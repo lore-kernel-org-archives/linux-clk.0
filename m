@@ -1,142 +1,180 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8771A1758B;
-	Mon, 12 May 2025 15:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762F71A08CA;
+	Mon, 12 May 2025 15:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747065090; cv=none; b=tW/4P74h7RYNNGtEPX7gx9HZmbRzLX66E+RzCGJSc/bDz/W2Cluq7JRtNcz4N9KW0NrprGmmTL7SP3egs7SuecdWiOIacNr+TSzVfEKnpjGcc1p6ObKPoo4GlAXPstLViIQjlyfhZkfeo/g1PSCiw3HrvOJe7ddxXhqt6TSV9CQ=
+	t=1747065515; cv=none; b=J2+tKL2cwv9CoLfb4B+kDzjzjcN5IgnmYBL4Ybq7QqLIKdwXnbhI1b2cWmBukBJxKvnN3VDUc59OyE7oMxKkre/PR5wszwZCx6v+kfdufmiD6rCIJM1lElkK6I1XTYUMzmWUIvAoxWAdRAh6VX+Q8SnRHhed5WDYFyZ4KoGW5CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747065090; c=relaxed/simple;
-	bh=4ozyet6Am4uOrDkpvVbP07Tzp8wHAIN5Eeov69emIjo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhHhBtd4HgsPExoSJN3/Phj9vF+5aVuQLR+RuPwW+bZo64izFgVKMD4J6SmWEjMPubJEgWp246/B93k2LvlmKQcj9bsxsjSWPZlwXBWwlw+t2JurOglDwLvm5SCTjEDDYCbzLzkeDPn3eqAOUNCh2BY+g6e+0Ncy6AYZT7wQ8sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fx8KFETA; arc=none smtp.client-ip=209.85.210.45
+	s=arc-20240116; t=1747065515; c=relaxed/simple;
+	bh=N3IupITUGFOYIokC/XqIJ6alt8Wbz30JQtkN85VBgo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCy3zjkvbh6dtnIaVuPrHny5howQYs8j2PncrJB859W1dlH1SNQU4nZAvSHEqXWPud01UZIKS1242qGFWvPfir5XRQlLF9XFuKrtH0+xBc6Hri0yj1DAuzPuQhxpNAGJn4HPRN+XGE7mlME/SQNA7Iq12tOqb3btl4mYUaggBH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8Ht2h3W; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx8KFETA"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72c3b863b8eso3310381a34.2;
-        Mon, 12 May 2025 08:51:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8Ht2h3W"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442ea341570so1916445e9.1;
+        Mon, 12 May 2025 08:58:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747065087; x=1747669887; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ld9Mq7+qdXV9AhMC/9M7vzrYD56VNJUHYiEJWfb0qDk=;
-        b=fx8KFETAqOcdZLLYgt0VKtK1GhAlTRebjWF5t8Cx672DymKfXy+U1zaO3rPm2yPHXx
-         2na5oioKe8GU1gO/fX2uq6XJKAGg57fbxH19WoRjYDgDLvJ78wThogVMWFEYaq5XW8pO
-         BHJt8T04xSBky7z/KlRhXb5T5WVISGDYU/PEA22gTOHXfipahVxqUoejLClPBoPRIy+N
-         8V9ue4qQpqUQriYzR8pBa3xQzByrJXPCC0mDvxX24SkJV4AuSkUZG8OExUWAosPVcEfa
-         LrGWgl8OjHWJiczj311kEZMxwd7saqHWh63BoXT3SMKg+L8vGEY6EhIS9bt7p+dLSJIp
-         9XHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747065087; x=1747669887;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747065512; x=1747670312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ld9Mq7+qdXV9AhMC/9M7vzrYD56VNJUHYiEJWfb0qDk=;
-        b=Sc/8aE8EaJnY95f+4a0CHuNBS1HzMDdStznzeXdNY2je3teiOuoNBnELPondGkGpwP
-         EwbonIwKyeo1jbyVWgbcqwDSRA69kvrp9S0DS2WE+LOo3z7q/Q8+dormrIzVqpYUu6c5
-         v/SBPUpbrceZrevbbY9ch0Mwtl1xlHUvYoHiFzKVBWcb4Vf1DdE8U3qk2VjDfGYpG6Oy
-         QEkfvUrGi538DDsZLGFVmFidJ89snK5eh4n+fLqDTUSm/Y6ef0V39YSnIj1/CNwKZlUb
-         WUXvJ06e60R4+GeXcgYMOYM0MbtBX33RqAtMdN0s+1XG2urCavnelT31sTLuGp49dj6u
-         +dmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCdqSZlW7xtonR4t7ADWL7MFTcHFraMpDOnKw6E+EPGrfAPio5z6kdDhIKBUR61Ms5AL250rpFxwjM@vger.kernel.org, AJvYcCVHmaLlxnTKVOEwDVJZervdYKU4ztw/QUmV9B3BmGPRgiXl9ne+TSYq/iLtQdx02AYhZN9og4v3qGSm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCBLVsBczR0ncTLup7zje+GT6th+odXw6kpQMvxjUs94WvYh6m
-	94YB+SFuD2QOMAdIQn7+MN3aMP4J4ZGUW6JWcWhso2zln7Bw5Kv6
-X-Gm-Gg: ASbGncucNnaIy2lWwTrlaBe0SzVkS56Lbc05Lnin0T4TzYUjyPEbMCTD/uWRV7ybP+w
-	0yy44NqCfOunlB2CD9SWi+R9+gpA+xX2jYnViXdX25M4brcj6SykYUwliUVYoWall3JvywPP7hb
-	EU2q9C05Hk1zxlQOqjfm165PXjvZD1LT85v52OXtG115JJ5Gym78FJRGfScfJFnblDVfvQ34Fa+
-	8gpmBIVuiNx3lduEfSMSW/8Foefw4mmRnfX9u6+BWUUGOrjx5G09p2p8mN/RnESMlVu8XF5+PD1
-	qvX65HaB35aLQxT/Tr3+C1C6+XbQySZBGWzCINrQ6iPYJZYXRjvYN6b4uMdThz8xtXQTmw==
-X-Google-Smtp-Source: AGHT+IE29HCnAnqJs70fjiVznu2cWndCXxPM0MBn2LaCtm8l99A+94DcdAaY4Wmxo+5EpZLx6ztYiA==
-X-Received: by 2002:a05:6830:6f44:b0:72a:45bf:18c2 with SMTP id 46e09a7af769-732269c4577mr9487337a34.9.1747065087378;
-        Mon, 12 May 2025 08:51:27 -0700 (PDT)
-Received: from neuromancer. ([2600:1700:fb0:1bcf:25f1:2610:e3fc:c8ec])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732264dd290sm1579539a34.40.2025.05.12.08.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 08:51:27 -0700 (PDT)
-Message-ID: <682218ff.050a0220.149fee.dd6e@mx.google.com>
-X-Google-Original-Message-ID: <aCIY_ca5PEdgItxE@neuromancer.>
-Date: Mon, 12 May 2025 10:51:25 -0500
-From: Chris Morgan <macroalpha82@gmail.com>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Hironori KIKUCHI <kikuchan98@gmail.com>,
-	Philippe Simons <simons.philippe@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v10 00/11] drm: sun4i: add Display Engine 3.3 (DE33)
- support
-References: <20250511104042.24249-1-ryan@testtoast.com>
+        bh=7Tiu7K1d+E3ERrbWyua7cTehS3PZhz9sGhrRK35gQe8=;
+        b=d8Ht2h3W97Fpc0bUICrHdDdTJBhG4XjsJfqV8rpXCeh9hF/l8LxosyFRJDwwzyby3m
+         /2HBUUVJFdUe2JP0T98DkFJ0HtdWh2hgTZkQUPtwAkpbG+MQUVGyAv5tQIsXm650ZISk
+         kjwX6sW2FedVKDYDJn7jdWGTDJrWScrOLkusgaBSEXZhVlGGaIl/ikF/zQtd8zHIu65B
+         QhQucamzp+8S/h2ai6BPbojrM4gDpVpjuMxVa+vVQUIBP9km/X7TZuvS0B2oHwYU40MJ
+         fzTVzME60A58DLFd6gmxlDVOx+Vnfh9cTT9+uZ1DnBEctF7dEjKNwnn6gB850hAbJ8tV
+         Ac9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747065512; x=1747670312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Tiu7K1d+E3ERrbWyua7cTehS3PZhz9sGhrRK35gQe8=;
+        b=uBF818WZivBOh76iElWmSJI6AK2xlBD8We7FeaSUTJkKr4Ka4/etzwuwGChx02/Zw4
+         qonk/RF/oz8dBPE0LKvuVXYB2/yMTsGgh9wesvrjPF14rjtrjwq6JVAG1gV05FDgIBQA
+         giHq+kqkHxa0JE1H8F1g8C0YbZPBHUJpgnDnhFzMfG3l5Rax2Rvv9g0oPIVdyvm3gcVP
+         N73E8IarD5naz2NtF+JHJv7rmrEwEB+QV3j2OsxLQ6kF6pKWOR11gNC0SfxpXHYaD5wn
+         vpPkjnkN64BqlFmJgeLLym4/deFDt93nbkCNdAhWDClBLFwdcuJ2qINaZoahSx0Jifwr
+         MPLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVF1nG+SUH0xgUtkroqdTUoSNrd1NyNQTaVSGfwZMzd9F2rmDvEQr+QDgWAZXfuU/OLGca7mGAbUmR4FWOx@vger.kernel.org, AJvYcCVtRsUalB2m5gB9q69Gf9H74Q9I4zLebITNRbuXU/gcLNzhQXzDlUZ9TRo7yvfBhw5yvuqUcBk7ldPV@vger.kernel.org, AJvYcCWpVS6WiQ2pWdBjy202oibAGtYKhHlLzz7Tj4Pb3kwVXCwRj25hMHb7DPALItxWmz1TXCSW2v7vQAPWoJFX9g/OlWg=@vger.kernel.org, AJvYcCXyN5TDNlOpumAoEm61BGr1ycB8C5xlH16bz5sK/HGBjUJKnSWn41m31TP06Wpdb0JxgGGCP7yTAHK2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGxBZ+aY8+uay2Giyt/t6y179cR0eWrjif9b3tB1zvuF76WZja
+	vl/XbVOh4zFSpp0so9Zj4IWRM1au4n9LZwupv/ipjvYSG5slE++BuAAPcfg507mByiBULl0L+ul
+	sReEKQ9QWUfFCuYBKy0YtfjzGE7I=
+X-Gm-Gg: ASbGncuYFn+vCwhygfhYt9WBgYXtgwCna4pn9Q6JJkAGjeTGwZkfVyIcElkPaMwIW0Z
+	WPL5XPZD5lNreZIi451og1V3ovGEGxrhvD/ueFI9mYnyQUKExKSkdZWUP4nZfNYF6dNAGAmq2fK
+	6C0yvX73nphnGbyBFX9H7Idlxq3sdvJkd32cm6G7sVuQ==
+X-Google-Smtp-Source: AGHT+IFXbahmg2a+BTqiLfTc49OhOevVl2AgJz/PIJpOPa+2/Fc+7yusnDFsUzxWbWrLCDk5Ky9+6rU51Zl0bh1I2Eo=
+X-Received: by 2002:a05:600c:1c8c:b0:442:dc6f:2f11 with SMTP id
+ 5b1f17b1804b1-442de4a8ca9mr58212345e9.25.1747065511651; Mon, 12 May 2025
+ 08:58:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250511104042.24249-1-ryan@testtoast.com>
+References: <20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250430204112.342123-15-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB113467D1EFC9C66CD94D216F3868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113467D1EFC9C66CD94D216F3868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 12 May 2025 16:58:05 +0100
+X-Gm-Features: AX0GCFuR8rcyABea0qPHxH1BuKL66czaA5OEAqMZRwiSFyesM0ZStKGzdKFxm4Y
+Message-ID: <CA+V-a8vz-7o96s0ok2ap+Kg2=BKMv8O8Zk667bYi+0Cu8F399Q@mail.gmail.com>
+Subject: Re: [PATCH v4 14/15] drm: renesas: rz-du: mipi_dsi: Add support for
+ LPCLK handling
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 11, 2025 at 10:31:09PM +1200, Ryan Walklin wrote:
-> Hi all,
-> 
-> v10 of this patch series adding support for the Allwinner DE33 display engine. This version is largely based on the previous v8 patch, with Chris's changes to the mixer bindings in particular from v9 to add names for the new register blocks. As discussed, the H616 LCD support patchset (which are largely device-tree now that the clock/reset binding definitions from v9 have been taken as a subset) will be sent separately with the rest of Chris' updates.
-> 
-> As noted previously the new YUV support in the DE3/DE33 and RCQ/DMA shadowing in the DE33 requires more work and discussion, so that support was removed from v8 and this patch supports RGB output only.
-> 
-> Regards,
-> 
-> Ryan
+Hi Biju,
 
-Thank you Ryan, I will just defer to you moving forward to ensure no
-further confusion on this series and will help out wherever I can.
+Thank you for the review.
 
--Chris
+On Sun, May 4, 2025 at 2:00=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for the patch.
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 30 April 2025 21:41
+> > Subject: [PATCH v4 14/15] drm: renesas: rz-du: mipi_dsi: Add support fo=
+r LPCLK handling
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Introduce the `RZ_MIPI_DSI_FEATURE_LPCLK` feature flag in `rzg2l_mipi_d=
+si_hw_info` to indicate the
+> > need for LPCLK configuration.
+> >
+> > On the RZ/V2H(P) SoC, the LPCLK clock rate influences the required DPHY=
+ register configuration,
+> > whereas on the RZ/G2L SoC, this clock is not present. To accommodate th=
+is difference, add an `lpclk`
+> > clock handle in `rzg2l_mipi_dsi` and update the probe function to condi=
+tionally acquire LPCLK if the
+> > SoC supports it.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v3->v4
+> > - No changes
+> >
+> > v2->v3:
+> > - No changes
+> >
+> > v1->v2:
+> > - Added LPCLK as feature flag
+> > ---
+> >  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi.c
+> > index df43ff59e08e..22a386ca8ae3 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -30,6 +30,7 @@
+> >
+> >  #define RZ_MIPI_DSI_FEATURE_DPHY_RST BIT(0)
+> >  #define RZ_MIPI_DSI_FEATURE_16BPP    BIT(1)
+> > +#define RZ_MIPI_DSI_FEATURE_LPCLK    BIT(2)
+> >
+> >  struct rzg2l_mipi_dsi;
+> >
+> > @@ -63,6 +64,7 @@ struct rzg2l_mipi_dsi {
+> >       struct drm_bridge *next_bridge;
+> >
+> >       struct clk *vclk;
+> > +     struct clk *lpclk;
+> >
+> >       enum mipi_dsi_pixel_format format;
+> >       unsigned int num_data_lanes;
+> > @@ -788,6 +790,12 @@ static int rzg2l_mipi_dsi_probe(struct platform_de=
+vice *pdev)
+> >       if (IS_ERR(dsi->vclk))
+> >               return PTR_ERR(dsi->vclk);
+> >
+> > +     if (dsi->info->features & RZ_MIPI_DSI_FEATURE_LPCLK) {
+> > +             dsi->lpclk =3D devm_clk_get(dsi->dev, "lpclk");
+> > +             if (IS_ERR(dsi->lpclk))
+> > +                     return PTR_ERR(dsi->lpclk);
+> > +     }
+> > +
+>
+> Can we use devm_clk_get_optional() and get rid of this Feature bit check
+> as DT binding check validates for a particular SoC this clk is required o=
+r not?
+> Otherwise, there is no usage for optional API's?
+>
+OK, I'll switch to devm_clk_get_optional().
 
-> 
-> Jernej Skrabec (7):
->   drm: sun4i: de2/de3: add mixer version enum
->   drm: sun4i: de2/de3: refactor mixer initialisation
->   drm: sun4i: de2/de3: add generic blender register reference function
->   drm: sun4i: de2/de3: use generic register reference function for layer
->     configuration
->   drm: sun4i: de33: vi_scaler: add Display Engine 3.3 (DE33) support
->   drm: sun4i: de33: mixer: add Display Engine 3.3 (DE33) support
->   drm: sun4i: de33: mixer: add mixer configuration for the H616
-> 
-> Ryan Walklin (4):
->   dt-bindings: allwinner: add H616 DE33 bus binding
->   dt-bindings: allwinner: add H616 DE33 clock binding
->   dt-bindings: allwinner: add H616 DE33 mixer binding
->   clk: sunxi-ng: ccu: add Display Engine 3.3 (DE33) support
-> 
->  .../bus/allwinner,sun50i-a64-de2.yaml         |   4 +-
->  .../clock/allwinner,sun8i-a83t-de2-clk.yaml   |   1 +
->  .../allwinner,sun8i-a83t-de2-mixer.yaml       |  34 +++-
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  25 +++
->  drivers/gpu/drm/sun4i/sun8i_csc.c             |   4 +-
->  drivers/gpu/drm/sun4i/sun8i_mixer.c           | 168 ++++++++++++++----
->  drivers/gpu/drm/sun4i/sun8i_mixer.h           |  30 +++-
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  27 ++-
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |   2 +-
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  14 +-
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |   6 +-
->  11 files changed, 252 insertions(+), 63 deletions(-)
-> 
-> -- 
-> 2.49.0
-> 
+Cheers,
+Prabhakar
