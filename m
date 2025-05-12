@@ -1,69 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36C5187872;
-	Mon, 12 May 2025 10:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227FB29375A;
+	Mon, 12 May 2025 12:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747046948; cv=none; b=ROB713XNQ+uuiSKfjY/g91RsgtVnJ2uh9cuD77gSTanep04MQ5VQ7FFYLvAaSTEUrdHHuL973JmdrkUd6KbKdV+yHtafmPrDJV96jWiwaMSN/L6YrQYSMCrtxpO5pbff+Ruz+Pr+WC8Nup9tePFvkp3VUspkRa6U1ehZOE43fs0=
+	t=1747054173; cv=none; b=KNhAZakfqPnLaHqyigpxXx3ka28ceS5o2ncVEERDYpUUR+s2aYn7A/gOlX1MbY5+FwVxCnDAFJta9zEyH5KzNwvVCfsbhmUdrnIkwofspK3dt+GQFANHBQNVMVKcZ9rHPvXevrxce41GR0hbaXBplBYooM8SpcEpkYvP4QDNUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747046948; c=relaxed/simple;
-	bh=zUpC1gW4fOUJ4OC+/1Eb2zn3OJzoIcVx6892BOSlhgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUXrLHdYrdQUVZPAUM9S/6k710ws+AsZB90OnBbsAuAHEuOxdcYbBdh0UvyP/196bhCrzamoiZ35hOk2Uqi0dyoOnCTMDMNV3mnawUqADtk4E0gpxw0ast4otvHZcv33lKsYw6jTHI1lzySrCWSxhqyX79QIY0i3LLcP9rzrUA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ytdl4i2E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747054173; c=relaxed/simple;
+	bh=Xul2N5TZdLPJDaY9qEes+2SrQ7lCw1Xec9sr/RkvLPI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=It0EqYWHbjOkxCMKS0wdrIjd9SZE6bL2UvUkSjBZypPKwhI+ptao4tbPO4c7Ovp3jbJ/rsxCy5gy15K1CejrLJcKBbV+1UVjwYj3KKJbksAn0VQQTzn7lL/y+BPXKwIWJAvdwj00VUaauqxFQFhqMoz9IYLHQzJkENROsj5lgHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUkjBnBP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ytdl4i2E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3F9C4CEE7;
-	Mon, 12 May 2025 10:49:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUkjBnBP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0539C4CEE7;
+	Mon, 12 May 2025 12:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747046948;
-	bh=zUpC1gW4fOUJ4OC+/1Eb2zn3OJzoIcVx6892BOSlhgQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ytdl4i2EUNDHcrySlH0apCvUjrSZ8JL9fSJihZ+5sMxY2RBl75mCoXrliddy+qoV/
-	 V2JtbOObqemMSqzmnAZAXKKk2EdrYRT59qIJm30CsSFuR2UDoyOP3c54u2/jEOl9dE
-	 /+KYhczxroCkePxFiCB/De75LSspDWGSJKgOwH9QRT2Qxtsn/ycLYLRrOMUcfr0ZHx
-	 hvS13/+PrnUaBm4QwD2O4b8+28m5IOnPJ6PmGJb3M+A8FfhXM2Vmks+etkNN8JgkYw
-	 +2qzzBODsTUltDuQIiHC1Yxnfwa67Gc3LbSQweTeQo6vxEE2fApRmSY/bRr0wUAFjq
-	 +nDGAudA0DhQg==
-Date: Mon, 12 May 2025 12:49:06 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: qcom: Add missing bindings on
- gcc-sc8180x
-Message-ID: <20250512-beryl-catfish-of-saturation-208467@kuoka>
-References: <20250512-sc8180x-camcc-support-v4-0-8fb1d3265f52@quicinc.com>
- <20250512-sc8180x-camcc-support-v4-1-8fb1d3265f52@quicinc.com>
+	s=k20201202; t=1747054173;
+	bh=Xul2N5TZdLPJDaY9qEes+2SrQ7lCw1Xec9sr/RkvLPI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=HUkjBnBPVRlfJwgczJvIz95ZeTA0Zc56cGxjb8KjZS+WMVCE9EiSSeUG9GURRr1m+
+	 9AlggNLcLnqOSv15GWgnmv9xxRTneOuVXX6fhrR7bPfM4BsQqRekdx+At9paamyIjv
+	 OBbsV9kP34hDxnAuOCRI4T1d9IkMFDTpa2yFKBL6GjrBaHmU4oev+ZxBN0VrgUS/Rm
+	 b7/BE8fHI9CjGp+t+sI7MEGxHTnhtEbPFXcEth1fy7Y0wVWlwuwfH/2T8HLXq1Pjd0
+	 jyg5n0RIj1AT3WGQ+9GDOspK9Jxd6mx/ZEMzz2W+Gk5U1lwWLxIRpGNOkCzoFyjplh
+	 k4uiNPp+SJXpg==
+Date: Mon, 12 May 2025 07:49:31 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250512-sc8180x-camcc-support-v4-1-8fb1d3265f52@quicinc.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: netdev@vger.kernel.org, s.nawrocki@samsung.com, sboyd@kernel.org, 
+ mturquette@baylibre.com, linux-clk@vger.kernel.org, alim.akhtar@samsung.com, 
+ linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, 
+ richardcochran@gmail.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+To: Raghav Sharma <raghav.s@samsung.com>
+In-Reply-To: <20250509131016.3173048-1-raghav.s@samsung.com>
+References: <CGME20250509130035epcas5p36c784dcbbdcfb708c12fdfc67eecfb49@epcas5p3.samsung.com>
+ <20250509131016.3173048-1-raghav.s@samsung.com>
+Message-Id: <174705404323.2941293.7491177381588935328.robh@kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: exynosautov920: add cmu_hsi2 clock DT
+ nodes
 
-On Mon, May 12, 2025 at 10:34:36AM GMT, Satya Priya Kakitapalli wrote:
-> The multi-media AHB clocks are needed to create HW dependency in
-> the multimedia CC dt blocks and avoid any issues. They were not
-> defined in the initial bindings. Add all the missing clock bindings
-> for gcc-sc8180x.
+
+On Fri, 09 May 2025 18:40:16 +0530, Raghav Sharma wrote:
+> Add required dt node for cmu_hsi2 block, which
+> provides clocks to ufs and ethernet IPs
 > 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 > ---
->  include/dt-bindings/clock/qcom,gcc-sc8180x.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.15-rc1-6-gaa833db4b822 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250509131016.3173048-1-raghav.s@samsung.com:
+
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: /soc@0/clock-controller@16b00000: failed to match any schema with compatible: ['samsung,exynosautov920-cmu-hsi2']
+
+
+
+
 
