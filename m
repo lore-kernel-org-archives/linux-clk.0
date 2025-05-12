@@ -1,75 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009C022338;
-	Mon, 12 May 2025 21:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BCC186A;
+	Mon, 12 May 2025 22:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747086543; cv=none; b=fXRV8AzIcMKeYHU2Ct5sHKWOKfTxPQ+fyyb1u0Yrcd49AmzuW/NtUcY9R/CjK3umCy7+0CQza7EGauIINjRvkOQ+PfkOaJADKGAletq2ZfU8AshNLHvlLRV9RKcJG9xZPwJLr3/O5ldr6kkwRFg7gt/t50jfo1riBz1RCUocQ+I=
+	t=1747089184; cv=none; b=d34MhThXQ05YY705fntZxXUM3/aCWfpZvf71ovMtIUT/9XQMYCCMTxt65+QwibZRXXzXNnktwmKm/vkgm5/ElRK7gpTa0OJ8yEO6sf1YH147obE5sXLIBi1WC/A5wxFbr09btVSae1tJoXVDRhTzJXfSJvBz7TdKGY/6x1EY0ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747086543; c=relaxed/simple;
-	bh=LuAOPUZgGmqT5sqplzTtEFTdMTPrEXMUaf/Wgr76LTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eLkVojxUhdpHmhWJQUzOo8KT8fsrbUw54WMsGlhUNDqbiNy3Recdpm2kE+kcy+0TjheTM10OLDcjExz7l/Yxym6Te8H4KflxQsRH+WAhRGDeBuaV54jQQGOYeEXmxNllrHCcGTRsAGmgFvnIt6ClqFEGfCgUaDK/xLa9kOEqcEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hteDYr8U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747089184; c=relaxed/simple;
+	bh=7uaPkVruATXm9Huody3+3MZx6tE8WbKbRuYqnjKm0pI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M6L0Oa6RfpotKk2a/7URWTjFPE9sJ1IwANHcOSJEsblALhs/aIc4qp1KM7ysixxaCTXjuVkzX/JmWZL9tg3Zduv2i4GXqBEvnXXxGr9tqqrZNat/78ocipwnnX8CphjQruPjpg6fs6mTIEcjAbvkk5i+ILw1PuSGde2mfDOhB54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLZ1KgzQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hteDYr8U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCE9C4CEE7;
-	Mon, 12 May 2025 21:48:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLZ1KgzQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80E1C4CEE7;
+	Mon, 12 May 2025 22:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747086542;
-	bh=LuAOPUZgGmqT5sqplzTtEFTdMTPrEXMUaf/Wgr76LTg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hteDYr8UbIqtSpmDpi//Sm6v3/BOIM97fYkz+iFZr8MUZ71/BwEmiAB0LKzKDko+z
-	 iNCvoG7adDNx/4A1S8f2Vmb8oj4LdqKOpAJVTd8DSvuPW5S93d0FnHiMKgPi+ryPki
-	 F+Omv5eWLtP0CO2jl6/f1P4nZjnMw+O1I+GZ4HebNTIwKW+GJ5y5znobdFedGhybVG
-	 ZMiF/D041d17Yu+KaScZsO1FeOwFh4oHOA1U0k7RNzv1R4mgqV34LtL8CqaTsfg2ct
-	 bvFs2N4VPLs0Oj3W+iwEyjDdnn3uLBzuBg9rBBc52S5OknRlJoCnhW/g46BYeB0CIO
-	 oCnFUHJ8vbJWw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/4] Add video clock controller for SM6350
-Date: Mon, 12 May 2025 22:48:49 +0100
-Message-ID: <174708642734.3671.5958647502216393277.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
-References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
+	s=k20201202; t=1747089183;
+	bh=7uaPkVruATXm9Huody3+3MZx6tE8WbKbRuYqnjKm0pI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLZ1KgzQOJhVUAg9HL/gG+/R//L7FAoO/kB/yvK5yZYA02+YkydJW15gu7HC4e1/l
+	 TwDqKmCGX8QJ1BMBsPkhEMfaHO0CeBjM16ODGskLNGUuuwssFGg9Zg2pN2cZMZhkxz
+	 yZftrJotY5E5fl3AFwbv/ZA0XqmSjhZUZ3j4L05gEo4q0Gd71DcA7BPV0j+n88AqC/
+	 /lXlbS0VrgwPwF4yyi7g4nUmRvIHmlMf4NUEQUPT6Bwunk1fLQ09V4q/NQG5V8APL6
+	 zyyz1I7mHgeS9gkiYzuw+Zlc0XZcHmMtcT8e3ZxeSTWAKYT4a64llabhgqhbPyg1lX
+	 Ent9sEQe4ZTww==
+Date: Tue, 13 May 2025 00:32:59 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Peter Rosin <peda@axentia.se>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Wolfram Sang <wsa@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 19/26] i2c: busses: at91: Add MCHP_LAN966X_PCI
+ dependency
+Message-ID: <t362y4tvg3y2q5yop3vnqme3qi6wxxehpbyzbx6qp7zbrihqkr@5bvsxvd2ti7i>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+ <20250507071315.394857-20-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507071315.394857-20-herve.codina@bootlin.com>
 
+Hi Herve,
 
-On Mon, 24 Mar 2025 09:41:00 +0100, Luca Weiss wrote:
-> The driver for the SM6350 videocc has been lying around in some branches
-> of my git tree for a long time, let's upstream it. It doesn't get any
-> better by letting it age!
+On Wed, May 07, 2025 at 09:13:01AM +0200, Herve Codina wrote:
+> The AT91 I2C driver depends on ARCH_AT91.
 > 
+> This I2C controller can be used by the LAN966x PCI device and so
+> it needs to be available when the LAN966x PCI device is enabled.
 > 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-Applied, thanks!
+Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-[2/4] dt-bindings: clock: add SM6350 QCOM video clock bindings
-      commit: b887afb9b2362b15c1ee5585df1fb8cf3a3384c6
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks,
+Andi
