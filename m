@@ -1,232 +1,125 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1019C1E25F2;
-	Mon, 12 May 2025 14:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B976A19C569;
+	Mon, 12 May 2025 14:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747060976; cv=none; b=aT0qAa54OpHQh01p2DKJY2bsvN2JcWt3VPhj0k6BbdtknRPJnnFtFZne6xlJb537J3nM1QWtXrHXyp19yb532vXJa2aOrQHKImqUK2Art7dORh5DQa7MjLWcTsrg/z7Nu3Gg663OHx5FGJWdb1VlLeuU9sdppoKLM3d1Lthncuc=
+	t=1747061206; cv=none; b=U3knhArpRhWjdL4eLqEQdGnrLO8iBtylLznEWr8efW31XRBCrkfzShKoLYZNbpt6Kh+fvC8oN2S0jl//3adVGcni9wf0H3WgUumUqjE5G4vTx+wRQShDU5r2nFH5N8bXuL35oyzyJclFwBmHGHZlvahu0H0ZLPTyaFAxwfWSxsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747060976; c=relaxed/simple;
-	bh=+MJuFyHlrR+N6ADcybjZTr/tKCQxt58f7yFbm/GyQdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y36GIrm1yn3kFBsgyp6zuzaFmQ/1ZyzIqwDyJ4SqrI/sqzvT/ONsjUqOYzMmX5A3DKMtFM+U8PJw6SGNUPUeYGmVys9KeE/NbIkxFlnB538cNV250ZxiboyA6TuLOzcnK2iJ8FjfEJqRqD/k9McKuEeOxb7Cm9DJIRmfjEMipOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyZfOtlZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747061206; c=relaxed/simple;
+	bh=JkM/nxZuW8/XtDWXx2zZGIoDGGsavYmJRK+QqVbajJI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M5BGeECu1KqY2S0YDApWtvXEZD25at8GEjYYRvLzyP57T10EJj1Bkh3iE5Xy6kqp5YlngaoyfdAlforSkrXy1rKYRgMNu38KYrFLYdnqO8EOwHvmnHtYyQ3I+SnMZm+wmsFCXE2A02CMRqX1qENDE2DU+/V1glArAv1DJJfsyUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVesmxv4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyZfOtlZ"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a0b7fbdde7so4330133f8f.2;
-        Mon, 12 May 2025 07:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747060973; x=1747665773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgS0gFzPJkgOZrUm2WjFUj6B4kBtJbfFOU+fHqfvDz4=;
-        b=CyZfOtlZMwhI2ytBYVolpJukcDTKDduV605WV+0VWL175F46c3JmRJown1ZW2C5PiS
-         KJwVngu2N9q45UQZw0Kq69+ZPLXBGNrswWnpV4evdYJqE9veefR2oxGKDdmhdrQWIrOe
-         DlUyIgPpmlEnznE3Amhk72cFEDR1aOmZTR3230ERn5UiFCVlNacPfLrLiRifyKPe7m8M
-         eiM+5IK7XVj/dThrua4eYzBB09M8znrA9FDx5GBBdS/GwQEisYFFrLK7OL1sNRp7iRuv
-         XWDbIUSWgs4C7nZYbAiJqvY6eWMl+N+/0YYunxFpW3eHzGPnNhuTUeTB9tmGUP3qloch
-         FfGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747060973; x=1747665773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgS0gFzPJkgOZrUm2WjFUj6B4kBtJbfFOU+fHqfvDz4=;
-        b=GyEz+E+ve8agk8+GSuiaUY60+gasNBycJ42PJx9c4X9TlRmmoDM1L5PKOuLwRuf8dq
-         PjXsXf2DG+I+iVx0hkt1P92UtbNHdR9x/hWknX4oDK71kbH1ugzDbXrSQbJ7zl3I8AMd
-         sr6bgm32ZZxjyTMHWzuu2fOJMpgnN7hqqRm2Hoc295J78wW7jkRGKA33Ovf0gmH0ZJhh
-         b9zt5FS1kYoo6PSIT9kKJ0TJBRs7maaZEKSUhYH7tROTpf2Acl3IYOgLfeNv6GAiv0vu
-         W7Iunnh6JhEKjcMz3BitvBh1+NJaLom50lFZLEYvSNFmNrcN+hLxnASur7ViydESqiPJ
-         YLxg==
-X-Forwarded-Encrypted: i=1; AJvYcCURQMAESDR+iIbEEk3TSu3SdyOgW7kOE3acGm67q7+P1CcKEL9tRNhluUGzSdXgFYjapuggBKE5W866@vger.kernel.org, AJvYcCUSJGTC+baqO+rmCxKfGKey8FLWP9QdM2Fkxb3GCz+gLFRyGayPDnvq0OW5EgdPfwAyAtX0lbu1oVxa@vger.kernel.org, AJvYcCWk7IvrAWAI8ggtK5hCOMidx1YcufsHGIcZShhDrwtOLshpT2Rj/9paF0cpZAPet0Tdn5AxC5qdLtkUDnZMPiMc9MY=@vger.kernel.org, AJvYcCXGuNAw90yxeoA6BS2Nqt/kul7g9AqzX4YJHAbkoavRP1koHFiJKLQ4GSCII14RjjQiVP6LobJqKUnQE8HA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2VcaRCSC5xnfG12yXnT6sOcGKmfH6kAs6/hGe7OVlzuDH5Xi5
-	fw2vIwV4+l/ldZQ0dZ9ZnRy2/1qNrZAV2i/pnaSOC1xUlBeJAL6ifTonnNe1JFrO1FBgcYOyN6o
-	K7GUwd/Z4NEWlaOzVI0o8DqmHmrQ=
-X-Gm-Gg: ASbGncsbha4xoh7aRlqiBgsKrJorsWjVyJHw7oxDdg8vzukznctO9P/FcECjmDlXAb9
-	E0uRNOSahMkI+qPED1AV7nXGC85Ibj2OHmpgsEr+A1UWZBuf5kOWdUHrFTza3+x1cm4WAv1JegZ
-	UMjFbvSQVhTFq7O6B1DECVphUoGfpY47w=
-X-Google-Smtp-Source: AGHT+IGgeCmhN6ZRg/tTj5xtux+YtjBRmxlsL0nR+eKs2oGnS9tHIOYCy15h6BCp659yOebsuWHJvxi2oHiACilW0rA=
-X-Received: by 2002:a05:6000:420d:b0:3a2:39d:f51d with SMTP id
- ffacd0b85a97d-3a2039df76fmr5286273f8f.23.1747060972990; Mon, 12 May 2025
- 07:42:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVesmxv4"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C07CC4CEE7;
+	Mon, 12 May 2025 14:46:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747061206;
+	bh=JkM/nxZuW8/XtDWXx2zZGIoDGGsavYmJRK+QqVbajJI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=MVesmxv41We+7F72e7PtVsvCBvv91s5xU5hCghkJoW8SO/YIDgxAWNOavgcR6BYFz
+	 uJ6zl9RAXK6EI8VMqrm9dxFqWFj0khKCuaV6A5EuYJrgt6ACQ3B3txKq/+HDn8e/Si
+	 84q5k8oHvtxItigKhH55sMQalbQBJoPKa/ZnQ3Ru0Oy+fTBdoajfyaw7+aKXIrJXOD
+	 7AUcIc38xNq5gandCeQSIyjLQfACunq5bOIrl7U3OHR/XKq0iFwaYK4cP0AU3bOdok
+	 Uk5geLw0ojo/lAiX+Gxc5W9oIxNc9hEVBTBcQKzrdvChf/90uj5jTnBsefdjb4OnZv
+	 jj+4bV/ouy6JQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EB2C3ABC3;
+	Mon, 12 May 2025 14:46:46 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Subject: [PATCH v5 0/7] clk: clk-axi-clkgen: improvements and some fixes
+Date: Mon, 12 May 2025 15:46:43 +0100
+Message-Id: <20250512-dev-axi-clkgen-limits-v5-0-a86b9a368e05@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250430204112.342123-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346F143A2F83CAD8733BD2E868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346F143A2F83CAD8733BD2E868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 12 May 2025 15:42:26 +0100
-X-Gm-Features: AX0GCFtIfNOD3yNLytAtJM5Aw-ApuQ_ToGcv-oRoFGArlVXSiaJ6rYqqvhWKN_4
-Message-ID: <CA+V-a8sCY38_KZTaEsEyF2cXNA=+3R4405FdJwx+GbgUcogWeA@mail.gmail.com>
-Subject: Re: [PATCH v4 08/15] drm: renesas: rz-du: mipi_dsi: Use VCLK for
- HSFREQ calculation
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANMJImgC/33QQW7DIBAF0KtErEPFzGA7dNV7VFlgGBxUx65Mh
+ BJFvntx1MqtIlesPtI8/nAXiafISbzu7mLiHFMchxKq/U64kx06ltGXLFBhpRAO0nOW9hql6z8
+ 6HmQfz/GSZE2hVa5iR4dWlNnPiUO8Ptz3Y8mnmC7jdHs8k2G5/RHNhphBKol1aDiAdt64NzvYf
+ uxe3HgWC5lxZQhoi8HCQEOW0fqaAJ4YWhmtmi2GCkPkmoCNM742v5n99/dohP/GNSpqdWCPzjy
+ 10GuLcrYYvbSwvgLUDIb/LjPP8xf9wCNvzwEAAA==
+X-Change-ID: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-spi@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+ Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, 
+ Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Mike Turquette <mturquette@linaro.org>, Xu Yilun <yilun.xu@linux.intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747061206; l=1903;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=JkM/nxZuW8/XtDWXx2zZGIoDGGsavYmJRK+QqVbajJI=;
+ b=hHrYNf5zdtiVEfAwcvmOhlMT+ZU1AkRzIsgLoiDGry69CjKzUCbhlVY0RfXmGxN4pKrc5pVmC
+ ZcKXEopQJzqAX+m/sI6uEaAxg/7M2jXGpKgRMURR4Of1Orfqswj7jOQ
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-Hi Biju,
+This series starts with a small fix and then a bunch of small
+improvements. The main change though is to allow detecting of
+struct axi_clkgen_limits during probe().
 
-Thank you for the review.
+---
+Changes in v5:
+- Patch 5:
+  * Drop voltage register from common header (not common);
+  * Drop 'fpga' from the commit subject.
+- Patch 6:
+  * Define voltage register here.
+- Patch 8:
+  * Sort headers in alphabetical order.
 
-On Sun, May 4, 2025 at 1:33=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
-> wrote:
->
-> Hi Prabhakar,
->
-> > -----Original Message-----
-> > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > Sent: 30 April 2025 21:41
-> > Subject: [PATCH v4 08/15] drm: renesas: rz-du: mipi_dsi: Use VCLK for H=
-SFREQ calculation
-> >
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual =
-VCLK rate instead of the mode
-> > clock. The relationship between HSCLK and VCLK is:
-> >
-> >     vclk * bpp <=3D hsclk * 8 * lanes
-> >
-> > Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that H=
-SFREQ accurately reflects the
-> > clock rate set in hardware, leading to better precision in data transmi=
-ssion.
-> >
-> > Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division w=
-hen computing `hsfreq`. Also,
-> > update unit conversions to use correct scaling factors for better clari=
-ty and correctness.
-> >
-> > Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ =
-threshold comparisons to use Hz
-> > instead of kHz to ensure correct behavior.
-> >
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v3->v4:
-> > - Used MILLI instead of KILO
-> >
-> > v2->v3:
-> > - No changes
-> >
-> > v1->v2:
-> > - No changes
-> > ---
-> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 27 ++++++++++---------
-> >  1 file changed, 15 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
-pu/drm/renesas/rz-
-> > du/rzg2l_mipi_dsi.c
-> > index c5f698cd74f1..911c955a3a76 100644
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/delay.h>
-> >  #include <linux/io.h>
-> >  #include <linux/iopoll.h>
-> > +#include <linux/math.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_graph.h>
-> > @@ -15,6 +16,7 @@
-> >  #include <linux/pm_runtime.h>
-> >  #include <linux/reset.h>
-> >  #include <linux/slab.h>
-> > +#include <linux/units.h>
-> >
-> >  #include <drm/drm_atomic.h>
-> >  #include <drm/drm_atomic_helper.h>
-> > @@ -199,7 +201,7 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mi=
-pi_dsi *dsi,
-> >       /* All DSI global operation timings are set with recommended sett=
-ing */
-> >       for (i =3D 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i)=
- {
-> >               dphy_timings =3D &rzg2l_mipi_dsi_global_timings[i];
-> > -             if (hsfreq <=3D dphy_timings->hsfreq_max)
-> > +             if (hsfreq <=3D (dphy_timings->hsfreq_max * MILLI))
-> >                       break;
-> >       }
-> >
-> > @@ -258,7 +260,7 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_m=
-ipi_dsi *dsi)  static int
-> > rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
-> >                                 const struct drm_display_mode *mode)  {
-> > -     unsigned long hsfreq;
-> > +     unsigned long hsfreq, vclk_rate;
-> >       unsigned int bpp;
-> >       u32 txsetr;
-> >       u32 clstptsetr;
-> > @@ -269,6 +271,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mip=
-i_dsi *dsi,
-> >       u32 golpbkt;
-> >       int ret;
-> >
-> > +     ret =3D pm_runtime_resume_and_get(dsi->dev);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     clk_set_rate(dsi->vclk, mode->clock * MILLI);
-> >       /*
-> >        * Relationship between hsclk and vclk must follow
-> >        * vclk * bpp =3D hsclk * 8 * lanes
-> > @@ -280,13 +288,8 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mip=
-i_dsi *dsi,
-> >        * hsclk(bit) =3D hsclk(byte) * 8 =3D hsfreq
-> >        */
-> >       bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
-> > -     hsfreq =3D (mode->clock * bpp) / dsi->lanes;
-> > -
-> > -     ret =3D pm_runtime_resume_and_get(dsi->dev);
-> > -     if (ret < 0)
-> > -             return ret;
-> > -
-> > -     clk_set_rate(dsi->vclk, mode->clock * 1000);
-> > +     vclk_rate =3D clk_get_rate(dsi->vclk);
->
-> Not sure, If there is a requested vclk for example, 108.45 MHz and get_ra=
-te() is returning
-> only 108MHz, do we need to propagate/print this error(like requested vs a=
-ctual, if there is a mismatch)
-> as there is change in resolution?
->
-OK, I'll add the below:
+- Link to v4: https://lore.kernel.org/r/20250505-dev-axi-clkgen-limits-v4-0-3ad5124e19e1@analog.com
+- Link to v3: https://lore.kernel.org/r/20250421-dev-axi-clkgen-limits-v3-0-4203b4fed2c9@analog.com
+- Link to v2: https://lore.kernel.org/r/20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com
+- Link to v1: https://lore.kernel.org/r/20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com
 
-       if (vclk_rate !=3D mode->clock * MILLI)
-               dev_info(dsi->dev, "Requested vclk rate %lu, actual %lu
-mismatch\n",
-                        mode->clock * MILLI, vclk_rate);
+---
+Nuno Sá (7):
+      clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
+      clk: clk-axi-clkgen: make sure to include mod_devicetable.h
+      include: linux: move adi-axi-common.h out of fpga
+      include: adi-axi-common: add new helper macros
+      clk: clk-axi-clkgen: detect axi_clkgen_limits at runtime
+      clk: clk-axi-clkgen move to min/max()
+      clk: clk-axi-clkgen: fix coding style issues
 
-> Otherwise LGTM
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
->
+ drivers/clk/clk-axi-clkgen.c        | 160 +++++++++++++++++++++++++-----------
+ drivers/dma/dma-axi-dmac.c          |   2 +-
+ drivers/hwmon/axi-fan-control.c     |   2 +-
+ drivers/iio/adc/adi-axi-adc.c       |   3 +-
+ drivers/iio/dac/adi-axi-dac.c       |   2 +-
+ drivers/pwm/pwm-axi-pwmgen.c        |   2 +-
+ drivers/spi/spi-axi-spi-engine.c    |   2 +-
+ include/linux/adi-axi-common.h      |  56 +++++++++++++
+ include/linux/fpga/adi-axi-common.h |  23 ------
+ 9 files changed, 175 insertions(+), 77 deletions(-)
+---
+base-commit: 82f69876ef45ad66c0b114b786c7c6ac0f6a4580
+change-id: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+--
 
-Cheers,
-Prabhakar
+Thanks!
+- Nuno Sá
+
+
