@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD804610D;
-	Mon, 12 May 2025 07:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8667F481DD;
+	Mon, 12 May 2025 07:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747034224; cv=none; b=KIVJtPnnYxMS3h1RHtJPxs5BcCE8mJzueDhQ/mMHre9a5sQ8+Riy5YtmyE7Y0oT63hKJx3RzLDnFwoLhoj/yUhHbsjhXHHGbohz54APUZoc7LV+DNLy21ReCFQsCs/1MNAPnN7teuFszuQQZ7gUAX7N/eShM//KAzlMat8n5Fi0=
+	t=1747034910; cv=none; b=iCXPMEYWJO8JsyLxFE4ClfDiM8iztFvFZ9UoYMNbSjz0TlyU8h5Kh1Nq6307lXD5ZEo/VOKGUW+KYaATLBGZuOWKU5R18tAgtLXzOK0/YITnLxZ0ghf4hOOJudTOhykSht1kfjg2GcE4ILwohcGOfQweNPGmcbrIuKPfvFaf8EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747034224; c=relaxed/simple;
-	bh=fhSkgYhOgYnJveTzTY3zf3sNJ9lxN064UAaKeMMZTKQ=;
+	s=arc-20240116; t=1747034910; c=relaxed/simple;
+	bh=OpwhBIBLUR7KZYGf1JS5ByHHeMy5ALtXFWlVVlrs1UM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0DaDA6b2eBSwd4ErbJALt+Z00fllWwjg7VlkVx25veRLMfvRq6T3Z0rJMejKVYpZgGGqBRrlWh0cp4unlodMRhknA//3JsFYu5NVzv7muf1/UZTD1k6gZKEXuK4/8ZykW8apmsv9J3UJOq4ELkOPhoZ3gseJjOFSobh+rvUpYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ceo/HOqi; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKu6VgG4ShDitzuDggmta80ZyUxYYIfwCQRmJsb1FbnqQ8gvsTGeTYQHeHGZcy3FP+4ouDC4xgITcZbDvRfHDgnAOqnYtbocUWEFj13UhaGxtsZkezsgl1zlZDo9w/GuQo+jQflAsA0k0z7bldElSSoPSW7yeXeS/7sJ5eFWHNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lvUAUn66; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ceo/HOqi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lvUAUn66"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747034223; x=1778570223;
+  t=1747034909; x=1778570909;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=fhSkgYhOgYnJveTzTY3zf3sNJ9lxN064UAaKeMMZTKQ=;
-  b=Ceo/HOqitkuX46tL38cn2qEGlEAjsrmRmD+263VpSqHXMcWpsE+2UxJN
-   YmS4DfU9m6lANqsSzYYQ3lA7yxK4CvmWSq2kywnzia7SGV1LCgED4k/ur
-   3N3Y4el9YW53uY4lh/tlbUXaHU0+DdFNJz/uq9NHTTDPPACTbWY0aomWo
-   ceJqID9yHDRqvcXPy6HMdpfng/yYlJsVLg6PE3lYTSNW/Fmq2mPudw4NR
-   T682bybtUs5QomLVInwdiF0j/jQYglEIT9KMFa2/12T8oY2QPAY07xa2h
-   NKQnM2xb4+/E26lnSxMYg1vrSyvC7sc47LPARcR36/HmdUfJvIRESrvWP
-   Q==;
-X-CSE-ConnectionGUID: usoiYEKwTs+SMe+mmXVKEg==
-X-CSE-MsgGUID: mmOL78MtSQGNCDZgoNnoWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48511036"
+  bh=OpwhBIBLUR7KZYGf1JS5ByHHeMy5ALtXFWlVVlrs1UM=;
+  b=lvUAUn66tcYJLEbyElPOhMToOgI7ekNstVe7B8vohOpB7CBE7BO5HG2Q
+   hsVevILU+a0S74Xz7kF6+BbOcUFymYX5k6cAOF5TDelv7m7aUpkn4e5Z7
+   2uI2pAvP3MkO9KGeXc97VQASh4jiyQugfTmPTMVhpQjWuFLlodnbdQK0S
+   Siw2LwbsSZqet+GKn8qDAz6irAbWk5VYjXUR46VXaLmLDuOdT7Ucb2qKl
+   P1o4SKQMMBbaewsho5N0y7wpYTtpX9ZwVG0Ngmp5qndYVa7c3npWaoVKS
+   ivTzGKyH9IFT6PTLmkBABUh78uV7lgOgrYsKk6c9MgQpVMtjtQAylM2hY
+   w==;
+X-CSE-ConnectionGUID: 5eXr2JAiSLmFt4W+KE9fFg==
+X-CSE-MsgGUID: 1WLns+zpRvaTk5QOGBo+1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="48742597"
 X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="48511036"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:17:02 -0700
-X-CSE-ConnectionGUID: p5INCGhZSRuJg4+0ALt83g==
-X-CSE-MsgGUID: 2I1NM1htTvWRbkgxgOe3ZA==
+   d="scan'208";a="48742597"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:28:28 -0700
+X-CSE-ConnectionGUID: 5/o3CDCpRq2+Y+cxe+xc2g==
+X-CSE-MsgGUID: d8OohKBWTZ+rtZbLD8aoLQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="137183989"
+   d="scan'208";a="142246382"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:16:56 -0700
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:28:22 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uENPA-00000000qRb-2YWK;
-	Mon, 12 May 2025 10:16:52 +0300
-Date: Mon, 12 May 2025 10:16:52 +0300
+	id 1uENaD-00000000qbV-3rOo;
+	Mon, 12 May 2025 10:28:17 +0300
+Date: Mon, 12 May 2025 10:28:17 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -72,10 +72,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 15/23] ACPI: property: Add support for cells property
-Message-ID: <aCGgZPJUQdAnWa-z@smile.fi.intel.com>
+Subject: Re: [PATCH v3 20/23] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <aCGjEdNVH3ughITd@smile.fi.intel.com>
 References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-16-apatel@ventanamicro.com>
+ <20250511133939.801777-21-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -84,64 +84,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250511133939.801777-16-apatel@ventanamicro.com>
+In-Reply-To: <20250511133939.801777-21-apatel@ventanamicro.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, May 11, 2025 at 07:09:31PM +0530, Anup Patel wrote:
+On Sun, May 11, 2025 at 07:09:36PM +0530, Anup Patel wrote:
+> From: Sunil V L <sunilvl@ventanamicro.com>
 > 
-> Currently, ACPI doesn't support cells property when
-> fwnode_property_get_reference_args() is called. ACPI always expects the
-> number of arguments to be passed. However,
-> fwnode_property_get_reference_args() being a common interface for OF and
-> ACPI, it is better to have single calling convention which works for
-> both. Hence, add support for cells property on the reference device to
-> get the number of arguments dynamically.
-
-You can reformat above to make it deviate less (in terms of line lengths):
-
-Currently, ACPI doesn't support cells property when
-fwnode_property_get_reference_args() is called. ACPI always expects
-the number of arguments to be passed. However, the above mentioned
-call being a common interface for OF and ACPI, it is better to have
-single calling convention which works for both. Hence, add support
-for cells property on the reference device to get the number of
-arguments dynamically.
+> Add ACPI support for the RISC-V SBI message proxy (MPXY) based
+> mailbox driver.
 
 ...
 
-> +			if (nargs_prop) {
-> +				if (!acpi_dev_get_property(device, nargs_prop,
-> +							   ACPI_TYPE_INTEGER, &obj)) {
-> +					args_count = obj->integer.value;
-> +				}
-> +			}
-> +
+> -		if (is_of_node(dev_fwnode(dev)))
+> +		if (is_of_node(dev_fwnode(dev))) {
+>  			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
+> +		} else {
 
-> +			if (nargs_prop) {
-> +				device = to_acpi_device_node(ref_fwnode);
-> +				if (!acpi_dev_get_property(device, nargs_prop,
-> +							   ACPI_TYPE_INTEGER, &obj)) {
-> +					args_count = obj->integer.value;
-> +				}
-> +			}
+You probably want to have this as
 
-These two seems to me enough duplicative to have a common helper:
+		} else if (is_acpi_..._node()) { // you should decide if it is data, device or any type of ACPI node you match with
 
-static unsigned int ...(struct acpi_dev *adev, ...)
-{
-	// define an obj variable?
+> +			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
+> +							      DOMAIN_BUS_PLATFORM_MSI);
+> +			dev_set_msi_domain(dev, msi_domain);
+> +		}
+>  	}
 
-	if (!nargs_prop)
-		return 0;
+...
 
-	if (acpi_dev_get_property(adev, nargs_prop, ACPI_TYPE_INTEGER, &obj))
-		return 0;
+> +#ifdef CONFIG_ACPI
+> +	if (!acpi_disabled)
 
-	return obj->integer.value;
-}
+Hmm... Why do you need this check? What for?
 
-Yes, the nember of LoCs most likely will increase, but the point here is better
-maintenance experience.
+> +		acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
+> +#endif
 
 -- 
 With Best Regards,
