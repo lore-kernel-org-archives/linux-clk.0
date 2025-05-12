@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF2D20326;
-	Mon, 12 May 2025 06:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184E2AD11;
+	Mon, 12 May 2025 07:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747032628; cv=none; b=UkRJf5/8+dQ5aOvuA6Hv50Wk/B59a4GE1EQZ+0sItEnYCn7VQCgNzfJ91w+xTSWhAHOxD6lFm7HdZBO8NSJ5g5NeyToR9XfOmx555gkJ6rH5NpkfFwDbZLDOOk+pztsD5iiKcnYc1/vNwjMGUjPsx+L1pJForpJRClEqWRQq2Zc=
+	t=1747033689; cv=none; b=d+GXmGQgk1tzTu9RXxOtsuOnIdIrostni356XBsJ8X8FUj5TXOyNBE8QOP/nwyAXV2aGrrusgVLoXTERhWVJnAUP7QSfZe2E/ZTYEn6AmgKdT+gu7IfhrfZPKIix7KJtc3m5WLliu9MXTsgzBl8bwGkpUIpLtd+mNos8X3Rzqe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747032628; c=relaxed/simple;
-	bh=rpwMv2y5lJIMTCuyi92paGgTBZ+I6o4sAEGRlxKoMIk=;
+	s=arc-20240116; t=1747033689; c=relaxed/simple;
+	bh=Mul8tNeRrypv/NSAZe83gZO8+DlWm98zYe0h3LwG4jg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2CyAYuAGooVjbLYI1ul6vxIK3Y1zbf5rDcxdQ9XAivWVgDLbKvA+Ig7iLD4++VqTMbHpio7RebZ6y90mp7XkiTa/JcuQBMRldJND3lupo9AN7ZaqASlY2Zh8CqTszy3Hul8IwwSmhst9qUbb21lWR0dmKeMETa4FGpGJ2NHWBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WAWpT7mN; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=UL8PbMYg2E7YyvxAF8VPg+9dI2xGOoK52wNA3wR7PpnD7GsxVJGweH1FiNfx+HrQZped0R7TK14YQU+DzN94m+53gZJ518WsCySWUX6IRsL/FwsNpy4prY4TKrwuxpPl2PJt9cAjrTyVYVdMVCTjFaFNilTWaAd3frpZwymoIng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mb5DRkWr; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WAWpT7mN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mb5DRkWr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747032628; x=1778568628;
+  t=1747033688; x=1778569688;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=rpwMv2y5lJIMTCuyi92paGgTBZ+I6o4sAEGRlxKoMIk=;
-  b=WAWpT7mNg7JO+KCUVi4jumtAB0ZnhQ0EKWwZd30j66xciMDu2OEZP5f4
-   6l/CWkqUKZMYZHVb6IoqMoFKNzAqHy0UYhpcyJ4npg/UF+lDcfVRsX68o
-   2tGVWVQbLlAAYm9AykJXBOrEPQ+AO0se4g4iHFp1Q5qEagfPhhSvjry5P
-   yPxHxZidRqQ5jP/OcsCbhFBlhQCPkCzm8/XsidsYEfUM3N0r6QhTP+i67
-   kYH+Accf7vRL2tSaXRcp54KZNlDy8WTzS7ffTabsOvhvzlUw8OFAKdfyh
-   7PeUGUlTCsfLAblixpwMG5LitLcIVrYCbooOwW+idvzSMlv75ofuFi6HF
-   w==;
-X-CSE-ConnectionGUID: Pq8jc8F+STmWFn/fuMVbVQ==
-X-CSE-MsgGUID: BsMPO52XTsqj9ePCYnyTYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="52626346"
+  bh=Mul8tNeRrypv/NSAZe83gZO8+DlWm98zYe0h3LwG4jg=;
+  b=mb5DRkWrGJvnAdL32F2ztPSRwxcEv2tViRGrHjaAGQ24+FmHhs/HKR3+
+   mLCJEfsE/iHsSdnklQeASC+EpJGfWplDSNpEe7P8cPTjk8nZLj/Fp0/nC
+   adD8hEXTm0Sa3IS+eLg5lhdwn7LxdL5F0E6AAp39odijDeDpF6z/tu9uo
+   U6+sSzUvP9g59bQqO+rh3L3Mt3XjA+o9/MqYTVcLlev9EMWxV3KaSD28F
+   zEgfvOtRTx59/dTMQpnK0iy/KqJqXB0ArZmUw6XtH/OsOLMWDCz3roMEG
+   uxm3SiijVAl1QGBdCxzt0XNi8e2H8TR+HqIN6LzjWAlE6r6Yn1cSGKo75
+   A==;
+X-CSE-ConnectionGUID: /AgWA6jBSoqMKjcNtP1ZwQ==
+X-CSE-MsgGUID: 6u7NJRIGSg6CfnnJzRhREg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="66355112"
 X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="52626346"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2025 23:50:27 -0700
-X-CSE-ConnectionGUID: zTNUU3H2QJ+U/O/rAvYgXA==
-X-CSE-MsgGUID: N9xxRReTSjSo9U4ytmnxrQ==
+   d="scan'208";a="66355112"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:08:07 -0700
+X-CSE-ConnectionGUID: +NC4/pH6QHKeJIQkvRlB3Q==
+X-CSE-MsgGUID: zFExEVxoRFiOmm8OdIwj5A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,281,1739865600"; 
-   d="scan'208";a="142488645"
+   d="scan'208";a="174434482"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2025 23:50:20 -0700
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2025 00:08:00 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uEMzR-00000000q6E-1z14;
-	Mon, 12 May 2025 09:50:17 +0300
-Date: Mon, 12 May 2025 09:50:17 +0300
+	id 1uENGX-00000000qLL-0P5S;
+	Mon, 12 May 2025 10:07:57 +0300
+Date: Mon, 12 May 2025 10:07:56 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -72,11 +72,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 13/23] irqchip: Add driver for the RPMI system MSI
+Subject: Re: [PATCH v3 10/23] clk: Add clock driver for the RISC-V RPMI clock
  service group
-Message-ID: <aCGaKXOOWyM4JQMg@smile.fi.intel.com>
+Message-ID: <aCGeTPS4WiGYMTTo@smile.fi.intel.com>
 References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-14-apatel@ventanamicro.com>
+ <20250511133939.801777-11-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,160 +85,222 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250511133939.801777-14-apatel@ventanamicro.com>
+In-Reply-To: <20250511133939.801777-11-apatel@ventanamicro.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, May 11, 2025 at 07:09:29PM +0530, Anup Patel wrote:
-> The RPMI specification defines a system MSI service group which
-> allows application processors to receive MSIs upon system events
-> such as graceful shutdown/reboot request, CPU hotplug event, memory
-> hotplug event, etc.
+On Sun, May 11, 2025 at 07:09:26PM +0530, Anup Patel wrote:
+> From: Rahul Pathak <rpathak@ventanamicro.com>
 > 
-> Add an irqchip driver for the RISC-V RPMI system MSI service group
-> to directly receive system MSIs in Linux kernel.
+> The RPMI specification defines a clock service group which can be
+> accessed via SBI MPXY extension or dedicated S-mode RPMI transport.
+> 
+> Add mailbox client based clock driver for the RISC-V RPMI clock
+> service group.
 
 ...
 
-> +/*
-> + * Copyright (C) 2025 Ventana Micro Systems Inc.
-> + */
-
-It can occupy a single line instead of 3 LoCs.
-
-...
-
-> +#include <linux/bitfield.h>
-> +#include <linux/bitops.h>
-> +#include <linux/cpu.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irqchip.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
 > +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/riscv-rpmi-message.h>
 > +#include <linux/module.h>
-> +#include <linux/msi.h>
-> +#include <linux/of_irq.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/printk.h>
-> +#include <linux/smp.h>
+> +#include <linux/mailbox/riscv-rpmi-message.h>
 
-+ types.h
-
-Actually this one is most clean, the rest of the patches where the new code
-is introduced has semi-random list of the inclusions, please, follow the IWYU
-principle.
+Just to point out again that the above misses a lot of headers definitions
+and/or APIs this driver uses. Follow IWYU principle.
 
 ...
 
-> +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
-> +{
-> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
-> +	int ret;
-> +
-> +	ret = rpmi_sysmsi_set_msi_state(priv, d->hwirq, 0);
+> +#define GET_RATE_U64(hi_u32, lo_u32)	((u64)(hi_u32) << 32 | (lo_u32))
 
-Please, use the respective getter and the type:
-
-	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-
-Ditto for all other similar cases.
-
-> +	if (ret) {
-> +		dev_warn(priv->dev, "Failed to mask hwirq %d (error %d)\n",
-> +			 (u32)d->hwirq, ret);
-
-No, this is wrong in two ways: usage of specified for signed value and
-passing the unsigned; using explicit casting to something unsigned.
-Instead ofa the explicit casting, find the best formatting specifier
-and use it.
-
-Ditto for  all your code.
-
-> +	}
-> +	irq_chip_mask_parent(d);
-> +}
+Hmm... Perhaps add this kind of macro to wordpart.h ? IIRC not only this driver
+uses something like this.
 
 ...
 
-> +static int rpmi_sysmsi_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rpmi_sysmsi_priv *priv;
-> +	int rc;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	priv->dev = dev;
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	/* Setup mailbox client */
-> +	priv->client.dev		= priv->dev;
-> +	priv->client.rx_callback	= NULL;
-> +	priv->client.tx_block		= false;
-> +	priv->client.knows_txdone	= true;
-> +	priv->client.tx_tout		= 0;
-> +
-> +	/* Request mailbox channel */
-> +	priv->chan = mbox_request_channel(&priv->client, 0);
-> +	if (IS_ERR(priv->chan))
-> +		return PTR_ERR(priv->chan);
-> +
-> +	/* Get number of system MSIs */
-> +	rc = rpmi_sysmsi_get_num_msi(priv);
-> +	if (rc < 1) {
-> +		mbox_free_channel(priv->chan);
-> +		return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
+> +enum rpmi_clk_type {
+> +	RPMI_CLK_DISCRETE = 0,
+> +	RPMI_CLK_LINEAR = 1,
 
-Can rc be negative holding an error code? If so, why does the code shadow that?
+> +	RPMI_CLK_TYPE_MAX_IDX,
 
-> +	}
-> +	priv->nr_irqs = rc;
-> +
-> +	/* Set the device MSI domain if not available */
-> +	if (!dev_get_msi_domain(dev)) {
-> +		/*
-> +		 * The device MSI domain for OF devices is only set at the
-> +		 * time of populating/creating OF device. If the device MSI
-> +		 * domain is discovered later after the OF device is created
-> +		 * then we need to set it explicitly before using any platform
-> +		 * MSI functions.
-> +		 */
-> +		if (is_of_node(dev_fwnode(dev)))
-> +			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
-> +
-> +		if (!dev_get_msi_domain(dev))
-> +			return -EPROBE_DEFER;
-> +	}
-> +
-> +	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> +					  &rpmi_sysmsi_template,
-> +					  priv->nr_irqs, priv, priv))
-> +		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
-> +
-> +	dev_info(dev, "%d system MSIs registered\n", priv->nr_irqs);
+No comma for the terminator. Please, clean all these cases.
+
+> +};
+
+...
+
+> +union rpmi_clk_rates {
+> +	u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
+> +	struct {
+> +		u64 min;
+> +		u64 max;
+> +		u64 step;
+> +	} linear;
+
+Have you looked at the linear ranges library we have in the kernel? Can you
+utilise it here?
+
+> +};
+
+...
+
+> +struct rpmi_clk {
+> +	struct rpmi_clk_context *context;
+> +	u32 id;
+> +	u32 num_rates;
+> +	u32 transition_latency;
+> +	enum rpmi_clk_type type;
+> +	union rpmi_clk_rates *rates;
+> +	char name[RPMI_CLK_NAME_LEN];
+> +	struct clk_hw hw;
+
+Just a reminder to use `pahole` to check that your data layout is optimised for
+memory consumption.
+
+> +};
+
+...
+
+> +struct rpmi_get_supp_rates_rx {
+> +	u32 status;
+> +	u32 flags;
+> +	u32 remaining;
+> +	u32 returned;
+> +	u32 rates[];
+> +};
+
+Is it ABI? (I mean if this is interface with some kind of FW)
+If so, Use proper endianess aware types. Same Q for all data
+types defined in this driver.
+
+...
+
+> +			for (j = 0; j < rx->returned; j++) {
+> +				if (rateidx >= (clk_rate_idx + rx->returned))
+
+Too many parentheses.
+
+> +					break;
+> +				rpmi_clk->rates->discrete[rateidx++] =
+> +					GET_RATE_U64(rate_discrete[j].hi,
+> +						     rate_discrete[j].lo);
+> +			}
+> +		}
+
+...
+
+> +	devm_kfree(context->dev, rx);
+
+Why?! This is a red flag to point that here is misunderstanding or abuse of
+managed resources approach. Either use __Free() from cleanup.h or don't call
+devm_kfree(). The latter must have a very good justification to explain why.
+
 > +	return 0;
-> +}
+
+(this is even not an error path, where it might have a little argument for)
 
 ...
 
-> +/** RPMI system MSI service IDs */
+> +	/* Keep the requested rate if the clock format
+> +	 * is of discrete type. Let the platform which
+> +	 * is actually controlling the clock handle that.
+> +	 */
 
-Why does this have a kernel-doc marker?
+/*
+ * Use proper style for the multi-line comments. You can
+ * refer to this comment as an example.
+ */
 
-> +enum rpmi_sysmsi_service_id {
-> +	RPMI_SYSMSI_SRV_ENABLE_NOTIFICATION = 0x01,
-> +	RPMI_SYSMSI_SRV_GET_ATTRIBUTES = 0x2,
-> +	RPMI_SYSMSI_SRV_GET_MSI_ATTRIBUTES = 0x3,
-> +	RPMI_SYSMSI_SRV_SET_MSI_STATE = 0x4,
-> +	RPMI_SYSMSI_SRV_GET_MSI_STATE = 0x5,
-> +	RPMI_SYSMSI_SRV_SET_MSI_TARGET = 0x6,
-> +	RPMI_SYSMSI_SRV_GET_MSI_TARGET = 0x7,
+...
 
-Please, be consistent in the style of values.
+> +out:
 
-> +	RPMI_SYSMSI_SRV_ID_MAX_COUNT,
+Redundant label. Note, the labels are recommended to be named after the flow
+they will run if goto. This one can be named as out_literally_with_return_0,
+which makes it obvious how useless it is.
 
-No comma in the terminator entry.
+> +	return 0;
+
+...
+
+> +	rates = devm_kzalloc(dev, sizeof(union rpmi_clk_rates), GFP_KERNEL);
+
+sizeof(*...)
+
+> +	if (!rates)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	rpmi_clk = devm_kzalloc(dev, sizeof(struct rpmi_clk), GFP_KERNEL);
+
+Ditto.
+
+> +	if (!rpmi_clk)
+> +		return ERR_PTR(-ENOMEM);
+
+...
+
+> +	ret = rpmi_clk_get_supported_rates(clkid, rpmi_clk);
+> +	if (ret)
+> +		return dev_err_ptr_probe(dev, ret,
+> +			"Get supported rates failed for clk-%u, %d\n", clkid, ret);
+
+Indentation issues. Repetitive ret in the message. Please, get familiar with
+the format dev_err_probe() uses.
+
+...
+
+> +	int ret, num_clocks, i;
+
+Why is 'i' signed?
+
+...
+
+> +	/* Allocate RPMI clock context */
+> +	context = devm_kzalloc(dev, sizeof(*context), GFP_KERNEL);
+
+Ha-ha, you have even inconsistent style in the same file! So, go through the
+whole series and make sure that the style used in each file is consistent.
+
+> +	if (!context)
+> +		return -ENOMEM;
+
+...
+
+> +	/* Validate RPMI specification version */
+> +	rpmi_mbox_init_get_attribute(&msg, RPMI_MBOX_ATTR_SPEC_VERSION);
+> +	ret = rpmi_mbox_send_message(context->chan, &msg);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to get spec version\n");
+> +		goto fail_free_channel;
+
+This is simply wrong. You should not do goto before any devm_*() calls.
+The error path and ->remove(), if present) is broken. Fix it accordingly.
+
+Here should be
+
+		return dev_err_probe(...);
+
+it's your homework to understand how to achieve that. Plenty of the examples in
+the kernel.
+
+> +	}
+
+...
+
+> +enum rpmi_clock_service_id {
+> +	RPMI_CLK_SRV_ENABLE_NOTIFICATION = 0x01,
+> +	RPMI_CLK_SRV_GET_NUM_CLOCKS = 0x02,
+> +	RPMI_CLK_SRV_GET_ATTRIBUTES = 0x03,
+> +	RPMI_CLK_SRV_GET_SUPPORTED_RATES = 0x04,
+> +	RPMI_CLK_SRV_SET_CONFIG = 0x05,
+> +	RPMI_CLK_SRV_GET_CONFIG = 0x06,
+> +	RPMI_CLK_SRV_SET_RATE = 0x07,
+> +	RPMI_CLK_SRV_GET_RATE = 0x08,
+
+> +	RPMI_CLK_SRV_ID_MAX_COUNT,
+
+No comma in the terminator line.
 
 > +};
 
