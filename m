@@ -1,164 +1,164 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF4228382
-	for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 08:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA00259C96
+	for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 08:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747038670; cv=none; b=HAhvqwL/XCmQ6Xpml7ljkWzbCADzyAc7pmZCWMtf9/GTdVwWUetRjWyejFrEipkG2TxH9GUU9bKBKNcHG9wxiZB7glwtEFRxJtnU3wcON6nFr4vZdunEJhEdhx/Yzwz3jtcSJPt210MiQF3cAFEMkJLdOBpZH3vVyQZyVeqjpcg=
+	t=1747038799; cv=none; b=TrfZhjc9UF21RmUzt/ysvS+BNC8vjCQya48h7uXqAKjtY5HLDSdfklJWDIbvTEz5cXCIrCeHIN0ns/zqtcwAXl6pMUiVZ4xVI0WgsoBAkSZ9Z2su0UCKp4Yi+WqzYbdf8ulC6P5nRfqfFkgWsI6FLxLzslqJ3d3bEfS1WSubnos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747038670; c=relaxed/simple;
-	bh=VbIsCmNofx1yYvLRGUCQKtW0w8/8EizRNsmeIZAEhcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKgJhaMydGLo6jA1LoE89Wv9J1/jhROgKYcWkH8RTxTiaO6QAZ15J8PgSuDPU66zQ6cyaqMk3dolE2ilQtvDKvTfqNA/1VEU7vaLUZDP5cPKMsdxbMBf41hDfqNptz7z0pkuOA0oRahfHD9sjkZLNEHb0rYviQXsYoMQGFkO1w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=N987vsIX; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1747038799; c=relaxed/simple;
+	bh=Hik7OtedaFZAkiGMlum5kZXS39nxblKMLG+OT8C0c1U=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=US37/YPXxSLyh1BO2xgZvYH9RtFMr/ieiZ69q15u+aM7Ij/zhxUeHU/L0cHFiREFQb+gyLcdAgaJPxfWX5vdj6K5nV3W9FC9A6yQ1ThylexXwjql/uqLEdloMU5/SaEh7Q0Y/xnPg2ANPhPndBU9a/++qVN9AfTc04d09zq5x3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFaFn33M; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="N987vsIX"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30c35ac35dfso3019083a91.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 01:31:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFaFn33M"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe574976so29089205e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 01:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1747038668; x=1747643468; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IzzZU6pvyYy7YIZ/GFIFCMgtFSutDNrqjC/VQVHvmcs=;
-        b=N987vsIX6LpBw0SS18D9yiW/8DRwzA6CgPE+ns/F5ohGEQ29zi6a83pTaTqflqioeG
-         KS+Fak6H8zfA7f8xR1JhZHXDdSP8xAbqUtZAPre+sASSwZ+9AuLXYHO1XIHeZQLbW9dg
-         zTtjur3pdhurmiFcWOfeWzznqU6/cvXmTsTZDb9bkIpZrfsBX7KOPeGZBN/czeZyaGne
-         dU2ArzdeEJFNNXudyH+HEKMC2NZSGbRX5rFULJWFkmlR0pbD2O9axXYMeDF6WIBJp/RP
-         0/yJayE3Vnk2CILa7XIFZsFHwHIZfMHEk2TiLj4q+ZcbyWQeL+329VBwyyjLmy58J/+f
-         klgg==
+        d=linaro.org; s=google; t=1747038795; x=1747643595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wTzHIKjFiKmyPbI4xGH6KvZ5G+KJhLs/y1YftexbnRA=;
+        b=fFaFn33MwB3gI1IuKOXjYBCJzWaTVklB5nqN3D8AfEHBg5ofDxXrv73imhBfNGuKiX
+         gTjZN/jgV/zSFyEJdKm08atmU3S5vgLU77HxP/aDqahGOrRH0Pq43Q3eDxL99egwpJoe
+         XCodrigCgwSLtshb5QnhXqGYqAWU0dAZ+aB0GuLbPlS9mmBISqKFLlAMrJID2UTJ87pA
+         7bgkzT3/NhgMiW2rmg1w0mmj6yeK1ZL1bsya3co/+f0SFY8BPZOFWnzfPqgb34AJv0Ni
+         ZfBfEC8EOZwZ6pCiblarXF5dV3+K92prz8t+6ipc2UFAGonjBbaVKu+3lqx/xU/Fi0bO
+         yWsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747038668; x=1747643468;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IzzZU6pvyYy7YIZ/GFIFCMgtFSutDNrqjC/VQVHvmcs=;
-        b=jy7sJtBcKTSdWUiB894bofu87q0yNw+TsKzYnv8fmPrAmBDrFTiHA5tjJQL4lVlX2D
-         a9gvyInA0/yQbjcqqqBfxbwfv4xq/Oiz9ofKp7HoImUPtotRKZvlEjbD4XgQnaEMHWzA
-         qJmC9XIRv2SYNRd0tZ0fLd3LN7e4gFO/g5mZrMLSWkKqOWfTWdz+iRUjMLW9LOwZrEa6
-         RdSxQq9jjupBbBwb1FxiE8M2NW0mmHv/cvjachpI9Qf9ALhQ8XL8mQ0TwOlnY2lcwnXK
-         ImMFbRdkssntye6dEjr3FL9XsVa9xOq8XFo82hegyXyMq6cahbvpb7st+OFQADeZ+Afw
-         habA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnUrh5bCLs+Gg1zW4YMB4EPbBxnMOxZ+rublzNx2Sq+EHoTKPUF3nhI6Rfj8zPxx+Br0ExS/+wFag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgx3J//Xjea8vxref7REascDjLUs5aYaC1S5Odov+45OiS72q3
-	nNAhvk1x6Z36vhBwvbihx42jYuzIAjfqn9+D4hc77KXMfK2Jc0hfsPLVj+H4A20=
-X-Gm-Gg: ASbGncugQj4eQpnNhJaKv9aFfpqbD/1Zow1UBKFQlzjOjnAJSgz4BAqqzh/fLBZeFwa
-	qtNQVXFuIUuvzZeKtik2zMQ4h+bEIq/hPtsR02FrfaKH0Qs7Wn+pPyLes3rekZcKG+bX6H/cbUo
-	hW3pd+/E4Jk9M1djmBHAALZ9R3tac4uVQA1a7yHbzjOsWQ6j5klCOMY7rPi8gwnaCTo9X08AYNv
-	LBo/IuSNGcuS2pt+8g+OdMTXFvksq9XvCvxL61HPHTA8NA0GM1JrtARuQWNgvAdNcDXp5Vid0z0
-	TsfXXlC05syxe42YnXENIK0yk/G6rZIvcf5p22KFuI9DV30fOQjdGWZperk=
-X-Google-Smtp-Source: AGHT+IGHNaTbk9KHcwLFc1JRN2apw3Jv/AHhjSrIdSWvDZ8yqVhUcJckbF0S8Q0geEc46Wby78RCbQ==
-X-Received: by 2002:a17:90b:3945:b0:2ee:c6c8:d89f with SMTP id 98e67ed59e1d1-30c3cefe5c1mr22528948a91.14.1747038668235;
-        Mon, 12 May 2025 01:31:08 -0700 (PDT)
-Received: from sunil-laptop ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ad4fe21a6sm9135565a91.31.2025.05.12.01.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 01:31:07 -0700 (PDT)
-Date: Mon, 12 May 2025 14:00:54 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 15/23] ACPI: property: Add support for cells property
-Message-ID: <aCGxvuHwd7TzfDOS@sunil-laptop>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-16-apatel@ventanamicro.com>
- <aCGgZPJUQdAnWa-z@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1747038795; x=1747643595;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wTzHIKjFiKmyPbI4xGH6KvZ5G+KJhLs/y1YftexbnRA=;
+        b=bp75WzJbKZBGNe+F3ba3blL/j2BzPd9DJu9BOsMTw6aNEPg805fzNzU49n6/ikNbof
+         qP3UVqgKszxyYPiBIjBfKtD7ovZWKgaRRFpHVe6A+9c74UvjVWYz6rkf9wLboZ86klGu
+         oX8i8wCocx2K60XiQPBYavh87GvOafy6lwwkKVkFJdXFOIu1StC4YWDzTvwtfeZTMIFU
+         7clU52yoYW/+OHyLtZsiJCpKjguZ18+AeOQiJHerSpBEz5CBpHcYcg0WscW5C1ZPCFPR
+         Y6ErafDaNLGouy4abuCd6AHuL3OBdzG+otfZPuDggQkZRQIGuKCsiNmW6W196AZmFmyB
+         kczg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFgbBJ4/KRYSTxJro6XzhnW40z40+mk6SWmxzQ7SM7LKK9xCyajXHeEYemdE8miXjslXxDsYx036U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUoZ7wWb4TMr12eVmSdrn0tZnXg9M9BLqcuX9/C55sNk69We+p
+	tpuy7XHmJm1oiZcDu0pZssqDGt6Z2Yyny5xZb/Pgx2vd4g3+/hAlo1D7SA2qxIDAlQ4CwCAUvu4
+	p
+X-Gm-Gg: ASbGncu/3q/KCtWz8C1/IbI4hZrxSWGrjzUkIOUckuURj2oQgvLHfj8+wjdqHXb6x9x
+	rT3rkzl8ZlHMcXsV+PY3MCGakdatCQTq6SwyjRQJEaZOozKiftEJcN/gCHEs0QWRG++MaTgf3Lb
+	SQRR4QS2U8sdxjYX+r6ItgQoBwSUOCYuMVZpijxSoZJPn48I17RXhaHxeF/ckt7QUDsywMlALU0
+	KBqQbclHLj4deoLAmtBrs1LFOak9Dt1LZ22ztAHs+OKEFbwqorNNEeMTQKapMHIbiJD+6XEjEw1
+	PoImnnWF5iMBC2nzlIWU539eesiad6ciOzVZLUfaj7QRyWnd0IQolDdelzRR7WdHr9H92gn0wsp
+	y9oer+BGCUPtBtjzdDizBnvnSuAJS
+X-Google-Smtp-Source: AGHT+IFuQDvMvD9YeofWnuHOmfxKE1aBgD/3Qr8iHneAgHf//6SuN6jkgPv2gPV91PBlbLB7la43DA==
+X-Received: by 2002:a05:600c:8012:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-442d6d3e6e8mr115012785e9.14.1747038795575;
+        Mon, 12 May 2025 01:33:15 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:a88a:91be:2fd8:4f9f? ([2a01:e0a:3d9:2080:a88a:91be:2fd8:4f9f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7b83sm156129235e9.33.2025.05.12.01.33.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 01:33:15 -0700 (PDT)
+Message-ID: <9d72fe73-3b71-4f40-a34e-fc7bdb907cc6@linaro.org>
+Date: Mon, 12 May 2025 10:33:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCGgZPJUQdAnWa-z@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2] clk: meson-g12a: fix missing spicc clks to clk_sel
+To: Da Xue <da@libre.computer>, Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: stable@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250511173926.1468374-1-da@libre.computer>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250511173926.1468374-1-da@libre.computer>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
+Hi,
 
-On Mon, May 12, 2025 at 10:16:52AM +0300, Andy Shevchenko wrote:
-> On Sun, May 11, 2025 at 07:09:31PM +0530, Anup Patel wrote:
-> > 
-> > Currently, ACPI doesn't support cells property when
-> > fwnode_property_get_reference_args() is called. ACPI always expects the
-> > number of arguments to be passed. However,
-> > fwnode_property_get_reference_args() being a common interface for OF and
-> > ACPI, it is better to have single calling convention which works for
-> > both. Hence, add support for cells property on the reference device to
-> > get the number of arguments dynamically.
-> 
-> You can reformat above to make it deviate less (in terms of line lengths):
-> 
-> Currently, ACPI doesn't support cells property when
-> fwnode_property_get_reference_args() is called. ACPI always expects
-> the number of arguments to be passed. However, the above mentioned
-> call being a common interface for OF and ACPI, it is better to have
-> single calling convention which works for both. Hence, add support
-> for cells property on the reference device to get the number of
-> arguments dynamically.
->
-Sure. Let me update in the next revision. Thanks!
- 
-> ...
-> 
-> > +			if (nargs_prop) {
-> > +				if (!acpi_dev_get_property(device, nargs_prop,
-> > +							   ACPI_TYPE_INTEGER, &obj)) {
-> > +					args_count = obj->integer.value;
-> > +				}
-> > +			}
-> > +
-> 
-> > +			if (nargs_prop) {
-> > +				device = to_acpi_device_node(ref_fwnode);
-> > +				if (!acpi_dev_get_property(device, nargs_prop,
-> > +							   ACPI_TYPE_INTEGER, &obj)) {
-> > +					args_count = obj->integer.value;
-> > +				}
-> > +			}
-> 
-> These two seems to me enough duplicative to have a common helper:
-> 
-> static unsigned int ...(struct acpi_dev *adev, ...)
-> {
-> 	// define an obj variable?
-> 
-> 	if (!nargs_prop)
-> 		return 0;
-> 
-> 	if (acpi_dev_get_property(adev, nargs_prop, ACPI_TYPE_INTEGER, &obj))
-> 		return 0;
-> 
-> 	return obj->integer.value;
-> }
-> 
-> Yes, the nember of LoCs most likely will increase, but the point here is better
-> maintenance experience.
-> 
-Makes sense. Let me do it in the next version.
+On 11/05/2025 19:39, Da Xue wrote:
+> HHI_SPICC_CLK_CNTL bits 25:23 controls spicc clk_sel.
 
-Thanks!
-Sunil
+This sentence can be removed, this patch doesn't change anything in this= regard.
+
+> 
+> It is missing fclk_div 2 and gp0_pll which causes the spicc module to
+> output the incorrect clocks for spicc sclk at 2.5x the expected rate.
+
+The sentence is not correct, the spicc sclk will be at the freq computed but CCF,
+it simply can't achieve the requested rate without the missing parents.
+
+But I'm against adding the GP0 PLL since this PLL is required to drive DSI panels.
+
+And GP0 isn't needed since on G12, the SPICC has the "enhance_clk_div" which should be
+able to to reach much more rates with the fclk_divX clocks.
+
+Neil
+
+> 
+> Add the missing clocks resolves this.
+> 
+> Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK Source clocks")
+> Cc: <stable@vger.kernel.org> # 6.1
+> Signed-off-by: Da Xue <da@libre.computer>
+> ---
+> Changelog:
+> 
+> v1 -> v2: add Fixes as an older version of the patch was incorrectly sent as v1
+> ---
+>   drivers/clk/meson/g12a.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 4f92b83965d5a..892862bf39996 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -4099,8 +4099,10 @@ static const struct clk_parent_data spicc_sclk_parent_data[] = {
+>   	{ .hw = &g12a_clk81.hw },
+>   	{ .hw = &g12a_fclk_div4.hw },
+>   	{ .hw = &g12a_fclk_div3.hw },
+> +	{ .hw = &g12a_fclk_div2.hw },
+>   	{ .hw = &g12a_fclk_div5.hw },
+>   	{ .hw = &g12a_fclk_div7.hw },
+> +	{ .hw = &g12a_gp0_pll.hw, },
+>   };
+>   
+>   static struct clk_regmap g12a_spicc0_sclk_sel = {
+
