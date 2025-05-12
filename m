@@ -1,164 +1,141 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA00259C96
-	for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 08:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C6B255F5A
+	for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 08:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747038799; cv=none; b=TrfZhjc9UF21RmUzt/ysvS+BNC8vjCQya48h7uXqAKjtY5HLDSdfklJWDIbvTEz5cXCIrCeHIN0ns/zqtcwAXl6pMUiVZ4xVI0WgsoBAkSZ9Z2su0UCKp4Yi+WqzYbdf8ulC6P5nRfqfFkgWsI6FLxLzslqJ3d3bEfS1WSubnos=
+	t=1747039013; cv=none; b=b35KFrLvhgOXzv3TwydL5CIabe5+yPPgN4q1kdj3VVOBvZogj92/HgWDCLLIAAtL2DpyBosHNmM+IBZJSpx8R3ZSsgZK3eqr1egDfMeFRdgrNyUfOwvqCKRxMZebZqGeh3qAKKd0oKUkHGljvXFRVZaDa4HaLUXGeh1eZ3NDPjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747038799; c=relaxed/simple;
-	bh=Hik7OtedaFZAkiGMlum5kZXS39nxblKMLG+OT8C0c1U=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=US37/YPXxSLyh1BO2xgZvYH9RtFMr/ieiZ69q15u+aM7Ij/zhxUeHU/L0cHFiREFQb+gyLcdAgaJPxfWX5vdj6K5nV3W9FC9A6yQ1ThylexXwjql/uqLEdloMU5/SaEh7Q0Y/xnPg2ANPhPndBU9a/++qVN9AfTc04d09zq5x3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFaFn33M; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747039013; c=relaxed/simple;
+	bh=TRB7eQyt2VOil6Xd2YCPJj+sLe3Q8um9y22xx0V3P2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nN1EivTpKzfW53lG73r69kKHZhZFrvzMF5uOvHPfVFv7IBHhUP7wnJlpwFzR5ZS42utzh4PD5UBLZrgR6n4CmTmxKLmGfIYlf+/9KIQ7++udnrzvUt/AYTXtD1Yco3gJUNpS0KE1qLM0zMPTWnxDc7SeQFxGaPWzdCZ0JmSWwoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=JbbxPg21; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFaFn33M"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe574976so29089205e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 01:33:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="JbbxPg21"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30a8cbddce3so3470954a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 01:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747038795; x=1747643595; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wTzHIKjFiKmyPbI4xGH6KvZ5G+KJhLs/y1YftexbnRA=;
-        b=fFaFn33MwB3gI1IuKOXjYBCJzWaTVklB5nqN3D8AfEHBg5ofDxXrv73imhBfNGuKiX
-         gTjZN/jgV/zSFyEJdKm08atmU3S5vgLU77HxP/aDqahGOrRH0Pq43Q3eDxL99egwpJoe
-         XCodrigCgwSLtshb5QnhXqGYqAWU0dAZ+aB0GuLbPlS9mmBISqKFLlAMrJID2UTJ87pA
-         7bgkzT3/NhgMiW2rmg1w0mmj6yeK1ZL1bsya3co/+f0SFY8BPZOFWnzfPqgb34AJv0Ni
-         ZfBfEC8EOZwZ6pCiblarXF5dV3+K92prz8t+6ipc2UFAGonjBbaVKu+3lqx/xU/Fi0bO
-         yWsw==
+        d=ventanamicro.com; s=google; t=1747039011; x=1747643811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ejc+fT9oBiZc6vlLfCLO2KcJoR0VUYj8MUaNRpcLSKk=;
+        b=JbbxPg21aN72Mm5UnW3XeSQWJcsGn+Sx2dGUY88ooALtbgIjFedL4tsQyXIKdj+lTL
+         w+d1c2skjR7ZGtRAxsdpT2rycGOQSNl9PThEE5nzu+QVJZ5zMHqXMGWEirowPVUm9zg1
+         BfXc+bOSVijZPVqqdVOF6tfaJf+JCB6nQmLRuE46B41Vj6uqXAiAjdHVxsRUOt9dyLyR
+         oW3zaLFa25713dYD4SdUrN7rwBgsNadJi7AcYCONBfpbaVEJF4YLRmTopD8cPcK5ZRBh
+         vPfG5SlJHEfbS+xOH5bIS89dUfM8ZX0tS8593BLr4mqi+3lMu9cBNYshqT5B96sU8FH/
+         nrIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747038795; x=1747643595;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wTzHIKjFiKmyPbI4xGH6KvZ5G+KJhLs/y1YftexbnRA=;
-        b=bp75WzJbKZBGNe+F3ba3blL/j2BzPd9DJu9BOsMTw6aNEPg805fzNzU49n6/ikNbof
-         qP3UVqgKszxyYPiBIjBfKtD7ovZWKgaRRFpHVe6A+9c74UvjVWYz6rkf9wLboZ86klGu
-         oX8i8wCocx2K60XiQPBYavh87GvOafy6lwwkKVkFJdXFOIu1StC4YWDzTvwtfeZTMIFU
-         7clU52yoYW/+OHyLtZsiJCpKjguZ18+AeOQiJHerSpBEz5CBpHcYcg0WscW5C1ZPCFPR
-         Y6ErafDaNLGouy4abuCd6AHuL3OBdzG+otfZPuDggQkZRQIGuKCsiNmW6W196AZmFmyB
-         kczg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFgbBJ4/KRYSTxJro6XzhnW40z40+mk6SWmxzQ7SM7LKK9xCyajXHeEYemdE8miXjslXxDsYx036U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUoZ7wWb4TMr12eVmSdrn0tZnXg9M9BLqcuX9/C55sNk69We+p
-	tpuy7XHmJm1oiZcDu0pZssqDGt6Z2Yyny5xZb/Pgx2vd4g3+/hAlo1D7SA2qxIDAlQ4CwCAUvu4
-	p
-X-Gm-Gg: ASbGncu/3q/KCtWz8C1/IbI4hZrxSWGrjzUkIOUckuURj2oQgvLHfj8+wjdqHXb6x9x
-	rT3rkzl8ZlHMcXsV+PY3MCGakdatCQTq6SwyjRQJEaZOozKiftEJcN/gCHEs0QWRG++MaTgf3Lb
-	SQRR4QS2U8sdxjYX+r6ItgQoBwSUOCYuMVZpijxSoZJPn48I17RXhaHxeF/ckt7QUDsywMlALU0
-	KBqQbclHLj4deoLAmtBrs1LFOak9Dt1LZ22ztAHs+OKEFbwqorNNEeMTQKapMHIbiJD+6XEjEw1
-	PoImnnWF5iMBC2nzlIWU539eesiad6ciOzVZLUfaj7QRyWnd0IQolDdelzRR7WdHr9H92gn0wsp
-	y9oer+BGCUPtBtjzdDizBnvnSuAJS
-X-Google-Smtp-Source: AGHT+IFuQDvMvD9YeofWnuHOmfxKE1aBgD/3Qr8iHneAgHf//6SuN6jkgPv2gPV91PBlbLB7la43DA==
-X-Received: by 2002:a05:600c:8012:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-442d6d3e6e8mr115012785e9.14.1747038795575;
-        Mon, 12 May 2025 01:33:15 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:a88a:91be:2fd8:4f9f? ([2a01:e0a:3d9:2080:a88a:91be:2fd8:4f9f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7b83sm156129235e9.33.2025.05.12.01.33.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 01:33:15 -0700 (PDT)
-Message-ID: <9d72fe73-3b71-4f40-a34e-fc7bdb907cc6@linaro.org>
-Date: Mon, 12 May 2025 10:33:14 +0200
+        d=1e100.net; s=20230601; t=1747039011; x=1747643811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ejc+fT9oBiZc6vlLfCLO2KcJoR0VUYj8MUaNRpcLSKk=;
+        b=NKwy08tmslH1+ATbm7C9yG30dclQoAMVbT5HmGJb9UezPlg+xABpjiKLO4KmKCGdwZ
+         mTxPfp9tEQcUahCGOcJE4H9P3kBydYZREm3n12BVNZJ8Qpu1lPiZz5292BxY97Doh83n
+         vFWII33ACwjkXSsXbCD/cRQP/y4ONSKyLKqs0iImqQr3Js9uAIiqULdryQCcdfxhJfoH
+         J+ag9mwjN/ni9rRUVDj02sOA5JcPu7SFT4otUPlxx9mSjgR9/lHPDvTofN8Uxk5EqSmo
+         Z39GlBw+9/8jghuUXBS2jj/Kqb+rj9SBDOMvYi7Hmayz+T9UTCCejr8ugCSHDiRJEXVC
+         xQ9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXO2FzgaoKtvDY6AlEDu2eYodaX4Mk1wsOwMrB7Si6JZHeZJvWG4QvEFSdRH8R2C1ES0yAMjFJcBAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtAdfTX1/h8sxCD7h2WhXwfk9rq+OgDpan0Dsk7Q5Z+i/U9e2c
+	VYlIL18oGTQCprdnRRGsx0NOuJFKnzIVYkGjVmy3PepRJW83XWgfJsPRiC6gGC8=
+X-Gm-Gg: ASbGncs38WTrdW8dIFy8XaCLEqMMMUKKxkYAb30Bot6K6rP7p/y4yuI+dLReAIGGVxh
+	gsWcKhe5J0/E8oDj5hh/4b2gNpkIYIc2PRnhGXXzKDGPXJnjLRoGUwAblMm5yM6Kd8R08E/upYk
+	dT7cp2nOHCzPyOiWNRFCmZfuqm0jRox3h/B1/HgEywN9FOf1te9YNbl3e1QFF2/1/nzflmUEx4e
+	UTAJTQf4rZJ5M3u2zTpOyVeRwYm5q/Fgr6FSoNwUzc/hgQcNv2/0SclFo1ub9WRtuCuCKvkONKX
+	lzNx6dyTkiyYCjDLw79yQGkWtp9b3yh7mvlomn5sAvHCGHwRpy9R5ucMb9c=
+X-Google-Smtp-Source: AGHT+IETI+63sqf5lJSJNfnuKUbP5ALGJFrOUXpQSYU1rR9FXckU+YWdjPI/7RMywkT9jw7jl9sPHg==
+X-Received: by 2002:a17:90b:4c8d:b0:2f2:ab09:c256 with SMTP id 98e67ed59e1d1-30c3d65e2a5mr21634709a91.33.1747039010926;
+        Mon, 12 May 2025 01:36:50 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30c39e760acsm6089961a91.47.2025.05.12.01.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 01:36:50 -0700 (PDT)
+Date: Mon, 12 May 2025 14:06:37 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/23] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <aCGzFVXFBVRbMUKz@sunil-laptop>
+References: <20250511133939.801777-1-apatel@ventanamicro.com>
+ <20250511133939.801777-21-apatel@ventanamicro.com>
+ <aCGjEdNVH3ughITd@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2] clk: meson-g12a: fix missing spicc clks to clk_sel
-To: Da Xue <da@libre.computer>, Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: stable@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250511173926.1468374-1-da@libre.computer>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250511173926.1468374-1-da@libre.computer>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCGjEdNVH3ughITd@smile.fi.intel.com>
 
-Hi,
-
-On 11/05/2025 19:39, Da Xue wrote:
-> HHI_SPICC_CLK_CNTL bits 25:23 controls spicc clk_sel.
-
-This sentence can be removed, this patch doesn't change anything in this= regard.
-
+On Mon, May 12, 2025 at 10:28:17AM +0300, Andy Shevchenko wrote:
+> On Sun, May 11, 2025 at 07:09:36PM +0530, Anup Patel wrote:
+> > From: Sunil V L <sunilvl@ventanamicro.com>
+> > 
+> > Add ACPI support for the RISC-V SBI message proxy (MPXY) based
+> > mailbox driver.
 > 
-> It is missing fclk_div 2 and gp0_pll which causes the spicc module to
-> output the incorrect clocks for spicc sclk at 2.5x the expected rate.
-
-The sentence is not correct, the spicc sclk will be at the freq computed but CCF,
-it simply can't achieve the requested rate without the missing parents.
-
-But I'm against adding the GP0 PLL since this PLL is required to drive DSI panels.
-
-And GP0 isn't needed since on G12, the SPICC has the "enhance_clk_div" which should be
-able to to reach much more rates with the fclk_divX clocks.
-
-Neil
-
+> ...
 > 
-> Add the missing clocks resolves this.
+> > -		if (is_of_node(dev_fwnode(dev)))
+> > +		if (is_of_node(dev_fwnode(dev))) {
+> >  			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
+> > +		} else {
 > 
-> Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK Source clocks")
-> Cc: <stable@vger.kernel.org> # 6.1
-> Signed-off-by: Da Xue <da@libre.computer>
-> ---
-> Changelog:
+> You probably want to have this as
 > 
-> v1 -> v2: add Fixes as an older version of the patch was incorrectly sent as v1
-> ---
->   drivers/clk/meson/g12a.c | 2 ++
->   1 file changed, 2 insertions(+)
+> 		} else if (is_acpi_..._node()) { // you should decide if it is data, device or any type of ACPI node you match with
 > 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 4f92b83965d5a..892862bf39996 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -4099,8 +4099,10 @@ static const struct clk_parent_data spicc_sclk_parent_data[] = {
->   	{ .hw = &g12a_clk81.hw },
->   	{ .hw = &g12a_fclk_div4.hw },
->   	{ .hw = &g12a_fclk_div3.hw },
-> +	{ .hw = &g12a_fclk_div2.hw },
->   	{ .hw = &g12a_fclk_div5.hw },
->   	{ .hw = &g12a_fclk_div7.hw },
-> +	{ .hw = &g12a_gp0_pll.hw, },
->   };
->   
->   static struct clk_regmap g12a_spicc0_sclk_sel = {
+Sure.
 
+> > +			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
+> > +							      DOMAIN_BUS_PLATFORM_MSI);
+> > +			dev_set_msi_domain(dev, msi_domain);
+> > +		}
+> >  	}
+> 
+> ...
+> 
+> > +#ifdef CONFIG_ACPI
+> > +	if (!acpi_disabled)
+> 
+> Hmm... Why do you need this check? What for?
+> 
+When we boot with DT, ACPI_COMPANION(dev) will return NULL which will
+cause a crash in acpi_dev_clear_dependencies(). Let me know if I am
+missing something.
+
+> > +		acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
+> > +#endif
+> 
+Thanks,
+Sunil
