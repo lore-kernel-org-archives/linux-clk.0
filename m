@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2350420D4F2;
-	Tue, 13 May 2025 13:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE94218027;
+	Tue, 13 May 2025 13:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747143323; cv=none; b=izXfdn1afXxOvPFLx34Lowdb2QzcxpapENLeJesMDaaT2cHyKowmt/d7OoRUtsFm3EIs5CeIOTsVqd+faNN/wKlP1TjcvUhAtn3r+K8zMRSy2AiInbGVguFAywBr4P/0XsYnjbUPtkUTw+S7n3Qbk9k2AcacbqlaoGP8FI2LGK0=
+	t=1747143349; cv=none; b=ZbKlA6BEzXnVzpaixHkWgmUPHnHGoUF9Iomvr04hdJmDVkpwi+qPYkkmbHRzyMkwOmGdvRNMy1ojXGXdRRSybtScSIU4575PYkdXwMd77HdbSi8a0aRNseXA+xImXXf2NuGBILjghSLQVCucPDiZu226a5nR6HvOHGBa9SAjtpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747143323; c=relaxed/simple;
-	bh=NR5vZNUsuI15bl5xfksQlcz2kKOlzAQLwpEtKX4quLQ=;
+	s=arc-20240116; t=1747143349; c=relaxed/simple;
+	bh=vL40+R/Pc25k6Thm0RAgq45shA6v4r5ZeGAKMo3N5Ts=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ka+dDjgvGw7aMr3MYKv9eJLgTiX5Ko+KnLExHSmjrpByzVYk+0tWZpwYkozAgkSGOeizL2v/ZmvCVEdVAMQbjfmB5VK7U3qO6WUSlk0LqBJ5kO+OiHDlUUJvWhXTnzQYhhmXWd4H5MdadLEFH+00ja0Zk+tPqbwo3nisB7tfe7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e582jhuB; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=fAdEzn5UC+eU86bQMptR31X5gRFnBmjZU3oAr9s5HwwaSK8k+UodzesZZkpQ9EmgFevuWPjea2KRrgmeVqBdzeuwRC55FgjHlxmqkTJzq/K5L3hQjkksYpEw+Culx/SryLwPudS4A4Uf1ILm5AKwRNxl5yf9VlqV+FHm3AQvBSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+1MzgZQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e582jhuB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB2C4CEE4;
-	Tue, 13 May 2025 13:35:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+1MzgZQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1DD9C4CEE9;
+	Tue, 13 May 2025 13:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747143322;
-	bh=NR5vZNUsuI15bl5xfksQlcz2kKOlzAQLwpEtKX4quLQ=;
+	s=k20201202; t=1747143348;
+	bh=vL40+R/Pc25k6Thm0RAgq45shA6v4r5ZeGAKMo3N5Ts=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e582jhuBkwm53yc/TvQ04B+vgV3RfyQ58MLJJh5FudDMuU9KygQRT2g9k8OTzFHxT
-	 07kBNaQfm0U6pfygPtz/LbQq4e6nReL8nNspZa3r3Zki3eVyFKm36x1vc8eOFlDV5J
-	 X/43K5UxNejj1+N0VfMWAR+lURYnbxQFrskxd6UBqBgt2hUbyWXxHWaNMSRPAa3tVx
-	 DJ1HTOeIWv/GT+zk+t//TtWmc++8kiQhHayHed4eY4TlfbY9ktMF8dM0GJnpH0/5q0
-	 CCC1r145SmgGkVrIBV3bUKvQO4DcMLkTZTe7jOWkhyV1LaqewHX35UUOcyBbtdorr4
-	 OMTN4u1sVt18Q==
-Message-ID: <1ec11b90-ed6d-4b41-9146-a91f0dcb8756@kernel.org>
-Date: Tue, 13 May 2025 15:35:17 +0200
+	b=E+1MzgZQYE+00S6hDLk6HAXBtOh8bA44jLq6TaLvZ0TP5cETT+yubk90h+6AqTfcy
+	 ud/MWzVwUw/lMDS3WQujtDxEAqxezUdWbA40xjOHq6NACjerB8p9luw7uB2wpJM173
+	 UF485v4rUoLGvgXPmf/FGqLWTsM75B84VM4wry+OrCXwLfOjDxsm+PVaOWi9TvY/rz
+	 ++/53VzMm1MozGLCiQ/UnGcdMbZoQOsnzb0BItouI+KqHvdpbskB5rblpNwo8oOv+e
+	 XZ6RMMJQveKZlOe65fNBV5NdkrmNS5Uff927mOyk0A7AcSbj5Vfl23nk1QqD6RAiqj
+	 aaH5Psh4J0ljA==
+Message-ID: <04b4cea3-6cd6-4764-b277-c2e9921b70dc@kernel.org>
+Date: Tue, 13 May 2025 15:35:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 16/19] dt-bindings: clock: imx8m-clock: add PLLs
+Subject: Re: [PATCH v12 05/19] dt-bindings: clock: imx8m-anatop: add
+ oscillators and PLLs
 To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
  linux-kernel@vger.kernel.org
 Cc: Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
@@ -50,7 +51,7 @@ Cc: Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
  devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+ <20250424062154.2999219-6-dario.binacchi@amarulasolutions.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,23 +97,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250424062154.2999219-17-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20250424062154.2999219-6-dario.binacchi@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/04/2025 08:21, Dario Binacchi wrote:
-> Though adding the PLLs to clocks and clock-names properties will break
-> the ABI, it is required to accurately describe the hardware. Indeed,
+> Though adding clocks and clock-names properties will break the ABI,
+> it is required to accurately describe the hardware. Indeed, the anatop
+> module uses the input oscillators to generate various PLLs. In turn,
 > the Clock Control Module (CCM) receives clocks from the PLLs and
 > oscillators and generates clocks for on-chip peripherals.
 > 
+> Furthermore, as agreed in [1], this change represents the first step
+> toward the implementation of the anatop driver. Currently, in fact,
+> there is no dedicated anatop driver, but the CCM driver parses the
+> anatop node and registers the PLLs it produces.
+> 
+> [1] https://lore.kernel.org/imx/20241106090549.3684963-1-dario.binacchi@amarulasolutions.com/
 > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 For future version if it happens:
 
 Un-reviewed.
-
 
 Best regards,
 Krzysztof
