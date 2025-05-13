@@ -1,65 +1,65 @@
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E43128D827
-	for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 12:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A88A28DB5E
+	for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 12:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747139088; cv=none; b=EHrC0poKShhC8Mr1MCVOcnaUaBz7Pt9EaZD+3y21pX71iRSGUz9lKhJ5dI7uRiDxY56TePTraUc57w2Ih1Y/RcKyCkPM6ECIULRkBU92vXDN6o/CFpz5isgCuvVxNhTzVN7ljfiZRaXK3ZjlXAeVx3r57iaq+hXAu/2FVZ2iu94=
+	t=1747139682; cv=none; b=IQ4E9ntfM4Wk+6Joy3gpql+GsBr+VwKDo6DcpQW0wbVW76NuGsSEwx2B4WuEeSj8Avd5TRpKGo/ca/2pVbuV7lgnh7loAjQRHR+LPhS1F++eCl15pXxOajCH3+OxfZhY6U5GA7vNFBarxKTvX/y63/cdo6XqMFnOpMcZGn93kFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747139088; c=relaxed/simple;
-	bh=nCH0DieIdmLcW3j4bl0vM0PoHomAZV2rslViEgt6WTw=;
+	s=arc-20240116; t=1747139682; c=relaxed/simple;
+	bh=C6g26+a8+4FWdWFM6DToFTTtYFPKxuXSuqUWlbI9vLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KETqWXUZ8fqRPa16DWCcfXrBhbRMxIG5/aZ+GPK02Txm33+y2PGZyc3GtCyLd8zv416D37v88X6J4W2vuvcH7fVMa3x44i2XHr8bEi5yJ4zuqUV/NyGOMjRFqh88HYGskqj0CSC1wUFQlLa8HKuQy2qO6uOW+DeF0Z1+V5x8swI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=LEV3MaS4; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	 In-Reply-To:Content-Type; b=HbobdHEqCG0ytXkIeB/Z727q2yZ0H+kai1sj9T0S+q4JFlK3nlNcBsSJf/vuVpLz1yJfx0KJ7XSA556PhlzDtPynqB8PDBjeqG7ZIdS9YCHIXEcM549LjTQAlRc3hIdrYjfbZxrlCxtAb1k+Tii2tydHe3H+n1we9+ysVq/b1vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BFGZlNco; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="LEV3MaS4"
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3db6d3868dcso236305ab.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 05:24:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BFGZlNco"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a1b8e8b2b2so2918202f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 05:34:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1747139085; x=1747743885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=tuxon.dev; s=google; t=1747139678; x=1747744478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oUukzgPxDimVlAEltPxV3Oz6fjf8xuwBqI/ZvbSdWbk=;
-        b=LEV3MaS4S1gduBJmnnC8Wzj2vCAnz4136bjJdvM3Jx9rMBwFuX7oIIQdsIutSQRooh
-         e/KXRRtLhhcjizvQoAA/jVOg2DHk/mOzJyCjoypGL+domoffEORglwXDaPjzHjNz8f4x
-         AWGEibG4x3xaoFRo1Gm/WoqbtcY4b7RX4usAbctMxYC5f3IVLGxf4YrV2I+Aeg9r3Iae
-         KaL4uzMV9Hn2GkvPSRVou4bbfatpvqwboZs5teujQdNErZc6iuhXGgwBw6jZTd6zcpxx
-         Rozu8AXRip7v7tkLOzHvnjveO6qyahXT0EUwye5ADdbo/8mmRh96Gc2599tBF/ksRR81
-         Fn5g==
+        bh=tHvaWLNRQYIypczjqy5l/3kyXpFgu36gZsSsUPB0g3w=;
+        b=BFGZlNcodhFIGG95tBF8ZHeHAy1SwtQqzOgi4U3aLowrzUHuGkoZbFYFUltuPHYVdY
+         X2+7GfmurVn2WtjAqbdE8ASX93ptUroC1IidHL/GEOgoMQkXKNKZY8VFCkSA9Jlxy6Vl
+         BbUGIjUQcQr+43F+ez0AAcjJVBqyjDwO6p2zEoKhQxdfx0vnPpClilPDVFUkxfjUXPxG
+         jU5ATcSjOSd+VqeoNEqhTN2JrU+fVPGK8MJlOhh+eLhGZE98Z6SC2yq+pF36GRhowKpH
+         o56EvyfcdUMrpPml0fO7ULeDSAq0yBHb/cp0n1hnc5srfSAuyhSFt+HfDQUnEHXtEzOG
+         5U6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747139085; x=1747743885;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1747139678; x=1747744478;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oUukzgPxDimVlAEltPxV3Oz6fjf8xuwBqI/ZvbSdWbk=;
-        b=d7uTSzTJrrLC7m+T5W7z3n8abxSomakDGLPkye2Y4cLTMlZGBSths0v3+n5yrKbU2M
-         29JyCxwDPQ2oKm3OcJdHg417Zf/OWlS8yVD0/ZlJNf3C0g6IW+Gs6K2SmiSusl6yA299
-         ySKLFA+VNtZSxSV0sZYxA5X5F/VZVyI8hXuMmMenw+z/pDH+OqiiJKpKttIxU3sN8Cph
-         Iah/Fnk4SZjx7OdVn7fckwDd7QTuDmxwX6oLz8fcK1BMUgVwO+HpQ3rzeK6FvMYdg/EG
-         t9SH4aWanzaDOYbkXnth/ClXQGGqz4f4EkHh0JpDN4qgbpezSXidsqsEo/fC8SdkqSOt
-         /EAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5fv923n4NN+iXOFvpIxKxKSZYDfKw/8BXwZkbs4jxhOMrWA9ODs4NyLYhgAfijHZYg6HrV9d5LA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWghM9RYXjFWT6Sd5XTahKk6d6TFq8wZPm75voxamXhK928aQS
-	2bgPjJmhXqk0TrYAuapw4k+sS0wRY+2G93IicTwRwB7UbrD9gkFBFPWew3Mptac=
-X-Gm-Gg: ASbGnctxt2bHjIHVZKrFPVVphXtuzXdQOgtcYySUxuaBkoTl0hZLWogqTVSRTpiaQIe
-	GDcdYMfxgg5eQdHvZljBKj3ezetsomJihRDm8TtYV92164sWOentEajmWijOYYOiby5vjmf6qGP
-	IYOUchlZEr8t7NWbgo0S3zsmKdqbr1ylqYr41LkAWeHPO2ncKkrRzw23jPHEI9qGy4aTC84rfVK
-	gYZUD6CnQNwqggQxuuw4pbG7cUtVljc2h9itBF4myMeEbqYEhwruiNOtlRgHe4XHhEQEF7254yz
-	mvUFPyVdSoyeozzD/PVQhDA9uRjrh+ePjof5mxA+uC29go/TnGFDq/2HU2wF5QaVqRGqVB14cJ4
-	FcD87IcKFalryzTE=
-X-Google-Smtp-Source: AGHT+IFa99yDPla8yOwa2Lb0IIWEjfvTvZm04RmCYhnJ6t18LZAeThH57cdW66O3OAMcaFau7kC0qQ==
-X-Received: by 2002:a05:6e02:1a08:b0:3d9:644c:e3b0 with SMTP id e9e14a558f8ab-3da7e20dd8dmr165655765ab.14.1747139085428;
-        Tue, 13 May 2025 05:24:45 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e158bfcsm26965915ab.58.2025.05.13.05.24.44
+        bh=tHvaWLNRQYIypczjqy5l/3kyXpFgu36gZsSsUPB0g3w=;
+        b=ZzZadQxKUE/QClpg+bUHdNDaJ0hBifOYfCCVFProqcgxIzcUzfWHkwnGAd4lcEEsla
+         voTREhyawACIXWN9xXpok5y8D5uXfOEWRTsaF+9lAkMQ8yBxv0bmEwuszLxu57azGpJp
+         6HBIEkpkpFdMlrvUAKgZfThsIcFW1Lgb2aeitKNZhu5Y8frn/euX8ZgQrP8Ex2b/+ePO
+         QPUPPYaUOY6yHSPF8gCnHiESpHZ9rLIzdRS4xFLm8Mz8ghWwjH36FoB43+XV4qLuTLAS
+         9bo/NR/dPZ3mZT7UIUIBsUKl1QYN7sIZgObOMwOn8bGM76NSBg3qXMMbD5NR5oqy/vjH
+         jZHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoCe4c4vEAje+bZwkXGn/XmYYrR58SJ5P4HN6iflLHLB11l9w0sr1nnBLonhizbkcYxux/6Thwo8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPwjsAT5aytqjgNyNqVPh9a9pSruD3zbcDT4pUGiZNq/KIpeLG
+	+Bk6uLpLtss6RWMdC0IiuGlAZZxyMcbAXGo5s2BPqAakbRhiG/GnJO6NPYmOabsBXFhnTiclJSd
+	c
+X-Gm-Gg: ASbGnctoczrBiFYO0XuFgN4+44p9xg58LWdeJgYfDSdl9hGnfJo4ql4R3x3F5gB3pKr
+	Cy/qmxfEc4+V3kmJpANjPed9p4W/WlRz44ugSmN5MWK2Vl+HVMY/NZIYRORacgd604WEShUL0jB
+	8JhJtSQXeKHP7AbV25nMqGtU0FhOvPCUIxUt8uJJmz+y7MDqy4mSQS6SvC0ufOCNm267nqMJls/
+	Fpm5B3oIeGTEf2WsUzsJuqW1ctWIabKFdp4VloLT6B95a1RvQMlxz9mtoy0gJQTykON/eu7pAHK
+	GIJn1NKuPfLP1fjFD3Lkp67vqz0dkJ9qFq4eTK0OWBG5DZd1fRbT4WcUxzH/Oz2hpUg=
+X-Google-Smtp-Source: AGHT+IF0EETx+h4w6PCBRf8i2YG0WKTnteIW6fnBPI7UNFnIyzB7TOmxHpmZzzr0n8N9bYJM5uBJpg==
+X-Received: by 2002:a05:6000:4287:b0:3a0:b635:ea40 with SMTP id ffacd0b85a97d-3a1f64a3e3dmr14843773f8f.55.1747139677671;
+        Tue, 13 May 2025 05:34:37 -0700 (PDT)
+Received: from [192.168.157.194] ([213.233.104.159])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f57de087sm16321473f8f.16.2025.05.13.05.34.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 May 2025 05:24:45 -0700 (PDT)
-Message-ID: <560c33a8-4917-4c89-a8f3-ed7810fd675f@riscstar.com>
-Date: Tue, 13 May 2025 07:24:43 -0500
+        Tue, 13 May 2025 05:34:36 -0700 (PDT)
+Message-ID: <53999471-277b-4621-abfd-b4c25761b3da@tuxon.dev>
+Date: Tue, 13 May 2025 15:34:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,82 +67,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/6] reset: spacemit: add support for SpacemiT CCU
- resets
-To: Philipp Zabel <p.zabel@pengutronix.de>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org
-Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250512183212.3465963-1-elder@riscstar.com>
- <20250512183212.3465963-5-elder@riscstar.com>
- <d25aa4b10e2ebefb36e0db03123b404044e71ec1.camel@pengutronix.de>
+Subject: Re: [PATCH 3/7] clk: renesas: rzg2l-cpg: Add support for MSTOP in
+ clock enable/disable API
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250410140628.4124896-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUv6+KFuobDzzmKFOH6PvwU0RFzd1M9WrEZ-yzESBahkw@mail.gmail.com>
+ <e77c85de-4542-44e1-af2e-f63f72602ff8@tuxon.dev>
+ <CAMuHMdXFtBmjDu=1RS2MLNYzhZ0fmpT7+1QbA9p4LvoLHitOuw@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <d25aa4b10e2ebefb36e0db03123b404044e71ec1.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <CAMuHMdXFtBmjDu=1RS2MLNYzhZ0fmpT7+1QbA9p4LvoLHitOuw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/13/25 4:21 AM, Philipp Zabel wrote:
-> On Mo, 2025-05-12 at 13:32 -0500, Alex Elder wrote:
->> Implement reset support for SpacemiT CCUs.  A SpacemiT reset controller
->> device is an auxiliary device associated with a clock controller (CCU).
+Hi, Geert,
+
+On 09.05.2025 15:34, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, 9 May 2025 at 12:54, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 07.05.2025 18:42, Geert Uytterhoeven wrote:
+>>> On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The RZ/{G2L, V2L, G3S} CPG versions support a feature called MSTOP. Each
+>>>> module has one or more MSTOP bits associated with it, and these bits need
+>>>> to be configured along with the module clocks. Setting the MSTOP bits
+>>>> switches the module between normal and standby states.
+>>>>
+>>>> Previously, MSTOP support was abstracted through power domains
+>>>> (struct generic_pm_domain::{power_on, power_off} APIs). With this
+>>>> abstraction, the order of setting the MSTOP and CLKON bits was as follows:
+>>>>
+>>>> Previous Order:
+>>>> A/ Switching to Normal State (e.g., during probe):
+>>>> 1/ Clear module MSTOP bits
+>>>> 2/ Set module CLKON bits
+>>>>
+>>>> B/ Switching to Standby State (e.g., during remove):
+>>>> 1/ Clear CLKON bits
+>>>> 2/ Set MSTOP bits
+>>>>
+>>>> However, in some cases (when the clock is disabled through devres), the
+>>>> order may have been (due to the issue described in link section):
+>>>>
+>>>> 1/ Set MSTOP bits
+>>>> 2/ Clear CLKON bits
+>>>>
+>>>> Recently, the hardware team has suggested that the correct order to set
+>>>> the MSTOP and CLKON bits is:
+>>>>
+>>>> Updated Order:
+>>>> A/ Switching to Normal State (e.g., during probe):
+>>>> 1/ Set CLKON bits
+>>>> 2/ Clear MSTOP bits
+>>>>
+>>>> B/ Switching to Standby State (e.g., during remove):
+>>>> 1/ Set MSTOP bits
+>>>> 2/ Clear CLKON bits
+>>>>
+>>>> To prevent future issues due to incorrect ordering, the MSTOP setup has
+>>>> now been implemented in rzg2l_mod_clock_endisable(), ensuring compliance
+>>>> with the sequence suggested in Figure 41.5: Module Standby Mode Procedure
+>>>> from the RZ/G3S HW manual.
+>>>>
+>>>> Additionally, since multiple clocks of a single module may be mapped to a
+>>>> single MSTOP bit, MSTOP setup is reference-counted.
+>>>>
+>>>> Furthermore, as all modules start in the normal state after reset, if the
+>>>> module clocks are disabled, the module state is switched to standby. This
+>>>> prevents keeping the module in an invalid state, as recommended by the
+>>>> hardware team.
+>>>>
+>>>> Link: https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com/
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> 
+>>>> +/* Need to be called with a lock held to avoid concurrent access to mstop->refcnt. */
+>>>> +static void rzg2l_mod_clock_module_set_state(struct mstp_clock *clock,
+>>>> +                                            bool standby)
+>>>> +{
+>>>> +       struct rzg2l_cpg_priv *priv = clock->priv;
+>>>> +       struct mstop *mstop = clock->mstop;
+>>>> +       bool update = false;
+>>>> +       u32 value;
+>>>> +
+>>>> +       if (!mstop)
+>>>> +               return;
+>>>> +
+>>>> +       value = MSTOP_MASK(mstop->conf) << 16;
+>>>> +
+>>>> +       if (standby) {
+>>>> +               unsigned int criticals = 0;
+>>>> +
+>>>> +               for (u8 i = 0; i < clock->num_shared_mstop_clks; i++) {
+>>>
+>>> unsigned int
+>>>
+>>>> +                       struct mstp_clock *clk = clock->shared_mstop_clks[i];
+>>>> +
+>>>> +                       if (clk->critical)
+>>>> +                               criticals++;
+>>>> +               }
+>>>> +
+>>>> +               /* Increment if clock is critical, too. */
+>>>> +               if (clock->critical)
+>>>> +                       criticals++;
+>>>
+>>> If clock->shared_mstop_clks[] would include the current clock, then
+>>> (a) this test would not be needed, and
 >>
->> This initial patch defines the reset controllers for the MPMU, APBC, and
->> MPMU CCUs, which already define clock controllers.
+>> Agree!
 >>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   drivers/reset/Kconfig          |   9 ++
->>   drivers/reset/Makefile         |   1 +
->>   drivers/reset/reset-spacemit.c | 246 +++++++++++++++++++++++++++++++++
->>   3 files changed, 256 insertions(+)
->>   create mode 100644 drivers/reset/reset-spacemit.c
+>>> (b) all clocks sharing the same mstop could share a single
+>>>     clock->shared_mstop_clks[] array.
 >>
-> [...]
->> diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
->> new file mode 100644
->> index 0000000000000..eff67bdc8adba
->> --- /dev/null
->> +++ b/drivers/reset/reset-spacemit.c
->> @@ -0,0 +1,246 @@
-> [...]
->> +static int spacemit_reset_controller_register(struct device *dev,
->> +			       struct ccu_reset_controller *controller)
+>> I'll look into this but I'm not sure how should I do it w/o extra
+>> processing at the end of registering all the clocks. FWICT, that would
+>> involve freeing some shared_mstop_clks arrays and using a single reference
+>> as the shared_mstop_clks[] is updated after every clock is registered. Can
+>> you please let me know if this what you are thinking about?
 > 
-> Align to open parenthesis, line length is fine.
+> Currently, when detecting two clocks share the same mstop,
+> you (re)allocate each clock's shared_mstop_clks[], and add the
+> other clock:
 > 
->> +{
->> +	struct reset_controller_dev *rcdev = &controller->rcdev;
->> +
->> +	rcdev->ops = &spacemit_reset_control_ops;
->> +	rcdev->owner = THIS_MODULE;
->> +	rcdev->of_node = dev->of_node;
->> +	rcdev->nr_resets = controller->data->count;
->> +
->> +	return devm_reset_controller_register(dev, &controller->rcdev);
->> +}
->> +
->> +static int spacemit_reset_probe(struct auxiliary_device *adev,
->> +				const struct auxiliary_device_id *id)
->> +{
->> +	struct spacemit_ccu_adev *rdev = to_spacemit_ccu_adev(adev);
->> +	const void *data = (void *)id->driver_data;
+>     rzg2l_cpg_add_shared_mstop_clock(priv->dev, clock, clk);
+>     rzg2l_cpg_add_shared_mstop_clock(priv->dev, clk, clock);
 > 
-> Unnecessary (void *) detour. Just cast to (const struct
-> ccu_reset_controller_data *) directly. Otherwise,
-> 
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Instead, call rzg2l_cpg_add_shared_mstop_clock() once, and modify
+> rzg2l_cpg_add_shared_mstop_clock() to not only realloc the target's
+> shared_mstop_clks[], but also loop over all its existing entries,
+> and update their shared_mstop_clks[] pointers.
+I tried this approach but w/o complicated further the code I can't keep
+track of whether the "to be updated" (not reallocated) shared_mstop_clks[]
+pointers were previously updated pointers or devm_krealloc()'ed ones. I
+need this to properly free the unused arrays. Calling devm_kfree() on a
+non-devres resource triggers a WARN_ON() for each call.
 
-Thank you very much for your review.  I'll update to incorporate
-your suggestions and will add your Reviewed-by.
+Because of this I prepared a new version where the duplicated lists are
+freed after all the mod clocks were initialized. I'll publish it soon.
 
-					-Alex
-
-> 
-> regards
-> Philipp
-
+Thank you,
+Claudiu
