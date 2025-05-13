@@ -1,176 +1,135 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71122BE7BB;
-	Tue, 13 May 2025 15:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1706E2BF3FD
+	for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 16:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747151208; cv=none; b=J7QsCzw9jBXqAnoDWMJ1II3OBWoc3tF870jSmiwYl/6Y3Qfmma0N4UuPtKpMrKGphj1QspKrng7LypBG9WNTXvgMM7HGU6hwpRTKEIVOLe4VtGKwalnN7fB469cp80OtXc+11vqkiFTyA6ZIX1EBIRek2+tQi0T9pHomW90dyE4=
+	t=1747153209; cv=none; b=Vb/9wWp8XcwyQxXGiEKzFhWfNWu/d9+VkZjoUG7AwGAedB0SOJASeWfRayY3SSSyOeFNZp+q9oUx8rVsvTpKvI/xAgYYKKcvep4Evnpvh3CMR6EwJiUGPHcIZmDy8jjwDKh+bbpSqY/xlxvTuoEwy9zQcIMtoS5olFo8jrkFxHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747151208; c=relaxed/simple;
-	bh=ND04u7mZCxafVj4HkDYoTBQzQ6yOCjXLrkgDWK76YaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eP3H8CielEiVvrNmNxRM2pRz5hJL5WAqzH8ipK7Ce8SjTIU8/6rMvdO3wJLIklakBtIoBcESEAVX4GcTvgFVGHL9ZRh/5HVhVx4BFln4nYOmzdDgC//Wq8VLpPlgQyDyzLA/UQAKudxuTRRFLmAiSOC6Ws678pKtoSOieHqeOrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtgVW5OP; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747153209; c=relaxed/simple;
+	bh=cWhfEEAw+tV/nQS2PrbAq7o6mdRDmYJ67CQa4j3Vk2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxPgCBSZkUGBeFUU4Q6YPkexnxYwdo3Pjxq6TP7JUYBeeAlFG/Z/vFOeByhMXnpD8vlE/p2XI+icGGfo7PXzAEOxPgDFFZnJh0sEKfIeGDFTVnvIhsWAz1N4TW9qcbi8306Hd9oTpJSS/cE5jiM2gGv5zc0Sl4s7YjKpJBYcq6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lessconfused.com; spf=pass smtp.mailfrom=lessconfused.com; dkim=pass (1024-bit key) header.d=lessconfused.com header.i=@lessconfused.com header.b=PFI7ywq9; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lessconfused.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lessconfused.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtgVW5OP"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so59655705e9.1;
-        Tue, 13 May 2025 08:46:46 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lessconfused.com header.i=@lessconfused.com header.b="PFI7ywq9"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22e6344326dso58974765ad.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 May 2025 09:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747151205; x=1747756005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=lessconfused.com; s=lessconfused; t=1747153207; x=1747758007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FefmbA6pOI8PMez6FVUK7e8M/BJCoNBt+TOUtcp4/mE=;
-        b=RtgVW5OPGq+QFT+rUGwwHybPNiwtwgL+BwpBsYWu0f4MkJSq4e06QP9jV9kZ1n/gJO
-         tvlDme3G1G3g0yj56jx4SNX5fP9l53QQIM8JjCvv5pIsjHl2qbZq3acXs97vdLRXfmH+
-         FyZoB6VL9Dqj4TNDYMEPG1G7s3upzjV17Ih5n6XM5QIF3AGBAzkBKWitKAkpISJBGNK6
-         vxI0Ls5p4uLj7afuxbIbNqvDUVZflKlvhIP5m+lix0Blm4UnHYRcEADm+04iQwC/PII7
-         NkXe7ChpTCF8fmnnzizUBRj1/GpTVSQXduWNp870KjWYvEWzY74mHji0AxkE0lxU38Ch
-         X6ZA==
+        bh=Okg4wdYw4WB8DO+V7q9yh5s+wPKhLzpza5jWmCmNzLM=;
+        b=PFI7ywq9Nxu7618sDhq/hrQh7AHQ/+myKdLHbqzke1KJi5dH3LKQhujwt64wR5Qb63
+         PpSPoLYxtskCwVB02+GPWh3zkMnhKfDv9XPAQASlWO9zzhr6GyXJXLZA4ZaVQpYG5sQs
+         6UetmO7zcnd2Sd2ZUsZj/mtd2112cOEM35PiE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747151205; x=1747756005;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1747153207; x=1747758007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FefmbA6pOI8PMez6FVUK7e8M/BJCoNBt+TOUtcp4/mE=;
-        b=FUTdJ+5KSf5iPbxoQwv9QmNyO5EyPEUZhv+gTxFeQ1/s4NTjk+l4+ZCzcjRjuDApUU
-         06WBOKqtYI1PrHGPBncpe68ERCFZMJ712TMl1jeUNaYgS2eLcy+MrT+qAyHxnTR9r/QD
-         PWjEQ53Ut+TL1jvQ6zx0BePjFNeUPw5CKJQsaqrhlwFoHlgxHQ8qGkaSSTU/x6RYX2tp
-         MbSd6E9R17dVUQGzpfpiqFKpogA8GHDAtseHfOSg5bpvQAO1jiOlUsHNVW4rRauhW3pi
-         AH96VkHEQ8+NmmUWc3Dr42Mq0E0Uw6y3BN2IqidDOEyMV7PT88tV/fAJbJu17vmvm7jh
-         w5cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWK6vCg/mNxtRCcqyZrTxSA6uHAt5ICe6qPtc7ZbK6U7EBmDinfWoeXPn07sfrBvAyGFLvDA9u6ffEhl6w=@vger.kernel.org, AJvYcCWQKCSU4xpL+weitoXpgzw2zwrVtHHasC92dqAli4e0mAegp9JgvTnI1/+gfawavWNVmqzb9V8Bi+CtxwSsOJMvPbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyni/UCuoWLX0QuvRkADXlINXSYT1D7Uzco756fF8iiiRXdDA8e
-	/pjWMwe8kBa8z4Zcu3zGRTne5lvJ16jypuO3+0MdPye+bSN42+X9
-X-Gm-Gg: ASbGnctfPW25Mdpp4U0eU2ws0Ugjcl5LkTTa26GM/jQ0/kg5iY7aZaBRj/CO/Qg+GK2
-	9Ctu3Lc7hljIC7Di+NgPRFVIq4rtkRpkRUF+y9N25uUU0BsyHl8fZFDsvIpztLe5WOTTzNl/z7l
-	cx6Dwo0OtdDvLFpbA0kJCEKLaegH4ylStbKGWW9MUjCwRIl6wn7xMpI4cL62qLQ3ESfVUqMlQCL
-	ATC4GceUk1hiwSfmy3XMaV6H7Y/Bth1TAgW7OV6Qv/Cke3IF7rIbWKb4Tj+fXPsO5lys2Bmu96n
-	uErBrDdnIORndlJkEhIlyOZj9xKtxY0tIY4tiShanvb/rK5onGnvhz72378LQLC63eD4FjfyOLz
-	c1uq5YreVxGxUIGlSdUsu
-X-Google-Smtp-Source: AGHT+IFd8YocAXJjTASlpGSxIniCnwA35PkUAppMddBcuuzZsCyPcwTDS+GvCWNTdIIq1aTPh1OcOQ==
-X-Received: by 2002:a05:600c:6487:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-442d6d516efmr165814595e9.19.1747151204757;
-        Tue, 13 May 2025 08:46:44 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:c996:6219:e8d3:1274])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d596a5e4sm183724645e9.31.2025.05.13.08.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 08:46:44 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5/5] clk: renesas: r9a09g056: Add clocks and resets for Mali-G31 GPU
-Date: Tue, 13 May 2025 16:46:35 +0100
-Message-ID: <20250513154635.273664-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250513154635.273664-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250513154635.273664-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=Okg4wdYw4WB8DO+V7q9yh5s+wPKhLzpza5jWmCmNzLM=;
+        b=GznZSrUm/x3XvLlvJttGOnKWs31w745MX5wI+fi98SiLWC3ySx2+EkkctA4ol/5osi
+         HtfxDa/QBxOgFp2jhsIqM+bOyNbxUbf6RMYpC6ImHyBaNn9UiKziiPLC5dhg+eRMqPuB
+         nX4yNRe2xIhmADDZru5bZ5QzwYbZgMuiklZCz32xkBz0AsCe3rIhp9wo9VlYmK6SqeBF
+         lLaKmG6kvXO4Ug1/anWVbEGWoN95RApFEQRL1fKuXey3e50/GxhCXKhYZN3yzpqyQzje
+         dQZPt55V+5BHRoZN97jxI+HcdBgioWBcz3i26YZ6naVD0B5FBtb6mDgxPb0BlQV+27jR
+         z3uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs40TXsRnb5qiShhYQVO2uhhEquB6ipc9EyJlWQiZ53qAyFzD0PcnjQKTiUWcp7NKbioycIu4rbk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywx0mcqH4l2A+tSaEWc1tBpUFMqM1rm1KC18iAtjKe/DW7Rcir
+	jcBmhYf4XynZCtk/6zrsYOlEvhhtziiQ8xjtlFHK8IKu+6Ufg0lxoFobR1mxAAjJtpPBWVC7HCb
+	wFVpmDGfzCuystCJvGIhYQz1AJ8ztsLyIDD1UvQ==
+X-Gm-Gg: ASbGncv6KnoK/EfH+9a+6RS8ztHajSvHpOxMz2Hd9yif87DIFSHnakq8oT+/TaGfSuv
+	a62KE9/B/n1MtKNO2zJSwTxT8Rfylji/4QrMRN9swv4z14Y+Lx6MMMpkb8lNHHz41g/S4FuTerQ
+	x0xSVW0p5QgZOcOSMFXYCEELERTtHuSRpdZYmEGDRrPGCp65cZhVUSwDro8+i04c7nQcQ=
+X-Google-Smtp-Source: AGHT+IEFiZZLEVm8p4exZqTgRnoEBDvu1NNpn5CecmgOUa1lbzow7S7xDOQ9y/PS6u/6mPTPI55hbsmTlWowpXVMs6Q=
+X-Received: by 2002:a17:902:d492:b0:224:2a6d:55ae with SMTP id
+ d9443c01a7336-231981d284emr53485ad.48.1747153207290; Tue, 13 May 2025
+ 09:20:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250512142617.2175291-1-da@libre.computer> <1jecwtymsj.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jecwtymsj.fsf@starbuckisacylon.baylibre.com>
+From: Da Xue <da@lessconfused.com>
+Date: Tue, 13 May 2025 12:19:55 -0400
+X-Gm-Features: AX0GCFvX20FlZeuRo40HJUU0H1dNyPENU2uA3HGGuO4tfwuq5uvg2W8hOH9cVak
+Message-ID: <CACdvmAgNVf8jtRj-jONwunGXhheaizUEEyB4rz5tpqzXb6hKqg@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: meson-g12a: add missing fclk_div2 to spicc
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Da Xue <da@libre.computer>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, stable@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, May 13, 2025 at 3:52=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+>
+> On Mon 12 May 2025 at 10:26, Da Xue <da@libre.computer> wrote:
+>
+> > SPICC is missing fclk_div2 which causes the spicc module to output sclk=
+ at
+> > 2.5x the expected rate. Adding the missing fclk_div2 resolves this.
+>
+> I had to re-read that a few times to get the what the actual problem is.
+> If you don't mind, I'll amend the commit message with
+>
+> '''
+> SPICC is missing fclk_div2, which means fclk_div5 and fclk_div7 indexes
+> are wrong on this clock. This causes the spicc module to output sclk at
+> 2.5x the expected rate when clock index 3 is picked.
+>
+> Adding the missing fclk_div2 resolves this.
+> '''
+>
+> Is that OK with you Da ?
 
-Add clock and reset support for the Mali-G31 GPU on the Renesas RZ/V2N
-(R9A09G056) SoC. This includes adding clock sources required for the
-module clocks.
+Feel free. Your description is better.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g056-cpg.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 7e34c4259a6c..13b5db79aab4 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -29,6 +29,7 @@ enum clk_ids {
- 	CLK_PLLDTY,
- 	CLK_PLLCA55,
- 	CLK_PLLETH,
-+	CLK_PLLGPU,
- 
- 	/* Internal Core Clocks */
- 	CLK_PLLCM33_DIV16,
-@@ -36,6 +37,7 @@ enum clk_ids {
- 	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
- 	CLK_PLLDTY_ACPU,
-+	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
- 	CLK_PLLDTY_DIV8,
- 	CLK_PLLETH_DIV_250_FIX,
-@@ -46,6 +48,7 @@ enum clk_ids {
- 	CLK_SMUX2_GBE0_RXCLK,
- 	CLK_SMUX2_GBE1_TXCLK,
- 	CLK_SMUX2_GBE1_RXCLK,
-+	CLK_PLLGPU_GEAR,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -93,6 +96,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
- 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
- 	DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
-+	DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
- 
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-@@ -102,6 +106,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
- 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
- 	DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
- 
-@@ -116,6 +121,8 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
- 	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
- 
-+	DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
-+
- 	/* Core Clocks */
- 	DEF_FIXED("sys_0_pclk", R9A09G056_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
- 	DEF_DDIV("ca55_0_coreclk0", R9A09G056_CA55_0_CORE_CLK0, CLK_PLLCA55,
-@@ -236,6 +243,12 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(8, BIT(6))),
- 	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
- 						BUS_MSTOP(8, BIT(6))),
-+	DEF_MOD("gpu_0_clk",			CLK_PLLGPU_GEAR, 15, 0, 7, 16,
-+						BUS_MSTOP(3, BIT(4))),
-+	DEF_MOD("gpu_0_axi_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 1, 7, 17,
-+						BUS_MSTOP(3, BIT(4))),
-+	DEF_MOD("gpu_0_ace_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 2, 7, 18,
-+						BUS_MSTOP(3, BIT(4))),
- };
- 
- static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
-@@ -269,6 +282,9 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
- 	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
- 	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
-+	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
-+	DEF_RST(13, 14, 6, 15),		/* GPU_0_AXI_RESETN */
-+	DEF_RST(13, 15, 6, 16),		/* GPU_0_ACE_RESETN */
- };
- 
- const struct rzv2h_cpg_info r9a09g056_cpg_info __initconst = {
--- 
-2.49.0
-
+>
+> >
+> > Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK =
+Source clocks")
+> > Cc: <stable@vger.kernel.org> # 6.1
+> > Signed-off-by: Da Xue <da@libre.computer>
+> > ---
+> > Changelog:
+> >
+> > v2 -> v3: remove gp0
+> > v1 -> v2: add Fixes as an older version of the patch was sent as v1
+> > ---
+> >  drivers/clk/meson/g12a.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> > index 4f92b83965d5a..b72eebd0fa474 100644
+> > --- a/drivers/clk/meson/g12a.c
+> > +++ b/drivers/clk/meson/g12a.c
+> > @@ -4099,6 +4099,7 @@ static const struct clk_parent_data spicc_sclk_pa=
+rent_data[] =3D {
+> >       { .hw =3D &g12a_clk81.hw },
+> >       { .hw =3D &g12a_fclk_div4.hw },
+> >       { .hw =3D &g12a_fclk_div3.hw },
+> > +     { .hw =3D &g12a_fclk_div2.hw },
+> >       { .hw =3D &g12a_fclk_div5.hw },
+> >       { .hw =3D &g12a_fclk_div7.hw },
+> >  };
+>
+> --
+> Jerome
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
