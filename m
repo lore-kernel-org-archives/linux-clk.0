@@ -1,63 +1,63 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9912BE0F4;
-	Tue, 13 May 2025 15:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006412BE7A8;
+	Tue, 13 May 2025 15:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747151206; cv=none; b=GGQ3VcGqbis3IRiZN7XBwWIb3zobxp/2H4HWjRHYSPv/yCMBx9EY2866ZULU9nc1rSmJq2o3pDTEQWFaEbcSDsUUG4r13JElOmqWr+znX++cXcqN9R/9XQhDPTrqrxGGHPS+/U1hvFNa+ZWsHZKxr+g+08UoZnqwD8uAZ/MYVvE=
+	t=1747151207; cv=none; b=LTZ6H5fSh7yIpWPTAo1JZiZu2S4tVfu3iX+57LAUKj7dkMk4XAZ9IWqtiaQI49GmBhTZBZnzQeJQZK9h6XeRqOvvx9IotjD+7s4Y6jUl3ISArR4FgBo4OqEPe4NkLKCtOjK9ky9mIsksdPaRdx0DpvI8j3OzYQpiNLX0pCEJfXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747151206; c=relaxed/simple;
-	bh=7OObJFxfpZp1B8oXL+u4n3UpxgBKQ5XeeE4l+y+8bGs=;
+	s=arc-20240116; t=1747151207; c=relaxed/simple;
+	bh=Ei3c30IkgDbDFBAIgcKxhxiqZ5bn2Gk1/GLZH03kNh4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ih+2wsSExvF+6vrfrXMIe/+wr3FZNMuKLXKjqnw+zkFcpzaFELIoBYwR/yS8fP0sy5peT7WJL3jT7Moz7mdA9m/SVcqdP1PjLpJD84NYXmVSI48LdEuu3M+7PpX94W/g1YjeA8KAKmHiMZD8ZypOLqzPT22AAAb0SMLynez3W/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILAYyKUL; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=Mh0Kpc7x4KIS48dupWb/bBxJZptdWCkb5WvVwboJE3Nnrol9KbMbkxpU1X8Ae5KF70UBmTa1sBhpG3LbMkqTYK4UwKeYDSAFkKLqEILFN+dZz/p04JiJpKVqmHqnss+QeVHmLdUpfE/cLC3M3QSJgzIqpYTjhFBn57dxOnDBk80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHwF8iYS; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILAYyKUL"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43d0618746bso44390225e9.2;
-        Tue, 13 May 2025 08:46:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHwF8iYS"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-441d1ed82dbso61439815e9.0;
+        Tue, 13 May 2025 08:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747151203; x=1747756003; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747151204; x=1747756004; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qy89hG9RDC9tHSW4zOkJGpVnZSzDfakkMpz+ikecyME=;
-        b=ILAYyKULRth6QB4SQlCtX2eGm7/c9FBAva1o1UukawMywZp3gHveU4zszWpFCs04H3
-         Vd2BolGksaKb0gXch709SrNwT0VnQB6jqPcZ08fk6BP+E0o2w7loe/0xzB+1DoEYmtkw
-         BP0C1ydJkoyS2s5EwHqh+lmxUWXZAvUQbqY4yicAomNMT8Uez89q3fugjnnzQtjD2z/S
-         QO/Fw/9T14O2uBK34ESfAEZky2cr17v98n0EEAMEi4BhbOgvshJl1X2AwLK1kG+rZSD8
-         PcS+iYFyJS2WcqlqjAYwcEFZr3ScYqfsFVFGijdhujB/WuuBMgTOflsbrU138tzigFBu
-         JOvQ==
+        bh=frTcHJ1Ea1WqOcJu3ebjls25uv02kObZU7xmSP4EXMc=;
+        b=kHwF8iYSlpdaHEEFWRYzPaiiP3fFqqoA2pEsjOQHeZkyU0pvijA4sPksy84ZC2Fr7N
+         4pkVK1PSPPskC/iyCygrm6zL40Wc3/HxyTZyA99YERnW6hmL/tHT53uId7WIOXEhkEgB
+         z364N5mUZNuSZkdyVZoo56CrQiZNijVnXfr32xvotsssn3ZoxpyK0to+OZSGZF/hNvq1
+         6k3r7pa/5Xf4wD49plsFNiQD7+i9Spjhe7yQknzlcUK2qhtv/N29OkwqZZgq3HeKbn6/
+         vKAXXGTI7vQhEo00gh3ApowlEM3SsAH8Oz5bQCVk10zAq4jIuUirodqjgfAG8EPC8W+R
+         9wSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747151203; x=1747756003;
+        d=1e100.net; s=20230601; t=1747151204; x=1747756004;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qy89hG9RDC9tHSW4zOkJGpVnZSzDfakkMpz+ikecyME=;
-        b=F8VYtkxmVEPPkMwUnon6kOez6ikw4Qlh/ll9nwHP3h56gHKExLsfuTo1JoSUlAcM0o
-         86nPSEdQYljywE1uspW8oB3QlDe0Hdk/cTN74eyfmfLGAxoboigcqm6tG6mFhuRYjO14
-         SIh97FHBhY4YpWsnDjMuxtKZFEujJuhakY3oH24/gfRNhdX1MjMl/+nZDEBbdmyNewFZ
-         sZ2n/YJJJBSbBpfWkRklmqsC5bxZ4LOln2UJ99wuw7SkhE4Ggjf2DeRTAm97KWCB2Eej
-         GHFBouq5dowbSfHwO2Zzbl1q56KUHUESAgtjGbu0K10uv+IJpBrrn8uclPj6sh41p/2m
-         K+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqC7bDXnlbnkPXkrqbLR/wtjiJDjh2mcPqsIQQKOjeCd8k3qZh6UYQiPAVNJlwFY6tK9DwnhFUobGjyHw=@vger.kernel.org, AJvYcCVZwRjRu8d0U1W4d4ehVc4MnZ+1l6fwDXF3y1y/x+6uc83HZsVhS4mq4JeqprTqsL2Z4DJEXhG3BRdmMqL0gyq73H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyASbvXfwc6tvCbE/xDfi3TRor85RtwTN6Jmdhx1aeXeT4lsMUG
-	uFJNGRg+CZgJXoSqluUyohb4xuyh5wVetxTWc3VcvuFnjUY2bA/5bT9+zKBo
-X-Gm-Gg: ASbGncsE4RV/JEtQWwrKdIwU9pVnd+hsoF95kORigX2vqxPYLOtWiWPKeYrv3FI4mkB
-	rFq8mgWCPg3lI0r7v0pxiS5XbN8m9PuRb1sd/rdO6/NbWSZ0FjgoL5+Ep2DR35cHQagOqUcZIWv
-	RLHuPkQQRW1BnvhOnJXfpgouZbJz0co2Cs4AmoEC56zvbpxHp+cY5dTEU2x7PcLw9jRSopnxPh2
-	WHZmEaoUM9Ci30Yxa0vEBEwRXcbq50ytR7rUjcqD5tEwj4wa1MB/18Ez/RFPP3oYXhPMkkNToJJ
-	JmaWnMLOfKC9/N6VrOUpxbwNncsgHkapizOP4lm/f//9wPfQJ1xeatAJvzHChxaH4iQMMv0RsHe
-	2uWHsnH9T+w==
-X-Google-Smtp-Source: AGHT+IGkXKhFbr9hf0yD5nL5be1Q4mtJy3U+YmCf6vFEaqGgeKkNb8K5asqIxkl8QQ0jO3CWgb6AmA==
-X-Received: by 2002:a05:600c:8708:b0:43c:f3e4:d6f6 with SMTP id 5b1f17b1804b1-442d6ddeb99mr179265345e9.31.1747151202588;
-        Tue, 13 May 2025 08:46:42 -0700 (PDT)
+        bh=frTcHJ1Ea1WqOcJu3ebjls25uv02kObZU7xmSP4EXMc=;
+        b=fwMPpoplCu+D1mLdhrIpYZ9yqoTd0UmT1hR8cq0r7JfsUJ8XNwsrHrszg71qODXuDa
+         HeFPFVD4FOpsrxXebB/KU4IE5hnPSEaTGnlluXp8ViBZiTILDrvL6eqJBvBFS8I+7ham
+         iEnYhi1RXCel61WP4H+5hM/FHOuAvUSc/Llz+vNmXEd5v8Z0zRkIUa4semVw+aqizHLH
+         mDJn0Y6RM8swq2VF52FUuRT7qbJ9DbmcGfmxIMn3PBvN+rbgJHbg02vk5LGoNjl/29V3
+         TyqaA/f6E4wXhJ/wMdjI0Bd/lKneMnlGwz/flxMbloY+8YKv1W8ziAYjyxAiKODi0SH1
+         5JIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXWI52jhsGw7Np1hfUk8OYjnwadsNd8fmIWx+J8uS6cHYCBmvGPWFN/ItIODtXFukQI8xskcciaKm8kHQ=@vger.kernel.org, AJvYcCWTq7F2Ys0SSbvILbdGVXGLL0XJ+oIn6mHgWVhBk0z83GTOCcRY9I3AOrIjAcZJ9VaFS2yKxk2Oa9okmg+amQe7610=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEWNeFd7oIqmbeY0HHD/bDRnAJoqg8+tCgS7xjvucMqlB9KDJq
+	/RBxmPBHQjw65ZEnxTvJ8G6J6kj819CYmZdRtSmChuCBPOBqueoH
+X-Gm-Gg: ASbGnctOvG7pbCIkP1ZRlUE7C11GCVqQ81k5sUHgDSCoSY00SyPctK6YLMBdWFDM+9s
+	uNtxUi1wbaT+oDmJrUpfx7t3FB0e0VVTQmYD/5k0MMSlS7a9cBrV6WfDKG3UiGWMVyoIOOdElL0
+	Fncmqp5xmAws/4oTE6gPPrYWImMO16VcEwR2ZmjmZtPUfo7yzkW1JXpy/+mZfP1mtU0ZR/nIiY+
+	paEWeNSQqr2PdOAg4ga603VW/OHYTk5RExzPmme4kSJmKVOj/YSeoHiCQrjCvHH9ogoVaut2am8
+	YTKJeVzQ16dYnknrsqhNayvJFCf9YhX7SQIChf64+QnX7eJoBBab84dLamDDowORvzmQU117mTb
+	+j2g01US+Vw==
+X-Google-Smtp-Source: AGHT+IFlZs4KN3x+jOO4Zys+qXTA4GLl+QCzqzAAx4N+sG7pzBc9R0NdKbUP5Da7aaiajbltT2pLcw==
+X-Received: by 2002:a05:600c:6095:b0:43b:c0fa:f9cd with SMTP id 5b1f17b1804b1-442d6d0a9ebmr147133625e9.7.1747151204078;
+        Tue, 13 May 2025 08:46:44 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:c996:6219:e8d3:1274])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d596a5e4sm183724645e9.31.2025.05.13.08.46.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d596a5e4sm183724645e9.31.2025.05.13.08.46.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 08:46:41 -0700 (PDT)
+        Tue, 13 May 2025 08:46:43 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -70,9 +70,9 @@ Cc: linux-clk@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/5] clk: renesas: r9a09g056-cpg: Add clock and reset entries for OSTM instances
-Date: Tue, 13 May 2025 16:46:32 +0100
-Message-ID: <20250513154635.273664-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4/5] clk: renesas: r9a09g056: Add clock and reset entries for WDT controllers
+Date: Tue, 13 May 2025 16:46:34 +0100
+Message-ID: <20250513154635.273664-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250513154635.273664-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20250513154635.273664-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -86,74 +86,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Introduce a new fixed divider .pllcln_div16 which is sourced from PLLCLN
-and add PCLK module clocks gtm_0_pclk through gtm_7_pclk for OSTM0-7. Add
-corresponding reset lines GTM_0_PRESETZ through GTM_7_PRESETZ to control
-the OSTM instances.
+Add module clock and reset definitions for WDT0-3, which are available
+on the RZ/V2N (R9A09G056) SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g056-cpg.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/clk/renesas/r9a09g056-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 5582041455c5..c57583e7f659 100644
+index a489e718a9c2..7e34c4259a6c 100644
 --- a/drivers/clk/renesas/r9a09g056-cpg.c
 +++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -34,6 +34,7 @@ enum clk_ids {
- 	CLK_PLLCM33_DIV16,
- 	CLK_PLLCLN_DIV2,
- 	CLK_PLLCLN_DIV8,
-+	CLK_PLLCLN_DIV16,
- 	CLK_PLLDTY_ACPU,
- 	CLK_PLLDTY_ACPU_DIV4,
- 	CLK_PLLDTY_DIV8,
-@@ -98,6 +99,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 
- 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
- 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
-+	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
- 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
-@@ -134,6 +136,22 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
- 						BUS_MSTOP(3, BIT(5))),
-+	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3,
-+						BUS_MSTOP(5, BIT(10))),
-+	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4,
-+						BUS_MSTOP(5, BIT(11))),
-+	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5,
-+						BUS_MSTOP(2, BIT(13))),
-+	DEF_MOD("gtm_3_pclk",			CLK_PLLCLN_DIV16, 4, 6, 2, 6,
-+						BUS_MSTOP(2, BIT(14))),
-+	DEF_MOD("gtm_4_pclk",			CLK_PLLCLN_DIV16, 4, 7, 2, 7,
-+						BUS_MSTOP(11, BIT(13))),
-+	DEF_MOD("gtm_5_pclk",			CLK_PLLCLN_DIV16, 4, 8, 2, 8,
-+						BUS_MSTOP(11, BIT(14))),
-+	DEF_MOD("gtm_6_pclk",			CLK_PLLCLN_DIV16, 4, 9, 2, 9,
-+						BUS_MSTOP(11, BIT(15))),
-+	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
-+						BUS_MSTOP(12, BIT(0))),
+@@ -152,6 +152,22 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 						BUS_MSTOP(11, BIT(15))),
+ 	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
+ 						BUS_MSTOP(12, BIT(0))),
++	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11,
++						BUS_MSTOP(3, BIT(10))),
++	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12,
++						BUS_MSTOP(3, BIT(10))),
++	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
++						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
++						BUS_MSTOP(5, BIT(13))),
  	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
  						BUS_MSTOP(3, BIT(14))),
- 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-@@ -190,6 +208,14 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-+	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
-+	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
-+	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
-+	DEF_RST(7, 0, 3, 1),		/* GTM_3_PRESETZ */
-+	DEF_RST(7, 1, 3, 2),		/* GTM_4_PRESETZ */
-+	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
-+	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
-+	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
+ 	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19,
+@@ -234,6 +250,10 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
+ 	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
+ 	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
++	DEF_RST(7, 5, 3, 6),		/* WDT_0_RESET */
++	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
++	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
++	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
  	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(9, 8, 4, 9),		/* RIIC_0_MRST */
+ 	DEF_RST(9, 9, 4, 10),		/* RIIC_1_MRST */
 -- 
 2.49.0
 
