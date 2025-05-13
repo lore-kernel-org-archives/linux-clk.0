@@ -1,119 +1,99 @@
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49041DB363;
-	Tue, 13 May 2025 04:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80DC1F92A;
+	Tue, 13 May 2025 05:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747109955; cv=none; b=S1q0SR1/hu1oZ4HVIgPI6H3S9zanet+l3Wnm2nSDiGwFgjUs7punj+qeUaOiLWm0IklFWWZmeCfLG0T9TLOBw/g80mv3TMrhJQU8qyVcZdadxkz7f/KUCqRGdSgpkxe0gHWInFNs35Ggd8lYAgNaQ+HtwJK78qjV32SLUhnK3l8=
+	t=1747112522; cv=none; b=KyLNTKqBKuH8lXoUf1Dq+pxxu4NuQiAoxKAcuZl1zW9HCydIKqgx7hldS0DlfBYM3Rwl7pQtYDVt38W4UOG7pF3Fr/som8gKO+4ghJKdGw61V0M2mcyFv4ZCxFeIYsWrGqAIZtvoe6yEEBtO3BuHQSLKz5DoM5gY5wTGHreWkP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747109955; c=relaxed/simple;
-	bh=kGZWRZOeRSkQaw367SMSl+gSUcwpGB0B3nI9lZI6dg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PwILDaYn6DqJhxrIcVzimqkVN93yV16z4sAC+ijh6GIYD+1sNtRX9259v3GBHyW+6elmMHqV3nYQM3A8+D9WNV9KRt9QxB2XPX7L9xPkSVquFH41vDlygb7KRdPLVsv5SYikelBaNT1JQ9PQWp3TYX7skEtuJYGZjv6X0XFaOsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwS6FyjQ; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747112522; c=relaxed/simple;
+	bh=+bxIO1TVXDAaN1B8C3jo1UC1Eipqnd36X95ZaU0RUig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6RKiz3dbpbCMhbn0qrMxOqrhvd38+Y+xrZs7HmR1EWtnYPqIcBMRQe4nPxH6v9apJqkgY/xTnB5/ZgLJ5zs/IliUF/ZTz7Ix4MN++el30RZiil0rwVftMCvwWcOy3/6cy4RsaUzNlvRP0IRNq055/ze0r5eh8GRzDTKeDW3rZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=h/kWoT6+; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=m3auRpyZ; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwS6FyjQ"
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7cad6a4fae4so906359685a.2;
-        Mon, 12 May 2025 21:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747109953; x=1747714753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SFbsTQE9tHKiV3IKABKjWIYDMs9C+L7n7mu7OXh8b2s=;
-        b=GwS6FyjQ82gIHWy3QGbeLmIdY/IS5etIfRp2kzZxOFSWv1veP7DCV2vD+1rB/Mv+Lk
-         PVOKZMhfNThjpMA8yyWoVIVQcUsEFTuydto6fvFiN33x6WdSVPv4XQm//cYu7NNSjklH
-         JwmicF51HAK3bYjeNWtYoqutkYhjCeVg027QzuwKphEtet8Cd4fKSXweECC4EVAqxUrT
-         KiodSFR2p9DI8WogE3+8QjMrOT537yBhCZQ2xsfgWv6tn0pQTyqZwzbFMZ8h27PSqlEs
-         XZhsWLzgBKhAdTvQ8YybApIPV6+FxT+mFv5IwaWyGyGtOIJFURmWd96+hA9eEE/e1u8w
-         AupQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747109953; x=1747714753;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SFbsTQE9tHKiV3IKABKjWIYDMs9C+L7n7mu7OXh8b2s=;
-        b=caScMOJMK4T+8I0pJ+IWbLFevSbFbp9j8B3tSkgF+U+7RDOlI+pR4aQoQ26VzjZ+5c
-         BnZdheox9kP2errt3TFD3q3J1/wy/777CJfLB6hyNQBgkap1vnrOCeZJnrdKBOLSDbMa
-         OqgSQNR/2l77UCtOVsZai5EXSZM5YUT+1r82vDb+alG94ZcZbqAEnxpAjrMdEcGOPTHC
-         8Q5I6ADGtsp7xliHfGE79Lzb0hPLxNb2BAyHyRAFFoE4hCbM9KHWrfQf/chrid8ILF1N
-         Q6fD6s75fmkfkO2+f66dKuAOm01XrYalkywIqB6c6D4kAIOGfspYVaQQFaplRGnruVlC
-         CkQA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4soTj8Kjy3nYALbuCKdRKDydGN/Gn4VHD7eW8qVTIiaRLBnsQtvHX7SOQo0bp4IzfTNwVYhopVknEam5S@vger.kernel.org, AJvYcCWWxXR2jsxWCfuOnKm3uYPwB8mkRUuLyu9qU8LfX4Rhnd0pTUciSF2821xQuIPQQG9X/Y5CXaAZ9GY5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/9JMyatqIwUANjNjaOv1kPsS1f7cz6lTSvF3g6R/5q8yi/AAN
-	VRwwSB9yyTNQOL0MYw74xOGo5ZCUoUZ51Uanbo8g6M1xZIjTvQGY
-X-Gm-Gg: ASbGncuSivKyvR/wSTa5+st67JIcIsJ9W1TYiPhj9Zu3NhpJIUAOkRvWq71cN7uILx6
-	KNz/BelEH4qjKI5b3NKpFAVtWFJ2nyCoooko1ILkFuhb72WJNB1p1wj7HMIYnyIPVC937/BT7I3
-	4PBwR/usZdn5xKxipWcLkPh9CDce+0QV6Yee2LXs0/TzUaNPsxubg3HPaM+tgUOwN25uS9NL5Io
-	OlDz3/f81PX+VVcdor7Lf6dqPxfwhUDeHrIu/OhGEmzvazta7tfkaU9AvCyWG8JACS2CyFYkRRP
-	LmKS2639Sg0zNghhkiVxdvLoJWnCyi8s+l8mEw==
-X-Google-Smtp-Source: AGHT+IGS3DH141eF3XFbywTS59BbLhX/9gyOryljRpt7OKQZ/4+tNhx00bLdZ/bOFxGP5J/MjBr5Cg==
-X-Received: by 2002:a05:620a:1b88:b0:7c5:ad99:9e38 with SMTP id af79cd13be357-7cd01143dd6mr2694467085a.43.1747109952721;
-        Mon, 12 May 2025 21:19:12 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd00fe620csm645540485a.97.2025.05.12.21.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 21:19:12 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: (subset) [PATCH v2 0/3] riscv: sophgo: cv18xx: dts rework, part 2
-Date: Tue, 13 May 2025 12:18:23 +0800
-Message-ID: <174710989166.597941.2836952647121868068.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250504104553.1447819-1-inochiama@gmail.com>
-References: <20250504104553.1447819-1-inochiama@gmail.com>
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="h/kWoT6+";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="m3auRpyZ"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id DD6E312FB43C;
+	Mon, 12 May 2025 22:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1747112512; bh=+bxIO1TVXDAaN1B8C3jo1UC1Eipqnd36X95ZaU0RUig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/kWoT6+6lxuUSEFhgRknbBr309/qqIzCW2azuz5gLZ2rw3J5YV7WPTb/uJeF67WJ
+	 KEgjj5GEUo3ih1OSVWQEFvIHGrKIUvkedwjR2NorNmTImLdGNM+wAQ2xQOSPp2z3/m
+	 M/FmXVY1MwcxYQXrpFQ6eLLCr0kQWYULojparMGqbK5e1fCDxJcGQxTVM8ZG88OHPd
+	 /gVsfd9W/JWtDzzD+Bd5hMZiSY8sa91QRhzbywWPld0Rud6giXXr9NiHVZ7Z1KEDYR
+	 DXL7MLQCx8rZqd3nF8GKqnjpeLSfNIprL3sRyqs2wXrCisfGWABmoLkxFhH36sGe/l
+	 zMHb+6Ps+hkcw==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id W4uJWQCw1BHG; Mon, 12 May 2025 22:01:18 -0700 (PDT)
+Received: from ketchup (unknown [183.217.81.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 5F6D012FB430;
+	Mon, 12 May 2025 22:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1747112478; bh=+bxIO1TVXDAaN1B8C3jo1UC1Eipqnd36X95ZaU0RUig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3auRpyZe2GfkrXIlMAnG9PEMU91B6GPaoPtLsih5ElnJJzQraBE9b5u9pK0gL9MA
+	 o4n/Ud1egen/FW/DTrf6AFdFmny9DnLc2U9eLmmgiW/lngex6DvmRfwzODDHXeU2Vu
+	 ax9Ma3rCsKCQkM136CndUq+IXkvLv3XABbRjJoFhkJ0bMJ5JzUMTDtDbrqEPde/kla
+	 34IVzg4IgUiyELv45EYbhYUtzqb4rF2UIwnYaKN7ALz3U8A0sftG9OmnE9ny6bxEIt
+	 nXzVnk1fyuzdc7R3MqLZKHFO+ylhfT48dVAYs3cLeZyFyodA3WGnzWtmFFUWmULFsI
+	 D9pHtf1BNEJbw==
+Date: Tue, 13 May 2025 05:01:10 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/6] clk: spacemit: set up reset auxiliary devices
+Message-ID: <aCLSFmSXLUQYi6on@ketchup>
+References: <20250512183212.3465963-1-elder@riscstar.com>
+ <20250512183212.3465963-4-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250512183212.3465963-4-elder@riscstar.com>
 
-On Sun, 04 May 2025 18:45:49 +0800, Inochi Amaoto wrote:
-> The part 2 of dts rework replaces precise compatible for existed clock device
-> with old wildcard one.
+On Mon, May 12, 2025 at 01:32:08PM -0500, Alex Elder wrote:
+> Add a new reset_name field to the spacemit_ccu_data structure.  If it is
+> non-null, the CCU implements a reset controller, and the name will be
+> used in the name for the auxiliary device that implements it.
 > 
-> Changed from v1:
-> - https://lore.kernel.org/all/20250430020932.307198-1-inochiama@gmail.com/
-> 1. patch 1: reused sophgo,sg2000-clk for sg2002.
-> 2. patch 1: mention sg2002 refer to a real device, not a wildcard one in
->             commit message.
-> 3. patch 2: fix wrong data for sophgo,cv1812h-clk.
-> 4. patch 2: remove compatible sophgo,sg2002-clk.
-> 5. patch 3: adapt the change of patch 1,2.
+> Define a new type to hold an auxiliary device as well as the regmap
+> pointer that will be needed by CCU reset controllers.  Set up code to
+> initialize and add an auxiliary device for any CCU that implements reset
+> functionality.
 > 
-> [...]
+> Make it optional for a CCU to implement a clock controller.  This
+> doesn't apply to any of the existing CCUs but will for some new ones
+> that will be added soon.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v9: Use ida_alloc() to assign the unique auxiliary device ID
+> 
+>  drivers/clk/spacemit/Kconfig     |   1 +
+>  drivers/clk/spacemit/ccu-k1.c    | 104 ++++++++++++++++++++++++++++---
+>  include/soc/spacemit/k1-syscon.h |  12 ++++
+>  3 files changed, 107 insertions(+), 10 deletions(-)
 
-Applied to for-next, thanks!
-
-[3/3] riscv: dts: sophgo: switch precise compatible for existed clock device for CV18XX
-      https://github.com/sophgo/linux/commit/6493272ec02706dcb2a32a1c7b14e47432ce6d6a
-
-Thanks,
-Inochi
-
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
