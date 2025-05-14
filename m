@@ -1,64 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F4813AA53;
-	Wed, 14 May 2025 15:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DBE18787A;
+	Wed, 14 May 2025 16:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235318; cv=none; b=HwmPIF0OAF26PoqjdjQ6iP533fTBG84WgMZoKye7dpm9F2Rdpda8Ln+rmjVUMJzE3xKq0/wiL2Ydmt6ZC8xuzMqyIb+eq9T1eehZ6T7JBndT6pHT9k3sYZezMQBVlhz2s0UJ3eGG4l8D+o8mdd0YsOOcBrEpS9kW4TofMlbrrzM=
+	t=1747238599; cv=none; b=nG/fvVosylWctf7uLN0FEfpx0BbLWj/qnei7TJHZ9POxUpov6J6rLeRZP7R1K9OHSZ9Ggp1L/J21Av1NbvbpckN+Awr2JxrZrfH+Zpl4YeLsK1FLJf9P8RNC+c14IGUWT20TVzV2k0NizKuLgu7PAMTsOVyMszHDNax0PnQS1cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235318; c=relaxed/simple;
-	bh=dkUlkhBMN1t5KmsuDVUB+kb6HjGenkUO4srDC9L1fQ0=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=L4uWHLknK5G/7+HvRXbmgCmG112omXjHo3z8fM/LABP2oaQT9gvLltEXeRreRTwItE86CSBybt/8pp9Ag0UI/5LUTVyfRg1ogq8JTOFDy2GxOUm3tbiT5tXnHgC3DlgS+CflFyNppcZ2loxdArOPa2yZogIrUqo+ogoYoRgKFkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzaJryF4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747238599; c=relaxed/simple;
+	bh=E/uPNr2Drrqwd9Qk8xjwfc5PbsvApW04uOmyoQnoWNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQLRPpLoaU2cRB5oW47geDUki92UJ9HbKBF2RY+i0fDGX+tNhuBcbncsY85EwCAIqhmpIV1Vc1ZqygnwUETQ0h2A13lW3dVlcAWSiOUqL5n5v/Gi/cotk/VkP9R2HsdVlfeEsR1Uy957RT8NlsD+1j9HilWqYIMsqvrjfi30Gtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dljvHuXg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzaJryF4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEBEC4CEE3;
-	Wed, 14 May 2025 15:08:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dljvHuXg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AD4C4CEE3;
+	Wed, 14 May 2025 16:03:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747235318;
-	bh=dkUlkhBMN1t5KmsuDVUB+kb6HjGenkUO4srDC9L1fQ0=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=TzaJryF4QEbqCY9JT5vXe7oyF7HcBzwcsyH8Dy8zfU1XzVYj0rUfz7AAI4slg/IKW
-	 k19zDKyuLgxgcmcG9Hc2NoKOliC1Xhhok1Dfd3/x9niP13rJYiiRf8qCNdLsYjmRx5
-	 rx1NmjYLze6uOKuSr5K/ptr5f0epDCoNDpvjiUB43rdUaUecMqy6YKdHj/XSGHSSnr
-	 x02MaB7brWzbHBl5ye48rg98iPOxwlJdgtrx3qKqArufS7ATM9VCcwxd+AEjvuXKSx
-	 S/6L+hpht9awAX4As2CKVy2Yv5lXW8AwgGx8PJs0UuBebJFab5v82GFpoP6cFGtzwl
-	 74tFcd5pmyqPA==
-Message-ID: <a509a73e96ff6875c9c5d09b6f12d35e@kernel.org>
-Date: Wed, 14 May 2025 15:08:35 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Ryan Walklin" <ryan@testtoast.com>
-Subject: Re: [PATCH v10 01/11] drm: sun4i: de2/de3: add mixer version enum
-In-Reply-To: <20250511104042.24249-2-ryan@testtoast.com>
-References: <20250511104042.24249-2-ryan@testtoast.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andre
- Przywara" <andre.przywara@arm.com>, "Chen-Yu Tsai" <wens@csie.org>, "Chris
- Morgan" <macroalpha82@gmail.com>, "Conor Dooley" <conor+dt@kernel.org>, "Daniel
- Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>, "Hironori KIKUCHI" <kikuchan98@gmail.com>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>, "Philippe Simons" <simons.philippe@gmail.com>, "Rob
- Herring" <robh@kernel.org>, "Samuel Holland" <samuel@sholland.org>, "Stephen
- Boyd" <sboyd@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1747238598;
+	bh=E/uPNr2Drrqwd9Qk8xjwfc5PbsvApW04uOmyoQnoWNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dljvHuXgTGmofArMWC1cgX9H3NKwD2u6BZ8YnbrwHXbOI0PCiiwNdOPBCC6moF481
+	 qNW/CRpjlpVhs4Tm+0VPBUzNX68lZTlEpfQdtYB4x/VTyHXfvjYTDcrRIWlW15rdnx
+	 YKk9Te87AiMfYPAbDkBT2/qxV76v38zCwIGjjwNtsEOKNjr+PsmIYohsn+ifPqKACk
+	 GjHBpUrRCTjJFiDaG0sva57D36fImXxUTM00Kziyono2UxCuy8yx3tEwvLAAaWh/NU
+	 GVBWdCp1dr8aAYLT0i5UEGPHh4dOCOfPXCrHsiKFeHbedLx16AOOFnIdjMjauzdzel
+	 LaeJYfjOLqBjQ==
+Date: Wed, 14 May 2025 11:03:16 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org, Luo Jie <quic_luoj@quicinc.com>,
+	linux-clk@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 3/6] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5018 SoC
+Message-ID: <174723859613.2419683.5915733279552659071.robh@kernel.org>
+References: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
+ <20250506-ipq5018-cmn-pll-v2-3-c0a9fcced114@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506-ipq5018-cmn-pll-v2-3-c0a9fcced114@outlook.com>
 
-On Sun, 11 May 2025 22:31:10 +1200, Ryan Walklin wrote:
-> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+On Tue, 06 May 2025 09:43:35 +0400, George Moussalem wrote:
+> The CMN PLL block in the IPQ5018 SoC takes 96 MHZ as the reference
+> input clock. Its output clocks are the XO (24Mhz), sleep (32Khz), and
+> ethernet (50Mhz) clocks.
 > 
-> The Allwinner DE2 and DE3 display engine mixers are currently identified
-> by a simple boolean flag. This will not scale to support additional DE
-> variants.
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml  |  1 +
+>  include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h         | 16 ++++++++++++++++
+>  2 files changed, 17 insertions(+)
 > 
-> [ ... ]
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thanks!
-Maxime
