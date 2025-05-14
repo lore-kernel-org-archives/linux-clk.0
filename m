@@ -1,47 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DBE18787A;
-	Wed, 14 May 2025 16:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E1A1E3762;
+	Wed, 14 May 2025 16:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747238599; cv=none; b=nG/fvVosylWctf7uLN0FEfpx0BbLWj/qnei7TJHZ9POxUpov6J6rLeRZP7R1K9OHSZ9Ggp1L/J21Av1NbvbpckN+Awr2JxrZrfH+Zpl4YeLsK1FLJf9P8RNC+c14IGUWT20TVzV2k0NizKuLgu7PAMTsOVyMszHDNax0PnQS1cc=
+	t=1747238923; cv=none; b=mkJF473ltfHKpiEvEhgWt0ooe6Qrt7A43twjNqH954IhUOkBQ25ErAe3B8jf1ji1CnhlqLHBAHmppJ0dqmiZOlMebdHjxqBczkirZFLFbbHw94zviOePpEt6BMuHjL6PVGLfKhav8aQjHDXsURU5cbJKjSRUhIkf+COX6/42kbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747238599; c=relaxed/simple;
-	bh=E/uPNr2Drrqwd9Qk8xjwfc5PbsvApW04uOmyoQnoWNE=;
+	s=arc-20240116; t=1747238923; c=relaxed/simple;
+	bh=hGOUe2xSoGL9oXowpjGUL9c1Ap2l3UhYWn76o1uRYSE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQLRPpLoaU2cRB5oW47geDUki92UJ9HbKBF2RY+i0fDGX+tNhuBcbncsY85EwCAIqhmpIV1Vc1ZqygnwUETQ0h2A13lW3dVlcAWSiOUqL5n5v/Gi/cotk/VkP9R2HsdVlfeEsR1Uy957RT8NlsD+1j9HilWqYIMsqvrjfi30Gtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dljvHuXg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=keZ8ULmuUzb6e+2eR/gi0h90Ety7KrLab9hFqEcMjmhimOHw1Gj+h/CEglvXMG4FsiFpqLbjIqjrus1abMzyeWCPSP7zk68w2cHpfybSYcSS05noimDtQRtaKOssTqoSnSCgUPi8i/JTvh9xl1Qa9qbVVAKWvpLCJOLUgZhsgTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8uRb7z1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dljvHuXg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AD4C4CEE3;
-	Wed, 14 May 2025 16:03:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8uRb7z1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E61FC4CEE3;
+	Wed, 14 May 2025 16:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747238598;
-	bh=E/uPNr2Drrqwd9Qk8xjwfc5PbsvApW04uOmyoQnoWNE=;
+	s=k20201202; t=1747238923;
+	bh=hGOUe2xSoGL9oXowpjGUL9c1Ap2l3UhYWn76o1uRYSE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dljvHuXgTGmofArMWC1cgX9H3NKwD2u6BZ8YnbrwHXbOI0PCiiwNdOPBCC6moF481
-	 qNW/CRpjlpVhs4Tm+0VPBUzNX68lZTlEpfQdtYB4x/VTyHXfvjYTDcrRIWlW15rdnx
-	 YKk9Te87AiMfYPAbDkBT2/qxV76v38zCwIGjjwNtsEOKNjr+PsmIYohsn+ifPqKACk
-	 GjHBpUrRCTjJFiDaG0sva57D36fImXxUTM00Kziyono2UxCuy8yx3tEwvLAAaWh/NU
-	 GVBWdCp1dr8aAYLT0i5UEGPHh4dOCOfPXCrHsiKFeHbedLx16AOOFnIdjMjauzdzel
-	 LaeJYfjOLqBjQ==
-Date: Wed, 14 May 2025 11:03:16 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	b=X8uRb7z1GWP22+I2dXUrFBGSE7xdYgRUBQrit6b2xTY2KWEoAk0DGNhUefhtYCY6X
+	 J24fzQj0vxVuuNZvQFctlJJuMuV+dUWB9dcMS0ThxLxPk/ZjMyD+kkPvTJ2BamajE+
+	 b6CA1ThkzukP4wqbDUruCiAp+LRjEMwKvubELh4VRPWLGDmtamyl66grw7rl6g3jt7
+	 0kCqWY/Pf4hFESUJH0elOFD+lSgu4PBeT6QAMkYFQ3luovFvG2Xc8kQI2/ymuMuWMY
+	 zAhMFK57lv7YxLzXQEXXVFylFbTTwkNWYM7qzD/5CekHuVPk0GWdGncXDyMj7NSMWM
+	 un8qvC4OwQiog==
+Date: Wed, 14 May 2025 11:08:41 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org, Luo Jie <quic_luoj@quicinc.com>,
-	linux-clk@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: clock: qcom: Add CMN PLL support for
- IPQ5018 SoC
-Message-ID: <174723859613.2419683.5915733279552659071.robh@kernel.org>
-References: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
- <20250506-ipq5018-cmn-pll-v2-3-c0a9fcced114@outlook.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <20250514160841.GA2427890-robh@kernel.org>
+References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
+ <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
+ <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+ <aCNGSwL7043GoJBz@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,20 +53,57 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250506-ipq5018-cmn-pll-v2-3-c0a9fcced114@outlook.com>
+In-Reply-To: <aCNGSwL7043GoJBz@linaro.org>
 
-
-On Tue, 06 May 2025 09:43:35 +0400, George Moussalem wrote:
-> The CMN PLL block in the IPQ5018 SoC takes 96 MHZ as the reference
-> input clock. Its output clocks are the XO (24Mhz), sleep (32Khz), and
-> ethernet (50Mhz) clocks.
+On Tue, May 13, 2025 at 02:16:59PM +0100, Stephan Gerhold wrote:
+> On Sun, May 11, 2025 at 05:48:11PM -0500, Bjorn Andersson wrote:
+> > On Tue, May 06, 2025 at 03:10:08PM +0200, Stephan Gerhold wrote:
+> > > APCS "global" is sort of a "miscellaneous" hardware block that combines
+> > > multiple registers inside the application processor subsystem. Two distinct
+> > > use cases are currently stuffed together in a single device tree node:
+> > > 
+> > >  - Mailbox: to communicate with other remoteprocs in the system.
+> > >  - Clock: for controlling the CPU frequency.
+> > > 
+> > > These two use cases have unavoidable circular dependencies: the mailbox is
+> > > needed as early as possible during boot to start controlling shared
+> > > resources like clocks and power domains, while the clock controller needs
+> > > one of these shared clocks as its parent. Currently, there is no way to
+> > > distinguish these two use cases for generic mechanisms like fw_devlink.
+> > > 
+> > > This is currently blocking conversion of the deprecated custom "qcom,ipc"
+> > > properties to the standard "mboxes", see e.g. commit d92e9ea2f0f9
+> > > ("arm64: dts: qcom: msm8939: revert use of APCS mbox for RPM"):
+> > >   1. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
+> > >   2. The clock controller inside &apcs1_mbox needs
+> > >      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
+> > >   3. &rpmcc is a child of remoteproc &rpm
+> > > 
+> > > The mailbox itself does not need any clocks and should probe early to
+> > > unblock the rest of the boot process. The "clocks" are only needed for the
+> > > separate clock controller. In Linux, these are already two separate drivers
+> > > that can probe independently.
+> > > 
+> > 
+> > Why does this circular dependency need to be broken in the DeviceTree
+> > representation?
+> > 
+> > As you describe, the mailbox probes and register the mailbox controller
+> > and it registers the clock controller. The mailbox device isn't affected
+> > by the clock controller failing to find rpmcc...
+> > 
 > 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml  |  1 +
->  include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h         | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
+> That's right, but the problem is that the probe() function of the
+> mailbox driver won't be called at all. The device tree *looks* like the
+> mailbox depends on the clock, so fw_devlink tries to defer probing until
+> the clock is probed (which won't ever happen, because the mailbox is
+> needed to make the clock available).
 > 
+> I'm not sure why fw_devlink doesn't detect this cycle and tries to probe
+> them anyway, but fact is that we need to split this up in order to avoid
+> warnings and have the supplies/consumers set up properly. Those device
+> links are created based on the device tree and not the drivers.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Does "post-init-providers" providers solve your problem?
 
+Rob
