@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31FC1C8621;
-	Wed, 14 May 2025 15:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F4813AA53;
+	Wed, 14 May 2025 15:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235304; cv=none; b=pIYV3bVHJv/fPCA5DjoqwNVajAWRL7jkIgkex3lsMTLTAHfaVJEersOqzHmLdC+DMfpTGFpqaPQXHa439104HZQW+Wy6ikfgLWPYUfm91omLiW1R1GQwyunsxPsjgSqEUXVLaIjUkHXIz0Uu+9/ohbs3uHC6RHo/c1DVmdiZiUE=
+	t=1747235318; cv=none; b=HwmPIF0OAF26PoqjdjQ6iP533fTBG84WgMZoKye7dpm9F2Rdpda8Ln+rmjVUMJzE3xKq0/wiL2Ydmt6ZC8xuzMqyIb+eq9T1eehZ6T7JBndT6pHT9k3sYZezMQBVlhz2s0UJ3eGG4l8D+o8mdd0YsOOcBrEpS9kW4TofMlbrrzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235304; c=relaxed/simple;
-	bh=NwS1B7xosoDUO5tvEbjazSqGCbiVpg+Ub8mt/kAm3Y8=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=qa+CTFZI4uJZRkqAG2Gp8Z8XDDyqnTDlSbQNQvrV1AOk9nkef3oL1MyHS8EUO9mo7Y7DWhhiQeNrzMa6yWIEn9P6bqbItiza+mJx8rmsGll7s7XHPuT6brKvVitglDmEmzErT4W1+fFfhHKbA5vtzsbhWfeKrKYq8GhdnOOiv6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWN/WMdW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747235318; c=relaxed/simple;
+	bh=dkUlkhBMN1t5KmsuDVUB+kb6HjGenkUO4srDC9L1fQ0=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=L4uWHLknK5G/7+HvRXbmgCmG112omXjHo3z8fM/LABP2oaQT9gvLltEXeRreRTwItE86CSBybt/8pp9Ag0UI/5LUTVyfRg1ogq8JTOFDy2GxOUm3tbiT5tXnHgC3DlgS+CflFyNppcZ2loxdArOPa2yZogIrUqo+ogoYoRgKFkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzaJryF4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWN/WMdW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B9C5C4CEE3;
-	Wed, 14 May 2025 15:08:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzaJryF4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEBEC4CEE3;
+	Wed, 14 May 2025 15:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747235304;
-	bh=NwS1B7xosoDUO5tvEbjazSqGCbiVpg+Ub8mt/kAm3Y8=;
+	s=k20201202; t=1747235318;
+	bh=dkUlkhBMN1t5KmsuDVUB+kb6HjGenkUO4srDC9L1fQ0=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=aWN/WMdWE1PCBthnaJXqUMGe1aMIEUcwedLYmMvOqp3gLpWVWDULMhgOdOssGYL7F
-	 Ux6eqGHwcD25ra82uYyaDFCffC2Hjg5eRVBd8Zjg5WPp5nERBe0jZ9HNwKk1CGWsmu
-	 uRP850sK2HnKUiT6TA1rchg/P9bA/ZNZwPV3d9cJwyNkUUVEXK6YX68PF3sF/63PnW
-	 s2YT/hITmGfEmg5iRSqgvGnZ7RwFDACT2KJDDnzuxEi3qMDTccfiM5mzq2xtlG7RQf
-	 JURaUBMP/w/k11jm6RWzkMUlRkrrZGsQu0rLJkL6WhPF4xn3EpzhKYLRj6brxaJO5k
-	 KVUXH2Uc2g+VQ==
-Message-ID: <b628554bb2ebc2e0983bd904b04d790e@kernel.org>
-Date: Wed, 14 May 2025 15:08:20 +0000
+	b=TzaJryF4QEbqCY9JT5vXe7oyF7HcBzwcsyH8Dy8zfU1XzVYj0rUfz7AAI4slg/IKW
+	 k19zDKyuLgxgcmcG9Hc2NoKOliC1Xhhok1Dfd3/x9niP13rJYiiRf8qCNdLsYjmRx5
+	 rx1NmjYLze6uOKuSr5K/ptr5f0epDCoNDpvjiUB43rdUaUecMqy6YKdHj/XSGHSSnr
+	 x02MaB7brWzbHBl5ye48rg98iPOxwlJdgtrx3qKqArufS7ATM9VCcwxd+AEjvuXKSx
+	 S/6L+hpht9awAX4As2CKVy2Yv5lXW8AwgGx8PJs0UuBebJFab5v82GFpoP6cFGtzwl
+	 74tFcd5pmyqPA==
+Message-ID: <a509a73e96ff6875c9c5d09b6f12d35e@kernel.org>
+Date: Wed, 14 May 2025 15:08:35 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Ryan Walklin" <ryan@testtoast.com>
-Subject: Re: [PATCH v10 02/11] drm: sun4i: de2/de3: refactor mixer
- initialisation
-In-Reply-To: <20250511104042.24249-3-ryan@testtoast.com>
-References: <20250511104042.24249-3-ryan@testtoast.com>
+Subject: Re: [PATCH v10 01/11] drm: sun4i: de2/de3: add mixer version enum
+In-Reply-To: <20250511104042.24249-2-ryan@testtoast.com>
+References: <20250511104042.24249-2-ryan@testtoast.com>
 Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andre
  Przywara" <andre.przywara@arm.com>, "Chen-Yu Tsai" <wens@csie.org>, "Chris
  Morgan" <macroalpha82@gmail.com>, "Conor Dooley" <conor+dt@kernel.org>, "Daniel
@@ -50,12 +49,12 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-On Sun, 11 May 2025 22:31:11 +1200, Ryan Walklin wrote:
+On Sun, 11 May 2025 22:31:10 +1200, Ryan Walklin wrote:
 > From: Jernej Skrabec <jernej.skrabec@gmail.com>
 > 
-> Now that the DE variant can be selected by enum, take the oppportunity
-> to factor out some common initialisation code to a separate function.
-> 
+> The Allwinner DE2 and DE3 display engine mixers are currently identified
+> by a simple boolean flag. This will not scale to support additional DE
+> variants.
 > 
 > [ ... ]
 
