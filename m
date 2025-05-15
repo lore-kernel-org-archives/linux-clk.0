@@ -1,54 +1,76 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E629ACD7;
-	Thu, 15 May 2025 12:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9AF295DB8
+	for <linux-clk@vger.kernel.org>; Thu, 15 May 2025 12:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747313466; cv=none; b=TGehvT0LEZr95hUZMjSMEAWBd/U8D4pygOPOiUH1H8sTgDSG5YTQk3g3XFd9pZdDqURXubggvvdOGKmElQqMQzY2uWTFu5RstpEu94fg84yFMKn6LMOeOUUe0NeTKY2VapacYaXoOjMqWF5udA8SoK22ZBOxOK7WeBPC/4K87/c=
+	t=1747313956; cv=none; b=hdUo2MqTJsxosi8Sz0uEyB56xz0+McrcoLyiS+uLOOHdiaZW+qgqD80oYcSVxSFSSt9UPW+Dxkiiv1euhrzViRXcTd2sfZ6rFszNqC+9uNth/NGbWmGUU57IfrA+FNxYkXLwmCZY76W3vCCn5zpVsjjRwRLNp+9S/P50ZlCQ7H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747313466; c=relaxed/simple;
-	bh=dGNaWkGgS9U31fWTHyQBFUOXdmxvm/T2H+mtOiW2Qcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DJhOrcJzPhOeQOsagyIZUCZ+a42LzXOG5Q9PSkDZ5xEuVKyrooV1NUxHOYuh94erpDXm9Cwiml4xywWpqqLAAv1L6Le3TzIkDHCkFesmoOJ1G9mDrkJ4hZUhrs/rwZFPp1ZcRqUQiTi7yQwIoO9m9vOHWBzCLn4fajCkslWh/MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QwMHcV9K; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1747313956; c=relaxed/simple;
+	bh=ZU+L9HRsuQDe88PKm6tInPPVLfT8JP5Bqdm/hv5vNlc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mUOQbAZDfP0TPwtBLZpsP+leX4os9o10SvqsMAca57GIlSk9bw+bt4pnnu6S+YphDh2OnFXOoV7STBqZnb+VH7B5+84UyRhIgVnLZiwWNUXOsApnqxg6+r9f3++G2Riey8hmbPbW62eYeVSPXvKFQ7+XEjCFWEESu/i7DPJtQHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pyjFK9Xt; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QwMHcV9K"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=QaorzZ1NhBrQjON3+nty+UxvATBO1FN3Ey2kw1dXSHA=; b=QwMHcV9K3OBIS1QzeAX6NAb4vg
-	WPH/JpNo0ANxNir+AML2JbRsJV8k69cVa+APK/0gg2iDCyQEzi0w8eqb18VswH+blDAvspTSWPr/G
-	fqd1amrwEtNbXqn3t9BPsPPKpa4877g4MfcsIXXzPfY5U/4r/GfLDXz3Q2GPxUBvYAKwYMs+wuTj5
-	1/4dXyTZZZswUt9hdt8AMOgsWAlvK2/ALPsPmvT0fr2KzhAhuGPWStGK6ioyXDOVuiycEgTI6yMc5
-	yhnj4BkI2CFmHBsBzLeQfPOAu4WjiJY5l+vHw0dTibVHMDD3Lfkdv36+dzUMWFb0kXnUxLVzX7FBf
-	ltdmNQMA==;
-Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uFY38-0004ph-0W; Thu, 15 May 2025 14:50:58 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	nicolas.frattaroli@collabora.com,
-	ziyao@disroot.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: rk3576: add missing slab.h include
-Date: Thu, 15 May 2025 14:50:42 +0200
-Message-ID: <174731343064.2524804.7884388044477445638.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250515082652.2503063-1-heiko@sntech.de>
-References: <20250515082652.2503063-1-heiko@sntech.de>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pyjFK9Xt"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so9840175e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 May 2025 05:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747313952; x=1747918752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=93NSiG1e0zBMLdXcPRXVb1UoRXanauxq8sjT5bMUUhw=;
+        b=pyjFK9XtrtDE1rF0UB8WNs7RuSwJ7+AKtdGrvj3EG4mc1inZzPv86zFMsqVKhDQ2ws
+         FeEtB7VIiurpiedqWyBJ4eWL6MKAwrADiKe1FRzgx0x1rQbzpSKWW/0u/MYGkdn//tv2
+         lwnxnqrdynRwL/As8WvGxIFnLvWSuz6TujNBrk6yaZQ0Bv98sgeIerE/j/FDuhuN7PwH
+         DpQof3y3pGPoi+PPzKBk7d1aaVgc0I23veNwoVOtYvkrYsfjwNnT6AufHadfiD2jlgyE
+         L1L9L+REm4EUtFvSjDy2mmLgdod6h8Dmy97Sv+4Qdxiuhtch/ZjlKMd+rgIUs+BLB9AR
+         1iuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747313952; x=1747918752;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=93NSiG1e0zBMLdXcPRXVb1UoRXanauxq8sjT5bMUUhw=;
+        b=Ranz7T2eG8AYqOl7ur0IIDxJexdhHbwZUX3tmWZTBVa+Q3tFEfUz9Bi2PStp+6C1T7
+         K0kfFuR4g45m9yRGmIFDh6D4smAYb1i5GG96d1MDId8Hk+1A6lFwc49EqRUWfwQ61qws
+         Crsv4ApjzLahCL+Kg6AHsn3wUDBwlG7gj2F2mCG4LaJjtB0L/wh4RpTeIfiL+aba5EuL
+         DuolqflZBGdiptFzWC9YVUbqlXR4F+sJ2VsaDpBQCqpuBHTQuasbB0NWtBsmfpXSyCSV
+         a1d2iggL3GmaROs4H5AgYyaAQldg1/hj2sA6s+Q4xqBWLa77OdrhtIWiriOrZAYR7enC
+         tUFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUW2WR7nIh5viZfk4NiP1ofGssi5VM2INcTcp4vbL80yWCN89YYViJJPPFa3AZsc28pZgn4Yt+wVLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrpCWw4K0VP46ZVkzS8fWbQzgIxrBqlkICCEQZNi5SLBFSD0DK
+	Xzif2D8xKzKxxAQr/GL4xE9f3PuQtkXdmine6XkzGSnAee0PVrc3mVmjKQ7z0VI=
+X-Gm-Gg: ASbGncv2BBi0OxRqPkNBlRDKkua7RZ0Q1v29vmvijudO+mCHD1ne4ZVZG+aU7CFr69l
+	VLE/qqk9qzxpcndgb/WqGFj/XHsXHn9Dr5JuMUmZZZB8Vy79HEUTYkJlKtc+4yQ0xGPHKrzXV3V
+	3OXpzJgWrhfbajHS5OCTKgdPoI6EWZrZYpIutH4nWvtjWtKTwiGYW834B02KCosyBvg5CNwCgR5
+	V78XdROns85TpWXualj8q1m7H28loRBM/GEyzfFlTBTSdSIUMk2RryVPuUIdTKsF3Adiitfchpx
+	PuwVst3eZul4mzS6FqSYj64MK2lMedc4CNsSHGw2w8V0EiamFwHFIMNWuJAahELz5A==
+X-Google-Smtp-Source: AGHT+IHpy1rhqw987Tuz+RK9oDjiZ/Y3wtsR+06Hh2lLmeOPW+aVkSCgkOsbFAx/A5adDBQ/I/BpHA==
+X-Received: by 2002:a05:600c:6612:b0:43d:878c:7c40 with SMTP id 5b1f17b1804b1-442f20e1abdmr92975295e9.10.1747313952121;
+        Thu, 15 May 2025 05:59:12 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:82b8:c32f:4d8c:199e])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-442f39e8578sm71180475e9.29.2025.05.15.05.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 05:59:11 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Da Xue <da@libre.computer>
+Cc: stable@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250512142617.2175291-1-da@libre.computer>
+References: <20250512142617.2175291-1-da@libre.computer>
+Subject: Re: [PATCH v3] clk: meson-g12a: add missing fclk_div2 to spicc
+Message-Id: <174731395123.3761659.11544664862448009697.b4-ty@baylibre.com>
+Date: Thu, 15 May 2025 14:59:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,22 +78,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
+Applied to clk-meson (clk-meson-next), thanks!
 
-On Thu, 15 May 2025 10:26:51 +0200, Heiko Stuebner wrote:
-> The change for auxiliary GRFs introduced kzalloc usage into the rk3576 clock
-> driver, but missed adding the header for its prototype. Add it now.
-> 
-> 
-
-Applied, thanks!
-
-[1/2] clk: rockchip: rk3576: add missing slab.h include
-      commit: 92da5c3cba23ee4be2c043bb63a551c89c48de18
-[2/2] clk: rockchip: rk3528: add slab.h header include
-      commit: 276036283716b9135525b195675ea42801bde204
+[1/1] clk: meson-g12a: add missing fclk_div2 to spicc
+      https://github.com/BayLibre/clk-meson/commit/daf004f87c35
 
 Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+--
+Jerome
+
