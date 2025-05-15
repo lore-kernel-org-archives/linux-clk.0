@@ -1,100 +1,183 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CAC78F26;
-	Thu, 15 May 2025 13:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2701EFF93;
+	Thu, 15 May 2025 14:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747315912; cv=none; b=Tj6+oZsAfw8aHM46J/i5DSUbFH532cAlT0FSW0am51+sjGvl4U0sSSDdA5Z5nZKsdLQBVnHFWm5ZDPHkKEDYiUjNWT9wCql+MWQ2YVad8734VRFlLxFX60DzcOBA4khp3MokRXbYvlCnGqQp8nLrV0LoQMUwSzL9mk8TjKvOyhI=
+	t=1747318733; cv=none; b=ZU0ehA/h2BPHBNpkFTUq1FRyWr31/kf5DJWpbfmiQlQ3YF3Vy/ZWY0+onjimoGUhNboQXeBV2tzdJjNG02bpnMkdt7gEeZO1wd1LpkcRLDLNtUF5UaKZxk8LG0OhJqwo3ObMwx7vQCWpYZnKT2EnlnoRHh7p3fqHT/ugVHyw+0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747315912; c=relaxed/simple;
-	bh=8VVU8NVRnTpjcLWUjqNAgSssaH4toawfwMWnPXvh4zU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DV86/D7xuh0/6LBnlJgVqKxic5Vtk6WistAukQ4Xlce0Q41+yakyo9V5zsuJ9LpjXWucHUSYScExGSKlEFQYgj0J3Nz9om1T2i9FLaGXnE4i/Po1THUCxdZQK2dcED5AkyCUiRxFasLNtAcMKW7v6lVUA32P1GrEVFAuaqKqJHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=n1iegtna; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="n1iegtna"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747315909;
-	bh=8VVU8NVRnTpjcLWUjqNAgSssaH4toawfwMWnPXvh4zU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=n1iegtnaJRMXTSutf212UUiX+v9k41CzAhn8UMiV+FHxiMozVyEhPasaFgmbDOXsf
-	 9ydE7VuFRNJi1ESO2sIOqYlgRl6+8RTzkX7XfldCKOjiPq8ZO8ZTn4iAgr7+oPxzOX
-	 zve5KuPj+UOEp8gvbWnf54YcCdK5jTUDlOb8nhAHzQwGy6WbfwE7kxUWkQMtWVbXHj
-	 tNYd9woATMW8GSRsV+4FioHg9JzBhxemu9srWBt+VZtAFVGF7n74y6g4kOdskW6c4y
-	 WK6uxnrAqQdS8joyiXWnp492ZS2TqCL18WnJ6prwN+6S6VD688b5mYZQHXxkBPHyaZ
-	 1CbpZrR9RTRTg==
-Received: from apertis-1.home (2a01cb0892f2D600c8F85cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 77B4017E00F0;
-	Thu, 15 May 2025 15:31:48 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Thu, 15 May 2025 15:31:45 +0200
-Subject: [PATCH 3/3] arm64: dts: mediatek: mt8188: gce: add missing
- 'clock-names'
+	s=arc-20240116; t=1747318733; c=relaxed/simple;
+	bh=GsOecQKdzXnOXnoxUa76dc8yMQrbi4afFRVPbHIhfNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kxBlpx+sDEXHN0cRB9+M6DqUc1fbOzdJXYnVkp2zXppxGCy9C5ljzEfe2JFxkcw6R8QSGt4uucqL4uUEnyJtvf0lLA/Wh7txJpme9hNk+m/zUNTRM+QlzKRSGRmK7YMzl0Ctbg9mGvoskSZc7ImdRNdtXgrfXKQOVzMZDbDKqo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: unLBMMFdSOivYWmicWTruw==
+X-CSE-MsgGUID: ZYGS9bHnS7mOOIofWXcNjQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 15 May 2025 23:18:43 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.187])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 581E6401E442;
+	Thu, 15 May 2025 23:18:39 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 02/10] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Thu, 15 May 2025 16:18:17 +0200
+Message-ID: <20250515141828.43444-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-dtb-check-mt8188-v1-3-cda383cbeb4f@collabora.com>
-References: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
-In-Reply-To: <20250515-dtb-check-mt8188-v1-0-cda383cbeb4f@collabora.com>
-To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Garmin Chang <garmin.chang@mediatek.com>, 
- Friday Yang <friday.yang@mediatek.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-The 'clock-names' property is required by the dt binding.
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-Fix the following dtb-check error:
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: mailbox@10320000: 'clock-names' is a required property
-from schema $id: http://devicetree.org/schemas/mailbox/mediatek,gce-mailbox.yaml#
-
-Fixes: 45682a4fffdd ("arm64: dts: mediatek: mt8188: Add Global Command Engine mailboxes")
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Changes v8->v9:
+  - keep clock names in generic section because T2H is a subset
+  - removed R9A09G077_CLK_BSC, to only keep R9A09G077_CLK_CKIO
+  - removed R9A09G077_MSTP* macros and module clocks definitions
+Changes v7->v8:
+  - extra parenthesis
+  - added loco
+  - renesas-cpg-mssr.h: removed unused clocks, added a macro for mstp
+Changes v6->v7:
+  - Add description for reg property
+Changes v5->v6:
+  - Set clock minItem constraint
+  - Moved additionalProperties after 'allOf' section
+Changes v4->v5:
+  - Set reg minItems and maxItems defaults at top level
+Changes v3->v4:
+  - Handle maxItems and clocks names properly in schema. 
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 46 ++++++++++++++-----
+ .../clock/renesas,r9a09g077-cpg-mssr.h        | 28 +++++++++++
+ 2 files changed, 63 insertions(+), 11 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index dec6ce3e94e92c8e1e2c3680cb3584394d9058bd..d5892ca35bc29f830d7894ba592aca3f58dc3bdc 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1372,6 +1372,7 @@ gce0: mailbox@10320000 {
- 			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH 0>;
- 			#mbox-cells = <2>;
- 			clocks = <&infracfg_ao CLK_INFRA_AO_GCE>;
-+			clock-names = "gce";
- 		};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..708ab6bd7d44 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,9 +52,15 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
  
- 		gce1: mailbox@10330000 {
-@@ -1380,6 +1381,7 @@ gce1: mailbox@10330000 {
- 			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH 0>;
- 			#mbox-cells = <2>;
- 			clocks = <&infracfg_ao CLK_INFRA_AO_GCE2>;
-+			clock-names = "gce";
- 		};
+   reg:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: base address of register block 0
++      - description: base address of register block 1
++    description: base addresses of clock controller. Some controllers
++      (like r9a09g077) use two blocks instead of a single one.
  
- 		scp_cluster: scp@10720000 {
-
+   clocks:
+     minItems: 1
+@@ -92,16 +98,6 @@ properties:
+       the datasheet.
+     const: 1
+ 
+-if:
+-  not:
+-    properties:
+-      compatible:
+-        items:
+-          enum:
+-            - renesas,r7s9210-cpg-mssr
+-then:
+-  required:
+-    - '#reset-cells'
+ 
+ required:
+   - compatible
+@@ -111,6 +107,34 @@ required:
+   - '#clock-cells'
+   - '#power-domain-cells'
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-cpg-mssr
++    then:
++      properties:
++        reg:
++          minItems: 2
++        clock-names:
++          items:
++            - const: extal
++    else:
++      properties:
++        reg:
++          maxItems: 1
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..29155fb0401e
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CLK_CA55C0		0
++#define R9A09G077_CLK_CA55C1		1
++#define R9A09G077_CLK_CA55C2		2
++#define R9A09G077_CLK_CA55C3		3
++#define R9A09G077_CLK_CA55S		4
++#define R9A09G077_CLK_CR52_CPU0		5
++#define R9A09G077_CLK_CR52_CPU1		6
++#define R9A09G077_CLK_CKIO		7
++#define R9A09G077_CLK_PCLKAH		8
++#define R9A09G077_CLK_PCLKAM		9
++#define R9A09G077_CLK_PCLKAL		10
++#define R9A09G077_CLK_PCLKGPTL		11
++#define R9A09G077_CLK_PCLKH		12
++#define R9A09G077_CLK_PCLKM		13
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
 -- 
-2.49.0
+2.43.0
 
