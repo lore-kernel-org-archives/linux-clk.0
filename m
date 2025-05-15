@@ -1,65 +1,65 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C02820D8
-	for <linux-clk@vger.kernel.org>; Thu, 15 May 2025 06:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F291125A2B2
+	for <linux-clk@vger.kernel.org>; Thu, 15 May 2025 06:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747290539; cv=none; b=aEvt6+UY09Z5plR5beH7maRvNzDcsxOqkhu9jG2q8uogwbbruPq3Ge0GwInUYPuqSuUUO3xvRjLV2RHeQf0jbdvluKoem3ScDQNZ6gmDlAv4qseFoGgWchnwy2jpTo0dnjE10YPETlQXNjaMsr4mUOuyzMbzI+pnuOGQ5Ke/0xY=
+	t=1747290853; cv=none; b=oAfA6mPBzvQco9MSFWbYlkv6RjG0TgXarl/3n/5r5EU6F3HzakjN9qAYSbrGRdZscG3bU3GXIOZEZJ/ILiEaoFYEgdsk7jqtwBAKyVjI+SmkkLFePc+6qF3woaq1QUVJgv94VDVpyjv0OLyCXX0/2ZaaS+5zy607UOlaQa0pBEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747290539; c=relaxed/simple;
-	bh=00AV94dG2ZcGMrm+oEM6uxQ3vNHzQbtkKeRhT356qXc=;
+	s=arc-20240116; t=1747290853; c=relaxed/simple;
+	bh=UCpHFms/9fZX+PC3YHyq6WBmI7oksVfgK9RI1AUF438=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rm5uBDgs2ciQg9fUVq54fog7i0wr4Pgs6FKq96+z7Wga5xflz3PJQoTm2ykhfqidwhxwatYTRZTdr/xbS5yUcGDCFQBWYUi6g9P25AC7ZD/kNdin8UiRgXywo3d6rcgWYAeaNsr3EixhL8DrC+J3uUgMMFJa+j6i8rZA2a9noDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=djxWEGz8; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=IKrszwI29gh+TnrOXC+zooaXw9GIr5vSQjbUhghZSeGOyczAojmsxnvEKTaLj/ZIlRJqm5mBZ626c9Jga8hBb1IF858BuB8xFWGM5UqSD+H9pojj4JJYdaNjP/UCsLGVWmeQb7ejXSb+ihdqG9c5QwscWkC0AfSSJgOJHk2B7PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKbHql4N; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="djxWEGz8"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so12680435e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 May 2025 23:28:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKbHql4N"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so5844425e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 14 May 2025 23:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747290536; x=1747895336; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747290850; x=1747895650; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ltzFKNmbLblqGQ8qkM/SiBLYExEz5st/fzGa1uhJzPM=;
-        b=djxWEGz8EOHzllt9drcA4a2TkEtmrQnBzk/C9HJ0xrzdOdjyysxoiG4hv/ZA2BkQei
-         A8J+QtR4pQPHBBH/7cpjcpoq6Ih6nNrZcxeGXThBilvG5VBKu6dZ+2L6hcQwBaGYTHy+
-         YzholSNzE0kG6mgOvaJgUox3KyEWn+e4xqW8/NiE33TdTS6qnYnkfGkdCtTu0zxj40Gf
-         ZnytTbEq02cAGz/pZ5CXtXfwU1xa9YZIhCXcc+Iicu5bnVN6psoTQtREwiX1KTw7sJTq
-         4+/0i49vuF2r0J2MkVIePzY7TLnT0VpyzXhYk4U1AcScNEEi3H9M8Oarr7Uf5MW9RfE8
-         4xzA==
+        bh=o/T0UCXB5vuqasYwa49l0chQi6vqaR/vGdzNl5dXsTs=;
+        b=OKbHql4NjfeTykc17uNo8rHZ2OMXQ+2CIImGuBJeTJh9rccamrjEdgAxVD4n/UQ8x2
+         2tikjFXC/bffpnk0gE7Db/exYYQdXMSxjdXPJeomdyKHZ5VlcBFE6AUIj6wGJFdKukMf
+         1HQ68YJMF8Qjh/DGMziLgVjJz1RClLyBrC+m+SiE7Cku99zcz1gL/cKm/dKMVd7y1Vwp
+         9q4mzXR+OjEwgt36BLnK3LpvSQWnOm7m9jDanrc8E2ikFiqqx8/P4aQpCRB4VeZIkskl
+         lSoQs1hO5wPmn7LNAvjzKPLELTEAYFoMoRQQLdYm+oc0/EorSvTnHnaN7cNVLLHzNcQt
+         yH7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747290536; x=1747895336;
+        d=1e100.net; s=20230601; t=1747290850; x=1747895650;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ltzFKNmbLblqGQ8qkM/SiBLYExEz5st/fzGa1uhJzPM=;
-        b=kaHs3dnADuoql1WZtfIVCwejiTT5AX/D3JjOJN0AX4l3exuRf4mqQtGFQxJYQUhgBH
-         wzr+v4Hg69W7LjcS4+UFMpQ8bnRvRznQQOyyB6W64Ei28usQ+38D6iVobXhssIWi2FNs
-         K6gWetl06WmjPCD5F7r7rod2MV2XCjmttQXrUI8WcWZVpQ790hDirZ+IIyfYZTtdvtfF
-         1vbo8jSdsuI6DPCHeDUfKmSQBP/qrvoBoYOkF01DwANICjPTnUGIBESkv2GynUDQlEdl
-         2nlHRZG6daMPlLwD1aFdW1KdvrrE7RWGMwkC3Kvab9KA+UCmMemd+3uFh6hsfNb4+N/v
-         WbbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoXRxwH67aR75AtEfUN0R/DXSQZ3+qjulPwjMf+EGzfnNgSRD/s7+coMyh9Vd963n1V0BA8AnzdTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz57jFAIHHo4T0gkGC9VirS80t9MhXEs5Ai/Ox4nXdCTeLkADSE
-	up3Tl61xbshfYjl4d1ustRz/Loqg/P+l5QBdo1202iP5KOEAfxpOjbeHOJF65TI=
-X-Gm-Gg: ASbGncvOaObwOhbLgLGDLfcUOgar4WTbi8PTdqQVfmIcMgVbNXc3fsgoMga9SvEHDp9
-	Ie9OA/t1+7idbZXTa66SlZ8FWwgcfvshx3CL0QBEhRpAcFHzfc306/Jvc4Or3ITYVHGtnHhUcCP
-	5Zjbu4jxtMs6Tik330Ld5QOb7LAVsjRrNiCFunke2DQ+WOAm2vFS6UGbDWPv4rzCx5s6VRaGkjx
-	UDP24neL8kpRRcqzAeIWYn0TqLArwkqmiubNM+0m0mDwchv6AdYG3/MOHDHEMipOhZH1eQbYiQh
-	Y7pSBc6XpZwGLERUMOc8scebUrgyvU7WKp7iOFxja6LEd6hw890kz+dsJUcI4A5ojHNemYLG/WQ
-	gIYmilfIy4o3W
-X-Google-Smtp-Source: AGHT+IHPjN36nPIAFheoxSJeMD7QVqgCVlEcC9j4OaPSYI+l7JvLUZZ3UyCX1An8LX7/LhBBB/f7Gg==
-X-Received: by 2002:a05:600c:6814:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-442f84c7cafmr20169815e9.3.1747290535806;
-        Wed, 14 May 2025 23:28:55 -0700 (PDT)
+        bh=o/T0UCXB5vuqasYwa49l0chQi6vqaR/vGdzNl5dXsTs=;
+        b=BYJ5NMcS1IKnenHZob7TTOcHIsggO3zT07Ed2t52fTsvNHJ5y08SKQT/eCQqdlfi/0
+         D0hLmkWts7GfqxjycIhEjJuEalD8n2bljtvFRpD7SLkBhemqhVerOs6PIbwEFL731Lyg
+         GYGMcb2XgIHcgD3eZMwDOOD9Ao7/qzGCKdXpRimWKTKhjYjibkw9c5KAmyFfGHw6R3vo
+         mJECZka1nVRwf6tjNqy1C/5bFrQDmQmfRlYf33Wza6WBC92Sz/PhxZx7yhpUB7/cvOo/
+         PBB+rBzdU5yZgykPvWqH36FdHCU94855QSa947DZcyfjsu8nIaq0ytpvIg0Y7sl9iOLE
+         wmrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLt1PSrgiSUWE+3YaTvQFqClORvUtyaGk3CcW9fbdnX16vZFI5zqOSY0NNlAjXQyLSI6uidYgr1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEEHrJhPLILPiOnmlRvD2qR84lYH7ZJyXdF32AMB501nwOEehH
+	22zo/Y356vpHR3aQulGHmqLupaCbLhUXEdenB51zLkDgNm6vMlX8fx3dmU0GDIA=
+X-Gm-Gg: ASbGnct77cwo4nkBy1GAvl9tXqR4LFCGLFLNfouA9yD8Fn3Ze9MCWfQa5nCFzOfD1PO
+	a2UdEMO9XV7iZMYA6xvVUVTO++c7+h7Wc59rt3VU5kekzl7xU3FOVYmw18tPNjde7SANKh+Nkl0
+	Ql4dd5r6lwu5Knsgg63qRdZfTume8c3mv9tZEEqXpINl/0UhQxJKPleTVz7B4R1MYEGUJmaVuFs
+	9Hz/zi4IPZu6qXB4xqRhcLhVJu+7MpWrpZYOkOQEe1Py8gKpohDIOVealPp7uaFzieY/QVzRJEP
+	j5QBRQgNjz+uoUCrUFycUC9efYADJlwlf1fR0SlMoNSWcV8km6VgbfRYQGHBL2+5OWz2Z+9TjXJ
+	qiq5xAVmPexwp
+X-Google-Smtp-Source: AGHT+IGi6GK0v/GAXDSDVd1UWmFfUHkAK0muwDMNzaFEMuRS6/TbSssIhPYz9lFtq+QsKOZ2rwrtRA==
+X-Received: by 2002:a05:600c:a0d:b0:43e:a7c9:8d2b with SMTP id 5b1f17b1804b1-442f21684a7mr50470315e9.24.1747290850242;
+        Wed, 14 May 2025 23:34:10 -0700 (PDT)
 Received: from [10.61.1.70] (110.8.30.213.rev.vodafone.pt. [213.30.8.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f3951b62sm58204595e9.22.2025.05.14.23.28.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39e8545sm58519295e9.31.2025.05.14.23.34.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 23:28:55 -0700 (PDT)
-Message-ID: <e6f8bf0b-4a17-494d-96c8-7384f9426ff7@linaro.org>
-Date: Thu, 15 May 2025 07:28:53 +0100
+        Wed, 14 May 2025 23:34:09 -0700 (PDT)
+Message-ID: <37aeea50-e149-44bc-87a8-9095afe29d42@linaro.org>
+Date: Thu, 15 May 2025 07:34:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/18] clk: qcom: common: Handle runtime power
- management in qcom_cc_really_probe
+Subject: Re: [PATCH v4 06/18] clk: qcom: common: Add support to configure clk
+ regs in qcom_cc_really_probe
 To: Jagadeesh Kona <quic_jkona@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -82,23 +82,29 @@ Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
  Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 References: <20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com>
- <20250515-videocc-pll-multi-pd-voting-v4-5-571c63297d01@quicinc.com>
+ <20250515-videocc-pll-multi-pd-voting-v4-6-571c63297d01@quicinc.com>
 Content-Language: en-US
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250515-videocc-pll-multi-pd-voting-v4-5-571c63297d01@quicinc.com>
+In-Reply-To: <20250515-videocc-pll-multi-pd-voting-v4-6-571c63297d01@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 14/05/2025 20:08, Jagadeesh Kona wrote:
-> Add support for runtime power management in qcom_cc_really_probe() to
-> commonize it across all the clock controllers. The runtime power management
-> is not required for all clock controllers, hence handle the rpm based on
-> use_rpm flag in clock controller descriptor.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> +		if (!pll->config || !pll->regs) {
+> +			pr_err("%s: missing pll config or regs\n", init->name);
+> +			continue;
+> +		}
+
+If you are printing error, why aren't you returning error ?
+
+I understand that it probably makes platform bringup easier if we print 
+instead of error here.
+
+I think this should be a failure case with a -EINVAL or some other 
+indicator you prefer.
+
+Assuming you amend to return an error you may add my
 
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
