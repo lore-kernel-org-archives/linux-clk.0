@@ -1,87 +1,107 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9638728C847;
-	Thu, 15 May 2025 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C029728F95B;
+	Thu, 15 May 2025 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747297640; cv=none; b=ts/8ekBb8kzy3N9rqs4Fn1wdJJ0GXapf7jCooWDAqV66b2ULeuKyJueX3FWtlmpkRAo/0AJNxi6AhGZdej37ldxPk6LDe7uvA/zLB6mTUyQuGJhjf0oDZjP5HCGCmw4FCJWUDKDsSTj+NwfrcvPloHerJOE3xsqIoFbSt4J3hwg=
+	t=1747301446; cv=none; b=dllvTGE7dmw/CjDBi1KFXvBF61na3BDg2kfJ8n+mytyvs+5fKZ+VWLkYudbELQ9vyzOGC5JUgkWHloJjKs6LF5FetKjU+vwZWfpyr17AYexnrzBSUoV638PGxNPNy8j05i2i8PZslpY13NczulMDcqSWDALQlftGZAS555Mb40I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747297640; c=relaxed/simple;
-	bh=pF1Il/IUpx74DrWIinad9ZPdMciJ7YZR9KyDM+5eUys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kz5g5+EiCbYO1B97LIn+Ms6FfFqeASgyfdSQMQE/jYneLt3H9vBA4C1isXZa9lAHBs/j/XhgvXaxglO3kzyFWSzTj33iezMNBsWadqV2e7luDTGwE0LFwNW0OZiAPDskd0xPFlCZebF/HwbC2Qy3Y9U1vvhTZxmcPWok2D2wpnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BbHW6MRQ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BbHW6MRQ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=tjZMaGznYTpgVkzcAZJLB15P+8pIgeWsz7sQYwAvhuY=; b=BbHW6MRQgqivLoVwFPVTJrHMYQ
-	8didFhmFojpowKxGBGsVehaGboufPYS6v4tflzKmoRcY0K7V8J5n7O4NaoS9wJ5OnJmZvNwa0Lf2/
-	0nZC93Ud1vKcDY2hq8CASdDh0dbDlTvyPEN3I9x8pJf8Src0txz0I1oqvUI4Rtotf/PK8OVRqjsoQ
-	udP6QfrZkIlHUQvMis9jjua9NWH/45uL1L/svgfoMTuIAttbKUkyFMWiZsEgrMIHc3ItlREwSWNbO
-	UmPyrEvVymvO0Uocyp/J7UsoecGYFD9Z4/XTpPucDSh9Wp3+GUklG1JiVnRx8FXlPmf6zxfvOW286
-	5mnWKQXw==;
-Received: from i53875a50.versanet.de ([83.135.90.80] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uFTvs-0008Fm-0C; Thu, 15 May 2025 10:27:12 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	nicolas.frattaroli@collabora.com,
-	ziyao@disroot.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: rockchip: rk3528: add slab.h header include
-Date: Thu, 15 May 2025 10:26:52 +0200
-Message-ID: <20250515082652.2503063-2-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250515082652.2503063-1-heiko@sntech.de>
-References: <20250515082652.2503063-1-heiko@sntech.de>
+	s=arc-20240116; t=1747301446; c=relaxed/simple;
+	bh=iKj4q91gS84iRtXfCHT5Q0YUZfIUid7N3CpwCLzvvAE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=uyN9246jQ801Diebq6Wou0FjFfxeKhI1+AXfJzEVHdUhJOG4p1EiX+Bj+/mFzU6UbR4Qie7FViwvl9BVBrqJ0MWhbvpnb0EbKIeeW35liws/kUaqi0Dm/LS/TASxtOyKv8jIcg6w/mDCDn36FmJvKu5Q4L2fY/SrJThyCIqdtXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Thu, 15 May 2025 17:30:28 +0800 (GMT+08:00)
+Date: Thu, 15 May 2025 17:30:28 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linmin@eswincomputing.com, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, ningyu@eswincomputing.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	huangyifeng@eswincomputing.com
+Subject: Re: Re: [PATCH 1/2] dt-bindings: clock: eswin: Documentation for
+ eic7700 SoC
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <174718561404.161129.10398945158829194944.robh@kernel.org>
+References: <20250514002233.187-1-dongxuyang@eswincomputing.com>
+ <20250514002516.290-1-dongxuyang@eswincomputing.com>
+ <174718561404.161129.10398945158829194944.robh@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <2fce3667.aaf.196d347ecb7.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgAXt5U0tCVotEN8AA--.13446W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQEDAmgkxWUdX
+	wAAsv
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-The newly added GRF types introduced kzalloc usage into the rk3528.
-At least for the similar rk3576 driver, the kernel-test-robot reported the
-missing prototype, which warranted adding a slab.h include.
-
-While it did not complain about the rk3528, so the header might be included
-"accidentially" right now, add a real include to make sure we keep it
-included in the future.
-
-Fixes: 306d2f5ddaa7 ("clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region")
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3528.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/rockchip/clk-rk3528.c b/drivers/clk/rockchip/clk-rk3528.c
-index f5f10493abfb..a5ff64b93f8f 100644
---- a/drivers/clk/rockchip/clk-rk3528.c
-+++ b/drivers/clk/rockchip/clk-rk3528.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/mfd/syscon.h>
- #include <linux/minmax.h>
-+#include <linux/slab.h>
- 
- #include <dt-bindings/clock/rockchip,rk3528-cru.h>
- 
--- 
-2.47.2
-
+SGksIEkgdXNlICJwaXAzIGluc3RhbGwgZHRzY2hlbWEgLS11cGdyYWRlIiB0byB1cGdyYWRlIHRo
+ZSBkdHNjaGVtYS4gVGhlIGR0c2NoZW1hIGlzIDIwMjUuMDIgYW5kIHlhbWxsaW50IGlzIDEuMzcu
+MS4gVXNlICJtYWtlIGR0X2JpbmRpbmdfY2hlY2sgRFRfU0NIRU1BX0ZJTEVTPURvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwiIHRv
+IGNoZWNrLCBidXQgdGhlcmUgaXMgbm90IGZvdW5kIHdhcm5pbmdzL2Vycm9ycy4gVGhlIGVudmly
+b25tZW50IGlzIFVidW50dSAxOC4wNCwgYW5kIHRoZSBMaW51eCBrZXJuZWwgdmVyc2lvbiBpcyB2
+Ni4xNS1yYzYuIFRoZXJlZm9yZSwgSSB3b3VsZCBsaWtlIHRvIG9idGFpbiB0aGUgdmVyc2lvbnMg
+b2YgZHRzY2hlbWEgYW5kIHlhbWxsaW50IHRoYXQgZGV0ZWN0IHdhcm5pbmdzL2Vycm9ycy4KClRo
+YW5rIHlvdSBmb3IgdGVsbGluZyBtZSB0aGUgbWVzc2FnZS4KCgo+IC0tLS0t5Y6f5aeL6YKu5Lu2
+LS0tLS0KPiDlj5Hku7bkuro6ICJSb2IgSGVycmluZyAoQXJtKSIgPHJvYmhAa2VybmVsLm9yZz4K
+PiDlj5HpgIHml7bpl7Q6MjAyNS0wNS0xNCAwOToyMDoxNCAo5pif5pyf5LiJKQo+IOaUtuS7tuS6
+ujogZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20KPiDmioTpgIE6IGxpbm1pbkBlc3dpbmNv
+bXB1dGluZy5jb20sIGtyemsrZHRAa2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZywgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZywgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20s
+IHNib3lkQGtlcm5lbC5vcmcsIG5pbmd5dUBlc3dpbmNvbXB1dGluZy5jb20sIGNvbm9yK2R0QGtl
+cm5lbC5vcmcsIGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnLCBodWFuZ3lpZmVuZ0Blc3dpbmNv
+bXB1dGluZy5jb20KPiDkuLvpopg6IFJlOiBbUEFUQ0ggMS8yXSBkdC1iaW5kaW5nczogY2xvY2s6
+IGVzd2luOiBEb2N1bWVudGF0aW9uIGZvciBlaWM3NzAwIFNvQwo+IAo+IAo+IE9uIFdlZCwgMTQg
+TWF5IDIwMjUgMDg6MjU6MTYgKzA4MDAsIGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tIHdy
+b3RlOgo+ID4gRnJvbTogWHV5YW5nIERvbmcgPGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29t
+Pgo+ID4gCj4gPiBBZGQgZGV2aWNlIHRyZWUgYmluZGluZyBkb2N1bWVudGF0aW9uIGFuZCBoZWFk
+ZXIgZmlsZSBmb3IKPiA+IHRoZSBFU1dJTiBFSUM3NzAwIGNsb2NrIGNvbnRyb2xsZXIgbW9kdWxl
+Lgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBZaWZlbmcgSHVhbmcgPGh1YW5neWlmZW5nQGVzd2lu
+Y29tcHV0aW5nLmNvbT4KPiA+IFNpZ25lZC1vZmYtYnk6IFh1eWFuZyBEb25nIDxkb25neHV5YW5n
+QGVzd2luY29tcHV0aW5nLmNvbT4KPiA+IC0tLQo+ID4gIC4uLi9iaW5kaW5ncy9jbG9jay9lc3dp
+bixlaWM3NzAwLWNsb2NrLnlhbWwgICB8ICA0MyArKwo+ID4gIC4uLi9kdC1iaW5kaW5ncy9jbG9j
+ay9lc3dpbixlaWM3NzAwLWNsb2NrLmggICB8IDU4OCArKysrKysrKysrKysrKysrKysKPiA+ICAy
+IGZpbGVzIGNoYW5nZWQsIDY0MSBpbnNlcnRpb25zKCspCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNs
+b2NrLnlhbWwKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9j
+ay9lc3dpbixlaWM3NzAwLWNsb2NrLmgKPiA+IAo+IAo+IE15IGJvdCBmb3VuZCBlcnJvcnMgcnVu
+bmluZyAnbWFrZSBkdF9iaW5kaW5nX2NoZWNrJyBvbiB5b3VyIHBhdGNoOgo+IAo+IHlhbWxsaW50
+IHdhcm5pbmdzL2Vycm9yczoKPiAKPiBkdHNjaGVtYS9kdGMgd2FybmluZ3MvZXJyb3JzOgo+IC9i
+dWlsZHMvcm9iaGVycmluZy9kdC1yZXZpZXctY2kvbGludXgvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2Nsb2NrL2Vzd2luLGVpYzc3MDAtY2xvY2suZXhhbXBsZS5kdGI6IHN5cy1j
+cmdANTE4MjgwMDAgKHN5c2Nvbik6IGNvbXBhdGlibGU6IFsnc3lzY29uJywgJ3NpbXBsZS1tZmQn
+XSBpcyB0b28gc2hvcnQKPiAJZnJvbSBzY2hlbWEgJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcv
+c2NoZW1hcy9tZmQvc3lzY29uLWNvbW1vbi55YW1sIwo+IC9idWlsZHMvcm9iaGVycmluZy9kdC1y
+ZXZpZXctY2kvbGludXgvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Vz
+d2luLGVpYzc3MDAtY2xvY2suZXhhbXBsZS5kdGI6IHN5cy1jcmdANTE4MjgwMDAgKHN5c2Nvbik6
+IHJlZzogW1swLCAxMzY3NTA2OTQ0XSwgWzAsIDUyNDI4OF1dIGlzIHRvbyBsb25nCj4gCWZyb20g
+c2NoZW1hICRpZDogaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvbWZkL3N5c2Nvbi1jb21t
+b24ueWFtbCMKPiAKPiBkb2MgcmVmZXJlbmNlIGVycm9ycyAobWFrZSByZWZjaGVja2RvY3MpOgo+
+IAo+IFNlZSBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3Byb2plY3QvZGV2aWNldHJlZS1i
+aW5kaW5ncy9wYXRjaC8yMDI1MDUxNDAwMjUxNi4yOTAtMS1kb25neHV5YW5nQGVzd2luY29tcHV0
+aW5nLmNvbQo+IAo+IFRoZSBiYXNlIGZvciB0aGUgc2VyaWVzIGlzIGdlbmVyYWxseSB0aGUgbGF0
+ZXN0IHJjMS4gQSBkaWZmZXJlbnQgZGVwZW5kZW5jeQo+IHNob3VsZCBiZSBub3RlZCBpbiAqdGhp
+cyogcGF0Y2guCj4gCj4gSWYgeW91IGFscmVhZHkgcmFuICdtYWtlIGR0X2JpbmRpbmdfY2hlY2sn
+IGFuZCBkaWRuJ3Qgc2VlIHRoZSBhYm92ZQo+IGVycm9yKHMpLCB0aGVuIG1ha2Ugc3VyZSAneWFt
+bGxpbnQnIGlzIGluc3RhbGxlZCBhbmQgZHQtc2NoZW1hIGlzIHVwIHRvCj4gZGF0ZToKPiAKPiBw
+aXAzIGluc3RhbGwgZHRzY2hlbWEgLS11cGdyYWRlCj4gCj4gUGxlYXNlIGNoZWNrIGFuZCByZS1z
+dWJtaXQgYWZ0ZXIgcnVubmluZyB0aGUgYWJvdmUgY29tbWFuZCB5b3Vyc2VsZi4gTm90ZQo+IHRo
+YXQgRFRfU0NIRU1BX0ZJTEVTIGNhbiBiZSBzZXQgdG8geW91ciBzY2hlbWEgZmlsZSB0byBzcGVl
+ZCB1cCBjaGVja2luZwo+IHlvdXIgc2NoZW1hLiBIb3dldmVyLCBpdCBtdXN0IGJlIHVuc2V0IHRv
+IHRlc3QgYWxsIGV4YW1wbGVzIHdpdGggeW91ciBzY2hlbWEuCg==
