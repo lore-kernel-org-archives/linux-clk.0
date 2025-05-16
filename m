@@ -1,93 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BF4227EBF;
-	Fri, 16 May 2025 11:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03D1D6DBB;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747396447; cv=none; b=atQkyy29Ct+CfJEh6rK1hBVKDkFuW9b0IJcnez3haO/Nwd6QV1jEsC9/3OD0PCz2qNPejG5MdBTrndeOnUGzFTecgAxoO//8pU6G7PWOwt4583u2yzxk+QzkfGeuyyWzDie9CInIQ3D6RmqVqvnmDG30JriBjGcz4kKutm+7rhg=
+	t=1747398971; cv=none; b=GEm8jZlOkUGrQcFKgIqa+OH1vyo3EDTTlIoZY/UN7rI0pJSASvu5ssgviaSHoP0JvORWtOuGScOZ9DIYnrZtbbAQoVwdV2MzkK/rSfGHQXobYY5dkakOsHBmS1R5DjBbqisoEAhuiWhKXAohhSuh/P37jdcT77OWotrSgzvUNWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747396447; c=relaxed/simple;
-	bh=ivb/R1S6r2RO2WRrath55ToVi2bTf8rbS9vtwi1lNXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHfwRrhtMR4XsE7U0oE8SYkysyGQ3JL25Yz/zMU3IfdNJPGkdp9Xr/MAXoZD6NJBIliUiM4v3//fdaH/dJHR74yAGqzSg0XTfdL00QhAPIWyrB5HciJOYosyU/EbiZG0FxI4+fHLxW3ivdzDWmybKlMRP2Jeea6lQskeFOneWSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWjwXe3M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747398971; c=relaxed/simple;
+	bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qP3VQSZRhZsD05QvOMjP6jtJNPVnGV40eAkNQeRyw6TVy7NTgu5nO39fhWsJ2bpPekljLM1r3wckv0ExRFidq69HrkAzk67rYtBWSLeEkJumJy2qyUa3aikpjfbrq0p7YUgyDxO3Jn2CPfylCsA3rOXgH+OvvJQkscl9NeAtHko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOw4moov; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWjwXe3M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F951C4CEE4;
-	Fri, 16 May 2025 11:54:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOw4moov"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 49A79C4CEE4;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747396446;
-	bh=ivb/R1S6r2RO2WRrath55ToVi2bTf8rbS9vtwi1lNXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nWjwXe3M258XeEQx/NbmBcjmqJ7f1uTyDlXQ1hblDuMdCyXPQTViOIvrIFqvhEZcP
-	 UryIx2mMeA7Vy2QaXRHgCclneb503DWTx6mhc20hXp238ML3v8Yj7FH6Vz8YtPL5B+
-	 Ke6PP/AfYtcTYlYf/Xgt5BiUmzhplJZX5dTOia/xloJwWpm3Ro6PoccZKmCuoC1hkI
-	 KzuvvBZ27H+zPBvGL2Ms2PX4Vogmc0Mt4/+iQQFdobGHABnoJKkKJBLb6+vBYjAuNd
-	 vvDcUto+TIodhXnQaO5zI/GYISZ6Anhwr+BtXyPoU/t1m8NR6M70gACSaR88f2xHqP
-	 G+KmMrXNLj6gw==
-Date: Fri, 16 May 2025 13:54:03 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v12 11/19] clk: imx: add support for i.MX8MM anatop clock
- driver
-Message-ID: <aCcnWx_BzfuLxZ9P@finisterre.sirena.org.uk>
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <20250424062154.2999219-12-dario.binacchi@amarulasolutions.com>
- <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk>
+	s=k20201202; t=1747398970;
+	bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aOw4moovYuu2URtOxLmJIAC857uquZx8/OGFqk1N4LqilDPsnckWWU0BvUa7G3VAu
+	 hd8K/Qh3FMFVrJ8TZgjMo9JrOUrVegxtIftlmz3gcAYUCzfBFpNwLn/yag1O3Ss/aa
+	 vytx4w3aU6ZeL302ynajEuWP7M9ODY9fJ37+PVt3iNtcVoHW/RXdCbnnn0S5W46Dqu
+	 8J4DDNzZ1wPHiWWjQR6/QzaVNRLDE7mojZwDYGWg35VgFaQnEmL6DEDFCt+RLHViVw
+	 esQPjpe5NVc7uYoLZbMLirt9SMYYhkjoD216Ozz3iIwITQS9nXhrj1Xlq+vF+ArRJw
+	 hL14ra2zI7c4w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE68C3ABC9;
+	Fri, 16 May 2025 12:36:10 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v4 0/5] Add CMN PLL clock controller support for IPQ5018
+Date: Fri, 16 May 2025 16:36:07 +0400
+Message-Id: <20250516-ipq5018-cmn-pll-v4-0-389a6b30e504@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f8trKPt590fsB1ic"
-Content-Disposition: inline
-In-Reply-To: <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk>
-X-Cookie: Well begun is half done.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADcxJ2gC/23P207EIBCA4VdpuBYDw7G98j2M2SAdXGJbetpGs
+ +m7S7te1NQrMiR8/HMnE44RJ1IVdzLiEqeYujzIp4L4q+s+kMY6zwQYKKYYp7Ef8mGpbzvaNw2
+ 1qLip0RoRLMmv+hFD/NrF17fHPOJwy/D8uCTvbkLqU9vGuSqsg1oJj8KrYEFb4WpRh9KVTikLY
+ LkOqCUacgyqij1Hck6HDF22Jgnykpu2pFIzZ4MqDROiWoBsGdc4zWn83vdc+N7xuxKcVlo4ZRR
+ MycBzL5nhL+k2Nyl9PufPdi2jB0GfBciCZ64M3mPNuTwL4iDwfwSRhSCsNl45YEb/FdZ1/QF3W
+ Ql4uwEAAA==
+X-Change-ID: 20250501-ipq5018-cmn-pll-8e517de873f8
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747398968; l=3223;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=rJpXVxnBUus4bk7EUo2JlBe6LQiEcnBeH8nz+pXrakQ=;
+ b=pKS14h5cIqFL3O7chlnYPrt4EAhFndx8NMyqGPpq9twY7tnGDTTLFIa79fBe6nG6AgkkEVfOY
+ 5JaWJxFXKHSAJqwh82GMkV8fUC+1epTSwpa9X6Up18uV503oclsV7E6
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
+
+The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+sleep at 32KHZ, and the ethernet block at 50MHZ.
+
+This patch series extends the CMN PLL driver to support IPQ5018. It also
+adds the SoC specific header file to export the CMN PLL output clock
+specifiers for IPQ5018. A new table of output clocks is added for the
+CMN PLL of IPQ5018, which is acquired from the device according to the
+compatible.
+
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v4:
+- Re-add missing CMN PLL node after git pull and rebase on linux-next
+- Link to v3: https://lore.kernel.org/r/20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com
+
+Changes in v3:
+- After further testing and evaluating different solutions, reverted to
+  marking the XO clock in the GCC as critical as agreed with Konrad
+- Moved kernel traces out of commit message of patch 1 to under the
+  diffstat separator and updated commit message accordingly
+- Updated commit message of patch 3
+- Link to v2: https://lore.kernel.org/r/20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com
+
+Changes in v2:
+- Moved up commit documenting ipq5018 in qcom,tcsr bindings
+- Fixed binding issues reported by Rob's bot
+- Undone accidental deletion of reg property in cmn pll bindings
+- Fixed register address and size based on address and size cells of 1
+- Removed XO and XO_SRC clock structs from GCC and enabled them as
+  always-on as suggested by Konrad
+- Removed bindings for XO and XO_SRC clocks
+- Removed qcom,tscr-cmn-pll-eth-enable property from bindings and will 
+  move logic to ipq5018 internal phy driver as per Jie's recommendation.
+- Removed addition of tcsr node and its bindings from this patch set
+- Corrected spelling mistakes
+- Link to v1: https://lore.kernel.org/r/20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com
+
+---
+George Moussalem (5):
+      clk: qcom: ipq5018: keep XO clock always on
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+      clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+      arm64: dts: ipq5018: Add CMN PLL node
+      arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+ .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 34 ++++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 37 ++++++++++++++--------
+ include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 ++++++++++
+ 7 files changed, 77 insertions(+), 19 deletions(-)
+---
+base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
 
 
---f8trKPt590fsB1ic
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 09, 2025 at 10:52:51AM +0900, Mark Brown wrote:
-> On Thu, Apr 24, 2025 at 08:21:41AM +0200, Dario Binacchi wrote:
-> > Support NXP i.MX8M anatop PLL module which generates PLLs to CCM root.
-> > By doing so, we also simplify the CCM driver code. The changes are
-> > backward compatible.
->=20
-> This patch, which has been in -next for the past few days as
-> 3cbc38cf42ca42d2, breaks boot on i.MX8MP platforms (I have the EVK and
-> Verdin).  We die with:
-
-This boot break is still present in -next, and I've not seen a fix
-posted yet.  Should we just revert the relevant patches until a fix is
-available?
-
---f8trKPt590fsB1ic
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgnJ1oACgkQJNaLcl1U
-h9BzbQf/d3ddn7KIWiWYv5nwyTgmsfExEQyp3Lp5MbF71mb/UavAxr9ZsuPeyLix
-mgUMGE+wP9XO5FI7/vRH7k398r/pYLdJq7lYi1FFie9L/eWwcYFjDAApLxuCJViZ
-jEm7pQIi+OR013c2mVCTLByz3Ou7w4Ri4568iVf4+opqGERs0JD9Fr72mUGEz0OI
-Y3m4sfZmr47hyI1PGVU/MXvcAmiTtHkrdwzGujJkoiX6cIe9lYPZ7yKnxdZ0jqUm
-1CgokulV+6S1x0PWupckRCz/Apb//jW7/ciJ4shGOpexjKAxoreVm+WiWMZPSMDv
-vE9T37v1qmm+YAZVaxu2bpgCrlQboQ==
-=+wUm
------END PGP SIGNATURE-----
-
---f8trKPt590fsB1ic--
