@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B3F23771E;
-	Fri, 16 May 2025 11:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF523C50B;
+	Fri, 16 May 2025 11:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747395788; cv=none; b=VdUEf2/LRFwK7uQikTciS6x+VcrSsJAlnDy77A5VjIyX8JFceS2RM5jnP/mehj2fqqGx0Wv39HC4b5yNxja90s2cc5Kkl4+EAIxTJDP1u7/LrzP0cNG1/Ph80SUZSuEVdAoqEfVtxTBweZWU8YGWFxhntL4vdDv1+b/NSBS3yMY=
+	t=1747395788; cv=none; b=hzwswlPOa+mkJA3ik6cSciXo61SgeCw5FrLwbMefPgElFn+LzYjigtzFv4+CQHPMX/YTiKot9zrOcaW+21QAOG12bBkOFt5bWOI/53xp+061SlmoxyqPJhIpYr5izkb6FtIdG10IR/tKnc1VBMlXUq5CWYHHB0bwNAd3w9MzCiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747395788; c=relaxed/simple;
-	bh=JWoWSWI2iFDqq31hCJJ8HrX1GSFoCvibN7mj9LxkFS0=;
+	bh=37F8XH+GAKZ//Tj61nrwPRcylir/pNEVzfMJfqa3dVI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fFshRhajjuby0zuPAB4vY2QnhQAddLIwcb65cgqZJe3e+F4AU3zTyLeCxhq0sCPA8cTShtBxhyE3sVzcpekX1jMyVV8+fRmbrk3ABFBGAyrvcii1b6DMBwF0NzfpRyWm/j5atngFTH+jdNflsjBGe3fy67snUd4ehrwg1b29v/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFWZkolJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=uATQq50tPELjBmZ2f0nuV/fVx6w0ZOJSjk2UNY6aC7bUgd+TApoqHuyvfoSjySK6MBlQ+3DKVPZ4cYdVN09SRM1X8Rn42QWGiZNAOIAd8rlSzZbAyTAJSx2n5rfkMGzfbvCF9pJTmLCH6Yge4rKmr3lMmrtzfK+0aBa8C4CzDfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cf73/0jB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFWZkolJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 698AFC4CEEB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cf73/0jB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 97792C4AF1B;
 	Fri, 16 May 2025 11:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1747395787;
-	bh=JWoWSWI2iFDqq31hCJJ8HrX1GSFoCvibN7mj9LxkFS0=;
+	bh=37F8XH+GAKZ//Tj61nrwPRcylir/pNEVzfMJfqa3dVI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RFWZkolJyy8sEv1iPgdNonksCqMhpINt97f3PoViysX0o+BSqRFMWfIrtIz82O46I
-	 qVqp6mMwuYRCQ90I7VG9vgESKSRlI9YTXaS+xhehuUJqPFIQiQZQHTjzv/VqMqr8Ij
-	 SFqVfvEr1cCooIFVCO/7f0qgFQcX5+zFZ0gDAxljXbTlwJH24bzhJgjcqr5bbTEfsZ
-	 qFWPDWcdECCgIoTYB4hq6etFR92TPaq35OQTZu3ZnhK1elal0v296CmpGPKPTuncNl
-	 xW//qowS6a6aB4//9I1CRE20bXE6f2TT29zFIIoS5NTUYubB+gjpJQVAiOI455v1Ka
-	 r3ZTbAvPy2+yg==
+	b=cf73/0jBEXl0G0qXWNj2P5vV9DisDxxfBC+NfDvScoSxDB7Mb3shrXx1aFpVJ2Wwg
+	 +z6MGwv2kYUld1l9CMEX+0OcYMCIKXG3I7pI1odT5o+RYle3QZCrN01fFQl/W5z65B
+	 UwiwK0U4blRKDtwxXeYBQVjoOc+PC596r3cfvfR/QsRBSHnwf93wwJW/imDc39MRCa
+	 hpECFOHaPgCTylVGCmqqGlcHoOZ2V+S0hkUKT83hvJM4UQRQ8TzpfLAsQcGFJhweLh
+	 ojkOmfcAlLKvRoYlkB2p3adNs/nE/35cOjeZnrxguhdVnIkqALOs1IT9rLNmrF6qBj
+	 M1BPHjWAtZTDg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56661C3ABD8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D692C3ABD8;
 	Fri, 16 May 2025 11:43:07 +0000 (UTC)
 From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Fri, 16 May 2025 15:43:04 +0400
-Subject: [PATCH v3 1/5] clk: qcom: ipq5018: keep XO clock always on
+Date: Fri, 16 May 2025 15:43:08 +0400
+Subject: [PATCH v3 5/5] arm64: dts: qcom: Update IPQ5018 xo_board_clk to
+ use fixed factor clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250516-ipq5018-cmn-pll-v3-1-f3867c5a2076@outlook.com>
+Message-Id: <20250516-ipq5018-cmn-pll-v3-5-f3867c5a2076@outlook.com>
 References: <20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com>
 In-Reply-To: <20250516-ipq5018-cmn-pll-v3-0-f3867c5a2076@outlook.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -52,13 +53,14 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Arnd Bergmann <arnd@arndb.de>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747395784; l=3176;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747395784; l=2156;
  i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=76iGGwYN7iao5R8Jw8ULkb9PNnmzQQ/WRzYbsqPI52M=;
- b=lRIKoG4O8Y6ZVZLIGRnXWA908cm1Q2k3Ghla9NIw/CI/f/mohI6TgZUlEDOcikSxo0Shbripz
- IMv57YIbhUHCkV+wZTR2lD7gbTgNrcWAt7Hi0ce9sf9kon1+SDIzEBp
+ bh=Kavlla7VqPYVz8RPprQ6zbDxT2pqDYQ1B/kyLZsoD2U=;
+ b=VFJNeLuEWwF+md2+fD/y3r4F6cnclXmET2DLsNq5Zi2l8RPBeJ82mK/NpVIATCI0RX2LNURaO
+ psPl7qt5+zvCJLA+pWBkpSNbY44FHwAlkYbT2V0BlRThD5V7f3DZ+BA
 X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
  pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
 X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
@@ -68,70 +70,57 @@ Reply-To: george.moussalem@outlook.com
 
 From: George Moussalem <george.moussalem@outlook.com>
 
-The XO clock must not be disabled to avoid the kernel trying to disable
-the it. As such, keep the XO clock always on by flagging it as critical.
+The xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output
+clock 96 MHZ (also being the reference clock of CMN PLL) divided by 4
+to the analog block routing channel. Update the xo_board_clk nodes in
+the board DTS files to use clock-div/clock-mult accordingly.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
-The kernel will panic when parenting it under the CMN PLL reference
-clock and the below message will appear in the kernel logs.
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts             | 3 ++-
+ arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts | 3 ++-
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi                      | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-[    0.916515] ------------[ cut here ]------------
-[    0.918890] gcc_xo_clk_src status stuck at 'on'
-[    0.918944] WARNING: CPU: 0 PID: 8 at drivers/clk/qcom/clk-branch.c:86 clk_branch_wait+0x114/0x124
-[    0.927926] Modules linked in:
-[    0.936945] CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.6.74 #0
-[    0.939982] Hardware name: Linksys MX2000 (DT)
-[    0.946151] Workqueue: pm pm_runtime_work
-[    0.950489] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.954566] pc : clk_branch_wait+0x114/0x124
-[    0.961335] lr : clk_branch_wait+0x114/0x124
-[    0.965849] sp : ffffffc08181bb50
-[    0.970101] x29: ffffffc08181bb50 x28: 0000000000000000 x27: 61c8864680b583eb
-[    0.973317] x26: ffffff801fec2168 x25: ffffff800000abc0 x24: 0000000000000002
-[    0.980437] x23: ffffffc0809f6fd8 x22: 0000000000000000 x21: ffffffc08044193c
-[    0.985276] loop: module loaded
-[    0.987554] x20: 0000000000000000 x19: ffffffc081749278 x18: 000000000000007c
-[    0.987573] x17: 0000000091706274 x16: 000000001985c4f7 x15: ffffffc0816bbdf0
-[    0.987587] x14: 0000000000000174 x13: 000000000000007c x12: 00000000ffffffea
-[    0.987601] x11: 00000000ffffefff x10: ffffffc081713df0 x9 : ffffffc0816bbd98
-[    0.987615] x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000057fa8
-[    1.026268] x5 : 0000000000000fff x4 : 0000000000000000 x3 : ffffffc08181b950
-[    1.033385] x2 : ffffffc0816bbd30 x1 : ffffffc0816bbd30 x0 : 0000000000000023
-[    1.040507] Call trace:
-[    1.047618]  clk_branch_wait+0x114/0x124
-[    1.049875]  clk_branch2_disable+0x2c/0x3c
-[    1.054043]  clk_core_disable+0x60/0xac
-[    1.057948]  clk_core_disable+0x68/0xac
-[    1.061681]  clk_disable+0x30/0x4c
-[    1.065499]  pm_clk_suspend+0xd4/0xfc
-[    1.068971]  pm_generic_runtime_suspend+0x2c/0x44
-[    1.072705]  __rpm_callback+0x40/0x1bc
-[    1.077392]  rpm_callback+0x6c/0x78
-[    1.081038]  rpm_suspend+0xf0/0x5c0
-[    1.084423]  pm_runtime_work+0xf0/0xfc
-[    1.087895]  process_one_work+0x17c/0x2f8
-[    1.091716]  worker_thread+0x2e8/0x4d4
-[    1.095795]  kthread+0xdc/0xe0
-[    1.099440]  ret_from_fork+0x10/0x20
-[    1.102480] ---[ end trace 0000000000000000 ]---
----
- drivers/clk/qcom/gcc-ipq5018.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-index 70f5dcb96700f55da1fb19fc893d22350a7e63bf..24eb4c40da63462077ee2e5714e838aa30ced2e3 100644
---- a/drivers/clk/qcom/gcc-ipq5018.c
-+++ b/drivers/clk/qcom/gcc-ipq5018.c
-@@ -1371,7 +1371,7 @@ static struct clk_branch gcc_xo_clk = {
- 				&gcc_xo_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+index 43def95e9275258041e7522ba4098a3767be3df1..df3cbb7c79c4e6c58cba7695691827fb8b84e451 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
++++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+@@ -120,5 +120,6 @@ &usbphy0 {
+ };
+ 
+ &xo_board_clk {
+-	clock-frequency = <24000000>;
++	clock-div = <4>;
++	clock-mult = <1>;
+ };
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
+index 5bb021cb29cd39cb95035bfac1bdbc976439838b..7a25af57749c8e8c9a6a185437886b04b0d99e8e 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
++++ b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
+@@ -124,5 +124,6 @@ uart_pins: uart-pins-state {
+ };
+ 
+ &xo_board_clk {
+-	clock-frequency = <24000000>;
++	clock-div = <4>;
++	clock-mult = <1>;
+ };
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index 6d33cc196f8e61e30deb485b0715255c5e833e38..36429730815d4b740511a2ec1b50f823a730262b 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -31,7 +31,8 @@ sleep_clk: sleep-clk {
+ 		};
+ 
+ 		xo_board_clk: xo-board-clk {
+-			compatible = "fixed-clock";
++			compatible = "fixed-factor-clock";
++			clocks = <&ref_96mhz_clk>;
+ 			#clock-cells = <0>;
+ 		};
+ 
 
 -- 
 2.49.0
