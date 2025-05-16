@@ -1,188 +1,102 @@
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB35163;
-	Fri, 16 May 2025 09:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE622F77D;
+	Fri, 16 May 2025 09:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389020; cv=none; b=E0gNT7fcyYCl+oIfbe2qE3WfUFEhc2JJcC7Vr1T4SYIR3D2qk3eOcR66sRSyk9qEUSH2l7vKG0s3L2Xh/2ooHWM+cXqkFxtkqOgwnQ4Y7WNFt1DzHurR0VuoimrsFqJaOXJeej8wcdTyYOkcqkoMIU4aS5JTrDUZCUG7/I8diKY=
+	t=1747389387; cv=none; b=O3k/qlkO4ist8jk00lHz2o66jDfHYtiA+ETsr+wt0pBfYjm/XtXcpuFsGkuvjow+QzXNq6ydMZZmeHTZBdO7/gAVce7+AlZ6/i0DwXn8bSnWl5a63YLn5FXZqnKpsiiCo6Ki/A5UO0tYTJWWIDRV7wpKJIPni+Tnwvqr8kNdBL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389020; c=relaxed/simple;
-	bh=pDjfNpsKfcpXFOhBp4uRBXfVrhuuhTv/HTPK8LprGh8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=XHtGkKNy9daf5RmbRmL/qkjIJ4Z6vtUvD5KYmk+A3ivIbcyl8hLO3TlvDO8Z2KGyQ/lJOzYWqulhTjX2Tc9cgZ4TNKoUCA/y6TS0Fzck5wMuy9HyNURF+nTFc6flvPBqvBBRRQtKTlIBS+rESVdoSDQu4js0IrDudicdogufVrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=GEx+yCQH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UmgyP2sm; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1747389387; c=relaxed/simple;
+	bh=6qeyCCT7zpD3fvBMzDh5PQih0K0gpp9zF5Ci9QuAQKU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=j6zqHdszEPoKWDOsLD1oNfh74L9VvYip1pyfB1iX9GyHR/rzhC3jxt3lTSahjGO7uNlVCTLI8lVX8bBEiOFx6IZ94trFku+zLRwjR7paFJ3quzjAAfyW4XbCqFRAAUCBO360YCXitVbx+Q8X+T6I7yJjRF0tqi1hXyAOjlGDbbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQaiVqgc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="GEx+yCQH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UmgyP2sm"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 524571140104;
-	Fri, 16 May 2025 05:50:15 -0400 (EDT)
-Received: from phl-imap-17 ([10.202.2.105])
-  by phl-compute-06.internal (MEProxy); Fri, 16 May 2025 05:50:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
-	 t=1747389015; x=1747475415; bh=ICAnzqRn8f548e/xF9gHUGpMoaEnzr4U
-	V/vlaT50lSk=; b=GEx+yCQH6hcWVDweddJQzydxrrzZeZdKPGUKJdP46h1wvpVF
-	4Kpd5MNYEEXeMaGtZadn11Tr6PPhJMd4qXvZjvFy8wdjJKZMNTydgjYhRnLiUHEg
-	rY4YdrJDV8hw1aXQ2NGw0IKDKdU7C7ljRCCowjjwUDN1c1dD32iCnbVkq/cNRtsN
-	WlF5AtKfS4WOzEijOB0iIMrfOeI46MiQAe9dxNVaaBY8scu0OxnFm44V23vjxotz
-	LDU6QvpeMpav/fE9TS1l5F0AcujKL+vPuO7C+dMCHoj9mRHJg81n2j1PZvsCbktI
-	HYCogxEyhRKqiFwKBPveRoqMEALnFXK8RqOE1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747389015; x=
-	1747475415; bh=ICAnzqRn8f548e/xF9gHUGpMoaEnzr4UV/vlaT50lSk=; b=U
-	mgyP2smkPYT4zFKGycsILpZGr1Vl6Iy4PZING0yw38DZ965IDdQZolchV+hsZURE
-	Ibs9r0scwq+nNxmkj1W4eVx3fONWHaFMR/Hyq1hXgrpnGh5YKwLmyBWj7mJOnAoM
-	9yZIisSXkJe3IE8P0i2CJPn6fi/yd1FSwsVbcsYQ76i0gULwCcnRx8ZrnvVkI9+A
-	RrsbAtXltYeTMWo3cLXHR/waAE1VMQKfTYh9+QSSe0IUV++OfxvIFsYYChhETJQH
-	FLSHsrPpZhFjTuAL0TpidTDia7Vyzst/wxybqh9v6zSAB90YkBKXQmzjDzDfGiCh
-	DNnYikGwvKQ6/MHeng0aQ==
-X-ME-Sender: <xms:VgonaOAJcFfpMwmNAZqnNyXo2Oth442oIk7wlq6Fzy16oe3M6baPSA>
-    <xme:VgonaIiQCYbSvHRBkR4pzGe5rkX8pjWQDjTddI4nP1QZXZRqp_JrqKH0_ZyiUHQPz
-    sj7JrlNQ0VwfMrzmA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefuddvgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftfihrghnucghrghlkhhlihhnfdcuoehrhigrnhesthgvshhtth
-    horghsthdrtghomheqnecuggftrfgrthhtvghrnhepjefhueekjeejgfduvdffheevveej
-    hfdtuddthfduuddvveefjeffgfdvleefuefgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhn
-    sggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnug
-    hrvgdrphhriiihfigrrhgrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvght
-    thgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopeifvghnshestghsihgvrdhorh
-    hgpdhrtghpthhtohepuggrnhhivghlsehffhiflhhlrdgthhdprhgtphhtthhopegrihhr
-    lhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvg
-    gtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhikhhutghhrghnleeksehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepmhgrtghrohgrlhhphhgrkedvsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepshhimhhonhhsrdhphhhilhhiphhpvgesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:VgonaBkSrc6upcBvaEARz4TVu4qk0C-Y9CBwKCoMyEVJqNMl7C118A>
-    <xmx:VgonaMyW4h-Kg4A4Xl9joK7Sj0IeX-CytUlAHPn_MsDGRgvcZnHCFg>
-    <xmx:VgonaDRBSU9tKa7_dqw48bEbsHl2uo8GTbdALULRsfPSDaWEnu4LPg>
-    <xmx:VgonaHYXnEeePGIQMdCtqv36fx2DNs_4rwUjRiW4DrsW7cxH8ecxPA>
-    <xmx:VwonaDe0fJJ5QBICmoOWjLcBLnNmwHyH09TKXiPR3IYwFeRpljAmSHPT>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 49704C40061; Fri, 16 May 2025 05:50:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQaiVqgc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FFDC4CEE4;
+	Fri, 16 May 2025 09:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747389387;
+	bh=6qeyCCT7zpD3fvBMzDh5PQih0K0gpp9zF5Ci9QuAQKU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OQaiVqgcB4Yu1+5FQF3O+JYdhQOUxOL6ue+z9lgTS/63FWdwt5JKcjGthvKHTelL5
+	 TYjZ2XGort85qrI+rPdUCj8Q3qSh/keXgZA3DHr11CyS0Bq29vB3m4+gJej5K7FMbe
+	 Itl5Wkwu4n+sUioWXy+vOpUpbqq7AFlRRAYuLJfcqsowHRpiojOwyWTlnA44AHzH/I
+	 dE2nIpCf5drU842wxWPDW4iZpBQAztXf7VHzLBgclkDOunJJ579HZJLYmRT+N0bWaW
+	 rPUzRJtCNGFz0uDL6VS1Z7UOASHz6QpDPbHytF6TmyuPT+R9c3Y8Bs7yjGfEWHtnjC
+	 jbZDXoW9puzpQ==
+Date: Fri, 16 May 2025 04:56:25 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tf495426756189e99
-Date: Fri, 16 May 2025 21:49:54 +1200
-From: "Ryan Walklin" <ryan@testtoast.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: "Chen-Yu Tsai" <wens@csie.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Andre Przywara" <andre.przywara@arm.com>,
- "Chris Morgan" <macroalpha82@gmail.com>,
- "Hironori KIKUCHI" <kikuchan98@gmail.com>,
- "Philippe Simons" <simons.philippe@gmail.com>,
- "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, "Chris Morgan" <macromorgan@hotmail.com>
-Message-Id: <70232334-a0c5-454c-8e1f-551860d74cba@app.fastmail.com>
-In-Reply-To: 
- <nze2olzqtgagrkiws2dt3uptehyvcgw7kai5ceycroaroin7jb@xeoddccn5uqh>
-References: <20250511104042.24249-1-ryan@testtoast.com>
- <20250511104042.24249-11-ryan@testtoast.com>
- <nze2olzqtgagrkiws2dt3uptehyvcgw7kai5ceycroaroin7jb@xeoddccn5uqh>
-Subject: Re: [PATCH v10 10/11] drm: sun4i: de33: mixer: add Display Engine 3.3 (DE33)
- support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+ devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
+To: Sukrut Bellary <sbellary@baylibre.com>
+In-Reply-To: <20250516081612.767559-2-sbellary@baylibre.com>
+References: <20250516081612.767559-1-sbellary@baylibre.com>
+ <20250516081612.767559-2-sbellary@baylibre.com>
+Message-Id: <174738938517.2667160.10906175729020548648.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: ti: Convert autoidle
+ binding to yaml
 
-On Thu, 15 May 2025, at 3:07 AM, Maxime Ripard wrote:
-> On Sun, May 11, 2025 at 10:31:19PM +1200, Ryan Walklin wrote:
 
->> +enum sun8i_mixer_type {
->> +	sun8i_mixer_de2,
->> +	sun8i_mixer_de3,
->> +	sun8i_mixer_de33,
->> +};
->
-> enum variants typically have their name in upper-case.
+On Fri, 16 May 2025 01:16:10 -0700, Sukrut Bellary wrote:
+> Autoidle clock is not an individual clock; it is always a derivate of some
+> basic clock like a gate, divider, or fixed-factor. This binding will be
+> referred in ti,divider-clock.yaml, and ti,fixed-factor-clock.yaml.
+> 
+> As all clocks don't support the autoidle feature e.g.,
+> in DRA77xx/AM57xx[1], dpll_abe_x2* and dpll_per_x2 don't have
+> autoidle, remove required properties from the binding.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> [1] https://www.ti.com/lit/ug/spruhz6l/spruhz6l.pdf
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> ---
+>  .../devicetree/bindings/clock/ti/autoidle.txt | 37 -------------------
+>  .../bindings/clock/ti/ti,autoidle.yaml        | 34 +++++++++++++++++
+>  2 files changed, 34 insertions(+), 37 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/autoidle.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> 
 
-Ah of course, will correct, thanks.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> With that fixed,
-> Acked-by: Maxime Ripard <mripard@kernel.org>
->
-> Maxime
+yamllint warnings/errors:
 
-Thanks for the review! Will submit a v11 with the enum fixed and without the clock bits Chen-Yu has already picked up.
+dtschema/dtc warnings/errors:
 
-Regards,
 
-Ryan
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml: Documentation/devicetree/bindings/clock/ti/autoidle.txt
 
->
->>  /**
->>   * struct sun8i_mixer_cfg - mixer HW configuration
->>   * @vi_num: number of VI channels
->> @@ -171,8 +180,9 @@ struct sun8i_mixer_cfg {
->>  	int		scaler_mask;
->>  	int		ccsc;
->>  	unsigned long	mod_rate;
->> -	unsigned int	is_de3 : 1;
->> +	unsigned int	de_type;
->>  	unsigned int	scanline_yuv;
->> +	unsigned int	map[6];
->>  };
->>  
->>  struct sun8i_mixer {
->> @@ -184,6 +194,9 @@ struct sun8i_mixer {
->>  
->>  	struct clk			*bus_clk;
->>  	struct clk			*mod_clk;
->> +
->> +	struct regmap			*top_regs;
->> +	struct regmap			*disp_regs;
->>  };
->>  
->>  enum {
->> @@ -220,13 +233,16 @@ sun8i_blender_base(struct sun8i_mixer *mixer)
->>  static inline struct regmap *
->>  sun8i_blender_regmap(struct sun8i_mixer *mixer)
->>  {
->> -	return mixer->engine.regs;
->> +	return mixer->cfg->de_type == sun8i_mixer_de33 ?
->> +		mixer->disp_regs : mixer->engine.regs;
->>  }
->>  
->>  static inline u32
->>  sun8i_channel_base(struct sun8i_mixer *mixer, int channel)
->>  {
->> -	if (mixer->cfg->is_de3)
->> +	if (mixer->cfg->de_type == sun8i_mixer_de33)
->> +		return mixer->cfg->map[channel] * 0x20000 + DE2_CH_SIZE;
->> +	else if (mixer->cfg->de_type == sun8i_mixer_de3)
->>  		return DE3_CH_BASE + channel * DE3_CH_SIZE;
->>  	else
->>  		return DE2_CH_BASE + channel * DE2_CH_SIZE;
->> -- 
->> 2.49.0
->> 
->
-> Attachments:
-> * signature.asc
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516081612.767559-2-sbellary@baylibre.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
