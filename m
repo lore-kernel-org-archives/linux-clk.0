@@ -1,154 +1,196 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188CA22DA1C
-	for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 08:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981822F173
+	for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 09:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747383387; cv=none; b=RQse1kO5RJZgVZ1/CgxLmThfTaXS+P4AjbbyWg70G8WUVvwfvFgu/n/ybRDOKokHbRnBy/1guWPGK4abdTKrGCoohgvoDOtOg7F5r/Qi7yDXzuRrxZXz3lF7G758FXzFKEZqOb40vgtVL3ICbTBp5Duv6o8YEuH3OLUwT8Pewfg=
+	t=1747386115; cv=none; b=W+zIACBCA+1wJbEAqTbKx5DVXKCkuxIQsA5y03MKE6TmQSkmtqtgDmZuxWcyZ//LIncuRHvYrE5p4F8SjHDTqTVFJL+h3kRsbx95YGhYgp/dHMDjYPayd+z71W2nRLL7l0/aYGhNJ4BOHTqDzga6Zq/BX+HLdW97YpQ17bKxdJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747383387; c=relaxed/simple;
-	bh=ne4PfWXtPTDke/5/uFZ5cI1NkNx1QheiiJRSL2tSd1o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M+z9zUDQOZn1NL14tAm/B+OELDx0OsxLdyfGThw2vCRx4e0SdmDqGTuZB8dlbebsB08nWlg1KcwhRjCKJYZ37bqRjehqOieou36Kfx3BQk10pdi6lYe89RiZfwFKUCZu7ncu+PPKK44U2sLknpcMdUVDJ7eQO+YMjyUXCI7aATc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ajQIsT/J; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1747386115; c=relaxed/simple;
+	bh=7bT7R25mgjoEOCenNMiog5d8jmrLGzIX7hwwnkSWCAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TTLj1R3cQTGNnHpI47ImtmbJZtXoovvkI85EEu16gKujFHBoXASQx+vxLhEV/+i1f7R3YJjIIjWDudod4Ihckt/F15+hqznzTcc8bF71ObiUdUGQ70oyW/hUpiiDhrk1i6OchFJJBdwrBuTiAHG8MnkQUzuU0lYScRvaASFJfzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZefljwAr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ajQIsT/J"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22fac0694aaso13944725ad.1
-        for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 01:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747383385; x=1747988185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/V2daD2rTNcNp3coCr/ToEF+NAYlBMkaOYzNetHBK5g=;
-        b=ajQIsT/JNGABAJnRdU4L0P233li6jU3+9UAWxfrTa0rzIpVAIxlhcxAXvYQv7prP2r
-         l2CZA/HUdhquexq/VK1cum58wmLFcueq7kCdh6zMlVWg8SSAvEJbnTLfC2X3bjVj/LSg
-         Wg0ddOsfnQSkjQkl/K93UA5VPBBF1ly7iCpM44d31KvaHuGwJ5lX3NImgIG2t97nxVSQ
-         cCgte/vEfuUICw/VG0M2yc3zY1FKRjIQTk0s+q7Re0xHDVf6vZAlISqwjqup4SmcoOKV
-         GE3Gc1a890brdf7lvyKd70Pus7cS5n8DN2wrNv5H0phPVXWc2Ft6YZwbepYw76QkIME/
-         bY9w==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZefljwAr"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G3se4R026156
+	for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 09:01:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	crwjkXwm2Mz61rb2CTsqxEUEHdKgDUcWAhJbvyh6c70=; b=ZefljwArl0RZ+5yA
+	w/twY6QCR1H5umDn0PkBv5sUhppB/T+ozvB+9nkuEo+7ucBaPG/yQloNRcXXB0CG
+	Ot9UEY77w0Al8sVTW/DiG+4uvsUA5xBOeP3ZEcWigvO1FLaIJWWYrjnUmXm/96nF
+	fuEVH7f8Zb038p1KfmJOiira5Kynnybz6BU730VNT2FW4RepTi1ZZ2T3loXhJ8/H
+	mCe+6ziA5qwTxojmKzqjwhcB2732QPxK2D2kScXSpH6bHs201ThuwZgq5RJ6bjDh
+	O9rUuvGpoqRC8cY47Ke75h8JsWRXZSg7dT07QHuUEAuxMcM7sdrtG2TcjN7zH8c0
+	jm7Kdg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46mbcyshuy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 09:01:51 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5ad42d6bcso53974385a.2
+        for <linux-clk@vger.kernel.org>; Fri, 16 May 2025 02:01:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747383385; x=1747988185;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/V2daD2rTNcNp3coCr/ToEF+NAYlBMkaOYzNetHBK5g=;
-        b=k9fEnnbYM+R0XqbUrsBgfJ00EgihwLoI+XYjNR6wRfaWluTa4iF/vwE8xGuM5/1huM
-         1/DEgImvB2wXs3BrzS+ByiRXKJjdVg/xN8EiJjB2SQSSJtLlCOfkoziT2VQqzdy4AC8I
-         IbWm1GgjyNOgEFsbDP5fCy1ABCIsQEuNKaH92JvZwPaSC+0g0Fo2UTD2GgUllNYKMK8J
-         7xSHYeQWlLQ7gshibX52k0f8fXG+cmgxpJwC4gs3Db2pE81g/spDzaT2IEHg8bMHfNOQ
-         xHkj98gWxXqlmQDZID7Cfie3uZJFJE8943Otn8z3qPGJXaN9s9+/U/rynKLSFVzyxcw2
-         LYMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6rMuWQB4GiZ4pvzWSOld/ObBbWndfeYeTVHvo332V0zC1nMQK5oNWSady1OpMlrHFrE0TNEXfwrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDHhO9UzfcoL5PNxson65uBzaX/Tjxjy7UOdol6JWB5hleKorZ
-	vdKZ6PUgCwUjPUeTZWrC9dA9MeeP9QET36fhRLsD4u6kNeKpWqiamFpJfnp3z5y4QkE=
-X-Gm-Gg: ASbGnctO3fcEaB/F9dxiB+tCkaLV/Y+2bLM88RoLYgCVfi/MEOeR1gL3Wy1Hn2tlTEp
-	beFv9vC3fIobhpsXMyDQxgCnLdfk2B8ICPvtqQ57hnjwJiE7Xc9DT3Ujux1kM0WUezjX1GFzZV5
-	gh540EHJzFYUywfYpsLTQ18am85DtxLme7StZtyyjv/fP2IdQn+sFPRJhoNvOck0jtINbY71Rxf
-	4wajl5IEE88Gmo+ujrD0BTwd07ctFvMpIOcRORetHls6i9fAfG6qsE3u3jUcimY9vtS4nqwyCBj
-	rT59GX8fqdynbs+WfoOYlxm5EbNPG0sXd9/zpqPKZQj6hmYqFdYQaL0gQh332ZdlKMsEJcDbEhx
-	oN3t9p+uFwMt2FA==
-X-Google-Smtp-Source: AGHT+IGNwOPd4/78bjds7wJXN85y4exK0t1zW51cDsS9UCcuz87FTXGSkJI8YZ6TyRB1xxjOHnrMRQ==
-X-Received: by 2002:a17:902:ea0a:b0:22f:b040:9751 with SMTP id d9443c01a7336-231de3b9709mr18773765ad.45.1747383385431;
-        Fri, 16 May 2025 01:16:25 -0700 (PDT)
-Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97801sm9397695ad.133.2025.05.16.01.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 01:16:24 -0700 (PDT)
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Sukrut Bellary <sbellary@baylibre.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: clock: ti: add ti,autoidle.yaml reference
-Date: Fri, 16 May 2025 01:16:12 -0700
-Message-Id: <20250516081612.767559-4-sbellary@baylibre.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250516081612.767559-1-sbellary@baylibre.com>
-References: <20250516081612.767559-1-sbellary@baylibre.com>
+        d=1e100.net; s=20230601; t=1747386110; x=1747990910;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=crwjkXwm2Mz61rb2CTsqxEUEHdKgDUcWAhJbvyh6c70=;
+        b=gTB+//fgSK8Rin9htCdFAqW+BM32Mvu/e0jSJKmq9DKevHxIpZJlbondxOUXTfOfMi
+         32AEcx9D/HQBVRvNN6XWGu7reP5HbZcGPSFLDR5dPH517D5lbhjp0iMzI8fRkXKnrnF+
+         BOhRUCRANTfoxe7uLcaqXfd0CvkNXrBGjGehnMD/rOwlWhiQcYCzUW6nvsd/OmDuHhDt
+         VaXeBn6y+RPoj2FNVkatg4oRUe00QOkI/aBW1ewchmk0IAWEODj6pA4dWTsJwKNot5FQ
+         6sHvswm2kwNmmQqSjUwZaZhTTn8wTeUR9AaTAXEL7XcW34NWYMjiD8vaRRPV3lZjS3t/
+         NTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGhRpo7U0KpagmNgZ7teRnjEVhzZRXar5DZ5+EtapuJpAGLYsoq8BZfPXtlAd4azWcAr8Cmvmdo8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg2H6qru1vN3eAt/T0ngS7DSQKepj8GZtjvP6B+mpTlEWT3Fx+
+	56xh6Oa/ulysz0QmBY4rhBTpBNrFKE0TG+iYnJCYiZmlVusCWUXPut0Ou9qDpF6z9lrorPmo/kf
+	g++6DpaRSXbrmeOhnmyJha/htPaGH9itaBLYQA26vvWbOH6lLdhI0ANbq43i35wk=
+X-Gm-Gg: ASbGncuONbB1xFIjLNtnAtahvHI+8Gm/gSb/3CnijyUJfyNE8NyxooAhohRWPpc9G3q
+	qwrLfbo2PnA7smiBY8vs7dbEP0eR08W/sHUzXVQMHEG2gZ1fIPrzPrYPGbUwBg+/hrsWchE8Mo3
+	25Aui48VydpRnPbiyt0ESQxbV2Yd7gkyGM6+hfhMUprPEfBxCrGW0vJAn88CeP9WUFJ7cHZMnS6
+	F7WDu80kV00B0nvBGqc/WdF+yex/iW6cdbfHgyZ/bdBN3MfvG+vv53FBt6Bdh9Q7igp/aXKegz5
+	LBSgXJMwgQApVxd7bfpiRKY8ZDl3s/P76OCP/66IpqjSwz0nSINFKS+fqq52QUHoLQ==
+X-Received: by 2002:ac8:7c4e:0:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-494ae373c48mr13480541cf.7.1747386110023;
+        Fri, 16 May 2025 02:01:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEk5/GJR09r13nfBtnkiEoEavjVSinfCHNYuKjToVdC/aopOQxGYHzKPdlMHftGKbnMw1zIxQ==
+X-Received: by 2002:ac8:7c4e:0:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-494ae373c48mr13480231cf.7.1747386109485;
+        Fri, 16 May 2025 02:01:49 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005a6e745fsm1094479a12.48.2025.05.16.02.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 May 2025 02:01:48 -0700 (PDT)
+Message-ID: <5190dc77-3ea5-492b-ac52-8523d8188ab8@oss.qualcomm.com>
+Date: Fri, 16 May 2025 11:01:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] clk: qcom: ipq5018: keep XO clock always on
+To: George Moussalem <george.moussalem@outlook.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
+ <20250506-ipq5018-cmn-pll-v2-1-c0a9fcced114@outlook.com>
+ <a3c3dbe8-b73e-40a4-b86f-ff9f371b1a46@oss.qualcomm.com>
+ <DS7PR19MB888370ACC69E0A1ABC46D3BB9D91A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <DS7PR19MB888370ACC69E0A1ABC46D3BB9D91A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: oVqfy5wf1H003j3Z-VQwtiAqA6ukuaTL
+X-Proofpoint-ORIG-GUID: oVqfy5wf1H003j3Z-VQwtiAqA6ukuaTL
+X-Authority-Analysis: v=2.4 cv=JszxrN4C c=1 sm=1 tr=0 ts=6826feff cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=UqCG9HQmAAAA:8 a=f-fEU4NQkEpfBDf4STYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDA4NSBTYWx0ZWRfX7M62ijBv5JaU
+ Gr9o4dLNY3VQYfX6BRQosfNBPs+TINzxQWx+C6kdx3iZ9ZaDTjmEO74IeHw3bIb2yeL2d4rIKq0
+ FVthYifGuwbEl9MnNRGjH7hUA94sS7T13PsYpU2JgyDM32Ta1PRag2DUjMDJViImv+91K3BDIGc
+ TtNtLHERtNnL5ZtlNzxW+hQhw7sRC+WGsEGkFLlNYbtsOia2XBME7Lf5B/LqoRO/0K5GJofuRbp
+ 9bUU9qmxfG+KJXeLClpypkWLISH6uQN0fYJW0V53Gj7EEYecUItWicsZuid5h91CnI4GKvQQUJ3
+ LcAR7jHL62N+1PywqKgEnnMum6dbGMGYKdT8ZQuPdGYVKfa1C8ERIfbQSILb0lMsvFjGEAPvr6y
+ 2+MP1bucL0rPyBwCo4dDq4VlnJDF3iPl/BPKZEf3fpGGzMOTFUJgxJr7nS3bFW9Wk8HGvZXo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_04,2025-05-15_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=984 bulkscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505070000 definitions=main-2505160085
 
-ti,divider-clock uses properties from ti,autoidle.
-As we are converting autoidle binding to ti,autoidle.yaml, fix the reference
-here.
+On 5/14/25 10:04 AM, George Moussalem wrote:
+> 
+> 
+> On 5/10/25 01:47, Konrad Dybcio wrote:
+>> On 5/6/25 7:43 AM, George Moussalem via B4 Relay wrote:
+>>> From: George Moussalem <george.moussalem@outlook.com>
+>>>
+>>> The XO clock must not be disabled to avoid the kernel trying to disable
+>>> the it (when parenting it under the CMN PLL reference clock), else the
+>>> kernel will panic and the below message will appear in the kernel logs.
+>>> So let's enable the XO and its source CLK and keep them always on.
+>>>
+>>> [    0.916515] ------------[ cut here ]------------
+>>> [    0.918890] gcc_xo_clk_src status stuck at 'on'
+>>> [    0.918944] WARNING: CPU: 0 PID: 8 at drivers/clk/qcom/clk-branch.c:86 clk_branch_wait+0x114/0x124
+>>> [    0.927926] Modules linked in:
+>>> [    0.936945] CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.6.74 #0
+>>> [    0.939982] Hardware name: Linksys MX2000 (DT)
+>>> [    0.946151] Workqueue: pm pm_runtime_work
+>>> [    0.950489] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>> [    0.954566] pc : clk_branch_wait+0x114/0x124
+>>> [    0.961335] lr : clk_branch_wait+0x114/0x124
+>>> [    0.965849] sp : ffffffc08181bb50
+>>> [    0.970101] x29: ffffffc08181bb50 x28: 0000000000000000 x27: 61c8864680b583eb
+>>> [    0.973317] x26: ffffff801fec2168 x25: ffffff800000abc0 x24: 0000000000000002
+>>> [    0.980437] x23: ffffffc0809f6fd8 x22: 0000000000000000 x21: ffffffc08044193c
+>>> [    0.985276] loop: module loaded
+>>> [    0.987554] x20: 0000000000000000 x19: ffffffc081749278 x18: 000000000000007c
+>>> [    0.987573] x17: 0000000091706274 x16: 000000001985c4f7 x15: ffffffc0816bbdf0
+>>> [    0.987587] x14: 0000000000000174 x13: 000000000000007c x12: 00000000ffffffea
+>>> [    0.987601] x11: 00000000ffffefff x10: ffffffc081713df0 x9 : ffffffc0816bbd98
+>>> [    0.987615] x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000057fa8
+>>> [    1.026268] x5 : 0000000000000fff x4 : 0000000000000000 x3 : ffffffc08181b950
+>>> [    1.033385] x2 : ffffffc0816bbd30 x1 : ffffffc0816bbd30 x0 : 0000000000000023
+>>> [    1.040507] Call trace:
+>>> [    1.047618]  clk_branch_wait+0x114/0x124
+>>> [    1.049875]  clk_branch2_disable+0x2c/0x3c
+>>> [    1.054043]  clk_core_disable+0x60/0xac
+>>> [    1.057948]  clk_core_disable+0x68/0xac
+>>> [    1.061681]  clk_disable+0x30/0x4c
+>>> [    1.065499]  pm_clk_suspend+0xd4/0xfc
+>>> [    1.068971]  pm_generic_runtime_suspend+0x2c/0x44
+>>> [    1.072705]  __rpm_callback+0x40/0x1bc
+>>> [    1.077392]  rpm_callback+0x6c/0x78
+>>> [    1.081038]  rpm_suspend+0xf0/0x5c0
+>>> [    1.084423]  pm_runtime_work+0xf0/0xfc
+>>> [    1.087895]  process_one_work+0x17c/0x2f8
+>>> [    1.091716]  worker_thread+0x2e8/0x4d4
+>>> [    1.095795]  kthread+0xdc/0xe0
+>>> [    1.099440]  ret_from_fork+0x10/0x20
+>>> [    1.102480] ---[ end trace 0000000000000000 ]---
+>>>
+>>> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +    /* Keep some clocks always-on */
+>>> +    qcom_branch_set_clk_en(regmap, 0x30018); /* GCC_XO_CLK_SRC */
+>>
+>> this clock is not a clk_branch2 - its control register is different and
+>> this call is incorrect - you can drop it altogether, as if the XO source
+>> clock isn't running, the system is dead
+>>
+>>> +    qcom_branch_set_clk_en(regmap, 0x30030); /* GCC_XO_CLK */
+>>
+>> This one actually is likely supposed to be always-on too - does removing
+>> these two lines do any harm?
+> 
+> removing these lines AND the clock structs works AND updating the parents for clocks that reference the xo_clk_src works. There kernel is not complaining about anything. The other option is setting the CLK_IS_CRITICAL flag. What would your preference be?
 
-Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
----
- .../bindings/clock/ti/ti,divider-clock.yaml   | 22 ++++---------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+Let's do critical after all
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-index 3fbe236eb565..6729fcb839d2 100644
---- a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-@@ -55,9 +55,10 @@ description: |
-   is missing it is the same as supplying a zero shift.
- 
-   This binding can also optionally provide support to the hardware autoidle
--  feature, see [1].
-+  feature.
- 
--  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-+allOf:
-+  - $ref: ti,autoidle.yaml#
- 
- properties:
-   compatible:
-@@ -97,7 +98,6 @@ properties:
-     minimum: 1
-     default: 1
- 
--
-   ti,max-div:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-@@ -116,20 +116,6 @@ properties:
-       valid divisor programming must be a power of two,
-       only valid if ti,dividers is not defined.
- 
--  ti,autoidle-shift:
--    $ref: /schemas/types.yaml#/definitions/uint32
--    description:
--      bit shift of the autoidle enable bit for the clock,
--      see [1].
--    maximum: 31
--    default: 0
--
--  ti,invert-autoidle-bit:
--    type: boolean
--    description:
--      autoidle is enabled by setting the bit to 0,
--      see [1]
--
-   ti,set-rate-parent:
-     type: boolean
-     description:
-@@ -156,7 +142,7 @@ required:
-   - clocks
-   - reg
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
--- 
-2.34.1
-
+Konrad
