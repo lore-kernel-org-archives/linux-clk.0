@@ -1,152 +1,99 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB633635;
-	Sun, 18 May 2025 13:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AE81DE2CE;
+	Sun, 18 May 2025 16:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747573590; cv=none; b=B1LbeDKlRwuShLNrYgcrFNFGlcqnIXkeml/fGk9zYWUQ0xtdg3WWlKR0sJTONKxff733QFXaW/8ZAdB4HpI5Q4dxskLh/RMtBgJjFurHkrN5ZgxQeC5vEj2Hyxj8NRE+/8SbM1bKSr7sMFow4gFmbedjfVNDvMlHgzLFIVaZSr4=
+	t=1747585282; cv=none; b=NxfmPszCEf2FkWM2jpMNdOrla+p7ZEOh6G7qI+Apz+OQ7FXCN6RK5Vi17wQx55Dp8f3D4N2F7uDpPLf/aA7Sz2pq6uNfUInK65rXmGniHQB1FDpC9EA0QWwekWPJtq+PXa6kiJWZUnm8lycNznsINmOeKtpe8jxwJ9mSqaVGLp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747573590; c=relaxed/simple;
-	bh=QKPfHl99X4kso7jChN1jE5UUNDv8LQK2gzGmhxNr2cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfT9sKHS/wNhvH+QUqYD3PdAm3AahxV1jaIGQX1Vh43U3aO90UdbJHo8EcbY/AF6BVQsOFVvKQDyDRKeboGVXJEK7oX8fFnF4x/GL5U6oeaFHVgg/1T4FXoREPGjg3qagzac2gcDPJ0TpEqLdIv15E1oSQhd8zHvMZFgjgI9gto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PROUTI3V; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1747585282; c=relaxed/simple;
+	bh=R4350qFjP5pmMxVLhOYIwlVLJLk/mrj5F3+vFg2NAYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BTIiVwnig5JNE8NjLRazeUJB3wxNfDWpneg9h2jI2WZCsABJzi9msNLmNAsZrwFzqPRIisn5MkyiVpxSxnrXg2k/OQu6Pev4mxcTWzTWhVGzAfWkYjispBz3EUceYUqH+w2O3uL3pudtfukGLAB94uPGytVFetSpBiJwSK+m/u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PROUTI3V"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2302d90c7f7so45708595ad.3;
-        Sun, 18 May 2025 06:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747573588; x=1748178388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
-        b=PROUTI3VsM4j3ut+o5Zzjal/ldvnB5+wPz7xrjOoiM095Mal8G8HiI/yfNijO39923
-         C6Du7GvPFdhGx6x4FOleMCXdZKREF+gNN5TLpLCcuXpfRQ7Kr+vf/exUxAXvmDBIRmSP
-         OdJGzONAoi4W5Zkc2taO+gKue/UVlqbtsSoUkGlNBfh2yPG0j/iDrZ7v4aeIpgTwp8g6
-         OV8MIB2bDnWDbUMbfQh5QYNPdEVacPEfexWWb1+YSN7D3ZjovMqeoLHtbrwZhCLUK6iQ
-         YlshfiBd1V3i3sTYMDigoUETVe4d4GSMbDiTmj7icn/wjGeuPmxgu3XNGAWer1IbzU1O
-         YLtw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54b166fa41bso5336880e87.0;
+        Sun, 18 May 2025 09:21:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747573588; x=1748178388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
-        b=F8vlBFq+M2FWawj7ff6CYSFngZOxjJNFtSeY+l29SEcm0lD2PrtfTppcoC5wouFjkP
-         B1VHJvUlkgScdgzLqqtN9qqoSoDGHYgID39kYQtoeBFHhHeYv38TwyBrc4BcsC50l1Ue
-         iNIiSZm/CDMbqgOwRBBBoiqnQolUeYzT3hB1KkK1vQ0p54ZtTnVIc9Z2TQtaT8ow9hIi
-         zZecmAkE2GFtYJtj6dA2al5CKbCuZsLUYTSOLEqEAqYPl87wbgQ4Tdi8EjVpAg9fdGYq
-         LmbQ8KnsnERoW8ZppZQV8RhMPiE2ddLKHaJZCnXaNcU1JNrCxVisg5YZw29/G6ChmY4/
-         75oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoOtffMwEDkxBnelJvOW341fiqnz61bo1KKdVl/+s3xalIUzMZiHDZIZJ4G9itVKqIycXo6XcGkPY=@vger.kernel.org, AJvYcCVgIUliL/WQ5Trgzkex7ETkekT0YRChEDWu7XeGU6PFSAIv2SoyO0rE4dU4jQYmXn5nA2mJIUNPZcoaGKDE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkXImoQF+64L5pE5kqKnp4GwgqT0IE44O/36CVpU4s1QhIpn6E
-	/JUprBLny36YTCHWxqLB+Tkesuf1SYhYUl6fC1KRBSbyh+iEj1KBVE11
-X-Gm-Gg: ASbGncuLgHAcYV9MQdgQYSvRORz7gfLD3D84l13iS+9mQleufLkbk+yBUR93GlyC4Sb
-	Van3teo/akt0YeggBftwc5lkE06ULpvG7m5wdcSFD+mh/Z1LJlsecsJJ2rCAFbI8AKpOqzmC/J2
-	p1jkrBAHziD9y0Gb3ullRt5SZaIpSEleoW0s+rcxOZRZM3pMMcssVeapESSESmsQdOpjQnkycxy
-	C3xfN0fUd0AKq08EFecdqhrUCoYGyUkku0Q43Qvkp7LKFdRBbV/cbJVY/GBttKyvhxLd+RrBMkW
-	y5nWBYK/yGBw3G/hRyypSw4XyW0G7A188rF7zGYXAyFaCIj/iA==
-X-Google-Smtp-Source: AGHT+IEbYz0zL6FUPuBDK6XmqwcyKT86zRveJT1Y3LuagJ7jKeVl+9KS1OpoBAzzEnt7nUQYsecdDw==
-X-Received: by 2002:a17:903:228b:b0:231:c05f:29d5 with SMTP id d9443c01a7336-231d438b54emr111092345ad.6.1747573587958;
-        Sun, 18 May 2025 06:06:27 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4adbfe1sm43469475ad.66.2025.05.18.06.06.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 May 2025 06:06:27 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Subject: [PATCH v2 RESEND] clk: qcom: rpmh: make clkaN optional
-Date: Sun, 18 May 2025 21:04:03 +0800
-Message-ID: <20250518130403.440971-1-mitltlatltl@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747585278; x=1748190078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R4350qFjP5pmMxVLhOYIwlVLJLk/mrj5F3+vFg2NAYI=;
+        b=n0+Q+RAaSsUgS2FiaofRbGkn6knOZiqEiw/D9O0wK5K2Y20hTBH6NUDK2z7oW5T15e
+         mtXuff01ak+O7j0T3x5VzAZkg6EH5ZfkADh3O93fJ4Wo3OD5AJ8BVCvPK5ykkMy0P/2c
+         sBmq+ZLvDqbogH93Gbk68qxuBloXbVhQqB//UfhwcJTAvWX4MLmuGyzViF7chOQpCoQh
+         ABC1XFa44ldO3d7TkNwcw5X7n9GimvXa2x9ligP6Iv+kRoWzMzm675GMMD+b2OTaSC5A
+         dOo0XVOE5C75gaHk/CGil9IgT4DaQ0Gl2UDxVXd5O8bz3wWQAlhiFKyvvkTYIyEyIzcy
+         f3kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ7Xd1q3jsB1wsi023ksmYwMbjcsCIx0iGF3JE7mgCpUfhAkev9RSRDnaQdaH7Ld2GdqqKEWT35oD6@vger.kernel.org, AJvYcCX4gB3cqGdGVk+AjyDnkFoGn65tqIuutvpFNYpVIrFBg3uaEsEEDDmsiAAkvfpQSGjsgRmO/XGYPPE+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQhlkqJozAi7/nb+flhUeTs6rWWqLydm9DYzloMIAD+D0kcpN6
+	sYNMu9APwKn8hPOkw6BM8heF5IvSCtQp/DEFQFc1IMGC7LR1vQaA7bmkZApEWrfa
+X-Gm-Gg: ASbGncuB8zuH5WOiA+FR/38GTjcC93mO66uhIOxMkUkjPBvlCtb1Rd1qGfMxhK+oaWL
+	mbdPyMhgZvN/+cOrpAGw+qBeovpXEY1lktOTlIWr/Q0AlBybTFfIUrE0EnBR1eEzMLZbsWHnz6o
+	7/IHTv2V7Isyza6F1Ts5u03711WKeP5B/ygJ/hJLsuvPsQQIRKH6CfQh/KknD98fW0/0BXOQGu2
+	O2lm0hnZ9NPdq59ievCRWFq5gtiKgdIBp/WVEwfhuivlJx4HG3mC3NdNknnnE0FNDudioJz0kQf
+	dImcO9+inskf4vADMMxQajwB6SvwJ3d1ZxxhRpetZ/rgA+O8uJoKaNN+tcv+F3oowt0j+3PzDSt
+	1UsVrmjvr
+X-Google-Smtp-Source: AGHT+IG1mXpBIEYbY9R2p/PrwdxbmxL0fq3KKfbxXUJnDAFME1iRdHTfM9K+ylGRR3CWAEakgs44ag==
+X-Received: by 2002:ac2:4e07:0:b0:54d:6a89:8722 with SMTP id 2adb3069b0e04-550e71d9258mr2833597e87.29.1747585277433;
+        Sun, 18 May 2025 09:21:17 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e701812esm1471481e87.112.2025.05.18.09.21.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 May 2025 09:21:16 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-329157c9f79so1704101fa.1;
+        Sun, 18 May 2025 09:21:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQJP4PtnSLJPcjueSDuuUAK3ssGVOuNvPoz5K/j7sv4xz46E2lQ7FldeNn5fZcIY2ALYUoIs/O3+/4@vger.kernel.org, AJvYcCV4+ASwUkN3CX9KA9bNt7lQdstzubOFq9EdgNnguWbdS5sf/LZi0FXZcp82xHCYkpwYEQelX/3TOVV7@vger.kernel.org
+X-Received: by 2002:a2e:8a9c:0:b0:30d:7c85:14f5 with SMTP id
+ 38308e7fff4ca-328077a2e48mr31714831fa.25.1747585276327; Sun, 18 May 2025
+ 09:21:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250516105101.11650-1-ryan@testtoast.com> <20250516105101.11650-2-ryan@testtoast.com>
+In-Reply-To: <20250516105101.11650-2-ryan@testtoast.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 19 May 2025 00:21:04 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67rSp-ap+QkBX=gATfaxDWbBM0aMn_kjNUP10giLKFaHQ@mail.gmail.com>
+X-Gm-Features: AX0GCFuJznDa_ICl2sGWtQLsZH04UWSn1aHqHteb8YSDT7ZfJxBtky01EaefvaI
+Message-ID: <CAGb2v67rSp-ap+QkBX=gATfaxDWbBM0aMn_kjNUP10giLKFaHQ@mail.gmail.com>
+Subject: Re: [PATCH v11 1/8] drm: sun4i: de2/de3: add mixer version enum
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Maxime Ripard <mripard@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andre Przywara <andre.przywara@arm.com>, Chris Morgan <macroalpha82@gmail.com>, 
+	Hironori KIKUCHI <kikuchan98@gmail.com>, Philippe Simons <simons.philippe@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On SM8650, clkaN are missing in cmd-db for some specific devices. This
-caused a boot failure. Printing log during initramfs phase, I found
+On Fri, May 16, 2025 at 6:51=E2=80=AFPM Ryan Walklin <ryan@testtoast.com> w=
+rote:
+>
+> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+>
+> The Allwinner DE2 and DE3 display engine mixers are currently identified
+> by a simple boolean flag. This will not scale to support additional DE
+> variants.
+>
+> Convert the boolean flag to an enum.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 
-[    0.053281] clk-rpmh 17a00000.rsc:clock-controller: missing RPMh resource address for clka1
-
-Adding the optional property to avoid probing failure which causes
-countless deferred probe. In the downstream tree,similar workarounds
-are introduced for SM7635, SM8550, SM8635, SM8650, SM8750.
-
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
----
-Changes in v2:
-- using capital letters, sm[0-9]+ => SM[0-9]+, rpmh => RPMh (Dmitry)
-- correct typo, alform => plaform (Dmitry)
-- remove tested-by tag from myself (Dmitry)
-- line break to keep 80 characters per line (Dmitry)
-- Link to v1: https://lore.kernel.org/all/20250404072003.515796-1-mitltlatltl@gmail.com
----
- drivers/clk/qcom/clk-rpmh.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index c7675930f..0aea8e1b7 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -66,6 +66,8 @@ struct clk_rpmh {
- struct clk_rpmh_desc {
- 	struct clk_hw **clks;
- 	size_t num_clks;
-+	/* RPMh clock clkaN are optional for this platform */
-+	bool clka_optional;
- };
-
- static DEFINE_MUTEX(rpmh_clk_lock);
-@@ -648,6 +650,7 @@ static struct clk_hw *sm8550_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
- 	.clks = sm8550_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
-+	.clka_optional = true,
- };
-
- static struct clk_hw *sm8650_rpmh_clocks[] = {
-@@ -679,6 +682,7 @@ static struct clk_hw *sm8650_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8650 = {
- 	.clks = sm8650_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8650_rpmh_clocks),
-+	.clka_optional = true,
- };
-
- static struct clk_hw *sc7280_rpmh_clocks[] = {
-@@ -847,6 +851,7 @@ static struct clk_hw *sm8750_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
- 	.clks = sm8750_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
-+	.clka_optional = true,
- };
-
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
-@@ -890,6 +895,13 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
- 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
- 		if (!res_addr) {
-+			hw_clks[i] = NULL;
-+
-+			if (desc->clka_optional &&
-+			    !strncmp(rpmh_clk->res_name, "clka",
-+				     sizeof("clka") - 1))
-+				continue;
-+
- 			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
- 				rpmh_clk->res_name);
- 			return -ENODEV;
--- 
-2.49.0
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
