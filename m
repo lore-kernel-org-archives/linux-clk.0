@@ -1,71 +1,71 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D454D211A19;
-	Sun, 18 May 2025 16:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFA1C147;
+	Sun, 18 May 2025 16:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747586516; cv=none; b=Omb/EdS1KnZMjbk2DVDP4J6n+L1lakqpluzcNLVIYSL+u+jkFDlf75R1V6Q91fC0LF36D4dzeXvONV047i8CzMtkGJ3PPE2ybPpkJdGK2iniBlw355ywJFi3dVbMpr4iAGeeBlEBvNvFbpZS97hhyYl+l9+L8E5p5uTSbV2+emM=
+	t=1747586528; cv=none; b=iz2xqrI/fKcN1hd5gQhx6WFjrrpQoHXDNd/Hmzx9a/2M0Gxq4fIqcicMOYPru0khoNk/spfREm1ijruspO3Y2LETHhxpeCE7Il7rLVboPv7RvDb+IeJ9zli61IAq7wHu6lcDz9G+5brTo5iJnWltPKBckuWBWFH6VBNGsVZlTi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747586516; c=relaxed/simple;
-	bh=aZDebBuIwhQGKIA5zH7FXUsKlBBCwxUk5Cqi9xBTjTY=;
+	s=arc-20240116; t=1747586528; c=relaxed/simple;
+	bh=wD0Py1Y+nYCa3T32gfjqbB8qmXGi889eEZKva2VRulI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IYB6KOsBC1xWuf1kQli1PqfY+oP2TeDE+DSXQmdPX9IMhCrKNph+yWi2d/Se6F/Vt06ZcYiWVpbJXRE4zuWCMeoq+MVFZOCMWnbhzJkp9F5nhHA8ZPI9w8kXZ2N4nAFD+oJ9hDWjEC2QkYMMKfUVDHV2UujA/6Iv27GFIcZic5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+	 To:Cc:Content-Type; b=GsU7KwcNi3p7aJJ3Yx5pLV0fW3XUxqypT98pXBbIfPX7Q8VZdPww9iodNrHgVLsYybbsp77asEBmwxyKSfeeX3atIq56/FxB6ZbTCsVnAtE04eJkPIoiBjlzaMqfGChUzRAGdf/v9QY36qy1twEzXkrpgW3S2LIiFtWZyzzWJJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7376e311086so4436154b3a.3;
-        Sun, 18 May 2025 09:41:54 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3da7d0d7d58so28906815ab.0;
+        Sun, 18 May 2025 09:42:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747586511; x=1748191311;
+        d=1e100.net; s=20230601; t=1747586522; x=1748191322;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aZDebBuIwhQGKIA5zH7FXUsKlBBCwxUk5Cqi9xBTjTY=;
-        b=bi4IBJTUJ/AoT8KEp4PFplo8YxKs4qXs/V4WiHjN5tK+gWWS/g8KmQYgkSzhUH2Nrd
-         WDG/eiZgzxTBsdPbHn4Nkb6uMuqaPeqcnlSo1gqEd9vYR2s0pRWdgNBCzsuUxYQy8OvQ
-         Luba5y4DdFQnml87oeGToQydzJN3YUAZMxFdLYWDD62vk+byi4nDmUO84EtS15DDyZj6
-         4iqVmQhEfiB75JcxsFSSjpYqBRsGR7mm12YZ8iAf6gtJSEqHxCKsAeH8xeVod9Hykxj1
-         AhyQ/jTRXLF8pX9mJjmiDf35CI3rI1dikbfjeGh1tbb05qEUdWpPQQ+VoViCapuK3P76
-         bhjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCM06a/6gE0VlLU0ZVvbzjIUvlNz8o16JrkNdTG/nFte/ugkEZQSs8JrGKS2tj5qrVUwnt8oTEavt6@vger.kernel.org, AJvYcCXm7UXj1GXoTOQsj+SBxUFdm+fdpMIolK5hDmaNQr6hgX2mrVfdVjXDyKFr9e4SRylbm+ibDTbYXnGN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZzqKITVqKhYZ+TJqnosZjlJYj96g7OnUNKnr6bLsmvC4J+IGx
-	kiDfGLV4j923LuYaMWtpsVF7ukkr1nqMcxwrrNKxka9ykuL2doFv5wmaV4BBEiH4ydE=
-X-Gm-Gg: ASbGncv+gEKWTIPTYXGf/gvOPmgbye9zfu1H5+Hz+aODYh8Lxz1TCU7Cqyk+i+uzM8b
-	cJosWGV/3L4CRNdSxAAOfxMfZ7U9+kviZncJqle02WNRgEbLqrTvQobvptoOMEM4R8or5Mquy9+
-	LYOXKUe+1IOFxZE9bOC55ig5Ig/YKTw2Rduoj7nBHzk755Do0VwZBg2g4FYg6lrs2MSrDURPPP6
-	Se31ksy3FsGabW5JjBYO3JhL50MQGmGWko/g3VSbrjyMf+gVwhdfl6R9pJ79LAdJVxXJVTN1grd
-	JkaMoRrXRjXmOzHr2WfmX14eEX7ygXnRT1PcTMAuIep0wYPO4BFkjoB/OF1FBTwYrumX0unY6on
-	HineuwRHMPflBC/c=
-X-Google-Smtp-Source: AGHT+IEtejn5JKK4xkFSj0n7XLV/Tzot/6v67/gmcgFBpTriJ4gBiLTCQ10x/M3q9nW0sG0ez43AYw==
-X-Received: by 2002:a05:6e02:1745:b0:3db:6c09:a60d with SMTP id e9e14a558f8ab-3db84334772mr115837305ab.19.1747586500649;
-        Sun, 18 May 2025 09:41:40 -0700 (PDT)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com. [209.85.166.44])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3db843f7a60sm14946305ab.32.2025.05.18.09.41.39
+        bh=wD0Py1Y+nYCa3T32gfjqbB8qmXGi889eEZKva2VRulI=;
+        b=JJPBHuhrwTntp0XQjL1WRl1SzgRyJ4jHcAD60lo52EAMpuHGrxX+lTOgPQOyWh8aMT
+         mD6HZLJt3OOzin5DhgnQpdfNK5O6/Dbr6K+uv9FV9uYQKLMg/0X2asIhwyxufBVxfe4T
+         J8HSN03XkUQ73LLkeyGOdmERNFzwcRRm9rpNBlF8sFKDtiu6nbVrw0+/9D2ZswxuH37z
+         bFjLjHnnNXuZcbS0PZDmaChMlnDLmqiUAoN4rJAsTndOaLRQczgoVp8XT9Wu5Hth9m4G
+         1OU4a5lxDMNik56qe7d3cDTKbwIcx655Qtc4hI6qorivwV6juQJgnB/2pAiZKZUQJA8G
+         ZUiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqYnxUUpw8SIk2HH0hUTulMW3DLfP/gaCjYIGqwtWN117d2rCL0F0IfDsgmxGzqFtL6CZSnMga9yyQ@vger.kernel.org, AJvYcCXqu0+QV1UJ9d2+CcqZIQ9bhEbcwA+fLds6CWMUwQSYZvwazPMr9QcpmmEjGdlU+2R9mtlibNa5nJ7w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/La2ZvnRED5e/xxiJEjZHjDqmhW1DYBWoorKoAyE5L7S1uTXH
+	+DfCW9oOSwnyJ8b+4tjx/p70pOUQxXkF338LHFgZ4/3MvM/76eWYEJP/eqQlVaDPA88=
+X-Gm-Gg: ASbGncuduxJg1IBkE6hKVMP1OrN00WIhdO9D50LMucO33QFCUm4VeenD+37tl3BqdDS
+	njMaObK5zEqB3merFrqEtei/UhoLTin0wZuGhd/HjKOke8TqqVYWLVud4xPiLH5Gu6WqZ6bzDga
+	+knKo9sGue6OnLm/zMVgIJnpH/UhcVW/cM+8xwaEnaoTmUw1wrqUl0fUomCK+XZt7fbXzLMkgkS
+	4JvAUNTX/IsKJUhEo1Crf+V0Q49q/HTdn9Cjb/qXmJzRO28boN9vtjbT2YPqtOpgX6stl6B6rBS
+	xWBA0RbhoZjx3TfqE6lFpB5HW7zY/rqNGvK8yKMeqVJQbIB5vENYNeP2yznRoPZ5zTnQKChydAZ
+	FUn+L4htoj+bEaAQ=
+X-Google-Smtp-Source: AGHT+IG4omiJ4EjRd5lhV6ue7F2CC8SXqw6HUieQpQVHg5Ls0JtEveJIugsA75+eiTWcterEBTcLtQ==
+X-Received: by 2002:a05:6e02:1949:b0:3d8:1f87:9431 with SMTP id e9e14a558f8ab-3db857544f8mr98208225ab.12.1747586521620;
+        Sun, 18 May 2025 09:42:01 -0700 (PDT)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc38ac21sm1358074173.17.2025.05.18.09.42.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 May 2025 09:41:39 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-86135af1045so469666939f.1;
-        Sun, 18 May 2025 09:41:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkjjWnr3EmBRfUJNnlPvkPelGPtdFDFreNvlKYxhyUJiAP2Khfyw08Y3gKdqYtTGPnDVydyzlCQ2+g@vger.kernel.org, AJvYcCVtwH7cFqQlD20Oz07CvzNMzqgQyN7P9b0mBOCFS3Rg/ukYTZSfhhRQXeoYj7W7VPXrIUlKikNg8Szm@vger.kernel.org
-X-Received: by 2002:a05:6602:6cce:b0:86a:93c:f5fb with SMTP id
- ca18e2360f4ac-86a231901efmr1346917139f.1.1747586498864; Sun, 18 May 2025
- 09:41:38 -0700 (PDT)
+        Sun, 18 May 2025 09:42:01 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85d9a87660fso426543639f.1;
+        Sun, 18 May 2025 09:42:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVivb9+OY2r9Ga2gcmryLSRNeZWuxloYYY+d/8Poai11evD2uxRSPfQbMnyu87YMeBL6HlajNs3/HPR@vger.kernel.org, AJvYcCWIJpkVJ4pViuT9NzZDKx7KrsXlh+sxIS6kBB5PLO2FkOJPz7aGlfYUAmWM6NIL2c8LNqf9bFXJmNIM@vger.kernel.org
+X-Received: by 2002:a05:6e02:2164:b0:3db:6fb2:4b95 with SMTP id
+ e9e14a558f8ab-3db857a6f7fmr111584635ab.18.1747586521124; Sun, 18 May 2025
+ 09:42:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250516105101.11650-1-ryan@testtoast.com> <20250516105101.11650-4-ryan@testtoast.com>
-In-Reply-To: <20250516105101.11650-4-ryan@testtoast.com>
+References: <20250516105101.11650-1-ryan@testtoast.com> <20250516105101.11650-5-ryan@testtoast.com>
+In-Reply-To: <20250516105101.11650-5-ryan@testtoast.com>
 Reply-To: wens@csie.org
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 19 May 2025 00:41:05 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66nwNrL1bJjqeLaUKxntPbbL=amao=3fLQnVwKt6bFyFw@mail.gmail.com>
-X-Gm-Features: AX0GCFvPNTkEIdX7vf-6v-hZnL1kJZY7vaEnvAF5rZAuePObHWHQncZKVmFJnYo
-Message-ID: <CAGb2v66nwNrL1bJjqeLaUKxntPbbL=amao=3fLQnVwKt6bFyFw@mail.gmail.com>
-Subject: Re: [PATCH v11 3/8] drm: sun4i: de2/de3: add generic blender register
- reference function
+Date: Mon, 19 May 2025 00:41:43 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66+c9j-uFn-d59VkP6Fk1_af7i=0sWJxSTmp+3+A=+V1A@mail.gmail.com>
+X-Gm-Features: AX0GCFvx955idocxBLHWdxaZkcNf0j8vEssSsAEhRIcCueVqPuT49DZqnymord0
+Message-ID: <CAGb2v66+c9j-uFn-d59VkP6Fk1_af7i=0sWJxSTmp+3+A=+V1A@mail.gmail.com>
+Subject: Re: [PATCH v11 4/8] drm: sun4i: de2/de3: use generic register
+ reference function for layer configuration
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -86,12 +86,8 @@ rote:
 >
 > From: Jernej Skrabec <jernej.skrabec@gmail.com>
 >
-> The DE2 and DE3 engines have a blender register range within the
-> mixer engine register map, whereas the DE33 separates this out into
-> a separate display group.
->
-> Prepare for this by adding a function to look the blender reference up,
-> with a subsequent patch to add a conditional based on the DE type.
+> Use the new blender register lookup function where required in the layer
+> commit and update code.
 >
 > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
