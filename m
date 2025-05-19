@@ -1,106 +1,100 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B926980F;
-	Mon, 19 May 2025 14:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60003268FC8;
+	Mon, 19 May 2025 14:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747664862; cv=none; b=dLKBN40QyB7iLDZRtm9+o6vGtTqXtN5SsMmuStZU8gupJtYRhFVKXc42mG4kEYOPrPBMYaML67C7U1CKLZWMc52d+ymhCshqhSRrM/0RnBX7uD+aSsCzZ+XStQnFEWZh0TA8mGLi8BcVN/21GfcF3mvCHuQDgTv+JZb6aZexafc=
+	t=1747665060; cv=none; b=tr+0ro2PSkzlz7yjuthObWVDsq4rtMkiB286fEqKsuDjnHoSXdPj/fpYGhAwlD5sVwVVFvAGoPz/p4i1Gm234WrVfCXqOqaaCM1hWRrBGhBr2Abyvf6Z6PCk5L1HCTwjG5SxezhJGV12RnVFBXpXBgKI+s4a11ZRF/z2HjL5xcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747664862; c=relaxed/simple;
-	bh=xhKmM+gfHAy6/K2yCwonmggKcnhDD1pEwXUFZhRnD6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iDPBYpZmReyZV+x7VB1eFZrlQRBD7e+7WFqLnFKUW4ujMm3UVXz/xoGDpOqijhSXA/A2s1J2UA9HPlSmMefk0zDaqUpzKtnR3Ya08Jmlyo4gf8c8k68DpiFFAOSmavkwIyeO5jFj3cskbtBVM0nLankAf2EQJFUEwyjXXRnSQP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KPDyy+L4; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1747665060; c=relaxed/simple;
+	bh=Frb3sunV2ENhXKid51T6ZwuAujvRL92OYErynI1QNPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnZ0laXJEhdUYds6zy0H/0MxD12ylF5dK+BLh4ljCvnzdA7XNiu34bNcznX3hExTFOqjjVZOsctMUW/EKS+X7SNXCsIwChPt2zRQ7eKUpknLvuHt6rsDn1kcCjOEzVk3ErZHrRmQ5/pYFjnIJZvGNX5cdc0xFt0Le+npdaTceaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAb1fYLr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KPDyy+L4"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F23D14397E;
-	Mon, 19 May 2025 14:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747664858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QMIQ5j4O4hhkkXDBrtnUP9c1BM9Lw9LhW4rCV+JF4qo=;
-	b=KPDyy+L4/pZBa2cLkw0ZUcC/t8rYe1alekyOJHI2L357/ABWIW2l77vPCeqjLt6ZKftunk
-	gc9U3l6270Yon2+sihKOQPrx1ucqucmm0w2hVe3oE+xzPMvnDzakmKrrioYOQIeCHJTrDV
-	w19guANFSsFUeD26WaHkWPZUKztJoPMOj2HylC8EZxi7qDsNCG4zA9/f1fMDYMXfwWvn28
-	1KyRQciYejW0VpyxKN5Hcs5cMXQWddLeUW0vN9Fi3V4gbfTrIcssDSaU5ip7653w8+a7JM
-	bbqYCTx6pZP/NdQ4WhEdcO1tSehTzs6BHuCTO77ylHRy8J+eAwmJQ4WpkO4wDg==
-Date: Mon, 19 May 2025 16:27:33 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
- Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
- Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
- Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
- <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 06/26] driver core: fw_devlink: Introduce
- fw_devlink_set_device()
-Message-ID: <20250519162733.2ef82127@bootlin.com>
-In-Reply-To: <aBt2EHYf6j6Ulthb@smile.fi.intel.com>
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
-	<20250507071315.394857-7-herve.codina@bootlin.com>
-	<aBt2EHYf6j6Ulthb@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAb1fYLr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08FF5C4CEE9;
+	Mon, 19 May 2025 14:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747665059;
+	bh=Frb3sunV2ENhXKid51T6ZwuAujvRL92OYErynI1QNPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UAb1fYLrBeKJGnk2IJ9S1cu3ZQ3cApkn8ZujBtE+RYvjtEGHDElYpRjBunsn+80Lq
+	 gk7PazzgHIQVQeI56zkZ+8NeyF76SQ4V6VAjBrO2S6sP6NETgdLs0GB0cY/v1XW3kl
+	 UU8egKVe04gTYI2DRfThddoiJq5HBN/WKwoMb1ryiTypcmq+CbsmfU/exzmlli70pH
+	 Nw21n1gWRQG6dQB+diYGstG0SuBCeHEz3DksU3sPA68uI0TctlFgFWF7MKKpWGeJhg
+	 cRV6BdKStlFX/HTNWaHq/prv34ePzJGq9QgL32YnwjMLeYHIVEy8Jt+thx6TpIfxVu
+	 yuNctDG18pERA==
+Date: Mon, 19 May 2025 15:30:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-amarula@amarulasolutions.com" <linux-amarula@amarulasolutions.com>,
+	Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [linux-next, 1/1] clk: imx: imx8mm-anatop: probe only on i.MX8MM
+ platforms
+Message-ID: <1ca1fe0b-2337-4aa6-b36d-f4d11df7b0f5@sirena.org.uk>
+References: <20250516134945.14692-1-dario.binacchi@amarulasolutions.com>
+ <PAXPR04MB8459312B18CBAEDF9192A188889CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <c929b7d8-6348-4978-824e-6902d0364a00@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdduiedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
- hepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5tcNGpct1qXGitB4"
+Content-Disposition: inline
+In-Reply-To: <c929b7d8-6348-4978-824e-6902d0364a00@linaro.org>
+X-Cookie: We have ears, earther...FOUR OF THEM!
 
-Hi Andy,
 
-On Wed, 7 May 2025 18:02:40 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+--5tcNGpct1qXGitB4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Wed, May 07, 2025 at 09:12:48AM +0200, Herve Codina wrote:
-> > Setting fwnode->dev is specific to fw_devlink.
-> > 
-> > In order to avoid having a direct 'fwnode->dev = dev;' in several
-> > place in the kernel, introduce fw_devlink_set_device() helper to perform
-> > this operation.  
-> 
-> Makes sense, can you also mark that field as __private? So sparse can catch
-> the abusers up.
-> 
+On Mon, May 19, 2025 at 04:13:14PM +0200, Krzysztof Kozlowski wrote:
 
-I didn't know about __private tag and related ACCESS_PRIVATE().
-Indeed, It makes perfect sense.
+> You claim with this:
 
-I will add it in next iteration.
+> 	compatible = "fsl,imx8mp-anatop", "fsl,imx8mm-anatop";
 
-Thanks for pointing out.
+> That 8mp is fully compatible with 8mm, yet here you claim that 8mm is
+> not handled. So it is both compatible and not compatible.
 
-Best regards,
-Hervé
+Note that binding for anatop and the above compatible list are in
+mainline so this is a preexisting issue, whatever differences there are
+in the versions in the two SoCs aren't triggering problems with the code
+that's in mainline.  The series adding actual clock drivers triggers the
+issue but the claim that the two were compatible wasn't introduced by
+it.  Given this if people are shipping DTBs based on the existing kernel
+we might need something like this patch to work around them, even if we
+fix the existing binding and .dtsi files.
+
+--5tcNGpct1qXGitB4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgrQJ0ACgkQJNaLcl1U
+h9DtDAf/YOhQ/EgQbcTye6iDeHwoQtdcs7hIDQQaJYA6f9Io0CcGpfOSYQHlbN/n
+OIcXaNe+qIC2nc94z8vn5LvGkFTEb4qHUtW8PJKzXrRurP72HvOAk0oEdJN9OylP
+6Lerjp0Z88s3h6t/aeXVedjzsnbDiil9dXtbAnR7QEzma03NJfWdsf/ecwcPFgXc
+JsPSniUHinFE4f0bSq5iRPshTdBpwmHMgjbEI2jedSom27U8693k4uRhmq0qZ+ht
+plwHnVPkcsH2V4dZe5XGr2pQ82CEyPZkfHYjfjSBBiDMAgOPgrIlUbjXCfuRgCYL
+iEz7t/xV12xq7v9pp8sssHCZ2JSf0A==
+=Lhqe
+-----END PGP SIGNATURE-----
+
+--5tcNGpct1qXGitB4--
