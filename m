@@ -1,115 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F8F142E83;
-	Mon, 19 May 2025 08:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51990269CE5;
+	Mon, 19 May 2025 08:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747641636; cv=none; b=JW2UxB6ITkMW6srQVKMwt+PN0E7GfwAvs8zXUzX97YK7gs16MEMqYeHs87KBfmisY1wxCxhxjviY4yjgMmufQC1kLUGJkHVYiksy5EMz0WRzoCZqeXLIKUrAwFpWT2gfE1MXxIe1BLl1m2tFYXGdNE1N0vOFvGPnmRAEVcFc/bM=
+	t=1747642738; cv=none; b=iuvbslMF2FWeLTc5o8If1vpe+8pZ0tH5IwT5MIquBY9UFJsIPKmOkRQgjJkpHpUUjqBQ+58exrS9mMGFhD1gQCKdKSULiP84t99/RjruJ+FVjW9DpTCkSPJi7D4fcshvJtU0HQh3MUiEl02agH+xFDq3OQ2bDoUpr2KU5x3ZV9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747641636; c=relaxed/simple;
-	bh=8NFJmtCrqy2M+sgpOfFXk1sfROnmArrwPBKg4L1GLXI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=sfWgzB7Ueyh5u5hzph/u5CNRrI6h/YoF2WoZUyN5oNwD1u1RFAJFDG44ALPmcMig7GPYTNYzFB7n97Cez7taTnVeGMvBDJ+oDU5w4t0q7dj6lgtLbhdELhuEI0wOlUGoP0xyI2PfxzAvhwtu/z+twXzETndlnvIUNpKq02P7fOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWHW5T38; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWHW5T38"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B6AC4CEE4;
-	Mon, 19 May 2025 08:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747641635;
-	bh=8NFJmtCrqy2M+sgpOfFXk1sfROnmArrwPBKg4L1GLXI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=oWHW5T38bj54HB2n5rv0HTOKrEyKNgsfQ9EwaIV41lzuCXOfDAiB6EEeOMnF/dxme
-	 q5jHVXwoLZhsfUms3QfthBspiyV79nhxwuhuANNGvGLo9mxH962hBWGGdWC4LpLCmt
-	 hEgqTfgW50KDGDkIe5EUGYO91SVSGjo48xg+1tRgDi2Hy1KHSCVVg7ZyNdhdizt6TA
-	 Ku+aYrnVPS3lXgM2MRovs5QQ3edkIrceJ//XlCHSODIdkueKrpYDctUr2pnm3LxvlA
-	 Qdl3z/FKHk9DdoGl3ymJ7iojBdSCXTa6meqGmGuXmH1g1xkvFcX36KxbGC/apxxjGy
-	 S56JPPm2YIf/A==
+	s=arc-20240116; t=1747642738; c=relaxed/simple;
+	bh=SXu6wFYQBB6ePgVlqFrEo8pieN7ilI+ch3cz0SSz6R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVPPxkwRnSjcjnooH6XXyysVvr5t4ePwI8nxyvLjcDK/SeqT399ZZdwXI5nGlvo62PtDMS4JjtGD1yJFYdin4TvLDPk5ND9TUoWVUl9/RBnal4ivHTBONbZe3kUnwXbdVz2oVc7FiqoB0lkAcF4fva6jVK+cRoervEZ2KvBspEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6124DC4AF0B;
+	Mon, 19 May 2025 08:18:57 +0000 (UTC)
+Date: Mon, 19 May 2025 10:18:55 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v4 02/18] dt-bindings: clock: qcom: Update sc8280xp camcc
+ bindings
+Message-ID: <20250519-barnacle-of-beautiful-enthusiasm-4e6af0@kuoka>
+References: <20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com>
+ <20250515-videocc-pll-multi-pd-voting-v4-2-571c63297d01@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 19 May 2025 10:00:27 +0200
-Message-Id: <D9ZZ93ZGKC3N.9VGUE5QBJS4H@kernel.org>
-Cc: <linux-pm@vger.kernel.org>, "Vincent Guittot"
- <vincent.guittot@linaro.org>, "Stephen Boyd" <sboyd@kernel.org>, "Nishanth
- Menon" <nm@ti.com>, <rust-for-linux@vger.kernel.org>, "Manos Pitsidianakis"
- <manos.pitsidianakis@linaro.org>, =?utf-8?q?Alex_Benn=C3=A9e?=
- <alex.bennee@linaro.org>, "Joakim Bech" <joakim.bech@linaro.org>, "Rob
- Herring" <robh@kernel.org>, "Yury Norov" <yury.norov@gmail.com>, "Burak
- Emir" <bqe@google.com>, "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- "Russell King" <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Andrew Ballance"
- <andrewjballance@gmail.com>, "Anisse Astier" <anisse@astier.eu>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V12 06/15] rust: macros: enable use of hyphens in module
- names
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Viresh Kumar" <viresh.kumar@linaro.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,
- "Danilo Krummrich" <dakr@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <cover.1747634382.git.viresh.kumar@linaro.org>
- <21b4c30db60f22d56cc6386a18564705ad3a6f4a.1747634382.git.viresh.kumar@linaro.org>
-In-Reply-To: <21b4c30db60f22d56cc6386a18564705ad3a6f4a.1747634382.git.viresh.kumar@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250515-videocc-pll-multi-pd-voting-v4-2-571c63297d01@quicinc.com>
 
-On Mon May 19, 2025 at 9:07 AM CEST, Viresh Kumar wrote:
-> From: Anisse Astier <anisse@astier.eu>
->
-> Some modules might need naming that contains hyphens "-" to match the
-> auto-probing by name in the platform devices that comes from the device
-> tree.
->
-> But rust identifiers cannot contain hyphens, so replace the module name
-> by an underscore anywhere we'd use it as an identifier.
+On Thu, May 15, 2025 at 12:38:47AM GMT, Jagadeesh Kona wrote:
+> SC8280XP camcc only requires the MMCX power domain, unlike
+> SM8450 camcc which will now support both MMCX and MXC power
 
-I think this is supposed to read "But Rust identifier cannot contain
-hyphens, so replace them with underscores.".
+I do not see change to sm8450 here. This makes no sense on its own. You
+do not move compatibles - what is the point of such change?
 
-> Signed-off-by: Anisse Astier <anisse@astier.eu>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> [Viresh: Replace "-" with '-', and fix line length checkpatch warnings]
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  rust/macros/module.rs | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
+> domains. Hence move SC8280XP camcc bindings from SM8450 to
+> SA8775P camcc.
 
-One nit below, with or without:
+Subject: everything could be an update. Be specific.
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-> index a9418fbc9b44..27cc72d474f0 100644
-> --- a/rust/macros/module.rs
-> +++ b/rust/macros/module.rs
-> @@ -185,7 +185,9 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream =
-{
-> =20
->      let info =3D ModuleInfo::parse(&mut it);
-> =20
-> -    let mut modinfo =3D ModInfoBuilder::new(info.name.as_ref());
-> +    /* Rust does not allow hyphens in identifiers, use underscore instea=
-d */
-> +    let name_identifier =3D info.name.replace('-', "_");
+> 
+> SA8775P camcc doesn't support required-opps property currently
+> but SC8280XP camcc need that property,  so add required-opps
+> based on SC8280XP camcc conditional check in SA8775P camcc
+> bindings.
 
-I think we could just name this variable `ident`.
+Best regards,
+Krzysztof
 
----
-Cheers,
-Benno
-
-> +    let mut modinfo =3D ModInfoBuilder::new(name_identifier.as_ref());
->      if let Some(author) =3D info.author {
->          modinfo.emit("author", &author);
->      }
