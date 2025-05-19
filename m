@@ -1,69 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51990269CE5;
-	Mon, 19 May 2025 08:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC05B26D4F1
+	for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 09:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747642738; cv=none; b=iuvbslMF2FWeLTc5o8If1vpe+8pZ0tH5IwT5MIquBY9UFJsIPKmOkRQgjJkpHpUUjqBQ+58exrS9mMGFhD1gQCKdKSULiP84t99/RjruJ+FVjW9DpTCkSPJi7D4fcshvJtU0HQh3MUiEl02agH+xFDq3OQ2bDoUpr2KU5x3ZV9g=
+	t=1747648705; cv=none; b=exRDACLXnfjoba3Ts9zqjpWtZ4M1vgvCuqkzWbMwKYl1ABaJl56JvlJijM2k820OEHEDJehYeaPv2U7ZRB5AFIK48UPkzSPO6Qo9rE1gqUssTrV7FEMCNdbEDpRU5tpsb48nXWhvfgPgPQFM5ZJvXmsx/Yuksl1GNLB+tFnzYRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747642738; c=relaxed/simple;
-	bh=SXu6wFYQBB6ePgVlqFrEo8pieN7ilI+ch3cz0SSz6R4=;
+	s=arc-20240116; t=1747648705; c=relaxed/simple;
+	bh=9ZrSYtXZNV36ReXjN1cyyFacq399yxsM28VasbnyhBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVPPxkwRnSjcjnooH6XXyysVvr5t4ePwI8nxyvLjcDK/SeqT399ZZdwXI5nGlvo62PtDMS4JjtGD1yJFYdin4TvLDPk5ND9TUoWVUl9/RBnal4ivHTBONbZe3kUnwXbdVz2oVc7FiqoB0lkAcF4fva6jVK+cRoervEZ2KvBspEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6124DC4AF0B;
-	Mon, 19 May 2025 08:18:57 +0000 (UTC)
-Date: Mon, 19 May 2025 10:18:55 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v4 02/18] dt-bindings: clock: qcom: Update sc8280xp camcc
- bindings
-Message-ID: <20250519-barnacle-of-beautiful-enthusiasm-4e6af0@kuoka>
-References: <20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com>
- <20250515-videocc-pll-multi-pd-voting-v4-2-571c63297d01@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDpB/V/3PXaptHSAevJ/n46hym8eD8qcbmmrbHVHMgtlPnjmn7glAto3farXof4Dn8w5+h8s9bcScsILocM/LsRqmP/c/o8F1Wy2TuoMPrIjhMuNYKErgEEl1DYTTQssqvSabKvcll8qxWIW/mlWZMnJ6lIQhT+e9B/bEoLTPhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u3kKSL6g; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3kKSL6g"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb2so3326787a91.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 02:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747648703; x=1748253503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8YfUtIKRuXb9JY1BcI3EzXnVUtQz9qLLJZfzR5tXeT8=;
+        b=u3kKSL6gRqLTaHbYjSQNPjIj8GY9BRBP7V5Rcx3XxEJBAumzUlpR5Y1fs96DJk4tMI
+         g/pHJKFd+TW0fOkd2QJ6AbON7yKY7wSKxY+Bq0TIGabL3bPSaEVdXK0KJaO/uQjawDkK
+         R8qvaz/hZ+1ITvJsHZtWwI4EsQJJwwHcVmXZviwxe4T6cPICgbTDUh2Fe2EiLShj7oyl
+         9M0W/eh/wuhrAz67FFb/RdLWw51Cyae1MFlw22o9/8U80W8+CYOV1wD/sGkwfq+0xqzl
+         iIE/0W2SW8pFGTT0ALvAFvyyXVqerQaR32E2xlzYG31ULHtaalcruQL8MjfquVVIRxkS
+         4Rkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747648703; x=1748253503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YfUtIKRuXb9JY1BcI3EzXnVUtQz9qLLJZfzR5tXeT8=;
+        b=coUfGZsUZlnFujeo6hMzfv+9Y28/VZwrqedwav/Rm9N0lZG6n+e/cLTdYjUYH05qlb
+         6haNm5Yw/RKX0W3YVodbLteG3TrYfgMsArH/1PVBWu0w518QC28IWnL4IvIkKz4Dgz+t
+         WR/a5LLx0eLjFee0lYJkStepKHV546hfNz5gPk1hYAS6cCIW9IAi/Sgx2aD0F0ERULdN
+         XGwGvlt+bRFGjAE1AVQsava2xVY7fzWipioz255uDJW/J8/iirA7NqFl3llm0w3wSigY
+         ZEBl1RlnoLbxTtiQBOmNn1DkU49EMGNiEP2mo+n8bQHOaQK0saULTb3pW2B7QpQTteXu
+         R8EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwXDSXv2LvhPiCDQWiiOI428SchVeD8NkAb8LNIYDzLZZfz3ype9Mhee9B2ilRCzl9vt6+m+bf6EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6DfOwCc/a7JTkaAv6AL7hecOC9rFnHFJez+zdEWhwAeMrjmx6
+	Jb6NBDvIuOgGiJWGbNuEyiChJCT4023TQVmnECMoWaZNXKg6tvZ4aV1DkOPO7x4SZOQ=
+X-Gm-Gg: ASbGncvmZ1Q5SKAC0PJF+tw20TqeEdKoabCVarj79HbkrnayFSLWiqPGjhEGckzXVB2
+	UUBhdUu/35gX7k+ADzbppZubgpg0gdXK5AEwI9ttcknyf+b5CinRt5PKMmtMs95XmW2f7o7XpFg
+	JWqfgc2F4nI9SFQZd+hfDDX+WT8w/fe82JukPj5M5HHE6RkqriBzjRR4jSvkvQ1h6oa1ApiTjcr
+	fCrfag0jgofdYwhtv4V7oEXezGW1FrstMbyl6RCi1pjUYmxxx0pwcNqFVWnFVA0C9ymDsDY5Rsu
+	uV6nKTeydcFBCDCqPW4sBCVfuFNuCAVQN8NgZL+VeHrCxMVyxMCjx7ihOD/9CUk=
+X-Google-Smtp-Source: AGHT+IFuN4PIJtc43pQLr5XwTeREs6uTt7w0XKP4X6Augem7eTNNda+/TECXA7tAATZlEUrMWLMBag==
+X-Received: by 2002:a17:90a:d604:b0:30a:9316:75a2 with SMTP id 98e67ed59e1d1-30e7d52adcfmr20450446a91.10.1747648702910;
+        Mon, 19 May 2025 02:58:22 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26f0824702sm5331260a12.62.2025.05.19.02.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 02:58:22 -0700 (PDT)
+Date: Mon, 19 May 2025 15:28:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Benno Lossin <lossin@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andrew Ballance <andrewjballance@gmail.com>,
+	Anisse Astier <anisse@astier.eu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V12 06/15] rust: macros: enable use of hyphens in module
+ names
+Message-ID: <20250519095820.b2ha3ud2uddfjdya@vireshk-i7>
+References: <cover.1747634382.git.viresh.kumar@linaro.org>
+ <21b4c30db60f22d56cc6386a18564705ad3a6f4a.1747634382.git.viresh.kumar@linaro.org>
+ <D9ZZ93ZGKC3N.9VGUE5QBJS4H@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250515-videocc-pll-multi-pd-voting-v4-2-571c63297d01@quicinc.com>
+In-Reply-To: <D9ZZ93ZGKC3N.9VGUE5QBJS4H@kernel.org>
 
-On Thu, May 15, 2025 at 12:38:47AM GMT, Jagadeesh Kona wrote:
-> SC8280XP camcc only requires the MMCX power domain, unlike
-> SM8450 camcc which will now support both MMCX and MXC power
+On 19-05-25, 10:00, Benno Lossin wrote:
+> I think this is supposed to read "But Rust identifier cannot contain
+> hyphens, so replace them with underscores.".
+ 
+> I think we could just name this variable `ident`.
 
-I do not see change to sm8450 here. This makes no sense on its own. You
-do not move compatibles - what is the point of such change?
+Fixed both. Thanks.
 
-> domains. Hence move SC8280XP camcc bindings from SM8450 to
-> SA8775P camcc.
-
-Subject: everything could be an update. Be specific.
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-> 
-> SA8775P camcc doesn't support required-opps property currently
-> but SC8280XP camcc need that property,  so add required-opps
-> based on SC8280XP camcc conditional check in SA8775P camcc
-> bindings.
-
-Best regards,
-Krzysztof
-
+-- 
+viresh
