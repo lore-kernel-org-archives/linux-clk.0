@@ -1,110 +1,78 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9024D27585C;
-	Mon, 19 May 2025 11:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9A275841;
+	Mon, 19 May 2025 11:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654532; cv=none; b=kjTrMp5jV5cMLnl0atxgo1j0l+YI+Yvw10oXPMWk1/3xzTSZSYCQca97jJPYdw4r6pt/KHa+GpI3Qwzkr/0BnJOJjBPyZqZqGjP3f1POMXtgX7Cn5FYflfuEPVhgGf03JmUL/AD741Xttrwy4y/Zel8/ODyEgX0TivoHQ7tdbsU=
+	t=1747654880; cv=none; b=NqkOjRgyakfV7PsIPwGJelpiv0vyWiYeTKMejSy+td7UyOvSnI2SXdavRGu26LREIkrBzoeu+ekJKZrW3Cnp/0QH3Qp6hPC0mtNdLUgV8bH+BYKeVSYfHvfvGt/IaXGP4kCT305rec/ADqY6vF/q77POBaxfzdsrai+vp5Cunhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654532; c=relaxed/simple;
-	bh=c4Lvu7ujHMSmlSyU6+Vgw3jLSD6EdIq9iAtPYK1lm4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ltgdi6pooAihFju3VSvBL8LaY4eZUptwVzOQ+BGm3siHMFoJR13UXw6PS+JoEcP8nupWDjW7G4mepzB6Wm3e6IhXMKyVLMpNV0q4PakbcN9AOXrD+rw6LkfMei2cbjE6Fl90Lh0nmyVYTyx2BfYNAkELP/MFvstTzaru/tEgzL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=StjPzBot; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1747654880; c=relaxed/simple;
+	bh=XKSfFCNj8EnxgCES6aIVmpmQO7wWDa6AFurBdNDUS2E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=oTMezcfTKmjFaK3KeajKgw/AB7QD+NGbE81prNXB2CDg4yafLF5pmdwwR0Ypl9UQIuNI5twMPbfV3E+cLNxNIqC1IU6N2jUGJABwpSRpyorW7gjfbW6c+jwxbSmJeZO0PPIZpBNGiRYrVhC17F57CkCuytGy6NHDaM1zOSGRDd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlCztRWz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="StjPzBot"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 87DEC43A0B;
-	Mon, 19 May 2025 11:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747654527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=81nL3/GhkQ2VjUOe+1pO+ZBtDt54R0erupT3wBOarVI=;
-	b=StjPzBotRjmZ4tnUHmQoqCmpf+mchssIgwwekn96rt1gfXBps2XWX7jLEZAhJe4G9sVKqv
-	t6dbwwTxJQEQBRizkflnOEQ8fY20CF6dugtMThMZyT9BLTOXR906FTXrOhwTeD7o9LHG2W
-	DeyxuJBEDBhEEOK37c8ykjfjoE8X5mI4wOUa+DCUfmlFzBMUIgJKFpRcdUWxi1k356vUSX
-	YsJdZmSF+EWVG/OYIn7c8cLUX/s9oBWV8FbtM1QSTJ/cJvwkRRBRophSkMp0kTrFsEVMoX
-	V0tBDlm/n8mpuJ37edJqKi3vLAbvNmdUE5+t+cba0AlWo3W1HaVw7M0xJYtMog==
-Date: Mon, 19 May 2025 13:35:22 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
- Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
- Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
- Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
- <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 04/26] driver core: Avoid warning when removing a
- device while its supplier is unbinding
-Message-ID: <20250519133522.63acf5e5@bootlin.com>
-In-Reply-To: <aBt5FvZ95S1Y_Mba@smile.fi.intel.com>
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
-	<20250507071315.394857-5-herve.codina@bootlin.com>
-	<aBt5FvZ95S1Y_Mba@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlCztRWz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 044B2C4CEE4;
+	Mon, 19 May 2025 11:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747654879;
+	bh=XKSfFCNj8EnxgCES6aIVmpmQO7wWDa6AFurBdNDUS2E=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=YlCztRWzZg6BgJoATb8JE0jjkPjXxhTtmIk1S9phuKDjFaCn2vVlD5tS5MLbxF621
+	 ZeDp2qAOZzdwpBEfpdSwQA5DM/9AqEgr4y4Z10jDS5+ncfwGaSVrhwls8LFTwlXm5q
+	 G7PtEfYI0oOk/cpjSEu7AZQ4xRO/YPEWE+qZ18trp3CUSiw/EOlUap2EgSTY6qAzPJ
+	 470WWKiQTRkTMIwgL3rOG1QaJrR5EaYqlER2FNQFVYN9HaGXXr9ppzkq8kcrBDwQXM
+	 BnQ7qGCU19zKv/2AETQNndm7X99Pczx48EMOKPC9tEZYepvcBYl2LT/gz4kEhL2s0w
+	 qfSGVY17POZug==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
- hepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-GND-Sasl: herve.codina@bootlin.com
+Date: Mon, 19 May 2025 13:41:12 +0200
+Message-Id: <DA03Y4OQIZ50.157T5EEVHQVMI@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Miguel Ojeda"
+ <miguel.ojeda.sandonis@gmail.com>, "Danilo Krummrich" <dakr@redhat.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-pm@vger.kernel.org>, "Vincent Guittot" <vincent.guittot@linaro.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Nishanth Menon" <nm@ti.com>,
+ <rust-for-linux@vger.kernel.org>, "Manos Pitsidianakis"
+ <manos.pitsidianakis@linaro.org>, =?utf-8?q?Alex_Benn=C3=A9e?=
+ <alex.bennee@linaro.org>, "Joakim Bech" <joakim.bech@linaro.org>, "Rob
+ Herring" <robh@kernel.org>, "Yury Norov" <yury.norov@gmail.com>, "Burak
+ Emir" <bqe@google.com>, "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ "Russell King" <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Andrew Ballance"
+ <andrewjballance@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V12 13/15] rust: cpufreq: Extend abstractions for driver
+ registration
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>
+X-Mailer: aerc 0.20.1
+References: <cover.1747634382.git.viresh.kumar@linaro.org>
+ <68906d67109c3b323b54469fb1ee44e10c1c5b1e.1747634382.git.viresh.kumar@linaro.org> <aCsQylyW7R5rC15m@pollux>
+In-Reply-To: <aCsQylyW7R5rC15m@pollux>
 
-Hi Andy,
+On Mon May 19, 2025 at 1:06 PM CEST, Danilo Krummrich wrote:
+> On Mon, May 19, 2025 at 12:37:18PM +0530, Viresh Kumar wrote:
+>> +///     fn exit(_policy: &mut cpufreq::Policy, _data: Option<Self::PDat=
+a>) -> Result<()> {
+>
+> This can just be `Result`, here and below.
 
-On Wed, 7 May 2025 18:15:34 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Since I saw you mention this multiple times and I agree, I created a
+clippy issue: https://github.com/rust-lang/rust-clippy/issues/14848
 
-...
-
-> 
-> >  		if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
-> >  			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
-> >  		} else {
-> > -			WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
-> > +			if (link->supplier->links.status != DL_DEV_UNBINDING)
-> > +				WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));  
-> 
-> Why not
-> 
-> 			WARN_ON(link->supplier->links.status != DL_DEV_UNBINDING &&
-> 			        !(link->flags & DL_FLAG_SYNC_STATE_ONLY));
-
-Indeed, I will update in that way in the next iteration.
-
-> 
-> >  			WRITE_ONCE(link->status, DL_STATE_DORMANT);
-> >  		}  
-> 
-
-Best regards,
-Hervé
+---
+Cheers,
+Benno
