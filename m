@@ -1,100 +1,164 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F31DE4FB;
-	Mon, 19 May 2025 11:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6B12777E4;
+	Mon, 19 May 2025 11:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747655406; cv=none; b=aHnrO05lyQEFt4N1llC1Kmo++V+ZpNn5oEe+VY+hmYNO5ppDunGXfxbS7C2nJWzZdZdzH1Ebv8q2QFyhSZncvSUfi+K+GiLh7Emnrz8fm1BT45eULrODoseFj/6BHkd+1VkFG5J/2UiuTk/TJdL2NpuF/MVbNhbWTELE4alEXl4=
+	t=1747655906; cv=none; b=lq1E4KeuplmDRmkMe7LbtSJaq3PsO95GMfNrSqqCiXokkGkOIwUm+agEiaaPXp+mAWjYG5z8DjPtnIvN29ppVFmMA+qIgllDmYk3N5R1O/gvc4PVOvYrrtKG414vIcdvvWYOkviMSmsD0aUx7rWO6p8Mtg+0g1wfv97PbEutwBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747655406; c=relaxed/simple;
-	bh=oUDLf+2BPOAigeSNYCbqQvwj6Ovxax3PYeOrgWAqPBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6RQoWsUAfMVCJu4+FUBJWvkxNVe8vDIs46HD+56pHmM+n7Ynu7eA9WZdQxIgRdVynp7WEd8bcAR4Bo1I9P/8exhfOC6jIGK+1NmrbjrQZq8kn5UKMn0+B3AsmDyS4MQxlIYdBvErl+wCAm9/TtcG/r60PKQ4FojVtLJRIeZaG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRjTBKcd; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1747655906; c=relaxed/simple;
+	bh=W6vNJt1RMhyXz8ga5g+DqhM5Q30vnvMDQZ0Zo9Ry6AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aVxFqDSHCGce2iBTAKP6tMgvn7OeK7sSgB2i/7FxjLtY/goVFbq4gATmKmphbmVoZZKTW/xJk8NwprD85lZM3M7FadpFnNlcOfYtFVHUzIfxGg6HEHMt29bCzv7ko+rs41ltKz6AIYx3iZuWROPNpwC7jv4qGw0KNmAfGHSq3iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IgT29pBY; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRjTBKcd"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b1f2a3bf3c8so481472a12.1;
-        Mon, 19 May 2025 04:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747655404; x=1748260204; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oUDLf+2BPOAigeSNYCbqQvwj6Ovxax3PYeOrgWAqPBA=;
-        b=jRjTBKcdi5OAGxae+u3sucCJ2Dq1R0Eo/d7nn/ii1/NlMGcS1S0tQuY5CJK1iqK0/5
-         y0DrzMx4CkvBhyVVG5VAGHiksDtdsP++cXGqwBqh982DcaOqUUg01hqTInFwUNgwVL1Y
-         ka1SWBCNAATv9wVAAIIa9Nye2FFbx3jZNciKxdgArW9EmfBkdd1wEI2mNyOn4XGIg3hG
-         igBEQVFWamUwboHoi1VF9V+zMJ28D+CM9Ptm1QkuIxfjxX6l6miKi2g6ZEQE8f5Eyb1S
-         j+LoglAjo5lJvQp8VnRrc7skw9zxXr0iO7g6j6Eu/F08Kd87T7tIDWvmRvmb54m05Nzy
-         8ZCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747655404; x=1748260204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oUDLf+2BPOAigeSNYCbqQvwj6Ovxax3PYeOrgWAqPBA=;
-        b=MAYP6+ancML5D5qI1oJyELox8tcMImBQrCkUFZ9Bm+j6bEyQtZGHL8/5021zycjXLf
-         H0RT2G6un+0OXlckzSndn7K6JIzdFOvSUgQoXxm9EuNmhCBF3QTA8wFDzycpVhQz5G/q
-         xQIIyXnVDLIbfUzOd4y6qlR0TSQnJe1C/EM0+S/Wdm5RWErzIRqIMXEu1Gza/ybCSr0u
-         Xd6ogxycyvfPMhg0/hs9SHoVDJSEw5PNP95HTa4W9w4EAClqfo6UjgS+14iaQ1wb+ZEx
-         0m6vAJAK1MCdVKRDpAhMKmSgOfSO4GQDhX3w5vWhfC6CAmK24tpVltNYRazjIWjKnHwX
-         Fzww==
-X-Forwarded-Encrypted: i=1; AJvYcCUn81CDO5XHQNLomccWxlE8BukmlgKRIQUviLZPLFuKvs5u2xFHi1t/OQtn/UTAUi/W+kOU7LA+/xYe4dNC@vger.kernel.org, AJvYcCVZkwe2exb2rqQJJaEK7C4Zrj19xtWGXJ4q21V8E4PcnmpFcR+Auw0HiNZoZ7gK8ldf9u8aYlolBRQ=@vger.kernel.org, AJvYcCW6dPiSf2kpN6VPG232EN9zofJUZvWKPtAEmhO7arkc1sFyB2ysM/AoL3ulJIHgUsJiZbyWM7wSxnjZDrPVmXg=@vger.kernel.org, AJvYcCXZgqz8crYUgKqGBoGxzNNUgOiEQmSsIXiZEc9VRKmdXd1bTcaWMwHvT7h7QWrxucTsTctRQP+/obs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX5wOZYI/y8S1vEI9VMIzPO2ereTgsr8kmlFriKWqmIGZaDnNQ
-	11zrlHj67/0C7/yxFQgV7OlZHS7eMqFBy6px9BtiFSQ+d9fwaiEDXYqrh7ZosFJBmssmC3yOrnn
-	gfX7it5iFxje8xWYK+6IpLK1DDIvcILU=
-X-Gm-Gg: ASbGnctygxuI7VBOPb+NnYhoeUa1iptAihb388+oagSi0AqqV+PLfeSx8a5IHLnFB6m
-	2KktXRMg0dFSAi/YztbkL0h5A27OjgweYJ7Dyj2Thq2hjcuCRLGN6CZt46FLfx3O5CoOzwfMVs6
-	75qI3OJ85O89X3aEc+WtWpktF8a6FwMWOY
-X-Google-Smtp-Source: AGHT+IE1Ts3sIukVdzxxpsexTNf3HAtq3Dwiv478kNTWPjzbcBoadvYcONjdB7Hlj450RyE34iWTbGW6YQggun7qMtE=
-X-Received: by 2002:a17:902:fc48:b0:22e:7633:1755 with SMTP id
- d9443c01a7336-231d453dd3dmr69905575ad.12.1747655403819; Mon, 19 May 2025
- 04:50:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IgT29pBY"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CE63842E7E;
+	Mon, 19 May 2025 11:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747655901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kh9CSiQhvcyTLsM/Bz8dkPxEJqF9S3PrOOEfDd7a+xM=;
+	b=IgT29pBY4dxUjp9NxcjfY42GTiU5Mmwv45iHgcCl1FYwagG/e6p0mLdW4LzrQjS+YoIHO/
+	FnCi+f+o0UnykAkEoe4k6+gqMX41JyWro4D7cJ4fSeYnyIC+EiP611O0DbkK4cnFmdahr/
+	XwFxYH0i7oimkebEmFa7AMYhYeYuPXz/WHV/2Nc4DugKacKuJo5w6C0pBsZ1V3PiSP5QOC
+	57YFAEYYEInhdiyLZgmL1g+wVGP9IHATT8VTn42djFLXLBaowQW3nqC6DQgUhzgB9VUI1Q
+	+lutXTZETYo82rSJC7GNuEqEgCbzMisUeyZNJFLxujXiLvYI9x01UPrW9LSKIQ==
+Date: Mon, 19 May 2025 13:58:18 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 05/26] bus: simple-pm-bus: Populate child nodes at
+ probe
+Message-ID: <20250519135818.01db3341@bootlin.com>
+In-Reply-To: <aBy_aBkC7NpicXho@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+	<20250507071315.394857-6-herve.codina@bootlin.com>
+	<aBy_aBkC7NpicXho@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747634382.git.viresh.kumar@linaro.org> <68906d67109c3b323b54469fb1ee44e10c1c5b1e.1747634382.git.viresh.kumar@linaro.org>
- <aCsQylyW7R5rC15m@pollux> <DA03Y4OQIZ50.157T5EEVHQVMI@kernel.org>
-In-Reply-To: <DA03Y4OQIZ50.157T5EEVHQVMI@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 19 May 2025 13:49:51 +0200
-X-Gm-Features: AX0GCFv2CorIZuOygV417OfPDUe4RrbuOHrnm503Kv8uaSCtXaPRF6KDnmmX3UQ
-Message-ID: <CANiq72kRxCttbyxJjCBPCuDyX-29XCkhECY3k6GvRrCJ5W5H7g@mail.gmail.com>
-Subject: Re: [PATCH V12 13/15] rust: cpufreq: Extend abstractions for driver registration
-To: Benno Lossin <lossin@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, 
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Andrew Ballance <andrewjballance@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ hepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Mon, May 19, 2025 at 1:41=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> Since I saw you mention this multiple times and I agree, I created a
-> clippy issue: https://github.com/rust-lang/rust-clippy/issues/14848
+Hi Andy,
 
-This is https://github.com/Rust-for-Linux/linux/issues/1128 -- I agree
-having it done in Clippy in a general way would be ideal.
+On Thu, 8 May 2025 17:27:52 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Thanks!
+> On Wed, May 07, 2025 at 09:12:47AM +0200, Herve Codina wrote:
+> > The simple-pm-bus drivers handles several simple bus. When it is used  
+> 
+> bus --> busses ?
 
-Cheers,
-Miguel
+Yes sure.
+
+> 
+> > with busses other than a compatible "simple-pm-bus", it don't populate
+> > its child devices during its probe.
+> > 
+> > This confuses fw_devlink and results in wrong or missing devlinks.
+> > 
+> > Once a driver is bound to a device and the probe() has been called,
+> > device_links_driver_bound() is called.
+> > 
+> > This function performs operation based on the following assumption:
+> >     If a child firmware node of the bound device is not added as a
+> >     device, it will never be added.
+> > 
+> > Among operations done on fw_devlinks of those "never be added" devices,
+> > device_links_driver_bound() changes their supplier.
+> > 
+> > With devices attached to a simple-bus compatible device, this change
+> > leads to wrong devlinks where supplier of devices points to the device
+> > parent (i.e. simple-bus compatible device) instead of the device itself
+> > (i.e. simple-bus child).
+> > 
+> > When the device attached to the simple-bus is removed, because devlinks
+> > are not correct, its consumers are not removed first.
+> > 
+> > In order to have correct devlinks created, make the simple-pm-bus driver
+> > compliant with the devlink assumption and create its child devices
+> > during its probe.  
+> 
+> ...
+> 
+> >  	if (match && match->data) {
+> >  		if (of_property_match_string(np, "compatible", match->compatible) == 0)  
+> 
+> Side note, there is an fwnode_is_device_compatible() API for such cases. And IIRC
+> there is also OF variant of it.
+
+fwnode_device_is_compatible() checked for all compatible string. I mean, if
+we have compatible = "foo,custom-bus", "simple-bus";
+fwnode_device_is_compatible() checking against "simple-bus" returns true.
+
+Here, we want "simple-bus" as the first position in the compatible string.
+In other word, we want to match the more specific compatible string as
+mentioned in the comment.
+
+> 
+> > -			return 0;
+> > +			goto populate;
+> >  		else
+> >  			return -ENODEV;
+> >  	}  
+> 
+> ...
+> 
+> > +	if (pdev->dev.of_node)  
+> 
+> Why do you need this check? AFAICS it dups the one the call has already in it.
+
+of_platform_populate() was called only if an OF node is present.
+I want to call of_platform_depopulate() on removal also only if an OF node
+is present.
+
+I don't see the other call that duplicated this check.
+
+Can you clarify?
+
+> 
+> > +		of_platform_depopulate(&pdev->dev);  
+> 
+
+Best regards,
+Hervé
