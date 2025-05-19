@@ -1,151 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C3726D4EF;
-	Mon, 19 May 2025 11:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9024D27585C;
+	Mon, 19 May 2025 11:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747652819; cv=none; b=tEJypwOHpRrD6kVABl4+Fe5kaOrIjjrqPWaB5Hlwio8FG9adbyQPF81ywxoDxlTlLXydlS8IvyO88nSdoKrwsjYu0PWTYQwTeWRpPTzfk4RAAHACNNi2t0ZelpmRPRRxiNQ5SjeAFhjT6BrABaK98gAWx4rQdFEGY35coSptuO8=
+	t=1747654532; cv=none; b=kjTrMp5jV5cMLnl0atxgo1j0l+YI+Yvw10oXPMWk1/3xzTSZSYCQca97jJPYdw4r6pt/KHa+GpI3Qwzkr/0BnJOJjBPyZqZqGjP3f1POMXtgX7Cn5FYflfuEPVhgGf03JmUL/AD741Xttrwy4y/Zel8/ODyEgX0TivoHQ7tdbsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747652819; c=relaxed/simple;
-	bh=QW6b2iPr1kIC6mJxbCjvYl2N57UynhfAeMer3vkWIAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgRNJWfb0drH13D/nTrENiBoNTh7bOtG5lKm99GXTsuJGPBBzLPyqdO3xkL9KchQ98OX282LBJELr3JsEqUF4u39yKXGZZjMNctVOdmundcKevqGUw8ukRxwlTIU/p9vEKh5AhunckYuHJSQz/Irq/TiK26ew2YRezqLPNPNn/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuhIXdxa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747654532; c=relaxed/simple;
+	bh=c4Lvu7ujHMSmlSyU6+Vgw3jLSD6EdIq9iAtPYK1lm4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ltgdi6pooAihFju3VSvBL8LaY4eZUptwVzOQ+BGm3siHMFoJR13UXw6PS+JoEcP8nupWDjW7G4mepzB6Wm3e6IhXMKyVLMpNV0q4PakbcN9AOXrD+rw6LkfMei2cbjE6Fl90Lh0nmyVYTyx2BfYNAkELP/MFvstTzaru/tEgzL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=StjPzBot; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuhIXdxa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A038C4CEEB;
-	Mon, 19 May 2025 11:06:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747652818;
-	bh=QW6b2iPr1kIC6mJxbCjvYl2N57UynhfAeMer3vkWIAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BuhIXdxakTY1pYyP0h9EYlDjkftNK2yF2RT5R1m5fJFV/cyYtxCauwCEJ1wgdWEmB
-	 L+doYZLJnMrYA4uNiPnzlim3/rRaLR+3BpBYYGhx5vf2vywCuqBQsp4Jzha6VtOog4
-	 dzCUNXuCoTU3jjTpx2898tHtA+g+IjH5carTbwqcDiGnpuxgdKPpUeVbdv7VKNn5Y6
-	 zRhRj5PtPtbT+aBCeSGbsEHyuVBmKLbbMk83Wz3himg43IKctQNZbm86vygEvwLNtn
-	 ACpudJeRajJ2TMzOnpihwAnCF8yUdm4j5eHVvlEExnz/WB3CA8e+PpYvmBzWF7/BOe
-	 m+FAPlrbuL7Ig==
-Date: Mon, 19 May 2025 13:06:50 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V12 13/15] rust: cpufreq: Extend abstractions for driver
- registration
-Message-ID: <aCsQylyW7R5rC15m@pollux>
-References: <cover.1747634382.git.viresh.kumar@linaro.org>
- <68906d67109c3b323b54469fb1ee44e10c1c5b1e.1747634382.git.viresh.kumar@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="StjPzBot"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 87DEC43A0B;
+	Mon, 19 May 2025 11:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747654527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=81nL3/GhkQ2VjUOe+1pO+ZBtDt54R0erupT3wBOarVI=;
+	b=StjPzBotRjmZ4tnUHmQoqCmpf+mchssIgwwekn96rt1gfXBps2XWX7jLEZAhJe4G9sVKqv
+	t6dbwwTxJQEQBRizkflnOEQ8fY20CF6dugtMThMZyT9BLTOXR906FTXrOhwTeD7o9LHG2W
+	DeyxuJBEDBhEEOK37c8ykjfjoE8X5mI4wOUa+DCUfmlFzBMUIgJKFpRcdUWxi1k356vUSX
+	YsJdZmSF+EWVG/OYIn7c8cLUX/s9oBWV8FbtM1QSTJ/cJvwkRRBRophSkMp0kTrFsEVMoX
+	V0tBDlm/n8mpuJ37edJqKi3vLAbvNmdUE5+t+cba0AlWo3W1HaVw7M0xJYtMog==
+Date: Mon, 19 May 2025 13:35:22 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 04/26] driver core: Avoid warning when removing a
+ device while its supplier is unbinding
+Message-ID: <20250519133522.63acf5e5@bootlin.com>
+In-Reply-To: <aBt5FvZ95S1Y_Mba@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+	<20250507071315.394857-5-herve.codina@bootlin.com>
+	<aBt5FvZ95S1Y_Mba@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68906d67109c3b323b54469fb1ee44e10c1c5b1e.1747634382.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ hepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Mon, May 19, 2025 at 12:37:18PM +0530, Viresh Kumar wrote:
-> +/// CPU frequency driver Registration.
-> +///
-> +/// ## Examples
-> +///
-> +/// The following example demonstrates how to register a cpufreq driver.
-> +///
-> +/// ```
-> +/// use kernel::{
-> +///     cpu, cpufreq,
-> +///     c_str,
-> +///     device::{Bound, Device},
-> +///     macros::vtable,
-> +///     sync::Arc,
-> +/// };
-> +/// struct FooDevice;
-> +///
-> +/// #[derive(Default)]
-> +/// struct FooDriver;
-> +///
-> +/// #[vtable]
-> +/// impl cpufreq::Driver for FooDriver {
-> +///     const NAME: &'static CStr = c_str!("cpufreq-foo");
-> +///     const FLAGS: u16 = cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV;
-> +///     const BOOST_ENABLED: bool = true;
-> +///
-> +///     type PData = Arc<FooDevice>;
-> +///
-> +///     fn init(policy: &mut cpufreq::Policy) -> Result<Self::PData> {
-> +///         // Initialize here
-> +///         Ok(Arc::new(FooDevice, GFP_KERNEL)?)
-> +///     }
-> +///
-> +///     fn exit(_policy: &mut cpufreq::Policy, _data: Option<Self::PData>) -> Result<()> {
+Hi Andy,
 
-This can just be `Result`, here and below.
+On Wed, 7 May 2025 18:15:34 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> +///         Ok(())
-> +///     }
-> +///
-> +///     fn suspend(policy: &mut cpufreq::Policy) -> Result<()> {
-> +///         policy.generic_suspend()
-> +///     }
-> +///
-> +///     fn verify(data: &mut cpufreq::PolicyData) -> Result<()> {
-> +///         data.generic_verify()
-> +///     }
-> +///
-> +///     fn target_index(policy: &mut cpufreq::Policy, index: cpufreq::TableIndex) -> Result<()> {
-> +///         // Update CPU frequency
-> +///         Ok(())
-> +///     }
-> +///
-> +///     fn get(policy: &mut cpufreq::Policy) -> Result<u32> {
-> +///         policy.generic_get()
-> +///     }
-> +/// }
-> +///
-> +/// fn foo_probe(dev: &Device<Bound>) {
+...
 
-You could use a real probe function, e.g. from platform:
+> 
+> >  		if (link->supplier->links.status == DL_DEV_DRIVER_BOUND) {
+> >  			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
+> >  		} else {
+> > -			WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));
+> > +			if (link->supplier->links.status != DL_DEV_UNBINDING)
+> > +				WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY));  
+> 
+> Why not
+> 
+> 			WARN_ON(link->supplier->links.status != DL_DEV_UNBINDING &&
+> 			        !(link->flags & DL_FLAG_SYNC_STATE_ONLY));
 
-	# struct Driver;
-	
-	impl platform::Driver for SampleDriver {
-	   # type IdInfo = ();
-	   # const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
-	
-	   fn probe(
-	      pdev: &platform::Device<Core>,
-	      info: Option<&Self::IdInfo>,
-	   ) -> Result<Pin<KBox<Self>>> {
-	      ...
-	   }
-	}
+Indeed, I will update in that way in the next iteration.
 
-> +///     cpufreq::Registration::<FooDriver>::new_foreign_owned(dev).unwrap();
+> 
+> >  			WRITE_ONCE(link->status, DL_STATE_DORMANT);
+> >  		}  
+> 
 
-I prefer if we do not use unwrap() in doctests, since they also serve as example
-and people might think that calling unwrap() is valid thing to do.
-
-Sorry, I didn't catch the above in my previous review -- fine for me if you do
-those improvements in a subsequent patch.
+Best regards,
+Hervé
