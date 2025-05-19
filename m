@@ -1,62 +1,62 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721D7269AFD
-	for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 07:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CD7269CF4
+	for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 07:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747638493; cv=none; b=aZDTCzRMgBNAhdvEqGAjMLYjR2qOJ9MeZSljJWMqgLUyesWwJBDt43h/26EJHcjPHX4LxUj+iXcha5DrfMsKfWgiuaSDW/Wbgnf/6m2+G9slut8cS9qlajvbn8BD/cj977mW0TqznWg0ZTlQW5QNF+N5+7Udc502TPIAmwhIegQ=
+	t=1747638497; cv=none; b=tsZ6cxTUqGVdbUB/fKwEU2zbRFWlYLGdZnf4xMvNwavbplZ3XrA2tMLfzAhGfK+ye7N8n3sN29pDzrU3noPoUPQ7m8yM6eLM8GtOOUqAFIqgLaKFCXuZr0P6rFre7sPgSGHiJIuV0vqfRg1NR2B4dcIKkOcdv7NPOT0JcCLYkg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747638493; c=relaxed/simple;
-	bh=juOq7g4rijYkdxYFdOONMCnI1QPlZoKOeRbFNRc5CdA=;
+	s=arc-20240116; t=1747638497; c=relaxed/simple;
+	bh=iaCNxDEvQFF0BxKHRPZ6sTywDQH6RmrBQNe/gDyVxqg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lfQKLGiWl68clIgHDhoLeW6hxoLk+sErWwUI2m/+7o79YXr05X0kXuadjO4ly7bYPoAs2Jey/qa1h3VwxpZbW6G/HJoRr2CzYOI6S8ad873QoMJU2RECHUc8LBP0CpAtVxONqVb2rnslX/PKyXWZZ17XZbLTf6LMc9PAakm6Wpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wPZjBqtt; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=sAJj3wR+p6XlQOigVOnOLunnXfmCG6x7A/8HYZvcNLqfGSGDcx/sYKbWRrbITcoC6aEbR4u8puztmm0tfR6VyWSMilXEWDj0F2+MOlE9BRu125KrUIUhHGGoPjv1A4nd9huANBA26w/sPTUNxHtETbus61WYn3LYTLjYzuWerao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U2WCg5hH; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wPZjBqtt"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-30e8f4dbb72so2786499a91.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 00:08:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U2WCg5hH"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c27df0daso819779b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 May 2025 00:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747638490; x=1748243290; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747638495; x=1748243295; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4r3X/jvGTdLizcE+YYmP7gaggu0BT8JGhgAP9zX20zQ=;
-        b=wPZjBqttr+hHHhBIqnTEXaCYP6p1mVG29YFLK8j2tQ50zoHy4GnQUg5PtnJNT1PaKV
-         zdDvuE8FhAIO6DomX7fSaiLE+EgRdnx1tz+t5mnaaTG4046YN8/c5lFQvtvA4Mborz3Q
-         QY84k+DhIFRu3mtaM7wm8OeAp6SbdKZnvwkrHs6aofpvWkrrNIMbp7agIW+ePo4imshD
-         33nw7pjAGEWD+IXsM46daodfEJvDyvXg4apXuL+qsBbC+50RBNXfdleODe+Ah77FBFCO
-         SL4Oayuis4AZWnG6AhoA9swQ4GGp8zUeqhis2sVhYmcoaSOidJy4uEM64VUYIHIxEg7R
-         F/MQ==
+        bh=T0gY3g4CMyk/KLPQ47ChexP08SbMxnytGLgjzVXuWIc=;
+        b=U2WCg5hH3h+SIVcy5nQ4Soix+uZdrkOWAh2I7IUFpVJHaQmuyeUDDRjmMxjPnvLiok
+         f5dYBSzT5rWFkhL6YgBtJNVIEX3HAjcd7h+SGCyM56xoMixrWyQQPz8i6IqIj33Q/fMh
+         9bNaGPD9ovUSO0meORwBRODvQv78vKjuotAmrA0OFqhi0tNExR9F9hdkMGEift16K6WT
+         Ti3gjWpXESl2IvieGsikHrncj7T2AVQdCnPL+6vpvDesqKDyeYHgLEwDa9zmzs309VIy
+         ym5KUBqJEjrZM/Ac3L1iSmAmv1RTD9tI/391eaS2osheOZ0qwuruMJHoWrHsWzvqtPHL
+         4/3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747638490; x=1748243290;
+        d=1e100.net; s=20230601; t=1747638495; x=1748243295;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4r3X/jvGTdLizcE+YYmP7gaggu0BT8JGhgAP9zX20zQ=;
-        b=ZoOnz7k5lRS5+w4Ta4pFIS4dJSOtIei0IhbdqY0bF8Zd2fMYGcS/mwO/T3gwC+CAqm
-         +QBvqQgye2vXnR9K8IRXg60yE8N8HxNyXOGipFIQLvBobUCSAKyVbSMBggSr+PIF9Bir
-         pFqeSyFIGWaWHnEH3GQfwAsvWS8tCjnT5U+1dQbc2xM37ZxOZyX332d4PfHKFYhiXkEd
-         O+f3V4GHUIDdMou/P1EKQo7pRKNBL4JMBGSYFyB0zOyWD8zo4Ic+ToJZl8MTWqaMe8y4
-         z9k7yMeZOJPqF/wJGx1kvdsGODsf7y/iwNybvsaGeW42nscRfUq+H7s03sQFtVMfXzuu
-         9mgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaJ2oSOWoUHZwxSgwz3OsC193kDA4T8/rfeYFje8SV6TAxXCDDIyZIyVutUcn+O+Mrcie9cpIutLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxakRm9j+JFHZBwzeyTD2S/w9kh94vfGLwDxB0Pt26IEhV/qZ4g
-	py9yD33GW8X7Vgpf+1sJX/FFRxm4KDFj+D9rP9WIpB+YWRndNPialBNxZo2oEPH86FA=
-X-Gm-Gg: ASbGncvr9pe48sHkCzdR9NZmicQm3oO+ckb0Heg2WKfRnNBSbqVsU4W8J1he48X5EPs
-	aLkLfr/3PQCuWaN/yLCuuiwRxw15ebbflNXZAcPc3wK9OLvizYkjq251JxkIdHg9l0ZT2+5fHmM
-	vxlaJ929DC70n+nkMTKcIZXhUNP4hsnLOkN4ih5p+x2VOTUhzo221DLFgM3yy1yBm6uE3zq370g
-	Ov0b9W4+lgIPIt7DAoRS2DvrMMThyKTmAZq6788MVmc+meYvbdzbE4EKEFbYxgKofUYRdSGUaaw
-	+ycihrUnMwzdkTOIpr21eBbWkqepvPi1AhCnnEFQ5sIzQXFj/hceD0ib/wFYtpw=
-X-Google-Smtp-Source: AGHT+IEwnItI1adJ5eNRnfUIiONeAwIaER/7UxHP7sLjQh/2fUqJp7LQ0oLpGHM32/z5QPdXw+IjVA==
-X-Received: by 2002:a17:90b:3b8f:b0:2ff:6608:78cd with SMTP id 98e67ed59e1d1-30e830fbe31mr19285978a91.9.1747638490516;
-        Mon, 19 May 2025 00:08:10 -0700 (PDT)
+        bh=T0gY3g4CMyk/KLPQ47ChexP08SbMxnytGLgjzVXuWIc=;
+        b=uf+o6CNsLjEQyZXMZ/06mxlshywtElzTMuxm+3jmob/Ac/BmPbfBktRVn2Qddvt5nc
+         Jk0p9CftQs7A6tDSPptg11is5npH7i80XWVdJjeMpmH4vC6O0GIHTHDf5qNC4eiLq+//
+         LZCzd1id0eeZUOJ0AC1SY72Wu5SgaR/pFvRiIH5+VfTMXAsyuElR+5sfJSxcqjntzcsa
+         zDVWnaxPAZ/pkzAgWPkg+m5002iq/BhEPV/KkLi2nAroq33VGFCly1ajlhwYpQoj8Fdf
+         PaoN4T12NjeJUtxCeqyTS1M2n18a5igVjIeyzdNkfxmq6o5WVHhNSv4ioxCa5khJqOlI
+         Cimw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyJt9aSCADQruCZBtt4rzfNkg4AyAhxN+4JrdxaVLaZAG2u9eZZENg59k9DIMLY60SJ3ufJv6qa1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyifqQh3IPZ4ePLkzu55cLB+LgNfQRR1kr2eFy4GfVnIBV9vpHp
+	wzxcGk7jH8xE/i9UNQt9j/B0fl/weNOPJv5lwSrxvVTTAcVsbfvKyQSiARuGygcy9Ic=
+X-Gm-Gg: ASbGncskSysO2PE864k/99IObe9dqWc89cPC+nY7WafNmwZyBwrujrVbijgR7F5QNwz
+	oaR+9sWM2NOz+6J5+HgSgQbE5lzXTPtD7wS1VG6j0TxkeWY9utXgymCEADlSpI9giavQQB9vWNX
+	8HGNV5sUdaT7wwDka9CnRrs28SYJjrrINGCrAVQBqeiXbu6RM8IG5OuYQSksgpejCMQ+TqHD1gw
+	yDt93jSv7XwJiuPHNTNihfyk5Z4DcTLuLuVGCBrXSNvxv8rNxbUO3gIe8Xdz+gZONZ9iRFTrDYR
+	q+J86vYurh+ah0d61HioFvx2Zi9Xkc/sJ8mest0KBtlcw/tv4cn/
+X-Google-Smtp-Source: AGHT+IH9j6Bth5f8cWmvK9+922RPLy2g7bS9UUlSkK9L8CsCt0G/VVlItFC0SYxSb2QpytTZz9o0Uw==
+X-Received: by 2002:aa7:88c8:0:b0:73e:2dc5:a93c with SMTP id d2e1a72fcca58-742a97c4fd9mr15166932b3a.11.1747638495149;
+        Mon, 19 May 2025 00:08:15 -0700 (PDT)
 Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e7d4aa777sm5971781a91.21.2025.05.19.00.08.09
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a970c86asm5738760b3a.57.2025.05.19.00.08.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 00:08:09 -0700 (PDT)
+        Mon, 19 May 2025 00:08:14 -0700 (PDT)
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
@@ -71,13 +71,12 @@ To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
+	Viresh Kumar <vireshk@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>
 Cc: Viresh Kumar <viresh.kumar@linaro.org>,
 	linux-pm@vger.kernel.org,
 	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
 	rust-for-linux@vger.kernel.org,
 	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
 	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
@@ -91,9 +90,9 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Andrew Ballance <andrewjballance@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V12 07/15] rust: cpu: Add from_cpu()
-Date: Mon, 19 May 2025 12:37:12 +0530
-Message-Id: <19bc845f59e0a7a6bbc5c23353d04f96f23aaed9.1747634382.git.viresh.kumar@linaro.org>
+Subject: [PATCH V12 08/15] rust: opp: Add initial abstractions for OPP framework
+Date: Mon, 19 May 2025 12:37:13 +0530
+Message-Id: <1a237a773715cb0738d831aeef9352ed04d2eac8.1747634382.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1747634382.git.viresh.kumar@linaro.org>
 References: <cover.1747634382.git.viresh.kumar@linaro.org>
@@ -105,93 +104,362 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This implements cpu::from_cpu(), which returns a reference to
-Device for a CPU. The C struct is created at initialization time for
-CPUs and is never freed and so ARef isn't returned from this function.
-
-The new helper will be used by Rust based cpufreq drivers.
+Introduce initial Rust abstractions for the Operating Performance Points
+(OPP) framework. This includes bindings for `struct dev_pm_opp` and
+`struct dev_pm_opp_data`, laying the groundwork for further OPP
+integration.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- MAINTAINERS                     |  1 +
- rust/bindings/bindings_helper.h |  1 +
- rust/kernel/cpu.rs              | 30 ++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |  1 +
- 4 files changed, 33 insertions(+)
- create mode 100644 rust/kernel/cpu.rs
+ MAINTAINERS                     |   1 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/lib.rs              |   2 +
+ rust/kernel/opp.rs              | 299 ++++++++++++++++++++++++++++++++
+ 4 files changed, 303 insertions(+)
+ create mode 100644 rust/kernel/opp.rs
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 12cde55579a0..475abf72869c 100644
+index 475abf72869c..931e418f89ed 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -6155,6 +6155,7 @@ F:	include/linux/cpuhotplug.h
- F:	include/linux/smpboot.h
- F:	kernel/cpu.c
- F:	kernel/smpboot.*
-+F:	rust/kernel/cpu.rs
+@@ -18165,6 +18165,7 @@ F:	Documentation/devicetree/bindings/opp/
+ F:	Documentation/power/opp.rst
+ F:	drivers/opp/
+ F:	include/linux/pm_opp.h
++F:	rust/kernel/opp.rs
  
- CPU IDLE TIME MANAGEMENT FRAMEWORK
- M:	"Rafael J. Wysocki" <rafael@kernel.org>
+ OPL4 DRIVER
+ M:	Clemens Ladisch <clemens@ladisch.de>
 diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index f53d6e1a21f2..ac92c67d2c38 100644
+index ac92c67d2c38..529f22891e0b 100644
 --- a/rust/bindings/bindings_helper.h
 +++ b/rust/bindings/bindings_helper.h
-@@ -11,6 +11,7 @@
- #include <linux/blk_types.h>
- #include <linux/blkdev.h>
- #include <linux/clk.h>
-+#include <linux/cpu.h>
- #include <linux/cpumask.h>
- #include <linux/cred.h>
- #include <linux/device/faux.h>
-diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-new file mode 100644
-index 000000000000..10c5c3b25873
---- /dev/null
-+++ b/rust/kernel/cpu.rs
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Generic CPU definitions.
-+//!
-+//! C header: [`include/linux/cpu.h`](srctree/include/linux/cpu.h)
-+
-+use crate::{bindings, device::Device, error::Result, prelude::ENODEV};
-+
-+/// Creates a new instance of CPU's device.
-+///
-+/// # Safety
-+///
-+/// Reference counting is not implemented for the CPU device in the C code. When a CPU is
-+/// hot-unplugged, the corresponding CPU device is unregistered, but its associated memory
-+/// is not freed.
-+///
-+/// Callers must ensure that the CPU device is not used after it has been unregistered.
-+/// This can be achieved, for example, by registering a CPU hotplug notifier and removing
-+/// any references to the CPU device within the notifier's callback.
-+pub unsafe fn from_cpu(cpu: u32) -> Result<&'static Device> {
-+    // SAFETY: It is safe to call `get_cpu_device()` for any CPU.
-+    let ptr = unsafe { bindings::get_cpu_device(cpu) };
-+    if ptr.is_null() {
-+        return Err(ENODEV);
-+    }
-+
-+    // SAFETY: The pointer returned by `get_cpu_device()`, if not `NULL`, is a valid pointer to
-+    // a `struct device` and is never freed by the C code.
-+    Ok(unsafe { Device::as_ref(ptr) })
-+}
+@@ -30,6 +30,7 @@
+ #include <linux/phy.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_opp.h>
+ #include <linux/poll.h>
+ #include <linux/property.h>
+ #include <linux/refcount.h>
 diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 3fd7c17cbc06..de0a840fcc99 100644
+index de0a840fcc99..ea589254b4ac 100644
 --- a/rust/kernel/lib.rs
 +++ b/rust/kernel/lib.rs
-@@ -43,6 +43,7 @@
- #[doc(hidden)]
- pub mod build_assert;
- pub mod clk;
-+pub mod cpu;
- pub mod cpumask;
- pub mod cred;
- pub mod device;
+@@ -67,6 +67,8 @@
+ #[cfg(CONFIG_NET)]
+ pub mod net;
+ pub mod of;
++#[cfg(CONFIG_PM_OPP)]
++pub mod opp;
+ pub mod page;
+ #[cfg(CONFIG_PCI)]
+ pub mod pci;
+diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+new file mode 100644
+index 000000000000..8f0493a8b6e8
+--- /dev/null
++++ b/rust/kernel/opp.rs
+@@ -0,0 +1,299 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Operating performance points.
++//!
++//! This module provides rust abstractions for interacting with the OPP subsystem.
++//!
++//! C header: [`include/linux/pm_opp.h`](srctree/include/linux/pm_opp.h)
++//!
++//! Reference: <https://docs.kernel.org/power/opp.html>
++
++use crate::{
++    clk::Hertz,
++    device::Device,
++    error::{code::*, to_result, Result},
++    ffi::c_ulong,
++    types::{ARef, AlwaysRefCounted, Opaque},
++};
++
++use core::ptr;
++
++/// The voltage unit.
++///
++/// Represents voltage in microvolts, wrapping a [`c_ulong`] value.
++///
++/// ## Examples
++///
++/// ```
++/// use kernel::opp::MicroVolt;
++///
++/// let raw = 90500;
++/// let volt = MicroVolt(raw);
++///
++/// assert_eq!(usize::from(volt), raw);
++/// assert_eq!(volt, MicroVolt(raw));
++/// ```
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++pub struct MicroVolt(pub c_ulong);
++
++impl From<MicroVolt> for c_ulong {
++    #[inline]
++    fn from(volt: MicroVolt) -> Self {
++        volt.0
++    }
++}
++
++/// The power unit.
++///
++/// Represents power in microwatts, wrapping a [`c_ulong`] value.
++///
++/// ## Examples
++///
++/// ```
++/// use kernel::opp::MicroWatt;
++///
++/// let raw = 1000000;
++/// let power = MicroWatt(raw);
++///
++/// assert_eq!(usize::from(power), raw);
++/// assert_eq!(power, MicroWatt(raw));
++/// ```
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++pub struct MicroWatt(pub c_ulong);
++
++impl From<MicroWatt> for c_ulong {
++    #[inline]
++    fn from(power: MicroWatt) -> Self {
++        power.0
++    }
++}
++
++/// Handle for a dynamically created [`OPP`].
++///
++/// The associated [`OPP`] is automatically removed when the [`Token`] is dropped.
++///
++/// ## Examples
++///
++/// The following example demonstrates how to create an [`OPP`] dynamically.
++///
++/// ```
++/// use kernel::clk::Hertz;
++/// use kernel::device::Device;
++/// use kernel::error::Result;
++/// use kernel::opp::{Data, MicroVolt, Token};
++/// use kernel::types::ARef;
++///
++/// fn create_opp(dev: &ARef<Device>, freq: Hertz, volt: MicroVolt, level: u32) -> Result<Token> {
++///     let data = Data::new(freq, volt, level, false);
++///
++///     // OPP is removed once token goes out of scope.
++///     data.add_opp(dev)
++/// }
++/// ```
++pub struct Token {
++    dev: ARef<Device>,
++    freq: Hertz,
++}
++
++impl Token {
++    /// Dynamically adds an [`OPP`] and returns a [`Token`] that removes it on drop.
++    fn new(dev: &ARef<Device>, mut data: Data) -> Result<Self> {
++        // SAFETY: The requirements are satisfied by the existence of [`Device`] and its safety
++        // requirements.
++        to_result(unsafe { bindings::dev_pm_opp_add_dynamic(dev.as_raw(), &mut data.0) })?;
++        Ok(Self {
++            dev: dev.clone(),
++            freq: data.freq(),
++        })
++    }
++}
++
++impl Drop for Token {
++    fn drop(&mut self) {
++        // SAFETY: The requirements are satisfied by the existence of [`Device`] and its safety
++        // requirements.
++        unsafe { bindings::dev_pm_opp_remove(self.dev.as_raw(), self.freq.into()) };
++    }
++}
++
++/// OPP data.
++///
++/// Rust abstraction for the C `struct dev_pm_opp_data`, used to define operating performance
++/// points (OPPs) dynamically.
++///
++/// ## Examples
++///
++/// The following example demonstrates how to create an [`OPP`] with [`Data`].
++///
++/// ```
++/// use kernel::clk::Hertz;
++/// use kernel::device::Device;
++/// use kernel::error::Result;
++/// use kernel::opp::{Data, MicroVolt, Token};
++/// use kernel::types::ARef;
++///
++/// fn create_opp(dev: &ARef<Device>, freq: Hertz, volt: MicroVolt, level: u32) -> Result<Token> {
++///     let data = Data::new(freq, volt, level, false);
++///
++///     // OPP is removed once token goes out of scope.
++///     data.add_opp(dev)
++/// }
++/// ```
++#[repr(transparent)]
++pub struct Data(bindings::dev_pm_opp_data);
++
++impl Data {
++    /// Creates a new instance of [`Data`].
++    ///
++    /// This can be used to define a dynamic OPP to be added to a device.
++    pub fn new(freq: Hertz, volt: MicroVolt, level: u32, turbo: bool) -> Self {
++        Self(bindings::dev_pm_opp_data {
++            turbo,
++            freq: freq.into(),
++            u_volt: volt.into(),
++            level,
++        })
++    }
++
++    /// Adds an [`OPP`] dynamically.
++    ///
++    /// Returns a [`Token`] that ensures the OPP is automatically removed
++    /// when it goes out of scope.
++    #[inline]
++    pub fn add_opp(self, dev: &ARef<Device>) -> Result<Token> {
++        Token::new(dev, self)
++    }
++
++    /// Returns the frequency associated with this OPP data.
++    #[inline]
++    fn freq(&self) -> Hertz {
++        Hertz(self.0.freq)
++    }
++}
++
++/// A reference-counted Operating performance point (OPP).
++///
++/// Rust abstraction for the C `struct dev_pm_opp`.
++///
++/// # Invariants
++///
++/// The pointer stored in `Self` is non-null and valid for the lifetime of the [`OPP`].
++///
++/// Instances of this type are reference-counted. The reference count is incremented by the
++/// `dev_pm_opp_get` function and decremented by `dev_pm_opp_put`. The Rust type `ARef<OPP>`
++/// represents a pointer that owns a reference count on the [`OPP`].
++///
++/// A reference to the [`OPP`], &[`OPP`], isn't refcounted by the Rust code.
++#[repr(transparent)]
++pub struct OPP(Opaque<bindings::dev_pm_opp>);
++
++/// SAFETY: It is okay to send the ownership of [`OPP`] across thread boundaries.
++unsafe impl Send for OPP {}
++
++/// SAFETY: It is okay to access [`OPP`] through shared references from other threads because we're
++/// either accessing properties that don't change or that are properly synchronised by C code.
++unsafe impl Sync for OPP {}
++
++/// SAFETY: The type invariants guarantee that [`OPP`] is always refcounted.
++unsafe impl AlwaysRefCounted for OPP {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
++        unsafe { bindings::dev_pm_opp_get(self.0.get()) };
++    }
++
++    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
++        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
++        unsafe { bindings::dev_pm_opp_put(obj.cast().as_ptr()) }
++    }
++}
++
++impl OPP {
++    /// Creates an owned reference to a [`OPP`] from a valid pointer.
++    ///
++    /// The refcount is incremented by the C code and will be decremented by `dec_ref` when the
++    /// [`ARef`] object is dropped.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `ptr` is valid and the refcount of the [`OPP`] is incremented.
++    /// The caller must also ensure that it doesn't explicitly drop the refcount of the [`OPP`], as
++    /// the returned [`ARef`] object takes over the refcount increment on the underlying object and
++    /// the same will be dropped along with it.
++    pub unsafe fn from_raw_opp_owned(ptr: *mut bindings::dev_pm_opp) -> Result<ARef<Self>> {
++        let ptr = ptr::NonNull::new(ptr).ok_or(ENODEV)?;
++
++        // SAFETY: The safety requirements guarantee the validity of the pointer.
++        //
++        // INVARIANT: The reference-count is decremented when [`OPP`] goes out of scope.
++        Ok(unsafe { ARef::from_raw(ptr.cast()) })
++    }
++
++    /// Creates a reference to a [`OPP`] from a valid pointer.
++    ///
++    /// The refcount is not updated by the Rust API unless the returned reference is converted to
++    /// an [`ARef`] object.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `ptr` is valid and remains valid for the duration of `'a`.
++    #[inline]
++    pub unsafe fn from_raw_opp<'a>(ptr: *mut bindings::dev_pm_opp) -> Result<&'a Self> {
++        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
++        // duration of 'a. The cast is okay because [`OPP`] is `repr(transparent)`.
++        Ok(unsafe { &*ptr.cast() })
++    }
++
++    #[inline]
++    fn as_raw(&self) -> *mut bindings::dev_pm_opp {
++        self.0.get()
++    }
++
++    /// Returns the frequency of an [`OPP`].
++    pub fn freq(&self, index: Option<u32>) -> Hertz {
++        let index = index.unwrap_or(0);
++
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        Hertz(unsafe { bindings::dev_pm_opp_get_freq_indexed(self.as_raw(), index) })
++    }
++
++    /// Returns the voltage of an [`OPP`].
++    #[inline]
++    pub fn voltage(&self) -> MicroVolt {
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        MicroVolt(unsafe { bindings::dev_pm_opp_get_voltage(self.as_raw()) })
++    }
++
++    /// Returns the level of an [`OPP`].
++    #[inline]
++    pub fn level(&self) -> u32 {
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        unsafe { bindings::dev_pm_opp_get_level(self.as_raw()) }
++    }
++
++    /// Returns the power of an [`OPP`].
++    #[inline]
++    pub fn power(&self) -> MicroWatt {
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        MicroWatt(unsafe { bindings::dev_pm_opp_get_power(self.as_raw()) })
++    }
++
++    /// Returns the required pstate of an [`OPP`].
++    #[inline]
++    pub fn required_pstate(&self, index: u32) -> u32 {
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        unsafe { bindings::dev_pm_opp_get_required_pstate(self.as_raw(), index) }
++    }
++
++    /// Returns true if the [`OPP`] is turbo.
++    #[inline]
++    pub fn is_turbo(&self) -> bool {
++        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
++        // use it.
++        unsafe { bindings::dev_pm_opp_is_turbo(self.as_raw()) }
++    }
++}
 -- 
 2.31.1.272.g89b43f80a514
 
