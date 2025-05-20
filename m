@@ -1,67 +1,114 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5B0EEDE;
-	Tue, 20 May 2025 14:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4EBCA5A;
+	Tue, 20 May 2025 15:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747751428; cv=none; b=jrXnSUNzMZysOWxzmJe7zqu1KFJ+R9DFyHLJsOJbpswxtT1zoxKgLNBfczvfoKZxaf3izbuBYfyUxrkUXsTSsGjg6bWO55iI7c2HA2uI0NI8jDkIgqGHgMkVa8wXF2uesQw6y50qtLjcL//fsdK+zZGoKIQbTfUPga08kDBM+SY=
+	t=1747755069; cv=none; b=Au+mng4zE4psOliJKhZAuktJS3oNLm1BwvCLxdLkz+3cjBmbpNcn2CczDwbTOh0Hddf+QAi1RFsNX7pGG0fEdK9BZC8Fx/XdE8YkvIDVOpHFLuyOFRfgUktuPr35Rl/C0hOH00BFEUQlFcoFRuYyvzDj7hUBjB5b2CqmWd/MyEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747751428; c=relaxed/simple;
-	bh=muApyINzTB9u4a/fQgtoIyPRGqFRWXQQmhe1H/OsntU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFscY+q7Ny1cqnvRPY7gr3DnoIz86j9Y4gIg6ySqdWff4Hw3akHIeod+YIclMQ1+GNiqz2TV99BmTKcpnLOgXHPuh44IXndVSNjNr+9VtVEpdmqU7q6vVzwY1+Dhlc2ug7+l/H5q8fp+ubegzr40TgXCaY9SZlA1WYz6F46PPo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=b1+f6y/q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1747755069; c=relaxed/simple;
+	bh=GrbZGLItfP6Nd2xeSeZXNEfkQXPcthdv00SmcvOiYQE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=PWDwMl5D9cCjbTYxmdcvAJ/nleFTCNOjmlsEZdax12GKckYwvV3W/Azwi1VsV61KNJINZ5x9dB+DeqNdRyD1V7yades9+Pc3XsZxA/q+KLq53PONRpAfUEfr6v230MIsxVd7nE0ar0YvQB6dmYg79v8WcgQQH2Ck75wd9sTuL5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rGXxvaOm; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="b1+f6y/q"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=60oYgzAqshuD6yLOKdWI/2Zup0hrKz6aeKRaimHYHAU=; b=b1+f6y/qH2058NF2o/xrWpwO2L
-	8MoTZG0nKc3MTgGQfRLBEdPRafkGWEK3ijxCQ9bcpbumoeiNLv86XQr9TWXw/ZqLfeeD6OQBg83P1
-	CaOiweBnQ5dCVPAv5On3ryybfKlhWBMlvWfjvQ0OfkUjmAvZBizf7FXaqJj3BJ71oYsM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uHNz0-00D8Jc-Gt; Tue, 20 May 2025 16:30:18 +0200
-Date: Tue, 20 May 2025 16:30:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de, BMC-SW@aspeedtech.com
-Subject: Re: [net 0/4] net: ftgmac100: Add SoC reset support for RMII mode
-Message-ID: <cfb44996-ad63-43cd-bbc5-07f70939d019@lunn.ch>
-References: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rGXxvaOm"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KFMZ9h014091;
+	Tue, 20 May 2025 17:30:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=lk7D3+J+dO4N7nuT17NijQ
+	wiCNmJdFyl56IfBFqF/xU=; b=rGXxvaOmKPW1GVxiuQOJhoM9eawEJGXYy7DL5y
+	YrIkMQEaN0lHTPvIO00NJkS7B+UtAYqrNLwar4UOjhwFX32Q0LSNRpgsFK0tcOXu
+	xMdoKf8yt0Uty1Bbe3M4noqBdNL1Ua2h2VqUunKQ5E9c9AHSWFTJYH76h/ArIMRu
+	ovsRrUvA4KkTXgPb68KGlj1Gl64c7vWmUHjqCNPoVkHf28A9vVvMLHdMebATxVl4
+	KqznOGAyJOCZhaAF+kJfvrQkb/HNk33TiCYJnJa48bzM5ZpgeLkT7TqYiWUMMzIt
+	RWLD5VZUBb9Sxs6T/54bOYCoBJwaxw2qj40iPFtdkQcSUNfA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46phbgnnk1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 17:30:54 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1585F40047;
+	Tue, 20 May 2025 17:29:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A3FD8B23C3F;
+	Tue, 20 May 2025 17:28:54 +0200 (CEST)
+Received: from localhost (10.48.87.146) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 17:28:54 +0200
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Subject: [PATCH v2 0/2] Introduce Clock and Reset Driver for STM32MP21
+ Platform
+Date: Tue, 20 May 2025 17:28:36 +0200
+Message-ID: <20250520-upstream_rcc_mp21-v2-0-3c776a6e5862@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKSfLGgC/x3MTQqAIBBA4avErBNsIPu5SoSITjWLSsaKILp70
+ vJbvPdAImFK0BcPCF2ceN8ysCzAL26bSXHIBtRY6xq1OmM6hNxqxXu7RqxU0K1BaoJvTAe5i0I
+ T3/9zGN/3A8Snj0hjAAAA
+X-Change-ID: 20250520-upstream_rcc_mp21-d0862e7dc769
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Nicolas Le Bayon
+	<nicolas.le.bayon@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-20_01,2025-03-28_01
 
-On Tue, May 20, 2025 at 05:28:44PM +0800, Jacky Chou wrote:
-> This patch series adds support for an optional reset line to the
-> ftgmac100 ethernet controller, as used on Aspeed SoCs. On these SoCs,
-> the internal MAC reset is not sufficient to reset the RMII interface.
-> By providing a SoC-level reset via the device tree "resets" property,
-> the driver can properly reset both the MAC and RMII logic, ensuring
-> correct operation in RMII mode.
+This patchset implements a new driver to manage clock and reset functionalities
+for the STM32MP21 platform.
 
-What tree is this for? You have net in the subject, but no Fixes:
-tags?
+Changes in v2:
+  - add list item for access-controlers and fix maxItems value from bindings
+  - drop STM32MP21_LAST_CLK and STM32MP21_LAST_RESET defines from bindings
+  - typo fixes from ALOK TIWARI
+  
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+Gabriel Fernandez (2):
+      dt-bindings: stm32: add STM32MP21 clocks and reset bindings
+      clk: stm32: introduce clocks for STM32MP21 platform
 
-	Andrew
+ .../bindings/clock/st,stm32mp21-rcc.yaml           |  204 +++
+ drivers/clk/stm32/Kconfig                          |    7 +
+ drivers/clk/stm32/Makefile                         |    1 +
+ drivers/clk/stm32/clk-stm32mp21.c                  | 1586 ++++++++++++++++++++
+ drivers/clk/stm32/stm32mp21_rcc.h                  |  651 ++++++++
+ include/dt-bindings/clock/st,stm32mp21-rcc.h       |  426 ++++++
+ include/dt-bindings/reset/st,stm32mp21-rcc.h       |  138 ++
+ 7 files changed, 3013 insertions(+)
+---
+base-commit: 8566fc3b96539e3235909d6bdda198e1282beaed
+change-id: 20250520-upstream_rcc_mp21-d0862e7dc769
+
+Best regards,
+-- 
+Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+
