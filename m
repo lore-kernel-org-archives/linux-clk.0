@@ -1,44 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D8725CC52;
-	Tue, 20 May 2025 02:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5561A25D213;
+	Tue, 20 May 2025 02:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747707319; cv=none; b=rQtvUyfrcM3D1opGkl5518T7lumlstNhyOtGMTDagd0Yej23V2LTO7kws6aY4dLuok5DkAma/6seHEbC61dyXAiYdGKoi1FSs0MaoNtw4c4Gha03f/eehH6Ve+Lro5naMVmK4hwJT+qc3UVjgHEEfO0g++3d+mqm6b/MlDBt8HM=
+	t=1747707323; cv=none; b=kEBRkleYRCQszwGaCTzLZUxXuAvQooJBvTVS8YKBR02NWm7UUQeiyC4sgtpBtMFfdbZM6YcGvPpFGr3VUw4HlSuJAQ9xdi1lX2A5Vdz2vjoJ15HNCu72E+8ovPJ4yTK/Aghf+0gHR/bwi5koeL5NoZSkWx8u0P2gU5h83b9WXn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747707319; c=relaxed/simple;
-	bh=aif4sok9hdrX1kOdyNvSgLbob0/jzF6fPaaMyDfNVxE=;
+	s=arc-20240116; t=1747707323; c=relaxed/simple;
+	bh=VeqTMYzS0fD6tBXCT0uNUcjW1AXJroijsACmY04O3x0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lqx/62siyOrPpzE8Og8YaaMEoBAxVQQy3zjvLDJl+7jZM1nX/HfYHZHbOOO9M+qc2VOmnKy55+GwFierBO3WnwPQWv6Wy5lRr6iQlWGpHJryCG/W/2zmw75KBan3Ye1fMLyERPqt3q9T585LpiVt9ZeYjUjsI8CPXpYRJemJOuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkmhgfdY; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=hNeiyPCqx/0xk1Ie4TbqEKALCWXo44n7LLQDEzyt0Moa/MPo4PdzAheNQkUC5nCYcLOVVd+7EyaaGboQEJzNwELx917k6z9Z9z/9sN20nQT04GYqDyejWGARU0a6PS7gTRZj5iAvFyWhpBPa1dHvvkQB0qmC12+/vElx0I8RyoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3wvgwix; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkmhgfdY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ECCBC4CEF1;
-	Tue, 20 May 2025 02:15:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3wvgwix"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C821EC4CEF2;
+	Tue, 20 May 2025 02:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747707319;
-	bh=aif4sok9hdrX1kOdyNvSgLbob0/jzF6fPaaMyDfNVxE=;
+	s=k20201202; t=1747707322;
+	bh=VeqTMYzS0fD6tBXCT0uNUcjW1AXJroijsACmY04O3x0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DkmhgfdYwT5Vh8x1usHObIkAnZn/FeTxix/NtYBappoORV2G5oa3NR1ohd40NOVpo
-	 CeAKtsfMzG99qwpdxb/GOpEEBPr+CBFrnKQhMPs2hc1yCXkmg1M/qhJgDQLo3HqV6I
-	 J6HYK9jh1eIil1VyRWrl5eB2a15sKotOIjTVejDbMyU+tiLcucAIlh5ns7gyf7RRNi
-	 0Q922mXQxbdaRfCtyJ6+2C3V7SWOKC2xg6bSFoTxTb6LNDH5Zjxbek59sPlxYKEv1t
-	 EpYn6jc8EV7AwO9KIf4U9bwV5uRXY773ct8+XNVAePlKxkSNxC9sBqZ9WY2xUN/WoY
-	 KCNhv3xUCz17w==
+	b=s3wvgwixgGDvMfWDRz9AqLc2dZlchWeJBPrlNoyR3Dg4Mcy+sjHCP5Q6YAEpsERFF
+	 Gy84B45c1vlAar9ZBgdsZ8BnhqkBdsGJDJ0G039P6Q8+C/Ys7nQpXmll5bcvSrMsnc
+	 zQBkBnmNEVM4Eyg/ppsF0WjMu0K+Hp5klQ1IYjhVSIMIviMzhaWUHAIGUXHWAoP5xH
+	 x+a8ID+nFKXlSSGGOmxwmRFW0u4auw+qTbvkjWhQVDBDmMsY3IabVjn8qXGvPfq2+m
+	 KuuMNNxcBnGiZFlOW2VSzhedStEgRuADypN0FwqyQKqaSXEAEnhiZzIqErWYmbOW27
+	 u16chZgPYpZ/Q==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: rpmh: make clkaN optional
-Date: Mon, 19 May 2025 21:14:47 -0500
-Message-ID: <174770727726.36693.18423131505308837812.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v6] clk: qcom: Add support for Camera Clock Controller on QCS8300
+Date: Mon, 19 May 2025 21:14:50 -0500
+Message-ID: <174770727720.36693.4191377559244212305.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250413172205.175789-1-mitltlatltl@gmail.com>
-References: <20250413172205.175789-1-mitltlatltl@gmail.com>
+In-Reply-To: <20250327-qcs8300-mm-patches-v6-1-b3fbde2820a6@quicinc.com>
+References: <20250327-qcs8300-mm-patches-v6-1-b3fbde2820a6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,22 +54,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 14 Apr 2025 01:22:04 +0800, Pengyu Luo wrote:
-> On SM8650, clkaN are missing in cmd-db for some specific devices. This
-> caused a boot failure. Printing log during initramfs phase, I found
+On Thu, 27 Mar 2025 15:32:27 +0530, Imran Shaik wrote:
+> The QCS8300 Camera clock controller is a derivative of SA8775P, but has
+> few additional clocks and offset differences. Hence, add support for
+> QCS8300 Camera clock controller by extending the SA8775P CamCC.
 > 
-> [    0.053281] clk-rpmh 17a00000.rsc:clock-controller: missing RPMh resource address for clka1
 > 
-> Adding the optional property to avoid probing failure which causes
-> countless deferred probe. In the downstream tree,similar workarounds
-> are introduced for SM7635, SM8550, SM8635, SM8650, SM8750.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: rpmh: make clkaN optional
-      commit: 166e65bc6ce317be41368d9340b870edbdbaa2aa
+[1/1] clk: qcom: Add support for Camera Clock Controller on QCS8300
+      commit: 1003cea3c7764ae582302c395f82e1cf7e5cd8f6
 
 Best regards,
 -- 
