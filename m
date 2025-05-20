@@ -1,26 +1,25 @@
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CB1267F5D;
-	Tue, 20 May 2025 09:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5651121C9F5;
+	Tue, 20 May 2025 09:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747733409; cv=none; b=Qqt/XTI0SpuRojwGVD3XJwbJ7meN4Mu/k0hSLE8LvkmiiVju5rbn9Re1MMDWP+F6cLoNwh2JK934UzkgY8ZBYIG41MXFwiPz2ZYlvF5TnEiliqPUjlWxaRLMoRxkY5HD20TttkvuYfdsTzGk1+JiMQvK/3/nfUFsMYJeAURUXvw=
+	t=1747733647; cv=none; b=DlOiQkcam5hHTBXw/0AIhW0OGiSFyCmHY3NFXRJySROQf2ehQi15yJaIW0oTBjx4z3ayvwhKNVghA8INa2RMN56T5P4lpVGXeCPJZPc77x2i08/12gBAZDXgJiAQ/w7HcOCu6w52OZ5WQDbXV3cW6AcnshRuiehX/hGo7q2P49c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747733409; c=relaxed/simple;
-	bh=niTQfAe3mnitW8DHBUFf0G5gpxM1At2/3CYLdrDk0MA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LmtATWv70/NFgIweGpFezoWZhZd1mM1wBZwSdErEn+Vg+Iu4tzX5yM97kSP++dKg6WCmTNP2jXIhLk49myUoUM7AhNTQOzIWB4cjv26NrbjHZvLrYCMHN6ljRdCfBF6+TfcwB0aWkXbQpI0zgjQcxpVOHB7tFAZjLtishAbdZV4=
+	s=arc-20240116; t=1747733647; c=relaxed/simple;
+	bh=dVHCcdZBjEhRo7MHU8YBvfIU2nlbHhQKdCAkPePq5J4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3blaVFOS2yK1zochao9rnpILDtYgbpHJwRpMV2lJ4CgWYwuGAVVUJj3WxLcPY/j/u8YFzeZyDUDUFEgl4X2F3tKBWJ7rJIdQS/0OZN9vlRIJLlidqOEkO+DB7UpehcrDTiolAKmP9PZDedOmXS1rM9STDDJaHIGmopoiCD/A/o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
  (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 20 May
- 2025 17:28:49 +0800
+ 2025 17:28:48 +0800
 Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
  (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 20 May 2025 17:28:49 +0800
+ Transport; Tue, 20 May 2025 17:28:48 +0800
 From: Jacky Chou <jacky_chou@aspeedtech.com>
 To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
@@ -30,12 +29,10 @@ CC: <linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
 	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<p.zabel@pengutronix.de>, <BMC-SW@aspeedtech.com>
-Subject: [net 3/4] ARM: dts: aspeed-g6: Add resets property for MAC controllers
-Date: Tue, 20 May 2025 17:28:47 +0800
-Message-ID: <20250520092848.531070-4-jacky_chou@aspeedtech.com>
+Subject: [net 0/4] net: ftgmac100: Add SoC reset support for RMII mode
+Date: Tue, 20 May 2025 17:28:44 +0800
+Message-ID: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
-References: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,50 +42,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add the "resets" property to the MAC nodes in the AST2600 device tree,
-using the appropriate ASPEED_RESET_MACx definitions.
+This patch series adds support for an optional reset line to the
+ftgmac100 ethernet controller, as used on Aspeed SoCs. On these SoCs,
+the internal MAC reset is not sufficient to reset the RMII interface.
+By providing a SoC-level reset via the device tree "resets" property,
+the driver can properly reset both the MAC and RMII logic, ensuring
+correct operation in RMII mode.
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+The series includes:
+- Device tree binding update to document the new "resets" property.
+- Addition of MAC1 and MAC2 reset definitions for AST2600.
+- Device tree changes for AST2600 to use the new reset properties.
+- Driver changes to assert/deassert the reset line as needed.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-index 8ed715bd53aa..f9fe89665e49 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-@@ -236,6 +236,7 @@ mac0: ethernet@1e660000 {
- 			reg = <0x1e660000 0x180>;
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>;
-+			resets = <&syscon ASPEED_RESET_MAC1>;
- 			status = "disabled";
- 		};
- 
-@@ -244,6 +245,7 @@ mac1: ethernet@1e680000 {
- 			reg = <0x1e680000 0x180>;
- 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC2CLK>;
-+			resets = <&syscon ASPEED_RESET_MAC2>;
- 			status = "disabled";
- 		};
- 
-@@ -252,6 +254,7 @@ mac2: ethernet@1e670000 {
- 			reg = <0x1e670000 0x180>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC3CLK>;
-+			resets = <&syscon ASPEED_RESET_MAC3>;
- 			status = "disabled";
- 		};
- 
-@@ -260,6 +263,7 @@ mac3: ethernet@1e690000 {
- 			reg = <0x1e690000 0x180>;
- 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC4CLK>;
-+			resets = <&syscon ASPEED_RESET_MAC4>;
- 			status = "disabled";
- 		};
- 
+This improves reliability and initialization of the MAC in RMII mode
+on Aspeed platforms.
+
+Jacky Chou (4):
+  dt-bindings: net: ftgmac100: Add resets property
+  dt-bindings: clock: ast2600: Add reset definitions for MAC1 and MAC2
+  ARM: dts: aspeed-g6: Add resets property for MAC controllers
+  net: ftgmac100: Add optional reset control for RMII mode on Aspeed
+    SoCs
+
+ .../bindings/net/faraday,ftgmac100.yaml       |  5 ++++
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |  4 +++
+ drivers/net/ethernet/faraday/ftgmac100.c      | 26 +++++++++++++++++++
+ include/dt-bindings/clock/ast2600-clock.h     |  2 ++
+ 4 files changed, 37 insertions(+)
+
 -- 
 2.34.1
 
