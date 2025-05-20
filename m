@@ -1,83 +1,99 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9301E21A459;
-	Tue, 20 May 2025 10:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7952D267728;
+	Tue, 20 May 2025 10:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747736260; cv=none; b=qcAomZ0BJEZKmjWVRn/xpJZ2PolU/9e4A9Gu+ZCPRlaOy/cLThH6vb+i4IzGUucxZA6XmOMSSHtGh7IUXZHgCzUQXmsIZ7Z01DQsVtxG4eQ8AjQWKK1+yblVFkt7E398nVvOPr6Jdl1xlpChYHP7wwkLuHb/5DXk48wu4EkeBSs=
+	t=1747736352; cv=none; b=rgBThsZph/ZJMVRDz3dPR/enMKL1PvztkJ3Yu9iCPfVo6qCs4jWotwgKj8jcduhGvwustCiu+x2T5zR/ABvS9+NQrgiGPvryCSXxx1H/7sku1Bex2ki14f79xice+qqBKJlLL0cmQ1V9VxA54qCJv3eSo12aBPNNNedL59CXHCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747736260; c=relaxed/simple;
-	bh=Ifwq+4sQrPiwiHLidB9FD+7sK9d0P0YTyMR7NR3l9L0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NgtOqQWL7EFCCaMGI/9bJ8yFjGugZ+oEMqfPc5RoS0uMxY1HAwCUr43SXlthReTSNOhpIi68Bml+ddWT4KBt1MHUlA/mbmBQjRKghPx64TvHVG9Erumf2FSXQw3xDtMefcuESmhuBMjMNDP7bdZMZvoplx5hsRb7D5PZlbIJWJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QEIxwI6W; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1747736352; c=relaxed/simple;
+	bh=9IamjCqlvQvJklBW8oB2MCtgzf/uhXR8hnZBDfqkBCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m1SHFS7YwYtO7oAYERP/sTJgUMPKqWyOV/eoesHiuIsCk6NEmVsvlHYQ7R0GQRctD8fnYE1E+t/METQPs+Xlv+61XjcOHdiBDJHFJQCxbTzlKqycpuuvzcQz4id7Su9v+RCfkqqZ8f2Bge46yrx7EDwGsd6lbvbBfplQ3JRZLvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ngqMnoV6; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QEIxwI6W"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ngqMnoV6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747736256;
-	bh=Ifwq+4sQrPiwiHLidB9FD+7sK9d0P0YTyMR7NR3l9L0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QEIxwI6W2EzhkcTOHpbPe0Q+P7crjPgfpYomAfcDNes4uRnZEZpxCv4RmLb9BL764
-	 SjEoPfnbA7MDLRZC4i/XwcrjLQQJwRz7b0pGKZ4YVh+KI9qC7s8vBbL8xByps61Fs5
-	 Yz5yNM6QngFMLYkaG3VnH7dX1Ry7+1ny/tfb84aFv9OSAJguwQmlPL4+YV6u69uObE
-	 vd11YhAu3lXV7Z+TorhNHuSzQLzsmnddmBaqhiqVUyEj778dB+FgpcxFWfyLgmjdom
-	 s2bC/uBs8hsnvTlCOFcFLCzs4C5hP6HlfmmJYiQCh+Er7ZyevccYT/VIMqJSwOJfy/
-	 2436xmwYTY78g==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=mail; t=1747736348;
+	bh=9IamjCqlvQvJklBW8oB2MCtgzf/uhXR8hnZBDfqkBCY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ngqMnoV6TclW8p981rXnTE16VJQJ26eVm+bjym3MWdm0qLUZGena3s0d9MhDYIc+M
+	 2zz21qlgzXFmKUEHfo/+eS1NAVWe3OVGhds4uH7LDB+6I5hGoqGPzqfVwLucFBXOH8
+	 lvplK/HLelavKF0A5A5xE+24csGH2s8QZNTPiQPwpGVPll9ocV2QWHrwtDdZYtNn10
+	 rA1kO20dkhGHRfYx4jpmL/w34jAEkO5Qln3enXr5hB+lTQc7aJGYLxfeFl4Rhg4rmH
+	 Lzq1KyYblbirWYGQl0EJRG+Z3FpZPH8wPSDRKM8xfIwDm6UgxLbUOuxgvZI6Kp5/Np
+	 KxvBoN+1THKmw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 01FE417E1047;
-	Tue, 20 May 2025 12:17:35 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Garmin Chang <garmin.chang@mediatek.com>, 
- Friday Yang <friday.yang@mediatek.com>, 
- Julien Massot <julien.massot@collabora.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
-References: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
-Subject: Re: (subset) [PATCH v2 0/2] mt8188: Fix missing reset DT property
-Message-Id: <174773625593.3349397.17577929635364837450.b4-ty@collabora.com>
-Date: Tue, 20 May 2025 12:17:35 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D938817E0E89;
+	Tue, 20 May 2025 12:19:07 +0200 (CEST)
+Message-ID: <b751c8d6-58ab-4a34-8d0e-a5300834962e@collabora.com>
+Date: Tue, 20 May 2025 12:19:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: Add #reset-cells
+ property for MT8188
+To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Garmin Chang <garmin.chang@mediatek.com>,
+ Friday Yang <friday.yang@mediatek.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
+ <20250516-dtb-check-mt8188-v2-1-fb60bef1b8e1@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250516-dtb-check-mt8188-v2-1-fb60bef1b8e1@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-On Fri, 16 May 2025 16:12:12 +0200, Julien Massot wrote:
-> This patch series addresses some issues found in the MediaTek MT8188 device tree
-> and its corresponding bindings:
+Il 16/05/25 16:12, Julien Massot ha scritto:
+> The '#reset-cells' property is permitted for some of the MT8188
+> clock controllers, but not listed as a valid property.
 > 
-> The #reset-cells property was missing in the MT8188 clock controller binding and
-> device tree nodes. This causes DT validation errors.
-> 
-> Patch 1 updates the binding to declare #reset-cells as a valid property.
-> Patch 2 adds #reset-cells to all affected nodes in mt8188.dtsi.
-> 
-> [...]
+> Fixes: 9a5cd59640ac ("dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188")
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
 
-Applied to v6.15-next/dts64, thanks!
+Stephen, please don't forget to pick this one, so that we resolve all those
+warnings :-)
 
-[2/2] arm64: dts: mediatek: mt8188: Add missing #reset-cells property
-      commit: fb77e7878bea92e7329b262e728eb6b4ac2d8768
-
-Cheers,
+Thanks!
 Angelo
+
+> ---
+>   Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> index 2985c8c717d72888dd49f1f6249a9e2594d8a38d..5403242545ab12a7736ed4fbac26008aa955c724 100644
+> --- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> @@ -52,6 +52,9 @@ properties:
+>     '#clock-cells':
+>       const: 1
+>   
+> +  '#reset-cells':
+> +    const: 1
+> +
+>   required:
+>     - compatible
+>     - reg
+> 
 
 
