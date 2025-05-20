@@ -1,73 +1,83 @@
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD17268C62;
-	Tue, 20 May 2025 09:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9301E21A459;
+	Tue, 20 May 2025 10:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747733671; cv=none; b=NLus1mpqOZpgv/Qwug9fBUG40bTgt6soa09pYOgEw3ER3wO7CEhJDzHfouYUMTl0PkMJxF5sTOnjVd7Ixtcw7YyuN8iaFS0UNODiJg2NrWTyxlCyrz6NEMIPSeQ4U8uBUcfpBSSzSPnJWKGZwhuvYYwRG6VTKS8ClG/2gXPJkrw=
+	t=1747736260; cv=none; b=qcAomZ0BJEZKmjWVRn/xpJZ2PolU/9e4A9Gu+ZCPRlaOy/cLThH6vb+i4IzGUucxZA6XmOMSSHtGh7IUXZHgCzUQXmsIZ7Z01DQsVtxG4eQ8AjQWKK1+yblVFkt7E398nVvOPr6Jdl1xlpChYHP7wwkLuHb/5DXk48wu4EkeBSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747733671; c=relaxed/simple;
-	bh=Syz436VCEOQqkrW2JJUUG9u2aVuk6xmBs+Jb+JYrAig=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bYmExB8Y8vmsYOyg40BMm3hPisXAqgVo/5n90sAaHIRMKM9GmDHB5wAJGqaonpCoh53FemnJnW9gqhQ2zZeLwV8JIkJ3NkqCeOWexojbfOH0a3CnwzD42NURitMJGo+4SEVEp7xDYwn4/D6GiFcIeqgv0DokSN8m5AHrBCLaZrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 20 May
- 2025 17:28:49 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 20 May 2025 17:28:49 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<p.zabel@pengutronix.de>, <BMC-SW@aspeedtech.com>
-Subject: [net 2/4] dt-bindings: clock: ast2600: Add reset definitions for MAC1 and MAC2
-Date: Tue, 20 May 2025 17:28:46 +0800
-Message-ID: <20250520092848.531070-3-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
-References: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1747736260; c=relaxed/simple;
+	bh=Ifwq+4sQrPiwiHLidB9FD+7sK9d0P0YTyMR7NR3l9L0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NgtOqQWL7EFCCaMGI/9bJ8yFjGugZ+oEMqfPc5RoS0uMxY1HAwCUr43SXlthReTSNOhpIi68Bml+ddWT4KBt1MHUlA/mbmBQjRKghPx64TvHVG9Erumf2FSXQw3xDtMefcuESmhuBMjMNDP7bdZMZvoplx5hsRb7D5PZlbIJWJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QEIxwI6W; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QEIxwI6W"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747736256;
+	bh=Ifwq+4sQrPiwiHLidB9FD+7sK9d0P0YTyMR7NR3l9L0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=QEIxwI6W2EzhkcTOHpbPe0Q+P7crjPgfpYomAfcDNes4uRnZEZpxCv4RmLb9BL764
+	 SjEoPfnbA7MDLRZC4i/XwcrjLQQJwRz7b0pGKZ4YVh+KI9qC7s8vBbL8xByps61Fs5
+	 Yz5yNM6QngFMLYkaG3VnH7dX1Ry7+1ny/tfb84aFv9OSAJguwQmlPL4+YV6u69uObE
+	 vd11YhAu3lXV7Z+TorhNHuSzQLzsmnddmBaqhiqVUyEj778dB+FgpcxFWfyLgmjdom
+	 s2bC/uBs8hsnvTlCOFcFLCzs4C5hP6HlfmmJYiQCh+Er7ZyevccYT/VIMqJSwOJfy/
+	 2436xmwYTY78g==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 01FE417E1047;
+	Tue, 20 May 2025 12:17:35 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Garmin Chang <garmin.chang@mediatek.com>, 
+ Friday Yang <friday.yang@mediatek.com>, 
+ Julien Massot <julien.massot@collabora.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
+References: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
+Subject: Re: (subset) [PATCH v2 0/2] mt8188: Fix missing reset DT property
+Message-Id: <174773625593.3349397.17577929635364837450.b4-ty@collabora.com>
+Date: Tue, 20 May 2025 12:17:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Add ASPEED_RESET_MAC1 and ASPEED_RESET_MAC2 reset definitions to
-the ast2600-clock binding header. These are required for proper
-reset control of the MAC1 and MAC2 ethernet controllers on the
-AST2600 SoC.
+On Fri, 16 May 2025 16:12:12 +0200, Julien Massot wrote:
+> This patch series addresses some issues found in the MediaTek MT8188 device tree
+> and its corresponding bindings:
+> 
+> The #reset-cells property was missing in the MT8188 clock controller binding and
+> device tree nodes. This causes DT validation errors.
+> 
+> Patch 1 updates the binding to declare #reset-cells as a valid property.
+> Patch 2 adds #reset-cells to all affected nodes in mt8188.dtsi.
+> 
+> [...]
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- include/dt-bindings/clock/ast2600-clock.h | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to v6.15-next/dts64, thanks!
 
-diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-index 7ae96c7bd72f..f60fff261130 100644
---- a/include/dt-bindings/clock/ast2600-clock.h
-+++ b/include/dt-bindings/clock/ast2600-clock.h
-@@ -122,6 +122,8 @@
- #define ASPEED_RESET_PCIE_DEV_OEN	20
- #define ASPEED_RESET_PCIE_RC_O		19
- #define ASPEED_RESET_PCIE_RC_OEN	18
-+#define ASPEED_RESET_MAC2		12
-+#define ASPEED_RESET_MAC1		11
- #define ASPEED_RESET_PCI_DP		5
- #define ASPEED_RESET_HACE		4
- #define ASPEED_RESET_AHB		1
--- 
-2.34.1
+[2/2] arm64: dts: mediatek: mt8188: Add missing #reset-cells property
+      commit: fb77e7878bea92e7329b262e728eb6b4ac2d8768
+
+Cheers,
+Angelo
+
 
