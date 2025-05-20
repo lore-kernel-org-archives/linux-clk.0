@@ -1,65 +1,50 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD6272E58
-	for <linux-clk@vger.kernel.org>; Tue, 20 May 2025 10:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D131922ED;
+	Tue, 20 May 2025 13:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747738651; cv=none; b=NG4tICq9bMJHBIHeZQjb3AF18ch8kkFJtXm/gxCHzEq/cRsHUzFybx3cCD6Hyfr4TPSpcEBeiE08fsMaqSmsXESzo8W3CA5v5+RMEwvMCPX6LOGdgsJre1AdfUSQJ0MhSmhTvr5SLSCQ4Qskrnv356cDqZ/O0MaJE55bzS5E9HA=
+	t=1747749379; cv=none; b=MXKWamgXuOY13Zz5DglrbeEOMTliUktvUsBaRpvpWGUgLJwU/xd4z1xuuZcN6F8PDXfXO0BrGVVPocJOHOCmCs9c6rwGRvew8kNfvvR11cC9yxk5r33hu6bqlICWWLAVVDyW7WY9cnae3/RnbJoEw6r0RFqxdS0GsRvsvASsvIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747738651; c=relaxed/simple;
-	bh=v3C8uqBBnYN7XJoM3SrnzUnkxn7Xi9+x8e5xRo06LnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUSxOaMJDRYpvfYXHCyzMJpoa9s80LaSEJ6y/uoMCVopGAPPSlnV3UT2geenJ5Ye+ZvQrX4XHQvt/dwQKJKwaFVnnj2v9us70Ll+vHSDUaPufzddR0KbLWmw2Rhd4dBMLbXhhwwtAqdneR3iT9EPPrPwj95TiBTewSUjeAaZU4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=an7bLzXe; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747749379; c=relaxed/simple;
+	bh=jD77PHAq98t/fTpuATjnvTsRHf77AgXl2kaJDhuTTzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A/gNrbMVeKc8qhTuNHqYrcyZ7jfXDgUbSlSeybM/7f69dF7S6uBUDxV4+OFVY2F6kbeaJ2YHLPPdPECRVQUVPKdkfhXr/1QrZ0O5Hx5HmLyhso03h3EgQLlbY6PVKi/WsZpCjhSxlpcDIdY2G3oD9KH+/5nQJ3aYChoXdmIPO7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zIjnQCbO; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="an7bLzXe"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-442ea0b3a9fso2981515e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 20 May 2025 03:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747738648; x=1748343448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yknbJUV1TY5CL2TNZRW5Unbo+Tdo8IphF++t5AiUCwY=;
-        b=an7bLzXeCr+Lpe3CBv13IH2qxE8AVJ5HyfRqZ74YDaubu2x9/SO7ETrYrUv9mQS3ji
-         27XfxwqPmzry7ikxEzj95tPiaq3Y96vDbZLTm5Whd3hkP77sBp/yjaWkDUNZg27dqELB
-         DQ6s2XcguSjvwrAQbnw5V6UD4a7HvrHNH3mFP3CMUW+THQ0I2lZ7fUKRAcBB/6u3b5tn
-         8FnjFWxy0SaEcEfH2mDiabTBQKXK3ZjgS21LSzirQ/uzasU47WoZoDZm3kvUKBGzNoS3
-         ynQTq7rBV7xr+1zGZBhkqotDpy+8LvgZ5AWH+7iNa2jNEUl7gRScHWpG399ZupjmnUN3
-         qo2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747738648; x=1748343448;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yknbJUV1TY5CL2TNZRW5Unbo+Tdo8IphF++t5AiUCwY=;
-        b=ZhN0qK1U9c+8wGAHJJsi7M4qf3JeIsRzL6JNet4ZiMmRfwik6aOJ1iHpPEs9TfKSfw
-         aoLZerAjwTM2NDq1tQgCgR27CF9kTGp+RMhkMouNy7mmqWB+RucXC2wN1/98IxWzNHY+
-         lA89ij2Scl2s5a0l4hTGU6CCDpP868rpW9WdBSo85SIDGzZqJhXpKLC8c57olEb39pPb
-         zTjzFHdmNlo4nbVB1O6rW3TAUDpREWD9fS6DnMxjfCSysYm4RR8/mgdDM700vdvLMd4v
-         MoFgd8S+Mnm2N9YUyg5K9A2q2Z9lrwRdqKmBRz23wLHBE04gimmG6y4BuwQssz124tm3
-         8fkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcQ0CPEsnME+JtmnfhpxrxwBeA/nOwyfMtPbCT54GBoTwVOl45ce9lv5VuuZDD+HftaPOhfGIWwTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Th02DWsb9M+9SS3L8pR/2JdwSYTlrqmKa1GUw3mVQsW8tELi
-	LxdMlALAwCBk8au1+Vb9iuqC8lB621Uuu+Zgu7bHHQIotnmufG9I0IucG6LqjefvQ0Q=
-X-Gm-Gg: ASbGncvZrsIzo6D/Mjslx/t5GcLhDzMQ/WKanks3cOhWBMzQy4T8+wcobLtfYLpDmEx
-	Tl2QxPj3rAFZb80sS9o6xSekNkm8WNkuAYH8d4j3FXMdqMDrExOMOFWEvjjl0W+7hCZN328TXo8
-	XKsRvTGlH1olO4EIuE82edSQbcXgyCbUxqmsmdlAary8pYlOIHClFoe2/cBQU5W5ngnBBIOxMpS
-	2EEojlmyBtfhtK3/+2RyPLFMOM8ktucJXubH0uvaKSlIMrZWubYx8qazN7kwmzw6F1r4ZP6Uod6
-	LUhLh7AebTLn5zGZpAZX+nBgEzxWOU644cX9ipMFSeGxKXizhGwgnFSw4/Jb9hktecw34jQ=
-X-Google-Smtp-Source: AGHT+IFrTvarTerfpRPfsH3qkfpvdopllQJ5FsFXYAyBxPQZ387bPDAcedl+theB70pYCIjfLUH3YA==
-X-Received: by 2002:a7b:c3c6:0:b0:442:fff5:5185 with SMTP id 5b1f17b1804b1-442fff55298mr36888055e9.6.1747738648042;
-        Tue, 20 May 2025 03:57:28 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f6f0554fsm26002655e9.9.2025.05.20.03.57.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 03:57:27 -0700 (PDT)
-Message-ID: <b4f68273-6c3d-4ca5-8b8d-8837f3f03683@linaro.org>
-Date: Tue, 20 May 2025 12:57:25 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zIjnQCbO"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K9Ubf0009345;
+	Tue, 20 May 2025 15:55:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	t4BiJg3sqYOfiLTKe5j15knUi7a/LhANZGo2DtDRYK8=; b=zIjnQCbO3gdOkkV3
+	btjiMB/a7ikbNnoKhSnQox9YWOTdLIN9i/DpeBNLw73zxUau+ipMkSHpCP/u949b
+	yPzJugUn4J3GT9BrhmzSZ9FsBUjl5QFpzE5sxRPaeI5qRGpOMEvXqa7UEn+NGjy5
+	mfqRxEf4XaF/B8owiVziod3/yqqdb7H/QeIIm+SNc9ZnuyIp0VOu5ggd1Bi2ODsp
+	8OfGoTioIdb4Dk/bCPznHMjRdiiI1hZAxaWLruMezuYn7RuOrKl1fDFrdnfZKmiA
+	KoO9XOoHcIbGYB6vwA8ZSUGyV9b615dzQuOe9PIJbBRv48xgSZ60TQylwJpi2zM2
+	apVOZg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46q5dn36n4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 15:55:55 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CAFC140047;
+	Tue, 20 May 2025 15:54:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D4283B0F0D0;
+	Tue, 20 May 2025 15:53:44 +0200 (CEST)
+Received: from [10.48.87.146] (10.48.87.146) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 15:53:44 +0200
+Message-ID: <8fc2a770-4940-4275-8080-27ef53ec3d2d@foss.st.com>
+Date: Tue, 20 May 2025 15:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,117 +52,149 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/24] drm/msm/dsi/phy: Define PHY_CMN_CTRL_0 bitfields
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
- Srinivas Kandagatla <srini@kernel.org>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-15-8cab30c3e4df@linaro.org>
- <j47udhqq3ldsza3cr6a6rd5dq7uxjgpolbmdhmpzvzt7glpuva@v5tgkydlywag>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: stm32: add STM32MP21 clocks and reset
+ bindings
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nicolas Le Bayon <nicolas.le.bayon@st.com>
+References: <20250519142057.260549-1-gabriel.fernandez@foss.st.com>
+ <20250519142057.260549-2-gabriel.fernandez@foss.st.com>
+ <f58f085e-fb41-434d-958d-1d6d8c63d793@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <j47udhqq3ldsza3cr6a6rd5dq7uxjgpolbmdhmpzvzt7glpuva@v5tgkydlywag>
-Content-Type: text/plain; charset=UTF-8
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <f58f085e-fb41-434d-958d-1d6d8c63d793@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-16_03,2025-03-28_01
 
-On 03/05/2025 00:44, Dmitry Baryshkov wrote:
-> On Wed, Apr 30, 2025 at 03:00:45PM +0200, Krzysztof Kozlowski wrote:
->> Add bitfields for PHY_CMN_CTRL_0 registers to avoid hard-coding bit
->> masks and shifts and make the code a bit more readable.
+
+On 5/19/25 16:38, Krzysztof Kozlowski wrote:
+> On 19/05/2025 16:20, gabriel.fernandez@foss.st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Adds clock and reset binding entries for STM32MP21 SoC family.
 >>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>> Signed-off-by: Nicolas Le Bayon <nicolas.le.bayon@st.com>
+>
+> I am pretty sure I gave to ST this feedback already:
+>
+> You CC-ed an address, which suggests you do not work on mainline kernel
+> or you do not use get_maintainers.pl/b4/patman. Please rebase and always
+> work on mainline or start using mentioned tools, so correct addresses
+> will be used.
+
+Hi Krzysztof, many thanks for your review
+
+Sorry for this bad manipulation, i will use b4 tools.
+
+
 >> ---
->>
->> Changes in v5:
->> 1. New patch
->> ---
->>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             |  9 ++++++---
->>  drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml | 11 ++++++++++-
->>  2 files changed, 16 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> index ca1a120f630a3650bf6d9f9d426cccea88c22e7f..7ef0aa7ff41b7d10d2630405c3d2f541957f19ea 100644
->> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> @@ -362,17 +362,19 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
->>  static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
->>  {
->>  	u32 data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
-> 
-> This (and several following functions) should be triggering a warning
-> regarding empty line after variable declaration block.
+>>   .../bindings/clock/st,stm32mp21-rcc.yaml      | 200 ++++++++
+>>   include/dt-bindings/clock/st,stm32mp21-rcc.h  | 428 ++++++++++++++++++
+>>   include/dt-bindings/reset/st,stm32mp21-rcc.h  | 140 ++++++
+>>   3 files changed, 768 insertions(+)
+> ...
+>
+>> +
+>> +  access-controllers:
+>> +    minItems: 1
+>> +    maxItems: 2
+> List the items.
+ok
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +  - '#reset-cells'
+>> +  - clocks
+>
+> ...
+>
+>> +#define CK_KER_FMC		263
+>> +#define CK_KER_SDMMC1		264
+>> +#define CK_KER_SDMMC2		265
+>> +#define CK_KER_SDMMC3		266
+>> +#define CK_KER_ETH1		267
+>> +#define CK_KER_ETH2		268
+>> +#define CK_KER_ETH1PTP		269
+>> +#define CK_KER_ETH2PTP		270
+>> +#define CK_KER_USB2PHY1		271
+>> +#define CK_KER_USB2PHY2		272
+>> +#define CK_MCO1			273
+>> +#define CK_MCO2			274
+>> +#define CK_KER_DTS		275
+>> +#define CK_ETH1_RX		276
+>> +#define CK_ETH1_TX		277
+>> +#define CK_ETH1_MAC		278
+>> +#define CK_ETH2_RX		279
+>> +#define CK_ETH2_TX		280
+>> +#define CK_ETH2_MAC		281
+>> +#define CK_ETH1_STP		282
+>> +#define CK_ETH2_STP		283
+>> +#define CK_KER_LTDC		284
+>> +#define HSE_DIV2_CK		285
+>> +#define CK_DBGMCU		286
+>> +#define CK_DAP			287
+>> +#define CK_KER_ETR		288
+>> +#define CK_KER_STM		289
+>> +
+>> +#define STM32MP21_LAST_CLK	290
+> Drop
 
-Hey Dmitry,
+ok
 
-I am implementing all the feedback and probably rebasing but to clarify
-this part:
 
-There is no checkpatch --strict warning here exactly for the reason I
-was saying. For readability there should be no empty line after because
-such statements are expected to be together. I don't mind of course
-adding one, so I will implement the change.
+>> +
+>
+> ...
+>
+>> +#define DDR_R		113
+>> +#define DDRPERFM_R	114
+>> +#define IWDG1_SYS_R	116
+>> +#define IWDG2_SYS_R	117
+>> +#define IWDG3_SYS_R	118
+>> +#define IWDG4_SYS_R	119
+>> +
+>> +#define STM32MP21_LAST_RESET	120
+> Drop
 
+ok
 
 Best regards,
-Krzysztof
+
+Gabriel
+
+>
+>> +
+>> +#define RST_SCMI_C1_R		0
+>> +#define RST_SCMI_C2_R		1
+>> +#define RST_SCMI_C1_HOLDBOOT_R	2
+>> +#define RST_SCMI_C2_HOLDBOOT_R	3
+>> +#define RST_SCMI_FMC		4
+>> +#define RST_SCMI_OSPI1		5
+>> +#define RST_SCMI_OSPI1DLL	6
+>> +
+>> +#endif /* _DT_BINDINGS_STM32MP21_RESET_H_ */
+>
+> Best regards,
+> Krzysztof
