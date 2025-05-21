@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF6F2BD59F;
-	Wed, 21 May 2025 21:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504E323644D;
+	Wed, 21 May 2025 21:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747861727; cv=none; b=MRK/oRuWONQ5T7yDBL3/cSl9g379MdEr1P0mYVoQtcQ+kJwVPoGtrMjW2aR/5Mt0T6f0D3asU7YVUYddtOb5DNIM6cRBaGSG8Gcx5K1aitROyETFl3HDjcyV0JRCQnP44zQbphujt/QvYv2Pzg7HhnyDGU96A1AP/0nwKe9NXls=
+	t=1747862312; cv=none; b=daVNfMalX4gplGol3cEbPMhB/OP/16yS8WXUdkqgCcM3SYkJ/w9gvbG0oqkpI9l51eBm8KLIkZAFxtylwnOpvc6utDv+HT0gslZmELdE8YUR/ntU2zQ4qnYSfAo/xu2keu+gJvM8YYzTI1fGW6f18SIW6eI6FJmXy6CiY4EsCUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747861727; c=relaxed/simple;
-	bh=xcLos6exQOgpj2JwKIyRbvBSr4JVBTN74lH6y2VSTJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SO9JHV4fuNduOyUfO3rgNJbdWGh0n2zky5Tb4y1nKusmXdn29ddWiAqRKwUZkohb2+p0pBK3gof4606rJSWr+cz90L87Bhsy/ajyQya77AadZIIuMLy6fPuSZ8ofdOt5gRYoUCKimtAQfAzPItk+ScN7NmaxtWTRrVcdCmC1ahU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzqJ0NzJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747862312; c=relaxed/simple;
+	bh=mkeBmnE/a1wHwc6pW2pUTiPMITzJ76xuMm41dvfwrQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlM4hx1XvBM38UnuTPGMD3bfRder1aIT7Fkn5hDkMqFQojVBhBQ4JqyE0MdjJxmTVyV5Hj4Z01xfy21OyA2sClf+Oo22Hr8T6zUfJlp3T9RSts7ndav9Nu/C4EwmTG1vFdkQWQvQATevSVpJMSqax6cTteKtWfAH2nB0CaFYiKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWmS03kZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzqJ0NzJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C239C4CEE4;
-	Wed, 21 May 2025 21:08:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWmS03kZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92688C4CEE4;
+	Wed, 21 May 2025 21:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747861727;
-	bh=xcLos6exQOgpj2JwKIyRbvBSr4JVBTN74lH6y2VSTJ0=;
+	s=k20201202; t=1747862311;
+	bh=mkeBmnE/a1wHwc6pW2pUTiPMITzJ76xuMm41dvfwrQU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GzqJ0NzJobkvj27Q2VTkKzX/wGBnA0F/7OunK93AKt53OcU6wfNceNUnnt49kba5C
-	 duxczwzudK8ZXuEx2MBOAbt7vdUUO6Tt4D2ONGOeRwWNpvp8s0WOz57L44upY8jeee
-	 xOG5rFdI/wi1OrWqPF7UqqPXWUmgerDJTX9wkVTVl/hjAW2llKutDZKbpzBEV0PEkW
-	 904VSzlmfRtVbjNhD4UYbNeQb8J42DLeK+izAKucf/Soim1jvwuQL8vaVsVigZMfnH
-	 dK+wzJeugPiXq+LMzNkIFtVqLPEW7K5T+fjuYvQ9UKjOHPtx1NwCBB/+BZQ3gQHGC9
-	 lxTvSQh+cqPag==
+	b=CWmS03kZyxJLve2nSHyU17l0KcK2C/F4Iv6ez1rMwD63qFa4HQPw8MTpRERUn+cdC
+	 /r7I8NR/Ynru1NdKo8F7uOncSY8d/FjUgHnJokTfoHFz1nHLXQeAh+vexrJ1pHYiNl
+	 Flcsw1mgLi4f/RaOaK/SpoWipfWh6ATfrzDskehpGbZmAoqgAFGMUlg9WadL9KfNnW
+	 AlRR51/ErGy8lxpgB6uyxwWh8okVeqD73jiahsw8pGxfWKc+mBJLSvfhnpk6X5YgYK
+	 ulrdYFwm3kOjlcwOuFnuMWT7cUeRhBWpPZTmZLdp9OpNY+CCH1RuG/v9+wREO5/hyi
+	 0GYLNpfSRIFJQ==
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -35,9 +35,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: Convert marvell,mvebu-core-clock to DT schema
-Date: Wed, 21 May 2025 16:08:43 -0500
-Message-ID: <20250521210844.62613-1-robh@kernel.org>
+Subject: [PATCH v2] dt-bindings: clock: Convert marvell,armada-3700-periph-clock to DT schema
+Date: Wed, 21 May 2025 16:18:25 -0500
+Message-ID: <20250521211826.77098-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -47,210 +47,200 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Marvell SoC core clock binding to DT schema format. It's a
-straight forward conversion.
+Convert the Marvell Armada 3700 peripheral clock binding to DT schema
+format. The north bridge is also a "syscon", so add the compatible to
+it.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../clock/marvell,mvebu-core-clock.yaml       | 94 +++++++++++++++++++
- .../bindings/clock/mvebu-core-clock.txt       | 87 -----------------
- 2 files changed, 94 insertions(+), 87 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/marvell,mvebu-core-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+v2:
+- Fix compatible schema (forgot to commit the fix)
+---
+ .../clock/armada3700-periph-clock.txt         | 71 --------------
+ .../marvell,armada-3700-periph-clock.yaml     | 96 +++++++++++++++++++
+ 2 files changed, 96 insertions(+), 71 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,armada-3700-periph-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,mvebu-core-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,mvebu-core-clock.yaml
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
+deleted file mode 100644
+index fbf58c443c04..000000000000
+--- a/Documentation/devicetree/bindings/clock/armada3700-periph-clock.txt
++++ /dev/null
+@@ -1,71 +0,0 @@
+-* Peripheral Clock bindings for Marvell Armada 37xx SoCs
+-
+-Marvell Armada 37xx SoCs provide peripheral clocks which are
+-used as clock source for the peripheral of the SoC.
+-
+-There are two different blocks associated to north bridge and south
+-bridge.
+-
+-The peripheral clock consumer should specify the desired clock by
+-having the clock ID in its "clocks" phandle cell.
+-
+-The following is a list of provided IDs for Armada 3700 North bridge clocks:
+-ID	Clock name	Description
+------------------------------------
+-0	mmc		MMC controller
+-1	sata_host	Sata Host
+-2	sec_at		Security AT
+-3	sac_dap		Security DAP
+-4	tsecm		Security Engine
+-5	setm_tmx	Serial Embedded Trace Module
+-6	avs		Adaptive Voltage Scaling
+-7	sqf		SPI
+-8	pwm		PWM
+-9	i2c_2		I2C 2
+-10	i2c_1		I2C 1
+-11	ddr_phy		DDR PHY
+-12	ddr_fclk	DDR F clock
+-13	trace		Trace
+-14	counter		Counter
+-15	eip97		EIP 97
+-16	cpu		CPU
+-
+-The following is a list of provided IDs for Armada 3700 South bridge clocks:
+-ID	Clock name	Description
+------------------------------------
+-0	gbe-50		50 MHz parent clock for Gigabit Ethernet
+-1	gbe-core	parent clock for Gigabit Ethernet core
+-2	gbe-125		125 MHz parent clock for Gigabit Ethernet
+-3	gbe1-50		50 MHz clock for Gigabit Ethernet port 1
+-4	gbe0-50		50 MHz clock for Gigabit Ethernet port 0
+-5	gbe1-125	125 MHz clock for Gigabit Ethernet port 1
+-6	gbe0-125	125 MHz clock for Gigabit Ethernet port 0
+-7	gbe1-core	Gigabit Ethernet core port 1
+-8	gbe0-core	Gigabit Ethernet core port 0
+-9	gbe-bm		Gigabit Ethernet Buffer Manager
+-10	sdio		SDIO
+-11	usb32-sub2-sys	USB 2 clock
+-12	usb32-ss-sys	USB 3 clock
+-13	pcie		PCIe controller
+-
+-Required properties:
+-
+-- compatible : shall be "marvell,armada-3700-periph-clock-nb" for the
+-  north bridge block, or
+-  "marvell,armada-3700-periph-clock-sb" for the south bridge block
+-- reg : must be the register address of North/South Bridge Clock register
+-- #clock-cells : from common clock binding; shall be set to 1
+-
+-- clocks : list of the parent clock phandle in the following order:
+-  TBG-A P, TBG-B P, TBG-A S, TBG-B S and finally the xtal clock.
+-
+-
+-Example:
+-
+-nb_perih_clk: nb-periph-clk@13000{
+-	compatible = "marvell,armada-3700-periph-clock-nb";
+-	reg = <0x13000 0x1000>;
+-	clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
+-	<&tbg 3>, <&xtalclk>;
+-	#clock-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/marvell,armada-3700-periph-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,armada-3700-periph-clock.yaml
 new file mode 100644
-index 000000000000..215bcd9080c3
+index 000000000000..87e8e4ca111a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/marvell,mvebu-core-clock.yaml
-@@ -0,0 +1,94 @@
++++ b/Documentation/devicetree/bindings/clock/marvell,armada-3700-periph-clock.yaml
+@@ -0,0 +1,96 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/marvell,mvebu-core-clock.yaml#
++$id: http://devicetree.org/schemas/clock/marvell,armada-3700-periph-clock.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Marvell MVEBU SoC core clock
++title: Marvell Armada 37xx SoCs Peripheral Clocks
 +
 +maintainers:
 +  - Andrew Lunn <andrew@lunn.ch>
 +  - Gregory Clement <gregory.clement@bootlin.com>
 +
 +description: >
-+  Marvell MVEBU SoCs usually allow to determine core clock frequencies by
-+  reading the Sample-At-Reset (SAR) register. The core clock consumer should
-+  specify the desired clock by having the clock ID in its "clocks" phandle cell.
++  Marvell Armada 37xx SoCs provide peripheral clocks which are used as clock
++  source for the peripheral of the SoC.
 +
-+  The following is a list of provided IDs and clock names on Armada 370/XP:
-+   0 = tclk    (Internal Bus clock)
-+   1 = cpuclk  (CPU clock)
-+   2 = nbclk   (L2 Cache clock)
-+   3 = hclk    (DRAM control clock)
-+   4 = dramclk (DDR clock)
++  There are two different blocks associated to north bridge and south bridge.
 +
-+  The following is a list of provided IDs and clock names on Armada 375:
-+   0 = tclk    (Internal Bus clock)
-+   1 = cpuclk  (CPU clock)
-+   2 = l2clk   (L2 Cache clock)
-+   3 = ddrclk  (DDR clock)
++  The following is a list of provided IDs for Armada 3700 North bridge clocks:
 +
-+  The following is a list of provided IDs and clock names on Armada 380/385:
-+   0 = tclk    (Internal Bus clock)
-+   1 = cpuclk  (CPU clock)
-+   2 = l2clk   (L2 Cache clock)
-+   3 = ddrclk  (DDR clock)
++    ID	Clock name	Description
++    -----------------------------------
++    0	mmc		MMC controller
++    1	sata_host	Sata Host
++    2	sec_at		Security AT
++    3	sac_dap		Security DAP
++    4	tsecm		Security Engine
++    5	setm_tmx	Serial Embedded Trace Module
++    6	avs		Adaptive Voltage Scaling
++    7	sqf		SPI
++    8	pwm		PWM
++    9	i2c_2		I2C 2
++    10	i2c_1		I2C 1
++    11	ddr_phy		DDR PHY
++    12	ddr_fclk	DDR F clock
++    13	trace		Trace
++    14	counter		Counter
++    15	eip97		EIP 97
++    16	cpu		CPU
 +
-+  The following is a list of provided IDs and clock names on Armada 39x:
-+   0 = tclk    (Internal Bus clock)
-+   1 = cpuclk  (CPU clock)
-+   2 = nbclk   (Coherent Fabric clock)
-+   3 = hclk    (SDRAM Controller Internal Clock)
-+   4 = dclk    (SDRAM Interface Clock)
-+   5 = refclk  (Reference Clock)
++  The following is a list of provided IDs for Armada 3700 South bridge clocks:
 +
-+  The following is a list of provided IDs and clock names on 98dx3236:
-+   0 = tclk    (Internal Bus clock)
-+   1 = cpuclk  (CPU clock)
-+   2 = ddrclk  (DDR clock)
-+   3 = mpll    (MPLL Clock)
-+
-+  The following is a list of provided IDs and clock names on Kirkwood and Dove:
-+   0 = tclk   (Internal Bus clock)
-+   1 = cpuclk (CPU0 clock)
-+   2 = l2clk  (L2 Cache clock derived from CPU0 clock)
-+   3 = ddrclk (DDR controller clock derived from CPU0 clock)
-+
-+  The following is a list of provided IDs and clock names on Orion5x:
-+   0 = tclk   (Internal Bus clock)
-+   1 = cpuclk (CPU0 clock)
-+   2 = ddrclk (DDR controller clock derived from CPU0 clock)
++    ID	Clock name	Description
++    -----------------------------------
++    0	gbe-50		50 MHz parent clock for Gigabit Ethernet
++    1	gbe-core	parent clock for Gigabit Ethernet core
++    2	gbe-125		125 MHz parent clock for Gigabit Ethernet
++    3	gbe1-50		50 MHz clock for Gigabit Ethernet port 1
++    4	gbe0-50		50 MHz clock for Gigabit Ethernet port 0
++    5	gbe1-125	125 MHz clock for Gigabit Ethernet port 1
++    6	gbe0-125	125 MHz clock for Gigabit Ethernet port 0
++    7	gbe1-core	Gigabit Ethernet core port 1
++    8	gbe0-core	Gigabit Ethernet core port 0
++    9	gbe-bm		Gigabit Ethernet Buffer Manager
++    10	sdio		SDIO
++    11	usb32-sub2-sys	USB 2 clock
++    12	usb32-ss-sys	USB 3 clock
++    13	pcie		PCIe controller
 +
 +properties:
 +  compatible:
-+    enum:
-+      - marvell,armada-370-core-clock
-+      - marvell,armada-375-core-clock
-+      - marvell,armada-380-core-clock
-+      - marvell,armada-390-core-clock
-+      - marvell,armada-xp-core-clock
-+      - marvell,dove-core-clock
-+      - marvell,kirkwood-core-clock
-+      - marvell,mv88f5181-core-clock
-+      - marvell,mv88f5182-core-clock
-+      - marvell,mv88f5281-core-clock
-+      - marvell,mv88f6180-core-clock
-+      - marvell,mv88f6183-core-clock
-+      - marvell,mv98dx1135-core-clock
-+      - marvell,mv98dx3236-core-clock
-+
++    oneOf:
++      - const: marvell,armada-3700-periph-clock-sb
++      - items:
++          - const: marvell,armada-3700-periph-clock-nb
++          - const: syscon
 +  reg:
 +    maxItems: 1
++
++  clocks:
++    items:
++      - description: TBG-A P clock and specifier
++      - description: TBG-B P clock and specifier
++      - description: TBG-A S clock and specifier
++      - description: TBG-B S clock and specifier
++      - description: Xtal clock and specifier
 +
 +  '#clock-cells':
 +    const: 1
 +
-+  clock-output-names:
-+    description: Overwrite default clock output names.
-+
 +required:
 +  - compatible
 +  - reg
++  - clocks
 +  - '#clock-cells'
 +
 +additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-deleted file mode 100644
-index d8f5c490f893..000000000000
---- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
-+++ /dev/null
-@@ -1,87 +0,0 @@
--* Core Clock bindings for Marvell MVEBU SoCs
--
--Marvell MVEBU SoCs usually allow to determine core clock frequencies by
--reading the Sample-At-Reset (SAR) register. The core clock consumer should
--specify the desired clock by having the clock ID in its "clocks" phandle cell.
--
--The following is a list of provided IDs and clock names on Armada 370/XP:
-- 0 = tclk    (Internal Bus clock)
-- 1 = cpuclk  (CPU clock)
-- 2 = nbclk   (L2 Cache clock)
-- 3 = hclk    (DRAM control clock)
-- 4 = dramclk (DDR clock)
--
--The following is a list of provided IDs and clock names on Armada 375:
-- 0 = tclk    (Internal Bus clock)
-- 1 = cpuclk  (CPU clock)
-- 2 = l2clk   (L2 Cache clock)
-- 3 = ddrclk  (DDR clock)
--
--The following is a list of provided IDs and clock names on Armada 380/385:
-- 0 = tclk    (Internal Bus clock)
-- 1 = cpuclk  (CPU clock)
-- 2 = l2clk   (L2 Cache clock)
-- 3 = ddrclk  (DDR clock)
--
--The following is a list of provided IDs and clock names on Armada 39x:
-- 0 = tclk    (Internal Bus clock)
-- 1 = cpuclk  (CPU clock)
-- 2 = nbclk   (Coherent Fabric clock)
-- 3 = hclk    (SDRAM Controller Internal Clock)
-- 4 = dclk    (SDRAM Interface Clock)
-- 5 = refclk  (Reference Clock)
--
--The following is a list of provided IDs and clock names on 98dx3236:
-- 0 = tclk    (Internal Bus clock)
-- 1 = cpuclk  (CPU clock)
-- 2 = ddrclk   (DDR clock)
-- 3 = mpll    (MPLL Clock)
--
--The following is a list of provided IDs and clock names on Kirkwood and Dove:
-- 0 = tclk   (Internal Bus clock)
-- 1 = cpuclk (CPU0 clock)
-- 2 = l2clk  (L2 Cache clock derived from CPU0 clock)
-- 3 = ddrclk (DDR controller clock derived from CPU0 clock)
--
--The following is a list of provided IDs and clock names on Orion5x:
-- 0 = tclk   (Internal Bus clock)
-- 1 = cpuclk (CPU0 clock)
-- 2 = ddrclk (DDR controller clock derived from CPU0 clock)
--
--Required properties:
--- compatible : shall be one of the following:
--	"marvell,armada-370-core-clock" - For Armada 370 SoC core clocks
--	"marvell,armada-375-core-clock" - For Armada 375 SoC core clocks
--	"marvell,armada-380-core-clock" - For Armada 380/385 SoC core clocks
--	"marvell,armada-390-core-clock" - For Armada 39x SoC core clocks
--	"marvell,armada-xp-core-clock" - For Armada XP SoC core clocks
--	"marvell,mv98dx3236-core-clock" - For 98dx3236 family SoC core clocks
--	"marvell,dove-core-clock" - for Dove SoC core clocks
--	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
--	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
--	"marvell,mv98dx1135-core-clock" - for Kirkwood 98dx1135 SoC
--	"marvell,mv88f5181-core-clock" - for Orion MV88F5181 SoC
--	"marvell,mv88f5182-core-clock" - for Orion MV88F5182 SoC
--	"marvell,mv88f5281-core-clock" - for Orion MV88F5281 SoC
--	"marvell,mv88f6183-core-clock" - for Orion MV88F6183 SoC
--- reg : shall be the register address of the Sample-At-Reset (SAR) register
--- #clock-cells : from common clock binding; shall be set to 1
--
--Optional properties:
--- clock-output-names : from common clock binding; allows overwrite default clock
--	output names ("tclk", "cpuclk", "l2clk", "ddrclk")
--
--Example:
--
--core_clk: core-clocks@d0214 {
--	compatible = "marvell,dove-core-clock";
--	reg = <0xd0214 0x4>;
--	#clock-cells = <1>;
--};
--
--spi0: spi@10600 {
--	compatible = "marvell,orion-spi";
--	/* ... */
--	/* get tclk from core clock provider */
--	clocks = <&core_clk 0>;
--};
++
++examples:
++  - |
++    clock-controller@13000{
++        compatible = "marvell,armada-3700-periph-clock-sb";
++        reg = <0x13000 0x1000>;
++        clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>, <&tbg 3>, <&xtalclk>;
++        #clock-cells = <1>;
++    };
 -- 
 2.47.2
 
