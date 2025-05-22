@@ -1,599 +1,104 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A2C28BA9A
-	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 13:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7626E80B;
+	Thu, 22 May 2025 14:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747919688; cv=none; b=SvucgSiU/g3j1WXYXQwQ1U7N6iKLYVu2dUXBZ8I7al9SV2bzAh6laJQ5WafNZN7sQ9bNuzW2Y/KpgUIXWKZTAFC18TlRN4Ztv9XvgC1yzFmI775LINKx0HH/GlNBAj+upNQDwJtPI2sSdyv5nFzgJRegg6dCguwaoC0rq/FaGso=
+	t=1747925061; cv=none; b=LKSuPCNt5/w510QQBRQBBlntkLRicw7RPNYW9uqq2aq7r7iPDILY2LVUBOm6cqGBr+B95c9lQwkHkU/ZzpaS0tXVgXCyEqrHoJBOMOJxWyvjTTZQYbcQSAbVQ8qU27IUd/CnfpCvNO6sZp2ujXQfiyY1IUN08fX+6fVyFL6bXEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747919688; c=relaxed/simple;
-	bh=THyTxK8Ib2BX4j5wHfxK22gA1ZnxQLV+NEsJmDNqy/8=;
+	s=arc-20240116; t=1747925061; c=relaxed/simple;
+	bh=4FS1WD6Ohgai5T03cmhd+uP3hmvq4bHzXFA3UmPvFgY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sbxq48RwBJqroVUb1Ko58FLhejoDAWvDot/LbyrOlPRBEubXlb2etkXbnOy2hJ5844sUjNzVwiasfd2otCnUe8DElzivYk/Apc7SXOtjf3Ayxvit0bQta56uEnlbDAoRJdT5JYQpwj3TL7S5dgJdrHimj1ttDx8zfNLf3Th142o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bij2gCkh; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bij2gCkh"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-af51596da56so6047630a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 06:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1747919685; x=1748524485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGlIrWJBVBFchs0/Y1aBCCRRWEAcXWd3TDlUnCoMtu4=;
-        b=bij2gCkh3oeGgscSKxUatE4lJJ9EpECivZm7Ipgpc655zI8ShNz8nKuvD9i98j4zZW
-         TJhJqH9IowkeSQTsOowomezg+XZvNPFivA4h4HdD0RQN/Ng+XvsaFHGHnROMNvDEVBfs
-         u/bIKAQAqxr4rKlZZvN3vAguUcGLyo3cOe1b2iSi9XACeI9m7o3RtOfRa4Akl9lmVPDN
-         7U6hwrIw8+TG5qE8xvpSswLxNUu9RYkDqCn2ZFXRPGWKJSSHizB8O43MCzWVRMoCkZIq
-         uIkt11h1cX/kd2PpAT9/iyhlWKuCMXSrzbsZXBOWizPphmqrA+pjHc2RK5UnRTwNesbg
-         fdfQ==
+	 To:Cc:Content-Type; b=pTAWmZS0zNAt433yLNqEq6GOxQwurKRliNsh7nra4SFK5UpZgpCuWaiOUryGcCJoLDnoFaCcxu1GICgV4mj9WKqGp/BqLw3YW9azT4yd93PYkxXBvNuhuzMARDNPFEA6m9amex4twsQNVD77wQhvxx5vOYWkOlWYeYV020sy1ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52b2290e292so2449149e0c.3;
+        Thu, 22 May 2025 07:44:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747919685; x=1748524485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kGlIrWJBVBFchs0/Y1aBCCRRWEAcXWd3TDlUnCoMtu4=;
-        b=h9W0RiToSc5KbNVEjXWtgUJTNpQTLle6yjWpX7upy20lODG7RLT6SFZNETUvixZJWU
-         2deMDKWCgsC4D0szNn2L49xjxFLAVnec99zSwBNIvfMQ1KgFVZvrak+nDFDdHka6C4ZH
-         MKOY2lhVn3A7U6G5VoTPfSJhQrkDT6rO9hAvIzKXxzzaJupeagirAC/XqMDCNqvyXskn
-         o5qu8/XUS2aDvOkHJnRUNCZl39n7F2zSLb3iaN1Gs7Rm/HLI8b0ER2gnBw36vqoeFoV2
-         IHNOQxxoyJnercWEwtk/h6JsFl10IrwxocPzXK/JQbJE+Eqk7JS1eZxF/3lq4KD8uzPL
-         oYMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxwY75PNMn4IkwNRf5yBPA5jWeSBxm36IgJZiY9shvgpuObK4LylBu/1V639j9ke6502nN5/ICXGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMiQjCCc4N/CFK/49oaJWF27lBC2q+6PrsGJIV/Wi2MCTAyC0N
-	qvUtLTSXr7XEZbsoKmOj6ybVY7+FQJzA5Y/L2vIrrGi6FYtdW3oR8y8h+l5KRIGnGa8N0ebTnqk
-	7iXcq5fiMsD/ZJR/Idn61GvYCplvCiH6W82HujEXJMg==
-X-Gm-Gg: ASbGnctOuNGBXjw8dnQAT4AuGRBU/FyCcNoXQyTPs2buPNZ1EGqsBcRX5u6MGT3hm6v
-	QHPnAtTMQVTo+UIiZxAZT5bcaZhTYeWUHa97ZQKZcBaeoW/6FVCf//H6w/wJ+3EFLmIS3XAEBvK
-	1GbN8bLlinvUU/GmJ13ttdBr7xQSXQGml5nKzwBqeHNr08Qomh78t2vhSxowoz8jQCPJ+081u8t
-	WyZ
-X-Google-Smtp-Source: AGHT+IEoGK3RJI5+jH0DpYUBMxkEhiQ3mORuC3aHcocT5wnnZB2VoW+JpOOqTk96BQl2MCAPqnS4MDLuyCIXbqWKkik=
-X-Received: by 2002:a17:902:d4c9:b0:232:202e:ab18 with SMTP id
- d9443c01a7336-232202eac80mr243775645ad.26.1747919685359; Thu, 22 May 2025
- 06:14:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747925057; x=1748529857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ulHyZgCZJs6vw2PQiLxo4q/s163zTZx6q7bD+Ce1XJM=;
+        b=OEkeSAfcXVbYnhmXRwsbR8cg37eX5g6wIbp11SkseBsI/JRbcyGXcieUduzx5ocOqV
+         AnLhrvA/fTV/BqdP7fMuS9KP9dlVoVdApxC3UGzR3Va5GksVk6TYjQ2W64YPzLICWu/1
+         3XKadMwiSAWJ2mFP6uZMuW7J1yRnKRbSJ1+BusM7C5SACig2zdkIeUTVx/t5P4uuyU0O
+         Kj1bZlrGLWMci/8l0j2/SV4wIhv2U9gdKW+MZG6izlw5tf5RVgLXhZ7TlXXoUO/vhCQI
+         kv/YX/alzi5uX2NCIEqEZI+7r8Pm5dctie1mDaIJzI3inqAqIpeE0OCodQK98plEiqbE
+         cNiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW11ueQg/WmtDBIgs8fiDqqvHiEDdcS7w1XoAPXdK1aKAOcxtHePgxgoxZZfJbHjKtlSm9myTk5K43baMhzfbeL6M0=@vger.kernel.org, AJvYcCWmQ2CzvAMYhQpn+SYI4Maf5l4y9aW4jc/bWR3pFRpcjaR1jKsF7HKqEHKOQ9g5pZh6F9E0WkkuEDkg@vger.kernel.org, AJvYcCXwmvqDzQKip/RzqvujvzhgkQwa73pF4DtcO2beBVqzOQl+OGFAom0yemFuD4bsyoWqgXBe0ShUonsE@vger.kernel.org, AJvYcCXz0Swty2t3HgzD9mpTqluweDy/OD6xnS3u/vPMxmpHvtGPHufSZadj/nsa51v9X+YUaInRC5Rf1gZdTak2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUSeoHOWNKyVfOBIcSn25zSboaUGXjCuV9MI6A1xgnCP9JFck0
+	sB9kifAhdwkLiuLE5b13Ggh0oPqlZC65Bt9tZ+gKtKka3foUcGILEdVsiZeTlBqJ
+X-Gm-Gg: ASbGncv03QA9eZdu7eotl5IS/4JSBT2I6MOu+bwgxsVZg7zt1M8OQBpvCngV1f5lQdN
+	SySF7BF2z3/dnVYYpz9Yrs2I64CMzxxXwUjf9SGfYYEA7680588sobKSHanrTaghwQ6DA2gzPjg
+	SmMzE1TEaHbjiHhcvPEEAeaDhl/jbwDOBxGGRBpW8L1j8FN8GYs1cVRG37lHel4r1gjhG0D9of1
+	e4+6qhagG3ggAlrL1tXrvAwgW9+hu1NnApk+ETYNY7hCiZIHMZOylEGMNMXGx3abdcw/bJ8gX7H
+	0DJwKWZs/OFBTs2iie8lzqjcNwPQg6hJ/fLmgtL+Xstey54fdHhTtb5aBU0SuAi1OkLJNLvZ46s
+	wynRk04x0rOSCDw==
+X-Google-Smtp-Source: AGHT+IGSUPlHeWsY78d5dyV5adWI8xIGhHI1TVK/Ner7LmyZaEtwkUSezDyMSCZotaXjGg1CmY52YA==
+X-Received: by 2002:a05:6122:178e:b0:52c:5062:c84d with SMTP id 71dfb90a1353d-52dbcab408amr19433372e0c.0.1747925057016;
+        Thu, 22 May 2025 07:44:17 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba91072dsm11931423e0c.8.2025.05.22.07.44.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 07:44:16 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87bf9d00e1bso1587308241.0;
+        Thu, 22 May 2025 07:44:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIEpdJXDUCTn9bDxE38JDRmSp2AWMmK2hwbk06vw5hBnw7AXQyIXIdbhGSlHWnwUrp488hMYKn9xechBTx@vger.kernel.org, AJvYcCUXFRw8GZPrQd6sOIPQYBbiAd8nC0Igq0ED/zoW2ukeRT8vEq6eOWxslcAOivkFbZUv6ffXMwojr0X7@vger.kernel.org, AJvYcCWW1AEBg2/33glrUDEIUjM7Ytw8eLAqI8XkBUdv8UWFRt9IHS5XRC99pWeFc1LulzRT0dk6rv6lLQeVg35sUC2l6i8=@vger.kernel.org, AJvYcCXwWtwU3oUF6MNzBmf6Fcx2VtxK5atogZnQswWxybmIUWNlA+KAJmAbKVMH1WYuweH9aMkX1GZEy7by@vger.kernel.org
+X-Received: by 2002:a05:6102:1512:b0:4c3:3eb:e84d with SMTP id
+ ada2fe7eead31-4e053c64e06mr22982552137.21.1747925056234; Thu, 22 May 2025
+ 07:44:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-11-apatel@ventanamicro.com> <aCGeTPS4WiGYMTTo@smile.fi.intel.com>
-In-Reply-To: <aCGeTPS4WiGYMTTo@smile.fi.intel.com>
-From: Rahul Pathak <rpathak@ventanamicro.com>
-Date: Thu, 22 May 2025 18:44:09 +0530
-X-Gm-Features: AX0GCFukMonDaz7YsSr5vql7vPIURSlLEpDbS2KpNPhkArtway53iQSyYkqxB5s
-Message-ID: <CA+Oz1=aLgFSc+RG4=5B0ejUDRrjUh1xNYmHjJQd0sRUwjMBGiw@mail.gmail.com>
-Subject: Re: [PATCH v3 10/23] clk: Add clock driver for the RISC-V RPMI clock
- service group
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Anup Patel <apatel@ventanamicro.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, 
-	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250514090415.4098534-1-claudiu.beznea.uj@bp.renesas.com> <20250514090415.4098534-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250514090415.4098534-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 May 2025 16:44:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUqZBT6siQtt-jY8H+-NBM2NK6nqmXtQv3WFZ-8r-hTSQ@mail.gmail.com>
+X-Gm-Features: AX0GCFuvftoCjkNI0QdHmFXYhUcsS-YxVKwyDJuwdT43XAXP4VA4uldmF_io67c
+Message-ID: <CAMuHMdUqZBT6siQtt-jY8H+-NBM2NK6nqmXtQv3WFZ-8r-hTSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] clk: renesas: rzg2l-cpg: Postone updating priv->clks[]
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andy
+On Wed, 14 May 2025 at 11:04, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Since the sibling data is filled after the priv->clks[] array entry is
+> populated, the first clock that is probed and has a sibling will
+> temporarily behave as its own sibling until its actual sibling is
+> populated. To avoid any issues, postpone updating priv->clks[] until after
+> the sibling is populated.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - postpone the update of priv->clks[id] as suggested in review process
+> - updated the patch title and description to reflect the new approach
 
-On Mon, May 12, 2025 at 12:38=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 11, 2025 at 07:09:26PM +0530, Anup Patel wrote:
-> > From: Rahul Pathak <rpathak@ventanamicro.com>
-> >
-> > The RPMI specification defines a clock service group which can be
-> > accessed via SBI MPXY extension or dedicated S-mode RPMI transport.
-> >
-> > Add mailbox client based clock driver for the RISC-V RPMI clock
-> > service group.
->
-> ...
->
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/err.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/mailbox/riscv-rpmi-message.h>
->
-> Just to point out again that the above misses a lot of headers definition=
-s
-> and/or APIs this driver uses. Follow IWYU principle.
->
-> ...
->
-> > +#define GET_RATE_U64(hi_u32, lo_u32) ((u64)(hi_u32) << 32 | (lo_u32))
->
-> Hmm... Perhaps add this kind of macro to wordpart.h ? IIRC not only this =
-driver
-> uses something like this.
->
-> ...
->
-> > +enum rpmi_clk_type {
-> > +     RPMI_CLK_DISCRETE =3D 0,
-> > +     RPMI_CLK_LINEAR =3D 1,
->
-> > +     RPMI_CLK_TYPE_MAX_IDX,
->
-> No comma for the terminator. Please, clean all these cases.
->
-> > +};
->
-> ...
->
-> > +union rpmi_clk_rates {
-> > +     u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
-> > +     struct {
-> > +             u64 min;
-> > +             u64 max;
-> > +             u64 step;
-> > +     } linear;
->
-> Have you looked at the linear ranges library we have in the kernel? Can y=
-ou
-> utilise it here?
->
-> > +};
->
-> ...
->
-> > +struct rpmi_clk {
-> > +     struct rpmi_clk_context *context;
-> > +     u32 id;
-> > +     u32 num_rates;
-> > +     u32 transition_latency;
-> > +     enum rpmi_clk_type type;
-> > +     union rpmi_clk_rates *rates;
-> > +     char name[RPMI_CLK_NAME_LEN];
-> > +     struct clk_hw hw;
->
-> Just a reminder to use `pahole` to check that your data layout is optimis=
-ed for
-> memory consumption.
->
-> > +};
->
-> ...
->
-> > +struct rpmi_get_supp_rates_rx {
-> > +     u32 status;
-> > +     u32 flags;
-> > +     u32 remaining;
-> > +     u32 returned;
-> > +     u32 rates[];
-> > +};
->
-> Is it ABI? (I mean if this is interface with some kind of FW)
-> If so, Use proper endianess aware types. Same Q for all data
-> types defined in this driver.
->
-> ...
->
-> > +                     for (j =3D 0; j < rx->returned; j++) {
-> > +                             if (rateidx >=3D (clk_rate_idx + rx->retu=
-rned))
->
-> Too many parentheses.
->
-> > +                                     break;
-> > +                             rpmi_clk->rates->discrete[rateidx++] =3D
-> > +                                     GET_RATE_U64(rate_discrete[j].hi,
-> > +                                                  rate_discrete[j].lo)=
-;
-> > +                     }
-> > +             }
->
-> ...
->
-> > +     devm_kfree(context->dev, rx);
->
-> Why?! This is a red flag to point that here is misunderstanding or abuse =
-of
-> managed resources approach. Either use __Free() from cleanup.h or don't c=
-all
-> devm_kfree(). The latter must have a very good justification to explain w=
-hy.
->
-> > +     return 0;
->
-> (this is even not an error path, where it might have a little argument fo=
-r)
->
-> ...
->
-> > +     /* Keep the requested rate if the clock format
-> > +      * is of discrete type. Let the platform which
-> > +      * is actually controlling the clock handle that.
-> > +      */
->
-> /*
->  * Use proper style for the multi-line comments. You can
->  * refer to this comment as an example.
->  */
->
-> ...
->
-> > +out:
->
-> Redundant label. Note, the labels are recommended to be named after the f=
-low
-> they will run if goto. This one can be named as out_literally_with_return=
-_0,
-> which makes it obvious how useless it is.
->
-> > +     return 0;
->
-> ...
->
-> > +     rates =3D devm_kzalloc(dev, sizeof(union rpmi_clk_rates), GFP_KER=
-NEL);
->
-> sizeof(*...)
->
-> > +     if (!rates)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     rpmi_clk =3D devm_kzalloc(dev, sizeof(struct rpmi_clk), GFP_KERNE=
-L);
->
-> Ditto.
->
-> > +     if (!rpmi_clk)
-> > +             return ERR_PTR(-ENOMEM);
->
-> ...
->
-> > +     ret =3D rpmi_clk_get_supported_rates(clkid, rpmi_clk);
-> > +     if (ret)
-> > +             return dev_err_ptr_probe(dev, ret,
-> > +                     "Get supported rates failed for clk-%u, %d\n", cl=
-kid, ret);
->
-> Indentation issues. Repetitive ret in the message. Please, get familiar w=
-ith
-> the format dev_err_probe() uses.
->
-> ...
->
-> > +     int ret, num_clocks, i;
->
-> Why is 'i' signed?
->
-> ...
->
-> > +     /* Allocate RPMI clock context */
-> > +     context =3D devm_kzalloc(dev, sizeof(*context), GFP_KERNEL);
->
-> Ha-ha, you have even inconsistent style in the same file! So, go through =
-the
-> whole series and make sure that the style used in each file is consistent=
-.
->
-> > +     if (!context)
-> > +             return -ENOMEM;
->
-> ...
->
-> > +     /* Validate RPMI specification version */
-> > +     rpmi_mbox_init_get_attribute(&msg, RPMI_MBOX_ATTR_SPEC_VERSION);
-> > +     ret =3D rpmi_mbox_send_message(context->chan, &msg);
-> > +     if (ret) {
-> > +             dev_err_probe(dev, ret, "Failed to get spec version\n");
-> > +             goto fail_free_channel;
->
-> This is simply wrong. You should not do goto before any devm_*() calls.
-> The error path and ->remove(), if present) is broken. Fix it accordingly.
->
-> Here should be
->
->                 return dev_err_probe(...);
->
-> it's your homework to understand how to achieve that. Plenty of the examp=
-les in
-> the kernel.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
-So far I could only find drivers with "goto used before devm_*" pattern use=
-d.
-Can you please point me to the example which does not use goto before
-devm_* apis.
+Gr{oetje,eeting}s,
 
-Also, I couldn't understand the problem which may happen because of
-this. Can you
-please explain?
-
->
-> > +     }
->
-> ...
->
-> > +enum rpmi_clock_service_id {
-> > +     RPMI_CLK_SRV_ENABLE_NOTIFICATION =3D 0x01,
-> > +     RPMI_CLK_SRV_GET_NUM_CLOCKS =3D 0x02,
-> > +     RPMI_CLK_SRV_GET_ATTRIBUTES =3D 0x03,
-> > +     RPMI_CLK_SRV_GET_SUPPORTED_RATES =3D 0x04,
-> > +     RPMI_CLK_SRV_SET_CONFIG =3D 0x05,
-> > +     RPMI_CLK_SRV_GET_CONFIG =3D 0x06,
-> > +     RPMI_CLK_SRV_SET_RATE =3D 0x07,
-> > +     RPMI_CLK_SRV_GET_RATE =3D 0x08,
->
-> > +     RPMI_CLK_SRV_ID_MAX_COUNT,
->
-> No comma in the terminator line.
->
-> > +};
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+                        Geert
 
 
---=20
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks
-Rahul Pathak
-
-On Mon, May 12, 2025 at 12:38=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 11, 2025 at 07:09:26PM +0530, Anup Patel wrote:
-> > From: Rahul Pathak <rpathak@ventanamicro.com>
-> >
-> > The RPMI specification defines a clock service group which can be
-> > accessed via SBI MPXY extension or dedicated S-mode RPMI transport.
-> >
-> > Add mailbox client based clock driver for the RISC-V RPMI clock
-> > service group.
->
-> ...
->
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/err.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/mailbox/riscv-rpmi-message.h>
->
-> Just to point out again that the above misses a lot of headers definition=
-s
-> and/or APIs this driver uses. Follow IWYU principle.
->
-> ...
->
-> > +#define GET_RATE_U64(hi_u32, lo_u32) ((u64)(hi_u32) << 32 | (lo_u32))
->
-> Hmm... Perhaps add this kind of macro to wordpart.h ? IIRC not only this =
-driver
-> uses something like this.
->
-> ...
->
-> > +enum rpmi_clk_type {
-> > +     RPMI_CLK_DISCRETE =3D 0,
-> > +     RPMI_CLK_LINEAR =3D 1,
->
-> > +     RPMI_CLK_TYPE_MAX_IDX,
->
-> No comma for the terminator. Please, clean all these cases.
->
-> > +};
->
-> ...
->
-> > +union rpmi_clk_rates {
-> > +     u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
-> > +     struct {
-> > +             u64 min;
-> > +             u64 max;
-> > +             u64 step;
-> > +     } linear;
->
-> Have you looked at the linear ranges library we have in the kernel? Can y=
-ou
-> utilise it here?
->
-> > +};
->
-> ...
->
-> > +struct rpmi_clk {
-> > +     struct rpmi_clk_context *context;
-> > +     u32 id;
-> > +     u32 num_rates;
-> > +     u32 transition_latency;
-> > +     enum rpmi_clk_type type;
-> > +     union rpmi_clk_rates *rates;
-> > +     char name[RPMI_CLK_NAME_LEN];
-> > +     struct clk_hw hw;
->
-> Just a reminder to use `pahole` to check that your data layout is optimis=
-ed for
-> memory consumption.
->
-> > +};
->
-> ...
->
-> > +struct rpmi_get_supp_rates_rx {
-> > +     u32 status;
-> > +     u32 flags;
-> > +     u32 remaining;
-> > +     u32 returned;
-> > +     u32 rates[];
-> > +};
->
-> Is it ABI? (I mean if this is interface with some kind of FW)
-> If so, Use proper endianess aware types. Same Q for all data
-> types defined in this driver.
->
-> ...
->
-> > +                     for (j =3D 0; j < rx->returned; j++) {
-> > +                             if (rateidx >=3D (clk_rate_idx + rx->retu=
-rned))
->
-> Too many parentheses.
->
-> > +                                     break;
-> > +                             rpmi_clk->rates->discrete[rateidx++] =3D
-> > +                                     GET_RATE_U64(rate_discrete[j].hi,
-> > +                                                  rate_discrete[j].lo)=
-;
-> > +                     }
-> > +             }
->
-> ...
->
-> > +     devm_kfree(context->dev, rx);
->
-> Why?! This is a red flag to point that here is misunderstanding or abuse =
-of
-> managed resources approach. Either use __Free() from cleanup.h or don't c=
-all
-> devm_kfree(). The latter must have a very good justification to explain w=
-hy.
->
-> > +     return 0;
->
-> (this is even not an error path, where it might have a little argument fo=
-r)
->
-> ...
->
-> > +     /* Keep the requested rate if the clock format
-> > +      * is of discrete type. Let the platform which
-> > +      * is actually controlling the clock handle that.
-> > +      */
->
-> /*
->  * Use proper style for the multi-line comments. You can
->  * refer to this comment as an example.
->  */
->
-> ...
->
-> > +out:
->
-> Redundant label. Note, the labels are recommended to be named after the f=
-low
-> they will run if goto. This one can be named as out_literally_with_return=
-_0,
-> which makes it obvious how useless it is.
->
-> > +     return 0;
->
-> ...
->
-> > +     rates =3D devm_kzalloc(dev, sizeof(union rpmi_clk_rates), GFP_KER=
-NEL);
->
-> sizeof(*...)
->
-> > +     if (!rates)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     rpmi_clk =3D devm_kzalloc(dev, sizeof(struct rpmi_clk), GFP_KERNE=
-L);
->
-> Ditto.
->
-> > +     if (!rpmi_clk)
-> > +             return ERR_PTR(-ENOMEM);
->
-> ...
->
-> > +     ret =3D rpmi_clk_get_supported_rates(clkid, rpmi_clk);
-> > +     if (ret)
-> > +             return dev_err_ptr_probe(dev, ret,
-> > +                     "Get supported rates failed for clk-%u, %d\n", cl=
-kid, ret);
->
-> Indentation issues. Repetitive ret in the message. Please, get familiar w=
-ith
-> the format dev_err_probe() uses.
->
-> ...
->
-> > +     int ret, num_clocks, i;
->
-> Why is 'i' signed?
->
-> ...
->
-> > +     /* Allocate RPMI clock context */
-> > +     context =3D devm_kzalloc(dev, sizeof(*context), GFP_KERNEL);
->
-> Ha-ha, you have even inconsistent style in the same file! So, go through =
-the
-> whole series and make sure that the style used in each file is consistent=
-.
->
-> > +     if (!context)
-> > +             return -ENOMEM;
->
-> ...
->
-> > +     /* Validate RPMI specification version */
-> > +     rpmi_mbox_init_get_attribute(&msg, RPMI_MBOX_ATTR_SPEC_VERSION);
-> > +     ret =3D rpmi_mbox_send_message(context->chan, &msg);
-> > +     if (ret) {
-> > +             dev_err_probe(dev, ret, "Failed to get spec version\n");
-> > +             goto fail_free_channel;
->
-> This is simply wrong. You should not do goto before any devm_*() calls.
-> The error path and ->remove(), if present) is broken. Fix it accordingly.
->
-> Here should be
->
->                 return dev_err_probe(...);
->
-> it's your homework to understand how to achieve that. Plenty of the examp=
-les in
-> the kernel.
->
-> > +     }
->
-> ...
->
-> > +enum rpmi_clock_service_id {
-> > +     RPMI_CLK_SRV_ENABLE_NOTIFICATION =3D 0x01,
-> > +     RPMI_CLK_SRV_GET_NUM_CLOCKS =3D 0x02,
-> > +     RPMI_CLK_SRV_GET_ATTRIBUTES =3D 0x03,
-> > +     RPMI_CLK_SRV_GET_SUPPORTED_RATES =3D 0x04,
-> > +     RPMI_CLK_SRV_SET_CONFIG =3D 0x05,
-> > +     RPMI_CLK_SRV_GET_CONFIG =3D 0x06,
-> > +     RPMI_CLK_SRV_SET_RATE =3D 0x07,
-> > +     RPMI_CLK_SRV_GET_RATE =3D 0x08,
->
-> > +     RPMI_CLK_SRV_ID_MAX_COUNT,
->
-> No comma in the terminator line.
->
-> > +};
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
-
-
---=20
-
-Thanks
-Rahul Pathak
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
