@@ -1,65 +1,72 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E03818A6A9
-	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 18:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C5220127D
+	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 19:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747938775; cv=none; b=tPuadqts5en3d4t6WcsuDin5U7ACD/DJCc7q0Ekm8vJgUmA4uvsOj+mTd+RIGB2qU09mh1JhQNIMBaVC6ON3/Ephc7pWuQfPx2Y5sroTzRT6rLyZ/EEObtYE3BQZGhUNLpVCyI/4QrvxdKvbC5qGdIRlDRKghY/R0WezcPj8V54=
+	t=1747943262; cv=none; b=AMubgqeCotRDIhs8ZqQ2ih/dsep3wGSxlQNGN5eKRratHMtNfkFDNtCCpObz9qddgpIWLMXf9dBs4IN2INu+sofHzznqN7/ffohVP+IQGTKuHRlBObYhc2kIQsgRrKEOVDS2WCy6Ty3fQscHwmv+9ONZxwM7D1o1jElPErLAloA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747938775; c=relaxed/simple;
-	bh=lMJ6tHz4tOW1eWeTG1Uc6/k5VF7JF9zmg/OfZNm2H1M=;
+	s=arc-20240116; t=1747943262; c=relaxed/simple;
+	bh=vtWv97QQmcdVkvJfd3Kq/jWab4iQxT2PxNipdne2hkg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xm1NcEEhJS0DjOm0KAGmflf7tC+cx7lmBzg7Ys3AsXBpf8IOXOadw5SzlgfinZpntjHoiSEqLSxpr5B2by6bxOnGsDXxQhv5IT2fq3bt9eD0vB6OVYLTgVvFJCqXe2Hcj8Bv7svcGHuBUCkxmHfD5I5KrI6CFDa/lGGTVB9CMAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KL3HxUfQ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=rGa6rxGWmVafej5+Y7+xkJ4E5z4a5UmTBq0UUKBzDgAl5xFiz7cnnRzShgxqTV7UaFNTTB9VPfAuiXN/RkZRhs6HAcD42PyO8ggTQ7fK+GPcNep81QEiAukOwlusQb+6/idnGvhZqLAZw/0nboIAf+GuFCCXN8qiC6zcp0BzrRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UoGLnYTG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KL3HxUfQ"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a361a54454so1025942f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 11:32:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747938771; x=1748543571; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cJY9vehP2g7EGxYhkgZzcqCJWvR4zDkNLhtdKYt0bgU=;
-        b=KL3HxUfQz5TBpNNfi9O71BW9phF3C+egioOQ67fgwuXJ/oZw9qhtav+7iaEN3DN26y
-         LsyeIFwshFcYJZujWPAgdIhUoHnrGcDrPFyAxAA8oKHFVZitzyZL27G6lqy1oyrzcvJU
-         Kww5Hnhc6tITl0QH5xUVVLzMlzzxdCl8ihbZ8ckC7kOntY1jQ9anCBMQg2JhpD92+Wg4
-         0j2gQs7EfRschDmUkWX2YrA+Z+JEF/TMPxEu6/0PP54Ladm6lMyFHiKP0lota/8Z69ig
-         U4dTbg4DLYNNcTE2WeQSzAYReSd5vSBlCU9QJ0QGlx5gPHJnnB8dTYyvF6/s1707egQ7
-         iV1g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UoGLnYTG"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MFTZ4m020957
+	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 19:47:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Vlwo72v/3bz8ukRxIg/7653/lvkTs/m7haGuKIkzqFg=; b=UoGLnYTGaNmYvuq7
+	eE2J0gxG0S3YNIhjbSQccHzQgEIbpoeKQZv0g7XSMGnC0nMS7amSb47jOBQgK/6h
+	rNwxe9lOiWDO8OgOPaZMLG/60THhD6EcYn/MkAx7hOmVhB6EfUyrFHniFrZKgbqW
+	05qSlkHFrERLV3spqf5FKgxIlMB97ffP79mw5g+PQ40g4Uutt8xmMao0ImYvezSr
+	VOQFJmQfPcbDU6Jx/AGWzlt0Yy3ksNawJj4tKnoIiuvbwFxntIKAkc6cmYUCJIo+
+	+gfLLK7ZNl5uqfgHPeZnNmjVrP7eW5qVkI6BdpPQ5HjNn3am9ld2yxB/u+bsLMv3
+	kmJyPw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf07s18-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 19:47:39 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-477608e8e4aso3577261cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 12:47:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747938771; x=1748543571;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cJY9vehP2g7EGxYhkgZzcqCJWvR4zDkNLhtdKYt0bgU=;
-        b=jDXlYnZRsHieEnUEvjKFwIJgdnviG5FqYjI6bYTWpUaxJJTpvm4o5r+7N6eOwU4P57
-         p8VZmKKhhzFaWkFxjxaWvhobUUoEAuCZQpSCnDWEK1fOdrQWvDUeFa/f07ZaVVdHE4Ju
-         nSuhrz3+qsnMBdnw2fLP3gFjNVT3vG72AgGZUiH+xClze+t9XDcqxmGIUypN3lC8ZsiV
-         MyWUfv1KLcABdugUwN5Et0cZkzxGe7Tkk4MartkPJeTrYDBCyw8tczLeYeH4JW8D08N3
-         57uU5/6srSRwNeZcwuL1hS3uHqmb1m9Aqu7Ljf/TX+d6uaG+/Ec5MB1Q3dBCU8BXnB97
-         RLpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeBexpZXGy+AueRjXn8khOmKNQHsklcPihw3sdZO4zFZuxtyLgByhcxn9DZC/lu+ydvgl8jXAjuDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ijvDcQmA0UwZuNaa6CeiL0glfghOA/1x8UAJrEUukACqVmGc
-	eShf8X1ZbcWR9ESFPPyo8xgB9p3+JH5spTFRm4CBqX+13SnhkZbLQv9crjEmKA676dM=
-X-Gm-Gg: ASbGnct4ZNHLSusylRmGT3hBLmaL8rTOD5wwub0t1IAxpcHgpCtHT5EXi8b02/4u8Xp
-	/2dcILFC8nHVZ087incCO8ErrHSVl9gLjmkAWGlDC/I7cgN2fVuo9OdAfWwOVmZlAfmxSafaelL
-	r2IQAUnxuO19fPs8akzBHDiMGg4I8Xg03eZnf4k2ikrSCbIv8jQeWdyYWQqXOOljgdnXufOWMkn
-	XLlLnlJpNdUjJhMYuUrvOYtjV7eDursmiwQunIEeQ2GNHRngKdb3Lf1BGeYVTFAdgsW6l3RjVpV
-	zzeMqYSWkdAyT4uthgTFnONfEAqWcY8l6IF/0Uahgdh9O5yUZHpM/G566R1rPZP912jmVBg=
-X-Google-Smtp-Source: AGHT+IGLyHoeTc4HSvaXyg3+PQJQKiImY3KCxwct5wGRCFTjBfvCwUsuGdayZtCuy6sdlhDOtQDFIQ==
-X-Received: by 2002:a05:600c:3587:b0:439:9a1f:d73d with SMTP id 5b1f17b1804b1-442fd68257fmr90763505e9.8.1747938771266;
-        Thu, 22 May 2025 11:32:51 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3ce483bsm113545715e9.33.2025.05.22.11.32.49
+        d=1e100.net; s=20230601; t=1747943258; x=1748548058;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vlwo72v/3bz8ukRxIg/7653/lvkTs/m7haGuKIkzqFg=;
+        b=SmGOqFUbYmOWnkOgki64PCR1z+pg4z5D/yA6CZ02idqGFeJHJRBvaGbwEXVT+hdS/G
+         7YcBxN3fTrhXMCunU2e/7vw/ipSvW5nq+WDIVW4C7zDfXWDdMxttxaHkl3SDqVh+yeDL
+         4gCbTkMWwsMHke3yzfIJ8K/rwsws2bR3W324Xuny2AMR6DSIwl+4QZQf4X6nzuT5z2vC
+         mp8Px+dYDHvzvIs+5NHMUXB1EirNdaeIN7gnKUETLIig+6zXEp4RMpB81RlrGFByeAPe
+         e6OiWDz/zSp4wMt+0flySao9enuOH0cSKQzLZzbGlB5Kjxc9Gq3nolTJj0e5EFLYLbd+
+         s0LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM5yGjNCAePlqDWwn3eOErOuQsT2QHP/v4AdyWBVbypoh3kDU7oddGmzYJBJ9Lf/h2GujG37Y+BMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2NrWVl3g3nR24QopAOmJmV6Q/OOsxzPKbT6ZrqbY0l6ixQLzi
+	TgcocElWUEer9sAnej22bZp7WWvocXgYpx8+TyTZ5f+sxbKKgkuEUfw7le8+dEUCV+rf7b6NDEH
+	AL9JT8m/oHPl5VRl5e6Ke4UVn9Bc+k8xyfE12eVNCyD7FJC4yghEu3n9P1uvW6jA=
+X-Gm-Gg: ASbGnct531bshHle2zp4hQgFOd/UJ9B3xoO5BIgOuAixLxnkI23OlRKzCrR0xZOPeag
+	TkDHvpn2nigsLUD0dPJgEWxodqPfkgqR5nDJ3Fq0XZXWxB9kNWqkRpze3WA08EfTob+4fBnO1K9
+	1X0GakjgxTVWUQCmPwTKbdSQX6SvNe/7FBMvKRQBqfqX4B2cCIW7GZB48yY3AyujPQmBgT6AX8b
+	jZ2atKQaWl09Yv3GZPhj1tWv/KOXEXNPlKyZ4p1Nl+N8B682BhJgD3eeqvvCgUpRPMyPfVQ/miE
+	7adulqvQXpJXhYgT3pxa0RZ1u6Yx5JzDZAF45H9dhTpWHjTzIUL3eSqBzGupc09qbg==
+X-Received: by 2002:ac8:57d0:0:b0:49b:8831:a061 with SMTP id d75a77b69052e-49b8831a1a9mr44716591cf.12.1747943258329;
+        Thu, 22 May 2025 12:47:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5VwqiEcm7K7nKCO+tiTFsUqyeBFclAgcgCdlXI/RUXoUd668SeE5MQMoMDNGnA4rB+aCLyQ==
+X-Received: by 2002:ac8:57d0:0:b0:49b:8831:a061 with SMTP id d75a77b69052e-49b8831a1a9mr44716491cf.12.1747943257894;
+        Thu, 22 May 2025 12:47:37 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04af40sm1123435566b.34.2025.05.22.12.47.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 11:32:50 -0700 (PDT)
-Message-ID: <f3f2b57c-d745-40b4-8317-5f123e2ab018@linaro.org>
-Date: Thu, 22 May 2025 20:32:49 +0200
+        Thu, 22 May 2025 12:47:37 -0700 (PDT)
+Message-ID: <16fd590e-7a00-4e71-a003-d6aafa83567d@oss.qualcomm.com>
+Date: Thu, 22 May 2025 21:47:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,87 +74,94 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: stm32: Do not enable by default during compile
- testing
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?=
- <emilio@elopez.com.ar>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
- <20250404-kconfig-defaults-clk-v1-3-4d2df5603332@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on
+ clk_ignore_unused
+To: Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com>
+ <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org>
+ <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
+ <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
+ <efd38edbed2743a258bbec7e80ff2238.sboyd@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250404-kconfig-defaults-clk-v1-3-4d2df5603332@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <efd38edbed2743a258bbec7e80ff2238.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 8rCOYR4qav0EYMQsY7qRJqnr0RhOyrW0
+X-Proofpoint-ORIG-GUID: 8rCOYR4qav0EYMQsY7qRJqnr0RhOyrW0
+X-Authority-Analysis: v=2.4 cv=ZP3XmW7b c=1 sm=1 tr=0 ts=682f7f5b cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=Q-fNiiVtAAAA:8 a=Yj5yA7lCVocwFOeKnIsA:9
+ a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5OSBTYWx0ZWRfX0YG2gfal11zr
+ smRhQWl8AE82QjO2JRua+DcvtZy0F37fzDgaaB9XkJEUGRcArVMovMRMJE2id7jQ0InI8fb9cBf
+ EPooFbjGVoAsxr1nRv5YyYiXdoEy2Ywbl+cp3Uwmx0Sx9a2CgPxE/XICxEuGsgG8FnYZaNdAmbI
+ E5Qzf61i/jevkmeMs3Nf+/K2+LHrkAtbdEWi8lB1MDEy/pNbYBw9YniPxUakovqF6eg6Yp6ow3x
+ hQnlQ7SLtAx7xeBStEoEuM5lSSpnWlbA0YVe0txflz5epMidLA52jiOhjpCjNqW0FWE+iZ0Om7s
+ mrzTMWnEwXaqhFhN0ZrHqa5oXBlfiH6hrUllQoZzzm5Nozb2+VyNm5AK2mHlmwFvih9Ju8HpEn4
+ BHOE3q+3zBewu9MCE2aVkpiCEWAXZ2B0smiYpW0sbPnDAb8lwS4w8C3o1R+3ob/p9kUBAdA7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505220199
 
-On 04/04/2025 13:56, Krzysztof Kozlowski wrote:
-> Enabling the compile test should not cause automatic enabling of all
-> drivers.  Restrict the default to ARCH also for individual driver, even
-> though its choice is not visible without selecting parent Kconfig
-> symbol, because otherwise selecting parent would select the child during
-> compile testing.
+On 3/4/25 8:34 PM, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2025-03-03 15:17:21)
+>> On Tue, 4 Mar 2025 at 00:16, Florian Fainelli
+>> <florian.fainelli@broadcom.com> wrote:
+>>>
+>>> On 3/3/25 14:48, Stephen Boyd wrote:
+>>>> Quoting Konrad Dybcio (2025-02-01 08:52:30)
+> [...]
+>>>>>
+>>>>> The clock subsystem plays a crucial part in this quest, as even if
+>>>>> the clock controllers themselves don't draw a lot of power when on
+>>>>> (comparatively), improper description of clock requirements has been
+>>>>> the #1 cause of incomplete/incorrect devicetree bindings in my
+>>>>> experience.
+>>>>
+>>>> What is a user supposed to do about this warning stack? We already print
+>>>> a warning. I don't see us dumping the stack when a driver is unfinished
+>>>> and doesn't implement runtime PM to save power.
+>>>>
+>>>
+>>> Agreed, I don't think this is tremendously helpful given that it does
+>>> not even tell you what part is incomplete, it's just a broad warning for
+>>> the entire system.
+>>>
+>>> Assuming you have a clock provided that can be used to turn clocks off,
+>>> and you did not boot with 'clk_ignore_unused' set on the kernel command
+>>> line, then you should discover pretty quickly which driver is not
+>>> managing the clocks as it should no?
+>>
+>> Unfortunately it's sometimes not that easy. And some developers
+>> pretend that 'clk_ignore_unused' is a viable way to run the system.
+>>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/clk/stm32/Kconfig | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Maybe we would be better off with a config option that removes the clk
+> ignore unused ability entirely. Then you can have a kernel config check
+> somewhere in the build process that verifies that a user can't even set
+> the kernel commandline to change the behavior.
 
-Ping. Any feedback from maintainers? Stephen, are you picking up this
-directly?
+I used WARN specifically to taint the kernel (which would in turn throw off
+any reasonable CI checks). Perhaps we could add a Kconfig entry (unless
+there already is one) that would do the same, and clk_ignore_unused could
+be gated behind it.
 
-Best regards,
-Krzysztof
+But then, it would make it harder to debug production kernels with that
+parameter, which could potentially come in handy too
+
+Konrad
