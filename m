@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C8C1E5202;
-	Thu, 22 May 2025 22:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3402BFC78;
+	Thu, 22 May 2025 23:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747954062; cv=none; b=P0NSCqYroxvuflOdv/op8fNjw3y0YldeBzzdFvUinuTrIL8q4yNqtdlNZYZhr1STBRoSJqdHNCcvHsqWIOlMv1gAbo3QJLRHpLinkaQQysG4hO3EdRowWjKZyFbtM/dcu3DizvfABEbYJHbqpSw9VmlBO6OWmPyvoMWIrn7HWVo=
+	t=1747955759; cv=none; b=grnDNZ0IZgVcQ1eLjsP26IioRXlX7KpBjb83Vf6hE0FoSlfSwFs9BBvmvTmhXEqMLttpuJblqJ0u1tbwB/4cOXz2aNSkxHGpi3nIGAt9UEEEH674uXFoav/Uu2uQAKMwwUMaeMQKpDQ/N1NdXIcGFi4fwRxCIXY0+SWleZI0XLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747954062; c=relaxed/simple;
-	bh=Kqb87YqrH7GgbRIjtu3CSrvC/nfpw9kj2G/CS9u5zDI=;
+	s=arc-20240116; t=1747955759; c=relaxed/simple;
+	bh=Jv56dkfNZCxpxUt9eux/nBkDnSUhfvknB6cfSV3tHfE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mBCeRVsAvSRC/jRlZPffsiUwwsoJ1GKf1EF/PA90f+hvTzFP5IZOlYYebsLJZvknTwv5ARgUc5kCualkk7LMUwF5lnpIHveM1rdmh/AZmnrJMq892zhq728DYOo4T1OrCgtJUgfzsBznjWa/LmCkrkCZMoimFjo2CvQ3Y4aG+8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9SBvD25; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=WbVMhIGW3JL7UcmoKGPTTqFFSjCyvzCKx5uw8sjqaTkzYu9R5xs5BVZzswcrFKS8Dw658LZ26g1LVpljg/YWbahxc4hFOY/rrNLwXiBXcSzvs+4QNUhck+jRRWCmOHrymNk1LpI7hSIBfxm4ccsrORGPBfhqp5/umMGvXG0Bu+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=di+Ji8IP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9SBvD25"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6CEC4CEE4;
-	Thu, 22 May 2025 22:47:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="di+Ji8IP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C011C4CEEB;
+	Thu, 22 May 2025 23:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747954062;
-	bh=Kqb87YqrH7GgbRIjtu3CSrvC/nfpw9kj2G/CS9u5zDI=;
+	s=k20201202; t=1747955759;
+	bh=Jv56dkfNZCxpxUt9eux/nBkDnSUhfvknB6cfSV3tHfE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=H9SBvD25Q2PU4UflB41Gd97nlaKsoI8SbBuXLVrsWgQJPn08cEjwwG4+hn50kJ/mF
-	 +Z3oRbYBMY03HCGgKutmjHhfiUkuBI/7FY5lGlF6yzUk4kYDCEzMUyQRG2+xGQRh6I
-	 ypc76/fUP4HHZcvpaE3jJebn/F+jehfq3+LJdpWrHwTCSN1E+9Iyk07a+qUqA/GIEs
-	 9bCbllTUz/giCzT9FLWPNXCMP7WArMCddkmI8VxxxEBrH6Rj95veyfF1C+WK+9XgWL
-	 auPisFZjm08OSeq5/vytZDsxymD08ImPmYr3Qkmqh/dhSGlOBCg4UIdrZ8sEXu5aMd
-	 WzE6SNvlg7bXQ==
-Message-ID: <4932d11de93098b86e3f18e858930388@kernel.org>
+	b=di+Ji8IP5qIQGjCFOKy7Wwlnvqdoetb1VciQKZzvoEZZ5gRTyN/h+IM9+xnlhRbff
+	 iuMHYtjkiVhCh5S5bmopo5i+GwUo4It42eoB+S+cgx5IaZIGhe5i4AusJqdHidSvwc
+	 0knP0R/cL+06zbtWzlLiakw6373VOn2e5h68D7YoBsD1oXdG91Bx+3EkIWKMUrywrV
+	 NcxpIU5QYjWzrhhpS9vbCB9yYCk5XhhkHW/hf0lpFm9qdaOAOyKLdRYMBDeWFRxYEB
+	 H8ubNEsD0OkCtl/icfGSMJnQg/sQwA591Zk45F8k/I0Cs32RtPetBGxjgKDLYEC/0d
+	 E5891P93wNTUg==
+Message-ID: <1950c6ba75c7045a06bac6fe15cc6d43@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,16 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250513101407.22233-2-krzysztof.kozlowski@linaro.org>
-References: <20250513101407.22233-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.16
+In-Reply-To: <aCaetzKYzCpzRYzd@wens.tw>
+References: <aCaetzKYzCpzRYzd@wens.tw>
+Subject: Re: [GIT PULL] Allwinner clock changes for 6.16
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 22 May 2025 15:47:40 -0700
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
+To: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 22 May 2025 16:15:57 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Krzysztof Kozlowski (2025-05-13 03:14:08)
+Quoting Chen-Yu Tsai (2025-05-15 19:11:03)
 > The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089a=
 c8:
 >=20
@@ -52,13 +52,13 @@ c8:
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.16
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-for-6.16
 >=20
-> for you to fetch changes up to 81214185e7e1fc6dfc8661a574c457accaf9a5a4:
+> for you to fetch changes up to be0e9a3727872783bad0752dc82e0857f4776049:
 >=20
->   clk: samsung: correct clock summary for hsi1 block (2025-05-12 08:30:06=
- +0200)
+>   clk: sunxi-ng: ccu: add Display Engine 3.3 (DE33) support (2025-05-12 2=
+3:55:06 +0800)
 >=20
 > ----------------------------------------------------------------
 
