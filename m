@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3402BFC78;
-	Thu, 22 May 2025 23:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944342D193B
+	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 23:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747955759; cv=none; b=grnDNZ0IZgVcQ1eLjsP26IioRXlX7KpBjb83Vf6hE0FoSlfSwFs9BBvmvTmhXEqMLttpuJblqJ0u1tbwB/4cOXz2aNSkxHGpi3nIGAt9UEEEH674uXFoav/Uu2uQAKMwwUMaeMQKpDQ/N1NdXIcGFi4fwRxCIXY0+SWleZI0XLg=
+	t=1747955935; cv=none; b=F81aYY8k6LZtWHYDKhJRxBWPgEQYkLb8p+CTV7JeiD8l027RINjY+0Fg4m8g9nDrsnHuo4o5Q1jju2DvUZSY7K9W/9IjIVbBu4VDZhRBrt0CB993hyQLVzZyN1KwUFJLnYOF/n3LxI4ZSko3BSkQ1imyriBMlLtIvyudCuQf2YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747955759; c=relaxed/simple;
-	bh=Jv56dkfNZCxpxUt9eux/nBkDnSUhfvknB6cfSV3tHfE=;
+	s=arc-20240116; t=1747955935; c=relaxed/simple;
+	bh=P3t4DL3xYUyTBmAEER2maWx8tKVsMIZCBNPFoN+u+9I=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=WbVMhIGW3JL7UcmoKGPTTqFFSjCyvzCKx5uw8sjqaTkzYu9R5xs5BVZzswcrFKS8Dw658LZ26g1LVpljg/YWbahxc4hFOY/rrNLwXiBXcSzvs+4QNUhck+jRRWCmOHrymNk1LpI7hSIBfxm4ccsrORGPBfhqp5/umMGvXG0Bu+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=di+Ji8IP; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=G6dIAjyAbBkAFTGAhqkn3uBbigLR++sTAG6zSsnrtZkS7zQpLt5UqJ0qR15t2h8VbKOtFShnpe31oHCOgM34kdxUxNTOrTBc6nGq0UyilK0B6zpq2wSdRUrL3BJD4poh8GZ30wAxXRZFpSi6ztxu81O9zLVgz5VG0jCzugWIGCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3RQj8Dt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="di+Ji8IP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C011C4CEEB;
-	Thu, 22 May 2025 23:15:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3RQj8Dt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D054C4CEEB;
+	Thu, 22 May 2025 23:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747955759;
-	bh=Jv56dkfNZCxpxUt9eux/nBkDnSUhfvknB6cfSV3tHfE=;
+	s=k20201202; t=1747955935;
+	bh=P3t4DL3xYUyTBmAEER2maWx8tKVsMIZCBNPFoN+u+9I=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=di+Ji8IP5qIQGjCFOKy7Wwlnvqdoetb1VciQKZzvoEZZ5gRTyN/h+IM9+xnlhRbff
-	 iuMHYtjkiVhCh5S5bmopo5i+GwUo4It42eoB+S+cgx5IaZIGhe5i4AusJqdHidSvwc
-	 0knP0R/cL+06zbtWzlLiakw6373VOn2e5h68D7YoBsD1oXdG91Bx+3EkIWKMUrywrV
-	 NcxpIU5QYjWzrhhpS9vbCB9yYCk5XhhkHW/hf0lpFm9qdaOAOyKLdRYMBDeWFRxYEB
-	 H8ubNEsD0OkCtl/icfGSMJnQg/sQwA591Zk45F8k/I0Cs32RtPetBGxjgKDLYEC/0d
-	 E5891P93wNTUg==
-Message-ID: <1950c6ba75c7045a06bac6fe15cc6d43@kernel.org>
+	b=P3RQj8DtIgVMpAjGTC4WR+s/4lgjFbMEY52cPLSy9ssQ6XI3M5cfIPuaN+nvTIOKW
+	 hUVe9xHj+PWelCqqwzU7VuU/+zWp4REsIDGcZw3bzGPgWSXjKvf5fg07NkKuKqeE9A
+	 3+/h5Ut1mJxD3c3+kVdppKa8T5ZvohymkH1VpTuOpbdtDPDp8XlZNOffiD3yYSPVRB
+	 JEj1raxHn+TbsKru0JblwotvTPMaDG98oPt0PjQ537hjIZVgrgdY/A/MRQzFzu62B3
+	 eAauOxh+Yg4dsiSuW+YwuJhDGMnRtjDaj0SCcKCa78IZTqcfiXn6sb8Kjnv5FfeJtq
+	 ABrG8jyNUdFPQ==
+Message-ID: <42ee51cc911b4a72c2659f94282519df@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,16 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aCaetzKYzCpzRYzd@wens.tw>
-References: <aCaetzKYzCpzRYzd@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.16
+In-Reply-To: <23068874.EfDdHjke4D@phil>
+References: <23068874.EfDdHjke4D@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.16 #1
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-To: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 22 May 2025 16:15:57 -0700
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Thu, 22 May 2025 16:18:53 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Chen-Yu Tsai (2025-05-15 19:11:03)
+Quoting Heiko Stuebner (2025-05-18 02:11:44)
+> Hi Mike, Stephen,
+>=20
+> please find below a pull-request with Rockchip clock change for 6.16
+>=20
+>=20
+> Please pull.
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
 > The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089a=
 c8:
 >=20
@@ -52,13 +63,13 @@ c8:
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-6.16
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.16-rockchip-clk1
 >=20
-> for you to fetch changes up to be0e9a3727872783bad0752dc82e0857f4776049:
+> for you to fetch changes up to 276036283716b9135525b195675ea42801bde204:
 >=20
->   clk: sunxi-ng: ccu: add Display Engine 3.3 (DE33) support (2025-05-12 2=
-3:55:06 +0800)
+>   clk: rockchip: rk3528: add slab.h header include (2025-05-15 14:49:05 +=
+0200)
 >=20
 > ----------------------------------------------------------------
 
