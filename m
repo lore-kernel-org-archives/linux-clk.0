@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F23224AE9;
-	Fri, 23 May 2025 09:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500DE224242;
+	Fri, 23 May 2025 09:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991468; cv=none; b=bV6rFyBcGM3P83qAczXnTMMLx4sZO8oMc8nGcg3w++q0IqvD/lqDphnOgrRUVyQLPVUg8H0QK0wi9WQPiCXzV3DJvLYSUJ/uKqhFjQmF8ugHtc9glKBGrTV88ODPCi/lT40MqMxXX1uu+FUbuam1SdVTiFTENjysa2yBZiMpuDU=
+	t=1747991508; cv=none; b=jEWSXLFRytVjg6r3fGIVNzlAEWDs46WMkvzVGjj75Wt/yYVHpBQAzYA6QD15bC8PQq9Oh5DFvBF5xw2wQzwe7bOyD1JEqaeTCZPCVvuePiOYFbieo6lV73pjhU0Eye5Si4qtlKJnTubanBEQ7ZWk+eO0guR6tXePqr9n3diS3oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991468; c=relaxed/simple;
-	bh=zyvUBsqt4e5/DgESqerFaKiM8S1NutcrQ3tAQuvzeHw=;
+	s=arc-20240116; t=1747991508; c=relaxed/simple;
+	bh=al2IdoiOXajrL0lnIOxmTJVnkym41xmKIC/n2JzX/38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwK1rsr3QqyhnuL5Xf7eMvnlc1qECAhZaCuQcbG+YbqQblbSjd73fR84nW2wgg1DhvGb+3ZCX8myzjODdeu+4QPkUH3LzXfkZSBI7lY1tbCgNdl+ZWdkeIRiFSrgRAqtlEuWLNDkftIMbpG+v4w7Bng4RePyZmcABz3lKanCtMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/m8brEE; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=YXbwSVyJbwtd/83wH60CFK1ewBbG0UPXG4Ee0GPEcrzB1PAUQ8/DTt7AW5i5wVb/bq5NHoAzz3hE7N9JzA/daMKatEwHK6IRTvzk2vlHGp0UhqcZ1OLt/irUtpHPyxTTBpQ3uS8bZ0I1I8EyjZQ01t7Ozd4CcEfUz1qN+ehhu9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ez+jL6zG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/m8brEE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CA6C4CEE9;
-	Fri, 23 May 2025 09:11:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ez+jL6zG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EFCC4CEEB;
+	Fri, 23 May 2025 09:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991468;
-	bh=zyvUBsqt4e5/DgESqerFaKiM8S1NutcrQ3tAQuvzeHw=;
+	s=k20201202; t=1747991507;
+	bh=al2IdoiOXajrL0lnIOxmTJVnkym41xmKIC/n2JzX/38=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B/m8brEErYauni2Uzcfd1XANs9d+utl3cIklOWsS0zbHXHmY0xvCAtO9jLNXP9e73
-	 qxFrFTWjUcuDLf72Sa7mge7VjI6rOA/tlbmyaBfvftvBLY8ttP5i71tfJHbgKaoHq7
-	 J+R+q641UJuGKTbmHBdxe3s9T0XjOJzXEUBzXB1TMQwaOE9+/a31FxGZzI+Jc6V7tI
-	 jY+Zhf/oHFpPzwUL97xp7YiSbzJYTD9tyq6/RzxkwEHnAZycI4+KNTlQRmzxIH71bJ
-	 eMPIessehPZjUtjhvRRmResJ1HFrHrRf8KK2j4FT4DMgvvuTEt8fsAcXBMpjW2qPko
-	 +HUN2krbWd4zg==
-Message-ID: <8e955eb3-5b61-4229-925f-cf938ea94a2d@kernel.org>
-Date: Fri, 23 May 2025 11:11:03 +0200
+	b=ez+jL6zGWpNAUnVONLRFhJSf8ZouZ0+s95/PgqB9eySQjZGREJxYop6chPtV2oVfY
+	 jIMIwcmScnjq0ZpN63KsRZ30zNmlakLj0H4uxG27GYYI9XZa7d59nI11ia0kBMilp8
+	 VxbWUTpKK/pg83TOsUM/X1q5Fn3OuVuGkzehzJymFzqZsQFJ2hbYag7FN+Ut59YcVm
+	 SSeM3FNynboWLwnFzp4D+iuFev7mlhKlRSnpM+IpOPtGsXzgYyfAocol+SFj4nmkZ8
+	 ndgD1jEAt6mt2zJrdpDorAd91OIgQYV00oMyYGcylp+IBr/2COlFr3B5i+OVgfOHM6
+	 s40DsB1WPsCbQ==
+Message-ID: <abc9e8f6-ba04-4c27-96c9-0b6db12659da@kernel.org>
+Date: Fri, 23 May 2025 11:11:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
+Subject: Re: [PATCH v2 0/2] Add driver support for ESWIN eic700 SoC clock
+ controller
 To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -44,7 +44,6 @@ To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
 Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
  huangyifeng@eswincomputing.com
 References: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
- <20250523090905.1885-1-dongxuyang@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,21 +89,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250523090905.1885-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/05/2025 11:09, dongxuyang@eswincomputing.com wrote:
+On 23/05/2025 11:07, dongxuyang@eswincomputing.com wrote:
 > From: Xuyang Dong <dongxuyang@eswincomputing.com>
 > 
-> Add device tree binding documentation and header file for
-> the ESWIN EIC7700 clock controller module.
+> Updates:
 > 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+>   dt-bindings: clock: eswin: Documentation for eic7700 SoC
+>   v1 -> v2: Update example, drop child node.
+>             Clear warnings/errors for using "make dt_binding_check".
+>             Change to the correct format.
 
-NAK, this never happened. Otherwise please point us where you received it.
+You also added tags which you did not receive. Write complete
+changelogs, not vague.
 
 Best regards,
 Krzysztof
