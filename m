@@ -1,119 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4E2DCBF9;
-	Fri, 23 May 2025 06:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3293D76
+	for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 06:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747981543; cv=none; b=MArwd63Gc4QhAZf4Q3ok+nap1OLXM6vUEErFMyqW2ay4x8Zpd2eA4R+pGdFU0azJyTV4lntEI4yuNxxN6kK8IbhRuZp1Gajpb+RHwWJaNUc99F/sXJYRP9Tm65zwLoUpQgJojEvRh/ZlwAtDiP8jDP1i6Z6gMFA0hboT0yUMTik=
+	t=1747983307; cv=none; b=QRz9GefEHB3uF77aO+QaqeHu6k+r/aXBjlUEVKg1A1KJCbgyDQeO6+JzZaoNMHLysYCqfnVrlWuU/z7vcgncN6tobolpwPx+UjDq1qjGJQwxtXOKWMX5XUrRLaoz4MFg8MWMnY6mdgXKY12OAhrcm5t+JG+r89k09VUXhQnaEVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747981543; c=relaxed/simple;
-	bh=JGpCq/ZRP8rK458O/7RLMNDdUkcfnrplMiNOlT76Sug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+j5ylJBklJQR/LBEuDJHqNxwlBEugIlvms+1dcTtLz6ZUSTLqDvRbdvHngxxB/NY17y8jMffgyY8EQH78HzYHFg0V6aOAi6reUhShYwxYws/45e+Hjdg68Duf19umXjNkRPLXMkoYiFyJfUCeCIeKvjFbmHpIpkshcE3ZFrPrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw7XbDEn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747983307; c=relaxed/simple;
+	bh=U20oBW7Rv6lgEPsP0GX95por6oX52DQoUY7ib1Yx1bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBrecQT5XPh+VVpwcG2lgXbSdZe1P9aBuFlCgEI/dEZEGgB47Px0vT9dsM7BW6UxBGf0vPYVa5HKdZOQX4spsIhBErppYWodjsrrK99sIFtHUtntfUct+7a95vngxYfGTFRcRU4VFS+bo1tdVLQ4ZkDjpPjmRDr4WUlDnFGvQFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f59BtNMF; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw7XbDEn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2EBC4CEE9;
-	Fri, 23 May 2025 06:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747981543;
-	bh=JGpCq/ZRP8rK458O/7RLMNDdUkcfnrplMiNOlT76Sug=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jw7XbDEnEoEWgt/RlCOWLC409AxZoZDKA0qV4AkpvOaYpgZNKSkccQ3fJUSBs0oTP
-	 XhxdxKD9vPvir1bpaOSxi8Q8cKCSH+ik3LfRFWRKEM3OYY/HIR/esFVvf6XFwcjE62
-	 5gAlPMATNaoQ5OkUxD4fcLAEJiXV7n8QBbBhw1rLzuZln26P5NZyAhotnCknVm7xep
-	 yTn0DNP0HiruVc/cyi+1hkNUYcvdbMoJfUoBLS9fzO/6imB+oIfVmNzHJhYFljnEri
-	 5IfS13gTv5H397ehqkYXliYqh5cgaoKhi6yVxSMI56296wuP/m84ExFYONCLw2HRPX
-	 mzAIyBbnXfeaQ==
-Message-ID: <655ea20d-ed2a-4727-b7c1-65fd69d3c027@kernel.org>
-Date: Fri, 23 May 2025 08:25:38 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f59BtNMF"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a37a243388so3705211f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 23:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747983303; x=1748588103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=69oCtQFtFuIhATn7nt7tT3JoQ8RLcM/FthzOv16zp9Y=;
+        b=f59BtNMFez59EXrzk3AfHvpLLVZp8dVZqJD/sC5KP9jgnljUNZd2XQDXOYLrYcctWY
+         qTgPc01LYuW5HRRi9oqmQHc9Ixcl6HIlCzF/IeUJg+QlOxDNwJPQxhwNTeIpJZsSjUVt
+         LFuYgi4Mw6tqf6TNOKohDWb3nOyCrQGzc+UOLAQZIu4uQuCX6IKSvtRIO02XO6NMCM0m
+         lVufifWZ1Vs0vDEPBZplJnzRV6+BFKUX36rQzAOoscHgnk22T+TeFlmaic7YAb3+QQyb
+         3AZnA9WFPzP28ujsY9CfvZLNgG15ddhn8WKhZUZDZBrQprmD3qIGGdQHJ/yM8IXCgusM
+         Wz+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747983303; x=1748588103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=69oCtQFtFuIhATn7nt7tT3JoQ8RLcM/FthzOv16zp9Y=;
+        b=ZEalxR69CGijiX8AT+JOzcWopywGS4nLcyaq4kPf1w7R5ybymWVFTb+Vc3dq06xNsZ
+         UawR05twC5LEHbuISkLssMwL08piloioj5reMFMir9ZxI4f7nvB9yWUBwTm0lg1E+hLK
+         MHsDNX5UEeKcMxy7jREfSnw14Ry2Qd06/BDYDXQMwt9ockrxMSYO680RMWzdAZ4xMsfL
+         X32sarZUMAoFkk2qOimFiqVk3AxJulbB7zg2ADmf2PWocxbJkgtfkvl+ofuuGBl4zWkY
+         wNehh1gEArMOJJj+Es4Mqjsat7CI/bTo3K9XPnNbqpFnxwmKOByEf10v3s7KN2JAbPuN
+         Daag==
+X-Forwarded-Encrypted: i=1; AJvYcCVL4vnsSmXLzx3qGHqpFUYP5pGprSySoxNU6ASPZBqiz3Beb7DmwnF4H9+lDMl+ihwSKGxKbGFejhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzyKqD98RUqkudC0jLoHCEFdwxDg+qAJpWNg9PNNbUbsH98nJj
+	r16AlvgfY2eDl/VN0ryrMT20JXjMHj9AVEY3gQ/Tlxi4TUyGBVyijLBpUDycvV90m24=
+X-Gm-Gg: ASbGncs2SebsBNngLIV4YYTSkVDtVY8KvROPfsd25tNa0qJP/rmdKUezpmRDhrClWe2
+	aDShPDpa2L0k1LNYPDdnXs8QpMQqTiWS/Wu7V1QVetqYjGk8wTw+zH/a3kbJtPzbXrTvWSwLA+D
+	TsOdIfuiuB68cooIZAd/HyR33MWS+Lc/V3YvB1bTiGGHOMjCMe6HCqJBFmaUhMmTe9jZ9jZZ/Nq
+	Z6wpK4Wfr3K1HRHWBjrs63vdlYif82kloWJSTraYtbFrukeaXxJO1z8hTpKNL3wly9dJylLEdDD
+	6yByTjKLHPUUgftwSbSrXWKFptDrb9lDMd3me513HwcTfRku
+X-Google-Smtp-Source: AGHT+IH75aOsRJMnyheDQH5VfJc94Xc0jentcmMf8E7Zp2ROIEwHjqRlngeR8WzATqUqYD8xScblVw==
+X-Received: by 2002:a05:6000:2903:b0:3a3:6e62:d8d5 with SMTP id ffacd0b85a97d-3a36e62d9afmr15906729f8f.58.1747983303480;
+        Thu, 22 May 2025 23:55:03 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca88941sm25904629f8f.61.2025.05.22.23.55.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 23:55:02 -0700 (PDT)
+Date: Fri, 23 May 2025 09:55:00 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
+ v12.0 DPU
+Message-ID: <aDAbxAnCN1lGGcGH@linaro.org>
+References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
+ <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] clk: thead: Updates for v6.16
-To: Drew Fustini <drew@pdp7.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Fu Wei
- <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
- Jisheng Zhang <jszhang@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>,
- Michal Wilczynski <m.wilczynski@samsung.com>
-References: <aBus+Yc7kf/H2HE5@x1>
- <018214f410632eb3dc6c6bd6ab58cba1@kernel.org> <aC+mJ560HbscG38R@x1>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aC+mJ560HbscG38R@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
 
-On 23/05/2025 00:33, Drew Fustini wrote:
-> On Thu, May 22, 2025 at 03:24:02PM -0700, Stephen Boyd wrote:
->> Quoting Drew Fustini (2025-05-07 11:56:57)
->>> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
->>>
->>>   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
->>>
->>> are available in the Git repository at:
->>>
->>>   git@github.com:pdp7/linux.git tags/thead-clk-for-v6.16
->>
->> I changed this to https://github.com/pdp7/linux.git but please fix it
->> next time.
+On 25-04-30 15:00:51, Krzysztof Kozlowski wrote:
+> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
+> differences and new implementations of setup_alpha_out(),
+> setup_border_color() and setup_blend_config().
 > 
-> Sorry about that. I'll use https in the future.
-This should be kernel.org. I remember Drew we meet few times and you
-never asked for signing your key. Just get in touch next time on a
-conference to get it signed (and bring printed fingerprints).
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v4:
+> 1. Lowercase hex, use spaces for define indentation
+> 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
+> 
+> Changes in v3:
+> 1. New patch, split from previous big DPU v12.0.
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 19 ++++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 +++++++++++++++++++++++++++++--
+>  2 files changed, 94 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index a4b0fe0d9899b32141928f0b6a16503a49b3c27a..90f47fc15ee5708795701d78a1380f4ab01c1427 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -320,14 +320,20 @@ static bool dpu_crtc_get_scanout_position(struct drm_crtc *crtc,
+>  }
+>  
+>  static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
+> -		struct dpu_plane_state *pstate, const struct msm_format *format)
+> +				      struct dpu_plane_state *pstate,
+> +				      const struct msm_format *format,
+> +				      const struct dpu_mdss_version *mdss_ver)
+>  {
+>  	struct dpu_hw_mixer *lm = mixer->hw_lm;
+>  	uint32_t blend_op;
+> -	uint32_t fg_alpha, bg_alpha;
+> +	uint32_t fg_alpha, bg_alpha, max_alpha;
+>  
+>  	fg_alpha = pstate->base.alpha >> 8;
 
-Best regards,
-Krzysztof
+For the 10-bit alpha, you need to shift here by 5 instead of 8.
