@@ -1,71 +1,72 @@
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F152145B27;
-	Fri, 23 May 2025 15:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461B625;
+	Fri, 23 May 2025 15:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748012715; cv=none; b=qMWKMOt8iGMvJizbrkiOLvvcmMulUGTEs+Wsj4DnvSl4RJpETqmNFmW1+GXCTn7qQ27fas4YOpqu8UaRzrSbFoUJ91EReJG19VbPUrZVJovPWtq1eIWiGzflO+ko8E92ON5LOBtxcb9xhufhbEo1Y05kQEaIWAbf+m1DibFX9kQ=
+	t=1748013536; cv=none; b=oH0tQnFdXsMa82lasJi0ngEN4lfPHI5TdMsv96PkluegEYe96sokkPZUso6LyipHHbjVX8CTMJpN7pMzk2iMndPj9u20Fsogk2OVqM7E14J8sBqybIzNkM2q3O7myqFgb5/JdrFtxYYwaS9OtmYDkVVpX+1eG7yrhAC0jIaWg1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748012715; c=relaxed/simple;
-	bh=IvZjz67TtM02MU3/MnsuVyjFE8j+g6IyR+ugdwoN3KM=;
+	s=arc-20240116; t=1748013536; c=relaxed/simple;
+	bh=JzbWPNFBaN6XORxvyrgp/fdQDALDHI1BuZLkqv0gg8c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t1JuygueEfM7DOAIIBVuLF2bHNgiDPEe98kr9JgE9jY2uMjlhtw0VtKm0PPIXxUCE5asZG96YBb2vq+11qyjEsb4M4eHVYmr7Z2iGJiNHOGqWKk5qf/1hqHujmF6wgUupZfXl4EldFE6/jSTtoF9FZCcwt3ItSumKnDJGu7Xtbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=uFapnjlgal93ZHDGdLO61dUFevYkM0pzzxIQgZS278dzBHJQhfKqKlMJ76RpJyweu1PKmzgL0Ek0LwB8B9BWh0td+VlFpv94UFt5iWyhk0PJh8qq7GnymGNi9ugfFveO+CO63VMNRFXGNBJCINuM+NHux+L4o3DHUrWGE3AAtVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87bf1348838so1754403241.2;
-        Fri, 23 May 2025 08:05:14 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6f5373067b3so116288356d6.2;
+        Fri, 23 May 2025 08:18:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748012713; x=1748617513;
+        d=1e100.net; s=20230601; t=1748013532; x=1748618332;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z7q5VOWPHTLyk2rAGQ6nFq+sdmA8F0+9sYOybYBqTFg=;
-        b=OUzAWH2uYwf+9ikl9k+q8DuPD8aXNCIqJTajWTYXjBRmduQf/j+XjAx9DzewKAHFMm
-         Kg1AoHCx4kng0kLRMn1mgU6vpIUI8csF7Pd5gZrusIJuByH/YQcgt76Igq1fPAwA1MY8
-         ipo/ErX5oXNnmTK27rDzmLO0b2aEg5N0k+IDVKyjelA8Vygyzlq/mWnmjDDe0AU6Vrh1
-         oROmcxyYTKEw2xfKtz159Mlmj8+LsFlAgA2wit2BT7FosZ8oyQKH6SjmOf+4IpGZThTg
-         4HjaMN3qspdL/S4DzftESX971uhI4fEXvl8RaYsQXZhNq3on50jTi7degFFYw0tIfo+3
-         QH+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOV1j6dmx4txs5fXAOJVhC1+F9voa+YKW03VjNnFMt3PZ/Y5FjC1M+cVJ7VfodjRg5N4A5G44gxqUtTpHrWXnBrC4=@vger.kernel.org, AJvYcCV1UFkWpne6CyUkWeRL8P2iz6IDQZzB7ujqkMwnhlPtg0MK0FIm+txL0+osUT2GdHg+aHt3qbmXUs6FC5GX@vger.kernel.org, AJvYcCVSdFTRROZYdWOYgddoNOBOTWDzuqIHmaHtwveGzKxBbN4gB/RrK0F9pGDmCAThEmttY8yT+x17fStg@vger.kernel.org, AJvYcCW7sg1j46ZJR+CjTp96LklyCi/c0e4NmNJiyjC3n522aYT1I8QlM4XQI6yuhr3w/jLLBq/mBk2jSWGl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw39HvHd1Onjav0cJyKUK77H+D8n3j5Mm2lS1GXAPZfy+zbRJZQ
-	5gJLJz7cLup4vo6b/HaM5qlfGo38UWTWPPmqot/0YXpfbtfkUzYES8EHFnVeujWqViA=
-X-Gm-Gg: ASbGnctjp3OdOIxWe2eyx3Pu/9SNmoRd9L7G0F2Tm703dzbRjlFAsbJZvNAT4BHuDCZ
-	t8tYf+43vFt4BN+1V76kTbaIpUwmIEPm8RItKqfti+kfGPGI5R2uuNLM7ukN18KRerx63Dqd5PG
-	LVdCmpBWrkJyZf2CWZa78SEhoo1JJyv01CDpxpEOsPUuP6r5MIGAoiDJZppsx+lTTdlVv66H4iI
-	FXR1RBWC1Q8wDM8FZk+uKrz9kkzj+OrOM/PtC/z2pDaf34c+6f0dQYWuLjS5smPlp0ccckNyZgD
-	c5k1vyc7VyChMIl9ZhWObGoRXEhAG7AEgM1SSiKDmO3jfeF4hp6SmpQasJd+HgDcJ/1KazB2sOe
-	o6HGrlRCQ+t0P5g==
-X-Google-Smtp-Source: AGHT+IGpTcQltr5JdidOWCx+aFZVnqU8+pIwt1rOvJNJGlxSQy2LIw9bd8arC40WmuYJzNqVVlUPHQ==
-X-Received: by 2002:a05:6122:d19:b0:529:2644:8c with SMTP id 71dfb90a1353d-52dbcdfccb7mr23054062e0c.8.1748012712580;
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52f19bb4c76sm2221857e0c.43.2025.05.23.08.05.12
+        bh=KUlujxEaEdi/ZnXb2x/YmWYgGPLEJZ1h5LPkWsQToHU=;
+        b=o5LTPj1BvAR84F243XuiQuoIitOMtt/tkKRuVAvwupdkEFcRQjA2P+do0Y4+Nup/9o
+         UV8suwfwsT0OpRRYBhQ7UyCHgX5vr3IPGAwRqXeZSX6Ke+uMeyraeUECaUzbFpFsNHtE
+         Xf/emSD06pi3GmUPHjvlxCbkYE2VKqN6Y8ZXYxr8LVZZFRrC31lSUtS1qMPL6kdxwMo3
+         5+PBOk8TtFPl4JoZE4hbCng8OeMDcIvHW8JeVhG8uDNCoynx+pQ9bUQv5bDFBMZ91kOZ
+         ZWZmadtElYfZkLf7iYEyLOkGvJorbohSazjno8wFakLjDO+nu+Pk67skPJlZfbz3w1N4
+         TFKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7TuK6b9GA7e32GLN2F8uIygmmJn6S6Q2yFIRiVsTlkNPDaecRu61mxQXjkIeu2eAfZ7B0f7Vn3Pxx@vger.kernel.org, AJvYcCVMDNymurl/O2wT3LJgXIP1Z0ZMA2bMqqABB/MKRgfXKogDIGMVG0rd4M6waQ0/19Qc6W/raUWUojliD12p@vger.kernel.org, AJvYcCVOmsCxSxF22VtGdKwOzZ4YAEU9tSK6zS5tYmOF0zn0MkmatLNIXJvz3FPTOj9QBuWvhK03vvUJSfnL8syAgk929cA=@vger.kernel.org, AJvYcCWBTNtJl0e2oNI/S83Ct9pPnwpY6+KzXP2rVG61e0TeuDouo4DuxJxfRd/4921biyPxxeE1h6gmepZy@vger.kernel.org
+X-Gm-Message-State: AOJu0YySNrQ08RxwsyRfrfp3wKxmQvN3Yoxi4m5nCKFqcPlIKZY9sJSk
+	1wIhlEt59CeSYiZx/S2TWykXtz1Ur2nbqI63bh5BOt+wHdxweVRVkyXmtACCc9porUQ=
+X-Gm-Gg: ASbGncujxzWLqIzk1aV405c4dBZ+dFtmDYJThH0G9wFZ9B5q0ifEk98yRSam8MVJ9FH
+	UtJVKrnoFjJkfLWtdfQwO2OWUpmh/jvMNZkxjP4F/6EyX9yTsbxW0oJg9XmnECklpswXJ2Tc5GB
+	wzmlecQlqZjVJuqx78y0M8SkGWl0Gtai3Rt1O0T2nHG67oi6B0+aRyf5VK2WzFhX9yg/rIM6L46
+	OC+NnxvZoBE31rLcpLDgqRqAtSQ2Il0fE544jK+wJLUaOJ0HvOVLsm4YHmfK3BGs1HwO+7Na3l5
+	V7xqhJyLAiECFbvA60YCD1txMN0UN2PCpQWVmTLq7azOr71Ctk89ByFNiCROJgl//RD3IUCZuoR
+	CwmBA7+hABxAWbQ==
+X-Google-Smtp-Source: AGHT+IHp8A2Qx2QDuA8jJndKxg3Q6eGK3Vg4y2WlPh7F6jfevPb6GrHKE6qIihI7fR3bDFny08J/nA==
+X-Received: by 2002:a05:6214:400a:b0:6f4:c423:67b4 with SMTP id 6a1803df08f44-6f8b2c59904mr445633896d6.10.1748013531694;
+        Fri, 23 May 2025 08:18:51 -0700 (PDT)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b096583csm115951986d6.92.2025.05.23.08.18.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e2900db5f1so3319137.3;
-        Fri, 23 May 2025 08:05:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4PQzaHN6hS+JeLbPQ7cC6h/b2VgZ6s2TxOF6++4767zj1AfPPffxEo+G4qYXKa1k9N7s+X/XNqqjZgnb2q1qibpM=@vger.kernel.org, AJvYcCWNVPjWL0Tnh1DYz7MFNo6LquFfw/aIwSveJInfM2Eew11Zpkm/sfMrfvrD9U+rmKhRvE7rMJBNMZknAJGP@vger.kernel.org, AJvYcCWS7cOPAbD0ojC38XjeY73zIuov0vjnoXhexj0Qs962+tW3R2rWBxDzyxwjad92enSrqTV0cf6zH0gr@vger.kernel.org, AJvYcCXRSRedHFSG4yMGgZtYRIrV1oQJOjDMiImGNaefp3ri6wHB1/O88pUeE2THM+k/ZhqOJXWhbjhA6aQR@vger.kernel.org
-X-Received: by 2002:a05:6102:3f06:b0:4e2:bacd:9f02 with SMTP id
- ada2fe7eead31-4e2bacda0c0mr10649290137.16.1748012320563; Fri, 23 May 2025
- 07:58:40 -0700 (PDT)
+        Fri, 23 May 2025 08:18:50 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6f2b04a6169so102859696d6.1;
+        Fri, 23 May 2025 08:18:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpj6T1aJm73lDbhjKixIV3CSFzh3PpeE58xG0EeT9qteoH4HzlfoHZL6hq5QLHhwN2EKCK+VBWgYNh@vger.kernel.org, AJvYcCWeOyv5Mt73xWB8IytjHSh7zlF3AohLa5JnLfGI30afGCLFr0+xXt0F9ySN47Xjef9iUDuw2guJ4rOlWUMj@vger.kernel.org, AJvYcCXCfHhOXRt6/KR80MHjnaqw0RFb75IGMVEq+qJdAh4es+LjB+pzPU9oNYH2XD1XUhH/EmK/33UvNu3D@vger.kernel.org, AJvYcCXKa2biDzn9BOS0LT9+CFeSCH1petbuD3JxdVLneqB1eWZkQ734Sntc1M9i44xOC92U15yRtYa3jNtM7VBlcmhL8lA=@vger.kernel.org
+X-Received: by 2002:a05:6214:1308:b0:6f8:a7c6:22ca with SMTP id
+ 6a1803df08f44-6f8b2c5f2bbmr442981216d6.16.1748013530224; Fri, 23 May 2025
+ 08:18:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250512184302.241417-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250512184302.241417-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 May 2025 16:58:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
-X-Gm-Features: AX0GCFt82q4LbUN8wOO1SOIRH6DyQiAH55lXfwgWzPo4hKmY_3p-dAhsTJpdcck
-Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] dt-bindings: display: bridge: renesas,dsi: Add
- support for RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
+Date: Fri, 23 May 2025 17:18:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX5_P4R43HOPuZc3JSAOQ5O2xOBDVhVVg1SxU1ucPdbPA@mail.gmail.com>
+X-Gm-Features: AX0GCFsg_XSn4r6_gauahCGD7VbDyx79Ezig6sAhQFHM9qfPwmiMO6CmvkImCB0
+Message-ID: <CAMuHMdX5_P4R43HOPuZc3JSAOQ5O2xOBDVhVVg1SxU1ucPdbPA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
 	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
 	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
@@ -77,70 +78,236 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@lina
 	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+	linux-clk@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
+Hi Prabhakar, Fabrizio,
 
 On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical to that of
-> the RZ/G2L SoC. While the LINK registers are the same for both SoCs, the
-> D-PHY registers differ. Additionally, the number of resets for DSI on
-> RZ/V2H(P) is two compared to three on the RZ/G2L.
+> Add DSI support for Renesas RZ/V2H(P) SoC.
 >
-> To accommodate these differences, a SoC-specific
-> `renesas,r9a09g057-mipi-dsi` compatible string has been added for the
-> RZ/V2H(P) SoC.
->
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Thanks for your patch!
 
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> @@ -14,16 +14,17 @@ description: |
->    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
->    up to four data lanes.
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2022 Renesas Electronics Corporation
+>   */
+>  #include <linux/clk.h>
+> +#include <linux/clk/renesas-rzv2h-dsi.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> @@ -30,6 +31,9 @@
 >
-> -allOf:
-> -  - $ref: /schemas/display/dsi-controller.yaml#
-> -
->  properties:
->    compatible:
-> -    items:
-> +    oneOf:
->        - enum:
-> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> -      - const: renesas,rzg2l-mipi-dsi
-> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+>  #define RZ_MIPI_DSI_FEATURE_16BPP      BIT(0)
+>
+> +#define RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA       (80 * MEGA)
+> +#define RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA       (1500 * MEGA)
 
-Nit: I would add the new entry after all the old entries, to preserve
-sort order (by part number).
+RZV2H_MIPI_DPHY_FOUT_M{IN,AX}_IN_MHZ?
 
 > +
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> +          - const: renesas,rzg2l-mipi-dsi
+>  struct rzg2l_mipi_dsi;
 >
->    reg:
->      maxItems: 1
+>  struct rzg2l_mipi_dsi_hw_info {
+> @@ -40,6 +44,7 @@ struct rzg2l_mipi_dsi_hw_info {
+>                               u64 *hsfreq_millihz);
+>         unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
+>                                             unsigned long mode_freq);
+> +       const struct rzv2h_pll_div_limits *cpg_dsi_limits;
+>         u32 phy_reg_offset;
+>         u32 link_reg_offset;
+>         unsigned long max_dclk;
+> @@ -47,6 +52,11 @@ struct rzg2l_mipi_dsi_hw_info {
+>         u8 features;
+>  };
+>
+> +struct rzv2h_dsi_mode_calc {
+> +       unsigned long mode_freq;
+> +       u64 mode_freq_hz;
 
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Interesting... I guess mode_freq is not in Hz?
+
+> +};
+> +
+>  struct rzg2l_mipi_dsi {
+>         struct device *dev;
+>         void __iomem *mmio;
+
+> +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq)
+> +{
+> +       static const unsigned long hsfreq[] = {
+> +               1953125UL,
+> +               3906250UL,
+> +               7812500UL,
+> +               15625000UL,
+> +       };
+> +       static const u16 ulpsexit[] = {49, 98, 195, 391};
+> +       unsigned int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(hsfreq); i++) {
+> +               if (freq <= hsfreq[i])
+> +                       break;
+> +       }
+> +
+> +       if (i == ARRAY_SIZE(hsfreq))
+> +               i -= 1;
+
+i--
+
+> +
+> +       return ulpsexit[i];
+> +}
+> +
+> +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
+> +{
+> +       const struct rzv2h_mipi_dsi_timings *timings;
+> +       u16 i;
+> +
+> +       timings = &rzv2h_dsi_timings_tables[index];
+> +       for (i = 0; i < timings->len; i++) {
+> +               unsigned long hsfreq = timings->hsfreq[i] * 10000000UL;
+
+(I wanted to say "MEGA", but then I noticed the 7th zero ;-)
+
+10 * MEGA?
+
+> +
+> +               if (freq <= hsfreq)
+> +                       break;
+> +       }
+> +
+> +       if (i == timings->len)
+> +               i -= 1;
+
+i--
+
+> +
+> +       return timings->start_index + i;
+> +};
+> +
+>  static void rzg2l_mipi_dsi_phy_write(struct rzg2l_mipi_dsi *dsi, u32 reg, u32 data)
+>  {
+>         iowrite32(data, dsi->mmio + dsi->info->phy_reg_offset + reg);
+> @@ -308,6 +479,158 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
+>         return 0;
+>  }
+>
+> +static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *dsi,
+> +                                             unsigned long mode_freq)
+> +{
+> +       struct rzv2h_plldsi_parameters *dsi_parameters = &dsi->dsi_parameters;
+> +       u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
+> +       struct rzv2h_plldsi_parameters cpg_dsi_parameters;
+> +       unsigned int bpp, i;
+> +
+> +       bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
+> +
+> +       for (i = 0; i < 10; i += 1) {
+> +               unsigned long hsfreq;
+> +               bool parameters_found;
+> +
+> +               mode_freq_hz = mode_freq * MILLI + i;
+
+KILO?
+
+And I guess you want to use mul_u32_u32(), as mode_freq_hz is u64?
+
+> +               mode_freq_millihz = mode_freq_hz * MILLI * 1ULL;
+
+Why * 1ULL?
+
+> +               parameters_found = rzv2h_dsi_get_pll_parameters_values(dsi->info->cpg_dsi_limits,
+> +                                                                      &cpg_dsi_parameters,
+> +                                                                      mode_freq_millihz);
+> +               if (!parameters_found)
+> +                       continue;
+> +
+> +               hsfreq_millihz = DIV_ROUND_CLOSEST_ULL(cpg_dsi_parameters.freq_millihz * bpp,
+> +                                                      dsi->lanes);
+> +               parameters_found = rzv2h_dsi_get_pll_parameters_values(&rzv2h_plldsi_div_limits,
+> +                                                                      dsi_parameters,
+> +                                                                      hsfreq_millihz);
+> +               if (!parameters_found)
+> +                       continue;
+> +
+> +               if (abs(dsi_parameters->error_millihz) >= 500)
+> +                       continue;
+> +
+> +               hsfreq = DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI);
+> +               if (hsfreq >= RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA &&
+> +                   hsfreq <= RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA) {
+> +                       dsi->mode_calc.mode_freq_hz = mode_freq_hz;
+> +                       dsi->mode_calc.mode_freq = mode_freq;
+> +                       return MODE_OK;
+> +               }
+> +       }
+> +
+> +       return MODE_CLOCK_RANGE;
+> +}
+
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> @@ -40,6 +40,39 @@
+>  #define DSIDPHYTIM3_THS_TRAIL(x)       ((x) << 8)
+>  #define DSIDPHYTIM3_THS_ZERO(x)                ((x) << 0)
+>
+> +/* RZ/V2H DPHY Registers */
+> +#define PLLENR                         0x000
+> +#define PLLENR_PLLEN                   BIT(0)
+> +
+> +#define PHYRSTR                                0x004
+> +#define PHYRSTR_PHYMRSTN               BIT(0)
+> +
+> +#define PLLCLKSET0R                    0x010
+> +#define PLLCLKSET0R_PLL_S(x)           ((x) << 0)
+
+ #define PLLCLKSET0R_PLL_S GENMASK(2, 0)
+
+and after that you can use FIELD_PREP(PLLCLKSET0R_PLL_S, x) in the code.
+More opportunities for masks below...
+
+> +#define PLLCLKSET0R_PLL_P(x)           ((x) << 8)
+> +#define PLLCLKSET0R_PLL_M(x)           ((x) << 16)
+> +
+> +#define PLLCLKSET1R                    0x014
+> +#define PLLCLKSET1R_PLL_K(x)           ((x) << 0)
+> +
+> +#define PHYTCLKSETR                    0x020
+> +#define PHYTCLKSETR_TCLKTRAILCTL(x)    ((x) << 0)
+> +#define PHYTCLKSETR_TCLKPOSTCTL(x)     ((x) << 8)
+> +#define PHYTCLKSETR_TCLKZEROCTL(x)     ((x) << 16)
+> +#define PHYTCLKSETR_TCLKPRPRCTL(x)     ((x) << 24)
+> +
+> +#define PHYTHSSETR                     0x024
+> +#define PHYTHSSETR_THSEXITCTL(x)       ((x) << 0)
+> +#define PHYTHSSETR_THSTRAILCTL(x)      ((x) << 8)
+> +#define PHYTHSSETR_THSZEROCTL(x)       ((x) << 16)
+> +#define PHYTHSSETR_THSPRPRCTL(x)       ((x) << 24)
+> +
+> +#define PHYTLPXSETR                    0x028
+> +#define PHYTLPXSETR_TLPXCTL(x)         ((x) << 0)
+> +
+> +#define PHYCR                          0x030
+> +#define PHYCR_ULPSEXIT(x)              ((x) << 0)
+> +
+>  /* --------------------------------------------------------*/
+>
+>  /* Link Status Register */
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
