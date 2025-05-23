@@ -1,76 +1,119 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944342D193B
-	for <linux-clk@vger.kernel.org>; Thu, 22 May 2025 23:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4E2DCBF9;
+	Fri, 23 May 2025 06:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747955935; cv=none; b=F81aYY8k6LZtWHYDKhJRxBWPgEQYkLb8p+CTV7JeiD8l027RINjY+0Fg4m8g9nDrsnHuo4o5Q1jju2DvUZSY7K9W/9IjIVbBu4VDZhRBrt0CB993hyQLVzZyN1KwUFJLnYOF/n3LxI4ZSko3BSkQ1imyriBMlLtIvyudCuQf2YU=
+	t=1747981543; cv=none; b=MArwd63Gc4QhAZf4Q3ok+nap1OLXM6vUEErFMyqW2ay4x8Zpd2eA4R+pGdFU0azJyTV4lntEI4yuNxxN6kK8IbhRuZp1Gajpb+RHwWJaNUc99F/sXJYRP9Tm65zwLoUpQgJojEvRh/ZlwAtDiP8jDP1i6Z6gMFA0hboT0yUMTik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747955935; c=relaxed/simple;
-	bh=P3t4DL3xYUyTBmAEER2maWx8tKVsMIZCBNPFoN+u+9I=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=G6dIAjyAbBkAFTGAhqkn3uBbigLR++sTAG6zSsnrtZkS7zQpLt5UqJ0qR15t2h8VbKOtFShnpe31oHCOgM34kdxUxNTOrTBc6nGq0UyilK0B6zpq2wSdRUrL3BJD4poh8GZ30wAxXRZFpSi6ztxu81O9zLVgz5VG0jCzugWIGCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3RQj8Dt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747981543; c=relaxed/simple;
+	bh=JGpCq/ZRP8rK458O/7RLMNDdUkcfnrplMiNOlT76Sug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j+j5ylJBklJQR/LBEuDJHqNxwlBEugIlvms+1dcTtLz6ZUSTLqDvRbdvHngxxB/NY17y8jMffgyY8EQH78HzYHFg0V6aOAi6reUhShYwxYws/45e+Hjdg68Duf19umXjNkRPLXMkoYiFyJfUCeCIeKvjFbmHpIpkshcE3ZFrPrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw7XbDEn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3RQj8Dt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D054C4CEEB;
-	Thu, 22 May 2025 23:18:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw7XbDEn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2EBC4CEE9;
+	Fri, 23 May 2025 06:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747955935;
-	bh=P3t4DL3xYUyTBmAEER2maWx8tKVsMIZCBNPFoN+u+9I=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=P3RQj8DtIgVMpAjGTC4WR+s/4lgjFbMEY52cPLSy9ssQ6XI3M5cfIPuaN+nvTIOKW
-	 hUVe9xHj+PWelCqqwzU7VuU/+zWp4REsIDGcZw3bzGPgWSXjKvf5fg07NkKuKqeE9A
-	 3+/h5Ut1mJxD3c3+kVdppKa8T5ZvohymkH1VpTuOpbdtDPDp8XlZNOffiD3yYSPVRB
-	 JEj1raxHn+TbsKru0JblwotvTPMaDG98oPt0PjQ537hjIZVgrgdY/A/MRQzFzu62B3
-	 eAauOxh+Yg4dsiSuW+YwuJhDGMnRtjDaj0SCcKCa78IZTqcfiXn6sb8Kjnv5FfeJtq
-	 ABrG8jyNUdFPQ==
-Message-ID: <42ee51cc911b4a72c2659f94282519df@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1747981543;
+	bh=JGpCq/ZRP8rK458O/7RLMNDdUkcfnrplMiNOlT76Sug=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jw7XbDEnEoEWgt/RlCOWLC409AxZoZDKA0qV4AkpvOaYpgZNKSkccQ3fJUSBs0oTP
+	 XhxdxKD9vPvir1bpaOSxi8Q8cKCSH+ik3LfRFWRKEM3OYY/HIR/esFVvf6XFwcjE62
+	 5gAlPMATNaoQ5OkUxD4fcLAEJiXV7n8QBbBhw1rLzuZln26P5NZyAhotnCknVm7xep
+	 yTn0DNP0HiruVc/cyi+1hkNUYcvdbMoJfUoBLS9fzO/6imB+oIfVmNzHJhYFljnEri
+	 5IfS13gTv5H397ehqkYXliYqh5cgaoKhi6yVxSMI56296wuP/m84ExFYONCLw2HRPX
+	 mzAIyBbnXfeaQ==
+Message-ID: <655ea20d-ed2a-4727-b7c1-65fd69d3c027@kernel.org>
+Date: Fri, 23 May 2025 08:25:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <23068874.EfDdHjke4D@phil>
-References: <23068874.EfDdHjke4D@phil>
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.16 #1
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Thu, 22 May 2025 16:18:53 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] clk: thead: Updates for v6.16
+To: Drew Fustini <drew@pdp7.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
+ Jisheng Zhang <jszhang@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>,
+ Michal Wilczynski <m.wilczynski@samsung.com>
+References: <aBus+Yc7kf/H2HE5@x1>
+ <018214f410632eb3dc6c6bd6ab58cba1@kernel.org> <aC+mJ560HbscG38R@x1>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aC+mJ560HbscG38R@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Heiko Stuebner (2025-05-18 02:11:44)
-> Hi Mike, Stephen,
->=20
-> please find below a pull-request with Rockchip clock change for 6.16
->=20
->=20
-> Please pull.
->=20
-> Thanks
-> Heiko
->=20
->=20
-> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089a=
-c8:
->=20
->   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v6.16-rockchip-clk1
->=20
-> for you to fetch changes up to 276036283716b9135525b195675ea42801bde204:
->=20
->   clk: rockchip: rk3528: add slab.h header include (2025-05-15 14:49:05 +=
-0200)
->=20
-> ----------------------------------------------------------------
+On 23/05/2025 00:33, Drew Fustini wrote:
+> On Thu, May 22, 2025 at 03:24:02PM -0700, Stephen Boyd wrote:
+>> Quoting Drew Fustini (2025-05-07 11:56:57)
+>>> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+>>>
+>>>   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+>>>
+>>> are available in the Git repository at:
+>>>
+>>>   git@github.com:pdp7/linux.git tags/thead-clk-for-v6.16
+>>
+>> I changed this to https://github.com/pdp7/linux.git but please fix it
+>> next time.
+> 
+> Sorry about that. I'll use https in the future.
+This should be kernel.org. I remember Drew we meet few times and you
+never asked for signing your key. Just get in touch next time on a
+conference to get it signed (and bring printed fingerprints).
 
-Thanks. Pulled into clk-next
+Best regards,
+Krzysztof
