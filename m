@@ -1,111 +1,93 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C0AEC5;
-	Fri, 23 May 2025 10:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FF0189919;
+	Fri, 23 May 2025 10:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747994513; cv=none; b=bvQ+H2CE2m4T57RE/A6kVMzYdzjykH5tlC6NVEz6nIPz+Eer8Auf/qc9m9vz2YeYp9I3phW9i5zusLtitLut/5DJOpu/Jt/EGnUtmkuLkBDkh6UrPAPKAjkPctcLPdvyo9NASqnY52uQbUaVy6BGM4/AEIhBZA40aIfNS8EUvd8=
+	t=1747997171; cv=none; b=jlGy1t/CSi9adnHSVtd3sDqP2VlliHXI+nuy+5jF2HgKbKb3TRocr/IiZiv2AR0GX0ANWlZB3rel1Sinlr24VgkOuTArC3eUDJ2dDOl5hDPrpf5i30hcf0w2PE/GhuKSHCrRWA6jfkyZbboepKR3ugbb4WiYcBPF8EFUsjauoc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747994513; c=relaxed/simple;
-	bh=q3T8UELofPcASBzsTVBayjFOP0EajpIvJbSoxArvKMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iB1nf6D+CfxL0+orJ5dL5FuDCbq5JXwYLedMRRxjzAXEBVGafqBh38HLeUzwelE1F09dIquhCkEi4dDj4CAW7uMEk8EoQJaX6rpJslOR9lq2i9u3DBCN9EEP5nCT8OYNJqgLYhbzle41O6yPvvCgoF6tlZzb2swP7MR2SWKNAS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52b2290e28eso2089335e0c.3;
-        Fri, 23 May 2025 03:01:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747994510; x=1748599310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EiiolHRMG8Ta2huRzCSSCJZUlZQ8b1R0+NV9XSqyCzI=;
-        b=XLW0tnCNiXjmp0xEexfDrTOszoT6ReZ2PeWdLenPFqyp0Kr6FOstBD2KRfgLgq0bWI
-         oW3rcUo0z2u+IjlIbxUjwnsQ6khcVlMVNIZO8M0o6zBeYjg9HPJj52BS48rT58SFb08j
-         b7Rse6ej4s3Fxe7baYGYJi3D29Ddvs2bsbbWy4z8T/m6ajME86LVotCEZ7Okp5SCCcCR
-         8q90rICAIhj9LDNwTfwUIl1gyBJUc3gRvt+SqNEWR4f1xPmzUNrqPu81/O4A6GjpFbrA
-         lin9rzSAQCLB05XZ+PyYidKK7UsALfgd4dTBZqk7+vOR82X/uEGI9PC+uVsbAHI4TqHo
-         mMgg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5WoFmH2r+OcM3tOsicuijUGRs2zykqToEDFYKHYDaMfdKsVqrpjFZmoxanYUsEBQ7sT4MB0nmbpFl9i0GlRFe6tw=@vger.kernel.org, AJvYcCW4RBC6gGi+nG1PJ69Qpcv4XxG1sQiS+icbnFjlalWuYjT7ksLysv11GEQfyOIaoefI192rY854QpU=@vger.kernel.org, AJvYcCWtGkC61J/QZFvYaDI9lCIV62xOieSy8ce6Db32j+QfbCxh6x1dV/k9aQiys5SpdAdjApKmoJxYWGW83uLU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyATawoF073heBD+ZzfUyN0rf3V6JHO1OFwE+oGdj1GyhxtrO2P
-	EWSCB3i8TBrD7IhpA7lrv0ubW9u+GwIYHDnaeC8oql8vg/JC+BhZo0rr/k4xSn2y
-X-Gm-Gg: ASbGnctnGGby5CmaQC6sEu32wqThgJ8ohQDF239mmv8JhcGq6sShlZcjFde/AzwqOAd
-	/dfgH9u84P1qGafRw1oZFkOp9GX8NhcLHCucizkgrW6l3VB051e98b+bkq49SKmbJzFgXg57SoX
-	2Xdn+c8rCfcL00mD3gNkpE+nAGsJXpBjfLLfDQ4p3s/fImYBNYFLF1P1SaP0LUsscluo2qCP059
-	ftS7oa4r4amcJUkpVM1RoGmak3bGNuBDldh1DVyPxNLwIt+t645dAdLVmyTp88sictwXCOW2XTB
-	Sh9FNCs3Q9zv/2HGkHzzeSylTVukYVYSuFySiie2Y1AKTqu7erQ3U//kJlFv9stfxdPk9I2zKu6
-	v5HHVdTyBx3QcSQ==
-X-Google-Smtp-Source: AGHT+IGKwPx3jRCYMTdti+/vE3+hV3DcoXvWmI9/xyPObqYhWkt8hmE6goWy160fCMaQpsoYFeQJlA==
-X-Received: by 2002:a05:6122:1d48:b0:529:1a6a:cd48 with SMTP id 71dfb90a1353d-52dba964347mr27064871e0c.6.1747994505754;
-        Fri, 23 May 2025 03:01:45 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba967788sm13188453e0c.22.2025.05.23.03.01.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 03:01:45 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4e290e4716fso2002655137.2;
-        Fri, 23 May 2025 03:01:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCzEAlFiPWW6g0jmXLDoFaxTe5SXzW6wXApIOdEYBcr8l4fROhHi75O2r0wcUP9vrETt10gaQlj3sNlBlO/Lio+50=@vger.kernel.org, AJvYcCVRaju+frVUIOg7h6uHwQQKIG+cSZtBZ7kr2fD78BCQwzGi0qKkZvpk3sdfvNY94qNa9X4n8NMmggB7uxy3@vger.kernel.org, AJvYcCXwpcuTFjSP3p2ModevRxd/MHBSuZ/gtYhJKtRBpF7qqJynHqstrYszg7wkhgbMTP6uXxmVDPIZGn4=@vger.kernel.org
-X-Received: by 2002:a05:6102:570d:b0:4c1:9695:c7c with SMTP id
- ada2fe7eead31-4dfa6c56bffmr27868276137.24.1747994505001; Fri, 23 May 2025
- 03:01:45 -0700 (PDT)
+	s=arc-20240116; t=1747997171; c=relaxed/simple;
+	bh=7HvdOFjy/qSjS9m8ifFf25BN9ifPXD7ylgf9PbJrc5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bM01dgLrBe/6b3T9yc1zM/R5HSh3Vn2zQYHfeS2yFKDcRZGRJ1oZMpCq/s3yjl94xF7xAnhEETdR0CfzaNwAoTgX8qzhCHmdBDMsMHZFN293oG45Yc1Pblz7gHuQBGPSkRQuQ/YS1pFC4jZzysYDckIBlp2VfwM5HjlHKQtNvPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MimChsLE; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MimChsLE"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5299D25D81;
+	Fri, 23 May 2025 12:46:08 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id MCRF59rG0MZi; Fri, 23 May 2025 12:46:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1747997166; bh=7HvdOFjy/qSjS9m8ifFf25BN9ifPXD7ylgf9PbJrc5E=;
+	h=From:To:Cc:Subject:Date;
+	b=MimChsLEwrQ+Sw6Hcs/Mirfmrlr0TlkIqc8MVFqaoG45utpuFJIYa8l043F6Nvt5t
+	 MRZ/DrjASFCxy09Y4Kwzh2IwqxCHCLcV5KdNxidw+5CKBhRDk52H6CuxLPD7YdpmwP
+	 aTcFm1pQevA3J/WcTgPdJYU0ut8gbFZnp+3mQ9ZttkvbxVOWwoYbafbXaoAYrToPNl
+	 boq+BWumnr5pJ6fV7uuW4Fbz8pqA62YCqTkbK/oEETfKnA1uq5qs9IP0p+6i1+ODNx
+	 0kgSl1piSxuuYNWYpWhDE8KGqEajmgtMTM4z4Crmm94ghhBkIm6HqReYPNbfFHry4V
+	 rwcccAteKgxIQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/8] Add clock support for Loongson 2K0300 SoC
+Date: Fri, 23 May 2025 10:45:44 +0000
+Message-ID: <20250523104552.32742-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com> <20250515141828.43444-6-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250515141828.43444-6-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 May 2025 12:01:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUe3Bz__5S0c-bgdY0CsCzQ_ySeBydzv63fMC3egPnAGQ@mail.gmail.com>
-X-Gm-Features: AX0GCFumhp15wxRPV5n96yu1tU9Qxfi63KcgiTtuf-ryhestJHNqOhq_Qf6Ln3Q
-Message-ID: <CAMuHMdUe3Bz__5S0c-bgdY0CsCzQ_ySeBydzv63fMC3egPnAGQ@mail.gmail.com>
-Subject: Re: [PATCH v9 05/10] clk: renesas: Add support for R9A09G077 SoC
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 15 May 2025 at 16:18, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> RZ/T2H has 2 register blocks at different addresses.
->
-> The clock tree has configurable dividers and mux selectors.
-> Add these new clock types, new register layout type, and
-> registration code for mux and div in registration callback.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
-> Changes v8->v9:
->  - Renamed r9a09g077-cpg-mssr.c to r9a09g077-cpg.c
->  - Makefile: keep alphabetical order
->  - Fixed DIVSCI0ASYNC
->  - Removed unused CLK_MAIN
->  - Simplified the clock tree, removing CLK_SEL_PLL0, CLK_SEL_PLL1 & CLK_SEL_PLL4
->  - Renamed loco to .loco
->  - Fixed the register bits in dtable_24_25_30_32, re-ordered the table
->  - DEF_DIV & DEF_MUX: set flag to zero always (might change in a future commit)
->  - Do not set CLK_DIVIDER_HIWORD_MASK
->  - Uses '8' as value of removed R9A09G077_PCLK_SCI0 definition
->  - Fixed addr calculation with RZT2H_REG_OFFSET in r9a09g077_cpg_clk_register
->  - struct cpg_core_clk: moved union in specific section
->  - Renamed cpg_read_rzt2h_mstp to cpg_rzt2h_mstp_read
->  - Renamed cpg_write_rzt2h_mstp to cpg_rzt2h_mstp_write
+This series adds support for Loongson 2K0300's clock controller.
+Loongson 2 clock driver is prepared to support more clock variants and
+its flexibility is improved. All clock hardwares except the output one
+for GMAC module are then defined.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.17.
+A clock tree dump could be obtained here[1]. This series depends on v3
+of series "Initial support for CTCISZ Forever Pi"[2] to apply.
 
-Gr{oetje,eeting}s,
+[1]: https://gist.github.com/ziyao233/8cd3ab8ebbf291b5a4643284309274ea
+[2]: https://lore.kernel.org/loongarch/20250523095408.25919-1-ziyao@disroot.org/
 
-                        Geert
+Yao Zi (8):
+  dt-bindings: clock: Document Loongson 2K0300 clock controller
+  clk: loongson2: Allow specifying clock flags for gate clock
+  clk: loongson2: Support scale clocks with an alternative mode
+  clk: loongson2: Allow zero divisors for dividers
+  clk: loongson2: Avoid hardcoding firmware name of the reference clock
+  clk: loongson2: Add clock definitions for Loongson 2K0300 SoC
+  LoongArch: dts: Add clock tree for Loongson 2K0300
+  LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ .../bindings/clock/loongson,ls2k0300-clk.yaml |  52 ++++++++
+ .../dts/loongson-2k0300-ctcisz-forever-pi.dts |   1 -
+ arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  17 ++-
+ drivers/clk/clk-loongson2.c                   | 124 +++++++++++++++---
+ .../dt-bindings/clock/loongson,ls2k0300-clk.h |  54 ++++++++
+ 5 files changed, 224 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k0300-clk.yaml
+ create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.49.0
+
