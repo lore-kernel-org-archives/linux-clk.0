@@ -1,118 +1,265 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C91DDC11;
-	Fri, 23 May 2025 09:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31DD5D8F0
+	for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 09:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991768; cv=none; b=SygJ+KV5CdrbXPoBpo4PDQe9j02aHkjDEBq2tXEANWseef2mjejMOdZyQDdgntXWUftQgDmxGIKzWh5tBONT0AQvzroUnYF9eqpoWZTk5qoo4MZFQjcxwMIPH9D/qIhMNTNG/V4yp96TUCYU51/rOazU+qZUshn6cL0zAbUUhKE=
+	t=1747992580; cv=none; b=nCQvLQfbF2wPkrntQrxv30uMcPly/xvFXIlAs2h+UOML3NUSvrKOIWDj+8/k29L7bhcdiDB2Uk099yM7+s88Y355b8g3NPRe/2Z60CTL6/B++vB6n43yYJ5vEqeWOeCxd5XmbnS8rWg8bbap5xyUxE8N9of+g8WmWx5IqrhZ04o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991768; c=relaxed/simple;
-	bh=IHiAU5Ln1utqscnRK79D8JWp5lxQXyRywi9Pdg4QM3I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JShMDjORPNn1qIxRKLZdbKUbB7yNpBWIXEzYdH2ybkz+nQESHzC/x5V/Ovuy12qVvPYP8y+Nm3x06EQZtkq574RVxyg2/44Pqy7ZPj5HIgyDtO/19Z59UgSQXUvhP32GGzsuimlsOE+UaWQ6eX6g84qY8ua+XCp0syBhdYN6nXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZw/TYC9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747992580; c=relaxed/simple;
+	bh=7iV0PK0XEkkXSDlRpCH9WIf0RlD/ImvYxhD6cBK3FpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R79ImkYPwSORSncG3TOIM22shIENN7lAEYf7pDotZyVCnJFClMXiscTQal/ZoiK+P8fKyZhXjonq/N2BXP2GrxF9EZSDw0xxBbVxyeizXUBiWC5Rubrw+413IwVzyBMPDiwq4psWPCCibMEWfxTE121Ck9ghjTkYh2IvuxOjGIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hTkBmFrr; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZw/TYC9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11472C4CEE9;
-	Fri, 23 May 2025 09:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991767;
-	bh=IHiAU5Ln1utqscnRK79D8JWp5lxQXyRywi9Pdg4QM3I=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=YZw/TYC9blXtwvWMrreeeb1JwGrvoG90zIcbQ5D/BQlRQUS5er60cLLRETEJukxrW
-	 mFft0DT6HvtQamg8D4ebfkJ8ywvFUiFAYjrxI83n1VL/oOSnSRwn3E5xmSxLXPaaBr
-	 D5SlXqKdpUzEa5LOTklzTpJIG5VGUJdDC/oFApYMob1kg1dFyefp8OB0AVG8+DUpYr
-	 xacqBy9DB0D+0Z/TInZMJkGPavqisuZ1B5HmDEl6rNCq56NvZP8vqnnJvdoxaSnzXO
-	 pN/KgiA+oRECmgW9pBU7JM9jBz/9rPA4Ivqxz6PIbswXZPcJjoH1aQxdcj/i5+re+3
-	 shGVjkxjrRwbQ==
-Message-ID: <143565d4-8e28-4ff0-8bd9-17969e7b54a8@kernel.org>
-Date: Fri, 23 May 2025 11:16:03 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTkBmFrr"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad5740dd20eso906923466b.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 02:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747992577; x=1748597377; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QSkMK6hpsz693rlBfw8R7EN03Okxs/CKoRdgfg9uKIU=;
+        b=hTkBmFrr2Cc7PRYyj+UG+706qMcQYEyxdZ+oTCQVizgwscoFpH539pP1fT068iyyLj
+         z/xuwfvFysFjM+RSHJS4v6DokZgJ1nFqXMDu86etV++yaZs5EVqFSB9Xm8pliSNCE3h/
+         GdhGJMpa1vk1YowmSz4vkIrgoZ22EB/qMOM+koJeb9lgbeaQ7ghKw2tHkBX6Dm16xe7c
+         iEtUI+glc4iFuYmOe7VF6bP0Pk1Wf+phaQ08wOA03DtwLr9XnHr8ov6NxQ1TVu7tRGed
+         jGVbU6PCvIf+4RAMkoyp21NAPRd3dPdxvicgpVMlAfr276gYJ2GH4NAAG12MGup4rb6T
+         8VAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747992577; x=1748597377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QSkMK6hpsz693rlBfw8R7EN03Okxs/CKoRdgfg9uKIU=;
+        b=FlxzIEkkESfZh5zjHxWCISAKzsgcE5VJepWzuMZvZlqxZSnRmBRCRXPgChkLUQnDTm
+         RKQ0NNyLIwISic57oV/eRutg7XEhRobahjWqX0DTZozeZyrndBoeOabIccHCVBmbEfPQ
+         X9ByCE6bf+6O+EEhbt6U3XigcucGy6LDv1im1UqbwCuInGQG7KInjQz5e05ZS+Zz6Qgg
+         13c2RDnUkLV6PSdOnA5Vbxc5wIr48t7ZYo7px9ZYl+di5Q6fqcs/0cJU2/LXEkXrATOQ
+         smsd5ZPJD5+lpC7Y+exQKe15p6i9hH5DMeu1AgDs0Vy852Qazwu240wyACihPKHfu2g8
+         GQ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9TGbf3n8aZwpMFVxWB5lKypuDAmEH5NUYARHbKmGhbA9bVwjkotEvKSmQ60nt6wKuHvYs6aSYKjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkjsEEgfjpgC9+hOVMDybZxemZaB+ZbqdWdPSMHWod4BfxMuIb
+	RSwBS1bCwmyT371jUO6EX2pMut8m9k9nUsB2a/rmDyEoEf0kYFe8k/jHeYcW9Woim5Y=
+X-Gm-Gg: ASbGncs21XH8CxAyuiT+1+O2Q5gnpUzb6kNFKkJpCKBzxEdC9M8KWfbx8JMpTt375UU
+	R2cyqP7afD47sbXhYdvjHdY3PBZYYoJZu1v05/8F4Xjd6vA9iz369HARoflzytHd5aN9K0qpZQs
+	QOPItthWZ7uchkxw0qckUtiEnKe3BmcccDDwkRV1YR3vWSUtIRg9+n7lCCcNy/O+1FS/4u8H9rH
+	9rMJMNwBuEKVEYcp7/ryPs13Ub2qTSnIWKeI9WPBjZfoymzlQmCoB5vsVxGMk29H33EBjHgtEBz
+	PK5OAT6K8urz10btTgIGrhf4B6EptxD5TbkK2xm8LmD5uHy1FTrcV+9jbSrp684=
+X-Google-Smtp-Source: AGHT+IGOpo1TPYd5N03AiCPo1Usu1rICKOKfo2ZjPp3xB2uH6rOk7X8el6oNzyY1EObtn5S2D2NxwQ==
+X-Received: by 2002:a17:906:c103:b0:ad5:7499:2644 with SMTP id a640c23a62f3a-ad71c671007mr203816166b.54.1747992576817;
+        Fri, 23 May 2025 02:29:36 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:845b:bbb4:b39e:a452])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d277a2esm1197585566b.83.2025.05.23.02.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 02:29:36 -0700 (PDT)
+Date: Fri, 23 May 2025 11:29:31 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <aDA_-zQEgFVVNE9W@linaro.org>
+References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
+ <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
+ <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+ <aCNGSwL7043GoJBz@linaro.org>
+ <20250514160841.GA2427890-robh@kernel.org>
+ <aCUHTJGktLFhXq4Q@linaro.org>
+ <20250521-psychedelic-cute-grouse-ee1291@kuoka>
+ <aC-AqDa8cjq2AYeM@linaro.org>
+ <20250523-markhor-of-fortunate-experience-1f575e@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clock: eswin: Add eic7700 clock driver
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
- <20250523090928.1940-1-dongxuyang@eswincomputing.com>
- <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250523-markhor-of-fortunate-experience-1f575e@kuoka>
 
-On 23/05/2025 11:13, Krzysztof Kozlowski wrote:
-> On 23/05/2025 11:09, dongxuyang@eswincomputing.com wrote:
->> From: Xuyang Dong <dongxuyang@eswincomputing.com>
->>
->> This driver depends on the CCF framework implementation.
->>   Based on this driver, other modules in the SoC can use the APIs
->>   provided by CCF to perform clock-related operations.
->>   The driver supports eic7700 series chips.
->>
->> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
->> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
->> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> NAK, stop adding fake tags. How did you even invent such email?
+On Fri, May 23, 2025 at 11:06:04AM +0200, Krzysztof Kozlowski wrote:
+> On Thu, May 22, 2025 at 09:53:12PM GMT, Stephan Gerhold wrote:
+> > +Saravana
+> > 
+> > On Wed, May 21, 2025 at 11:20:40AM +0200, Krzysztof Kozlowski wrote:
+> > > On Wed, May 14, 2025 at 10:12:44PM GMT, Stephan Gerhold wrote:
+> > > > > > > > The mailbox itself does not need any clocks and should probe early to
+> > > 
+> > > ... so probe it early.
+> > > 
+> > > > > > > > unblock the rest of the boot process. The "clocks" are only needed for the
+> > > > > > > > separate clock controller. In Linux, these are already two separate drivers
+> > > > > > > > that can probe independently.
+> > > 
+> > > They can probe later, no problem and DT does not stop that. Linux, not
+> > > DT, controls the ways of probing of devices and their children.
+> > > 
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Why does this circular dependency need to be broken in the DeviceTree
+> > > > > > > representation?
+> > > > > > > 
+> > > > > > > As you describe, the mailbox probes and register the mailbox controller
+> > > > > > > and it registers the clock controller. The mailbox device isn't affected
+> > > > > > > by the clock controller failing to find rpmcc...
+> > > > > > > 
+> > > > > > 
+> > > > > > That's right, but the problem is that the probe() function of the
+> > > > > > mailbox driver won't be called at all. The device tree *looks* like the
+> > > > > > mailbox depends on the clock, so fw_devlink tries to defer probing until
+> > > > > > the clock is probed (which won't ever happen, because the mailbox is
+> > > > > > needed to make the clock available).
+> > > > > > 
+> > > > > > I'm not sure why fw_devlink doesn't detect this cycle and tries to probe
+> > > > > > them anyway, but fact is that we need to split this up in order to avoid
+> > > > > > warnings and have the supplies/consumers set up properly. Those device
+> > > > > > links are created based on the device tree and not the drivers.
+> > > > > 
+> > > > > Does "post-init-providers" providers solve your problem?
+> > > > > 
+> > > > 
+> > > > I would expect that it does, but it feels like the wrong solution to the
+> > > > problem to me. The clock is not really a post-init provider: It's not
+> > > > consumed at all by the mailbox and needed immediately to initialize the
+> > > > clock controller. The real problem in my opinion is that we're
+> > > > describing two essentially distinct devices/drivers in a single device
+> > > > node, and there is no way to distinguish that.
+> > > > 
+> > > > By splitting up the two distinct components into separate device tree
+> > > > nodes, the relation between the providers/consumers is clearly
+> > > > described.
+> > > 
+> > > You can split devices without splitting the nodes. I do not see reason
+> > > why the DT is the problem here.
+> > > 
+> > 
+> > The Linux drivers for this particular mailbox/clock controller already
+> > work exactly the way you propose. They are split into two devices that
+> > can probe independently.
+> > 
+> > The problem is outside of the drivers, because fw_devlink in Linux
+> > blocks probing until all resources specified in the device tree nodes
+> > become available. fw_devlink has no knowledge that the mailbox described
+> > by this peculiar device tree node does not actually need the clocks:
+> > 
+> > 	apcs1_mbox: mailbox@b011000 {
+> > 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+> > 		reg = <0x0b011000 0x1000>;
+> > 		#mbox-cells = <1>;
+> > 		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> > 		clock-names = "pll", "aux", "ref";
+> > 		#clock-cells = <0>;
+> > 	};
+> > 
+> > Without device-specific quirks in fw_devlink, the fact that these clocks
+> > are only used by an unrelated clock controller only becomes clear if we
+> > split the device tree node like I propose in this series:
+> > 
+> > 	apcs1_mbox: mailbox@b011000 {
+> > 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+> > 		reg = <0x0b011000 0x1000>;
+> > 		#mbox-cells = <1>;
+> > 
+> > 		apcs1_clk: clock-controller {
+> > 			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> > 			clock-names = "pll", "aux", "ref";
+> > 			#clock-cells = <0>;
+> > 		};
+> > 	};
+> 
+> Above code suggests that clocks are not needed for the mailbox at all.
+> You need to be really sure of that. If that's the case, then this
+> description looks like correct hardware description, more detailed then
+> the first case, though.
+> 
 
-To clarify: I NAKed your patch. NAK means Not accepted, Not acknowledge.
-It is the opposite of review, means your patch is wrong and I do not
-agree with it.
+Yes, these clocks are not needed for the mailbox.
 
-Translating this to review is inappropriate.
+> > 
+> > It is easy to say that the problem is in Linux (and not the DT), but
+> > unless you are suggesting to remove fw_devlink from Linux, or to add
+> > more device-specific quirks to the generic fw_devlink code, I'm only
+> > aware of the following two options to make this work (both already
+> > discussed in this email thread):
+> > 
+> >  1. post-init-providers (as suggested by Rob):
+> > 
+> > 		post-init-providers = <&a53pll_c1>, <&gcc>, <&rpmcc>;
+> > 
+> >     To repeat my previous email: IMHO this is a crude workaround for
+> >     this situation. The clock is not really a post-init provider: It's
+> >     not consumed at all by the mailbox and needed immediately to
+> >     initialize the clock controller.
+> 
+> Clock is a provider - it has clock-cells - and it is post-init, because
+> mailbox (parent) does not need it to initialize itself. Only part of its
+> functionality - clocks - need it.
+> 
 
-Best regards,
-Krzysztof
+Right.
+
+> > 
+> >     With this approach, there are no device links created for the
+> >     clocks, so we don't get the proper probe/suspend ordering that
+> >     fw_devlink normally provides.
+> 
+> This probably could be fixed in the Linux?
+> 
+
+This is probably something for Saravana to answer, but I think
+post-init-providers is more intended to break up actual circular
+dependencies, where you want to omit the device links for one of the
+sides. For this specific case this is not necessary, because we can
+avoid creating the cycle by describing the hardware more accurately.
+
+> > 
+> >  2. Split up device tree node (this patch series): With this approach,
+> >     the mailbox can probe early and the clock controller child device
+> >     gets the expected consumer/supplier device links to the clocks. IMHO
+> >     this is the cleanest solution to go for.
+> > 
+> > @Saravana: Is there any other option that I missed? Or perhaps you have
+> > any other suggestions how we should handle this?
+> > 
+> > To summarize the series and previous emails, the dependency cycle that
+> > was in msm8939.dtsi before commit d92e9ea2f0f9 ("arm64: dts: qcom:
+> > msm8939: revert use of APCS mbox for RPM") is:
+> > 
+> >   1. The clock controller inside &apcs1_mbox needs
+> >      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
+> >   2. &rpmcc is a child of remoteproc &rpm
+> >   3. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
+> > 
+> > This is not a real dependency cycle, the clocks in the mailbox@ node are
+> > not needed for the mailbox. They are only used and needed for the clock
+> > controller child device that makes use of the same device tree node.
+> > 
+> > At runtime this cycle currently results in none of the devices probing:
+> > 
+> > [   13.281637] platform remoteproc: deferred probe pending: qcom-rpm-proc: Failed to register smd-edge
+> > [   13.296257] platform b011000.mailbox: deferred probe pending: platform: supplier b016000.clock not ready
+> > [   13.308397] platform b016000.clock: deferred probe pending: platform: wait for supplier /remoteproc/smd-edge/rpm-requests/clock-controller
+> > 
+> 
+> Except missing dev_links you mentioned, this feels for me like job for
+> post-init-providers (option 1), but I am also fine with option 2,
+> because it fees like more appropriate hardware description.
+> 
+
+Great, thanks for the review!
+
+Stephan
