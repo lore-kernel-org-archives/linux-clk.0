@@ -1,166 +1,231 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520B222370F
-	for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 09:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01BA223DD0;
+	Fri, 23 May 2025 10:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747993859; cv=none; b=XzN2dl4lWEUPHAdklHey+BEu3nKABRLK4XwBTS+4Ip/YxeAhe6tdHF+0JSclQcjw47o/ZcxISRxdYRxPPd8EGP0Y/XbvQSDMY9Pcy3okK2+s304cm+genjrzVjpJwDUha+y/2EQ3tfmwlf+za5ZD3e3fPb113LmtYIEPI3HZJ8Q=
+	t=1747994455; cv=none; b=fadjZRZntYO2Q/asAZw9rEvYfaNnscB1J1ABOSS9t12h+Qeaj/g4KNPqRXuyz7FLN5YYkhUFA9h/p1Tg6HPhTS1Gdj73opKsI2g8+Iehftr0cbFk9P7l7nciuPYX5dMpsdsVofsPJ5/guJHbhjdiNPXo6XwGRFi75GhlFnHitsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747993859; c=relaxed/simple;
-	bh=AW43RwLwOmrl4rpbbbN2XAtRXZBN1bmhD8swbRBxMOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fWQ0LxA9X+T4eiHnYDSXcEsYUpe2IgqAaLnasehB4Zbtv2EeYnCCiOxyd9XNgSMpfAnxONkGcx71tOmnGCIS/FKlkxYBVzKyFTHBgQXyTXg1VUiDuDvp8PNkpbjuKv3z7sowfU0QpZ07rXdFHSyxV871HHLHYaLOp0PUkYkXYaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WxCZWFr5; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxCZWFr5"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a36210dbe4so1003143f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 02:50:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747993855; x=1748598655; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HY4ZgUXsyVdmMvzWCBHX/kKastlwpiiCBGCBj2Rck9E=;
-        b=WxCZWFr5p5hmBebTiCKxu4bBkS2cit5ZSZ4VL944m4x1E30hjPV2UaEZ6jv/DJMjUU
-         ul7mT48Hk2ISknv/J0ZJ0nBhOmfaFY3OZ0Noy0fmDdfzHrTzuiFklf8QmWWVpy8nDbkk
-         xv8ZROcCWPJrmBENobqOKEQItTl2+mLwpV4wJc2tbhqc/ZR/e7/AQinJvAIQyjxAJxZ0
-         1+mFxM58tC5ifntRPX3leKFFfu64O/j2fc0W/UISD05bPm0gPQjc5jY+eypDbqau3URb
-         ulValqL3IRfICtT9Ahs0l5a+nOojY9pGOq2WN01XAI+eBw8j6Wrsb5AppsqTQj9tCfs+
-         0U4g==
+	s=arc-20240116; t=1747994455; c=relaxed/simple;
+	bh=QWN9QTWpsuziH+HrVRdGgN3yI6W2etIemOWYs57/rNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H66aaEtKTpDXaLwKsIdJEyAOW9aRRDaVdJDhtM/4yJarDLlL/jckzCNWlH2ISPCU1Yfb8I3x8dM93zrbd1uY3IAk+btTqNDITwu2dL0Z7SABEqPP9beELs+TLsyVGOjA01aVxUqeWXlZqIA2jD25aQ6wHAByUZR42OK0Zt8u/ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5242f137a1eso2784052e0c.1;
+        Fri, 23 May 2025 03:00:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747993855; x=1748598655;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1747994452; x=1748599252;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HY4ZgUXsyVdmMvzWCBHX/kKastlwpiiCBGCBj2Rck9E=;
-        b=O9bwMud0iMQbLHmVZe3HXKS7CX7T/yCGZD1zICH2TqsMN/6f6Jxv8/e+VAUWG5T7G0
-         zGNVUDpEizyaOt9JWVAGU8V5bZbxgTgQZkJuascnjCsliY2xncvrE73V0tRD5xqFANbB
-         Qq7ggLM/xRba3GtPGLLPDd7lQm0JpTVpsKYzaDrWhw24+x1QynJ+8lx8er9u0jj0cluG
-         bszBpPH2T/YO+oEJ4dB3EWX6QUhqOdX1aBSToEmL8CdF902v/POYVEjy1ISngIPRJuXg
-         Ah4Im2u0rJogCKphsNOqe8mihnQ2ouIuJfuNyQWD7ESs8cGfqfG/Hgjz8wiPlZXFqsck
-         vmGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnwxxhltrkNUaIdxY9HtDvPcAPk6jzgjB++CmgxB3wERKViUSodlvLwS9VpDlvnhEUB9KeEfrZLPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5B30HaAo9LdCZX8LWUo1bOQNFLeUshkwSs9nFUqnSo93pvpP9
-	7gObKV1MqQsYVDnJJz4+hzxugdLv0iMWlFjScCw41vQCVEjT9W6ACsQD2X6MEQiM8nQ=
-X-Gm-Gg: ASbGncvPP4KHHNnPGUghhv/Mp92HgA3cvUNZBTe82Lc5IMkm0Ek0mLPpdpIBrCn0yIF
-	HW06uj1X4OvybU0j7bWq+Z31iG3jAm9Dktzl+L5n2FXUTa2UTdyezTHVzut5iGL2Yjc7DCHmcHi
-	LuebOkUcrawWgAPcmABhwSST4LKkIVKeKDgqsXf8jd+yWtdXR9RPyKk7AXav26q+BSWqGXMpMmJ
-	h4I8vLqhE3Jukp1IUybQJmp/O7pUKtGbjR1TUYsTPTruvYtpnuNREB9hP173UKB4frhiR6d8Tqe
-	cgI/vC82o4pN4NloFvvLSdZFm7khX49qIsDLrWo41rCFvXk8dDsEaCXalIo6TQJluWeoYUI=
-X-Google-Smtp-Source: AGHT+IHLsU9tv3YRIwmvHOcU1vW70gGI1NXC5VhNjyd6s34jrQf3fJpxo0TRChZUDx2i0DZeJYCiAQ==
-X-Received: by 2002:a5d:5385:0:b0:3a3:5e77:436a with SMTP id ffacd0b85a97d-3a35e774456mr6839479f8f.15.1747993855484;
-        Fri, 23 May 2025 02:50:55 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d204sm26289437f8f.10.2025.05.23.02.50.53
+        bh=be71ceagNF+QtjuGSl+mrmGNCahExrQ6GiVnfl6YdcM=;
+        b=hKcR/IAEPokudH9gsc5NzOn31PPe8Ezk6OiSfsorm5yaHAqfbYN/aiv2W5oYJaFUUB
+         K8SEgCd4KWa6eLDs28vrjtEDy1KN63TG/9GCloL4C/KNdKq784WD6pnic/e3X1xTMIAs
+         klfKBQmLkpAaqA5GdV02sC9C/N1oCd5FePt73TG0pwhsyiZZV25cOvxpKA+duapvefEQ
+         yJ5cuQ7tWzEWD3ZLDNpxsj/7sZUgbDW0jwa+iCExPAzHjw3gsHatTzdpu+aV4Rgcjbmg
+         A37HNLeydK1C4rz4NPx72tcmdVaYayZ7f31juZC9wL8ICXFJGNmJ4ohXkmc2r+YgtQjj
+         dONA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7nXGRV+6JgX3wXomjpBbdijYWn0qnpI8u2HM7UInEnHLW+JtfAeMJkyQ0Vm1vvVJjpslbAGFAhyI5@vger.kernel.org, AJvYcCUWi7WwpwdMMaMP1vhfY8qevIuK9YDBBtKTng3eMK7RCsIRc5ToMkIgmV4uZJWRqB+kPpqoY5xeoaI+wLT3Htu/kjU=@vger.kernel.org, AJvYcCVYl3VBxzIO2Fl4sL0MwcVvBgFyZsnaG9K3y79iBW8uiQ2bSxAGRtzJl3Uc9E+hhyGNOy5uG5gFXfmFTDvZ@vger.kernel.org, AJvYcCVolEqYEf9Rn/38HtX8HHmEMUfbWls6RRKxq+5XBLx8eeKSpvSp86h4Wu3dZLKTiPuuOmLvnMHAP13W@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtMVW9M9l7N6CsOOzuxN6o+AFqBlrDw8YSYYg9ti5KjcREGHmz
+	LOFy+8ATOD566OVBY/U+M6j+uDQKUr67uov0Y7337TWhh6HPXoYWGUxeRSVgBVlH
+X-Gm-Gg: ASbGncv3VtdQhxv4E9pghV+iueXsKupvgyQIlu4gAhXktzaLL462gV1Zqyv5nMdPx7/
+	vHrtBglWgGAql8u9AkofjD7gU+ZeUQrMo7s/AtVYyij8JYx82gqVXR9QH+lOdDLI06huDV28vnv
+	KuPlbFwacHl9PYTknqEtDXgWV562ieF6LQsEP/6p89PUy7CxVbF56DRrJarcBNoSLp11taXDthx
+	Kt+/4Oxv94KlNsid/g7/vH9G77HMpbnNnvtZIo2iXyZElhifbIOjhSCyFVgKFlHm3bisGz+932b
+	0I+qveo/jUiV5HhgvVlBVGwLDMr2qzf34KViPDEQit9/6amU2uQqUgLX9jvWlLgUdgV0PVaWBwr
+	PuHOb7sg7RJqXbg==
+X-Google-Smtp-Source: AGHT+IGNN+NmOzeuLoaDTrcL4ZlBnopmw0Efjgusr9ZwAW3Z57vueE1Uj6+pUsMau5ggdIXh2nxrGg==
+X-Received: by 2002:a05:6122:6170:b0:516:18cd:c1fc with SMTP id 71dfb90a1353d-52dbcddbca1mr20823983e0c.8.1747994452165;
+        Fri, 23 May 2025 03:00:52 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dbab4e7b9sm13065021e0c.37.2025.05.23.03.00.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 02:50:54 -0700 (PDT)
-Message-ID: <1adc727c-ff4e-454f-9424-453d49bf610a@linaro.org>
-Date: Fri, 23 May 2025 11:50:52 +0200
+        Fri, 23 May 2025 03:00:51 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4dfa0f6127dso3013161137.1;
+        Fri, 23 May 2025 03:00:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUlpXQS38Q2x5TQg4aWx9+8rminT6eqMzQH8/3GapYGzInCWv62eS+6hSpUS0MvnVnvRqc0YGNh3SGm26+@vger.kernel.org, AJvYcCXaJU6x6IBQ5iguuRnl4OwmbyyEBtJSv1iB/jQhYIuZcogmbb2wetTf07X8Q3vLDqMLN+uY50PhiohvfhqEp9A7Hm4=@vger.kernel.org, AJvYcCXcqoERp83fCzhT8vhvtYEaHjiZ0nJPieEVqjJWDl6ouw4b435UaqxfPJVpi251Dy3xu45XRHXEjns+@vger.kernel.org, AJvYcCXnbfVh3jGjtUg5Ex9fmgnDA90MjY38+cLjWbvMLLlKD69xbW+T59f3N5TTaaoZZZjbF3IFzC1VyoI+@vger.kernel.org
+X-Received: by 2002:a05:6102:b06:b0:4e2:aafe:1bb7 with SMTP id
+ ada2fe7eead31-4e2aafe1e8dmr11622236137.15.1747994450845; Fri, 23 May 2025
+ 03:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
- Srinivas Kandagatla <srini@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
- <aDAbxAnCN1lGGcGH@linaro.org> <aDAdax7xdeDsvQHB@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <aDAdax7xdeDsvQHB@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com> <20250515141828.43444-3-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250515141828.43444-3-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 May 2025 12:00:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXv_1nXmRkTfB9i95wjSXaN2XjQG2f55ZNV6axeNUmpzg@mail.gmail.com>
+X-Gm-Features: AX0GCFvE2RVBXQ4rbV6YxeljOJyWA7MZNsF1UH9gKR8AoFSUJYEsR3Rcr8PYcws
+Message-ID: <CAMuHMdXv_1nXmRkTfB9i95wjSXaN2XjQG2f55ZNV6axeNUmpzg@mail.gmail.com>
+Subject: Re: [PATCH v9 02/10] dt-bindings: clock: Add cpg for the Renesas
+ RZ/T2H SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 23/05/2025 09:02, Abel Vesa wrote:
->>>  static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
->>> -		struct dpu_plane_state *pstate, const struct msm_format *format)
->>> +				      struct dpu_plane_state *pstate,
->>> +				      const struct msm_format *format,
->>> +				      const struct dpu_mdss_version *mdss_ver)
->>>  {
->>>  	struct dpu_hw_mixer *lm = mixer->hw_lm;
->>>  	uint32_t blend_op;
->>> -	uint32_t fg_alpha, bg_alpha;
->>> +	uint32_t fg_alpha, bg_alpha, max_alpha;
->>>  
->>>  	fg_alpha = pstate->base.alpha >> 8;
->>
->> For the 10-bit alpha, you need to shift here by 5 instead of 8.
-> 
-> Typo. "6 instead of 8".
-> 
-Thanks, this indeed fixes the darkness!
+On Thu, 15 May 2025 at 16:18, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> ---
+> Changes v8->v9:
+>   - keep clock names in generic section because T2H is a subset
+>   - removed R9A09G077_CLK_BSC, to only keep R9A09G077_CLK_CKIO
+>   - removed R9A09G077_MSTP* macros and module clocks definitions
 
-Best regards,
-Krzysztof
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in a branch shared by renesas-clk for v6.17 and
+renesas-devel for v6.17.
+
+
+> Changes v7->v8:
+>   - extra parenthesis
+>   - added loco
+>   - renesas-cpg-mssr.h: removed unused clocks, added a macro for mstp
+> Changes v6->v7:
+>   - Add description for reg property
+> Changes v5->v6:
+>   - Set clock minItem constraint
+>   - Moved additionalProperties after 'allOf' section
+> Changes v4->v5:
+>   - Set reg minItems and maxItems defaults at top level
+> Changes v3->v4:
+>   - Handle maxItems and clocks names properly in schema.
+> ---
+>  .../bindings/clock/renesas,cpg-mssr.yaml      | 46 ++++++++++++++-----
+>  .../clock/renesas,r9a09g077-cpg-mssr.h        | 28 +++++++++++
+>  2 files changed, 63 insertions(+), 11 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> index 77ce3615c65a..708ab6bd7d44 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -52,9 +52,15 @@ properties:
+>        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+>        - renesas,r8a779g0-cpg-mssr # R-Car V4H
+>        - renesas,r8a779h0-cpg-mssr # R-Car V4M
+> +      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+>
+>    reg:
+> -    maxItems: 1
+> +    minItems: 1
+> +    items:
+> +      - description: base address of register block 0
+> +      - description: base address of register block 1
+> +    description: base addresses of clock controller. Some controllers
+> +      (like r9a09g077) use two blocks instead of a single one.
+>
+>    clocks:
+>      minItems: 1
+> @@ -92,16 +98,6 @@ properties:
+>        the datasheet.
+>      const: 1
+>
+> -if:
+> -  not:
+> -    properties:
+> -      compatible:
+> -        items:
+> -          enum:
+> -            - renesas,r7s9210-cpg-mssr
+> -then:
+> -  required:
+> -    - '#reset-cells'
+>
+>  required:
+>    - compatible
+> @@ -111,6 +107,34 @@ required:
+>    - '#clock-cells'
+>    - '#power-domain-cells'
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-cpg-mssr
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: extal
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            items:
+> +              enum:
+> +                - renesas,r7s9210-cpg-mssr
+> +    then:
+> +      required:
+> +        - '#reset-cells'
+> +
+>  additionalProperties: false
+>
+>  examples:
+> diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> new file mode 100644
+> index 000000000000..29155fb0401e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+> +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* R9A09G077 CPG Core Clocks */
+> +#define R9A09G077_CLK_CA55C0           0
+> +#define R9A09G077_CLK_CA55C1           1
+> +#define R9A09G077_CLK_CA55C2           2
+> +#define R9A09G077_CLK_CA55C3           3
+> +#define R9A09G077_CLK_CA55S            4
+> +#define R9A09G077_CLK_CR52_CPU0                5
+> +#define R9A09G077_CLK_CR52_CPU1                6
+> +#define R9A09G077_CLK_CKIO             7
+> +#define R9A09G077_CLK_PCLKAH           8
+> +#define R9A09G077_CLK_PCLKAM           9
+> +#define R9A09G077_CLK_PCLKAL           10
+> +#define R9A09G077_CLK_PCLKGPTL         11
+> +#define R9A09G077_CLK_PCLKH            12
+> +#define R9A09G077_CLK_PCLKM            13
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+> --
+> 2.43.0
+>
+
+
+--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
