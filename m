@@ -1,131 +1,226 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEC1191F6D
-	for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 11:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8DD5695;
+	Fri, 23 May 2025 12:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748000353; cv=none; b=GG/3jCV+u2nlM2jWyvqW9pqZS9lS1+eHFNMn4cF4GVOKHjXMv1bbMt511UkXQ6IsNNbUlmy0UXulqwNvV+TT4EBRgNK2Fog5CFxgGVC07FF1Gp0eqbKozSokhZTDwyPoo67M0I8sP0YWsWXmDCkU478H0fM7v/CweisbO4sn+kU=
+	t=1748003474; cv=none; b=Ek+dEnA4nP5GA7BDO9LkUdN3gB64nUktlA60l9fxpLNKotAzRxsvQH10uPUQzoLfGOAIhgsMAfHSnagezWOQE5jpUIGq+BTG4z85NV6cS5w/EwDShAGRVHmc5fJNrifhc01Gj7OdPD0tZn4e+SPfNkZIBXUkHNoGkTAfIrOfBr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748000353; c=relaxed/simple;
-	bh=4c6XCcGeGI3Iz42ETVD1kWDpnOaknLRaew23lcoOgaw=;
+	s=arc-20240116; t=1748003474; c=relaxed/simple;
+	bh=6RL7KQIOgJBaxllw15lEHWUqm8MNQgnkMaFeUS0xE7A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZcwc2rIL4zIk+CCBiCaa47To0ciKp60rzDu2XZ3rpmKEWGS3tTla5jWqGfg7SGwfaxw6ZsPPyl/T8qs7CNkIT8Qkams5wta3Wu5Kgi/3qXzr8gcyWbfSlHWQ+EgSM1jeVR9ZHpt/5PRDOdrBkratVw3BQmKQo9RnkWpkkirRA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=iqt2JCiD; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	 To:Cc:Content-Type; b=Emix2L4JqQru+p9lr5nGglvNSDIEXRfn5WHpGSh8BOvq0dxXns6IyP9SJ7vJ9U0/Eel4uPsm8owGAIGM0EEh66Ls0aqt/NZW6D+v/wDyTSG4FTYyiacvVTaNOMHXt17iR+AlAZbIFdBvCekN2LG4pbBJwLR1UHC/CPt9wlvXmaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LveV0kGh; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="iqt2JCiD"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-328114b26e1so47290861fa.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 04:39:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LveV0kGh"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-602039559d8so9450772a12.1;
+        Fri, 23 May 2025 05:31:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748000349; x=1748605149; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748003471; x=1748608271; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4c6XCcGeGI3Iz42ETVD1kWDpnOaknLRaew23lcoOgaw=;
-        b=iqt2JCiD0yZhix7cKkZGkGIt7KPbjUPQa7M/o+1OAdMDz6hgpQDqt6kjx8vHb+FCfG
-         l4m3y/plCGg6oIf20G6NiVN2/fWdF4BT6ntRTygyc2C0ktOtySZfDwI1Kk6p7gLJrlxt
-         Yk30ZY6gW6FAGy/r9gkyXjRhq0Xsc9yg7cWL8IgTKfhNA/QpXd6nEAo1OVWyRFKFXPCU
-         NknyrlzTj3sa8l0bieqOHtvXypLPdyCUP/6HM7fpvCq7K3zNcjHwZp32XAAUhyfTO7FL
-         r88tuv8JSv29aPPMOtvj05DOfW/pGRfxitUIP4IMQF0RSXqYHe/WhxZA6PY/re6gSEep
-         7pBQ==
+        bh=gZePJaaViCvSD05MKtWm1uzZsAobi9HR7bhRGFEkvks=;
+        b=LveV0kGhYDF9kbKi+JE7ELI7ktb1bN9OCOIQj1jer2N4NOjRS5tXQRCW1XNgjgVhpt
+         PNox1uBj/lBUn4b8ghW/h9soz1/Jxo++3CaQtHNmDMBXjHYZPDOgbsLXWRI2aAKOYXwg
+         QvE6wx3ZuDDZxuuBYA6AJwC6QUl7kik/XUISarspwzfCGw+VlaCTF7wXm0LcS+6qi/Sv
+         nw9fru6mNHxwrQ12corZvoDkjOxXBjDeqKyjUgj3IDfaPQqV7mLEQJgLj//0NKyUvh3S
+         kv/MK1c3dOIvto/f1Cf58gmiWFRQ1U3BwVJA3MgHp5G6uEIuj7d+18tk1zS0/TJkRXcG
+         ho8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748000349; x=1748605149;
+        d=1e100.net; s=20230601; t=1748003471; x=1748608271;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4c6XCcGeGI3Iz42ETVD1kWDpnOaknLRaew23lcoOgaw=;
-        b=OuHvoS2G4fu2TP5b4aSyWECAVUPuE2iUSiR2oN8oMEe9WR0toKJKcxNnfCnfEJ8eT6
-         AlXS0NbCFsIu3Ld0awYLwue6y6i2h4ryu2fQNavGVdYp/8ipyhBL+rXxG6rwtxoiBRrb
-         TB5EKeiJtp+kVAQrh3SPkpUz28udmNOph21m59szJd37kNuu66QnNrJ17z0dYy12r0F0
-         kJwQxS+1bzrcbMdnYXxMGYPA9Zdchtjzfs2O3Xy40FoEHUjJkzTlxz/USvyPzeVkW1Z7
-         s8YBAhz+wf1fxQqtij0vU6FdBGhGbEHXS1T3PGVuCW+s8TKlHJziHum7m6GJaM+Hh4NY
-         9n+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnLkxbcQvIB+E0y2Fvv0Z4+ZqxKSVTLz8djAH2OGE0Tm3zoymRYSSU0A+axgpVWdRxfle2Nj24vyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaDPViejQYnpqkr0D7VvbEMeQE+rOArLCMCn0f+A8RpuCLmdQG
-	0k9HjVax0cXGp+KE8stDWyov6gJ6IjvFvkd2R1ZE1Z63ZM60OCulrxB1O4NSru6MoZkwHBBXN55
-	1/Cq2Qu5P96bwLyFdlk7OR2blADCo46ym2gfJl3IWHw==
-X-Gm-Gg: ASbGnct+Ko1ehHtXncRfGpMpGzcWzx6xTdIMuPAeNdeDrvSAQ2ShtmkrMGDVkLE0fQB
-	iAYgJzuvuvLv4Jp3NSeLdJQ1FO1383JnhX5HdlDnmUO5QAou6KmT0UCnq2Y2J/PkJzlJ+8rSc1K
-	+IDJ7cSRL37DVFB+XBEM1etIdwyFZ8E/9G
-X-Google-Smtp-Source: AGHT+IF2LOIg4O1xHRyi86CCrwvgJ2OS7m73hlziSd4ebNFqUGMO5r7pRVz549vYj95zmX/EW8KpI62SWz8WryNi6o8=
-X-Received: by 2002:a05:651c:304f:b0:30b:b956:53e5 with SMTP id
- 38308e7fff4ca-328096b7830mr78162091fa.12.1748000349503; Fri, 23 May 2025
- 04:39:09 -0700 (PDT)
+        bh=gZePJaaViCvSD05MKtWm1uzZsAobi9HR7bhRGFEkvks=;
+        b=xPk7UuC42cazrWMeNzQB/zCr7T/R6Cm6p89yEfEjB3WJZcP71vrE0ud8nGCJyDc+YW
+         ZevH43V9wi4a6urbgN/Wc0UEwaxV25zLN2sqRKYsEuNJEnxi3aUhun3Lp04GjESXUUrx
+         e6xSpWcXXhKecxibCo9uKv8ayjuK5yWQfCyWPeN9VuXHqJtURDJ92P5Q7VScJQyACkZa
+         IBXulnxPRGzvztRktE7t7p4p/cuOrEIp9yEkaxIrFxarelXHhHdpDp3TgyHwD7xVdaLu
+         ZnNhgMOq1vezpgrfDd/P0Gd7Fvu9JbtsyULaxzEea6gjV8lmaXLRdkT0fJtmRQ8bBkHQ
+         HCcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUHxcXwGFMMflUTeHCUngSHw02RBtGyAFKd92T08hOebB5+Nu5qY2Ux0Nllni6O2woQQ1Gi2u2eRrd@vger.kernel.org, AJvYcCXi2grKaoRJAuM4EwwE9oxi5L3Iryu3GEj4qn684AGCY2xmNUKl75Bh/Sk62rIivnhVW/oR4G5xRf/25bbG@vger.kernel.org, AJvYcCXye4jqRkw81zsgMwqBOGPdzb4sj7gKr494wuoGYbhcLyIy73SL+DYu+YJVS67bXvy/4z+hHezLXetB@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwp+RFvu+gBXfuAWR5jnnZYj9mYcU89wOAb06MyXbQG26rItZB
+	wqaYggei+y0B4M1uug+BlTEbsODUlH1qY3HESLcrJb1k0+PVGtgSnK/TJadFoFFmDm7a8dLE+Ug
+	TXNZ1EScHf1l0/l33AosqAHJ9+EPDHGY=
+X-Gm-Gg: ASbGnctHnp1ThRsY1AeJrhqOo4EarX2Bsv3Cr5/D4WNBYCdoFVcTYev5Cy86oYbN4gS
+	Gu7uXDgPfbszYL9tQDAE68XdgRFeV3HiZPFmENjxAyBE7Six5BQxyWVyFGZaQ59YRBwHWa8teMC
+	6BLDQodGnB6LfHUXSntAPHkmotMtU3V/zo
+X-Google-Smtp-Source: AGHT+IGWlJUkoqEM1lKufCkJoGQC1KPn5qxbYU6vzVhsAOysE3E9HU2ESod2o4cWjRIgZJsMEdsYZE4ddIeAwpI8ivY=
+X-Received: by 2002:a17:907:d05:b0:ad5:1c28:3c4b with SMTP id
+ a640c23a62f3a-ad536f29859mr2451295366b.52.1748003470843; Fri, 23 May 2025
+ 05:31:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-14-apatel@ventanamicro.com> <aCGaKXOOWyM4JQMg@smile.fi.intel.com>
- <CAK9=C2U1rzSa42qMNqxfTtjAC5RiJrhwg_32_B86nT2+xJ4Qow@mail.gmail.com> <aC3e-IXYb68RoIyu@smile.fi.intel.com>
-In-Reply-To: <aC3e-IXYb68RoIyu@smile.fi.intel.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 23 May 2025 17:08:57 +0530
-X-Gm-Features: AX0GCFuikFsTk4gG8kf6GKZUp9UJZvUrFZuYjcduLBrZd3gwT8GH2kdzFPFBAPw
-Message-ID: <CAK9=C2WMxdmGEY=4BSeR_20JXoLkYK-t55qd0K7w=qOqnAkkOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/23] irqchip: Add driver for the RPMI system MSI
- service group
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20250523104552.32742-1-ziyao@disroot.org> <20250523104552.32742-2-ziyao@disroot.org>
+In-Reply-To: <20250523104552.32742-2-ziyao@disroot.org>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Fri, 23 May 2025 20:30:57 +0800
+X-Gm-Features: AX0GCFuUC-pGEjSv1O0q4b7QC2Sp4Bks5MdQhMyjc7562FwoYKnYCHzHRGmQXp0
+Message-ID: <CAMpQs4JRy+Q2D5B9cOLyuD=8EcWNqqyhJcm+X5wiqTgjy5cikA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Document Loongson 2K0300 clock controller
+To: Yao Zi <ziyao@disroot.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>, 
+	Kexy Biscuit <kexybiscuit@aosc.io>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 7:41=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, May 23, 2025 at 6:46=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
 >
-> On Wed, May 21, 2025 at 05:07:05PM +0530, Anup Patel wrote:
-> > On Mon, May 12, 2025 at 12:20=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Sun, May 11, 2025 at 07:09:29PM +0530, Anup Patel wrote:
+> Document the clock controller shipped in Loongson 2K0300 SoC, which
+> generates various clock signals for SoC peripherals.
 >
-> ...
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  .../bindings/clock/loongson,ls2k0300-clk.yaml | 52 ++++++++++++++++++
+>  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k=
+0300-clk.yaml
+
+I don't think a new binding file for 2K0300 is needed. Adding
+compatible entries to loongson,ls2k-clk.yaml would be more appropriate
+as they are almost all similar.
+
+>  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
 >
-> > > > +#include <linux/bitfield.h>
-> > > > +#include <linux/bitops.h>
-> > > > +#include <linux/cpu.h>
-> > > > +#include <linux/interrupt.h>
-> > > > +#include <linux/irqchip.h>
-> > > > +#include <linux/mailbox_client.h>
-> > > > +#include <linux/mailbox/riscv-rpmi-message.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/msi.h>
-> > > > +#include <linux/of_irq.h>
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/printk.h>
-> > > > +#include <linux/smp.h>
-> > >
-> > > + types.h
-> > >
-> > > Actually this one is most clean, the rest of the patches where the ne=
-w code
-> > > is introduced has semi-random list of the inclusions, please, follow =
-the IWYU
-> > > principle.
-> >
-> > Sure, I will simplify the #includes
+> diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k0300-cl=
+k.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k0300-clk.yaml
+> new file mode 100644
+> index 000000000000..d96b9d7cb7c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k0300-clk.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/loongson,ls2k0300-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Loongson-2K0300 SoC Clock Controller
+> +
+> +maintainers:
+> +  - Yao Zi <ziyao@disroot.org>
+> +
+> +description: |
+> +  The Loongson 2K0300 clock controller generates various clocks for SoC
+> +  peripherals. See include/dt-bindings/clock/loongson,ls2k0300-clk.h for
+> +  valid clock IDs.
+> +
+> +properties:
+> +  compatible:
+> +    const: loongson,ls2k0300-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: External 120MHz reference clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref_120m
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clk: clock-controller@16000400 {
+> +        compatible =3D "loongson,ls2k0300-clk";
+> +        reg =3D <0x16000400 0x100>;
+> +        clocks =3D <&ref_120m>;
+> +        clock-names =3D "ref_120m";
+> +        #clock-cells =3D <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/include/=
+dt-bindings/clock/loongson,ls2k0300-clk.h
+> new file mode 100644
+> index 000000000000..5e8f7b2f33f2
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> @@ -0,0 +1,54 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> + */
+> +#ifndef _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> +#define _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> +
+> +/* Derivied from REFCLK */
+> +#define LS2K0300_CLK_STABLE                    0
+> +#define LS2K0300_PLL_NODE                      1
+> +#define LS2K0300_PLL_DDR                       2
+> +#define LS2K0300_PLL_PIX                       3
+> +#define LS2K0300_CLK_THSENS                    4
+> +
+> +/* Derived from PLL_NODE */
+> +#define LS2K0300_CLK_NODE_DIV                  5
+> +#define LS2K0300_CLK_NODE_PLL_GATE             6
+> +#define LS2K0300_CLK_NODE_SCALE                        7
+> +#define LS2K0300_CLK_NODE_GATE                 8
+> +#define LS2K0300_CLK_GMAC_DIV                  9
+> +#define LS2K0300_CLK_GMAC_GATE                 10
+> +#define LS2K0300_CLK_I2S_DIV                   11
+> +#define LS2K0300_CLK_I2S_SCALE                 12
+> +#define LS2K0300_CLK_I2S_GATE                  13
+> +
+> +/* Derived from PLL_DDR */
+> +#define LS2K0300_CLK_DDR_DIV                   14
+> +#define LS2K0300_CLK_DDR_GATE                  15
+> +#define LS2K0300_CLK_NET_DIV                   16
+> +#define LS2K0300_CLK_NET_GATE                  17
+> +#define LS2K0300_CLK_DEV_DIV                   18
+> +#define LS2K0300_CLK_DEV_GATE                  19
+> +
+> +/* Derived from PLL_PIX */
+> +#define LS2K0300_CLK_PIX_DIV                   20
+> +#define LS2K0300_CLK_PIX_PLL_GATE              21
+> +#define LS2K0300_CLK_PIX_SCALE                 22
+> +#define LS2K0300_CLK_PIX_GATE                  23
+> +#define LS2K0300_CLK_GMACBP_DIV                        24
+> +#define LS2K0300_CLK_GMACBP_GATE               25
+> +
+> +/* Derived from CLK_DEV */
+> +#define LS2K0300_CLK_USB_SCALE                 26
+> +#define LS2K0300_CLK_USB_GATE                  27
+> +#define LS2K0300_CLK_APB_SCALE                 28
+> +#define LS2K0300_CLK_APB_GATE                  29
+> +#define LS2K0300_CLK_BOOT_SCALE                        30
+> +#define LS2K0300_CLK_BOOT_GATE                 31
+> +#define LS2K0300_CLK_SDIO_SCALE                        32
+> +#define LS2K0300_CLK_SDIO_GATE                 33
+> +
+> +#define LS2K0300_CLK_GMAC_IN                   34
+> +
+> +#endif // _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> --
+> 2.49.0
 >
-> Oh, IWYU (Include What You Use) is not about simplification. It's about
-> comprehension. It usually means that *more* headers need to be included
-> and *only some* of the existing will be dropped.
 >
 
-Okay, I will update accordingly.
-
-Regards,
-Anup
+--=20
+Thanks.
+Binbin
