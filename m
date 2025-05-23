@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C0B7083A;
-	Fri, 23 May 2025 09:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F40223DC3;
+	Fri, 23 May 2025 09:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991636; cv=none; b=orGXkWFITbaJ+Td7+IqbJvMqCcNJG/EyPdCkkyM/EPX/LSgho79p5f501XnyOJNpbwgUoWL3YV0wGuEDQATDDRQlHbEvHzX1byNuByupgO8BvQkbQhJyuaE4/w+NULkMMibckauCHoO8iXJeg9CnyzyaNyED7AsKpzmAaNgq9kk=
+	t=1747991716; cv=none; b=fyxp7UgyGf2DpP72958GjLof4l3R8bIY/vBJJH+XAUQA8FfVVY6pG+A3VYNnm3tRWEcNnVQ2d2Sab5zuUbS7kO01csRWopgzsDQBU7WhjBAqb3ybboQdHz0g0DO3Z+bL5Gqo+QJJKieVaSHMilGMTyla37glYYTsPvmVXWGl/DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991636; c=relaxed/simple;
-	bh=quRZiAtHBMyCVY3xX8NmyD/m/HFZt5z8CfWeUS1wbE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1ijh2si9EtYrGmG07BuhhNNxb8wd9n055husWyr4rZrlgPU1vp7xI65+tGRaj8//NOgz543uz/5mfp0ouDaFwkJfRkI8tiFV9e65hF5DM7J1wfTF8+L5tjmN/El+uZ2ayRU6fJum2ENqKdQUCFbUkvtDc8oivER9nllANrsJvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE/4aLJm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747991716; c=relaxed/simple;
+	bh=Vsf6Vb/iI3sYwwJ36Kk/m4GDx5cX9rcVJzwepgxciQw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YiDPOmq8ZhJ1lJ1xNRJvdTcb0lJgxAuER4dqJP8IYdYpfCTY8Mg72vITfQ1TSLgftdexPw40+WUUvkJktV5qafN9S3xaTDMn2gcslIzXkcXlyKrBKnUVMBdiIBb3WBdPqCvlHVg99szJESf41Rx/gwdaHqRhlD+cq8Df5Mvuevs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJREXTih; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE/4aLJm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFF6C4CEEB;
-	Fri, 23 May 2025 09:13:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJREXTih"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FCDCC4CEE9;
+	Fri, 23 May 2025 09:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991635;
-	bh=quRZiAtHBMyCVY3xX8NmyD/m/HFZt5z8CfWeUS1wbE0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OE/4aLJmDH1vo9ieZwCezrgUluY9XcSsfBPeriaNP4s0OhdyRR/lzOL1Ugz3vx3VM
-	 U8e353inNiCWiliDeMD/FspDDQQNDl1zDqfnWyjCfr4T0yPQG7uKY/XHIrNshoB2/K
-	 klqcmx9TaNAo+em4GoeXd/wXT/7CVb5mJjSTDR7xL+iwzWUJIARr59f7xE+KoH9718
-	 pnwukS7qpgS0wNMeNb8Rmn8ZnipIfVv0q+3C5k702asR9U/xN02kAYZYYK/bhSymdz
-	 xYG0YDwYVErERxZWqKLYOdRNe78uxZyTniqwGU1Im7G8S05/O3/TgZgvAUwgxW6pOo
-	 I+XlHxnueIBlQ==
-Message-ID: <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Date: Fri, 23 May 2025 11:13:50 +0200
+	s=k20201202; t=1747991716;
+	bh=Vsf6Vb/iI3sYwwJ36Kk/m4GDx5cX9rcVJzwepgxciQw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=TJREXTihMETV0CZ4nxkx1yjtfBd547AcvuDFiAAEnB/rYQC+QK3t4GmfYfYbZhD0H
+	 nN/NaYTWEKnvIG/ciwlMyHDv0f3NpaaO140XSs/eOy+cRWpzJoTK0WdfhvoQN4UYtF
+	 rgFQyVev5Nowkuaq2WMEFLbl0kC/2bffHIezQKGKUD2KOmisBpkLr3NKT0C4a6aPyf
+	 p4rPkQFI2sCzrfupVwXiSsOSLcCiRpVagmlgQa+QakvFYrqwbL2sjFQMtysfS6GpBo
+	 7AZsmZhMBudNZCRODqMteXOxPbiIgeelztUoM3oHgosuoLie08dr44G40BJV9ai+5j
+	 TjUrTlhLsR8bQ==
+Message-ID: <7d8065ee-f8d1-4453-858b-485f7a5216de@kernel.org>
+Date: Fri, 23 May 2025 11:15:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clock: eswin: Add eic7700 clock driver
+Subject: Re: [PATCH 2/2] clock: eswin: Add eic7700 clock driver
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
  huangyifeng@eswincomputing.com
-References: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
- <20250523090928.1940-1-dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+References: <20250514002233.187-1-dongxuyang@eswincomputing.com>
+ <20250514002626.348-1-dongxuyang@eswincomputing.com>
+ <87874bd2-2fcb-42b3-9e92-cccaa4eaa148@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -89,22 +90,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250523090928.1940-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <87874bd2-2fcb-42b3-9e92-cccaa4eaa148@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/05/2025 11:09, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 16/05/2025 15:23, Krzysztof Kozlowski wrote:
+> On 14/05/2025 02:26, dongxuyang@eswincomputing.com wrote:
+>>> +static int eswin_cpu_clk_init(struct platform_device *pdev)
+>> +{
+>> +	struct clk *cpu_clk;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	u32 default_freq;
+>> +	int ret = 0;
+>> +	int numa_id;
+>> +	char name[128] = { 0 };
+>> +
+>> +	ret = of_property_read_u32(np, "cpu-default-frequency", &default_freq);
 > 
-> This driver depends on the CCF framework implementation.
->   Based on this driver, other modules in the SoC can use the APIs
->   provided by CCF to perform clock-related operations.
->   The driver supports eic7700 series chips.
-> 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
-NAK, stop adding fake tags. How did you even invent such email?
+> NAK, undocumented ABI.
+
+I NAKed your patch and this you translated as reviewed? This is
+inappropriate. You just bypass comments and force push your code onto us.
+
 
 Best regards,
 Krzysztof
