@@ -1,153 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7C2EC2;
-	Fri, 23 May 2025 16:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B65717BA3
+	for <linux-clk@vger.kernel.org>; Sat, 24 May 2025 01:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748018118; cv=none; b=bngUYMQUahhYvUsokIt8uFdybrmMKzpyMegqzkjY1h1eVWFAH8SNTSC8u6iCnjSLAo/SsUlYdm17o1IghutHwGAF4V2zJfNg1PmWQD0pwS6OTne6UjB89ccvM+ku59fLt0y69xUvostSveLmxz5oJAC7Maee+I2d4OE/+pcMjDc=
+	t=1748049957; cv=none; b=UFYKYn5n2GJ0WbnJ5weRuTfRQhUBzldRyantphliM8HGg4xLRDWoFdy8o0OrYeoX9YNc7RT92s2FDQqwTrxzODixLYWXdB0chCRXXHL+/Zs0dCCQtEAGsQiZQuL1+BofUYrqSZXLRRCtFm36DdVfUnNVFLzlpoyAxivFsHwM8RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748018118; c=relaxed/simple;
-	bh=+ql4+wMFVHmoFncJ5POu6pIQVoJkYP5u9JwCC9Ndcww=;
+	s=arc-20240116; t=1748049957; c=relaxed/simple;
+	bh=l1ZDZS/SgRZKCVPpw+35tAdRnJSUkZtdbbKhB270Ijw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OC7bPcK3kvSt2EqRUusB2NlVMMlsk6oSOSdtW+IYNJB9jr4Y76Tglr/8nCsU68bRSUuLAwPghlEcVJLpSt5Hhl1u2QCthFZFgFMQpK069cOE+t3xCaYkjQrTMAmih/iP7WU+kqlpmKRdnCT9Q0AHlsB5YUUuyveN4GqAzib5HAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tu5S5cG2; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUXPu9Mfq+lPqPYwwxWpTmsFLZJc2ldBmur4zpIYRAiihM7MboxMzf5AqIT4kVrThqyCZzqwoyxsnwSb3jK3RoqKrZzoZ7R3E3+98tXhyHvIUCa01HVZEANRWrFnCFklwwsGN01fVyR5IAJjEHnRA81nLtbPBe3GEluQK81An9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=zNoI9kDz; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tu5S5cG2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748018117; x=1779554117;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=+ql4+wMFVHmoFncJ5POu6pIQVoJkYP5u9JwCC9Ndcww=;
-  b=Tu5S5cG2HTytGRNf+zmIcY1FRC7JG3xPuEKL+lmWcCLuJfN/WK3OZ5PM
-   KDDhy1RK3+WBtvXwMPe3/EnyEtk3cX0FXcWty4LFLgu13gbdF1wvcS22j
-   8LQ8VPfifqPPJAY1tPILw/7fQFvZO9IYwlV3qYhQekZ0ZT2bSuQVtBBbb
-   INsQbOnejHTc9pzravIicBATw8XZPydZ72MplWpTzFshYaz211CBeF03b
-   WdQaOdyOTHltjPUMofbdMVJ9hXtJ0m9KjUdtqsoUsozEfY0uwQzheFkoA
-   GviNK4rxU5SmhiT3bqbnI+v2vBm27nRc8o0lluyhm7Zi6/q5blUeyT71t
-   w==;
-X-CSE-ConnectionGUID: cd65I6GASP+zH9uoOjYeXQ==
-X-CSE-MsgGUID: KOj9zv1NTSSttWc+/0pxiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49334835"
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="49334835"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 09:35:15 -0700
-X-CSE-ConnectionGUID: 1kq2cXoyS26GB4c60n4EDA==
-X-CSE-MsgGUID: 8eOGJ7T/QkyBOIEo4kD2ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="141706401"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 09:35:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uIVMP-000000006UP-2OH6;
-	Fri, 23 May 2025 19:35:05 +0300
-Date: Fri, 23 May 2025 19:35:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Rahul Pathak <rpathak@ventanamicro.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="zNoI9kDz"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74019695377so340204b3a.3
+        for <linux-clk@vger.kernel.org>; Fri, 23 May 2025 18:25:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1748049955; x=1748654755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gsJDbHj9dierw4BMguGhVwoJuBKXsLDgRKWknpTgP/w=;
+        b=zNoI9kDz9zZj0CWQUwjYqIo8oyli45+NrwFolMv8e44TFIzdWQsWPrvtWRFvflHLOC
+         IPMIRkAqZpw9iF0yCPeH3YifjnyKCTFVNwBDMS4vEDl+H2wqhl5zPn1Eeko0Ot+pPW7X
+         Gnz8PB4HEq46BxVoID3khIgmA4+VNpiuhCQTl3Xtd6jBrHxAh/DUvOLQ8OzstcACj8/X
+         hafRu7bHY+lPFOH9wNGCMVrbmY9IsLOcuWHYwmsCZJsqOqTTnPvNX/QZ3Nq/qqZH1dl5
+         b513lwx3IAAVg+F0hrGm3zUfTSzX3RJvVhmN2LkDUE+j5vxGmjzmZO92+GeA3SpSQMtg
+         q65A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748049955; x=1748654755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gsJDbHj9dierw4BMguGhVwoJuBKXsLDgRKWknpTgP/w=;
+        b=ZVSWmQLBIsKncSjxptqzSz+g652mhbhh64FoQHH1MfqGJqA5KwjcWlMFTZ0pldI66E
+         94j8hnV/hyB5b/ja/0+yYOJVQUR0JmenLjj1xe/5YeWEApaUZa1+d/xB8jgllga8r7Mn
+         YUDVW7SbceVC6KBQTsK5BbHVAIDp6nj2kVL2z+zU/C4pP5MA8omQpScNiPtnyqfhDPKT
+         69IsoOG7JbXO98QpkgjWtWi7SfDXmQ6YbB2jnulXoNFXCMD5q5X7y4DyDyuVrqkoPRJH
+         87SLb0/Wf8sxMtJhujgwAWviyOeLaFR2mSwk1QJVGn5nEujILAnSrECYE7AnBvpy77WM
+         KZmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjXxw/+A+/jkwq0KpgSSLfASm6ic+MN1ms6/buVjgaxowLE+CVRwULu1fa7pMQDLVSL1muKWpr5FQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyEtju4Sf1DX4TncvHeBy2f1G8oxmVOnJOqM/r1v5gqQBtMdF5
+	oli2pQTZ5r/ClDdzhqPJ2ObMuoNtfkT3sAMOcbH0H4Toredyd/gR3aoSFtbUSBvQGRY=
+X-Gm-Gg: ASbGncs0ZWGvxLnsXUf/aG+lv15lo1+KQCQJZ1Zr05IA0Y3eI13kyUsYr36kdE95Boa
+	6v+TMR171Lf8TENygnbQ58zOjgKCu+WqyIRpfkf73WfGh2XL/ZE2TcIItp9hActxUoHwTWkHBi1
+	di5mHIFuYcKPE1CzqqdIyWxXNoALZ84bCRxxNSQD5cvQJmrHaFdKcurqIdWxUUrt4gXbXftR9I0
+	ASTVBvqoRuEmwRU+326choMp98h4/2SbQe+1iKiLCotKeWDSPbDi0j7Sx4KWZje7fXmw7YdrQKR
+	+O1UuGYEaBsOr3sAMwB2Okoluatr7mzHwBNN4QVDz2dfn8hq7Oqkfso1cxETLs0=
+X-Google-Smtp-Source: AGHT+IEOGeOW+PhuQhUWHpeQcMcmiGpwG3vk6rjPFlkV6C76xF/ii0bBJjaE1/tPG81FTngDhnjmmA==
+X-Received: by 2002:a05:6a21:1089:b0:216:6060:971d with SMTP id adf61e73a8af0-2188c3b49bemr2223604637.37.1748049955462;
+        Fri, 23 May 2025 18:25:55 -0700 (PDT)
+Received: from x1 (97-120-251-212.ptld.qwest.net. [97.120.251.212])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2c208eeeeasm195364a12.13.2025.05.23.18.25.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 18:25:55 -0700 (PDT)
+Date: Fri, 23 May 2025 18:25:53 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 10/23] clk: Add clock driver for the RISC-V RPMI clock
- service group
-Message-ID: <aDCjua9KiI96Q8Ht@smile.fi.intel.com>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-11-apatel@ventanamicro.com>
- <aCGeTPS4WiGYMTTo@smile.fi.intel.com>
- <CA+Oz1=aLgFSc+RG4=5B0ejUDRrjUh1xNYmHjJQd0sRUwjMBGiw@mail.gmail.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: [GIT PULL] clk: thead: Updates for v6.16
+Message-ID: <aDEgIfYl2f7zcO3O@x1>
+References: <aBus+Yc7kf/H2HE5@x1>
+ <018214f410632eb3dc6c6bd6ab58cba1@kernel.org>
+ <aC+mJ560HbscG38R@x1>
+ <655ea20d-ed2a-4727-b7c1-65fd69d3c027@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+Oz1=aLgFSc+RG4=5B0ejUDRrjUh1xNYmHjJQd0sRUwjMBGiw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <655ea20d-ed2a-4727-b7c1-65fd69d3c027@kernel.org>
 
-On Thu, May 22, 2025 at 06:44:09PM +0530, Rahul Pathak wrote:
-> On Mon, May 12, 2025 at 12:38 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, May 11, 2025 at 07:09:26PM +0530, Anup Patel wrote:
+On Fri, May 23, 2025 at 08:25:38AM +0200, Krzysztof Kozlowski wrote:
+> On 23/05/2025 00:33, Drew Fustini wrote:
+> > On Thu, May 22, 2025 at 03:24:02PM -0700, Stephen Boyd wrote:
+> >> Quoting Drew Fustini (2025-05-07 11:56:57)
+> >>> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+> >>>
+> >>>   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+> >>>
+> >>> are available in the Git repository at:
+> >>>
+> >>>   git@github.com:pdp7/linux.git tags/thead-clk-for-v6.16
+> >>
+> >> I changed this to https://github.com/pdp7/linux.git but please fix it
+> >> next time.
+> > 
+> > Sorry about that. I'll use https in the future.
+> This should be kernel.org. I remember Drew we meet few times and you
+> never asked for signing your key. Just get in touch next time on a
+> conference to get it signed (and bring printed fingerprints).
 
-First of all, remove all unneeded context with which you are agree.
-I should not crawl through dozens of lines of the email to see what
-you wanted to discuss. Take it as everyday practice, please.
+Good idea. I would like to get kernel.org setup. The Portland kernel
+meetup is next week so hopefully I can get some signatures. And I would
+definitely appreciate your signature at the next conference we are both
+at - maybe ELC Europe?
 
-...
-
-> > > +     /* Validate RPMI specification version */
-> > > +     rpmi_mbox_init_get_attribute(&msg, RPMI_MBOX_ATTR_SPEC_VERSION);
-> > > +     ret = rpmi_mbox_send_message(context->chan, &msg);
-> > > +     if (ret) {
-> > > +             dev_err_probe(dev, ret, "Failed to get spec version\n");
-> > > +             goto fail_free_channel;
-> >
-> > This is simply wrong. You should not do goto before any devm_*() calls.
-> > The error path and ->remove(), if present) is broken. Fix it accordingly.
-> >
-> > Here should be
-> >
-> >                 return dev_err_probe(...);
-> >
-> > it's your homework to understand how to achieve that. Plenty of the examples in
-> > the kernel.
-> 
-> So far I could only find drivers with "goto used before devm_*" pattern used.
-
-Of course, because they are wrong and most of them need fixing.
-(Yes, there are some exceptional cases, but I don't believe it's many)
-
-> Can you please point me to the example which does not use goto before
-> devm_* apis.
-
-Tons of them, any which starts with devm_*() call in the probe, most of the
-drivers/iio/, for instance. Just a random pick here: drivers/iio/accel/bma400*.
-
-(and FWIW it was indeed the very first driver I was looking into while writing
- this email)
-
-> Also, I couldn't understand the problem which may happen because of
-> this. Can you please explain?
-
-devm_*() defers the resource deallocation to the end of ->remove() and error
-path in ->probe(). This breaks the symmetry of the allocating / deallocating
-resources. At worst case it will be an Oops on ->remove() or when error happens
-during the ->probe().
-
-...
-
-My gosh, the original text was quoted twice! Next time I won't even look into
-the email reply which won't have a reduced context.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Drew
