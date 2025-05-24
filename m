@@ -1,117 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF8239FCE;
-	Sat, 24 May 2025 02:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB9C4A1D;
+	Sat, 24 May 2025 10:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748052972; cv=none; b=khrC0H9eCk4B1lBW7JfT7CVmOWECPlCBMWFQH3pWbwn2tlb+r9cfyXi0B/CQyX5oWo3t2GCq3IkZOztOE6Qs/sJpwIdc+Am01Dr/V3A4qt/kcJ8J41DX+ALTpSlsjqRthQY704Y7Irme2aRVz3Kb3srcbusxOT/Wu00kDfusFo0=
+	t=1748081903; cv=none; b=KkVcdMQNPFd1Raljbaf+nTMZRPApGlSQKw9A92EskO5pXXhKotHg75SUVR3hoGX176GaYKfpoCcCmsvua+31zwruemvZGC9D+Wn/5SjZDit04CcmR7Zi2/MNniH4h/JnROGlkcV/EUQiUNy3oW8iICHDoMuxEQ2Unc4oSN1JUko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748052972; c=relaxed/simple;
-	bh=/sJKcJB9D2opaHxxN17lki+er3heUMPimrFbx5WTMCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qug/P4cR4/q/8z43yG8k5bPx2JqrGDxIFG9LelpVzDFPMkxE8udtzoYYOs72LdM7iIawmITx4yhvzJYAkpmYwA5xutRcgdHYFlwdQmm+6KtahXVTuvrgRNE2DlQ/5O2H8POt57wcfDdmoF8H2OvKb/hxCZAJx1TVgbQb81no3E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FU8fKMVo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748081903; c=relaxed/simple;
+	bh=fegzFpIcG+9An2adNTrrMdYqP95RFa3AIn0vE9liKsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKYdkASohZv81X73jXTTt69Dlwvf7/PR1XhKfNkXdsrEwI7RW9PYR3YVA3hWNT99LdeXS9+DTGP+B/8Eo3HadvHib78dIYW+Lm2FU++x3Ho+uMDR94BQ/JLx12i6apO8K14EuzgVXw+eqJWuLMOZz38eHumnU98TAXE+iye/FQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZ6EYmOf; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FU8fKMVo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B21C4CEE9;
-	Sat, 24 May 2025 02:16:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748052972;
-	bh=/sJKcJB9D2opaHxxN17lki+er3heUMPimrFbx5WTMCk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FU8fKMVoRwRryhvNxeKp24m9VO5TYN2pBzyNS/sAZ9QVtr0uvYQ80CGB4ERjbHqWe
-	 vhpdVLhfdA4Mo0OLUJ5F2rcpWIM76XJGM7mFVjoXWIqe0OU5ucg4B/PjofakxF3kif
-	 oa74QyHqvUL7NsWuPHmIW/4dAmLHWbSamJeoJGzl2bFCeb1Tdoz+bKQ1BjpR/bCaqy
-	 kh9KI9An+jLszGHvOJQ1GtGiBAlCBnYlvg+tvioDPsD02uZ5SolWd7KPM4006zrxZ2
-	 RPSPTHvrui6EFqBMCh2JeZSN08Dgxf+NtBpHPBlW+K1dvViDnZWiJZ21RbUXMQ8tOC
-	 ZwuL0GsDLvXVQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>,
-	Vincent Knecht <vincent.knecht@mailoo.org>,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [GIT PULL] Qualcomm clock updates for v6.16
-Date: Fri, 23 May 2025 21:16:09 -0500
-Message-ID: <20250524021610.18621-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZ6EYmOf"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad564b7aea9so329512466b.1;
+        Sat, 24 May 2025 03:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748081895; x=1748686695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Dzb3JHRMdpmADz7F31upHZIM2rweK1WRKvLmimqyeU=;
+        b=lZ6EYmOf2P7JnOJTN5us+pZ+W3lvBXwHOBjzcDgz0SI/vAPyH32zdJU1qbRSfo02sc
+         019j2AT3kOpEofkEwk4Lk6naYbhn93u9+sHliU/iXfyhW+FfGrQe3hfy+FdbqGl4Vpzy
+         n0c18bOaezWLprZ/N5cTuwpFweAhG4Fhs/KalScCkrQ5y4RqQZZVN8k/0ddnwX9nIYcf
+         wV5euxsi6OQzpdSMugWllnlmJHq8M4ngmgZshiUbiqSojMPnNM7NgNSw3sFz2KwBCGYL
+         hkEpaenvH/hGo751PR1IETMGMM16TELE6G5WcD1guUcbIvAWvNvdwfK9HT6Ck49V7tw1
+         x1nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748081895; x=1748686695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Dzb3JHRMdpmADz7F31upHZIM2rweK1WRKvLmimqyeU=;
+        b=vr1fj7liPes5tLfHRPhmmWtoy6dJc2FKZ6ectS2+Lzhjw0U2sGtYamSg591n3qLSsd
+         MnMpRXnWBKoEqSWM5VMRMgHo9RhNsduBumewNCFkq4jmk0YveuCAEDeLrBjYOZaaEyLT
+         4ppDusLoJw6K21FbjRwGDmIcaHrY/g67PA7qZ7PTPlaoQriEEsr5zNrF1o53QIVGl3cm
+         Vik+W/pK6BeA7sQaj98O4jxzTEWXuiiDftPhfpifgNmE1vW2D99S8e3V9k6urlbZGleu
+         Bdb5mgjbMlXSLuNAOZrFOfolT3lm2tzvApnCRGv5pVXUSF4NfLQrrqjxkMg3UE936YK/
+         7OUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2yG03Z47Wd5ZbQt7zNnBXRE9H1GGdMgSXGExAPUS+bK5Hx4rHqgyp6xrQC2euqtHwaURHr3u3FuF7NSmb@vger.kernel.org, AJvYcCX7dq8UxxZURYvHIcHjs7dJCEk8WDL5lGVZAdfxzkumEjcH4w7lo0lyc1DHESc/qBb/NF+AwGXQKMYVmSdQ@vger.kernel.org, AJvYcCXr7EXHLw4FbIJzb64/WrwpAHB13gUjVsddFXOdiDP7H89cpb6R5+WDRh5pYC9C9SCJo32NguhXO3Xz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpbwoVtN33fEbALPI3DTEapItQsBbt8TmNnR6+BoCYP47+qTwK
+	CaUpjgmICTUgjp0ph3dPUNmHO25kSr3YcEIZ28kkC01gnBEoSGrbyNId
+X-Gm-Gg: ASbGncuOaLnSwoPs1FGT6OLCz704hJV7Dsme69gbFDbtaXTDN+9+Fmrl3u5e/D6OjD3
+	z77xDeCLLDpaZGNzTj/Epm2bPCTaSQ9WnpD+1t1+EDx7ifL8QHEFwDSjdTQ6pT+NTk8gMr9VWm3
+	eLxkHhKpZq3ke7OG6F9ucigAKlGa97RWS13+j3mjUfAs5BFby57AmDvpNCWLh+JfB2cCbinXvnb
+	D0Pvn3/nftjBO/PN73X+bVUKWesVYBkH+tS2WTg1RBUUs9zXHOKRMw3oRB+mvhY0/guZHdYzrMe
+	0tmldA6k4g8oBqmb/BIKQN7LNNcTNrowqeBped6YDuC4KGRUSIErQ0kZcwqXp9kqjdUubU7r14g
+	jVUz11pURGwWZuYam
+X-Google-Smtp-Source: AGHT+IFNHwWIR8ptD43relRI1YmiVXvEBMPrnqyp9HLfaqyNlLeVc/aY4bDgRLRWImxYbuqH3dc5OA==
+X-Received: by 2002:a17:907:1b21:b0:ad5:7649:b3f5 with SMTP id a640c23a62f3a-ad63f98066bmr615214766b.3.1748081895304;
+        Sat, 24 May 2025 03:18:15 -0700 (PDT)
+Received: from [192.168.3.32] (cpe-188-129-45-176.dynamic.amis.hr. [188.129.45.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d06dcafsm1402536966b.54.2025.05.24.03.18.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 May 2025 03:18:14 -0700 (PDT)
+Message-ID: <35ec4b1e-9502-4d4f-96cd-531c176dc82d@gmail.com>
+Date: Sat, 24 May 2025 12:18:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-ipq8074: fix broken freq table for
+ nss_port6_tx_clk_src
+To: Christian Marangi <ansuelsmth@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250522202600.4028-1-ansuelsmth@gmail.com>
+Content-Language: en-US
+From: Robert Marko <robimarko@gmail.com>
+In-Reply-To: <20250522202600.4028-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+On 22. 05. 2025. 22:25, Christian Marangi wrote:
+> With the conversion done by commit e88f03230dc0 ("clk: qcom: gcc-ipq8074:
+> rework nss_port5/6 clock to multiple conf") a Copy-Paste error was made
+> for the nss_port6_tx_clk_src frequency table.
+>
+> This was caused by the wrong setting of the parent in
+> ftbl_nss_port6_tx_clk_src that was wrongly set to P_UNIPHY1_RX instead
+> of P_UNIPHY2_TX.
+>
+> This cause the UNIPHY2 port to malfunction when it needs to be scaled to
+> higher clock. The malfunction was observed with the example scenario
+> with an Aquantia 10G PHY connected and a speed higher than 1G (example
+> 2.5G)
+>
+> Fix the broken frequency table to restore original functionality.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: e88f03230dc0 ("clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf")
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+Tested-by: Robert Marko <robimarko@gmail.com>
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.16
-
-for you to fetch changes up to 201bf08ba9e26eeb0a96ba3fd5c026f531b31aed:
-
-  clk: qcom: gcc-x1e80100: Set FORCE MEM CORE for UFS clocks (2025-05-17 19:28:40 -0500)
-
-----------------------------------------------------------------
-Qualcomm clock updates for v6.16
-
-Introduce support for the camera clock controller on QCS8300.
-
-Correct wait_val values for a variety of GDSCs, fix X Elite UFS clock
-settings, and allow clkaN to be optional in the rpmh clock controller
-driver if command db doesn't define it.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      Merge branch '20250324-sm6350-videocc-v2-2-cc22386433f4@fairphone.com' into clk-for-6.16
-
-Imran Shaik (1):
-      clk: qcom: Add support for Camera Clock Controller on QCS8300
-
-Konrad Dybcio (1):
-      dt-bindings: clock: add SM6350 QCOM video clock bindings
-
-Luca Weiss (4):
-      clk: qcom: camcc-sm6350: Add *_wait_val values for GDSCs
-      clk: qcom: dispcc-sm6350: Add *_wait_val values for GDSCs
-      clk: qcom: gcc-sm6350: Add *_wait_val values for GDSCs
-      clk: qcom: gpucc-sm6350: Add *_wait_val values for GDSCs
-
-Pengyu Luo (1):
-      clk: qcom: rpmh: make clkaN optional
-
-Taniya Das (2):
-      clk: qcom: gcc: Set FORCE_MEM_CORE_ON for gcc_ufs_axi_clk for 8650/8750
-      clk: qcom: gcc-x1e80100: Set FORCE MEM CORE for UFS clocks
-
-Vincent Knecht (1):
-      clk: qcom: gcc-msm8939: Fix mclk0 & mclk1 for 24 MHz
-
-Wentao Liang (1):
-      clk: qcom: Fix missing error check for dev_pm_domain_attach()
-
- .../devicetree/bindings/clock/qcom,videocc.yaml    |  20 ++++
- drivers/clk/qcom/apcs-sdx55.c                      |   6 +-
- drivers/clk/qcom/camcc-sa8775p.c                   | 103 ++++++++++++++++++++-
- drivers/clk/qcom/camcc-sm6350.c                    |  18 ++++
- drivers/clk/qcom/clk-rpmh.c                        |  11 +++
- drivers/clk/qcom/dispcc-sm6350.c                   |   3 +
- drivers/clk/qcom/gcc-msm8939.c                     |   4 +-
- drivers/clk/qcom/gcc-sm6350.c                      |   6 ++
- drivers/clk/qcom/gcc-sm8650.c                      |   2 +
- drivers/clk/qcom/gcc-sm8750.c                      |   3 +-
- drivers/clk/qcom/gcc-x1e80100.c                    |   4 +
- drivers/clk/qcom/gpucc-sm6350.c                    |   6 ++
- include/dt-bindings/clock/qcom,sm6350-videocc.h    |  27 ++++++
- 13 files changed, 204 insertions(+), 9 deletions(-)
- create mode 100644 include/dt-bindings/clock/qcom,sm6350-videocc.h
+> ---
+>   drivers/clk/qcom/gcc-ipq8074.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> index 7258ba5c0900..1329ea28d703 100644
+> --- a/drivers/clk/qcom/gcc-ipq8074.c
+> +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> @@ -1895,10 +1895,10 @@ static const struct freq_conf ftbl_nss_port6_tx_clk_src_125[] = {
+>   static const struct freq_multi_tbl ftbl_nss_port6_tx_clk_src[] = {
+>   	FMS(19200000, P_XO, 1, 0, 0),
+>   	FM(25000000, ftbl_nss_port6_tx_clk_src_25),
+> -	FMS(78125000, P_UNIPHY1_RX, 4, 0, 0),
+> +	FMS(78125000, P_UNIPHY2_TX, 4, 0, 0),
+>   	FM(125000000, ftbl_nss_port6_tx_clk_src_125),
+> -	FMS(156250000, P_UNIPHY1_RX, 2, 0, 0),
+> -	FMS(312500000, P_UNIPHY1_RX, 1, 0, 0),
+> +	FMS(156250000, P_UNIPHY2_TX, 2, 0, 0),
+> +	FMS(312500000, P_UNIPHY2_TX, 1, 0, 0),
+>   	{ }
+>   };
+>   
