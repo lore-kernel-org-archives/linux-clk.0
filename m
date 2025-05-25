@@ -1,144 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93425C70D;
-	Sun, 25 May 2025 17:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C6E3596F;
+	Sun, 25 May 2025 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748195769; cv=none; b=H8kkMOJQZK1X287AaLWzoXhr4cyr8RQ4topbUlucnN458f8WXwHi8jjn9WyQZiZ6AH/Y5lkdsUG7wTlBOCkhIQ+b+bL+g4DNvw71bxLyN5siikEcsfeye27ffKEr/Nl9tu3xFwNy1yDoF+Nu7KzPNLGc5amA1IIiJw6WeAA46ZA=
+	t=1748200093; cv=none; b=j6WwidJNDfTNrWuIyOTgTjcFeQRRC3xgvOigp2BtMNLgavXJmZD2ycaUmCHVAN86DYzE6r9VgnhHhnhvqJQV4HdHIQif2k1UvU7/XVA0svVCrA4rw1Tiqo3sWQZZlQA1yq8oIhWKHT/x9JKESyPz2Fu2619lo5gFLRfQ4lUdHpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748195769; c=relaxed/simple;
-	bh=9A/6O9r2IqeLYzOFaVCEJKjY9Ul0YdWsU/rVzaX6qCc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k54rlP0itJhXV5gFHrKflsdZbAe/mhnr+yHov9HbhR+nRhAvGyZijiMI1xZYiUD26XNrvPKepuBAOcfDG7hyL899zlBipMeJPvgfB2zqHxbQkWRT9NHKnfYje3IsdN91ISrngEqy7d2Y4OCzKPuqceFNzUZFblMYEu9p8z0JOoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSfbwS1+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748200093; c=relaxed/simple;
+	bh=hQ50hdmC9pjOtYEv3cztvNwybp3k53R3vskxGJPCsgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n1E2H12puOVsxQOY12xRt9a6QUQ4gzeN4OCM7Z1RxhnmJyQW40c7Ek9B1+gvGDFXhcQssGoKy90xbBNiK7HURJT00C3TCER2WvKycTpEcFLpQFjPO4b6+mXjMPSIHboHU2WCsu3vJQaiIDrmoRdiu4YigDH72mA8IIVALqv2owE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBe2wSEv; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSfbwS1+"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 570D3C4CEFA;
-	Sun, 25 May 2025 17:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748195768;
-	bh=9A/6O9r2IqeLYzOFaVCEJKjY9Ul0YdWsU/rVzaX6qCc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BSfbwS1+Z6WZKLQFpUmLvoXUwMsG9ZiYzfdy1Galm+2fkh0Zv97THsbe0HFw60iib
-	 GKS7NneNIYYOKPnNczhhCOQS9IfZHaIRiF8tavW1aPmGLQEicBxN7IS04jZF4NKUdP
-	 P8Rpip7Oz5rPiUSlJqxa02aRI/mmfzYNWKMhI0/R+La+3PB6vRAfV4uka3rl0WSn5x
-	 RBCRm0+BDQevps0HTt5xNBI6JJcdZRiGZ//uF7u31ddtiNU5hQHMPPk04ZcCBFgaR5
-	 PVcuJQqeUZFhh1rCd8R4zdimojkVMp4TdDlpPlSTpAdNa+GP3+6icVcgtREvdW9Nhq
-	 ZgwdSCgMMqNiw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D18FC54FB3;
-	Sun, 25 May 2025 17:56:08 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Sun, 25 May 2025 21:56:08 +0400
-Subject: [PATCH 5/5] arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio
- bus
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBe2wSEv"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-551eb17123cso2439978e87.1;
+        Sun, 25 May 2025 12:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748200089; x=1748804889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HnW85cP1cMkj1Q65CdC0Nnhj4/aADdGprEwtCkfqX28=;
+        b=iBe2wSEvDOp9JKLSOkpmQ9h7dzcohFsClnPGo1EVqVs++UWkgSH7zGkUWIAIZ74z5p
+         AqC4ZbtDUW5VtWRMADXtUxFcf997cq/yt0rc6IHvzT2dzL1jIRCizcI1mf9dquNmyLh8
+         Sozb0YmBhO27hnWKdLhtz+g+QLFwNXeHVLv0pjxsGEZSSxM9/J0V/m5koLGwSZBUQRZZ
+         VtyzRVLJUbBgPoJSrJf10rbBlQN1ypS6mSekVv9OHJpwY+e/9l+QtXYgSbapk5u37/rJ
+         nF5upYaEqTJx58jmqUE1gqGA9PDrVlbseuQMvUgTIc29uGQWF+NkwLrxGQE/WmO+YbF+
+         30aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748200089; x=1748804889;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HnW85cP1cMkj1Q65CdC0Nnhj4/aADdGprEwtCkfqX28=;
+        b=Ah7YMWvc4AG5d+5G9iiZcwsr2Pj4BeYprDOGyYlR/MQgPciiykD1cdr6HA5HnuKHDu
+         gCgrekno62tO2tsWEcAhieVzpmJrw3tk5GmKiSnCuD1hRb0eh/FPMqKksMbDYWM+Omqk
+         YFjT/bwVQ4/PQ4HG2x+LWBQcwhs7HBA0fj8GGNus/PPD8smzsuuBnAtelBWVsI4IvsWM
+         tr1FT8Zgi67KG6NK6OSOy+S73vAXjQiZ53IAVObiCqPzfuCYM7JJ/pRa2+T1IDqmQUQh
+         RARPv3IaxtybT55KTWfZhSws9UCTBqS+fFxWnSFweoOFX9pUq1QIc+R9GWdGvZLqa9AB
+         Y0pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJkMY0mfWO+RhZmUgXNURjRenX5+zX5fbQCyzzZrnkN/D5W7mJefh7RTydi+Kxa89eydOxUE4K4MBT@vger.kernel.org, AJvYcCVfOyp084czmMziROfZ04QkpznuOZ/v02pqMoOBycol+hZwjg8zYvPilyQZ/2SurLHmbDtFAYGDh4su/FIu@vger.kernel.org, AJvYcCWDo+3i5wTdK94eYiXtABXvwhuY5fFdJp/sBAVV+yt0ZiXATapAcq2uTpjk8JakbrV3vKmc0+q6pEwR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzORsue6X860sRdnvqV3gY8DG+85OydiQT045Fd+DJoQ8h/8n27
+	KQJFY7IDxrejmaQljL75wr/NV2+VsB6xBitjAWHX8udYj7YOAhxIZRhX
+X-Gm-Gg: ASbGnctEbf0vt2IBHGRpkfUUPIxqRN/X2n2SzU6UthxWgd1yoQMIy6fBhdEF2+0/5Gv
+	43HoInZNM6QDMpW2kxOoICdNkJ1vnk0fbfuAbgnJU3/FnP5yZB4KxdDZiWLOhRC0yIqHnr/PTyw
+	qRpYO9EAxbDoRXWchYknZuJD2XJ9TaFX2DnxXzM62In4CkvBZUIEkraV8L+JjPVKH5pXu9NgsFy
+	XeKG9WaDvKV1k7eXLjHF7ndf/aYDqwZJmYeaKvRk1aRJWbeQUym/esnID/2ld+oZdAPsQKOi4bX
+	4nq+K7lcLMlJkz69xi7IvGYRtAv4VJZhNPaYScwwbFy6kFTlH4l0JKvnH1Dy+qNJtmAMFjsFpTm
+	Kv1QRpdLxPav+TpTveO3raZc=
+X-Google-Smtp-Source: AGHT+IFmwdJ7zKB8rzf+rgiGertXPdVsNgHDRdx1sfF8sLYxYM6YV8MXp8+m4VgcPlCUyNjQ0s5E9g==
+X-Received: by 2002:a05:6512:3e0e:b0:54c:348d:19b7 with SMTP id 2adb3069b0e04-5521cbb5966mr1606374e87.46.1748200088932;
+        Sun, 25 May 2025 12:08:08 -0700 (PDT)
+Received: from gmail.com (213-67-3-247-no600.tbcn.telia.com. [213.67.3.247])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550eb6c7155sm4551758e87.22.2025.05.25.12.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 May 2025 12:08:08 -0700 (PDT)
+From: "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jank@cadence.com
+Cc: edgar.iglesias@amd.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] clk: fixed-mmio: Add optional ready registers
+Date: Sun, 25 May 2025 21:08:02 +0200
+Message-ID: <20250525190806.1204531-1-edgar.iglesias@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250525-ipq5018-ge-phy-v1-5-ddab8854e253@outlook.com>
-References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
-In-Reply-To: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748195765; l=1843;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=RbZYI9mHUjINGh38wXyVEQGgEtjNvQeZPMy+hpynOhA=;
- b=VYUp3FjEr6voXpngVWA+ruIyKayYUaXPmgTAd4U/eODjiXYYjWK3ETaw/TxwWWlHt2kUfaiox
- 8HhdPvf0hFaCND7OBVCC0uXcmYJy+ASmjLbH4aV7OY1jhuVkTc4GNSZ
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Transfer-Encoding: 8bit
 
-From: George Moussalem <george.moussalem@outlook.com>
+From: "Edgar E. Iglesias" <edgar.iglesias@amd.com>
 
-The IPQ5018 SoC contains an internal GE PHY, always at phy address 7.
-As such, let's add the GE PHY node to the SoC dtsi.
+I'm not sure if this is a good idea but while doing some stuff in emulation
+I had a need to wait for a fixed-mmio-clock to go ready before using
+devices it drives. I figured it may be useful to have a generic way to
+describe a simple polling for readiness.
 
-In addition, the GE PHY outputs both the RX and TX clocks to the GCC
-which gate controls them and routes them back to the PHY itself.
-So let's create two DT fixed clocks and register them in the GCC node.
+Cheers,
+Edgar 
 
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Edgar E. Iglesias (2):
+  dt-bindings: clk: fixed-mmio-clock: Add optional ready reg
+  clk: fixed-mmio: Add optional poll for clk readiness
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 03ebc3e305b267c98a034c41ce47a39269afce75..ff2de44f9b85993fb2d426f85676f7d54c5cf637 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -16,6 +16,18 @@ / {
- 	#size-cells = <2>;
- 
- 	clocks {
-+		gephy_rx_clk: gephy-rx-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <125000000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		gephy_tx_clk: gephy-tx-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <125000000>;
-+			#clock-cells = <0>;
-+		};
-+
- 		sleep_clk: sleep-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
-@@ -192,6 +204,17 @@ mdio0: mdio@88000 {
- 			clock-names = "gcc_mdio_ahb_clk";
- 
- 			status = "disabled";
-+
-+			ge_phy: ethernet-phy@7 {
-+				reg = <7>;
-+
-+				clocks = <&gcc GCC_GEPHY_RX_CLK>,
-+					 <&gcc GCC_GEPHY_TX_CLK>;
-+
-+				resets = <&gcc GCC_GEPHY_MISC_ARES>;
-+
-+				qca,eth-ldo-ready = <&tcsr 0x105c4>;
-+			};
- 		};
- 
- 		mdio1: mdio@90000 {
-@@ -232,8 +255,8 @@ gcc: clock-controller@1800000 {
- 				 <&pcie0_phy>,
- 				 <&pcie1_phy>,
- 				 <0>,
--				 <0>,
--				 <0>,
-+				 <&gephy_rx_clk>,
-+				 <&gephy_tx_clk>,
- 				 <0>,
- 				 <0>;
- 			#clock-cells = <1>;
+ .../bindings/clock/fixed-mmio-clock.yaml      | 38 ++++++++++++++++++-
+ drivers/clk/clk-fixed-mmio.c                  | 35 +++++++++++++++++
+ 2 files changed, 72 insertions(+), 1 deletion(-)
 
+
+base-commit: 4856ebd997159f198e3177e515bda01143727463
 -- 
-2.49.0
-
+2.43.0
 
