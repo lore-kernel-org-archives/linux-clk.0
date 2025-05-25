@@ -1,63 +1,63 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930071F09BD
-	for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 08:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FD727454
+	for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 08:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748162956; cv=none; b=RFWdnaMpajQCWMhFyi6EN+9a8sIfphL0ZsOFc0as3acYQVPEUmAWW1OA/8osjgfVfzthO3kPc+UCl6v0wZRXtkV7ftn3pcdt6SujWeN1QAPjhyiLJBy4H/QVGm5EFB9sg8dtpHcat/tbrlWPPWTq1hhtekievYcP1pJB9Be2WE0=
+	t=1748162963; cv=none; b=KVOMDWtRmIE5Skgdo5OFvlecCQNhaqWpNYbVmi8HeYmG+p5FdOVB+kuS3RY++wHfwMHJBNh6nseuFP3OMDKpBEwequnxHb3qEAxjafVSJXOk2zn9WQ3pjQwt9d+Api/SSOxH5WZJi2ThdWx0Pz42njf8s4m4xP8FwSjzMfZ74Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748162956; c=relaxed/simple;
-	bh=qfOdfKA+uFb6HucDPZYkEHXg0Hwqd9GVBlCffX1OTZ8=;
+	s=arc-20240116; t=1748162963; c=relaxed/simple;
+	bh=GHGvIRMABFHZz8Rip9kEWuDjGkE4igVxIjdR6SESrL0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PnsywSWe9HCqyTXCbWGq7ObjXfUzs2cy0pxlmEbLkbWT7INA+JWlHSWLrc6FiPWbRtukaX3oyR/u5gouv3LwN96bPBGfh8r899gPBW+4krd5aopInqcnrz1LbtK+M/uRTeuRhBsk93irRBfkkggU4UB46eB+d7+fsh0d/MTRu6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IHljKbXI; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=ZoOtPPhkrEOZLTc8LPPSevSnvfjlLQIEOklVdanEZGKCq0UDiNw+yL/RYuKqN5Csrd+ineGb/5dB+lxmpwxR+i4v179NKy0UTu0226Plxjnyo5LniqkcgeIhsqCe7ThncD7oAszo0PT+tgy2oPB279/wCpb6AJ4YUblEOkq3W7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gOPP3hwx; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IHljKbXI"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-742c9563fd9so783481b3a.3
-        for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 01:49:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gOPP3hwx"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so799670b3a.0
+        for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 01:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748162953; x=1748767753; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1748162960; x=1748767760; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q2qD1SUyd9eBK3a59CMuT4dnFP9uuQQDpZErqEgAqwQ=;
-        b=IHljKbXIh+kgFF6g/wqRfI4mmRgHCty6+gtf23++XGCCoZshYedwgT6lFwu5Dkfmiq
-         2eDUvCgJG8DpTZDJldGY4bYUM8fJKnJbcZcOERnKb0gctLCnFwKp33xBnJReIPeui3Kn
-         aQslvsQg3fVYxtkS+CLyXMMjayuJtgLccIIG5cxOdKRWDzpGASraCYj4yK51WKAQH1Nl
-         CRH4oXPhpXecEQ9iMNr+fys9YaVayFC4OviR9hyDHn/j+PffkQPdk1CKW3Dow5UmQ6H3
-         Gz0ST7OjZ66HS35eiAwZ0GOHha2XmKmjZm9X5s4tsOytE8iwgJn0OMYEZHDym50JtgDF
-         jYjA==
+        bh=9FunaAXszvTG8F9NxLwtJcRl/JdpmfQ2Wvu5HorrkT0=;
+        b=gOPP3hwxGyimoV29gUujyL43MqTpNNaRRP77u1KLu3AsDUFmiLFlNaraw8JdvFehpd
+         FZjiLxwtayxwpcMt3NDF6sXUpZqpODcS2t6p+0112f0x9xVxKkjrDhtYk8iU+MNO/rYr
+         6r33vvq5nZYIp+YSelWFJA4JqkX/YQZ+S139pkgdNGBfhWGvoYpNwiNEXhkK5wXFhb/x
+         QF99FSsM5o1lRmkIFA5rx18mocSLXD8fF7iBsCfUM26URtmSm2Nu0epbc2f9d85Y3P23
+         TenHxbot77ziK7SkYf1gKgDa3x67zKOwEDi89urtwzqb0nE85Hac2uOy4l6LXtDF0FMH
+         Gc8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748162953; x=1748767753;
+        d=1e100.net; s=20230601; t=1748162960; x=1748767760;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q2qD1SUyd9eBK3a59CMuT4dnFP9uuQQDpZErqEgAqwQ=;
-        b=vv640vngMx1Dq97rZLhgC9TwxUSQTqPsg1vegwKGNdw72NPGJovcu9YtnKJnYx0i41
-         rfJUeSs6ATjxn/yZAxHEqDGtlntQHaI/toxsNc70eOjzKITvDqtg7erdxIkSzNesd0gG
-         r83aG1juSUYs+D7nOnWtUydw9JsptPdSHfM72dGfqlsPq+S9vzpSglqg9D/Nj4vyQlHc
-         3q3+uMxEnNew/8uHu2fUaurEXb5/5jWk8XS9jFsKJWnLp2eB4E/JuTehKfc1P6GVpYJi
-         KXWgL9Dw6EGqJQjiWgmSskA6/g4N0fqQ/qfqfO6+wmH+e1SAiHM5BOrlr/RHmXuAR2P8
-         g5nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeVIAPca/pBSLbFGib0NBzYU6qwi0d+AUoHJSJuL1Lc+MsXlvFMiJZYi8gSfUCps+IVExWQz1pfRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKrRt6Fgs838BfDxhKOAEbv5qVea9n7fW8AqNdxFHf7OCCWdr4
-	J6goGjId2vd1KGbtswN11tfVib/jP8eyAi+l93hNqy29MLK0TqKj17wrcT5LOunTrZ0=
-X-Gm-Gg: ASbGnctiGMzespkmQ3V9D+XfOAaQoACHWxWuGsUS9Lyk7oFxV5s2YEjpliNF9uvFFB2
-	BiRvplSP7zy7Eb83jiSSDK3Cr/e75W2H+i+fpyzpHK4Edckw6ByUSe2hPCpcrEtZxtOqcVtz4GQ
-	s8POYB95C8jB29DuzEU/HjdhsemgGfpwA8FOc+U7owG4E67JBIf8DtR2S3TPelNgNjtSmB/13tL
-	sNhpTOI8hQvtQZf8iYMsjV5gKohwR8jAHvdyCHdxQLAeNlQoftgb4aooA4FfK+XV9L8RKXOhaML
-	tJDUDKI4Cp0+rwed6ann8fGAsd3piAKYB2/QV0JgnyJSsHpXi8idMam6jHq83SblDtfR6L2/dQU
-	G5yHrmCuSIzjfhVAbNiM=
-X-Google-Smtp-Source: AGHT+IG5VdKjlJIBSFcnTsm2EIJJEs9XuFm7KFtDiCxPVe9MAB+8sEMm23sLjXVJi+vsSKiG4KlgxA==
-X-Received: by 2002:a05:6a21:1789:b0:215:db66:2a33 with SMTP id adf61e73a8af0-2188c257f96mr7661282637.16.1748162952816;
-        Sun, 25 May 2025 01:49:12 -0700 (PDT)
+        bh=9FunaAXszvTG8F9NxLwtJcRl/JdpmfQ2Wvu5HorrkT0=;
+        b=eE0dA7RO0d5Pnhu4J4LT8R3HLwNl/4sJTEoME3NRJn80z69aAoLf9xxA98yIUxRUuy
+         O/5l7lJnrR7a/+R4hJCwmL58AtWQUl0lNUZHZi6ZuxPM/KAUSe5h23+W7hdDOe+lSbB2
+         TJRgXZ+GztbDoIz3hwUKHBaMJN0AI3H4ZmumK9xUMaC9M7U5Hiln+vUs75ii4he3yfKB
+         ElcTrj/fQ8ju9Ui7o4WPTZt3sDdF9QvHUKM2bp4xns+oLFAiVnElcQqCG5lK/RIGOiqn
+         ATeqwk/+xSZHrZoBiZZTsOdfC7bqhcO06GZDmkNshFGn0lhG4U6zroSTUEOOg1PUnyif
+         BnOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUI6RHJ15vJQ6ncnP6THFxM2kqzWTI4MvX1Yc5+husYGazRw+PfQV0GaieQqQv+6W3HPY9tayzFr9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrvKmGX6d0cidpV9jPUqG0KGg/seGa4d54niXbSGemils6LNZP
+	mb3kDjBD3WLQCmhi4HQSy4T1qhrBkVlFZilhKcBFrpGj4NNENC5tXWyr5oab9FD5N0E=
+X-Gm-Gg: ASbGncvW2nZAUtEmJvh5AYBJU5xm7IWI4yYrdjg01Hxfzj93Yi9hbscn4YqZMLs+8hB
+	D2+7DSvf89JAq8trgjUBUPxE6JTq15HXhE8qVu8JCPaxjsKPVidyVTftLZcRLY4HWVS5q6LxIS7
+	5J1ZIsOraJtp9HJNKRzxspe1N0p4fBpjVu1iPN236yKYHIy5XPxcCf76xt2Bk0p3N7KS8uD2sUI
+	zlnWBpngXDiI7eCWtMC6NYZFohVstxAV/cmknLrQjgpRKv8MaXsunFiFPlde2iKYsGD4sMNhv/5
+	srUQgKsEhWASfsMhM+//xObMe+S8ZsDuBNsaH9yBsEZ652Om9y3crlyaUIGB9KsdS6o7784ghPN
+	0PhVm0qJz
+X-Google-Smtp-Source: AGHT+IFfQ4GlwBOm5aqf9abJJ6GzdowEpxdV3jxJWk+baMuesDsuJ4xVL+L2MQeiT0KLZQBJG7FJ6Q==
+X-Received: by 2002:a05:6a21:100f:b0:218:75de:d924 with SMTP id adf61e73a8af0-2188c22eb79mr8067987637.19.1748162960471;
+        Sun, 25 May 2025 01:49:20 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.22.180])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6dd83sm15250627a12.18.2025.05.25.01.49.05
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6dd83sm15250627a12.18.2025.05.25.01.49.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 01:49:12 -0700 (PDT)
+        Sun, 25 May 2025 01:49:20 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -85,11 +85,10 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v4 13/23] irqchip: Add driver for the RPMI system MSI service group
-Date: Sun, 25 May 2025 14:17:00 +0530
-Message-ID: <20250525084710.1665648-14-apatel@ventanamicro.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 14/23] ACPI: property: Refactor acpi_fwnode_get_reference_args()
+Date: Sun, 25 May 2025 14:17:01 +0530
+Message-ID: <20250525084710.1665648-15-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250525084710.1665648-1-apatel@ventanamicro.com>
 References: <20250525084710.1665648-1-apatel@ventanamicro.com>
@@ -101,374 +100,160 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RPMI specification defines a system MSI service group which
-allows application processors to receive MSIs upon system events
-such as graceful shutdown/reboot request, CPU hotplug event, memory
-hotplug event, etc.
+From: Sunil V L <sunilvl@ventanamicro.com>
 
-Add an irqchip driver for the RISC-V RPMI system MSI service group
-to directly receive system MSIs in Linux kernel.
+Currently acpi_fwnode_get_reference_args() calls the public function
+__acpi_node_get_property_reference() which ignores the nargs_prop
+parameter. To fix this, make __acpi_node_get_property_reference() to
+call the static acpi_fwnode_get_reference() so that callers of
+fwnode_get_reference_args() can still pass a valid property name to
+fetch the number of arguments.
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 ---
- drivers/irqchip/Kconfig                    |   7 +
- drivers/irqchip/Makefile                   |   1 +
- drivers/irqchip/irq-riscv-rpmi-sysmsi.c    | 284 +++++++++++++++++++++
- include/linux/mailbox/riscv-rpmi-message.h |  13 +
- 4 files changed, 305 insertions(+)
- create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+ drivers/acpi/property.c | 101 ++++++++++++++++++++--------------------
+ 1 file changed, 50 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 08bb3b031f23..83700fc2ddc9 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -612,6 +612,13 @@ config RISCV_IMSIC
- 	select GENERIC_MSI_IRQ
- 	select IRQ_MSI_LIB
- 
-+config RISCV_RPMI_SYSMSI
-+	bool
-+	depends on MAILBOX
-+	select IRQ_DOMAIN_HIERARCHY
-+	select GENERIC_MSI_IRQ
-+	default RISCV
-+
- config SIFIVE_PLIC
- 	bool
- 	depends on RISCV
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 365bcea9a61f..515280da499c 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -102,6 +102,7 @@ obj-$(CONFIG_RISCV_INTC)		+= irq-riscv-intc.o
- obj-$(CONFIG_RISCV_APLIC)		+= irq-riscv-aplic-main.o irq-riscv-aplic-direct.o
- obj-$(CONFIG_RISCV_APLIC_MSI)		+= irq-riscv-aplic-msi.o
- obj-$(CONFIG_RISCV_IMSIC)		+= irq-riscv-imsic-state.o irq-riscv-imsic-early.o irq-riscv-imsic-platform.o
-+obj-$(CONFIG_RISCV_RPMI_SYSMSI)		+= irq-riscv-rpmi-sysmsi.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
- obj-$(CONFIG_STARFIVE_JH8100_INTC)	+= irq-starfive-jh8100-intc.o
- obj-$(CONFIG_THEAD_C900_ACLINT_SSWI)	+= irq-thead-c900-aclint-sswi.o
-diff --git a/drivers/irqchip/irq-riscv-rpmi-sysmsi.c b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-new file mode 100644
-index 000000000000..d7b19fb7bf4e
---- /dev/null
-+++ b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-@@ -0,0 +1,284 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2025 Ventana Micro Systems Inc. */
-+
-+#include <linux/device.h>
-+#include <linux/dev_printk.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/mailbox/riscv-rpmi-message.h>
-+#include <linux/module.h>
-+#include <linux/msi.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+#include <vdso/bits.h>
-+
-+struct rpmi_sysmsi_get_attrs_rx {
-+	__le32 status;
-+	__le32 sys_num_msi;
-+	__le32 flag0;
-+	__le32 flag1;
-+};
-+
-+#define RPMI_SYSMSI_MSI_ATTRIBUTES_FLAG0_PREF_PRIV	BIT(0)
-+
-+struct rpmi_sysmsi_set_msi_state_tx {
-+	__le32 sys_msi_index;
-+	__le32 sys_msi_state;
-+};
-+
-+struct rpmi_sysmsi_set_msi_state_rx {
-+	__le32 status;
-+};
-+
-+#define RPMI_SYSMSI_MSI_STATE_ENABLE			BIT(0)
-+#define RPMI_SYSMSI_MSI_STATE_PENDING			BIT(1)
-+
-+struct rpmi_sysmsi_set_msi_target_tx {
-+	__le32 sys_msi_index;
-+	__le32 sys_msi_address_low;
-+	__le32 sys_msi_address_high;
-+	__le32 sys_msi_data;
-+};
-+
-+struct rpmi_sysmsi_set_msi_target_rx {
-+	__le32 status;
-+};
-+
-+struct rpmi_sysmsi_priv {
-+	struct device		*dev;
-+	struct mbox_client	client;
-+	struct mbox_chan	*chan;
-+	u32			nr_irqs;
-+	u32			gsi_base;
-+};
-+
-+static int rpmi_sysmsi_get_num_msi(struct rpmi_sysmsi_priv *priv)
-+{
-+	struct rpmi_sysmsi_get_attrs_rx rx;
-+	struct rpmi_mbox_message msg;
-+	int ret;
-+
-+	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_GET_ATTRIBUTES,
-+					  NULL, 0, &rx, sizeof(rx));
-+	ret = rpmi_mbox_send_message(priv->chan, &msg);
-+	if (ret)
-+		return ret;
-+	if (rx.status)
-+		return rpmi_to_linux_error(le32_to_cpu(rx.status));
-+
-+	return le32_to_cpu(rx.sys_num_msi);
-+}
-+
-+static int rpmi_sysmsi_set_msi_state(struct rpmi_sysmsi_priv *priv,
-+				     u32 sys_msi_index, u32 sys_msi_state)
-+{
-+	struct rpmi_sysmsi_set_msi_state_tx tx;
-+	struct rpmi_sysmsi_set_msi_state_rx rx;
-+	struct rpmi_mbox_message msg;
-+	int ret;
-+
-+	tx.sys_msi_index = cpu_to_le32(sys_msi_index);
-+	tx.sys_msi_state = cpu_to_le32(sys_msi_state);
-+	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_STATE,
-+					  &tx, sizeof(tx), &rx, sizeof(rx));
-+	ret = rpmi_mbox_send_message(priv->chan, &msg);
-+	if (ret)
-+		return ret;
-+	if (rx.status)
-+		return rpmi_to_linux_error(le32_to_cpu(rx.status));
-+
-+	return 0;
-+}
-+
-+static int rpmi_sysmsi_set_msi_target(struct rpmi_sysmsi_priv *priv,
-+				      u32 sys_msi_index, struct msi_msg *m)
-+{
-+	struct rpmi_sysmsi_set_msi_target_tx tx;
-+	struct rpmi_sysmsi_set_msi_target_rx rx;
-+	struct rpmi_mbox_message msg;
-+	int ret;
-+
-+	tx.sys_msi_index = cpu_to_le32(sys_msi_index);
-+	tx.sys_msi_address_low = cpu_to_le32(m->address_lo);
-+	tx.sys_msi_address_high = cpu_to_le32(m->address_hi);
-+	tx.sys_msi_data = cpu_to_le32(m->data);
-+	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_TARGET,
-+					  &tx, sizeof(tx), &rx, sizeof(rx));
-+	ret = rpmi_mbox_send_message(priv->chan, &msg);
-+	if (ret)
-+		return ret;
-+	if (rx.status)
-+		return rpmi_to_linux_error(le32_to_cpu(rx.status));
-+
-+	return 0;
-+}
-+
-+static void rpmi_sysmsi_irq_mask(struct irq_data *d)
-+{
-+	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
-+	int ret;
-+
-+	ret = rpmi_sysmsi_set_msi_state(priv, irqd_to_hwirq(d), 0);
-+	if (ret) {
-+		dev_warn(priv->dev, "Failed to mask hwirq %lu (error %d)\n",
-+			 irqd_to_hwirq(d), ret);
-+	}
-+	irq_chip_mask_parent(d);
-+}
-+
-+static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
-+{
-+	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
-+	int ret;
-+
-+	irq_chip_unmask_parent(d);
-+	ret = rpmi_sysmsi_set_msi_state(priv, irqd_to_hwirq(d), RPMI_SYSMSI_MSI_STATE_ENABLE);
-+	if (ret) {
-+		dev_warn(priv->dev, "Failed to unmask hwirq %lu (error %d)\n",
-+			 irqd_to_hwirq(d), ret);
-+	}
-+}
-+
-+static void rpmi_sysmsi_write_msg(struct irq_data *d, struct msi_msg *msg)
-+{
-+	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
-+	int ret;
-+
-+	/* For zeroed MSI, do nothing as of now */
-+	if (!msg->address_hi && !msg->address_lo && !msg->data)
-+		return;
-+
-+	ret = rpmi_sysmsi_set_msi_target(priv, irqd_to_hwirq(d), msg);
-+	if (ret) {
-+		dev_warn(priv->dev, "Failed to set target for hwirq %lu (error %d)\n",
-+			 irqd_to_hwirq(d), ret);
-+	}
-+}
-+
-+static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
-+{
-+	arg->desc = desc;
-+	arg->hwirq = (u32)desc->data.icookie.value;
-+}
-+
-+static int rpmi_sysmsi_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
-+				 unsigned long *hwirq, unsigned int *type)
-+{
-+	struct msi_domain_info *info = d->host_data;
-+	struct rpmi_sysmsi_priv *priv = info->data;
-+
-+	if (WARN_ON(fwspec->param_count < 1))
-+		return -EINVAL;
-+
-+	/* For DT, gsi_base is always zero. */
-+	*hwirq = fwspec->param[0] - priv->gsi_base;
-+	*type = IRQ_TYPE_NONE;
-+	return 0;
-+}
-+
-+static const struct msi_domain_template rpmi_sysmsi_template = {
-+	.chip = {
-+		.name			= "RPMI-SYSMSI",
-+		.irq_mask		= rpmi_sysmsi_irq_mask,
-+		.irq_unmask		= rpmi_sysmsi_irq_unmask,
-+#ifdef CONFIG_SMP
-+		.irq_set_affinity	= irq_chip_set_affinity_parent,
-+#endif
-+		.irq_write_msi_msg	= rpmi_sysmsi_write_msg,
-+		.flags			= IRQCHIP_SET_TYPE_MASKED |
-+					  IRQCHIP_SKIP_SET_WAKE |
-+					  IRQCHIP_MASK_ON_SUSPEND,
-+	},
-+
-+	.ops = {
-+		.set_desc		= rpmi_sysmsi_set_desc,
-+		.msi_translate		= rpmi_sysmsi_translate,
-+	},
-+
-+	.info = {
-+		.bus_token		= DOMAIN_BUS_WIRED_TO_MSI,
-+		.flags			= MSI_FLAG_USE_DEV_FWNODE,
-+		.handler		= handle_simple_irq,
-+		.handler_name		= "simple",
-+	},
-+};
-+
-+static int rpmi_sysmsi_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rpmi_sysmsi_priv *priv;
-+	int rc;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	/* Setup mailbox client */
-+	priv->client.dev		= priv->dev;
-+	priv->client.rx_callback	= NULL;
-+	priv->client.tx_block		= false;
-+	priv->client.knows_txdone	= true;
-+	priv->client.tx_tout		= 0;
-+
-+	/* Request mailbox channel */
-+	priv->chan = mbox_request_channel(&priv->client, 0);
-+	if (IS_ERR(priv->chan))
-+		return PTR_ERR(priv->chan);
-+
-+	/* Get number of system MSIs */
-+	rc = rpmi_sysmsi_get_num_msi(priv);
-+	if (rc < 1) {
-+		mbox_free_channel(priv->chan);
-+		if (rc)
-+			return dev_err_probe(dev, rc, "Failed to get number of system MSIs\n");
-+		else
-+			return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
-+	}
-+	priv->nr_irqs = rc;
-+
-+	/* Set the device MSI domain if not available */
-+	if (!dev_get_msi_domain(dev)) {
-+		/*
-+		 * The device MSI domain for OF devices is only set at the
-+		 * time of populating/creating OF device. If the device MSI
-+		 * domain is discovered later after the OF device is created
-+		 * then we need to set it explicitly before using any platform
-+		 * MSI functions.
-+		 */
-+		if (is_of_node(dev_fwnode(dev)))
-+			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
-+
-+		if (!dev_get_msi_domain(dev)) {
-+			mbox_free_channel(priv->chan);
-+			return -EPROBE_DEFER;
-+		}
-+	}
-+
-+	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-+					  &rpmi_sysmsi_template,
-+					  priv->nr_irqs, priv, priv)) {
-+		mbox_free_channel(priv->chan);
-+		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
-+	}
-+
-+	dev_info(dev, "%u system MSIs registered\n", priv->nr_irqs);
-+	return 0;
-+}
-+
-+static const struct of_device_id rpmi_sysmsi_match[] = {
-+	{ .compatible = "riscv,rpmi-system-msi" },
-+	{}
-+};
-+
-+static struct platform_driver rpmi_sysmsi_driver = {
-+	.driver = {
-+		.name		= "rpmi-sysmsi",
-+		.of_match_table	= rpmi_sysmsi_match,
-+	},
-+	.probe = rpmi_sysmsi_probe,
-+};
-+builtin_platform_driver(rpmi_sysmsi_driver);
-diff --git a/include/linux/mailbox/riscv-rpmi-message.h b/include/linux/mailbox/riscv-rpmi-message.h
-index 18b606e0023c..90eacb37fdd8 100644
---- a/include/linux/mailbox/riscv-rpmi-message.h
-+++ b/include/linux/mailbox/riscv-rpmi-message.h
-@@ -88,6 +88,7 @@ static inline int rpmi_to_linux_error(int rpmi_error)
+diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+index 436019d96027..d4863746fb11 100644
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -882,45 +882,10 @@ static struct fwnode_handle *acpi_parse_string_ref(const struct fwnode_handle *f
+ 	return &dn->fwnode;
  }
  
- /* RPMI service group IDs */
-+#define RPMI_SRVGRP_SYSTEM_MSI		0x00002
- #define RPMI_SRVGRP_CLOCK		0x00008
+-/**
+- * __acpi_node_get_property_reference - returns handle to the referenced object
+- * @fwnode: Firmware node to get the property from
+- * @propname: Name of the property
+- * @index: Index of the reference to return
+- * @num_args: Maximum number of arguments after each reference
+- * @args: Location to store the returned reference with optional arguments
+- *	  (may be NULL)
+- *
+- * Find property with @name, verifify that it is a package containing at least
+- * one object reference and if so, store the ACPI device object pointer to the
+- * target object in @args->adev.  If the reference includes arguments, store
+- * them in the @args->args[] array.
+- *
+- * If there's more than one reference in the property value package, @index is
+- * used to select the one to return.
+- *
+- * It is possible to leave holes in the property value set like in the
+- * example below:
+- *
+- * Package () {
+- *     "cs-gpios",
+- *     Package () {
+- *        ^GPIO, 19, 0, 0,
+- *        ^GPIO, 20, 0, 0,
+- *        0,
+- *        ^GPIO, 21, 0, 0,
+- *     }
+- * }
+- *
+- * Calling this function with index %2 or index %3 return %-ENOENT. If the
+- * property does not contain any more values %-ENOENT is returned. The NULL
+- * entry must be single integer and preferably contain value %0.
+- *
+- * Return: %0 on success, negative error code on failure.
+- */
+-int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
+-	const char *propname, size_t index, size_t num_args,
+-	struct fwnode_reference_args *args)
++static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
++					  const char *propname, const char *nargs_prop,
++					  unsigned int args_count, unsigned int index,
++					  struct fwnode_reference_args *args)
+ {
+ 	const union acpi_object *element, *end;
+ 	const union acpi_object *obj;
+@@ -999,7 +964,7 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
  
- /* RPMI clock service IDs */
-@@ -103,6 +104,18 @@ enum rpmi_clock_service_id {
- 	RPMI_CLK_SRV_ID_MAX_COUNT
- };
+ 			ret = acpi_get_ref_args(idx == index ? args : NULL,
+ 						acpi_fwnode_handle(device),
+-						&element, end, num_args);
++						&element, end, args_count);
+ 			if (ret < 0)
+ 				return ret;
  
-+/* RPMI system MSI service IDs */
-+enum rpmi_sysmsi_service_id {
-+	RPMI_SYSMSI_SRV_ENABLE_NOTIFICATION = 0x01,
-+	RPMI_SYSMSI_SRV_GET_ATTRIBUTES = 0x02,
-+	RPMI_SYSMSI_SRV_GET_MSI_ATTRIBUTES = 0x03,
-+	RPMI_SYSMSI_SRV_SET_MSI_STATE = 0x04,
-+	RPMI_SYSMSI_SRV_GET_MSI_STATE = 0x05,
-+	RPMI_SYSMSI_SRV_SET_MSI_TARGET = 0x06,
-+	RPMI_SYSMSI_SRV_GET_MSI_TARGET = 0x07,
-+	RPMI_SYSMSI_SRV_ID_MAX_COUNT
-+};
+@@ -1017,7 +982,7 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
+ 
+ 			ret = acpi_get_ref_args(idx == index ? args : NULL,
+ 						ref_fwnode, &element, end,
+-						num_args);
++						args_count);
+ 			if (ret < 0)
+ 				return ret;
+ 
+@@ -1039,6 +1004,50 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
+ 
+ 	return -ENOENT;
+ }
 +
- /* RPMI linux mailbox attribute IDs */
- enum rpmi_mbox_attribute_id {
- 	RPMI_MBOX_ATTR_SPEC_VERSION = 0,
++/**
++ * __acpi_node_get_property_reference - returns handle to the referenced object
++ * @fwnode: Firmware node to get the property from
++ * @propname: Name of the property
++ * @index: Index of the reference to return
++ * @num_args: Maximum number of arguments after each reference
++ * @args: Location to store the returned reference with optional arguments
++ *	  (may be NULL)
++ *
++ * Find property with @name, verifify that it is a package containing at least
++ * one object reference and if so, store the ACPI device object pointer to the
++ * target object in @args->adev.  If the reference includes arguments, store
++ * them in the @args->args[] array.
++ *
++ * If there's more than one reference in the property value package, @index is
++ * used to select the one to return.
++ *
++ * It is possible to leave holes in the property value set like in the
++ * example below:
++ *
++ * Package () {
++ *     "cs-gpios",
++ *     Package () {
++ *        ^GPIO, 19, 0, 0,
++ *        ^GPIO, 20, 0, 0,
++ *        0,
++ *        ^GPIO, 21, 0, 0,
++ *     }
++ * }
++ *
++ * Calling this function with index %2 or index %3 return %-ENOENT. If the
++ * property does not contain any more values %-ENOENT is returned. The NULL
++ * entry must be single integer and preferably contain value %0.
++ *
++ * Return: %0 on success, negative error code on failure.
++ */
++int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
++				       const char *propname, size_t index,
++				       size_t num_args,
++				       struct fwnode_reference_args *args)
++{
++	return acpi_fwnode_get_reference_args(fwnode, propname, NULL, index, num_args, args);
++}
+ EXPORT_SYMBOL_GPL(__acpi_node_get_property_reference);
+ 
+ static int acpi_data_prop_read_single(const struct acpi_device_data *data,
+@@ -1558,16 +1567,6 @@ acpi_fwnode_property_read_string_array(const struct fwnode_handle *fwnode,
+ 				   val, nval);
+ }
+ 
+-static int
+-acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+-			       const char *prop, const char *nargs_prop,
+-			       unsigned int args_count, unsigned int index,
+-			       struct fwnode_reference_args *args)
+-{
+-	return __acpi_node_get_property_reference(fwnode, prop, index,
+-						  args_count, args);
+-}
+-
+ static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwnode)
+ {
+ 	const struct acpi_device *adev;
 -- 
 2.43.0
 
