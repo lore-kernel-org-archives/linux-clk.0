@@ -1,63 +1,63 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FD727454
-	for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 08:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4324C1F237D
+	for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 08:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748162963; cv=none; b=KVOMDWtRmIE5Skgdo5OFvlecCQNhaqWpNYbVmi8HeYmG+p5FdOVB+kuS3RY++wHfwMHJBNh6nseuFP3OMDKpBEwequnxHb3qEAxjafVSJXOk2zn9WQ3pjQwt9d+Api/SSOxH5WZJi2ThdWx0Pz42njf8s4m4xP8FwSjzMfZ74Cs=
+	t=1748162970; cv=none; b=Rmm8biudicS3uyIyE4DSlgAQyX497XMiiWE41ONPJtWtpsJqWUJCzHDAthnR4bh1biW634Q5r/S7VB4EYG9f6pQLmrcCjD2wmqn1rzJl/Jq7UgglSx9wLZslCTwUxVSMxDCTQsVJ0nVOS64VEGNC+zqhL9hxwShhYPn4GIS3eDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748162963; c=relaxed/simple;
-	bh=GHGvIRMABFHZz8Rip9kEWuDjGkE4igVxIjdR6SESrL0=;
+	s=arc-20240116; t=1748162970; c=relaxed/simple;
+	bh=MuJyfj0pHWnRkEcbvrQA/wJDke7vM4uboKRNMUCLA5c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZoOtPPhkrEOZLTc8LPPSevSnvfjlLQIEOklVdanEZGKCq0UDiNw+yL/RYuKqN5Csrd+ineGb/5dB+lxmpwxR+i4v179NKy0UTu0226Plxjnyo5LniqkcgeIhsqCe7ThncD7oAszo0PT+tgy2oPB279/wCpb6AJ4YUblEOkq3W7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gOPP3hwx; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=GwFkMHuvO7GA6i9ovx8EqKs9He0x/M4rKcGQjIcxEMyhCFEa3a1815vqdLYXeHBbX1bRusfNUdOwp5vjRjI3r4NYaJRtR9qTAOfVYw5dQbV3tZBT4VoF5mwNnAcu3nLBuYam9U7+UaL4e9BzzKfa1xDKeRmanESmvkJS7YDyVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fGoPA0fm; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gOPP3hwx"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so799670b3a.0
-        for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 01:49:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fGoPA0fm"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742c9563fd9so783535b3a.3
+        for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 01:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748162960; x=1748767760; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1748162968; x=1748767768; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9FunaAXszvTG8F9NxLwtJcRl/JdpmfQ2Wvu5HorrkT0=;
-        b=gOPP3hwxGyimoV29gUujyL43MqTpNNaRRP77u1KLu3AsDUFmiLFlNaraw8JdvFehpd
-         FZjiLxwtayxwpcMt3NDF6sXUpZqpODcS2t6p+0112f0x9xVxKkjrDhtYk8iU+MNO/rYr
-         6r33vvq5nZYIp+YSelWFJA4JqkX/YQZ+S139pkgdNGBfhWGvoYpNwiNEXhkK5wXFhb/x
-         QF99FSsM5o1lRmkIFA5rx18mocSLXD8fF7iBsCfUM26URtmSm2Nu0epbc2f9d85Y3P23
-         TenHxbot77ziK7SkYf1gKgDa3x67zKOwEDi89urtwzqb0nE85Hac2uOy4l6LXtDF0FMH
-         Gc8w==
+        bh=Te183q+oK/UUiJXJqywViKcAzUsX+o6NlP4bjtzs3DM=;
+        b=fGoPA0fmjjwK+E+9bNeSEzJcs32jRrsqdD5lLmYpQCBFV5VmpbxIYaCxzldiyT2Ks2
+         7vOzyWi3DGvKplEBfGZtiCqJqZGlMNFtWxB4p4E8WdWRK9WWumNSn+1uOqhejx3giTUl
+         KvB4d99JXwEUQ00Mi055W18WOT09P3/Ko+qV1N/gsOiS+oQ9xOwXcQbmtT5ofxMjmnyV
+         HcgAvSpyleQ2tbqOyeyGAiQ6m2h/xLJv6DuS8Z0Ev1fR+BZrlp2Qjax1eA9kHGvLaIPG
+         5WXJck0keVQuq/5OPcGlfPmt5fFMkQH79MfkHHo1m1FU4WkG0f8UhEtvid2tVveTP1yd
+         /8fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748162960; x=1748767760;
+        d=1e100.net; s=20230601; t=1748162968; x=1748767768;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9FunaAXszvTG8F9NxLwtJcRl/JdpmfQ2Wvu5HorrkT0=;
-        b=eE0dA7RO0d5Pnhu4J4LT8R3HLwNl/4sJTEoME3NRJn80z69aAoLf9xxA98yIUxRUuy
-         O/5l7lJnrR7a/+R4hJCwmL58AtWQUl0lNUZHZi6ZuxPM/KAUSe5h23+W7hdDOe+lSbB2
-         TJRgXZ+GztbDoIz3hwUKHBaMJN0AI3H4ZmumK9xUMaC9M7U5Hiln+vUs75ii4he3yfKB
-         ElcTrj/fQ8ju9Ui7o4WPTZt3sDdF9QvHUKM2bp4xns+oLFAiVnElcQqCG5lK/RIGOiqn
-         ATeqwk/+xSZHrZoBiZZTsOdfC7bqhcO06GZDmkNshFGn0lhG4U6zroSTUEOOg1PUnyif
-         BnOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUI6RHJ15vJQ6ncnP6THFxM2kqzWTI4MvX1Yc5+husYGazRw+PfQV0GaieQqQv+6W3HPY9tayzFr9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrvKmGX6d0cidpV9jPUqG0KGg/seGa4d54niXbSGemils6LNZP
-	mb3kDjBD3WLQCmhi4HQSy4T1qhrBkVlFZilhKcBFrpGj4NNENC5tXWyr5oab9FD5N0E=
-X-Gm-Gg: ASbGncvW2nZAUtEmJvh5AYBJU5xm7IWI4yYrdjg01Hxfzj93Yi9hbscn4YqZMLs+8hB
-	D2+7DSvf89JAq8trgjUBUPxE6JTq15HXhE8qVu8JCPaxjsKPVidyVTftLZcRLY4HWVS5q6LxIS7
-	5J1ZIsOraJtp9HJNKRzxspe1N0p4fBpjVu1iPN236yKYHIy5XPxcCf76xt2Bk0p3N7KS8uD2sUI
-	zlnWBpngXDiI7eCWtMC6NYZFohVstxAV/cmknLrQjgpRKv8MaXsunFiFPlde2iKYsGD4sMNhv/5
-	srUQgKsEhWASfsMhM+//xObMe+S8ZsDuBNsaH9yBsEZ652Om9y3crlyaUIGB9KsdS6o7784ghPN
-	0PhVm0qJz
-X-Google-Smtp-Source: AGHT+IFfQ4GlwBOm5aqf9abJJ6GzdowEpxdV3jxJWk+baMuesDsuJ4xVL+L2MQeiT0KLZQBJG7FJ6Q==
-X-Received: by 2002:a05:6a21:100f:b0:218:75de:d924 with SMTP id adf61e73a8af0-2188c22eb79mr8067987637.19.1748162960471;
-        Sun, 25 May 2025 01:49:20 -0700 (PDT)
+        bh=Te183q+oK/UUiJXJqywViKcAzUsX+o6NlP4bjtzs3DM=;
+        b=hrctPUVhtoszVv5470B2HUzuv2u07yVWwOdHHEova2/5+JP0bcBe3zT5lr5Y38l3s6
+         5vU8xQvg2OZ/OVpmazY6lUqkORYPupapCMQakLYUoX2VjRRaFV+KVwrJf81/ZwB7Iqcb
+         k4yr4n+sOGVOu7HeZ8es20pHVloGf8KsOWnm7lk/jzu1+qVFtZChLqWX/KsJveSD3551
+         DInwzE5bUhsCFLCQ+7DX59sKaR74bGTWa95cxv9Vl/gxkTNuRqUkGZCZJbvG5iTFbB1b
+         VB5YTS1D1PDPfTNdCSPz2rNEcyOuUzbsL4E5d4JtVq99obRWWooL8JcOEk71OgjU2Rx5
+         pgjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUErmN1QUSrR+qEV1kz3vrJ13B4EzMVYmY5m+AhJ9tqsoFlTJKX+JKiVvc7ba8SMj2hxqsXVlGNgJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHy/WDwtWNXtuBZ5BTkkC4hgXpd7S50OQWIZ16lF3hDPh0nYWZ
+	agp04tWfUG52KzD+vN7imjdEQIT/N2iPhCHeGmjAtYwz9EnTYpZ3UKRAi5VQHJk32So=
+X-Gm-Gg: ASbGncsq4JflPGtPxS6vygLA3PkrOxeXQaS6Hfa8p/jJlEdbMvPPJyEc0A7Juxw3P8F
+	p/YzpkBWLxedJGdwhaqbt55/z/q9k+GdmIdVheT5jERxUOqYGsw29C6P97BvpS3/A9AWh0lWJQh
+	5rD9R8y78I8hMCBN0nsArKbba1WrzCzLokhaVX8h3uyDwybc4vKyo0i4IqlZGEOvFHC86yCnYTm
+	D5S+TYbsWxeTXOgqJzMMeBv+ZYRcLtW/UYCAwhbOPDkTVhqOBmNuxLNWvrzRCus/V2j6ZlD6OPR
+	GjuE/X7IKwNCGaQ84CSzReG+07UPm9X5jiUXxiVcIsH5N0XQw+7ROuLsEtLhtOt1pvzk11BvSBC
+	raeY6++st
+X-Google-Smtp-Source: AGHT+IHvodyfLDw8dU8rN0uEdUKyajUEF59LEZ7NqCCr7saQPd/1HfpNeU3hAKm+Asik2TwpoaM2Sg==
+X-Received: by 2002:a05:6a21:3399:b0:216:185c:af0b with SMTP id adf61e73a8af0-2188c3b494amr8573479637.39.1748162968385;
+        Sun, 25 May 2025 01:49:28 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.22.180])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6dd83sm15250627a12.18.2025.05.25.01.49.13
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6dd83sm15250627a12.18.2025.05.25.01.49.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 01:49:20 -0700 (PDT)
+        Sun, 25 May 2025 01:49:27 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -86,9 +86,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 14/23] ACPI: property: Refactor acpi_fwnode_get_reference_args()
-Date: Sun, 25 May 2025 14:17:01 +0530
-Message-ID: <20250525084710.1665648-15-apatel@ventanamicro.com>
+Subject: [PATCH v4 15/23] ACPI: property: Add support for cells property
+Date: Sun, 25 May 2025 14:17:02 +0530
+Message-ID: <20250525084710.1665648-16-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250525084710.1665648-1-apatel@ventanamicro.com>
 References: <20250525084710.1665648-1-apatel@ventanamicro.com>
@@ -102,158 +102,80 @@ Content-Transfer-Encoding: 8bit
 
 From: Sunil V L <sunilvl@ventanamicro.com>
 
-Currently acpi_fwnode_get_reference_args() calls the public function
-__acpi_node_get_property_reference() which ignores the nargs_prop
-parameter. To fix this, make __acpi_node_get_property_reference() to
-call the static acpi_fwnode_get_reference() so that callers of
-fwnode_get_reference_args() can still pass a valid property name to
-fetch the number of arguments.
+Currently, ACPI doesn't support cells property when
+fwnode_property_get_reference_args() is called. ACPI always expects
+the number of arguments to be passed. However, the above mentioned
+call being a common interface for OF and ACPI, it is better to have
+single calling convention which works for both. Hence, add support
+for cells property on the reference device to get the number of
+arguments dynamically.
 
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 ---
- drivers/acpi/property.c | 101 ++++++++++++++++++++--------------------
- 1 file changed, 50 insertions(+), 51 deletions(-)
+ drivers/acpi/property.c | 22 ++++++++++++++++++++++
+ drivers/base/property.c |  2 +-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index 436019d96027..d4863746fb11 100644
+index d4863746fb11..c9c3d6920326 100644
 --- a/drivers/acpi/property.c
 +++ b/drivers/acpi/property.c
-@@ -882,45 +882,10 @@ static struct fwnode_handle *acpi_parse_string_ref(const struct fwnode_handle *f
+@@ -882,6 +882,20 @@ static struct fwnode_handle *acpi_parse_string_ref(const struct fwnode_handle *f
  	return &dn->fwnode;
  }
  
--/**
-- * __acpi_node_get_property_reference - returns handle to the referenced object
-- * @fwnode: Firmware node to get the property from
-- * @propname: Name of the property
-- * @index: Index of the reference to return
-- * @num_args: Maximum number of arguments after each reference
-- * @args: Location to store the returned reference with optional arguments
-- *	  (may be NULL)
-- *
-- * Find property with @name, verifify that it is a package containing at least
-- * one object reference and if so, store the ACPI device object pointer to the
-- * target object in @args->adev.  If the reference includes arguments, store
-- * them in the @args->args[] array.
-- *
-- * If there's more than one reference in the property value package, @index is
-- * used to select the one to return.
-- *
-- * It is possible to leave holes in the property value set like in the
-- * example below:
-- *
-- * Package () {
-- *     "cs-gpios",
-- *     Package () {
-- *        ^GPIO, 19, 0, 0,
-- *        ^GPIO, 20, 0, 0,
-- *        0,
-- *        ^GPIO, 21, 0, 0,
-- *     }
-- * }
-- *
-- * Calling this function with index %2 or index %3 return %-ENOENT. If the
-- * property does not contain any more values %-ENOENT is returned. The NULL
-- * entry must be single integer and preferably contain value %0.
-- *
-- * Return: %0 on success, negative error code on failure.
-- */
--int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
--	const char *propname, size_t index, size_t num_args,
--	struct fwnode_reference_args *args)
-+static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
-+					  const char *propname, const char *nargs_prop,
-+					  unsigned int args_count, unsigned int index,
-+					  struct fwnode_reference_args *args)
- {
- 	const union acpi_object *element, *end;
- 	const union acpi_object *obj;
-@@ -999,7 +964,7 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
- 
- 			ret = acpi_get_ref_args(idx == index ? args : NULL,
- 						acpi_fwnode_handle(device),
--						&element, end, num_args);
-+						&element, end, args_count);
- 			if (ret < 0)
- 				return ret;
- 
-@@ -1017,7 +982,7 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
- 
- 			ret = acpi_get_ref_args(idx == index ? args : NULL,
- 						ref_fwnode, &element, end,
--						num_args);
-+						args_count);
- 			if (ret < 0)
- 				return ret;
- 
-@@ -1039,6 +1004,50 @@ int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
- 
- 	return -ENOENT;
- }
-+
-+/**
-+ * __acpi_node_get_property_reference - returns handle to the referenced object
-+ * @fwnode: Firmware node to get the property from
-+ * @propname: Name of the property
-+ * @index: Index of the reference to return
-+ * @num_args: Maximum number of arguments after each reference
-+ * @args: Location to store the returned reference with optional arguments
-+ *	  (may be NULL)
-+ *
-+ * Find property with @name, verifify that it is a package containing at least
-+ * one object reference and if so, store the ACPI device object pointer to the
-+ * target object in @args->adev.  If the reference includes arguments, store
-+ * them in the @args->args[] array.
-+ *
-+ * If there's more than one reference in the property value package, @index is
-+ * used to select the one to return.
-+ *
-+ * It is possible to leave holes in the property value set like in the
-+ * example below:
-+ *
-+ * Package () {
-+ *     "cs-gpios",
-+ *     Package () {
-+ *        ^GPIO, 19, 0, 0,
-+ *        ^GPIO, 20, 0, 0,
-+ *        0,
-+ *        ^GPIO, 21, 0, 0,
-+ *     }
-+ * }
-+ *
-+ * Calling this function with index %2 or index %3 return %-ENOENT. If the
-+ * property does not contain any more values %-ENOENT is returned. The NULL
-+ * entry must be single integer and preferably contain value %0.
-+ *
-+ * Return: %0 on success, negative error code on failure.
-+ */
-+int __acpi_node_get_property_reference(const struct fwnode_handle *fwnode,
-+				       const char *propname, size_t index,
-+				       size_t num_args,
-+				       struct fwnode_reference_args *args)
++static unsigned int acpi_fwnode_get_args_count(const struct acpi_device *device,
++					       const char *nargs_prop)
 +{
-+	return acpi_fwnode_get_reference_args(fwnode, propname, NULL, index, num_args, args);
++	const union acpi_object *obj;
++
++	if (!nargs_prop)
++		return 0;
++
++	if (acpi_dev_get_property(device, nargs_prop, ACPI_TYPE_INTEGER, &obj))
++		return 0;
++
++	return obj->integer.value;
 +}
- EXPORT_SYMBOL_GPL(__acpi_node_get_property_reference);
++
+ static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+ 					  const char *propname, const char *nargs_prop,
+ 					  unsigned int args_count, unsigned int index,
+@@ -960,6 +974,9 @@ static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+ 			if (!device)
+ 				return -EINVAL;
  
- static int acpi_data_prop_read_single(const struct acpi_device_data *data,
-@@ -1558,16 +1567,6 @@ acpi_fwnode_property_read_string_array(const struct fwnode_handle *fwnode,
- 				   val, nval);
- }
++			if (nargs_prop)
++				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
++
+ 			element++;
  
--static int
--acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
--			       const char *prop, const char *nargs_prop,
--			       unsigned int args_count, unsigned int index,
--			       struct fwnode_reference_args *args)
--{
--	return __acpi_node_get_property_reference(fwnode, prop, index,
--						  args_count, args);
--}
--
- static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwnode)
- {
- 	const struct acpi_device *adev;
+ 			ret = acpi_get_ref_args(idx == index ? args : NULL,
+@@ -978,6 +995,11 @@ static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+ 			if (!ref_fwnode)
+ 				return -EINVAL;
+ 
++			if (nargs_prop) {
++				device = to_acpi_device_node(ref_fwnode);
++				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
++			}
++
+ 			element++;
+ 
+ 			ret = acpi_get_ref_args(idx == index ? args : NULL,
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index c1392743df9c..172dfb950328 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -578,7 +578,7 @@ EXPORT_SYMBOL_GPL(fwnode_property_match_property_string);
+  * @prop:	The name of the property
+  * @nargs_prop:	The name of the property telling the number of
+  *		arguments in the referred node. NULL if @nargs is known,
+- *		otherwise @nargs is ignored. Only relevant on OF.
++ *		otherwise @nargs is ignored.
+  * @nargs:	Number of arguments. Ignored if @nargs_prop is non-NULL.
+  * @index:	Index of the reference, from zero onwards.
+  * @args:	Result structure with reference and integer arguments.
 -- 
 2.43.0
 
