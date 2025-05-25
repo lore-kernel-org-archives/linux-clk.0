@@ -1,139 +1,114 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F251EA7E1
-	for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 08:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE25143C61;
+	Sun, 25 May 2025 17:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748163035; cv=none; b=MnCpR3YgKSZ3aEBMfz8DW3yOp/NqCky5T6SObUXWE9VRglRY8l0S1XBZfZqkdwvO4pRaeblMye+pClxlhJfQsqfMnRbK8rnCmWfntPf71YZ2dVLC5XTXR6GPuF6G7GSQWy8TmOcO/GVKT6fFvBXaihUur4BmdSOJ6NHu0Z6LWqo=
+	t=1748195768; cv=none; b=Gzm6umqBkwqJQXiD+PmYeW/a3clm/tWlPZ3DMkDHmT1h6KLfr5CsG4Hv/JtTDWESYKnHcfc6EbpWXe8X0q9OVWRGwyQfSsM7t3tb3TUBuoA6ZRNqfhlJ9iPiEKzrz0Jz9r+0ofaFgW6rggmiz5/pbHUXfINK5rgfby5XJ5SfWaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748163035; c=relaxed/simple;
-	bh=oGSCzCROCq47IZD65VMMVOn6HMFmoELYuYWTwWyFJAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WdK2XoG4q4KlxdSd54aYXiHFcAdpVFgz8YYOoAZfJOmuBULgRe7pRFZkiPQAse4+yires9JDFzVBOn4O2NC7ho9vvcg43x5UWGp7ryaE7SMpbglBKstWpqBMYtSWcS6YuNTPrRq0ZuU8z6mFfo/1vKDHjvL5slLvZy5IK9P8DJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=YTiViTxA; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1748195768; c=relaxed/simple;
+	bh=gAGGrpFaUot6LvUtyb2oJD1jQBlcQMlGQ2LEDzh1XzY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IDwnK30QnuVSZAAqE0mVjp/ugQvxq0fc/jAReF9iEaNDeyIhuLAeJVoEf71pLNH6k3UQ6G7UFqW9FMYp3eJ14/9BNsjZh8DtA03WcJ0tfbMYvQytZjqLCHkwzwDmUtlAiK5Vy+eiViba4pNFOPGSZn9EPdhxFFBjtTTkiWwuTl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5xcn49w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="YTiViTxA"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234477e3765so1683055ad.2
-        for <linux-clk@vger.kernel.org>; Sun, 25 May 2025 01:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748163033; x=1748767833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cHC1UEZymw9wnnpkV/BuwvpiaSVPH0/q81+93KLNW1U=;
-        b=YTiViTxAFXQBzfVLV9Y0CfEFSlyxP3YxRnSC5XnvrlZG0gvEFkzIE1miO5mGMrNEDL
-         uCOE340WqBqCQDP+qMWSDAMizznyTh0+Ah44kcnR2S41iU86Oryo24xZ8erW+KNxJGlb
-         nBWimM97UD9d2xfdtsP9UM7z3rIjOSa2dpRrpO21mVC4gzUfoSela8KpvYhPnQsvqCWP
-         7lEdJq2DyByEEozaYkbyOIJ4u+v2Q+KksaQOxafoH9+GyvhND61QH1j/506Wh+z9nQJm
-         f+KK+vebqGgRfu/l9JSETH4U9kHdP8k6NwsCxEX3X5DHLQ8RmaUhph6u8RyL3VDTrTNR
-         TDng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748163033; x=1748767833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cHC1UEZymw9wnnpkV/BuwvpiaSVPH0/q81+93KLNW1U=;
-        b=SAPI87gROwgf9qzjAz65LMo4DMakfpy8nkUb4KLT19c8pA5ZfS254IovGWAzUA4t+N
-         xkK6phF1vbLdpaZrGLTFbSany9kSn7Dv8Nc9TO1z+Fk8njEWlUqWgGejuaSL6u0SIbcO
-         kLiXHv1pPfDffacrUfzwugagnM6HMDhkEqxVb7Aa0X5vNrWgUgugC+3uMmsNz2BD0L6D
-         EB7RVTakFzUSxuHpj5gYHM1oJ7HyHKZ76wYsBQn54TsvQ5hDqTO5YqH76VN4pzH8tCWV
-         St8bhAacQ8JWoSRJKJuIdr6QINgwEreYPoJtXGETA1zqFAf2gy2p33CKhz5nhQsh/5M0
-         +N+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUy0bWiV9L/QhclMOYRAaw6WwG2krlLYdVV6goFoApduX+qR0kGZHU+o6G88H+y0tKIGVEKKh+ghuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPenfblH9oL0g+ivZS/kgAu45mktju/DUuzoUxSvyn53MQfWla
-	UUbCKY4TeCNAuhIyLX1MmTaz2i4ZLIt6JES2Xa0SHsb1vYwOO5pPqFZm+mlDgn1ic/U=
-X-Gm-Gg: ASbGncv7yfUrfuXbwyxUjqXglgdchdMoTEILvL9IUCWX1Qw9eW6Fgvqkbx07IIMd/Co
-	onJHWlnDBY2GBCmtnt/xVtzObnpyEspY53Jcudw4vCEQhhxVac0BXNHKMCGVARtKTHAta0ej+CE
-	Au7M+p/wWIGHuIF1MYcyYjbJbrWpbXizsYOn3EUvfoDbpdffyldvUq4ch40jlL6kU5x3DkNpk7E
-	NP9HArT347ZJhjutSdS5hu2AIrAgErUxVyUZ6DY+wKef6y0l5T2Z2CG9RhktFkCqL2R0zXfFw5W
-	8VwDK7vaqDpjfGKNmtR5srDfZVQvHQvOT7X8sClAtaUPrxAIcUSf5erL1qXe1pxc8DIj39SyQIV
-	cRvdbDIuR
-X-Google-Smtp-Source: AGHT+IEZvm0nbOinSt/PdP1ymjs9KkhXXFgMyCQpgodAAZI4iEJHOoECkEhtpUUCnZco52yWUXVFNQ==
-X-Received: by 2002:a17:902:ce8b:b0:223:5c77:7ef1 with SMTP id d9443c01a7336-23414f7036dmr90752035ad.21.1748163033368;
-        Sun, 25 May 2025 01:50:33 -0700 (PDT)
-Received: from localhost.localdomain ([122.171.22.180])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6dd83sm15250627a12.18.2025.05.25.01.50.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 01:50:32 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v4 23/23] MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-Date: Sun, 25 May 2025 14:17:10 +0530
-Message-ID: <20250525084710.1665648-24-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250525084710.1665648-1-apatel@ventanamicro.com>
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5xcn49w"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03C61C4CEEA;
+	Sun, 25 May 2025 17:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748195768;
+	bh=gAGGrpFaUot6LvUtyb2oJD1jQBlcQMlGQ2LEDzh1XzY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=C5xcn49w0aBuf/jAK3LO5aPziNZnwsF3TX50BbNhvAL7TjkmN38X0k+cR6KEltc+v
+	 +Be1ecwA5Y8PgwMyXM8iK9bad++n65p8w0iTHzPLgBMpVWt1E9MXm39smu+c2N8Oz/
+	 BoF/Qp/Uldr6Tlr1g7QUibMWJ9k1jjPBpZ9XVoEgutEvRbQYe7PELvshTTOHIdu2sj
+	 /zqINYZv+Hjifx4ZLh0z9lSMN+tYBJshZuPY5HrUZcSOfUnMK5MpW90Ima4NqjCm95
+	 +6jbBd/sPtH3LRZ0Ikr7g3NrRnfffNzxzjDqDYbSOYfIWENxzhADogzT/dpMVVdp9S
+	 fsFp78P4fyW2g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4256C54ED0;
+	Sun, 25 May 2025 17:56:07 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH 0/5] Add support for the IPQ5018 Internal GE PHY
+Date: Sun, 25 May 2025 21:56:03 +0400
+Message-Id: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALRZM2gC/x2MQQqAIBAAvyJ7TlDTiL4SHUy33IuZQhTh35OOw
+ zDzQsFMWGBiL2S8qNARG8iOgQs27sjJNwYllBG6F5zSaYQceTMpPNyvg9F2s9qhhxaljBvd/3B
+ eav0Au7tQZmAAAAA=
+X-Change-ID: 20250430-ipq5018-ge-phy-db654afa4ced
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748195765; l=1665;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=gAGGrpFaUot6LvUtyb2oJD1jQBlcQMlGQ2LEDzh1XzY=;
+ b=ETlaBtS9A4SDI9CPrwyMaAyaR/EcnY1qbqF7EUT62PnT6kmIhqi+xx7bxpZ8AKxo4F5RYUTG2
+ 88D7dh2zvHaBiTDGz0BT4Ljm5VSX4nmKwdBizoSNLETbp+V2sOXx+qO
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Add Rahul and myself as maintainers for RISC-V RPMI and MPXY drivers.
+The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+output pins that provide an MDI interface to either an external switch
+in a PHY to PHY link architecture or directly to an attached RJ45
+connector.
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+802.3az EEE.
+
+The LDO controller found in the IPQ5018 SoC needs to be enabled to drive
+power to the CMN Ethernet Block (CMN BLK) which the GE PHY depends on.
+The LDO must be enabled in TCSR by writing to a specific register.
+
+In a phy to phy architecture, DAC values need to be set to accommodate
+for the short cable length.
+
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+George Moussalem (5):
+      dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE PHY support
+      clk: qcom: gcc-ipq5018: fix GE PHY reset
+      net: phy: qcom: at803x: Add Qualcomm IPQ5018 Internal PHY support
+      arm64: dts: qcom: ipq5018: add MDIO buses
+      arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d48dd6726fe6..f09b865a697e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20963,6 +20963,21 @@ F:	drivers/perf/riscv_pmu.c
- F:	drivers/perf/riscv_pmu_legacy.c
- F:	drivers/perf/riscv_pmu_sbi.c
- 
-+RISC-V RPMI AND MPXY DRIVERS
-+M:	Rahul Pathak <rahul@summations.net>
-+M:	Anup Patel <anup@brainfault.org>
-+L:	linux-riscv@lists.infradead.org
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-+F:	drivers/clk/clk-rpmi.c
-+F:	drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-+F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
-+F:	include/linux/mailbox/riscv-rpmi-message.h
-+
- RISC-V SPACEMIT SoC Support
- M:	Yixun Lan <dlan@gentoo.org>
- L:	linux-riscv@lists.infradead.org
+ .../devicetree/bindings/net/qca,ar803x.yaml        |  23 +++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  51 ++++-
+ drivers/clk/qcom/gcc-ipq5018.c                     |   2 +-
+ drivers/net/phy/qcom/Kconfig                       |   2 +-
+ drivers/net/phy/qcom/at803x.c                      | 221 ++++++++++++++++++++-
+ 5 files changed, 287 insertions(+), 12 deletions(-)
+---
+base-commit: ebfff09f63e3efb6b75b0328b3536d3ce0e26565
+change-id: 20250430-ipq5018-ge-phy-db654afa4ced
+
+Best regards,
 -- 
-2.43.0
+George Moussalem <george.moussalem@outlook.com>
+
 
