@@ -1,247 +1,220 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFA041C64;
-	Mon, 26 May 2025 08:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9BF194A60;
+	Mon, 26 May 2025 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748248018; cv=none; b=HwqLdfpewDUWcUrBAragVtf6x5fKehy6/tfvCR3FdQ6ZFLsbPKKRs01/jhVe4IzRrCUQ83rL9EiRfyBJFJX1Y5P1ecNDvitxwl/sVL7F6Aa1erSXw6QpNvZd+s9heCf8lSFAUxorRquwCe6bD2StUGmNY0032zBzhVxT28GQpe0=
+	t=1748258913; cv=none; b=VECNnoWDCAiuV8bSeAJ8Yu9FLISTcLzKm7Amoxiz/1gSoTbFvICHoVR9c6bs0BQT5OHZpvdwpVYecFlCdCU5RzXUlqqy02KcbdQa3lgtj3909Yu/cB3QS/rI5OLtaxySUrPvd/UzU8uTHw+U8bE8X+RBLQ+bJnTE0oDhkwyqA6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748248018; c=relaxed/simple;
-	bh=0McZ0gQ9QSprE/u+YU+0FI5C9czsGBnBCLpeWD6/XJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WT6O0BnpnfGuEmTwJLA1kl6nSZpperKa02g8eFiWy4oc7II+VKyiMOmkY56Sn90mnMnuKG4H9Ij5dbv7WWywYXJjsVSparS+gWr7IFX7DtrSTVgv3B3r1X9fWLXE0Ev2bcnlwLAqbMbM+C96wK+CckmohyPEdFB6NQjhsZn455E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mV1/NZ4U; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1748258913; c=relaxed/simple;
+	bh=kEmp3zOQRYeNavMXIDH8o5Z2ES2SGt4vLffkGHqSWJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4MCrbz7empavvh9HL74clzsZyT8I+TBpGxmKynkLlN7Btnk48va5pwHB3ja8J4xpVsyHDERskrFJaIokGXaw5AWYQwfl+xDR0mvsj4D+yXwq9MCTay0Q7uqRrSxsw1noYsSOEVGhXewhj3+BWY8Nb8anT8lk0EzhufgiT6WsJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REI6joJY; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mV1/NZ4U"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54PNF1hs012378;
-	Mon, 26 May 2025 08:26:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w5MkyRhBDoPh8kgsB2TQmnk0WBaUQ4YSc85Jvh7YWYo=; b=mV1/NZ4UZpX4+q33
-	9KqV07X3dr4q6/HLj8c0ENhP5HMEhXD9C+2l5r/izJWwdaaOytuIqYRa4djRbz1E
-	yBUMAgkR0rSTc/Lx0p6giOZxwGXpFI666UrmkvBFrsLZQFopzuAC6FTCrNHBiWs3
-	xCkx+bJdP9hxhwIjlm4Tap+WYCDVCJqv6Bl1JuFr7EIE1W2hM5D8CqW/LV+XtNSc
-	SrO38yRQroPCINVoFfjx/gbt7xX6cmaJrxx6f6JbvWH592lW5xvYheixbrqCO+zC
-	F6+j7VE1nGLQlf4t/nBKIArGF1KLBeA24bhkneRw+BBVGe1tk1O4Ty4wWkdIstM7
-	xbeQ7w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6b5khbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 08:26:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54Q8Qn1c002816
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 08:26:49 GMT
-Received: from [10.231.216.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 May
- 2025 01:26:46 -0700
-Message-ID: <0b188dd2-c0c9-4125-83b4-86fb35b237f7@quicinc.com>
-Date: Mon, 26 May 2025 16:26:25 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REI6joJY"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55324062ea8so718868e87.3;
+        Mon, 26 May 2025 04:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748258910; x=1748863710; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/gp0tjp1Usc8MAV95nXKqKc5hXuWmSH0K8Gw6kVM6k=;
+        b=REI6joJYxwrfOIsJu5/fegCW4UEZKU8iDQkZsbfeloTn5F1ZUE/ZuzL8AnzwUv38/d
+         7NwXGGB0uxwwkPPLErfjlScON/PidcdSSXwshUnvYkWO49Ftq1ccbjl86/qkHsg0BlnA
+         7nllNAWoEr97tZAWwcxCJyCkem0ABYaANqf2i+J6jmsEUR8oF9jLAYItuqUl0wtdd8w6
+         oJ4CheapnMstdvHnjL0OjyyHB3/Yvwr4lKdY/b1Q8pHTINQBfW6HBKTwWtrOflxsWxRH
+         HMUkmCn8Rsy8INEXSe2olXo6p0VkyUXgma3czTarq/ji+3zhgfPhBU12P+xxBK56b43N
+         tZOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748258910; x=1748863710;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B/gp0tjp1Usc8MAV95nXKqKc5hXuWmSH0K8Gw6kVM6k=;
+        b=Ku+iXyC5Mj/KQZnRD/ttrlwWMhlQTRqkflWJd4oyvKVZcSlXOpnvzLawpyiMbk+NRy
+         bzaa14Y8mXB+y6WFRKOVW6GQ7bp0HeNNDw026exK5RWt+qmJaJHahWJDYsmz8HI6H/JK
+         MQOUeMKlwrwiMJYYmCEK9lZqAZc2pvQJh1K5siaX8oUgVnOgCFGakR4Y+xojeY5GdpAE
+         RMzkwDak+7ZhkU/lDdpXIrgSSI+RB+aHfRDUvcG6iVaXk9gKm7h8J0HmsK3GuKq1y9Kx
+         GtP7wmnbv0quwiYbhMGO12LQc/6Ey/m8soWpcqlUL4fuUPM5xrMrSVg3eik+zSs2OHzC
+         DvTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNF4/dAqtJxPydB4hxHekTpN7pq+jGYfZdty9KdVqcJcfW+mGQeRjpmUZQZ+1nUULgI50/X97TplDt@vger.kernel.org, AJvYcCWA1P51Wvvr5fHKnJut6pJLYXf7gVH82Mxl9DUcY76S1O3RaRpt/+WTCtkoe1/xjAuJX42H0p2TwDyF@vger.kernel.org, AJvYcCXtFf8g3t5uhuX4EFxtU90MtERaHMt7wQzCw9D/kg7CYnts4lpD3smN9HBJOfXN8Ahow4deESddP6Wi1lIp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqMisdey/hiFabiSo6ui1P637LQldZSDSPZjToMkvR4ssb3HVo
+	lVcumqR9vvP1sgKCrSnDVFCq4dYXT+zaN5zBPv20f2Yg70Qlx4iM1O5C
+X-Gm-Gg: ASbGncuUgnASldQ84BRdg9YoKLi3jCZMwJf9HvZM8bY+FsJK2KpcIQi1MKO7xTdptO2
+	WCTgkZZNOueCUxrtQiRcDT+Aa1BqSeakmmN5zSuHu/2RzXIpTzf5uzJnxGrHpnx8LoXDytQZmB+
+	KoppoQTpdiu/qK2NxCc8hal3bVk2evp50MRsQe4Jk672ijc9URZF22stAKMMs/+pw2i/Aj+TfgY
+	0NrZVNk/9IlmesbqjNc3q23Ahw/tdsCz4sIkvSCxUzeDJS27Ja28kzhxZBFLmL1PIUW7BO2QccO
+	sv99LRERNeEss1WPamIQGyImRwAdbc974dwOuwRLaxg+2QVS6Ik2BuJrxgvMlbgWgptmO9/KmyQ
+	dg7u3slKnBseFjLCM6vIsybk=
+X-Google-Smtp-Source: AGHT+IHRhjYaDU6k00/gXLYowdKanWHffNQeKQGOtcca3mVTBbs0rkOKWcbsJqncpV4ih5gfEecxkQ==
+X-Received: by 2002:a05:6512:3d21:b0:545:1e2d:6b73 with SMTP id 2adb3069b0e04-5521c7ae5a0mr2006472e87.13.1748258909504;
+        Mon, 26 May 2025 04:28:29 -0700 (PDT)
+Received: from gmail.com (213-67-3-247-no600.tbcn.telia.com. [213.67.3.247])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55322c2cd0bsm351149e87.124.2025.05.26.04.28.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 04:28:29 -0700 (PDT)
+Date: Mon, 26 May 2025 13:28:28 +0200
+From: "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jank@cadence.com,
+	edgar.iglesias@amd.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: clk: fixed-mmio-clock: Add optional
+ ready reg
+Message-ID: <aDRQXFTQngigI4pC@zapote>
+References: <20250525190806.1204531-1-edgar.iglesias@gmail.com>
+ <20250525190806.1204531-2-edgar.iglesias@gmail.com>
+ <e7efac3d-8dbf-4370-8f36-ffa9351593c0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
- <20250218-switch_gdsc_mode-v4-2-546f6c925ae0@quicinc.com>
- <cf244e11-96b3-49cd-8daa-df9c91435e6e@linaro.org>
-Content-Language: en-US
-From: Renjiang Han <quic_renjiang@quicinc.com>
-In-Reply-To: <cf244e11-96b3-49cd-8daa-df9c91435e6e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZcodNtVA c=1 sm=1 tr=0 ts=683425ca cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=KKAkSRfTAAAA:8 a=yKG4cNEaDZQrYnTI7YEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDA3MCBTYWx0ZWRfX/UxKCsHMYu9M
- trRY7zoYZ7VkRMDHUb2OBhObmhhxIu2GzaqMHPDPRAOJWD971ycRKCTp3xDNqneF9fiZ+Sso8vN
- aXSwGFDLYDMic8XA9zy5XMdCpZ/rAJZF7U4/QFgP1Vbt9Am+Me6ucX6A3xWvEY2llXE01U3GTlv
- +brDDFV351voum9ilgWMUqXq4NOj5wzlNHZqlhpMPY8YPjCG/qjsXaTueZ3ztC8fsNUj8GreWyP
- 49N1vcnTcnICewIr5kJ2SK6mRfBIQVtBQeQKvD5W/4oYlA32a+faMUrNIiWvDPvGquXZtu7KV9H
- shqhG2b6TMwN0pR888w1Uc3LJd177S1wXG4wjuw6BVtqK/NoSlBSzp5pCwkilJIFSYNi8a7/aoA
- z/DzO9/NApnB60Fn4ZZmIqAUs8/+qAtxVOSJXBJWdFKT32qucTOtn7ydDx6bHxkj6/XTr4t4
-X-Proofpoint-GUID: DTHybJFK3v-Kzyl27L32aODXXqN7V7My
-X-Proofpoint-ORIG-GUID: DTHybJFK3v-Kzyl27L32aODXXqN7V7My
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_04,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- spamscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505260070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7efac3d-8dbf-4370-8f36-ffa9351593c0@kernel.org>
+User-Agent: Mutt/2.2.14+84 (2efcabc4) (2025-03-23)
+
+On Mon, May 26, 2025 at 06:53:14AM +0200, Krzysztof Kozlowski wrote:
+> On 25/05/2025 21:08, Edgar E. Iglesias wrote:
+> > From: "Edgar E. Iglesias" <edgar.iglesias@amd.com>
+> > 
+> > Add an optional ready register and properties describing bitfields
+> > that signal when the clock is ready. This can for example be useful
+> > to describe PLL lock bits.
+> > 
+> > Signed-off-by: Edgar E. Iglesias <edgar.iglesias@amd.com>
+> > ---
+> >  .../bindings/clock/fixed-mmio-clock.yaml      | 38 ++++++++++++++++++-
+> >  1 file changed, 37 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> > index e22fc272d023..90033ba389e8 100644
+> > --- a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> > @@ -10,6 +10,11 @@ description:
+> >    This binding describes a fixed-rate clock for which the frequency can
+> >    be read from a single 32-bit memory mapped I/O register.
+> >  
+> > +  An optional ready register can be specified in a second reg entry.
+> > +  The ready register will be polled until it signals ready prior to reading
+> > +  the fixed rate. This is useful for example to optionally wait for a PLL
+> > +  to lock.
+> > +
+> >    It was designed for test systems, like FPGA, not for complete,
+> >    finished SoCs.
+> >  
+> > @@ -21,7 +26,10 @@ properties:
+> >      const: fixed-mmio-clock
+> >  
+> >    reg:
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    items:
+> > +      - description: Fixed rate register
+> > +      - description: Optional clock ready register
+> >  
+> 
+> I am not convinced we actually want this. If you have more complicated
+> clocks which need more than one register, then maybe this is too complex
+> for generic device and you should just make this part of clock controller.
+
+Right.
+
+> 
+> Also I wonder how a clock, which is not controllable, cannot be gated,
+> can be ready or not. Issue is easily visible in your driver:
+> 1. Probe the driver
+> 2. Clock is not ready - you wait...
+> 3. and wait and entire probe is waiting and busy-looping
+> 4. Probed.
+> 5. Unbind device
+> 6. Rebind and again we check if clock is ready? Why? Nothing changed in
+> the hardware, clock was not disabled.
+
+Yeah, in my particular case, once the clock is ready it will never go
+back to "unready" until cold restart.
+
+> 
+> Although above is maybe better question for driver design, but it still
+> makes me wonder whether you are just putting driver complexity into DT.
+
+Yes, I felt that this was simple enough to have a generic mechanism but perhaps not.
 
 
-On 3/19/2025 6:11 AM, Bryan O'Donoghue wrote:
-> On 18/02/2025 10:33, Renjiang Han wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> The video driver will be using the newly introduced
->> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
->> control modes at runtime.
->> Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
->> Qualcomm SoC SC7180, SDM845, SM7150, SM8150 and SM8450.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
->> ---
->>   drivers/clk/qcom/videocc-sc7180.c | 2 +-
->>   drivers/clk/qcom/videocc-sdm845.c | 4 ++--
->>   drivers/clk/qcom/videocc-sm7150.c | 4 ++--
->>   drivers/clk/qcom/videocc-sm8150.c | 4 ++--
->>   drivers/clk/qcom/videocc-sm8450.c | 4 ++--
->>   5 files changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/videocc-sc7180.c 
->> b/drivers/clk/qcom/videocc-sc7180.c
->> index 
->> d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 
->> 100644
->> --- a/drivers/clk/qcom/videocc-sc7180.c
->> +++ b/drivers/clk/qcom/videocc-sc7180.c
->> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
->>       .pd = {
->>           .name = "vcodec0_gdsc",
->>       },
->> -    .flags = HW_CTRL,
->> +    .flags = HW_CTRL_TRIGGER,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   diff --git a/drivers/clk/qcom/videocc-sdm845.c 
->> b/drivers/clk/qcom/videocc-sdm845.c
->> index 
->> f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 
->> 100644
->> --- a/drivers/clk/qcom/videocc-sdm845.c
->> +++ b/drivers/clk/qcom/videocc-sdm845.c
->> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
->>       },
->>       .cxcs = (unsigned int []){ 0x890, 0x930 },
->>       .cxc_count = 2,
->> -    .flags = HW_CTRL | POLL_CFG_GDSCR,
->> +    .flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
->>       },
->>       .cxcs = (unsigned int []){ 0x8d0, 0x950 },
->>       .cxc_count = 2,
->> -    .flags = HW_CTRL | POLL_CFG_GDSCR,
->> +    .flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   diff --git a/drivers/clk/qcom/videocc-sm7150.c 
->> b/drivers/clk/qcom/videocc-sm7150.c
->> index 
->> 14ef7f5617537363673662adc3910ddba8ea6a4f..b6912560ef9b7a84e7fd1d9924f5aac6967da780 
->> 100644
->> --- a/drivers/clk/qcom/videocc-sm7150.c
->> +++ b/drivers/clk/qcom/videocc-sm7150.c
->> @@ -271,7 +271,7 @@ static struct gdsc vcodec0_gdsc = {
->>       },
->>       .cxcs = (unsigned int []){ 0x890, 0x9ec },
->>       .cxc_count = 2,
->> -    .flags = HW_CTRL | POLL_CFG_GDSCR,
->> +    .flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   @@ -282,7 +282,7 @@ static struct gdsc vcodec1_gdsc = {
->>       },
->>       .cxcs = (unsigned int []){ 0x8d0, 0xa0c },
->>       .cxc_count = 2,
->> -    .flags = HW_CTRL | POLL_CFG_GDSCR,
->> +    .flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   diff --git a/drivers/clk/qcom/videocc-sm8150.c 
->> b/drivers/clk/qcom/videocc-sm8150.c
->> index 
->> daab3237eec19b727d34512d3a2ba1d7bd2743d6..3024f6fc89c8b374f2ef13debc283998cb136f6b 
->> 100644
->> --- a/drivers/clk/qcom/videocc-sm8150.c
->> +++ b/drivers/clk/qcom/videocc-sm8150.c
->> @@ -179,7 +179,7 @@ static struct gdsc vcodec0_gdsc = {
->>       .pd = {
->>           .name = "vcodec0_gdsc",
->>       },
->> -    .flags = HW_CTRL,
->> +    .flags = HW_CTRL_TRIGGER,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   @@ -188,7 +188,7 @@ static struct gdsc vcodec1_gdsc = {
->>       .pd = {
->>           .name = "vcodec1_gdsc",
->>       },
->> -    .flags = HW_CTRL,
->> +    .flags = HW_CTRL_TRIGGER,
->>       .pwrsts = PWRSTS_OFF_ON,
->>   };
->>   static struct clk_regmap *video_cc_sm8150_clocks[] = {
->> diff --git a/drivers/clk/qcom/videocc-sm8450.c 
->> b/drivers/clk/qcom/videocc-sm8450.c
->> index 
->> f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..4cefcbbc020f201f19c75c20229415e0bdea2963 
->> 100644
->> --- a/drivers/clk/qcom/videocc-sm8450.c
->> +++ b/drivers/clk/qcom/videocc-sm8450.c
->> @@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
->>       },
->>       .pwrsts = PWRSTS_OFF_ON,
->>       .parent = &video_cc_mvs0c_gdsc.pd,
->> -    .flags = RETAIN_FF_ENABLE | HW_CTRL,
->> +    .flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
->>   };
->>     static struct gdsc video_cc_mvs1c_gdsc = {
->> @@ -372,7 +372,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
->>       },
->>       .pwrsts = PWRSTS_OFF_ON,
->>       .parent = &video_cc_mvs1c_gdsc.pd,
->> -    .flags = RETAIN_FF_ENABLE | HW_CTRL,
->> +    .flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
->>   };
->>     static struct clk_regmap *video_cc_sm8450_clocks[] = {
->>
->
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> >    "#clock-cells":
+> >      const: 0
+> > @@ -29,6 +37,25 @@ properties:
+> >    clock-output-names:
+> >      maxItems: 1
+> >  
+> > +  ready-timeout:
+> > +    description:
+> > +      Optional timeout in micro-seconds when polling for clock readiness.
+> > +      0 means no timeout.
+> 
+> Use a proper unit suffix.
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+> 
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> Drop
 
-Hi @Bjorn
+Fixed for v2.
 
-Could you help pick this into videocc?
 
--- 
-Best Regards,
-Renjiang
+> 
+> > +    default: 0
+> > +
+> > +  ready-mask:
+> > +    description:
+> > +      Optional mask to apply when reading the ready register.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    default: 0xffffffff
+> > +
+> > +  ready-value:
+> > +    description:
+> > +      When a ready register is specified in reg, poll the ready reg until
+> > +      ready-reg & ready-mask == ready-value.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> 
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -44,4 +71,13 @@ examples:
+> >        reg = <0xfd020004 0x4>;
+> >        clock-output-names = "sysclk";
+> >      };
+> > +  - |
+> > +    pclk: pclk@fd040000 {
+> 
+> clock@
+> 
+> And drop unused label
 
+Fixed.
+
+
+> 
+> > +      compatible = "fixed-mmio-clock";
+> > +      #clock-cells = <0>;
+> > +      reg = <0xfd040000 0x4 0xfd040004 0x4>;
+> > +      ready-mask = <1>;
+> > +      ready-value = <1>;
+> > +      clock-output-names = "pclk";
+> > +    };
+> >  ...
+> 
+> 
+> Best regards,
+> Krzysztof
