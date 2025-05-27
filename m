@@ -1,192 +1,136 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C3127AC41
-	for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 16:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE142820B1;
+	Tue, 27 May 2025 17:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748362732; cv=none; b=iMm59MQZDvo1EV8nvipalYQZdZE7ShdULFMJFVPhnVS9l5N/DdTvAlaw/uDXhoqqkYA3I01qzu0ohBj8IX2abdGClB7FoU0ZDHKvr5ov0OgwXCUDlm+mh3L6UvLRElr0+hwcJhhFks4rixi55vX9Xr3wi4tu55PhV2+HLf6C3tQ=
+	t=1748368586; cv=none; b=iQDTVMMfDVMClg8ifiL6VoBTAd/glVb7uyZC0qSjrHInf1QeC0tp0/mIfXymiN1qYPqt9BaBPKKdKr1dHHPW6ykOscaWkBAQiHM7beBIaIYHdiE08sYWgxt1qY53vJ5qZURiq/puiPxuZ5gijVidhhW2XcDI6edjXk+OijHlzEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748362732; c=relaxed/simple;
-	bh=XhTt676vUTRZQa7c0XDUeYryAQMXPv7GVIuaao63lI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nY2kJG/7wKAQ1SJ2IJpUluHcGNC0fkD8NsC0n/Gbp2JTIJE+gJjdaGVsoILLNjq1Kym8ZYMcLTLh4n8ya66+/b+24opAKaptRQ6epFuV403cU5xapUB3ZSoJlcmV9ZITvG1CsTtPTd8165q0YIOx30rCzp8PJyQSoINdxeaU6s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AS8wEHlA; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1748368586; c=relaxed/simple;
+	bh=qj/NFUs6Q4cvExcqis4HSxY/ptX9HKobaFds0gNh0KI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=mnfTuY2kHtLCixU0ej8zuEYS7TpVxUE1M4I2ccH8n/BS7g0yn62Du9yB5i3to0cKDpwNhj++4IuWknHtQlSt4W8oqnTV01vuxALP63FRGlWfShVOE/QtAKt2jTnRs5/wzT84vUfUGfxpbL1b2uhV0oR/WjDPcvxvkqbpU9soWfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tp1BX57i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AS8wEHlA"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74264d1832eso3843098b3a.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 09:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1748362719; x=1748967519; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5cxpY74SeyEYMsHNu2Rje055exgHwznrIMIxOx3xXw=;
-        b=AS8wEHlAMn1L+2yEQy4nlZcRUKvtBmJK7t0FVW46GYJPo6QnSK/yqs+iOM2BLNpRhN
-         xavN6HHpgCeliuV6+kwRAtPBVqea6UC6WBenGEkZbTyyQGfAAq+E0gutaISxwYktd9HZ
-         qValqmX5DsPwTv3fx0oztSwrsuBbpsnnZ3S6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748362719; x=1748967519;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L5cxpY74SeyEYMsHNu2Rje055exgHwznrIMIxOx3xXw=;
-        b=GUMhPgXAB7inwmzta4Y53Jqbip6QDAQzwMN42EEQDhdJOelZiW122lgLa+/2mVRSB1
-         H2w5IL/LEzx+HW+y3FbXPQ//uff55VS6vzbMvh03o9COPaiGjsLgpuauoVS+yPNrkhSh
-         +s58UU/XzbeKhXXr8ik+F8GPQvwMSH2xCR8G0Xjw+ZMKPhOj0hBX+FzT6pVICTkgAzt4
-         +X1u14V4KKA/EDeatFKO8qYjSsjtTcnFGGORWAxcnUg6P0fvo9n1m/3q3NjMnMtDIZiS
-         VP+bcxGplWfkG5I+tYUD+7HF6FsAKX0946FX159namaNb1p2P+3w3smxpKt04CIhIesV
-         dorw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYlwm6Lx+b05/8RJxBh8Q67UT5fIB+8Ugigdu6I/NgOmbJPvO43lmLAsIIUEq4eUwnuXhc+WVEYV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAKPK+mPHrEGURMUDsagR73/jE9Ii0ZhWaM3zwi5939mDcYYKB
-	1Ojv9K9mDCPRy6lJUUHLQERmvz/YVJOxzR9jbzmbFOKdVv4Ue0hRSSf4gjgQvtN04Q==
-X-Gm-Gg: ASbGncuQZETeU0FSOFvBeXgZcy0h/5Jl9rDq7VUw55DplRcKD2DiQ9CJyZWvLaUHjDq
-	MpLwi1xIKhwwDWbEI9i/pDwxhR7BIFN7tPjMcb5sozxiScAjs6lJuExeCbdwSUJY58Ryrek8VoO
-	JM4MFoQ0QLSC8MnmsMYf+SOe7IC1q2PtXbcYGWQny9YyEwk7irYPZGcGXIu4UN7/4K5AZ1U7jUs
-	SxuCpnoWbAAth6njEYCww9zIxKirScKGkJHtzggZyhszV/8c/Z/UGTF6w1bZ58eKMC/a93mNprg
-	F7HiaKdZyFbUBkU6hSrm/G+J1+igSprtitKOP50zx8rEH18DK3i291pl9ymCkTl41IvWO8EzvFJ
-	/HOG/DfnH1VXSdoT/U+NlZFqv4Q==
-X-Google-Smtp-Source: AGHT+IEom8QL6Y/Pg1q5xaK7iGO193QLG6Lm8YsAgtzmZjeb230ToJsSh7hjy+S2iDqt2W7r0HW6dA==
-X-Received: by 2002:a05:6a21:1084:b0:1f5:7d57:830f with SMTP id adf61e73a8af0-2188c37d5a0mr20596185637.33.1748362719553;
-        Tue, 27 May 2025 09:18:39 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6fd3bsm18838307a12.23.2025.05.27.09.18.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 09:18:38 -0700 (PDT)
-Message-ID: <6953caf0-0fef-4bd6-898c-4f86ee738f30@broadcom.com>
-Date: Tue, 27 May 2025 09:18:34 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tp1BX57i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F34C4CEE9;
+	Tue, 27 May 2025 17:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748368586;
+	bh=qj/NFUs6Q4cvExcqis4HSxY/ptX9HKobaFds0gNh0KI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=tp1BX57iWRjfC47HV0pta+DAwEpBKFNV+PiY892vqqjRlJ7lqok4gRsc6j6MkQaSS
+	 eM4mX4ropUMSkPMsBXYX4EpEeSlucrZ+n0p0/P2nytQzGT2tElKrpa0WTPN7+qRbyR
+	 S3uQgeQKnvLlOlbrnI5dSQwYO2wx1EmZigk/pfIkCKHDBUerrnbM8Wm02sca5LDnOx
+	 61GA6HDpMQ6ImPdZ9FS89Oe2+Uda0tQmXxd9qVs4QvDC5rc5B9tkIeWEcOtH9InYgN
+	 UvpWM4pSYAXzB+naEfrkIdkXD/I2hdheXj520ZHqcvIEqdH0rBXHObALo/NdiKQ7DV
+	 v1g4CAOVTLcHA==
+Date: Tue, 27 May 2025 12:56:24 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 -next 08/12] arm64: dts: bcm2712: Add external clock
- for RP1 chipset on Rpi5
-To: Matthias Brugger <mbrugger@suse.com>,
- Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
-References: <cover.1745347417.git.andrea.porta@suse.com>
- <38514415df9c174be49e72b88410d56c8de586c5.1745347417.git.andrea.porta@suse.com>
- <aBp1wye0L7swfe1H@apocalypse>
- <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
- <CAO50JKVF6x_=MUuzjhdK0QotcdUgHysMb9v1g0UvWjaJF2fjDA@mail.gmail.com>
- <48AFA657-5683-42A4-888E-3E98A515F3B1@broadcom.com>
- <aCIk40642nXZ3arz@apocalypse> <3899c82c-d6a7-4daf-889b-b4d7f3185909@suse.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <3899c82c-d6a7-4daf-889b-b4d7f3185909@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, devicetree@vger.kernel.org, 
+ Andrew Lunn <andrew@lunn.ch>, Conor Dooley <conor+dt@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, linux-clk@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Paolo Abeni <pabeni@redhat.com>, linux-arm-msm@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
+References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
+Message-Id: <174836830808.840816.13708187494007888255.robh@kernel.org>
+Subject: Re: [PATCH 0/5] Add support for the IPQ5018 Internal GE PHY
 
-On 5/26/25 07:06, Matthias Brugger wrote:
-> 
-> 
-> On 12/05/2025 18:42, Andrea della Porta wrote:
->> Hi Florian,
->>
->> On 15:02 Mon 12 May     , Florian Fainelli wrote:
->>> On May 7, 2025 5:01:05 PM GMT+02:00, Andrea della Porta 
->>> <andrea.porta@suse.com> wrote:
->>>> Hi Florian, to accept the patches, what would work best for you?
->>>>
->>>> 1) Send only the relevant updated patches (maybe as an entirely new
->>>> patchset with
->>>>    only those specific patches)
->>>
->>> Only the updated patches work for me. I don't think there is that 
->>> much coupling between the DT changes and the non-DT changes (other 
->>> than without DT entries nothing is activated)
->>
->> It's a little bit more involved than that:
->>
->> - Patch 7 (misc driver) depends on 6 (RP1 common dts) which in turn
->>    depends on 1 (clock binding header). Should be taken by Greg.
-> 
-> Greg gave an Acked-by so I think Florian is good to take that patch. 
-> Which leaves us to the clock patches (driver + dt-bindings).
-> 
->>
->> - Patch 9 and 10 (board dts) depends on 6 (RP1 common dts) which again
->>    depends on 1 (clock binding header). Should be taken by Florian.
->>
->> - Patch 4 (clock driver) depends on 1 (clock binding header) and
->>    should be taken by Stephen.
->>
-> 
-> Steven reviewed the patches (driver + dt-binding) so he is waiting for a 
-> new version which addresses the review. He offered to either take them 
-> and provide a branch that Florian can merge into his branch or provide a 
-> Acked-by tag.
-> 
-> @Florian what would you prefer?
 
-I am fine either way, it's definitively simpler if I can take all of the 
-patches in the respective Broadcom ARM SoC branches, but pulling a 
-branch from another maintainer's tree works just as well.
+On Sun, 25 May 2025 21:56:03 +0400, George Moussalem wrote:
+> The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+> output pins that provide an MDI interface to either an external switch
+> in a PHY to PHY link architecture or directly to an attached RJ45
+> connector.
+> 
+> The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+> 802.3az EEE.
+> 
+> The LDO controller found in the IPQ5018 SoC needs to be enabled to drive
+> power to the CMN Ethernet Block (CMN BLK) which the GE PHY depends on.
+> The LDO must be enabled in TCSR by writing to a specific register.
+> 
+> In a phy to phy architecture, DAC values need to be set to accommodate
+> for the short cable length.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+> George Moussalem (5):
+>       dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE PHY support
+>       clk: qcom: gcc-ipq5018: fix GE PHY reset
+>       net: phy: qcom: at803x: Add Qualcomm IPQ5018 Internal PHY support
+>       arm64: dts: qcom: ipq5018: add MDIO buses
+>       arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
+> 
+>  .../devicetree/bindings/net/qca,ar803x.yaml        |  23 +++
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  51 ++++-
+>  drivers/clk/qcom/gcc-ipq5018.c                     |   2 +-
+>  drivers/net/phy/qcom/Kconfig                       |   2 +-
+>  drivers/net/phy/qcom/at803x.c                      | 221 ++++++++++++++++++++-
+>  5 files changed, 287 insertions(+), 12 deletions(-)
+> ---
+> base-commit: ebfff09f63e3efb6b75b0328b3536d3ce0e26565
+> change-id: 20250430-ipq5018-ge-phy-db654afa4ced
+> 
+> Best regards,
+> --
+> George Moussalem <george.moussalem@outlook.com>
+> 
+> 
+> 
 
-Andrea, sorry to ask you this, can you post a v10 and we aim to get that 
-version applied?
 
-Thanks!
--- 
-Florian
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: base-commit ebfff09f63e3efb6b75b0328b3536d3ce0e26565 not known, ignoring
+ Base: attempting to guess base-commit...
+ Base: remotes/arm-soc/qcom/dt64-11-g43fefd6c7129 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com:
+
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: ethernet-phy@7: clocks: [[7, 36], [7, 37]] is too long
+	from schema $id: http://devicetree.org/schemas/net/ethernet-phy.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: ethernet-phy@7: clocks: [[7, 36], [7, 37]] is too long
+	from schema $id: http://devicetree.org/schemas/net/ethernet-phy.yaml#
+
+
+
+
+
