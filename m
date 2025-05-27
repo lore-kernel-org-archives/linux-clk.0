@@ -1,224 +1,185 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D429B1B040B
-	for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 19:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78F32116E7
+	for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 21:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748374353; cv=none; b=tr3ZkewAxnGMZWBdVP7ZMbjyoQtm8AVMXOc4idUC9/l2bEEVrhQ22cx0mUWAT4gFp4prDS9eztZUZOhTPnGQ2at6rCLQA0zE8bDgWtWvsZ79YhCFg5ZnULSH+UNLi0piMa7epXzDqpoCZjAJChlK0V88fDWBUQ+PhaibVQOqRog=
+	t=1748380971; cv=none; b=emCPuk/QtLR6+fcvCnS4+RHx+Jaaz4KkYkfD+S5MEXqJB4h78S5zvvuCh7F2a/xYETQaM5wtBvmDWcslr7VQMNe+p6kCLMbqQkJ7EUyxDmZy7eCRf9DQSkt0E8BbsbEicA9Tp7zCbw8FXX8Oy0MprB9qjeFlJ/6meDXa8OP80HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748374353; c=relaxed/simple;
-	bh=uzFA3ilBQ504lpBzuzMHiBkcD8tJcsjTFHHxhNpX7Dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnRyux+2k8yleWwoOdiwSOX4N1BLGDvp/p5UYJdgB6b2bK8Nei7kTD3NsWF9Ge7wrMU3nPVMEhkWWQZMj6mLBfNrL1XGqDXTxRpTf/rf5wCfbv4KHHZfcMDVIOWxJf2YsvgvYjw17lHeyZiH97j0gEES+1GqD8p9Y+K7WFRuXTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=V7jAMbPL; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1748380971; c=relaxed/simple;
+	bh=CmXNjfU2YBa1jt2Z+F/46nl2cI2JRC7z389h5i3eWiA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nShUVUwKLqgNe0PN8bxs7tC+bsxoR1auoWN/sWpX4V2FeCKI5XSqhcfQJF/G3oNqQy7/W+P4v7rP0mdBvB4hB2k2ceAGv+SYGEuxR+zSLqmp2CnE6Vx+yoat+vQ9h9+Xl6iD+aH0BVrql6N3140e1gZcQxRrDc6h8iT/ux3cLCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H69psyHK; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="V7jAMbPL"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70dd2d35449so26846437b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 12:32:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H69psyHK"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60477f1a044so4308064a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 May 2025 14:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1748374350; x=1748979150; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RAMW61EAomfw/fUNyk8GW0NVdz9vS8vCzbD7XJ2g2mk=;
-        b=V7jAMbPLHTUYE+G6aQubFXk6ZDcFzXRkLgbnbVg1n+GuqNUrKVGN7G0yhRA55+kZDS
-         pWUfivBFJWCBZtyVgZYtrBFlvgiP6GXWdiLZN4pWbt1g+uZSfuHAKvZ2mz/WzHLVRNaF
-         ifaJUXP2dKokwhVradYbYyZLVH8ykIR4GX3qI=
+        d=suse.com; s=google; t=1748380967; x=1748985767; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rf03yAgQQGBhErkrSSaEFDElj+fjBRlARFLOXQZblAk=;
+        b=H69psyHKbQd+b1T7e2t1AoZ7tFyB8lK5HSQmjuD4D/7k4SnwZHcfu1urhxpPqWYzwc
+         qw3Da9W98rPjPC8ZszP9Mcd5P2DBqssZl30GNyhWM66Yb/IdMXGAQXObQO1lNdzTw7zu
+         yLWwhTGy04iCD04EUbey1mHl7vQs8uiYqk+b+VEatSNwgPTfVN+XHTWFz5wHHdQf6t78
+         PfPNlOGGSo3fYrlwSkDTATULV6VvjZ7Vjd6ezZOhT3c3ch9kFOIPjD4Zyk5hAsXvZEjY
+         FU2Gda7Cf1knFTS16k5nMmS7BMg/rG2zpr5I7z8D3yy+na7KjrTQRVXitX4ZsZLNHJO0
+         BFDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748374350; x=1748979150;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RAMW61EAomfw/fUNyk8GW0NVdz9vS8vCzbD7XJ2g2mk=;
-        b=g7N0QZoqiU3uPHjHgobWU0suNDZgyvqmK0KqWBLW21CiN+s9Mmr8YpfcvzbpSWPiXL
-         sixxhm3r15vSj/cuJVJk/yKZl8XhwfrVgf35eGg9u1rt7358VKxoC6lCBjpuwQhv05vx
-         xo0s6+0SE5KwE4CF7CSYaP0AEEZSjGaKs3Lu/TJocnCQh8YVmSkPuiKd71E557KNoYck
-         T7ByYRY62iQWxny+Cbih4Ggzl48MCJ//iqY+i8FKNanuG5oB2GeoJNL9W5tbapvRGeLu
-         gM8ZFCfQqTSm8yhEAw5DrjSH8pfNYOYoYa/U58eHLooyS2Aixa/Uybuj0cXdqWdftN+x
-         MSWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOBID0OVIhFIKnDvGJ3qiq8zKtuJjxdM7KGGWFprEyBiU+ri5YBQywjap4Vv4X/IomKBTQYLTbdwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcgDDBkN8U+y8fsi901dZKN2OdhzGdXaGSfUXw/on9WKAh1JnF
-	iy+3iF4kLzSQwmeO5k0rDV/2vhFX4ZZ9NXqLlDynpSeCTyCjNKgmAJcgxw6KaC9jle2uMN5qjgh
-	ruNMdLCdbkZ7OBC3lIQWMjXQK62Oi5IEbGdTUhV8KUQ==
-X-Gm-Gg: ASbGncvrU7wfVmndem1vfu4NFbfVjjSJ/HeksxexXvtqw1JZuZiQpCgWkm+97oR8Ia/
-	Q+xVXwkdz8KxBD+G/QkHdftefxJWSRbSdwCavqmEFWqzvcJYeD1d00gI/MyP7mB+5exKnJFws7X
-	4y80iFE6MpMSRy7h6JbSR5Qe5j0mVYL7c=
-X-Google-Smtp-Source: AGHT+IHpKdA2pbbNG4OrRbDcCpmkqycRDPThJP4yF+uhXUiU6y0MFBDvKQJkquESUTC+W3my9RdaR3/1y98M7NJ8QHE=
-X-Received: by 2002:a05:690c:6083:b0:70e:2355:3fe0 with SMTP id
- 00721157ae682-70e2d9daa58mr179805047b3.16.1748374349722; Tue, 27 May 2025
- 12:32:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748380967; x=1748985767;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rf03yAgQQGBhErkrSSaEFDElj+fjBRlARFLOXQZblAk=;
+        b=g/a8JCM07KaYG/D1qdCY1en+6O6MJWxG7jv/2WX+EDvURaDeHKeJoujDljeCmJKz8H
+         S9YjMPVSIBSJNGs+k9iSP3yEvd4SClbxdn8/BIOmlnHS/b/wqrR8YqHPVMj4zQ7GyjRo
+         tNDNjx+vOoaVH8tELmkDBnx4ssvvm4jD/to/G78k3b9U6bgdfOxpyyyTHdX/VyOoZLbY
+         JVBlfvJ3er1JBqbbn1TALyzS6Sn9GgTwaRx931vcWbkN63KhDzLVle/k5bL4AHh8aI+E
+         jYnX0AjUKJosqmj32QlfqBb9css4RJamjqaI0mN8k2uDXO9xFQfKm7yIkjvDildecNcZ
+         K3Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWFqQV5RWXirihPX/a5DH4ZBLoEIPG3ZyrwYu+MzbVISljk4dyaVHy7yxKd4mnvYtcwvfccWax110U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz34MXVVCmnH1bPMRKloMa2ao+T0y6a/UmHc1wQSSLm+VKor152
+	ffHDrpwb00DrVVOLzfUuSsOIOjUYWuaqQ0stXmlPIzk5f+7PfxThiKTIqgm984QjPdI=
+X-Gm-Gg: ASbGncvsqOc1OtQPORjLetq2zru3v+NHrspVnhQiC6zEjjxGTRUxzMbhRcPG+Zfx8xD
+	V70/L+THk4T76YcmiUaX1p/S8jbmpyIq7F/ANrvX5LIzJLu7EnL8BGcsTzb9nzLYAQapc3IOTjs
+	r42f6+A82IHo01RKNDHBymfL0xspbu0HEKBS6VRHD5hV9sHJKYjjCw0WckrkgeBbxmd6643PVSL
+	cgvPMnE9dSBGogJEHPNCevpEhoVAxCsovY250FxHyofPv0uQCeM4ifVh4K7mjAU3k8P9ou2yrk5
+	AvKpwKHVGL4QoLXZOVSfutQ+Wwann9td3yNW6ZtO028dNQQH+aS117P69v1NspkylXJoL7N0FJJ
+	V/4kYDxgpKg7o3/8YkqZjgBbWIo8hROMg
+X-Google-Smtp-Source: AGHT+IFERg8h0M0q68ymhrrsY3ViILpvzLyzrWuNOWeP4SVGe1Wg+ZNpOzN/Rnmv7ShgttQHfLkmmw==
+X-Received: by 2002:a05:6402:1d4b:b0:601:f185:fc2 with SMTP id 4fb4d7f45d1cf-602d8e5e352mr13569888a12.3.1748380967163;
+        Tue, 27 May 2025 14:22:47 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60517a7f920sm128296a12.53.2025.05.27.14.22.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 14:22:46 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 27 May 2025 23:24:20 +0200
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Matthias Brugger <mbrugger@suse.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v9 -next 08/12] arm64: dts: bcm2712: Add external clock
+ for RP1 chipset on Rpi5
+Message-ID: <aDYthG54Wz3khQ88@apocalypse>
+References: <cover.1745347417.git.andrea.porta@suse.com>
+ <38514415df9c174be49e72b88410d56c8de586c5.1745347417.git.andrea.porta@suse.com>
+ <aBp1wye0L7swfe1H@apocalypse>
+ <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
+ <CAO50JKVF6x_=MUuzjhdK0QotcdUgHysMb9v1g0UvWjaJF2fjDA@mail.gmail.com>
+ <48AFA657-5683-42A4-888E-3E98A515F3B1@broadcom.com>
+ <aCIk40642nXZ3arz@apocalypse>
+ <3899c82c-d6a7-4daf-889b-b4d7f3185909@suse.com>
+ <6953caf0-0fef-4bd6-898c-4f86ee738f30@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
- <CABGWkvq=pXhrzyCV2ABvQ3uwx4qKYL_G9280p5ECb8nsJ859yw@mail.gmail.com> <b2ed96a4-a236-4ea2-9e02-6896ff03caaa@kernel.org>
-In-Reply-To: <b2ed96a4-a236-4ea2-9e02-6896ff03caaa@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Tue, 27 May 2025 21:32:18 +0200
-X-Gm-Features: AX0GCFvlrZYhHqibbEv_6cXxIS8smjjQnIVNkeTDjWWzyIinppoBbEgrE74Khx0
-Message-ID: <CABGWkvpu+quSY1y7u7eXOuiDLz8j2Sgs=sn=muZW80e-vNnHbg@mail.gmail.com>
-Subject: Re: (subset) [PATCH v12 00/19] Support spread spectrum clocking for
- i.MX8M PLLs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6953caf0-0fef-4bd6-898c-4f86ee738f30@broadcom.com>
 
-On Tue, May 27, 2025 at 8:42=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 23/05/2025 17:19, Dario Binacchi wrote:
-> > Hello Abel,
-> >
-> > On Mon, May 5, 2025 at 9:52=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org>=
- wrote:
-> >>
-> >>
-> >> On Thu, 24 Apr 2025 08:21:30 +0200, Dario Binacchi wrote:
-> >>> This version keeps the version v9 patches that can be merged and
-> >>> removes the patches that will need to be modified in case Peng's
-> >>> PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
-> >>> The idea is to speed up the merging of the patches in the series
-> >>> that have already been reviewed and are not dependent on the
-> >>> introduction of the assigned-clocks-sscs property, and postpone
-> >>> the patches for spread spectrum to a future series once it becomes
-> >>> clear what needs to be done.
-> >>>
-> >>> [...]
-> >>
-> >> Applied, thanks!
-> >
-> > I was surprised to see that the series has been removed from linux-next=
-.
->
-> Did you miss entire email thread explaining why? I think you never
-> answered to several emails in this thread... and we - including myself -
-> sent them a lot.
+Hi Florian,
 
-I don't think so:
+On 09:18 Tue 27 May     , Florian Fainelli wrote:
+> On 5/26/25 07:06, Matthias Brugger wrote:
+> > 
+> > 
+> > On 12/05/2025 18:42, Andrea della Porta wrote:
+> > > Hi Florian,
+> > > 
+> > > On 15:02 Mon 12 May     , Florian Fainelli wrote:
+> > > > On May 7, 2025 5:01:05 PM GMT+02:00, Andrea della Porta
+> > > > <andrea.porta@suse.com> wrote:
+> > > > > Hi Florian, to accept the patches, what would work best for you?
+> > > > > 
+> > > > > 1) Send only the relevant updated patches (maybe as an entirely new
+> > > > > patchset with
+> > > > >    only those specific patches)
+> > > > 
+> > > > Only the updated patches work for me. I don't think there is
+> > > > that much coupling between the DT changes and the non-DT changes
+> > > > (other than without DT entries nothing is activated)
+> > > 
+> > > It's a little bit more involved than that:
+> > > 
+> > > - Patch 7 (misc driver) depends on 6 (RP1 common dts) which in turn
+> > >    depends on 1 (clock binding header). Should be taken by Greg.
+> > 
+> > Greg gave an Acked-by so I think Florian is good to take that patch.
+> > Which leaves us to the clock patches (driver + dt-bindings).
+> > 
+> > > 
+> > > - Patch 9 and 10 (board dts) depends on 6 (RP1 common dts) which again
+> > >    depends on 1 (clock binding header). Should be taken by Florian.
+> > > 
+> > > - Patch 4 (clock driver) depends on 1 (clock binding header) and
+> > >    should be taken by Stephen.
+> > > 
+> > 
+> > Steven reviewed the patches (driver + dt-binding) so he is waiting for a
+> > new version which addresses the review. He offered to either take them
+> > and provide a branch that Florian can merge into his branch or provide a
+> > Acked-by tag.
+> > 
+> > @Florian what would you prefer?
+> 
+> I am fine either way, it's definitively simpler if I can take all of the
+> patches in the respective Broadcom ARM SoC branches, but pulling a branch
+> from another maintainer's tree works just as well.
+> 
+> Andrea, sorry to ask you this, can you post a v10 and we aim to get that
+> version applied?
 
-The answers related to the errors encountered during DTC compilation:
+No problem, just to avoid any confusion I'll summarize what-goes-where with
+respect to branches in your repo broadcom/stblinux, so I can adapt each patch
+to the relevant branch:
 
-https://lore.kernel.org/oe-kbuild-all/CABGWkvp7n=3DOr-OqnLoOJsQQCHF+=3D8eQ9=
-EV5=3DO+Qp4sQF49_DbA@mail.gmail.com/
-https://lore.kernel.org/all/CABGWkvqfyH=3Ddcuw6EDZaFVVebj8SZhJF0P944+mmzL5Y=
-K3-Pug@mail.gmail.com/
+- dt-binding/DTS (patch 1,2,3,6,8,9,10) -> devicetree/next
+- defconfig (patch 11,12) -> defconfig/next
+- drivers (patch 4,5,7) -> drivers/next or soc/next?
 
-The patch to fix the regression reported by Mark Brown:
+Also, should I split any patches that have MAINTAINERS changes so you can apply
+them to your maintainers/next branch? Those are patches 4,5,6,7.
 
-https://lore.kernel.org/all/20250516134945.14692-1-dario.binacchi@amarulaso=
-lutions.com/
+Many thanks,
+Andrea
 
-Also successfully tested by him.
-
-And when I didn=E2=80=99t reply, I was expecting the maintainers to handle =
-it
-=E2=80=94 as Peng Fan had requested in version 10:
-
-https://lore.kernel.org/all/20250314093503.GD12210@nxa18884-linux/
-
-I may have made some mistakes, but don't tell me I never replied.
-
-After all, anyone can make mistakes:
-https://lore.kernel.org/all/d421a6e8-e72c-48d9-8806-09724723b5d8@kernel.org=
-/
-
-Best regards,
-Dario
-
->
-> >
-> > It=E2=80=99s been 8 months since the first version dated September 28, =
-2024.
-> > The most critical phase was version 3 -
-> > https://lore.kernel.org/all/20241106090549.3684963-1-dario.binacchi@ama=
-rulasolutions.com/
-> > -
-> > where two key issues emerged:
-> >
-> >  1 The CCM design is flawed because "in the current design, CCM is
-> >    taken as the producer of CLK_IMX8M_VIDEO_PLL, not the consumer."
-> >
-> >  2 A driver for anatop needs to be implemented because "using clocks
-> >    to replace fsl,ssc-clocks is possible under CCM mode, but you need
-> >    to develop the fsl,imx8mm-anatop clock driver."
-> >
-> > These development guidelines, agreed upon with Krzysztof and Peng,
-> > enabled a coherent implementation of both the DT bindings and the
-> > code. The following versions, from v4 to v8, were necessary to
-> > review and refine those implementations, bringing us to January 2025.
-> >
-> > At that point, Peng opened a separate pull request -
-> > https://github.com/devicetree-org/dt-schema/pull/154 -
-> > for the definition of general-purpose DT bindings for spread spectrum
-> > handling, which ended up invalidating mine.
-> >
-> > While waiting for his pull request to be accepted, I submitted version =
-9,
-> > trying to at least get the patches for the anatop driver merged,
-> > eventually reaching version 12.
-> >
-> > This final version was merged, but then a few days ago it was dropped.
->
-> And explained why. There were bug reports which you completely ignored.
->
-> >
-> > As it stands now:
-> >
-> > - We still don=E2=80=99t have proper spread spectrum handling
-> > - Peng=E2=80=99s pull request has been stalled since February 20
-> > - We don=E2=80=99t have a driver for anatop
-> > - The CCM design remains flawed
-> > - Not even the first 4 patches of the series were merged =E2=80=94 thes=
-e were
-> >   simply a replication for i.MX8MM and i.MX8MP of patch
-> >   bedcf9d1dcf88 ("clk: imx: rename video\_pll1 to video\_pll"), which
-> >   was already merged some time ago.
-> >
-> > Could you please let me know if you're still interested in this series?
-> > If so, could you suggest how to resolve the issues that led you to drop=
- it?
->
->
-> You got several replies what is wrong. Can you respond to these instead
-> of coming now surprised?
->
-> Best regards,
-> Krzysztof
-
-
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+> Thanks!
+> -- 
+> Florian
