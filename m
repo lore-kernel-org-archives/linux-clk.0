@@ -1,53 +1,53 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04052701A4;
-	Tue, 27 May 2025 11:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471219D07A;
+	Tue, 27 May 2025 11:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748345640; cv=none; b=k8tMo7eWNYVmP+RnDhH8LFt0s40QwXC3PrJZ8FmeFxlSOv4xr7YkkktD/7BvLsv9i/rymIus3gkx5CHwST+i/kaJY43rK2AEBjszd65uxobGRJJAhe8FHx164aEdi/QVA8681tai5C37f7xJGDLnGYyugh4+FKM9ahYNChMTyK0=
+	t=1748346098; cv=none; b=H2pdqofn1mKZUYk0l/uFlrFbfRcGKG73U87icduQUXY6khgPsxxK6v0qx1vctTwZd1SFUp9FiqDMWElijiY8vNSr7zgE3g3S22/ZJqoPMxf2C/VeRMHKaspiUCRnU1K5X4Zo+KivMjYT5FEyh3aNroYx5LHPrTtlA30ZoLZeGqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748345640; c=relaxed/simple;
-	bh=FhE857sNlui17Q6Yip1QmHEqZKc56oFYs8TlkWSU6A0=;
+	s=arc-20240116; t=1748346098; c=relaxed/simple;
+	bh=W5E3Xu6pVeg4WGDqRtohIYctx/gK/C6GG/OwK5hM5A4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8HcYc8aOzEGf1oTTYddnQKpIaQgggSQWTKUJPQ6q3pag1HYDuOehz9RdH3PlpTpuEsec7fGddJ7l8bowOfF8ZiyeNrJqpvyBe2Z45wEyiBXPabOTPmx+o9yw7vpfyfsQqki+sGA40yWpyj5rqJP4ORZ8hLxbO3n+J4lvY9Ln4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=heYFPjK0; arc=none smtp.client-ip=198.175.65.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrU7sGgYd8csN2xcPnEFVVw14FySm5AcSla0UsuW7QgGYMnurZbCLttMa1G1FPO1zQpOUW52JxNHkCmpRFwZszi9C8b1P+XBWhTWNimO9Lc45AHm4MFMLNYSRjH9JmIP5xQ+9z+423Vlow+r0He4G3S1kECOSACsxCZCCdUakL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bbuyqjym; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="heYFPjK0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bbuyqjym"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748345638; x=1779881638;
+  t=1748346096; x=1779882096;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=FhE857sNlui17Q6Yip1QmHEqZKc56oFYs8TlkWSU6A0=;
-  b=heYFPjK0Bm22LlBx2JTljZoVMks8JKQ3pGpqEgWtzw6rLNuPiuSXcEWv
-   Bs3rkDS5KRccLsL/u5chZ5jHGODC1Heq3QuqEInkZaMtpGli7Da4/fbTr
-   Bn1TWTj6C5yWHvGpFK3F30Y7iUeJiRNfddBkZVYUEOcZORqZYmna5p5fk
-   +i17NhvQPNM7eUCYjda/Zf5PWQvDdzQGRQ1oTSI1c6f8pShtN6vP8uvtt
-   sks5usfgZRUYic+w5GMIREviAZbaWKdIXu1HOfDPphmARmpnQfisyuHHG
-   ENgylLO6ExJu6bRdJTDX5J7VEfhz5hFUKroU0y636YoHH+QsG3mZBWyiM
-   Q==;
-X-CSE-ConnectionGUID: QP4nazT9S9eOH51MrGBc0g==
-X-CSE-MsgGUID: ZRbVaIfUSROtcmZIPYjXug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="61385026"
+  bh=W5E3Xu6pVeg4WGDqRtohIYctx/gK/C6GG/OwK5hM5A4=;
+  b=BbuyqjympMNyPwv2MjJ+Y0uT24Zjuqe27Er6nWmWLUy4W2Xnx7RAecrT
+   JmTVqm9OkhGwps1/MW3r+iNUjdZkcGbTFgauoQx5PYbUf+VcFwqZgHnwz
+   hUQKEE3QQNc3lJnYKCFGgY9vSb4rr/k0GcKATRcDqbgmsr+XWgNb3rkMh
+   W55PvZULxrc4wQY+IlIqrPuBrrD40rY0TXzYS9Dtz+0axDuyEIEbdSJtI
+   rMTcWGCnOCEO8/gOmsaKykm9186BEEFt+pZzxFFHGiaS29ZkhFN4933Mt
+   5F6Z0wk9QpH/hD4D21vlbtIE+V4P5HhCgOK91NkFCRXuwXfnyPu2+vZYr
+   g==;
+X-CSE-ConnectionGUID: hmcyEDVTRUShTqj4PJv1vA==
+X-CSE-MsgGUID: YjOZKVT5RGmUL1k0ZbVgbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="61385808"
 X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="61385026"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:33:57 -0700
-X-CSE-ConnectionGUID: Cub3cRe+ROW5XmgHsdWjRg==
-X-CSE-MsgGUID: tbehL1KcSUqP7EwsbrOvLw==
+   d="scan'208";a="61385808"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:41:35 -0700
+X-CSE-ConnectionGUID: Bs/edGu0Tde6lrxtkstj2A==
+X-CSE-MsgGUID: XtLu7GQ6T3+4Ynx8hbYSEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="165971321"
+   d="scan'208";a="143749122"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:33:51 -0700
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:41:30 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uJsZ1-000000019UT-2iJS;
-	Tue, 27 May 2025 14:33:47 +0300
-Date: Tue, 27 May 2025 14:33:47 +0300
+	id 1uJsgQ-000000019Z8-21f1;
+	Tue, 27 May 2025 14:41:26 +0300
+Date: Tue, 27 May 2025 14:41:26 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -72,11 +72,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 13/23] irqchip: Add driver for the RPMI system MSI
- service group
-Message-ID: <aDWjG9jAJ7kSaC9b@smile.fi.intel.com>
+Subject: Re: [PATCH v4 06/23] mailbox: Allow controller specific mapping
+ using fwnode
+Message-ID: <aDWk5kIN3lkB0Jw2@smile.fi.intel.com>
 References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-14-apatel@ventanamicro.com>
+ <20250525084710.1665648-7-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,164 +85,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250525084710.1665648-14-apatel@ventanamicro.com>
+In-Reply-To: <20250525084710.1665648-7-apatel@ventanamicro.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, May 25, 2025 at 02:17:00PM +0530, Anup Patel wrote:
-> The RPMI specification defines a system MSI service group which
-> allows application processors to receive MSIs upon system events
-> such as graceful shutdown/reboot request, CPU hotplug event, memory
-> hotplug event, etc.
+On Sun, May 25, 2025 at 02:16:53PM +0530, Anup Patel wrote:
+> Introduce optional fw_node() callback which allows a mailbox controller
+> driver to provide controller specific mapping using fwnode.
 > 
-> Add an irqchip driver for the RISC-V RPMI system MSI service group
-> to directly receive system MSIs in Linux kernel.
+> The Linux OF framework already implements fwnode operations for the
+> Linux DD framework so the fw_xlate() callback works fine with device
+> tree as well.
 
 ...
 
-> +#include <linux/device.h>
+>  struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+>  {
+> +	struct fwnode_reference_args fwspec;
 
-Perhaps I missed something, but devm_kzalloc() is in device/devres.h. Do you
-need it for something else?
++ property.h (if not done yet)
 
-> +#include <linux/dev_printk.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/riscv-rpmi-message.h>
-> +#include <linux/module.h>
-> +#include <linux/msi.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/types.h>
+> -	int ret;
+> +	int i, ret;
 
-> +#include <vdso/bits.h>
+Why is 'i' signed?
 
-Just make it linux/bits.h as vdso is for user space libvdso and related.
+> -	if (!dev || !dev->of_node) {
+> -		pr_debug("%s: No owner device node\n", __func__);
+> +	if (!dev || !dev->fwnode) {
 
-But
+Do not dereference fwnode directly. Use dev_fwnode.
 
-+ asm/byteorder.h
+> +		pr_debug("%s: No owner %s\n", __func__, !dev ? "device" : "fwnode");
 
-...
+Use positive conditional.
 
-> +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
-> +{
-> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
+__func__ is redundant it debug messages. With Dynamic Debug enabled it may be
+switched at run-time.
 
-Declare temporary variable for hwirq and do irqd_to_hwirq() only once.
+>  		return ERR_PTR(-ENODEV);
+>  	}
+>  
+> -	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
+> -					 index, &spec);
+> +	ret = fwnode_property_get_reference_args(dev->fwnode, "mboxes",
 
-> +	int ret;
-> +
-> +	ret = rpmi_sysmsi_set_msi_state(priv, irqd_to_hwirq(d), 0);
-> +	if (ret) {
-> +		dev_warn(priv->dev, "Failed to mask hwirq %lu (error %d)\n",
-> +			 irqd_to_hwirq(d), ret);
-> +	}
-> +	irq_chip_mask_parent(d);
-> +}
+	struct fwnode_handle *fwnode = dev_fwnode(dev);
 
-...
+> +						 "#mbox-cells", 0, index, &fwspec);
+>  	if (ret) {
+>  		dev_dbg(dev, "%s: can't parse \"mboxes\" property\n", __func__);
+>  		return ERR_PTR(ret);
+>  	}
 
-> +static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
+> +	memset(&spec, 0, sizeof(spec));
+> +	if (dev->of_node) {
 
-Ditto.
+What is this check for?
 
-...
-
-> +static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
-> +{
-> +	arg->desc = desc;
-> +	arg->hwirq = (u32)desc->data.icookie.value;
-
-Hmm... Why do you need an explicit casting?
-
-> +}
-
-...
-
-> +	if (WARN_ON(fwspec->param_count < 1))
-
-+ bug.h
-
-> +		return -EINVAL;
-
-+ errno.h (but actually you need err.h due to PTR_ERR() et al.)
-
-...
-
-> +static int rpmi_sysmsi_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rpmi_sysmsi_priv *priv;
-> +	int rc;
-
-Be consistent with variable naming for the same (semantically) stuff.
-
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	priv->dev = dev;
-
-> +	platform_set_drvdata(pdev, priv);
-
-How is being used?
-
-> +
-> +	/* Setup mailbox client */
-> +	priv->client.dev		= priv->dev;
-> +	priv->client.rx_callback	= NULL;
-> +	priv->client.tx_block		= false;
-> +	priv->client.knows_txdone	= true;
-> +	priv->client.tx_tout		= 0;
-> +
-> +	/* Request mailbox channel */
-> +	priv->chan = mbox_request_channel(&priv->client, 0);
-> +	if (IS_ERR(priv->chan))
-> +		return PTR_ERR(priv->chan);
-> +
-> +	/* Get number of system MSIs */
-> +	rc = rpmi_sysmsi_get_num_msi(priv);
-> +	if (rc < 1) {
-> +		mbox_free_channel(priv->chan);
-> +		if (rc)
-> +			return dev_err_probe(dev, rc, "Failed to get number of system MSIs\n");
-> +		else
-> +			return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
-> +	}
-> +	priv->nr_irqs = rc;
-> +
-> +	/* Set the device MSI domain if not available */
-> +	if (!dev_get_msi_domain(dev)) {
-> +		/*
-> +		 * The device MSI domain for OF devices is only set at the
-> +		 * time of populating/creating OF device. If the device MSI
-> +		 * domain is discovered later after the OF device is created
-> +		 * then we need to set it explicitly before using any platform
-> +		 * MSI functions.
-> +		 */
-
-> +		if (is_of_node(dev_fwnode(dev)))
-> +			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
-
-		if (dev_of_node(dev))
-			of_msi_configure(dev, dev_of_node(dev));
-
-> +		if (!dev_get_msi_domain(dev)) {
-> +			mbox_free_channel(priv->chan);
-> +			return -EPROBE_DEFER;
-> +		}
+> +		spec.np = to_of_node(fwspec.fwnode);
+> +		spec.args_count = fwspec.nargs;
+> +		for (i = 0; i < spec.args_count; i++)
+> +			spec.args[i] = fwspec.args[i];
 > +	}
 > +
-> +	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> +					  &rpmi_sysmsi_template,
-> +					  priv->nr_irqs, priv, priv)) {
-> +		mbox_free_channel(priv->chan);
-> +		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
+>  	mutex_lock(&con_mutex);
+>  
+>  	chan = ERR_PTR(-EPROBE_DEFER);
+> -	list_for_each_entry(mbox, &mbox_cons, node)
+> -		if (mbox->dev->of_node == spec.np) {
+> +	list_for_each_entry(mbox, &mbox_cons, node) {
+> +		if (mbox->fw_xlate && mbox->dev->fwnode == fwspec.fwnode) {
+> +			chan = mbox->fw_xlate(mbox, &fwspec);
+> +			if (!IS_ERR(chan))
+> +				break;
+> +		} else if (mbox->of_xlate && mbox->dev->of_node == spec.np) {
+>  			chan = mbox->of_xlate(mbox, &spec);
+>  			if (!IS_ERR(chan))
+>  				break;
+>  		}
+
+
+		if (!IS_ERR(...))
+			break;
+
+is common.
+
+
 > +	}
-> +
-> +	dev_info(dev, "%u system MSIs registered\n", priv->nr_irqs);
-> +	return 0;
-> +}
+
+...
+
+> +fw_mbox_index_xlate(struct mbox_controller *mbox,
+> +		    const struct fwnode_reference_args *sp)
+
+One line?
 
 -- 
 With Best Regards,
