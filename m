@@ -1,112 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698B92459EC;
-	Wed, 28 May 2025 07:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E81274FE5;
+	Wed, 28 May 2025 08:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417478; cv=none; b=sl0mtxEIi9UUOgj1gX06NUHTMPLQ4FjaaXiQriq3Ir9A15zotNsdzK98PZ4SzTuFi+9mb1vlIxFc3TAKQ2d7FnEEBrHCrgIcnip8yOEl9wUdM+Qex14YacCfGayJGrW8nM1L2PsKlPKZD/3Bz4RGf05BZ0xr7NQXxFmMRa0Cir4=
+	t=1748422502; cv=none; b=AjdqUBt0/qr2GdXCOpCdDRGzDTlvFA9JQ9e8UV7cA0Sfa0bxuGteQqsbvswySdaVXaEnKQp0LnMpX2FhLP7TUUoulRHCDUWJDStQwNHVVY2VPn3Hek+oWVo6u9j++Ddrn4uQqBRn2eqcNBxbtmG1CfTHNs/+RAgkkjtwCrRFa38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417478; c=relaxed/simple;
-	bh=6DMj4x7ehA/wKfhb8tJLlbL9mm9WfijKZfBTnzdVzX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GLLo4QhpbN8+l0RQpc/jigvZWxmtn5egDlutHFtKecipsj/O964NHESDaXMwV8GtAsptLAci+aAfdTBaKuQh+1Csl0ovBvbytgkjOQ055YRcrdbjE/rv0XqsRb5MYM/QbDoFdI9/S03N5xTx55OR7gNIROWIkhAKyvq/Q3JhfTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KP1TCICg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748422502; c=relaxed/simple;
+	bh=UVux7hP9bMnrn8D/4/hQlg1HOvWZ0FYr+0n+VvHDd6g=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D70w4foxOKUbANuQeU3BpN2gh8ekDDpfbkioTEjN2pBNmUhjuIJ9+knK83V6n3CfjEfuGuAL6jMjg426uz5YLYdhATD1qc9x+hQ79zoj6SC7TUY6lYXSO4793hpGWWIJfVlPmdVi63lGv9v2wBTIcKXmVDCeyKXA4n4V5HnTDYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZwMkE3w; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KP1TCICg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463C1C4CEEB;
-	Wed, 28 May 2025 07:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748417473;
-	bh=6DMj4x7ehA/wKfhb8tJLlbL9mm9WfijKZfBTnzdVzX0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=KP1TCICgLjMgH7fZONJKN+oJKwzRiwetuZg0T+cJtZWHAWdGi087t0k++E3kfAfd6
-	 AeyfTuZy9IEYR1xc0THWjxDs4y8HamuWAKyEBRqtf4GzovWBcYPQQflaPVeLOHLYVW
-	 Y0UqLosE/nm5vWJOLT4LW4WjQe4glsoip3oDQ2Tfh08AA87MgHnrjQpSAU4M+jMcJn
-	 s745BLw22VMe+sB+annb0FDhiFXR4qtj9mEdnMbATMNfiyf6ptchc7Iz/dSioMzT4L
-	 qpJTBQ92dmSwkNIiiy/fp71ZKXzE1oc5bfGNJeCJhdmqrZePQABMpHUjQRdWdIaVdd
-	 VZmUHiEU0LFqQ==
-Message-ID: <031d061e-6b00-4fe2-b420-6fd4149a7e6a@kernel.org>
-Date: Wed, 28 May 2025 09:31:09 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZwMkE3w"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-442fda876a6so39920375e9.0;
+        Wed, 28 May 2025 01:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748422499; x=1749027299; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
+        b=OZwMkE3w5p3YquP5bfzqj05sMAwlSZE8M6Ng46nz4dMYnFhGl2QieMKnSAYB/x8N4P
+         xN3kbMRbMiKMo8N66gxbLfWRlXgVcnn3BsJttC0FBBNyDIgx8o4YDbkrjJ7j7Mf6aYXn
+         XSrrY/1vLZc4HQhs4oLKiWCEX2T2IMq2ryiWxMEOoqjPJ845XvZ7ppyOqC1/qFjNG5Pp
+         tssh/QiRIiyXSuKmTjQUiRJKzhMJ+zATY/SKRcEYEGTQnVIc8wwQLdNWmwpKl1hkDDm6
+         MBXoO9hJ22lDhBgROwmRaAST2I5e79ZcDOHs4JbmbqhKGwHDRRc6pzHqEiCrUDTlDaeH
+         l85Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748422499; x=1749027299;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
+        b=JG3kDHDvarRFDkQKGdEb0MMtGzmxe5U8VfN/7kFbXB2zgo9FZCGMcp4O/6VQw15dv5
+         MeOZAomXorIF0vC99Pc1Xg3OZlquRQhExozAUBEdndDk0us0rQLJFNSaa+OqFEwZsN3u
+         1tFCOqSa5+JulYprgoxoGDZjXBUCL0lk5uxU8bU7hVS/0m7YjAwbltOQ52rWg9LVqCXz
+         uA2mdmUkIuK0VCj3UQZS3I5MKcs/oOsdQn4BiVdG8mLSczIAnU/fMXNvGSLTV+ZXjska
+         /I8hOyt/1a2kXW0eVk994haJD+T1N6ZOqCUFtNfrPu0vvAU6y+FzjFvvdvggtUXHP/MX
+         kg4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvD8yfp3M6xbBkmIyHPw7ieDz9rf6ttHf2POUjIphl6392WZCEh+svp55uL9q/RRrBt91uesLv4HKdN6nW@vger.kernel.org, AJvYcCW4nZ+PV1cpT4/DmcZVGyDdEgXvTPzE7478xhLRTPooX7Qmihbwm+tbGf0lMsoC9PJoutrh/9jIJhl0@vger.kernel.org, AJvYcCXIjQcI3I2bOoKTEnQqZJ40iyjXcRguR6nOj0EyvCaPBSq6biiexVkB3X6CHbhtqqK+LAZ1qo2RMDb3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMTIuy+tC++VQzkHgynsk4s6MHs0kKnXp1ZcnnH+9KCF4+lxGf
+	Sp6sdaGK+fU6g0WIBaaI8KMdA99PM1gKCiZQASNXyEwo45nFogTrB4XS
+X-Gm-Gg: ASbGncurlSckx7Elp+9oAxDMOoKPMcz7tCye37ICOe0iZJ39P3UObhnG6FkFgKIvUjX
+	R+D39VbZGEAyEtS0JqaoDkRrtC3XnTvbCu5+/5w1C1hz+JdFUyBHtY4E0+8r5/+KjrpEAXej176
+	hp9eDjQecezMsEWzKF/6l38V4VRW6jJTKSrZfw1cvLKrEroH8ccADRZdh/kCNQpbiVNyuinclul
+	GWVStNZy2WJtCM0ZWRq93tXVFrkG6qkuJoXOr6jPDJnjwGzYulhgi0shWViYbYNv7cbs/onAKRL
+	HhHNWv2B+1QzBdgfRw6Z2ra/NUVzJpR9ZRivKwJEQXtyVdITJ9AFDu6pk8iOd0LrETkDkIwVnD7
+	0eJjk/K8=
+X-Google-Smtp-Source: AGHT+IHzDXo4DKV7NuIB2FHat2ZLCgGieMqt3tp4PCcFaDmAJxHMEYrCP10nDJxLNZ8k0RrjjTbMcg==
+X-Received: by 2002:a05:600c:511d:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-44c91cc5591mr137161785e9.11.1748422498857;
+        Wed, 28 May 2025 01:54:58 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eacd6e8asm865113f8f.70.2025.05.28.01.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 01:54:58 -0700 (PDT)
+Message-ID: <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
+X-Google-Original-Message-ID: <aDbPYDACfIkaZMLj@Ansuel-XPS.>
+Date: Wed, 28 May 2025 10:54:56 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
+ AN7583 clock
+References: <20250528004924.19970-1-ansuelsmth@gmail.com>
+ <20250528004924.19970-5-ansuelsmth@gmail.com>
+ <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] dt-bindings: reset: add binding for Airoha AN7583 SoC
- reset
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250528004924.19970-1-ansuelsmth@gmail.com>
- <20250528004924.19970-4-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250528004924.19970-4-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
 
-On 28/05/2025 02:49, Christian Marangi wrote:
-> Add binding for Airoha AN7583 SoC Resets. These are very similar to
-> EN7581 but lack some specific reset line hence the order is different
-> and a dedicated binding is needed.
+On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
+> On 28/05/2025 02:49, Christian Marangi wrote:
+> >    - if:
+> >        properties:
+> >          compatible:
+> > @@ -75,6 +78,17 @@ allOf:
+> >          reg:
+> >            maxItems: 1
+> >  
+> > +      required:
+> > +        - reg
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          const: airoha,an7583-clock
+> > +    then:
+> > +      properties:
+> > +        reg: false
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../dt-bindings/reset/airoha,an7583-reset.h   | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+> 
+> No resources here, so this should be part of parent node.
+> 
 
-This goes with the binding for this device, not separate commit.
+Ok hope you can help here. This is another case of "MFD" thing.
 
-Best regards,
-Krzysztof
+I was with the idea that it was O.K. to use this with very different
+devices. (current scenario Clock controller and MDIO controller)
+
+The node structure I had in mind was
+
+		system-controller@1fa20000 {
+			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
+			reg = <0x0 0x1fb00000 0x0 0x970>;
+
+			scuclk: scuclk {
+				compatible = "airoha,an7583-clock";
+				#clock-cells = <1>;
+				#reset-cells = <1>;
+			};
+
+			mdio {
+				compatible = "airoha,an7583-mdio";
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				mdio_0: bus@0 {
+					reg = <0>;
+					resets = <&scuclk AN7583_MDIO0>;
+				};
+
+				mdio_1: bus@1 {
+					reg = <1>;
+					resets = <&scuclk AN7583_MDIO1>;
+				};
+			};
+		};
+
+But you want
+
+system-controller@1fa20000 {
+        compatible = "airoha,an7583-scu", "syscon";
+        reg = <0x0 0x1fb00000 0x0 0x970>;
+
+        #clock-cells = <1>;
+        #reset-cells = <1>;
+
+        mdio_0: bus@0 {
+                reg = <0>;
+                resets = <&scuclk AN7583_MDIO0>;
+        };
+
+        mdio_1: bus@1 {
+                reg = <1>;
+                resets = <&scuclk AN7583_MDIO1>;
+        };
+};
+
+Again sorry if this question keeps coming around and I can totally
+understand if you are getting annoyed by this. The reason I always ask
+this is because it's a total PAIN to implement this with the driver
+structure due to the old "simple-mfd" model.
+
+(as again putting everything in a single node conflicts with the OF
+principle of autoprobing stuff with compatible property)
+
+-- 
+	Ansuel
