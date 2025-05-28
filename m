@@ -1,174 +1,318 @@
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E332777F3;
-	Wed, 28 May 2025 09:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189A1EB193;
+	Wed, 28 May 2025 09:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748424366; cv=none; b=ImXwPZ6Wt/YKINFDoKdZ24CroHup/WAXZGUDDT21BLVD+mue83aj+0Li0UVKVcm9rVhHI92H+IpEGQ+gKLA3yPzx0kN5qdlbtOiyK1JIiPIFMZHruOsY0DzViqFc2CGuQZ+c6GcAZ0Yq3Ks9EWr2S78HDPE3zoL8lk0oEudc8V4=
+	t=1748425729; cv=none; b=q5xy6EUzxpBXUDIrKg+B4l4EXDT8O6qJkxoh15dNlgESZd5YvprA93EpdmwcGPCqe9MuowFIyYYeXcimNN4jzFkVzJ2ch7mF/8irZf+IoWnirgVVJg0Ar1EYao7KkFsQZ3/mLn4Ttdl7fY8Bfr63Fq3p5KDNrbSWwuR9G6owmzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748424366; c=relaxed/simple;
-	bh=XY1gV0lSHP/Zh5lUmNucIx81dJ3L3wDM+AR+kA1tql8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fj1vdyeZBSB77KhLQl6cUMql7t9C0PnBH7NRJmC6iZR34BOQN/7yQ5yPQYXdjscORUtUnmve3gxJuG+Cq/3pgsF/RRQ3fi8ZPXjq9WVkvk8Sna8Ry3QCqbQPacehNczgmPnfowTfI2WTeYTNPDMn4Cje/gVkxO9PQj2L/kc3Xiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=etNgrfp+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dr30cG0k; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1748425729; c=relaxed/simple;
+	bh=Uinns349GxH1UR6aquqSJAn77/2GAuIwH7OpLa221PM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMReJrJCgaTXdQZ4dUMzotEC0m96oe9T04b+iaNgzRId7XIk6Bj45wHIewP+y+VFGuiRoSz/gwwTY9zX4iXKanRlMCNC9931L3Z7o7v/Eys3TTIRXA+PfL2xQl95d4o3uxeRRUF1ASCSCfXpzuFkxJo9rzb9pdHL59g5XiX61to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiceM8ZH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="etNgrfp+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dr30cG0k"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3F0B525400C6;
-	Wed, 28 May 2025 05:26:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 28 May 2025 05:26:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1748424363; x=
-	1748510763; bh=7jPRji7f+itML8q0+tbGPOwVQxf6bxrH9U7BpgdfIMA=; b=e
-	tNgrfp+JHJG3t+SPmfAjZ4KFX7Y19kHx6nNuU88yVt/5gAaHmDSgOAkhlfSmZFCx
-	QLWsu3IZTnrXbDluVSyeXHgrcNhFHvcLvYFvR9n37qASRKEMz7oQcrbIhwdP702s
-	5wSiG+kp6ELWnEUJFnjzkgY6eoe4OSCviVjIhJiQ/yC8xQPndZhtL4jm+gBg2T+D
-	Rdhq3g18c7XJYNimmsToGz1BnUyq10JqUXTVmPb7viG/tLJrZvFyXTe6egKVRED3
-	/STD7VzkgseRaGM0mpCiutXVBaoqOY6bdeegXYGgk31aeqZrRWnZwigiJUg4lRnu
-	ujclq6ojE+KN7oE4LuH7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1748424363; x=1748510763; bh=7
-	jPRji7f+itML8q0+tbGPOwVQxf6bxrH9U7BpgdfIMA=; b=dr30cG0kdUGcW0pI8
-	O3/NSUT07+FaDf0BCAmavU44hsW9s8FBjoGqzLapFz/ZOuG5IljXOH2B/PCg1TSK
-	tQHymyyJe/9pJsVf7F3cyTYSnlVhIo+hAWcxp773Yz8jMhuCYZLzHrP2M0SpdU2J
-	6z1B6oQpuzO7vUPrrWy8HitX0Kc+4wyfoVhLuxg3O5GlH1iH4RWB63gGJUnpVJxx
-	flcMeO2/w5G9w9mjas8L+YLhKGqWRT72QYLk1ogJxjA94BH6vBCSzk/WxwgVUW1f
-	jIIANIkbBzPUzLPIdWdoup1jtNr65Y1p3DWsFxfQ7r5KAzDys1WSK7UR5QpoQFMm
-	/X6Kw==
-X-ME-Sender: <xms:qtY2aC1DR_P-JHY1HPv9nuPBlVIU881GjqrsYuuibyE55hocYyFXaA>
-    <xme:qtY2aFEkJNcxHGfz2ZScTpPfmqt8LfD5cX4MBZ1_rW2tEXyE2QWiRNInJbN5uGtLI
-    G70zRtPkXlQyR28rQ>
-X-ME-Received: <xmr:qtY2aK6UEMPQgznoT4nx6ZKnTfVoVd94svXA6yIyKfDFaQ7cJe9bD49ih73l0IOQ5u4xzbIoIiq0vls6K2PRi2YaZzfiIQytQsbqljTwrTRO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvvdekleculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffo
-    jghfggfgsedtkeertdertddtnecuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhi
-    grnhesthgvshhtthhorghsthdrtghomheqnecuggftrfgrthhtvghrnhepffehieffgedt
-    gfffjeetveegfeekleeileekveeuteffteetudffveegieeiheetnecuvehluhhsthgvrh
-    fuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgr
-    shhtrdgtohhmpdhnsggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhs
-    segtshhivgdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtse
-    hlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhes
-    shhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtg
-    hpthhtohepuggrnhhivghlsehffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdr
-    shhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhoh
-    hllhgrnhgurdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:qtY2aD0O7yx8Zv6gpJ-fE7OIqtxtxjKfDLk6-c2uNv66AS0VLyhEZA>
-    <xmx:qtY2aFGiEyvS_Ji5DJ_kDL-vUgO7GJccfu6PvjY1u7gnMRuAGpAxgQ>
-    <xmx:qtY2aM9-w1xeLWulXziv2TH2tzY5xT90ty7wRvC8Y6T4w_liPueOtw>
-    <xmx:qtY2aKmJnP44684U79feYngEux_WEvgQ0g68prXdjKnhJH3JZFrnaQ>
-    <xmx:q9Y2aDf7y_QVWDmCaRuYYQoZGK-sAEQr8b30cdgK5tX8qGuujySqxtNA>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 May 2025 05:25:56 -0400 (EDT)
-From: Ryan Walklin <ryan@testtoast.com>
-To: Maxime Ripard <mripard@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	Hironori KIKUCHI <kikuchan98@gmail.com>,
-	Philippe Simons <simons.philippe@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v12 8/8] drm: sun4i: de33: mixer: add mixer configuration for the H616
-Date: Wed, 28 May 2025 21:22:13 +1200
-Message-ID: <20250528092431.28825-9-ryan@testtoast.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250528092431.28825-1-ryan@testtoast.com>
-References: <20250528092431.28825-1-ryan@testtoast.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiceM8ZH"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf257158fso36648165e9.2;
+        Wed, 28 May 2025 02:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748425726; x=1749030526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YejcQjvowFFKkqN+UPoZNPAf32M6HyCXABg2+FNPRa0=;
+        b=MiceM8ZHMEqXDc+TTwJgcGHGooDwvxe71qsaljJ24CMv5GBt0i34fgUgzdRLaBCr09
+         rNt8AaCI1KGbbBueXpd/grj186cOqSUcZJrj/gf+h3kzfl5+c4W//GbZTj9s1vrOF44L
+         CrQsSsJK5gdgty1fCaTZZW4x5p3E3rXRWsPF26NmMFlQ3PXBWAcze6SUwkOGn0MZsX3/
+         20hf039WuYIsxRFqchlfOSFF8d7jajZR6KnRnE20+0VcixNZbd1VqsyECoV1R4EMr8fR
+         IqxGMutTl2tX5o9VGzoRqa50P5X7JKy0xyPOqXKJfmWVJaSrBwOA/btEMWxouYYuWoRl
+         0xSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748425726; x=1749030526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YejcQjvowFFKkqN+UPoZNPAf32M6HyCXABg2+FNPRa0=;
+        b=ojKzZE9BPFjcWvnwPulA4ju+XmkGkMEZO2p+MI1LEMesiBtUeCa7Lba/PiBEFPMrw/
+         Aq+Q7u+UekV+novw13iLUQ9kucx2gxLW1efvaiqlCt5WZRwQ8AWm7f3/UOw26aIcahbu
+         EGBWKr+4B58axbc0e6nIzw8ag5lIxqxuXu8xs5J3HSWup3zE1nbF6mYZR7gT5xHm8mwh
+         zS5TDmx/lDCcVHXhw1FWeTWwpZWkWwQD66753ojnwA9KDP35viYES/v7Wc6MFkriNCUR
+         hYLe0mg5yrbLRJnsM+udbRnbjtiFNJJioRnX2110louPiPW3e88sOonyZYt3nLLL/n2P
+         dT1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUBfe58iYwfe4FOB4B2pY3UcXS6/GeGUGD2Qmb2XrbyaYAb6NqyaDlwm4Ulvdlh7d+j6GUe6BqjI/Lc@vger.kernel.org, AJvYcCUZOpZXfasuio8YfIlAxNmFFxpBboLKMSXgLNUHh+jOqPMIZyCPhd2lI6BTH2NvC0OaSoNEbkPCVcdDOqgU@vger.kernel.org, AJvYcCVBZk/uWxJXMPOiMXtvGagsnN1rJjsb/F4u3Ho08ikePJaI3lvRo96t13S/Pbhf8ZTLzYBVWYxsGdQU@vger.kernel.org, AJvYcCXkaPDHunzIq0SgVp3LRKb3UYHfjACFJb3tCp2sXpr+zwhKruwmR1IWq014eEQmoSjpCnr/CozJgrKtnVP3qeihUeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL81YB0OcG5gfhWtTpnkXLVTXtWCUkHcMzb6U4PGHvGVVQKcnX
+	2uRHDtx64AGfAFr+oSNsDplbFWKqxTXf3yviooq2TTjHQ+5VFDao0/zFGvfU6f7l5Vr3lfIOfPE
+	yr3qLj7yDdNHcYvGTFoyx7zDXOqhHFXs=
+X-Gm-Gg: ASbGncs6DcWickGSa1C/ah57oASycCuZYXa0c3wY5m1IcgfGBXp68ZPzbBUg2qE8eVc
+	qzxAmm0dM8v6nQYeHGMK+SKDmdJZNr4IhYEC6pXcu4rAS/keiPjXM7jhVMUde/gh/imzfhHhQN3
+	OQ2Ex4HdOvCFOL+Sx4iOcXulLU77Qd5wAIPJYqvdObDOFPI6v7ltPBE2UGqRj11wwaeA==
+X-Google-Smtp-Source: AGHT+IFOU92ZFS2S3O0R5SwadRfYVFCtrH9pyzPNYTlNPomarpL8i1KADqoaf8Wf35yeCGDtsi5p0K+tgRPxmCxDFK4=
+X-Received: by 2002:a05:600c:6089:b0:444:c28f:e81a with SMTP id
+ 5b1f17b1804b1-44c94c246b9mr146760025e9.27.1748425726021; Wed, 28 May 2025
+ 02:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250512184302.241417-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX5_P4R43HOPuZc3JSAOQ5O2xOBDVhVVg1SxU1ucPdbPA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX5_P4R43HOPuZc3JSAOQ5O2xOBDVhVVg1SxU1ucPdbPA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 28 May 2025 10:48:20 +0100
+X-Gm-Features: AX0GCFvgbR9aYLSei5CukQRvloak3Q9KnXFyd1nNDHatfD-viQKLYa05qK7GLSE
+Message-ID: <CA+V-a8sde6Zaz3Z2uDt3OGZ52UBJfR3vQMs4-ZUusDu=oNwFhg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jernej Skrabec <jernej.skrabec@gmail.com>
+Hi Geert,
 
-The H616 (and related SoC packages sharing the same die) carry the new
-DE33 display engine.
+Thank you for the review.
 
-Add the mixer configuration and a compatible string for the H616 to the
-mixer.
+On Fri, May 23, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar, Fabrizio,
+>
+> On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add DSI support for Renesas RZ/V2H(P) SoC.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Renesas Electronics Corporation
+> >   */
+> >  #include <linux/clk.h>
+> > +#include <linux/clk/renesas-rzv2h-dsi.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/iopoll.h>
+> > @@ -30,6 +31,9 @@
+> >
+> >  #define RZ_MIPI_DSI_FEATURE_16BPP      BIT(0)
+> >
+> > +#define RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA       (80 * MEGA)
+> > +#define RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA       (1500 * MEGA)
+>
+> RZV2H_MIPI_DPHY_FOUT_M{IN,AX}_IN_MHZ?
+>
+Ok, I'll rename them as above.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > +
+> >  struct rzg2l_mipi_dsi;
+> >
+> >  struct rzg2l_mipi_dsi_hw_info {
+> > @@ -40,6 +44,7 @@ struct rzg2l_mipi_dsi_hw_info {
+> >                               u64 *hsfreq_millihz);
+> >         unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
+> >                                             unsigned long mode_freq);
+> > +       const struct rzv2h_pll_div_limits *cpg_dsi_limits;
+> >         u32 phy_reg_offset;
+> >         u32 link_reg_offset;
+> >         unsigned long max_dclk;
+> > @@ -47,6 +52,11 @@ struct rzg2l_mipi_dsi_hw_info {
+> >         u8 features;
+> >  };
+> >
+> > +struct rzv2h_dsi_mode_calc {
+> > +       unsigned long mode_freq;
+> > +       u64 mode_freq_hz;
+>
+> Interesting... I guess mode_freq is not in Hz?
+>
+Actually it is int Hz, I will make it unsigned long.
 
----
-Changelog v7..v8:
-- Separate DE33 support and H616 enablement in the mixer.
+> > +};
+> > +
+> >  struct rzg2l_mipi_dsi {
+> >         struct device *dev;
+> >         void __iomem *mmio;
+>
+> > +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq)
+> > +{
+> > +       static const unsigned long hsfreq[] =3D {
+> > +               1953125UL,
+> > +               3906250UL,
+> > +               7812500UL,
+> > +               15625000UL,
+> > +       };
+> > +       static const u16 ulpsexit[] =3D {49, 98, 195, 391};
+> > +       unsigned int i;
+> > +
+> > +       for (i =3D 0; i < ARRAY_SIZE(hsfreq); i++) {
+> > +               if (freq <=3D hsfreq[i])
+> > +                       break;
+> > +       }
+> > +
+> > +       if (i =3D=3D ARRAY_SIZE(hsfreq))
+> > +               i -=3D 1;
+>
+> i--
+>
+OK.
 
-Changelog v10..v11:
-- Convert de_type enum to uppercase
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> > +
+> > +       return ulpsexit[i];
+> > +}
+> > +
+> > +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
+> > +{
+> > +       const struct rzv2h_mipi_dsi_timings *timings;
+> > +       u16 i;
+> > +
+> > +       timings =3D &rzv2h_dsi_timings_tables[index];
+> > +       for (i =3D 0; i < timings->len; i++) {
+> > +               unsigned long hsfreq =3D timings->hsfreq[i] * 10000000U=
+L;
+>
+> (I wanted to say "MEGA", but then I noticed the 7th zero ;-)
+>
+> 10 * MEGA?
+>
+Agreed, I will update it as above.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 13e712382010..31a8409b98f4 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -799,6 +799,17 @@ static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
- 	.vi_num		= 1,
- };
- 
-+static const struct sun8i_mixer_cfg sun50i_h616_mixer0_cfg = {
-+	.ccsc		= CCSC_MIXER0_LAYOUT,
-+	.de_type	= SUN8I_MIXER_DE33,
-+	.mod_rate	= 600000000,
-+	.scaler_mask	= 0xf,
-+	.scanline_yuv	= 4096,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+	.map		= {0, 6, 7, 8},
-+};
-+
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
-@@ -844,6 +855,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun50i-h6-de3-mixer-0",
- 		.data = &sun50i_h6_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-h616-de33-mixer-0",
-+		.data = &sun50i_h616_mixer0_cfg,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
--- 
-2.49.0
+> > +
+> > +               if (freq <=3D hsfreq)
+> > +                       break;
+> > +       }
+> > +
+> > +       if (i =3D=3D timings->len)
+> > +               i -=3D 1;
+>
+> i--
+>
+> > +
+> > +       return timings->start_index + i;
+> > +};
+> > +
+> >  static void rzg2l_mipi_dsi_phy_write(struct rzg2l_mipi_dsi *dsi, u32 r=
+eg, u32 data)
+> >  {
+> >         iowrite32(data, dsi->mmio + dsi->info->phy_reg_offset + reg);
+> > @@ -308,6 +479,158 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi=
+_dsi *dsi, unsigned long mode_f
+> >         return 0;
+> >  }
+> >
+> > +static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *d=
+si,
+> > +                                             unsigned long mode_freq)
+> > +{
+> > +       struct rzv2h_plldsi_parameters *dsi_parameters =3D &dsi->dsi_pa=
+rameters;
+> > +       u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
+> > +       struct rzv2h_plldsi_parameters cpg_dsi_parameters;
+> > +       unsigned int bpp, i;
+> > +
+> > +       bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
+> > +
+> > +       for (i =3D 0; i < 10; i +=3D 1) {
+> > +               unsigned long hsfreq;
+> > +               bool parameters_found;
+> > +
+> > +               mode_freq_hz =3D mode_freq * MILLI + i;
+>
+> KILO?
+>
+OK, as mode_freq_hz is in Hz I'll make it unsigned long.
 
+> And I guess you want to use mul_u32_u32(), as mode_freq_hz is u64?
+>
+and use mul_u32_u32() below...
+> > +               mode_freq_millihz =3D mode_freq_hz * MILLI * 1ULL;
+>
+> Why * 1ULL?
+>
+Agreed, not needed, I will use mul_u32_u32() here.
+
+> > +               parameters_found =3D rzv2h_dsi_get_pll_parameters_value=
+s(dsi->info->cpg_dsi_limits,
+> > +                                                                      =
+&cpg_dsi_parameters,
+> > +                                                                      =
+mode_freq_millihz);
+> > +               if (!parameters_found)
+> > +                       continue;
+> > +
+> > +               hsfreq_millihz =3D DIV_ROUND_CLOSEST_ULL(cpg_dsi_parame=
+ters.freq_millihz * bpp,
+> > +                                                      dsi->lanes);
+> > +               parameters_found =3D rzv2h_dsi_get_pll_parameters_value=
+s(&rzv2h_plldsi_div_limits,
+> > +                                                                      =
+dsi_parameters,
+> > +                                                                      =
+hsfreq_millihz);
+> > +               if (!parameters_found)
+> > +                       continue;
+> > +
+> > +               if (abs(dsi_parameters->error_millihz) >=3D 500)
+> > +                       continue;
+> > +
+> > +               hsfreq =3D DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI)=
+;
+> > +               if (hsfreq >=3D RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA &&
+> > +                   hsfreq <=3D RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA) {
+> > +                       dsi->mode_calc.mode_freq_hz =3D mode_freq_hz;
+> > +                       dsi->mode_calc.mode_freq =3D mode_freq;
+> > +                       return MODE_OK;
+> > +               }
+> > +       }
+> > +
+> > +       return MODE_CLOCK_RANGE;
+> > +}
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> > @@ -40,6 +40,39 @@
+> >  #define DSIDPHYTIM3_THS_TRAIL(x)       ((x) << 8)
+> >  #define DSIDPHYTIM3_THS_ZERO(x)                ((x) << 0)
+> >
+> > +/* RZ/V2H DPHY Registers */
+> > +#define PLLENR                         0x000
+> > +#define PLLENR_PLLEN                   BIT(0)
+> > +
+> > +#define PHYRSTR                                0x004
+> > +#define PHYRSTR_PHYMRSTN               BIT(0)
+> > +
+> > +#define PLLCLKSET0R                    0x010
+> > +#define PLLCLKSET0R_PLL_S(x)           ((x) << 0)
+>
+>  #define PLLCLKSET0R_PLL_S GENMASK(2, 0)
+>
+> and after that you can use FIELD_PREP(PLLCLKSET0R_PLL_S, x) in the code.
+> More opportunities for masks below...
+>
+Thanks, I will make use of GENMASK/FIELD_PREP macros.
+
+Cheers,
+Prabhakar
