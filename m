@@ -1,380 +1,191 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022140.outbound.protection.outlook.com [40.107.75.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7BB1C84B2;
-	Wed, 28 May 2025 00:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748393402; cv=none; b=P4nUZtY2IgzCC0kVhIa1SV6sCzvnxEaOXEtqxrvNkWdNxoCzPb/gvRHJVAOcRjJKuNyavQdtx9YLXYtBeDt7ee9wc5jjEvyDKNzJXjeM9On+j9zp2yPy6kX89doEH/C9YLVBJKe9dPLD/lUdnKUSFFh45d+5mURApOEkcl1+BYs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748393402; c=relaxed/simple;
-	bh=gpBLtlkGM4oAG9AwfT2x15Xi285hIx49/ofZvJOQccM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V/2L8YvM3kRysHlRrfDRq/Obz4nV2mTeNLG1Qq/fRD533lp4veN9k7p00AG13pnPWyMZObSWUZOSGpJfEcXDJCPm7nUF6x9crBFXvurnDObwfE/QKML+IqLXoQk0uUYr1D97QaWe3i/m6eN80nKycikORtwQaIEdn5SgEKUfLy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYgSwoKR; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C410942;
+	Wed, 28 May 2025 01:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748397006; cv=fail; b=mo5tCEZh7bB0YFx0zdg6Zhwy4on9dVsbCCwDbpnS9yMjhWY6FdDMeA8vFnToMnWyNlGojk+yRg3gZ40UTq08HLi+jtO3j8Qee8k9ee4K0fq6jk5ktBSWDRGWMFMH2quIbQiInWTNTBFeSvo1vxWP8UcANv8Glf9t1303JRhQt+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748397006; c=relaxed/simple;
+	bh=/o+RCouCo5ZVC2WN/3Xud3a2CWZ0lNgzZlJRMQBLv8I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tU7WrcZxncTXHJ1Amx0facm2J/yFkoEH8q9bXsjx75VuKKG1xvv27ho5r6jc5KdQzZj9LLyqtDvRMVj3d/+AkyY8979+IbrARj2jlgrSj4l8jNIP7KLhWJ0ayvCu7sZV0c0L6JtdbH5O9MkxUL/HTGjun4ifuVKMHAEQUVbqWLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=XRaDHrx/; arc=fail smtp.client-ip=40.107.75.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYgSwoKR"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4508287895dso75265e9.1;
-        Tue, 27 May 2025 17:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748393398; x=1748998198; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sMepoabFQW1etE0k1cIZwoujR5CGEJouw2O2av/kOeQ=;
-        b=HYgSwoKRL79BAZvwg5d483v3IiyDZfQCGhMDqsO8hIUuTflVr23deNFKCZ1tR9Tfcy
-         HTPuOn0HF7elrKDVQre80xZJgdJvKU+YIvhE7S2A0dicO1CAXavbdnbVNq16XMqMSIUD
-         FAus5c++9eYB9IgNnvXGMHLIYgKO2XgkVF9EeZ1FLQUzNrESCsRBE8lRQ2lTTHqDpx8b
-         BiQkNaot69OhqD+gwAtO7/JI7JUKnmtN/Hd0ohTOhpC2xCEHEpuXuROKwOuMv72xo7L3
-         9ZAqqmnd00/rPvf5bS5Ri/meZFHsY6v2FnQRXQAPZEdpGXb3lOBTsP64RwJXWR06502S
-         2ctg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748393398; x=1748998198;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sMepoabFQW1etE0k1cIZwoujR5CGEJouw2O2av/kOeQ=;
-        b=Fgxb7RcXuxfoBz1lYp4gNWmN02kiGhoWlYmN9lG/5weNtCUkiveGjYWMSKDLO4ltaV
-         V+ULJo4McpGWMexgq51HXV4rmXJP8d6OuUOylRlu0Cwdhm4mEfoF8mX+uC2BLqjFxRMf
-         JzfALlGAHJE7B4eqKQddBWWULT2zuVC7Id+BVLnwvfDCQdNHc3HmaDlJP9PsnsId8DIp
-         5YOTE0nWg/p2YOPJRSBWqMPRuucpx7GspHVRBFYUp8UNtEjqW//lsFRdrKgZAnoN0tNh
-         wZl3WLy4MZ5JJ4dH5DSbARBFbeDLXqXja7ePe1GPHT9naV0ym2fi4FnSLKmHg47RP8MX
-         rXeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUa8eu9AOKLPXN0DEHIdNgDKpgC3G0VDZvU5GZJWkTDAFyxHA9pDz2fd2G3b0KQouWVf0RZQAM9r1RJA9bB@vger.kernel.org, AJvYcCVOrR9fdtx1ZlwEMJ3KhHiT/DDXTlH0aOCKGgsFi2vtBZIjHaR6K7S4oriTpHx6KBi2uhSsfvZuSslf@vger.kernel.org, AJvYcCVwNmV36R3vjXf+dZXA1/S/dM+a0YSk+UVUpWrlpxHaOeL4DKFKVNjSNCZnkLNNx1taQHBCtUbOkSED@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwTgQGBLa+/SJS9aP1agCLJ+3tKtG0GhCLByOXWE3zNmAjfE73
-	QTjBK0KEkLYXDRfKSulfJZmwK0OKnVK9dyXPkq93JRD8Ibi1JcooDFLcyY5NOA==
-X-Gm-Gg: ASbGncsi+qowL4svszMF2K88m2EAl+Y16nfTTCAVtYKa9ZNQ6QmET70aUFQYChxQF6/
-	rTU5VleCgz7kpoZppN8qF6hYJjbGPKKg9AE/ghNULJRDT3FwY2mVrNZGBHE/HwwZqJd/pQo7DW0
-	N06L/ANxs6lm5XmEfHJPepnOKyiNFyyy1aU/K7pX02oS6mD0MVzHdyxL5kfiJ0U7aeCWFXraH3o
-	xmeLGe3qw5RqEdsuSMyRaqCBxkTl6hp2GZSzXMYSvfc/sbCjRs5L+mB5+hUKE3caAF4lNgzM+bI
-	iQSwR/fz6vdgpkjRFKojx7sZ4AbVN8M77xv/9qs5ci3sYCb9DKcKNLpkUTvVjveBRKk1eL9Wmrt
-	a5Q1ArZpvZdZBavE8++E5
-X-Google-Smtp-Source: AGHT+IEuqcts/Y9EqxufAqkAoh7hMxdfIPHQIbWJcVRP6UTF+zluZL7rrWRJBesNSyU5r9iWVbJM9Q==
-X-Received: by 2002:a05:600c:6818:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-44fd1a01b05mr23103845e9.3.1748393398085;
-        Tue, 27 May 2025 17:49:58 -0700 (PDT)
-Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-44fccee6c54sm33682535e9.1.2025.05.27.17.49.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 17:49:57 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 5/5] clk: en7523: add support for Airoha AN7583 clock
-Date: Wed, 28 May 2025 02:49:18 +0200
-Message-ID: <20250528004924.19970-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250528004924.19970-1-ansuelsmth@gmail.com>
-References: <20250528004924.19970-1-ansuelsmth@gmail.com>
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="XRaDHrx/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MObpab1Agxxqa0e4PV0b6eXJUCTS5M/ioBrhtGj3ETB8uK2+olD+fWQUnxGHhI/zQWfrl2xCnDm/Kb+njAiVoKbjU+Oqljsh9B3shQr+wlI3zdV8wil/6nh6aFSttCdVK/cwa2ZqmVYANa5fWgTa6klzO72o7SZSyEvN810E2MCK7z69+3E3hLqy9SXsMNi3cgOWCEQImKF3agX1l91PdfVLaWXJPJk9Ww7Uia+guQtGKfB3vHwhvfE1xwMzv8Kz6543v2jYhOUrUq3RduZTYPtveDsI7ZnUFLPRy61W+k84BqCVYSYKVt/KtlWSbFaXg+SUGmFTS6Nk6df4XuCo1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/o+RCouCo5ZVC2WN/3Xud3a2CWZ0lNgzZlJRMQBLv8I=;
+ b=A2jzGPGdcDchTg78qmdqZA4mqdkb4YrEHiXOBc0z/lgfN/ySASgddmfTxJM7k4ziApQearMS18OEF2DWeShz5onLsMhqzrHh/uKZewdR/BPhuEVL5Vhk4JiLuN/EeNbHrF6HDT4k+fqNzeIAAGQgjW3QKMUDBo5bkUJGFG7IgmPDiG5qqR0c2BuuhFd7vqyXlZq/uP7fCQJvN6d351MKjvfwpeOKTC1xYt0wqYEaPhND6AVwA0XHQ1duIVnLf20sjzaTcEfpzWsmZbe4LGvh3y/9DnAFRT5nykU5hk9sOAwxa2d+tA8La4LTKYP3nfYxQDh7562ENHGFnfraULLSpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/o+RCouCo5ZVC2WN/3Xud3a2CWZ0lNgzZlJRMQBLv8I=;
+ b=XRaDHrx/VuRMwnDiQWPaJq/ZYCp3/oyTl7qgI80Odg8cyMBdn+664rqFokCRiVNb9vNME76nZMfzLrTsHsmQJll8wscJMow1CNNURzq8G6Z8lLWSa9yKI8835ukNqIiDiQ9UHbodCGamygWDQc+seMfRh0FOcWLzPSkd2Tp4s0DP3s4Be3yQO3bXK8rM0nzjKSFeOpuuTrEt4pTaT7ph6J/n6dljE5dphG5hszdwxvyEy5lyHUbZUDIONTH6+CWbdeR45BwYMyCGFoYNjZA86OqPE1nXm8XW+B3uO7P0Ex0TscN/7FnKSs4WKvwL7I2wJ6IXwxMm5grm4F1YmUk75g==
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
+ by SEZPR06MB7345.apcprd06.prod.outlook.com (2603:1096:101:255::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.24; Wed, 28 May
+ 2025 01:49:58 +0000
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28%5]) with mapi id 15.20.8769.022; Wed, 28 May 2025
+ 01:49:58 +0000
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+	<joel@jms.id.au>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, BMC-SW
+	<BMC-SW@aspeedtech.com>
+Subject:
+ =?big5?B?pl7C0DogW25ldCAxLzRdIGR0LWJpbmRpbmdzOiBuZXQ6IGZ0Z21hYzEwMDogQWRk?=
+ =?big5?Q?_resets_property?=
+Thread-Topic: [net 1/4] dt-bindings: net: ftgmac100: Add resets property
+Thread-Index: AQHbyWmbzc4DO9TZvEidHe0NP79ULbPbqjGAgAod+ZCAAMf9AIAAwfmA
+Date: Wed, 28 May 2025 01:49:58 +0000
+Message-ID:
+ <SEYPR06MB5134B705B97DA376D60DDA149D67A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
+ <20250520092848.531070-2-jacky_chou@aspeedtech.com>
+ <20250520-creature-strenuous-e8b1f36ab82d@spud>
+ <SEYPR06MB51346A27CD1C50C2922FE30C9D64A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+ <20250527-sandy-uninvited-084d071c4418@spud>
+In-Reply-To: <20250527-sandy-uninvited-084d071c4418@spud>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|SEZPR06MB7345:EE_
+x-ms-office365-filtering-correlation-id: b640ea60-94a4-4fd3-e5c4-08dd9d89f40f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?big5?B?bnRESHl6cFhLOEYrN1k4UGphZ0VJZW5Ua29OWHBqUlRFWWkrOHhMZE9DS2pMdHBs?=
+ =?big5?B?S2duN2ZVZnVSeXM1YmdlSTNLRjZhMDlibERxdVNRQkxSTCt1TXpqYjdJSDdzZDF1?=
+ =?big5?B?TVJZR2VSYVBWZ2EwN2xHdW9SQXBhL0gzWUtGS3ZiZTBrWTk0dW5ha1hSREZlVGVl?=
+ =?big5?B?bEZvS08wOGtSd05JR0RCZ3VrQnRzSmF2a29ocjFtWHVkeW1yNThXV3Q1cU5ZTk9I?=
+ =?big5?B?ZTVycWRMMWpicjhqTEUzcHQzUnBxcVFiaUE1MElMMDI1dE10dC9oSVU0bXBYT0V3?=
+ =?big5?B?dXNEeUpTUk5qQmlOWmlTM0Y4aW1YejNzaDlBWnV0cHNqQWZNNjJaZCt6K3N4Smtx?=
+ =?big5?B?TjEzelpTb1lRZytZeWZKSEsxMll0M3dnS01GQndRWU9uYmhUUWg2MnNJaEVENTRm?=
+ =?big5?B?c3lRWFZzbnMxYkRyZUxPVHF4U0dWS21rQmV0Vk1mdHdxWDFRN28wSlZTRklWdWgx?=
+ =?big5?B?SmhwTFlKeXdsL05pKzZDNWhsTm1pRnFoVGhwbE9uTVpvdmIvbU56YXJsK0UyTlE4?=
+ =?big5?B?RnZWUzNXczA1STI0SkYwc0JvbWx6cmYwNG43OUVPYTB1L3B1ZHZkVGxMVVlRWlZ5?=
+ =?big5?B?ckxXU3k1UDVlWFZkLytuZkUwb05OZmRWNjcwQmhwQzFla0REazlWTUx4RE80Nm1V?=
+ =?big5?B?QnpTcnIzMUZXRSt1MU9OeFhsc3YyWVhnaG5OVDkrV1BwRTNYL1A1alFVZXVYY0Jn?=
+ =?big5?B?ZVRIUmhMUHJTWEZzU0JERkZSVllTTDBuQlhXZno4alJCZHl6alBKQTdOejlBN3Nr?=
+ =?big5?B?VUJXMHhPWGZUWk5FdkUvWnptc2tEaG9YU1FEM2hHYXBJWmRGMUR4U3hrVWJtd2pv?=
+ =?big5?B?eHdFU1hTTGoyY1RSVFlYU1ZIQkpoTU1EUk9NbHc1eTFNNTdlalhkYlNNYUFCSUVx?=
+ =?big5?B?anBMeVNmUUdqb2RTNWhzWGpJY1M5MHFVZ1czRjRldTNTay9QSkNFN01yREFBazZ3?=
+ =?big5?B?NTc3dlBQQVh5anp1c3N3NHF4MUpXSEdrMjgvZDJnRDllTXRzTEtRZGpvN3RUNERz?=
+ =?big5?B?c2hwVkMrYVhDQUM0MmdxaDZRRDBjUFFjd0NlblZYQytpRzhOckZsV0Q4Njh0a1Q0?=
+ =?big5?B?Q0FNandMSitIdHFzbnNTY1luM1o0NFN4Z3g3VE4vV3N6RmZRUStzK0xINzBXS1Qz?=
+ =?big5?B?bFRYbU04eUh6dVllMzBQb1R3MlNpVDlaUWJVYTV6bTlnL2ZkNlJvTVVaZ21jRXJF?=
+ =?big5?B?VUsvOHF4VGozYUNxOUhrSXRKUFZ3UFpGVlljbnloZTY0MW5KOGhxcm5MS2FUbWY2?=
+ =?big5?B?NTdHVFgyU0hUcUREQU5VZHgyWXJZRklBeld5NzdPaG42UEgyUHZkMnVMWE9qcUFH?=
+ =?big5?B?VGZFU0oxYzdvdW85Wk8rbUpoeU04SUNIT09YUURkajBCV1hyWWw0cGM2b3ErWFJx?=
+ =?big5?B?dTZ0MmR5K3lYUjBBbHZIUTVLeUxGWEZCRk01eVNiamt1RVhmaXYzM2x6dXg5Qndo?=
+ =?big5?B?OTRhUFdsV1J6ZisvTjVlZEZ5MDF4RWVOdDhTVlVUV2h6MVJoSzU3eW9BNG51cEVk?=
+ =?big5?B?Z3RLZTBWd0JTY1diL0lib3haeXFuV1BUK2R6dndqQUI0bFE1Y3dYSThhUFFZZ1dU?=
+ =?big5?B?Q0lrOTAzK1VpakJvbDd4UlErS0Z3QnE4dFJnaW1IenM2dmZRZXhZRkloREZoWkEz?=
+ =?big5?B?MjB3b0FFdjU2S05PaUMrZEFYbndYdG5jejBHRHBKVC9wc0RjUnhQK0NTL0Z6ZTA1?=
+ =?big5?B?ZGtwUVdEa1VkN2NTdWQvdTJrTkQreFJDTlNBeHYrc1BFTy9pUVRNdi9mSGQxR3pT?=
+ =?big5?B?aXVVRmR5a2ZHNXNsRmYzRFpuUkpucUkvWngzaVhtM0hIcWFHWUF1MThYMFlkZ1Jx?=
+ =?big5?B?VUk2TWtVbEovMG82VnVwODkxUUV4TEY0dVU1RWZrZmcrQVFnSG5BeXJNRWFUa0R3?=
+ =?big5?B?cUQ2N2Z3PT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?big5?B?dTRNSzN6aUZFaC85M0NzRVBmTnZXVktnRmgzanBlbE1FVUpORVdjdEZUaDZnYzR5?=
+ =?big5?B?V0lrQzlzdFZqVWg5dmhFNUl6RDM2Ri83SFZMMUlidlN6dlFjTG9xdXAwb1F4K040?=
+ =?big5?B?T042WkVodzg1Wml4Qm9PZ0VwYUwxUldQelpFTGY5Y2drclFvNjdRUjM1QUZSTWpH?=
+ =?big5?B?Skp5bWlXYkJtZnMrSnVXS2c2WkJmL0Z2aWhOWDlOOWowWFAyeDRIUFdMcjhTNy9C?=
+ =?big5?B?ZjRBNXFRSXZpdlhNMlZDLzZDYXpnUW9xbTRxSjcwRENqNXc2RkNxWFB1VnZtWTV6?=
+ =?big5?B?NTh5TlNRaDI3MkhuclZadUwyZ3VSYnEzd2lycTJzanlLYlNoZytTRGh1ckxVNTBR?=
+ =?big5?B?Zitib2Q0d0xVcUJjYzlPTC9oVEhFcEp4bks0bWs0T1p1bzJpYVNWRXRDNWhKeWpt?=
+ =?big5?B?di9lZXBMbWw2cmVYaVdqNkdSMzRtS0UwYnZSaUczQkFRdCsrRjVER3pUcjVhcW8z?=
+ =?big5?B?TzM4V3htVzdLbk52ekxaM0loSWE3OWVaSmxFQnI5VUloaGJhR2Rtd2NtQWwwVEUz?=
+ =?big5?B?NENnSlo1R2VDTVlkQmhxSjJIR216WXhmbmZUMWlIcjNrbGgrMERUZ3NNbUQ1djg4?=
+ =?big5?B?RjAxTCtUcTRLMzdFNE5HemN3a250eXJXMFNXR05rTlVodDA0VUJJRTFsZS9nYkZH?=
+ =?big5?B?VmEyWXVIL2hvaCt6S1gySVpwNlN5VnByN0Z1cWRtUG1aeUpENTFMbFV1dzFQWm5Z?=
+ =?big5?B?dmIxeTBrQ2pnMnNIQ1BncnhUZ2dobkd4R3FaTHBZVjlya3VlMnlSK0dHZlVvdUVy?=
+ =?big5?B?VHVUNmhMWVdjSnp5YXFJKzFueGR4YnJmWWxiNVBmQzN5anZUdnM2UU12NURhTXdt?=
+ =?big5?B?YW9ROVZEc2QwL2NoTzZQTmtub3FDNzM3czFnNk52ckV5Rmgva01BM1VQWVc4cmxJ?=
+ =?big5?B?enlKNXdSc3BodU9xbFhrdTVma21UckNaTVhkdnFYNlFUU3J0OXpzR3NqNnZVVDNx?=
+ =?big5?B?bS9weFg0Y2ZYL0FmeTZnNnpzUGhiMU5raGNnbWpsTVUwdEhvYW42Syt4ZS9VNFlk?=
+ =?big5?B?eXZyQTBEZGFlZHAxMTZ5UHd6ZXhmd3F4eVRUemp2ZHR6SHRzNE44ck82dW1LN0VE?=
+ =?big5?B?Uk80TDY0R1B0Z3F1WW9XL1VDTVBKZzRYeGhrQWlXT3pIbDRJbFRXRkpUeDVxQ2xo?=
+ =?big5?B?YythRFVNWGRmejNjS1ZCTXBBSkdYcmt3RU84MnljZ2t5WGJNcVNtUUdod0ROMTdN?=
+ =?big5?B?ZzRiT2pkQk53UFVPakFhOTI4YmxQaHc2MWYzdmlCTzJPNW1JQno2UXpYazNOWWsz?=
+ =?big5?B?TlovNjZTY1dpYmphenVDUzJ6VERFbmZqdCtQbjNPWTFCSXdETldpZ1U5Z1I1SFlC?=
+ =?big5?B?dVBTdWdOTDcxWUZwV1hpMVMrNGRMRkdUekErUlBlbk5Fa0tsT2hmYVY4bFRjNFcx?=
+ =?big5?B?ZmlvMFQ3ZEJhZW16SnhqNzlkK29nRlFrdFh4Y2sveUJBb1pSeHFialN5V0F6d3oy?=
+ =?big5?B?MUlmNWdsVm9ZZGhjdmV6bEN3MGRqNVliVmI2b2p6cnI2cjFPMGtNSHJabGtCUVJH?=
+ =?big5?B?UzljT09RK3NzWkJBdW0ydGU4MEJDTSsxUW1DajJpc201OHpQN1BVbXd6OCszUDVx?=
+ =?big5?B?emRQeVB0bERXWE96bzVUdWRMTHlJMlNDTjVDVDNCdnlsTUlTK3hvMlExN2E4STZw?=
+ =?big5?B?Mk1zVDdvdkR0c0RtQnoxdnF1TUp0alY2dnB4RUdORnFoRWZOcEZMUHJTdm1QdkZN?=
+ =?big5?B?bjVZelRFME11OHdldTJUZ1o2VlA2K0RIelh0bXRZNFYyZFpHRU1zQmsraHJXdXVX?=
+ =?big5?B?eW1hWGd0NXYrcTRiQllwaGo2R1VyUnExekVlSTFiMm5rVXNORzRIOUF1VytNbXNp?=
+ =?big5?B?OE5ZTGtXekZzR1hVRDdZd09pODNuSGF0RUJXZEdLd1VpZEpaNjY5NkhEVlNWV0Mx?=
+ =?big5?B?aDUxejVKcWh6a05OOHlmOU1iSHczMDVTUFdGYlJPL0JxSFBzY1h1YnZPa3RzWWpQ?=
+ =?big5?B?VTFnWDZMc0cyTmJVc2ZuMHNxeUs5blpIMmtrTkxLeUhkLytSVy9IcVRNUGFnV1hR?=
+ =?big5?Q?CsGk/G2Vyp7vTCCU?=
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b640ea60-94a4-4fd3-e5c4-08dd9d89f40f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2025 01:49:58.7054
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: D5+9q5BXPQRXrAwo8NVw6cJyYPAFwXgWeqG1dgGA5GQyfvc6uTKsszi2IcdorMGnB6PwSHap9EnJwC3fozWdHr9PlyqxPCmwss0M9E3r9m4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7345
 
-Add support for Airoha AN7583 clock and reset.
-
-Airoha AN7583 SoC have the same register address of EN7581 but implement
-different bits and additional base clocks. Also reset are different with
-the introduction of 2 dedicated MDIO line and drop of some reset lines.
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/clk-en7523.c | 231 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 231 insertions(+)
-
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 07ab5b42fd5a..65c7b66ab78f 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -11,6 +11,7 @@
- #include <linux/reset-controller.h>
- #include <dt-bindings/clock/en7523-clk.h>
- #include <dt-bindings/reset/airoha,en7581-reset.h>
-+#include <dt-bindings/reset/airoha,an7583-reset.h>
- 
- #define RST_NR_PER_BANK			32
- 
-@@ -96,6 +97,14 @@ static const u32 bus7581_base[] = { 600000000, 540000000 };
- static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
- static const u32 crypto_base[] = { 540000000, 480000000 };
- static const u32 emmc7581_base[] = { 200000000, 150000000 };
-+/* AN7583 */
-+static const u32 gsw7583_base[] = { 540672000, 270336000, 400000000, 200000000 };
-+static const u32 emi7583_base[] = { 540672000, 480000000, 400000000, 300000000 };
-+static const u32 bus7583_base[] = { 600000000, 540672000, 480000000, 400000000 };
-+static const u32 spi7583_base[] = { 100000000, 12500000 };
-+static const u32 npu7583_base[] = { 666000000, 800000000, 720000000, 600000000 };
-+static const u32 crypto7583_base[] = { 540672000, 400000000 };
-+static const u32 emmc7583_base[] = { 150000000, 200000000 };
- 
- static const struct en_clk_desc en7523_base_clks[] = {
- 	{
-@@ -298,6 +307,114 @@ static const struct en_clk_desc en7581_base_clks[] = {
- 	}
- };
- 
-+static const struct en_clk_desc an7583_base_clks[] = {
-+	{
-+		.id = EN7523_CLK_GSW,
-+		.name = "gsw",
-+
-+		.base_reg = REG_GSW_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 8,
-+		.base_values = gsw7583_base,
-+		.n_base_values = ARRAY_SIZE(gsw7583_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+		.div_offset = 1,
-+	}, {
-+		.id = EN7523_CLK_EMI,
-+		.name = "emi",
-+
-+		.base_reg = REG_EMI_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 8,
-+		.base_values = emi7583_base,
-+		.n_base_values = ARRAY_SIZE(emi7583_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+		.div_offset = 1,
-+	}, {
-+		.id = EN7523_CLK_BUS,
-+		.name = "bus",
-+
-+		.base_reg = REG_BUS_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 8,
-+		.base_values = bus7583_base,
-+		.n_base_values = ARRAY_SIZE(bus7583_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+		.div_offset = 1,
-+	}, {
-+		.id = EN7523_CLK_SLIC,
-+		.name = "slic",
-+
-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
-+		.base_bits = 1,
-+		.base_shift = 0,
-+		.base_values = slic_base,
-+		.n_base_values = ARRAY_SIZE(slic_base),
-+
-+		.div_reg = REG_SPI_CLK_DIV_SEL,
-+		.div_bits = 5,
-+		.div_shift = 24,
-+		.div_val0 = 20,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_SPI,
-+		.name = "spi",
-+
-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
-+		.base_bits = 1,
-+		.base_shift = 1,
-+		.base_values = spi7583_base,
-+		.n_base_values = ARRAY_SIZE(spi7583_base),
-+
-+		.div_reg = REG_SPI_CLK_DIV_SEL,
-+		.div_bits = 5,
-+		.div_shift = 8,
-+		.div_val0 = 40,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_NPU,
-+		.name = "npu",
-+
-+		.base_reg = REG_NPU_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 9,
-+		.base_values = npu7583_base,
-+		.n_base_values = ARRAY_SIZE(npu7583_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+		.div_offset = 1,
-+	}, {
-+		.id = EN7523_CLK_CRYPTO,
-+		.name = "crypto",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC2,
-+		.base_bits = 1,
-+		.base_shift = 0,
-+		.base_values = crypto7583_base,
-+		.n_base_values = ARRAY_SIZE(crypto7583_base),
-+	}, {
-+		.id = EN7581_CLK_EMMC,
-+		.name = "emmc",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC2,
-+		.base_bits = 1,
-+		.base_shift = 13,
-+		.base_values = emmc7583_base,
-+		.n_base_values = ARRAY_SIZE(emmc7583_base),
-+	}
-+};
-+
- static const u16 en7581_rst_ofs[] = {
- 	REG_RST_CTRL2,
- 	REG_RST_CTRL1,
-@@ -361,6 +478,59 @@ static const u16 en7581_rst_map[] = {
- 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
- };
- 
-+static const u16 an7583_rst_map[] = {
-+	/* RST_CTRL2 */
-+	[AN7583_XPON_PHY_RST]		= 0,
-+	[AN7583_GPON_OLT_RST]		= 1,
-+	[AN7583_CPU_TIMER2_RST]		= 2,
-+	[AN7583_HSUART_RST]		= 3,
-+	[AN7583_UART4_RST]		= 4,
-+	[AN7583_UART5_RST]		= 5,
-+	[AN7583_I2C2_RST]		= 6,
-+	[AN7583_XSI_MAC_RST]		= 7,
-+	[AN7583_XSI_PHY_RST]		= 8,
-+	[AN7583_NPU_RST]		= 9,
-+	[AN7583_TRNG_MSTART_RST]	= 12,
-+	[AN7583_DUAL_HSI0_RST]		= 13,
-+	[AN7583_DUAL_HSI1_RST]		= 14,
-+	[AN7583_DUAL_HSI0_MAC_RST]	= 16,
-+	[AN7583_DUAL_HSI1_MAC_RST]	= 17,
-+	[AN7583_WDMA_RST]		= 19,
-+	[AN7583_WOE0_RST]		= 20,
-+	[AN7583_HSDMA_RST]		= 22,
-+	[AN7583_TDMA_RST]		= 24,
-+	[AN7583_EMMC_RST]		= 25,
-+	[AN7583_SOE_RST]		= 26,
-+	[AN7583_XFP_MAC_RST]		= 28,
-+	[AN7583_MDIO0]			= 30,
-+	[AN7583_MDIO1]			= 31,
-+	/* RST_CTRL1 */
-+	[AN7583_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
-+	[AN7583_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
-+	[AN7583_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
-+	[AN7583_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
-+	[AN7583_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
-+	[AN7583_TIMER_RST]		= RST_NR_PER_BANK + 8,
-+	[AN7583_PCM1_RST]		= RST_NR_PER_BANK + 11,
-+	[AN7583_UART_RST]		= RST_NR_PER_BANK + 12,
-+	[AN7583_GPIO_RST]		= RST_NR_PER_BANK + 13,
-+	[AN7583_GDMA_RST]		= RST_NR_PER_BANK + 14,
-+	[AN7583_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
-+	[AN7583_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
-+	[AN7583_SFC_RST]		= RST_NR_PER_BANK + 18,
-+	[AN7583_UART2_RST]		= RST_NR_PER_BANK + 19,
-+	[AN7583_GDMP_RST]		= RST_NR_PER_BANK + 20,
-+	[AN7583_FE_RST]			= RST_NR_PER_BANK + 21,
-+	[AN7583_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
-+	[AN7583_GSW_RST]		= RST_NR_PER_BANK + 23,
-+	[AN7583_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
-+	[AN7583_PCIE0_RST]		= RST_NR_PER_BANK + 26,
-+	[AN7583_PCIE1_RST]		= RST_NR_PER_BANK + 27,
-+	[AN7583_CPU_TIMER_RST]		= RST_NR_PER_BANK + 28,
-+	[AN7583_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
-+	[AN7583_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
-+};
-+
- static u32 en7523_get_base_rate(const struct en_clk_desc *desc, u32 val)
- {
- 	if (!desc->base_bits)
-@@ -690,6 +860,54 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
- 	return en7581_reset_register(&pdev->dev, clk_map);
- }
- 
-+static int an7583_reset_register(struct device *dev, struct regmap *map)
-+{
-+	struct en_rst_data *rst_data;
-+
-+	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
-+	if (!rst_data)
-+		return -ENOMEM;
-+
-+	rst_data->bank_ofs = en7581_rst_ofs;
-+	rst_data->idx_map = an7583_rst_map;
-+	rst_data->map = map;
-+
-+	rst_data->rcdev.nr_resets = ARRAY_SIZE(an7583_rst_map);
-+	rst_data->rcdev.of_xlate = en7523_reset_xlate;
-+	rst_data->rcdev.ops = &en7581_reset_ops;
-+	rst_data->rcdev.of_node = dev->of_node;
-+	rst_data->rcdev.of_reset_n_cells = 1;
-+	rst_data->rcdev.owner = THIS_MODULE;
-+	rst_data->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &rst_data->rcdev);
-+}
-+
-+static int an7583_clk_hw_init(struct platform_device *pdev,
-+			      const struct en_clk_soc_data *soc_data,
-+			      struct clk_hw_onecell_data *clk_data)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map, *clk_map;
-+
-+	map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
-+	clk_map = device_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(clk_map))
-+		return PTR_ERR(clk_map);
-+
-+	en75xx_register_clocks(dev, soc_data, clk_data, map, clk_map);
-+
-+	regmap_clear_bits(clk_map, REG_NP_SCU_SSTR,
-+			  REG_PCIE_XSI0_SEL_MASK | REG_PCIE_XSI1_SEL_MASK);
-+	regmap_update_bits(clk_map, REG_NP_SCU_PCIC, REG_PCIE_CTRL,
-+			   FIELD_PREP(REG_PCIE_CTRL, 3));
-+
-+	return an7583_reset_register(dev, clk_map);
-+}
-+
- static int en7523_clk_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
-@@ -736,9 +954,22 @@ static const struct en_clk_soc_data en7581_data = {
- 	.hw_init = en7581_clk_hw_init,
- };
- 
-+static const struct en_clk_soc_data an7583_data = {
-+	.base_clks = an7583_base_clks,
-+	/* We increment num_clocks by 1 to account for additional PCIe clock */
-+	.num_clocks = ARRAY_SIZE(an7583_base_clks) + 1,
-+	.pcie_ops = {
-+		.is_enabled = en7581_pci_is_enabled,
-+		.enable = en7581_pci_enable,
-+		.disable = en7581_pci_disable,
-+	},
-+	.hw_init = an7583_clk_hw_init,
-+};
-+
- static const struct of_device_id of_match_clk_en7523[] = {
- 	{ .compatible = "airoha,en7523-scu", .data = &en7523_data },
- 	{ .compatible = "airoha,en7581-scu", .data = &en7581_data },
-+	{ .compatible = "airoha,an7583-clock", .data = &an7583_data },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.48.1
-
+SGkgQ29ub3IgRG9vbGV5LA0KDQoNCj4gPiA+ID4gKyAgcmVzZXRzOg0KPiA+ID4gPiArICAgIG1h
+eEl0ZW1zOiAxDQo+ID4gPiA+ICsgICAgZGVzY3JpcHRpb246DQo+ID4gPiA+ICsgICAgICBPcHRp
+b25hbCByZXNldCBjb250cm9sIGZvciB0aGUgTUFDIGNvbnRyb2xsZXIgKGUuZy4gQXNwZWVkDQo+
+ID4gPiA+ICsgU29DcykNCj4gPiA+DQo+ID4gPiBJZiBvbmx5IGFzcGVlZCBzb2NzIHN1cHBvcnQg
+dGhpcywgdGhlbiBwbGVhc2UgcmVzdHJpY3QgdG8ganVzdCB5b3VyIHByb2R1Y3RzLg0KPiA+ID4N
+Cj4gPg0KPiA+IFRoZSByZXNldCBmdW5jdGlvbiBpcyBvcHRpb25hbCBpbiBkcml2ZXIuDQo+ID4g
+SWYgdGhlcmUgaXMgcmVzZXQgZnVuY3Rpb24gaW4gdGhlIG90aGVyIFNvQywgaXQgY2FuIGFsc28g
+dXNlcyB0aGUgcmVzZXQgcHJvcGVydHkNCj4gaW4gdGhlaXIgU29DLg0KPiANCj4gImlmIiwgc3Vy
+ZS4gQnV0IHlvdSBkb24ndCBrbm93IGFib3V0IGFueSBvdGhlciBTb0NzLCBzbyBwbGVhc2UgcmVz
+dHJpY3QgaXQgdG8gdGhlDQo+IHN5c3RlbXMgdGhhdCB5b3UgZG8ga25vdyBoYXZlIGEgcmVzZXQu
+DQoNCkFncmVlZC4NCkkgd2lsbCByZXN0cmljdCBpdCBpbiBuZXh0IHZlcnNpb24uDQoNCkphY2t5
+DQo=
