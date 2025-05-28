@@ -1,71 +1,72 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3AF2248AA
-	for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 23:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4F22253BD
+	for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 23:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748474252; cv=none; b=ZDbu+vVCKN8ZLPhJeLAwbr+MTClOvc0scTNOT/2fTH5ch00yfSB/hZNu5ddWaS4opvZBq0g8Vtsh8+gA20jtdrmwwp6qpaIx/T28a2Wzcclv3WvBglJhy2bLhDUBNTgI1WrCojaU+b18knCxQjFaVcBw8I4rJwcA3bumd+1pycM=
+	t=1748474255; cv=none; b=ZmMiQtZPkFu6zh23+vgPVw0Q4CRV3T1zH9Q0FAjWzIWbIwzElV4WFWiJQ3NumIdfGGTlT2dLuQ6oedspF7YdGtc88vZRsIt8zAZ9mgUnazjQIqpwTtfnvalYstjd+NYjSWqyiRWU6gTWQon2M6HlsesF30c+5IbRlNrDKlk3geg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748474252; c=relaxed/simple;
-	bh=O2dam44l6BAOHzopP51WKdXl85jM4U2hjqdRMXfjkcI=;
+	s=arc-20240116; t=1748474255; c=relaxed/simple;
+	bh=sQ+5ETviPsufC2rC/jxYhJ16ZkKYEBNOFVNqjLFU4VM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZT8FJFIRWSMSy6JNCIfSez7UNrGKk/u/F3kTwBwsZXyTfoKRVLtj2sVvI9a4zx1FoFcQ+M7XDpjwAAWWQSQLH7QOaTxJvmkGygbUtFTtzwne4nY19T+KfL+vRLrIYQTCulVNLAg4sfh8iR9MHao5SzzS+lbvq7F3hgjuCO8Ck80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LbBiOn+y; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=rMM41Go3TXEXlJQnTZiZdfkUO3yuUPfogMcauoXxaMurWPu4eU4r/ID+aOsxbZu6pa5BQy5g0MKaOkzEp6Ew89RsWqoUpKxeZmkFRD+a+rlVzrvMf3O/S1pLCg55C/3vwHulpRiQ4HhjbizmsRhGOLdYv05Wiy8VOGCrEDKZTKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e4QyuH9P; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LbBiOn+y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e4QyuH9P"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748474249;
+	s=mimecast20190719; t=1748474252;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CCt5MrL1YxXPreac2l4d2M4RaAJoVl1H1kh5YWArmls=;
-	b=LbBiOn+yZRb5EXZdYujOA+VjWnMYznSM9KVBGKY0m5EQ8riFwDnsh0TzAx8jSiTC+AVsUv
-	OB64BeHxQ8mEPd5TxcN4HcFKtkdYl1cXSk8G8v8vPamTZXvyAZp/XSNEE1+YQfcQZpCpDo
-	OWGQUzXMdOIglwBzbGu5AYjNAIcdMP0=
+	bh=UoCPU8m3g0MY3zvVnMAX+QdRxdLJGM4GIE5nlW4Y3SY=;
+	b=e4QyuH9P6u6SBjM3wIZdiliTyfCLxlZ3kERTa/PTsrjaiSInkXD/C9ZlDWy9jwnYQevsbR
+	i58emKH4vR/vtsYRLnOXbga0N/QwRv9nyEV1smPxK2ldGfq1HwFFtDGZwdhyp/GerDPTbl
+	jHLQ9JOVAXbk2kERyAYuiz4c9JGTrBU=
 Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
  [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-QkOKoHxmN0yr_tfXLGAvXA-1; Wed, 28 May 2025 19:17:28 -0400
-X-MC-Unique: QkOKoHxmN0yr_tfXLGAvXA-1
-X-Mimecast-MFC-AGG-ID: QkOKoHxmN0yr_tfXLGAvXA_1748474248
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c7c30d8986so82257885a.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 16:17:28 -0700 (PDT)
+ us-mta-606-nDXt07-SPWW3iGh_AJoHUw-1; Wed, 28 May 2025 19:17:31 -0400
+X-MC-Unique: nDXt07-SPWW3iGh_AJoHUw-1
+X-Mimecast-MFC-AGG-ID: nDXt07-SPWW3iGh_AJoHUw_1748474251
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c53e316734so42403585a.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 16:17:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748474248; x=1749079048;
+        d=1e100.net; s=20230601; t=1748474251; x=1749079051;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CCt5MrL1YxXPreac2l4d2M4RaAJoVl1H1kh5YWArmls=;
-        b=xVanlHUGFVIsruo85Ncb5O9Ld4DMI4+TUFZnZEkKgSpz8CuAOldSwKST/xvx3rYnY3
-         Jm7Re5priK8/YSAgyuxzVlQsFc6A7EbBu1K7zGPq5jzAWkCwa222gHt5vxCruBq77rXW
-         yIPLZ3HskimItxTQSQq5blntHeFHxLgJAeU+yfC4nKrBWIDHIagjBK5EvXST284A/wk+
-         icdDLvmvRSuDWK/0RCyNlzpRjQGeb5Cbzga8vMceBe5nT2vXzvCTQkJbECbcconYlzyk
-         sZs/V6PFmKIYp/AMdUMwh/+SPBiUBa1BH2WcjAXFVpvq5fgr/i6S45d7TuRQKehVxDpn
-         OWiQ==
-X-Gm-Message-State: AOJu0Yx1mnfaKmo0XaV4+/fZWsJydn4QSSzY0NQ+m4fCDG4T5f+041A6
-	iT11CxXM9423t3n8bh87My8ZmxsLWkwu9abevdf6i42uyNC1CZL/AwldOMHqILUrTBAmCmPN+vA
-	5CHUjpG/IZrupir8YisXFLyDI+lMs9x5t+4N3X39L/5YLZyZbnfyI3KHJ4ROBbg==
-X-Gm-Gg: ASbGncskQt2rRMFo4paVc7SbxTDXyzqgVNZ/PnBU8Nzqcnrdtr9/qj679aDpKcfLIp7
-	pGdCIz7q16cvCm5UV4A5qWLrbn69axytel+jJ2QjZh9K2CIqwLWMkwMq09ZbsYXAL5dsI8TBoRi
-	tIXiPMyPitnPSvs5tfzEQGk7xGp8SxMGbbMXpv7nCqCbxnHTk+Ar14J7rI3rdGa+Edi+5KYg+V3
-	QieLpJWay0kyR2mTG+mc3HrKm3UE6ZymkBTxbrKkt+0elHWnDBv3IfRB6hnkd/qqBFU8ekw4zzQ
-	i2kCFbP0HJ3PBCefg1Z7R/9lleenF0mWZwHmsJgNAG0WBnIzbw==
-X-Received: by 2002:a05:620a:28c2:b0:7ca:f039:d471 with SMTP id af79cd13be357-7ceecc34b73mr2827331185a.52.1748474247813;
-        Wed, 28 May 2025 16:17:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHn6kfO05Z2NeOQM/9HMFvnDvkHIfesKF61ofgfRilVt2IW9V0DiL9DegitNVT6zkxVcIHiJQ==
-X-Received: by 2002:a05:620a:28c2:b0:7ca:f039:d471 with SMTP id af79cd13be357-7ceecc34b73mr2827328385a.52.1748474247517;
-        Wed, 28 May 2025 16:17:27 -0700 (PDT)
+        bh=UoCPU8m3g0MY3zvVnMAX+QdRxdLJGM4GIE5nlW4Y3SY=;
+        b=S64R1On9d26gWqUIJfS4p7h1PYmN9QD6Pb0p+VhIucyDVKai4QxYxmrg3VUesHKxlZ
+         T2gJ7fo1SBnrRDxDXJgoIwtoykPnzLSRgaRFzR1rEnLlSCCIeUut6y6sbFVDBi4UNf+J
+         9p1VQBe6lK5Xi+0zPtzcnJJUeN6otuTEbJfHPeAfqVlYEEz0jkCgYGBiYa39JP5KZAtZ
+         x2DLphi+3KZcUGI4Ku8WBriWycNSfFAoIsz44WLMmmSwmHAcR01XoeKOoweZvAeNbhb4
+         4ck+wdcnepqFrlsHonKboF84Fuo/JDIlUhM7UXN7HNKlBeKGyhdZOW4B1o04dgmRv1pY
+         JzSQ==
+X-Gm-Message-State: AOJu0YwIXPLDRdqfp+lJqyoaQ20q3Tlg/u0vlqaE0S+3a6ugkedV113D
+	rzgTUy8n1TbCMRbxqWuDi0pOF0hYvjmw7pWvVHP568HF7z8dPjQHGV/aHe1X70a/v9D7g73iJIw
+	H22Vhng4yKxdrF0p+Og4agA19+2Mc+yqyJLeAV6s7OHGtNT6ugU30jO2JGjdfpA==
+X-Gm-Gg: ASbGncuOz7L/Xl4d9Jbl8v64p+J1LAeOSnEJQFGpYU4j0dBAJl0MicaSX7D3Ekqhiqa
+	H00tFu0fpU/3mBtbFxntBfuk8yFyKybMrAnmfqzq2INWE75ZAciO02PKfxS1K79euKqG/OIRyqe
+	z7FQ64QGP8IprKISubPKck8nb2AHdqfzhT0zE1lN982Z2OnK8MwKJlfcfi66dDPdgWcpA5+H5hy
+	RBznZqS8iKtKOmObaC9gjQ+fXu/pKOlLYVi+1Ljcz8LQ78WgB57ItlHZOTl1EuVpJA7qtmENEZ/
+	FnPemiFi5+P8moDWKs51774kUpB+OqJqg1k5GiM0nlw72jPX9Q==
+X-Received: by 2002:a05:620a:2682:b0:7ca:cb02:7942 with SMTP id af79cd13be357-7ceecba4556mr2609129585a.1.1748474250735;
+        Wed, 28 May 2025 16:17:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvTpkkJ9DU5JLRmwa8tguJ3IJoZtmoauvr0XQSfD/ieT9Sm6WTM94sv1t5e4G4Mp1o2SEv1g==
+X-Received: by 2002:a05:620a:2682:b0:7ca:cb02:7942 with SMTP id af79cd13be357-7ceecba4556mr2609127085a.1.1748474250477;
+        Wed, 28 May 2025 16:17:30 -0700 (PDT)
 Received: from [192.168.1.2] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0f984fsm13437985a.43.2025.05.28.16.17.25
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0f984fsm13437985a.43.2025.05.28.16.17.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 16:17:26 -0700 (PDT)
+        Wed, 28 May 2025 16:17:29 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 28 May 2025 19:16:54 -0400
-Subject: [PATCH v2 08/10] clk: test: introduce helper to create a mock mux
+Date: Wed, 28 May 2025 19:16:55 -0400
+Subject: [PATCH v2 09/10] clk: test: introduce test variation for sibling
+ rate changes on a mux
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,7 +75,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-clk-wip-v2-v2-8-0d2c2f220442@redhat.com>
+Message-Id: <20250528-clk-wip-v2-v2-9-0d2c2f220442@redhat.com>
 References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
 In-Reply-To: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
 To: Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
@@ -83,237 +84,87 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  Michael Turquette <mturquette@baylibre.com>, 
  Alberto Ruiz <aruiz@redhat.com>, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748474226; l=7421;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748474226; l=2566;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=O2dam44l6BAOHzopP51WKdXl85jM4U2hjqdRMXfjkcI=;
- b=CUG6QvAnQNxhMFGNanvklQpYfOpElHasZJtBONqjWEZxiH/axBCu3zQ47b8GAP8rkCpFIeT54
- H9mOGaN9E8HBy4OUE49fmxWDg0B4wtYrxqJFgHF+pcc8Z0VbjlYXzVe
+ bh=sQ+5ETviPsufC2rC/jxYhJ16ZkKYEBNOFVNqjLFU4VM=;
+ b=ChBC/ilvuXXJXRyiziNjnFOkucSkSvvLHNZzLHSQQdueZGY9aWrJAP9J9NkBCRVXMyUsjqlxk
+ THzafP5HRIGAFYJKQKPa6Caxb9n9anfpeIxZbJB4un1a6UdrxCEo9d1
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-Introduce a helper to create a mock mux to reduce code duplication.
-This also changes it so that the relevant clk_hws are registered with
-the kunit framework.
+Introduce a test variation that creates a parent with two children: a
+divider and a mux. Ensure that changing the rate of the divider does not
+affect the rate of the mux.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk_test.c | 141 ++++++++++++++++++-------------------------------
- 1 file changed, 52 insertions(+), 89 deletions(-)
+ drivers/clk/clk_test.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 1440eb3c41def8c549f92c0e95b2a472f3bdb4a7..147935975969f8da4a9365c0fac6ffe37e310933 100644
+index 147935975969f8da4a9365c0fac6ffe37e310933..b5cf0de16abd1e098368a67626fff9044f7a1a6a 100644
 --- a/drivers/clk/clk_test.c
 +++ b/drivers/clk/clk_test.c
-@@ -538,45 +538,64 @@ static struct kunit_suite clk_uncached_test_suite = {
- 	.test_cases = clk_uncached_test_cases,
- };
- 
--static int
--clk_multiple_parents_mux_test_init(struct kunit *test)
--{
--	struct clk_multiple_parent_ctx *ctx;
--	const char *parents[2] = { "parent-0", "parent-1"};
-+static int clk_init_multiple_parent_ctx(struct kunit *test,
-+					struct clk_multiple_parent_ctx *ctx,
-+					const char *parent0_name,
-+					unsigned long parent0_rate,
-+					const char *parent1_name,
-+					unsigned long parent1_rate,
-+					const char *mux_name, int mux_flags,
-+					const struct clk_ops *mux_ops)
-+{
-+	const struct clk_hw *parents[2];
- 	int ret;
- 
--	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
--	if (!ctx)
--		return -ENOMEM;
--	test->priv = ctx;
--
--	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
-+	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT(parent0_name,
- 							    &clk_dummy_rate_ops,
- 							    0);
--	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
-+	ctx->parents_ctx[0].rate = parent0_rate;
- 	ret = clk_hw_register_kunit(test, NULL, &ctx->parents_ctx[0].hw);
- 	if (ret)
- 		return ret;
- 
--	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
-+	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT(parent1_name,
- 							    &clk_dummy_rate_ops,
- 							    0);
--	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
-+	ctx->parents_ctx[1].rate = parent1_rate;
- 	ret = clk_hw_register_kunit(test, NULL, &ctx->parents_ctx[1].hw);
- 	if (ret)
- 		return ret;
- 
--	ctx->current_parent = 0;
--	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
--					   &clk_multiple_parents_mux_ops,
--					   CLK_SET_RATE_PARENT);
-+	parents[0] = &ctx->parents_ctx[0].hw;
-+	parents[1] = &ctx->parents_ctx[1].hw;
-+	ctx->hw.init = CLK_HW_INIT_PARENTS_HW(mux_name, parents,
-+					      mux_ops, mux_flags);
- 	ret = clk_hw_register_kunit(test, NULL, &ctx->hw);
- 	if (ret)
- 		return ret;
- 
-+	ctx->current_parent = 0;
-+
- 	return 0;
+@@ -904,6 +904,48 @@ clk_rate_change_sibling_div_gate_test_init(struct kunit *test)
+ 	return &ctx->clk_ctx;
  }
  
-+static int
-+clk_multiple_parents_mux_test_init(struct kunit *test)
++struct clk_rate_change_sibling_div_mux_sibling_context {
++	struct clk_dummy_div child1;
++	struct clk_multiple_parent_ctx child2_mux;
++	struct clk_test_rate_change_sibling_clk_ctx clk_ctx;
++};
++
++static struct clk_test_rate_change_sibling_clk_ctx *
++clk_rate_change_sibling_div_mux_test_init(struct kunit *test)
 +{
-+	struct clk_multiple_parent_ctx *ctx;
++	struct clk_rate_change_sibling_div_mux_sibling_context *ctx;
++	int ret;
 +
 +	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
 +	if (!ctx)
-+		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
 +	test->priv = ctx;
 +
-+	return clk_init_multiple_parent_ctx(test, ctx,
-+					    "parent-0", DUMMY_CLOCK_RATE_1,
-+					    "parent-1", DUMMY_CLOCK_RATE_2,
-+					    "test-mux", CLK_SET_RATE_PARENT,
-+					    &clk_multiple_parents_mux_ops);
++	ret = clk_init_multiple_parent_ctx(test, &ctx->child2_mux,
++					   "parent0", DUMMY_CLOCK_RATE_24_MHZ,
++					   "parent1", DUMMY_CLOCK_RATE_48_MHZ,
++					   "child2", CLK_SET_RATE_NO_REPARENT,
++					   &clk_multiple_parents_mux_ops);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ctx->child1.hw.init = CLK_HW_INIT_HW("child1",
++					     &ctx->child2_mux.parents_ctx[0].hw,
++					     &clk_dummy_div_ops,
++					     CLK_SET_RATE_PARENT);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->child1.hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ctx->clk_ctx.parent_clk = clk_hw_get_clk(&ctx->child2_mux.parents_ctx[0].hw, NULL);
++	ctx->clk_ctx.child1_clk = clk_hw_get_clk(&ctx->child1.hw, NULL);
++	ctx->clk_ctx.child2_clk = clk_hw_get_clk(&ctx->child2_mux.hw, NULL);
++
++	return &ctx->clk_ctx;
 +}
 +
- /*
-  * Test that for a clock with multiple parents, clk_get_parent()
-  * actually returns the current one.
-@@ -2536,7 +2555,6 @@ static int
- clk_leaf_mux_set_rate_parent_test_init(struct kunit *test)
- {
- 	struct clk_leaf_mux_ctx *ctx;
--	const char *top_parents[2] = { "parent-0", "parent-1" };
- 	int ret;
+ struct clk_test_rate_change_sibling_test_case {
+ 	const char *desc;
+ 	struct clk_test_rate_change_sibling_clk_ctx *(*init)(struct kunit *test);
+@@ -914,6 +956,10 @@ static struct clk_test_rate_change_sibling_test_case clk_test_rate_change_siblin
+ 		.desc = "div_gate",
+ 		.init = clk_rate_change_sibling_div_gate_test_init,
+ 	},
++	{
++		.desc = "div_mux",
++		.init = clk_rate_change_sibling_div_mux_test_init,
++	},
+ };
  
- 	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-@@ -2544,27 +2562,11 @@ clk_leaf_mux_set_rate_parent_test_init(struct kunit *test)
- 		return -ENOMEM;
- 	test->priv = ctx;
- 
--	ctx->mux_ctx.parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
--								    &clk_dummy_rate_ops,
--								    0);
--	ctx->mux_ctx.parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.parents_ctx[0].hw);
--	if (ret)
--		return ret;
--
--	ctx->mux_ctx.parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
--								    &clk_dummy_rate_ops,
--								    0);
--	ctx->mux_ctx.parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.parents_ctx[1].hw);
--	if (ret)
--		return ret;
--
--	ctx->mux_ctx.current_parent = 0;
--	ctx->mux_ctx.hw.init = CLK_HW_INIT_PARENTS("test-mux", top_parents,
--						   &clk_multiple_parents_mux_ops,
--						   0);
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.hw);
-+	ret = clk_init_multiple_parent_ctx(test, &ctx->mux_ctx,
-+					   "parent-0", DUMMY_CLOCK_RATE_1,
-+					   "parent-1", DUMMY_CLOCK_RATE_2,
-+					   "test-mux", 0,
-+					   &clk_multiple_parents_mux_ops);
- 	if (ret)
- 		return ret;
- 
-@@ -2752,7 +2754,6 @@ static int clk_mux_notifier_callback(struct notifier_block *nb,
- static int clk_mux_notifier_test_init(struct kunit *test)
- {
- 	struct clk_mux_notifier_ctx *ctx;
--	const char *top_parents[2] = { "parent-0", "parent-1" };
- 	int ret;
- 
- 	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-@@ -2763,27 +2764,11 @@ static int clk_mux_notifier_test_init(struct kunit *test)
- 	init_waitqueue_head(&ctx->pre_rate_change.wq);
- 	init_waitqueue_head(&ctx->post_rate_change.wq);
- 
--	ctx->mux_ctx.parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
--								    &clk_dummy_rate_ops,
--								    0);
--	ctx->mux_ctx.parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.parents_ctx[0].hw);
--	if (ret)
--		return ret;
--
--	ctx->mux_ctx.parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
--								    &clk_dummy_rate_ops,
--								    0);
--	ctx->mux_ctx.parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.parents_ctx[1].hw);
--	if (ret)
--		return ret;
--
--	ctx->mux_ctx.current_parent = 0;
--	ctx->mux_ctx.hw.init = CLK_HW_INIT_PARENTS("test-mux", top_parents,
--						   &clk_multiple_parents_mux_ops,
--						   0);
--	ret = clk_hw_register(NULL, &ctx->mux_ctx.hw);
-+	ret = clk_init_multiple_parent_ctx(test, &ctx->mux_ctx,
-+					   "parent-0", DUMMY_CLOCK_RATE_1,
-+					   "parent-1", DUMMY_CLOCK_RATE_2,
-+					   "test-mux", 0,
-+					   &clk_multiple_parents_mux_ops);
- 	if (ret)
- 		return ret;
- 
-@@ -2866,39 +2851,17 @@ static int
- clk_mux_no_reparent_test_init(struct kunit *test)
- {
- 	struct clk_multiple_parent_ctx *ctx;
--	const char *parents[2] = { "parent-0", "parent-1"};
--	int ret;
- 
- 	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 	test->priv = ctx;
- 
--	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
--							    &clk_dummy_rate_ops,
--							    0);
--	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
--	ret = clk_hw_register(NULL, &ctx->parents_ctx[0].hw);
--	if (ret)
--		return ret;
--
--	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
--							    &clk_dummy_rate_ops,
--							    0);
--	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
--	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
--	if (ret)
--		return ret;
--
--	ctx->current_parent = 0;
--	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
--					   &clk_multiple_parents_no_reparent_mux_ops,
--					   0);
--	ret = clk_hw_register(NULL, &ctx->hw);
--	if (ret)
--		return ret;
--
--	return 0;
-+	return clk_init_multiple_parent_ctx(test, ctx,
-+					    "parent-0", DUMMY_CLOCK_RATE_1,
-+					    "parent-1", DUMMY_CLOCK_RATE_2,
-+					    "test-mux", 0,
-+					    &clk_multiple_parents_no_reparent_mux_ops);
- }
- 
- static void
+ KUNIT_ARRAY_PARAM_DESC(clk_test_rate_change_sibling_test_case,
 
 -- 
 2.49.0
