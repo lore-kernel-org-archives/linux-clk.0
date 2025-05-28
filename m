@@ -1,276 +1,129 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF78246774;
-	Wed, 28 May 2025 12:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8123C1FAA;
+	Wed, 28 May 2025 13:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748437072; cv=none; b=aOiyjFW1mSsahXWWnRsypFMW4sXHSYkJ9G7suz1f84V/v1F0r2s4M+6IntT4rfLmwQyKPCnUDgUdVg/31Ge2AO0xBq4KkZpTQbVzOMxYmJDXcGgtp99h0P0rH/+vTcLc0stRzqwxX5RWlfuHqqgdvfg/e3Jm04si2sK4kcdRJwI=
+	t=1748438769; cv=none; b=e0jiwNzLtazEUOCt8X7Y+AfP6UP9B74tFN0FY/Sl4Q6fOKHHOLGZMyKYIcT9wiu/GG5rqdhZM7Bwtmc+loQbN/KXf6AxIzS8pAJVIpiXeztjauxF5h6Y6PrtxHA8BRJmeV/FV1t/FccmfvrwlaM9eIivJD/QhDOotQPTdHWXDBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748437072; c=relaxed/simple;
-	bh=WpeZQl5vh0yqYxs+79UsHi2F/aa84sVNJqFa7mJ4Avc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB4dNENg1rijFIFUott8/NQbFWj6vBfJiS5AYX5aLHRJivp0+fuD1ilNuKVDbnYY9dGDmoJFuwxJX2pOg/1kzhhqwW00KkaEUn7S8D2VYLgQ+JDJtAKOViiP/ZQ9Om3w5nqms84Rs3RS+KRz40CxVmLrUbA6pbyxd21MFxth0GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZD/wViPJ; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1748438769; c=relaxed/simple;
+	bh=rxep3wf4faA2onypK2iZ/bRRCLhtffcSXOxeWi8D5cg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sVnJsbGA92GGtM0MjoS/SqB2T2a4NSmlM1TdJePeOIsH0N5LZo9Fhz52f+ZLcA8Awhc8/5baNWu5Zw5ZAXkn6Eat+GXAJwVAldFc82GThUN+EC6ppRYBSAulS9aVRN3kYH/YU5EFRs3436O5UXVWer0r7AeClbbhbZ+ASuZb29o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWjAUUJ5; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZD/wViPJ"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a36f26584bso2754810f8f.0;
-        Wed, 28 May 2025 05:57:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWjAUUJ5"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-604e299b5b6so1766842a12.0;
+        Wed, 28 May 2025 06:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748437069; x=1749041869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
-        b=ZD/wViPJNg/FqKxbWpXaB/MW2Vt3Z2mb+ngEhaaRURUbC2HtKoDxDeiMAiqup6AS6D
-         wt15zExhb1YZoTd6wn3xvIPT51dmerOpnLOx+9E3duLBi+qebQIGLERs9DyIP8XM7sBj
-         d50+qiZqSb61bnI95Dka58D5fNhwvmwMf7Pm3xNMv2ZtJ15Yr9GtuPddNchgvhqlnI5o
-         NoCyp7Vkxt/RnHTRmQNX3eeUMtqaGBDjjqJZlCt4za4bsp+FsocuwdQVfpnGXqI5qHuQ
-         RxmSqz9rXgbqn40To+GFqM5LDH7pAYSrOW1eg3UZq53J/Q6ZhqNXqZd1J0BjuVYVocqP
-         erQA==
+        d=gmail.com; s=20230601; t=1748438766; x=1749043566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ieSLku7E97lhZ4UgdnDAb1QCFNhVxCm/IzChsnoZiEc=;
+        b=UWjAUUJ5665ICvx61xNY6FK/9oHtzZc6a4KQT2vCkLxbY9HmJmQN9PvCE8psN6kP24
+         TrtFqM3+4XuJP7yi29DrkTTqfMSg5HPA3Wwg+zIbR+AI+L2qKi5Nw6s7zdcglWziqidb
+         P06TTV6bOJ+kYFt8+6MwuRa0J6qTQpLl6eChDTqnCDF86MlpHVrwcZrfMg77VKHlVpLZ
+         qyUyjry3C6MEws4M0jnTF86M2kpwaw7jpynQ4fjD6R2kwHFeLZKwWwSPFppPNMk6p9Ik
+         kvBez8B4rfuyY/OaQha+/XaVz+oEduN/04aOg2MPdZDZQMXcXzC296i3UGuKKqAnxzWa
+         l2yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748437069; x=1749041869;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
-        b=R3zlYNbA07qBzg4BjsBZmL9Fzaa/JG/Mc7KcgRUzAYIPcEhHgESDskztU3Ws2BDytg
-         baMtI0aRRz8ocnOxAKMi9rRADJRQOXbx52wfaNENDC3ZWQVncc6UcXTzgMxpgK8OKYNf
-         RfsIppfgemuiFoKWyb7h2Lb0lwvztzQKb6huc4P3z0sQI+AkooNGduw8gAV+Z9AKQKyD
-         no+Ice4Ljvv4Fx7lfVnQ0uqwKJKubM95An4Dx2gYbYtDgYsF7+UbzrMJ7fyJN3AR+t0K
-         P1Zl1UnhtMJESeqBCjrQLl4+QVp4XWI1FIkVk8q74jThwKHI8SGnrPxKWDvgCvKLL/aI
-         gtYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCbdbg0uxCQpZsuVLURmwl5YXjFGjczv8PJ2wC24EwC97P+LouerPC9jS5L66HqeyJDMf76SEumPaJNm7b@vger.kernel.org, AJvYcCVhW7vvMMhIGukeaRDeG62AUgQ86O37SMs1/mjMLfnojt1uQJCGU/en+/Hk25CFVYJ1afVdmKwlscPO@vger.kernel.org, AJvYcCWCBrDvSWQ2XmNao0RuLCvgyIxKbkdGFFJhrpU01WSnXTnBpicv+OEgOTAHMqIIy3l0sOobX6f20/75@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCloU9NTeBZJCrYLrqDfyTP9kfBM+aAdYGiZ7BAPCTU7lY460g
-	AZro3C3aBpbkPhf1oZUxhG3lI6Z8vgj/clbR27XuDdZqEgtuWrd4NgzX
-X-Gm-Gg: ASbGnctAxS2n8S4W0HoJAlwhh9fx29asN2UVtBDQjJ3p84UpsW7arcgqnkkDRbQ5WxV
-	b6c9b2dh2Fjz9DhzlVcG6Ug6sxYyv8vh4waL3Cb1XOfBrmJySyvjiXkz608yLb0VMnFI8jZLU8F
-	m2stwbw2XUedqZF1UaNWhOkR16PhrRjpPq5sx3LB+hi0kuReDpkpzM2O5sVMNY0Ka5yFB+y0l3k
-	FQ93V72xyw2dV09X4879YbAgVKgAVeJ+Vx49qdXnb/NpID/LcO0u4CURBhqMDFycgsyz33DG5Kv
-	lomJ/qzWPoZbn2abWPF+3gfgJigzE4j6TrCJhwPpjfjum5XtbZTAUB121m7G9jrVEZ+5JOLRK/Q
-	+FzCnnjI=
-X-Google-Smtp-Source: AGHT+IEl/pHPv7vigoqckP9ECM+urkLDQK2RF8IW0Ah4JbrbzZh1z1Et6i/TKjhKBeupCdDcJQ72Aw==
-X-Received: by 2002:a5d:584c:0:b0:3a4:d452:fff with SMTP id ffacd0b85a97d-3a4d45211edmr11122707f8f.17.1748437068809;
-        Wed, 28 May 2025 05:57:48 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eac6e615sm1446608f8f.19.2025.05.28.05.57.47
+        d=1e100.net; s=20230601; t=1748438766; x=1749043566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ieSLku7E97lhZ4UgdnDAb1QCFNhVxCm/IzChsnoZiEc=;
+        b=LutXOfge8/OnymtH5ba8fcPsedAmbtgs43SOpWaVvRpbklmp3S4jeNdQnRWHhy4G2n
+         PcaKu9RKzzEdokRo7eEWtDWsNi6wsAxcp4l0AWuUPBlEZAUyk+6jv+EJ89dB5ABRCe/t
+         93GzfTA10S2olPfoTMF5yPVjjyBNOikHgawRzahDYpaBlNfUt1YqbehYMsioK6myA+U3
+         N8xNZFruv11mE0oTF2SFYc1qnxA1kdJdPAWghwtGV1uq5/5e6E4NXyGNaYYErsKSh162
+         cuRh8fBUQqMPTJ8BfdhTugVzgK9l0sQpAKAyoRzhhX1ZY7HmiNQeOTxqLxijML25iq0v
+         6uQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIJ1P3hnSNpbX921UbzYKdMPx9tkpB231Pca3ZV8L/89UfALRqd8mAys8dzCK9xBzSdsZAThZT6mgV5HD4@vger.kernel.org, AJvYcCXQmg11sfpnl36i9hLkZYtX99HyUS1RLbPjv9F1sNTmlqPtUErbiWctvoW9ia9yCfWudjVW/QpSCCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTUI0aRYqPYbIkTlXbVF5Do+p0IjP51nm3x73rePt3SyVFveR+
+	dOv5gDfbtaVU96Zu+m6Q/jCJc6rVNbB3GKtvvS7wEOnV5g1jizZn8yOC
+X-Gm-Gg: ASbGncuLkjeTbX7kBpWkfOyluXiyoVrV/5/mnNP1LJgIj828lnyjY58vbiSeTMnKiH3
+	ZB9elTvVaSvztdF02h14E0JmWNlmM3U2IQ8fKXY3Z6gquJyJmcC1uUTrJO2Sf+PWRsYODnzouBW
+	GrEApjTbUIjnSlXT9Va14DuW4zMlSXE+5bNI0RhYckDhumJYENnHeDhf0g8wwAqhzxsk8rYWM38
+	WP6Jw+JQ5RzAsTfl2U4uSGUv2ILtrlUzDy1agj2L8EkW7mp/EIIUgL1ZvIY7NusH9J3sKN1nbP3
+	3b/ESFVdYN+bZrJDHaOLiZ+mzcMjdRoGg4hoNyuUQrU680eXPRFYpxEV5GWTJqU/IGeNrT4obNn
+	F
+X-Google-Smtp-Source: AGHT+IGH6NhjWRQzveyywsEHiNFK4CABJe+WM0+dyFghWFFkW3BP9KOOz7lN2b71Pta0/mTCAqJMrA==
+X-Received: by 2002:a17:907:9717:b0:ad5:6258:996f with SMTP id a640c23a62f3a-ad8989f78acmr418190566b.19.1748438765502;
+        Wed, 28 May 2025 06:26:05 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:7078:193c:ccdc:e2f5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a19ad462sm107742766b.4.2025.05.28.06.26.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 05:57:48 -0700 (PDT)
-Message-ID: <6837084c.050a0220.1e474f.3f20@mx.google.com>
-X-Google-Original-Message-ID: <aDcISot-sCztcyqa@Ansuel-XPS.>
-Date: Wed, 28 May 2025 14:57:46 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-References: <20250528004924.19970-1-ansuelsmth@gmail.com>
- <20250528004924.19970-5-ansuelsmth@gmail.com>
- <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
- <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
- <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
+        Wed, 28 May 2025 06:26:04 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a09g056: Add clock and reset entries for USB2.0
+Date: Wed, 28 May 2025 14:25:58 +0100
+Message-ID: <20250528132558.167178-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 28, 2025 at 01:56:54PM +0200, Krzysztof Kozlowski wrote:
-> On 28/05/2025 10:54, Christian Marangi wrote:
-> > On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
-> >> On 28/05/2025 02:49, Christian Marangi wrote:
-> >>>    - if:
-> >>>        properties:
-> >>>          compatible:
-> >>> @@ -75,6 +78,17 @@ allOf:
-> >>>          reg:
-> >>>            maxItems: 1
-> >>>  
-> >>> +      required:
-> >>> +        - reg
-> >>> +
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          const: airoha,an7583-clock
-> >>> +    then:
-> >>> +      properties:
-> >>> +        reg: false
-> >>
-> >>
-> >> No resources here, so this should be part of parent node.
-> >>
-> > 
-> > Ok hope you can help here. This is another case of "MFD" thing.
-> > 
-> > I was with the idea that it was O.K. to use this with very different
-> > devices. (current scenario Clock controller and MDIO controller)
-> > 
-> > The node structure I had in mind was
-> > 
-> > 		system-controller@1fa20000 {
-> > 			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
-> > 			reg = <0x0 0x1fb00000 0x0 0x970>;
-> > 
-> > 			scuclk: scuclk {
-> > 				compatible = "airoha,an7583-clock";
-> > 				#clock-cells = <1>;
-> > 				#reset-cells = <1>;
-> > 			};
-> > 
-> > 			mdio {
-> > 				compatible = "airoha,an7583-mdio";
-> > 				#address-cells = <1>;
-> > 				#size-cells = <0>;
-> > 
-> > 				mdio_0: bus@0 {
-> > 					reg = <0>;
-> > 					resets = <&scuclk AN7583_MDIO0>;
-> > 				};
-> > 
-> > 				mdio_1: bus@1 {
-> > 					reg = <1>;
-> > 					resets = <&scuclk AN7583_MDIO1>;
-> > 				};
-> > 			};
-> > 		};
-> > 
-> > But you want
-> > 
-> > system-controller@1fa20000 {
-> >         compatible = "airoha,an7583-scu", "syscon";
-> >         reg = <0x0 0x1fb00000 0x0 0x970>;
-> > 
-> >         #clock-cells = <1>;
-> >         #reset-cells = <1>;
-> > 
-> 
-> mdio could be here just to group the bus (it's pretty common I think),
-> although not sure if compatible is useful then.
-> 
-> >         mdio_0: bus@0 {
-> >                 reg = <0>;
-> >                 resets = <&scuclk AN7583_MDIO0>;
-> >         };
-> > 
-> >         mdio_1: bus@1 {
-> >                 reg = <1>;
-> >                 resets = <&scuclk AN7583_MDIO1>;
-> >         };
-> > };
-> > 
-> > Again sorry if this question keeps coming around and I can totally
-> > understand if you are getting annoyed by this. The reason I always ask
-> > this is because it's a total PAIN to implement this with the driver
-> > structure due to the old "simple-mfd" model.
-> 
-> ... and Rob was saying multiple times: be careful when adding
-> simple-mfd. If it bites back, then I am sorry, but everyone were warned,
-> weren't they?
-> 
-> What is exactly the pain anyway? You cannot instantiate children from
-> SCU driver?
->
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Answering below since they are related.
+Add clock and reset entries for USB2.0.
 
-> > 
-> > (as again putting everything in a single node conflicts with the OF
-> > principle of autoprobing stuff with compatible property)
-> 
-> I am not sure if I follow. What principle? Where is this principle
-> expressed?
-> 
-> And you do not have in your second example additional compatibles, so
-> even if such principle exists it is not broken: everything autoprobes, I
-> think.
-> 
-> > 
-> 
->
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g056-cpg.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The principle I'm talking about is one driver for one compatible.
-(to be more precise excluding syscon compatible that is actually
-ignored, if a driver for the compatible is found, any other compatible
-is ignored.)
+diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
+index 13b5db79aab4..e370ffb8c1e2 100644
+--- a/drivers/clk/renesas/r9a09g056-cpg.c
++++ b/drivers/clk/renesas/r9a09g056-cpg.c
+@@ -134,6 +134,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+ 	DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
+ 		 CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
++	DEF_FIXED("usb2_0_clk_core0", R9A09G056_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
+ 	DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G056_GBETH_0_CLK_PTP_REF_I,
+ 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
+ 	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G056_GBETH_1_CLK_PTP_REF_I,
+@@ -219,6 +220,12 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD("usb2_0_u2h0_hclk",		CLK_PLLDTY_DIV8, 11, 3, 5, 19,
++						BUS_MSTOP(7, BIT(7))),
++	DEF_MOD("usb2_0_u2p_exr_cpuclk",	CLK_PLLDTY_ACPU_DIV4, 11, 5, 5, 21,
++						BUS_MSTOP(7, BIT(9))),
++	DEF_MOD("usb2_0_pclk_usbtst0",		CLK_PLLDTY_ACPU_DIV4, 11, 6, 5, 22,
++						BUS_MSTOP(7, BIT(10))),
+ 	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
+ 						BUS_MSTOP(8, BIT(5)), 1),
+ 	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
+@@ -280,6 +287,9 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(10, 12, 4, 29),		/* USB2_0_U2H0_HRESETN */
++	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
++	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
+ 	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
+ 	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
+ 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
+-- 
+2.49.0
 
-This means that declaring multiple compatible as:
-
-compatible = "airoha,clock", "airoha,mdio"
-
-doesn't result in the clock driver and the mdio driver probed but only
-one of the 2 (probably only clock since it does have priority)
-
-The "simple-mfd" compatible is just a simple compatible that indicate to
-the OF system that every child (with a compatible) should be also probed.
-And then automagically the driver gets probed.
-
-Now the ""PAIN"" explaination. Not using the "simple-mfd" way with the
-child with compatible and putting everything in the node means having to
-create a dedicated MFD driver that just instruct to manually probe the
-clock and mdio driver. (cause the compatible system can't be used)
-
-So it's 3 driver instead of 2 with the extra effort of MFD driver
-maintainer saying "Why simple-mfd is not used?"
-
-
-There is a solution for this but I always feel it's more of a workaround
-since it doesn't really describe the HW with the DT node.
-
-The workaround is:
-
-		system-controller@1fa20000 {
-                        /* The parent SCU node implement the clock driver */
-                        compatible = "airoha,an7583-scu", "syscon";
-                        reg = <0x0 0x1fb00000 0x0 0x970>;
-
-                        #clock-cells = <1>;
-                        #reset-cells = <1>;
-
-                        /* Clock driver is instructed to probe child */
-                        mdio {
-                                compatible = "airoha,an7583-mdio";
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-
-                                mdio_0: bus@0 {
-                                        reg = <0>;
-                                        resets = <&scuclk AN7583_MDIO0>;
-                                };
-
-                                mdio_1: bus@1 {
-                                        reg = <1>;
-                                        resets = <&scuclk AN7583_MDIO1>;
-                                };
-                        };
-                };
-
-
-But this really moves the probe from the simple-mfd to the clock driver.
-
-So it's either 3 solution
-1. 2 driver + "simple-mfd"
-2. 3 driver + PAIN (due to MFD required driver)
-3. 2 driver + not very correct DT node structure
-
-Maybe option 3. is more acceptable?
-
-The SCU node is mainly clock + reset controller and the MDIO bus is an
-expansion of it?
-
-Hope the long explaination makes sense to you (especially about the
-OF principle thing)
-
---
-Ansuel
