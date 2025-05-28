@@ -1,115 +1,191 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A94220F47
-	for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 19:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD881DFFC;
+	Wed, 28 May 2025 22:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748461501; cv=none; b=NzmUfdMYP6hRS9G5meIj5Q3X18zM3xQFjhYumGhPSUS2LYuWK18c5dBqf2C6OOEsNmNq/GAo/lwC0ujqmUSgKu+OdvY442LjMWJg9/ctqWMeb4jV887q92Z3pnomTJqBbxdH2+SLy+2KsTtxrXbWQwBzl5F2HhkyU7Uualvz1nQ=
+	t=1748470415; cv=none; b=FpU4Tb5x1PXtGV/IgAZyq/rhJF1a3sBQm+feBhZ+YBZfnFVV9FqGiYsUIpuHHl7by3Jz5Yu6qMQTcDvibnQ/Mdw2TZ2QSWyfoqHGoDhUhgeoMrtcW2V9CG5KElbG1r+tKhDrh8W8XJJAGGW9lB5e6cWHQs/rdeAUm14FxxErEtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748461501; c=relaxed/simple;
-	bh=JaLEcoIDX2MnUtAyvebRh+z+dgc4MZeERa7wRQutoC4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qvXSE/X5I3TwdXV05hqZOwKYY0DCqokoIEnJY9CO5bPcGVpjKgKuMgAHf26iLTzTeSTLkqZak7BDJXoesIkr91YBvjqKMZd/oDLi9YLvVz11pPXIpEfU13PBYFnSuJkcZr1ETek6nc41qLiepyK5/iVz9I1l+GEtopZ0+ko5h4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NJkP2Tv8; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748470415; c=relaxed/simple;
+	bh=FFixiD6CWexuWWAc/vkRspwDcAhH5LtSZ12dUKV7hE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9IK6VhGjMKg7y4rwT27ZBQZN5QGglDB7JnyrSdRFMFke9QtF+LfLAD4IG5O40GMNOq8JCvC92h/g1juwGrLe2P30XYNvAN3VD68ADhkiAqn+IXAtlZYNosygbUe77+18+3RIO9ExHwEkTvlSeV0p5nDVK9mL9j4c+ewp5Td7LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3PMepjo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJkP2Tv8"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4ef05f631so13989f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 12:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748461497; x=1749066297; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vB8gZ2Otjc20dEIAbS3e+F9BejDU6DIS+BphNh1eutE=;
-        b=NJkP2Tv8xVt8km7zfdUIyd3uiY2kHVTBeYaTiRPRMWuVusgE7qpv+BrStWX1jpMOgY
-         +kcS0SPEl0pWK++qkNpdZ5H7/OWD84Bzx5DHbT/j9/5JlFRb5tH5ibRNHhSr9llrhfvq
-         Wi6TXIWkfkTirHwtg7Hi4AAbqXxa9SdLh5/fq0Y/zqXknrKVTqpggwklEWlf4Hebyc1x
-         2AT2BP1nbdbD3Q0/EBF8uHxEoHJzm7MfslzukwOfOGlDF9eV3DtFHx/9hj7lBbgIkNtw
-         qd/PMhI50bCLtkxMiqCT1FH0sy0bSrlwt+ub2lotKvrXCIrdzoFsDK1t0v9wLgikUu3E
-         vRNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748461497; x=1749066297;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vB8gZ2Otjc20dEIAbS3e+F9BejDU6DIS+BphNh1eutE=;
-        b=BBEQVgTlp3uOWeQ7eULR6Q1tfWJGN45rAeJZ8oIKIf9cHk2F6064XZa+9dOILv3jCg
-         E/wPFanXYGg9F81irbi18CtMGqnD30eY+KLv7ZhvA/9YdkCVv+jJeWmjyKwzFgCqK/7M
-         +dz83kXLZggqO2btFqSBPcs0nzGMsgZkQzL2zFslKFDBYmFVhmZMaWFTiWBjwcjdMC4o
-         Q7lvlvD6MQmXN8PdetHu2vYZHcLFj2ZzRYHQPQibedtr2EMBtgx6xulrWQds+tytj4Zh
-         ppdBj9FxHe09W/tEJLzXv2KL1/kfnB5cxBgWO9VoGyZd5nvZ7ClpiBSgzRS6A3QXTmIp
-         dBjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGhhmRELHEz5BG++w9a/mRcqW75i7ezKtzE7CSOQidvCAVzGXK5LQXj22RMiVrBmMqMSAcjSOt0lU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX+aN41vrMPYikv+0B8UPCekdlhfmyvDkjyNwumObnFqomKRFa
-	He4mpqs3qXTqle2f/tTNU2Gbjsr1Y8/BuW+gkwZB5B9P1nGBHlqLSqsUJl7GY62h9nmUSihxqts
-	vlzyU
-X-Gm-Gg: ASbGncurVekfDCsvOz+zo+wOpR2Js1Uou9KX4pCBZ+dNWcUS9e0yZEABX0DmNSk+CTV
-	D8rpjW7JCDUYZ3CTGBVIXXNKROrpMTZEiPI5TSuadcm0dhlh3lOUhvG2oYMTeIxPpLkugOxHpuI
-	vv0P71RvfmGXiS2kwPGPhuyBFLrYOS2UBKEGDsCh1K1iYoHHJP3a477zS13y23ulthThzLTBovI
-	9UC+qE/XbQrQpIGo7RgoW48cS317HSTQ8oDgk7K2u2raYU5OkI/rdp0Nz4mMI0Ku+uV+y0k3oXy
-	QRGnnhQhgkz9Izz6ITEPx78pAA8rjL9X4LQ+vZYOIvwxQTfn5veBHo610JnKCMPvE94Dzx0Y
-X-Google-Smtp-Source: AGHT+IGTjdGUI8wshiTR53oaMojLuIFxdDZg5ObeOYIG80t0XE2ComuiYEk5vxy6mSYM3jknwUl1Cw==
-X-Received: by 2002:a05:600c:3144:b0:43d:fa58:81d2 with SMTP id 5b1f17b1804b1-44ffbf6531fmr13824805e9.9.1748461496685;
-        Wed, 28 May 2025 12:44:56 -0700 (PDT)
-Received: from kuoka.. ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc51579sm248585e9.25.2025.05.28.12.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 12:44:56 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Alex Helms <alexander.helms.jy@renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: versaclock7: Constify regmap_range_cfg array
-Date: Wed, 28 May 2025 21:44:54 +0200
-Message-ID: <20250528194453.567324-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3PMepjo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40082C4CEE3;
+	Wed, 28 May 2025 22:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748470414;
+	bh=FFixiD6CWexuWWAc/vkRspwDcAhH5LtSZ12dUKV7hE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C3PMepjoQrqneKfB199dlEwGYYOL3JdVq6BLsQ/5Y08O/Jmg4zN8NeJg8BmlLYmZs
+	 ZNWdGjuw/Dl4Y4llpRj9y26stNCk2oy5PsdsHiq5PY0ztWOBjto63ZcYb5+gQKut0e
+	 dDd5+gaGzbTlE/Y0H3sGi+cdnV1WzUs2jkniTxR28HOLRfT241BeDs8YPFhG7Iyyt+
+	 rcdH0yE9cpm61u6A7TsFsXaJF14n8sh5BxGfdoHsmEg/Du7VVTsxjgAe+QTF3fovuJ
+	 Hj69WkFIZIhP8c0E3g4jZ9lo+EeZYKSzGCGGCko9bBU/gJMZIg7HmJD/i4KZfrfV7W
+	 WVZrtUd6ulZ0A==
+Date: Wed, 28 May 2025 17:13:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>, Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: net: qca,ar803x: Add IPQ5018
+ Internal GE PHY support
+Message-ID: <20250528221332.GA865966-robh@kernel.org>
+References: <20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com>
+ <20250528-ipq5018-ge-phy-v2-2-dd063674c71c@outlook.com>
+ <174844980913.122039.6315970844779589359.robh@kernel.org>
+ <DS7PR19MB8883581EF8CD829910D3C1C29D67A@DS7PR19MB8883.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=742; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=JaLEcoIDX2MnUtAyvebRh+z+dgc4MZeERa7wRQutoC4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2e1OuA/hD1sexRDdgHQfOr8fvV4yISai3Omo
- 5FuI/hgJuyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdntQAKCRDBN2bmhouD
- 1+KgEACGWyYwtIs64wNSWDXfZtTqr29hchYQvDpa1nH847O6l3z+rSeoRJmqMC0THPLosjcl7DI
- YGjzTI+dOhcN3XrzJ0g6u5U46zOeoErkPJRIqm+DNUPRte5Oyiae5y8FkfV0hNRs4eSv8BWEeYc
- bqR0C+VMXdHcvzz8ZPsJV7apRpdjVnOBN+axVdUd0gE2X7u0q5DtHruPaTmbA1DjehAbOFUqKht
- RSZej9qg1Vgl3LqdrsGtsCnO7FbIkb1ntzMG/oxhsPj/C436c/kRsU9RXaEdy6gM5cKYJIMi6ZN
- PZe0NRiG/e8Z6hUHfjfdI46hDp57g7vk40UhhUa0u20QKT3aYIBx+pJs+3AmsrRNJT8OOgpqwm8
- ckoMOiQaM3e7kJFrvAaUSGTbn4sDXXn146N9gvcs/emjmrDFpkjpHHYP7rXGgiCOXc3+XBoILJF
- MzhCljsCCoteCqjJd85hEYpR1QUnT8xlnkMpC6Uz0YEH4xx0PSfkSGrdOQAT0eLKRZKIy+37Q6H
- YG7j9qpQ3cKnmtpQ35BA3HlbiB1nkiDA1NIbYJOsWQUARSHr50QqPCb1gQeZ6sbApBZUHoFh9kk
- odQASaDZsTznAkyVzPytiZ4IgYAOX4KNE65j+z1C0C17oR5wkttwB7ZmAteOZQK+fjz7xTGWiCm mXMswtzr890iFnQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS7PR19MB8883581EF8CD829910D3C1C29D67A@DS7PR19MB8883.namprd19.prod.outlook.com>
 
-Static 'struct regmap_range_cfg' array is not modified so can be changed
-to const for more safety.
+On Wed, May 28, 2025 at 08:59:45PM +0400, George Moussalem wrote:
+> Hi Rob,
+> 
+> On 5/28/25 20:30, Rob Herring (Arm) wrote:
+> > 
+> > On Wed, 28 May 2025 18:45:48 +0400, George Moussalem wrote:
+> > > Document the IPQ5018 Internal Gigabit Ethernet PHY found in the IPQ5018
+> > > SoC. Its output pins provide an MDI interface to either an external
+> > > switch in a PHY to PHY link scenario or is directly attached to an RJ45
+> > > connector.
+> > > 
+> > > The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+> > > 802.3az EEE.
+> > > 
+> > > For operation, the LDO controller found in the IPQ5018 SoC for which
+> > > there is provision in the mdio-4019 driver. In addition, the PHY needs
+> > > to take itself out of reset and enable the RX and TX clocks.
+> > > 
+> > > Two common archictures across IPQ5018 boards are:
+> > > 1. IPQ5018 PHY --> MDI --> RJ45 connector
+> > > 2. IPQ5018 PHY --> MDI --> External PHY
+> > > In a phy to phy architecture, DAC values need to be set to accommodate
+> > > for the short cable length. As such, add an optional boolean property so
+> > > the driver sets the correct register values for the DAC accordingly.
+> > > 
+> > > Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> > > ---
+> > >   .../devicetree/bindings/net/qca,ar803x.yaml        | 52 +++++++++++++++++++++-
+> > >   1 file changed, 51 insertions(+), 1 deletion(-)
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/qca,ar803x.example.dtb: ethernet-phy@7 (ethernet-phy-id004d.d0c0): clocks: [[4294967295, 36], [4294967295, 37]] is too long
+> > 	from schema $id: http://devicetree.org/schemas/net/ethernet-phy.yaml#
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250528-ipq5018-ge-phy-v2-2-dd063674c71c@outlook.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> 
+> 
+> Really weird, I've checked this numerous times:
+> 
+> (myenv) george@sl2-ubuntu:~/src/linux-next$ make dt_binding_check
+> DT_SCHEMA_FILES=qca,ar803x.yaml
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/net/qca,ar803x.example.dts
+>   DTC [C] Documentation/devicetree/bindings/net/qca,ar803x.example.dtb
+> (myenv) george@sl2-ubuntu:~/src/linux-next$ pip3 install dtschema --upgrade
+> Requirement already satisfied: dtschema in
+> /home/george/myenv/lib/python3.12/site-packages (2025.2)
+> Requirement already satisfied: ruamel.yaml>0.15.69 in
+> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (0.18.10)
+> Requirement already satisfied: jsonschema<4.18,>=4.1.2 in
+> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (4.17.3)
+> Requirement already satisfied: rfc3987 in
+> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (1.3.8)
+> Requirement already satisfied: pylibfdt in
+> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (1.7.2)
+> Requirement already satisfied: attrs>=17.4.0 in
+> /home/george/myenv/lib/python3.12/site-packages (from
+> jsonschema<4.18,>=4.1.2->dtschema) (25.3.0)
+> Requirement already satisfied: pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0
+> in /home/george/myenv/lib/python3.12/site-packages (from
+> jsonschema<4.18,>=4.1.2->dtschema) (0.20.0)
+> Requirement already satisfied: ruamel.yaml.clib>=0.2.7 in
+> /home/george/myenv/lib/python3.12/site-packages (from
+> ruamel.yaml>0.15.69->dtschema) (0.2.12)
+> (myenv) george@sl2-ubuntu:~/src/linux-next$ make dt_binding_check
+> DT_SCHEMA_FILES=qca,ar803x.yaml
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/net/qca,ar803x.example.dts
+>   DTC [C] Documentation/devicetree/bindings/net/qca,ar803x.example.dtb
+> 
+> I only found the same errors when removing the DT_SCHEMA_FILES property.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/clk-versaclock7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Correct.
 
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index f323263e32c3..483285b30c13 100644
---- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -1257,7 +1257,7 @@ static const struct vc7_chip_info vc7_rc21008a_info = {
- 	.num_outputs = 8,
- };
- 
--static struct regmap_range_cfg vc7_range_cfg[] = {
-+static const struct regmap_range_cfg vc7_range_cfg[] = {
- {
- 	.range_min = 0,
- 	.range_max = VC7_MAX_REG,
--- 
-2.45.2
+> Is that because ethernet-phy.yaml is a catch-all based on the pattern on the
+> compatible property (assuming my understanding is correct)? How would we get
+> around that without modifying ethernet-phy.yaml only for this particular PHY
+> (with a condition)? This PHY needs to enable two clocks and the restriction
+> is on 1.
 
+It's kind of a mess since ethernet phys didn't have compatibles 
+frequently and then there was resistance to adding compatibles. You know 
+we don't need compatibles because phys are discoverable and all. Well, 
+except for everything we keep adding for them in DT like clocks...
+
+We probably need to split out common phy properties to its own schema. 
+And then add a schema just for phys with no compatible string (so 
+'select' needs to match on $nodename with ethernet-phy as now, but also 
+have 'not: { required: [compatible] }'. And then a schema for the 
+'generic' phys with just ethernet-phy-ieee802.3-c22 or 
+ethernet-phy-ieee802.3-c45. Then we'll have to look at what to do with 
+ones with "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$" compatibles. 
+Probably, we need to add specific id's to the generic schema or in their 
+own schemas.
+
+Or we can just change clocks in ethernet-phys.yaml to:
+
+minItems: 1
+maxItems: 2
+
+And kick that can down the road...
+
+Rob
