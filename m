@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203198C0E;
-	Wed, 28 May 2025 07:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698B92459EC;
+	Wed, 28 May 2025 07:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417443; cv=none; b=tqnOfgLPMaGVQyLjQSz3PN+3dkmMOMiabP+S70toV5GiTs8ovxlrUoprQs6P/6TPXdJ2FjOfCobgnONiQjaRuu5b4oFvOD0EdcnadE3O7nzCS4Z3fGGan5+WeyqVtWR/n+kaYFjePKV6uVMBk6FQ2oMjPSzRbpsO8LFqW4SrB3s=
+	t=1748417478; cv=none; b=sl0mtxEIi9UUOgj1gX06NUHTMPLQ4FjaaXiQriq3Ir9A15zotNsdzK98PZ4SzTuFi+9mb1vlIxFc3TAKQ2d7FnEEBrHCrgIcnip8yOEl9wUdM+Qex14YacCfGayJGrW8nM1L2PsKlPKZD/3Bz4RGf05BZ0xr7NQXxFmMRa0Cir4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417443; c=relaxed/simple;
-	bh=mSM+9VCcEHEXnwYh7KodGZTDVA7thHrbUH+ZWdhd2OQ=;
+	s=arc-20240116; t=1748417478; c=relaxed/simple;
+	bh=6DMj4x7ehA/wKfhb8tJLlbL9mm9WfijKZfBTnzdVzX0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EyIdUfO5L2hajOrX/QFC8u0bnjBl4d7bNNuDgtQcnmArHUiG3K7JAPpBoDVYHa9Y8Q3J7LcwhBTZeSX4+Xma1xErtUPjqdPmexbdWnCOtQuQKdJFi8eDYTmwZIHKOcioPPuxkM/I/M3J0X15JFnqlDMUz6GVgH4pcpQIVffEJE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=da0/j5i0; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=GLLo4QhpbN8+l0RQpc/jigvZWxmtn5egDlutHFtKecipsj/O964NHESDaXMwV8GtAsptLAci+aAfdTBaKuQh+1Csl0ovBvbytgkjOQ055YRcrdbjE/rv0XqsRb5MYM/QbDoFdI9/S03N5xTx55OR7gNIROWIkhAKyvq/Q3JhfTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KP1TCICg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="da0/j5i0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00767C4CEE7;
-	Wed, 28 May 2025 07:30:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KP1TCICg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463C1C4CEEB;
+	Wed, 28 May 2025 07:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748417441;
-	bh=mSM+9VCcEHEXnwYh7KodGZTDVA7thHrbUH+ZWdhd2OQ=;
+	s=k20201202; t=1748417473;
+	bh=6DMj4x7ehA/wKfhb8tJLlbL9mm9WfijKZfBTnzdVzX0=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=da0/j5i0CGETYAvvWHP74Myr2BFA9uS2t+GOkruDfepGo6nOqHt1WVsclx7TvyzsU
-	 EyiQP+WOHctuNUJXtzSGdFoTg7B/85dVaVGGtFgiYJ4gIFinxalLc120A+rwn/hARK
-	 XneEkCY+uZpsfI0MJJOq1z8g025mPQd6iCfWf1j+eikLSXNczfVkK/1X+2Jeb9fH7q
-	 Gk6kycRCOs48f7AY+6CF8eO+cpJH5NJB+ZvdcqUMDMX9+GaM9CiEjr7d9gdnU3h5bH
-	 TVmHhh3wH0u9hZBzWGmKd0dfA19v5qkdTFdT1fYgwRV8X72+TkyvWG2s5fQlDXdseJ
-	 ivhkSGjmeQazQ==
-Message-ID: <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
-Date: Wed, 28 May 2025 09:30:37 +0200
+	b=KP1TCICgLjMgH7fZONJKN+oJKwzRiwetuZg0T+cJtZWHAWdGi087t0k++E3kfAfd6
+	 AeyfTuZy9IEYR1xc0THWjxDs4y8HamuWAKyEBRqtf4GzovWBcYPQQflaPVeLOHLYVW
+	 Y0UqLosE/nm5vWJOLT4LW4WjQe4glsoip3oDQ2Tfh08AA87MgHnrjQpSAU4M+jMcJn
+	 s745BLw22VMe+sB+annb0FDhiFXR4qtj9mEdnMbATMNfiyf6ptchc7Iz/dSioMzT4L
+	 qpJTBQ92dmSwkNIiiy/fp71ZKXzE1oc5bfGNJeCJhdmqrZePQABMpHUjQRdWdIaVdd
+	 VZmUHiEU0LFqQ==
+Message-ID: <031d061e-6b00-4fe2-b420-6fd4149a7e6a@kernel.org>
+Date: Wed, 28 May 2025 09:31:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
+Subject: Re: [PATCH 3/5] dt-bindings: reset: add binding for Airoha AN7583 SoC
+ reset
 To: Christian Marangi <ansuelsmth@gmail.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -45,7 +45,7 @@ To: Christian Marangi <ansuelsmth@gmail.com>,
  Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250528004924.19970-1-ansuelsmth@gmail.com>
- <20250528004924.19970-5-ansuelsmth@gmail.com>
+ <20250528004924.19970-4-ansuelsmth@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,31 +91,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250528004924.19970-5-ansuelsmth@gmail.com>
+In-Reply-To: <20250528004924.19970-4-ansuelsmth@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/05/2025 02:49, Christian Marangi wrote:
->    - if:
->        properties:
->          compatible:
-> @@ -75,6 +78,17 @@ allOf:
->          reg:
->            maxItems: 1
->  
-> +      required:
-> +        - reg
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: airoha,an7583-clock
-> +    then:
-> +      properties:
-> +        reg: false
+> Add binding for Airoha AN7583 SoC Resets. These are very similar to
+> EN7581 but lack some specific reset line hence the order is different
+> and a dedicated binding is needed.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../dt-bindings/reset/airoha,an7583-reset.h   | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
 
-
-No resources here, so this should be part of parent node.
+This goes with the binding for this device, not separate commit.
 
 Best regards,
 Krzysztof
