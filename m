@@ -1,191 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD881DFFC;
-	Wed, 28 May 2025 22:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892DB1805B
+	for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 23:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748470415; cv=none; b=FpU4Tb5x1PXtGV/IgAZyq/rhJF1a3sBQm+feBhZ+YBZfnFVV9FqGiYsUIpuHHl7by3Jz5Yu6qMQTcDvibnQ/Mdw2TZ2QSWyfoqHGoDhUhgeoMrtcW2V9CG5KElbG1r+tKhDrh8W8XJJAGGW9lB5e6cWHQs/rdeAUm14FxxErEtM=
+	t=1748474234; cv=none; b=VP6JlTptNcR+eITLvpJfxMaS5jlLECYr01o0kYkxcJ9SfMPm4mFGBfT+Qg1tSkJ0Jx5KPdukZb1US60mC/vz2ONiNRqh1v+yQ7whvggef2sJVsuQjgQk2+BF4/ds/B4p/8vo6S3CuNR2XvkB9z4b1VMRf+EmnytclPD7z66zcbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748470415; c=relaxed/simple;
-	bh=FFixiD6CWexuWWAc/vkRspwDcAhH5LtSZ12dUKV7hE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9IK6VhGjMKg7y4rwT27ZBQZN5QGglDB7JnyrSdRFMFke9QtF+LfLAD4IG5O40GMNOq8JCvC92h/g1juwGrLe2P30XYNvAN3VD68ADhkiAqn+IXAtlZYNosygbUe77+18+3RIO9ExHwEkTvlSeV0p5nDVK9mL9j4c+ewp5Td7LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3PMepjo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748474234; c=relaxed/simple;
+	bh=bR4jltbeJghKywDdd3mwBC+Jb3pwT0W7NWcj+YMcNXk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qpbCjdPEG/rPcAhcqQQcY8LnFFxGguUOyjO9pK2DT9rgNndmqYYWZIDQC/Gxe2CHGGIDEXlfn/xS7OMbnMK8nMolNgY4PxyfEGy6dy6ycaqrbSzRGaliFTwMHUIABnALUF4e++xyBNzfMlBVZr9ZBAILuKDJ3Rn5VKCW38bi0Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A8DofxYq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3PMepjo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40082C4CEE3;
-	Wed, 28 May 2025 22:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748470414;
-	bh=FFixiD6CWexuWWAc/vkRspwDcAhH5LtSZ12dUKV7hE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C3PMepjoQrqneKfB199dlEwGYYOL3JdVq6BLsQ/5Y08O/Jmg4zN8NeJg8BmlLYmZs
-	 ZNWdGjuw/Dl4Y4llpRj9y26stNCk2oy5PsdsHiq5PY0ztWOBjto63ZcYb5+gQKut0e
-	 dDd5+gaGzbTlE/Y0H3sGi+cdnV1WzUs2jkniTxR28HOLRfT241BeDs8YPFhG7Iyyt+
-	 rcdH0yE9cpm61u6A7TsFsXaJF14n8sh5BxGfdoHsmEg/Du7VVTsxjgAe+QTF3fovuJ
-	 Hj69WkFIZIhP8c0E3g4jZ9lo+EeZYKSzGCGGCko9bBU/gJMZIg7HmJD/i4KZfrfV7W
-	 WVZrtUd6ulZ0A==
-Date: Wed, 28 May 2025 17:13:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>, Eric Dumazet <edumazet@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: net: qca,ar803x: Add IPQ5018
- Internal GE PHY support
-Message-ID: <20250528221332.GA865966-robh@kernel.org>
-References: <20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com>
- <20250528-ipq5018-ge-phy-v2-2-dd063674c71c@outlook.com>
- <174844980913.122039.6315970844779589359.robh@kernel.org>
- <DS7PR19MB8883581EF8CD829910D3C1C29D67A@DS7PR19MB8883.namprd19.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A8DofxYq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748474231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HNVTS3XJErwAg78tN7yQ7rmq17jTcCsZX0ZsbDsKJ4U=;
+	b=A8DofxYqp4AU2Ulq4mM+3J55Z4ZNd/EE2c+kWg2xESfP3GPmSHtuGxI703N23XiaImuvYI
+	rjiz3NZsg5J5no5GsQjlSSveCG/Kr67k60uj0C+eqo++Aeup0JGJND90d2kbS8TbQ4Fipx
+	m7lMZN0HwHZMFu8moo+tTWuC60clbMA=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-348-bO27Vq7oPE2h_fduLBin3g-1; Wed, 28 May 2025 19:17:10 -0400
+X-MC-Unique: bO27Vq7oPE2h_fduLBin3g-1
+X-Mimecast-MFC-AGG-ID: bO27Vq7oPE2h_fduLBin3g_1748474229
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c9abdbd3so34258185a.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 16:17:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748474229; x=1749079029;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HNVTS3XJErwAg78tN7yQ7rmq17jTcCsZX0ZsbDsKJ4U=;
+        b=hNyAQwTtB3Ue3heX9a3pPDaZzmO8f3BDykFHcEymBq/w5Rv7k53Mv4cnTDSn7LerQ5
+         Hew09loKEKIXvDe2TsLmYv+FpeKnFakOhJiJa4/ZSCfS3CDB815pkkI9UonjnzWJj4hd
+         VvXLfg3T0pRg6FUhG1Eub/AAmR19NsHPAwa/PGNqCtOrmF6kJ01yJgZqEh7HZVeDOEcI
+         DzH2Eyx1ICq7i0cscm5pr3QeQ2Jl21rOfnNgMkbyyQN0G8aif/z9w2P9xsGdjGXHEqe3
+         +UPJrtNNpkwoKaYOuCPWcF7MUyaflOP1xAtyWbLtw9EhXEoc0gh5DpbAjXRnmU9PyzWF
+         iGsA==
+X-Gm-Message-State: AOJu0Yzp5E0EqUsTlEOb5ze48uuM3FBGmHOoi1EkxTr1cB3Y8JB9hoDE
+	LJp5NKRCOZRHD9C45ruyErVnFGNK8jyICl3qjFPcMBsrQtO9qjsMhdjDTk4CKDf4vj25LukML8p
+	1R8dTQ7tVl5SbINYhk2IHYmyXhQ1UfLINh2xk2M61LNZpX7r6Fmr0cUsobbPiOKn9k4hc6M9e
+X-Gm-Gg: ASbGncs9M9IlH4oug7dRpeY6rU6QQQp/OFPDwb30/OquwS7w4LoSjMtmygn8YybvGYD
+	HrQsUFIJcMkiEGWvjy9bk49id5+xL9zCSc1Vq8L+RFef7wmfzl/IcfaR34fpEvflskg/l5aK+ZH
+	q224rLQiAD5AwXtFtjk9hy77Sz9MIwn/0KEc+98yclEJ0CaW5iCm2DkOz4Nrxt9dwEqZqYT7xTW
+	3BBbBenrj/k1su/Haf0D1fyinB5O4GL0zrLII/Cw1tJ47sO9+ZRS5tp4FAZTjUkn75hXjS4w/Yz
+	KjW8yflGqY2wruY32zbnUB/2rkiYukOmPWOZGuTGolv9MnFCDg==
+X-Received: by 2002:a05:620a:240c:b0:7c5:5670:bd77 with SMTP id af79cd13be357-7ceecbf9d5amr2976783785a.55.1748474229139;
+        Wed, 28 May 2025 16:17:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4WUSbtjPX/jIstfDumz1aLRt9cGSRxDbR99fys/EUj2js8Z5XB/6olHr1Rng/KTgyDsa68w==
+X-Received: by 2002:a05:620a:240c:b0:7c5:5670:bd77 with SMTP id af79cd13be357-7ceecbf9d5amr2976780085a.55.1748474228734;
+        Wed, 28 May 2025 16:17:08 -0700 (PDT)
+Received: from [192.168.1.2] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0f984fsm13437985a.43.2025.05.28.16.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 16:17:07 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v2 00/10] clk: add kunit tests and correct rate change bug
+ in the clk core
+Date: Wed, 28 May 2025 19:16:46 -0400
+Message-Id: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS7PR19MB8883581EF8CD829910D3C1C29D67A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF+ZN2gC/0XMSw7CIBSF4a00d+xteIjFjtyHcUDprRAFGmiqp
+ uneJU48s29w/g0KZU8F+maDTKsvPsUKcWjAOhPvhH6sBsGEYkpotM8HvvyMq0DNZZ0ZOFNnqIc
+ 50+Tfv9j1Vj3lFHBxmcw/cWQdl1wo3XbsJDVyHIIpkT6XTKMzS2tTgH3/AugWmcKYAAAA
+X-Change-ID: 20250528-clk-wip-v2-813333ab1059
+To: Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Alberto Ruiz <aruiz@redhat.com>, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748474226; l=3436;
+ i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
+ bh=bR4jltbeJghKywDdd3mwBC+Jb3pwT0W7NWcj+YMcNXk=;
+ b=vdHEnQ94JPNGIHCCZwIxPNiqKHhH6hU6UBtXvT+6qDsaUjVFbtUotmD0843bAl6A5j94b0cD2
+ V0X/h9bsyrOBeVqo7JNvcfsOHL5jhB5mtUTiyp9CT9/h6eJXjl/7b81
+X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
+ pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-On Wed, May 28, 2025 at 08:59:45PM +0400, George Moussalem wrote:
-> Hi Rob,
-> 
-> On 5/28/25 20:30, Rob Herring (Arm) wrote:
-> > 
-> > On Wed, 28 May 2025 18:45:48 +0400, George Moussalem wrote:
-> > > Document the IPQ5018 Internal Gigabit Ethernet PHY found in the IPQ5018
-> > > SoC. Its output pins provide an MDI interface to either an external
-> > > switch in a PHY to PHY link scenario or is directly attached to an RJ45
-> > > connector.
-> > > 
-> > > The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
-> > > 802.3az EEE.
-> > > 
-> > > For operation, the LDO controller found in the IPQ5018 SoC for which
-> > > there is provision in the mdio-4019 driver. In addition, the PHY needs
-> > > to take itself out of reset and enable the RX and TX clocks.
-> > > 
-> > > Two common archictures across IPQ5018 boards are:
-> > > 1. IPQ5018 PHY --> MDI --> RJ45 connector
-> > > 2. IPQ5018 PHY --> MDI --> External PHY
-> > > In a phy to phy architecture, DAC values need to be set to accommodate
-> > > for the short cable length. As such, add an optional boolean property so
-> > > the driver sets the correct register values for the DAC accordingly.
-> > > 
-> > > Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> > > ---
-> > >   .../devicetree/bindings/net/qca,ar803x.yaml        | 52 +++++++++++++++++++++-
-> > >   1 file changed, 51 insertions(+), 1 deletion(-)
-> > > 
-> > 
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/qca,ar803x.example.dtb: ethernet-phy@7 (ethernet-phy-id004d.d0c0): clocks: [[4294967295, 36], [4294967295, 37]] is too long
-> > 	from schema $id: http://devicetree.org/schemas/net/ethernet-phy.yaml#
-> > 
-> > doc reference errors (make refcheckdocs):
-> > 
-> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250528-ipq5018-ge-phy-v2-2-dd063674c71c@outlook.com
-> > 
-> > The base for the series is generally the latest rc1. A different dependency
-> > should be noted in *this* patch.
-> > 
-> > If you already ran 'make dt_binding_check' and didn't see the above
-> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> > date:
-> > 
-> > pip3 install dtschema --upgrade
-> > 
-> > Please check and re-submit after running the above command yourself. Note
-> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> > your schema. However, it must be unset to test all examples with your schema.
-> > 
-> 
-> 
-> Really weird, I've checked this numerous times:
-> 
-> (myenv) george@sl2-ubuntu:~/src/linux-next$ make dt_binding_check
-> DT_SCHEMA_FILES=qca,ar803x.yaml
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->   CHKDT   ./Documentation/devicetree/bindings
->   LINT    ./Documentation/devicetree/bindings
->   DTEX    Documentation/devicetree/bindings/net/qca,ar803x.example.dts
->   DTC [C] Documentation/devicetree/bindings/net/qca,ar803x.example.dtb
-> (myenv) george@sl2-ubuntu:~/src/linux-next$ pip3 install dtschema --upgrade
-> Requirement already satisfied: dtschema in
-> /home/george/myenv/lib/python3.12/site-packages (2025.2)
-> Requirement already satisfied: ruamel.yaml>0.15.69 in
-> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (0.18.10)
-> Requirement already satisfied: jsonschema<4.18,>=4.1.2 in
-> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (4.17.3)
-> Requirement already satisfied: rfc3987 in
-> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (1.3.8)
-> Requirement already satisfied: pylibfdt in
-> /home/george/myenv/lib/python3.12/site-packages (from dtschema) (1.7.2)
-> Requirement already satisfied: attrs>=17.4.0 in
-> /home/george/myenv/lib/python3.12/site-packages (from
-> jsonschema<4.18,>=4.1.2->dtschema) (25.3.0)
-> Requirement already satisfied: pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0
-> in /home/george/myenv/lib/python3.12/site-packages (from
-> jsonschema<4.18,>=4.1.2->dtschema) (0.20.0)
-> Requirement already satisfied: ruamel.yaml.clib>=0.2.7 in
-> /home/george/myenv/lib/python3.12/site-packages (from
-> ruamel.yaml>0.15.69->dtschema) (0.2.12)
-> (myenv) george@sl2-ubuntu:~/src/linux-next$ make dt_binding_check
-> DT_SCHEMA_FILES=qca,ar803x.yaml
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->   CHKDT   ./Documentation/devicetree/bindings
->   LINT    ./Documentation/devicetree/bindings
->   DTEX    Documentation/devicetree/bindings/net/qca,ar803x.example.dts
->   DTC [C] Documentation/devicetree/bindings/net/qca,ar803x.example.dtb
-> 
-> I only found the same errors when removing the DT_SCHEMA_FILES property.
+Here's a series that adds various kunit tests to the clk framework,
+documents the members of struct clk_core, and adds a fix that does a
+better job of preserving the original clock rate when a sibling clock
+changes it's rate, and the shared parent's rate.
 
-Correct.
+These tests are centered around inconsistencies and limitations in the
+clock framework that may lead to some clocks unknowingly changing rates
+during a rate change of their siblings.
 
-> Is that because ethernet-phy.yaml is a catch-all based on the pattern on the
-> compatible property (assuming my understanding is correct)? How would we get
-> around that without modifying ethernet-phy.yaml only for this particular PHY
-> (with a condition)? This PHY needs to enable two clocks and the restriction
-> is on 1.
+The intent of the clock framework is to keep the siblings clock rate
+stable during such an operation:
 
-It's kind of a mess since ethernet phys didn't have compatibles 
-frequently and then there was resistance to adding compatibles. You know 
-we don't need compatibles because phys are discoverable and all. Well, 
-except for everything we keep adding for them in DT like clocks...
+    clk_set_rate(clk, MY_NEW_RATE);
 
-We probably need to split out common phy properties to its own schema. 
-And then add a schema just for phys with no compatible string (so 
-'select' needs to match on $nodename with ethernet-phy as now, but also 
-have 'not: { required: [compatible] }'. And then a schema for the 
-'generic' phys with just ethernet-phy-ieee802.3-c22 or 
-ethernet-phy-ieee802.3-c45. Then we'll have to look at what to do with 
-ones with "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$" compatibles. 
-Probably, we need to add specific id's to the generic schema or in their 
-own schemas.
+However, it assumes that the sibling can generate that rate in the first
+place. In many situations, it can't, and it leads to numerous bugs and
+solutions over the years.
 
-Or we can just change clocks in ethernet-phys.yaml to:
+https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev/
+https://lore.kernel.org/linux-kernel/20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev/
+https://lore.kernel.org/all/20241114065759.3341908-1-victor.liu@nxp.com/
+https://lore.kernel.org/linux-clk/20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com/
 
-minItems: 1
-maxItems: 2
+We intend to fix these issues, but first we need to agree and document
+what these shortcomings are. These patches are meant to do that, even
+though some will be skipped as they are currently broken.
 
-And kick that can down the road...
+Special thanks to Maxime Ripard for the guidance and feedback on this
+project so far.
 
-Rob
+Changes in v2:
+- Combine my two v1 patch series referenced below into one.
+- Patch 1: Newly introduced: clk: add kernel docs for struct clk_core
+- Patch 2: Simplfy further and there is no need to call clk_recalc() for
+  parts of the tree that didn't request a rate change.
+- Patch 5:
+  - Enable all of the tests since this particular limitation is
+    addressed in the clk core with patch 2.
+  - Update the div_div_3 test to ensure the dividers on the clock
+    are automatically updated as expected.
+- Patch 7: Correct test description of
+  clk_rate_change_sibling_test_suite.
+- Links to v1:
+  clk: preserve original rate when a sibling clk changes it's rate
+  https://lore.kernel.org/lkml/20250520192846.9614-1-bmasney@redhat.com/
+
+  v1: clk: test: add tests for inconsistencies and limitations in the framework
+  https://lore.kernel.org/lkml/20250407131258.70638-1-bmasney@redhat.com/
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (10):
+      clk: add kernel docs for struct clk_core
+      clk: preserve original rate when a sibling clk changes it's rate
+      clk: test: introduce a few specific rate constants for mock testing
+      clk: test: introduce clk_dummy_div for a mock divider
+      clk: test: introduce test suite for sibling rate changes on a divider
+      clk: test: introduce clk_dummy_gate for a mock gate
+      clk: test: introduce test suite for sibling rate changes on a gate
+      clk: test: introduce helper to create a mock mux
+      clk: test: introduce test variation for sibling rate changes on a mux
+      clk: test: introduce test variation for sibling rate changes on a gate/mux
+
+ drivers/clk/clk.c      |  57 ++++-
+ drivers/clk/clk_test.c | 605 ++++++++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 573 insertions(+), 89 deletions(-)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250528-clk-wip-v2-813333ab1059
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
