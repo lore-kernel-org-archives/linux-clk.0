@@ -1,174 +1,144 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E81274FE5;
-	Wed, 28 May 2025 08:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84FE1EB193;
+	Wed, 28 May 2025 09:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422502; cv=none; b=AjdqUBt0/qr2GdXCOpCdDRGzDTlvFA9JQ9e8UV7cA0Sfa0bxuGteQqsbvswySdaVXaEnKQp0LnMpX2FhLP7TUUoulRHCDUWJDStQwNHVVY2VPn3Hek+oWVo6u9j++Ddrn4uQqBRn2eqcNBxbtmG1CfTHNs/+RAgkkjtwCrRFa38=
+	t=1748424305; cv=none; b=Zod9r5/GKfKtSV7ZWNtHxoRJBHRC/lUBXQC68KPzXneH+A1bWwzvrvAsuxmKfqsHUizMyglu/cgqz3mTkxEd7NRJJahpTjUghBVKKUtQor1Z4tGE2baZJtSPubG5dkg0zVdswvQIFQXVdX9fZktioQkRcGdE9lKhLe1lUymdfMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422502; c=relaxed/simple;
-	bh=UVux7hP9bMnrn8D/4/hQlg1HOvWZ0FYr+0n+VvHDd6g=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D70w4foxOKUbANuQeU3BpN2gh8ekDDpfbkioTEjN2pBNmUhjuIJ9+knK83V6n3CfjEfuGuAL6jMjg426uz5YLYdhATD1qc9x+hQ79zoj6SC7TUY6lYXSO4793hpGWWIJfVlPmdVi63lGv9v2wBTIcKXmVDCeyKXA4n4V5HnTDYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZwMkE3w; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1748424305; c=relaxed/simple;
+	bh=Kf3A/6Ulzfar2XtF0mo2HMHaS+2CAvVsHGsFV8dZwrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFSEtKHGGOVo7MR2H+lNp3ENbljuOTZRfre3CHNI0srtax6oNq/1diEi2ugsWvpDOTu9EeNvAMm5T62Ddf5nqUu64zvQurhiYja4zhfNrPfOOf+Q35b9lEtyWHxGvTThK0cxqz91E9v4a/6HyaPptf09/SVrVJFO0E5aCNEGy5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=O/VLU+oU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CriTHz4j; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZwMkE3w"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-442fda876a6so39920375e9.0;
-        Wed, 28 May 2025 01:55:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748422499; x=1749027299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
-        b=OZwMkE3w5p3YquP5bfzqj05sMAwlSZE8M6Ng46nz4dMYnFhGl2QieMKnSAYB/x8N4P
-         xN3kbMRbMiKMo8N66gxbLfWRlXgVcnn3BsJttC0FBBNyDIgx8o4YDbkrjJ7j7Mf6aYXn
-         XSrrY/1vLZc4HQhs4oLKiWCEX2T2IMq2ryiWxMEOoqjPJ845XvZ7ppyOqC1/qFjNG5Pp
-         tssh/QiRIiyXSuKmTjQUiRJKzhMJ+zATY/SKRcEYEGTQnVIc8wwQLdNWmwpKl1hkDDm6
-         MBXoO9hJ22lDhBgROwmRaAST2I5e79ZcDOHs4JbmbqhKGwHDRRc6pzHqEiCrUDTlDaeH
-         l85Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748422499; x=1749027299;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
-        b=JG3kDHDvarRFDkQKGdEb0MMtGzmxe5U8VfN/7kFbXB2zgo9FZCGMcp4O/6VQw15dv5
-         MeOZAomXorIF0vC99Pc1Xg3OZlquRQhExozAUBEdndDk0us0rQLJFNSaa+OqFEwZsN3u
-         1tFCOqSa5+JulYprgoxoGDZjXBUCL0lk5uxU8bU7hVS/0m7YjAwbltOQ52rWg9LVqCXz
-         uA2mdmUkIuK0VCj3UQZS3I5MKcs/oOsdQn4BiVdG8mLSczIAnU/fMXNvGSLTV+ZXjska
-         /I8hOyt/1a2kXW0eVk994haJD+T1N6ZOqCUFtNfrPu0vvAU6y+FzjFvvdvggtUXHP/MX
-         kg4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvD8yfp3M6xbBkmIyHPw7ieDz9rf6ttHf2POUjIphl6392WZCEh+svp55uL9q/RRrBt91uesLv4HKdN6nW@vger.kernel.org, AJvYcCW4nZ+PV1cpT4/DmcZVGyDdEgXvTPzE7478xhLRTPooX7Qmihbwm+tbGf0lMsoC9PJoutrh/9jIJhl0@vger.kernel.org, AJvYcCXIjQcI3I2bOoKTEnQqZJ40iyjXcRguR6nOj0EyvCaPBSq6biiexVkB3X6CHbhtqqK+LAZ1qo2RMDb3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMTIuy+tC++VQzkHgynsk4s6MHs0kKnXp1ZcnnH+9KCF4+lxGf
-	Sp6sdaGK+fU6g0WIBaaI8KMdA99PM1gKCiZQASNXyEwo45nFogTrB4XS
-X-Gm-Gg: ASbGncurlSckx7Elp+9oAxDMOoKPMcz7tCye37ICOe0iZJ39P3UObhnG6FkFgKIvUjX
-	R+D39VbZGEAyEtS0JqaoDkRrtC3XnTvbCu5+/5w1C1hz+JdFUyBHtY4E0+8r5/+KjrpEAXej176
-	hp9eDjQecezMsEWzKF/6l38V4VRW6jJTKSrZfw1cvLKrEroH8ccADRZdh/kCNQpbiVNyuinclul
-	GWVStNZy2WJtCM0ZWRq93tXVFrkG6qkuJoXOr6jPDJnjwGzYulhgi0shWViYbYNv7cbs/onAKRL
-	HhHNWv2B+1QzBdgfRw6Z2ra/NUVzJpR9ZRivKwJEQXtyVdITJ9AFDu6pk8iOd0LrETkDkIwVnD7
-	0eJjk/K8=
-X-Google-Smtp-Source: AGHT+IHzDXo4DKV7NuIB2FHat2ZLCgGieMqt3tp4PCcFaDmAJxHMEYrCP10nDJxLNZ8k0RrjjTbMcg==
-X-Received: by 2002:a05:600c:511d:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-44c91cc5591mr137161785e9.11.1748422498857;
-        Wed, 28 May 2025 01:54:58 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eacd6e8asm865113f8f.70.2025.05.28.01.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 01:54:58 -0700 (PDT)
-Message-ID: <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
-X-Google-Original-Message-ID: <aDbPYDACfIkaZMLj@Ansuel-XPS.>
-Date: Wed, 28 May 2025 10:54:56 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="O/VLU+oU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CriTHz4j"
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 10763254015F;
+	Wed, 28 May 2025 05:25:01 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Wed, 28 May 2025 05:25:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1748424300; x=1748510700; bh=zBGKEikn8s
+	OkH8ifRQ7NlBifMPHUZcjmHH/o8wnfxQo=; b=O/VLU+oUWxZk7sqparaKE5qfyu
+	YoOpgNPhu262RPk6CilrxbkzaYhBa5YQYi/FMyZEtj+xTMAvPdF7RVe1LlQCOFYy
+	ikdgMLcMJdfr2wf+MpcLCjF72rdZwI/7PMosx6ncPOENkAust6KkFeeBzMAv37cn
+	qf867JHUIJ0iv/fI+WNn9odm2nRyIWY8UHILRVO+1pQiY+pKcgBBmXve5LBk6pla
+	SAYpMPPRAikWwEwxOiByL2Myq9zQJsmVl9FX3PpzvIFYjJfp2E6SLBfPHRKo3tCX
+	jy9aLcEnLMNCj4C27pd7aHscBUwjkrT0ssdb1VxtGd/dyEKg+SuMffH9x91A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1748424300; x=1748510700; bh=zBGKEikn8sOkH8ifRQ7NlBifMPHUZcjmHH/
+	o8wnfxQo=; b=CriTHz4jm1M3j/TvCn02m1RyagJFon/APVekoU0dUi0SZbe0jcV
+	X8ECpsupQLZzpmewxZFhX1U7Vro+fHEULuQOILnpv93soyM+ATpczIusCMIlU3qq
+	Xj7dnGZIVYmKG81Hg6QwZL50wLz3IDJM1o2wSMI2GiLWVtZYyWGhtjIXFUlicwCC
+	F3R8CxxNA/YprKncCrnxbPhnpJmD8YyuDq80iXLf/huQH64ZCnPrktLODmIYhWsu
+	X16kgLD3sWNYq3MPHjoDncXVN+zKyTTWdYNZWgt+vWSAnHwIVbnN2cnHM6G0tiyo
+	n6n0x1HIR915xUBT0LX16QmM4YFsl5ioFvA==
+X-ME-Sender: <xms:a9Y2aFGKaxL4GsWdzp93Xp8LObzHvlxEtJF5KeLab-7MTIxZ84tEXw>
+    <xme:a9Y2aKXGsH7FcavMSBnswCaWfdBlxIIyTiCNcRN2yyNOeGumNPEEe3VHvy04ICwoU
+    QM7cZ-MafRRKnBuSA>
+X-ME-Received: <xmr:a9Y2aHIqOfEEUrdAxmIaDUhb0aoVYOG7RO5vnDgmpb_qP20bVpQKPWN2WsrNdI3hza6qUlOjaFe9eZgJeYieDPfqAEM7iJJmyo32jMK3QypN>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvvdeltdculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffo
+    ggfgsedtkeertdertddtnecuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnh
+    esthgvshhtthhorghsthdrtghomheqnecuggftrfgrthhtvghrnhepuddvueduueegtdeu
+    ffetveevgeehhedvhfefudduveekgffgfedtheegtefhhfffnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshht
+    rdgtohhmpdhnsggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhssegt
+    shhivgdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlih
+    hnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhu
+    shgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepuggrnhhivghlsehffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdrshhk
+    rhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhohhllh
+    grnhgurdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:a9Y2aLHqdFO_JkNcTpm99HFf3LVwJidnWLb2wtLlsY2bOmI8zcxV6g>
+    <xmx:a9Y2aLW3Eqkg6eukZiKHTQK5GIrdoA0z_0e4dULxg7LRaluSRM2XSw>
+    <xmx:a9Y2aGNyx5_7cYUqgYvsVMZ8KEA5P8wS99fXRE85Eqml6hrO6i0mVw>
+    <xmx:a9Y2aK03kvhg40LpptJsDHZsjBJ9_akNvbI2anDOnwwdvAWpa5uPeg>
+    <xmx:bNY2aBciyYTcOErPVoeyrRPHSm1oSMqb7sIc63L-Qm75xJ-bCPYC9CWH>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 28 May 2025 05:24:53 -0400 (EDT)
+From: Ryan Walklin <ryan@testtoast.com>
+To: Maxime Ripard <mripard@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-References: <20250528004924.19970-1-ansuelsmth@gmail.com>
- <20250528004924.19970-5-ansuelsmth@gmail.com>
- <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Chris Morgan <macroalpha82@gmail.com>,
+	Hironori KIKUCHI <kikuchan98@gmail.com>,
+	Philippe Simons <simons.philippe@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Ryan Walklin <ryan@testtoast.com>
+Subject: [PATCH v12 0/8] drm: sun4i: add Display Engine 3.3 (DE33) support
+Date: Wed, 28 May 2025 21:22:05 +1200
+Message-ID: <20250528092431.28825-1-ryan@testtoast.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
-> On 28/05/2025 02:49, Christian Marangi wrote:
-> >    - if:
-> >        properties:
-> >          compatible:
-> > @@ -75,6 +78,17 @@ allOf:
-> >          reg:
-> >            maxItems: 1
-> >  
-> > +      required:
-> > +        - reg
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: airoha,an7583-clock
-> > +    then:
-> > +      properties:
-> > +        reg: false
-> 
-> 
-> No resources here, so this should be part of parent node.
-> 
+Hi All,
 
-Ok hope you can help here. This is another case of "MFD" thing.
+V12 of this patch adding Allwinner DE33 Display Engine support. Just a single change from V11 to add missing documentation for a new sun8i_mixer_cfg struct member, and add Reviewed-by tags recieved on the previous version.
 
-I was with the idea that it was O.K. to use this with very different
-devices. (current scenario Clock controller and MDIO controller)
+Regards,
 
-The node structure I had in mind was
+Ryan
 
-		system-controller@1fa20000 {
-			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
-			reg = <0x0 0x1fb00000 0x0 0x970>;
+Jernej Skrabec (7):
+  drm: sun4i: de2/de3: add mixer version enum
+  drm: sun4i: de2/de3: refactor mixer initialisation
+  drm: sun4i: de2/de3: add generic blender register reference function
+  drm: sun4i: de2/de3: use generic register reference function for layer
+    configuration
+  drm: sun4i: de33: mixer: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: vi_scaler: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: mixer: add mixer configuration for the H616
 
-			scuclk: scuclk {
-				compatible = "airoha,an7583-clock";
-				#clock-cells = <1>;
-				#reset-cells = <1>;
-			};
+Ryan Walklin (1):
+  dt-bindings: allwinner: add H616 DE33 mixer binding
 
-			mdio {
-				compatible = "airoha,an7583-mdio";
-				#address-cells = <1>;
-				#size-cells = <0>;
-
-				mdio_0: bus@0 {
-					reg = <0>;
-					resets = <&scuclk AN7583_MDIO0>;
-				};
-
-				mdio_1: bus@1 {
-					reg = <1>;
-					resets = <&scuclk AN7583_MDIO1>;
-				};
-			};
-		};
-
-But you want
-
-system-controller@1fa20000 {
-        compatible = "airoha,an7583-scu", "syscon";
-        reg = <0x0 0x1fb00000 0x0 0x970>;
-
-        #clock-cells = <1>;
-        #reset-cells = <1>;
-
-        mdio_0: bus@0 {
-                reg = <0>;
-                resets = <&scuclk AN7583_MDIO0>;
-        };
-
-        mdio_1: bus@1 {
-                reg = <1>;
-                resets = <&scuclk AN7583_MDIO1>;
-        };
-};
-
-Again sorry if this question keeps coming around and I can totally
-understand if you are getting annoyed by this. The reason I always ask
-this is because it's a total PAIN to implement this with the driver
-structure due to the old "simple-mfd" model.
-
-(as again putting everything in a single node conflicts with the OF
-principle of autoprobing stuff with compatible property)
+ .../allwinner,sun8i-a83t-de2-mixer.yaml       |  34 +++-
+ drivers/gpu/drm/sun4i/sun8i_csc.c             |   4 +-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           | 168 ++++++++++++++----
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |  33 +++-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  27 ++-
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  14 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |   6 +-
+ 8 files changed, 225 insertions(+), 63 deletions(-)
 
 -- 
-	Ansuel
+2.49.0
+
