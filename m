@@ -1,69 +1,76 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF39A221561;
-	Wed, 28 May 2025 23:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E432F143C61
+	for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 23:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748474288; cv=none; b=C5jJ8mcPy9UBFNHViupgVEf1Tc9wV9gwLOBucK/nm3gOAWdf6s/BdhmtTHoq2/pg4KElKyanmYtmo5lk66+7fGDiSwcRK9pVwtxVahGHOdz6GhtOKm2pgSsVOjXc7Ng5BOx7TuT5IwWavCzSiETYL1hLTWkPBwNfj7S9JVDJu8M=
+	t=1748474586; cv=none; b=TiPL9kax8v1suQxylZbc73GEbFzeKdLe5KhoOqGN5jNkHhEgVmQX5KlXUmEetLfTylqf9xHaROn47bf2Z77S1bVr5Du4ViQ9umm7tfguI8jzFtCqsMZTMCuzNHvJj4lWGa1O2R4m3LMG89SKzyOdHYR2Uh7CGKiyixUbjXJJY6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748474288; c=relaxed/simple;
-	bh=OlkQ5LDNFcAG4+B3fU48CyA1LXgDRJ2eUlh71NIIl0g=;
+	s=arc-20240116; t=1748474586; c=relaxed/simple;
+	bh=p3cS7ziZxA7eWl6AkFDcQeO1xTNZ1j8LYv7CxtgwRMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njslww3afXodhKL98Z4NmLimVbIm0USopLU3jbOtSzNNN+DQZWVrNKScwu/prld3gDcDAdbeSejmhB3u3E47+KK5Itstd9sEYjN1zR744P/ZZBE6rL2aQ03EawDduPTCULBfyYslRbL1CGbdrRrSZVi052oeSuVllgJtv3kh2Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O0M2qj4w; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=sygQ4n00s2b1IAHuca01FPhGI9lPw/Fgdokv+YnPm+3ahXu1HzME5hwxuloZ32YCzeEyLFSUmMbs97K8ySCJK/gL/9Wwh98+NGv9rCAvEZuk+jF3i6TrNTAlPO/9VGCHuP+K9hT6RCsih3ArqW/Vg4uQBUWy70UXR/g5AxDreec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kt+j9N6H; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O0M2qj4w"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748474287; x=1780010287;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OlkQ5LDNFcAG4+B3fU48CyA1LXgDRJ2eUlh71NIIl0g=;
-  b=O0M2qj4wvoys0A4I/YcBtIYJdrj2eZonR1Zcq4S5Cw0NwNkk8WLhcZjA
-   G20iNxU/tzR7I4h5MdFPhuk399k+hXKOLyiz/22ck0LzBH1K0wYOX/e9c
-   aWuJ+4lkbGDXXz+SUvQ05mB0tWZ2ni+W+OnsMOkgUyb+hb42TH29llMbU
-   Y/91kK0zHeioKqbdW01u1fEJR7BzX7j5Gg9e4TNrf+UjkDsqkntE5VEut
-   aWxtPtGGi56xdngWErDOwB3nd0W66Y/n0UrJANQw2Q99sPneGnxKrDG8K
-   zFE9CfI/UhZWku784YlxaMc8Knq3bNkOHcAzHATpsmbv4Z/PwvBbHf5go
-   w==;
-X-CSE-ConnectionGUID: QCceLrO7SuOUAo56GKGOzg==
-X-CSE-MsgGUID: izNXCJMtTkG9clhoDtB70Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="68070664"
-X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
-   d="scan'208";a="68070664"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 16:18:05 -0700
-X-CSE-ConnectionGUID: Ynjqfh96TUCxktsd33xPwA==
-X-CSE-MsgGUID: M+fn4Cj8S6uE04O0uNAhPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
-   d="scan'208";a="148524148"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 28 May 2025 16:18:01 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uKQ23-000W9G-1F;
-	Wed, 28 May 2025 23:17:59 +0000
-Date: Thu, 29 May 2025 07:17:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] clk: samsung: exynos990: Add CMU_HSI1 block
-Message-ID: <202505290752.ccgBnlpc-lkp@intel.com>
-References: <20250528105252.157533-3-umer.uddin@mentallysanemainliners.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kt+j9N6H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748474583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3cS7ziZxA7eWl6AkFDcQeO1xTNZ1j8LYv7CxtgwRMQ=;
+	b=Kt+j9N6HQt17GTPGaOHkbojNdJCh70XdH95zE/QEDRtFHl6Nn6fYHj6Rp5erNHe8Yu5hC4
+	2Am6UjutlJ/p6ckvC1U1dXpicBKUmLN4JM7P7CXkXhV/uYbW+zUcVwyKBDkZCqlZsJYyU3
+	EQW4ihWuE34STqOb/3GU4OcVKwKfsAs=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-323-_JITJnpLMVWVyK4czzt5Vg-1; Wed, 28 May 2025 19:23:02 -0400
+X-MC-Unique: _JITJnpLMVWVyK4czzt5Vg-1
+X-Mimecast-MFC-AGG-ID: _JITJnpLMVWVyK4czzt5Vg_1748474582
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-476900d10caso5529641cf.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 May 2025 16:23:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748474582; x=1749079382;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p3cS7ziZxA7eWl6AkFDcQeO1xTNZ1j8LYv7CxtgwRMQ=;
+        b=hrbJjpuNMOCqC4oqcTty7qqxFoJEhEIhCNEB9kDSb/fBApcsiRD15pNqlmQ63sohr3
+         lXBlxUOCE0h4nTZmKzk3m3fJQkFUKcZVZ6VDnP2CYE8ao9DQBN7KxPV9w8fGlABTA3Hi
+         M2X9fDsMMEnHmbl/tpMKMCyPrPIyurn7HE0PvuyTu3edpK7r7LPaqwEhGbLqKs1klQP2
+         FI/64Vh9Uj6J6QO4ywtsNb1M9Q9U7bKdhc1d0XTYAq2BlwAMizsEeK7tdPJcIxHt9ibj
+         saiEq0/23kWip2JRx/b9R/tNlN9qB9lgYsRsEEcHvrYAOtwzzyxstreT92yDgiMoD/1N
+         VN5w==
+X-Gm-Message-State: AOJu0YxbvFlJuPSkT89QnzuEskNTm23C9oxRQpvE7VtG/kgf3/hNkvE/
+	TUmFQ2NWjvJv5d24Max3s1Xb78x/JeCmt1MFthTaGSpbn/yjGABfr4uis4yoY8fBu54zFUTPLdp
+	1r5iMrqNmCVGmQ8nWgtMK1FKNyryqjfBMip6Hv7DfaLXuwDRIuX3Us2H6bZDpww==
+X-Gm-Gg: ASbGncvLb+rfwfUo61YsUM6UmlvLYXhm3bad13bj+rSbfVp+H69Y5ZdxU+Ks7sK/Jv2
+	yOJTL/RmMLXEFiYP5USmma91c0rHBxYAi2oHH9QGEh+rpGxrJCr4jyoaf08r/kWlFV99LCFQ/ka
+	QQ4ZjOfcYJ+IFuCkyZWT6IGKvNV+8TWmJcxxOeSowa/3i1RdyNCpfUiO9YieOQMuhVy88YIoei3
+	YNR7UhpgtR4X+cNvbPF6+pmUjfqX5H7ckU5UxLpHErLKmmRD044w9Lj+hRtJcT/mAvBfI3+CpGG
+	VCnmmRVDij3IZYp1I0NY+HgYMPpFXVoXLVQ=
+X-Received: by 2002:a05:622a:2591:b0:4a4:2c46:26a2 with SMTP id d75a77b69052e-4a42c46272dmr39923341cf.10.1748474581668;
+        Wed, 28 May 2025 16:23:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxmHZfkjn5NZQNvu2eOxIy27NyirRpd6v7QkpaRHIVY/chEiuLRUJUD1UiqdL0oTpISgUIjQ==
+X-Received: by 2002:a05:622a:2591:b0:4a4:2c46:26a2 with SMTP id d75a77b69052e-4a42c46272dmr39923091cf.10.1748474581307;
+        Wed, 28 May 2025 16:23:01 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a435a37204sm886781cf.60.2025.05.28.16.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 16:23:00 -0700 (PDT)
+Date: Wed, 28 May 2025 19:22:59 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: sboyd@kernel.org, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mripard@redhat.com
+Subject: Re: [PATCH 0/8] clk: test: add tests for inconsistencies and
+ limitations in the framework
+Message-ID: <aDea0w0hWl6yBVGa@x1>
+References: <20250407131258.70638-1-bmasney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,98 +79,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528105252.157533-3-umer.uddin@mentallysanemainliners.org>
+In-Reply-To: <20250407131258.70638-1-bmasney@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Umer,
+On Mon, Apr 07, 2025 at 09:12:50AM -0400, Brian Masney wrote:
+> Here's a series that introduces some clock provider kunit tests. These
+> tests are centered around inconsistencies and limitations in the clock
+> framework that may lead to some clocks unknowingly changing rates during
+> a rate change of their siblings.
 
-kernel test robot noticed the following build warnings:
+I posted a v2 of this series with a new title for the cover letter. This
+combines another series related to fixing an issue in the clk core.
 
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on krzk-dt/for-next clk/clk-next linus/master v6.15 next-20250528]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+https://lore.kernel.org/lkml/20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com/T/#t
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Umer-Uddin/dt-bindings-clock-exynos990-Add-CMU_HSI1-bindings/20250528-185847
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250528105252.157533-3-umer.uddin%40mentallysanemainliners.org
-patch subject: [PATCH v1 2/2] clk: samsung: exynos990: Add CMU_HSI1 block
-config: arm-randconfig-002-20250529 (https://download.01.org/0day-ci/archive/20250529/202505290752.ccgBnlpc-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250529/202505290752.ccgBnlpc-lkp@intel.com/reproduce)
+Brian
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505290752.ccgBnlpc-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/clk/samsung/clk-exynos990.c:15:
->> drivers/clk/samsung/clk-exynos990.c:1666:7: warning: 'mout_hsi1_mmc_card_p' defined but not used [-Wunused-const-variable=]
-    PNAME(mout_hsi1_mmc_card_p) =  { "oscclk",
-          ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:237:44: note: in definition of macro 'PNAME'
-    #define PNAME(x) static const char * const x[] __initconst
-                                               ^
->> drivers/clk/samsung/clk-exynos990.c:1658:7: warning: 'mout_hsi1_bus_p' defined but not used [-Wunused-const-variable=]
-    PNAME(mout_hsi1_bus_p) =  { "dout_cmu_shared0_div3",
-          ^~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:237:44: note: in definition of macro 'PNAME'
-    #define PNAME(x) static const char * const x[] __initconst
-                                               ^
->> drivers/clk/samsung/clk-exynos990.c:1657:7: warning: 'mout_hsi1_pcie_p' defined but not used [-Wunused-const-variable=]
-    PNAME(mout_hsi1_pcie_p) =  { "oscclk", "fout_shared2_pll" };
-          ^~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:237:44: note: in definition of macro 'PNAME'
-    #define PNAME(x) static const char * const x[] __initconst
-                                               ^
->> drivers/clk/samsung/clk-exynos990.c:1653:7: warning: 'mout_hsi1_ufs_card_p' defined but not used [-Wunused-const-variable=]
-    PNAME(mout_hsi1_ufs_card_p) =  { "oscclk",
-          ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:237:44: note: in definition of macro 'PNAME'
-    #define PNAME(x) static const char * const x[] __initconst
-                                               ^
->> drivers/clk/samsung/clk-exynos990.c:1649:7: warning: 'mout_hsi1_ufs_embd_p' defined but not used [-Wunused-const-variable=]
-    PNAME(mout_hsi1_ufs_embd_p) =  { "oscclk",
-          ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:237:44: note: in definition of macro 'PNAME'
-    #define PNAME(x) static const char * const x[] __initconst
-                                               ^
-
-
-vim +/mout_hsi1_mmc_card_p +1666 drivers/clk/samsung/clk-exynos990.c
-
-  1647	
-  1648	/* Parent clock list for CMU_HSI1 muxes */
-> 1649	PNAME(mout_hsi1_ufs_embd_p) =		{ "oscclk",
-  1650						  "dout_cmu_shared0_div4",
-  1651						  "dout_cmu_shared2_div2",
-  1652						  "oscclk" };
-> 1653	PNAME(mout_hsi1_ufs_card_p) =		{ "oscclk",
-  1654						  "dout_cmu_shared0_div4",
-  1655						  "dout_cmu_shared2_div2",
-  1656						  "oscclk" };
-> 1657	PNAME(mout_hsi1_pcie_p) =		{ "oscclk", "fout_shared2_pll" };
-> 1658	PNAME(mout_hsi1_bus_p) =		{ "dout_cmu_shared0_div3",
-  1659						  "dout_cmu_shared0_div4",
-  1660						  "dout_cmu_shared1_div4",
-  1661						  "dout_cmu_shared4_div3",
-  1662						  "dout_cmu_shared2_div2",
-  1663						  "fout_mmc_pll",
-  1664						  "oscclk",
-  1665						  "oscclk" };
-> 1666	PNAME(mout_hsi1_mmc_card_p) =		{ "oscclk",
-  1667						  "fout_shared2_pll",
-  1668						  "fout_mmc_pll",
-  1669						  "dout_cmu_shared0_div4" };
-  1670	PNAME(mout_hsi1_bus_user_p) =		{ "oscclk", "dout_cmu_hsi1_bus" };
-  1671	PNAME(mout_hsi1_mmc_card_user_p) =	{ "oscclk", "dout_cmu_hsi1_mmc_card" };
-  1672	PNAME(mout_hsi1_pcie_user_p) =		{ "oscclk", "dout_cmu_hsi1_pcie" };
-  1673	PNAME(mout_hsi1_ufs_card_user_p) =	{ "oscclk", "dout_cmu_hsi1_ufs_card" };
-  1674	PNAME(mout_hsi1_ufs_embd_user_p) =	{ "oscclk", "dout_cmu_hsi1_ufs_embd" };
-  1675	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
