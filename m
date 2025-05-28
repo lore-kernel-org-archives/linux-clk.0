@@ -1,154 +1,179 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBFC288531;
-	Wed, 28 May 2025 14:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D58B19B3CB;
+	Wed, 28 May 2025 14:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748441368; cv=none; b=A8acNFUlGtwJrcfaPa7RbkUDVQes8ahCQ3phN6P9eaH7ZXWUFGLP8APMm16b2GGL/B4ompFbd4OUWa8iALkwPKG4z1Fer/Zx9RJMFO+KE21cfuDp+sfnWLGuLlSJO6+wJtYuSXq3dXV0BBuW7+gorcGKXWT0U60b/Qw5CsZF21I=
+	t=1748441613; cv=none; b=JX17+Rrqlg2brq4eqfPXk64dnYxn3IuhHy0ebjP4uHBPbEfSVbo0sKTOaY9r+tkJt4DYFOVZlf4ITMVtND9ioAyi6RM+VBLMk2GltAxczEsr11+OA5ySXniT0nx00PGjQ1wGcacFUc7yklLZ/1f2rQEsbeYRztNw7QWOsGpDGwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748441368; c=relaxed/simple;
-	bh=7yjB8O1nptaMCAdyW34dheYmTFFgAPJt00GF5IcxxAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=np9CNvv+PjpNGyq6ZNChYnQqJS9xe+mWdxcq7sBQie+uyJqqWi8olo37n9zyjIHEJB/xVVCdDQZmnblJ7x1mIkVdKcnhuJAGZJnc1O8DmfG5qiuSm4ynMWnTz67ckOBOQtf18VV1WHW8gWTXCDpCmfEhN9zpHU6upI340zyfR1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTbwWYdC; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1748441613; c=relaxed/simple;
+	bh=dpXIbCAlYRmIowUQvMgyFGOg+FO7ISbS1+UG1ZIuELM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eh5UOxZqe27YJCyPegZNUsTwHatFrfvrqtooR0b1vJgKVyJf43Gk5kL9/e3d1SoMErsc4UIumnvssfIAEO0VIj2K2hUAeEYsvqTGad8YeXyuNM93FB1lmu3l+v3HgP+jL+WrIaVZJykRL8tYdnWF9tQLHKWqpd5I8rsxCe1r4e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aj3lQrZm; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTbwWYdC"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32a6b34acd9so19843291fa.1;
-        Wed, 28 May 2025 07:09:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aj3lQrZm"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe574976so36299995e9.1;
+        Wed, 28 May 2025 07:13:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748441365; x=1749046165; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1748441610; x=1749046410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YrwViwkA5g2e7HXh/5c2XXJyUI4AHTmxngFmEUZQuds=;
-        b=LTbwWYdCFvgfIUqXRH0LVFyWp7aBTfTExUTE5fF2K+7EPT4GMKigTqqUdfm1yzuot/
-         UcMjMLZUkmQpn4JknUKFwKBlVHZVQH29l/Wz3S86nN148Zd+gQtmCFBuPumdnQCbEDjZ
-         1D6w/XoGRTlAL2LPTHpnRi2C9+Uw5ppz8v6kQ2PY2DJ7XV4mjypi6mZGuJydhM4uAJl7
-         00L9Wb6zeJ1wuwCNmLMxGE87rd2wBkP5Vc5Z1O5GDegtDpm2R0NeZeTy995p/F3vp2Ym
-         Gu9a4MSInLz+tNcFNT0cFpAioix0vbKj+SycqN13q5ftiKjo7W/UHcDtp62pXbXMR+Nu
-         l6VQ==
+        bh=u/NvBcF4s3yGqfgtLGu/F6IheBb4FWCw8Mlh0+qa7IM=;
+        b=aj3lQrZmOCGZLdTm/WMkY5TkY8J5IBvf2ww++U0GuXzFo+Yy5RHQmk1Bu55dSRRMSc
+         cNhLOgofEkW5KqDwlRVZ0lP/jjqaHYxUs6Q/UtguxWHpdIYB0w2Vva3vd4S05AtUuY3M
+         oy7oSOqJkKyD43SYTTYFHyJBtKM4HfZIKLqLxKx6LOrTBrLRRmDUsMMfKpx3g5+spxAb
+         KhtXTapjS8sD+OuZPwEwcaG73Ew2TvO0WP46COqBug88jqdONMC8ct1iI4Kk1zNRceMc
+         WB2IgImBKFCuOpB7Im++v6Itf4Q9ASTRxCNdHdYBgBX96V5ZZGBR5hVpKROxFxPMpWSR
+         ECjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748441365; x=1749046165;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748441610; x=1749046410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YrwViwkA5g2e7HXh/5c2XXJyUI4AHTmxngFmEUZQuds=;
-        b=BU+cTbJF7XCT7xSmobVsMA4rQQX2G9dODHZeUZuFLrVsetVNGCPl1UNbFPmjc8Fs34
-         amUbZsd7AGF5ByVwTkFgbOmCYA2NFYgGovLf6M/KqvGtx2r09M1ku15tQyzbnZiPs/cT
-         5QXpn7muDDaz2Vblzgbf7gduCkIXQMWfrS2+PI5aJv4h9IzDno2spAVTgc4nvJiKcvZn
-         RMrn7rmmzB+3eD4tRsE4zcZFK7ztHwiOTdouNgN3NElzJG1tyIYqiBv1tE7BecmooGDP
-         IG1tasgqaU/o6oOK2Ada1Zv82oVwHIMsbNEpAkWBatz8ynda1A3P9j0yAXJvMOxw5r4j
-         /tvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzTL8fkRhwXPTOOMJU0j2ssGwCbhS0sGIIPrOQhh+qDrOLJp3FvmIv5nKfV+fUg7lsr5tqtAhII02gkcYM@vger.kernel.org, AJvYcCWHdlJqWCsqO5/y40InWjkVJsoXHD3PrAzRG0fhImOpytPZ20mdvnnR3t8OuA3cJG6qM1+P26S0VS0g@vger.kernel.org, AJvYcCWSsfovvbdiAc0M/QRREkhJGtR2V3xJhbAHWRLG9zR3GqTv3Ajo/OB5p46UteYE5NfoGWbr0qnoYWOA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeBeFeDmE0d7/IVtw/jnjqplhPEwfiD96bqLhfMDwjeK3E6nmq
-	4Kc/BDZuvXpvn5hVw+JSnFfiwMzLoCTNf0QZMGdEBSJ9mVvlF4dTuUom
-X-Gm-Gg: ASbGncuw0/zCfX2/V5Ts/ETQH4YL3rz382a1nlaujH5wMe+AnmBuYr6KIM77TybVS38
-	vX2mmADKNc5XaXWFqBe/ecjo4QH2721l/VVHEdHALXqj3oNmC0jKG43gG1tFWxF0ISQjWPAevWA
-	nK5jBSvL9dfs5ZPwXDnL1wUO/MO1NATpVQTaI+6kqn4TSZwocAgMJbGjRkLuvdskjDV/Q4D72+u
-	46LdCBD5tGdJilVy7fCfUnNpDqXSWE28RXpLQnWHTR9ml8YqVvGYqUJcBR4SxUlzKrYLWKrOHFE
-	EBiKzMqGlJyOD4quI4iPCcYagFdQ8VwV8q7PlTPssZ7aHNeFZkx12UuHIfahhPMOCCID6ic3eC1
-	x/4njbY58vZqJ674cpqIsUb0=
-X-Google-Smtp-Source: AGHT+IE+D40YZKOj0M6nRWuqWZuGsVn3rPHjUaIwL3IGMIhNtG8XnOqVIcyPMEvcMHIpB8Nj/U2uvQ==
-X-Received: by 2002:a05:651c:b10:b0:300:26bc:4311 with SMTP id 38308e7fff4ca-3295b9e1d79mr44721701fa.18.1748441364204;
-        Wed, 28 May 2025 07:09:24 -0700 (PDT)
-Received: from gmail.com (213-67-3-247-no600.tbcn.telia.com. [213.67.3.247])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32a79e9a6cdsm2654091fa.17.2025.05.28.07.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 07:09:23 -0700 (PDT)
-From: "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jank@cadence.com
-Cc: edgar.iglesias@amd.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: fixed-mmio: Add optional poll for clk readiness
-Date: Wed, 28 May 2025 16:09:17 +0200
-Message-ID: <20250528140917.876453-3-edgar.iglesias@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250528140917.876453-1-edgar.iglesias@gmail.com>
-References: <20250528140917.876453-1-edgar.iglesias@gmail.com>
+        bh=u/NvBcF4s3yGqfgtLGu/F6IheBb4FWCw8Mlh0+qa7IM=;
+        b=gEzt297PDL/27IqXsRaA6sz8KoktLxt0Kkwk8ny9g3qdGfGsE9iX7hmWhxaXJssJcC
+         2P7QAjb751pwpQ0PKX4m7uYq3bI4sDc4wYxUw9nKXHdvP4cw495ftDhdaYlmV09R6nND
+         zT4AL0wWmIOG/N/uPxXfZF78UB+IB1ylr4l/chSCskJDfba0iObwBcJ9XxZLgvgbo4HD
+         ndmzo0Uq8lbbH68bXHzxdXLB1yGsBtanuzPfoQI9r3hPBHqwats5wGIzF6RKhdC03rnG
+         180Q7n8WUjy9xIg3o2dskWxqZokkxovnOHapS0oD7cGWSkVXAZ+8KuQTabSHvgOaAAph
+         HEyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4JThMBpKxFCY4l95uyXad1g0a9t3M68n1LrH83/Ve15FxLX+r+pQ+JgbinDRK9fhPcTaF2m6YRbJb@vger.kernel.org, AJvYcCWaf4Y3qMxt3+KJZ2pGMDLyWKpezByiVoQVb0xUEI+pu9TRPSpMPiIwRU9qmnoH2TEQ8C0/gWF6zOGA+QO1@vger.kernel.org, AJvYcCX/egNEtAVE8lIsvmWEK79WV5q4QQQcl74t+itvqVANEHjuYShvw+O4fr8jZB/qwXsk1uID7Ke5Hi17@vger.kernel.org, AJvYcCXw3LjwQHxzD+fHj0nMHzFUlzPdaWQSWNQWQWpr3DhDVmiFq8NkCGJOWdRIIUgFQIlhqHuBWYM9QPtGlNhyPXG5IRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVeRkyYpPfptMKT4uas9rcQNq5tC7/gqoskh0P1sX4exiaRA6f
+	EtVr2WuTX1ibiCqTccG2TfwYNjLVTEo2R9Y2A19j0PXuL2JNe28UcloJhdrmmaSXUtnvSiC9KAo
+	eRQ6kJVNe2h9MWZL77vs6wFqbS9uFxGY=
+X-Gm-Gg: ASbGncvwn8k0Qv+K4gDYbghXiRzJ0WQiqDonp05mHk9c5M8uiL30vuoMh0MCTEuZ5xW
+	LU+9NQO0+W/ItBdAEhwXrrCrsGyN8eBMPAYWa7ft8EOLEA9YSTVtQE/QsH6s/knRQacqObBW7Jd
+	aXy8taws1OisP6f8Vb0MgIcifpPDZ3jYIVtA/HUOh+A2E56bh15tmOBz8gwdy/ljvd+w==
+X-Google-Smtp-Source: AGHT+IHkpT2ySjMUdtYwChJ0/5/1rzDmtMoM740OXZxSdgP34XADiDvdJ0+rhe/twNar59adXV7Gqw4wW8anaLlVuPA=
+X-Received: by 2002:a05:600c:3b17:b0:43c:f1b8:16ad with SMTP id
+ 5b1f17b1804b1-450787c9705mr26585325e9.30.1748441609568; Wed, 28 May 2025
+ 07:13:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250512184302.241417-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdU=iuVFo=VJjV7UM-fLTeZk9TwyOJwojOVOSJiniRneHA@mail.gmail.com>
+ <CA+V-a8sOGEEajx9TQsVBb+NeFRUx2eSo81ZdRQMsLzd0Eiox2w@mail.gmail.com> <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
+In-Reply-To: <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 28 May 2025 15:13:02 +0100
+X-Gm-Features: AX0GCFv1m8Xej_HgH71EgZ4Kvyv9BeSbuvPePanFkBHFJSxJNoRIerOZEfcK3ek
+Message-ID: <CA+V-a8sUyZHGPwUzfUan8tmsF19mB2EPN599Tzu2kaoYxSMaHw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Edgar E. Iglesias" <edgar.iglesias@amd.com>
+Hi Geert,
 
-Add optional poll for clk readiness prior to reading the fixed rate.
+On Wed, May 28, 2025 at 8:09=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 27 May 2025 at 23:51, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > On Fri, May 23, 2025 at 3:45=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> =
+wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add support for PLLDSI and PLLDSI divider clocks.
+> > > >
+> > > > Introduce the `renesas-rzv2h-dsi.h` header to centralize and share
+> > > > PLLDSI-related data structures, limits, and algorithms between the =
+RZ/V2H
+> > > > CPG and DSI drivers.
+> > > >
+> > > > The DSI PLL is functionally similar to the CPG's PLLDSI, but has sl=
+ightly
+> > > > different parameter limits and omits the programmable divider prese=
+nt in
+> > > > CPG. To ensure precise frequency calculations-especially for milliH=
+z-level
+> > > > accuracy needed by the DSI driver-the shared algorithm allows both =
+drivers
+> > > > to compute PLL parameters consistently using the same logic and inp=
+ut
+> > > > clock.
+> > > >
+> > > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+>
+> > > > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> > > > +                                              struct clk_rate_requ=
+est *req)
+> > > > +{
+> > > > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(=
+hw);
+> > > > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > > > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->pll=
+dsi_div_parameters;
+> > > > +       u64 rate_millihz;
+> > > > +
+> > > > +       /*
+> > > > +        * Adjust the requested clock rate (`req->rate`) to ensure =
+it falls within
+> > > > +        * the supported range of 5.44 MHz to 187.5 MHz.
+> > > > +        */
+> > > > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
+> > > > +
+> > > > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
+> > > > +       if (rate_millihz =3D=3D dsi_dividers->error_millihz + dsi_d=
+ividers->freq_millihz)
+> > > > +               goto exit_determine_rate;
+> > > > +
+> > > > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
+> > > > +                                                dsi_dividers, rate=
+_millihz)) {
+> > > > +               dev_err(priv->dev,
+> > > > +                       "failed to determine rate for req->rate: %l=
+u\n",
+> > > > +                       req->rate);
+> > > > +               return -EINVAL;
+> > > > +       }
+> > > > +
+> > > > +exit_determine_rate:
+> > > > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
+> > >
+> > > Shouldn't this also update req->rate with the actual rate?
+> > >
+> > >     req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_dividers->freq_millihz, M=
+ILLI);
+> > >
+> > Agreed, I will update it.
+>
+> I think not updating req->rate may cause clk_get_rate() to return
+> an incorrect value (can error_millihz > 1000?).  Any chance this fix
+> can simplify the clock handling in the DSI driver?
+>
+Yes, error_millihz can be greater than 1000, as result the DSI driver
+does check this (>=3D 500) and proceeds to try the next one.
 
-Signed-off-by: Edgar E. Iglesias <edgar.iglesias@amd.com>
----
- drivers/clk/clk-fixed-mmio.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
-index 3bfcf4cd98a2..1b764c446ce5 100644
---- a/drivers/clk/clk-fixed-mmio.c
-+++ b/drivers/clk/clk-fixed-mmio.c
-@@ -11,10 +11,36 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- 
-+static int fixed_mmio_clk_wait_ready(struct device_node *node,
-+				     void __iomem *base)
-+{
-+	u32 ready_mask;
-+	u32 ready_val;
-+	u32 timeout;
-+	u32 v;
-+
-+	if (of_property_read_u32(node, "ready-timeout-us", &timeout))
-+		timeout = 0;
-+
-+	if (of_property_read_u32(node, "ready-mask", &ready_mask))
-+		ready_mask = ~0;
-+
-+	if (of_property_read_u32(node, "ready-val", &ready_val)) {
-+		pr_err("%pOFn: missing ready-val property\n", node);
-+		return -EINVAL;
-+	}
-+
-+	pr_info("%pOFn: wait for clock\n", node);
-+	return readl_relaxed_poll_timeout_atomic(base, v,
-+						 (v & ready_mask) == ready_val,
-+						 1, timeout);
-+}
-+
- static struct clk_hw *fixed_mmio_clk_setup(struct device_node *node)
- {
- 	struct clk_hw *clk;
-@@ -23,6 +49,15 @@ static struct clk_hw *fixed_mmio_clk_setup(struct device_node *node)
- 	u32 freq;
- 	int ret;
- 
-+	base = of_iomap(node, 1);
-+	if (base) {
-+		/* Wait for clk to get ready. */
-+		ret = fixed_mmio_clk_wait_ready(node, base);
-+		iounmap(base);
-+		if (ret)
-+			return ERR_PTR(ret);
-+	}
-+
- 	base = of_iomap(node, 0);
- 	if (!base) {
- 		pr_err("%pOFn: failed to map address\n", node);
--- 
-2.43.0
-
+Cheers,
+Prabhaar
