@@ -1,170 +1,276 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA671E3DC8;
-	Wed, 28 May 2025 12:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF78246774;
+	Wed, 28 May 2025 12:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748435521; cv=none; b=GjDg2DGRUsEAvJpVuKa5n4+iv0jW9S4hv23GZ6or01ULqaV1S0ax1gJQn+0MdiuE0JrrR21qTvXQ+3XHcdcq4v94nq14kDxe5qV8A5jzaKC44EDH0zKJRraAaP3SF/Qtvx2sfZO/gppvYVV8r3O+tGaSbGNUqNEqP65FJ+HMkAI=
+	t=1748437072; cv=none; b=aOiyjFW1mSsahXWWnRsypFMW4sXHSYkJ9G7suz1f84V/v1F0r2s4M+6IntT4rfLmwQyKPCnUDgUdVg/31Ge2AO0xBq4KkZpTQbVzOMxYmJDXcGgtp99h0P0rH/+vTcLc0stRzqwxX5RWlfuHqqgdvfg/e3Jm04si2sK4kcdRJwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748435521; c=relaxed/simple;
-	bh=zEkV1uU//gbAAl5EyFZskc/S8PcbUkq6USUFR4LIc1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D9IIfBXmY8+YNkjIFOzAx2nrRdlFr+kp7VnBZs9EXdobWrXP/j7Y4109jTkx8T8hJ/8h2ErcLss9L1AHOjt9os1lVncdRdCrR+dh8hInV1nQImXMWsMJa4K9KMkrPYk9vc5Ilq/eryByB8S2h6ijhN8PxQagacG4RVXMbjUowCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1748437072; c=relaxed/simple;
+	bh=WpeZQl5vh0yqYxs+79UsHi2F/aa84sVNJqFa7mJ4Avc=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IB4dNENg1rijFIFUott8/NQbFWj6vBfJiS5AYX5aLHRJivp0+fuD1ilNuKVDbnYY9dGDmoJFuwxJX2pOg/1kzhhqwW00KkaEUn7S8D2VYLgQ+JDJtAKOViiP/ZQ9Om3w5nqms84Rs3RS+KRz40CxVmLrUbA6pbyxd21MFxth0GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZD/wViPJ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72ecc30903cso2124824a34.0;
-        Wed, 28 May 2025 05:31:58 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZD/wViPJ"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a36f26584bso2754810f8f.0;
+        Wed, 28 May 2025 05:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748437069; x=1749041869; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
+        b=ZD/wViPJNg/FqKxbWpXaB/MW2Vt3Z2mb+ngEhaaRURUbC2HtKoDxDeiMAiqup6AS6D
+         wt15zExhb1YZoTd6wn3xvIPT51dmerOpnLOx+9E3duLBi+qebQIGLERs9DyIP8XM7sBj
+         d50+qiZqSb61bnI95Dka58D5fNhwvmwMf7Pm3xNMv2ZtJ15Yr9GtuPddNchgvhqlnI5o
+         NoCyp7Vkxt/RnHTRmQNX3eeUMtqaGBDjjqJZlCt4za4bsp+FsocuwdQVfpnGXqI5qHuQ
+         RxmSqz9rXgbqn40To+GFqM5LDH7pAYSrOW1eg3UZq53J/Q6ZhqNXqZd1J0BjuVYVocqP
+         erQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748435517; x=1749040317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KUHS2p4Yrhb6D+Ze5aQXRwHv8Hsjiq07gFX0i1Aa/2E=;
-        b=rFGdKjufzvxvcbZE4e10mZFZzB4ZF6XOZXY4t8tLnw/c4k0u9XirvsjgP/vcyKcjle
-         ihQFFSQr1Qtjh4MxV9b/k81ccQi01tRvJXrW3ePhLf5vfSpdqHgpfWvMOzS+9AgKOzpb
-         PHzEGS5ACjXLrkv2N6Y+PomrY3Ab4DlGZ3TlDbKsz1Vqh2LxqJcDSFkYjuKVBcoHzol5
-         IM7eOvSp1gQ8GMVDHkx2KPSitdROFdTF7o8hAenSjKDTc0uQ1pQj8YuGuApWWa5Y7ppb
-         1BWfLRP7bkkXbZmwxVr5+sQvwzpCkmL/GEnVHuTxCTEoV8UP0Ucl0ypQsrsCtWt2em2Z
-         vYHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUB1sw/QzJ76PwJTSVflAVE9evIFOWOVNRT8laqAUcGhTObibGhZmJLFyalGScdZt4v0CwB/DnxMsIG/B9TqguB3Ns=@vger.kernel.org, AJvYcCW+9ZHIttlnxP69CmSL9jVX1FedZWjtLB42rSXTgUZsraMQMnl6n3FMaf3MX1gdupfr3ixn7t574Dd8LQoy@vger.kernel.org, AJvYcCW6Y5PM2I3ZitEY0+qRkKgUssv9uCIDcNrCqXY4fzDlEiNF1o5kdYLxFarQs9ZdMsonIvZHfsh8ENni@vger.kernel.org, AJvYcCX+bGsC/qS7BMRuFcVVQnQsXG73e1KLjPlus/uGYmxEFumvRVSgEOKh9TCe1mrR7juxfCwA1AydfV5R@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8acI3qBIYcyN4jnhoTmA0ymCwKGMHA1m3KEacrgiJcxMReBI
-	DZQDQG70Ba23SeYNMiYwXvFGrn1+SrPLkHl4SWmrk4wgTF6mv7OfBOM1PWwgCP3R
-X-Gm-Gg: ASbGnct4x2pylQZ9rnrnI6zU1l27NZLdRwY6NJatdw0CkWY526qhBrlAFG+puKVnw3J
-	WwoPkmIc78jw7tuNya7k/M4r5VOd9HpgDPhhVrJmI5FzGPlWPz6xWT+r9GJAWwOC8v6XyuwLieb
-	GMDRWR4FVFoXOYKV+M7MZnhFTw9NmfijgV2RSHF+RTg8N7L1f2M7ZyxqeyaVedHoXPj4QTM61AO
-	Lc1Z3PYoKEXxhO6s7BOLnpAKUGxAyiWJBzAiiVI2FlvI3ChSeRVUw6c7XgEWRfmNnXMiBMnuc2O
-	l1rH1zdjd/z+e1+SLKk8WY8bqcX1tCq8PlUxPNUOdxlxyIn5eJ0UVGgs8oW3Z0L4WIGQ6p3dLrk
-	nyK3F4qS7o/fwjHzXiA==
-X-Google-Smtp-Source: AGHT+IEDMZzyfOMPlNzg7lx0D57OR0NCvzKxaCAjNuHqYIaj8NmEH61YJT6F1kojh5TpFIulWeutXA==
-X-Received: by 2002:a05:6830:b8b:b0:72b:9cb4:acf with SMTP id 46e09a7af769-7355d194491mr10828925a34.25.1748435517279;
-        Wed, 28 May 2025 05:31:57 -0700 (PDT)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-735a1bb5276sm166912a34.30.2025.05.28.05.31.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 05:31:56 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3feb0db95e6so2372958b6e.1;
-        Wed, 28 May 2025 05:31:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKF3MpTmne15d1MUF9wrASTSiKKm4iHjlByCA5sMFeQZuSHxmar6txZWH45nGzPLxpCduPopYxefl6@vger.kernel.org, AJvYcCUL+ccugzcXi963hknQTSqrIq3qFBx3gJEG1Xz5SBAe4f6iPyRigOnXgNi58AVONBeziKHtabgP4bNFIzsq@vger.kernel.org, AJvYcCUo0NRv/4rN7QbyHJMeBZnLMqgE9HjjDF9ahagpfpn8Bdi2G2HCWEU9whXhiWw+nh05EEUQtX8EAfXR@vger.kernel.org, AJvYcCXhK8dbGANfXToZjxrKIoZS9XesY56JbZXOx70E2OolkH6D8CAmstfholayG3gwu5QcA92xu3W29EhGKRyh9iKYWfM=@vger.kernel.org
-X-Received: by 2002:a05:6808:680a:b0:406:692e:d678 with SMTP id
- 5614622812f47-406692ed990mr412088b6e.22.1748435516651; Wed, 28 May 2025
- 05:31:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748437069; x=1749041869;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
+        b=R3zlYNbA07qBzg4BjsBZmL9Fzaa/JG/Mc7KcgRUzAYIPcEhHgESDskztU3Ws2BDytg
+         baMtI0aRRz8ocnOxAKMi9rRADJRQOXbx52wfaNENDC3ZWQVncc6UcXTzgMxpgK8OKYNf
+         RfsIppfgemuiFoKWyb7h2Lb0lwvztzQKb6huc4P3z0sQI+AkooNGduw8gAV+Z9AKQKyD
+         no+Ice4Ljvv4Fx7lfVnQ0uqwKJKubM95An4Dx2gYbYtDgYsF7+UbzrMJ7fyJN3AR+t0K
+         P1Zl1UnhtMJESeqBCjrQLl4+QVp4XWI1FIkVk8q74jThwKHI8SGnrPxKWDvgCvKLL/aI
+         gtYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbdbg0uxCQpZsuVLURmwl5YXjFGjczv8PJ2wC24EwC97P+LouerPC9jS5L66HqeyJDMf76SEumPaJNm7b@vger.kernel.org, AJvYcCVhW7vvMMhIGukeaRDeG62AUgQ86O37SMs1/mjMLfnojt1uQJCGU/en+/Hk25CFVYJ1afVdmKwlscPO@vger.kernel.org, AJvYcCWCBrDvSWQ2XmNao0RuLCvgyIxKbkdGFFJhrpU01WSnXTnBpicv+OEgOTAHMqIIy3l0sOobX6f20/75@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCloU9NTeBZJCrYLrqDfyTP9kfBM+aAdYGiZ7BAPCTU7lY460g
+	AZro3C3aBpbkPhf1oZUxhG3lI6Z8vgj/clbR27XuDdZqEgtuWrd4NgzX
+X-Gm-Gg: ASbGnctAxS2n8S4W0HoJAlwhh9fx29asN2UVtBDQjJ3p84UpsW7arcgqnkkDRbQ5WxV
+	b6c9b2dh2Fjz9DhzlVcG6Ug6sxYyv8vh4waL3Cb1XOfBrmJySyvjiXkz608yLb0VMnFI8jZLU8F
+	m2stwbw2XUedqZF1UaNWhOkR16PhrRjpPq5sx3LB+hi0kuReDpkpzM2O5sVMNY0Ka5yFB+y0l3k
+	FQ93V72xyw2dV09X4879YbAgVKgAVeJ+Vx49qdXnb/NpID/LcO0u4CURBhqMDFycgsyz33DG5Kv
+	lomJ/qzWPoZbn2abWPF+3gfgJigzE4j6TrCJhwPpjfjum5XtbZTAUB121m7G9jrVEZ+5JOLRK/Q
+	+FzCnnjI=
+X-Google-Smtp-Source: AGHT+IEl/pHPv7vigoqckP9ECM+urkLDQK2RF8IW0Ah4JbrbzZh1z1Et6i/TKjhKBeupCdDcJQ72Aw==
+X-Received: by 2002:a5d:584c:0:b0:3a4:d452:fff with SMTP id ffacd0b85a97d-3a4d45211edmr11122707f8f.17.1748437068809;
+        Wed, 28 May 2025 05:57:48 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eac6e615sm1446608f8f.19.2025.05.28.05.57.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 05:57:48 -0700 (PDT)
+Message-ID: <6837084c.050a0220.1e474f.3f20@mx.google.com>
+X-Google-Original-Message-ID: <aDcISot-sCztcyqa@Ansuel-XPS.>
+Date: Wed, 28 May 2025 14:57:46 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
+ AN7583 clock
+References: <20250528004924.19970-1-ansuelsmth@gmail.com>
+ <20250528004924.19970-5-ansuelsmth@gmail.com>
+ <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
+ <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
+ <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250512184302.241417-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdX5_P4R43HOPuZc3JSAOQ5O2xOBDVhVVg1SxU1ucPdbPA@mail.gmail.com> <CA+V-a8sde6Zaz3Z2uDt3OGZ52UBJfR3vQMs4-ZUusDu=oNwFhg@mail.gmail.com>
-In-Reply-To: <CA+V-a8sde6Zaz3Z2uDt3OGZ52UBJfR3vQMs4-ZUusDu=oNwFhg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 May 2025 14:31:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSbEWVpMbDx7UC3Zn3YteZLCdJ=kOOakE38k1TeTxKqA@mail.gmail.com>
-X-Gm-Features: AX0GCFvVYyRF-qqhinpZ-10VhZ1hJFI-N7-tDZlIlkbT7TO9C3UrFM6heC0l3I0
-Message-ID: <CAMuHMdXSbEWVpMbDx7UC3Zn3YteZLCdJ=kOOakE38k1TeTxKqA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
 
-Hi Prabhakar,
-
-On Wed, 28 May 2025 at 11:48, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Fri, May 23, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Add DSI support for Renesas RZ/V2H(P) SoC.
-> > >
-> > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+On Wed, May 28, 2025 at 01:56:54PM +0200, Krzysztof Kozlowski wrote:
+> On 28/05/2025 10:54, Christian Marangi wrote:
+> > On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
+> >> On 28/05/2025 02:49, Christian Marangi wrote:
+> >>>    - if:
+> >>>        properties:
+> >>>          compatible:
+> >>> @@ -75,6 +78,17 @@ allOf:
+> >>>          reg:
+> >>>            maxItems: 1
+> >>>  
+> >>> +      required:
+> >>> +        - reg
+> >>> +
+> >>> +  - if:
+> >>> +      properties:
+> >>> +        compatible:
+> >>> +          const: airoha,an7583-clock
+> >>> +    then:
+> >>> +      properties:
+> >>> +        reg: false
+> >>
+> >>
+> >> No resources here, so this should be part of parent node.
+> >>
+> > 
+> > Ok hope you can help here. This is another case of "MFD" thing.
+> > 
+> > I was with the idea that it was O.K. to use this with very different
+> > devices. (current scenario Clock controller and MDIO controller)
+> > 
+> > The node structure I had in mind was
+> > 
+> > 		system-controller@1fa20000 {
+> > 			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
+> > 			reg = <0x0 0x1fb00000 0x0 0x970>;
+> > 
+> > 			scuclk: scuclk {
+> > 				compatible = "airoha,an7583-clock";
+> > 				#clock-cells = <1>;
+> > 				#reset-cells = <1>;
+> > 			};
+> > 
+> > 			mdio {
+> > 				compatible = "airoha,an7583-mdio";
+> > 				#address-cells = <1>;
+> > 				#size-cells = <0>;
+> > 
+> > 				mdio_0: bus@0 {
+> > 					reg = <0>;
+> > 					resets = <&scuclk AN7583_MDIO0>;
+> > 				};
+> > 
+> > 				mdio_1: bus@1 {
+> > 					reg = <1>;
+> > 					resets = <&scuclk AN7583_MDIO1>;
+> > 				};
+> > 			};
+> > 		};
+> > 
+> > But you want
+> > 
+> > system-controller@1fa20000 {
+> >         compatible = "airoha,an7583-scu", "syscon";
+> >         reg = <0x0 0x1fb00000 0x0 0x970>;
+> > 
+> >         #clock-cells = <1>;
+> >         #reset-cells = <1>;
+> > 
+> 
+> mdio could be here just to group the bus (it's pretty common I think),
+> although not sure if compatible is useful then.
+> 
+> >         mdio_0: bus@0 {
+> >                 reg = <0>;
+> >                 resets = <&scuclk AN7583_MDIO0>;
+> >         };
+> > 
+> >         mdio_1: bus@1 {
+> >                 reg = <1>;
+> >                 resets = <&scuclk AN7583_MDIO1>;
+> >         };
+> > };
+> > 
+> > Again sorry if this question keeps coming around and I can totally
+> > understand if you are getting annoyed by this. The reason I always ask
+> > this is because it's a total PAIN to implement this with the driver
+> > structure due to the old "simple-mfd" model.
+> 
+> ... and Rob was saying multiple times: be careful when adding
+> simple-mfd. If it bites back, then I am sorry, but everyone were warned,
+> weren't they?
+> 
+> What is exactly the pain anyway? You cannot instantiate children from
+> SCU driver?
 >
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 
-> > > @@ -47,6 +52,11 @@ struct rzg2l_mipi_dsi_hw_info {
-> > >         u8 features;
-> > >  };
-> > >
-> > > +struct rzv2h_dsi_mode_calc {
-> > > +       unsigned long mode_freq;
-> > > +       u64 mode_freq_hz;
-> >
-> > Interesting... I guess mode_freq is not in Hz?
-> >
-> Actually it is int Hz, I will make it unsigned long.
+Answering below since they are related.
 
-I really meant the first member.
-As rzv2h_dphy_mode_clk_check() does "mode_freq_hz =3D mode_freq * MILLI",
-mode_freq may be in kHz?
+> > 
+> > (as again putting everything in a single node conflicts with the OF
+> > principle of autoprobing stuff with compatible property)
+> 
+> I am not sure if I follow. What principle? Where is this principle
+> expressed?
+> 
+> And you do not have in your second example additional compatibles, so
+> even if such principle exists it is not broken: everything autoprobes, I
+> think.
+> 
+> > 
+> 
+>
 
-> > > +};
+The principle I'm talking about is one driver for one compatible.
+(to be more precise excluding syscon compatible that is actually
+ignored, if a driver for the compatible is found, any other compatible
+is ignored.)
 
-> > > @@ -308,6 +479,158 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mi=
-pi_dsi *dsi, unsigned long mode_f
-> > >         return 0;
-> > >  }
-> > >
-> > > +static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi =
-*dsi,
-> > > +                                             unsigned long mode_freq=
-)
-> > > +{
-> > > +       struct rzv2h_plldsi_parameters *dsi_parameters =3D &dsi->dsi_=
-parameters;
-> > > +       u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
-> > > +       struct rzv2h_plldsi_parameters cpg_dsi_parameters;
-> > > +       unsigned int bpp, i;
-> > > +
-> > > +       bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
-> > > +
-> > > +       for (i =3D 0; i < 10; i +=3D 1) {
-> > > +               unsigned long hsfreq;
-> > > +               bool parameters_found;
-> > > +
-> > > +               mode_freq_hz =3D mode_freq * MILLI + i;
-> >
-> > KILO?
-> >
-> OK, as mode_freq_hz is in Hz I'll make it unsigned long.
+This means that declaring multiple compatible as:
 
-I am not sure if "unsigned long" is OK. Is mode_freq in kHz?
-What is its largest value?
+compatible = "airoha,clock", "airoha,mdio"
 
-Gr{oetje,eeting}s,
+doesn't result in the clock driver and the mdio driver probed but only
+one of the 2 (probably only clock since it does have priority)
 
-                        Geert
+The "simple-mfd" compatible is just a simple compatible that indicate to
+the OF system that every child (with a compatible) should be also probed.
+And then automagically the driver gets probed.
+
+Now the ""PAIN"" explaination. Not using the "simple-mfd" way with the
+child with compatible and putting everything in the node means having to
+create a dedicated MFD driver that just instruct to manually probe the
+clock and mdio driver. (cause the compatible system can't be used)
+
+So it's 3 driver instead of 2 with the extra effort of MFD driver
+maintainer saying "Why simple-mfd is not used?"
+
+
+There is a solution for this but I always feel it's more of a workaround
+since it doesn't really describe the HW with the DT node.
+
+The workaround is:
+
+		system-controller@1fa20000 {
+                        /* The parent SCU node implement the clock driver */
+                        compatible = "airoha,an7583-scu", "syscon";
+                        reg = <0x0 0x1fb00000 0x0 0x970>;
+
+                        #clock-cells = <1>;
+                        #reset-cells = <1>;
+
+                        /* Clock driver is instructed to probe child */
+                        mdio {
+                                compatible = "airoha,an7583-mdio";
+                                #address-cells = <1>;
+                                #size-cells = <0>;
+
+                                mdio_0: bus@0 {
+                                        reg = <0>;
+                                        resets = <&scuclk AN7583_MDIO0>;
+                                };
+
+                                mdio_1: bus@1 {
+                                        reg = <1>;
+                                        resets = <&scuclk AN7583_MDIO1>;
+                                };
+                        };
+                };
+
+
+But this really moves the probe from the simple-mfd to the clock driver.
+
+So it's either 3 solution
+1. 2 driver + "simple-mfd"
+2. 3 driver + PAIN (due to MFD required driver)
+3. 2 driver + not very correct DT node structure
+
+Maybe option 3. is more acceptable?
+
+The SCU node is mainly clock + reset controller and the MDIO bus is an
+expansion of it?
+
+Hope the long explaination makes sense to you (especially about the
+OF principle thing)
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Ansuel
