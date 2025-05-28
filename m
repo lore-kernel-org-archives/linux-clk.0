@@ -1,77 +1,76 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8123C1FAA;
-	Wed, 28 May 2025 13:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ABC38FB0;
+	Wed, 28 May 2025 14:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748438769; cv=none; b=e0jiwNzLtazEUOCt8X7Y+AfP6UP9B74tFN0FY/Sl4Q6fOKHHOLGZMyKYIcT9wiu/GG5rqdhZM7Bwtmc+loQbN/KXf6AxIzS8pAJVIpiXeztjauxF5h6Y6PrtxHA8BRJmeV/FV1t/FccmfvrwlaM9eIivJD/QhDOotQPTdHWXDBo=
+	t=1748441364; cv=none; b=g2ghpjxhFkoSDwbIUVQN6Luq1Ycr19maFfUCnaTPeAtlWTV39JGBVxsQbjIS9an+LN829KvjgE1JbbGwSxizAzOnr5CPC9wSW2i2p1tbyRELglyaz4nUcv5rdNQ5jVRjXSyNdLCMaozAHGix+cEyqvBJb0Y/bdHWV26izbPmzKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748438769; c=relaxed/simple;
-	bh=rxep3wf4faA2onypK2iZ/bRRCLhtffcSXOxeWi8D5cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sVnJsbGA92GGtM0MjoS/SqB2T2a4NSmlM1TdJePeOIsH0N5LZo9Fhz52f+ZLcA8Awhc8/5baNWu5Zw5ZAXkn6Eat+GXAJwVAldFc82GThUN+EC6ppRYBSAulS9aVRN3kYH/YU5EFRs3436O5UXVWer0r7AeClbbhbZ+ASuZb29o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWjAUUJ5; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1748441364; c=relaxed/simple;
+	bh=PNNjnY8qFFr8VVPEB1+kvLJElP/RtVTkzjXbyUtYBzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kz/TL9qigXdrTFgzL5d8FarK111N6Fp902Bt/jRv57+ph5gcWydMezIbv8G4hICjF0ud3T2IoiuDRiQ3/FoTGG3kiH9d0NvOqL07R7drEmDqiGCGM5I+c/2UAuX7Tvm2RdvgMMDIE8Ac7Nd5P6IYU0904w1ddGovz5r7F/JL0uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caebcaXG; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWjAUUJ5"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-604e299b5b6so1766842a12.0;
-        Wed, 28 May 2025 06:26:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caebcaXG"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553331c3dc7so611829e87.3;
+        Wed, 28 May 2025 07:09:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748438766; x=1749043566; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748441360; x=1749046160; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ieSLku7E97lhZ4UgdnDAb1QCFNhVxCm/IzChsnoZiEc=;
-        b=UWjAUUJ5665ICvx61xNY6FK/9oHtzZc6a4KQT2vCkLxbY9HmJmQN9PvCE8psN6kP24
-         TrtFqM3+4XuJP7yi29DrkTTqfMSg5HPA3Wwg+zIbR+AI+L2qKi5Nw6s7zdcglWziqidb
-         P06TTV6bOJ+kYFt8+6MwuRa0J6qTQpLl6eChDTqnCDF86MlpHVrwcZrfMg77VKHlVpLZ
-         qyUyjry3C6MEws4M0jnTF86M2kpwaw7jpynQ4fjD6R2kwHFeLZKwWwSPFppPNMk6p9Ik
-         kvBez8B4rfuyY/OaQha+/XaVz+oEduN/04aOg2MPdZDZQMXcXzC296i3UGuKKqAnxzWa
-         l2yA==
+        bh=Xde3QcEaLdUdjjxYrQVArbtAlmWgNtbJbn/lPMARRtw=;
+        b=caebcaXGuhB+eG9mJPMgFbZCfTtE5/FFba2klC+tR9rklzafywSR6FOQOBIWbcWSPD
+         LSC5rFPSLvdVmoGprnQUgRJBAICjNX3j8OhfJE/HvD/H3XFWikLxknr3EUc8ZWb9gVtw
+         88XyU3KNtUjTUD1v800LyhXDBK6LatyhQkSp95XLLC1xdxfWviObXXVVqyPaFJpb2oI5
+         Yhy/3turAmpn8WjsbmYIbYLjWgCfnUQ3p4YB1PkT5nEyR/NECn+fSokcV8hN0ZbuuEem
+         tFZgXXwVXDe2t6v3Sv/R6DtXCraR5l+TgLVzSDV0mddwvFVbiBCoUFhI17ZSXQyj+4jF
+         kiiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748438766; x=1749043566;
+        d=1e100.net; s=20230601; t=1748441360; x=1749046160;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ieSLku7E97lhZ4UgdnDAb1QCFNhVxCm/IzChsnoZiEc=;
-        b=LutXOfge8/OnymtH5ba8fcPsedAmbtgs43SOpWaVvRpbklmp3S4jeNdQnRWHhy4G2n
-         PcaKu9RKzzEdokRo7eEWtDWsNi6wsAxcp4l0AWuUPBlEZAUyk+6jv+EJ89dB5ABRCe/t
-         93GzfTA10S2olPfoTMF5yPVjjyBNOikHgawRzahDYpaBlNfUt1YqbehYMsioK6myA+U3
-         N8xNZFruv11mE0oTF2SFYc1qnxA1kdJdPAWghwtGV1uq5/5e6E4NXyGNaYYErsKSh162
-         cuRh8fBUQqMPTJ8BfdhTugVzgK9l0sQpAKAyoRzhhX1ZY7HmiNQeOTxqLxijML25iq0v
-         6uQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIJ1P3hnSNpbX921UbzYKdMPx9tkpB231Pca3ZV8L/89UfALRqd8mAys8dzCK9xBzSdsZAThZT6mgV5HD4@vger.kernel.org, AJvYcCXQmg11sfpnl36i9hLkZYtX99HyUS1RLbPjv9F1sNTmlqPtUErbiWctvoW9ia9yCfWudjVW/QpSCCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTUI0aRYqPYbIkTlXbVF5Do+p0IjP51nm3x73rePt3SyVFveR+
-	dOv5gDfbtaVU96Zu+m6Q/jCJc6rVNbB3GKtvvS7wEOnV5g1jizZn8yOC
-X-Gm-Gg: ASbGncuLkjeTbX7kBpWkfOyluXiyoVrV/5/mnNP1LJgIj828lnyjY58vbiSeTMnKiH3
-	ZB9elTvVaSvztdF02h14E0JmWNlmM3U2IQ8fKXY3Z6gquJyJmcC1uUTrJO2Sf+PWRsYODnzouBW
-	GrEApjTbUIjnSlXT9Va14DuW4zMlSXE+5bNI0RhYckDhumJYENnHeDhf0g8wwAqhzxsk8rYWM38
-	WP6Jw+JQ5RzAsTfl2U4uSGUv2ILtrlUzDy1agj2L8EkW7mp/EIIUgL1ZvIY7NusH9J3sKN1nbP3
-	3b/ESFVdYN+bZrJDHaOLiZ+mzcMjdRoGg4hoNyuUQrU680eXPRFYpxEV5GWTJqU/IGeNrT4obNn
-	F
-X-Google-Smtp-Source: AGHT+IGH6NhjWRQzveyywsEHiNFK4CABJe+WM0+dyFghWFFkW3BP9KOOz7lN2b71Pta0/mTCAqJMrA==
-X-Received: by 2002:a17:907:9717:b0:ad5:6258:996f with SMTP id a640c23a62f3a-ad8989f78acmr418190566b.19.1748438765502;
-        Wed, 28 May 2025 06:26:05 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:7078:193c:ccdc:e2f5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a19ad462sm107742766b.4.2025.05.28.06.26.04
+        bh=Xde3QcEaLdUdjjxYrQVArbtAlmWgNtbJbn/lPMARRtw=;
+        b=A7SKswLLWL28Z350RlYQx34faroG+mJzjhtHEnyH182V0Yaex/ERgOhDw3V1l+0c25
+         4v09iOiutgrUk7uxtvnBLLYI+nMB23V9FQ7ME9Z588JVQ4l4otceb6cG0JOihsai/t9l
+         Jo5YOYukTXIfClupt6pnpQKZ4wLoTdZBMat2ZAslRekUoZFsx+QTNMprvR3wPEj3xG7s
+         hbwaUeWnoUP7WK+EKM6K/hjGWnsALijqyKyFDf2cwJLnhMIKvaB9AGIp+o95vfgFGBdu
+         e0BJej6JHXLP3FRDavxMTvcKU8OvuWasMoERT9Z4vp9gFNGgX5UyYBzDtTcVTFx7gYAr
+         oBLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUF4newc4GfZqwa0sH+hvommM8f3tOyjAGomz0N+UsVIbIN+0Fg49vw8mNUbLArJ10gipTDnORzBuPX@vger.kernel.org, AJvYcCUVFTAsUMcOiQbqa/Gb+FIdg0WvtwJFMHHzz9r1ribY5r797nSf5CzqtbUfoDQi4DE5c4fQInAIxK/uOyYB@vger.kernel.org, AJvYcCXuqmxt39eqUY8WpNwF98SBgW5t/YeQvHik0VZSHb/UkMh7Z4qDbaH4R6yiA0Co+wAvStdfXu24Sbl/@vger.kernel.org
+X-Gm-Message-State: AOJu0YztyM83mkcpqHR7AetuB10klJr4a4c5zsgadZJ3zgXsGFCT+nOH
+	A0eeBcH3ZrGOd0QQTaFGpr/1tECfnrT84IDzmMjLlCjVRJoY0+v4o4jg
+X-Gm-Gg: ASbGncuNohcu7oIuw06mFJsfW988AnqjtdaQdPZ3ARBrFA5k/IwRltsh0S7h+lzFQ+c
+	sPP+uNJvKliocxpCDI/p/JSEtOkXkIOtCQ8l6GyWccndWMLDgFKq5jg2OwcsFruJ9V8gEOI6wwx
+	JSqqRUPqH6qnbRksyO6jUc7Y1QVOJSpaaAq/zsXZyHcYclHyvCEDhhZPKn7LuBDvcnz0qhe0Chn
+	NmBLFJujJE+CLOV6LputeXmxTimHHCOIJzStmqfUVdQWd003uTtSWRoyuZfx02lG3u86pXIuh30
+	WX/VkJ6MJC/voK828OXxWxw8Lkih3I1OIv4xOLHdJYQCYbWFpkDx/ATHU0KKYO8vahTybnnMMPe
+	Q+Z5CH7xIJ79O8OhoHLGNgJBhxGWURAvOdA==
+X-Google-Smtp-Source: AGHT+IHfnh9vdk+RemNz3ZB0OBfCZjiGqQpUV6d0Y93UkvUovkg7i/ks7VL90KlEwuCeuKiWJ5b3Qg==
+X-Received: by 2002:a05:6512:1304:b0:553:3407:eee0 with SMTP id 2adb3069b0e04-5533407f3cfmr590221e87.4.1748441359957;
+        Wed, 28 May 2025 07:09:19 -0700 (PDT)
+Received: from gmail.com (213-67-3-247-no600.tbcn.telia.com. [213.67.3.247])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532f61c4b2sm298226e87.45.2025.05.28.07.09.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 06:26:04 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Wed, 28 May 2025 07:09:19 -0700 (PDT)
+From: "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jank@cadence.com
+Cc: edgar.iglesias@amd.com,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r9a09g056: Add clock and reset entries for USB2.0
-Date: Wed, 28 May 2025 14:25:58 +0100
-Message-ID: <20250528132558.167178-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: fixed-mmio: Add optional ready registers
+Date: Wed, 28 May 2025 16:09:15 +0200
+Message-ID: <20250528140917.876453-1-edgar.iglesias@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,50 +79,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Edgar E. Iglesias" <edgar.iglesias@amd.com>
 
-Add clock and reset entries for USB2.0.
+I'm not sure if this is a good idea but while doing some stuff in emulation
+I had a need to wait for a fixed-mmio-clock to go ready before using
+devices it drives. I figured it may be useful to have a generic way to
+describe a simple polling for readiness.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g056-cpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Cheers,
+Edgar
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index 13b5db79aab4..e370ffb8c1e2 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -134,6 +134,7 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
- 		 CDDIV1_DIVCTL3, dtable_1_8),
- 	DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
-+	DEF_FIXED("usb2_0_clk_core0", R9A09G056_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
- 	DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G056_GBETH_0_CLK_PTP_REF_I,
- 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
- 	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G056_GBETH_1_CLK_PTP_REF_I,
-@@ -219,6 +220,12 @@ static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
- 						BUS_MSTOP(8, BIT(4))),
- 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
- 						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("usb2_0_u2h0_hclk",		CLK_PLLDTY_DIV8, 11, 3, 5, 19,
-+						BUS_MSTOP(7, BIT(7))),
-+	DEF_MOD("usb2_0_u2p_exr_cpuclk",	CLK_PLLDTY_ACPU_DIV4, 11, 5, 5, 21,
-+						BUS_MSTOP(7, BIT(9))),
-+	DEF_MOD("usb2_0_pclk_usbtst0",		CLK_PLLDTY_ACPU_DIV4, 11, 6, 5, 22,
-+						BUS_MSTOP(7, BIT(10))),
- 	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
- 						BUS_MSTOP(8, BIT(5)), 1),
- 	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
-@@ -280,6 +287,9 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
-+	DEF_RST(10, 12, 4, 29),		/* USB2_0_U2H0_HRESETN */
-+	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
-+	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
- 	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
- 	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
- 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
+ChangeLog:
+
+v1 -> v2:
+* dt-binding: Add unit suffix, ready-timeout -> ready-timeout-us
+* example: Remove unused label and renamed to clock@
+
+
+Edgar E. Iglesias (2):
+  dt-bindings: clk: fixed-mmio-clock: Add optional ready reg
+  clk: fixed-mmio: Add optional poll for clk readiness
+
+ .../bindings/clock/fixed-mmio-clock.yaml      | 37 ++++++++++++++++++-
+ drivers/clk/clk-fixed-mmio.c                  | 35 ++++++++++++++++++
+ 2 files changed, 71 insertions(+), 1 deletion(-)
+
+
+base-commit: feacb1774bd5eac6382990d0f6d1378dc01dd78f
 -- 
-2.49.0
+2.43.0
 
