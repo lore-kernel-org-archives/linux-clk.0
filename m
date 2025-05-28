@@ -1,179 +1,118 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D58B19B3CB;
-	Wed, 28 May 2025 14:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8C62882AB;
+	Wed, 28 May 2025 14:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748441613; cv=none; b=JX17+Rrqlg2brq4eqfPXk64dnYxn3IuhHy0ebjP4uHBPbEfSVbo0sKTOaY9r+tkJt4DYFOVZlf4ITMVtND9ioAyi6RM+VBLMk2GltAxczEsr11+OA5ySXniT0nx00PGjQ1wGcacFUc7yklLZ/1f2rQEsbeYRztNw7QWOsGpDGwg=
+	t=1748441943; cv=none; b=ItLbbT6MXSAa8HXISsDbTnhF7DS3ucr2zduTR+WA9JPi+dJFcOs5wCX8JAe7+oieWnaOTyoYk5MJrjLutMtBuLrHcaTH20j64+a6ew17ueHfPm0synGu4uP4coIglj3/7ffGmoQkgSFKs9lcnt4R5bWXWF/lgoGvOGPMjW6zXsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748441613; c=relaxed/simple;
-	bh=dpXIbCAlYRmIowUQvMgyFGOg+FO7ISbS1+UG1ZIuELM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eh5UOxZqe27YJCyPegZNUsTwHatFrfvrqtooR0b1vJgKVyJf43Gk5kL9/e3d1SoMErsc4UIumnvssfIAEO0VIj2K2hUAeEYsvqTGad8YeXyuNM93FB1lmu3l+v3HgP+jL+WrIaVZJykRL8tYdnWF9tQLHKWqpd5I8rsxCe1r4e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aj3lQrZm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1748441943; c=relaxed/simple;
+	bh=78K9IapfEUA0fFpl8LYkfjYQvXb/zqZqFdh+VYT4FJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DkLXKmZwE6eeN1k5rQ7gP5s7ejwLouPEFY9AqV5bmxP8hMkQzgvaDd8TBQ0r3NYq36t1Fquu8xjxBXYByvZ+cRzj/XUXf41BsNotCBTwHfepzsXa5DLAXQ83Fp+8xxNLXPnm0nNPHHOrgCtG9wsUKb9ZJFhR8K1lcBFciB16iGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkeOzXk5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aj3lQrZm"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe574976so36299995e9.1;
-        Wed, 28 May 2025 07:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748441610; x=1749046410; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u/NvBcF4s3yGqfgtLGu/F6IheBb4FWCw8Mlh0+qa7IM=;
-        b=aj3lQrZmOCGZLdTm/WMkY5TkY8J5IBvf2ww++U0GuXzFo+Yy5RHQmk1Bu55dSRRMSc
-         cNhLOgofEkW5KqDwlRVZ0lP/jjqaHYxUs6Q/UtguxWHpdIYB0w2Vva3vd4S05AtUuY3M
-         oy7oSOqJkKyD43SYTTYFHyJBtKM4HfZIKLqLxKx6LOrTBrLRRmDUsMMfKpx3g5+spxAb
-         KhtXTapjS8sD+OuZPwEwcaG73Ew2TvO0WP46COqBug88jqdONMC8ct1iI4Kk1zNRceMc
-         WB2IgImBKFCuOpB7Im++v6Itf4Q9ASTRxCNdHdYBgBX96V5ZZGBR5hVpKROxFxPMpWSR
-         ECjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748441610; x=1749046410;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u/NvBcF4s3yGqfgtLGu/F6IheBb4FWCw8Mlh0+qa7IM=;
-        b=gEzt297PDL/27IqXsRaA6sz8KoktLxt0Kkwk8ny9g3qdGfGsE9iX7hmWhxaXJssJcC
-         2P7QAjb751pwpQ0PKX4m7uYq3bI4sDc4wYxUw9nKXHdvP4cw495ftDhdaYlmV09R6nND
-         zT4AL0wWmIOG/N/uPxXfZF78UB+IB1ylr4l/chSCskJDfba0iObwBcJ9XxZLgvgbo4HD
-         ndmzo0Uq8lbbH68bXHzxdXLB1yGsBtanuzPfoQI9r3hPBHqwats5wGIzF6RKhdC03rnG
-         180Q7n8WUjy9xIg3o2dskWxqZokkxovnOHapS0oD7cGWSkVXAZ+8KuQTabSHvgOaAAph
-         HEyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4JThMBpKxFCY4l95uyXad1g0a9t3M68n1LrH83/Ve15FxLX+r+pQ+JgbinDRK9fhPcTaF2m6YRbJb@vger.kernel.org, AJvYcCWaf4Y3qMxt3+KJZ2pGMDLyWKpezByiVoQVb0xUEI+pu9TRPSpMPiIwRU9qmnoH2TEQ8C0/gWF6zOGA+QO1@vger.kernel.org, AJvYcCX/egNEtAVE8lIsvmWEK79WV5q4QQQcl74t+itvqVANEHjuYShvw+O4fr8jZB/qwXsk1uID7Ke5Hi17@vger.kernel.org, AJvYcCXw3LjwQHxzD+fHj0nMHzFUlzPdaWQSWNQWQWpr3DhDVmiFq8NkCGJOWdRIIUgFQIlhqHuBWYM9QPtGlNhyPXG5IRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVeRkyYpPfptMKT4uas9rcQNq5tC7/gqoskh0P1sX4exiaRA6f
-	EtVr2WuTX1ibiCqTccG2TfwYNjLVTEo2R9Y2A19j0PXuL2JNe28UcloJhdrmmaSXUtnvSiC9KAo
-	eRQ6kJVNe2h9MWZL77vs6wFqbS9uFxGY=
-X-Gm-Gg: ASbGncvwn8k0Qv+K4gDYbghXiRzJ0WQiqDonp05mHk9c5M8uiL30vuoMh0MCTEuZ5xW
-	LU+9NQO0+W/ItBdAEhwXrrCrsGyN8eBMPAYWa7ft8EOLEA9YSTVtQE/QsH6s/knRQacqObBW7Jd
-	aXy8taws1OisP6f8Vb0MgIcifpPDZ3jYIVtA/HUOh+A2E56bh15tmOBz8gwdy/ljvd+w==
-X-Google-Smtp-Source: AGHT+IHkpT2ySjMUdtYwChJ0/5/1rzDmtMoM740OXZxSdgP34XADiDvdJ0+rhe/twNar59adXV7Gqw4wW8anaLlVuPA=
-X-Received: by 2002:a05:600c:3b17:b0:43c:f1b8:16ad with SMTP id
- 5b1f17b1804b1-450787c9705mr26585325e9.30.1748441609568; Wed, 28 May 2025
- 07:13:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkeOzXk5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB70CC4CEE3;
+	Wed, 28 May 2025 14:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748441943;
+	bh=78K9IapfEUA0fFpl8LYkfjYQvXb/zqZqFdh+VYT4FJQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VkeOzXk5eN+qrU03KZerCJkDAKnh8wRqro+X+AhBJBc8PifbmrRAc7xFN7hOyrJhv
+	 YuWH3To3Cku6KJ6Bj4LyKfoGNRaQt+JCqQi/HpFULd1mEXAAMfNVTJrYyJXBGFi9t/
+	 CiI7iQfuvkIIi3N+R8u5PnQI3VT07VKW86Uy6Fq67CgEpm7Z2BTV4KDWrCFMw7rR/X
+	 DG1T56yPZ9LShXI/wJZGo4wrbTVonT2ei3JlAf4qD9t3Mc4zL69HkK4qubSV76E+rN
+	 aqs/b1z/Ix2qzhtSvjo6CrXO6LPVQy60spli6q5XfIGfNYT5NmG3VUxjqzV4stWCft
+	 xrS69ZDzlonEQ==
+Date: Wed, 28 May 2025 09:19:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jank@cadence.com, edgar.iglesias@amd.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clk: fixed-mmio-clock: Add optional
+ ready reg
+Message-ID: <20250528141901.GA3966725-robh@kernel.org>
+References: <20250528140917.876453-1-edgar.iglesias@gmail.com>
+ <20250528140917.876453-2-edgar.iglesias@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250512184302.241417-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdU=iuVFo=VJjV7UM-fLTeZk9TwyOJwojOVOSJiniRneHA@mail.gmail.com>
- <CA+V-a8sOGEEajx9TQsVBb+NeFRUx2eSo81ZdRQMsLzd0Eiox2w@mail.gmail.com> <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
-In-Reply-To: <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 28 May 2025 15:13:02 +0100
-X-Gm-Features: AX0GCFv1m8Xej_HgH71EgZ4Kvyv9BeSbuvPePanFkBHFJSxJNoRIerOZEfcK3ek
-Message-ID: <CA+V-a8sUyZHGPwUzfUan8tmsF19mB2EPN599Tzu2kaoYxSMaHw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528140917.876453-2-edgar.iglesias@gmail.com>
 
-Hi Geert,
+On Wed, May 28, 2025 at 04:09:16PM +0200, Edgar E. Iglesias wrote:
+> From: "Edgar E. Iglesias" <edgar.iglesias@amd.com>
+> 
+> Add an optional ready register and properties describing bitfields
+> that signal when the clock is ready. This can for example be useful
+> to describe PLL lock bits.
+> 
+> Signed-off-by: Edgar E. Iglesias <edgar.iglesias@amd.com>
+> ---
+>  .../bindings/clock/fixed-mmio-clock.yaml      | 37 ++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> index e22fc272d023..57419b4de343 100644
+> --- a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
+> @@ -10,6 +10,11 @@ description:
+>    This binding describes a fixed-rate clock for which the frequency can
+>    be read from a single 32-bit memory mapped I/O register.
+>  
+> +  An optional ready register can be specified in a second reg entry.
+> +  The ready register will be polled until it signals ready prior to reading
+> +  the fixed rate. This is useful for example to optionally wait for a PLL
+> +  to lock.
+> +
+>    It was designed for test systems, like FPGA, not for complete,
+>    finished SoCs.
+>  
+> @@ -21,7 +26,10 @@ properties:
+>      const: fixed-mmio-clock
+>  
+>    reg:
+> -    maxItems: 1
+> +    minItems: 1
+> +    items:
+> +      - description: Fixed rate register
+> +      - description: Optional clock ready register
+>  
+>    "#clock-cells":
+>      const: 0
+> @@ -29,6 +37,24 @@ properties:
+>    clock-output-names:
+>      maxItems: 1
+>  
+> +  ready-timeout-us:
+> +    description:
+> +      Optional timeout in micro-seconds when polling for clock readiness.
+> +      0 means no timeout.
+> +    default: 0
+> +
+> +  ready-mask:
+> +    description:
+> +      Optional mask to apply when reading the ready register.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0xffffffff
+> +
+> +  ready-value:
+> +    description:
+> +      When a ready register is specified in reg, poll the ready reg until
+> +      ready-reg & ready-mask == ready-value.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
-On Wed, May 28, 2025 at 8:09=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 27 May 2025 at 23:51, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
- wrote:
-> > On Fri, May 23, 2025 at 3:45=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Add support for PLLDSI and PLLDSI divider clocks.
-> > > >
-> > > > Introduce the `renesas-rzv2h-dsi.h` header to centralize and share
-> > > > PLLDSI-related data structures, limits, and algorithms between the =
-RZ/V2H
-> > > > CPG and DSI drivers.
-> > > >
-> > > > The DSI PLL is functionally similar to the CPG's PLLDSI, but has sl=
-ightly
-> > > > different parameter limits and omits the programmable divider prese=
-nt in
-> > > > CPG. To ensure precise frequency calculations-especially for milliH=
-z-level
-> > > > accuracy needed by the DSI driver-the shared algorithm allows both =
-drivers
-> > > > to compute PLL parameters consistently using the same logic and inp=
-ut
-> > > > clock.
-> > > >
-> > > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
->
-> > > > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
-> > > > +                                              struct clk_rate_requ=
-est *req)
-> > > > +{
-> > > > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(=
-hw);
-> > > > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > > > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->pll=
-dsi_div_parameters;
-> > > > +       u64 rate_millihz;
-> > > > +
-> > > > +       /*
-> > > > +        * Adjust the requested clock rate (`req->rate`) to ensure =
-it falls within
-> > > > +        * the supported range of 5.44 MHz to 187.5 MHz.
-> > > > +        */
-> > > > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
-> > > > +
-> > > > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
-> > > > +       if (rate_millihz =3D=3D dsi_dividers->error_millihz + dsi_d=
-ividers->freq_millihz)
-> > > > +               goto exit_determine_rate;
-> > > > +
-> > > > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
-> > > > +                                                dsi_dividers, rate=
-_millihz)) {
-> > > > +               dev_err(priv->dev,
-> > > > +                       "failed to determine rate for req->rate: %l=
-u\n",
-> > > > +                       req->rate);
-> > > > +               return -EINVAL;
-> > > > +       }
-> > > > +
-> > > > +exit_determine_rate:
-> > > > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
-> > >
-> > > Shouldn't this also update req->rate with the actual rate?
-> > >
-> > >     req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_dividers->freq_millihz, M=
-ILLI);
-> > >
-> > Agreed, I will update it.
->
-> I think not updating req->rate may cause clk_get_rate() to return
-> an incorrect value (can error_millihz > 1000?).  Any chance this fix
-> can simplify the clock handling in the DSI driver?
->
-Yes, error_millihz can be greater than 1000, as result the DSI driver
-does check this (>=3D 500) and proceeds to try the next one.
+And next someone wants to add an enable bit, so there's another 2-3 new 
+properties. And it never ends...
 
-Cheers,
-Prabhaar
+So no, create a specific binding for your h/w.
+
+Rob
