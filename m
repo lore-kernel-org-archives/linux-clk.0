@@ -1,69 +1,65 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A269221D98
-	for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 12:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2C1C683
+	for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 12:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748521843; cv=none; b=qO1LwmDv+M+7bbkVGXk3EFkFxATchWV9Wkf6CXkkmRKPdD+n9pF2YAoGOOxlOv4lUzlce+AK6nC1LOo6LEdKDfUhdHx/qvMAeVwuYNQYly5Ev6+1s/Uymsu+0/MV5JWx0cUXl9Vqer0DSDw1lM8eHlEi13iAC+vWzdv6o/o323w=
+	t=1748522554; cv=none; b=T64YLw/cfD9nCrxXQqEbQtprfE2VFn4+bB+CFYX9dXjLd1jmcNTYZntPiWf3c69kyJBxoSEEKIhxho+z7IJUtEVDI2PReB8c0h+GQK37zYkFgGMNbbxcByvxP0jW5MKS+AZvz4BIgjsJJGYuYQlvnWncOhiELQJiANSqIvIOz10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748521843; c=relaxed/simple;
-	bh=Yve1y1r49ecQDnwvQsVX/ck6yFvbc6vKX1qjrxYEKpI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qtSegItn0ew+Jx/OX8XXVuvYCi0KDGbzLeU1GcsItHVR9xdqlgShXNb84uu5ieH6yCZPDulHoL6L1rdzG42yzXCrFHpjukqCXhrrldaFJbErQLSBw7K7PZ+6CeNdynnqExzqZnykzVTLNMH8bZX7a+KYMymhDwphmEXNwRHsG4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V7sr5hko; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1748522554; c=relaxed/simple;
+	bh=SQWgLajK8q0ElTexcPd2O92Wl6hMxgUNnTU2DmCd/7s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=pFkfFEsBf6oxcHF/E7M5Nta7poSw5Uo0N7hKTkgHO1q053B627okpehDRnJC928Qu7JlzVTWKFGsKiky5CYozUUkoDkXNEQK8gHv2L5gfOqMw6gAsP3tsCsVGFlrAOwWOuoEmk2KEOecVomPiaV6j9zSEo4wENF+/cpbxC38P8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gRm73Tlx; arc=none smtp.client-ip=209.85.218.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V7sr5hko"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad89ee255easo143485266b.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 05:30:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gRm73Tlx"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso48834766b.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 05:42:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748521840; x=1749126640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=suszitiSJbZS8iWXXXVjI9GrivMQ+RVo/o+nLw7sB/M=;
-        b=V7sr5hkoBzvHJosQbML2fvSaGT8F1aWaY5uwjPFVi73sxMDGwi0WvH3AByv2TZOb8k
-         /2yWOtPohAsyoflr0uMYnffj2u7p4ujuqVxt36PQcLKh+retBoJPLEnqS8KvcGfoYk9b
-         g2FhbWcDjepAbrUJrzGlQGo0cl1D6Lu2Yxe4jFcbCZydWb8m1EsyMnBk9Yho/9PzQHQp
-         8OzMvtatqE95YuoDfyXM/kXDB+2Xg4TnMLPK77oEuTK5MIiRID9z0bi/tUnNy96Ygxao
-         olB+OvBVgypYJhHXYpU5w1KOtF0UEeoqWVa+t262MPDyujWyR6QhU6vsqqZ/bUPDwT/g
-         /n8g==
+        d=suse.com; s=google; t=1748522550; x=1749127350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TeDOSnn5fREb0uOPL8DykLXJIZWFTF03C5KXX/rT0MU=;
+        b=gRm73Tlxh92JxxbpiCS2V+WNzl5XWOnyMetq6KO9CiPHTGHh0SICZKP0sYXKgv1kdc
+         Zg4O4xRSgZuZQ/9y+tUUtvpjbjYAGHVVOaDllsonMczT4ymI6n6Sy/eNynWpbjEu6B8q
+         u6hKTXjcSFWRWvw8/KGIhuzQ9H/b00G/0Zt3VTcwmmT9FEyYysW3Rfde9bpDyN5xOhqf
+         VqAuz0uRXj/yfEwWaihGBy4IDy2q6d8fp1130gXUfsGvoE/O1Dbc55DikXNxb1BgN17Q
+         3UKhcYhv0FoUJlDpLmE3mTBwSZs4t22NZVtDkC/uPVnnck+WJ9UUs8273yYTyH2Feq4B
+         m/bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748521840; x=1749126640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=suszitiSJbZS8iWXXXVjI9GrivMQ+RVo/o+nLw7sB/M=;
-        b=wD6J8XPTalC4UiKajvcmqh8y4mwuBiyAqoNv0qrLan84iUbROLPqRJY9KCJBztzzdV
-         eUl3sKi/UWIyimJTHrdCjer7+PXHFWaig5q745BRisMuiljTH/QHSjgARgbgFnM6DbPm
-         MJk2OgR0cevg5TMuNvPcxBUZff/PDODBErIKmK+CPTZ4rWkPwtHXgwxeeGi6C4N1E5Zz
-         Tfg9mU+NxSg529O7ZjW68/N3tBXo8YO5Uacvj9Hn/q+qsa+HaLA/iMZ4qONY/MgkBLfY
-         Y1yKIoH2JSgpKhwJObP36XB/+I1y6boJi3xI9FK3yn6HyZ9TIASD5fGSM1y5bHdcw7kr
-         +m6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXySwACZQJJB2/YGpVJ8j6kjliq8Z0gQ5sAVxWnsumNZI14/t74vbEUwshDKBcnXnmqTgq96L9TBus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiakbcVvpU6iulTfQFWx4xoC2kptrZzAwK2Jyz/fJNwFz3PTjk
-	K3mxroC+wAsVlEndBFsw35czltBqwVcp1ZHMKwZ0p8GjYvRU3IKtj/zkO8DREoTtyKk=
-X-Gm-Gg: ASbGncuihiAn2COuSMb8ZJLj5fwxVhkCD3S1WVIVMwujt80pD3O1+VwdGKLDC4SVf9R
-	EvTlz9Dhclw9HcmgjJc0Pfg2YCMLp+MZ09pD5Z/m52IJpN0iCq3/40F8aJ4ZR/bIGl+Z0To16w0
-	ZP6Y8fmajwPkpaxqz4Ja6h03vH9j8NAuHLWiNiO6OKa9LU0lEm4wtSIhIZOhUzvC7DRcXG2iErS
-	0lZKtZp31OHRqU9TNA8TQ4j2uwk0ka20NIe0KmPDeq8zThXkZ+txBG/AATPJJkZQY5iHFJj/4OB
-	AidjXbEHHjTUECfVvFASXLzdY7qDegXnq3iR2vhonCCIG/6C3Kz2Fvqs54aycojy0QsliNik3uL
-	XewE4oGxb2cAjDF2DMzwKog==
-X-Google-Smtp-Source: AGHT+IGh83QJllCl4ga2r5TeFVA+yFVEjbebpA/nYkqIF9yNbUhm17ow5NrnSrfH88Ym8gPqVxFW9Q==
-X-Received: by 2002:a17:907:1c21:b0:ad8:adf5:f7f2 with SMTP id a640c23a62f3a-ad8adf5f9camr383908066b.31.1748521839767;
-        Thu, 29 May 2025 05:30:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748522550; x=1749127350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TeDOSnn5fREb0uOPL8DykLXJIZWFTF03C5KXX/rT0MU=;
+        b=MCVOH9p5nA/XK7b/1AIfUAwEhAd1XZpIcIcpqECOSJR8YpQ7xx+pn5+rVyzjYOwR2p
+         6AWUosaHgh+HuT4FaJkJ8KqXPX7rn2d+LxJPxZBcdu5B4jIXsv+YAOq5v2fkvP4RX+YO
+         IviEZxG8cl6u4QT8W8UDUh0zqhKM5AfNzqHUzYlSwXrdhmd51drOctG/rKifrue0qJv8
+         eCbQlkxmh7a5n7XrqE0cI3vqLer10xMv3kIqWD9SYaK9UN/pAWQ4/l6qFve2fNYAT3x8
+         4ZNSWPQJJo5q2UKvP6QxaoCahgUe8IIi9xwEI4+p4dby3Dniw4rGhoIZX3nKSlRejF7X
+         rN2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIdoBO5xuiSR3k1dH6y40ao6FwHPc07Zel1tPdgPRnG5SuBdbFp/Ytk0sf8XTy7W7Q7++wELlHrhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzErkF2LuFZmKX6q6qrIj5E510xXHdOeEpERJlnmlxh8SWAOuxp
+	DbrSsNS6+Mo17tXHSCeG8G9K3l2riSr6UrE8NH9qqvFyj3iUGpvPa5X2tD+y1pAGR8w=
+X-Gm-Gg: ASbGncu3ynVq17QEu7Y9kjVaVnG+1gAzP6E5qjcFQbEOIBCtRVWr7xOvWJkfwp9rajN
+	zHvrz/CSULXuzlNgiat06OYjTmtT2CfNrs8U8o7KwvLmSRdFa/qGGJDT9YdBHll73IX241t7CEZ
+	wcFZhknalVvXRI6PKM6nV3ZCd9bZoqvy058SRPZbs0zSBb5aAcBUPvL3tudXza+MbGLZkDN0KJ6
+	gw0p49iYz+MsxwlTFjfVi3vub6m9PyUop0SZ077MpCh3iwHHd72DLn4Shx8IGyR6W0GY+VOYCaM
+	Xazlg0ZYIOwz9aN7cU8M2yMWdTf9uTQetXmxQ3wgfZ8gU/npfdJ0FY82tODWiwFynFD0tXAppJE
+	yrDRAOXj7uPLQCGE5mVk0lQ==
+X-Google-Smtp-Source: AGHT+IFc7mYtdWx5h64JYuH4a1LeComufmIsNfa7K/9QthDz9+VCnPqHTyQm1vfkEIaYUwEw02Ai2A==
+X-Received: by 2002:a17:907:3da6:b0:adb:2db9:b0b0 with SMTP id a640c23a62f3a-adb2db9b1b7mr45221366b.35.1748522549691;
+        Thu, 29 May 2025 05:42:29 -0700 (PDT)
 Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d850d88sm134258766b.77.2025.05.29.05.30.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82eee2sm136039966b.73.2025.05.29.05.42.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 05:30:39 -0700 (PDT)
+        Thu, 29 May 2025 05:42:29 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 29 May 2025 14:32:14 +0200
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
+To: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -74,47 +70,173 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Derek Kiernan <derek.kiernan@amd.com>,
 	Dragan Cvetic <dragan.cvetic@amd.com>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
 	Stefan Wahren <wahrenst@gmx.net>,
 	Herve Codina <herve.codina@bootlin.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
 	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v10 0/13] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <aDhTzqMLM5wR09y2@apocalypse>
-References: <cover.1748516814.git.andrea.porta@suse.com>
- <2025052908-goldmine-ramp-b865@gregkh>
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v11 0/13] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Thu, 29 May 2025 14:43:49 +0200
+Message-ID: <cover.1748522349.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025052908-goldmine-ramp-b865@gregkh>
+Content-Transfer-Encoding: 8bit
 
-> On Thu, May 29, 2025 at 01:23:35PM +0200, Andrea della Porta wrote:
-> > *** RESENDING PATCHSET SINCE LAST ONE HAS CLOBBERED SEQUENCE NUMBER ***
-> 
-> Then it needs to be a new version, not the same one please.
+*** RESENDING PATCHSET AS V11 SINCE LAST ONE HAS CLOBBERED SEQUENCE NUMBER ***
 
-Sending V11 in a moment.
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
 
-Thanks,
-Andrea
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration. To
+ensure compatibility with downstream, a devicetree already comprising the
+RP1 node is also provided, so it's not strictly necessary to use the
+dynamically loaded overlay if the devicetree is already fully defined at
+the origin.
+To achieve this modularity, the RP1 node DT definitions are arranged by
+file inclusion as per following schema (the arrow points to the includer,
+see also [9]):
+ 
+ rp1-pci.dtso         rp1.dtso
+     ^                    ^
+     |                    |
+rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b.dts
+                                               ^
+                                               |
+                                           bcm2712-rpi-5-b-ovl-rp1.dts
 
-> 
-> thanks,
-> 
-> greg k-h
+Followup patches should add support for the several peripherals contained
+in RP1.
+
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
+
+The patches are ordered as follows:
+
+-PATCHES 1 to 3: add binding schemas for clock, gpio and RP1 peripherals.
+ They are needed to support the other peripherals, e.g. the ethernet mac
+ depends on a clock generated by RP1 and the phy is reset through the
+ on-board gpio controller.
+
+-PATCH 4 and 5: add clock and gpio device drivers.
+
+-PATCH 6: the devicetree node describing the RP1 chipset. 
+
+-PATCH 7: this is the main patch to support RP1 chipset. It can work
+ either with a fully defined devicetree (i.e. one that already included
+ the rp1 node since boot time) or with a runtime loaded dtb overlay
+ which is linked as binary blob in the driver obj. This duality is
+ useful to comply with both downstream and upstream needs (see [9]).
+ The real dtso is in devicetree folder while the dtso in driver folder is
+ just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
+ The reason why drivers/misc has been selected as containing folder
+ for this driver can be seen in [6], [7] and [8].
+
+-PATCH 8: add the external clock node (used by RP1) to the main dts.
+
+-PATCH 9: the fully fledged devictree containing also the rp1 node.
+ This devicetree is functionally similar to the one downstream is using.
+
+-PATCH 10 (OPTIONAL): this patch introduces a new scenario about how
+ the rp1 node is specified and loaded in DT. On top of the base DT
+ (without rp1 node), the fw loads this overlay and the end result is
+ the same devicetree as in patch 9, which is then passed to the next
+ stage (either the kernel or u-boot/bootloader).
+ While this patch is not strictly necessary and can therefore be dropped
+ (see [10]), it's not introducing much extra work and maybe can come
+ in handy while debugging.
+
+-PATCH 11: add the relevant kernel CONFIG_ options to defconfig.
+
+-PATCH 12: enable CONFIG_OF_OVERLAY in order for 'make defconfig'
+ to produce a configuration valid for the RP1 driver. Without this
+ patch, the user has to explicitly enable it since the misc driver
+ depends on OF_OVERLAY.
+
+-PATCH 13: collect all changes for MAINTAINERS file.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been already promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Many thanks,
+Andrea della Porta
+
+Links:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+- [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+- [9]: https://lore.kernel.org/all/Z87wTfChRC5Ruwc0@apocalypse/
+- [10]: https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
+
+CHANGES IN V11
+
+
+PATCH RELATED -------------------------------------------------
+
+- Patch 10,11,12: Added: Reviewed-by: Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+
+- Patches reworked to apply cleanly on broadcom/stblinux branches:
+  patch 1,2,3,6,8,9,10 -> devicetree/next
+  patch 11,12 -> defconfig/next
+  patch 4,5,7 -> drivers/next
+  patch 13 -> maintainers/next
+
+- Patch 13: new patch gathering all changes for MAINTAINERS
+
+
+RP1 CLOCK DRIVER ------------------------------------
+
+- Dropped some WARN_ONCE() lines that are basically useless
+
+- rp1_clock_set_parent() now returns EINVAL in case the parent check
+  is failing. As a result, rp1_clock_set_rate_and_parent() has also
+  been adapted to return rp1_clock_set_parent() retcode.
+
+- Return an ERR_PTR from rp1_register_clock() instead of just NULL
+
+- Dropped some unaesthetic blank lines
+
+- Disabled the builtin locking in regmap since we're already dealing
+  with concurrency in the code
+
+- rp1_clk_probe(): dropped dev_err_probe() as redundant due to commit
+  12a0fd23e870 ("clk: Print an error when clk registration fails")
+
