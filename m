@@ -1,244 +1,240 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787751B6D06;
-	Thu, 29 May 2025 09:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFF828C5CE
+	for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 10:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748509244; cv=none; b=dxjG0s9Dxoxmj6X9rxbfjSF/y+yIp5qHV6aVuqRWf0ynGHDdNk5LrwP6ilt9IIN+sqtaqbmuVNrH9hWm7QFTf9elgYgBezC3jGax95tN9SuLrYf9VoXx8FrnoalFhVF3PylKPnXDLLLzxyWAOWPy3iX/fz4V7nhkw2llY+x/CQo=
+	t=1748515683; cv=none; b=KPG7B+VNYgn0+YLbcCPsaIEbVbAwDTNhB4lXwZ9gnq0nKJ0qwclF33Clrygoukv1T91QlZfzjwE7QVJ6l+/2wKtdM2NS28VBOt1r7gJVzP9OaiYU4NFFjPBqe9Rk5lrm3G5csFn4oX+Q7uMMfqbe40lc3+/65iOjKgv/TRAlBbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748509244; c=relaxed/simple;
-	bh=z6rn8oeHUdTWK5F9qwdWd7GFhM+29i6k/K02iAi8NjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UqBL1NR7oactxSUSug4cGpJYZx+i1twJxDSZXAhAabdbK8MgQ10DDzTqn2Pky/dNGEV5uNDsJW/NEQJZMveEZke4jkoKYLtmHhz+yUBoDWJtjy4SD4bXy9w/TL/D37Bm1wB1Ehsfxttz/UsjJjMSgNoYrJhTNg3U60Go2yloOPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3C7bxoG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748515683; c=relaxed/simple;
+	bh=st3kw9xeiT6Aj1eKo3Q06hpJlMVvXj6ln4IoXPrMPDo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ZP7aGScLURgkYh3mqxGPQewEvXayiBEAjE3Rs0m7p6aIIrqRguw3heKfi6kJ+TZyLTRt+QooxVGyLdAGnw8otSaA67l2EOJNUM3qbDRSHMtaL0+FUGuDgmefdKBswb0RKsxlvqYyeqGpkh7RcU4C96A8r0bF5xX2AiAeW8IiczI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jgv0HfW/; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3C7bxoG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E8EC4CEE7;
-	Thu, 29 May 2025 09:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748509244;
-	bh=z6rn8oeHUdTWK5F9qwdWd7GFhM+29i6k/K02iAi8NjY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g3C7bxoGUoOdpvGlkqcYQDn6dC+O5ojEWiuQRaQKIc9ej0Qq2saE4UCEnQSXqrgDA
-	 +DhXyaw8Y3f+O1zdbt23n3MMD/vXbGV3a2bAKSt5DcM94pBmLhtY+biMG8b3wY40j3
-	 kXpuB63OXBhkGYCyk/JJFdl/ECYAWqqCGqzzJA34g/E+rxmIEaiPYTS+hCe0qI/05t
-	 agrZ3U0aKlM1bQ9vApxjSTIlY3CRZc9khH7PBtd+iGF+tiVgIyyW0m8LD4JFzmiasM
-	 vu7aosqlIU27R10eC/YIjsk3QwBH+anBTrNw+cvki/jystFwMn0dBRqIvQoAxPElLI
-	 ixikskPP3qjrA==
-Message-ID: <3fb8ad2b-016d-4eee-af57-be7dec659f4c@kernel.org>
-Date: Thu, 29 May 2025 11:00:39 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jgv0HfW/"
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-60462e180e2so1441614a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 May 2025 03:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748515679; x=1749120479; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EAESDW/7jCSPVaKPQ9/uLiimzACzDSjMXvuVDbRi/d4=;
+        b=Jgv0HfW/OKOFBpu8hoCl1rv1l0xNAjIBDbyL4zjGPZ9uzov9rBP3fdIoh8lT+pbajY
+         /3f9kXmEnEM+wTqhLi3lARYt+t7XZSojm31wshNC7R7rjn/SDULiInzLNnTWOA8Ab/NL
+         mqTn8fMjkb7pCwow+9ge52Mc6lO+xsdJGDLnjhLAHmWXZaNNoakSYPyi98vzJjvP4Z2r
+         JzU8uL6AEeJv1aw8NgIw8xRmrE+z5ztIYBt2Yhx/8z9ryu4dDXn946GTI9d0YvYJfFMv
+         8DnknDwaYXwuFT0c88CbD1f9NuR3Fihge0AR0ba5xwPFSNjvsXLp/JgtXxura9S8blrB
+         uXNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748515679; x=1749120479;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EAESDW/7jCSPVaKPQ9/uLiimzACzDSjMXvuVDbRi/d4=;
+        b=K47oS0uBjR6Q7tacdSzcVEwHldQhjsVviFHXBX4xU/j3oj/DXOsWAX3GBT9BnGQy8O
+         ablaDelLUu5JP9wF/RiAdupzvYb6HT0FvFVzCuYXCUk8z0KoSlux8DFxXLdCtnX4+aMX
+         793fSdcrHdiSShEmXlYtaYu5TlDiDoz98QG8OsTlWA3clMAvSD2fouTBEJMrmA70ilIr
+         Y7iT8Ox7AQ0w+MifEkHvxxFCypoR8r+zoiKPUGLdbGK3amp2+fwVfrl8+IiEAAVGJ+uN
+         ej+pxhqddXVJrqTB0QqtIhKg9D44uAYpYzULqX6lXcEUi7yFqX/RlC0dXwJtjIJiWvsT
+         iPqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHPqonoW0pqAJWuQUpLfbIBRVoG+x2qa3rKSqOFkXlB8CJk5l2VTI+0jcK9CqLjSIXq8+a7xfYImM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3PuA+T9m/NpSqMqp9f0HDDZDEFmkJUI66hG4e5sg29KQJRd4A
+	+1GEvpgw7PbIieryBAWUNNac/CL3G9IMEepGhuHL2two/4PUCj8H8ijVT7ghrOwfme8=
+X-Gm-Gg: ASbGncuJvMQMf28LeWnRWMWt+9tiWs3FQxlzHYVl+lPEpCjG+gmV+Ljq3goqz5byqab
+	Duut6PC9L0vLkR3aUhlJ11nfHdhrHpH1Te3vq6GUgHDgdJLP+ev3353bUxmYE6aBDiMaUN8WIim
+	VcRl3h7ALkOyjq92HRnbuJNhHwbgCLCF482SIBR4NOUIHrAa+FuqfrRwiAyzqGwMNba23E6R8fe
+	he1M7IBwWUoJNAkCK0RsRX1Q3nbPNmGCtNUsvZ+uCVBm63rQqFdiuQ+HpUhz4k6vwhIprzbcIc2
+	NQyZRp7mALslOGdJQGWFFwYKgRimkxjk2rSwDfJ6jXh7uHplLslO8qnVtTiO3vQz278S7+Bzl0s
+	+s7xbOM3pNdjHxLkYMV1WlX96YknSGX2r
+X-Google-Smtp-Source: AGHT+IHUFGHnG9AjxmrJqcXz/LbzZ6SrWKFB/alTR21Pzmob3zURAwQjqtx36Bhs9JKybPZL4Rvl5g==
+X-Received: by 2002:a17:907:9713:b0:ad8:9e80:6bc8 with SMTP id a640c23a62f3a-ad89e807b84mr616689066b.19.1748515679011;
+        Thu, 29 May 2025 03:47:59 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5dd043a9sm119264966b.89.2025.05.29.03.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 03:47:58 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v10 0/13] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Thu, 29 May 2025 12:49:17 +0200
+Message-ID: <cover.1748514765.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250528004924.19970-1-ansuelsmth@gmail.com>
- <20250528004924.19970-5-ansuelsmth@gmail.com>
- <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
- <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
- <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
- <6837084c.050a0220.1e474f.3f20@mx.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <6837084c.050a0220.1e474f.3f20@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/05/2025 14:57, Christian Marangi wrote:
->>> Again sorry if this question keeps coming around and I can totally
->>> understand if you are getting annoyed by this. The reason I always ask
->>> this is because it's a total PAIN to implement this with the driver
->>> structure due to the old "simple-mfd" model.
->>
->> ... and Rob was saying multiple times: be careful when adding
->> simple-mfd. If it bites back, then I am sorry, but everyone were warned,
->> weren't they?
->>
->> What is exactly the pain anyway? You cannot instantiate children from
->> SCU driver?
->>
-> 
-> Answering below since they are related.
-> 
->>>
->>> (as again putting everything in a single node conflicts with the OF
->>> principle of autoprobing stuff with compatible property)
->>
->> I am not sure if I follow. What principle? Where is this principle
->> expressed?
->>
->> And you do not have in your second example additional compatibles, so
->> even if such principle exists it is not broken: everything autoprobes, I
->> think.
->>
->>>
->>
->>
-> 
-> The principle I'm talking about is one driver for one compatible.
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
 
-There is no such principle. One compatible can map to many drivers and
-many compatibles can map to one driver.
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration. To
+ensure compatibility with downstream, a devicetree already comprising the
+RP1 node is also provided, so it's not strictly necessary to use the
+dynamically loaded overlay if the devicetree is already fully defined at
+the origin.
+To achieve this modularity, the RP1 node DT definitions are arranged by
+file inclusion as per following schema (the arrow points to the includer,
+see also [9]):
+ 
+ rp1-pci.dtso         rp1.dtso
+     ^                    ^
+     |                    |
+rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b.dts
+                                               ^
+                                               |
+                                           bcm2712-rpi-5-b-ovl-rp1.dts
 
-> (to be more precise excluding syscon compatible that is actually
-> ignored, if a driver for the compatible is found, any other compatible
-> is ignored.)
-> 
-> This means that declaring multiple compatible as:
-> 
-> compatible = "airoha,clock", "airoha,mdio"
-> 
-> doesn't result in the clock driver and the mdio driver probed but only
-> one of the 2 (probably only clock since it does have priority)
+Followup patches should add support for the several peripherals contained
+in RP1.
 
-I don't understand this example. It makes no sense - clock is not
-compatible with mdio.
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
 
-> 
-> The "simple-mfd" compatible is just a simple compatible that indicate to
-> the OF system that every child (with a compatible) should be also probed.
-> And then automagically the driver gets probed.
-> 
-> Now the ""PAIN"" explaination. Not using the "simple-mfd" way with the
-> child with compatible and putting everything in the node means having to
-> create a dedicated MFD driver that just instruct to manually probe the
-> clock and mdio driver. (cause the compatible system can't be used)
+The patches are ordered as follows:
 
-You already have that driver - SCU. No need for new MFD driver...
+-PATCHES 1 to 3: add binding schemas for clock, gpio and RP1 peripherals.
+ They are needed to support the other peripherals, e.g. the ethernet mac
+ depends on a clock generated by RP1 and the phy is reset through the
+ on-board gpio controller.
+
+-PATCH 4 and 5: add clock and gpio device drivers.
+
+-PATCH 6: the devicetree node describing the RP1 chipset. 
+
+-PATCH 7: this is the main patch to support RP1 chipset. It can work
+ either with a fully defined devicetree (i.e. one that already included
+ the rp1 node since boot time) or with a runtime loaded dtb overlay
+ which is linked as binary blob in the driver obj. This duality is
+ useful to comply with both downstream and upstream needs (see [9]).
+ The real dtso is in devicetree folder while the dtso in driver folder is
+ just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
+ The reason why drivers/misc has been selected as containing folder
+ for this driver can be seen in [6], [7] and [8].
+
+-PATCH 8: add the external clock node (used by RP1) to the main dts.
+
+-PATCH 9: the fully fledged devictree containing also the rp1 node.
+ This devicetree is functionally similar to the one downstream is using.
+
+-PATCH 10 (OPTIONAL): this patch introduces a new scenario about how
+ the rp1 node is specified and loaded in DT. On top of the base DT
+ (without rp1 node), the fw loads this overlay and the end result is
+ the same devicetree as in patch 9, which is then passed to the next
+ stage (either the kernel or u-boot/bootloader).
+ While this patch is not strictly necessary and can therefore be dropped
+ (see [10]), it's not introducing much extra work and maybe can come
+ in handy while debugging.
+
+-PATCH 11: add the relevant kernel CONFIG_ options to defconfig.
+
+-PATCH 12: enable CONFIG_OF_OVERLAY in order for 'make defconfig'
+ to produce a configuration valid for the RP1 driver. Without this
+ patch, the user has to explicitly enable it since the misc driver
+ depends on OF_OVERLAY.
+
+-PATCH 13: collect all changes for MAINTAINERS file.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been already promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Many thanks,
+Andrea della Porta
+
+Links:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+- [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+- [9]: https://lore.kernel.org/all/Z87wTfChRC5Ruwc0@apocalypse/
+- [10]: https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
+
+CHANGES IN V10
 
 
-> 
-> So it's 3 driver instead of 2 with the extra effort of MFD driver
-> maintainer saying "Why simple-mfd is not used?"
+PATCH RELATED -------------------------------------------------
 
-Sorry, that's a wrong argument. You can use simple-mfd, iff it follows
-standard practices. If it does not fit standard practices, you cannot
-use an argument "now I need more complicated solution".
+- Patch 10,11,12: Added: Reviewed-by: Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-> 
-> 
-> There is a solution for this but I always feel it's more of a workaround
-> since it doesn't really describe the HW with the DT node.
+- Patches reworked to apply cleanly on broadcom/stblinux branches:
+  patch 1,2,3,6,8,9,10 -> devicetree/next
+  patch 11,12 -> defconfig/next
+  patch 4,5,7 -> drivers/next
+  patch 13 -> maintainers/next
 
-Really? All arguments you used here are driver arguments - that
-something is a pain in drivers. Now you mention that hardware would not
-match description.
-
-Then let's change entire talk towards hardware description and send
-patches matching hardware, not matching your MFD driver structure.
-
-> 
-> The workaround is:
-> 
-> 		system-controller@1fa20000 {
->                         /* The parent SCU node implement the clock driver */
->                         compatible = "airoha,an7583-scu", "syscon";
->                         reg = <0x0 0x1fb00000 0x0 0x970>;
-> 
->                         #clock-cells = <1>;
->                         #reset-cells = <1>;
-> 
->                         /* Clock driver is instructed to probe child */
->                         mdio {
->                                 compatible = "airoha,an7583-mdio";
-
-Again, drop compatible.
-
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> 
->                                 mdio_0: bus@0 {
->                                         reg = <0>;
->                                         resets = <&scuclk AN7583_MDIO0>;
->                                 };
-> 
->                                 mdio_1: bus@1 {
->                                         reg = <1>;
->                                         resets = <&scuclk AN7583_MDIO1>;
->                                 };
->                         };
->                 };
-> 
-> 
-> But this really moves the probe from the simple-mfd to the clock driver.
-> 
-> So it's either 3 solution
-> 1. 2 driver + "simple-mfd"
-> 2. 3 driver + PAIN (due to MFD required driver)
-> 3. 2 driver + not very correct DT node structure
-
-Option 4:
-Describe it correctly. You have one device which is the SCU which is
-clock provider and has subnode for MDIO bus. I don't care how many
-drivers you have there (but I am sure one can do it in a simple way).
-
-> 
-> Maybe option 3. is more acceptable?
-> 
-> The SCU node is mainly clock + reset controller and the MDIO bus is an
-> expansion of it?
-> 
-> Hope the long explaination makes sense to you (especially about the
-> OF principle thing)
-> 
-> --
-> Ansuel
+- Patch 13: new patch gathering all changes for MAINTAINERS
 
 
-Best regards,
-Krzysztof
+RP1 CLOCK DRIVER ------------------------------------
+
+- Dropped some WARN_ONCE() lines that are basically useless
+
+- rp1_clock_set_parent() now returns EINVAL in case the parent check
+  is failing. As a result, rp1_clock_set_rate_and_parent() has also
+  been adapted to return rp1_clock_set_parent() retcode.
+
+- Return an ERR_PTR from rp1_register_clock() instead of just NULL
+
+- Dropped some unaesthetic blank lines
+
+- Disabled the builtin locking in regmap since we're already dealing
+  with concurrency in the code
+
+- rp1_clk_probe(): dropped dev_err_probe() as redundant due to commit
+  12a0fd23e870 ("clk: Print an error when clk registration fails")
+
