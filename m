@@ -1,72 +1,72 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CF726F461
-	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8C7283C90
+	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748646047; cv=none; b=le42VPu0/HxiCDbqmgEZdI311THMKfA+JDHi31uLcXBtN6PmD9EVt1jN4YxouzoaCFYnsGvfOJQyvvkXnX064ji30Wy/rtJFmr7VMRzjvSlQhJdCKK8z3TLyOojG0pqh8jSjCL0uEgGfzzHgT5UC20F+TyMzXqleifOhuYv1D6I=
+	t=1748646272; cv=none; b=CavSiHHXrPghhxUOMjGEeS0LWFfOwEATX7DvedWAiTgkm516eZ/+JHiO6Bn4c/AbomMh0lR4E+TVwujiKzIj9hbFlI7LuJTgQIgaRlBdgQ3UiX6bPtXsdgOSPP8SXefcj8dtvLTQ11oIuxOoq9sy88uQHFureWsfJUgR45m6AHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748646047; c=relaxed/simple;
-	bh=LMN2CJvWjnSp1DFxtqbW5/P+SkmfTosLclftY2KufBo=;
+	s=arc-20240116; t=1748646272; c=relaxed/simple;
+	bh=byiZoh49SLANJUmSAfCqkOwCaNc9lAE28TTBexKKF/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LFKqgXB38m1B4xsDCOfM4Plm/hw8Soa3LR8ddbO4HyJJE4hxf40GxSKo86Afr+z2jt03bfjJrLLaIHkJaS+DT1pd7R/xbt9uHJ0g4ElJTOO/faS4kuCh+MIQ+gQPLnsScUcSNcm13MLnmwXyHvAcfqieF1W6UAFVKg8Mi5sSe58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LXEUZzKe; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=fdQRefPnFao102cH4WC+lDalx7jfzMN3fIBdcZdm8zzBwtgYztq2BrxINRK5RRCwF+cAL2DYADyxQHA9j28rNpFRL79N5QdqwkuPV9ilK0XhtP9R5GAGDoYeoU8q7YN2q1CWai0EBjJiRZoeJkbkcfbqfqULwZPkBKypnzrCiEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V0BnDPAQ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LXEUZzKe"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54ULk425009473
-	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:00:45 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V0BnDPAQ"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UMU199006938
+	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:04:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	616bsY/nEBSBHhfZUGqUyy3WTHSx4fm6iqXWJiW0Obo=; b=LXEUZzKenzxzgwZV
-	ppg18kMac9P4rgtAoSlwTqc1i6HLV9vI1EPx0iTdMCTP88OZO9REiY00KL8s4nWM
-	5SnUZ3yVFjpIoDFH2PzVoQH2gyfQ3JnxOBUK2qscR18DQ7fPaCvhS8LlPBhqzyyn
-	A8gIfosnLPux9ltX7pqiV8elH6RitpidT+WVhdf3ycTdChUiCwv7TwClyaOLmvMY
-	l31kRPKfLmVJ+KYC7qq1Tjaw505hO9Of3kYUHFtcH+dCm5WnusRq2oJQeEEOXyZa
-	3txNbhGnbonm+MZbUbJ1jfyzo7Bu02BUKj5HVsMMNJn0yYFjRhIjxQLL8OesYDdE
-	MfRVLg==
+	dkCBS/+sevFscPkQYrCdD9qA2ujLMqx9Mjn5PoGA0mk=; b=V0BnDPAQ1cZA5vMx
+	wrO+uwAWz8KFlXnstE/uufBrXfFTgi9pMy5ti7STYQH8q8NfAlgSoJywzRQ6RcaA
+	6L4TJWa4Uz403dM51XNkHzP/9ei2iIwgXqq+mOW85fAgEex2hgHJ8sNILvHTUBtx
+	QMmPQvrIfUhawDrBFMPX2VL8X4HSZYJ6jM24pYyOVnxGGOnTewosFWMUTitVV0hm
+	KmSkZ/UPg4Xm8SkaQ6cc3gS7/f80g+dpbgrj3rRQ2grar1cbok/T3eBRMT7e4Nov
+	M6dcZIyQItB+TI3kB95iWFi5BpBHlRQOo4mvsDGr9r4aZtKEZ+qjdWdfclyqhQkp
+	lNnSrA==
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w691n9sp-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u3fqjuq5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:00:45 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a42e9c8577so6649181cf.0
-        for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 16:00:45 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 23:04:27 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a43228ba19so7238281cf.2
+        for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 16:04:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748646044; x=1749250844;
+        d=1e100.net; s=20230601; t=1748646267; x=1749251067;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=616bsY/nEBSBHhfZUGqUyy3WTHSx4fm6iqXWJiW0Obo=;
-        b=jmSWGaiym84m9ADfP9wX6hXzoUmfgcrnWL66MRlB6ao2pEDGPjv8zY0gThuV7n4N2d
-         9jRZUIu/QHnltwMU0h7RgxRidvp+AxQdZINjwfYExbJQAvdyZvCFQQBDfjNA4b9xqtfv
-         j36QviUXmCuUeaSxxJQuGfBddWIS8YomBnqw2zia5RzSP1JOtnLsEhq1FF9/VA1wsI/n
-         1KcA8q3P+CsRvwIW8iUDJv9CScbwu3fGIBpAERBnFDatlzBv84CJzKIzfa9vVufBtHGh
-         E3gNUqeTT2r3cz+YqYvtAYdx8gNudF42ihi/AOkrQnTEiwhrCJ/daWDcreRmFwu5BbvS
-         CqGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNwB3SKkNIuMTH8e4iZNonu+7R/ickkSxYE7QF8Jczr6jOnQL3RAeaJRr/4VANCiYSjP7hQBX4O7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpVJzZWItaFUOhMhKZOUTPEXabXn6rQztwUDAx3tbcQRaQHHkc
-	OyEs9YEXr8xc/Ztffq9gOsX/6CIOa/ZkBZc0ZUjf32J3gMZbD43ttB3+gIx3HQn2KQVGzsBhQ4e
-	66FSUAHJ8vzsxaA7xSF7AMxbhyP9CPs/MoxS2CPnCh1W7VztLTCkqmMsWMeRM4a4=
-X-Gm-Gg: ASbGncueuK6dn8nKffDAa4lhg42GwtUNEbwbO90XTuPS2nUsI+mZGfUT9zUWZxLsPy8
-	7UjQQ4aLoF5oxO0cBv/etzq/T3wkKQQbWicr73q++Id02k9pXDrtf1lSTKz7pCOKww/hCkt40d8
-	8FMdIFklLsoXBNiG1ugCrRn70ZkLr5Bibbs8NgNYirfE6/g9g/fYdSQeetXx4NKAXKYubk5YzV5
-	Ki35Pni1alnqYHqWD1N+xVWhMa/TsDBk80c+KmR/KnVRr1CHH4DpJ+yNOwVaAMpBpaS3j9HeH7+
-	3lPyePCg3CdnEh1cryNza4RMRaj57V2jcPsazmhRrHjW4BefoxmcYTyRifNpNDItbQ==
-X-Received: by 2002:a05:622a:1995:b0:47a:ecd7:6714 with SMTP id d75a77b69052e-4a44319ad30mr25042971cf.9.1748646044068;
-        Fri, 30 May 2025 16:00:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFK6iok0uvIVWvqpCOyLIDjws7FdwQixOfUFwlizxjEFvY61uTtRtd0YSIs0q8n6c4uFb7yNQ==
-X-Received: by 2002:a05:622a:1995:b0:47a:ecd7:6714 with SMTP id d75a77b69052e-4a44319ad30mr25042591cf.9.1748646043455;
-        Fri, 30 May 2025 16:00:43 -0700 (PDT)
+        bh=dkCBS/+sevFscPkQYrCdD9qA2ujLMqx9Mjn5PoGA0mk=;
+        b=TQquBlTFVoyMBw+y7bFYY0X9YEmZStKs0ESdjZxodpaHAgvfRxapUZewoBPkK1Bta8
+         lkcZcMWhA0eZZtq4xlqekDRURJ8E0SawZ5na8IQReBzfi+uuth+pumkN9LHYF/nMUE3J
+         nHlliyDMQRV8p5cnLVcDeWMAedGH6YN9b5WsJGeRHalHeDivmUsKq8xfSUefj5TslZDq
+         EbfakCPL2d/cFyofS0401ySVy8hNRo3Gmz6PIk0XqLjP4vJN9tz1L+uaAEcf4kS5jptI
+         Qj34I5jg2lsJbMD4SimuyRmtfCQmNrfRuSjLjTosSvW6JUapSyY1DQzs9/TvG5x9RKsz
+         vVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdgJwkGpO0GRwlSwHBPExaEt/Mbushdz2fESX/IhdPrll0wtsVfFHXNv0B/Ri8LNKpoDIvgR8h5So=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykFvUzLl6ofH/8bkB0U5I6vwDXZbQc9eNQTRrtihS0nrrcCX3h
+	a17KSXQoDW5lbSoDP+pXjdv18VjqbT1xZuWG8jZD4/8kvM7y7/W6nA3uZm970XohnZMVbAtg7xY
+	2sh349W/ikXTYPQXJNoXlwsjFP/X6b1Nf1CiKKn1QUszMVvmPSGds9nLH8gXfDDg=
+X-Gm-Gg: ASbGnctFM7FDnjLafLIUlhqmoZ0HoYZdb9gPbNdNkkrSx/sEUZ10ATHLQVJH3N2QeZF
+	34bnE1xZFuO0uRiMSJ/y8u1lL3ZwDCEDjlw5yXHXqAtKZe5UCUHY16ncJ5Dge9mcGcn7BhkvHUC
+	RijQ4NugVRm3FmnfwBOVY73zAEMVV2CXetNo1u3/iwnSUKfhv1+aPajaqZr5wKypwljvQ1ENGQV
+	TUR6sIiZcm8dXSBKolxadC6OvFkdGomqmbQ8ggFF32NLP+pRgM/2h2/f2akmzPPRh2IQ7AmTpkD
+	18c0Hn+WFMspsrezlGT2W3yrCWb9KkCm+kMwlJfSrRFD0oIU7XBkGeUnWT5+a1lOzw==
+X-Received: by 2002:ac8:5786:0:b0:4a4:3cad:6378 with SMTP id d75a77b69052e-4a442fd5b4dmr24294131cf.4.1748646266918;
+        Fri, 30 May 2025 16:04:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwEI1tzi2R7YfDu7oYyeYqxX/g+u3B+J1JeZ+9bSeOHb3HGbzLToYdbggmXX+xwNflLNapVg==
+X-Received: by 2002:ac8:5786:0:b0:4a4:3cad:6378 with SMTP id d75a77b69052e-4a442fd5b4dmr24293841cf.4.1748646266428;
+        Fri, 30 May 2025 16:04:26 -0700 (PDT)
 Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60566c2a7bcsm2304464a12.12.2025.05.30.16.00.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7ff075sm399104366b.37.2025.05.30.16.04.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 16:00:42 -0700 (PDT)
-Message-ID: <4639636e-0544-44a4-a997-2969f4661bd0@oss.qualcomm.com>
-Date: Sat, 31 May 2025 01:00:39 +0200
+        Fri, 30 May 2025 16:04:25 -0700 (PDT)
+Message-ID: <ee3caba9-deff-462e-8117-f375882aaccf@oss.qualcomm.com>
+Date: Sat, 31 May 2025 01:04:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,75 +74,86 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/18] clk: qcom: common: Add support to configure clk
- regs in qcom_cc_really_probe
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 1/5] clk: qcom: gcc-ipq5018: fix GE PHY reset
+To: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King
+ <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley
  <conor+dt@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
- <20250530-videocc-pll-multi-pd-voting-v5-6-02303b3a582d@quicinc.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com>
+ <20250528-ipq5018-ge-phy-v2-1-dd063674c71c@outlook.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250530-videocc-pll-multi-pd-voting-v5-6-02303b3a582d@quicinc.com>
+In-Reply-To: <20250528-ipq5018-ge-phy-v2-1-dd063674c71c@outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=WfoMa1hX c=1 sm=1 tr=0 ts=683a389d cx=c_pps
+X-Proofpoint-GUID: pJ0pkNfQdgg5xQP6dQ0c1uvwlD8oQ1l6
+X-Proofpoint-ORIG-GUID: pJ0pkNfQdgg5xQP6dQ0c1uvwlD8oQ1l6
+X-Authority-Analysis: v=2.4 cv=X8FSKHTe c=1 sm=1 tr=0 ts=683a397b cx=c_pps
  a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=zrwMVDrAeVkrMBg2wiAA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: pE2jsUwXzRA_nfZF_ZoBLNAGkmOmgljD
-X-Proofpoint-ORIG-GUID: pE2jsUwXzRA_nfZF_ZoBLNAGkmOmgljD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDIwNiBTYWx0ZWRfX5X2bRmHYua+f
- bCD2WhxtUqo0eiBfUg29+lZGaJ4OhPbb4y/0DW77WBatrqMFhLTfxqGbbOY4WKvpJdyj3De7uu6
- NVb66UB/kjW2pl/CZx80gBo57SnkxzOpAsYDOl8dSnNkPxQmFRfEh5RVgCqvZFnDpn7UWSZT6WB
- LJe3FG80lkLPEzc36CSjnmsqjBl1LB2J6QMln8eIMIIYJ6w8UBuziX3ie/5VRnJUltasvcktrWw
- m7PFHmGyJr2mDWOxeoY5UzyrRO9rTjZqrZkBWk8g1Qe6W3oAfM8oEfrtwl4u5hTGP2CKlO0bS1g
- yhNJVAaEUoYjdnwaYx2hcAW45mgEf36vMCHMIt8GaRWhKGdngN7MC3ZRi77y5e6P/a4K0z+I2fh
- 5KvVIkK13/HsWKowcS82TNiTqHTXGDPrSnQ+vhTxx9pSEjDLj16eT8Rs6YD/YERrlUmLiqPD
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=qC_FGOx9AAAA:8 a=UqCG9HQmAAAA:8
+ a=EUspDBNiAAAA:8 a=rZqdB0JiAKPJAkIg25gA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=fsdK_YakeE02zTmptMdW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDIwNiBTYWx0ZWRfX2z+8yLBirc/j
+ yBmFO97VwyDlbzA+zkzTcPYAjhHD2NZw0IZi7l71sy+fVHDqUUw4TNmHavb2K8k1BribgydPXdQ
+ WuLzeQ05g+5mLCvMH5IYRkuv2KkkBldTxsWAv0SLRinkFDXqTP8KgJQQdZJy+YNus2bWFMUBzz9
+ dIVlITCnzHOLMVBo/EOn2GUXx/FYi4ovS3ikR+Dm4twPblgcSPXiK2aoAenok6CEd2yggYwLoLL
+ Vnsz1uwtiLAn/rkl9OAP3l0qeqswetWdPYoaNW18hhNjdZvPT6m0189Dmh1oLIzjGGpSwSmFDEH
+ NPHQ93JcHPYxE1BxqYSNoLA1Tb2mlyrEW45NvBQ+4qSlQ1MB/Z4+iIk7IaWsaYQblo46axnwDlK
+ vxX9uMlfaLapc+tPM7nEj6saY3sdSuGDapHHBBHUkr8X/ZlJEkSgpjFqpv72sLt4SpMlyLSW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-30_10,2025-05-30_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- bulkscore=0 adultscore=0 spamscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505300206
+ impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505300206
 
-On 5/30/25 3:20 PM, Jagadeesh Kona wrote:
-> Add support to configure PLLS and clk registers in qcom_cc_really_probe().
-> This ensures all required power domains are enabled and kept ON by runtime
-> PM code in qcom_cc_really_probe() before configuring the PLLS or clock
-> registers.
+On 5/28/25 4:45 PM, George Moussalem via B4 Relay wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
 > 
-> Add support for qcom_cc_driver_data struct to maintain the clock
-> controllers PLLs and CBCRs data, and a pointer of it can be stored in
-> clock descriptor structure. If any clock controller driver requires to
-> program some additional misc register settings, it can register the
-> clk_regs_configure() callback in the driver data.
+> The MISC reset is supposed to trigger a resets across the MDC, DSP, and
+> RX & TX clocks of the IPQ5018 internal GE PHY. So let's set the bitmask
+> of the reset definition accordingly in the GCC as per the downstream
+> driver.
 > 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Link: https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/commit/00743c3e82fa87cba4460e7a2ba32f473a9ce932
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 > ---
+>  drivers/clk/qcom/gcc-ipq5018.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
+> index 70f5dcb96700f55da1fb19fc893d22350a7e63bf..02d6f08f389f24eccc961b9a4271288c6b635bbc 100644
+> --- a/drivers/clk/qcom/gcc-ipq5018.c
+> +++ b/drivers/clk/qcom/gcc-ipq5018.c
+> @@ -3660,7 +3660,7 @@ static const struct qcom_reset_map gcc_ipq5018_resets[] = {
+>  	[GCC_WCSS_AXI_S_ARES] = { 0x59008, 6 },
+>  	[GCC_WCSS_Q6_BCR] = { 0x18004, 0 },
+>  	[GCC_WCSSAON_RESET] = { 0x59010, 0},
+> -	[GCC_GEPHY_MISC_ARES] = { 0x56004, 0 },
+> +	[GCC_GEPHY_MISC_ARES] = { 0x56004, .bitmask = 0xf },
+
+in case you send a v3:
+
+0xf -> GENMASK(3, 0)
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
