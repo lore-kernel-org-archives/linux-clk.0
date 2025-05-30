@@ -1,295 +1,162 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098C24685;
-	Fri, 30 May 2025 10:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F7921C9F2
+	for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 11:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748601169; cv=none; b=lrZKLHFRvHy8X1JJd5EAbSGqIcY/Yc5NFuTolfbQwV8XtyudcQvyTfKhQRH4OU9htMp89iS0fhDDmBwW7EJpY5IiEceF7Sa0Mm8JjGVrDhen2NprwN+cv+6kDTmQQEUh1nqGCJlTjvnbnSO+vAhn96YeUnkQln7Kr7VyNxtM+2w=
+	t=1748603988; cv=none; b=pD1iztxTxMnxTU7hUZOYvnFmUolfth1/tFPox15lor8gCOQhlrJ7PkqoqZhhk+HWvYlm3Ew11OEuvnkC57Xl8jEWBMgibWJMIocFKsYHVWintThgs+/bFWNHHQvfmk87Nnj/t/pJGDl32I3FnwxS1D8fh+9voE9Ahl5WmtyyozU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748601169; c=relaxed/simple;
-	bh=stNs+MLwfmvFrO9WFziWRRzwneo679wcSSsxm7O2lHE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=gMCC6qQmk2PC40NkJoOKVUsdy4BLc1S0D6CIa9txu3eiMXWhi1iB4CHzf5z86itQAve/u864CXjkp4/3P7e+33arPENopThj9LEIACgwwOvjXSX/Bmp60BF/J5qswG0seU5DDDBC6An+sPs+vPKcFPa56ZI6cV76jfQ0IcPvDi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H0ioXTbG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1748603988; c=relaxed/simple;
+	bh=63UqaY8eo1/+MF5TIlcrSnoAO41a1hgwgM6ht8qQvFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Om9ukwNfqln6yvLQjh5E77IwL9Tm6mmNeMvnjsnBJrzcWq5bRIIQEpsetNrh19+p6eDe7EHi6A10zno50jkNMjt5bYVc0egxPN8wjE9oz7K3NpYkWbQ9idJXAguIPQE0i8TRUbKAlw23mNIc3LZgXlybb4Y3TAcZEaUrAtzELMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jWorY0ZH; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H0ioXTbG"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UAWXRi008272;
-	Fri, 30 May 2025 10:32:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=u5Dl1VPZeqVmjlMz6TRbk9
-	uWVlha+O4qdSwPEZjbQNI=; b=H0ioXTbG48VPA2DPljRifxGLZcQhqIlQsoUcBK
-	BVmMl1Xe6AgSVSw9IHXaaVuqIes8ggiYPM4E6TbIAjbbrCVOTwHcvsim/xvnZEXg
-	DGbZRMsr1VzdvgtWDGK+iubFkvL+IUe5OMaQ8TgVpZzDwwpuBaptq1aaisl7+/tD
-	aQTKxRIPSXqYqBX92Wz4utSmbZo4Nv7R+s7JfGaSz8MOjnMhvnPSJCKcbYe+BmRq
-	VFJeFYNqpWbEhdn0YDlq7KLk/XYhE1oB1lAxxjuWxOMwRa4rj5XZXVe7qO5dsESa
-	BvJNwzWqHneL9vFKt9t526hQgVmnS18onn7AjhhxpS4Z2o8A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w992tu0j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 10:32:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54UAWgeb001270
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 10:32:42 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 30 May 2025 03:32:39 -0700
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Fri, 30 May 2025 16:01:59 +0530
-Subject: [PATCH v5] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video
- GDSC's
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jWorY0ZH"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso12692915e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 30 May 2025 04:19:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1748603984; x=1749208784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=USDzPWtwfClWp+wqP7p23s9TnEvWK9VkLl4tGpc0TUk=;
+        b=jWorY0ZH/zS8Ls/jGVG9FKanOq/kN3EEFQ5Qf6XhS1aIsAXzecnH7jrfPVWv+QzHaS
+         GVWPYEAEeTM3a6im1jZPzfJfCkDQbjFG/BIuESEa4WHCg1Q11mDhX35Zl9tyXR0aKM70
+         zE9dWcYuPrMinVQqb4cWWoQIvstYJNZ+eKgFampZ0ZToRJi45TfaarCG3XneIAAbzEtu
+         1YnkZvKUKxImO1PkU3QIU1LcSQDEW6gA97BypyLY1fUAtNQpKoxIE4sploUguyiNyuE8
+         tuFIdbT41K56KKo+AzKGMIK6Nqw1sRiffd8sC1meEnOm6lH4LDWRl8UMWxlI0nfoWfxS
+         4+7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748603984; x=1749208784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=USDzPWtwfClWp+wqP7p23s9TnEvWK9VkLl4tGpc0TUk=;
+        b=mlVFLo/4GkPvLScPyP8CdJl5cw8cf+bhxeganL6VzrFpD/QmYpkLV3ynkjrrACl+PT
+         uUUWNVGCJW4QGlE5bxltbKCe4jJs/0tLQsuz+QTAXltvBx/zqGocTZ220kvQJYmKpsPA
+         syOnvNFoKwyLQpCnkAMVMGvA1B36bPuVSlX36eIS1t7h90LP5X3VXyGcbW8cuW9lJlw3
+         I0Anx+Pfy70IJC4MHcDtCU5+jJIQS9My0V1GQMW7GaXpr3cZpkBNg6OxjdhXradEeid9
+         5lFA+rTY9UQkL7AJnRhD0xo7EXblluyvUzzJedPXPm+sRd60yN6wPOt+hPUuuPWDWB38
+         WSOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3sMDYUFIBiVQnJ7OQ/xJ4b5EB7atPnFS7jeWCNkIEPtF1lfMboWWLQjaCuNHuYYMdbRfvGeDe0EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvYZ2IjO2MuNe2Z0kGSFj8Te7FG1o5iTBkFzbKyoAVXTyQVmkN
+	0AkVAAP8YzNzt8gPhHO97uvg03nF0Ehhd9On12Hz855kNvFh2ZCuuU4oBXzDWeO70oQ=
+X-Gm-Gg: ASbGncvRQnbh1E8Sou/Hofgzn15bCnrntNC9TgqJtUkqe85OgtGFFBm7fVBjAcBVdml
+	57TfR5Fy3e6BA+5ZR9aCmeNlnblPZdfcA7TJxS4MKer54XuH7xkOSXY6/Ed2qh8+Z29DXToVLVd
+	XsJZx7WRVtqFo/Fm/00q2i7b88yxWCraBxlhUTY0FEcQgyPe+V0/AhYh2efE4iv9C/qmlwBI3Fu
+	8+2aW3VmB+M+nMQMUnbeKZOla7WwM6ofB1+ibIl/nDF4wBVFDCmbOwm1mWG5yxz+pC3V13YZ4eF
+	qTD4SYbdk71KGocCtuXCYxJksdOwz6OSWhIs3S4mM3hsXiYLMQdJIePZJF3tgdc/H+A1l3304po
+	Y576tfA==
+X-Google-Smtp-Source: AGHT+IEbp0QcHOdy/Wep78m1G3gFrb9KOos/vWXOjVVBlX3y+lsRN5K2Os1MzG3FOYd4Bwb4BIL7Jw==
+X-Received: by 2002:a05:600c:1c96:b0:450:d386:1afb with SMTP id 5b1f17b1804b1-450d64d63d1mr31026995e9.9.1748603983832;
+        Fri, 30 May 2025 04:19:43 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450dc818f27sm3986435e9.18.2025.05.30.04.19.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 04:19:42 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	john.madieu.xa@bp.renesas.com,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 0/8] PCI: rzg3s-host: Add PCIe driver for Renesas RZ/G3S SoC
+Date: Fri, 30 May 2025 14:19:09 +0300
+Message-ID: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250530-switch_gdsc_mode-v5-1-657c56313351@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAB6JOWgC/23PwWrDMAyA4VcpPs/Fli1n3mnvMUZJZKXRockWd
- 9lGybvXKZRCk+Mv0Cd0UZlH4azedhc18iRZhr4EvuwUdXV/ZC2ptAIDaNAZnX/lTN3hmDIdTkN
- iDRhc8JHYVqjK2tfIrfzdyI/P0p3k8zD+3y5MdpkumLcWYI1NVhvtArYmVkxNY96/f4Skpz0NJ
- 7VwEzwIALdBQCG4QYqhZg4B1oS7E2isxQ3CFSLW4BO0qQJPa8I/CLCvG4QvBPrQBoqANT89Ms/
- zFRyVoqB7AQAA
-X-Change-ID: 20250530-switch_gdsc_mode-2563649ce175
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        "Vikash
- Garodia" <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748601159; l=7251;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=Q7euKf03Sle99JOH4MUzlfPfquYXmQMtj9fhWEbiGGU=;
- b=/rfDiEnXpXIkKrUFsKeCAa/hGGeS2zHNT+9yCyJCm8f9yG94eL+bd1/x0QQfMcEE2vd7A2WSS
- jVqWxV/P/0ODUwxW3ktTQksI4/DIMR55vHB8UZX6BWw8iZ7j9SHmOOh
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDA5MCBTYWx0ZWRfXzYUd3uvhgcZA
- gULMR8nyZsGNAElQoQtNGc2N9sjopUZ0Mmsc+dbQMxOkP3G7mTawJcL1pYXd7W5KGc3o4WnJxYQ
- eY6Tbvkj1qOM3/L+P3ikiUUCOx72MNX1KtqqkwfzNoxOIjojxTYCCUQ7N1BFxdFHrMG42qmhe10
- d+DlYkbLtGOEggX/mtwlQwBe2Y4tGJQW/t0O5oefn9zNGVrUTmSds+PKGMi7g2KXG2cZQixG5wl
- 1D0CNaoGmOSDKlXQtd3W5oHf/HK+wTTy4vFF3Muon4AaKDik0v7bYvMTFA0OLO0Ti9780p9P4y9
- ZOVIPO4qq6VR25AFHiwPY3g4K2iKygvJOQ9DtoyGv7G8pgzOBRu+Ah0wuKOwHG6WSl66nrB2dM+
- ixYBWvcdv68eq52X9SkcbAeV0AAO2pr2RnR59qI3lSciP+cfoJgCYB1+5aoxl/zNpg4PBgnp
-X-Authority-Analysis: v=2.4 cv=Fes3xI+6 c=1 sm=1 tr=0 ts=6839894b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=__jX16zl-YCOEXp__AEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: A25POxVFF9yrPpqL5B9nJxEaI-LfgTOT
-X-Proofpoint-ORIG-GUID: A25POxVFF9yrPpqL5B9nJxEaI-LfgTOT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_04,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=641 spamscore=0
- adultscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505300090
+Content-Transfer-Encoding: 8bit
 
-From: Taniya Das <quic_tdas@quicinc.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The video driver will be using the newly introduced
-dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
-control modes at runtime.
-Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
-Qualcomm SoC SC7180, SDM845, SM7150, SM8150 and SM8450.
+Hi,
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
----
-The Venus driver requires vcodec GDSC to be ON in SW mode for clock
-operations and move it back to HW mode to gain power benefits. Earlier,
-as there is no interface to switch the GDSC mode from GenPD framework,
-the GDSC is moved to HW control mode as part of GDSC enable callback and
-venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
-from SW whereever required. But the POWER_CONTROL register addresses are
-not constant and can vary across the variants.
+Series adds a PCIe driver for the Renesas RZ/G3S SoC.
+It is split as follows:
+- patch 1/8:		updates the max register offset for RZ/G3S SYSC;
+			this is necessary as the PCIe need to setup the
+			SYSC for proper functioning
+- patch 2/8:		adds clock, reset and power domain support for
+			the PCIe IP
+- patches 3-4/8:	add PCIe support for the RZ/G3S SoC
+- patches 5-8/8:	add device tree support and defconfig flag
 
-Also as per the HW recommendation, the GDSC mode switching needs to be
-controlled from respective GDSC register and this is a uniform approach
-across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
-controls GDSC mode switching using its respective GDSC register.
+Please provide your feedback.
 
-Make venus driver to use dev_pm_genpd_set_hwmode() to switch GDSC mode on
-v4.
-- 1. the venus driver adds compatibility with the new way to switch GDSC
-mode.
-- 2. the clock driver uses the HW_CTRL_TRIGGER flag, which means the venus
-driver needs to use the dev_pm_genpd_set_hwmode() API to switch GDSC mode.
+Merge strategy, if any:
+- patches 1-2,5-8/8 can go through the Renesas tree
+- patches 3-4/8 can go through the PCI tree
 
-Validated this series on QCS615 and SC7180.
-
-Note:
-This series only includes videocc patches and it can be picked
-independently without having any functional dependency.
----
-Changes in v5:
-- 1. Remove venus driver patch from this patch series due to it has been
-picked.
-- Link to v4: https://lore.kernel.org/r/20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com
-
-Changes in v4:
-- 1. Update the order of patches.
-- 2. Update vcodec_control_v4 to try dev_pm_genpd_set_hwmode first.
-- 3. Add hwmode_dev to indicate whether to use HW_CTRL_TRIGGER flag.
-- 4. Update commit message and cover letter message.
-- 5. Remove the patch that cleaned up dead code and will submit this patch
-with next patch series.
-- Link to v3: https://lore.kernel.org/r/20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com
-
-Changes in v3:
-- 1. Update commit message.
-- 2. Add a patch to clean up the dead code for the venus driver.
-- 3. Remove vcodec_control_v4() function.
-- 4. Directly call dev_pm_genpd_set_hwmode() without vcodec_control_v4().
-- Link to v2: https://lore.kernel.org/r/20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com
+Thank you,
+Claudiu Beznea
 
 Changes in v2:
-- 1. Add the HW_CTRL_TRIGGER flag for the targets SM7150/SM8150 and SM8450
-video GDSCs supporting movement between HW and SW mode of the GDSC.
-(Suggested by Dmitry Baryshkov)
-- 2. There is a dependency of the clock driver introducing the new flag
-and the video driver adapting to this new API. Missing either the clock
-and video driver could potentially break the video driver.
-- Link to v1: https://lore.kernel.org/r/20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com
----
- drivers/clk/qcom/videocc-sc7180.c | 2 +-
- drivers/clk/qcom/videocc-sdm845.c | 4 ++--
- drivers/clk/qcom/videocc-sm7150.c | 4 ++--
- drivers/clk/qcom/videocc-sm8150.c | 4 ++--
- drivers/clk/qcom/videocc-sm8450.c | 4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+- dropped "of/irq: Export of_irq_count()" as it is not needed anymore
+  in this version
+- added "arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe"
+  to reflect the board specific memory constraints
+- addressed review comments
+- updated patch "soc: renesas: rz-sysc: Add syscon/regmap support"
+- per-patch changes are described in each individual patch
 
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
---- a/drivers/clk/qcom/videocc-sc7180.c
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
- 	.pd = {
- 		.name = "vcodec0_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
---- a/drivers/clk/qcom/videocc-sdm845.c
-+++ b/drivers/clk/qcom/videocc-sdm845.c
-@@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x890, 0x930 },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sm7150.c b/drivers/clk/qcom/videocc-sm7150.c
-index 14ef7f5617537363673662adc3910ddba8ea6a4f..b6912560ef9b7a84e7fd1d9924f5aac6967da780 100644
---- a/drivers/clk/qcom/videocc-sm7150.c
-+++ b/drivers/clk/qcom/videocc-sm7150.c
-@@ -271,7 +271,7 @@ static struct gdsc vcodec0_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x890, 0x9ec },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -282,7 +282,7 @@ static struct gdsc vcodec1_gdsc = {
- 	},
- 	.cxcs = (unsigned int []){ 0x8d0, 0xa0c },
- 	.cxc_count = 2,
--	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-diff --git a/drivers/clk/qcom/videocc-sm8150.c b/drivers/clk/qcom/videocc-sm8150.c
-index daab3237eec19b727d34512d3a2ba1d7bd2743d6..3024f6fc89c8b374f2ef13debc283998cb136f6b 100644
---- a/drivers/clk/qcom/videocc-sm8150.c
-+++ b/drivers/clk/qcom/videocc-sm8150.c
-@@ -179,7 +179,7 @@ static struct gdsc vcodec0_gdsc = {
- 	.pd = {
- 		.name = "vcodec0_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -188,7 +188,7 @@ static struct gdsc vcodec1_gdsc = {
- 	.pd = {
- 		.name = "vcodec1_gdsc",
- 	},
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- static struct clk_regmap *video_cc_sm8150_clocks[] = {
-diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
-index 2e11dcffb6646d47b298c27ef68635a465dd728e..be68d9bf52a2df9c09828e3d636085d7f942a89d 100644
---- a/drivers/clk/qcom/videocc-sm8450.c
-+++ b/drivers/clk/qcom/videocc-sm8450.c
-@@ -347,7 +347,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs0c_gdsc.pd,
--	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc video_cc_mvs1c_gdsc = {
-@@ -372,7 +372,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs1c_gdsc.pd,
--	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
- };
- 
- static struct clk_regmap *video_cc_sm8450_clocks[] = {
+Claudiu Beznea (7):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the PCIe
+  dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add documentation for the
+    PCIe IP on Renesas RZ/G3S
+  PCI: rzg3s-host: Add Initial PCIe Host Driver for Renesas RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045s33: Add PCIe node
+  arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe
+  arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+  arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
 
----
-base-commit: 3a83b350b5be4b4f6bd895eecf9a92080200ee5d
-change-id: 20250530-switch_gdsc_mode-2563649ce175
+John Madieu (1):
+  soc: renesas: rz-sysc: Add syscon/regmap support
 
-Best regards,
+ .../pci/renesas,r9a08g045s33-pcie.yaml        |  202 ++
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/renesas/r9a08g045s33.dtsi |   60 +
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |    5 +
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   11 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   19 +
+ drivers/pci/controller/Kconfig                |    7 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-rzg3s-host.c      | 1686 +++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |    1 +
+ drivers/soc/renesas/r9a08g045-sysc.c          |   10 +
+ drivers/soc/renesas/r9a09g047-sys.c           |   10 +
+ drivers/soc/renesas/r9a09g057-sys.c           |   10 +
+ drivers/soc/renesas/rz-sysc.c                 |   17 +-
+ drivers/soc/renesas/rz-sysc.h                 |    3 +
+ 16 files changed, 2050 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+
 -- 
-Renjiang Han <quic_renjiang@quicinc.com>
+2.43.0
 
