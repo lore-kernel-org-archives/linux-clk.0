@@ -1,198 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE5B7080C;
-	Fri, 30 May 2025 16:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1040B76034;
+	Fri, 30 May 2025 17:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748623283; cv=none; b=Sc2PM2MDZmE+25NCnjuyK0CPWQIKNM/fBGT0/4qBs+DEYAbI12fM6kvLTpejnptRZa1ierwArCdk9MJ6JSbYpJy1eFWXMH2Mu1EvPNqApM9/pDzrCJtVcPYFWALCd0inJ/Vi8j8Je5XuycMCImtp1izHCX1gD+gwsyK7kVRIN60=
+	t=1748625535; cv=none; b=nj/dhOwnOfzJ/yYRr/qISErOtaTWM7bGKPA8zyLyETwXMU75IP/cLl3GYpnASY4PSaNKV6BQzWkA+C0y3ZMXcNxr/mungCs2SJD3zdyt/bUFCgIHCPNqcIiA6riqZ1YTNjXmjASsXc7v/LVmFqXmZNa5yoGhFCfmUSKQeS5AFKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748623283; c=relaxed/simple;
-	bh=NNIZMqtV5b/laCJ78xBzh8tAvbijms9RwhfGqszJY4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwCIE3hK925OHKOKCj82bPhl5PRnvUnhu7Ey6dFTWHJLbhnIlq5hz3BFs/Scw2ftYG1TVmRfOMsrqc0BmCzfEfc32okaB4FFu7n8QBpVDrsVLF0AOI/nT7DX2OYhZVT/d1Ep2E9KtldP21Jrk4UCZH4EIaSXm24A2s3nK8xKRRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6rdKF6E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748625535; c=relaxed/simple;
+	bh=9/0bdtA1vR5+4Kh5awQTth/q83szk0nQIqT+94YgRY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QolgB+eCu2pqP7Fl1Fc4V1VGcb4lDwT7XBuRxS9U1DZ55qvC46iAyEBDPMB1ALpXRR5L+cVqYnAWrBR+3Rq6bY5fyEDryhON5o5JW4OVretS5+Pc08o0cvpa1Z94OjvxpmptdHvHaYESguwitp10sT8Yfw2R2SB4CZU85piypiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuPG9E3k; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6rdKF6E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363FEC4CEE9;
-	Fri, 30 May 2025 16:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748623283;
-	bh=NNIZMqtV5b/laCJ78xBzh8tAvbijms9RwhfGqszJY4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6rdKF6EW0yFAyrcq2MrEEVWAhxbmkkpt/vleZ8NidsgHlFzNbSP6QGAlzRhLWaAE
-	 uUs1Fa42tEFx3aPUZPLnFBKusm3zESYUyUqdvTHxn60y2Rg3bD7rRUlB7fEGG+n6DQ
-	 +P4KeASYSUuWASNe8ALRkMfHScGUtgdhIpHPcjwRCdSHF9ibe+eT/NDtTT9H2U8EKb
-	 V825bsIFE7WHppnu6OFXLPqsZKR9gYVd8t3Xo9WQTkQjsZelQbQWBbM0/Hb9wsLUQQ
-	 w12RDR6rNlKW1CLnJS9MGzJI/JaWw8pCW0qJm+jYB9MK+9c12mEkKdqOSbO7pNrnZi
-	 6xKHRYv8rMdyw==
-Date: Fri, 30 May 2025 17:41:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuPG9E3k"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a36748920cso2446930f8f.2;
+        Fri, 30 May 2025 10:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748625531; x=1749230331; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ynEvrykvvMU0ksBhHKWbakf97c/AyKOyZ1b6YiZ4xoU=;
+        b=OuPG9E3kHuEeWVzKgg7sq3vzHG3hAZabraG/5me70gGTTvr4x7awtM+jKvp+bLsd0i
+         UKziSchmr79gsLc2jT7cbtvj7ZDUpK3ZVatgQEk1N1czxK/q2fQuydSkmtVAII1W9+WM
+         dhXZX/BU+7DeDnZdZbRnD33IuwDRIbVh6rLtO6HutPOuykRC9CJ8ELOUM4ZHMn+LYRqE
+         FuVh1QaS6WJF6+Hw05aIvn739m1XRwb4s+HwaJxi0VIN/ML3tk0slc8HszE3OZbnkVqF
+         0UDXI4qOXRKNSYnyGBRw9TZDhHOjAgN7XSLtQ3nyHSVAa7X3IhrD3nVfGJNI7o25KCML
+         eriw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748625531; x=1749230331;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ynEvrykvvMU0ksBhHKWbakf97c/AyKOyZ1b6YiZ4xoU=;
+        b=tMDY1RMVTsKwEwDnmZf87/T+jWQEI3xe2XSM+oWSU3c+LCDjxsSSceTMolLbjO6RFv
+         f/qCd2gR+payFCjZrwCnBNqs22BcNwonekc3SfvJs7XuIw4Kq9GCRGAKk+U1xlwG3qAX
+         8SYjK+Ebt9XhJKtKvOILmNbrwdvjO21jCUxTvDbJ6a193UrndHSAmb9iEZBOLyFhd/oD
+         oxXQHTgzvxkqFbl7kcYcxMRJ8jBQ+zOobq/F2ONyZU6PhmLFAl8iJS9oreWGQ1st1+cy
+         vKUJ6RsZ8KEtdutvdlzPepuxi66LDn0a3H7qCY0wfArOCB70ziDw3C/aNyNqcqrcdrp5
+         ZZDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGzcRN0LhIpQt2wERSI1tNyTVQF75J2xo44FvyNeEdX5t/ReHN7R08GWpDrGmnX6d/X9AmzCIBJQuSPvO9@vger.kernel.org, AJvYcCWvGCb48s+OWrsiB6YLDlhpgt7At5Vj99yzrIOhPhrxiYi+/4+MMVz8ryAOr8brFoY4B54V7Ock1mr9KnyvE6w9uK4=@vger.kernel.org, AJvYcCXB+s/nCyrvHRYvIJjFx5ySx6fmJEUy82CE6MS6HbpPKfvJujrf5pWEwu7y3oiSCw5ns81YgU8NuKB1@vger.kernel.org, AJvYcCXkQuCL7+OH+Qnwe1D7yMfijwn3zATJkZ9Bxu6nX/kXgds8O2HCO15lc2aMYrqXvnnfF56bEKLlBTK0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxINZ9NKexZTO5iBhvv4nqgi1Hx16j4tek7dN2kizNAf/dgA80A
+	m61Y+GMRiVMkcCKBlhTrDOLRFbr96jhiATR+eLr5w416V9qHYo+lrLB6
+X-Gm-Gg: ASbGnctW0yxJnEWF8ku8DMXqEsXnGOXtpz60MQWP6XQIVSCXr0eMy2GRAWjVGM7P61M
+	eegRurCp0nythZmvhek2fAhjmrRkGyGlOxLRKQzLHfVVqLvmHE2GXMVJi0JdA25g+DsYg71H7zS
+	HyJkSP5tH0C9F73Jv0QJtnCMZ8hYc9vM+JHhOYDEADlvfw/J0zFVQ51y2bX7HWthw4vACpO4IG9
+	TNfEZt/wCQF7fg1rlJMj+urIadjn/7HL/Rs5IxwV5nm1L65CYFqSmap4pkYqUigHxGjGVj8SDNY
+	A0vVAVXbQkRv/3KCYKOLsXNH03Z9ksqkYMmwFZeYnDYy14M1o7frwz/og/cg21RRegtUsdT45WH
+	K/HnaXJc8pA==
+X-Google-Smtp-Source: AGHT+IEp6Pb6coP//ft8xEoxnN0XG2mGL8lYvmKsSoDN6jZiXpCVG5HXqDoz0TnLlIZVoVTUVF/FDw==
+X-Received: by 2002:a05:6000:2204:b0:3a4:c713:7d8 with SMTP id ffacd0b85a97d-3a4f89a765fmr2551757f8f.16.1748625531267;
+        Fri, 30 May 2025 10:18:51 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:bcab:7ec7:2377:13b0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00972c1sm5395963f8f.68.2025.05.30.10.18.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 10:18:50 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 09/23] dt-bindings: clock: Add RPMI clock service
- controller bindings
-Message-ID: <20250530-squatting-chatroom-230f035f18ef@spud>
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-10-apatel@ventanamicro.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v6 0/4] Add support for DU/DSI clocks and DSI driver support for the Renesas RZ/V2H(P) SoC
+Date: Fri, 30 May 2025 18:18:37 +0100
+Message-ID: <20250530171841.423274-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nkVldtvynGlh9wsR"
-Content-Disposition: inline
-In-Reply-To: <20250525084710.1665648-10-apatel@ventanamicro.com>
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---nkVldtvynGlh9wsR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi All,
 
-On Sun, May 25, 2025 at 02:16:56PM +0530, Anup Patel wrote:
-> Add device tree bindings for the RPMI clock service group based
-> controller for the supervisor software.
->=20
-> The RPMI clock service group is defined by the RISC-V platform
-> management interface (RPMI) specification.
->=20
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  .../bindings/clock/riscv,rpmi-clock.yaml      | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-cl=
-ock.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yam=
-l b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-> new file mode 100644
-> index 000000000000..9c672a38595a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/riscv,rpmi-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RISC-V RPMI clock service group based clock controller
-> +
-> +maintainers:
-> +  - Anup Patel <anup@brainfault.org>
-> +
-> +description: |
-> +  The RISC-V Platform Management Interface (RPMI) [1] defines a
-> +  messaging protocol which is modular and extensible. The supervisor
-> +  software can send/receive RPMI messages via SBI MPXY extension [2]
-> +  or some dedicated supervisor-mode RPMI transport.
-> +
-> +  The RPMI specification [1] defines clock service group for accessing
-> +  system clocks managed by a platform microcontroller. The supervisor
-> +  software can access RPMI clock service group via SBI MPXY channel or
-> +  some dedicated supervisor-mode RPMI transport.
-> +
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +  References
-> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +  [1] RISC-V Platform Management Interface (RPMI)
-> +      https://github.com/riscv-non-isa/riscv-rpmi/releases
-> +
-> +  [2] RISC-V Supervisor Binary Interface (SBI)
-> +      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> +
-> +properties:
-> +  compatible:
-> +    description:
-> +      Intended for use by the supervisor software.
-> +    const: riscv,rpmi-clock
-> +
-> +  mboxes:
-> +    maxItems: 1
-> +    description:
-> +      Mailbox channel of the underlying RPMI transport or SBI message pr=
-oxy channel.
-> +
-> +  "#clock-cells":
-> +    const: 1
+This patch series adds DU/DSI clocks and provides support for the
+MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
+series [0], but has now been split into 4 patches due to dependencies
+on the clock driver, making it easier to review and merge.
 
-Could you please add some description here as to what this clock-cell
-actually does? On a normal clock controller someone might cite an
-include file with a huge list of defines for what numbers map to what
-clock. In this case, this value is CLOCK_ID in the spec, so it's
-completely platform specific as to what they mean so citing some include
-isn't helpful, so just mention that it is CLOCK_ID and the meanings are
-platform specific.
+[0] https://lore.kernel.org/all/20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-I suppose technically it can be something other than CLOCK_ID, if this is
-used when the SBI message proxy extension is provided by an SBI
-implementation that uses a non-RPMI transport, but I don't think that's a
-can of worms worth bringing up in the binding. Anyone doing that can put
-2+2 together I think.
+Note: This patch series applies on top of the following patch series:
+[1] https://lore.kernel.org/all/20250530165906.411144-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Otherwise, the bindings are all:
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
+v5-> v6:
+- Renamed CPG_PLL_STBY_SSCGEN_WEN to CPG_PLL_STBY_SSC_EN_WEN
+- Updated CPG_PLL_CLK1_DIV_K, CPG_PLL_CLK1_DIV_M, and
+  CPG_PLL_CLK1_DIV_P macros to use GENMASK
+- Updated req->rate in rzv2h_cpg_plldsi_div_determine_rate()
+- Dropped the cast in rzv2h_cpg_plldsi_div_set_rate()
+- Dropped rzv2h_cpg_plldsi_round_rate() and implemented
+  rzv2h_cpg_plldsi_determine_rate() instead
+- Made use of FIELD_PREP()
+- Moved CPG_CSDIV1 macro in patch 2/4
+- Dropped two_pow_s in rzv2h_dsi_get_pll_parameters_values()
+- Used mul_u32_u32() while calculating output_m and output_k_range
+- Used div_s64() instead of div64_s64() while calculating
+  pll_k
+- Used mul_u32_u32() while calculating fvco and fvco checks
+- Rounded the final output using DIV_U64_ROUND_CLOSEST()
+- Renamed CLK_DIV_PLLETH_LPCLK to CLK_CDIV4_PLLETH_LPCLK
+- Renamed CLK_CSDIV_PLLETH_LPCLK to CLK_PLLETH_LPCLK_GEAR
+- Renamed CLK_PLLDSI_SDIV2 to CLK_PLLDSI_GEAR
+- Renamed plldsi_sdiv2 to plldsi_gear
+- Preserved the sort order (by part number).
+- Added reviewed tag from Geert.
+- Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
+  PHYTCLKSETR_* and PHYTHSSETR_* macros.
+- Replaced 10000000UL with 10 * MEGA
+- Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
+- Replaced `i -= 1;` with `i--;`
+- Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
+  
 Cheers,
-Conor.
+Prabhakar
 
-> +
-> +required:
-> +  - compatible
-> +  - mboxes
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller {
-> +        compatible =3D "riscv,rpmi-clock";
-> +        mboxes =3D <&mpxy_mbox 0x1000 0x0>;
-> +        #clock-cells =3D <1>;
-> +    };
-> +...
-> --=20
-> 2.43.0
->=20
+Lad Prabhakar (4):
+  clk: renesas: rzv2h-cpg: Add support for DSI clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+  dt-bindings: display: bridge: renesas,dsi: Add support for RZ/V2H(P)
+    SoC
+  drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
 
---nkVldtvynGlh9wsR
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/display/bridge/renesas,dsi.yaml  | 116 ++++--
+ drivers/clk/renesas/r9a09g057-cpg.c           |  63 ++++
+ drivers/clk/renesas/rzv2h-cpg.c               | 278 +++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  17 +
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 345 ++++++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+ include/linux/clk/renesas-rzv2h-dsi.h         | 210 +++++++++++
+ 7 files changed, 1025 insertions(+), 38 deletions(-)
+ create mode 100644 include/linux/clk/renesas-rzv2h-dsi.h
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.49.0
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDnfrAAKCRB4tDGHoIJi
-0uDZAP44sukoA1LPqYegMtV2uiSKQF4gXRTD8Qx7XhkuHFJQfwD7B2qEkWLyTKAW
-D1359VQetNBQvvyAK7YiFoZG3o+KcgM=
-=LFdp
------END PGP SIGNATURE-----
-
---nkVldtvynGlh9wsR--
