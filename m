@@ -1,477 +1,195 @@
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012000.outbound.protection.outlook.com [52.101.71.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0689C2C3247;
-	Mon,  2 Jun 2025 14:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748874989; cv=fail; b=dc1r3yw4jFoYRiiK0AyNzqcRxqi1s4GZzwU/uCUfFBYA6oEhaReAUV24VyogTpiWob9B6H+cNJQxsSThGlXbUZZWHjCr5ydUoNGQzZ4vd/CsbXYgvOvaZAMs+tNvMwA45F8hdSU+IWTeoFLXXoAmb0F3QiyF5HvimuhjjbTCzRo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748874989; c=relaxed/simple;
-	bh=BCQwImgtKx81r7s1lKDKU06bSgnuJrix3JS59JbRHxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=g+vBMPm1HUAws9JAr2THFeysnp2EGWtWVwu/Q66jEIEyhGOXps6RdTWojQIMyp70WgcuUhl0Gy6PtNHaAoO22EBvRtWw+rYD8YXSIrtBxcBV6zNyb37EJHEHbMZ1B9bUyIMU9AIN0jqxvC6gxLR9rPAvJrof3gD8HjFnOtj4CZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HLEj72wG; arc=fail smtp.client-ip=52.101.71.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAD517BD9
+	for <linux-clk@vger.kernel.org>; Mon,  2 Jun 2025 15:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748879873; cv=none; b=lpl75QYPznj7dxhDqUPpiGqORcwRayA/oSrlA85D+2KiIJfrr9Ms0pgRgrCtvlgFUItNlEoW97V6Hkea24eTssZlpMktiikIrd2JQAlx7Kq+B6FS6+BT/c+gSJBdncyYYLupHLgv1Ekbz/WlKdBqJkDT7pAI0kZ5U6v4V9Q5aOI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748879873; c=relaxed/simple;
+	bh=r3/KInTIis2b68ucTZICsTDUQM2+trrNFPxqpe7VyhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Do8yrA/7zP6EVfziY76ik4Z3e0uswLJGwxMMAd7L2cecpmXi0emT/se6ez+b48UCKgnk+rpX3rexDWeBORWAP4Kfj6hwj50NA9oARQQlZ2codU5jauGWYrYCALcPfnjGMNNBc7ZOuloafZywcVv1A5lS29G+iJYhfeI9PJjMYY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MSPCHRHO; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HLEj72wG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iRkl8omGlMjOAC9+DjPYwCfxhnYF4QspxXG96YralP0X17fIY8I/uzaSVgCcL3x/GnUvzVUIX5MQmiXaOieHJ23sim6NaY4FCmpjTkMjfzrM0LLq9M1HC6lECB17wJjRp2XkHaI9eCxAp9XzYQKm0agQuUVnOko4uVf+Qae3Y27Gx7U3JVKoTbd/RUd3SYUsrlm41w1C6S47n29O6VH1H25u5pYIRsHnsMDla/UZVJTBhE6bLKjI8CfOfQdjz0JC4FT5Z5lCwPrjNnIczCQhw0dND6cRgh1Jvv7XeKdquIgj39Y8UrEKr5FSTUCG1fWeLR8eHZ1jBuwzY6pRvLTouw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2EnYe0uZ+uklSirATKZHGaxMRFHPX2TsOYFTDm8SPsU=;
- b=Sh6Wpj+qyYEKm87DHC7pr8sNxwBM+2lszIjZD10Q6PT7j+jdP/P0lfXO2intjJrRYJeRCBntUl/JQ4yqvpeMWb9fpdNFt3vOecwh5Q3Wpmcm339Gtuvs5m2oEQBWvgm+1q9YGUUBbibqZtU8G7w+fH2W4E5dxQdkf/QGLU3t4me7zYp056w12x/i0ZcRzjV0baxcDlkopeKby3quFtV7Us7hAIFLL9p2DmU3k+FScVXObjmk0VpxRcRl5GgQNMTCJ49waNpQl3ATdeDN1E1brGRu7HsNM6G8fVSxwLk9YKP7g6ygjWhVC27JK3M2E6HMdH7TUtK4b1bzdE9vV0A1oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2EnYe0uZ+uklSirATKZHGaxMRFHPX2TsOYFTDm8SPsU=;
- b=HLEj72wGqb35zIXajEAm0kCc/zr4qNhpVtQD+fTyyoEqQYKbFVMHxUZjQyb2n38egwLVr5kd5SkNRoCq5/1d9vQ2XBWt5wbH3fiopQoIIiyDKiPuCH3QKIS2/06KmHq+n7lm7lFC+bHwQIj9ehDgovWNaJorJp7ucx3bQXHMdnlamcDbF7E04jeycXXnfCReQXs2m34SwAhTskzpqzWJFF3TsyhsatsTX7D5nfo7trr11xkxm2gGXQ3s0qaO3tJbJOu9V5q7yozwoS+UXycpW3PBxsN49h+I4UX9tlLREwlxJXHTZim5AO+/qsIVYb5a9gaosSRgAogfGpt8I0EnvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10386.eurprd04.prod.outlook.com (2603:10a6:10:56d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Mon, 2 Jun
- 2025 14:36:23 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Mon, 2 Jun 2025
- 14:36:23 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	dmaengine@vger.kernel.org (open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM),
-	linux-phy@lists.infradead.org (open list:GENERIC PHY FRAMEWORK),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/LPC18XX ARCHITECTURE)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: mfd: convert lpc1850-creg-clk.txt pc1850-dmamux.txt phy-lpc18xx-usb-otg.txt to yaml format
-Date: Mon,  2 Jun 2025 10:36:10 -0400
-Message-Id: <20250602143612.943516-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM8P190CA0030.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:219::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MSPCHRHO"
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-23508d30142so47332525ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Jun 2025 08:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748879871; x=1749484671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=V0HldRLBDlDdaFi1o6vWHUnaZIQg5Lpmr6+tFkz4pQ0=;
+        b=MSPCHRHOjwUtdoF6lLuiiWIm8HkWqFCfzaZwWMwFICsXo9Suqo2uG3M3MF6fgbo9as
+         izCHBBI5oIbjjxypGLMSr+3jekoh9TvQBKq+HzwiZ1SMk9+8e/0GQ/pWLD2FwF8zVIVC
+         3WYXR/TWmhMjxnjx1Wdhhw2QNkTyOq0z89f6w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748879871; x=1749484671;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V0HldRLBDlDdaFi1o6vWHUnaZIQg5Lpmr6+tFkz4pQ0=;
+        b=rB3K6md37NZ2Kh1Ta0Mw8ufzlV+NDxyNZqVDIt1V/swg9MJCNtWzmiyyN6vu75eLTl
+         Igx40h4dG2f1zkxXzQyDSY8kvXeQqmbdG0lhCpecCG7khKycrldEAH6KMaZ5HIxAOlHD
+         H/hUuSmocsB8ZNXqKmvg7JZgRqXDls32rB/bJa+WTAA4s5rQDZ24eqhZ+jnRdGdJi9PU
+         cE4hYXgFeGtehxEZgi57lcrbc5olmixKqS8W2pBoaVHAT0lOtNs0n0dqljI+YMNLEiy2
+         iGX5k1eVC9EBax+XgaCCM319QACPQvTpuR5SxvFGYb9MFXRwiYAqWB+EzcH4OY4qO75t
+         u7Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiOBYwYcmz6C2RTcEf1zWnpSl0vnQ8urwYaJBmhtplNYT5Idaeqo5blY6gJpAXgu47obh0/ow1TYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq4fXgV1FLhklmPyXi/ZTtTfuS2MRTqE2bN7u36JtrbDcHiZf0
+	B+s9DdkFtrhQpIwH4mLCYvrZIFohSaH+lrc5FXCzocHYvZ796ZPguKyoYLQvcZWaFw==
+X-Gm-Gg: ASbGncvd7euXxFsTX4QDRzAb3he3UqQwM3wJir5HZRnB2Cb5Qe1wEpEpzMj9wYhzXro
+	CIGttsSxdBE71OfkJIl6a/uLxlMoS6zfkLgBAd1fnKiYST+dRvs6E7kC8co17UKGy4tY3hfgkCl
+	m69srHTi8eCYHQplF6Fh8Z9+whehus0RK8lsbQB1WZ+nl5fRy29/WWHfBjRknPq6LO/x6OxyGzf
+	npBi0qTwNcrhNgB5e7yxXB3y7A+mROguMzyIgk56kaY6vt9fvW52gbYEPZx2RX5lhfdsdrfjUnV
+	bRAFmMudQZl6DbnkIe9f16uBjI2CERfHIea9UAI9dqdjcWWkxDp6bCo3+YShJ3XDvvlr9sdOWZH
+	RB8YG8YW08ebzS5U=
+X-Google-Smtp-Source: AGHT+IGQX/TTR/ORwQelCPj6foZ1YTf+Vd3yQv9rufQDqmNgYezZEjz7F6ipV2r7WIOBa7TL5zP2TA==
+X-Received: by 2002:a17:903:40c8:b0:235:15f3:ef16 with SMTP id d9443c01a7336-235390e0fd9mr158050305ad.13.1748879870804;
+        Mon, 02 Jun 2025 08:57:50 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bd96f9sm72629995ad.98.2025.06.02.08.57.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 08:57:49 -0700 (PDT)
+Message-ID: <891ac4ee-7c98-4035-9ac9-3c17d9dc6d4d@broadcom.com>
+Date: Mon, 2 Jun 2025 08:57:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10386:EE_
-X-MS-Office365-Filtering-Correlation-Id: afc09956-e40c-4e93-2af7-08dda1e2d8b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kzcIM19j+6aYjpD/zqwkDcc5BY6F9PLDzla+w65RM5VTZLmqMzQcnX/LVSr7?=
- =?us-ascii?Q?8JNQocUf0uxjNaUhvzta/0S7v574JBg8EvLz/oWJ6BXTpiPONQPs06E13xXZ?=
- =?us-ascii?Q?XhIAyhTLkqtsDmiC8uLPVnFwg0hQFU7JJEYlPFP0F9MINBRIlH0cgF4YukhQ?=
- =?us-ascii?Q?auCgei5wCUb/HzLNfx2MwwywcgQeZpzM6jZ23ZpnJ14TDpZBJvWQozDfSOjo?=
- =?us-ascii?Q?wMJlPmn4O+E9+mMKHxCUphgQA2bv0EizMNhRsm66AVkYZX4YBDgWkDjM4B46?=
- =?us-ascii?Q?Fj565cJWa64Js2Ts3WSuIaiu2Rqg2iWBa48vb4qKCdSNz7n0pj+RHiW4r20c?=
- =?us-ascii?Q?mtlXHHzito9lhD3Q0DJryhcgK2BXDOplumWx+vCV++cXx4WvX7EWOLTBzpxy?=
- =?us-ascii?Q?XcOB228+vE/TU5ZhyEHPpzLyZ3lCE+ie/lcphhlOFTBIJCbTsF/ZuRB/5qLf?=
- =?us-ascii?Q?939SbT5JVqIdRRhj/D/7+ZGyEZP0+3lUEPLhrqbjDqcOqS4pmjnwARJLocOZ?=
- =?us-ascii?Q?U9O/gwvW8nZWdNxzHG3tdrlYh3zILfc0jDFOk3+N8XtzbaH/NtbyLwRIJO6N?=
- =?us-ascii?Q?mA/6CCsiagKbxw+6P1iQsoc1/V3+lnG2ykzeuRua8gzOr9QrjOBDeAV3l5ib?=
- =?us-ascii?Q?z+LPambM6wtGIv6EpQWZAAXdJSz2uicgIjpgTxzV/IbH7hYhDPOaMTZsUwLS?=
- =?us-ascii?Q?IqCC971g9gDxOVoQTk+zF8JqNltWkV+Zk/07mT+cF8RC7hYDvrsLU3NxfrmZ?=
- =?us-ascii?Q?c0/gyzxcxZouUwGYheEkFCwUB5Z7qQkjpo5n8eoWcQ0X06cE2l5jwDgOOGon?=
- =?us-ascii?Q?L2ps6ne4aZpdQo4sJjNiGBpdgyOgXdHhJKxQrt6F30WkNVC3rSB/GB3HiaSO?=
- =?us-ascii?Q?c54a9r779ugQ1lhDHlQZkFRJNs9SDbhVld5Hj7yvbREikyKvDZkrABk9gWvh?=
- =?us-ascii?Q?GJjnfCjFNS25El+w1md4AYjbZdS58NiZTyQgNyEjaiIf2r9C/3gcpefUl51k?=
- =?us-ascii?Q?mbZraPREcK3pRWO6GK6VAGDAfp0D7+wM2pXQLf0VQ6uXAzsxTFKNmwmMzjGm?=
- =?us-ascii?Q?2Bzz/rfX37MBHrVx3jQ/zBrisJw+WzlY5kDF7tu7mKT3w8YU9zfyMjqlTotW?=
- =?us-ascii?Q?Y/QWRS8S7P3m1hV0oNTFNiBgio6iy4OGBSTKuq4Kd5QGWB1ewNeFtB4gpnly?=
- =?us-ascii?Q?SKs8GSKDQp54vMhPH+MQxsUl1Ql6nSVl0tWDxmtA2+LWuN6OM6ccmo3GSqxO?=
- =?us-ascii?Q?/Fwtpr8XC7tFoXNiQ49FY3rwxRDJGbsbOw6yjdxLm2AVA//UGZA6N3p2+ZM/?=
- =?us-ascii?Q?8Y43hmivbwR4ElWXekTAK3KXiNYrlWujNxhYW2v9lu4if6rRCAmVHmREgFTM?=
- =?us-ascii?Q?KDjgAgI9/dgFR6Uvosr7Q3gP6ioLaHrg0GKD4LJg/SpNHcVEm2CcGZXeImoX?=
- =?us-ascii?Q?LvQQyNvKYE80TuhVR0YSXCWwyvlVT3k3dwWWyo8xWDYYkGQy/j0x9A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CWY8+YBaEq0gGalV6OXStbj6HtifqT+HU4aDct6qccneM9em4M3dq7BfKuO7?=
- =?us-ascii?Q?57eXm+jmdeXgVDO6FmCT7dqnhAzvVOovPjWvqNhfi0iuBeiSGdV/X4Az89Z8?=
- =?us-ascii?Q?6ZDOA07bt7G6PINHwR5MsOg2fehgpvOe13Z7uR3SbdH4CENTs1YqirO36ukd?=
- =?us-ascii?Q?qkJcoixix+mOwCuE+ELgXBO+sUkQGsQlfyrXjHAhsJ2qBPHbG3o44iEKK1A6?=
- =?us-ascii?Q?mwZivzk7+3NXdeUeYwK87cw39edYTfxt+GHE7PqEXKOhBXMoR7nDTqBNXG8p?=
- =?us-ascii?Q?PNvTq5saIauPxllz+xT0JMD87ZFfmjkGS2jrYqp5yEwGjYgU55sJiiLewMr3?=
- =?us-ascii?Q?yvo60jNwMmcddI4VMkAA4t42O3isv4psOph+fIzpyvfqkdFrEMvcxSJOkasA?=
- =?us-ascii?Q?QWSdI5aD2PhXqah/71BhDaGKdpymERssLu8odNcZhlljDctBD0UxsQ01p7SS?=
- =?us-ascii?Q?UejOAAEXvuWeY1EI/LtN1mZYu9KL8llauA2LRjgTX7rtllojgaXs9Yl93RNC?=
- =?us-ascii?Q?yvpsIuQEl/dwbD15Jbd5NbV+eQZrfQ/2a+K/IvA06V6y2glEcYxRBMA6kgMD?=
- =?us-ascii?Q?ik7qTX3DY39XHYzfj58SgHRnsYzPuPd7D1Yp/pgnfeqgUVMhO2HjYwPxscxr?=
- =?us-ascii?Q?eyNKB1vKA2H/njuJbP08NKVtuxJkFlyYihsveulOlizGzjv3h12q+hd6g2Sa?=
- =?us-ascii?Q?745SoKlF8enKV5YyZSPPI/qfO+/bkYzrndo7jCEbUZ3jdhMC06UW0nOMEM8E?=
- =?us-ascii?Q?D55h9ECAhZs44JBbn6meZJMqD7jyDdSCGoREPEoxSh9isMAJOBZ0ShkCVQWq?=
- =?us-ascii?Q?wwGE9JiWtwhmeui/S/C8jJe2HJgNzagdFDmGslJjVoPTnIgEUBrcoDHawpv7?=
- =?us-ascii?Q?nCisgGhNI34ZjuqkFlCDo9eXKmD5imvVYodM43qBz13SOD2qrbvPurzKqMcZ?=
- =?us-ascii?Q?EAiMRdUdJb1RoXtONpMUcDBSHN/bWZZHH3PGU0uUaYDE4zENIG0lTBDeuPat?=
- =?us-ascii?Q?N7GT7D9mVQgfb/r/ZrAOxcpymcibs7Lx2WpoKLj1IlNj2RXm4OAzJg8raEu3?=
- =?us-ascii?Q?3J0rxSFKjMNiYk2+xoWj+8vqFJxCVXVQTzyrgKPLUPm3O10c+Dty7Df2700y?=
- =?us-ascii?Q?YAT6VpRKcdbfF9wh+zaLcLd0z0+J562STHX0VGtdM7pca1e7HqOmLht6PeyB?=
- =?us-ascii?Q?h2xvs3qxFe2+nN13snHDKTe3Mly2zd2g88YvgepUkaBpTnieZQO40n6Rwy0m?=
- =?us-ascii?Q?+XAlj5dLBZ50sGZkKbbrz+LMxgylNyibJd0HVZOCa1Vl9IMk0fc+rrY1phfs?=
- =?us-ascii?Q?d3yBlSMXIgge68xhLjrStfrCvB3dqOD8UzH6tHGuVXL1v9kO5gIxJhvhUsTb?=
- =?us-ascii?Q?uiXvdGUByP4fZh31XEBIy8qZvcHW3HGSQp27W3bHQ2edwUxo2ZdktHQDFT1X?=
- =?us-ascii?Q?+eC/ryC1kshEPl+in5A9N1mUB+ajU76/i/IquOAJm2S5PLlK9bKfLZH782KG?=
- =?us-ascii?Q?5m5of96L1VUCdZ1j0UGUpUms6LRbXHhiCEnfD83F3yMdHJYpcQEygl8dErN+?=
- =?us-ascii?Q?E1sPA0RN7N1YSip7kU5wriJKrZBKwgPRYT9NWzJN?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afc09956-e40c-4e93-2af7-08dda1e2d8b1
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 14:36:22.9704
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w5m5f4OAxDaoLb5LFR+6iE2gFA54amb+1KU/sZhDsrAZcIc9Om18eG5TVZFawq7KuuthDsGPqgUgPAN6NeKqDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10386
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/13] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+References: <cover.1748526284.git.andrea.porta@suse.com>
+ <0580b026-5139-4079-b1a7-464224a7d239@kernel.org>
+ <aDholLnKwql-jHm1@apocalypse>
+ <7934ae2a-3fc5-4ea2-b79a-ecbe668fd032@app.fastmail.com>
+ <0e154ae3-e0ab-4a4e-aa39-999ea1c720ed@broadcom.com>
+ <aD1ZNAeB4tpMNTGZ@apocalypse>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <aD1ZNAeB4tpMNTGZ@apocalypse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Combine lpc1850-creg-clk.txt pc1850-dmamux.txt and phy-lpc18xx-usb-otg.txt
-to one mfd yaml file.
+On 6/2/25 00:56, Andrea della Porta wrote:
+> Hi Florian,
+> 
+> On 16:46 Fri 30 May     , Florian Fainelli wrote:
+>> On 5/29/25 23:03, Arnd Bergmann wrote:
+>>> On Thu, May 29, 2025, at 16:00, Andrea della Porta wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> On 15:50 Thu 29 May     , Krzysztof Kozlowski wrote:
+>>>>> On 29/05/2025 15:50, Andrea della Porta wrote:
+>>>>>> *** RESENDING PATCHSET AS V12 SINCE LAST ONE HAS CLOBBERED EMAIL Message-Id ***
+>>>>>>
+>>>>> Can you slow down please? It's merge window and you keep sending the
+>>>>> same big patchset third time today.
+>>>>
+>>>> Sorry for that, I was sending it so Florian can pick it up for this
+>>>> merge window, and I had some trouble with formatting. Hopefully
+>>>> this was the last one.
+>>>
+>>> That's not how the merge window works, you missed 6.16 long ago:
+>>>
+>>> Florian sent his pull requests for 6.16 in early may, see
+>>> https://lore.kernel.org/linux-arm-kernel/20250505165810.1948927-1-florian.fainelli@broadcom.com/
+>>>
+>>> and he needed time to test the contents before sending them to me.
+>>>
+>>> If the driver is ready to be merged now, Florian can pick it up
+>>> after -rc1 is out, and then include it in the 6.17 pull requests
+>>> so I can include them in the next merge window.
+>>
+>> I have applied all of the patches in the respective branch as we had
+>> discussed with Andrea and also merged all of the branches into my "next"
+>> branch so we can give this some proper soak testing. Once 6.16-rc1 is
+>> available, all those branches (devicetree/next, defconfig-arm64/next,
+>> drivers/next, etc.) will be rebased against that tag such that the patches
+>> that are already included will be dropped, and only this patch set plus what
+>> I have accumulated will be applied on top (if that makes sense).
+>>
+>> As Arnd says though, this is too late for 6.16 so this would be included in
+>> 6.17. Andrea, thank you very much for your persistence working on this patch
+>> series, and sorry that the request to merge those patches came in during a
+>> time where I was away. The good news is that I am not doing that again
+>> anytime soon.
+> 
+> It was a pleasure, and many thanks for your patience too.
 
-Additional changes:
-- remove label in example.
-- remove dmamux consumer in example.
-- remove clock consumer in example.
+As a heads up, the kernel robot reported a build failure for 
+devicetree/next due to the missing pcie1 label, I have moved the DT 
+patches from devicetree/next to devicetree-arm64/next where Stanimir's 
+patches adding 2712 PCIe are already present.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../bindings/clock/lpc1850-creg-clk.txt       |  52 ------
- .../bindings/dma/lpc1850-dmamux.txt           |  54 -------
- .../bindings/mfd/nxp,lpc1850-creg.yaml        | 148 ++++++++++++++++++
- .../bindings/phy/phy-lpc18xx-usb-otg.txt      |  26 ---
- 4 files changed, 148 insertions(+), 132 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
- delete mode 100644 Documentation/devicetree/bindings/dma/lpc1850-dmamux.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/nxp,lpc1850-creg.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/phy-lpc18xx-usb-otg.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-deleted file mode 100644
-index b6b2547a3d17a..0000000000000
---- a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--* NXP LPC1850 CREG clocks
--
--The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
--control registers for two low speed clocks. One of the clocks is a
--32 kHz oscillator driver with power up/down and clock gating. Next
--is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
--
--These clocks are used by the RTC and the Event Router peripherals.
--The 32 kHz can also be routed to other peripherals to enable low
--power modes.
--
--This binding uses the common clock binding:
--    Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible:
--	Should be "nxp,lpc1850-creg-clk"
--- #clock-cells:
--	Shall have value <1>.
--- clocks:
--	Shall contain a phandle to the fixed 32 kHz crystal.
--
--The creg-clk node must be a child of the creg syscon node.
--
--The following clocks are available from the clock node.
--
--Clock ID	Name
--   0		 1 kHz clock
--   1		32 kHz Oscillator
--
--Example:
--soc {
--	creg: syscon@40043000 {
--		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
--		reg = <0x40043000 0x1000>;
--
--		creg_clk: clock-controller {
--			compatible = "nxp,lpc1850-creg-clk";
--			clocks = <&xtal32>;
--			#clock-cells = <1>;
--		};
--
--		...
--	};
--
--	rtc: rtc@40046000 {
--		...
--		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
--		clock-names = "rtc", "reg";
--		...
--	};
--};
-diff --git a/Documentation/devicetree/bindings/dma/lpc1850-dmamux.txt b/Documentation/devicetree/bindings/dma/lpc1850-dmamux.txt
-deleted file mode 100644
-index 87740adb29956..0000000000000
---- a/Documentation/devicetree/bindings/dma/lpc1850-dmamux.txt
-+++ /dev/null
-@@ -1,54 +0,0 @@
--NXP LPC18xx/43xx DMA MUX (DMA request router)
--
--Required properties:
--- compatible:	"nxp,lpc1850-dmamux"
--- reg:		Memory map for accessing module
--- #dma-cells:	Should be set to <3>.
--		* 1st cell contain the master dma request signal
--		* 2nd cell contain the mux value (0-3) for the peripheral
--		* 3rd cell contain either 1 or 2 depending on the AHB
--		  master used.
--- dma-requests:	Number of DMA requests for the mux
--- dma-masters:	phandle pointing to the DMA controller
--
--The DMA controller node need to have the following poroperties:
--- dma-requests:	Number of DMA requests the controller can handle
--
--Example:
--
--dmac: dma@40002000 {
--	compatible = "nxp,lpc1850-gpdma", "arm,pl080", "arm,primecell";
--	arm,primecell-periphid = <0x00041080>;
--	reg = <0x40002000 0x1000>;
--	interrupts = <2>;
--	clocks = <&ccu1 CLK_CPU_DMA>;
--	clock-names = "apb_pclk";
--	#dma-cells = <2>;
--	dma-channels = <8>;
--	dma-requests = <16>;
--	lli-bus-interface-ahb1;
--	lli-bus-interface-ahb2;
--	mem-bus-interface-ahb1;
--	mem-bus-interface-ahb2;
--	memcpy-burst-size = <256>;
--	memcpy-bus-width = <32>;
--};
--
--dmamux: dma-mux {
--	compatible = "nxp,lpc1850-dmamux";
--	#dma-cells = <3>;
--	dma-requests = <64>;
--	dma-masters = <&dmac>;
--};
--
--uart0: serial@40081000 {
--	compatible = "nxp,lpc1850-uart", "ns16550a";
--	reg = <0x40081000 0x1000>;
--	reg-shift = <2>;
--	interrupts = <24>;
--	clocks = <&ccu2 CLK_APB0_UART0>, <&ccu1 CLK_CPU_UART0>;
--	clock-names = "uartclk", "reg";
--	dmas = <&dmamux 1 1 2
--		&dmamux 2 1 2>;
--	dma-names = "tx", "rx";
--};
-diff --git a/Documentation/devicetree/bindings/mfd/nxp,lpc1850-creg.yaml b/Documentation/devicetree/bindings/mfd/nxp,lpc1850-creg.yaml
-new file mode 100644
-index 0000000000000..89b4892e9ca71
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/nxp,lpc1850-creg.yaml
-@@ -0,0 +1,148 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/nxp,lpc1850-creg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: The NXP LPC18xx/43xx CREG (Configuration Registers) block
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - nxp,lpc1850-creg
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  clock-controller:
-+    type: object
-+    description:
-+      The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
-+      control registers for two low speed clocks. One of the clocks is a
-+      32 kHz oscillator driver with power up/down and clock gating. Next
-+      is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
-+
-+      These clocks are used by the RTC and the Event Router peripherals.
-+      The 32 kHz can also be routed to other peripherals to enable low
-+      power modes.
-+
-+    properties:
-+      compatible:
-+        const: nxp,lpc1850-creg-clk
-+
-+      clocks:
-+        maxItems: 1
-+
-+      '#clock-cells':
-+        const: 1
-+        description: |
-+          0            1 kHz clock
-+          1           32 kHz Oscillator
-+
-+    required:
-+      - compatible
-+      - clocks
-+      - '#clock-cells'
-+
-+    additionalProperties: false
-+
-+  phy:
-+    type: object
-+    description: the internal USB OTG PHY in NXP LPC18xx and LPC43xx SoCs
-+    properties:
-+      compatible:
-+        const: nxp,lpc1850-usb-otg-phy
-+
-+      clocks:
-+        maxItems: 1
-+
-+      '#phy-cells':
-+        const: 0
-+
-+    required:
-+      - compatible
-+      - clocks
-+      - '#phy-cells'
-+
-+    additionalProperties: false
-+
-+  dma-mux:
-+    type: object
-+    description: NXP LPC18xx/43xx DMA MUX (DMA request router)
-+    properties:
-+      compatible:
-+        const: nxp,lpc1850-dmamux
-+
-+      '#dma-cells':
-+        const: 3
-+        description: |
-+          Should be set to <3>.
-+          * 1st cell contain the master dma request signal
-+          * 2nd cell contain the mux value (0-3) for the peripheral
-+          * 3rd cell contain either 1 or 2 depending on the AHB  master used.
-+
-+      dma-requests:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        maximum: 64
-+        description: Number of DMA requests the controller can handle
-+
-+      dma-masters:
-+        $ref: /schemas/types.yaml#/definitions/phandle
-+        description: phandle pointing to the DMA controller
-+
-+    required:
-+      - compatible
-+      - '#dma-cells'
-+      - dma-masters
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - resets
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/lpc18xx-ccu.h>
-+
-+    syscon@40043000 {
-+        compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
-+        reg = <0x40043000 0x1000>;
-+        clocks = <&ccu1 CLK_CPU_CREG>;
-+        resets = <&rgu 5>;
-+
-+        clock-controller {
-+            compatible = "nxp,lpc1850-creg-clk";
-+            clocks = <&xtal32>;
-+            #clock-cells = <1>;
-+        };
-+
-+        phy {
-+            compatible = "nxp,lpc1850-usb-otg-phy";
-+            clocks = <&ccu1 CLK_USB0>;
-+            #phy-cells = <0>;
-+        };
-+
-+        dma-mux {
-+            compatible = "nxp,lpc1850-dmamux";
-+            #dma-cells = <3>;
-+            dma-requests = <64>;
-+            dma-masters = <&dmac>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/phy/phy-lpc18xx-usb-otg.txt b/Documentation/devicetree/bindings/phy/phy-lpc18xx-usb-otg.txt
-deleted file mode 100644
-index 3bb821cd6a7f3..0000000000000
---- a/Documentation/devicetree/bindings/phy/phy-lpc18xx-usb-otg.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--NXP LPC18xx/43xx internal USB OTG PHY binding
-----------------------------------------------
--
--This file contains documentation for the internal USB OTG PHY found
--in NXP LPC18xx and LPC43xx SoCs.
--
--Required properties:
--- compatible	: must be "nxp,lpc1850-usb-otg-phy"
--- clocks	: must be exactly one entry
--See: Documentation/devicetree/bindings/clock/clock-bindings.txt
--- #phy-cells	: must be 0 for this phy
--See: Documentation/devicetree/bindings/phy/phy-bindings.txt
--
--The phy node must be a child of the creg syscon node.
--
--Example:
--creg: syscon@40043000 {
--	compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
--	reg = <0x40043000 0x1000>;
--
--	usb0_otg_phy: phy {
--		compatible = "nxp,lpc1850-usb-otg-phy";
--		clocks = <&ccu1 CLK_USB0>;
--		#phy-cells = <0>;
--	};
--};
+Thanks!
 -- 
-2.34.1
-
+Florian
