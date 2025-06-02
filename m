@@ -1,156 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A69E1EE02F;
-	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B920FA84
+	for <linux-clk@vger.kernel.org>; Mon,  2 Jun 2025 11:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748858006; cv=none; b=B5iL9RK0hni3flrRddkhcA08+DeRpNpUtmq2pF08Qxa2fzpO0NN+RTbW8bJd8RwKkpMKnrwMACAUv9F+Kf5KJYI7G7Awzzbycc+XwXKcvUJ7c1wIpANd/BYr5TNFbpdXGw9b0z9TeYvrUq9GcbZ8kKyVgK4c1kyYYUbwoWBfrQs=
+	t=1748865551; cv=none; b=qE3EW74KaoTN/P3dkFvQQMZuUteLP9OD2DvKAVQQR9P2dBtZwG4Jrv7HbiZWHl0MRJ1tgdaK/4wRU2dOhTJ/IcaDoIvbZzhVky8HsLmkfNQGg9Q2MwfPZ+a2myNKxqkDJcwBx1UDww2By+PQjSsnm8qhSb4i0Ios0CFt6Qbx6HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748858006; c=relaxed/simple;
-	bh=YW0aYGk44OBGXMXwnXBPhhKQgB+lh/nINEBWmVaTupA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nSvbY4074TBWqToP9tWk1y643SLKmmORv5hoY1r/Y0URR9CdWT3W8qy08WLmwXyL9nhzkqJvjq5wRdoCryccEitSrJrax5VqRUsUtADDawNXf1D+2jtXmMfj+dN9hjnro3alnyCeTYzmrUK6WQxZ2soZ6sojYPpC9jKeUU8bkPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7covpRT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1748865551; c=relaxed/simple;
+	bh=csSdyBiGbdS0W1mFbOEKsySlk/j10aPNku7jHZHS66I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gCLj3Ueev68Xuw82ZtuLwKvI+YZBEaTYQVhpyOqcFEx9cQFeXaR0d8+3VkGkFwURc8M8olT15ro1sPe18X+ut/hHcu7SuLXCNtft7/MtlBcrNluoCsXzVTIF4dsu0lebEn/aYl6XvxvixfLUZDyEmnlc4cdA3Cm1q8GDZ4Gts60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ppIH0tx/; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7covpRT"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 871FCC4AF0B;
-	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748858005;
-	bh=YW0aYGk44OBGXMXwnXBPhhKQgB+lh/nINEBWmVaTupA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=h7covpRTh3TWctaSOHielhkRdC+O2qJwj1qh7JPnZTo7i1QKzENJBzN8rueMHgUJp
-	 6EZfL15aKWwLCEmDN2RsbsTgCHN3XJjKLl+l5QpzxooUpzIkV31Q5KBEhSob6HlJ9I
-	 D54LDGcf7vy/AoN9XnXzTahHDUxRE5tU8DXy82A44psLmwZtfM+7ve85lbMauo4WBY
-	 MEhf3FKqWn2t7dMeatvyVFtnRYq0RkITSXd1SJE/e0YBkAJaeCHbW61qAj7npGkGFS
-	 P2uryx7vqSf2oWgh+Afek/yj4pB+cIVYthJ66bMtkrx0V3Nh4SiPcS5vVQ3gk4nmZz
-	 0tOI0tGRhnrWg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D973C61CE5;
-	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 02 Jun 2025 13:53:17 +0400
-Subject: [PATCH v3 5/5] arm64: dts: qcom: ipq5018: Add GE PHY to internal
- mdio bus
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ppIH0tx/"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a365a6804eso3240918f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 02 Jun 2025 04:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748865545; x=1749470345; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nc1KW/2KV/6taVcMVu/ddDJOUA42qnSt0fYjiD5ShkY=;
+        b=ppIH0tx/vYtlt5iK6w4qt3J6553kAD9vk/6Az+yAnoHVlKjygVvIPp96MDvu6Fs2+Z
+         GP22fL0fA2FCoW8+vmX0xKRO8/PRK4UuVG6iZ7G398Pa+CSgeErIUXZ5A7NPtiMD/AcJ
+         ZuVKtgNW8DCaRVDKfYYQpIp2tmHmslT0Y6s+mdfruBAWnueNbEh+s942XYk2z9vC5Iyk
+         +/u+I7E9+JaGYl/J+/W5DULkR3RkER9XjTtVJ08PVEPw2aWGfYs0fu3cXDen2pmm75Jh
+         8F80EY3d/XRhohH4XSzMWWir7T00PRP+sVlAyhO4tQwg1DQbJVpoocw8jLn8lk8Xioic
+         vSyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748865545; x=1749470345;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nc1KW/2KV/6taVcMVu/ddDJOUA42qnSt0fYjiD5ShkY=;
+        b=p8MvVvEFk+EYf+q8Ftvf2IHF8+HQ40XTDgc/RyWgJyKlMSB5PUye5c1SrVWsYktKrg
+         iyt/HLjvD4IhXYxpT7QI0Crskx9r1bwOtQY9/ZR3nUdwcacMu0j9WhmvsXV2SlWZQIQU
+         4xwk2HJ4PjUVGTRRU133hruY7i/E8NcJkWrhrNPqvH65ur67bn4n+Q+basCP1tYSEyOU
+         n7t07qtUs/RT40Ps7Phh2+6VEtYgz9XANcz1OLBouo9Hj966LGW0DNVRZnMsQjLnrbFv
+         S5j1kwvAbpyti0RWvxtAL/8JoCCUn9KziDw6VFP9gKiYAswwH+eKaBO3PiH5MxTJxia6
+         vDYQ==
+X-Gm-Message-State: AOJu0YzA3/pin0K2/NGkxX3T5M+98MW9P+Zmxw7WsfyyIGWNELLXIAkW
+	09o0Nvw+Z3bjKqm+y261vRq8aV88DYC6/2vhC/bXtlNhtgqJHb8SIiwybtFdR2j8IV8XtF9IqIl
+	J2n6/
+X-Gm-Gg: ASbGncsORICfrAVPIePjGXgEkFEzdcAXF/uggt9LxYxjdwLF6pLsRM581pysJQNvYoI
+	EcudfWAkEY8i84jFW3saZP8CurIjdY2d1ABjSqOC/Db4XzrNdGOgzJV7tjRbRFAv4OOZVaWqb5J
+	+NmqqmhDj5k4IhtXJrLuJ155oLXU3op/dm5GKLXswuog5pMTHP3J1f/pHc3thFT+b3peglup2LW
+	kE8r4lft4n1Rf5L13Ob3Z2y5bFH5iNNifsG/HXJpDTvy+9dJTiLQ16mLDtIShkF2QROO2kow/Nn
+	DF9zEzDOjwwpsESXlWUupeuQrGaVu6zAhokrqzbSI3DvzMYMbrU=
+X-Google-Smtp-Source: AGHT+IE4pjLyz8ghL0TgsAhNpn0Ghf0u7RoeYit5QqJnyA4Ap2fVk8z+2nDBKdd5+JiWOxBkr//AIw==
+X-Received: by 2002:a05:6000:1449:b0:3a4:dbdf:7154 with SMTP id ffacd0b85a97d-3a4f7ab1311mr10695797f8f.54.1748865545440;
+        Mon, 02 Jun 2025 04:59:05 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:f076:bb08:db3e:3647])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4efe6d0dbsm14317402f8f.40.2025.06.02.04.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 04:59:04 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: add a clk_hw helpers to get the clock device
+ or device_node
+In-Reply-To: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
+	(Jerome Brunet's message of "Thu, 17 Apr 2025 15:44:21 +0200")
+References: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Mon, 02 Jun 2025 13:59:04 +0200
+Message-ID: <1jsekicq2f.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250602-ipq5018-ge-phy-v3-5-421337a031b2@outlook.com>
-References: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
-In-Reply-To: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748858002; l=2285;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=hFpy0osU/0n+A52muRC0D3Drst6JCZAX5hmtJZDrLks=;
- b=N49n6bXKezFjPN5GJPRT+nh05uSgQVNbY4Dz+Qo7xmhVhq7Ajjuu+u12p/VRDTiYU3yFSOF0D
- B9lgYJLAsIHDStM+rLG60GYWVlZU1VyEHjd0n5g4WNRwnLHpOP+cxJ+
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain
 
-From: George Moussalem <george.moussalem@outlook.com>
+On Thu 17 Apr 2025 at 15:44, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-The IPQ5018 SoC contains an internal GE PHY, always at phy address 7.
-As such, let's add the GE PHY node to the SoC dtsi.
+> This patchset adds helpers to get the device or device_node associated with
+> clk_hw. This can be used by clock drivers to access various device related
+> functionality. The 2nd changes adds kunit test coverage for the new helpers
+>
+> This patchset is the v4 of the series previously sent here [1], with the
+> amlogic patches dropped for now. I'll resume the work on the amlogic
+> changes when the helpers are available in CCF core.
 
-The LDO controller found in the SoC must be enabled to provide constant
-low voltages to the PHY. The mdio-ipq4019 driver already has support
-for this, so adding the appropriate TCSR register offset.
+Hi Stephen,
 
-In addition, the GE PHY outputs both the RX and TX clocks to the GCC
-which gate controls them and routes them back to the PHY itself.
-So let's create two DT fixed clocks and register them in the GCC node.
+Gentle reminder.
+We have been stuck on this for a few months now. Could please take patch
+#1 at least. There is a significant amount queued on this on and it
+would really help.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+Thanks
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 03ebc3e305b267c98a034c41ce47a39269afce75..d47ad62b01991fafa51e7082bd1fcf6670d9b0bc 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -16,6 +16,18 @@ / {
- 	#size-cells = <2>;
- 
- 	clocks {
-+		gephy_rx_clk: gephy-rx-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <125000000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		gephy_tx_clk: gephy-tx-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <125000000>;
-+			#clock-cells = <0>;
-+		};
-+
- 		sleep_clk: sleep-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
-@@ -184,7 +196,8 @@ pcie0_phy: phy@86000 {
- 
- 		mdio0: mdio@88000 {
- 			compatible = "qcom,ipq5018-mdio";
--			reg = <0x00088000 0x64>;
-+			reg = <0x00088000 0x64>,
-+			      <0x019475c4 0x4>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
-@@ -192,6 +205,13 @@ mdio0: mdio@88000 {
- 			clock-names = "gcc_mdio_ahb_clk";
- 
- 			status = "disabled";
-+
-+			ge_phy: ethernet-phy@7 {
-+				compatible = "ethernet-phy-id004d.d0c0";
-+				reg = <7>;
-+
-+				resets = <&gcc GCC_GEPHY_MISC_ARES>;
-+			};
- 		};
- 
- 		mdio1: mdio@90000 {
-@@ -232,8 +252,8 @@ gcc: clock-controller@1800000 {
- 				 <&pcie0_phy>,
- 				 <&pcie1_phy>,
- 				 <0>,
--				 <0>,
--				 <0>,
-+				 <&gephy_rx_clk>,
-+				 <&gephy_tx_clk>,
- 				 <0>,
- 				 <0>;
- 			#clock-cells = <1>;
+>
+> Added tests run example:
+>      KTAP version 1
+>      # Subtest: clk_hw_register_get_dev_of_node_test_suite
+>      # module: clk_test
+>      1..2
+>          KTAP version 1
+>          # Subtest: clk_hw_register_get_dev_test
+>          ok 1 clock with device reference
+>          ok 2 clock missing device reference
+>      # clk_hw_register_get_dev_test: pass:2 fail:0 skip:0 total:2
+>      ok 1 clk_hw_register_get_dev_test
+>          KTAP version 1
+>          # Subtest: clk_hw_register_get_of_node_test
+>          ok 1 clock with device reference
+>          ok 2 clock missing device reference
+>      # clk_hw_register_get_of_node_test: pass:2 fail:0 skip:0 total:2
+>      ok 2 clk_hw_register_get_of_node_test
+>  # clk_hw_register_get_dev_of_node_test_suite: pass:2 fail:0 skip:0 total:2
+>  # Totals: pass:4 fail:0 skip:0 total:4
+>  ok 17 clk_hw_register_get_dev_of_node_test_suite
+>      KTAP version 1
+>      # Subtest: of_clk_hw_register_get_dev_of_node_test_suite
+>      # module: clk_test
+>      1..2
+>          KTAP version 1
+>          # Subtest: of_clk_hw_register_get_dev_test
+>          ok 1 clock with of_node reference
+>          ok 2 clock missing of_node reference
+>      # of_clk_hw_register_get_dev_test: pass:2 fail:0 skip:0 total:2
+>      ok 1 of_clk_hw_register_get_dev_test
+>          KTAP version 1
+>          # Subtest: of_clk_hw_register_get_of_node_test
+>          ok 1 clock with of_node reference
+>          ok 2 clock missing of_node reference
+>      # of_clk_hw_register_get_of_node_test: pass:2 fail:0 skip:0 total:2
+>      ok 2 of_clk_hw_register_get_of_node_test
+>  # of_clk_hw_register_get_dev_of_node_test_suite: pass:2 fail:0 skip:0 total:2
+>  # Totals: pass:4 fail:0 skip:0 total:4
+>
+> [1]: https://lore.kernel.org/linux-clk/20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+> Jerome Brunet (2):
+>       clk: add a clk_hw helpers to get the clock device or device_node
+>       clk: tests: add clk_hw_get_dev() and clk_hw_get_of_node() tests
+>
+>  drivers/clk/Makefile                          |   1 +
+>  drivers/clk/clk.c                             |  12 ++
+>  drivers/clk/clk_test.c                        | 215 ++++++++++++++++++++++++--
+>  drivers/clk/kunit_clk_hw_get_dev_of_node.dtso |  10 ++
+>  include/linux/clk-provider.h                  |  26 ++++
+>  5 files changed, 247 insertions(+), 17 deletions(-)
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250415-clk-hw-get-helpers-c2344d404f3c
+>
+> Best regards,
 
 -- 
-2.49.0
-
-
+Jerome
