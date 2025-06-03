@@ -1,243 +1,174 @@
-Received: from mail-24422.protonmail.ch (mail-24422.protonmail.ch [109.224.244.22])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933241FBEA9
-	for <linux-clk@vger.kernel.org>; Tue,  3 Jun 2025 08:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC822FF22;
+	Tue,  3 Jun 2025 13:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748938199; cv=none; b=kJGJufTOnnRPR/mP5+i0M4qv3Q2c3oA311YUTOuTYz1zVfM4LfatJlXpBvDbxpT+sokN/+8K/F+7HfyaKj7b1+BW8A+WNbF/T1N7cGR2gFmZyoWmTbJN0oz9rVHw7PnHGywDUFZ2qSM09Gpmt0TYCRsIhKA2uQR0w8Qnk/5meUw=
+	t=1748958075; cv=none; b=gVvwhNOtflFbBmswkzetoUjt24ZTiE3JIIMtkJtW4TY3oHC3nfJ1tz10CHRkLoUsRwu5HSt7FXecQflqz+zchKbuWJ6tKRlXDAM6yECMKJFv4EHFIJa4BcbORFlfwB4227XNUxJfEZkdL7ccb4LJp+R/x7yzmMW6gDHBl0TBqXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748938199; c=relaxed/simple;
-	bh=OCI+PpWASD7sLo2MJgDQvdo2o++17YjCGFcKCFyLdqk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DBt+PtGkYrR8J4bRD2sz6lWfJxzBJfXny14k/Ze2E445Q2etV5QiLH6WByFfFdlmPBuRpXXWPZfsxChwf+mmM1QcJkp0NmUBrhC3F3XTFMiK5++ccqB7LAgmaih6i6Kx3LZkF1pmntJwnW2sMItCNcQrE3rryjCMWlafkmgXsvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=SAsE3CV4; arc=none smtp.client-ip=109.224.244.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
+	s=arc-20240116; t=1748958075; c=relaxed/simple;
+	bh=Ld/DmiOsr/GIjO8Gve7Gwa5r9+0LnmJEzLNU8zeFIpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwwFrJbRu+zvCyS0e+DOGZlAh5X9IIw+eJfUBfK69XmTenu4TGmFwdC43siCacI1qsQJWBlmCv624r1AlJr4sk677qJ2rdHdZTxhlsNA/uHtwNXSeQkm9P7e9+qn0rn/OYPR3gycyYLEzelfftB/0e3OEP5shFGxOnlNTUEusvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4t4mUV4; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="SAsE3CV4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
-	s=protonmail2; t=1748938195; x=1749197395;
-	bh=MBcwTN9fNybth9Y9nK84MLeY8D6MbSYYsWdQF3WzHVs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=SAsE3CV4OzDwdospsTtUH7Xwi6u6Uzqyc2Bov2rplKWv7BQQ1IJCYmfuVPJUaIPkU
-	 3ooWajezDqDyBOoLp5/L8SHStdylECeXMNzEONyKMO3+Xmdf0YGnosdJpIhpDxoD4t
-	 Arghxqe1ixXRDTxIRlTFbHDzyiVD/Yz5z2cJWBrHVYydWvkIOWugp2J38CHADrKZWs
-	 aNfbezbcqlz/0wOHbctuLmOl/5xOMeurL4u/3ISOBUe5eGrMp2k4MQZAS8kGt7x634
-	 dVrMcIKwg6XifXhkSM6TmWLzvmcRWdH18SDA3Gmd3XNfjRW0wfL6zLzSvymRFB8leS
-	 h8WgRsseqO8lw==
-Date: Tue, 03 Jun 2025 08:09:49 +0000
-To: Jagadeesh Kona <quic_jkona@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 00/18] clk: qcom: Add support to attach multiple power domains in cc probe
-Message-ID: <2b44e799-3b15-4dfd-96c6-8bb38a5175de@nxsw.ie>
-In-Reply-To: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
-References: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
-Feedback-ID: 136405006:user:proton
-X-Pm-Message-ID: 6398c13e0a361bd5342a6606cc523563453aa089
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4t4mUV4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748958074; x=1780494074;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ld/DmiOsr/GIjO8Gve7Gwa5r9+0LnmJEzLNU8zeFIpw=;
+  b=n4t4mUV4Egsa9n0z+ZRTTESCOnMD9YG83JaD6l/DRQ5V5amUaa7NEALD
+   6kxOEnLPxHlg4bwhny/x8N2/eOMoEX5EDeG8gW7QPbuaJKWiZYZuotzhD
+   B+gRrJyodcqCaDda21soXegjpF9Jgz2ud+GNRdr9ww91AXcpcRMcp66jn
+   ihqJ3N3zoDFcVmof0Q1faNadE0mx83/e79hvlLKfPARaHRExuxSuUClV3
+   PyaUISbhePp1RRDB5/+H2gnZyRWxeVF/uvJXgaoFV/9WNU4lJhdoB6rEi
+   th9W5vz9KkbUBa5DunFMr/A+j9k1zZxIkzki4jo3DVovcprhHlomLGVmI
+   A==;
+X-CSE-ConnectionGUID: jX+4bTatRoOH68ovH/7cKA==
+X-CSE-MsgGUID: RH2MfgJcRBqDKPEv309iMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="50693253"
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="50693253"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 06:41:13 -0700
+X-CSE-ConnectionGUID: Ksv9muBGQaGp28i285/M4Q==
+X-CSE-MsgGUID: Xh9d85mtRBWw5r1/a3RPuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="145823921"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 03 Jun 2025 06:41:08 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uMRt4-0002Sv-1r;
+	Tue, 03 Jun 2025 13:41:06 +0000
+Date: Tue, 3 Jun 2025 21:40:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, nfraprado@collabora.com
+Cc: oe-kbuild-all@lists.linux.dev, angelogioacchino.delregno@collabora.com,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Irving lin <irving-ch.lin@mediatek.corp-partner.google.com>
+Subject: Re: [1/5] clk: mt8189: Porting driver for clk
+Message-ID: <202506032107.zewlKCY5-lkp@intel.com>
+References: <20250602083624.1849719-1-irving-ch.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602083624.1849719-1-irving-ch.lin@mediatek.com>
 
-On 30/05/2025 14:20, Jagadeesh Kona wrote:
-> In recent QCOM chipsets, PLLs require more than one power domain to be
-> kept ON to configure the PLL. But the current code doesn't enable all
-> the required power domains while configuring the PLLs, this leads to
-> functional issues due to suboptimal settings of PLLs.
->=20
-> To address this, add support for handling runtime power management,
-> configuring plls and enabling critical clocks from qcom_cc_really_probe.
-> The clock controller can specify PLLs, critical clocks, and runtime PM
-> requirements using the descriptor data. The code in qcom_cc_really_probe(=
-)
-> ensures all necessary power domains are enabled before configuring PLLs
-> or critical clocks.
->=20
-> This series fixes the below warning reported in SM8550 venus testing due
-> to video_cc_pll0 not properly getting configured during videocc probe
->=20
-> [   46.535132] Lucid PLL latch failed. Output may be unstable!
->=20
-> The patch adding support to configure the PLLs from common code is
-> picked from below series and updated it.
-> https://lore.kernel.org/all/20250113-support-pll-reconfigure-v1-0-1fae6bc=
-1062d@quicinc.com/
->=20
-> This series is dependent on bindings patch in below Vladimir's series, he=
-nce
-> included the Vladimir's series patches also in this series and updated th=
-em.
-> https://lore.kernel.org/all/20250303225521.1780611-1-vladimir.zapolskiy@l=
-inaro.org/
->=20
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
-> Changes in v5:
-> - Reversed order of patches 2 & 3 to add MXC support in SM8450
->    camcc bindings first and then moved SC8280XP camcc to SA8775P
->    camcc to have single power domain support for it.
-> - Added return code for qcom_cc_clk_pll_configure() and
->    returned -EINVAL in case if PLL config or registers is
->    NULL in patch 6 [Bryan]
-> - Added separate CBCR's list for SM8650 videocc and
->    updated clk_cbcrs list based on compatible in patch 8[Konrad]
-> - Added R-By tags received on v4
-> - Link to v4: https://lore.kernel.org/r/20250515-videocc-pll-multi-pd-vot=
-ing-v4-0-571c63297d01@quicinc.com
->=20
-> Changes in v4:
-> - Updated the SC8280XP camcc bindings patch to fix the
->    required-opps warning reported by kernel bot
-> - Updated the description of power-domains, required-opps of SM8450 camcc
->    bindings as per review comments on v3 [Bryan]
-> - Moved the PLL config checks to calling function code [Dmitry]
-> - Removed qcom_clk_reg_setting struct and regmap_update_bits() code.
->    Added a .clk_regs_configure() callback that clock drivers can implemen=
-t
->    if they require to update some misc register settings [Dmitry]
-> - Moved the PLLs and CBCRs data to a separate qcom_cc_driver_data
->    struct to avoid bloating up the CC descriptor structure
-> - Updated the videocc and camcc driver patches to incorporate above
->    qcom_cc_driver_data change
-> - Updated the commit text of DT patches [Bryan]
-> - Added the R-By, T-By tags received on v3
-> - Link to v3: https://lore.kernel.org/r/20250327-videocc-pll-multi-pd-vot=
-ing-v3-0-895fafd62627@quicinc.com
->=20
-> Changes in v3:
->   - Updated the videocc bindings patch to add required-opps for MXC power=
- domain [Dmitry]
->     and added Bryan & Rob R/A-By tags received for this patch on v1.
->   - Included the Vladimir's bindings patch for SM8450 camcc bindings to
->     add multiple PD support and updated them to fix the bot warnings.
->   - Moved SC8280XP camcc bindings to SA8775P camcc since SC8280XP only
->     require single MMCX power domain
->   - Split runtime PM and PLL configuration to separate patches [Dmitry]
->   - Removed direct regmap_update_bits to configure clock CBCR's and
->     using clock helpers to configure the CBCR registers [Dmitry, Bryan]
->   - Added new helpers to configure all PLLs & update misc clock
->     register settings from common code [Dmitry, Bryan]
->   - Updated the name of qcom_clk_cfg structure to qcom_clk_reg_setting [K=
-onrad]
->   - Updated the fields in structure from unsigned int to u32 and added
->     val field to this structure [Konrad]
->   - Added a new u32 array for cbcr branch clocks & num_clk_cbcrs fields
->     to maintain the list of critical clock cbcrs in clock controller
->     descriptor [Konrad]
->   - Updated the plls field to alpha_plls in descriptor structure [Konrad]
->   - Added WARN() in PLL configure function if PLL type passed is not
->     supported. The suggestion is to use BUG(), but updated it to
->     WARN() to avoid checkpatch warning. [Bjorn]
->   - Moved the pll configure and helper macros to PLL code from common cod=
-e [Bjorn]
->   - Updated camcc drivers for SM8450, SM8550, SM8650 and X1E80100 targets
->     with support to configure PLLs from common code and added MXC power
->     domain in corresponding camcc DT nodes. [Bryan]
->   - Added Dmitry and Bryan R-By tags received on videocc DT node changes =
-in v1
->   - Link to v2: https://lore.kernel.org/r/20250306-videocc-pll-multi-pd-v=
-oting-v2-0-0cd00612bc0e@quicinc.com
->=20
-> Changes in v2:
->   - Added support to handle rpm, PLL configuration and enable critical
->     clocks from qcom_cc_really_probe() in common code as per v1 commments
->     from Bryan, Konrad and Dmitry
->   - Added patches to configure PLLs from common code
->   - Updated the SM8450, SM8550 videocc patches to use the newly
->     added support to handle rpm, configure PLLs from common code
->   - Split the DT change for each target separately as per
->     Dmitry comments
->   - Added R-By and A-By tags received on v1
-> - Link to v1: https://lore.kernel.org/r/20250218-videocc-pll-multi-pd-vot=
-ing-v1-0-cfe6289ea29b@quicinc.com
->=20
-> ---
-> Jagadeesh Kona (15):
->        dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
->        dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp camcc to sa87=
-75p camcc
->        clk: qcom: common: Handle runtime power management in qcom_cc_real=
-ly_probe
->        clk: qcom: common: Add support to configure clk regs in qcom_cc_re=
-ally_probe
->        clk: qcom: videocc-sm8450: Move PLL & clk configuration to really =
-probe
->        clk: qcom: videocc-sm8550: Move PLL & clk configuration to really =
-probe
->        clk: qcom: camcc-sm8450: Move PLL & clk configuration to really pr=
-obe
->        clk: qcom: camcc-sm8550: Move PLL & clk configuration to really pr=
-obe
->        clk: qcom: camcc-sm8650: Move PLL & clk configuration to really pr=
-obe
->        clk: qcom: camcc-x1e80100: Move PLL & clk configuration to really =
-probe
->        arm64: dts: qcom: sm8450: Additionally manage MXC power domain in =
-videocc
->        arm64: dts: qcom: sm8550: Additionally manage MXC power domain in =
-videocc
->        arm64: dts: qcom: sm8650: Additionally manage MXC power domain in =
-videocc
->        arm64: dts: qcom: sm8450: Additionally manage MXC power domain in =
-camcc
->        arm64: dts: qcom: sm8650: Additionally manage MXC power domain in =
-camcc
->=20
-> Taniya Das (1):
->        clk: qcom: clk-alpha-pll: Add support for common PLL configuration=
- function
->=20
-> Vladimir Zapolskiy (2):
->        dt-bindings: clock: qcom,sm8450-camcc: Allow to specify two power =
-domains
->        arm64: dts: qcom: sm8550: Additionally manage MXC power domain in =
-camcc
->=20
->   .../bindings/clock/qcom,sa8775p-camcc.yaml         | 15 ++++
->   .../bindings/clock/qcom,sm8450-camcc.yaml          | 20 +++--
->   .../bindings/clock/qcom,sm8450-videocc.yaml        | 18 +++--
->   arch/arm64/boot/dts/qcom/sm8450.dtsi               | 12 ++-
->   arch/arm64/boot/dts/qcom/sm8550.dtsi               | 12 ++-
->   arch/arm64/boot/dts/qcom/sm8650.dtsi               |  6 +-
->   drivers/clk/qcom/camcc-sm8450.c                    | 89 +++++++++++----=
--------
->   drivers/clk/qcom/camcc-sm8550.c                    | 85 +++++++++++----=
-------
->   drivers/clk/qcom/camcc-sm8650.c                    | 83 ++++++++++-----=
------
->   drivers/clk/qcom/camcc-x1e80100.c                  | 67 ++++++++-------=
--
->   drivers/clk/qcom/clk-alpha-pll.c                   | 57 ++++++++++++++
->   drivers/clk/qcom/clk-alpha-pll.h                   |  3 +
->   drivers/clk/qcom/common.c                          | 81 +++++++++++++++=
-++---
->   drivers/clk/qcom/common.h                          | 10 +++
->   drivers/clk/qcom/videocc-sm8450.c                  | 58 ++++++--------
->   drivers/clk/qcom/videocc-sm8550.c                  | 66 ++++++++-------=
--
->   16 files changed, 421 insertions(+), 261 deletions(-)
-> ---
-> base-commit: 138cfc44b3c4a5fb800388c6e27be169970fb9f7
-> change-id: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
->=20
-> Best regards,
-> --
-> Jagadeesh Kona <quic_jkona@quicinc.com>
->=20
->=20
+Hi irving.ch.lin,
 
-Can we merge this series now.
+kernel test robot noticed the following build warnings:
 
-Looks ready.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.15 next-20250530]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
----
-bod
+url:    https://github.com/intel-lab-lkp/linux/commits/irving-ch-lin/clk-mt8189-Porting-driver-for-clk/20250603-105623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250602083624.1849719-1-irving-ch.lin%40mediatek.com
+patch subject: [1/5] clk: mt8189: Porting driver for clk
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250603/202506032107.zewlKCY5-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250603/202506032107.zewlKCY5-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506032107.zewlKCY5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/clk/mediatek/clk-bringup.c: In function '__bring_up_enable':
+   drivers/clk/mediatek/clk-bringup.c:18:50: error: invalid use of undefined type 'struct platform_device'
+      18 |         clk_con = of_count_phandle_with_args(pdev->dev.of_node, "clocks",
+         |                                                  ^~
+   drivers/clk/mediatek/clk-bringup.c:22:38: error: invalid use of undefined type 'struct platform_device'
+      22 |                 clk = of_clk_get(pdev->dev.of_node, i);
+         |                                      ^~
+   drivers/clk/mediatek/clk-bringup.c: In function 'clk_post_ao_probe':
+   drivers/clk/mediatek/clk-bringup.c:48:40: error: invalid use of undefined type 'struct platform_device'
+      48 |         struct device_node *node = pdev->dev.of_node;
+         |                                        ^~
+   drivers/clk/mediatek/clk-bringup.c: In function 'bring_up_probe':
+   drivers/clk/mediatek/clk-bringup.c:78:51: error: invalid use of undefined type 'struct platform_device'
+      78 |         clk_probe = of_device_get_match_data(&pdev->dev);
+         |                                                   ^~
+   drivers/clk/mediatek/clk-bringup.c:84:17: error: implicit declaration of function 'dev_err' [-Werror=implicit-function-declaration]
+      84 |                 dev_err(&pdev->dev,
+         |                 ^~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:84:30: error: invalid use of undefined type 'struct platform_device'
+      84 |                 dev_err(&pdev->dev,
+         |                              ^~
+   drivers/clk/mediatek/clk-bringup.c:86:29: error: invalid use of undefined type 'struct platform_device'
+      86 |                         pdev->name, r);
+         |                             ^~
+   drivers/clk/mediatek/clk-bringup.c: At top level:
+   drivers/clk/mediatek/clk-bringup.c:96:15: error: variable 'bring_up' has initializer but incomplete type
+      96 | static struct platform_driver bring_up = {
+         |               ^~~~~~~~~~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:97:10: error: 'struct platform_driver' has no member named 'probe'
+      97 |         .probe          = bring_up_probe,
+         |          ^~~~~
+   drivers/clk/mediatek/clk-bringup.c:97:27: warning: excess elements in struct initializer
+      97 |         .probe          = bring_up_probe,
+         |                           ^~~~~~~~~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:97:27: note: (near initialization for 'bring_up')
+   drivers/clk/mediatek/clk-bringup.c:98:10: error: 'struct platform_driver' has no member named 'remove'
+      98 |         .remove         = bring_up_remove,
+         |          ^~~~~~
+   drivers/clk/mediatek/clk-bringup.c:98:27: warning: excess elements in struct initializer
+      98 |         .remove         = bring_up_remove,
+         |                           ^~~~~~~~~~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:98:27: note: (near initialization for 'bring_up')
+   drivers/clk/mediatek/clk-bringup.c:99:10: error: 'struct platform_driver' has no member named 'driver'
+      99 |         .driver         = {
+         |          ^~~~~~
+   drivers/clk/mediatek/clk-bringup.c:99:27: error: extra brace group at end of initializer
+      99 |         .driver         = {
+         |                           ^
+   drivers/clk/mediatek/clk-bringup.c:99:27: note: (near initialization for 'bring_up')
+   drivers/clk/mediatek/clk-bringup.c:99:27: warning: excess elements in struct initializer
+   drivers/clk/mediatek/clk-bringup.c:99:27: note: (near initialization for 'bring_up')
+   drivers/clk/mediatek/clk-bringup.c:106:1: warning: data definition has no type or storage class
+     106 | module_platform_driver(bring_up);
+         | ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:106:1: error: type defaults to 'int' in declaration of 'module_platform_driver' [-Werror=implicit-int]
+>> drivers/clk/mediatek/clk-bringup.c:106:1: warning: parameter names (without types) in function declaration
+   drivers/clk/mediatek/clk-bringup.c:96:31: error: storage size of 'bring_up' isn't known
+      96 | static struct platform_driver bring_up = {
+         |                               ^~~~~~~~
+   drivers/clk/mediatek/clk-bringup.c:96:31: warning: 'bring_up' defined but not used [-Wunused-variable]
+   cc1: some warnings being treated as errors
+
+
+vim +106 drivers/clk/mediatek/clk-bringup.c
+
+   105	
+ > 106	module_platform_driver(bring_up);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
