@@ -1,79 +1,88 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7814B155A4D
-	for <linux-clk@vger.kernel.org>; Mon,  2 Jun 2025 17:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF1D2C187
+	for <linux-clk@vger.kernel.org>; Tue,  3 Jun 2025 00:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748883998; cv=none; b=d8+ydMEt5+3GTxjI1mwTJulbeMxX1jGAhU/SgCwdpJS34p7OmfExC0WjrjhtjnDDVbq9D9pioM2g4WFl9/hKwfMkk70YFG584Uub4Hqah8UUknH/O5dWEGAYfhsd7iaHbh0iOLlZGyboW4zPk6HdOJRyumtN4yGVYFVofE2fjrE=
+	t=1748910693; cv=none; b=JzQrQsdvB1BbMIRqgis5U5eXyWTEQZXzIlff0ySSLc4dyWgXRm5qYuQDoS7DTGIoy4I2gn+iVRp1UmXvS9J7sHXOGgixlaYDZojoOt+OnWDdsSV9CmFECZnA+2Lxlg1BJxTg+3Pe09VhD965eB/BiHxTVlLmuXagup7R/6CNS9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748883998; c=relaxed/simple;
-	bh=jGHtXSMNYuOS4DBBIsFiHbP+AkxtA8bAuVMP2cZb2Gw=;
+	s=arc-20240116; t=1748910693; c=relaxed/simple;
+	bh=+C0Gk9Lo27j17lR1Om5aDZ1uBMHuV88Of7KaaLuQJvg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Houv969ULi+qJzO98E/I1SRxIF+sJnTkniZNES6PXeiijmLcSTc12ZIvt4Nc1dP8s7z/gZvlUBsaoT7y/bL9JRyJioGwovZnCDCgh1Dt1gHfdnwBLvZEVcoxuCnOcQn8kdmwYrIsElK6cM/DN2f3FHI43e5pYXnzppIwTkNVORU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CoN5H9JL; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=thKqGIIbq5I4TwRugmNHTJ5y+0Yp2bZEZJOn9/haP7GeyFRuXDEXHdQ1FfL5qM+y26/8qY9fk47COYiUD23kgeg6PddOKM9B48636V32feEhoca3QptZg324Y5QONNjfB5zKu3XRfRIlbqK3wj/GVBMn1TggZxSabkohU7MkLdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BgU67jIg; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CoN5H9JL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BgU67jIg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748883995;
+	s=mimecast20190719; t=1748910690;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tYcA+9sD/BT6SER7UMB+2zvYQlRmXLTzrbmL5tzdDww=;
-	b=CoN5H9JLpY5aoZ3nV4a/Zcn1XOSkfe0JccSgxFOwC8T9luyBehn01Qnfox6ujkKoU9Ckdp
-	xM3QFMg4+CAP1888Nq8S4JFIbo4WaWT2RpySpWSM6DHFnmv1606Gj8zpYlRZTESLkg8Tgb
-	Dc792jpdYxnrBgfpXxtTjGux9Itcd14=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ub9Ld5Og2J794EXigKYKviTvauaVfB+CsjKmCFqc+fQ=;
+	b=BgU67jIgYxLqHeQyjEOK90lnDvlanOP8UtLsWPelhkxujk+Zqv79m70cWyvdUgtP4NRCdc
+	58zB0zBY55NlEvHJnxLYnj+eeiIw2O/KtYfopXyayoJHEH+E0g2rgRADFpEGs+4326Lcsh
+	je1yYcUWvZblwxyV8sewV4a4/KfJMFE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-7VRiDt5PO1ixGwD_h9MC4Q-1; Mon, 02 Jun 2025 13:06:33 -0400
-X-MC-Unique: 7VRiDt5PO1ixGwD_h9MC4Q-1
-X-Mimecast-MFC-AGG-ID: 7VRiDt5PO1ixGwD_h9MC4Q_1748883993
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6facb96d553so65725586d6.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Jun 2025 10:06:33 -0700 (PDT)
+ us-mta-490-wLoSceBsNhC0Qg1exBiDUw-1; Mon, 02 Jun 2025 20:31:27 -0400
+X-MC-Unique: wLoSceBsNhC0Qg1exBiDUw-1
+X-Mimecast-MFC-AGG-ID: wLoSceBsNhC0Qg1exBiDUw_1748910687
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5e2a31f75so444591085a.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Jun 2025 17:31:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748883993; x=1749488793;
+        d=1e100.net; s=20230601; t=1748910687; x=1749515487;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tYcA+9sD/BT6SER7UMB+2zvYQlRmXLTzrbmL5tzdDww=;
-        b=DDwlAcvltnkkkIBmRPFS8h2gf1byjLT2ukoOECe/k9LXlv8/J4jneoSk7KwKUHhg8U
-         q0p0PYJ8jKw7x9WutZAQKnaWZusx5mXaqWtRw+QDwm1pIOX2CR2WA9hZ4VT7ytP+wTBd
-         tUHRwy+9we/KfpGWGYRB0ShVPzPsuCd88le7ZNowpXzKBRmbWMdAC6M4lHOPqV7fn+7R
-         eKheqBowAwirKJU+VUa5+NfUSUR/h9pD2JLJfJYKU9zwhNZM6+ZcDEPguLC3XDGTaxy+
-         inkJ2IiYCvBjIz41ppjcqq5rOejtuJljKgeR5/e+T3YTrty1IrUNLjtqOdwqxZrnaioN
-         o/Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXu6QH8559+fC/5ZUgadR8fyXz1H///loDHja+hdk10PbkIXmkuyMRh4U8vU/K+vtLGapgj4wJrudw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhaROq0YXuP57UvFjEddViIbRbVTp5t8reGF/WkNPdtI/jlxZz
-	jAqOrtVnQ7gQU032cEe0Mwz3oHkAPWTyZ9i79IW6lKs4+hOOMoL5gaz1xvEPXwyd0EyELSB/DP6
-	/tP5Df8yrfqy5wq7d7JXlZIdbYeHvV3WQ+WW2GuBxykO7K5P8aCXT2Ri0nGMV4g==
-X-Gm-Gg: ASbGncsJpd/CiPuZ1DD22NS/rKEj8xY600oLtO4gyx/npya1eLj6k59w/SReUJXulU7
-	s/muhkedTdSj5EFMSznjp07mdr5d0FwPR9IV9jqHQTPFk/y4U4oc+mDbxl4fpTeR3Kn41jbXr5U
-	zy5avbBzjNveclcsbzJIBqj4cMPpeDzeYGcoo8YfjHu09hCGg8QGBK4SdyHHobakR4cODiiIvYK
-	i/lNtjUwGqm3QFAcIL/hHjjHH5R6tCABj3Cibj51KOtnqZDNC10SrEt6l79atB7xDH91RG2zWbr
-	VaTM/nE/i/xpxTsRS4RUiyi1+PWPAEfbs3dGhcq6vaYdQg==
-X-Received: by 2002:a05:6214:584d:b0:6fa:b468:caf4 with SMTP id 6a1803df08f44-6faed6cec34mr3581386d6.0.1748883992765;
-        Mon, 02 Jun 2025 10:06:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDIW6J9P2qG1g1rwGHAt0e10YSWO/VaY15tJKPiaekxXAvJTtUGm41gXv6znBsK6TM7kwmtg==
-X-Received: by 2002:a05:6214:584d:b0:6fa:b468:caf4 with SMTP id 6a1803df08f44-6faed6cec34mr3581066d6.0.1748883992376;
-        Mon, 02 Jun 2025 10:06:32 -0700 (PDT)
+        bh=ub9Ld5Og2J794EXigKYKviTvauaVfB+CsjKmCFqc+fQ=;
+        b=f6MRkZ7ZYVoJXkOhiWIEj9+UB+1hTQmYDYuufv+ucRVSu8xaSRnLv7F6YBNWQ34NUJ
+         lp0ozf+g3uk3aMMd42LaILHDAYRHvp2S/XpC5lXJZ0YXszrUNEdg2IHLODpwbpBou8d0
+         3LDEvfUB9hqEcWRmpJ991aQW4xFzM6PbAuaOb+tXGxdBC4hl1L/56mnSVbOT44/SxdVq
+         k6Io608jPAc4RAIDzZ4zNKR3ZQblhjpUCFW9Dt5MN+EzgqpU4291mrJXaD+2lvub1RDi
+         Z4yRF8hsO2wP2Jce/XOsqQxkcPRv4lH2wXMiBlFp6mQaaIUMmJUQzS/a7yY4ilQBiWZK
+         kRVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe4iC6eD+fekj0Q0jPlDsqiWA8rOo88Jn6NjIiQVDC8ApCNvpdTuRxb9oEJWsBRyqnfQs7xuLaa8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoRNxZYN799gERSgfZjliRd3773F8lCHwrI3zOz8HAuh7ZgivQ
+	bSu2+3yKCD93MkCzvTOJaKtAAx8B9b0JDLsyE1gK+Gy94WrMFosL7vc6ozY39GTIbZB3TF3sr68
+	XirFVYRozNNGSJHnTXmHMrHCCWNPLCTnT5zYbH97joBHyrFQluEtldsPn/K5wOw==
+X-Gm-Gg: ASbGnct1EfQS2aKWSuWncOC+Ti9towEDBpau0SD3wjfzxwhbunD8grdAU31QvvGiABY
+	xCm0I7/AiKvUseDGykXvFsWh1CJqlJjTXPMlBSaH9TKRJwvcUHhXuZEGbAgcYKoCmIZ6YgvqpYd
+	5zE0pebUfbmAK/jkxKgfXFagjLedgqWIiEcAnBzuaBRHNuFZd4rRv1r4ML23YerYQzuECCUS7fU
+	7Cwrz6v8rWW3EoCCgBoFF4ep516XXOsbk9oYw1x8AWeRwFV45XT40FcdPTP/UuI36RpvR7QDZqq
+	o4RSmC/oPwIPMYrYeOiAwot/AmRoHPsV1KnxVDa26bJj/A==
+X-Received: by 2002:a05:620a:4509:b0:7ce:d95e:8d9a with SMTP id af79cd13be357-7d0a4e394e6mr2020790885a.28.1748910687049;
+        Mon, 02 Jun 2025 17:31:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGaXeGj+rAUYQBxhqVmcHl5R5OWVK/TVJ/1hYqSQFU3Oar1jrFtXFjwuXkb+WGyr5ryDc+1iw==
+X-Received: by 2002:a05:620a:4509:b0:7ce:d95e:8d9a with SMTP id af79cd13be357-7d0a4e394e6mr2020787685a.28.1748910686549;
+        Mon, 02 Jun 2025 17:31:26 -0700 (PDT)
 Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6d4d6b6sm63640396d6.44.2025.06.02.10.06.31
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0e3fa9sm726038285a.24.2025.06.02.17.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 10:06:31 -0700 (PDT)
-Date: Mon, 2 Jun 2025 13:06:30 -0400
+        Mon, 02 Jun 2025 17:31:25 -0700 (PDT)
+Date: Mon, 2 Jun 2025 20:31:24 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: tests: add clk_hw_get_dev() and
- clk_hw_get_of_node() tests
-Message-ID: <aD3aFs-hbtYw0PVO@x1>
-References: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
- <20250417-clk-hw-get-helpers-v1-2-7743e509612a@baylibre.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on
+ clk_ignore_unused
+Message-ID: <aD5CXNy5Qtbe5cOb@x1>
+References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com>
+ <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org>
+ <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
+ <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
+ <efd38edbed2743a258bbec7e80ff2238.sboyd@kernel.org>
+ <16fd590e-7a00-4e71-a003-d6aafa83567d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,47 +91,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250417-clk-hw-get-helpers-v1-2-7743e509612a@baylibre.com>
+In-Reply-To: <16fd590e-7a00-4e71-a003-d6aafa83567d@oss.qualcomm.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Apr 17, 2025 at 03:44:23PM +0200, Jerome Brunet wrote:
-> Add kunit test suites clk_hw_get_dev() and clk_hw_get_of_node()
-> for clocks registered with clk_hw_register() and of_clk_hw_register()
+On Thu, May 22, 2025 at 09:47:35PM +0200, Konrad Dybcio wrote:
+> On 3/4/25 8:34 PM, Stephen Boyd wrote:
+> > Maybe we would be better off with a config option that removes the clk
+> > ignore unused ability entirely. Then you can have a kernel config check
+> > somewhere in the build process that verifies that a user can't even set
+> > the kernel commandline to change the behavior.
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> I used WARN specifically to taint the kernel (which would in turn throw off
+> any reasonable CI checks). Perhaps we could add a Kconfig entry (unless
+> there already is one) that would do the same, and clk_ignore_unused could
+> be gated behind it.
+> 
+> But then, it would make it harder to debug production kernels with that
+> parameter, which could potentially come in handy too
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+In addition to clk_ignore_unused, there's also regulator_ignore_unused
+and pd_ignore_unused that should also be considered.
 
-I also ran the tests with no issues.
+From a power-management perspective, a userspace tool like powertop will
+warn about various things that could be improved. For example, on my
+Thinkpad x13s laptop, one of the warnings given is:
 
-Just a few minor nits below if you happen to spin a v2.
+    Bad           Runtime PM for PCI Device Qualcomm Technologies,
+                    Inc QCNFA765 Wireless Network Adapter
 
-> @@ -3016,7 +3023,7 @@ KUNIT_ARRAY_PARAM(clk_register_clk_parent_data_device_hw_test,
->   */
->  static void clk_register_clk_parent_data_device_hw_test(struct kunit *test)
->  {
-> -	struct clk_register_clk_parent_data_device_ctx *ctx;
-> +	struct clk_register_device_ctx *ctx;
->  	const struct clk_register_clk_parent_data_test_case *test_param;
->  	struct clk_dummy_context *parent;
->  	struct clk_hw *parent_hw;
+I think it would be useful to add a check to powertop for the presence
+of any of these three kernel parameters.
 
-Put in reverse Christmas tree where possible.
-
-> +static void clk_hw_register_get_of_node_test(struct kunit *test)
-> +{
-> +	const struct clk_hw_get_dev_of_node_test_param *test_param = test->param_value;
-> +	struct clk_register_device_ctx *ctx = test->priv;
-> +	struct device *dev = test_param->has_ref ? ctx->dev : NULL;
-> +	struct device_node *np = NULL;
-> +
-> +	if (dev) {
-> +		np = dev_of_node(dev);
-> +
-> +		if (!np)
-> +			np = dev_of_node(dev->parent);
-
-Remove newline before the if().
+I know that power management isn't the only reason for the original
+patch, and this won't cover the case to give some kind of warning where
+the various core parts of the system controlled by Linux are not
+described in device tree, and the system is relying on a resource setup
+by the bootloader.
 
 Brian
 
