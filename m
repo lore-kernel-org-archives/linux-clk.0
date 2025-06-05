@@ -1,173 +1,160 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358E6278153
-	for <linux-clk@vger.kernel.org>; Thu,  5 Jun 2025 17:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE7D275869;
+	Thu,  5 Jun 2025 18:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749146186; cv=none; b=qo2SpIGvoP2vI2M9NkmPPCnwrha1WmqAftQ+Q0j55rpYVyL9tCl0bW2QmzOwTwk8wz2kQ67OdbYQiL+r5/BfR2RZbrG3bBWGVq6mAuRydmAqS8zG2/L1i1NyZtz6T4aboWXdnMdIU6v1q7GGhcfF3h9u2DCLuC9GKyBquT5P7ns=
+	t=1749147296; cv=none; b=ulBQQ14iFdrhXbO00MA3Upol6evW7bEN0B0HtbNn7C2B2BlJvA1tL1qwsi5+aYMgj5A4cX52RxO0a9R7gk0P2PN+Nj/OIsRm7QwMDhdlTtY5+2PaUhE24Cm2Aowp9zQ5z5oOb+R3QVlfI2P3hFL5NlpHBUYOsdutg1DUZ/iVrhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749146186; c=relaxed/simple;
-	bh=RukCIS+sJx3VdGKZDRlpBXirAsgXcEVmiyigL9kxbkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D+OEuTKA5JqqvF+40e2OC1Xl/8FMjZYF553chSGSKDXcmh4ZA2aPJyHRhxVXW4Gh9WfSAn+XR4M2Uj84hkE5JlVDqh6MibcOwRM9RVJwFrnAYUjrt7WDPD92kKmyjf7T66UIvQmSDgX7ivpCjsD26pJATi7PVjraLjeq8+E5KpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Y1bKW9tm; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1749147296; c=relaxed/simple;
+	bh=kM+tZQLZzYNHuIw8DxjQDCB49bssz5ArH/w0ixdklPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYUZ2tvzNbunXXwMPDGqw3yrO+brcobqYiryd4PYpgTsGLJ0pINHr8HEdzfyDDBvBIpz9HX6QT49HN0pnMjvnv1K7kIyeAIMa5Df7wTkIOErRNagBbVEwBwUzhlxNp2oNVJ+SfMzGcNjflQr7pwEjvz39EEBcMVqG4N/gsn4K0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irglAXUu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Y1bKW9tm"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2345c60507bso9475025ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 05 Jun 2025 10:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1749146183; x=1749750983; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=b8jf1lmQO0Pg7Ys10iVizBIdX5M9wTrvSGVjsrJdlFk=;
-        b=Y1bKW9tmFK4LcokMNHZ+WsboRxZMWsnXkxcoD1eeLcyH4rGoSc0LD+kNkedhc7Jkko
-         jTAG+QipmeTeX7sMOtJVJNtOmM3rhigvn130fR123wKB9ugCz2mkBGrsSQRqjIXy2KKK
-         qOCCJWKePtqf30M3sTUVlcfpG5O+HDVay2eC8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749146183; x=1749750983;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b8jf1lmQO0Pg7Ys10iVizBIdX5M9wTrvSGVjsrJdlFk=;
-        b=hDKQ/VyIh4rvge4gZMnuKYKIHHMaQT5KxSbQrCyA+f7932TMhB8kw50qL1qJqwy3WF
-         UDIJ/YLKr3upuxGdQj1jR54wQ7GOJ397lBDrQSOTY66AMziq950v0juv5yPhTUpuJhhc
-         VKRk4Jph4ML712bpQYaZtejyhfKOC1I/XRjcMgJSZMOh4XhOTarNMl/cvCKQJWQTqfJc
-         Vcn4uLnzY2+0eiqIcWfdpBUuOlKlgTIDlPznpoNKJED8T2+q2VMgT9m0kbLn4UozwDZ5
-         LLvJVc1Yr+dgD1/kbsa9If3Ffa2behTX15CIAhteQ38k/dYwjGANIGnBCpgT4Ilri/Qm
-         jN9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXSGwXTHjUAugP/eIhNmyMsBnss24BRcDTD8q6JIAA2CBNR+Wx73CtRoQ1rAcyzPeIHk2fhZofjCJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfdURbUm+ITEUe5FjEmXfXkphC8Ne9G0PnNlhhSIPCspEBRk5Y
-	7boRrE1GVBdSS+Q0LDsUdQSUJsanyVL7gq8WCBMwlSHhoiNOJ+fz2eI726s3zjciOg==
-X-Gm-Gg: ASbGncsuMGniubLUvqXkW0NzNsobg5ZLVlSb/OgemQEFzGowMpYBNiT4w3wnM/Lsrg8
-	l8KanPrzzmj6iQQ2qPIo6DlTPjR5Et2aaD6D6lGbPUCCmriFGkKx3Qy4m3ThYrhpgL4vzFa/xvC
-	DLVyHzup3dshLGiChRIvSCSPdN2znIunruW/uZ6HN9/1vuO9DCcSzEdqavvUHEWC7FBoI8JhBhG
-	FHLtnKdvwD6Cs5ERXTy2f5ZVvrUDsQRlZigGQLtI02DlN3F9+hmxOaorEO2u5VgiI4gkD7ueUrG
-	etTCijN7sWaE0+wuPS4jTv/fnF8KWCAS8XgK0yoYqk2sVV29hfsIpV/1lk9yQzpyTYJmo6m2mGb
-	bdLuMvGzWYGVdWmRD9sS+LuuuZA==
-X-Google-Smtp-Source: AGHT+IHg/Lebx9Vxjm/X2QVgDBjrGiUnrwsQoERVRbwKkJolroxifqh7yUeV+FNoLlX1GBOfS/JanA==
-X-Received: by 2002:a17:902:ccd2:b0:234:d399:f948 with SMTP id d9443c01a7336-23601d973bfmr3905535ad.33.1749146181074;
-        Thu, 05 Jun 2025 10:56:21 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cd34edsm122425045ad.126.2025.06.05.10.56.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 10:56:20 -0700 (PDT)
-Message-ID: <d642eba3-d7f2-4bf5-93ce-6ea491d4709a@broadcom.com>
-Date: Thu, 5 Jun 2025 10:56:19 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irglAXUu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949B2C4CEE7;
+	Thu,  5 Jun 2025 18:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749147295;
+	bh=kM+tZQLZzYNHuIw8DxjQDCB49bssz5ArH/w0ixdklPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=irglAXUu2OpsKW9nnQWyxV8tVob52YV/dgR9F0uBahjTSfnZlgO5EVlJhjYbltYXu
+	 9lTnWSlOsDUgBwDvE9NnQENGN4k8AxmNWWB21jbtpF/pFzg60sSqmyI9dd3g5UaIz5
+	 F/yka1xtCh7bwVqLQQeTpiQPGJ1kwkYVV0zSpPRYNwVdUkDHn8GPH0MElwJ/1I8bIT
+	 Xd8kh5eKQp/yUzk+TnmPYge/1i12/RZSZK/yV4iJ1ZCrUSYecHTTRFAczRReeZXc0/
+	 MNpV1jjiF6eTu/jqu6EA4GcnV0PXjdq2agD/BztXZ55wQNNMXKc8epepoAHiLxuDss
+	 FLRKwbWv7PVFg==
+Date: Thu, 5 Jun 2025 13:14:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] dt-bindings: net: qca,ar803x: Add IPQ5018
+ Internal GE PHY support
+Message-ID: <20250605181453.GA2946252-robh@kernel.org>
+References: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
+ <20250602-ipq5018-ge-phy-v3-2-421337a031b2@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jun 3 (clk/clk-rp1.c)
-To: Randy Dunlap <rdunlap@infradead.org>,
- Andrea della Porta <andrea.porta@suse.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org
-References: <20250603170058.5e1e1058@canb.auug.org.au>
- <cee929b0-8b09-4e6b-95c1-c4067a8c389d@infradead.org>
- <6e88587d-f426-4841-b370-b46917822212@broadcom.com>
- <aEGhHy7qPyIjG5Xp@apocalypse>
- <44c89b6b-edaa-4b0f-9306-a447ef2d9250@infradead.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <44c89b6b-edaa-4b0f-9306-a447ef2d9250@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602-ipq5018-ge-phy-v3-2-421337a031b2@outlook.com>
 
-On 6/5/25 10:07, Randy Dunlap wrote:
+On Mon, Jun 02, 2025 at 01:53:14PM +0400, George Moussalem wrote:
+> Document the IPQ5018 Internal Gigabit Ethernet PHY found in the IPQ5018
+> SoC. Its output pins provide an MDI interface to either an external
+> switch in a PHY to PHY link scenario or is directly attached to an RJ45
+> connector.
 > 
+> The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+> 802.3az EEE.
 > 
-> On 6/5/25 6:52 AM, Andrea della Porta wrote:
->> On 20:06 Wed 04 Jun     , Florian Fainelli wrote:
->>>
->>>
->>> On 6/3/2025 10:01 AM, Randy Dunlap wrote:
->>>>
->>>>
->>>> On 6/3/25 12:00 AM, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> Please do not add any material destined for v6.17 to you rlinux-next
->>>>> included branches until after v6.16-rc1 has been released.
->>>>>
->>>>> Changes since 20250530:
->>>>>
->>>>
->>>> on i386:
->>>>
->>>> ld: drivers/clk/clk-rp1.o: in function `rp1_pll_divider_set_rate':
->>>> clk-rp1.c:(.text+0xba1): undefined reference to `__udivdi3'
->>>>
->>>> caused by
->>>> 	/* must sleep 10 pll vco cycles */
->>>> 	ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
->>>>
->>>>
->>>
->>> Andrea, do you mind fixing this build error for a 32-bit kernel? Thanks!
->>
->> Sorry for the delay, this should fix it:
->>
->> @@ -754,7 +769,7 @@ static int rp1_pll_divider_set_rate(struct clk_hw *hw,
->>          clockman_write(clockman, data->ctrl_reg, sec);
->>   
->>          /* must sleep 10 pll vco cycles */
->> -       ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
->> +       ndelay(div64_ul(10ULL * div * NSEC_PER_SEC, parent_rate));
->>   
->>          sec &= ~PLL_SEC_RST;
->>          clockman_write(clockman, data->ctrl_reg, sec);
->>
->> should I send a new patch with this fix only (against linux-next or stblinux/next?)
->> or Florian is it better if you make the change in your next branch directly?
+> For operation, the LDO controller found in the IPQ5018 SoC for which
+> there is provision in the mdio-4019 driver.
 > 
-> Yes, this fixes the 32-bit build error. Thanks.
+> Two common archictures across IPQ5018 boards are:
+> 1. IPQ5018 PHY --> MDI --> RJ45 connector
+> 2. IPQ5018 PHY --> MDI --> External PHY
+> In a phy to phy architecture, the DAC needs to be configured to
+> accommodate for the short cable length. As such, add an optional boolean
+> property so the driver sets preset DAC register values accordingly.
 > 
-> Tested-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  .../devicetree/bindings/net/qca,ar803x.yaml        | 39 ++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/net/qca,ar803x.yaml b/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> index 3acd09f0da863137f8a05e435a1fd28a536c2acd..fce167412896edbf49371129e3e7e87312eee051 100644
+> --- a/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> +++ b/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> @@ -16,8 +16,32 @@ description: |
+>  
+>  allOf:
+>    - $ref: ethernet-phy.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - ethernet-phy-id004d.d0c0
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          const: 7  # This PHY is always at MDIO address 7 in the IPQ5018 SoC
 
-Thank you both, amended the original commit with the change and added 
-Randy's tag.
--- 
-Florian
+blank line
+
+> +        resets:
+> +          items:
+> +            - description:
+> +                GE PHY MISC reset which triggers a reset across MDC, DSP, RX, and TX lines.
+
+blank line
+
+> +        qcom,dac-preset-short-cable:
+> +          description:
+> +            Set if this phy is connected to another phy to adjust the values for
+> +            MDAC and EDAC to adjust amplitude, bias current settings, and error
+> +            detection and correction algorithm to accommodate for short cable length.
+> +            If not set, it is assumed the MDI output pins of this PHY are directly
+> +            connected to an RJ45 connector and default DAC values will be used.
+> +          type: boolean
+>  
+>  properties:
+> +
+
+Drop
+
+But this schema is broken. There's no way for it to be applied to a node 
+because there is no compatible defined in this schema nor a 'select'. 
+You can introduce an error and see (e.g. 'qcom,dac-preset-short-cable = 
+"foo";'). Really, any phy using these properties should have a specific 
+compatible defined here.
+
+>    qca,clk-out-frequency:
+>      description: Clock output frequency in Hertz.
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> @@ -132,3 +156,18 @@ examples:
+>              };
+>          };
+>      };
+> +  - |
+> +    #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+> +
+> +    mdio {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        /* add alias to set qcom,dac-preset-short-cable on boards that need it */
+> +        ge_phy: ethernet-phy@7 {
+> +            compatible = "ethernet-phy-id004d.d0c0";
+> +            reg = <7>;
+> +
+> +            resets = <&gcc GCC_GEPHY_MISC_ARES>;
+> +        };
+> +    };
+> 
+> -- 
+> 2.49.0
+> 
