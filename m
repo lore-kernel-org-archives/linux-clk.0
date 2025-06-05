@@ -1,61 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747AB17548;
-	Thu,  5 Jun 2025 22:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67A628E17;
+	Thu,  5 Jun 2025 22:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749162782; cv=none; b=B1eaVSLnCyYtMW9yAR3CQPa+s8kw2A3gvLuexIVxu8MjcZnU+HRek2ash9YMkv7VAeSjKOaR9XaTSNcCf99GVyfskGTbpmvewfUKWpbv7W7ZMv8NHS5gXrwy+X5TYQ9+SqESl5MogEza/uSTlDQqZ19rKxm6zJ914nY0oiGAe0s=
+	t=1749164253; cv=none; b=N3z6Wp2+daDDtjxx+NtE3nsHUQLB8IhGFpYf47FWkOM1PB+ZnWj63F3+HsM9ZwHZMtI9jkhPVRslEALdPLVw4oQ8mZp1NawqhdwfzhZT5V2t5p44Zd+kCtDd+nmKLorXZG8e2plRCmg05uFpdvxmY10osYYY6boQ57eMU7NVQPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749162782; c=relaxed/simple;
-	bh=EiZr8n/BGt6VEah20sbpc4UIdBvd2SKgkI9EPu73p5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFesOKcci1sk+YLA6nfs/G1ERqEKem46tvCAqpM2zrHpxKeCIfFXkJ1sLShAy8ByMDWiieBOdOoostZzAYsdgm5apv3G82ZPL8azZ0cEsFM9HE0P0h4CZGhvhFMGVrn9ghfJm7OpZBVYK7hfn1+GvYVQf+2+WNO9uotW6Po4lhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwqfEgAy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749164253; c=relaxed/simple;
+	bh=ttq74J8zgl/CqPTmFPHRqNeX1HBQ5yWBTsGcAVjdt5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nqDKZD1dx/NzCe1jsLqRmiVdhKTyPVSwa2LGHxN9I/TqlrLetliPViGU62J6ajYEQsddgEw50XTZJBFGrn3GSY31VmV2JgDKMRfE45UcQyuHT6M+6B5l8jbRj/rXCnUdbrSF45uKe7vffqHrFlTEabyaYMYUlI2HYHARKw8kOS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7J4N7AR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwqfEgAy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A251FC4CEE7;
-	Thu,  5 Jun 2025 22:33:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7J4N7AR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30293C4CEE7;
+	Thu,  5 Jun 2025 22:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749162781;
-	bh=EiZr8n/BGt6VEah20sbpc4UIdBvd2SKgkI9EPu73p5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GwqfEgAy9QYH0rJ6lGdgxwju69/4Ue8dnzDJz3s5CdXUuPCmmNxwXa+kq6VqM5rLY
-	 JrE2c2qn+LifQFYb+q9yrI3lMmjSwjII56ltq7KQ0oeOmZBKXtY4ma486A+kxpVXet
-	 sEIXWmkarEBa5+gED2SVq/3HxZ8rP1cScbG4OaUvB8Wa54y/WRNFXNU4AmSQPs5nKq
-	 VKxXwtskjR7c+1VIZ+F5EVlqpfufp5t2SnACf785vdNGXrXnTfgbZMO6BkjZ7vufii
-	 yJGXMDu0CUDqqZ7RydPryKE3b/MjN9rgnFkONktpGEXdNkLomXixt0KDNMRhuFrPKZ
-	 x+d2s8cuL50bA==
-Date: Thu, 5 Jun 2025 17:32:59 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Stephen Boyd <sboyd@kernel.org>, freedreno@lists.freedesktop.org,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Yongxing Mou <quic_yongmou@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>, David Airlie <airlied@gmail.com>
-Subject: Re: [PATCH v2 2/5] dt-bindings: clock: Add SC7280 DISPCC DP pixel 1
- clock binding
-Message-ID: <174916277679.3373425.11793137630921424183.robh@kernel.org>
-References: <20250530-dp_mst_bindings-v2-0-f925464d32a8@oss.qualcomm.com>
- <20250530-dp_mst_bindings-v2-2-f925464d32a8@oss.qualcomm.com>
+	s=k20201202; t=1749164252;
+	bh=ttq74J8zgl/CqPTmFPHRqNeX1HBQ5yWBTsGcAVjdt5U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=F7J4N7AROXpSNCIcWVGENA6Qg3/33Ich5ukiqOms+VM42I5Zq1EHSHryln5/6ji+/
+	 bvlS2Ffc/4RS8aVyTKpO7Wc83areCxJzQ3L/Evs3CG9vuC+Tk6fYcvJT8O+90wjHnb
+	 F8cJlAE+J6PzkZjQzSCI+jPvUWCJGbPf1MiGlZNDgD3mxKIxzmFCLvpT3kFBcvpgyI
+	 RXvFQPh6UYp7n7DG0YI6U1PdH7I1oTrkbfVLZYKi9Ajk6rLWDdKavUoB2rf05X4Hwk
+	 hYmDWxDGxGWYve2Iy+Tm6lzEYHj8Y/ZNW7StUx+lCwF4wRcJV1tPYGObRoxY8PiQOD
+	 wW3m6rV4OlNMw==
+Date: Thu, 5 Jun 2025 17:57:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, john.madieu.xa@bp.renesas.com,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <20250605225730.GA625963@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,20 +49,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250530-dp_mst_bindings-v2-2-f925464d32a8@oss.qualcomm.com>
+In-Reply-To: <20250530111917.1495023-5-claudiu.beznea.uj@bp.renesas.com>
 
-
-On Fri, 30 May 2025 10:47:25 -0700, Jessica Zhang wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+On Fri, May 30, 2025 at 02:19:13PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Add DISP_CC_MDSS_DP_PIXEL1_* macros for SC7280
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> ---
->  include/dt-bindings/clock/qcom,dispcc-sc7280.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> only as a root complex, with a single-lane (x1) configuration. The
+> controller includes Type 1 configuration registers, as well as IP
+> specific registers (called AXI registers) required for various adjustments.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> +/* Timeouts */
+> +#define RZG3S_REQ_ISSUE_TIMEOUT_US		2500
+> +#define RZG3S_LTSSM_STATE_TIMEOUT_US		1000
+> +#define RZG3S_LS_CHANGE_TIMEOUT_US		1000
+> +#define RZG3S_LINK_UP_TIMEOUT_US		500000
 
+Are any of these timeouts related to values in the PCIe spec?  If so,
+use #defines from drivers/pci/pci.h, or add a new one if needed.
+
+If they come from the RZ/G3S spec, can you include citations?
+
+> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* Initialize the PCIe related registers */
+> +	ret = rzg3s_pcie_config_init(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Initialize the interrupts */
+> +	rzg3s_pcie_irq_init(host);
+> +
+> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
+> +					  host->cfg_resets);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for link up */
+> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
+> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS), 5000,
+> +				 RZG3S_LINK_UP_TIMEOUT_US);
+
+Where do we wait for PCIE_T_RRS_READY_MS before pci_host_probe()
+starts issuing config requests to enumerate devices?
+
+> +	if (ret) {
+> +		reset_control_bulk_assert(host->data->num_cfg_resets,
+> +					  host->cfg_resets);
+> +		return ret;
+> +	}
+> +
+> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
+> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+> +
+> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
+> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
+> +
+> +	if (probe) {
+> +		ret = devm_add_action_or_reset(host->dev,
+> +					       rzg3s_pcie_cfg_resets_action,
+> +					       host);
+> +	}
+> +
+> +	return ret;
+> +}
+
+> +		 * According to the RZ/G3S HW manual (Rev.1.10, section
+> +		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
+> +		 * 12 LSB bits to be 0xfff. Extract 1 from size for this.
+
+s/Extract/Subtract/
+
+> +		 */
+> +		size = roundup_pow_of_two(size) - 1;
