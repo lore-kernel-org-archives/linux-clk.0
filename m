@@ -1,49 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F317548;
-	Thu,  5 Jun 2025 22:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0917548;
+	Thu,  5 Jun 2025 22:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749161591; cv=none; b=SGByqheaefbEH+O4Zn/kVbxJcSlI/tvyG/fyAa+9JA921DjvRlspY2ZBYy5F268HM/nnzbh/z9doRTCbBM3+I4c8MeCbtx+6OygcLEMbMvNOAH9DdPeLWOH+eN6zm0tqlLl9GMblmnM/6urToL9CuUeDZb1jSWPce8Pz9KF3F1c=
+	t=1749162744; cv=none; b=UoJZg5LhcObfhJQ1c9+dHhZy+xsdJTQsmsKwZ0SezHNOw6smQDQmeeaoDlbIlLhZeIEqW7cWa5DP0c76AX6W3SuVSTKQwvpvuogvOu2sSwICxQh6wml+jtedRWVGhYLTLUMCluTSfM1fXiwo0yefLkmYTQkEBBoHKsyWZ/qG6Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749161591; c=relaxed/simple;
-	bh=BLfA4ZAVbtNmh+Wd7A/4kqT3/Wp/5XmJ0077S+Wl6Uw=;
+	s=arc-20240116; t=1749162744; c=relaxed/simple;
+	bh=bSOvzXClskVrCx7RtSl03xmNekxUy/NSjbkZTpo3POw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=siO+jERNixEXVxug5c50BLqkFQhwLOJ4HFPxGlhd0W1sd2np+VW9KVnRAmiZ/pwpxdrCjqv5xErUs2I/BR2ozhT7esBQUQpxNzNAFNgqnLUxCffjgQuKDSsTcWVGG7hSc7Bq7rK5iIIXsoWPrdG1fN9gBHpnHvvnxFZa281iIfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBWIQJ9Q; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFY/jVD0nU/S9LWyrWTrlo+We6nildv1f71iDmbVamS67nGjtq0nc1lWMhj7O99EuoV2b07iMJJTYqmG/UPIHAmF5p6OMHrSDPYXQou1buxRXIXod2dlq/dzcNvajPOgRFPh5KV5yKUG4RU4heSnPJnDPIYb20EBk0zw0GnbnoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxLY3wDn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBWIQJ9Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E845EC4CEE7;
-	Thu,  5 Jun 2025 22:13:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxLY3wDn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F06C4CEE7;
+	Thu,  5 Jun 2025 22:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749161591;
-	bh=BLfA4ZAVbtNmh+Wd7A/4kqT3/Wp/5XmJ0077S+Wl6Uw=;
+	s=k20201202; t=1749162744;
+	bh=bSOvzXClskVrCx7RtSl03xmNekxUy/NSjbkZTpo3POw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBWIQJ9QhBXQmamEEFJUAvjxOnHvxneQRcEYEpoBNI1H553B5myDsXEI4gWfpaNia
-	 /HecHxWS+MrSqUXmngyI4NHxzDJxDzuJkpJrEGlXp0kUtmImsD44mBjhdArwuQZDzS
-	 tp4CxQWsylneH02xA7bhDNe6imKa5AkSbl+waWJaHHqEZ1nLfjMUaEtg/xVRXSq5Q7
-	 L0CUU/4LvfROVZlmQaK44sjOHikKhd7dVOcKe03ZW4lz6ETWFVkWpJlyfEkei5GW3K
-	 E+YOtGwX/Wy/hrzo+aW89OBT9SAW+xQyG+HrVNWJZsMAYHuvFmh7L/cGxh/hZzic/p
-	 Xsm1ojDqrfAyQ==
-Date: Thu, 5 Jun 2025 17:13:08 -0500
+	b=sxLY3wDnoMyoY+nghxY1Drb7vMG7UkSP+4d80bP/S4aioa1iaTsyh5gEYDynGmaYO
+	 4j4m5oXsFm+7tfoMjLknS0RoqJk8OksEZv6glbMnjZzhMt/ReYihV7osGY6MgkI2Oj
+	 NUBuPz8xjkvM3YTffcfgddhfCxg/hOSw7axJEZ8bARn+acIpajh0tbgjX5bYaFjam6
+	 YuQpYzuUG91X5iFrOUUO1HXGI+KZ4NYyBHICxPBoP7v2mI8AmdYIiZyNL8P40PLbzU
+	 pJPgmB6nDnnfG3kgZ82jseD5dmiVA2wmFNbsForJtcS0g6rvA/Qk2hyoIrFMvkpcrY
+	 W++f06QKISeuA==
+Date: Thu, 5 Jun 2025 17:32:21 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: conor+dt@kernel.org, geert+renesas@glider.be,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	mturquette@baylibre.com, lpieralisi@kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-	magnus.damm@gmail.com, john.madieu.xa@bp.renesas.com,
-	linux-pci@vger.kernel.org, kw@linux.com, bhelgaas@google.com,
-	krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	manivannan.sadhasivam@linaro.org, sboyd@kernel.org
-Subject: Re: [PATCH v2 3/8] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
- documentation for the PCIe IP on Renesas RZ/G3S
-Message-ID: <174916158571.3344975.11147858201870776077.robh@kernel.org>
-References: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
- <20250530111917.1495023-4-claudiu.beznea.uj@bp.renesas.com>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Yongxing Mou <quic_yongmou@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Kuogee Hsieh <quic_khsieh@quicinc.com>,
+	Mahadevan <quic_mahap@quicinc.com>, Sean Paul <sean@poorly.run>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: Fixup x1e80100 to add DP MST support
+Message-ID: <174916273839.3372439.12068616039739952601.robh@kernel.org>
+References: <20250530-dp_mst_bindings-v2-0-f925464d32a8@oss.qualcomm.com>
+ <20250530-dp_mst_bindings-v2-1-f925464d32a8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,40 +63,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250530111917.1495023-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250530-dp_mst_bindings-v2-1-f925464d32a8@oss.qualcomm.com>
 
 
-On Fri, 30 May 2025 14:19:12 +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, 30 May 2025 10:47:24 -0700, Jessica Zhang wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > 
-> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
-> Base Specification 4.0. It is designed for root complex applications and
-> features a single-lane (x1) implementation. Add documentation for it.
+> Add x1e80100 to the dp-controller bindings, fix the
+> displayport-controller reg bindings, and drop
+> assigned-clock-parents
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 > ---
-> 
-> Changes in v2:
-> - update the interrupt names by dropping "int" and "rc" string; due
->   to this the patch description was adjusted
-> - added "interrupt-controller" and made it mandatory
-> - s/clkl1pm/pm/g
-> - dropped the legacy-interrupt-controller node; with this the gic
->   interrupt controller node was dropped as well as it is not needed
->   anymore
-> - updated interrupt-map in example and added interrupt-controller
-> - added clock-names as required property as the pm clock is not
->   handled though PM domains; this will allow the driver to have
->   the option to request the pm clock by its name when implementation
->   will be adjusted to used the pm clock
-> - adjusted the size of dma-ranges to reflect the usage on
->   SMARC module board
-> - moved "renesas,sysc" at the end of the node in example to align
->   with dts coding style
-> 
->  .../pci/renesas,r9a08g045s33-pcie.yaml        | 202 ++++++++++++++++++
->  1 file changed, 202 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
+>  .../devicetree/bindings/display/msm/dp-controller.yaml       |  2 ++
+>  .../devicetree/bindings/display/msm/qcom,x1e80100-mdss.yaml  | 12 +++++-------
+>  2 files changed, 7 insertions(+), 7 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
