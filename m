@@ -1,110 +1,68 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC6113D521;
-	Thu,  5 Jun 2025 17:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B964018CC15;
+	Thu,  5 Jun 2025 17:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749143292; cv=none; b=YFD1Em3Oh9fIIvROhTICsrzeEfa1uoJ+3N8mj+N0ptf8PTGbzfAzkUN0AMlNAFYPICeeNmdEjUSBR467neipCAiX7OBhy6OehTMemapfPYY28uMSHWXmRv1Wwzzoa9QJeROKzxhvhfihlVETJ5xuMZLB0F2kHZyPn/WVtCUErew=
+	t=1749145679; cv=none; b=QLysqyJwSMu7P/kL70BQvGqpkhzpygfbjaMwtFwaTDu36P40JEu+jzjmr8aHcznGqcOl2nOnD/mtNVR8dsFr8JQXfsI0EIuPDTz9631d3hb5X3O196OZajLSQeVlwZGMTifK2PSpmjd5p2BGJ4g6HvTUX+HZfe+Iq+pEK3GQBsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749143292; c=relaxed/simple;
-	bh=b4STD/lOfA1i70s8WfGdglRnk8LVxXlWtZI7Ja8pL98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qOqmP5gvNTNH1lA6D+BwnvMJfJUEOetFeSL+BEHyU8/ybXXzAOW3TBlOlJExrFwvsZe7giVNspjq7Lu6Uq34M+L6Ne5RFGpnAWqXqfHTs17TeQrdWCLL2GUWWmxxsMf3+H0LtwopzwZcY8OcyI0XUtebuEZGhMxleQ1klJkjOW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p+6ndzKD; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1749145679; c=relaxed/simple;
+	bh=Vc58Oa/CYTfhNPPdVaJtGNwwC3wsXvAVKJEocn2OeU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuWvWXKlwuzH7JPXD9MiPaVJIq3MaFJ4G0jEvid7e7ugGUrDE6jR3kFXQCHkeaV5Q6HpIO0ZFhcq+50CmA2dYv4ZAesoIFckvQm1nCk88bqvozEObcwf7nJkdRX/6td6J5QYEh3SFiOBRuPIznJKNToJe3tRdIbsud7BqFHRwOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdNLQVGQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p+6ndzKD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=ueMI9i9n30bX3Jb2KX/od2qOmj/m0L2xH9S2mUAYsqU=; b=p+6ndzKDgG9O+gYpEgwvjEOHqH
-	bDMYpcsl5livWauj7Jm5e3ujw01G6BEAR7d5xfQIu6xHvk1JWZ/G8QZCriUFaaGZRCVsbNm8kwIjG
-	ektBQXo2b4MomHC6H4QFDJFZrJAud8AYFFG+OrVMozV2xnYHZXZnlEhN6eeu5L8zQ4bj+beVsv62O
-	zZES7niKKjEfFSxsfXMLX50+25Bp7x9JNHGXqrkrckcXpIMEjfHiQb6j8T7LIggi+Gq1AuUlKROWG
-	v+43xecWV9L3CteHDxyWilCDCXAK5oklQPRQF1Ujnf+SeMHyWcYxEF5X0cjt++TAT8Xbc9IqA2rUD
-	O9Vfpg/g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNE4U-00000004SQP-0XiO;
-	Thu, 05 Jun 2025 17:08:06 +0000
-Message-ID: <44c89b6b-edaa-4b0f-9306-a447ef2d9250@infradead.org>
-Date: Thu, 5 Jun 2025 10:07:53 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdNLQVGQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023D2C4CEE7;
+	Thu,  5 Jun 2025 17:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749145679;
+	bh=Vc58Oa/CYTfhNPPdVaJtGNwwC3wsXvAVKJEocn2OeU8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cdNLQVGQii5rss8ytGr4U6veG6kEPy+GHpnQHAB7z/DI+p9QuSvLtpVzSAUVu5haw
+	 aO/DVtIq+UjRJU7RJXJ5E5UyAitURhzC2VKvDoaoiGx3QlocsaJffM9F43lAwG+jP/
+	 2hcw+MJUl8xDH1sCc3UVW2Gqoos0yRBs6SSOCaaDJlqRcpwcpvGXejbsavWp0Z4SD7
+	 rKOJJ/ZBGe4O7erznqTs9pDGmS2Rug2p8ZbAWRzHtw0rv4U1y+xHZYG1LKcSjE54gZ
+	 d2NpZilgXhW8p4neumVVmTyZCoUDGLXILQc8JphXzVdIb/K51AMsGWwc3BwsoggrCQ
+	 JbS6x+eZajHBA==
+Date: Thu, 5 Jun 2025 12:47:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Raghav Sharma <raghav.s@samsung.com>
+Cc: krzk@kernel.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+	sunyeal.hong@samsung.com, sboyd@kernel.org, s.nawrocki@samsung.com,
+	mturquette@baylibre.com, alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org, shin.son@samsung.com,
+	karthik.sun@samsung.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, chandan.vn@samsung.com,
+	richardcochran@gmail.com, linux-clk@vger.kernel.org,
+	dev.tailor@samsung.com, conor+dt@kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: exynosautov920: sort clock
+ definitions
+Message-ID: <174914567467.2924605.14306583560925504695.robh@kernel.org>
+References: <20250529112640.1646740-1-raghav.s@samsung.com>
+ <CGME20250529111708epcas5p232b8bb6b05795b7014d718003daef0cb@epcas5p2.samsung.com>
+ <20250529112640.1646740-2-raghav.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jun 3 (clk/clk-rp1.c)
-To: Andrea della Porta <andrea.porta@suse.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org
-References: <20250603170058.5e1e1058@canb.auug.org.au>
- <cee929b0-8b09-4e6b-95c1-c4067a8c389d@infradead.org>
- <6e88587d-f426-4841-b370-b46917822212@broadcom.com>
- <aEGhHy7qPyIjG5Xp@apocalypse>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aEGhHy7qPyIjG5Xp@apocalypse>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529112640.1646740-2-raghav.s@samsung.com>
 
 
-
-On 6/5/25 6:52 AM, Andrea della Porta wrote:
-> On 20:06 Wed 04 Jun     , Florian Fainelli wrote:
->>
->>
->> On 6/3/2025 10:01 AM, Randy Dunlap wrote:
->>>
->>>
->>> On 6/3/25 12:00 AM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Please do not add any material destined for v6.17 to you rlinux-next
->>>> included branches until after v6.16-rc1 has been released.
->>>>
->>>> Changes since 20250530:
->>>>
->>>
->>> on i386:
->>>
->>> ld: drivers/clk/clk-rp1.o: in function `rp1_pll_divider_set_rate':
->>> clk-rp1.c:(.text+0xba1): undefined reference to `__udivdi3'
->>>
->>> caused by
->>> 	/* must sleep 10 pll vco cycles */
->>> 	ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
->>>
->>>
->>
->> Andrea, do you mind fixing this build error for a 32-bit kernel? Thanks!
+On Thu, 29 May 2025 16:56:37 +0530, Raghav Sharma wrote:
+> Sort all the clock compatible strings in alphabetical order
 > 
-> Sorry for the delay, this should fix it:
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> ---
+>  .../bindings/clock/samsung,exynosautov920-clock.yaml      | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> @@ -754,7 +769,7 @@ static int rp1_pll_divider_set_rate(struct clk_hw *hw,
->         clockman_write(clockman, data->ctrl_reg, sec);
->  
->         /* must sleep 10 pll vco cycles */
-> -       ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
-> +       ndelay(div64_ul(10ULL * div * NSEC_PER_SEC, parent_rate));
->  
->         sec &= ~PLL_SEC_RST;
->         clockman_write(clockman, data->ctrl_reg, sec);
-> 
-> should I send a new patch with this fix only (against linux-next or stblinux/next?)
-> or Florian is it better if you make the change in your next branch directly?
 
-Yes, this fixes the 32-bit build error. Thanks.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
--- 
-~Randy
