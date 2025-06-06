@@ -1,115 +1,114 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329B2857EE;
-	Fri,  6 Jun 2025 09:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9034E81724;
+	Fri,  6 Jun 2025 10:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749203026; cv=none; b=htnlUd0I2/zlqDVSpSQYhwQ1SP9fr4+Q0GlO6lqON/ZSrEvRZidGh+JtBqAMyRzG5EqbnKjd5bhba1pSGU7yvmPWTrxNavAh9YpTpatb0oZVaQpZEnJGOX8E1UCZbBqB6F87EmEnUQ5hl/I3/6wdNlOKfYzmJngu6e5VZEhVay0=
+	t=1749204651; cv=none; b=X/vmDbTVG4n++oWA9aJ0F5U18u2LPdhyVm+PJARuVp4J7ENO5c1AEtVeYQqd/dqaltedejArB4gutLg+11kA+60rYjBYneJHdoZvVHI//EhAxFnnZ434/JKApASJpBT078opJTcFwN/2vOT+aLRaeP8s5Eg1AMOOvXIVc0ROqtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749203026; c=relaxed/simple;
-	bh=CGa6Fxkxq4yuPjwo3CTYeG71tpsCcLUb40D4q4WTZ+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQIhaA6vnYdHygBLOTD5V/6HOBDal6JolxmXe4Irvp9IY3n0J+dQNw2AaYzcZpVjUAfeMh8xSPV6oqsy8TgUzJe462Dil+5eILrMqw1i/iw0uEPmLBz+yoDRLTdOw9lVmN3NiNqwNBTR3kPLYp626TA/N3YVTizvHnBoO7EImEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF043153B;
-	Fri,  6 Jun 2025 02:43:25 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D5C93F59E;
-	Fri,  6 Jun 2025 02:43:42 -0700 (PDT)
-Date: Fri, 6 Jun 2025 10:43:30 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: scmi: Fix children encountered before parents case
-Message-ID: <aEK4QmtXO_GL5K_0@pluto>
-References: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
+	s=arc-20240116; t=1749204651; c=relaxed/simple;
+	bh=w3jvPKDcZ5KnZ8bgfQHEt/tnSSP/RaDEPYHKY4JFfQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K3cA1FMXLGvYCKSAOhuLwHkgvgdUS5WBib7/6962QGwLN9n05/zP54ppeNlVsp+1HaC3XkzqXpoDuhhNJx1j6gTu8+1aeqegHzLWTbAa9VZEjNn+x13ElXAWOkbl34IL8NerCbLwmMknq8JQxHMP9t3HUzeOQZz2K/2mCoqPyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIKBcX83; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIKBcX83"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-234c26f8a25so3035745ad.1;
+        Fri, 06 Jun 2025 03:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749204650; x=1749809450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fEVsPcmujVG4TPPGthouiu2CSCG3XCwm4flJ5gXb89s=;
+        b=bIKBcX83PfeyoiJ/l4HcDSJKMC5T4UcVCLLqaSM1ocYlPRD4oPfyyF5d/ff3/Qo5fs
+         3KZFZroJVdbsvJH7zgDtZYcfpEy5NV50DjWEhFCa118DHCV70Guvmnn3wXx6t95ldwdd
+         AoDqczoR2QqQPIYNcKA7pA+KQXTsgSlkEqltQF8XQa9yo22TCBgUSifwsJVwNbbnivZV
+         cUUhWQLMHm4dlm7geSRxEq9StcAH0VqlbhBcBls+mMh5bSlCZrJrfNN1RI0hZqn0WK3p
+         0YCp6Mim6eV1vEMvZXxVkVHAYqTFGtPtMIcanZxQ4c7c3vqLXTreIbiJ6sc+5thS24cu
+         UJ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749204650; x=1749809450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fEVsPcmujVG4TPPGthouiu2CSCG3XCwm4flJ5gXb89s=;
+        b=H9kQdAxJkwUuFRNHcaG3yrwvqIQ1m1tLvya8K3ojmpHmi1+lxIQP6V2hJIEMSucMnI
+         qA+DKzsSU8q7ZDKAC6nO1pUL4m8w+h4nAC51mvJpyei4v1MiqcXTyNRGUQjI+HQboFBH
+         s1eZ7x6RK7wxMkL7LWXVedng0LscOSo3vnWUOjBEY+S2vpPxpap+1IeWVUCu0L6P7B82
+         MmukQYeoECL/SRZgLNl9lRCBmQR2dX1baDlc/yQQWUiGUEnJ/j/y3Cq62LGI1b9KzLdb
+         uafxk3aNvr6aoW82VYJSSZRHGE0prfHid4LHopeXUg0iGS/b3rIBOuqGaU/7zF/36xah
+         k8ag==
+X-Forwarded-Encrypted: i=1; AJvYcCU7jqOdoBK9KwrZkq0o0sttJhOOfQtqg2Qz6oekkiFqKy4C0BqxizZc02Fq/6AbQh60lXXej1/40PA=@vger.kernel.org, AJvYcCW+uU5orndG6orzfsSi2oItRzBhRzezCMAILrjsD22j0wYzB1PXNpL0SkNfreZEc2++F1ShY2lfyw4=@vger.kernel.org, AJvYcCW//BNwocnmehOV855x2XMoY3aLcH2mNFVVPlS1fMT4tBjWtoofVqHOgTaFAds6ERPyTXlfQv+OKmdcsoFA@vger.kernel.org, AJvYcCW0IhZR520dcPA449FAAEJ7L/DqvJgZbZO8CCyeKE8K8oOqDxPLT/hrtLQb3LSp6Fc2qmnyrL+f6b24BOQpLh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs4vHL6EJ4AX0WQdjTP3JauBpog0f518bPKAM1c+a3iLC/bUpF
+	XRqLTZclrB9V/VakDhTTz0nJe/MzIrXzaE6fgZF6VOWUzMtqlOCxCos1hp50aqO6uXiTpzsVmYi
+	q0wgnl14zXYkVIoZWfGFPLh43jLRL1rs=
+X-Gm-Gg: ASbGnctu9ycIYa3de5U/8kfH0pshJ9BaxxyERVQOrq+1Ywq1lwSh7ni992vpsl8fVbd
+	6M7jvsS/uPvliRm1CfomtwFFCO1OYt62opVCCn/vpiUB0nlRPr5kUbyFM4l1EdxNXqWvZlA7mpO
+	+bVqhod2Qo4lvo2Y9XGT/GaNOMzNbNwc2v+S51n0AhIbE=
+X-Google-Smtp-Source: AGHT+IHJK6lS0GjeOTRlGjUGlIzSEOQJan0nGM6pFx6roUYemWWUxEZ7RboJGS+1ELFs1nF2rCoKHpO5YCC2dkuhHuo=
+X-Received: by 2002:a17:90b:3d04:b0:312:ec:411a with SMTP id
+ 98e67ed59e1d1-3134e3fa0e4mr1136329a91.3.1749204649600; Fri, 06 Jun 2025
+ 03:10:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
+References: <HVTDJypFNQFfSQJmmYDSPU4o-irFnjmDN22RW3S0z5Kwe_hVk9kquZWElv-C2k6d5kOIiewhj_Xo2kAoTHbHgg==@protonmail.internalid>
+ <cover.1747634382.git.viresh.kumar@linaro.org> <87qzzy3ric.fsf@kernel.org>
+In-Reply-To: <87qzzy3ric.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 6 Jun 2025 12:10:37 +0200
+X-Gm-Features: AX0GCFulh-NApLJ_BZprdr-LgDGIG0IRhXBoIDMZxa1As4OIxQVem2hDI7xiYt0
+Message-ID: <CANiq72=EE1Gqhjhyz46njFa5Wb6gbax3Abg83PyhQNX=X7pF1Q@mail.gmail.com>
+Subject: Re: [PATCH V12 00/15] Rust abstractions for clk, cpumask, cpufreq, OPP
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@redhat.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <benno.lossin@proton.me>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Trevor Gross <tmgross@umich.edu>, 
+	Viresh Kumar <vireshk@kernel.org>, Yury Norov <yury.norov@gmail.com>, linux-pm@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, rust-for-linux@vger.kernel.org, 
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Burak Emir <bqe@google.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
+	linux-clk@vger.kernel.org, Andrew Ballance <andrewjballance@gmail.com>, 
+	Anisse Astier <anisse@astier.eu>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 04, 2025 at 01:00:30PM +0200, Sascha Hauer wrote:
-> When it comes to clocks with parents the SCMI clk driver assumes that
-> parents are always initialized before their children which might not
-> always be the case.
-> 
+On Thu, Jun 5, 2025 at 9:42=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> I was testing an unrelated patch and found this kunit failure in
+> mainline today:
+>
+> [19:45:34] # rust_doctest_kernel_cpumask_rs_0.location: rust/kernel/cpuma=
+sk.rs:180
+> [19:45:34] # rust_doctest_kernel_cpumask_rs_0: ASSERTION FAILED at rust/k=
+ernel/cpumask.rs:190
+>
+> This is for arm64 defconfig. The test seems to passes on x86_64.
 
-Hi,
+Yeah, I reported this back in v11:
 
-> During initialization of the parent_data array we have:
-> 
-> 	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
-> 
-> hws[sclk->info->parents[i]] will not yet be initialized when children
-> are encountered before their possible parents. Solve this by allocating
-> all struct scmi_clk as an array first and populating all hws[] upfront.
-> 
+    https://lore.kernel.org/rust-for-linux/CANiq72k3ozKkLMinTLQwvkyg9K=3DBe=
+Rxs1oYZSKhJHY-veEyZdg@mail.gmail.com/
 
-Yes indeed, good catch.
-Thanks for this.
+No harm done, but let's please try to avoid merging new stuff into
+mainline with open issues.
 
-Just one minor nitpick down below.
+Thanks!
 
-> Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/clk-scmi.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 15510c2ff21c0335f5cb30677343bd4ef59c0738..f258ad7dda73e3c50c3ce567a8e22b3d2ec9836b 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -404,6 +404,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
->  	const struct scmi_handle *handle = sdev->handle;
->  	struct scmi_protocol_handle *ph;
->  	const struct clk_ops *scmi_clk_ops_db[SCMI_MAX_CLK_OPS] = {};
-> +	struct scmi_clk *sclks;
->  
->  	if (!handle)
->  		return -ENODEV;
-> @@ -430,18 +431,24 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
->  	transport_is_atomic = handle->is_transport_atomic(handle,
->  							  &atomic_threshold_us);
->  
-> +	sclks = devm_kcalloc(dev, count, sizeof(*sclks), GFP_KERNEL);
-> +	if (!sclks)
-> +		return -ENOMEM;
-> +
->  	for (idx = 0; idx < count; idx++) {
-> -		struct scmi_clk *sclk;
-> -		const struct clk_ops *scmi_ops;
-> +		struct scmi_clk *sclk = &sclks[idx];
-
-...do we really need this intermediate local variable in this initializarion loop ?
-...doesnt feel like giving more readability (even though the compiler will probably
-kill it anyway...)
-  
-> -		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-> -		if (!sclk)
-> -			return -ENOMEM;
-> +		hws[idx] = &sclk->hw;
-
-....cant we just
-
-  	for (idx = 0; idx < count; idx++)
-		hws[idx] = &sclks[idx].hw;
-
-
-Other than this, LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-Thanks,
-Cristian
+Cheers,
+Miguel
