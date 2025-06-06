@@ -1,175 +1,158 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B828642E
-	for <linux-clk@vger.kernel.org>; Fri,  6 Jun 2025 09:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B6E1A5BA9;
+	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749201147; cv=none; b=YuFd4FtcunYJwdKtf+Hh63J0xIkGguCH9aIcbtU/UfpMF7vMkscsVQW0Ed3Xu0Xr0iY06TXhf7QPvifqt23C4wotPUt5OqHeQZngZpFo6L2FX1ZSpU5Er6aziZ6Nfi/Ec0rh1ffX5s/h5fHz8XoCu32tD8YUNiSl6AxVN01FCdM=
+	t=1749201445; cv=none; b=VOJHqOOFBsiFEJIwnML0fl1hTXT7U6EtNR4s5Q04/fPLIDsx9M5C7Xrqu3YV7d7BDGQTYjy3o93xns0HUaeu1odLWNjpbNsdetMB3LC1DGYyL2PYs9U9ML6N+GXGjtA92uTwrzi8+x6rPWufzAHfHeYWPd58MoBZvdvRKm0+9+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749201147; c=relaxed/simple;
-	bh=HmRNUwvFUl/hdKoO4B1dgc6/Hw5mGyFSqMWv/NJQVWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uH+gizAI5bNev/gHcJxu1gUHAM5ifFeebMcifX3Me0NHxZbAIVu9oFxcK1vEZppAtx0jkaYVvUhEQDMjnhdjS8wKE1CXxfYt2k+5f8XS5zebxD/Idz22t2fNO3AYsJxwCDjnRsHMpvHPFnSRyHuP2ELtX9WK1m4OLKkeZ0gtKrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TxvA3+vc; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1749201445; c=relaxed/simple;
+	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=npy7FhpRl2v9VovDrshx2f2JZZbeCPFKKs1OGM7rldhc87i8GgTGWm8R6D3/YEvBDw+0NOpcLwN9jWcC3+Is93BDqJL9/qTCSQl8r3VkKqLxqUU1g/59W5vhlnPCoSRlxPRCRrlShCRtlVa9hjkvcFkqgvQT3wXkNq3K2eDRv/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxKiavON; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TxvA3+vc"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad883afdf0cso359278466b.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Jun 2025 02:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749201144; x=1749805944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wc+ifX+7O38yry593NEDWvp79xQMU3g4ALAygrP5+5k=;
-        b=TxvA3+vcesJZKqLdzgVo3evL9gOZzhwlcXroGLLBq+G8ahix5MAMLbKqLE35JLUHF2
-         VAvfkrrzKMTNT1Er2AEEtR0GK5Jklbeh4SDj//wLvZ+MXHqpuLHP1y8+Ew37iDNJ/ELB
-         zGhVek5Cu05m1W0oBuGylGglcngGZP80EfUkifMT7AU6RLF4+uduuyt1BPRz3coEAQtq
-         SW9pJJVof/RhUpHQVgMQkGdxLiu/xtLDer20WNPoe3nsqhMdclVAfEwnrx7puRF3IKrA
-         3xZthlRqDnC+BfNnrav3UnkwCkSEWUZ9QA8rf88C/gzcD6VYUSmeu6f9qbBQ1uH4nfQi
-         3eoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749201144; x=1749805944;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wc+ifX+7O38yry593NEDWvp79xQMU3g4ALAygrP5+5k=;
-        b=hDJJllK0TeeXg2roKX/UiTeTosd5mECD0coftFY/v2YrcwxHEgn8zw0yyX0Jjzp2jV
-         TWEmdwFjAM4M1okXR9u0b7bDm1yAzh0S5NaXcuQssNWMjkbs1IAKjvbCxcLAA/KaICqG
-         baGdNPWJEPvDKtaJ7bLqh4agI4qaBqNi/3mZwbM0XmRgCsPH2t72OB9Q93GSFWyOyYp3
-         dtTSCzMzfaHaLCd/CbFMmKv/g6JH8tZ7AfU+Fy0OWtmjKBR5g8c/YUzVvGstmgVY6XIu
-         IDHprekpDZn/GZ/cxXPd2wyQcLUesISUC75WrNdvr6EddAQOi/YA3JovXJXfLJnaPbLQ
-         EbSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbQigzH1e3+L2yO4QC7HVL6ysYgsM0FxR69qZ2NwW2xbQccP0J36JIMvtE7Wfkhciiy0abKnDL/Dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/C/FFgsVJcvzxxJCnZ/W6YBLhOup7WlTnlhmeqbJjTPSTmR42
-	61u56DobbautH3OFMm+TJI/evI0PRd64KIG8UTvPaymBQx30/cOFmIwy2hh+U7TQJOE=
-X-Gm-Gg: ASbGncvCfvMp/Wf5OKBLQloPX4JKk+Bhkc7OBUAue0gv4r8ntUSApDCGUkCBRRRKNQr
-	cWPS2AawHwnXBzjpH0e1SOMXpAXci4vNaA45V5vCLjLoXOAF0BQ4e3dTf0Ei4oXr1lIyNvtsdsq
-	DBq7v602enlr9bp6c89HVImWrKfB9zHWNCGwwoJSd+oXnlgu0CZ9/8SkbuMXrxB8462C2+NgvI7
-	rBP8hZ5AAsK4gYyxQgwwLgFXPLxOK4aMmIAvHq/PIEjtDRC8oJjVp5Zg3mbmjMFuewBxFwyY7mZ
-	redUKnE7TzICfc6+7cOCXgporGGbm+D5Xj9PmG3/eDLEGtCgXqzoXDdhKr8Z
-X-Google-Smtp-Source: AGHT+IEjDHiLE7sMo+a12s7VFlD8SjfCEiBfxxMF3QVGmJjKfSvQI7x7ZEGc6pDRlowYGNhvaszk6A==
-X-Received: by 2002:a17:907:bb49:b0:adb:428f:f748 with SMTP id a640c23a62f3a-ade1aa06c95mr206620466b.21.1749201143788;
-        Fri, 06 Jun 2025 02:12:23 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc7d300sm85900566b.179.2025.06.06.02.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 02:12:23 -0700 (PDT)
-Message-ID: <53921bd9-6ac9-49fb-8c9d-2c439ec8cd5b@tuxon.dev>
-Date: Fri, 6 Jun 2025 12:12:21 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxKiavON"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30624C4CEEF;
+	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749201444;
+	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kxKiavONcB/WIysSRDIfdLKgglvY/RwSo+s6CJdrbUK/bbk/oaklsT/mEShmR63Ae
+	 jypwSf89L/DocrigEErSG9RCm4iyKzMIkOTcOjn9VmxBNHkxzslE7KcC19neaLEDdA
+	 vHrsTPq99j/8SeVfbJvCsLUvZ3+qkX0VDPR8uX0SgG74efyJ8yd9m9cPGUO8lxc/sP
+	 Bk8EX8+GDKhD8oenxrw8o2niISgQWdbijq71omz9zcuzIj96c8wlZRjhEVFpK/exjb
+	 vvmkO9X0wZNSZVMr77t3xA5CwDXPdyabkPu5f78subnYeOjV7kl4Ob6NiRkbgb1/jf
+	 fp6j7jonntr1A==
+Date: Fri, 6 Jun 2025 11:17:21 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
+	Alberto Ruiz <aruiz@redhat.com>
+Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
+Message-ID: <20250606-fuzzy-hasty-deer-fdcee0@houat>
+References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
+ <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- john.madieu.xa@bp.renesas.com,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250605225730.GA625963@bhelgaas>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250605225730.GA625963@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="nqgulkyw2ns3u2wn"
+Content-Disposition: inline
+In-Reply-To: <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
 
-Hi, Bjorn,
 
-On 06.06.2025 01:57, Bjorn Helgaas wrote:
-> On Fri, May 30, 2025 at 02:19:13PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->> only as a root complex, with a single-lane (x1) configuration. The
->> controller includes Type 1 configuration registers, as well as IP
->> specific registers (called AXI registers) required for various adjustments.
-> 
->> +/* Timeouts */
->> +#define RZG3S_REQ_ISSUE_TIMEOUT_US		2500
->> +#define RZG3S_LTSSM_STATE_TIMEOUT_US		1000
->> +#define RZG3S_LS_CHANGE_TIMEOUT_US		1000
->> +#define RZG3S_LINK_UP_TIMEOUT_US		500000
-> 
-> Are any of these timeouts related to values in the PCIe spec?  If so,
-> use #defines from drivers/pci/pci.h, or add a new one if needed.
-> 
-> If they come from the RZ/G3S spec, can you include citations?
+--nqgulkyw2ns3u2wn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
+MIME-Version: 1.0
 
-The values here were retrieved by experimenting. They are not present in
-RZ/G3S specification. I'll look though the header you pointed and use any
-defines if they match.
+On Wed, May 28, 2025 at 07:16:47PM -0400, Brian Masney wrote:
+> Document all of the members of struct clk_core.
+>=20
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/clk/clk.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0565c87656cf5c557d8259c71b5d2971a7ac87e8..a130eac9072dc7e71f840a0ed=
+f51c368650f8386 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -57,6 +57,48 @@ struct clk_parent_map {
+>  	int			index;
+>  };
+> =20
+> +/**
+> + * struct clk_core - This structure represents the internal state of a c=
+lk
+> + * within the kernel's clock tree. Drivers do not interact with this str=
+ucture
+> + * directly. The clk_core is manipulated by the framework to manage clock
+> + * operations, parent/child relationships, rate, and other properties.
+> + *
+> + * @name:              Unique name of the clk for identification.
+> + * @ops:               Pointer to hardware-specific operations for this =
+clk.
+> + * @hw:                Pointer for traversing from a struct clk to its
+> + *                     corresponding hardware-specific structure.
+> + * @owner:             Kernel module owning this clk (for reference coun=
+ting).
+> + * @dev:               Device associated with this clk (optional)
+> + * @rpm_node:          Node for runtime power management list management.
+> + * @of_node:           Device tree node associated with this clk (if app=
+licable)
+> + * @parent:            Pointer to the current parent in the clock tree.
+> + * @parents:           Array of possible parents (for muxes/selectable p=
+arents).
+> + * @num_parents:       Number of possible parents
+> + * @new_parent_index:  Index of the new parent during parent change.
+> + * @rate:              Current clock rate (Hz).
 
-> 
->> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
->> +{
->> +	u32 val;
->> +	int ret;
->> +
->> +	/* Initialize the PCIe related registers */
->> +	ret = rzg3s_pcie_config_init(host);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Initialize the interrupts */
->> +	rzg3s_pcie_irq_init(host);
->> +
->> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
->> +					  host->cfg_resets);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for link up */
->> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
->> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS), 5000,
->> +				 RZG3S_LINK_UP_TIMEOUT_US);
-> 
-> Where do we wait for PCIE_T_RRS_READY_MS before pci_host_probe()
-> starts issuing config requests to enumerate devices?
+I think we should define what current means here. clk_core->rate is
+effectively a cached value of what the hardware has been programmed with.
 
-I missed adding it as RZ/G3S manual don't mention this delay.
+It's initialized by reading the value at boot time, and will be updated
+every time an operation affecting the rate will be performed.
 
-> 
->> +	if (ret) {
->> +		reset_control_bulk_assert(host->data->num_cfg_resets,
->> +					  host->cfg_resets);
->> +		return ret;
->> +	}
->> +
->> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
->> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
->> +
->> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
->> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
->> +
->> +	if (probe) {
->> +		ret = devm_add_action_or_reset(host->dev,
->> +					       rzg3s_pcie_cfg_resets_action,
->> +					       host);
->> +	}
->> +
->> +	return ret;
->> +}
-> 
->> +		 * According to the RZ/G3S HW manual (Rev.1.10, section
->> +		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
->> +		 * 12 LSB bits to be 0xfff. Extract 1 from size for this.
-> 
-> s/Extract/Subtract/
+Clocks the CLK_GET_RATE_NOCACHE flag however should not use this value,
+as its rate is expected to change behind the kernel's back (because the
+firmware might change it, for example).
 
-OK.
+Also, if the clock is orphan, it's set to 0 and updated when (and if)
+its parent is later loaded, so its content is only ever valid if
+clk_core->orphan is false.
 
-Thank you for your review,
-Claudiu
+> + * @req_rate:          Requested clock rate (Hz).
+
+and clk_core->req_rate is the last rate requested by a call to
+clk_set_rate. It's initialized to clk_core->rate. It's also updated to
+clk_core->rate every time the clock is reparented, and when we're doing
+the orphan -> !orphan transition.
+
+> + * @new_rate:          New rate to be set during a rate change operation.
+> + * @new_parent:        Pointer to new parent during parent change.
+> + * @new_child:         Pointer to new child during reparenting.
+> + * @flags:             Clock property and capability flags.
+> + * @orphan:            True if this clk is currently orphaned.
+> + * @rpm_enabled:       True if runtime power management is enabled for t=
+his clk.
+> + * @enable_count:      Reference count of enables.
+> + * @prepare_count:     Reference count of prepares.
+> + * @protect_count:     Protection reference count against disable.
+> + * @min_rate:          Minimum supported clock rate (Hz).
+> + * @max_rate:          Maximum supported clock rate (Hz).
+> + * @accuracy:          Accuracy of the clock rate (Hz).
+
+The unit is parts per billion
+
+> + * @phase:             Current phase (degrees or hardware-specific units=
+).
+
+It's degrees, not hardware specific units.
+
+Maxime
+
+--nqgulkyw2ns3u2wn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKyIQAKCRAnX84Zoj2+
+dkyfAYDSVOdlnZmKx2FqnpDkMSE9pm85fEZTb7iWlHewL2hOdF7wOkEGZw5k3Akg
+Xa3G7qMBeQFn5bn+m06N2XT535qmFpoVRzdZIwm8h+7Rvat2YrBvD3CE7wMoq2Zr
+MYcipCUb6w==
+=AOV5
+-----END PGP SIGNATURE-----
+
+--nqgulkyw2ns3u2wn--
