@@ -1,158 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B6E1A5BA9;
-	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329B2857EE;
+	Fri,  6 Jun 2025 09:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749201445; cv=none; b=VOJHqOOFBsiFEJIwnML0fl1hTXT7U6EtNR4s5Q04/fPLIDsx9M5C7Xrqu3YV7d7BDGQTYjy3o93xns0HUaeu1odLWNjpbNsdetMB3LC1DGYyL2PYs9U9ML6N+GXGjtA92uTwrzi8+x6rPWufzAHfHeYWPd58MoBZvdvRKm0+9+s=
+	t=1749203026; cv=none; b=htnlUd0I2/zlqDVSpSQYhwQ1SP9fr4+Q0GlO6lqON/ZSrEvRZidGh+JtBqAMyRzG5EqbnKjd5bhba1pSGU7yvmPWTrxNavAh9YpTpatb0oZVaQpZEnJGOX8E1UCZbBqB6F87EmEnUQ5hl/I3/6wdNlOKfYzmJngu6e5VZEhVay0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749201445; c=relaxed/simple;
-	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
+	s=arc-20240116; t=1749203026; c=relaxed/simple;
+	bh=CGa6Fxkxq4yuPjwo3CTYeG71tpsCcLUb40D4q4WTZ+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npy7FhpRl2v9VovDrshx2f2JZZbeCPFKKs1OGM7rldhc87i8GgTGWm8R6D3/YEvBDw+0NOpcLwN9jWcC3+Is93BDqJL9/qTCSQl8r3VkKqLxqUU1g/59W5vhlnPCoSRlxPRCRrlShCRtlVa9hjkvcFkqgvQT3wXkNq3K2eDRv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxKiavON; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxKiavON"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30624C4CEEF;
-	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749201444;
-	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxKiavONcB/WIysSRDIfdLKgglvY/RwSo+s6CJdrbUK/bbk/oaklsT/mEShmR63Ae
-	 jypwSf89L/DocrigEErSG9RCm4iyKzMIkOTcOjn9VmxBNHkxzslE7KcC19neaLEDdA
-	 vHrsTPq99j/8SeVfbJvCsLUvZ3+qkX0VDPR8uX0SgG74efyJ8yd9m9cPGUO8lxc/sP
-	 Bk8EX8+GDKhD8oenxrw8o2niISgQWdbijq71omz9zcuzIj96c8wlZRjhEVFpK/exjb
-	 vvmkO9X0wZNSZVMr77t3xA5CwDXPdyabkPu5f78subnYeOjV7kl4Ob6NiRkbgb1/jf
-	 fp6j7jonntr1A==
-Date: Fri, 6 Jun 2025 11:17:21 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
-	Alberto Ruiz <aruiz@redhat.com>
-Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
-Message-ID: <20250606-fuzzy-hasty-deer-fdcee0@houat>
-References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
- <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQIhaA6vnYdHygBLOTD5V/6HOBDal6JolxmXe4Irvp9IY3n0J+dQNw2AaYzcZpVjUAfeMh8xSPV6oqsy8TgUzJe462Dil+5eILrMqw1i/iw0uEPmLBz+yoDRLTdOw9lVmN3NiNqwNBTR3kPLYp626TA/N3YVTizvHnBoO7EImEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF043153B;
+	Fri,  6 Jun 2025 02:43:25 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D5C93F59E;
+	Fri,  6 Jun 2025 02:43:42 -0700 (PDT)
+Date: Fri, 6 Jun 2025 10:43:30 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: scmi: Fix children encountered before parents case
+Message-ID: <aEK4QmtXO_GL5K_0@pluto>
+References: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="nqgulkyw2ns3u2wn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
+In-Reply-To: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
 
+On Wed, Jun 04, 2025 at 01:00:30PM +0200, Sascha Hauer wrote:
+> When it comes to clocks with parents the SCMI clk driver assumes that
+> parents are always initialized before their children which might not
+> always be the case.
+> 
 
---nqgulkyw2ns3u2wn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
-MIME-Version: 1.0
+Hi,
 
-On Wed, May 28, 2025 at 07:16:47PM -0400, Brian Masney wrote:
-> Document all of the members of struct clk_core.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> During initialization of the parent_data array we have:
+> 
+> 	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
+> 
+> hws[sclk->info->parents[i]] will not yet be initialized when children
+> are encountered before their possible parents. Solve this by allocating
+> all struct scmi_clk as an array first and populating all hws[] upfront.
+> 
+
+Yes indeed, good catch.
+Thanks for this.
+
+Just one minor nitpick down below.
+
+> Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > ---
->  drivers/clk/clk.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0565c87656cf5c557d8259c71b5d2971a7ac87e8..a130eac9072dc7e71f840a0ed=
-f51c368650f8386 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -57,6 +57,48 @@ struct clk_parent_map {
->  	int			index;
->  };
-> =20
-> +/**
-> + * struct clk_core - This structure represents the internal state of a c=
-lk
-> + * within the kernel's clock tree. Drivers do not interact with this str=
-ucture
-> + * directly. The clk_core is manipulated by the framework to manage clock
-> + * operations, parent/child relationships, rate, and other properties.
-> + *
-> + * @name:              Unique name of the clk for identification.
-> + * @ops:               Pointer to hardware-specific operations for this =
-clk.
-> + * @hw:                Pointer for traversing from a struct clk to its
-> + *                     corresponding hardware-specific structure.
-> + * @owner:             Kernel module owning this clk (for reference coun=
-ting).
-> + * @dev:               Device associated with this clk (optional)
-> + * @rpm_node:          Node for runtime power management list management.
-> + * @of_node:           Device tree node associated with this clk (if app=
-licable)
-> + * @parent:            Pointer to the current parent in the clock tree.
-> + * @parents:           Array of possible parents (for muxes/selectable p=
-arents).
-> + * @num_parents:       Number of possible parents
-> + * @new_parent_index:  Index of the new parent during parent change.
-> + * @rate:              Current clock rate (Hz).
+>  drivers/clk/clk-scmi.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> index 15510c2ff21c0335f5cb30677343bd4ef59c0738..f258ad7dda73e3c50c3ce567a8e22b3d2ec9836b 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -404,6 +404,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+>  	const struct scmi_handle *handle = sdev->handle;
+>  	struct scmi_protocol_handle *ph;
+>  	const struct clk_ops *scmi_clk_ops_db[SCMI_MAX_CLK_OPS] = {};
+> +	struct scmi_clk *sclks;
+>  
+>  	if (!handle)
+>  		return -ENODEV;
+> @@ -430,18 +431,24 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+>  	transport_is_atomic = handle->is_transport_atomic(handle,
+>  							  &atomic_threshold_us);
+>  
+> +	sclks = devm_kcalloc(dev, count, sizeof(*sclks), GFP_KERNEL);
+> +	if (!sclks)
+> +		return -ENOMEM;
+> +
+>  	for (idx = 0; idx < count; idx++) {
+> -		struct scmi_clk *sclk;
+> -		const struct clk_ops *scmi_ops;
+> +		struct scmi_clk *sclk = &sclks[idx];
 
-I think we should define what current means here. clk_core->rate is
-effectively a cached value of what the hardware has been programmed with.
+...do we really need this intermediate local variable in this initializarion loop ?
+...doesnt feel like giving more readability (even though the compiler will probably
+kill it anyway...)
+  
+> -		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
+> -		if (!sclk)
+> -			return -ENOMEM;
+> +		hws[idx] = &sclk->hw;
 
-It's initialized by reading the value at boot time, and will be updated
-every time an operation affecting the rate will be performed.
+....cant we just
 
-Clocks the CLK_GET_RATE_NOCACHE flag however should not use this value,
-as its rate is expected to change behind the kernel's back (because the
-firmware might change it, for example).
+  	for (idx = 0; idx < count; idx++)
+		hws[idx] = &sclks[idx].hw;
 
-Also, if the clock is orphan, it's set to 0 and updated when (and if)
-its parent is later loaded, so its content is only ever valid if
-clk_core->orphan is false.
 
-> + * @req_rate:          Requested clock rate (Hz).
+Other than this, LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-and clk_core->req_rate is the last rate requested by a call to
-clk_set_rate. It's initialized to clk_core->rate. It's also updated to
-clk_core->rate every time the clock is reparented, and when we're doing
-the orphan -> !orphan transition.
-
-> + * @new_rate:          New rate to be set during a rate change operation.
-> + * @new_parent:        Pointer to new parent during parent change.
-> + * @new_child:         Pointer to new child during reparenting.
-> + * @flags:             Clock property and capability flags.
-> + * @orphan:            True if this clk is currently orphaned.
-> + * @rpm_enabled:       True if runtime power management is enabled for t=
-his clk.
-> + * @enable_count:      Reference count of enables.
-> + * @prepare_count:     Reference count of prepares.
-> + * @protect_count:     Protection reference count against disable.
-> + * @min_rate:          Minimum supported clock rate (Hz).
-> + * @max_rate:          Maximum supported clock rate (Hz).
-> + * @accuracy:          Accuracy of the clock rate (Hz).
-
-The unit is parts per billion
-
-> + * @phase:             Current phase (degrees or hardware-specific units=
-).
-
-It's degrees, not hardware specific units.
-
-Maxime
-
---nqgulkyw2ns3u2wn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKyIQAKCRAnX84Zoj2+
-dkyfAYDSVOdlnZmKx2FqnpDkMSE9pm85fEZTb7iWlHewL2hOdF7wOkEGZw5k3Akg
-Xa3G7qMBeQFn5bn+m06N2XT535qmFpoVRzdZIwm8h+7Rvat2YrBvD3CE7wMoq2Zr
-MYcipCUb6w==
-=AOV5
------END PGP SIGNATURE-----
-
---nqgulkyw2ns3u2wn--
+Thanks,
+Cristian
