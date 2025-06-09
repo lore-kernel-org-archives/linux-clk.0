@@ -1,210 +1,153 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8B520B215
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 09:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FF71C8604;
+	Mon,  9 Jun 2025 11:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749460247; cv=none; b=YXC+RHEoy+WVuR2f1djE5fCWcsNOvzVP4vXmv6Utw56OGmAIZJ3IvtpQH725Pl+DonBDb2hUQT8yJ/LlzfmcEie3ZPzhLWJXKXw0FC+2kx2Wg4lPcfUJRyb4IhbEL5tlA24pRoDAqUB3LwHpTHrKqW2pcF1p3OUQiikBGq+IV64=
+	t=1749469491; cv=none; b=iQ5l5MCwapjIQzIShOoJnilgj8irvPawLhZ51Ey0d0DXsn2cjIgm+ewsnZhENyD65h0n9u9zyop+OB0Y38pi1oecMTa9E1YxgLLUR+jSXv1w0QyYCyVaaRiZDtfyE25BCBHHXp0rfTVFsXzETuR37OoXNZduyaIVzqKsF/cbZzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749460247; c=relaxed/simple;
-	bh=ZDHaPJOchoR/hqnrZl0N+DUeT8UZdeaTMXTUEFnbspw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZKtytq2i2cF5TEoiwUs/lzfCHQx22XrtA8yCcVcuOtiCWG2mqmF6U5hUVLLzZuevQzFxgXTaMuF5Wbpl5a82Dttr76TOb1KSlqUtbxPZg7L2zSGyMwWJ4Wukx040diMnW/oEMUVGIlY9icoBa/nhqpPk9xXDq6w52VtQ91uO0ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HaGVmXad; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1749469491; c=relaxed/simple;
+	bh=72ROgsceAbh3vMokXfXqWXOso7SCfFxFePbiSzbwxwQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nPyNwi6Hb+plHY8BeGMTnIz1r1Gr5gefWOK8qe6TPGNHDWZ6ogg0lHNjKH8Nil+p5E+4GqI9q+XxrkDSyLzmCrF10CaEuNOB0AG5Gv5jWArV2lYwPH7zZee79arBmJ2OsdOZdtZjkcbCqbjqnRraXJav2nlshsEMrD/wE1OTeas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/TTuP5b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HaGVmXad"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55351af2fc6so4911196e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 02:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749460244; x=1750065044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FMmw4G9aKaZU5qDapJFu/F3F/qwNFopqJUpdbcMKEQI=;
-        b=HaGVmXadMfaSSUlitAkJrhvVhwgWFHyX5USsKYyy7CIPtPtOjhzD7n2n+MLhduljMv
-         rx06MLFK/5MmakjXXIWB91QqSsqlESPfBLs2Eb6CeGPIAmXtGbYCSrEtft9CctVYQ950
-         FrgvOblqSrVw1jIyMZ+qZDWZCdM9tVXn2ugbFaii2SQHTqun4fDRAX2unjD7e16m+CpQ
-         frlXDqJvDlKnzB4A2hImk0dgcy62u1GU/K3k7x1tZoypj8hX7+BMeXA9bzywjaH5oc0g
-         VG+zTtnPaqh8XDWG0GLsr6Q0gVFX5AcHQ9b9DoAakqnbUbe7aiIBEeggTbsBSG0D4oTr
-         buiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749460244; x=1750065044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FMmw4G9aKaZU5qDapJFu/F3F/qwNFopqJUpdbcMKEQI=;
-        b=kqjgjnEwcemSz1/MplvJT5UsW3TItSL/adAYzPgIgEwhxERSzkLOCLvengWXdZpjn2
-         d75TyNud1h4klXvNo8j7sOjp74fBEpEqRfTox1enim4rJtYMOv+TOiOy8rinDiStAvGg
-         zLRSUQ5goj+4wBXOx0CMZhJAbG0MxHgB9EuVfdKHwEcFSA2Pq+0Fe5u530GvnQej/1Le
-         lFIEB2IsaPNzTiY8iMda1FLyrTkEpaaNkHM+9XYrrhQ/pbvqptw1E32aIuYjJYF8TimE
-         1nlU0lYUG/MbwGPBR2UAYgQ+9xBoANGG/3lNvMUrTvY430J4f68OjoulSQKTcXlqUXzh
-         y8DA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+yEwnAENDbTwj0ZgPxH6gkZg12b5Bl1fmDUl+eLOQEUd/2FYWc0O0UA8gpD/d8HhcuDyDlNPvwRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUXkp2VIaiQdny61c5/tdo74+Z/wRwk6AkDnsrQaZFKLjJvx0f
-	xjDCswH4QXglLvVc3TSss7RET1r+L5nbVk2zrvGmmTaqz7Bnx1KZDGHoVshOF4l1ilq4WEXmCAW
-	cPeFe8MpCDHVUhoMWtkQyNN6Wlth3+fA+qnXPNLZjYg==
-X-Gm-Gg: ASbGncvI8Vvvy0tpku0kNOjaTFHclnK9oZX+DHZUFC+OC4QGA8rPxvQgcp0YAfqg1pL
-	W42CxEzrL51Wg1pbqG30jddmLcsAmKaQbyBfWhRHGYnDJt04moqR6CpED6INTYC5Px90iEF0hEh
-	1KffwxEPJcCym1XYmLkyyT5jB0LgLjGumRDdkL2m0GMPnr
-X-Google-Smtp-Source: AGHT+IH+6vAFbi+7H9+Qq6oBFGjvfco9YJD10/KKGRGKVUqABbwLY2AZfQVHTc1As+KdJzrE2dw9ZkGPK2jj2n3kE2k=
-X-Received: by 2002:a05:6512:3da1:b0:553:2a2f:22eb with SMTP id
- 2adb3069b0e04-55366c35872mr2987129e87.36.1749460244141; Mon, 09 Jun 2025
- 02:10:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/TTuP5b"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D2F59C4CEEB;
+	Mon,  9 Jun 2025 11:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749469490;
+	bh=72ROgsceAbh3vMokXfXqWXOso7SCfFxFePbiSzbwxwQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=J/TTuP5bWmP/QoEvXYYyXoYfBV7PFQcW0XsFwkuyNxUfZqA30f0ibsLgJWUK0uaGD
+	 xq9TyTEdqaOV0bTeEq/3P0rRDgutdmH65f1grFPjTkwjsFfgWAg5WOsHh3ARf3HTMc
+	 FQ4oCRi/HYtwdv8zmMnxb4u3IbFc7LEMBkCuNApffPGfYLcEiDNEC0B2v2vLm0riDZ
+	 NsLD5+ZtsEOYJ4jU6ejImQE9XBy1dyIJjd9gWWcg/mQ/BqY+UVpkV7CDlFW/6rxDFe
+	 FGnCpvvC5FrXHY+N4Je6V95pT2eB/M3xnFjBn68C1gdFg43W3ZglV8pYiePoMHwOOo
+	 CnNBq6zP67qAQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD013C61CE8;
+	Mon,  9 Jun 2025 11:44:50 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v4 0/5] Add support for the IPQ5018 Internal GE PHY
+Date: Mon, 09 Jun 2025 15:44:33 +0400
+Message-Id: <20250609-ipq5018-ge-phy-v4-0-1d3a125282c3@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-7-apatel@ventanamicro.com> <aDWk5kIN3lkB0Jw2@smile.fi.intel.com>
-In-Reply-To: <aDWk5kIN3lkB0Jw2@smile.fi.intel.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 9 Jun 2025 14:40:32 +0530
-X-Gm-Features: AX0GCFu9QhcInm8OVXRkSGSXY6CJ1XzDih7D6CmQzSnxoRj96FTDd8_3JeLtE_U
-Message-ID: <CAK9=C2XbNeZRp9h4FevVBm-NdPH3w5t=C1NhAn5WQAkNLK9d_A@mail.gmail.com>
-Subject: Re: [PATCH v4 06/23] mailbox: Allow controller specific mapping using fwnode
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACHJRmgC/2XMSw7CIBSF4a0YxmLg8mjjyH0YBxSoJWqpUIlN0
+ 71L68BHh/+9Od+Iog3ORrTfjCjY5KLzbQ6+3SDdqPZssTO5ERAQhDOCXXcXhJY4f7pmwKaSgqt
+ acW0NyqMu2No9F/B4yt242PswLH6i8/VNCRD/VKKYYGNUVZaCWxDs4B/91fvLTvsbmrEE30C5A
+ mABiGSy4Lqgeg2wDyAJrACWAQ6UsUIRRiv4BaZpegFHN/WCMAEAAA==
+X-Change-ID: 20250430-ipq5018-ge-phy-db654afa4ced
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749469488; l=3740;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=72ROgsceAbh3vMokXfXqWXOso7SCfFxFePbiSzbwxwQ=;
+ b=FrUjWNPAJ+ft1zj4iRHjMYysifyvX6IyEx87r+1fOkerDyfPpYARB2b2A7Y0NIJjX6QpanxyM
+ 0fbPO62nQBQBtpGpKBrB3NOHFG9hhNURPHnvngCTi2FBVHH8UZRFP3Z
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Tue, May 27, 2025 at 5:11=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 25, 2025 at 02:16:53PM +0530, Anup Patel wrote:
-> > Introduce optional fw_node() callback which allows a mailbox controller
-> > driver to provide controller specific mapping using fwnode.
-> >
-> > The Linux OF framework already implements fwnode operations for the
-> > Linux DD framework so the fw_xlate() callback works fine with device
-> > tree as well.
->
-> ...
->
-> >  struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int ind=
-ex)
-> >  {
-> > +     struct fwnode_reference_args fwspec;
->
-> + property.h (if not done yet)
+The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+output pins that provide an MDI interface to either an external switch
+in a PHY to PHY link architecture or directly to an attached RJ45
+connector.
 
-This needs fwnode.h
+The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+802.3az EEE.
 
->
-> > -     int ret;
-> > +     int i, ret;
->
-> Why is 'i' signed?
+The LDO controller found in the IPQ5018 SoC needs to be enabled to drive
+power to the CMN Ethernet Block (CMN BLK) which the GE PHY depends on.
+The LDO must be enabled in TCSR by writing to a specific register.
 
-No particular reason because 'i' is not being assigned a negative
-value so both signed and unsigned will work fine.
+In a phy to phy architecture, DAC values need to be set to accommodate
+for the short cable length.
 
->
-> > -     if (!dev || !dev->of_node) {
-> > -             pr_debug("%s: No owner device node\n", __func__);
-> > +     if (!dev || !dev->fwnode) {
->
-> Do not dereference fwnode directly. Use dev_fwnode.
->
-> > +             pr_debug("%s: No owner %s\n", __func__, !dev ? "device" :=
- "fwnode");
->
-> Use positive conditional.
->
-> __func__ is redundant it debug messages. With Dynamic Debug enabled it ma=
-y be
-> switched at run-time.
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v4:
+- Updated description of qcom,dac-preset-short-cable property in
+  accordance with Andrew's recommendation to indicate that if the
+  property is not set, no DAC values will be modified.
+- Added newlines between properties
+- Added PHY ID as compatible in DT bindings for conditional check to
+  evaluate correctly. Did a 'git grep' on all other PHY IDs defined in
+  the driver but none are explicitly referenced so I haven't added them
+- Link to v3: https://lore.kernel.org/r/20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com
 
-Okay, I will drop the __func__
+Changes in v3:
+- Replace bitmask of GEPHY_MISC_ARES with GENMASK as suggested by Konrad
+- Removed references to RX and TX clocks as the driver need not
+  explicitly enable them. The GCC gatecontrols and routes the PHY's
+  output clocks, registered in the DT as fixed clocks, back to the PHY.
+  The bindings file has been updated accordingly.
+- Removed acquisition and enablement of RX and TX clocks from the driver
+- Link to v2: https://lore.kernel.org/r/20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com
 
->
-> >               return ERR_PTR(-ENODEV);
-> >       }
-> >
-> > -     ret =3D of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox=
--cells",
-> > -                                      index, &spec);
-> > +     ret =3D fwnode_property_get_reference_args(dev->fwnode, "mboxes",
->
->         struct fwnode_handle *fwnode =3D dev_fwnode(dev);
->
-> > +                                              "#mbox-cells", 0, index,=
- &fwspec);
-> >       if (ret) {
-> >               dev_dbg(dev, "%s: can't parse \"mboxes\" property\n", __f=
-unc__);
-> >               return ERR_PTR(ret);
-> >       }
->
-> > +     memset(&spec, 0, sizeof(spec));
-> > +     if (dev->of_node) {
->
-> What is this check for?
+Changes in v2:
+- Moved values for MDAC and EDAC into the driver and converted DT
+  property qca,dac to a new boolean: qcom,dac-preset-short-cable as per
+  discussion.
+- Added compatible string along with a condition with a description of
+  properties including clocks, resets, and qcom,dac-preset-short-cable
+  in the bindings to address bindings issues reported by Rob and to
+  bypass restrictions on nr of clocks and resets in ethernet-phy.yaml
+- Added example to bindings file
+- Renamed all instances of IPQ5018_PHY_MMD3* macros to IPQ5018_PHY_PCS*
+- Removed qca,eth-ldo-ready property and moved the TCSR register to the
+  mdio bus the phy is on as there's already support for setting this reg
+  property in the mdio-ipq4019 driver as per commit:
+  23a890d493e3ec1e957bc925fabb120962ae90a7
+- Explicitly probe on PHY ID as otherwise the PHY wouldn't come up and
+  initialize as found during further testing when the kernel is flashed
+  to NAND
+- Link to v1: https://lore.kernel.org/r/20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com
 
-It's a paranoid check on my part. I will drop the check
-in the next revision.
+---
+George Moussalem (5):
+      clk: qcom: gcc-ipq5018: fix GE PHY reset
+      dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE PHY support
+      net: phy: qcom: at803x: Add Qualcomm IPQ5018 Internal PHY support
+      arm64: dts: qcom: ipq5018: Add MDIO buses
+      arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
 
->
-> > +             spec.np =3D to_of_node(fwspec.fwnode);
-> > +             spec.args_count =3D fwspec.nargs;
-> > +             for (i =3D 0; i < spec.args_count; i++)
-> > +                     spec.args[i] =3D fwspec.args[i];
-> > +     }
-> > +
-> >       mutex_lock(&con_mutex);
-> >
-> >       chan =3D ERR_PTR(-EPROBE_DEFER);
-> > -     list_for_each_entry(mbox, &mbox_cons, node)
-> > -             if (mbox->dev->of_node =3D=3D spec.np) {
-> > +     list_for_each_entry(mbox, &mbox_cons, node) {
-> > +             if (mbox->fw_xlate && mbox->dev->fwnode =3D=3D fwspec.fwn=
-ode) {
-> > +                     chan =3D mbox->fw_xlate(mbox, &fwspec);
-> > +                     if (!IS_ERR(chan))
-> > +                             break;
-> > +             } else if (mbox->of_xlate && mbox->dev->of_node =3D=3D sp=
-ec.np) {
-> >                       chan =3D mbox->of_xlate(mbox, &spec);
-> >                       if (!IS_ERR(chan))
-> >                               break;
-> >               }
->
->
->                 if (!IS_ERR(...))
->                         break;
->
-> is common.
+ .../devicetree/bindings/net/qca,ar803x.yaml        |  44 +++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  48 +++++-
+ drivers/clk/qcom/gcc-ipq5018.c                     |   2 +-
+ drivers/net/phy/qcom/Kconfig                       |   2 +-
+ drivers/net/phy/qcom/at803x.c                      | 185 ++++++++++++++++++++-
+ 5 files changed, 269 insertions(+), 12 deletions(-)
+---
+base-commit: ebfff09f63e3efb6b75b0328b3536d3ce0e26565
+change-id: 20250430-ipq5018-ge-phy-db654afa4ced
 
-Latest mailbox.c has changed so I will check and update accordingly.
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
 
->
->
-> > +     }
->
-> ...
->
-> > +fw_mbox_index_xlate(struct mbox_controller *mbox,
-> > +                 const struct fwnode_reference_args *sp)
->
-> One line?
 
-Okay, I will update.
-
-Regards,
-Anup
