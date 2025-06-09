@@ -1,358 +1,150 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D84B67F;
-	Mon,  9 Jun 2025 04:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1E627F736
+	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 05:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749442912; cv=none; b=ixU+VKauMh8fPAOIgJFLeewmGQq05x5j2okhmotsK2+2yZfimqiROZjFne/OXaNE1ZIgce3LkuKkJlczEWmfAzbOHcBXjDf5cZabwir7101xKPHSXrCctw2O5MdPP5DfiSmKtGH2uZyLyp0B48kVfaDTjhNbXZk53fsBcGO12A0=
+	t=1749448702; cv=none; b=uSiwKK4uIK8beQP98b7EBPw5qO0t8CqE+EPDreZIoR7qRWyrRep4WjX1i+9WmArdl9KhJmdTI9UCQn6D8g/5o+1Cf4GEGTKKN5yo8Mor0SRaetiaWhcL73FjKcJ+q5wuFSJ0b1f10iXvQ6/1hGzwOdSLV0d75rKuHeJNp92OVzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749442912; c=relaxed/simple;
-	bh=jS0cEzQw8X9ASmmTWmyjGvXq7CYOImtqUSmMlKYOQ7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqTIPNWIEVQrD0ydZtnUtOZAP2/FhTdJxlU+/Gm9e8GOhRzZGI2G9fxqmiIJPTEGg3QaATYH+vS6Do3cqCP+oK/VRlZsL1TSETmB61Sg611f8BwUd8IxvVqP/IKHuzjCgeVKYKvg+zME766KdeDbRKVgWQZEvCx0CkCG3yCFdaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wpF99Ev9; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=zbaw+kg3; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1749448702; c=relaxed/simple;
+	bh=slXEZt1JN9lXv9PIIOCjVGjhjME8+mB5XUxfKMGsbd0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XqckPCLRKm8lUh8a+8coSxzCe1JOQu1+/Uu/wdpmOhutc87nj+qtMS/mnbI8v8Hn3x7lfh5ZqWxvjV040djjr027Lp8PwqsKjmTK2R5PFKtuh7mmTeDGQngUWEAlEUMsH2zRzvZywpww2Hnjd/WDceFc6pW60HcpsSrfMaHtlTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=O/4PbqNE; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wpF99Ev9";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="zbaw+kg3"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 7995812FB41C;
-	Sun, 08 Jun 2025 21:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1749442908; bh=jS0cEzQw8X9ASmmTWmyjGvXq7CYOImtqUSmMlKYOQ7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wpF99Ev9a1i3kYzbIH8xr9WdebuCDfK5QA0LVjIOfyUqwwfetuWYZf1d4C2miIIbt
-	 vwI0K65ufIRSKKDBuEDxTmDYJ/f7xqPrfZJxQ491KFwC5LJ1TeaBaxUXGYB180MWTb
-	 /SDBJCEWCFz49iIyzlGuHieYs+YvOlTzDR4ivA2TjsNtYdwXSkhJ1DaeAfjm82FM16
-	 SqS67RH0O3eBwbpUjwk0ieSrnIwiAB2no+uHSoekILYWJa3ScUJTaCxz/M+uJUOvvM
-	 ztlKorjuRtkLdXQJwjzGA0AR3NFFlkyw/H3KRofWxs5owqTmvqxJaYOzZuzEfaW9Ab
-	 dD0y0aJuHVkhw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id Q-z2SKhicKqm; Sun,  8 Jun 2025 21:21:45 -0700 (PDT)
-Received: from ketchup (unknown [183.217.80.254])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 1082D12FB401;
-	Sun, 08 Jun 2025 21:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1749442905; bh=jS0cEzQw8X9ASmmTWmyjGvXq7CYOImtqUSmMlKYOQ7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zbaw+kg3PaM6bHrS+UWUsB27CpmMy8q0fPqD4qLEwRWvYm2ovPE8+PC0AcRKgVvMJ
-	 HALTz+cSrlxDOrYDOlplmYc3qUovcSrjGtJcP5ubfO/X5IE1A6fah+Y13qeKBH1LZP
-	 5d6xQKArlcgrC+uFnqEMCvkQVBa1Rlvvgychc+5hwt5B2JJ9s/LC916wU6Bqz0tBTP
-	 /0lIGkjH3aUbEztmUtIRTkzvTtT5K9zArUEMIBEFb5HxCPNKYmd5/XA9Fj4WXvlvqq
-	 foGBgGl0qLo7mOVvhs4CLgTja3MbhLYvdmxksv4IDPafiBWdM14FPMxV/EQ5zrlzp8
-	 Qwi0l8o7HDkDw==
-Date: Mon, 9 Jun 2025 04:21:39 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, inochiama@outlook.com,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH] clk: spacemit: mark K1 pll1_d8 as critical
-Message-ID: <aEZhU5kk7pMnl7F9@ketchup>
-References: <20250607202759.4180579-1-elder@riscstar.com>
- <20250608002453-GYA108101@gentoo>
- <52c27139-20aa-4995-b3b5-290df13f1ec9@riscstar.com>
- <aEUVwvKHCu4hr6xs@ketchup>
- <ef696db8-20ca-4710-b642-8d22263d4ffe@riscstar.com>
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="O/4PbqNE"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5532a30ac41so4073631e87.0
+        for <linux-clk@vger.kernel.org>; Sun, 08 Jun 2025 22:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749448699; x=1750053499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=79dQYfKRjz/YesTMH1J35SSA7TkpXL6oM6f8PWhNqGs=;
+        b=O/4PbqNEZk9pBBLormo1ZrCdf5fYtzEYPQzBKvBGlddyieONBAtJG3PpwJDQQTXXAf
+         PJqG8PbF9Wch2UZoJb8IAsNLbWQ2vquBCV8TfqL8rGqFwFLJFUj/GDdjSV7UNlA7Karm
+         Z1EPFDoYRtAb5bwEQSPvBHL6yIE+8LWVhPY6lqigze1SAJTba0mFMaQqos5u6HMtHFfe
+         Z2++ewQGC/tvTQ8bpI0qa2lJ1yQphrhu4TrjE5ZqyggiKz1JQa9hLz8gIrFyKBKNcE/a
+         Zp+CWw8ecdYQGdbXeZ+KRqLoyCWvVCrkHkT0usYwERB7GqubDTwt75PFA+2i4ZoDQKuW
+         ZR5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749448699; x=1750053499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=79dQYfKRjz/YesTMH1J35SSA7TkpXL6oM6f8PWhNqGs=;
+        b=nss+dJcsjPGIAhhj03+wbvbi3yCjimytRrKwYcX9Mr/sRJA3bYc3iSpkr1ORD+xgXR
+         PrmRqDP6ua2MZwFpDhkrgTFR0yP6rzPIRNnTE48KjFCl7tD1lr9UQp+wm/24lA3+t+6w
+         WpjumoijvYJdEapDxyyu+51xCLNN0pW1y5ZK6vx90bmgabjf21R1BLixw0+whjD78X12
+         WF13po1ZI8yQodiRUO4LmTijut8j+HNLJEhKkg6EisBqQBNSJd1jZFgPO8DQ0dZVXopz
+         X2ntzIWECTchC+sQM/9aG4fHQtZck0LEA6EKH+3212PvU6z6LmNXrz7MShwmvcrYx2Le
+         EyJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQlYJRZJ07YJOqDQ1jPkId/QG7VmMQ9NE1ZQxZQcnJvwm3aYWcIEcyoDbreVxjkFs0stGFYOBf8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr5tFmvGhERfNgECNP+HRw/2cdV3UChPTtw3G/8X12VKJYb7SL
+	/7c1L3Vajok4F++hOh+0h/DjIZWZnXwEeaSPVwys0Dm/dMAHtuYAJTqpK4M1Sjg4SxrUia0l/lK
+	EbcC4XLW6J8oYlJxH4jrqKBZU7VluOG/arCMbQIkwEA==
+X-Gm-Gg: ASbGncsdJxQf6k6MeYskq2rb+t3Ux/rUm5Yt1HIijZ+VZ9iMTH/YRKG+v/TtxIo8B8j
+	COK7Kyk7/SXmaFipvzr3OXaCYZop1F4nyRtGNpUX8vcQlzTjBt3dwF6XSgtZX3rLM+2FbOL/xfX
+	zHHX+IIMh3s/7ymxyOd86tPqWe2oV5awdMtGaWXEoT7MrX
+X-Google-Smtp-Source: AGHT+IEEAjCAU74AdDgZhPUpik9rwnZXkawnnn1BuceWjTl98W9A7+CL2sv8mgaup8C6oH709Ul1OgTzgtqBWZpTOi4=
+X-Received: by 2002:a05:6512:39c3:b0:553:2486:e0fd with SMTP id
+ 2adb3069b0e04-55366bfa7a2mr2653560e87.23.1749448698667; Sun, 08 Jun 2025
+ 22:58:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef696db8-20ca-4710-b642-8d22263d4ffe@riscstar.com>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-2-apatel@ventanamicro.com> <53abb1fc-6236-4266-a6e7-25023e27e160@linux.dev>
+In-Reply-To: <53abb1fc-6236-4266-a6e7-25023e27e160@linux.dev>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Mon, 9 Jun 2025 11:28:06 +0530
+X-Gm-Features: AX0GCFsmWbRIoUi6nNFKjR9qXpFfrpwbKCN1t236wpZV7bl1kup6dBRNjwof4ew
+Message-ID: <CAK9=C2VhmU1a9TN4+oLMNRfweHY8jw=W71k+HpqnUxxve6hNfQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/23] riscv: Add new error codes defined by SBI v3.0
+To: Atish Patra <atish.patra@linux.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 08, 2025 at 01:31:42PM -0500, Alex Elder wrote:
-> On 6/7/25 11:46 PM, Haylen Chu wrote:
-> > On Sat, Jun 07, 2025 at 09:46:03PM -0500, Alex Elder wrote:
-> 
-> I respond below.  I'm leaving all the context for now.
-> 
-> > > On 6/7/25 7:24 PM, Yixun Lan wrote:
-> > > > Hi Alex,
-> > > > 
-> > > > On 15:27 Sat 07 Jun     , Alex Elder wrote:
-> > > > > The pll1_d8 clock is enabled by the boot loader, and is ultimately a
-> > > > > parent for numerous clocks.  Guodong Xu was recently testing DMA,
-> > > >               ~~~~~~~~~this is still vague, numerous isn't equal to critical
-> > > 
-> > > I will give you a full explanation of what I observed, below.
-> > > 
-> > > > > adding a reset property, and discovered that the needed reset was
-> > > > > not yet ready during initial probe.  It dropped its clock reference,
-> > > > > which dropped parent references, and along the way it dropped the sole
-> > > > > reference to pll1_d8 (from its prior clk_get()).  Clock pll1_d8 got
-> > > > > disabled, which resulted in a non-functioning system.
-> > > > > 
-> > > > So, I'm trying to understand the problem, and would like to evaluate if
-> > > > the "critical" flag is necessary..
-> > > > 
-> > > > It occurs to me, the DMA driver should request and enable clock first,
-> > > > then request and issue a reset, it probably could be solved by proper
-> > > 
-> > > No, that is not the issue.  The reset is never deasserted.
-> > > 
-> > > > order? so what's the real problem here? is DMA or reset? dropped the
-> > > > clock? or does driver fail to request a reset before clock is ready?
-> > > 
-> > > The problem is with the pll1_d8 clock.  That clock is enabled
-> > > successfully.  However the reset isn't ready, so the clock
-> > > gets disabled, and its parent (and other ancestors) also get
-> > > disabled while recovering from that.
-> > > 
-> > > I'll give you a high-level summary, then will lay out a ton of
-> > > detail.
-> > > 
-> > > In the DMA driver probe function, several initial things happen
-> > > and then, a clock is requested (enabled):
-> > >    <&syscon_apmu CLK_DMA>
-> > > That succeeds.
-> > > 
-> > > Next, a reset is requested:
-> > >    <&syscon_apmu RESET_DMA>
-> > > But that fails, because the reset driver probe function hasn't
-> > > been called yet.  The request gets -EPROBE_DEFER as its result,
-> > > and the DMA driver starts unwinding everything so that it can
-> > > be probed again later.  Dropping the clock reference results
-> > > in parent clocks dropping references.  And because pll1_div8
-> > > initially had a reference count of 0 (despite being on),
-> > > dropping this single reference means it gets disabled.  Then
-> > > we're stuck.
-> > > 
-> > > 
-> > > Here is how the DMA clock is supplied (at boot time):
-> > > 
-> > > pll1 -> pll1_d8 -> pll1_d8_307p2 -> pmua_aclk -> dma_clk
-> > > 
-> > > pll1 and pll1_d8 are enabled by the boot loader, but at this
-> > > time the drivers for various hardware that require them aren't
-> > > "getting" and enabling them (yet).
-> > > 
-> > > devm_clk_get_optional_enabled() causes clk_prepare_enable()
-> > > to be called on the target clock (pll1_d8).  That simply calls
-> > > clk_prepare() and clk_enable().  Let's focus on the latter.
-> > >      clk_enable(dma_clk)
-> > >        clk_core_enable_lock()
-> > > 
-> > > So now the clock enable lock is held.  The target clock's
-> > > enable_count for pll1_d8 is 0.
-> > > 
-> > >    clk_core_enable(dma_clk)
-> > >      clk_core_enable(parent = pmua_aclk)
-> > >      ...
-> > >      enable_count++ (on dma_clk)
-> > > 
-> > > The parent gets enabled (I'm fairly certain pmua_clk's
-> > > enable_count is also 0).
-> > > 
-> > >    clk_core_enable(pmua_aclk)
-> > >      clk_core_enable(parent = pll1_d8_307p2)
-> > >      ...
-> > >      enable_count++ (on pmua_clk)
-> > > 
-> > > And so on.  When the clk_enable(dma_clk) completes, we have
-> > > these enable counts:
-> > >    dma_clk:		1
-> > >    pmua_clk:		1
-> > >    pll1_d8_307p2:	1
-> > >    pll1_d8:		1
-> > >    pll1:			1? (I don't recall)
-> > > 
-> > > The -EPROBE_DEFER causes the  devm_clk_get_optional_enabled()
-> > > for dma_clk to get undone.  That means clk_disable_unprepare()
-> > > gets called on dma_clk.  Let's just focus on clk_disable().
-> > > 
-> > >    clk_disable(dma_clk)
-> > >      clk_core_disable_lock(dma_clk)
-> > >        (takes clk_enable lock)
-> > >        clk_core_disable()
-> > >          --enable_count becomes 0 (on dma_clk)
-> > >          (disables dma_clk)
-> > >          clk_core_disable(core->parent = pmua_aclk)
-> > > 
-> > >    clk_core_disable(pmua_aclk)
-> > >      --enable_count becomes 0 (on pmua_clk)
-> > >      (disables pmua_clk)
-> > >      clk_core_dissable(core->parent = pll1_d8_307p2)
-> > > 
-> > >    clk_core_disable(pll1_d8_307p2)
-> > >      --enable_count becomes 0 (on pll1_d8_307p2)
-> > >      (disables pll1_d8_307p2)
-> > >      clk_core_dissable(core->parent = pll1_d8)
-> > > 
-> > >    clk_core_disable(pll1_d8\)
-> > >      --enable_count becomes 0 (on pll1)
-> > >      (disables pll1_d8)
-> > >      BOOM
-> > 
-> > Yeah, I got the reason that pll1_d8 is disabled, but I don't still
-> > understand why it matters: pll1_d8 is a simple factor gate, though being
-> > parent of various peripheral clocks, it's okay to enable it again later
-> > if some peripherals decide to use it or one of its child, isn't it?
-> 
-> When it gets disabled, the system becomes non-functional.  What that
-> means is that everything stops, no more output, and even when I
-> enabled KDB it did not drop into KDB.  *Something* depends on it,
-> but there is no driver that properly enables the clock (yet).
-> This means--for now--it seems to be a critical clock.
-> 
-> > I could come up with several scenarios where disabling the clock really
-> > causes problems,
-> > 
-> > 1. Some essential SoC components are actually supplied by pll1_d8 or one
-> >     of its children, but isn't described in devicetree or the driver,
-> >     thus disabling pll1_d8 leads to an SoC hang. We should mark the
-> 
-> This is what I believe is happening.  So my fix marks the one clock
-> as critical in the driver.  I would not want to mark it critical
-> in DT.
+On Sat, Jun 7, 2025 at 5:21=E2=80=AFAM Atish Patra <atish.patra@linux.dev> =
+wrote:
+>
+>
+> On 5/25/25 1:46 AM, Anup Patel wrote:
+> > The SBI v3.0 defines new error codes so add these new error codes
+> > to the asm/sbi.h for use by newer SBI extensions.
+>
+> This patch can be dropped as it is part of the FWFT series with minor
+> modifications in error mappings.
+>
+> https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@rivos=
+inc.com/
 
-Okay. Then please make it more explicit in the commit message, "pll1_d8
-seems to supply critical SoC components" describes the situation more
-precisely than "Clock pll1_d8 got disabled, which resulted in a
-non-functioning system".
+Yes, I am aware of Clement's patch. I was temporarily carrying
+this patch over here.
 
-> >     precise clock that being essential as critcal, instead of setting
-> >     pll1_d8 as critical to work around the problem.
-> 
-> I provided the chain of clocks leading to the dma_clk.  Disabling
-> the dma_clk did not cause harm; disabling pmua_aclk did not cause
-> harm; disabling pll1_d8_307p2 did not cause harm.  Only when pll1_d8
-> was disabled did the machine become unusable.
+Regards,
+Anup
 
-I don't think this is an evidence strong enough to prove pll1_d8 itself
-is critical.
-
-pll1_d8 supplies not only pll1_d8_307p2 and its children, but also
-pll1_d16_153p6, pll1_d24_102p4 and many more. It's totally possible that
-not pll1_d8 but actually pll1_d16_153p6 or pll1_d24_102p4 is critical
-for SoC operation: in a normal functioning system with a working UART,
-these two clocks are always enabled since they (indirectly) supply UART
-bus and func clocks, hidding the problem.
-
-In your case, when DMA driver reverts the enable operation, the UART
-driver don't seem to be probed yet (or enable count of pll1_d8 won't
-decrease to zero). Disabling the parent may cause an SoC hang as well if
-pll1_d16_153p6 or pll1_d24_102p4 is critcal in fact.
-
-> > 2. There're bugs in our clock driver, thus it fails to bring pll1_d8
-> >     (or maybe also its children) back to a sound state. If so we should
-> >     fix the driver.
-> 
-> No, I found that pll1_d8 had an enable count of 1 after dma_clk
-> was enabled.  And then the set of disables that resulted from the
-> -EPROBE_DEFER discovered its enable count was zero, and therefore
-> disabled pll1_d8 (after dma_clk, pmua_aclk, and pll1_d8_307p2 were
-> disabled).  I do not suspect the clock *driver* is at fault.
-
-A correct enable count doesn't mean the hardware is configured
-correctly.
-
-> > Unless you could confirm pll1_d8 (not its child) really supplies some
-> > essential SoC components, I don't think simply marking pll1_d8 as
-> > critical is the correct solution.
-> 
-> I did confirm this.  The child gets disabled before the parent in
-> clk_core_disable().
-> 
-> > And, I don't even know what "non-functioning system" behaves like. Could
-> > you please provide more information, like soC behaviours or dmesg when
-> > disabling pll1_d8 causes problems? Thanks.
-> 
-> Maybe you could, as an experiment, pretend <&syscon_apmu CLK_DMA>
-> is a clock for something and get it during probe, using
-> devm_clk_get_optional_enabled().  Then just return -EPROBE_DEFER
-> after that, and I think you'll reproduce the issue.  In fact,
-> you might hit the issue more quickly if you used CLK_PLL1_D8.
-> 
-> 					-Alex
-
-Thanks,
-Haylen Chu
-
-> > > I hope this is clear.
-> > > 
-> > > 					-Alex
-> > 
-> > Regards,
-> > Haylen Chu
-> > 
-> > > 
-> > > > > Mark that clock critical so it doesn't get turned off in this case.
-> > > > > We might be able to turn this flag off someday, but for now it
-> > > > > resolves the problem Guodong encountered.
-> > > > > 
-> > > > > Define a new macro CCU_FACTOR_GATE_DEFINE() to allow clock flags to
-> > > > > be supplied for a CCU_FACTOR_GATE clock.
-> > > > > 
-> > > > > Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> > > > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > > > Tested-by: Guodong Xu <guodong@riscstar.com>
-> > > > > ---
-> > > > >    drivers/clk/spacemit/ccu-k1.c  |  3 ++-
-> > > > >    drivers/clk/spacemit/ccu_mix.h | 21 +++++++++++++--------
-> > > > >    2 files changed, 15 insertions(+), 9 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> > > > > index cdde37a052353..df65009a07bb1 100644
-> > > > > --- a/drivers/clk/spacemit/ccu-k1.c
-> > > > > +++ b/drivers/clk/spacemit/ccu-k1.c
-> > > > > @@ -170,7 +170,8 @@ CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4,
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
-> > > > > -CCU_FACTOR_GATE_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1);
-> > > > > +CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
-> > > > > +		CLK_IS_CRITICAL);
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d11_223p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(15), 11, 1);
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d13_189, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(16), 13, 1);
-> > > > >    CCU_FACTOR_GATE_DEFINE(pll1_d23_106p8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(20), 23, 1);
-> > > > > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> > > > > index 51d19f5d6aacb..668c8139339e1 100644
-> > > > > --- a/drivers/clk/spacemit/ccu_mix.h
-> > > > > +++ b/drivers/clk/spacemit/ccu_mix.h
-> > > > > @@ -101,16 +101,21 @@ static struct ccu_mix _name = {							\
-> > > > >    	}									\
-> > > > >    }
-> > > > > +#define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> > > > > +			       _mul, _flags)					\
-> > > > > +struct ccu_mix _name = {							\
-> > > > > +	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> > > > > +	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> > > > > +	.common = {								\
-> > > > > +		.reg_ctrl	= _reg_ctrl,					\
-> > > > > +		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, _flags)	\
-> > > > > +	}									\
-> > > > > +}
-> > > > > +
-> > > > >    #define CCU_FACTOR_GATE_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> > > > >    			       _mul)						\
-> > > > > -static struct ccu_mix _name = {							\
-> > > > > -	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> > > > > -	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> > > > > -	.common = {								\
-> > > > > -		.reg_ctrl	= _reg_ctrl,					\
-> > > > > -		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, 0)	\
-> > > > > -	}									\
-> > > > > -}
-> > > > > +	CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> > > > > +			       _mul, 0)
-> > > > >    #define CCU_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl, _shift, _width,		\
-> > > > >    			    _mask_gate, _flags)					\
-> > > > > -- 
-> > > > > 2.45.2
-> > > > > 
-> > > > 
-> > > 
-> 
+>
+>
+> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > ---
+> >   arch/riscv/include/asm/sbi.h | 12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
+h
+> > index 3d250824178b..4dd6aafb8468 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -419,6 +419,11 @@ enum sbi_ext_nacl_feature {
+> >   #define SBI_ERR_ALREADY_STARTED -7
+> >   #define SBI_ERR_ALREADY_STOPPED -8
+> >   #define SBI_ERR_NO_SHMEM    -9
+> > +#define SBI_ERR_INVALID_STATE        -10
+> > +#define SBI_ERR_BAD_RANGE    -11
+> > +#define SBI_ERR_TIMEOUT              -12
+> > +#define SBI_ERR_IO           -13
+> > +#define SBI_ERR_DENIED_LOCKED        -14
+> >
+> >   extern unsigned long sbi_spec_version;
+> >   struct sbiret {
+> > @@ -503,11 +508,18 @@ static inline int sbi_err_map_linux_errno(int err=
+)
+> >       case SBI_SUCCESS:
+> >               return 0;
+> >       case SBI_ERR_DENIED:
+> > +     case SBI_ERR_DENIED_LOCKED:
+> >               return -EPERM;
+> >       case SBI_ERR_INVALID_PARAM:
+> > +     case SBI_ERR_INVALID_STATE:
+> > +     case SBI_ERR_BAD_RANGE:
+> >               return -EINVAL;
+> >       case SBI_ERR_INVALID_ADDRESS:
+> >               return -EFAULT;
+> > +     case SBI_ERR_TIMEOUT:
+> > +             return -ETIMEDOUT;
+> > +     case SBI_ERR_IO:
+> > +             return -EIO;
+> >       case SBI_ERR_NOT_SUPPORTED:
+> >       case SBI_ERR_FAILURE:
+> >       default:
