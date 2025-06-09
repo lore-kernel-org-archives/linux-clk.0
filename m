@@ -1,58 +1,58 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1E627F736
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 05:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609481FC0EA
+	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 06:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749448702; cv=none; b=uSiwKK4uIK8beQP98b7EBPw5qO0t8CqE+EPDreZIoR7qRWyrRep4WjX1i+9WmArdl9KhJmdTI9UCQn6D8g/5o+1Cf4GEGTKKN5yo8Mor0SRaetiaWhcL73FjKcJ+q5wuFSJ0b1f10iXvQ6/1hGzwOdSLV0d75rKuHeJNp92OVzU=
+	t=1749449559; cv=none; b=du6PkEMMj/AjePIw5xfPSgSLEyYWdHFanRW+bR80opc+LWl1YFndK3vACtjQsN7beuiqFZwlTd+sfwGJ8Msxugd4XcfGEPyDIsnwDVr12s+7oR6qZaU57MG/xahfmgCFAWVU6a5kZWU5ToS6H0wdtee2SHg7tQZhAaGtxaHsIAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749448702; c=relaxed/simple;
-	bh=slXEZt1JN9lXv9PIIOCjVGjhjME8+mB5XUxfKMGsbd0=;
+	s=arc-20240116; t=1749449559; c=relaxed/simple;
+	bh=hC7sYjRTRprvhqWeyddKYr1R75JwHa16GRXz1WGFPCA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqckPCLRKm8lUh8a+8coSxzCe1JOQu1+/Uu/wdpmOhutc87nj+qtMS/mnbI8v8Hn3x7lfh5ZqWxvjV040djjr027Lp8PwqsKjmTK2R5PFKtuh7mmTeDGQngUWEAlEUMsH2zRzvZywpww2Hnjd/WDceFc6pW60HcpsSrfMaHtlTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=O/4PbqNE; arc=none smtp.client-ip=209.85.167.44
+	 To:Cc:Content-Type; b=MVjjZM3861NK1SRAya7+QU2vJ2BLQedlzDLrwAY7G6Snp8nv/ekKcIiYqVmau0G8WivJi7EllW1q8pmsM9bBTHp27ZtdjsipImLYVu8CWG1iazAVkeAGst1bDUzZgGH4nTDa18bXBSCjfD/lJ+/gnQGnUUf9BRUyBqIUMp5mIpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HkI0tmDf; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="O/4PbqNE"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5532a30ac41so4073631e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 08 Jun 2025 22:58:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HkI0tmDf"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5532f9ac219so4629317e87.1
+        for <linux-clk@vger.kernel.org>; Sun, 08 Jun 2025 23:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749448699; x=1750053499; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1749449555; x=1750054355; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=79dQYfKRjz/YesTMH1J35SSA7TkpXL6oM6f8PWhNqGs=;
-        b=O/4PbqNEZk9pBBLormo1ZrCdf5fYtzEYPQzBKvBGlddyieONBAtJG3PpwJDQQTXXAf
-         PJqG8PbF9Wch2UZoJb8IAsNLbWQ2vquBCV8TfqL8rGqFwFLJFUj/GDdjSV7UNlA7Karm
-         Z1EPFDoYRtAb5bwEQSPvBHL6yIE+8LWVhPY6lqigze1SAJTba0mFMaQqos5u6HMtHFfe
-         Z2++ewQGC/tvTQ8bpI0qa2lJ1yQphrhu4TrjE5ZqyggiKz1JQa9hLz8gIrFyKBKNcE/a
-         Zp+CWw8ecdYQGdbXeZ+KRqLoyCWvVCrkHkT0usYwERB7GqubDTwt75PFA+2i4ZoDQKuW
-         ZR5g==
+        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
+        b=HkI0tmDf1zaAwVk2tV5DEWzZwI0X8AHf6QTikEWF+Im4kHdBPc0S7MghSGPMR8xoZF
+         62OQb+BcXlLmIMgPqGyNczQPs+BBLbWqJagIeECqHHYLiSKir7rCD/eg6vcAL3JoGRXw
+         cWhlupyCD31F5fNgfsTorQOdKg3nA9TkDfDht6YfaYVP8OYkMQmy8uaHoxONMQuMTZvf
+         X9ypvYIF4TuizkElbgOKINgqv8aNoYfcTRqgkCHzsvKknEuSGqfp641F9E09Lt+FHRzf
+         2DPKPcqU44NOaX/eyg+dLZiX+9+U2MDKiudcdxG4T8RRsfWdR8P6LYhWe/FXvSohtqCQ
+         q33Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749448699; x=1750053499;
+        d=1e100.net; s=20230601; t=1749449555; x=1750054355;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=79dQYfKRjz/YesTMH1J35SSA7TkpXL6oM6f8PWhNqGs=;
-        b=nss+dJcsjPGIAhhj03+wbvbi3yCjimytRrKwYcX9Mr/sRJA3bYc3iSpkr1ORD+xgXR
-         PrmRqDP6ua2MZwFpDhkrgTFR0yP6rzPIRNnTE48KjFCl7tD1lr9UQp+wm/24lA3+t+6w
-         WpjumoijvYJdEapDxyyu+51xCLNN0pW1y5ZK6vx90bmgabjf21R1BLixw0+whjD78X12
-         WF13po1ZI8yQodiRUO4LmTijut8j+HNLJEhKkg6EisBqQBNSJd1jZFgPO8DQ0dZVXopz
-         X2ntzIWECTchC+sQM/9aG4fHQtZck0LEA6EKH+3212PvU6z6LmNXrz7MShwmvcrYx2Le
-         EyJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiQlYJRZJ07YJOqDQ1jPkId/QG7VmMQ9NE1ZQxZQcnJvwm3aYWcIEcyoDbreVxjkFs0stGFYOBf8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr5tFmvGhERfNgECNP+HRw/2cdV3UChPTtw3G/8X12VKJYb7SL
-	/7c1L3Vajok4F++hOh+0h/DjIZWZnXwEeaSPVwys0Dm/dMAHtuYAJTqpK4M1Sjg4SxrUia0l/lK
-	EbcC4XLW6J8oYlJxH4jrqKBZU7VluOG/arCMbQIkwEA==
-X-Gm-Gg: ASbGncsdJxQf6k6MeYskq2rb+t3Ux/rUm5Yt1HIijZ+VZ9iMTH/YRKG+v/TtxIo8B8j
-	COK7Kyk7/SXmaFipvzr3OXaCYZop1F4nyRtGNpUX8vcQlzTjBt3dwF6XSgtZX3rLM+2FbOL/xfX
-	zHHX+IIMh3s/7ymxyOd86tPqWe2oV5awdMtGaWXEoT7MrX
-X-Google-Smtp-Source: AGHT+IEEAjCAU74AdDgZhPUpik9rwnZXkawnnn1BuceWjTl98W9A7+CL2sv8mgaup8C6oH709Ul1OgTzgtqBWZpTOi4=
-X-Received: by 2002:a05:6512:39c3:b0:553:2486:e0fd with SMTP id
- 2adb3069b0e04-55366bfa7a2mr2653560e87.23.1749448698667; Sun, 08 Jun 2025
- 22:58:18 -0700 (PDT)
+        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
+        b=pg4ZrvOv+d8qlW5HyazjirkDD3rIzrUYuSlLPx9lxsRo+u6+/2WD52r2NBOrpWod9n
+         O4e54QoQhHzQAMRR5ul51PH3jfEL1l9mPtl7PeN+Nlz94lbnDCyYLwoDcQheumkXVBrr
+         VU2/UIfRMiAN5rzCrVLNU3UyN1W3w5LDsP89qsA1kQnKGzPf6sj7ZKLm/YkXQjUEtBXd
+         OGJd9sWZaTS2ufZPQQF/4lIDFSMPVTtKvWsNihxdk5E6KntFDyqsgoyVVkEHdzk9M9TF
+         71Aohc+Jux0QByEtEAkcL5kZ5vK0/CcNbDHzoqYxRAQHPwkkfx4LLcJCYz1LN7JrUI/J
+         fm4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWFVcbPHvkGrzuKagjeXV5YK8ditluWV65xX4lZcbqAeponam/n49r6/hIPJShUA5GlfGMt4vDZGpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAko4iX77r7FZqjn73o78PagtIbyfuxOBRdZtE1rWSeoWtiNdY
+	Qu6jUKyZqzdcEG6bZKachTJQX8MAVkPxWm6CjfzwgGaYebsESzMss781WBvr2bR/KpzB3doMFa4
+	pn+PZJ3JOD3R3FiEuI4Qh5tYCoZbPXSd6bYwK8kiMDQ==
+X-Gm-Gg: ASbGncsszT26gxistPiSgrjRVlpxQFsF4njtQSeU/Z/MiiQS1+eVQR4GCMT28hC1T2a
+	7npY/Mcs7AbKtIoLMuf7gklCpaKB3uSmbofXdTyGw5NbnVJkoBV/CmR+ngw89+Qjt1mMaNPdVDM
+	R1SbZda+SCgDpCprRQr3GCybXe1+9eNRmoVg==
+X-Google-Smtp-Source: AGHT+IEECTtnbfpfpm1PCJ+0qNEPhUm+SPgQTf/zlmkXsjTkZrawcTxrDJFp5prLSUOiP9b4jKSeL0mzxrsjJjV1G9g=
+X-Received: by 2002:a05:6512:3e14:b0:553:2633:8a64 with SMTP id
+ 2adb3069b0e04-55366bee0a6mr3224048e87.23.1749449555474; Sun, 08 Jun 2025
+ 23:12:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,91 +60,68 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-2-apatel@ventanamicro.com> <53abb1fc-6236-4266-a6e7-25023e27e160@linux.dev>
-In-Reply-To: <53abb1fc-6236-4266-a6e7-25023e27e160@linux.dev>
+ <20250525084710.1665648-5-apatel@ventanamicro.com> <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
+In-Reply-To: <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
 From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 9 Jun 2025 11:28:06 +0530
-X-Gm-Features: AX0GCFsmWbRIoUi6nNFKjR9qXpFfrpwbKCN1t236wpZV7bl1kup6dBRNjwof4ew
-Message-ID: <CAK9=C2VhmU1a9TN4+oLMNRfweHY8jw=W71k+HpqnUxxve6hNfQ@mail.gmail.com>
-Subject: Re: [PATCH v4 01/23] riscv: Add new error codes defined by SBI v3.0
-To: Atish Patra <atish.patra@linux.dev>
+Date: Mon, 9 Jun 2025 11:42:23 +0530
+X-Gm-Features: AX0GCFvPnCJfNRo5uBNaPo8NZXrvaeCQeQ6i_dUaHiR22KPdWkZ9co7wy5KHhiQ
+Message-ID: <CAK9=C2XJ7+homTqdiYvYRv6J+4-gEM3jLmi3EpMDn=wZjkMOqA@mail.gmail.com>
+Subject: Re: [PATCH v4 04/23] RISC-V: Add defines for the SBI message proxy extension
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
 	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
 	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
 	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
 	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
 	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
 	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 7, 2025 at 5:21=E2=80=AFAM Atish Patra <atish.patra@linux.dev> =
-wrote:
+On Tue, May 27, 2025 at 2:17=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
+> On Sun, May 25, 2025 at 02:16:51PM +0530, Anup Patel wrote:
+> > Add defines for the new SBI message proxy extension which is part
+> > of the SBI v3.0 specification.
 >
-> On 5/25/25 1:46 AM, Anup Patel wrote:
-> > The SBI v3.0 defines new error codes so add these new error codes
-> > to the asm/sbi.h for use by newer SBI extensions.
+> ...
 >
-> This patch can be dropped as it is part of the FWFT series with minor
-> modifications in error mappings.
+> > +/** RPMI message protocol specific MPXY attributes */
 >
-> https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@rivos=
-inc.com/
+> If you do a kernel-doc, do it properly.
 
-Yes, I am aware of Clement's patch. I was temporarily carrying
-this patch over here.
+Okay, I will update.
+
+>
+> > +enum sbi_mpxy_rpmi_attribute_id {
+> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_ID =3D SBI_MPXY_ATTR_MSGPROTO_ATT=
+R_START,
+> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_VERSION,
+>
+> > +     SBI_MPXY_RPMI_ATTR_MAX_ID,
+>
+> Remove trailing comma for the terminator.
+
+Okay, I will update.
+
+>
+> > +};
+> > +
+> > +/* Encoding of MSG_PROT_VER attribute */
+> > +#define SBI_MPXY_MSG_PROT_VER_MAJOR(__ver)   (((__ver) >> 16) & 0xffff=
+)
+> > +#define SBI_MPXY_MSG_PROT_VER_MINOR(__ver)   ((__ver) & 0xffff)
+>
+> This can utilise GENAMSK() or even upper_16_bits()/lower_16_bits().
+
+Okay, I will update.
 
 Regards,
 Anup
-
->
->
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > ---
-> >   arch/riscv/include/asm/sbi.h | 12 ++++++++++++
-> >   1 file changed, 12 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
-h
-> > index 3d250824178b..4dd6aafb8468 100644
-> > --- a/arch/riscv/include/asm/sbi.h
-> > +++ b/arch/riscv/include/asm/sbi.h
-> > @@ -419,6 +419,11 @@ enum sbi_ext_nacl_feature {
-> >   #define SBI_ERR_ALREADY_STARTED -7
-> >   #define SBI_ERR_ALREADY_STOPPED -8
-> >   #define SBI_ERR_NO_SHMEM    -9
-> > +#define SBI_ERR_INVALID_STATE        -10
-> > +#define SBI_ERR_BAD_RANGE    -11
-> > +#define SBI_ERR_TIMEOUT              -12
-> > +#define SBI_ERR_IO           -13
-> > +#define SBI_ERR_DENIED_LOCKED        -14
-> >
-> >   extern unsigned long sbi_spec_version;
-> >   struct sbiret {
-> > @@ -503,11 +508,18 @@ static inline int sbi_err_map_linux_errno(int err=
-)
-> >       case SBI_SUCCESS:
-> >               return 0;
-> >       case SBI_ERR_DENIED:
-> > +     case SBI_ERR_DENIED_LOCKED:
-> >               return -EPERM;
-> >       case SBI_ERR_INVALID_PARAM:
-> > +     case SBI_ERR_INVALID_STATE:
-> > +     case SBI_ERR_BAD_RANGE:
-> >               return -EINVAL;
-> >       case SBI_ERR_INVALID_ADDRESS:
-> >               return -EFAULT;
-> > +     case SBI_ERR_TIMEOUT:
-> > +             return -ETIMEDOUT;
-> > +     case SBI_ERR_IO:
-> > +             return -EIO;
-> >       case SBI_ERR_NOT_SUPPORTED:
-> >       case SBI_ERR_FAILURE:
-> >       default:
