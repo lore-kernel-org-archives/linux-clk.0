@@ -1,146 +1,169 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7621121019E
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 08:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81D51E572F
+	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 08:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749457979; cv=none; b=DTFEtkwcyC06/jFA/Pv6hejeMkokl8nQ74VgAHY8QbP9wJaBIXMJoZwCeeLa4oY7w9ExHiYemIf10hQO/Wtjg+GDOMEgHeFEYSCVdrK4WX3BTS7EalMUC0erG50AHTmiGrwfhPjjHTXx19RhwwgKmAuXQr7ZMQK2brOkdYoWY2c=
+	t=1749458910; cv=none; b=MtAH3eUUwd9Yo+PMAzSCtCa99RQ2A8ca/9/z752oOqNks6Rzb69we0QVMafhbWM3d/6x6qf2gYGmxFWLkwiMo0pBf9fZ7NKdPsOqnV7G2Ir593UWfOFGuBECeDpMWXht4GAbrvVFnUUkqU8JuB/OrF3AkAgRZj2x2qT1gYTA3aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749457979; c=relaxed/simple;
-	bh=YvbeRS0CNwTQZDVWn3o5Ny73fqKXWOdsBfUGNRzl0Jw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=mYSdmQdnBFFFsHWVavXi1oAnSCQnhrRL27KgZSv/+dGfZehNfZ3BgJLVrxwWTfkS0Qt5pOs8RVLiNTtbvyfO97OUsAgaYwkl8YIWQr3CnV6KOY+N6LH7AbeWeiikM6bbmw6UQR+v3d8HG1ITr/6AQYyXuOO0tMNylSoxAEa2180=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GOoEi8dn; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1749458910; c=relaxed/simple;
+	bh=0XzL4kpmsZHZXN2qz7fHXQDCyKTAt3P/xJ06KG7pGfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VAVf++RhfuwwHPRAzYNk8btT38OA/6ZdI6d/4mZmGVQmZI5JzeMBbt87V/uGKLrKNYfEfiaREI0oY7GQLnFo8yrfUhZkEBU9aej0qh55A8cGQAQGrx3nIrWFJPjMnCo7YXs7VjCf/zrUZ7osFfyhw0UG417lE0cIyq+XovNw+Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Wp3H+kiA; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GOoEi8dn"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250609083255epoutp034e485654d72a6066cc8cf1eab301a6e2~HUsJ01Gu40456004560epoutp03h
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 08:32:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250609083255epoutp034e485654d72a6066cc8cf1eab301a6e2~HUsJ01Gu40456004560epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749457975;
-	bh=raYhcpxvaUZ+U3DFFXokA1FxIAXMkZbDHQQsHnlKWKI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=GOoEi8dngFVNeJONQ9mfq/T09fwR7WYEGOMbyQK+/rtoK0dGisjvx6pEr8hFVh6At
-	 ZfK9QzcjKwu+ZraOf0+tatFdzdLep5bvLjWdCBJlcycDJocNu+xUafHoNDqc2Y42Vu
-	 xv6kbPMU863HBsH29OktGcSRHPjWjLGG+hVYZ8j0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250609083254epcas5p4582a8ece71f15b0d09c96fde109aabc7~HUsJBovem0515605156epcas5p49;
-	Mon,  9 Jun 2025 08:32:54 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bG4tX4gGSz6B9m9; Mon,  9 Jun
-	2025 08:32:52 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250609083251epcas5p1380bd5ffe9b5b91f776a1c7f48b317df~HUsGa3UxF3208532085epcas5p1d;
-	Mon,  9 Jun 2025 08:32:51 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250609083249epsmtip1185a8a7cdb024a1a522bad1061beae6f~HUsEApVOx2620026200epsmtip1X;
-	Mon,  9 Jun 2025 08:32:49 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<sunyeal.hong@samsung.com>, <shin.son@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<chandan.vn@samsung.com>, <karthik.sun@samsung.com>,
-	<dev.tailor@samsung.com>
-In-Reply-To: <20250529112640.1646740-5-raghav.s@samsung.com>
-Subject: RE: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock
- DT nodes
-Date: Mon, 9 Jun 2025 14:02:47 +0530
-Message-ID: <047901dbd919$16a39270$43eab750$@samsung.com>
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Wp3H+kiA"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55350d0eedeso4211059e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 01:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749458907; x=1750063707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+qulMhJZHk6X+tREHSphVBY4DmeNmnxx1NU3h6SyVE=;
+        b=Wp3H+kiAB/AEPhUIx+7SiPtMBZ8MvtQwOdpsop34wM/C1Zben+5ZQL/KClxsEhXKI7
+         xo0OKnQ6o1Umw64BkzdhkwJAAmB7wMoJnCPJAjg4YFkwaN4RHpfzn9BACp2H7ZzUz6BY
+         gpdt1/AJOqC+t9XtuhDbpJk6+kOtMeL/xsumM3TlB/5vY7Zqou+SFHzjcWVqSesp6Vm8
+         A/SKZTc23UaHVHM6dDgUu6fUcNrqi7XpcrLzJ2CnbVcQa/LQPFm/+jXepmhA7JU/bixn
+         d+sQUoFIc6pey2tY9ChVj/hWw9ZT6qG/Tp0fubewFaC1cc9zdXhRIFitLPNvvVovbm9B
+         SHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749458907; x=1750063707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1+qulMhJZHk6X+tREHSphVBY4DmeNmnxx1NU3h6SyVE=;
+        b=NQZFTr0zZzM2rGHVkRxkDIIYbu5Ae+bZbaYtg3U20z9fm/PoLhoAmMNY1XMRvcFoNy
+         ENrrMEveMq2MlaWUfbUhliHcclRl6041reqrsV1wZ9sK4J5PQyKvSegUSD7GIc15+REh
+         Qb+h52ipk2Z9Mp7fCMzZP51W0UNmn1yAf80dMI9mSyVmWxldlkfuFN3tmbxwLdcr5UHR
+         WNEa/wr5gaEACd1H+7YM4hQAya4pVZMHZLv2UwOWCsBGwDCzGWEoywASLf37JVwajzgc
+         314MzvfDJ9AARP7wKnYhbpfVfsXJGNADKk2faNqz60XNqA0wFS/iasJnmRj/CbMyDo9X
+         eVEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0BAXKtBqQbYs/MkK5MD91tW2haQOuiABGKrnYbGvuV0mZsB33joLYhO5n/uvpj1YW+VcjF32zFg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAADG23wj8hBV0oqJSRNvih+9sNl34s2O52nzkWWDyN+0XpO4J
+	WvxxehaOMySzeLh0XMkLCpYHAh7vgcnOWxQBSwkWN7RkDk4pQMi+xeS1D+TxrhmT/QOX20yjfP6
+	aMn/0tfdP9HjxVabWbRoVwbkyjqr4O8TDU+ZcF+0FlQ==
+X-Gm-Gg: ASbGncvV7h/LFEvZehdtPpeT2qfG+RU8z22h9Wz0F3JPquRVDnOkUOgcBesrnsP2lfI
+	Ts6LUhlBWOSYNhX2zlOmKaRJ5dKmD1JYtmr16jAJzhkVbcAxyrfznDLq7xBUWvTbLSPVYEMH4Iw
+	2CXVewPeLSrbTFZ6fQZj5YkEo5GfoJiWyt2g==
+X-Google-Smtp-Source: AGHT+IGD0pH7TFlMkgX9gTB2arw453UvhjyRmw09ACjbNfgzKN77QnxzN12Gz5PpF/wVzlrHBwVIxkmX2zq51K32rMQ=
+X-Received: by 2002:a05:6512:398b:b0:553:263d:ab90 with SMTP id
+ 2adb3069b0e04-55366be26b0mr2962896e87.18.1749458906940; Mon, 09 Jun 2025
+ 01:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRyuXPQglR2pg1tLiplohNF2WAzQHWb0Q+AhHSDDezb1SDcA==
-Content-Language: en-us
-X-CMS-MailID: 20250609083251epcas5p1380bd5ffe9b5b91f776a1c7f48b317df
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
-References: <20250529112640.1646740-1-raghav.s@samsung.com>
-	<CGME20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef@epcas5p4.samsung.com>
-	<20250529112640.1646740-5-raghav.s@samsung.com>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-6-apatel@ventanamicro.com> <aDWfDZ_rmdZeuvX3@smile.fi.intel.com>
+In-Reply-To: <aDWfDZ_rmdZeuvX3@smile.fi.intel.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Mon, 9 Jun 2025 14:18:15 +0530
+X-Gm-Features: AX0GCFv7nT4kE5svL_VD2AT2FTxU3u5CwWlzFhZ6AhttmorGU6f8kX-CYBTFYjM
+Message-ID: <CAK9=C2Wc75EmvTnGF0m59eQjhXK0=htHCafpi5oPNE0_5TS-7A@mail.gmail.com>
+Subject: Re: [PATCH v4 05/23] mailbox: Add common header for RPMI messages
+ sent via mailbox
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Raghav
+On Tue, May 27, 2025 at 4:46=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Sun, May 25, 2025 at 02:16:52PM +0530, Anup Patel wrote:
+> > The RPMI based mailbox controller drivers and mailbox clients need to
+> > share defines related to RPMI messages over mailbox interface so add
+> > a common header for this purpose.
+>
+> ...
+>
+> > +#include <linux/mailbox_client.h>
+>
+> This is not even closer to the list of the headers the header is using.
+> E.g., types.h is missing.
 
-> -----Original Message-----
-> From: Raghav Sharma <raghav.s@samsung.com>
-> Sent: Thursday, May 29, 2025 4:57 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
-> sunyeal.hong@samsung.com; shin.son@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; netdev@vger.kernel.org;
-> chandan.vn@samsung.com; karthik.sun@samsung.com;
-> dev.tailor@samsung.com; Raghav Sharma <raghav.s@samsung.com>
-> Subject: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT
-> nodes
-> 
-> Add required dt node for CMU_HSI2 block, which provides clocks to ufs and
-> ethernet IPs
-> 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
+Okay, I will add types.h
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>
+> > +/* RPMI version encode/decode macros */
+> > +#define RPMI_VER_MAJOR(__ver)                (((__ver) >> 16) & 0xffff=
+)
+> > +#define RPMI_VER_MINOR(__ver)                ((__ver) & 0xffff)
+>
+> Same comment as per previous patch.
 
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17
-> +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 2cb8041c8a9f..7890373f5da0 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
->  			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
->  		};
-> 
-> +		cmu_hsi2: clock-controller@16b00000 {
-> +			compatible = "samsung,exynosautov920-cmu-hsi2";
-> +			reg = <0x16b00000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&xtcxo>,
-> +				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_NOC_UFS>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_UFS_EMBD>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_ETHERNET>;
-> +			clock-names = "oscclk",
-> +				      "noc",
-> +				      "ufs",
-> +				      "embd",
-> +				      "ethernet";
-> +		};
-> +
->  		pinctrl_hsi2: pinctrl@16c10000 {
->  			compatible = "samsung,exynosautov920-pinctrl";
->  			reg = <0x16c10000 0x10000>;
-> --
-> 2.34.1
+Okay, I will use macros from linux/wordpart.h
 
+>
+> ...
+>
+> > +     RPMI_ERR_NO_DATA                =3D -14,
+> > +     RPMI_ERR_RESERVED_START         =3D -15,
+> > +     RPMI_ERR_RESERVED_END           =3D -127,
+> > +     RPMI_ERR_VENDOR_START           =3D -128
+>
+> Leave the trailing comma, as it doesn't sound like a terminator.
 
+Okay
+
+>
+> ...
+>
+> > +             return -ETIMEDOUT;
+> > +             return -ECOMM;
+> > +             return -EOPNOTSUPP;
+>
+> + errno.h
+
+Okay, I will add errno.h
+
+>
+> ...
+>
+> > +/* RPMI linux mailbox attribute IDs */
+> > +enum rpmi_mbox_attribute_id {
+> > +     RPMI_MBOX_ATTR_SPEC_VERSION =3D 0,
+>
+> Why do you need an explicit initialiser? If it's a HW requirement, all of=
+ them
+> should be explicitly defined. This makes code robust against potential ch=
+anges.
+
+Explicit initializers are not needed. I will drop in the next revision.
+
+>
+> > +     RPMI_MBOX_ATTR_MAX_MSG_DATA_SIZE,
+> > +     RPMI_MBOX_ATTR_SERVICEGROUP_ID,
+> > +     RPMI_MBOX_ATTR_SERVICEGROUP_VERSION,
+> > +     RPMI_MBOX_ATTR_MAX_ID
+> > +};
+>
+> ...
+>
+> > +/* RPMI linux mailbox message types */
+>
+> linux --> Linux
+> (everywhere)
+
+Okay, I will update.
+
+Regards,
+Anup
