@@ -1,167 +1,180 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F3B220F31
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 20:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A1E220680;
+	Mon,  9 Jun 2025 20:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749500070; cv=none; b=oUieIrYsnJrbQfekWjl2Js7ubFJcJVIWQ5rAdcAfLvXSvYZ1Wl7i1wvW/sC1uYYXrW3m+uKMAI+SrC8n43OFax5Ed86JLf+MQvU53ZGDZ9VwoEPC6UM2GayJy+vGUBG6aFMYB7qCoTjWVbIol5vD/EwKp6LLyrOKl0Whx660HMg=
+	t=1749501422; cv=none; b=qZJhJVSfiR9WJu4bVFgjGUv2tRYVpBRNZ9RR3MEXki/egYeLBOLQbmRio0gqW3Lt0qEWjTnnQVVVg4hTKPggeixf+Y1q3ND2tCp/Bwl2Dfb57pSE4niB8yHef7Suo9k3pLtEgpP8MYQ2q/JJQi1+m8LLoFWIQmsNu5DjV/CWls0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749500070; c=relaxed/simple;
-	bh=cc13l7pbpIRdIEC25QVqWj0lamcvY3YyLME1tijvOPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rMdMSewq9/6F55Oar7nmYR7vN0Oe6uIOhFzQry3XYgAibcSkEsWi7MtJJGvM9Ympbg5+DAGdC0i19R69URYQJEvSzZKdSDgIf9vO7xPaUqjlo+PUDYC/bMJZoI8dZf0rGHN+/KZ/r99/P15b0u4WoK5euUbB7lOxJrYEyxGLccA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=fBv/pCWD; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1749501422; c=relaxed/simple;
+	bh=bMo3wzMhKltZs7QMjn6YEMIpFXpusjz5hmvh1DJhHHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y6Ds748HH4/3VV/eMesyCjKw7BO/zl3Gin3Z6/Jmg7Mnx9HZy2sygJu1NnagvaPez4XKuwOGlBNDNrT3Ns6HBrNlNatRl0l/skBNBcHSJ7JTMf9B97PNH6aacSqSprMLEL4nLowxfrMb4ORpv/PtErgrCEytbzYehJmMRXHnNgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hgtct6qv; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="fBv/pCWD"
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ecf99dd567so61618656d6.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 13:14:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hgtct6qv"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a54700a463so995670f8f.1;
+        Mon, 09 Jun 2025 13:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749500067; x=1750104867; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bFj+rnVnwrli61+RW3pW0hp2hmvQPvdmAdNSR40r1ZE=;
-        b=fBv/pCWDZBsrmhi+S5m15nxdEmb6BnFtmvfNSy1cBdVTHR95TiSSrT8bjV/0jMq8bP
-         yad/mpUqZw5k24orKm27KxVWETuwuHNyP+1ocWo8Khzcz5hmEf5QJ246igPfgIjGaPnc
-         cYxUaoRvYWb9lkDlzYCUIxjyZijSyTVILgPDMwJn8H4luK6X/G2YMoRpwodgrJAqkRZX
-         F/BAIaJey0SVFnBBun71bT5dTx9Sw7EVg9L4kyZ97xB3QtO/D4WMkdYEg4FVVEAyX1JA
-         s9MRe5PAsc3YFDVi1qHTfauuAr24COOug7RINrORwnbhe8ZfdxWMWMal94RgXoTndp1m
-         tbSA==
+        d=gmail.com; s=20230601; t=1749501418; x=1750106218; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRRMZrP2oXiS+2iiPhUnuzFCLiBggFlP7GuSrH2c3mM=;
+        b=Hgtct6qv2OsPW39Yo8Brm+pd//Ywv4ghcj0Xxr0i2Yt0hAXVd8BzUZAB1VB6zTHzHW
+         C4Rz9mryTV68PsFeMfFt6WJrp+kzSGPsLP/UkzGAlNkVXbAZ4FKxGnTM+FxRhWp3e2ij
+         6f4x4PL/iOalWpYRbAIz98eH8k4uWqm4rj9EH/o4sxGVCp1olGEQcFo9TxmDxO0VcgZV
+         RfGXZ6Gceo6oXlLr4TZgEPe0UTQvb32FlI36e2qgacw6T1uYrFVI+LilPwapohdK1AEp
+         MEieR6rwylxUold/TzrbldaCbhnwUeZ8ZoJR16BeCkD3qfUHCwbtVbK3Zw2wC1/zqpTF
+         ioqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749500067; x=1750104867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bFj+rnVnwrli61+RW3pW0hp2hmvQPvdmAdNSR40r1ZE=;
-        b=ZYB3+PzZEWfLESC7Ib5SURYlT3GOyStKeIpeLrurDdqickwvl4BrLK3QVXTaQV8y/H
-         5ao3jROsd0vD+CBO2U5SyPmuBSuQ7I/5IX6nsY7wuyzhQYW6wJ8gcj1ETXARbRU820Fe
-         cByB6DHZpM8ltNt7CbDGNt2OfCeLHf5ZE2EjVkUR8DRxfZB80cGOHx1c13qShzkIcb8S
-         V/p50sZ1XIEndKtnWiQ2CtI/debANLtjxJ4jSdt0S2Sfa1wIYuqngtTG3sMpiScNaHg/
-         rSQnlFROi3ZBFGiP0rOccUQ7R6gjnMGmOzfLUrF21xjEQ8p1s0XSsaQPSf3B3JF7n1SB
-         1vwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIwlnEEzwH7FD7zNjOhY3ZxO4VbFULBO7Qp33m+Oh2U7jlYU7o2eNJNs2W8zingE123rf5zgfPg/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrD8d/4ay5DpdI84odTJWVdtndyPjtFBLx2GS/pKer5gs4733h
-	KZe3daPQsAcdmVzIfrhNL9Pt3oWDq8bMmdPOa0KsspoebVdYvCVmLVMOZGf5PHlWIv4=
-X-Gm-Gg: ASbGncsKNSTVUdkjuermPaG73po+Hl0L73R9pyFOH/Hafkzso6RwIcUWYPRAOsl8tOB
-	iH0affxXjp/peAejFcOWt6aMH1WRsaIvDvf48vXM6bFiJ/I70pZHA/O6gLylwYlmD1gdUMV9LKq
-	LkJt7yYK+6GJWLgfWoOh5ND94lsneMhHFBQoFt3QRKLUwObtis1/I4bWICAanrpg9q5VbNsk8wy
-	ZZW7l+RpA4FHxLtBl+FRM639xaTryhvK/iHpR9bcUNICFdjIIqHIdtvi3c8wrdugcDdcj+av3HD
-	EA1j5cebYrHCaJd0V5MuGPtqPVWV5HcKtgN+1LsXcuI6U3mWZtskDh9gfctw/VLAgDCNEr9vk+T
-	htwiJtIUrn75nR152x0oO6Z0sYR4IRU4m+OLU
-X-Google-Smtp-Source: AGHT+IEoxsMyfv1zl4Eq2z6OuyNYN5zJiRV3axkBglw2RaCBqnFhaHAJb4H6tYu0A3sn+TFxdgVaMQ==
-X-Received: by 2002:a05:6214:1256:b0:6fb:14:5e89 with SMTP id 6a1803df08f44-6fb08fe7f6fmr255840366d6.19.1749500067642;
-        Mon, 09 Jun 2025 13:14:27 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ac8415sm56510096d6.27.2025.06.09.13.14.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 13:14:27 -0700 (PDT)
-Message-ID: <17a7ab55-aa1a-4d1d-b8f6-27bbe51fe761@riscstar.com>
-Date: Mon, 9 Jun 2025 15:14:26 -0500
+        d=1e100.net; s=20230601; t=1749501418; x=1750106218;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PRRMZrP2oXiS+2iiPhUnuzFCLiBggFlP7GuSrH2c3mM=;
+        b=GO8/OUMKuJ4qPYorJqq3NKMTKGf7yQAYdiYAYiW1OBbw+fbcSIVI8FwGYoQ8qAyjIU
+         rakcbaC8JgEm881/5yNOb4jMN54ONqGYFultyHnecK6ry7CGb+tWIq/PM25hkjleyLVH
+         QLfVDdAaVekdvHavcTdK9pMjtfWHzNlRNt2bFQqZ7Mg2Dm104dBJTfy+8rQJgOiEJYBC
+         9D1kzdQEUJzzHbe6ZEa0WUjRVXDrBVciokeNIpbVnF5E+ySK8R86oEKp7l/TRNwkrc6z
+         3PCfRUhcYrIGuJk5quYwJJtXWmNEe0gjTsk63k/lh1Q1jNl00HHOeVoIxe4/WZchTS7s
+         lnVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUztynf7nEbVYUoIMQgbqg5D+D3t75kVFeLjOU1qgPDBfQIZzhMAMWYciycmmGgv+wud81gouc8U+hR@vger.kernel.org, AJvYcCV+fzV40f1mGrhsvjWZZk00yhjI8t2tuHA7HrPKxyZ4XqsFBIocMj7ag/gO1uc9cqoqMtnQjXAQqcEcRh7v@vger.kernel.org, AJvYcCW3GKMqP+LEihATkmK8u7ryY/6sRwNChN4SMnEddredeKjAqD4Ca0tLnjji3wvcivoWeYYshXy1qJh5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNU94RpmhwjNunjZmGEcG8QZvIMG23+UN3snrCJ/Uh+YF39ddm
+	YNLOdnRSo+FyyCDmHaPsDkezAjO9CSc3pHXVe1b3vW/6GN116Bp3vgy+
+X-Gm-Gg: ASbGncv5tovsqXnTMvlQNxUztAB5MNQXiA/edMRNF68urU7Drvg1L92N+iygEwfAuZX
+	hHCNrWWIrZIM6qVuDEKibMzRMEDPxC9XE1Hz5kK7wSCXFx6t+8oRHTMboVnLbRknWrSPakWJOgJ
+	jBHtdUBrcOx72Um+RAK8MOES2GiJwYHlyX2WuVK90NrnWK/PJxCQAdBAFXRyG8WgXQJQ9XOrXjU
+	l4mJgi38PIQdwZnyEEpBH7cAdFnaXSlP8nwfCJN5Dkqz0Msnu1w6jcptwLshCDRysTCrjlTa7w3
+	KEE08QiwjiU5vqo9UPfY2b22LajIwYXCYaQUK0tma6btpmXgxyZxBfD5Kg2XyLUbKMN+bCVMQqy
+	r6QwQ8vNoNw5FAIT+WWk=
+X-Google-Smtp-Source: AGHT+IHBEbEPbt855qQ4gJTaWfzJVvRxq98v+liy5baKejXU6miw8aenSf5+UBaR0KaKAp9o8Ref4g==
+X-Received: by 2002:a05:6000:430d:b0:3a4:e238:6496 with SMTP id ffacd0b85a97d-3a5514174b2mr873507f8f.18.1749501417983;
+        Mon, 09 Jun 2025 13:36:57 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:3c26:913e:81d:9d46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452730c73d2sm118240345e9.30.2025.06.09.13.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 13:36:57 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/8] Add support for Renesas RZ/N2H (R9A09G087) SoC and RZ/N2H EVK
+Date: Mon,  9 Jun 2025 21:36:48 +0100
+Message-ID: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: spacemit: mark K1 pll1_d8 as critical
-To: mturquette@baylibre.com, sboyd@kernel.org
-Cc: dlan@gentoo.org, heylenay@4d2.org, inochiama@outlook.com,
- linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Guodong Xu <guodong@riscstar.com>
-References: <20250609200822.468482-1-elder@riscstar.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250609200822.468482-1-elder@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/9/25 3:08 PM, Alex Elder wrote:
-> The pll1_d8 clock is enabled by the boot loader, and is ultimately a
-> parent for numerous clocks, including those used by APB and AXI buses.
-> Guodong Xu discovered that this clock got disabled while responding to
-> getting -EPROBE_DEFER when requesting a reset controller.
-> 
-> The needed clock (CLK_DMA, along with its parents) had already been
-> enabled.  To respond to the probe deferral return, the CLK_DMA clock
-> was disabled, and this led to parent clocks also reducing their enable
-> count.  When the enable count for pll1_d8 was decremented it became 0,
-> which caused it to be disabled.  This led to a system hang.
-> 
-> Marking that clock critical resolves this by preventing it from being
-> disabled.
-> 
-> Define a new macro CCU_FACTOR_GATE_DEFINE() to allow clock flags to
-> be supplied for a CCU_FACTOR_GATE clock.
-> 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> Tested-by: Guodong Xu <guodong@riscstar.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I'm very sorry, this path is v2 and I neglected to indicate that
-in the subject line.  Here is v1:
-   https://lore.kernel.org/lkml/20250607202759.4180579-1-elder@riscstar.com/
+Hi All,
 
-					-Alex
-> ---
-> v2: Reworded the description to provide better detail
-> 
->   drivers/clk/spacemit/ccu-k1.c  |  3 ++-
->   drivers/clk/spacemit/ccu_mix.h | 21 +++++++++++++--------
->   2 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index cdde37a052353..df65009a07bb1 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -170,7 +170,8 @@ CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4,
->   CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
-> -CCU_FACTOR_GATE_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1);
-> +CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
-> +		CLK_IS_CRITICAL);
->   CCU_FACTOR_GATE_DEFINE(pll1_d11_223p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(15), 11, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d13_189, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(16), 13, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d23_106p8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(20), 23, 1);
-> diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> index 51d19f5d6aacb..668c8139339e1 100644
-> --- a/drivers/clk/spacemit/ccu_mix.h
-> +++ b/drivers/clk/spacemit/ccu_mix.h
-> @@ -101,16 +101,21 @@ static struct ccu_mix _name = {							\
->   	}									\
->   }
->   
-> +#define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> +			       _mul, _flags)					\
-> +struct ccu_mix _name = {							\
-> +	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> +	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> +	.common = {								\
-> +		.reg_ctrl	= _reg_ctrl,					\
-> +		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, _flags)	\
-> +	}									\
-> +}
-> +
->   #define CCU_FACTOR_GATE_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
->   			       _mul)						\
-> -static struct ccu_mix _name = {							\
-> -	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> -	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> -	.common = {								\
-> -		.reg_ctrl	= _reg_ctrl,					\
-> -		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, 0)	\
-> -	}									\
-> -}
-> +	CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> +			       _mul, 0)
->   
->   #define CCU_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl, _shift, _width,		\
->   			    _mask_gate, _flags)					\
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+This patch series adds support for the Renesas RZ/N2H (R9A09G087) SoC and
+the RZ/N2H EVK (R9A09G087M44-RZN2H-EVK) evaluation board. The RZ/N2H SoC
+is very much similar to the RZ/T2H (R9A09G077) SoC. 
+
+RZ/N2H is a high-performance MPU that delivers advanced application
+processing and real-time operation for industrial applications. It
+features a quad-core Arm Cortex-A55 and dual-core Arm Cortex-R52
+configuration, with security features, and is designed for real-time
+control and high-speed communication.
+
+RZ/N2H SoC supports below features:
+- Quad-core Arm Cortex-A55 and dual-core Arm Cortex-R52 configuration
+- Security functions (optional)
+- Encoder interfaces
+  * 16 channels
+  * EnDat 2.2, BiSS-C, A-format, and HIPERFACE DSL-compliant interfaces
+  * Frequency-divided output from an encoder
+- Various communications interfaces
+  * Ethernet
+    - EtherCAT slave Controller: 3 ports
+    - Ethernet switch: 3 ports
+    - Ethernet MAC: 1 port x 3 units
+  *  USB 2.0 high-speed host/functions: 1 channel
+  * CAN/CANFD (compliant with ISO11898-1): 2 channels
+  * SCI with 16-byte transmission and reception FIFOs: 6 channels +
+    12 channels (for encoder)
+  * I2C bus interface: 3 channel for transfer at up to 400 kbps
+  * SPI: 4 channels
+  * xSPI: 2 channels
+  * PCI Express Gen3: 2 lane x 1 port or 1 lane x 2 ports
+  * SD card host interface: 2 channels
+- Serial host interface
+- 12 bits x 3 unit (4 channels for unit 0, 1, 15 channels for unit 2
+- LCD Controller
+- General-purpose I/O ports
+- Trigonometric function unit
+- 16-bit x 8 + 32-bit MTU3 (9 channels), 32-bit GPT (56 channels)
+- 6-bit CMT (6 channels), 32-bit CMTW (2 channels)
+
+For more information, please refer to the product page:
+
+https://www.renesas.com/en/products/microcontrollers-microprocessors/rz-mpus/rzn2h-advanced-mpu-delivers-high-performance-application-processing-and-real-time-operation-industrial?srsltid=AfmBOoro9kUrZ77ugeURFIlE5ToiFazSyzIsbjBDdGs83NHZfhlkFHlJ
+
+Note, this patch series applies on top of the patch series
+- "Add initial support for Renesas RZ/T2H SoC" [1].
+- "dt-bindings: serial: renesas,rsci: Document RZ/N2H support" [2].
+
+[1] https://lore.kernel.org/all/20250523142417.2840797-1-thierry.bultel.yh@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250609192344.293317-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  soc: renesas: Add config option for RZ/N2H (R9A09G087) SoC
+  dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
+  clk: renesas: Add MSSR support to RZ/N2H SoC
+  arm64: dts: renesas: Add initial SoC DTSI for RZ/N2H SoC
+
+Paul Barker (4):
+  dt-bindings: soc: Add Renesas RZ/N2H (R9A09G087) SoC
+  arm64: dts: renesas: Refactor RZ/T2H EVK device tree
+  arm64: dts: renesas: Add DTSI for R9A09G087M44 variant of RZ/N2H SoC
+  arm64: dts: renesas: Add initial support for RZ/N2H EVK
+
+ .../bindings/clock/renesas,cpg-mssr.yaml      |   5 +-
+ .../bindings/soc/renesas/renesas.yaml         |  10 ++
+ arch/arm64/boot/dts/renesas/Makefile          |   1 +
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  17 +--
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    | 135 ++++++++++++++++++
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  16 +++
+ arch/arm64/boot/dts/renesas/r9a09g087m44.dtsi |  13 ++
+ .../boot/dts/renesas/rzt2h-evk-common.dtsi    |  24 ++++
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a09g077-cpg.c           |   1 +
+ drivers/clk/renesas/renesas-cpg-mssr.c        |   6 +
+ drivers/soc/renesas/Kconfig                   |   6 +
+ .../clock/renesas,r9a09g087-cpg-mssr.h        |  28 ++++
+ 14 files changed, 251 insertions(+), 17 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g087m44.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzt2h-evk-common.dtsi
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
+
+-- 
+2.49.0
 
