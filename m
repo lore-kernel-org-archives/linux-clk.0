@@ -1,127 +1,105 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609481FC0EA
-	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 06:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221628136C
+	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 08:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749449559; cv=none; b=du6PkEMMj/AjePIw5xfPSgSLEyYWdHFanRW+bR80opc+LWl1YFndK3vACtjQsN7beuiqFZwlTd+sfwGJ8Msxugd4XcfGEPyDIsnwDVr12s+7oR6qZaU57MG/xahfmgCFAWVU6a5kZWU5ToS6H0wdtee2SHg7tQZhAaGtxaHsIAM=
+	t=1749456563; cv=none; b=ihkNgiFtf9wpwmqzd9KJcOycPLP6Hykr2PoKUByYvL3lMDkXUM+MZt6seJvrTpHE/i9XoCLnc41Ni55Q3TBKyGrA0Ky/q33/cdy2cqP9pANOy0/xDsmleXOimVIL4ecRs4O1DCWV/L4LHE/jUVbH9nKegRRNBamuHflBIH6/2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749449559; c=relaxed/simple;
-	bh=hC7sYjRTRprvhqWeyddKYr1R75JwHa16GRXz1WGFPCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVjjZM3861NK1SRAya7+QU2vJ2BLQedlzDLrwAY7G6Snp8nv/ekKcIiYqVmau0G8WivJi7EllW1q8pmsM9bBTHp27ZtdjsipImLYVu8CWG1iazAVkeAGst1bDUzZgGH4nTDa18bXBSCjfD/lJ+/gnQGnUUf9BRUyBqIUMp5mIpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HkI0tmDf; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1749456563; c=relaxed/simple;
+	bh=8AACitPeHLTam5VzlLo5+bcHH+YOkRrdMQnNubGwCRA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=AFKf+lhUygo9Rf4g0DuEQttl2U9uHLDC1sp+1YehdXfbQ/zU15HgVkNhMS+/z1kCqBIS2ATKnSrG2rs8CZMDUzNa3nfl46BzBi4tkDvS411fWV4s4l3TRAsymUJwI7X0oYNYpscNgn/9B94S4OfVWMxXHig8mYR3zKAJdEKEkUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pgasgp+6; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HkI0tmDf"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5532f9ac219so4629317e87.1
-        for <linux-clk@vger.kernel.org>; Sun, 08 Jun 2025 23:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749449555; x=1750054355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
-        b=HkI0tmDf1zaAwVk2tV5DEWzZwI0X8AHf6QTikEWF+Im4kHdBPc0S7MghSGPMR8xoZF
-         62OQb+BcXlLmIMgPqGyNczQPs+BBLbWqJagIeECqHHYLiSKir7rCD/eg6vcAL3JoGRXw
-         cWhlupyCD31F5fNgfsTorQOdKg3nA9TkDfDht6YfaYVP8OYkMQmy8uaHoxONMQuMTZvf
-         X9ypvYIF4TuizkElbgOKINgqv8aNoYfcTRqgkCHzsvKknEuSGqfp641F9E09Lt+FHRzf
-         2DPKPcqU44NOaX/eyg+dLZiX+9+U2MDKiudcdxG4T8RRsfWdR8P6LYhWe/FXvSohtqCQ
-         q33Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749449555; x=1750054355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
-        b=pg4ZrvOv+d8qlW5HyazjirkDD3rIzrUYuSlLPx9lxsRo+u6+/2WD52r2NBOrpWod9n
-         O4e54QoQhHzQAMRR5ul51PH3jfEL1l9mPtl7PeN+Nlz94lbnDCyYLwoDcQheumkXVBrr
-         VU2/UIfRMiAN5rzCrVLNU3UyN1W3w5LDsP89qsA1kQnKGzPf6sj7ZKLm/YkXQjUEtBXd
-         OGJd9sWZaTS2ufZPQQF/4lIDFSMPVTtKvWsNihxdk5E6KntFDyqsgoyVVkEHdzk9M9TF
-         71Aohc+Jux0QByEtEAkcL5kZ5vK0/CcNbDHzoqYxRAQHPwkkfx4LLcJCYz1LN7JrUI/J
-         fm4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFVcbPHvkGrzuKagjeXV5YK8ditluWV65xX4lZcbqAeponam/n49r6/hIPJShUA5GlfGMt4vDZGpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAko4iX77r7FZqjn73o78PagtIbyfuxOBRdZtE1rWSeoWtiNdY
-	Qu6jUKyZqzdcEG6bZKachTJQX8MAVkPxWm6CjfzwgGaYebsESzMss781WBvr2bR/KpzB3doMFa4
-	pn+PZJ3JOD3R3FiEuI4Qh5tYCoZbPXSd6bYwK8kiMDQ==
-X-Gm-Gg: ASbGncsszT26gxistPiSgrjRVlpxQFsF4njtQSeU/Z/MiiQS1+eVQR4GCMT28hC1T2a
-	7npY/Mcs7AbKtIoLMuf7gklCpaKB3uSmbofXdTyGw5NbnVJkoBV/CmR+ngw89+Qjt1mMaNPdVDM
-	R1SbZda+SCgDpCprRQr3GCybXe1+9eNRmoVg==
-X-Google-Smtp-Source: AGHT+IEECTtnbfpfpm1PCJ+0qNEPhUm+SPgQTf/zlmkXsjTkZrawcTxrDJFp5prLSUOiP9b4jKSeL0mzxrsjJjV1G9g=
-X-Received: by 2002:a05:6512:3e14:b0:553:2633:8a64 with SMTP id
- 2adb3069b0e04-55366bee0a6mr3224048e87.23.1749449555474; Sun, 08 Jun 2025
- 23:12:35 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pgasgp+6"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250609080918epoutp029ac4232c36c6fcf33f5c2596490202a8~HUXiBTg-N1189311893epoutp02Y
+	for <linux-clk@vger.kernel.org>; Mon,  9 Jun 2025 08:09:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250609080918epoutp029ac4232c36c6fcf33f5c2596490202a8~HUXiBTg-N1189311893epoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749456558;
+	bh=cN9o5yJb7lDfiZzuAc8Z6y89aiz9604YtYG7xD9tzTw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=pgasgp+6AQvZMrxhGTbMIerWhFBSld2H6TzZ7CFtP5CLFGFT4rFuzqFGJ6Mn9J/T+
+	 u0GYDLTHXpEe2ScN/ZVneDJQykIp22rpIMNLTSifMrqlCEKYsA5GE4yix1oKPjYNzN
+	 F7Ro9455b4wmU3M12HxR5rieWlL1Ja6o/aL3cnfY=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250609080917epcas5p17c6704d44ba3593428bcb9b96f039e56~HUXhnjq5Y2375323753epcas5p1M;
+	Mon,  9 Jun 2025 08:09:17 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bG4MH15c4z3hhT9; Mon,  9 Jun
+	2025 08:09:15 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250609080914epcas5p4d304dbdc3a5741045d7e489c370c4417~HUXeeC5qH1804718047epcas5p4z;
+	Mon,  9 Jun 2025 08:09:14 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250609080911epsmtip1e3e91558507d9affa05a8678865f25f8~HUXcEjzBR1204112041epsmtip1a;
+	Mon,  9 Jun 2025 08:09:11 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
+	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
+	<sunyeal.hong@samsung.com>, <shin.son@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<chandan.vn@samsung.com>, <karthik.sun@samsung.com>,
+	<dev.tailor@samsung.com>
+In-Reply-To: <20250529112640.1646740-3-raghav.s@samsung.com>
+Subject: RE: [PATCH v3 2/4] dt-bindings: clock: exynosautov920: add hsi2
+ clock definitions
+Date: Mon, 9 Jun 2025 13:39:10 +0530
+Message-ID: <043e01dbd915$c9e043a0$5da0cae0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-5-apatel@ventanamicro.com> <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
-In-Reply-To: <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 9 Jun 2025 11:42:23 +0530
-X-Gm-Features: AX0GCFvPnCJfNRo5uBNaPo8NZXrvaeCQeQ6i_dUaHiR22KPdWkZ9co7wy5KHhiQ
-Message-ID: <CAK9=C2XJ7+homTqdiYvYRv6J+4-gEM3jLmi3EpMDn=wZjkMOqA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/23] RISC-V: Add defines for the SBI message proxy extension
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIRyuXPQglR2pg1tLiplohNF2WAzQMeJa83AJLEY+CzcMpuQA==
+Content-Language: en-us
+X-CMS-MailID: 20250609080914epcas5p4d304dbdc3a5741045d7e489c370c4417
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250529111711epcas5p48afd16e6f771a18e3b287b07edd83c22
+References: <20250529112640.1646740-1-raghav.s@samsung.com>
+	<CGME20250529111711epcas5p48afd16e6f771a18e3b287b07edd83c22@epcas5p4.samsung.com>
+	<20250529112640.1646740-3-raghav.s@samsung.com>
 
-On Tue, May 27, 2025 at 2:17=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 25, 2025 at 02:16:51PM +0530, Anup Patel wrote:
-> > Add defines for the new SBI message proxy extension which is part
-> > of the SBI v3.0 specification.
->
-> ...
->
-> > +/** RPMI message protocol specific MPXY attributes */
->
-> If you do a kernel-doc, do it properly.
 
-Okay, I will update.
 
->
-> > +enum sbi_mpxy_rpmi_attribute_id {
-> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_ID =3D SBI_MPXY_ATTR_MSGPROTO_ATT=
-R_START,
-> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_VERSION,
->
-> > +     SBI_MPXY_RPMI_ATTR_MAX_ID,
->
-> Remove trailing comma for the terminator.
+> -----Original Message-----
+> From: Raghav Sharma <raghav.s@samsung.com>
+> Sent: Thursday, May 29, 2025 4:57 PM
+> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
+> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
+> sunyeal.hong@samsung.com; shin.son@samsung.com
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; netdev@vger.kernel.org;
+> chandan.vn@samsung.com; karthik.sun@samsung.com;
+> dev.tailor@samsung.com; Raghav Sharma <raghav.s@samsung.com>
+> Subject: [PATCH v3 2/4] dt-bindings: clock: exynosautov920: add hsi2 clock
+> definitions
+> 
+> Add device tree clock binding definitions for CMU_HSI2
+> 
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> ---
 
-Okay, I will update.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
->
-> > +};
-> > +
-> > +/* Encoding of MSG_PROT_VER attribute */
-> > +#define SBI_MPXY_MSG_PROT_VER_MAJOR(__ver)   (((__ver) >> 16) & 0xffff=
-)
-> > +#define SBI_MPXY_MSG_PROT_VER_MINOR(__ver)   ((__ver) & 0xffff)
->
-> This can utilise GENAMSK() or even upper_16_bits()/lower_16_bits().
-
-Okay, I will update.
-
-Regards,
-Anup
