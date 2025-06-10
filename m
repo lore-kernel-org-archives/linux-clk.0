@@ -1,67 +1,67 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51622DCBF2
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 14:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675682DFA33
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 14:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749564403; cv=none; b=ZT+HRVldSJ4updrKVbjR5iyj94Sj+s15yN+xEtJl3GlrTabDNx0puOhso5tLOTXJZ7rpnymSI54uDc6yDMARPbOW1kzsVQExJiGKQ2pbfXV/FYERTsqqevIJbDaLDhhE3ace1pwXL7fLRj1yH7UDH+CuAFn7yanCpzivGvlhwLE=
+	t=1749564406; cv=none; b=Q2c9cUYOwfKQThGJVocm9qKOr+veV/C6ws+84WQloWhGAZrXldmhAXQfg3vXlVJ6QuwxdXEI/k8lP4zj1pah6GClaB/xdtik1XUqZ/lFU0AptQwMg5+yN/vwguQ1NayteIlJuzIw4oqwsNKKQ48d+vk7nN66tJ90r+eC9qcKRQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749564403; c=relaxed/simple;
-	bh=B37GRMruOX+ZSyC96p19lfWnZVPySg5VUvTqpflIprM=;
+	s=arc-20240116; t=1749564406; c=relaxed/simple;
+	bh=PDdJg5qIS7HbPoHRu893zZjvEEa3IuzpHJO/F1Hc654=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=meXm6o/AkbPeHQeO4/mO2q8JxJiJlviAd+DZqgHB2xKJJSodQCmL9z4sm3L3lvQr8m+Z1XphDIjxxJ0u3SD67uBDAF4SxvWK7u4A/Adj5xosnJM3ojZ5JmQigpzEOegL54S3qoWJReOd8MdhbnETjeE3+8l3nTpHZ57hpW0RS/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cmv+J8s7; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=A8dzQ4U/PlzAbP4s8Km87l34wWDmxeLJqiiTqcsyCxrV7lnmeIvvTruXuZCn3XhFmnsQOlnpv38PPPFMLE01BFvhLLiRHKcYmd0z/6ZKt5mvaP96Q7Y0o5yg3Aa/9moxyzTl8LJkPQbIPHdAl9ChL+2JFlyHuLM+8cp2ol/+bfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcDSFZZ6; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cmv+J8s7"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450d08e662fso2098375e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 07:06:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcDSFZZ6"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4ebbfb18fso482493f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 07:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749564399; x=1750169199; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749564403; x=1750169203; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n82J7xKXmpUjRKj7zBCcVyEW4JwAUsZ8BkHyrQ3/GMg=;
-        b=cmv+J8s7b4DL49yqwFlRZ4skhXwqDVbKJryzN9LR9u8bNm9APVEYDQ7NyizTfr3weP
-         0CxoYqHLKq2BDLVkVeIiHYSKuVXaXBuXp7xjhzVv/FdyB/SV8TFNKSP9oDiobSCowUTR
-         phbISPcrF/UcS8fXz8sjUuNi00Vm7pwY9i3Eqw0be87UVlKFAH1AF0bvWvj7iy0058dn
-         YAEa8egGNwssBFQPgRIx0AzTv3e3y7mO/RHz1Rfrya8KvWSYLdsguFbVsdDXrP1Egp5j
-         Nhs+hm+Ur23EcawblzmZ5YZL221SOVE72BWUr1+oXGENUnhQYTE732IdPID95kiC4Sge
-         ui8g==
+        bh=CBcl3mtlA2qXlHBtwB5KJDW+hrhCZib9hqqSTtK3hgY=;
+        b=RcDSFZZ6/ofukSezyhLNCbJJo9hQ0K9PoWRV5rSrBw2rknL7BW/5s1mCmc8Ng/ANKh
+         TtUpMkKmTEkbNga9EUeKT7kyxDZOs3TwRMIo1CW8t8oZ+d4riwGw1HVJW0lH/f6Z4o9b
+         1odq8cdbIumSEH8GoWONZ8qpP8wujdCuieDfg16AaQBfqke+iIr+WI2lLEP0W7flpY4B
+         Wyw/eeL1ic5qvYgdnxJCE1O66Vio24/JA75pxgPeX07meZUemNd2VmR/pAw6SKbpU+L8
+         4JUGaa02yX78lZFgvp8SMdHQ5L3R4r6V76jWIVRyLkC0fMTqzJrHOJ/S++c7qPTZK7Qj
+         VX/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749564399; x=1750169199;
+        d=1e100.net; s=20230601; t=1749564403; x=1750169203;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n82J7xKXmpUjRKj7zBCcVyEW4JwAUsZ8BkHyrQ3/GMg=;
-        b=EbXSW2BIR1W1NUEHrlYJSEd+sfrpvEcaSPd3gnzG85PVYJlhsOeuEBRRv2VBTX+v1A
-         Dzsa5cVRGJ+1yqu1aHRs9f+F1sU4G/D9eGA8EJPoSvZCqdr05EYiUxkXGskhxLlW7vJu
-         EOQZbMQ/20850QzQuzUQdmvktV3rTQnAOMPocE2xqz/Y6MRF+EhBID5uwuzjsIUC1S2b
-         M+opT5F/caI9VMAunP0UH8PAweF9RRqhXFl+/LGmUO5Njwt8T5jG/rM+E1yR8AhLyeQv
-         E2B6XVzxtTpBLS5YaHRZuANSN7cbfEXeBhUmcDVolS5q/BGKtqAC4UxqgaHRo9cvrMIa
-         YD7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVq0cOk3iVpxPQ5lQ2hgGRF/VWnyxnwj7jkY3VTx+q2mfqynHJTtu+otaeiYWwkb+vQ9YbLjl2NFyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcF+peaYHjuuvFsIJY+tJrCQ8ywwJtg0d2Ru5tIS2DdCFuZXVL
-	PzND4tAGZF7cDuEY/oJG5vqnwK/C9+Oq/01G09kM2gWUs2OYYGf+T+vYAQSzxBspzEc=
-X-Gm-Gg: ASbGnctFrNRLa5ICNumjyuMgcj1NYI56/2KY6eK/Ljy+fNk1rhXgHeTMkANDksjob8i
-	KBzTOssAHzbed8jh1+FffcO8ppXo5fbPbHXDx3Dp103ML1iQ85nCT1N++RNbIkcP/jGzso7WBxg
-	v6V9NHwONyrLSC7ItLElkTQ912ebULjEGmEuembbugQX3QhcHBBJBMAA0VsEzRCweXN3TPtxYFP
-	N5P/6mR5VCq/dlx2vmAkIoAs9UqBrwS0oRVTd1Ld+sUksgK/2a0QGsr0O2loOmZj6xq7XGdHolT
-	SF5GWyZLEmyAIdXyMbx0X5/6eG0jGgwJNVCqXTvlrIfGxgjCQhNeQFjabDriwKY6eGBCHIc01bb
-	gPsAYhA==
-X-Google-Smtp-Source: AGHT+IG/dBTylLygyD2mPbuxdE/ELraLT0KX1851OeZv3cweWndw3S/3EbupdYYae7LTZf5icINklg==
-X-Received: by 2002:a05:600c:1e02:b0:439:88bb:d00b with SMTP id 5b1f17b1804b1-4529abc31c1mr59950945e9.5.1749564399005;
-        Tue, 10 Jun 2025 07:06:39 -0700 (PDT)
+        bh=CBcl3mtlA2qXlHBtwB5KJDW+hrhCZib9hqqSTtK3hgY=;
+        b=Sn3oDhpFyrWFkRo8G7tDJ+rb+k81ELF54wMvZs/lIRNYv8Pb2xHADBbA+mChwBlTPq
+         OBsLOdC6haa2+lsWUJG0mxLioBgv63JFEACBZbM/pNunpNAYJWZlJRgd4/XGhFFPGD93
+         vePV//vFA1rGKA5b/XiNc53OD23YhftF8/p5QwIAXnwODvbvvmLpS4QWNYhI/m6F4KDb
+         otFFp3gn4f2aFls6p2yyU46BxnK67YAmgY4bVgXQOf3VsR5xm41yMFlJ/uI1G5QAmQ9E
+         mmf/nQIWl5NJXBZk/GF6dtKMorrvrTisTdaCQxNmPZiv28O8YFQ76GlSy37pSHv3Zg/F
+         7RIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWccoaX3oQj8W8IZ0XJ0xzW9WkY2b5g278R0KXZnhuqFQN8ISJ/+PFoLKn0+lRVApobvoJFffwI3eE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhE40IPAfRPg5MTYpI/WPn5Uz5pB+jOmmVbTYWYino8hE32Rbk
+	4xlozqg/3/p0MLSeXbSKFNjNj+NVXx7DZO4ToYsaMdFLU1FS4oTKo/sK7hY8yVBLaYE=
+X-Gm-Gg: ASbGncvMrVFb397Sz/rVGWMrDYE1fzogpYsZhc2Dr8DlmCgFf1+KN26LgjTABSHAf//
+	H5SVx3XNKzNxzDN93QI7TKltmG0fS+fGFgdI2ZQOB2+uFP9IGNWUVPu8sQpNVwuyd2PIHWo+dMt
+	4N82rb+sbXMcvf89ZrCJQP0qy3qpQNZZQKXhG5dq4zUnq4Y2CxQ6JuLDzdROYHi5+zD0QJ3p296
+	73oXBpODFvn+ZG+/+t1hSM9groREUrd0NlrHqyUgllAFUxvTXdyHdHnLGKvuuCdb5Q4BYewmA4s
+	43Q2pe2s/kqy3z2oRWjtQ5+pngG5K+p4DR2GU2mHoCRUrOesQ4WU6jGcX90yNdCwW452a+WqYtT
+	MZ0iQNw==
+X-Google-Smtp-Source: AGHT+IFnue5hc35VVNgvb+VArzqO/xMlK9wQa6Q2rScaAFY6GDOjKfFaMoYtpeOxRfR6atMZBXHMzQ==
+X-Received: by 2002:a5d:5f8b:0:b0:3a4:e0e1:8dc8 with SMTP id ffacd0b85a97d-3a53319cb6emr4791148f8f.9.1749564401173;
+        Tue, 10 Jun 2025 07:06:41 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244df06sm12734469f8f.69.2025.06.10.07.06.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244df06sm12734469f8f.69.2025.06.10.07.06.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 07:06:38 -0700 (PDT)
+        Tue, 10 Jun 2025 07:06:40 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 10 Jun 2025 16:05:52 +0200
-Subject: [PATCH v6 14/17] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
+Date: Tue, 10 Jun 2025 16:05:53 +0200
+Subject: [PATCH v6 15/17] drm/msm/dpu: Implement CTL_PIPE_ACTIVE for v12.0
+ DPU
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-b4-sm8750-display-v6-14-ee633e3ddbff@linaro.org>
+Message-Id: <20250610-b4-sm8750-display-v6-15-ee633e3ddbff@linaro.org>
 References: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
 In-Reply-To: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
@@ -93,244 +93,192 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
  Srinivas Kandagatla <srini@kernel.org>, 
  Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7947;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6580;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=B37GRMruOX+ZSyC96p19lfWnZVPySg5VUvTqpflIprM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoSDvL7xck0GNYEedf7be2lVr7C90maScpLeaRp
- XR4GjkJK1yJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaEg7ywAKCRDBN2bmhouD
- 12gEEACEHHrURLT7ce5ukBw9rVKVSFrrkZt53yHh19ZSi1KTTidp07cRCb6eeHzUR+vH6PXhuRf
- jeMRljCTZxREf0yuBAsE015l/M/HmvCG8HyWVqnuZ5HN6aMpjBc/XXW+tIvquI3uuz9wvCiCHED
- 2jkG2XFu5pkRzADKBgOzF82FoV9AbaTFh1tCcv3tgKx9qoJyavtkhwI1rdwR7Iu70SdJpmK0n13
- H+w4potU8b1pGuvfHTFGbcQvfZZpQeKNMvVanVCUPJWDNVfQk4mK+LENGVYMGcp7j1d+Juxil+w
- 477KkhIq8Xv9KSE7Hlaf4IbW5t3hCRWlqXrH6dQjLt2Sjr7yH4a+M7bLieN06lj/9uh+LzCnl0h
- 9DACq86Aw1Cm4/vU/7rJ3F6Mr/npccB+utjxzhKjpGENjebIInqLCOLRXaWun4pQ7XF9pxqsXnb
- 1F8N7eU9oOX3XxF3ALtjH2cRvu+LiQC5cAjI0Cd7e8tmW5HrkttMhmNBxj7EF4DpKbc7pgfZWqs
- yeCkuJunafQzktagMr9+0iNFbEDxZPMQch8pF0g0rUxkFRaMCsuz2Oyb0GTr2lb5GBB2aMRdLjl
- zDU9wL6t9G4Au0j9bslgnhYvKzDiWNtPj6I7k9VG/AeJ5vKjd+rHTUyFytCkFrGCpfZu/R6DDip
- P4L1S9YifI2YAqg==
+ bh=PDdJg5qIS7HbPoHRu893zZjvEEa3IuzpHJO/F1Hc654=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoSDvMj11z6OwjHQNIAPJQ3fXNkq2xWlp9svl9k
+ 1pofTOhOXOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaEg7zAAKCRDBN2bmhouD
+ 1/mRD/9fsunALr5xCqYqRm1+udEXhJyuzA6VBVaxqH36ReMkUZmNkTtGNZ5l5Bkv1AXIaRw98aT
+ xStOZ0TJ1wpjKwGkcOnYZ1ocBgKQabXSYrGe/bMRcrkLW96WcvZrzKXsaZz1uMiCn9HKUh/ZhrI
+ UleqjsoasJPBeWWkWFgbeWUgriFkpxpQy9vw3M9Q6oMFjlzPlqiNEssXcZMZpQWIlJD40XPQl7o
+ 92G2z5hfXZn5XQWtstlQzp01i5+2pvLONcDjvfbAptVVhPHXkMqleVJsMCjr21b9UbDtTE3IomF
+ hewtTpeGEE5ADFDtmqB20bb85WUvqPYksxzlQHRGhx++xNdJ/DCVv0SOL/KHOt8BdE+nL7zv+90
+ qaC9z7ywNg3NM449nP7Bv3TDEfd/R4bUc/9KctsX2EFAv0VME/OdkzML5/czCqRBcSEAcA3PBz2
+ M8nXXk+9kloa+Sd2w87pbKQToYTfmhL37mVvsDaTFW1xdc8HJXUfbGcmHJYmuCe65/GjBFpFFz1
+ 2mV3fKYv4C3pQ04PiNwl2kA14e/blcPmzLdNbsqpRTFmCv0PcvWoF5dR3x0PsoIMT9mni2bAo30
+ HjtvO14oNWMPN975mal2ojmvqppLb2o5dCUXDjHyiv0luugrGYODx0epiMGNCkx0bI+Z7g9quHF
+ VkNSkYypmckAJlQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
-differences and new implementations of setup_alpha_out(),
-setup_border_color() and setup_blend_config().
+v12.0 DPU on SM8750 comes with new CTL_PIPE_ACTIVE register for
+selective activation of pipes, which replaces earlier
+dpu_hw_ctl_setup_blendstage() code path for newer devices.
 
-Notable changes in v6:
-Correct fg_alpha shift on new DPU, pointed out by Abel Vesas.
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
-Changes in v6:
-1. Checkpatch: CHECK: Prefer kernel type 'u32' over 'uint32_t'
-2. Fix for fg_alpha shift (Abel Vesa).
-
 Changes in v4:
-1. Lowercase hex, use spaces for define indentation
-2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
+1. Lowercase hex
+2. Add Dmitry's tag
 
 Changes in v3:
 1. New patch, split from previous big DPU v12.0.
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 23 ++++++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 +++++++++++++++++++++++++++++--
- 2 files changed, 97 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  9 +++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  3 +++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c  | 29 +++++++++++++++++++++++++++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h  |  8 ++++++++
+ 4 files changed, 47 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 92f6c39eee3dc090bd957239e58793e5b0437548..5e986640c8ce5b49d0ce2f91cc47f677a2e3f061 100644
+index 5e986640c8ce5b49d0ce2f91cc47f677a2e3f061..50897de0ab55c2d8dc2e6547b9f3a033a3ca9b45 100644
 --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
 +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -320,14 +320,22 @@ static bool dpu_crtc_get_scanout_position(struct drm_crtc *crtc,
+@@ -453,8 +453,10 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+ 	u32 lm_idx;
+ 	bool bg_alpha_enable = false;
+ 	DECLARE_BITMAP(active_fetch, SSPP_MAX);
++	DECLARE_BITMAP(active_pipes, SSPP_MAX);
+ 
+ 	memset(active_fetch, 0, sizeof(active_fetch));
++	memset(active_pipes, 0, sizeof(active_pipes));
+ 	drm_atomic_crtc_for_each_plane(plane, crtc) {
+ 		state = plane->state;
+ 		if (!state)
+@@ -472,6 +474,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+ 			bg_alpha_enable = true;
+ 
+ 		set_bit(pstate->pipe.sspp->idx, active_fetch);
++		set_bit(pstate->pipe.sspp->idx, active_pipes);
+ 		_dpu_crtc_blend_setup_pipe(crtc, plane,
+ 					   mixer, cstate->num_mixers,
+ 					   pstate->stage,
+@@ -480,6 +483,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+ 
+ 		if (pstate->r_pipe.sspp) {
+ 			set_bit(pstate->r_pipe.sspp->idx, active_fetch);
++			set_bit(pstate->r_pipe.sspp->idx, active_pipes);
+ 			_dpu_crtc_blend_setup_pipe(crtc, plane,
+ 						   mixer, cstate->num_mixers,
+ 						   pstate->stage,
+@@ -503,6 +507,9 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+ 	if (ctl->ops.set_active_fetch_pipes)
+ 		ctl->ops.set_active_fetch_pipes(ctl, active_fetch);
+ 
++	if (ctl->ops.set_active_pipes)
++		ctl->ops.set_active_pipes(ctl, active_pipes);
++
+ 	_dpu_crtc_program_lm_output_roi(crtc);
  }
  
- static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
--		struct dpu_plane_state *pstate, const struct msm_format *format)
-+				      struct dpu_plane_state *pstate,
-+				      const struct msm_format *format,
-+				      const struct dpu_mdss_version *mdss_ver)
- {
- 	struct dpu_hw_mixer *lm = mixer->hw_lm;
- 	u32 blend_op;
--	u32 fg_alpha, bg_alpha;
-+	u32 fg_alpha, bg_alpha, max_alpha;
+@@ -529,6 +536,8 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
+ 					mixer[i].lm_ctl);
+ 		if (mixer[i].lm_ctl->ops.set_active_fetch_pipes)
+ 			mixer[i].lm_ctl->ops.set_active_fetch_pipes(mixer[i].lm_ctl, NULL);
++		if (mixer[i].lm_ctl->ops.set_active_pipes)
++			mixer[i].lm_ctl->ops.set_active_pipes(mixer[i].lm_ctl, NULL);
+ 	}
  
--	fg_alpha = pstate->base.alpha >> 8;
--	bg_alpha = 0xff - fg_alpha;
-+	if (mdss_ver->core_major_ver < 12) {
-+		max_alpha = 0xff;
-+		fg_alpha = pstate->base.alpha >> 8;
-+	} else {
-+		max_alpha = 0x3ff;
-+		fg_alpha = pstate->base.alpha >> 6;
-+	}
-+	bg_alpha = max_alpha - fg_alpha;
+ 	/* initialize stage cfg */
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index c0ed110a7d30fa1282676e3ae4c9f1316a3a3bf1..a52d5a74759ed9b1b12a0f00ee2417d9ee37fef9 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -2197,6 +2197,9 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
  
- 	/* default to opaque blending */
- 	if (pstate->base.pixel_blend_mode == DRM_MODE_BLEND_PIXEL_NONE ||
-@@ -337,7 +345,7 @@ static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
- 	} else if (pstate->base.pixel_blend_mode == DRM_MODE_BLEND_PREMULTI) {
- 		blend_op = DPU_BLEND_FG_ALPHA_FG_CONST |
- 			DPU_BLEND_BG_ALPHA_FG_PIXEL;
--		if (fg_alpha != 0xff) {
-+		if (fg_alpha != max_alpha) {
- 			bg_alpha = fg_alpha;
- 			blend_op |= DPU_BLEND_BG_MOD_ALPHA |
- 				    DPU_BLEND_BG_INV_MOD_ALPHA;
-@@ -348,7 +356,7 @@ static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
- 		/* coverage blending */
- 		blend_op = DPU_BLEND_FG_ALPHA_FG_PIXEL |
- 			DPU_BLEND_BG_ALPHA_FG_PIXEL;
--		if (fg_alpha != 0xff) {
-+		if (fg_alpha != max_alpha) {
- 			bg_alpha = fg_alpha;
- 			blend_op |= DPU_BLEND_FG_MOD_ALPHA |
- 				    DPU_BLEND_FG_INV_MOD_ALPHA |
-@@ -481,7 +489,8 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
- 
- 		/* blend config update */
- 		for (lm_idx = 0; lm_idx < cstate->num_mixers; lm_idx++) {
--			_dpu_crtc_setup_blend_cfg(mixer + lm_idx, pstate, format);
-+			_dpu_crtc_setup_blend_cfg(mixer + lm_idx, pstate, format,
-+						  ctl->mdss_ver);
- 
- 			if (bg_alpha_enable && !format->alpha_enable)
- 				mixer[lm_idx].mixer_op_mode = 0;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-index 3bfb61cb83672dca4236bdbbbfb1e442223576d2..f220a68e138cb9e7c88194e53e47391de7ed04f7 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c
-@@ -19,12 +19,20 @@
- 
- /* These register are offset to mixer base + stage base */
- #define LM_BLEND0_OP                     0x00
+ 		if (ctl->ops.set_active_fetch_pipes)
+ 			ctl->ops.set_active_fetch_pipes(ctl, NULL);
 +
-+/* <v12 DPU with offset to mixer base + stage base */
- #define LM_BLEND0_CONST_ALPHA            0x04
- #define LM_FG_COLOR_FILL_COLOR_0         0x08
- #define LM_FG_COLOR_FILL_COLOR_1         0x0C
- #define LM_FG_COLOR_FILL_SIZE            0x10
- #define LM_FG_COLOR_FILL_XY              0x14
- 
-+/* >= v12 DPU */
-+#define LM_BORDER_COLOR_0_V12            0x1c
-+#define LM_BORDER_COLOR_1_V12            0x20
-+
-+/* >= v12 DPU with offset to mixer base + stage base */
-+#define LM_BLEND0_CONST_ALPHA_V12        0x08
- #define LM_BLEND0_FG_ALPHA               0x04
- #define LM_BLEND0_BG_ALPHA               0x08
- 
-@@ -83,6 +91,22 @@ static void dpu_hw_lm_setup_border_color(struct dpu_hw_mixer *ctx,
++		if (ctl->ops.set_active_pipes)
++			ctl->ops.set_active_pipes(ctl, NULL);
  	}
  }
  
-+static void dpu_hw_lm_setup_border_color_v12(struct dpu_hw_mixer *ctx,
-+					     struct dpu_mdss_color *color,
-+					     u8 border_en)
-+{
-+	struct dpu_hw_blk_reg_map *c = &ctx->hw;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+index fe4fdfb8774b176fb024d76dc0bd269d9736d226..4299e94351d5e5371a86608f5ec1246f0cbe4290 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+@@ -42,6 +42,7 @@
+ #define   CTL_INTF_FLUSH                0x110
+ #define   CTL_CDM_FLUSH                0x114
+ #define   CTL_PERIPH_FLUSH              0x128
++#define   CTL_PIPE_ACTIVE               0x12c
+ #define   CTL_INTF_MASTER               0x134
+ #define   CTL_DSPP_n_FLUSH(n)           ((0x13C) + ((n) * 4))
+ 
+@@ -681,6 +682,9 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_hw_ctl *ctx,
+ 	if (ctx->ops.set_active_fetch_pipes)
+ 		ctx->ops.set_active_fetch_pipes(ctx, NULL);
+ 
++	if (ctx->ops.set_active_pipes)
++		ctx->ops.set_active_pipes(ctx, NULL);
 +
-+	if (border_en) {
-+		DPU_REG_WRITE(c, LM_BORDER_COLOR_0_V12,
-+			      (color->color_0 & 0x3ff) |
-+			      ((color->color_1 & 0x3ff) << 16));
-+		DPU_REG_WRITE(c, LM_BORDER_COLOR_1_V12,
-+			      (color->color_2 & 0x3ff) |
-+			      ((color->color_3 & 0x3ff) << 16));
-+	}
-+}
-+
- static void dpu_hw_lm_setup_misr(struct dpu_hw_mixer *ctx)
- {
- 	dpu_hw_setup_misr(&ctx->hw, LM_MISR_CTRL, 0x0);
-@@ -112,6 +136,27 @@ static void dpu_hw_lm_setup_blend_config_combined_alpha(struct dpu_hw_mixer *ctx
- 	DPU_REG_WRITE(c, LM_BLEND0_OP + stage_off, blend_op);
+ 	if (cfg->intf) {
+ 		intf_active = DPU_REG_READ(c, CTL_INTF_ACTIVE);
+ 		intf_active &= ~BIT(cfg->intf - INTF_0);
+@@ -737,6 +741,23 @@ static void dpu_hw_ctl_set_active_fetch_pipes(struct dpu_hw_ctl *ctx,
+ 	DPU_REG_WRITE(&ctx->hw, CTL_FETCH_PIPE_ACTIVE, val);
  }
  
-+static void
-+dpu_hw_lm_setup_blend_config_combined_alpha_v12(struct dpu_hw_mixer *ctx,
-+						u32 stage, u32 fg_alpha,
-+						u32 bg_alpha, u32 blend_op)
++static void dpu_hw_ctl_set_active_pipes(struct dpu_hw_ctl *ctx,
++					unsigned long *active_pipes)
 +{
-+	struct dpu_hw_blk_reg_map *c = &ctx->hw;
-+	int stage_off;
-+	u32 const_alpha;
++	int i;
++	u32 val = 0;
 +
-+	if (stage == DPU_STAGE_BASE)
-+		return;
-+
-+	stage_off = _stage_offset(ctx, stage);
-+	if (WARN_ON(stage_off < 0))
-+		return;
-+
-+	const_alpha = (bg_alpha & 0x3ff) | ((fg_alpha & 0x3ff) << 16);
-+	DPU_REG_WRITE(c, LM_BLEND0_CONST_ALPHA_V12 + stage_off, const_alpha);
-+	DPU_REG_WRITE(c, LM_BLEND0_OP + stage_off, blend_op);
-+}
-+
- static void dpu_hw_lm_setup_blend_config(struct dpu_hw_mixer *ctx,
- 	u32 stage, u32 fg_alpha, u32 bg_alpha, u32 blend_op)
- {
-@@ -144,6 +189,32 @@ static void dpu_hw_lm_setup_color3(struct dpu_hw_mixer *ctx,
- 	DPU_REG_WRITE(c, LM_OP_MODE, op_mode);
- }
- 
-+static void dpu_hw_lm_setup_color3_v12(struct dpu_hw_mixer *ctx,
-+				       uint32_t mixer_op_mode)
-+{
-+	struct dpu_hw_blk_reg_map *c = &ctx->hw;
-+	int op_mode, stages, stage_off, i;
-+
-+	stages = ctx->cap->sblk->maxblendstages;
-+	if (stages <= 0)
-+		return;
-+
-+	for (i = DPU_STAGE_0; i <= stages; i++) {
-+		stage_off = _stage_offset(ctx, i);
-+		if (WARN_ON(stage_off < 0))
-+			return;
-+
-+		/* set color_out3 bit in blend0_op when enabled in mixer_op_mode */
-+		op_mode = DPU_REG_READ(c, LM_BLEND0_OP + stage_off);
-+		if (mixer_op_mode & BIT(i))
-+			op_mode |= BIT(30);
-+		else
-+			op_mode &= ~BIT(30);
-+
-+		DPU_REG_WRITE(c, LM_BLEND0_OP + stage_off, op_mode);
++	if (active_pipes) {
++		for (i = 0; i < SSPP_MAX; i++) {
++			if (test_bit(i, active_pipes) &&
++			    fetch_tbl[i] != CTL_INVALID_BIT)
++				val |= BIT(fetch_tbl[i]);
++		}
 +	}
++
++	DPU_REG_WRITE(&ctx->hw, CTL_PIPE_ACTIVE, val);
 +}
 +
  /**
-  * dpu_hw_lm_init() - Initializes the mixer hw driver object.
-  * should be called once before accessing every mixer.
-@@ -175,12 +246,19 @@ struct dpu_hw_mixer *dpu_hw_lm_init(struct drm_device *dev,
- 	c->idx = cfg->id;
- 	c->cap = cfg;
- 	c->ops.setup_mixer_out = dpu_hw_lm_setup_out;
--	if (mdss_ver->core_major_ver >= 4)
-+	if (mdss_ver->core_major_ver >= 12)
-+		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha_v12;
-+	else if (mdss_ver->core_major_ver >= 4)
- 		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha;
- 	else
- 		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config;
--	c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
--	c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
+  * dpu_hw_ctl_init() - Initializes the ctl_path hw driver object.
+  * Should be called before accessing any ctl_path register.
+@@ -800,8 +821,12 @@ struct dpu_hw_ctl *dpu_hw_ctl_init(struct drm_device *dev,
+ 	c->ops.trigger_pending = dpu_hw_ctl_trigger_pending;
+ 	c->ops.reset = dpu_hw_ctl_reset_control;
+ 	c->ops.wait_reset_status = dpu_hw_ctl_wait_reset_status;
+-	c->ops.clear_all_blendstages = dpu_hw_ctl_clear_all_blendstages;
+-	c->ops.setup_blendstage = dpu_hw_ctl_setup_blendstage;
 +	if (mdss_ver->core_major_ver < 12) {
-+		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
-+		c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
++		c->ops.clear_all_blendstages = dpu_hw_ctl_clear_all_blendstages;
++		c->ops.setup_blendstage = dpu_hw_ctl_setup_blendstage;
 +	} else {
-+		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3_v12;
-+		c->ops.setup_border_color = dpu_hw_lm_setup_border_color_v12;
++		c->ops.set_active_pipes = dpu_hw_ctl_set_active_pipes;
 +	}
- 	c->ops.setup_misr = dpu_hw_lm_setup_misr;
- 	c->ops.collect_misr = dpu_hw_lm_collect_misr;
+ 	c->ops.update_pending_flush_sspp = dpu_hw_ctl_update_pending_flush_sspp;
+ 	c->ops.update_pending_flush_mixer = dpu_hw_ctl_update_pending_flush_mixer;
+ 	if (mdss_ver->core_major_ver >= 7)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+index 9cd9959682c21cc1c6d8d14b8fb377deb33cc10d..ca8f34ff3964c1adaaacdd3f0a60572da53870e1 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+@@ -258,6 +258,14 @@ struct dpu_hw_ctl_ops {
  
+ 	void (*set_active_fetch_pipes)(struct dpu_hw_ctl *ctx,
+ 		unsigned long *fetch_active);
++
++	/**
++	 * Set active pipes attached to this CTL
++	 * @ctx: ctl path ctx pointer
++	 * @active_pipes: bitmap of enum dpu_sspp
++	 */
++	void (*set_active_pipes)(struct dpu_hw_ctl *ctx,
++				 unsigned long *active_pipes);
+ };
+ 
+ /**
 
 -- 
 2.45.2
