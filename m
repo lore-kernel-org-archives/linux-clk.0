@@ -1,179 +1,97 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB5322CBF6
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 12:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93EC29DB8D
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 12:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749556832; cv=none; b=juYAZx7gm4UEllfK8FmFmE2932mQKgAVpQxE60ktJRE2y3lXJ3Z1Klolc8H2kKe/5qhjfeYmd2R9JBqsN8KrFdPSafBFDq64dWiCvavDrOISDkVqawXgB1cAAcYYqq/s4zekODwFpdyCYhDUeRymZCx1GKoEHD+7IUKpsYXDveE=
+	t=1749558982; cv=none; b=KE5LiqCT3H8ECRoQVPPgOHHNQRMYVXLBkLueEPW/bYzHo4Qdw+sSlJ20nMzBPQ7CLHXPs4BkZgllksgaAuQq3r5J0PWfWa9FUYtREys8Y9ksAJnd4ufUhgoE2Iv7AgACQQgac3UGWd5JxoJShSoDc7382/N7Nint0v7sy7OKEWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749556832; c=relaxed/simple;
-	bh=S0mmtyWzjsCqCoDn/rfa6q0q4/Eq8txn8/ryBYyu4Yg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jZGC00N9hO+FGtShB7kNKOlzlH1wiUEXO241QXGtPkIfKDV0NDYch6O2AbeIStDNC5uqP016hsB+40gXOokinQ5AjCqwlmPg4ZqZEU3Zyo+OH7thPUfDA+Cc7S4EjF4hQEk+hU7QWFAJhgGgnWt42Z25zzdXbh2FapZ6J34M1OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBmxVEgL; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1749558982; c=relaxed/simple;
+	bh=lJ2EibwYrHKuwkGgy7UaDo0dDOz7bGTb8OT6K/FalDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GQvuV1unl8UAmY3yElHJ17dyuNp3BMywQYRSUcpNd/4Q1EnLrd1nWV6dB+WTkD2PbrkFElMzOwgQebmodLDneDrRcmg0MVJlaYj1sqJcqpxiBOryM4zQ76/3CGmn+oo4vV54001HwASzIfqpHHSBJSjIf88/EH45eWGfGfSdARo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gAdQN02a; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBmxVEgL"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a522224582so3283910f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 05:00:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gAdQN02a"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5535652f42cso5524195e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 05:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749556828; x=1750161628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Coo2JF5+cM4uR2kYnPgicZ8fGjo28sh0FAgXwnCVr+g=;
-        b=WBmxVEgLSleax5KYgdtSDwVa8pLAPoDnYNYcifvVgZ+I6/bdBlVysjtV+wq0sSWU+d
-         4BAlVHsihRaOJIpwjQolM53uYZ+Kh+UZqnzC2clBuXoh8kp3N3vJWTjdiZlf6ugCNTfb
-         NOq3sVz6Q1ujKYpQ49RyKSKB+6JjZq5UduHLC7Iq4rwC/7vWv55xFj0GjWIDYUofn4v3
-         eb0C4YEPGCHz4MCOO6DZCqkJA5LeLDgA9Ls5md145PLRnZXliOumT0zJt/dSf7Bp3XEH
-         f5SZDSaUuo4kabDka2djYR21pYxzKQH+QFqiC5s6/EwWoqDgWqhgRQttuNQp4FbprvxN
-         wWZg==
+        d=linaro.org; s=google; t=1749558977; x=1750163777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lJ2EibwYrHKuwkGgy7UaDo0dDOz7bGTb8OT6K/FalDM=;
+        b=gAdQN02as9yrRwz4ViMUJk6Cfco4saDH9Z3YGj694wOeHRvPMk3W2Os4PwT+68vN5m
+         t6qOe+BTok0wpf+qdSBxTNOTOndh/TZBrFSopIVDZRUtTY6IqYRgNxpQUUA+y5qCd5Z4
+         8VdpWKrluhs+c/ihOfhheiQwLY8e/cBujUErW7Ckl/hff52KfQb6FW9Ejh+qnTEnoJeZ
+         QYjHwKLTq1PZ2u+wz8dGbKi02FrGNQD2DKGaRguickLVqIbWFqZVSvV6xFDvfOPXgqO8
+         okt8e2xwJ6eU5oiAXZ7g6vLHz9MiQ/UGRjly7RMvJDRp/IsSZPn7zSVlQjEJBDj6V5Pz
+         gu7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749556828; x=1750161628;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Coo2JF5+cM4uR2kYnPgicZ8fGjo28sh0FAgXwnCVr+g=;
-        b=W8cXHnzSjfI0DZ/1H+IH4i4xoLjVbX7bFOVnu9QLOihlGKoVBPCMNuQp878gIXnIXl
-         rqL5cwyLNYXgi3Pmo5xTH2cb/5VM3fPJm3BVQe4lTwNwOYBiRdn8c0LnZ74IemhKa4Ri
-         4sBe9E6V/ItaU3h5zp//7h/IeLG2C3bqISvRSvY1wpuTXrP7SifMA9hM4Zr/PxkBp2hK
-         mNZRWnOVgpElkXBv7Xz2v7JbmIlTPbcttYOS4PxWnihWRnyXxPnFmfCAdNF+rD9bxVhi
-         vx9cyadxq82TeyLsN8hwjdFi7No9DLZJgJVLdKukbTERxXbAtdb+BiMpZXoM4ttm1oP4
-         LS+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVuyJ8TugYkHIbAgUcc+CptBkyCKV5I4KSkDvw6toKlluA50mYQVF683Qr6/SDGmRe3mDSgYnvAuTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDAEqfuNyXPpRkfh+Zk8Ahdh7IorIXW963YVZe3nj6a1iMy0Ap
-	dSeD8Zzp2VFbMb0SRBVwgoHbL5Q/ZfduJDoycrv7UCUMbTyoTu9OeGuxw6xzbp/dJXs=
-X-Gm-Gg: ASbGncv4vxbm5GbjmElOIxyrtQiKYy8o8uLyvfc4lRtQWaHwLwP4tD2fL+xZmpjg0Zh
-	1E4unh3EczEYwoKMLYRHkD4t5aI4kyK0JKG1ZBLDziA8DegVcA+r0/ypR/AG3nYZ1tYlO1eQU17
-	MnTHlKcbCcGgS731TRr7gBO5Vesf1OQRY4pY2ykwLVuv+vCUR/31WCUiEjo4MMrSEP6RvhiaHSx
-	uyITuCykXNH28FvjNa0Hv8TxpJCr3uDbsJe79T5TH1ke1a2eZLs1emIIEfAGzD9xBL0xFzMwLHP
-	fGaKYE7LJ/MxX6ifBLjcvp+2iDtqxwm10d8/Pg6qA8s7OCUNAQPi6q5m5nFtgM/DhxgC1PO4xa3
-	A/yQ39UN+yJWkt0/ej3CiiYzBnCGuCKZYDVd3
-X-Google-Smtp-Source: AGHT+IEWr+i6z74M870LqTluirn8Ed8XIxDY0nZwNEMv+tERVcE36PmtETT5IrjEiWDNl9FBSWUs8Q==
-X-Received: by 2002:a05:6000:4287:b0:3a4:d41d:8f40 with SMTP id ffacd0b85a97d-3a531cadb25mr15530954f8f.46.1749556827388;
-        Tue, 10 Jun 2025 05:00:27 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f0b:a9b6:d508:9d14? ([2a01:e0a:3d9:2080:f0b:a9b6:d508:9d14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323c0819sm11927794f8f.45.2025.06.10.05.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 05:00:27 -0700 (PDT)
-Message-ID: <c3c3826b-ed90-42b1-998c-7b482b0cb051@linaro.org>
-Date: Tue, 10 Jun 2025 14:00:26 +0200
+        d=1e100.net; s=20230601; t=1749558977; x=1750163777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lJ2EibwYrHKuwkGgy7UaDo0dDOz7bGTb8OT6K/FalDM=;
+        b=HV2n2LckPQDF8SjZAsAa+RYch7inmwWD7lbv2CzDCKkuRch13savVzGuH5MP4G8jFx
+         u9Zuyya7R74uqTZLuTveIHNtY2rPPQWUWsYP+HqMGuod7JWR8F2OnO3ZexyziaybYGhX
+         /7xJ16FzhTheEv0XYJFPP04DWEGpYXQq8i2MLeJ58sYGaUmGphjxnv1cbPTjmLOBgsrh
+         7UJwoqXf8OGu5PLOZ5cKOX9rtWzeGcy9BfD8CbCeR/hnHMcqcj70aSPXhmI0jl2yO7U1
+         faEEi0Zec5l9U39z2qZ8358yBp18ckUZ24RnxytdeNHF8gatczN9C2iNFz+nI1yhEdr2
+         2ZlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVycXfP2iEBCLh49GwHhAKsPWfcTj+TBrUQ6gouzjFQCPQdvTTheUiOs2rGOfSbZwehbxdbWvZ2KF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZIDwmlY70q6LiK7rkLjlciwhLEkzMyTZPA04ZBHQoVaS7T7CM
+	KgneCaw2+pTZeIgWFJHUsINf7643V+Cx8uGSNj6c7d/w8tgBGBj/ZEK83AuJalBNihSbLGDuPnB
+	ZXAUfDc7G+YYPETdsPnWUhVTl6OarjJvFBVZRAB+WwQ==
+X-Gm-Gg: ASbGncuF1oCjUPsBnPVKxZcRDA9/at0p7ez3ahDbLr32z7sNo0M0uO2wtrnSjtA1upd
+	0tS4LmMepME2Dur5qM76jCxyRcBCFrkSWc+b309s/oMByJMbUt34Q6xW5wdSTjCQA5AAetDdcQm
+	tR5xSKVzzAqtkPzKz3UZ7HHK4HUVwjNBIJaVT88puguXigPas1f3RhpQ==
+X-Google-Smtp-Source: AGHT+IELdA+tq9VR5udoo0SjBqgjtXdlCnUFk1ZiTiteFNoU/sAmnTRRf2Lggd+JrBptHGv6llHTchs9v9E5K8zOTw0=
+X-Received: by 2002:a05:6512:3091:b0:553:37e7:867a with SMTP id
+ 2adb3069b0e04-553947dd220mr757785e87.49.1749558976880; Tue, 10 Jun 2025
+ 05:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] clk: qcom: sm8450: Enable retention for usb controller
- gdsc
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
- <20250610111019.osnrknvff7tlvrfz@umbar.lan>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250610111019.osnrknvff7tlvrfz@umbar.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250607135203.2085226-1-wens@kernel.org>
+In-Reply-To: <20250607135203.2085226-1-wens@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 10 Jun 2025 14:36:05 +0200
+X-Gm-Features: AX0GCFvyRHimADR81nq1Y9XLD3rNjaMG2YYHVtzY0J60cBE6h0su1u4nLP7Bn_w
+Message-ID: <CACRpkdZRROZHK2nr5nx0UzwYZaoTrLLt8CzOtYWOsJg=hKoDwA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: dt: Consider pin base when calculating
+ bank number from pin
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/06/2025 13:10, Dmitry Baryshkov wrote:
-> On Tue, Jun 10, 2025 at 02:52:53PM +0530, Krishna Kurapati wrote:
->> When USB controller enters runtime suspend while operating in host
->> mode, then wakeup because of cable disconnect or a button press of
->> a headset causes the following kind of errors:
->>
->> Error after button press on a connected headset :
->>
->> [  355.309260] usb 1-1: reset full-speed USB device number 2 using xhci-hcd
->> [  355.725844] usb 1-1: device not accepting address 2, error -108
->>
->> Error on removal of headset device from usb port:
->>
->> [  157.563136] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402
->> ,iova=0xd65504710, fsynr=0x100011, cbfrsynra=0x0, cb=6
->> [  157.574842] arm-smmu 15000000.iommu: FSR    = 00000402 [Format=2 TF],
->> SID=0x0
->> [  157.582181] arm-smmu 15000000.iommu: FSYNR0 = 00100011 [S1CBNDX=16 WNR
->> PLVL=1]
->> [  157.589610] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
->> [  157.596197] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
->>
->> Enabling retention on usb controller GDSC fixes the above issues.
-> 
-> Could you please clarify, if there are other platforms which need this
-> change? Is there a chance of switching all of them in one patch set?
+On Sat, Jun 7, 2025 at 3:52=E2=80=AFPM Chen-Yu Tsai <wens@kernel.org> wrote=
+:
 
-Since sm8250, sc8280xp, x1e80100, sm8650 are all affected
-- https://lore.kernel.org/r/20221102091320.66007-1-manivannan.sadhasivam@linaro.org
-- https://lore.kernel.org/r/20220929161124.18138-1-johan+linaro@kernel.org
-- https://lore.kernel.org/r/20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org
-- https://lore.kernel.org/r/20250305-topic-sm8650-upstream-fix-usb-suspend-v1-1-649036ab0557@linaro.org
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> In prepare_function_table() when the pinctrl function table IRQ entries
+> are generated, the pin bank is calculated from the absolute pin number;
+> however the IRQ bank mux array is indexed from the first pin bank of the
+> controller. For R_PIO controllers, this means the absolute pin bank is
+> way off from the relative pin bank used for array indexing.
+>
+> Correct this by taking into account the pin base of the controller.
+>
+> Fixes: f5e2cd34b12f ("pinctrl: sunxi: allow reading mux values from DT")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-I think sm8350 & sm8550 also should be switched, perhaps sm8150 also ?
+Patch applied for fixes!
 
-> 
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> ---
->>
->> Note:
->> The above mentioned issues pop up after I enabled runtime suspend after
->> applying [1].
->> [1]: https://lore.kernel.org/all/20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com/
->>
->>   drivers/clk/qcom/gcc-sm8450.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
->> index 65d7d52bce03..f94da4a1c921 100644
->> --- a/drivers/clk/qcom/gcc-sm8450.c
->> +++ b/drivers/clk/qcom/gcc-sm8450.c
->> @@ -3141,7 +3141,7 @@ static struct gdsc usb30_prim_gdsc = {
->>   	.pd = {
->>   		.name = "usb30_prim_gdsc",
->>   	},
->> -	.pwrsts = PWRSTS_OFF_ON,
->> +	.pwrsts = PWRSTS_RET_ON,
->>   };
->>   
->>   static struct clk_regmap *gcc_sm8450_clocks[] = {
->> -- 
->> 2.34.1
->>
-> 
-
+Yours,
+Linus Walleij
