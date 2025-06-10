@@ -1,97 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80119219FC;
-	Tue, 10 Jun 2025 02:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2965121322F
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 04:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749522659; cv=none; b=EfspWV4l5nlhX4oCCUBk3HV0GoHCXMd6Rjoxx6uuawIZHUaQx0iPAr9njqjgc91kjCOXYVys15MycS2ggv5zMe02Vm7y7gdE5EwKjZVojZ+cEM4CsRNlI/77CvAPdPoj930qkBZgPuXB/1iwAjEDEjoNeQ2mUFfs9r1vzqzF0Lg=
+	t=1749530142; cv=none; b=adNYyBPjhJfyGnupbmgDAnSP0mErNXmHBKDTCqaZwjvyDdLJrBxvwSLuEaBAuoN7GZBJTp6gjhXLIvwdV1SOcdbFwm8GKvwcRxYMKNfBPPfajkS4IOJgN0iRo3w4sVyIYAwnYTYvCuKUUk4LaDqjrb4F2mQvPmZ1sOBTl7zTlgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749522659; c=relaxed/simple;
-	bh=MF9eFED5nRvQBjnkQkaYBoOXrlZbPXE3oEhI6hM3hIM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=jCmIBHnDp6LsUcnexYSs8Gze+iEQEHRMchhvj6CqriYmVL+BPYrLEcbPBUMDOVtLz3UdcZ0jkyyWjNeBD9NW1BP1xtOFdLIa+VXwMDp6c+8exXrk5jP2JlImVGwcwiput8Pfa72Fep768FJZwgahEVmk+XUVSyngf860xBoRMhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtPCtTdA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749530142; c=relaxed/simple;
+	bh=+vjfbM7qqAK0wXxezlHayMmhbq1IaZ9tTIr+C3ezwK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQ+leus2KfPuSjeIE0Q/qzIP+8iaVbfcWSsctVp4MxgJDOlgyaL/1hPNCuOUVBAojIyL6rWHST512yeE+Gps7y1oPlU0lFT3hvehMJfEJwZXFGIb+yox2oqnTbWZ2B/e6jYpDMnj+Bm5uCkt7gbps81Fq7rJjH5sMCJzGVCy8Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Vbe6L+zs; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtPCtTdA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B1BC4CEEB;
-	Tue, 10 Jun 2025 02:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749522659;
-	bh=MF9eFED5nRvQBjnkQkaYBoOXrlZbPXE3oEhI6hM3hIM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=QtPCtTdAWiYNrWfnLL1Egie323Tgg630GTtlhtKZVSX9uBqa1Gr88E9RsbxDT91td
-	 g8N2E1mXP6KQ3i2S6j5SfrRj0MaXKnbtvuE83BlJUxGGpTiVbnl2rxiJMDCs4KEyTx
-	 8GoA9PljkQes7HFBNnlOgpA+P9Osn1lcp/7BumzmdOTDsooqKlOoMYKrU0N+NtBleL
-	 XDFNcpnclJnjOq5Ft8al8OYLgep4MJTJBH3B1r74QqveEOOgVHBzBa3R7cBj3KbHtg
-	 aOW4kofCS51lkO8XkZR1GLTWMCjnZ4wICUfyW4BwQFGxs5B6ZFfvE6OYVB/idqhdt2
-	 m/aI3IhosKoyA==
-Date: Mon, 09 Jun 2025 21:30:57 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Vbe6L+zs"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5534edc6493so5411144e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 21:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749530139; x=1750134939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ed8RxUAjYyp2LZZaxVzqOY+SgZzJQWB9mmLBoWY3jwg=;
+        b=Vbe6L+zs/5pWBRPba5ctupjKictxAHVF2LHzhFto7ztoPt8fOo0qOKIZQ2yh/2YNJ+
+         QvaVC5rN5HlOU3RyFHLOGZgVMc/SAjxddb1VIQjtAUxDFBDa8dajgAXcgLAGxTF0uId7
+         2XLKmfafjYxerKNemsh6XXc80jHFTXXLZWUNvNfQrpdxCtY7iuQi9fSnhLEnLVgm/xVk
+         GnI2z1XO2A/DkZZbx2ZUHA99SyU3SVz43JvuHpbPPHtTgyR+AO6cf8Ar1zXmahdyP6Tt
+         OpVvUUa1UD1Do7SLBUGAH2wf0J3Aek4QwRcbrK8u8upD22Kw6B9XTcNhFlpzrbi+NCRq
+         YukQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749530139; x=1750134939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ed8RxUAjYyp2LZZaxVzqOY+SgZzJQWB9mmLBoWY3jwg=;
+        b=uE8daHjwCuQNxv5gGeTgACWMGcNDsjx8E7QmV1mOJv3ijBc7mYsJWoxFsjUyweIA8c
+         OKL2LZy0Of9CEmfoprjzgVBQkjKF6HNIMg5b9xSmZQaEGg5f45Ui42o4M9vsCYjlSZ8C
+         7hfqQrKb1swQUO/fduvMhRpDtvKOOZWW8KlGTZwC/MfeF8UiptkBI5+TNyQCcx745/Wb
+         3ZNls7pD3z9dLfeDpqOWtmFAWimAc6Bzz+I1NG6ckp3JahAppcJW3QVGgm9OpYeVsfdl
+         QIZ5tk7V2quHOnuNMzxG2KLjVtDOzlCFvQvpQX6YrRn/hNuWGnRtE2nt3WCxClvx4aT4
+         dFGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnYYfTEpZzkaT0zSsdLCt0irUGXP01H78lJRIGWY98hufXz5F0ov7ijF7/OSex3ITFo9iySP/d+qY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjgdD1W9LUbE9bvTtgeL3xQX/kI4Awm54fZThAnAjQHWIjCssy
+	eFfG5YvHkQIoZpgJdeEV0ztno+Q+nTjqPwcD0sphR0UspbtG1liwZz9SQCnV1MMHd9I5N1cKL1G
+	u2bdKGudmujKOxhXDtegTQGv3LDH5Rdozy+qUX69mFA==
+X-Gm-Gg: ASbGncs5P1XHj9uhsCwtRON5PKyJIqN1ADlp1ePB/wHR/eG2MO5pInZo0aR83vaPCgt
+	J3IQ1ZCf8G4QcwykmAZ9N/94t5iqtb1j+hGw3khEDWbCnXwygN6IWbcnFOmwr7MryogABEiRi3Z
+	ryu9pGtIowYu9Z8ygkqXzpoyZ59WfxD3PRlwKMZZyCdJtB
+X-Google-Smtp-Source: AGHT+IFxFmkHQ3fGwNL4owR0g3OIQgJ/V8z3FZMMkX4FuLFUg5JQYB9HKU+r2AMKe1MFWDs5KmtPabb7AI8QwZPozUs=
+X-Received: by 2002:ac2:4c4d:0:b0:553:3a0a:1892 with SMTP id
+ 2adb3069b0e04-55366bee654mr3830038e87.15.1749530139008; Mon, 09 Jun 2025
+ 21:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: edumazet@google.com, netdev@vger.kernel.org, 
- linux-aspeed@lists.ozlabs.org, mturquette@baylibre.com, 
- BMC-SW@aspeedtech.com, linux-kernel@vger.kernel.org, kuba@kernel.org, 
- krzk+dt@kernel.org, p.zabel@pengutronix.de, sboyd@kernel.org, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- davem@davemloft.net, conor+dt@kernel.org, joel@jms.id.au, 
- andrew+netdev@lunn.ch, devicetree@vger.kernel.org, pabeni@redhat.com, 
- andrew@codeconstruct.com.au
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-In-Reply-To: <20250610012406.3703769-2-jacky_chou@aspeedtech.com>
-References: <20250610012406.3703769-1-jacky_chou@aspeedtech.com>
- <20250610012406.3703769-2-jacky_chou@aspeedtech.com>
-Message-Id: <174952265793.3644019.286629373000016480.robh@kernel.org>
-Subject: Re: [net-next v2 1/4] dt-bindings: net: ftgmac100: Add resets
- property
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-8-apatel@ventanamicro.com> <aDbrBFcgaJxgBRVZ@smile.fi.intel.com>
+ <CAK9=C2XJwgsC5AK-eVOHQqN1tPxtrsTjVoKdHgALbREv=sb8zQ@mail.gmail.com> <aEc-SHvL187xdj-m@smile.fi.intel.com>
+In-Reply-To: <aEc-SHvL187xdj-m@smile.fi.intel.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Tue, 10 Jun 2025 10:05:27 +0530
+X-Gm-Features: AX0GCFs_6x-PmQkIdN0TNx_kOYhGk1jP9YjELf3l8YvJWCRscxqU6ceG469MS-c
+Message-ID: <CAK9=C2VjOZ22smYdxDg1bjnx-+wwjngEN3c-iOpdtaADFcQ0+w@mail.gmail.com>
+Subject: Re: [PATCH v4 07/23] mailbox: Add RISC-V SBI message proxy (MPXY)
+ based mailbox driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 10, 2025 at 1:34=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Jun 09, 2025 at 05:59:40PM +0530, Anup Patel wrote:
+> > On Wed, May 28, 2025 at 4:23=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Sun, May 25, 2025 at 02:16:54PM +0530, Anup Patel wrote:
+>
+> ...
+>
+> > > > +#include <asm/sbi.h>
+> > >
+> > > asm/* usually goes after generic linux/* ones. Why here?
+> >
+> > I am not aware of any such convention but I will update anyway.
+>
+> It's just a common sense. We include most generic first and most custom a=
+t
+> last.
+>
+> ...
+>
+> > > > +static int mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 a=
+ttr_count,
+> > > > +                         u32 *attrs_buf)
+> > > > +{
+> > > > +     struct mpxy_local *mpxy =3D this_cpu_ptr(&mpxy_local);
+> > > > +     struct sbiret sret;
+> > > > +     u32 i;
+> > > > +
+> > > > +     if (!mpxy->shmem_active)
+> > > > +             return -ENODEV;
+> > > > +     if (!attr_count || !attrs_buf)
+> > > > +             return -EINVAL;
+> > > > +
+> > > > +     get_cpu();
+> > > > +
+> > > > +     for (i =3D 0; i < attr_count; i++)
+> > > > +             ((__le32 *)mpxy->shmem)[i] =3D cpu_to_le32(attrs_buf[=
+i]);
+> > >
+> > > Don't we have helpers for this? They are suffixed with _array.
+> > > https://elixir.bootlin.com/linux/v6.15-rc6/source/include/linux/byteo=
+rder/generic.h#L168
+> > > Don't forget to have asm/byteorder.h being included.
+> > >
+> > > Ditto for the similar case(s).
+> >
+> > The cpu_to_le32_array() and le32_to_cpu_array() helpers update data
+> > in-place but over here we have separate source and destination.
+>
+> Fair enough. Perhaps add something like memcpy_to_le32() / memcpy_from_le=
+32()
+> or alike for your case?
 
-On Tue, 10 Jun 2025 09:24:03 +0800, Jacky Chou wrote:
-> Add optional resets property for Aspeed SoCs to reset the MAC and
-> RGMII/RMII.
-> 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  .../bindings/net/faraday,ftgmac100.yaml       | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
+Okay, I will add memcpy_to_le32() / memcpy_from_le32()
+in include/linux/byteorder/generic.h and use it over here.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+>
+> > > > +     sret =3D sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_WRITE_ATTRS,
+> > > > +                      channel_id, base_attrid, attr_count, 0, 0, 0=
+);
+> > > > +
+> > > > +     put_cpu();
+> > > > +     return sbi_err_map_linux_errno(sret.error);
+> > > > +}
+>
+> ...
+>
+> > > > +                            sizeof(mchan->rpmi_attrs) / sizeof(u32=
+),
+> > > > +                            (u32 *)&mchan->rpmi_attrs);
+> > >
+> > > Why casting? What about alignment?
+> >
+> > The RPMI attributes (aka struct sbi_mpxy_rpmi_channel_attrs) are
+> > a collection of u32 attributes hence we can also treat rpmi_attrs
+> > as a u32 array. Further, the rpmi_attrs is XLEN aligned within the
+> > struct mpxy_mbox_channel so no alignment issue with the casting
+> > on both RV32 and RV64.
+> >
+> > If we want to avoid the casting then we will have to use a temporary
+> > u32 array plus additional memcpy().
+>
+> OK.
+>
+> ...
+>
+> > > > +     if (mbox->msi_count)
+> > >
+> > > Is this check really needed?
+> >
+> > MSIs are optional for the SBI MPXY mailbox so we should only use
+> > platform_device_msi_xyz() APIs only when MSIs are available.
+>
+> > > > +             platform_device_msi_free_irqs_all(mbox->dev);
+>
+> Hmm... I am not sure why. Do you have any Oops or warnings if the check
+> is not there and no MSI provided?
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml:82:1: [error] duplication of key "allOf" in mapping (key-duplicates)
+We don't see any oops or warnings. This check is to avoid unnecessary
+work (such as acquiring lock, checking default domain, etc) in the
+msi_domain_free_irqs_all() called by platform_device_msi_free_irqs_all().
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml:82:1: found duplicate key "allOf" with value "[]" (original value: "[]")
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/net/faraday,ftgmac100.example.dts'
-Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml:82:1: found duplicate key "allOf" with value "[]" (original value: "[]")
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/net/faraday,ftgmac100.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1519: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+I don't mind dropping the check so I will update in the next revision.
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250610012406.3703769-2-jacky_chou@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Regards,
+Anup
