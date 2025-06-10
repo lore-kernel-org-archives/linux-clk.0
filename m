@@ -1,119 +1,168 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333CB28B3EF;
-	Tue, 10 Jun 2025 11:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6128DF35
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 11:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749553751; cv=none; b=mFzty24JTIy4zzgNhBOxkrJL+QdqFyD0Vj+AgrWwPTKjHlgpMPK+jmvuUlN4D9HbXfG2WxU17GE/GL4zDpVkPg5QNR/mCnScePbC76sgswkUNh69+Z1K1JMxbozJfKSGDCNqmpYMkBFZkUMwa6vDTw4Pil0ILPmNvaz7dECKb9E=
+	t=1749553826; cv=none; b=CVFJ2nwnD5tlvMT+PpRgBp22D6wIyWnU2A42QNKkb83xT5Lnobng8zeiCpBKYjR0OHFMA4cLUAe3P0jjv3T5y8w2bxgWZftVt4DxZJrkKlRaT4TGa6mzDrOwrdfHGGaJsYbz8/x5vK+YDzAWl4DfL4oGFrh54awX8y/q2PMCsdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749553751; c=relaxed/simple;
-	bh=dzzDigNbQWvFnbgIjdwltehjUydpRvZcm8J0CiyGL6A=;
+	s=arc-20240116; t=1749553826; c=relaxed/simple;
+	bh=r4xPlsKaOiVx9NhoF1ofQO6ILdX1exjn3Eiq1JZUm44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FdemSVzB1qpNwHHjLG/lkdyPyye4+3O57/xB7ZEccz1EE+bk6AahAoHky32T7vZ6qjVLkZh881AQDelSQinPfIUKZHIUZK+FQ+UX+yABXM/WoadMcqBMkKUob73QagummsLLqwOe3Ie7zJzqwCciuGvtWoKaNBIx7LI+zjSkH0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2Yq/7sQ; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5e0Ci7R2J3QzpJu07Y7LybPtfhjuNBM1PsapOG5pGkCV74wKsS5LSmHkbkz9q33rNkx8Oo6YiyOrOQikAicoJX3iqUIx6xCVo0czm5u5rQ1vRmnCcS4eND7JYcHefiuyrMZoF5o6Oiz2aNEUQVzCnP8bE5eIa+Wj0bqrIc09Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bzjaTMyk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2Yq/7sQ"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45300c82c1cso9377665e9.3;
-        Tue, 10 Jun 2025 04:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749553748; x=1750158548; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzzDigNbQWvFnbgIjdwltehjUydpRvZcm8J0CiyGL6A=;
-        b=Y2Yq/7sQnRs8P0rdsctJE3bOCJ1IBA2XExaiU2e7ANYBKp5Dq5zzdTHlK9j/SNUiYt
-         Pi85J6w8somcrCIMQrlEHkHckJ5SFQI8ieldpNytbtVRJGEoWV8fMLHEwamna9QShY1J
-         ybGV/Sqh7ELtH58v+YTsFwGkA+xGxwOW79xzcV25kAMrddl54RPjcLGAH9FdJNN0UBy9
-         i9BVfHKQgd/251fC6jmflAd1mxcbB4uspHPATlrMm6XpkHZGzgQxX52NaBWcoS9qlW4C
-         yCkKJfU0GatFs3WwtohOtzcN2yy53DFA8/krlQglbm0Ij+5VOPtCEeCuk7kRyqLTZmUv
-         UylQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bzjaTMyk"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A9MlKc032175
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 11:10:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hpn/4tPOJNmUak+UQiHyAmjZ
+	rWIWVGOHrxMVzXs3PzU=; b=bzjaTMykLG9/dqIxVoTS8I8xZkxlVSxASHjQY0Ki
+	DkZ6JRTnFZNakFEVYHaIZUXcH5l5bv1qSht6YxuWMsld9i/YCRnvlw1BA9bEXhfj
+	RA1E67McNeZ0EeOZkII/DKRAcQnbphqo59YyRVgcf/w6HO65KDxCIlLB4ytqTaGm
+	yap4p0p+0STBaLTWXph8xGkQFalZ1GlUNLiv9RBO4x6OHTRDHYZiQJrcdQ55wbQc
+	cgW82MmAmVXnG6cr71QgzJzqI9hcp7GZi/F8h/WgJ/8XjXR+uEAAwyUhaAC7R78r
+	ZEqgznH0fXmsJzK2YP1oPWlJkJk+kxlLilEQP1ctGNQ4Rg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ccv94ds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 11:10:23 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d099c1779dso966306385a.0
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 04:10:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749553748; x=1750158548;
+        d=1e100.net; s=20230601; t=1749553822; x=1750158622;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dzzDigNbQWvFnbgIjdwltehjUydpRvZcm8J0CiyGL6A=;
-        b=BW3XlvnLQQkbLQzuB8D+I57IzHgbpSu9JUzzZfL6W2R6ViV04ys6rnHrBXV/6TP2AM
-         Si3IWI7kGeM7Ss4503mjTxnj/3YdmhRu4kFMmCJ9L4wGmM1CiG3+rp7BzP30Jf4RVKEl
-         4qIfohD8qZZUv0YtoJXL2MIeRzf96XyphL0QE/LzScuUFIqV3UZgECC/cWQ6vvEYC7zj
-         Ha2FZKIQweHVsm7kOx730ow8oXC2v3lC0CQ/IksTe+Ah1sdwzEDhjI8jAqQKaZvInEIq
-         VN3TpNmdj51nCeqDk5iMD9E4bUcjJ4/MsvO+YRjR77jNd0BcJ2Z6oNahHEfTqSg53sNf
-         ubGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV79Mm75Kk2AkQ1Nbo6PNTEOA8onfJJI/qhXWLKXCTSdTfXIXP3QFZBHII0Sl1s588vCvFqFX/NSDNqCXmQ@vger.kernel.org, AJvYcCWhPUy4CdUdz5XJT0PqSX2sLunErWEsnyGVvGYF1d1RmbxHivrrXkNvYbBeR7m7P3DzdvS9eOZKZIN1ttg=@vger.kernel.org, AJvYcCWkDTM3yxLHqvYx1EU9a4zXRNA2P/ggCnLfRQsAFeuxD8xHQizH5e20Ghnv54nuUdQ413JzJ9CZqHY=@vger.kernel.org, AJvYcCXeC3Ib2M9QZZmpKwGxk0m+15LQ+sDK6NoxCu2zxLCUbxowmUMEu9q7kviGZBD6dZQUHoHiXycdW18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ1LLFhirbVQTuV4r9RJMtzaJ1vB49u2D3RfmG4jj8PVChBYyk
-	R7lh5sKRNmxWGZ46dOYRB4A7kQvXpfznfh12Hn3uArA8i7JykhwJDnlc
-X-Gm-Gg: ASbGncslmIDDmbxSMyYJx/6XHdeD2I/0BsIN0YDXdaUcPYHy6nal3TdNNtONRKxSBot
-	blkqtJCmcymVn1hXatWekAGIOxl14Fp6YTDGPdW90vj39T1S/3+8NbhdZ1CxLe0iy8ZSGey9+T7
-	q4+ILPoNH0gkPoWbUcqvDv8rJG/Dlz6yyGoYvopVevK4k6AnJWcoS9VTqQyo+h9GuWy1UMqjrSx
-	zyqlTT9EDd1Fv+BlFMRra4a33RNv1jQEOqcBZzG812fvYiTM7R656BWSZsMc+hLGuxYn8YI92CR
-	q/kWTK4qGtAei1T+w+OfO416SK42RzM4hiP1+s/JMU3LCtg2KD8PBUOrzgB1udABoNN1++E4LVm
-	ax5T44S/2c6MGaO2LIHCGsbzbRGlDXI8PWPa/1Y66Dkn4oLGM
-X-Google-Smtp-Source: AGHT+IG68oUn/KlqqErVvFmv6p1audzggHo+5krqXAROPFaPY2NiSSWkghrcrZfQLAO3t9T1pwRiwA==
-X-Received: by 2002:a05:600c:8718:b0:450:d07e:ee14 with SMTP id 5b1f17b1804b1-452013ada08mr171855775e9.17.1749553748299;
-        Tue, 10 Jun 2025 04:09:08 -0700 (PDT)
-Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5324364f1sm12316562f8f.58.2025.06.10.04.09.06
+        bh=hpn/4tPOJNmUak+UQiHyAmjZrWIWVGOHrxMVzXs3PzU=;
+        b=hfiF7z1a6MUDD1SpHoHjZgoVO2hVh3JDKJj7AO4xvhVFCwY4n1DCRoeJ2YWtkNrc5Y
+         Ct6OPiU6OaQOJ9cyzWAxJjAeXsjWO81CtcUoLEzD+lmX+CL2nPZ/XLoCJNIT1p9obfcC
+         21g0lLTCpsYPrOpO6PvmGyjupeaaZWCvK1TOL7rYmqQfY21R5DiMeIfYGFSG/YDwqfxl
+         Y8nlQPnvfrVintbmDTk7P9bbg3SJ/BEQTp3H9AgJ4kyzWGMbkKSjjHSGDaDkgxz5knns
+         d96tp8jiRrYlQ0p3UMg3NujWiPUcMTu+78A/p27m3lZZYYlCEKHz3gpW7u72WogTuWiG
+         Zixg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRYDE2823Zd5fFMHfW9PSr8eb0hzyCmOlz1vsMzQokpoHQJj/Gy/+8NJeK98o+73nAQAO06+wsO34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQDAEEIkZS0bug+V8JtzMpDCRF2sAJHerDyQH1/0G84+U1jAEN
+	IAb51aESSwHiNuup9zepLvJcwdkAlZyuGGCGiK8NuONqafmLgM736yCqzsyUtKb6kdQZ38fmyvh
+	IFxlWDQ/iUQGYSsET31olv14uIrX2dlUG2PbMxfI8fz1nh0/6mNHBpigo9hAvpII=
+X-Gm-Gg: ASbGncu5jkItv3GRD2mTNoSOORcwUjcGQFqNxkLI0JdNjAMJ2ArgCXryQZrt5Zfwed5
+	vIJvDNvHarAb5xEHHyHVLkHQqZMapXCff0YxHR72OG6fBp03InaUhCLDl/tiSq06piaMBEcGnys
+	EpOq1fUR958mCgRxizygnRRWGin+9HGkLhKvUDm50YtECxK6/qb2uN79QRtZiKQkntoeJfJggHn
+	q3t3M9vnVeBVIcsW45kiOCslWF8qH/BBeOjq8M6s1ZZOZOMrmygKOcIKKhDBm7oYfNUpltCZUNn
+	jiKIKU4sYxbw44ZI7gorJLOQRFn2wSY8Xc2VVfgWd1Jgu7iPKjjNKlxXtfclQrO9GDSsSVXuPNU
+	fEntKZIT6ksAe5+4sgpoKIYrDZXP5BGPSsfE=
+X-Received: by 2002:a05:620a:198e:b0:7c5:5670:bd6f with SMTP id af79cd13be357-7d2299025edmr2630761785a.53.1749553822374;
+        Tue, 10 Jun 2025 04:10:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuXICBhdrwFurksQR6OS+y4QHN0UrTWRMmZU5j8Di3gdH7KR6uSaZW6QrdFBs18kU8wa1rVA==
+X-Received: by 2002:a05:620a:198e:b0:7c5:5670:bd6f with SMTP id af79cd13be357-7d2299025edmr2630757285a.53.1749553821987;
+        Tue, 10 Jun 2025 04:10:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553676d00c0sm1512628e87.22.2025.06.10.04.10.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 04:09:06 -0700 (PDT)
-Date: Tue, 10 Jun 2025 13:09:05 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
-Message-ID: <svbpvo5cpwonxae46wre7ar2w4yf5j2xbfkb4hek6xgnue3jpl@5v57pp4iz7uv>
-References: <20250321095556.91425-1-clamor95@gmail.com>
- <20250321095556.91425-2-clamor95@gmail.com>
+        Tue, 10 Jun 2025 04:10:21 -0700 (PDT)
+Date: Tue, 10 Jun 2025 14:10:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: sm8450: Enable retention for usb controller
+ gdsc
+Message-ID: <20250610111019.osnrknvff7tlvrfz@umbar.lan>
+References: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lc2bghryyziuu5ih"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321095556.91425-2-clamor95@gmail.com>
+In-Reply-To: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: HeJ-lvo2AS7TAz8tnLKiXoasJPQamKnv
+X-Authority-Analysis: v=2.4 cv=TsLmhCXh c=1 sm=1 tr=0 ts=6848129f cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=1kStAPyy7fiUOHsjtOQA:9
+ a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: HeJ-lvo2AS7TAz8tnLKiXoasJPQamKnv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDA4NiBTYWx0ZWRfXyvDtGQmsIqtr
+ Y68BhpfXHC0IvmfOKC7DH+B2kIFBkkJl1tLNqtGxpdWJOXm1xS3wZyEwPewYh+9sHmcevu16BJW
+ DNvq+ODL6b/anKDgQ29VLfo8jXsvcN3wtEs7I6NsyE5w2IMvZOT1V5s5HPdVv+fftY6OomAeisv
+ 3FKUNzR19g2a6yFN7/nB8rHK35sJEtSPfyPVXNn71zGn95NFDK+9/IELHnFrCTcQX95ytUiX7GS
+ BA/be38gfdP8zRUBmwU3GN6PSOLhGwvs36KFRjeCzdY8QQ/HMCxqKOqWWiWfgbawjGTcZVSaNNd
+ KPTS1/iouBvJgAnKDlJKWAl4O0pd1NnDolGZlYTwLP0HBwt/nHvMQm4FQ/L61fF6dwfnFBA6uM9
+ 4Pjyf8QV9E/gnYXkmnugQzQeGQGENs2Y8XnovHKU/gR939jIDj6d9Pl4UJXAhnn2UoExOPtw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_04,2025-06-09_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100086
 
+On Tue, Jun 10, 2025 at 02:52:53PM +0530, Krishna Kurapati wrote:
+> When USB controller enters runtime suspend while operating in host
+> mode, then wakeup because of cable disconnect or a button press of
+> a headset causes the following kind of errors:
+> 
+> Error after button press on a connected headset :
+> 
+> [  355.309260] usb 1-1: reset full-speed USB device number 2 using xhci-hcd
+> [  355.725844] usb 1-1: device not accepting address 2, error -108
+> 
+> Error on removal of headset device from usb port:
+> 
+> [  157.563136] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402
+> ,iova=0xd65504710, fsynr=0x100011, cbfrsynra=0x0, cb=6
+> [  157.574842] arm-smmu 15000000.iommu: FSR    = 00000402 [Format=2 TF],
+> SID=0x0
+> [  157.582181] arm-smmu 15000000.iommu: FSYNR0 = 00100011 [S1CBNDX=16 WNR
+> PLVL=1]
+> [  157.589610] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
+> [  157.596197] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
+> 
+> Enabling retention on usb controller GDSC fixes the above issues.
 
---lc2bghryyziuu5ih
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
-MIME-Version: 1.0
+Could you please clarify, if there are other platforms which need this
+change? Is there a chance of switching all of them in one patch set?
 
-On Fri, Mar 21, 2025 at 11:55:54AM +0200, Svyatoslav Ryhel wrote:
-> Tegra 4 is fully compatible with existing Tegra K1 cpufreq driver.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+> 
+> Note:
+> The above mentioned issues pop up after I enabled runtime suspend after
+> applying [1].
+> [1]: https://lore.kernel.org/all/20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com/
+> 
+>  drivers/clk/qcom/gcc-sm8450.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+> index 65d7d52bce03..f94da4a1c921 100644
+> --- a/drivers/clk/qcom/gcc-sm8450.c
+> +++ b/drivers/clk/qcom/gcc-sm8450.c
+> @@ -3141,7 +3141,7 @@ static struct gdsc usb30_prim_gdsc = {
+>  	.pd = {
+>  		.name = "usb30_prim_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  };
+>  
+>  static struct clk_regmap *gcc_sm8450_clocks[] = {
+> -- 
+> 2.34.1
+> 
 
-It might be confusing to refer to this as both Tegra 4 and Tegra114. I
-think it'd be better to stick with just Tegra114. Otherwise:
-
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---lc2bghryyziuu5ih
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhIElAACgkQ3SOs138+
-s6Fk7g/6AjRUWbg6q1l0nhejjkpwMeIxmpQSymJfQ98bwI0lntbIDB26QfmZZFfR
-8rIjlsf53Uu6LWe0KOxxOot4X9uIauE5EZsAb9y3ESBzxC+0k6PYXb2wpLFwyIDo
-lQ7jlr6lPvjf9RMdO/hrdbcZr6UI6A3jfXJ2BpoiLOSuDSjqHGMzLJX3M+3WovdL
-WFjhVLaosl7gq8eF40ozOz5PZpb5WxhtcqhJbKWhZc5SEpbd/SHNWf6teBRDqiBB
-Km7V8NqYUBvWpN7SoJj+X+JI13tokegEDiHIgEX3AIQ9ldy9SeExkPKQe1j7ak2H
-PqDs7iMd1g7e1AKZBAkbcn2IxM+guFwnIOzfXU89iWNs2lQG8LQuqlbFVtd4bbY+
-2lUyM/vRoghKPpXpGB7TdRkZwa6WeiOZu4TYI6sNXx3vCgPo8Zne37hoGeoaquCM
-8N/8oS3ZxVKtGWQPXIYspoM5JdN9X8lEldHmp5duWk2YsMpnpEu2qENBLt3YEK6l
-xLnLxGuX71x1dMAigYe7hayAvSo5B/iAszYFKPS0o0FMQZMxAwxJb2ZrhhpmaF5R
-x4Xcrvub1yXS+L3r88x9zoo9xTlPcVDHOZtpnfK6AG2dbEixauPN/U6h9acuD7/W
-FzTLT/GCrGjoq5VYBE6Fh+fT8BlXGRFPegB4nH0/ZfCYLyFp990=
-=Hh0/
------END PGP SIGNATURE-----
-
---lc2bghryyziuu5ih--
+-- 
+With best wishes
+Dmitry
