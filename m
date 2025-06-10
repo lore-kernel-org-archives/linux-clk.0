@@ -1,207 +1,197 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4B21CA0C
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 06:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579F725EF9C
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 07:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749536559; cv=none; b=Z+Jc9lTMjemmDJOPATC7eGb4qbLJgi/OuAiix9++HQuyJGwYN2mBRElEgmEnyY2InuhvSnpTzDMQH1Xe0XUdplzyIqKcN5jDzsqMwbfC5+H2/Ts9goBZbhuT9XON3IW2/QU0xHLlnr+gUN4wqizB7w3SmxplqcwJ++ayzrlT6pU=
+	t=1749539914; cv=none; b=U0hpz/3ZRTNl5IRgzFW3e50Vdj8XHnCeH5it/XuIrmr0GhvKfVBbL9ThJHXBrqEGNAXGdHAkAdZn/94ef9lhHOrdKhN3PEImQbiTv+SdDJkVd1vQyj2TfOAe4hXVgt3dcj/rAv9AmmHTGBEEw63MUV7maGaWdnX+3AHd38gDwYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749536559; c=relaxed/simple;
-	bh=43KLnRsyvO0tiWhgbqvJeLpm30esHdsuJEJIl1OCoag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aaiBRX+/WGQgny1Lp/T2k6pY8hjEASHMY45lA9W3t7iAmvOCztwfmacA29mF8C3TVQvbovHscB716Fyzb0C9XH9hsSDI/4LpDBazM2HsDvJKWq499KB2rCFZ6MEIZoq4d9/FLBAU5wpSj41WNKVgnBcO6Af6HWnoc4q3esGVV/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=R73/pvEq; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1749539914; c=relaxed/simple;
+	bh=KHQLDsJ4E+kG/B+xHajjkoc/MZlUo7hjn+WFDIwXVtw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=lNAivtUibE2/1M6B4FnJBnGcP7ISrB8cJxvQupFhFW5wobhU0sNabk1oLQb8eXX/EXtesP/dBMqR/E22ha2WLwQbeIwTnROmnWMWkC3SOflbvqZ1fv1UPn3qLBXN3siV8+jrMFFzfANAiEbWvMKgSoYwEoR7usgk5ccmOWKx3AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DzWk9FJ5; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="R73/pvEq"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5532a30ac45so4683757e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 23:22:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DzWk9FJ5"
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4e59af1f0e7so1663509137.0
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 00:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749536555; x=1750141355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DB4ehjm6ObGiT+zk3hEYWsaNwCd4xVOzRB3uomCd3eo=;
-        b=R73/pvEqh92z7pHc36U5/hkARSD64xR6HxV69eCUdFmvUei3t5IR0vdVMKxi6nN8Kn
-         TO3ID1a3BeTSpCXGlCvgzw55oT3qiKChi8ah9z6YiQZ8kPPA23SqXYf0CnWXcup0qn6L
-         GMI8Q19R/DN8XFSlV0uNAPw/ecQUzPHHDAchW+13WcyEKqtmMI3elAvh3ttUpUvidxZZ
-         /3qG3DIvVZoy3ALyNjmGztBIr8oSu8qEyTlKvDLTt05For9g2qSb43zgCGvEyx+YSCSx
-         pkX1ubAyFHtPX1LpWg011S85J4/icQPqbr6HzGaXng4r2v26ZNV6kLaQMD5OhgA4u24T
-         2kAA==
+        d=linaro.org; s=google; t=1749539910; x=1750144710; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SkHumX+B+y86i8MSC5SJDKQ6nFwDO3pplzjQCYTDa/A=;
+        b=DzWk9FJ5p5buHP5wsEAgTx2+YwHVnFAIaFUhqj0cGYXYUwA1Li+Z73RXGfycLoubM6
+         qY6MT8vCRUJxw3eiYnaUFvf3E32re/Nf6l6B4CniqwbR/9ikpclDh1qt4RAtOytHv7rA
+         umNgogFgdngUzu883gpjb9qEgiCpT8jqqzC1fx6+W36K/KCBfR/FiZO7vA0IIgLOlNnE
+         I73H2IOU2OlIMAXam5UjDB9fLhYT7gVGHeSXPIQRdnE286+eX+P8dafePJ+Hc16HzWMi
+         kbDJWVn3JudRfClrnlwqiHEpEMqBe7n+AqmfwA+AR079t6zML5xiFsoFvLqw3hm/JIiT
+         Tv1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749536555; x=1750141355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DB4ehjm6ObGiT+zk3hEYWsaNwCd4xVOzRB3uomCd3eo=;
-        b=GiDfjC4s6Ms8RRwzPf6m/247YbPj2YZqQ5cvZdLJyicnhnYzCvrOe77whU5nZbzjmX
-         F/5sIfXvBrdoijJ3IN//Somm+U9mAoRnpooYL6JGWTawH5dkwoJSaXmHvdXTR4Mv63lO
-         Gh37NNrrSPdGEEhs8sKMto/BFupS9RsmFaXHzXjciDXNP49pAurMHCPRfBZTP0/ldZO8
-         /U2eVP6MMybxSPrqwcVR0C5Xkg6FGrcHvqerYK0HpiGJxQAgwvZA1pDHzVIUcLHG4edK
-         lZhFGg42YzAGRgSKJJ+15bfcERX2a0QQwdsaWLttZ5emmN1Kcbn41+pda5ErkrTQQLHv
-         DcIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAsqVUlxCT5VGv6AvBMlooC9E+TUC2CpqK2Pah1D35MET9GkqHJdXrR7qVJVpOHZiFAvYel5ARGac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDwODj599TDKAaxAVUqyRGVrcIdxJO+49ZVmxS1d4Jd4Ro9ucn
-	z4GX5scLjKwPtZ2aUYWUolpKqhQhswqajYJ1duD+pgjykRw+HXFjEh6FGQ3nZoJCbVv+UQkhSbw
-	+/oeQ+YmMxfOZRqkkuZTvXrg2XQN0L6PAjZcKGCex4Q==
-X-Gm-Gg: ASbGnctOa7p5FtGTlpP9JfsG9mQTWIM3W1taOmIGNB9bJ1quTHGCIOieF24naoYkngU
-	y9OIxapvpuvK2kRr26QDQpFot04R7/9Qb6LgJ+hiKhx5dAGxD6ZP79NJ2k41CenLryGoCUpvWoI
-	K0LFiHffp6JHSyLNGjceON/qEKKNawUmAjPr/8XMuWhmRz
-X-Google-Smtp-Source: AGHT+IFgemJZ7kG2F8XgEhfvR0SOkaw84uYimQM0ic6wTdIsKvJiAdX6chuiGxpnG0pLj9VEVULnGD9buu+lY7bXnsc=
-X-Received: by 2002:a05:6512:3d88:b0:553:29cc:c49c with SMTP id
- 2adb3069b0e04-55393181e5emr633542e87.7.1749536554598; Mon, 09 Jun 2025
- 23:22:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749539910; x=1750144710;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SkHumX+B+y86i8MSC5SJDKQ6nFwDO3pplzjQCYTDa/A=;
+        b=Eb9q9u8JejETJbCZp3bzyeeCW1tg1t6pDNsJAZVZNTLlE35gH8r+66Yvig0wn6PuuC
+         taes99DFGSTaoIMzCIUSmXbvoe7PFIiMd4l7yr1NeHRGwkIY0fv1VOkDDZM1lJVu1VXw
+         sbdWPrWxObxdvXS+0I/YpEKHEf3u+Cl9fh85l/QHCU2mlXMZLArXdcBq6Oey206K+uh1
+         OibHAPB8wIRM+X/Qx7AE4q0rw4lrssa7mkEcrY3M370Aq/XCjsTMjm7w05mKkq+2sCnH
+         i7rw0/Kl3N8DdlEBJcvRZR0lyjnMXTOp3eJ/R4ijbSNfYm7d9ePqIED/MSn/MPl14KuB
+         ARVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXu1xKoGUKMZENj+mNJGYVV2zdWTz8Gh4Rl6KLrzYjsxF6fGjbaNW7w3MbDoL0FP5tNceiXwViSRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNi266m8AjnJ09ckx2iD1DuOdPzWkpLXDmnSbmsd2JzDFqAHxj
+	O8WdBdYcpsvKizwzJmOnT2OXCKl8KL1YmsSDZy1a6CtAqGHrbsBk4do8omxnnj0JhlTV7vh4yr5
+	1VFpOHXnr16quG25XvDta3V9Bp/Ju4+Ubt3qrKbophg==
+X-Gm-Gg: ASbGncv8dNxLC3F2Gakmj6KL4Gmi6Kr6o0F5yipV2+PLfCw8PV0RNCzM3Li2mFbVpgE
+	RXDyPPaZxiBOexJgCLKySoX7T1dAHbhyDnaC/w82TZzeBoENdJH7jY3HAEZjk3VChAY9DRHb7Jt
+	oqlp+mTqBmwBKvTr2b8+921Kg2+VDRrRpQdFNF20KT5piAzClLP9AKbRDnWTruj40xrrOAJ1x2d
+	5hp
+X-Google-Smtp-Source: AGHT+IEWeK8X5+m8ElJSK5z3+ETpZn+gitvlG/z+JagvODDs6mTjgbOyPmSCoIASAzlc/+Rww7q/dUQ/dbl/qwPi6yI=
+X-Received: by 2002:a05:6102:4403:b0:4e2:a5b9:df1d with SMTP id
+ ada2fe7eead31-4e7729acf70mr12705549137.8.1749539910181; Tue, 10 Jun 2025
+ 00:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-13-apatel@ventanamicro.com> <c691cf5e-695e-4a29-b31a-76b3376442b2@linux.dev>
-In-Reply-To: <c691cf5e-695e-4a29-b31a-76b3376442b2@linux.dev>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 10 Jun 2025 11:52:22 +0530
-X-Gm-Features: AX0GCFvoavACeRUD8FpjiBKHCKwOiwWVItSFykOssn8ajeKua3l6UtUtY_QL-G4
-Message-ID: <CAK9=C2U-oFe6QpJZ36yqCzbvv0x6+m8nBYfPOjd61hRaW1cxZQ@mail.gmail.com>
-Subject: Re: [PATCH v4 12/23] dt-bindings: Add RPMI system MSI interrupt
- controller bindings
-To: Atish Patra <atish.patra@linux.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 10 Jun 2025 12:48:18 +0530
+X-Gm-Features: AX0GCFs5HGZPW_5vlnOtlFErN9wZOl5LWlGniaDfW8i9KS2B_HI6AE7jX17fEGo
+Message-ID: <CA+G9fYsYVuEpL5KnYdq4ciRmpnUMQqkNQHmy7y5XvUm48kjxyA@mail.gmail.com>
+Subject: Juno-r2 WARNING kernel time clockevents.c cev_delta2ns clockevents_config.part
+To: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 7, 2025 at 4:33=E2=80=AFAM Atish Patra <atish.patra@linux.dev> =
-wrote:
->
->
-> On 5/25/25 1:46 AM, Anup Patel wrote:
-> > Add device tree bindings for the RPMI system MSI service group
-> > based interrupt controller for the supervisor software.
-> >
-> > The RPMI system MSI service group is defined by the RISC-V
-> > platform management interface (RPMI) specification.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > ---
-> >   .../riscv,rpmi-system-msi.yaml                | 74 ++++++++++++++++++=
-+
-> >   1 file changed, 74 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/interrupt-contro=
-ller/riscv,rpmi-system-msi.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/ris=
-cv,rpmi-system-msi.yaml b/Documentation/devicetree/bindings/interrupt-contr=
-oller/riscv,rpmi-system-msi.yaml
-> > new file mode 100644
-> > index 000000000000..ac13cec0666e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi=
--system-msi.yaml
-> > @@ -0,0 +1,74 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/interrupt-controller/riscv,rpmi-sys=
-tem-msi.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RISC-V RPMI system MSI service group based interrupt controller
-> > +
-> > +maintainers:
-> > +  - Anup Patel <anup@brainfault.org>
-> > +
-> > +description: |
-> > +  The RISC-V Platform Management Interface (RPMI) [1] defines a
-> > +  messaging protocol which is modular and extensible. The supervisor
-> > +  software can send/receive RPMI messages via SBI MPXY extension [2]
-> > +  or some dedicated supervisor-mode RPMI transport.
-> > +
-> > +  The RPMI specification [1] defines system MSI service group which
-> > +  allow application processors to receive MSIs upon system events
-> > +  such as P2A doorbell, graceful shutdown/reboot request, CPU hotplug
-> > +  event, memory hotplug event, etc from the platform microcontroller.
-> > +  The supervisor software can access RPMI system MSI service group via
-> > +  SBI MPXY channel or some dedicated supervisor-mode RPMI transport.
-> > +
-> > +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +  References
-> > +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +  [1] RISC-V Platform Management Interface (RPMI)
-> > +      https://github.com/riscv-non-isa/riscv-rpmi/releases
-> > +
-> > +  [2] RISC-V Supervisor Binary Interface (SBI)
-> > +      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> > +
-> nit: Same comment as previous patch.
+Regression while booting Juno-r2 with the Linux next-20250606
+the following kernel warnings found.
 
-Like mentioned in the previous patch, I will add the spec version to the te=
-xt.
+This boot warning was reproduced with juno-r2.dtb and juno-r2-scmi.dtb.
 
-> > +allOf:
-> > +  - $ref: /schemas/interrupt-controller.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    description:
-> > +      Intended for use by the supervisor software.
-> > +    const: riscv,rpmi-system-msi
-> > +
-> > +  mboxes:
-> > +    maxItems: 1
-> > +    description:
-> > +      Mailbox channel of the underlying RPMI transport or SBI message =
-proxy channel.
-> > +
-> > +  msi-parent: true
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +  "#interrupt-cells":
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - mboxes
-> > +  - msi-parent
-> > +  - interrupt-controller
-> > +  - "#interrupt-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    interrupt-controller {
-> > +        compatible =3D "riscv,rpmi-system-msi";
-> > +        mboxes =3D <&mpxy_mbox 0x2000 0x0>;
-> > +        msi-parent =3D <&imsic_slevel>;
-> > +        interrupt-controller;
-> > +        #interrupt-cells =3D <1>;
-> > +    };
-> > +...
->
-> Otherwise, LGTM.
-> Reviewed-by: Atish Patra <atishp@rivosinc.com>
->
->
->
+Regressions found on Juno-r2
+- boot warning
 
-Regards,
-Anup
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
+
+First seen on the next-20250606
+Good: next-20250512
+Bad:  next-20250606
+
+The suspected patch that found between tags is,
+
+# git show next-20250512..next-20250513 --
+arch/arm64/boot/dts/arm/juno-base.dtsi
+commit 1fa3ed04ac55134063e3cd465b41aeb26715e52a
+Author: Sudeep Holla <sudeep.holla@arm.com>
+Date:   Mon May 12 11:11:32 2025 +0100
+
+    arm64: dts: arm: Drop the clock-frequency property from timer nodes
+
+    Drop the clock-frequency property from the timer nodes, since it must be
+    configured by the boot/secure firmware.
+
+    Cc: Liviu Dudau <liviu.dudau@arm.com>
+    Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Message-Id: <20250512101132.1743920-1-sudeep.holla@arm.com>
+    Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+
+diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi
+b/arch/arm64/boot/dts/arm/juno-base.dtsi
+index 055764d0b9e5..9ccb80821bdb 100644
+--- a/arch/arm64/boot/dts/arm/juno-base.dtsi
++++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+@@ -10,7 +10,6 @@ / {
+        memtimer: timer@2a810000 {
+                compatible = "arm,armv7-timer-mem";
+                reg = <0x0 0x2a810000 0x0 0x10000>;
+-               clock-frequency = <50000000>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+                ranges = <0 0x0 0x2a820000 0x20000>;
+
+
+Boot regression: Juno-r2 WARNING kernel time clockevents.c
+cev_delta2ns clockevents_config.part
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Boot warning
+[    0.000000] timer_sp804: timer clock not found: -517
+[    0.000000] timer_sp804: arm,sp804 clock not found: -2
+[    0.000000] Failed to initialize
+'/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@110000':
+-22
+[    0.000000] timer_sp804: timer clock not found: -517
+[    0.000000] timer_sp804: arm,sp804 clock not found: -2
+[    0.000000] Failed to initialize
+'/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@120000':
+-22
+[    0.000000] arch_timer: frequency not available
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/clockevents.c:38
+cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1))
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
+6.15.0-next-20250605 #1 PREEMPT
+[    0.000000] Hardware name: ARM Juno development board (r2) (DT)
+[    0.000000] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.000000] pc : cev_delta2ns (kernel/time/clockevents.c:38
+(discriminator 1))
+[    0.000000] lr : clockevents_config.part.0 (kernel/time/clockevents.c:499)
+[    0.000000] sp : ffff800082923cd0
+[    0.000000] x29: ffff800082923cd0 x28: 0000000000000400 x27: ffff800081650000
+[    0.000000] x26: ffff80008292fcc0 x25: ffff800082425888 x24: ffff8000829343c0
+[    0.000000] x23: ffff800083210000 x22: 000000000000000b x21: ffff8000823cf178
+[    0.000000] x20: ffff800082433880 x19: ffff00080021e240 x18: 0000000000000000
+[    0.000000] x17: ffff00080021a400 x16: ffff00080021a200 x15: 0000000000000100
+[    0.000000] x14: fffffdffe0008a00 x13: ffff800080000000 x12: 0000000000000000
+[    0.000000] x11: 0000000000000068 x10: 0000000000000100 x9 : ffff8000801b50f8
+[    0.000000] x8 : 000000001dcd6500 x7 : 000000003b9aca00 x6 : 0000000000000020
+[    0.000000] x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000f00000000
+[    0.000000] x2 : 0000000000000000 x1 : ffff00080021e240 x0 : 000000000000000f
+[    0.000000] Call trace:
+[    0.000000] cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1)) (P)
+[    0.000000] clockevents_config_and_register (kernel/time/clockevents.c:519)
+[    0.000000] arch_timer_mem_frame_register
+(drivers/clocksource/arm_arch_timer.c:1319
+drivers/clocksource/arm_arch_timer.c:1580)
+[    0.000000] arch_timer_mem_of_init
+(drivers/clocksource/arm_arch_timer.c:1653)
+[    0.000000] timer_probe (drivers/clocksource/timer-probe.c:31)
+[    0.000000] time_init (arch/arm64/kernel/time.c:62)
+[    0.000000] start_kernel (init/main.c:1014)
+[    0.000000] __primary_switched (arch/arm64/kernel/head.S:247)
+[    0.000000] ---[ end trace 0000000000000000 ]---
+[    0.000000] arch_timer: cp15 and mmio timer(s) running at 50.00MHz
+(phys/phys).
+
+## Source
+* Kernel version: 6.15.0-next-20250513 to 6.15.0-next-20250606
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 4f27f06ec12190c7c62c722e99ab6243dea81a94
+* Toolchain: gcc-13
+
+## Boot details
+* Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8309469#L622
+* Boot log: https://qa-reports.linaro.org/api/testruns/28679128/log_file/
+* Boot warning:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250605/log-parser-boot/exception-warning-cpu-pid-at-kerneltimeclockevents-cev_delta2ns/
+* Build link:  https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
