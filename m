@@ -1,438 +1,131 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAAC20E711
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 04:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A9E21FF32
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 04:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749530290; cv=none; b=Jpybx5MiV2hBKcdL6mjmuH3ZgRg+eHBsdicIGGI6Tubemqdx+jYkIqAtNNxDpw050DnZgYKyEFdd49gxzvdf8fK8J4MZEVi3L1QqJThI5tewHTidp7wcNaM8r3WDfRb11uU0D9b+Lsu8P+yLYOkUgGOH79v/WcL73Lbw2Mbxgdc=
+	t=1749530537; cv=none; b=Kj3fb7NuBNs4WxaQ6lMjA71ffHrrTOET/6NJfK7Q/upsF2NwrKXe613OkkAiDEsdiMAnPyTel9AsqaRHgWfe4gtuNLp0EyWp66sVWEoPQ48gdK8qagonVPt7qfnQ1U7qKjEftG1BO2YTExfmNJOSDlGDJcfMGEslvnRgAxsklfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749530290; c=relaxed/simple;
-	bh=NmhdJ/ddA04MjThhtcZDld1AI0fRvypZGx6pPho3sSg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gEXyZ4kdrwdSdcGqqodt1qCTxAOjdWL6aPiNjANdfaHvnn+qBvYfmFngpNDmuldDnaCLA9TMZXvY/HFMgjhoASxVN0ZJpQu4oTm6vEH3A8oNq6bzhILEx0kR+wwPz6Rw+fMr6WHqzzHgBLHKSz+SW8LPZgHmaVYuGeUkEEBUbSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cIMqDYsW; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1749530537; c=relaxed/simple;
+	bh=CAzDFjhSAzbmD8Txu7d1pGievjGb5rkrE7JNed1lhig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnG/jrTK6NwS6E53ZxXjDft5BEx75VdDcs+NvIV46Nli3W5TQrzpgT+Y/tG31bQdGF6BKGff4zXXeW7ldzoHrxfZChUK4lsIAOZ/hWZdC6o4tyIcWZWAq6lF0Rutx+pAaMsilB1p8QDiK4lPNyFB5weTZBjQrf4uwhzG2O0RbQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=jSVXQt6c; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cIMqDYsW"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74849e33349so1642110b3a.3
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 21:38:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="jSVXQt6c"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234c5b57557so46022625ad.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jun 2025 21:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749530287; x=1750135087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOmEa242izJ9/bhxzxxZ9yeRYv/F/pcNvQXgz4tu4ME=;
-        b=cIMqDYsW/MNnkUcAnjUMe48ozWdlkFWFYC6Q6aFVS8Ig/g+XiRrBP3NI/YR3svEx2M
-         ZRTr1/ol/gRxZKRPMDFfwsr3tSnCxYoBlkTDTb7ED+HJLVHegGiUKsyxnt5wCbIbrMEH
-         IxvIxwQqBIAY314UTS4lYB1DzkD9gYq6QhwLoA1Ik/YaXpk56ux9yBKKsT4VM0/FJCWA
-         00a7Jttt7eK90T/Fx4QwegIwylVCiT1/1OJxJ5fwKKVsHo1t0R/ToqQYIhV6ATWNsZXw
-         /U0tci3MDRixdyTchdDsrZKTp1COXmMYTV7CqY3927DhOma+0ddWp5OnF2kfyUJ2FHQi
-         x6OA==
+        d=ventanamicro.com; s=google; t=1749530535; x=1750135335; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVeTEtZcl1m4ClJ2o9p5dHCV4fbTAw96xygmKyHd+ZA=;
+        b=jSVXQt6cLqIWP2AdpnrUhsBreW4p2wU25oiaJN790VwdPuc+ze2tIRIQ7mDrgv6rFF
+         uY/yfialTOt6CMMNQiGP1bxkV1VrWS+M0CvGPEHv1hoLmjuu4UbQXch4WTOB4uKXXn/W
+         4rqK6PbVoPtqNUgi/1Ytoucsy9MD+ylnZY7NZjQfSYay1/yEGf6o4ahiE24XHg+SUmN6
+         6Et8ze4Tz/BNL+qIQgD1qfSrrMmOm3fvD8fFpZUOsg/dtS76F1Yf7XQCOHSKqoO/lpia
+         vXtXUBhWdqVe3PV8po5IUOGQqUzn/5NQp9qxvFsEDlfURhM/3wPsVoAFbCfrfQ7DJKfr
+         +QXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749530287; x=1750135087;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EOmEa242izJ9/bhxzxxZ9yeRYv/F/pcNvQXgz4tu4ME=;
-        b=NWnhaXq042gReu9AFs750cGXL1l1bnpeEqVCGhJflqlUBmFaqDZbflYA6qavAw4rTd
-         2BjikckluNxUGmM0z5s/LYIi07sG3xkwwHe/atbEJS+JN9dFMpiurS/peEwHh3+rmjPt
-         D3MbyZhdTerzFSRz/97WnrG2Vc+uOj6DG4UDybibT89w6Qjz0m5XfABrb1AzjdILix23
-         kd9WQmGR+rYnHNDSWvkcX9ojyq1zUXl+SE2JbnMocgwvwmw5g9/nQWNMJ879/KD9DfSY
-         LzAsTMSTlENQnArhzWlvJiaUA/UuLCRYFbZqpgOPI5DF+9JJV4R5ybvS2q/aHjM6xyw3
-         jdTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQQm4FENLnUKis4LEwMS60jXP4NwzLJ6X2fqFdEQDTWiXZlsRfiKj75MQQb9sQR/dnlRZgdRyj0OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVWn6bh1ypbKuPJbTwbwIJb2gJPeYAJFYztvsuZlL4hFXk70Tr
-	Mf6GPx/UrfQvRO8vplEJNR+OGUja1aZTCfeGpSQWyhoNt93toxRPmpsS29f0C65uztA=
-X-Gm-Gg: ASbGncv0fbTQAM2jKoKmR0n9yzg5ViqyAM8AVdQNyKTJ1aNZilh6lYDMZlw4ey5pvNm
-	C1OPAZlH5nX0Ut3X+gR9X81PcNBRQ/CSBJL9a3c5TRK6rdIZJfhl/ENXG6jFCSd9vwIESh/BrqC
-	uluBfc6Z5AnBy7k3qJ2PNalWBLAI0qmtAeGeHnGIpOmeWaOjp1VkVm6X309gLEhrzuQJzUQh9JI
-	BZHBP1jVK+aZwKnMuilixwRpfB+3J6IrLE6nS5x0HDEX2nMTVGhiiwXn5HNt4Ci+avCsxRrEnEH
-	tQedx6jVkBnXSyNYX6ErDtLK2wxhIUfFSsKdqr240EYWmtF0zjhptYoChKzV8hk=
-X-Google-Smtp-Source: AGHT+IFnumFN5YrH9SMLJGmJpHdBIrELYFHIVkETeYy9y2eyxYkz9cRqU/nNBhslMEsPJdrH40v3PA==
-X-Received: by 2002:a05:6a00:228c:b0:746:31d1:f7d0 with SMTP id d2e1a72fcca58-74861845fabmr1441742b3a.9.1749530286574;
-        Mon, 09 Jun 2025 21:38:06 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0c0635sm6520120b3a.123.2025.06.09.21.38.05
+        d=1e100.net; s=20230601; t=1749530535; x=1750135335;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVeTEtZcl1m4ClJ2o9p5dHCV4fbTAw96xygmKyHd+ZA=;
+        b=LmesHvTh/8geQW/YLUJnzfzkXbAmZlFV0itHIGikW9usL30tNmFBcgd2VXSRYm7TBE
+         JDPidSqQQf3cJBOUhAY03nVvQpoXcqblUr6EiXkPydG4DO5xyLn6Xv9exuzwhX7nxTeM
+         8wXsL6hdUVpbZiGlaFPnEG3f5LFuPxLnX3v1gfZeQvqeVsZL9fRJP0Tsp3FXDLBrqDEK
+         UfvYsPypa+48iz2zWjwZznd2SF2/d9IoEhDfKhasFUj7AYFCAz22lQDl2aS8cNzOECG4
+         DM4SP9SSFSrqJNE6Gbuim7CLfbNBHp74znng/n9BjISWg7Hwy7Qb8i8+XHYttj37Fpe8
+         vZyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2qTmC70uTzPcDmmmn9OhkE1iIw2ziRExyU25MrVjkr0wuRoa6Oq6pCbouF5DOTM9jc1EhfcuqRGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3vQjPyZMm7agm6DletUlOMW0XXZel2eRnflnHzw4GnO2OB92t
+	sIevNtki/9OvpktCj3fvjxt8Bgl5vfUgWXUYHWAHpBZ1kz039HHoaRGqi0dKMnrsXBw=
+X-Gm-Gg: ASbGnctIMZNKwmOK5coMRS6ChvZXX+U4KX/NBFdApuqo7PBO5ojpWgPcTjSKWhkuPL/
+	55lw0ue3+qC02nPgAm6S731Axcen+o9IFH9aBuNeHbb4vdGbyOK6scSu+fiYITj7yxXX2oSEZ1x
+	RE5/lT+LIMTYfomDhAPRnGoTUuHcL1JZr7CNOTEcHNYl8GKe/WBUxCCqWmjl3XBt0t4gKLeRBfx
+	TZdgF8W1JIOv7Kl1aYfga4NXw7x3iqNenPkY4sevhMLQ9zX2fxrAxGfpfE1Wtjuu+0p1bCq9dTk
+	l+xpAq+WpeTU3c96yy+bVo3C272IILA+t8LvQkCJ3mpsexihf9c5vpvdliZGcmhvNdwI7A==
+X-Google-Smtp-Source: AGHT+IEkTU+gBcq13St9Qw/Wf0Um/jTGbpeL8M59SViyqMxrr/ADp4BVSyewhIKv47GXRKYXDjzYQQ==
+X-Received: by 2002:a17:902:d2c3:b0:235:7c6:ebd2 with SMTP id d9443c01a7336-23601d2296bmr201118235ad.31.1749530535298;
+        Mon, 09 Jun 2025 21:42:15 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2363ad3492esm1896875ad.154.2025.06.09.21.42.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 21:38:05 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
+        Mon, 09 Jun 2025 21:42:14 -0700 (PDT)
+Date: Tue, 10 Jun 2025 10:12:03 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Nishanth Menon <nm@ti.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-block@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] rust: Use consistent "# Examples" heading style in rustdoc
-Date: Tue, 10 Jun 2025 10:07:46 +0530
-Message-Id: <70994d1b172b998aa83c9a87b81858806ddfa1bb.1749530212.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 17/23] ACPI: RISC-V: Create interrupt controller list
+ in sorted order
+Message-ID: <aEe3m23wIDM1I-AH@sunil-laptop>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-18-apatel@ventanamicro.com>
+ <aDbuABrlO30TIrx1@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDbuABrlO30TIrx1@smile.fi.intel.com>
 
-Use a consistent `# Examples` heading in rustdoc across the codebase.
+On Wed, May 28, 2025 at 02:05:36PM +0300, Andy Shevchenko wrote:
+> On Sun, May 25, 2025 at 02:17:04PM +0530, Anup Patel wrote:
+> > 
+> > Currently, the interrupt controller list is created without any order.
+> > Create the list sorted with the GSI base of the interrupt controllers.
+> 
+> ...
+> 
+> > -	list_add_tail(&ext_intc_element->list, &ext_intc_list);
+> > +	if (list_empty(&ext_intc_list)) {
+> > +		list_add(&ext_intc_element->list, &ext_intc_list);
+> > +		return 0;
+> > +	}
+> 
+> With the below done the above can be optimized (hopefully).
+> 
+> > +	list_for_each_entry(node, &ext_intc_list, list) {
+> > +		if (node->gsi_base < ext_intc_element->gsi_base)
+> > +			break;
+> > +	}
+> > +
+> > +	__list_add(&ext_intc_element->list, node->list.prev, &node->list);
+> 
+> Is this reimplementation of list_add_tail()? And why list debug is excluded here?
+> 
+Sure. Let me use list_add_tail() itself in the next revision. However, I
+didn't understand the list debug question. IIUC, list_add_tail() is a
+wrapper around __list_add() and doesn't exclude the list debug, right?
 
-Some modules previously used `## Examples` or `# Example`, which deviates
-from the preferred `# Examples` style.
-
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- rust/kernel/block/mq.rs  |  2 +-
- rust/kernel/clk.rs       |  6 +++---
- rust/kernel/configfs.rs  |  2 +-
- rust/kernel/cpufreq.rs   |  8 ++++----
- rust/kernel/cpumask.rs   |  4 ++--
- rust/kernel/devres.rs    |  4 ++--
- rust/kernel/firmware.rs  |  4 ++--
- rust/kernel/opp.rs       | 16 ++++++++--------
- rust/kernel/pci.rs       |  4 ++--
- rust/kernel/platform.rs  |  2 +-
- rust/kernel/sync.rs      |  2 +-
- rust/kernel/workqueue.rs |  2 +-
- rust/pin-init/src/lib.rs |  2 +-
- 13 files changed, 29 insertions(+), 29 deletions(-)
-
-diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-index fb0f393c1cea..831445d37181 100644
---- a/rust/kernel/block/mq.rs
-+++ b/rust/kernel/block/mq.rs
-@@ -53,7 +53,7 @@
- //! [`GenDiskBuilder`]: gen_disk::GenDiskBuilder
- //! [`GenDiskBuilder::build`]: gen_disk::GenDiskBuilder::build
- //!
--//! # Example
-+//! # Examples
- //!
- //! ```rust
- //! use kernel::{
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 6041c6d07527..34a19bc99990 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -12,7 +12,7 @@
- ///
- /// Represents a frequency in hertz, wrapping a [`c_ulong`] value.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// ```
- /// use kernel::clk::Hertz;
-@@ -95,7 +95,7 @@ mod common_clk {
-     /// Instances of this type are reference-counted. Calling [`Clk::get`] ensures that the
-     /// allocation remains valid for the lifetime of the [`Clk`].
-     ///
--    /// ## Examples
-+    /// # Examples
-     ///
-     /// The following example demonstrates how to obtain and configure a clock for a device.
-     ///
-@@ -266,7 +266,7 @@ fn drop(&mut self) {
-     /// Instances of this type are reference-counted. Calling [`OptionalClk::get`] ensures that the
-     /// allocation remains valid for the lifetime of the [`OptionalClk`].
-     ///
--    /// ## Examples
-+    /// # Examples
-     ///
-     /// The following example demonstrates how to obtain and configure an optional clock for a
-     /// device. The code functions correctly whether or not the clock is available.
-diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
-index 34d0bea4f9a5..92cc39a2f7ca 100644
---- a/rust/kernel/configfs.rs
-+++ b/rust/kernel/configfs.rs
-@@ -17,7 +17,7 @@
- //!
- //! C header: [`include/linux/configfs.h`](srctree/include/linux/configfs.h)
- //!
--//! # Example
-+//! # Examples
- //!
- //! ```ignore
- //! use kernel::alloc::flags;
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index b0a9c6182aec..944814b1bd60 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -201,7 +201,7 @@ fn from(index: TableIndex) -> Self {
- /// The callers must ensure that the `struct cpufreq_frequency_table` is valid for access and
- /// remains valid for the lifetime of the returned reference.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to read a frequency value from [`Table`].
- ///
-@@ -317,7 +317,7 @@ fn deref(&self) -> &Self::Target {
- ///
- /// This is used by the CPU frequency drivers to build a frequency table dynamically.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to create a CPU frequency table.
- ///
-@@ -394,7 +394,7 @@ pub fn to_table(mut self) -> Result<TableBox> {
- /// The callers must ensure that the `struct cpufreq_policy` is valid for access and remains valid
- /// for the lifetime of the returned reference.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to create a CPU frequency table.
- ///
-@@ -832,7 +832,7 @@ fn register_em(_policy: &mut Policy) {
- 
- /// CPU frequency driver Registration.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to register a cpufreq driver.
- ///
-diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-index c90bfac9346a..0f2dd11d8e6a 100644
---- a/rust/kernel/cpumask.rs
-+++ b/rust/kernel/cpumask.rs
-@@ -29,7 +29,7 @@
- /// The callers must ensure that the `struct cpumask` is valid for access and
- /// remains valid for the lifetime of the returned reference.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to update a [`Cpumask`].
- ///
-@@ -173,7 +173,7 @@ pub fn copy(&self, dstp: &mut Self) {
- /// The callers must ensure that the `struct cpumask_var_t` is valid for access and remains valid
- /// for the lifetime of [`CpumaskVar`].
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to create and update a [`CpumaskVar`].
- ///
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index 0f79a2ec9474..3644c604d4a7 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -42,7 +42,7 @@ struct DevresInner<T> {
- /// [`Devres`] users should make sure to simply free the corresponding backing resource in `T`'s
- /// [`Drop`] implementation.
- ///
--/// # Example
-+/// # Examples
- ///
- /// ```no_run
- /// # use kernel::{bindings, c_str, device::{Bound, Device}, devres::Devres, io::{Io, IoRaw}};
-@@ -192,7 +192,7 @@ pub fn new_foreign_owned(dev: &Device<Bound>, data: T, flags: Flags) -> Result {
-     /// An error is returned if `dev` does not match the same [`Device`] this [`Devres`] instance
-     /// has been created with.
-     ///
--    /// # Example
-+    /// # Examples
-     ///
-     /// ```no_run
-     /// # #![cfg(CONFIG_PCI)]
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index 2494c96e105f..e209b5af297c 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -139,7 +139,7 @@ unsafe impl Sync for Firmware {}
- /// Typically, such contracts would be enforced by a trait, however traits do not (yet) support
- /// const functions.
- ///
--/// # Example
-+/// # Examples
- ///
- /// ```
- /// # mod module_firmware_test {
-@@ -261,7 +261,7 @@ const fn push_internal(mut self, bytes: &[u8]) -> Self {
-     /// Append path components to the [`ModInfoBuilder`] instance. Paths need to be separated
-     /// with [`ModInfoBuilder::new_entry`].
-     ///
--    /// # Example
-+    /// # Examples
-     ///
-     /// ```
-     /// use kernel::firmware::ModInfoBuilder;
-diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-index a566fc3e7dcb..5f404c4181ad 100644
---- a/rust/kernel/opp.rs
-+++ b/rust/kernel/opp.rs
-@@ -103,7 +103,7 @@ fn to_c_str_array(names: &[CString]) -> Result<KVec<*const u8>> {
- ///
- /// Represents voltage in microvolts, wrapping a [`c_ulong`] value.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// ```
- /// use kernel::opp::MicroVolt;
-@@ -128,7 +128,7 @@ fn from(volt: MicroVolt) -> Self {
- ///
- /// Represents power in microwatts, wrapping a [`c_ulong`] value.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// ```
- /// use kernel::opp::MicroWatt;
-@@ -153,7 +153,7 @@ fn from(power: MicroWatt) -> Self {
- ///
- /// The associated [`OPP`] is automatically removed when the [`Token`] is dropped.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to create an [`OPP`] dynamically.
- ///
-@@ -202,7 +202,7 @@ fn drop(&mut self) {
- /// Rust abstraction for the C `struct dev_pm_opp_data`, used to define operating performance
- /// points (OPPs) dynamically.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to create an [`OPP`] with [`Data`].
- ///
-@@ -254,7 +254,7 @@ fn freq(&self) -> Hertz {
- 
- /// [`OPP`] search options.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// Defines how to search for an [`OPP`] in a [`Table`] relative to a frequency.
- ///
-@@ -326,7 +326,7 @@ fn drop(&mut self) {
- ///
- /// Rust abstraction for the C `struct dev_pm_opp_config`.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to set OPP property-name configuration for a [`Device`].
- ///
-@@ -569,7 +569,7 @@ extern "C" fn config_regulators(
- ///
- /// Instances of this type are reference-counted.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to get OPP [`Table`] for a [`Cpumask`] and set its
- /// frequency.
-@@ -1011,7 +1011,7 @@ fn drop(&mut self) {
- ///
- /// A reference to the [`OPP`], &[`OPP`], isn't refcounted by the Rust code.
- ///
--/// ## Examples
-+/// # Examples
- ///
- /// The following example demonstrates how to get [`OPP`] corresponding to a frequency value and
- /// configure the device with it.
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 8435f8132e38..2c2ed347c72a 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -100,7 +100,7 @@ extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
- 
- /// Declares a kernel module that exposes a single PCI driver.
- ///
--/// # Example
-+/// # Examples
- ///
- ///```ignore
- /// kernel::module_pci_driver! {
-@@ -194,7 +194,7 @@ macro_rules! pci_device_table {
- 
- /// The PCI driver trait.
- ///
--/// # Example
-+/// # Examples
- ///
- ///```
- /// # use kernel::{bindings, device::Core, pci};
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 5b21fa517e55..f8c0d79445fa 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -120,7 +120,7 @@ macro_rules! module_platform_driver {
- ///
- /// Drivers must implement this trait in order to get a platform driver registered.
- ///
--/// # Example
-+/// # Examples
- ///
- ///```
- /// # use kernel::{bindings, c_str, device::Core, of, platform};
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 36a719015583..a38ea4419758 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -39,7 +39,7 @@ impl LockClassKey {
-     /// Initializes a dynamically allocated lock class key. In the common case of using a
-     /// statically allocated lock class key, the static_lock_class! macro should be used instead.
-     ///
--    /// # Example
-+    /// # Examples
-     /// ```
-     /// # use kernel::c_str;
-     /// # use kernel::alloc::KBox;
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index d092112d843f..8c27786dc8f0 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -26,7 +26,7 @@
- //!  * The [`WorkItemPointer`] trait is implemented for the pointer type that points at a something
- //!    that implements [`WorkItem`].
- //!
--//! ## Example
-+//! # Examples
- //!
- //! This example defines a struct that holds an integer and can be scheduled on the workqueue. When
- //! the struct is executed, it will print the integer. Since there is only one `work_struct` field,
-diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-index 9ab34036e6bc..c5f395b44ec8 100644
---- a/rust/pin-init/src/lib.rs
-+++ b/rust/pin-init/src/lib.rs
-@@ -953,7 +953,7 @@ macro_rules! try_init {
- /// Asserts that a field on a struct using `#[pin_data]` is marked with `#[pin]` ie. that it is
- /// structurally pinned.
- ///
--/// # Example
-+/// # Examples
- ///
- /// This will succeed:
- /// ```
--- 
-2.31.1.272.g89b43f80a514
-
+Thanks!
+Sunil
