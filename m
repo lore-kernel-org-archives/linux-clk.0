@@ -1,287 +1,181 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA30C28DF0E
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 11:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015DC28DF0E;
+	Tue, 10 Jun 2025 11:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749553442; cv=none; b=MJHpKUD2gj3UTrETI32Wgb84WKKF1tW/N4RxM9VFsFKvYKmcy20CTxLApieLouKuv5b4r/jRyLvK25Jy2wqVY0gXdQInkwpElvFBWjpj6vSrN0p9eYT259t2+8PPzjVCzRwHgZl/q2cDEmxL+x2DU3aHnGWC/m0LZj3rS1M5rx0=
+	t=1749553661; cv=none; b=qjmN0b2eDOc0b5kFkYcVIsslJIdl93le3wdZSiP0R6O0kUR/YIqxcmYAGdD+HVclQSlL9lJYeeG/77XqaPL9x8Nz6Vf5tdsCV+WRB3b38iW4D1mvM73PraXkmctqq8ZfXdx2/C7RApMVMChj0lhxJ4qHRI/mfVmLNK2bFfAqEDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749553442; c=relaxed/simple;
-	bh=8fNQgjatY1ybh3/ip3WOZMx4IyIUcueMoDOkViRKZd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ujno+VNrEXZQw+Vd/lZox1KUHUY3WoWQf/BK/hnm8foneSheCf2vvJG0VeTB/fkF/fjpQMCoYKhj1VGIJpR4gTO2ESXoyYYbNDiHmaURGB2yo4Xz7+Ek+Ev6sPm53Axlry3VwopSw1rilkvg74iow9rqpHeeLI9FiypzBwNDA70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=MyPwLmaw; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1749553661; c=relaxed/simple;
+	bh=5WyJDjOsacc1tyrhglR5f00AB2huMpl9kWaITwLH2gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOa9DNu7g9yS7nRYN91fzLbFj69mR919Ok/mEhQ3fKI5sigeKY82ixczBXM0yudi+tHJ/+4f5K3E+yGUJFkpgkSHZsDZONj2QXtZaNHyvmKicwyJZeqqiCp9yJuTd2yWSdoyBh1qxwUsRmD5EwELesfr1xFmSxLwVibkaIc7iWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dre9Zpx8; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="MyPwLmaw"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5535652f42cso5429575e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 04:04:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dre9Zpx8"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450cfb6a794so34332035e9.1;
+        Tue, 10 Jun 2025 04:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749553439; x=1750158239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKrG+/t13RZcj2XOvH9v9z8+L2fFTYYa3Ltd42Ng0rE=;
-        b=MyPwLmawmguJu8VPMGIASo7MS3uN2CUDw5+K1JkfdI3XwUe3aIOnt+7XeEbaxFYsfw
-         dyig0/cE0IuVw6vxqMbeUxc4WJkd2DE2T04xmITFKkrzErmb6XtvkzaCGkNOFTHk9iS5
-         gx/xmfvzZMVpf1ACgIIczmhSbn6RZN8EzY3eczxmpbJZGOnhwNfuZksBBVn9NwTv0QNM
-         8Em9Y9A4ENlkAY4i0jmIOmSKo9d7iJCWFVHVgkzonXH8Gqn4FYSkXUNrSbT0leeiFNC+
-         2tQIZ7LTLigPRDvP465LjYIVwXggsp97mpau9TWzONJT7k43MSpi+2dSbpw+uW73nYab
-         DJSA==
+        d=gmail.com; s=20230601; t=1749553658; x=1750158458; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSDkUNg7pCMVGDi1JhrPkWKMxNcgCg8HawFBRzXOTrI=;
+        b=dre9Zpx8/rNdCYA1RW70X6SMxRNeaA8IaQWu7NUnG5CVbaW2fUGuWmxHyEPI3ExH+H
+         PX2GZuNcHtUp7dwRWUbY/Wp3dTLQWtMwZEQf+CX5qI+ZQxOMKHG1yMLB6GwI3lPOJoFg
+         KsNJp7KI29a3LtAKhm4u/l7jsFQ9nstNQygzEuSh7avf6KE2OM7S8GvFXYaF/MNa1Kh6
+         c2eqx8m/Xxb43fa2DwJK1sFOUMlxKOuZpzgFlBLCamDbhC+LassZxE6SAJfxJKEe94dC
+         Hi8qWn/Ej00lCQspDuH8fVZvk/zSfIAgMD9UnFtwEWUt9yK8yhvfyHpovXNbgXZ0oDmR
+         pbOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749553439; x=1750158239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKrG+/t13RZcj2XOvH9v9z8+L2fFTYYa3Ltd42Ng0rE=;
-        b=QsohjWFuZICEJc/eDg6z6lq0gqJqjdF1p7ikYVTDXj0Nxd/5sEG6YOwZc1ZjN/bN10
-         LO1w9WXzpLFxNE3W/rNvzvxnllErn7C4LeI0gi67echr28f2VIYBKr0GnL/joZ9cIW+k
-         EjFbEj/xWE/q/VCRjJ3Mkcm7+CleyeqLHpjzX+g/OO8P66twLw2nhtSadXdCg9DXkkXS
-         1WOEDlc8IFFfnN5TOxB5bVTh3Rveh+R6S72OMwjEXgSY84qEKgwRtzRTs9GJy/fNR9B4
-         m0Nua61mnk+7A+F3dwXD8Uxe74H2jyh28zxQROxvwU1XLiIBvMCjk1Z7YP7jki4MPcW6
-         T48w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrspu07AzzSjyw77+maJI4ZG1wvZyE+mXmHILOD6dnRz1JewgzMrLI0bHqsVSrxxmkTVBqTceMH9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFCn+YQfbRndAozdsYysaq7zR/k0lzjANqYzvICn7YbMOPX7L0
-	avFbm9ub9MSHjs7sp5Cj4gHddC+D+TQCWHnarzycIoyxJX9vUbMXxAYwQkDYOS5K6aZYd1DOMDy
-	RR3v/Wzoa21YTOd7G+/Fk0qbgcrbC3/E+O4FvLAvpCQ==
-X-Gm-Gg: ASbGncuuL/zWqnAv79gYlf2T1e6I4KCA91HHT6fC8dG7xGTAo+PEAMMSC012IfR1fYG
-	WYyEnoq0M4DZsQFGP7r3wKaixIZqOv+ssqB+msYBoGxvYYsbDoJnC9Ncj+BvHnOCysSwYwusXXR
-	oy5dae51Ty/GOjz+se9fjoqkw3CzVvQNkBykwC47k4JSrN
-X-Google-Smtp-Source: AGHT+IESMN1xY0S0unbcyTuOy1IpGOvKrvakY0krrQjYzGxBna97nQp1FPjoYQhSDGAOnzFkYRrS1ke1WZ4KLHhwEvw=
-X-Received: by 2002:a05:6512:1390:b0:553:349c:6465 with SMTP id
- 2adb3069b0e04-553947c776fmr618266e87.33.1749553439019; Tue, 10 Jun 2025
- 04:03:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749553658; x=1750158458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSDkUNg7pCMVGDi1JhrPkWKMxNcgCg8HawFBRzXOTrI=;
+        b=D2x2GnJylpydS9RBnKc+5YA5d7R7Yb+ElpiSpyyTvAkLi3qNrUA10iiRbRxcG4dxFp
+         LAVOsuSwlNjw5F1m/nOI/HZ9DAItaJcuBjXkC7V1S2QFEjzNQ6SQxDBwFiXJTZHXy43q
+         kkhCL9Is4xbIthTdkFQP7pHpDqKQsu47Ne/gDn6BvChMRtkUx6UsNXgudPB+kz/MC7bt
+         FYZdsmqcirBonaNiWITGFaX3INImZOly4TAEPhPLMv13nPbw/b8FYE40iryPOFhka/2N
+         CMAgxubuqGcFKjPAxBsrMRET9eq41m+VvAlFci1wlU89PDMWFwtuOZzwA5xtgwY9zjS9
+         RLgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG1IRFzTVIUPfcM+VTMckrwRSrUmn+6VYFlfI4gLCXmSpbBEgAJuSURBYy8AuDmblrNsGFcsXOO+2Vlzur@vger.kernel.org, AJvYcCWUGdXsdDBFRUX1sAVT68nrnmGGv5Ff/iGvw6VqLIjnFGD/KFNAWwpuZZlWoVHdngLopdAUEypPdJE=@vger.kernel.org, AJvYcCWetYkFf3WaVr8ByMEh5RCxEXPaejVqjmgxmrPCqTyJ5EpNLBfUtELYebHLxtVASebfVFFo7LboO3gMqUc=@vger.kernel.org, AJvYcCXzyebREo2T2ZodbTO0xKITytIzGxymsw/uP/PPA9oFTgXGlq0mtwwo/t9r1Nq3dLwMlZ8P6MnlHxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbOWCHolJJBi9v3OYReN59nZ/tRyX7ZBAoMbnbpqdgwte6nhQ1
+	dPasEyBjWj1LDdegwB3HP2nCF82yrPLl128y02Zen8COc8OWJxsAXPsS
+X-Gm-Gg: ASbGncs31PX2xwYsd2DCC0Y3TPuXXUdmT6njfLPoWKbAaZnp/L/+qS6Zs1pVtMI1N46
+	jnygpqia9f7Wj82iELVy3kqQThr3evpcyuEmsSYhMlFIUl32sLXCTebvtA8JJ96KzXzMDdG2rC8
+	m1pwNhrrQI3ZENA8bdlhcA78MplZ/dla1TDSqByewC+GXxOHCvmUSxivV5d+B26BrPEoOI2eaPW
+	SKpqD37g+q/aqR6t2QyfZ/7716UnG2TZQrugcly2WtLgAMYcnvwc53ym/Sxs+yEE0oWSR9WhOYN
+	U9webGFseRrc1yPn/BU3WuioJtXVbIIi6GFnvQnI/hPy4fLi8tDGTu7paLqpFxRNdegZWxwON8t
+	jIRx6u0G1Ut53BxEoCbWbA0rBPgV71Ban+DkSw5YFCU+JBSSo
+X-Google-Smtp-Source: AGHT+IGJLn68qlQRgM1RWjGLvgYWa/yZA0vynepgw1pm/prSBNurVotzXJWhrmwMI0/EhEopshwdMw==
+X-Received: by 2002:a05:600c:8b72:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-4531de00a15mr22080545e9.13.1749553658041;
+        Tue, 10 Jun 2025 04:07:38 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45307b4788fsm88637525e9.21.2025.06.10.04.07.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 04:07:36 -0700 (PDT)
+Date: Tue, 10 Jun 2025 13:07:34 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
+Message-ID: <g7kegtso3opafpwocvibhm3rym35oikxoyq2wmphqy3wjenzpa@m7extntwahau>
+References: <20250321095556.91425-1-clamor95@gmail.com>
+ <20250321095556.91425-3-clamor95@gmail.com>
+ <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-14-apatel@ventanamicro.com> <aDWjG9jAJ7kSaC9b@smile.fi.intel.com>
-In-Reply-To: <aDWjG9jAJ7kSaC9b@smile.fi.intel.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 10 Jun 2025 16:33:46 +0530
-X-Gm-Features: AX0GCFshka7Yxp7fjO1jD3jzFyiwSbjQL6yn3YQHCZzypSxtbBGLaVxP7eVlcr8
-Message-ID: <CAK9=C2VYCSkMV5zoyVEKHTY30Y0KpUr_M8FELm37M8=WYi+4HQ@mail.gmail.com>
-Subject: Re: [PATCH v4 13/23] irqchip: Add driver for the RPMI system MSI
- service group
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mdr3yu4j4s5eicl5"
+Content-Disposition: inline
+In-Reply-To: <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
+
+
+--mdr3yu4j4s5eicl5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
+MIME-Version: 1.0
 
-On Tue, May 27, 2025 at 5:03=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 25, 2025 at 02:17:00PM +0530, Anup Patel wrote:
-> > The RPMI specification defines a system MSI service group which
-> > allows application processors to receive MSIs upon system events
-> > such as graceful shutdown/reboot request, CPU hotplug event, memory
-> > hotplug event, etc.
-> >
-> > Add an irqchip driver for the RISC-V RPMI system MSI service group
-> > to directly receive system MSIs in Linux kernel.
->
-> ...
->
-> > +#include <linux/device.h>
->
-> Perhaps I missed something, but devm_kzalloc() is in device/devres.h. Do =
-you
-> need it for something else?
-
-dev_get_msi_domain() is part of linux/device.h hence it should
-be included.
-
-I will add linux/device/devres.h as well.
-
->
-> > +#include <linux/dev_printk.h>
-> > +#include <linux/irq.h>
-> > +#include <linux/irqdomain.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/mailbox/riscv-rpmi-message.h>
-> > +#include <linux/module.h>
-> > +#include <linux/msi.h>
-> > +#include <linux/of_irq.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/types.h>
->
-> > +#include <vdso/bits.h>
->
-> Just make it linux/bits.h as vdso is for user space libvdso and related.
->
-> But
->
-> + asm/byteorder.h
->
-> ...
->
-> > +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
-> > +{
-> > +     struct rpmi_sysmsi_priv *priv =3D irq_data_get_irq_chip_data(d);
->
-> Declare temporary variable for hwirq and do irqd_to_hwirq() only once.
-
-Okay, I will update.
-
->
-> > +     int ret;
+On Fri, Mar 21, 2025 at 09:50:09PM +0100, Krzysztof Kozlowski wrote:
+> On 21/03/2025 10:55, Svyatoslav Ryhel wrote:
+> > Extend the Tegra124 driver to include DFLL configuration settings requi=
+red
+> > for Tegra114 compatibility.
+> >=20
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>=20
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument, so you will
+> not CC people just because they made one commit years ago). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+>=20
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> </form letter>
+>=20
+>=20
+>=20
+> > +++ b/include/dt-bindings/reset/tegra114-car.h
+>=20
+> Filename based on compatible.
+>=20
+> > @@ -0,0 +1,13 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> > +/*
+> > + * This header provides Tegra114-specific constants for binding
+> > + * nvidia,tegra114-car.
+> > + */
 > > +
-> > +     ret =3D rpmi_sysmsi_set_msi_state(priv, irqd_to_hwirq(d), 0);
-> > +     if (ret) {
-> > +             dev_warn(priv->dev, "Failed to mask hwirq %lu (error %d)\=
-n",
-> > +                      irqd_to_hwirq(d), ret);
-> > +     }
-> > +     irq_chip_mask_parent(d);
-> > +}
->
-> ...
->
-> > +static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
->
-> Ditto.
->
-> ...
->
-> > +static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_des=
-c *desc)
-> > +{
-> > +     arg->desc =3D desc;
-> > +     arg->hwirq =3D (u32)desc->data.icookie.value;
->
-> Hmm... Why do you need an explicit casting?
-
-Not needed, I will drop the casting in the next revision.
-
->
-> > +}
->
-> ...
->
-> > +     if (WARN_ON(fwspec->param_count < 1))
->
-> + bug.h
-
-Okay, I will update.
-
->
-> > +             return -EINVAL;
->
-> + errno.h (but actually you need err.h due to PTR_ERR() et al.)
->
-> ...
->
-> > +static int rpmi_sysmsi_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct rpmi_sysmsi_priv *priv;
-> > +     int rc;
->
-> Be consistent with variable naming for the same (semantically) stuff.
->
-> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +     if (!priv)
-> > +             return -ENOMEM;
-> > +     priv->dev =3D dev;
->
-> > +     platform_set_drvdata(pdev, priv);
->
-> How is being used?
-
-Typically, it's for driver_remove() but since we don't have
-driver_remove() we can drop it.
-
->
+> > +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
+> > +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
 > > +
-> > +     /* Setup mailbox client */
-> > +     priv->client.dev                =3D priv->dev;
-> > +     priv->client.rx_callback        =3D NULL;
-> > +     priv->client.tx_block           =3D false;
-> > +     priv->client.knows_txdone       =3D true;
-> > +     priv->client.tx_tout            =3D 0;
-> > +
-> > +     /* Request mailbox channel */
-> > +     priv->chan =3D mbox_request_channel(&priv->client, 0);
-> > +     if (IS_ERR(priv->chan))
-> > +             return PTR_ERR(priv->chan);
-> > +
-> > +     /* Get number of system MSIs */
-> > +     rc =3D rpmi_sysmsi_get_num_msi(priv);
-> > +     if (rc < 1) {
-> > +             mbox_free_channel(priv->chan);
-> > +             if (rc)
-> > +                     return dev_err_probe(dev, rc, "Failed to get numb=
-er of system MSIs\n");
-> > +             else
-> > +                     return dev_err_probe(dev, -ENODEV, "No system MSI=
-s found\n");
-> > +     }
-> > +     priv->nr_irqs =3D rc;
-> > +
-> > +     /* Set the device MSI domain if not available */
-> > +     if (!dev_get_msi_domain(dev)) {
-> > +             /*
-> > +              * The device MSI domain for OF devices is only set at th=
-e
-> > +              * time of populating/creating OF device. If the device M=
-SI
-> > +              * domain is discovered later after the OF device is crea=
-ted
-> > +              * then we need to set it explicitly before using any pla=
-tform
-> > +              * MSI functions.
-> > +              */
->
-> > +             if (is_of_node(dev_fwnode(dev)))
-> > +                     of_msi_configure(dev, to_of_node(dev_fwnode(dev))=
-);
->
->                 if (dev_of_node(dev))
->                         of_msi_configure(dev, dev_of_node(dev));
+> > +#define TEGRA114_RESET(x)		(5 * 32 + (x))
+>=20
+>=20
+> Does not look like a binding, but some sort of register. Binding IDs
+> start from 0 (or 1) and are incremented by 1.
 
-Okay, I will update.
+I'll try and clear up some of the confusion around this. The way that
+resets are handled on these Tegra devices is that there is a set of
+peripheral clocks & resets which are paired up. This is because they
+are laid out in banks within the CAR (clock and reset) controller. In
+most cases we're referring to those resets, so you'll often see a clock
+ID used in conjection with the same reset ID for a given IP block.
 
->
-> > +             if (!dev_get_msi_domain(dev)) {
-> > +                     mbox_free_channel(priv->chan);
-> > +                     return -EPROBE_DEFER;
-> > +             }
-> > +     }
-> > +
-> > +     if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> > +                                       &rpmi_sysmsi_template,
-> > +                                       priv->nr_irqs, priv, priv)) {
-> > +             mbox_free_channel(priv->chan);
-> > +             return dev_err_probe(dev, -ENOMEM, "failed to create MSI =
-irq domain\n");
-> > +     }
-> > +
-> > +     dev_info(dev, "%u system MSIs registered\n", priv->nr_irqs);
-> > +     return 0;
-> > +}
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+In addition to those peripheral resets, there are a number of extra
+resets that don't have a corresponding clock and which are exposed in
+registers outside of the peripheral banks, but still part of the CAR.
+To support those "special" registers, the TEGRA*_RESET() is used to
+denote resets outside of the regular peripheral resets. Essentially it
+defines the offset within the CAR at which special resets start. In the
+above case, Tegra114 has 5 banks with 32 peripheral resets each. The
+first special reset, TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0.
 
-Regards,
-Anup
+So to summarize: We cannot start enumerating these at 0 because that
+would fall into the range of peripheral reset IDs.
+
+Thierry
+
+--mdr3yu4j4s5eicl5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhIEfMACgkQ3SOs138+
+s6GhaRAAmd49Bi91xyPfMgzNKI861C3Y5GeN/U4iPxCnbuxP6d/aG+FGMZgfL6rt
+1oEh6iocRWI6eF3ydldX6NAQec3h8kbQUT2wxfybcfjpUVH4vwqfHnV4BcWdNmKO
+kDxZIxDWCzZxUAT9DsqKT0p4GKdWreJO5JEdsZBw/tc0szmMB2+5yQxA3eKgOLjG
+kvRAxBvt8dfb6Y+MiDFESKX3SwUVKzfSZYofLxZDo0HS74fJlNlP0MtTu47QN4H/
+C3HdExss0D9Z6T2FuFXeKXiTlDO2x4q6ZBuSyVsrYAlUGtWAoeQD5s59zL26Vfuu
+xQYo5a8iPSaE3LNyyiEavk5NPkaNo+2Y4f9JMls09n69uEeQIL6+bAGJ0fKKhZ/Z
+5DuTugrGpHFs6r8wKC4rGsKq40aprc7Q0eOZFL1bBQyh08yPsi72QgQM5edVYxcC
+xjsNPjAm3PhGsUE+5MMBMV8uArxQGrPJLghz9MzsVGimjePZg6KE35xNkOeYUhn9
+1UHksmOY0TYJEuxu3+o0IxuFwzHAqcO+v6B+gusqAxeHhPn5kaPSMK4wYeCwnhAk
+EOuvs1Wnqw3FPrSnahnuoodY8Muz7fSuXG9sGmxRJZtekSzRiZ4qvTBQZCgcUrUp
+WFNWYoNNf1N72sSPVZAfeOne9c+U37vTi83ieJGI6qQoXePP4Eg=
+=N9Uu
+-----END PGP SIGNATURE-----
+
+--mdr3yu4j4s5eicl5--
