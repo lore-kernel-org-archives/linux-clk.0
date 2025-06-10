@@ -1,148 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6528F233D92;
-	Tue, 10 Jun 2025 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986CF264A65
+	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 21:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749572909; cv=none; b=AP+7u0MAQGud7r9CJFAyI0TaKcG4pDb64asgNXbNcnPFwYIOO5k2F5L8sMftTgTwc5zortm68KZCven0DTzJYv8i5TJTNfRvQG2uWAexL+PMo0amHajVbhrkV2jIFTuaAgAzO3rQBt1iWFs56HO6wGm1gl4QQXbCY57kXzEGtVM=
+	t=1749589859; cv=none; b=Hfoe+l7VRIoQUrYjdJH/boJQf6oTiVYGN9/NU2ECvhgMfRsjtejVgclXWNchuc6HIJaEGj+0RjA/y6xdOCfp0z4Xzq7t0ljq3JUysazgUA1oq9VZttPyCWRBqoQzgcA3szPYJC5DiFWEuOiBE87I94rch3lRTsbPDzNPkK7J/Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749572909; c=relaxed/simple;
-	bh=y3iTblb10g0L1NBLsroMMvLS5yuT8zO0ahcr1JeCwlY=;
+	s=arc-20240116; t=1749589859; c=relaxed/simple;
+	bh=xopTrHZYYeehT8ed1EQVkbTxnWFxQKA3lyNFS+FgNus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PD5QLvo9Hl2z/udpEDrnS1Hsvu1zSkCugwW3HtaBf4jS4eaDa+fTV9QdCj7nzWwAUu730VSYOKmw9sPUV0hPyYsKiJvPUHPbGIwGduXJp871XFG19aOQkP0zz/uspBfWTtd97Fc+a4hg8F8b/i2NLzBXq1BdDXDbI1QfECDwkHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxEcUgBn; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2iYvyrfVm1PBNAd9TVN7eQ3ZWsdwC+gASoFQhUunXYw2zNNN6ahOXUI2AQIKEkl6DVxsDJK9mbdvU+HRo/q2th6kpDQcPwJ4cx5FqUiyzK3c9svhJAUF5THPgFEg4CJPhYsrm1N8F8YtgUZJ86SmgMuyv1uceaC8Ic0sRq47zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=Tq2s4Hys; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxEcUgBn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43560C4CEED;
-	Tue, 10 Jun 2025 16:28:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749572908;
-	bh=y3iTblb10g0L1NBLsroMMvLS5yuT8zO0ahcr1JeCwlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XxEcUgBnGCNoC+5OqGxJC4lRgPP/kayp4AfoyMp6xuQ4gLs7FLGXQ+bsmYCRtHrCi
-	 3gcTxCWeqOATWOCg8AZQrRiAC7hCig4DKs4BhiPEqvLJ7n8NfWjto2BmCkIlVHGaNF
-	 Xe2KCUN3Sjj1rKRAMkCGBxWKIu7b6esA0EWxeifIgdmH8V1nXKd9BTty/SVtFBxRy9
-	 BE4uWlwQTK+k6d2mEkNhM3Wt5pe13SMjEl3cBig9bbYo0mbWyHpdt1tau1sIo0DUJp
-	 rFkELIxkOtsNerocyaIClC3RctDewHurAe4t8pu3NgP8KAlqWS+rhYEFG1V7obF5s9
-	 A4a4Vj6j+D9Bw==
-Date: Tue, 10 Jun 2025 18:28:26 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
-	Alberto Ruiz <aruiz@redhat.com>
-Subject: Re: [PATCH v2 03/10] clk: test: introduce a few specific rate
- constants for mock testing
-Message-ID: <20250610-hot-shapeless-skua-dcfc2a@houat>
-References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
- <20250528-clk-wip-v2-v2-3-0d2c2f220442@redhat.com>
- <20250606-fabulous-fortunate-chamois-ab4c98@houat>
- <aEL7A_YeC8b4Wj48@x1>
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="Tq2s4Hys"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso4881942b3a.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 14:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1749589856; x=1750194656; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6z/2eKNf3fRnG2uPVmiQPHVorfwCzVQ+3VGe9Xlb1rw=;
+        b=Tq2s4HysD8o3z14wQk/nD3Otc/LcaeJmXPDJ20DppUPzeCh1hKg+/I5PhcuHjyF/co
+         QHiJ1Ok1vRf+fvvTmDifJXc5VjbLUGf2Ck7iHKOW1eupiwiabezBoItzmrtGQ8wHz52Y
+         115O+c+MegTVeI0O7VXnSXGnaty6RaX6eWXo4sRXX/hu8BSbhn6AnLDWduDYsAkqfCTG
+         9OBbsnYrQ5k93jpCg6aZHbVcxJaQMRTW6+q2uZZfwNHZy8iN28aACalYP+mwUEiTjviE
+         9vkPQVqfPcmvmj2s4svyEru0J/TyhA4SLyWwNhrh6VpR6Z5Atn8jo+7JtpDOA1HWx4n5
+         I0/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749589856; x=1750194656;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6z/2eKNf3fRnG2uPVmiQPHVorfwCzVQ+3VGe9Xlb1rw=;
+        b=f/wGyLFqROpvmJ7WKbKV2RXrpTDCvQXnQDDiwgHlueQkENkLe0urOfLiJLseC9N21f
+         OosHfXxXpbB4dyC3mKBKTka5ql0i5YrPanCzmDlzrMj2U9GCdMh8cjgVYIkUKXlIHL+b
+         i1u9nfHmxq/YoWr73UZKo8HTrryXQPILfBm66tH0M8XzaIX+vqU4SZjNEhzSwYHhUF9c
+         Ij8SvwTcEb6gBCdZ8S8pNvKzS8xTu3JsH9YU0VqaqFBOvUVD1qOhW4+zDE546p047ia5
+         JDGW8fq7/b8qUjYhXL43Chx5w82KV99X52V1KMv0NE9cngkVBOX0ArmXt8qy2A1/9oeK
+         ZmXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/l8k/GVQroO4btGL+lK4X4+TUgaQBxS/JN2MSN/CsbmiNXb0Z21JEc5DNjBxKJ6mS31+PSUmaJ94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw24NwatJQg4o6GaUK/6igT6viktB0MrlGkfVTA+TuNdjL4A0+O
+	TBlFnQ1hTm9uV9zwv59u1zbNKxx4rIYuTjhxN2g+DY2HYyC4jU0LLqFXd2mhSeG8EDY=
+X-Gm-Gg: ASbGncuthqwF/zSc5LWzzDdR1MfCY2VN4Tb1tG4e59IXn63f5ZpEhSZ+WvFYy/pCC3/
+	2T9+LMtaggbaFtR+e0P7/EEvYbmFt/GvnskYLUWgVJ51p0A7vYPa1dFDOVA/enyCOkTuxluyJOa
+	4lMfNDNklT8Dm+fvqUqTnHphItlICNQz6CYZS0l64hvnFFgJMwL/AoL25G/cuFZ6t2RBB9eorrM
+	cRaFtDQsTi/GmwBWBSaKWFfruzXdShOx1iocomsNz2z58GGIkAlZH67QTldAFQ1z2/ms5SpeX+U
+	SiA6kq101iDyAK1LpqIQ/k9v8t5CQ+KrxU6lsA4P4BCiCWZFdkKq1NbQUD8yuNg0r1pIbwvquw=
+	=
+X-Google-Smtp-Source: AGHT+IEwLiXrZcnfbq3Tv7L10VDTAaWuwBouaxEsiIQvsla3HLyJ0NW+H5r5c64jx5IdZukdlDUpIQ==
+X-Received: by 2002:a05:6a00:23c8:b0:742:a334:466a with SMTP id d2e1a72fcca58-7486cbd86f3mr1332331b3a.12.1749589855939;
+        Tue, 10 Jun 2025 14:10:55 -0700 (PDT)
+Received: from x1 (97-120-245-201.ptld.qwest.net. [97.120.245.201])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b083ac7sm7858957b3a.82.2025.06.10.14.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 14:10:55 -0700 (PDT)
+Date: Tue, 10 Jun 2025 14:10:53 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+Message-ID: <aEifXZnLxKd2wa0w@x1>
+References: <CGME20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9@eucas1p2.samsung.com>
+ <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="j2s7e6xz263okgjh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEL7A_YeC8b4Wj48@x1>
+In-Reply-To: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
 
+On Tue, Jun 10, 2025 at 02:52:48PM +0200, Michal Wilczynski wrote:
+> This patch series introduces Rust support for the T-HEAD TH1520 PWM
+> controller and demonstrates its use for fan control on the Sipeed Lichee
+> Pi 4A board.
+> 
+> The primary goal of this patch series is to introduce a basic set of
+> Rust abstractions for the Linux PWM subsystem. As a first user and
+> practical demonstration of these abstractions, the series also provides
+> a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+> of its PWM channels and ultimately enables temperature controlled fan
+> support for the Lichee Pi 4A board. This work aims to explore the use of
+> Rust for PWM drivers and lay a foundation for potential future
+> Rust based PWM drivers.
+> 
+> The core of this series is a new rust/kernel/pwm.rs module that provides
+> abstractions for writing PWM chip provider drivers in Rust. This has
+> been significantly reworked from v1 based on extensive feedback. The key
+> features of the new abstraction layer include:
+> 
+>  - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+>    by ARef, correctly tying its lifetime to its embedded struct device
+>    reference counter. Chip registration is handled by a pwm::Registration
+>    RAII guard, which guarantees that pwmchip_add is always paired with
+>    pwmchip_remove, preventing resource leaks.
+> 
+>  - Modern and Safe API: The PwmOps trait is now based on the modern
+>    waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+>    by the subsystem maintainer. It is generic over a driver's
+>    hardware specific data structure, moving all unsafe serialization logic
+>    into the abstraction layer and allowing drivers to be written in 100%
+>    safe Rust.
+> 
+>  - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+>    types (State, Args, Device, etc.) and uses standard kernel error
+>    handling patterns.
+> 
+> The series is structured as follows:
+>  - Rust PWM Abstractions: The new safe abstraction layer.
+>  - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+>    top of the new abstractions.
+>  - Clock Fix: A necessary fix to the TH1520 clock driver to ensure bus
+>    clocks remain enabled.
+>  - Device Tree Bindings & Nodes: The remaining patches add the necessary
+>    DT bindings and nodes for the TH1520 PWM controller, a thermal
+>    sensor, and the PWM fan configuration for the Lichee Pi 4A board.
+> 
+> Testing:
+> Tested on the TH1520 SoC. The fan works correctly. The duty/period
+> calculaties are correct. Fan starts slow when the chip is not hot and
+> gradually increases the speed when PVT reports higher temperatures.
+> 
+> The patches are based on mainline, with some dependencies which are not
+> merged yet - platform Io support [1] and math wrapper [2].
+> 
+> Reference repository with all the patches together can be found on
+> github [3].
 
---j2s7e6xz263okgjh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 03/10] clk: test: introduce a few specific rate
- constants for mock testing
-MIME-Version: 1.0
+I'm trying to build your rust-next-pwm-working-fan-for-sending-v4 branch
+but I get this error:
 
-On Fri, Jun 06, 2025 at 10:28:19AM -0400, Brian Masney wrote:
-> On Fri, Jun 06, 2025 at 10:56:57AM +0200, Maxime Ripard wrote:
-> > On Wed, May 28, 2025 at 07:16:49PM -0400, Brian Masney wrote:
-> > > Some of the mock tests care about the relationship between two
-> > > different rates, and the specific numbers are important, such as for
-> > > mocking a divider.
-> > >=20
-> > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> >=20
-> > It's not obvious to me why they are important, actually. The relation
-> > between the two is, but a divider (and our tests) should work with any
-> > parent rate, so I guess we can expect it to be opaque.
->=20
-> I agree as well.
->=20
-> > Can you expand on why it's important?
->=20
-> I personally find that having specific numbers in some (but not) of the
-> tests make the tests clearer that specific functionality within the clk
-> core is exercised. For example, assume we have a parent that can do any
-> rate, and two children that are dividers. We could have a test like the
-> following:
->=20
->     clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_1);
->     clk_set_rate(ctx->child2_clk, DUMMY_CLOCK_RATE_2);
->     KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE=
-_1);
->     KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE=
-_2);
->     /*
->      * Make something to figure out what the ideal parent rate should be
->      * and test that as well?
->      */
->=20
-> So if we set child1 and child2 to 16 MHz and 32 MHz, then that exercises
-> one path through the clk core. However, it will currently fail if we set
-> the children to 32 MHz and 48 MHz. I have this working on a WIP branch
-> and one of my new tests looks similar to:
->=20
->     clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_32_MHZ);
->     clk_set_rate(ctx->child2_clk, DUMMY_CLOCK_RATE_48_MHZ);
->     // This should test that it's a multiple of 96 MHz
->     KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), DUMMY_CLOCK_RATE=
-_96_MHZ);
->     KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE=
-_32_MHZ);
->     KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE=
-_48_MHZ);
->=20
-> Based on the work in my WIP branch, I think we need to make some of the
-> divider only clk tests parameterized, and have a table with various
-> specific frequencies so that various edge cases within the clk core are
-> tested by the frequency combinations.
->=20
-> I think that instead of having a list of DUMMY_CLOCK_RATE_XXX_MHZ
-> defines, a single define like this will suffice:
->=20
-> #define clk_dummy_rate_mhz(rate)      ((rate) * 1000 * 1000)
+$ make W=1 LLVM=1 ARCH=riscv -j16
+  CALL    scripts/checksyscalls.sh
+.pylintrc: warning: ignored by one of the .gitignore files
+  UPD     include/generated/utsversion.h
+  CC      init/version-timestamp.o
+  KSYMS   .tmp_vmlinux0.kallsyms.S
+  AS      .tmp_vmlinux0.kallsyms.o
+  LD      .tmp_vmlinux1
+ld.lld: error: undefined symbol: rust_build_error
+    referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+                  drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::get_state) in archive vmlinux.a
+    referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+                  drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::write_waveform) in archive vmlinux.a
+    referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+                  drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::write_waveform) in archive vmlinux.a
+make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+make[1]: *** [/home/pdp7/linux/Makefile:1241: vmlinux] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-So, my main worry is that I'm concerned that some tests will only pass
-because (or thanks to) the rates we've chosen, and not because they are
-actually passing. Kind of like what happened with your earlier patch to
-change the rate clk_recalc was called with.
+I've uploaded the config to:
+https://gist.github.com/pdp7/e2c34dd7e4349a54bd67b53254bd3a22
 
-I have the feeling our tests should have caught it, and maybe it's also
-because we're missing some coverage, but didn't because we picked those
-particular rates it worked by accident.
-
-Maybe we should start using parent_rate / X in our assertions instead of
-defines, or come up with better assertions?
-
-Maxime
-
---j2s7e6xz263okgjh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEhdKQAKCRAnX84Zoj2+
-duslAX45mPHHS5X45hack0b7fMLLs1OKrfgfGRRaEODzcenZ9Dm+73LMSfVWocAH
-hJNwmogBfjAQMTk5fuR8HC+ytmd+Vwo6SubV1eqorqAYEQ7M+W1emUb74VXOlzP4
-pDAxYq7SrA==
-=0Zjj
------END PGP SIGNATURE-----
-
---j2s7e6xz263okgjh--
+Thanks,
+Drew
