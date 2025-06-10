@@ -1,111 +1,107 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277E8283FE7
-	for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 08:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCA922157B;
+	Tue, 10 Jun 2025 08:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749543839; cv=none; b=b2QNDDwoQnIntf9NXZX0eVcG23FQ6aDtWr1Dq25xmt0A6xFsDEcUnKMc5zDIxz6QT9Y+ojOT9VlhCGX0t1JIrzDGUQmpe92Bf2tQZKB/M5JL7I0bTT0Tkp7TKq0BBLyKOY2nx5GCDLkeZmIO4hUHfUMkolS+pKuE5J2Cc9PiH/Y=
+	t=1749544501; cv=none; b=C9PA6tex5tnTsk0YMf+L+wiFQSwzWRIsdV8JK/UtJCElsHjUpA16LTBsW1PCLwnzo4vHoZX7jx3b9DvvYNTT8uvldfGfFXVCZpnydbWTDs36qfmriuiVw4/R+3HXQS8YeL90I6Dy4UO46JCzIUlMqKk/UYU17KRplZ/w8hD5ti4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749543839; c=relaxed/simple;
-	bh=yyhzPDdF8NeOOeZr2SZOX9HHHQ5D7bOqPKd37iQiSFs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qyilbDhysdE1VnggXILN4D1OcTzS4NOliXcMEre7FvHPwRDj4DB401oUgz10Z7ToQkGfdp8LBYrXFlG327+27qMjGmUfQLwBO+YVK/n8CJXdHV0mkyT2S521vOaPw19PiEvordKSD9TxW5NaKEFi2/TcuwmyL/6gVr0g0i3gaM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEZC9Q1T; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1749544501; c=relaxed/simple;
+	bh=AKMt5bOqhnoUm7/yUiDXZGax3MVDPIxJL5bYGkHzERI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=irPZuhaq1RxOVZRNo4vUEh/x7LOkBjqkyjviVdoFQ4/bVDFh+TmpYC1Y0Ke8GB9jevyX90wFY2Sj3cvMnrLNnKW4IlfV1J4immTaJP/xwRuefSHEgkCoLrmMSvn1BpK7mUNeURwHePkaRRpjgiQyjAMG0LJO3BEcnWWl52rwywc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WM5yE3KD; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEZC9Q1T"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453079c1e2eso810295e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 01:23:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM5yE3KD"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so188094a91.2;
+        Tue, 10 Jun 2025 01:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749543835; x=1750148635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749544500; x=1750149300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q9WGI4IbP//61XrnIlM+natAC7ecS9zG4vex6G78gZY=;
-        b=hEZC9Q1TgiXTu95oc+6NtCo1BRbnOHrDqPXM+MQe97jPplFgtUdf13p/+l/jivtpqn
-         AVEQjBzDe0FJXPE6Qt6a8uqrNr2fPd42ABmxo+Ea3b2F/O2bpgYVKdN+pbeS5ePPw1cm
-         akKeS/vsivEpT4A4OhOoE989960LD37RLNNrych+3AkFBsAUaYDYEI8fWIB+kyRCdOYs
-         LHNItha/qRFBQeNZEdhYjhtgiFYAGupfM9a1F8cMJL3gN3y8zWcjShQ6qS+/8UxWnLa0
-         WdUy5IvMd8OPHPs55WlLsoulOhhLt1FIAQwpR257JdBImWFyg/7ZWBilWCccOvj0herZ
-         M3CQ==
+        bh=AKMt5bOqhnoUm7/yUiDXZGax3MVDPIxJL5bYGkHzERI=;
+        b=WM5yE3KDuMTi0aRvwuFycTaclSzCED0mbjoPQsD22AgrNpMSBd5kd6b0TwxpbS6AaA
+         x6S3LU3NCB4lY0eNsU+dKMFkBZIRgTOCS0RDmOkTlGT3ReRh/BxwZ62o5VS8arc+Tevo
+         0d+upa62AD3RaVRM2JW4ZEfFHfAEFj6A9tJHYnhAu0T0h2M1mZe+ptKXhGHQWDJrfm9D
+         dpNFuxEyyiDyn4xw60m4Tj50Kgy7z9tj/gsxQi+J0b1Lwyw/p+WZcD7CgOB7od9L6771
+         jix6+pJVAAYT8vWeJX5/6OCDVR2lED2HcogWm4+TX0rVOnhwTleyfflDLoDag372O72E
+         WXzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749543835; x=1750148635;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749544500; x=1750149300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q9WGI4IbP//61XrnIlM+natAC7ecS9zG4vex6G78gZY=;
-        b=GMX4SIsbpaPcNDgckrd52S8SKmIdjGS0mo6wpW5QfecgFuRNwvM3yO6zGTvKr47w03
-         Dkt7jnTM5FXPFeXM59cD5x1uXFDlLThY96oLcCF9/azQYeZHSkz01YGYYOtPtLhslu8/
-         x3h4SxIp2ksrz3UnkFXRPJkvCFEGwWz0fCcLLn+pVlNDQfBKjQ/P0/R9KpdanYPTiyFp
-         lMpjVkddiBuj719Y0CklkPuFB2BjHG2WGUgUvW501ry64quHXFECUqqBXWaFS12NF1xs
-         SCfKUJEuSD8Gh6u6MOgsTIUpwakMv898VgcqcCE2t7jmqt1lSndb2A+ylD4wbcOXXdrK
-         398g==
-X-Forwarded-Encrypted: i=1; AJvYcCUqzqHxHM9awMDP0UlDYRAtb0LeGPKcWrbjKSC3DGMdW7sDSkhlsBr8PeZUvoGaFv9Mgw/gYxnTkoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlDJpSETpIKn+aKrxati6WdKWuwqrNpbuRpuBWkYfCjte3J/w7
-	oerwufvibm96Qnmy+7Iwr/lXdAK9gUwGZbi9FpN8GsEjyxQkbI929WB7QTyhxf7mqOo=
-X-Gm-Gg: ASbGncutAs9PpoaZasiZe+nQnVLf5xFvarG8vLEoVfRahBA0LbqV3MEiGr91PS1/jyD
-	ZpPwqvTt4wFxW5Asj7Syz1m/FaGi10kv2DsarFnUCY0ZkQTJ2Xevi3VmbduLgWzHNuDMSxSahS7
-	d7za4htY4ziprSMpw1c9UJARGSrF6s7BknNI6+wYq7hNddBWzs4wQhPV46dRG/mOSSWzC+ivFWn
-	SZjZ2LcfZ+61YM3VpzdTKnT+IbkcrDR/xZebay1qDwovLYPuB/H1HKlJBt70rkbaF9Xh2sAjSex
-	B/JSV+HsoYZXT45+YKfad3Loh6dx5aUevSM4VbqYKz26V/vdJomxkr/FP/RnVs4Z1mt2FDPcdpb
-	UL/Y57A==
-X-Google-Smtp-Source: AGHT+IF3umgoC1MXVewYqSd6NXb0BxRbXdgsSHg+n+0cmqeui+0FYUC+7otmqctsYZrl7Ig6A8Aq0g==
-X-Received: by 2002:a05:6000:2409:b0:3a0:782e:9185 with SMTP id ffacd0b85a97d-3a53313fa5emr4137414f8f.2.1749543835438;
-        Tue, 10 Jun 2025 01:23:55 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532450b08sm11378980f8f.80.2025.06.10.01.23.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 01:23:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
-References: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
-Subject: Re: [PATCH 0/3] clk: samsung: gs101 & exynos850 fixes
-Message-Id: <174954383375.117835.6950854237763688291.b4-ty@linaro.org>
-Date: Tue, 10 Jun 2025 10:23:53 +0200
+        bh=AKMt5bOqhnoUm7/yUiDXZGax3MVDPIxJL5bYGkHzERI=;
+        b=pnx08ExgWNS2Vnph4jZQOYSfG6AHQEKpblM8hOorNxVno5EcegC8qiJiOesv8hMeH7
+         yFiZ8dhg2KMv5CGu02ueIW9Ta5jwr3cPh399KY5nJ8VD30M4pWqmNwJFZxujvjuZT5Q/
+         5/vztv5dcQr2lDrCw/VwDHfznt7ISW8mtUTzvBTCXpBZKb60iWobRp3f4Q+fHCUMtXeD
+         pNxtoYhVr4ljyPkFwq+WoJHcfRhjTyRIyDFX1m4lRGeZrmasZWYriDCk21XILyDxmS14
+         78tS+O/qTt3AqfSDHjwW8IouUzRr1pUSBV/+6+O3oClFK9NCYmse00CZXqNIq5dWaZ56
+         lxpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVih8oeqD02KbKo1LUCC5DVozv59S6gZtLSjrvlPXHOklU7EqMN24UR5W17g+QoiP71tKol1Hm3IFo9jA==@vger.kernel.org, AJvYcCWE2Nt9C6DkikSZKJtVKeE4bHXySHhaaQOXPBBz7pKwHR9szMyNh6hD5K1LHWk8XHiZJzzTxKUSr6XAHuL8PMQ=@vger.kernel.org, AJvYcCWPs7/w3WndJelDmKiSTdiv89huZ9a491HQZLSXsK6myYm+MTU8p2W6TN0KVkQOgKwFiNBS1vw540Qm8KLl@vger.kernel.org, AJvYcCWyaJe4P59BGBX2F4wM1kY1rTQVI0zLcXIUASuSL1keWLdvJyVMEL2gpwKhbcjkM6hIu3hUBsXv7p8=@vger.kernel.org, AJvYcCXCUYE15Ib2OQ54vdber+dtRehdi9wTV+CdH1yMbz+v4pYOmdlpsgltu+CIccP2JrvkmNXA4mPXI1JG@vger.kernel.org, AJvYcCXxwU9a5nKb+VrPSuUzO15IFgQcRmQFrS4AcV8zv32AqwWuECxflHvh5c/3X3Yv4AjEjbZ3UrYecHR9@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu5rmambIqMuCVa6Ho/VkJONQZz7A+R0Fr0OlHvCy6D2vCR3PB
+	zHFTf3X/Zw38Okkgs9D9auSPXtDtPxFAMvo6SFItbhT5pxXy/JznTnFZwqe2CeW7w9eCK00vCQw
+	1L7QvSjb0aoRSzLsT6gx0FKGm5/JAn3I=
+X-Gm-Gg: ASbGncuvKEvveuClKrwIwnoa3kTdhD+iHDQx/u1RLKr72uSAlLJNM2TTap6GnVG+GWy
+	I298fbW/cOsYVPbByW4cZglko8xkJJUiWzOhZ+Kf2aozjYzwbXqI/7mPD40JHFOfuMXz/DoZKRL
+	JEeYBZBXvRBK0TFEdUeJ3wye1Az01FgmEEP9CAtnJBjH4=
+X-Google-Smtp-Source: AGHT+IG9o8l5nJqI45FrwDH7Khv7XoEw96OrQqnf6E/rj5r8N91+BEKWod7OyjPnRZjArPU77UU87Z94T1+rv+17SlU=
+X-Received: by 2002:a17:90a:d006:b0:311:e9a6:332e with SMTP id
+ 98e67ed59e1d1-3134ded1839mr9033972a91.0.1749544499647; Tue, 10 Jun 2025
+ 01:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+References: <70994d1b172b998aa83c9a87b81858806ddfa1bb.1749530212.git.viresh.kumar@linaro.org>
+In-Reply-To: <70994d1b172b998aa83c9a87b81858806ddfa1bb.1749530212.git.viresh.kumar@linaro.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 10 Jun 2025 10:34:47 +0200
+X-Gm-Features: AX0GCFuW4nKJxDOyQjzaKLJqfQBe7ZqYmgxa6VoP-kHbDElCPzAeYxEw-DuKrag
+Message-ID: <CANiq72mhyBOjzmvmUDfgFBoRqO_aaS-CL-ct3vmJ56HoJAsV4A@mail.gmail.com>
+Subject: Re: [PATCH] rust: Use consistent "# Examples" heading style in rustdoc
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Yury Norov <yury.norov@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Nishanth Menon <nm@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 10, 2025 at 6:38=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> Some modules previously used `## Examples` or `# Example`, which deviates
+> from the preferred `# Examples` style.
 
-On Tue, 03 Jun 2025 16:43:18 +0100, André Draszik wrote:
-> The patches fix some errors in the gs101 clock driver as well as a
-> trivial comment typo in the Exynos E850 clock driver.
-> 
-> Cheers,
-> Andre
-> 
-> 
-> [...]
+Note that `##` is not necessarily wrong, it depends on the intended
+header level. Top-level headers use `#`, second level is `##`, and so
+on.
 
-Applied, thanks!
+(In particular, it shouldn't be used as a hack to get smaller font
+size in the rendered form).
 
-[1/3] clk: samsung: gs101: fix CLK_DOUT_CMU_G3D_BUSD
-      https://git.kernel.org/krzk/linux/c/29a9361f0b50be2b16d308695e30ee030fedea2c
-[2/3] clk: samsung: gs101: fix alternate mout_hsi0_usb20_ref parent clock
-      https://git.kernel.org/krzk/linux/c/ca243e653f71d8c4724a68c9033923f945b1084d
-[3/3] clk: samsung: exynos850: fix a comment
-      https://git.kernel.org/krzk/linux/c/320e7efce30e2613c2c7877acc46a8e71192cdcd
+So, for instance, in the `workqueue.rs` one in this patch, the example
+is likely intended to be a subsection of the "safe API" section, not
+an example of everything, so I don't think that one should change.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks!
 
+Cheers,
+Miguel
