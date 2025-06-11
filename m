@@ -1,142 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462CA1AAA11;
-	Wed, 11 Jun 2025 15:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584B71BC9E2
+	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 15:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749654662; cv=none; b=tnKrTHaIbG+zf2Q4JUItCezoqUZeu+u9aPXxI/xIdM3dsLwqGWgFBQZreC1mhvmWNyB7y9IhF2nFKcINH9po4RU8GobrV9wGSAOcBhc+7ZiACEi81gSDzCzTdbtYKELoBowjDzVDl7jOC1r/6KOEIGamSHkbXLM+Tkdokvqa6ng=
+	t=1749654887; cv=none; b=TSd+3WD9Z8vzDrdd9uJuN5/ELgcMA0V85vFblW6T6+Ievhe5rI5yhHFEZag1y8ic2zhV6BqMs6yp5uvx2NMdOdaUAUmItbk/ib/iOBqgOyMWhXhYfrSbehUv4eZHcr3/xMpTSfyvpMv9H4oNlk7n1GoMJ7hSZCI5tvIik40fdqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749654662; c=relaxed/simple;
-	bh=0eNt8o6GRVqaVnWen5UM1J8DZaaLXXFgahGl8ogtMRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHbbpxes2MGk/+dKTUhgdsVITAT702SLp+P3O9YMlXmzspw+5vqyUS0BgOhs42bPVWAKRRAHUce00bBXwGNuGk0jRwl5DL90rCSkvJNAtHgY/qV8zPdNSW7itSumaSQ7pZ4Gx+ta/yf24XkmpBmJpjq4g3QBPBcQeayNOsqY/+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cromLVAR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749654887; c=relaxed/simple;
+	bh=pb1NQueabVI9wQkdaC+YDQL17yZ/J3cirFxX0Ib+CQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=MySujDPwEPiANDg98DP6u55cS63qUdpVnC9xAcG02hxh8yvrdWBMfNPJmOBPUDirB9FqQPGUevgo0CEPLB6AYohV7aMJ4+zglN6wOen1vVWuc8HPzarTeFnwcThouco5FbvIYqD3LtBDfK6ApnYb7oup388yK6WUc1MdC+PFG6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ihUI4pic; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cromLVAR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F4FC4CEEA;
-	Wed, 11 Jun 2025 15:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749654661;
-	bh=0eNt8o6GRVqaVnWen5UM1J8DZaaLXXFgahGl8ogtMRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cromLVAR1qxFyMoCOKE5oGSPqzKSaqGn+9NBMQA6qTg7T8pHuwQCCLno78vgsAVAh
-	 QZ7M9OtKBrMG173XinNt65nBlYcCWJIyxPNaamu9jFAvKKIsNVjVLt08GylSjxE3Bx
-	 q4ZCxABFuiq7xIMRr3m925QHFVjmL5/tQZoMxdFyTh9sCGyZcEuEGk9BQE0N+FKQqQ
-	 avQMmF8k8JKWsZ0rhi7yKaNz/0H0qL7TlU0Xmbu8mVkzxdsP3pGaawrJJd3AfYbnvp
-	 FYbBNPvqKutjrjG6nfa/mZ4jIeMi5hmfvIiYXd2G3aIYtmMjU9q/AnO94D1O+vRsIi
-	 DXEZJj5pjwSNg==
-Date: Wed, 11 Jun 2025 10:10:59 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: sm8450: Enable retention for usb controller
- gdsc
-Message-ID: <ufhknluapvb24r7p6sykxmj34gtjp6s4mejitj7d67uf6hobdq@4braukg5loxr>
-References: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
- <sy33khkakjxi66amjbuugnypjnegvd4z4dyfzvrp72qkuv3roh@dxaymdc6cfad>
- <9b8ad81f-28e1-471e-a8fc-9e64578aaf4f@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ihUI4pic"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250611151442euoutp023eb531efd2f58cf55eddfe4c14c55e2a~IBdiC4j5c2016120161euoutp02C
+	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 15:14:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250611151442euoutp023eb531efd2f58cf55eddfe4c14c55e2a~IBdiC4j5c2016120161euoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749654882;
+	bh=/aG3yXc2EucpbW7sa9J+WzUETPZ1G5/7AvZ60LGbpt8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ihUI4picgtqUec1YrsKY2X8y+lZtQi5PEzaMdY1POhzjEGEKAYKdwrIPJowunk9ho
+	 McMbITHYYQQRjiqckByAn6RcHEdimhnM9Ieyp+MhmKyNYPlmxMJ9cYHkMutsHLsxM/
+	 jYGC2BBusGkTjcJqayLlYd3mMorqFK1VDaKlb0y8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250611151441eucas1p1c5b30da3e0bd7484b27c9ad78a91f678~IBdhUjG441932119321eucas1p1c;
+	Wed, 11 Jun 2025 15:14:41 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250611151440eusmtip2d72d1b30d77ba1ed35d675241db8b411~IBdgIHHGO2985829858eusmtip2g;
+	Wed, 11 Jun 2025 15:14:40 +0000 (GMT)
+Message-ID: <6ca6016e-3b17-48a0-ad8d-bb05317aa100@samsung.com>
+Date: Wed, 11 Jun 2025 17:14:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b8ad81f-28e1-471e-a8fc-9e64578aaf4f@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+To: Drew Fustini <drew@pdp7.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <aEifXZnLxKd2wa0w@x1>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250611151441eucas1p1c5b30da3e0bd7484b27c9ad78a91f678
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9
+X-EPHeader: CA
+X-CMS-RootMailID: 20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9
+References: <CGME20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9@eucas1p2.samsung.com>
+	<20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
+	<aEifXZnLxKd2wa0w@x1>
 
-On Wed, Jun 11, 2025 at 10:35:36AM +0530, Krishna Kurapati wrote:
+
+
+On 6/10/25 23:10, Drew Fustini wrote:
+> On Tue, Jun 10, 2025 at 02:52:48PM +0200, Michal Wilczynski wrote:
+>> This patch series introduces Rust support for the T-HEAD TH1520 PWM
+>> controller and demonstrates its use for fan control on the Sipeed Lichee
+>> Pi 4A board.
+>>
+>> The primary goal of this patch series is to introduce a basic set of
+>> Rust abstractions for the Linux PWM subsystem. As a first user and
+>> practical demonstration of these abstractions, the series also provides
+>> a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+>> of its PWM channels and ultimately enables temperature controlled fan
+>> support for the Lichee Pi 4A board. This work aims to explore the use of
+>> Rust for PWM drivers and lay a foundation for potential future
+>> Rust based PWM drivers.
+>>
+>> The core of this series is a new rust/kernel/pwm.rs module that provides
+>> abstractions for writing PWM chip provider drivers in Rust. This has
+>> been significantly reworked from v1 based on extensive feedback. The key
+>> features of the new abstraction layer include:
+>>
+>>  - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+>>    by ARef, correctly tying its lifetime to its embedded struct device
+>>    reference counter. Chip registration is handled by a pwm::Registration
+>>    RAII guard, which guarantees that pwmchip_add is always paired with
+>>    pwmchip_remove, preventing resource leaks.
+>>
+>>  - Modern and Safe API: The PwmOps trait is now based on the modern
+>>    waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+>>    by the subsystem maintainer. It is generic over a driver's
+>>    hardware specific data structure, moving all unsafe serialization logic
+>>    into the abstraction layer and allowing drivers to be written in 100%
+>>    safe Rust.
+>>
+>>  - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+>>    types (State, Args, Device, etc.) and uses standard kernel error
+>>    handling patterns.
+>>
+>> The series is structured as follows:
+>>  - Rust PWM Abstractions: The new safe abstraction layer.
+>>  - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+>>    top of the new abstractions.
+>>  - Clock Fix: A necessary fix to the TH1520 clock driver to ensure bus
+>>    clocks remain enabled.
+>>  - Device Tree Bindings & Nodes: The remaining patches add the necessary
+>>    DT bindings and nodes for the TH1520 PWM controller, a thermal
+>>    sensor, and the PWM fan configuration for the Lichee Pi 4A board.
+>>
+>> Testing:
+>> Tested on the TH1520 SoC. The fan works correctly. The duty/period
+>> calculaties are correct. Fan starts slow when the chip is not hot and
+>> gradually increases the speed when PVT reports higher temperatures.
+>>
+>> The patches are based on mainline, with some dependencies which are not
+>> merged yet - platform Io support [1] and math wrapper [2].
+>>
+>> Reference repository with all the patches together can be found on
+>> github [3].
 > 
+> I'm trying to build your rust-next-pwm-working-fan-for-sending-v4 branch
+> but I get this error:
 > 
-> On 6/11/2025 9:12 AM, Bjorn Andersson wrote:
-> > On Tue, Jun 10, 2025 at 02:52:53PM +0530, Krishna Kurapati wrote:
-> > > When USB controller enters runtime suspend while operating in host
-> > > mode, then wakeup because of cable disconnect or a button press of
-> > > a headset causes the following kind of errors:
-> > > 
-> > > Error after button press on a connected headset :
-> > > 
-> > > [  355.309260] usb 1-1: reset full-speed USB device number 2 using xhci-hcd
-> > > [  355.725844] usb 1-1: device not accepting address 2, error -108
-> > > 
-> > > Error on removal of headset device from usb port:
-> > > 
-> > > [  157.563136] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402
-> > > ,iova=0xd65504710, fsynr=0x100011, cbfrsynra=0x0, cb=6
-> > > [  157.574842] arm-smmu 15000000.iommu: FSR    = 00000402 [Format=2 TF],
-> > > SID=0x0
-> > > [  157.582181] arm-smmu 15000000.iommu: FSYNR0 = 00100011 [S1CBNDX=16 WNR
-> > > PLVL=1]
-> > > [  157.589610] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
-> > > [  157.596197] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
-> > > 
-> > > Enabling retention on usb controller GDSC fixes the above issues.
-> > > 
-> > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> > > ---
-> > > 
-> > > Note:
-> > > The above mentioned issues pop up after I enabled runtime suspend after
-> > > applying [1].
-> > > [1]: https://lore.kernel.org/all/20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com/
-> > > 
-> > 
-> > It makes sense that the BCR issue appears after the flattening of dwc3,
-> > but why would the suspend issue pop up?
-> > 
-> > The change matches what we do on many other platforms, but I've been
-> > hoping we either could drop the retention or clearly document why it's
-> > needed - so that we know if this should be on all or none of the SoCs.
-> > 
+> $ make W=1 LLVM=1 ARCH=riscv -j16
+>   CALL    scripts/checksyscalls.sh
+> .pylintrc: warning: ignored by one of the .gitignore files
+>   UPD     include/generated/utsversion.h
+>   CC      init/version-timestamp.o
+>   KSYMS   .tmp_vmlinux0.kallsyms.S
+>   AS      .tmp_vmlinux0.kallsyms.o
+>   LD      .tmp_vmlinux1
+> ld.lld: error: undefined symbol: rust_build_error
+>     referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+>                   drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::get_state) in archive vmlinux.a
+>     referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+>                   drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::write_waveform) in archive vmlinux.a
+>     referenced by pwm_th1520.4789668fc0b4e501-cgu.0
+>                   drivers/pwm/pwm_th1520.o:(<pwm_th1520::Th1520PwmDriverData as kernel::pwm::PwmOps>::write_waveform) in archive vmlinux.a
+> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+> make[1]: *** [/home/pdp7/linux/Makefile:1241: vmlinux] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+
+Hi,
+
+Thanks for testing !
+I can reproduce the issue with your config.
+
+The root of the problem was a failing compile time assertion
+(build_assert!) in the underlying Rust abstracions, I think IoMem since
+get_state and write_waveform functions are impacted. My development
+configuration was accidentally hiding this issue, but your configuration
+correctly exposed it.
+
+The kernel config option that is different on my setup is:
+CONFIG_RUST_BUILD_ASSERT_ALLOW=y
+
+Now I have to take a look at the IoMem abstractions, I think there is
+a new revision [1]. Will apply it and check why exactly compile
+assertions are triggering.
+
+[1] - https://lore.kernel.org/all/20250603-topics-tyr-platform_iomem-v9-0-a27e04157e3e@collabora.com/
+
 > 
-> Sure, will try to root cause why we are seeing issues during suspend (on
-> sm8450) and come up with another patch.
+> I've uploaded the config to:
+> https://protect2.fireeye.com/v1/url?k=0cc1a518-535a9c14-0cc02e57-000babff3563-8df2dfc535042c2a&q=1&e=eaf92127-0b5a-4559-9796-3264da753ae3&u=https%3A%2F%2Fgist.github.com%2Fpdp7%2Fe2c34dd7e4349a54bd67b53254bd3a22
 > 
-> But I remember on sc7280-herobrine (and IIRC while testing multiport on
-> sa8295), when gdsc was not in retention, after entering suspend, we would
-> see a disconnect and reconnect of connected peripherals during resume
-> (probably because controller was in off state during suspend). When I tested
-> with RET_ON in sc7280, I see the re-enumeration after resume never popped
-> up.
+> Thanks,
+> Drew
 > 
 
-Sounds very reasonable that we'd need to keep the IP block in retention
-for such use case. But if that's the case, then it sounds like we need
-this for every SoC that supports host mode (I presume host or OTG).
-
-It would also likely imply that we ultimately would want a mechanism to
-toggle this behavior from dwc3-qcom to limit it to the times when we're
-in host mode, or perhaps even only when something is connected?
-
-If there are any power savings of turning the GDSC off, that is...
-
-Regards,
-Bjorn
-
-> Regards,
-> Krishna,
-> 
-> > Regards,
-> > Bjorn
-> > 
-> > >   drivers/clk/qcom/gcc-sm8450.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
-> > > index 65d7d52bce03..f94da4a1c921 100644
-> > > --- a/drivers/clk/qcom/gcc-sm8450.c
-> > > +++ b/drivers/clk/qcom/gcc-sm8450.c
-> > > @@ -3141,7 +3141,7 @@ static struct gdsc usb30_prim_gdsc = {
-> > >   	.pd = {
-> > >   		.name = "usb30_prim_gdsc",
-> > >   	},
-> > > -	.pwrsts = PWRSTS_OFF_ON,
-> > > +	.pwrsts = PWRSTS_RET_ON,
-> > >   };
-> > >   static struct clk_regmap *gcc_sm8450_clocks[] = {
-> > > -- 
-> > > 2.34.1
-> > > 
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
