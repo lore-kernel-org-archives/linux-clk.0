@@ -1,161 +1,245 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B03217A300
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 06:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7974D2EAE3
+	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 06:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749622871; cv=none; b=e+PyymYdN9/aBBuMn1SIaFdKTrsl18wFATYQ61d1+u9ld4AXvvM8lyzRggOKEQ2naCBXbcX9ts5Tg/8IAPrhRotTCYXBmb/aZCalKf+of17Bq4gAkxH0v1Ff2Oe5UeiDS+0yl1mi+a0uCtsMBPGEzKLzDglP2TzrtFK2Ir0qlQ8=
+	t=1749622984; cv=none; b=vBfk7o578pWzxYrqPwrEhgkrLvXYPmUmSdS6J0IXylxS0VNGV/mp2Xq2c5uZEgpiV1VEEfhtpBDXBSf3tyVMlHeTaNuWfE4rhvg0NsKS0r5tg/GSyYLFzmCkAsGhUSTYbKJWquY/PSQk3vx40Yh77stmeXqF8qQebAOlPjfb4qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749622871; c=relaxed/simple;
-	bh=wgfIdpRvO+AZaghNHz0zFC8jXc0J+BUrOlmFO4Hw5s8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JmXj4IiiUqIPfMCGW+b8WjciAhd/wIrSZTFQMOlwqeyEV4Fs0R81jTxqXr6H99zcMKE+itVO1cVDpj5VcQWKGhcN1myvX7iRJq/86gRiY9gjkMeFAfnjR4TpSbfU02rTGPL7bTSsTANzNMlUsTA6zMUEFDrBbI4ednnCf8PxamU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VxQrljdX; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1749622984; c=relaxed/simple;
+	bh=8d/8mwsmm2Bj8oUzbynlYQ99Qu9ru7hjPXyeNTbxR2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BItyCHy17gydGLtkUVAiRWVJVQTd0rz96kf62SYHKANyfUjuzJOlwxqnI+Vyici5QtZKz9UOwsn0rI6VxDe3L9zZYeR4cLpIM9LYnsx4/3avOJc7GUy8EpBAXmlMm5O51wFMA3oWEbJuC+TamQWoTH3phoWCtQDNluDid+YxT/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=C8GQq+W+; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VxQrljdX"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4ef05f631so25882f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 23:21:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="C8GQq+W+"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235ea292956so60109315ad.1
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 23:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749622868; x=1750227668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=H49y5YVCCcLC59k0m8v0JycfHHDJlxdG1p1wxeBPnio=;
-        b=VxQrljdXAfggaMtHvav8BlYpvQ5murvfI6qYUXtjWnyMLlqn9vSHt2nkBLYhcMVWgr
-         rngMgpaOCnnVkxcQOTpVOONfor4q3J7QpsT3Sw5nZv7FodvDZp5tSednFqBN/FNrz7lO
-         mCjKyEWrWWmkRcL5EahradspPRz1NlgIxRHt3+8Kyl51rrbGOrhejb9n2ik1hhJ8ivKf
-         Y6UbzkPx4grY1IOvwzmlOM/XohyWxhnHoATav0d15iDDTiGkiiWojQ9aLvZGDIG107/E
-         Tij44DHITxccZWImlqC8f6nlMonL0IKJQKMH8r85IBSfoaT4nkfm6g6t+b/4vtXRytvz
-         bnUg==
+        d=ventanamicro.com; s=google; t=1749622982; x=1750227782; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FCnkfIAKufTtsXTirgU1KTm9z6frMQCb5vfgSfK41j8=;
+        b=C8GQq+W+Z7V+j+Qzx3kBTT3M8nxyp1d8bx/gv0rQc84oxbx2uHB10qv0s2yqG7BlXS
+         prnyDwqIAuJqx1o73SAw1JyKPhwEB2Mf7YciRmAgMrfC4TEGjP5CN/eEtz82nPU5XU0M
+         NsZVOqIFvauq/O+ejdLYDM/6FPYSiBgs4BByYE5HMCMNSQrHo/v2eJCjxGr+iqtZOz2D
+         J3xBBkIgYLYfT/NO8OQvyVMohvw1/9N+FuU2ql/D7+25EQObuEO1OoJ5yx/mnMzDCf1d
+         EXKiI/v6X/0/m8KAL5dIXIxTLo6xWPYNwCwIMMF5GrnehLYkKEpfj9WaHpPBMFyjcQk8
+         eEeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749622868; x=1750227668;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H49y5YVCCcLC59k0m8v0JycfHHDJlxdG1p1wxeBPnio=;
-        b=KW+GfoenVHp5/kHCAc9Vv9g/66mlz/Eou10IiKY0BlL4/KvEyeGSwjjE1JzFb4+FxL
-         o0BRhHnvXa+5z7UQxVx0AkWb9ZIrxcmECGTy++FZXzvW4DRGjD+qIYudaCnBwH/jn3il
-         pdM2h4jLFeCtgH/mMkLKoWx3Nz0NUSWkR3ZZBTjaS0ERU1l6Fp00lYOM0+OXm6VYOPRv
-         BvYhg5hZwbI0Mr04fJvfF3RQsR+i5YKOVrTgo4kNiHnEdbsNAWOTdOFc2j84etndzIaq
-         sv11ZgW+/Dc+hK/2yhG4QaIY/kUAVSn3kPPhCTtSz8NX42/fpl2HJLAhHY6ppgPZVgeC
-         rlrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3F1FCQvE8E0Aw00WGkOJPaxCwP7Lfi6Zcpe5G9jxGgCIT6ZDREO/ZkJqtZx4Ps6DXoR2/9s4RMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6sWs9Tv2LxvIrOGOF1u0HT38rTLQK7PLOdikgEPSKkpm5wklm
-	BjNa6oK0yOyt1aGVURuuDfkSSFAf8ywgzNJc9UVrfboQIRrkB1JqByZzRYYYbwu391g=
-X-Gm-Gg: ASbGncsBVJeTa7ZD0iSNUl84+U9hRZGVD1FMzhxjdtqpw8BTsoyzNW7u2jYQADy4aYt
-	BsHqSD76sQIWp25QvD79OKX+aBvUVzgwtiwr03oW+X1sD5yYll9drLOdhbNMwrVprIMJFC6uOLS
-	QmPHpOZMMEGMGG9PzfuvHp5rRhr/hnmD48Q9MdqjnEZfXDS1c1NFPfG1N9MpB2jwyzeDYeXEM+x
-	aIc8H+tGFklNghihhjrfsWkOGmSehxRl7mBJLMjBw4vxrUfBX4b4sQovVeD8hdM2u9xRVLxZLcd
-	OhG4B51Cviyna8OKfHnihUS8SPCekJpuIjlS/MjtLqUjQ7sxD5ZoHTBolFo9zrA3g+zxFBWm//3
-	QCIB0U8Q=
-X-Google-Smtp-Source: AGHT+IEarnczQxYkldyQAgqK7gAPAp5A+If3BCU9tfItzyU2/3kobA5cfdLuXp5ux1yaylvgS8DRSg==
-X-Received: by 2002:a05:600c:c087:b0:451:df07:f41e with SMTP id 5b1f17b1804b1-45324871143mr3839615e9.1.1749622868451;
-        Tue, 10 Jun 2025 23:21:08 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229de70sm13890748f8f.5.2025.06.10.23.21.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 23:21:06 -0700 (PDT)
-Message-ID: <82733f35-f5d4-4927-b2f3-4d739b388bc3@linaro.org>
-Date: Wed, 11 Jun 2025 08:21:04 +0200
+        d=1e100.net; s=20230601; t=1749622982; x=1750227782;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FCnkfIAKufTtsXTirgU1KTm9z6frMQCb5vfgSfK41j8=;
+        b=MDbV/A8Tvye5oxeWrKYr7FQtpXtRMABpEUdpbz5nZxBVuBvYAhHTa6GOtvgXVwDxqt
+         qu0NGVzpk9PUTLYeJ/AbJMb01eXnsfHSTYeTbBGfEfRJaIjWj8jy+aDX8EiZYcJgI7Dr
+         S/+C4hfrjuQcFRd/28STNZpt2Y4CUXVWwB5TDhpki098fBj/PIoHJQcftXson0gwxk7y
+         /fAD9GDAQoX7pldsDLif/5tEvJz0d9dQfoVseRQONcBvRlyY3l3/3ePgsmS4oh8cYh7y
+         FNlOHSzJU2uvW8ru1oSGzUtK+FQiYf5PzmqcFs6Znu+xwbqtlVhP3QcvvcogAXIMMZx/
+         XdIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFgK1ts/6aRn+cYrsd6L0dY9pRdqVM03lqrYsu9RrdbdVps64kSShevwWV9I5ExRWVdBZotQxbgoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzILrsdbqI8NfWT7cdll+tJ2s2ab/i5vOqSbImzkzj240M8sy17
+	G0KPaIdlhTTW9lZUeD9EVmOJroy/ZctSRLcziunc7QFAIJ+oCK9VvXqU/LLI/r7U7Ac=
+X-Gm-Gg: ASbGncsqKucgOp+PYnOwu+yBqkSo2bzLx4eWANgsHXjq0nNf2c93f2eGHkwFJaly4VS
+	gspiL2h9fAj1VvBX/RhPlk2+9cJfeVyCAI0d0UVawd6j4p3I8aQCLtwIVWNY2ZJhNZCQ32uNUuI
+	o41kHu+gsus+ozyoqfyKBktJSTByZ5OXuKMrTa78lyjAWcNCtK0Ke399F9wfegHCOIMdA8wpkCD
+	oOPsjen/d+MJz5Zdg955uPAoeLuZi3+uBlqtBBWhMT+fSnyQAjtwODVULY5SNfYFctUv53BkIRf
+	CPkv90J7H3KIAXaI0LHAYrr1T9AygDlfJM4s6PH11pCPTedvKZsfYYqa+gJBePPian/9tVkKzKt
+	e0fSMSDNzBI23kzZ27yxGgzEKAA==
+X-Google-Smtp-Source: AGHT+IFflCobAzZ7DXGfkuM4PqfzrltZgkya36IU2M6LH+WC7zfTuPjuPy+rud5tVoTqrkTwZZw4yA==
+X-Received: by 2002:a17:902:d4c1:b0:235:ef87:bd50 with SMTP id d9443c01a7336-23641b16639mr27978465ad.45.1749622981638;
+        Tue, 10 Jun 2025 23:23:01 -0700 (PDT)
+Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603092677sm79976295ad.64.2025.06.10.23.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 23:23:01 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v5 01/23] dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+Date: Wed, 11 Jun 2025 11:52:16 +0530
+Message-ID: <20250611062238.636753-2-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250611062238.636753-1-apatel@ventanamicro.com>
+References: <20250611062238.636753-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 14/17] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
- <20250610-b4-sm8750-display-v6-14-ee633e3ddbff@linaro.org>
- <3d576c19-6f68-4f04-b89a-e269c438b339@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <3d576c19-6f68-4f04-b89a-e269c438b339@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/06/2025 16:10, Neil Armstrong wrote:
-> On 10/06/2025 16:05, Krzysztof Kozlowski wrote:
->> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
->> differences and new implementations of setup_alpha_out(),
->> setup_border_color() and setup_blend_config().
->>
->> Notable changes in v6:
->> Correct fg_alpha shift on new DPU, pointed out by Abel Vesas.
-> 
-> -------------------------------------------------------- Vesa
-> 
-> Not sure this should be in the commit message.
+Add device tree bindings for the common RISC-V Platform Management
+Interface (RPMI) shared memory transport as a mailbox controller.
 
-DRM, at least multiple DRM-subsystems, adds full changelogs to the
-commit msg, so I think adding notable part is worth.
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 124 ++++++++++++++++++
+ 1 file changed, 124 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+new file mode 100644
+index 000000000000..3aabc52a0c03
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mailbox/riscv,rpmi-shmem-mbox.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: RISC-V Platform Management Interface (RPMI) shared memory mailbox
++
++maintainers:
++  - Anup Patel <anup@brainfault.org>
++
++description: |
++  The RISC-V Platform Management Interface (RPMI) [1] defines a common shared
++  memory based RPMI transport. This RPMI shared memory transport integrates as
++  mailbox controller in the SBI implementation or supervisor software whereas
++  each RPMI service group is mailbox client in the SBI implementation and
++  supervisor software.
++
++  ===========================================
++  References
++  ===========================================
++
++  [1] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
++      https://github.com/riscv-non-isa/riscv-rpmi/releases
++
++properties:
++  compatible:
++    const: riscv,rpmi-shmem-mbox
++
++  reg:
++    minItems: 2
++    items:
++      - description: A2P request queue base address
++      - description: P2A acknowledgment queue base address
++      - description: P2A request queue base address
++      - description: A2P acknowledgment queue base address
++      - description: A2P doorbell address
++
++  reg-names:
++    minItems: 2
++    items:
++      - const: a2p-req
++      - const: p2a-ack
++      - enum: [ p2a-req, a2p-doorbell ]
++      - const: a2p-ack
++      - const: a2p-doorbell
++
++  interrupts:
++    maxItems: 1
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a wired
++      interrupt and this property specifies the interrupt source.
++
++  msi-parent:
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a system MSI
++      and this property specifies the target MSI controller.
++
++  riscv,slot-size:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 64
++    description:
++      Power-of-2 RPMI slot size of the RPMI shared memory transport.
++
++  riscv,a2p-doorbell-value:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    default: 0x1
++    description:
++      Value written to the 32-bit A2P doorbell register.
++
++  riscv,p2a-doorbell-sysmsi-index:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a system MSI
++      and this property specifies system MSI index to be used for configuring
++      the P2A doorbell MSI.
++
++  "#mbox-cells":
++    const: 1
++    description:
++      The first cell specifies RPMI service group ID.
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - riscv,slot-size
++  - "#mbox-cells"
++
++anyOf:
++  - required:
++      - interrupts
++  - required:
++      - msi-parent
++
++additionalProperties: false
++
++examples:
++  - |
++    // Example 1 (RPMI shared memory with only 2 queues):
++    mailbox@10080000 {
++        compatible = "riscv,rpmi-shmem-mbox";
++        reg = <0x10080000 0x10000>,
++              <0x10090000 0x10000>;
++        reg-names = "a2p-req", "p2a-ack";
++        msi-parent = <&imsic_mlevel>;
++        riscv,slot-size = <64>;
++        #mbox-cells = <1>;
++    };
++  - |
++    // Example 2 (RPMI shared memory with only 4 queues):
++    mailbox@10001000 {
++        compatible = "riscv,rpmi-shmem-mbox";
++        reg = <0x10001000 0x800>,
++              <0x10001800 0x800>,
++              <0x10002000 0x800>,
++              <0x10002800 0x800>,
++              <0x10003000 0x4>;
++        reg-names = "a2p-req", "p2a-ack", "p2a-req", "a2p-ack", "a2p-doorbell";
++        msi-parent = <&imsic_mlevel>;
++        riscv,slot-size = <64>;
++        riscv,a2p-doorbell-value = <0x00008000>;
++        #mbox-cells = <1>;
++    };
+-- 
+2.43.0
+
