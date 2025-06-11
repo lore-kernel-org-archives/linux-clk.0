@@ -1,190 +1,194 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A4814B945
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 05:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951ED450EE
+	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 05:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749618345; cv=none; b=kdu4Fy9vZ/ZcUeNU6b2nMrkMsa/imDisNLsuLnOuJ8qBjBfW83QoneKHbQZwm0mYcLVFx5BeKeziPGHvdXn8Ns1TFvHOZljK24a0W3rEjJSE6CqXcqiLRC3eaIVip+rhMJN7k5hrECYC5odUagYWMQ3UzE7EuYwbmjjIVgzPK8k=
+	t=1749619291; cv=none; b=b6eHI432wI4eb5l4IEMtLjrTwwWPy9wvawd0p0uZq2CMYTa8IExnqFoUBdUNzrlE0rGA8bqA3vngfem9OLOLoHjnM8wxZyaUxsi0GFOLxz0CnU5jMWQA0aBk87nFEbSHfAkMZ46sK/Ve4ZgQdExRPAlZJccSk1AQSGmb3msQ/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749618345; c=relaxed/simple;
-	bh=aQYY6xCCcAYMYix4A5vJaId13rEdEFR2wIi9qkRVWTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t17F3pFK8ydl8aunTSOToIhlndqp7cPMW7CgTMJVUsuTJ5708v97SbKxhqjbfS10nCnDi950nuYln+90INP3mKFMKU1GeW4WEwW/hcJU7woiTPFpOitQrtrwQ80c+ro60/lIZ7wch/9S7q8/povx2RR4yDF9OISWkHdEjeb/XHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gceIcVzP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1749619291; c=relaxed/simple;
+	bh=Hf+lkGaUqaa3E7rZXs3fvFcSb8MaDoq9N7PpKV1SFWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zw9AeYmiTMR8PDfbuZoGG982TUZGBvZMD0+Jf6uZ9stDhp1GU/SKhhQ9TsAXUSOnIPPKH8Sls2Qe/Sv8h670zZUapM2xrI+BUag2dMaqkuXgpvMGhrSAHwF6Ur1uBWGDM+035dlVBMhETY00V8s1saslS1cNMQ/zX5PPMtSJ3KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cIaZVpyr; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gceIcVzP"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AIQBF1010618
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 05:05:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iI9NMDhEkMnV0ltFhVkLoW15tu5Nhk3mtinuC3YUV4o=; b=gceIcVzPl1+9oJHI
-	QjtKp9RsK47gzVGU6HlHQ8EKdhG7O3j+Wq6vXEKJawePiZVooHKH5QuFCVYUF+aV
-	ImCBHgoj7VoOaJCft632KoQ7CTvEGSp4D2oRha1h9W/VgDYKB/hppM6ydjwj0qX0
-	04rHx6RGDiyWJtkr0Jn1kck757jed8kEixC1zChgkmoDxMuVNlX3NWRuwRFwz+kZ
-	pnttwuywuGYVF2fX+AhQUpSruB5GjyO+UWc0gagVydQtCnQxGuRhCNtVIdyHg8uf
-	8Xq3wjewqUNIsF3BFyXawiZSGQU3FrWQaSAym1zilyLuiHaz0d39oDU4aeIjG2Y1
-	F2Iqlw==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d123sc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 05:05:41 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so7004353a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 22:05:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cIaZVpyr"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b019bdea3so24656181fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 22:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749619288; x=1750224088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CZBCRuywHIrHwB4Y6CUEmtf4oyW/dhVJ1DZHpWrRRRc=;
+        b=cIaZVpyrGmbtfG9DEmittwHhTJGAwUmt5GTccOjEFW/8RuReQg9x3QS/m/uDCe+xHO
+         5vCS21iejai+faDwO6c9RIoXzEjK6br6ZkGJMWF/DMeYL7OSBzhiolK9qun2QW7xnV/W
+         v8prh+cM9rzXAB3y3idfe6Ox4/bG4iqdNjoO5wWJVLYSbgLr/Eqiy1w0q9ZuyzRsMxqs
+         G6CupV9O5iUT9lnxaYHP3wJYAsSz6al2q20gfyJzTsC/xHxNsbipT2/+tYuljBtDGfMO
+         OnmJaZG2aEri60Gj4l+7LuTeSiY2mFoVVvPb66Srt8U9iDSRRwb336vDNSLDP4iPeHru
+         1uAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749618340; x=1750223140;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iI9NMDhEkMnV0ltFhVkLoW15tu5Nhk3mtinuC3YUV4o=;
-        b=NDZ/t2JjdDKgOmdsxf5u/k/eBeVj+1zHm8uTPAyVWaa/5lUV4z+ufDs9/EkgXjtr5Y
-         ByQf3LJZsvGCBL4e9+nBH0HvGCJR0TxTYaC4ZF4jhJHLEyBAvtkenlXkoTdQhuU20TQG
-         n/6PmUCjqoL0Y3fQ9BDHwgrNkOTaOIXcXxxENaeQ0XS9hKk4IU5vxky9Km2+ne0StWpM
-         cBw2Hu8EUGkfYmcbl9mQJ9DBJsn1sBlwbsGND39AztDc0p/IvP0DDr4+ktRMC2quz1jw
-         4ALZoeyAxifvsdm2+Fbq/yUEXkCLbQCeGVw/puagb078MWyiDiBTf/dN9TrlBLEw+9Ip
-         tkfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMmPngVUPRqYPS975am03ETpiwHvLoTe1oXnxOL84lyiLjyFQOAfYaWyk77Sl1yx6JgFYMkr4iCjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR/Jx3hwf8Y0rmsfFYv+RPwCEv0muI7sXNnTBEAT6U62u5s+jt
-	ATKVxoljvG6nJHFhBhkLMKtxIJRequMYOm9aRvIg7UztbzmGQF3M74rdeYCsgk0GZ8zs6yW0u6E
-	pS9bCVZmTHJbX1u3/nnqE38ccNzYXoeX3xya5j+Coz0119HMaovpYlh3zhQ9QJ+F/MOzi8QY=
-X-Gm-Gg: ASbGncsZqXVviPIVC/izN/nxTxDMSgzONPM/EUKK2AHj2HRgN+W3im25Ti3jGds1Jvj
-	GRSpXVjIQ5UXIOL9aSBfQ6PxqRl2BKRzxSBKYHDBNPwjQ0b4IELZkYy3/juEaOJpeYLxleLHBBk
-	aOsWFC8bJeJqXEQqEll0ftHHuyfHOgiNJ406OstouWqv4KfmLZ6LviO69L4nUB+DvxRsFUM5fnl
-	ht0jHZ9JJaHShbaYVkj/u+XHuZ5gVwVlkJYVaMnL74vykhAuj+rKfbaHJwWcUqgyY9q8tUMNxcX
-	B6+E82C+nZjIYgor9JKzBHR5VwupwaLR+97t8GPErw8P4G3KsKv6HGI=
-X-Received: by 2002:a05:6a20:a11e:b0:215:de13:e212 with SMTP id adf61e73a8af0-21f88fd555amr2079342637.15.1749618340584;
-        Tue, 10 Jun 2025 22:05:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlfmx/FndYaMxUj1Mm8zVA7Xx2NEooQKaHlG/FisCHiAXfOwLHC3oXYqQPC02W8mtcz+1vmA==
-X-Received: by 2002:a05:6a20:a11e:b0:215:de13:e212 with SMTP id adf61e73a8af0-21f88fd555amr2079311637.15.1749618340150;
-        Tue, 10 Jun 2025 22:05:40 -0700 (PDT)
-Received: from [192.168.1.4] ([122.174.137.154])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ee6f1dfsm7587129a12.18.2025.06.10.22.05.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 22:05:39 -0700 (PDT)
-Message-ID: <9b8ad81f-28e1-471e-a8fc-9e64578aaf4f@oss.qualcomm.com>
-Date: Wed, 11 Jun 2025 10:35:36 +0530
+        d=1e100.net; s=20230601; t=1749619288; x=1750224088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CZBCRuywHIrHwB4Y6CUEmtf4oyW/dhVJ1DZHpWrRRRc=;
+        b=J30h0TWJR7e1Z65FlA0dV1U4xLZFqHVLiwGMO9xlh05lPWatZjQ6mziMEuQYfPeg/L
+         F0pXd/KRhbkocrrTQdimfmBRBvLYYpJHYjzcT27d60t0TnusYNe1U8+B3wB7kk+kzASo
+         sVj/vvtqOok3Uvdn9Ud6SW826+S8GINsBrO5DwFa+D0AC2f3yOO9L6/FR8VFrL+wdYgc
+         0W3K2i4uVtjc1an3Dv6BCbmujz7Zy3+ZaVkDumruc4MGHrN9RSdj+em8ILBRFGF8DFaQ
+         WBXuBe+ukVvzCgf9UG9SNSmAd6132hkw+8u9hbQJArMIc60QCWivwlJIUEPY8Lnzh3xL
+         11fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtkshhpA/F08gqZ92r1aCBKPXXWWX2atTiyfR7uCy1VdtbHilzbH15HkeKt1QGyly2m/XfjUiqSWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4XnMSv3syjtj5jsRJq+Cdy9uigZk0dxR7hH7CARXUDffPepo5
+	gfdIw3s2WvD8ZhfBis2j7Mthfu7lpJCTdyPEjE5RdWIJn8ZxM6i9ZsxWWXF9F/UbSeBhtYljrkC
+	tSSRTFIO9/FEuv3MloMC3ig3dJYBaGmZBm4LmCfcQ1g==
+X-Gm-Gg: ASbGncs6jijJFIdHocdm77555s2pkgzil8eDRRDydcml4oxoSrFxinopxlut5UMfZPp
+	4Qg+yFxxZ5RYCHps4HM9nPWBb3z3OhoUOtamZYV9idKD5Db4hSrcov6sZWqZLFUT8QkdsTcUMwf
+	CKMXdZGcxBnX6mTM23qBxTF0etUTJLULJ/HL6E0j5MALi4Emp9JEy/1sc=
+X-Google-Smtp-Source: AGHT+IGcTZB8S6Gd3hIZot1w2/0Yfybi+OExqcLnX1AZuMKGrGy+Zh6YIGrowqLXEqln+XAK8JxzBWfPL5Z462AVQRQ=
+X-Received: by 2002:a05:6512:ea0:b0:553:2411:b4ef with SMTP id
+ 2adb3069b0e04-5539c14d883mr614133e87.34.1749619287649; Tue, 10 Jun 2025
+ 22:21:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: sm8450: Enable retention for usb controller
- gdsc
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250610092253.2998351-1-krishna.kurapati@oss.qualcomm.com>
- <sy33khkakjxi66amjbuugnypjnegvd4z4dyfzvrp72qkuv3roh@dxaymdc6cfad>
-Content-Language: en-US
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <sy33khkakjxi66amjbuugnypjnegvd4z4dyfzvrp72qkuv3roh@dxaymdc6cfad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 5Jvd7tvOiVTDmP1FRYcRKGLF9cXXcz8l
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjExMDA0MyBTYWx0ZWRfX9jc/oT5ZA0v+
- XPrxeJGifhtmw6Oc4IFb3cGhb/WWKhFgiPgVbrTUEVXE+8TRsJGH6swhCJus1FrLt0YA35KdCQ+
- K4Hq9W24KBNNLGblGY4VR8Z+OB2w6XDBu7NUsUJKSDswEa+VIHt/KOQLiXu9XAqoafTAM0T6c78
- 9r6MxdtlyPLoHQOkb2jvwj9pnW04e+qm5sZrxkQNCeN4tSsauTO2L5d+sNaBf+L0T8Sr7KybC7L
- 6wwu9vt9nKpJcPz0hI0R2mA/FGV64nlWjaR+g5CwK9NMtE/0PZJMgNObp/Cmkyi/rmxVRzRkHYD
- nouhIrzu0YCtn4VjSEb7/rdthJFx5zrAXIag5uDpZi+Y2BUddh4YZFXiksHSMYXfR5c5Cb19iex
- 4eRoTGnSP9NY2aU4vNG5eZ4vKGGYg9TJVKOIQL63VrQy/ciW5a7LkDZoWjRRAgkfe+bRQdFe
-X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=68490ea6 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=oYmrSCt18pvj5yoFrZalCQ==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=CUOy4OKjmV6SWOl3eY8A:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: 5Jvd7tvOiVTDmP1FRYcRKGLF9cXXcz8l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-11_02,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506110043
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-8-apatel@ventanamicro.com> <aDbrBFcgaJxgBRVZ@smile.fi.intel.com>
+ <CAK9=C2XJwgsC5AK-eVOHQqN1tPxtrsTjVoKdHgALbREv=sb8zQ@mail.gmail.com>
+ <aEc-SHvL187xdj-m@smile.fi.intel.com> <CAK9=C2VjOZ22smYdxDg1bjnx-+wwjngEN3c-iOpdtaADFcQ0+w@mail.gmail.com>
+ <aEgBGup553Pki98e@smile.fi.intel.com>
+In-Reply-To: <aEgBGup553Pki98e@smile.fi.intel.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 11 Jun 2025 10:51:15 +0530
+X-Gm-Features: AX0GCFt0zvXLqPkqunyCtbvdd6VWwuT7DuTT2gaTg9GfnLxzDC88KAV9zwbxwm8
+Message-ID: <CAK9=C2Ww0Mt91x_r0VTffse-AiWcOyBYvWpxxK7p5=+EDUEoMw@mail.gmail.com>
+Subject: Re: [PATCH v4 07/23] mailbox: Add RISC-V SBI message proxy (MPXY)
+ based mailbox driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 10, 2025 at 3:25=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Jun 10, 2025 at 10:05:27AM +0530, Anup Patel wrote:
+> > On Tue, Jun 10, 2025 at 1:34=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Mon, Jun 09, 2025 at 05:59:40PM +0530, Anup Patel wrote:
+> > > > On Wed, May 28, 2025 at 4:23=E2=80=AFPM Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > On Sun, May 25, 2025 at 02:16:54PM +0530, Anup Patel wrote:
+>
+> ...
+>
+> > > > > > +     if (mbox->msi_count)
+> > > > >
+> > > > > Is this check really needed?
+> > > >
+> > > > MSIs are optional for the SBI MPXY mailbox so we should only use
+> > > > platform_device_msi_xyz() APIs only when MSIs are available.
+> > >
+> > > > > > +             platform_device_msi_free_irqs_all(mbox->dev);
+> > >
+> > > Hmm... I am not sure why. Do you have any Oops or warnings if the che=
+ck
+> > > is not there and no MSI provided?
+> >
+> > We don't see any oops or warnings. This check is to avoid unnecessary
+> > work (such as acquiring lock, checking default domain, etc) in the
+> > msi_domain_free_irqs_all() called by platform_device_msi_free_irqs_all(=
+).
+> >
+> > I don't mind dropping the check so I will update in the next revision.
+>
+> Perhaps you can rather add this check into the callee? Seems to me that
+> you have a justification for it. Usual pattern in the kernel that freeing
+> resources should be aware of the NULL pointers or optional resources
+> so we may call it unconditionally from the user(s).
+>
 
+Unconditionally calling platform_device_msi_free_irqs_all() when there
+were no MSIs allocated causes the below crash because "dev->msi.data"
+is non-NULL only when:
 
-On 6/11/2025 9:12 AM, Bjorn Andersson wrote:
-> On Tue, Jun 10, 2025 at 02:52:53PM +0530, Krishna Kurapati wrote:
->> When USB controller enters runtime suspend while operating in host
->> mode, then wakeup because of cable disconnect or a button press of
->> a headset causes the following kind of errors:
->>
->> Error after button press on a connected headset :
->>
->> [  355.309260] usb 1-1: reset full-speed USB device number 2 using xhci-hcd
->> [  355.725844] usb 1-1: device not accepting address 2, error -108
->>
->> Error on removal of headset device from usb port:
->>
->> [  157.563136] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402
->> ,iova=0xd65504710, fsynr=0x100011, cbfrsynra=0x0, cb=6
->> [  157.574842] arm-smmu 15000000.iommu: FSR    = 00000402 [Format=2 TF],
->> SID=0x0
->> [  157.582181] arm-smmu 15000000.iommu: FSYNR0 = 00100011 [S1CBNDX=16 WNR
->> PLVL=1]
->> [  157.589610] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
->> [  157.596197] xhci-hcd xhci-hcd.0.auto: WARNING: Host Controller Error
->>
->> Enabling retention on usb controller GDSC fixes the above issues.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> ---
->>
->> Note:
->> The above mentioned issues pop up after I enabled runtime suspend after
->> applying [1].
->> [1]: https://lore.kernel.org/all/20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com/
->>
-> 
-> It makes sense that the BCR issue appears after the flattening of dwc3,
-> but why would the suspend issue pop up?
-> 
-> The change matches what we do on many other platforms, but I've been
-> hoping we either could drop the retention or clearly document why it's
-> needed - so that we know if this should be on all or none of the SoCs.
-> 
+[    1.355735] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000008
+[    1.358212] Current swapper/0 pgtable: 4K pagesize, 57-bit VAs,
+pgdp=3D0x0000000081a2b000
+[    1.360632] [0000000000000008] pgd=3D0000000000000000
+[    1.363132] Oops [#1]
+[    1.363748] Modules linked in:
+[    1.364768] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.16.0-rc1-00037-gab55e1c1d97a-dirty #7 NONE
+[    1.368325] epc : mutex_lock+0x0/0x28
+[    1.369796]  ra : __msi_lock_descs+0x32/0x3c
+[    1.370234] epc : ffffffff80af96e8 ra : ffffffff800038e6 sp :
+ff2000000004ba90
+[    1.372412]  gp : ffffffff81819c00 tp : ff60000001dc0000 t0 :
+6900000000000000
+[    1.373527]  t1 : 0000000000000072 t2 : 6962732d76637369 s0 :
+ff2000000004bab0
+[    1.376628]  s1 : ff6000000241c410 a0 : 0000000000000008 a1 :
+ffffffff8168ca58
+[    1.379110]  a2 : 0000000000000010 a3 : 00000000000000a3 a4 :
+0000000000000000
+[    1.380410]  a5 : 0000000000000000 a6 : 0000000000000000 a7 :
+000000004442434e
+[    1.381019]  s2 : 0000000000000000 s3 : ff6000003fff30a0 s4 :
+ff6000000241c410
+[    1.381579]  s5 : ff600000039f9320 s6 : ff6000000241c400 s7 :
+0000000000000002
+[    1.382242]  s8 : ffffffff81821fa0 s9 : 0000000000000000 s10:
+0000000000000000
+[    1.384018]  s11: 0000000000000000 t3 : ffffffff81830a37 t4 :
+ffffffff81830a37
+[    1.385958]  t5 : ffffffff81830a38 t6 : ff2000000004b7c8
+[    1.387306] status: 0000000200000120 badaddr: 0000000000000008
+cause: 000000000000000d
+[    1.388407] [<ffffffff80af96e8>] mutex_lock+0x0/0x28
+[    1.389333] [<ffffffff80003dba>] msi_domain_free_irqs_all+0x2a/0x48
+[    1.390275] [<ffffffff80714e86>] platform_device_msi_free_irqs_all+0x16/=
+0x2c
+[    1.391715] [<ffffffff808d8114>] mpxy_mbox_probe+0x6dc/0x750
+[    1.392522] [<ffffffff806f1706>] platform_probe+0x4e/0xb4
+[    1.393169] [<ffffffff806eef58>] really_probe+0x84/0x230
+[    1.393789] [<ffffffff806ef160>] __driver_probe_device+0x5c/0xdc
+[    1.394282] [<ffffffff806ef2a4>] driver_probe_device+0x2c/0xf8
+[    1.396577] [<ffffffff806ef4ac>] __driver_attach+0x6c/0x15c
+[    1.397634] [<ffffffff806ed146>] bus_for_each_dev+0x62/0xb0
+[    1.399060] [<ffffffff806eea9a>] driver_attach+0x1a/0x24
+[    1.399792] [<ffffffff806ee31e>] bus_add_driver+0xce/0x1d8
+[    1.400363] [<ffffffff806f020c>] driver_register+0x40/0xdc
+[    1.400832] [<ffffffff806f1414>] __platform_driver_register+0x1c/0x24
+[    1.401551] [<ffffffff80c3df7e>] mpxy_mbox_driver_init+0x1a/0x24
+[    1.402328] [<ffffffff800108b2>] do_one_initcall+0x56/0x1d8
+[    1.403674] [<ffffffff80c01236>] kernel_init_freeable+0x266/0x2d0
+[    1.404956] [<ffffffff80af549a>] kernel_init+0x1e/0x13c
+[    1.405422] [<ffffffff80012266>] ret_from_fork_kernel+0xe/0xcc
+[    1.405870] [<ffffffff80aff042>] ret_from_fork_kernel_asm+0x16/0x18
 
-Sure, will try to root cause why we are seeing issues during suspend (on 
-sm8450) and come up with another patch.
-
-But I remember on sc7280-herobrine (and IIRC while testing multiport on 
-sa8295), when gdsc was not in retention, after entering suspend, we 
-would see a disconnect and reconnect of connected peripherals during 
-resume (probably because controller was in off state during suspend). 
-When I tested with RET_ON in sc7280, I see the re-enumeration after 
-resume never popped up.
+It is better to have the check on "mbox->msi_count" before calling
+platform_device_msi_free_irqs_all().
 
 Regards,
-Krishna,
-
-> Regards,
-> Bjorn
-> 
->>   drivers/clk/qcom/gcc-sm8450.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
->> index 65d7d52bce03..f94da4a1c921 100644
->> --- a/drivers/clk/qcom/gcc-sm8450.c
->> +++ b/drivers/clk/qcom/gcc-sm8450.c
->> @@ -3141,7 +3141,7 @@ static struct gdsc usb30_prim_gdsc = {
->>   	.pd = {
->>   		.name = "usb30_prim_gdsc",
->>   	},
->> -	.pwrsts = PWRSTS_OFF_ON,
->> +	.pwrsts = PWRSTS_RET_ON,
->>   };
->>   
->>   static struct clk_regmap *gcc_sm8450_clocks[] = {
->> -- 
->> 2.34.1
->>
+Anup
