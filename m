@@ -1,63 +1,63 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B96B231824
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 06:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9917622A814
+	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 06:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749623126; cv=none; b=YkNMdzgmPeHcI+tXGTutAYpc1xXks/9JuzrDHymUO/9kF+CUHzUGGpb8zwNPtU/wj5b3sbGIfzerh4/XNLr9RFhhWcWqLKVW7k7/oaejlksivVN1Ujs49OtXcuznBQLEL/kg2UhW0aQZSNz/7mMRoB6kaZQgPiKQ5u8On8NeqSE=
+	t=1749623135; cv=none; b=AI1Tr2PTsT0p3cbBoPPWeAQHDnsfpWVz/1e2n/dXYZtqP52sOV2EyB6nOZQcPNqT6tyUIKEUEvvlp33UHnwqR03vKU+Vx9TBLoL38YsSb6RMDmqbB8kXvGas7sbeO0VsbHgFGzw+uswwibQ6X7FBXHwLe5rmOHaYn0EhYe4Mgbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749623126; c=relaxed/simple;
-	bh=bDMVpDUTCKSQxIzYquuybqhsrFm52uIQJL3fLHSkHZc=;
+	s=arc-20240116; t=1749623135; c=relaxed/simple;
+	bh=HmUGIQxKVHOETiXQmbQMVfvnbNgiP89D8IFlOG4Z2e8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hyG7sN6BWyjM3rDFrv/yhmb3FEDh5u6FJXP1fFOO9agVnQV1wLDTjdlgejLKTn6/5YnvX9sxlJvbme1czYSDuPqKSd8gRWYflhhhKRbugIdCJ0cTvFXuR7s0g6IjTV9R//zFNhyXdOa/beJJW3xHv2XiVprcoAQHgm0Fris05Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=aOLNLSBV; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=pcs58yZtgT1FgX5ntZl2WqDUTP3Th/I5lx4ZUs4Qcg2Ye0h/smpbsfykFinj/twaYKdDgDL3sTn5LtMRKOzaaPLQR1grjJNm4yopyIXNEA3cIIrCOEJPaGf5Kej8DmPNPj8bVsyxlBeAtm4+VAczEpBUpjAv1M+0GI6toSBMOSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=B2jJZpiG; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="aOLNLSBV"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2360ff7ac1bso29907425ad.3
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 23:25:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="B2jJZpiG"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2349f096605so74900945ad.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jun 2025 23:25:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749623124; x=1750227924; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1749623133; x=1750227933; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P3TJh+HyLkyeQ1VqRyPxzf43XEd03uT1gCuO+kpCcOM=;
-        b=aOLNLSBVq4WLH7iTTLFU42LhQxBn6hbTSabYvx2Aqf7QXi1OyioL73qzpnc4oegiXJ
-         D/8w9FvUuNBNzgJqqZu3KyuIxWHIt+2+3o2lHnsAefLgYEtWRbjsRGU1+b6letnWlHl/
-         bo5gE1zDSY3+s+EhMBTK6ODl2XKFNrES/fLh8WhHaM+eVMp1++AfFULtHdrFqQQ87yTU
-         +imgPkYnkH6GdZeCqkotK3D6gRFzNSF+rLxMRSKihsaAc6dWHM8Is100aJWQTNNCOLrO
-         my1KjEuMvTfKcM4NRIpT7sMqqsyG25XkAMBhAK3w2DI9KlAV3xdIIy4WFezRvTMJwNiJ
-         GXBQ==
+        bh=R+ya0GtiFk/8ci1A3C7Dw+WSyLS2yytdeeB0s74FDG4=;
+        b=B2jJZpiGg04yarCx6myK6NWU1VEtVsnvm4x62tzl4Hj/+gAzyWgYqRFySwYer3bgIb
+         SLil8J4EKO0sYng9FZNUEaeIe2yt7qpq5hgghEINKzave+u+Tb6OIOA5PtBRAyGsEpda
+         sR9U5f8tPCVAOIlBnlhNW50DMV1NO8Lg33y6vCGWh8//wQ/uAnkqwB5lPviKyWePyevp
+         tbSn1fVZzIuYy3t5Cu79iTLSiw9UpQK+pdsdXkh+iQqpCrih/GBGLiLjpPQT6BHi3A6I
+         1UoLd3WWeX+Zyt+g6suIqv5CkEMIVkieOm3eiyNlKwrx2hk8oB0PJmoFPnEy2JwtecTs
+         HV/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749623124; x=1750227924;
+        d=1e100.net; s=20230601; t=1749623133; x=1750227933;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P3TJh+HyLkyeQ1VqRyPxzf43XEd03uT1gCuO+kpCcOM=;
-        b=Vyx96I7KfWE4h0YFwNUak190KEhWUMirNSuYTpjPgn7wQcdM6nLHZILjRd5X7hZsCz
-         HXEgYU0jaW3wbV8ou8gbUUyUqja/B/8VKiNqdnSRlV9fRZt1SruDZYS4f8nOFndwAF+X
-         MfstW2nKdaGDRsozB09QtDL7c8eFFSXP6VLAnvqv6LX4hVximORivM0MZKigJMMT1t/c
-         8Jlj3G7fEt9cFNZAKVXuiVZAsalCbkGbxzz0JlcPv1IX0TbDBhqjLUju7lpqFq6HBGdV
-         2+LUWBcLxYHX/drqM/+HrgfJOjHCWP/nO3EqHEHviqs4zbRpbZkOCHfSH+t95NLSy0sA
-         5T9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUR1JY/fdXlPxjX/dpT9p1+0nrXZoZHgLXdCEU1BIDqxcJAnhK7lSR3Hu6lpOACKqy35UNu6GGo7Vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm0ZQ+66I0bPKM+tchDdIqZmpDLdQAP/VrwixPxdO+D+khl5VI
-	F2EkXdUxOWyLeSyv0MAiJOHtlgOPOfjTHu4wZYFc6z0PKs9spacB33LDQyvcRGEo2oA=
-X-Gm-Gg: ASbGncsF2pd6wRMpl1y0hCZH4qwSo000CzRuJrDFtgcSpQsiKEa7EhC91SZDQqyYxw5
-	EjNpzKGU/Q6QXDj0LJQNu8PyVPAiQalGYJBbtTYmaW6baxX9XqZnM4+BMru3QieSyE9Kiiy5cOb
-	LAOmtlJGifgILmhAbNAitaqLeXFjkjSlrjhYI9vfcK+6ZtLDeEmX28w+pGi+5IfLN2FM7+fabwR
-	XGVZNjPfXKVD2LXE/VlufFDq/FxfYVSWv/HWODWQ16TFtbJtKQ7ZtNTJvQEKuq4Q+UObFdo3xFo
-	gPyFCpujwbM+ckCHLdOm2iNjvGOsjekmnH3VB1TQZFu7ZWUI4mDypxOt1cqUkSU9piM5aC+mdiY
-	9P1iQCrcg9776DYr8RYx9zh3CqA==
-X-Google-Smtp-Source: AGHT+IGEWLvHu+QitAoaSc5JCFVSXTiR4zAQBrrLEPUMyZeyXwPVzV+EQ4Eq/uT7lUdx2oEJTNiDkA==
-X-Received: by 2002:a17:903:2407:b0:224:76f:9e4a with SMTP id d9443c01a7336-23641abc3d7mr31388505ad.14.1749623123949;
-        Tue, 10 Jun 2025 23:25:23 -0700 (PDT)
+        bh=R+ya0GtiFk/8ci1A3C7Dw+WSyLS2yytdeeB0s74FDG4=;
+        b=Pn44qIEKFQlggZdsC3VNvkd4tPQWnHDtBJ3Vaic/vAd6O8qV4ziMj5gyEI9RPwAAy8
+         F/fakIHzCm+1/H9XvWqH02O/9UUbrK/lPF0kYoCTVeiFhaabOKxGA9BUfCyC+3g8K5QL
+         iScCYiBWi1+L1sW3tawLMSZY6+wXe91EtWZsaFJ2YAgxi4NnyCR4ox1+E5eV6bsa2msA
+         6sadMYGeXS1v3rPkNSy+SNFJmWUJ6iV/yN8xN+CO9ueV7D7V5lWyeO1BFxrKbfxCcxH6
+         gZlvqUhh3ia5y/GDfHrHuL6Dr4cd6ksIa+Hfk8AqQt83JixdqLcskR+2L0Tno2C6jGbW
+         Mu7g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9c74h7bj8tpUehGTydOQw7+3R9gZojHDbYFJ67gv9H+0JBBjnWL/1rrt40iOdRYhKabxqZgeky7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5SosoNShvHGX9eu1guAZJZlE94P9gYiwTuiC0bsZ8p9nBjyj/
+	me+cGBrfXt6mXBTyBnMV2ihu0r6i6nvw17ZuAMONyalmeGrl+mLmx8yAOj2AneyZOw4=
+X-Gm-Gg: ASbGnctayhkbjQbgZ/OeraKRZmkyMmvUR41EKvbSq4MlhIBuDKmHpR1NqBumC7E2gui
+	+TOVpkTE4MG6ao6ly4ykTDV4ysgTihVtFJl0I8lpksUl6q4ifPfvLnMaIygNQNHuhYWSv+66X+w
+	rSQS3beeeWuNNNiRm36LBHVDqlxLjEW8oFXyvdRLZEFqcBOykVZxLlije6Pdgu7orMZdPHe7NiO
+	qCsq50ari1Dx7QWYM6dm2yU0j6wpaRWkLzrvpTKwv5DbS39fEevkfOVVCEZ9a6UyuYuqL2GFnqk
+	xbzGX7QT+FpF79Y52H2PXfawMHU427GQXmM75XBfOO4LSjb/YFKDuIKh9DyrpCADNtlfRE3iVcI
+	crJq8pLM8Z+zIQhJqAxjzYAsF3Fp7i0ntfvHB
+X-Google-Smtp-Source: AGHT+IEwIvq+MzJvJvKzSGNR//1g1SyAHTIWb/Bau/CEh4PRJwyomTrDPbcTXddUHnHcaNXUPycI9Q==
+X-Received: by 2002:a17:902:ccc8:b0:234:b422:7120 with SMTP id d9443c01a7336-23641a8bef9mr26337945ad.9.1749623132858;
+        Tue, 10 Jun 2025 23:25:32 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603092677sm79976295ad.64.2025.06.10.23.25.15
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603092677sm79976295ad.64.2025.06.10.23.25.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 23:25:23 -0700 (PDT)
+        Tue, 10 Jun 2025 23:25:32 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -87,9 +87,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v5 17/23] ACPI: RISC-V: Add support to update gsi range
-Date: Wed, 11 Jun 2025 11:52:32 +0530
-Message-ID: <20250611062238.636753-18-apatel@ventanamicro.com>
+Subject: [PATCH v5 18/23] ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+Date: Wed, 11 Jun 2025 11:52:33 +0530
+Message-ID: <20250611062238.636753-19-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250611062238.636753-1-apatel@ventanamicro.com>
 References: <20250611062238.636753-1-apatel@ventanamicro.com>
@@ -103,128 +103,76 @@ Content-Transfer-Encoding: 8bit
 
 From: Sunil V L <sunilvl@ventanamicro.com>
 
-Some RISC-V interrupt controllers like RPMI based system MSI interrupt
-controllers do not have MADT entry defined. These interrupt controllers
-exist only in the namespace. ACPI spec defines _GSB method to get the
-GSI base of the interrupt controller, However, there is no such standard
-method to get the GSI range. To support such interrupt controllers, set
-the GSI range of such interrupt controllers to non-overlapping range and
-provide API for interrupt controller driver to update it with proper
-value.
+The RPMI System MSI device will provide GSIs to downstream devices
+(such as GED) so add it to the RISC-V GSI to fwnode mapping.
 
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- arch/riscv/include/asm/irq.h |  5 +++++
- drivers/acpi/riscv/irq.c     | 38 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 41 insertions(+), 2 deletions(-)
+ arch/riscv/include/asm/irq.h |  1 +
+ drivers/acpi/riscv/irq.c     | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
 diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
-index 7b038f3b7cb0..2caf049f09c8 100644
+index 2caf049f09c8..9c9d22f5165e 100644
 --- a/arch/riscv/include/asm/irq.h
 +++ b/arch/riscv/include/asm/irq.h
-@@ -40,6 +40,7 @@ unsigned long acpi_rintc_ext_parent_to_hartid(unsigned int plic_id, unsigned int
- unsigned int acpi_rintc_get_plic_nr_contexts(unsigned int plic_id);
- unsigned int acpi_rintc_get_plic_context(unsigned int plic_id, unsigned int ctxt_idx);
- int __init acpi_rintc_get_imsic_mmio_info(u32 index, struct resource *res);
-+int riscv_acpi_update_gsi_range(u32 gsi_base, u32 nr_irqs);
- 
- #else
- static inline int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
-@@ -74,6 +75,10 @@ static inline int __init acpi_rintc_get_imsic_mmio_info(u32 index, struct resour
- 	return 0;
- }
- 
-+static inline int riscv_acpi_update_gsi_range(u32 gsi_base, u32 nr_irqs)
-+{
-+	return -ENODEV;
-+}
- #endif /* CONFIG_ACPI */
- 
- #endif /* _ASM_RISCV_IRQ_H */
-diff --git a/drivers/acpi/riscv/irq.c b/drivers/acpi/riscv/irq.c
-index 33c073e2e71d..cc1928422418 100644
---- a/drivers/acpi/riscv/irq.c
-+++ b/drivers/acpi/riscv/irq.c
-@@ -10,6 +10,8 @@
- 
- #include "init.h"
- 
-+#define RISCV_ACPI_INTC_FLAG_PENDING BIT(0)
-+
- struct riscv_ext_intc_list {
- 	acpi_handle		handle;
- 	u32			gsi_base;
-@@ -17,6 +19,7 @@ struct riscv_ext_intc_list {
- 	u32			nr_idcs;
- 	u32			id;
- 	u32			type;
-+	u32			flag;
- 	struct list_head	list;
+@@ -30,6 +30,7 @@ enum riscv_irqchip_type {
+ 	ACPI_RISCV_IRQCHIP_IMSIC	= 0x01,
+ 	ACPI_RISCV_IRQCHIP_PLIC		= 0x02,
+ 	ACPI_RISCV_IRQCHIP_APLIC	= 0x03,
++	ACPI_RISCV_IRQCHIP_SMSI		= 0x04,
  };
  
-@@ -69,6 +72,22 @@ static acpi_status riscv_acpi_update_gsi_handle(u32 gsi_base, acpi_handle handle
- 	return AE_NOT_FOUND;
- }
- 
-+int riscv_acpi_update_gsi_range(u32 gsi_base, u32 nr_irqs)
-+{
-+	struct riscv_ext_intc_list *ext_intc_element;
-+
-+	list_for_each_entry(ext_intc_element, &ext_intc_list, list) {
-+		if (gsi_base == ext_intc_element->gsi_base &&
-+		    (ext_intc_element->flag & RISCV_ACPI_INTC_FLAG_PENDING)) {
-+			ext_intc_element->nr_irqs = nr_irqs;
-+			ext_intc_element->flag &= ~RISCV_ACPI_INTC_FLAG_PENDING;
-+			return 0;
-+		}
-+	}
-+
-+	return -ENODEV;
-+}
-+
  int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
- 			    u32 *id, u32 *nr_irqs, u32 *nr_idcs)
- {
-@@ -115,14 +134,22 @@ struct fwnode_handle *riscv_acpi_get_gsi_domain_id(u32 gsi)
- static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr_idcs,
- 					       u32 id, u32 type)
- {
--	struct riscv_ext_intc_list *ext_intc_element, *node;
-+	struct riscv_ext_intc_list *ext_intc_element, *node, *prev;
- 
- 	ext_intc_element = kzalloc(sizeof(*ext_intc_element), GFP_KERNEL);
- 	if (!ext_intc_element)
- 		return -ENOMEM;
- 
- 	ext_intc_element->gsi_base = gsi_base;
--	ext_intc_element->nr_irqs = nr_irqs;
-+
-+	/* If nr_irqs is zero, indicate it in flag and set to max range possible */
-+	if (nr_irqs) {
-+		ext_intc_element->nr_irqs = nr_irqs;
-+	} else {
-+		ext_intc_element->flag |= RISCV_ACPI_INTC_FLAG_PENDING;
-+		ext_intc_element->nr_irqs = U32_MAX - ext_intc_element->gsi_base;
-+	}
-+
- 	ext_intc_element->nr_idcs = nr_idcs;
- 	ext_intc_element->id = id;
- 	list_for_each_entry(node, &ext_intc_list, list) {
-@@ -130,6 +157,13 @@ static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr
- 			break;
- 	}
- 
-+	/* Adjust the previous node's GSI range if that has pending registration */
-+	prev = list_prev_entry(node, list);
-+	if (!list_entry_is_head(prev, &ext_intc_list, list)) {
-+		if (prev->flag & RISCV_ACPI_INTC_FLAG_PENDING)
-+			prev->nr_irqs = ext_intc_element->gsi_base - prev->gsi_base;
-+	}
-+
- 	list_add_tail(&ext_intc_element->list, &node->list);
+diff --git a/drivers/acpi/riscv/irq.c b/drivers/acpi/riscv/irq.c
+index cc1928422418..d9a2154d6c6a 100644
+--- a/drivers/acpi/riscv/irq.c
++++ b/drivers/acpi/riscv/irq.c
+@@ -168,6 +168,33 @@ static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr
  	return 0;
  }
+ 
++static acpi_status __init riscv_acpi_create_gsi_map_smsi(acpi_handle handle, u32 level,
++							 void *context, void **return_value)
++{
++	acpi_status status;
++	u64 gbase;
++
++	if (!acpi_has_method(handle, "_GSB")) {
++		acpi_handle_err(handle, "_GSB method not found\n");
++		return AE_ERROR;
++	}
++
++	status = acpi_evaluate_integer(handle, "_GSB", NULL, &gbase);
++	if (ACPI_FAILURE(status)) {
++		acpi_handle_err(handle, "failed to evaluate _GSB method\n");
++		return status;
++	}
++
++	riscv_acpi_register_ext_intc(gbase, 0, 0, 0, ACPI_RISCV_IRQCHIP_SMSI);
++	status = riscv_acpi_update_gsi_handle((u32)gbase, handle);
++	if (ACPI_FAILURE(status)) {
++		acpi_handle_err(handle, "failed to find the GSI mapping entry\n");
++		return status;
++	}
++
++	return AE_OK;
++}
++
+ static acpi_status __init riscv_acpi_create_gsi_map(acpi_handle handle, u32 level,
+ 						    void *context, void **return_value)
+ {
+@@ -222,6 +249,9 @@ void __init riscv_acpi_init_gsi_mapping(void)
+ 
+ 	if (acpi_table_parse_madt(ACPI_MADT_TYPE_APLIC, riscv_acpi_aplic_parse_madt, 0) > 0)
+ 		acpi_get_devices("RSCV0002", riscv_acpi_create_gsi_map, NULL, NULL);
++
++	/* Unlike PLIC/APLIC, SYSMSI doesn't have MADT */
++	acpi_get_devices("RSCV0006", riscv_acpi_create_gsi_map_smsi, NULL, NULL);
+ }
+ 
+ static acpi_handle riscv_acpi_get_gsi_handle(u32 gsi)
 -- 
 2.43.0
 
