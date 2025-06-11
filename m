@@ -1,107 +1,68 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DA43C1F
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 21:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76B824EAAF;
+	Wed, 11 Jun 2025 21:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749676566; cv=none; b=Ou1rZN6VRhqDJt/A6HetjIh7L028KNIdK3GoK15HBIqw2BcEtLomM68EXnMPEHhYLYvSH7PNqo/xSDhRSN3gUgyZUGC7TevfhxqI0GKD8e3Y0b+gLZ1CPovH5zxob00tZIMO606KPJPd1KGA6xNDky4mXzO1/zqd85ENlWVk9Q0=
+	t=1749676629; cv=none; b=euINOYFPKbLaOFbvWYuV15dt1ae9UOP8L8QNFQ0SimBm7tibMKXAFuK6y5alVTDbm41QH55cYNc0k5/tGfEIgdoUcHyVN8mZ00idLsFqoMhLGUc0lqDQH1lhe2zafUldeWI8FXjVhHQ/6d5haQLesmEZ1yGlKnHHc7LSycUvXMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749676566; c=relaxed/simple;
-	bh=34l1hncorS8+nkL26ZB/15dqnRBpVywFqIADeqMlHMU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=vCkhu6IRsmREofBUyalXdZqXwwY8NT1FJPlYVNPuIkwwOb9jwd+sa6usMWETWbOhd0nL3sJcA/ni/xVejGF5BFW40iWZ/EztB/69KbfJdXIwDWvZhdEXba6Tn4DHRdTLIEd290I8E3M1yJvyBzsR6cPj5ZagIWscd/XWN+N1P+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bp0W74Lh; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1749676629; c=relaxed/simple;
+	bh=jm6YAMEI2w2bPtK1+XGUCqX2+AtqBcb2XwmANQwlY04=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kjhRO573DVwhui8ZNfU+10juTV6QPgnYDack0c0nQtezI9rch6cZFphuu8uhjiGGOQZjfcefng235SgDGe/mTKCt+r1Fbr35uRxWFV62erjvq2kN+Y/RaaRcTCEuSiHR2z72jA3UlI/CL9gnOAF7rbq0nphyG7t8a46t4p1nLAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crn5xSiM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bp0W74Lh"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250611211602euoutp023bee20c4792f3b3ba7ae08d8d1db2cb0~IGZA8FZDO3234732347euoutp02X
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 21:16:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250611211602euoutp023bee20c4792f3b3ba7ae08d8d1db2cb0~IGZA8FZDO3234732347euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749676562;
-	bh=gJSx6fFWCab1L0dG4hF/wx4spo5Eingwx2AqpslewPk=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=bp0W74LhifQr+oDb85bFPnIvLOvQj11U4xNBK2Ctc3WQbNvMXWHlyVld+paX8aOnx
-	 jHUXOFqS4Gqc31gj9khxT2dS4yO5XFKlDvzNkeeaiVcPU7iuznz807UwDsOtlRhIGI
-	 wMx6yzURpEnZd1OPa2nu1tm7/icJkWPXwRhDOr4M=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250611211600eucas1p13784b73e9c0257e670846320bca0a2f9~IGY-b_FYG1491714917eucas1p1X;
-	Wed, 11 Jun 2025 21:16:00 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250611211558eusmtip17a546ce3e5256d611175ed66f1a5dc7a~IGY8xpr_31879718797eusmtip1c;
-	Wed, 11 Jun 2025 21:15:57 +0000 (GMT)
-Message-ID: <02e480b9-68eb-47e7-97f5-54e49d259f84@samsung.com>
-Date: Wed, 11 Jun 2025 23:15:57 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crn5xSiM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2A7C4CEEA;
+	Wed, 11 Jun 2025 21:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749676629;
+	bh=jm6YAMEI2w2bPtK1+XGUCqX2+AtqBcb2XwmANQwlY04=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=crn5xSiMLRNCcCSCkkUgfe/DxNxgFUJK+XC0dZ4txcnO9MA64W44YX6b98zOd/tIS
+	 lrqLEAZyt+2f9FLZgqj9aHfW64mWEZL+bvvfxKEbxP85eFQ/nH3mIFo0jLBajqr6qY
+	 Wgdun6FOLVICUxKiyIb0PMsgR+15qkvfhtmB/o9M3C2lxQMrd/Q5iNMJFR2EPeA2LH
+	 azP09qsX6hKsa64CSztLRvoQwlfbgnol9XRPHMmC2DRTbt3eJIhPwJcUsBhSaQwnMP
+	 kFoveuLXe5ivnbyCRbf55BxW7qCR2DzmUcYKQTUK/APzp9QMzNy3pP8o1U9Y4Aq2PS
+	 3lTn53jlv4akA==
+Date: Wed, 11 Jun 2025 14:17:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: George Moussalem via B4 Relay
+ <devnull+george.moussalem.outlook.com@kernel.org>
+Cc: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v5 0/5] Add support for the IPQ5018 Internal GE PHY
+Message-ID: <20250611141707.7f4371a1@kernel.org>
+In-Reply-To: <20250610-ipq5018-ge-phy-v5-0-daa9694bdbd1@outlook.com>
+References: <20250610-ipq5018-ge-phy-v5-0-daa9694bdbd1@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
-	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
-	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
-	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Language: en-US
-In-Reply-To: <1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250611211600eucas1p13784b73e9c0257e670846320bca0a2f9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d
-References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
-	<CGME20250610125333eucas1p16126b64a0f447a5e9a5ad553d9d7d79d@eucas1p1.samsung.com>
-	<20250610-rust-next-pwm-working-fan-for-sending-v2-2-753e2955f110@samsung.com>
-	<jbm3qvowi5vskhnjyqlp3xek36gzzqjt35m66eayxi6lmi525t@iefevopxjl53>
-	<1d9bba9e-0f30-4039-812e-60b160271e6b@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 10 Jun 2025 12:37:54 +0400 George Moussalem via B4 Relay wrote:
+> The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+> output pins that provide an MDI interface to either an external switch
+> in a PHY to PHY link architecture or directly to an attached RJ45
+> connector.
 
-
-On 6/11/25 22:04, Michal Wilczynski wrote:
-> 
-> 
-> On 6/11/25 08:58, Uwe Kleine-König wrote:
->> Hello,
->>
->>
->> What does .unwrap_or(0) do? You need to round up in this mul_div
->> operation.
-
-Yeah and I'm thinking that the helper needs to be updated or new one
-added like mul_div_round_up, to do the rounding
-
-> 
-> The .unwrap_or(0) is to handle the case where the mul_div helper returns
-> None, which can happen if the divisor (rate_hz) is zero. In that case,
-> the period  becomes 0. The mul_div helper is introduced in this commit
-> [1].
-> 
-> [1] - https://lore.kernel.org/all/20250609-math-rust-v1-v1-1-285fac00031f@samsung.com/
-> 
-
-
-Best regards,
+Please repost just patches 2 and 3 for networking to merge (with 
+[PATCH net-next] in the subject). The other patches will be merged
+by other trees.
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+pw-bot: cr
