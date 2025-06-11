@@ -1,171 +1,228 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F825BF08;
-	Wed, 11 Jun 2025 13:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F3F28A71D;
+	Wed, 11 Jun 2025 13:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749647508; cv=none; b=tZNmcPKDWXvE9ShkkBLeRpBg7peEv8sIP4VBiuFAuNKICaz2A8A5t+znk2kcFoA+F5+SgF6MrfUKNDMYPb1Y3nJkZReG+Ioc6DuD0Dl1mjLw3bm8HgomLyDASMGqnPEH5+BTwdH9S6jlYXpJ85ynaQamht7JKNXfRXu6S0YTAfE=
+	t=1749648920; cv=none; b=uuJgs6tXA03kTZBJvDv6gcV+ah0iAdbE9CWjf+cbmSFkMWH2Zsnkxu8XHn3OjZG9K/3Xrmb/CIMFjmXOTKyjwNdsPrIwl6dK7TKTmv5Gc247d4YKe0FE+LkRJSqHJLxOMxgEc+Gjvtzlx9V2wzf+AP89WPZ9YxPwOddWOkgrTS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749647508; c=relaxed/simple;
-	bh=ZWJSub589iDrGZ+60SCcmXF5iQtLYyYprZ6GcJ4AcI4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=QWZAyrm2iveRT6Te7WDAZ18RoNzRJBm8N04oCroyXwpbddpSLB61A3nq6hxfLQQTSUZOhErsiautiy9sak8IwoL0ZfSJKR7rhMmV1Fr4tbeu67DpqYchh6uMmX8qcMwWb0N+mc5inQZ/OkYKqQu+ljRo9658XCsJtxHDytt/1DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaJrDBYF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749648920; c=relaxed/simple;
+	bh=hkFr+Bx51wr83EaGtiwARjlngiHTI7OKLDw5jUc9D7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pSrcE3FJdcOygE78OQFYgVgucjgZ1wV90IdDtsS1DK+rhRVQkZQNKfQ9eQAGeXb0NO/QuWs2zQS8x5k34YMnyBtISVyTsvrFf2sIIBe172gtMed28ozr7XHHcq9fkVwXDmzAqwKcOvqw0F3TdqfCi6OFa5XEssJSsOqRdE4fNXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDuEvEK+; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaJrDBYF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02C5C4CEEE;
-	Wed, 11 Jun 2025 13:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749647508;
-	bh=ZWJSub589iDrGZ+60SCcmXF5iQtLYyYprZ6GcJ4AcI4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=VaJrDBYF4KTGovaBs6YwgoZBUq6BRiwemvL7WXoKQJXgVU+rdBs6RfRoCH2EVQ/WE
-	 xZpKOz775xPF8adjXJpiOics45NO12ytvIAfPoAy2U12mtYBt0vAcrITiyCjfbBLfY
-	 BZEjyN+3u7/vQeZLcTPtavAN00HoP0WE0lVM7zLYOZb+LuDuLpf2EcKCA7HPEBBKrY
-	 SLpTyh+Qvq3zBdLc/yDUgPT50OvEMDz5IpCzxHFmn53VAs1li5fP/VSwsX4E4TS9Lw
-	 QpZ3pAK/j1g0yMpdijXwiVvqOdUzbWEmM+qWFPLMMwwlhUvkcj+rkdPt3TegcOOPrS
-	 GiXazWlEx4+dA==
-Date: Wed, 11 Jun 2025 08:11:46 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDuEvEK+"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b2eeada3df1so22484a12.1;
+        Wed, 11 Jun 2025 06:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749648916; x=1750253716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7+YJEMDJ36thuIfANjb3mLZl0V1QkdkPulFRUlEhRc=;
+        b=QDuEvEK+drMX51ldkME7a350gCa0isJtAl7LiDVUDvkpnGK4P9ifnkib8AjzxteCbo
+         7Kw9aDyEvT/7jpknkDECjMiJqxFAaJaSMKuNYjyemwmYqkmojfO9qMqclsLyXlhardWB
+         rnFRGSUoRebqwN5hDyUJeoSR4rfcXeFGLB7OSo6JuxuZn+gdtsTLT0F+HSi+5YCcR2hc
+         5Z+QG5nonthmkGJW8E/8mH5wdfATVRbdHLydMjoeDzNqAN4jc9kw1S6yHJX9PE1vN1CT
+         KkHIYwYs4AdGQXZyeFX98dspySN3MzQulCnlwRDEsIqqJsF9IImtl/Wu/xrK6eQjU7mp
+         iiPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749648916; x=1750253716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7+YJEMDJ36thuIfANjb3mLZl0V1QkdkPulFRUlEhRc=;
+        b=pkNPki4mE9pTS/Dj7SewWKkylZ2p/oTY39483MADVbDYLPB3mgM/vGQvcD2izV2Eiw
+         kYl/tAuc85A5BZphnG/L2RxQvYiGh73RTZHGTvbEjJD9p8oEC8sPnj7LLxmTGlvYKTw6
+         x0mReUqlCBCOMBgD4Sm24f1y5WKRV9PbTIeAdNb/8fO/x+cZPlc1BhxsDkdxunIPyAeb
+         ac1NGoSr8dYk3ED5Nb/Y/WkJgqJFGAomP0pDIOs8aO3jrWOHmFndEn7IOb6muo94O0QR
+         uum3rUgtJ1WOWA+AyXrgFy8LrbRlvWb16m+8MwWx8Hw5mgbeIzvXdrpiii+Up37dcQmT
+         ncxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0T7wKRAe9/Ge637F1rbqRM7x+tMbIiDfDe3UGxfU9Uv9ZO8+Fkj97qK70bdOsAQinN/wZOMohB+9Tiqf3Xa8=@vger.kernel.org, AJvYcCUYtjkjCSc7xjtFwcrfZZfcRtCGvEdcTQGhZe4gsAsN1zaLvwuetmkYJMcGJ6Mo/MxMokxr/HqB2KvrPfQh@vger.kernel.org, AJvYcCVCuMERZGkB5WDaGUJWliYVfCLNfb5B4Un4fhR1ucgfJFuWUDVAkjG/+KMprEO3ODDYmrnbYEjdE7z9@vger.kernel.org, AJvYcCWcs9w2FfyugTOh9hO4otx1/+6yDHjBUkpdVAV5Z+qYtN687rNGxD/tTzOrbEFn68xqf3zzlHRGgKCD@vger.kernel.org, AJvYcCXw2kzBJ2F677sdG5PZLEBiJypTzeYWMW3ULeCTp9rU8aGZuRYnT3U1kJH+uLgCWL1hh+dmIm9e0FkA@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd6l4fE81GhuyFy73D4uVDQ7NCcm+CsvFfsuB/oZ7FFgpz9xat
+	ve9Jr5WBXuI2eHLd8pPWtLXXiZT+Y8CKi/ewiH6Cqj6Cj3KsBRDO4vAI4RFCBnA44UifHaJS28A
+	Hf2fIo2Ub7bNHnSO8oY+9/ZT6k1PBQJI=
+X-Gm-Gg: ASbGncvrE2GUw8JN+0dV9XehRFwo99cEBz0alM0aKycOsBg76R925WYBoQFw2YNALWv
+	ZoDcyUiI7fX1mT8vUlPQxq5TaPOVdop0VgSU9q85+zagMD9im4p4DdDyDaroTNRPHrFgPb3kgMo
+	CuepyNW6aViI1kBJWIeids15X/ZEeUUjGCkQpDIIMECG4=
+X-Google-Smtp-Source: AGHT+IGbJpFZ+Qk6FvdsQn7PW78XJk+bb1d1PTP/d+zpCYzn/eIeprshnIC7HU+/be04GHkcxAD23HE18OQvHrvC4pg=
+X-Received: by 2002:a17:90b:2f8b:b0:313:14b5:2521 with SMTP id
+ 98e67ed59e1d1-313af1e1bfdmr2041537a91.5.1749648916482; Wed, 11 Jun 2025
+ 06:35:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-hardening@vger.kernel.org, 
- linux-i3c@lists.infradead.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
- Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-In-Reply-To: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
-References: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
-Message-Id: <174964724485.330045.2181706921272138816.robh@kernel.org>
-Subject: Re: [PATCH RFC 0/7] i3c: add driver for the Renesas IP and support
- RZ/G3S+G3E
+References: <CGME20250610125332eucas1p2da441aa44760236527afc82495af95d1@eucas1p2.samsung.com>
+ <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
+ <20250610-rust-next-pwm-working-fan-for-sending-v2-1-753e2955f110@samsung.com>
+In-Reply-To: <20250610-rust-next-pwm-working-fan-for-sending-v2-1-753e2955f110@samsung.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 11 Jun 2025 15:35:04 +0200
+X-Gm-Features: AX0GCFucCUfitmsrkVpmEkyboIYu-vqz9Ti13iybORi8Z5Q-FoT6_3kpjtnZoMo
+Message-ID: <CANiq72mW2ZsBh8WxY26Knh=FxxPHWK_ikbS9iZip2qRLJAXiNg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] rust: Add basic PWM abstractions
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Michal,
 
-On Wed, 11 Jun 2025 11:39:24 +0200, Wolfram Sang wrote:
-> Here is finally the first RFC of a driver for the Renesas I3C IP. It was
-> created by merging two versions of it from two different BSPs. Then,
-> improved according to code analyzers, cleaned up with regard to coding
-> style, and then refactored to hopefully match I3C subsystem standards.
-> 
-> It is a basic driver for the I3C IP found in various SoCs like RZ/G3S
-> and G3E. Missing features to be added incrementally are IBI, HotJoin and
-> maybe target support. Other than that, this driver has been tested with
-> I3C pure busses (2 targets) and mixed busses (2 I3C + various I2C
-> targets). DAA and reading/writing to the temperature sensors worked
-> reliably at different speeds. Scoping the bus, the output from the
-> protocol analyzer seems reasonable, too. But hey, I am still new to all
-> this, so I might have overlooked something.
-> 
-> The first patches are needed to enable I3C on the RZ/G3S and G3E boards.
-> Once this series loses RFC status, they will be sent out individually,
-> of course. All is on top of 6.16-rc1. A branch can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/g3s/i3c
-> 
-> Why is this still RFC?
-> 
-> - On G3E (but not G3S), we get a spurious irq during boot. We are
->   working on it. This is just platform dependent, though, kind of
->   independent of the high level design of the driver. For this, we
->   would love to get comments already. So, we can fix things in parallel
-> 
-> - G3S has 17 irqs, G3E only 16. The way we handle this might need
->   discussion (see patch 3)
-> 
-> - On G3S, clocks are named 'i3c' while on G3E they are named 'i3c0'
->   I don't have all the needed docs for this, but Tommaso can surely
->   figure this out meanwhile
-> 
-> - There are some open questions regarding the driver itself
->   (see patch 4)
-> 
-> Really looking forward to comments! This has been quite a ride. Getting
-> a suitable test setup was a surprisingly big task. If someone knows an
-> off-the-shelf device supporting HotJoin, I am all ears. I couldn't find
-> one.
-> 
-> So much for now here, some patches have more details.
-> 
-> All the best,
-> 
->    Wolfram
-> 
-> 
-> Quynh Nguyen (1):
->   arm64: dts: renesas: r9a08g045: Add I3C node
-> 
-> Tommaso Merciai (3):
->   clk: renesas: r9a09g047: Add I3C0 clocks and resets
->   dt-bindings: i3c: renesas,i3c: Add binding for Renesas I3C controller
->   arm64: dts: renesas: r9a09g047: Add I3C node
-> 
-> Wolfram Sang (3):
->   clk: renesas: r9a08g045: Add I3C clocks, resets and power domain
->   i3c: add driver for Renesas I3C IP
->   WIP: arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-> 
->  .../devicetree/bindings/i3c/renesas,i3c.yaml  |  186 +++
->  MAINTAINERS                                   |    7 +
->  arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   35 +
->  arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   35 +
->  .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   33 +
->  drivers/clk/renesas/r9a08g045-cpg.c           |    7 +
->  drivers/clk/renesas/r9a09g047-cpg.c           |    8 +
->  drivers/i3c/master/Kconfig                    |   10 +
->  drivers/i3c/master/Makefile                   |    1 +
->  drivers/i3c/master/renesas-i3c.c              | 1441 +++++++++++++++++
->  10 files changed, 1763 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
->  create mode 100644 drivers/i3c/master/renesas-i3c.c
-> 
-> --
-> 2.47.2
-> 
-> 
-> 
+Some docs-only/nits quick review for future versions and other
+patches. Some may apply multiple times.
 
+On Tue, Jun 10, 2025 at 2:54=E2=80=AFPM Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> +//! This module provides safe Rust abstractions for working with the Lin=
+ux
+> +//! kernel's PWM subsystem, leveraging types generated by `bindgen`
+> +//! from `<linux/pwm.h>` and `drivers/pwm/core.c`.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+The second part we typically do with a "C header" reference to
+`srctree/...` which will get rendered as clickable link to the file
+(please check other files to see how it is usually done).
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+I would also simplify, e.g. typically abstractions try to be safe, and
+the bindings typically come from `bindgen`, so I would just say e.g.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+    //! PWM subsystem abstractions.
+    //!
+    //! C header: ...
 
-  pip3 install dtschema --upgrade
+What types are you using from `drivers/pwm/core.c`, by the way?
 
+> +use crate::{
+> +    bindings,
+> +    device::{self, Bound},
+> +    error::{self, to_result, Result},
+> +    prelude::*,
+> +    str::CStr,
+> +    types::{ARef, AlwaysRefCounted, ForeignOwnable, Opaque},
+> +};
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.16-rc1 (exact match)
+At least a couple of these already come from the prelude.
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+> +/// Maximum size for the hardware-specific waveform representation buffe=
+r.
+> +/// From C: #define WFHWSIZE 20
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250611093934.4208-1-wsa+renesas@sang-engineering.com:
+This would be rendered as a single paragraph, so I would split it into
+two by adding a newline in between.
 
-arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: /soc/i3c@1005b000/temp@4a: failed to match any schema with compatible: ['adi,adt7411']
+In addition, please use code spans (i.e. backquotes) where possible.
 
+> +/// PWM polarity. Mirrors `enum pwm_polarity`.
 
+We don't link consistently C types, but if you wanted, you could link
+them (either `srctree/` link to a file or a docs.kernel.org to a
+concrete C item if it is rendered there -- either is fine).
 
+(Eventually we want to have an automatic way to do so, similar to
+intra-doc links)
 
+> +    /// Normal polarity (duty cycle defines the high period of the signa=
+l)
 
+Please end sentences/docs with a period.
+
+> +    Normal,
+> +    /// Inversed polarity (duty cycle defines the low period of the sign=
+al)
+
+I suggest a newline between these.
+
+> +impl From<bindings::pwm_polarity> for Polarity {
+> +    fn from(polarity: bindings::pwm_polarity) -> Self {
+> +        match polarity {
+> +            bindings::pwm_polarity_PWM_POLARITY_NORMAL =3D> Polarity::No=
+rmal,
+> +            bindings::pwm_polarity_PWM_POLARITY_INVERSED =3D> Polarity::=
+Inversed,
+> +            _ =3D> Polarity::Normal,
+> +        }
+> +    }
+> +}
+
+Should this be fallible? i.e. should the default case be an error / is
+the C enum expected to have any other value ?
+
+(I have no context, so this may be all expected, of course)
+
+> +/// Represents a PWM waveform configuration. Mirrors struct pwm_waveform=
+.
+
+Code span.
+
+> +    /// Duration the PWM signal is in its "active" state during one peri=
+od,
+> +    /// in nanoseconds. For a typical "normal" polarity configuration wh=
+ere active is high,
+> +    /// this represents the high time of the signal.
+> +    pub duty_length_ns: u64,
+
+The first paragraph of an item is the "short description", i.e. it
+acts as a title when it gets rendered in item lists. So it should be
+short if possible. For instance, here I would add a new paragraph
+between the two sentences.
+
+(Ditto for other cases).
+
+> +    /// This type must be `Copy`, `Default`, and fit within `WFHW_MAX_SI=
+ZE`.
+
+Please use intra-doc links wherever possible, e.g. [`Copy`] and
+[`WFHW_MAX_SIZE`] (assuming they work).
+
+> +    /// # Safety
+> +    /// C-callback. Pointers from C must be valid.
+
+Please add a newline between these to match the usual style. Also,
+"C-callback" is not a precondition, so I would move it outside the
+safety section (above), unless you want to restrict C to be the only
+one calling this or things like that (in which case I would clarify).
+
+> +    unsafe extern "C" fn read_waveform_callback(
+> +        c: *mut bindings::pwm_chip,
+> +        p: *mut bindings::pwm_device,
+> +        wh: *mut core::ffi::c_void,
+
+Please avoid `core::ffi::` -- nowadays you should be able to just
+write e.g. `c_void`, and that will get you the `kernel::ffi::` one
+(https://docs.kernel.org/rust/coding-guidelines.html#c-ffi-types).
+
+> +    ) -> i32 {
+
+Unless the C side uses an explicitly `s32`, which as far as I can see
+it doesn't in this case, please use `c_int` instead (i.e. please match
+the C signatures in callbacks, even if they happen to resolve to that
+type).
+
+Finally, in another patch I noticed the `author` key -- we are trying
+to move to the `authors` (plural) one, so please use that one.
+
+Thanks!
+
+Cheers,
+Miguel
