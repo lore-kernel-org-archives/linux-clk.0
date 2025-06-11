@@ -1,312 +1,171 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE2E28314A
-	for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 12:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F825BF08;
+	Wed, 11 Jun 2025 13:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749646462; cv=none; b=ZReUrRrFtbL+kwWkmWBkGDBQLfIRtFxpbSG9HOumhdTg9/M9DjhiPkEE7cmfzt+GoG26eeKMgOHP00vXfBFcuXRVuVbWOQvISv52wC0wt6ZBHM1G6mWGGUNCxxfSiyi9NxUCR/n1/g4jkXPb/3O+spNiogEtqqNrVE7Z6+H3B6g=
+	t=1749647508; cv=none; b=tZNmcPKDWXvE9ShkkBLeRpBg7peEv8sIP4VBiuFAuNKICaz2A8A5t+znk2kcFoA+F5+SgF6MrfUKNDMYPb1Y3nJkZReG+Ioc6DuD0Dl1mjLw3bm8HgomLyDASMGqnPEH5+BTwdH9S6jlYXpJ85ynaQamht7JKNXfRXu6S0YTAfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749646462; c=relaxed/simple;
-	bh=huEY8ThqIGGefkr+NwFuL0lRYACFVhJDRBYG4OTx8VY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VcvdqcRrIkxaSWfUTRQHUOmZfxwTAbQ+wXjpjmGYKwblk2VSfPj8iuFEVKsL0CeavF8C5pb88JykXaZJPf9NCchhz6tzOPzKIetGY0jgpWjyrsgy5UWva9nKggCtIfxbmF96N0Zu8bbKvxuEgi1NFfjnVG3Ls9PZmKFbjX+ogSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JL0yfBlE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1749647508; c=relaxed/simple;
+	bh=ZWJSub589iDrGZ+60SCcmXF5iQtLYyYprZ6GcJ4AcI4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=QWZAyrm2iveRT6Te7WDAZ18RoNzRJBm8N04oCroyXwpbddpSLB61A3nq6hxfLQQTSUZOhErsiautiy9sak8IwoL0ZfSJKR7rhMmV1Fr4tbeu67DpqYchh6uMmX8qcMwWb0N+mc5inQZ/OkYKqQu+ljRo9658XCsJtxHDytt/1DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaJrDBYF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JL0yfBlE"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so80737795e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 05:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749646459; x=1750251259; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdZFjl2fccvj0QADc8xzOcmXiXilDJiFfw1wc4K1F9g=;
-        b=JL0yfBlE8SFZkGTxO9+B5b02EO2HNe+V2TM+L02MzMqeE3jx8XUD8iK8W7iYspt+Tc
-         B7ri9gRSs93wiM4plxIkmdfqRvERhWYBCpFP4W7PfD1XrNL8Ma3tTuEFKhLO9Z/5cO9d
-         PEwMImk2DtDCW9+wrd0/gz8CtKvl8Yl0Vq1pbbdkOEipg5llHrasO8iwYILA+43iXC9S
-         F+4C2yNbdeBi54oIVqxcoWBY68zUJ1yN2GlfrKEoMfcCRPdpO7jGRCc2j3Lc82lGcgNy
-         HkSe0S3mtrHH4t+N6Gnmf8g+rvN3XcOwWw8Q0b0QjedVg7JBHf10ZRk2xozM+bVFe8rM
-         9U4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749646459; x=1750251259;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KdZFjl2fccvj0QADc8xzOcmXiXilDJiFfw1wc4K1F9g=;
-        b=GyTU0u1A24HIeAVppYcXBhMK0NgdoVWJWGkSZs0YlfSqGKBWgnnFxhdYmUzuqSAc1i
-         8ocb5mKw1chfK7TZwSC45MQwKeDwd+25u8DUMYk9Us/0k4CSU4oUG7XNNOQt0Lb2LdMf
-         WHpKiux/GW1E0rQD1O5uyDXyTF5TAzfEA2oOcagUI/X4MHn4lIFBn/F2OC8QSSON7m4X
-         hHocBqwnpoLTJ8PXCJ8JOBGmui78UqzSU4LHkP+sQJWIePRfMOLAYL48ZyBtAarWnEC8
-         6SXEs6LuPJzSil3MZq7M6lfky6cvYwBnW59KEQOXcwpQTDElL/jRh70h3kMTwG5wEIaI
-         pQQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgWVZLQnR3fb/jJqQFvCMGWI23aCEha1myBpayZb94KA71WuOmVtnwf5yZpBhS/lhQ5TNeshH6eQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4i8L4zCd5VLEgU9+5VnhWSTQNYNlH9swJfHVABZ5L2zKXYTb3
-	6u3XYP7BdTNM2hHSnf+mg1+JoVS3faNDarUEmCjL27HNTwU1Ow8JgUhzk+ufZvXGB68=
-X-Gm-Gg: ASbGncvAMQkAaoE49sS+ZxZNADHHvtLK7rR4ICOzJ3JyoMZqnLIIFJNFH7eAyMQFLIV
-	OsHL295ocDEhK9Ioqs8cIFdeCJQ7GvbF0JXWMNDUfcvjlHl+HCfn25+kpWosLqX+f3nLnDmbitK
-	yffE87JnSIKi+Mkh+KgokTa6MfyVEsGtLMvAI1t10GO3Q7yAgTjjnw4LXytOj8Q2DA9mJYjYsUb
-	/vBbx9TSniuIHy650mU479Psj0E1nSlrWjLbas6y4WZTc3k33+MiuhnPsIUtKNA2KERLy/S0QDU
-	a0bYw11lBvK/lc0ya9V/SYNk9jt6LCYhJx+0a8OnCJsROcevQ8gib6GEZlyBk6ZPkbwN/yS36xN
-	R
-X-Google-Smtp-Source: AGHT+IFwVwM1VBdaMyjnvhb9KUvhpjuoSTMLyxFLI5Ds1mjnS+Tvk4Fdx9g7hYxsolgprYuijG/Grg==
-X-Received: by 2002:a05:600c:83c6:b0:442:ccf0:41e6 with SMTP id 5b1f17b1804b1-45324879755mr33205135e9.3.1749646458645;
-        Wed, 11 Jun 2025 05:54:18 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:8ef3:a82f:ccaa:91b5])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a53245275esm15225486f8f.76.2025.06.11.05.54.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jun 2025 05:54:18 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 11 Jun 2025 14:53:59 +0200
-Subject: [PATCH 4/4] clk: amlogic: axg-audio: use the auxiliary reset
- driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaJrDBYF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02C5C4CEEE;
+	Wed, 11 Jun 2025 13:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749647508;
+	bh=ZWJSub589iDrGZ+60SCcmXF5iQtLYyYprZ6GcJ4AcI4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=VaJrDBYF4KTGovaBs6YwgoZBUq6BRiwemvL7WXoKQJXgVU+rdBs6RfRoCH2EVQ/WE
+	 xZpKOz775xPF8adjXJpiOics45NO12ytvIAfPoAy2U12mtYBt0vAcrITiyCjfbBLfY
+	 BZEjyN+3u7/vQeZLcTPtavAN00HoP0WE0lVM7zLYOZb+LuDuLpf2EcKCA7HPEBBKrY
+	 SLpTyh+Qvq3zBdLc/yDUgPT50OvEMDz5IpCzxHFmn53VAs1li5fP/VSwsX4E4TS9Lw
+	 QpZ3pAK/j1g0yMpdijXwiVvqOdUzbWEmM+qWFPLMMwwlhUvkcj+rkdPt3TegcOOPrS
+	 GiXazWlEx4+dA==
+Date: Wed, 11 Jun 2025 08:11:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250611-clk-aux-v1-4-fb6575ed86a7@baylibre.com>
-References: <20250611-clk-aux-v1-0-fb6575ed86a7@baylibre.com>
-In-Reply-To: <20250611-clk-aux-v1-0-fb6575ed86a7@baylibre.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5930; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=huEY8ThqIGGefkr+NwFuL0lRYACFVhJDRBYG4OTx8VY=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoSXx0TIJvPb4pFL/m7UQSR8q8Mbmnm6OXPs6eY
- BlR75emBm6JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaEl8dAAKCRDm/A8cN/La
- hYBdD/4q4nR6sR3pGrG2npIFVDhtrUeD2xlhg3MU+t88JlBrPmoOz41y1Wf/bedDpP/faKO/bBr
- TOoSV5jth7KOZPGgyHqDPHAsKRsHJbhqNCunHDD2lrgPZ1G5sFpWda3g4iTBjdRcQA/hejB/ms+
- k5kKyGyh2k5q+aslEn26t+PeUGNpnURdMTXra3MoWA5iNFxnRyBwh/kYcv/SxH7xOvYdjSuuQ8E
- 3O/rX23FNPho4XyEsvHCxK6eNI8G/drzYrSTR7x0ho6tYHGXQyO8kiVyz6X4VNpDaxSjhFZgtVs
- 27d3xyfPLL9D3gANvpytNJ2TDCZsxI/bnxBzvX3PWBNnqFEsMtzQL3AbbDXmszrQ7KZoWmYGgIr
- kol4jbVM1bYwt1uW7lFipMrRLaPUOBp0ZgU8cEXKBdjBEbvBTNPYPiONQgGcjLC5wORPH0Tx/bX
- EOgo9478Bt3rTMhrDtnvInIoRkS/hWafp/2eyaerWzpsG2CT7gPmDEgGPCFYpEeDbmxUgFSDaPu
- gaPRwD8xreYmjOVrY8ouBs8ZP5hRfRPj99j8QNqli0LMOWUgollWYlxxCg176YGEd1Ahlod6wdZ
- VlYbRSa049s3x8nrmijC9a0qHqGHNlDHhkm9JTN8P+uDvgj4y+wuGe+UNy3WC/9xpve12kAEbiW
- Zd2BjFIZ3ZYGjVA==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-hardening@vger.kernel.org, 
+ linux-i3c@lists.infradead.org, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+ Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+In-Reply-To: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
+References: <20250611093934.4208-1-wsa+renesas@sang-engineering.com>
+Message-Id: <174964724485.330045.2181706921272138816.robh@kernel.org>
+Subject: Re: [PATCH RFC 0/7] i3c: add driver for the Renesas IP and support
+ RZ/G3S+G3E
 
-Remove the implementation of the reset driver in axg audio
-clock driver and migrate to the one provided by reset framework
-on the auxiliary bus.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig     |   3 +-
- drivers/clk/meson/axg-audio.c | 114 +++++-------------------------------------
- 2 files changed, 15 insertions(+), 102 deletions(-)
+On Wed, 11 Jun 2025 11:39:24 +0200, Wolfram Sang wrote:
+> Here is finally the first RFC of a driver for the Renesas I3C IP. It was
+> created by merging two versions of it from two different BSPs. Then,
+> improved according to code analyzers, cleaned up with regard to coding
+> style, and then refactored to hopefully match I3C subsystem standards.
+> 
+> It is a basic driver for the I3C IP found in various SoCs like RZ/G3S
+> and G3E. Missing features to be added incrementally are IBI, HotJoin and
+> maybe target support. Other than that, this driver has been tested with
+> I3C pure busses (2 targets) and mixed busses (2 I3C + various I2C
+> targets). DAA and reading/writing to the temperature sensors worked
+> reliably at different speeds. Scoping the bus, the output from the
+> protocol analyzer seems reasonable, too. But hey, I am still new to all
+> this, so I might have overlooked something.
+> 
+> The first patches are needed to enable I3C on the RZ/G3S and G3E boards.
+> Once this series loses RFC status, they will be sent out individually,
+> of course. All is on top of 6.16-rc1. A branch can be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/g3s/i3c
+> 
+> Why is this still RFC?
+> 
+> - On G3E (but not G3S), we get a spurious irq during boot. We are
+>   working on it. This is just platform dependent, though, kind of
+>   independent of the high level design of the driver. For this, we
+>   would love to get comments already. So, we can fix things in parallel
+> 
+> - G3S has 17 irqs, G3E only 16. The way we handle this might need
+>   discussion (see patch 3)
+> 
+> - On G3S, clocks are named 'i3c' while on G3E they are named 'i3c0'
+>   I don't have all the needed docs for this, but Tommaso can surely
+>   figure this out meanwhile
+> 
+> - There are some open questions regarding the driver itself
+>   (see patch 4)
+> 
+> Really looking forward to comments! This has been quite a ride. Getting
+> a suitable test setup was a surprisingly big task. If someone knows an
+> off-the-shelf device supporting HotJoin, I am all ears. I couldn't find
+> one.
+> 
+> So much for now here, some patches have more details.
+> 
+> All the best,
+> 
+>    Wolfram
+> 
+> 
+> Quynh Nguyen (1):
+>   arm64: dts: renesas: r9a08g045: Add I3C node
+> 
+> Tommaso Merciai (3):
+>   clk: renesas: r9a09g047: Add I3C0 clocks and resets
+>   dt-bindings: i3c: renesas,i3c: Add binding for Renesas I3C controller
+>   arm64: dts: renesas: r9a09g047: Add I3C node
+> 
+> Wolfram Sang (3):
+>   clk: renesas: r9a08g045: Add I3C clocks, resets and power domain
+>   i3c: add driver for Renesas I3C IP
+>   WIP: arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+> 
+>  .../devicetree/bindings/i3c/renesas,i3c.yaml  |  186 +++
+>  MAINTAINERS                                   |    7 +
+>  arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   35 +
+>  arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   35 +
+>  .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   33 +
+>  drivers/clk/renesas/r9a08g045-cpg.c           |    7 +
+>  drivers/clk/renesas/r9a09g047-cpg.c           |    8 +
+>  drivers/i3c/master/Kconfig                    |   10 +
+>  drivers/i3c/master/Makefile                   |    1 +
+>  drivers/i3c/master/renesas-i3c.c              | 1441 +++++++++++++++++
+>  10 files changed, 1763 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/renesas,i3c.yaml
+>  create mode 100644 drivers/i3c/master/renesas-i3c.c
+> 
+> --
+> 2.47.2
+> 
+> 
+> 
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index ff003dc5ab20d904c91fc34c701ba499a11d0b63..5c669b2e2f268c7608c8d9c64bba3c5b54da39b2 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -106,7 +106,8 @@ config COMMON_CLK_AXG_AUDIO
- 	select COMMON_CLK_MESON_SCLK_DIV
- 	select COMMON_CLK_MESON_CLKC_UTILS
- 	select REGMAP_MMIO
--	select RESET_CONTROLLER
-+	select AUXILIARY_BUS
-+	imply RESET_MESON_AUX
- 	help
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 9df627b142f89788966ede0262aaaf39e13f0b49..3948f5d0faca372dd5cc4ed6dc95f9c89fe5bae8 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -4,6 +4,7 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  */
- 
-+#include <linux/auxiliary_bus.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/init.h>
-@@ -12,7 +13,6 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
--#include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
- #include "meson-clkc-utils.h"
-@@ -1678,84 +1678,6 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
- 	&sm1_earcrx_dmac_clk,
- };
- 
--struct axg_audio_reset_data {
--	struct reset_controller_dev rstc;
--	struct regmap *map;
--	unsigned int offset;
--};
--
--static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
--					unsigned long id,
--					unsigned int *reg,
--					unsigned int *bit)
--{
--	unsigned int stride = regmap_get_reg_stride(rst->map);
--
--	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
--	*reg += rst->offset;
--	*bit = id % (stride * BITS_PER_BYTE);
--}
--
--static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
--				unsigned long id, bool assert)
--{
--	struct axg_audio_reset_data *rst =
--		container_of(rcdev, struct axg_audio_reset_data, rstc);
--	unsigned int offset, bit;
--
--	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
--
--	regmap_update_bits(rst->map, offset, BIT(bit),
--			assert ? BIT(bit) : 0);
--
--	return 0;
--}
--
--static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	struct axg_audio_reset_data *rst =
--		container_of(rcdev, struct axg_audio_reset_data, rstc);
--	unsigned int val, offset, bit;
--
--	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
--
--	regmap_read(rst->map, offset, &val);
--
--	return !!(val & BIT(bit));
--}
--
--static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	return axg_audio_reset_update(rcdev, id, true);
--}
--
--static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	return axg_audio_reset_update(rcdev, id, false);
--}
--
--static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	int ret;
--
--	ret = axg_audio_reset_assert(rcdev, id);
--	if (ret)
--		return ret;
--
--	return axg_audio_reset_deassert(rcdev, id);
--}
--
--static const struct reset_control_ops axg_audio_rstc_ops = {
--	.assert = axg_audio_reset_assert,
--	.deassert = axg_audio_reset_deassert,
--	.reset = axg_audio_reset_toggle,
--	.status = axg_audio_reset_status,
--};
--
- static struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -1766,8 +1688,7 @@ struct audioclk_data {
- 	struct clk_regmap *const *regmap_clks;
- 	unsigned int regmap_clk_num;
- 	struct meson_clk_hw_data hw_clks;
--	unsigned int reset_offset;
--	unsigned int reset_num;
-+	const char *rst_drvname;
- 	unsigned int max_register;
- };
- 
-@@ -1775,7 +1696,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct audioclk_data *data;
--	struct axg_audio_reset_data *rst;
-+	struct auxiliary_device *auxdev;
- 	struct regmap *map;
- 	void __iomem *regs;
- 	struct clk_hw *hw;
-@@ -1834,22 +1755,15 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	/* Stop here if there is no reset */
--	if (!data->reset_num)
--		return 0;
--
--	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
--	if (!rst)
--		return -ENOMEM;
--
--	rst->map = map;
--	rst->offset = data->reset_offset;
--	rst->rstc.nr_resets = data->reset_num;
--	rst->rstc.ops = &axg_audio_rstc_ops;
--	rst->rstc.of_node = dev->of_node;
--	rst->rstc.owner = THIS_MODULE;
-+	/* Register auxiliary reset driver when applicable */
-+	if (data->rst_drvname) {
-+		auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-+							data->rst_drvname, NULL, 0);
-+		if (!auxdev)
-+			return -ENODEV;
-+	}
- 
--	return devm_reset_controller_register(dev, &rst->rstc);
-+	return 0;
- }
- 
- static const struct audioclk_data axg_audioclk_data = {
-@@ -1869,8 +1783,7 @@ static const struct audioclk_data g12a_audioclk_data = {
- 		.hws = g12a_audio_hw_clks,
- 		.num = ARRAY_SIZE(g12a_audio_hw_clks),
- 	},
--	.reset_offset = AUDIO_SW_RESET,
--	.reset_num = 26,
-+	.rst_drvname = "rst-g12a",
- 	.max_register = AUDIO_CLK_SPDIFOUT_B_CTRL,
- };
- 
-@@ -1881,8 +1794,7 @@ static const struct audioclk_data sm1_audioclk_data = {
- 		.hws = sm1_audio_hw_clks,
- 		.num = ARRAY_SIZE(sm1_audio_hw_clks),
- 	},
--	.reset_offset = AUDIO_SM1_SW_RESET0,
--	.reset_num = 39,
-+	.rst_drvname = "rst-sm1",
- 	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
- };
- 
 
--- 
-2.47.2
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250611093934.4208-1-wsa+renesas@sang-engineering.com:
+
+arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dtb: /soc/i3c@1005b000/temp@4a: failed to match any schema with compatible: ['adi,adt7411']
+
+
+
+
 
