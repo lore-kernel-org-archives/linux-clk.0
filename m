@@ -1,107 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A878F40;
-	Thu, 12 Jun 2025 05:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBB31FDE19
+	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 07:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749704520; cv=none; b=E4HAkj4rTxYQsXSWcvUmlVZSqjrSzcW3RyFrtNxJubp4+WoUVFRMUOtQWlVIwSKvc6rCEWX1YZXoACpu759oksXxv5HSkjVhZvrRgsgPTa809KYci7NM9YjZvYykv1bZEtjo+t9iEtC01G0HsFMa/q1gPY6VWK6m+848q+gNuYQ=
+	t=1749713447; cv=none; b=XXsXZJzAXSqDlw+KFerR7hMWRVVWZmBc45lY1wdYLkz7t8J0BV9r79q7U1GbsMObvhrUR3ZmpiqnD46ngXOOPJ+bHnt2KbquZ2wNXuJjhnCjYFOxeU2IKdF/cqdJtBduFd+9+bCzqBnlmFtNuJp8Dwbno9nxjmbrhIVuD7QZ5hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749704520; c=relaxed/simple;
-	bh=AtroGsAe8tO4vVOIvU9dZHQFrQmVDJFDiGO4t+qeGxU=;
+	s=arc-20240116; t=1749713447; c=relaxed/simple;
+	bh=nov992LCVMyZO3iwhDNtSw/xJ4PKYx0N3w/Cu6ujlr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxtVDxp9L162+ndcrIRQ3U+ZLOhJtRRRpPhsnrZ0vDzOpFfCewwb3KNgOSteZCqi4CyH5edVuFCa6VwzRjRJanXbtS7Q9/+w/WVailNiIaF3fAqOoSlDu5rQFjqdXWSzCCQ1vhdq+kzyEaQDRj5fbV5088S331etOI7R6h9sn4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p36EjwWz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p36EjwWz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B056C4CEEA;
-	Thu, 12 Jun 2025 05:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749704520;
-	bh=AtroGsAe8tO4vVOIvU9dZHQFrQmVDJFDiGO4t+qeGxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p36EjwWzOyew02KLXojOZJEFfyicj5NHustdqU8N+dsi1IDmylP1c8gN3qks1itWY
-	 me2jipboB28iWBiTsqUO/GaetMRgUflT+wIoiYUjzdarPmtHZTlexvOeh2FpQFlIiB
-	 tmqLKmihEz0qniwD96JID3jgHjsjSFyhPquQLjPxgByUTBuDGuBAvTpMjbO9N7Zhz2
-	 3g2JFPiNzTW71iZB1+er7DSSAzbJlurmx97+56uHNiAfSc3aUr9kw2oS8yMgcMbNEl
-	 eWhL1AK6GHUABpFlLu156DKXuFbHz1V4yN5SC54F+8dibyD7rLKT+BzGsCyoOeMQlL
-	 eI3GbtCoOJ4iA==
-Date: Thu, 12 Jun 2025 07:01:57 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Drew Fustini <drew@pdp7.com>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Message-ID: <t26bhukukjzy7e4d2omtvjchxxzlnfyx54ku7xbytcnxkuk7xk@6tap2t3z2oaq>
-References: <CGME20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9@eucas1p2.samsung.com>
- <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
- <aEifXZnLxKd2wa0w@x1>
- <6ca6016e-3b17-48a0-ad8d-bb05317aa100@samsung.com>
- <aEoWtviFl0vYATXe@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UgFg3e46z2Qm+PAlcpK5DhCI49es3ETk3TJ232kvLmwkVNqkgH8u4+4JUKMtoHv2fZ/BUYYjUeWQvFOpZPqvKoazRtgTlOA5y+V+nBI2jAQ84+ho6ffgJ1PR6HNirSpPRdjdAXwlJpo6H0jGxY2OCcTadR9TXI2lyqWN1oYODOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-0001dv-QA; Thu, 12 Jun 2025 09:30:31 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-0035AV-1C;
+	Thu, 12 Jun 2025 09:30:31 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uPcON-008nuf-0r;
+	Thu, 12 Jun 2025 09:30:31 +0200
+Date: Thu, 12 Jun 2025 09:30:31 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: scmi: Fix children encountered before parents case
+Message-ID: <aEqCF-xV04VIKCfg@pengutronix.de>
+References: <20250604-clk-scmi-children-parent-fix-v1-1-be206954d866@pengutronix.de>
+ <20250612034723.GB7552@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xq7etcxgxyqwg5gi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEoWtviFl0vYATXe@x1>
+In-Reply-To: <20250612034723.GB7552@nxa18884-linux>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+On Thu, Jun 12, 2025 at 11:47:23AM +0800, Peng Fan wrote:
+> On Wed, Jun 04, 2025 at 01:00:30PM +0200, Sascha Hauer wrote:
+> >When it comes to clocks with parents the SCMI clk driver assumes that
+> >parents are always initialized before their children which might not
+> >always be the case.
+> >
+> >During initialization of the parent_data array we have:
+> >
+> >	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
+> >
+> >hws[sclk->info->parents[i]] will not yet be initialized when children
+> >are encountered before their possible parents. Solve this by allocating
+> >all struct scmi_clk as an array first and populating all hws[] upfront.
+> >
+> >Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
+> >Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> Thanks for the fix. To i.MX, the index of child clk is always after
+> parent clk per current SM design. Not sure you met real issue, anyway
+> this patch itself is correct.
 
---xq7etcxgxyqwg5gi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-MIME-Version: 1.0
+I had issues on TI AM62L (not yet upstream).
 
-Hello Drew,
+Sascha
 
-On Wed, Jun 11, 2025 at 04:52:22PM -0700, Drew Fustini wrote:
-> I also enabled the pwm fan driver. However, there is a probe failure:
->=20
-> [    1.250921] pwm-fan pwm-fan: Failed to configure PWM: -524
-> [    1.256546] pwm-fan pwm-fan: probe with driver pwm-fan failed with err=
-or -524
-
-524 =3D ENOTSUPP, so it seems the request had duty_offset > 0. Does your
-fan use PWM_POLARITY_INVERTED? If so, try without that flag. If your fan
-really needs an inverted PWM this of course makes fan control buggy.
-With the next revision it should work fine (as a duty_offset > 0 should
-get rounded down to 0).
-
-Best regards
-Uwe
-
---xq7etcxgxyqwg5gi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhKX0IACgkQj4D7WH0S
-/k5cmwgAojpI13yoKGdS0NWryMcPvKU5a+1JbPt59o4PXbaSw5knpBShYrBVXz/I
-7d18yAnyyXsniwR1hd0KJPktunPYQR6xtv6d6TiaoiJhfziuznFm6d/lbC4ORtJe
-pXXEp1J1wCQobTjVt6PTmqNSkqStH5vAl6uEEb/0zHIiJ7DGKlqu7cKqlkeo6InV
-e/1Qsf85Pkc8v57zQBRoukYNU2MjJNh12bBfeYX8jCsxkU2FZuYljB22ByRqH15S
-hTJVeizgoIuoxNWKiI4nL1nVAr0YF40ieDXvpFIAHDbkPuu2hvvWzsl49PX9yWjs
-kgjE/rz6QmYYc90F6zSylgYQ14rObA==
-=nVye
------END PGP SIGNATURE-----
-
---xq7etcxgxyqwg5gi--
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
