@@ -1,100 +1,137 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968C18FC91;
-	Thu, 12 Jun 2025 13:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F6A248898;
+	Thu, 12 Jun 2025 14:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749736084; cv=none; b=KVvOooLQfCExPhbzK7sTEcxpEAa8tF9XOnGSPx0L79SAb9XXjpliZGGzdy3nPOwKES9l20iY/AvgtcmldUtW0XajQOPiJeEcktpsUoj9UJbhr62GiN12ua99rQfuTd1xoP7Smu8mtZDTDergRrzW64/dMEluuzmIJCN4Po45ktw=
+	t=1749739061; cv=none; b=C1M2uJ1ba1AxLT0i5iKu4IBMrKqRkWwKWv4o3dIC4Nri3/cSuhb+ocDd7501Cd1K9HUcffwq7iRiQ1UhroIq4LQCxmglAfpZsqmTVXFZhlAu4gPewq6H1s/4TJ0SXd5ml18Il5PpI4hdj+UnYPi2GKW5eIrDTrs2rvgPUuYYs7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749736084; c=relaxed/simple;
-	bh=y8CFAn9qh3k/yLp5zOH+ernhDI9ZtahcNeN0S2G9P1U=;
+	s=arc-20240116; t=1749739061; c=relaxed/simple;
+	bh=I0gga3/prf2yW/2Rgu96cc0OhRZ2RNlPN4GZaRSC/B0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GoEr/UTwd0yjYxFkLnt5kbbBk9BCHKiJkRPIocQgFmbatTQ5C6+zpm+3lvTV6FEBLpOv3sT8ftFPO9cKVbL40lH5PzloYqmiWhBKfbq/4HQC6EEkwxdQRSsfV2+/fKYba9sxkWZbr9dYMBCnQ5NSh7ky22p6zLDI8YKD4hBIYZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+	 To:Cc:Content-Type; b=k9Z3mJQIKCS1uzxMBe2LiQeCKp9yDksWU52SqdWe5y6NMmA/madpL5LuSN5BFvSV9UJMW0uPK6y/t/OPL65dMBdDwPf+bnpNuxl+0Xkczi5sZ0iWdnJEIrz3eoanwnwI9iCBEO5iw4JWzBsQ6rt/6om6GJ4p0yrTPcp4m+dhKno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ec5e1cd4aso286593241.0;
-        Thu, 12 Jun 2025 06:48:03 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d0a0bcd3f3so109796985a.1;
+        Thu, 12 Jun 2025 07:37:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749736081; x=1750340881;
+        d=1e100.net; s=20230601; t=1749739058; x=1750343858;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7FQr7slkKxPbariVEmX9D6gn7HsHdpZpEVmZVDWtqF4=;
-        b=ken/3lX1fPyfnUnYNt0jGkikxCWu/PNw9hhkbguKrgMNVkxDphhnjrLdarAsmViwyP
-         a1myF9ecV+BkWCy3I5lTduUTFCiV+dh6AjE0mvKdHBqTY3fBsrWzA7MSClMVhuXapVlF
-         Xaj9QdCAJZasmRnz6joziF9NqJ2JAQHYdA2UaOujVhcQVoDadGWJ04MK53Cg5wWsSGFh
-         BkqvjBT+1HDaTFY5/AqFHoFjyHc35rktWRsMwMArDjfGdjN1IYUtc6zKFi2JhoEe/Evr
-         LePunl6glEXM+3Rs0Q0CZVN93rqAwuy2WjI8Cz9LQEiRgB6IICmAilNlUdGPSNCjwr9v
-         C+4g==
-X-Forwarded-Encrypted: i=1; AJvYcCURTZcuOj1C4aFovqG+nyY/4QPlLsCrO0WNJQUB0c9zMZQvOm8zj7ezrRJEysuyUl0M9mYs0fSKBJTYzX1s@vger.kernel.org, AJvYcCVQK17dF55n7cXqR6vS1Q703UVU6z2oFpnge4HQHjcU/B85f4sZ4PGGYH1tzFcUWslRGhnoz2dWJ9M=@vger.kernel.org, AJvYcCXoy+9+e1Kkw4wUBQIVv5cyjg11sgtH4KYxqKbCrT685ikBKyGFkQg+Eljz+KW/KdvfZuIfVfgln9tapyTB6Lc426M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLqoO9ZVPCaw71Ymn+S/uycz7otLUNfvsQSwYEQwFIRlAdjcy2
-	u653dXLB9+9crlhHs1IdD6fA+tzXDr3E2v/v7QRoFjk0mU1ZBT3sZISCLiNnWuO9
-X-Gm-Gg: ASbGncvwxMbxXj2mvAyiY7hgL+Oq69VyRpZ2UzcqrdCOlTyYJaQ5NMmLg1T1zF6Jtj5
-	VFvO75x75ZQt1rTdVtwYkylSxb44nSowjrIcKoSPD5zX03Cr4lI4bEJRz+sz2ykCHGdL/BeF9aP
-	8vt7WZqylLIaf2YmwsTe0TipmQmVBlIYWrXy2PTYLdfHCQS2q0Y849o/wWa5pQHp6Ev75rForP1
-	CQbyVq4Cf2cv8CdTKVOaasJMFqPJldbW9udpGirbcXErX6Ci/Fs8eT6XesLttfW4Inpifp0TJJH
-	W+gDb5ltrN/TgdwU77YKNYgzDLn3wK0asRVQHDAsW0oo5RdwmEkoO0KLiEABmpDznzLk2mh9SP+
-	8Ud/J1nzMe6LDUHvavWjgpPKocHjFhHi/CZs=
-X-Google-Smtp-Source: AGHT+IETRftRWQysl+wm+CZvPLOKPLG+qdHOy1bhzi/lsBCa1PgmSaK6GhG64LkitNiC01zQ6irD4Q==
-X-Received: by 2002:a05:6102:94d:b0:4bb:eb4a:f9ef with SMTP id ada2fe7eead31-4e7ce7f841dmr2474911137.4.1749736081419;
-        Thu, 12 Jun 2025 06:48:01 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01243001sm297441241.5.2025.06.12.06.48.00
+        bh=vzO6ta/nkwEKv80MmXJ/NzmLz0Qy3PfJgXbDfDVkKho=;
+        b=ZKt0aGv0aploGkFsS+AMIpzaO/ou+/xRQNxEAPGUnSI52diDDdngKm7RPghqeRghCN
+         vX3Revw+LUDwolu7hM0hnB8fpgUnoLBwwS2DtLyJIVikViylldBZeYy0kB+oBag+RJL3
+         HBLFpzwcsOd6Wk/k254Y5O8pX9TN6tD0GDzY0SmN7KYCvuJaq9kFCek4IXRkeY9rQsr1
+         yJUqBSZJ0zgXneF4CNEno59rCOb46gTynkkCzj1b6MziSSSc2Q19ZCJh2nc9tLTGp4WI
+         DYxa4fV9Kxa3Q08xxi02/PXa2QEy3jyxXjO8HwmzUTB0+XREdJy9uAtJA2E7pZo8gVJh
+         TJVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3MMNKcyI1wmrwdQFxVXNH0ukiygUZxICIR6ihE6kIwBLzsUDOlt1Og2tGmsnWsAgZSt8fkuHvPB+w8SoCPZzQUBc=@vger.kernel.org, AJvYcCUQfJHeUz2fXdMTOtUqIx+Wufj8C4RnnkeH1vsCwmoBOzRQ44Tuj4dZb34Pkgt3PmIguevv9FgJvX/u@vger.kernel.org, AJvYcCUszeCJqU0/HPaqenRh+c8Wzlnf8RtIgizYsZ6uXb1gP5eWlMxSTp165ehqtpZBFrxbBrK3JEcIlYKcdO5X@vger.kernel.org, AJvYcCX8xidEvKLxaXm9I5b85WuLveDFjNuWk12pLZHxTeXAcqXoleAFTrC8voMEGBTimu/vA6EeLmVGHdGx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw24EQMN8lYnRiR5/AFyG0eJrQPDzSKnnwmylVMrp2EWwwEdV+4
+	PgwHKzXTzQcFoHb533EBy+k0L0t+BISOq35XS7XmiQv32lmyJ3+JHT+f9ZhzKK0n
+X-Gm-Gg: ASbGnctLhZCM7o/B/SMRcqjG2fKTdeq6dBgq1EHM1o4QjI6Kdyxk/P2KNO+/CXb/e42
+	mrw2zddUOYSW2VYN/ihgWa+QTX/OAGkp1KkzGLQFNgFRLEApvZZhA84u1bPGd5VhU5T9Ap1W5pr
+	dsHAnXnERte5KuQ6quUAvqrX9a3mgvQ2/5lpLWv50Uwbu5XzxcFGNQew7tsn+ot9jmM3pKYEO6j
+	+StevCIrdW/+D5c0L80zIsUJd/4K/3QS4V8P0KGLFR21MYkI5rMUlelmeUGUPcwmzcUp3LjBnRl
+	GKpw5fYXPvxFLReYtDTAiyZnHyw6poG1Bdec7fk/SoEtYqW0HtDoRBtLJqy//hbBOJd2VskNUar
+	0WCChffMO+0kBBd36PUsUtbCxylMbitkx7/A=
+X-Google-Smtp-Source: AGHT+IFzWfQ+Mbhi9yAkSsr8d8gkYYMVvFYyRtgH0++NHbnBfZLX5TIMmZ2G0uOkDasY7VQI3XL8mQ==
+X-Received: by 2002:a05:620a:a215:b0:7d2:18f2:e8c3 with SMTP id af79cd13be357-7d3b2c6d45bmr517510285a.2.1749739057732;
+        Thu, 12 Jun 2025 07:37:37 -0700 (PDT)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8f2301asm46168685a.114.2025.06.12.07.37.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ecba78750so321456241.1;
-        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWE8cb5ltxP5tyaxtJ1hku4kA32dVNdNRuxU5XSjVnQ2R085Fhh4wUnVTMGfGAAvztR03V4+T88hdA=@vger.kernel.org, AJvYcCXF84Gbss+bU06Jj8XWWMT5QaZcOS8o7I3rEXv2ko/tw64smfNc3wCA540CDJ2lq3phF7zXz4R4kFYUlCYXyX8laJ0=@vger.kernel.org, AJvYcCXum6x9yUuz8Jt/HWwPD4DjniQuJH88vW8m4grI5gOMOXTSVTbtkeI7r80cbLzp8k/rk5Vzh/i8wZoGQwS7@vger.kernel.org
-X-Received: by 2002:a05:6102:54a9:b0:4e6:d784:3f7 with SMTP id
- ada2fe7eead31-4e7ce8ef245mr2321438137.15.1749736079868; Thu, 12 Jun 2025
- 06:47:59 -0700 (PDT)
+        Thu, 12 Jun 2025 07:37:37 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fafb6899c2so12187116d6.0;
+        Thu, 12 Jun 2025 07:37:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIXV+RSf3HCFcINjLhyMLiVXCJp8Utr/spkKjnbSOjtKVFBGhLG9cVwFFJmRzc8RvJc5aCkwVWg0lq@vger.kernel.org, AJvYcCVR1RiL3wmduOLzbLnryOKEJRZ0SvHsLUG5LgFcMgr8ZEAFxea1LuuWQNLgdMIXkwut5HYf4m7rL49a0oNoOlXqt90=@vger.kernel.org, AJvYcCX3VTijhjGNS8Jo/prSLGrrGkdmVbRUrwUwd7lDwB5nhQGz0vBQosqBgYgwYFAh5R6pV87nOjQ/Ab8S5hzO@vger.kernel.org, AJvYcCXRyR9/mOzEAitOO6L22CSvoa+mwD4xFeQZu8BPpqq1ARW0iPK6m9CgxAhyL4M6whe7cPB/JBvDEKON@vger.kernel.org
+X-Received: by 2002:a05:6214:202e:b0:6fa:f59f:f349 with SMTP id
+ 6a1803df08f44-6fb347f3f5fmr56720356d6.10.1749739057314; Thu, 12 Jun 2025
+ 07:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250609203656.333138-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250609203656.333138-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jun 2025 15:47:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
-X-Gm-Features: AX0GCFsjFFOMl0FpwnFUdrbDnlL9gyxveYHGO9Mfv0X_27HN0AyCAO3jn5ITdyY
-Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Fix missing CLK_SET_RATE_PARENT
- flag for ddiv clocks
+Date: Thu, 12 Jun 2025 16:37:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+X-Gm-Features: AX0GCFsuq2UTCzvbMhu6t2eErAlrMWnHmknmauMa46mODIPLG40ClLlm4kMFDTw
+Message-ID: <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: Add initial SoC DTSI for RZ/N2H SoC
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Prabhakar,
 
-On Mon, 9 Jun 2025 at 16:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Commit bc4d25fdfadf ("clk: renesas: rzv2h: Add support for dynamic
-> switching divider clocks") missed setting the `CLK_SET_RATE_PARENT`
-> flag when registering ddiv clocks.
+> Add initial SoC DTSI for Renesas RZ/N2H ("R9A09G087") SoC, below are
+> the list of blocks added:
+> - EXT CLKs
+> - 4X CA55
+> - SCIF
+> - CPG
+> - GIC
+> - ARMv8 Timer
 >
-> Without this flag, rate changes to the divider clock do not propagate
-> to its parent, potentially resulting in incorrect clock configurations.
->
-> Fix this by setting `CLK_SET_RATE_PARENT` in the clock init data.
->
-> Fixes: bc4d25fdfadfa ("clk: renesas: rzv2h: Add support for dynamic switching divider clocks")
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Thanks for your patch!
 
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for the RZ/N2H SoC
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#define RZN2H_PINS_PER_PORT    8
+> +
+> +/*
+> + * Create the pin index from its bank and position numbers and store in
+> + * the upper 16 bits the alternate function identifier
+> + */
+> +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + (p) | ((f) << 16))
+> +
+> +/* Convert a port and pin label to its global pin index */
+> +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin))
+
+These 3 defines belong in the (future) patch that adds the pinctrl node.
+
+> +       timer {
+> +               compatible = "arm,armv8-timer";
+> +               interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +                                     <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +                                     <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +                                     <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
+> +                                     <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
+> +               interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
+
+Thanks, this brought to my attention that the node in the posted RZ/T2H
+patch is wrong ;-)
+
+> +       };
+> +};
+
+The rest LGTM, so with the above fixed:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.17, unless you think it deserves
-to be fast-tracked as a fix (issue present since v6.12).
 
 Gr{oetje,eeting}s,
 
