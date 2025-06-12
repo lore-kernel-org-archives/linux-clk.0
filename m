@@ -1,47 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8B7214A7C;
-	Thu, 12 Jun 2025 04:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE53227EA7;
+	Thu, 12 Jun 2025 04:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749700860; cv=none; b=BM/EV8Io/LZBTiJVKgDzH9LEhgsjlH+OqUSGulnzXaSk/E9rSbGl4SU0wY5KGWt48hqrT/Sg1+hk0qYmgnj5ay4j7G13CZL7ZoO6cuGadLeStG2pjq2dURt48Os3XvplMkrZK2RdSxSXhgUPOFtNU7NCZjg1P/ia1Rmeh1mFTcA=
+	t=1749700864; cv=none; b=dUaLEapUKkyZRD9mbeY3XDGEM3lKIQWC5k62Y+3rU6dxJsXCn0pLRM6nkZchhSBBJsD4szs2SNHl15JMOKVamIVKIhCrr278bY+B6M68KRf1chplgpLa+kFewopODz4X5vXXH+banUri3qRK6s/5q/K32ma5EKSoQUTOQ/hQbAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749700860; c=relaxed/simple;
-	bh=pDRU92uHlGJ5yI50jxsfiGWXXJPvSCxz68BeIKGRH7M=;
+	s=arc-20240116; t=1749700864; c=relaxed/simple;
+	bh=agqZ4kwIFiAfv2mknwnH4MYpFMkhrcT3U+7UIHs/KXY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rDoHnp9o6GYo2Ja4OcM+o2ocIqQE1V7pq5meMiIcoXvIGzS37/l9UPsc0iq9qdcDxfj9RHMeaj3TQZW7db/DgFHi/St4uXgpj0osoohpvXESfX46spbdkVfQpfr5cVQdf8Cz+8T1YAWxo1zXDhNYEtn2UQH/kIhcl+bwLQzJkBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjVLvHu6; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=qTNCHZchzDkJ71mcaNdcnUuitxIbarI2lQQWROfmT3ma1a2x24M6lP1HZMbgM9Abv1+ypaqtHjwkkItP1aLUZy/+8DmDM/dXcCcksKUJbaLEpR4n28g42PxOOAzDY8vszZIOprs9B5scl+JQyNEvaHKbqPCU9TRtru1T4vJ/MYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fA/CU71+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjVLvHu6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98BEAC4CEEB;
-	Thu, 12 Jun 2025 04:00:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fA/CU71+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F20D8C4CEEA;
+	Thu, 12 Jun 2025 04:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749700860;
-	bh=pDRU92uHlGJ5yI50jxsfiGWXXJPvSCxz68BeIKGRH7M=;
+	s=k20201202; t=1749700864;
+	bh=agqZ4kwIFiAfv2mknwnH4MYpFMkhrcT3U+7UIHs/KXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gjVLvHu6xm7HAer3xppPj2JLMnkmEkvPO6afVfWM1nu7m2Vjod4v0+pqEOUTDlcRi
-	 0wRlag4+MV9nfsfEFVZOTxqi67JAblftQAuGtlUV8jI8JMRI6VYdXHZx3QmmrdhHet
-	 kbFAsG5YX8KH61o0+ZNwVpu8dNxQ5ZNTGaNfjdkyP8yXvJXicNNuozzyGH/k2nKpyw
-	 rXPrjHk5qm4cfAouSboStFJ4AMHsA+hMigJf+yAhwm6RkH0mEWqkBde8poL+mG2Z9X
-	 ZJG9ErLrF+Av2U8sGejaDluwgCrICLyxtKhtKapbC2rMBVwBA70T5Hwjd0TT7gMnVy
-	 euN5AiBob6sCg==
+	b=fA/CU71+pyTlGOV9ThEDbuPOU4POnh+yIqgxUrTr5qtdHSxfL9GyMuqYza/yOcFDR
+	 Pgg+I7Gg5eOpUWM/c9uGy9ex+q80bZP0lX1mdx6bUAG69Hiy9CJfViamZD/M3mzeZZ
+	 TrknE85gBwtPmCK2d7ewu/1A6RALU5NvabNUxew79Yqafoa6mZ6qm6wpk5mOtWHbsc
+	 036mQ5VzpBanrT4yaZCvstQgteuL7OdjxfvggMj6P08uVAD+Q6bFCsjpWOj7AGTui/
+	 cyi955Ivh+ADidaM2Mo6aQQNT9t6HW0MQxUDJHYIUFiWFHMMDW4Z+iAZM/toj5geJd
+	 9jXS62XrQ1qnw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: stable@vger.kernel.org,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v6] clk: qcom: dispcc-sm8750: Fix setting rate byte and pixel clocks
-Date: Wed, 11 Jun 2025 23:00:40 -0500
-Message-ID: <174970084199.547582.700390478777102209.b4-ty@kernel.org>
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 0/4] Add video clock controller for SM6350
+Date: Wed, 11 Jun 2025 23:00:44 -0500
+Message-ID: <174970084196.547582.13141993457803698213.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520090741.45820-2-krzysztof.kozlowski@linaro.org>
-References: <20250520090741.45820-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
+References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,21 +58,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 20 May 2025 11:07:42 +0200, Krzysztof Kozlowski wrote:
-> On SM8750 the setting rate of pixel and byte clocks, while the parent
-> DSI PHY PLL, fails with:
+On Mon, 24 Mar 2025 09:41:00 +0100, Luca Weiss wrote:
+> The driver for the SM6350 videocc has been lying around in some branches
+> of my git tree for a long time, let's upstream it. It doesn't get any
+> better by letting it age!
 > 
->   disp_cc_mdss_byte0_clk_src: rcg didn't update its configuration.
 > 
-> DSI PHY PLL has to be unprepared and its "PLL Power Down" bits in
-> CMN_CTRL_0 asserted.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: dispcc-sm8750: Fix setting rate byte and pixel clocks
-      commit: 0acf9e65a47d1e489c8b24c45a64436e30bcccf4
+[4/4] arm64: dts: qcom: sm6350: Add video clock controller
+      commit: 67081281bb0dffd09e5f11c991088e6ac546a4ae
 
 Best regards,
 -- 
