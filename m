@@ -1,113 +1,81 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C118F29C33C
-	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 15:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22661298CD2;
+	Thu, 12 Jun 2025 15:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749742194; cv=none; b=Yijj0axDMTwBJ0DQxCx68CEEnjZK+Uz4t87QJe0djUKNzh+cDjK9zJw6qTXBPIZfmybFuvnZtoHlyk7eKhAUFmU92l3bBab+KN/SDxRzuu8D/TA++ajGNi0N0XXISE5VbomIImqiCmT9IEwNZrHi9EmukGB5wjJuknrjkiAw8Rk=
+	t=1749742607; cv=none; b=rumciY7DCPIX0dahXfuoPtvKYMGfogb7XSh8TRYI3rBo1rwchZGyhwtmfTPVQOxWzGMIFxg2r/BelYiRCfDsfcdZsUCU2vqYLwO4CLDTLQX0gBPfxfxcYqAatUvwMNSCT5mJHkYQKh8lJfZfevpWoJ+ysJSvt+LeXZDieWE2dYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749742194; c=relaxed/simple;
-	bh=z0ar1hJos7ARhEgbjSSfr1bzntLG3QJmXsE49Omcdw8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E8Bm8DeVKNuNwP3l6LfJjuFl7hqDctTEWrWK4nHrRroFht9HZwTMV358qWoriy6rq03k3wyZLStnsnz7+l1N1/ZiY2oUTi1M+foFDUOzz0VmkfdkRunAIFvTxw+OKzlv9ARrn1npFpPqHGnvmJmqeKycG+SsbQb3XcqPIU4FhpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rAg/G+SW; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1749742607; c=relaxed/simple;
+	bh=YkGQb8u2LFs6Ny5AZDZ8dQLB2Mj5Hwh5mCAoXi9JxhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWsmdJEJDWJB9sT2RHhue+xtyo5IfsChUcKb8jystETJ3Pn5vzMeUtcLchenVD1Iw1o2TIg/qMR5Ijirc19fNOJxw8dU3pqVQzSwp/eqSEEw3XNHenYDvJtaqVHG9y+gLI4owvaYv2OEyqbY8/eIc9QvIxhnieNxWbi540fldxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yt01YW6k; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rAg/G+SW"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4ebbfb18fso53049f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 08:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749742191; x=1750346991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DKvQ0kizkJd8CblYTjjvTx/DyqmBuLZOpwvQ/Oh9KYc=;
-        b=rAg/G+SW2txg0b7vzr6ipT/igZ8ZIsSUxWPPHeSBCfVOdSeb37vMFzo/tnXAwVYVDG
-         AjduHqrBXzcBgJQmivIkFdCh/UVcFd+Hi8xsj3ZPERGr76CSuHGbnxjF/6N0Y7D7JqRM
-         p0nSVJvXoGYwosAy4osuKRzZdwWJeoPMmT8SFkPvB5oiQx9xBg8rX4kRm94p0yGeF0vA
-         rCyWw+crKm2xq4MwJ9AtwYZ/cG4t9zn2JkCbD7AMtdqFdF+ZFm5l0mVAWt0tN57m+FVf
-         yKLkPof3O1Po4Ju08M4Qb4BVX6M67vubZmCeQmGbdDX3isCSsEAgqGNYS6JpbzOJXMlO
-         idAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749742191; x=1750346991;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DKvQ0kizkJd8CblYTjjvTx/DyqmBuLZOpwvQ/Oh9KYc=;
-        b=aT8GTRbmdoe0K2fZH9kZ9P7o2tNo5pn+CipYBzH3GcirKdNEW31eQXKByl2x01qUWz
-         dY/cbAg0hF5Q0nwU6DAY6a1TqexnYF9O+1oplw/jf49BuLDBcE6T8P0eF+Wez9eAzeTx
-         MhjdI3zGCwvDYLJ+99I2/xGa9ZFh3GjyB1LkdsXbkvqBytBuMe5UfSs6GtXWWcwaRdU4
-         kS40KabOIqUsuXjqXy6nTrieQy6ulow1HhdE1YZy5UFTvHpteD0UL6fiqJHhjSs8BX6E
-         szZh+GFHRvVpcaQsxyGYCLbLC4GCQnMPc+VsQ8kYzmBOqXvxbPwFmxI0f4YiswLewPev
-         LoZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaZyqHQH6sAb5j1wHsJC+qtWENMV8tyghjO5zb+ctEzUgJ4KOet3VD079/bMlDpGUn5PV8ORWPIZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaLRSo6BYImxEY64TVe0ibR/RT45U2lF+odEPRJkDcMECqWYFh
-	qVxxrP/VlueLIyA2h68mNlpZsqMwHDPtgB/suTUV8BPKSuTj79qXCeUEd7d2ZoCU7JY=
-X-Gm-Gg: ASbGnctr/p7ZhXxzyS5IGzGhDdqJldqABZhEcVFogF+bDA2PrqC9wdBIpsrL4cQ/K8N
-	XM1xMRDdx4euZ67Jb5i4CLs4nIUKEKsE5k3hECCe7qIlZKLpd/w1d745gvhW1oZFVY7XFYxsIJs
-	t9GGMXp+dIbZUhx9am9pMQDTROD/xLILEuCPuSSt6l+ED2FBudPfsi+16Dyz6RwtC3dfwekzLEk
-	gtjvKsNOfdxCRrjGLnY/k4aJnLOLfWvUjCa/0WJ9qOe3uVnTrX3O0scgsXqAfvUlYWvA1f1JXPH
-	DNKGdQr+CTqrQ+A+0jWNDrptzdW92ULkmDriZTzdYznt7BIE4T8tP/sFPHFhSD2mm4RINWm1nQ1
-	ylSNRf7M=
-X-Google-Smtp-Source: AGHT+IHcEf5K0JeoZyRffkMk2oZLKO8IT8ky+qUldOOWFDZEO8dRcFFzDiYHDmEiK60pzDMoVYDLyQ==
-X-Received: by 2002:a05:6000:26c1:b0:3a4:f8a9:ba02 with SMTP id ffacd0b85a97d-3a5586b8858mr2648512f8f.1.1749742191063;
-        Thu, 12 Jun 2025 08:29:51 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e232e4asm23557265e9.11.2025.06.12.08.29.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jun 2025 08:29:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
- robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com, 
- sunyeal.hong@samsung.com, shin.son@samsung.com, 
- Raghav Sharma <raghav.s@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- chandan.vn@samsung.com, karthik.sun@samsung.com, dev.tailor@samsung.com
-In-Reply-To: <20250529112640.1646740-1-raghav.s@samsung.com>
-References: <CGME20250529111705epcas5p25e80695086d6dc0d37343082b7392be7@epcas5p2.samsung.com>
- <20250529112640.1646740-1-raghav.s@samsung.com>
-Subject: Re: [PATCH v3 0/4] Add clock support for CMU_HSI2
-Message-Id: <174974218878.126240.878153774506566554.b4-ty@linaro.org>
-Date: Thu, 12 Jun 2025 17:29:48 +0200
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yt01YW6k"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QrJhlPmIGFpkmPRtfeqRYsI2Ia1MBPkjaqSOSbGZiSs=; b=yt01YW6k4t6UAt7H4xX6DshAhI
+	i0quv3ifop6RM7RcEvjAwOADbe58RlzVgrd6fn8Sv3QwWQO+qf3bAdvAVrA1vgvJDqbaDo+n7zzlj
+	4X13J99n1oGhBOwg9McPGr3hByePOxmfvQpMmNNSHgyB7xzX8WyS0yxdev82S46khAn4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uPjyn-00FYqi-JH; Thu, 12 Jun 2025 17:36:37 +0200
+Date: Thu, 12 Jun 2025 17:36:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH net-next v5 3/5] net: phy: qcom: at803x: Add Qualcomm
+ IPQ5018 Internal PHY support
+Message-ID: <096eacfe-ff24-4ed8-b223-04a6fe590496@lunn.ch>
+References: <20250612-ipq5018-ge-phy-v5-0-b5baf36705b0@outlook.com>
+ <DS7PR19MB88833EF18DC634F4D7F037439D74A@DS7PR19MB8883.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS7PR19MB88833EF18DC634F4D7F037439D74A@DS7PR19MB8883.namprd19.prod.outlook.com>
 
-
-On Thu, 29 May 2025 16:56:36 +0530, Raghav Sharma wrote:
-> This series sorts clock yaml and adds clock support for the CMU_HSI2 block.
+On Thu, Jun 12, 2025 at 05:11:07PM +0400, George Moussalem wrote:
+> The IPQ5018 SoC contains a single internal Gigabit Ethernet PHY which
+> provides an MDI interface directly to an RJ45 connector or an external
+> switch over a PHY to PHY link.
 > 
-> Patch[1/4]: dt-bindings: clock: exynosautov920: sort clock definitions
->         - Sorts the compatible strings for clocks
+> The PHY supports 10BASE-T/100BASE-TX/1000BASE-T link modes in SGMII
+> interface mode, CDT, auto-negotiation and 802.3az EEE.
 > 
-> Patch[2/4]: dt-bindings: clock: exynosautov920: add hsi2 clock definitions
->         - Adds DT binding for CMU_HSI2 and clock definitions
+> Let's add support for this PHY in the at803x driver as it falls within
+> the Qualcomm Atheros OUI.
 > 
-> [...]
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-[1/4] dt-bindings: clock: exynosautov920: sort clock definitions
-      https://git.kernel.org/krzk/linux/c/3d6470990bfc8600609177962a53201cb0640daa
-[2/4] dt-bindings: clock: exynosautov920: add hsi2 clock definitions
-      https://git.kernel.org/krzk/linux/c/da5cb65d25f747236a003b82525eb6de5d49a2e6
-[3/4] clk: samsung: exynosautov920: add block hsi2 clock support
-      https://git.kernel.org/krzk/linux/c/2d539f31ab0eb3eb3bd9491b7dcd52dec7967e15
-[4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT nodes
-      https://git.kernel.org/krzk/linux/c/e2016763590f571cdc3912d6a7ec848d2b61e6c2
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    Andrew
 
