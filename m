@@ -1,112 +1,71 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AAB2F4321
-	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 04:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC1C1C32FF;
+	Thu, 12 Jun 2025 04:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749700827; cv=none; b=C7hxZ7Kir+9Y75Aoc5PUQB7/MdI0mr75pt6b1hEaCwQe/D6Jv1paC12/hRw/4eJyV8Mo4mVeQrctUx4UoYQ6Z9FDNAJWirezEdKOdhtT6uHlRzdnJc4BjlWd2nX9SFo3sE4n6sEoro94Aoi9VQTQ6OEgEA63LgRXD8kMUa+xn4Q=
+	t=1749700855; cv=none; b=CzG1HuH7zQPdqJFm7DUfCcucUKPfCAeJyoqkwWYkyHcIs2JZzXMk374oWj0htjKOIeiXT0pOc1lNeWa3afcosbGHGFabejfv3OASgbKGWi2Vy1oUwBIpxJb+hJV22csqNjxVIxpo4XKnPiQ+L0h/s3FKc4YN44TnmW2yqkrGbto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749700827; c=relaxed/simple;
-	bh=LrZf9tw7ue1AjUWwaIRpX02bUAB62dzm3WhOTiLfKg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DLD1tjEgg/9/mZYA2K30SbZVt3rWLOcS2cAY91Ys/riJSNnUZMKk2CC47Krqi1MllrCSbDuqnMF3NbaBqxk1CVqLzVsCSMTD0PofTbSYZLI0VMohev6CvqRp8jGRvZrqob8EWiG9o/pvP5CVFhO8THQ4t+HuTOmxFdj59a96gqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=l1JaIQQ4; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1749700855; c=relaxed/simple;
+	bh=RNOBAoQ4FlcbcHzSQexrGIpqp38M7Y0na4e0BuXj+JM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qpltrrPTBX4/JVqwDN6b+qh3nPcp6QrwcbkXNeQgDbFSUKqIvTl4Ob23hj7ZBUsqTAl20ZW2Cawa6AtMuTHYVJ8unG/RUE1w6vR4YPG6U/OjZamrzfNYDqp10QeF5nijRQflWeAlfXG26NTX/jlD5XdJkVnsbARybrTXUUW9dEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcqCyHAq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="l1JaIQQ4"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55324062ea8so491813e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jun 2025 21:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749700823; x=1750305623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LrZf9tw7ue1AjUWwaIRpX02bUAB62dzm3WhOTiLfKg8=;
-        b=l1JaIQQ4IipbLDrlJAd5wq48I3EnHNxUCz/XyNSq1qRxudJf+ysLG8dWTJpDBGviGz
-         ZXkCIneRl2HInlh67JUlcp76zlqbfbhn331R8iSR+OuS/eETVR54WHHumWEkNePvDJkm
-         aC1xhJHja7o6opJkIZXxO7pKZiyscJuMTlscILmb9p03V9VJk2+4TrmYek29iDo9P5Iq
-         2geeaYqme1nWR17W1H6hUbE5kOE75oesphuVSO/oeo3ueoBAlzoZG3wrfbTt8Tc+e1iH
-         Ik6myCgWnhkriWMoXckun5kwCvvbywBDfcE8aCLHLo2P4J4TQhLxgl99ox37bJCt3rpi
-         5A4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749700823; x=1750305623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LrZf9tw7ue1AjUWwaIRpX02bUAB62dzm3WhOTiLfKg8=;
-        b=n1UuG8gDkCdPH/BOrCpRnbuFEbX0Nh2dXAuvXe5UOdHjwdJym62KL1jV5qF0pyU2B9
-         u4B0rRduzx8uZFf0wpspTxhX7IUSLZ3z+fO0FmRHeJcdKUZawRYmMM8M3xn1UQxYcQGH
-         V1Z9DxNYShrtxK5lvUhwB1cZqcyCK87mC0RilqGxcV4UVh+fL4Taqw+DdZ6axMVs/l8H
-         8PBxFKDAdKUgw3Dur4ZILJQ1UmuCoU7aad9aF+bqzC1bFu+9Ne4VXoOo52uCtw18VzH1
-         e3bjD/K+8FPgbbaevr+c+Yo9d4vxQau8otteAAayG02GN6EK5LtH+Kj+lPSUjg0gWP38
-         V98Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbpWc6crxofMAWmRIrtgtzUJwnD3o8tqwZCKgxZsXSFAZuWMyIsANf/PJ20DcDENAj51FrnolREtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRdBbnYnTldzDt+FYw0Gzw5vJPJ8Cu5eNRPRpKC4O6mF/xNDMA
-	HrpveRzczOicSui00QDAxm+Nz7+rlEm0ZF2lWfCVCHxMuOzqIO73emiTn/RIcCUZhvt+UD4A5kb
-	P3+6nnWzMJTNRIlREPP2r5hgNbUosmhAYnD/0BxVrkw==
-X-Gm-Gg: ASbGncvOwsIX4MS7nbyiMva/9s1CKdFfLCtjkXEC74PZ4718UFzYwseyjbPoSOvrxvJ
-	1Fki4JAmOvJGC4jc4BFpbCjWLQLch+dZ8NNx0I5mpnLkADpri8OcH/4Omv4s+OBwsAzPQ8gOOA+
-	edKhSpWi07gl6CI7+fnJbPGAuGadmeVpaeXxJaNZIIEjBY
-X-Google-Smtp-Source: AGHT+IHFiT/1CKTclaeo4nECAjAsNA6jBOPa/LZL3M+Ccdnks+IHwcRkfiDgkJcope9mTG1+XxA4A5iEPu8+KuKIZnw=
-X-Received: by 2002:a05:6512:3b0c:b0:553:2450:5895 with SMTP id
- 2adb3069b0e04-553a6446c73mr435357e87.4.1749700823052; Wed, 11 Jun 2025
- 21:00:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcqCyHAq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D45C4CEEA;
+	Thu, 12 Jun 2025 04:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749700854;
+	bh=RNOBAoQ4FlcbcHzSQexrGIpqp38M7Y0na4e0BuXj+JM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bcqCyHAqCEeSXpfh9vxS0s0cbuiJMAzHt90Udk+csPYBm7HlJIhsE46fUXeTUgRQi
+	 I0+FO7rZCu4g4b6WjXlblFOcDIxdxIiCvEtQeeSxVzu7F9jO1KKQRX0t2/msu4gHMh
+	 heMwwrzsgEyqLQBc2DrpUUcxA8DXCdGZr3uy5bF4o8Q/SW3YLcItvJKaibOaMs7oXR
+	 7THcfMK2hq8+spwOvm1m++f+Tte7uO6IbgIxntrPwkOFULgavoktqlCy5bhvO/3xYU
+	 aQHsF/TugdzzxEdQx1lPljmOKrBMJ7IIHj2YiQzZnVcQbVSrFPTqIBNfmtxJmpxjl1
+	 2K1OI1JA3FuEg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christian Marangi <ansuelsmth@gmail.com>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-ipq8074: fix broken freq table for nss_port6_tx_clk_src
+Date: Wed, 11 Jun 2025 23:00:33 -0500
+Message-ID: <174970084199.547582.1426735315594799373.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250522202600.4028-1-ansuelsmth@gmail.com>
+References: <20250522202600.4028-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611062238.636753-1-apatel@ventanamicro.com>
- <20250611062238.636753-9-apatel@ventanamicro.com> <20250611-sprint-playable-07774a23f027@spud>
-In-Reply-To: <20250611-sprint-playable-07774a23f027@spud>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 12 Jun 2025 09:30:11 +0530
-X-Gm-Features: AX0GCFsKCy8m7CU7KuBd7obZnUUEUh3VEd4feuIdW-8ohTJTYbZ_MYkJD8lCino
-Message-ID: <CAK9=C2UwtBhefp_FxwTtDPRyXb2McVdypgh-A9PaQO9288uzMA@mail.gmail.com>
-Subject: Re: [PATCH v5 08/23] dt-bindings: clock: Add RPMI clock service
- controller bindings
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 11, 2025 at 9:47=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, Jun 11, 2025 at 11:52:23AM +0530, Anup Patel wrote:
-> > Add device tree bindings for the RPMI clock service group based
-> > controller for the supervisor software.
-> >
-> > The RPMI clock service group is defined by the RISC-V platform
-> > management interface (RPMI) specification.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->
-> On v4 I said the tag I provided was for all binding patches.
-> Is there a reason, other than using b4 to grab tags, or not noticing,
-> for why you only added it here?
 
-Yes, I use b4 to grab tags before addressing comments. I will
-manually add your Reviewed-by in all binding patches in the
-next revision.
+On Thu, 22 May 2025 22:25:55 +0200, Christian Marangi wrote:
+> With the conversion done by commit e88f03230dc0 ("clk: qcom: gcc-ipq8074:
+> rework nss_port5/6 clock to multiple conf") a Copy-Paste error was made
+> for the nss_port6_tx_clk_src frequency table.
+> 
+> This was caused by the wrong setting of the parent in
+> ftbl_nss_port6_tx_clk_src that was wrongly set to P_UNIPHY1_RX instead
+> of P_UNIPHY2_TX.
+> 
+> [...]
 
-Thanks,
-Anup
+Applied, thanks!
+
+[1/1] clk: qcom: gcc-ipq8074: fix broken freq table for nss_port6_tx_clk_src
+      commit: 077ec7bcec9a8987d2a133afb7e13011878c7576
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
