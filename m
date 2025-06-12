@@ -1,92 +1,120 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8002147EA
-	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 08:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049C41DDC1B;
+	Thu, 12 Jun 2025 09:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749717825; cv=none; b=fpz/u4QVtEnQV/DaI1OB9F8oNRzPw27VtBAblVkKk5zuj8xkOk18TLpF8Xll0zEwD+Sw1E245W3DGk0n6xfbsWm7Ulmio1yilRcBsPnGsNgA+yzCE4Mg5owQloEs5WGPvRcyBL8utZR33EfTfBOraE/UpRuqxpuiapa2apk9lSY=
+	t=1749719546; cv=none; b=MbV2Wau/N+m90dX8sqm5dcGMjMqgSUhKSmB+QDvTKNUCeizNhvoO/RN3ckZHoT8v6DImQz8C+B9rrKpYJr87m7iVQD4OBPYPqcpPbTPV5/0MYshD7sB7hqOohgrLEDnXkKWq32aa9mLcYsHEhICvBZgNWEjvRqa160sjefKlcy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749717825; c=relaxed/simple;
-	bh=8iaxqSPyLwyYc4p+UQKnDkBRPNeQrZuJ5qNr27px7kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieWAJKrndyBrLx9IZfcfA2KL/Y2LAyLJVI1jLhoLveIOfI9GmzgiLqc+flY4t84n/sQDkDvfqPJMwQTDIm50ZiPDPDdd0z9QeLXABUNpYv3t8nyohE0IXmC34GIIxa4RTBLRl3o7s8OSElyvDa8G1Qxty5a1JQfpcFOlgpubKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX3-0005C5-0f; Thu, 12 Jun 2025 10:43:33 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX2-0035mI-2D;
-	Thu, 12 Jun 2025 10:43:32 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uPdX2-008pJu-1h;
-	Thu, 12 Jun 2025 10:43:32 +0200
-Date: Thu, 12 Jun 2025 10:43:32 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: scmi: Fix children encountered before parents
- case
-Message-ID: <aEqTNLTp0EzcC2aa@pengutronix.de>
-References: <20250612-clk-scmi-children-parent-fix-v2-1-125b26a311f6@pengutronix.de>
- <20250612-eccentric-fresh-bee-e52db4@sudeepholla>
+	s=arc-20240116; t=1749719546; c=relaxed/simple;
+	bh=zJQ79n0+FenXg8CW9hXrEPBZ2mMHVHaVY55v6bEoH3c=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UO6DLSYZEyJZgs9oQngoiTsDK97+dk7YRZqsiCrPmyrc7RktifkEg8lvKbC2y3t5uWMBtvInnqTvxal3XrqgQO24Re69E0Zd3CzU+sEUm/laExl5BQw34D47Gjp7eIuRE0L5UGBPHXycbusSjxAt7v9IhGvo3i9OiIVz41lyr4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNmY3HVZ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNmY3HVZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333E9C4CEEA;
+	Thu, 12 Jun 2025 09:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749719545;
+	bh=zJQ79n0+FenXg8CW9hXrEPBZ2mMHVHaVY55v6bEoH3c=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=vNmY3HVZoPLE2n2l1u5VMrnXXjfglJfJQkQW/kG9MSzoncNmdaVGVF/Zw0VdhSd+2
+	 3+zr6nieafadxOb84+tYiZSE33Iz+U0ONwWQLxb5+sDYXYrzn9EF4QTGZlREZVq/zq
+	 Y4Gg/fT7BII/gpL1zRNomeJYsQqlCwd5uZC14eZjOx//CxZ3nRpEtdZrFCkYF4gsTZ
+	 tphePEpk50umpQ61omEd+GsAQtVOFyun0lIgSpexo5QiBohESdem3p1NFx9DZucQZk
+	 MEsSLIQKk31UVAkkrQ8bIv0OypuJ0QRzSRHZoZhseI3nEmGq9m9auyauKk0xWUhlAC
+	 FAAKddH+Qwn/Q==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612-eccentric-fresh-bee-e52db4@sudeepholla>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Jun 2025 11:12:18 +0200
+Message-Id: <DAKFT7C8IRC4.2ID8TJIKN4Z5R@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/7] rust: Add basic PWM abstractions
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Michal Wilczynski" <m.wilczynski@samsung.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Drew Fustini" <drew@pdp7.com>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
+ <wefu@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com> <CGME20250610125332eucas1p2da441aa44760236527afc82495af95d1@eucas1p2.samsung.com> <20250610-rust-next-pwm-working-fan-for-sending-v2-1-753e2955f110@samsung.com>
+In-Reply-To: <20250610-rust-next-pwm-working-fan-for-sending-v2-1-753e2955f110@samsung.com>
 
-On Thu, Jun 12, 2025 at 09:29:16AM +0100, Sudeep Holla wrote:
-> On Thu, Jun 12, 2025 at 09:36:58AM +0200, Sascha Hauer wrote:
-> > When it comes to clocks with parents the SCMI clk driver assumes that
-> > parents are always initialized before their children which might not
-> > always be the case.
-> > 
-> > During initialization of the parent_data array we have:
-> > 
-> > 	sclk->parent_data[i].hw = hws[sclk->info->parents[i]];
-> > 
-> > hws[sclk->info->parents[i]] will not yet be initialized when children
-> > are encountered before their possible parents. Solve this by allocating
-> > all struct scmi_clk as an array first and populating all hws[] upfront.
-> > 
-> 
-> LGTM. I would like to add a note that we don't free individual scmi_clk
-> if for some reason it fails to setup. I can do that when I apply, just
-> checking if anyone has any objections. Please shout out if you have.
+On Tue Jun 10, 2025 at 2:52 PM CEST, Michal Wilczynski wrote:
+> Introduce safe Rust abstractions for the Linux PWM subsystem. These
+> abstractions provide ergonomic, lifetime managed wrappers around the
+> core C data structures and functions, enabling the development of PWM
+> chip drivers in safe Rust.
+>
+> This initial version provides the core building blocks for writing a PWM
+> chip provider driver, with a focus on safety, resource management, and
+> idiomatic Rust patterns.
+>
+> The main components are:
+>
+> Ownership and Lifetime Management:
+>  - The pwm::Chip type, an ARef managed wrapper for struct pwm_chip,
+>    correctly handles the object's lifetime by using the embedded struct
+>    device's reference counter.
+>  - A pwm::Registration RAII guard ensures that a call to register a
+>    chip (pwmchip_add) is always paired with a call to unregister it
+>    (pwmchip_remove), preventing resource leaks.
+>
+> Safe Type Wrappers:
+>  - Safe, idiomatic Rust types (Polarity, Waveform, State, Args,
+>    Device) are provided to abstract away the raw C structs and enums.
+>    The State wrapper holds its data by value, avoiding unnecessary
+>    heap allocations.
+>
+> Driver Operations (PwmOps):
+>  - A generic PwmOps trait allows drivers to implement the standard
+>    PWM operations. It uses an associated type (WfHw) for the driver's
+>    hardware specific waveform data, moving unsafe serialization logic int=
+o
+>    the abstraction layer.
+>    The trait exposes the modern waveform API (round_waveform_tohw,
+>    write_waveform, etc.) as well as the other standard kernel callbacks
+>    (get_state, request, apply).
+>  - A create_pwm_ops function generates a C-compatible vtable from a
+>    PwmOps implementor.
+>
+> This foundational layer is designed to be used by subsequent patches to
+> implement specific PWM chip drivers in Rust.
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS                     |   6 +
+>  drivers/pwm/Kconfig             |  13 +
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/pwm.c              |  20 +
+>  rust/kernel/lib.rs              |   2 +
+>  rust/kernel/pwm.rs              | 864 ++++++++++++++++++++++++++++++++++=
+++++++
+>  7 files changed, 907 insertions(+)
 
-Feel free to add that note. I should have added this myself since it's
-not entirely obvious that the devm_kfree() has to be removed with this
-patch.
+Do you mind splitting this into smaller commits to make review easier?
 
-Sascha
+---
+Cheers,
+Benno
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
