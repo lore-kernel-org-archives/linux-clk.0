@@ -1,125 +1,108 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2959241686
-	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968C18FC91;
+	Thu, 12 Jun 2025 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749734835; cv=none; b=YKEsDA5+qlU4KNLRNv3/qWyakVvUkCyaDD+PTMTq/91PIbP6Wdnd6c1R4rcqDY6REJ+FjrnM2H407dslmkS4nxaeL0X6OQXhPuCB6e02z8buG+I+kjJQALXn6em0k1BbV/R+50X03V/p64NJdpXERZ21i6W6CAkfZ70YGxO7x+o=
+	t=1749736084; cv=none; b=KVvOooLQfCExPhbzK7sTEcxpEAa8tF9XOnGSPx0L79SAb9XXjpliZGGzdy3nPOwKES9l20iY/AvgtcmldUtW0XajQOPiJeEcktpsUoj9UJbhr62GiN12ua99rQfuTd1xoP7Smu8mtZDTDergRrzW64/dMEluuzmIJCN4Po45ktw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749734835; c=relaxed/simple;
-	bh=4LHEwxEc3hBPrlnpoz7wEtk78FB0iBFJ2kl/SiFP2GU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=jZyc1v3J4YOGoqrHRAApsLVrHbiHhDDLtC+A7HF0lD+du2FYOWGuumCzqkOUBeGzGWaZSWur3FgHsH1ccIJEXIa+dFhlGQFj+mnnkiRjkbIcW93K8U6slnSCvULACoqUxDLKy0u+5YggFPCj8REDgB0e3DvB9gTgMc0klMkIYLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e+p98fe2; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e+p98fe2"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250612132711euoutp02d19906cd1a6feb888a25b960d528211b~ITo8m2cdu1533415334euoutp028
-	for <linux-clk@vger.kernel.org>; Thu, 12 Jun 2025 13:27:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250612132711euoutp02d19906cd1a6feb888a25b960d528211b~ITo8m2cdu1533415334euoutp028
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749734832;
-	bh=PULRw5otkpn6GT9WVK7m+LoEccaSTbNn1hjyoEzOiIs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=e+p98fe2EtXbMFxwWvQgJluh1QObjr8g6tF2nHs1kG+Hcjb3bO5O924WF1GVlTPyk
-	 YhWHkegBS5oA4jFG8qH0C5OBvo/7m/hgotMW9dT1Iay0p0xMz4OUgLKQmM2GGgWlW0
-	 s/gQAlg+rNLhrihoWDunNEKjcRep3lrnbq6wGfAg=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250612132711eucas1p1db84d1c02a89f07e7346dec9dc6c48e8~ITo75vBrM2197421974eucas1p1Q;
-	Thu, 12 Jun 2025 13:27:11 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250612132709eusmtip2f714daf4dd428c2679068f9872962dc7~ITo6trRkm1234712347eusmtip23;
-	Thu, 12 Jun 2025 13:27:09 +0000 (GMT)
-Message-ID: <b3252042-e7fd-4ac9-a4ad-0226d21fd477@samsung.com>
-Date: Thu, 12 Jun 2025 15:27:09 +0200
+	s=arc-20240116; t=1749736084; c=relaxed/simple;
+	bh=y8CFAn9qh3k/yLp5zOH+ernhDI9ZtahcNeN0S2G9P1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GoEr/UTwd0yjYxFkLnt5kbbBk9BCHKiJkRPIocQgFmbatTQ5C6+zpm+3lvTV6FEBLpOv3sT8ftFPO9cKVbL40lH5PzloYqmiWhBKfbq/4HQC6EEkwxdQRSsfV2+/fKYba9sxkWZbr9dYMBCnQ5NSh7ky22p6zLDI8YKD4hBIYZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ec5e1cd4aso286593241.0;
+        Thu, 12 Jun 2025 06:48:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749736081; x=1750340881;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7FQr7slkKxPbariVEmX9D6gn7HsHdpZpEVmZVDWtqF4=;
+        b=ken/3lX1fPyfnUnYNt0jGkikxCWu/PNw9hhkbguKrgMNVkxDphhnjrLdarAsmViwyP
+         a1myF9ecV+BkWCy3I5lTduUTFCiV+dh6AjE0mvKdHBqTY3fBsrWzA7MSClMVhuXapVlF
+         Xaj9QdCAJZasmRnz6joziF9NqJ2JAQHYdA2UaOujVhcQVoDadGWJ04MK53Cg5wWsSGFh
+         BkqvjBT+1HDaTFY5/AqFHoFjyHc35rktWRsMwMArDjfGdjN1IYUtc6zKFi2JhoEe/Evr
+         LePunl6glEXM+3Rs0Q0CZVN93rqAwuy2WjI8Cz9LQEiRgB6IICmAilNlUdGPSNCjwr9v
+         C+4g==
+X-Forwarded-Encrypted: i=1; AJvYcCURTZcuOj1C4aFovqG+nyY/4QPlLsCrO0WNJQUB0c9zMZQvOm8zj7ezrRJEysuyUl0M9mYs0fSKBJTYzX1s@vger.kernel.org, AJvYcCVQK17dF55n7cXqR6vS1Q703UVU6z2oFpnge4HQHjcU/B85f4sZ4PGGYH1tzFcUWslRGhnoz2dWJ9M=@vger.kernel.org, AJvYcCXoy+9+e1Kkw4wUBQIVv5cyjg11sgtH4KYxqKbCrT685ikBKyGFkQg+Eljz+KW/KdvfZuIfVfgln9tapyTB6Lc426M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLqoO9ZVPCaw71Ymn+S/uycz7otLUNfvsQSwYEQwFIRlAdjcy2
+	u653dXLB9+9crlhHs1IdD6fA+tzXDr3E2v/v7QRoFjk0mU1ZBT3sZISCLiNnWuO9
+X-Gm-Gg: ASbGncvwxMbxXj2mvAyiY7hgL+Oq69VyRpZ2UzcqrdCOlTyYJaQ5NMmLg1T1zF6Jtj5
+	VFvO75x75ZQt1rTdVtwYkylSxb44nSowjrIcKoSPD5zX03Cr4lI4bEJRz+sz2ykCHGdL/BeF9aP
+	8vt7WZqylLIaf2YmwsTe0TipmQmVBlIYWrXy2PTYLdfHCQS2q0Y849o/wWa5pQHp6Ev75rForP1
+	CQbyVq4Cf2cv8CdTKVOaasJMFqPJldbW9udpGirbcXErX6Ci/Fs8eT6XesLttfW4Inpifp0TJJH
+	W+gDb5ltrN/TgdwU77YKNYgzDLn3wK0asRVQHDAsW0oo5RdwmEkoO0KLiEABmpDznzLk2mh9SP+
+	8Ud/J1nzMe6LDUHvavWjgpPKocHjFhHi/CZs=
+X-Google-Smtp-Source: AGHT+IETRftRWQysl+wm+CZvPLOKPLG+qdHOy1bhzi/lsBCa1PgmSaK6GhG64LkitNiC01zQ6irD4Q==
+X-Received: by 2002:a05:6102:94d:b0:4bb:eb4a:f9ef with SMTP id ada2fe7eead31-4e7ce7f841dmr2474911137.4.1749736081419;
+        Thu, 12 Jun 2025 06:48:01 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f01243001sm297441241.5.2025.06.12.06.48.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87ecba78750so321456241.1;
+        Thu, 12 Jun 2025 06:48:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWE8cb5ltxP5tyaxtJ1hku4kA32dVNdNRuxU5XSjVnQ2R085Fhh4wUnVTMGfGAAvztR03V4+T88hdA=@vger.kernel.org, AJvYcCXF84Gbss+bU06Jj8XWWMT5QaZcOS8o7I3rEXv2ko/tw64smfNc3wCA540CDJ2lq3phF7zXz4R4kFYUlCYXyX8laJ0=@vger.kernel.org, AJvYcCXum6x9yUuz8Jt/HWwPD4DjniQuJH88vW8m4grI5gOMOXTSVTbtkeI7r80cbLzp8k/rk5Vzh/i8wZoGQwS7@vger.kernel.org
+X-Received: by 2002:a05:6102:54a9:b0:4e6:d784:3f7 with SMTP id
+ ada2fe7eead31-4e7ce8ef245mr2321438137.15.1749736079868; Thu, 12 Jun 2025
+ 06:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Drew Fustini
-	<drew@pdp7.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
-	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <t26bhukukjzy7e4d2omtvjchxxzlnfyx54ku7xbytcnxkuk7xk@6tap2t3z2oaq>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250612132711eucas1p1db84d1c02a89f07e7346dec9dc6c48e8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9
-X-EPHeader: CA
-X-CMS-RootMailID: 20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9
-References: <CGME20250610125330eucas1p2a573627ca8f124fe11e725c2d75bdcc9@eucas1p2.samsung.com>
-	<20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
-	<aEifXZnLxKd2wa0w@x1> <6ca6016e-3b17-48a0-ad8d-bb05317aa100@samsung.com>
-	<aEoWtviFl0vYATXe@x1>
-	<t26bhukukjzy7e4d2omtvjchxxzlnfyx54ku7xbytcnxkuk7xk@6tap2t3z2oaq>
+References: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250609140341.235919-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jun 2025 15:47:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
+X-Gm-Features: AX0GCFsjFFOMl0FpwnFUdrbDnlL9gyxveYHGO9Mfv0X_27HN0AyCAO3jn5ITdyY
+Message-ID: <CAMuHMdU5YyfQ6KwQyVaeZaEk7buNv56H_gPrWt_yb85SSF5aEQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Fix missing CLK_SET_RATE_PARENT
+ flag for ddiv clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Prabhakar,
 
+On Mon, 9 Jun 2025 at 16:03, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Commit bc4d25fdfadf ("clk: renesas: rzv2h: Add support for dynamic
+> switching divider clocks") missed setting the `CLK_SET_RATE_PARENT`
+> flag when registering ddiv clocks.
+>
+> Without this flag, rate changes to the divider clock do not propagate
+> to its parent, potentially resulting in incorrect clock configurations.
+>
+> Fix this by setting `CLK_SET_RATE_PARENT` in the clock init data.
+>
+> Fixes: bc4d25fdfadfa ("clk: renesas: rzv2h: Add support for dynamic switching divider clocks")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 6/12/25 07:01, Uwe Kleine-König wrote:
-> Hello Drew,
-> 
-> On Wed, Jun 11, 2025 at 04:52:22PM -0700, Drew Fustini wrote:
->> I also enabled the pwm fan driver. However, there is a probe failure:
->>
->> [    1.250921] pwm-fan pwm-fan: Failed to configure PWM: -524
->> [    1.256546] pwm-fan pwm-fan: probe with driver pwm-fan failed with error -524
-> 
-> 524 = ENOTSUPP, so it seems the request had duty_offset > 0. Does your
-> fan use PWM_POLARITY_INVERTED? If so, try without that flag. If your fan
-> really needs an inverted PWM this of course makes fan control buggy.
-> With the next revision it should work fine (as a duty_offset > 0 should
-> get rounded down to 0).
+Thanks for your patch!
 
-Since we're running the same DT, the polarity shouldn't be inverted. I
-see you have CONFIG_PWM_DEBUG=y enabled, which is most likely the reason
-the probe fails.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17, unless you think it deserves
+to be fast-tracked as a fix (issue present since v6.12).
 
-With that option, the following check is performed in __pwm_apply:
+Gr{oetje,eeting}s,
 
-if (IS_ENABLED(CONFIG_PWM_DEBUG)) {
-	struct pwm_waveform wf_rounded;
+                        Geert
 
-		err = __pwm_round_waveform_fromhw(chip, pwm, &wfhw, &wf_rounded);
-		if (err)
-			return err;
-
-In this revision of the driver, I have not implemented the read-waveform
-callbacks, so the Rust PWM abstractions correctly return -ENOTSUPP.
-
-Uwe, this poses a problem, as reading from the duty and period registers
-on the TH1520 SoC's PWM controller appears to be broken.
-
-
-> 
-> Best regards
-> Uwe
-
-Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
