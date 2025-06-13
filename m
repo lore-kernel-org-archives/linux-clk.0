@@ -1,140 +1,445 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5A72397A4;
-	Fri, 13 Jun 2025 21:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD7B22A4E9
+	for <linux-clk@vger.kernel.org>; Fri, 13 Jun 2025 23:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749850031; cv=none; b=HQDm+WTZ0apLTCuy4mTNHR1wZbmOC1mjjVWrrtTOSGayzMNk5o/gi3ezkrwpgOxtAisdrosb/O0NHMswqSC8p8kQledHjOYllY2F5mRWoIX0oioj1zQGF8XtNmoqA8UgkdFKchP93Gumsb2WoWaDi9wUNDfUG0nFOK2UFFb+S2Y=
+	t=1749856052; cv=none; b=iwD1YxMfPkHlQZ/fwBGkdRU6L3UwI90Oxsso35JKisF8/JXCt1TG7GhbGCc0YbuuvhYvyJ3gKosnoZU5pPAakq6TWpr1T9WnBtc7rLYkK62IU6u0q2UXXQd8FUPm8pryp52D7EHV1i81ei7hfEbIWU2iHS9wNGg+YGc//707w2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749850031; c=relaxed/simple;
-	bh=uao9vXicfmNGv7hAWWVlUXBcpeUEFrEd/9ktZYSF5ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=dilfbHh4ddjSDIa8/lp8fKlVdZIezejxeMDxe8Tr9xUG195kgAjoDmbIO7onYUXKV+f7nRdqry/KPOASd07SvIWsLvGAqIFceaVUDDEUPBFgCERaGMOB2U9k/TmWG2ZrqzQuSMsJpMf8CyRlvx+gk43XFa50ueSKfj133mg2wNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZbpXBjn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749856052; c=relaxed/simple;
+	bh=4ODlo4NCGapsyQT3x6q33ftK/BJIybrpczdYBg4zG+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jjqyPecsoekVW9Cbuk8Sg7C3qpzZutOK5Q4Fpd3zPa2AO1F8lBA9PKBcv2c/AlCm/ly6xay3a6UCLTA8DvpHRaK32Xs+EsD/ti2jJLl51HRovpg1nARfIH/d8B0pA/7WhAYJb2EMCAWMKINl1VbPa6RpURlx2iH0CjbTfWLMkZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oaImb+BO; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZbpXBjn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62DCC4CEE3;
-	Fri, 13 Jun 2025 21:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749850030;
-	bh=uao9vXicfmNGv7hAWWVlUXBcpeUEFrEd/9ktZYSF5ig=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nZbpXBjnZAtM27vBM686WDSlmCevbldUDcv0haHfTvmlSbLoJxSVxv9p7sUN/igzZ
-	 DQK/ujQyUDtDXKo2+9/B+og9k8xaILfs7yj0Ci3wDQTJoB15fvuJM/ChAGShZ3sJS/
-	 bufKhI9YRG+YCjlQBcTTG/xsYrSg2fEsxsIA3vHaqMgwXY8cAwIwDfocOYkk4kfsyJ
-	 P4ztXwL4ANgDMym+oXwaG7Bg27bJtH+40UVzknDgw/qfvepHaMcja5TXadWM+ftgzY
-	 JKVnZ/05xPQ/3S7h35bYqr18+mF84NOxMFMKg9d3gusw5T0wrId6QwXlt1I1+pXePB
-	 G+ukl5JR60TBg==
-Date: Fri, 13 Jun 2025 16:27:09 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 24/28] PCI: Add Microchip LAN9662 PCI Device ID
-Message-ID: <20250613212709.GA979346@bhelgaas>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oaImb+BO"
+Message-ID: <0f968b01-b607-46a7-b712-dba4a1b63290@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749856044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qzh0q3kPhCowjX0P+3Cs7CCHVbnsaoKh1I97INlJ1oA=;
+	b=oaImb+BOoyPj+TKewR04u7RSfMiPNudSQ+eYJR3N1hcJaFLm2ixS2ZsJVkTgytubIxs/Ao
+	m+pXM5/By2yCbPsz7rnFYbS9ar6V1Fw2KTbvPc/qnn/b1wCVeSbVsg657C+uzi6wqjOjJU
+	DNo9c2yvdYMuax/GwQBomIqznl5CEEw=
+Date: Fri, 13 Jun 2025 16:07:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-25-herve.codina@bootlin.com>
+Subject: Re: [PATCH v5 12/23] irqchip: Add driver for the RPMI system MSI
+ service group
+To: Anup Patel <apatel@ventanamicro.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>,
+ Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak
+ <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Anup Patel
+ <anup@brainfault.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250611062238.636753-1-apatel@ventanamicro.com>
+ <20250611062238.636753-13-apatel@ventanamicro.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250611062238.636753-13-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jun 13, 2025 at 03:48:04PM +0200, Herve Codina wrote:
-> Existing code uses the 0x9660 value (LAN9662 PCI Device ID) in several
-> places.
-> 
-> Avoid this direct use of the 0x9660 value replacing it by defined PCI
-> Device ID.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
+On 6/10/25 11:22 PM, Anup Patel wrote:
+> The RPMI specification defines a system MSI service group which
+> allows application processors to receive MSIs upon system events
+> such as graceful shutdown/reboot request, CPU hotplug event, memory
+> hotplug event, etc.
+>
+> Add an irqchip driver for the RISC-V RPMI system MSI service group
+> to directly receive system MSIs in Linux kernel.
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->  drivers/misc/lan966x_pci.c | 2 +-
->  drivers/pci/quirks.c       | 2 +-
->  include/linux/pci_ids.h    | 1 +
->  3 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/lan966x_pci.c b/drivers/misc/lan966x_pci.c
-> index b28066c96534..e60ab662b8f3 100644
-> --- a/drivers/misc/lan966x_pci.c
-> +++ b/drivers/misc/lan966x_pci.c
-> @@ -197,7 +197,7 @@ static void lan966x_pci_remove(struct pci_dev *pdev)
->  }
->  
->  static struct pci_device_id lan966x_pci_ids[] = {
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_EFAR, 0x9660) },
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_EFAR, PCI_DEVICE_ID_EFAR_LAN9662) },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(pci, lan966x_pci_ids);
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index d7f4ee634263..bde077ce663a 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -6302,7 +6302,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0xa76e, dpc_log_size);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5020, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5021, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REDHAT, 0x0005, of_pci_make_dev_node);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_EFAR, 0x9660, of_pci_make_dev_node);
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_EFAR, PCI_DEVICE_ID_EFAR_LAN9662, of_pci_make_dev_node);
->  
->  /*
->   * Devices known to require a longer delay before first config space access
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index e2d71b6fdd84..5d69fde7dd97 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -934,6 +934,7 @@
->  #define PCI_VENDOR_ID_EFAR		0x1055
->  #define PCI_DEVICE_ID_EFAR_SLC90E66_1	0x9130
->  #define PCI_DEVICE_ID_EFAR_SLC90E66_3	0x9463
-> +#define PCI_DEVICE_ID_EFAR_LAN9662	0x9660
->  
->  #define PCI_VENDOR_ID_MOTOROLA		0x1057
->  #define PCI_DEVICE_ID_MOTOROLA_MPC105	0x0001
-> -- 
-> 2.49.0
-> 
+>   drivers/irqchip/Kconfig                    |   7 +
+>   drivers/irqchip/Makefile                   |   1 +
+>   drivers/irqchip/irq-riscv-rpmi-sysmsi.c    | 285 +++++++++++++++++++++
+>   include/linux/mailbox/riscv-rpmi-message.h |  13 +
+>   4 files changed, 306 insertions(+)
+>   create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+>
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 0d196e447142..96bf6aa55681 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -617,6 +617,13 @@ config RISCV_IMSIC
+>   	select GENERIC_MSI_IRQ
+>   	select IRQ_MSI_LIB
+>   
+> +config RISCV_RPMI_SYSMSI
+> +	bool
+> +	depends on MAILBOX
+> +	select IRQ_DOMAIN_HIERARCHY
+> +	select GENERIC_MSI_IRQ
+> +	default RISCV
+> +
+>   config SIFIVE_PLIC
+>   	bool
+>   	depends on RISCV
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 23ca4959e6ce..4fd966aa78ab 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -103,6 +103,7 @@ obj-$(CONFIG_RISCV_INTC)		+= irq-riscv-intc.o
+>   obj-$(CONFIG_RISCV_APLIC)		+= irq-riscv-aplic-main.o irq-riscv-aplic-direct.o
+>   obj-$(CONFIG_RISCV_APLIC_MSI)		+= irq-riscv-aplic-msi.o
+>   obj-$(CONFIG_RISCV_IMSIC)		+= irq-riscv-imsic-state.o irq-riscv-imsic-early.o irq-riscv-imsic-platform.o
+> +obj-$(CONFIG_RISCV_RPMI_SYSMSI)		+= irq-riscv-rpmi-sysmsi.o
+>   obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+>   obj-$(CONFIG_STARFIVE_JH8100_INTC)	+= irq-starfive-jh8100-intc.o
+>   obj-$(CONFIG_THEAD_C900_ACLINT_SSWI)	+= irq-thead-c900-aclint-sswi.o
+> diff --git a/drivers/irqchip/irq-riscv-rpmi-sysmsi.c b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+> new file mode 100644
+> index 000000000000..06f64936802a
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (C) 2025 Ventana Micro Systems Inc. */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/bug.h>
+> +#include <linux/device.h>
+> +#include <linux/device/devres.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/errno.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/riscv-rpmi-message.h>
+> +#include <linux/module.h>
+> +#include <linux/msi.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/types.h>
+> +
+> +struct rpmi_sysmsi_get_attrs_rx {
+> +	__le32 status;
+> +	__le32 sys_num_msi;
+> +	__le32 flag0;
+> +	__le32 flag1;
+> +};
+> +
+> +#define RPMI_SYSMSI_MSI_ATTRIBUTES_FLAG0_PREF_PRIV	BIT(0)
+> +
+> +struct rpmi_sysmsi_set_msi_state_tx {
+> +	__le32 sys_msi_index;
+> +	__le32 sys_msi_state;
+> +};
+> +
+> +struct rpmi_sysmsi_set_msi_state_rx {
+> +	__le32 status;
+> +};
+> +
+> +#define RPMI_SYSMSI_MSI_STATE_ENABLE			BIT(0)
+> +#define RPMI_SYSMSI_MSI_STATE_PENDING			BIT(1)
+> +
+> +struct rpmi_sysmsi_set_msi_target_tx {
+> +	__le32 sys_msi_index;
+> +	__le32 sys_msi_address_low;
+> +	__le32 sys_msi_address_high;
+> +	__le32 sys_msi_data;
+> +};
+> +
+> +struct rpmi_sysmsi_set_msi_target_rx {
+> +	__le32 status;
+> +};
+> +
+> +struct rpmi_sysmsi_priv {
+> +	struct device		*dev;
+> +	struct mbox_client	client;
+> +	struct mbox_chan	*chan;
+> +	u32			nr_irqs;
+> +	u32			gsi_base;
+> +};
+> +
+> +static int rpmi_sysmsi_get_num_msi(struct rpmi_sysmsi_priv *priv)
+> +{
+> +	struct rpmi_sysmsi_get_attrs_rx rx;
+> +	struct rpmi_mbox_message msg;
+> +	int ret;
+> +
+> +	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_GET_ATTRIBUTES,
+> +					  NULL, 0, &rx, sizeof(rx));
+> +	ret = rpmi_mbox_send_message(priv->chan, &msg);
+> +	if (ret)
+> +		return ret;
+> +	if (rx.status)
+> +		return rpmi_to_linux_error(le32_to_cpu(rx.status));
+> +
+> +	return le32_to_cpu(rx.sys_num_msi);
+> +}
+> +
+> +static int rpmi_sysmsi_set_msi_state(struct rpmi_sysmsi_priv *priv,
+> +				     u32 sys_msi_index, u32 sys_msi_state)
+> +{
+> +	struct rpmi_sysmsi_set_msi_state_tx tx;
+> +	struct rpmi_sysmsi_set_msi_state_rx rx;
+> +	struct rpmi_mbox_message msg;
+> +	int ret;
+> +
+> +	tx.sys_msi_index = cpu_to_le32(sys_msi_index);
+> +	tx.sys_msi_state = cpu_to_le32(sys_msi_state);
+> +	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_STATE,
+> +					  &tx, sizeof(tx), &rx, sizeof(rx));
+> +	ret = rpmi_mbox_send_message(priv->chan, &msg);
+> +	if (ret)
+> +		return ret;
+> +	if (rx.status)
+> +		return rpmi_to_linux_error(le32_to_cpu(rx.status));
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmi_sysmsi_set_msi_target(struct rpmi_sysmsi_priv *priv,
+> +				      u32 sys_msi_index, struct msi_msg *m)
+> +{
+> +	struct rpmi_sysmsi_set_msi_target_tx tx;
+> +	struct rpmi_sysmsi_set_msi_target_rx rx;
+> +	struct rpmi_mbox_message msg;
+> +	int ret;
+> +
+> +	tx.sys_msi_index = cpu_to_le32(sys_msi_index);
+> +	tx.sys_msi_address_low = cpu_to_le32(m->address_lo);
+> +	tx.sys_msi_address_high = cpu_to_le32(m->address_hi);
+> +	tx.sys_msi_data = cpu_to_le32(m->data);
+> +	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_TARGET,
+> +					  &tx, sizeof(tx), &rx, sizeof(rx));
+> +	ret = rpmi_mbox_send_message(priv->chan, &msg);
+> +	if (ret)
+> +		return ret;
+> +	if (rx.status)
+> +		return rpmi_to_linux_error(le32_to_cpu(rx.status));
+> +
+> +	return 0;
+> +}
+> +
+> +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
+> +{
+> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
+> +	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+> +	int ret;
+> +
+> +	ret = rpmi_sysmsi_set_msi_state(priv, hwirq, 0);
+> +	if (ret)
+> +		dev_warn(priv->dev, "Failed to mask hwirq %lu (error %d)\n", hwirq, ret);
+> +	irq_chip_mask_parent(d);
+> +}
+> +
+> +static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
+> +{
+> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
+> +	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+> +	int ret;
+> +
+> +	irq_chip_unmask_parent(d);
+> +	ret = rpmi_sysmsi_set_msi_state(priv, hwirq, RPMI_SYSMSI_MSI_STATE_ENABLE);
+> +	if (ret)
+> +		dev_warn(priv->dev, "Failed to unmask hwirq %lu (error %d)\n", hwirq, ret);
+> +}
+> +
+> +static void rpmi_sysmsi_write_msg(struct irq_data *d, struct msi_msg *msg)
+> +{
+> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
+> +	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+> +	int ret;
+> +
+> +	/* For zeroed MSI, do nothing as of now */
+> +	if (!msg->address_hi && !msg->address_lo && !msg->data)
+> +		return;
+> +
+> +	ret = rpmi_sysmsi_set_msi_target(priv, hwirq, msg);
+> +	if (ret) {
+> +		dev_warn(priv->dev, "Failed to set target for hwirq %lu (error %d)\n",
+> +			 hwirq, ret);
+> +	}
+> +}
+> +
+> +static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
+> +{
+> +	arg->desc = desc;
+> +	arg->hwirq = desc->data.icookie.value;
+> +}
+> +
+> +static int rpmi_sysmsi_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
+> +				 unsigned long *hwirq, unsigned int *type)
+> +{
+> +	struct msi_domain_info *info = d->host_data;
+> +	struct rpmi_sysmsi_priv *priv = info->data;
+> +
+> +	if (WARN_ON(fwspec->param_count < 1))
+> +		return -EINVAL;
+> +
+> +	/* For DT, gsi_base is always zero. */
+> +	*hwirq = fwspec->param[0] - priv->gsi_base;
+> +	*type = IRQ_TYPE_NONE;
+
+Why do we set the type to IRQ_TYPE_NONE ?
+Either we shouldn't care about the type here  or edge type as it is only 
+MSI driver.
+We also throw a warning for user if the any other irq type is passed in 
+msi_translate call back.
+
+> +	return 0;
+> +}
+> +
+> +static const struct msi_domain_template rpmi_sysmsi_template = {
+> +	.chip = {
+> +		.name			= "RPMI-SYSMSI",
+> +		.irq_mask		= rpmi_sysmsi_irq_mask,
+> +		.irq_unmask		= rpmi_sysmsi_irq_unmask,
+> +#ifdef CONFIG_SMP
+> +		.irq_set_affinity	= irq_chip_set_affinity_parent,
+> +#endif
+> +		.irq_write_msi_msg	= rpmi_sysmsi_write_msg,
+> +		.flags			= IRQCHIP_SET_TYPE_MASKED |
+> +					  IRQCHIP_SKIP_SET_WAKE |
+> +					  IRQCHIP_MASK_ON_SUSPEND,
+> +	},
+> +
+> +	.ops = {
+> +		.set_desc		= rpmi_sysmsi_set_desc,
+> +		.msi_translate		= rpmi_sysmsi_translate,
+> +	},
+> +
+> +	.info = {
+> +		.bus_token		= DOMAIN_BUS_WIRED_TO_MSI,
+> +		.flags			= MSI_FLAG_USE_DEV_FWNODE,
+> +		.handler		= handle_simple_irq,
+> +		.handler_name		= "simple",
+> +	},
+> +};
+> +
+> +static int rpmi_sysmsi_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rpmi_sysmsi_priv *priv;
+> +	int rc;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +	priv->dev = dev;
+> +
+> +	/* Setup mailbox client */
+> +	priv->client.dev		= priv->dev;
+> +	priv->client.rx_callback	= NULL;
+> +	priv->client.tx_block		= false;
+> +	priv->client.knows_txdone	= true;
+> +	priv->client.tx_tout		= 0;
+> +
+> +	/* Request mailbox channel */
+> +	priv->chan = mbox_request_channel(&priv->client, 0);
+> +	if (IS_ERR(priv->chan))
+> +		return PTR_ERR(priv->chan);
+> +
+> +	/* Get number of system MSIs */
+> +	rc = rpmi_sysmsi_get_num_msi(priv);
+> +	if (rc < 1) {
+> +		mbox_free_channel(priv->chan);
+> +		if (rc)
+> +			return dev_err_probe(dev, rc, "Failed to get number of system MSIs\n");
+> +		else
+> +			return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
+> +	}
+> +	priv->nr_irqs = rc;
+> +
+> +	/* Set the device MSI domain if not available */
+> +	if (!dev_get_msi_domain(dev)) {
+> +		/*
+> +		 * The device MSI domain for OF devices is only set at the
+> +		 * time of populating/creating OF device. If the device MSI
+> +		 * domain is discovered later after the OF device is created
+> +		 * then we need to set it explicitly before using any platform
+> +		 * MSI functions.
+> +		 */
+> +		if (dev_of_node(dev))
+> +			of_msi_configure(dev, dev_of_node(dev));
+> +
+> +		if (!dev_get_msi_domain(dev)) {
+> +			mbox_free_channel(priv->chan);
+> +			return -EPROBE_DEFER;
+> +		}
+> +	}
+> +
+> +	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
+> +					  &rpmi_sysmsi_template,
+> +					  priv->nr_irqs, priv, priv)) {
+> +		mbox_free_channel(priv->chan);
+> +		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
+> +	}
+> +
+> +	dev_info(dev, "%u system MSIs registered\n", priv->nr_irqs);
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id rpmi_sysmsi_match[] = {
+> +	{ .compatible = "riscv,rpmi-system-msi" },
+> +	{}
+> +};
+> +
+> +static struct platform_driver rpmi_sysmsi_driver = {
+> +	.driver = {
+> +		.name		= "rpmi-sysmsi",
+> +		.of_match_table	= rpmi_sysmsi_match,
+> +	},
+> +	.probe = rpmi_sysmsi_probe,
+> +};
+> +builtin_platform_driver(rpmi_sysmsi_driver);
+> diff --git a/include/linux/mailbox/riscv-rpmi-message.h b/include/linux/mailbox/riscv-rpmi-message.h
+> index 476a2d64d972..06d2f8b38969 100644
+> --- a/include/linux/mailbox/riscv-rpmi-message.h
+> +++ b/include/linux/mailbox/riscv-rpmi-message.h
+> @@ -91,6 +91,7 @@ static inline int rpmi_to_linux_error(int rpmi_error)
+>   }
+>   
+>   /* RPMI service group IDs */
+> +#define RPMI_SRVGRP_SYSTEM_MSI		0x00002
+>   #define RPMI_SRVGRP_CLOCK		0x00008
+>   
+>   /* RPMI clock service IDs */
+> @@ -106,6 +107,18 @@ enum rpmi_clock_service_id {
+>   	RPMI_CLK_SRV_ID_MAX_COUNT
+>   };
+>   
+> +/* RPMI system MSI service IDs */
+> +enum rpmi_sysmsi_service_id {
+> +	RPMI_SYSMSI_SRV_ENABLE_NOTIFICATION = 0x01,
+> +	RPMI_SYSMSI_SRV_GET_ATTRIBUTES = 0x02,
+> +	RPMI_SYSMSI_SRV_GET_MSI_ATTRIBUTES = 0x03,
+> +	RPMI_SYSMSI_SRV_SET_MSI_STATE = 0x04,
+> +	RPMI_SYSMSI_SRV_GET_MSI_STATE = 0x05,
+> +	RPMI_SYSMSI_SRV_SET_MSI_TARGET = 0x06,
+> +	RPMI_SYSMSI_SRV_GET_MSI_TARGET = 0x07,
+> +	RPMI_SYSMSI_SRV_ID_MAX_COUNT
+> +};
+> +
+>   /* RPMI Linux mailbox attribute IDs */
+>   enum rpmi_mbox_attribute_id {
+>   	RPMI_MBOX_ATTR_SPEC_VERSION,
