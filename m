@@ -1,125 +1,177 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC2E3D76
-	for <linux-clk@vger.kernel.org>; Fri, 13 Jun 2025 12:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2884C97;
+	Fri, 13 Jun 2025 12:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749818219; cv=none; b=TvZoUDnRMlIbawotbToOS2QQXtdSC66eAoZi3sLQgdALNnuROl1vjoM/KyMJvRL5bYit58aCQzPuviozcn0KI9cVIA0u3govQxaFCDoYr5WbSmb7w/cqlavThAEtYEVqiI4LBwIaFPU/FCHWJzhI9m67JdgjSsKoSH9iw2fzZ/Y=
+	t=1749818638; cv=none; b=UACYAQS2ml0eWEbs7n7yfBMWhlsp47vRM/tDK1/WxDgNS76aOWtxpX6jXeTov5wr8Zv4D6OdUFqt0kHmCkB2vfVc6aLauX2BQp5IpWleApArZyw4tzAS86cDbjc9RzHMGzXF6w6eAFFaIwpodi18z8FKFJG8Ad85SpDBRxwLAdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749818219; c=relaxed/simple;
-	bh=m4rkyYEqJtoOiSYYioayX0Hhab6LqMJvW2vTZ7jZY1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N+sf1uZ22ACQo0VZR5dNzToSWd1CirN1kYnlPMdLtvBSGsZG77KS7O47GzJFLo8p3j5FCuKDqFIczFC+IwWcNZP/6GknmohypfeMI1Rnxb1MHOrjK3FXcCdh683UFLEsAGf3AbHUkTy7mU+uLT6UW5eWzgxq+OUe4it0FMoESfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=idXzmazr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1749818638; c=relaxed/simple;
+	bh=zpDVdjYhK2I8xsbQtHeIQ7//k3NZkgd5iBenS9Sm588=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzAJDzVxd7sk1eCqPt+ajGNEHsIWizwdvGmgXPRsdqt8/nqwz9SlHQhZdVpMJvgfsY48P8vanwBJgoUff3eslONS/Rq2WSECwTlEc9czctEjXFUXBMVeEbsoOi5T6hnLhxQIHSyRNokCIWjrmlVaNKk/zCX4TKg+8XPjD/IEXLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N91ii9A3; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="idXzmazr"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D9DNTN027360
-	for <linux-clk@vger.kernel.org>; Fri, 13 Jun 2025 12:36:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WiUakxxSN+1nXzFjzlIrZN1S
-	nz6/jGOBgrcWU/AJ22I=; b=idXzmazrXj/gGs0J6hk3EJZjvIe6tM4OM0QVuAiO
-	XxVdwqvrfaRy9ch8ZrG6ixjweVV2bzKbQf7Qi60Zy5ab4PnG90/RETPqxNKvRZjS
-	eiE1P1Tzxvq1lFwRbqgkyQova1PDSGXfPOepNV0zU6mKAvAqf/V+Fi/GsRivWJeQ
-	jqhSh45c7Mt8JKnya7wzmX/xJ4NtDYfpMh5IXhSwKVeMg5IezhsgEbip3M6izkZ9
-	aIJ6rpnB3vdu9YX4A7iy/6i1Xty0PW9KjdILPZYVBE1AyScKdPJ3bRsuxXYKiXTj
-	NcrY+NFMqfL4tPQ2mUpRXoPGeeP0X0pZgZJeV68/Gt2HIw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 476jrhjd2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 13 Jun 2025 12:36:56 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fb01bb5d9aso28435516d6.3
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jun 2025 05:36:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749818216; x=1750423016;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N91ii9A3"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cf214200so17927525e9.1;
+        Fri, 13 Jun 2025 05:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749818635; x=1750423435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WiUakxxSN+1nXzFjzlIrZN1Snz6/jGOBgrcWU/AJ22I=;
-        b=PcHaew9k/n56EwG6hh9Rs5t3u30zGX0mibwuwrdEkF4ZD/x//FsNBpom0WT5c6Taaz
-         5leQQHcbre47P/akkuIEtjGHmTEXYFtlP3cDtzwn9fH7JZm4bP8od765kpjqoEEJmhbU
-         rYYb5HFm/zF1YkahioBtU84Kji+s63LsNiaZzYd1um7HsPDzoKM8MG15Y/kdV7MwCKl6
-         oJ/dlozGFYoQ5k6cbLQSnudFQmgEdRAclijtIvCiTYQimiDtalNOTrqX3i046DW/KMeS
-         9HiBhopcmYXQWMB0cEo6UY/iTuk50vBq582YYU4VnYoYQcwUblaLKlTf9grcNWRrkdxv
-         t97Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0XhvbWICUTJaHJy3qTVoZxQqTWq0HlM/gzpv7Q83y8uZrfpANJxG/oFj+SXzm4Nycoztr+ZYCYN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqwjtS0q4eBBWeIytDT6evKqNgmqGI2FdNzcbN7M0wWyHT/Wyr
-	KHlXzexXXrhgrz2/dUVb7Qawa/VYqcvn4SIbqsNR2O3graQEI9bpT7ZiRshK7iNm3M2UoTaxLWn
-	jjCRmBGajy2awrFwmUS64Ppx7HXz1o9QLsiNFEmGll1D1UmtNWjSkaWfd7Wj1XMM=
-X-Gm-Gg: ASbGncuQQ3cL/XpSq7PWPU0dbKiXOY3S3CQqXkcb0OYSFxggzrx78VX+XQ5RVDnBYaD
-	gmXC/sLZWOOZg+/9rUGahdQhAJFaAZlJNTNooeWRwNuJ+zf/9HdXosWPEh1ODBG5C6FAau/iSuc
-	JMo2FEaJX+LqzZk2+ME1ACrkZ2p4bFYhT1YHXisQSE5/5K2fpvq8RJfNSuvEjfO87ZsZN6RylW6
-	kBcBLS8GbtHNe0p0xe5GXdxXCawsryD12XiqJuCIsBEgrLYkTBjv2G0bn97h5EzfAUVeb6Ni+8O
-	cWsZl3srsBnzQyr+RIFaeaGxamyvNzjTZAovJanUCszydx1anQKL2NL93qfkIFJmQTWGpZEJiqB
-	RWa2RE20Yf+seHdFPYG8t4GalIDf2OINxazw=
-X-Received: by 2002:a05:6214:519b:b0:6fa:b1bb:8315 with SMTP id 6a1803df08f44-6fb3e59a061mr40470786d6.6.1749818215672;
-        Fri, 13 Jun 2025 05:36:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKBgV48W2nf8QXu1t8reMR4IVWaqjw4aDfebN45a7V4MAz0VWfAE0OjLFPbHkgdIEljmvRgA==
-X-Received: by 2002:a05:6214:519b:b0:6fa:b1bb:8315 with SMTP id 6a1803df08f44-6fb3e59a061mr40470456d6.6.1749818215294;
-        Fri, 13 Jun 2025 05:36:55 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b3304f4a8sm5397681fa.3.2025.06.13.05.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 05:36:54 -0700 (PDT)
-Date: Fri, 13 Jun 2025 15:36:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video
- GDSC
-Message-ID: <vsl74hdwomghugslc6ol7aa4r6ralx7fswit6eiw3674xxgnr3@pigmgoxpiapw>
-References: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
+        bh=QSzXWhN/raBWTiTPkiF0KQOC1xc4h5AJxVQUi0l6KqY=;
+        b=N91ii9A3BimgrjxCR8lpTaXs1KELczJFTHFSf0XYrlq5ckKYawkhSAO81pAvQ2vKW1
+         QkT9n8TLtI/zPQkoJCf0s/MOPOVGICD8PEvvdb06rBrWdA8DLLH8uUOANeia0QFIO72a
+         6AnRKzSwRPZZl2zjme96EZwhqYTKfBKgIjuWl1ipiWwFKDWzX5nQH7m18+ZcxTDQAc/u
+         FxzkLGzR/qDSq8EV0/9+++4PkS4jmR5iOyiZ0byDrGfS2h3aXtnDOnbay5n7264L8+Tm
+         40JB3mJPwr8Ujk7wNQR4aN4xcrmzrjpsYR0uDHcje4mOB1Km1jJ9v5cInBNAUXzxFMq9
+         lJUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749818635; x=1750423435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSzXWhN/raBWTiTPkiF0KQOC1xc4h5AJxVQUi0l6KqY=;
+        b=Ks0jgiMyHGBtrD+mEKtbEqRYjRlJlJAJ2c8VtCOh0vEtV7wM1D+56Wk+Qb5dLOZojv
+         kR5SVFdIMQexLOQeUwqhKCJHGNnGNZCaQf/IcljNwqpiCIPa5X/y+7e/Mvh/V/RDTnwH
+         ureDsmdXFVd2p7opJvX/eOwe1hdS5+jBpdNlMcnCNgGLN68ysifJHVF6E5B+//VD83DF
+         qqREizB3dFIYfv0bPcp3mjJEeH0GsqG2KTRnuGEsTwDvTIzPnUvwIAeMwfg/EGGJdOY7
+         qoUtP+l68nW7T8//0qV9BWs00IOUrHVzvpXrdCAZMDwLpAtkbfaxAYVulhgqfK0eJU3l
+         rtAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaGdo3Adi8MNOw+lzfwgk1NiHiO/hZsUsrCTeTQ9stv+ZYR/2bjtuNkDGf7yXAKbTsT41rTtYAirwLw/MH@vger.kernel.org, AJvYcCVB+m/WeAFM0jXqxbHG8swW7bwjec2z3mffWTUbZWbgcTcnVcaoxMGzYWKYlLSVkOXt7eu/h/n16Od+@vger.kernel.org, AJvYcCVX2AsD9dzTpzdCdhDs57EXh2VvSXRrgZBL7Ex2Kvek1TKaGrwEcuFiiSi3YH8n4VSUf7IWjEJIUGvw@vger.kernel.org, AJvYcCWHSW1sesKKv0gKAxLIrInr96QsmYFwRpGsP9JFAKavtnzY4KzHXHMsSQI7y86fxqwPmFj1GwJo0Mk/JXwSjoLmxYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1jl01fGtkSjC9JBxpz3wrZGjmV1EgeXp/fDmOF6ygSqsue8Vv
+	SxWBqksF1664KeO7l41ycU/v/70quwvQB7S5vMRqUSsbqQ3YhvBOZJvnB3/XJuCWOtJ9+KE09qf
+	QGUZGzwppgAn9g1aoWlPTuJxpC/x5NjI=
+X-Gm-Gg: ASbGnct87D6jaTH6g3CYNvdQ+/OJgVn3ruGf3iBV7VZT6kD8ArXwtry02P0NaJwlKJR
+	VCERyoK/zs43KxQ3qGppwwdJuyMrnTOokmFChuM5Pl5tfdDyE5bYQBsD4oJprnXdEzbGFFxCLX/
+	30oi1c9dVmh1vqDJSarppeWtFn1Ob8e/qqsCNcJ3dwB7y74TnalFAGa8cDJZsCiLfyKGvmVF1oY
+	Gtwv1o47VAM9Q==
+X-Google-Smtp-Source: AGHT+IEgP77ApvkePGUXbDz5b2URG0Tqka6fWKxmrlHoPPjLt6eXfMRuQsc3BlD+NOvRaghPFy/NaAhZ9nDY7Waa6rE=
+X-Received: by 2002:a05:600c:c162:b0:439:9424:1b70 with SMTP id
+ 5b1f17b1804b1-45339a3b38cmr16993865e9.30.1749818634634; Fri, 13 Jun 2025
+ 05:43:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=EovSrTcA c=1 sm=1 tr=0 ts=684c1b68 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=rn4lbcPYODbMvauTXpgA:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-ORIG-GUID: gLSOZ56e7KQPfHi8XgkjMNiy6h0yirFq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDA5MSBTYWx0ZWRfXx3C3sSU76AQV
- D8v0ArdtXbbbFm9i4rcLKxle92U+Qd7plOS837V4XXrOG76WtLrn/egyMwGv6qRD7l1w5i/5i3U
- dQB5Pvi2MP9q7ihG63tIh1dAy2HcBLdXlXeAUoOmEB80KjoyRKReesUXauLUIdKmRAh29MF6mN1
- P67IRTLqq+LlOSo/wM1pmM1ZAX1/C3NgNnvJYfnyVlVHfbDDKE0YKlMKOa9mrN7tQ6B+6VDEmeQ
- rjtq3EvgITN5CrGL8tnFfvRhcqK73GS2ryeZm8Knbo1VEZPfzM3kaGV7kdS0kTWR/Y6bsjPW66Z
- oWycLdsn3r6g8/Ix67zFkaG0TEdQU45voqnt6L5RKBspf8xpkGBKJc5g/O98Wupq5rz0N55MVA8
- 9nDtdDlNpVSx3XJwigL9CX4oMfIJ9ZxOtT66SZbjTbTXeluCL3rnXZ3fj7qeNY1H41sYqP5m
-X-Proofpoint-GUID: gLSOZ56e7KQPfHi8XgkjMNiy6h0yirFq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-13_01,2025-06-12_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=838
- mlxscore=0 clxscore=1015 malwarescore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506130091
+References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250609203656.333138-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+In-Reply-To: <CAMuHMdUyce8qxwStb-adR=ywJRdPynOSdZn9DV106VRptaa67w@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 13 Jun 2025 13:43:27 +0100
+X-Gm-Features: AX0GCFsk-_bL3wETvaMr4BaAQMx3wbt70A6JfaYg8NsgwG6lufDuRSiVfN-lk_k
+Message-ID: <CA+V-a8s_9WeKJPvyi5-eAVAR2t-z03iC2niFUP-OJgkc-yhD-A@mail.gmail.com>
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: Add initial SoC DTSI for RZ/N2H SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 12:22:45PM +0200, Loic Poulain wrote:
-> The venus video driver will uses dev_pm_genpd_set_hwmode() API to switch
-> the video GDSC to HW and SW control modes at runtime. This requires domain
-> to have the HW_CTRL_TRIGGER flag.
-> 
-> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/gcc-qcm2290.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Hi Geert,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Thank you for the review.
 
+On Thu, Jun 12, 2025 at 3:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add initial SoC DTSI for Renesas RZ/N2H ("R9A09G087") SoC, below are
+> > the list of blocks added:
+> > - EXT CLKs
+> > - 4X CA55
+> > - SCIF
+> > - CPG
+> > - GIC
+> > - ARMv8 Timer
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
+> > @@ -0,0 +1,135 @@
+> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +/*
+> > + * Device Tree Source for the RZ/N2H SoC
+> > + *
+> > + * Copyright (C) 2025 Renesas Electronics Corp.
+> > + */
+> > +
+> > +#define RZN2H_PINS_PER_PORT    8
+> > +
+> > +/*
+> > + * Create the pin index from its bank and position numbers and store i=
+n
+> > + * the upper 16 bits the alternate function identifier
+> > + */
+> > +#define RZN2H_PORT_PINMUX(b, p, f)     ((b) * RZN2H_PINS_PER_PORT + (p=
+) | ((f) << 16))
+> > +
+> > +/* Convert a port and pin label to its global pin index */
+> > +#define RZN2H_GPIO(port, pin)  ((port) * RZN2H_PINS_PER_PORT + (pin))
+>
+> These 3 defines belong in the (future) patch that adds the pinctrl node.
+>
+Ok, I'll make it to the later patch.
 
--- 
-With best wishes
-Dmitry
+> > +       timer {
+> > +               compatible =3D "arm,armv8-timer";
+> > +               interrupts-extended =3D <&gic GIC_PPI 13 IRQ_TYPE_LEVEL=
+_LOW>,
+> > +                                     <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_L=
+OW>,
+> > +                                     <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_L=
+OW>;
+> > +               interrupt-names =3D "sec-phys", "phys", "virt", "hyp-ph=
+ys", "hyp-virt";
+>
+> Thanks, this brought to my attention that the node in the posted RZ/T2H
+> patch is wrong ;-)
+>
+I have some fixup patches for T2H which apply on v10, maybe I'll post them.
+
+Cheers,
+Prabhakar
+
+> > +       };
+> > +};
+>
+> The rest LGTM, so with the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+>
