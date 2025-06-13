@@ -1,164 +1,172 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC602275AE6;
-	Fri, 13 Jun 2025 11:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749815904; cv=none; b=q5VwG3cOBPvDytclq5KDM90QtgweTg6n2xoSkInwX2VPhwCmt2Zn/ejWGgfWbpLsUBrpY0kwR2M9EmFptlcntP/7Dleb1/9eKAeOxdm5oFkPbn5OQ1y+8fcySAyfG7AqOU1CS5Dl1bxznP6zpgjA9wyjke4n7Wmnszj2ho6f/aw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749815904; c=relaxed/simple;
-	bh=kGmD8JB19m0HhUHQRBoezxXA2nIBVgQxsgwG2CF215E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mcqDkKGHlFOEBw75n3t4ttlGrfAB4Eyg8DgfmSAzwMUU5BxBt8ohT3i/SUqiHHBURkMa72R240Bf9HizvlBZl5yFZlteKUWp4hjb9vBrdYV7EMPhawWDtu0ALlaSI5Vcf51/ijkf3lbVyZwOth6BtRcOdhFws6/FxywTiC578VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUctGX6T; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B66275AE6;
+	Fri, 13 Jun 2025 12:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749816576; cv=pass; b=Le78KBEX/aorHl+bjUZlYc9NG7Ou+vznzefU+/Iec9tujTi+ivo7WK8MS9MeBHDtJ03enlZNL5hdzW9XvX7kF+M5pr12V2YD0kAUmmwW8KxRb+I4BCUzkL6mm+dLqXWRDFAPRq77D2vNpwJPU+l5j6TuWzbQqnsT8Zb1vJWpgF0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749816576; c=relaxed/simple;
+	bh=tWxzlB7gvAwvQ4TxzPO+xifFWwtGtqkUHJoJ1LVl9CE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rUOsPQtDG30lH6TtGo3ThkGp1aYzhk0jMiHSC8Af6lapOC+jDWcHm+pdkQYFgEwXDkc6mlCTGDd+UiAwc+A34o3+5yUfa9aeR9tYwR+RgmVopcdMnj/si65SXM72YHizj6in1wnRVxfbPHZ7jdQ2RohtSHGNMxMukcZ6MueYHc0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=iYPe6hd7; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUctGX6T"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450dd065828so16502325e9.2;
-        Fri, 13 Jun 2025 04:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749815901; x=1750420701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j3eMhtTUTyut2nDlLIrWhDjg9MBYJFf+FAciQR/QagY=;
-        b=hUctGX6TOPld5yq4sDC56XUYuv6hprinX3Xy9n0jjyXMutC4OKcSuN9xd3sdRfAkUL
-         sJ6QFGAu73uvSJ5HhACIjnZhGUD8UCtQfVzvV10wvW7/AZwFuesoypLiqTiIegIrBM7b
-         bZa0lI3GLa3p/Cfifvmu+w48XB9zB2spg9HPIZV4ko2YGkdywSkaKRpMtcb4TO2Q733r
-         JmNDUG+nKj75lzyUNOCX/24AVpK6wPZZJ2zGErujDjkNpqf1cWdI4ltjRF5g8AOp02Kf
-         09SeUPi4p6xkcIY7aZ2kfagAo5SRNIFGFGW0WTJKseP99lmsVGmiJT0G2KMhyAdm+wCs
-         kRtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749815901; x=1750420701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j3eMhtTUTyut2nDlLIrWhDjg9MBYJFf+FAciQR/QagY=;
-        b=wdBFh0hoIgRd0heIigAHtwXRQ5+YVbRyApNDeVILa6UXKapVOV0qwpOt4XZtDF9yLD
-         MpQf5hyUhrbh37BJ4v6PncK6AqHyMO3jGRGzYy8YdidLiW03WL8v1f+g/eM03XFBConB
-         v3aE8WA/PuD/1+yaciHLWEdQ+PMRykFYFeUhwu0kKuSlf0rVf0eoEEH9TozfW35IXYtL
-         8aB1Yo1El2YUcXByh2KKZBAcZ+a+UKzNsUsDkNUoxacM8acCrsMeLCmrJcQOlW1U6ogH
-         XA9ryl4lYa8QgXy10EQJJ5U2VboNmbM9aKVrYVpivENHL4H3mNvvzdSfMJSOVA8cZVls
-         4aDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVP7i7KoiU/4/eylXoyLHBQ4iEJ7MwHRa77vB5EdmnBQ8QA9hZse47k3kxeALHzdQH3uEJMqHWEM13dL5Fn@vger.kernel.org, AJvYcCVQDxNWRKpmzYMoWlPp+0MsUuryxHzvFbL3jItCr4llbVd1FCeNOduNGPcXoQDb04zQBQ+teHw0IT50@vger.kernel.org, AJvYcCVjuYKRcdFqHZkKsA91YKnPnRFOqMCn/uo5CEExvpSnDVGtKrhEx+VcfuMo5f66/Ikx3VcXFBehDMlbirTyeixP8xk=@vger.kernel.org, AJvYcCXbriV9PUbZ+UNAEIy+BGI4+DDrgpP29y9VNj9/ktnTvgcngAKbpgQYRT7oj/NQNef6Wfkkh/SKTDfy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAiIlz9i1EFmOYnVP5qdUzkkqzDB6BuUACrsNb2q1cBlxKnSFj
-	/TfiBlbEW47VtZvQirO+nMYNTqTxzcquoWtcy/TSeZO0GOuQqcMeglFjMRsWoOsrhJpPte0YuYb
-	n1vBJNQwdCBqjZPYnWv/FJY587N4flTM=
-X-Gm-Gg: ASbGncsYoG7pgbKdv76m7HqShRKEer9pvJxvJjQ9lVz7GKIWPqjf6wXiyWAEMpNJuLF
-	+MetWrcwTyiOB6DG+VmQwQ2+Ucu/bwvzHGcF5GJEW5vavhQJXvz8BBctposTEgazHxJULFX/3P5
-	VJD0UUuUO6CUhJQIgLm5Y5ZzFid9YR5FIbUZsqPCPywXLEkX66L6ZBL4x0rtrX0LyTtiaELVQMX
-	G0ORtbtvIRTog==
-X-Google-Smtp-Source: AGHT+IG/7VJabrHQCjSUvresbYAtyJF2QCi65NJE/H8hpkv92Y0pDiB+ItmEawPO54iQKV9D7rQ5943HH+mWJ2mxCeM=
-X-Received: by 2002:a05:600c:1c19:b0:43d:9d5:474d with SMTP id
- 5b1f17b1804b1-4533499db1emr31423015e9.0.1749815900968; Fri, 13 Jun 2025
- 04:58:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="iYPe6hd7"
+ARC-Seal: i=1; a=rsa-sha256; t=1749816504; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HxsUUIkbJLHor7xQVOxFnKjQL2tcvAU/8U7uOGAT8YJ5SzkaPujbsMSqqr80mMJL7/C6qPJ5R72AJZZz4V+WGvRuhbDD8RcEdYVp0T3jFCWzPUWFNNQ68W3mkdPx/uRz9Q8CO9KUVnMiuh0wlCTVhHSoXI4LkoQwVLhFcDXTcHE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749816504; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oC6j4XXPtFnpNI59vFPxucp8Atnh3iWQ7iCtDWJTvGo=; 
+	b=A1ATiiZZKeXR51mKcGYEcu+ievsJrJBhXTLF5fKN6m6uGlmf+gN+qSW/4BgN2DXa3+ihmm5IDJ0LMQYccMcRuItr2vNHq1tFXK2h6DApxhwbIV2hxsLhxWB7MZeQnM9wPRrdMCbbUDX2/hY046rowLcFe6wBngVN1Vd+mah2Cyc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749816504;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=oC6j4XXPtFnpNI59vFPxucp8Atnh3iWQ7iCtDWJTvGo=;
+	b=iYPe6hd7lzD5NmEuVNlPJNUR1sBcQMTEzgFULW5ZE1tzhGuUUZmsrhquSUKDA+Cs
+	I90mwM0EoNm4PSiTntzA6phjzUyTdMpluFlcfHK8TNliE3+1AYflsiylQRbXHpwn2NL
+	nJ0riWRwAIxWd/I6yzJxEXtQHSBfMYaBpXVI3PVg=
+Received: by mx.zohomail.com with SMTPS id 1749816501559794.9356716993168;
+	Fri, 13 Jun 2025 05:08:21 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 17/20] PCI: dw-rockchip: switch to HWORD_UPDATE macro
+Date: Fri, 13 Jun 2025 14:08:08 +0200
+Message-ID: <12129790.nUPlyArG6x@workhorse>
+In-Reply-To: <aEvzMnxgsjfryCOo@ryzen>
+References:
+ <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com>
+ <20250612-byeword-update-v1-17-f4afb8f6313f@collabora.com>
+ <aEvzMnxgsjfryCOo@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250609203656.333138-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVvQEC9c9wHDrFiY6iixuP-JjOgHZQjfzOkAjvxs=LuqQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVvQEC9c9wHDrFiY6iixuP-JjOgHZQjfzOkAjvxs=LuqQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 13 Jun 2025 12:57:53 +0100
-X-Gm-Features: AX0GCFtuTlsa4Ii84sW_lD7uEsQCXVKDSlUppMTz6suqDDVTRQMUqOTSl9D_r-M
-Message-ID: <CA+V-a8vUdBwAx5x1FfWJZK0BeXQQqFeDRLtvyETiPDQc1Pftiw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi Geert,
+Hello,
 
-Thank you for the review.
+On Friday, 13 June 2025 11:45:22 Central European Summer Time Niklas Cassel wrote:
+> Hello Nicolas,
+> 
+> On Thu, Jun 12, 2025 at 08:56:19PM +0200, Nicolas Frattaroli wrote:
+> > 
+> > PCIE_CLIENT_RC_MODE/PCIE_CLIENT_EP_MODE was another field that wasn't
+> > super clear on what the bit field modification actually is. As far as I
+> > can tell, switching to RC mode doesn't actually write the correct value
+> > to the field if any of its bits have been set previously, as it only
+> > updates one bit of a 4 bit field.
+> > 
+> > Replace it by actually writing the full values to the field, using the
+> > new HWORD_UPDATE macro, which grants us the benefit of better
+> > compile-time error checking.
+> 
+> The current code looks like this:
+> #define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
+> #define  PCIE_CLIENT_EP_MODE            HIWORD_UPDATE(0xf0, 0x0)
+> 
+> The device_type field is defined like this:
+> 4'h0: PCI Express endpoint
+> 4'h1: Legacy PCI Express endpoint
+> 4'h4: Root port of PCI Express root complex
+> 
+> The reset value of the device_type field is 0x0 (EP mode).
+> 
+> So switching between RC mode / EP mode should be fine.
+> 
+> But I agree, theoretically there could be a bug if e.g. bootloader
+> has set the device_type to 0x1 (Legacy EP).
+> 
+> So if you want, you could send a patch:
+> -#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE_BIT(0x40)
+> +#define  PCIE_CLIENT_RC_MODE            HIWORD_UPDATE(0xf0, 0x40)
+> 
+> With:
+> Fixes: 0e898eb8df4e ("PCI: rockchip-dwc: Add Rockchip RK356X host controller driver")
+> 
+> But I also think that your current patch is fine as-is.
+> 
+> I do however think that you can drop this line:
+> +#define  PCIE_CLIENT_MODE_LEGACY       0x1U
+> 
+> Since the define is never used.
 
-On Thu, Jun 12, 2025 at 3:38=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Document support for Module Standby and Software Reset found on the
->
-> the Clock Generator and Module Standby and Software Reset
->
-Ok, I'll amend the commit message as above.
+Will do
 
-> > Renesas RZ/N2H (R9A09G087) SoC. The Module Standby and Software Reset I=
-P
->
-> Clock Generator and ...
->
-Ok, I'll amend the commit message as above.
+> 
+> 
+> Also, is there any point in adding the U suffix?
+> 
+> Usually you see UL or ULL suffix, when that is needed, but there actually
+> seems to be extremely few hits of simply U suffix:
+> $ git grep 0x1U | grep -v UL
 
-> > is similar to that found on the RZ/T2H SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
-> > @@ -0,0 +1,28 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > + *
-> > + * Copyright (C) 2025 Renesas Electronics Corp.
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G087_CPG_H__
-> > +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G087_CPG_H__
-> > +
-> > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> > +
-> > +/* R9A09G087 CPG Core Clocks */
-> > +#define R9A09G087_CLK_CA55C0           0
-> > +#define R9A09G087_CLK_CA55C1           1
-> > +#define R9A09G087_CLK_CA55C2           2
-> > +#define R9A09G087_CLK_CA55C3           3
-> > +#define R9A09G087_CLK_CA55S            4
-> > +#define R9A09G087_CLK_CR52_CPU0                5
-> > +#define R9A09G087_CLK_CR52_CPU1                6
-> > +#define R9A09G087_CLK_CKIO             7
-> > +#define R9A09G087_CLK_PCLKAH           8
-> > +#define R9A09G087_CLK_PCLKAM           9
-> > +#define R9A09G087_CLK_PCLKAL           10
-> > +#define R9A09G087_CLK_PCLKGPTL         11
-> > +#define R9A09G087_CLK_PCLKH            12
-> > +#define R9A09G087_CLK_PCLKM            13
-> > +#define R9A09G087_CLK_PCLKL            14
->
-> The RZ/T2H DT bindings file lacks PCLKL, which was probably a harmless
-> oversight (it can always be added later), as it does exist on RZ/T2H,
-> too, according to the documentation.
->
-> However, given drivers/clk/renesas/r9a09g077-cpg.c has
-> LAST_DT_CORE_CLK =3D R9A09G077_CLK_PCLKM,
-> using R9A09G087_CLK_PCLKL will lead to wrong results.
->
-> So either you want to add R9A09G077_CLK_PCLKL and update
-> LAST_DT_CORE_CLK first, or set LAST_DT_CORE_CLK to R9A09G087_CLK_PCLKL
-> in this patch.
->
-Actually I already have a patch which includes a couple of fixes and
-to the orignal bring up series for T2H + I2C support which adds
-R9A09G077_CLK_PCLKL and updates LAST_DT_CORE_CLK. I intend to send
-them when the base patches are accepted. As there are no users for
-PCLKL in the bringup series this won't cause any issues. Is that OK
-with you?
+Sort of. Literals without the U suffix are considered signed iirc, and
+operating with them and then left-shifting the result can run into issues
+if you shift their bits into the sign bit. In the patch at [1] I needed to
+quell a compiler warning about signed long overflows with a U suffix. This
+should only ever really be a problem for anything that gets shifted up to
+bit index 31 I believe, and maybe there's a better way to handle this in
+the macro itself with an explicit cast to unsigned, but explicit casts
+give me the ick. I'm also open to changing it to an UL, which will have
+the same effect, and has more precedent.
 
-Cheers,
-Prabhakar
+> 
+> 
+> Kind regards,
+> Niklas
+> 
+
+Best Regards,
+Nicolas Frattaroli
+
+Link: https://lore.kernel.org/all/20250612-byeword-update-v1-7-f4afb8f6313f@collabora.com/ [1]
+
+
