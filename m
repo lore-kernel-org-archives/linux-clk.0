@@ -1,73 +1,73 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8801DE4D8
-	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 18:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA421E520D
+	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 19:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749927046; cv=none; b=qekHAuElGEykn90GCOjEXSmfcU2mvlTjev68vqkazmq5b7edWDBmJnsutFkskFherEcQIx/HqDEqI3gO2hz6yRI6WnekPkXIbmM7sQpD8gkWSJ8mJpWDuYSj9NgCBWQvIjkoX0bFTSxh2DgsRJTcyRuNDR+ks8XoMQ450ltVYhQ=
+	t=1749928080; cv=none; b=X4qZJS3tInC0G9ibf9F5QDL+xgAqIQ+oeZh5kmt9YwqmRrnq2ADo+hS2VuyIzdk6hfsiNd93if2mIURswNAOs1hm+H1uPnLrTiNji6mGlSHCa85NHaeJyjelrrssvs0/WS7nJ1ByqbajP5qUcQC4Pvr2I5B1iShgSlwDwTT5W98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749927046; c=relaxed/simple;
-	bh=zAo8PQ1kIpBM1SD/j60V6KNaG3hiL9Q7UDeeuB5Xfpk=;
+	s=arc-20240116; t=1749928080; c=relaxed/simple;
+	bh=5fGCHQhY/8CNoHqiYwK5sKJ1eRamWizDToJSxLRvSZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fuxRZz/dXmI+x/8HfRjr938FbOumHBevJn2+mW92AHDENfYBdTXuMwWsYY3f6+s6Ugv8YyAISpo1YF5OhuyuYHs5Ma0BdMxObSYS1tDBBQjYmDvS1vsnvJzy1KetAfD0WIy1mpVsjtZJmSZvHn9t+DU3KpbuVpfrxyhuVw9AUIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UDKuxPYn; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=KMKzTsBWx4OI08jGoWxz0Eb4CxMbnPFVbSnkD9f1cNGy7rcjrA3Bn4T2bYBJbGn88XsCAMz6e6mKsQP/2SEWISq+DPQal8oYy4IwpLl3rhPO2FgIFwAR/88TL8ezLfmz9gnSPKEc+NpvO3FwnLG8yjvGlncrAVXImW7oBbMga1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UAfU5rwZ; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UDKuxPYn"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55EIocdb018484
-	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 18:50:43 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UAfU5rwZ"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55EGX73U027542
+	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 19:07:58 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eoG6O0K3f8gZX/KII4B/go1MHyLMfczPeBlrtLSsYrM=; b=UDKuxPYnC4bK/zSP
-	qjZzLRQmMiLyjHi7cOmLs3MXUjrYKquJxPrs1f9I6+I0hl5/PETBkSTnYf2iI0jF
-	EMtozgAt/iqpMHItsXUFVjrtRt7p65SVdI/tfdQrlS/AOxyBXGxsH7GlJW+u1Sia
-	asYaodCQQCUX0TH5XsfLRozMdD6Qr9eYHOl5jUR1THq8/bD7irP7aNO8z9S7Nx3b
-	RnzVqlGiMZuMqiCXKcwEFQjE2EcTeY/F2NZFiDncMBDTxmOwGP1ACK7hGlgMNfUd
-	5dyWxRO4pE5FmLc+FB7UgReIg4t6pVw/v5os8IVPgqXnskbS3zqB4tAI+JdCFXbk
-	tYAX6w==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791f70wjc-1
+	czK0+r2bU5CFI56zqbiiRnlxJxdH80DDV95cNC/UIGI=; b=UAfU5rwZzqvcNtFl
+	jaOdBi9vtGH82J7QMOexumQzZJjregDTM4Llp23N1DQQ09PJEQdzf2F0+u4vjioa
+	uDxK/3WvNvHzFl6qjQim55lJ0209N6n2IUn//8d9ZcxmzuZw1pIxOYPP2EmSvb9M
+	ISCw4hkbEojzykIbX+QBR9ntqx+W8PWgtjDIaarqBprKmSEycwwgeNo3OQ+BKSKb
+	Pu4PJqTc2348jtZtTd+Ao7moK+IgZWNShQyBxj+RnVg1EKE1yN7Ir3vq5SRu4/Se
+	Ujmyid1faE4FuSbBFhLp8CA7by4JLfWhqGOTBc1LbMK/ltlq5BwBmcy5cSY6eJsL
+	rgD2pw==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hf8x48-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 18:50:43 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a6f59d5ac6so6133481cf.0
-        for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 11:50:43 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 19:07:57 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d0976a24ceso99063085a.2
+        for <linux-clk@vger.kernel.org>; Sat, 14 Jun 2025 12:07:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749927042; x=1750531842;
+        d=1e100.net; s=20230601; t=1749928077; x=1750532877;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eoG6O0K3f8gZX/KII4B/go1MHyLMfczPeBlrtLSsYrM=;
-        b=rIx0tUNwaMR7DJHAqpLIagmre0FOJN+c/ODcNJNjDzy2UvBFL4iUbSLNhKLJpzFqm6
-         BBX74oUSrrIVZwMF+r3l2Y3CQ6jZsflJhVVkrjzQbfMSyeoR/BD3DITxfdPtZye8TCo+
-         INvPu+Tjo21MUUi7Ma67maPZUbKfmk33rCzn4K3qjMQwna6700ggZjnJe/otucjYskdi
-         4WMASr68Z6YdlKpEPnqnZ4h5NC0EnWqwf4435zrptfXG0rrlOu4k7zSd7eMokOE+n9+l
-         /DOAzr72EzshHKjJQC7ECF3mQY0ydanUvQJ5wzXWnGP1ceZ1vMZ3uEtHTA/aTcJ//6HF
-         Es4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXJlJJJmaLEngrRSWwjIkdu126lU/ktx5fb2umeGrBX2nhdUc6qNRgL6LrK+eorNWfhmcNV5Bo+1Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwomfIesGR1r9abuQu7Ksv78avnWY9lntB7u4KTeqbFyEIkjCuF
-	NAtVK0DqpmqYyZUGR99WUSP5uQ7O6qRKRTNbMJxh5P62Q8YA2tJ9Qd6QDetNoMpO0er8mMOkgIK
-	r++k8jZnhmMl8WoC3xblVc86ErUAyWMno8wQhTlk/8kenDXXcF9MH+K7UgV/4BabhWpVGxqc=
-X-Gm-Gg: ASbGncsARu/e24nyp+ro2yh70DZiLxb/Isaf2uz3qtuv8QBSObPsSO2D8UTgnO2op8p
-	8DzY1J8IJOAcB14OpDUiZd3VyFt5w9z3Bc2bh6YfmEII6x/XIpYKtlRgbosjjOeCbOKOp4iDUBS
-	a4i+yzPPE3HqopDVugjn+dKJPUs+ZazR1nJqBIw+7NTLwW0mBAfXuYovFVUEVzgCRvnJk7FlBs5
-	dQjiavC6Qc3WavEvasmUFSED8Igde24Ct1BkqNHhKl1eRARL/s5MyDJCaw4Vnnp+daCXdEg4gg9
-	72lOQDs1o20i60DMCOgM1O7OMJ1vc1FxI9LxltXBydlwS3bDncXF9Do4OqUm8/vFXztkx0J1RWX
-	C0V8=
-X-Received: by 2002:a05:622a:60e:b0:494:b869:ac06 with SMTP id d75a77b69052e-4a73c4f0986mr22004411cf.6.1749927042626;
-        Sat, 14 Jun 2025 11:50:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEx8dYFput+x1zrfRR/vwybI6ORi4SG7FUVUMwmj0jEta6iK89coF3n7ZV/SrKjJMpi0fdbrQ==
-X-Received: by 2002:a05:622a:60e:b0:494:b869:ac06 with SMTP id d75a77b69052e-4a73c4f0986mr22004301cf.6.1749927042208;
-        Sat, 14 Jun 2025 11:50:42 -0700 (PDT)
+        bh=czK0+r2bU5CFI56zqbiiRnlxJxdH80DDV95cNC/UIGI=;
+        b=kIxlcxuNxFUawuKtpKJXrPAhnNmzDlhhNmxMiUGjm0t2YnFqtU1iGD3pBpArYw8Q7w
+         4MK8uxa24P02SRlQ5zIYN+p5HvZ/HnzAa4OWSd8s08En29Rao7O0+KPmgrWuNuzAwTc4
+         zSl+RoQWJ79vyC64Au8f3WPvl+1bhNN5j6JC8zuJVgfVwxb3M8MNPjskRgCNb7Vh50Gr
+         zHjyL/XP+0EzHatBq1qrMV2LcvwJvgamslMuxVufMtHrc43uHnI42dTNanw2uyKsKXbH
+         R4n8rMHnLRTgjex3l4LsH2IMXWEp5WCeV1Fx/EMYaMZP3EF/NkIrh2XrFn80He+5QnvD
+         E4iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU73lxdhL9fiKw6uzSpPQEoWjb9KTISlakeYoepZcsHuucG0m88jb2FNe+V2RfyeR1o+gY1SNuiw4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuhYl3pWDtNB2LbvwLVcM4YbZe4qTzEe4P5/65dLhKfIK4YdP0
+	7SDFY7zX2ZGNirWbmPDlA18oYPU2xXN9BTjvwNx+6LswU83DyNxg5gCwux2VXsKa/X26DC3Zfcp
+	NV7VMUfe5k1DZ1PqxfcTSTQbcOLLcxy7x9wAnhkFWVPuKJT429Axl4G+C6cC8rAQ=
+X-Gm-Gg: ASbGncvw5S/gzNyNuvCMuwARzaOBgXzQk5sPr2B4CraHya7pY+InSKOnAMPhgGkH6Zb
+	b/JWuQTZ2QtUqOEw5AEf4ZhI0RGepfiFOLn7P9Z+r0Urn/Tbk/e9C9lGlU0PuFUtJulUVpEIWiy
+	SP4d6OQXlpSKwdDtOa6nnqVWYTPqL90xsAT/hC4KrveaRfKzEYHVSjWoLLVdFqbaWJzETM1am0T
+	3f/bbhJiZk2YMhrYurupAWUvG7Tu6SZjN4tXMLVSSeXdyKOB0dogWI2HNXtP88EO4lnhjiD7ocs
+	FdGuKwZkwAT1O944AexhTcPhc9hPcp9yR6OhgkrrGLyDHVrxtVdxkly8fH+pCXRcgkjFL9FgOKv
+	N9GM=
+X-Received: by 2002:a05:6214:2266:b0:6fa:c46c:6fa9 with SMTP id 6a1803df08f44-6fb4779e607mr23145376d6.4.1749928076548;
+        Sat, 14 Jun 2025 12:07:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEI5J+2Qhz/ZsAiL1MBsakDRbis6CARe5oJAazNWsgg8FGvV/1N59kDzEJiBk3ROKzM6jr0ZQ==
+X-Received: by 2002:a05:6214:2266:b0:6fa:c46c:6fa9 with SMTP id 6a1803df08f44-6fb4779e607mr23145106d6.4.1749928076097;
+        Sat, 14 Jun 2025 12:07:56 -0700 (PDT)
 Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adfade680d4sm186158466b.10.2025.06.14.11.50.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a5e6f0sm3268359a12.42.2025.06.14.12.07.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Jun 2025 11:50:41 -0700 (PDT)
-Message-ID: <f0483597-45b9-49f8-b316-a9cde7b98d81@oss.qualcomm.com>
-Date: Sat, 14 Jun 2025 20:50:39 +0200
+        Sat, 14 Jun 2025 12:07:55 -0700 (PDT)
+Message-ID: <b89c5809-38c3-4b62-b26f-073869674b95@oss.qualcomm.com>
+Date: Sat, 14 Jun 2025 21:07:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,8 +75,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 01/10] clk: qcom: clk-alpha-pll: Add support for
- dynamic update for slewing PLLs
+Subject: Re: [PATCH v9 03/10] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
 To: Taniya Das <quic_tdas@quicinc.com>,
         Bjorn Andersson
  <andersson@kernel.org>,
@@ -91,115 +91,66 @@ Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
         Imran Shaik <quic_imrashai@quicinc.com>,
         Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 References: <20250612-qcs615-mm-v9-clock-controllers-v9-0-b34dc78d6e1b@quicinc.com>
- <20250612-qcs615-mm-v9-clock-controllers-v9-1-b34dc78d6e1b@quicinc.com>
+ <20250612-qcs615-mm-v9-clock-controllers-v9-3-b34dc78d6e1b@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250612-qcs615-mm-v9-clock-controllers-v9-1-b34dc78d6e1b@quicinc.com>
+In-Reply-To: <20250612-qcs615-mm-v9-clock-controllers-v9-3-b34dc78d6e1b@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE0MDE1OCBTYWx0ZWRfX78Fm2K2uiep7
- myv7ZmGpq6OorXxMc/+ksgTO/dRYJAnxyvi48M+uf5Mjyvmb1C/9wVF+Fv39O5xYVXOOcGdvqe5
- NhrEMlQMMFn6MSFdBIRgI/d2y0DpMuNYX/3cVbWSx1Q8YSleen1l5OpvvahwMqYDCSTARtIwiXz
- U8XO0WVKXyEkzei0u9K5AeZiDA1SAyQDNJom0+ukQK+NA4at83g2vgqIiuPGAj3h1Z83t7fDc82
- IPXtGwM9VOKdZvPGBLikoJAVXbToxvNQe+0N8hPmvTmi6YgEms8qLyu/4lZSvwy9VV8202t1fQr
- Be//p6mi/n5sNoYFMJb908Zk3oPR5X0qtlURyg+ahDS5E/duyoFitRz0xDogGF8AoTl2eoIS2dk
- uX5NxBqQ692ebtE9RJTFZvKWOR8BIrqMNLZf1eiLvC15Xlb416Yuw1o71+10Y4jtc0VaY/Pj
-X-Proofpoint-GUID: rhd35FBYcgrU-SgIL15X6jDDuPKzPW5n
-X-Proofpoint-ORIG-GUID: rhd35FBYcgrU-SgIL15X6jDDuPKzPW5n
-X-Authority-Analysis: v=2.4 cv=FrIF/3rq c=1 sm=1 tr=0 ts=684dc483 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=b3DFIE2h8Nkn-kLj-EYA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE0MDE2MCBTYWx0ZWRfX5zknuslFksf3
+ kFrUsvWB/bQ3a01V/uuGukiX4qwr5XN5y1vxsEmdq+L55/C2Mn/lJ1Thrve8gmj8fY9BJEnNrjX
+ /YH0zKgFH/9uwYuq7Ef854k2/fpQr+J1i7Lonv8oofPFtcgZixuyeYw32xdgsykxOWoOO8rpfIA
+ iQfe9B3b9FMBkZZI7wL9LeENmtdkYPW+x6ZNk1diebODAQLqLiVuPs7LESgZXQR8LDjA4j/pZjK
+ P+Rqwjyrc70a9hy4Gyf0RcJKb7jK7AKHIgFI5bQcL26nDSIE+K3xe8H1lLDys6gcpLPXum7l8Cd
+ hCU8XLnmXOitBs3LbkMniwNxnNqlJC3kPzzmeDyUGwsv4utMEGrhLZnxQZ0+GPJucZuOPUkeGCN
+ blPxvLow38PrGWlPVbxq4hT6VE8wbmtg2/6IVmMjqnIpyLdXQJpcXDGdrWmV3UYoM+k1E0gU
+X-Authority-Analysis: v=2.4 cv=VvEjA/2n c=1 sm=1 tr=0 ts=684dc88e cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=Bfq9QhnQsXqFA3cbzqQA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 6aTKmoj7ji1eX0n8mMFppKIaajEKfy7U
+X-Proofpoint-ORIG-GUID: 6aTKmoj7ji1eX0n8mMFppKIaajEKfy7U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-14_07,2025-06-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- malwarescore=0 phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a
+ adultscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
  authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506140158
+ engine=8.19.0-2505280000 definitions=main-2506140160
 
 On 6/12/25 11:55 AM, Taniya Das wrote:
-> The alpha PLLs which slew to a new frequency at runtime would require
-> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
-> which can support the slewing of the PLL to a new frequency.
+> Add support for the camera clock controller for camera clients to
+> be able to request for camcc clocks on QCS615 platform.
 > 
-> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  drivers/clk/qcom/clk-alpha-pll.c | 170 +++++++++++++++++++++++++++++++++++++++
->  drivers/clk/qcom/clk-alpha-pll.h |   1 +
->  2 files changed, 171 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index cec0afea8e446010f0d4140d4ef63121706dde47..5e4a755b849970281e7742ef83219b7eeaa406c3 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2960,3 +2960,173 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
->  	.set_rate = clk_zonda_pll_set_rate,
->  };
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
-> +
-> +static int clk_alpha_pll_slew_update(struct clk_alpha_pll *pll)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE, PLL_UPDATE);
-
-There's an ever sweeter sugar-syntax for this case - regmap_set_bits()
-
-> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
-> +
-> +	ret = wait_for_pll_update(pll);
-> +	if (ret)
-> +		return ret;
-> +	/*
-> +	 * Hardware programming mandates a wait of at least 570ns before polling the LOCK
-> +	 * detect bit. Have a delay of 1us just to be safe.
-> +	 */
-> +	mb();
-
-Since you read the value of PLL_MODE back, the barrier is unnecessary
 
 [...]
 
-> +
-> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
-> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
-> +
-> +	/* Ensure that the write above goes before slewing the PLL */
-> +	mb();
-
-Here however, the write may not arrive at the clock controller before you
-proceed to slew_update()
-
-> +
-> +	if (clk_hw_is_enabled(hw))
-> +		return clk_alpha_pll_slew_update(pll);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Slewing plls should be bought up at frequency which is in the middle of the
-> + * desired VCO range. So after bringing up the pll at calibration freq, set it
-> + * back to desired frequency(that was set by previous clk_set_rate).
-> + */
-> +static int clk_alpha_pll_calibrate(struct clk_hw *hw)
+> +static int cam_cc_qcs615_probe(struct platform_device *pdev)
 > +{
-> +	unsigned long calibration_freq, freq_hz;
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	struct clk_hw *parent;
-> +	const struct pll_vco *vco;
-> +	u32 l;
-> +	int rc;
-> +	u64 a;
+> +	struct regmap *regmap;
+> +
+> +	regmap = qcom_cc_map(pdev, &cam_cc_qcs615_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	clk_alpha_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
+> +	clk_alpha_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
 
-A reverse-Christmas-tree sorting would be nice 
+Please convert to use Jagadeesh's recent helpers
+
+with that:
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 Konrad
