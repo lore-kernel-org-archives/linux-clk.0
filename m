@@ -1,156 +1,153 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward201a.mail.yandex.net (forward201a.mail.yandex.net [178.154.239.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A815326D4CE
-	for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 13:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969912BEFF9
+	for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 15:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080624; cv=none; b=ZRZAtCXz6Bd4jxtRQxmxOFki5+OJy2W4o4Fbkcrjri2cdJ5j2bCFONYIPlwP/l9n+hZJ/eAvg7GBBW31nb7sl3Nqzb8n1G5qoYYIfZmjeDUjvH61ejUsJw56w8bYKSp5a0Eo4kACiSBhrqSCb5DouUJ1+mgOPaqfzqSZkI/LbQ8=
+	t=1750087186; cv=none; b=WZ+QX+vm4AkEurGlHgIO3AqFqTrg3Q88SEm14pbHpXmgF9O04iF4n5ZnQ7N0REntkH/JVNl54pF9QRxp1VMwBwIgs6Gsy+bKrgvCzocaHrilGCjhBZG/eGrE/0nrozcMXzNgA7XQkjKRo9CfmReXKMWGX40MWqvRwupfNBZbPjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080624; c=relaxed/simple;
-	bh=4Zfd7f0oSTyDjhyyLNFCOi5jeoQIXrDItP4SyLWb99s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LsY0mviELU2LNqdVDrvSOpPfyvt3O9pWG2JDttV62A+q/66bDNu6g/IBA1dhSKWEk4HuLr7isAp5xMNbyKroaA7xq2PRHV4GnAK5aZHHNBoZikSE+tYNhRmQwcqEyHraAh2yv3VBnRaU0O+M2ZRrM39WbC+kR5gRZAkv0fSkFiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VOZXM28g; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750087186; c=relaxed/simple;
+	bh=+LwYjfXJzueB7HaMa0+cHKiOwLTDmmJ5whlPzH24Ljg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fq6kMuBxB7amUE4duDnM6DS/DsA7ARKid5415+ZoA4I47rRpgSR/nbMT4dvab++YWOtecw31yoxC0VEWLceGW/OWryzLG5EV1Nl4kssqgYrV5+cv5GyO1haD2YSG1zPkeW+KJH0i69sWjHD4k/ZR20FQ9UvKDzx3XbxsZRNWkKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=NFRO4nfq; arc=none smtp.client-ip=178.154.239.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VOZXM28g"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e81ec95d944so4710795276.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 06:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750080621; x=1750685421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dIM4ggq6nkqhLbVMKcT1ezBsK840f8IM9RKNGuYHjk=;
-        b=VOZXM28gJWu1vtHOVXPd4JllO/Nz4hljwAtGy/NTTFqx4sFZAoktaklYs3/0AO1zwr
-         s8Bs8c4S8RQAf/S6s8xkvhKLKBXz2LH7lOa9UCKs92RogaANj4nhH8yucEzHKhHccwlT
-         E6OhXRIhlrtu5aoUYs0XPZVqMddfNmbbuzj/54GmWWHAwTawvRgmOlrZL5bkAguDTt+g
-         48inRBhIuUixx887ZOITRZJfQJEBvQkauQXFmsmV1GCzMFYDb6owUm1GXTXkvoADFM3a
-         KKmEA4XPHzI0qDYfHSC4JNfjQEbQQb2EphKSOIq7QhZRGcveAh7/eCjJB+Dyw6bfOkp6
-         dc/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080621; x=1750685421;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8dIM4ggq6nkqhLbVMKcT1ezBsK840f8IM9RKNGuYHjk=;
-        b=WDXQt6myXCi6ApoRRFAJM3suuNbnUJY1c1aY1uv5PdXY/q+dl8OolIaOLNmKSGeNV5
-         Qn4OmNiG8LanOxWUlOtoQOxpundmwn12C70wMuo1BSt3AeEIVuGxNqvkPJ4P6LQb6gkr
-         /txCtIBclRTC4Jtgh/WmAMBaRYZgm1Pjoklx5iWSagg/8SSU+3Yb1eCZT1x8umJ79rLO
-         ooi+Ye+Zvaf7mIM2LMGwnbCPsupqufvk1J+6DnORC4iB9E9OmjtI+nkvXHv2Qo4/lQMX
-         8XwdcFcyKfPV+NTP8i4fQPpIKzR5HNWR5ZvxT/PTSDpgD//9KLLgwCt6v0gg01U67SDJ
-         nPqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCvmSRjVS1xk/50+sOFKlfdegpVbdYAYXdMx0SQkm1IssBbBz+Wqlasx7XoqbyunouffDPHpsNOb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOY5sW1HX5/r7Dda6boxgeM3sY4mwfyx/Isxt99bdcZj9zTqtb
-	u0Skh+Rtw8Y4bfhriZCf2O3977m39kLtmt/CTei8GOdMPQqxv02AFF2s9x6lBa4gy0ewYU2JmqB
-	BoRygBzmBCGWiYAcgms6s7Fb25o9dwqSgD4vDd2b+ZQ==
-X-Gm-Gg: ASbGncvRfjLU30bz7ydf3rIdyHIgwEgbsjKFq/tUZqZzv/yh0uc7nY28S9W65K9/nWQ
-	dBxW8ZXiKG/mS3xs3/N5QxJcu/fJJfU/NX5SRTsdftXDgwvJhOu6EfTJILAGfsrJabjxA/beVjQ
-	6fjeDQHajj5IfisQ2t59EMPGuCEHiCNSVm2btph2gUt1n0
-X-Google-Smtp-Source: AGHT+IHvwFdTtrctzoiWIaPE71W/8FTAI+xhZY2HkhDJbIaDsGip4BNw9qrbXT3Tk9Kd8tGyhyS35T/gDOg+zFs+nYI=
-X-Received: by 2002:a05:6902:703:b0:e81:566c:3085 with SMTP id
- 3f1490d57ef6-e8227f0e61bmr12875927276.1.1750080620760; Mon, 16 Jun 2025
- 06:30:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="NFRO4nfq"
+Received: from forward102a.mail.yandex.net (forward102a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d102])
+	by forward201a.mail.yandex.net (Yandex) with ESMTPS id F314C650B5
+	for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 18:19:34 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:5915:0:640:b034:0])
+	by forward102a.mail.yandex.net (Yandex) with ESMTPS id 6AB7560B60
+	for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 18:19:27 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id EJNs2J0LgCg0-hqskJXNB;
+	Mon, 16 Jun 2025 18:19:26 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750087166;
+	bh=NrkI11pzc6I77alUozshicWIJzB5Sj6lRW/o0Skdp4o=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=NFRO4nfqCp7p4uIdncyBY6fWFyF9oFKLbEvJq62jKc29F/diVtqYBluHWVP487HQg
+	 Nfo0ibkqNzcbDcc5319usvtdkZYy91Nz/PgeO+mDfoyzR0NF5jZLvypfnkDsNPxdCV
+	 /Ehyb4hkLmYltsOT2g4Xfx0+lXlsU7MaVTsml0iM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: onur-ozkan <work@onurozkan.dev>
+To: linux-clk@vger.kernel.org
+Cc: onur-ozkan <work@onurozkan.dev>
+Subject: [PATCH] Various improvements on clock abstractions
+Date: Mon, 16 Jun 2025 18:18:49 +0300
+Message-ID: <20250616151849.11936-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com> <20250612-byeword-update-v1-2-f4afb8f6313f@collabora.com>
-In-Reply-To: <20250612-byeword-update-v1-2-f4afb8f6313f@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 16 Jun 2025 15:29:44 +0200
-X-Gm-Features: AX0GCFucmmVjhuxKNu1-kopwQ1Ifcn7b36ykDZEf_SV72XMHIWGaSa8Aqxa6A60
-Message-ID: <CAPDyKFr_-aQ+YoRqYVUFhRR=94NWOredaSYQsVb-xvot83HJ3w@mail.gmail.com>
-Subject: Re: [PATCH 02/20] mmc: dw_mmc-rockchip: switch to HWORD_UPDATE macro
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Shreeya Patel <shreeya.patel@collabora.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, kernel@collabora.com, 
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Jun 2025 at 20:57, Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> drivers that use constant masks.
->
-> Switch to the new HWORD_UPDATE macro in bitfield.h, which has error
-> checking. Instead of redefining the driver's HIWORD_UPDATE macro in this
-> case, replace the two only instances of it with the new macro, as I
-> could test that they result in an equivalent value.
->
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+A few changes to improve the clock abstractions and make them a little
+more idiomatic:
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+1. `impl Hertz` functions are now constant and compile-time evaluable.
+2. `Hertz` conversions are now done with constant variables, which should
+    make them more readable.
+3. `con_id` is handled in a single line using `map_or` instead of using
+    nested if-else blocks.
 
-Kind regards
-Uffe
+Signed-off-by: onur-ozkan <work@onurozkan.dev>
+---
+ rust/kernel/clk.rs | 42 +++++++++++++++++++-----------------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
 
-> ---
->  drivers/mmc/host/dw_mmc-rockchip.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index baa23b51773127b4137f472581259b61649273a5..9e3d17becf65ffb60fe3d32d2cdec341fbd30b1e 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -5,6 +5,7 @@
->
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/bitfield.h>
->  #include <linux/clk.h>
->  #include <linux/mmc/host.h>
->  #include <linux/of_address.h>
-> @@ -24,8 +25,6 @@
->  #define ROCKCHIP_MMC_DELAYNUM_OFFSET   2
->  #define ROCKCHIP_MMC_DELAYNUM_MASK     (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
->  #define ROCKCHIP_MMC_DELAY_ELEMENT_PSEC        60
-> -#define HIWORD_UPDATE(val, mask, shift) \
-> -               ((val) << (shift) | (mask) << ((shift) + 16))
->
->  static const unsigned int freqs[] = { 100000, 200000, 300000, 400000 };
->
-> @@ -148,9 +147,9 @@ static int rockchip_mmc_set_internal_phase(struct dw_mci *host, bool sample, int
->         raw_value |= nineties;
->
->         if (sample)
-> -               mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-> +               mci_writel(host, TIMING_CON1, HWORD_UPDATE(GENMASK(11, 1), raw_value));
->         else
-> -               mci_writel(host, TIMING_CON0, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-> +               mci_writel(host, TIMING_CON0, HWORD_UPDATE(GENMASK(11, 1), raw_value));
->
->         dev_dbg(host->dev, "set %s_phase(%d) delay_nums=%u actual_degrees=%d\n",
->                 sample ? "sample" : "drv", degrees, delay_num,
->
-> --
-> 2.49.0
->
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 6041c6d07527..fbcea31dbcca 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -30,39 +30,43 @@
+ pub struct Hertz(pub c_ulong);
+ 
+ impl Hertz {
++    const KHZ_TO_HZ: c_ulong = 1_000;
++    const MHZ_TO_HZ: c_ulong = 1_000_000;
++    const GHZ_TO_HZ: c_ulong = 1_000_000_000;
++
+     /// Create a new instance from kilohertz (kHz)
+-    pub fn from_khz(khz: c_ulong) -> Self {
+-        Self(khz * 1_000)
++    pub const fn from_khz(khz: c_ulong) -> Self {
++        Self(khz * Self::KHZ_TO_HZ)
+     }
+ 
+     /// Create a new instance from megahertz (MHz)
+-    pub fn from_mhz(mhz: c_ulong) -> Self {
+-        Self(mhz * 1_000_000)
++    pub const fn from_mhz(mhz: c_ulong) -> Self {
++        Self(mhz * Self::MHZ_TO_HZ)
+     }
+ 
+     /// Create a new instance from gigahertz (GHz)
+-    pub fn from_ghz(ghz: c_ulong) -> Self {
+-        Self(ghz * 1_000_000_000)
++    pub const fn from_ghz(ghz: c_ulong) -> Self {
++        Self(ghz * Self::GHZ_TO_HZ)
+     }
+ 
+     /// Get the frequency in hertz
+-    pub fn as_hz(&self) -> c_ulong {
++    pub const fn as_hz(&self) -> c_ulong {
+         self.0
+     }
+ 
+     /// Get the frequency in kilohertz
+-    pub fn as_khz(&self) -> c_ulong {
+-        self.0 / 1_000
++    pub const fn as_khz(&self) -> c_ulong {
++        self.0 / Self::KHZ_TO_HZ
+     }
+ 
+     /// Get the frequency in megahertz
+-    pub fn as_mhz(&self) -> c_ulong {
+-        self.0 / 1_000_000
++    pub const fn as_mhz(&self) -> c_ulong {
++        self.0 / Self::MHZ_TO_HZ
+     }
+ 
+     /// Get the frequency in gigahertz
+-    pub fn as_ghz(&self) -> c_ulong {
+-        self.0 / 1_000_000_000
++    pub const fn as_ghz(&self) -> c_ulong {
++        self.0 / Self::GHZ_TO_HZ
+     }
+ }
+ 
+@@ -132,11 +136,7 @@ impl Clk {
+         ///
+         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = if let Some(name) = name {
+-                name.as_ptr()
+-            } else {
+-                ptr::null()
+-            };
++            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
+             //
+@@ -304,11 +304,7 @@ impl OptionalClk {
+         /// [`clk_get_optional`]:
+         /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
+         pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+-            let con_id = if let Some(name) = name {
+-                name.as_ptr()
+-            } else {
+-                ptr::null()
+-            };
++            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
+ 
+             // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
+             //
+-- 
+2.49.0
+
