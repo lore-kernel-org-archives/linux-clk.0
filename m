@@ -1,128 +1,120 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E764A2D12F6
-	for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 11:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78424261570;
+	Mon, 16 Jun 2025 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750073607; cv=none; b=UuXnHtqh8qjfkb8Scm4iWY9/RkWTWac8jrBtDHMIkmftk2iRJJm+nU1ujA0A8bvxnJz4WlBL4CaSAV/e+kn9dIwvOvBAVSMcmIl6CGEtb0iN0ozDFrXGItvLkZZGADCGkg9wTlkx2CdD+ZKSstpsmaLkALY0lBfCmnNSTx2UgPs=
+	t=1750073875; cv=none; b=YQ7WTXXLylVvyDXYOFC1Im7h3ZdOdWthZPAbI4HMbb4Wg1HFMWDNtCa7J2oG0ethzI9OOAZDeKK6uBY29FBtPjSCmbhv8xI/k/+lowm3eENUitfBEW7Si0uQfd1W0+kVDmT2450tfSMIMnaNlDKkQ5TAeGMFGHiRS5khtfYi0dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750073607; c=relaxed/simple;
-	bh=sUJtxVCgOPUC9izlgo4CNw2jnzc7+5K3qEajbBawjgg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FrBWW7Hz5hl3QAL3nTwiqLxdtFlgGM8bZn+wOSs/eaezMLYplKPK595sYOjKb3wxdG2vB3I51a4ak6VQEy2qGqnPE2u36ddr/ar/m0kMhmlmYFyBxCLRd86nL3C+L/b88HTE6Gyt9q0xSAco5D+lz+gMJipbNhYKPMqyKXk3u+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DgZmK78e; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750073875; c=relaxed/simple;
+	bh=fLvwmw7HfsZKXm1HnRSW1wbqeq9h4sVoqCvM+tJ5kAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEH/LZXtt89JOmDll6mST2EkjuQ5l/e7SydLjoddRD2WwMhT0CnonAenQJNoyfG4Z846o6+gybmoxIAXIxFcN8AEQZ5U863oydjBkz0hZn1vckCjlPhxbezCzKGJfAHoA931M/HNduhyAq/oSMCdxWL3TPo1Q8OO71ysQaGa1/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nu6LPlvX; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DgZmK78e"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so2620972f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jun 2025 04:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750073603; x=1750678403; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sUJtxVCgOPUC9izlgo4CNw2jnzc7+5K3qEajbBawjgg=;
-        b=DgZmK78eRIvsGmJEJg3/5LzJP6Jt1UIMX+KReOFN2e6WY7772YzjvQKG8Ob4NQke1v
-         7JbWE6tg3XFdbI+PdFQE4NdFat6syGXC1yBSpd2AKEkCAEB/TOkNC5LWbBVrtIN2fFwW
-         dfVUJMWM51xdFBjkXK0tsbaesFESXrfM2cPsMQnN7c/zCHt5F3ihxluYnxjXwNvPHr4X
-         WH4XD/YzpzMoh7+sYVRwPfl08wD5okkeGBSqKth6UWxZUQ9ywxHZHl+OR1Hxso+uU7W0
-         h7Mv3B+G3vIw6t7wgM4HEP8U1j3boV+J8pi7MEW8549I8qGh4c3BNqwRKe+ZFrKy07Q5
-         C7Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750073603; x=1750678403;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sUJtxVCgOPUC9izlgo4CNw2jnzc7+5K3qEajbBawjgg=;
-        b=YGy4mzhZdcpeK6/LDv5FpyExpiv+rGaW1Gi5nx7fow4uV+OtDxtfUh0vTcFU3DBqQG
-         v/0rXQP04WbpYrRyN+VKuxFpxSRGAIR0BUHyt8bEmx5XBFw801SyYGfckcgfoGyWf1PO
-         qR2QqSyFTA7VZvPbyts25C3+V7O8+AQq/TWJ9Lo4URojRaBTptX8kKf4doGVsnUh5OxW
-         h1i+hcuimjVS8ojJrBnbxHbHA6Rs72NTt+F8FO6rxymO24RLXThFfVsoZVLsk2Z03Pov
-         ckHzHUfVafM64Hrfzfw4Ge23fhmQriB88T96kvDICav6InasqvjdhORe5C9r/ptezH60
-         kVjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOzC7SJcvQMuYtc4Eju4j6L5tVvYzrZs5YZsCZrDixGToheYbKcFsTQMd1L/rpcnh4q4gYiKRDgRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwR2iN+z9vyrEgA5IfEXCBjRKu/qrkzH+mYxwgXyh3G3Ii+cSI
-	3o4wM5Wm5fHIc67dxI1IZaMrP491Aa0Wg/x23y15W3eqvl1MKZaQvWFqPcC7B7pKrq8=
-X-Gm-Gg: ASbGncv6ofxMLqedMwHXjHDd/b8NSyv8mtQ7KzPA+TPcylqetT2zrHU3g+AS8RFzc6u
-	ulhCvpWi71Zm6aCfysELLiQX9sdU+jjgXlomPxyY1pwuvg1RSg7MHpltwEWQ81pFFDDw3l84Q1C
-	7X8ibJq1Pk/qNzd0eq8tipPL+mcFob+GSMPp8btNU/M8bXNyO974yWM/Had9MY6YHJzhwvJwkU6
-	xZWvyCtgLTWtDYe4TGYOjZ2WTYtgvbB7JcTBSo3hE4rcW9xQqSl8V+ygVTNaB/o9gJInRP0170l
-	o1LUybrL2bm8+HV0mX01CtyRroicnfI6Fsvad6NtZYCaF981Bqiu1JhXYGc8+600WrYxx9HFloY
-	/4Q==
-X-Google-Smtp-Source: AGHT+IHENEkwxduA7K0Vjfe2dGuq+xptRSYw34g+0tog7rCYhbhJGOxjnsq/iY/dAhPOFFaN1g90tg==
-X-Received: by 2002:a05:6000:2501:b0:3a4:d700:f773 with SMTP id ffacd0b85a97d-3a5723977camr6533466f8f.11.1750073603145;
-        Mon, 16 Jun 2025 04:33:23 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532063ebf6sm111747185e9.3.2025.06.16.04.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 04:33:22 -0700 (PDT)
-Message-ID: <b193e94f042cf6134d2bed92152c23ee5bba6a26.camel@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon	 <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus	 <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rtc@vger.kernel.org, Lee Jones
- <lee@kernel.org>
-Date: Mon, 16 Jun 2025 12:33:21 +0100
-In-Reply-To: <905e6cab9932c814a578826329f5e3f944418ef9.camel@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-			 <20250415160212.GA372032@google.com> <2025041715425693974c6d@mail.local>
-		 <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
-	 <905e6cab9932c814a578826329f5e3f944418ef9.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.1-1 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nu6LPlvX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750073873; x=1781609873;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fLvwmw7HfsZKXm1HnRSW1wbqeq9h4sVoqCvM+tJ5kAw=;
+  b=Nu6LPlvXdr+NdKqhTcNC/Nax3iN7L6CigZ8DRnhG2DMO9wXLEOW+c+PB
+   VvLDvdL9cAIWhY6WdmJ38NKv0Im5/r+Zzm3DlSaDtfXN5eNyRpiqckzDd
+   Q/+rwNSyDgG8UEjeG0COyCJBUiLgdt8jDStCDc4iUKx/54zOXmh2KbrU0
+   BWtn6ZZ2RMFoJbPekJix9kYT+v3Jn6FtXXL7fhhCKia1QlaT+tFNUpvLh
+   J/chZe3wwhcoOutGNxCHGuDJhjJ+VUQ4tBjp3AZm1avesdUY8duD+yfLM
+   urHbTPquUjdB0J4PUjLNDoqoFeKwfnlJ6m/2CumJW6mcuyoY2sd+AQ3Cj
+   g==;
+X-CSE-ConnectionGUID: w2+ed9x3Sg+D26a0/QKDNg==
+X-CSE-MsgGUID: zljgQdxaSWSkWqTbl15WMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="56015605"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="56015605"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:37:52 -0700
+X-CSE-ConnectionGUID: uu/dMdKmTy6C/CMQq8oAyQ==
+X-CSE-MsgGUID: vmFt6vaaS4WB85EZl06xXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="148347549"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:37:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uR89j-000000073o4-2D5Z;
+	Mon, 16 Jun 2025 14:37:39 +0300
+Date: Mon, 16 Jun 2025 14:37:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 08/28] pinctrl: cs42l43: Use fw_devlink_set_device()
+Message-ID: <aFACAwTAyIh2HtNm@smile.fi.intel.com>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-9-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613134817.681832-9-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-SGkgQWxleGFuZHJlLAoKT24gTW9uLCAyMDI1LTA1LTE5IGF0IDE1OjQxICswMTAwLCBBbmRyw6kg
-RHJhc3ppayB3cm90ZToKPiBIaSBBbGV4YW5kcmUsCj4gCj4gT24gTW9uLCAyMDI1LTA0LTI4IGF0
-IDE5OjE3ICswMTAwLCBBbmRyw6kgRHJhc3ppayB3cm90ZToKPiA+IEhpIEFsZXhhbmRyZSwKPiA+
-IAo+ID4gT24gVGh1LCAyMDI1LTA0LTE3IGF0IDE3OjQyICswMjAwLCBBbGV4YW5kcmUgQmVsbG9u
-aSB3cm90ZToKPiA+ID4gT24gMTUvMDQvMjAyNSAxNzowMjoxMiswMTAwLCBMZWUgSm9uZXMgd3Jv
-dGU6Cj4gPiA+ID4gPiDCoGRyaXZlcnMvbWZkL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMzUgKy0KPiA+ID4g
-PiA+IMKgZHJpdmVycy9tZmQvTWFrZWZpbGXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNSArLQo+ID4gPiA+ID4gwqBkcml2
-ZXJzL21mZC9zZWMtYWNwbS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfCA0NDIgKysrKysrKysrKysrKysrKysrKwo+ID4gPiA+ID4gwqBk
-cml2ZXJzL21mZC9zZWMtY29tbW9uLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHwgMzAxICsrKysrKysrKysrKysKPiA+ID4gPiA+IMKgZHJpdmVy
-cy9tZmQvc2VjLWNvcmUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHwgNDgxIC0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gPiA+ID4gwqBk
-cml2ZXJzL21mZC9zZWMtY29yZS5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDIzICsKPiA+ID4gPiA+IMKgZHJpdmVycy9tZmQvc2Vj
-LWkyYy5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB8IDIzOSArKysrKysrKysrCj4gPiA+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1pcnEu
-Y8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgfCA0NjAgKysrKysrKy0tLS0tLS0tLS0tLS0KPiA+ID4gPiAKPiA+ID4gPiA+IMKgZHJpdmVy
-cy9ydGMvcnRjLXM1bS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCB8IDE5NyArKysrKystLS0KPiA+ID4gPiAKPiA+ID4gPiBNRkQgcGFy
-dHMgbG9vayBva2F5IHRvIG1lIG5vdy4KPiA+ID4gPiAKPiA+ID4gPiBXaXRoIEFja3MgZnJvbSB0
-aGUgQ2xrIGFuZCBSVEMgbWFpbnRhaW5lcnMsIEkgY2FuIG1lcmdlIGFsbCBvZiB0aGUKPiA+ID4g
-PiBkcml2ZXIgc3R1ZmYgdG9nZXRoZXIgYW5kIHN1Ym1pdCBhIFBSIGZvciBvdGhlcnMgdG8gcHVs
-bCBmcm9tLgo+ID4gPiA+IAo+ID4gPiAKPiA+ID4gSSBkb24ndCB0aGluayB0aGUgUlRDIHBhcnQg
-ZGVwZW5kcyBvbiB0aGUgTUZEIG9uZSBzbyBJIHdhcyBnb2luZyB0bwo+ID4gPiBhcHBseSB0aGUg
-cGF0Y2hlcyBpbiBteSB0cmVlIGlmIHRoaXMgaXMgZmluZSBmb3IgZXZlcnlvbmUuCj4gPiAKPiA+
-IFJUQyBwYXRjaCAyNyBkb2VzIGRlcGVuZCBvbiB0aGUgczJtcGcxMCBtZmQgY29yZSBkcml2ZXIg
-KGR1ZSB0bwo+ID4gdXNpbmcgZW51bXMgYW5kIG1hY3JvcyBpbnRyb2R1Y2VkIHRoZXJlKS4KPiAK
-PiBMZWUgaGFzIGtpbmRseSBtZXJnZWQgYWxsIHRoZSBjb3JlIGRyaXZlciBwYXRjaGVzLgo+IAo+
-IEFueSBjaGFuY2UgdGhlIHJ0YyBjaGFuZ2VzIHdpbGwgbWFrZSBpdCBpbnRvIHRoZSBzYW1lIGtl
-cm5lbCByZWxlYXNlPwoKRnJpZW5kbHkgcGluZy4KCgpDaGVlcnMsCkFuZHJlJwo=
+On Fri, Jun 13, 2025 at 03:47:48PM +0200, Herve Codina wrote:
+> The code set directly fwnode->dev field.
+> 
+> Use the dedicated fw_devlink_set_device() helper to perform this
+> operation.
+
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
