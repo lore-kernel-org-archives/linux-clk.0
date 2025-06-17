@@ -1,88 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C372EF653;
-	Tue, 17 Jun 2025 14:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B1B2ECE99;
+	Tue, 17 Jun 2025 15:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171906; cv=none; b=ulPDby9HCxvJTbXoFsw2L6d3cZgoUDw+5Ez7QCI2+mkabRk4Az5Wnjwgf/eqw44cE9xHQp0Ap2HGtg5qHTZ/zu9ngTwz1CrUb81ZEuLFTZ0PQ8gXQnWsl++Js7gO6wvMRllhVCapD3+Oq2iLv4SIg/44yN3udA4ud/kYtf5jobc=
+	t=1750175882; cv=none; b=Rq6wQS/nu1MRQFUnjWWU0CIBOUr2eer8azHGgjvwkoDSHcQ66e+1dUJMSU3QVFP+gb0XqXXIZkyiGWydsyyeNa83VmsOiFKrLJnp389ZocekV3Hi6vmJ5a7VuaK6Em/h/zFTjo5d/F9LnQJdjvyV9uv3BkQfsdqsaEBMuOzCjk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171906; c=relaxed/simple;
-	bh=GJNDpDkdKnWwO964hGEn7dPszcj2MajR6OvVee6Hb1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=T5VOZwHiPtPc2MpWclNBGByE/f+fdcBToxoGFScrtZ8ZJ2lVxZlaXdjElbM3/QsransM4V0B12ymJutCeYH6ewAGDoZbU+E4+5FU1OY5LfHNKBQCvwxnuPyvZZzQn7CWhC2pckCsX1YgEqx5s2/LeQmM/BjqJKmBMUoKvsOYnoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2+LJqlx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750175882; c=relaxed/simple;
+	bh=SffMIIFbr7xI/iF/n2eCRR6ijDsf2+ugvTClsReolMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KGPg7hbBld5m0ykSA0csWQk3obMzqUzAk6r7TkNUbweVmkIcXpZp8sFUmgq445wQclDPy7Rh1+crccoxm0sh53xR+aixKNrWihkc3jfBAPoFITWUsxQzXG/Sr/4rNGZ4NGstCSiKg60W1hY+nzqrYNFiZMTB/ATTxLZsqOiecQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Io3w9Uv6; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2+LJqlx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF6EC4CEE3;
-	Tue, 17 Jun 2025 14:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750171906;
-	bh=GJNDpDkdKnWwO964hGEn7dPszcj2MajR6OvVee6Hb1o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Z2+LJqlx6+TL/hZHm8WCskW3k2OV7kpcNCs02+3FZQFT09KQ8TJU3zto91XJ+DyEq
-	 /z/1HcGzaeoptb5J2eo2eIBP1CkROT1/0SuZW74f55fEybTsVTIsF9Kr4NSDPf6oEz
-	 oxyGbN6RUfnxd1apQerveF99Mt7FaIifoK7VnV0Ic803vdpspcb5VlalWI0JaXMCbo
-	 mm8fU076psXpF1DAbIx94NXo8gSq0eWYe//4sEuGwCLi1Uid0UGjtXdR03tScpHa4j
-	 s9I5TTvL2fLecj9y89qIvyrhifu9krBxJMMCDQyulGp2DcYqgLVTlycV4nlBKcCOof
-	 7842kN3i4S7kw==
-Date: Tue, 17 Jun 2025 09:51:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Io3w9Uv6"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450ce671a08so37400365e9.3;
+        Tue, 17 Jun 2025 08:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750175879; x=1750780679; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJJNLvFYXH8jXiom8tinXa8ZRDeIOxc/CjQYop7JDbc=;
+        b=Io3w9Uv65yn2DGfSGuJxHRiIaz0bkAxWp7WGRyRgFsYJnRJklcgrwdfd89FfoxQ2og
+         zsE6+mU09PIZAw7pTKd976EoIb7A6/1LtM7hwzNf5u5e4QaX3Bs5epfWZ/cABVSA+y7R
+         BZeO4TncU2BWVDdwl8yU741kxTNiiezqTQllXl4oOWwJEnZsEqZMyo7vtGY7DETGkS7e
+         Xvy6kSUgPXWSUTGHX3HSFto3ROs8Pfb2R3PN1cQYka1vsVmBv/ti8x7zufm/tOmh+ycd
+         Y0eZPzUz4BhYcHHtViU/eXSwnFZqVVFBTs8bkK0klPeFyC0eiZD5Ueen1wACmywWytqX
+         miNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750175879; x=1750780679;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KJJNLvFYXH8jXiom8tinXa8ZRDeIOxc/CjQYop7JDbc=;
+        b=er9M17ftnWdT2Mxq0hLO5VFyp6Bf7ApbB0YnENuZTmTcHMgBKZLEj1Tiw7l6ygMipG
+         y0TTDAmJh+tNKBCG6ihUlR1hzaHNmQfVPFD8xcO83+E/gC0hKtLqu88NVJO+yQNKT0gb
+         AgvE91f2XsytRUxt+r8QmIiG1iHQA+u37eKmce/MojOlCONLxL9dyYaWfxpNy9cDw3Io
+         Q1fe2RahyQwYE/yZNBnrueV5SsAEWbxH+NfZ6TO7IAEvGEpMfaN3DxxiwgqcuQxENDSN
+         vM+s25mmTdNHY2pDvaG5JIhnMvafWvUnQw05rcKdxrjZng+jl8WM8+srKlDQpC/S6ip+
+         pEAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlmw4gqOZhCfdXcARKMZXUnOXUw02n1c7uj9qAKmzcyADGWBgsWeeQ67hNs51bSA27bG5G7fKy6Wr2A1tJ@vger.kernel.org, AJvYcCVzyL8SAQnQH7F2zOphEOSTOm7C3VYg/TIGT2nNwBReEji8kGxgh861yiuY3bhwGLp5zFx8hb1F6nt1@vger.kernel.org, AJvYcCWDYBTbZnTHQbv4FzbMFjtpTptR2YdOBmrcD0fe0SzWi23meB6arZZsA0RHQCl+ufySaMtVcQTNYqqc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD5tyDUXU9F157bqxdB5cLAhmjdQAPsSA5pxBSIGNCcqxJ+9/6
+	OwRl6N7NWMjeGJke7LnK+Fpvil9z+mDoUqiQ6477qpAUlWVLkg/kiXiz
+X-Gm-Gg: ASbGncsOLTbLGM9Rx2sW8aayR7zNeWxjWbrH45u6AoFWBd0KGPrRv3Rv6SbkjisHWP2
+	2dSTeHmvRIQxlQNuYEt59BaXj6KHKBUJ+/skFFNNnvbA+E5fmxV9yt4QsXmwT8Tri0LCTU+OHuM
+	kMuzgZjaC7qTE+8AukKOChERhsE/cz9QfZkhl76R6srzmskjZcn91zl6hZtMjHtIzefoXaFFa3n
+	YkaHqvaMzy36KIRnZFmwychvgGPOXsB+uCUgh088Npna78sp8o17WsKR1UT4TrhcCSIP1z6N6Xz
+	c6ItJ5niJe5vDD4xyTXJThYcGVi8ea3Ms7da5ZDO7e6m11Sxp441Lr5WPV/HBWn3ApqNXydCL0J
+	1yHXO57MApTY=
+X-Google-Smtp-Source: AGHT+IEHG+qH1Kc0aRWhRe2pFMGOtmXhNLQop3+1vD7jRkXX9/xcUoyibN9G6CU0imRTOunbvijpqw==
+X-Received: by 2002:a05:600c:529b:b0:43d:97ea:2f4 with SMTP id 5b1f17b1804b1-4533caf5b1amr132980785e9.12.1750175879106;
+        Tue, 17 Jun 2025 08:57:59 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:a081:30f1:e1c7:6f28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a53f79sm14189115f8f.4.2025.06.17.08.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 08:57:58 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH stblinux/next 2/2] clk: rp1: Implement ramaining clock
- tree
-Message-ID: <20250617145144.GA1135520@bhelgaas>
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/4] Add CPG/MSSR support for RZ/N2H SoC
+Date: Tue, 17 Jun 2025 16:57:53 +0100
+Message-ID: <20250617155757.149597-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b70b9f2d50e3155509c2672e6779c0840f38ad5e.1750165398.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 03:10:27PM +0200, Andrea della Porta wrote:
-> The RP1 clock generator driver currently defines only the fundamental
-> clocks such as the front PLLs for system, audio and video subsystems
-> and the ethernet clock.
-> 
-> Add the remaining clocks to the tree so as to be completed.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-In subject, s/ramaining/remaining/
+Hi All,
 
-I guess we actually get some functional benefit here (something that
-previously did not work, will start working after this patch)?  It
-would be good to mention that here.  "Completing the tree" sounds
-nice, but if I were being asked to merge this, I'd like to know what
-benefit it brings.
+This series adds support for the Clock Generator, Module Standby, and
+Software Reset (CPG/MSSR) found on the Renesas RZ/N2H (R9A09G087) SoC.
+The implementation reuses the existing RZ/T2H (R9A09G077) CPG/MSSR
+driver, as both SoCs share the same clock and reset architecture.
 
-Bjorn
+Note, Ive split the CPG/MMSR support into separate series previously
+the patches were part of series [1].
+
+[1] https://lore.kernel.org/all/20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+v1->v2:
+- Rebased on latest linux-next.
+- Update commit messages for patches 1/4 and 4/4
+- Patches 2/4 and 3/4 are new patches to add PCLKL core clock
+- Added reviewed-by tags.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
+  dt-bindings: clock: renesas,r9a09g077: Add PCLKL core clock ID
+  clk: renesas: r9a09g077-cpg: Add PCLKL core clock
+  clk: renesas: Add CPG/MSSR support to RZ/N2H SoC
+
+ .../bindings/clock/renesas,cpg-mssr.yaml      |  5 +++-
+ drivers/clk/renesas/Kconfig                   |  5 ++++
+ drivers/clk/renesas/Makefile                  |  1 +
+ drivers/clk/renesas/r9a09g077-cpg.c           |  4 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  6 ++++
+ .../clock/renesas,r9a09g077-cpg-mssr.h        |  1 +
+ .../clock/renesas,r9a09g087-cpg-mssr.h        | 28 +++++++++++++++++++
+ 7 files changed, 48 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
+
+-- 
+2.49.0
+
