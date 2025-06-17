@@ -1,161 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E272F30CC;
-	Tue, 17 Jun 2025 21:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD41F4E2;
+	Tue, 17 Jun 2025 22:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750195903; cv=none; b=YyXbgnKGU5fBBnG/viMoxabLCi3Oi3x5KdGDZDPqdovyFh2d4pQhPg0tAwIu0psdWQvCdzngwhPfs8FfK+aElKZCwH914IEtvbv4pctSFyOP3+2HpYZaq2twYhSmBYB4yW58RyTCAldb/qBJIKuQXEWHicI/Mz1A3RMy49dru9c=
+	t=1750198703; cv=none; b=UqYwgJYQ6pCEBHCxJpWDlk6wXOv88yMaa3Lk7cxKUKqUrNPUszDHIYYYHKiwphv3TA+XxVA97s10dySRud1ZIuBwh0I5Kdz6jJuCXRaxZcxEvZ9X/1h9zzHXKsVXJJJYQiFKYYMEr7WjG9c0rxu9Uw5ToA/6noWlon4HjqHT8gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750195903; c=relaxed/simple;
-	bh=1YfwZW+S936XwdA8SGfJ1ZJvlipD9uTXygNO4srMawo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BWrl/fwZcbwWBEcKxMkQFCJPUAghwLr4ETQ3G0/zqBGUnvzaVwO+umBbCrqaHe9Wt2xY1m0b6lkI/Jp7FrJr2E00mA8gPxcCrk3hPGMaKqW877GTFTqBfep3XdCaFEKktQZnkAFa+SxNOGWu57oLURUcQOEumwlHExYURyd/FKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmarUdqc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750198703; c=relaxed/simple;
+	bh=JSQ8c3bRabnCayUlehYiu+uvSPqvMtoPuZgRoDGUHoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeZTTT2+MJwtp1FoU7VZ5vt3laE3vEKTB7Pr4BwMtv7k73dr402CeGOkaVU5Dq8TJZggXngpmKsrdaTcSxT8UkEEcDZABEzujiIzj2e5JUvnh+XI7FTFalJHSqQiuNAkNgnefaZcbmkhf8j2Pb1VX/cb8MiuGpeX2MJRMvUnMEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQW9damG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmarUdqc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBBFC4CEF1;
-	Tue, 17 Jun 2025 21:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750195902;
-	bh=1YfwZW+S936XwdA8SGfJ1ZJvlipD9uTXygNO4srMawo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YmarUdqcOEke0FSqL0Xg4J8Lsf3Wt1uxrnUTrBql9tooIzqRSqrJXRb/RthUG96tM
-	 UhmIuCJamZ3RxGpHFDGNgVGHqRgU1HHltdd03/dUDd3yZXgKOp1z4NJsBzWdqKZRoT
-	 Nhpr9RanMRtnDUygTTyNdDrv/EZ+9j1PkN20sbSIICvlIom/jxXKO7Iy/l/5DOxHrK
-	 Bbs/ObfLHkXDYrqiBgMagOsKvqyvb6JzIr1I9Liskj/HU2yXXiA0ZapCnbVd5Mg2Kc
-	 jqYO7cFto/25mDOQtAHCbJcXHeN3ftaqa2xSE6M8SFyV/zeuKzmBhVcfLIJFp6Mr6z
-	 Mn6XCuVHjg8Yw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Lee Jones <lee@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alex Elder <elder@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	David Wronek <david@mainlining.org>,
-	Jens Reidel <adrian@mainlining.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Danila Tikhonov <danila@jiaxyga.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-hardening@vger.kernel.org,
-	linux@mainlining.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Connor Mitchell <c.dog29@hotmail.com>
-Subject: Re: (subset) [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and Google Pixel 4a
-Date: Tue, 17 Jun 2025 16:31:26 -0500
-Message-ID: <175019588888.714929.17490930593303808143.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
-References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQW9damG"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23636167b30so56233715ad.1;
+        Tue, 17 Jun 2025 15:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750198702; x=1750803502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9NIdWve1K1b8QzOBntihNhgvZs/2vkEK7FdH81C/3/I=;
+        b=FQW9damGnI2Vz0ySaAs+PuR3IfwI3q35jupxpPJyKuqijKE1Ew54LfSgMbTzY49gai
+         ZR1nFYebYHe/OVRPXpGKWMhD9M4cBik1WHlHGpo1+EbiGNnuMnedOZbG5eLI8OqiTxxX
+         V1hiA5s2lPqxjC5R5g38CH+AF7+nEIisBmIaLsUWM/GK238aZWzhOMUmKGzy1tO/LZg6
+         Qi7s0/w6OoeX0O6p9g5HZZqNgMI/B32GSM6KhpdgVy3EOpkVjG++jWjBwusaiq21Wr+M
+         nHE1zqHjI7EEGCqYVnICpOpdALXgf0+UkX3LYoNMhAtaa49OiW16x64rT/p4E8gREQ8E
+         LJvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750198702; x=1750803502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9NIdWve1K1b8QzOBntihNhgvZs/2vkEK7FdH81C/3/I=;
+        b=tufzYPVmAi968F6+7PBbisNPpkGRjBNghgITlvC7O2MmIRnyX53NraV5fFz1sYTJjB
+         fF+a+w8IQeWRLkibHrSYF81Y+FChgmBiD2dDnI+TJUsDXWaLt70XEFt4Mrq1Nrxet9iq
+         8f7DQwuPaLD0Y3D/rpyILWUxJh9Mk14EGuuYtfl9ZX/iQTEx7IM9fZMCxF9sgBj++Cft
+         pmOashm/h4BpWYGWV7+tAznDjRwRNEoX43uLQntwp4+o24VWliZTNA3Tcoe6M70+i0uV
+         5gD+BrIG2bkdiEmiLnwCTJvtmYuCQGpDKKfskKlXCzsg0SgQ1r5VL1NZX30MQjSsvpZZ
+         np+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUV/2tGa0ovbqneTE6fD8IdUfIbRE6FhCHCUrGzcr+lDMk4PgE3zaK1Cvckfb5f6qbNfRcejMW+gSJYPu2E@vger.kernel.org, AJvYcCVP9cV7FJVvd4Fff5GXaSzmAr5oZCJ1D3d5026HrzUO7ZPBs4udcVqEfYZabp7MZQBZiD1GGZ+Vuhg=@vger.kernel.org, AJvYcCW16Nhrg4v7pEKn1vhR1khZ+zPR7E0n+ftoxRL3cZnqYdLXfWVrBcKku9mcbJCDTJ3fzEOQjQTyBpic@vger.kernel.org, AJvYcCW9aANfYQNbk9RQTHYptWWKbDwxlBtepBwnetchERXRFzlfSbXFW4kvhQNQ3ARe7If1E2/Ji0wAsENhZKQ=@vger.kernel.org, AJvYcCWRMsGxCCWxYQ3GMtDxVovNnUd+6kRayugO/r6vyZ/fy5Zw2U/DcQLF9ehZYQHSsWQWs3MRhXkuwIY=@vger.kernel.org, AJvYcCXAw2IDBUDrek0IRZAj3nVvIvRa3a9n01ttxwoh+z71vqNgIoWk806mIliDZPLeVpKmfxBx6oY2hma9@vger.kernel.org, AJvYcCXItILcjo3MNfHsvpqFgUf6DLt3f9nV36WSar8YgHPT5MMQr1VUkTB4KepXX/rIJxl1GOkUcduZRnldpfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmkZWW1yfMyCY04RvBbXWfJixG6LknI1GWhv9G/utp/OINRw7R
+	TtJ9qORcD1PEgFF8P57wglLhrVNH5lj5uoNt9qD/6EQq0s00IQqO8J1k
+X-Gm-Gg: ASbGncuUv/dIxGkTsZ0gSmB9uun2xlYKJX1HlyDdWUJcQHpXmbA/E4KH1VTvmu5sCFf
+	OpiFZ2Of1Gg8Q4OgCw4AFLcvHTKLfyVwjKW+xwmaYclnSKBEY9r0/mOj88ggJjXZfxaaPciNxkW
+	Fl0ibgeKSHPGZZzp0eg0h97oqsqMbje4LXN1FFMEICBFTJtReGJ+0yiByx2FqsNnQ9MIqrPJe2S
+	dGpUgNbPblyrWOFGs5u/GuyJ2TFZCAZyuCx+ZTlywuesehUpPuJB+8OOL8vdDlNzvd6B4aBhVjb
+	M0L4/BFzyIAUXGL/4SM8dPe1f+WWVnRwOE+EGza001wQiwg7rOiY0Md2RwlPYME=
+X-Google-Smtp-Source: AGHT+IF91BQZXlbd6uuMahbLtTEtN2tg3W8Od60D+rCGiIPm2Y3r9UQq92CpdM0V1gssQmyVDCfWGA==
+X-Received: by 2002:a17:902:8bc8:b0:234:a139:120d with SMTP id d9443c01a7336-2366b32e4ebmr135159835ad.7.1750198701630;
+        Tue, 17 Jun 2025 15:18:21 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:4cd9:8b8e:24cd:5a36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deca40fsm86178655ad.208.2025.06.17.15.18.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 15:18:20 -0700 (PDT)
+Date: Tue, 17 Jun 2025 15:18:17 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Sven Peter <sven@kernel.org>
+Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Neal Gompa <neal@gompa.dev>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Arnd Bergmann <arnd@arndb.de>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, iommu@lists.linux.dev, linux-input@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 08/11] Input: apple_z2: Drop default ARCH_APPLE in Kconfig
+Message-ID: <oinzomct3qvhmlvulhsubckhtarrz2eedk4ymgnvfeebmiljtt@3wtkh3un7cdb>
+References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
+ <20250612-apple-kconfig-defconfig-v1-8-0e6f9cb512c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612-apple-kconfig-defconfig-v1-8-0e6f9cb512c1@kernel.org>
 
-
-On Tue, 22 Apr 2025 23:17:01 +0300, Danila Tikhonov wrote:
-> This patch series adds support for the Qualcomm Snapdragon 730/730G/732G
-> (SM7150) platform along with the Google Pixel 4a (sunfish) device. Since
-> the most critical drivers were submitted and applied in separate patch
-> series, this series is largely composed of DT bindings and device‑trees.
+On Thu, Jun 12, 2025 at 09:11:32PM +0000, Sven Peter wrote:
+> When the first driver for Apple Silicon was upstreamed we accidentally
+> included `default ARCH_APPLE` in its Kconfig which then spread to almost
+> every subsequent driver. As soon as ARCH_APPLE is set to y this will
+> pull in many drivers as built-ins which is not what we want.
+> Thus, drop `default ARCH_APPLE` from Kconfig.
 > 
-> To date, we’ve tested SM7150 support on the following eleven devices:
-> - Google Pixel 4a (sunfish)
-> - Samsung Galaxy A71 (a715f)
-> - Lenovo Tab P11 Pro (j706f)
-> - Xiaomi POCO X2 (phoenix)
-> - Xiaomi POCO X3 (karna) / POCO X3 NFC (surya)
-> - Xiaomi Redmi Note 10 Pro (sweet)
-> - Xiaomi Redmi Note 12 Pro (sweet_k6a)
-> - Xiaomi Mi 9T / Redmi K20 (davinci)
-> - Xiaomi Mi Note 10 Lite (toco)
-> - Xiaomi Mi Note 10 (CC9 Pro) & Mi Note 10 Pro (CC9 Pro Premium) (tucana)
-> - Xiaomi Mi 11 Lite 4G (courbet)
-> 
-> [...]
+> Signed-off-by: Sven Peter <sven@kernel.org>
 
-Applied, thanks!
+Applied, thank you.
 
-[01/33] dt-bindings: arm: cpus: Add Kryo 470 CPUs
-        commit: 7b768d1235dbd98ef7268596995d86df31afce21
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Dmitry
