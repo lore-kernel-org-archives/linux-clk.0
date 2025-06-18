@@ -1,66 +1,72 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C662DE214
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 13:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE66B2E9748
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 13:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750253759; cv=none; b=aOLLAjJa0CQyI0W3MSqAHVH1BG4DtvaPthLXSsLf7GHj5C4Xj5g1j9HN1Z2zmnotJtsOCfO3boBOPzgYo6pMR0Nb4tN9krPOtCdhGcZQNh1yGrLhImM91GzskBwhPihYr7NFBoOtuO22IrKcn3qnk34Nf7XOHwjb8VTsxN9X1Kw=
+	t=1750253963; cv=none; b=EhT0Mu89x1aLGhJOm09jZBenf4ff4zfQYh+GmuY2z69/2hWd8oQl/2jPbieAdyiF15YeqCV9fotLqag9Tl+5h9CwR/5En0S9VzriCdbCqwzZ3hEV0/gfOF8rlMoREHwJqKTnq/8jJFaKe4pRVKZYhushN0RSNrmLmX0JbZtJTv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750253759; c=relaxed/simple;
-	bh=oPJM7QhMmBy1bs1KbbyHUDef3Omzubhxo/q1a2c1SiA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a6iG1lSieITV7bWX8O0yGKn9eGiVPGzSAMyw6YbjLCjy3e0QhjL86Hpi4AoyGIGufsMtvAXg+1hK8iWaK+IMCjQC6Q/RwQWSq9KS1/0LA7pFJdkuoyhmvXZ33tn7naC8G9yG4yG7GY1oEk9vORS1C3ulSIWClhWWDrkmI5rXdj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gYBwUqxh; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750253963; c=relaxed/simple;
+	bh=R7do5X/dzbKFhPd80Rrbvxwt9EOrSDZ0d7dEdzQbftU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bF5QhjUaQ0MXNzq2PkVBOkPxo7KScPFeN0/vHrGjwQVMMx4/49+F8TwCfihl/dIua/kfgLzH1XglAmYKKvxuSSA4l0HhcvStHahTlNWl3LM1DRdUezKrnEGO8M5dmy5QnmRuxvP5Mcu+tdzmbnIc8eBWWRmpGfTLFu0q3BkeNFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TS6A3eEa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gYBwUqxh"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606aadc1433so933987a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 06:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750253756; x=1750858556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vm95n91Ns52KWia1xFtPhZZXKAC2p8xjQR1LgtP4GLI=;
-        b=gYBwUqxhx3YKx9eCGEZrovnLJXJ3SCY5T5B18st5YjVsMG/0KzIqLVnMIA682cIktO
-         TI+VAVZpwYvevf5tx4WEsEghi4fUOFtxEfUSZxtjRSnGbieodz/VkUF1Auivwswc8d5k
-         ITjVv86TRXf8SAy5Hi5DqQMUjEHpjOPC21RL+MLXkLNWcckQmX4YFS/9ioJf/2fRef6r
-         uM6iUzLdqd4tXsUATwE6yQWOaoM3AfwczJzzmeoIDJ6dKx4sHuXTT81tT7mfyLCb9zkm
-         7SzCgLMqJEep/GSD5D7GlbBcKst3GMTzLPh03ZlXfzUBITBPD3bxl6vJABwrxMikRbA1
-         VWvw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TS6A3eEa"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55IAITHq005078
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 13:39:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4EXdgzWBp0rRNaJUQrduuFz9dcLZtkU3b7btYf+fyks=; b=TS6A3eEavcszJ+4u
+	utlHuBbP5Ro/XSrrrJk7631nSwT83ZoPwxnrnc3T95lXnS21LJ3HAliIeThWwOux
+	3yogDz/mEZ8S8gxtTUNJxEUEQJ55zjtwyOfXC0DAYbyjx8CCQWYcE3AVwm9eqzN1
+	pjRwAtBU+dWaUniwTTACHZVdQqCaf3xvwWK2eSO315X8J7TWs9EjH6CPejF3xvXz
+	uuz0AhLUkvtIpBApzpQnlj4IqM55SftmQ5/SVM6kBOv7tA5GK9daWgtk547skQPD
+	lApVocx52v4RYdsBqesRcTC97+OZTs5DC00hDXaIZoezSTGDXixvsPyKCRBFs67h
+	/hvdIQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ag238a69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 13:39:20 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3cbf784acso1270052085a.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 06:39:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750253756; x=1750858556;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vm95n91Ns52KWia1xFtPhZZXKAC2p8xjQR1LgtP4GLI=;
-        b=O+m2FUcePSpTO6Z4x5t3HHGd1pxQQBOLmiTiYkhE4xFCh5lD53nnkWqr6LFcMZtG6h
-         O3eHC0ma7Vrr93ThXKwMu0NbD0Itp4l4rMj7CjpMwenadVCIVYzM/amNcn6v/bC4cfNF
-         bkz8ZRePxl14oYywlFnUXMVMEvO00UYen98H21EY6n9ko9Nu1JtmEi/osXDu8R2XrOUE
-         r4Kj3BL+kpUOGy/AEAgn+CZpowhez4K1Vj8kOHH62F/hnNhsLhwdHrFoHjlMLHN72UHs
-         nGqxuaoQX7Oc7KMz7IrcUUvGmBANAPfh6C4udn+j6+05U4KWqJzgQnqKLONlCQV2e3+l
-         WJ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWymegiCFQb690D6Y2QmeR4PkUzdLmkLyzPp9QOZpYmyiTuIv6gRoBcDLy2JEYb8wfbpHuoVMFQANA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiL777HhbjScWe64MX8gOUu0x3cZpU03MMy+Wv9wQDB+OJgFYS
-	do2QQaNNesDoUUFXrWqNj/IVtJx29N+iWPrfb+bUCcoxvDxyvBq7Stq7LByZPQHzh98=
-X-Gm-Gg: ASbGncu5tG9MUJIb2bhsD/EQCWLxG7nC+1JMNBZ17og58ruWW/j3RZF7/vIvnOBtwLW
-	hzx0j99BuCwli98mVxMCMlBAlYEY7v5PQu6+jDbH1eeQse2Pjn1lj8G+u0Gzo13qofcMS5u0HsU
-	dXGhR5O0ju2XgxTCbd1CwOYrGLnVnskEyY5eYWRkoRqh9uszQ8y+WUG8g/l946CnRS76VLkGhYO
-	fFEoRw45jqLb9Ib7fpuqyPwuHNHz8pZXAOHFrXq2kQvk/tbSkHJTCXlJUA+GQdwV52fQsVy2yPk
-	0DCLN9XZD1RAnVefFS8PZoAqRbT9X5syL7TadsldZawm3QPSD0T+7Qu8lGF1a1giEKVkQdPtCXh
-	jvcOIPAc=
-X-Google-Smtp-Source: AGHT+IE1ud3yJYsJ79Qd0+8elKcmVVdwL9QoowOoPfGYgIuLMPOKhG0CbABrtSSUISu4VSl+T5X7Kg==
-X-Received: by 2002:a05:6402:42c9:b0:607:7add:8647 with SMTP id 4fb4d7f45d1cf-608d0a22945mr5401571a12.8.1750253756018;
-        Wed, 18 Jun 2025 06:35:56 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48faf6asm9699865a12.31.2025.06.18.06.35.53
+        d=1e100.net; s=20230601; t=1750253959; x=1750858759;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EXdgzWBp0rRNaJUQrduuFz9dcLZtkU3b7btYf+fyks=;
+        b=AudvByGCu5VhsixcMShM20BSXK0jXIm5PQOShoD2Fi3HNLEjyZURQZK8V0GvGWMXaw
+         1abL9UMH2yxIZOFNL45n8eSzbFmj9klTe7IWjcObrxQu56J4BVY3UKO9yhJWFnsxMTWH
+         uRxYwknWrME0tj5pmcgJeUqM673tgincU0WR5K3KzmpLPfUqQ3kUzKZ8F6G6lkfq4/rn
+         ga0fjp147J3UQwKhTXogFmKkvNelG/siSOxU9I/YDvkuKocvgzeKNZGFfeZQyzrbGZuL
+         rHN+KrXOta6W3uD/Xg4ifWI8aCCEAi5j4O3bdoOY2ot/GArvXGRpjFTjkDWnx5AZBq+X
+         k8qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrrO2ORzgUubtSchvv/K/P1uRXTzOroXalI03N/LTt3Md76u9g8h776SBlR0sDCUUFLqmeUQLnMS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTg9R46bEbzFRtQ7staqWE1gypt2EBPyn+M9J1TlIC/wPT7GBj
+	lyCHJAmj/xljq8hcuM3ih2dS+wDRCdddAIAKoPfFPrAla0nZdEhZPrp+j1JuptkOz1ac0zaGRfh
+	RI5Czlo0ZEtuDJ517820c01wEy7d40bcsJqJIjiJ7HRGiFBr/H1Ks5eRd/M+rRzY=
+X-Gm-Gg: ASbGncseo3PAHvcDYgQpWX6f36VkRNEaVB4VgsFNkPA6XhjX894Al4WUyfYh53OPBMN
+	to6c/cuR7n4UzvtQguMty9gW9two5zwdOlRBrIjAwALeVofjr42DL+bLq/ASHTOOBKUZDGDY8VR
+	9jZDibsewdIsPah/iNLiJELhG/CEklSvsuoB4lwvGztzaBx0CEq69MU2H8khR9RETXvdElJ9wAq
+	EoHE9B2FSVoDQ3COQC5+43Ghs/YRmobBV+J69qov7wzfHP+jU+qVptLAp3iAWakYVXSty/xsBnU
+	yGnE29j1ibjzh54c5SnlQ7X9yVExiA+4PD2637nXPQ==
+X-Received: by 2002:a05:620a:4512:b0:7d0:9ee6:e7ac with SMTP id af79cd13be357-7d3c6c16571mr2603783685a.21.1750253959470;
+        Wed, 18 Jun 2025 06:39:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUVtqsx2MV4WTV8JMc+1EJgnKxxG3YeGolNRkNZNGXdIZpmLSYPMNcqI7vB8yIshy4whg95A==
+X-Received: by 2002:a05:620a:4512:b0:7d0:9ee6:e7ac with SMTP id af79cd13be357-7d3c6c16571mr2603780285a.21.1750253959040;
+        Wed, 18 Jun 2025 06:39:19 -0700 (PDT)
+Received: from [10.92.240.160] ([212.136.9.4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adfa7435a1dsm906932066b.110.2025.06.18.06.39.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 06:35:55 -0700 (PDT)
-Message-ID: <51f03189-6a35-4387-acb9-c853ffc56a0a@linaro.org>
-Date: Wed, 18 Jun 2025 15:35:53 +0200
+        Wed, 18 Jun 2025 06:39:18 -0700 (PDT)
+Message-ID: <fa8d4af9-e822-4dec-a8dc-f3bbf5dd0100@oss.qualcomm.com>
+Date: Wed, 18 Jun 2025 16:39:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,25 +76,30 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 08/17] drm/msm/dsi/phy: Fix reading zero as PLL rates
  when unprepared
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Srinivas Kandagatla <srini@kernel.org>
 References: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
  <20250610-b4-sm8750-display-v6-8-ee633e3ddbff@linaro.org>
  <n5djafe2bm4cofoa3z4urfogchhfacybzou763nelttgfspo25@bywfd5febe6g>
@@ -98,68 +109,47 @@ References: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
  <24xkss4bw6ww43x2gbjchcm4gtmqhdecncmxopnnhf7y2tblc2@iibgqhuix5rm>
  <f2654844-091f-46bf-88c6-6f6d4edc5533@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 In-Reply-To: <f2654844-091f-46bf-88c6-6f6d4edc5533@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: XlvcPx8xXIABRPbRmC5hxuRGoe9xbupV
+X-Authority-Analysis: v=2.4 cv=edY9f6EH c=1 sm=1 tr=0 ts=6852c188 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=dNlqnMcrdpbb+gQrTujlOQ==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=BTWw6KF8kvBcRQRl-U4A:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDExNSBTYWx0ZWRfXys9woqa6I0z1
+ e1t4/0nF7wGrLbJz7dYELh685eZNpnG140H7hBXvZPxP3cYD9/nLmPV/BrwKe4Pfu+CmK6bakC7
+ clhb2xX7uZl+iwMScx5uTvSKt6/psk8ESpmkLqUSp+vmXkRT6fEBYnOnfxtK5BtbUXd7kwMaw/T
+ Eq1SIgqOdBqXU0c0l0YRfQJZyYEICfJP6dhAWf//7TUv2AivrYtjzuHKLcm8XkfRp2b0P1mBmgH
+ tyufgMc6TB5eJqtLY5KcOFT001850dByEptx9jELvzHxPexwxfVDxtVDAROiwvwr9MeSchMxVNM
+ hQjae4w3un+pwByBywXJjVIX7BLUZTHhbH3UESP6IB3LMUcrXhFj6QUoS6Lt9h//m/6PV5gj0JV
+ xbz7IbYH5PR1DF+8m9FzMu69yQMZw1rEkbP+TYpg3WelClAByR9roGfBCZrQovaa3TFMaC3i
+X-Proofpoint-GUID: XlvcPx8xXIABRPbRmC5hxuRGoe9xbupV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-18_05,2025-06-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=668 malwarescore=0
+ phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506180115
 
-On 18/06/2025 15:34, Krzysztof Kozlowski wrote:
+On 18/06/2025 16:34, Krzysztof Kozlowski wrote:
 > On 18/06/2025 15:07, Dmitry Baryshkov wrote:
 >> On Wed, Jun 18, 2025 at 10:28:10AM +0200, Krzysztof Kozlowski wrote:
 >>> On 13/06/2025 16:04, Dmitry Baryshkov wrote:
 >>>> On 13/06/2025 17:02, Krzysztof Kozlowski wrote:
 >>>>> On 13/06/2025 15:55, Dmitry Baryshkov wrote:
->>>>>>>   
+>>>>>>>    
 >>>>>>> @@ -361,24 +373,47 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
->>>>>>>   
->>>>>>>   static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
->>>>>>>   {
+>>>>>>>    
+>>>>>>>    static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
+>>>>>>>    {
 >>>>>>> +	unsigned long flags;
->>>>>>>   	u32 data;
->>>>>>>   
+>>>>>>>    	u32 data;
+>>>>>>>    
 >>>>>>> +	spin_lock_irqsave(&pll->pll_enable_lock, flags);
 >>>>>>> +	--pll->pll_enable_cnt;
 >>>>>>> +	if (pll->pll_enable_cnt < 0) {
@@ -172,12 +162,12 @@ On 18/06/2025 15:34, Krzysztof Kozlowski wrote:
 >>>>>>> +		return;
 >>>>>>> +	} /* else: == 0 */
 >>>>>>> +
->>>>>>>   	data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
->>>>>>>   	data &= ~DSI_7nm_PHY_CMN_CTRL_0_PLL_SHUTDOWNB;
->>>>>>>   	writel(0, pll->phy->pll_base + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES);
->>>>>>>   	writel(data, pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+>>>>>>>    	data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+>>>>>>>    	data &= ~DSI_7nm_PHY_CMN_CTRL_0_PLL_SHUTDOWNB;
+>>>>>>>    	writel(0, pll->phy->pll_base + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES);
+>>>>>>>    	writel(data, pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
 >>>>>>> +	spin_unlock_irqrestore(&pll->pll_enable_lock, flags);
->>>>>>>   	ndelay(250);
+>>>>>>>    	ndelay(250);
 >>>>>>
 >>>>>> What is this ndelay protecting? Is is to let the hardware to wind down
 >>>>>> correctly? I'm worried about dsi_pll_disable_pll_bias() beng followed up
@@ -189,7 +179,7 @@ On 18/06/2025 15:34, Krzysztof Kozlowski wrote:
 >>>>> Great question, but why do you ask me? The code was there already and
 >>>>> MSM DRM drivers are not something I know and could provide context about.
 >>>>
->>>> Because it's you who are changing the code as you've faced the issue 
+>>>> Because it's you who are changing the code as you've faced the issue
 >>>> with recalc_rate.
 >>>>
 >>> Heh, the answer is then: I don't know. I think authors of the code could
@@ -203,21 +193,35 @@ On 18/06/2025 15:34, Krzysztof Kozlowski wrote:
 >>
 > 
 > I can drop this 250 ns here, if that's what you ask me. But fixing
-
-But please confirm that you want dropping 250 ns as PART of this fix,
-not some separate commit. Separate commit is irrelevant to this patchset.
-
 > anything in 10nm is not relevant to this patchset. You were already
 > asking me for different fixes for some different things and I find it
 > not acceptable anymore. Stop blocking this patchset with every little
 > existing issue.
+
+I think that it is a common practice to ask to fix the issue in relevant 
+pieces. For example, we frequently ask to fix all the DT files if there 
+was an issue / workaround reported against a selected set of those.
+
+In this case you can send a fix for 10nm separately, but please post a 
+fix for that platform too.
+
 > 
 > Or merge this code without this patch if a fix for reading PLL as zero
 > anyhow is questionable for you.
+
+I think I've asked it at some point, to split the generic code parts and 
+the DSI enablement into two different patch series, so that they could 
+be picked up separately.
+
+No, the fix is not questionable. The patch causes questions though.
+
+
+
 > 
 > Best regards,
 > Krzysztof
 
 
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
