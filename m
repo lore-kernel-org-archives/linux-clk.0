@@ -1,144 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [178.154.239.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEA7126C1E;
-	Wed, 18 Jun 2025 09:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAA18460;
+	Wed, 18 Jun 2025 09:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238022; cv=none; b=aKXRANUIiWX+Jy0ISotMCnYCV+V2xA1JeEFeJJXzNhbumrq7x9EZDZVqRrWjK7HphhbnO+B3pawq87RoQPiwQ6PXkVy/37VqdtLzfjLtnfhr+My+p0nisZHZjd9tpxGx8osmBVs76mYojZzBT0zks/I8al6HtNGgf5nEzNXo5K0=
+	t=1750238162; cv=none; b=dLEFOo4EC6i46eS4crP1k1LqlHJSeuTY9LvcVBGBxUroaa2sks3sTpFahrpO6Trlxwy0vuTT9enZ3D6ekPV+r7HdGJ2AepS+7qltYjCwry3K7utefXLK+0SBDdLSMYvwcjEvU0WbHG3rvmD1Rh9DyUcwQ1w02ogxKuq0gwccAow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238022; c=relaxed/simple;
-	bh=0xWF4UxVnOl6CBWPAc7gc0LvHTEwy77liqQmp5KcYYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLEM49+OBlZlgQnQ/yvWiVkTA+vkBGLJkXL/LHAXHiCrCum+cafmPbEkgLec7VDBlSwoaobKWmwjZo830RklHCE16wDnxJHOyUjUrw+ZEg0bALl4jN5oqRMuvHQbgtWH0bUTZ4QKc1Q1hBzQAGsn8P7KOCeVsMybZu/dk5SSWN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFt967AU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750238162; c=relaxed/simple;
+	bh=ZG2A4iSucAU291eWSjW71lggtPyweGYcMynvg+qYv0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fs0Lr1glBWXQXBWbUzPyqVcLS+29vWLYJUaq5azl0iDwVNnEoogQejMCM9VgvrV7knivplFKAmqEUnXua0P1oL+UrAWEVsEogvv3WSgIwuF12pCMaUI4lgv/iyk73RTnfLZPb+NjY2COYrhDWjiyUY286UJAhf9JHIdl+GdP2Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=bJoMnF34; arc=none smtp.client-ip=178.154.239.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFt967AU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B79C4CEE7;
-	Wed, 18 Jun 2025 09:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750238022;
-	bh=0xWF4UxVnOl6CBWPAc7gc0LvHTEwy77liqQmp5KcYYM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cFt967AUmVOLCSLWVDiTBXO+fe+XjT+vfwL1vClXcJsVcZoanmj++rVPtTfgU3Ejf
-	 S2HYzRJ/VsXWGJosrBw1mLCL1Ik/eiEimLZmqbVN+TszFY3YpNSGFEIoivdUNA11km
-	 I7MhmF03+A9oGYoBqE07I8eXZ5m03uf4JzE0Turaq3mClE8bdj80zifigEi0rys0eY
-	 nr0uHHhUSbLsiDWTLX53fB36cMP0x3DPHGmI6O0OoPS1UPf8ZfL/sBtnBT9xzLZsu6
-	 gMgpeVBfc5/OhVKjMBJGQoq7x7XKOEmgvFHKHarU6VgW2xVCQsoex5+RdF/HepPB2G
-	 keb2wStJR6LDQ==
-Message-ID: <ea77c51d-6fad-4bd1-a608-987642f77aba@kernel.org>
-Date: Wed, 18 Jun 2025 11:13:37 +0200
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="bJoMnF34"
+Received: from mail-nwsmtp-smtp-production-main-58.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-58.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:4898:0:640:7065:0])
+	by forward101d.mail.yandex.net (Yandex) with ESMTPS id 1E367609A7;
+	Wed, 18 Jun 2025 12:15:51 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-58.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ZFJToBFLZKo0-f6wDD1so;
+	Wed, 18 Jun 2025 12:15:50 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750238150;
+	bh=rKI5qWlXphdfpnYiW4pjsQe5ZK9YH76/sNIC0XCwXUI=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=bJoMnF34cHVioZptjl0N4Twc2WBKJNA7a5ZKvWHX4c3mRzti3hD73mmVXqca4MN5P
+	 D8UJzoHczMUPte7VaAHTgmzkj+Wv+oGNZl51djXnUbFWk+o+QbJ4ukonPyXKybqo5G
+	 p8XW/Srin3exiRLWpN/LNKiqESsp5k6w5Falq7dQ=
+Authentication-Results: mail-nwsmtp-smtp-production-main-58.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH] rust: make `clk::Hertz` methods const
+Date: Wed, 18 Jun 2025 12:14:42 +0300
+Message-ID: <20250618091442.29104-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250321095556.91425-1-clamor95@gmail.com>
- <20250321095556.91425-3-clamor95@gmail.com>
- <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
- <g7kegtso3opafpwocvibhm3rym35oikxoyq2wmphqy3wjenzpa@m7extntwahau>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <g7kegtso3opafpwocvibhm3rym35oikxoyq2wmphqy3wjenzpa@m7extntwahau>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/06/2025 13:07, Thierry Reding wrote:
->>
->>> @@ -0,0 +1,13 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
->>> +/*
->>> + * This header provides Tegra114-specific constants for binding
->>> + * nvidia,tegra114-car.
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
->>> +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
->>> +
->>> +#define TEGRA114_RESET(x)		(5 * 32 + (x))
->>
->>
->> Does not look like a binding, but some sort of register. Binding IDs
->> start from 0 (or 1) and are incremented by 1.
-> 
-> I'll try and clear up some of the confusion around this. The way that
-> resets are handled on these Tegra devices is that there is a set of
-> peripheral clocks & resets which are paired up. This is because they
-> are laid out in banks within the CAR (clock and reset) controller. In
-> most cases we're referring to those resets, so you'll often see a clock
-> ID used in conjection with the same reset ID for a given IP block.
-> 
-> In addition to those peripheral resets, there are a number of extra
-> resets that don't have a corresponding clock and which are exposed in
-> registers outside of the peripheral banks, but still part of the CAR.
-> To support those "special" registers, the TEGRA*_RESET() is used to
-> denote resets outside of the regular peripheral resets. Essentially it
-> defines the offset within the CAR at which special resets start. In the
-> above case, Tegra114 has 5 banks with 32 peripheral resets each. The
-> first special reset, TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0.
-> 
-> So to summarize: We cannot start enumerating these at 0 because that
-> would fall into the range of peripheral reset IDs.
+Marks `Hertz` methods as `const` to make them available
+for `const` contexts. This can be useful when defining
+static/compile-time frequency parameters in drivers/subsystems.
 
-So these are hardware values, not bindings. Drop the header or move it
-outside of bindings like other headers for hardware constants.
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
+---
+ rust/kernel/clk.rs | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 6041c6d07527..ef0a2edd52c3 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -31,37 +31,37 @@
+
+ impl Hertz {
+     /// Create a new instance from kilohertz (kHz)
+-    pub fn from_khz(khz: c_ulong) -> Self {
++    pub const fn from_khz(khz: c_ulong) -> Self {
+         Self(khz * 1_000)
+     }
+
+     /// Create a new instance from megahertz (MHz)
+-    pub fn from_mhz(mhz: c_ulong) -> Self {
++    pub const fn from_mhz(mhz: c_ulong) -> Self {
+         Self(mhz * 1_000_000)
+     }
+
+     /// Create a new instance from gigahertz (GHz)
+-    pub fn from_ghz(ghz: c_ulong) -> Self {
++    pub const fn from_ghz(ghz: c_ulong) -> Self {
+         Self(ghz * 1_000_000_000)
+     }
+
+     /// Get the frequency in hertz
+-    pub fn as_hz(&self) -> c_ulong {
++    pub const fn as_hz(&self) -> c_ulong {
+         self.0
+     }
+
+     /// Get the frequency in kilohertz
+-    pub fn as_khz(&self) -> c_ulong {
++    pub const fn as_khz(&self) -> c_ulong {
+         self.0 / 1_000
+     }
+
+     /// Get the frequency in megahertz
+-    pub fn as_mhz(&self) -> c_ulong {
++    pub const fn as_mhz(&self) -> c_ulong {
+         self.0 / 1_000_000
+     }
+
+     /// Get the frequency in gigahertz
+-    pub fn as_ghz(&self) -> c_ulong {
++    pub const fn as_ghz(&self) -> c_ulong {
+         self.0 / 1_000_000_000
+     }
+ }
+2.49.0
+
