@@ -1,115 +1,217 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012023.outbound.protection.outlook.com [52.101.71.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778EB284663
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 18:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750270067; cv=none; b=fRr0BVJu4Rt1bD33l19RQvxEX5IgfigOcIshl+Ehbczuf3nwyeqcbJUoIVrWhPmVtMdjbcF7KF0k6KvOHU1U74Qc710s27N+mP+efNakryxSz2Xb3+Jv4V1NFC+zU4EBWwOJr/CinfAHSMGvMnLy9gY3H72c/58RR4bgZF0LfXo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750270067; c=relaxed/simple;
-	bh=OORpbyIv7wOwpEmO2nAi9DFYlQJd4JcdOYUYd3nnzKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKZCT7QwAhQfgOK8Y8DMgriEnIdpTLHsr7Re+ePc0+QtKYUDEj7hDfAdOb4uHlTtbt+1ELEGRf8apIYnXnoUb33SSUg1404MPKk2lgE4gJN7R6wuF8W6R8nB7YaVb/YOtvLV0HF1MZxUQMFoR/IllT8ynCtTdUbiMrdE2QSijzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EQZjs8nJ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5CA3085D2;
+	Wed, 18 Jun 2025 18:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750270540; cv=fail; b=AdMVkBUyuLrUVrJDkmSaQnTEjoZBn6uLotvNxiDHp4tIHv3F8WiVqRfyKdW7+EOnkqCpCsyZ1eMnKNzHMbCdnAJPIBy6/0vKJi72OvPvXNhNq8mNtjT6g6phbvSICH8edo4JSjYm9gI55XdeaYUZCWm9EKuE7gg5gwNSj8VpCys=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750270540; c=relaxed/simple;
+	bh=whOQHELd9o+/j/WdT8uM78Ie8ZBEs4upBxcdQo5I2qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AU83xm3URpFEU2ZplHDI6BJphsegnMyc7/DF2CuaaJyYTCjlcocTSV4BwmHbtKuUPfWsva77gnE1xUpRqgC3Sdj7KoSFYP6bf394OcFt+ShRAuvjwQ5h7rS+YYi2sesz9l+LJXSY1KTakTTTjNYGSVlbMprcmeO8ZF52Zv0HOPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vnr+Y9LC; arc=fail smtp.client-ip=52.101.71.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EQZjs8nJ"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ade326e366dso1332810066b.3
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 11:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750270063; x=1750874863; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OORpbyIv7wOwpEmO2nAi9DFYlQJd4JcdOYUYd3nnzKw=;
-        b=EQZjs8nJwxLaHdj9QUW2xw1qhApkKAfBwm1OMQc50WMvianu5HAGSZ9Udt19sqHkJe
-         kRvea7IaDWNwOUi5eaYKqBY7/+FXvion6G8Y8YvwCWRJR0lvGtYyikEMWDaOJ5N/ayOF
-         lBX9Gh/9put2ibE5kvPRn6YbKszROjcYaIAde3aoiVwX3L5Qi65kyO5zMRouj8dtuyqS
-         kqV3IG3UpMQY8xlMx1kfYi8f1RS0epvOw4YDMoQFhOWZZJ0lc11EQw7JclvrRwGQdlMu
-         tyP8FCu5uYQmkGIu8klCRdWnybqJly0KdnlukOn0c2by51YPY8m4juCIDZ/2q+T/EImn
-         Veug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750270063; x=1750874863;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OORpbyIv7wOwpEmO2nAi9DFYlQJd4JcdOYUYd3nnzKw=;
-        b=j2QciGzuGn2H9aZ7jbANXu613q4oIHuivDPazLQTEpg7v2c6NErt4dw/eVciIRDBvR
-         /JHLQ4S0YXXtWn5zRL2lDYx9b+HV/YvpRn4b/wNM2vSM0Oz1AP/5L0a+Ot0KObjVlAHC
-         Ffv4E2pKmlxsDu6gvxUiNr6ZSylYj35W6xFywq8m2bwNSr9mwx8jf8qaCdtgLwuKYqfv
-         svJQuffMJdINrQPBC/pay5ASSWsDq0FatD89eYWdj7YrtxyByiT8W/aw6iM3IDPBm1HD
-         EPzvPDF3xLckveHCXIDAF2hIXOjqRCzH771CwiceyieQQqUBp3vaHZ6kpu85KokJ+Kic
-         MKNg==
-X-Gm-Message-State: AOJu0Yxy+3+00+rhaEOc6XCSzeUzBha3ZiFrkB0ZR+yEE1fJrIe9PYZO
-	3jTWj6dO7iJwBt9Mgg2gq2cx6MxzpZ+jzCvBvMGHXdY3iK88BDuZ9LqwZrCG5zZPRdE=
-X-Gm-Gg: ASbGnctsaock2fc+VWKNeOli8r7QiOyok1pWY0qvCP2myVVTm82HbmPGhsGxi8EIXgp
-	6dQ04/pEf0I4Rs0+TTEDINDxXO+dM92ZXpSBW77CDcd6pFc4+KSrHPDxSjjyCQpxvbYmaE9ihU+
-	PuwTJSgeUOE12v3rdDbgXVt1hACcgtcw9SCO2c3iam35V9AVey0SenHJ17gqoQh6wbMaf42YY08
-	MzD1kZp3JWvVD3sIC0XO0RSf42eG/0luwsBavF1AHb37JO5MB6XNdidoB3Br8EXsGLQt1xEbDXt
-	YI7jUrwj8WwHjQUCoLuuCuhRhmlxTvDeg6+5Or8IAb2z2lZrx+8AnllXIFrRrfU7/3wU1eCidP8
-	HMLrUD8j55lACZNogF537m/arcKHP
-X-Google-Smtp-Source: AGHT+IEN1axOTTyGZ+47pb4M7RuhULwD+cCfnYhjQipu2S+AjBZym/amFSpaw9xH663+D6RVqndEcw==
-X-Received: by 2002:a17:907:d86a:b0:ae0:1dbf:32b9 with SMTP id a640c23a62f3a-ae01dbf4305mr392573466b.5.1750270062644;
-        Wed, 18 Jun 2025 11:07:42 -0700 (PDT)
-Received: from localhost (p200300f65f13c80400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f13:c804::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-adec81c1fc2sm1096774366b.59.2025.06.18.11.07.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 11:07:41 -0700 (PDT)
-Date: Wed, 18 Jun 2025 20:07:40 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: pwm: A few improvements
-Message-ID: <du3xj5fkhw55oppor3feyk4pgchprcog2ew2epaixhsvf2e2sm@humm6imft4sp>
-References: <cover.1746006578.git.ukleinek@baylibre.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vnr+Y9LC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n9vJBAliJvzj+Nz5/zp4DpPwZiQfpU54ckhMhW94xFxDJPK/3sZ0mFuSO6VL81Q24KQlTk6mrV6unn5eAKe3VsNGft96lV5BbTGii0KmPQaFe1Lp8cQVa/8hxtP2RE0KkO99fMg03HT7yp+u7kJ39NcHvBX8yT7zhR+LUPQ79T3HrI/fRjOO4seIx1yLJWYjTQ5stIGhsCDuor6Q3D911mKY+G4gOTcld531v6F55ijUtDgutoWLz+6ysyCgnvA6GNNPCSj9Z8rfSyRxRbwwYXT6vBGQf8TpCM/ipNscVr03zU4q+YSc97oFtcDVeVOi/X6OQGAQKMKKRWIJW6dnpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VRbq7OKqMBEVj4dkUrebOVAQgxj/W1z6PJpr3fFK+aM=;
+ b=hQZHpAVxR08azIwcCEd99BNOALW2u6SuchPPNWb+2VEGSUTsw+gjD4YrHfDEqQPh4ERZln220enCO47scSpkCr30xEDf/AwzMEK92gz9JST+uURGYAZlOgjqATOX7HA2vdX1QM7yxJYCeJP9kpSjfnpJ14Sj35SwHkaGM4h5n4xxm9Tn2q7ArNtGcbgZU1tUHJTsWVbRXplgW7HjOmepT7M8nBUEbIc7Qh0aAv4kIWfZV2FI39LkzdX3joDkbEHkOV6VjFZ7siv12OB5hogbAPnGC6YgT3+ajKh/1j3qUcnqtEbtc51KZKLGTIhGN4O3Nj3prmPcpsbAdPuUcutIzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VRbq7OKqMBEVj4dkUrebOVAQgxj/W1z6PJpr3fFK+aM=;
+ b=Vnr+Y9LCwRUksiN7T4F+Ktt05d7cNCW8teh262902Lt7rWxB/vSLIbDJ4ZqfNgVjjts51JruZs/g77wCPSCUnpeKXl4ppUogr62WhLFv7kCXUN4dK3XWgoikMTvOvLKlpuknU9jOgsWwrjA2e9VwJdENk0nAovHAeH4QlC1QuCAh6IIrCG+9HX1HSj7Q+vc5Wb99ztuQsbvC1jTPLpClRgYpDEboT9oy6NrmB4fIESiapYddoL6sSnkWM/xM03Gjn4/b0Z31/nl/qPr5TkIttQfGP1jC6YCp6SfvjkIxWAh2mvkuuJjzTO58ZNckdyfZRDVOb/rnvgr9vKP17xbilQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7845.eurprd04.prod.outlook.com (2603:10a6:20b:2a7::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.19; Wed, 18 Jun
+ 2025 18:15:35 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 18:15:34 +0000
+Date: Wed, 18 Jun 2025 14:15:30 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: imx: Fix an out-of-bounds access in
+ dispmix_csr_clk_dev_data
+Message-ID: <aFMCQhOSoaMnccNA@lizhi-Precision-Tower-5810>
+References: <20250618065318.319339-1-xiaolei.wang@windriver.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618065318.319339-1-xiaolei.wang@windriver.com>
+X-ClientProxiedBy: AS9PR06CA0644.eurprd06.prod.outlook.com
+ (2603:10a6:20b:46f::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="djs46wk4reaxddc2"
-Content-Disposition: inline
-In-Reply-To: <cover.1746006578.git.ukleinek@baylibre.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7845:EE_
+X-MS-Office365-Filtering-Correlation-Id: d36fc467-f7fe-4111-872a-08ddae941e8c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EyjVSyftxdOdolSNwS67SmPI5EYN/DP29idae6svt3DOTBhuRbJ/4tJ8WiIt?=
+ =?us-ascii?Q?gzEuBdJX/9COo0esBePmFvKyE7ipo7tjjYU1xwl4hrvf5M+GfehZVvqtkAB0?=
+ =?us-ascii?Q?jPCm4wMngT2gHdLskkc+CevFtpg6P1RGOZ5hsu33CSGALzcxcpr6g02uKcwR?=
+ =?us-ascii?Q?uVduhQNEx7n286YUrsWxH5pXkd74c7g7vWQG2UKb2xklWCVE2PXPXpOzxGMZ?=
+ =?us-ascii?Q?nm82cEUqdiMxGRNHrO9CSPcDvX5qoArv4eKINKBLVTHNjqct1SBZX0LcAIEy?=
+ =?us-ascii?Q?2HKO1XQu2mhW1ddyxYdQ0GCK+zY8lVbVmZq1lwup5RYiYqrO1JBKj+XfNVVU?=
+ =?us-ascii?Q?tLcg3CjN3J2Gk+u1R59UTWVCgVst4SxCXfQKL44A7NqR2ZGaDTnkw7NiKySp?=
+ =?us-ascii?Q?aexlHAw3MZdTMGSOujFcmAFaYZhqlwdMXM7/TZx6a+gaOn3RudRLtN7Am24r?=
+ =?us-ascii?Q?oAV5oxtdU+EotJ/MEZbAIP6q2lQa6bXgHlg2n0HODmopKyexyy/Q+AQwwpKZ?=
+ =?us-ascii?Q?IyRPDuMEXOzepmyUd35E/fXgHaMQoPKB+QM4+lJZBPJ3HC78PmpXf15llyPs?=
+ =?us-ascii?Q?bm6WLtjkBZcGUCyH9l5wHht5TftRNj9c0Ogazta+vtnSJRGRM6fEc6WgOJ5e?=
+ =?us-ascii?Q?7/eeD+FobahTZVujxyvoh4wbUEm4jXMcSvOV75TYlhp+S3cNL3wjrFgEpvTs?=
+ =?us-ascii?Q?UsXiCsa2BCH5pL1Icla/fIbL+yMKsrmtVxrocgTCdvczSrwbbtoKmcv4Bms7?=
+ =?us-ascii?Q?SZNI/4ihGgp6bK14GYyeBDHAm1MLxZjnAynxHTSf0j1SWoOdrkxmOlKlk5/M?=
+ =?us-ascii?Q?GqqkJbbgZd/WLBzp5MdqqDYcWDsRNubPC1+vhX2KM+FEwZgZOawemYkY3yoW?=
+ =?us-ascii?Q?uRYG+F2Z4EYLQQjUEC8xfDP8NyTZRIV05X8qGiD+7mgL6J8f11IBOxpazwiJ?=
+ =?us-ascii?Q?o7/Bo1NSmS7o1Dc3Iwt4w6n48mb7yRmZFy924O41m7vO/QRkdp5ofWQsNDwX?=
+ =?us-ascii?Q?JOcSxgvZ+wDdCxZmUJHrencQcCnoJaKbohhMLEqN3E+oBSpsftLQgDo5HAJx?=
+ =?us-ascii?Q?6VaqWTfz2Y9cN106ZTHLwr2LgDuQqOjRQ9GC8vfVSI68jOjND3vVtL41znuj?=
+ =?us-ascii?Q?WEyd8jR9PTKsBnTVdH2fASBt1K0oTtQApzG6cA1UPvzQ7v6pbosHFgCdv/oy?=
+ =?us-ascii?Q?PUoBIecGkj1LhbbxnZJ/HBmnb7ArfFgHhVs9sAfZAPVEwa2iJ5ACYnxH3rrW?=
+ =?us-ascii?Q?EvWTYzo6hXXhVuPTOviaZcXVGwy+vgSA1CAAOR2OjPbHWENIn7HUVsGB9T9K?=
+ =?us-ascii?Q?+uPlB3hQNSHKRZPv2js7wZ2LQYQgKOudnvMBTH9rHCfZDWGgBvnQEdrUawXH?=
+ =?us-ascii?Q?J1B3J45/SzWNPNGW0n8dZXe3kpMKy5ie92orpCivH+0ydX6BX2+igOtKHUbR?=
+ =?us-ascii?Q?n2fxcKw74qdTJSAP4B3mmFSKUwCTDPkRdEjXLjGcThyWwf5wwug/DpK3Url/?=
+ =?us-ascii?Q?S2HdD5yFQsFOPP0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GB/4czoPV0dSoX/Ibs1E8j5ojRZlJAEn56tMLOIKvQAVLvePLdXWPeGPgrn5?=
+ =?us-ascii?Q?P//X2N87h7f6zFyynPVfbo0P571RP8SLD4yjlePzrgkT9nIpw1QisdZIQ0sc?=
+ =?us-ascii?Q?b7vDycvblPs0bv7V8XHznMCEgwbs204LuzUwn8R94s0BUFSHBghme8qOP3LU?=
+ =?us-ascii?Q?2E1gcaMV32loXdREyExgN1ygamhmSnBpjHtlT+cz6UWd17HyMpZ5ZroD/bXd?=
+ =?us-ascii?Q?AbkKbKR7AUZye/E5yJpnMtgrT9p93Wk21Evv7lz5ZeOKzDtRm2fxmZg0SAHh?=
+ =?us-ascii?Q?UBA5BCBiePihXS1sC4aadzzcRIEUPGAxYm6wvjvrjTCr9x5J/cN3Hie9UfI8?=
+ =?us-ascii?Q?LOMi3lbMQbkQ6ahjfs+IYjhZqRIAVAa522/kZGE0OIvUWiQG8hm6YD0X7tvm?=
+ =?us-ascii?Q?PgAkcqmONoEm58y4KhWVDA6TsXcBQo1NKP5WIcA0T7y5j/YZIy/t31BwZgK8?=
+ =?us-ascii?Q?Fe8yIb4W9czT1YRPYRE6hkrzju/XcAkagOZ0URvBfm9jMOLSs7JFkBVQJEH/?=
+ =?us-ascii?Q?bu5ANtfmqPvDXufoVvJfink9GhoJlZuO66BXHaaGlOkkSAqtiQF7FcvrE53o?=
+ =?us-ascii?Q?yNCxWHycO9yxs6yIaLG5HaPPjpaA5P2wII/A6cuDxRLGfL2eLKRUjqtX+1Ym?=
+ =?us-ascii?Q?fb74XXOFPlVLnfXjzfHCWIyHm2C+owalJcizxfkHVkRRc5z4Rdq+r35kzm8p?=
+ =?us-ascii?Q?QQAg00D0X5hLpZJWIINCYor/mBum5mTkWZsNizURpcAZ/yTAkdgpp1eQvJlo?=
+ =?us-ascii?Q?tAW83ScaIZ8CA8s5epy5+3PiPmJiwRIyd7ZX9BjmoyWu5o3qhwqXfU/REbjf?=
+ =?us-ascii?Q?JZuEbRdgbqrJC+SabSwzFt3/kIctWui5AgkylnvTrJ/s6Oaj6acTSe70ruNk?=
+ =?us-ascii?Q?v50UlbnU+WpEmFchMOuAnBQDX40Tv7tHUcJppq5R9gVPKlzAG6tFVoureUO2?=
+ =?us-ascii?Q?3J3pBxeLnQSoWioC5i7+nl8mjusWxzwW1xlMJT1LxtSyGxRmmNmex95Kyhtx?=
+ =?us-ascii?Q?AHcrSRo4Ol2VQiH6d1YlmKbY2MP1pMfkrUKpa3b5ymI+sQ/n6Zrm4ftUV5aT?=
+ =?us-ascii?Q?fnM4BBmpYfCVfwiD8PR7DFSRpjcHd/VD70xMylQkT0ymXR2/hKOtV/eO4/1F?=
+ =?us-ascii?Q?BfwlvCJw629qxbiFdfU/37+rjNGhFUNU8SCHgDvtTxBMu0KhVzOk9KSFzdgs?=
+ =?us-ascii?Q?yhFDmUgIhsFxIAjNbFxGh/Pf8oLCS6640LJFvFWSzc2AE6jA5/VvF9fnp/IM?=
+ =?us-ascii?Q?/RiT9ZO7w6BTQs/mIvkkhFfa00+LW9AJ8jvEeFdGbOIrkMhatcS1rlIx9Y2H?=
+ =?us-ascii?Q?N7I5eGjMoLiuRfqUmgXTssmmARfmIrAyKM9rwTXf2Y5obCSRQfK7Jlibbn1w?=
+ =?us-ascii?Q?zzEqQovIkE+4ccJPvOmXC0V6qcXkDZzKNmzokQXiJUZq0NTS1RzOVFQmHmI1?=
+ =?us-ascii?Q?9nE57HT2s+tjEZjgZnqTMeuuwFb3U2+PWkqcz36eM3T+wq0LaHcaa9q74gdI?=
+ =?us-ascii?Q?XU/0TnI3q56wENCoWWe4mR8xF5oOK3TCohT6F3n7Zcw51odXhSzWOaewDxC3?=
+ =?us-ascii?Q?yueesdVJHWlkrfP89dlMr70Cnjlj6QjgJWUaB6H0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d36fc467-f7fe-4111-872a-08ddae941e8c
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 18:15:34.9166
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uY0he9spWuWn7ghFgZkxurvH4X+olr/EdoUXKmpEsf/BVZeyImeWPRB5XtpJV0JZs10ecf98HnHXrI8K9nVWvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7845
 
+On Wed, Jun 18, 2025 at 02:53:18PM +0800, Xiaolei Wang wrote:
+> When num_parents is 4, __clk_register() occurs an out-of-bounds
+> when accessing parent_names member. Use ARRAY_SIZE() instead of
+> hardcode number here.
+>
+>  BUG: KASAN: global-out-of-bounds in __clk_register+0x1844/0x20d8
+>  Read of size 8 at addr ffff800086988e78 by task kworker/u24:3/59
+>   Hardware name: NXP i.MX95 19X19 board (DT)
+>   Workqueue: events_unbound deferred_probe_work_func
+>   Call trace:
+>     dump_backtrace+0x94/0xec
+>     show_stack+0x18/0x24
+>     dump_stack_lvl+0x8c/0xcc
+>     print_report+0x398/0x5fc
+>     kasan_report+0xd4/0x114
+>     __asan_report_load8_noabort+0x20/0x2c
+>     __clk_register+0x1844/0x20d8
+>     clk_hw_register+0x44/0x110
+>     __clk_hw_register_mux+0x284/0x3a8
+>     imx95_bc_probe+0x4f4/0xa70
+>
+> Fixes: 5224b189462f ("clk: imx: add i.MX95 BLK CTL clk driver")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 
---djs46wk4reaxddc2
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/4] clk: pwm: A few improvements
-MIME-Version: 1.0
+You need cc stable.
 
-Hello,
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-On Wed, Apr 30, 2025 at 11:57:45AM +0200, Uwe Kleine-K=F6nig wrote:
-> my main objective here to get rid of the call to pwm_config() as I want
-> to drop that function. While implementing that I found a few changes
-> left and right of it that I think improve the driver.
-
-This was sent a few weeks before v6.15 and it missed the window for
-v6.16-rc1. Is it only lack of review capacities that there was no
-reaction yet, or did it fall through the cracks?
-
-Best regards
-Uwe
-
---djs46wk4reaxddc2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhTAGkACgkQj4D7WH0S
-/k5Z0wf/Tlso92kkFmYl7I0XH0zZ6HdaBnkGzptHXaL8Pa4NxqGBmLEXacmsOWgm
-5p0F0KVYwDJ+dbARBWj6nZ51WSFL5Gec4SQ6qlD3u70cYux8A5NwlLkV3LnW/GUe
-4wx1XJijZM+p9hZAznin8V7r31SGH4wZk8dEuAvH9AKvEy4DvHPWAC9JIWUcc6Z2
-+rRaCWZ5aEnbPuml5e6tjC0oRhwmkho/e8b5Brn8VF7Grz7WT2rmFzJIxj2iUHSO
-RxQXc5Rz1obXSeXxz0l/pmlXiifrFreVoz+KJ9DCKhfjB3afNxbkzfdyvU0ufrL/
-iVNHHVXnk0+pXpARy/Dlq386kLQsnA==
-=nDTk
------END PGP SIGNATURE-----
-
---djs46wk4reaxddc2--
+> ---
+> v1:
+>   https://patchwork.kernel.org/project/linux-arm-kernel/patch/20250614112255.2838154-1-xiaolei.wang@windriver.com/
+> v2:
+>   Use ARRAY_SIZE() instead of hardcode number here.
+>
+>  drivers/clk/imx/clk-imx95-blk-ctl.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> index 25974947ad0c..cc2ee2be1819 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -219,11 +219,15 @@ static const struct imx95_blk_ctl_dev_data lvds_csr_dev_data = {
+>  	.clk_reg_offset = 0,
+>  };
+>
+> +static const char * const disp_engine_parents[] = {
+> +	"videopll1", "dsi_pll", "ldb_pll_div7"
+> +};
+> +
+>  static const struct imx95_blk_ctl_clk_dev_data dispmix_csr_clk_dev_data[] = {
+>  	[IMX95_CLK_DISPMIX_ENG0_SEL] = {
+>  		.name = "disp_engine0_sel",
+> -		.parent_names = (const char *[]){"videopll1", "dsi_pll", "ldb_pll_div7", },
+> -		.num_parents = 4,
+> +		.parent_names = disp_engine_parents,
+> +		.num_parents = ARRAY_SIZE(disp_engine_parents),
+>  		.reg = 0,
+>  		.bit_idx = 0,
+>  		.bit_width = 2,
+> @@ -232,8 +236,8 @@ static const struct imx95_blk_ctl_clk_dev_data dispmix_csr_clk_dev_data[] = {
+>  	},
+>  	[IMX95_CLK_DISPMIX_ENG1_SEL] = {
+>  		.name = "disp_engine1_sel",
+> -		.parent_names = (const char *[]){"videopll1", "dsi_pll", "ldb_pll_div7", },
+> -		.num_parents = 4,
+> +		.parent_names = disp_engine_parents,
+> +		.num_parents = ARRAY_SIZE(disp_engine_parents),
+>  		.reg = 0,
+>  		.bit_idx = 2,
+>  		.bit_width = 2,
+> --
+> 2.43.0
+>
