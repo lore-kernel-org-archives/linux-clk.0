@@ -1,15 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7743A280CF6
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 09:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F832836A0
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 09:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238483; cv=none; b=g8xG72kIP68UIkdWOOAMznbrGowGtsOcC7aNXdmu0ppi/O6WnrK4f5leDV+D8+aSDkWpAHfyF0fInCbWfpTTrNbckEy6Q7Dyd637BHRDdlv/6q4WpTofn1vwzxkSe9uYngYIhYwRy9MwS6IV2xU1+ufcJKK1OlZHH6nZtwVpHak=
+	t=1750238488; cv=none; b=F7FWVCZkrXgweD1wCDpS8+niL0Od20SNpUqgCb64mxRIrd1QlRlobuaGU5TfUJlGBN5cZ5OzywGGSGgsNOb+WZBJ8n+6lip/doguBv3hyfJpAQIs2HeMb/YqmCcqWe4lq9Tetb8LTGbcqkgEvSHhFk5gEKtxhLzk5FXpiMzXLlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238483; c=relaxed/simple;
-	bh=8E1ehRVYoTz9WwqT1b9dtBs8b6qcwXxr8HWeBeBxMM8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Eot8XNpGW5bQ3YBI+GhYLnq2svMq43slTAG9tiPq0WdqyGPleOT9f1J07GSc8R5HkG5d0VKLxRf8E/TyfvaYJD/rJ9aIQ5VLhFQ9SfNeH6jb97oWRHj/WerTZEo7vYpK7ZO7zaSJjicyw2RmBpknnyn+wlzBvNQot1lMNp7A35Y=
+	s=arc-20240116; t=1750238488; c=relaxed/simple;
+	bh=zXZe+qJTLC6fo/1MoICek/b4HV3kkC9vbZuXJj7J3oo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pj3ELQXgFjVZfBNwi3B9nWjJRivwO3SRfLHFyJ6KvxOcDQRmcsMLXh/I1vqNyTvgBhtiPZ+qNbpen7aFm7jMjPHOG/8yF6Pkz4WJwcglSKJc6JxOH7Gu/7SCf3Alti7yOotS/UD7SuDZaK3zARX3ZrS7Akc8wwHzzRit2A8HFbw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -17,22 +18,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyr-0003B5-6r; Wed, 18 Jun 2025 11:21:17 +0200
+	id 1uRoyr-0003Av-6q; Wed, 18 Jun 2025 11:21:17 +0200
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyq-004757-2Q;
+	id 1uRoyq-004756-2P;
 	Wed, 18 Jun 2025 11:21:16 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyq-005QWt-25;
+	id 1uRoyq-005QWt-26;
 	Wed, 18 Jun 2025 11:21:16 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v5 0/4] clk: add support for TI CDCE6214
-Date: Wed, 18 Jun 2025 11:21:11 +0200
-Message-Id: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
+Date: Wed, 18 Jun 2025 11:21:12 +0200
+Subject: [PATCH v5 1/4] dt-bindings: clock: add TI CDCE6214 binding
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,12 +41,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAeFUmgC/3XQQQ6CMBCF4auYrq2ZTgu1rryHcQHTqTYaMEWJx
- nB3CyuCuvxfMt9i3qLjFLkTu9VbJO5jF9smR7FeCTpXzYll9LkFAhZgYCvpepHkiUtURgJZA0Z
- 7wtKKfHJLHOJz4g7H3OfY3dv0mvRejesfqFcSZO0NW3BYORX2N25Oj3tqm/jceBaj1uNccAsBs
- 2CgxqK2iEz1T0HPBAULQWfBW03BhaD9Fn4KZibopZA/Il1QBVuFZUXllzAMwwepizYlcwEAAA=
- =
-X-Change-ID: 20250408-clk-cdce6214-0c74043dc267
+Message-Id: <20250618-clk-cdce6214-v5-1-9938b8ed0b94@pengutronix.de>
+References: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
+In-Reply-To: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -56,11 +53,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
  Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750238476; l=3422;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750238476; l=3070;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=8E1ehRVYoTz9WwqT1b9dtBs8b6qcwXxr8HWeBeBxMM8=;
- b=ugTiqbkjv8Qt6G0qBx990iwWKhv9rCrE7gnUekl7QAAPq79duUebJ6F907vnukpZVGiVe7Mxv
- /gsFY6xzVLCB8MTety5Hm5RnGD6xGhYPh7YQCBYgKWcyXRvhaoynRyo
+ bh=zXZe+qJTLC6fo/1MoICek/b4HV3kkC9vbZuXJj7J3oo=;
+ b=4dbjlwJlJcp8zj7IImcRe3WIfzdJl2Id5r3+gj8wAGIfwipjuSU1PAkW4YWDweM4YITCNdKjS
+ B8RjDUUD9lUDoqBLh09dmZRWhzWiYitN4IjMgn1lHBxgtD9ihZWXnZ7
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -68,84 +65,114 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-Differential Outputs, Two Inputs, and Internal EEPROM.
-
-This series adds a common clk framework driver for this chip along with
-the dt-bindings document and a small fix needed for the common clk
-framework.
-
-In this round I have split out the pin configuration support and
-binding to separate patches. My hope is that without the pin
-configuration the first two patches are acceptable already and then
-the pin configuration can be disscussed separately.
-
-Sascha
+Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+Generator With One PLL, Four Differential Outputs, Two Inputs, and
+Internal EEPROM.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
-Changes in v5:
-- Reword commit message for binding patch (Krzysztof)
-- Make clock binding yaml simpler (Krzysztof)
-- add link to datasheet to driver code (Stephen)
-- Drop inclusion of linux/clk.h (Stephen)
-- Add missing #include <linux/bitfield.h> (Kernel test robot)
-- simplify cdce6214_clk_out0_get_parent() (Stephen)
-- Use divider_get_val() where appropriate (Stephen)
-- Add Rxx defines for registers (Stephen)
-- Add define for magic value 24 (Stephen)
-- introduce and use cdce6214_clk_psx_mask() (Stephen)
-- Use clamp() instead of open code (Stephen)
-- declare const arrays const (Stephen)
-- more use of dev_err_probe() (Stephen)
-- use determine_rate() instead of round_rate (Stephen)
-- split out pin configuration to separate patches
-- Link to v4: https://lore.kernel.org/r/20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     | 60 ++++++++++++++++++++++
+ include/dt-bindings/clock/ti,cdce6214.h            | 25 +++++++++
+ 2 files changed, 85 insertions(+)
 
-Changes in v4:
-- add missing '>' modifier in include/dt-bindings/clock/ti,cdce6214.h
-- fix clocks maxItems should be 2
-- add missing license in include/dt-bindings/clock/ti,cdce6214.h
-- Fix checkpatch issues
-- Link to v3: https://lore.kernel.org/r/20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..0a952b634079ec74bbf1114d1beb9fd5ee8682ec
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI CDCE6214 programmable clock generator with PLL
++
++maintainers:
++  - Sascha Hauer <s.hauer@pengutronix.de>
++
++description: >
++  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
++  Two Inputs, and Internal EEPROM
++
++  https://www.ti.com/product/CDCE6214
++
++properties:
++  compatible:
++    enum:
++      - ti,cdce6214
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    items:
++      - enum: [ priref, secref ]
++      - const: secref
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        clock-generator@67 {
++            compatible = "ti,cdce6214";
++            reg = <0x67>;
++            #clock-cells = <1>;
++            clocks = <&clock_ref25m>;
++            clock-names = "secref";
++        };
++    };
+diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..ffe4c3cf83afdf5e58e31a5511ea998a5ec97878
+--- /dev/null
++++ b/include/dt-bindings/clock/ti,cdce6214.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
++#define _DT_BINDINGS_CLK_TI_CDCE6214_H
++
++/*
++ * primary/secondary inputs. Not registered as clocks, but used
++ * as reg properties for the subnodes specifying the input properties
++ */
++#define CDCE6214_CLK_PRIREF	0
++#define CDCE6214_CLK_SECREF	1
++
++/*
++ * Clock indices for the clocks provided by the CDCE6214. Also used
++ * as reg properties for the subnodes specifying the output properties
++ */
++#define CDCE6214_CLK_OUT0	2
++#define CDCE6214_CLK_OUT1	3
++#define CDCE6214_CLK_OUT2	4
++#define CDCE6214_CLK_OUT3	5
++#define CDCE6214_CLK_OUT4	6
++#define CDCE6214_CLK_PLL	7
++#define CDCE6214_CLK_PSA	8
++#define CDCE6214_CLK_PSB	9
++
++#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
 
-Changes in v3:
-- Use string properties instead of int for enums
-- Use units from property-units in dtschema
-- Link to v2: https://lore.kernel.org/r/20250409-clk-cdce6214-v2-0-40b25b722ecb@pengutronix.de
-
-Changes in v2:
-- Use consistent quotes in binding document
-- make clock-names an enum to make each clock fully optional
-- drop '|' in binding description where not needed
-- encode clock input mode into integer
-- encode clock output mode into integer
-- do not use defines for reg properties
-- support setting load capacity for the oscillator via device tree
-- support setting Bias current for the oscillator via device tree
-- support setting polarities of CMOS outputs via device tree
-- fix compatible string in driver
-- remove unused struct cdce6214_config
-- Link to v1: https://lore.kernel.org/r/20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de
-
----
-Sascha Hauer (4):
-      dt-bindings: clock: add TI CDCE6214 binding
-      clk: add TI CDCE6214 clock driver
-      dt-bindings: clock: cdce6214: add binding for pin configuration
-      clk: cdce6214: add pin configuration support
-
- .../devicetree/bindings/clock/ti,cdce6214.yaml     |  155 +++
- drivers/clk/Kconfig                                |    7 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-cdce6214.c                         | 1389 ++++++++++++++++++++
- include/dt-bindings/clock/ti,cdce6214.h            |   25 +
- 5 files changed, 1577 insertions(+)
----
-base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
-change-id: 20250408-clk-cdce6214-0c74043dc267
-
-Best regards,
 -- 
-Sascha Hauer <s.hauer@pengutronix.de>
+2.39.5
 
