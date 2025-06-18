@@ -1,172 +1,120 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941FF2BF013
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 12:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB36B2E54CA
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 12:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249707; cv=none; b=giw+toYrEB3AtzdpPtiTh0BYNF9Xu65E4qgnxSvwaOhzgNEVACo2ltZlM+CoembLGENRL2cXPMBu6mPlqyBEE4KiFm64f//iHpAVx7sDprltqpzrCK1hLOlxvPD43qLfNXpji9eUx4/uXdCx7UrPpEu5onS9WP/7hkepTv9d0/Y=
+	t=1750251430; cv=none; b=YfajlEzbeMWT/e9yD28XbfooDfM5wOScWQfuglQt/QhqpbWpQwv5KhWL8dM9dZJhv+yu932rlH2374UDkLYs4iouuzysNQSsgwy+V2ulEU59M+diLLYNDa4TmyAiJYXqNgQhOudOvsk4yg6UGQ20+k85jnlYN30Bib9JErpm38w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249707; c=relaxed/simple;
-	bh=pQpdhYmfxqh3Yfxmei5sPv11PaCzGkgZVRufLVaDNj8=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=HYCJLkHqC9gjdTSnaoY4iF6oLFYT2l6Q3H3NtXmY+t4rTZ6w/Z0zDxFsSRODCV7qeiBX8n0eolcud+xjd9aopE1ocX+Za+YhGmFlw4tiyNLAwi38tOqMgfMei2VZ2fYJvkItEvh9/ytLQEPpcATaodmcLQtO242b3loKajeJ0Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=R2riRSf6; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1750251430; c=relaxed/simple;
+	bh=chU3ZzgX8ixQ80XuNsDpy9w595hkOFK6g+6/L8GwJwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ep5f+7FGEclyvXxtfIGGFzGMcQ1fRn1KaqIJZjO141Xo441Q5fMK8I5xgyko7VZ1Mwzrz4EBa+YpNuUHCtG2lf0uoP6rdZHt0d+zNKTnWZJIYoij5UcaqlojkGHKsQhWLNYMP84QETLoB27356+LAmGrx49xRIm1R2c3tuVBdIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vooGQp+c; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="R2riRSf6"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250618122814euoutp016088ecb0a2634230d40f11e0ecf689df~KItLVWWXY3083430834euoutp01g
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 12:28:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250618122814euoutp016088ecb0a2634230d40f11e0ecf689df~KItLVWWXY3083430834euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750249694;
-	bh=Thc/4MnT4r5I8ag38cbivyQhpbuX345C1nEB0lzCSSU=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=R2riRSf6p9yZyCjifLQI9mMAEOD4ZIqOji2fTItbvsSgxHLr9I8mwCkBbZ9LYYrUm
-	 Za2lbBL9zDed2K8nxtYCyBITkCz4+COCd4WNW0XzPziUaPePsOpMePxBxXyhgw/orN
-	 aVFdECsegyRTfSKTcMmSbsWDXFk7YlfuSEHylFkk=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250618122813eucas1p287bd4915937a1fa5d93343cd0665854c~KItK0t3i22282022820eucas1p2T;
-	Wed, 18 Jun 2025 12:28:13 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618122812eusmtip1af5b2366f46c13b22711fc88b192c9e4~KItJm6nkV2578325783eusmtip1Z;
-	Wed, 18 Jun 2025 12:28:12 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Wed, 18 Jun 2025 14:27:42 +0200
-Subject: [PATCH v4 9/9] riscv: dts: thead: Add PWM fan and thermal control
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vooGQp+c"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e75668006b9so6279704276.3
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 05:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750251427; x=1750856227; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2X2h53UoNZQhDXBsMhRcUUHtA/t5wbotkmy7UVTkX7E=;
+        b=vooGQp+cXA7Bl9EdDFb5l+L/SbQXuI4V5FZ0RzgjuAXNy2/KAcAyg2o0IWDzripkkE
+         tBcO61mGf6On7hilM9Kk8BA7p/r54kdadUGCT7+RjJWLFtKtD49Ey3xovothllGuoj/4
+         cxXsMsagUqhtNDY9xe3IgmmjXPfqYXJqlV92vCEkihxdk3DWBzTR13Wc9w9peHStJI3V
+         2RGg4jkTHOtGpN/1nexrUJ0QdBXUzSHI/I18yISa6Mx4qaxv6QSZzxrY1VkWUzOfo/r6
+         IL7vbyCJIta0JWgxjWOjrHPMkACNqcs8A1MbsIp1o40U5q2UIjPOipsV3G9Vi/CcrE/r
+         7Gug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750251427; x=1750856227;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2X2h53UoNZQhDXBsMhRcUUHtA/t5wbotkmy7UVTkX7E=;
+        b=ixmvsR18xs2mKEVFDlpK6ZLNExP6Wnd1Mrd7EASgXIbIuOdqC/go36bR4073LjPBsh
+         YB3BoVJPcK1QjTl2XGsz/yNdzZkoIghQON/33DTo33QB5XUSksqHiT7mr95+57b+ETSr
+         TUXdTGmveiXdiXIVUx684yrflG/9sGPxmynDMzaRnowbOMDBMW7/2A2tI4AKojd0N0zt
+         XtWnYiuTUl9JeNA/C7Vpt18FTfvzrAaF5hHLAjk9HrrTwyfeOqwHYVuWIouGX4H9znI7
+         g6HyH93G5/3HqMgRn6/pEznBodJ62PQIVkPmeq9MKl6uBPhPKHSJO5h41SKg5z/7xt6y
+         dXcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXD2hlgAiiw4Bi20sN9AeAdAtAJNDEOun0VZbTr/dbbjqWENO7Npl4K2cR2GFZtEVnj26vaFPOjz+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysKlE9PEu09OZTXcd9pa+SnYLnWcpIx67nj/705ffKRNvqF2iW
+	7FhZoPdU4zjNF0ni4Ljew1biDJyxndOUoSAiXrjJmTo1e2Bydex1vkJljJ6IWGmNl2a1CoHX1la
+	0kQRCK/rCUv6KUQJcvCKvS5hUG54wRzApQUbA9j3yBA==
+X-Gm-Gg: ASbGncstABYmVzdLhQQih3vElBPZazT1ifKhmjsVcWgcPcWkKEhznbITFSViyV01QdL
+	pnfe7/8YeHJOV1+0qLE2toXlGukadUbWUfn7suc9O1HzXc2nSwQXswMVLcJROr0C14W4AbCIXxQ
+	nI0HDXXgex1i9QD7px3MZdnO9vQsrdpE/s5yBvi1tziMo=
+X-Google-Smtp-Source: AGHT+IEZlf2SkQ6pDtcOhhdvV3LmUw3iR0H22QpguHg1V4liWBddtmQy97+4HMMAxIbIevgaVnIrB0SHGsEYRyBVYzQ=
+X-Received: by 2002:a05:6902:6303:b0:e82:2b85:ea3a with SMTP id
+ 3f1490d57ef6-e822b85ee43mr16723424276.32.1750251426746; Wed, 18 Jun 2025
+ 05:57:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-rust-next-pwm-working-fan-for-sending-v4-9-a6a28f2b6d8a@samsung.com>
-In-Reply-To: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>, Drew Fustini <drew@pdp7.com>,  Guo
-	Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,  Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
-	<conor+dt@kernel.org>,  Paul Walmsley <paul.walmsley@sifive.com>,  Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,  Alexandre
-	Ghiti <alex@ghiti.fr>,  Marek Szyprowski <m.szyprowski@samsung.com>,  Benno
-	Lossin <lossin@kernel.org>,  Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250618122813eucas1p287bd4915937a1fa5d93343cd0665854c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618122813eucas1p287bd4915937a1fa5d93343cd0665854c
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618122813eucas1p287bd4915937a1fa5d93343cd0665854c
-References: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com>
-	<CGME20250618122813eucas1p287bd4915937a1fa5d93343cd0665854c@eucas1p2.samsung.com>
+References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org> <20250612-apple-kconfig-defconfig-v1-1-0e6f9cb512c1@kernel.org>
+In-Reply-To: <20250612-apple-kconfig-defconfig-v1-1-0e6f9cb512c1@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 18 Jun 2025 14:56:30 +0200
+X-Gm-Features: AX0GCFsnEI_9cu3U9fY7I_D0EnrNerJPcmhYfg39LAqv66uN774UfRLbAU6VCkM
+Message-ID: <CAPDyKFrQ3Uj+coa0WCG00_pyaxu-yEnH26qmS6tevZ_772oZVg@mail.gmail.com>
+Subject: Re: [PATCH 01/11] pmdomain: apple: Drop default ARCH_APPLE in Kconfig
+To: Sven Peter <sven@kernel.org>
+Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, iommu@lists.linux.dev, linux-input@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Thu, 12 Jun 2025 at 23:12, Sven Peter <sven@kernel.org> wrote:
+>
+> When the first driver for Apple Silicon was upstreamed we accidentally
+> included `default ARCH_APPLE` in its Kconfig which then spread to almost
+> every subsequent driver. As soon as ARCH_APPLE is set to y this will
+> pull in many drivers as built-ins which is not what we want.
+> Thus, drop `default ARCH_APPLE` from Kconfig.
+>
+> Signed-off-by: Sven Peter <sven@kernel.org>
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+Applied for next, thanks!
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
 
--- 
-2.34.1
-
+> ---
+>  drivers/pmdomain/apple/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/apple/Kconfig b/drivers/pmdomain/apple/Kconfig
+> index 12237cbcfaa983083367bad70b1b54ded9ac9824..a8973f8057fba74cd3e8c7d15cd2972081c6697d 100644
+> --- a/drivers/pmdomain/apple/Kconfig
+> +++ b/drivers/pmdomain/apple/Kconfig
+> @@ -9,7 +9,6 @@ config APPLE_PMGR_PWRSTATE
+>         select MFD_SYSCON
+>         select PM_GENERIC_DOMAINS
+>         select RESET_CONTROLLER
+> -       default ARCH_APPLE
+>         help
+>           The PMGR block in Apple SoCs provides high-level power state
+>           controls for SoC devices. This driver manages them through the
+>
+> --
+> 2.34.1
+>
+>
