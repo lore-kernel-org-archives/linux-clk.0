@@ -1,133 +1,207 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787D7192D8A;
-	Wed, 18 Jun 2025 03:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2C91B425C
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 04:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750217628; cv=none; b=MVjGPe6cLoRPmvflSqo18Ay/qb9iP06xZ1IRtRY6njMVGdMGCMl3qU2Ns1XiYJo96maCnF2cdk0C2fEeVGjVMkS7y4Iaohprxd1gp7B6WDwca5NDDwq61/g1VNlpGP6WDZYuHPUOZkU4tUtqX6vMNI1rfA9M/noEb9qRPeWXKDQ=
+	t=1750219742; cv=none; b=m9OjK8BpZ4+ZZGw27EJ2w1EnksgCfLR8B22Y46JfFpUIzOpU2k3FyXbDG+PXjg+SP9e/HqPtbtTz+R+dvmpRIQdnSexeWEFO/ta3vbfkECytr6FvxG+QWx4AaAz9y0kElTfwMIMX0O76K3w6XrWlyWcB/zkkUa4p56yvNIiocpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750217628; c=relaxed/simple;
-	bh=3VvqmFIUqdeyjynHMuuFCh4mFv5QeHs7/Dxti4jBakM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=II48+JE1Gd8hF1sO398a3zZUqFMmAQW9sg5iE/bwLud7ymZAXtk6KSDmDBiirPPVQ6Mvnu8l0Lt6VgbzUL143tmfX+/g18aYoQhhtuP8Mgn3jlHmkHGljrSItsFByMTeLu8AgYzZCxZ/uceeFCojsEibZbstUPNcfuQhkBlfigg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ljch38BI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750219742; c=relaxed/simple;
+	bh=Rc7QRQavRmVFyB9IhxdzFHRfSkThkI3xPrEYilcz6ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RLR+0U60UOz2q+BNQWyholD7nTTejr8Ppkd9IvEO7RFCeePfyKFxw8uwLHVW0KF6fkRhqrJEL0uZH1KpSatZ1E5ZLptsX8d3H8+gMMTyLEZ+Xo72GOcWGFww6S2RAzaQKoBTVkDRs6TVy2jK1WRxnKcSRdEjoXdq3raCr37/lHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=A+RsD6GW; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ljch38BI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B8FC4CEE7;
-	Wed, 18 Jun 2025 03:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750217628;
-	bh=3VvqmFIUqdeyjynHMuuFCh4mFv5QeHs7/Dxti4jBakM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ljch38BIGCwmNG61wGiFvAlskwCKR98dsG8dgjojBEopxMMpMWKn4l/ZXuvwZ+Fjw
-	 SsJnu17Li2suwRd0llS9BWYR5yvguYJsgM8DPCLwejOXuVy7gs8TDHHpCRKzlK2Yuo
-	 t6HzznIhmuKSP6wsYlAzlHChRdcghYwOhRd3qlS6aJ2Kr08TPqHfbfzIi2+rkEg7NM
-	 fSkEUED3m0pqyDCxLoDqOIyLvZu8htd45Ck4r4k3JclysCFymCYwJzijJMTAQgY3aS
-	 F1IYZ1VXCveyXZfV81jQhQaIBvvrzczZ+dpIaGzPan1sqrWdaNer45RB9Asx7zUVqr
-	 jksN+MuFJ3JQw==
-Date: Tue, 17 Jun 2025 22:33:45 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: george.moussalem@outlook.com
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Luo Jie <quic_luoj@quicinc.com>, Lee Jones <lee@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] clk: qcom: ipq5018: keep XO clock always on
-Message-ID: <wao5fe7nbupujho3ql46ctvbqhe6y2adzqrtbyxqgfja6oriwt@nekluv75lcze>
-References: <20250516-ipq5018-cmn-pll-v4-0-389a6b30e504@outlook.com>
- <20250516-ipq5018-cmn-pll-v4-1-389a6b30e504@outlook.com>
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="A+RsD6GW"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553cf020383so1279715e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jun 2025 21:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1750219738; x=1750824538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hV+4GdLIPduWvDvm4cyTBr7zE4Nr+cAmACWAXvYhmEQ=;
+        b=A+RsD6GWOfrrfvbu/18Nxgkut5GandJnIFIRJLjfLD43GYf4I1L539jn+Y8ouXwBKH
+         6Sfj39qmJxEIHSbqaryuvh8a8Tmm1cZkGy7WFV/lqOP17/K68i420x77fUskDXzQcWbT
+         F/JvBAbeItsVkpyv/A46m9OXuluPHYZ2cXuy+ZbDnG7sEaNMSZJbUnTijrfEjVa+Ph+L
+         fBcuMRLUYjP2YHjm/D4OfTkNBSwJ03BBOawOfDEeobrx/TH3RP1EXicMuYRY4yuqXmp5
+         zkRTDCLiMRV1HCAG7IO4FOv16t++bmaR0Hkfx0lEssIwsyAQyuoQpZVNMLAkn2IgSatz
+         d71w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750219738; x=1750824538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hV+4GdLIPduWvDvm4cyTBr7zE4Nr+cAmACWAXvYhmEQ=;
+        b=RVGgyR/xF/QppOGkJcg/FvR75ykHsLNxDsjvSxO3vxy8PWOxW9kcIX+IpoAE5pLlkx
+         SQcU03ADDV9xa365CXOEYhIU4/BmZYRbkW03bn5AuDZ2JnZCcCOdWOEi7dsYW37KdP1k
+         JlfWtCTo6CzAejNJjN+r/NS7QMye20L3k2U/QUOdlcmLpo2SRtbPcTgXL3DQ1w5YXt7+
+         WqRqTynr3LLhubWV148eH0/J7CymQHHQTTKhsrqZYEEI9QV6AHZtAHjJTYftkfQn3isA
+         Uxq4mF7OVvMptwv+GEUZxKND913Jf2aJSCGo7I0GqglqtgljaxfL1PTwWyOoTZep6XwW
+         /y5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjqQEqda5SEQVFKCt+huUM/UOYgJKAA/5jzEiR1f3sLoq7i4BbRjxqAp74Egb18OWepESbeRfrzjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2BqXa5cYm9cTFi9jsMdYNyH6q06fi3AgaU5URVhpuz38dvSGB
+	9T3OrQqjpZ9ooxuvjCukTN8RYJ8Xdct1Z3bossWKt/faGGmht2RoHtvOOgAx0aI7WsRn6bVdSxb
+	xxac3TMGCQeVg6WrtZIF+CnbFcmyBkspCTut2T0zizQ==
+X-Gm-Gg: ASbGncv3u7Q4ccTbm61ISHFuXzAahw/irPSnK1NsdG1ZMXA+/mriOTgQmn9Kh4E8xHi
+	+C3NlDfS9eT/wMSK9tPqJAcfZK63Gnnwsg6HaP4w9EelPvG0v+6aqgyKDgrr9eCMenSeld/fHak
+	EMFZyGQD8VeGBot38UZOweb0XZvsieckGqlVoL2E6XsQ==
+X-Google-Smtp-Source: AGHT+IFnL3eHkaa0AaGa2260XzL4VnwU/UtF89FsaS0XOFT0LH12cqs0j3TtvsOBW7k3zdEpBSYUjjpFngr0GSrWEx8=
+X-Received: by 2002:a05:6512:1192:b0:553:addb:ef51 with SMTP id
+ 2adb3069b0e04-553b6e8c2f5mr3946779e87.18.1750219738106; Tue, 17 Jun 2025
+ 21:08:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516-ipq5018-cmn-pll-v4-1-389a6b30e504@outlook.com>
+References: <20250611062238.636753-1-apatel@ventanamicro.com>
+ <20250611062238.636753-6-apatel@ventanamicro.com> <aEmiOFwofEJyXm4R@smile.fi.intel.com>
+In-Reply-To: <aEmiOFwofEJyXm4R@smile.fi.intel.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 18 Jun 2025 09:38:46 +0530
+X-Gm-Features: AX0GCFuSAGiDE5-KiEpx1v8HnSXue_LepxDvBagpnGvUmEgx8W2v2dqjbNj1zB0
+Message-ID: <CAK9=C2Xhkfk4WZeD2gVCoJxeRHAuYjSfwx_zUHvVBqOQPLV7Lg@mail.gmail.com>
+Subject: Re: [PATCH v5 05/23] mailbox: Allow controller specific mapping using fwnode
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 16, 2025 at 04:36:08PM +0400, George Moussalem via B4 Relay wrote:
-> From: George Moussalem <george.moussalem@outlook.com>
-> 
-> The XO clock must not be disabled to avoid the kernel trying to disable
-> the it. As such, keep the XO clock always on by flagging it as critical.
-> 
+On Wed, Jun 11, 2025 at 9:05=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Jun 11, 2025 at 11:52:20AM +0530, Anup Patel wrote:
+> > Introduce optional fw_node() callback which allows a mailbox controller
+> > driver to provide controller specific mapping using fwnode.
+> >
+> > The Linux OF framework already implements fwnode operations for the
+> > Linux DD framework so the fw_xlate() callback works fine with device
+> > tree as well.
+>
+> ...
+>
+> >  struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int ind=
+ex)
+> >  {
+> > +     struct fwnode_reference_args fwspec;
+>
+> Define
+>
+>         struct fwnode_handle *fwnode;
+>
+>
+> >       struct device *dev =3D cl->dev;
+>
+> This better to be just a declaration.
+>
+> >       struct mbox_controller *mbox;
+> >       struct of_phandle_args spec;
+> >       struct mbox_chan *chan;
+> > +     unsigned int i;
+> >       int ret;
+>
+> With the above the below will look like...
+>
+> > -     if (!dev || !dev->of_node) {
+> > -             pr_debug("%s: No owner device node\n", __func__);
+> > +     if (!dev || !dev_fwnode(dev)) {
+> > +             pr_debug("No owner %s\n", dev ? "fwnode" : "device");
+> >               return ERR_PTR(-ENODEV);
+> >       }
+> >
+> > -     ret =3D of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox=
+-cells",
+> > -                                      index, &spec);
+> > +     ret =3D fwnode_property_get_reference_args(dev_fwnode(dev), "mbox=
+es",
+> > +                                              "#mbox-cells", 0, index,=
+ &fwspec);
+> >       if (ret) {
+> >               dev_err(dev, "%s: can't parse \"mboxes\" property\n", __f=
+unc__);
+> >               return ERR_PTR(ret);
+> >       }
+>
+> ...this
+>
+>         dev =3D cl->dev;
+>         if (!dev) {
+>                 pr_debug("No owner device\n");
+>                 return ERR_PTR(-ENODEV);
+>         }
+>
+>         fwnode =3D dev_fwnode(dev);
+>         if (!fwnode) {
+>                 dev_dbg(dev, "No owner fwnode\n");
+>                 return ERR_PTR(-ENODEV);
+>         }
+>
+>         ret =3D fwnode_property_get_reference_args(fwnode, "mboxes",
+>                                                  "#mbox-cells", 0, index,=
+ &fwspec);
+>         if (ret) {
+>                 dev_err(dev, "%s: can't parse \"mboxes\" property\n", __f=
+unc__);
+>
+> You may save a few bytes by doing it as
+>
+>                 dev_err(dev, "%s: can't parse \"%s\" property\n", __func_=
+_, "mboxes");
+>
+>                 return ERR_PTR(ret);
+>         }
+>
+> > +     spec.np =3D to_of_node(fwspec.fwnode);
+> > +     spec.args_count =3D fwspec.nargs;
+> > +     for (i =3D 0; i < spec.args_count; i++)
+> > +             spec.args[i] =3D fwspec.args[i];
+> > +
+> >       scoped_guard(mutex, &con_mutex) {
+> >               chan =3D ERR_PTR(-EPROBE_DEFER);
+> > -             list_for_each_entry(mbox, &mbox_cons, node)
+> > -                     if (mbox->dev->of_node =3D=3D spec.np) {
+> > +             list_for_each_entry(mbox, &mbox_cons, node) {
+>
+> > +                     if (mbox->fw_xlate && dev_fwnode(mbox->dev) =3D=
+=3D fwspec.fwnode) {
+>
+> We have a helper device_match_fwnode()
+>
+> > +                             chan =3D mbox->fw_xlate(mbox, &fwspec);
+> > +                             if (!IS_ERR(chan))
+> > +                                     break;
+> > +                     } else if (mbox->of_xlate && mbox->dev->of_node =
+=3D=3D spec.np) {
+>
+> No need to check OF node (again). Instead refactor as
+>
+>                         if (device_match_fwnode(...)) {
+>                                 if (fw_xlate) {
+>                                         ...
+>                                 } else if (of_xlate) {
+>                                         ...
+>                                 }
+>                         }
+>
 
-Is there any reason for us to model this clock in Linux, if we're not
-allowed to touch it?
-
-CLK_IS_CRITICAL has side effect on the runtime PM state of the clock
-controller, so would be nice if we can avoid that.
+Okay, I will update like you suggested.
 
 Regards,
-Bjorn
-
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
-> The kernel will panic when parenting it under the CMN PLL reference
-> clock and the below message will appear in the kernel logs.
-> 
-> [    0.916515] ------------[ cut here ]------------
-> [    0.918890] gcc_xo_clk_src status stuck at 'on'
-> [    0.918944] WARNING: CPU: 0 PID: 8 at drivers/clk/qcom/clk-branch.c:86 clk_branch_wait+0x114/0x124
-> [    0.927926] Modules linked in:
-> [    0.936945] CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.6.74 #0
-> [    0.939982] Hardware name: Linksys MX2000 (DT)
-> [    0.946151] Workqueue: pm pm_runtime_work
-> [    0.950489] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.954566] pc : clk_branch_wait+0x114/0x124
-> [    0.961335] lr : clk_branch_wait+0x114/0x124
-> [    0.965849] sp : ffffffc08181bb50
-> [    0.970101] x29: ffffffc08181bb50 x28: 0000000000000000 x27: 61c8864680b583eb
-> [    0.973317] x26: ffffff801fec2168 x25: ffffff800000abc0 x24: 0000000000000002
-> [    0.980437] x23: ffffffc0809f6fd8 x22: 0000000000000000 x21: ffffffc08044193c
-> [    0.985276] loop: module loaded
-> [    0.987554] x20: 0000000000000000 x19: ffffffc081749278 x18: 000000000000007c
-> [    0.987573] x17: 0000000091706274 x16: 000000001985c4f7 x15: ffffffc0816bbdf0
-> [    0.987587] x14: 0000000000000174 x13: 000000000000007c x12: 00000000ffffffea
-> [    0.987601] x11: 00000000ffffefff x10: ffffffc081713df0 x9 : ffffffc0816bbd98
-> [    0.987615] x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000057fa8
-> [    1.026268] x5 : 0000000000000fff x4 : 0000000000000000 x3 : ffffffc08181b950
-> [    1.033385] x2 : ffffffc0816bbd30 x1 : ffffffc0816bbd30 x0 : 0000000000000023
-> [    1.040507] Call trace:
-> [    1.047618]  clk_branch_wait+0x114/0x124
-> [    1.049875]  clk_branch2_disable+0x2c/0x3c
-> [    1.054043]  clk_core_disable+0x60/0xac
-> [    1.057948]  clk_core_disable+0x68/0xac
-> [    1.061681]  clk_disable+0x30/0x4c
-> [    1.065499]  pm_clk_suspend+0xd4/0xfc
-> [    1.068971]  pm_generic_runtime_suspend+0x2c/0x44
-> [    1.072705]  __rpm_callback+0x40/0x1bc
-> [    1.077392]  rpm_callback+0x6c/0x78
-> [    1.081038]  rpm_suspend+0xf0/0x5c0
-> [    1.084423]  pm_runtime_work+0xf0/0xfc
-> [    1.087895]  process_one_work+0x17c/0x2f8
-> [    1.091716]  worker_thread+0x2e8/0x4d4
-> [    1.095795]  kthread+0xdc/0xe0
-> [    1.099440]  ret_from_fork+0x10/0x20
-> [    1.102480] ---[ end trace 0000000000000000 ]---
-> ---
->  drivers/clk/qcom/gcc-ipq5018.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-> index 70f5dcb96700f55da1fb19fc893d22350a7e63bf..24eb4c40da63462077ee2e5714e838aa30ced2e3 100644
-> --- a/drivers/clk/qcom/gcc-ipq5018.c
-> +++ b/drivers/clk/qcom/gcc-ipq5018.c
-> @@ -1371,7 +1371,7 @@ static struct clk_branch gcc_xo_clk = {
->  				&gcc_xo_clk_src.clkr.hw,
->  			},
->  			.num_parents = 1,
-> -			.flags = CLK_SET_RATE_PARENT,
-> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> 
-> -- 
-> 2.49.0
-> 
-> 
+Anup
