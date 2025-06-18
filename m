@@ -1,200 +1,88 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399DE283C90
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 09:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B97F281365
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 09:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238488; cv=none; b=o/wKW6LXdkcYUugUFTT2Ghwt8awWlQNWZfScJnMXBzSNvUYgQMzpQvYv+5MvWZuZ4+zhDMnR0Jjq+n3QOm+vWYzs5cgrCQYHx6+5j0GI9AN94FkWx1MyICsmjp/JjMxWa2efsPe/IyH4piGBok6vwFq8i4cern90R1Fc+WCjXRE=
+	t=1750238592; cv=none; b=eg30lIXcwyThhdQNT0Zmu4p6B0rx0yEjNa1uLprBmJig/YJuVm/nuMNi6iG1ck0p1Y9w/dr/vY4GidoEggYjz4AOlXnCAppN59EjcVPLc5XISmz+kOgIWkYO9pz5PcEd3vq88z0Nr7gKOnw4IahTfpLkLCfvBJCON8+RS0ljJuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238488; c=relaxed/simple;
-	bh=GdgEkaZVjswiBEs+3bYeidL9yhjp1EX2Mem4kOua3EU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tb4do0DCOWnq5eBcDP3jvXMfhWGNxRgxrmedwQ2cAoGVTualkprSsbWLE7ie/T5H042IL3rx2jpFSuGgLGwiC2f9JeLyhzgh8Mik/aBiTc26E2gt41fLHGYA5DPI4gRhrhiJg8LLWkKw5Fy1F8Pb07mbfzfdesvNiQCMPOEyB1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyr-0003B9-6s; Wed, 18 Jun 2025 11:21:17 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyq-004758-2R;
-	Wed, 18 Jun 2025 11:21:16 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1uRoyq-005QWt-28;
-	Wed, 18 Jun 2025 11:21:16 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 18 Jun 2025 11:21:14 +0200
-Subject: [PATCH v5 3/4] dt-bindings: clock: cdce6214: add binding for pin
- configuration
+	s=arc-20240116; t=1750238592; c=relaxed/simple;
+	bh=zTuDs6bz1pawzmQ/06qQ/gHnfbRQbq99TmjUqF+L6RI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wf9aAtT0R8BYYEa4GegumcWbdclwswDypUc29Wq+SxfNPe8zQMGRVJkyOQKadBRZtDktw9gqpaggN0w/g4IWROAqqN552ne7Yd35X3zDon8p7D0S3hTj15EjtzORVEKfZSlrxiZAxc5F6qy948wuroY0finYKwjBZmOGZeMrmwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xjqIY9UP; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xjqIY9UP"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so5690872f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 02:23:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750238589; x=1750843389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTuDs6bz1pawzmQ/06qQ/gHnfbRQbq99TmjUqF+L6RI=;
+        b=xjqIY9UPe1GKtHdSLku3sTgzkfCKqYYp6UpyAnBKU9nz8dlisM2j4bHUywZI9/S3Kz
+         O8HOyUBIyJ6NIpTFysxshM6mXz3NBRAe7l/WE6ikDFLkoZLFn4q4hfg5W5CFqZNF+6yL
+         q1vVDOs+0jXzGqtPrfiVEBaFcIZiuqjZ+1eczDIn86QKWurFsc0oA9z54rc6poBMFyhp
+         WrYESy/KVivGeBVrUD9wCXIe/O5KGGsAwWkx+HyPhw06WogJhfISf373k9h69FtobrYk
+         J9zLGHvYVMqhTZuDsV6K7+F9l3OfZCk/KH8N48Ch/r8fNWV0bVoMdzE31OYzCo5t8tQI
+         0d7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750238589; x=1750843389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zTuDs6bz1pawzmQ/06qQ/gHnfbRQbq99TmjUqF+L6RI=;
+        b=f/b7icu4h3GUjXU92d0m+84HxhZfrmyjSjvGOfbixDVCnQZEm366G0/O49PDloxQIB
+         JjBGZvMxIfazQ7Z2bzCT8+UgUx+JPWRwGu9NF526PwAq6NHMp0GuOG/cxoOkc1flhfqg
+         CoGFB+sDLVuKh5n/Abb0HmwUHto2qhDHV8srdzMuiGNNr/X18B4NdKFiTLY84j0gV5JJ
+         9heJpngZDHi+alMv2Yf/Zpczjbyx0Qxh7iIYPKNKBm2kRi7I5nn1NG8qPDlGACA43s/v
+         b2jSAhb4thnevgybxJR1k0vVcqzM/G3ol/Lh9g2OZYgPK3SsiwjYThoiUMCN5Q3Mo5FS
+         z1Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9lqSsPdI7qlpQlxOXD78N05pUpg2x0n11hMPtsJRl2hpMeVmqUbH9g4xsMXUL2cHsbh/+A3kkn8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1CMKyBKPUmqe8tb4Jma6vfEEOrAnsZ6oeYwSYc3aVLNFxLJDj
+	2hdY7gwgdcG7hXTgOUKK9QAQR2M3qCdKK9H34L0CEXRppqlHhGZay2tdZ0epoAwJt5aKTPNZHFM
+	+bkK7xHZsvidJ4G9Kff6TtvAKoIfrDvIELxC0OtPm
+X-Gm-Gg: ASbGncu+GK0VR0KnFbx6IrAF2Qx8cO8hgwJQliH5TNotQGxBov5HgC5bBD/wSWtuZw4
+	p+zhHqqetoaESTl/FEGhI5QdSHiTe6sjx1Jp70H/an8ZywrwKnCjZqf/0ImRvTj+w0afleb+Bdh
+	66C7t3x6zwxARPD4QZcOXMbZKsNYwQAC4+2s18TSsQtF7aTnnLj1koEMTXEWc49Oy5BggIDa/Am
+	dhjNExUTQM+
+X-Google-Smtp-Source: AGHT+IFDu55zBpLTjN0YBZ0/8S08wBdjH+mMHocco39YXZmhbhmmSXQ5wtBu7D5AZ5XiCHAHE2Mwh0RzhSUyiGnz88M=
+X-Received: by 2002:a05:6000:310f:b0:39f:175b:a68d with SMTP id
+ ffacd0b85a97d-3a572398e87mr12580033f8f.11.1750238589173; Wed, 18 Jun 2025
+ 02:23:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-clk-cdce6214-v5-3-9938b8ed0b94@pengutronix.de>
-References: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
-In-Reply-To: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750238476; l=3666;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=GdgEkaZVjswiBEs+3bYeidL9yhjp1EX2Mem4kOua3EU=;
- b=NT/xHvpP3fRHyz0yhWxr/UdWPL5YXAnLpHBMhJCUv4/rXAU1+PpYiXCkSx6gUAPXLzxrqxwmS
- ePNO3mwqMBUDL4hdYF+ggupweTWaD1uBNK8Ph45ERYWx8LQQ2CAMh9f
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20250618091442.29104-1-work@onurozkan.dev>
+In-Reply-To: <20250618091442.29104-1-work@onurozkan.dev>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 18 Jun 2025 11:22:57 +0200
+X-Gm-Features: Ac12FXwBWm2g1vrL71ZUV7peDg5fj1BZheM81_V76WXGGFZadcayIxH6T_7o4k8
+Message-ID: <CAH5fLggmDKjis3XSW16_E0motkK98KgHEYq5wcJHekai=Q1tcA@mail.gmail.com>
+Subject: Re: [PATCH] rust: make `clk::Hertz` methods const
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add pin configuration binding for the TI CDCE6214. The CDCE6214 has
-an internal EEPROM to to fully configure the chip, but this EEPROM
-might be empty, so add support for configuring the chip through
-the device tree.
+On Wed, Jun 18, 2025 at 11:16=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.de=
+v> wrote:
+>
+> Marks `Hertz` methods as `const` to make them available
+> for `const` contexts. This can be useful when defining
+> static/compile-time frequency parameters in drivers/subsystems.
+>
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- .../devicetree/bindings/clock/ti,cdce6214.yaml     | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-index 0a952b634079ec74bbf1114d1beb9fd5ee8682ec..615aac29761e7e3d5c5c0147f5246c9bdd228210 100644
---- a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-@@ -33,9 +33,78 @@ properties:
-       - enum: [ priref, secref ]
-       - const: secref
- 
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-   '#clock-cells':
-     const: 1
- 
-+patternProperties:
-+  '^clk@[0-1]$':
-+    type: object
-+    description:
-+      optional child node that can be used to specify input pin parameters. The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock input identifier.
-+        minimum: 0
-+        maximum: 1
-+
-+      ti,clkin-fmt:
-+        enum: [ lvcmos, xtal, differential ]
-+        description:
-+          Clock input format.
-+
-+      ti,xo-cload-femtofarads:
-+        description:
-+          Selects load cap for XO in femto Farad (fF). Up to 9000fF
-+        minimum: 3000
-+        maximum: 9000
-+
-+      ti,xo-bias-current-microamp:
-+        description:
-+          Bias current setting of the XO.
-+        minimum: 0
-+        maximum: 1758
-+
-+  '^clk@[2-9]$':
-+    type: object
-+    description:
-+      optional child node that can be used to specify output pin parameters.  The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 2
-+        maximum: 9
-+
-+      ti,clkout-fmt:
-+        enum: [ cmos, lvds, lp-hcsl ]
-+        description:
-+          Clock output format.
-+
-+      ti,cmosn-mode:
-+        enum: [ disabled, high, low ]
-+        description:
-+          CMOSN output mode.
-+
-+      ti,cmosp-mode:
-+        enum: [ disabled, high, low ]
-+        description:
-+          CMOSP output mode.
-+
- required:
-   - compatible
-   - reg
-@@ -53,8 +122,34 @@ examples:
-         clock-generator@67 {
-             compatible = "ti,cdce6214";
-             reg = <0x67>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-             #clock-cells = <1>;
-             clocks = <&clock_ref25m>;
-             clock-names = "secref";
-+
-+            clk@1 {
-+                reg = <1>; // CDCE6214_CLK_SECREF
-+                ti,clkin-fmt = "xtal";
-+                ti,xo-cload-femtofarads = <4400>;
-+                ti,xo-bias-current-microamp = <295>;
-+            };
-+
-+            clk@3 {
-+                reg = <3>; // CDCE6214_CLK_OUT1
-+                ti,clkout-fmt = "cmos";
-+                ti,cmosp-mode = "high";
-+                ti,cmosn-mode = "low";
-+            };
-+
-+            clk@4 {
-+                reg = <4>; // CDCE6214_CLK_OUT2
-+                ti,clkout-fmt = "lvds";
-+            };
-+
-+            clk@6 {
-+                reg = <6>; // CDCE6214_CLK_OUT4
-+                ti,clkout-fmt = "lp-hcsl";
-+            };
-         };
-     };
-
--- 
-2.39.5
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
