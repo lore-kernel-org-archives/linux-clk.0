@@ -1,63 +1,63 @@
 Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD93E2DF3CC
-	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 12:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753102E2676
+	for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 12:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248875; cv=none; b=nWvVcZmS48YX73viTfgahxrxPNuaOMRAxajT6HJdcDeeIkiEiCNS0utOLefCj/uCw1/h5Mfs22bUHOy3h6L3msdJT8vOL2hXmUDqNQrprAuNJVP1xGpKk1FITOHp0pIxG0+ywDBvzzjICDpb1ZphGsjnY2VOiXlKfM84gXdS+I8=
+	t=1750248884; cv=none; b=IbVumRxRX1uWXZSwmFt6HG0McqNwnLyvy7AM+nxwgRFyQgWzFJHjqQ3p/Yr7AHlwd7X1e1JmlHiUGfe1a1uyCSXmkGwk+MzIwfe3gXew1i8t4BP36FElAkpCdeDxCrT+6tUETaLbErwO+/w+A+FEtaLMVIbkPhdPLBL0kyvmHK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248875; c=relaxed/simple;
-	bh=wpGteD02sLvwEnKA7TBa2+SX4iYwOSU082ERtl6/Vjc=;
+	s=arc-20240116; t=1750248884; c=relaxed/simple;
+	bh=eDNnGBkTf0Y5fws6LhOepKDma0EWdw+271uEbOW9qV8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XcV26fsO5DrIR1CIEmG708ZrPQlszqHCRO6eeNT07CK9qb5NCIoLs1tT9DyZQyUtz5wApr/oQZVZfikwe4WHP1J2mdutq6uLnYVt24CLsRQ3sqhbSBp4d1ZK5EwqFrkZKJSmWADpHdzAwTlbwe4ak5/8L37LvjXz08pL8hu7ouo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=m7qAjYLT; arc=none smtp.client-ip=209.85.215.172
+	 MIME-Version; b=qEPVN9XCG5ywl6lTuHgqCkSg/u1G64TmZjPvsNX1JntZDtbHMnD4nZA17NjLku4Pupcqd7z5QXZYP2M6r8L6ipCiGjL4y4iDMlj3ecpxut5rgEvc6dSQnjbhUJjdPeMOR5uTUCT3Jp2zgC3r/aN4fh3Act7of+/GqkzLWF32EKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=XHhA7NPF; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="m7qAjYLT"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2f62bbb5d6so5534944a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 05:14:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="XHhA7NPF"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2c2c762a89so5555733a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jun 2025 05:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1750248873; x=1750853673; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1750248882; x=1750853682; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EGFMyHcY75Un2ey32rj/OGQJrYLrfBUEB3tHZxTx41w=;
-        b=m7qAjYLTh6k29aCxkuSZxb5uMIACvXHfgr+RTjkRgpEHC7ielO7QuwOlyB40+60NFO
-         4NB3OEZ3eNpFMfOn9LNrSHouyUHbIpmce3uaYEO87rZmISpdUsg7P0iy1ZsYR8fo/I73
-         BA+WnNxdgGJ7qgrYcHrSZ7WmiPir3p2tLI7twXy1+yuBXTGU/B0RPO1ZUNejDhm72tHy
-         t4vmXAZQ3V9KcXCARnzGxbDVSvHiFbmwTp2kzuhx+vrO7SVu+bPN9h4j2NJybiZca1MI
-         nT9dDHwK5Q/MrnW4oAzmICJlmaOcOM0YjeR9lzwjkMS8TJnzEbBbp2wCSm6XZ+x1gthN
-         T3rA==
+        bh=nXsaU5bufMYm3XYxPsa+imfe1GGPBzMdyNVNNOxnCRU=;
+        b=XHhA7NPFwpehY5KaKM3HO/EUpWL+R/IGCGYL4o4faWaHJGEnlqDptK7pbUIE71MA2g
+         UB2qEJuoppIvgXjbl8520YQGeMWh1Xr83z/CR/H/sBXt5GuCAOD6tto3xzKkDUlowV0w
+         JDgqNmGsLeys+1w8+q3kVb80r0ed7G2ysoQriIsskztuZAGf40pE/Iz+Y0LNIZ14zQxc
+         DeHeyYCJvQGzLWpfyqJ31kXOJMmdzPSXDshSOw+jd2ye+URsue+RHNBM9Ih9mjFR8IbO
+         iTNWcQt2zUzNJQWe29sDkb/raiTCOEHRzUUrDJ3mxhJaupjVUTxCtrTowZFMOXERH0fr
+         gjrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750248873; x=1750853673;
+        d=1e100.net; s=20230601; t=1750248882; x=1750853682;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EGFMyHcY75Un2ey32rj/OGQJrYLrfBUEB3tHZxTx41w=;
-        b=qA1JFHX0iGiTMc+yaua4AQhpvXVhPzt7SUMPv0XkeE8rJ9qKYSQKGGb4uzB7fxzeoF
-         M6poHq/tflCyG1qiugxTaj1gnx39u3x/ua97mAB418fAfuygYnTi7StN+JGNZkIJA8AW
-         MEhWt8bBoSfZ9q0bDb54IvdDL7WY/RpzqYrqgAzkSmzkSD9GAt4tOkYOqEUn8594ULRx
-         wZxLgFhcf/vmBxBsPgiSVJRvPH+Qdl+kwXxewGSG1vKLiEOsKp2YI/AE004kHgP4mTTY
-         bdUD8Ww4Il1oiExRfxjIzpcKL4omw4lwGAbJ1DFIvOo8u8GKo6JMe6L2hdFWud2/HLd3
-         0Rhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWCYIGfVxvzMOrx8myiGIZIg0TApFCe6yBx7bLyPUTvePDGwVlLUkhWR1GTn4FV9hm+L3thKGpphI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRoWPu69aKSA+OW9KBtgzVeIT/Tb5rFN8MnZ3+dbBPJ9ypSgxu
-	ZrfZG1sLsyFUyh8cnNHMwLmgYEb+v0ZtpvrdRiG5d1EHkZbRxFfcH76/61fLzOE/F/M=
-X-Gm-Gg: ASbGncsxIyHkbH+cSwmpCTKTd1wf/O7rV1zvRY5n+obHnwiPSB7AwcGJ0dVjrd8ugCT
-	25pJYi6xxWJo+6g4tB8JtIGeycGZ7vMjZdqUZaGpgqC+zmdXYAvkX+xMe8M/UwF3Y9u5Nesk9g5
-	IG6UgmYKJ+CcSpYUOavICJGKpEDj4Xbtj6a+ltJWegJEXMJrtMN/OoHkFGTCQ2rg9+1+burtJ42
-	aKXH6AVB3B8JC5ZMRjd2+Z50sDpfnFWWSR7JcHIZzipZ9y/LUld+Uz14l0v0x09GAM7JCTbhEy2
-	bf8PWnlrg9NJqhVgo0Ir2QKl/dsUH/nPvkL2X6WZjWEEceLFGfQGvTB0S+0M4QD1m/RPxfzTf1a
-	rcRJvrbL6G5JvqAHBng==
-X-Google-Smtp-Source: AGHT+IH19wLzq9wlb/kctuWR26QQIpePLbUfQ1snatAUiGKbTDh1UHVaygrkai5UEeU6wLpNf8lJYQ==
-X-Received: by 2002:a05:6a21:648b:b0:21f:53e4:1925 with SMTP id adf61e73a8af0-21fbd523a1dmr22715391637.10.1750248872883;
-        Wed, 18 Jun 2025 05:14:32 -0700 (PDT)
+        bh=nXsaU5bufMYm3XYxPsa+imfe1GGPBzMdyNVNNOxnCRU=;
+        b=nVrTfaXt2BoZQvKjwnvXqjdr+iGClJkZ/jR/VrJehGwO5iyJEJC3rUvhV0SANXkZeQ
+         6Q0nC9Bqv0mT5c+THprmW8CYMvNyOj+22qrR41D6+kZ+wF7GXpkZq9A1oHRDnEeLrK8q
+         vzVigExGU0Tj97JXKiBWTsgWHiMREfOpmLlfbycfCRFVIwbUp75IQbNYW2UcE9NZTY+q
+         pKtNwfcGpCcDgeN72Exftw3Rl8rmkPLAleKlkBU1VZ3U4+l3nIs9X6/hnZmxi3s9O3cM
+         M+mSDStnoMmEeceaDHWyBOntFtBlZDRJxBcuRczRk1lGDPiUBlt/2zM0FEphtekbuGiZ
+         4HgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0/0rGAeaoz0dj6h41V8+ndsAKIjCN1y+xPHE71/rJOFoXry4XEA0Wj/E2XGrEAV18anWNG0QVbXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw5lmZ6jyrQHvgWrTqUfCEmN36Zuj3+CFDifAAOD4LfisuACju
+	KcnFrVUMbflgE7TScoal8G/i9SD9nFEPcfYm7ON8zwhHFUH8dwmZew+ExDazTLmj53E=
+X-Gm-Gg: ASbGncttO1nRZO4YsfuP8Ii9yR+kzrw6Q21r1NfKBHsbOJ3OVxcGWDk0NzrjWeRijou
+	H7iZK6vhcp9Y3+pB9ihIVrwtoz/xzHnqu3xQXc0RvZ9TiOQkfshBUIJfwgYRLM64OyMotyfR5ZZ
+	uVIrr8WtuU2Yi95En3qMioDlozauYezMbT58KJXxwmCT9F9ccSDVQTTmrpxDVCw+7q9M2wpQd5J
+	62s9G/3+NwCylX5Ku9Nr1wLlzu9w9D5TRNK+Y1VzFMDNRg1P7IcEkMEFY3a/AYVgTQpTypWGomW
+	f+XTTtTTqhDJYJNXJ2VhcrSacDKYpjtK7+RXCki80IamoWisfIa0Tyh2W20FdaLgUk9mEIKSCR7
+	3N058amvvbYAZyjwQZ4e3aF50qftW
+X-Google-Smtp-Source: AGHT+IHDAt6S+LCqNlP/AcoJd0DtxuOspyynusq6LumWUM8AG0KDy5DjUm6vNvbZrBQI2+c48YQfNA==
+X-Received: by 2002:a05:6a21:9006:b0:21c:fa68:b47c with SMTP id adf61e73a8af0-21fbd4d5478mr26347574637.18.1750248881659;
+        Wed, 18 Jun 2025 05:14:41 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.23.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900d7e0asm11201177b3a.174.2025.06.18.05.14.24
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900d7e0asm11201177b3a.174.2025.06.18.05.14.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 05:14:32 -0700 (PDT)
+        Wed, 18 Jun 2025 05:14:41 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -86,11 +86,10 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v6 02/23] dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
-Date: Wed, 18 Jun 2025 17:43:37 +0530
-Message-ID: <20250618121358.503781-3-apatel@ventanamicro.com>
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v6 03/23] RISC-V: Add defines for the SBI message proxy extension
+Date: Wed, 18 Jun 2025 17:43:38 +0530
+Message-ID: <20250618121358.503781-4-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250618121358.503781-1-apatel@ventanamicro.com>
 References: <20250618121358.503781-1-apatel@ventanamicro.com>
@@ -102,73 +101,124 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device tree bindings for the RISC-V SBI Message Proxy (MPXY)
-extension as a mailbox controller.
+Add defines for the new SBI message proxy extension which is part
+of the SBI v3.0 specification.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Co-developed-by: Rahul Pathak <rpathak@ventanamicro.com>
+Signed-off-by: Rahul Pathak <rpathak@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml | 51 +++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+ arch/riscv/include/asm/sbi.h | 63 ++++++++++++++++++++++++++++++++++++
+ include/linux/wordpart.h     |  8 +++++
+ 2 files changed, 71 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-new file mode 100644
-index 000000000000..061437a0b45a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 341e74238aa0..59a7285ff956 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -10,6 +10,7 @@
+ #include <linux/types.h>
+ #include <linux/cpumask.h>
+ #include <linux/jump_label.h>
++#include <linux/wordpart.h>
+ 
+ #ifdef CONFIG_RISCV_SBI
+ enum sbi_ext_id {
+@@ -36,6 +37,7 @@ enum sbi_ext_id {
+ 	SBI_EXT_STA = 0x535441,
+ 	SBI_EXT_NACL = 0x4E41434C,
+ 	SBI_EXT_FWFT = 0x46574654,
++	SBI_EXT_MPXY = 0x4D505859,
+ 
+ 	/* Experimentals extensions must lie within this range */
+ 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+@@ -430,6 +432,67 @@ enum sbi_fwft_feature_t {
+ 
+ #define SBI_FWFT_SET_FLAG_LOCK			BIT(0)
+ 
++enum sbi_ext_mpxy_fid {
++	SBI_EXT_MPXY_GET_SHMEM_SIZE,
++	SBI_EXT_MPXY_SET_SHMEM,
++	SBI_EXT_MPXY_GET_CHANNEL_IDS,
++	SBI_EXT_MPXY_READ_ATTRS,
++	SBI_EXT_MPXY_WRITE_ATTRS,
++	SBI_EXT_MPXY_SEND_MSG_WITH_RESP,
++	SBI_EXT_MPXY_SEND_MSG_WITHOUT_RESP,
++	SBI_EXT_MPXY_GET_NOTIFICATION_EVENTS
++};
 +
-+title: RISC-V SBI Message Proxy (MPXY) extension based mailbox
++enum sbi_mpxy_attribute_id {
++	/* Standard channel attributes managed by MPXY framework */
++	SBI_MPXY_ATTR_MSG_PROT_ID		= 0x00000000,
++	SBI_MPXY_ATTR_MSG_PROT_VER		= 0x00000001,
++	SBI_MPXY_ATTR_MSG_MAX_LEN		= 0x00000002,
++	SBI_MPXY_ATTR_MSG_SEND_TIMEOUT		= 0x00000003,
++	SBI_MPXY_ATTR_MSG_COMPLETION_TIMEOUT	= 0x00000004,
++	SBI_MPXY_ATTR_CHANNEL_CAPABILITY	= 0x00000005,
++	SBI_MPXY_ATTR_SSE_EVENT_ID		= 0x00000006,
++	SBI_MPXY_ATTR_MSI_CONTROL		= 0x00000007,
++	SBI_MPXY_ATTR_MSI_ADDR_LO		= 0x00000008,
++	SBI_MPXY_ATTR_MSI_ADDR_HI		= 0x00000009,
++	SBI_MPXY_ATTR_MSI_DATA			= 0x0000000A,
++	SBI_MPXY_ATTR_EVENTS_STATE_CONTROL	= 0x0000000B,
++	SBI_MPXY_ATTR_STD_ATTR_MAX_IDX,
++	/*
++	 * Message protocol specific attributes, managed by
++	 * the message protocol specification.
++	 */
++	SBI_MPXY_ATTR_MSGPROTO_ATTR_START	= 0x80000000,
++	SBI_MPXY_ATTR_MSGPROTO_ATTR_END		= 0xffffffff
++};
 +
-+maintainers:
-+  - Anup Patel <anup@brainfault.org>
++/* Possible values of MSG_PROT_ID attribute */
++enum sbi_mpxy_msgproto_id {
++	SBI_MPXY_MSGPROTO_RPMI_ID = 0x0
++};
 +
-+description: |
-+  The RISC-V SBI Message Proxy (MPXY) extension [1] allows supervisor
-+  software to send messages through the SBI implementation (M-mode
-+  firmware or HS-mode hypervisor). The underlying message protocol
-+  and message format used by the supervisor software could be some
-+  other standard protocol compatible with the SBI MPXY extension
-+  (such as RISC-V Platform Management Interface (RPMI) [2]).
++/* RPMI message protocol specific MPXY attributes */
++enum sbi_mpxy_rpmi_attribute_id {
++	SBI_MPXY_RPMI_ATTR_SERVICEGROUP_ID = SBI_MPXY_ATTR_MSGPROTO_ATTR_START,
++	SBI_MPXY_RPMI_ATTR_SERVICEGROUP_VERSION,
++	SBI_MPXY_RPMI_ATTR_IMPL_ID,
++	SBI_MPXY_RPMI_ATTR_IMPL_VERSION,
++	SBI_MPXY_RPMI_ATTR_MAX_ID
++};
 +
-+  ===========================================
-+  References
-+  ===========================================
++/* Encoding of MSG_PROT_VER attribute */
++#define SBI_MPXY_MSG_PROT_VER_MAJOR(__ver)	upper_16_bits(__ver)
++#define SBI_MPXY_MSG_PROT_VER_MINOR(__ver)	lower_16_bits(__ver)
++#define SBI_MPXY_MSG_PROT_MKVER(__maj, __min)	make_u32_from_two_u16(__maj, __min)
 +
-+  [1] RISC-V Supervisor Binary Interface (SBI) v3.0 (or higher)
-+      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
++/* Capabilities available through CHANNEL_CAPABILITY attribute */
++#define SBI_MPXY_CHAN_CAP_MSI			BIT(0)
++#define SBI_MPXY_CHAN_CAP_SSE			BIT(1)
++#define SBI_MPXY_CHAN_CAP_EVENTS_STATE		BIT(2)
++#define SBI_MPXY_CHAN_CAP_SEND_WITH_RESP	BIT(3)
++#define SBI_MPXY_CHAN_CAP_SEND_WITHOUT_RESP	BIT(4)
++#define SBI_MPXY_CHAN_CAP_GET_NOTIFICATIONS	BIT(5)
 +
-+  [2] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
-+      https://github.com/riscv-non-isa/riscv-rpmi/releases
+ /* SBI spec version fields */
+ #define SBI_SPEC_VERSION_DEFAULT	0x1
+ #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
+diff --git a/include/linux/wordpart.h b/include/linux/wordpart.h
+index 5a7b97bb7c95..ed8717730037 100644
+--- a/include/linux/wordpart.h
++++ b/include/linux/wordpart.h
+@@ -31,6 +31,14 @@
+  */
+ #define lower_16_bits(n) ((u16)((n) & 0xffff))
+ 
++/**
++ * make_u32_from_two_u16 - return u32 number by combining
++ * two u16 numbers.
++ * @hi: upper 16 bit number
++ * @lo: lower 16 bit number
++ */
++#define make_u32_from_two_u16(hi, lo)	(((u32)(hi) << 16) | (u32)(lo))
 +
-+properties:
-+  compatible:
-+    const: riscv,sbi-mpxy-mbox
-+
-+  "#mbox-cells":
-+    const: 2
-+    description:
-+      The first cell specifies channel_id of the SBI MPXY channel,
-+      the second cell specifies MSG_PROT_ID of the SBI MPXY channel
-+
-+required:
-+  - compatible
-+  - "#mbox-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    mailbox {
-+          compatible = "riscv,sbi-mpxy-mbox";
-+          #mbox-cells = <2>;
-+    };
+ /**
+  * REPEAT_BYTE - repeat the value @x multiple times as an unsigned long value
+  * @x: value to repeat
 -- 
 2.43.0
 
