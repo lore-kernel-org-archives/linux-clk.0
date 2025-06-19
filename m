@@ -1,136 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0943621FF33;
-	Thu, 19 Jun 2025 12:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB192188CB1;
+	Thu, 19 Jun 2025 13:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335563; cv=none; b=AtrmXZNfIXB9waKDrIvNj2oM9ALSipA10OMoPQHmgpTU+9ofb4gf+++RkGlHxtCkNf82zpWPmUsdKS0zp0l08q4WNpj069K9aSaxIylVtZXmVdMSf4NPSq9L2AiuVMbuuFvoU8hLsmcpUAfNMfGr8Le1QTZQrxnRh6CWrP6XefU=
+	t=1750339055; cv=none; b=aod2KpuP0HbAzjJCsjfFVbCi0pQbmXQcRGQciUhGObBGnvQ8J/ntjIeSo4xH21J9H5/0f9rXHaO9pNnnQFP/KmkYFq52ou57ZwoXopqat8TNa3puYrc37dwOQncZHksEZ1LRRM8O5Rq2UWq7AgAvd1wGuDGENDfhEzbQrAvVchQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335563; c=relaxed/simple;
-	bh=wOtxYd7FeByenB+qByLpAwEF4ztZQ/PR/wXrB5umFwM=;
+	s=arc-20240116; t=1750339055; c=relaxed/simple;
+	bh=dxcXKwEUj8sgXcUKb28ZiQzkgidZwqraHxlva4Jn0Cg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ClV+7hjAmzOQDhZse8UI3UsSLEfEJUQxSTk7POo6FzWj2AsFmyqkRF3n6aSi/DMtMEUesqqVsim84NBOoJdQhWtIchHfNgnv//OCde1+HkDoGo6i3O4tJMppR5ovVlLUn60H7ZT6f2jsPNcrXhm0gTlEmv2RTmcQkOxPL4JIJVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2sVfizp; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yb3toixsthR599C9vH20d/9mQcC6BvMCjOau5SvQi5pCZZnuRJWmHtDy7q0Cv9c1k/KORGhhucUk6wXWbQZd2QXkZ0hp3Izbseg4VUxJ2VCx8FgWeLXr1IBJ3V6SFeEbnS1/Y0KfITdgqpQcTux9y837ptkOG1jBDGpkrnng+cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kM/KoYs4; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2sVfizp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C403C4CEEA;
-	Thu, 19 Jun 2025 12:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750335562;
-	bh=wOtxYd7FeByenB+qByLpAwEF4ztZQ/PR/wXrB5umFwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U2sVfizp/8RjiMYlKKqsnF7R2f5DhvS65P6lko53nexYpYpd6ASNO5gMQTW1b6wF9
-	 zPwiLBsX5cLhpZiCkZgzQVQOdQcMQm5H1vnJNo6bpRo7GX9qHdPkm2JwDVidusIK5D
-	 Z6w2GJcarqXOat8r5iPWVfDEUaiBoZyw52kVkR9sCXSqkMERPv1qaKj3KNDARM2VQD
-	 Vm6vnpZ7uzpVGuZO5tF7zbSQE1TOxg29rM8rHEykwQZpestS8+PRf4NHPYVvWOL/3e
-	 VEg8L8mom599SmeL2gzNC+Fe2XHzh4jLy0k0Q4NnjvunpJIwOrwDwoFWZdWUkggm8k
-	 SwdbZMnO/3p+A==
-Date: Thu, 19 Jun 2025 14:19:14 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kM/KoYs4"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5BA2925EBB;
+	Thu, 19 Jun 2025 15:17:31 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id E5OwfZ29gqk2; Thu, 19 Jun 2025 15:17:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750339050; bh=dxcXKwEUj8sgXcUKb28ZiQzkgidZwqraHxlva4Jn0Cg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kM/KoYs4eRXoxD9wPSZnlO3gwu6ERpf18PsCulKGZJnbethKYhiYGZuCDv4qzhPRi
+	 d7nlpDRB5C7nzxFU8+ziAi15ImXo66IR69HGfk4srxBDisoObNf7Jppb4IT3DquhIs
+	 g6ckn6YELS3otT0mN9OWS0kFvQ7p7rwFSWjuSpfa6wJZYSqjIiNoTVyxq36kGjaEj5
+	 ct4aC1y7isC1Twhi+Vv9pjRjx/NAm2JxAWQrb40SngjmvFV7Xe8KSrbZeCePQ/ZaNr
+	 w8ZHw72cRI9koQnZ41f8nt5fHwLl15BvVkad+9k6+xap4pBxLXqhl11SI+3OXj+/ie
+	 n4UyQngXW87fw==
+Date: Thu, 19 Jun 2025 13:17:13 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
-Message-ID: <aFQAQlB6gG3CElcN@pollux>
-References: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com>
- <CGME20250618122807eucas1p22d41cd6a9ac5131d91d41dfb09b8c92a@eucas1p2.samsung.com>
- <20250618-rust-next-pwm-working-fan-for-sending-v4-4-a6a28f2b6d8a@samsung.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH v2 0/8] Add clock support for Loongson 2K0300 SoC
+Message-ID: <aFQN2TSjT1IOvOt3@pie.lan>
+References: <20250617162426.12629-1-ziyao@disroot.org>
+ <CAAhV-H4dR3cd6g2+bGS1uLRKkpVVEjHY6Kd_QCYx4LuY71y6uA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250618-rust-next-pwm-working-fan-for-sending-v4-4-a6a28f2b6d8a@samsung.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H4dR3cd6g2+bGS1uLRKkpVVEjHY6Kd_QCYx4LuY71y6uA@mail.gmail.com>
 
-On Wed, Jun 18, 2025 at 02:27:37PM +0200, Michal Wilczynski wrote:
+On Thu, Jun 19, 2025 at 05:02:48PM +0800, Huacai Chen wrote:
+> Hi, Yao,
+> 
+> I suggest dropping the last two patches temporarily, because:
+> 1, the last two should be merged via another tree.
+> 2, the last two depend on another series which hasn't been merged now,
+> and can be squashed to that series.
 
-<snip>
+These are fair points, but I think including corresponding devicetree
+changes along with the binding patch helps review and proves the binding
+makes sense. it should be okay to merge only parts of a series, so I
+guess keeping the patches doesn't hurt, does it?
 
-> +    fn write_waveform(
-> +        chip: &pwm::Chip,
-> +        pwm: &pwm::Device,
-> +        wfhw: &Self::WfHw,
-> +        parent_dev: &Device<Bound>,
-> +    ) -> Result {
-> +        let data: &Self = chip.drvdata().ok_or(EINVAL)?;
+By the way, do you prefer to wait until all fundamental drivers (clock,
+pinctrl, and reset) ready and merged, then merge the devicetree with all
+the three devices added? Or is it just fine to go part by part, with
+incremental changes to the devicetree?
 
-<snip>
+Best regards,
+Yao Zi
 
-> +impl platform::Driver for Th1520PwmPlatformDriver {
-> +    type IdInfo = ();
-> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-> +
-> +    fn probe(
-> +        pdev: &platform::Device<Core>,
-> +        _id_info: Option<&Self::IdInfo>,
-> +    ) -> Result<Pin<KBox<Self>>> {
-> +        let dev = pdev.as_ref();
-> +        let resource = pdev.resource(0).ok_or(ENODEV)?;
-> +        let iomem = pdev.ioremap_resource_sized::<TH1520_PWM_REG_SIZE>(resource)?;
-> +        let clk = Clk::get(pdev.as_ref(), None)?;
-> +
-> +        clk.prepare_enable()?;
-> +
-> +        // TODO: Get exclusive ownership of the clock to prevent rate changes.
-> +        // The Rust equivalent of `clk_rate_exclusive_get()` is not yet available.
-> +        // This should be updated once it is implemented.
-> +        let rate_hz = clk.rate().as_hz();
-> +        if rate_hz == 0 {
-> +            dev_err!(dev, "Clock rate is zero\n");
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        if rate_hz > time::NSEC_PER_SEC as usize {
-> +            dev_err!(
-> +                dev,
-> +                "Clock rate {} Hz is too high, not supported.\n",
-> +                rate_hz
-> +            );
-> +            return Err(ERANGE);
-> +        }
-> +
-> +        let chip = pwm::Chip::new(dev, MAX_PWM_NUM, 0)?;
-> +
-> +        let drvdata = KBox::new(Th1520PwmDriverData { iomem, clk }, GFP_KERNEL)?;
-> +        chip.set_drvdata(drvdata);
-
-Sorry that I didn't spot this before: Is there a reason you can't pass drvdata
-directly to pwm::Chip::new()?
-
-If not, you can initialize the pwm::Chip's drvdata on creation of the pwm::Chip.
-
-This has the advantage that your chip.drvdata() (see write_waveform() above)
-becomes infallible.
-
-(If there are reasons this isn't possible, there are other potential solutions
-to avoid chip.drvdata() to return an Option.)
-
-> +
-> +        pwm::Registration::new_foreign_owned(dev, chip, &TH1520_PWM_OPS)?;
-> +
-> +        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
-> +    }
-> +}
+> Huacai
+> 
+> On Wed, Jun 18, 2025 at 12:25 AM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > This series adds support for Loongson 2K0300's clock controller.
+> > Loongson 2 clock driver is prepared to support more clock variants and
+> > its flexibility is improved. All clock hardwares except the output one
+> > for GMAC module are then defined.
+> >
+> > A clock tree dump could be obtained here[1]. This series depends on v3
+> > of series "Initial support for CTCISZ Forever Pi"[2] to apply.
+> >
+> > [1]: https://gist.github.com/ziyao233/160bb4693e7758b2a2a996d4510b7247
+> > [2]: https://lore.kernel.org/all/20250523095408.25919-1-ziyao@disroot.org/
+> >
+> > Changed from v1:
+> > - Fold loongson,ls2k0300-clk.yaml into loongson,ls2k-clk.yaml
+> > - Include the new binding header in MAINTAINERS
+> > - Link to v1: https://lore.kernel.org/all/20250523104552.32742-1-ziyao@disroot.org/
+> >
+> > Yao Zi (8):
+> >   dt-bindings: clock: loongson2: Add Loongson 2K0300 compatible
+> >   clk: loongson2: Allow specifying clock flags for gate clock
+> >   clk: loongson2: Support scale clocks with an alternative mode
+> >   clk: loongson2: Allow zero divisors for dividers
+> >   clk: loongson2: Avoid hardcoding firmware name of the reference clock
+> >   clk: loongson2: Add clock definitions for Loongson 2K0300 SoC
+> >   LoongArch: dts: Add clock tree for Loongson 2K0300
+> >   LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
+> >
+> >  .../bindings/clock/loongson,ls2k-clk.yaml     |  26 +++-
+> >  MAINTAINERS                                   |   1 +
+> >  .../dts/loongson-2k0300-ctcisz-forever-pi.dts |   1 -
+> >  arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  17 ++-
+> >  drivers/clk/clk-loongson2.c                   | 124 +++++++++++++++---
+> >  .../dt-bindings/clock/loongson,ls2k0300-clk.h |  54 ++++++++
+> >  6 files changed, 193 insertions(+), 30 deletions(-)
+> >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> >
+> > --
+> > 2.49.0
+> >
+> >
