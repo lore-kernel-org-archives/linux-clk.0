@@ -1,95 +1,136 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFD52192F4;
-	Thu, 19 Jun 2025 12:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0943621FF33;
+	Thu, 19 Jun 2025 12:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335421; cv=none; b=irYYFmdIpfZmxatwZXUFZWv2fyKo8Zedx7xRt/VnnXwxDhX21wHTQ3ih33jF7xYwJksAQ7S01pakdGWTe6w0ZA/avO4vB3FClxecBavj/RanZbiCUqRUMGU456jyjD6nrwEcrYyg+iOQhPiIjI4SnXt4t5kZO3kc5ttiztgFBkw=
+	t=1750335563; cv=none; b=AtrmXZNfIXB9waKDrIvNj2oM9ALSipA10OMoPQHmgpTU+9ofb4gf+++RkGlHxtCkNf82zpWPmUsdKS0zp0l08q4WNpj069K9aSaxIylVtZXmVdMSf4NPSq9L2AiuVMbuuFvoU8hLsmcpUAfNMfGr8Le1QTZQrxnRh6CWrP6XefU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335421; c=relaxed/simple;
-	bh=KOV50LtxSLTk8myNakTi6pYOjKVosHJ1Zs2xoj2+sYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJnoZGfQwNwQiHUMUt0Edm5UHKikKizh+xuYRV6Dcf65qVgrlPrv7DX2YeUtC+UwGp8pil1DJlihtjDR/poahfyxdv28SKqjgaWwZWXAWdtfO/F57JOcfizSpTWmK0kC3XIxMSyAvShnq7WWvkh2YSj9flC2Km0+YxqYm0nb8HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-52d9a275c27so627757e0c.0;
-        Thu, 19 Jun 2025 05:16:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750335418; x=1750940218;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BIR2gsz9to+yAE2m695WmEpzHsU9ducBJg+W2fRJiJE=;
-        b=q3FSIMPCu8S/Hr0bsHuSzUu65t1BoqvdzQy1GPUWu+xB7iTdRlVReGOh6uSVI1OJfc
-         BdiWLxze7tUVKa6jl2zPdhXfwz0WcoQKly/o4iFziu2R8HCdFDvGjIktYgbGtn85GlAD
-         rHaEW4vMVozzSP/ZTkycrfs2MbLzsHIrRS7bitUt1veDcekYdTktk0s0qKAd75CK/N7M
-         54AO5swsIjWHNoYU3eYp/PI3bnpHhIwxe7mRYw/E49dY159RX9xgNcJElSLrjQZZ4vrC
-         Lr7QWNlfv9ti7RAcy2878VO8YDjGXnDR6ebV2Hkg2/146sIhT0Z3TvMMHeZdPIjU2cwv
-         T1cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUfUmIT+rakdQ1UYsbt9QnueXUWYYBA86j8Vi5VkT/PiQ1UW1OUhBMDKpWxTJlZ6AQU7BRtXje3rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfn8DrDpBqDawVG79IhZ+Q2VjKjH7U4nSrF5HLhZvHkffYVIgx
-	kIVdwG5zJMQH7sesjraSNEf+NTCfzRhRAqfP7ucCOMjT2iyHEqG6kYko78EFyZGQ
-X-Gm-Gg: ASbGnct9KoyWAfz0+8FerKUJIptKwxWvvP5O0Vi10ERwsLXeve0Pwk+h5QdQ4KZH2LH
-	fjgCsze5vOXM236UffZgHgX80/EERyAwaf14NUGMTQm7TuoYl/GL4imS1EdyWe3UpgLXSBlcT5h
-	nCzm++GMOk7UPSeWtNNijk1ONKxlsBV5HUqrQIW15V0rwpidcb4H56G+S2yLJZWZoFIVAA3YQ50
-	rmKQTeHFsQIQMLWwsoLAoe7FdEFGL//1EVI0fiUTbBUwpZ67SgPEhr3ksAAoxSacD4ypiU7Pkpk
-	atTw/xHcvDNqMgnraX6WxxBTBRfiAgvCEtHytKbYOl40L4HGQIxCS2VIHIlx3Km0rJJ3N02f+L0
-	9eQbW+zDFqtxDSubcFHtyt8/8
-X-Google-Smtp-Source: AGHT+IFJmDs8i09QXknen/DRO5LHV5Slmo91FMxHb0eEQYx2e9qqKSVekJBf46Sf2i6NKEtPDjrSGg==
-X-Received: by 2002:a05:6122:30a8:b0:530:7e05:3836 with SMTP id 71dfb90a1353d-53149a7a652mr14784780e0c.9.1750335417885;
-        Thu, 19 Jun 2025 05:16:57 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-531401e5bfasm2336162e0c.33.2025.06.19.05.16.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jun 2025 05:16:57 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e9a109035bso584785137.1;
-        Thu, 19 Jun 2025 05:16:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLr/TG7p68RS6TXoKLgoyoVdgkQXq22/+/DrQeHHp4ZHwR94LzfSN3Ll1Hppgaa9PS32FW1DMEGaE=@vger.kernel.org
-X-Received: by 2002:a05:6102:6c6:b0:4e9:ba27:2c94 with SMTP id
- ada2fe7eead31-4e9ba273c69mr326957137.6.1750335416865; Thu, 19 Jun 2025
- 05:16:56 -0700 (PDT)
+	s=arc-20240116; t=1750335563; c=relaxed/simple;
+	bh=wOtxYd7FeByenB+qByLpAwEF4ztZQ/PR/wXrB5umFwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClV+7hjAmzOQDhZse8UI3UsSLEfEJUQxSTk7POo6FzWj2AsFmyqkRF3n6aSi/DMtMEUesqqVsim84NBOoJdQhWtIchHfNgnv//OCde1+HkDoGo6i3O4tJMppR5ovVlLUn60H7ZT6f2jsPNcrXhm0gTlEmv2RTmcQkOxPL4JIJVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2sVfizp; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2sVfizp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C403C4CEEA;
+	Thu, 19 Jun 2025 12:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750335562;
+	bh=wOtxYd7FeByenB+qByLpAwEF4ztZQ/PR/wXrB5umFwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U2sVfizp/8RjiMYlKKqsnF7R2f5DhvS65P6lko53nexYpYpd6ASNO5gMQTW1b6wF9
+	 zPwiLBsX5cLhpZiCkZgzQVQOdQcMQm5H1vnJNo6bpRo7GX9qHdPkm2JwDVidusIK5D
+	 Z6w2GJcarqXOat8r5iPWVfDEUaiBoZyw52kVkR9sCXSqkMERPv1qaKj3KNDARM2VQD
+	 Vm6vnpZ7uzpVGuZO5tF7zbSQE1TOxg29rM8rHEykwQZpestS8+PRf4NHPYVvWOL/3e
+	 VEg8L8mom599SmeL2gzNC+Fe2XHzh4jLy0k0Q4NnjvunpJIwOrwDwoFWZdWUkggm8k
+	 SwdbZMnO/3p+A==
+Date: Thu, 19 Jun 2025 14:19:14 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
+Message-ID: <aFQAQlB6gG3CElcN@pollux>
+References: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com>
+ <CGME20250618122807eucas1p22d41cd6a9ac5131d91d41dfb09b8c92a@eucas1p2.samsung.com>
+ <20250618-rust-next-pwm-working-fan-for-sending-v4-4-a6a28f2b6d8a@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611093934.4208-1-wsa+renesas@sang-engineering.com> <20250611093934.4208-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20250611093934.4208-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Jun 2025 14:16:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUkkTaL8aaYiw37hwBNL_QA1PFRkz9FNGxYR2N7sjADhA@mail.gmail.com>
-X-Gm-Features: Ac12FXxkMEiQQG8WQUVpr0ffZzKYaMxjtDuztBTJ65cLJ9hMwug5HR4iSnoelSA
-Message-ID: <CAMuHMdUkkTaL8aaYiw37hwBNL_QA1PFRkz9FNGxYR2N7sjADhA@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/7] clk: renesas: r9a09g047: Add I3C0 clocks and resets
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618-rust-next-pwm-working-fan-for-sending-v4-4-a6a28f2b6d8a@samsung.com>
 
-On Wed, 11 Jun 2025 at 11:39, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
->
-> Add Renesas RZ/G3E R9A09G047 I3C0 clocks and reset support into
-> cpg driver.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Jun 18, 2025 at 02:27:37PM +0200, Michal Wilczynski wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.17.
+<snip>
 
-Gr{oetje,eeting}s,
+> +    fn write_waveform(
+> +        chip: &pwm::Chip,
+> +        pwm: &pwm::Device,
+> +        wfhw: &Self::WfHw,
+> +        parent_dev: &Device<Bound>,
+> +    ) -> Result {
+> +        let data: &Self = chip.drvdata().ok_or(EINVAL)?;
 
-                        Geert
+<snip>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +impl platform::Driver for Th1520PwmPlatformDriver {
+> +    type IdInfo = ();
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
+> +
+> +    fn probe(
+> +        pdev: &platform::Device<Core>,
+> +        _id_info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>> {
+> +        let dev = pdev.as_ref();
+> +        let resource = pdev.resource(0).ok_or(ENODEV)?;
+> +        let iomem = pdev.ioremap_resource_sized::<TH1520_PWM_REG_SIZE>(resource)?;
+> +        let clk = Clk::get(pdev.as_ref(), None)?;
+> +
+> +        clk.prepare_enable()?;
+> +
+> +        // TODO: Get exclusive ownership of the clock to prevent rate changes.
+> +        // The Rust equivalent of `clk_rate_exclusive_get()` is not yet available.
+> +        // This should be updated once it is implemented.
+> +        let rate_hz = clk.rate().as_hz();
+> +        if rate_hz == 0 {
+> +            dev_err!(dev, "Clock rate is zero\n");
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        if rate_hz > time::NSEC_PER_SEC as usize {
+> +            dev_err!(
+> +                dev,
+> +                "Clock rate {} Hz is too high, not supported.\n",
+> +                rate_hz
+> +            );
+> +            return Err(ERANGE);
+> +        }
+> +
+> +        let chip = pwm::Chip::new(dev, MAX_PWM_NUM, 0)?;
+> +
+> +        let drvdata = KBox::new(Th1520PwmDriverData { iomem, clk }, GFP_KERNEL)?;
+> +        chip.set_drvdata(drvdata);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sorry that I didn't spot this before: Is there a reason you can't pass drvdata
+directly to pwm::Chip::new()?
+
+If not, you can initialize the pwm::Chip's drvdata on creation of the pwm::Chip.
+
+This has the advantage that your chip.drvdata() (see write_waveform() above)
+becomes infallible.
+
+(If there are reasons this isn't possible, there are other potential solutions
+to avoid chip.drvdata() to return an Option.)
+
+> +
+> +        pwm::Registration::new_foreign_owned(dev, chip, &TH1520_PWM_OPS)?;
+> +
+> +        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
+> +    }
+> +}
