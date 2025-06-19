@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF2430E82B;
-	Thu, 19 Jun 2025 19:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29904246787;
+	Thu, 19 Jun 2025 19:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750362877; cv=none; b=eMn0YNqDlBUmqZV37T3X72RUvKCXex+h9uXMMPbKRJdK+AeK4Q2XFR5xt1jY5hnD97FOw0cbM6fZeKWnfIRgy1UobAx9/vWrL9svFbUL4ykHrESl+yUJ/0/P2D/sJJZQZQHHVzpyVWsAsseeDGpqq+upyt70BbJa/fTl12fb2n8=
+	t=1750363031; cv=none; b=QKQIum5L7T1sSmNaGqOU07TMnF25sAExAyJ+vjemf/7+9gy3+vsetimcrrAQoxDyX/ml9JR4XSAKJWqkVJmXQieOMJDHF0ka1WeQo7V2WzePjrl0/DEdQG2w2uYxcw5hcAcjr01hAlU66k3rTFKmm0S667DFjj8t6jUq7kcCyGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750362877; c=relaxed/simple;
-	bh=rWufee79LmCp4cY9NcorLs0fohV01FS8UrEAxvFpX8o=;
+	s=arc-20240116; t=1750363031; c=relaxed/simple;
+	bh=ibWzxSUcPdGpnUffjV9oSw3Mgv/hOA1CQ+xqnIiMa/A=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=bY+4ze3IAILsE260Q0iGtDBZnWpGz4AFtYXmPQ7qsFOUDMEKC25V9ZIrtG0TBxwtg2ZCXLE7biTCSzSTQ2VV7BCTnKbAXRRnc4vVbZGy7gZj60LZjldCeMWx5RCu+2bXhxqomZjXUa6YT6WZL05l7Jv+CNttSk3svTM/Cc6n48A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqCYK5Rz; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=cX9UJ07YH+reXPk5AEboCfsH5wr7R6O3S1TQ+SQUk2e8kKUX9jOY03BYBwitVjpwwsVmKyv1kch9+vMOat0Ay17G70WZBqcqwnIs7zO6nA9tZqL90CjQBkDJhshyEklH7FAH1dgsX7/0j81aCoqjrQJfsbEiS8cW6o8Yk3dfaTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7jPXHyk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqCYK5Rz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270BEC4CEEA;
-	Thu, 19 Jun 2025 19:54:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7jPXHyk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88289C4CEEE;
+	Thu, 19 Jun 2025 19:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750362877;
-	bh=rWufee79LmCp4cY9NcorLs0fohV01FS8UrEAxvFpX8o=;
+	s=k20201202; t=1750363030;
+	bh=ibWzxSUcPdGpnUffjV9oSw3Mgv/hOA1CQ+xqnIiMa/A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SqCYK5Rz8YvF0vcvtzOdxJftdiR4Ku5Kg/+UB/wt9lfIapBdM7EgslJXlwWARdpim
-	 WvT2mH7T8ciXJGF3uluweqCm3Dalpgbm7YpT9JASuSX9V+RHXPljTPtkuPZj2QnyzP
-	 9Y75A50hutA0AjWGlMXh7V9tWiuA2uvHAAPcFTvLINIACd2KYBWnDQm2hbr67FNhXs
-	 w+0K/+KIOJhuz1To6GWST7NjPRJPFULHggPbUYeR94Hfpfe8qbJXfAT4MTBK53smqp
-	 zMbTO5YDNVWIpEug9qO7Prg6iRNc1DleXUDZafIa3NPKyB8uVR9sd8qZSKhyZhIU2z
-	 6YC/4iy+AHr2A==
+	b=g7jPXHykDJy4xCaKiVKrMn/tusr/gawzeCFHZsc615sMC0WdBFcbe0OEa/N2TwOU/
+	 8cCrH8oAjJGS25DqiggSTogcvqHVrqG3TX2l/vfNry2tD22ByRLNj/3wo7br5XAs27
+	 LbzPlS6RZBVgJ/aeKgQXXsKfz5ghIbHtulZDVyt/l4IVyTkWIXfwHi49CqD++c/KEm
+	 ILBSgtmDHnclzgrdvUrpKTudmpzrPXV24U7LJ6smnPjOzyKzH1/Dine16SudrOKCaf
+	 xFTD3rTebrWRDONzLhLiL2HHOSafqYpf6frftNckvxweqvVKY+Ee52uOZd32SnAOuF
+	 0X3uMOw0XlNdg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,30 +34,44 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250619171025.3359384-3-wens@kernel.org>
-References: <20250619171025.3359384-1-wens@kernel.org> <20250619171025.3359384-3-wens@kernel.org>
-Subject: Re: [PATCH 2/2] clk: sunxi-ng: sun55i-a523-r-ccu: Add missing PPU0 reset
+In-Reply-To: <20250618-rust-next-pwm-working-fan-for-sending-v4-5-a6a28f2b6d8a@samsung.com>
+References: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com> <CGME20250618122808eucas1p1734efef72b723602969465d6cd0c01d2@eucas1p1.samsung.com> <20250618-rust-next-pwm-working-fan-for-sending-v4-5-a6a28f2b6d8a@samsung.com>
+Subject: Re: [PATCH v4 5/9] clk: thead: Mark essential bus clocks as CLK_IGNORE_UNUSED
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>, Chen-Yu Tsai <wens@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>
-Date: Thu, 19 Jun 2025 12:54:36 -0700
-Message-ID: <175036287647.4372.1701190769589982450@lazor>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+To: Albert Ou <aou@eecs.berkeley.edu>, Alex Gaynor <alex.gaynor@gmail.com>, Alexandre Ghiti <alex@ghiti.fr>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Boqun Feng <boqun.feng@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Fu Wei <wefu@redhat.com>, Gary Guo <gary@garyguo.net>, Guo Ren <guoren@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Michal Wilczynski <m.wilczynski@samsung.com>, Miguel Ojeda <ojeda@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Trevor Gross <tmgross@umich.edu>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Date: Thu, 19 Jun 2025 12:57:09 -0700
+Message-ID: <175036302986.4372.15656426260486761164@lazor>
 User-Agent: alot/0.11
 
-Quoting Chen-Yu Tsai (2025-06-19 10:10:25)
-> From: Chen-Yu Tsai <wens@csie.org>
+Quoting Michal Wilczynski (2025-06-18 05:27:38)
+> Probing peripherals in the AON and PERI domains, such as the PVT thermal
+> sensor and the PWM controller, can lead to boot hangs or unresponsive
+> devices on the LPi4A board. The root cause is that their parent bus
+> clocks ('CLK_CPU2AON_X2H' and the 'CLK_PERISYS_APB' clocks) are
+> automatically gated by the kernel's power-saving mechanisms when the bus
+> is perceived as idle.
 >=20
-> There is a PPU0 reset control bit in the same register as the PPU1
-> reset control. This missing reset control is for the PCK-600 unit
-> in the SoC. Manual tests show that the reset control indeed exists,
-> and if not configured, the system will hang when the PCK-600 registers
-> are accessed.
+> Alternative solutions were investigated, including modeling the parent
+> bus in the Device Tree with 'simple-pm-bus' or refactoring the clock
+> driver's parentage. The 'simple-pm-bus' approach is not viable due to
+> the lack of defined bus address ranges in the hardware manual and its
+> creation of improper dependencies on the 'pm_runtime' API for consumer
+> drivers.
 >=20
-> Add a reset entry for it at the end of the existing ones.
+> Therefore, applying the'`CLK_IGNORE_UNUSED' flag directly to the
+> essential bus clocks is the most direct and targeted fix. This prevents
+> the kernel from auto-gating these buses and ensures peripherals remain
+> accessible.
 >=20
-> Fixes: 8cea339cfb81 ("clk: sunxi-ng: add support for the A523/T527 PRCM C=
-CU")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> This change fixes the boot hang associated with the PVT sensor and
+> resolves the functional issues with the PWM controller.
+>=20
+> Link: https://lore.kernel.org/all/9e8a12db-236d-474c-b110-b3be96edf057@sa=
+msung.com/ [1]
+>=20
+> Reviewed-by: Drew Fustini <drew@pdp7.com>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
