@@ -1,90 +1,93 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D4E2222A8;
-	Thu, 19 Jun 2025 10:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A72223702
+	for <linux-clk@vger.kernel.org>; Thu, 19 Jun 2025 11:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750329315; cv=none; b=U1EbrzFWAcwsx8Md15DdINtAl/VW/IyR7DebyVlWlY47ZWPGhX359n0SufX45hKE4ddYNKUVmR8OF92U0oDzVT4n8k1JrnrL5TTPmkS0QXW5UeZdcgtrVBEEcR806KPPvDkWp86xbadbZBjOQplbiWEQYeQJrnsaBg5k+rc/YP8=
+	t=1750332538; cv=none; b=evO5iPnzw8Oq5sjKRo5oJpi/o+8+1rhEERAKzjMQlMGZR3NxGx8nMtlZ5DJxD4EQD/ou6x+PIed1ChlDlLH0yw9T+IZmcTqj5gq9Dq+aL+as1UbzAqnvVmDBV9FWN+N8tZ1LULwiCZ8g6NBBeHAt+tM6L/091A140ImB1i3lnvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750329315; c=relaxed/simple;
-	bh=9n0CSCsflojbXw3RCAZurIuz4o0bkVtsAswJzgXymLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ok25ct+8TGhNlF3Pc+dToKvuZQ4nitM6o6Mzfvh7dncQe8s6F0d5VrQYhJNEB6/Lkn6ftRSWG07CHcyRhYdCQQje/o95xJsYCYL6eH6SrWo9/kCPgLLooqb2L508U7pFeaRPwSfnlJC+VgE1aPIMMQD6TCejdcMhFS/g//hAb1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZMgmDSeO; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMgmDSeO"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso84619766b.2;
-        Thu, 19 Jun 2025 03:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750329312; x=1750934112; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kYcSpy3fjOfl/Ld8pD/5IvIIcuWozqQniEpo/GJie+A=;
-        b=ZMgmDSeO6812o3bZ16qPJtRXKaK1M8iCwynPkqZpOTSW2w/zE/yGv8O+i8rUQD1AcJ
-         sMTMa6yHf2imvtNVRkhOUDahVpl0Fyk6aJM5KKx6/9VzOrniJANlToCTPz+ZufGz2Sze
-         Z7u0caIU4RhYGvK+NxP+MDnB+Dw3cE8nWY2byEg6fX5DawsLA0hZsOfvUNidKsEDpkJV
-         6qjLrLU0Od+7p5uF+hTksabRmYksZts1Kf8rvd6HFEWVmswr5oTqPZlCVb/8E+nYi8GI
-         yWDHxK/WhF1yzoNAQK6NVIqT6uQ1+VT6/nVxz7/x0W8xOf1qUs+XzuoYgVZQiRsMg2tH
-         13wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750329312; x=1750934112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kYcSpy3fjOfl/Ld8pD/5IvIIcuWozqQniEpo/GJie+A=;
-        b=VDrP1t+IC+APDVwsV0xrOIGi3p3/pz3IDLAvWVE5JHiBjiMZ8cxonzgbyCzxAD8l/L
-         upIxOTJHSDhGoDz4uczGI9U/mdfkr2OZGX0QcMyqv11K5AzhgmjiUbetrSuAT9W0PKs+
-         7HLAdzyQTS9p9Q7Pe/SyNqBazH7JKbUvqkX2kQN98ikl3yMEaoL72yq9jpL65Kqwn+BM
-         BhHLBevlY5bBrQQNv7qLmw3uwYUhKoXquOqA5M+8B6iE6lqgeIF5AGUw6vZ6Hbqj318t
-         4g0UbJYuWJI+L4Raad5CD1xftGipZhvVn7lFgorv8Z7Tf+M7QyeA3SoJtduFGTCC+a8u
-         29Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOP4aHXBMHoSZfi/aEB9v1OwVDN8HqaA5Wc7Gf71tr7RKvb54rPedYAd5x0JDKe+WeL1GQ5nr/ZNwI6thi@vger.kernel.org, AJvYcCXZdUJsFq/IT5IlX9duzkXukBSCx5iaYEHG3SB9uJGTz6mgid0WppX8ySRbTAAqp9sNqZYynHGEukU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDo1cXYME6dqoUr8zGjs2NKwIV9AU5x44pe+IUucY81IpYKyFw
-	sw3M+pSxCJjzyV3mcA33hu0HpghWYsS00sKlew6VSEHoC0BL/0f65Q2iEUyRewbpvjh8/jn0OSI
-	IcipvEO1q5yS2nRn48sgb5RitzHv6EJg=
-X-Gm-Gg: ASbGnctazG+aB0bI9iJ7VuBu9nShVzzLmkSaLHafS43ueHOXfyZy9Jz/xKSG7sy0GH4
-	8T1gNKhSr2TzrwsZyc8wOWArpqNmNOEB+Y/Iu0buEXA8kZNQjM6Uy2L97o0CjApn81U1gHyFVtm
-	aC6QDGrxeEnhJNbHXJxKw/434+cXdrUFCuhtjWnAnRtdQ=
-X-Google-Smtp-Source: AGHT+IHHWUKjyfALrzaw//PYiT1+cxeTALWpRxcAIJQOTFRjLxTFyWACQ9rEp0RDZam+4I9Xwde6H8GCZ3rm+YFu/6A=
-X-Received: by 2002:a17:906:6a18:b0:ad6:4e8e:1883 with SMTP id
- a640c23a62f3a-adfad29824bmr2276520266b.3.1750329311740; Thu, 19 Jun 2025
- 03:35:11 -0700 (PDT)
+	s=arc-20240116; t=1750332538; c=relaxed/simple;
+	bh=7ago14q1gQ9JAob84HS378yfaJHxlW6UjfAjq6a307c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DkRqI8nfhCqTXUG5RLbZtrLy6gWxU92po0zyweVg2NHPZ138f4GDFNYerV+uqns2JZWHTxZuN5lAwJNbTI3X+vp9vnS8Qeac258RsDGSSof2o4YCuzuRYSTLybqFDYelrJkpNA4Lup8SrE8XR9u9GOFikgepOi3Is5IR5RX72GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uSDRY-0007wh-JV; Thu, 19 Jun 2025 13:28:32 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uSDRY-004I9Q-0d;
+	Thu, 19 Jun 2025 13:28:32 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uSDRY-005PyJ-0G;
+	Thu, 19 Jun 2025 13:28:32 +0200
+Date: Thu, 19 Jun 2025 13:28:32 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v5 3/4] dt-bindings: clock: cdce6214: add binding for pin
+ configuration
+Message-ID: <aFP0YIgXndjTVyAL@pengutronix.de>
+References: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
+ <20250618-clk-cdce6214-v5-3-9938b8ed0b94@pengutronix.de>
+ <20250619-arboreal-jaguarundi-of-passion-a2eaa1@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618093508.16343-1-work@onurozkan.dev>
-In-Reply-To: <20250618093508.16343-1-work@onurozkan.dev>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 19 Jun 2025 16:04:59 +0530
-X-Gm-Features: Ac12FXx8wLCRzICGcke8dQ2iTjvvG_2RNf4kUGiZlyDyDEi9s0vgAYKU_9R4R6o
-Message-ID: <CAOh2x=k_xje2iHdHZCZO7QaRECvRSLQEVeBPkC2oY5YdJ83kAg@mail.gmail.com>
-Subject: Re: [PATCH] rust: shorten `con_id`s in `get` methods in clk module
-To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	dakr@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619-arboreal-jaguarundi-of-passion-a2eaa1@kuoka>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, Jun 18, 2025 at 3:07=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev=
-> wrote:
->
-> Converts `if-else` blocks into one line code using `map_or`
-> for simplicity.
->
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> ---
->  rust/kernel/clk.rs | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
+On Thu, Jun 19, 2025 at 09:42:06AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, Jun 18, 2025 at 11:21:14AM GMT, Sascha Hauer wrote:
+> > Add pin configuration binding for the TI CDCE6214. The CDCE6214 has
+> > an internal EEPROM to to fully configure the chip, but this EEPROM
+> > might be empty, so add support for configuring the chip through
+> > the device tree.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 95 ++++++++++++++++++++++
+> >  1 file changed, 95 insertions(+)
+> 
+> 
+> This should be part of previous patch. Bindings should be complete, not
+> added in partial sets.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+See cover letter why I did this. If everybody is fine with the pin
+configuration binding then I can merge this back together, but I doubt
+it and in that case I'd rather get the driver upstream without the pin
+configuration at first.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
