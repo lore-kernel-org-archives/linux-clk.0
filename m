@@ -1,147 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915827494;
-	Thu, 19 Jun 2025 15:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AAAF9DA;
+	Thu, 19 Jun 2025 17:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750346594; cv=none; b=DSMh+kxZv/k6zgEExMLwhSCXCiOIylA0+aog/vJz/92ImXocrY9mbkcOxumDbkX0XrKMQQ28bwLqYGRlx48rTfjJAdr3wihiZBCu2a0JeSzoBSmqPb9EdZtSZOGuikLf7D563c1A9PIPrxiFLlSTy98BJv08jzFPq0QJPOr7X7k=
+	t=1750353031; cv=none; b=qTY9CXBwd4khoWUlvGNFLhU9MI9RX6edNnTRl0mi7V1RJIOkBc+oNUMCvvUSlQ3x970U7l9FjAsCxeiJ7OqFz+HSQ3TbGAoZbBgz/q1C4myxVdewcO0uXQMxvA6f+8GLm+powvDPWqRu5ggLDKyhL0ZDjk2c+kaMnJq/iG85Fy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750346594; c=relaxed/simple;
-	bh=SwDI5O+tZvIfRNuyVcMNkxY6LY3/oXoFoTGFL2+xKdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YFqlSIYUZOO0bSUvZYLNh0npXpsA9880YfBGxghdwoVMXhxHuexDP+sGenfvQ2m2cstYkKI2pT99f6eIm5BAuaddlZ1v27B3f3e8ic6fMQ9yXkO4gDeezpN+4eUbxJw+TYxy1vmJS22nSeAYzoVHXE1dDxx+5PfQbPPv6qgR1qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7PDLPTH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750353031; c=relaxed/simple;
+	bh=1tM7lfGa2OX6upFSfSRNAvjF/6bzMIakzUVOukjfgp0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cbOJFkCD6p1W2OmwKAh4T/wuRjkdwlMHa7fePfeJw3Cc41kwyNSptgfD69u3Fjnf0GaddxuZHhj8TeFIzjehcQr63CEAawSN5W5f9mbduHvgVyj/TuY6DvGq1woupzsPPdjroDrjpP3QLRhc0pqqSfrEvJGbj+KquPVmYAOgzBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjyYMQ1B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7PDLPTH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F57C4CEF1;
-	Thu, 19 Jun 2025 15:23:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjyYMQ1B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CBEC4CEEA;
+	Thu, 19 Jun 2025 17:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750346594;
-	bh=SwDI5O+tZvIfRNuyVcMNkxY6LY3/oXoFoTGFL2+xKdU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g7PDLPTH86VqIWFBR/dq5nZkYzcm/0ocX6eZdxVfOS9hAmc7LcdqDA4dP0UIVrbUJ
-	 iiLvm2tsVxKjOh89r/HgntGu4MeALTZTYHM6gbQ99HrVnzkZagwL7vrdM489JXYOBv
-	 ZKIIyFu4VDB7BhR/Zn+RYe6JiZZx4Y3MmxZCJzusuQcFHgD5Qelvo6fAA7w81xXxzi
-	 Y11NFLg5IbIgyqdRLt4dsa5a3+KL3aeBn/XqdA0zatcRfu4LMoWIHrM3SufS0vzjqu
-	 Zdq0MFIEodVvwNQ8Lw88Baeo8zniUAZhxRS1gs1yqLD3MjdwNezp8MJOSw0AGpcqh8
-	 AqFlbNGwZEVgQ==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60727e46168so1623586a12.0;
-        Thu, 19 Jun 2025 08:23:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVVjWXRif/iBSxZZ4J5XyyhZQw6PBQRuoh8C0wQv4OsnNSeTX/42G8G7Xi0LRjE/A50HbGq95I2P6wz@vger.kernel.org, AJvYcCW1XVLQVZ+q1xx1TJEOJtpxvS2hvVcYo2wyXGuJNUhkJNx0hvxgZ14jC3wmHbvaVH90HXJBhydw5w01r/mK@vger.kernel.org, AJvYcCXrO7caFvvkqB5W1yx6apP1R42q92pFc+hW63Ss3i4GJjTowzTr8vI8DY/1e4VzbgT5OnAK4c+JiSjX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJxrxYMGXZ/H83avUQ3AqrXTD3WZ4p3U9l2XP2fih3QH7UaHlB
-	lvma/hOi1DBmcwXc9aoQZISj9LRl0Yx2ARIccpjvvxDkhgrEj9YDpHci5ti10rhz+T5HmBQKOXz
-	M8U2bd64s3JJ3icdhB08Xb+exLPGv8qk=
-X-Google-Smtp-Source: AGHT+IG/pZuTmErWjVZ0Wq/kq9f6qxWsOesVABoR2+f8hJPtebRo74IpJF1gGR0hdGST63n8p846BRR2Vx2xAjaeraU=
-X-Received: by 2002:a05:6402:50d1:b0:607:6324:8da2 with SMTP id
- 4fb4d7f45d1cf-608d09cf5e7mr19497555a12.24.1750346592796; Thu, 19 Jun 2025
- 08:23:12 -0700 (PDT)
+	s=k20201202; t=1750353031;
+	bh=1tM7lfGa2OX6upFSfSRNAvjF/6bzMIakzUVOukjfgp0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KjyYMQ1Be302kdviESang5cJb1yKX07PYqBpvNGpMtyiRA+F0DJVli2y2lUvUL1AJ
+	 mg1uRLdqOSv9XpfshipGT4rCfCIKKYzL5EeAy5sB2WqeCHajR7KY+xtU6tmoZ+vW96
+	 l6SqVsGDPti766CEhXkzPt9+f53H8EO2xWk0gElBGHTa/K8wY3JUSwWtrdDFhcqpLv
+	 3vuwVXSG3MdhQR6VEWPLVTdi0+e2UMRP0rEoGoohU9MNWoZYoOI1U0bcGdP5u2G5Vs
+	 YKvPjFQ50jcrAx1nwNOx5O1K5nTZ6HbDrfWpOtJimUAxZz592GYBq/rgRC8hnhCNUJ
+	 ZerjfQ2poc2xg==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 8E4075FF4F; Fri, 20 Jun 2025 01:10:28 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	devicetree@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: sunxi-ng: sun55i-a523-r-ccu: Add missing PPU0 reset
+Date: Fri, 20 Jun 2025 01:10:25 +0800
+Message-Id: <20250619171025.3359384-3-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250619171025.3359384-1-wens@kernel.org>
+References: <20250619171025.3359384-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617162426.12629-1-ziyao@disroot.org> <CAAhV-H4dR3cd6g2+bGS1uLRKkpVVEjHY6Kd_QCYx4LuY71y6uA@mail.gmail.com>
- <aFQN2TSjT1IOvOt3@pie.lan>
-In-Reply-To: <aFQN2TSjT1IOvOt3@pie.lan>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 19 Jun 2025 23:23:02 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6EDEf3U6w5KY3R3HCAdAbqDefqpE3ktCQeQtFbDK2Ypg@mail.gmail.com>
-X-Gm-Features: AX0GCFvvW6SYVKrmH037GeOA3vr2AnqCqYBdHT4NDoXMM5cozrqAuCu19uS9S9U
-Message-ID: <CAAhV-H6EDEf3U6w5KY3R3HCAdAbqDefqpE3ktCQeQtFbDK2Ypg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] Add clock support for Loongson 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 9:17=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
->
-> On Thu, Jun 19, 2025 at 05:02:48PM +0800, Huacai Chen wrote:
-> > Hi, Yao,
-> >
-> > I suggest dropping the last two patches temporarily, because:
-> > 1, the last two should be merged via another tree.
-> > 2, the last two depend on another series which hasn't been merged now,
-> > and can be squashed to that series.
->
-> These are fair points, but I think including corresponding devicetree
-> changes along with the binding patch helps review and proves the binding
-> makes sense. it should be okay to merge only parts of a series, so I
-> guess keeping the patches doesn't hurt, does it?
-Yes, keeping them is just OK.
+From: Chen-Yu Tsai <wens@csie.org>
 
->
-> By the way, do you prefer to wait until all fundamental drivers (clock,
-> pinctrl, and reset) ready and merged, then merge the devicetree with all
-> the three devices added? Or is it just fine to go part by part, with
-> incremental changes to the devicetree?
-Yes, I prefer to wait until fundamental drivers are merged.
+There is a PPU0 reset control bit in the same register as the PPU1
+reset control. This missing reset control is for the PCK-600 unit
+in the SoC. Manual tests show that the reset control indeed exists,
+and if not configured, the system will hang when the PCK-600 registers
+are accessed.
 
+Add a reset entry for it at the end of the existing ones.
 
-Huacai
+Fixes: 8cea339cfb81 ("clk: sunxi-ng: add support for the A523/T527 PRCM CCU")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> Best regards,
-> Yao Zi
->
-> > Huacai
-> >
-> > On Wed, Jun 18, 2025 at 12:25=E2=80=AFAM Yao Zi <ziyao@disroot.org> wro=
-te:
-> > >
-> > > This series adds support for Loongson 2K0300's clock controller.
-> > > Loongson 2 clock driver is prepared to support more clock variants an=
-d
-> > > its flexibility is improved. All clock hardwares except the output on=
-e
-> > > for GMAC module are then defined.
-> > >
-> > > A clock tree dump could be obtained here[1]. This series depends on v=
-3
-> > > of series "Initial support for CTCISZ Forever Pi"[2] to apply.
-> > >
-> > > [1]: https://gist.github.com/ziyao233/160bb4693e7758b2a2a996d4510b724=
-7
-> > > [2]: https://lore.kernel.org/all/20250523095408.25919-1-ziyao@disroot=
-.org/
-> > >
-> > > Changed from v1:
-> > > - Fold loongson,ls2k0300-clk.yaml into loongson,ls2k-clk.yaml
-> > > - Include the new binding header in MAINTAINERS
-> > > - Link to v1: https://lore.kernel.org/all/20250523104552.32742-1-ziya=
-o@disroot.org/
-> > >
-> > > Yao Zi (8):
-> > >   dt-bindings: clock: loongson2: Add Loongson 2K0300 compatible
-> > >   clk: loongson2: Allow specifying clock flags for gate clock
-> > >   clk: loongson2: Support scale clocks with an alternative mode
-> > >   clk: loongson2: Allow zero divisors for dividers
-> > >   clk: loongson2: Avoid hardcoding firmware name of the reference clo=
-ck
-> > >   clk: loongson2: Add clock definitions for Loongson 2K0300 SoC
-> > >   LoongArch: dts: Add clock tree for Loongson 2K0300
-> > >   LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever =
-Pi
-> > >
-> > >  .../bindings/clock/loongson,ls2k-clk.yaml     |  26 +++-
-> > >  MAINTAINERS                                   |   1 +
-> > >  .../dts/loongson-2k0300-ctcisz-forever-pi.dts |   1 -
-> > >  arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  17 ++-
-> > >  drivers/clk/clk-loongson2.c                   | 124 +++++++++++++++-=
---
-> > >  .../dt-bindings/clock/loongson,ls2k0300-clk.h |  54 ++++++++
-> > >  6 files changed, 193 insertions(+), 30 deletions(-)
-> > >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > >
-> > > --
-> > > 2.49.0
-> > >
-> > >
->
+diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+index b5464d8083c8..70ce0ca0cb7d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+@@ -204,6 +204,7 @@ static struct ccu_reset_map sun55i_a523_r_ccu_resets[] = {
+ 	[RST_BUS_R_IR_RX]	= { 0x1cc, BIT(16) },
+ 	[RST_BUS_R_RTC]		= { 0x20c, BIT(16) },
+ 	[RST_BUS_R_CPUCFG]	= { 0x22c, BIT(16) },
++	[RST_BUS_R_PPU0]	= { 0x1ac, BIT(16) },
+ };
+ 
+ static const struct sunxi_ccu_desc sun55i_a523_r_ccu_desc = {
+-- 
+2.39.5
+
