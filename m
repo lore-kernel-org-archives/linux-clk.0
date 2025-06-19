@@ -1,102 +1,144 @@
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C7B217F36;
-	Thu, 19 Jun 2025 10:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4947C221725;
+	Thu, 19 Jun 2025 10:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750327566; cv=none; b=qbOxmKKjwp7g1NzOCmhOgvo+FdqvYdDIOpecGBgF45yuC4KPMBCCei8ewKQ2WqXCnpMsjAnyOx3w5rtPt5kBQPh4jH16tu5AbCDaY4NtKtvylOn+Vqr8FHogEtxK31Sr2B8gVzbf56OqPXu2K7gc+IJ27ANGNbfUuSB0P8t16Dc=
+	t=1750328427; cv=none; b=oskUDEaImYQWiotWEU9nmSITPT7nCVj5eW4Z82qtM+hHX88BGTzGMvLoHdyZIQ0hfCq13tzl7PAk+jvFfL8vAO5xY/9dPXXVTq0KWdaP3rF/9S4ibDWnugbCIa1H5ch+2sVERwf5lqh/krTjSTRljQpaQYOiDJwjiOGLMVm6lQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750327566; c=relaxed/simple;
-	bh=3Q859OB643D+9nMxoAjoOVmWNmeQfgcpihaipu4T+w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MGMDeb38Tuuyn3TB7oNKOtxcyizldlrxgCmyzkRcanueFNNgX8hfc1naeXdPreAmwo0mVgnqGv4NDQZS3X4WbVpsb4xiNrPTrGQE+QN6unoJAFxLy0LLpL9BuF8yfxKVvtcSd6ibEYS8esayTodAyQa6o/Gq72HcujMK3fDNyjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=eWhmSDau; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+	s=arc-20240116; t=1750328427; c=relaxed/simple;
+	bh=0DgFTAL6mz9/5mlr4eRewZuvWWgktHbE0dCpfKYuO5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cSCpnGDemti175qkTtzJ6qCImj0cbiWSwb0fGk4u+XVsqv+UZgJux4kxmMGlQ1UzJbQQb6ll3MXF0rwWXvzAQrPtTWI4Sa4J+n5eVLqYXCbkzJJvPaHq3+jAZEPjb9zj4bnhhAm0NKy6NLqtXS366ioQdZoL4OhWGbcz0yIvcXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfGQfc7m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="eWhmSDau"
-Received: from mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2db2:0:640:9334:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id D919B61B84;
-	Thu, 19 Jun 2025 13:05:55 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id p5Lw11ALbqM0-nTVsfCIV;
-	Thu, 19 Jun 2025 13:05:54 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1750327555;
-	bh=3Q859OB643D+9nMxoAjoOVmWNmeQfgcpihaipu4T+w4=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=eWhmSDauEWHYMVbL1Y25p9riHykM4mzD6LRmI0aDx7YAGfO4ANdaPzwrwAe8sc72e
-	 wiV4b9eMQzqjNKPiB9DmUNje/lkIi2WsFX+AbpJOl3f3QiTN3gDW4xM6M6PGufBYqM
-	 a1mVANxypPG8bE62wiFcAGXxsGRmf5MvK+xEFQcA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Thu, 19 Jun 2025 13:05:51 +0300
-From: Onur <work@onurozkan.dev>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
- <sboyd@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
- "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "boqun.feng@gmail.com"
- <boqun.feng@gmail.com>, "gary@garyguo.net" <gary@garyguo.net>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "lossin@kernel.org"
- <lossin@kernel.org>, "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
- "aliceryhl@google.com" <aliceryhl@google.com>, "tmgross@umich.edu"
- <tmgross@umich.edu>, "dakr@kernel.org" <dakr@kernel.org>
-Subject: Re: [PATCH] Various improvements on clock abstractions
-Message-ID: <20250619130551.388da2a2@nimda>
-In-Reply-To: <20250619064534.nipg4rs2gwepxqw2@vireshk-i7>
-References: <20250616200103.24245-1-work@onurozkan.dev>
-	<CANiq72n0v7jinSyO85vorYRFB=y5NH5roW4xLRjwZz+DFJ5QSQ@mail.gmail.com>
-	<42151750134012@mail.yandex.com>
-	<CANiq72n3+qzDCCf0ct-5gtQHKXDbT2rr1fgxVQP4qBW69JmmhA@mail.gmail.com>
-	<20250619064534.nipg4rs2gwepxqw2@vireshk-i7>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfGQfc7m"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55J5wNNY002625;
+	Thu, 19 Jun 2025 10:20:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FIwbK4fsuTi2Ekg9nbMkJqw3FQ1RBeyBosd/m9t3QZI=; b=HfGQfc7m3b++WjVf
+	hHM5n6UFF51uDG5oD7ScfITiITd3h2hVtuOqOfehHJINXh/o3GmzeqgpQ4lh9aXW
+	v4697Dixc0TD74BtYoYsPUwJWrsA1Xz7afkFjcAK1DR464VdHebX+SKhhsLXfLUz
+	16M6AW2J3y10zWp1ugfiehCXWyjj/w0loqZdwiYm0KpeVm0CxJO0hwlH+ijYils4
+	rI9Nwpnk2j8wpnBKKrTZ/Gmi7njrAv+MjyeTlYma8QRIxaxGejbWPP0t/VDCc17W
+	Wd1U0ypCmXb2Y+BnuQbR0FYtNI6Zz6biYl6/vsZLvkE1BRqyMkfWNNEcBDHnGDCI
+	wliEjQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hd7p88-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Jun 2025 10:20:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55JAKImX007362
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Jun 2025 10:20:18 GMT
+Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Jun
+ 2025 03:20:11 -0700
+Message-ID: <5ed72663-da54-46a4-8f44-1ceda4a7d0d9@quicinc.com>
+Date: Thu, 19 Jun 2025 15:50:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom,sm8450-videocc: Add minItems
+ property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        kernel test robot <lkp@intel.com>
+References: <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-0-02e83aeba280@quicinc.com>
+ <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-1-02e83aeba280@quicinc.com>
+ <4657c6d8-8454-478a-aac3-114c6194b72e@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <4657c6d8-8454-478a-aac3-114c6194b72e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDA4NyBTYWx0ZWRfX/trn2uyXOjTc
+ 4IeRI9Cdlx3pU/HuRaOht29drWcPFBCK3gbknQh8urk0Ew7+NgFscoWuUZgq23RxvoLmVyEF4rU
+ Ijlfq49ZrttjTaRu5vCEMweP5D2tpT2mMxXrrG5Qy6Sqs75rkkwjy6gXWcBeePwb02CNtPGoVF3
+ SsJXdxJR/tmWVs5mHrq9Xv2kFp0Vo3r8ZvcGFrBXkor4JMPxWSW75vv9jcKncxnkpJvuWmaAzax
+ zkMW6pHohJey/V4ZUXRhi8XD6BlHnksoLfcT3hlfiFkoNeJGiL5x50e2GN/j4k63Ca03G5WJ1Bm
+ 0q51pPjJIIXY+/XLUrVq0AvTrgHkBQqKCFzQARbkrjaaEYlJ3EZhO/iGqHJZ0k9d5C4ETKyWFMZ
+ QpJ7zNTTklqw49wvQzdHy9ZNc7YxW8lhE2AZkdCogktAh8dtYbiJUusHNTy28rRj5qpjiVEv
+X-Authority-Analysis: v=2.4 cv=PtaTbxM3 c=1 sm=1 tr=0 ts=6853e462 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=cLWHS4kKuHwVDwOVLkgA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: GAUMW2cVFg-9ItYRwUoI_TkgEoHvKSCw
+X-Proofpoint-GUID: GAUMW2cVFg-9ItYRwUoI_TkgEoHvKSCw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-19_03,2025-06-18_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506190087
 
-On Thu, 19 Jun 2025 12:15:34 +0530
-Viresh Kumar <viresh.kumar@linaro.org> wrote:
-
-> On 17-06-25, 08:55, Miguel Ojeda wrote:
-> > On Tue, Jun 17, 2025 at 6:28=E2=80=AFAM Onur =C3=96zkan <work@onurozkan=
-.dev>
-> > wrote:
-> > >
-> > > Yes, it should be "Onur =C3=96zkan", sorry. Should I update that part
-> > > and re-send the patch?
-> >=20
-> > I would suggest to wait for other feedback, and then you can send a
-> > v2 if needed.
-> >=20
-> > > where my patch converts this into a single straight line which I
-> > > think makes it more idiomatic.
-> >=20
-> > Up to the maintainers :) So far we have both styles around.
->=20
-> I am okay with all the changes, the commit log can be improved as you
-> mentioned earlier.
->=20
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->=20
-
-FWIW I split this patch into 3 parts and sent them separately as it
-was suggested earlier by Alexandre.
-
-Here are the patches I sent yesterday:
-
-- https://lore.kernel.org/all/20250618092810.29370-1-work@onurozkan.dev/
-- https://lore.kernel.org/all/20250618093508.16343-1-work@onurozkan.dev/
-- https://lore.kernel.org/all/20250618091442.29104-1-work@onurozkan.dev/
 
 
-Regards,
-Onur
+On 6/18/2025 11:56 AM, Krzysztof Kozlowski wrote:
+> On 17/06/2025 21:07, Jagadeesh Kona wrote:
+>> Add minItems as 1 for power-domains and required-opps properties
+>> to allow this binding to be compatible with both single and multiple
+>> power domains.
+> 
+> This is your hardware, so you know how it works thus I expect here
+> arguments why this is correct from the hardware point of view. Without
+> this, it is impossible to judge whether this is a correct change.
+> 
+> If I overlook this now, it will be used in discussions by other qcom
+> engineers, so unfortunately you see, you need to prepare perfect commits
+> now...
+>
+
+These clk controllers mainly require MMCX power domain to be enabled to access
+the clock registers. But to configure the cam & video PLLs in probe, an additional
+MXC power domain also needs to be enabled.
+
+Since the initial DTS changes only added MMCX power domain, this change is required
+to be backward compatible with older DTS and avoid ABI breakage as discussed in below
+thread.
+
+https://lore.kernel.org/all/cc737a89-77e0-43bc-8766-2c8e9cce1863@quicinc.com/#t
+
+Thanks,
+Jagadeesh
+ 
+> Best regards,
+> Krzysztof
