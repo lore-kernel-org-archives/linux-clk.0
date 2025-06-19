@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29904246787;
-	Thu, 19 Jun 2025 19:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1958230E849;
+	Thu, 19 Jun 2025 20:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750363031; cv=none; b=QKQIum5L7T1sSmNaGqOU07TMnF25sAExAyJ+vjemf/7+9gy3+vsetimcrrAQoxDyX/ml9JR4XSAKJWqkVJmXQieOMJDHF0ka1WeQo7V2WzePjrl0/DEdQG2w2uYxcw5hcAcjr01hAlU66k3rTFKmm0S667DFjj8t6jUq7kcCyGE=
+	t=1750363254; cv=none; b=BhelHq90iuRsSwnEB9d/jRy/0134sB/JEJuZegAzUPiDKOGHLK+sF2xgLZGSOUqFy4dc2o5pj6GK9cFfJ7dYDyCrzY9Mmiwy5/vEEHR+Kq/npdD2gzXPde579Evzcd9LeRGuwlcJm+ML8xJqui+nPLOIpVk6BajOf+lM8mu3P5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750363031; c=relaxed/simple;
-	bh=ibWzxSUcPdGpnUffjV9oSw3Mgv/hOA1CQ+xqnIiMa/A=;
+	s=arc-20240116; t=1750363254; c=relaxed/simple;
+	bh=W2J0i+WG/PKJ/ZkG9vyA2DkvGy1gkKZsqlYj/4o9WVc=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=cX9UJ07YH+reXPk5AEboCfsH5wr7R6O3S1TQ+SQUk2e8kKUX9jOY03BYBwitVjpwwsVmKyv1kch9+vMOat0Ay17G70WZBqcqwnIs7zO6nA9tZqL90CjQBkDJhshyEklH7FAH1dgsX7/0j81aCoqjrQJfsbEiS8cW6o8Yk3dfaTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7jPXHyk; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=VvpeXsbRAHLwPIU+02O7FGG/69Lom0WDJoX4GkdMHPmAK08ahkKzwe79LLZHUGC/wMqrKGcGxPgdt/gJ1dB92qRr3DP3ElDzUp0LSmAPf5GsAqmuO5nwWXzvWvO8V0Dn+7JJFBvUWIuWlIF9L7uFKoQ4qvS4iXbBnPvQ2SgiAxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJ02kzcb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7jPXHyk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88289C4CEEE;
-	Thu, 19 Jun 2025 19:57:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJ02kzcb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3DBC4CEEA;
+	Thu, 19 Jun 2025 20:00:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750363030;
-	bh=ibWzxSUcPdGpnUffjV9oSw3Mgv/hOA1CQ+xqnIiMa/A=;
+	s=k20201202; t=1750363253;
+	bh=W2J0i+WG/PKJ/ZkG9vyA2DkvGy1gkKZsqlYj/4o9WVc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=g7jPXHykDJy4xCaKiVKrMn/tusr/gawzeCFHZsc615sMC0WdBFcbe0OEa/N2TwOU/
-	 8cCrH8oAjJGS25DqiggSTogcvqHVrqG3TX2l/vfNry2tD22ByRLNj/3wo7br5XAs27
-	 LbzPlS6RZBVgJ/aeKgQXXsKfz5ghIbHtulZDVyt/l4IVyTkWIXfwHi49CqD++c/KEm
-	 ILBSgtmDHnclzgrdvUrpKTudmpzrPXV24U7LJ6smnPjOzyKzH1/Dine16SudrOKCaf
-	 xFTD3rTebrWRDONzLhLiL2HHOSafqYpf6frftNckvxweqvVKY+Ee52uOZd32SnAOuF
-	 0X3uMOw0XlNdg==
+	b=UJ02kzcbZJZeiNEHd5b99bUhLyNEtRcBgfSKjSh+UOnyIc7kkQLDZFtwAZMz1ywhz
+	 7/SXXYjPRqVYlVdLVBpLLnv/0AdaP5zLVChg+Tw4+8CuqLhghPw+PajRVJop8jHJ9g
+	 7aoYF4o1rAUSU1tRakIJq4BHPyQC8FaUyLbmoWCiZBNWED3ibxKpPtxLs2xYsmhpcb
+	 Vr6I1QEx469iI9xEYTi15uvFqFwAkO0grFJvGWl5RJE9ZA69jqpzL1JDIOzpxWohyg
+	 2CMKHT1xuftnB62ZsAJGxOJ0TjfrmYKLdeRI+zzmBb9xPjdtnPFonlS4Dca3fHGxVo
+	 xLXoKV1K/Wewg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,44 +34,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250618-rust-next-pwm-working-fan-for-sending-v4-5-a6a28f2b6d8a@samsung.com>
-References: <20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com> <CGME20250618122808eucas1p1734efef72b723602969465d6cd0c01d2@eucas1p1.samsung.com> <20250618-rust-next-pwm-working-fan-for-sending-v4-5-a6a28f2b6d8a@samsung.com>
-Subject: Re: [PATCH v4 5/9] clk: thead: Mark essential bus clocks as CLK_IGNORE_UNUSED
+In-Reply-To: <20250610012406.3703769-3-jacky_chou@aspeedtech.com>
+References: <20250610012406.3703769-1-jacky_chou@aspeedtech.com> <20250610012406.3703769-3-jacky_chou@aspeedtech.com>
+Subject: Re: [net-next v2 2/4] dt-bindings: clock: ast2600: Add reset definitions for MAC1 and MAC2
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-To: Albert Ou <aou@eecs.berkeley.edu>, Alex Gaynor <alex.gaynor@gmail.com>, Alexandre Ghiti <alex@ghiti.fr>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Boqun Feng <boqun.feng@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Fu Wei <wefu@redhat.com>, Gary Guo <gary@garyguo.net>, Guo Ren <guoren@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Michal Wilczynski <m.wilczynski@samsung.com>, Miguel Ojeda <ojeda@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Trevor Gross <tmgross@umich.edu>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Date: Thu, 19 Jun 2025 12:57:09 -0700
-Message-ID: <175036302986.4372.15656426260486761164@lazor>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, mturquette@baylibre.com, p.zabel@pengutronix.de, BMC-SW@aspeedtech.com, Conor Dooley <conor.dooley@microchip.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Date: Thu, 19 Jun 2025 13:00:52 -0700
+Message-ID: <175036325275.4372.17530886047439204374@lazor>
 User-Agent: alot/0.11
 
-Quoting Michal Wilczynski (2025-06-18 05:27:38)
-> Probing peripherals in the AON and PERI domains, such as the PVT thermal
-> sensor and the PWM controller, can lead to boot hangs or unresponsive
-> devices on the LPi4A board. The root cause is that their parent bus
-> clocks ('CLK_CPU2AON_X2H' and the 'CLK_PERISYS_APB' clocks) are
-> automatically gated by the kernel's power-saving mechanisms when the bus
-> is perceived as idle.
+Quoting Jacky Chou (2025-06-09 18:24:04)
+> Add ASPEED_RESET_MAC1 and ASPEED_RESET_MAC2 reset definitions to
+> the ast2600-clock binding header. These are required for proper
+> reset control of the MAC1 and MAC2 ethernet controllers on the
+> AST2600 SoC.
 >=20
-> Alternative solutions were investigated, including modeling the parent
-> bus in the Device Tree with 'simple-pm-bus' or refactoring the clock
-> driver's parentage. The 'simple-pm-bus' approach is not viable due to
-> the lack of defined bus address ranges in the hardware manual and its
-> creation of improper dependencies on the 'pm_runtime' API for consumer
-> drivers.
->=20
-> Therefore, applying the'`CLK_IGNORE_UNUSED' flag directly to the
-> essential bus clocks is the most direct and targeted fix. This prevents
-> the kernel from auto-gating these buses and ensures peripherals remain
-> accessible.
->=20
-> This change fixes the boot hang associated with the PVT sensor and
-> resolves the functional issues with the PWM controller.
->=20
-> Link: https://lore.kernel.org/all/9e8a12db-236d-474c-b110-b3be96edf057@sa=
-msung.com/ [1]
->=20
-> Reviewed-by: Drew Fustini <drew@pdp7.com>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
