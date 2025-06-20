@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEA30E85C;
-	Fri, 20 Jun 2025 07:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF66225A2C;
+	Fri, 20 Jun 2025 07:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750404053; cv=none; b=icGYXVKXqU7UxP+/17ns19/LM6E/E+hhzYQDfWF6VN37J1SEslk+Q8u+rn9rKcYO9pESIWARwz20HVqW385/seh87cEVY6pm/AriQ1ybW8MbHqV5cifKX7uBBoff6mfO7bscc34K9FTCUVahC3u8d6J7KIBwa7uSXeti41MNytY=
+	t=1750404084; cv=none; b=u1ufxeJlLK7sD+onjcEGkaLgnWQmstgHq9INfBfOglvSywY7agKMY30/UCAZXLmTckNtXI0ZOxgESXzFeXLuwnONzEuBbf/60vOyi10ClCjJUgR3O2REXqUN/BMW6sjQg3rLqxanEDLlpSgdlpeSjD0SSWRR2vo12nne+KZfIkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750404053; c=relaxed/simple;
-	bh=zF5y0gF8Y7NkjYj9fVdZa2uGp6iaT6yW0LPr/ToduHI=;
+	s=arc-20240116; t=1750404084; c=relaxed/simple;
+	bh=FSM2izM9vl5e3Hqb+oIj0xlTknp96G+HXI6ROxmh4SA=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=rmfTRlWYstjVCpbMfCnDHDGCx8TV8ULURn7d97Zj/SNhT4kz9b2MU/mYxdYTVH6ISPsH2upTvZBOSDbIbljC33WmtdV03zbg6WFn5UnG39qIiaBiwiUfoW/tENrMiMux4948hQAugnWolzElg6Iftf8Dp4ah3j+xX/mHVrOnp2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMMc0M4f; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=rKV5qbTiFX3W/Mr1i697KMJ+DdZnfQMfU5HJR2ac+N6MPtUlzWkeZ1Ut2MUSuZL8P2dQhxb6ZPT+o5IXRm2U+qkMvlCMhPM2/s1jKMvU11JODI7ujSzvKr1HC3odFK/jlbEcqsxUNLapn7dk22UDTYeRQBHU1Gc9XvhLqpxNkrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoRRXQiL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMMc0M4f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC004C4CEE3;
-	Fri, 20 Jun 2025 07:20:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoRRXQiL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480B4C4CEE3;
+	Fri, 20 Jun 2025 07:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750404052;
-	bh=zF5y0gF8Y7NkjYj9fVdZa2uGp6iaT6yW0LPr/ToduHI=;
+	s=k20201202; t=1750404083;
+	bh=FSM2izM9vl5e3Hqb+oIj0xlTknp96G+HXI6ROxmh4SA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=JMMc0M4fqKQJS0JOcr1N2FW5URnjzSFhUD+n8ntxQ3VvngFeOwVrr5VmRGsxnxBUe
-	 7pDHvW3W9LyQcNR4bnesTXu02QV7XikGO2Lm9qC6JvvVg3mVb+6NXUGhWNUw0iZjMM
-	 wRd2WWl0/7463L/DK0Stv5XMaaJ4kUFwEnLM/na8gDxO0odeGpRS8UcMa44dqjMwCP
-	 bWEGdGyJaHoPsWIT0OrsVoJa/JT/xz5juHz4RlttTR+sY+KOUVOUuFPnSlhAMb+58N
-	 wFLb4D2kmlRgAEkC4aDRS3dUF9/llorkBSGEh1VQ857b2e4YDwrLxpLoeXsSv2VLW8
-	 3m+DDWAqj0F8w==
+	b=UoRRXQiLO+R0p4ZlmRLdszbRQ3CXGasmrKwf0KJAtOE1m1aqiOcZyZsaIRvWQ0pe2
+	 MGK4ZpAvNswj+g4TDkFL74RdrdwXEHDGiGJ5GutrNTSYny0w/xp1YBHBFqW0TQ4vV5
+	 2598p67FYgF/tkW5qSsuJVOJky9F/iaivYRZPf5Mj8TrNvU/f2SYzG0/Cll171zt1F
+	 /1mexlZS5/AwibSZ16WWqdJ1jIqKHZF8CGTeMrZLsjA9QtNdPbE3kDRYzCJ3L4JEuu
+	 G+vrC0+S2bM1j4RUdvuWezHWIcPv//+lNBM4SW1c1E1ojLb1BOk6V+0nH1tcvzPs0Q
+	 4TUEO7h88wtLw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,23 +34,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
-References: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
-Subject: Re: [PATCH 0/2] clk: add a clk_hw helpers to get the clock device or device_node
+In-Reply-To: <20250404-kconfig-defaults-clk-v1-2-4d2df5603332@linaro.org>
+References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org> <20250404-kconfig-defaults-clk-v1-2-4d2df5603332@linaro.org>
+Subject: Re: [PATCH 2/5] clk: nuvoton: Do not enable by default during compile testing
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Fri, 20 Jun 2025 00:20:51 -0700
-Message-ID: <175040405169.4372.877329870252746551@lazor>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Samuel Holland <samuel@sholland.org>
+Date: Fri, 20 Jun 2025 00:21:21 -0700
+Message-ID: <175040408188.4372.10647064030431437175@lazor>
 User-Agent: alot/0.11
 
-Quoting Jerome Brunet (2025-04-17 06:44:21)
-> This patchset adds helpers to get the device or device_node associated wi=
-th
-> clk_hw. This can be used by clock drivers to access various device related
-> functionality. The 2nd changes adds kunit test coverage for the new helpe=
-rs
+Quoting Krzysztof Kozlowski (2025-04-04 04:56:58)
+> Enabling the compile test should not cause automatic enabling of all
+> drivers.  Restrict the default to ARCH also for individual driver, even
+> though its choice is not visible without selecting parent Kconfig
+> symbol, because otherwise selecting parent would select the child during
+> compile testing.
 >=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-I've pushed this to clk-hw-device, splitting the test patch into two and
-reworking it. Let me know if you see anything off.
+Applied to clk-next
