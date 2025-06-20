@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAC038DD8;
-	Fri, 20 Jun 2025 06:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2E530E844;
+	Fri, 20 Jun 2025 06:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750399594; cv=none; b=KFvkwtMXgSwxSj0wvkOCGH3vxspfTtrQIs0l748sU+khKDkZCdRirYvdOkrScCO5G/WGk3la5bUtVCbygXGzTNKtoTzLUHjW/GHHcUe/rP8cJBhxzBY1PvjoS5VgATAQ29gVy8Oi7BhdV238GyoJVfX0/eK90yxaW92y1flJKKo=
+	t=1750399751; cv=none; b=IeqQYD79W2o6hRPzSLp3Ympz669ERXga9b7accOnCYJdA7TReN9ihhjrIm7Do8UxBrfVqc0M0xBfr1ux9dlm0CbS1mYPuFA0rYc43sQOtcM1JSpVDqhjDz3t0dAjjy6Cvn1Tbn450PTGh4ym7ErbA7N5SyLMlm7qmr8amrPyN2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750399594; c=relaxed/simple;
-	bh=sEYic5OrVjD6hWkOfxuOeaGzuWpjyBgXCww2D7dncYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVeBnHr5KKOc+mIoAVXnE7fcwzHSURWbO7t4hi2BofRLMkRDN2GXmRWKf0hPYpFRs0dbhUj/r0B7fMDVKP9b6hXTqHbGIHlMNOfyh8zB4OteKtZbP2brAdE13wS6RMvcGBOFJKOpJXK5frfM9CbnpCZzoWM1ILKYCO0grvfgIYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4XFYsyR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750399751; c=relaxed/simple;
+	bh=QGULT/+qFJlx0fY3ofxFZOztAw3sxBbpACU7X2GRR8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ELbW2LlqVwEHLC8b+l+TH4OYOpq+zj7MAXDMl1KcIlCtMf0HuENWpBs+iIpzQb1Mi60V7b1G9lsyngbvqBnRAyn2XQfbtJcBnFKl9kyZePJaFpLSZ1EBbMOr02SoyReUPNq4k0jrCoUDuPhcQx1W2X8Vrtc1FlqqDjiSMwBWBFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2LC7BmJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4XFYsyR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41F9C4CEE3;
-	Fri, 20 Jun 2025 06:06:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2LC7BmJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 788C3C4CEE3;
+	Fri, 20 Jun 2025 06:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750399594;
-	bh=sEYic5OrVjD6hWkOfxuOeaGzuWpjyBgXCww2D7dncYw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p4XFYsyRlkYkt54vjZI3BJzXZi70D782inBOAUs6UB1k6BYEDQHK8wsjsoFHz58qN
-	 F/uUcsNtSiTEN/kSvuiB7T0qALxDBeNiUhLXdXG+uryr2K7i/OUIkAjgfHQQ3xzNGD
-	 D18uMhxwWH8T+kx8Cui7koF25MEZ1z87ZBUPMNvUTkgi46TmLj+Qa+ewQKdpQy4hXY
-	 /7v66LkNScG2RAqFeqRG3XPkHCZGaaubnIId/tL7MFNm5UQSoN0/NbyEoa1B2mBgSY
-	 IFGRwGY6gPSpSP+mjvhxqC/B8ysj+GvT7Ey3YFAeGdc+O5/VuTzbcTkdm5YaJoWsAz
-	 yMExgYfcYxqDw==
-Message-ID: <7fcb5ca6-7881-44c2-a658-752fa7cd5f38@kernel.org>
-Date: Fri, 20 Jun 2025 08:06:29 +0200
+	s=k20201202; t=1750399751;
+	bh=QGULT/+qFJlx0fY3ofxFZOztAw3sxBbpACU7X2GRR8Y=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=l2LC7BmJ8egcst9yf9qH5qOjV2EDNPK+fBc7yEiNO+XYLxmIx37BU/zKM6TYnf9l8
+	 wtIEzeavI+NvPFPaVI+xJAykrmfPkYnEDjyco4VaFRMuMPR6WvCu/CcCHdRAZ1RbIc
+	 4Q1uPKzDBt0kvHdjKK+0LBEWYv1wN3oSpuDVnYNFGJCoxtOcpm/EAOo+0xCJzxsn8x
+	 T3rz0Yi2QLBjOKBIYx/5Nqthe4xPIvUN0CesYlo+NnhiMuHiIKomSe0hT31cUqBDkR
+	 o/4TMYcT+1ef6FEoisPogUz2O1X6PL98ABfM4f6yzyBnV4p6iixauhm1kumbs5arJP
+	 uqAGTnzWS4YmA==
+Message-ID: <7b712056-b038-436f-a3d0-eb6fe74c86e2@kernel.org>
+Date: Fri, 20 Jun 2025 08:09:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: cdce6214: add binding for pin
- configuration
+Subject: Re: [PATCH v5 1/4] dt-bindings: clock: add TI CDCE6214 binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Sascha Hauer <s.hauer@pengutronix.de>
 Cc: Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -45,10 +45,8 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  kernel@pengutronix.de, =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
 References: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
- <20250618-clk-cdce6214-v5-3-9938b8ed0b94@pengutronix.de>
- <20250619-arboreal-jaguarundi-of-passion-a2eaa1@kuoka>
- <aFP0YIgXndjTVyAL@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250618-clk-cdce6214-v5-1-9938b8ed0b94@pengutronix.de>
+ <20250619-nonchalant-benign-ape-1fb180@kuoka>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -93,34 +91,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aFP0YIgXndjTVyAL@pengutronix.de>
+In-Reply-To: <20250619-nonchalant-benign-ape-1fb180@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/06/2025 13:28, Sascha Hauer wrote:
-> On Thu, Jun 19, 2025 at 09:42:06AM +0200, Krzysztof Kozlowski wrote:
->> On Wed, Jun 18, 2025 at 11:21:14AM GMT, Sascha Hauer wrote:
->>> Add pin configuration binding for the TI CDCE6214. The CDCE6214 has
->>> an internal EEPROM to to fully configure the chip, but this EEPROM
->>> might be empty, so add support for configuring the chip through
->>> the device tree.
->>>
->>> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
->>> ---
->>>  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 95 ++++++++++++++++++++++
->>>  1 file changed, 95 insertions(+)
+On 19/06/2025 09:37, Krzysztof Kozlowski wrote:
+> On Wed, Jun 18, 2025 at 11:21:12AM GMT, Sascha Hauer wrote:
+>> Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+>> Generator With One PLL, Four Differential Outputs, Two Inputs, and
+>> Internal EEPROM.
 >>
->>
->> This should be part of previous patch. Bindings should be complete, not
->> added in partial sets.
+>> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+>> ---
+>>  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 60 ++++++++++++++++++++++
+>>  include/dt-bindings/clock/ti,cdce6214.h            | 25 +++++++++
+>>  2 files changed, 85 insertions(+)
 > 
-> See cover letter why I did this. If everybody is fine with the pin
-> configuration binding then I can merge this back together, but I doubt
-> it and in that case I'd rather get the driver upstream without the pin
-> configuration at first.
-
-We expect bindings to be complete, not added in chunks and drivers do
-not matter here that much. You can still discuss the drivers, afterwards.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Un-reviewed, incomplete binding.
 
 Best regards,
 Krzysztof
