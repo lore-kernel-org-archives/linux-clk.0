@@ -1,483 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CA430E82F;
-	Fri, 20 Jun 2025 19:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377E82AD16
+	for <linux-clk@vger.kernel.org>; Fri, 20 Jun 2025 21:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750448133; cv=none; b=b27djDL7C1RHkUd2rl9uoC+01cdVrRcXQMIyPT75x4BR48BivKFkih9ncVPtnahigQc1XvDQx5TZPiJXiwSLiaFgi6Cfjs6KUzm5zh6RdF669OPLbnr2WFoioPLHb02F4jGwPA62CJ8whpancc1rqHKWOX/ySWwOWD6vF9wz4Rc=
+	t=1750455265; cv=none; b=bkliuT5+ubLDVfCDYdJe9K5tHGxf5L9TmRq5MHWfXAqFEz2y4DaPrs7UfleUC3NoN5c06biHI+k5stw44KwkbjMzwRyPMw/vKCA5q7fqd0CAD6sAamRKRzCwhLJmx+uMg+S2JB5kekEXbbLxB+dBjOV4+Mn43a1ghsznn6jWDqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750448133; c=relaxed/simple;
-	bh=66fn9HVkApU3iF680tkkXdzVYX3EDaTH1IPNsA4xYo0=;
+	s=arc-20240116; t=1750455265; c=relaxed/simple;
+	bh=ddeEOwDx9KIEkwLrqjkmYZXL0t1PupX616M914w3kqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1rCiEaRwJfRRbL+RkLKeWwaE3m5/0+S2BRI0DHpZj+397QHMSignhLWpVLjym6N1PBByu1pRcmb4S/hYeWGkRzqgGitYsnp/CxRJiEXaJ1Na/dw0vDOepFzcbiFCcRyvoGHR5OMm8rtdhAEy/wfZJ4pUkrSLz4e7My+8NXH96I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a86iKB2M; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBCY03tTsa8h+se5c2zA6hwMhux8FEfTiXNeFDO+6gHF6XznYxS/dqP5IpxBxvqEQ9goyfbt/S4q4LSoKKvln6NmQstICR+vAPhf9QJfrc7N1psTVGx2WRA83C9d6X4hPCQrsduDTpNynp7bgS+bX+Vy9+x9LbedgmZZd425JXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pYjD9sYs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a86iKB2M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1C6C4CEE3;
-	Fri, 20 Jun 2025 19:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750448133;
-	bh=66fn9HVkApU3iF680tkkXdzVYX3EDaTH1IPNsA4xYo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a86iKB2MRIz4v9m6LsFIb8ONcnhcuTQPxRZKu0C5BUOgErlz1OXiJ2JOEMYDoRSzE
-	 kCuWGO/SbX/Voecf3TOeXzitec/I7AGaxYd6ECLTwTWcJyr5vVTcX8fcWbMgLMZ58F
-	 iRRYPb4b+DlERg5W8rFWyYViYCEDVDFPptfqPqBkAgojjEDzcdrRF9QdSvq516HHz9
-	 LXigkFexulhuoDD5a+ubrUdwIbgfZzWSub2NNStB9yPmfxIBZlQyzZKEtQR7EDBsyF
-	 alZS71MD635veIDrmg8NX+RPs8us103R992X09tzJGsK2Q7bV7c+AohIAUfFbs4IJP
-	 UCTzRJJi73nsQ==
-Date: Sat, 21 Jun 2025 01:05:21 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	p.zabel@pengutronix.de, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, john.madieu.xa@bp.renesas.com, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-Message-ID: <z7o26wizu5j3sft67yjbe2hgvqz7lqtsimgklzrvvwytahrhrd@rquvx32ctqtc>
-References: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
- <20250530111917.1495023-5-claudiu.beznea.uj@bp.renesas.com>
- <764d3uocv4kj6mrciaumoazwnquxhtn7u33u6v3a7tjwqhiyxf@2rtfsjyzny37>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pYjD9sYs"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55KK3jfl018741
+	for <linux-clk@vger.kernel.org>; Fri, 20 Jun 2025 21:34:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=I5eUMVemtx+WOtxG7ifeKcbV
+	DLFe5coNfGzblu/bS8Y=; b=pYjD9sYs9RyZ3OEacXtIZo34s/uwKLSE7os3otJL
+	XywyPBWBdd44hpHxqtKSefoK6kfj3ndV3LfdD55+Ugvu3Y2ngdyxceqM6UP05c+y
+	gv0XI3bNjA5v3W689kVZL2VVDr0aGdCa3lnpJmA0OweikRXYLkje5x9HUp0GZBtp
+	P4krv3KP1jrlMD/imeN24LgPuRKTQMFksF+nevf/wc8od6jl+in2FoOLExpqPZr6
+	Q56NKsB9U6gz22H5fi3c8CfmS8Mnd0qjqm1IeK2QVbCXGbHRm/vG58QeACT0/fEu
+	ETvssLpIkHjkVocbU8B1ObByruqcBjxBnfrcxdp1V62OMQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47debc84fe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 20 Jun 2025 21:34:23 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7cf6c53390eso184695085a.2
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jun 2025 14:34:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750455262; x=1751060062;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5eUMVemtx+WOtxG7ifeKcbVDLFe5coNfGzblu/bS8Y=;
+        b=DogC/Mi3E9pSZwlJ1KVIOMTEGcvuhpboGPafvDrNf0pAIZ0uA3S9Gewj7gbCSXTaos
+         BLPHQyD9BCRZ1fvr0GwyUuxAikMMsHuI96ZZYUXy9j7HcEjB/njJLbw3xk9Ft6PUBPbB
+         NCAVrIYUpVyf8JowwfwnnHV4UVLMqmz7VVMskJu9r68F9lXPKddwPA/XN90SaMUK5LhI
+         mJLJPaHGtw8KJiNCnCEIWqJMuaPX8bL5xWRKAjSpsgGjkxWiMNFsEfuiNleAugx4WNU/
+         ujqJXSl6aS4akB61GxFNa0Xz1PtQytMLxm151KtpHfRwbD4IdTtWWKn25UVDQ5eyZuwt
+         TMZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXO0cbRa8N1IHWc8f/y4he193gINlai/fdz7qafY8v3+4FhDXuVOVnjL4y2LgFbfuFwkrvCh8XZYfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztgaO46h79kyJcQwiJVWlhQXrugo2YoBhrkVdeu4nes+zEX+G7
+	knkGSyrin1Jm87pXXyMH6/gznRxqugU6KeKomvqc+fMkOu+0izvsDkVmw+UZ0GrLUOHDqNC2CGd
+	OlF/oFFiTyKzuez//70gxZJo3m3znjrtYkr1Mizc3p2yBkl5ahzBvgEYLjbnpQVQ=
+X-Gm-Gg: ASbGncsMfPdUQJmclHoC4bcWG7doauoyxj/vR62c8TxcWbcZBcBOZCfKoPrTq/f50zF
+	sXNUrP/CibiA6Bgy7VqirkiZE7oxO9cug/r+buJq484P27NolZd0Sfll/L1o79lqHoSEUVadkpo
+	1FC2DZ2Kr4arivDNq8/0waTtK1RJHlWA17FRoT0MZjK2wpKYQ+GGEvW1JCUNBjTYCal8kshDtX1
+	UyVwnu5azBGmIYQiP0/9WMmXH311e+/+9iISwMAgN05OUtJ4Nfq+uRMlo9nVZB0JdVR9vAW2irL
+	Wg1YZajs1Fcv7XZRal88beCV94VkM9+TmW9ULMR3aEkro8eDqKGD9OFipCmQC6hjjMnFf+pv/HA
+	p4grVJEgKzdi/SiinFoc/ughtW4EKxr6XUHw=
+X-Received: by 2002:a05:620a:6187:b0:7d0:984a:d1b4 with SMTP id af79cd13be357-7d3f98d99b4mr612145185a.17.1750455261823;
+        Fri, 20 Jun 2025 14:34:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQgOg+RQxEGOUR5Axw5ElARrL+47mFou5bAIbvY41SUovy9rbjpZJh1+YdUa1r9WfF2UcAeQ==
+X-Received: by 2002:a05:620a:6187:b0:7d0:984a:d1b4 with SMTP id af79cd13be357-7d3f98d99b4mr612140885a.17.1750455261374;
+        Fri, 20 Jun 2025 14:34:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e414cae2sm425057e87.59.2025.06.20.14.34.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 14:34:19 -0700 (PDT)
+Date: Sat, 21 Jun 2025 00:34:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom,sm8450-videocc: Add
+ minItems property
+Message-ID: <aswg6zjmyi4pcx75uzfj5byadkx5gof2yfpjcu7fspbuniatrg@dy52pmcrgnoc>
+References: <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-0-02e83aeba280@quicinc.com>
+ <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-1-02e83aeba280@quicinc.com>
+ <4657c6d8-8454-478a-aac3-114c6194b72e@linaro.org>
+ <5ed72663-da54-46a4-8f44-1ceda4a7d0d9@quicinc.com>
+ <6068badd-8d33-4660-aef8-81de15d9b566@linaro.org>
+ <ffe32102-cc55-4f86-b945-ae77a4e163bd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <764d3uocv4kj6mrciaumoazwnquxhtn7u33u6v3a7tjwqhiyxf@2rtfsjyzny37>
+In-Reply-To: <ffe32102-cc55-4f86-b945-ae77a4e163bd@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: mSxl1G8RJNV84VI8wAMYMFTiZzbLjbX2
+X-Authority-Analysis: v=2.4 cv=PoqTbxM3 c=1 sm=1 tr=0 ts=6855d3df cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=SDRi_Ghe60FVfvUD7c8A:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: mSxl1G8RJNV84VI8wAMYMFTiZzbLjbX2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDE0OSBTYWx0ZWRfX5sbkzonsIUt7
+ INFF0ocQCSpKCVh3E1N39mt8ZHs7GflGODd6sLz+DDQ4mNPEr2CnaL6fun/SVgEIcCLyTIrqep1
+ Rxgroi6HiK7XH8AwyeWoMOcZVGntbvIp5n+CLmNNNI89R2pPvBAXKPwk2qdE71c7p7ZQWoJWcCr
+ hhA4cN7uRSkifEW+CExt7kulOhe9dj0s/ehDS0bAi85mijgiWrY+jERdi1TR19VD2AfhOw4GETs
+ oZX5OKNqz7jJbWGtaBCTU7dKr65Riq9SRR6Suw5NHkU3MyxSudCwKwu/3wXmyfnbTvYQoh8XT1W
+ z3PLkigzH6YfzPJl6bh+CcFZOE9ncKKolCesWHSssQnKLoTDTLbvz8XU2zswuQpYYCNPT4aBtpJ
+ dRLtSSmvINE29XzWf6XrCocckK/OdVi1KTAnFLrtwIDBbBvfYZjkYMzRTDwRwlL8BbTbAKKl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-20_08,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 spamscore=0 phishscore=0 malwarescore=0
+ impostorscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506200149
 
-On Wed, Jun 18, 2025 at 11:12:28PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, May 30, 2025 at 02:19:13PM +0300, Claudiu wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Jun 20, 2025 at 07:39:06PM +0200, Konrad Dybcio wrote:
+> On 6/20/25 7:56 AM, Krzysztof Kozlowski wrote:
+> > On 19/06/2025 12:20, Jagadeesh Kona wrote:
+> >>
+> >>
+> >> On 6/18/2025 11:56 AM, Krzysztof Kozlowski wrote:
+> >>> On 17/06/2025 21:07, Jagadeesh Kona wrote:
+> >>>> Add minItems as 1 for power-domains and required-opps properties
+> >>>> to allow this binding to be compatible with both single and multiple
+> >>>> power domains.
+> >>>
+> >>> This is your hardware, so you know how it works thus I expect here
+> >>> arguments why this is correct from the hardware point of view. Without
+> >>> this, it is impossible to judge whether this is a correct change.
+> >>>
+> >>> If I overlook this now, it will be used in discussions by other qcom
+> >>> engineers, so unfortunately you see, you need to prepare perfect commits
+> >>> now...
+> >>>
+> >>
+> >> These clk controllers mainly require MMCX power domain to be enabled to access
+> >> the clock registers. But to configure the cam & video PLLs in probe, an additional
+> >> MXC power domain also needs to be enabled.
 > > 
-> > The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> > Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> > only as a root complex, with a single-lane (x1) configuration. The
-> > controller includes Type 1 configuration registers, as well as IP
-> > specific registers (called AXI registers) required for various adjustments.
 > > 
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
+> > Then your patch is not correct. Anyway, you should explain the hardware
+> > in commit msg, why this domain is optional in the hardware.
+> > 
+> >>
+> >> Since the initial DTS changes only added MMCX power domain, this change is required
+> >> to be backward compatible with older DTS and avoid ABI breakage as discussed in below
+> >> thread.
+> > 
+> > 
+> > So you send incorrect hardware description allowing something which will
+> > not work? Or how exactly?
+> 
+> So I think there's a mistake in understanding the backwards compatibility
+> paradigm here.
+> 
+> There exists a single, objectively correct and represented in hardware,
+> list of required power-domains and the commit that caused the schema
+> validation errors was essentially "align YAML with reality" which should
+> be coupled with an immediate DT update to match and we forget about the
+> incomplete past
 
-[...]
-
-> > +static int rzg3s_pcie_msi_setup(struct rzg3s_pcie_host *host)
-> > +{
-> > +	size_t size = RZG3S_PCI_MSI_INT_NR * sizeof(u32);
-> > +	struct rzg3s_pcie_msi *msi = &host->msi;
-> > +	struct device *dev = host->dev;
-> > +	int id, ret;
-> > +
-> > +	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
-> > +	if (!msi->pages)
-> > +		return -ENOMEM;
-> > +
-> > +	msi->dma_addr = dma_map_single(dev, (void *)msi->pages, size * 2,
-> > +				       DMA_BIDIRECTIONAL);
-> > +	if (dma_mapping_error(dev, msi->dma_addr)) {
-> > +		ret = -ENOMEM;
-> > +		goto free_pages;
-> > +	}
-
-Why can't you use dma_alloc_coherent()?
-
-> > +
-> > +	/*
-> > +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.4.5.2 Setting
-> > +	 * the MSI Window) the MSI window need to be within any AXI window. Find
-> > +	 * an AXI window to setup the MSI window.
-> > +	 */
-> > +	for (id = 0; id < RZG3S_MAX_WINDOWS; id++) {
-> > +		u64 base, basel, baseu;
-> > +		u64 mask, maskl, masku;
-> > +
-> > +		basel = readl(host->axi + RZG3S_PCI_AWBASEL(id));
-> > +		/* Skip checking this AXI window if it's not enabled */
-> > +		if (!(basel & RZG3S_PCI_AWBASEL_WIN_ENA))
-> > +			continue;
-> > +
-> > +		baseu = readl(host->axi + RZG3S_PCI_AWBASEU(id));
-> > +		base = baseu << 32 | basel;
-> > +
-> > +		maskl = readl(host->axi + RZG3S_PCI_AWMASKL(id));
-> > +		masku = readl(host->axi + RZG3S_PCI_AWMASKU(id));
-> > +		mask = masku << 32 | maskl;
-> > +
-> > +		if (msi->dma_addr < base || msi->dma_addr > base + mask)
-> > +			continue;
-> > +
-> > +		break;
-> > +	}
-> > +
-> > +	if (id == RZG3S_MAX_WINDOWS) {
-> > +		ret = -EINVAL;
-> > +		goto dma_unmap;
-> > +	}
-> > +
-> > +	/* The MSI base address need to be aligned to the MSI size */
-> > +	msi->window_base = ALIGN(msi->dma_addr, size);
-> > +	if (msi->window_base < msi->dma_addr) {
-> > +		ret = -EINVAL;
-> > +		goto dma_unmap;
-> > +	}
-> > +
-> > +	rzg3s_pcie_msi_hw_setup(host);
-> > +
-> > +	return 0;
-> > +
-> > +dma_unmap:
-> > +	dma_unmap_single(dev, msi->dma_addr, size * 2, DMA_BIDIRECTIONAL);
-> > +free_pages:
-> > +	free_pages(msi->pages, 0);
-> > +	return ret;
-> > +}
-> > +
-> > +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
-> > +{
-> > +	struct platform_device *pdev = to_platform_device(host->dev);
-> > +	struct rzg3s_pcie_msi *msi = &host->msi;
-> > +	struct device *dev = host->dev;
-> > +	const char *devname;
-> > +	int irq, ret;
-> > +
-> > +	mutex_init(&msi->map_lock);
-> > +
-> > +	irq = platform_get_irq_byname(pdev, "msi");
-> > +	if (irq < 0)
-> > +		return dev_err_probe(dev, irq ? irq : -EINVAL,
-> > +				     "Failed to get MSI IRQ!\n");
-> > +
-> > +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
-> > +	if (!devname)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = rzg3s_pcie_msi_allocate_domains(msi);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = devm_request_irq(dev, irq, rzg3s_pcie_msi_irq, 0, devname, host);
-> > +	if (ret) {
-> > +		dev_err_probe(dev, ret, "Failed to request IRQ: %d\n", ret);
-> > +		goto free_domains;
-> > +	}
-> > +
-
-So you've modelled INTx as hierarchial IRQ domain, but not MSI. May I know why?
-Both are chained to GIC, isn't it?
-
-> > +	ret = rzg3s_pcie_msi_setup(host);
-> > +	if (ret) {
-> > +		dev_err_probe(dev, ret, "Failed to setup MSI!\n");
-> > +		goto free_domains;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +free_domains:
-> > +	rzg3s_pcie_msi_free_domains(msi);
-> > +	return ret;
-> > +}
-> > +
-
-[...]
-
-> > +static int rzg3s_soc_pcie_init_phy(struct rzg3s_pcie_host *host)
-> > +{
-> > +	static const u32 xcfgd_settings[RZG3S_PCI_PHY_XCFGD_NUM] = {
-> > +		[8]  = 0xe0006801, 0x007f7e30, 0x183e0000, 0x978ff500,
-> > +		       0xec000000, 0x009f1400, 0x0000d009,
-> > +		[17] = 0x78000000,
-> > +		[19] = 0x00880000, 0x000005c0, 0x07000000, 0x00780920,
-> > +		       0xc9400ce2, 0x90000c0c, 0x000c1414, 0x00005034,
-> > +		       0x00006000, 0x00000001,
-> > +	};
-> > +	static const u32 xcfga_cmn_settings[RZG3S_PCI_PHY_XCFGA_CMN_NUM] = {
-> > +		0x00000d10, 0x08310100, 0x00c21404, 0x013c0010, 0x01874440,
-> > +		0x1a216082, 0x00103440, 0x00000080, 0x00000010, 0x0c1000c1,
-> > +		0x1000c100, 0x0222000c, 0x00640019, 0x00a00028, 0x01d11228,
-> > +		0x0201001d,
-> > +	};
-> > +	static const u32 xcfga_rx_settings[RZG3S_PCI_PHY_XCFGA_RX_NUM] = {
-> > +		0x07d55000, 0x030e3f00, 0x00000288, 0x102c5880, 0x0000000b,
-> > +		0x04141441, 0x00641641, 0x00d63d63, 0x00641641, 0x01970377,
-> > +		0x00190287, 0x00190028, 0x00000028,
-> > +	};
-> > +
-> > +	writel(RZG3S_PCI_PERM_PIPE_PHY_REG_EN, host->axi + RZG3S_PCI_PERM);
-> > +
-> > +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGD_NUM; i++)
-> > +		writel(xcfgd_settings[i], host->axi + RZG3S_PCI_PHY_XCFGD(i));
-> > +
-> > +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_CMN_NUM; i++) {
-> > +		writel(xcfga_cmn_settings[i],
-> > +		       host->axi + RZG3S_PCI_PHY_XCFGA_CMN(i));
-> > +	}
-> > +
-> > +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_RX_NUM; i++) {
-> > +		writel(xcfga_rx_settings[i],
-> > +		       host->axi + RZG3S_PCI_PHY_XCFGA_RX(i));
-> > +	}
-> > +
-> > +	writel(0x107, host->axi + RZG3S_PCI_PHY_XCFGA_TX);
-> > +
-> > +	/* Select PHY settings values */
-> > +	writel(RZG3S_PCI_PHY_XCFG_CTRL_PHYREG_SEL,
-> > +	       host->axi + RZG3S_PCI_PHY_XCFG_CTRL);
-> > +
-> > +	writel(0, host->axi + RZG3S_PCI_PERM);
-> > +
-> > +	return 0;
-> > +}
-
-Why didn't these go into a PHY driver? Please provide justification.
-
-> > +
-> > +static void rzg3s_pcie_pm_runtime_put(void *data)
-> > +{
-> > +	pm_runtime_put_sync(data);
-> > +}
-> > +
-
-[...]
-
-> > +static int rzg3s_pcie_probe(struct platform_device *pdev)
-> > +{
-> > +	struct pci_host_bridge *bridge;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct device_node *np = dev->of_node;
-> > +	struct device_node *sysc_np __free(device_node) =
-> > +		of_parse_phandle(np, "renesas,sysc", 0);
-> > +	struct rzg3s_pcie_host *host;
-> > +	int ret;
-> > +
-> > +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
-> > +	if (!bridge)
-> > +		return -ENOMEM;
-> > +
-> > +	host = pci_host_bridge_priv(bridge);
-> > +	host->dev = dev;
-> > +	host->data = device_get_match_data(dev);
-> > +	platform_set_drvdata(pdev, host);
-> > +
-> > +	host->axi = devm_platform_ioremap_resource(pdev, 0);
-> > +	if (IS_ERR(host->axi))
-> > +		return PTR_ERR(host->axi);
-> > +	host->pcie = host->axi + RZG3S_PCI_CFG_BASE;
-> > +
-> > +	ret = of_property_read_u32(np, "vendor-id", &host->vendor_id);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = of_property_read_u32(np, "device-id", &host->device_id);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	host->sysc = syscon_node_to_regmap(sysc_np);
-> > +	if (IS_ERR(host->sysc))
-> > +		return PTR_ERR(host->sysc);
-> > +
-> > +	ret = regmap_update_bits(host->sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> > +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> > +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_sysc_signal_action,
-> > +				       host->sysc);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = rzg3s_pcie_resets_prepare(host);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = devm_pm_runtime_enable(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = pm_runtime_resume_and_get(dev);
-> > +	if (ret)
-> > +		return ret;
-
-Why do you need runtime PM? Do you need to enable any parent domain before
-intializing the controller?
-
-> > +
-> > +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_pm_runtime_put, dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-
-Why is this needed?
-
-> > +	raw_spin_lock_init(&host->hw_lock);
-> > +
-> > +	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_intx_setup,
-> > +				    rzg3s_pcie_msi_enable, true);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	bridge->sysdata = host;
-> > +	bridge->ops = &rzg3s_pcie_root_ops;
-> > +	bridge->child_ops = &rzg3s_pcie_child_ops;
-> > +	ret = pci_host_probe(bridge);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return devm_add_action_or_reset(dev, rzg3s_pcie_host_remove_action,
-> > +					host);
-
-Is this a workaround for not having a .remove() callback?
-
-> > +}
-> > +
-> > +static int rzg3s_pcie_suspend_noirq(struct device *dev)
-> > +{
-> > +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
-> > +	const struct rzg3s_pcie_soc_data *data = host->data;
-> > +	struct regmap *sysc = host->sysc;
-> > +	int ret;
-> > +
-> > +	ret = pm_runtime_put_sync(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = reset_control_bulk_assert(data->num_power_resets,
-> > +					host->power_resets);
-> > +	if (ret)
-> > +		goto rpm_restore;
-> > +
-> > +	ret = reset_control_bulk_assert(data->num_cfg_resets,
-> > +					host->cfg_resets);
-> > +	if (ret)
-> > +		goto power_resets_restore;
-> > +
-> > +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> > +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> > +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
-> > +	if (ret)
-> > +		goto cfg_resets_restore;
-
-Don't you need to control the endpoint state here? Like putting it into D3Cold,
-toggling PERST#, enabling wakeup etc...?
-
-> > +
-> > +	return 0;
-> > +
-> > +	/* Restore the previous state if any error happens */
-> > +cfg_resets_restore:
-> > +	reset_control_bulk_deassert(data->num_cfg_resets,
-> > +				    host->cfg_resets);
-> > +power_resets_restore:
-> > +	reset_control_bulk_deassert(data->num_power_resets,
-> > +				    host->power_resets);
-> > +rpm_restore:
-> > +	pm_runtime_resume_and_get(dev);
-> > +	return ret;
-> > +}
-> > +
-> > +static int rzg3s_pcie_resume_noirq(struct device *dev)
-> > +{
-> > +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
-> > +	const struct rzg3s_pcie_soc_data *data = host->data;
-> > +	struct regmap *sysc = host->sysc;
-> > +	int ret;
-> > +
-> > +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> > +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> > +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/*
-> > +	 * According to the RZ/G3S HW manual (Rev.1.10, section
-> > +	 * 34.5.1.2 De-asserting the Reset) the PCIe IP needs to wait 5ms from
-> > +	 * power on to the de-assertion of reset.
-> > +	 */
-> > +	usleep_range(5000, 5100);
-> > +	ret = reset_control_bulk_deassert(data->num_power_resets,
-> > +					  host->power_resets);
-> > +	if (ret)
-> > +		goto assert_rst_rsm_b;
-> > +
-> > +	ret = pm_runtime_resume_and_get(dev);
-> > +	if (ret)
-> > +		goto assert_power_resets;
-> > +
-> > +	ret = rzg3s_pcie_host_setup(host, NULL, rzg3s_pcie_msi_hw_setup, false);
-> > +	if (ret)
-> > +		goto rpm_put;
-> > +
-> > +	return 0;
-> > +
-> > +	/*
-> > +	 * If any error happens there is no way to recover the IP. Put it in the
-> > +	 * lowest possible power state.
-> > +	 */
-> > +rpm_put:
-> > +	pm_runtime_put_sync(dev);
-> > +assert_power_resets:
-> > +	reset_control_bulk_assert(data->num_power_resets,
-> > +				  host->power_resets);
-> > +assert_rst_rsm_b:
-> > +	regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> > +			   RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> > +			   FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct dev_pm_ops rzg3s_pcie_pm_ops = {
-> > +	NOIRQ_SYSTEM_SLEEP_PM_OPS(rzg3s_pcie_suspend_noirq,
-> > +				  rzg3s_pcie_resume_noirq)
-> > +};
-> > +
-> > +const char * const rzg3s_soc_power_resets[] = {
-> > +	"aresetn", "rst_cfg_b", "rst_load_b",
-> > +};
-> > +
-> > +const char * const rzg3s_soc_cfg_resets[] = {
-> > +	"rst_b", "rst_ps_b", "rst_gp_b", "rst_rsm_b",
-> > +};
-> > +
-> > +static const struct rzg3s_pcie_soc_data rzg3s_soc_data = {
-> > +	.power_resets = rzg3s_soc_power_resets,
-> > +	.num_power_resets = ARRAY_SIZE(rzg3s_soc_power_resets),
-> > +	.cfg_resets = rzg3s_soc_cfg_resets,
-> > +	.num_cfg_resets = ARRAY_SIZE(rzg3s_soc_cfg_resets),
-> > +	.init_phy = rzg3s_soc_pcie_init_phy,
-> > +};
-
-Are you expecting these callbacks to be different in next gen SoCs? I'd
-recommend to get rid of callbacks until the support for newer SoCs get added.
-
-> > +
-> > +static const struct of_device_id rzg3s_pcie_of_match[] = {
-> > +	{
-> > +		.compatible = "renesas,r9a08g045s33-pcie",
-> > +		.data = &rzg3s_soc_data,
-> > +	},
-> > +	{},
-> > +};
-> > +
-> > +static struct platform_driver rzg3s_pcie_driver = {
-> > +	.driver = {
-> > +		.name = "rzg3s-pcie-host",
-> > +		.of_match_table = rzg3s_pcie_of_match,
-> > +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
-> > +	},
-> > +	.probe = rzg3s_pcie_probe,
-
-You haven't implemented .remove(), but didn't set '.suppress_bind_attrs = true'.
-PCI controller drivers acting as an IRQCHIP are not safe to be removed.
-
-- Mani
+I'd second that. Let's make sure that the _driver_ works with old DT.
+But we don't have to support old DT in schema.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
