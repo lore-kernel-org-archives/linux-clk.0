@@ -1,127 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51193134CF;
-	Sat, 21 Jun 2025 16:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAAB4CE08;
+	Sat, 21 Jun 2025 20:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750521703; cv=none; b=Km6J8Vt3A4mZ5EuXrinObRvwKiCPhPmOB9kpcO1ZrQRJDISTM6/XeTPrtNia16NcYe0ipGiMNj6nsrwnmM/qSSuVuJuesiytxJcJgvETf7WW5DF8tvN6XRLBEPYY5P8F8hkpkQJ880OlWNRGKMRZ6utt1xe8qJWibZJluI8LyTg=
+	t=1750539079; cv=none; b=klq8TnUY6+FZf6Mbd52Tnj5khPOSjE4smHKmu8onjvsFYdKJy5J/++meZqC+DnWtYmkGv4SP0mCNQU7roLt1IUCvZBjwTbR28M071BSAWHers1U05PH9AoN7WVgxW3QfbUbaV1zOcX7iwDU8fX8sVMaWCX8i9I+5+lYC8uVEX+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750521703; c=relaxed/simple;
-	bh=7z06BI2WfCKHgocG5mZp+KFS5XZpvyaukvIGuVj/RlU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F9FTd7ICjmVh1PnwdvbZLUw2TwCOGk/CSfVT7resyUV9W7rUOFgM5OPUaQ/beboDwo5j6orFxcCPpckjuDmvXYOq2MPu+7fLQzcIj62zuKiZuwWOJc9PaAKveVeNx3b9vIObzk+bPy4xPTXMRQ/XELjTL/CYwsqsvzzQXxcOFxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDwXevel; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750539079; c=relaxed/simple;
+	bh=B+DuNopW44+Lh7XHj4O2MzRgvBUrBmL58pqFDgxbbnQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=bBwaiadZ/cKoamoWl/954D2MuUZ6s8peDXYoVKUiRc9EE5rgw3Hj3H9HY91BZErDRUtSTk6WCrOmaIuXsFOsp3xoNpSbtEBbNX9HlfbzZWtcd+l3g8DsbfcLNrlj3KRQt8IDIo3t9mSmji+lb4/lfLdbZhRmn4jxy6nYepxuLvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M677msOz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDwXevel"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3502C4CEE7;
-	Sat, 21 Jun 2025 16:01:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M677msOz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2648FC4CEE7;
+	Sat, 21 Jun 2025 20:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750521701;
-	bh=7z06BI2WfCKHgocG5mZp+KFS5XZpvyaukvIGuVj/RlU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uDwXevel3/1jiq4Sl2EDKgEHARqYuu8Bl7nrJLZ8lUCzHpBkeoumIp6jzt/ZP4Nsl
-	 wqLBEHqbQv7BeGHwV/DPP5ckgANF6VbYI5AyU+Yd7Skc57x9V4PhZEjE744+ExYRFr
-	 AkERmpzc03BtzkqT5tG8hywtOyMFB4oMbjoTgSssty33EMxdWKqHIONBBQ3NX56YP1
-	 1s66LaJ7sUP5cIPW3qhTCIyNXnqk1AvoKqeUz+bq+RtWlN5ktVenNOvVQfcXtnbR0P
-	 yISLwmztKCaQ6JNWVfJn38zjoEhxBT4pRdcGegeMhL6zVqHpjw3aesU2v9O/kMhLww
-	 W9a4U4D46RlpQ==
-Message-ID: <d5a616f3-67a3-4504-904e-6cec503ab157@kernel.org>
-Date: Sat, 21 Jun 2025 18:01:33 +0200
+	s=k20201202; t=1750539077;
+	bh=B+DuNopW44+Lh7XHj4O2MzRgvBUrBmL58pqFDgxbbnQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=M677msOz5QqeisCcomJhJdH5mYIg/X0Hre6RPDykAA70W0SIYwwLTZFI7lVeZE6yx
+	 gQ6Dm38jBqTdYeQyJ8rMR9JEEm8NyKQkpT+6PgiaNFBOhzd6A0kU08FQq0JsKZjkQU
+	 CVpr3J8GrtqicvzX0SNORe/q1KgPyqfH3+CKWSQJrXLFznFu6DM7ioajp3yBr8OgyP
+	 MHK7xkBpyMMkdVipmlBhLrzaejUUh3pyXUXHCOHsi8FzkLgTIb28b35wcuIkLw2C9a
+	 P534mf/f8T6+DXXJ5IlYQH8LovHalYJ5wG7L0mr05NWoWD7yLJO/ZwRGRFmGe6YuNC
+	 GOF7v1iWW9U3A==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] arm64: defconfig: Enable Apple Silicon drivers
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: asahi@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- Srinivas Kandagatla <srini@kernel.org>, linux-kernel@vger.kernel.org,
- Viresh Kumar <viresh.kumar@linaro.org>, Neal Gompa <neal@gompa.dev>,
- linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-i2c@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?Q?Martin_Povi=C5=A1er?=
- <povik+lin@cutebit.org>, Joerg Roedel <joro@8bytes.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Mark Brown <broonie@kernel.org>, iommu@lists.linux.dev,
- linux-input@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andi Shyti <andi.shyti@kernel.org>, Will Deacon <will@kernel.org>
-References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
- <20250612-apple-kconfig-defconfig-v1-11-0e6f9cb512c1@kernel.org>
- <2e022f4e-4c87-4da1-9d02-f7a3ae7c5798@arm.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <2e022f4e-4c87-4da1-9d02-f7a3ae7c5798@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
+References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org> <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org> <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc> <aCNGSwL7043GoJBz@linaro.org> <20250514160841.GA2427890-robh@kernel.org> <aCUHTJGktLFhXq4Q@linaro.org> <20250521-psychedelic-cute-grouse-ee1291@kuoka> <aC-AqDa8cjq2AYeM@linaro.org> <20250523-markhor-of-fortunate-experience-1f575e@kuoka> <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node for clock-controller
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Date: Sat, 21 Jun 2025 13:51:16 -0700
+Message-ID: <175053907628.4372.13105365536734444855@lazor>
+User-Agent: alot/0.11
 
-On 13.06.25 18:50, Robin Murphy wrote:
-> On 2025-06-12 10:11 pm, Sven Peter wrote:
->> Enable drivers for hardware present on Apple Silicon machines.
->> The power domain and interrupt driver should be built-it since these are
->> critical for the system to boot, the rest can be build as modules.
-> 
-> Nit: I'd be tempted to put this patch first, just in case anyone 
-> bisecting with "make defconfig" in their process lands in the middle and 
-> suddenly loses some drivers (although arguably them going from "=y" to 
-> "=m" could still be a surprise, but at least a bit less so).
+Quoting Bjorn Andersson (2025-06-10 20:31:57)
+>=20
+> I'm still sceptical here.
+>=20
+> In the first snippet above, we describe a single IP block which provides
+> mailboxes and clocks.
+>=20
+> In the second snippet we're saying that the IP block is a mailbox, and
+> then it somehow have a subcomponent which is a clock provider.
+>=20
+> It seems to me that we're choosing the second option because it better
+> fits the Linux implementation, rather than that it would be a better
+> representation of the hardware. To the point that we can't even describe
+> the register range of the subcomponent...
+>=20
 
-Ah, that's a good point that I hadn't even thought about.
-Now that most of these have already been merged into different trees 
-that ship has sailed though.
-
-> 
-> [...]
->> @@ -1504,6 +1520,7 @@ CONFIG_ARCH_TEGRA_194_SOC=y
->>   CONFIG_ARCH_TEGRA_234_SOC=y
->>   CONFIG_TI_PRUSS=m
->>   CONFIG_OWL_PM_DOMAINS=y
->> +CONFIG_APPLE_PMGR_PWRSTATE=y
-> 
-> If this is critical for any Apple platform to work then it would 
-> probably make sense to explicitly select it from ARCH_APPLE, as is done 
-> for APPLE_AIC...
-
-
-Documentation/kbuild/kconfig-language.rst:
-
-   select should be used with care. select will force a symbol to a value
-   without visiting the dependencies. By abusing select you are able to
-   select a symbol FOO even if FOO depends on BAR that is not set. In
-   general use select only for non-visible symbols (no prompts anywhere)
-   and for symbols with no dependencies. That will limit the usefulness
-   but on the other hand avoid the illegal configurations all over.
-
-
-That's probably fine for APPLE_AIC which only depends on ARM64 (and 
-ARCH_APPLE) which is guaranteed to be set when ARCH_APPLE is set anyway.
-APPLE_PMGR_PWRSTATE also has an additional dependency on PM so it should 
-probably remain in defconfig and not use select.
-
-
->>   CONFIG_RASPBERRYPI_POWER=y
->>   CONFIG_IMX_SCU_PD=y
->>   CONFIG_QCOM_CPR=y
->> @@ -1567,6 +1584,7 @@ CONFIG_QCOM_PDC=y
->>   CONFIG_QCOM_MPM=y
->>   CONFIG_TI_SCI_INTR_IRQCHIP=y
->>   CONFIG_TI_SCI_INTA_IRQCHIP=y
->> +CONFIG_APPLE_AIC=y
-> 
-> ...which I think means this would already be redundant.
-
-Yup, this can be dropped.
-
-
-Thanks,
-
-Sven
-
+Agreed. Don't workaround problems in the kernel by changing the binding
+to have sub-nodes.
