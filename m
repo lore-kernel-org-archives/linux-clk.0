@@ -1,45 +1,65 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5142828E61E;
-	Mon, 23 Jun 2025 16:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695073; cv=pass; b=m/fMGmAsFJsbe6kCUepzFIZf+rXSHU3FMEYv2B70B8a4klISSz8f6UcwAkvZF+Htt4fGsFypE8/bxYGFBDtKvXovudx+yStlIRgDzjhSJUDiTWoYgBwvxz+xTMi+Da0qhk3P8fqZcKOZJhAhWomcx8LW5JCK1CyjyHVKs7WM8Gw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695073; c=relaxed/simple;
-	bh=UblQ/Xi9teuoaZM1+IlFLdoyalC6siaHzqHpUWPdXp4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ciITSoQcMwtFbHlUF6wvsoTWPmtVcdSHHW2fQbjYcnHHMdQfm8UvDiluQ244fs0gizvriN/dBQrOwGgCy8QLLIN9KVIxYaGc3GGjjUiDlA+7n9we2NqqnMfH+x7b3vnyPXNyUAydNebvGAIZBcCEjBdpru+z0pFMMCR5XhPadCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=ifhrRglT; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AF235280
+	for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 16:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750696670; cv=none; b=WOQfZY+hDCjdJR4jPGkOdxOyBHutYCGRTEIWirS6pal87KVqmlaCUEWkDX25GZRgt04f8rwLp34n82T4THLXGG4x/cEVjDMlJs9w/RPfXfI6r71HIsUZtYxWrjilIiWWvdQDOrrT1tBif5JxVQ3b6LTIxuZ+rbBk4WvhVn6T63s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750696670; c=relaxed/simple;
+	bh=mYWVSmzjLjIbQDjgPKQIGCT3cgx5XlaE8wPwnDxWmfg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HAVpt8dN8EsHHlY8CuAPnOCa8YW3UoK6CQd4j8mHHhKfJX7ezcIH1+2CaI93JrY+FSfV6rVKnV6y3DzDcpdaLVo7NnVYzC+NOVXOr50+osQGD5Ig+6u2GHcxUv4N75BzQzRnxquNRMiBSxgVurlm2qfhcR6i1R449jGTATzLH84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jt5MlaU5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="ifhrRglT"
-ARC-Seal: i=1; a=rsa-sha256; t=1750695014; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EpBtJRjKcgPsO+xAJObVVmFvnI4hmdsZ6LijaICW3w0zdFpegt0k3I/wGT51x6yq9t7zXoX7sFb3yMWpHNE+rLAu2ZZjCp+N9VFX+Q4/04KiU/EsrfstavBLC9MQzFMo/b3QMwzBRvoc+e13RHmo8OoEeFd00ZASOpK3oSJJglM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750695014; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LrDqBL7o/mg/nAqIiAJ/LSWqzkg2m3/2ojuA+PZ4zkE=; 
-	b=Yke2UH0sgLcdjm6t4ucqMhYEpUfHQfgnCY1vqDVFeITgfZA/sUs1RgZRk340I6Jejbq5/pXgjtH289g684o8J2aZHAELCY9xvv5ldmSWpCLm6se5G3BspfIU/bZG+gRqwJ87tvnoqoBCO23T0tPs75Dpj4AZstHKLhiuIw2w0TY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750695014;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=LrDqBL7o/mg/nAqIiAJ/LSWqzkg2m3/2ojuA+PZ4zkE=;
-	b=ifhrRglTFZ2RX+hsYHYJv5VSQEYe/R1mGxnsPnU80GFRfFV+SXXAgL+bnaRD8IDJ
-	XMwx3CHErJ+Z05XkEGWJF+8nIMYLmSNdyD9nVywEoYVsytQSuhHMaK3gAoItL9dGZk9
-	hC/Qo/9ULp3XvQ8MVn1Ko0pBL0TX2Clu2xmUyeEg=
-Received: by mx.zohomail.com with SMTPS id 17506950128651017.218237604295;
-	Mon, 23 Jun 2025 09:10:12 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 23 Jun 2025 18:05:48 +0200
-Subject: [PATCH v2 20/20] phy: rockchip-pcie: switch to FIELD_PREP_WM16
- macro
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jt5MlaU5"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453426170b6so32339055e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 09:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750696666; x=1751301466; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sXfU9/sKAYBBbGmHQM1w7+6Suw+kwrFKSqlLdXK/Mh0=;
+        b=jt5MlaU5XsYYv+oXi7tSqHqsGUHZldZxQBZ/Ttn92OUDohsvjtEIQ5pmXccbQop6u9
+         sg7lMrg+Qgs1rb1aLKVPWXvtGYRVljEVgTYmo8MIthrzQBX2mKtJp9PKvV3bL2im4MZj
+         elZkqI/nEgpmu78YREk3XDpzKrxyM0TmLpOdcIpY8ah3vg+2Nc6nLQEBBeSnyBmQnuoK
+         ScKTDQ72pncsHh3ns9igyzgb/p2y4717EYcN2C9NFnFK6Dmb3z5B9fMqWpcJ36Mz3Gi5
+         pHkvYAFFvvYnuuZAFeigitiIuAujJoMY6vm0afobdVkktdpXfUD8fiYZOKOjfxIOjjwJ
+         TAeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750696666; x=1751301466;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sXfU9/sKAYBBbGmHQM1w7+6Suw+kwrFKSqlLdXK/Mh0=;
+        b=eFQkgNMyM64oxC8dp9q6DQCoiutLx+d6sW4kxQetPI5ksQa/iWkM2uLhyqkkK/4vZD
+         Ca4StJlqtcXgwvaMvC8ESKODYDu0p+PF4MwLwrYpOrGbGYAjs3tt5yezKz6jcS+jRcx7
+         t5MOyrS++yyS40qi6FXIlXQPWuHEdympBb6SpmV9OjElk53x2p8K5wenNqPPupkEDHKX
+         SEQJqEf6CpK+1kpJHMqR8H43ptJ6pN+KZhpNHBxgdfR5HRcWO9ju9qmEToz5lFtMKf2n
+         54TgKwjisM5Atkal8D0toZFx6MtIj/ZeVmhj05hFFnibW4I6XY3FvKkR41Jw2mxVHgS3
+         hZvw==
+X-Gm-Message-State: AOJu0Yw//3teDJtFvD3FCVtMu0iXSPcVX9eI4XaYg4G89obXwPBx+aIV
+	Pj3HRJG3cjbsQpFpZrp+tZHaC+9l/wfh8yU2/x581UfLgdcA7dtazwignQihNCRhKIatz8kVqV0
+	U1SVO
+X-Gm-Gg: ASbGncu8W//J56welVHBxzsjdTdZCK9KgvS6wzgPJNsY2/qSPjYEY0+A+rgVa6J/qTW
+	Hb0Fk+OT70SSG2uGUiHMZsr1w1H/GI+VeDCyMpjjCGZqxRR1XrgEs4DRUOcF/R4elnX91ArfiFg
+	ykSy7CWaHNt8KkiDuVV8jvzwbz/gWXbUUTXi3k1KyN1VXHgpTo88AvEMAEOLxLdGE3gxqapozTD
+	xzPaBAAqR0Fe+euiwsOq2WTNY3lH5/ABQBCIvcozWHUMZmQ7aQNaYj2vC2tmNuz+TDrvnkNl6ci
+	IazBbmCoc8S4w0t8wU7CoLgkpgXoPqqS2k6bMHzDF1b0DB3/V5aKSW+dKr2ZfKoIqGA2PEIAEkF
+	2
+X-Google-Smtp-Source: AGHT+IFqfwGYY0+Dig+qJqYeoejIBa8GYHXUUVZat5Q6BxxTcUIEB+sFZBy9mHOAj+NMznzCbMGGkQ==
+X-Received: by 2002:a05:6000:2089:b0:3a4:e1f5:41f4 with SMTP id ffacd0b85a97d-3a6e71ff6ecmr153014f8f.17.1750696666309;
+        Mon, 23 Jun 2025 09:37:46 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:7b0f:c522:cad6:acd1])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a6d0f1011fsm9852947f8f.7.2025.06.23.09.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 09:37:45 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v4 0/3] clk: amlogic: drop clk_regmap tables
+Date: Mon, 23 Jun 2025 18:37:36 +0200
+Message-Id: <20250623-amlogic-clk-drop-clk-regmap-tables-v4-0-ff04918211cc@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,218 +68,107 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-byeword-update-v2-20-cf1fc08a2e1f@collabora.com>
-References: <20250623-byeword-update-v2-0-cf1fc08a2e1f@collabora.com>
-In-Reply-To: <20250623-byeword-update-v2-0-cf1fc08a2e1f@collabora.com>
-To: Yury Norov <yury.norov@gmail.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jaehoon Chung <jh80.chung@samsung.com>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Shreeya Patel <shreeya.patel@collabora.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Shawn Lin <shawn.lin@rock-chips.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
- MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
- linux-sound@vger.kernel.org, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-B4-Tracking: v=1; b=H4sIANCCWWgC/5XOy2rDMBAF0F8JWldFM9ajyar/UbLQY+yI2JGRg
+ okx/vcqhkIJWSS7uXdx7iysUI5U2GG3sExTLDFdapAfO+ZP9tIRj6FmhgIlIApuhz510XPfn3n
+ IadyOTN1gR361rqfC4YuUb5XBRmlWoTFTG2/byM+x5lMs15TnbXOCe/sWPwEXfK9D0Mp417rw7
+ ezcR5fp06eB3Rcm/FOVADAvqVjVAK2ppjCmoSdq80998demqoAapQSp99I8qOu6/gJuN1LNgwE
+ AAA==
+X-Change-ID: 20241220-amlogic-clk-drop-clk-regmap-tables-18e5cf572356
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3293; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=mYWVSmzjLjIbQDjgPKQIGCT3cgx5XlaE8wPwnDxWmfg=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoWYLVmgtUvfDevz3Z10seXSm+XFjjYfxvZSxDt
+ D3zgtlL2siJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaFmC1QAKCRDm/A8cN/La
+ hZ5zD/wKTXfUG9GHR7LsTVWa2bQ0Ny9ClwqlBsRKbjzPe25XXK95/Z0+fnBUE0gcokzUmNXOajH
+ sOvbauzAcb4bx3x1AZwpkpEE3/lwZ8NNv7Ecun48UyYWsPEzJWu439gjg/niJ7hIXttXw1vVWwb
+ o96iCZN/DNLSns99V04RUJ6j21ka1W2zS3gzxay3xhAvtUCaW4vDiXdWMfShlpCRm9KhL2OyTl4
+ HlfDCMjaoBGM8+NzKaYhoMSYO/sTvRb04hPNQb3TCQIknGS2Cdwzq6bNqom3xytg4cPFvyETTQ8
+ 73lDcMDONg0BXIQ1W/qr2ATjh+ruRLwQZR9zL9g91i9E83VSWKyf4Ozxsx8PhHTQMZPY+5PkNOv
+ xcD4yy69DwnkS2eC1otDTnPh/g4nxtUMLO3k5Bch98Ov3XFenhz+l26KKFtFYJc+O5iv/719nll
+ iatKI8tUIxveTkFfRIsgtxNRpltGMIiRbsJJfj0YI61k+YfOSb2QsM6er8jlzAw3oU4IkNcNTrK
+ EOkMZA2y7BLQvVDU8P7JFvC1l5afC/e6U3ShoXqgsOylTgSzHqmEUo1+1g2Q3Y+t9loEEk9OgBm
+ wAwsKkNt+XMRiwJrQid9Jhr11nkvOJ/BP0RTwHhajdv2PUEItqyHIUUNW9miFTy0fDgiaAuODUv
+ lA3+YVdj/o3X5Iw==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-drivers that use constant masks.
+This patchset removes the need for clk_regmap tables in each clock
+controller driver. These were used to populate regmap with in the regmap
+based clocks.
 
-The Rockchip PCIe PHY driver, used on the RK3399, has its own definition
-of HIWORD_UPDATE.
+This saves memory and is the 2nd step in a series of rework of Amlogic
+clocks, to clean-up, increase code re-use and ease future maintenance.
 
-Remove it, and replace instances of it with hw_bitfield.h's
-FIELD_PREP_WM16. To achieve this, some mask defines are reshuffled, as
-FIELD_PREP_WM16 uses the mask as both the mask of bits to write and to
-derive the shift amount from in order to shift the value.
+Note: the clock initilization callback has guess what in order to properly
+get the necessary regmap. This is not ideal and temporary as noted in the
+code comments. This intent is to eventualy replace this with a dedicated
+location where regmap may be consistently retreived by the clock.
 
-In order to ensure that the mask is always a constant, the inst->index
-shift is performed after the FIELD_PREP_WM16, as this is a runtime
-value.
+Changes in v4:
+- Rebased clk-meson-next targeting v6.17
+- Link to v3: https://lore.kernel.org/r/20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com
 
-From this, we gain compile-time error checking, and in my humble opinion
-nicer code, as well as a single definition of this macro across the
-entire codebase to aid in code comprehension.
+Changes in v3:
+- Fix some typos
+- Link to v2: https://lore.kernel.org/r/20250117-amlogic-clk-drop-clk-regmap-tables-v2-0-d1f77cb0773e@baylibre.com
 
-Tested on a RK3399 ROCKPro64, where PCIe still works as expected when
-accessing an NVMe drive.
+Changes in v2:
+- Add clk_hw_get_of_node and kunit tests for the new helpers
+- Split patch adding the .init() and the dropping the table
+- Drop devres based solution and something temporary but simple
+  while a more generic solution to hook controller init is discussed.
+- Link to v1: https://lore.kernel.org/r/20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/phy/rockchip/phy-rockchip-pcie.c | 72 ++++++++++----------------------
- 1 file changed, 21 insertions(+), 51 deletions(-)
+Jerome Brunet (3):
+      clk: amlogic: get regmap with clk_regmap_init
+      clk: amlogic: drop clk_regmap tables
+      clk: amlogic: s4: remove unused data
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index bd44af36c67a5a504801275c1b0384d373fe7ec7..d7f994c3bcdf93faffd5c04ed4d0f9d29eaf43cc 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/hw_bitfield.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-@@ -18,23 +19,14 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
--/*
-- * The higher 16-bit of this register is used for write protection
-- * only if BIT(x + 16) set to 1 the BIT(x) can be written.
-- */
--#define HIWORD_UPDATE(val, mask, shift) \
--		((val) << (shift) | (mask) << ((shift) + 16))
- 
- #define PHY_MAX_LANE_NUM      4
--#define PHY_CFG_DATA_SHIFT    7
--#define PHY_CFG_ADDR_SHIFT    1
--#define PHY_CFG_DATA_MASK     0xf
--#define PHY_CFG_ADDR_MASK     0x3f
--#define PHY_CFG_RD_MASK       0x3ff
-+#define PHY_CFG_DATA_MASK     GENMASK(10, 7)
-+#define PHY_CFG_ADDR_MASK     GENMASK(6, 1)
-+#define PHY_CFG_RD_MASK       GENMASK(9, 0)
- #define PHY_CFG_WR_ENABLE     1
- #define PHY_CFG_WR_DISABLE    1
--#define PHY_CFG_WR_SHIFT      0
--#define PHY_CFG_WR_MASK       1
-+#define PHY_CFG_WR_MASK       BIT(0)
- #define PHY_CFG_PLL_LOCK      0x10
- #define PHY_CFG_CLK_TEST      0x10
- #define PHY_CFG_CLK_SCC       0x12
-@@ -49,11 +41,7 @@
- #define PHY_LANE_RX_DET_SHIFT 11
- #define PHY_LANE_RX_DET_TH    0x1
- #define PHY_LANE_IDLE_OFF     0x1
--#define PHY_LANE_IDLE_MASK    0x1
--#define PHY_LANE_IDLE_A_SHIFT 3
--#define PHY_LANE_IDLE_B_SHIFT 4
--#define PHY_LANE_IDLE_C_SHIFT 5
--#define PHY_LANE_IDLE_D_SHIFT 6
-+#define PHY_LANE_IDLE_MASK    BIT(3)
- 
- struct rockchip_pcie_data {
- 	unsigned int pcie_conf;
-@@ -100,22 +88,14 @@ static inline void phy_wr_cfg(struct rockchip_pcie_phy *rk_phy,
- 			      u32 addr, u32 data)
- {
- 	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_conf,
--		     HIWORD_UPDATE(data,
--				   PHY_CFG_DATA_MASK,
--				   PHY_CFG_DATA_SHIFT) |
--		     HIWORD_UPDATE(addr,
--				   PHY_CFG_ADDR_MASK,
--				   PHY_CFG_ADDR_SHIFT));
-+		     FIELD_PREP_WM16(PHY_CFG_DATA_MASK, data) |
-+		     FIELD_PREP_WM16(PHY_CFG_ADDR_MASK, addr));
- 	udelay(1);
- 	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_conf,
--		     HIWORD_UPDATE(PHY_CFG_WR_ENABLE,
--				   PHY_CFG_WR_MASK,
--				   PHY_CFG_WR_SHIFT));
-+		     FIELD_PREP_WM16(PHY_CFG_WR_MASK, PHY_CFG_WR_ENABLE));
- 	udelay(1);
- 	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_conf,
--		     HIWORD_UPDATE(PHY_CFG_WR_DISABLE,
--				   PHY_CFG_WR_MASK,
--				   PHY_CFG_WR_SHIFT));
-+		     FIELD_PREP_WM16(PHY_CFG_WR_MASK, PHY_CFG_WR_DISABLE));
- }
- 
- static int rockchip_pcie_phy_power_off(struct phy *phy)
-@@ -126,11 +106,9 @@ static int rockchip_pcie_phy_power_off(struct phy *phy)
- 
- 	guard(mutex)(&rk_phy->pcie_mutex);
- 
--	regmap_write(rk_phy->reg_base,
--		     rk_phy->phy_data->pcie_laneoff,
--		     HIWORD_UPDATE(PHY_LANE_IDLE_OFF,
--				   PHY_LANE_IDLE_MASK,
--				   PHY_LANE_IDLE_A_SHIFT + inst->index));
-+	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_laneoff,
-+		     FIELD_PREP_WM16(PHY_LANE_IDLE_MASK,
-+				     PHY_LANE_IDLE_OFF) << inst->index);
- 
- 	if (--rk_phy->pwr_cnt) {
- 		return 0;
-@@ -140,11 +118,9 @@ static int rockchip_pcie_phy_power_off(struct phy *phy)
- 	if (err) {
- 		dev_err(&phy->dev, "assert phy_rst err %d\n", err);
- 		rk_phy->pwr_cnt++;
--		regmap_write(rk_phy->reg_base,
--			     rk_phy->phy_data->pcie_laneoff,
--			     HIWORD_UPDATE(!PHY_LANE_IDLE_OFF,
--					   PHY_LANE_IDLE_MASK,
--					   PHY_LANE_IDLE_A_SHIFT + inst->index));
-+		regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_laneoff,
-+			     FIELD_PREP_WM16(PHY_LANE_IDLE_MASK,
-+					     !PHY_LANE_IDLE_OFF) << inst->index);
- 		return err;
- 	}
- 
-@@ -172,15 +148,11 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 	}
- 
- 	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_conf,
--		     HIWORD_UPDATE(PHY_CFG_PLL_LOCK,
--				   PHY_CFG_ADDR_MASK,
--				   PHY_CFG_ADDR_SHIFT));
-+		     FIELD_PREP_WM16(PHY_CFG_ADDR_MASK, PHY_CFG_PLL_LOCK));
- 
--	regmap_write(rk_phy->reg_base,
--		     rk_phy->phy_data->pcie_laneoff,
--		     HIWORD_UPDATE(!PHY_LANE_IDLE_OFF,
--				   PHY_LANE_IDLE_MASK,
--				   PHY_LANE_IDLE_A_SHIFT + inst->index));
-+	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_laneoff,
-+		     FIELD_PREP_WM16(PHY_LANE_IDLE_MASK,
-+				     !PHY_LANE_IDLE_OFF) << inst->index);
- 
- 	/*
- 	 * No documented timeout value for phy operation below,
-@@ -211,9 +183,7 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 	}
- 
- 	regmap_write(rk_phy->reg_base, rk_phy->phy_data->pcie_conf,
--		     HIWORD_UPDATE(PHY_CFG_PLL_LOCK,
--				   PHY_CFG_ADDR_MASK,
--				   PHY_CFG_ADDR_SHIFT));
-+		     FIELD_PREP_WM16(PHY_CFG_ADDR_MASK, PHY_CFG_PLL_LOCK));
- 
- 	err = regmap_read_poll_timeout(rk_phy->reg_base,
- 				       rk_phy->phy_data->pcie_status,
+ drivers/clk/meson/Kconfig          |   1 +
+ drivers/clk/meson/a1-peripherals.c | 163 +-------------
+ drivers/clk/meson/a1-pll.c         |  16 +-
+ drivers/clk/meson/axg-aoclk.c      |  22 --
+ drivers/clk/meson/axg-audio.c      | 433 -------------------------------------
+ drivers/clk/meson/axg.c            | 131 -----------
+ drivers/clk/meson/c3-peripherals.c | 210 +-----------------
+ drivers/clk/meson/c3-pll.c         |  32 +--
+ drivers/clk/meson/clk-cpu-dyndiv.c |   1 +
+ drivers/clk/meson/clk-dualdiv.c    |   2 +
+ drivers/clk/meson/clk-mpll.c       |   6 +
+ drivers/clk/meson/clk-phase.c      |  11 +
+ drivers/clk/meson/clk-pll.c        |   7 +
+ drivers/clk/meson/clk-regmap.c     |  49 +++++
+ drivers/clk/meson/clk-regmap.h     |   4 +
+ drivers/clk/meson/g12a-aoclk.c     |  34 ---
+ drivers/clk/meson/g12a.c           | 261 ----------------------
+ drivers/clk/meson/gxbb-aoclk.c     |  19 --
+ drivers/clk/meson/gxbb.c           | 393 ---------------------------------
+ drivers/clk/meson/meson-aoclk.c    |   5 +-
+ drivers/clk/meson/meson-aoclk.h    |   2 -
+ drivers/clk/meson/meson-eeclk.c    |   4 -
+ drivers/clk/meson/meson-eeclk.h    |   2 -
+ drivers/clk/meson/meson8-ddr.c     |   9 -
+ drivers/clk/meson/meson8b.c        | 200 -----------------
+ drivers/clk/meson/s4-peripherals.c | 341 -----------------------------
+ drivers/clk/meson/s4-pll.c         |  31 ---
+ drivers/clk/meson/sclk-div.c       |   5 +
+ drivers/clk/meson/vclk.c           |   2 +
+ drivers/clk/meson/vid-pll-div.c    |   1 +
+ 30 files changed, 94 insertions(+), 2303 deletions(-)
+---
+base-commit: b7f68cdf9f2a42b88815941538446dbf4f2dd464
+change-id: 20241220-amlogic-clk-drop-clk-regmap-tables-18e5cf572356
 
+Best regards,
 -- 
-2.50.0
+Jerome
 
