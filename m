@@ -1,357 +1,239 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CD5253F12;
-	Mon, 23 Jun 2025 12:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A02F253935
+	for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 13:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750683443; cv=none; b=gik5RP3PRRjzVMTWIygP88sOeUu/jzp1CpUTvhf9erXqQ1HYntU+vbMBoOZd+/2Bjo/r5J66M0QSrsprLqpQfg2aC7SZHAQemfhG7StLWzgRHtLmYm48ZOTzdmzHMaLKqlmKC2VpEcUT6VaAasWnBJiX0Mez/2RXB1MUmRz3gPA=
+	t=1750684663; cv=none; b=f47MA0sotJFLoFx7Iu0PvpMG2ofSZVoUEnhkTmrBr9fTCyIrHoQiyq1J7fzuRNQs+ykL4C0cWY2h2zkfCc0PoBzQyZGt2Npy0OG8epYT/iTkYlI9JtBlYtnC+A0Jz1seRP5OcO61LrihNw9IJmar2xT+srCBliZQ3tYDyy+v7Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750683443; c=relaxed/simple;
-	bh=nDmXGid+HX75bqpdmYZ2WxwC0IlRF4aAoqhrrbUmWe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E6TmQ0gQ0vVdBaf38m+qfDDFYYAwtstaWDFdFfhjzevEFYbdBidDWQtvxS93kfxPhlvOs2lT1XkW2QCylrQdRVjvbM1Tohl/DhGg0zoVS6OXixTc4O9z7lbS1mTaCQ+DW28OHCKoiDruJ3sAK/2lZ5dHJWfZqGXr53O62yOyiR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBWjM6uC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750684663; c=relaxed/simple;
+	bh=UmKYTFFeSV9jOHfwbxiCTnST38hUxBP+0O3P5/ea6fI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5HQggyrnTTOTX4YW1FP/t1K7HWcg9eKpg4evH+feMA4Nfd5VOfFYP/rceF+su5seaQ2CR5b1KCcQ/LA1QSQ6vz81ipS2PrZ5YeWLrAtnNzAyF+2ZA1cIxslmNzb/Bb3uthIPljvtwFHr7OlYWPfkWbeV/OTfPkI8OWhMvUi10Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y3wBd6M5; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBWjM6uC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E32C4CEF2;
-	Mon, 23 Jun 2025 12:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750683443;
-	bh=nDmXGid+HX75bqpdmYZ2WxwC0IlRF4aAoqhrrbUmWe8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uBWjM6uCOi7S9/o7F4oIwb/r48WO6CwD7lR4NY42WkXRDDcAJvqKyb/UR+zJ0eLG2
-	 pbFAW7vuPkeiOJ5fuaT7YK7AMMZjif1wLdlsDo4oOAzpdn9nVa7y3o+3X1ihYp15l4
-	 iWTXt21vk/urVSi6ZJyO+eSaEi5nHghGZ3Futk7cshRJHdsTAMFtq86TBkvqN3CcMS
-	 MjNf134gsEMkoPx6AQlwAgkxnfh+YbHAotstXyMdH95WZf23103Ozr61XSn54zOEKG
-	 LqLy6u2cvERWKe+mLoIfIOoFAZcqud3QJEgzajYMcm3XtMrTXXS8YqDElHQcXDK5eY
-	 Uu45OG345dkUg==
-From: Conor Dooley <conor@kernel.org>
-To: sboyd@kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y3wBd6M5"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d3f72391so38604945e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 06:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750684660; x=1751289460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxhGLTOSbdGZUBImck+Z0lOUfVyulsscQ0JkY0XS5+g=;
+        b=Y3wBd6M5IH7vHMxqTMosNc+/XrBBI7IbQIA39uv1yEj3/aJjxGizJ1pKXJknnT+JWi
+         1inJi6TXg0OebM82tBxlydd0oZ4evamnPhDhnSRsA1oxr0YwxpI4OlBuA9Y05l5iz1sL
+         QsRPxIfNRU2ljuwkYSCy+Am9yUrWbUzblkeUQGrPVvOYsU3qkzNXiz1m+/Dg+DzK3SkJ
+         Jj++yyAKkmfFxCIUaTJtCwFnH2SJi+AhqtcVx/QAn3IIbP2btjfKdaqMVRcEkz7fbFpg
+         u9uBK2bk7wXk59XmE5GebXMqirFDpk8Mqsua/6vhnNDgzwg52JO9mediL7+m9dzpW0Jx
+         nQXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750684660; x=1751289460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxhGLTOSbdGZUBImck+Z0lOUfVyulsscQ0JkY0XS5+g=;
+        b=QIqXk0dFaey9gOp2/JtRqrHatPfr6p59M8reamkq0dPs5Whp3J1MWnqq3/A138vkUo
+         8yHq+kypHON7cBjjD9wrKrTk93Wx5NFpvPZ7QgrsuVfWVT0akmsPkmXa9YgUNJavsDdx
+         KdNSDk0PyD4/llsfSi+sasyKG4Z4g86WrWzluzUvQ353g+goQmuLWBO8iSIJIYtC2sa2
+         1d36oOZK77GsgsYF6NAH06f+BSDAYN/MRGbOdA7aVwBYb2QrAUG7wL64B/bXt+K5tUhB
+         6khV10bAdvDwjlXDnr8AktNxLlC680gDKiBmaLt3qJ203kN2lX24/82CWEaK/odOOnWM
+         oCqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXORspapxh/o6bQI+9KV0a/RYH61vpHQw9BRkBL7TX6rpA9FjRSFBlbvcEp9P8a4Ap545k37EDDAUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLhYLAn6wtEhM311y9DFdaJPBYFFBF2zgyfPY5aGS+nDsTrKA+
+	pZ/iU9jRD++oHlTgkspAlKHI8fnU4J6ZNzqjn8NHfM4QQkVRZjYHwPFebkOvE11a/1krtbqPHaO
+	345Du
+X-Gm-Gg: ASbGncuyz52NBjjXgUhh/gq4JrpMgqufscDmG6XV4pWNKkyYnE4nzgTB5O452eAgOye
+	EhJwB6bX6tFv8PhvtYsm/61sesbXRVsFQBVgkQUW1mm6ob3jrg6MV117jZTR9Y/U/1izYD1MDv5
+	VUe72W94Rdq9R1pfFEjWZOmHyCgryGoPO/iK8naD5QVJBhcEIdpRc4PX+HsKeoU7aSDnRDkUSqv
+	PCD54oJM+qL0JcN2crw6B3wkGTFi4tmZjD7blZqSuVmI4d2oHmFv3dVrBdjG23EJn+G9RBOxXws
+	dSWM0ALoF6fb7m99jd4pajWmDvYDNj0aNH2ZLaz3XFE0VpPhtJJwrkVXtZBnmvBZW8r1oDhhsw=
+	=
+X-Google-Smtp-Source: AGHT+IGF1ChYdi0HdVo0w/tZZ8X8382dEOsP+3IQAytinuQ4JkzJIKY1f45nqyDbj9X+WTLDfaRCMw==
+X-Received: by 2002:a05:600c:c10d:b0:43c:f87c:24ce with SMTP id 5b1f17b1804b1-4536877ffb5mr66971955e9.21.1750684659595;
+        Mon, 23 Jun 2025 06:17:39 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:b3ca:db17:bc4f:ae5a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4536470903asm112660185e9.40.2025.06.23.06.17.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 06:17:39 -0700 (PDT)
+Date: Mon, 23 Jun 2025 15:17:33 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Jassi Brar <jassisinghbrar@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 9/9] clk: microchip: mpfs: use regmap clock types
-Date: Mon, 23 Jun 2025 13:56:23 +0100
-Message-ID: <20250623-battering-cable-b61e1047d180@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250623-levitate-nugget-08c9a01f401d@spud>
-References: <20250623-levitate-nugget-08c9a01f401d@spud>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <aFlT7fLePVmvoxBQ@linaro.org>
+References: <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
+ <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+ <aCNGSwL7043GoJBz@linaro.org>
+ <20250514160841.GA2427890-robh@kernel.org>
+ <aCUHTJGktLFhXq4Q@linaro.org>
+ <20250521-psychedelic-cute-grouse-ee1291@kuoka>
+ <aC-AqDa8cjq2AYeM@linaro.org>
+ <20250523-markhor-of-fortunate-experience-1f575e@kuoka>
+ <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
+ <175053907628.4372.13105365536734444855@lazor>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10031; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=GO9ApPaEu2krjObe/V++g6BUriuEocKEs23aw1DaxIU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBmRfh9fmf8x9X92rMnWcMJVPh6T5U7R16u2W6U2R2gcs HnDkZTaUcrCIMbBICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgIkoTGL473HlqMmVgplXrJMX KfGLHln4dPO/0EltE+6f9N4q+mqq4VpGht95zwUFQxfZcXQ+Vpicl3ig3mODfZ9crf/i7Fm9au9 6WQA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175053907628.4372.13105365536734444855@lazor>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+wOn Sat, Jun 21, 2025 at 01:51:16PM -0700, Stephen Boyd wrote:
+> Quoting Bjorn Andersson (2025-06-10 20:31:57)
+> > I'm still sceptical here.
+> > 
+> > In the first snippet above, we describe a single IP block which provides
+> > mailboxes and clocks.
+> > 
+> > In the second snippet we're saying that the IP block is a mailbox, and
+> > then it somehow have a subcomponent which is a clock provider.
+> > 
+> > It seems to me that we're choosing the second option because it better
+> > fits the Linux implementation, rather than that it would be a better
+> > representation of the hardware. To the point that we can't even describe
+> > the register range of the subcomponent...
+> > 
+> 
+> Agreed. Don't workaround problems in the kernel by changing the binding
+> to have sub-nodes.
 
-Convert the PolarFire SoC clock driver to use regmap clock types as a
-preparatory work for supporting the new binding for this device that
-will only provide the second of the two register regions, and will
-require the use of syscon regmap to access the "cfg" and "periph" clocks
-currently supported by the driver.
+I can describe the register range for the subcomponent if you prefer
+(it's reg = <0x50 0xc>; within the parent component). That would be easy
+to add.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/microchip/Kconfig    |   4 +
- drivers/clk/microchip/clk-mpfs.c | 151 ++++++++++++++++++++-----------
- 2 files changed, 101 insertions(+), 54 deletions(-)
+Your more fundamental concern (working around problems in the kernel by
+changing the binding) is a more tricky and subtle one. I had exactly the
+same thought when I started making this patch series. However, if you
+start looking more closely you will see that this is much easier said
+than done. I tried to explain the problem already a few times (in the
+cover letter, the commit messages and responses to this series), but let
+me try again. Perhaps in different words it will become more
+understandable.
 
-diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
-index 0724ce65898f3..cab9a909893b2 100644
---- a/drivers/clk/microchip/Kconfig
-+++ b/drivers/clk/microchip/Kconfig
-@@ -7,6 +7,10 @@ config MCHP_CLK_MPFS
- 	bool "Clk driver for PolarFire SoC"
- 	depends on ARCH_MICROCHIP_POLARFIRE || COMPILE_TEST
- 	default ARCH_MICROCHIP_POLARFIRE
-+	depends on MFD_SYSCON
- 	select AUXILIARY_BUS
-+	select COMMON_CLK_DIVIDER_REGMAP
-+	select COMMON_CLK_GATE_REGMAP
-+	select REGMAP_MMIO
- 	help
- 	  Supports Clock Configuration for PolarFire SoC
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index c22632a7439c5..c7fec0fcbe379 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -6,8 +6,10 @@
-  */
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <dt-bindings/clock/microchip,mpfs-clock.h>
- #include <soc/microchip/mpfs.h>
- 
-@@ -30,6 +32,14 @@
- #define MSSPLL_POSTDIV_WIDTH	0x07u
- #define MSSPLL_FIXED_DIV	4u
- 
-+static const struct regmap_config clk_mpfs_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.max_register = REG_SUBBLK_CLOCK_CR,
-+};
-+
- /*
-  * This clock ID is defined here, rather than the binding headers, as it is an
-  * internal clock only, and therefore has no consumers in other peripheral
-@@ -39,6 +49,7 @@
- 
- struct mpfs_clock_data {
- 	struct device *dev;
-+	struct regmap *regmap;
- 	void __iomem *base;
- 	void __iomem *msspll_base;
- 	struct clk_hw_onecell_data hw_data;
-@@ -68,14 +79,12 @@ struct mpfs_msspll_out_hw_clock {
- #define to_mpfs_msspll_out_clk(_hw) container_of(_hw, struct mpfs_msspll_out_hw_clock, hw)
- 
- struct mpfs_cfg_hw_clock {
--	struct clk_divider cfg;
--	struct clk_init_data init;
-+	struct clk_divider_regmap divider;
- 	unsigned int id;
--	u32 reg_offset;
- };
- 
- struct mpfs_periph_hw_clock {
--	struct clk_gate periph;
-+	struct clk_gate_regmap gate;
- 	unsigned int id;
- };
- 
-@@ -172,15 +181,15 @@ static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_msspll_hw_c
-  * MSS PLL output clocks
-  */
- 
--#define CLK_PLL_OUT(_id, _name, _parent, _flags, _shift, _width, _offset) {	\
--	.id = _id,								\
--	.output.shift = _shift,							\
--	.output.width = _width,							\
--	.output.table = NULL,							\
--	.reg_offset = _offset,							\
--	.output.flags = _flags,							\
--	.output.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_ops, 0),	\
--	.output.lock = &mpfs_clk_lock,						\
-+#define CLK_PLL_OUT(_id, _name, _parent, _flags, _shift, _width, _offset) {		\
-+	.id = _id,									\
-+	.output.shift = _shift,								\
-+	.output.width = _width,								\
-+	.output.table = NULL,								\
-+	.reg_offset = _offset,								\
-+	.output.flags = _flags,								\
-+	.output.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_regmap_ops, 0),	\
-+	.output.lock = &mpfs_clk_lock,							\
- }
- 
- static struct mpfs_msspll_out_hw_clock mpfs_msspll_out_clks[] = {
-@@ -220,15 +229,14 @@ static int mpfs_clk_register_msspll_outs(struct device *dev,
-  * "CFG" clocks
-  */
- 
--#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags, _offset) {		\
--	.id = _id,									\
--	.cfg.shift = _shift,								\
--	.cfg.width = _width,								\
--	.cfg.table = _table,								\
--	.reg_offset = _offset,								\
--	.cfg.flags = _flags,								\
--	.cfg.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_ops, 0),		\
--	.cfg.lock = &mpfs_clk_lock,							\
-+#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags, _offset) {	\
-+	.id = _id,								\
-+	.divider.shift = _shift,						\
-+	.divider.width = _width,						\
-+	.divider.table = _table,						\
-+	.divider.map_offset = _offset,						\
-+	.divider.flags = _flags,						\
-+	.divider.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_regmap_ops, 0),	\
- }
- 
- #define CLK_CPU_OFFSET		0u
-@@ -245,13 +253,13 @@ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
- 		REG_CLOCK_CONFIG_CR),
- 	{
- 		.id = CLK_RTCREF,
--		.cfg.shift = 0,
--		.cfg.width = 12,
--		.cfg.table = mpfs_div_rtcref_table,
--		.reg_offset = REG_RTC_CLOCK_CR,
--		.cfg.flags = CLK_DIVIDER_ONE_BASED,
--		.cfg.hw.init =
--			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_divider_ops, 0),
-+		.divider.shift = 0,
-+		.divider.width = 12,
-+		.divider.table = mpfs_div_rtcref_table,
-+		.divider.map_offset = REG_RTC_CLOCK_CR,
-+		.divider.flags = CLK_DIVIDER_ONE_BASED,
-+		.divider.hw.init =
-+			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_divider_regmap_ops, 0),
- 	}
- };
- 
-@@ -264,14 +272,14 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
- 
--		cfg_hw->cfg.reg = data->base + cfg_hw->reg_offset;
--		ret = devm_clk_hw_register(dev, &cfg_hw->cfg.hw);
-+		cfg_hw->divider.regmap = data->regmap;
-+		ret = devm_clk_hw_register(dev, &cfg_hw->divider.hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     cfg_hw->id);
- 
- 		id = cfg_hw->id;
--		data->hw_data.hws[id] = &cfg_hw->cfg.hw;
-+		data->hw_data.hws[id] = &cfg_hw->divider.hw;
- 	}
- 
- 	return 0;
-@@ -281,15 +289,14 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
-  * peripheral clocks - devices connected to axi or ahb buses.
-  */
- 
--#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {			\
--	.id = _id,								\
--	.periph.bit_idx = _shift,						\
--	.periph.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_ops,		\
--				  _flags),					\
--	.periph.lock = &mpfs_clk_lock,						\
-+#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {				\
-+	.id = _id,									\
-+	.gate.map_offset = REG_SUBBLK_CLOCK_CR,						\
-+	.gate.bit_idx = _shift,								\
-+	.gate.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_regmap_ops, _flags),	\
- }
- 
--#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].cfg.hw)
-+#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].divider.hw)
- 
- /*
-  * Critical clocks:
-@@ -346,19 +353,60 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
- 
--		periph_hw->periph.reg = data->base + REG_SUBBLK_CLOCK_CR;
--		ret = devm_clk_hw_register(dev, &periph_hw->periph.hw);
-+		periph_hw->gate.map = data->regmap;
-+		ret = devm_clk_hw_register(dev, &periph_hw->gate.hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     periph_hw->id);
- 
- 		id = periph_hws[i].id;
--		data->hw_data.hws[id] = &periph_hw->periph.hw;
-+		data->hw_data.hws[id] = &periph_hw->gate.hw;
- 	}
- 
- 	return 0;
- }
- 
-+static inline int mpfs_clk_syscon_probe(struct mpfs_clock_data *clk_data,
-+					struct platform_device *pdev)
-+{
-+	clk_data->regmap = syscon_regmap_lookup_by_compatible("microchip,mpfs-mss-top-sysreg");
-+	if (IS_ERR(clk_data->regmap))
-+		return PTR_ERR(clk_data->regmap);
-+
-+	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(clk_data->msspll_base))
-+		return PTR_ERR(clk_data->msspll_base);
-+
-+	return 0;
-+}
-+
-+static inline int mpfs_clk_old_format_probe(struct mpfs_clock_data *clk_data,
-+					    struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	dev_warn(&pdev->dev, "falling back to old devicetree format");
-+
-+	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(clk_data->base))
-+		return PTR_ERR(clk_data->base);
-+
-+	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(clk_data->msspll_base))
-+		return PTR_ERR(clk_data->msspll_base);
-+
-+	clk_data->regmap = devm_regmap_init_mmio(dev, clk_data->base, &clk_mpfs_regmap_config);
-+	if (IS_ERR(clk_data->regmap))
-+		return PTR_ERR(clk_data->regmap);
-+
-+	ret = mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int mpfs_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -374,13 +422,12 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(clk_data->base))
--		return PTR_ERR(clk_data->base);
--
--	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(clk_data->msspll_base))
--		return PTR_ERR(clk_data->msspll_base);
-+	ret = mpfs_clk_syscon_probe(clk_data, pdev);
-+	if (ret) {
-+		ret = mpfs_clk_old_format_probe(clk_data, pdev);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	clk_data->hw_data.num = num_clks;
- 	clk_data->dev = dev;
-@@ -406,11 +453,7 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
--	if (ret)
--		return ret;
--
--	return mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
- }
- 
- static const struct of_device_id mpfs_clk_of_match_table[] = {
--- 
-2.45.2
+Just for clarity, let's take the current device tree description again:
 
+	apcs1_mbox: mailbox@b011000 {
+		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+		reg = <0x0b011000 0x1000>;
+		#mbox-cells = <1>;
+		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+		clock-names = "pll", "aux", "ref";
+		#clock-cells = <0>;
+	};
+
+Clearly this is a mailbox (#mbox-cells) and a clock controller
+(#clock-cells). In the hardware these are stuffed into one register
+region, but they don't have anything to do with each other. In
+particular, the specified clocks are only used by the clock controller.
+They are not used or related in any way to the mailbox component.
+
+We need to have the mailbox available early to proceed with booting. The
+clock controller can probe anytime later. The &rpmcc clock required by
+the clock controller depends on having the mailbox available.
+
+In Linux, I cannot get the mailbox driver to probe as long as the &rpmcc
+clock is specified inside this device tree node (or by using
+post-init-providers, but see [1]). This is not something I can fix in
+the driver. The "problem in the kernel" you are referring to is
+essentially "fw_devlink". Independent of the device-specific bindings we
+define, it is built with the assumption that resources specified in a
+device tree node are required to get a device functioning.
+
+We usually want this behavior, but it doesn't work in this case. I argue
+this is because we describe *two* devices as part of a *single* device
+tree node. By splitting the *two* devices into *two* device tree nodes,
+it is clear which resources belong to which device, and fw_devlink can
+function correctly.
+
+You argue this is a problem to be solved in the kernel. In practice,
+this would mean one of the following:
+
+ - Remove fw_devlink from Linux.
+ - Start adding device-specific quirks into the generic fw_devlink code.
+   Hardcode device links that cannot be deferred from the device tree
+   because our hardware description is too broad.
+
+Both of these are not really desirable, right?
+
+I don't think there is a good way around making the hardware description
+more precise by giving the two devices separate device tree nodes. There
+are many different options for modelling these, and I would be fine with
+all of them if you think one of them fits better:
+
+Top-level siblings:
+
+	apcs1_mbox: mailbox@b011008 {
+		compatible = "qcom,msm8939-apcs-mbox";
+		reg = <0x0b011008 0x4>;
+		#mbox-cells = <1>;
+	};
+
+	apcs1_clk: clock-controller@b011050 {
+		compatible = "qcom,msm8939-apcs-clk";
+		reg = <0x0b011050 0xc>;
+		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+		clock-names = "pll", "aux", "ref";
+		#clock-cells = <0>;		
+	};
+
+Top-level syscon wrapper with two children:
+
+	syscon@b011000 {
+		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+		reg = <0x0b011000 0x1000>;
+		#adress-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0 0x0b011000 0x1000>;
+
+		apcs1_mbox: mailbox@8 {
+			compatible = "qcom,msm8939-apcs-mbox";
+			reg = <0x8 0x4>;
+			#mbox-cells = <1>;
+		};
+
+		apcs1_clk: clock-controller@50 {
+			compatible = "qcom,msm8939-apcs-clk";
+			reg = <0x0b011050 0xc>;
+			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+			clock-names = "pll", "aux", "ref";
+			#clock-cells = <0>;
+		};
+	};
+
+Mailbox as parent (what I did in this series):
+
+	apcs1_mbox: mailbox@b011000 {
+		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+		reg = <0x0b011000 0x1000>;
+		#mbox-cells = <1>;
+
+		apcs1_clk: clock-controller {
+			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+			clock-names = "pll", "aux", "ref";
+			#clock-cells = <0>;
+		};
+	};
+
+Maybe it makes more sense with this explanation and the other options.
+Let me know what you think!
+
+Thanks,
+Stephan
+
+[1]: https://lore.kernel.org/linux-arm-msm/aC-AqDa8cjq2AYeM@linaro.org/
