@@ -1,40 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE471F542E;
-	Mon, 23 Jun 2025 12:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7929730E85D;
+	Mon, 23 Jun 2025 12:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681325; cv=none; b=CBRmeoMwLD6XtBCc2hn5RFWRrHlixKkKDAfT1a8ta2xxjhkapvaKu8sgUYuPw7V0+btUW2j6v14YT6stLUk7Kk7qPran1qqEvlIcOPvHIoa+9GLSkyagDqM5fvHNY/hqCTPcHDjl9BJS88muCzfr6/XfhsSiWZsj5AZOaJtCBVw=
+	t=1750681691; cv=none; b=VIhSn/0PP4vLqrm+tXd/rP17FwKR/Lm2iom/ZK9VgLDUDzXIQLf1z0EY7OlnG5LVp4rnFra7G3VUGn8nu6ZHHCz8vONuQX6j83FyKGMmuM2DAIPRZ8mKOR9NjHtSe/mpgRoMenypTBDvxKf961tSVitB0WCngJ6hvgfRzNtqYak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681325; c=relaxed/simple;
-	bh=BX3kWGffKwR8jKbbugtulEnXj6o/sd8kiTE3A0kY6pg=;
+	s=arc-20240116; t=1750681691; c=relaxed/simple;
+	bh=L3lwm4Q79M0itc0l84wAC7ShG2c5tjBD0AKvgW2+PHg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ja20Sag3KoPMTfbD3ZxqeXIVdIBS1eM7FHrjYjz+IQSGEfhYcEjcfKFmH6s0WspOY913pEa//B93Xx8M27IcAO8Ht5PUEd84tvm7pLA8L0H12IxkEcpp4rA7ScyXQJG5GHukvGInEaXz6HcAti+WnPNgHLlSka7g1YAlt1pv2Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nlCFAT4q; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=U4pZFVO4gi4LllwAJ/5yveK9aYTJ2u0QGXoV8oh28QIJtZ0oM9nlIrGSyuXpjZlJLiYPME6119m35VeAK7AXmmqhMQXLdeXNgA3K4G0ZNEdwoFoW9o3+aXruwca2m64Yo5Tv+gEwFxjYvJiWG3VHxQkvjhj1ER20lLJjkKh7TGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A1PlZFFG; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nlCFAT4q"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A1PlZFFG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750681322;
-	bh=BX3kWGffKwR8jKbbugtulEnXj6o/sd8kiTE3A0kY6pg=;
+	s=mail; t=1750681687;
+	bh=L3lwm4Q79M0itc0l84wAC7ShG2c5tjBD0AKvgW2+PHg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nlCFAT4qrsm8CJbwA6C9jm53wiNm1n1d/wI2w8xmVhuIRTPHk06c68q4u4nMFKm+n
-	 T3RYFwA4sQatd9lOioQGhKgiY1kRNkjFqN0DkadumCvSCKtFp7vJlLiY0jZQ/GFYCv
-	 OwHXaKXhfzxdmTtDvbg6qySKVx/CdGeM8Iwr9Xkm8unsdLe6M4pA/Hruzscf3CA9cv
-	 Y4MiotqPf3FEuQUFRYKDrQPakNIFMHv6VxGBm2NPrqqEkTgE5+P9PAuOwa+9sEkYnf
-	 0mzckR8pSS/VBtF4pEVra+r4X4uVNfk62V+chyGPdfeaYHRSgpUrfprijXC6tEvIqn
-	 GkpvbbRQMwTmw==
+	b=A1PlZFFGfM1WxjDwRSi2gG2bnXsvodBiTa3IQX1Iaqlw1rzqHEZu4rjeDYU7YymrS
+	 TCWH9rVwp06kgswjOGnb6hXnZoKxsBD3wwoRVboOoKyYG9BRPbGmeImTCUHH/rsYwI
+	 0nfJV9ok/6U9iROToQz4yqnQys6R9wgSe9qii2e4SiRvlX/JS6NPa8W345gEgv4q+m
+	 vwxFXZJWXf14HR0LFYOmY5BQnht6y1p5dKbKvSH+ey94HnIFGcVWrRO9bp2Sd0qway
+	 NQqHJP+VZ6+ezTOPKrU94Y+6QHfpovYna7+oXgpTfuiGcBrcofvC1Xmr7UmAbWf1Ol
+	 MHpyJe1JyCnJg==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1349417E0FDB;
-	Mon, 23 Jun 2025 14:22:01 +0200 (CEST)
-Message-ID: <dfbd00bd-37bd-425a-aa98-e536b2a3f2d4@collabora.com>
-Date: Mon, 23 Jun 2025 14:22:00 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBA1417E05BD;
+	Mon, 23 Jun 2025 14:28:06 +0200 (CEST)
+Message-ID: <b21b9865-7344-45ab-8f03-09cbd8b961b5@collabora.com>
+Date: Mon, 23 Jun 2025 14:28:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 29/30] dt-bindings: reset: Add MediaTek MT8196 Reset
- Controller binding
+Subject: Re: [PATCH 09/30] dt-bindings: clock: mediatek: Describe MT8196
+ peripheral clock controllers
 To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
  <laura.nao@collabora.com>, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -54,52 +54,199 @@ Cc: guangjie.song@mediatek.com, wenst@chromium.org,
  linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
  kernel@collabora.com
 References: <20250623102940.214269-1-laura.nao@collabora.com>
- <20250623102940.214269-30-laura.nao@collabora.com>
- <2bc23bcf-0021-44dd-ae42-9ef0e95e3b32@kernel.org>
+ <20250623102940.214269-10-laura.nao@collabora.com>
+ <ef64816f-0ba2-4a12-bef8-aa10e44793e1@kernel.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <2bc23bcf-0021-44dd-ae42-9ef0e95e3b32@kernel.org>
+In-Reply-To: <ef64816f-0ba2-4a12-bef8-aa10e44793e1@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 23/06/25 14:13, Krzysztof Kozlowski ha scritto:
+Il 23/06/25 14:12, Krzysztof Kozlowski ha scritto:
 > On 23/06/2025 12:29, Laura Nao wrote:
->> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>
->> Add a binding for the PEXTP0/1 and UFS reset controllers found in
->> the MediaTek MT8196 Chromebook SoC.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>   .../reset/mediatek,mt8196-resets.h            | 26 +++++++++++++++++++
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - mediatek,mt8196-adsp
+>> +          - mediatek,mt8196-imp-iic-wrap-c
+>> +          - mediatek,mt8196-imp-iic-wrap-e
+>> +          - mediatek,mt8196-imp-iic-wrap-n
+>> +          - mediatek,mt8196-imp-iic-wrap-w
+>> +          - mediatek,mt8196-mdpsys0
+>> +          - mediatek,mt8196-mdpsys1
+>> +          - mediatek,mt8196-pericfg-ao
+>> +          - mediatek,mt8196-pextp0cfg-ao
+>> +          - mediatek,mt8196-pextp1cfg-ao
+>> +          - mediatek,mt8196-ufscfg-ao
+>> +          - mediatek,mt8196-vencsys
+>> +          - mediatek,mt8196-vencsys-c1
+>> +          - mediatek,mt8196-vencsys-c2
+>> +          - mediatek,mt8196-vdecsys
+>> +          - mediatek,mt8196-vdecsys-soc
+>> +      - const: syscon
 > 
-> This belongs to the binding doc.
+> Why everything is syscon?
 > 
->>   1 file changed, 26 insertions(+)
->>   create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
->>
->> diff --git a/include/dt-bindings/reset/mediatek,mt8196-resets.h b/include/dt-bindings/reset/mediatek,mt8196-resets.h
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  '#reset-cells':
+>> +    const: 1
+>> +
+>> +  mediatek,hardware-voter:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: A phandle of the hw voter node
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pericfg_ao: clock-controller@16640000 {
+>> +        compatible = "mediatek,mt8196-pericfg-ao", "syscon";
+>> +        reg = <0x16640000 0x1000>;
+>> +        mediatek,hardware-voter = <&scp_hwv>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> +  - |
+>> +    pextp0cfg_ao: clock-controller@169b0000 {
+>> +        compatible = "mediatek,mt8196-pextp0cfg-ao", "syscon";
+>> +        reg = <0x169b0000 0x1000>;
+>> +        #clock-cells = <1>;
+>> +        #reset-cells = <1>;
+>> +    };
+>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
 >> new file mode 100644
->> index 000000000000..1a01b2b01f7f
+>> index 000000000000..363ebe87c525
 >> --- /dev/null
->> +++ b/include/dt-bindings/reset/mediatek,mt8196-resets.h
->> @@ -0,0 +1,26 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
+>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
+>> @@ -0,0 +1,76 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/mediatek,mt8196-sys-clock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek System Clock Controller for MT8196
+>> +
+>> +maintainers:
+>> +  - Guangjie Song <guangjie.song@mediatek.com>
+>> +  - Laura Nao <laura.nao@collabora.com>
+>> +
+>> +description: |
+>> +  The clock architecture in MediaTek SoCs is structured like below:
+>> +  PLLs -->
+>> +          dividers -->
+>> +                      muxes
+>> +                           -->
+>> +                              clock gate
+>> +
+>> +  The apmixedsys, apmixedsys_gp2, vlpckgen, armpll, ccipll, mfgpll and ptppll
+>> +  provide most of the PLLs which are generated from the SoC's 26MHZ crystal oscillator.
+>> +  The topckgen, topckgen_gp2 and vlpckgen provide dividers and muxes which
+>> +  provide the clock source to other IP blocks.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - mediatek,mt8196-apmixedsys
+>> +          - mediatek,mt8196-armpll-b-pll-ctrl
+>> +          - mediatek,mt8196-armpll-bl-pll-ctrl
+>> +          - mediatek,mt8196-armpll-ll-pll-ctrl
+>> +          - mediatek,mt8196-apmixedsys-gp2
+>> +          - mediatek,mt8196-ccipll-pll-ctrl
+>> +          - mediatek,mt8196-mfgpll-pll-ctrl
+>> +          - mediatek,mt8196-mfgpll-sc0-pll-ctrl
+>> +          - mediatek,mt8196-mfgpll-sc1-pll-ctrl
+>> +          - mediatek,mt8196-ptppll-pll-ctrl
+>> +          - mediatek,mt8196-topckgen
+>> +          - mediatek,mt8196-topckgen-gp2
+>> +          - mediatek,mt8196-vlpckgen
+>> +      - const: syscon
 > 
-> Wrong license, use standard ones.
+> Why everything is syscon?
 
-Oh WHOOOOOPS! No idea how that happened.
+Like all other MediaTek SoCs - each sub-IP has its own clock controller, and all
+of those sub-IPs have part of the system controller.
 
-Laura, can you please change this to (GPL-2.0-only OR BSD-2-Clause)?
+It's just a MediaTek SoC being a... MediaTek SoC.
 
-Thanks!
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  mediatek,hardware-voter:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: A phandle of the hw voter node
+> 
+> Do not copy property name to description, but say something useful - for
+> what? And why this cannot be or is not a proper interconnect?
+> 
+
+Laura, please check the commit description of my power domains HWV patches
+here: 20250623120154.109429-8-angelogioacchino.delregno@collabora.com
+
+...and follow what krzk just said which... well, my bad for not complaining
+about this during internal reviewing.
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    apmixedsys_clk: syscon@10000800 {
+>> +        compatible = "mediatek,mt8196-apmixedsys", "syscon";
+>> +        reg = <0x10000800 0x1000>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> +  - |
+>> +    topckgen: syscon@10000000 {
+>> +        compatible = "mediatek,mt8196-topckgen", "syscon";
+>> +        reg = <0x10000000 0x800>;
+>> +        mediatek,hardware-voter = <&scp_hwv>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> +
+> 
+> 
+> 
+>> +#define CLK_OVL1_DLO9					56
+>> +#define CLK_OVL1_DLO10					57
+>> +#define CLK_OVL1_DLO11					58
+>> +#define CLK_OVL1_DLO12					59
+>> +#define CLK_OVL1_OVLSYS_RELAY0				60
+>> +#define CLK_OVL1_OVL_INLINEROT0				61
+>> +#define CLK_OVL1_SMI					62
+>> +
+>> +
+>> +/* VDEC_SOC_GCON_BASE */
+>> +#define CLK_VDE1_LARB1_CKEN				0
+>> +#define CLK_VDE1_LAT_CKEN				3
+> 
+> IDs increment by 1, not 3.
+
+Thank you, Krzysztof - sharp as always!
 
 Cheers,
 Angelo
-
-> 
-> Best regards,
-> Krzysztof
-
 
