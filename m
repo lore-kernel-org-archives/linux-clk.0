@@ -1,185 +1,219 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F52829DB7F;
-	Mon, 23 Jun 2025 17:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488271DACB1
+	for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 18:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750700664; cv=none; b=dAYkM65mD86ZxeJcQPM0Jivk70km1CcMmTv+nANj2CQsL1Ih1l3eEZs09bcSwbk6lJ5mtbVAnzQz2yTKin3zEARsLY2BhnVAh57Rrrg4gIzG0hRxxjZhqZ4uu3k3dj9yri0s6slliuNM4ThUb29/IbUySMOcSzZtYeZ5RsmGX58=
+	t=1750702141; cv=none; b=MlH4L9Upv/z/0yPpkqHXGLL0B3eROBMM8AuuqRfkm2EbK1LlZXGjFQXQ/7tcVtbZ0vAgpI2ZAnH3JUYfRksa7mpZvkKj8ZFDbNVJdDdpti3nrH8ekkEZEqJlAEhNtdQvsIVL9pZii9sgN2IeLkVehLNoMYFoz0+cUCyqBsPOSIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750700664; c=relaxed/simple;
-	bh=buFR86CbEJajgXCGgjs9OpR+12x9UYnUmlkj20EIlKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PYyF8Sv8DS/weiCkFd378kGsF3xMyoh9rW9IawEetyO/kJ+HPwuTGFuzHZ3SZamH8M2MnrymckoDwYCFrYR2PbRxPXfGqe7PHu6sXinfeUc68dJIsZTpL7N0rq7fjVhXUdT1q9NwraFboBhRmy5+Lw1GOl6zYj/7HflJfvZAxIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A75J2zGu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1750702141; c=relaxed/simple;
+	bh=lKMjjI0CD+0NOz10GEsQsk5hFuAjVtzdeqJ7LGsVqj0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
+	 References; b=lM3bdaEAw+1Rkr0lcEBmSWaGO+AwXntJQebPlgCvqPUa0w5vJg/8Owc03GLbz57r5iVBCj0cwp0kNUWRLKERupEDJUO/aySjyPKtsPs1Rph5CwW+Zczj8dhMDvL8b2ueDlqHCh0ujcAGoiyTTw/kOZTWIzpVEWue+77QE0H/p/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jLJfdr72; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A75J2zGu"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NDRsAW017023;
-	Mon, 23 Jun 2025 17:44:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hJF3Ty1czmm05Sp7DzaIycn/BLZzZuhUo+jJUKr3vbM=; b=A75J2zGuJVT+SOGy
-	4VyDI/ATaeCZn49OyxJUwsHdPawxtJldJaUogZ7ffOwXToj17y+7xZQXZJJwHCr/
-	iMv/lEefeitFl1sLh1HaSJxoIzZwyvOfLn+DrdIQ4+XBQbDLeJXyy9V99V6HkMG0
-	EGlPEKJa8eQfLAGr7RZD/sXTFN4wW5uqpW8MMBTcX8fmxv1WKU6Cr+ArWe244yoh
-	PGn9KPn65n5PuK807hVYyNoS1S+2h8Ta5VgDl4jnWUMIlx6IlUCb/6CPMxwZTdY7
-	neE5L0gi+zrTYg74ZlySnmElqp2Uhm77SBkT7XqAfdAMuY2PBgiBGOAwrd1hujeZ
-	hlBN1w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f7ttrrgq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Jun 2025 17:44:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55NHiFvx031964
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Jun 2025 17:44:15 GMT
-Received: from [10.216.15.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 23 Jun
- 2025 10:44:09 -0700
-Message-ID: <3d2e9354-40a5-4908-a6a6-cfc8afd4c702@quicinc.com>
-Date: Mon, 23 Jun 2025 23:14:05 +0530
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jLJfdr72"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250623180857euoutp01bec3f762b3fc04b8d12ee4693d245712~LvlGUAqNB0365003650euoutp01p
+	for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 18:08:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250623180857euoutp01bec3f762b3fc04b8d12ee4693d245712~LvlGUAqNB0365003650euoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750702137;
+	bh=gnd9AgBLlzI9gRNy4DOqDUc3dGypeF45QUvYRkKrTAw=;
+	h=From:Subject:Date:To:Cc:References:From;
+	b=jLJfdr72ggBJPhW5buoCnL6kTDBrdxJ5v2DO7UMHggWtrZzzoZMdsmKEVR4F4C7Y7
+	 FP7hYK6KjHuOPxn3/TOFh5zyL3Gb3d4ypUNzDejkv/sI/7oiId8aEUt2vdvI0YOmtq
+	 I0hnLCU57uwRb8k6N2jZMs3x46rI/PjRIdT2yjIY=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250623180857eucas1p2e3e9ddad89b5f055af801cb97dbfc7cc~LvlFplo4O0102201022eucas1p20;
+	Mon, 23 Jun 2025 18:08:57 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250623180855eusmtip1afa4b6d035233e5b46c8bb061eb13572~LvlEe3H7R0652006520eusmtip1r;
+	Mon, 23 Jun 2025 18:08:55 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v5 0/9] Rust Abstractions for PWM subsystem with TH1520 PWM
+ driver
+Date: Mon, 23 Jun 2025 20:08:48 +0200
+Message-Id: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom,sm8450-videocc: Add minItems
- property
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli"
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "kernel test robot" <lkp@intel.com>
-References: <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-0-02e83aeba280@quicinc.com>
- <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-1-02e83aeba280@quicinc.com>
- <4657c6d8-8454-478a-aac3-114c6194b72e@linaro.org>
- <5ed72663-da54-46a4-8f44-1ceda4a7d0d9@quicinc.com>
- <6068badd-8d33-4660-aef8-81de15d9b566@linaro.org>
- <ffe32102-cc55-4f86-b945-ae77a4e163bd@oss.qualcomm.com>
- <aswg6zjmyi4pcx75uzfj5byadkx5gof2yfpjcu7fspbuniatrg@dy52pmcrgnoc>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <aswg6zjmyi4pcx75uzfj5byadkx5gof2yfpjcu7fspbuniatrg@dy52pmcrgnoc>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=QINoRhLL c=1 sm=1 tr=0 ts=68599270 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
- a=OLmTynEB7P0R7dDm6R4A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 51Nswkb2jdWpOy211cosqsGxp41t7AdK
-X-Proofpoint-GUID: 51Nswkb2jdWpOy211cosqsGxp41t7AdK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDEwOSBTYWx0ZWRfX/l1mE2PqlSIy
- U1ftgDj+n/lLjJsNRkz5hSPAEXMaSVRqN5UNc2tCKAKEERdMuHKDt7AC4RarQk8C8hXJLhpgq/o
- mQqbQk3aOZHXOySl5z4mANAhmB5NKySuIL0cCk8cSXRYR5ULNb0bdKA6Cc6X8o3IkoJylThLKZl
- 24qwyUEJK3y7v2n3rDHATj1g+/bTfK6I5vaoAziQCHbmm4T/dqi3h1e7/fGpBSkwjHO8xO8jmMd
- YFUuDlnZxR8ZdLE6KtmbpVsn0uS+LdOV8ZXyHLZ7jRGuIPHHEZ6jY3YRsOuU+dROuBlDkH/sZlT
- 0nTyEENazdxTB21z6nKAMAyr7KH7qeOcLsBABTn2kwJEBrPJVz8ejgXXPsKk6BpbVVYOLE4n7R9
- TvLlM8UieLG3fGGO2RGe1bk9CT6EsYMe+tjOxJAcyCN8x8Bz/CPgy4xnFxN6R3pYqjT5LpgJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-23_05,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0
- clxscore=1015 mlxlogscore=999 bulkscore=0 suspectscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506230109
+X-B4-Tracking: v=1; b=H4sIADCYWWgC/5XNvW7DIBSG4VuJmHsiOAb/ZMp9VB0wcBxUGSJwn
+	FSR7704S1JlccfvG573zrJL3mV22N1ZcrPPPoYy1MeOmZMOgwNvy2bIUXGFEtIlTxDcbYLzdYR
+	rTN8+DEA6AMUE2QW7bqVQW7SiF13FinVOjvzt0fn8Kvvk8xTTzyM7i/X9b2EWwKG3JaJ4J4maY
+	9ZjvoRhb+LI1saMT7cWfKuLxW1U5bBTioTg72716jZb3aq4whjdysbU1NG7K1/ddqsri6trjS1
+	hX9tW/3WXZfkF0ZwkhOQBAAA=
+X-Change-ID: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
+	Wilczynski <m.wilczynski@samsung.com>, Drew Fustini <drew@pdp7.com>,  Guo
+	Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,  Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+	<conor+dt@kernel.org>,  Paul Walmsley <paul.walmsley@sifive.com>,  Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,  Alexandre
+	Ghiti <alex@ghiti.fr>,  Marek Szyprowski <m.szyprowski@samsung.com>,  Benno
+	Lossin <lossin@kernel.org>,  Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,  Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250623180857eucas1p2e3e9ddad89b5f055af801cb97dbfc7cc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623180857eucas1p2e3e9ddad89b5f055af801cb97dbfc7cc
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623180857eucas1p2e3e9ddad89b5f055af801cb97dbfc7cc
+References: <CGME20250623180857eucas1p2e3e9ddad89b5f055af801cb97dbfc7cc@eucas1p2.samsung.com>
 
+This patch series introduces Rust support for the T-HEAD TH1520 PWM
+controller and demonstrates its use for fan control on the Sipeed Lichee
+Pi 4A board.
 
+The primary goal of this patch series is to introduce a basic set of
+Rust abstractions for the Linux PWM subsystem. As a first user and
+practical demonstration of these abstractions, the series also provides
+a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+of its PWM channels and ultimately enables temperature controlled fan
+support for the Lichee Pi 4A board. This work aims to explore the use of
+Rust for PWM drivers and lay a foundation for potential future
+Rust based PWM drivers.
 
-On 6/21/2025 3:04 AM, Dmitry Baryshkov wrote:
-> On Fri, Jun 20, 2025 at 07:39:06PM +0200, Konrad Dybcio wrote:
->> On 6/20/25 7:56 AM, Krzysztof Kozlowski wrote:
->>> On 19/06/2025 12:20, Jagadeesh Kona wrote:
->>>>
->>>>
->>>> On 6/18/2025 11:56 AM, Krzysztof Kozlowski wrote:
->>>>> On 17/06/2025 21:07, Jagadeesh Kona wrote:
->>>>>> Add minItems as 1 for power-domains and required-opps properties
->>>>>> to allow this binding to be compatible with both single and multiple
->>>>>> power domains.
->>>>>
->>>>> This is your hardware, so you know how it works thus I expect here
->>>>> arguments why this is correct from the hardware point of view. Without
->>>>> this, it is impossible to judge whether this is a correct change.
->>>>>
->>>>> If I overlook this now, it will be used in discussions by other qcom
->>>>> engineers, so unfortunately you see, you need to prepare perfect commits
->>>>> now...
->>>>>
->>>>
->>>> These clk controllers mainly require MMCX power domain to be enabled to access
->>>> the clock registers. But to configure the cam & video PLLs in probe, an additional
->>>> MXC power domain also needs to be enabled.
->>>
->>>
->>> Then your patch is not correct. Anyway, you should explain the hardware
->>> in commit msg, why this domain is optional in the hardware.
->>>
->>>>
->>>> Since the initial DTS changes only added MMCX power domain, this change is required
->>>> to be backward compatible with older DTS and avoid ABI breakage as discussed in below
->>>> thread.
->>>
->>>
->>> So you send incorrect hardware description allowing something which will
->>> not work? Or how exactly?
->>
+The core of this series is a new rust/kernel/pwm.rs module that provides
+abstractions for writing PWM chip provider drivers in Rust. This has
+been significantly reworked from v1 based on extensive feedback. The key
+features of the new abstraction layer include:
 
-The initial videocc with single power domain works fine, but in that case the
-PLL's work with default sub-optimal configuration settings and below PLL
-warning during bootup was reported during video iris testing. 
+ - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+   by ARef, correctly tying its lifetime to its embedded struct device
+   reference counter. Chip registration is handled by a pwm::Registration
+   RAII guard, which guarantees that pwmchip_add is always paired with
+   pwmchip_remove, preventing resource leaks.
 
-[    3.327753] Lucid PLL latch failed. Output may be unstable!
+ - Modern and Safe API: The PwmOps trait is now based on the modern
+   waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+   by the subsystem maintainer. It is generic over a driver's
+   hardware specific data structure, moving all unsafe serialization logic
+   into the abstraction layer and allowing drivers to be written in 100%
+   safe Rust.
 
-The multi PD support helps to fix the above warning.  
+ - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+   types (State, Args, Device, etc.) and uses standard kernel error
+   handling patterns.
 
+The series is structured as follows:
+ - Rust PWM Abstractions: The new safe abstraction layer.
+ - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+   top of the new abstractions.
+ - Clock Fix: A necessary fix to the TH1520 clock driver to ensure bus
+   clocks remain enabled.
+ - Device Tree Bindings & Nodes: The remaining patches add the necessary
+   DT bindings and nodes for the TH1520 PWM controller, a thermal
+   sensor, and the PWM fan configuration for the Lichee Pi 4A board.
 
->> So I think there's a mistake in understanding the backwards compatibility
->> paradigm here.
->>
->> There exists a single, objectively correct and represented in hardware,
->> list of required power-domains and the commit that caused the schema
->> validation errors was essentially "align YAML with reality" which should
->> be coupled with an immediate DT update to match and we forget about the
->> incomplete past
-> 
-> I'd second that. Let's make sure that the _driver_ works with old DT.
-> But we don't have to support old DT in schema.
-> 
+Testing:
+Tested on the TH1520 SoC. The fan works correctly. The duty/period
+calculations are correct. Fan starts slow when the chip is not hot and
+gradually increases the speed when PVT reports higher temperatures.
 
-Yes, The driver code is already backward compatible with the older DT.
+The patches are based on mainline, with some dependencies which are not
+merged yet - platform Io support [1].
 
-Thanks,
-Jagadeesh
+Reference repository with all the patches together can be found on
+github [2].
+
+[1] - https://lore.kernel.org/rust-for-linux/20250509-topics-tyr-platform_iomem-v8-0-e9f1725a40da@collabora.com/
+[2] - https://github.com/mwilczy/linux/commits/rust-next-pwm-working-fan-for-sending-v9/
+
+---
+Changes in v5:
+- Reworked `pwm::Chip` creation to take driver data directly, which
+  allowed making the `chip.drvdata()` accessor infallible
+- added missing `pwm.c` file lost during the commit split (sorry !)
+- Link to v4: https://lore.kernel.org/r/20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com
+
+Changes in v4:
+ - Reworked the pwm::Registration API to use the devres framework,
+   addressing lifetime issue.
+ - Corrected the PwmOps trait and its callbacks to use immutable references
+   (&Chip, &Device) for improved safety.
+ - Applied various code style and naming cleanups based on feedback
+
+- Link to v3: https://lore.kernel.org/r/20250617-rust-next-pwm-working-fan-for-sending-v3-0-1cca847c6f9f@samsung.com
+
+Changes in v3:
+ - Addressed feedback from Uwe by making multiple changes to the TH1520
+   driver and the abstraction layer.
+ - Split the core PWM abstractions into three focused commits to ease
+   review per Benno request.
+ - Confirmed the driver now works correctly with CONFIG_PWM_DEBUG enabled
+   by implementing the full waveform API, which correctly reads the
+   hardware state.
+ - Refactored the Rust code to build cleanly with
+   CONFIG_RUST_BUILD_ASSERT_ALLOW=n, primarily by using the try_* family of
+   functions for IoMem access.
+ - Included several cosmetic changes and cleanups to the abstractions
+   per Miguel review.
+
+- Link to v2: https://lore.kernel.org/r/20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com
+
+Changes in v2:
+ - Reworked the PWM abstraction layer based on extensive feedback.
+ - Replaced initial devm allocation with a proper ARef<Chip> lifetime model
+   using AlwaysRefCounted.
+ - Implemented a Registration RAII guard to ensure safe chip add/remove.
+ - Migrated the PwmOps trait from the legacy .apply callback to the modern
+   waveform API.
+ - Refactored the TH1520 driver to use the new, safer abstractions.
+ - Added a patch to mark essential bus clocks as CLK_IGNORE_UNUSED to fix
+   boot hangs when the PWM and thermal sensors are enabled.
+- Link to v1: https://lore.kernel.org/r/20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com
+
+---
+Michal Wilczynski (9):
+      rust: pwm: Add Kconfig and basic data structures
+      rust: pwm: Add core 'Device' and 'Chip' object wrappers
+      rust: pwm: Add driver operations trait and registration support
+      pwm: Add Rust driver for T-HEAD TH1520 SoC
+      clk: thead: Mark essential bus clocks as CLK_IGNORE_UNUSED
+      dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM controller
+      riscv: dts: thead: Add PWM controller node
+      riscv: dts: thead: Add PVT node
+      riscv: dts: thead: Add PWM fan and thermal control
+
+ .../devicetree/bindings/pwm/thead,th1520-pwm.yaml  |  48 ++
+ MAINTAINERS                                        |   8 +
+ arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  |  67 ++
+ arch/riscv/boot/dts/thead/th1520.dtsi              |  18 +
+ drivers/clk/thead/clk-th1520-ap.c                  |   5 +-
+ drivers/pwm/Kconfig                                |  23 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm_th1520.rs                          | 318 ++++++++
+ rust/bindings/bindings_helper.h                    |   1 +
+ rust/helpers/helpers.c                             |   1 +
+ rust/helpers/pwm.c                                 |  20 +
+ rust/kernel/lib.rs                                 |   2 +
+ rust/kernel/pwm.rs                                 | 890 +++++++++++++++++++++
+ 13 files changed, 1400 insertions(+), 2 deletions(-)
+---
+base-commit: 79b01ff21368605a62b76535ab1ab5f1f726de60
+change-id: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
+
