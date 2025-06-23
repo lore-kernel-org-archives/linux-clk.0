@@ -1,97 +1,128 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E00522D9F3
-	for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 08:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71E156236;
+	Mon, 23 Jun 2025 08:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750667653; cv=none; b=XdI4qAQ8ukzxua7o1amHYgtgQiBAnNwajNVsuObE+lRpqJ3gskYgwqlTA5lf0nieStkigldMRnjJon0aUES/J8AAWJxwR1lfmnJLbPBoLbezxHKNUkKaLOa3kvWRIR7/lIQb41gomH6a1P4qFEHQpVp5xIXuREJZGLIUDppknuc=
+	t=1750668318; cv=none; b=graYlWsZLoTFwPy2w1QdcKQJd80lXqrChkD3zlW9YfqaqWM9dsfKc0aeK11qaFTiMINROw/nvvxtAUemOQxHXgZRxJxxgKUiIpcZHRvgAAp7SOim2+Mi8jU+OytswY5eUMVZOP8yWKAFYWM2VOW392kNa7HAgSOBNDIyvG58bEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750667653; c=relaxed/simple;
-	bh=vLww2eGHeZc4ZEtzZZSOGEU6r7W4F67eKI8Q0JDb0Po=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XUYxL1nkkk+XS7+A9WsYm+tPqGuNTykDcei1Lr9eHEbvtugS+ZKUAuF+2J5mGugJX4cLCKYkWhx0TrRQOyddb3muB8inoun+TW457C9YJMJ0MTy0lPNjwfV6KN3/Hgnm639WX9imn8iCdCNMi5a6CoMUR7/tPTPeXZPbFtltJTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XrIcSGtW; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1750668318; c=relaxed/simple;
+	bh=czCnr454L0Rdgtenujc5uQtXulaQ8IYmBZKADIw/Euw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TyF+YvVd+IIMo1OC3uVeKozL103WkFdYI7xdOke8CHqEF9LulSuVsFO5692eKdArKsFSUplDFUprenf2wXpb+UoBUCgOFD3RkGtWDYnAQLx+p1aXvn4qTSzYZLO+M9c1LGiBDeW/Dv56gzST0XCpa+HbGPetKznbIX4KW7L4hms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M+161uPZ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XrIcSGtW"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453608ed113so33962295e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jun 2025 01:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750667649; x=1751272449; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6V4vS/eU1Q8rEblmiZ9Om+oGMdxgfuC51356EGTOok=;
-        b=XrIcSGtWVKaDW3FnqFgesWzizpNmq2x6P9OwDNrephFbcnUtTHh2wAX5+WosX33SNG
-         6r14OoXUThXYfo4LFPYV8kv/3PrEszyAqXU9EVRiPs93+7i1+RVawzoFZ36vwWk+oe6M
-         ZmpiewVRG86PnW4CXoqwlTBcuxe5KKSHwXRKRMZCdJcG9CYUalOy6cy58LwZMTQ57sfO
-         FHn34HDQTGLUOxVe/dVOdtKRWjavayotQ3bmvIlpKwyxjudndzfpjVr97K88JDl9ou1P
-         cks84R7OaPfBID9MVoMhM9BbSQkCbDnNZ4iapRgJVMMIwWv6M7XrncbCe3GYgokhPkJ+
-         xZiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750667649; x=1751272449;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E6V4vS/eU1Q8rEblmiZ9Om+oGMdxgfuC51356EGTOok=;
-        b=CNxtTmHyCe6BQWHiGLt3mxfFB8C3LJfpUyIaWAn9dpgTx2DklYALMze7+apFElhOli
-         MOlux7/NZWdydYducuEndww0C9ZIc+dHmvw3iuYO4u9ayda/fMBSgZ+DYCpaJeYtcbVy
-         GBs2JydZD/J4DFPeSiDw0ToVmM23vc49sDaxC8VbJ04KTZubiRMLtL+wsaQv5Habv+ul
-         aUzvUPPwJoyzBYyeib1g/fEJX2XfI4qTMG8ngoJlVYJedZPzJSGInrPt3JMMJaIS7SJX
-         z0o/wRLATlsZUGftEGiqbojegW4s1aWdp3Ny9ncZPmbPuEU+Hmtn/V0HRINFkTJKFn1i
-         BzoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT83HXVBjf2kiXeMIQlX2jWxFLbgu+duDc0U187WMJJlRQMfs6iYrBaLAlnliJRS1kFrIYxlQq8oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmazQT6rRO7HtHPN2lAGQEsZw+5BvZ+CtyV0c2My2A4emfZXTg
-	XIS30uCz2HTc33K9b62YwiqH++gH/rJ889vK7Ds3g+aqCFbjYbhFYVFYTx2rB4bkjWs=
-X-Gm-Gg: ASbGncunOhPQoHSg0Zvjfp3i9hpBUnIx7sKoG2DWZ+uKj8h24nb3K++xv+KZ+W/O2++
-	oXtXbnaS4WgL8IxUVsBiyQHn/UBtJhAlmD/U2MSIK404zMhTEAmcWBW4HNSdsfG5Aoh+1arIsRn
-	0EDW49BXEeOOvK+xsa7hUQi8Auc/fHS4IGZ3nNHYvgpp5Ud6IZ615+MoucK0o4HKUl5mIDRLpZP
-	kMWJo7w/92SYUo5TQVopdwS2AcZQJGJQRYxwsV0PqQHlINfsHOW+tGgcRKgotpeMr9yZqMTcDHM
-	yTX1DQmiOPhDYKbRrY6r8GWYT0wGuVcxn6swLUa+ZkLXd627ZA2j790E81xJ
-X-Google-Smtp-Source: AGHT+IHSJfvK6dQbPraZ8PZJdEqb5ZYNuG0wqSXtbY+ekDrm3YLiM3GUQj5KWveW7N4Q0Rxk3iAgdg==
-X-Received: by 2002:a05:600c:1f94:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-45365a05192mr105949495e9.30.1750667648653;
-        Mon, 23 Jun 2025 01:34:08 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:dd07:164c:d535:3e5])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-453624554cfsm75443835e9.0.2025.06.23.01.34.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 01:34:08 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: add a clk_hw helpers to get the clock device
- or device_node
-In-Reply-To: <175040405169.4372.877329870252746551@lazor> (Stephen Boyd's
-	message of "Fri, 20 Jun 2025 00:20:51 -0700")
-References: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
-	<175040405169.4372.877329870252746551@lazor>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 23 Jun 2025 10:34:07 +0200
-Message-ID: <1jo6uekgao.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M+161uPZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750668317; x=1782204317;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=czCnr454L0Rdgtenujc5uQtXulaQ8IYmBZKADIw/Euw=;
+  b=M+161uPZpKUDCmMnczoYlKeoUteJ0dUkmwv+iXSrVr5x+ODPi1mLIkFN
+   CIRU/MlhBKbMgLjfU2xXJYuYrKlIOCVTTi4590F8JSKG4sY0HzYtF/Zry
+   PwAxg2N5DAqRXQtEvs6Rew8tzcR/rSLe70yWB2CuJs/acXHm8d8Mr2H/k
+   gI9uEht7cY0AIW2AnsTOfX0Z6YSaqP14DuID4II9cCm6p+RYU1Zmhu06N
+   B4nJjbf6tHBmEZnJVWoCZhw5OHMHUF31hY5r/XAkYH6b4aBzXBUgFvjHn
+   Trt9ZA5heC30tkR24h/867uhvrnLQ3hlUfuP2NHpdr8Z7f7sti8afx2io
+   g==;
+X-CSE-ConnectionGUID: aplOaf2vSPGBOsfTXYpRWA==
+X-CSE-MsgGUID: Sa61Gde3S0mFgHt9D3JWOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="55498544"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="55498544"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:45:16 -0700
+X-CSE-ConnectionGUID: a/sJG7yBTmO0RoMIxh1VOw==
+X-CSE-MsgGUID: sQ1iTc6BQKKm1IEI9yq6Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="155547323"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:45:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uTcna-0000000973l-0JQc;
+	Mon, 23 Jun 2025 11:45:06 +0300
+Date: Mon, 23 Jun 2025 11:45:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 05/23] mailbox: Allow controller specific mapping
+ using fwnode
+Message-ID: <aFkUETH_R30-CNOX@smile.fi.intel.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-6-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618121358.503781-6-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri 20 Jun 2025 at 00:20, Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Jun 18, 2025 at 05:43:40PM +0530, Anup Patel wrote:
+> Introduce optional fw_node() callback which allows a mailbox controller
+> driver to provide controller specific mapping using fwnode.
+> 
+> The Linux OF framework already implements fwnode operations for the
+> Linux DD framework so the fw_xlate() callback works fine with device
+> tree as well.
 
-> Quoting Jerome Brunet (2025-04-17 06:44:21)
->> This patchset adds helpers to get the device or device_node associated with
->> clk_hw. This can be used by clock drivers to access various device related
->> functionality. The 2nd changes adds kunit test coverage for the new helpers
->> 
->
-> I've pushed this to clk-hw-device, splitting the test patch into two and
-> reworking it. Let me know if you see anything off.
+...
 
-Thanks a lot Stephen !
+> +	fwnode = dev_fwnode(dev);
+> +	if (!fwnode) {
+> +		dev_dbg(dev, "No owner fwnode\n");
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	ret = fwnode_property_get_reference_args(dev_fwnode(dev), "mboxes",
 
-You could keep the authorship of the 2nd patch I think, it is more a
-rewrite than a rework. Either way, it is fine by me. Thanks again.
+Why not using fwnode directly here?
+
+> +						 "#mbox-cells", 0, index, &fwspec);
+>  	if (ret) {
+> -		dev_err(dev, "%s: can't parse \"mboxes\" property\n", __func__);
+> +		dev_err(dev, "%s: can't parse \"%s\" property\n", __func__, "mboxes");
+>  		return ERR_PTR(ret);
+>  	}
+
+...
+
+Otherwise looks like a good solution to get rid of OF-centric code from mailbox
+in the future.
 
 -- 
-Jerome
+With Best Regards,
+Andy Shevchenko
+
+
