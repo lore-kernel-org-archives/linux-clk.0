@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E240B1DE4E6;
-	Mon, 23 Jun 2025 09:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E558230BCB;
+	Mon, 23 Jun 2025 09:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750669727; cv=none; b=VCLir0FGKDEmRaFx+WIwxEKOrLX5oq7PcCc7TLeZS50iPlPy95c8Ojgo95fAb0TvAzLdth87R8uN6V1714pxtl3V4bygfmUZ2aYgeR6zp1tg2p1Sr4M8ovK+ZreFg6pHfwcdVogvM23YwVQmR40G7f3UHqrakY2+NVrfX5ha8Fc=
+	t=1750670067; cv=none; b=hv7sVJGJXPFNuGDs54V9/4NfN6yIu/1vInAS1nEu8MCmhsEpHXlSp4URwN8+BKpQkkzEitonO68sgxdQEPr0kPcMFtGDzUH3LUg4vQ0SRZF1Pbg/KGhtgj38SfwAj6yV5BLZvYozFx3i7YEVDQbRb8HSWUbzg8234JNM3sp0Y0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750669727; c=relaxed/simple;
-	bh=W7hiJd78r+59Ny4okc/0aID6HplmUdQ4ZRFh1yeSVfc=;
+	s=arc-20240116; t=1750670067; c=relaxed/simple;
+	bh=eIeY3heN+gnrpZQU6Tbcw37VApX8DZLMbgNPQw+j5oI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mUX59voch042MjConPL7i5p85ThALvpRZ/5iScSQPFNhs695k2cpu5fw2w34D3/IYqHfAslE9zIzR7YYBHIwWNP1avUgpboRoj260HeAw2yRBdYOfg7j8yrK9BIUuBMgR7n7oAnATBkD4eiiLlUdN7TaroTLGc26cw+0XjAc8Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cGQbN2C2; arc=none smtp.client-ip=192.198.163.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=b94k48Mja8JBcxkupEgRrPFFEeR6LgElEFtBeXABQyWCSIHdfgCAxdADgTPpH2oTrr+WkLdP3lYkFhSQBQEezvdj85dF+AFet1f7222ofomsxtsUgVpH3Z5Sjn7/DPXifRFS1e+5PdjWDuZts18rS0h/wgydFfPuaIjCQ02haxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9+TxHmB; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cGQbN2C2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9+TxHmB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750669726; x=1782205726;
+  t=1750670066; x=1782206066;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=W7hiJd78r+59Ny4okc/0aID6HplmUdQ4ZRFh1yeSVfc=;
-  b=cGQbN2C2+EloY1PliYfaVHSgvrC1C4hpz43xLMoAoEJl0oZy3rjkyPEI
-   JJ7s3vU9UJtoBLu29pNtmHAkt1GvVz+z3D/CYe/SiQ+9QEp3d8U/jqfW1
-   Cw9KMbRr/hckbg9dV+Bicr+OSq3TAAEs6/gVYuB3qvUuhli4SICGmFBzX
-   ehh9fHguvvcbgZxkLXCEpXq+8rwl2rLNiRP0uj7wIDVW0bjQzKXmgaaHS
-   /6OgdO3S3qc1heqrFieorg8hY2U9Yi87hk3iNKizN7uu2IM/FaKl6aXBw
-   iqDs4WeZjfpqNGaeUnCiayIBu1Wey6/kwuRgsrR1fZIBJay7k2B35ZOqK
+  bh=eIeY3heN+gnrpZQU6Tbcw37VApX8DZLMbgNPQw+j5oI=;
+  b=M9+TxHmB9wMgmsHBBpmUDchcKOU6YAl3mI8DuUGWfIicDk19tplmuc1v
+   73lH+yr47P0JZkrvf3oxSye32TQ9TrT+l0wmH0ko8ND85Y1swOhHzskYq
+   o4u+ZXEURzBD7KwqocIhCCiseqejnqr31hfGeEPBsVvgyc4s9V5hr7Xrj
+   BGKTGIrehIqSjGclcx6oYOf+D/mGYtjBgLu67CNoRak3IjaJwFb687tnv
+   HkguNDEAYNeb3g2e66UTmQCHafHM16G4FZec7/HT3i6fM5Dy+uwoG3gXq
+   RpEjbxd2UyYTw9600vohNowxr+y1hOFyJD0monrkhGARvE6zI7XHrZ9Cr
    w==;
-X-CSE-ConnectionGUID: 8Uzez2O/SASjB0A/dpnRdg==
-X-CSE-MsgGUID: dZVOpqgQTUGlQmkzto2JHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="53007167"
+X-CSE-ConnectionGUID: lRLPUT1fTqSYrRuoXbqzGw==
+X-CSE-MsgGUID: YSNtN8uSR6GjswPq2vbwzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="75401274"
 X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="53007167"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:08:42 -0700
-X-CSE-ConnectionGUID: NFYrKPxFSoSykF6AvZkAyQ==
-X-CSE-MsgGUID: OhoYh5ZHRFKw4wgUN/vAaQ==
+   d="scan'208";a="75401274"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:14:18 -0700
+X-CSE-ConnectionGUID: e4ekD39qTday9sIFTi7Scg==
+X-CSE-MsgGUID: 9gtBh0Q9Tb6PnnFaBaRxUg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="151115142"
+   d="scan'208";a="155846754"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:08:36 -0700
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:14:12 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTdAF-000000097MM-339k;
-	Mon, 23 Jun 2025 12:08:31 +0300
-Date: Mon, 23 Jun 2025 12:08:31 +0300
+	id 1uTdFf-000000097Qy-3DMk;
+	Mon, 23 Jun 2025 12:14:07 +0300
+Date: Mon, 23 Jun 2025 12:14:07 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -72,11 +72,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 13/23] ACPI: property: Refactor
- acpi_fwnode_get_reference_args()
-Message-ID: <aFkZj2QCU2LfTI30@smile.fi.intel.com>
+Subject: Re: [PATCH v6 14/23] ACPI: property: Add support for cells property
+Message-ID: <aFka3y1494LIzyUA@smile.fi.intel.com>
 References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <20250618121358.503781-14-apatel@ventanamicro.com>
+ <20250618121358.503781-15-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,21 +84,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618121358.503781-14-apatel@ventanamicro.com>
+In-Reply-To: <20250618121358.503781-15-apatel@ventanamicro.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jun 18, 2025 at 05:43:48PM +0530, Anup Patel wrote:
+On Wed, Jun 18, 2025 at 05:43:49PM +0530, Anup Patel wrote:
+> From: Sunil V L <sunilvl@ventanamicro.com>
 > 
-> Currently acpi_fwnode_get_reference_args() calls the public function
-> __acpi_node_get_property_reference() which ignores the nargs_prop
-> parameter. To fix this, make __acpi_node_get_property_reference() to
-> call the static acpi_fwnode_get_reference() so that callers of
-> fwnode_get_reference_args() can still pass a valid property name to
-> fetch the number of arguments.
+> Currently, ACPI doesn't support cells property when
+> fwnode_property_get_reference_args() is called. ACPI always expects
+> the number of arguments to be passed. However, the above mentioned
+> call being a common interface for OF and ACPI, it is better to have
+> single calling convention which works for both. Hence, add support
+> for cells property on the reference device to get the number of
+> arguments dynamically.
 
-Looks okay to me, but I think it's better to have more eyes here (Mika,
-Rafael?).
+...
+
+> +static unsigned int acpi_fwnode_get_args_count(const struct acpi_device *device,
+> +					       const char *nargs_prop)
+> +{
+> +	const union acpi_object *obj;
+
+> +	if (!nargs_prop)
+> +		return 0;
+
+This check is implied by the call. No need to duplicate.
+
+> +	if (acpi_dev_get_property(device, nargs_prop, ACPI_TYPE_INTEGER, &obj))
+> +		return 0;
+> +
+> +	return obj->integer.value;
+> +}
+
+...
+
+> +			if (nargs_prop)
+
+Again, if you don't won't to reassign the existing value, it's better to have
+this data be collected in the temporary variable of the same semantics. Then
+you will choose one when it's needed, no need to have this dup check (again!).
+
+> +				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
+> +
+>  			element++;
+>  
+>  			ret = acpi_get_ref_args(idx == index ? args : NULL,
+
+...
+
+> +			if (nargs_prop) {
+
+Ditto.
+
+> +				device = to_acpi_device_node(ref_fwnode);
+> +				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
+> +			}
 
 -- 
 With Best Regards,
