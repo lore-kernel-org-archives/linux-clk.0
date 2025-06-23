@@ -1,148 +1,126 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E558230BCB;
-	Mon, 23 Jun 2025 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2707417996;
+	Mon, 23 Jun 2025 09:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670067; cv=none; b=hv7sVJGJXPFNuGDs54V9/4NfN6yIu/1vInAS1nEu8MCmhsEpHXlSp4URwN8+BKpQkkzEitonO68sgxdQEPr0kPcMFtGDzUH3LUg4vQ0SRZF1Pbg/KGhtgj38SfwAj6yV5BLZvYozFx3i7YEVDQbRb8HSWUbzg8234JNM3sp0Y0U=
+	t=1750671000; cv=none; b=WzQDZ/0Wpqg1LXot84+Zs8TP/SOzL9iGSf8htvfZq7PU/GfAVWiYUxiIVe2lE7XsQHoTnd3BQBaeL/y8WynWdcfczvc71Yp+e00eZASjPWk5rmEUlHd1Qdoyp1Wh2aLyPTv4emboUYnF3VXZjTHCP4NwgDqI0xfYYIxZLa7glMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670067; c=relaxed/simple;
-	bh=eIeY3heN+gnrpZQU6Tbcw37VApX8DZLMbgNPQw+j5oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b94k48Mja8JBcxkupEgRrPFFEeR6LgElEFtBeXABQyWCSIHdfgCAxdADgTPpH2oTrr+WkLdP3lYkFhSQBQEezvdj85dF+AFet1f7222ofomsxtsUgVpH3Z5Sjn7/DPXifRFS1e+5PdjWDuZts18rS0h/wgydFfPuaIjCQ02haxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9+TxHmB; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1750671000; c=relaxed/simple;
+	bh=Z/JyWLR3XY6i6uwbS0ebYewrhlB9XFQj4QMmwqeNAz4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=g4D+981y1Uqv+lRV89hwYa3Xin/aNxYdCoweAi9NQjX3fVEibGS7sfnuNL9AIV1ycIFB39f/d7J4bj58saYHX00TGLUcLKlteqbO+SPx3YWT7QAxisNR8PTvSlYRIs/1LIwXTgMh+LgOkLOlp0WaF29FjrgIdcWjdn6jcw9YYSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xKjNtqKI; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9+TxHmB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750670066; x=1782206066;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eIeY3heN+gnrpZQU6Tbcw37VApX8DZLMbgNPQw+j5oI=;
-  b=M9+TxHmB9wMgmsHBBpmUDchcKOU6YAl3mI8DuUGWfIicDk19tplmuc1v
-   73lH+yr47P0JZkrvf3oxSye32TQ9TrT+l0wmH0ko8ND85Y1swOhHzskYq
-   o4u+ZXEURzBD7KwqocIhCCiseqejnqr31hfGeEPBsVvgyc4s9V5hr7Xrj
-   BGKTGIrehIqSjGclcx6oYOf+D/mGYtjBgLu67CNoRak3IjaJwFb687tnv
-   HkguNDEAYNeb3g2e66UTmQCHafHM16G4FZec7/HT3i6fM5Dy+uwoG3gXq
-   RpEjbxd2UyYTw9600vohNowxr+y1hOFyJD0monrkhGARvE6zI7XHrZ9Cr
-   w==;
-X-CSE-ConnectionGUID: lRLPUT1fTqSYrRuoXbqzGw==
-X-CSE-MsgGUID: YSNtN8uSR6GjswPq2vbwzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="75401274"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="75401274"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:14:18 -0700
-X-CSE-ConnectionGUID: e4ekD39qTday9sIFTi7Scg==
-X-CSE-MsgGUID: 9gtBh0Q9Tb6PnnFaBaRxUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="155846754"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:14:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTdFf-000000097Qy-3DMk;
-	Mon, 23 Jun 2025 12:14:07 +0300
-Date: Mon, 23 Jun 2025 12:14:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 14/23] ACPI: property: Add support for cells property
-Message-ID: <aFka3y1494LIzyUA@smile.fi.intel.com>
-References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <20250618121358.503781-15-apatel@ventanamicro.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xKjNtqKI"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N5ppEk002482;
+	Mon, 23 Jun 2025 11:29:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ZOsuluXNSLkxvHwd4tbbEr6WHEQwIqQwF7TiT8kGSEY=; b=xKjNtqKI9/+dDLG9
+	oFTGydhHzjiJWbKuNHqPXZyh2TRLdnYlIx9Wm85jf7VTjSZEvYT25ojtBP+kPV7z
+	9OlpKZApBw9+xxKb4ywsAoojQBi5XX62vGKvxYhUB7DwqOyVytNjHH5NX0eDuUUg
+	oANtco0jJceMp29Z9UDP5B+jVmhEDXG6ForKdRVtZe5gU3FLGUzWqCN2I0P71Enu
+	9vHisFwQQ02suimEnYZI5Yjgj8CWp4ShkUCe6bsyJq5DnP6BEdUehg84U2WlKDsU
+	/ps1szoDjLVxduRU1fyVtDGIWj3fexp2bRoywhcM1xQEbY6OsvEoMrzKchqre+8I
+	lAXVnQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5nfca1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 11:29:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2629E40051;
+	Mon, 23 Jun 2025 11:28:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5B2E5C37FE;
+	Mon, 23 Jun 2025 11:27:22 +0200 (CEST)
+Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
+ 2025 11:27:22 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Mon, 23 Jun 2025 11:27:07 +0200
+Subject: [PATCH 02/13] dt-bindings: stm32: stm32mp25: add
+ `access-controller-cell` property
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618121358.503781-15-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250623-ddrperfm-upstream-v1-2-7dffff168090@foss.st.com>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+In-Reply-To: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
 
-On Wed, Jun 18, 2025 at 05:43:49PM +0530, Anup Patel wrote:
-> From: Sunil V L <sunilvl@ventanamicro.com>
-> 
-> Currently, ACPI doesn't support cells property when
-> fwnode_property_get_reference_args() is called. ACPI always expects
-> the number of arguments to be passed. However, the above mentioned
-> call being a common interface for OF and ACPI, it is better to have
-> single calling convention which works for both. Hence, add support
-> for cells property on the reference device to get the number of
-> arguments dynamically.
+RCC is able to check the availability of a clock.
+Allow to query the RCC with a firewall ID.
 
-...
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> +static unsigned int acpi_fwnode_get_args_count(const struct acpi_device *device,
-> +					       const char *nargs_prop)
-> +{
-> +	const union acpi_object *obj;
-
-> +	if (!nargs_prop)
-> +		return 0;
-
-This check is implied by the call. No need to duplicate.
-
-> +	if (acpi_dev_get_property(device, nargs_prop, ACPI_TYPE_INTEGER, &obj))
-> +		return 0;
-> +
-> +	return obj->integer.value;
-> +}
-
-...
-
-> +			if (nargs_prop)
-
-Again, if you don't won't to reassign the existing value, it's better to have
-this data be collected in the temporary variable of the same semantics. Then
-you will choose one when it's needed, no need to have this dup check (again!).
-
-> +				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
-> +
->  			element++;
->  
->  			ret = acpi_get_ref_args(idx == index ? args : NULL,
-
-...
-
-> +			if (nargs_prop) {
-
-Ditto.
-
-> +				device = to_acpi_device_node(ref_fwnode);
-> +				args_count = acpi_fwnode_get_args_count(device, nargs_prop);
-> +			}
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+index 88e52f10d1ec..83974b7fb82f 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+@@ -31,6 +31,11 @@ properties:
+   '#reset-cells':
+     const: 1
+ 
++  '#access-controller-cells':
++    const: 1
++    description:
++      Contains the firewall ID associated to the peripheral.
++
+   clocks:
+     items:
+       - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
+@@ -123,6 +128,7 @@ required:
+   - reg
+   - '#clock-cells'
+   - '#reset-cells'
++  - '#access-controller-cells'
+   - clocks
+ 
+ additionalProperties: false
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
