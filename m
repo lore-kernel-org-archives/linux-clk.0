@@ -1,84 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCBDBA33;
-	Mon, 23 Jun 2025 06:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4323C3C;
+	Mon, 23 Jun 2025 08:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750660469; cv=none; b=iBp1aY+43JTRLlixNF0nj/deTXxcuyNUsRxDybEs9GrB0nYlrH+rv7w1VJTxOQhj7x0VkuZyCLj9ELNvZTKD1pBElm/r9zeIhVkFr6RdN3uWFYTSuWvAPt9mIF4HIRBTKuov1/bYQ0VrcFLrO6LjBU+Y2b00S/LN5yz3MOvDH7s=
+	t=1750666193; cv=none; b=diYYVMV9wQuYGQxgnZ3n7JEEUry/SoOFFZDRWq0h8cTKYsezQXJEaoSAvJsHRqf9ZEchBeYPvfnFNGVjY3CEZwErCqdcRCgdh64kELBcfLHKlYh7kxrNf4Z+xqaKcYZlhlGPFft7Wn/JJCJYTdogHMdLoHJfWKwOFRgJEBNkzMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750660469; c=relaxed/simple;
-	bh=4C6wXd+Eo26Qy37WMRqveXHtHM5MhD9wkvtfxwvTAxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkAWG2Yz9ksIJqemwo+omtftFGT/lnWNMUF7jdOcMHpDFAIvgPFSOgL5cp/x1M7t9SRDjoWe26z4ctoqrNDPj9hFTb43NIYWLjZVoCTdH4Spe8Ne3I9iFx9aXz8FJdwJeW6D5+nfzuBnVt2m8VBc6l2tWsw8Xc3Xw+r2qaOSNrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjXMs0HS; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjXMs0HS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 184EBC4CEED;
-	Mon, 23 Jun 2025 06:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750660468;
-	bh=4C6wXd+Eo26Qy37WMRqveXHtHM5MhD9wkvtfxwvTAxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjXMs0HSZ/fkqEHhPxPmQ/2qIq6mwXllao9DJWgUNtpchNh0SpnExy8d0k3vyFOBK
-	 lrLwczroAQ9joHePT21xiaY1LTFudGpxMEGroh459DjOylLItCQfduWgN14HRKfEPD
-	 XPwuLzINUTqu4pRZUxAagMdhixGXI18eusmnklpx0qutapC6EB/de2AxdTerUHXQE1
-	 IaIruIdaHjYxZMk3oyzDaWhKdxHdya3BsF4XySjX16zvKJNw/11OWy8jDOgfpFiHbX
-	 RsRIGo4/wGnexy8N8lr6VvIzVLKfmIwXsvh45g2/wvTc7sNN8pzp2okrw6Vo5D4QLB
-	 PS3AEqkAcna9A==
-Date: Mon, 23 Jun 2025 08:34:26 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND net-next v5 1/2] dt-bindings: net: qca,ar803x: Add
- IPQ5018 Internal GE PHY support
-Message-ID: <26v6yklme3bbw3h4eze4z27cgr67ovymee5mc6nay23zt4xfcv@37sus6dp3g7x>
-References: <20250613-ipq5018-ge-phy-v5-0-9af06e34ea6b@outlook.com>
- <20250613-ipq5018-ge-phy-v5-1-9af06e34ea6b@outlook.com>
+	s=arc-20240116; t=1750666193; c=relaxed/simple;
+	bh=yzDROjhSklpW6F9Q/hVoK6cpVbi+O//aoyDTe91y/ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eAEGClBqkaPFabkek2bEK++2RnDDIt5gcuJ4nSG1ZazTbEkSXdyJ58GDtlbwhhiWqlCEbkdoUCRqhKifuLbpOhfOj2SVkIyEho10F3HamvfpzMx01fmj9kHoGZHVREfu6UoUHDk+7UHFUe2MuIZj57WMgo15hUikJ8Wr1Cwhs38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: uzOpVZaOSFWOzqjhLvgzCg==
+X-CSE-MsgGUID: syUGVdaAT4SPqE3xaD03EA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 23 Jun 2025 17:04:39 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.157])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0D2A440103C9;
+	Mon, 23 Jun 2025 17:04:34 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	richardcochran@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v3 0/3] Add support for GBETH IPs found on RZ/G3E SoCs
+Date: Mon, 23 Jun 2025 10:04:02 +0200
+Message-ID: <20250623080405.355083-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250613-ipq5018-ge-phy-v5-1-9af06e34ea6b@outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 05:55:07AM +0400, George Moussalem wrote:
-> Document the IPQ5018 Internal Gigabit Ethernet PHY found in the IPQ5018
-> SoC. Its output pins provide an MDI interface to either an external
-> switch in a PHY to PHY link scenario or is directly attached to an RJ45
-> connector.
-> 
-> The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
-> 802.3az EEE.
-> 
-> For operation, the LDO controller found in the IPQ5018 SoC for which
-> there is provision in the mdio-4019 driver.
-> 
-> Two common archictures across IPQ5018 boards are:
-> 1. IPQ5018 PHY --> MDI --> RJ45 connector
-> 2. IPQ5018 PHY --> MDI --> External PHY
-> In a phy to phy architecture, the DAC needs to be configured to
-> accommodate for the short cable length. As such, add an optional boolean
-> property so the driver sets preset DAC register values accordingly.
-> 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  .../devicetree/bindings/net/qca,ar803x.yaml        | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
+Hi all,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This series adds support for the two Gigabit Ethernet (GBETH) interfaces on the
+Renesas RZ/G3E (R9A09G047) SoCs and their enablement on the SMARC-II EVK. This
+is achieved by integrating the necessary clock/reset signals prior to defining
+common DTS nodes, and enabling both GBETH ports at the board level.
 
-Best regards,
-Krzysztof
+Here are pach dependencies:
+
+ - Patch 1/3 is based on renesas-drivers tree, on top of renesas-clk-for-v6.17
+ branch
+ - Patches [2,3]/3  are based on renesas-devel tree, on top of
+ renesas-dts-for-v6.17 branch
+
+V1 of this series is located here [1]. It originaly included a patch for
+binding documentation, which, in response to Jakub [2], has been resubmited
+as a standalone patch for net-next.
+
+V2 can be found here [3].
+
+Changes in v2:
+ - Appart from resending the patches and some collected tags, there is no
+ changes in V2.
+ - Separated binding patch send as standalone patch can be found here [4]
+
+Changes in v3:
+ - Fixed consistency with clock names, replacing dashes with underscores
+ - Labeled mdio nodes and used phandle-based override instead of node
+ redefinition
+ - Minor typo fixes
+
+Note for DT maintainers:
+Documentation/dt-bindings patch was sent separately and has already been applied here [5]
+
+[1] - https://lore.kernel.org/all/20250604065200.163778-1-john.madieu.xa@bp.renesas.com/
+[2] - https://lore.kernel.org/all/20250609083008.0157fe47@kernel.org/
+[3] - https://lore.kernel.org/all/20250611061609.15527-1-john.madieu.xa@bp.renesas.com/
+[4] - https://lore.kernel.org/all/20250611061204.15393-1-john.madieu.xa@bp.renesas.com/
+[5] - https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=31b928210df1097eaa5e8cb51e2ff79989ebe57e
+
+Regards,
+John Madieu
+
+John Madieu (3):
+  clk: renesas: r9a09g047: Add clock and reset signals for the GBETH IPs
+  arm64: dts: renesas: r9a09g047: Add GBETH nodes
+  arm64: dts: renesas: rzg3e-smarc-som: Enable eth{0-1} (GBETH)
+    interfaces
+
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 207 ++++++++++++++++++
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  98 +++++++++
+ drivers/clk/renesas/r9a09g047-cpg.c           |  64 ++++++
+ 3 files changed, 369 insertions(+)
+
+-- 
+2.25.1
 
