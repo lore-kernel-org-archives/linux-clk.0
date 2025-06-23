@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1FB1F4629;
-	Mon, 23 Jun 2025 12:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE471F542E;
+	Mon, 23 Jun 2025 12:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750680887; cv=none; b=fNTijtP3TdMPBeR1T7wtGSCU7ViCkI7ApY5v0Dd6wUb04o3olkpEdl26gD2kNyq2PsOjDm6+gdrZkVO1R4rgB2+RWgOgXx0OKA+tjMkviWeSa5UW9UIitSA+KJcOreEAReaYobrReD2zILM03kvvCE9ZHWNpcqsgYTE6McXwah4=
+	t=1750681325; cv=none; b=CBRmeoMwLD6XtBCc2hn5RFWRrHlixKkKDAfT1a8ta2xxjhkapvaKu8sgUYuPw7V0+btUW2j6v14YT6stLUk7Kk7qPran1qqEvlIcOPvHIoa+9GLSkyagDqM5fvHNY/hqCTPcHDjl9BJS88muCzfr6/XfhsSiWZsj5AZOaJtCBVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750680887; c=relaxed/simple;
-	bh=o/om+5oc+Ti+iKJv0+pm2Nb+TnULQl3shWGHQYtDlw8=;
+	s=arc-20240116; t=1750681325; c=relaxed/simple;
+	bh=BX3kWGffKwR8jKbbugtulEnXj6o/sd8kiTE3A0kY6pg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ajjxcPtwhzRRJG/NwtBfjRPPkZn5sBTJDrg0BC79V6E3gcvT+WsCXvWVDDbPW6Ngf7lEJC/krbP9CFn+LE6WVpKjWMR5vnn4Ojp0x2ah5vyfK4PNFwfEVZmEph13H9VsVzvDj16PAxj34gco3+jUgT6jV+ykk4ljiimCeyXjXw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+nKa5ja; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ja20Sag3KoPMTfbD3ZxqeXIVdIBS1eM7FHrjYjz+IQSGEfhYcEjcfKFmH6s0WspOY913pEa//B93Xx8M27IcAO8Ht5PUEd84tvm7pLA8L0H12IxkEcpp4rA7ScyXQJG5GHukvGInEaXz6HcAti+WnPNgHLlSka7g1YAlt1pv2Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nlCFAT4q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+nKa5ja"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D51C4CEF0;
-	Mon, 23 Jun 2025 12:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750680886;
-	bh=o/om+5oc+Ti+iKJv0+pm2Nb+TnULQl3shWGHQYtDlw8=;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nlCFAT4q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750681322;
+	bh=BX3kWGffKwR8jKbbugtulEnXj6o/sd8kiTE3A0kY6pg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p+nKa5ja+zDAPNVmSQWKjplk0v5hOGK6Q/XlJbsTL5sbfiQOwIy6T1LT8V++Uylqu
-	 uOiIY2Yc9R+h8nnWIN5dvEyudvIlJhrf2qky5/RFp63yvQsBCAt0JoZc1RHg7iDqaZ
-	 mB9946nDS9/1zE2dS0e4fzjEm03RL1Mz86KXPCaupMgtG/ow/LsuXzkAPNX4ccrfNz
-	 6Pk4eAJ963DaPSboxbhp8diRyfDWn3qnEHUGYv/0UERzAod7IEwGjO0IcPlpXgXb8Y
-	 OXTGm9Jz+/oVjObqcFCe1sdMxMAwu76OF0MM2e3tTsPj0uor7/vxfLzxrFnunS1AaH
-	 n7IsphcyEeCuQ==
-Message-ID: <d1802074-5472-475c-94b6-a0667e353208@kernel.org>
-Date: Mon, 23 Jun 2025 14:14:40 +0200
+	b=nlCFAT4qrsm8CJbwA6C9jm53wiNm1n1d/wI2w8xmVhuIRTPHk06c68q4u4nMFKm+n
+	 T3RYFwA4sQatd9lOioQGhKgiY1kRNkjFqN0DkadumCvSCKtFp7vJlLiY0jZQ/GFYCv
+	 OwHXaKXhfzxdmTtDvbg6qySKVx/CdGeM8Iwr9Xkm8unsdLe6M4pA/Hruzscf3CA9cv
+	 Y4MiotqPf3FEuQUFRYKDrQPakNIFMHv6VxGBm2NPrqqEkTgE5+P9PAuOwa+9sEkYnf
+	 0mzckR8pSS/VBtF4pEVra+r4X4uVNfk62V+chyGPdfeaYHRSgpUrfprijXC6tEvIqn
+	 GkpvbbRQMwTmw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1349417E0FDB;
+	Mon, 23 Jun 2025 14:22:01 +0200 (CEST)
+Message-ID: <dfbd00bd-37bd-425a-aa98-e536b2a3f2d4@collabora.com>
+Date: Mon, 23 Jun 2025 14:22:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,85 +42,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 30/30] clk: mediatek: mt8196: Add UFS and PEXTP0/1 reset
- controllers
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- p.zabel@pengutronix.de, richardcochran@gmail.com
+Subject: Re: [PATCH 29/30] dt-bindings: reset: Add MediaTek MT8196 Reset
+ Controller binding
+To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
+ <laura.nao@collabora.com>, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
 Cc: guangjie.song@mediatek.com, wenst@chromium.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
  kernel@collabora.com
 References: <20250623102940.214269-1-laura.nao@collabora.com>
- <20250623102940.214269-31-laura.nao@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250623102940.214269-30-laura.nao@collabora.com>
+ <2bc23bcf-0021-44dd-ae42-9ef0e95e3b32@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250623102940.214269-31-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <2bc23bcf-0021-44dd-ae42-9ef0e95e3b32@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23/06/2025 12:29, Laura Nao wrote:
-> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Il 23/06/25 14:13, Krzysztof Kozlowski ha scritto:
+> On 23/06/2025 12:29, Laura Nao wrote:
+>> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>
+>> Add a binding for the PEXTP0/1 and UFS reset controllers found in
+>> the MediaTek MT8196 Chromebook SoC.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>   .../reset/mediatek,mt8196-resets.h            | 26 +++++++++++++++++++
 > 
-> Add definitions to register the reset controllers found in the
-> UFS and PEXTP clock controllers.
+> This belongs to the binding doc.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8196-pextp.c  | 36 ++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-mt8196-ufs_ao.c | 25 ++++++++++++++++
->  2 files changed, 61 insertions(+)
+>>   1 file changed, 26 insertions(+)
+>>   create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
+>>
+>> diff --git a/include/dt-bindings/reset/mediatek,mt8196-resets.h b/include/dt-bindings/reset/mediatek,mt8196-resets.h
+>> new file mode 100644
+>> index 000000000000..1a01b2b01f7f
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/mediatek,mt8196-resets.h
+>> @@ -0,0 +1,26 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
+> 
+> Wrong license, use standard ones.
 
-You just added these files. Don't add incomplete driver just to fix it
-later. Add complete driver.
+Oh WHOOOOOPS! No idea how that happened.
 
-Patch should be squashed.
+Laura, can you please change this to (GPL-2.0-only OR BSD-2-Clause)?
 
-Best regards,
-Krzysztof
+Thanks!
+
+Cheers,
+Angelo
+
+> 
+> Best regards,
+> Krzysztof
+
+
