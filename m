@@ -1,126 +1,189 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AE7291C29
-	for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 13:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F492D3A93;
+	Tue, 24 Jun 2025 14:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750771892; cv=none; b=lehscdjpFQx2A4bEHRRG1hrbJudaLcB4tiGJwGdedTL9aWkiLHMVMAMuax56IbFC40TrA9hQWBRFBp4hHr+4upLWzzqVpwf7l98t4QMD8miF9bo/C2OrzW/7kyIMSuNe6XbD9h8+yIOpbfkQp5opACsL/XbiyPL6ELcZRMHxaeo=
+	t=1750775615; cv=none; b=r5KF6MoHFsFnnFvm6Z9ogC6yCr+u5iAmzOD4zTUu2NdBezAdK0dAWIdzJXqYVrHHt4ayPJiaM34/Dbrir7+AvtgtqcuGCe05K0xQ56WsSHpE6ooZErZLZsjol5RnrGk23TvLbSfrceP4fKjDBGaBpw9O4Gr6q1wkB44OQFdwQTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750771892; c=relaxed/simple;
-	bh=SNPpj7vjjty2f4GcEPbvBgmWRu/gVwdJZznlDEc11KA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CG7wdgDaTlAYo9TQdvg4zpqIfHrJdfabbHEIdgv8KpGaPNFYbAebnHGJHL4oy3dNzH8zwcxVx6aKFpDQS1BLFx2V9w2bkVFjK5lUyVelVOOPpTyWi2b563BnXeYjSS7TsU1lYfPz42DZGIboLOaXWZZPKoJ430zhCC2BBgIdpDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uA/M4pTs; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750775615; c=relaxed/simple;
+	bh=T4Clas5bzqxC87iLgxrgDlE8/O1YxVArn4WnJgBEpKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=M4JVpLFlYjP/w/m0RimibXzZx7EBLbO83gHNjvBk1LgIaAM282t1PMe+/7vBaQdqm2Tx5och+5OpAMASI2JukY2faXTzXNAh2Tr/jLrHrh+mzpC+4+mPGsHLfDDvDd5WP6fxggndU4BQA9yrmsHqx8OsqNgpgNfC2BjzkKD0zBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Linbs5zY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uA/M4pTs"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b7a3af9aso489478e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 06:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750771889; x=1751376689; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ixsChjPXVo6tgSzutDLAX1rFKh+YpL/is6uOUSR1ZI=;
-        b=uA/M4pTsWXNxuf26ML3cTsvaYGniT0CiXnLKgZxOAcimj1IMmRoCKQ+t7mdCN7+G7s
-         R1pxZKRaCQImOqnK5QZatW35asTsAVsxGrmyvoNx2nOD+XdESCpDVEYoN8eIB8yUVvwW
-         ItXi3nkXiBiWprcC+5qzZ3qQeuOYk0+e4MI84xFHEcygVIo2XT+b44WBB/pXJjFLadQ6
-         SM+JRHNrWmE1wzowI4NNRRrIYppGag2JiaYQ4bGKQF0YvclWMd7WSR15yKOpvupevg9C
-         UeGvcXqTKcu9Uln5ywIafagCFY9wql3hoIGj978PwXsc3GoNe5mXhbJMPsFpbxDp60wO
-         s5iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750771889; x=1751376689;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ixsChjPXVo6tgSzutDLAX1rFKh+YpL/is6uOUSR1ZI=;
-        b=hWAfGSieSRw0hQ5dSn8DSuJFVKuc3DiWB73vheMPPnihzcWaraB7dSmRPzVEMLPdS7
-         ykHtU2Jy6mt0YTgo6dXbHcdqKvhEpj634aPaRYDX9JwXJyzfEqZh2jBbYcmSscifwqBB
-         H03Lhiuaup/i4QkdF9Ea3AM3SdFXa1XHX87IJyZu4q8UwpcBHzZOuQ0djCODYkf9ZtBU
-         EqNCfp4u2prZWaFRSMDhuhkzXNGeye5saAM5ZdytzKR23UD4rpL3ZGZfVbkv5hombznC
-         LUgqO9UhESz82pMHzgcjtJ6MjvmoT94RCsI+wODoCTQ7ases6/SxTruBnmkgDFE9mdcc
-         a0WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrbZxn8vdKYiwvMRD28OBnMHeSiMWSiI+foNVV8v6XB0wRcUO8hAH6HGFjey62q9WckEo2OSuZIrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmxfnzaKytR3AP5QKUN6fVN1m4SE+2DgHQExiO33VCzsErZyXY
-	uHx4H8sShAMMdCjdmdCvuc8VpROmHT1h/SP3lMNZs87L5pRtJlHlDSY8ma8b+PjGfyk=
-X-Gm-Gg: ASbGncuR2h06qO4ubmDpwpewQYQhxGjg2IWdu2WLMmk4kdb5vVckrJHhB0Fi9S4hCh4
-	KzbvKKbls9IumXO0CSXgsgyqBq4UvwdF+bjwPPRk/nDi7eyxPCJMNxH4tPZSAOR3u2Pj3XijdRg
-	+8v5Nj54FjTr+bGkxwSyyMaCu3vtSPaoMxyFtJKwdgAhSKHOxodiUg9RGvEqmchih3+oo5XYTCb
-	ZLN5uXSQNZyeIA28CM+6CtKDkOHxs8jP6Y/jC8F1jOSv1++CMNemTTYjA45Wu1zZF84xO0vV6UC
-	4fiWCkxH1lD6PZZfqaIqEiFljvHWaQXH2mGnUZmx5F28J8xKOu5w/FC/dCEU/wyGd6QPhiz6em/
-	3wuQZpEQWp4SbZdW7gsyypbIsDnSePWWdLZs269Uf
-X-Google-Smtp-Source: AGHT+IGwGCymU8RONA+nhcXdhqLM3PrHi9ooRcM+SCxJHnCXXQhmrBOwn+PHm3whE+vhvRviZRDUzA==
-X-Received: by 2002:a05:6512:3086:b0:553:2874:8efb with SMTP id 2adb3069b0e04-553e3c079b7mr1854622e87.11.1750771888708;
-        Tue, 24 Jun 2025 06:31:28 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41bbba4sm1837510e87.109.2025.06.24.06.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 06:31:28 -0700 (PDT)
-Message-ID: <9fc448d5-5c16-446f-ba89-ce4681b5c76d@linaro.org>
-Date: Tue, 24 Jun 2025 16:31:27 +0300
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Linbs5zY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750775611;
+	bh=T4Clas5bzqxC87iLgxrgDlE8/O1YxVArn4WnJgBEpKA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Linbs5zYmDSJ0zkA/iGPLy8OFrGC6fGw+57BQTCTC71zIlT3Nyk9QKUjc771ILAch
+	 xd1yU/vY6b+L1qWFFhX3FzCv3EAuQzptiptko7Z02We/fYsC7GqOvM1OWzi4wdODs7
+	 L4uCgp2C+KBU08/zwq4qzpKSpsW1GnXqvLiGvKuFAMFknMrRAvwjd4rqm6skxoYP4L
+	 dTRLsL3gBzmexBaIKpLlFCixY+2E3SSEw9xrdbI72jjUm7F/Vu4IK5GQrT4ruwEh2Q
+	 50Ft5IDSE4L9+tqDn75PrER9Sd0H36uY7GQ66tFtxrNwHrYrXZGmXuFH2RMKpeJP7a
+	 KKLDdpwfyab5g==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:d2c7:2075:2c3c:38e5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 72BA217E0DE3;
+	Tue, 24 Jun 2025 16:33:30 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
+	kernel@collabora.com,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH v2 00/29] Add support for MT8196 clock controllers
+Date: Tue, 24 Jun 2025 16:31:51 +0200
+Message-Id: <20250624143220.244549-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: x1e80100: Add CAMSS block
- definition
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
- <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-5-edcb2cfc3122@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-5-edcb2cfc3122@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 3/14/25 15:14, Bryan O'Donoghue wrote:
-> Add dtsi to describe the xe180100 CAMSS block
-> 
-> 4 x CSIPHY
-> 2 x CSID
-> 2 x CSID Lite
-> 2 x IFE
-> 2 x IFE Lite
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 185 +++++++++++++++++++++++++++++++++
->   1 file changed, 185 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 4ae0f67a634a982143df7aa933ec4de697f357a5..ee78c630e2a1c38643c9222a6d6fff4cc1216a47 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -5195,6 +5195,191 @@ cci1_i2c1: i2c-bus@1 {
->   			};
->   		};
->   
-> +		camss: isp@acb6000 {
-> +			compatible = "qcom,x1e80100-camss";
-> +
-> +			reg = <0 0x0acb7000 0 0x2000>,
+Add support for MT8196 clock controllers
 
-There is an inconsistency between the unit address and the first
-value of the 'reg' property, it shall be fixed.
+This patch series introduces support for the clock controllers on the
+MediaTek MT8196 platform, following up on an earlier submission[1].
+
+MT8196 uses a hardware voting mechanism to control some of the clock muxes
+and gates, along with a fence register responsible for tracking PLL and mux
+gate readiness. The series introduces support for these voting and fence
+mechanisms, and includes drivers for all clock controllers on the platform.
+
+[1] https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
+
+Changes in v2:
+- Fixed incorrect ID numbering in mediatek,mt8196-clock.h
+- Improved description for 'mediatek,hardware-voter' in mediatek,mt8196-clock.yaml and mediatek,mt8196-sys-clock.yaml
+- Added description for '#reset-cells' in mediatek,mt8196-clock.yaml
+- Added missing mediatek,mt8196-vdisp-ao compatible in mediatek,mt8196-clock.yaml
+- Fixed license in mediatek,mt8196-resets.h
+- Fixed missing of_match_table in clk-mt8196-vdisp_ao.c
+- Squashed commit adding UFS and PEXTP reset controller support
+- Reordered commits to place reset controller binding before dependent drivers
+- Added R-b tags
+
+Link to v1: https://lore.kernel.org/all/20250623102940.214269-1-laura.nao@collabora.com/
+
+AngeloGioacchino Del Regno (1):
+  dt-bindings: reset: Add MediaTek MT8196 Reset Controller binding
+
+Laura Nao (28):
+  clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable control
+  clk: mediatek: clk-pll: Add ops for PLLs using set/clr regs and FENC
+  clk: mediatek: clk-mux: Add ops for mux gates with set/clr/upd and
+    FENC
+  clk: mediatek: clk-mtk: Introduce mtk_clk_get_hwv_regmap()
+  clk: mediatek: clk-mux: Add ops for mux gates with HW voter and FENC
+  clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use
+    mtk_gate struct
+  clk: mediatek: clk-gate: Add ops for gates with HW voter
+  clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
+  dt-bindings: clock: mediatek: Describe MT8196 peripheral clock
+    controllers
+  clk: mediatek: Add MT8196 apmixedsys clock support
+  clk: mediatek: Add MT8196 topckgen clock support
+  clk: mediatek: Add MT8196 topckgen2 clock support
+  clk: mediatek: Add MT8196 vlpckgen clock support
+  clk: mediatek: Add MT8196 peripheral clock support
+  clk: mediatek: Add MT8196 ufssys clock support
+  clk: mediatek: Add MT8196 pextpsys clock support
+  clk: mediatek: Add MT8196 adsp clock support
+  clk: mediatek: Add MT8196 I2C clock support
+  clk: mediatek: Add MT8196 mcu clock support
+  clk: mediatek: Add MT8196 mdpsys clock support
+  clk: mediatek: Add MT8196 mfg clock support
+  clk: mediatek: Add MT8196 disp0 clock support
+  clk: mediatek: Add MT8196 disp1 clock support
+  clk: mediatek: Add MT8196 disp-ao clock support
+  clk: mediatek: Add MT8196 ovl0 clock support
+  clk: mediatek: Add MT8196 ovl1 clock support
+  clk: mediatek: Add MT8196 vdecsys clock support
+  clk: mediatek: Add MT8196 vencsys clock support
+
+ .../bindings/clock/mediatek,mt8196-clock.yaml |   87 ++
+ .../clock/mediatek,mt8196-sys-clock.yaml      |   81 ++
+ drivers/clk/mediatek/Kconfig                  |   78 +
+ drivers/clk/mediatek/Makefile                 |   14 +
+ drivers/clk/mediatek/clk-gate.c               |  106 +-
+ drivers/clk/mediatek/clk-gate.h               |    3 +
+ drivers/clk/mediatek/clk-mt8196-adsp.c        |  193 +++
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c  |  203 +++
+ drivers/clk/mediatek/clk-mt8196-disp0.c       |  169 +++
+ drivers/clk/mediatek/clk-mt8196-disp1.c       |  170 +++
+ .../clk/mediatek/clk-mt8196-imp_iic_wrap.c    |  117 ++
+ drivers/clk/mediatek/clk-mt8196-mcu.c         |  166 +++
+ drivers/clk/mediatek/clk-mt8196-mdpsys.c      |  187 +++
+ drivers/clk/mediatek/clk-mt8196-mfg.c         |  150 ++
+ drivers/clk/mediatek/clk-mt8196-ovl0.c        |  154 ++
+ drivers/clk/mediatek/clk-mt8196-ovl1.c        |  153 ++
+ drivers/clk/mediatek/clk-mt8196-peri_ao.c     |  144 ++
+ drivers/clk/mediatek/clk-mt8196-pextp.c       |  131 ++
+ drivers/clk/mediatek/clk-mt8196-topckgen.c    | 1257 +++++++++++++++++
+ drivers/clk/mediatek/clk-mt8196-topckgen2.c   |  662 +++++++++
+ drivers/clk/mediatek/clk-mt8196-ufs_ao.c      |  109 ++
+ drivers/clk/mediatek/clk-mt8196-vdec.c        |  253 ++++
+ drivers/clk/mediatek/clk-mt8196-vdisp_ao.c    |   79 ++
+ drivers/clk/mediatek/clk-mt8196-venc.c        |  235 +++
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c    |  769 ++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |   16 +
+ drivers/clk/mediatek/clk-mtk.h                |   23 +
+ drivers/clk/mediatek/clk-mux.c                |  119 +-
+ drivers/clk/mediatek/clk-mux.h                |   76 +
+ drivers/clk/mediatek/clk-pll.c                |   46 +-
+ drivers/clk/mediatek/clk-pll.h                |    9 +
+ .../dt-bindings/clock/mediatek,mt8196-clock.h |  867 ++++++++++++
+ .../reset/mediatek,mt8196-resets.h            |   26 +
+ 33 files changed, 6828 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-adsp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mcu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-peri_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-pextp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen2.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt8196-clock.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
 
 -- 
-Best wishes,
-Vladimir
+2.39.5
+
