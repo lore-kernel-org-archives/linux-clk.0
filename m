@@ -1,118 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CD523C51F;
-	Tue, 24 Jun 2025 06:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFE442065;
+	Tue, 24 Jun 2025 06:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750747307; cv=none; b=bpIjh8F2c3on7jqudEkaARD0/6ZhGspOI4uuMSgNa6xZHSpYoEXYNl+il47PTKnaWP+bQa5YFAEM1jWi+/kXCQ3d+jQF6Tl7SnCcvgjmT9MvZ9HbvzMiIbF/kkAzy1hGNWHVeFCgeUUNIyGEoLQszV0MkgifAfpMJQco4xE1b2A=
+	t=1750748303; cv=none; b=DtW9LPLJvgzitLSHAod4G5yxNovhrZLROAw7ReFWMtK3lDaHWSTDCXTAQfAqdaut+KdvuqabPr2vjpttxZWUSp9tO4SUBlhGZIrx4XH2arbslII2JpUZLN1VE86QJd0V1iJl/Ake6UU93oeuNDoj1oZ1DP+h63R4QOxev0sQD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750747307; c=relaxed/simple;
-	bh=XbgEhC+fI0zEai/znLDBDx3WSxt18trUioMURpeGfM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDbNaC1vxti1oQqOJBfTopXew4jS+9BvTC8AORfBC/P5ZXzKTfFqVttspRPtMrbggJ7vzlG5LpjZLHGRUhVDXcB5n1whtyI9PAtOEVhhrW5CxgiOOvMCcngcGEDGpstxNrWkOFriZIDRrdkX63QfJDmqdMqxyDzvVd4RSvaEEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ii7Qynol; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ii7Qynol"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750747306; x=1782283306;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XbgEhC+fI0zEai/znLDBDx3WSxt18trUioMURpeGfM4=;
-  b=ii7QynolNuKhDaq751MX3IMMf1BE59dX/FXGyqa0QugxD51V5BqygUKR
-   LW7Hv0KRhP8FqFvcryzEuxUOYEWvWjshfFA5lN0zqGFBVmivxz1n2Ayez
-   3eNqfXXjIQL/LtF13Kdv1bASfLUQcdcpxsgKiLO2sLX4Y7jlJ/qUgjigN
-   79xY1MT7ueBud+ORNOqmoVww8kqzg9kkNCppAYt30qZDSjWFUb42u5YD6
-   A/PGOXCayDv+0PX+4ISTnVqHwNLLBLuQU6gkSuNQwZNAvFbgIgAfN0Gvq
-   2P0SUS0nRPKnaL/N8hZ4FzrGK3gwstnUHp/AtVqxrTJmePqfbyRliOJ/V
-   A==;
-X-CSE-ConnectionGUID: dx3LAe5cQJy5YVS0OLoVWg==
-X-CSE-MsgGUID: DeNn7xnARcKXCAYPhbGC6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53107557"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="53107557"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 23:41:46 -0700
-X-CSE-ConnectionGUID: FaRihE0RS/ChSZqkWDGsLA==
-X-CSE-MsgGUID: AMgtjDzgTkKJg1vnnqz3dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="157599303"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 23 Jun 2025 23:41:41 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTxLe-000Roo-1k;
-	Tue, 24 Jun 2025 06:41:38 +0000
-Date: Tue, 24 Jun 2025 14:40:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, guangjie.song@mediatek.com,
-	wenst@chromium.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	kernel@collabora.com, Laura Nao <laura.nao@collabora.com>
-Subject: Re: [PATCH 24/30] clk: mediatek: Add MT8196 disp-ao clock support
-Message-ID: <202506241439.PGytyi4q-lkp@intel.com>
-References: <20250623102940.214269-25-laura.nao@collabora.com>
+	s=arc-20240116; t=1750748303; c=relaxed/simple;
+	bh=ll+XCQtbnZpyxXV1CX8tUsesHOegPhxgo220bAItwDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BEcI+JjosByu5RSr1BDFVWzAm4HizkL14DfucNc5Khouoey4TyATETrOXLIa5besHATnWUSZQ0i4FACebl8Iep0Xe5Mgwt0DHiYihkh2ldL6yrE79hIZtcPUggwrY9i4h7EyvGlD1NxsZ+lLFA5qwN7OoViVz9mBmuOqL50KYbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5315acf37b6so1573532e0c.2;
+        Mon, 23 Jun 2025 23:58:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750748300; x=1751353100;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I3mb0VhzXDswklcC+tGvNju9dri/YZ4kpTTjwEnQ8oA=;
+        b=F9tuvUTuU6ogyoRSgfNhy32ZWzIN8FcN5FvXPRyNVDB1qoK3RVqu99FNXWa16mcTmb
+         +9H545r1Wo2EH9RjmCGtqdf9xPjzal4a+ZRKVtaFhv1TlER6JEw1OsX0o80cjA6kf81f
+         8cckH2dKpLtK5/Ph5SjIDZ9MqVAMPYrncHnUjjm0skq0NqWOyBfCf13fD10mofzcg8cg
+         afURmygH2PPIWOiel4PBvyaDuPU2R3v2ImL4ZXa3NI0E7WnvjPclTcZ6mZ1WcBWqzs4x
+         lQXNnSrz0JKwVLb1uu0KE/F4FEdO3dOsauLAWyOdqM7iR/LpScxBPUE5c8MgIKPbEfoE
+         DmSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU25SWZJ5LKnbFYOs/WI7n61KrUOusKH//c1nj8Q/wQXCyQ1Tes5Mn09P82f/lDtpj99L1eW86h7GNoscdo@vger.kernel.org, AJvYcCVGJ0uJl3w8jhjzuSP1IIup/7aqxKOTwCXeKnNaejNxpZDsgEz9l6O2ACwXKynKlbrTbLtliHDgTQNne2+LhnTnefI=@vger.kernel.org, AJvYcCVSPsdMOhYrLdzKbUz/KoJCPsVwqOBLW9Rb5ADcuFOgJGLxjGeImkY96ogSJzZHaL3E9WwlojZz01s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycFtwB6ERbGmjzOdWIEvhHJwLXaWLkWFm/3enyZImGhNNGaDS7
+	2/GBto+pRn4Et/RQes7GGo9WsunjdbyHqw0E5qgKx5HRyT/5wLb9et4hhS5goLGN
+X-Gm-Gg: ASbGncu7YM40J0k3xWbhl8Rim9axK0xnGe402MA6yPggNGIx/yL7AZNvnUgan7arVXb
+	gNsPuAY7cyatutpOsMnH+j0PyLb0INrnM1KbpPlUHo4KwdrJg88lCW2MHeuJcfHBkm+BaOgnw5t
+	Dfv6wbpPOGxM7vLwx+O6bpVPLuNevjS0y/rIJkpBwgjJJ9CXPTHXaJFUN8luBy8u2q6+2dh5p6z
+	tx5FI311fJaX9GXWLZgVrSM3cUur6of6XIdi3yjBEEbQSWZbxI/CAUUQgjpHBHhECfcYtt4BsSG
+	ZOIL390iww91BRxZEFqkj+SzG7hNTWAszeTpDkpUsjfCI8/TJ/Fk0cIZHp2LISJPROFXAbX3dHA
+	c/eokbPuQjSoYoRb/B43hMOiU
+X-Google-Smtp-Source: AGHT+IH13kO9YbN/OP792OHwLxVq9xJLt1+adMRr3ztnrXD9QfANaSlEjjo0oCqpeabfB0hX/HhAEg==
+X-Received: by 2002:a05:6122:4fa7:b0:530:66e6:e214 with SMTP id 71dfb90a1353d-531ad5211d8mr9933143e0c.3.1750748300282;
+        Mon, 23 Jun 2025 23:58:20 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-531ab202cb0sm1567358e0c.9.2025.06.23.23.58.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 23:58:19 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86f9c719d63so1133277241.1;
+        Mon, 23 Jun 2025 23:58:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOFu9gsnoDagXiYFGRaYljZMSqd2EAD558d0UcOO2+BCL0zBwoaxJy0PVAqi3Ulnj1/ON3G7lUXAWOo9k98qgpLVA=@vger.kernel.org, AJvYcCVJuPaf1TkBEuaWWCy6svMxXKDdncoxa//WFtdx10GSfTaDnkpSxrnoD0yzmz0YFJm+Vxm5FU5yc65tFsVI@vger.kernel.org, AJvYcCXWeSFJmd4eMxPgbDX180qWJT+iMRwGpHG70s/K9plcp3GwSlY21jFy5VcNaoiLUMPkmmoTGXLDsdE=@vger.kernel.org
+X-Received: by 2002:a05:6102:2d01:b0:4e9:b076:9f7f with SMTP id
+ ada2fe7eead31-4e9c2cf29b5mr8486894137.16.1750748294782; Mon, 23 Jun 2025
+ 23:58:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623102940.214269-25-laura.nao@collabora.com>
+References: <20250610072809.1808464-1-raag.jadav@intel.com> <aFVO-QtE3D3dU7y8@black.fi.intel.com>
+In-Reply-To: <aFVO-QtE3D3dU7y8@black.fi.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jun 2025 08:58:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVPDxgEV49yN1JS8Q2WVwxfau6kccMV0OPojxDnMfp-yQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyVxQAMbNcfIs45xL1NaEpK__-Ph2zKIrzrkRShDUqHQRPel2D8ZJHFv1I
+Message-ID: <CAMuHMdVPDxgEV49yN1JS8Q2WVwxfau6kccMV0OPojxDnMfp-yQ@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: renesas: rzv2h: use devm_kmemdup_array()
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	andriy.shevchenko@linux.intel.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Laura,
+Hi Raag,
 
-kernel test robot noticed the following build warnings:
+On Fri, 20 Jun 2025 at 14:07, Raag Jadav <raag.jadav@intel.com> wrote:
+> On Tue, Jun 10, 2025 at 12:58:09PM +0530, Raag Jadav wrote:
+> > Convert to use devm_kmemdup_array() which is more robust.
+> >
+> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.16-rc3 next-20250623]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for your patch!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Laura-Nao/clk-mediatek-clk-pll-Add-set-clr-regs-for-shared-PLL-enable-control/20250623-184204
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250623102940.214269-25-laura.nao%40collabora.com
-patch subject: [PATCH 24/30] clk: mediatek: Add MT8196 disp-ao clock support
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250624/202506241439.PGytyi4q-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506241439.PGytyi4q-lkp@intel.com/reproduce)
+> Bump. Anything I can do to move this forward?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506241439.PGytyi4q-lkp@intel.com/
+Please include linux-renesas-soc@vger.kernel.org next time.
 
-All warnings (new ones prefixed by >>):
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
->> drivers/clk/mediatek/clk-mt8196-vdisp_ao.c:62:34: warning: 'of_match_clk_mt8196_vdisp_ao' defined but not used [-Wunused-const-variable=]
-      62 | static const struct of_device_id of_match_clk_mt8196_vdisp_ao[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Gr{oetje,eeting}s,
 
-
-vim +/of_match_clk_mt8196_vdisp_ao +62 drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
-
-    61	
-  > 62	static const struct of_device_id of_match_clk_mt8196_vdisp_ao[] = {
-    63		{ .compatible = "mediatek,mt8196-vdisp-ao", .data = &mm_v_mcd },
-    64		{ /* sentinel */ }
-    65	};
-    66	MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vdisp_ao);
-    67	
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
