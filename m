@@ -1,63 +1,63 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843DF2571A5
-	for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 21:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158FB2571C8
+	for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 21:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750799505; cv=none; b=o9wu0PMPqUUXeVh5rBkiAKvBigl8JrEbJLVAs4zSe2t08/tUD5BjawcAaKUDCCQYABuhswGUTjAw1CXzmJ7wQ1RJ22T0Yaq/Z1rVwnX/ZhGUrZVp+V/+Y2yaUfav91NtDJEJAY1tlYvnmt69mUrHTo+Qj56p04ADSr3XVoo0K0I=
+	t=1750799543; cv=none; b=kAvELGt6POn13Y7HaH27jSxfTcvil7gn3wAMY6YQ5dI4g4zuv+hWceuDIfB2E9ZIrV8gkumuUK6b14PuMac54W3wgX3737e8EhIV4B6LS5u7GrUP9DyG97QUFFEIYGV4p774ZqZprMx4tztMl6mTDVocpIu1YZpYurzSPtrQE1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750799505; c=relaxed/simple;
-	bh=PFbnWfYExMNiWyWjv+9emyWRUe/yj2S0aeMUTA6DgRQ=;
+	s=arc-20240116; t=1750799543; c=relaxed/simple;
+	bh=vg1ef1oRFT4Gwpd8ueYyQA6/BOZsNA4oa9AALT0Rbxs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JilXfJ8GwI2Lv+WiiLj6yu9R1VmG01YL408TcNztCqWgyvn6xnok13xACsEOamyeWZV+FI5Ewir22ph+USe+TWuBhPZf0ZnkRfLiPxnPfD5+mVPFnNVd/L6lONZJ43JACUUptFmEmZ12WrkfDpwf+JX9ct6ZrPHWORnAcDJLgE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LiwNQ/kh; arc=none smtp.client-ip=209.85.210.182
+	 In-Reply-To:Content-Type; b=iJsqtxuJxlh6d8N6xkhJWG1OFf58bLXUbas1fmsqgCHPpwPP0MNCRZY9D2DERWvEbTTfb/WxkL5hB4zk7+kN2/ytqX3saYoPEnAA6nXlzMSMGKTZrR9hvSzA07LEC3QJAHJGt46D/4DTc+QK7dYJSB/VcHdmQpJCBZAG4yY8c/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KhGnubNm; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LiwNQ/kh"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747ef5996edso4173325b3a.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 14:11:44 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KhGnubNm"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234bfe37cccso13473575ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 24 Jun 2025 14:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1750799504; x=1751404304; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1750799541; x=1751404341; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eo2vufChLx1e55QzOzBwTMNU9Z8LIJfaoAcIHFWzr7Q=;
-        b=LiwNQ/khYCK49AlkADU62XP9aeXqysZtDDLWK3LsWbaE22eCtPCeOSGv6zEeFkzxkJ
-         ng7axil/5AnsTznFEp8bj94zas6V4TrbOsx1x0ZBohOyeXSozWH3E7jC/KTi1AhCl2mB
-         7b18cOfH1NevQJgPKqKUFG+dhS50gQVAwYI0U=
+        bh=wkIMyFBlVlgs2Ulo4+3BI7DnkrCtZPojDt3EBpbXk+s=;
+        b=KhGnubNmsT7u5pVY+SRS2xFXm4T/sYLMrizOIUh6hmEE9MlBmOdYfembezeB+sKxo9
+         d9VdW8vGnjlDaSfw/RfnyTAdK9xdNVr0QmHNH/CgiaZK/DQ7PmnjySR+2knRYMYTQ1gR
+         vuxT3dfsXGzE15ACBVV9Q9TVQpQVU6xTLiegw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750799504; x=1751404304;
+        d=1e100.net; s=20230601; t=1750799541; x=1751404341;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Eo2vufChLx1e55QzOzBwTMNU9Z8LIJfaoAcIHFWzr7Q=;
-        b=FOsSe91AdPLmhaAI3+snGYSIh4pdZDPu6hdxy0b6xWLQy9V2s7OdGQGcqpEBhbcGK/
-         3re5Uf3NNPj0NrtKDUvDYz0URjbTWfQSsayhe+GR/wt+s+jlNWqM8kbED6pULQto3CmJ
-         0qH1fHO169MY1lFlSvwf/1OarbfhhIWsrCi5UhjgD8GfgnEspZ1hZjm1KyHV9zghh3p0
-         HYRH6ReEHA+X3M13A7Fbpc4etzal4WtwZxEFzQxmjKNq5/diqTuZhV9XR8moDJc59Pa9
-         X8VqqWni/Fl6LUeUY/RSKH8qexL2fN2XMPmc9huEFWKx/cC/SvHFfuZX9pJEPXvu7Bid
-         jrvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU11IZRwq1d6/h9W56vQda3ty8ENNA8z4iVSrDdvwjCMyJo3wFvYyjG/QHJcZgh5s8evlcaBMXoFs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEttm2rUq7iFRoNVQ6VG8LSHd61O72bZLDOtazToFhCXP45JGU
-	t0+/pNbGynLrW/qIE46Vu4k2wynmfr64Xx4p76UHJV7sQnHefpTISa+vhjGqauIsjQ==
-X-Gm-Gg: ASbGnctG8vY0nhXSIXheBMMFTB0zt/KNZr8vqPqcI/1I6eYLH8MEPGTWLo/lcIhSahI
-	8FyY0M4I4pzVU9zigAdY6BJ736yrV+nB4taLRQ1QEMWaXNDzBJkCKNWlkaPmF+s/WK9Kz4gNyfo
-	LqqZpZHbN72Qa7imNcTCfdjIMBehRClDep3U0i09BdVHmmhKhOP5tH1rUGCxygSjt3ePzan7CmE
-	pxrxxv61wUvVj+4q7mIm2R7udazMYRKaBE7qOsb05WnZeLwpvHYKoTmUqZ1KbMQDRCSSkU8JyId
-	fenMrFGbMCjMaCloMngF5LijyUKzgdhb74R4XcplhbK8aQC8AhyUPr5uXvX575TBsdfxkgDhWNZ
-	kbB6Mikny3VM1GhobgX6dT8dp1g==
-X-Google-Smtp-Source: AGHT+IFf3/YeR9gk7+WP5WcaJ4mRmmHJiKPywBy37oskEyKjfGaPDSuW17BELTvjbXXXqhnRst+TYA==
-X-Received: by 2002:a05:6a21:8cc6:b0:21a:eabb:ab93 with SMTP id adf61e73a8af0-2207f19255cmr765020637.6.1750799503649;
-        Tue, 24 Jun 2025 14:11:43 -0700 (PDT)
+        bh=wkIMyFBlVlgs2Ulo4+3BI7DnkrCtZPojDt3EBpbXk+s=;
+        b=efDI2KP9JC1xBiovmxy0bgQf21w2LIR0q7Eid9+lzL5Ty5vBbOLUau+uG7REr7PDpl
+         2w2EB6ymU1KPyC3+x3hA6RJFuh/SfPPLJBmHnPhcPgHcqaSneXpgHCKAsJUw59yjJ7zX
+         zCd49X/YA0P8Osl1wq8HfpgTbDkyMbxuhUQA3Cvlxtl+/bYBYZ7yTJpNNjJuSQ3pFUGy
+         WxXO6zcTPnu+UNMN5BuKqhaqCofhvBCQ6gDA+MNCJ0Bz5juAGmZso2z0PTdTFqxBMbiy
+         hZehQ3Sdj9mUlkdTdLAtmxrQV0rnInW/ZTAkd2bE9GPVQU8q8C6bg2UInUbQ8xEUhWHT
+         5HHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUZZk6KDWnRsbIuus1ozPO5Y40fUDX84yP8b6ytat+sPvDTj0/s/aZJm0rDBAd/K4DnWnaHIKg7+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydXogK2sCNFhi+FX0S4ToKN3OJEbuYBFvVcwHG+ffH8LmvvaCJ
+	CZYev2SS7WVUcCJEqfjjZ9ydnMpTexer11g5kNoxhgDL5DuIJOifXc/+54E89eBh9w==
+X-Gm-Gg: ASbGncu0DzwOkU9EioUwsSaXN8h1iGJmGI6EKytSspwgpgrJ6WQawZI9691CWN/Ri4I
+	4rRq+VkoM/rJCAXZk50DJUfFD5aXYai3FdDVge5Pu4ucX1CN7UzALpYkTyNUC3Bt+MSeFS35xWx
+	Ct7G650WJjfP0k6fGgfDSYc7quK4riCXJkqkv41C4l9SL/qV66Le0BoRt4Iy19Sx7uCclln9CN2
+	H7WpnyZvGd1Fhz8DGWsE1JAniM8wJyQvhLPS6MUUZX+wSQV6ZHankC9g2++bxrdqRYvffWiZW/5
+	fTXZKIT1EIVuoy/5PdtSIRluAdzQ1crPiSDDhnZHtSRi9VmhHajN8vLBnJnYrljR9e2Iq4crTbl
+	bmFl6yR71sqKLCulFgEEePxLtDl8w5W8FBgPi
+X-Google-Smtp-Source: AGHT+IE8AtKCbRL/Ae95ntUOEV0G/Hz0ZyjAAOPX2JCe7DpKTe3ncgHoFdCvDL7h49ynbDxxbTuKNg==
+X-Received: by 2002:a17:902:d60e:b0:234:f6ba:e681 with SMTP id d9443c01a7336-2382409dfc9mr13529245ad.5.1750799541406;
+        Tue, 24 Jun 2025 14:12:21 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f1258b55sm9471699a12.61.2025.06.24.14.11.40
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f53d94b1sm23610a91.33.2025.06.24.14.12.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 14:11:42 -0700 (PDT)
-Message-ID: <9d31a4d7-ffd1-48ca-8df6-0ddc6683a49c@broadcom.com>
-Date: Tue, 24 Jun 2025 14:11:39 -0700
+        Tue, 24 Jun 2025 14:12:20 -0700 (PDT)
+Message-ID: <78106b8c-3f4e-44d0-9828-9b46952f3fa6@broadcom.com>
+Date: Tue, 24 Jun 2025 14:12:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,8 +65,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH stblinux/next] pinctrl: rp1: Implement RaspberryPi RP1
- pinmux/pinconf support
+Subject: Re: [PATCH v2 stblinux/next 2/2] clk: rp1: Implement remaining clock
+ tree
 To: Andrea della Porta <andrea.porta@suse.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -91,7 +91,8 @@ To: Andrea della Porta <andrea.porta@suse.com>,
  <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>,
  kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-References: <8c282b89b1aa8b9e3c00f6bd3980332c47d82df7.1750778806.git.andrea.porta@suse.com>
+References: <c20066500908db854aa4816b40e956296bab526a.1750714412.git.andrea.porta@suse.com>
+ <17e5c6e0c085cfa0bf4b63b639cdc92c6a4c1418.1750714412.git.andrea.porta@suse.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -126,23 +127,34 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <8c282b89b1aa8b9e3c00f6bd3980332c47d82df7.1750778806.git.andrea.porta@suse.com>
+In-Reply-To: <17e5c6e0c085cfa0bf4b63b639cdc92c6a4c1418.1750714412.git.andrea.porta@suse.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/24/25 08:36, Andrea della Porta wrote:
-> The current implementation for the pin controller peripheral
-> on the RP1 chipset supports gpio functionality and just the
-> basic configuration of pin hw capabilities.
+On 6/23/25 14:46, Andrea della Porta wrote:
+> The RP1 clock generator driver currently defines only the fundamental
+> clocks such as the front PLLs for system, audio and video subsystems
+> and the ethernet clock.
 > 
-> Add support for selecting the pin alternate function (pinmux)
-> and full configuration of the pin (pinconf).
+> Add the remaining clocks to the tree so as to be completed, which means
+> that the following RP1 peripherals could now consume their specific clocks
+> and be enabled to work (provided that the relevant driver changes for each
+> specific peripheral, if any, are committed):
 > 
-> Related pins are also gathered into groups.
+> - ADC
+> - Audio IN/OUT
+> - DMA controller
+> - I2S
+> - MIPI DPI/DSI
+> - PWM
+> - SDIO
+> - UART
+> - Video Encoder
 > 
 > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 
-Linus, can I get an ack or reviewed by tag from you and take that in the 
-next few days to go with the Broadcom ARM SoC pull requests? Thanks!
+Stephen, can I get an Acked-by or Reviewed-by from you so I can take 
+those changes in the Broadcom ARM SoC pull request that I will submit in 
+the next few days, thanks!
 -- 
 Florian
