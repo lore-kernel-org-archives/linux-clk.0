@@ -1,150 +1,160 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EA522D9ED;
-	Tue, 24 Jun 2025 15:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750780179; cv=pass; b=pG+IC5mvWGewOKtkxmTT2lcds1gmEkCiKyaMZwNPgpUp3arwXyfXcF4jjkSLtAO7xGCwcXaBliEmRd8wGJuZ08OnHOTtZzz1MdBJkG60gYFz5bfLrjjeHWyh+OhjqmDjC2nUmgUYz3ZyFkmJpvz5fBSJ95ujQgx0ygLv7IMyNMk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750780179; c=relaxed/simple;
-	bh=3+XTKpEiNYrYrQNEx7zBBd9tGAKVmroU4kJyUaRvTlY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i0wHNjNZ9s5rxg8SZZMVrCoHWHSWAdKEOv2lXFmuX/tkl1KdbBGCa0gilSDWCuCVzkWGQ2QamjcxRANSQGUdwIdfzCW/GbtTapWQCZCJTOulXrwu/FAE+fR2B3kceru7M11JaGRDbEqvMmkwoxtuIySbb0eIh9X0w3+Oo8/UF6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=Mf+1u2nZ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117A42D662A;
+	Tue, 24 Jun 2025 16:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750780803; cv=none; b=osH8ectk1LZsBnsMClU6pfBmhmxE4m6PHXZqUAMQKw9jbHpT55qsPx5KUW5RGQj+Ggiofc+e416kopBVat9QTG/czolGzY7IvJjuTe2hr8j8aq0QLI2ON90J1wHdXkna24TZ6Yw85o9EVegQnIv4Qu5ExApbAhVCZL+PCrfnSgc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750780803; c=relaxed/simple;
+	bh=oAj6M5RJNPj9zPVNfLaIS7Hz87nTWDNolCrwMJkPsAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vp8XyFMHap45oqZq4hqvL8Ivf5LAlqIov7n3RJtorPqG0MuuVXZ8Drk799R/2Gyt0UuEx1wiTelH9FBnSkCIm7QCVKyrjpscgFm8Jc3ZCk8GFPN7i8ykAWjXejLkKl6K1fAevbFy8oH9zcRHSIWPlQPwdaErAvJCEAQstPkjnU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdctnZWY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="Mf+1u2nZ"
-ARC-Seal: i=1; a=rsa-sha256; t=1750780152; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nhM6xzFKQLignkPZ/NGXslADyUBs01OBDRtEGhcYbEZLQGf8X++La8SK8bC4+Ep+pG4NDeBk7ldt/PmAcUwHLQAhHIBkrJl+G2icqEjZGA88um/8uXeLESnCeveaO2Sqlx2ssV+EZHeA04IQK4nTIlbJQ+7JJzoWL2lDvcLidTg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750780152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=3+XTKpEiNYrYrQNEx7zBBd9tGAKVmroU4kJyUaRvTlY=; 
-	b=fslOD0wYoTicBABQ5dKJGop85WUGIP8Gf7QKyA66Q36NNT+f9XEPfE6a9cQpNesBZuqe2kgLSDPkO+dfvDn5u9qbPyRpHBivsWb0QxEAVyKVGmpCEzrib0a75B05/cYjHkJhNxrq1JkFsVCMmbClNIhuL/wQtsLnpwLAcWK3ocE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750780152;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=3+XTKpEiNYrYrQNEx7zBBd9tGAKVmroU4kJyUaRvTlY=;
-	b=Mf+1u2nZer5UaeOmVDDAG1ecTp+wTtSEGZa9C3cYt9i/q4ByEvX5DGQq90zHOwAn
-	2/GOLXkRK5exFiNuHju7XzqZIHCmL20orHuNSEIRGWVBLR9FlyMSJlOokbhtLDnXggx
-	bYiEGIiz6n8lHpUWi/XVRSNEguEbKc1oG0rnjXyc=
-Received: by mx.zohomail.com with SMTPS id 1750780149757734.6410007359632;
-	Tue, 24 Jun 2025 08:49:09 -0700 (PDT)
-Message-ID: <c05ff44f1df5276a0a548cbfc7589d45520a54bb.camel@collabora.com>
-Subject: Re: [PATCH v2 00/29] Add support for MT8196 clock controllers
-From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
- p.zabel@pengutronix.de, richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com, wenst@chromium.org,
- linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,  netdev@vger.kernel.org,
- kernel@collabora.com
-Date: Tue, 24 Jun 2025 11:49:07 -0400
-In-Reply-To: <20250624143220.244549-1-laura.nao@collabora.com>
-References: <20250624143220.244549-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdctnZWY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05257C4CEE3;
+	Tue, 24 Jun 2025 16:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750780802;
+	bh=oAj6M5RJNPj9zPVNfLaIS7Hz87nTWDNolCrwMJkPsAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OdctnZWYTC2OySmeHB0kk3tnxgJZhoD2Eszg4FdDvvp+inSJCTCGaDxjW5Lgqn03T
+	 pCrEQrvJU7EuKdEChDca44k/Bi3meJzZNJ1HpC/L7VmFBlsc8bgdxqXyTHa3BX1LW5
+	 pUdH9oU7w9n+Ipb7C0SZR+f3x91NOtFln7yoANDlOujkjcu/Kg3FPjylHH1BCpoeJh
+	 /ks5EEIbWYW8Gbq0WgH/6rq6+r3SnqtUx/MOaR62bnRhpj97dE0f2ZwGn7WmHwLsln
+	 ijKFARQzyMJ65Ttx9CarMFe0ZyAwVGIGYu+Xd3winavaZacvw087EBZbB8TswaPzMP
+	 gpzs14eDgxrzQ==
+Date: Tue, 24 Jun 2025 16:59:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: conor.dooley@microchip.com, daire.mcnamara@microchip.com,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: microchip: mpfs: Fix incorrect MSSPLL ID in error
+ message
+Message-ID: <20250624-monotype-disorder-aedee5ef7cfa@spud>
+References: <20250622180352.4151679-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kYIau9vyQZzfZ+VS"
+Content-Disposition: inline
+In-Reply-To: <20250622180352.4151679-1-alok.a.tiwari@oracle.com>
 
-On Tue, 2025-06-24 at 16:31 +0200, Laura Nao wrote:
-> Add support for MT8196 clock controllers
->=20
-> This patch series introduces support for the clock controllers on the
-> MediaTek MT8196 platform, following up on an earlier submission[1].
->=20
-> MT8196 uses a hardware voting mechanism to control some of the clock
-> muxes
-> and gates, along with a fence register responsible for tracking PLL
-> and mux
-> gate readiness. The series introduces support for these voting and
-> fence
-> mechanisms, and includes drivers for all clock controllers on the
-> platform.
->=20
-> [1]
-> https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek=
-.com/
->=20
-> Changes in v2:
-> - Fixed incorrect ID numbering in mediatek,mt8196-clock.h
-> - Improved description for 'mediatek,hardware-voter' in
-> mediatek,mt8196-clock.yaml and mediatek,mt8196-sys-clock.yaml
-> - Added description for '#reset-cells' in mediatek,mt8196-clock.yaml
-> - Added missing mediatek,mt8196-vdisp-ao compatible in
-> mediatek,mt8196-clock.yaml
-> - Fixed license in mediatek,mt8196-resets.h
-> - Fixed missing of_match_table in clk-mt8196-vdisp_ao.c
-> - Squashed commit adding UFS and PEXTP reset controller support
-> - Reordered commits to place reset controller binding before
-> dependent drivers
-> - Added R-b tags
->=20
-> Link to v1:
-> https://lore.kernel.org/all/20250623102940.214269-1-laura.nao@collabora.c=
-om/
->=20
-> AngeloGioacchino Del Regno (1):
-> =C2=A0 dt-bindings: reset: Add MediaTek MT8196 Reset Controller binding
->=20
-> Laura Nao (28):
-> =C2=A0 clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable
-> control
-> =C2=A0 clk: mediatek: clk-pll: Add ops for PLLs using set/clr regs and
-> FENC
-> =C2=A0 clk: mediatek: clk-mux: Add ops for mux gates with set/clr/upd and
-> =C2=A0=C2=A0=C2=A0 FENC
-> =C2=A0 clk: mediatek: clk-mtk: Introduce mtk_clk_get_hwv_regmap()
-> =C2=A0 clk: mediatek: clk-mux: Add ops for mux gates with HW voter and
-> FENC
-> =C2=A0 clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use
-> =C2=A0=C2=A0=C2=A0 mtk_gate struct
-> =C2=A0 clk: mediatek: clk-gate: Add ops for gates with HW voter
-> =C2=A0 clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
-> =C2=A0 dt-bindings: clock: mediatek: Describe MT8196 peripheral clock
-> =C2=A0=C2=A0=C2=A0 controllers
-> =C2=A0 clk: mediatek: Add MT8196 apmixedsys clock support
-> =C2=A0 clk: mediatek: Add MT8196 topckgen clock support
-> =C2=A0 clk: mediatek: Add MT8196 topckgen2 clock support
-> =C2=A0 clk: mediatek: Add MT8196 vlpckgen clock support
-> =C2=A0 clk: mediatek: Add MT8196 peripheral clock support
-> =C2=A0 clk: mediatek: Add MT8196 ufssys clock support
-> =C2=A0 clk: mediatek: Add MT8196 pextpsys clock support
-> =C2=A0 clk: mediatek: Add MT8196 adsp clock support
-> =C2=A0 clk: mediatek: Add MT8196 I2C clock support
-> =C2=A0 clk: mediatek: Add MT8196 mcu clock support
-> =C2=A0 clk: mediatek: Add MT8196 mdpsys clock support
-> =C2=A0 clk: mediatek: Add MT8196 mfg clock support
-> =C2=A0 clk: mediatek: Add MT8196 disp0 clock support
-> =C2=A0 clk: mediatek: Add MT8196 disp1 clock support
-> =C2=A0 clk: mediatek: Add MT8196 disp-ao clock support
-> =C2=A0 clk: mediatek: Add MT8196 ovl0 clock support
-> =C2=A0 clk: mediatek: Add MT8196 ovl1 clock support
-> =C2=A0 clk: mediatek: Add MT8196 vdecsys clock support
-> =C2=A0 clk: mediatek: Add MT8196 vencsys clock support
 
-For the whole series:
+--kYIau9vyQZzfZ+VS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+On Sun, Jun 22, 2025 at 11:03:49AM -0700, Alok Tiwari wrote:
+> The error message in mpfs_clk_register_mssplls() incorrectly
+> printed a constant CLK_MSSPLL_INTERNAL instead of the actual
+> PLL ID that failed to register.
 
-(as I internally reviewed it before submission)
+Huh, that's weird. Did you actually encounter this happening, or is this
+some sort of patch based on the output from a tool?
+I ask because I don't see how this could ever actually report a
+constant, when the array it loops over only has a single element.
+Feels like we should just do something like the following (if we do
+anything at all)
 
---=20
-Thanks,
+Cheers,
+Conor.
 
-N=C3=ADcolas
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-m=
+pfs.c
+index c22632a7439c5..ed6d5e6ff98ec 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -148,22 +148,18 @@ static struct mpfs_msspll_hw_clock mpfs_msspll_clks[]=
+ =3D {
+ };
+=20
+ static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_msspl=
+l_hw_clock *msspll_hws,
+-				     unsigned int num_clks, struct mpfs_clock_data *data)
++				     struct mpfs_clock_data *data)
+ {
+-	unsigned int i;
++	struct mpfs_msspll_hw_clock *msspll_hw =3D &msspll_hws[0];
+ 	int ret;
+=20
+-	for (i =3D 0; i < num_clks; i++) {
+-		struct mpfs_msspll_hw_clock *msspll_hw =3D &msspll_hws[i];
++	msspll_hw->base =3D data->msspll_base;
++	ret =3D devm_clk_hw_register(dev, &msspll_hw->hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
++				     CLK_MSSPLL_INTERNAL);
+=20
+-		msspll_hw->base =3D data->msspll_base;
+-		ret =3D devm_clk_hw_register(dev, &msspll_hw->hw);
+-		if (ret)
+-			return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
+-					     CLK_MSSPLL_INTERNAL);
+-
+-		data->hw_data.hws[msspll_hw->id] =3D &msspll_hw->hw;
+-	}
++	data->hw_data.hws[msspll_hw->id] =3D &msspll_hw->hw;
+=20
+ 	return 0;
+ }
+@@ -386,8 +382,7 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	clk_data->dev =3D dev;
+ 	dev_set_drvdata(dev, clk_data);
+=20
+-	ret =3D mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, ARRAY_SIZE(mpfs_=
+msspll_clks),
+-					clk_data);
++	ret =3D mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, clk_data);
+ 	if (ret)
+ 		return ret;
+=20
+
+>=20
+> Update it to msspll_hw->id for accurate diagnostics
+>=20
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+>  drivers/clk/microchip/clk-mpfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk=
+-mpfs.c
+> index c22632a7439c5..d12b7120f16ff 100644
+> --- a/drivers/clk/microchip/clk-mpfs.c
+> +++ b/drivers/clk/microchip/clk-mpfs.c
+> @@ -160,7 +160,7 @@ static int mpfs_clk_register_mssplls(struct device *d=
+ev, struct mpfs_msspll_hw_c
+>  		ret =3D devm_clk_hw_register(dev, &msspll_hw->hw);
+>  		if (ret)
+>  			return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
+> -					     CLK_MSSPLL_INTERNAL);
+> +					     msspll_hw->id);
+> =20
+>  		data->hw_data.hws[msspll_hw->id] =3D &msspll_hw->hw;
+>  	}
+> --=20
+> 2.46.0
+>=20
+
+--kYIau9vyQZzfZ+VS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFrLfgAKCRB4tDGHoIJi
+0vgFAP9GyzbHnazol+NlKh5je3tRgPsVvN7IpkQiog8B5K4D0QEA2xnruSiwTK/I
+46n97dx2MdGT4uUpeQbsfTsUm0KjmwM=
+=SyNN
+-----END PGP SIGNATURE-----
+
+--kYIau9vyQZzfZ+VS--
