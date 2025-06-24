@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D68B229B36;
-	Tue, 24 Jun 2025 11:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794B919F480;
+	Tue, 24 Jun 2025 11:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750762859; cv=none; b=OtgljccUVadyX3P8PSyiqBasLBAqhEleLZ6/eFXhpzqKmhi0dgLv8xWL+D+2tLCL6CHhzlbVYVFcBmRloOpfuaV2cOMQIQtnaZrjlhTGCRyPxScVPeceqvi+lmSLB7bcN0PZseC5k79vKVgCsDSofd0RZO5ij8/bq7xjwFn1yT0=
+	t=1750763054; cv=none; b=kV06ngbhV0KquqB+X4fRJwX5AhKH3rG/+KF+ATJuttvlwbUgtRZcJTwDF1Gwjv+AJyMOXxleiisrZ7gv529UPTGK1Asax7rmn+zQAyoon4OhyLPFnmrCHBPE2P6u7znnJlqaQ6gxlNdZPxnNxGPo9NxLexseQgUdEOK/7mW9vaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750762859; c=relaxed/simple;
-	bh=FoF0p/Xd6d2XLyOYAUtlJno6CwxeRwrK4FnBNCnaBKY=;
+	s=arc-20240116; t=1750763054; c=relaxed/simple;
+	bh=F+Ut0uhyqMWbQMweVF486zOFsPnCENVNVbpdP3ATUDA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ocOEWpDTapHuxHGOoFLqedwwR6wVRCpO77zWiyJxU326vdhN4x+LD0OHb0p9L0560sUb8vXNyBtJ8QoETntan1DJU5PE+Tux7WCEJGmiaJym5/qOFYFyGR5XFZcedSlHYMTjI3IsSj1J3uYUeBED3LLYxGxdWQ3JOXFlh50dWPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecVKd2zi; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=JxK+N/pROvtx6aBrllK75L0Bj0AJKXdHWdK9daZrbSBGfiwgghkV8K7majR88I6kan5SV82AOMzsseY3KrAjxLKhgIBI10B+anjTVKh+ZpkSOWruUlbi7dkKEZVR6A9VMTuo40ov8G0wyUjVnFbmzJ5VmmOxcLPj5lQsFPbwI4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqSv5D6B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecVKd2zi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5AE1C4CEE3;
-	Tue, 24 Jun 2025 11:00:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqSv5D6B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CCC4C4CEE3;
+	Tue, 24 Jun 2025 11:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750762858;
-	bh=FoF0p/Xd6d2XLyOYAUtlJno6CwxeRwrK4FnBNCnaBKY=;
+	s=k20201202; t=1750763054;
+	bh=F+Ut0uhyqMWbQMweVF486zOFsPnCENVNVbpdP3ATUDA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ecVKd2ziH/fQHEkxedPGzvc57yYb4PGnT4AeISrq7rgxOOdycnFKL1QeeXTExBEaS
-	 +s2Is64lJgNBCQQ41Tih6hFBVAxMP3N+/X6tx3DSHcLLWuBDwq3xa99d7A/0qsj5MN
-	 U46sSAR/QGw/4sNaoIF5M3BuKJVQ7w/FdOcJpR8DArmFHrRPUVzVRV/YLuJqez+T/Y
-	 gx5TagxPGW+z5vGDjn/GksW3VxXnH8t2qc7+I1604sSo9ija8miEkpBtwpfDp8kzJ/
-	 r/NTxDwIzbxi6cQDCI8AhL9jlIrFgza4rddfgZey0Rkviglq2t8IX7Kb+QIt7djpr0
-	 wVBFmmPQNeuMw==
-Message-ID: <cd98add5-dd2f-455f-b534-c83e62a97bd0@kernel.org>
-Date: Tue, 24 Jun 2025 13:00:53 +0200
+	b=ZqSv5D6B0y7mg2AUQgSm69sMfGE/+ffsDWYi2wUe4Xn0nvLgdNvQP84vknLIJZIJf
+	 fXKI1/WUNQ4IEETJT+qY/CN4rq+/pTMWfwkoC7/Hh2KREqWcxYwSxjg4qT2FE4tVv1
+	 XSLdfkYuHxXhy/u3dtoqeUVcjx8Mdrf6lr29fk62QaRBC4KDymfgzbmNhtGpdF8UlR
+	 zKKjJB4HNzT3c2pWM8RDNI2ubNqnpzJjuzNrliU3cmGLkojx2UvQY5Hj6iGDXGxBZ0
+	 JP6Ob2fmhtW7aGg8pmn6Jzqp99Ro5q8qMBsNsOcBAd4EgGjpQ3VqxCibrZygz/Ve1O
+	 8me8GOmI/JDGQ==
+Message-ID: <420cc724-e6cf-42d9-b00b-558965bee085@kernel.org>
+Date: Tue, 24 Jun 2025 13:04:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
+Subject: Re: [PATCH v3 2/2] clock: eswin: Add eic7700 clock driver
 To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -44,7 +43,7 @@ To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
 Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
  huangyifeng@eswincomputing.com
 References: <20250624103212.287-1-dongxuyang@eswincomputing.com>
- <20250624103256.345-1-dongxuyang@eswincomputing.com>
+ <20250624103314.400-1-dongxuyang@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,151 +89,73 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250624103256.345-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20250624103314.400-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/06/2025 12:32, dongxuyang@eswincomputing.com wrote:
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-clock
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  cpu-default-frequency:
+On 24/06/2025 12:33, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> This driver depends on the CCF framework implementation.
+>   Based on this driver, other modules in the SoC can use the APIs
+>   provided by CCF to perform clock-related operations.
+>   The driver supports eic7700 series chips.
+> 
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  drivers/clk/Kconfig             |    1 +
+>  drivers/clk/Makefile            |    1 +
+>  drivers/clk/eswin/Kconfig       |   10 +
+>  drivers/clk/eswin/Makefile      |    8 +
+>  drivers/clk/eswin/clk-eic7700.c | 3809 +++++++++++++++++++++++++++++++
+>  drivers/clk/eswin/clk-eic7700.h |  194 ++
 
-Frequency has a type - hz, use it as unit suffix if this stays.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-Drop
-
-Anyway, why do you need it? Why would this be a different per board and
-why would you ever need to encode it in DT? If firmware initializes
-device, just the registers.
-
-> +    default: 1400000000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-
-
-... and your example is not complete. Add all properties there.
-
-...
-
-> +#define EIC7700_MUX_U_VI_SHUTTER_XTAL_2MUX1_4	68
-> +#define EIC7700_MUX_U_VI_SHUTTER_XTAL_2MUX1_5	69
-> +#define EIC7700_MUX_U_VO_ACLK_XTAL_2MUX1		70
-> +#define EIC7700_MUX_U_IESMCLK_XTAL_2MUX1		71
-> +#define EIC7700_MUX_U_VO_PIXEL_XTAL_2MUX1		72
-> +#define EIC7700_MUX_U_VO_MCLK_2MUX_EXT_MCLK		73
-> +#define EIC7700_MUX_U_VC_ACLK_XTAL_2MUX1		74
-> +#define EIC7700_MUX_U_JD_XTAL_2MUX1		75
-> +#define EIC7700_MUX_U_JE_XTAL_2MUX1		76
-> +#define EIC7700_MUX_U_VE_XTAL_2MUX1		77
-> +#define EIC7700_MUX_U_VD_XTAL_2MUX1		78
-> +#define EIC7700_MUX_U_SATA_PHY_2MUX1		79
-> +#define EIC7700_MUX_U_AONDMA_AXI2MUX1_GFREE		80
-> +#define EIC7700_MUX_U_CRYPTO_XTAL_2MUX1		81
-> +#define EIC7700_MUX_U_RMII_REF_2MUX			82
-> +#define EIC7700_MUX_U_ETH_CORE_2MUX1		83
-> +#define EIC7700_MUX_U_VI_DW_ROOT_2MUX1		84
-> +#define EIC7700_MUX_U_VI_DW_XTAL_2MUX1		85
-> +#define EIC7700_MUX_U_NPU_E31_3MUX1_GFREE		86
-> +#define EIC7700_MUX_U_DDR_ACLK_ROOT_2MUX1_GFREE		87
-> +
-> +/* divider clocks */
-> +#define EIC7700_DIVDER_U_SYS_CFG_DIV_DYNM		100
-
-DIVIDER... or just shorter DIV
-
-> +#define EIC7700_DIVDER_U_NOC_NSP_DIV_DYNM		101
-> +#define EIC7700_DIVDER_U_BOOTSPI_DIV_DYNM		102
-> +#define EIC7700_DIVDER_U_SCPU_CORE_DIV_DYNM		103
-> +#define EIC7700_DIVDER_U_LPCPU_CORE_DIV_DYNM	104
-> +#define EIC7700_DIVDER_U_GPU_ACLK_DIV_DYNM		105
-> +#define EIC7700_DIVDER_U_DSP_ACLK_DIV_DYNM		106
-> +#define EIC7700_DIVDER_U_D2D_ACLK_DIV_DYNM		107
-> +#define EIC7700_DIVDER_U_HSP_ACLK_DIV_DYNM		108
-> +#define EIC7700_DIVDER_U_ETH_TXCLK_DIV_DYNM_0	109
-> +#define EIC7700_DIVDER_U_ETH_TXCLK_DIV_DYNM_1	110
-> +#define EIC7700_DIVDER_U_MSHC_CORE_DIV_DYNM_0	111
-> +#define EIC7700_DIVDER_U_MSHC_CORE_DIV_DYNM_1	112
-> +#define EIC7700_DIVDER_U_MSHC_CORE_DIV_DYNM_2	113
-> +#define EIC7700_DIVDER_U_PCIE_ACLK_DIV_DYNM		114
-> +#define EIC7700_DIVDER_U_NPU_ACLK_DIV_DYNM		115
-> +#define EIC7700_DIVDER_U_NPU_LLC_SRC0_DIV_DYNM	116
-> +#define EIC7700_DIVDER_U_NPU_LLC_SRC1_DIV_DYNM	117
-> +#define EIC7700_DIVDER_U_NPU_CORECLK_DIV_DYNM	118
-> +#define EIC7700_DIVDER_U_VI_ACLK_DIV_DYNM		119
-> +#define EIC7700_DIVDER_U_VI_DVP_DIV_DYNM		120
-> +#define EIC7700_DIVDER_U_VI_DIG_ISP_DIV_DYNM	121
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_0	122
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_1	123
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_2	124
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_3	125
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_4	126
-> +#define EIC7700_DIVDER_U_VI_SHUTTER_DIV_DYNM_5	127
-> +#define EIC7700_DIVDER_U_VO_ACLK_DIV_DYNM		128
-> +#define EIC7700_DIVDER_U_IESMCLK_DIV_DYNM		129
-> +#define EIC7700_DIVDER_U_VO_PIXEL_DIV_DYNM		130
-> +#define EIC7700_DIVDER_U_VO_MCLK_DIV_DYNM		131
-> +#define EIC7700_DIVDER_U_VC_ACLK_DIV_DYNM		132
-> +#define EIC7700_DIVDER_U_JD_DIV_DYNM		133
-> +#define EIC7700_DIVDER_U_JE_DIV_DYNM		134
-> +#define EIC7700_DIVDER_U_VE_DIV_DYNM		135
-> +#define EIC7700_DIVDER_U_VD_DIV_DYNM		136
-> +#define EIC7700_DIVDER_U_G2D_DIV_DYNM		137
-> +#define EIC7700_DIVDER_U_AONDMA_AXI_DIV_DYNM	138
-> +#define EIC7700_DIVDER_U_CRYPTO_DIV_DYNM	139
-> +#define EIC7700_DIVDER_U_VI_DW_DIV_DYNM		140
-> +#define EIC7700_DIVDER_U_NPU_E31_DIV_DYNM	141
-> +#define EIC7700_DIVDER_U_SATA_PHY_REF_DIV_DYNM	142
-> +#define EIC7700_DIVDER_U_DSP_0_ACLK_DIV_DYNM	143
-> +#define EIC7700_DIVDER_U_DSP_1_ACLK_DIV_DYNM	144
-> +#define EIC7700_DIVDER_U_DSP_2_ACLK_DIV_DYNM	145
-> +#define EIC7700_DIVDER_U_DSP_3_ACLK_DIV_DYNM	146
-> +#define EIC7700_DIVDER_U_DDR_ACLK_DIV_DYNM		147
-> +#define EIC7700_DIVDER_U_AON_RTC_DIV_DYNM		148
-> +#define EIC7700_DIVDER_U_U84_RTC_TOGGLE_DIV_DYNM	149
-> +#define EIC7700_DIVDER_U_VO_CEC_DIV_DYNM		150
-> +
-> +/* gate clocks */
-> +#define EIC7700_GATE_CLK_CPU_EXT_SRC_CORE_CLK_0	200
-
-151, there should be no gaps in IDs.
-
-> +#define EIC7700_GATE_CLK_CPU_EXT_SRC_CORE_CLK_1	201
-> +#define EIC7700_GATE_CLK_CPU_EXT_SRC_CORE_CLK_2	202
-> +#define EIC7700_GATE_CLK_CPU_EXT_SRC_CORE_CLK_3	203
 
 
 ...
 
-> +
-> +#define EIC7700_CLK_VC_JE_PCLK		685
-> +#define EIC7700_CLK_VC_JD_PCLK		686
-> +#define EIC7700_CLK_VC_VE_PCLK		687
-> +#define EIC7700_CLK_VC_VD_PCLK		688
-> +#define EIC7700_CLK_VC_MON_PCLK		689
-> +
-> +#define EIC7700_CLK_HSP_DMA0_CLK		690
-> +#define EIC7700_CLK_HSP_DMA0_CLK_TEST	691
-> +
-> +#define EIC7700_NR_CLKS		700
 
-Drop
-
+> +void eswin_clk_register_pll(struct eswin_pll_clock *clks, int nums,
+> +			    struct eswin_clock_data *data, struct device *dev)
+> +{
+> +	void __iomem *base = data->base;
+> +	struct eswin_clk_pll *p_clk = NULL;
+> +	struct clk *clk = NULL;
+> +	struct clk_init_data init;
+> +	int i;
+> +	static struct gpio_desc *cpu_voltage_gpio;
 > +
-> +#endif /* _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_ */
+> +	p_clk = devm_kzalloc(dev, sizeof(*p_clk) * nums, GFP_KERNEL);
+> +
+> +	if (!p_clk)
+> +		return;
+> +	/*
+> +	 *In the D2D system, the boost operation is performed using the GPIO on Die0.
+
+What is the Linux coding style of comment?
+
+> +	 *However, the same GPIO pin cannot be acquired twice, so special handling is implemented:
+> +	 *Once the GPIO is acquired,the other driver simply uses it directly
+> +	 */
+> +	cpu_voltage_gpio =
+> +		IS_ERR_OR_NULL(cpu_voltage_gpio) ?
+> +			devm_gpiod_get(dev, "cpu-voltage", GPIOD_OUT_HIGH) :
+> +			cpu_voltage_gpio;
+> +	if (IS_ERR_OR_NULL(cpu_voltage_gpio)) {
+> +		dev_warn(dev, "failed to get cpu volatge gpio\n");
+> +		cpu_voltage_gpio = NULL;
+> +	} else {
+> +		/*cpu default freq is 1400M, the volatge should be VOLTAGE_0_8V*/
+> +		eswin_clk_set_cpu_volatge(cpu_voltage_gpio, VOLTAGE_0_8V);
+
+Amount of typos and unreadable stuff like missing spaces in this driver
+is just discouraging and making review unnecessary difficult. Fix the
+typos, fix the style. Driver is also way too big for simple clock driver
+and I am surprised to see so many redundancies.
+
+Anyway, your binding said it is not 1400M but something else so this is
+a mess.
 
 
 Best regards,
