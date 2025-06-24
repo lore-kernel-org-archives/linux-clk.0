@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1382C2DAFA3;
-	Tue, 24 Jun 2025 16:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03AD2E11D3;
+	Tue, 24 Jun 2025 16:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750780988; cv=none; b=PKwyiXvF6cKZ6TTLSCjVHtQZsPwX2sp8NUIHHFyOdq/Hnr2JnKqUQGk6kqAeZz4SEuP1g9LpBlk85gdLuPDufnCvHl9SnJCZHfmB9O9OI7X8MikkMSM7mt1hEjBXAFd+yJf1QHvWTaOyAMf1vQWoAHfqaS2BDKaq5vz1jlBnNMI=
+	t=1750781101; cv=none; b=rZQls6dP14t71ZcgbwMBXvJkejpi4ChkqcFYhfPMC8e3BBFPrSZIAHL4G5QUlUJH2c5B3De+XLq4rebcXriFeBICmwyj9iVt7NTatQJCfKoppEzAJnA/6X4UwV84ncVPODCwM3VzgdUk4m+Cb9ZI1rQCWieOFIRFd+nhua16i6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750780988; c=relaxed/simple;
-	bh=r+kbtBtkvupSYbQKKEAYAqkAxHTnFoIv9mvGzVb2VcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LDRM7/dI8hkn1W4mpTqqLpz5UGT8s/lgruqoSse0+2whdRgwmnrKkB6ArBEoEmZgVZyfPg0HJ/13nNmcOLtmjdDrf7LV/xhvDjsFKltJKeXD4bhE53m+UxWtRdsQQXKEJzIFIp1Pe3+M3BYn/TZZWx5Yi/N84df+K+1yZo+2uYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcZP2bot; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750781101; c=relaxed/simple;
+	bh=h35+iqWPfBuYqEWe71ovWfkRt/Oz+j7GFp+J5yhUpkw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QsD5RoedzjBPF5eP/4W9lfyKFuoi6GO2xTmAfLPMjpcjU3ADy1HxOUXQHEIVGNsUIbODrocAmSRXtLiPAqUe9GaAJ0hmzkkauVaCuQVe+ytagAqMraALGDbvGIaJEXbIrPU6mxN33Vce8dZNW+lqHMl7yc29+GEwqASkTQ5Zb7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cB52xsF2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcZP2bot"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D339C4CEE3;
-	Tue, 24 Jun 2025 16:03:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cB52xsF2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62569C4CEE3;
+	Tue, 24 Jun 2025 16:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750780987;
-	bh=r+kbtBtkvupSYbQKKEAYAqkAxHTnFoIv9mvGzVb2VcA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pcZP2bot0uc8aYUXNM4TyNuFCofFDE58lIfoi0mW9SKYZ2/rHUyxdCVkLTr+i1cYF
-	 +6WKRQ2spIeriCw3mYuR9tc8rNqNboI9yFCVhBMwDbiHfWBLWFsj5vGQKn+LnGRutQ
-	 S1Ro7vqfCbUjhOZ821nYpGwbjtFu7y75YgMgOa2OXik8hOmLNsz1qfdafB7v+oI0UM
-	 7eaL+qL1U5lo+xRxFUJepr/SKA4cZ5Gqmk/nFNhoVYCYqbejxYMwRy1oGJhqFguso6
-	 4WL0hHg0ky1Yfc4QDHO1Jwy0v6UhsEhSta08gtLpxDVt635iTmwj15uAlc+VSTL1sa
-	 mSOGm/bLL6LEw==
-Message-ID: <ae13aeea-bf44-49e5-82c6-5e369ea96d84@kernel.org>
-Date: Tue, 24 Jun 2025 18:03:01 +0200
+	s=k20201202; t=1750781100;
+	bh=h35+iqWPfBuYqEWe71ovWfkRt/Oz+j7GFp+J5yhUpkw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=cB52xsF2NjUTAiDKSfI0ZrZPJ57Zux+QNb3QW1Adxqw/ViaxkVdbczs+N0Pla6wfY
+	 egor1k49RoEpslU9lKt0MQtc2bu3t33Ct8X66CAkVEhaEGz5wcXwFSYibfv9EMp2f2
+	 BDFlsmY/PWBz6WwtdSbheG6pfgN0vBqhE0i18m3L5K0zgrDHdwbLbX+moiP1Enhd1V
+	 5+V5E5eIVhJnWE4CAso5wz3s1d3mWojeroH0Lx0o9BO7VId1PwyCcQquFBXVhxZg1J
+	 5tol9sNvylVgmyYvpUoJg11Oc8n2PXZmVQfuOTJhIq7IbS2O6Tj6VtAkY1f0EpaLLV
+	 uySCiiImtfErQ==
+Message-ID: <eb5e2b27-58a9-4ee4-a1d8-b2df8ecbd13a@kernel.org>
+Date: Tue, 24 Jun 2025 18:04:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 10/29] dt-bindings: reset: Add MediaTek MT8196 Reset
  Controller binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
@@ -48,8 +49,8 @@ Cc: guangjie.song@mediatek.com, wenst@chromium.org,
  kernel@collabora.com
 References: <20250624143220.244549-1-laura.nao@collabora.com>
  <20250624143220.244549-11-laura.nao@collabora.com>
+ <ae13aeea-bf44-49e5-82c6-5e369ea96d84@kernel.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -93,35 +94,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250624143220.244549-11-laura.nao@collabora.com>
+In-Reply-To: <ae13aeea-bf44-49e5-82c6-5e369ea96d84@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/06/2025 16:32, Laura Nao wrote:
-> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On 24/06/2025 18:03, Krzysztof Kozlowski wrote:
+> On 24/06/2025 16:32, Laura Nao wrote:
+>> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>
+>> Add a binding for the PEXTP0/1 and UFS reset controllers found in
+>> the MediaTek MT8196 Chromebook SoC.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>  .../reset/mediatek,mt8196-resets.h            | 26 +++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>  create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
 > 
-> Add a binding for the PEXTP0/1 and UFS reset controllers found in
-> the MediaTek MT8196 Chromebook SoC.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  .../reset/mediatek,mt8196-resets.h            | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
+> No improvements.
 
-No improvements.
+I see the license got fixed, so half improvements. My other comment stays.
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+Respond to the comments instead.
 
 Best regards,
 Krzysztof
