@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DE0367;
-	Wed, 25 Jun 2025 06:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA56637160;
+	Wed, 25 Jun 2025 06:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750831672; cv=none; b=D3q0dWj+32WoEwSy3z21z1AiZk7mDvElmyqoW3Mw3jCoPA+VU0d0paYUqlqni5tt2hUUykurMfLaM8fwnsk6aF7IfbNlJNnsXpTGPAx9vDnLIzYVMkTxkewsLE1wI/2KyimoxINPLmyv0js2+KUkGyftX52EZC8xDZnng+pzo9o=
+	t=1750833313; cv=none; b=hsS6vLpOilXlQUu5muH0bWL6EAb+JlGtIvzX3YF8GKL8rPhZQTXArpYusB7D86IshPaObPqmgmDOX8lL5nugUBIYY3/2C6NwQOEhONwxPkCL2WEmHkcAvDicmBhEln+zR5vBzdiIy9/HIDGJskWkPEG2Y1+hGP82aI36VbcvkiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750831672; c=relaxed/simple;
-	bh=16077y7PohfoJ5YRxrXRfL4a/jQzc6nyzs7y1vOMPPo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X8jdu1lFBExipPGbf4BG8mzydRvy9KEbZu+ZOxUvnrlT1EsyXgOz33RQLu+jX9NGsjQw54CcUaOpeiBHxFdQ1Z8I6Nmy5B9wD/Ak8bOWWcy/pDQFJ3wWx3PF3KAhhAY3Y5zgAJe610uWU4fS+f0nbRcGixhKJwIa1r+GD/ODG3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSVL7Kx7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750833313; c=relaxed/simple;
+	bh=vwTWK+tYNZHhkq/xqWMABVn6M86lPQdnixn3JPY3DUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bDjChaMoA6cHB6x2G9qIoTjdCvhNLYWR9O+myDPkdj6WrkqXPUjJR0zKdTGLnNsacL+oUURRquRJsqHhdg81WzlDoLZ8+elLKlP/y7etaO6GvZwLnP+XqmkZkE+g2kiMYgnylOoKdw73f958z393hhQTc66TC4HKqjsKMmIwJ5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7iEtdGk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSVL7Kx7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615A2C4CEEA;
-	Wed, 25 Jun 2025 06:07:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7iEtdGk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 995E0C4CEEA;
+	Wed, 25 Jun 2025 06:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750831672;
-	bh=16077y7PohfoJ5YRxrXRfL4a/jQzc6nyzs7y1vOMPPo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=RSVL7Kx7D7kvhkKsJcc0TkOJ1QsNutwZCgCkDExhM3SZ7njZpSV/EINUixZEtzNCw
-	 t7b5onVR1mp2m4x9dA3ij6aEuRWh1qa6rsEYYMRm/mOxob4nSMAy6PtGnandi4kfCO
-	 wtqWz4A2REzHfjbvwvFxfk/GKTR92Lq9Z0DOvyyneTUpS0Ij63aNBevVUJQ5uDhuro
-	 1eYadkwVK+mNnsuUl4D90aVXXkkE3elZFnFTDYpzTyoiZsgIFwFgoGqxFvrqy1LqlL
-	 dOrrY/fDIK61lSZItatLKlSUljVltihYUf4AmSe/sc4M2BbZ4wn872hWnCm+6vmeub
-	 AqVflerUzpGkA==
-Message-ID: <0175c006-c4ad-40b1-a7e0-aa0abf0b6411@kernel.org>
-Date: Wed, 25 Jun 2025 08:07:47 +0200
+	s=k20201202; t=1750833313;
+	bh=vwTWK+tYNZHhkq/xqWMABVn6M86lPQdnixn3JPY3DUU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z7iEtdGkFUpmfIgo90PZe5ORPYF+PkxouXBYkAbbKpm+ZQWRXxtG80XjdafjOE5mE
+	 T/zr6BG6oFquAkxgjG/g82i9KZmat5lBibXx2XExAahgl55aKYsaA7FTmgsozS/i3Q
+	 TJjYP4QctNSMyJeqikUXcrt6o/aJsspw1QVmqLbnK3lORVujH37OTxsC1w8NW1QSfd
+	 54O5eEqv6A9rGD4fNjqHr+l0EFR8hDGa6rTcdS7bgZMhggQ3FffGu2Lg2lHU4IB7Th
+	 DSDSrceO9+KQN5L4ekA6/hGyFaTrpcTIM86oG6JS+VUxqXK+Zh+iHG8f8nDuUgLGAT
+	 xL+QTeq7yM7cg==
+Message-ID: <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
+Date: Wed, 25 Jun 2025 08:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,18 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+ <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250624103212.287-1-dongxuyang@eswincomputing.com>
- <20250624103256.345-1-dongxuyang@eswincomputing.com>
- <cd98add5-dd2f-455f-b534-c83e62a97bd0@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -91,37 +99,60 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <cd98add5-dd2f-455f-b534-c83e62a97bd0@kernel.org>
+In-Reply-To: <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/06/2025 13:00, Krzysztof Kozlowski wrote:
-> On 24/06/2025 12:32, dongxuyang@eswincomputing.com wrote:
->> +
->> +properties:
->> +  compatible:
->> +    const: eswin,eic7700-clock
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  cpu-default-frequency:
+On 24/06/2025 12:43, Clement LE GOFFIC wrote:
+> On 6/23/25 11:45, Krzysztof Kozlowski wrote:
+> [...]
 > 
-> Frequency has a type - hz, use it as unit suffix if this stays.
+> Hi Krzysztof,
 > 
->> +    $ref: /schemas/types.yaml#/definitions/uint32
+> Sorry I forgot to address comments below.
 > 
-> Drop
+>>> +
+>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
+>>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
+>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
+>>> +	.counters_nb = MP1_CNT_NB,
+>>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
+>>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
+>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
+>>> +};
+>>> +
+>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
+>>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
+>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
+>>> +	.counters_nb = MP2_CNT_NB,
+>>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
+>>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
+>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
+>>> +};
+>>> +
+>>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
+>>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
+>>> +};
+>>> +
+>>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
+>>> +	{
+>>> +		.compatible = "st,stm32mp131-ddr-pmu",
+>>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>>> +	},
+>>> +	{
+>>> +		.compatible = "st,stm32mp151-ddr-pmu",
+>>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>>
+>> So devices are compatible, thus express it correctly and drop this.
 > 
-> Anyway, why do you need it? Why would this be a different per board and
-> why would you ever need to encode it in DT? If firmware initializes
-> device, just the registers.
+> Ok so I assume this comes with your comment in the bindings and 
+> basically don't get you point here.
+> Can you please be more precise ?
 
-I missed here a word: ", just read the registers".
-
+Express compatibility in the bindings, like 90% of SoCs are doing, so
+with proper fallback and drop this entry in the table. My comment was
+pretty precise, because this is completely standard pattern, also used
+already in stm32.
 
 Best regards,
 Krzysztof
