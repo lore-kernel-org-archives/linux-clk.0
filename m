@@ -1,134 +1,207 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023082.outbound.protection.outlook.com [52.101.127.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206EC2D6620
-	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 09:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842800; cv=none; b=q9NswdHhQVhkJz5eEDa8p0NnYqfYPG7Gr3nOgrDnR3uuWBKnM5DbwLg53jhD81PGqGJVmXo0XV/bFYBQGC+OgM0ktdHAbuGVLDajiRGvUR8pLiWBQoLwmX84yo7R5hHmJhEJJIV2lkdb46oyMQRItwd5ZeI9b4O+vZX+tOXAe1w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842800; c=relaxed/simple;
-	bh=JQ9w+7Zgo2FXC2Mpy+jdIS6f5XEOUQezkej2dK+ZYxE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bGg/TfV3/Hq9z1ummhPAfOpg6sPV5qEHEnOVAVki9kPgO2DtMRsJnJPMsS77iE2aiZ+btA3lRuVXyoV7AwGsDmderMepG6B3vfycKfz4Ips6QJ/UJiDFYGZzWlksNuov79giukfxNTKpbMr95O3yckbj9iqNXnLkS5vuyJpi1wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=qJ0NtXLG; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="qJ0NtXLG"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so1219599a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 02:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1750842796; x=1751447596; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tMsHQKFydEWBAR4xJazzqmW53CI/637ZYZWhjeBquso=;
-        b=qJ0NtXLGcOG9oFu62I93iwjHzg7UCklJqP+J5BRR38tcEJ6xCLV+BI04j7mcDRT7Sn
-         ihotnq5jj1X5vnD3fSpw3I3z3VcR/Wzkssnx2IVqpg+3KCtLwcY+1UILNJtSbsyatcQ3
-         Lqqlp+0bVuPFqVrdJehX8EO0W2HlU8H8B2FtacSvfB2kDFXR6xax3bb4NkPSSB+IYlRE
-         IxEqWP004DfjgXiA6LFHIeajL28iGmextz8/ifrtfc2sRdQqSMTjN4GPLkpI0W6cDCLW
-         a4HT8NkxZXmBAE0562UDrdhsFFibnBesDtQw3Lz9an1LVRphbBDdWbUGxJZCetRdV6Ir
-         9gng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750842796; x=1751447596;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMsHQKFydEWBAR4xJazzqmW53CI/637ZYZWhjeBquso=;
-        b=sdaVZtf7QPnCl6ifSlFgB4jalHnoILTxBlstRn8cj1lvHDZcNFiEIh8l624f9mWflj
-         LXksdip5RqHfAG8SRpKg345YmXIEayI+1E3tFP39WNS7In5SfW9EJ3N0VBoJUdKZyDq8
-         xpERCLqvkqAQFmSl0cn9kuCcsXyb1lXBnqxvDseB7mT3ciWfMWU0xZwgkCipC+lJJ7M6
-         6SXFrgiqLPcH/pytdkSXhtNPrY+inB3aS+pdtUtU34urtYmeAsq2f4s+d6k0dbM8ZdTT
-         AtyHTEc237zhjAhWZuYCOh/mju0ML5Ncd5wUVvS74yy+Ob0MB9WysVpjIxvG8iurutNN
-         lkYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp5ub2uM84y+XpARZKVkcEc5gELt+NYxy02pigWFcDmJ0iLks2GHlaAiSfTw2Ro8KfNn+d2Mbzbac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU+eQWRD6W0YA+yCZTLq2qOe1GDf+A9SadtS2ClR4oxQuwJARm
-	0HavHkBjB5ZdrTl+ZmVJfe0GfvzAav10cglbsvwwpkU8wIh/6b1BdOjb89DXc9p0XAu6S8mM6la
-	3k/zE
-X-Gm-Gg: ASbGncsK4Zxu3V0iCS3X2vGfN4KQIH32I6aicrxBIeVTldX9Gxxc3cMcNorsO3Mltk2
-	nHh4gsXTac04cwtzLou9fkQQ5k6EfU/dfFqBElCkaVVZ0P1K2J/Fh7EqPyIX3m5fmg9jmukMAJ6
-	ckSCIYhdTXQ9Oe/+3eK2eo4VF/XHpoQlHxKfQm3I5Tc09G+rSOHdq0SvayTthcf4cgSiZqzw1S0
-	wkQpg9qtcqGcqkIhxyF0Dq+M1R310I01hGEkpKRqxBXdUreCMqBlwjIdbyr468aieCiZMpW7wwd
-	BW5wY10oiBy8WbkKyHbQzjzQk7hIoyGph0ZAZ0suhDi8qIJr/Xsp/4x59ycqG1+ySVhKsWxyYn/
-	LMTtvVC0OCwY08mu9bGCCrBgmpyGuTRhx
-X-Google-Smtp-Source: AGHT+IHqLUpjRRz2U5DvTK05gprNPcYkyY3qhvchJTvyKUvPYxRBNt7uhs3K836HbEKah1PslU0D8g==
-X-Received: by 2002:a17:907:3e12:b0:adf:3cb9:e3b9 with SMTP id a640c23a62f3a-ae0c0621f50mr209003966b.3.1750842796305;
-        Wed, 25 Jun 2025 02:13:16 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0a93f5e96sm272499466b.74.2025.06.25.02.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 02:13:15 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 25 Jun 2025 11:12:50 +0200
-Subject: [PATCH 4/4] clk: qcom: tcsrcc-sm8650: Add support for SM7635 SoC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1663F29AB02;
+	Wed, 25 Jun 2025 09:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750844219; cv=fail; b=KB6KjzX6mkK/5U4oDGAsvpHh6JmXmJ/81p8PYDw35f1sZ36ZxjOeC2Hie3tkkj9Y58MGRtZkXvLkvYRexUKwKzlLxy/GYKZs6gON8ltHwNfnfdmvdqQUOihDlQy0Wl4BHQCVYS9xZJgtyfbTqKEOHSr7J6UTOOSKuEx0MBFPgT8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750844219; c=relaxed/simple;
+	bh=2xnxuQtF0alhdR5IIF229uA7qRCtuNz4uBqslE4tm+U=;
+	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LdrrOkKnOxH40fnaOJGtk6DxIpUhBz2MC6i/uh66DUgqMpWUAw8CkOxHO/ct8EjeMKJkc3BUgWEgfb4L9jE1PtpDuOziCQAsRPAB4DgFAbxObmZAbPP/i6VkC6bYT6q4PZ7llk/c7S4aMdY8VMY/kgOUjDW0DuFW4Uofx+0BJGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; arc=fail smtp.client-ip=52.101.127.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LLm15d3NAKxEYeCB9B7ajh8Lq+CuimLC5xE72w1edRbX3n2Kpow1QO+ZQUU3C3DMj8rzfVPiX5TTB1yjY/99rbBU21PjfdIzZ7EUP8fxBan87EJWbWcwbOuZFy4wmipr4rsS6c6HhOUPxYq0adTXvaGXox2PZ6lGCW7o2cFMOXD6FSuU8sHUVW9jDHCKdjtdUxqvT3TE9DCucpu8BE3wWKrAcuDlBs2FQnlCCWM3Gb8ewb0j0QUh7JOHmRPkzJuuendFvPJZ+Xyz136yGQlgtBw1xZZljuu7xooT+ooM9AK19kSY5RH/kJ3hukrvQHw3ro0EMeNn9bja6HPLBtzqHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yKHINoz0dTYVGL3Z0AVDcICInEqbHBazU/BmNHaemQo=;
+ b=vZv+6xpTVW4OKZ1Ty8LR/R10/Tf9JNsm+wQc/d+Mibm/nwKUmrlzodzxofcBg6hCsDxD9ST2simRMF2qjpYNe4/zRl/OyvthiZ1s/+B8wKLl2vGTIZTmzoyMkLcYi0Y4CEPkP6RSByC9MYuH2/qPchG+Lgefo36Z+YCgpdH6zRxr0ToM8Ju8H/M49t7LshQHageabIfjNLwBWLlg4sHXket1X16Imcg9/qseEsDT0gCT7Eyf5IJOFrn0h4verkapytB0CZjHIwkGZW2cy+IAlarLoyb0CcHMWrhTVqSmYllvp9fXEGOogpjdpUzWyRNYaggJjflE1U8L4AM08i3dLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=linumiz.com; dmarc=pass action=none header.from=linumiz.com;
+ dkim=pass header.d=linumiz.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=linumiz.com;
+Received: from TYZPR06MB6935.apcprd06.prod.outlook.com (2603:1096:405:3c::9)
+ by KL1PR0601MB5776.apcprd06.prod.outlook.com (2603:1096:820:b4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Wed, 25 Jun
+ 2025 09:36:50 +0000
+Received: from TYZPR06MB6935.apcprd06.prod.outlook.com
+ ([fe80::9e42:3253:9a2e:b565]) by TYZPR06MB6935.apcprd06.prod.outlook.com
+ ([fe80::9e42:3253:9a2e:b565%7]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
+ 09:36:49 +0000
+Message-ID: <9c3ea5fb-a045-46bd-9753-26ffa67fe1bc@linumiz.com>
+Date: Wed, 25 Jun 2025 15:06:43 +0530
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH 10/22] pinctrl: sunxi: add missed lvds pins for a100/a133
+To: Paul Kocialkowski <paulk@sys-base.io>
+References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
+ <20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com>
+ <aFu3fAMa8KPwjPbX@shepard>
+Content-Language: en-US
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+In-Reply-To: <aFu3fAMa8KPwjPbX@shepard>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0088.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ae::13) To TYZPR06MB6935.apcprd06.prod.outlook.com
+ (2603:1096:405:3c::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-sm7635-clocks-misc-v1-4-45fea645d39b@fairphone.com>
-References: <20250625-sm7635-clocks-misc-v1-0-45fea645d39b@fairphone.com>
-In-Reply-To: <20250625-sm7635-clocks-misc-v1-0-45fea645d39b@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842791; l=1383;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=JQ9w+7Zgo2FXC2Mpy+jdIS6f5XEOUQezkej2dK+ZYxE=;
- b=KYBHO9BrDI6wTp1yOWF8kGKqlw+3vOeKLlAUHZSfG+X/jL2hFROuM7mUcVR/4G/1cZmTk7/R2
- 97m5sCBTseTBJy1sJfmDq+2JF8PFyvuLgz3qKPCRLGU1vJg9CqhMElp
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6935:EE_|KL1PR0601MB5776:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8dcbf53e-6409-413b-3e5e-08ddb3cbcf0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bnRZaUNBMm1hVnRwMVdmMkduaDRBSE5SYUVDN3VIWnAraUd3LzBTZThLMHdm?=
+ =?utf-8?B?VlJHc21NN0VIdzZtMXNTTUNqaU9MNEREaUREbFRORWhsUVd4MXNLcHhkcHlm?=
+ =?utf-8?B?T0xWL3hIS2hCZkI3ZmRVYXR5cTFsTzVFMGRoaWh2Wm5wdzMwb2MvREt3UDdm?=
+ =?utf-8?B?R0kzcTZKNjFlLzBRMkpaZ2ZMMlFjR0doRkNXbTlRMlN5WU9oV3VjSm1MTTUy?=
+ =?utf-8?B?UGpyMjNHSnlNN0pKMlRvZ3dYWFllSzBQR3JyUlI4R3JXaFlqdGJobHd5UzZp?=
+ =?utf-8?B?UmhISU1OWHYvTUsxaVcxbUNMOHJqazdXckNzY0phTDIveXFaYlFUa0FHek1L?=
+ =?utf-8?B?SWhXT0JtZ0tNTFhPN3dleDZOTnJZZTBVMCtPSXN0TzZ3bzJnSkcxeGhlQndR?=
+ =?utf-8?B?Unc0dHNWYk13RTRaL1oxZXFBWnJXWEh6VkVYZlkzTFQ0TXZVcWgwWUxzb3NG?=
+ =?utf-8?B?eVhGNWxZcWo2czhpYkZWdmpNU3U5MDZINFZXNjh5NEdkMnNsZTVmbHhKUHdN?=
+ =?utf-8?B?anlxdjAzdXlUTlYvbTVuL1FtYTkxYTJ2ZjNSQVp0ZVFDcXNXb09NYUIvZEp3?=
+ =?utf-8?B?eFpCandycHpwYW1UWEVqUk1MNUpWQm5rdmE3WncxWWcySkFYdFg2VUdJNU9y?=
+ =?utf-8?B?TVEzOWtIeFJsSE5BTEpYYXhBOXQxUURNcjljMVZaeFlhQzUvN2U2bHFwSVU1?=
+ =?utf-8?B?cXJnODY1MlUvc2RRMTdpZERRa0NGaVdNRW1kNEpqMklMZVVBMG1nUnpQbjEv?=
+ =?utf-8?B?N1FtV0U3K2xOWS8rSmUyWFpUU29Ya2lkMHV2VWdSdHhJVzk1UFp2c252Yisz?=
+ =?utf-8?B?TTZzTzVSRjd0MEdSYnRBUllqOFVzeEUvNy80V0hBTk5yNVk3czRIMzc4V0Y1?=
+ =?utf-8?B?UnQrck5BMXZwYVhsMWJGQnpoMmF1dFlvdjcrTUpRVTk0ZGtUcVgwa2tUV1FQ?=
+ =?utf-8?B?M2dHQ1dycG1mLzVuSkw5MGVNUVZ2aUpQbkEybms3eUQ5MzFMSHNzamlqUGJZ?=
+ =?utf-8?B?a21VZVhSNnRXa2JyWEEzMUZDSXIyNk5UcENPeXVpSnJHZzhUYTZxRFhlUnla?=
+ =?utf-8?B?K3dDV2xtbFJuRTYvNHAyUXVZRXVxb1pudnRKNWJsdStERVRCUW9maUU1YS9u?=
+ =?utf-8?B?c3lBQlJUYXp6a2tpclNiUktqdDZuVDQ2bVA3cUlsUzVGdk16OU9VaVc1d1pW?=
+ =?utf-8?B?V3c5TE1UNHN5ZnpKV0Mrb216Yi9Qb1RHRHdXM1hFVWpjdFpPK0t1QzF5Tjcr?=
+ =?utf-8?B?MUF0WGtkRVZGbUdFM2UvaUFyNXFqSkRPaHQ2NS91OEpzYTY4QTduNXVSUmY0?=
+ =?utf-8?B?c0x5QlBScEh4ZDZwYXlBbEtXS0plYWxGV0NZVmhmcWo2Z2Z1TFo0Qys3Y3lz?=
+ =?utf-8?B?YzVQK3F5dGFKdzhNUTRobURNdk0rRytQbXJyZVRRK0RkcHRBbkIydE9WUmdU?=
+ =?utf-8?B?UmpNV0ZObVdKbER4azBmUXZaSjcvNlZnaWZJNnIyREJFZ3BnT0s0UlZhTU4z?=
+ =?utf-8?B?VEo1aVlPUlRvc1A4Vi9aQ0IxSVZMaGJQWEx3b2p1ZmxMaitYYlBENEhXTFlp?=
+ =?utf-8?B?TzF4am5IalZYM21PN0NrelRUMk4xRVdFKzVYMHMxVXprRXVjOGRaMGlHbVk5?=
+ =?utf-8?B?TFBzZUVaeFVoWS9lS245K1FmNDNzdERjdGlhUFRSTk94L2NSRTVGdnhMNHp0?=
+ =?utf-8?B?WnV6eUR2RzlGdlNKcFhDSWhLMjRwRHlWa09NeVRES0I4Tm9tNTRTTHIvM1Az?=
+ =?utf-8?B?ZkIzRHVWdFc3L2ZreDdYSXkyaEp2QU5DRTFpT3dodlFLbTdPRXFWb0tjZ2c2?=
+ =?utf-8?B?eGVZY0ZHZ0FJcXJaVitDR1AyS1EyQy93UUNWdnBWWFprUElzaTlDRXdDcEti?=
+ =?utf-8?B?UW01eGdWcnJnVjRRWUlYNmNkTWRESHJ3RTZINGFZNzdVZFVza2ViM0dlZk81?=
+ =?utf-8?Q?iks0Xe8ap04=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6935.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UWQ1cjRRS0FkU1hPY1haREx1U2tnWEt6S2RaMGdyaUk3dW5CVnd1cHYyYmVX?=
+ =?utf-8?B?NURxZU0vSnJnQ0FyRXR4dGxpZk4rRHhBdndvUWFySWZoMFc1MnBDTmNVdkpL?=
+ =?utf-8?B?bGllMnpMS216dXl6MVRGLzhhTy9CRmo3b2Qyc0tqNGRUMk5pbjhwQmJ5TUR0?=
+ =?utf-8?B?ajdqQnVnUDVqQTNiZHpya1ZTL0EvVDZkcmlFdWhUR0NBRm1pZVl6RThlNVBB?=
+ =?utf-8?B?MXR5bE1GRVZXcTg0NTVrSDcxNThCclMvVUY0ZG1nVEpxT1hYQkF0TC9OOW5N?=
+ =?utf-8?B?eXNQZDRNamduZjg4dkl3UXJjT2ZsemhKbXFIb3FXeGFMRXhzTWhmcllDVXB4?=
+ =?utf-8?B?bWFQL3NnTE1lMUlNcGxpZloxYnVEZ2pEVnBsUno4RnJQUmY2OGJqUUpvb2kx?=
+ =?utf-8?B?ZTJINXVQKzF2c2wwLzBoWDJ6akEwV2JlVlNjeG1ubDN5UlhNSWMvYUhYbE9P?=
+ =?utf-8?B?MTY2WGhTOFdoQjdBc0RkYVdsaHcyZUVqNkFqNmwvS2M2cU41Ync1MHlnS0JF?=
+ =?utf-8?B?dUNTKzVDZTFMMjVUbHFpajFBQy8rMmZnU1dvYXBYSmNXK05FZnljbnVVYS91?=
+ =?utf-8?B?L0pCRVg1ai9CTGVvWVRYay9EZjFqNnZldnpQN085c1lQcU1VaDlvdExSL1pX?=
+ =?utf-8?B?K21Ec2Job3Z5S1JEMXVBeEtidTZuMzhZNm9NOURMU09PT3kyZkhOUTBGZThy?=
+ =?utf-8?B?MDZqYittUlZIR1F3dnBXMkRuZDBPRlM0Y2lLYkhPT3VBU2ExKzk0ZlRjSVhE?=
+ =?utf-8?B?SHgraVdqNDU0UFp3c2NuR2FjSzhmODlxS2dOT3U5Y0FWQkxTeWNJTzNHb21i?=
+ =?utf-8?B?OXVoNXFEcEthUTg0WWpzWG1kMzBIVUs2L2JmOXo5RkVzZUd6NnNCcHQvSm1k?=
+ =?utf-8?B?Qzc4YlJUajU0cmEyck5XSlpJbTUxZGFHOE85WURaRmFUeTBTUXkxcis1bzNM?=
+ =?utf-8?B?UU9OS2F1WGJjSG10OEdQcUpPY0dLSFIxc2l5alZmZ0dETEFpL0Z1QzJkSTln?=
+ =?utf-8?B?T3MyMFJwcnVDTGQ5RUhEaGU3OXBmcnQ2QlBQVWpHOUQ3NjVJTFoxTHQxNnkx?=
+ =?utf-8?B?c2hDNUxlRXdjTkhIM3FRYk84Wi85RG1VMC9HTXNJSGFUR3VyYURsZnVyWUYx?=
+ =?utf-8?B?UHVxVHBiZGc4TER4S3dPaCsrT1h5UTBwTFgyTWdoTkRKalIxVXVMemJCV1Bi?=
+ =?utf-8?B?Rll0YWluaWJHRzFBWVdzZ1FQT1d1S0JUb2Q4Zkx3NEJ0Vis4YnVPMUZJTjdk?=
+ =?utf-8?B?OW5kWWlaYUhvd1ZwNStsSERBUUI5QUovaWZCb3FORHI4djBWKzdTR1MrMFZJ?=
+ =?utf-8?B?R09NMzBnWlp3bk1aejRnLy9Kcng4M1N0MXVRL0swdVIreUJ3c0J6Zi9PK0gw?=
+ =?utf-8?B?NXJCbmRBT2pEMCtrTnczY25zRmswTVB6USs2TExBbkgyeElxQWc1SE1OSng4?=
+ =?utf-8?B?bWlZa1FUbWNxTzNmUkU1L095aFM5cXY2bUZ4VXJob2pMVFBGMU9Nbm5mM3Rv?=
+ =?utf-8?B?bXZ0b2djK0l3WkpmQmtlRE5tYmoyK09wM1c4eU1aMm95YU5CcXg4Mk5rcEt6?=
+ =?utf-8?B?YTltQ3kwbkN2empzQmFxYjBib3ZlTzBrZjN4MEo4NnRvQmZHdUZGT1lqVzFW?=
+ =?utf-8?B?UFdjY0gxTXdHS1MrWUxIVGZnbEtvSXFNdXNUb2VFREdtdGVJaVdPNGV1YXk0?=
+ =?utf-8?B?bUt3M3VhVkdLdHpPdHRnZlR1c00vZ0tJZzlrZ2EvZlRvS1B1ajRYSVFmVTRq?=
+ =?utf-8?B?czhza1BjR2xjUTNGVzVyYWNxaEM0VzB0Uis2dzl2emxDWlFIM3ZaZHowQ3hB?=
+ =?utf-8?B?V0FkTDZIN1pCWTBvSno1Yjk5Q3pYeVdXeTNqelJPU0tqbjlVbFVMeVRGUzR3?=
+ =?utf-8?B?ZUo3a3FKdmp5b1ZYK0s3bHNKbE9yOGE0OGM2eDRMbVI0NWtEZ3krYnB0a3Vj?=
+ =?utf-8?B?K1ozamhHQnhJWndqZ25MWU53Yzl1L1hPQ1h1MUo3UG9wL3pwOXRBUml0cHU5?=
+ =?utf-8?B?UHZGdmJWbHA2MTM4aklnZHlaak1veUpKTzE0OU80R3dCOWFReXZ0M3g3Z3Vh?=
+ =?utf-8?B?YmFFOVJQMnN4WUlaZVdOQXZObDlzdEM4QWtZemtVWnBPYkN4RDZFRVBvekk5?=
+ =?utf-8?B?QjI2c1J3Q3NSZ1pZY25QZ2taMnhHQUdIWDcveVN6RTFCMlk0Q21wbHdkTmxn?=
+ =?utf-8?B?dWc9PQ==?=
+X-OriginatorOrg: linumiz.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dcbf53e-6409-413b-3e5e-08ddb3cbcf0a
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6935.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 09:36:49.1684
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 808466aa-232a-41f4-ac23-289e3a6840d4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BnWhQiwWilaFuSIpSve9W77XZyGtlxf0o6rvvsW6Zb+megMg7I8ISlZHD/AKvufkUO+Hw5qkf6emyabWHduNPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5776
 
-The SM7635 has a very similar tcsrcc block, only TCSR_UFS_CLKREF_EN uses
-different regs, and both TCSR_USB2_CLKREF_EN and TCSR_USB3_CLKREF_EN are
-not present.
 
-Modify these resources at probe if we're probing for sm7635.
+On 6/25/25 2:16 PM, Paul Kocialkowski wrote:
+> Hi and thanks for your work!
+> 
+> On Fri 27 Dec 24, 16:37, Parthiban Nallathambi wrote:
+>> lvds, lcd, dsi all shares the same GPIO D bank and lvds0
+>> data 3 lines and lvds1 pins are missed, add them.
+> Would it also make sense to submit device-tree pin definitions here?
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/tcsrcc-sm8650.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+this patch is already merged. 
+git show --stat cef4f1b5ba99a964cd6dd248bb373520573c972f
+commit cef4f1b5ba99a964cd6dd248bb373520573c972f
+Author: Parthiban Nallathambi <parthiban@linumiz.com>
+Date:   Fri Dec 27 16:37:57 2024 +0530
 
-diff --git a/drivers/clk/qcom/tcsrcc-sm8650.c b/drivers/clk/qcom/tcsrcc-sm8650.c
-index 11c7d6df48c7b39f661cc4c2df30387836d2ca60..3829d4b283480b96cd0ec0d4bfa78777359730d9 100644
---- a/drivers/clk/qcom/tcsrcc-sm8650.c
-+++ b/drivers/clk/qcom/tcsrcc-sm8650.c
-@@ -148,6 +148,7 @@ static const struct qcom_cc_desc tcsr_cc_sm8650_desc = {
- };
- 
- static const struct of_device_id tcsr_cc_sm8650_match_table[] = {
-+	{ .compatible = "qcom,sm7635-tcsr" },
- 	{ .compatible = "qcom,sm8650-tcsr" },
- 	{ }
- };
-@@ -155,6 +156,13 @@ MODULE_DEVICE_TABLE(of, tcsr_cc_sm8650_match_table);
- 
- static int tcsr_cc_sm8650_probe(struct platform_device *pdev)
- {
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm7635-tcsr")) {
-+		tcsr_ufs_clkref_en.halt_reg = 0x31118;
-+		tcsr_ufs_clkref_en.clkr.enable_reg = 0x31118;
-+		tcsr_cc_sm8650_clocks[TCSR_USB2_CLKREF_EN] = NULL;
-+		tcsr_cc_sm8650_clocks[TCSR_USB3_CLKREF_EN] = NULL;
-+	}
-+
- 	return qcom_cc_probe(pdev, &tcsr_cc_sm8650_desc);
- }
- 
+    pinctrl: sunxi: add missed lvds pins for a100/a133
+    
+    lvds, lcd, dsi all shares the same GPIO D bank and lvds0
+    data 3 lines and lvds1 pins are missed, add them.
+    
+    Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+    Link: https://lore.kernel.org/20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-2.50.0
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Do you mean the consumer/board devicetree changes?
+
+Thanks,
+Parthiban
+
+> 
+> Thanks!
+> 
+> Paul
 
