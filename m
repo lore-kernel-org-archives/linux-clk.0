@@ -1,117 +1,124 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3DE266EFA;
-	Wed, 25 Jun 2025 14:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3193F26A0AB;
+	Wed, 25 Jun 2025 15:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750861043; cv=none; b=orBw03soAPDHR41+E6sFfSxmwLK3tYNWB1WArTDhaydOC7hpzjWTrv0GHcGE05RzEuNM9xp88ZTawMDjLok1oygK/P8ClBpwK3gxgQ/kgKAG1HmGSbCaKHp7XgvBim4JB6KhPFAkcOfGn9ZofkCoN+OyeFl65l5Ja6DGVZcv/sA=
+	t=1750864384; cv=none; b=KM0P46mkZsgukny+kRe53/6C4B7e/M6DnyXjgGPyCYeiExxKG7hgppiFA9DljY5ONhZKrjZlGccIniJgwZIZh+zyW06T1WgvVExdZqOsAwtSkLU8gQfQRocIA8gmnxLKs+UR76wPyrdFCYhWTuZM7kvYHdiKNO3+Wwd8pHvijK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750861043; c=relaxed/simple;
-	bh=T3T4B/EgjCOcgobjU2/eb+v+8EkMm7rIjS/zYG2A0VA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mEk3pOawcueEWrj7TopGw8k7RIR6BdHi5UgZwI8n3nJVdO6iDf5oR59v8ZPlfS+KnYZRh47b0QpGwJlakLDUHrGtObapnbxZHdnugPJVGBHb6HzgAi+SK1fN+5zS+gMdMXd02RttETSD/beeCn9RZMVs4qrqeBk+VSjIKS+ewxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ia4MoVq+; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1750864384; c=relaxed/simple;
+	bh=doujq3pVBT4abticu6BLUeL7j4/UINv+1VAnO6ZjsA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s21zADg5ISHqPT4oTFtgwYADH4L+xzJOXbCdH1QftOVW3JrJ2C80RUR7QOXedFIVd+sPD/ptmitZI3JZJWJdhDO6VBAZeM6VQUic9MC0r2JiQNRBi4d1EOXGr530LUgsTUXsJ165Y9K4mzEExPrV4u1WrMuMWqF9xBoVq5N8Qp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ia4MoVq+"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cf214200so58192055e9.1;
-        Wed, 25 Jun 2025 07:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750861040; x=1751465840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N+6aexemoa6TrhWM6bdU7hYQWr3l9qlRXvN00Dniv4g=;
-        b=Ia4MoVq+yGYHrc/ym7BuzBlYlFLp2Bu5osoFSX1GXDLT1aHRydyiNVHWaX6ySVZfiC
-         JPGz0qgQ+JcV012aJlgnbEz5jzu8pH7NhAahg4QXbI3LXWm5xa+9bbYHXY+lHqf7AHuE
-         ASgcHJKI87MVslQ7KmyM13TYH16HAllngUTwrNjkntIhNmaPyYo+konMg61udY9UaI9M
-         IB/2IBqZT2XJD92FPpFAq/qukrP51gJ1ojEA8REHGKxID+AMKuBVddyatBW+52CU3MpE
-         +OMm62fRqKd3x7CmEZRqMFVbWF1uOTcLtKJAffSGC3MvDJa0zTVUpE9a9I96ynWBUU+Q
-         MhGw==
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7d3862646eeso431752385a.2;
+        Wed, 25 Jun 2025 08:13:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750861040; x=1751465840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+6aexemoa6TrhWM6bdU7hYQWr3l9qlRXvN00Dniv4g=;
-        b=W/Wrw6GdW9+T/zrA26IqPTSiUnT7Xt/O6Sk90SMuyRuZi4XDyL/Wxa317AxJ/GSczY
-         RP4Fc2vELnPNkLyovPAMc9Wu+jDjMmo3Iok8RvTStANMqrsLUA0ElO7AmHJaPFpUdI4j
-         TlJX9WEwQi245mJZFA04rb8ueg3S4BxHTv49G7FoJL3ttLkH/Ssuc8SlY8IMlIyu3UPJ
-         TfvaqCG6fKvTJTA4Vj15Ra+WUpkuzT3+zv69J3tXs6Vl6DzxcMwJCIVlc8K5PThJrHv6
-         eVByuRCcRO0FQMlVHvxCB+LJ/b8XjMNJtjco+CIs1vpFuE0hH9l+/FvPgu8tAqz31JbP
-         4hBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUc1QYxtCuZbxiBU0EDDT0WRdwBZt/hIi/hPbEFIBC9mEomtbNVy1MTg57LbA50+68t8KWTmapxdCdR@vger.kernel.org, AJvYcCWYivIgyCPspC3uGmY+LniCrq/keGfDkB96gv5/ABJqZ/x06R9Q0RReGPX8LUlKRdwtffdj7HvhlKcU@vger.kernel.org, AJvYcCXUzSwy1oPH4x7g/U4vdYjqyk81ZALiWUEnmDwZWLnsrqeI34iL/EEZVJJI6Zr8W2NoOfEP7HmDtI4FEbbF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0GR2T7PG1K0XE+zxXRuK2KvisMuyB+PC5updj/DzjrKg9vkiM
-	LiCJJCjYJnkmZAO8pDA0PmMZ5anFXZaaNwYVXkrVgO+twji7pJNOY7Az
-X-Gm-Gg: ASbGncszfdX4NA0oTMclzgE2g2qZS8VLQGEL3MZau2X8hFVWbcGnl7SEVOjxvee1Nzr
-	T2TVvSpFo4/sYI0fKpuHiv6TsvCIqmebkAw3vKWJ6HyNecp6JGiFNJp+3ri+vts1FhdlTMY31VN
-	KneOSJzz4BtsD/XxAAH4iFYiGH5k5Dgw0DzzojIroO+dJTIJ5vXmlUH8KPFW1iBcMFJEEiAfV+R
-	BPQU16paGvktbUp49t1CfUyrTxp0SPRySJkCAJm4dzGFOL4Inp4eNLzfhnk90qU9LrG7LYpHdJm
-	2sN2FSvs9sBWyyiAUMYQO7Ztvv2ejcO1lk7QKu9ofmb0skjb/px4pjLcc8hberz8+MEQ3GIwtBd
-	ITnsLLpbFsnh9jjC3187K
-X-Google-Smtp-Source: AGHT+IEOi7zAxpAzlfswU03K/n4Rf9hQmWXx+JyTsPIqnl/OhUykYfA/kEDapnjd+yKTxy47RCGj0g==
-X-Received: by 2002:a05:600c:674e:b0:43d:b85:1831 with SMTP id 5b1f17b1804b1-45381a4afb9mr34745185e9.0.1750861040038;
-        Wed, 25 Jun 2025 07:17:20 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:c47e:d783:f875:2c7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538235a85bsm21609425e9.23.2025.06.25.07.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 07:17:18 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/3] clk: renesas: r9a09g077-cpg: Add RIIC module clocks
-Date: Wed, 25 Jun 2025 15:17:05 +0100
-Message-ID: <20250625141705.151383-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250625141705.151383-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250625141705.151383-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1750864380; x=1751469180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H0dyYw8IfQp7v2LRIThG2Iy4gcFWIs987F5cu/YPOvY=;
+        b=Wb8lIzQZFgQRJUuqYZmgWPAaJXbaUz2rM6RXblHn5pyyKz24SN0EiRXeJI99N0kgXu
+         J0/uJWFubekD7XBiS1SlMSE+sYiimSCsOaDQJgQJ51h118klPGRDBa7nIfhYvUaFBlge
+         o5cZ1Sp6h85WGwN33Ha6QnN17HsOUpbdG84wlYvU9hwxWB7m94vxGCa1t2ENkiiy3OdE
+         ukwabW8PXa10HwszCJ5zC3nmHWhXQrMDqcR90jFJ/dD6NM2ISqKURzIVz3k+MvH3ASML
+         /wRxPTRVNqAJdqgtv2jjqNZB+5ZrtrLskvDnno0Mcu15ALe8XdDgzU54+IhLllC7oxXh
+         0LtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOcNGqnyG8YEbSKhvqpFdMfIPc8GpH8La/0lVy412hYFXwUQDyjAiLv2T3Y7RBIRikuhhhnvY23G0l@vger.kernel.org, AJvYcCVUlQ5Qp8i/WijVTHfcjTNRJc5WnfMpkBDGDZOjhnGFWOwoqOJkyxcSRv1Kt+ywl2SY8M3ZM3vUSQZl@vger.kernel.org, AJvYcCVpKeDdPqEkkMOBLhj5pl+W1QA7dWbBxOH068I9u+OviDmzIPuMZCpvXW23wNJaYxwyE4xEoTI4@vger.kernel.org, AJvYcCWHmM5mFd/kCGXUIMPOZSnv0m9NFZeaIJqWJ/RLu/R60dk9+XXx4jk7Of1GWEbDHPamUaJZc+i54Lsu2NHfDtNfnVo=@vger.kernel.org, AJvYcCXFG92Blqg619NRdx6jeQX7l9OHxotV4HrHimvViJMA0qm3e8dmmAtkcONTXuSm7PZd27y51CFl/s8+ZYN7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV6Cr7Rlu+eNzIDxkk7AMf/NR4LgkLQ3NgOi+CcnXuY18uv9Fc
+	FIoOENxpLc1CCvoMGmEPOVBTf/9GIPJgAPCUSrZDnLOikEyJNR9JbQwR2RsrhxNI
+X-Gm-Gg: ASbGnctRze2QNlOHvjx/vuOgmGztN6ayJ6au89lYmTUnd3XrvZr49VIlovdzP6JINos
+	IvQuKgY9LJ8/dleHnjN3W40AEqecjkL63jaSS86iWBndODGbXGi+nqrySLQ10FKd8CWd2OCvwUr
+	bs+dxp/OXJ7HArzOLKtluyNMwC39NMHJHISIvMdE+jQL1mJlWhBg6EjaLJpnx2MNJ6SYUSWjn9z
+	JVI8GxbXNolXnKICX9vs4JluusimWeBLqR0OZ/cVtExos2KZAO915D7e4tHLJAn6mvmU0H7H4LE
+	6Tunuxg4oEy1qUw9y2SBavv/LhDSZ+AWNWf2aXaae2xUUL20czQdoHjqM78PtNYe2CmW9CGM9ri
+	z+WhWP3sPjvEIRdE3RTdDxe73+AiK
+X-Google-Smtp-Source: AGHT+IFx8NK8Tgdd2qrdrRfFqYVP7IvywERkDpj9fdLMh7ThdkqFVU10uIK+Ey9qN9wP0RiTZ4zKPQ==
+X-Received: by 2002:a05:620a:1a08:b0:7d3:90e4:157d with SMTP id af79cd13be357-7d4297cbf79mr529875985a.54.1750864379587;
+        Wed, 25 Jun 2025 08:12:59 -0700 (PDT)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3f999db4csm620263485a.15.2025.06.25.08.12.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 08:12:59 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7d3e5df4785so443617685a.0;
+        Wed, 25 Jun 2025 08:12:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEgzjCLwfMr8aQ553RjQ/Aq3CA2GKx5RMSGqdWPrX9H4gZSa2/w1s+ZFf3sfTdlxUduRpHM03us4Kx1a9f@vger.kernel.org, AJvYcCUv8DJBmlP3Fw8W6l/zKMXc7QWjf7xQ6gyMll4WDhdgvqx4+WXjB9T5SJ0NwbkpAQnMqeOaJH6L5n9NAqSUN/lHlBc=@vger.kernel.org, AJvYcCVUhtf8rSR2xgZf+WkoVvkvmE16W5Q5jzdKEEVgoRdjUtYnlE2zbcLuE8Howqnv1xSE98W6kagS@vger.kernel.org, AJvYcCVu9MfrcMIeSDNvUWkWZAQUCijgQFv4sr1WQ5PAByRwR79KqzjJOCMUFfoKh+WrJ976Kmd6nhGJtQjv@vger.kernel.org, AJvYcCVxD5p0MQp/4OI/ydX8Sq7Go07O/+uOMp7N7oyXD3yHY0FgnZgUvskhUQDvfKnmhrySYP+TbFE4+0Qf@vger.kernel.org
+X-Received: by 2002:a05:620a:1a28:b0:7d4:f7:3baa with SMTP id
+ af79cd13be357-7d42970ffa4mr479610485a.8.1750864378765; Wed, 25 Jun 2025
+ 08:12:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250623080405.355083-1-john.madieu.xa@bp.renesas.com> <20250623080405.355083-2-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250623080405.355083-2-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Jun 2025 17:12:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU1mEfiL3e=NwSjTchpDXt1YTM3AkS7K3aR5h4FK94WCg@mail.gmail.com>
+X-Gm-Features: Ac12FXwsfcXtQcl1AL1H_21vDL8HbRYTR4_tq-vWVjK1gZ980dyatR86pYQllnY
+Message-ID: <CAMuHMdU1mEfiL3e=NwSjTchpDXt1YTM3AkS7K3aR5h4FK94WCg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: renesas: r9a09g047: Add clock and reset
+ signals for the GBETH IPs
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	richardcochran@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, netdev@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi John,
 
-Add RIIC module clocks for: iic0, iic1, and iic2.
+On Mon, 23 Jun 2025 at 10:04, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Add clock and reset entries for the Gigabit Ethernet Interfaces (GBETH 0-1)
+> IPs found on the RZ/G3E SoC. This includes various PLLs, dividers, and mux
+> clocks needed by these two GBETH IPs.
+>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+>
+> v2:
+> No changes but resending without dt-bindings patch
+>
+> v3:
+> Uses underscores instead of dashes in clock names
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g077-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks for the update!
 
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index 93862d84f95f..ed1e94cbd267 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -154,6 +154,9 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 
- static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
- 	DEF_MOD("sci0fck", 8, CLK_SCI0ASYNC),
-+	DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
-+	DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
-+	DEF_MOD("iic2", 501, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
- 	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
- };
+> --- a/drivers/clk/renesas/r9a09g047-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g047-cpg.c
+
+> +
+>  /* Mux clock tables */
+> +static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxc_rx_clk" };
+> +static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txc_tx_clk" };
+> +static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxc_rx_clk" };
+> +static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txc_tx_clk" };
+
+I have to ask you again: these still differ from the similar names used
+on RZ/V2H. Is there a reason for that? Will that cause issues later?
+Or is this to be sorted out only when the PHY driver will start
+supporting these clocks?
+
+>  static const char * const smux2_xspi_clk0[] = { ".pllcm33_div3", ".pllcm33_div4" };
+>  static const char * const smux2_xspi_clk1[] = { ".smux2_xspi_clk0", ".pllcm33_div5" };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.49.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
