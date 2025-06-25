@@ -1,120 +1,123 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98E1FE47B;
-	Wed, 25 Jun 2025 20:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4955725A33F;
+	Wed, 25 Jun 2025 23:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750882108; cv=none; b=lPuDGtAVmYbK8nvw6avknZVQrziNFMlikSBjO7Ymb0QM6o69l8tCHKhfVW1KL1F4arkVXNU2VR3k748CKxnDM8Ts5PUpZUG3Uz2QfvKT7aZroJ2Te1e6zxOTbxPGtF0+0qgXPT0UuAEpXquVCgdesoWY7L4dE0uczVsFuZSmAJU=
+	t=1750893189; cv=none; b=aUC6pN4IAxNrTYSoZrtnrI9jq6rn38Mv/67nAqN3flOboAWo+LaeUR1rXnbyspc50Af7AM0UEIgwMPBO1QbM+t4HKHOHqnCwyA+Pdv9uTxhR8+/Mm8vH6BdM7RXAd8u0zUttGBk9vGESTWcH9EXhNnpCETI6foUcnmsansKg1fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750882108; c=relaxed/simple;
-	bh=xUpMEIzpFjRDAERBUMObbNI+oufFrlvJkWbPLwaUzp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etBUnZUQTQCsToX2sWMTogAZVQ5GfbdC5xirLfPl3TZ0kbefPQ8uci7dJymeENqMMNfYQtfRYK4nzw+3yiZ8iiMphlZEc/m7MK6IxuKDhC+JW0HVDioDEAv5pq0ZmurGcsGG4v2Nzk7v17/9Tg+SpMvBdgvUB+Pjq/SlGMNtljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dFJvusXS; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1750893189; c=relaxed/simple;
+	bh=qCNf3yjCbeA85cA6kY5mUVbxNXuxynZhYCnNAeM6/qM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HPE6Vz2C5VKd1JdBdt1jZgXroJTJRFUn+MDtnRCoE9YszJ+oi5DAuPDUOZqE7aSiFFl3gQdu2zgnOPoYNGBHsDCEerir5v546/MgG138wAoVyorbw6XEMsEkxjTyGrL1FRARjJlmTavhff/zkdeO+BXMQwpXiXiiW3Qzv41Ht7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=L3i7mbNO; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dFJvusXS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750882107; x=1782418107;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xUpMEIzpFjRDAERBUMObbNI+oufFrlvJkWbPLwaUzp0=;
-  b=dFJvusXSSnTUtEoMw+ge5lgkqAsi2YMxLLvv0V/xwhkZ/bsjImzSEPmC
-   PEMKIMD1Bfs/PwlZeBJ5lcZarbauTwHOeijR5Ltltg7JXTBuq55hCVgBn
-   TMuHYW5vWPm/PgMXylaLHeFLZi4N4wRy1xqisFNXBpJEObgWKsIrPYef7
-   Z2uBtYL/P6rTq/RV5uaRHu8D6sOww6PdT+MjRYHG37U3xnxD5MXdJ0LvW
-   KC2m5LYYj62Mfi7zSckoYU3VzlVTUd/xmeclOW99jTz9cRltAGCuZI3Z+
-   G52/YB7eoBl0GFsE75rDen+rYn37F38FBgN3TZDCPhbc32LEsG7b4uNvg
-   A==;
-X-CSE-ConnectionGUID: +UaOQrb5Q/mlId2UukCGXg==
-X-CSE-MsgGUID: sV/HvzV3TAeWvbnSQxuxPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="63766168"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="63766168"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 13:08:26 -0700
-X-CSE-ConnectionGUID: YpEsUcroSXaqWKY9aziD2Q==
-X-CSE-MsgGUID: Tn6UOuwBSeC9ZqjURSczQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="153033344"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 25 Jun 2025 13:08:23 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUWPt-000TRa-0m;
-	Wed, 25 Jun 2025 20:08:21 +0000
-Date: Thu, 26 Jun 2025 04:07:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luca Weiss <luca.weiss@fairphone.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="L3i7mbNO"
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id E3FB6C00282F;
+	Wed, 25 Jun 2025 16:13:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com E3FB6C00282F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1750893187;
+	bh=qCNf3yjCbeA85cA6kY5mUVbxNXuxynZhYCnNAeM6/qM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L3i7mbNOOPE5/aTRKHTYI/azAJT31NyEOBxrS2IvQ4ijfPXH16lbJVSKIYebd8Xlc
+	 DWvgzncH7DKLphrrzvSbCGND8cYscZp3DbskD/iHc+fPt0GvOJ4EpdJ/pd8Pal6K2/
+	 B1PCuyG5JSTSSb8hGrpbjF+WRv9MYw5aS9wcNKos=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 3913418000530;
+	Wed, 25 Jun 2025 16:13:06 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-Subject: Re: [PATCH 08/10] clk: qcom: Add Graphics Clock controller (GPUCC)
- driver for SM7635
-Message-ID: <202506260357.DyPYkEZb-lkp@intel.com>
-References: <20250625-sm7635-clocks-v1-8-ca3120e3a80e@fairphone.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Etienne Buira <etienne.buira@free.fr>,
+	Antonio Quartulli <antonio@mandelbit.com>,
+	Illia Ostapyshyn <illia@yshyn.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-mm@kvack.org (open list:PER-CPU MEMORY ALLOCATOR),
+	linux-pm@vger.kernel.org (open list:GENERIC PM DOMAINS),
+	kasan-dev@googlegroups.com (open list:KASAN),
+	maple-tree@lists.infradead.org (open list:MAPLE TREE),
+	linux-modules@vger.kernel.org (open list:MODULE SUPPORT),
+	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
+Subject: [PATCH 02/16] MAINTAINERS: Include device.py under DRIVER CORE entry
+Date: Wed, 25 Jun 2025 16:10:39 -0700
+Message-ID: <20250625231053.1134589-3-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625-sm7635-clocks-v1-8-ca3120e3a80e@fairphone.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Luca,
+Include the GDB scripts file under scripts/gdb/linux/device.py under the
+DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS subsystem since it parses
+internal data structures that depend upon that subsystem.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-[auto build test WARNING on 19272b37aa4f83ca52bdf9c16d5d81bdd1354494]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Luca-Weiss/dt-bindings-clock-qcom-document-the-SM7635-Global-Clock-Controller/20250625-171703
-base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-patch link:    https://lore.kernel.org/r/20250625-sm7635-clocks-v1-8-ca3120e3a80e%40fairphone.com
-patch subject: [PATCH 08/10] clk: qcom: Add Graphics Clock controller (GPUCC) driver for SM7635
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250626/202506260357.DyPYkEZb-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260357.DyPYkEZb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506260357.DyPYkEZb-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/qcom/gpucc-sm7635.c:135:37: warning: 'gpu_cc_parent_data_2' defined but not used [-Wunused-const-variable=]
-     135 | static const struct clk_parent_data gpu_cc_parent_data_2[] = {
-         |                                     ^~~~~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gpucc-sm7635.c:131:32: warning: 'gpu_cc_parent_map_2' defined but not used [-Wunused-const-variable=]
-     131 | static const struct parent_map gpu_cc_parent_map_2[] = {
-         |                                ^~~~~~~~~~~~~~~~~~~
-
-
-vim +/gpu_cc_parent_data_2 +135 drivers/clk/qcom/gpucc-sm7635.c
-
-   130	
- > 131	static const struct parent_map gpu_cc_parent_map_2[] = {
-   132		{ P_BI_TCXO, 0 },
-   133	};
-   134	
- > 135	static const struct clk_parent_data gpu_cc_parent_data_2[] = {
-   136		{ .index = DT_BI_TCXO },
-   137	};
-   138	
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 27521a01d462..d92a78bf66e9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7381,6 +7381,7 @@ F:	rust/kernel/faux.rs
+ F:	rust/kernel/platform.rs
+ F:	samples/rust/rust_driver_platform.rs
+ F:	samples/rust/rust_driver_faux.rs
++F:	scripts/gdb/linux/device.py
+ 
+ DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+ M:	Nishanth Menon <nm@ti.com>
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
