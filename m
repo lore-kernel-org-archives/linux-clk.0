@@ -1,196 +1,333 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010063.outbound.protection.outlook.com [52.101.228.63])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E9325D1EB;
-	Wed, 25 Jun 2025 11:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750851771; cv=fail; b=omLPsOnvuHoiQJuCctHnWKuBLByNG2Vomm9xYGQvqTt7uKEjGJrOnaSoawUL4yjmlLaFWnSLF7vWmP7mTSxsGwSD6q2LCsirh0KVgKahIUNcaS2HgUoHgJjaIBc1uIkgO5ps+s8YK5vGr7nSGm7aM0KMltyyvAObZ8z3CIFl83w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750851771; c=relaxed/simple;
-	bh=IeEzo7a40YaYpwasjDDGFcM3reFUsLrsBhqCklRf3Hs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bRTCxq19xfjdQ8ogxBQ/NOVtrtMpfcf38AzNb+bHbxtt8ujSlR/iPmzINmCzhgTAnJSrSk35paRDhBlGOdW6CpfWH0nmRNhIO43vYqooPAEG4LBvhnLQleZxqPxMzYMnbyeTirQlOQVlswc6fbMWWrdQvqJ00dXIg5vVIqSidJ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=FObUdLnf; arc=fail smtp.client-ip=52.101.228.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EAA25A2A3
+	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 11:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750852057; cv=none; b=S2ic9Vus45MdvQBHfFuBg/XWwTLqCZ+zleYBoWod/YoNGcaFcwlMvI/9acE5a5GkxXeDyjHywwNKWTAHdJ3XLIrZjCjD9RU7jNrjJANkydzs7KMfZfx8RBunnwJet2+3TVu2zoSFnYnwwsLGLjDrvcntIRVzXZb72YXjs31x5OQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750852057; c=relaxed/simple;
+	bh=H6Ux8Hu+A7NcbgXUY+irrhi4jCk8KQ7ofE6RNJ+jxTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puRx3TCrynL5xZsICFGw62xfuD6yFKpDLsywZvQwi5/QfJXw9169YmiPw530eoHF2/UTdkartvNueaApxOw1SzCCrgdECT2CNwn5gsgAMdZfVXJGV4ACoMqwodjj8zLhDeBbeNdRaND65UKywSaw6CSaMs81b4mQrb2QTK6gnb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dKhbwi0l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="FObUdLnf"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vfup0KdsXxyZn/AtitkhxZh/vF/jixbOiHTXg/yv6d/GE1U22NcJkBixq+DOja8uSGMu9B2upETTDpWTpRdX5mupuvs+w48oj0b3nKFJtjpm6uQTFtbsed8PM4kD3QwfBZl1OpuPz8dBQDrhiCd4uCBeMHziUW7zJ7aH7ei72FnIZ2l/OSyC8Ft/kbAohm8v1OOEl3o/2F2pOVm1eyuzfexEAV/16QMLyfiNQZvg0Gp+omRpK2Mb6l+NT5KUxSnetW2hmPwFOJ569QBC4+KjI/0XJdPQFg/zR+WLETR1dzvL4m7207vvlHBmNnvrfT9/J3zPLYR7Pl/+EnBaarwYhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IeEzo7a40YaYpwasjDDGFcM3reFUsLrsBhqCklRf3Hs=;
- b=SjA9Jp5CuTyAb6lU09ukIxqHu87FVZZoOcYNwph9aMzXCYXZ2ppnLvet1ppcRzJJ+JGLpdLU/2NSgA2H3pHemjPmvi7SfUhB3xh0/3ZCDIGRtrXyqfWEMJ6RxbyeBDrZSFA/tJ3PygD6W/TXqcUH+Vt/Xu3crIXdJga+93heKzd2cF5fcYe09ldq7+5qopIXYdW8i3AmOKSwArTrSxpSg1cfCHugfBNiYaXa2kyOePnPP7x3HJnHc0CafiwPz+sb2FvctL+0q8Mj22/8R4pmQgB40T4Z25Yh+wFTiuzrT6PTH0de0p2+bSA5ZXLaOmZjaLxR7rLnVtEqs0eMHGqdAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IeEzo7a40YaYpwasjDDGFcM3reFUsLrsBhqCklRf3Hs=;
- b=FObUdLnfhzmwp/oEPGKY4VWyyq90UDD18966medAZMUL051dqwfqakvaEzUZe9Yj1Cad71wMy6wRAIS6/V7wdL/Xwz2RiNFt4hSixIMMh7tLYpnX+WqQ3J4/2b88teK3YUCAEVmYBSbihjdKnVYBFBcCO1H8tuc0kemjaRZ1ysw=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS9PR01MB15920.jpnprd01.prod.outlook.com (2603:1096:604:3d7::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Wed, 25 Jun
- 2025 11:42:45 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
- 11:42:45 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
- Foss <rfoss@kernel.org>, laurent.pinchart
-	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Magnus
- Damm <magnus.damm@gmail.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Fabrizio Castro
-	<fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v6 4/4] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-Thread-Topic: [PATCH v6 4/4] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-Thread-Index: AQHb0YbxoLXThBVJyEq0KQgkc6A6OrQAr/1QgAUFOYCAAABy8IAM3RaAgAEw7pA=
-Date: Wed, 25 Jun 2025 11:42:45 +0000
-Message-ID:
- <TY3PR01MB113468C96544DBE6526D51177867BA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250530171841.423274-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250530171841.423274-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB11346A62FDF84C5F2C1240BBF8677A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8sZfTgOENXfR2NnykgjGHd+2-vS9Jk-dNLWTVQyAGbQTw@mail.gmail.com>
- <TYCPR01MB11332F40696148C7216866D3B8670A@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <CA+V-a8txzBEwSSNEgoPkxBGAoQDrdGFtnYoLo49SqN-aZUUVXw@mail.gmail.com>
-In-Reply-To:
- <CA+V-a8txzBEwSSNEgoPkxBGAoQDrdGFtnYoLo49SqN-aZUUVXw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB15920:EE_
-x-ms-office365-filtering-correlation-id: 5d5e1c0a-0e58-42e0-d99f-08ddb3dd6714
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SDBmWGoxVDhjNjAwUnFlTVZtWHhDNVA1TFlRdVhtbTJhMjRRTkl6MFJjMGdy?=
- =?utf-8?B?bWlnUWtINTlGSW9SS3NvR1o0OFRaK3AyeCtsb0tEMVh5T2ZGaEVqNnVKcE5Y?=
- =?utf-8?B?RCs0NjVKbkU2bVRVUzdVV3ZseXFlWFNOTzM2SlNlQmg0RTR3cjZVczlLdGdt?=
- =?utf-8?B?ejRKektZVm1KMmNQaHFKV2YzUUxQZy9ZOHBpR1pEYWl4NkJlMkY0ZzZOWkhN?=
- =?utf-8?B?TVpWOVNHZk0yWkkycnkwNlArcStkanlzSEZiMjBRMnlibU8vMVBvd25ZRVVh?=
- =?utf-8?B?SEU3YnM3YTFlbUpiUEhMV01OVW9vNkZJcW8vRVplcnV3OTNUMVBCTjNGZERq?=
- =?utf-8?B?Vlp3NFc4cVJORDcwckUySm1panpkK0lLR0Z4bEtjM0QzYzh2Y0l5MDcxWDY1?=
- =?utf-8?B?dnZzQUlMTjJ1THNIYVpsdi9mQVM2M1ZaVlpscjd2a0FGRDBzTkxMams2dFR4?=
- =?utf-8?B?WmZsbEczVkkyWjdZYm9wTmJIdENuTkh5SmFtN1R2S1BINkQ4V0FtOGROYjQv?=
- =?utf-8?B?VzlvSndTQVlrcStwdDF1WFRIbkhMYWFlS1ptZDVqSUdIUzFvRVZzVW1TeVZV?=
- =?utf-8?B?QmpXUVdEc1dLaW1CVmU4VWphR1Npa0NPZHZvZzZTckdFSDlCVTcreFJhMUw3?=
- =?utf-8?B?SDg0S2wrMmJhYVBHN3l3OWk3UFNldEdEcmR6VndZQUs4bUFVaWtvdmZzNzNy?=
- =?utf-8?B?Mm5vL3QyeGVDanhWTlIzQzJHNmx0elV6QXpLMXM3S1JJN3g1REt5RUpyYkx4?=
- =?utf-8?B?KzdhY3ZvMjZWWDNMb3NOMW9pOFVFTklFOVNIdjNoNXp5cm1XTXE3VEl0MUNJ?=
- =?utf-8?B?eE1UK0xRc1JWRUJaUDF0YklzazNNY3RZbVlmZFdnSndxenU3eUZNcVlpMWRa?=
- =?utf-8?B?aGZFK0swYldpS01wamZ2Y1BKWjc5a0N4ck51VlR4SHNYVHdhbnkyTmRMNWlH?=
- =?utf-8?B?VXU3QnZVV2JpZi9UbWtuRDBxVWpZVTlMaXVES1BRN3R6MWlEU3dqTGE0MWlm?=
- =?utf-8?B?N2txU0d6TWxyQ0RLSzd3S2t4c09ZTXk3TWZoSFZPekJRV1QrbDZsdnRRZTEw?=
- =?utf-8?B?ZE9iVVdRUENieFhTaStxcEd5aTU2RkcyRWIyS2c3OThodDJQaEF0SVFiUDht?=
- =?utf-8?B?NkV6amNRR3ZKZGVpSENySFV5cCtkR1YxY0RzOTNFK3habXdOQU52R3g2bklQ?=
- =?utf-8?B?eDVobXgrQXBER1VlWWI2OFozRGo3WHNjK2NndUkwWFl0RzdPdU9wY3NUeVRs?=
- =?utf-8?B?Mjcyb2lucG9OU2dvZU5xUW9CeWtJQ1BNK0pHSEs5dTVmRllHRDFaNmZQeEgy?=
- =?utf-8?B?ZkxyMXQvSXJQS2JLSVpWUmhHako0cWE2S1RZbTNRZ0dmWXdKR0VoNDI0eEYz?=
- =?utf-8?B?aGNYS3FGa1JUNFl0SXpJNzR4L1B0Zk9TZ3hjVHg5UFU2MWI4QUlzTHcrQ1E2?=
- =?utf-8?B?bGVQcmdYQlh1SWNjckZnSkxuWVZldGxZMU14eDZQeUhkYXNOSUpyaFNRSGJR?=
- =?utf-8?B?SFNMMks1QmhNQVNzemttUGJFdityK0FnMTNZN3Z0Mm5LVmQ1TTdRVUVaSStn?=
- =?utf-8?B?SWdLM2ZqNngreGYvWUptNUo4T29HcS9GeitRdllrRkNVOVBXc1dWRkVRay95?=
- =?utf-8?B?RDdIZ0ZEckwzYmxGVGhJTFFrU2JoRHg1NlJRVDJXZ3V6bTZDd1dVUklYaFZi?=
- =?utf-8?B?bXRXVmZDTGlUa1daMitCcHNtNGRPcXNaMVBEb2FOWmkwbFRjdVdzK1hMcFR6?=
- =?utf-8?B?Z1RLd2daU3pLUkVDYXdOZjdsZ2YyVkRQSGpKU1ZJaXQ1dGkzN2dvNW90ZTR0?=
- =?utf-8?B?Uk1lMEVvR1RIRGFxMWpFOTFzQUZtNUZBYVNqZ2V3NGZkNjUzMVIzTDduWWVS?=
- =?utf-8?B?ZDNhK09YZzFkS2kvUGt5RFQ5S2ZqUDMxcTIxVDZFbE1MTSsyWG5aQ1RUNWF3?=
- =?utf-8?B?UG5YdUQvZDZLLytpU3NpL2ljUnkvNmREemhTNEp0VlBXNkxIbVJmaGcybmdW?=
- =?utf-8?Q?vQ+FKCEKrqLfIEJDycABvnpw2Za/U8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NDNGdHkwVGh2VG5PWUlocU4zc3YxUjhQb2lxSnJWWmxGeTNCRXFrQ3MyRStE?=
- =?utf-8?B?c0lwT0V3K200Z3g1T3dTc1BBdmNNSlN5d3FadkF1Z01WRWRXY01WWm9iczNC?=
- =?utf-8?B?Q2lKL0tZdDVsVmkyV3Ric3lpaXRSZFNqa3Y4Z1o1ekkvZ0hrdmN5Zk5YUlR5?=
- =?utf-8?B?MnAvRU1VT29YYjBFMzR5UDhHR29Fc1JBN3k0VzVXYUZmOElsU2I4TDgxeGhU?=
- =?utf-8?B?dm1RMTBPWUovSU43T2NrR0J6bkdMeHl0djlLYzBndGhRbENidURvMUdseVcz?=
- =?utf-8?B?cVlGeTVGRW8xOUsrYXFUMW5FVHBhUjZmbC93amI4ZS9hdHRTclY0Z0NxeTlB?=
- =?utf-8?B?akFoU0VEQWk5YTdiN0lmMXVSbnFZTEIvZUwwYWc3a2c1UWhzajdvWExNNWxF?=
- =?utf-8?B?K3J4azdDY1FxbTRhbHBlQUtFTjB4Q3UxR3V6WVh6MVYyOVVtTm92VUZJY2FF?=
- =?utf-8?B?dWF4aHFZcjB2ZnlrVHN6cTdIOEV5M2F6TXpqdnZjMlVWUWtSeVNreVBVRFF3?=
- =?utf-8?B?Um0rdzk5SGg5OXFBUWdHR005M2FFWER4TGlIUml0SEFlMExFbmY1VnY1MXox?=
- =?utf-8?B?MWRzaGVOVVJVYmxQTGVLRnVKS2dGa1p0ZlRqNnF5WTdUVTNnM2tSeldzSHRV?=
- =?utf-8?B?R3RSb0JsN1hHdm95VkduQmlUWDVWMVRHNStWblhEVnJVZDl6d3RlcktobHVV?=
- =?utf-8?B?L0tpVjdqMTErSnZkeURaQWI1MUlkUjFRNVhZMmJBbEp2Rkt3OE1RMWdtcnlt?=
- =?utf-8?B?SWRycDRpaVdPaWJwckduSlRPUVBZOFpTYk1mNXQyMCtPNHNrZUd2T09mSnhT?=
- =?utf-8?B?TzBSYTJXVVBFNEY3R2hoQnUxVWVEcjNkbWxrcE1JQ0N3bVpHeXZMZVVJcjRO?=
- =?utf-8?B?S3JVNHNIOEdlRzFvQnJtc3dJLzNRVzZscDhMK2xkNGpoNnphTWFLRHRiNVZK?=
- =?utf-8?B?bDJ4em9acmN2TzdHVjlOc0hrbkFxU3FiaVZmVUZGaENLaGt3UDgxUFJ1enky?=
- =?utf-8?B?OVJWZmNTVkQxbXErN1BUek5GQW1pNk9SaHloQkI3SWtaUUN2dG81MVhlVk5x?=
- =?utf-8?B?Nkx5cnZSUlFWVmVtWE5TcUNFeHNmZE9QMHRLeXd6cGQ5d0xlejBNeHZ4NFVC?=
- =?utf-8?B?V1M4NUpkMERPNHpuZ2I2Rld1ZWRBR2tmVDRzNGtuK2NnS0NSeUcxYW5laHB5?=
- =?utf-8?B?S2o1TjAybGtKdGNIbHQ1MjRqM1B5L2M5T3J2RE9kSnVPb0N2bW0yeU91OHBo?=
- =?utf-8?B?OGFCUHFISG1PU2t3czN2MGk2U2xmU3B2N0FGa2ZTbW9GdUJLWGJ2VTVJRnlS?=
- =?utf-8?B?Tklhc3RHTkt2eU1sQVFyWlUvOWpxckdIQTBFNmtCYU16NUxRcmhyclViaW5E?=
- =?utf-8?B?c0tZN090UlJLNDdXaTMxcC9yd1BVbEZmUDNTR2pPSXp6NkZ5allMSEVBbjBs?=
- =?utf-8?B?YlMzN1FFZld0cklDbXF0cS9qOUVZdjF1TDAzek15MWV1Y1ZJcWNBSG9QMkMz?=
- =?utf-8?B?VHJyaGNrdjk0M1N0NjlQT2ZyazhCaXBSYjJ4OTZpUUovVHJ4bnloalZpUEY0?=
- =?utf-8?B?MExrdGVzSjlWVGZoNGtvK2F1YVlIVGhBVFBXOEk1S3dCV1hQSFNyNE5iaTRa?=
- =?utf-8?B?VkNDb0JiV1FzaTlXcThnZlU0dEZwZFdJL1IwcER5NStmNG9xNi95bmwra0Jv?=
- =?utf-8?B?T3JEMkxYKzFtMFY4VHhiNWhwcit1VEV2bWJ2UnJkTEJvWCtFWkozSE9Ga2gz?=
- =?utf-8?B?Z29GUTZ5TWtBQkRnMDhXUWk4MWRURVZyMTZHVlltaWRldnYvR002OFRaQ0ho?=
- =?utf-8?B?ZEREQWF6aFpUZlZKK2Yzck9MMjFhZkQ2dVdwSHpJZ1VuSFpONjdMZDBYM2pI?=
- =?utf-8?B?U1VsL2p1eEZzOXB5OU13OGcvT0J3NzVTbGt4bVBuZ2E4Rm9IUmtQaStGVkdt?=
- =?utf-8?B?SUVSckNpSkdZd09CSVdqMmxlNFY4ZGR6M0lPNkh0UnUxSGZ1eWNQUktCeGxz?=
- =?utf-8?B?WTJObTB1SUQxek1QdXRJOGpPc3dKMzZTbU92dVVSdVZ3TE9SUzJYZFJnbnFF?=
- =?utf-8?B?MXd3dk1VWnN0TzdjeU9zNVVuY3o1UEN5R0JKcXF5Wk9FUnlxMTkxY3psYmVv?=
- =?utf-8?Q?PWQjoA2+FSGOcWoOT8QPnBJ2D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dKhbwi0l"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P5Uaqp014612
+	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 11:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=R6FqCG7b8R+qhzgHna3f9JAx
+	3Wwa0Pc3B238JWiWJdY=; b=dKhbwi0lp4Iz7gAelPuOZdLiUUGKwi17dtuEDlSK
+	lnEuhOx+kPGKhZidKhkI4h27FRDAU8eAs7iMTStfhog3aJWxhWviWTwWYlZmbE7T
+	2BtMH5t8Z3kfdSroA23iY8VHQ65aNaU+A9gCEzafXX6Q+mgfCan0+V2PKvxLeWCa
+	tRNyH9RTNE7T/wHkjlmu86G8GZp4qqzvN+Oa1jC/ISkdyEcA8zmyhBHSY4448IGz
+	TPgjwI7xWoNy6hfaRP5vC0oI3Aw13spL9TmM49O/QV8WdPhrJepRywYApSpN53ls
+	TiWvGWCllnRxEJ6POH39r+yAHBZMseF0FTSvdoUbF4fduA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f2rpyy31-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 11:47:33 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d399070cecso1201379785a.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 04:47:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750852052; x=1751456852;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6FqCG7b8R+qhzgHna3f9JAx3Wwa0Pc3B238JWiWJdY=;
+        b=D9tkMrTrTOXqcDJM3uWvlOTwxzYVWFQfBG/zsHQyTiEuNGOIiuiT+gXKAzwE0WnMog
+         NLYNNbd2y3xPH9+RzpfaZbUnUeGLNTiCfLeOW1cu+PmyRK/6LmQDbB+jo2mVaIt5Tmxf
+         6L3GkJ2wgaClq6BHbuQAarituqPKE+7Pm/fhkcO5IyqzWAvzeMobcbyJ0ZOO+T0GiwaS
+         biE49i11qsIDM/GvHICNSHb3l1hLl/ozBvaw4EH7EknkxBtiSNYG11IlXBFpuotuf0tA
+         Obm+1jd3LdERoKVfS5vQZBV8UTURrOPlUoSKsR2AlnpGepaeVDeNeE7yLoPnmY/9NlJ7
+         gA6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVAAsuwElYZ21ipFqHmn3IQU6LIHPJqSmnt+ftIgsYNx+pVFul//EZUBi/srzElcRMmphWJDS6ycUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdFphj0byj7d6u6MJw+8YLy/bFvQ6egbvPY/imlEhZW49nATE8
+	oZNZPdKkFqrLxlzipcTfIchB9L4VlyzXYQ5tmyNcCUiGMzytOwoBuyuKrBMMZIIe6b40OO2G5on
+	6onmlk6fmyBwDJrf9V0IePPuTnoQNaK2GGcCzD60wZIWLAOWTNufvHSm1ZKrEXSc=
+X-Gm-Gg: ASbGncspDVENeqftA51KoZztlRL7Jybece/xqvVPBw1zUZWt3FrudJY6zpWt+v/wcZ9
+	dMT2gbSAsV3cjEwfgMUr5fGeEC21nTW1Qoorty4utbfqq4RbdazK1K+bbUhLAzy5mmSKMIARuho
+	fxy6qwhUpATkA91da3wd93eKGr2mCOF2n8T6cGELUSl3lQu8oKtQm+LR+ASm/IZ61mkua/cOvl0
+	suYflMrz3Npcizw6bVZkiV7JOWVluGbKJz3XK+DwM7/uWI/93Mtuk08VXCpk1PZ0dFID5mVAAt0
+	J6C9ICTTeYF7bRX2fCAStiw3Mbjj9o5Lk3PfkSuIO98JugJLMJB9D1QgGqlZcdFWliX45bc2yw0
+	A4WDNKnwT/y7tzUgD3d0ot96DV9eupMmGjkQ=
+X-Received: by 2002:a05:620a:4444:b0:7d3:ed55:c92b with SMTP id af79cd13be357-7d42974b899mr326666385a.38.1750852052254;
+        Wed, 25 Jun 2025 04:47:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwN9V0DIMaqLW3c8P1cQrAhb/E9grjRFPmdzpe/w+9SMMXrfRLILkEXZLWzYsCSaZ100tLfQ==
+X-Received: by 2002:a05:620a:4444:b0:7d3:ed55:c92b with SMTP id af79cd13be357-7d42974b899mr326662985a.38.1750852051789;
+        Wed, 25 Jun 2025 04:47:31 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41cc0easm2167738e87.208.2025.06.25.04.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 04:47:30 -0700 (PDT)
+Date: Wed, 25 Jun 2025 14:47:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v10 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+Message-ID: <trwdfk2oz2udtbiqxh3ybuqbvasfqywmqxgi4xyvsknz6svs2r@icpp7snpq6c5>
+References: <20250625-qcs615-mm-v10-clock-controllers-v10-0-ec48255f90d8@quicinc.com>
+ <20250625-qcs615-mm-v10-clock-controllers-v10-1-ec48255f90d8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d5e1c0a-0e58-42e0-d99f-08ddb3dd6714
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2025 11:42:45.4482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LrWIQyfqSuFxZfng7kNz943HodK0KAdwtR1wZ0GcEbaX+J1Ju3SBh09GKlgMZTi9gOXoVy7AyxGYYXXMWdLrtkIGURFBj9DmPjkKc/zhny4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15920
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625-qcs615-mm-v10-clock-controllers-v10-1-ec48255f90d8@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=NdDm13D4 c=1 sm=1 tr=0 ts=685be1d5 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=2-BSLW4CMbL1kKF9A54A:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA4NyBTYWx0ZWRfXxZgIoaTN+LLh
+ 6UHFsfmffgAqBpu5E7C0dJzP2rhvxyZe9K62PYPbpTStd0MsIcgfypYibHD00gDiD+j55u/A4jz
+ aA8FZvXqo2WEdQIh+JWKTLXKXi5jMd3W194uJ8sFq4dV1Zdgg6BE+LdKzW6MxzSyBDKHeunaa9x
+ A0C/j4505UES60kM8OS7Px63BJXn6J0t+jJFwOd0PyCmN4X0OWFQpmsSf8SKsIJJdlgowmFIHTC
+ iVubOmCaaOKAqfUc/uVbfHSFmhkOsh6wCAEzCZKRz4R0ztRJYe2OL9vUanTw9K5erU6D6of3RcP
+ J5h9S3v5ewYlSePgbxeYhclPedKCdi4mePlJfsp7lmdVG8jZvBkicy+YQKd56WO/qm080PfWVJA
+ R3g8aWqUQv+LDHE8RkvzB7DJODCHk0JZCCh0zLYH/WholuqdB8fKzpvy2N0czbGQCG3PiPiv
+X-Proofpoint-ORIG-GUID: IHCnNhjff_R1xhfxSjU95nYnXW7Xpi26
+X-Proofpoint-GUID: IHCnNhjff_R1xhfxSjU95nYnXW7Xpi26
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_03,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999 adultscore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506250087
 
-SGkgUHJhYmhha2FyLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IExh
-ZCwgUHJhYmhha2FyIDxwcmFiaGFrYXIuY3NlbmdnQGdtYWlsLmNvbT4NCj4gU2VudDogMjQgSnVu
-ZSAyMDI1IDE2OjE2DQo+ID4NCj4gPiBUaGVyZSB3aWxsIGJlIGRldGVybWluZV9jbGsgZm9sbG93
-ZWQgYnkgc2V0X2Nsb2NrIGZvciBzZXR0aW5nIG5ldyByYXRlDQo+ID4gZm9yIFBMTCBEU0koZHNp
-LT52Y2xrICogdGhlIGRpdmlkZXIgdmFsdWUpIEZvciBlZzogIHZjbGtfbWF4ID0gMTg3LjUNCj4g
-PiBNSHosIERTSSBEaXZpZGVyIHJlcXVpcmVkID0gMTYgVGhlbiBzZXQgUExMX0RTSSA9IDE4Ny41
-ICogMTYgTUh6IHVzaW5nIGNsa19zZXQuDQo+ID4NCj4gVGhpcyB3aWxsIHRyaWdnZXIgdGhlIGFs
-Z29yaXRobSB0d2ljZSwgc28gSSdsbCBnbyB3aXRoIHRoZSBjdXJyZW50IGFwcHJvYWNoIHdoaWNo
-IGlzIG9wdGltYWwuDQoNCk9LLg0KDQpDaGVlcnMsDQpCaWp1DQo=
+On Wed, Jun 25, 2025 at 04:13:26PM +0530, Taniya Das wrote:
+> The alpha PLLs which slew to a new frequency at runtime would require
+> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+> which can support the slewing of the PLL to a new frequency.
+> 
+> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 169 +++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>  2 files changed, 170 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index d8e1cd1263317814da2d0414600988de4b87c56f..354ebf48435f1ef7f76ead05e9ca882085dcc46d 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -3017,3 +3017,172 @@ void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regm
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_clk_alpha_pll_configure);
+> +
+> +static int clk_alpha_pll_slew_update(struct clk_alpha_pll *pll)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	regmap_set_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE);
+> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> +
+> +	ret = wait_for_pll_update(pll);
+> +	if (ret)
+> +		return ret;
+> +	/*
+> +	 * Hardware programming mandates a wait of at least 570ns before polling the LOCK
+> +	 * detect bit. Have a delay of 1us just to be safe.
+> +	 */
+> +	udelay(1);
+> +
+> +	return wait_for_pll_enable_lock(pll);
+> +}
+> +
+> +static int clk_alpha_pll_slew_set_rate(struct clk_hw *hw, unsigned long rate,
+> +					unsigned long parent_rate)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	const struct pll_vco *curr_vco, *vco;
+> +	unsigned long freq_hz;
+> +	u64 a;
+> +	u32 l;
+> +
+> +	freq_hz = alpha_pll_round_rate(rate, parent_rate, &l, &a, ALPHA_REG_BITWIDTH);
+> +	if (freq_hz != rate) {
+> +		pr_err("alpha_pll: Call clk_set_rate with rounded rates!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	curr_vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
+> +	if (!curr_vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	vco = alpha_pll_find_vco(pll, freq_hz);
+> +	if (!vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * Dynamic pll update will not support switching frequencies across
+> +	 * vco ranges. In those cases fall back to normal alpha set rate.
+> +	 */
+> +	if (curr_vco->val != vco->val)
+> +		return clk_alpha_pll_set_rate(hw, rate, parent_rate);
+> +
+> +	a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
+
+We have code that does this in __clk_alpha_pll_set_rate() and now you
+are adding two more copies. Please extract PLL_L_VAL, PLL_ALPHA_VAL and
+PLL_USER_CTL / PLL_VCO_MASK into a helper function.
+
+> +
+> +	/* Ensure that the write above goes before slewing the PLL */
+> +	mb();
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return clk_alpha_pll_slew_update(pll);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Slewing plls should be bought up at frequency which is in the middle of the
+> + * desired VCO range. So after bringing up the pll at calibration freq, set it
+> + * back to desired frequency(that was set by previous clk_set_rate).
+> + */
+> +static int clk_alpha_pll_calibrate(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	struct clk_hw *parent;
+> +	const struct pll_vco *vco;
+> +	unsigned long calibration_freq, freq_hz;
+> +	u64 a;
+> +	u32 l;
+> +	int rc;
+> +
+> +	parent = clk_hw_get_parent(hw);
+> +	if (!parent) {
+> +		pr_err("alpha pll: no valid parent found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
+> +	if (!vco) {
+> +		pr_err("alpha pll: not in a valid vco range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * As during slewing plls vco_sel won't be allowed to change, vco table
+> +	 * should have only one entry table, i.e. index = 0, find the
+> +	 * calibration frequency.
+> +	 */
+> +	calibration_freq = (pll->vco_table[0].min_freq + pll->vco_table[0].max_freq) / 2;
+> +
+> +	freq_hz = alpha_pll_round_rate(calibration_freq, clk_hw_get_rate(parent),
+> +					&l, &a, ALPHA_REG_BITWIDTH);
+> +	if (freq_hz != calibration_freq) {
+> +		pr_err("alpha_pll: call clk_set_rate with rounded rates!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Setup PLL for calibration frequency */
+> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
+> +
+> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_VCO_MASK << PLL_VCO_SHIFT,
+> +				vco->val << PLL_VCO_SHIFT);
+> +
+> +	/* Bringup the pll at calibration frequency */
+> +	rc = clk_alpha_pll_enable(hw);
+> +	if (rc) {
+> +		pr_err("alpha pll calibration failed\n");
+> +		return rc;
+> +	}
+> +
+> +	/*
+> +	 * PLL is already running at calibration frequency.
+> +	 * So slew pll to the previously set frequency.
+> +	 */
+> +	freq_hz = alpha_pll_round_rate(clk_hw_get_rate(hw),
+> +			clk_hw_get_rate(parent), &l, &a, ALPHA_REG_BITWIDTH);
+> +
+> +	pr_debug("pll %s: setting back to required rate %lu, freq_hz %ld\n",
+> +		clk_hw_get_name(hw), clk_hw_get_rate(hw), freq_hz);
+> +
+> +	/* Setup the PLL for the new frequency */
+> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
+> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
+> +
+> +	regmap_set_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_ALPHA_EN);
+> +
+> +	return clk_alpha_pll_slew_update(pll);
+> +}
+> +
+> +static int clk_alpha_pll_slew_enable(struct clk_hw *hw)
+> +{
+> +	int rc;
+> +
+> +	rc = clk_alpha_pll_calibrate(hw);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return clk_alpha_pll_enable(hw);
+> +}
+> +
+> +const struct clk_ops clk_alpha_pll_slew_ops = {
+> +	.enable = clk_alpha_pll_slew_enable,
+> +	.disable = clk_alpha_pll_disable,
+> +	.recalc_rate = clk_alpha_pll_recalc_rate,
+> +	.round_rate = clk_alpha_pll_round_rate,
+> +	.set_rate = clk_alpha_pll_slew_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_slew_ops);
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+> index 7f35aaa7a35d88411beb11fd2be5d5dd5bfbe066..ff41aeab0ab9844cd4e43c9b8e1ba0b50205e48e 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.h
+> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+> @@ -206,6 +206,7 @@ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+>  #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+>  
+>  extern const struct clk_ops clk_alpha_pll_regera_ops;
+> +extern const struct clk_ops clk_alpha_pll_slew_ops;
+>  
+>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>  			     const struct alpha_pll_config *config);
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
