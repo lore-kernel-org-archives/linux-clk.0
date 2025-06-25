@@ -1,200 +1,117 @@
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2E271447;
-	Wed, 25 Jun 2025 08:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A17288C89
+	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 08:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840938; cv=none; b=rJAQH6fbF3+o9yIcORL0J9VoRJQjUOAsQ8QRUTufl//HmMU2fxa5lsYeKUmxm01QzySK/4eHH7IpdJlWbl0ToxU2cF22sbpbVkGqM9pPONxGFiC+wBF81RlUcaaYPvipvfA4gqvb+gjFoQhyADsWdAqj45+sL9FZyRcYjTvUa2k=
+	t=1750841130; cv=none; b=m0ph2m8oTPk4JLhOt+CL5U6MILKqO+uTM879ZMFjoRdRzP7daiK62Z2hVFfPM8dQ1PB7onpCpc4c6WKmLWe7PvTc4UpnQnX8rkyn07AMfrHtVrUOjP3mzSJqki9zqd1rIHHJlgyjx/BLsfjP/8eG/sebawpMc5DqFb33F7zg24Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840938; c=relaxed/simple;
-	bh=qqNayb7XJOOtdiN0r+72/Y4dYJQ1cosr5ilno7hGb70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZvVAy5Ne6880UmeMP8bmHtJS71AGXEOq7uSJ6Zv6tYS+sSNKsGtXXAqM4vWIIP+AI9AP/41kSX/tZL30C+umUl3haYr10wAnqe73QOA7ko/C37H9NlS2/iWdx9571uXRIlOonRFITpqUDjzsBUSrnOqhI88PLQUQpT6tNBVUxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 59FFA1F00057;
-	Wed, 25 Jun 2025 08:42:05 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id B700DAC7A49; Wed, 25 Jun 2025 08:42:02 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id B63DAAC79CD;
-	Wed, 25 Jun 2025 08:41:58 +0000 (UTC)
-Date: Wed, 25 Jun 2025 10:41:56 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 17/22] phy: allwinner: phy-sun6i-mipi-dphy: add LVDS
- support
-Message-ID: <aFu2VBhCIEdLIPv3@shepard>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-17-13b52f71fb14@linumiz.com>
+	s=arc-20240116; t=1750841130; c=relaxed/simple;
+	bh=4CWyVOg1ySsSGm3tCccXgrCtfZcjTGRY536tD9B4aXc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YEOhe8YQ1M3cipBqkWoGo6c3CvPWSJQAGZmvtJOX/S2qecMzp+qXisw5F7s5gb4t+B8HA4LzS4mkhVaVUYFH0BfOacpoBv+ka52bEEi1j3N2VOA4HVlAqO4FafFNnvatbqu+poRIoRsyqOhpVaVF34Gjb702G4t7/2A+h6P685E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LwbAQ1Cr; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwbAQ1Cr"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3105ef2a071so75829311fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 01:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750841127; x=1751445927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4CWyVOg1ySsSGm3tCccXgrCtfZcjTGRY536tD9B4aXc=;
+        b=LwbAQ1Cr3YZihFgPa5aK9bUmn44ivPfF5qkBM8w6l/uw+BGgxyzRFFDannqOEjx/gX
+         aEAc1T+yPBUSAdiG2JCq0B6E0+1sWJekOFyCwpg4qbTAMUc5iTIsqyNbO4ifOIZrBXBf
+         GRtlQKXAPk2dxGqlv7WDWt/42F/TdnxWe/05eLVL4iDJ7iW5/AbCaQyl/qgqOWSoW+QI
+         cQptVJGDMMS7hXIK9qUicyEmM0RVLlilpu4h3tSBTy94ehG8IysLPlyXksaUyD1QFIih
+         DYyoiOQI6Vfwr3R4As1c0LSjYYvso/oycxykAAg4S98+/RyfAfEzPdDE2SVE89IJNrnP
+         9KqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750841127; x=1751445927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4CWyVOg1ySsSGm3tCccXgrCtfZcjTGRY536tD9B4aXc=;
+        b=e5U1Expi1I1m8aBB8Bo5IsXyNOj9cdY9L4CIu8OyIdasJYxI3Ay2252onOW6FENV8w
+         4N9V9vuMFxpr0cCucCy8JdgVKAScBUPRGI8bJeaSwZxP8lwpuQ230WFZsvibGTSY7SsF
+         sMZdJCjnNYREF8zoaECbj9/2TbUK5pBA0Ty5rqqo6O7Gl7x0WL+PCwUiICPxjYvCoQai
+         l9KgV49HcPfPTP0p71iNAcJJbY5s1Clmzam9hBE/kjQdCSr4AKrwpdx4Gn+rnN3xY3Bf
+         SY6gSPMbjvv0x/fntrsXAqylsyNlvVIJIfmiMuQjotOLHSrv/TMDWTBWY00KcxTMYe7p
+         k2vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ3C7yqK1clkuo74u67cZ+lXu8kLO39Tcun6hMxWezSg0KckvmqUKra7do6FwJgFj1LgTn5k+/BL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9pJyVRGeICz1Qo1ssV7YNLZ9e7ez2a7qh7RnbHYOLo+qwRc/9
+	AdCfcfrU21BhcHPRZWGudYeN4q5QSal6Ob3GlyXFXLxtE/FyoYpKosltc3YFjPpqM4TdIwQv7mr
+	vDWFSqcceDiQwhy3lDNbP/huwW2I9rhiKDZ2qdZLq3g==
+X-Gm-Gg: ASbGnct9g5KoXdjrtPtrRt4T6w25AIr2S6+9pTWYcm49rs3zGR5A3V0xVEtzQinvgyG
+	WXxJaD777htq9eelm8lb67xbWLDLl1MmsUbQFWoOECiGT8VrWvZMHHljgBi0LPmi3+eFxykS/hG
+	QNNCeZ1qYsTtprEDgVw3X9CrcclZF8980cACmnhXkWuQ8=
+X-Google-Smtp-Source: AGHT+IE+JyenPgPvT+Svvv9s+V0VraZ6su8hbOajVsCqvqbMTxCrk4fBzjbCyvVMQ0l2eId9Zjx6ak0ozUYWm+PwBYY=
+X-Received: by 2002:a05:651c:4201:b0:32b:533a:ef76 with SMTP id
+ 38308e7fff4ca-32cc6490c2cmr5605931fa.13.1750841127084; Wed, 25 Jun 2025
+ 01:45:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d3aehSfkx/JP9fmi"
-Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-17-13b52f71fb14@linumiz.com>
-
-
---d3aehSfkx/JP9fmi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <8c282b89b1aa8b9e3c00f6bd3980332c47d82df7.1750778806.git.andrea.porta@suse.com>
+ <9d31a4d7-ffd1-48ca-8df6-0ddc6683a49c@broadcom.com>
+In-Reply-To: <9d31a4d7-ffd1-48ca-8df6-0ddc6683a49c@broadcom.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 25 Jun 2025 10:45:15 +0200
+X-Gm-Features: AX0GCFs5reLO3eAptejwJU5aIb8qpce34Nq1CQTt9TXYf2HTB17zcNXvrt_8Yc4
+Message-ID: <CACRpkdbAxyZK_f8y6mzX_eJ3UM5ZtuXEpSmXE+QpUXaHKw_NGg@mail.gmail.com>
+Subject: Re: [PATCH stblinux/next] pinctrl: rp1: Implement RaspberryPi RP1
+ pinmux/pinconf support
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, 
+	Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Phil Elwell <phil@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Jun 24, 2025 at 11:11=E2=80=AFPM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+> On 6/24/25 08:36, Andrea della Porta wrote:
+> > The current implementation for the pin controller peripheral
+> > on the RP1 chipset supports gpio functionality and just the
+> > basic configuration of pin hw capabilities.
+> >
+> > Add support for selecting the pin alternate function (pinmux)
+> > and full configuration of the pin (pinconf).
+> >
+> > Related pins are also gathered into groups.
+> >
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+>
+> Linus, can I get an ack or reviewed by tag from you and take that in the
+> next few days to go with the Broadcom ARM SoC pull requests? Thanks!
 
-Thanks for your work on this!
+I was just very confused by the "stblinux/next" thing in the
+subject ... what is that even. I thought the patch was for some
+outoftree stuff.
 
-On Fri 27 Dec 24, 16:38, Parthiban Nallathambi wrote:
-> DPHY in A100/A133 supports both LVDS and DSI. Combo phy register
-> have BIT(2) for enabling LVDS specifically, but enabling it alone
-> isn't functional.
->=20
-> Both MIPI and LVDS needs to be enabled in the combo phy to get
-> the display working under LVDS mode. There is no specific enable
-> bit for LVDS apart from the one in combo phy. MIPI got enable
-> control in analog 4 register which must be disabled when using
-> in LVDS mode.
->=20
-> Introduce set_mode in phy ops to control only for MIPI DSI.
+But go ahead!
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Similar work was already submitted for D1/T113-S3 LVDS support, which seems=
- to
-be the exact same situation as the A133.
-
-See: https://patchwork.freedesktop.org/series/145276/
-
-I just made a review of that series and find it more elegant in various ways
-(especially since configuring the registers in set_mode is not the right pl=
-ace).
-So you probably want to follow-up on that series instead.
-
-Note that both D1/T113-S3 and A133 support a second LVDS output, LVDS1, whi=
-ch
-uses the traditional TCON0 LVDS PHY. It would be great to be able to support
-both outputs as well as dual-link modes!
-
-All the best,
-
-Paul
-
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/phy/allwinner/phy-sun6i-mipi-dphy.c b/drivers/phy/al=
-lwinner/phy-sun6i-mipi-dphy.c
-> index 36eab95271b2..d164b2ea5dfd 100644
-> --- a/drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
-> +++ b/drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
-> @@ -314,13 +314,11 @@ static void sun50i_a100_mipi_dphy_tx_power_on(struc=
-t sun6i_dphy *dphy)
->  	/* Disable sigma-delta modulation. */
->  	regmap_write(dphy->regs, SUN50I_DPHY_PLL_REG2, 0);
-> =20
-> -	regmap_update_bits(dphy->regs, SUN6I_DPHY_ANA4_REG,
-> -			   SUN6I_DPHY_ANA4_REG_EN_MIPI,
-> -			   SUN6I_DPHY_ANA4_REG_EN_MIPI);
-> -
->  	regmap_update_bits(dphy->regs, SUN50I_COMBO_PHY_REG0,
-> +			   SUN50I_COMBO_PHY_REG0_EN_LVDS |
->  			   SUN50I_COMBO_PHY_REG0_EN_MIPI |
->  			   SUN50I_COMBO_PHY_REG0_EN_COMBOLDO,
-> +			   SUN50I_COMBO_PHY_REG0_EN_LVDS |
->  			   SUN50I_COMBO_PHY_REG0_EN_MIPI |
->  			   SUN50I_COMBO_PHY_REG0_EN_COMBOLDO);
-> =20
-> @@ -528,6 +526,22 @@ static int sun6i_dphy_exit(struct phy *phy)
->  	return 0;
->  }
-> =20
-> +static int sun6i_set_mode(struct phy *phy, enum phy_mode mode, int submo=
-de)
-> +{
-> +	struct sun6i_dphy *dphy =3D phy_get_drvdata(phy);
-> +
-> +	switch (mode) {
-> +	case PHY_MODE_MIPI_DPHY:
-> +		regmap_update_bits(dphy->regs, SUN6I_DPHY_ANA4_REG,
-> +				   SUN6I_DPHY_ANA4_REG_EN_MIPI,
-> +				   SUN6I_DPHY_ANA4_REG_EN_MIPI);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> =20
->  static const struct phy_ops sun6i_dphy_ops =3D {
->  	.configure	=3D sun6i_dphy_configure,
-> @@ -535,6 +549,7 @@ static const struct phy_ops sun6i_dphy_ops =3D {
->  	.power_off	=3D sun6i_dphy_power_off,
->  	.init		=3D sun6i_dphy_init,
->  	.exit		=3D sun6i_dphy_exit,
-> +	.set_mode	=3D sun6i_set_mode,
->  };
-> =20
->  static const struct regmap_config sun6i_dphy_regmap_config =3D {
->=20
-> --=20
-> 2.39.5
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---d3aehSfkx/JP9fmi
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhbtlQACgkQhP3B6o/u
-lQzqSg//SJcn6XUET8v2oKGY0j3YQ3uzt4mVEWREtoX7QNRmIZjIBDAGhrWgBmTN
-dFlh6GJ2K+rOsj+OV+97A7mAEY9i/VFv0Dg8EQvuOvdhDtkf0WVlMAJq83QfvEob
-OQHfNljD4Aok5skavuHpLBw653kp//9ZON/+cMP2f6bZmXIAeLTUdN6ocHb7hYa+
-kyyXzDUNmSuoPqGZaDJB1WWEqxAr4Y80zzjWC8XVJhKU7q9Rp/lyypTuNC26ftK+
-vcEL/5xc3WY5mcdQzORUx8lgd1ci0KIitnXtRXJNZEYlAuiOaMiNOtSU2TO28BTM
-WGx945ro/eq7fjjqkijVHgsyRksQgIdhbCjYg6fHnpVtOF2zoxv7vwu+8PKtUdPC
-DID0fceBLNf6ETivJq5mQj+VjQ81bljq+XtKRIwVJSpU1vD9NwapX/l8R0P24AM+
-He/bymV/n1GJ+Pcr449ALxq4wM9AVSa4W3GqpUtgYhXlR4dPVJQdZkifclHAewVO
-XaksRFT7LiybP6l3zB5/oqihosU6efMnhxJjd5U1SqGxT0DCmLT4V4dpaDY4C4IX
-xncL/YSihjHW8gQlK7OHldVSHBO+yxBUoffyBxOmV1UDLFimGT7G9eHrZ6TGmiid
-E9NyPrf2JsbW+O5iukFTY4G6uPMXr7ez+HzHW9c9FD0saunYv9o=
-=BpKz
------END PGP SIGNATURE-----
-
---d3aehSfkx/JP9fmi--
+Yours,
+Linus Walleij
