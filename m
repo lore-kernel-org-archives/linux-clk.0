@@ -1,159 +1,607 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C09225DCE3;
-	Wed, 25 Jun 2025 13:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16872620E7
+	for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 13:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856406; cv=none; b=Eb6nHZwR/HJQPb1zl3YT6+kwN3Vr4jaCE5dLEBI9UQliVlu5gPo3BX0vwiFEd5Lh1A8b1Y/cjsWNw2S+8YW+OG5xq0dBDQJERQQ5xKUbdejw0shN4vHiRDGAaKXRpdgL2lSH/5lhmx+xgYwpiRLSnmunp92gufP5QO051WG5G/k=
+	t=1750856891; cv=none; b=kjCE5nWgskgvr1yAN6edpThZiScuP+pjzsjeKBrYSWKBdy34oSvBWNVES56CHKPMm7aP6bv0siRPfceZXIQIo1Iyr0Zc+vvaNJvOM+b5qRmOfyOHld2lxwcDc/7m1ebKedt5bWKdYbkMMqZhAU48JfmuYEIAXk7665IvHj5vF7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750856406; c=relaxed/simple;
-	bh=vHZOLOxUOXqLChOAWe78z0H43RWaYWuJUBxuOWinPSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YT/yXlIcqx9gkl0F0RAvO3m+dxZgIy154blL/ny+AHFJrJwwny19Imki4S7UT9XmGx6Q7BQ5MDC/8qeRUP3lWLWkyB1dBcSAk1nGEhcepWetP7oIhczeo7subOhCMUpmJZuS1nm7g8iubJqcCqPRKtwFSRHGi17uxrAOuw+LciM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+FSU+Q1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750856891; c=relaxed/simple;
+	bh=F6DcXRoi0t6T7ZyzgYxJBAawMnwiCxokYxU36nifNqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WaivTYgTQEoNJytlDAwQtKNrHpgs9PEWoMLA6r/cmY5s5ekPE640VuAl7PjcTCSJss8Xj8y/pAToxTKxGNoHFRUMGlnZDjQGSppB4NDLtHdFg4xq23oJxJ3JxL9KrNfr07EXn1GozKSf61Z6WMnemGAN7rLHDgcgav7vyvH6Hj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f0IJlr5B; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+FSU+Q1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213F3C4CEEA;
-	Wed, 25 Jun 2025 13:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750856405;
-	bh=vHZOLOxUOXqLChOAWe78z0H43RWaYWuJUBxuOWinPSk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B+FSU+Q1GU523W8SJnwaLVuoYap1xOesCc60d/mSus1f7T2WoJ2Nxt2Yo7Vw+4Xv/
-	 /4Cjban+Zw1RtQQr7WECEv5IDDV3PYhmuxJQpdRztu0IjQNU/a3wtUvA4uRjYEvzJ3
-	 XdpQJOp2qYgRU9i2s1FWZJbWuAuz1zII7KWihOOQg0pOlQ2YbZrLI8xi5K6Sz8toi4
-	 +0ub2tsoSmoC7udguAeOgJCZiuScSxzBCmZOZ9V8QeIX8BmymloZyLIccCky1DPx35
-	 3N4bt/x9VxRkB0ksQZxqzQ4QvQsYuI5ZbxPOzidXMLXl91Wg9lFOEoMp6xmYW0l3Ia
-	 +ANCgGeuxNNvQ==
-Date: Wed, 25 Jun 2025 14:00:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-Cc: conor.dooley@microchip.com, daire.mcnamara@microchip.com,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [External] : Re: [PATCH] clk: microchip: mpfs: Fix incorrect
- MSSPLL ID in error message
-Message-ID: <20250625-reconvene-lyricist-8bfbf0c6ee36@spud>
-References: <20250622180352.4151679-1-alok.a.tiwari@oracle.com>
- <20250624-monotype-disorder-aedee5ef7cfa@spud>
- <cf197270-bdca-4624-a2ad-9bb56429b5b7@oracle.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f0IJlr5B"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-555024588b1so50455e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jun 2025 06:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1750856887; x=1751461687; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YmZoc1HxYILMnzAwR8iICp8UEElHuji5dtRjcLwOJbk=;
+        b=f0IJlr5B9qDbmyQRctCfPr+vbidEwy8QbicX6jBOSXN5sy6Nzh+CNxKbCZ9Vjx0DSd
+         KfGe0tLAxjVyHMgd4bMcYv9FsTKoFjG8NsXRN91lQTTS2UZqxpNLLzh3iwpjYURQ1Y2A
+         uGja+onTuNRmrrdjfzpvoj2o0PRjZmIRXQrzkHfQXOKdBokPlpYDfv5ANwVx5gmzqBH9
+         L4bSl1R/Bcpm6U5NL4P6tT8j/HzvMI64eSgslVWEjKNd4yOkTrq+DLuhebOf2u0dTkJB
+         pC3mP47gxUpNzrYrbT2ARzMVAL+Ttpudh+NXy7g/6j7DBZdHu8PuQv3ZjO4bVEcK3ljH
+         l2Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750856887; x=1751461687;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmZoc1HxYILMnzAwR8iICp8UEElHuji5dtRjcLwOJbk=;
+        b=Evzx+TwxYkIKFEB5aVunQMW7eMYnQBwSCIldPhlcCmv39gSNd+Cdr+pAnirjBL87O+
+         5aH02wlastKFvDDHluFAzI5vNB9icZTz1Ea9Zzo9428yJAngpzrdrqVRxnDHsf2dvY/3
+         ScB4au0tXyOTG+2yTLQ9vchUEDKMZBsvmZS90foC5hXGdrwOcaSWjIGeR+eadeGsDzl7
+         aKaROHF9FJpZ9KWKsj7urLBvMNAmM7mMrZW4tWGdaJLvixodLzpiGgWGgYnjDBBu+ftd
+         u9jciOnyls/+EtnB3N4ob0+Ianyn0/hs1HdxqhNT0pWH5xct/duHVbwp2Ki7daUG/3Ji
+         tBRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeLMOcJnELNDq4nTe/gwBDBNOwNRe2oe43/yAA40VNgLtONJALiJ/UTgN1a8QH1TbXp2OKU4AQLrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQAgJJEc6Cma7hehTkXQKEqM5KLpKG/zwvj2J8OxSZBpmGCiwn
+	gOtE9pgKWfkXs7l3AHg6qzO5UuhpXutX0RfmFyGZfFkqSi82sfS14ayO8APYZ7wIRJI=
+X-Gm-Gg: ASbGnctZxLpfUvrU7scvJvLkHpcLTh+gv2a+NTvvMzOSS6J9UJTaCBBmdY2ZnxNXV8K
+	aZSbRWTHTWxHX3OlhCShul+mHQiz/Uazc34XwLlQSrc8E78ZSnq8x4YatCxno13Rm0ceqAycy3j
+	vLxlz6d0H3j4zJ9rWMit5nZK+2y7NOWa4ka4RIubXBHlLex4/xyj2wztZ72R3Tw78sMLTH2Rtyy
+	4Wd3Qm/Si2NIrrV/X8nCbzTgDzufuMbBQ8S3Kd8zg08h1zBt3XhP6mJ27WOf0sO0I6P88cA+sKm
+	OMrJFqh30zT5gJHVccb8FHhjKEKvdq9so52n2WcZ4ih/vGCxUaCsM58kQdMa6A78UfVVV7hkWOp
+	OM5rbQw==
+X-Google-Smtp-Source: AGHT+IFdium0N0x3+pNtSeitx12z4cp08x0a9rOtFbjQ4k2/wcmgeo8a+KMS+HSZv8k/LAxLrq+1iw==
+X-Received: by 2002:a05:6512:10c5:b0:553:543d:d996 with SMTP id 2adb3069b0e04-554fdd1d8aemr1072459e87.33.1750856884969;
+        Wed, 25 Jun 2025 06:08:04 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.110])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f196f3bsm2487591a12.9.2025.06.25.06.08.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 06:08:04 -0700 (PDT)
+Message-ID: <23153135-fc04-4c8e-88cf-639f3dd39c7a@tuxon.dev>
+Date: Wed, 25 Jun 2025 16:08:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lSQe9zTW71F2Yj1B"
-Content-Disposition: inline
-In-Reply-To: <cf197270-bdca-4624-a2ad-9bb56429b5b7@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ john.madieu.xa@bp.renesas.com,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250530111917.1495023-5-claudiu.beznea.uj@bp.renesas.com>
+ <764d3uocv4kj6mrciaumoazwnquxhtn7u33u6v3a7tjwqhiyxf@2rtfsjyzny37>
+ <z7o26wizu5j3sft67yjbe2hgvqz7lqtsimgklzrvvwytahrhrd@rquvx32ctqtc>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <z7o26wizu5j3sft67yjbe2hgvqz7lqtsimgklzrvvwytahrhrd@rquvx32ctqtc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi, Manivannan,
+
+On 20.06.2025 22:35, Manivannan Sadhasivam wrote:
+> On Wed, Jun 18, 2025 at 11:12:28PM +0530, Manivannan Sadhasivam wrote:
+>> On Fri, May 30, 2025 at 02:19:13PM +0300, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>> only as a root complex, with a single-lane (x1) configuration. The
+>>> controller includes Type 1 configuration registers, as well as IP
+>>> specific registers (called AXI registers) required for various adjustments.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>> ---
+> 
+> [...]
+> 
+>>> +static int rzg3s_pcie_msi_setup(struct rzg3s_pcie_host *host)
+>>> +{
+>>> +	size_t size = RZG3S_PCI_MSI_INT_NR * sizeof(u32);
+>>> +	struct rzg3s_pcie_msi *msi = &host->msi;
+>>> +	struct device *dev = host->dev;
+>>> +	int id, ret;
+>>> +
+>>> +	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
+>>> +	if (!msi->pages)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	msi->dma_addr = dma_map_single(dev, (void *)msi->pages, size * 2,
+>>> +				       DMA_BIDIRECTIONAL);
+>>> +	if (dma_mapping_error(dev, msi->dma_addr)) {
+>>> +		ret = -ENOMEM;
+>>> +		goto free_pages;
+>>> +	}
+> 
+> Why can't you use dma_alloc_coherent()?
+
+I just wanted to be mapped.
+
+Controller needs the address returned here to fit into one of the AXI
+windows. This address is just configured into the controller registers and
+not used anywhere else in the current code.
+
+> 
+>>> +
+>>> +	/*
+>>> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.4.5.2 Setting
+>>> +	 * the MSI Window) the MSI window need to be within any AXI window. Find
+>>> +	 * an AXI window to setup the MSI window.
+>>> +	 */
+>>> +	for (id = 0; id < RZG3S_MAX_WINDOWS; id++) {
+>>> +		u64 base, basel, baseu;
+>>> +		u64 mask, maskl, masku;
+>>> +
+>>> +		basel = readl(host->axi + RZG3S_PCI_AWBASEL(id));
+>>> +		/* Skip checking this AXI window if it's not enabled */
+>>> +		if (!(basel & RZG3S_PCI_AWBASEL_WIN_ENA))
+>>> +			continue;
+>>> +
+>>> +		baseu = readl(host->axi + RZG3S_PCI_AWBASEU(id));
+>>> +		base = baseu << 32 | basel;
+>>> +
+>>> +		maskl = readl(host->axi + RZG3S_PCI_AWMASKL(id));
+>>> +		masku = readl(host->axi + RZG3S_PCI_AWMASKU(id));
+>>> +		mask = masku << 32 | maskl;
+>>> +
+>>> +		if (msi->dma_addr < base || msi->dma_addr > base + mask)
+>>> +			continue;
+>>> +
+>>> +		break;
+>>> +	}
+>>> +
+>>> +	if (id == RZG3S_MAX_WINDOWS) {
+>>> +		ret = -EINVAL;
+>>> +		goto dma_unmap;
+>>> +	}
+>>> +
+>>> +	/* The MSI base address need to be aligned to the MSI size */
+>>> +	msi->window_base = ALIGN(msi->dma_addr, size);
+>>> +	if (msi->window_base < msi->dma_addr) {
+>>> +		ret = -EINVAL;
+>>> +		goto dma_unmap;
+>>> +	}
+>>> +
+>>> +	rzg3s_pcie_msi_hw_setup(host);
+>>> +
+>>> +	return 0;
+>>> +
+>>> +dma_unmap:
+>>> +	dma_unmap_single(dev, msi->dma_addr, size * 2, DMA_BIDIRECTIONAL);
+>>> +free_pages:
+>>> +	free_pages(msi->pages, 0);
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
+>>> +{
+>>> +	struct platform_device *pdev = to_platform_device(host->dev);
+>>> +	struct rzg3s_pcie_msi *msi = &host->msi;
+>>> +	struct device *dev = host->dev;
+>>> +	const char *devname;
+>>> +	int irq, ret;
+>>> +
+>>> +	mutex_init(&msi->map_lock);
+>>> +
+>>> +	irq = platform_get_irq_byname(pdev, "msi");
+>>> +	if (irq < 0)
+>>> +		return dev_err_probe(dev, irq ? irq : -EINVAL,
+>>> +				     "Failed to get MSI IRQ!\n");
+>>> +
+>>> +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
+>>> +	if (!devname)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	ret = rzg3s_pcie_msi_allocate_domains(msi);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = devm_request_irq(dev, irq, rzg3s_pcie_msi_irq, 0, devname, host);
+>>> +	if (ret) {
+>>> +		dev_err_probe(dev, ret, "Failed to request IRQ: %d\n", ret);
+>>> +		goto free_domains;
+>>> +	}
+>>> +
+> 
+> So you've modelled INTx as hierarchial IRQ domain, but not MSI. May I know why?
+
+MSI domain created in rzg3s_pcie_msi_allocate_domains() is created with
+pci_msi_create_irq_domain() that calls msi_create_irq_domain() ->
+__msi_create_irq_domain() -> irq_domain_create_hierarchy()
+
+I noticed other drivers are doing it similarly (e.g.
+drivers/pci/controller/mobiveil/pcie-mobiveil-host.c).
+
+Am I missing something?
+
+> Both are chained to GIC, isn't it?
+
+Yes, both are chained to GIC.
+
+> 
+>>> +	ret = rzg3s_pcie_msi_setup(host);
+>>> +	if (ret) {
+>>> +		dev_err_probe(dev, ret, "Failed to setup MSI!\n");
+>>> +		goto free_domains;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +
+>>> +free_domains:
+>>> +	rzg3s_pcie_msi_free_domains(msi);
+>>> +	return ret;
+>>> +}
+>>> +
+> 
+> [...]
+> 
+>>> +static int rzg3s_soc_pcie_init_phy(struct rzg3s_pcie_host *host)
+>>> +{
+>>> +	static const u32 xcfgd_settings[RZG3S_PCI_PHY_XCFGD_NUM] = {
+>>> +		[8]  = 0xe0006801, 0x007f7e30, 0x183e0000, 0x978ff500,
+>>> +		       0xec000000, 0x009f1400, 0x0000d009,
+>>> +		[17] = 0x78000000,
+>>> +		[19] = 0x00880000, 0x000005c0, 0x07000000, 0x00780920,
+>>> +		       0xc9400ce2, 0x90000c0c, 0x000c1414, 0x00005034,
+>>> +		       0x00006000, 0x00000001,
+>>> +	};
+>>> +	static const u32 xcfga_cmn_settings[RZG3S_PCI_PHY_XCFGA_CMN_NUM] = {
+>>> +		0x00000d10, 0x08310100, 0x00c21404, 0x013c0010, 0x01874440,
+>>> +		0x1a216082, 0x00103440, 0x00000080, 0x00000010, 0x0c1000c1,
+>>> +		0x1000c100, 0x0222000c, 0x00640019, 0x00a00028, 0x01d11228,
+>>> +		0x0201001d,
+>>> +	};
+>>> +	static const u32 xcfga_rx_settings[RZG3S_PCI_PHY_XCFGA_RX_NUM] = {
+>>> +		0x07d55000, 0x030e3f00, 0x00000288, 0x102c5880, 0x0000000b,
+>>> +		0x04141441, 0x00641641, 0x00d63d63, 0x00641641, 0x01970377,
+>>> +		0x00190287, 0x00190028, 0x00000028,
+>>> +	};
+>>> +
+>>> +	writel(RZG3S_PCI_PERM_PIPE_PHY_REG_EN, host->axi + RZG3S_PCI_PERM);
+>>> +
+>>> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGD_NUM; i++)
+>>> +		writel(xcfgd_settings[i], host->axi + RZG3S_PCI_PHY_XCFGD(i));
+>>> +
+>>> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_CMN_NUM; i++) {
+>>> +		writel(xcfga_cmn_settings[i],
+>>> +		       host->axi + RZG3S_PCI_PHY_XCFGA_CMN(i));
+>>> +	}
+>>> +
+>>> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_RX_NUM; i++) {
+>>> +		writel(xcfga_rx_settings[i],
+>>> +		       host->axi + RZG3S_PCI_PHY_XCFGA_RX(i));
+>>> +	}
+>>> +
+>>> +	writel(0x107, host->axi + RZG3S_PCI_PHY_XCFGA_TX);
+>>> +
+>>> +	/* Select PHY settings values */
+>>> +	writel(RZG3S_PCI_PHY_XCFG_CTRL_PHYREG_SEL,
+>>> +	       host->axi + RZG3S_PCI_PHY_XCFG_CTRL);
+>>> +
+>>> +	writel(0, host->axi + RZG3S_PCI_PERM);
+>>> +
+>>> +	return 0;
+>>> +}
+> 
+> Why didn't these go into a PHY driver? Please provide justification.
+
+It has been explained in the review of v1:
+
+Registers are at separate offset compared to AXI and PCIe registers. But
+they are all part of the PCIe controller address space, same
+clocks are used to access them, same resets.
+
+I thought implemeting it as a separate driver considering that I will
+attach it to the auxiliary bus. For that, if I'm not wrong, I would have
+been registering that PHY driver from this PCIe driver probe function and
+later on, in the PCIe driver probe, I would have been requesting the same
+previously registered PHY. For this, I consider to be overcomplicated thus
+I ended up having it as proposed here.
+
+Please let me know if you prefer to have the reasoning of this as a comment
+in this driver or if you see it otherwise implemented.
+
+> 
+>>> +
+>>> +static void rzg3s_pcie_pm_runtime_put(void *data)
+>>> +{
+>>> +	pm_runtime_put_sync(data);
+>>> +}
+>>> +
+> 
+> [...]
+> 
+>>> +static int rzg3s_pcie_probe(struct platform_device *pdev)
+>>> +{
+>>> +	struct pci_host_bridge *bridge;
+>>> +	struct device *dev = &pdev->dev;
+>>> +	struct device_node *np = dev->of_node;
+>>> +	struct device_node *sysc_np __free(device_node) =
+>>> +		of_parse_phandle(np, "renesas,sysc", 0);
+>>> +	struct rzg3s_pcie_host *host;
+>>> +	int ret;
+>>> +
+>>> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
+>>> +	if (!bridge)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	host = pci_host_bridge_priv(bridge);
+>>> +	host->dev = dev;
+>>> +	host->data = device_get_match_data(dev);
+>>> +	platform_set_drvdata(pdev, host);
+>>> +
+>>> +	host->axi = devm_platform_ioremap_resource(pdev, 0);
+>>> +	if (IS_ERR(host->axi))
+>>> +		return PTR_ERR(host->axi);
+>>> +	host->pcie = host->axi + RZG3S_PCI_CFG_BASE;
+>>> +
+>>> +	ret = of_property_read_u32(np, "vendor-id", &host->vendor_id);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = of_property_read_u32(np, "device-id", &host->device_id);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	host->sysc = syscon_node_to_regmap(sysc_np);
+>>> +	if (IS_ERR(host->sysc))
+>>> +		return PTR_ERR(host->sysc);
+>>> +
+>>> +	ret = regmap_update_bits(host->sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+>>> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+>>> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_sysc_signal_action,
+>>> +				       host->sysc);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = rzg3s_pcie_resets_prepare(host);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = devm_pm_runtime_enable(dev);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = pm_runtime_resume_and_get(dev);
+>>> +	if (ret)
+>>> +		return ret;
+> 
+> Why do you need runtime PM?
+
+The clocks of this controller are managed though a clock power domain.
 
 
---lSQe9zTW71F2Yj1B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Do you need to enable any parent domain before
+> intializing the controller?
 
-On Tue, Jun 24, 2025 at 10:39:16PM +0530, ALOK TIWARI wrote:
->=20
->=20
-> On 6/24/2025 9:29 PM, Conor Dooley wrote:
-> > On Sun, Jun 22, 2025 at 11:03:49AM -0700, Alok Tiwari wrote:
-> > > The error message in mpfs_clk_register_mssplls() incorrectly
-> > > printed a constant CLK_MSSPLL_INTERNAL instead of the actual
-> > > PLL ID that failed to register.
-> > Huh, that's weird. Did you actually encounter this happening, or is this
-> > some sort of patch based on the output from a tool?
-> > I ask because I don't see how this could ever actually report a
-> > constant, when the array it loops over only has a single element.
-> > Feels like we should just do something like the following (if we do
-> > anything at all)
-> >=20
-> > Cheers,
-> > Conor.
-> >=20
-> > diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/c=
-lk-mpfs.c
-> > index c22632a7439c5..ed6d5e6ff98ec 100644
-> > --- a/drivers/clk/microchip/clk-mpfs.c
-> > +++ b/drivers/clk/microchip/clk-mpfs.c
-> > @@ -148,22 +148,18 @@ static struct mpfs_msspll_hw_clock mpfs_msspll_cl=
-ks[] =3D {
-> >   };
-> >   static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_=
-msspll_hw_clock *msspll_hws,
-> > -				     unsigned int num_clks, struct mpfs_clock_data *data)
-> > +				     struct mpfs_clock_data *data)
-> >   {
-> > -	unsigned int i;
-> > +	struct mpfs_msspll_hw_clock *msspll_hw =3D &msspll_hws[0];
-> >   	int ret;
-> > -	for (i =3D 0; i < num_clks; i++) {
-> > -		struct mpfs_msspll_hw_clock *msspll_hw =3D &msspll_hws[i];
-> > +	msspll_hw->base =3D data->msspll_base;
-> > +	ret =3D devm_clk_hw_register(dev, &msspll_hw->hw);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
-> > +				     CLK_MSSPLL_INTERNAL);
-> > -		msspll_hw->base =3D data->msspll_base;
-> > -		ret =3D devm_clk_hw_register(dev, &msspll_hw->hw);
-> > -		if (ret)
-> > -			return dev_err_probe(dev, ret, "failed to register msspll id: %d\n",
-> > -					     CLK_MSSPLL_INTERNAL);
-> > -
-> > -		data->hw_data.hws[msspll_hw->id] =3D &msspll_hw->hw;
-> > -	}
-> > +	data->hw_data.hws[msspll_hw->id] =3D &msspll_hw->hw;
-> >   	return 0;
-> >   }
-> > @@ -386,8 +382,7 @@ static int mpfs_clk_probe(struct platform_device *p=
-dev)
-> >   	clk_data->dev =3D dev;
-> >   	dev_set_drvdata(dev, clk_data);
-> > -	ret =3D mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, ARRAY_SIZE(m=
-pfs_msspll_clks),
-> > -					clk_data);
-> > +	ret =3D mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, clk_data);
-> >   	if (ret)
-> >   		return ret;
->=20
->=20
-> Thanks Conor. This patch based on static tool.
->=20
-> You are right, there is only a single MSSPLL internal clock, so the loop
-> isn't strictly necessary.
-> We could either remove the loop entirely (as you suggested),
-> or alternatively, just tweak the error message to something like:
-> "failed to register MSSPLL internal id: %d\n"
+No, the power domain controls the IP clocks only.
 
-The loop doesn't do anything, so it should probably be removed.
+> 
+>>> +
+>>> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_pm_runtime_put, dev);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+> 
+> Why is this needed?
 
-> This would help distinguish it from the error messages used for the MSSPLL
-> output and cfg clocks.
->=20
-> I also noticed that similar generic messages are used elsewhere, like:
-> "failed to register clock id: %d\n" in mpfs_clk_register_cfgs()
-> "failed to register clock id: %d\n" in mpfs_clk_register_periphs()
->=20
-> Would it make sense to update those as well for clarity, or do you think
-> it's better to keep the patch minimal and leave them as is?
+To keep the failure path simpler. It reverts the
+pm_runtime_resume_and_get() call above.
 
-I dunno, I don't think there's anything particularly wrong with those,
-the IDs are unique across the whole driver. You need to look up the IDs
-anyway to understand the error message, so changing those prints
-provides no extra info IMO.
+> 
+>>> +	raw_spin_lock_init(&host->hw_lock);
+>>> +
+>>> +	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_intx_setup,
+>>> +				    rzg3s_pcie_msi_enable, true);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	bridge->sysdata = host;
+>>> +	bridge->ops = &rzg3s_pcie_root_ops;
+>>> +	bridge->child_ops = &rzg3s_pcie_child_ops;
+>>> +	ret = pci_host_probe(bridge);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	return devm_add_action_or_reset(dev, rzg3s_pcie_host_remove_action,
+>>> +					host);
+> 
+> Is this a workaround for not having a .remove() callback?
 
---lSQe9zTW71F2Yj1B
-Content-Type: application/pgp-signature; name="signature.asc"
+I used devm actions or resets to keep the failure path simpler. Having this
+one was explictly proposed in the review process of v1:
+https://lore.kernel.org/all/28195126-8dd4-4a61-91b9-fb65aea6d420@tuxon.dev/
 
------BEGIN PGP SIGNATURE-----
+> 
+>>> +}
+>>> +
+>>> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+>>> +{
+>>> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+>>> +	const struct rzg3s_pcie_soc_data *data = host->data;
+>>> +	struct regmap *sysc = host->sysc;
+>>> +	int ret;
+>>> +
+>>> +	ret = pm_runtime_put_sync(dev);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	ret = reset_control_bulk_assert(data->num_power_resets,
+>>> +					host->power_resets);
+>>> +	if (ret)
+>>> +		goto rpm_restore;
+>>> +
+>>> +	ret = reset_control_bulk_assert(data->num_cfg_resets,
+>>> +					host->cfg_resets);
+>>> +	if (ret)
+>>> +		goto power_resets_restore;
+>>> +
+>>> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+>>> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+>>> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
+>>> +	if (ret)
+>>> +		goto cfg_resets_restore;
+> 
+> Don't you need to control the endpoint state here? Like putting it into D3Cold,
+> toggling PERST#, enabling wakeup etc...?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFvy0QAKCRB4tDGHoIJi
-0pmvAQCVowLYQ+nseeBVvAj1iEHXJVREPX47v1J5Bfg4zIr95AEA6sXHshThgwct
-aE6P6LFHjkPucomg+AlA48SgVrTcpwU=
-=nvzq
------END PGP SIGNATURE-----
+The role of the RZG3S_SYS_PCIE_RST_RSM_B signal is to signal to the PCIe
+PHY that the power to the PHY was applied. Software need to set this
+before/after power to the PHY is turned off/on.
 
---lSQe9zTW71F2Yj1B--
+The rzg3s_pcie_set_max_link_speed() don't progress further if the link is
+not L0. AFAIK, this corresponds to D0 on the endpoint side. Please correct
+me if I'm wrong.
+
+The controller don't have specific registers to set the PERST#. I think
+this may be controlled though the IP resets. I need to check. Should I add
+a PCI_PM_D3COLD_WAIT delay after all resets are de-asserted?
+
+In the next version I am going to add a delay msleep(PCIE_T_RRS_READY_MS)
+before enumerating devices as suggested by Bjorn.
+
+> 
+>>> +
+>>> +	return 0;
+>>> +
+>>> +	/* Restore the previous state if any error happens */
+>>> +cfg_resets_restore:
+>>> +	reset_control_bulk_deassert(data->num_cfg_resets,
+>>> +				    host->cfg_resets);
+>>> +power_resets_restore:
+>>> +	reset_control_bulk_deassert(data->num_power_resets,
+>>> +				    host->power_resets);
+>>> +rpm_restore:
+>>> +	pm_runtime_resume_and_get(dev);
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int rzg3s_pcie_resume_noirq(struct device *dev)
+>>> +{
+>>> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+>>> +	const struct rzg3s_pcie_soc_data *data = host->data;
+>>> +	struct regmap *sysc = host->sysc;
+>>> +	int ret;
+>>> +
+>>> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+>>> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+>>> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	/*
+>>> +	 * According to the RZ/G3S HW manual (Rev.1.10, section
+>>> +	 * 34.5.1.2 De-asserting the Reset) the PCIe IP needs to wait 5ms from
+>>> +	 * power on to the de-assertion of reset.
+>>> +	 */
+>>> +	usleep_range(5000, 5100);
+>>> +	ret = reset_control_bulk_deassert(data->num_power_resets,
+>>> +					  host->power_resets);
+>>> +	if (ret)
+>>> +		goto assert_rst_rsm_b;
+>>> +
+>>> +	ret = pm_runtime_resume_and_get(dev);
+>>> +	if (ret)
+>>> +		goto assert_power_resets;
+>>> +
+>>> +	ret = rzg3s_pcie_host_setup(host, NULL, rzg3s_pcie_msi_hw_setup, false);
+>>> +	if (ret)
+>>> +		goto rpm_put;
+>>> +
+>>> +	return 0;
+>>> +
+>>> +	/*
+>>> +	 * If any error happens there is no way to recover the IP. Put it in the
+>>> +	 * lowest possible power state.
+>>> +	 */
+>>> +rpm_put:
+>>> +	pm_runtime_put_sync(dev);
+>>> +assert_power_resets:
+>>> +	reset_control_bulk_assert(data->num_power_resets,
+>>> +				  host->power_resets);
+>>> +assert_rst_rsm_b:
+>>> +	regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+>>> +			   RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+>>> +			   FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static const struct dev_pm_ops rzg3s_pcie_pm_ops = {
+>>> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(rzg3s_pcie_suspend_noirq,
+>>> +				  rzg3s_pcie_resume_noirq)
+>>> +};
+>>> +
+>>> +const char * const rzg3s_soc_power_resets[] = {
+>>> +	"aresetn", "rst_cfg_b", "rst_load_b",
+>>> +};
+>>> +
+>>> +const char * const rzg3s_soc_cfg_resets[] = {
+>>> +	"rst_b", "rst_ps_b", "rst_gp_b", "rst_rsm_b",
+>>> +};
+>>> +
+>>> +static const struct rzg3s_pcie_soc_data rzg3s_soc_data = {
+>>> +	.power_resets = rzg3s_soc_power_resets,
+>>> +	.num_power_resets = ARRAY_SIZE(rzg3s_soc_power_resets),
+>>> +	.cfg_resets = rzg3s_soc_cfg_resets,
+>>> +	.num_cfg_resets = ARRAY_SIZE(rzg3s_soc_cfg_resets),
+>>> +	.init_phy = rzg3s_soc_pcie_init_phy,
+>>> +};
+> 
+> Are you expecting these callbacks to be different in next gen SoCs?
+
+Yes, we have prepared the support for another SoC (RZ/G3E). That one have
+different resets (only "aresetn"), cfg_resets are handled though PCIe
+specific registers, and there is no need for phy init.
+
+> I'd
+> recommend to get rid of callbacks until the support for newer SoCs get added.
+
+I agree with this. I did it like this as the driver got cleaner this way,
+to me. I can revert it, if any. Please let me know.
+
+> 
+>>> +
+>>> +static const struct of_device_id rzg3s_pcie_of_match[] = {
+>>> +	{
+>>> +		.compatible = "renesas,r9a08g045s33-pcie",
+>>> +		.data = &rzg3s_soc_data,
+>>> +	},
+>>> +	{},
+>>> +};
+>>> +
+>>> +static struct platform_driver rzg3s_pcie_driver = {
+>>> +	.driver = {
+>>> +		.name = "rzg3s-pcie-host",
+>>> +		.of_match_table = rzg3s_pcie_of_match,
+>>> +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
+>>> +	},
+>>> +	.probe = rzg3s_pcie_probe,
+> 
+> You haven't implemented .remove(), but didn't set '.suppress_bind_attrs = true'.
+
+The driver can still be removed w/o remove being here. devm takes care of
+proper configuration. I wasn't sure about suppress_binding_attrs, I noticed
+there are controllers using it but didn't knew the rationale behind it.
+
+> PCI controller drivers acting as an IRQCHIP are not safe to be removed.
+
+OK, I will add suppress_bind_attrs = true.
+
+Thank you for your review,
+Claudiu
