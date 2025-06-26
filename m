@@ -1,158 +1,218 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B45289E0D;
-	Thu, 26 Jun 2025 13:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703602E7F0E;
+	Thu, 26 Jun 2025 14:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750944148; cv=none; b=uQL6zgVhN8vKnFetdxcNa8A4XH89J7r2LFaV/+wfI6qT3BU+IVs8PjPO3sgT3Sdra0xiCOJwqX+9UH3qb8T1IX0dLO19uQhNvpyjFiBLWOSqtU747I/wJv4T+ZVu2P7j+CGJWBzh2pRFrAo49Uf8ZMKiu+uPkqIaR1XXPN2BIWI=
+	t=1750946917; cv=none; b=cc2U4/FSPV5arpIT5GF8+Pe2mSU15r8ZnW/UwQHUWPw3h7PzkoVlP7Xv+3p7IPACij/Swxbm6J4BICXFNkVO/Zi8HbAO4TNqLvFoloXoT5bcrrAlMiSScTD2R7CsKjNAFdUIM0G68o0bE9bN+edzoIkgzqFsubRE0pGYwXR1XbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750944148; c=relaxed/simple;
-	bh=mV9mNsEWH/V5Q2P6cS/JQcjMaDc3Rijx9fBYLM4n7Mg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTDWjH144ySA0KQsHAA8vy3XoxTIlWg6eHyz8UMVNfX6kOlnrQdzpWRnmXHgbKAy14VUWMlKVW47NMwZ1WLyMzsnJYqF0vCc5e6Ffu7go5z3pGMWO3jE/XNLvzrZS3fHWhmC8ssMxh0eolhSfdE5LFzu5gsmlLHcRWvgoshljCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d219896edeso102440585a.1;
-        Thu, 26 Jun 2025 06:22:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750944145; x=1751548945;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p8hDBb4/b+eNSRxSeGUOjC6YvOZSs2hSxxLjv9B1kfc=;
-        b=pyvDHdV2/cChNrb497rGo0S1BgPoBV3ts9A3TPYAkvsKszfa7Hyzxxk0UtOae3jV70
-         wHGD5X1rmhRlfM0yV+n27zQuyDomr+ksQxpoDt1pnb5oTz0xmR911hu7w7QSeQtEKyUn
-         8Ukna+Myj/F71KoYXcYhL3Lprg6tRRZpMpHWu48f5WJIp+UOd32zEekA5/u+EUya5CM1
-         KLiZH6vMaJyW/SKE7YTdiYgXG2h3QuFUXt6cxniIwXk8ItYghfa8y7oq5a3vhUeeXWaT
-         rMOlZcs6uHF1r+T6PgtP2QxTautT6QYWf0gYaQCqPUcQcOAccDqujGMJ4KgLWIYCh4nI
-         RdYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj/ynQo9ZWwRNiBWxrZnNQdplmHiuOnz9wEZrUBHHz2EOoxHrU84CvLHlESYMBIIzs0ri7QpQt8OVk@vger.kernel.org, AJvYcCVuZAXq0leclSaFGT0KxI3MVBgAOli4GOh8nlLTBt8PDcNdtkwvKiJkgJz9YxkyIprFia0sw8qWANU8GyRs@vger.kernel.org, AJvYcCWmG2Lg38rx9Jba4ZcNHICH0MkrAGvxH8owO2ZYCAo6dFHqZOuNq5kJySkf5WC1xOh8sbRvUoJ9y1vW@vger.kernel.org, AJvYcCXOEhiiuMolOvqEmI6Y9uxUNIqhz2cMzZI+VZ9hNbcEvx0KGyhTv7Ng+09Dwewlr7sFFG43rM9ij1D2fJO9VHeoeK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo469uHANnWG2UYJLXVKDuD1WnQi87JtVF6ycv7d6LUYhrk4n2
-	9lv1EXb2+bN+uC0OQ8WLtBRhx20P6qsnhcBU1XdCsh22XLFNyDc4/SK6ayZl4QBE
-X-Gm-Gg: ASbGncvZ33Vl16sO8Enu7aknHewTtfUbxjjA89tGxT0Knb8F4Nr2SCezl4xURkHkv9J
-	R0YlqbCV3IhnlQGs3vX1nUjMDRyqIyqZMKYI350Wd1tSTOe4WQX/Dpl6surXT8NqTlU9Pqe+7gx
-	VMjoaY+VVlLQ9oIlRRYe5UPjlmu7LVqdx1WvD5DNYu59a6r+jd60dpbUYWmLEyNIEmxWxU96K3m
-	VahLTD1VwMpuaL8nV1SA3AtsnuuUVdSkuyM+SdLsY5o1FxOmsYojW7U9ntiN+AfATFUpKtvgvcK
-	K++2Nh3SjG6vC3qfzlUXCJ46L0gPB282pwGR7p5Yt0F4FVOVfTjGx8Siopp5blBpM4rnak6bv9W
-	UMT6LP3Qp4/JJSQF0Q6Anuzf5lcez
-X-Google-Smtp-Source: AGHT+IEAymfAGWqa1lsc+lE9aekt+GQmzOq8aWOhlreKofdFa70OokYDqTp4i8/hZux35lG7OKU96A==
-X-Received: by 2002:a05:620a:7004:b0:7c7:ba67:38a with SMTP id af79cd13be357-7d4296920c1mr1162621385a.6.1750944144634;
-        Thu, 26 Jun 2025 06:22:24 -0700 (PDT)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443150adesm378585a.26.2025.06.26.06.22.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 06:22:24 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d412988b14so97565685a.3;
-        Thu, 26 Jun 2025 06:22:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNy6i86XkyaVNTZAgIUZSt1s9WmUMYW6X7DQLgk9QOjK+k1wlhiDP4rTFCmUmDB2oVYkFr14cLW02I@vger.kernel.org, AJvYcCUSo3KGRhHPZKEVW4WDFS3i48pjyES51AfBJvya780NMApbdVZ3M/RJTZlQlfgg9nkuZYiAYSGJTBvoumgk@vger.kernel.org, AJvYcCUdbKItAQVz20QuyJYVT3cWuTyUYDW2k8X0axzF+uQAo6JxUpRKgV7zjjqMzSfDACE0j0/rO7qW776lQjLv42cHBSI=@vger.kernel.org, AJvYcCUlO/6kAh2YeY5nO9IrCBpFaRD4K9SRXdouxtQGeX8oppSwN/PQ871p6o205npRNqO/B3OTXg8D7uEL@vger.kernel.org
-X-Received: by 2002:a05:620a:1a28:b0:7d4:2922:14a4 with SMTP id
- af79cd13be357-7d4296e5269mr1006485085a.23.1750944143752; Thu, 26 Jun 2025
- 06:22:23 -0700 (PDT)
+	s=arc-20240116; t=1750946917; c=relaxed/simple;
+	bh=k/qMuy2UAwSKbsE7B3K84tsOzsawz6UhjEOsFcCgiuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bLOtZB5kAlmpo6hYqqKVQZvpPFwgZB6o3Xhhd/ZkzI2inVf170H+08JG+THvKsnGhGKltPqVVPIwC/fi0iCK7hu8MxOQ3AsVeF9odFCIFdQ2tvhAB27rGzQwIDT03zm3ej3mqMDU2A4uRfQDL7M+xZ0grC5MG1rmTYPEc+iTaZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kyXF2bcK; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyXF2bcK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750946915; x=1782482915;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=k/qMuy2UAwSKbsE7B3K84tsOzsawz6UhjEOsFcCgiuY=;
+  b=kyXF2bcKAOdCQqlwd+oWi2eEK7VYDT1jzW1bultTA2Xyd0vSFrjrPrsy
+   yBxu1+4bom5OeTJStsHgczZUzp8VVrDrHUFwYBrl059tAl5Dff7LZkxnO
+   7+YoOApfuWpfL9y+bvDeu6vquK4ODiccJatf/6aWJGWAXqfZDbX5vL1pc
+   JHmyO1NB7JR09H2662fsxDbEyvu+K/4VzOHikJwpfSF+i6bS1+Gb37t2c
+   rfvUP3DSr/V1sG9A6+uXU33L2wD0MULJqBdLxzQzPpEzvKkO45ya50vNa
+   yDBIlnuik9znd7QgGD6qbo53co0hCw8xJ/oHwQTftQKFYSBLsDnDL8Za9
+   Q==;
+X-CSE-ConnectionGUID: t4YhfzloQp6oRyULYlATAw==
+X-CSE-MsgGUID: LSNmX7RvQpuK+abaZvLLxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53185499"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="53185499"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:08:34 -0700
+X-CSE-ConnectionGUID: CB549Yq0TNqBqvYiSe3cwg==
+X-CSE-MsgGUID: h/oV6ZAkT420la7/oEhi8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="158027243"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:08:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uUnH6-0000000ACBt-2d9z;
+	Thu, 26 Jun 2025 17:08:24 +0300
+Date: Thu, 26 Jun 2025 17:08:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rahul Pathak <rpathak@ventanamicro.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/23] clk: Add clock driver for the RISC-V RPMI clock
+ service group
+Message-ID: <aF1UWNzWhheLNTky@smile.fi.intel.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-10-apatel@ventanamicro.com>
+ <aFkZJKnweqBi64b8@smile.fi.intel.com>
+ <CA+Oz1=a65HvfXHWjeSq4Ubq=5kzHp9pkLJVr77hvTYAGFHv0Mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624173030.472196-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250624173030.472196-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250624173030.472196-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jun 2025 15:22:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWsA4mC+D8ftx74_XeuBjpv-9EQN0rgVLPsxjmrO3+rWg@mail.gmail.com>
-X-Gm-Features: Ac12FXyZOhKLUwzapIWzq_IcowUr7r_QEZiZS2TBQeWgQqz_SzAvs4KKWCo_QvU
-Message-ID: <CAMuHMdWsA4mC+D8ftx74_XeuBjpv-9EQN0rgVLPsxjmrO3+rWg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] clk: renesas: rzv2h: Add fixed-factor module clocks
- with status reporting
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+Oz1=a65HvfXHWjeSq4Ubq=5kzHp9pkLJVr77hvTYAGFHv0Mg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Prabhakar,
+On Thu, Jun 26, 2025 at 12:32:14PM +0530, Rahul Pathak wrote:
+> On Mon, Jun 23, 2025 at 2:36 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Wed, Jun 18, 2025 at 05:43:44PM +0530, Anup Patel wrote:
 
-On Tue, 24 Jun 2025 at 19:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support for fixed-factor module clocks that can report their enable
-> status through the module status monitor. Introduce a new clock type,
-> CLK_TYPE_FF_MOD_STATUS, and define the associated structure,
-> rzv2h_ff_mod_status_clk, to manage these clocks.
->
-> Implement the .is_enabled callback by reading the module status register
-> using monitor index and bit definitions. Provide a helper macro,
-> DEF_FIXED_MOD_STATUS, to simplify the definition of such clocks.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+...
 
-Thanks for your patch!
+> > > +union rpmi_clk_rates {
+> > > +     u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
+> > > +     struct {
+> > > +             u64 min;
+> > > +             u64 max;
+> > > +             u64 step;
+> > > +     } linear;
+> >
+> > Have you looked at the linear_range.h? Why can it not be (re-)used here?
+> 
+> I did the first time only when you commented. And i dont see any
+> benefit in that.
+> linear_range has slightly different way to access any value using `sel`.
+> Here this union represents how RPMI protocol represents the rates and
+> reusing linear_range will only introduce conversion to and fro.
 
-One early review comment below...
+Summarize this in the comment on top of the struct definition so one will not
+attempt to convert the driver in the future.
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > > +};
 
-> +static struct clk_ops rzv2h_clk_ff_mod_status_ops;
+...
 
-This is an empty block of 200 bytes, consuming memory even when running
-on a different platform.
+> > > +static u32 rpmi_clk_get_num_clocks(struct rpmi_clk_context *context)
+> > > +{
+> > > +     struct rpmi_get_num_clocks_rx rx;
+> > > +     struct rpmi_mbox_message msg;
+> > > +     int ret;
+> > > +
+> > > +     rpmi_mbox_init_send_with_response(&msg, RPMI_CLK_SRV_GET_NUM_CLOCKS,
+> > > +                                       NULL, 0, &rx, sizeof(rx));
+> >
+> > ...here
+> >
+> > > +     ret = rpmi_mbox_send_message(context->chan, &msg);
+> > > +
+> >
+> > This blank line should be rather ^^^
+> 
+> Sure, I will update.
+> 
+> >
+> > > +     if (ret || rx.status)
+> > > +             return 0;
+> >
+> > Why rx.status can't be checked before calling to a sending message?
+> > Sounds like the rpmi_mbox_init_send_with_response() links rx to msg somehow.
+> > If this is the case, use msg here, otherwise move the check to be in the
+> > correct place.
+> 
+> Yes, the rpmi_mbox_init_send_with_response is a helper function which links
+> the rx to msg. It's a very simple function which only performs assignments.
+> 
+> Using msg instead of rx directly will require additional typecasting
+> which will only clutter
+> I can add a comment if that helps wherever the rpmi_mbox_init_send_with_response
+> is used.
 
-> +static struct clk * __init
-> +rzv2h_cpg_fixed_mod_status_clk_register(const struct cpg_core_clk *core,
-> +                                       struct rzv2h_cpg_priv *priv)
-> +{
-> +       struct rzv2h_ff_mod_status_clk *clk_hw_data;
-> +       struct clk_init_data init = { };
-> +       struct clk_fixed_factor *fix;
-> +       const struct clk *parent;
-> +       const char *parent_name;
-> +       int ret;
-> +
-> +       WARN_DEBUG(core->parent >= priv->num_core_clks);
-> +       parent = priv->clks[core->parent];
-> +       if (IS_ERR(parent))
-> +               return ERR_CAST(parent);
-> +
-> +       parent_name = __clk_get_name(parent);
-> +       parent = priv->clks[core->parent];
-> +       if (IS_ERR(parent))
-> +               return ERR_CAST(parent);
-> +
-> +       clk_hw_data = devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL);
-> +       if (!clk_hw_data)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       clk_hw_data->priv = priv;
-> +       clk_hw_data->conf = core->cfg.fixed_mod;
-> +
-> +       rzv2h_clk_ff_mod_status_ops = clk_fixed_factor_ops;
+This is besides harder-to-read code is kinda of layering violation.
+If you afraid of a casting, add a helper to check for the status error.
+Comment won't help much as making code better to begin with.
 
-This overwrites rzv2h_clk_ff_mod_status_ops in every call (currently
-there is only one).
+> > Seems the same question to the all similar checks in the code.
+> >
+> > > +     return le32_to_cpu(rx.num_clocks);
+> > > +}
 
-> +       rzv2h_clk_ff_mod_status_ops.is_enabled = rzv2h_clk_ff_mod_status_is_enabled;
+...
 
-If there would be multiple calls, there is a short time window where
-rzv2h_clk_ff_mod_status_ops.is_enabled is NULL, possibly affecting
-already-registered clocks of the same type.
+> > > +     struct rpmi_clk_context *context = rpmi_clk->context;
+> > > +     struct rpmi_clk_rate_discrete *rate_discrete;
+> > > +     struct rpmi_clk_rate_linear *rate_linear;
 
-Hence I think you better store rzv2h_clk_ff_mod_status_ops inside
-rzv2h_cpg_priv (so it is allocated dynamically), and initialize it from
-rzv2h_cpg_probe (so it is initialized once).
+> > > +     struct rpmi_get_supp_rates_rx *rx __free(kfree) = NULL;
 
-Gr{oetje,eeting}s,
+This should be assigned where it's used. NULL assignment is not encouraged.
 
-                        Geert
+> > > +     struct rpmi_get_supp_rates_tx tx;
+> > > +     struct rpmi_mbox_message msg;
+> >
+> > > +     size_t clk_rate_idx = 0;
+> >
+> > This kind of assignments is hard to maintain and it's mistake prone in case
+> > some additional code is injected in the future that might reuse it.
+> >
+> I dont understand what is the problem with this assignment. If any
+> code added in the future reuse it then it has to make sure that
+> clk_rate_idx has the correct initial value before any further references.
+
+Yes, it will add an additional churn and require more brain activity to
+maintain such a code. It's a general recommendation to assign when it's
+actually needed (there are, of course, exceptions for some small functions,
+but this one is not).
+
+> > > +     int ret, rateidx, j;
+
+...
+
+> > > +     context->chan = mbox_request_channel(&context->client, 0);
+> > > +     if (IS_ERR(context->chan))
+> > > +             return PTR_ERR(context->chan);
+> >
+> > Here is an incorrect order of the freeing resources. Besides that, wrapping
+> > the mbox_free_channel() into managed resources reduces this code by more
+> > than 10 LoCs! At bare minimum it will fix the bug,
+> 
+> Understood. So we can use devm_add_action_or_reset to link a release function
+> with the context->chan. Is this what you are suggesting? This will also make
+> the .remove callback redundant which can be removed.
+
+Yes.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
