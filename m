@@ -1,137 +1,176 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6479C29DB6B;
-	Fri, 27 Jun 2025 14:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F422980BF
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 15:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036382; cv=none; b=BtbMBsi2X0oQfPe3oTZ694CiizSVa+trKPxr4Y21BR++kbDeijB2C3UPF308joSsQiTz3BlRrgyLzBhB+ZEazzy42C18P2Pv0Zkrnx4FuvhRLpE+xDef1B9PUjyP5fy5ngAu40Dn2jU0/SBGbSSNhOY6VDuc1cTz1XefXEbq284=
+	t=1751036841; cv=none; b=WdzIHgUecrdhO/K0K9utOnNmufNSyDTV0C/jRZ04NYzaew1j57FoD2YugqAgyc4vdiMVtaVOXGKNBYmIU68HQzhkpPjkRoNFksZjmdLI/edSSjfYoQX/wK5SWxpMqyDTaWLoGJYn7tA4Mroy8dcJjuE4myn9EPbpSiK1KGxEXp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036382; c=relaxed/simple;
-	bh=Q624Qj2i25nnhuv7Bqn+nxJwHsYhIYSd8aBORWKkTDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GUxZ3siR29RkQQ3hzSfsF44cAPFhjlhJ6OB2O3hSA4TH4oGbLanc5cOK52bK4uIWzSJk+A7IUTKYhUMkX5DhGcX5zjFA2sNGueFn266b/SfmpFXanXICW3iE52T9S5uAsM3KYyLCWvTKRZ//U1L+IIKjmxmT0GPEeSj248SfJYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AZZxZg1s; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1751036841; c=relaxed/simple;
+	bh=K1W/ACUkhEzsh3VhZeua9bbwljhzBiDcmta6M6ukqF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=suZEWIiLelUIrJqByLCAQlo7dCGdE6Xsh4uPSiePe8UJ0GtS86Lc1m9S0CE31FNSJHYWcVdhguCD154YEGB8nTa2o1on5EAlEK9lCQeDpGLCFNx0Y4AMfnPDYg7oMM0R8E+lO3a7oHsrSDFi0cjzYTOpZcIjMaDDCfxGD/ErLvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D25FZLss; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AZZxZg1s"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B280243914;
-	Fri, 27 Jun 2025 14:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751036376;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ThiterbTvL+mYGXh+idmEWQ5hcYVOVl2geFkwk5TYJc=;
-	b=AZZxZg1sYkT9vHUrIb2/97+6gfdNO4TtsAae3Q97XVRt49b0/Vi8ATyjffit62MZ37kfFL
-	ymp82e/YrnESaBvIOQpjbOf2NByT+aIPb77AUb4LL4j2gswmjCDrkd8q8JlI9EKD/dTAGv
-	ehdRnIQrsEL+gjpbp5/HZ3gDsDO5/1suKp3xnM2E14rmnSJF/7NfSxhMn203GJECVD9In9
-	m8CXZqLY8ct1ish67IsDUCaBumDTG5qcx7dEbGr9De+dkZwMfiwoTHf5QNh6Zrf48SviUx
-	IemOqFS+LYffkXWwV86Y/xGnsTH8VmnMH3qqowHZYUhXdCZGAKaDau1hHDHE3g==
-Date: Fri, 27 Jun 2025 16:59:30 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
- Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown
- <lenb@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso
- <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 06/28] driver core: fw_devlink: Introduce
- fw_devlink_set_device()
-Message-ID: <20250627165930.344b429c@bootlin.com>
-In-Reply-To: <20250616090406.32f62ca4@bootlin.com>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
-	<20250613134817.681832-7-herve.codina@bootlin.com>
-	<CAGETcx9u-7TJ6_J5HdmDT=7A6Z08P-rUC0n+qnBoBi+ejRc2SQ@mail.gmail.com>
-	<20250616090406.32f62ca4@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D25FZLss"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-879d2e419b9so1939670a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 08:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751036839; x=1751641639; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTVCLY7nH8LB+Zm3xLfrn9nxZr6jXIw9YXpYJef7Kgs=;
+        b=D25FZLsstZtLsO5j+wAXsUDJnc7QJjU1sSGmjqN94ktzT3SFC4WYiJE7BbwEvnAAPG
+         q2q4YlC6sC0HhmzfiJo+aICTur6m9XyRK/P/xbhCYJmVXqJbzCLYXZ9HNXFvennNOs+J
+         0Zu+F8ZBFwThPrbcK8xpNVb1UYvI8lbFEyVjp9+s5lszsR4cQTHYV3isOpQMkYqfa8lC
+         8pic48+BHO9EEHvi6ArqBtW5i/emso6Zp6VnmTKIJUTC00ITbygVdj7sNjAzo2pA+dCY
+         S8nfOC3Nu+iNYTwhgf3/4unN1yFpd9wmMIZnTHHUzyYEinDKjW2prZ/esAX5QKzjtxCg
+         iApw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751036839; x=1751641639;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kTVCLY7nH8LB+Zm3xLfrn9nxZr6jXIw9YXpYJef7Kgs=;
+        b=Tx3A5fzZtx1pQaKf7WeyLQu0OL0ZlXH7BU4OA7ntcIgqXCrRIjBUa7sjw+dDZyeg0+
+         ob4xG2OJi4kZSusGyo13lrJzrUUBNwpUp2fJHPwcauEuUltykhxrjLu1LrA+WECOXPBY
+         cJiH26q5GCiQ4r6U8vEKuU8/fRA6/k4Ef0HDsOJ+y7VEmIeA7mRrjC+fByD4HRAyDBy1
+         XPkt97ZYETK8R362BShp8gU1WgD/+sDiiE9MYVzp5KIrJPkdGftVEjkzyYp135P05NSq
+         XZysx0Op056slutybl71iPVxXEQX4LqPt8Wk1Hdn1qDE/P2n2zFy9kk7DgyKnf+N7BRl
+         RtaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9agRZMIoXrNuEXBDrtwc8bMrhTOHTa6bpwiUZwZ4J3HUOVThQmWd4GRhZMuIDVCvw2T3FWeo0BVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzehlK2MxrHc9YfJbt6MRbMspCgPht6FhQC2LLOtxBpwR89eKHo
+	CAVaXATmjvc9E1LzNizR/QyOEQGqVHtQzFY0OUqrIGuD6AUhaJa4c6rY2BG98BGHY4Eb9ALyw3n
+	SRD+SqWOa9gIUqO1brQ0V+yswFM02H1S4T9NeIRDQBQ==
+X-Gm-Gg: ASbGnctEHEycycK+YW9xYyqBnrgDQPH8DEZngG54lt3SoeVasJO0zU6cNRwh2KYoNgR
+	FvzAIEJsUlklrswo9kjQ9+Xz+bOI8sRfej+uOBQrHUTgvlvWfuUFpz3Hjr4ma2bqv+rR1QpD20K
+	qrQfKMLHgvGy2yqgQt6ivwxXwa7WT/9EsiWa80FSfJDxe/zdthRTZVXY3oL5hZfq7o4YcD+6gSP
+	arl
+X-Google-Smtp-Source: AGHT+IF4AdiLDVJzWcIgdL/8Bs2UVOqvh/d51X69lsgIeuxgoVvKvtiPfY/zv1dvVDdkVgnc/ZS5VJNJlB5QgtEcAew=
+X-Received: by 2002:a17:90b:528a:b0:311:d3a5:572a with SMTP id
+ 98e67ed59e1d1-318c9225e52mr5337592a91.8.1751036839222; Fri, 27 Jun 2025
+ 08:07:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeffeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeegkedprhgtphhtthhopehsrghrrghvrghnrghksehgohhoghhlvgdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnv
- ghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
-X-GND-Sasl: herve.codina@bootlin.com
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-10-apatel@ventanamicro.com> <aFkZJKnweqBi64b8@smile.fi.intel.com>
+ <CA+Oz1=a65HvfXHWjeSq4Ubq=5kzHp9pkLJVr77hvTYAGFHv0Mg@mail.gmail.com> <aF1UWNzWhheLNTky@smile.fi.intel.com>
+In-Reply-To: <aF1UWNzWhheLNTky@smile.fi.intel.com>
+From: Rahul Pathak <rpathak@ventanamicro.com>
+Date: Fri, 27 Jun 2025 20:36:41 +0530
+X-Gm-Features: Ac12FXyg_1voP3_rSKmrZJ_A-E3gflVigZ0fA-ce5u-xgIj9wegRrIsa-1iLCcE
+Message-ID: <CA+Oz1=bAsykB=qAk3r8FV8K8cnPEVT4Ow7L4SWBvrc_3DsyaWw@mail.gmail.com>
+Subject: Re: [PATCH v6 09/23] clk: Add clock driver for the RISC-V RPMI clock
+ service group
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, 
+	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Saravana,
-
-On Mon, 16 Jun 2025 09:04:06 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
-
-> Hi Saravana,
-> 
-> On Fri, 13 Jun 2025 14:13:49 -0700
-> Saravana Kannan <saravanak@google.com> wrote:
-> 
-> > On Fri, Jun 13, 2025 at 6:49 AM Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > > +union rpmi_clk_rates {
+> > > > +     u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
+> > > > +     struct {
+> > > > +             u64 min;
+> > > > +             u64 max;
+> > > > +             u64 step;
+> > > > +     } linear;
 > > >
-> > > Setting fwnode->dev is specific to fw_devlink.
+> > > Have you looked at the linear_range.h? Why can it not be (re-)used here?
+> >
+> > I did the first time only when you commented. And i dont see any
+> > benefit in that.
+> > linear_range has slightly different way to access any value using `sel`.
+> > Here this union represents how RPMI protocol represents the rates and
+> > reusing linear_range will only introduce conversion to and fro.
+>
+> Summarize this in the comment on top of the struct definition so one will not
+> attempt to convert the driver in the future.
+>
+
+Sure, I will update.
+
+> >
 > > >
-> > > In order to avoid having a direct 'fwnode->dev = dev;' in several
-> > > place in the kernel, introduce fw_devlink_set_device() helper to perform
-> > > this operation.
-> > >    
-> > 
-> > This should not be set anywhere outside the driver core files. I'll
-> > get to reviewing the series, but until then, NACK to this.
-> > 
-> > Is there a specific patch that explain why we need to set this outside
-> > driver core?  
-> 
-> We need to set it in case of creating device-tree node for PCI.
-> 
-> Usually, fwnode are created (based on DT or ACPI) and then, dev are
-> created.
-> 
-> In the PCI DT node creation case, device are already created and then, based
-> on information already computed by the kernel, DT node are created.
-> 
-> You can see that on patch 11 (dev setting was already upstream and it is
-> replace by a call to the helper for PCI host bridge) and on patch 13 (PCI
-> device).
-> 
-> Other patches (8, 9 and 10) replace the existing direct setting of the dev
-> member by a call to the helper.
-> 
+> > > > +     if (ret || rx.status)
+> > > > +             return 0;
+> > >
+> > > Why rx.status can't be checked before calling to a sending message?
+> > > Sounds like the rpmi_mbox_init_send_with_response() links rx to msg somehow.
+> > > If this is the case, use msg here, otherwise move the check to be in the
+> > > correct place.
+> >
+> > Yes, the rpmi_mbox_init_send_with_response is a helper function which links
+> > the rx to msg. It's a very simple function which only performs assignments.
+> >
+> > Using msg instead of rx directly will require additional typecasting
+> > which will only clutter
+> > I can add a comment if that helps wherever the rpmi_mbox_init_send_with_response
+> > is used.
+>
+> This is besides harder-to-read code is kinda of layering violation.
+> If you afraid of a casting, add a helper to check for the status error.
+> Comment won't help much as making code better to begin with.
 
-Have you got time to look at the series, patches I pointed out and the reply
-from Andy?
+Why using rx is the issue in the first place when it's the same layer
+which links the rx with msg using the helper function and then
+uses it directly?  Infact using rx directly avoids unnecessary code
+which is only increasing redundant code which ultimately results in
+same thing. Even if I add a helper function that will require additional
+pointer passing with NULL checking which all is currently avoided.
+And, we are not just talking about rx.status but a lot of other fields.
 
-Are modifications still nacked on your side?
-If so, what kind of modification would you like to see in order to move
-forward?
+>
+> > > > +     struct rpmi_clk_context *context = rpmi_clk->context;
+> > > > +     struct rpmi_clk_rate_discrete *rate_discrete;
+> > > > +     struct rpmi_clk_rate_linear *rate_linear;
+>
+> > > > +     struct rpmi_get_supp_rates_rx *rx __free(kfree) = NULL;
+>
+> This should be assigned where it's used. NULL assignment is not encouraged.
 
-Best regards,
-Hervé
+Sure, I will update.
+
+>
+> > > > +     struct rpmi_get_supp_rates_tx tx;
+> > > > +     struct rpmi_mbox_message msg;
+> > >
+> > > > +     size_t clk_rate_idx = 0;
+> > >
+> > > This kind of assignments is hard to maintain and it's mistake prone in case
+> > > some additional code is injected in the future that might reuse it.
+> > >
+> > I dont understand what is the problem with this assignment. If any
+> > code added in the future reuse it then it has to make sure that
+> > clk_rate_idx has the correct initial value before any further references.
+>
+> Yes, it will add an additional churn and require more brain activity to
+> maintain such a code. It's a general recommendation to assign when it's
+> actually needed (there are, of course, exceptions for some small functions,
+> but this one is not).
+
+Sure, I will update.
+
+
+
+-- 
+
+Thanks
+Rahul Pathak
