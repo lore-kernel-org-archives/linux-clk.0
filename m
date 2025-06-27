@@ -1,125 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9CB21A421;
-	Fri, 27 Jun 2025 08:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000C11DC9B8;
+	Fri, 27 Jun 2025 08:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751011437; cv=none; b=ThesSFdiJSeYTjFZdS1pBkNCy9g/zaudpvpsvwMMGNfx8wU30/j2+44cn1MUYW9KFlgMyoplU9Dh7063ESCs68yyRzI6rf7mYZu/obiQmqUrq8wjBhPI5cqlUsUwt98EVUPF7595i9qtY27lj6A/nD47siQW2DlRvvIl7tcKwLI=
+	t=1751012426; cv=none; b=B2YtOM0bw9TjhVzC9gFjBt4nya9ypvcicptT5HZE4M/yYTXfeAAJxRGy3/Z+HK4mDO+gBfheFGeLv537+Y+ctRTbwsklly0UgwywyUVVn5Layv0UsF+g8waqPG/yrqPcLIt5bVzztpF5dplXiNF3UnfX0ATCGw/9TA9mDACJ5bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751011437; c=relaxed/simple;
-	bh=DR0iURhckp5XfzMvSk4LgMuAnciQyHbp2E9NxNgrSgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpxIhiAxeu9VHkW1Hj+D1Ws/YlIw/60vkckBAvZY1e/BVdttSYJ2ngKRpcbFMOn/B8JvNpkCK4cz6cb3VoSUlAJPU+eipaeMAtRMeDrJ54aCPThyrN+392xXXT0G2H+esLwvqxVpZwc3jepeoMvTarbm3cN/TFXeqVC/p0rT/po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKdPvAM1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751012426; c=relaxed/simple;
+	bh=Oh4TD3SGQIYcYPmXM4CeF0rb8he7Z8jtXWch8rytSpA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHfA+9NmQ4dAP2HGAuUyCBbtPW2hhCT2gyyMasUshXLb1lS9IF4HU7iEAQ/wXe1EM19tPBTy2g6N8ppPwqISD4x3b4ZF34YESZqjXf8acmurUm6WKaDiJqmpZynD8eQgfrbdsZkVO9vaw9WVRoZg2bWP1bnRjmMRqmd5LClWYa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kY8bbLyV; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKdPvAM1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674EEC4CEE3;
-	Fri, 27 Jun 2025 08:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751011437;
-	bh=DR0iURhckp5XfzMvSk4LgMuAnciQyHbp2E9NxNgrSgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tKdPvAM1SwN5SgSDdLEEOTC9vk+owg/oWIwcT5dP3WpUetyEuoQJKkYwXDxEENE5d
-	 vhX35a6Tlr+PsBjbSwQsd2vHWBj8o5AXfAvF6Sq2OmK/2ncWANrWkVK2HkzAzb7WBJ
-	 H5K2MrlZgoLw0qghldvzWZPN+SagJ80l+TdWZmIVhMAUL5LqYKCxZrRtpFgIFQ8cWy
-	 UMBU9QnzwkCqklZecwcMC2WZ15qgXZTNPAOvDzoocBmoqHWN2G0PW3bXLW0TBaVAcK
-	 WZzAqZI1E3ygtO0naX4bqMfIPaEcZttCIt1lTS6SjItT1jt9sGcuJ9sDt306SR7Kkh
-	 5RztUAAts5Fpg==
-Date: Fri, 27 Jun 2025 10:03:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: loongson2: Add Loongson
- 2K0300 compatible
-Message-ID: <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
-References: <20250617162426.12629-1-ziyao@disroot.org>
- <20250617162426.12629-2-ziyao@disroot.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kY8bbLyV"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so1674796f8f.2;
+        Fri, 27 Jun 2025 01:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751012423; x=1751617223; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IWBRBcY6kXuI6+1Do3ghha4t7BmkCU/pF8IxkFP+m00=;
+        b=kY8bbLyVM8RZnEyJtoRtoBge3f7aOfqzKBZLBIbLekKKwCBWLjwq3XiVxTCP5hQLwn
+         hehQU3xP3sWMvnMgyXJQxhlEWt8+ErF3vxCb+XAgVS2U+0ArwBbav18ah3ltHe5aeADI
+         reohYZtC4AUpQbU1Cn82G5hZoKrCfVfzvrGXgzHUaGNNrFSKmJy1bDhJ0Yz3LAGflPQS
+         DTJg+us7fFKITMJyfSSaS7FHp3tMAnS7VCfgsHzz84xzpav5NS7h8qP3r8MrWWurxVCo
+         WTuis5DBdd4dllHFkls1VgxGGSo4NsLAVD40wWLGOI6vGYOVnOi6t2TurfWGF/vetuzd
+         p/Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751012423; x=1751617223;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IWBRBcY6kXuI6+1Do3ghha4t7BmkCU/pF8IxkFP+m00=;
+        b=kuHMGvmBzqOULld4keVT6+Uxh7yThI9jxgGaWFD/sEH7ycdxTr87tFrE5+NqJJOb38
+         vmQ/N6X8/A08Vhb7m888QgDQUZeiYJzOHToYp/JdOx6Ihth325lOoLfvxOJNX4/6Zq7J
+         3n5jD+XjkhvcguFaXCgKFGzIeQntlMmeJ6S+Fo4x0YB612Rbh8nIxZkjfZAlXb+OQacd
+         +vMxX9jHIUlH2sjs9XhFCkTzI5LVnx2+YcydaTmCf8y2B0Pal21OYUBl8/AaTc1Sl1uL
+         vAw/y4c0hUh8omXCvmMHpqjK6iOEJwDHS7X84mSiC0q5eBNVt4YNtQuNRt32S6bJE9PW
+         6f6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVH5AIlOtTuHiQee6HzKiIJuzWGFXqQ6u/fgTyhekOibYkID9KSxhw761HefEZEdXzsDaKSMFmS36vp@vger.kernel.org, AJvYcCWQwiCO9OaxBWCeokhx6BzYF0tdkOnvs0vhJKxH/v9t16ngfr7mm26g/izgWn09UkoafhVOW+c5471beM3r@vger.kernel.org, AJvYcCXmO9XZBuqe8YCU+YgajPDRrneM+96y2cg6OAMsAdzSeaF9daepcYH1WLiD1Begtahvi6kreVOuSoqq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVQAXoMbdzTACXk58ym9N3cYikV7chb8qUyNtWtEnj1gxRMlDV
+	c0cjYl/QlzGkroxxhN6ymP97nidVPoBbbI0vRk9Aj1v4KcnGtBI+zgO/
+X-Gm-Gg: ASbGncvLttxiWV9FTabWm/FY3zrvHmiy0n69t32r0GDBaWApE1rxgYKB45PgW2vbLRH
+	iuSqcDc9tgzv+WAsAq/vnOhyNOCBSUPpnBeDu0TlMJu5vN8hTuqJ9wOTgxS7IsXfz5zQ+nk5lTL
+	2eYVzpqd8lk/wOwxZRjfO+sTgUXpF2UFnLRHzufGdO/IocvDCyR0Ppt2IgzEKjsiAYdLgvV2xWI
+	Naa09gCoES1T4kpRXUl9UiN5FIGTVay9OjpklePfyXgABfI5UENlbrNWoxMAt3JQ0J9kNw66QDK
+	aKz+W5Z+qMZlIaC/NHwjCEkd/q47YAYzSSYZg1Fwxz0Z/1yhr1BofgxCIoWaXTNIS29UjxvRoOl
+	T1p4akl1xcjXz8B6VdxULJqjMrp9U
+X-Google-Smtp-Source: AGHT+IFyrWOPafLVznMIr337ZwVduzg2vwEuHZZVpqaz1/9FfTAHeXsSa1kc2uxwBBxJaIqMooSWoQ==
+X-Received: by 2002:a05:6000:2893:b0:3a9:dc5:df15 with SMTP id ffacd0b85a97d-3a90dc5df54mr2292293f8f.13.1751012423025;
+        Fri, 27 Jun 2025 01:20:23 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7ec6aesm2009045f8f.5.2025.06.27.01.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 01:20:22 -0700 (PDT)
+Message-ID: <685e5446.df0a0220.369e9e.8cb1@mx.google.com>
+X-Google-Original-Message-ID: <aF5UQC9s3T1sDuzo@Ansuel-XPS.>
+Date: Fri, 27 Jun 2025 10:20:16 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] dt-bindings: clock: airoha: Document new
+ property airoha,chip-scu
+References: <20250617130455.32682-1-ansuelsmth@gmail.com>
+ <20250617130455.32682-7-ansuelsmth@gmail.com>
+ <20250627-determined-helpful-rabbit-be2dfe@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250617162426.12629-2-ziyao@disroot.org>
+In-Reply-To: <20250627-determined-helpful-rabbit-be2dfe@krzk-bin>
 
-On Tue, Jun 17, 2025 at 04:24:19PM +0000, Yao Zi wrote:
-> Document the clock controller shipped in Loongson 2K0300 SoC, which
-> generates various clock signals for SoC peripherals.
+On Fri, Jun 27, 2025 at 09:59:34AM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Jun 17, 2025 at 03:04:49PM +0200, Christian Marangi wrote:
+> > Document new property airoha,chip-scu used on new Airoha SoC to
+> > reference the Chip SCU syscon node used for PCIe configuration.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../devicetree/bindings/clock/airoha,en7523-scu.yaml      | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> > index fe2c5c1baf43..bce77a14c938 100644
+> > --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> > @@ -49,6 +49,11 @@ properties:
+> >      description: ID of the controller reset line
+> >      const: 1
+> >  
+> > +  airoha,chip-scu:
 > 
-> Differing from previous generations of SoCs, 2K0300 requires a 120MHz
-> external clock input, and a separate dt-binding header is used for
-> cleanness.
+> So the scu has phandle to scu... That's not what we discussed. Your
+> changelog also is very vague here, no links to previous discussions does
+> not make reviewing it easier.
+>
+
+Do you think it might be better to add to the changlog link to the
+previous version?
+
+> You clearly said you have SCU node wich clocks and now you claim you
+> have here some different device thus you need phandle. This is what your
+> schema says.
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  .../bindings/clock/loongson,ls2k-clk.yaml     | 26 ++++++---
->  MAINTAINERS                                   |  1 +
->  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
->  3 files changed, 75 insertions(+), 6 deletions(-)
->  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
+
+There is "SCU" and "Chip SCU". This new schema is to keep consistency
+with an7581 as MFD is quite problematic.
+
+Also I implemented the current mdio schema with 2 line with compatible
+and reg from suggestion of Rob review.
+
+> No.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> index 4f79cdb417ab..3e0a894cfb2f 100644
-> --- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> @@ -16,6 +16,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - loongson,ls2k0300-clk
->        - loongson,ls2k0500-clk
->        - loongson,ls2k-clk  # This is for Loongson-2K1000
->        - loongson,ls2k2000-clk
-> @@ -24,19 +25,32 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    items:
-> -      - description: 100m ref
-> +    maxItems: 1
->  
-> -  clock-names:
-> -    items:
-> -      - const: ref_100m
-> +  clock-names: true
+> Where is the DTS with COMPLETE picture?
+> 
+> 
 
-No. How does this implement my comment?
+Here the current DTS [1]. Nothing is stable for this and we can change
+it but I want to stress that the current HW block are VERY CONFUSING and
+SCRAMBELED. So it's really a matter of finding the least bad solution.
 
-It makes no sense, why 100m even appeared here. I already objected last
-time!
+In SCU there are:
+- PART fot the clock register
+- 2 MDIO controller register
 
+In chip SCU:
+- Other part of the clock register
+- Thermal driver register
+- PART of the pinctrl register
 
->  
->    '#clock-cells':
->      const: 1
->      description:
->        The clock consumer should specify the desired clock by having the clock
->        ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-> -      for the full list of Loongson-2 SoC clock IDs.
-> +      and include/dt-bindings/clock/loongson,ls2k0300-clk.h for the full list of
-> +      Loongson-2 SoC clock IDs.
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: loongson,ls2k0300-clk
-> +    then:
-> +      properties:
-> +        clock-names:
-> +          const: ref_120m
+[1] https://github.com/Ansuel/openwrt/blob/openwrt-24.10-airoha-an7581-stable/target/linux/airoha/dts/an7583.dtsi#L361
 
-NAK, stop doing this pattern. You already got comment on this.
-
-Best regards,
-Krzysztof
-
+-- 
+	Ansuel
