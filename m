@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79E5136672;
-	Fri, 27 Jun 2025 08:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3217F17741;
+	Fri, 27 Jun 2025 08:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751013424; cv=none; b=o0y4F5JgeL3J/c1KxxxmARVEpUm8kPIrnkb+93U1LNECNxUWfr0+k7cb6UdXm7wz6NUAq5Kh/EnosK+MSfesW6gIjz4A6pUFOfpa/Yfg5vzoKuV5ANoHDAvDDPIZ66ghWfKUFJ7TYvmj4Sehg80EBiOoruDn22yB3LVlcmMeWUs=
+	t=1751013891; cv=none; b=uJFPV6/poyRkcTzn5Q1zCVL57nzYL9sXqY/UiBXsVK5Ths2Ew2tWwGVgwFnIDEb7xmRzM0DwiuvxGjdrZKCvBMoxFmyz8WnJt5SMte8czPWrDzRSJ30vM2QDD5HSg4gQDzKmryWVFOmx2QSSHFvc7IosEFDsmZDbb/yHhIkvZvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751013424; c=relaxed/simple;
-	bh=yWXI+MjQClJMKfE5POsBy9to/tIrO6o24Qlch/pvNSE=;
+	s=arc-20240116; t=1751013891; c=relaxed/simple;
+	bh=RTLLpwAcPZOfKhzKTWv9DijE/pyyo/yM7NlOJeC3mSc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfD4zmZ4MDQ+g0Az8ctqRx2m4BbAqNIqnn26k6Qhn1ZTfgNIgtpDqBSULp1TbZO9UbLbhAD5BoTz+I6F1bcbRjDQnHTL4uhYy753F/tIKDQcxYXKE2SZXCQb6WYEYAAYmAhNNfQvPD7C4yXFsrQChGpQwhwPRE8G5VxJJ+CJVeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKUojzIY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPkhczQB1QUNksl7zpyRLBGk35nf5nxR+gCUmuDXMN/SpM3Z9gSPDQmO58G1fruMG80wuSVb7NBxprWbacnmzUrROHTm39xOjac00HIT3OQ0ImMcIgouf/hv3f1Jtn4sXTFOsRaG8+FtJD5wnCjVnN6fc2is237gQFG3PFczeOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8BnQ4a2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKUojzIY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7AA8C4CEE3;
-	Fri, 27 Jun 2025 08:37:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8BnQ4a2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C807BC4CEE3;
+	Fri, 27 Jun 2025 08:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751013423;
-	bh=yWXI+MjQClJMKfE5POsBy9to/tIrO6o24Qlch/pvNSE=;
+	s=k20201202; t=1751013890;
+	bh=RTLLpwAcPZOfKhzKTWv9DijE/pyyo/yM7NlOJeC3mSc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uKUojzIYgA4egmrpUAzw5VgfAMdSLFoHrcwyvD4cYNKrT4sFI1dUq9Uao1Jz9eqGy
-	 Cl7VIxetZSqylOssl7W9tzxwrJSSKEuO0vc40YCKJhU+zJPO+60wj1Z0Ff6t87ir/E
-	 8yLPGDYI1uVWxp8DRUinDIrBaq8vzhtVcGa3Vzs68KKJi24X42fhX53Z0loX+lZEsl
-	 zrZhZEMan5NpQ8pm/+41uM5FmpWDrzZm6HjCBQXrfPbPWPesLIzF25M2LaYb7EJc6I
-	 pYSOHMhj2Pg0aGQ6AHvc5Sa/w+nRnsYljwqp7/iJNWyRM7MI+eBqMm0aWPhS+pxCQn
-	 WHG5LuDbVJhSw==
-Date: Fri, 27 Jun 2025 10:37:00 +0200
+	b=D8BnQ4a2qY+T7f6Nj93ZdhYrpdcPOQOWkuZ8+ABcMmaaalqNwlzCVewwvEgKG6BXN
+	 ELWtADd0yAz+SoTC/LZgdsX4Ushlh5KbRxIGqcRmn+9J+0ZO4TLxmwbgDWK9x6bN+H
+	 10Vsq5P6ufR4FKHGBpEc4FJLcUKby3zlkCiJ+N/vb7jd98zAZkmsowWvFUxuZBy/US
+	 nalHm8bz7WEsfTHX4KPH/CS3zgKjx1DcskmR5Vq0fHOvdrK4oLUi0ln10/uPriktBK
+	 uYQ4uVZUxK8GfgwwpJsTo8mRVpqk+ML+kUwBmHPrMhNHUqt5KImfrhwoJ7SlperKMh
+	 BRGsPXnnQmfTg==
+Date: Fri, 27 Jun 2025 10:44:47 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com, 
@@ -38,15 +38,15 @@ Cc: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
 	kernel@collabora.com
 Subject: Re: [PATCH v2 09/29] dt-bindings: clock: mediatek: Describe MT8196
  peripheral clock controllers
-Message-ID: <20250627-ingenious-tourmaline-wapiti-fa7676@krzk-bin>
+Message-ID: <20250627-camouflaged-utopian-hedgehog-11ea2c@krzk-bin>
 References: <20250624143220.244549-1-laura.nao@collabora.com>
  <20250624143220.244549-10-laura.nao@collabora.com>
  <7dfba01a-6ede-44c2-87e3-3ecb439b48e3@kernel.org>
  <284a4ee5-806b-45f9-8d57-d02ec291e389@collabora.com>
  <0870a2ba-936b-4eb2-a570-f2c9dea471b8@kernel.org>
  <9fc32523-5009-4f48-8d82-6c3fd285801d@collabora.com>
- <29eeae4f-59ed-4781-88b1-4fd76714ecb6@kernel.org>
- <312f321f-2e49-48ac-bc41-a741f5e3b3a5@collabora.com>
+ <86654ad1-a2ab-4add-b9de-4d56c67f377b@kernel.org>
+ <ae478fd7-c627-433c-a614-b76dcd4164d2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,10 +55,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <312f321f-2e49-48ac-bc41-a741f5e3b3a5@collabora.com>
+In-Reply-To: <ae478fd7-c627-433c-a614-b76dcd4164d2@collabora.com>
 
-On Wed, Jun 25, 2025 at 02:42:15PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 25/06/25 13:05, Krzysztof Kozlowski ha scritto:
+On Wed, Jun 25, 2025 at 02:48:39PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 25/06/25 13:06, Krzysztof Kozlowski ha scritto:
 > > On 25/06/2025 11:45, AngeloGioacchino Del Regno wrote:
 > > > Il 25/06/25 10:57, Krzysztof Kozlowski ha scritto:
 > > > > On 25/06/2025 10:20, AngeloGioacchino Del Regno wrote:
@@ -118,159 +118,39 @@ On Wed, Jun 25, 2025 at 02:42:15PM +0200, AngeloGioacchino Del Regno wrote:
 > > > ....but the hardware voter cannot be represented as a clock, because you use it
 > > > for clocks *or* power domains (but at the same time, and of course in different
 > > > drivers, and in different *intertwined* registers).
-> > > 
-> > > So the hardware voter itself (and/or bits inside of its registers) cannot be
-> > > represented as a clock :\
-> > > 
-> > > In the context of clocks, it's used for clocks, (and not touching power domains at
-> > > all), but in the context of power domains it's used for power domains (and not
-> > > touching clocks at all).
 > > 
-> > I don't understand this. Earlier you mentioned "MUX-GATE and GATE
-> > clocks", so these are clocks, right? How these clocks are used in other
-> > places as power domains?
-> 
-> I think you've misread, or I've explained badly enough to make you misread...
-> let me describe some more to try to let you understand this properly.
-> 
-> The hardware voter is a unit that is used to vote for "flipping various switches",
-> in particular, you can vote for, *either*:
->  - Enabling or disabling a *clock*; or
->  - Enabling or disabling a *power domain*.
-> 
-> There may be multiple (by hardware, in-silicon) copies of the Hardware Voter; in
-> the specific case of the MediaTek Dimensity 9400 MT6991 and of the MediaTek MT8196
-> Chromebook SoC, there is only one instance.
-
-Everything so far very similar to qcom... They do exactly like that.
-
-> 
-> The Hardware Voter, there, is located in the SCPSYS macro-block.
-> 
-> The SCPSYS macro-block contains:
->  - A system controller
->  - A Hardware Voter IP (new in MT6991/MT8196)
->  - A power domains controller
->  - Other hardware that is not relevant for this discussion
-> 
-> The HWV is MMIO-accessible, and there is one (small, for now) set of registers,
-> allowing to vote for turning on/off one (or maybe multiple too, not sure about
-> that as there's no documentation and when I tried with multi-votes it didn't work)
-> clk/pd at a time.
-
-Sure, the only difference against qcom is interface - qcom uses
-remoteprocs channels, here you have MMIO. The interface does not matter
-though.
-
-> 
-> Probably not important but worth mentioning: the HWV can vote for clocks or for
-> power domains in macro-blocks outside of its own (so, outside of the SCPSYS block,
-> for example - it can vote to turn on a clock or a power domain in HFRPSYS as well).
-
-Same for qcom.
-
-> 
-> The register set in the HWV is *not* split between clock voters and PDs voters,
-> in the sense that the register set of clock voters is *not contiguous*; trying
-> to be as clear as possible, you have something like (mock register names ahead):
->  0x0 - CLOCK_VOTER_0 (each bit is a clock)
->  0x4 - PD_VOTER_0 (each bit is a power domain)
->  0x8 - SECURE_WORLD_CLOCK_VOTER_1
->  0xc - PD_VOTER_1
->  0x10 - SECURE_WORLD_PD_VOTER_0
-> 
-> ...etc etc.
-
-OK
-
-> 
-> >> If they are, this either has to be fixed or
-> > apparently this is a power domain and use it as power domain also here.
-> 
-> So no, clocks are not used as power domains, and power domains are not used as
-> clocks; we are talking purely about something that aggregates votes internally
-
-OK
-
-> and decides to turn on/off "whatever thing it is" (one of the clocks, or one of
-> the power domains) - and to do that, you flip a bit in a register, and then you
-> read another two registers to know the status of the internal state machine....
-
-Sure. This is 100% not syscon, though. You must not do it via syscon,
-because you will be flopping bits of other devices in this driver.
-What's more, the actual implementation - registers for voting - is
-irrelevant to this device here. This device here wants:
-power domain
-or
-clock
-
-Hm... don't we have bindings for this? Wait, we have!
-
-> 
-> ....and you do that atomically, this can't sleep, the system has to lock up
-> until HWV is done (I think I know what you're thinking, and yes, it's really
-> like this) otherwise you're surely racing.
-
-Sure, no problems here.
-
-> 
+> > BTW:
 > > 
-> > Really, something called as hardware voter is not that uncommon and it
-> > does fit existing bindings.
+> > git grep mediatek,hardware-voter
+> > 0 results
 > > 
+> > so I do not accept explanation that you use it in different drivers. Now
+> > is the first time this is being upstream, so now is the time when this
+> > is shaped.
 > 
-> Do you mean the interconnect/qcom/bcm-voter.c?
-
-This and many others - all rpm/rpmh/rsc are for that.
-
+> I was simply trying to explain how I'm using it in the current design and nothing
+> else; and I am happy to understand what other solution could there be for this and
+> if there's anything cleaner.
 > 
-> That one seems to aggregate votes in software to place a vote in a hardware voter
-> (the Bus Clock Manager) and I see it as being really convoluted.
+> You see what I do, and I'm *sure* that you definitely know that my goal is *not* to
+> just tick yet another box, but to make things right, - and with the best possible
+> shape and, especially, community agreement.
 
-I do not say that drivers are example to follow. Actually, I do not
-recommend even DT bindings!
+Ack, I understand. Your case here is really not different from all
+others. Interface is different, hardware is different, but the concept -
+you place votes via some intermediary - is completely the same which
+qcom is doing since years and maybe other vendors as well.
 
-> 
-> For MediaTek's HWV, you don't need to aggregate anything - actually, the HWV itself
-> is taking care of aggregating requests internally...
-> 
-> Also, checking sdx75 and x1e80100 DTs, I see a virtual clock controller described,
-> placing votes through the bcm-voter, and with clocks that looks like being kind
-> of disguised/faked as interconnects?
+And I expect more and more of this in case of Mediatek, so in the future
+you will be plcing votes not only for on/off but also for values.
+Everyone goes there, mobile, automotive... maybe IoT lags behind because
+performance there is not that important, but all others need top
+performance with top energy saving which they cannot do in Linux and
+they move it to firmware (SCMI, hw voter, dedicated blocks, whatever).
 
-Don't remember exactly, but I don't think it matters. What matters is
-you need to choose appropriate representation for your votes.
-> 
-> That's a bit unclear, and even if I'm wrong about those being disguised as icc,
-> and not virtual, purely looking at the usage of the clk_virt and bcm-voters, I
-> seriously don't think that any similar structure with interconnect would fit
-> MediaTek SoCs in any way...
-
-
-> 
-> > > 
-> > > I'm not sure what qcom does - your reply makes me think that they did it such that
-> > > the clocks part is in a MMIO and the power domains part is in a different MMIO,
-> > > without having clock/pd intertwined voting registers...
-> > 
-> > No, you just never have direct access to hardware. You place votes and
-> > votes go to the firmware. Now depending on person submitting it or
-> > writing internal docs, they call it differently, but eventually it is
-> > the same. You want to vote for some specific signal to be active or
-> > running at some performance level.
-> > 
-> 
-> Okay then there is one similarity, but it's different; MTK HWV is only arbitering
-> a on/off request; Nothing else.
-
-Does not matter, still the same concept.
-
-In 2026 or 2027 you will do other votes as well...
-
-> 
-> No RATE votes.
-> No performance levels.
-> Literally, that's it.
+You need to start designing this proper with that future in mind and
+syscon is a strong no-go. Whether this is clocks, power domains or
+interconnects - dunno yet, maybe both.
 
 Best regards,
 Krzysztof
