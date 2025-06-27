@@ -1,168 +1,134 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524F72EE5EC;
-	Fri, 27 Jun 2025 20:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54992279334
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 21:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751056974; cv=none; b=EqJJMpBe9p4q6IQGLKZmUtbUuj/H8jHJJN6NrbR9ms0eyVJKXhx2RBDLUDVtDJZTfCRMSYBlUtO44xxxufe/kBJJsHD/V+IE1uRVsbijug0Ws0T/cigrpALdBm/YyX8JdkXorwjm49iA7nZz6QlKIg5iqb67DmW7M1Ki6aprGJY=
+	t=1751059797; cv=none; b=ArIZsvHJpVYxRKHe6Dys/CQOJkXr6lvzl6gblM2qWs5sMuCKtGVe1hm+zchmVe0ssLx6S6qrNzA05ZdBpVjUGB3gFcZ1JBYq/gzNvOtOucc6x9pPd0ZFsiojFyPuP7jP706xI0BsFEtBEklimefnx1GJYYWxXAYKPHKebaJ13Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751056974; c=relaxed/simple;
-	bh=8QkcunE7avjR4ETyOBJIS9ShZo4Feau4QzXVbObg1+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j0vLy2lt76BXhaKrDJQ/4EocOwM00MhRIRC1gDXpasBfWJdmCBiOhs2BKqnARzjZviUt74YGgkB+sJXzl0RTEFmvSGkpZTe3y+LYU5iJErd8u7g51szG/mGma3omT4QDIt6/6znus3uNR1OzMFWKtIbv23IiUiNiy0vsrgqUXLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GF90QWAV; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1751059797; c=relaxed/simple;
+	bh=DDrlIsBowQIoYj42JBQiuKWXbnIzuVcfTZ6WW+6h26k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rlE8VT0K7SpqdkVELTpHaFwYU0xFTP6arS67NeIJCTG32ZdxJQ3uWAZ9Zu7ezmN1/VGUde+87NlD2jTA6bRpVD9I8cZp/dx6nrPRmVZCYoroH/KObBHbwKl6pbcEv5KCpHLDrD/6ZcamaTar50Jomyk6KznGY472ooSIwDHoy9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=koGqEnCi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GF90QWAV"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d3f72391so2755425e9.3;
-        Fri, 27 Jun 2025 13:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751056971; x=1751661771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFogUEFPDwoe5zvFZR9IXlLvXXTdFdqsNR9k44UIfj0=;
-        b=GF90QWAV51pa8Iw+otH4m3OzGDs63mSSnOI1zv7whIQlohRmidLtHXKbzabu0g+nPF
-         7mOgk0BW20leeT3C+jsGwjwH/OgY6nwo/7OVB8QzEL/7Rr/nnjL7khBIRBfeLutVBW1D
-         P+SZ5/Z4aDklQ0RTPshqyVTDJh16SPNeZPUGdXeh/3ktQcj2svRKMgZTZc8osXI15kRo
-         QoIU7HNkxpHH5HmpJr/vV7ZUNuJ9qh/bjSL0g4K2N3Gb7VWDg6zTOgvk0qxJxvfJhDBI
-         vkW82QE1M+Vb87hmdt5o6SzL9KepdQ0IkhBKpztn3QrV+yd9vsU1yL6SfGHCI6NnBrEV
-         /L3w==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="koGqEnCi"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBOQth014370
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 21:29:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	j+VclKGpJtOMeG2/CBYjO907O4spsZFF4G3PlFZVFvU=; b=koGqEnCim5hP7+EU
+	LHS0XQuPw/A3zDmAwwWpmZcjPaA1rivwkrl4wCpl4zGemNcPKZ0up794iytwe8sv
+	nMYE/6UBcZxT3HS1deXpSuawI/QwHWGCaqYypHhxEfzmxrQhiPWyyRAtWiZw2aF2
+	X2OLqLQSCKYxR1CYo3X+xmwrcjA8smYtQuYPIPNd+0wl+bQMAtAnhggqUarWrESH
+	pHSa7s5oOF1JKtI9WQ/E4B+Gftsq/J+AWMh39c5L2L6LEd+xyXyeSaksx1j1dxjZ
+	Yq7VmeTYHnylnhlhiMIgLp0LsBBWceQKvMKCIwzKr/REMwPNRkTusclbPXXcovwH
+	SrvWvQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47emcn1u4x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 21:29:55 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d0a9d20c2eso49056685a.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 14:29:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751056971; x=1751661771;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JFogUEFPDwoe5zvFZR9IXlLvXXTdFdqsNR9k44UIfj0=;
-        b=JrqQLbNknp47g+RfIfhTOKT7Yn3ceeCRxOgYSyCvSZBdkG3vANJHOYNUecqEvyigTf
-         JeyZ3d6AZC7UWFjOuzqcldMCSePdqELQDdyq8qLOWlNGJ6z/Yl7wl5DMP0nX3BScOkjV
-         j6fnP0rBhZ0/zf4Lb50lef3M5tzgFIxd/rPaUTuNaXulDfBOXX0UsH1HhzD0WO/qT+cI
-         ekbGLW/xj4XBJ0ZL5EBAt0HVfvy8XEv0D1YWsVsR9BxBAiv9Ohu5ietaTtLSY3epJRzL
-         32A9YSrPdqeCQOuppfibFdr1DN5TINEyytaq33OPrkehXNhiTke3SvdfxzSjNlEvLnZH
-         lBRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/PkG/W34xQhdmEaGJ/rPBh9mb+FZuUDae26RCbgd977tjSqi/gsJpA5yP5Dhh7GmR/559hblVAG74@vger.kernel.org, AJvYcCUWxa1a0OjS1Ai0zX488H2oiolMFMGZw2a/1ZXx5VBHCRoVQ2XIl09cPb6Molm0T+lDVuCErV6ueUYc50Rp@vger.kernel.org, AJvYcCUbJeX+MAFiSxScAwl+1WZsvEvKwXcDzAe3M4B0C58ALtTOzCSSQWQO8gEzhX/l8cK5HTH8anC1J6+f@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQgPGOPxx3ASUTD+ZxgLAXXtARkxfOvWXYe8tLM9zCQ/7TdAW/
-	BGciufrjRb7d5Wi3zMVNJm09c7JkGkjsZ4B/DWS2Eub9afItShs+vX+Z
-X-Gm-Gg: ASbGncsOk9hy1x8/8ffzVTu+KHTy9ag2ROSZS/JXMUkd6gGOEiMFw1qrWFC4J3JfdAW
-	YcSxze0xU2HE37HZfPyjtyIUMf1W/0rmbtnGap2+0yGPgqndLB9aL6xg395lFf9tUebN+Kh5YZo
-	YO9s8l5hY4GwCV8hi3FHhA45V9NDK018ALJtRfWjVD4J4sYjhPVYUH5bVg8c7BSgddmSbO/jl6m
-	OfyXXJk2XbvA8JfUgczSfxvPofY2b0m4r1AAvitEvn0Egt9b/odn+17+4f+hloggmKNy2Kyn6iZ
-	8hpkast/tOzijPniwUsh3ZECLySHG8vOeHj1LBK0KwPtkkYGdsy3SD/cVbX85h/bgEdkTMqgvhh
-	pSlWlYKgIAw==
-X-Google-Smtp-Source: AGHT+IHreqXziLECND4E146z9XCfLLQ7bEVfI+nB28X5sGu6INUIfUxfhFQlKoKmti/oMpVcdTkrXg==
-X-Received: by 2002:a05:6000:2082:b0:3a5:2875:f985 with SMTP id ffacd0b85a97d-3a90066afb5mr4907750f8f.59.1751056970518;
-        Fri, 27 Jun 2025 13:42:50 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:3b46:edb1:4d0:593b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fab7asm3609322f8f.24.2025.06.27.13.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 13:42:49 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 6/6] clk: renesas: r9a09g057: Add XSPI clock/reset
-Date: Fri, 27 Jun 2025 21:42:37 +0100
-Message-ID: <20250627204237.214635-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250627204237.214635-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250627204237.214635-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1751059794; x=1751664594;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j+VclKGpJtOMeG2/CBYjO907O4spsZFF4G3PlFZVFvU=;
+        b=UCwwSgPRaXEnraye0bHr9kTs82ZYY7c8HEZ6y2N6v8de2pP447aJCK9Ql7YufjSp+q
+         7cQ6WJhNEm0Hnvyr+Z/MTCmOTC6RedF+AHPYKn1VZau5N9R/FjGy0v4UeF46bYco8+oV
+         UKgylZEWeXMA6jqoZj0pHXlQ+ma51KzIcEioxfVslnvmBqeupXJOx3LEvNxFtuxRXxeU
+         pDhyxOdze5zSKwOqx1iM7SaeGLAGT2PDwGnWYUXCqs+C1bia6uCQm1r04USkE+Kw21Fl
+         sFT/gzvkMP9iOXixuYo+SmqF4mPXLFhImrIwQ3/U3JFmSV6pJgBdz41NpZ8CE0xBeEF1
+         FyIw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9WHr2Gqno4gz3+fV7SZd1Q1lXnTUruMzZq4hXTOI01S24IDcnw0v69z4EE6DOl5Q2EUf+5ENSbBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz3l8A0hJ9dzFOAklYIblrKZxy0DaTK0tncbw6izRzt3/s+co8
+	FcmdrGd3m6DvEXdT3dPY/J09M2qITQZw6ey1MXdqVnk2PnfTCBnllLJahxofw9ZFXqX2wBK/g6Q
+	ToHmPQrXnO9o2USlShZdqRxO3LV7pXnn2W+jjFcLOGI4tiraTH0fFsnbVsNkJJB8=
+X-Gm-Gg: ASbGnctOZxk5iHamWD+l+qE45Ic6ty8Rg0xr6nIRFv3jFzqO3UPWbQ2h3buTm5vC1uG
+	neUJKXbUod3tVvwDyy3fXERxs2i9nSvRIRkxIkDGafmS46R3eWb/vEllBR23BycZtjmY/vBv1kv
+	diOJrVhtIHHhqLA6g/bgBYFwfOSVvRoMdoEe2KyqFs/bnKypO+JQ70n2w6p4oz8dYhlwPDTpk8q
+	obQUWb67r+gry0AIBd63k0AbOnvC4hZ7MuIQES+rboQVsAfcDmFPif1V3SX9ediiFUAq6Z5jKGM
+	CxK3il5Luwi2/XHeqhwKWj00gNObr3zMhvsO2hwr+UaKw1z7J3uBRxekbjhMgY2BQ8Fhyt4fIaV
+	ai4c=
+X-Received: by 2002:a05:620a:26a8:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7d44c27a0e5mr34980285a.11.1751059793918;
+        Fri, 27 Jun 2025 14:29:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6O61YOi4A2FE/HAM5495f3Lx0kZsOuxdmkU5HT7ZQwhZfq27mgtK/+v+5AKGJA2+aDJAuWA==
+X-Received: by 2002:a05:620a:26a8:b0:7c5:9ab7:3012 with SMTP id af79cd13be357-7d44c27a0e5mr34978485a.11.1751059793400;
+        Fri, 27 Jun 2025 14:29:53 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a95esm195682966b.59.2025.06.27.14.29.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 14:29:52 -0700 (PDT)
+Message-ID: <6e4854e7-1bb6-436e-958b-382e26beee04@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 23:29:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] clk: qcom: tcsrcc-sm8650: Add support for SM7635 SoC
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250625-sm7635-clocks-misc-v1-0-45fea645d39b@fairphone.com>
+ <20250625-sm7635-clocks-misc-v1-4-45fea645d39b@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250625-sm7635-clocks-misc-v1-4-45fea645d39b@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: OIhOAaI6rtbt34ZrAMPVfkFaLv5YVnZt
+X-Proofpoint-ORIG-GUID: OIhOAaI6rtbt34ZrAMPVfkFaLv5YVnZt
+X-Authority-Analysis: v=2.4 cv=J+eq7BnS c=1 sm=1 tr=0 ts=685f0d53 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
+ a=vTaQQWYYi_PMaXEYf6cA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDE3NCBTYWx0ZWRfX+m5c7JhE+uW7
+ 4yObtxdAZJvMmJCo1Xi113g4gV0Uu2+9lOSdesq6oFCUckEwYgULiig2HkVN4ovAxW6JVxe2Xp0
+ H/D9txDZdwt6H7GCXP4STK8iD3psklMBnmAzwg/2PvRq+fBzowUobhw3ImWcHZQmvFf5Y0bDF4C
+ yfPR2GzKVUA4vGNIrmGHJQymoVPwMS1JuMn1zHrIUAEZJXgYmmpulddzmF4I6rrfEAF6uJS0r2e
+ PlKOrcHDUtwaVpX8J7seNUT26xvKHXfkqMUaBWS7XGMZwbXAzAecfuPPHwsNj1fKU5SzyxO6s9n
+ D/MKaKBtd/oS930VWMyy1+aMFhGfM/2KDdhtB5ElahxBff1r+u/6OYjVyq126ti6wqRHfyXeKMT
+ gj4C/Y2rsS7+IGhzfRALtLuRNxKhKZa0ni8Dtm+i+og4MZOKGIidfzFMrDZfaNCRPAZzTly3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxlogscore=836 adultscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270174
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 6/25/25 11:12 AM, Luca Weiss wrote:
+> The SM7635 has a very similar tcsrcc block, only TCSR_UFS_CLKREF_EN uses
+> different regs, and both TCSR_USB2_CLKREF_EN and TCSR_USB3_CLKREF_EN are
+> not present.
+> 
+> Modify these resources at probe if we're probing for sm7635.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-Add clock and reset entries for the XSPI interface on the R9A09G057 SoC.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-While at it, rename CLK_PLLCM33_DIV4_PLLCM33 to CLK_PLLCM33_GEAR to align
-with the terminology used in the hardware manual.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1-> v2:
-- No change.
----
- drivers/clk/renesas/r9a09g057-cpg.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 39065d63df61..687c25f76852 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -36,8 +36,8 @@ enum clk_ids {
- 	CLK_PLLCM33_DIV3,
- 	CLK_PLLCM33_DIV4,
- 	CLK_PLLCM33_DIV5,
--	CLK_PLLCM33_DIV4_PLLCM33,
- 	CLK_PLLCM33_DIV16,
-+	CLK_PLLCM33_GEAR,
- 	CLK_SMUX2_XSPI_CLK0,
- 	CLK_SMUX2_XSPI_CLK1,
- 	CLK_PLLCM33_XSPI,
-@@ -134,7 +134,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
- 	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
- 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
--	DEF_DDIV(".pllcm33_div4_pllcm33", CLK_PLLCM33_DIV4_PLLCM33,
-+	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR,
- 		 CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
-@@ -189,10 +189,12 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
- 	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G057_GBETH_1_CLK_PTP_REF_I,
- 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
-+	DEF_FIXED_MOD_STATUS("spi_clk_spi", R9A09G057_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2,
-+			     FIXED_MOD_CONF_XSPI),
- };
- 
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
--	DEF_MOD("dmac_0_aclk",			CLK_PLLCM33_DIV4_PLLCM33, 0, 0, 0, 0,
-+	DEF_MOD("dmac_0_aclk",			CLK_PLLCM33_GEAR, 0, 0, 0, 0,
- 						BUS_MSTOP(5, BIT(9))),
- 	DEF_MOD("dmac_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 1, 0, 1,
- 						BUS_MSTOP(3, BIT(2))),
-@@ -258,6 +260,12 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 						BUS_MSTOP(1, BIT(7))),
- 	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27,
- 						BUS_MSTOP(1, BIT(8))),
-+	DEF_MOD("spi_hclk",			CLK_PLLCM33_GEAR, 9, 15, 4, 31,
-+						BUS_MSTOP(4, BIT(5))),
-+	DEF_MOD("spi_aclk",			CLK_PLLCM33_GEAR, 10, 0, 5, 0,
-+						BUS_MSTOP(4, BIT(5))),
-+	DEF_MOD("spi_clk_spix2",		CLK_PLLCM33_XSPI, 10, 1, 5, 2,
-+						BUS_MSTOP(4, BIT(5))),
- 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
- 						BUS_MSTOP(8, BIT(2))),
- 	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
-@@ -380,6 +388,8 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(9, 14, 4, 15),		/* RIIC_6_MRST */
- 	DEF_RST(9, 15, 4, 16),		/* RIIC_7_MRST */
- 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
-+	DEF_RST(10, 3, 4, 20),		/* SPI_HRESETN */
-+	DEF_RST(10, 4, 4, 21),		/* SPI_ARESETN */
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
--- 
-2.49.0
-
+Konrad
