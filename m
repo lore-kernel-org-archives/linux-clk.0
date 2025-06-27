@@ -1,78 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5152EA14C;
-	Fri, 27 Jun 2025 15:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705819E990;
+	Fri, 27 Jun 2025 15:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039522; cv=none; b=LEw7Nl1HIzJZGatY7RH84Lx86NIdHR+BQFd18S2OJq5IxqiIl2XFYmEfHGHDJachz8frR5dS2JqLNvVPtp27gSQcY16fvWPp+71ZQNPdms5jOGKiXPrhIfcDjl+NVThwjlmRhEgY2NsFB4KCfmtaZlpBByKmE75wGgD3ZFJJV7M=
+	t=1751039899; cv=none; b=ICsqLr+jakEUA57DF8FIv5lwxGMMCVxWL+MqB1cDOF3m/Q5D2jWPWiOccPx8KDvPgfW019wUjwmvP1n8olAymmIDHE6YZuI6TbLJcPB9pLvaRCEGpCnefsuAwxzHNkNCgtnwAgQCfoNUTsxGFG9BsCGHF3kzyGYRxbGTm+Cg+qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039522; c=relaxed/simple;
-	bh=f0UYA/EuZoGSHsVhZD3Fus+HSK9WipcpF5RxkV+BP5o=;
+	s=arc-20240116; t=1751039899; c=relaxed/simple;
+	bh=u+XL7v8/9OOtA8g6d2DdeYD79b4YpzBpJvua/vnySUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGV7y1jQ45g4SXi1xJX7Ki495PudN3emL0VPxvAyvWaOzY5/KK5XiUr++9Ccp4AHluPh7dUAN9kA0ie1Q5HkWuzKi+sBhguyJQxwBK5DIkBlkyUL/ol5BI6D79XMNwvJbGOD4C2meXk3Zp1nM+FkGYN2IWi6WvehwGexpsRQTA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyPdnJ7Q; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4MEEpYWWWaPXLT8Vu1Sw/cn5CfZ+Biouvc18raV3PMyT4DJy0TR/U/3h9nIo5ZmdvCO9m7MpGJ1UdFFrw0DrRsMo0clo1On8ytLOnuQ/VWpedV4BeGghUSO6JwiYMBnw/tKAKGS2JP2EUR8GFAdPl5+6vW4dW6pDSQxDEssco8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aua8oyWG; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyPdnJ7Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B088C4CEED;
-	Fri, 27 Jun 2025 15:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751039521;
-	bh=f0UYA/EuZoGSHsVhZD3Fus+HSK9WipcpF5RxkV+BP5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pyPdnJ7Q7HuuIiKgrWaMDcrBwxGTZiscgxJc6vl+XrICm0G79l/w04xJOgIgSsiT4
-	 nyJKeqIT4LG/SdOrP9BThyVFe+sK/VvM3jidhmIf4FL5wNqqTU5vXGLNIqJcAXv1fB
-	 qKTpyLWg6gUYFK9zYNPKm3MeePbH4VzwGEN7jkKanOyl7pqQcVspMU/YR0KWDgEe+y
-	 Zv5XPVN4hnsL9/6Codf3WfenmJLS/Wop+OvwNF2usYFuIMsbN5lfU8nIT0Fa6ZEQ9G
-	 1eaaz5yVdyekzbuVGyJ58FdAsHP1VfbszTS+QL47CPNvx+4zmaedL/KBAtCkPkCxRv
-	 NsSgI1XvWhPIA==
-Date: Fri, 27 Jun 2025 10:52:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aua8oyWG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751039898; x=1782575898;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u+XL7v8/9OOtA8g6d2DdeYD79b4YpzBpJvua/vnySUU=;
+  b=aua8oyWGZ+MBtqFh7wthv4dL7LYTn4BaXspsqPK5BHCywxv7QBZg0LXj
+   Jt4hAP/yRQN33rHfR0L4fU6mn/GehuGTUcA7+ddvYrp8gv7LstLgqV1Af
+   z4HfqDh+P6XWBVSpqEa3e+obDPFQxRaPNExEF+OUS2+DpkVJQA1z36CFD
+   1Yw0ZnzhKv6CPgzDhJhWM0FPJ8PUSHdmnGDIui/d0w2M5cqzPQbhrMDtV
+   R9oRz5a5Ea9loZEqC8lJizxH46c6ku7CqFXA9gq3n27Jfu3NOftBuaLHB
+   mxvM7qie1GJ8+OCJiKLKJLJiKsmW4QpP36lAAz44/K5BCzr2dtEY91xQW
+   g==;
+X-CSE-ConnectionGUID: MhW9j5FXSUiMS3VQ3XIgMg==
+X-CSE-MsgGUID: tWTUKrZ7R5CMaA4bFqiVnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="57164080"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="57164080"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 08:58:16 -0700
+X-CSE-ConnectionGUID: KVJGX7g6S5KEfnZwEuHcqg==
+X-CSE-MsgGUID: yIZt5dr4Q5yFAGa7IG6/Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="176516514"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 08:58:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uVBSo-0000000AWqQ-09Od;
+	Fri, 27 Jun 2025 18:58:06 +0300
+Date: Fri, 27 Jun 2025 18:58:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rahul Pathak <rpathak@ventanamicro.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 05/28] bus: simple-pm-bus: Populate child nodes at
- probe
-Message-ID: <20250627155200.GB3234475-robh@kernel.org>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-6-herve.codina@bootlin.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/23] clk: Add clock driver for the RISC-V RPMI clock
+ service group
+Message-ID: <aF6_jVJYCXeKZfXo@smile.fi.intel.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-10-apatel@ventanamicro.com>
+ <aFkZJKnweqBi64b8@smile.fi.intel.com>
+ <CA+Oz1=a65HvfXHWjeSq4Ubq=5kzHp9pkLJVr77hvTYAGFHv0Mg@mail.gmail.com>
+ <aF1UWNzWhheLNTky@smile.fi.intel.com>
+ <CA+Oz1=bAsykB=qAk3r8FV8K8cnPEVT4Ow7L4SWBvrc_3DsyaWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,45 +89,72 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-6-herve.codina@bootlin.com>
+In-Reply-To: <CA+Oz1=bAsykB=qAk3r8FV8K8cnPEVT4Ow7L4SWBvrc_3DsyaWw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jun 13, 2025 at 03:47:45PM +0200, Herve Codina wrote:
-> The simple-pm-bus driver handles several simple busses. When it is used
-> with busses other than a compatible "simple-pm-bus", it doesn't populate
-> its child devices during its probe.
-> 
-> This confuses fw_devlink and results in wrong or missing devlinks.
-> 
-> Once a driver is bound to a device and the probe() has been called,
-> device_links_driver_bound() is called.
-> 
-> This function performs operation based on the following assumption:
->     If a child firmware node of the bound device is not added as a
->     device, it will never be added.
-> 
-> Among operations done on fw_devlinks of those "never be added" devices,
-> device_links_driver_bound() changes their supplier.
-> 
-> With devices attached to a simple-bus compatible device, this change
-> leads to wrong devlinks where supplier of devices points to the device
-> parent (i.e. simple-bus compatible device) instead of the device itself
-> (i.e. simple-bus child).
-> 
-> When the device attached to the simple-bus is removed, because devlinks
-> are not correct, its consumers are not removed first.
-> 
-> In order to have correct devlinks created, make the simple-pm-bus driver
-> compliant with the devlink assumption and create its child devices
-> during its probe.
+On Fri, Jun 27, 2025 at 08:36:41PM +0530, Rahul Pathak wrote:
 
-IIRC, skipping child nodes was because there were problems with 
-letting the driver handle 'simple-bus'. How does this avoid that now?
+...
 
-The root of_platform_populate() that created the simple-bus device that 
-gets us to the probe here will continue descending into child nodes. 
-Meanwhile, the probe here is also descending into those same child 
-nodes. Best case, that's just redundant. Worst case, won't you still 
-have the same problem if the first of_platform_populate() creates the 
-devices first?
+> > > > > +     if (ret || rx.status)
+> > > > > +             return 0;
+> > > >
+> > > > Why rx.status can't be checked before calling to a sending message?
+> > > > Sounds like the rpmi_mbox_init_send_with_response() links rx to msg somehow.
+> > > > If this is the case, use msg here, otherwise move the check to be in the
+> > > > correct place.
+> > >
+> > > Yes, the rpmi_mbox_init_send_with_response is a helper function which links
+> > > the rx to msg. It's a very simple function which only performs assignments.
+> > >
+> > > Using msg instead of rx directly will require additional typecasting
+> > > which will only clutter
+> > > I can add a comment if that helps wherever the rpmi_mbox_init_send_with_response
+> > > is used.
+> >
+> > This is besides harder-to-read code is kinda of layering violation.
+> > If you afraid of a casting, add a helper to check for the status error.
+> > Comment won't help much as making code better to begin with.
+> 
+> Why using rx is the issue in the first place when it's the same layer
+> which links the rx with msg using the helper function and then
+> uses it directly?  Infact using rx directly avoids unnecessary code
+> which is only increasing redundant code which ultimately results in
+> same thing. Even if I add a helper function that will require additional
+> pointer passing with NULL checking which all is currently avoided.
+> And, we are not just talking about rx.status but a lot of other fields.
 
-Rob
+Because it's simply bad code, look at the simplified model:
+
+	int foo, bar;
+	int ret;
+
+	func_1(..., &foo, &bar);
+	ret = func_2(&foo);
+	if (ret || bar)
+		...do something...
+
+When one reads this code the immediate reaction will be like mine.
+This is also (without deeper understanding) tempting to someone
+who even thinks that the code can be simplified (w/o knowing that it
+may not) to change it as
+
+	func_1(..., &foo, &bar);
+	if (bar)
+		...do something...
+
+	ret = func_2(&foo);
+	if (ret)
+		...do something...
+
+Using msg is the right thing to do. In that way there is no questions asked
+and everything is clear. Also why layering violation? Because the conditional
+requires to know the guts of rx in the code which doesn't use rx that way
+(or rather using it as semi-opaque object).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
