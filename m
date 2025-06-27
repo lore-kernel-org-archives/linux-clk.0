@@ -1,142 +1,131 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA72DE21D;
-	Fri, 27 Jun 2025 12:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35EA2BEFE5;
+	Fri, 27 Jun 2025 12:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751026268; cv=none; b=pOdfIqCjbxCrRPXs8Q+OwNAIkyPwJv+jhZcTPu3o0ydxcz+Q1KiejRIEyk5wPwkAQDCn7oECVwO8CD8y6H8UUf3ho5nsYvXXA0YXNj69VyTCxRGBeIkvwUzpEZBnF085xwAXKQW7w/fV0oSM6S28CqF2CkQVUgVHgBdyqmlg5pM=
+	t=1751026375; cv=none; b=LOj454kiVEOpNa1HN4GQcosU8vpqeOEOhhyitMYUt6jas0VXL4RX12ywoA0IkoZZWw1ZzDIlPoTYqvggs8WHD4Hn2XtJr7kX3MNTZJdnn7DjEr2QFUP77ZPBxVW7rwNnLmGnrRV09hosAV37TuBxsSBhCQwiUSuhD1rBo3ULvls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751026268; c=relaxed/simple;
-	bh=oHwh9VFNs4yOYKQxh4Vg0eNBHFXcnSt+CiAnYWuEvd4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=B84V0JNkDheys15Nl7eIOLTBX0YzMyr7CYS6P6SC9OHvPZLUv/+MAakx4jyD40BraRAC3pRiN6gipvJ70Qk1LOOoEFra2voBzcXEEb/tyYk5uJQGlSSKoCvph9Vorw8A6j2+WPafMjQyiVf01Q9fCAGH2HN5Nl8nlzwsqDbz2Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lEu2FVGl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1751026375; c=relaxed/simple;
+	bh=C6oegAaJ6Q9XOuL86FjJu5fzYxEuJUZ71dKO2pzkkNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccng3ONfYUGqizahC/sQ5w3j5bzM+S4GkwoM4IYI1JdFkACaZFR1IqAz5ZOiZEOcxx+a2QtbjCbuyRy6Zy+UYj276UvUOSYPeF/tgIlZG29DuKu/jpouaOhDTCaMflfLpVPvYTMDDChqI7TdlWASRHbQEQs1GXiRzrPWC9y5T7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sftZOycl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lEu2FVGl"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R4DEfp007832;
-	Fri, 27 Jun 2025 12:10:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WZLmkylB7KOiH+S7TmQ73Uz0hsqumaOTQtRl5xns8ZU=; b=lEu2FVGlY6q6XtCz
-	UK0KXwwt9nS5DHuJrZB0l+aDYKooTIoCkjE+vpomjju9pB4WIb5HoCGVvugnVFKT
-	0NVgCUiTHzgoxfOP3PmPf8ndyth6g5wyBssuLHQ5KvdOB3osZ5116Vvztz8IBWoX
-	m1od8xAJtdyVwit2/yxCnx3y5rC5r2qOApXgJr9nSAiOgt7/yDrthAyg9xo7hMWU
-	C5WtFJGufI5AoP0VSVUYaXVEosjcIWJopp1tXLPBv+hTkNP96nbY/fwUWJZ9sAXr
-	5kYepYVDoo9U2BJg5fQybmeNoujFjynkbRyIakcni6eOQohmqi/MV3exyiknfr0N
-	/c5ZRg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqw4w6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 12:10:57 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RCAuYH028832
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 12:10:56 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 27 Jun 2025 05:10:51 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Fri, 27 Jun 2025 20:09:24 +0800
-Subject: [PATCH v2 8/8] arm64: defconfig: Build NSS clock controller driver
- for IPQ5424
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sftZOycl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6153C4CEE3;
+	Fri, 27 Jun 2025 12:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751026374;
+	bh=C6oegAaJ6Q9XOuL86FjJu5fzYxEuJUZ71dKO2pzkkNI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sftZOyclg0UnjLvH59IBt3TWlpu4GVOW4KuMn8IEDuNrH2vgoHXZSa2IWzQCGGp+F
+	 0iUvAhRQ8QbFdRyHnK3kbDHevMUO6/pDQ7eHfiAtXrWH9DIYuA/NwwCHmddErxrQvd
+	 EhxQxR03CgCIJuprGt35iCoWpUVCp+i+9GYzHYmqCMamk57ZxzoAcZV10yeMpZGRgH
+	 WbHRJ/tm6DnZBbQf0qPzqtq98A+E+4qpYoFnp9m+E+HUrLW2WRyDh3QCP2VZJ/mOph
+	 ss/bWH7nlFaFJ5IAA3BwX3vWRvHMEvx3OjT+YMWHWPmbhgU0blePaRiruCixQxauZ7
+	 sDQ1YZKaxcHNA==
+Date: Fri, 27 Jun 2025 14:12:46 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/9] rust: pwm: Add core 'Device' and 'Chip' object
+ wrappers
+Message-ID: <aF6Kvrk3UTC1Jj5Q@pollux>
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180859eucas1p10ebb40f33046d52618ba738ebbbaa664@eucas1p1.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-2-0ca23747c23e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250627-qcom_ipq5424_nsscc-v2-8-8d392f65102a@quicinc.com>
-References: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
-In-Reply-To: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751026208; l=769;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=oHwh9VFNs4yOYKQxh4Vg0eNBHFXcnSt+CiAnYWuEvd4=;
- b=aYXJUL52NGqwzNdg/HQiNLjEnDH5q/tTQ8Pucd1V0ZYjWeOWuB+JVGr5rHAtsDQ1JdPjMRx3o
- 7ySuNXYyr3JCgyaWRu4aqT+or43nLPcb1gHY4egfTs3ExMu6VNjLgg/
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ak2jR7HqSZw3Q_mAqiC2zeZrqTR20VJl
-X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685e8a52 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=_akgYgN2Q3wxHyBukJEA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: ak2jR7HqSZw3Q_mAqiC2zeZrqTR20VJl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEwMSBTYWx0ZWRfX3dyjV1XduVeZ
- /BDb8RWs7Oov9EuSXjqTCSUa8IC4GKcjIDAHh2WYLHm4lvelm1MikfalY/6C0uZXCWOnIVfdzO7
- T4kT3Rii2XUAJdILw8YAitAW09fSWd2YSs4sDq2p3zh6YQGIT44hMmfLBB3umy17/okE734kzqd
- X2ZSdM+cWu8xbsLS4L/w8Xc3tKXhFspraF6a58XsAFI8QepTQ9cGmEUmQb+5A/bv74WeFvgKekH
- 3ERoaAh2Mo8LW5hgTnMiWfmzyeWRUvuWGS+tOrhgg//rXtGBHmZ8Yj1cmNBl1EafU9IfIV1eOeW
- Ky/0kJfFCynEu4S0xZDlZFyrvAyv/q3EMDhpRaJ+mo33E+QcsxRbxq8o57hpf8ozzj0KBOK6gQH
- dRgJ8QxbBVZHiVmrJK3+I7QJB8bL7/sqm7kRh/yheI7oHv0MF9y+ZK0BJCUk1m990l/EmhaA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 mlxlogscore=799 phishscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506270101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-2-0ca23747c23e@samsung.com>
 
-NSS clock controller is needed for supplying clocks and resets to the
-networking blocks for the Ethernet functions on the IPQ5424 platforms.
+On Mon, Jun 23, 2025 at 08:08:50PM +0200, Michal Wilczynski wrote:
+> +    /// Gets the *typed* driver-specific data associated with this chip's embedded device.
+> +    pub fn drvdata<T: 'static>(&self) -> &T {
+> +        // SAFETY: `self.as_raw()` gives a valid pwm_chip pointer.
+> +        // `bindings::pwmchip_get_drvdata` is the C function to retrieve driver data.
+> +        let ptr = unsafe { bindings::pwmchip_get_drvdata(self.as_raw()) };
+> +
+> +        // SAFETY: The only way to create a chip is through Chip::new, which initializes
+> +        // this pointer.
+> +        unsafe { &*ptr.cast::<T>() }
+> +    }
+> +
+> +    /// Sets the *typed* driver-specific data associated with this chip's embedded device.
+> +    pub fn set_drvdata<T: 'static + ForeignOwnable>(&self, data: T) {
+> +        // SAFETY: `self.as_raw()` gives a valid pwm_chip pointer.
+> +        // `bindings::pwmchip_set_drvdata` is the C function to set driver data.
+> +        // `data.into_foreign()` provides a valid `*mut c_void`.
+> +        unsafe { bindings::pwmchip_set_drvdata(self.as_raw(), data.into_foreign().cast()) }
+> +    }
 
-All boards based on the IPQ5424 SoC will require this driver to be enabled.
+I think this is unsound, e.g. what happens if someone calls set_drvdata() twice?
+Then you leak the ForeignOwnable from the first call.
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Anyways, this does not need to be public, you should just call
+bindings::pwmchip_set_drvdata() once in Self::new().
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e071f8f45607..7454221fd21a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1365,6 +1365,7 @@ CONFIG_IPQ_GCC_5424=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_5424=m
- CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
+Please also see [1], where I introduce generic accessors for drvdata for Device.
 
--- 
-2.34.1
+[1] https://lore.kernel.org/lkml/20250621195118.124245-3-dakr@kernel.org/
 
+> +    /// Allocates and wraps a PWM chip using `bindings::pwmchip_alloc`.
+> +    ///
+> +    /// Returns an [`ARef<Chip>`] managing the chip's lifetime via refcounting
+> +    /// on its embedded `struct device`.
+> +    pub fn new<T: 'static + ForeignOwnable>(
+> +        parent_dev: &device::Device,
+> +        npwm: u32,
+> +        sizeof_priv: usize,
+> +	drvdata: T,
+> +    ) -> Result<ARef<Self>> {
+> +        // SAFETY: `parent_device_for_dev_field.as_raw()` is valid.
+> +        // `bindings::pwmchip_alloc` returns a valid `*mut bindings::pwm_chip` (refcount 1)
+> +        // or an ERR_PTR.
+> +        let c_chip_ptr_raw =
+> +            unsafe { bindings::pwmchip_alloc(parent_dev.as_raw(), npwm, sizeof_priv) };
+> +
+> +        let c_chip_ptr: *mut bindings::pwm_chip = error::from_err_ptr(c_chip_ptr_raw)?;
+> +
+> +        // Cast the `*mut bindings::pwm_chip` to `*mut Chip`. This is valid because
+> +        // `Chip` is `repr(transparent)` over `Opaque<bindings::pwm_chip>`, and
+> +        // `Opaque<T>` is `repr(transparent)` over `T`.
+> +        let chip_ptr_as_self = c_chip_ptr.cast::<Self>();
+> +
+> +	// SAFETY: The pointer is valid, so we can create a temporary ref to set data.
+> +        let chip_ref = unsafe { &*chip_ptr_as_self };
+> +        chip_ref.set_drvdata(drvdata);
+> +
+> +        // SAFETY: `chip_ptr_as_self` points to a valid `Chip` (layout-compatible with
+> +        // `bindings::pwm_chip`) whose embedded device has refcount 1.
+> +        // `ARef::from_raw` takes this pointer and manages it via `AlwaysRefCounted`.
+> +        Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(chip_ptr_as_self)) })
+> +    }
+> +}
