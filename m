@@ -1,176 +1,157 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F422980BF
-	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 15:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509AE2E92DB
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 15:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036841; cv=none; b=WdzIHgUecrdhO/K0K9utOnNmufNSyDTV0C/jRZ04NYzaew1j57FoD2YugqAgyc4vdiMVtaVOXGKNBYmIU68HQzhkpPjkRoNFksZjmdLI/edSSjfYoQX/wK5SWxpMqyDTaWLoGJYn7tA4Mroy8dcJjuE4myn9EPbpSiK1KGxEXp8=
+	t=1751036988; cv=none; b=otAcApYL7CqLeP8vgoHymB//JOtqqhweVvHjVbK22Hqgt3zRYrJL/y99wY60IF79lvRET5JUmMLDyaW2BOm+OPyVX3vnZBRVFptO6RXf+TsF1UthoXv9weM2ZJ+2nXwqAuhhDXSyJZNti6DD7VNvPjivBWoWociiAe3eZLyjniY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036841; c=relaxed/simple;
-	bh=K1W/ACUkhEzsh3VhZeua9bbwljhzBiDcmta6M6ukqF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=suZEWIiLelUIrJqByLCAQlo7dCGdE6Xsh4uPSiePe8UJ0GtS86Lc1m9S0CE31FNSJHYWcVdhguCD154YEGB8nTa2o1on5EAlEK9lCQeDpGLCFNx0Y4AMfnPDYg7oMM0R8E+lO3a7oHsrSDFi0cjzYTOpZcIjMaDDCfxGD/ErLvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D25FZLss; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1751036988; c=relaxed/simple;
+	bh=Rs39AICjklGcyc7xDCTetXh1jXW242vqtldO29LpJBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O+0k9ttS+JH8AzfP4kdlmHjG8g9bZ/MceZU5fkaCUpH3F+FU7jmysGjT0U1UfD4HoB4eMbR6X1GAj/dp6EUxm+UjGVk2Ug1CmRm5YobpxCQpIo8Kl2e5aybJW3PRBGvVZgxXGu0QV0n5na98BwfakfYCB/D0lANWh9lDQc2zKpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OnDg/9hd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D25FZLss"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-879d2e419b9so1939670a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 08:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751036839; x=1751641639; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTVCLY7nH8LB+Zm3xLfrn9nxZr6jXIw9YXpYJef7Kgs=;
-        b=D25FZLsstZtLsO5j+wAXsUDJnc7QJjU1sSGmjqN94ktzT3SFC4WYiJE7BbwEvnAAPG
-         q2q4YlC6sC0HhmzfiJo+aICTur6m9XyRK/P/xbhCYJmVXqJbzCLYXZ9HNXFvennNOs+J
-         0Zu+F8ZBFwThPrbcK8xpNVb1UYvI8lbFEyVjp9+s5lszsR4cQTHYV3isOpQMkYqfa8lC
-         8pic48+BHO9EEHvi6ArqBtW5i/emso6Zp6VnmTKIJUTC00ITbygVdj7sNjAzo2pA+dCY
-         S8nfOC3Nu+iNYTwhgf3/4unN1yFpd9wmMIZnTHHUzyYEinDKjW2prZ/esAX5QKzjtxCg
-         iApw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OnDg/9hd"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBVZdg007340
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 15:09:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8MYuuA2G+3W/uvr0CyQxqIxAaENDczI3l8DDQQ0A/Hc=; b=OnDg/9hdtmSvSmLL
+	ynNfsbbnIiwSr9BjDUizsy7NdocbsgLRPVZ1tZY6zI7W/Znhw5Q4VQmtZrZNnYkN
+	DrXQjKxWT0Vkmprkm49OW60kG8OGUUGZDnbQQm0RKrQDzN0YpkuG1As1fmIE0j9X
+	ppMNRr0jnxXFUULrFbUiGAwN1dYnVf9B+5BvNXfNKdjpKCbrqaqsp7uCiALDTNh8
+	48OotKF8Ohg6Tf/NX5ME2xK425160xlk4oyt9ZZUpMsyhIr5GO4VKadfXtgdFlD5
+	KQYz61rXfD7H/NAyGfYIBX+JulUwZApu4X5e5u6qr4TV368xP5cmi6MgLbKcPFoR
+	t5LcEQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47evc60e5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 15:09:46 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d3ea727700so28884885a.3
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 08:09:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751036839; x=1751641639;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kTVCLY7nH8LB+Zm3xLfrn9nxZr6jXIw9YXpYJef7Kgs=;
-        b=Tx3A5fzZtx1pQaKf7WeyLQu0OL0ZlXH7BU4OA7ntcIgqXCrRIjBUa7sjw+dDZyeg0+
-         ob4xG2OJi4kZSusGyo13lrJzrUUBNwpUp2fJHPwcauEuUltykhxrjLu1LrA+WECOXPBY
-         cJiH26q5GCiQ4r6U8vEKuU8/fRA6/k4Ef0HDsOJ+y7VEmIeA7mRrjC+fByD4HRAyDBy1
-         XPkt97ZYETK8R362BShp8gU1WgD/+sDiiE9MYVzp5KIrJPkdGftVEjkzyYp135P05NSq
-         XZysx0Op056slutybl71iPVxXEQX4LqPt8Wk1Hdn1qDE/P2n2zFy9kk7DgyKnf+N7BRl
-         RtaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9agRZMIoXrNuEXBDrtwc8bMrhTOHTa6bpwiUZwZ4J3HUOVThQmWd4GRhZMuIDVCvw2T3FWeo0BVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzehlK2MxrHc9YfJbt6MRbMspCgPht6FhQC2LLOtxBpwR89eKHo
-	CAVaXATmjvc9E1LzNizR/QyOEQGqVHtQzFY0OUqrIGuD6AUhaJa4c6rY2BG98BGHY4Eb9ALyw3n
-	SRD+SqWOa9gIUqO1brQ0V+yswFM02H1S4T9NeIRDQBQ==
-X-Gm-Gg: ASbGnctEHEycycK+YW9xYyqBnrgDQPH8DEZngG54lt3SoeVasJO0zU6cNRwh2KYoNgR
-	FvzAIEJsUlklrswo9kjQ9+Xz+bOI8sRfej+uOBQrHUTgvlvWfuUFpz3Hjr4ma2bqv+rR1QpD20K
-	qrQfKMLHgvGy2yqgQt6ivwxXwa7WT/9EsiWa80FSfJDxe/zdthRTZVXY3oL5hZfq7o4YcD+6gSP
-	arl
-X-Google-Smtp-Source: AGHT+IF4AdiLDVJzWcIgdL/8Bs2UVOqvh/d51X69lsgIeuxgoVvKvtiPfY/zv1dvVDdkVgnc/ZS5VJNJlB5QgtEcAew=
-X-Received: by 2002:a17:90b:528a:b0:311:d3a5:572a with SMTP id
- 98e67ed59e1d1-318c9225e52mr5337592a91.8.1751036839222; Fri, 27 Jun 2025
- 08:07:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751036985; x=1751641785;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8MYuuA2G+3W/uvr0CyQxqIxAaENDczI3l8DDQQ0A/Hc=;
+        b=RYY+a+0l54pnDSZomBQF+l5KyOLDINU67c/6K53KNAcIhstZ7kpE27B/TPZvwrSQa6
+         6JMz5x0tdpK/pcm36Qcdoe2VVaHTWr8Zu84vlOWOJ4BaZRK4aLRXVUAzGJyiw7VPvZyX
+         Ep3zmBFgn+Lg8gldwxlic+KLaolcapMWb1OkbnzRPGCkMF9Swy50vL5lguFDaa+KbjjA
+         g947KDc49icgGFKsukNsBc8GundbMqGCFYuwODAFieI+CbvlcXisOHQHI8HOVztI3Fcm
+         Vxy/Ph3uvpzT/YtyICtx4PxLXMGlCm8CojFyvdfvJkrAxE7j1GvR+Xt4QWFmYdQHq64J
+         RZKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzoVcHQRhb8aFpYkdYuo7VJJVkX7J3rd0JYYt0ByJynUviopqlzyYmbOHnV0gGw1m8hFaLgsTauZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcMCONshRfOVylYDsyTkrwBatuRuGGg8P9jx1toHL0RLDY7Obj
+	nwa8rre91s9xdnkFKv81cZrQZHfvhhGmragpc4R0UVzLNWKZG7T/w9DfhRkgpLPmOohQqa2wYew
+	QyRaz3XLmxqZjQmBXdsIFk1dL8Q6hzYmAgfjFH/xJv921zEFpo33Lv+S3jZflxLQ=
+X-Gm-Gg: ASbGnctlUOW0xw69sw6Hny82/XeL3aYVIFD2dUlCkefGUwy11yTyVFWxwHW1dWTe3gO
+	ZUGHoPNRldYXu7Pj7Lp4ifvEXD0eX39i2d/Kuv+1Z1hedczKM75DirMV4lhxxSkhq9s3jv8UT8u
+	U7wDSuc5A5pKoWknvRjQ+sG9dgpydfZ+62+HhQHVjIJjC5ko4B6GJZVp6HNTkxAdx0m4bpacfv4
+	O8l406JOhAJpch9MI68SYqoKBLaWXi+1UF8kAsDmn8Qf6cGwffDE5fT1e3sy8cCYOKw+gJyHobb
+	CW1/tIInejyrcxUtVyDhj+DHRrgckrzp7ITFDi1o3ehCpYOhs/6mEIy2UR2gekgfzM9Uped3Fah
+	exHk=
+X-Received: by 2002:a05:620a:6011:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d44393af52mr210730985a.8.1751036984754;
+        Fri, 27 Jun 2025 08:09:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFt0El1GcFRYFDLI+q1hURApBGF+0X3eNxXSn7/tVJPwdQii+67Yzh11WAEpAraqUYgdU6DMQ==
+X-Received: by 2002:a05:620a:6011:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d44393af52mr210728585a.8.1751036984230;
+        Fri, 27 Jun 2025 08:09:44 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8292076csm1554764a12.32.2025.06.27.08.09.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 08:09:43 -0700 (PDT)
+Message-ID: <c37349c0-8ec0-4654-bc82-15190509ddeb@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 17:09:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <20250618121358.503781-10-apatel@ventanamicro.com> <aFkZJKnweqBi64b8@smile.fi.intel.com>
- <CA+Oz1=a65HvfXHWjeSq4Ubq=5kzHp9pkLJVr77hvTYAGFHv0Mg@mail.gmail.com> <aF1UWNzWhheLNTky@smile.fi.intel.com>
-In-Reply-To: <aF1UWNzWhheLNTky@smile.fi.intel.com>
-From: Rahul Pathak <rpathak@ventanamicro.com>
-Date: Fri, 27 Jun 2025 20:36:41 +0530
-X-Gm-Features: Ac12FXyg_1voP3_rSKmrZJ_A-E3gflVigZ0fA-ce5u-xgIj9wegRrIsa-1iLCcE
-Message-ID: <CA+Oz1=bAsykB=qAk3r8FV8K8cnPEVT4Ow7L4SWBvrc_3DsyaWw@mail.gmail.com>
-Subject: Re: [PATCH v6 09/23] clk: Add clock driver for the RISC-V RPMI clock
- service group
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Anup Patel <apatel@ventanamicro.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, 
-	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+To: Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250612-qcs615-mm-v9-clock-controllers-v9-0-b34dc78d6e1b@quicinc.com>
+ <20250612-qcs615-mm-v9-clock-controllers-v9-1-b34dc78d6e1b@quicinc.com>
+ <f0483597-45b9-49f8-b316-a9cde7b98d81@oss.qualcomm.com>
+ <9a9d84e3-49de-4fbd-9c0d-180e3e498125@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <9a9d84e3-49de-4fbd-9c0d-180e3e498125@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: WjNZdLCULxnvQK47gqdhk8BQvD7t9ujf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEyMiBTYWx0ZWRfXxxT3yfybtVmW
+ hfvaC990wTxnf1Khq7TyQGkVQF96QW3weKhjJcK6sytEEwMxJVfcbxsh5WfXRKjiqwCWWcXZ0Y+
+ D7soUZacpAFynno5AhUeiLnTyoS873jX4anzxPT+KE6sA/JYddxiWAIfI8XUNf6SiP6vMuUbqwv
+ Pxn8p+Pc1Htt1F61IoshCWd6XzYTC+RVbYVFbO68FqQj568DXnKLTQao1CybFXTiOBoIe6rDuZr
+ GZzYDB06DC8mRzlGqwA7Seke3rDshG5fjTdm68rns7RJNdxFn1nY5jGLyVidRLc/Ucz76druPd2
+ 3qpqWFaKPKVTPw4aAYs7wtB2JFp6tJMDzjd2h5Kh6tVKTgCQOZf+37cHr+SjgLyaopnbh/P8cpG
+ n6dqrWBj7IWjHidcANlW1+FWG/aYV53uBWiMLlWZjZtfrIKGx2HU5A49hPP5H6sf173EuoM0
+X-Authority-Analysis: v=2.4 cv=caHSrmDM c=1 sm=1 tr=0 ts=685eb43a cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=Wx9hSxQhFZ4lEN4NqugA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: WjNZdLCULxnvQK47gqdhk8BQvD7t9ujf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270122
 
-> > > > +union rpmi_clk_rates {
-> > > > +     u64 discrete[RPMI_CLK_DISCRETE_MAX_NUM_RATES];
-> > > > +     struct {
-> > > > +             u64 min;
-> > > > +             u64 max;
-> > > > +             u64 step;
-> > > > +     } linear;
-> > >
-> > > Have you looked at the linear_range.h? Why can it not be (re-)used here?
-> >
-> > I did the first time only when you commented. And i dont see any
-> > benefit in that.
-> > linear_range has slightly different way to access any value using `sel`.
-> > Here this union represents how RPMI protocol represents the rates and
-> > reusing linear_range will only introduce conversion to and fro.
->
-> Summarize this in the comment on top of the struct definition so one will not
-> attempt to convert the driver in the future.
->
+On 6/25/25 12:31 PM, Taniya Das wrote:
+> 
+> 
+> On 6/15/2025 12:20 AM, Konrad Dybcio wrote:
+>> On 6/12/25 11:55 AM, Taniya Das wrote:
+>>> The alpha PLLs which slew to a new frequency at runtime would require
+>>> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+>>> which can support the slewing of the PLL to a new frequency.
+>>>
+>>> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> ---
 
-Sure, I will update.
+[...]
 
-> >
-> > >
-> > > > +     if (ret || rx.status)
-> > > > +             return 0;
-> > >
-> > > Why rx.status can't be checked before calling to a sending message?
-> > > Sounds like the rpmi_mbox_init_send_with_response() links rx to msg somehow.
-> > > If this is the case, use msg here, otherwise move the check to be in the
-> > > correct place.
-> >
-> > Yes, the rpmi_mbox_init_send_with_response is a helper function which links
-> > the rx to msg. It's a very simple function which only performs assignments.
-> >
-> > Using msg instead of rx directly will require additional typecasting
-> > which will only clutter
-> > I can add a comment if that helps wherever the rpmi_mbox_init_send_with_response
-> > is used.
->
-> This is besides harder-to-read code is kinda of layering violation.
-> If you afraid of a casting, add a helper to check for the status error.
-> Comment won't help much as making code better to begin with.
+>>> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>>> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
+>>> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
+>>> +
+>>> +	/* Ensure that the write above goes before slewing the PLL */
+>>> +	mb();
+>>
+>> Here however, the write may not arrive at the clock controller before you
+>> proceed to slew_update()
+>>
+> 
+> Yes, it is required here and will keep it.
 
-Why using rx is the issue in the first place when it's the same layer
-which links the rx with msg using the helper function and then
-uses it directly?  Infact using rx directly avoids unnecessary code
-which is only increasing redundant code which ultimately results in
-same thing. Even if I add a helper function that will require additional
-pointer passing with NULL checking which all is currently avoided.
-And, we are not just talking about rx.status but a lot of other fields.
+You should change it to a readback instead
 
->
-> > > > +     struct rpmi_clk_context *context = rpmi_clk->context;
-> > > > +     struct rpmi_clk_rate_discrete *rate_discrete;
-> > > > +     struct rpmi_clk_rate_linear *rate_linear;
->
-> > > > +     struct rpmi_get_supp_rates_rx *rx __free(kfree) = NULL;
->
-> This should be assigned where it's used. NULL assignment is not encouraged.
-
-Sure, I will update.
-
->
-> > > > +     struct rpmi_get_supp_rates_tx tx;
-> > > > +     struct rpmi_mbox_message msg;
-> > >
-> > > > +     size_t clk_rate_idx = 0;
-> > >
-> > > This kind of assignments is hard to maintain and it's mistake prone in case
-> > > some additional code is injected in the future that might reuse it.
-> > >
-> > I dont understand what is the problem with this assignment. If any
-> > code added in the future reuse it then it has to make sure that
-> > clk_rate_idx has the correct initial value before any further references.
->
-> Yes, it will add an additional churn and require more brain activity to
-> maintain such a code. It's a general recommendation to assign when it's
-> actually needed (there are, of course, exceptions for some small functions,
-> but this one is not).
-
-Sure, I will update.
-
-
-
--- 
-
-Thanks
-Rahul Pathak
+Konrad
