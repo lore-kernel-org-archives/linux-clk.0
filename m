@@ -1,162 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7942676D9;
-	Fri, 27 Jun 2025 12:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059372E2652;
+	Fri, 27 Jun 2025 14:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751028041; cv=none; b=SXShUaI+6NrAOt7jK2DBXOo4Sze7vvk8e7WJFbyDSd32f619JvQOSsnc/kc7Qq7KQg+1gb2QI0Ns09dWrrOHNq6GUAZM6OU7VhLiRsj6gBiCnD0FgV7PejrsLnQnHD1D5MTHWRBiIKHna4wPEOzkKe23fva5gISI6WQJjF1sGoU=
+	t=1751033928; cv=none; b=GefjOijEj2Ek8NvH9Vpn2M+N+li3JpaCu0uDaGiQ/XXEOI71ZtithJDEUxkorb5mkUmCxPoRUhS2nTNxUgfE14QdFQfj+EO01QP+5/fKFSb/L/xUNHu9lteiPaOShq+11QTMTA0q6cnCql+zPeTE/pGO5a48jqMF5EpyDBuTHEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751028041; c=relaxed/simple;
-	bh=Q3jNiVM+YcgIYTzNm3pT/8+2MA0+y7yNnCCai3D7Scw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WDl4QKfyXnc/LL8B9E12Shsxu9ZJeg2k2rQZWUL7VmPnngW1y7yPNGKnYZDUn/zHEd8O3ImScv++BwDbCxvePSSU7Myq/eLnYTrTEpuLYmODU9kbINMMf7h4krqdit/IXaN7p4iCgwnkccYd04gLzNSPoYsrzsZxMxQNfi0W/rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C15C4CEE3;
-	Fri, 27 Jun 2025 12:40:39 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.17
-Date: Fri, 27 Jun 2025 14:40:34 +0200
-Message-ID: <cover.1751027127.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751033928; c=relaxed/simple;
+	bh=TaiQW3c+noRyzXQvsLousUbpwR3hV32c+YniAy5VZUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFNbUlpVuEtVIuomElPS/dw9NID2yPJPxjq14B6Nr8hJRMbxl/RBDabziUP2hc8oZrCdB+BSaP2l5e0owXMHlQhwDkj4GrR2xF3/Ty9Upf/aS2d8pgtLA3PhF0PP5bEdItn2T5YsxaU7MEqz5+rAsL+92jBgLIt49yYMlDxOj24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMFvBsxh; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMFvBsxh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA384C4CEE3;
+	Fri, 27 Jun 2025 14:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751033927;
+	bh=TaiQW3c+noRyzXQvsLousUbpwR3hV32c+YniAy5VZUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JMFvBsxh25QJ2POJpnOoSHcIiORn+haen7v9wCSZAqbRWEWR8rp168/xP5JajxRet
+	 ABSMKTjuxgMOqYpqxHoeQAIY1ZO/1qnNPS1mZwEAmC6ZGJ+7oPy6aIr9chIwI3mMzx
+	 1LwQNtcBxXDKjAqya0P7p7/blBNf1PY42VO6WrZJIuY+dkKjUMVR2n25EtXJNAYBR9
+	 AXfHsrTv4FYdFOr/WwX1bKOOoWsBgt46qpWbERDFD3NLDjmQReTG1ZBzJlC2KUu2aT
+	 lgwUVSvQu451wB1EMcCCl1itmRUz/iFxcC0/eMTNQtR8zSTF1A1AGP4bgUwFaT/d6Y
+	 QSo2Oo2lIP7sA==
+Date: Fri, 27 Jun 2025 09:18:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 02/28] driver core: Rename get_dev_from_fwnode()
+ wrapper to get_device_from_fwnode()
+Message-ID: <20250627141846.GA3234475-robh@kernel.org>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613134817.681832-3-herve.codina@bootlin.com>
 
-	Hi Mike, Stephen,
+On Fri, Jun 13, 2025 at 03:47:42PM +0200, Herve Codina wrote:
+> get_dev_from_fwnode() calls get_device() and so it acquires a reference
+> on the device returned.
+> 
+> In order to be more obvious that this wrapper is a get_device() variant,
+> rename it to get_device_from_fwnode().
+> 
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Saravana Kannan <saravanak@google.com>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/base/core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index cbc0099d8ef2..36ccee91ba9a 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1881,7 +1881,7 @@ static void fw_devlink_unblock_consumers(struct device *dev)
+>  	device_links_write_unlock();
+>  }
+>  
+> -#define get_dev_from_fwnode(fwnode)	get_device((fwnode)->dev)
+> +#define get_device_from_fwnode(fwnode)	get_device((fwnode)->dev)
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+In patch 3, you add the same define. Is there some reason to not move it 
+to a header?
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.17-tag1
-
-for you to fetch changes up to b7c26cbd5b704a350b3176669f47047153903bc9:
-
-  clk: renesas: rzv2h: Add missing include file (2025-06-26 16:28:50 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.17
-
-  - Initial support for the Renesas RZ/T2H (R9A09G077) and RZ/N2H
-    (R9A09G087) SoCs,
-  - Add Ethernet clocks and resets on RZ/V2H and RZ/V2N,
-  - Add timer, I2C, watchdog, GPU, and USB2.0 clocks and resets on
-    RZ/V2N,
-  - Rework Module Stop and Power Domain support on the RZ/G2L family of
-    SoCs (especially on RZ/G3S),
-  - Add I3C clocks and resets on RZ/G3E,
-  - Miscellaneous fixes and improvements.
-
-Note that this includes DT binding definitions for the RZ/T2H and RZ/N2H
-SoCs, which are shared by the clock driver and DT source files.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (8):
-      clk: renesas: rzg2l: Postpone updating priv->clks[]
-      clk: renesas: rzg2l: Move pointers after hw member
-      clk: renesas: rzg2l: Add macro to loop through module clocks
-      clk: renesas: rzg2l: Add support for MSTOP in clock enable/disable API
-      clk: renesas: r9a08g045: Drop power domain instantiation
-      clk: renesas: rzg2l: Drop MSTOP based power domain support
-      dt-bindings: clock: rzg2l: Drop power domain IDs
-      Revert "dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells = <1> for RZ/G3S"
-
-Fabrizio Castro (1):
-      clk: renesas: rzv2h: Add missing include file
-
-Geert Uytterhoeven (4):
-      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag' into renesas-clk-for-v6.17
-      clk: renesas: rzg2l: Rename mstp_clock to mod_clock
-      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag2' into renesas-clk-for-v6.17
-      Merge tag 'renesas-r9a09g087-dt-binding-defs-tag1' into renesas-clk-for-v6.17
-
-Lad Prabhakar (13):
-      clk: renesas: rzv2h: Skip monitor checks for external clocks
-      clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
-      clk: renesas: r9a09g056-cpg: Add clock and reset entries for GBETH0/1
-      clk: renesas: r9a09g056-cpg: Add clock and reset entries for OSTM instances
-      clk: renesas: r9a09g056: Add clock and reset entries for RIIC controllers
-      clk: renesas: r9a09g056: Add clock and reset entries for WDT controllers
-      clk: renesas: r9a09g056: Add clocks and resets for Mali-G31 GPU
-      clk: renesas: r9a09g056: Add clock and reset entries for USB2.0
-      clk: renesas: rzv2h: Fix missing CLK_SET_RATE_PARENT flag for ddiv clocks
-      dt-bindings: clock: renesas,r9a09g077: Add PCLKL core clock ID
-      dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
-      clk: renesas: r9a09g077: Add PCLKL core clock
-      clk: renesas: Add CPG/MSSR support to RZ/N2H SoC
-
-Paul Barker (1):
-      dt-bindings: soc: renesas: Document RZ/N2H (R9A09G087) SoC
-
-Raag Jadav (1):
-      clk: renesas: rzv2h: Use devm_kmemdup_array()
-
-Thierry Bultel (3):
-      dt-bindings: clock: renesas,cpg-mssr: Document RZ/T2H support
-      clk: renesas: Pass sub struct of cpg_mssr_priv to cpg_clk_register
-      clk: renesas: Add support for R9A09G077 SoC
-
-Tommaso Merciai (1):
-      clk: renesas: r9a09g047: Add I3C0 clocks and resets
-
- .../bindings/clock/renesas,cpg-mssr.yaml           |  49 +-
- .../bindings/clock/renesas,rzg2l-cpg.yaml          |  18 +-
- .../devicetree/bindings/soc/renesas/renesas.yaml   |  10 +
- drivers/clk/renesas/Kconfig                        |  10 +
- drivers/clk/renesas/Makefile                       |   2 +
- drivers/clk/renesas/r7s9210-cpg-mssr.c             |   7 +-
- drivers/clk/renesas/r8a77970-cpg-mssr.c            |   8 +-
- drivers/clk/renesas/r9a07g043-cpg.c                | 132 +++---
- drivers/clk/renesas/r9a07g044-cpg.c                | 168 +++----
- drivers/clk/renesas/r9a08g045-cpg.c                | 227 ++++-----
- drivers/clk/renesas/r9a09g011-cpg.c                | 116 ++---
- drivers/clk/renesas/r9a09g047-cpg.c                |   8 +
- drivers/clk/renesas/r9a09g056-cpg.c                | 165 +++++++
- drivers/clk/renesas/r9a09g057-cpg.c                |  64 +++
- drivers/clk/renesas/r9a09g077-cpg.c                | 243 ++++++++++
- drivers/clk/renesas/rcar-gen2-cpg.c                |   5 +-
- drivers/clk/renesas/rcar-gen2-cpg.h                |   3 +-
- drivers/clk/renesas/rcar-gen3-cpg.c                |   6 +-
- drivers/clk/renesas/rcar-gen3-cpg.h                |   3 +-
- drivers/clk/renesas/rcar-gen4-cpg.c                |   6 +-
- drivers/clk/renesas/rcar-gen4-cpg.h                |   3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             | 193 +++++---
- drivers/clk/renesas/renesas-cpg-mssr.h             |  32 +-
- drivers/clk/renesas/rzg2l-cpg.c                    | 509 ++++++++++++---------
- drivers/clk/renesas/rzg2l-cpg.h                    |  66 +--
- drivers/clk/renesas/rzv2h-cpg.c                    |  35 +-
- drivers/clk/renesas/rzv2h-cpg.h                    |  25 +-
- include/dt-bindings/clock/r9a07g043-cpg.h          |  53 ---
- include/dt-bindings/clock/r9a07g044-cpg.h          |  58 ---
- include/dt-bindings/clock/r9a07g054-cpg.h          |  58 ---
- include/dt-bindings/clock/r9a08g045-cpg.h          |  71 ---
- .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |  28 ++
- .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |  28 ++
- 33 files changed, 1449 insertions(+), 960 deletions(-)
- create mode 100644 drivers/clk/renesas/r9a09g077-cpg.c
- create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Rob
