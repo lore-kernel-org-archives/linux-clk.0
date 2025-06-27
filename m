@@ -1,157 +1,144 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75322EA47E
-	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3D12E54D5;
+	Fri, 27 Jun 2025 16:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751041648; cv=none; b=M7GHTH945xYnoCacgqVEfJQXHAFUpw1xGL7sFJW7zt7iI5X5AhMEVvAvCTutlk4urjngG2GjLgWFz2fCsdyTTfym2a6XD/kgqctxVBhbtVfa+ENtv7mP3XVw9WeV7c77hscTt6rtjQdrfyqFVj0/vEhs520LoFEW1UnQmWOyvYg=
+	t=1751042038; cv=none; b=X6sSAq91vp5va2C6qBSrFMnhmZ4h/IXLXcfclbs3QFhFNZxYo2ftun0cXA8xv5xrEVzrH46o0O+l6Dga5ZnaJn8nykmrBEjVzBXrdeSeLqy9GvdGcYMW7srxLJq9D4rywev+ZYrQ01jEVcKoXbYXLCLvI2gSA+YX4XmTXdj8VbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751041648; c=relaxed/simple;
-	bh=LRgiyfrICsKTlHv9IhC5r+4XBxhCMDaKngyow+IGVj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjCkS7VoC1B9R9k7j2bRVYRrEN51b/BLlvPyTUC3cZwbFMszqjW04qjRcYQf201x0aksi8WJiyROBfGRX1+fRsjfdKYKsO1gZjC3Kv00sWSXfk78XJ0bTRsbFZQ6nrO2FY7VqLGFN2M/+yKpHtJN+v/c7Zq/A/6hoD3Z47E1dKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bDXLCAQ0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1751042038; c=relaxed/simple;
+	bh=Y2MaEeceKNbv4yiFNLVL6EuLylExKPZ4w7oafZAoUjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIZC0YPj4qLUWOWmpjAGtffE3Cu588GxX+irDgvlQxOgRF7RcdYc3vQ9UYz1mhcnop/tQ1RRwAiprHlqDETcbFXzcXxJYS5BDbf9UmyG2yYJu3xf78wKgx67TZAypToBeAjiOsuzeJ3xwgyJHnCka6CQiigahlH2dg5kJKpITtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fs2Ad+ug; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bDXLCAQ0"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RCsmtS009899
-	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:27:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lvYd1deVAhihvBAnBWJn94CrhAU80ERbjP9yegxtMRc=; b=bDXLCAQ0cbgCnzoi
-	lm+zHp0o4lGhoQHyD9gxNOKnTFOFDsTWHkH8HmlD5/uBJW4rnl8cXb4Iiurr8HK4
-	XWXZUjskbqOFfdlzu8eneXoVRrnHQ0izL8V8U8OGPVNi+/19sBQkKUkT0qngbbsz
-	e6H8F3kGVCBMhN9ByxZkXMJfSy/TJnOIRDEDzWtUNA7vCW+VYrAGwBcyNr8ntvII
-	HNexMP22VMPgv3qVSUFsSxkjm5C/EVvoDKtIgW4KZ/4PGBIG5DNfUa6r+J3jnP0d
-	kzQsq+hYUyJaCEOlqcb7dIarRz7UZeNBOPCWu1nBFcZZieEKow8ZsZwgO1wTFWZP
-	yn6sAg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47g88fh5fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:27:25 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d09b74dc4bso45133885a.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 09:27:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751041645; x=1751646445;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lvYd1deVAhihvBAnBWJn94CrhAU80ERbjP9yegxtMRc=;
-        b=riIaZUN4oKps0Exz9QYC/bfoATz9kz+qFGRgNOzmV1ESwLSLPDlZfNtsbyI/V3hRKP
-         9aY2os04BddPCuq+Txxbp/Su+U9KqLp40pk2jFiKEER0pCUuaEEmvfy52GTWBlvAdru0
-         SkKrXvaRIXiNAWTiVCMxFj/Z/9phGxUToZMzZmNLvoD9iKVu4Wj3qtngQ6QkV+6nUOen
-         Jh1PaGFsNNfokMy4K7RgGSErlWXmTlrQVjl1FE2FZnY9ygVdWfU2WzjOLY6LmS7WPJeR
-         3yEeQpKbLre5ZnfedZE8hQ77C4/Ej8DtO4Onz1mLfKrsNBOTAxbFeJO73H4Vnv82oJyo
-         /2Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYjNAQz1Xe1XB+nc0aZ6LU2DPFyJkpbl+nlG4zd0BuWBdf1GGBXdzCre5evDKlejdRrzpdT8sz6Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo/s/Iet1SRh5hWy+ixGZi4u92sMXGy2MmTcGZkPMWJHYbrLbY
-	Ud4/wRZMLCQixIbbZ9ANy7mjDK8yKNu9rCGrjD19WxsqcKW5T6eYNDXd+wD3TVEvRjk6GO2g94U
-	PhT4YOV4u/Du2qJglk775SoXAYmHZCejiNH6Qn4hYeZDdwZsdXfQIMJXo8CZuK+8=
-X-Gm-Gg: ASbGncuQ+FQmYmzXOx9zj9Obu3HAnjwDYs45+ZRwP7uq9e8jPhKenAYpyhCl7XTtVvW
-	+rNrrXPum+Qa72bnS/hWrU7bMQmajRuTqNttJkzCSVHe5h4Hx4viGKQodQayoQaeeUkDiqEEny1
-	VzjwcI54cKmnzCKReh0PM0zip0j3xwzgY20MwjqX9q08EFcPZ5KWphzIAI/K6ftVXXoLPhOaqPK
-	0gIoPcWc7ZU5dNGLnSWwKaSyTmF+MkQG4paaR4AVbgPH++oW0GVqES+LojKI9AkzAVs5naayCir
-	YqhxoXrxh/j0jKw/aN5+BuXx61+8Gep0XMaCs/4uwYg5AjVxS+RVEoEqzc8EbQi6K01W+UdzGRh
-	1J88=
-X-Received: by 2002:a05:620a:6011:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d44393af52mr224995885a.8.1751041644605;
-        Fri, 27 Jun 2025 09:27:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQx+88Ksz4ECZwUoGt+Ed4X8fsAOVBGWYUZ4j8qk+znxirQR95/4sMWkJF3ZwWKFN09XhTLg==
-X-Received: by 2002:a05:620a:6011:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d44393af52mr224991485a.8.1751041644137;
-        Fri, 27 Jun 2025 09:27:24 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353659e12sm148855366b.40.2025.06.27.09.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 09:27:23 -0700 (PDT)
-Message-ID: <cd6f018d-5653-47d8-abd2-a13f780eb38f@oss.qualcomm.com>
-Date: Fri, 27 Jun 2025 18:27:20 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fs2Ad+ug"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751042037; x=1782578037;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y2MaEeceKNbv4yiFNLVL6EuLylExKPZ4w7oafZAoUjc=;
+  b=Fs2Ad+ugEnW8qSsWArq7KVp/lsBNdKr6NrF7KParsLYBR7T+yEk/tJaU
+   dyJPDQmYz4KYZ6Su5/F793XJ0LVHZv5x4RKaroLfBoCkROG6Ygnjr7ygv
+   Rowen59uXo/Ceoz/Bx0T675mCWUlY85IT+yQh3gWEVpQ0S1Z+d9xWyIqR
+   DiG59v7XJ/QOfNdmCCIvyzGsZ1ai7wd1kJ3ECMn+h/Nh8c1CmbFdy2Hwh
+   YdW8uiMPCnRuGzYhQYU7ZMShL/imkbJm+EoSxZp9qWL1yzewGX/yKik6J
+   +dnhKUOCC6BxPOaMZjTaDXUe3BSz+TNDA7Spespo1jEHMrac/0b+ufLVT
+   Q==;
+X-CSE-ConnectionGUID: aDwHT5DZTHaKji7HqORHCQ==
+X-CSE-MsgGUID: 5gb/9b34S5CPJ/EWiYVXyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53079635"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="53079635"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:33:56 -0700
+X-CSE-ConnectionGUID: 1C2IXb2STTuL8X3DDhbOyQ==
+X-CSE-MsgGUID: danC++UFS6ObVuVtA6jiVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="157388500"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:33:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uVC1D-0000000AXHz-2uXB;
+	Fri, 27 Jun 2025 19:33:39 +0300
+Date: Fri, 27 Jun 2025 19:33:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 18/28] of: property: Allow fw_devlink device-tree on
+ x86 when PCI device-tree node creation is enabled
+Message-ID: <aF7H4-toeb7Ouz3d@smile.fi.intel.com>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-19-herve.codina@bootlin.com>
+ <20250627162245.GA3513535-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: ipq5424: Add NSS clock
- controller node
-To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
-        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
-        quic_suruchia@quicinc.com, quic_pavir@quicinc.com
-References: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
- <20250627-qcom_ipq5424_nsscc-v2-7-8d392f65102a@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250627-qcom_ipq5424_nsscc-v2-7-8d392f65102a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEzMyBTYWx0ZWRfX3x/XjLg4+Y/I
- 2mOubrrflkwiOFvGXGfUfEMDiokn6blcrSgUY7BAOGywnw4+kufw944NVV9bbWYRxCEOXRBfUDw
- 8bl69MKtjjkLcb36nmJ15JEIzeTrd4LijKJEOZPBaJYw83Z3Oqoo8KdnwpL737piVegDTC3DXOb
- dBA0qBp4iPwZ6LLTVojP7xHv+s4C2M8UWz5PF0hnlspaDNOxZvQswDU8tQHiqxXEAqdBoIurCM9
- ZGQEfZP0711YX4wKzFOG1rJpTwWi/PcYOBylIMbDdAfeFQavSrnGwUW+62Y0r2331kEm1uATvfV
- KkkSwKBQBrAH65/hdCcqicQrOD72m41SMPT8475ptCvB2dOWzPVAvMgD6lQUadjMjCaHxyPAv7f
- LVOtRAI9kj/WXNXjOQYwcXerd9K/uw/Qze2a9BJEj0Mvt8EP0BvCGR4ZYMgvFxAQiBjuZnAQ
-X-Proofpoint-ORIG-GUID: uLVDQ9Sht_H2EZhaXnvEMgu8EQwiX5ci
-X-Proofpoint-GUID: uLVDQ9Sht_H2EZhaXnvEMgu8EQwiX5ci
-X-Authority-Analysis: v=2.4 cv=LNNmQIW9 c=1 sm=1 tr=0 ts=685ec66d cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=f6GukiY9ARMaQ3Zrt0MA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506270133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627162245.GA3513535-robh@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 6/27/25 2:09 PM, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> hardware blocks on the IPQ5424, such as PPE (Packet Process Engine) and
-> UNIPHY (PCS) blocks.
+On Fri, Jun 27, 2025 at 11:22:45AM -0500, Rob Herring wrote:
+> On Fri, Jun 13, 2025 at 03:47:58PM +0200, Herve Codina wrote:
+
+...
+
+> > -	if (IS_ENABLED(CONFIG_X86))
+> > +	if (IS_ENABLED(CONFIG_X86) && !IS_ENABLED(CONFIG_PCI_DYNAMIC_OF_NODES))
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+> I really want CONFIG_PCI_DYNAMIC_OF_NODES to go away at some point, not 
+> add more users. 
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> index 2eea8a078595..eb4aa778269c 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> @@ -730,6 +730,36 @@ frame@f42d000 {
->  			};
->  		};
->  
-> +		clock-controller@39b00000 {
-> +			compatible = "qcom,ipq5424-nsscc";
-> +			reg = <0 0x39b00000 0 0x800>;
+> I think this should instead check for specific platforms not with 
+> kconfig symbols but DT properties. For ce4100, you can just check the 
+> root compatible string. For OLPC, there isn't a root compatible (in the 
+> DT I have). You could check for /architecture == OLPC instead. There's 
+> some virtualization guests using DT now too. I would think their DT's 
+> are simple enough to avoid any fw_devlink issues. 
 
-size = 0x100_000
+I don't think this is good approach. The above check is more reliable in my
+opinion.
 
-with that:
+> Alternatively, we could perhaps make x86 fw_devlink default off
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+For my (little) knowledge I believe this is not feasible anymore.
+Some x86 code (drivers) relies on fw_devlink nowadays. But take
+this with grain of salt, I may be way mistaken.
 
-Konrad
+> and then enable it only when you create nodes. Maybe it has to be restricted
+> a sub tree of the DT to avoid any later interactions if devices are unbound
+> and rebound. Not a fully fleshed out idea...
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
