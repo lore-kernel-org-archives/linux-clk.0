@@ -1,102 +1,125 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B83A2750E7;
-	Fri, 27 Jun 2025 15:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5152EA14C;
+	Fri, 27 Jun 2025 15:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751038665; cv=none; b=qU6BW6D9xi3fWqGPJ8cWWWcyU0EMuZWkmDltzaJd4T/crwH8c5utEriBJXiP0g5YRMZc+MXnankqWz6vdflilj42nOWp4UbRM6tN1tCHu0tLu9wdy2hPZ0n8vqFxZH7pgws3qF+8wpwGvzc5OnP/exE1azUXUWc3EYHu4/X+Ha8=
+	t=1751039522; cv=none; b=LEw7Nl1HIzJZGatY7RH84Lx86NIdHR+BQFd18S2OJq5IxqiIl2XFYmEfHGHDJachz8frR5dS2JqLNvVPtp27gSQcY16fvWPp+71ZQNPdms5jOGKiXPrhIfcDjl+NVThwjlmRhEgY2NsFB4KCfmtaZlpBByKmE75wGgD3ZFJJV7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751038665; c=relaxed/simple;
-	bh=ZCmaznIAEW9CdV0v3lggh2s8vZKtTSHxMp/86AwX+Gs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YKO4Rah1L8D4N0vwCXze+O8/Z9R/GKa81rQXfk6fVEGz3QCH/gSU1Q2RvfZiZ1PZnGPNIiYI9t2phabqGkbWgxc1SpGBBOXUem9Txna1ZkXbbaWsQRntGvW8MrHalA9f5AJhSnrB9OURSRFiDQHVlQntTA2HRnTjmqVVSPr66eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf+kGXdR; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1751039522; c=relaxed/simple;
+	bh=f0UYA/EuZoGSHsVhZD3Fus+HSK9WipcpF5RxkV+BP5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGV7y1jQ45g4SXi1xJX7Ki495PudN3emL0VPxvAyvWaOzY5/KK5XiUr++9Ccp4AHluPh7dUAN9kA0ie1Q5HkWuzKi+sBhguyJQxwBK5DIkBlkyUL/ol5BI6D79XMNwvJbGOD4C2meXk3Zp1nM+FkGYN2IWi6WvehwGexpsRQTA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyPdnJ7Q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf+kGXdR"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b34b770868dso304386a12.2;
-        Fri, 27 Jun 2025 08:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751038663; x=1751643463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCmaznIAEW9CdV0v3lggh2s8vZKtTSHxMp/86AwX+Gs=;
-        b=Xf+kGXdRN64JXlEbj4Hnub96fcoc8vnE2cmZSQStNqdUOfj1t2t6LEmiUAS4AvsgJa
-         WwQ3GckPqmsYzqud1hCJq0USFuHIUAPuUMMJEjS9EJT5vrbV4EwjL6XRkw2MweX3Ql4f
-         vw1TFZNzPFXP5BQshIfgyuevAgMlcz23vm5qmdG1Yr502WzdRaXK7G44/ytpHANOmcWM
-         YfP7mQWAEA8HDhQYk2JLK+amNmcBgAGj5iEfZ6O1DdLYy8eYtl/LAG9EFS8VhG0HvYMc
-         XSSo3I+spGeR9viKfmN2zYBUS1Oa8sd9U7QlEbOx0LioBvC8KMRSmWtmA0+rYCTGXpze
-         5EXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751038663; x=1751643463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZCmaznIAEW9CdV0v3lggh2s8vZKtTSHxMp/86AwX+Gs=;
-        b=frHABHgurbfoG1SKKwXy3AkBVRqgaJB3qr/6VjakQdbAFAAiWdy2yi5PiSIP1DK8sq
-         H+Rq+IMjK4pJCPNr6FTsHCtsgLtXLe8OikoHERFJNh6dTDjSb3wxvgzfT0iUtcQ5UgtY
-         1s2FXfASOnYs4aiX1rQMtfYe3BjJVWeHIs/RIh1wpnMgRncsS5p0ycNk2aiSxlA/qAQh
-         uXAZ549B4yEE5drvD5Qy47wOjrgliab4ecWKb7evLjgbrJgKwj4HfV4U+EZoufMJ2PhC
-         jVQGsmyW3wGUc9baj5RLxjwp2zv+IDdyQny4xaLIN0H/NVrLTrsxcp1H2Oj1KLftCJce
-         5khA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgGkb+sgw37KsnKTX45d27Ntf8PcwpupMkDcs0nSRVAma3GPzJNUr8B9b4c08rAQ+sA7vvB50tRuTIQ0se@vger.kernel.org, AJvYcCVs0Rf5X/vjdFmT/dcKV6FUOHgU92P71qBiedc6JBVqPcXBApQ6JOH2Z6UaDfdBTAfUrbQtK80Adieo@vger.kernel.org, AJvYcCWFeJMCh6xRE131gdjQr4xD+QS06dKMA6Dt3gtvzkE9pTyYS1sJQvj5IiDzsg5YXDZ+1R84ovlB2ACL@vger.kernel.org, AJvYcCWg4LzE5NsgXRJpKPWOolaONrfXfD9n4QKxcg3sJYmxkdLvXnNMamUGGkuuDfKhFLE1+RfEHwe3CbhkgWlcuhI=@vger.kernel.org, AJvYcCWwNRs2VQKTYuB8CjOy2osA4O4ELGyvzF/cafal8+uFbL78HO9NPafyGHrd0dTHNHE3Txp7b6xuZKAV@vger.kernel.org
-X-Gm-Message-State: AOJu0YymAQ1bBobeXeiUk+FNpGtgHYBpvYAu03EFYxSGYzzGcLTMctjf
-	3YEovNcF9fiwZPVeB5xuAxHZxO6D1QZceLj+fb/YX59qw8Zzk5isRmBCGT8sZCxnoYfhtcfWgQf
-	qeWDQkBas4Ij39hQjN+wJMlrypsHFz6Y=
-X-Gm-Gg: ASbGncsDaps+bOj2Wywtwz1V1GI83ht5D/e2H2e83QVorMZe5K6UUBKo6ensONlsJdX
-	pH8VM3SB+NiwuTQ+EW+Pa8rF6PfZv+MXSrUzS2DQbzaBPDkCKS0JFqDO13zWWguvmAKQ+U6Qf+6
-	mKuQvbDp4WWgVY53Z3BvOxs4TV/r2qTG+XeE9h9ItrZyg=
-X-Google-Smtp-Source: AGHT+IGml+/wI/ttVJxoSaAeHmsEJgv1Qyo+AziT1f7C4wzb0+XtAzoRAvO/6UJcBeBiENnHea2kADFQnSSIKre+AeI=
-X-Received: by 2002:a17:90a:e7ca:b0:312:639:a06d with SMTP id
- 98e67ed59e1d1-318c925acf9mr1963338a91.5.1751038663269; Fri, 27 Jun 2025
- 08:37:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyPdnJ7Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B088C4CEED;
+	Fri, 27 Jun 2025 15:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751039521;
+	bh=f0UYA/EuZoGSHsVhZD3Fus+HSK9WipcpF5RxkV+BP5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pyPdnJ7Q7HuuIiKgrWaMDcrBwxGTZiscgxJc6vl+XrICm0G79l/w04xJOgIgSsiT4
+	 nyJKeqIT4LG/SdOrP9BThyVFe+sK/VvM3jidhmIf4FL5wNqqTU5vXGLNIqJcAXv1fB
+	 qKTpyLWg6gUYFK9zYNPKm3MeePbH4VzwGEN7jkKanOyl7pqQcVspMU/YR0KWDgEe+y
+	 Zv5XPVN4hnsL9/6Codf3WfenmJLS/Wop+OvwNF2usYFuIMsbN5lfU8nIT0Fa6ZEQ9G
+	 1eaaz5yVdyekzbuVGyJ58FdAsHP1VfbszTS+QL47CPNvx+4zmaedL/KBAtCkPkCxRv
+	 NsSgI1XvWhPIA==
+Date: Fri, 27 Jun 2025 10:52:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 05/28] bus: simple-pm-bus: Populate child nodes at
+ probe
+Message-ID: <20250627155200.GB3234475-robh@kernel.org>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-6-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
- <CGME20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5@eucas1p1.samsung.com>
- <20250623-rust-next-pwm-working-fan-for-sending-v5-1-0ca23747c23e@samsung.com>
- <q7sz7uci5vnyc24laqzs56vgt4i2jamb3ifyxkqom6qcml5kkv@642prvwxjkxc>
-In-Reply-To: <q7sz7uci5vnyc24laqzs56vgt4i2jamb3ifyxkqom6qcml5kkv@642prvwxjkxc>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 27 Jun 2025 17:37:31 +0200
-X-Gm-Features: Ac12FXyJg4tT9bxwLEYb_HLIZtlp-3_A8C-ynNyjXzmSe2QQtKFWNglZwQDRbqQ
-Message-ID: <CANiq72nZzuqgNRU7RnUP+D2R+Oj8q9Nhje2XiyauW8Pby6UxPw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/9] rust: pwm: Add Kconfig and basic data structures
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613134817.681832-6-herve.codina@bootlin.com>
 
-On Fri, Jun 27, 2025 at 5:10=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
-nel.org> wrote:
->
-> Currently CONFIG_PWM is a bool, so it cannot be =3Dm. But I considered
-> making PWM a tristate variable. How would that interfere with Rust
-> support?
+On Fri, Jun 13, 2025 at 03:47:45PM +0200, Herve Codina wrote:
+> The simple-pm-bus driver handles several simple busses. When it is used
+> with busses other than a compatible "simple-pm-bus", it doesn't populate
+> its child devices during its probe.
+> 
+> This confuses fw_devlink and results in wrong or missing devlinks.
+> 
+> Once a driver is bound to a device and the probe() has been called,
+> device_links_driver_bound() is called.
+> 
+> This function performs operation based on the following assumption:
+>     If a child firmware node of the bound device is not added as a
+>     device, it will never be added.
+> 
+> Among operations done on fw_devlinks of those "never be added" devices,
+> device_links_driver_bound() changes their supplier.
+> 
+> With devices attached to a simple-bus compatible device, this change
+> leads to wrong devlinks where supplier of devices points to the device
+> parent (i.e. simple-bus compatible device) instead of the device itself
+> (i.e. simple-bus child).
+> 
+> When the device attached to the simple-bus is removed, because devlinks
+> are not correct, its consumers are not removed first.
+> 
+> In order to have correct devlinks created, make the simple-pm-bus driver
+> compliant with the devlink assumption and create its child devices
+> during its probe.
 
-At the moment, the requirement would still need to be `PWM=3Dy` until
-the `kernel` crate is split, which I guess is why this was here (I
-assume copied from elsewhere).
+IIRC, skipping child nodes was because there were problems with 
+letting the driver handle 'simple-bus'. How does this avoid that now?
 
-Cheers,
-Miguel
+The root of_platform_populate() that created the simple-bus device that 
+gets us to the probe here will continue descending into child nodes. 
+Meanwhile, the probe here is also descending into those same child 
+nodes. Best case, that's just redundant. Worst case, won't you still 
+have the same problem if the first of_platform_populate() creates the 
+devices first?
+
+Rob
