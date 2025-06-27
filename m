@@ -1,124 +1,167 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38311F09A5;
-	Fri, 27 Jun 2025 17:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107624502A;
+	Fri, 27 Jun 2025 18:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751046589; cv=none; b=mrtoOWlqW8Dh8KD+cyxOX9Ujyaev9nbykkS7MyIp5FHp3Zgyg7ZIVoi15vwG9GEBBAPzhoFY13wHobAm9soatPvvFg3OGw0eu84ZE8JVj3cwwmCIEd8ZzjJTy+GTWQy8ruQ6AcxTW2R0t0shzNGaIl1RI/ZksXyv1owND1sSddg=
+	t=1751050321; cv=none; b=D/TPdYlSuKT+tXc0cQ1EST/QjC+nBSPC6gkadrmfoJjGatlFKedd5p3UZtPNLVcT0C39nZIzPTAqgqsAx478ATSfbckmflIy/RXV7/jABKBHdtodFQr8tV/S+XIhuRrdxDWUUCicki34kG04IKDQlN7V+m/2pDn6aW6EljwVeMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751046589; c=relaxed/simple;
-	bh=fENVGkGcV01nrx8rwyk5yc++tYlpmC/4in3yTWfI+BU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bbMFCZQLINv8QjrLvBc/yfPykhqqF9Cjo00k07ZXilnMn4yDazQ7C/SvMyecXvCsF8WMGL9IFdw7fpWMb9tmE5phn7r/d/9EVwcsZ5TjFU2WKkPgW5Y7hJ9aXuPPnbhW/sEMY7UJVc5IfhyclqB6xT5VSfbNh8BXO7B8Z0lXDdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDaBKqc7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751050321; c=relaxed/simple;
+	bh=euvnyW4y4L7Ax2AaJfgnY285+oZy74N4SwvcUrcj4aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ngurEg5zteG7LpgdzfO7XpTVDkaw/3jn8iPFgbqI6KlF5QgQ7hJ/ToCtxzfOW+z1ApKrwPgIDHFmRtO4W9AwKco03WNrQDPmT1YWq/s2XdCWebFwRhpj+pkn76UzYgJ3H8t+rPlqJ7uosJIbQP8Ki+HSy6BxtuxCIm7Q+8EE4mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f89gT4qm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDaBKqc7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66C83C4CEFB;
-	Fri, 27 Jun 2025 17:49:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f89gT4qm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CA3C4CEE3;
+	Fri, 27 Jun 2025 18:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751046589;
-	bh=fENVGkGcV01nrx8rwyk5yc++tYlpmC/4in3yTWfI+BU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QDaBKqc73OAck/HvM0EVd5wtKUjUN7GPsOvpdjQ9yxQfT7gPphE3WJUX18LD5I3cV
-	 3I0DsaAXNiZrzbAjgH5RmUIHzuGV+il3/DAWKdEl1GqN7pgoGcBq/ue07wIRoUWsUt
-	 DTpXWcdsABzLOk1esyLFQ6+vPQhDQTQrIl2/oW859p+ENQfTmHeQIpUI/tNrE7f6Jx
-	 0HaPtNPil8h6RVpt0LhQKj8TbFYuz1YRJsqIZTzOr7g9NNuWwvAtNNz3sRmHxoyX4R
-	 hw1JP/ra1GDPoCgdErvqrQrL0xl6DZHuw+Uqxk597rbpThcBDon2oxslqivu081ygM
-	 1Gw7oJVnPaDng==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ade5a0442dfso452627066b.1;
-        Fri, 27 Jun 2025 10:49:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFcL3o8K4XcNCCwr/1Hn0poOddvQhQrl+98rz+OBpFX0ptmAaBjOFw2icmYhyPxanLDzt3Bs9Dsyz0@vger.kernel.org, AJvYcCV85OlD2kqLMH+Ja/mtvbCkla+glBX8wqNUUJe/yG2gHde+uYriYhSDOkr7yXOZpsmD6xnF8lws+cCI9g==@vger.kernel.org, AJvYcCVR33dTuoHXsGzVCTB+FMM8EMK9TJJo7JifLED2McI1RRmgmyuqnfMG7VQFSvbYyiojIpq/mrIRLMOINlny@vger.kernel.org, AJvYcCWnhdWYwqlaZEF2RE2uYpmQ//qLwa151J0iS4Vc8EJLhuZIxCl4pwBgYqcb+LIfH5uwVLFzvbLiBax7@vger.kernel.org, AJvYcCWrHIQdkFKqtu3aTQe3Rth8wTXCPpm4S9x5flUxxc26wlhd32JcGCxnhS/5ODR1wgyqwBYj/osYKFVE@vger.kernel.org, AJvYcCWympIu3XRPp0mybc36H/IdWUAq6GKlRTipRzrnuDEVdVT8/2HOhpdqq3/Mv597Gfh22MM2szwKsm7D@vger.kernel.org, AJvYcCXj269BJATXYJKaiwemrLrVPs3JuriT1yFOyGMIRecNlIeyCDGPUqOuYgRCRfP/dpshlW+Q0PgCADAZ@vger.kernel.org, AJvYcCXzOxcNMxXblyIensO8v/yRIGHlv0jZgNvVzCw8BGJKBIKV5e3X3ZJb0mhP+ST5jENabLIVP50ZB1mF@vger.kernel.org
-X-Gm-Message-State: AOJu0YztsrCYPhCat9rSiG0ZJpXcwuYjAABZTfK3HEg+1YoO9IEcQB6U
-	6JMZVZ7qUx6Vj1mNIyivWMcUXoAXi2TaGRiXtHa0r8CM5UIQwJPg1t8nyXWRj+7v6n7rJr7Gv6w
-	agkHDNUDKa82cwRcNh3KZXbHHACzjlg==
-X-Google-Smtp-Source: AGHT+IHT5hz4lr0pRGvdH2rjBfGZM81PcOoFrAQguTcQw3WkJwjxgHpGim6dbfGwqFeg5PpW/uAYH3Ohif/f2EVITXw=
-X-Received: by 2002:a17:907:cb86:b0:ae3:55bd:7724 with SMTP id
- a640c23a62f3a-ae355bd77f6mr319698366b.37.1751046587752; Fri, 27 Jun 2025
- 10:49:47 -0700 (PDT)
+	s=k20201202; t=1751050319;
+	bh=euvnyW4y4L7Ax2AaJfgnY285+oZy74N4SwvcUrcj4aA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f89gT4qmMIdFe6oB5I+WVQS4FNELutxouQp7A4Pbl8uaWBia15pG1PeQbOWhWSzS4
+	 ldrmQcjnd70byKhVmXgxNS9u5Tr1MzI16xM9vacE3gxT7SftOQayTZoyj2qFAIBfR1
+	 DnmbUjv4BKN17rpd5w1SClMSBQmFF0UG2XdT2CRRDHW20mwpkTx9AYQcu6ncIg3EKs
+	 iZbul4cc4L8Yi86LWWRERnejaccCX6uPfL2QqP1idwMg4kRD5LXkpp6g2zVwzWHpxw
+	 f+Gl5pogZhQsteJfOly0+pK7ZLoVTudL+XMzXUtV6dBMy6xhDM0Q3UMn9jSeZzPuqX
+	 LZS5q2LzrxKOA==
+Message-ID: <8c4284f6-58eb-4d9a-b2e7-e1c66d3fcad6@kernel.org>
+Date: Fri, 27 Jun 2025 20:51:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-19-herve.codina@bootlin.com> <20250627162245.GA3513535-robh@kernel.org>
- <aF7H4-toeb7Ouz3d@smile.fi.intel.com>
-In-Reply-To: <aF7H4-toeb7Ouz3d@smile.fi.intel.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 27 Jun 2025 12:49:36 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJCuevzu69bx3yWm3ZR9wZ+UsWuNXscig5KMm2WH4WxOw@mail.gmail.com>
-X-Gm-Features: Ac12FXz-QVHJXTEek87UkxSujkajQAR7GpuL-shCkOttrl-AQQGXN_bA70yoM5c
-Message-ID: <CAL_JsqJCuevzu69bx3yWm3ZR9wZ+UsWuNXscig5KMm2WH4WxOw@mail.gmail.com>
-Subject: Re: [PATCH v3 18/28] of: property: Allow fw_devlink device-tree on
- x86 when PCI device-tree node creation is enabled
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/9] rust: pwm: Add driver operations trait and
+ registration support
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Drew Fustini <drew@pdp7.com>,
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin
+ <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180900eucas1p2ffbd79e79f690189ae89aefcc3793e50@eucas1p2.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-3-0ca23747c23e@samsung.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-3-0ca23747c23e@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 27, 2025 at 11:33=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Jun 27, 2025 at 11:22:45AM -0500, Rob Herring wrote:
-> > On Fri, Jun 13, 2025 at 03:47:58PM +0200, Herve Codina wrote:
->
-> ...
->
-> > > -   if (IS_ENABLED(CONFIG_X86))
-> > > +   if (IS_ENABLED(CONFIG_X86) && !IS_ENABLED(CONFIG_PCI_DYNAMIC_OF_N=
-ODES))
-> >
-> > I really want CONFIG_PCI_DYNAMIC_OF_NODES to go away at some point, not
-> > add more users.
-> >
-> > I think this should instead check for specific platforms not with
-> > kconfig symbols but DT properties. For ce4100, you can just check the
-> > root compatible string. For OLPC, there isn't a root compatible (in the
-> > DT I have). You could check for /architecture =3D=3D OLPC instead. Ther=
-e's
-> > some virtualization guests using DT now too. I would think their DT's
-> > are simple enough to avoid any fw_devlink issues.
->
-> I don't think this is good approach. The above check is more reliable in =
-my
-> opinion.
+On 6/23/25 8:08 PM, Michal Wilczynski wrote:
+> diff --git a/rust/kernel/pwm.rs b/rust/kernel/pwm.rs
+> index 3865b43ec47df6cb0c09bc74a228535512b6b1a8..25bc07a3df1d43467a3a6ec8f2362ae8f770360a 100644
+> --- a/rust/kernel/pwm.rs
+> +++ b/rust/kernel/pwm.rs
+> @@ -8,12 +8,13 @@
+>   
+>   use crate::{
+>       bindings,
+> -    device,
+> -    error,
+> +    device::{self, Bound},
+> +    devres::Devres,
+> +    error::{self, to_result},
+>       prelude::*,
+>       types::{ARef, AlwaysRefCounted, ForeignOwnable, Opaque},
+>   };
+> -use core::{convert::TryFrom, ptr::NonNull};
+> +use core::{convert::TryFrom, marker::PhantomData, ptr::NonNull};
+>   
+>   /// Maximum size for the hardware-specific waveform representation buffer.
+>   ///
+> @@ -408,3 +409,482 @@ unsafe impl Send for Chip {}
+>   // kernel locks, which the C core is responsible for. Any interior mutability is
+>   // handled and synchronized by the C kernel code.
+>   unsafe impl Sync for Chip {}
+> +
+> +/// A resource guard that ensures `pwmchip_remove` is called on drop.
+> +///
+> +/// This struct is intended to be managed by the `devres` framework by transferring its ownership
+> +/// via [`Devres::new_foreign_owned`]. This ties the lifetime of the PWM chip registration
+> +/// to the lifetime of the underlying device.
+> +pub struct Registration {
+> +    chip: ARef<Chip>,
+> +}
+> +
+> +impl Registration {
+> +    /// Registers a PWM chip with the PWM subsystem.
+> +    ///
+> +    /// Transfers its ownership to the `devres` framework, which ties its lifetime
+> +    /// to the parent device.
+> +    /// On unbind of the parent device, the `devres` entry will be dropped, automatically
+> +    /// calling `pwmchip_remove`. This function should be called from the driver's `probe`.
+> +    pub fn new_foreign_owned(
+> +        dev: &device::Device<Bound>,
+> +        chip: ARef<Chip>,
+> +        ops_vtable: &'static PwmOpsVTable,
+> +    ) -> Result {
+> +        let c_chip_ptr = chip.as_raw();
+> +
+> +        // SAFETY: `c_chip_ptr` is valid because the `ARef<Chip>` that owns it exists.
+> +        // The vtable pointer is also valid. This sets the `.ops` field on the C struct.
+> +        unsafe {
+> +            (*c_chip_ptr).ops = ops_vtable.as_raw();
+> +        }
+> +
+> +        // SAFETY: `c_chip_ptr` points to a valid chip with its ops initialized.
+> +        // `__pwmchip_add` is the C function to register the chip with the PWM core.
+> +        unsafe {
+> +            to_result(bindings::__pwmchip_add(c_chip_ptr, core::ptr::null_mut()))?;
+> +        }
+> +
+> +        let registration = Registration { chip };
+> +
+> +        Devres::new_foreign_owned(dev, registration, GFP_KERNEL)?;
+> +
+> +        Ok(())
 
-I'm fine with any solution that doesn't add a
-CONFIG_PCI_DYNAMIC_OF_NODES which we can't remove. Adding it was a
-kick the can down the road to merge the support worry the mixed
-usecase (on ACPI systems) later. It's now later.
+This can just be:
 
-> > Alternatively, we could perhaps make x86 fw_devlink default off
->
-> For my (little) knowledge I believe this is not feasible anymore.
-> Some x86 code (drivers) relies on fw_devlink nowadays. But take
-> this with grain of salt, I may be way mistaken.
+	Devres::new_foreign_owned(dev, registration, GFP_KERNEL)
 
-Doesn't the CONFIG_X86 check disable it?
+I.e. no need for the `Ok(())` below.
 
-Rob
+With that,
+
+	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+
+for the Registration bits.
+
+@Uwe: Just a head-up if you plan to pick this up for the upcoming merge window,
+Devres::new_foreign_owned() will be replaced with devres::register() --
+semantics and arguments do not change.
+
+> +    }
+> +}
+> +
+> +impl Drop for Registration {
+> +    fn drop(&mut self) {
+> +        let chip_raw = self.chip.as_raw();
+> +
+> +        // SAFETY: `chip_raw` points to a chip that was successfully registered.
+> +        // `bindings::pwmchip_remove` is the correct C function to unregister it.
+> +        // This `drop` implementation is called automatically by `devres` on driver unbind.
+> +        unsafe {
+> +            bindings::pwmchip_remove(chip_raw);
+> +        }
+
+NIT: You can write this in one line as:
+
+	unsafe { bindings::pwmchip_remove(chip_raw) };
