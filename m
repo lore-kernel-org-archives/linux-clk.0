@@ -1,158 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2963819E990;
-	Fri, 27 Jun 2025 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91C14EC73
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039919; cv=none; b=bR9chPMaORbaIfQnOBSduck6sEDrjc5b6Vjdb0mXWFtcgQaj+9mvp6Lv8cTMv9q6qcj+Eb82xNsumsGSvn1dP9bosnFe5mBYrDu7OXaHvaCJLSpcU4PEYni3rgoODNvxI9sBnkhZAEgTOxM20JAQu9NSdcgVqKDC8ILRGxymOgA=
+	t=1751040135; cv=none; b=nDrsknPO0t8PTYFC3GfDmgEB4rWf/460Ob7VvVw0LQ5gu7Xe8WQY5F7ju1UBJMdVIvf5GtPlSfGS7rUFbE2XVUKmc5fEuY1Bn/leebaOWYuuV+za054y+2dnkiIdw6pJO85gG1948VB6pmZufN4XK2kx6Tusf6rdQocc4aDYjlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039919; c=relaxed/simple;
-	bh=tBv0zN4w3fBWkY/nFOn0k+IhVxh6OQEYPfuuw9vKCvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfiq9Wl2ge9Vvl0GWciZkfrZXqScZ6GVoCwn9lxxARBLQfVGwjv/C+rjGj183umfD84M0ykVcv904w5kHF6kMdnc1IXNyaPrhZFrvXB1snWQSI1Pm2Oaa8DM0JKGqXh/hbc1KT2oqYVQjcm8VKfB41D7bjDWZzZ1pZMiham4WgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4tJ94JZ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4tJ94JZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D7B3C4CEE3;
-	Fri, 27 Jun 2025 15:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751039918;
-	bh=tBv0zN4w3fBWkY/nFOn0k+IhVxh6OQEYPfuuw9vKCvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b4tJ94JZTjGfbHmZDMM8bIuOky0BWZylZfr+Z7v8HXEL7evqfsEWw1BgYoEYnFfpX
-	 SdKj4hkTwOEnNMp6O4y/hMVwX+Tk/9SY3kG6RNby6zDETioc5MDSawDH9+LcaRgrsG
-	 Pz3RCeX3aRYkjYStdMtyjYME4zWrNpS+iykXmBun6VP+XXrF6ivxSzv5WeRN87gV/M
-	 HLSMkb13vj/LZuOP9gKQN4koUKfveUcJGZoe0jAWfkjC9sE+Y1rfFm+XLyHfVaaSV5
-	 SQAYvDPy3PQkLshJCnEyhDpwGRkyX80rd1xx5d7Iwju+Cm+YcCtjz9Kx4UzxQ1xIYx
-	 RCWGTryFzxJ0Q==
-Date: Fri, 27 Jun 2025 10:58:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 00/28] lan966x pci device: Add support for SFPs
-Message-ID: <20250627155837.GC3234475-robh@kernel.org>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1751040135; c=relaxed/simple;
+	bh=GldpBUfQxusdRLQisJudA/HXkddw/PUvTkMxa+47M6o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NtMjA1WXDQiSrJp1N0qeQAjWTGRjIoo+v89rmCFroOVvTjtk5VUtOYywcINowpW4eO+Pb4DKdftp8DdzdTROFYNk3UjdLxIIZw7COwvGocFvGLHcXsCyPyrZtSlj+WoITDgenO9QMDmptpfirMGUfVh85iDRCQhpMog8CqqqFDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBWT-00038m-D8; Fri, 27 Jun 2025 18:01:53 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBWS-005dyk-2s;
+	Fri, 27 Jun 2025 18:01:52 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBWS-000Olw-2X;
+	Fri, 27 Jun 2025 18:01:52 +0200
+Message-ID: <905dc44cf6e7fc4d4500b47f493ec073991a849b.camel@pengutronix.de>
+Subject: Re: [PATCH v3 4/9] reset: mpfs: add non-auxiliary bus probing
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Conor Dooley <conor@kernel.org>, sboyd@kernel.org
+Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
+ <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
+ valentina.fernandezalanis@microchip.com, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Lee
+ Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Fri, 27 Jun 2025 18:01:52 +0200
+In-Reply-To: <20250623-equate-ogle-0ce3293567e2@spud>
+References: <20250623-levitate-nugget-08c9a01f401d@spud>
+	 <20250623-equate-ogle-0ce3293567e2@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-1-herve.codina@bootlin.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Fri, Jun 13, 2025 at 03:47:40PM +0200, Herve Codina wrote:
-> Hi,
-> 
-> This series add support for SFPs ports available on the LAN966x PCI
-> device. In order to have the SFPs supported, additional devices are
-> needed such as clock controller and I2C.
-> 
-> As a reminder, the LAN966x PCI device driver use a device-tree overlay
-> to describe devices available on the PCI board. Adding support for SFPs
-> ports consists in adding more devices in the already existing
-> device-tree overlay.
-> 
-> With those devices added, the device-tree overlay is more complex and
-> some consumer/supplier relationship are needed in order to remove
-> devices in correct order when the LAN966x PCI driver is removed.
-> 
-> Those links are typically provided by fw_devlink and we faced some
-> issues with fw_devlink and overlays.
-> 
-> This series gives the big picture related to the SFPs support from
-> fixing issues to adding new devices. Of course, it can be split if
-> needed.
-> 
-> The first part of the series (patch 1, 2 and 3) fixes fw_devlink when it
-> is used with overlay. Patches 1 and 3 were previously sent by Saravana
-> [0]. I just rebased them on top of v6.15-rc1 and added patch 2 in order
-> to take into account feedback received on the series sent by Saravana.
-> 
-> Those modification were not sufficient in our case and so, on top of
-> that, patch 4 and 5 fix some more issues related to fw_devlink.
-> 
-> Patches 6 to 12 introduce and use fw_devlink_set_device() in already
-> existing code.
-> 
-> Patches 13 and 14 are related also to fw_devlink but specific to PCI and
-> the device-tree nodes created during enumeration.
-> 
-> Patches 15, 15 and 17 are related fw_devlink too but specific to I2C
-> muxes. Patches purpose is to correctly set a link between an adapter
-> supplier and its consumer. Indeed, an i2c mux adapter's parent is not
-> the i2c mux supplier but the adapter the i2c mux is connected to. Adding
-> a new link between the adapter supplier involved when i2c muxes are used
-> avoid a freeze observed during device removal.
-> 
-> Patch 18 adds support for fw_delink on x86. fw_devlink is needed to have
-> the consumer/supplier relationship between devices in order to ensure a
-> correct device removal order. Adding fw_devlink support for x86 has been
-> tried in the past but was reverted [1] because it broke some systems.
-> Instead of enabling fw_devlink on *all* x86 system or on *all* x86
-> system except on those where it leads to issue, enable it only on system
-> where it is needed.
-> 
-> Patches 19 and 20 allow to build clock and i2c controller used by the
-> LAN966x PCI device when the LAN966x PCI device is enabled.
-> 
-> Patches 21 to 25 are specific to the LAN966x. They touch the current
-> dtso, split it in dtsi/dtso files, rename the dtso and improve the
-> driver to allow easier support for other boards.
-> 
-> The next patch (patch 26) update the LAN966x device-tree overlay itself
-> to have the SPF ports and devices they depends on described.
-> 
-> The last two patches (patches 27 and 28) sort the existing drivers in
-> the needed driver list available in the Kconfig help and add new drivers
-> in this list keep the list up to date with the devices described in the
-> device-tree overlay.
-> 
-> Once again, this series gives the big picture and can be split if
-> needed. Let me know.
+On Mo, 2025-06-23 at 13:56 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> While the auxiliary bus was a nice bandaid, and meant that re-writing
+> the representation of the clock regions in devicetree was not required,
+> it has run its course. The "mss_top_sysreg" region that contains the
+> clock and reset regions, also contains pinctrl and an interrupt
+> controller, so the time has come rewrite the devicetree and probe the
+> reset controller from an mfd devicetree node, rather than implement
+> those drivers using the auxiliary bus. Wanting to avoid propagating this
+> naive/incorrect description of the hardware to the new pic64gx SoC is a
+> major motivating factor here.
+>=20
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v2:
+> Implement the request to use regmap_update_bits(). I found that I then
+> hated the read/write helpers since they were just bloat, so I ripped
+> them out. I replaced the regular spin_lock_irqsave() stuff with a
+> guard(spinlock_irqsave), since that's a simpler way of handling the two
+> different paths through such a trivial pair of functions.
+> ---
+>  drivers/reset/reset-mpfs.c | 81 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 65 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> index 574e59db83a4f..9c3e996f3a099 100644
+> --- a/drivers/reset/reset-mpfs.c
+> +++ b/drivers/reset/reset-mpfs.c
+> @@ -7,12 +7,15 @@
+>   *
+>   */
+>  #include <linux/auxiliary_bus.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+> +#include <linux/regmap.h>
 
-Please suggest how you think this should get merged? There's 8 
-maintainer trees involved here. Some parts can be merged independently? 
-We need to spread over 2 cycles? Greg just takes it all?
+Maybe sort these alphabetically.
 
-Rob
+>  #include <linux/reset-controller.h>
+>  #include <dt-bindings/clock/microchip,mpfs-clock.h>
+>  #include <soc/microchip/mpfs.h>
+> @@ -27,11 +30,14 @@
+>  #define MPFS_SLEEP_MIN_US	100
+>  #define MPFS_SLEEP_MAX_US	200
+> =20
+> +#define REG_SUBBLK_RESET_CR	0x88u
+> +
+>  /* block concurrent access to the soft reset register */
+>  static DEFINE_SPINLOCK(mpfs_reset_lock);
+> =20
+>  struct mpfs_reset {
+>  	void __iomem *base;
+> +	struct regmap *regmap;
+>  	struct reset_controller_dev rcdev;
+>  };
+> =20
+> @@ -46,41 +52,50 @@ static inline struct mpfs_reset *to_mpfs_reset(struct=
+ reset_controller_dev *rcde
+>  static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long=
+ id)
+>  {
+>  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>  	u32 reg;
+> =20
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
+> +
+> +	if (rst->regmap) {
+> +		regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), BIT(id))=
+;
+
+mpfs_reset_lock is only needed for the readl()/writel() below.
+regmap has its own locking.
+
+> +		return 0;
+> +	}
+> =20
+>  	reg =3D readl(rst->base);
+>  	reg |=3D BIT(id);
+>  	writel(reg, rst->base);
+> =20
+> -	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
+> -
+>  	return 0;
+>  }
+> =20
+>  static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned lo=
+ng id)
+>  {
+>  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>  	u32 reg;
+> =20
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
+> +
+> +	if (rst->regmap) {
+> +		regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), 0);
+
+Same as above.
+
+
+regards
+Philipp
