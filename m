@@ -1,174 +1,246 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91C14EC73
-	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A56E29B232
+	for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 16:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751040135; cv=none; b=nDrsknPO0t8PTYFC3GfDmgEB4rWf/460Ob7VvVw0LQ5gu7Xe8WQY5F7ju1UBJMdVIvf5GtPlSfGS7rUFbE2XVUKmc5fEuY1Bn/leebaOWYuuV+za054y+2dnkiIdw6pJO85gG1948VB6pmZufN4XK2kx6Tusf6rdQocc4aDYjlg=
+	t=1751040602; cv=none; b=ZPJHC4pXcMYQjMzxxGXFQNjRKfSWeyHiHwbn6Z3bqQdT0qSUlMqhxW6f85t/la7PyyVzKB71W50KgBbHNQBoxtNqeF+7t06tqsPYmFWtbhBKhK0f9xrNEzX1dPGdnuCQWfAoT3++VlhgpHb5uRbaX/ULm1qGwKSC+tnhbJnj2XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751040135; c=relaxed/simple;
-	bh=GldpBUfQxusdRLQisJudA/HXkddw/PUvTkMxa+47M6o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NtMjA1WXDQiSrJp1N0qeQAjWTGRjIoo+v89rmCFroOVvTjtk5VUtOYywcINowpW4eO+Pb4DKdftp8DdzdTROFYNk3UjdLxIIZw7COwvGocFvGLHcXsCyPyrZtSlj+WoITDgenO9QMDmptpfirMGUfVh85iDRCQhpMog8CqqqFDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBWT-00038m-D8; Fri, 27 Jun 2025 18:01:53 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBWS-005dyk-2s;
-	Fri, 27 Jun 2025 18:01:52 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBWS-000Olw-2X;
-	Fri, 27 Jun 2025 18:01:52 +0200
-Message-ID: <905dc44cf6e7fc4d4500b47f493ec073991a849b.camel@pengutronix.de>
-Subject: Re: [PATCH v3 4/9] reset: mpfs: add non-auxiliary bus probing
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>, sboyd@kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
- <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
- valentina.fernandezalanis@microchip.com, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Lee
- Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Fri, 27 Jun 2025 18:01:52 +0200
-In-Reply-To: <20250623-equate-ogle-0ce3293567e2@spud>
-References: <20250623-levitate-nugget-08c9a01f401d@spud>
-	 <20250623-equate-ogle-0ce3293567e2@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751040602; c=relaxed/simple;
+	bh=IH2+O5cU6bMl3dQgfqyetZYxS7jXnkdNLnvW+qxsQ88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WTHkvq7uXjr0bZWdANqDE39zKlkOSiyzoKnTuwF3hzELjXIS/xxGK1UQSezJInHOb9BhAUxPMHGVLMXFvoBcsVMZAVRvp3klySPezvkCR/X2/nP8s6SG79MQZNeNJRtznFLUe2QDle49L1aWM4hK/L8RsymEsobuJvvm1k7orhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=H4dCPw8k; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="H4dCPw8k"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so2840607b3a.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jun 2025 09:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1751040600; x=1751645400; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6tajG5R3MCsrP/w0wwPMIBf3LF9dc2Wm7Uf1cjFJKdc=;
+        b=H4dCPw8kainQkV3U88q1ykgWUxcyaUhGqNx70wITre5B9Uqg0J5ACangeMO0rF8x6v
+         I86lecQmRle0IXAfhBiPjb3MOiHCqYYTthU4m0LlPGixC1QoSv64F+UuBk7yeSTdgtsy
+         2VaZFR3XhvRA9jigy235+wgd3/xBOuEZOA5KE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751040600; x=1751645400;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6tajG5R3MCsrP/w0wwPMIBf3LF9dc2Wm7Uf1cjFJKdc=;
+        b=maI0DQOtz/ReNz6XXf8cYfNcp9OZNphzkMIleA/WHEUallg08/fI9H2pPTypKl29sY
+         mmjaeCcJnSK6RvX+ljeGWHkWkmkuqrg6m1Si121KDCvFLbyehlfpUOVeMEGDNPZJKLbI
+         Yn00zIrAgeR5gDQYEeuZDNc/SE7QTPRaIZ9qfkwLtUhKgNPlDngAQySy68WGp2EU8Tfu
+         nwJhMvCKmGu8rM6FQ+dF73pGEPq/J+WjXrQO/SeHl0IZ1VhZoqHPyp3LRZ4kgcIwHmfE
+         IH0H19S9N2IIC7OGve+c317FWd8Vcf7igXkKglZRnNPhr9fNtd+1+3TtXoMfLXFVi/Zj
+         Mnyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWK+JOm8ZTrRjHUIc6U9vLuAC6itt8Mmw5vV6YSvGpCzBwblNA70nKixbpTfS/T3LH2DuRbiCOgkzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk5U0K/UrM5W6saxIw2IUdBIeN7NPy6dYRLlgtlLaTm9Q4N9p7
+	NaBLsLenXNnz9KlgiZM3cga3ItfbTMKhB8ODmxS4GhDHEdi0cvRaeHvBiwBPWLQ6HA==
+X-Gm-Gg: ASbGnctWGQe0hO7NNkDBJoFJH6JqTPrGqqOBGJuoR/ptPV7s3oGRefbofiR4tW6jt97
+	QdcSr4z+Uog4NcmOdVLxRmlFcW1R86R7XL4QwwCPJvXxIRMJEbfQI5rAQtt5uZ0//J1Njv3m3wq
+	gfzFkvkrJ9h8amHo4C1YolFGTKupLC/c7SE58u7pb0WJHBidHuKZ/EY5BTSHj1Oo5m8IJjfQtjh
+	0p7bCf7aEgY2Wbn3SNOYwwelDwNAra5WHGoN6XCXh8R4kA47cUq4emV2TKXqZbq5Y3lMs39dyig
+	lVke+6ucKC/3MgJWZkGesRCkVBo4zLcJG3j94L/1w/RGSy8M1NQRVssV59MHpxwAptRZw76p/Gq
+	sWH2d9mnIwgASEhV/ku5qY6xKmg==
+X-Google-Smtp-Source: AGHT+IGphu6TPIxsadsg8AJvhSvpk9h0/WSLUUO4UG0XTFbdDPP5hlzrX20zsMC3uarGOiW78rocGg==
+X-Received: by 2002:a17:902:f709:b0:235:779:edea with SMTP id d9443c01a7336-23ac465d24fmr64232725ad.38.1751040599657;
+        Fri, 27 Jun 2025 09:09:59 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e1b3esm18966805ad.35.2025.06.27.09.09.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 09:09:58 -0700 (PDT)
+Message-ID: <cc36310a-c390-42f0-9c82-5b0236a9abfa@broadcom.com>
+Date: Fri, 27 Jun 2025 09:09:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] MAINTAINERS: Include GDB scripts under their
+ relevant subsystems
+To: Jan Kara <jack@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
+ Kieran Bingham <kbingham@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
+ Ilya Leoshkevich <iii@linux.ibm.com>, Etienne Buira <etienne.buira@free.fr>,
+ Antonio Quartulli <antonio@mandelbit.com>, Illia Ostapyshyn
+ <illia@yshyn.com>, "open list:COMMON CLK FRAMEWORK"
+ <linux-clk@vger.kernel.org>,
+ "open list:PER-CPU MEMORY ALLOCATOR" <linux-mm@kvack.org>,
+ "open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>,
+ "open list:KASAN" <kasan-dev@googlegroups.com>,
+ "open list:MAPLE TREE" <maple-tree@lists.infradead.org>,
+ "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>,
+ "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+ <fynmrmsglw4liexcb37ykutf724lh7zbibilcjpysbmvgtkmes@mtjrfkve4av7>
+ <c66deb8f-774e-4981-accf-4f507943e08c@broadcom.com>
+ <iup2plrwgkxlnywm3imd2ctkbqzkckn4t3ho56kq4y4ykgzvbk@cefy6hl7yu6c>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <iup2plrwgkxlnywm3imd2ctkbqzkckn4t3ho56kq4y4ykgzvbk@cefy6hl7yu6c>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mo, 2025-06-23 at 13:56 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While the auxiliary bus was a nice bandaid, and meant that re-writing
-> the representation of the clock regions in devicetree was not required,
-> it has run its course. The "mss_top_sysreg" region that contains the
-> clock and reset regions, also contains pinctrl and an interrupt
-> controller, so the time has come rewrite the devicetree and probe the
-> reset controller from an mfd devicetree node, rather than implement
-> those drivers using the auxiliary bus. Wanting to avoid propagating this
-> naive/incorrect description of the hardware to the new pic64gx SoC is a
-> major motivating factor here.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v2:
-> Implement the request to use regmap_update_bits(). I found that I then
-> hated the read/write helpers since they were just bloat, so I ripped
-> them out. I replaced the regular spin_lock_irqsave() stuff with a
-> guard(spinlock_irqsave), since that's a simpler way of handling the two
-> different paths through such a trivial pair of functions.
-> ---
->  drivers/reset/reset-mpfs.c | 81 ++++++++++++++++++++++++++++++--------
->  1 file changed, 65 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index 574e59db83a4f..9c3e996f3a099 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -7,12 +7,15 @@
->   *
->   */
->  #include <linux/auxiliary_bus.h>
-> +#include <linux/cleanup.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> +#include <linux/regmap.h>
+On 6/27/25 00:55, Jan Kara wrote:
+> On Thu 26-06-25 09:39:36, Florian Fainelli wrote:
+>> On 6/26/25 09:17, Liam R. Howlett wrote:
+>>> * Florian Fainelli <florian.fainelli@broadcom.com> [250625 19:13]:
+>>>> Linux has a number of very useful GDB scripts under scripts/gdb/linux/*
+>>>> that provide OS awareness for debuggers and allows for debugging of a
+>>>> variety of data structures (lists, timers, radix tree, mapletree, etc.)
+>>>> as well as subsystems (clocks, devices, classes, busses, etc.).
+>>>>
+>>>> These scripts are typically maintained in isolation from the subsystem
+>>>> that they parse the data structures and symbols of, which can lead to
+>>>> people playing catch up with fixing bugs or updating the script to work
+>>>> with updates made to the internal APIs/objects etc. Here are some
+>>>> recents examples:
+>>>>
+>>>> https://lore.kernel.org/all/20250601055027.3661480-1-tony.ambardar@gmail.com/
+>>>> https://lore.kernel.org/all/20250619225105.320729-1-florian.fainelli@broadcom.com/
+>>>> https://lore.kernel.org/all/20250625021020.1056930-1-florian.fainelli@broadcom.com/
+>>>>
+>>>> This patch series is intentionally split such that each subsystem
+>>>> maintainer can decide whether to accept the extra
+>>>> review/maintenance/guidance that can be offered when GDB scripts are
+>>>> being updated or added.
+>>>
+>>> I don't see why you think it was okay to propose this in the way you
+>>> have gone about it.  Looking at the mailing list, you've been around for
+>>> a while.
+>>
+>> This should probably have been posted as RFC rather than PATCH, but as I
+>> indicate in the cover letter this is broken down to allow maintainers like
+>> yourself to accept/reject
+>>
+>>>
+>>> The file you are telling me about seems to be extremely new and I needed
+>>> to pull akpm/mm-new to discover where it came from.. because you never
+>>> Cc'ed me on the file you are asking me to own.
+>>
+>> Yes, that file is very new indeed, and my bad for not copying you on it.
+>>
+>> I was not planning on burning an entire day worth of work to transition the
+>> GDB scripts dumping the interrupt tree away from a radix tree to a maple
+>> tree. All of which happens with the author of that conversion having
+>> absolutely no idea that broke anything in the tree because very few people
+>> know about the Python GDB scripts that Linux has. It is not pleasant to be
+>> playing catch when it would have take maybe an extra couple hours for
+>> someone intimately familiar with the maple tree to come up with a suitable
+>> implementation replacement for mtree_load().
+>>
+>> So having done it felt like there is a maintenance void that needs to be
+>> filled, hence this patch set.
+> 
+> I can see that it takes a lot of time to do a major update of a gdb
+> debugging script after some refactoring like this. OTOH mandating some gdb
+> scripts update is adding non-trivial amount of work to changes that are
+> already hard enough to do as is. 
 
-Maybe sort these alphabetically.
+This really should have been posted as RFC, because I can see how 
+posting this as PATCH would be seen as coercing maintainers into taking 
+those GDB scripts under their umbrella.
 
->  #include <linux/reset-controller.h>
->  #include <dt-bindings/clock/microchip,mpfs-clock.h>
->  #include <soc/microchip/mpfs.h>
-> @@ -27,11 +30,14 @@
->  #define MPFS_SLEEP_MIN_US	100
->  #define MPFS_SLEEP_MAX_US	200
-> =20
-> +#define REG_SUBBLK_RESET_CR	0x88u
-> +
->  /* block concurrent access to the soft reset register */
->  static DEFINE_SPINLOCK(mpfs_reset_lock);
-> =20
->  struct mpfs_reset {
->  	void __iomem *base;
-> +	struct regmap *regmap;
->  	struct reset_controller_dev rcdev;
->  };
-> =20
-> @@ -46,41 +52,50 @@ static inline struct mpfs_reset *to_mpfs_reset(struct=
- reset_controller_dev *rcde
->  static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long=
- id)
->  {
->  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
-> -	unsigned long flags;
->  	u32 reg;
-> =20
-> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
-> +
-> +	if (rst->regmap) {
-> +		regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), BIT(id))=
-;
+> And the obvious question is what is the
+> value? I've personally never used these gdb scripts and never felt a strong
+> need for something like that. People have various debugging aids (like BPF
+> scripts, gdb scripts, there's crash tool and drgn, and many more) lying
+> around. 
 
-mpfs_reset_lock is only needed for the readl()/writel() below.
-regmap has its own locking.
+Those are valuable tools in the tool box, but GDB scripts can work when 
+your only debug tool accessible is JTAG for instance, I appreciate this 
+is typically miles away from what most of the kernel community does, but 
+this is quite typical and common in embedded systems. When you operate 
+in that environment, having a decent amount of debugger awareness of 
+what is being debugged is immensely valuable in saving time.
 
-> +		return 0;
-> +	}
-> =20
->  	reg =3D readl(rst->base);
->  	reg |=3D BIT(id);
->  	writel(reg, rst->base);
-> =20
-> -	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
-> -
->  	return 0;
->  }
-> =20
->  static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned lo=
-ng id)
->  {
->  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
-> -	unsigned long flags;
->  	u32 reg;
-> =20
-> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
-> +
-> +	if (rst->regmap) {
-> +		regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), 0);
+> I'm personally of an opinion that it is not a responsibility of
+> the person doing refactoring to make life easier for them or even fixing
+> them and I don't think that the fact that some debug aid is under
+> scripts/gdb/ directory is making it more special. 
 
-Same as above.
+That is really the question that I am trying to get answered with this 
+patch series. IMHO as a subsystem maintainer it is not fair to be 
+completely oblivious to scripts that live in the source tree, even if 
+you are not aware of those.
 
+ > So at least as far as I'm> concerned (VFS, fsnotify and other 
+filesystem related stuff) I don't plan
+> on requiring updates to gdb scripts from people doing changes or otherwise
+> actively maintain them.
 
-regards
-Philipp
+vfs.py script is beyond trivial, the largest and most complicated IMHO 
+is mapletree.py which had to be recently developed to continue to 
+support parsing the interrupt descriptor tree in the kernel, I can 
+maintain that one now that I know a lot more than I ever wished I knew 
+about maple trees. So really the burden is not as big as it may seem but 
+it's fair not to be taking on more work as a maintainer, I get that.
+
+Thanks for your feedback!
+-- 
+Florian
