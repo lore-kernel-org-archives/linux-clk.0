@@ -1,93 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE66CA6F;
-	Fri, 27 Jun 2025 19:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C5D1F17E8;
+	Fri, 27 Jun 2025 20:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751053137; cv=none; b=udP/JaPdO4b0PlcJa+CTHrYaLhUtBbzhDJJQr+MiJoyKR4mZpoyezb+ImIZsJd+GQR+LsnK61O1RwZ+bz+uT4kPwiIh7Gygn2PtnVSco6WloHeyHsnlPhE+qmipXf2gwOt47OB99kk0bLOgmLRSN48bvsUBAReAnL2wsM3V1UF8=
+	t=1751056453; cv=none; b=RZ73V0MVt1gPUr0Y3O3d3jSuY1hRfvfP29D2nNpG64YxehXmmUOgg38WfH9CflB3/6DvdbfikMlqYaqCdeFlWXkic3yF33DtJTd5JBoMee1LvYmyphwBJT0b0t3uL+aQEYwfr2BURT7Eht/8vx1aj5esrmVCKl1GfNVlIV+hP6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751053137; c=relaxed/simple;
-	bh=OE8U2vT7ew5Dt6ec8C7hkjuElIoXUc1rAPhJAuZXxG8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jYZ9MYlYWJHDndU7W+ApKdo1uybbfOVWazX6AmqtZ9XF8eEfbdnKEAyqqQzRE4xFtxf4E6BSC+d58jUC1k+6926mhXp3LNQlqqWXMiFIiuuJywH2Z4YauWoCAWTIHstIGQztO8u5eNcZjnywV8BfqTT9jj6kQcNvYa+seZgAPWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPGZ7yVd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751056453; c=relaxed/simple;
+	bh=iiUQq76IQA17+Pru1iWcynDOuQvwdeIl3L2j6A40dus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aigt9s9NSUdoP/i9bKv97VNPgxNeegz3AXBhUponb/i1rtfwyiPaqFRNcRDZpIX9jORwG9aoCRrl7vMFN37SAPRxUwZu5zoY5Hf4oZeTacTnLFLH2Y5hZ9IMTsy6UgTCsujL6FjOkp5SUpbUDnl0IAZQYS09rZ/1LYSJHSx4lUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrDkSTxZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPGZ7yVd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283C1C4CEF6;
-	Fri, 27 Jun 2025 19:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751053136;
-	bh=OE8U2vT7ew5Dt6ec8C7hkjuElIoXUc1rAPhJAuZXxG8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YPGZ7yVdxGLbHgm7y1rhDBnfH40vpyGmywbcIuoWgPzSGVZQylVK8pc8sG0H0Ajut
-	 UP99Rzrh9GlJKv7QfNyk+MyyellutDgnFh2R7Xiu3VFkXPC665FsBfbqW+XMSo1uD5
-	 bzXAQxt/ahMTNZ8xI/lRCOJQWDdo2wU2PTESbUseSewXDCcJ8kCrvpqdLWFztEPJtz
-	 20s1yYt99RwhltUaKArwd/16gAMti29MT+Dl593FYEEixbTOWluSnBjT0+14f0GSwn
-	 6ptEsco2UXPqaJvwHSpi0sPzGeIwxY7VCrNi6xKloyRfIMPozR3owMJ4IDbyq0YcJA
-	 cP5xHbmkEl6RA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 27 Jun 2025 21:37:58 +0200
-Subject: [PATCH 4/4] clk: qcom: rpmh: Define RPMH_IPA_CLK on QCS615
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrDkSTxZ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453608ed113so3074385e9.0;
+        Fri, 27 Jun 2025 13:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751056450; x=1751661250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RpiQyytJ0KMzWWY5PNEIWElmrKBfnMQjCYIhq/3zCbQ=;
+        b=nrDkSTxZzA5vARAisCFnKvQKIK7+8Xmem8IoBdPjPT/nNTa9pzHr+X+W0XzpwjJJJ2
+         6ekvQzIbDKQRyzqxsBxQKe0/VgjXZIHeo3Pavretpj1Z65Z7j9c5xlbyIMObz7ytNzFE
+         KU9Mz7z9UAFwUQ8n1patDUh46VBar8G++ZFAWPmmibgL+rbH/uEVr7wwh3fRVr0F5zo0
+         1HFMblRF8IF0Q+Usx+KeHrj24Lg3ab84h7OtGL8yrQ6dUfN5xgrXu5+/WU5BmY+lsAaj
+         SmqZtJi6MzssFnTcYmQ9IkdAyb0txevWZhkmsqHBIKMa1iIywiBIhoAGguotbcf5p38k
+         145Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751056450; x=1751661250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RpiQyytJ0KMzWWY5PNEIWElmrKBfnMQjCYIhq/3zCbQ=;
+        b=a0QwpOxz5rBY3G6ujsiKKdUfjqRefXDl3cKnAINtui/2MxpmgmV7878i93ohmFeQHR
+         96/+/zu729/iQpEJ0YshwCYJa9bUG8vfJNCH8DZ31yntVlBHGVRaEg152j+6Mi3XEkbj
+         faxyMlG9EsZGponBYMQl8N8IGCJnEpokAvWHgJYrzxNw6clhlsubAcXR6xlP2LxudsyO
+         Qgo2VKsGb/3eYu8jCxV0OlScCu2weXj66e4vE2w4SqfKnKKI1i/bFjzPntROObDVK3CX
+         5RL5aazZnoC0cs68DTL7mLlPn1x+vDWvQEXfUEmyhv4kCeMNrroKie4qOGC9BDcYZfJU
+         675A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRGKvQBvBNYc1Uvv4FTak8iXpf88wKA/WZQSF9L5OPe7bvgj0Eyh1UDo0xf5cvx445ORHzAY3KDa+JVX6yAHY6E4k=@vger.kernel.org, AJvYcCW1Owy5GTVhOkPgFNl5I/MCgmh2Ld2CgnDZSzP/8JB7PFdsb9frMab1RddhjZF/rlPkFax1w7ODSbF7QQo1@vger.kernel.org, AJvYcCWnlJ079hqmrCq8zhchqpn9MO12ESI3wcW8f3NEAKFDQfiacsjhW5lhHfdV4qef/LxqaBu/pynSw4Ky@vger.kernel.org, AJvYcCXPdWlPTWEPkmo5UEz7CoQEDwHQd862SGcjtC2BE6yRrKtoJYM318LOitsSZYjpfo3MXewc5cksFbT6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGFYGy0gOF++Jt/OhEbtjMdN3lkCCRzoawqd1U544rXFVBBZny
+	a7sy2/8s2aDPlyPebq6hvT2jZhfFvpzRYEYWYVG8B/TzV/DjIQACc6hKYR9dbO1lhewx/bRsRRb
+	Tsu1QQ+zHdO12IoX92KGKUjhX8FrHIt8=
+X-Gm-Gg: ASbGnctemjWRcLb9DEpW6ekDx5sIdUH+vJDITJj36nZ8xopAJKuT4yrH/cfZ619i3TQ
+	E0/txwPP21bgycqryCV7Q+noqaA7VkQPoWeVGQdNpmxmETAH8SAV2m5LWHG3Hu8xAaJrglAMQns
+	RUHjit6vhw57ts/2op/DPH3XfgMx7Ti0wt9Yj3Kwyly7Y7W4Tkx7Kx3mZ9fXUf33JwHB8x/98ns
+	9o=
+X-Google-Smtp-Source: AGHT+IH1we4l8TSLRHqWA9UawCQgS0sZUtmWk4EfDQsVgWet8wb0/4Ml2IXH7vL2eKFsllpPVAEOxRuEa+K9dz5AeMU=
+X-Received: by 2002:a05:6000:20c4:b0:3a4:e7d3:bd9c with SMTP id
+ ffacd0b85a97d-3a8f52b64fdmr2956569f8f.17.1751056449449; Fri, 27 Jun 2025
+ 13:34:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-topic-qcs615_icc_ipa-v1-4-dc47596cde69@oss.qualcomm.com>
-References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
-In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
- Taniya Das <quic_tdas@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751053092; l=1036;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=I5Frh8xqHPLbzLba+aZWZ34NiNQSkZoK0uf/p2Aol9Q=;
- b=Z32XgiO7x666mSxR3HDZ8XOdjJnY4rK71nyJqsrpxcHn+wYCGzZNbU5f/KPR/xtsw+CBzt09K
- J0n4xR3/hx/CuaFqaJDWkWSZdn2OqtSxDeCo+dnR0Rmr0Wa3ZKFU/NA
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+References: <20250624173030.472196-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250624173030.472196-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWsA4mC+D8ftx74_XeuBjpv-9EQN0rgVLPsxjmrO3+rWg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWsA4mC+D8ftx74_XeuBjpv-9EQN0rgVLPsxjmrO3+rWg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 27 Jun 2025 21:33:43 +0100
+X-Gm-Features: Ac12FXy9AMVc6a5m4cjCAXc_6PL2PvT_9O5j-pCG6-K-7YQ1SyWLo-YIppgIWEk
+Message-ID: <CA+V-a8ubw=1JdnH-Sr0xj222e0-+Q97KYAYqUPMVU4N3siL5jw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: renesas: rzv2h: Add fixed-factor module clocks
+ with status reporting
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi Geert,
 
-This was previously (mis)represented in the interconnect driver, move
-the resource under the clk-rpmh driver control, just like we did for
-all platforms in the past, see e.g. Commit aa055bf158cd ("clk: qcom:
-rpmh: define IPA clocks where required")
+Thank you for the review.
 
-Fixes: 42a1905a10d6 ("clk: qcom: rpmhcc: Add support for QCS615 Clocks")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/clk/qcom/clk-rpmh.c | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Jun 26, 2025 at 2:22=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 24 Jun 2025 at 19:30, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for fixed-factor module clocks that can report their enable
+> > status through the module status monitor. Introduce a new clock type,
+> > CLK_TYPE_FF_MOD_STATUS, and define the associated structure,
+> > rzv2h_ff_mod_status_clk, to manage these clocks.
+> >
+> > Implement the .is_enabled callback by reading the module status registe=
+r
+> > using monitor index and bit definitions. Provide a helper macro,
+> > DEF_FIXED_MOD_STATUS, to simplify the definition of such clocks.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> One early review comment below...
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+>
+> > +static struct clk_ops rzv2h_clk_ff_mod_status_ops;
+>
+> This is an empty block of 200 bytes, consuming memory even when running
+> on a different platform.
+>
+Agreed.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 00fb3e53a388ed24ed76622983eb5bd81a6b7002..e02346bccdc6f26b1a832ed62dbfdc35f271c858 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -825,6 +825,7 @@ static struct clk_hw *qcs615_rpmh_clocks[] = {
- 	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
- 	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
- 	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
-+	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
- };
- 
- static const struct clk_rpmh_desc clk_rpmh_qcs615 = {
+> > +static struct clk * __init
+> > +rzv2h_cpg_fixed_mod_status_clk_register(const struct cpg_core_clk *cor=
+e,
+> > +                                       struct rzv2h_cpg_priv *priv)
+> > +{
+> > +       struct rzv2h_ff_mod_status_clk *clk_hw_data;
+> > +       struct clk_init_data init =3D { };
+> > +       struct clk_fixed_factor *fix;
+> > +       const struct clk *parent;
+> > +       const char *parent_name;
+> > +       int ret;
+> > +
+> > +       WARN_DEBUG(core->parent >=3D priv->num_core_clks);
+> > +       parent =3D priv->clks[core->parent];
+> > +       if (IS_ERR(parent))
+> > +               return ERR_CAST(parent);
+> > +
+> > +       parent_name =3D __clk_get_name(parent);
+> > +       parent =3D priv->clks[core->parent];
+> > +       if (IS_ERR(parent))
+> > +               return ERR_CAST(parent);
+> > +
+> > +       clk_hw_data =3D devm_kzalloc(priv->dev, sizeof(*clk_hw_data), G=
+FP_KERNEL);
+> > +       if (!clk_hw_data)
+> > +               return ERR_PTR(-ENOMEM);
+> > +
+> > +       clk_hw_data->priv =3D priv;
+> > +       clk_hw_data->conf =3D core->cfg.fixed_mod;
+> > +
+> > +       rzv2h_clk_ff_mod_status_ops =3D clk_fixed_factor_ops;
+>
+> This overwrites rzv2h_clk_ff_mod_status_ops in every call (currently
+> there is only one).
+>
+Good point.
 
--- 
-2.50.0
+> > +       rzv2h_clk_ff_mod_status_ops.is_enabled =3D rzv2h_clk_ff_mod_sta=
+tus_is_enabled;
+>
+> If there would be multiple calls, there is a short time window where
+> rzv2h_clk_ff_mod_status_ops.is_enabled is NULL, possibly affecting
+> already-registered clocks of the same type.
+>
+Yes agreed.
 
+> Hence I think you better store rzv2h_clk_ff_mod_status_ops inside
+> rzv2h_cpg_priv (so it is allocated dynamically), and initialize it from
+> rzv2h_cpg_probe (so it is initialized once).
+>
+Sure, I'll update as above, that is allocate only when needed (and only onc=
+e).
+
+Cheers,
+Prabhakar
