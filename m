@@ -1,46 +1,68 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB464A3C;
-	Sun, 29 Jun 2025 18:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985053D6F;
+	Sun, 29 Jun 2025 20:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751220650; cv=none; b=QaI2wD2NoMwWWtsMczy7NmBK35IkrZGmFGArkumz7hhLIyrhAIL3JE3bMtBLAgEjZfx4Qg8A4Cnc/HKuGgSLOrk94cLcDRHcstl+8buOLk0cvPC9A2oT1r0cH6C8MKoy5JiwczzXRT51Dg2hFW4R5EDqqU2tfRhXVX7Z/NLbzVk=
+	t=1751230657; cv=none; b=V/Wq7Fn4GaxHD95iJXzc/hYIjul5TGNPbUmx1nDuMGwHo0R+Hh/zU+SOCr4BYQ7zLQ2DHoo0Lzts1t4oX9XgwvJAgIPPv4MSGsUrWyEVwllr3lYcY/ufHgPjPGcGGtuty1K4jUN3phBuvlTRbADTL9sdPkw5I61Khfi5I+qfbHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751220650; c=relaxed/simple;
-	bh=rQ13VObp17dm8Lf0rGOz6vSrG3BrY0W2QeZG0NRfLTM=;
+	s=arc-20240116; t=1751230657; c=relaxed/simple;
+	bh=4sGclJ7JPmOXEyw1qCkUxmj9+SxiJpgXHWGQ3kI7L8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4WEFl6+w0bIT4V8DEW579s4DTM3ia2zR1E1CE7eAX97smiPiCuCzg770U8teFnA7wjWchg12BJ9bMPEp/BnPdwBoaI3A0a0MvXpIY/geOKwyzaSN1Y6NcNJUb6mqe7e/J4Kb80R4jBs+FFX2W/Lglhmg09+CjD/e1nHoCcbTOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XCslqu7v; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpLUhIkM7DgVcFhW8EL/C/OUIy6WUZ+IfRght3y11y2WarwWwPCgjnR8fSqHXW4rA0GjPVlUXlWgww2U0tPU02BDS+YJMXsotctbEgv+DX3I92jTFhrrJuIwoq+IsMpG33cb/ztNBhrZuADGWOT2yqeh7lDqCdDdDOTEOP6BXSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TKlRP+3f; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XCslqu7v"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0SXtSx80cAdCDtcPv9j072wXjbBXpZrMW0XySoNhCpM=; b=XCslqu7v0e4xvy6nG6epE1EPIJ
-	2sMobVmbQNK5E5AeZNuOc5TPB/L6Q2pQdXLxEDIyJxii0LeUsjmEfeqS6NtgiwKkNDHBXrArzEHyQ
-	u+cywzWRihMoNasndy/IlJrhmXDdrSWZly0QGf3SUSDDZFRDTBYKkg5/l5+F2X0sJ46s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uVwTt-00HIBB-EX; Sun, 29 Jun 2025 20:10:21 +0200
-Date: Sun, 29 Jun 2025 20:10:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lucien.Jheng" <lucienzx159@gmail.com>
-Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com, albert-al.lee@airoha.com
-Subject: Re: [PATCH v1 net-next PATCH 1/1] net: phy: air_en8811h: Introduce
- resume/suspend and clk_restore_context to ensure correct CKO settings after
- network interface reinitialization.
-Message-ID: <fe9a6e67-2790-489b-a5fa-a03ec041f48e@lunn.ch>
-References: <20250629115911.51392-1-lucienzx159@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TKlRP+3f"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751230654; x=1782766654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4sGclJ7JPmOXEyw1qCkUxmj9+SxiJpgXHWGQ3kI7L8E=;
+  b=TKlRP+3f/6xa/BsqWWJ1rOHbxPuKQxI4UoAPkOLKgX/24YK4S0W6CBr2
+   mLPR1nT5/bW4GCFEzV87wIlEZZTVo2cHsL/Io2xUX33AXqMUItAvvUk8W
+   9WqWBlXmOIbT0zR7n5FNnqx5iO2Scc+dXCQRUtGTtL6hkAm6bT4XA5ZN5
+   dv7KBef4kk2nC0XhV2699kGEOcy0HG1jHzZ4AeMlm9WPBTj9IG+663CZ1
+   Pj+fUkEP3t5l940/2+jDusWx7FcnGku0Boqu/5jn9IB7k/6oV7h8hdY17
+   eK08987vV6w5dwdnS9y6gzs9fEJWqsrutlm0s/XcNOy2f0Jem8BdKuO3R
+   Q==;
+X-CSE-ConnectionGUID: MHTvA/O7RTqGdnq6qHH77Q==
+X-CSE-MsgGUID: +TVy+MTFTkm36HzPfcv4yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="76006842"
+X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
+   d="scan'208";a="76006842"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 13:57:34 -0700
+X-CSE-ConnectionGUID: yqedKzWcThKyEa84V8mKAQ==
+X-CSE-MsgGUID: 2xMj3oDGTH6CIdlGLr8kEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
+   d="scan'208";a="152780971"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 29 Jun 2025 13:57:29 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uVz5b-000YE2-1w;
+	Sun, 29 Jun 2025 20:57:27 +0000
+Date: Mon, 30 Jun 2025 04:56:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de,
+	richardcochran@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, guangjie.song@mediatek.com,
+	wenst@chromium.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	kernel@collabora.com, Laura Nao <laura.nao@collabora.com>
+Subject: Re: [PATCH v2 22/29] clk: mediatek: Add MT8196 mfg clock support
+Message-ID: <202506300416.dbAiyBcI-lkp@intel.com>
+References: <20250624143220.244549-23-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,17 +71,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250629115911.51392-1-lucienzx159@gmail.com>
+In-Reply-To: <20250624143220.244549-23-laura.nao@collabora.com>
 
-> +static void en8811h_clk_restore_context(struct clk_hw *hw)
-> +{
-> +	if (!__clk_get_enable_count(hw->clk))
+Hi Laura,
 
-Using a __ functions seems wrong, they are supposed to be internal.
+kernel test robot noticed the following build warnings:
 
-How about clk_ops save_context() and restore_context()?
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.16-rc3 next-20250627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-    Andrew
+url:    https://github.com/intel-lab-lkp/linux/commits/Laura-Nao/clk-mediatek-clk-pll-Add-set-clr-regs-for-shared-PLL-enable-control/20250624-225217
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250624143220.244549-23-laura.nao%40collabora.com
+patch subject: [PATCH v2 22/29] clk: mediatek: Add MT8196 mfg clock support
+config: arm64-randconfig-r053-20250629 (https://download.01.org/0day-ci/archive/20250630/202506300416.dbAiyBcI-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e04c938cc08a90ae60440ce22d072ebc69d67ee8)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
 
----
-pw-bot: cr
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506300416.dbAiyBcI-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/clk/mediatek/clk-mt8196-mfg.c:143:3-8: No need to set .owner here. The core will do it.
+
+vim +143 drivers/clk/mediatek/clk-mt8196-mfg.c
+
+   137	
+   138	static struct platform_driver clk_mt8196_mfg_drv = {
+   139		.probe = clk_mt8196_mfg_probe,
+   140		.remove = clk_mt8196_mfg_remove,
+   141		.driver = {
+   142			.name = "clk-mt8196-mfg",
+ > 143			.owner = THIS_MODULE,
+   144			.of_match_table = of_match_clk_mt8196_mfg,
+   145		},
+   146	};
+   147	module_platform_driver(clk_mt8196_mfg_drv);
+   148	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
