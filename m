@@ -1,68 +1,93 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985053D6F;
-	Sun, 29 Jun 2025 20:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3375227
+	for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 05:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751230657; cv=none; b=V/Wq7Fn4GaxHD95iJXzc/hYIjul5TGNPbUmx1nDuMGwHo0R+Hh/zU+SOCr4BYQ7zLQ2DHoo0Lzts1t4oX9XgwvJAgIPPv4MSGsUrWyEVwllr3lYcY/ufHgPjPGcGGtuty1K4jUN3phBuvlTRbADTL9sdPkw5I61Khfi5I+qfbHc=
+	t=1751260665; cv=none; b=hmxI1wnAHcrYoJrbIVoHG58fKP6ay02/+y8enxDYEw+DhlOhh3BTdlLd+4wfNYIrlF428bJBRc7/6rCQQkM32c7mckeDevqkFqVlUv75q/WII+wxvyOxY5GLeXeRr+Xqqsavin6Nffs3d6OQRak+F8SHUgHGJdwxuRXT61AdTZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751230657; c=relaxed/simple;
-	bh=4sGclJ7JPmOXEyw1qCkUxmj9+SxiJpgXHWGQ3kI7L8E=;
+	s=arc-20240116; t=1751260665; c=relaxed/simple;
+	bh=j0+utyg3WdFVd9h3Luv7yRhQ04bPtA+ySwD2/SbLX/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpLUhIkM7DgVcFhW8EL/C/OUIy6WUZ+IfRght3y11y2WarwWwPCgjnR8fSqHXW4rA0GjPVlUXlWgww2U0tPU02BDS+YJMXsotctbEgv+DX3I92jTFhrrJuIwoq+IsMpG33cb/ztNBhrZuADGWOT2yqeh7lDqCdDdDOTEOP6BXSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TKlRP+3f; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=l26D/bXqHJDt+S11COVLQnFUn38FajxzBftVwcIUPh28DgoQSf9OWUvpknr5R4EB67wcQhuzOy+GHxrTGXsLeaqgITv1n1TW9xkBzhu8Ryt5lip4wHjkrGOJzJerImwk3zYktb+tClhrhW7W0icHCE10vYvWCEg2HM0UTGtYkDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mqxqIjYr; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TKlRP+3f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751230654; x=1782766654;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4sGclJ7JPmOXEyw1qCkUxmj9+SxiJpgXHWGQ3kI7L8E=;
-  b=TKlRP+3f/6xa/BsqWWJ1rOHbxPuKQxI4UoAPkOLKgX/24YK4S0W6CBr2
-   mLPR1nT5/bW4GCFEzV87wIlEZZTVo2cHsL/Io2xUX33AXqMUItAvvUk8W
-   9WqWBlXmOIbT0zR7n5FNnqx5iO2Scc+dXCQRUtGTtL6hkAm6bT4XA5ZN5
-   dv7KBef4kk2nC0XhV2699kGEOcy0HG1jHzZ4AeMlm9WPBTj9IG+663CZ1
-   Pj+fUkEP3t5l940/2+jDusWx7FcnGku0Boqu/5jn9IB7k/6oV7h8hdY17
-   eK08987vV6w5dwdnS9y6gzs9fEJWqsrutlm0s/XcNOy2f0Jem8BdKuO3R
-   Q==;
-X-CSE-ConnectionGUID: MHTvA/O7RTqGdnq6qHH77Q==
-X-CSE-MsgGUID: +TVy+MTFTkm36HzPfcv4yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="76006842"
-X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
-   d="scan'208";a="76006842"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 13:57:34 -0700
-X-CSE-ConnectionGUID: yqedKzWcThKyEa84V8mKAQ==
-X-CSE-MsgGUID: 2xMj3oDGTH6CIdlGLr8kEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
-   d="scan'208";a="152780971"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 29 Jun 2025 13:57:29 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uVz5b-000YE2-1w;
-	Sun, 29 Jun 2025 20:57:27 +0000
-Date: Mon, 30 Jun 2025 04:56:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, guangjie.song@mediatek.com,
-	wenst@chromium.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	kernel@collabora.com, Laura Nao <laura.nao@collabora.com>
-Subject: Re: [PATCH v2 22/29] clk: mediatek: Add MT8196 mfg clock support
-Message-ID: <202506300416.dbAiyBcI-lkp@intel.com>
-References: <20250624143220.244549-23-laura.nao@collabora.com>
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mqxqIjYr"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-747c2cc3419so3917877b3a.2
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jun 2025 22:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751260663; x=1751865463; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CHPtwkORxYza8f0AQe4trY9Wlzmo7dC+e4hGrz5TZ/8=;
+        b=mqxqIjYryhA+0zr9tTzyIr/Gcpvgpp/1zYKFkeUD0l7Kb8GxhEsslHPUnrHDeAdm16
+         w4DtFymjm8fm1ZQBYlRRujx4qLkDKc+krNVHFywEuyfpPgZeij5EhNdpUIqIXqgkd3cB
+         c7hazZBdvI5w2fRLfZUYnDKVd3D1XsvRz/rBz1fbvaLu7zfhysD5Nmuqs1bZ1oEUY8hg
+         LBMc6Q6NDL6VrvwpcOgqpHKj793qgZhTRCppZb22hVI79j8peejBGCgcYJNmqrB5iUo4
+         +yezLi9pCJXdX2d2aK5F9ducCt94lR1J5r2g9BQ7DPGIXZQhh2UVH+8fiklLepIjC+Lp
+         d8vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751260663; x=1751865463;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CHPtwkORxYza8f0AQe4trY9Wlzmo7dC+e4hGrz5TZ/8=;
+        b=YJ9OG5kbNPgFWFRoKjdnV72HWng5D9bhYm7vLaj0fYrixjTlenSNQWSIdUfKUrrpKK
+         JcSX+FoilVY8tY11IctF/Bz2Ahy10TEv4F46zLjhVYxckGvf/I2ZP1QZmatPpuF2EALZ
+         UtJwErdsM/1HOfw5oMLLY8Ya+pj+XDaJAG9686ksTNltQb1+PPRrOCHHD4vyMCR/+iPL
+         l6uyt4LvBtyscrpJ29Gyq7MaWoQSAMbPvKPAhTNllR7h43M4KdRmXqyRcfDI37abXqSg
+         6xNbHHq8fzHkqWtgCcLK9b37l7UuDIkLXhZEbb58Jv2oXaCLp6i08oXK70OH9nScvrEP
+         AK3w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/37/L+A0cvVKLbu9gLKrYCcBF6vRhtB56p2m2qxEgLMjt8nUiBqET5FVBKkg2WUwRhr6tB6kW+kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG6YHiFykPPvJe9JJUHQZUp1MxUP/K6fpoEHb+v8B8OVe0Tlxp
+	fXR+Nxru1H+tAfNb0Iaakyhrt9+OwshyeBbVE2LPNStE7dyajyZmcpa30MxlSOTCIpw=
+X-Gm-Gg: ASbGnctFYSDQJGO/zTNKH+O5DCf5XKX6nnYqQcRa7YwbxyYl3xhH9KQ4Rhg0l++h9iS
+	jN1Qod3oovOlBsH6YbtFpnMJGcjNyy8ZifFb8mLQ3n7QJ5RealZX7jP15C8r63FtNXpq3jRq3lz
+	vmA+ahLuMLAYCI9MdiiwI3+XfTMU/vOPWawstEtk08sX5ZvPUulz+vl9wE43oKF+8UILI3ctasX
+	POBo8oPfcQj+JznV9dGIRbIJD6TxuWVuShqolCQ8OY8zMjqr/uAVK/ty2kvw/T6Edw2Z+mgj1+b
+	r+5WYUnxGdjG1OJMjbu+R6+cHo7dvVvfNR3uNo9XZIkoqx6tpeEmZKdHf8KQMU93GGiR8S4mIrR
+	ZvlWa
+X-Google-Smtp-Source: AGHT+IEHPxZf5K+6rB6h+G22ROpgqRBCwgyhaeWghhTRXeAPT0VUHYSFlG21O4cgJMdUdvOxbVQ28Q==
+X-Received: by 2002:a05:6a00:3e17:b0:748:33f3:8da3 with SMTP id d2e1a72fcca58-74af6f2f9d7mr18261164b3a.19.1751260663025;
+        Sun, 29 Jun 2025 22:17:43 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af56e3ac1sm8021982b3a.145.2025.06.29.22.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 22:17:42 -0700 (PDT)
+Date: Mon, 30 Jun 2025 10:47:28 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 14/23] ACPI: property: Add support for cells property
+Message-ID: <aGId6M_0D0qERUu_@sunil-laptop>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-15-apatel@ventanamicro.com>
+ <aFka3y1494LIzyUA@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,49 +96,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624143220.244549-23-laura.nao@collabora.com>
+In-Reply-To: <aFka3y1494LIzyUA@smile.fi.intel.com>
 
-Hi Laura,
+On Mon, Jun 23, 2025 at 12:14:07PM +0300, Andy Shevchenko wrote:
+> On Wed, Jun 18, 2025 at 05:43:49PM +0530, Anup Patel wrote:
+> > From: Sunil V L <sunilvl@ventanamicro.com>
+> > 
+> > Currently, ACPI doesn't support cells property when
+> > fwnode_property_get_reference_args() is called. ACPI always expects
+> > the number of arguments to be passed. However, the above mentioned
+> > call being a common interface for OF and ACPI, it is better to have
+> > single calling convention which works for both. Hence, add support
+> > for cells property on the reference device to get the number of
+> > arguments dynamically.
+> 
+> ...
+> 
+> > +static unsigned int acpi_fwnode_get_args_count(const struct acpi_device *device,
+> > +					       const char *nargs_prop)
+> > +{
+> > +	const union acpi_object *obj;
+> 
+> > +	if (!nargs_prop)
+> > +		return 0;
+> 
+> This check is implied by the call. No need to duplicate.
+> 
+> > +	if (acpi_dev_get_property(device, nargs_prop, ACPI_TYPE_INTEGER, &obj))
+> > +		return 0;
+> > +
+> > +	return obj->integer.value;
+> > +}
+> 
+> ...
+> 
+> > +			if (nargs_prop)
+> 
+> Again, if you don't won't to reassign the existing value, it's better to have
+> this data be collected in the temporary variable of the same semantics. Then
+> you will choose one when it's needed, no need to have this dup check (again!).
+> 
+Okay. Let me update in the next version.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.16-rc3 next-20250627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Laura-Nao/clk-mediatek-clk-pll-Add-set-clr-regs-for-shared-PLL-enable-control/20250624-225217
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250624143220.244549-23-laura.nao%40collabora.com
-patch subject: [PATCH v2 22/29] clk: mediatek: Add MT8196 mfg clock support
-config: arm64-randconfig-r053-20250629 (https://download.01.org/0day-ci/archive/20250630/202506300416.dbAiyBcI-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e04c938cc08a90ae60440ce22d072ebc69d67ee8)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506300416.dbAiyBcI-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/mediatek/clk-mt8196-mfg.c:143:3-8: No need to set .owner here. The core will do it.
-
-vim +143 drivers/clk/mediatek/clk-mt8196-mfg.c
-
-   137	
-   138	static struct platform_driver clk_mt8196_mfg_drv = {
-   139		.probe = clk_mt8196_mfg_probe,
-   140		.remove = clk_mt8196_mfg_remove,
-   141		.driver = {
-   142			.name = "clk-mt8196-mfg",
- > 143			.owner = THIS_MODULE,
-   144			.of_match_table = of_match_clk_mt8196_mfg,
-   145		},
-   146	};
-   147	module_platform_driver(clk_mt8196_mfg_drv);
-   148	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks!
+Sunil
