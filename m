@@ -1,98 +1,117 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5E91EBA0D
-	for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 19:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D867222E3FA;
+	Mon, 30 Jun 2025 20:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751311501; cv=none; b=OGWG73K+nOSZLrWs8Mk9kkQyKfau+/TRZGolyv85XN5JTglBcsx8UQcgKh69452oXQQN159rOtFyzcxJ6nhXAepDyCJsHMcHiP4iANcjPY+LWh4haTJPmT5i5qIsqMyKi/misrD630xnuLugOIiw7W0iySnzJe1r9xSt/JNsesg=
+	t=1751315246; cv=none; b=QD9k/tou/pHcR1TMBa/C/WD5M9fjscCBikQjsmo7wl1ip8jRq6pAHbwWDRX5ne0YN+THyDqPS90h8ufdqO3GHgL1PN+fJiZTOaOhxLiiX3/12gIa8afQOUhi0soihWa+GsUTddOyhJo8FIW6pX3JI3CdmB9brXgEb7R4SYuAyE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751311501; c=relaxed/simple;
-	bh=wc4HAFsZ7kIFDm6m43qroHG1q95JfdK3z19LySP5jT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GqcH7kzmmJkySktiR09DmcYvPzmuitafQtBC+fBlUG8Ksi7FXSHY4LORTU74fOIFNASmgPyxyILAEWMgp1HC03z9eF3qN9P84BNyBo7FcGkjyxuH+XfDb+lKrDgTHpBq2tsdgPmVLBygIh8UCKPkZVZ+wXzPap6nSAVBp7Pu5P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JeIw4yLf; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1751315246; c=relaxed/simple;
+	bh=mm6D6rN9YCLi05ZkS4Yr8AiNEs/PMDAf3hD+0ETdEvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgO9T5H3j6dY1X/W+Y+jHKz82BJ8HlulOAax6hxaiHSkyJWwo2tv6rYRsyj/nMjQM8AgLURCnrB7vnLJN0MQ06woWy+kvf6CBVJGggGsk9Ruj6QUiaIOwSsl8MBeP3V3NqpmeWBA7W4h8WB0Y81NgpQ9e0FDaiFoebX24H3vpO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9/a6/Nx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JeIw4yLf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=4/LCbwFpzUbKFE
-	xOXHgaxctPMbt2oqsv6EgfTa4IgaQ=; b=JeIw4yLfktyfZzUozMP+rsTUGZSmhw
-	LESDRpDUksu4daDd0RvJqFolAFrNIcMpCHToMVWaiCEvg0GHMy0NIG4wdBlT4ylU
-	c9xcfH87bD1oK/82oFrlwCfUiaYBuZk2wLThbOKrxt9bF9d2/BaQU2wEIyqWy2fH
-	WDmZpbvWsR1RTo8WqaA0IRpKD/YA6V6Iy38YCwzSqhuKhPK478EAJNRU5FvL8o/m
-	HworXaJL/V8g934bt3B9v21rl0xKRgtmHiIeI0dfjDlCLX8pZiGnAPP+rOEvj6RX
-	Zq4jSYPHushIYCb975qZyrFYwYc16UEqwbKh7m5gmS0NU5bveVNbVo4g==
-Received: (qmail 2678660 invoked from network); 30 Jun 2025 21:24:44 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Jun 2025 21:24:44 +0200
-X-UD-Smtp-Session: l3s3148p1@tiPs+s44zM8gAwDPXyUmAP5FmBXRrw7R
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9/a6/Nx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04FFEC4CEE3;
+	Mon, 30 Jun 2025 20:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751315245;
+	bh=mm6D6rN9YCLi05ZkS4Yr8AiNEs/PMDAf3hD+0ETdEvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V9/a6/NxFgycREwnlDhrZgtvp8pAFZImQNec5/c/twV2DgQ0znTyfrop3lQKZeZ7h
+	 fgQ39nnpkRhWhAyw5J5AKzgtDzpQvA8Z6tMKD+u2aCTt3+GoDm8ccE4Xg5Q9i1qZUL
+	 +AD2WCWeY8ARVpccuvjwuKYMzBHzXkqT3laSqVLK03++8wYeeec8cBrN+EjhvUvlLZ
+	 T9RKDw2/uEOdkpuEHNebR6fa64ajz0bL7erRyjy6bsF3BlvXYHo+XO1du383Eg2Cjc
+	 pjDM2rlbVJL/SPYAj2u0PIRbIwo4D6mqHolSxIp6xoG2RrlsNvRZAJD3WF1ySGItIF
+	 otdth+1F2/mOQ==
+Date: Mon, 30 Jun 2025 13:27:23 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a08g045: Add I3C clocks and resets
-Date: Mon, 30 Jun 2025 21:21:31 +0200
-Message-ID: <20250630192438.38311-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [PATCH v5 8/9] riscv: dts: thead: Add PVT node
+Message-ID: <aGLzK8wTFcWuR4Zv@x1>
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180907eucas1p10c0ca6b667debcc8139402d97e4ef800@eucas1p1.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-8-0ca23747c23e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-8-0ca23747c23e@samsung.com>
 
-Extracted from the BSP driver and rebased.
+On Mon, Jun 23, 2025 at 08:08:56PM +0200, Michal Wilczynski wrote:
+> Add PVT DT node for thermal sensor.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index 26996422e1efe5d2dde68819c2cec1c3fa782a23..bef30780034e06b07aa29b27b0225ea891a4b531 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -669,6 +669,17 @@ padctrl_aosys: pinctrl@fffff4a000 {
+>  			thead,pad-group = <1>;
+>  		};
+>  
+> +		pvt: pvt@fffff4e000 {
+> +			compatible = "moortec,mr75203";
+> +			reg = <0xff 0xfff4e000 0x0 0x80>,
+> +			      <0xff 0xfff4e080 0x0 0x100>,
+> +			      <0xff 0xfff4e180 0x0 0x680>,
+> +			      <0xff 0xfff4e800 0x0 0x600>;
+> +			reg-names = "common", "ts", "pd", "vm";
+> +			clocks = <&aonsys_clk>;
+> +			#thermal-sensor-cells = <1>;
+> +		};
+> +
+>  		gpio@fffff52000 {
+>  			compatible = "snps,dw-apb-gpio";
+>  			reg = <0xff 0xfff52000 0x0 0x1000>;
+> 
+> -- 
+> 2.34.1
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+The PVT sensor is useful for more than just the fan so I'm okay with
+taking this even though the PWM driver has yet to be accepted. I have
+applied this patch to thead-dt-for-next [1] as commit c31f289 [2].
 
-Changes since RFC:
-* seperated from larger series
-* refactored because pm_domain-array is gone now
-* rebased to renesas-drivers as of today
+The required clk driver fix has been applied to thead-clk-for-next [3]
+as commit 0370395 [4], so PVT sensor will be able to be tested in next.
 
-Thanks to Geert for the pointers! Tested on HW.
+Thanks,
+Drew
 
- drivers/clk/renesas/r9a08g045-cpg.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 405907925bb7..93aae270665f 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -183,6 +183,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
- 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
- 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
-+	DEF_FIXED("P5", R9A08G045_CLK_P5, CLK_PLL2_DIV2, 1, 4),
- 	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
- 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
- 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
-@@ -289,6 +290,10 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(14))),
- 	DEF_MOD("tsu_pclk",		R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0,
- 					MSTOP(BUS_MCPU2, BIT(15))),
-+	DEF_MOD("i3c_pclk",             R9A08G045_I3C_PCLK, R9A08G045_CLK_TSU, 0x610, 0,
-+					MSTOP(BUS_MCPU3, BIT(10))),
-+	DEF_MOD("i3c_tclk",             R9A08G045_I3C_TCLK, R9A08G045_CLK_P5, 0x610, 1,
-+					MSTOP(BUS_MCPU3, BIT(10))),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
- 					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
- };
-@@ -329,6 +334,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
- 	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
- 	DEF_RST(R9A08G045_TSU_PRESETN, 0x8ac, 0),
-+	DEF_RST(R9A08G045_I3C_TRESETN, 0x910, 0),
-+	DEF_RST(R9A08G045_I3C_PRESETN, 0x910, 1),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
- 
--- 
-2.47.2
-
+[1] https://github.com/pdp7/linux/commits/thead-dt-for-next/
+[2] https://github.com/pdp7/linux/commit/c31f2899eab084b3557e9f9e10fc7898113ef18d
+[3] https://github.com/pdp7/linux/commits/thead-clk-for-next/
+[4] https://github.com/pdp7/linux/commit/0370395d45ca6dd53bb931978f0e91ac8dd6f1c5
