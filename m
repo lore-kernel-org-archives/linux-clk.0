@@ -1,79 +1,37 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4362623D28C
-	for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 10:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A3B27055A;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277644; cv=none; b=MngqfArHxmJf40JX4a5p5PNeYyrvGSwH9WqL76cyTPztvJWxCw6zrmpVrPXLG5Q+yTW05upL7yLkqaIRjgFNG0yWVj0IEVMkXLMZ8aUEkURmivc7wvspS/Qf5Jo73Yu+tCJaNSnfEyvnT/1U3fhbRE4HMBGf2ChAyMmOlaPc27I=
+	t=1751286909; cv=none; b=MQ5FIshUloX30jEJV9FBRALA4QR3OsUdq4Dqc1QVoZ6Tv5TMxe4PrNJK9bQBerdP+aiq7kijxsdt62AQ5Z1zCM9qknEIhiP0+4z763E7zTOemTRPqtye35UFZ0QorTxLH77d8pJ2QJqr8kCk0PzbPHwObZVoQ2A+d4A8Me5kLC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277644; c=relaxed/simple;
-	bh=v6MZTsAebqK5pi8z+h84sS4gvkSWKDyxRKB2fdUTHNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JfjnL5hHVZedchPdOtWajkDYoycnWr6xEhsJD5ZoMPTeukfHOXX2FFW+6RKhHrYzzAwq/NgCEy9Hj/1OdMT/7Xdy8TBCy7cxVqI3YuSMk4Jcikvrtb13gx3LeFRTbyXUgr91C+RjIjjHg3YUduFr4pIT38k6ZRC2gCly02yeHLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lKj84BDe; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1751286909; c=relaxed/simple;
+	bh=8Y2htiPy5meWxzHXQzhyzo1AQtbeIgcyev3Yn6FKh6Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KIDGfLini0mZBAJmWFk/1Oy2zbsCpca2d52gGLKcd0VQX5hylZVAbN2zLLo4psqfKim+NGZPgqkrCVeN+Mp6KVNlakakG9QxvDy+Y94YWGrXJb+U8IOGa+Mi4OpHOK1dcSe/ksPNxZ+ZKC+8vm7LvoRJnoSAfEm5GnSghhLnjl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPMT8vHr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lKj84BDe"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a54700a46eso2074610f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 03:00:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751277639; x=1751882439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XkT/Rstid8JISpjAt6SdqbTq9GQ5RgC+pCfbEEzIrEg=;
-        b=lKj84BDeaA+50NB2Tp4fdPZ0rJoZjpixzBJ47EsiLxFRBDjj37CCdnF+QWpesVDxS4
-         9mFr4HGLlCmeqYhxm5cni21domuaFjit4DZBFU080iH6PUfh6ce26vaiD2MPnsz/1+iy
-         VZmckJGXiMz7Xlz0aoeS3ODCi/HOKyx1/0i/zNvFxHa8JMZTVGO9SQOs08EqUEgZ/7vV
-         p8kqh/KNyivWt15bIZpAvRsEruBNlfqfzV8bGQfjMX8yoCK8EEvJFTBqi7EcvWZC4yby
-         UfUyBxX+AUN1s7XX2pED0fdVCRZ93t2ofhpPzv5U/DU1YPGjR2xOMSTHDt3F5gctKydp
-         t91w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751277639; x=1751882439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XkT/Rstid8JISpjAt6SdqbTq9GQ5RgC+pCfbEEzIrEg=;
-        b=rCDGj4NF2/FSIkwXlLiwyjcNjT2IkxeKRfWwkQ1w0npwb+eKVrAKTMqpYiuq8OLnqK
-         91bAvqX/mjzpNXxM0hJ6T9C2QNQQ6sih9zmsCa4rD0hUhs2tAI8QJhssulYiEDZfzFUm
-         D98et2/4/RFwhAaZNnSaI6TD7qQCCL+m4NIbcqChnvYyAfoL9ENi0dBZSr4MNUUcHvwb
-         0kGJINuUFkpjFnacvqiUZ8sjRLUvAQtSx1KtjC/5J23hIM1EdppQ229585J6gxZHCvJp
-         w4Hhds5/6YP2UDpF6tO/WKqrcZp6Iev41LHutYsTL3YPB+hRapAtUy5IK3gQlSDcgI78
-         DuMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVssi/z3t40+PzOAnO3uF61XRtGGKn36Sn5J444+Ykuld2J6ND7PIxPlpp1FDX6o3+3msdKOIIrVFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNiYAE8OcshTa6oJFvC5U9V1yDaSg5EbV85UFnYerQTnO3pw7e
-	JRMYjikK7faLP+HyKbstOh1AjBaSETyzRbDDCHmTAlCTlTqha8XX0rWgFMT4Q/vWk0s=
-X-Gm-Gg: ASbGncsSA7uxPN4SVJGs+ZtN3MJE8vRtu0mPqNV/kTrUDP9lOXvMwE+xzpLbE9tlLf8
-	M7X8t2+omSftVkxEiCxrIxOk/ijLYG7aiFuQ7cIZu0bip8WiaxfbakCthu+H1Ha4En/93TvcFgM
-	14Kbffwm9u2HkdnUfgw0cEUz/rdeT14Sj6WL3Cg5nf1Ju7sPnC5ZNeXlQjuCTMbqWuvHYnvWgVR
-	1RPNUpFDAnsE8JSh9YUcojiqqJK1Da3ovmo3myWIqQtKWtEn2yAbRWRE2mH/SydkweSKKgxPmuF
-	AbmOhfBXt228LHgAiSsqTmfmx4UXQp2APuq2k0MCr4PdWDnPNbspLO4G6+MZvQ==
-X-Google-Smtp-Source: AGHT+IGr8kDpio/yTc2q7sbJPgt53a5XcrIQFYk6F8xhvZP/fdYVNcvrjEwO9kaxLpdzOyi51LJFFw==
-X-Received: by 2002:a5d:584a:0:b0:3a4:e844:745d with SMTP id ffacd0b85a97d-3a90be8d151mr11063926f8f.56.1751277639515;
-        Mon, 30 Jun 2025 03:00:39 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:279:fce:4bb7:6daa])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a892e52bbfsm10076002f8f.65.2025.06.30.03.00.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 03:00:38 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: amlogic: remove unnecessary headers
-Date: Mon, 30 Jun 2025 12:00:16 +0200
-Message-ID: <175127759469.367173.10851786033226658116.b4-ty@baylibre.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250623-clk-meson-no-headers-v1-1-468161a7279e@baylibre.com>
-References: <20250623-clk-meson-no-headers-v1-1-468161a7279e@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPMT8vHr"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 34C5BC4CEEF;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751286909;
+	bh=8Y2htiPy5meWxzHXQzhyzo1AQtbeIgcyev3Yn6FKh6Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=mPMT8vHrQ0V8KVI6Il0mkawZgYlIFi9d7naOFlzYL9Mwpr8To2hAhfefixrG7H/yc
+	 izB8lNc91m7b0b3hi4bSaxYvEmTZuIKTowvifjxIYFR6Ug7SW7mHUP7SlagELLi0ST
+	 +rzwm8ZMnKFspMOchqaD8d81SDxbofmxjbzKyDTi0BgwVHgvjGFSVBWpRu4bnc68o6
+	 jB2kd3ztkdO9DhrnK5KVcDMlL2NkxmomMmGBsnrIYzS9P9cpLQYHguljrFM9LjhoeQ
+	 /uEXzZVZqDc90aw/t+dGB7GAJnnOZsWOkHTpNskCgviRYSNd/y5t7GxPHiLt+OPAVG
+	 5dXBoR/Ze0o7w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23671C8302F;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 30 Jun 2025 16:35:00 +0400
+Subject: [PATCH v6 1/3] clk: qcom: gcc-ipq5018: fix GE PHY reset
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,13 +39,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-ipq5018-ge-phy-v6-1-01be06378c15@outlook.com>
+References: <20250630-ipq5018-ge-phy-v6-0-01be06378c15@outlook.com>
+In-Reply-To: <20250630-ipq5018-ge-phy-v6-0-01be06378c15@outlook.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751286906; l=1220;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=y65n0Od6u+x9wP3HKotpTyPdgu84le/dyFb7G8W0t/E=;
+ b=8GFFdXl2KAWvcdLAfio5sbRql6URuWxu1LrF2UScWzaP2crAPzgbOSYYGfwb2CyAvqVN6HQvG
+ cKUzsL4FKfOCe0qZu/cImN6p6estTR7yvV1/7E6WEQD7X3ZhI9T9Gqf
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Applied to clk-meson (clk-meson-next), thanks!
+From: George Moussalem <george.moussalem@outlook.com>
 
-[1/1] clk: amlogic: remove unnecessary headers
-      https://github.com/BayLibre/clk-meson/commit/328d4a7eb073
+The MISC reset is supposed to trigger a resets across the MDC, DSP, and
+RX & TX clocks of the IPQ5018 internal GE PHY. So let's set the bitmask
+of the reset definition accordingly in the GCC as per the downstream
+driver.
 
-Best regards,
---
-Jerome
+Link: https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/commit/00743c3e82fa87cba4460e7a2ba32f473a9ce932
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ drivers/clk/qcom/gcc-ipq5018.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
+index 70f5dcb96700f55da1fb19fc893d22350a7e63bf..6eb86c034fda18c38dcd9726f0903841252381da 100644
+--- a/drivers/clk/qcom/gcc-ipq5018.c
++++ b/drivers/clk/qcom/gcc-ipq5018.c
+@@ -3660,7 +3660,7 @@ static const struct qcom_reset_map gcc_ipq5018_resets[] = {
+ 	[GCC_WCSS_AXI_S_ARES] = { 0x59008, 6 },
+ 	[GCC_WCSS_Q6_BCR] = { 0x18004, 0 },
+ 	[GCC_WCSSAON_RESET] = { 0x59010, 0},
+-	[GCC_GEPHY_MISC_ARES] = { 0x56004, 0 },
++	[GCC_GEPHY_MISC_ARES] = { 0x56004, .bitmask = GENMASK(3, 0) },
+ };
+ 
+ static const struct of_device_id gcc_ipq5018_match_table[] = {
+
+-- 
+2.49.0
+
+
