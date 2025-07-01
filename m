@@ -1,172 +1,137 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4934027F4CB
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 16:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F0D2798FA;
+	Tue,  1 Jul 2025 16:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751385734; cv=none; b=urs+O80DTQsWUGzAUS6hB/4f1vI14DZRW62vgT5ilJXXvle8+q3h/cInMfbLCeunk914DoLW6vDxFqmxkz0rPea9qcKsaOW7jxu8kCIAlqgkDsEEFup1N+xVsBc70whMkRsQOaNPhcKfb76/Q37GzxQuCfCjKYpeEP9lBDaQpMI=
+	t=1751388438; cv=none; b=fpYzDT7R+Ymw6OrGv05jqTohCIePFrepWX02h6uadsNyIRmgBHcO6ncIJU6MESHQNpln5GHo2WdeIMF24r7WEQp7Q6cGX6ebraDD3NwatLc3Wei8H/ZIhLMs3Sx5P135sFwYUsc2SbwEL+40F2Lqf6IjsQsIe4CbAHDhaaB5z4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751385734; c=relaxed/simple;
-	bh=pQpdhYmfxqh3Yfxmei5sPv11PaCzGkgZVRufLVaDNj8=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=MtTbyWQZPdV83LTVa76zzfKW4xnmwdxQbnoeN+8AXmRAQre4SX1z9ZpnGEv+7cW9RENskM9s9w3OMzcHyl/MVvPMN5Xv3jLeeL/HXqHpnnxiA2Zp53kBt+Hmy+uqo24eu/OJVqehFNhvdfsiacRV6kCoVf9kQn7w+XXHc/VzJyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E4CZAKog; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1751388438; c=relaxed/simple;
+	bh=ymyz98G6WAIWhgot7OyS3l+nPaHFTvJsU8EnPPnV3hw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jmYlgSW7XfGHmNWqBy6Tl0YPHjO6d4MlhSz9MDHSRtTmq2tZZ6YMhiqHIxYNIlOt80Tv6T02gBxmNxwgSDGhlFePvajGANFpaxPmJpLDbgfVAk3EcJPRIrxkEGYcpB/JhfwHTIwxm8+eYwG96hkhYsMcwZFM0FecioILuuMZBxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZFC/jGu; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E4CZAKog"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250701160208euoutp02bc1690d35b02fbdc1d1f6ae41e5e7b58~OLAp-S9Zk3149631496euoutp02d
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 16:02:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250701160208euoutp02bc1690d35b02fbdc1d1f6ae41e5e7b58~OLAp-S9Zk3149631496euoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751385728;
-	bh=Thc/4MnT4r5I8ag38cbivyQhpbuX345C1nEB0lzCSSU=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=E4CZAKogyAvZo+4zp4YdTXwhS6UT3701qpYlrBkDWHg7t+enBnejRciSq8V2WvOqI
-	 LVIWNffSp+f6RsG7Ydj0ZxFSY+cmVPUMR1Tq3K6JdNYBk3FeRzWPdkV6CmUgru2TCu
-	 XQ6KQyxk8FijjwV7q4bJZV2EGWx6kRDPr5xIw+XM=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250701160208eucas1p2633ce5cd0b9ef013999b3d596be74cdd~OLApiaZG32521625216eucas1p2G;
-	Tue,  1 Jul 2025 16:02:08 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250701160206eusmtip192999017bfbc2de977e7580df56a36a7~OLAoZ52AM3260032600eusmtip1D;
-	Tue,  1 Jul 2025 16:02:06 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 01 Jul 2025 18:01:45 +0200
-Subject: [PATCH v6 8/8] riscv: dts: thead: Add PWM fan and thermal control
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZFC/jGu"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso30043591fa.0;
+        Tue, 01 Jul 2025 09:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751388434; x=1751993234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymyz98G6WAIWhgot7OyS3l+nPaHFTvJsU8EnPPnV3hw=;
+        b=RZFC/jGuvOhElYbJdSKVKR+vOQ4+ZCR5TVwAlqWpR2svkdoOXBQ9obkYcTh6Drma3q
+         qLSzWR+QgCL6X4MWR1DN9tEqLnHXcxUTYcilIKS/atsW/RvgLB+upBteOGFIl9fTbF1l
+         4xE41/q1EtjI88Xt+knbYXFoZQvkX0TfO5HWKJbTbO/tsj0HSJFFddPM0xDtEMvmHftH
+         ReNeMxfA9FV0sNqcwUY1qjSEvKibnZn7G/3SNk+bUp160VwTk10+1Zk7WRplNsYWrxm0
+         KGpjqcsiMGd7kkJ2RBrAAWPPqrZTxwD080I+AfFINLots+G9BGUVVu9JQzuXwAapYdFW
+         uzlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751388434; x=1751993234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ymyz98G6WAIWhgot7OyS3l+nPaHFTvJsU8EnPPnV3hw=;
+        b=UL5BwIdbe57vfJQs9UWHMO1QN/CxnfkmdxDXtLijDyBsFi2K9eWXEmM9PS65Y1mmlr
+         an+yC6PGZ5xKy3ulYXRv4x7uYwQe46tw1G8UBTgm9bdB2WdN6qnDipmJMkBSM+b+Xp7f
+         7cNrA/0d220r0dC/Kt8rqnubn78ayw6CdqzFt7YSHgTbbHmNt0sIhmOcxrxwp2dueWLw
+         Imlr4puauuiwmlGfvvSJhTl0ZW1Tt83AWfQJWmZ4XExb1/Zjlicc5bOuTGJWxb1y4s00
+         r9qlq7aeJ0LKbRM7AKZchFyjQC/ngRTZmEQFV9lMuIt+fPxGJsLNT6FTIFlPZ+H4bXiZ
+         7FyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCOQd8i4kOBLmqHPjJ7RU9Xt7JcxESpHk2lH73uHcfRsh3aQzMrCTqB8rDkCiidHcKxbCLwSqUP65qKBD6xVk=@vger.kernel.org, AJvYcCUaCbzxPxuDts8/ImtrFbDERuCI+i3tuGeCIVG05mUba4eNYZuKGmS3U8MGPs67eCCfMw7TCB4lirM=@vger.kernel.org, AJvYcCUwcQi0sai9VUZeb3fDcwuxtPuj2Tnk8L5rdHz+TI84/qQcMEIndGEq5aR+5EUTvvwNIiPfdLaBpHTrYF1XBAk8@vger.kernel.org, AJvYcCW9EaHS62g1Hp0LNcXCoJgABJKv99UbzF1FM9DKFTy6EDjWNJw1dHEd9+/BlNcz+6AKs3DejxIbCtT1@vger.kernel.org, AJvYcCWZilvt5uJ0QLlxhaZqtU75xC85cG5kQULsrJ1JwBA9DXIGEnR/sBTTnq34vUlQnJBfRkuH7zS2@vger.kernel.org, AJvYcCWk/npMOtG8kAP4cMk/j2zje4SoYmXE9n+f3VsCFVa+Yq+RSx260W8YdLx+kf4n/XZXGpSu79mTBerPvpM=@vger.kernel.org, AJvYcCXVWhtUytKw40WInDMflfrQNGrugDPSDo08xE0uCjY/5eXSsWmuvnTLA8PfYtzvRpxkraUCuPD3Ap2GtN2U@vger.kernel.org, AJvYcCXZ1FkRVTHPbHwRvUt1GSQkOGOy51TsZaVZEtGpR/7xn/kzXxi+RipI7GbV8TUNc2sl53VfhURzM2UX@vger.kernel.org, AJvYcCXegcSZlhgS2mPJoagurMt9GAlI+I7x37E1NDSxFSJy78Dp/DFiq2c2q6AabknG5QDfubkySY0uT2An@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP+mYa/dIb+AvWsYjOwL4xbmeQ/6zqedOf3Th66C1KGDCWjonT
+	uiqwwOt/OJsDmT99Nkk/gp9mbSxxyukREEeEIA0qKtFPe4QrP+h27ogMBQP7uPCAyK3aPda6MEm
+	CX2yLE5sLGK/Xe3t1F9ZWl1Ipbs8/Hd0=
+X-Gm-Gg: ASbGncvIdJreVaPaH7bakggtW/bhmClPzk720Z47WTO5BhHBaqdQjD2wUYCIURKr/5f
+	VFY4OFPTjy7fCVC/qTMTp5L/4MS9MzeDK2leoId1Y2xmkCmtzqwRkjo9ujlBMNx1a6VCpBSx+Py
+	T2z0H6CYwj5yp5huePfRMX1dv8uZyTlofJ3Kj9HSMF1bvtR4uTTLr038I1epeayeKDSF+zJwVnz
+	Fu21g==
+X-Google-Smtp-Source: AGHT+IFASHXyh6nKAuBWNflJbwzC1dxAvHKvYXKVWM4leUPhMKpN6FRK5U0/hoCDkOtFemkDVZIaXGSG2DOrBLCq8Rk=
+X-Received: by 2002:a2e:7c08:0:b0:32c:a907:491f with SMTP id
+ 38308e7fff4ca-32cdc464463mr36198291fa.15.1751388434129; Tue, 01 Jul 2025
+ 09:47:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-rust-next-pwm-working-fan-for-sending-v6-8-2710932f6f6b@samsung.com>
-In-Reply-To: <20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
-	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
-	Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Benno
-	Lossin <lossin@kernel.org>,  Drew Fustini <fustini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250701160208eucas1p2633ce5cd0b9ef013999b3d596be74cdd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250701160208eucas1p2633ce5cd0b9ef013999b3d596be74cdd
-X-EPHeader: CA
-X-CMS-RootMailID: 20250701160208eucas1p2633ce5cd0b9ef013999b3d596be74cdd
-References: <20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com>
-	<CGME20250701160208eucas1p2633ce5cd0b9ef013999b3d596be74cdd@eucas1p2.samsung.com>
+References: <20250619-cstr-core-v12-0-80c9c7b45900@gmail.com> <aGO7-SQUUgg6kSVU@google.com>
+In-Reply-To: <aGO7-SQUUgg6kSVU@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 1 Jul 2025 12:46:37 -0400
+X-Gm-Features: Ac12FXw8AGP83JXgR8yzKwPiapZfBBkrNyDazktnve1kCOVkl79eviuMomA9o84
+Message-ID: <CAJ-ks9kbsTRrRN4yP7GmphozPyZHgbaAGJmLXR42NVgJ1ie_SQ@mail.gmail.com>
+Subject: Re: [PATCH v12 0/5] rust: replace kernel::str::CStr w/ core::ffi::CStr
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-pci@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	linux-block@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Tue, Jul 1, 2025 at 6:44=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> On Thu, Jun 19, 2025 at 11:06:24AM -0400, Tamir Duberstein wrote:
+> > This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> > have omitted Co-authored tags, as the end result is quite different.
+> >
+> > Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vad=
+orovsky@protonmail.com/t/#u [0]
+> > Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>
+> Overall LGTM. Only question is whether we should re-export
+> core::ffi::CStr from kernel::ffi. Reason being that right now we are
+> telling people to never use core::ffi as the integer types are wrong,
+> and I think it would be nice if we can continue to tell people "never
+> use core::ffi".
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+I agree that'd be nice. There are existing references to items in
+`core::ffi` scattered around (e.g. in rust/kernel/drm/file.rs); it
+would be good to clean all those up together with CStr provided we
+have some ability to lint against new occurrences.
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+I'll leave this as-is for now since this series has already churned
+quite a lot, and the cleanup can be a reasonable first task for
+someone.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
+>
+> Either way, for the whole series:
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
--- 
-2.34.1
-
+Thanks! I'll send the rebase on rc3 momentarily.
+Tamir
