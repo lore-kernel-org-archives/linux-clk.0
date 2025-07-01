@@ -1,150 +1,138 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D4472601;
-	Tue,  1 Jul 2025 06:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BF01F4634
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 06:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751350776; cv=none; b=AHqW15HmXVqBqnKKmFkNeLWHB2hKLX24JgJOnmDTrBnlat8uqynSDhVKXhztbxzpUgsJUPUzU4eHQ3/QPFztzFeeGNZxP0WvHZlcAJOqa4ATwAtzk0EFFt6jhhj1tJ4P3vY4Tiy00nc+dF893FJhO5JHVi/aVKXSsI1MDWh2fOk=
+	t=1751352634; cv=none; b=t4VWlB2+2i/FiZUWje/QRAZMmYaLp+1mJHHhX/138PCID7nS3SamEv94gnGRbbZSHhvclKo/TRXFsglY76hV+EFue+0YRnQ0jPlUbHXfy1Tj2h7tVUcJZPjHpaeQHfHMlAPh9jh7JiOZS3hTkZs0imCRabOIbMpgO2gwF/NWmYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751350776; c=relaxed/simple;
-	bh=6ztUB8DVz6lMSBchbLvs5c9lOdO5QWCHLLlM1LbTyXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EYZ8akmG4Mqf+DKJww0V6OOxglsFrArlEjBiyEDtMPv/cBtDKsPsp97AQ2dHH/nYhwYEnNQflvcvBrshruPSsffsySk5cuUUAwXjx064c4W6YC6MIic+xzOldC03ThZBSqq+YFAc4qWoRYoMeMjb9oSvfUMmDsYTfMBWyeVjX8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T8AxJ4+t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1751352634; c=relaxed/simple;
+	bh=slYL0pcK30l/kdf1cEqzfFGHu0UunnUbDKnicMoho0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c17cd8/mZtysHtd6OZVr4AoAZAT57Hv4lO3hexDoG+oxJNDWIsTNr/LNDqPxgUfo1Wf5Opn34vb3dJlqh28vtgN/7HYhsb/BoBp5Y0kzbGXhPw/6lL8oxbwCwApjvM/PVodgoL36y36vhueZ6eZMOM9iWCGZ9Wjqmk4hWKqFV7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=kn7la7bs; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T8AxJ4+t"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5614FN9Y024794;
-	Tue, 1 Jul 2025 06:19:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ti6mrnRniD673CTX+hG/sAAcg1JSfYL2S8V/LJ7Gu3s=; b=T8AxJ4+tGPPpFge+
-	keNFammgzYs35F0QyZZiqLkDaFo08PaDUUe8nhZhlqqekTWWnVTe36wGWTfcE+Mn
-	/qiXIa7t3t5euP0BfvuJrjm6KSwLeJJMOslgH+oW7BoXcCUpSlCSglGd4eCQrjQN
-	VbFQASm9lJ5gct3XIHQMDTEBwM7XcnH6XB0rxlaFPnh0ipK7B6igd5PvHRB/T0wa
-	9bAknWq01GDa1PP79nPSGOETjZBbuFfSCv3lpkeiYEVH+kZVhUL5Pr7+HZxOtERO
-	g8NkFykq0TRvUKZsSJpE/MD4dfqH6XdWWpEpPuybKDoyhbmcgi1X442QIGDLPh2d
-	v+s2hQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9f901-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 06:19:25 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5616JO5x020508
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Jul 2025 06:19:24 GMT
-Received: from [10.217.217.109] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Jun
- 2025 23:19:19 -0700
-Message-ID: <744da3c1-04c6-4347-bafc-233471d07853@quicinc.com>
-Date: Tue, 1 Jul 2025 11:49:13 +0530
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="kn7la7bs"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32ca160b4bcso52485961fa.3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 23:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751352631; x=1751957431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mWPXFIhjTb/V6V1DQLHOJ4YlKbwSK1c4xU/yQWq9blU=;
+        b=kn7la7bsJ4QvXlCWDLDEJQ0uVyUpBMJiwp/yIn/VJs4h8HMOUTcjkshXNyDTwJlo7t
+         33DegWQnKnFY3m3AbVezFYCnle449KUn9fhLxMnUB3pLs94V3WcMAY6buL87+vLlWIN4
+         lUo0zfDIInp1ogtBK2V5h1kZxCiUQb0aKoI19dSJdQU2MLlPygF6CSYEtSNA6yRl+jTj
+         K0TBXMkVrI1+h1jle1UAnMursGiW597lKKjPLB6aZjPpoch1U7NbMNXrDHfBpr3HPAgp
+         BJZcMweLYdLz+LAbi7E9Q8wdqPZAai9qlGvyFK1edI8K/wIpFCWMY1/LxM9bKkNiPDYx
+         bz7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751352631; x=1751957431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mWPXFIhjTb/V6V1DQLHOJ4YlKbwSK1c4xU/yQWq9blU=;
+        b=gF+QD30sOiwMQ15Fm/c+IItFBJ7Cx8yNXztY1+NA89fVQgt2ppwt1Nlk1amt1Pf2JQ
+         F0QMru2Jt6IN025dRDexpU+4+aP1vA47nDw8/kzl6i+nWGoLD2tjOl5c0DctlfPOARf6
+         Lt5jAuEXJEedvU0xnsdw1fD6Hr3dGEpyO5vbm+oMSjWD/mXYbk2JrKkwJPOWuwRAmKCm
+         gX1Siv//W/K1o7KjFu5mHe3QzwOSYVFZjZoBUm8wfYrzHl4834KGzdAdJbsCQI1GFdRp
+         ViSb04+pqTGWSZymLyXc1BwY6pmZykCFVKYnlMJY8u1vUxjSTOVcwXzknrsvMnwtM1OV
+         idug==
+X-Forwarded-Encrypted: i=1; AJvYcCUWhRGNp9psp+uIH7gvGudhqU7Jy+gTSuvPCv7CW+IWvs8KCZi8wlUGdx5rDeqY5J5OzgNpl4SnNss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+xu2ZNbuPbQuh53Lul0QZgATyhuC6lSO8A/MXNcFx23T823++
+	TPeuo9/txihT2uF9JbHGYBqxoNL8qMZSq0wJtGRDYr01p5huRWieUbo8xWqH6JWmnIdlehtifnd
+	yB95z1nqx5qivIMHd9TwWN762UiYZGCYsVLWht5AQKQ==
+X-Gm-Gg: ASbGnct4R9DxvY+3TOY44m8iy34DGKTr/4friF16yyeo9P4PiTxGvWp/8OKHCoFNYCo
+	HWvYklZggThMxNmJ85lvJ9lQOnlJ6e+4hY8tn67XxXXtZOpC92keTCZJNmWIyL2wACZjjhuUKxU
+	Hbcc0WKnMhrY5iQA9sEm6C26QtSfYId0Tsd3s9uaWFjwycv9VCYH0iHTQ=
+X-Google-Smtp-Source: AGHT+IFzkBl1xaxBMxsvzjYcnTTImtOa41K69LoWO7vhOCRunctW7uRpVxNN5kP1lrGeGDNRGiHQb4LGbb+eDUYPLaE=
+X-Received: by 2002:a2e:bc1c:0:b0:32c:ef7a:d84b with SMTP id
+ 38308e7fff4ca-32cef7ad8c6mr27641281fa.13.1751352631111; Mon, 30 Jun 2025
+ 23:50:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 01/10] clk: qcom: clk-alpha-pll: Add support for
- dynamic update for slewing PLLs
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Will Deacon <will@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250612-qcs615-mm-v9-clock-controllers-v9-0-b34dc78d6e1b@quicinc.com>
- <20250612-qcs615-mm-v9-clock-controllers-v9-1-b34dc78d6e1b@quicinc.com>
- <f0483597-45b9-49f8-b316-a9cde7b98d81@oss.qualcomm.com>
- <9a9d84e3-49de-4fbd-9c0d-180e3e498125@quicinc.com>
- <c37349c0-8ec0-4654-bc82-15190509ddeb@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <c37349c0-8ec0-4654-bc82-15190509ddeb@oss.qualcomm.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <20250618121358.503781-6-apatel@ventanamicro.com> <aFkUETH_R30-CNOX@smile.fi.intel.com>
+In-Reply-To: <aFkUETH_R30-CNOX@smile.fi.intel.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Tue, 1 Jul 2025 12:20:18 +0530
+X-Gm-Features: Ac12FXx2G23C94_L44JHbdLekj9g5IUE1GEONeTER1Z3bkY9Y3w5bcaCPjCbmV4
+Message-ID: <CAK9=C2WpN2_+wi-0AOZ_2xOK8z9oZk_dD__uRCu+E8iccjyC=Q@mail.gmail.com>
+Subject: Re: [PATCH v6 05/23] mailbox: Allow controller specific mapping using fwnode
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=68637ded cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=bVv2Rnes1pukqZk3WigA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Upw_c5UZz3oM712a0vmt5Vdbt_qqNuEU
-X-Proofpoint-GUID: Upw_c5UZz3oM712a0vmt5Vdbt_qqNuEU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDAzMyBTYWx0ZWRfX75XITVUDZ34y
- cgJmLR8w3Ag6yIcddTImDpihy/XbAgvTDLRVkfeviD+ERvx4Goaw73ULMoiragNxlBeqViLox1E
- ibNPqnO1BlCTbiX6XrxFr4jxL+0sanYAklR8pP/DEFLZ/OYiiLftzd23eYXI5CXBKvhzvIY1ecW
- OPQQBeeQrBFu3iXLLRBPTkxCMKAcoyd1rTrVeqKDHSxW1x7cYGcU/8ktJx+iMwiOV3OzWTOsuNM
- 42m326X2I3+lHAaRzmNzdViVCXG80xxb74j3ROnJ+r5qKANWNqNWfqfzYwg//Qbqa2cwI1eLRxr
- lItDnTk+XZRPQY2O5rr4yr1ZCzs4iZW8kikHdZ0xStBFDH46r2vVGn6mUlaU5miWj9BaUwvR+SY
- xn7EgIl3ujSfe3nC5IKSEPxBIdWKt580HxcIBDGKonNlsBhtho1+c1gvwQ48JQrcqxXFtbvy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0 spamscore=0
- adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507010033
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 23, 2025 at 2:15=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Jun 18, 2025 at 05:43:40PM +0530, Anup Patel wrote:
+> > Introduce optional fw_node() callback which allows a mailbox controller
+> > driver to provide controller specific mapping using fwnode.
+> >
+> > The Linux OF framework already implements fwnode operations for the
+> > Linux DD framework so the fw_xlate() callback works fine with device
+> > tree as well.
+>
+> ...
+>
+> > +     fwnode =3D dev_fwnode(dev);
+> > +     if (!fwnode) {
+> > +             dev_dbg(dev, "No owner fwnode\n");
+> > +             return ERR_PTR(-ENODEV);
+> > +     }
+> > +
+> > +     ret =3D fwnode_property_get_reference_args(dev_fwnode(dev), "mbox=
+es",
+>
+> Why not using fwnode directly here?
 
+Argh, I missed replacing dev_fwnode() over here. Thanks for catching it,
+I will update in the next revision.
 
-On 6/27/2025 8:39 PM, Konrad Dybcio wrote:
-> On 6/25/25 12:31 PM, Taniya Das wrote:
->>
->>
->> On 6/15/2025 12:20 AM, Konrad Dybcio wrote:
->>> On 6/12/25 11:55 AM, Taniya Das wrote:
->>>> The alpha PLLs which slew to a new frequency at runtime would require
->>>> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
->>>> which can support the slewing of the PLL to a new frequency.
->>>>
->>>> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
-> 
-> [...]
-> 
->>>> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
->>>> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), lower_32_bits(a));
->>>> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), upper_32_bits(a));
->>>> +
->>>> +	/* Ensure that the write above goes before slewing the PLL */
->>>> +	mb();
->>>
->>> Here however, the write may not arrive at the clock controller before you
->>> proceed to slew_update()
->>>
->>
->> Yes, it is required here and will keep it.
-> 
-> You should change it to a readback instead
-> 
+>
+> > +                                              "#mbox-cells", 0, index,=
+ &fwspec);
+> >       if (ret) {
+> > -             dev_err(dev, "%s: can't parse \"mboxes\" property\n", __f=
+unc__);
+> > +             dev_err(dev, "%s: can't parse \"%s\" property\n", __func_=
+_, "mboxes");
+> >               return ERR_PTR(ret);
+> >       }
+>
+> ...
+>
+> Otherwise looks like a good solution to get rid of OF-centric code from m=
+ailbox
+> in the future.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-Okay, I can introduce a readback, but as per the PLL code we have been
-using mb() at most places. But I am okay to update it.
-
-> Konrad
-
+Thanks,
+Anup
