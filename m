@@ -1,114 +1,115 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FFF26FD90;
-	Tue,  1 Jul 2025 10:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21A726FDA9
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751365493; cv=none; b=D37cBGuY9ezgn6nIynCd6MDxztO3IGvTuudjl9YNWSNaweteDDms3LicCbdc5qkul3rEUWS4rucGyr3Ud71g8tvdF5nIPRbq+6EhGuLXYpV0mf97AAaNRVv0/JeEwnfBLOOAcecBfyQIbu2XnfoewL/W4e1oY6z+/d5cyagN8co=
+	t=1751366656; cv=none; b=Cn1t9bgg8WSsAh15MapGQGSeXLQh+mbUxoQYsmz/vgd88JCtKefz3zXO4LJJzUCFZJ6fysCtaHZ+pDVIA6GfusFTXLJSDvK8adQ598A+U5aymnWu6V1TIsUo8YTGOwcaMy6qjOiYQPd+AToq1KwhrGgAUZhGEfsDzFRRWZSxRVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751365493; c=relaxed/simple;
-	bh=L9I/QwF14on9fp60DEuPscxVm5jBLrf+FI9XP/J1bmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qaYvghr6jaHu1qtEM56ciDzK3olAF5DS0Bg4q3fetN6mlr0tsxMyPKoTgFj+CgiJaI5VnTgarHPth3RFE5p69jUbjlWA6YvbLmjUFTgU1MXNW1RhlxyVOXsCayCCqVBxzrJ7wkSXtAuvlgEEhBB0B1u8T/XyaTLyxOAIiFroRFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4e7eb3fad4fso3087738137.0;
-        Tue, 01 Jul 2025 03:24:51 -0700 (PDT)
+	s=arc-20240116; t=1751366656; c=relaxed/simple;
+	bh=FjNNJQuNFHz/e6yt6+QF01AIHDz6pY4OvsUX2LurgSk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qycZN8fVrg9WJeGXg1Ske5R/6+bJ/47Kry70t+Niw1vwO4LsUpIohuhHH0ksh4m2PsoStH53N5k/9zrgxEq+sC/kBzWEegbEQSJpjJJKA/82TZ9JtLR/q9YsAOBKuoUdw7BaJ1kv0qqUq6umCOBqVQzDrdfJfwlIZF0ZchFvg7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yAXGl2UE; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yAXGl2UE"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-60728151592so3275522a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 03:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751366652; x=1751971452; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KkP3Q/mrHcTXpi5jFAQSRZZTttwkOM8RfBay5zssxDs=;
+        b=yAXGl2UE0qGFLEXo8I/Q2Me+hvVbD7mps4Qv0pBulP64GzRp969FW+u0lywERoqpQ1
+         ZjN7Z+eLDoqa7yoDrhFaRojz57rhL6Rir/zpwzCWKuPEEyGre87w/lCKpfuIR13kFpKf
+         yCy6wzZ6QgkBK/ptREQ02Xm5pvimoCLIT3982qRqrBRkaoOSTgjddPD2/M0krisx/I70
+         x0/3GmhDt3zFn+6ov2RP3FHOBkSbhkVi2tlA2nKgBkQh2lw7FMQ85VQvaFylCsDlB98p
+         buq6+GFlh7eDHsEvqV3s+Q8LCNNNGNncnj2SKXdG6kY62ZswTAKQnbbWL2vwc+JqJ/ZV
+         lw0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751365490; x=1751970290;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=irNrZCPGj0s+GoagNMAYrylMTiLNtVpXzFPwd8Y8B7Y=;
-        b=igRbi2FpeU/na8e3Yq7e9WirDtMPrzK/MY9oqWa4ITK4dfwXIWL/eX2bJpxq9IsKKd
-         6UfruzNWStLr2JNF4ymu9PXosEAQEEZBiGuWzhBQgDzaxbtbH+J6CgpbCB137cD1OFZg
-         WVdPF1wATyni1gcsYwIshYeXsAjI4llRDrprs6PKY1sNTpmhJNLFHZ9iCb1P/5G2HGtx
-         c2nU4SCPyDLJM1FdqnhtJBShaAJ+fYaeWtVIALKoR3JeqZUIDU7rS3tN7vChSHElHjk5
-         8hwB0JxKzqORI1XAd+ToXZo1vyDimNXIDs7yahZV7L2B9j1L4U7OW7A2axwINBeiVudN
-         kyWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkNEDbMvlyHXf3/VKF/DNZT+xZnn5BgHqggibOhH7v4TN1N9cf8d+Kbw5jcz+v2aYKch04eEgVMaZF84VY@vger.kernel.org, AJvYcCVa5Dt58g1merhFgozUbYMdsdLsvxXthzXLkAIdCgRQcUIdwUKeit4WJXixAHecLHcEdSoNNZGzJKY=@vger.kernel.org, AJvYcCX2cFHi1jQkCfG0RmN8ZtfCET9ibgr+xypIeJ2mDw2rwA2Sp1+02dJuCMkfVs42bCWxW4aS7OHtNyAl1zuJ3XQikMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+mzK5lPzbMtmdbkH2jesNXzTj4W2x0xKXIVjKx9gyudpLKvm8
-	CtoOiyhSKuAYkhqmn3TfWlNTUg586LyF8+X/Ws1/waXo3wflqUU3w5luhXsvdTEH
-X-Gm-Gg: ASbGncv6lzpMnEDcCH4qdcej4hY1Z486hVANjUCSxHr/HB3UYRHckcSfoqIEplKKd1v
-	f8z+v+b4PpBLVLF4vDsJOEzVeQJysfKbOGmGgBoP3x9zRHKYJpN6BykswTV/3FH6eK144USGT1K
-	E22folhXYq+gW3TXvbcTFAn3yrRoZx9p1oozPib5ZJFBI43aOwoYbnbwZA50e1sNSAJYqBHryFF
-	dAE7i+jsAeXG2+aEPPlGuFFY/F1z+uF3gZykF2wLk+JJWcDBYGtvJEgRopBbHB5un93tK0AhD08
-	b9hOoAYU9Tpp5ljPIO8Kn9LeDaiqDKvEHdb+tztPw5My/dszVcg2ttgQ06p+yP6IV/gkJPYBKOp
-	2iEylJ7aoDlC4SwAIpqySv4gi
-X-Google-Smtp-Source: AGHT+IEDvOTHlGi8AoXCERwoNFW8zMR0WsN3JQSGjwTOk5Tw7YTuiJPW/Iz0DEPVO46Anul3nQktrw==
-X-Received: by 2002:a05:6102:1608:b0:4e5:9c40:824d with SMTP id ada2fe7eead31-4ee4f6f7b83mr9497718137.16.1751365490512;
-        Tue, 01 Jul 2025 03:24:50 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-884d1d88000sm1864434241.19.2025.07.01.03.24.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 03:24:50 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-86fea8329cdso2791606241.1;
-        Tue, 01 Jul 2025 03:24:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZ5wWfCGDbkGYgH68Lv0hGmoXvrCzUJAXq7V8eJMQQe4dPhe7owlekTL0j+BKUg8JAJL51VYKIOovTlWdj@vger.kernel.org, AJvYcCVeWvB8YUTwSGkeQ1x76q4dmp4mNOacJLUZA26b+k/AfCA5bBxqIK/sTM9IRGShNKrAiyHA9XZEEDd4gc5Epf5EDB8=@vger.kernel.org, AJvYcCVvooBWAbAw0mTnmsFnaVmBYkDfMmSvKRyxHq8zlxiD175PlJXHjgYOKkUOgJWfLY4Q40lK+xZrlkQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:b14:b0:4e9:b60a:441 with SMTP id
- ada2fe7eead31-4ee4f6f8278mr10613853137.13.1751365490045; Tue, 01 Jul 2025
- 03:24:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751366652; x=1751971452;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KkP3Q/mrHcTXpi5jFAQSRZZTttwkOM8RfBay5zssxDs=;
+        b=f7bBjZqYOhb6jOg842e+YFsf0NMLfsqRcTIlU1gblq3K93KmMGTHBmClJXUG13s/LC
+         BjQiXkwly+j9FJeQQR7HpZDlIz1PyWQleIdQHNP0DxGffFaV3+hX8Qr5swAo0EAchQXS
+         T90/7nKbCXEoWp39nUQtl3EezLa7X6Ng37zID7BS7/NHfIzYJFoeqzUhsBrBZJQ1Cy2H
+         dFDQ1e9klW0Fe06c+4ECoQDPuB6E9uBhMfffpMVtxbN2lF//rIgKTiiTS2Ohcllu/n4B
+         tYyQ8a+MtueRiL3lpwzcwtAfNesTRNHTRBALW1p+V4P60ByMIvMbEo4kMzgV3IwcK39z
+         Nl8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ujzC/GkEutZ4SUBq2vpLczU5oedppXFftjq9kZZzeuDWSu+1fTxtn60UfEQznmq+qZA4FxocXlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD4VGr2PxcTjrQxHCCTinMGpp3WQ4qBkc1570uSoYsi1AHRVFB
+	e0oekSgTXmZBydJyQlDhKCBnx4CuoP6/jftjgs+EJTnAJqkv1mMxCtHk3IajSUaFA2CNh/g6S6V
+	1wmWcPkvLkn/MBMNpPw==
+X-Google-Smtp-Source: AGHT+IFVVYwcwXIW2+rs+LXCKTLno19A5yuxBI/UefmvL0JcGML1UYLUePmSmcmNLPYFZsBsDSZ4dtmzcyM66Ug=
+X-Received: from edwf17.prod.google.com ([2002:a05:6402:1511:b0:60c:3b8e:c3eb])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:26d4:b0:607:f431:33fb with SMTP id 4fb4d7f45d1cf-60c88b26b30mr16470283a12.3.1751366650570;
+ Tue, 01 Jul 2025 03:44:10 -0700 (PDT)
+Date: Tue, 1 Jul 2025 10:44:09 +0000
+In-Reply-To: <20250619-cstr-core-v12-0-80c9c7b45900@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250624153049.462535-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250624153049.462535-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 1 Jul 2025 12:24:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV46tME9zuC556XuxcxRt2FGLwuUmdudZvOKf9RLvQ1Lw@mail.gmail.com>
-X-Gm-Features: Ac12FXwUljg1lofKpmUbbv07c21dKNGD0chVy1ox_vcCbaotHiTKDZM6ZS_5KyU
-Message-ID: <CAMuHMdV46tME9zuC556XuxcxRt2FGLwuUmdudZvOKf9RLvQ1Lw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Drop redundant base pointer from pll_clk
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250619-cstr-core-v12-0-80c9c7b45900@gmail.com>
+Message-ID: <aGO7-SQUUgg6kSVU@google.com>
+Subject: Re: [PATCH v12 0/5] rust: replace kernel::str::CStr w/ core::ffi::CStr
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-pci@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	linux-block@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Prabhakar,
+On Thu, Jun 19, 2025 at 11:06:24AM -0400, Tamir Duberstein wrote:
+> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+> have omitted Co-authored tags, as the end result is quite different.
+> 
+> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-On Tue, 24 Jun 2025 at 17:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The base address can be accessed via the priv pointer already present in
-> struct pll_clk, making the separate base field redundant. Remove the base
-> member and its assignment.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Overall LGTM. Only question is whether we should re-export
+core::ffi::CStr from kernel::ffi. Reason being that right now we are
+telling people to never use core::ffi as the integer types are wrong,
+and I think it would be nice if we can continue to tell people "never
+use core::ffi".
 
-Thanks for your patch!
+Either way, for the whole series:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.17, with s/rzv2h-cpg/rzv2h/.
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-
-> @@ -230,7 +229,6 @@ rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
->                            struct rzv2h_cpg_priv *priv,
->                            const struct clk_ops *ops)
->  {
-> -       void __iomem *base = priv->base;
->         struct device *dev = priv->dev;
->         struct clk_init_data init;
->         const struct clk *parent;
-
-Don't forget to update "clk: renesas: rzv2h-cpg: Add support for DSI clocks" ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Alice
