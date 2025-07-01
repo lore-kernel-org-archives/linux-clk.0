@@ -1,212 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2C42E9EA3;
-	Mon, 30 Jun 2025 23:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3F339A1;
+	Tue,  1 Jul 2025 00:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751326027; cv=none; b=kt6LUQAeWArkIixexQdnKLAN5X4aERRQqdU/aFnY8i6LhXlEgD8KPqeb+0emC0OB/wmWMJSaF7PHC/s4nL8jOmbdAxx5aixYUV2AzkcxbfM9B/xla4IA7XVUpSp2oAD9haca4edUuzK3hJETbjb02Ft1R2LezfXwk3xpdhZEwVc=
+	t=1751331527; cv=none; b=SyLuuEUJq1hF97kGedlTSufPNIc72WWkfPgcXUkVFqumtDCwjwKDIOwRm+Yo/RC0oRAKWdymnW2vuaNZrSxKd/a1BJdijDN6IbZ71vMFtOBVxoekvKWs5kPtNYqJTjUpSKnF1qGBf8Y+X1QMdqWEw1tSjuPypopONR/QheclELI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751326027; c=relaxed/simple;
-	bh=KZZob1ziys11up+TERSy8DmK6bVQ82VouoWjvFI+MaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tyuVfOwqj39wqN+H3FZqKwp5B69QKKNMloqb3AfYreWEoduGlv0gp5khUbAjHgIht/Aq62N4amHjl1ofmI0YNblpm8Z2oHCeQ9P0BJMd6rEfUOIvo07s8R5HFgxCJFoOgONA/OWlhqbIxbw+26CsjIZJkD+13prHCcT5OWAmDyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5/JIP5E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751331527; c=relaxed/simple;
+	bh=9oprfdI1sJ+15xAulHIwRy8N2QDKD6U7CpCIKxB4YHQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=H3hpoOs0iWwkkBFJpKwd3Mp/Q0zJsdvVBs0GFZlZpiWoLlXRtjBG6CaPvih2540wVuC8x0SLGc6arrgK9lMNIXIZqfAaeApi8Uy8c1o9iELIaPziP81pylEkdwQ+7HLQad8YsjnEW6fhQnQR4KvGe78KXUaSADs1UrboRYiQJLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMZxU7R9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5/JIP5E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34086C4CEE3;
-	Mon, 30 Jun 2025 23:27:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMZxU7R9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA380C4CEE3;
+	Tue,  1 Jul 2025 00:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751326026;
-	bh=KZZob1ziys11up+TERSy8DmK6bVQ82VouoWjvFI+MaM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D5/JIP5Eu0VhLKUHmDKQH+7FCS5H5+YTKoysCJqTYc4/ZDq3TkytfKLpB91PTi0hg
-	 KPmvJGztTTjs0YOehFRQMXDK59ULEUT0iH0EnkLNMAu6q1x7cQDDOQQwUsi4FdcmNN
-	 ILmSz3KMqnYsN4Thr5a/DVc6/+a7vVwZaJdA3JHCB2SJQrqB6ibGgN3ijC3WGf8uoY
-	 rgvRYm2cqFLAJ94LzfekRcnEcVs92SSaZFl1FocuJT9ohwYC24z8IdzJhwFOxAzEDS
-	 1Yyaxj5FjN0v+Kbs49tefL56CepqKt4wNG8pCQI6TCs/k8rZWdy17UEwuGVIWQ/VXl
-	 F/IYf5XxUaZKA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Mack <daniel@zonque.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: Convert maxim,max9485 to DT schema
-Date: Mon, 30 Jun 2025 18:26:57 -0500
-Message-ID: <20250630232658.3701225-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1751331525;
+	bh=9oprfdI1sJ+15xAulHIwRy8N2QDKD6U7CpCIKxB4YHQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=tMZxU7R9gOk+G0ojtOyWmYbdMU5k2Js1MA7HZJXzVaxotkMIabWdO07r2g/4ob7sl
+	 XCxij+o9e10E4vPy2qWR+yIdkcomKjZNabTa9s7wGisQ7+R0UNSD2k1Kvzfpx1GFxY
+	 jS0t+qPsrKevD/bAI2sB5Pd/joLuKZxZ3+LdemlEJr8A7b1MJC3eOJvhWBqplY+JXT
+	 B9m0EwJKdrvagWX/nM2V9+6mhVCAAOzIMXKRe7gY7HaJ5bQRrrQV8r3R2PDcBHKRiK
+	 jA0veSn6sxj6u8dt6JQbNvxT3XmQWYFgVU+XvE1MHg7UwF0muq+fAtQt/VgQnecP+V
+	 Jq9/KPQf5tgOw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250519-dev-axi-clkgen-limits-v6-1-bc4b3b61d1d4@analog.com>
+References: <20250519-dev-axi-clkgen-limits-v6-0-bc4b3b61d1d4@analog.com> <20250519-dev-axi-clkgen-limits-v6-1-bc4b3b61d1d4@analog.com>
+Subject: Re: [PATCH v6 1/7] clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>
+To: Nuno =?utf-8?q?S=C3=A1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, nuno.sa@analog.com
+Date: Mon, 30 Jun 2025 17:58:45 -0700
+Message-ID: <175133152558.4372.13862908191934557493@lazor>
+User-Agent: alot/0.11
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/clock/maxim,max9485.txt          | 59 -------------
- .../bindings/clock/maxim,max9485.yaml         | 82 +++++++++++++++++++
- 2 files changed, 82 insertions(+), 59 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.yaml
+Quoting Nuno S=C3=A1 via B4 Relay (2025-05-19 08:41:06)
+> From: Nuno S=C3=A1 <nuno.sa@analog.com>
+>=20
+> The fpfd_max frequency should be set to 450 MHz instead of 300 MHz.
+> Well, it actually depends on the platform speed grade but we are being
+> conservative for ultrascale so let's be consistent. In a following
+> change we will set these limits at runtime.
+>=20
+> Fixes: 0e646c52cf0e ("clk: Add axi-clkgen driver")
+> Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-deleted file mode 100644
-index b8f5c3bbf12b..000000000000
---- a/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-+++ /dev/null
-@@ -1,59 +0,0 @@
--Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
--
--This device exposes 4 clocks in total:
--
--- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
--- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
--			frequencies
--- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
--
--MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
--requests.
--
--Required properties:
--- compatible:	"maxim,max9485"
--- clocks:	Input clock, must provide 27.000 MHz
--- clock-names:	Must be set to "xclk"
--- #clock-cells: From common clock binding; shall be set to 1
--
--Optional properties:
--- reset-gpios:		GPIO descriptor connected to the #RESET input pin
--- vdd-supply:		A regulator node for Vdd
--- clock-output-names:	Name of output clocks, as defined in common clock
--			bindings
--
--If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
--and "clkout2".
--
--Clocks are defined as preprocessor macros in the dt-binding header.
--
--Example:
--
--	#include <dt-bindings/clock/maxim,max9485.h>
--
--	xo-27mhz: xo-27mhz {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <27000000>;
--	};
--
--	&i2c0 {
--		max9485: audio-clock@63 {
--			reg = <0x63>;
--			compatible = "maxim,max9485";
--			clock-names = "xclk";
--			clocks = <&xo-27mhz>;
--			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
--			vdd-supply = <&3v3-reg>;
--			#clock-cells = <1>;
--		};
--	};
--
--	// Clock consumer node
--
--	foo@0 {
--		compatible = "bar,foo";
--		/* ... */
--		clock-names = "foo-input-clk";
--		clocks = <&max9485 MAX9485_CLKOUT1>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.yaml b/Documentation/devicetree/bindings/clock/maxim,max9485.yaml
-new file mode 100644
-index 000000000000..f9d8941c7235
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max9485.yaml
-@@ -0,0 +1,82 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/maxim,max9485.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Maxim MAX9485 Programmable Audio Clock Generator
-+
-+maintainers:
-+  - Daniel Mack <daniel@zonque.org>
-+
-+description: >
-+  Maxim MAX9485 Programmable Audio Clock Generator exposes 4 clocks in total:
-+
-+    - MAX9485_MCLKOUT:  A gated, buffered output of the input clock of 27 MHz
-+    - MAX9485_CLKOUT:   A PLL that can be configured to 16 different discrete
-+                        frequencies
-+    - MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
-+
-+  MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
-+  requests.
-+
-+properties:
-+  compatible:
-+    const: maxim,max9485
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    description: Input clock. Must provide 27 MHz
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: xclk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  reset-gpios:
-+    description: >
-+      GPIO descriptor connected to the #RESET input pin
-+
-+  vdd-supply:
-+    description: A regulator node for Vdd
-+
-+  clock-output-names:
-+    description: Name of output clocks, as defined in common clock bindings
-+    items:
-+      - const: mclkout
-+      - const: clkout
-+      - const: clkout1
-+      - const: clkout2
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        clock-controller@63 {
-+            compatible = "maxim,max9485";
-+            reg = <0x63>;
-+            #clock-cells = <1>;
-+            clock-names = "xclk";
-+            clocks = <&xo_27mhz>;
-+            reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-+            vdd-supply = <&reg_3v3>;
-+        };
-+    };
--- 
-2.47.2
-
+Applied to clk-next
