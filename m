@@ -1,79 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6335D1E9B1C;
-	Tue,  1 Jul 2025 20:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3087C1B95B;
+	Tue,  1 Jul 2025 20:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751400361; cv=none; b=fpZvJstSmzluOAJ6W6kg/253P64/8b0GMNCdVJ9JfsdC/ODHzRuRFkgkib5bjiiKk5XCBSQoSXBmTTrbztyTs/z4mc0Xd0ByJQ6nKzFsv6c0iqKOcZyWHErsyzTSd26ix8D5Noa3w5PddUQ93+toxa7SsKzIlFvxmh6APEq1V9w=
+	t=1751400774; cv=none; b=LZMu7U3RXF/1Pa535y7JKuNTfPNcOG5wtadd/rjf6EGIaXFmiLYOJxJgJhSYAmcR1cP3COVqsXX0Npivo4Brxt9VOdT4Ky/hYXGk82CuYnO0T72J2BqtirHD/9udXI7t4+GKbrfYma9/aN94mnTYxp8/UDJYFdVgNzXoT8qSL58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751400361; c=relaxed/simple;
-	bh=EgCnSjkxf4u1frTm53+gSUO8YuhHv0iXVp3vsJ/h0RU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIwX/SAHs5trYQrzpSAJRowld0cWTb1xblBkbJtMIXQTNr19/kHlDirXBToumoxWep6tcHZjHIIDjirSeJt7Ge+59KmEf0ET0InbLoQW6m72MlmRg77FGU9PCNVdW4Y0i/dhjiAmcsODoWQRsSWVI+JTh9/lGgb9YmuO3YOhHzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiCcDC/L; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiCcDC/L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C334C4CEEB;
-	Tue,  1 Jul 2025 20:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751400360;
-	bh=EgCnSjkxf4u1frTm53+gSUO8YuhHv0iXVp3vsJ/h0RU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hiCcDC/LMjF4xusnlzOHKMvbFAnZ5glKwkSnQD38zFYwoP5d+j+D65q8v1QxTBjvE
-	 ovSjwtxKoO4AAnJsBdOZPxQiw36jM7qV9i2fUs0QZEzDhhKzmDwgikxzZTEZYJBkEE
-	 nSylKd5/ukuQiI05UAv7aJpTx2aY5a+LRhVyiHzmmOzphhvJZFo0CANwewdpdDAn7p
-	 d2uGSWQT3bzxAPl9WZ8G8S4iFkbpDrV8OvKzUT1Jhmw7AM5Vkpaa9nmQCrcYJuWgDA
-	 dXnKlAn+RqRmebG9V1oOD6N0rXgmAjgfkugQ+voiTz9QQH+piz4p0iiZC+M2yP3SRf
-	 uugx2/WRLqaZQ==
-Date: Tue, 1 Jul 2025 13:05:58 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1751400774; c=relaxed/simple;
+	bh=dgl5hIOq6GycYqWdHrpk1fFDgkuYnSrk119emMBzkZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mo0gZgxxENnU5lw/pWRckfKQ+h3+JO1zfhNBut5aVYeFTaDmnTAWqZyMdap0dLhLbCCv/O68L22bQGbOB5gMJQQFZbi7abGofPURid//FcV2ESQL0Vn6KIZYqmMO69prmfQugHUOCGNgTZBz01gSbY1zsW/qF8W7VYdGr2SxOGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id CFBD81F00036;
+	Tue,  1 Jul 2025 20:12:49 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 55ACFAC968A; Tue,  1 Jul 2025 20:12:49 +0000 (UTC)
+X-Spam-Level: *
+Received: from localhost.localdomain (unknown [192.168.1.64])
+	by laika.paulk.fr (Postfix) with ESMTP id 5A449AC967D;
+	Tue,  1 Jul 2025 20:11:30 +0000 (UTC)
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-gpio@vger.kernel.org
+Cc: Yong Deng <yong.deng@magewell.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 0/8] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Message-ID: <aGQ/ph1dGIJcnyZu@x1>
-References: <CGME20250701160157eucas1p1b6dfd8bf3859b07bff0cfcd171d7c939@eucas1p1.samsung.com>
- <20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Icenowy Zheng <icenowy@aosc.xyz>,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH 0/5] sunxi: Various minor V3s clock/pinctrl fixes
+Date: Tue,  1 Jul 2025 22:11:19 +0200
+Message-ID: <20250701201124.812882-1-paulk@sys-base.io>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 01, 2025 at 06:01:37PM +0200, Michal Wilczynski wrote:
-> This patch series introduces Rust support for the T-HEAD TH1520 PWM
-> controller and demonstrates its use for fan control on the Sipeed Lichee
-> Pi 4A board.
-[snip]
-> [2] - https://github.com/mwilczy/linux/commits/rust-next-pwm-working-fan-for-sending-v10/
+This is a mixed-bag of minor fixes for V3s clocks and pinctrl.
 
-I've tested this branch, which is now based on next-20250701, and the fan
-is working correctly.
+The last patch is a weak attempt at accomodating using both the display
+engine and tcon along with the camera subsystem. The main issue is that
+the tcon and de need to have the same clock parent, which may not be
+the case depending on the pixel rate. Bringing the de block to the same
+clock rate as the csi block helps in some cases.
 
-Tested-by: Drew Fustini <fustini@kernel.org>
+Paul Kocialkowski (5):
+  pinctrl: sunxi: v3s: Fix wrong comment about UART2 pinmux
+  clk: sunxi-ng: v3s: Fix CSI SCLK clock name
+  clk: sunxi-ng: v3s: Fix CSI1 MCLK clock name
+  clk: sunxi-ng: v3s: Fix TCON clock parents
+  drm/sun4i: Run the mixer clock at 297 MHz on V3s
+
+ .../bindings/media/allwinner,sun6i-a31-csi.yaml    |  2 +-
+ .../bindings/media/allwinner,sun6i-a31-isp.yaml    |  2 +-
+ .../media/allwinner,sun6i-a31-mipi-csi2.yaml       |  2 +-
+ arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi         |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c               | 14 +++++++-------
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                | 12 ++++++------
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c          |  2 +-
+ include/dt-bindings/clock/sun8i-v3s-ccu.h          |  2 +-
+ 8 files changed, 19 insertions(+), 19 deletions(-)
+
+-- 
+2.49.0
+
