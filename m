@@ -1,42 +1,73 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBE6265298
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94031D7989
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751358306; cv=none; b=NlXlQfEAd1XySx3pxV+lpx/Whu32b9KhORVVy8wCx8hlTW9cTbY07CxFlxioc7AkS3Oiuqi/lKaLc4iVXSzRxYROXoA9upHGaaVC7cZEf4s3UWbYS2c/MHAxsg+pZioI8TrhSXVlvMON4RYq3hVBz9k4UCyH654XGuFDrAQx870=
+	t=1751359466; cv=none; b=AU36ryfGel/++i1C7w8f4bUrPGZ/2NxQNmpPoVtJuOUax0qf13o27OBEZl/ZBYBmn8yAwPdNb2qFM4BiLyQ6ftlj47HUEB0eJIjlyjs5s5Z/+zx4Q7XQURIWgRh29LYW+Pf+w5OwW5Z0dfw1NjuMNPVIfgHJEWukk1UHxCVMqaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751358306; c=relaxed/simple;
-	bh=4NBRo7asrbE4jcsC4N5i3/e2ZCZPMxakKBYsVImNKI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=sKeFIJN0uVlJ5mKJRKv02MX/RUMOBljvwNY0i+vCIKYGnbToqRgnV6tuzRR2zLiQsNzVfTJZYVLggpHb/e4E2/QF5wuwkm7k8MdWSUkABrTnIXr2gretiPi6fi8DUq5/V6CG5bvNFjT/7nDkhBgTpbUcvpasGpmiJMAa35YzWzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PwQsOHJX; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1751359466; c=relaxed/simple;
+	bh=ETahjvfhObWfhp3wH4KH1j1xcBmeV7kvedrPys7wXik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jk0Eym2jLyHU7+hGef1gTsgJFLIvowViPKNT44ZZZGPryTd/+QuhZweqC37/B91LUfXOwif/Xkk6vOtd/OENwo3b8qazAncOfqyOI7YM3Lm6d9D1NoeIoGjs1iLMHoFgjcdKuAkIa5+B2jx/LX3SKEyNhLrgLrBDMOci6qLUpMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LTmc355r; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PwQsOHJX"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250701082456euoutp02e8f58b4e1df2e4af6046f7a741b1344a~OExd6zItI2113721137euoutp02u
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:24:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250701082456euoutp02e8f58b4e1df2e4af6046f7a741b1344a~OExd6zItI2113721137euoutp02u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751358296;
-	bh=KfdpUFAVhAyxGqE9eLEIBkkqrEYX2W0imprAxbQivkU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=PwQsOHJXGkU9mixvHQse3EYengfFoqHmA30yZ29Nwz9nTmg5Vjvv3Mjnkdj2yQTO+
-	 HA7ti9PjBheHdgVw6q3trtWTW6m0QWrOBK8uQ0cUBq4yTUAK1j2qGYkWFUG+eAtdKk
-	 Zd1cwp+uPNs5SfmyqgTwNswNIlSbQiMFzoMmeoPY=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250701082456eucas1p27ac527ab6df65b4ad24af9f1936ee772~OExdUXUK-0564305643eucas1p2z;
-	Tue,  1 Jul 2025 08:24:56 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250701082454eusmtip179c87208d9c76abee9ff0a1bd9cb19a6~OExcL0hDa2415924159eusmtip1p;
-	Tue,  1 Jul 2025 08:24:54 +0000 (GMT)
-Message-ID: <ca58f110-7f9a-427d-b018-e514cf34adaf@samsung.com>
-Date: Tue, 1 Jul 2025 10:24:54 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LTmc355r"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5612vANg024827
+	for <linux-clk@vger.kernel.org>; Tue, 1 Jul 2025 08:44:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yf8OXMx4FGnWdIQA3MUAkQiLT+ux14ax47Cw7Z9XIeQ=; b=LTmc355rIX1vCd4V
+	QbKXgSVG2hnzEhL4Ak+j0xi2wCu0JbWCm/5pLIIYILdPLgozQFThyEIW5eblLMM5
+	L9Lf36yFB7Od6FdA+S29o2nLp6hv5+7sJ0PKmBqujBxy1rqHP00Lp14ZUgNp3+D1
+	cFQ/Xsh9ZpUviWrYhSBOocEraKWvZGxc1sIiHXClNJ0rzX12DM5vOc8xUb25Diyx
+	3e1dgAaRk4rWMOgbJry92RksReabhtN/hz1aw4ODmsNDP+TAIXq8ZkQC4IJ631zr
+	D4wZ6ecxNW0z2IVmCj/7ZCFQ8r8Sw/s5CIITLXi4My0GnMcpxG9sBW2qqLCJhDsL
+	aRa03w==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9fuu6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 08:44:23 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a5a9791fa9so12528761cf.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 01:44:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751359462; x=1751964262;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yf8OXMx4FGnWdIQA3MUAkQiLT+ux14ax47Cw7Z9XIeQ=;
+        b=QQvKo2qbhcNlhOa4RGVRyDVPNCWKDDHy87Fc6u0K8polg/jtmTN4DKFWKm8BAd6xvq
+         nzn7LOqr4bHF9Wx8hL2auJfMaPsqCD5hGWEEybWmDj7XR/c+bMlmc3O3MOBQBGsNbgJq
+         SlMpzAVf6fhVs/KcygFWy7BX569svxhjjVCglB75Ey3ztXHohAyPd+TWc9esQQveKLNI
+         +QF0hog84saRInmrkzC4+c9Os/VgMXmGALRi6QNfoAqU6K1LK43xUw10zxtFEU1fWEHM
+         AN+ZDGUcQ/s075q7AnYZTgqt1Yc0CA28f/m78bJpIwYay3DoXvJGbeW7AhXO3s6tkt65
+         n/rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPnz63/PuNsCY9h8BW6pt/cEpGnICz57oldOg89PSK6v2KDqmtkuffsNv7Wpz0xo44tnfXvIqbQqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ47DR2qECJ5exxsQl6JDSMZmHgFGH1uKO2z+7jLchPwa1110u
+	CyC55pT21HA1LJzIY8yxH/tGfN0fksSp7vsmZ3XaC7hk0kWlaE+gbW2xcBsV5RHqCfQteC1KIQb
+	V5finTW8IPmXY8yzZ8i1sufRMwjyVjOc5JnwaHb2Plu33j59V5rnRJxDgldvpkG+a3gG8GPU=
+X-Gm-Gg: ASbGncvj4T/ERmHiVbOH5nasXLtyhxkv8dNL+N2qD2G1r2P/0ZON8ffGSSl099kvzp0
+	e1x0kS+Irg+0BCSJbhq3G2n0B+wJTQ4t0TMtfgBKAauKXi9Za4DIrvIRfmAXEHraWLl21mJ3keB
+	39NbxXhQmAUueEEhnwshz2+hlBPn80JsFfP7vv9+MmJX0Elo1tXj0lz5ZnySfEoBOKkoe+FDDdh
+	qO5zDwR3V0trTsW/ZQnXHbb4FPAIzziWE+U6i7pwldpr77SZ7KAh0vjDjjrq3uT40Heg/JfCX9O
+	wGXzn0JCayY0eOKlRT3506cfUasWAv89W8ZsMQy2dhtwaBERr0pmfkwTo9Gz4ZT1/YwdNWhRClw
+	bsAPeP9MN
+X-Received: by 2002:ac8:5a81:0:b0:471:f437:2973 with SMTP id d75a77b69052e-4a833959521mr9863451cf.14.1751359462360;
+        Tue, 01 Jul 2025 01:44:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/sA0oirRY7BnsvlJ60EVwuLrYw1JMcOwklbuCHYYyVTAZbHQKxT6zpexqZo4Yazepm+DXNA==
+X-Received: by 2002:ac8:5a81:0:b0:471:f437:2973 with SMTP id d75a77b69052e-4a833959521mr9863291cf.14.1751359461842;
+        Tue, 01 Jul 2025 01:44:21 -0700 (PDT)
+Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8319aef5sm7312708a12.48.2025.07.01.01.44.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 01:44:21 -0700 (PDT)
+Message-ID: <850260dc-7e67-4ae4-82a5-5b8f5197633d@oss.qualcomm.com>
+Date: Tue, 1 Jul 2025 10:44:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,100 +75,65 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/9] rust: pwm: Add Kconfig and basic data structures
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
-	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
-	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
-	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: Convert qcom,krait-cc to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250630232617.3699954-1-robh@kernel.org>
 Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <n5zfbzu3hn7kqdf3xc7orpeovvdprc2xlf7w3f62uoohkxdk5c@cc24urt5xf36>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250701082456eucas1p27ac527ab6df65b4ad24af9f1936ee772
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5
-X-EPHeader: CA
-X-CMS-RootMailID: 20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5
-References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
-	<CGME20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5@eucas1p1.samsung.com>
-	<20250623-rust-next-pwm-working-fan-for-sending-v5-1-0ca23747c23e@samsung.com>
-	<q7sz7uci5vnyc24laqzs56vgt4i2jamb3ifyxkqom6qcml5kkv@642prvwxjkxc>
-	<c127e368-8c1f-4299-b222-a105940ac34e@samsung.com>
-	<1450a457-4bd3-4e9c-a74f-3be15c9ec84f@samsung.com>
-	<n5zfbzu3hn7kqdf3xc7orpeovvdprc2xlf7w3f62uoohkxdk5c@cc24urt5xf36>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250630232617.3699954-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=68639fe7 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=LpQP-O61AAAA:8
+ a=i-1VaULvG7sLBx-uF14A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=pioyyrs4ZptJ924tMmac:22
+X-Proofpoint-ORIG-GUID: QRQk2hSNRUfZgmfVaLHDOHZuBNgbi6Ri
+X-Proofpoint-GUID: QRQk2hSNRUfZgmfVaLHDOHZuBNgbi6Ri
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA1MCBTYWx0ZWRfXyteA7vdaXQUP
+ opx0qopw8I9OITIjYJyia43pBIxBCJJMSgB3UqkJ2cXuUsM0kzR8+yJx7d+8Za/O8Tr8UZdKRfu
+ I0i4IkvnEU7rBcosnsrTWXZcsWZMSOja3Or0DmGbqZAcAFTaPPXbgA05e5sPyh1GMuSRiiXE79x
+ NAe9xnXqcq+GzLptVOGhOeUf0avjFoOewCZZ01pAH6Xpx9jXa5xUqEYR4XRN4Aaegub0b/LPYQW
+ MPvIGJagw+z3ipVYM6QVDxSZfd0+UDYmGUGCHKi5P8KtFYfUqplfQHRKibf+Or7zVzOy2NUi2q1
+ G+52YMGoyzOAlsEZXNcdqUxlUjbA6jS12qmPjyMVOFUjBwaTtPxc+5qyOTKSM9cGx1w/aqEtAye
+ dgAFUXy66XAlARphTRYU0nz4LUSplSf3dQesf00cCrX+dQLr8+xanOBkZTLCrh1YP7ZcU1/J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507010050
 
 
 
-On 6/29/25 12:29, Uwe Kleine-König wrote:
-> On Sat, Jun 28, 2025 at 09:47:19PM +0200, Michal Wilczynski wrote:
+On 01-Jul-25 01:26, Rob Herring (Arm) wrote:
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/qcom,krait-cc.txt          | 34 ---------------
+>  .../bindings/clock/qcom,krait-cc.yaml         | 43 +++++++++++++++++++
+>  2 files changed, 43 insertions(+), 34 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
 
->>>>> +    /// Sets the polarity of the PWM signal.
->>>>> +    pub fn set_polarity(&mut self, polarity: Polarity) {
->>>>> +        self.0.polarity = polarity.into();
->>>>> +    }
->>>>
->>>> Please don't expose these non-atomic callbacks. pwm_disable() would be
->>>> fine.
->>
->> Hmm, I've just realized that without those setters it would most likely
->> impossible to correctly implement the get_state callback.
-> 
-> You shouldn't implement the get_state callback for a waveform driver.
+[...]
 
-You're right that a new driver using the waveform API shouldn't
-implement .get_state.
+> +title: Krait Clock Controller
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@codeaurora.org>
 
-My goal for the abstraction layer, however, is to be flexible enough to
-support writing both modern waveform drivers and legacy style drivers
-that use the .apply and .get_state callbacks.
+FYI codeaurora has been dead for years
 
-To implement the .get_state callback, a driver needs the ability to
-construct a State struct and populate its fields from hardware values
-before returning it to the PWM core. Without this ability there is no
-way to implement get_state callback.
-
-I think the cleaner way, without the setters would be to update the
-`new` like so:
-    pub fn new(
-        period: u64,
-        duty_cycle: u64,
-        polarity: Polarity,
-        enabled: bool,
-        usage_power: bool,
-    ) -> Self {
-        let raw_c_state = bindings::pwm_state {
-            period,
-            duty_cycle,
-            polarity: polarity.into(),
-            enabled,
-            usage_power,
-        };
-
-        State(raw_c_state)
-    }
-
-This way the get_state callback would be responsible for creating new
-state and initializing it, instead of passing the mutable State to
-get_state.
-
-
-> 
-> Best regards
-> Uwe
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Konrad
