@@ -1,58 +1,58 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BF01F4634
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 06:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58214158DAC
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 07:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751352634; cv=none; b=t4VWlB2+2i/FiZUWje/QRAZMmYaLp+1mJHHhX/138PCID7nS3SamEv94gnGRbbZSHhvclKo/TRXFsglY76hV+EFue+0YRnQ0jPlUbHXfy1Tj2h7tVUcJZPjHpaeQHfHMlAPh9jh7JiOZS3hTkZs0imCRabOIbMpgO2gwF/NWmYs=
+	t=1751353394; cv=none; b=F01hNAO6M+7EZALl7ZHM7KRw+dcMSeUJeePvm32k4m1laf2gELx/gEc/kj4n/c9g2EbyORxF2c2aDY2nnWfVKOTKiE+Q5VM2kLss5DhUDigtFpVlPxTpbYpmDpaVEYSIKSWgeqbzTdkYOK5V7P8xUDzSxyZud/puqBXt00qMAhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751352634; c=relaxed/simple;
-	bh=slYL0pcK30l/kdf1cEqzfFGHu0UunnUbDKnicMoho0g=;
+	s=arc-20240116; t=1751353394; c=relaxed/simple;
+	bh=+EC0oMLVpnRfdUFzMGpfa0FgwGNFEt+oba3/joF/fnE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c17cd8/mZtysHtd6OZVr4AoAZAT57Hv4lO3hexDoG+oxJNDWIsTNr/LNDqPxgUfo1Wf5Opn34vb3dJlqh28vtgN/7HYhsb/BoBp5Y0kzbGXhPw/6lL8oxbwCwApjvM/PVodgoL36y36vhueZ6eZMOM9iWCGZ9Wjqmk4hWKqFV7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=kn7la7bs; arc=none smtp.client-ip=209.85.208.177
+	 To:Cc:Content-Type; b=pwsqd5ov5ikPAgB03SInHbRnlqSoYbhJNW5K9qnIV6cQMmm7QznGva2a64YC4qS1acdnbSl7mvG3ZIhmm4LQe2aCZnmQhZv8aSXZfE6B270rzwHJrgfvQn31NMzb+Z0OoCfAZgozFE6bsRy4gMi4pKZdfncgVbeJWS6Ye0FiKR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HyIOv9Zg; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="kn7la7bs"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32ca160b4bcso52485961fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jun 2025 23:50:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HyIOv9Zg"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso6205769e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 00:03:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751352631; x=1751957431; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1751353390; x=1751958190; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mWPXFIhjTb/V6V1DQLHOJ4YlKbwSK1c4xU/yQWq9blU=;
-        b=kn7la7bsJ4QvXlCWDLDEJQ0uVyUpBMJiwp/yIn/VJs4h8HMOUTcjkshXNyDTwJlo7t
-         33DegWQnKnFY3m3AbVezFYCnle449KUn9fhLxMnUB3pLs94V3WcMAY6buL87+vLlWIN4
-         lUo0zfDIInp1ogtBK2V5h1kZxCiUQb0aKoI19dSJdQU2MLlPygF6CSYEtSNA6yRl+jTj
-         K0TBXMkVrI1+h1jle1UAnMursGiW597lKKjPLB6aZjPpoch1U7NbMNXrDHfBpr3HPAgp
-         BJZcMweLYdLz+LAbi7E9Q8wdqPZAai9qlGvyFK1edI8K/wIpFCWMY1/LxM9bKkNiPDYx
-         bz7w==
+        bh=iIU5NNrDBXiK6ci+KkmpULxlihLtb8DLKHWe5DIQOM0=;
+        b=HyIOv9ZgCkwfijbz65r3487WW3wYSVV04iIhdLBXzt3HFvb/78AeXw2UAXTf0iDVUs
+         IL/UBt10BtgGHAN0znmWoQuKBnLbr0d1oevRyil9rMw3Iu50MfpkPpnhnOewETmJsK/0
+         3DbULhAPhhFJcrKBZeo4b7j/yThflbjHmDox5PMUzx1mAdbo1+ouW1NXfNkDusqlcyXw
+         xFtn4Z4Vi7ZwRgK2LY1igd+5t7H5SHCGI2gCOb+wqwQMJY1KQ9Z42rjzEocygsrjUL+m
+         Mk8ZXX1KjeCjZ84BZBOZhFEtPNgDQKaPwTyXh8b4Ap+bL9jsAxKIz1M4UuhsAY9v2XKM
+         Oh9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751352631; x=1751957431;
+        d=1e100.net; s=20230601; t=1751353390; x=1751958190;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mWPXFIhjTb/V6V1DQLHOJ4YlKbwSK1c4xU/yQWq9blU=;
-        b=gF+QD30sOiwMQ15Fm/c+IItFBJ7Cx8yNXztY1+NA89fVQgt2ppwt1Nlk1amt1Pf2JQ
-         F0QMru2Jt6IN025dRDexpU+4+aP1vA47nDw8/kzl6i+nWGoLD2tjOl5c0DctlfPOARf6
-         Lt5jAuEXJEedvU0xnsdw1fD6Hr3dGEpyO5vbm+oMSjWD/mXYbk2JrKkwJPOWuwRAmKCm
-         gX1Siv//W/K1o7KjFu5mHe3QzwOSYVFZjZoBUm8wfYrzHl4834KGzdAdJbsCQI1GFdRp
-         ViSb04+pqTGWSZymLyXc1BwY6pmZykCFVKYnlMJY8u1vUxjSTOVcwXzknrsvMnwtM1OV
-         idug==
-X-Forwarded-Encrypted: i=1; AJvYcCUWhRGNp9psp+uIH7gvGudhqU7Jy+gTSuvPCv7CW+IWvs8KCZi8wlUGdx5rDeqY5J5OzgNpl4SnNss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+xu2ZNbuPbQuh53Lul0QZgATyhuC6lSO8A/MXNcFx23T823++
-	TPeuo9/txihT2uF9JbHGYBqxoNL8qMZSq0wJtGRDYr01p5huRWieUbo8xWqH6JWmnIdlehtifnd
-	yB95z1nqx5qivIMHd9TwWN762UiYZGCYsVLWht5AQKQ==
-X-Gm-Gg: ASbGnct4R9DxvY+3TOY44m8iy34DGKTr/4friF16yyeo9P4PiTxGvWp/8OKHCoFNYCo
-	HWvYklZggThMxNmJ85lvJ9lQOnlJ6e+4hY8tn67XxXXtZOpC92keTCZJNmWIyL2wACZjjhuUKxU
-	Hbcc0WKnMhrY5iQA9sEm6C26QtSfYId0Tsd3s9uaWFjwycv9VCYH0iHTQ=
-X-Google-Smtp-Source: AGHT+IFzkBl1xaxBMxsvzjYcnTTImtOa41K69LoWO7vhOCRunctW7uRpVxNN5kP1lrGeGDNRGiHQb4LGbb+eDUYPLaE=
-X-Received: by 2002:a2e:bc1c:0:b0:32c:ef7a:d84b with SMTP id
- 38308e7fff4ca-32cef7ad8c6mr27641281fa.13.1751352631111; Mon, 30 Jun 2025
- 23:50:31 -0700 (PDT)
+        bh=iIU5NNrDBXiK6ci+KkmpULxlihLtb8DLKHWe5DIQOM0=;
+        b=pWme0fgwbfGholKMztCBIsAe50xUTeGb12qBCrfLQ4lQFwJyL9Gxn6226d/zuMcas+
+         28tw17exN9LQ0EKWaihKNi2lmdXkSYzuN9JeFfoNMHVpnQjNZhoFiFxSLyJHN4T94blO
+         GR6W41KagoAShNuU3Wc6vPqyQDAUDRHjOqeafbwlnxIUrJhjZcsX6An9r0lDhIsIjvnm
+         pRf9gJIC8uCpgsuncFhGk0JyDSxcHepIazNanSAKul+Ng0/adggo4oftsMunbEDfc3fC
+         YvISAo4SKAnS9eiav+jRzp0Jlj2BCVzPHywC6XGMh7lBWneaVfR25JTCHHXTbm7POuro
+         LiNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLQMSCTRiOufKPUaqF2MOb8x8YWf8Z3mHc6mDcjCjyLq9MwhDSqic5DFy1riSNrig7L1NblefnPcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBAxmr9c16HjgsNKA9UzP/fkvi8yfVTAzPYAhNe5/K1PQELRux
+	44d46czMnvD+Pp5FWWqzv64u2j59FhPjtlqlA7JvHzxRvHJoaAwENObkpS5y2fmpHIPFNi2PpYc
+	tCFZMWUdOwAmyw723aN6cmZIs0bHqRBy+XQ/oHHsqsg==
+X-Gm-Gg: ASbGncsMw4OSwFDBs07YSOkRRnXce2oXCP24xJoTCrQuWxK+x0f3m/zjOEOYl89E3mI
+	VlOKEFlbd+ahjcgO3Ez3MUEGWEKavQWLrh3ZkngoAUzrJork2dEojyHLmVlTTEN0zqtW6KFkWYV
+	CMpUnx0oGkJ9iluwQ/f8nxkrRdGwIJQDx68g5sStmknxlimDebDOYQeZs=
+X-Google-Smtp-Source: AGHT+IG2hO6nzI2GLaUpV//IQuh9V9bSS/bokBUiGKqfApG5Zg7ceEjqZCY0yleadUsPuqLCZd4pLgQndJnpi85hp6w=
+X-Received: by 2002:a05:6512:220d:b0:554:f76a:baaf with SMTP id
+ 2adb3069b0e04-5550b9ee1c0mr5526546e87.56.1751353390315; Tue, 01 Jul 2025
+ 00:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,13 +60,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <20250618121358.503781-6-apatel@ventanamicro.com> <aFkUETH_R30-CNOX@smile.fi.intel.com>
-In-Reply-To: <aFkUETH_R30-CNOX@smile.fi.intel.com>
+ <20250618121358.503781-7-apatel@ventanamicro.com> <aFkVQTSCSkvBhzgC@smile.fi.intel.com>
+In-Reply-To: <aFkVQTSCSkvBhzgC@smile.fi.intel.com>
 From: Anup Patel <apatel@ventanamicro.com>
-Date: Tue, 1 Jul 2025 12:20:18 +0530
-X-Gm-Features: Ac12FXx2G23C94_L44JHbdLekj9g5IUE1GEONeTER1Z3bkY9Y3w5bcaCPjCbmV4
-Message-ID: <CAK9=C2WpN2_+wi-0AOZ_2xOK8z9oZk_dD__uRCu+E8iccjyC=Q@mail.gmail.com>
-Subject: Re: [PATCH v6 05/23] mailbox: Allow controller specific mapping using fwnode
+Date: Tue, 1 Jul 2025 12:32:57 +0530
+X-Gm-Features: Ac12FXyj6dh_QMGxazJoimu3YO2qWqoVT9ukdJkMwkLRVDb7ZkWPIfUsIhiEvxA
+Message-ID: <CAK9=C2Wh3ha9bV_JhGqJRhBSWheXqRMmBN-M0x2-ffZyFni_cw@mail.gmail.com>
+Subject: Re: [PATCH v6 06/23] mailbox: Add RISC-V SBI message proxy (MPXY)
+ based mailbox driver
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -84,55 +85,57 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 2:15=E2=80=AFPM Andy Shevchenko
+On Mon, Jun 23, 2025 at 2:20=E2=80=AFPM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 >
-> On Wed, Jun 18, 2025 at 05:43:40PM +0530, Anup Patel wrote:
-> > Introduce optional fw_node() callback which allows a mailbox controller
-> > driver to provide controller specific mapping using fwnode.
-> >
-> > The Linux OF framework already implements fwnode operations for the
-> > Linux DD framework so the fw_xlate() callback works fine with device
-> > tree as well.
+> On Wed, Jun 18, 2025 at 05:43:41PM +0530, Anup Patel wrote:
+> > Add a mailbox controller driver for the new SBI message proxy extension
+> > which is part of the SBI v3.0 specification.
 >
 > ...
 >
-> > +     fwnode =3D dev_fwnode(dev);
-> > +     if (!fwnode) {
-> > +             dev_dbg(dev, "No owner fwnode\n");
-> > +             return ERR_PTR(-ENODEV);
-> > +     }
-> > +
-> > +     ret =3D fwnode_property_get_reference_args(dev_fwnode(dev), "mbox=
-es",
+> > +static void mpxy_mbox_remove(struct platform_device *pdev)
+> > +{
+> > +     struct mpxy_mbox *mbox =3D platform_get_drvdata(pdev);
 >
-> Why not using fwnode directly here?
+> > +     if (mbox->msi_count)
+>
+> I'm still not convinced we need this check _here_.
+> Can it be rather a separate patch to add it inside
+> the below call?
 
-Argh, I missed replacing dev_fwnode() over here. Thanks for catching it,
-I will update in the next revision.
+IMHO, improving platform_device_msi_free_irqs_all() and its
+users should be a separate series.
 
 >
-> > +                                              "#mbox-cells", 0, index,=
- &fwspec);
-> >       if (ret) {
-> > -             dev_err(dev, "%s: can't parse \"mboxes\" property\n", __f=
-unc__);
-> > +             dev_err(dev, "%s: can't parse \"%s\" property\n", __func_=
-_, "mboxes");
-> >               return ERR_PTR(ret);
-> >       }
+> > +             platform_device_msi_free_irqs_all(mbox->dev);
+> > +}
 >
 > ...
 >
-> Otherwise looks like a good solution to get rid of OF-centric code from m=
-ailbox
-> in the future.
+> > +static const struct of_device_id mpxy_mbox_of_match[] =3D {
+> > +     {.compatible =3D "riscv,sbi-mpxy-mbox", },
 >
-> --
-> With Best Regards,
-> Andy Shevchenko
+> Missing space and unneeded inner comma.
+
+Okay, I will update.
+
 >
+> > +     {}
+> > +};
+>
+> ...
+>
+> > --- a/include/linux/byteorder/generic.h
+> > +++ b/include/linux/byteorder/generic.h
+>
+> This is good change, but deserves to be in a separate patch.
+> I will Ack/Review it as soon as it appears to be so.
 >
 
-Thanks,
+I generally prefer introduction and usage of a new API in the
+same patch since it provides better context. I don't mind creating
+separate patch so I will update in the next revision.
+
+Regards,
 Anup
