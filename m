@@ -1,73 +1,42 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94031D7989
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E4E1EC01D
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751359466; cv=none; b=AU36ryfGel/++i1C7w8f4bUrPGZ/2NxQNmpPoVtJuOUax0qf13o27OBEZl/ZBYBmn8yAwPdNb2qFM4BiLyQ6ftlj47HUEB0eJIjlyjs5s5Z/+zx4Q7XQURIWgRh29LYW+Pf+w5OwW5Z0dfw1NjuMNPVIfgHJEWukk1UHxCVMqaw=
+	t=1751359949; cv=none; b=rYnEm9ynrxK9wlCOXglQ6R+QG/FrE13ywU/upkyJ3qL1JrKJyq8vSmPJ47cVR+HNepn7FvTssP9jNAZ1ElJsXpaMdrmpzGXTpNmnMyaskF88Kvtfx1lg5OPBo/T0WDyuAnrVFuKs0THDWzN8/BX8WwmCOleQTEcDoQoRZgbzCZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751359466; c=relaxed/simple;
-	bh=ETahjvfhObWfhp3wH4KH1j1xcBmeV7kvedrPys7wXik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jk0Eym2jLyHU7+hGef1gTsgJFLIvowViPKNT44ZZZGPryTd/+QuhZweqC37/B91LUfXOwif/Xkk6vOtd/OENwo3b8qazAncOfqyOI7YM3Lm6d9D1NoeIoGjs1iLMHoFgjcdKuAkIa5+B2jx/LX3SKEyNhLrgLrBDMOci6qLUpMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LTmc355r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1751359949; c=relaxed/simple;
+	bh=65oAe0qpLcRgjSC486bat76EyBiBDhhxgd5LMUbXjzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=XQkZBwWnOC5KkOhylZb9b6Y+BaYUcYLM/d0p8gRikCCnsXLBPHkeTUhfwQMGb8XcR2ejWMA8r0JBIb2OuXDDRBzvEc2FwJeWrPMuDpoAbsyxWQ9SyixdKpQJVRVPty9Rxz/lU1L2WocNNOzX64tvadqfxKDCQwfwx7kQ7ikdopI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WypqO/7x; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LTmc355r"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5612vANg024827
-	for <linux-clk@vger.kernel.org>; Tue, 1 Jul 2025 08:44:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yf8OXMx4FGnWdIQA3MUAkQiLT+ux14ax47Cw7Z9XIeQ=; b=LTmc355rIX1vCd4V
-	QbKXgSVG2hnzEhL4Ak+j0xi2wCu0JbWCm/5pLIIYILdPLgozQFThyEIW5eblLMM5
-	L9Lf36yFB7Od6FdA+S29o2nLp6hv5+7sJ0PKmBqujBxy1rqHP00Lp14ZUgNp3+D1
-	cFQ/Xsh9ZpUviWrYhSBOocEraKWvZGxc1sIiHXClNJ0rzX12DM5vOc8xUb25Diyx
-	3e1dgAaRk4rWMOgbJry92RksReabhtN/hz1aw4ODmsNDP+TAIXq8ZkQC4IJ631zr
-	D4wZ6ecxNW0z2IVmCj/7ZCFQ8r8Sw/s5CIITLXi4My0GnMcpxG9sBW2qqLCJhDsL
-	aRa03w==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9fuu6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 08:44:23 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a5a9791fa9so12528761cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 01:44:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751359462; x=1751964262;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yf8OXMx4FGnWdIQA3MUAkQiLT+ux14ax47Cw7Z9XIeQ=;
-        b=QQvKo2qbhcNlhOa4RGVRyDVPNCWKDDHy87Fc6u0K8polg/jtmTN4DKFWKm8BAd6xvq
-         nzn7LOqr4bHF9Wx8hL2auJfMaPsqCD5hGWEEybWmDj7XR/c+bMlmc3O3MOBQBGsNbgJq
-         SlMpzAVf6fhVs/KcygFWy7BX569svxhjjVCglB75Ey3ztXHohAyPd+TWc9esQQveKLNI
-         +QF0hog84saRInmrkzC4+c9Os/VgMXmGALRi6QNfoAqU6K1LK43xUw10zxtFEU1fWEHM
-         AN+ZDGUcQ/s075q7AnYZTgqt1Yc0CA28f/m78bJpIwYay3DoXvJGbeW7AhXO3s6tkt65
-         n/rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPnz63/PuNsCY9h8BW6pt/cEpGnICz57oldOg89PSK6v2KDqmtkuffsNv7Wpz0xo44tnfXvIqbQqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ47DR2qECJ5exxsQl6JDSMZmHgFGH1uKO2z+7jLchPwa1110u
-	CyC55pT21HA1LJzIY8yxH/tGfN0fksSp7vsmZ3XaC7hk0kWlaE+gbW2xcBsV5RHqCfQteC1KIQb
-	V5finTW8IPmXY8yzZ8i1sufRMwjyVjOc5JnwaHb2Plu33j59V5rnRJxDgldvpkG+a3gG8GPU=
-X-Gm-Gg: ASbGncvj4T/ERmHiVbOH5nasXLtyhxkv8dNL+N2qD2G1r2P/0ZON8ffGSSl099kvzp0
-	e1x0kS+Irg+0BCSJbhq3G2n0B+wJTQ4t0TMtfgBKAauKXi9Za4DIrvIRfmAXEHraWLl21mJ3keB
-	39NbxXhQmAUueEEhnwshz2+hlBPn80JsFfP7vv9+MmJX0Elo1tXj0lz5ZnySfEoBOKkoe+FDDdh
-	qO5zDwR3V0trTsW/ZQnXHbb4FPAIzziWE+U6i7pwldpr77SZ7KAh0vjDjjrq3uT40Heg/JfCX9O
-	wGXzn0JCayY0eOKlRT3506cfUasWAv89W8ZsMQy2dhtwaBERr0pmfkwTo9Gz4ZT1/YwdNWhRClw
-	bsAPeP9MN
-X-Received: by 2002:ac8:5a81:0:b0:471:f437:2973 with SMTP id d75a77b69052e-4a833959521mr9863451cf.14.1751359462360;
-        Tue, 01 Jul 2025 01:44:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/sA0oirRY7BnsvlJ60EVwuLrYw1JMcOwklbuCHYYyVTAZbHQKxT6zpexqZo4Yazepm+DXNA==
-X-Received: by 2002:ac8:5a81:0:b0:471:f437:2973 with SMTP id d75a77b69052e-4a833959521mr9863291cf.14.1751359461842;
-        Tue, 01 Jul 2025 01:44:21 -0700 (PDT)
-Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8319aef5sm7312708a12.48.2025.07.01.01.44.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 01:44:21 -0700 (PDT)
-Message-ID: <850260dc-7e67-4ae4-82a5-5b8f5197633d@oss.qualcomm.com>
-Date: Tue, 1 Jul 2025 10:44:19 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WypqO/7x"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250701085225euoutp016499afd946bc9d1d20018dc7d8075c5e~OFJdo4DL10090900909euoutp01T
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 08:52:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250701085225euoutp016499afd946bc9d1d20018dc7d8075c5e~OFJdo4DL10090900909euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751359945;
+	bh=jiMSvhTO3EuRijPHPyzHEcK75GqOsBl3jGoGvHtO4dI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=WypqO/7xv2nYZLsiGJH8BavQ4NJdGsvs1gBin449bTfoI3/D/riZ4tdaL1LmVCelv
+	 MQRrGSri6TEYSs2Dw0U3Vt87LLLvD8t+tf97Csp7yNfa2beJS4IDoUSKwqaEh06DYa
+	 prdQ5MEet3kM3WhtWTerMV5Q3nq0jehFZFa+cVb8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250701085224eucas1p2d74efed39332d4ddb82e9881a6f586a3~OFJdDOVz31375613756eucas1p2O;
+	Tue,  1 Jul 2025 08:52:24 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250701085223eusmtip207386da0b4d9ddd9eea052e444116d0c~OFJb4_9xu1783617836eusmtip2a;
+	Tue,  1 Jul 2025 08:52:23 +0000 (GMT)
+Message-ID: <425fe73f-8cb2-4238-9e15-55403ed9daf6@samsung.com>
+Date: Tue, 1 Jul 2025 10:52:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,65 +44,160 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert qcom,krait-cc to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250630232617.3699954-1-robh@kernel.org>
+Subject: Re: [PATCH v5 1/9] rust: pwm: Add Kconfig and basic data structures
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
+	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
+	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250630232617.3699954-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=68639fe7 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=LpQP-O61AAAA:8
- a=i-1VaULvG7sLBx-uF14A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=pioyyrs4ZptJ924tMmac:22
-X-Proofpoint-ORIG-GUID: QRQk2hSNRUfZgmfVaLHDOHZuBNgbi6Ri
-X-Proofpoint-GUID: QRQk2hSNRUfZgmfVaLHDOHZuBNgbi6Ri
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA1MCBTYWx0ZWRfXyteA7vdaXQUP
- opx0qopw8I9OITIjYJyia43pBIxBCJJMSgB3UqkJ2cXuUsM0kzR8+yJx7d+8Za/O8Tr8UZdKRfu
- I0i4IkvnEU7rBcosnsrTWXZcsWZMSOja3Or0DmGbqZAcAFTaPPXbgA05e5sPyh1GMuSRiiXE79x
- NAe9xnXqcq+GzLptVOGhOeUf0avjFoOewCZZ01pAH6Xpx9jXa5xUqEYR4XRN4Aaegub0b/LPYQW
- MPvIGJagw+z3ipVYM6QVDxSZfd0+UDYmGUGCHKi5P8KtFYfUqplfQHRKibf+Or7zVzOy2NUi2q1
- G+52YMGoyzOAlsEZXNcdqUxlUjbA6jS12qmPjyMVOFUjBwaTtPxc+5qyOTKSM9cGx1w/aqEtAye
- dgAFUXy66XAlARphTRYU0nz4LUSplSf3dQesf00cCrX+dQLr8+xanOBkZTLCrh1YP7ZcU1/J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0 spamscore=0
- adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507010050
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <ayp32pdwvpko3zuatgt2jgtfxgcmrmc5aujkx6twjchmyazpz7@yeo3kxgxnpda>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250701085224eucas1p2d74efed39332d4ddb82e9881a6f586a3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+	<CGME20250623180858eucas1p1815f6d6815b1c715baad94810cefacd5@eucas1p1.samsung.com>
+	<20250623-rust-next-pwm-working-fan-for-sending-v5-1-0ca23747c23e@samsung.com>
+	<q7sz7uci5vnyc24laqzs56vgt4i2jamb3ifyxkqom6qcml5kkv@642prvwxjkxc>
+	<c127e368-8c1f-4299-b222-a105940ac34e@samsung.com>
+	<ayp32pdwvpko3zuatgt2jgtfxgcmrmc5aujkx6twjchmyazpz7@yeo3kxgxnpda>
 
 
 
-On 01-Jul-25 01:26, Rob Herring (Arm) wrote:
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/clock/qcom,krait-cc.txt          | 34 ---------------
->  .../bindings/clock/qcom,krait-cc.yaml         | 43 +++++++++++++++++++
->  2 files changed, 43 insertions(+), 34 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
+On 6/29/25 11:23, Uwe Kleine-König wrote:
+> Hello Michal,
+> 
+> On Sat, Jun 28, 2025 at 04:38:15PM +0200, Michal Wilczynski wrote:
+>> On 6/27/25 17:10, Uwe Kleine-König wrote:
+>>> On Mon, Jun 23, 2025 at 08:08:49PM +0200, Michal Wilczynski wrote:
+>>>> +/// From C: `#define WFHWSIZE 20`
+>>>> +pub const WFHW_MAX_SIZE: usize = 20;
+>>>
+>>> Can we somehow enforce that this doesn't diverge if the C define is
+>>> increased?
+>>
+>> You are absolutely right. The hardcoded value is a maintenance risk. The
+>> #define is in core.c, so bindgen cannot see it.
+>>
+>> I can address this by submitting a patch to move the #define WFHWSIZE to
+>> include/linux/pwm.h. This will make it part of the public API, allow
+>> bindgen to generate a binding for it, and ensure the Rust code can never
+>> diverge. Is this fine ?
+> 
+> I wonder if that is the opportunity to create a file
+> include/linux/pwm-provider.h. In that file we could collect all the bits
+> that are only relevant for drivers (pwm_ops, pwm_chip, pwmchip_parent,
+> pwmchip_alloc ...). (Some inline functions depend on some of these, so
+> some might have to stay in pwm.h)
+> 
+> I can address that in parallel, don't add this quest to your series. So
+> yes, move WFHWSIZE to include/linux/pwm.h (and rename it to PWM_WFHWSIZE
+> to not pollute the global namespace).
+>  
+>>> Please don't expose these non-atomic callbacks. pwm_disable() would be
+>>> fine.
+>>>
+>>> Otherwise I'd prefer if pwm_set_waveform_might_sleep() is the API
+>>> exposed to/by Rust.
+>>
+>>
+>> OK, I'll remove all the setters from the State, while will keep the
+>> getters, as they would be useful in apply callbacks.
+> 
+> How so? They might be useful for consumers, but my preferred idiom for
+> them is that they know at each point in time what they want completely
+> and don't make that dependant on the previou setting.
 
-[...]
+Oh, this is not just to check the previous state, let me bring my
+implementation of apply from the v1 of the series:
 
-> +title: Krait Clock Controller
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@codeaurora.org>
+impl pwm::PwmOps for Th1520PwmChipData {
+    // This driver implements get_state
+   fn apply(
+        pwm_chip_ref: &mut pwm::Chip,
+        pwm_dev: &mut pwm::Device,
+        target_state: &pwm::State,
+    ) -> Result {
+        let data: &Th1520PwmChipData = pwm_chip_ref.get_drvdata().ok_or(EINVAL)?;
+        let hwpwm = pwm_dev.hwpwm();
 
-FYI codeaurora has been dead for years
+        if !target_state.enabled() {
+            if pwm_dev.state().enabled() {
+                data._disable(hwpwm)?;
+            }
 
-Konrad
+            return Ok(());
+        }
+
+        // Configure period, duty, and polarity.
+        // This function also latches period/duty with CFG_UPDATE.
+        // It returns the control value that was written with CFG_UPDATE set.
+        let ctrl_val_after_config = data._config(
+            hwpwm,
+            target_state.duty_cycle(),
+            target_state.period(),
+            target_state.polarity(),
+        )?;
+
+        // Enable by setting START bit if it wasn't enabled before this apply call
+        if !pwm_dev.state().enabled() {
+            data._enable(hwpwm, ctrl_val_after_config)?;
+        }
+
+        Ok(())
+    }
+}
+
+So the target state values are also accessed by those getters, not just
+previous state.
+
+> 
+>> Will implement additional functions for Device i.e set_waveform,
+>> round_waveform and get_waveform, and the new enum to expose the result
+>> of the round_waveform more idiomatically.
+>>
+>> /// Describes the outcome of a `round_waveform` operation.
+>> #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+>> pub enum RoundingOutcome {
+>>     /// The requested waveform was achievable exactly or by rounding values down.
+>>     ExactOrRoundedDown,
+>>
+>>     /// The requested waveform could only be achieved by rounding up.
+>>     RoundedUp,
+>> }
+> 
+> Sounds good. Hoever I have some doubts about the C semantic here, too.
+> Is it really helpful to provide that info? A user of that return value
+> has to check anyhow which parameter got rounded up. If you have an
+> opinion here, please share.
+
+FWIW; In my opinion, it is helpful.
+
+The 1 (rounded up) vs. 0 (rounded down/exact) return value provides a
+simple summary flag for the most common validation case: ensuring a
+strict requirement, like a minimum frequency, is not violated by
+rounding.
+
+>  
+> Best regards
+> Uwe
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
