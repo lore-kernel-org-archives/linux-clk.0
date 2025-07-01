@@ -1,65 +1,72 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E54428F1;
-	Tue,  1 Jul 2025 07:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF66D202995;
+	Tue,  1 Jul 2025 08:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751355232; cv=none; b=B4D3+bLe+LPkYBr/b+VG4AHqVoFY2hKYKlAb8TjWCWJqyAqPuUgncRgpFhgV+1fURMgB2tRppeSeI5j66ylXnZu7f+EHHKQ/fnJTjzl1+/dZ2cnB2IQzuNwiUUN33TubfVVEA+glyPksKkbXtIKrcKkNEJI2BhyqnmMGaewOA10=
+	t=1751358063; cv=none; b=N/5uAvFO7XdVozACOIEIHP1m8fiQxkrTnoIzMvjyxPVQT8KYQufrrxp7gS7FAB5sauLNlD0kWLF/G3Gel2g1UMeUiA19mjSDG09DwrOhf+CWVLDTPCFmClDYqwYJ4U7358BvPJsgGwGCa5Wih+oW6OWjGVmGsLNprly0rNROeVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751355232; c=relaxed/simple;
-	bh=2VqbAPJtUfnkDlAF8rcNfBYvaCT+VVnZ4zdP9Nu994k=;
+	s=arc-20240116; t=1751358063; c=relaxed/simple;
+	bh=IKeZCcNNQbdeaNTVppkO6cUdRxq1Vqd2h///xUYe4Is=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDCys0VNrbBY+zVXHykusoV3L6YrXJzxLvsy1+P4yr26mCaMXW+rPvJX1VZXVfbsu8w/jlyw+j6EEyladrAQoUtJ9WhKVAwDLlutL4VbClMGBTCmaSNVPiYugdZcheRngI293Ygg84QwbBd0NiK4eRAhKih8xIRUv/auW4Z6axw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=P//OOnOm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	 Content-Type:Content-Disposition:In-Reply-To; b=uVOeRyFYqtnNwu/I7GBDyUKj+PrglrYgV2ai5s/sVBPdt6a4+2Cj0kWZEraIxHPqubyFoCZGQNpmPjPQeZmfwS3qgpZpXayjGSrxxO7OolqBlQJpInSrf17M8QRFus3OBbWlOhxYW4y5pGiJjHkrB4EgcVjLGqYd/Un1oXwDJk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPgII8Bp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="P//OOnOm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6Lcv9nTvAgKsJXFRPrOjjHvHtdAeBlh7A4eHDwh00wk=; b=P//OOnOm5stv/kbXHC5u15pFPT
-	IYA2JY03mW/qZZm/KKowsf07U1qsvHsCf6ZTgovpvKth50CI8ZbWdoSKlxbdt4dVR+0NoV26w3YHV
-	Eb3hDqmH4FBWNMztMtM0D/4HHuHt72VL1SK7Dj8FIn1bg84nO9t8DkzgSIAOSFae8pbk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uWVUZ-00HRFJ-L8; Tue, 01 Jul 2025 09:33:23 +0200
-Date: Tue, 1 Jul 2025 09:33:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lucien.Jheng" <lucienzx159@gmail.com>
-Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com, albert-al.lee@airoha.com
-Subject: Re: [PATCH v2 net-next PATCH 1/1] net: phy: air_en8811h: Introduce
- resume/suspend and clk_restore_context to ensure correct CKO settings after
- network interface reinitialization.
-Message-ID: <90321dbf-cca3-4f00-9f2e-3d09756761f6@lunn.ch>
-References: <20250630154147.80388-1-lucienzx159@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPgII8Bp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB7D7C4CEEE;
+	Tue,  1 Jul 2025 08:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751358063;
+	bh=IKeZCcNNQbdeaNTVppkO6cUdRxq1Vqd2h///xUYe4Is=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XPgII8Bp2xOLTGJFW4oR2RScTDXxzOla0kh5UQCZWPcqXs4g8Mq4TvkEGuz1gyNb3
+	 4yIZxBXluNgK/ZI1Y61dL9DGvwxiiNiEne95SYwtywSf49qza7R86NoMXxDE82KKB8
+	 +BMDw6JqkvhohxYRLnb7Jd8zqgki7QGFOnFHyjqUsiIJDfe0AHUO1YkkrGMHwNEU64
+	 V+v3k+vmEHGP4dDHGi1yIndszJqq12EQ1CIYTREdjxtQIrJvHg7CuPWUukFAXSQmcl
+	 0a39IoVA31UeaxTKEShRW/ORjm+U6+Pg4oMDL6xlODTRsnL3vYQDaouC7u9TczXH9a
+	 GBm50AC+6/yhQ==
+Date: Tue, 1 Jul 2025 10:21:00 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Georgi Djakov <djakov@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Anusha Rao <quic_anusha@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, 
+	quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_suruchia@quicinc.com, 
+	quic_pavir@quicinc.com
+Subject: Re: [PATCH v2 1/8] dt-bindings: interconnect: Add Qualcomm IPQ5424
+ NSSNOC IDs
+Message-ID: <20250701-devious-pony-of-prowess-ff36c9@krzk-bin>
+References: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
+ <20250627-qcom_ipq5424_nsscc-v2-1-8d392f65102a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250630154147.80388-1-lucienzx159@gmail.com>
+In-Reply-To: <20250627-qcom_ipq5424_nsscc-v2-1-8d392f65102a@quicinc.com>
 
-On Mon, Jun 30, 2025 at 11:41:47PM +0800, Lucien.Jheng wrote:
-> If the user reinitializes the network interface, the PHY will reinitialize,
-> and the CKO settings will revert to their initial configuration(be enabled).
-> To prevent CKO from being re-enabled,
-> en8811h_clk_restore_context and en8811h_resume were added
-> to ensure the CKO settings remain correct.
+On Fri, Jun 27, 2025 at 08:09:17PM +0800, Luo Jie wrote:
+> Add the NSSNOC master/slave ids for Qualcomm IPQ5424 network subsystem
+> (NSS) hardware blocks. These will be used by the gcc-ipq5424 driver
+> that provides the interconnect services by using the icc-clk framework.
 > 
-> Signed-off-by: Lucien.Jheng <lucienzx159@gmail.com>
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  include/dt-bindings/interconnect/qcom,ipq5424.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-    Andrew
+Best regards,
+Krzysztof
+
