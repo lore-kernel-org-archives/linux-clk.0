@@ -1,67 +1,67 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C349527FB3B
-	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 17:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B652A27FD7D
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 17:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751390941; cv=none; b=UDLeH4bK4gC/2Kv83bsvpPMOb8BfVqq7uV9FYO6omOL2b4Bke9l2tmFQmBcuOEnhCkvuGQywxPe47AWZ0QdXvVopasFnjd30SVRSDCC7BI2CZ0Dt64fCrEETdW5SQSSdCFJsLEkG9126+KmuL1X1RgvJO0cKZ4+NGoHEmb8svJ8=
+	t=1751390941; cv=none; b=sLwpK28oo4B2tUX0HR1+3y8C4T6V9pIsEGMrjimi0Ebz+2goZrkkSYKi8Ebv0yiLcBXBQkBHj+NknKI3HeRBgeG6skO31DsEQrYhvPjVSZRFSCHTEIqLyTHQqN7Htg+g356Dqi0hbsRmMPbn6qD9EjIwGIwIqBQE2CaB/iYjwoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751390941; c=relaxed/simple;
-	bh=MDNAebsy+Mi3ASrl6aegA1x7VqUr0MZiP8pOhziKEJE=;
+	bh=lKLvoCVJRgutFe2R/Rd+FFb6y/96aAw7/Kdifm/nYNI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lOq8C7D7FyODaveXbL+Ys1wgtA+Dj6uN3VrqMWGrcJE3/p/g3rjoKwjp1F/g2HxACUOkC0mHSro9lhHQAhe73HYU3Fpo6aN6kiIPKljjMORL1i4HDp/rpKTlJJ9uV62ljJXTUTNLzdfe5MlZ+1bKBXWTqgQJ4eDgkcXKbKnysBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=URnl0zTN; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:To:Cc; b=Qbp9klaoCbD2gXpkfHdeEIHUe4yxLNxhx+M/kXyW+zDcyl0sjA+Cn5HLhlAcUf4fWheRGDQP/PXL8/oEFLG7OcS6Z9GO//+1jvuTaEeOrxXPo/z28gpSI/0Qw/LAVwlk5sqVS8c7VWqauxM0yOh9V+kDR7oTNrjdTMRFU6q3BJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jLiAdaZe; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="URnl0zTN"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a54700a463so3635841f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 10:28:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLiAdaZe"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45363645a8eso41574945e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 10:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751390937; x=1751995737; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1751390938; x=1751995738; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LprHnzf3Ga8gFToTGu+6UNkCcfwqLEwWhp8zeax+d+o=;
-        b=URnl0zTNGaDyx72JhDvGboESMKAI/Uh37pxmnpT2MOYCCWQ3SlytGIHcTLJidwlMSI
-         YgTybkmUs69GhlYottSqhbW27C5LvWyQ0ddf/tEZR9131hJz3m/AJxezvUrAG7YpCuda
-         0Gq1BuCLHC724ax9UVCv1ym0diZkVAYsUvqebyXdrhHCoXdToNkeJVt2yRXBcU3td95p
-         6RSSYC4yx6MMidthyB2H3ox2dlYFJjhxBseAKQC9LpcrxactKV3zQA8YxUF3VnYFYn1H
-         2Uvunn9f8rHgHDB6SyqgqwKECB+kLisLvnTRS+hvKEhvjRMdvFZca89a8xwJ0KIr0f26
-         NLLQ==
+        bh=bLYmm/W841t/0A2F0oIr72Kx6VbF3J/btLHJRobqvhw=;
+        b=jLiAdaZeofVCHtmtvWsRHEwYNpFYRg4aDjMy+MXNKVX8dg5jDOuhxVrqkxGHOHQZF6
+         Kkq3I1e2xBZ5biaBNKBAk9O4PD/q+xzxE6o5ty5bkVIReFjRR52h+UctDrtj2e9cwu5w
+         Oc6ucocKQnittO07+M9Rhgscw2x1nJbY25YH6ePrd5iPLSR4LnhLA0ZFCDrXGJZd65KL
+         vexvO6NBNbkpdvzKXW/TE9H5L3l80UsJObnRfAkqP7nWnydGWzrbxOztyfL5tErAu3As
+         gMun5iX9PANcg1mABwj1yaIO2KJkBDsI85OzoMKlXCZucf/PZ/DrGblFlJvBUZzCJTAW
+         FN1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751390937; x=1751995737;
+        d=1e100.net; s=20230601; t=1751390938; x=1751995738;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LprHnzf3Ga8gFToTGu+6UNkCcfwqLEwWhp8zeax+d+o=;
-        b=XUxTQkL0y4+KelkJvN20UDTCmlo5WRXqkLkzYiYl0/mC5nc98555Zxh8e7WTg5zmsS
-         CE6HCh8QHfmdvzzM4EwtxirrnU/Mxx124yjDe2QrG2dph7OwDgs/Uo/GpARwdD302NPN
-         h9vfOkzidYg7LoirZ9veju+dO5yijZjKvXz3hnt66WRBmfjJct0VebxX1UzzaHAkatV/
-         GNp346R9UGRHULuSWL974M+KSV0Qel8sWXZzcZ3OOriAvH95oSTR3/nwsvDLT0uQMme+
-         iuRIQe7LmgDRBwMC0s3hB/6+YAHwY/9zVTaa9Ri6B5W6gQJNsbrX9w48z9BM9yv2hoIV
-         ARDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcx1kAp7+WmJL7WiqTFUeVvV/JqDaJ4281xHP3WXKrebcGDSO8cjDXMzkcQU9hZ8H0xXxQe12nA3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqOeI2CT4Pjnm/pJH4v5AmkZOZSxKDV8An374MJXMhbDL1Bwnz
-	QYIodh5gXpf2klK9m8CrBAol28QhcJv+v+bK3dlKNCPQRcNKr0P2sm3S++8URzze4uE=
-X-Gm-Gg: ASbGncv+KzU4LL5rm3c89Xb6oIa6qOx4MOkcaTuP1t2H6smeILN4cTOfTjaVTH6kmQT
-	uFxiop76CS5rkPCqk1IPtNLe59DL85UrelpJJUVrTioXq72kkm3Em1U5vU+Moxn+prcSNc2pnKK
-	JX7Ft+aPtt65s8f2HBKRRIgLwqXlKe0MaAtnLKA3Km6iyQr+J3ZzBEY+nfN8Z/V0wvxhLeDZoH8
-	1UBQFc/nqGm3H7sq5HGIqclqso5H2dGcKXLYCpXAogtvwpc+DvL0WzHcDXFpxrUNQY3MCS0CB1f
-	OJyvj7RtiRmaP77imXccPD37yBDBsZdtidl6nk/Mt3jTgVI82p5WsxE/ihQj4jCo3TJPndZ/aC5
-	TUA==
-X-Google-Smtp-Source: AGHT+IG9UfbKX/+O28pbh9mOgykatm2AQRooaxU64IfyXQEfm5XhZwAZ6nxN5YS+Af/aCOrAhRimXA==
-X-Received: by 2002:a05:6000:b0b:b0:3a4:f70d:aff0 with SMTP id ffacd0b85a97d-3af0ffb93aamr3609887f8f.14.1751390936967;
-        Tue, 01 Jul 2025 10:28:56 -0700 (PDT)
+        bh=bLYmm/W841t/0A2F0oIr72Kx6VbF3J/btLHJRobqvhw=;
+        b=JkSUQI54YO8X9lnyVFCUFP6QQTDLt3hOBFIVO4YUqFELeyF3Ch+fgbEcKRhGO730V0
+         Rs9lJFLTAY6MGUJFC3Y9RRGkWHQdhe6LVFSc757PASHar5XKOlpziUY1Rp9CD92sLr9K
+         xWp9fFqHFPJwVA/kzPxrrWOlApIjg/+ZsfbUw9Q4+UGYvTzdFRJSv4RJK9vc/JmgwfLy
+         daNOIs4iDyVnho2hsBCzyihXfxvm9KeX+kf00zrFXD1nQ65YHXITkhc+59fJkBtJs6he
+         rf8dN/2nNxRDRBQRw1V65+fMDZpBYOZ16OEEiT8C6CgHlR91tKmKAdwSjlEH30cbM3jp
+         iPvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYaIctmcKe7Xa+R3sYaEGDWsYfuEzN6VMbxBzbGe4I9sqPpt+0Dxx7uYxm1Ottzuy7dZ2cAphCa9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX2NJ7I1Qvz4R+eloS/j6XI2z9G5jXNZMrobFrDr5LPfxQD2Yr
+	EnNrgk+g0FfKxL/Yh8sCQKvdy78G4zba9YIr6epZ1zhPXD2I6C0HUwI8PlkGlCmKECI=
+X-Gm-Gg: ASbGncv3Otej3aXEIBHjoJqNtreGWfCiO9vbcBl4JvFsVpmjMLcmV9pUEtSQRJpPGTi
+	qrfNGnIdSnn0VLgjrVQvQ0PabKrWAVfV+B8YAO/84k2KUxqbcMBSlRPAVfSXtF0CkOZQBe3WiB2
+	GY+W6jZv+PR8GH9JP4XTY2rH8H+3tOAYFk5FoCC+cjuTx4O3iuQU6RJ+PXtnLmUIVCxlLclAeg8
+	8O68Iu4d2l8Mqso4GQul0/sD39lCMfXDcSwBbPN3m3igbJSJtY6Xd4MdM2hwYXyvLu99mwQKOlE
+	bIJzDRtLvo2gLfpwVefPMVFRX4tSqmKFSfKiYMGUE7cs8OW3fQ/S/cSVpEmN3V1qvrXyb9hMNYA
+	KDg==
+X-Google-Smtp-Source: AGHT+IF4HQoWvaoo6s2knilDjvFtQ5l+MD7/ur7mX6jo8Z4Ek68Oqu5P27xeS+nao9YYpdCcOso2Ww==
+X-Received: by 2002:a05:600c:699a:b0:43c:f3e4:d6f6 with SMTP id 5b1f17b1804b1-4538ee7122dmr218050125e9.31.1751390938018;
+        Tue, 01 Jul 2025 10:28:58 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:1425:eda1:87ab:f850])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538234b1b9sm198716175e9.11.2025.07.01.10.28.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538234b1b9sm198716175e9.11.2025.07.01.10.28.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 10:28:56 -0700 (PDT)
+        Tue, 01 Jul 2025 10:28:57 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 01 Jul 2025 19:28:35 +0200
-Subject: [PATCH 3/6] clk: qcom: videocc-sm8550: Add separate frequency
- tables for X1E80100
+Date: Tue, 01 Jul 2025 19:28:36 +0200
+Subject: [PATCH 4/6] dt-bindings: clock: qcom,x1e80100-gcc: Add missing
+ video resets
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-x1e-videocc-v1-3-785d393be502@linaro.org>
+Message-Id: <20250701-x1e-videocc-v1-4-785d393be502@linaro.org>
 References: <20250701-x1e-videocc-v1-0-785d393be502@linaro.org>
 In-Reply-To: <20250701-x1e-videocc-v1-0-785d393be502@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>
@@ -87,89 +87,24 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-X1E80100 videocc is identical to the one in SM8550, aside from slightly
-different recommended PLL frequencies. Add the separate frequency tables
-for that and apply them if the qcom,x1e80100-videocc compatible is used.
+Add the missing video resets that are needed for the iris video codec.
 
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
- drivers/clk/qcom/Kconfig          |  2 +-
- drivers/clk/qcom/videocc-sm8550.c | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/qcom,x1e80100-gcc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 26752bd79f508612347ce79fd3693359d4dd656d..53bbdbe0725bd1b37ecd4c6b15b0d31676d9f548 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1394,7 +1394,7 @@ config SM_VIDEOCC_8550
- 	select QCOM_GDSC
- 	help
- 	  Support for the video clock controller on Qualcomm Technologies, Inc.
--	  SM8550 or SM8650 devices.
-+	  SM8550 or SM8650 or X1E80100 devices.
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode/decode.
- 
-diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-index 3e5891b43ee404edc6c99bbf8f2583cb44df9e37..32a6505abe265472de4059c4a048f731fdbf1dfe 100644
---- a/drivers/clk/qcom/videocc-sm8550.c
-+++ b/drivers/clk/qcom/videocc-sm8550.c
-@@ -145,6 +145,16 @@ static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_sm8650[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_x1e80100[] = {
-+	F(576000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(720000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1014000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1443000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 video_cc_mvs0_clk_src = {
- 	.cmd_rcgr = 0x8000,
- 	.mnd_width = 0,
-@@ -177,6 +187,15 @@ static const struct freq_tbl ftbl_video_cc_mvs1_clk_src_sm8650[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_video_cc_mvs1_clk_src_x1e80100[] = {
-+	F(840000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1050000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1350000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1500000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1650000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 video_cc_mvs1_clk_src = {
- 	.cmd_rcgr = 0x8018,
- 	.mnd_width = 0,
-@@ -559,12 +578,22 @@ static const struct qcom_cc_desc video_cc_sm8550_desc = {
- static const struct of_device_id video_cc_sm8550_match_table[] = {
- 	{ .compatible = "qcom,sm8550-videocc" },
- 	{ .compatible = "qcom,sm8650-videocc" },
-+	{ .compatible = "qcom,x1e80100-videocc" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
- 
- static int video_cc_sm8550_probe(struct platform_device *pdev)
- {
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,x1e80100-videocc")) {
-+		video_cc_pll0_config.l = 0x1e;
-+		video_cc_pll0_config.alpha = 0x0000;
-+		video_cc_pll1_config.l = 0x2b;
-+		video_cc_pll1_config.alpha = 0xc000;
-+		video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_x1e80100;
-+		video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_x1e80100;
-+	}
-+
- 	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-videocc")) {
- 		video_cc_pll0_config.l = 0x1e;
- 		video_cc_pll0_config.alpha = 0xa000;
+diff --git a/include/dt-bindings/clock/qcom,x1e80100-gcc.h b/include/dt-bindings/clock/qcom,x1e80100-gcc.h
+index 24ba9e2a5cf6c31e6e88c682e6bfcc60490d692d..710c340f24a57d799ac04650fbe9d4ea0f294bde 100644
+--- a/include/dt-bindings/clock/qcom,x1e80100-gcc.h
++++ b/include/dt-bindings/clock/qcom,x1e80100-gcc.h
+@@ -482,4 +482,6 @@
+ #define GCC_USB_1_PHY_BCR					85
+ #define GCC_USB_2_PHY_BCR					86
+ #define GCC_VIDEO_BCR						87
++#define GCC_VIDEO_AXI0_CLK_ARES					88
++#define GCC_VIDEO_AXI1_CLK_ARES					89
+ #endif
 
 -- 
 2.49.0
