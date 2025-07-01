@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37893275AE0;
-	Tue,  1 Jul 2025 13:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB0B27990C;
+	Tue,  1 Jul 2025 13:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376345; cv=none; b=QqpkHYfuDOqIHQZTCgpHVVqiloANFdkg2048j2fuGZFK+zQ1J7ULqioqYU0+N8sJfiLDCYZg9FYRuU2UIY8/0/Hf5Rdk0W5fR1EZkNJ3iXLg5Axoju6QD5Y2R/ZaczX2a65DWc5BwO7gt/URuxvqC262qstQPmzeL/SX7/NQfYo=
+	t=1751376468; cv=none; b=VfCsacs46A6kjVQ9AZbxTDZpRRFTI2ezS/y5XQKeoCpgoSQfo6f0bWp82IMXa2XPbTe+NyhtN3fC+0JJslkJaKqHUWpmcD2hYs1NaMN4SWD2nHlFdNpwWilAdJD7RVg/bVeiODMcWsw7wxOOKBfRZo3BrQbS+AxJF/PtSxxyS+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376345; c=relaxed/simple;
-	bh=vT7ov7LAauBb7LGrKM3cvyMGfVQJUejHpZ27EbEJ9qA=;
+	s=arc-20240116; t=1751376468; c=relaxed/simple;
+	bh=sLAarvdqD0dhDZ0Cif8r8RA7rmugbDbr+OQ/xE74q1Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZJQWYxL4qWdKCxpwtSzb+SDU7x1khYn2Khw06WfOFPd0GZZfduHIFreMZ+3olQS50vNmiSDax5sICB4mX0YItecwewzHhyDJrQi/LShtzb8HV8SK/FN+3qIqx3HyZvLSqcUelraiRFS3/I8FQHNe2Xv/+My0hjR0rNZYPGDOeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CE/OBk/X; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=CSAyWVuq76vGKn2gjWjqDv0+QdISnZnKAQUpYEs2oNso9l5V4XdeNjTQ4y32uPCpRwKBGDkl4Q4iv5rIA1dgTSrKDyohwgNtUH9cJKFmRWdXaiUP43XCY44QlY9fe+7cbEz2ahGyNhKzykjnT9aBTE0rrWYFz7jroZqlaIq2Mn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzpaqkIO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CE/OBk/X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59DBC4CEED;
-	Tue,  1 Jul 2025 13:25:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzpaqkIO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E925C4CEED;
+	Tue,  1 Jul 2025 13:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751376344;
-	bh=vT7ov7LAauBb7LGrKM3cvyMGfVQJUejHpZ27EbEJ9qA=;
+	s=k20201202; t=1751376468;
+	bh=sLAarvdqD0dhDZ0Cif8r8RA7rmugbDbr+OQ/xE74q1Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CE/OBk/Xt7CZtksSi2pC4pWGEfqZsBDjs8vrk7Jj8r+oW2Qv4zV5X2PdxRThPOJCO
-	 McauLT2QuHT/VmtPAJ8WGWG/81Hpd4zZBkXTFDuQaE2vTMnZACXcGVqfFAdsF+Jj8s
-	 KIUDdeGbDeQ3TW2CBBwWRKDdwPXaUf6817H22puKdU0JeRZH1I1VpH+K09c1rMKrI7
-	 uKqkO2rJ4gwjHRNFT74FGrRfN8Suur1AjQoeaLqeZR18w4oR7ymMtvzR5QGUfrA+G2
-	 S+37V/K5vm83r2yFEyC6Ys3Lx+ee5jJPPZGlMLQ4JoD8e6kvXu3rL2vEdyFFx6S/vT
-	 3laXMbf1YVM9g==
-Message-ID: <0cb379b9-021f-466b-b9d2-03dccdaa738c@kernel.org>
-Date: Tue, 1 Jul 2025 15:25:35 +0200
+	b=XzpaqkIO5qERnBn9kCU6DiOk0e/a8JycfsiUCzCTHKAy3pgmcCh4daZsrU5yJQU9d
+	 i4Q6dhOboLVl6FhGnCulDNJIKbvmi+LP9y6VdRPBvCScRRz7mFGUYS2afzLystYGbI
+	 9zNgFmj8PzAw1CJjZuh47syZYxho9jV6SzbyKzGT+SSHiPeAjVf/zJ0fas5xiR9xkN
+	 vq0wlcXV+8u3RUUZhOVKFXNwZGFu2rrQfBdUzlhcYRrkWnEpMSLVlDWNUfmUlsT3kP
+	 porZrMQkKxUP339DzFh2c8MIb8RnE6IejEWtjTMK6w0g8ViAGH9uwA49hvCJvwNhJn
+	 r6lrQmLJlC/uA==
+Message-ID: <0323b9eb-9a3d-4d17-bad8-f9052fb30b57@kernel.org>
+Date: Tue, 1 Jul 2025 15:27:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,27 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add support for i.MX94
- LVDS/DISPLAY CSR
-To: Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
+ compatible
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Frank Li <frank.li@nxp.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Abel Vesa <abel.vesa@linaro.org>
-References: <20250701-imx95-blk-ctl-7-1-v1-0-00db23bd8876@nxp.com>
- <20250701-imx95-blk-ctl-7-1-v1-1-00db23bd8876@nxp.com>
- <efeb4af5-642e-40d2-b535-5aacc47bdb99@kernel.org>
- <PAXPR04MB8459BED6EAE13B22943E4C6F8841A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250701-sc8180x-videocc-dt-v2-0-b05db66cc1f6@quicinc.com>
+ <20250701-sc8180x-videocc-dt-v2-1-b05db66cc1f6@quicinc.com>
+ <9b6de81e-54d4-4448-87f0-5ca83086fc27@oss.qualcomm.com>
+ <6d44e289-a20d-4dcd-871f-20b1854cbbf0@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,24 +98,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <PAXPR04MB8459BED6EAE13B22943E4C6F8841A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <6d44e289-a20d-4dcd-871f-20b1854cbbf0@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/07/2025 15:04, Peng Fan wrote:
->>> @@ -19,6 +19,8 @@ properties:
->>>            - nxp,imx95-lvds-csr
->>>            - nxp,imx95-netcmix-blk-ctrl
->>>            - nxp,imx95-vpu-csr
->>> +          - nxp,imx94-display-csr
->>> +          - nxp,imx94-lvds-csr
->>
->> Wrong order. You received that comment on your previous patches, no?
+On 01/07/2025 14:09, Satya Priya Kakitapalli wrote:
 > 
-> Ah, alphabet order, I thought number does not matter.
+> On 7/1/2025 5:23 PM, Konrad Dybcio wrote:
+>>
+>> On 01-Jul-25 13:40, Satya Priya Kakitapalli wrote:
+>>> The sc8180x video clock controller block is identical to that
+>>> of sm8150. Add a new compatible string for sc8180x videocc and
+>>> use sm8150 as fallback.
+>>>
+>>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>>> ---
+>> The yaml checker throws a warning:
+>>
+>> make ARCH=arm64 LLVM=1 -j$(nproc) dt_binding_check DT_SCHEMA_FILES="Documentation/devicetree/bindings/clock/qcom,videocc.yaml"
+>>
+>>    CHKDT   ./Documentation/devicetree/bindings
+>>    LINT    ./Documentation/devicetree/bindings
+>> ./Documentation/devicetree/bindings/clock/qcom,videocc.yaml:28:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+>> ./Documentation/devicetree/bindings/clock/qcom,videocc.yaml:35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+>>    DTEX    Documentation/devicetree/bindings/clock/qcom,videocc.example.dts
+>>    DTC [C] Documentation/devicetree/bindings/clock/qcom,videocc.example.dtb
+> 
+> 
+> I somehow didn't get these warning when I ran the DT checker.
+> 
+> I am able to reproduce these warnings by running the yamllint tool 
+> directly, will fix them and resend, thanks.
+> 
+> 
+> $ yamllint Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+>          Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+>                28:9      error    wrong indentation: expected 10 but 
+> found 8  (indentation)
+>                35:9      error    wrong indentation: expected 10 but 
+> found 8  (indentation)
+> 
 
-The number is the only thing that matters here. Otherwise everyone would
-add their stuff to the end...
+Qualcomm needs to stop using Ubuntu 18.04 or 20.04 or whatever ancient
+is there for development... These errors are part of standard check but
+broken or crazy old system would explain why it does not work.
+
+Plus you get huge speed up on new Python.
 
 Best regards,
 Krzysztof
