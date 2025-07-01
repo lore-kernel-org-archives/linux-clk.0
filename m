@@ -1,122 +1,83 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA301CAB3;
-	Tue,  1 Jul 2025 17:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676551F4285;
+	Tue,  1 Jul 2025 17:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751389678; cv=none; b=DzQ31oN7SZmke2fr2O6CZnSDhdF4Z5d/Y4Fh3lHz80izJPctXBhiA0frJIwJwcMQ2wfNa/yc7tceegr9I/2yJeBACn8sUwKp+YhNQdbOIh74fq1l5oWWLGLsDhYkahgCRa4mHv8NNe6wWtXYEROGeqzK/awGsfmmzzjYS+Mn8Ww=
+	t=1751390085; cv=none; b=rpHLqhlvl0kbGuNjq+LjIDHCkU1kvkNcS2Brh4xa1XmCZQRRKiJYwQ8+bUk4Pipl5npvRvArU3gk0/kEdaBT0QDQFB5tcS6AAf2VS1TV5/t8ZcXCeS2YD7ZjRBOI5OZ4XyXnTMRvKL/L6a+INfcZ5FVleM2RxmJr8X7sdoq6Pyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751389678; c=relaxed/simple;
-	bh=otvAmKrNgrGmm953h66f4Y1tIUJExy7j19EPbj8H6iA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=imsI4lm2o4Pp8z1ePpt9l/qTXI6UXqkoK5uxY2bLaAVDr1CYRqWqCLjVA4xvQQBltQGUl/qkhKRTENZmvDB+7UJjszSlJ6B7s+erbTGlbPpZ2593r/AqaVLaLPh8lWYICkDRE3R5NtZ5ilKOV+ZJ4PKB5njIbCmz4ZErvBVyxZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kiYjz8NN; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1751390085; c=relaxed/simple;
+	bh=/nYOnOIIbrOV+84hpe4LR2uNAOY0fYnhNLgViKHOwaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDwQdUhbM/DOjSQNwGjKvFKLlrfv4hmITDnNvoEal1nbfShcTeXMm+GK+bNeD2+dGF9YG1jwSMy+bAkc0Ii3DN8WQeFKQHpXKyuESqLjlnPL80I09kmn9jKUQuoqCLUoJW7depxCSG7Fxpv5mMdgo3+MjPY8+a+Scd26k2+B8Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opSQbVh6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kiYjz8NN"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so857584a91.2;
-        Tue, 01 Jul 2025 10:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751389676; x=1751994476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otvAmKrNgrGmm953h66f4Y1tIUJExy7j19EPbj8H6iA=;
-        b=kiYjz8NNpOJxrRXlsqGZ3oeOj12/hks03K2uwKszmsm2TKO6PWHasSkbSal/thUBtP
-         j5KUOPmclpaWDZWbSJyFhYH0BjB05x4Uoy+zlqWSFYFbmvc4UQBbHF8jboYIAfa39HDO
-         2rGOETIxlw98tSfVouySSyy5vYhriVOqZp/YrhLQtsfa7FKg2KZY4ADKJiW//84H4U2T
-         ilhk25nr3cCU/Az4xLDd1uzeRfdXQ2GdyMDDDoTmPcH1ia/62JpVltVwDvstOlAxR+Me
-         VVEwudhStPelyFrY+k/SjljkeeGSABxeiY6qoHiI/WgKnHZTbxUuSdR12PS7o5bIjWFG
-         EgZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751389676; x=1751994476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=otvAmKrNgrGmm953h66f4Y1tIUJExy7j19EPbj8H6iA=;
-        b=Qu/ukY7nmnNyvhSFwBW4+4Wv8NSNoScJYtoEyaEaiRMHt267/igRxaQQGBzBEgPBSp
-         eHkKCVhbvUHPoKzcaNJlcsRuIYNwZdhEW64r1oMM/7PwNDieaClizqupLTSUIXWwvfYw
-         Hh/w4tjmgU7XcwRPOHfLcT6+uIYVfwVrOr5MO/eT4NpZ5SMIiFenKsIHTHvZ/IR1XQmK
-         f7xRF9HuvdtuBGon1X9Q7aa7ASv52+im3uA8Nl/MDUCvNaWjpEz7qVN2lGu0Rd4OkYM6
-         OJPpf7QNt2KFEU7ceV7HTU6OvwPSbmiBSBTP4WG7yFbFwXBb2zKZYPDo5/R88jMFAMsI
-         LSuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ajjKB68SLN66QP388B5a/X7BCzoLsOMq+SfWmFwqq3+55TFvY5KGlGB7qsXtAqUE6H312HLIRoO1@vger.kernel.org, AJvYcCUC8uVNBMVzrKos7qCAdYnISml67mR+0S+WrG7QyK/waONB/H0pFNhSCyqiEo0tqVovsQ5HPMu5zk82067N5S/g@vger.kernel.org, AJvYcCUyCzEanLJJwP/53KnufHUVLGcO3o3tr8kmdqNPogv0SIpeK8/Zu0ZoHTaRwv5aPoHlOABhZ87S@vger.kernel.org, AJvYcCVdN7uuRg1cxOK3xoX2WB5VyLk6Uam+qw6eVl5wIz+XDOai5C+jEJjMZV1ycYwCY8V8rVz8cXx9YyFjpQ7X@vger.kernel.org, AJvYcCW3EbVRy5zWudWdXbf3hgDtVBOAtNVI6bv3hRWZzJ0u2yyYyGsft9c640VCtONXq08Dbh4cPiuRgiM=@vger.kernel.org, AJvYcCWIV3pR6hmlBX5LxsK62Fk32K6TIXO0TpC4k2cVma7qt7XP9FIEc5vCxKX1kqOZSTjVLZJH06/+wCnX/ZdYVEo=@vger.kernel.org, AJvYcCWg/WQDlo9Ef/L+RGBOwstLuIo4VbR5EhAdIbM6QWFQ5TIhVLqUv6D4G2Lp6IVZcjCeT9ucMhbSyuPp@vger.kernel.org, AJvYcCWnrObpUbMViM5Zj1qjfHzMvTWiBdbtESKORQw/R4LBL6sk8uliH2SH0I0+SSgbjtYYfIkAOGtbLt9l@vger.kernel.org, AJvYcCXzaRYlXuOY354Vn+39W80azjkjQ3lyNaESXCrWfLPFW/VH1HVe4+T5lIA2it6dXNcy/fgWcb4ZQG7UJ9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMyLgeDCVWKHE0b6GjKargB9+UP52wtiW7s4avvvT35w/W9OSH
-	FgDcOTOKuSe0JZ27YeijfbSuGgTK2Y36vmlUUB6I3yyevLt+YK2+L0+O/vwMSDNKtwiat762zf/
-	kaCKzl8jfN9C1N3kgqtzIMC38Fg0Nk+E=
-X-Gm-Gg: ASbGncu3GsJU777MZ/9SlyVeltVoM2EU0ZNPFl9PwUI+tgKHXu/P1FJrFO1FyLmCuIr
-	h9PcFrNdZwZSp3iEj/fZbq6TZbfGsVikf/oPwTSGcjkG0VcJ040+9y4MDWWuZx2OUvRxqdQjS9c
-	9afKGcCqIgB2XweBlczKVrhglD33ZCWn8l1a9LCQSW+KntSvWZpntyng==
-X-Google-Smtp-Source: AGHT+IGgyj2cxaLL1I/RbT9oFzMdK+mMcfN6YoSZuvCYWImRFjEfnNWMRG/RDCPN3KNKY0Jv5Rbef8Y4TKqAiOAmPyk=
-X-Received: by 2002:a17:90b:1843:b0:314:29ff:6845 with SMTP id
- 98e67ed59e1d1-319519ee90bmr2461781a91.4.1751389675613; Tue, 01 Jul 2025
- 10:07:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opSQbVh6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6540DC4CEEB;
+	Tue,  1 Jul 2025 17:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751390084;
+	bh=/nYOnOIIbrOV+84hpe4LR2uNAOY0fYnhNLgViKHOwaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=opSQbVh63+1AG4gEDXtVjLecX5Ff/0yV6Pvs8ObQge9FVL2sDvLA4exzHD6w5Eiq4
+	 oA0sEuYIT1FPtZzwuCIL/MFW3oLhmvSZ29YQ15I5N3swOVr5tDG9eGfOmNpTLw4Wjb
+	 4/3FEXeATUtsv4d46vz5q9LkVVeArZBZuL4S68yVmPKAsVanB0nLbZIBQSQjmIr5HO
+	 PDl2Ag2K+yWjOZd08MnNcHXmJdxFT3ymSUawNTxpeSt4mmq27oaOliI690M5kSMjHp
+	 YU8hkAsAYkTjkXzWp3t20A9YIb0Cl+20RQu6g2QaOFNrW/kOb1Qqv1fDcfAIKk5H/1
+	 JcOO8Yn5xhjOQ==
+Message-ID: <aeb45ff9-73a7-427b-8cca-cc9646b65b9b@kernel.org>
+Date: Tue, 1 Jul 2025 19:14:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
-In-Reply-To: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 1 Jul 2025 19:07:43 +0200
-X-Gm-Features: Ac12FXxPrxBmeSfKO3xPaPnHZ9Ojlak6uQ0jVcG0JF2jdPMZA5As1xRK0OZ6894
-Message-ID: <CANiq72kb5b-Q4OwASfGg6gz94fCQSLH34u29umQRsF8MEhR+6g@mail.gmail.com>
-Subject: Re: [PATCH v13 0/5] rust: replace kernel::str::CStr w/ core::ffi::CStr
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-pci@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	linux-block@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/8] rust: pwm: Add core 'Device' and 'Chip' object
+ wrappers
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Drew Fustini <fustini@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com>
+ <CGME20250701160201eucas1p14d4182ecd8d6b2034f55ed5262bac646@eucas1p1.samsung.com>
+ <20250701-rust-next-pwm-working-fan-for-sending-v6-3-2710932f6f6b@samsung.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250701-rust-next-pwm-working-fan-for-sending-v6-3-2710932f6f6b@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 1, 2025 at 6:49=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
-> have omitted Co-authored tags, as the end result is quite different.
->
-> Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vador=
-ovsky@protonmail.com/t/#u [0]
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On 7/1/25 6:01 PM, Michal Wilczynski wrote:
+> +    /// Returns a reference to the parent device of this PWM chip's device.
+> +    pub fn parent_device(&self) -> Option<&device::Device> {
+> +        self.device().parent()
+> +    }
 
-Thanks for keeping this up.
+I know what you use this for, i.e. to provide a &Device<Bound> reference in your
+class device callbacks -- that's great!
 
-Let's see if we get some Acked-by's -- otherwise, we may want to split
-by subsystem and avoid flagday changes wherever possible.
+But please don't expose this to the public. I think what you want instead is a
+private unsafe method that returns you the &Device<Bound> directly, since you
+also know that you set a valid parent device, hence no need to mess with the
+Option as well.
 
-Cheers,
-Miguel
+And again, sorry for not catching it right away.
+
+- Danilo
