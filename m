@@ -1,249 +1,208 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011069.outbound.protection.outlook.com [40.107.130.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41B5275B09;
-	Tue,  1 Jul 2025 13:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376578; cv=fail; b=OqKhsJSV+8A7os8uFPc50rDT3cDS43YJOZ1DC3EmKC9ZpoP+h8GtuTKXANrdUT17/Vkx6a1x87qCXNhwK9tKR2NpJpEe+bE/D1BUzQSZqBpP2mj8sCOWdYQd2T+rlW7ZRo6gt/2jMy6x/vCOHUczXpVY8s/ay4S9dXkIlxZcApk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376578; c=relaxed/simple;
-	bh=iwhd8Q9A9bNyEq66ghmrMqSn6rZUiY+ACTiYng8xQwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Xd0XeisoHy9Pc131DDDGNAF/8V1eAksMq0fa9An2kInFueitZIFnZDzEmk+EvrKIoRCGJNT7dtqDdopy0jtW5+V5G6MBfEjxV8LkLyQMASSuc/JIywljVxrA54Aq+rU89i8otpd4B2r6UwN2A1YmeSYtPw6txez2ts1AZl8h+SM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Vll0p3/D reason="signature verification failed"; arc=fail smtp.client-ip=40.107.130.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF86C274FE5
+	for <linux-clk@vger.kernel.org>; Tue,  1 Jul 2025 13:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751377332; cv=none; b=qzDmArmUcP+D5KV34jWSEz58XzT2q+raDyEcvcPUGv7KgWJmkb/uvlprPqnoaKgDIOxKbeja8qFejjd4AP8wQnbaS1vPS3ylfeiAXpZI5OO23UjC8GsDhJ0WXMtCp99/JC3TAG9eUNqmm12w5JXLX/8LcB+agxYFgY8Pc4wq5tk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751377332; c=relaxed/simple;
+	bh=Mc1KTGp8AQ3igfQCX1fLG/VmxsuDuKRGSwcWZkGX5/c=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QH3u41Vo+Pd/nnDljMPHmwSyzqQHgOE4Ks/5wqHcP4ZxMplh4ahv2tPYa0eLAIG2ATStbADTNxkes25WVwgoNIa4nI+1j0eDFAqepu30lS7ZNxujKlY8osYHSDXAB75XYZwV5DRE1LI5KKdaQ+5bjp4fzJjxikhRUPyB28Ndu6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=OBO6iTkd; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Vll0p3/D"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W1UsqZciRH/ZxBaQ0jlmoJPt0seM045nwx4n27ND/AYqGveLSaAu/M8USJmiTBlzYbYdruwYSNXcjDbBy0OlN6czjTEHPPR1ZLuQ6dqryePOec/GAMvyl1zHAlVBPxGwAhzH6D/TCHiWxgvzns8zBhqXpVjMWfW//HC/sK2SoK7Xujc2MkzhZ9n6iPzl+8uc/e93zfhm79W4jamhLHS3gHfm7XyeTDAO12NcPJg/ZAu37+bbqJZMQbeCsIx5GZMT28n8ePdgSzYY5USDsax7TFsOJzz5JchIDKSVW0siPVnspDlJ/ikhTUv0jHRuCvbvzzvVPJ90v+HSXSstZ8N3qA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kRbz40m7ArAANcZejph/QKqwsySKYTsSGdqP649CCA4=;
- b=mbqaqbRmAeucQDl1QrKJdHPtjVjF+AvveINalHMixEVaDXF0w6DtFu8+qx8dhW9GoWvnIBnaPgGbXgG62pL94J7SRbydi2PxTtmNCHyY/LoHmmL9Ml44M7tSfghhPUPh0DC9xhHF9oanepmX/s3WsyxZ2mzYgFupG9X4QAt7+v4QckuE8roUnpKz3/9ZqPvtA9qooPMUWtDsPvmAn0NNB9OQmKvGoe74kvzBzgRenZ1rU2Su+wntAsYBrvdwDtd9Z6+bJjCakj86GO57MbmiaB7yL5+NeYtNYwMZgGjOpjKaecd3CAG8F73IsPia6y0uiqkdpZjZB0NN4gInmvSh9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kRbz40m7ArAANcZejph/QKqwsySKYTsSGdqP649CCA4=;
- b=Vll0p3/DR+XvrgmFdFFaPqdXiUaPkOG8vX7PxojBiepfI1WcE+ZbqfYi0bxQWVKlXFt515ID51ewJaKQ7vxjDSru/La17FO8sJCTBg+lG3qktlKhgeLqOguqbZvIxt0hrjiIPpJHI9qLasSm6Lz9Gzvc75HGS7XqEaoi0nx5oLY80pfrG6n6dv8aqwUYmgft6/ZUs0xsUZ8usX1/z2KeGY1IFnWBo5s4njV3LTwPoKZcNd3QGbMPwDtOGbS0cszpMU6DC2obEreTge2sL4+T0FwGayLOJUi1r2gT8Bxw7EQzLm84yPLYL8ioVRlNKzgps7RtK6WQ2CHSlLnEZWw26Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GV1PR04MB10378.eurprd04.prod.outlook.com (2603:10a6:150:1d4::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.32; Tue, 1 Jul
- 2025 13:29:31 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8880.029; Tue, 1 Jul 2025
- 13:29:31 +0000
-Date: Tue, 1 Jul 2025 22:40:01 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH 5/5] arm64: dts: imx943: Add LVDS/DISPLAY CSR nodes
-Message-ID: <20250701144001.GB20538@nxa18884-linux>
-References: <20250701-imx95-blk-ctl-7-1-v1-0-00db23bd8876@nxp.com>
- <20250701-imx95-blk-ctl-7-1-v1-5-00db23bd8876@nxp.com>
- <2791534.mvXUDI8C0e@steina-w>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2791534.mvXUDI8C0e@steina-w>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0069.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::10) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="OBO6iTkd"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so4309654a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 06:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1751377328; x=1751982128; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K3NN3YOnZNPrDgXvyD2XIOWd2IQC6I9YUWFKOCRkpLE=;
+        b=OBO6iTkdmBRm4eMeS0Es6aAwNn7vMoDgC5DMUE0RyLrnT2Byx6S3YxDDL+AeDYspQP
+         Iop2DiV70VY40Svs8Tuik7W/uOlL9MyFR4y0qFtVT0oMUetOxjt3yScq8YyDTgSpxefC
+         rzbuZYHmIS+n0cK36GIR/kObpQQT1AXUGKlo8kQ87iKh3YA7CPNiWoXKrZzeW8a8HESc
+         5WN88aStwwvrEcJZfkuxlFFDjuSaAzfbpXfhA0vFvsk/eCGzqvodg7d6zmFVDzQXhDpn
+         LRZjpk7QJ/YJvXHCBLW9tfj6/7WQTvbsXKMIK11nvd8+zc6k4iBrA6r/JC7KaclhLrmt
+         anYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751377328; x=1751982128;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K3NN3YOnZNPrDgXvyD2XIOWd2IQC6I9YUWFKOCRkpLE=;
+        b=Jnur2smKQp/hJJW24LXOQbiQOCe3xFF88FI9x7vlmuzbYJiyfFVSTwmw2Qm4MLVI/g
+         mhNdDMUDh2KhMbaCTqfUVsPtqLXzpdZ6aGjh1qXtDv1++l2uk1yqTxmKu2V1FAmED31o
+         XQ/yF/T00telwv5yX3cWGWq4662Dol0VbCxLgw+lebHcMQCbwVN33FvCcr+SLfO7d/qz
+         GklNbxogV6en+24+LErOXI+D8PzJSIP/7M+svxXoOfyFLZoWBWNhlTo2nOEh1S9YwCGU
+         w1VS/42LONusL2Tf+8ZjHLvMdXiG5ZfmwNSAPxahzIIxYWVd238qbB1BzaVFT3/ot4I6
+         9O1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIRsruP4IiPJF3TkrwsLbdiARsp5BeuAQfNa1mVoBE8rJeQh5DPROPoDty0BHgM8DsHG84zrA1rzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAty5dQYoLIJnWtpR3fpwRex93gNOK8f+5gTzMouqj/phM+G+O
+	eLoYX6EdMEcarDWwJhaMaPRPubvrIyCT0HTe5BTwnNJ/pHMuhK75+D4qa8979M2hNOA=
+X-Gm-Gg: ASbGncuvvttc4gR6t1n7EkYArExit1lmxypupWOEPW7rLd0095NP/mth7MN6vAgSVv4
+	gYGHiVQrrV9Wzj5XbwVzlGZakAFNtFEsLxQGRfZT2IRE9D9LYK7Ae17eUlGGeIHEgnF/aQ7m0mS
+	qoa17DWrFYJL0MDJ3wJgDddcEix+nXumMMVygT5WSPiBDexwBKbiDrEYZQyzo059g0pEuIPUFkT
+	1qEelNhGYm/dfCsBxWg0qlevZBROwhr3yS9HoshAO25Dxy0LPuxOtctqacnhqVtj4oB14awbmP7
+	Pgmcr06AbHOU9P9Fea7fsSCKgEk+RayImzv7FpCXIAba4rDSA9U5xDu1NscknnlpK1E/9glAgVo
+	LrUQVsyedLszPonsACS+I5QhTNCB0TOx4yHtJvBCjsE/xPON3sCBOeL/7s2xvasbxQaw7edo=
+X-Google-Smtp-Source: AGHT+IGgNsYenmtHtqlifsI+EKQi0fEzMyYD6xYkDkrtd/syyHWZIutfcBHdoTD2pZXazBORFz/1ew==
+X-Received: by 2002:a05:6402:26cb:b0:602:1b8b:2902 with SMTP id 4fb4d7f45d1cf-60c88dd6503mr16076177a12.15.1751377328145;
+        Tue, 01 Jul 2025 06:42:08 -0700 (PDT)
+Received: from localhost (2001-1c00-3b8a-ea00-c4de-d39d-05f4-c77a.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:c4de:d39d:5f4:c77a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8290fb73sm7382663a12.35.2025.07.01.06.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 06:42:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB10378:EE_
-X-MS-Office365-Filtering-Correlation-Id: 710ff516-5abf-4704-73f5-08ddb8a34ff1
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|19092799006|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?gaeN2eNSPMGowd3h8F0eBrIHitIBEZI9xgfO1Mg1aupRRoe7Cyd4+EMuR3?=
- =?iso-8859-1?Q?3DlXISz0Hh8ACXpqROPIb8iPxQ/EQnIKAEzUzLbM+8iCY7WV4MTgqfk6iZ?=
- =?iso-8859-1?Q?IruqiN2fPIktAq+VXa/I/XSkr2oVUYKAzYTOqqXeLM7s0aPY2szQW0FJIt?=
- =?iso-8859-1?Q?AU11J29psXWkcBBgI8wntwkI779oPvLTxRjLsmSrEaJfDGqR88yfvjk4H1?=
- =?iso-8859-1?Q?A9c506B43k9etEiXAYJ035bduphL/lmjhxa5bqvngMZ9w9+Wj1rxJAqu3T?=
- =?iso-8859-1?Q?aDBah8NEWxgHn4ZXNqsHVxNL5lqFLvE49rNIv9nFQsB8TPwotgOKLoBcsl?=
- =?iso-8859-1?Q?NERk75vYipNTINaZEq7+YldA2hADXO8wsZoLjhkIkuL2mDXLxzkb02pPFt?=
- =?iso-8859-1?Q?T8NxlTeeCzLVfpQ3srtcniccd0pi1jJrpGGpJRXG+VJY2G2TikeSb8D/jq?=
- =?iso-8859-1?Q?orQ4XDFEpgXu5Ku8T7KTRcVjYjrBAxWsMwwAFJ/aOf91/BNPkfvHXDvnlh?=
- =?iso-8859-1?Q?HuYBGGIAOVJr+kz/aEYAKlctXhDSLnpevPDFUTijtxdJiDauc3aFRWooYB?=
- =?iso-8859-1?Q?UbXw/6w35i63PMfNfljFOa5x2R0qnUqd5MuZuj3PRRCiWcYCuQbbVNAt3E?=
- =?iso-8859-1?Q?3HAVAeBnFO0QQaw+INxDT75j1OqZtDTHlnDDwCFIyWmF5ZZgeLlzB3e8J/?=
- =?iso-8859-1?Q?qPPR+Lt5Ch24CwFp03CEWxRQsICFL6FLT68ntQrNp5AtERUnF+IkBTuV7n?=
- =?iso-8859-1?Q?D2Wjd8N3TDo5OO38vIO1dwHCNzC1orYj0d7T8om6ayeSaH7bxicq6eNNav?=
- =?iso-8859-1?Q?Dm/ZN69HpLbLLVv5pLF0ab4e/L9G8hYOoC9ZGnkQI/xIr9k+9h30iRDPm9?=
- =?iso-8859-1?Q?dheZp7ipF6791eRBBJnubEyi3Xm7rZe7/VuRDNa+NoSxt/IcgYC+2HkpSx?=
- =?iso-8859-1?Q?y9VBPCat/ylpY8BMZnltDkr2TeLjwXyitejwGiwSCrlzoFxND7X0B+E++5?=
- =?iso-8859-1?Q?+lPrscH1vYvafVTknPeJBZI0dLX3LFymtYLeopXYml4iQ599WoHL+qsqUd?=
- =?iso-8859-1?Q?WxgbvEcIaCJ69ZnVEl4WqjRbwFjdzk2zNglgx1KfQ7HJWq00si+TMGm9wQ?=
- =?iso-8859-1?Q?LkcwJJhkUgEki72n0R4C6MIsly+oW3Kq04s/0Pdxr+5O1SvZsearCrGLUB?=
- =?iso-8859-1?Q?SkbwIwHOkPMtByqkCn2XgTqKyBh9PEgvEZQzsBhkBuZ0j6IDrZIgi/7FYw?=
- =?iso-8859-1?Q?/mfavVMKn7DKf+DXnmPMXAihF0tJVtfj3zqMs7xqLmFyR5xn+/m4YBcnPx?=
- =?iso-8859-1?Q?vwa5hlG9ZdxO9Rf6eB7ynoRa8oq6WIfZobh6svUMgJz/rQkGBTK7wT7f0g?=
- =?iso-8859-1?Q?U3TuW6ojkykLTnGcv5ujO/10cSmY87ytG0KDO1FqKkKevYmogTskdUm8hl?=
- =?iso-8859-1?Q?a8SOsAUYhrm6EOK41dsvVHq5bLGf+vqJLkILN8evN0wpBDEP2f8vjM7CZk?=
- =?iso-8859-1?Q?o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?bREdh4kTMDswfMBu0Wz0diOywpNHT5gsB+0VEnUILpqj7VBRJC3FFk7bxl?=
- =?iso-8859-1?Q?+uM12hYiULHD2h/57+IeBeqoYfV+fgz1s7EWTaxLqJwlF/AjyfsmcWPLlJ?=
- =?iso-8859-1?Q?bb10B7Xolx8AkdWe7UIv++mS04kqkSAqk/xpF16A/CDvykEnCyDjZF+s9A?=
- =?iso-8859-1?Q?+45WWYU4oPCqDeIrAdW88nVlhzw79lJUSurLYOiOMcftw5tC77wBBh9ReF?=
- =?iso-8859-1?Q?W4gB+bqQBI8M0uycI3kP9bDCvhPxSPs9Dt6LxNitPAduK7sYGcsE+uIP6M?=
- =?iso-8859-1?Q?CzQurQBPW9FqJ5RKGxc/1fKWRaG+Oq5EKoNSLw/WWDdmz2vADPxvCJ3dhA?=
- =?iso-8859-1?Q?JiZO7l+y/mBhUlXhiGUapWo2NdgCc7sJZxwjmuRo6OzCvRfGqTy1izaxDs?=
- =?iso-8859-1?Q?5bqOipkyPJ1/DyPwG1ticGDH05iv0jQWbPwT6Fcfc2kkH/KIisDTLCCUDz?=
- =?iso-8859-1?Q?rTps6O79fFSFQFtftLkpkj7/MI0sYg0eOUIsaT1QgBHtBaRDjdJ4DPX2ox?=
- =?iso-8859-1?Q?RWyCB3S5vaf3FsWvBBoBlCKuLBKLrQRWtNHJgI2mK3bSXQeJkZLOPPv05W?=
- =?iso-8859-1?Q?TdDibf/nYOY5A9H4zYnKETC08nqf2iakWQJ5QJ7k8iTqoFBVakMzGqXo5T?=
- =?iso-8859-1?Q?qbB3+fh/XyG6Ozel/n5bTgH0xiiDZ3J4cU5GmWDTDrKVyO6MruNi3CdQxg?=
- =?iso-8859-1?Q?1nkCU7Qps2IrswQBko1nIbALuB57CWi7JzltsbnYrsca7sOLIxqnl9jfXG?=
- =?iso-8859-1?Q?KlqJBMEJh4H9UcZ3OV7CyVXAB1A8AXNtYeRCVI6h7B/WhVD0QDPeKgQRrV?=
- =?iso-8859-1?Q?exTmMhJqoFHf483wtU+YokZDBcD2ddphaUWfUK09WHcjxgbv1X9u5w1nDM?=
- =?iso-8859-1?Q?SkzNGD6Q2jwZBkHsfAdOB7nnYWL2bdRsriYet+en/NMCiMBzsjSWPtzLV+?=
- =?iso-8859-1?Q?VqedDpCSV8kDm4dJTYQ2UUa2L1ylGvUY3D9kB/e+hzYg+4iWWw+JeTLb/t?=
- =?iso-8859-1?Q?P7owswKe4YzdZGbMHH9ayblnQdkOZ+7YWFHayTPsabAsa+SrwnTTzzdafJ?=
- =?iso-8859-1?Q?cVpg1vV1o8g6sN4A0piuhKKS3ADo5DQRp7r7xJ53vFmkv9P86yG0g4tiCB?=
- =?iso-8859-1?Q?qp1t3pRP8MM9v3YEGQo5KquWyL+XHdXSf9ljcI8B5TwA7JiSZxgBdaE03Y?=
- =?iso-8859-1?Q?TR3G3v6WNa6RFr1XeWHPuCMi9fbWuBcH44LpMJVoCgCbdOtHmZgJEjp7G1?=
- =?iso-8859-1?Q?zqeFJ4rpXD4IDXfJXbC4hoQQZVcVz0d6iM9dku3vFZ+nf7myJ1keZRahQc?=
- =?iso-8859-1?Q?oGnOeAnhi1x0jzpacX9ncSSFB64b/pyJQP+E033gVgF7yRLULhlBWAL9Gh?=
- =?iso-8859-1?Q?L3YEaKmcOu6lP3sOIiFjT0dWTAIhq/MEq3ELS6JnB3xOqGNEhX+i5K4EIN?=
- =?iso-8859-1?Q?5pHi9I5l02EUqbqQcKplV1AiSspo0NfzuZ0WnuyNGsjfwP52jjYIPb6zje?=
- =?iso-8859-1?Q?DdnOIWyJbGBbG5ITjmHCgAwH4qKmmMTJZ+1cwwcvrZhaU6d5pvHRfujB7J?=
- =?iso-8859-1?Q?eaMO/ZnTZARE4VexzfeFkAKQSzSKnZuZqgIZbY5+aZEkfjlUAk1MoGmeYb?=
- =?iso-8859-1?Q?kwfah4kc1TSIwU/rrXo6vwMdh7cB8jIHpD?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 710ff516-5abf-4704-73f5-08ddb8a34ff1
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 13:29:31.8684
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TA0wEpStey+tb4TK4bRBQe+arqlPWGtGKbM4d2qvox93S1KgbEd/7/YB6jBr2z2gjNNnQft8+PQrZh5w/duZ4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10378
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 01 Jul 2025 15:42:06 +0200
+Message-Id: <DB0RG4PFFP4A.1BAZWWZU2TWJF@fairphone.com>
+Cc: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/10] Add clock drivers for SM7635
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250625-sm7635-clocks-v1-0-ca3120e3a80e@fairphone.com>
+ <68056b4a-b1c3-401f-8720-8e0c3cda6249@oss.qualcomm.com>
+ <DAXEWQ93VELV.3HJXPNWASYBT7@fairphone.com>
+ <DAZPKV5DQ1EK.2D4TQE5MIH4K9@fairphone.com>
+ <w4eujq72uqflqpsqshc7zhu6lkc7owufep2g2rjacvzgj44vmf@auonp4ugbgow>
+In-Reply-To: <w4eujq72uqflqpsqshc7zhu6lkc7owufep2g2rjacvzgj44vmf@auonp4ugbgow>
 
-On Tue, Jul 01, 2025 at 11:28:07AM +0200, Alexander Stein wrote:
->Hi,
+On Tue Jul 1, 2025 at 1:16 PM CEST, Dmitry Baryshkov wrote:
+> On Mon, Jun 30, 2025 at 10:01:35AM +0200, Luca Weiss wrote:
+>> Hi Konrad,
+>>=20
+>> On Fri Jun 27, 2025 at 5:14 PM CEST, Luca Weiss wrote:
+>> > On Fri Jun 27, 2025 at 5:10 PM CEST, Konrad Dybcio wrote:
+>> >> On 6/25/25 11:12 AM, Luca Weiss wrote:
+>> >>> Document and add the clock drivers for GCC, CAMCC, DISPCC, GPUCC and
+>> >>> VIDEOCC on the SM7635 SoC.
+>> >>>=20
+>> >>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> >>> ---
+>> >>> Luca Weiss (10):
+>> >>>       dt-bindings: clock: qcom: document the SM7635 Global Clock Con=
+troller
+>> >>>       clk: qcom: Add Global Clock controller (GCC) driver for SM7635
+>> >>>       dt-bindings: clock: qcom: document the SM7635 Camera Clock Con=
+troller
+>> >>>       clk: qcom: Add Camera Clock controller (CAMCC) driver for SM76=
+35
+>> >>>       dt-bindings: clock: qcom: document the SM7635 Display Clock Co=
+ntroller
+>> >>>       clk: qcom: Add Display Clock controller (DISPCC) driver for SM=
+7635
+>> >>>       dt-bindings: clock: qcom: document the SM7635 GPU Clock Contro=
+ller
+>> >>>       clk: qcom: Add Graphics Clock controller (GPUCC) driver for SM=
+7635
+>> >>>       dt-bindings: clock: qcom: document the SM7635 Video Clock Cont=
+roller
+>> >>>       clk: qcom: Add Video Clock controller (VIDEOCC) driver for SM7=
+635
+>> >>
+>> >> We had a massive yak shaving patchset go in this season, please move
+>> >> the magic settings in .probe to qcom_cc_driver_data {}
+>> >
+>> > Okay cool, I found them
+>> > https://lore.kernel.org/linux-arm-msm/174970084192.547582.612305407582=
+982706.b4-ty@kernel.org/
+>>=20
+>> For camcc, gpucc and videocc it seems quite simple to follow these
+>> changes.
+>>=20
+>> For dispcc I don't know what to do with this line.
+>>=20
+>> 	/* Enable clock gating for MDP clocks */
+>> 	regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
 >
->Am Dienstag, 1. Juli 2025, 09:04:41 CEST schrieb Peng Fan:
->> Add nodes for LVDS/DISPLAY CSR.
->> 
->> Add ldb_pll_div7 node which is used for clock source of DISPLAY CSR.
->> 
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx943.dtsi | 34 +++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> index 45b8da758e87771c0775eb799ce2da3aac37c060..cf67dba21e4f6f27fff7e5d29744086e4ec9c021 100644
->> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
->
->Why is this specific to imx943 but not imx94? What is the difference anyway?
+> Use clk_regs_configure() callback to set this bit.
 
-There is only i.MX943 in i.MX94 family as of now. Other future variants
-may not support lvds or display. So Add the nodes in imx943.dtsi.
-
-In future if the family has more and more members, and they
-lvds and display supported, we could move back to imx94.dtsi.
-
-No specific reason.
-
-Thanks
-Peng
+Got it, found an example on the lists.
 
 >
->Best regards
->Alexander
+>>=20
+>> Do I just keep the regmap references in this probe function and just
+>> move the clk_lucid_ole_pll_configure & qcom_branch_set_clk_en to the
+>> config struct?
+>>=20
+>> And similar for gcc, I can move the qcom_branch_set_clk_en calls there
+>> but the qcom_cc_register_rcg_dfs needs to be kept.
 >
->> @@ -3,6 +3,8 @@
->>   * Copyright 2025 NXP
->>   */
->>  
->> +#include <dt-bindings/clock/nxp,imx94-clock.h>
->> +
->>  #include "imx94.dtsi"
->>  
->>  / {
->> @@ -145,4 +147,36 @@ l3_cache: l3-cache {
->>  			cache-unified;
->>  		};
->>  	};
->> +
->> +	ldb_pll_pixel: ldb_pll_div7 {
->> +		compatible = "fixed-factor-clock";
->> +		#clock-cells = <0>;
->> +		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
->> +		clock-div = <7>;
->> +		clock-mult = <1>;
->> +		clock-output-names = "ldb_pll_div7";
->> +	};
->> +
->> +	soc {
->> +		dispmix_csr: syscon@4b010000 {
->> +			compatible = "nxp,imx94-display-csr", "syscon";
->> +			reg = <0x0 0x4b010000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +			assigned-clocks = <&scmi_clk IMX94_CLK_DISPAXI>,
->> +					  <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			assigned-clock-parents = <&scmi_clk IMX94_CLK_SYSPLL1_PFD1>,
->> +						 <&scmi_clk IMX94_CLK_SYSPLL1_PFD1_DIV2>;
->> +			assigned-clock-rates = <400000000>,  <133333333>;
->> +		};
->> +
->> +		lvds_csr: syscon@4b0c0000 {
->> +			compatible = "nxp,imx94-lvds-csr", "syscon";
->> +			reg = <0x0 0x4b0c0000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +		};
->> +	};
->>  };
->> 
->> 
+> Would you mind extnding struct qcom_cc_desc with args to call
+> qcom_cc_register_rcg_dfs() and call it from qcom_cc_really_probe()?
+
+Something like this? Not quite sure when (in what order) this should be
+called, is that place fine?
+
+I'd include a patch then in the v2 of this series.
+
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index b3838d885db2..d53f290c6121 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
+ 			goto put_rpm;
+ 	}
+=20
++	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
++		ret =3D qcom_cc_register_rcg_dfs(regmap,
++					       desc->dfs_rcgs,
++					       desc->num_dfs_rcgs);
++		if (ret)
++			goto put_rpm;
++	}
++
+ 	cc->rclks =3D rclks;
+ 	cc->num_rclks =3D num_clks;
+=20
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 0f4b2d40c65c..dbe7ebe5b871 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -43,6 +43,8 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ 	struct clk_hw **clk_hws;
+ 	size_t num_clk_hws;
++	const struct clk_rcg_dfs_data *dfs_rcgs;
++	size_t num_dfs_rcgs;
+ 	const struct qcom_icc_hws_data *icc_hws;
+ 	size_t num_icc_hws;
+ 	unsigned int icc_first_node_id;
+
+
+Regards
+Luca
+
 >
->
->-- 
->TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
->Amtsgericht München, HRB 105018
->Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
->http://www.tq-group.com/
->
->
+>>=20
+>> Does that sound okay, or what exactly is the desired outcome of the
+>> requested changes?
+>>=20
+>> Regards
+>> Luca
+>>=20
+>> >
+>> >>
+>> >> Konrad
+>>=20
+
