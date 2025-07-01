@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B0C1DC994;
-	Tue,  1 Jul 2025 11:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839EB27147D;
+	Tue,  1 Jul 2025 11:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751369902; cv=none; b=PkvgXZwntincMFrU0wMpuzAbex4sU5dHgdItr+THwPVnnoPi0mdMZtXd0lbomG1ObrKcxFVZnVmL75FcAdo6gQmMhEsGFIld2G/jsa0EuaukCV0ETh5+lTZtF1djUPGL5OfhhLDvDX+KvrrNiCahK42aeiOC1DAe7lE+dZlvEio=
+	t=1751369931; cv=none; b=UTL7nYBXs2JLvHuGJKkFyAIMMFFLaHuAIliSY1aBjdAZnh02NfJcg3h9YmmRvR4AgB2d0yLQDPKa33CEGoAFgx4P++7FFXJoj0yhMn/bzztdMKqlvOniuvRt9gj0VkpaG/uOrBH5CmrOhWAbwvX1H2lxBQrlITe69r8i4AHvk+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751369902; c=relaxed/simple;
-	bh=W2YdMpACO4BaBXSKODcbkQsYQod9zXLEzofKC/X1Img=;
+	s=arc-20240116; t=1751369931; c=relaxed/simple;
+	bh=Y3VYK0xUvjChhtVTMRDfTkLxiEXA0r751kvYsufbcvI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogIlIaEZX8EJs0Bz+a4gh/fXQkxtcQ2hqBkDkZAkqJcLwyAKa3gG5A75kjxD6OR+3UIR5KFAyZ50uEStbTijqcpRT0YuIIoPGMeY+JNdpP0PFRn3cruucFL2c6h4ebNdhcuT/afz4ZfgqLyx1P7vFe8ZyoZ51XWlfhHMbrzWENc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpEdGSX1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=N9LzRWoN5ojPTYOVEw5m3f7dWls9eHrfC84bwQI/cOvfmyDUBQYvgZlCeMJCQVd7GMAOB18opgMLIX+qn8FFY8Bmg6uulwSHmdn3bXjrLgwTYXnH54mo28oVW9Cqo9/ouowGDfqydA+56JXHVg92keOa+fYPWiwInl8uQUQcUis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNT1AVzZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpEdGSX1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84A6C4CEEB;
-	Tue,  1 Jul 2025 11:38:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNT1AVzZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51B7C4CEF2;
+	Tue,  1 Jul 2025 11:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751369902;
-	bh=W2YdMpACO4BaBXSKODcbkQsYQod9zXLEzofKC/X1Img=;
+	s=k20201202; t=1751369931;
+	bh=Y3VYK0xUvjChhtVTMRDfTkLxiEXA0r751kvYsufbcvI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UpEdGSX1HoYiHuTpcKRrIezUWnm9ranQC6z/ZWdt/3lYWCupKcFnPQoTqyRQr9n/p
-	 iRFDao1PB9O5zjxcdaOGm/6aftMGGPrHeT6A3JR5DgjKdd8L2gd9in4LwK9b9Yiyb7
-	 rQbDK7pRGprWcoiaErfNa4e9Z5moVliTB+DLcRm8fm9e2bY4bfEGGBy9B0IA/9vpxt
-	 Ra8fPm9jCV0cSAUzUbCN8rOxik4Ha+Rm9/DRV1NbX4deBXqZnET+ES931PDRS2TzNS
-	 0xNwkkVHsbpIAMGfS7Pvilp+IdXCo8yfknMshXRW9ds0JMFK+JJnOS8nmHx9OmMCJl
-	 0OkT+3YxFRCPA==
-Message-ID: <466b4352-91b9-4259-94b0-b8228d8282e9@kernel.org>
-Date: Tue, 1 Jul 2025 13:38:11 +0200
+	b=kNT1AVzZgXn/stPTLnwsso1xnnU2BufLnxbdK7ZBlbRX06iAGzRO690BK76fAYXGh
+	 w7iPesl9QF3QknxCDOj9S9kgg8ibezeLW3nx4CpRTAorRwNZ854jcLcrFzU8gtyn23
+	 rFjrXCbwWgCHv9cJylZL+bXnem4+ZueEAKZ2f1HIM0c5MCfZV8uv1SUeNyogLYMk47
+	 ZUcy0QYCG8dgdqD7Rl+KxlqKvJVSdjeFq1wzMDr2bpyNaQ5PzY8DNQQiXppLae2Y5h
+	 Tm8utYQCByAdqM9r2Xpu1nxYKQvEVqMkRwDE+4rVCvsumlyHmOtL8pmuN7q3n69eCb
+	 5QxBN5kbZb9mg==
+Message-ID: <efeb4af5-642e-40d2-b535-5aacc47bdb99@kernel.org>
+Date: Tue, 1 Jul 2025 13:38:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: imx943: Add LVDS/DISPLAY CSR nodes
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add support for i.MX94
+ LVDS/DISPLAY CSR
 To: Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -48,7 +49,7 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 References: <20250701-imx95-blk-ctl-7-1-v1-0-00db23bd8876@nxp.com>
- <20250701-imx95-blk-ctl-7-1-v1-5-00db23bd8876@nxp.com>
+ <20250701-imx95-blk-ctl-7-1-v1-1-00db23bd8876@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,57 +95,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250701-imx95-blk-ctl-7-1-v1-5-00db23bd8876@nxp.com>
+In-Reply-To: <20250701-imx95-blk-ctl-7-1-v1-1-00db23bd8876@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 01/07/2025 09:04, Peng Fan wrote:
-> Add nodes for LVDS/DISPLAY CSR.
+> Add i.MX94 LVDS/DISPLAY CSR compatible string.
 > 
-> Add ldb_pll_div7 node which is used for clock source of DISPLAY CSR.
+> Add clock index for the two CSRs.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx943.dtsi | 34 +++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+>  .../devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml        |  2 ++
+>  include/dt-bindings/clock/nxp,imx94-clock.h                 | 13 +++++++++++++
+>  2 files changed, 15 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
-> index 45b8da758e87771c0775eb799ce2da3aac37c060..cf67dba21e4f6f27fff7e5d29744086e4ec9c021 100644
-> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
-> @@ -3,6 +3,8 @@
->   * Copyright 2025 NXP
->   */
->  
-> +#include <dt-bindings/clock/nxp,imx94-clock.h>
-> +
->  #include "imx94.dtsi"
->  
->  / {
-> @@ -145,4 +147,36 @@ l3_cache: l3-cache {
->  			cache-unified;
->  		};
->  	};
-> +
-> +	ldb_pll_pixel: ldb_pll_div7 {
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> index d0291bfff23a27cb55683880fe3a1f8b3e2ada5a..4e20e8c8663b3b6665ff91ae63e1539aa8e9cc9b 100644
+> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> @@ -19,6 +19,8 @@ properties:
+>            - nxp,imx95-lvds-csr
+>            - nxp,imx95-netcmix-blk-ctrl
+>            - nxp,imx95-vpu-csr
+> +          - nxp,imx94-display-csr
+> +          - nxp,imx94-lvds-csr
 
-Not a DTS coding style.
-
-Please use name for all fixed clocks which matches current format
-recommendation: 'clock-<freq>' (see also the pattern in the binding for
-any other options).
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
-
-> +		compatible = "fixed-factor-clock";
-> +		#clock-cells = <0>;
-> +		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
-> +		clock-div = <7>;
-> +		clock-mult = <1>;
-> +		clock-output-names = "ldb_pll_div7";
-> +	};
-
-
+Wrong order. You received that comment on your previous patches, no?
 
 Best regards,
 Krzysztof
