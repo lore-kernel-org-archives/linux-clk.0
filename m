@@ -1,102 +1,115 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45630246781;
-	Wed,  2 Jul 2025 11:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A25255E4E;
+	Wed,  2 Jul 2025 11:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751455865; cv=none; b=KW+LDgJq6k8mHZ5gM1XWvO21RQRrtOB2mp4+GRPxynYVpisp3edgCUKG4B4dLFtS55Nrx5EmxswV+0bvv3c/8HV1NggAcHX9KnSEx5Cn/5apm+zhonRV4g6mHZGlhJZHpge8snEN4Bk/pHfvzVVMRG/2Q4pLX/ZZhd67HIiK/oM=
+	t=1751456216; cv=none; b=dPOuj/c7MvMZntif0WyP4xjhjkezJYqfvGbZ5NHd9xoTk8xpsK4Ec1Y7HAz1R601AlZBCRf8Rmr2phIE3jfCmh8IoXQVlLCqFX2CFuuv7cAbB4093tVA8TqsIJ8yNFg+yoh5q6HcdozQ6pgZ3Lvirc8vSnt5gttltl0F4PDYs/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751455865; c=relaxed/simple;
-	bh=BQCMzYb6py2zdb+YdFBHZxoeQM3A3WG6DoBX46UnyrI=;
+	s=arc-20240116; t=1751456216; c=relaxed/simple;
+	bh=AR2YdjUQDruKw3xwEOLHDbUEwgTRlLLrLUuQcRkPcwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jB83k2jrCBSLBljYsnChVGjdjVWwSgSv5bevq1EXmiAiZSl/IDT2Y2vhFVB9kTn2QYYEpi/CS8kwRTymya0li2/qb/kjTe/v8iD9mg1PzUruczv0KoOYfMeGtZ+vECOfER4LvyHX81HR4TjMbyXYMCwXWaYP0SCYW0BbRhf+03g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NM1XnPg3; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5Givj2fGDn6bKVJT4F6xVs+3a8TAY1PoCvBQAH0xYJbNhPZkMWli7TbhD6/os3HoXhu+rBZtnN3EgK4VaYjOOyeAw+0oN9w05witmLbvHgwsyBlPutG+EtvIY3CJaFwS+xq79b1t+sfGfT3x2yGY7Y5q27/hWpzEJmiFl89EYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF+Mxsfn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NM1XnPg3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751455865; x=1782991865;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BQCMzYb6py2zdb+YdFBHZxoeQM3A3WG6DoBX46UnyrI=;
-  b=NM1XnPg3myCeU+pXEhN9Tek1tPhAYdzp5DgAFBRLWV1cx/FpOyD6TCLP
-   rRipg3oUn14ZMclOzjiJX7Q8LsucCkhXpE4SkLi5uOsAszhnpcFe4nVCc
-   k4ThFFhpTKguj8C7nU72ziU5IPzQn8Lz1SxzSo2oOsoARKBo9Cc37v2UV
-   N8cyBN84ApPIAME/n6tKoG1x0aO6c21I1pRxoZnSAJpZM75Xjr1bkkd3F
-   PJhsb/XMntCS9mmude1JcsJLvlSqtTFEHaH4U+CtO0qon9/bApYZ2y8LE
-   TZUfccFU9rX3LMiEEz3S3O1+GLVg05mYcLKAazOeUmIDY1PzdCfvzP/CW
-   Q==;
-X-CSE-ConnectionGUID: Z6kCnSQ5Sf2PMssCiFudbw==
-X-CSE-MsgGUID: ap5u5udrS4uFiIQuNtFKGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="79186476"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="79186476"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:31:04 -0700
-X-CSE-ConnectionGUID: GgPq3gDpQmWwNZsum2/JhQ==
-X-CSE-MsgGUID: ITHP5AsvTvGxhlUG+acF+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="153456263"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:30:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uWvfw-0000000Bu4U-04v5;
-	Wed, 02 Jul 2025 14:30:52 +0300
-Date: Wed, 2 Jul 2025 14:30:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 06/24] byteorder: Add memcpy_to_le32() and
- memcpy_from_le32()
-Message-ID: <aGUYa6PWYFy4TyLg@smile.fi.intel.com>
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
- <20250702051345.1460497-7-apatel@ventanamicro.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF+Mxsfn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E239DC4CEED;
+	Wed,  2 Jul 2025 11:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751456216;
+	bh=AR2YdjUQDruKw3xwEOLHDbUEwgTRlLLrLUuQcRkPcwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mF+MxsfngCXb328CwhUUDfE58INzeO/02EHWhYdfq92zRhxhdu9m3eJy38g/Z2+my
+	 PEo2RicQ5A29nvdeyqkEhYXmYPboIIoBnvwoyjTo33CStZrq6JwcxbeXINWGNT7z3f
+	 V0h82qzbUvYiU0/w0GdHs6pl8GqKnD7kpM5FIhdB/O3UqCLfHOsR83L6FB+gFjKTY0
+	 VvjpbF/cL+u6rtx027/kfZy2nlIfRBljuP/L2/yJYG1Tzj1L1m4ah1WTAD5SV3yc9C
+	 atIKqU3Z259Hwdsi1bfTag54achQvlF3vPxb6tcJRRGnxMXaQac8Pe1qjRKwYG5wv2
+	 f6PbOLbcQg9gQ==
+Date: Wed, 2 Jul 2025 13:36:53 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, 
+	Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.xyz>, 
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 5/5] drm/sun4i: Run the mixer clock at 297 MHz on V3s
+Message-ID: <20250702-psychedelic-stalwart-jerboa-a626eb@houat>
+References: <20250701201124.812882-1-paulk@sys-base.io>
+ <20250701201124.812882-6-paulk@sys-base.io>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="v4szwvinjjahevo3"
 Content-Disposition: inline
-In-Reply-To: <20250702051345.1460497-7-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Wed, Jul 02, 2025 at 10:43:27AM +0530, Anup Patel wrote:
-> Add common memcpy APIs for copying u32 array to/from __le32 array.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20250701201124.812882-6-paulk@sys-base.io>
 
 
+--v4szwvinjjahevo3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 5/5] drm/sun4i: Run the mixer clock at 297 MHz on V3s
+MIME-Version: 1.0
+
+On Tue, Jul 01, 2025 at 10:11:24PM +0200, Paul Kocialkowski wrote:
+> The DE mixer clock is currently set to run at 150 MHz, while the
+> Allwinner BSP configures it at 300 MHz and other platforms typically
+> run at 297 MHz.
+>=20
+> 150 MHz appears to be enough given the restricted graphics capabilities
+> of the SoC (with a work area of only 1024x1024). However it typically
+> causes the DE clock to be parented to the periph0 pll instead of the
+> video PLL.
+>=20
+> While this should generally not be a concern, it appears (based on
+> experimentation) that both the DE and TCON clocks need to be parented
+> to the same PLL for these units to work. While we cannot represent this
+> constraint in the clock driver, it appears that the TCON clock will
+> often get parented to the video pll (typically running at 297 MHz for
+> the CSI units needs), for instance when driving displays with a 33 MHz
+> pixel clock (33 being a natural divider of 297).
+>=20
+> Running the DE clock at 297 MHz will typically result in parenting to
+> the video pll instead of the periph0 pll, thus making the display
+> output functional.
+>=20
+> This is all a bit fragile but it solves the issue with displays running
+> at 33 Mhz and brings V3s to use the same frequency as other platforms,
+> making support more unified.
+
+It's beyond fragile, and doesn't have anything to do with the DRM driver.
+
+You should set up the clock tree properly in the clock driver, and then
+add NO_REPARENT to the DE clock to make sure it stays that way.
+
+And then, you can change the clock rate if you want to, but at least you
+don't set a rate and hope that the side effects work your way, and won't
+happen again.
+
+Maxime
+
+--v4szwvinjjahevo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGUZ0QAKCRAnX84Zoj2+
+dkUOAX9QETvGjudIqLH1LHrODK1oz9R7fTZgMW27nwd0xCKcdeLTvQKST2uEzWle
+vJapl8MBfAx2o6ST5tt4OTYqAlQbnHgSbySZjkHgRUqtZhP/pvQc99/anfjE9qN1
+3VMToXuhRg==
+=p0B2
+-----END PGP SIGNATURE-----
+
+--v4szwvinjjahevo3--
