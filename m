@@ -1,116 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C0E101DE;
-	Wed,  2 Jul 2025 16:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801B92F0E5E;
+	Wed,  2 Jul 2025 16:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751473470; cv=none; b=bBQkahvj9wTvRhDesIZCX5hI9t0t4dzdqsAwLmhEkY964daOtyeoNJM8lsHkwcG2M2/ii23Rko+yRz6VPCd4iQpKqFGfCF1adVQxVwkN8MrP9iS865H9xv3YyWx/1JcXNJFzgWAzMhE4PtWfXWlXFbxGKpcuO1eyGsr/2eu+uP4=
+	t=1751475421; cv=none; b=e7KTjh+Lj1cM4DDt9/QzRPyZT5xeAVScEU4aRd5qZ/PtljoCgggr2FI7bC7xbQ2YMehF0TXIQPdtytTunI+l++pL2whm8DU5fLQknPE+VrH+gZkHueonkRze0SICS+Ivei8J5ZutzZmGdjN4pgjoOM3vNRU3M+qS7JT+T1wxClI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751473470; c=relaxed/simple;
-	bh=M6iEZcjkRbFz5jFtS+j4R+UxNJcxCweP+Ki5IzSq3mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bg328A1iJz+Ju4OKQPOXm0aw8UXK04BjUjuSlw1knWoLYLi2HXdsNjXbsPSWXuGBb6NxFnpoSRpM53wJXfOeRxKHxqg4HvLOkQqxNIk1fx8+FgrSCC6HS2J3c0peIYM/1DrPbnTb6jCDIzK2bEZjJyfpue7C2oBYRKqxFZ8w+Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1+Ck7Ii; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751475421; c=relaxed/simple;
+	bh=5fLW9lHTWD1y79pwK2fgk5Kd5I6KUd1GhgRK6nF2tYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZdOhbJQOUMH3wJSYDCHOfJBVhitp5rdPgEOpsXDguLuslYw3dJGGRKgIB9OWX56lIw8xIthUH9zHU8TSDdN2Kqtpvj5LsHFY8A4NVp5W43XqOCarGxJVk5/QolLsq4yK+eNbdHxaGipBAWGdx+bjdC1umaFrsD60kNbquz1X/Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sER/DzSx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1+Ck7Ii"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7934C4CEEF;
-	Wed,  2 Jul 2025 16:24:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sER/DzSx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025B1C4CEED;
+	Wed,  2 Jul 2025 16:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751473469;
-	bh=M6iEZcjkRbFz5jFtS+j4R+UxNJcxCweP+Ki5IzSq3mA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b1+Ck7IiroyoCY2aTSWcgrd+53FNVecNW0MuH/4pFWFLjUOJT2hRavODGgpzDB3w6
-	 zs+iZ8+bpc6U2fXIrD3ZxokZMajWq2L1GGYry5CLzSyM9EIPRFOc2368Cnmls/CZAf
-	 M5oGXVtIDDZN7CX/VicYKxF27z8COAgD1RMUIGhqHAaYb4Xmw/UeK6phsz7dugvJqP
-	 8WrJGulfx+x9EcZXkD4ki+VyUeu4sREEgTF2EHw//vgDmoLkzs6f7eiPO/9P8rWUSy
-	 LNw8MWbE8oS2mN0rr7k3xotn4aj4U6TTacFwxYlLLXNES8oKwdqn0FkEHbOtZ5Likm
-	 hZgsrZjdWo4Og==
-Message-ID: <3d68babb-3dc7-40cb-aaad-ed31eef1d62a@kernel.org>
-Date: Wed, 2 Jul 2025 18:24:22 +0200
+	s=k20201202; t=1751475421;
+	bh=5fLW9lHTWD1y79pwK2fgk5Kd5I6KUd1GhgRK6nF2tYI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sER/DzSxLf1cACrNLDFA83rnzm9Yg3EebdeAqx58yqiK8+c7PkNjE0vxNUv2apS/G
+	 2lPoZLTxhECQi7CmUZVgv9T2HSwj4c6gAz7aiFKwatOMMAq170Kl/dnj2QMDTvgkXa
+	 BMLZKktwQ08bMScdmxxW5+l+gJh08yituY7oCuLzPMFFq1Iyq0xoCp9qX/ONjpn743
+	 6I2Z0/hpHrNDR+lGUkdTrAb6leaLc2wHgTZOC8TwbwfoRfW3IAJi3wzK2/FbZvcfcG
+	 8gDWJ8Y/LgDObJsEmBXM+irkNgcmrhBhjMXdPgXbga2ePnNfe/Wfn8UK3KS7FpTeyH
+	 GtemJkj0F817g==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-611e20dd2ffso898126eaf.2;
+        Wed, 02 Jul 2025 09:57:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdA+xgBVFYNU1Jt4PYEkKdfyFdObMNhrynAT28nU7kiHOIlq+n23H3zgQWQjgiE8zBdVn2HIW60YOE@vger.kernel.org, AJvYcCVN57P8pKk/R381uDsSjKQ/vA8XOEret8nxnsWiKzKKr9OGaXkqawMYltI/IVdCLF6bHKVwxZpURt+hevT6@vger.kernel.org, AJvYcCWGbEqNT6SeVaSrZgV8rrgXaoGEx9JRBMVUIjd1G2MRF+poqNpD0sa5jZhqEeSlTGiW6zbDhVQORqZa/Q==@vger.kernel.org, AJvYcCWPuUHWzM0MPKH4nO4EXqwT9NK9s/3Stc5cH7ZxZzDwxBYDVhS45Cww5Elu+9DiK8fHLMCFR5ys/ytV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoeapCdpPJxctxnas3i7rA4PDVwyy/eLmNJ3J+7dIrUw2HNRpi
+	R5EaE1e2bsVFgrrTMvLCYYpCix35tev4Z621o4s7vbIkxzcpm1yMEFHVa/BHZ5omP1pElImAqcq
+	aX0n57iRBRyt+BkBg7ATCsD6RzkNeVYc=
+X-Google-Smtp-Source: AGHT+IH9qNtwc3BZ2zcpxgSNEE28TzTLjJ7V6ei87dF1FcJIxoWDLz53sAGHsJJOhX0RJfWm/FheCXyuy0fLYb8IODw=
+X-Received: by 2002:a05:6808:1706:b0:40a:52cf:8870 with SMTP id
+ 5614622812f47-40bfde82cbcmr15178b6e.26.1751475420246; Wed, 02 Jul 2025
+ 09:57:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
- compatible
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
- <20250702-sc8180x-videocc-dt-v3-1-916d443d8a38@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250702-sc8180x-videocc-dt-v3-1-916d443d8a38@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-16-apatel@ventanamicro.com> <CAJZ5v0iYYuK2GF2Pg3NiO4vLFzoYm6Q3Dnk5O2DkMJm1R3qSfQ@mail.gmail.com>
+ <aGUaFX9WgTW1I_ZO@smile.fi.intel.com> <CAJZ5v0h=qzS67Xu6NUfN_LmQUmKF9=AtkaRrTx81td0m-mRNNg@mail.gmail.com>
+ <aGVK7NxRdDIGRzNR@sunil-laptop>
+In-Reply-To: <aGVK7NxRdDIGRzNR@sunil-laptop>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 2 Jul 2025 18:56:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxz2sRU5vqvKRB8NuHZ48tg4u3JFhsyNnnrs4x6Kv_jRDKQqaFb0Fqjbyc
+Message-ID: <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
+Subject: Re: [PATCH v7 15/24] ACPI: property: Add support for cells property
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Anup Patel <apatel@ventanamicro.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, 
+	Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/07/2025 17:13, Satya Priya Kakitapalli wrote:
->  
->    clocks:
->      minItems: 1
-> @@ -111,6 +115,7 @@ allOf:
->        properties:
->          compatible:
->            enum:
-> +            - qcom,sc8180x-videocc
+On Wed, Jul 2, 2025 at 5:06=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com>=
+ wrote:
+>
+> On Wed, Jul 02, 2025 at 02:39:30PM +0200, Rafael J. Wysocki wrote:
+> > On Wed, Jul 2, 2025 at 1:38=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Wed, Jul 02, 2025 at 12:20:55PM +0200, Rafael J. Wysocki wrote:
+> > > > On Wed, Jul 2, 2025 at 7:16=E2=80=AFAM Anup Patel <apatel@ventanami=
+cro.com> wrote:
+> > >
+> > > ...
+> > >
+> > > > >  static int acpi_fwnode_get_reference_args(const struct fwnode_ha=
+ndle *fwnode,
+> > > > >                                           const char *propname, c=
+onst char *nargs_prop,
+> > > > >                                           unsigned int args_count=
+, unsigned int index,
+> > >
+> > > > >         const struct acpi_device_data *data;
+> > > > >         struct fwnode_handle *ref_fwnode;
+> > > > >         struct acpi_device *device;
+> > > > > +       unsigned int nargs_count;
+> > > > >         int ret, idx =3D 0;
+> > >
+> > > > > +                       nargs_count =3D acpi_fwnode_get_args_coun=
+t(device, nargs_prop);
+> > > >
+> > > > I think it should work the same way as it used to for the callers t=
+hat
+> > > > pass args_count, so maybe
+> > > >
+> > > > if (!args_count)
+> > > >         args_count =3D acpi_fwnode_get_args_count(device, nargs_pro=
+p);
+> > >
+> > > But this is different variable.
+> >
+> > Of course it is different.  It is an acpi_fwnode_get_reference_args() p=
+arameter.
+> >
+> > > > >                         element++;
+> > > > > -
+> > > > >                         ret =3D acpi_get_ref_args(idx =3D=3D inde=
+x ? args : NULL,
+> > > > >                                                 acpi_fwnode_handl=
+e(device),
+> > > > > -                                               &element, end, ar=
+gs_count);
+> > > > > +                                               &element, end,
+> > > > > +                                               nargs_count ? nar=
+gs_count : args_count);
+> > > >
+> > > > And this change would not be necessary?
+> > >
+> > > This is not the same check as proposed above.
+> >
+> > No, it is not.
+> >
+> > It just makes the function work the same way it did before the change
+> > for the callers who passed nozero args_count and so they might be
+> > forgiven expecting that it would be taken into account.
+>
+> But if we do like this, the expectation of
+> fwnode_property_get_reference_args() will differ for DT and ACPI, right?
+> I mean nargs_prop should take higher precedence than nargs.
 
-This is not correct, does not match the compatibles - test yourself. You
-want here contains.
+So you basically want acpi_fwnode_get_reference_args() to take
+nargs_prop into account (which could be explained much cleaner in the
+patch changelogs).
 
-Best regards,
-Krzysztof
+Also, your changes don't modify the behavior of
+__acpi_node_get_property_reference() AFAICS, so this is OK.
+
+Never mind then, but you could pass nargs_prop along with the
+additional device parameter to acpi_get_ref_args() and make that
+function obtain the nargs_prop value.  In the patch, you need to get
+the nargs_prop value before calling it anyway in both places in which
+it is used.
