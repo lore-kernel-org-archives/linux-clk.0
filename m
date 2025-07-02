@@ -1,164 +1,102 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA9C23A995;
-	Wed,  2 Jul 2025 08:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F87022F757;
+	Wed,  2 Jul 2025 09:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445817; cv=none; b=lAdx9wzKkVwbwVtoG+SHrTWEH8ml53slJK/9oTaxLrRzChqvYG6luv7c3ggkNFRh8dEpxHTWS0BAmlAeNgnDcM5Sl9tuEIPL1YUULIL5kLmMUbBuQdwlos6uiEA2x0z3hQsU2dksov93+TzpA3eEDxTDO9X31Ge4sFVEkn/vtbI=
+	t=1751446867; cv=none; b=nMpdOBCftjrscxBE87m/IKqbOo9vIyldK+r0JoAVl8/M8Ad+GPHzqXnpTWq87DZ5zdQne8UhB3mheUDJG0PWzFX0XNK1Z/E3HdVzBiBcS16jg+mNvdcu+Rfu3wnhke8tc7LGxvSWGHk81TO0p9S+VYN2cY/wlH7J7iV2kXW2XTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445817; c=relaxed/simple;
-	bh=/Mj9IbvLmcEdXds6zDfjwnUJ2vNA7j8nuWO6n4VjrAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Kr09WIohx0Fgyi7Q5V8r4kKqylv91z99UE5Lp/ptv09iVosSmB8s1XjFi1EptNe/RvNrOHikzymALXP+nHtmM/Q5UhU8ARl0h4J8SGWbvd24jsahvUxaamp2iXo9LY3sOuDCSIs5uvo13GghhbpfL9ek14YZwNzz16GW13WV0y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OnKdYIJO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OnKdYIJO"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5622U1Sk020544;
-	Wed, 2 Jul 2025 08:43:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5RbAHSbae8Jj29ZSVUOTUguuPqjViFL1e6ZVXS1jCfM=; b=OnKdYIJOX6kzgIG8
-	FV16+1iUUADbnb2TMJxRqharHmeXLLVOUrxS7d+YgGmVfKsXerCrndtTsDldyAvz
-	kxumGv5iYwwat7kIxw2wulzNc9VT8Zp5Zrk1+/C1UUSx2zThH/20yt/rWonQE3Oz
-	k0f6W5XaOi7lJK352QnAcjtoP1X8eB+BNiUsZXzWa5HKRr+uBLVXtw73bO4gTZ+4
-	7DQ23C2tcEaRtctCutfQBom1elKcfPwJp+sHGG9iAEFuF8LoYehusXtydKbUEv+7
-	LVYR19vjPc99RLUeYnnmGsr4VO2pHpFY8hN45HuPRe54LIIq5NOXlPCwfUZTaAzR
-	kilxNA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn2h0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 08:43:25 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5628hOmg031410
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Jul 2025 08:43:24 GMT
-Received: from [10.217.217.109] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
- 2025 01:43:19 -0700
-Message-ID: <4884d189-e43a-4932-af52-e1987bd7106c@quicinc.com>
-Date: Wed, 2 Jul 2025 14:13:14 +0530
+	s=arc-20240116; t=1751446867; c=relaxed/simple;
+	bh=fZJzccDw6bL7Ls2PWdWua6e8l4VI/x3Ji22ej+rNsn0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9IJEZk2YQqpVpopN29VFqWBrqtY94Wu5NYyWHdUx3J5UupK6MogepCSVjmmBnX9BBm5mAMwJjPfXBVqf+TUbaJrBt0sUBcholD+sZaoPw86DOGgFfa2nu7OA4cubVmRY5OvINJu48nyYJjWGJf+te4tWSypMRM/REs7epUqM/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-88131f0badcso2516816241.2;
+        Wed, 02 Jul 2025 02:01:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751446863; x=1752051663;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p4ZaC8SZJJEqARXDIgMWg4EN0MjgSfBPCqeNJPMbVto=;
+        b=TQsShQ8Sn8syJahugGrGr2eLeVNXR1I0EU0XdNuQvtN2LwNzBNNeGFv/xx7QDUUMGF
+         eERgxEQMgEqtxVuJoOw2siMUDXLkTWv9iJpFCG3qzUHxWjGXDY82TaP2b3Q7nKU6eC6E
+         LmmeTTIGX9/zKl3ELHH6vNuwl2QpY37fnhD3ZcLMrGAcyPZwKJmOhlANu3g4Xm2Ih4/a
+         QVQM0ZuCfGvRp6F4ERHSNaikXe3gcGBy0X2Br5QIH2eGQKpbBsQsyei054U39U/oSnv2
+         EL/Vqg40ygSa7Q0qpNMjKoykWUQyDR+Jp2Xibd8d3y+BLfWlhy98bZbfxx6HVFVosCqw
+         uuog==
+X-Forwarded-Encrypted: i=1; AJvYcCVdNHh5WNQsXgNVG82ThtjsvoI7WoMe9p6FD+Bokn7Rsc+LTg4FXPJyD3HH1Gt4dfcB/KNrUU1Bcj2uLq/Hk1eRh5g=@vger.kernel.org, AJvYcCVwBjHDxQ0UoD2tbMIAWf4zNbgGxKfKIZxZ8avFeVJoBFrhJrdjSrYcfW/40gIWWrAaOPPMxo7q@vger.kernel.org, AJvYcCWZPybX0iZGinZsIHqJI6SmaJnYeGh8uqQoKD5rlVfHZ905YuFuocYva7fij2r5jeKjjiPb7a6A6pt7@vger.kernel.org, AJvYcCXbVBq+CVKbhchxYrJvzVhsfT38xndE3sU6Jyyb56bCmnlQUK8xusg8sh6U3HV7pom7RpWq2XQQt+5U@vger.kernel.org, AJvYcCXebHz5UMKPjQoN7dcgvt5YsCK9GUjiaFsSpzl6oMaU+hjOoIQJNl06psYooZuBxMQCouQ0mkLiFMhVV7z7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7vt55ZKJsCn/Qt2Re6jM2kPk/6GPqOqa/HHDqeMCcrFGiB1zr
+	xYRLWGuD6nslI8hq4ICXBCtCaBcm7dWcJbsrwS0CczaPEIxn0duZ/3n2nqrGviIY
+X-Gm-Gg: ASbGncvWIM30SMiDi7XrKtYtRxqPkCQMVQRLiGe9/BAbsBRECeEycBqiuODyNcbt2CR
+	Xish0WKpk67GBu+xNx23+YZJnNBvGwsqwbvxpF8GcmSGwO5d0xvt0vvZTWbTmkJI3e8CEVCVMFV
+	q8dCaA6MWS5Pe1aMSIAcmMDX5ZrtPXSCcdERuS+pFLDTMbZaU/YNU5bUKM2/SvXHUYoxUvj14CK
+	yKcLOK6sn1dU5mfBojTsfZd5j5TPpcSzudY3CjHHJrxlyil2Tc6A5rDYMoSVwyUbBI8BaOtZ03z
+	Y9fYAwwHrwYW1uFGyRcuZNiFK6fbkIxv87afzodAVLoIAmpDb26X40D1u28UuTiFoWMHEgiq1s5
+	tAwL12gx7FGY4wFgBb364kaaKZauZ
+X-Google-Smtp-Source: AGHT+IGb/rdNczI7QkiwvzRrWHUozdrj2zm43+tzc1dsU7VwW1ZJW013I7vK9mQManbUXzrSz0VO+g==
+X-Received: by 2002:a05:6102:2d04:b0:4f1:37f4:8c32 with SMTP id ada2fe7eead31-4f1611617bbmr757041137.11.1751446862899;
+        Wed, 02 Jul 2025 02:01:02 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-884f3b2430fsm1444383241.9.2025.07.02.02.01.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 02:01:02 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-532dbe71e4eso2826478e0c.2;
+        Wed, 02 Jul 2025 02:01:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFlDm2PqSkM1+MG5Ce0omji3QHarmDRFB+Qyb/J8Kp/nquTw7VdrGd4aRgYvPVkCaEskQDnr8rH+RdluWa@vger.kernel.org, AJvYcCVY+7Se18RfXi9VdEOC8y0esOHagnZid3JRBIyCVPXgePTOsakwZdSjCHkT/ZxKkvv+2dTNFF5R@vger.kernel.org, AJvYcCWcCrj906ieO0MTk1RQG4RCv9hulfgcTe9JISFaWMa4OI0luijzvWoDbdvYd7jmdv4B0T9jWhbGXJ5bM9tUnMHIqwI=@vger.kernel.org, AJvYcCWdtqqYUkvhIDd9cM1iAW/xgwHMzgAOKFjxEru+IMfzom+9B6Js7ke+eXPKVYm2aNr4ZwOPA/S5i5qA@vger.kernel.org, AJvYcCWfCeiTQI7eA1o13+qWjTb7x2lg73tCeBcxN1CAkUJZ8aC+8hhI49Y3vY/USuIVQSAJq+NsmTnRzUkL@vger.kernel.org
+X-Received: by 2002:a05:6122:8c8f:b0:52f:4776:f6a7 with SMTP id
+ 71dfb90a1353d-53457c1c1afmr1365164e0c.0.1751446861289; Wed, 02 Jul 2025
+ 02:01:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/10] clk: qcom: clk-alpha-pll: Add support for
- dynamic update for slewing PLLs
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit
- Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250625-qcs615-mm-v10-clock-controllers-v10-0-ec48255f90d8@quicinc.com>
- <20250625-qcs615-mm-v10-clock-controllers-v10-1-ec48255f90d8@quicinc.com>
- <trwdfk2oz2udtbiqxh3ybuqbvasfqywmqxgi4xyvsknz6svs2r@icpp7snpq6c5>
- <44dddd3f-d2d2-4d4b-831a-21e6d9050445@quicinc.com>
- <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
+References: <20250702005706.1200059-1-john.madieu.xa@bp.renesas.com> <20250702005706.1200059-2-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250702005706.1200059-2-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Jul 2025 11:00:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWN7K===8+a_xjbROXXwt31y=D9EhhtW0dcWhOW-xi3Fw@mail.gmail.com>
+X-Gm-Features: Ac12FXy3qvRlCCOU1J9rVOyXjvrgTG4HaTQsme_N6hvHGBENHVYbBkeMw8lB4F0
+Message-ID: <CAMuHMdWN7K===8+a_xjbROXXwt31y=D9EhhtW0dcWhOW-xi3Fw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] clk: renesas: r9a09g047: Add clock and reset
+ signals for the GBETH IPs
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	richardcochran@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	netdev@vger.kernel.org, biju.das.jz@bp.renesas.com, john.madieu@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2OSBTYWx0ZWRfX8VcgtUhyolYE
- VzR1RXp2VdwzTnrCopUKekm8qLZdpBh04QtuOXo8dJbDQSw6Xdzy5vJXf0uwXBd0gE1aa6GsjHo
- Eq+UP46sNtfjAeq0r6rmQR+hFAGW8QHhIQPsFG02d9wVQjZEnsWHUlimx8kgUQDz2Tx5T08bBWz
- uNuIKtPGXHKOL3uraFUOsUTvmz3poHoZ/yUzl+H9asmRwnfqfQeWF1I+IZP50hIQ6VxFYyaAR5E
- wHEV9PYb8SU80DNxm+H//JlkA2n8jatGeYH2Ki3+D62sWbv1C1iLh3PLNmC2LKwriw7ZwchtZJ3
- akOnR5a/x4eHFOkcnUDFkP2mUp9EVM0qKDSMkb2FV4YNUnZBDbCmxJ22apKKaBEJCiPm6e8Oyip
- 1H+wf4BEMLPTPrqbZXcRldcfRexN0Anbj//UTVeDhHD33hH2BmEQxNhIAj9P1m0NaToa5yMR
-X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=6864f12d cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=O75FsbJ6qr0OxAJT8SUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
-X-Proofpoint-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507020069
 
+On Wed, 2 Jul 2025 at 02:57, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Add clock and reset entries for the Gigabit Ethernet Interfaces (GBETH 0-1)
+> IPs found on the RZ/G3E SoC. This includes various PLLs, dividers, and mux
+> clocks needed by these two GBETH IPs.
+>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
+> v4:
+>  - Renames clock names to match V2Hs
+>  - Uses DEF_MOD_MUX_EXTERNAL instead of DEF_MOD for Tx and Rx clks
+>  - Drops Tested-by tag from Biju
 
-On 6/27/2025 6:07 PM, Dmitry Baryshkov wrote:
-> On 27/06/2025 13:13, Taniya Das wrote:
->>
->>
->> On 6/25/2025 5:17 PM, Dmitry Baryshkov wrote:
->>> On Wed, Jun 25, 2025 at 04:13:26PM +0530, Taniya Das wrote:
->>>> The alpha PLLs which slew to a new frequency at runtime would require
->>>> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
->>>> which can support the slewing of the PLL to a new frequency.
->>>>
->>>> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>>   drivers/clk/qcom/clk-alpha-pll.c | 169 +++++++++++++++++++++++++++
->>>> ++++++++++++
->>>>   drivers/clk/qcom/clk-alpha-pll.h |   1 +
->>>>   2 files changed, 170 insertions(+)
->>>>
->>
->>>> +    /*
->>>> +     * Dynamic pll update will not support switching frequencies
->>>> across
->>>> +     * vco ranges. In those cases fall back to normal alpha set rate.
->>>> +     */
->>>> +    if (curr_vco->val != vco->val)
->>>> +        return clk_alpha_pll_set_rate(hw, rate, parent_rate);
->>>> +
->>>> +    a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
->>>> +
->>>> +    regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
->>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll),
->>>> lower_32_bits(a));
->>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
->>>> upper_32_bits(a));
->>>
->>> We have code that does this in __clk_alpha_pll_set_rate() and now you
->>> are adding two more copies. Please extract PLL_L_VAL, PLL_ALPHA_VAL and
->>> PLL_USER_CTL / PLL_VCO_MASK into a helper function.
->>>
->>
->> Dmitry, I was thinking of implementing the following as a reusable
->> helper since it can be leveraged by most of the functions. I'd
->> appreciate your suggestions or feedback.
-> 
-> The code below looks good to me. Please use 'alpha' instead of 'a'.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
-Thanks, I will use 'alpha' in the next patch.
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Taniya
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
