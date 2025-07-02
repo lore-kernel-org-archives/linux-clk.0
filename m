@@ -1,155 +1,278 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F48123C4E5;
-	Wed,  2 Jul 2025 09:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6872417E6;
+	Wed,  2 Jul 2025 10:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751450122; cv=none; b=Ltf1df00VPPJpeW7giHEKY/TuYiR6TIWb/o3escnjSVvjIuAC8TUm+O7spFIY5P32aURkKlILvLFtk9/+GngVB3UHZWMZurvJmEneIc/gMXDW512csZIGzFJn+/YJXuZLRkVg3cxdJUmfwgDeRvkbTNwWDINOZQ2H/Sq8KUEkmI=
+	t=1751450870; cv=none; b=t0lwJ+17XhauGxmkpoLu3ewHvWyqifEaG/v6tjOzzrPHD4G6BGPN2YE9C6uNPmDdf+RjeHLo3f4GMtn4M4P3ekzxL/6kQPwz8AvN4t2yKndemWW1OnrcFZIczd9gvS4/DoLPUTED4Z+esxtZNnvoh5CMh752Owsf7599hEzwHaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751450122; c=relaxed/simple;
-	bh=C5QXblfrBCzvu7BdLvGifTigoPSkoFM22gBY88eg8Hc=;
+	s=arc-20240116; t=1751450870; c=relaxed/simple;
+	bh=weyTifFbm+9UaGAzEaZQa9PZjTRZ7slzMKMFXBEpui8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=raegWlGORjMdb4eTrT1ntRSkYipBaNNepGZpe8zxZtDvbwjXC/VnqQwClpQcNQr7sYzddMr9JTWV1Ue9B6X2B2v9VApiEe31ssXJ2C+AukkqohtTR7a8LC5Y0mSE2I3m8zaFKcjViC8OlCjw2RRRlmlVa84fa1caTJSvzhylxPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-53159d11cecso4112713e0c.2;
-        Wed, 02 Jul 2025 02:55:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751450119; x=1752054919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aOx75XV9/OUc0GtT1FSm/gKABj7KC8EmhXbi5Ta+wgM=;
-        b=PwskfG/nB6t+tj8b5o9dCBp/Wl6ZGN+uw/FCV6TAuXearukzrmvIg46VYtCvOguTTq
-         IYCYICfQSVtEnVu6dJUkl5X6vi19QSgjqM2jYcLPD2ZYgia1sTdVlbe810zAn5M+WikR
-         Yyw155Cr3XVMP87JdQr/lCE88i0ihWBonR2CFUNBkl8eRccEBvZnC3rAiSwqhzAu9Zly
-         K60dt4oA/BQYB12vrvkFmNHMsgnOUxelI+/hjaxcR7F2o3BySEUgg0E2GuEjxTp/IJea
-         e/5wXXUr9Me/3SzRF4QX5ZjP6bzCoZlfvMK+njt+ikAomEuAME90/rK2ovC1v4eXGZp+
-         nyOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrjZ1HI8i3KIuB/LPECEjXQX9AtCMVSoxygiRgpAn2Eme9UatzGJEAFWzCDacNJl5cUqn4RJ4lHi6U@vger.kernel.org, AJvYcCVv3VB+vzqA3WbCoN2mDxCNj5ga0OZHZUF5xBZSuMbGfza80YI//rBEhMAi53HhxA9+j7HZ1cQgswu22/Ug205Iba0=@vger.kernel.org, AJvYcCWYZD9JSSA+4jwlejHfF+ef0EWf+pwnjNI9hxOpx8O5D+zxyV0Blg9youc/G7n0Qy+NWfjtga9C@vger.kernel.org, AJvYcCWeMw0O5Flx38Z4ZfhPY/LaFRKWKNv9Auf3OOLr/GuEC0Tc3xMHQlwD5Yt+CAH9ovbU1w7bO8VpAs+B5ZS4@vger.kernel.org, AJvYcCX8CxOKmf/qII8t4AbU6zhaymTsaQAq8l8QFOvVqidSZQQ2KNc00qgHUYHY9rEH7qxGq+pn0JvQL/pN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlrpYDJascPfi+Hiw6fTcbiIEIo/XuCHTAD4eGwwf19hfIelex
-	ggX/UcQjbQdyGwrEJ0HH4jKm0zJEDhflZYTCTQgLQBLjgOdunI1t0GIyJhgQs8ZU
-X-Gm-Gg: ASbGnctahUWVgFEpLYm4KUnwzSMmTnAf+FOmHVmHfUq4ntieh8VSYpFAzaO7FeNXGSC
-	XJdrogviDx3yPPWfZoyH6xwJICOHxgMbn1BPOBMknaOC21wRIUR+KqyS4HO93r940SdpVYJhH8t
-	PwDzfevl/EUHN07KwEoglCw72qW5ZMfn5JXwm82EWQnrFKOJC7JvgwJOn79cd0iBXsOxcrph2MM
-	N2Zn27BVyZ6VmPjB0vdS3Mqy8PKdEg3BQ3hB5IFAs9mWp+r5lTnvODJMW3wchklDV8BJFV+PCPB
-	O1jTuOZSK5rhP4xZ0kFiCRePMfKEbbDdB18tZgHByoetwDm6SQ+FGxx3jWA3anaRSD/aZ2X2/gN
-	bOs449iGjLROoA046OCD5zX74
-X-Google-Smtp-Source: AGHT+IHQUTerjig7jhM2oeODUMFmoGxzKZinnz4Sg/Dq0Dcvk1urc/btp22t9YpRxgsyIH8VOMyerw==
-X-Received: by 2002:a05:6122:2381:b0:531:2906:7525 with SMTP id 71dfb90a1353d-534583bf125mr1534408e0c.6.1751450119081;
-        Wed, 02 Jul 2025 02:55:19 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5345ae35c6esm154196e0c.37.2025.07.02.02.55.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 02:55:18 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e80d19c7ebso4062278137.3;
-        Wed, 02 Jul 2025 02:55:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3cWRs0mgX1RiqAX/+TdgVjeaIL4Izdw+5inlmy1CzlVCj5JcYlHpo4VKoXl7jf0AkfgNm5jiDNqc8@vger.kernel.org, AJvYcCUvIehNGd9DmP4ucsAYFY/jEV0pduDD2D7+8IpA7jWR9oRfWTVsE4Hwh6OtsDCn3OB+y45B5EHLr50Uur4WNRBSk8o=@vger.kernel.org, AJvYcCUzYa/CT+RiKhiohni+v22MuIx9IjzLhSGQBdL1w7x042uxuce1qUV2SjjYKfjUUHx3N+nmZ0UNurJQ@vger.kernel.org, AJvYcCW/ZTnOf+I+qbufyDCLNrpcWMGivIX1MthUujcdy7NuInPDDSriK+VqyL5Kee74JF+RnJWZ+11zfdZkmt2J@vger.kernel.org, AJvYcCWu5tlv0A0CuoKa13jnGoyf497eWeV4DEoeTDVqahnnzHMYzpK4z4bYcATCU+AJiZzzTOXqcc0/@vger.kernel.org
-X-Received: by 2002:a05:6102:2d0c:b0:4e5:992e:e397 with SMTP id
- ada2fe7eead31-4f1611b63aemr846718137.19.1751450118032; Wed, 02 Jul 2025
- 02:55:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=Tk3Ce4POlwJim9TjTz3vjvm7ikNYeSRttxzcRzJ31pylPMy+NdbDNxjgRls5f0TbtmsdS8pEbf6wPcN0Hj+4ZQ/rpceOQJiNma/dMmnxaK3K6P9zTZOSLIm1SncuDpM1FjwMYb+/CjZAJqo0TCiliiqjul26QGskdLddC7bLq4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXyEV+l4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXyEV+l4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B786C4CEFE;
+	Wed,  2 Jul 2025 10:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751450869;
+	bh=weyTifFbm+9UaGAzEaZQa9PZjTRZ7slzMKMFXBEpui8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NXyEV+l4prWmA5xNasJNgIgmUSgM3+Yt1Z/QGc3tu04lP7Vd/35XgG1bIgRYF6QbC
+	 hS+BNUi5W3ZeJZwhElILpy2EoCd0J8/7vcaATsh2V+yR4W/jv8iDQSMzoyf7V+Ggz0
+	 33j4MJ4bvLXmVPIUU3N/6UvmUqGHDwzNYx9ajuOeB4zwMoOnB6HaZwzZJolDGmNnj6
+	 Eyl38o0v5Cx7zG8V7a5LhakoabbxDhmevK4Q8cpgCr3LtW2gnsrQHfbql1ZrgOkFcD
+	 bxLHy8FIjT0wGCwFi9W6leaK6OdKg+oyBWDMj7TWBNil94GI6wHRS19liEy2PqhvmE
+	 Aq+JQaKrxTr7w==
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-40b32b6af9eso3109534b6e.1;
+        Wed, 02 Jul 2025 03:07:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjzwE5Cf7LsrPTYK5cGF6DAEPYyY41Z2VpwFZDYd+YHohYHkigpvS0nrdB3zESPGfNOirM2wMbtLAT@vger.kernel.org, AJvYcCUzcniCTLJ9r6c9m18GLLPdC96sUme0ckh0GrFajwuwBmD8/bAWHXXwXuV62CSZ+NuCSqm6IkvaWBt1@vger.kernel.org, AJvYcCXXvYuN8BTZr7TQyMLQ7HxngfbJjpGqbSeopWrKbPBdbMf9g7aPO7RX5hxJk2zAXZ9Oly/18m5iYITfGA==@vger.kernel.org, AJvYcCXjXazA9qbbTexJguqJaev0oLADE02uAX3W/um8XQrcJ/rYrke47IqOH1wm65yMyo/6dnaiPl2OSglKlAui@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXTSzW/u5yBFNy3krn7jfgBD5ZAcJ5upsrogr/j3ahrYDsOpV2
+	7bQVZ3yh0yds4Wo/hPXc7qur3HmGXkPL42gwMbD1aVffpiTSYblVmKUT/DOGbHdfkeiGgNdycrA
+	PmVNiI8ikdeeXMUz7CYQY0CdH10iC/Nk=
+X-Google-Smtp-Source: AGHT+IGtIVuzmhoykn4M0axoi0CGQ6+4aSkLoPsqP+2+vacu7bYqMOdAim8lVESGAzHhcXoXAFFINc4I7/DELd8kc+U=
+X-Received: by 2002:a05:6808:1b07:b0:404:e0b3:12f with SMTP id
+ 5614622812f47-40b8876eecbmr1608611b6e.11.1751450868525; Wed, 02 Jul 2025
+ 03:07:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702005706.1200059-1-john.madieu.xa@bp.renesas.com> <20250702005706.1200059-4-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20250702005706.1200059-4-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Jul 2025 11:55:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVOhJaYuKqJeJA4N1n-_a=msyaYbiSHpaMw8OkHrprZSA@mail.gmail.com>
-X-Gm-Features: Ac12FXzTWEhjeOAh5YAp_gztZRfyET2-t76qHKNwKKlCmIBxnbJjNyzV2hJk3lE
-Message-ID: <CAMuHMdVOhJaYuKqJeJA4N1n-_a=msyaYbiSHpaMw8OkHrprZSA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] pinctrl: renesas: rzg2l: Add PFC_OEN support for
- RZ/G3E SoC
-To: John Madieu <john.madieu.xa@bp.renesas.com>, prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	richardcochran@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, netdev@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	john.madieu@gmail.com
+References: <20250702051345.1460497-1-apatel@ventanamicro.com> <20250702051345.1460497-15-apatel@ventanamicro.com>
+In-Reply-To: <20250702051345.1460497-15-apatel@ventanamicro.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 2 Jul 2025 12:07:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ifCN7OWEw0DHpULSmXn4nCb9EdJMjQPJwmdoF_y0nfjA@mail.gmail.com>
+X-Gm-Features: Ac12FXwydwjWOWusGuVaIxI2hPrV2omvDChuKbmceQ_-F0JLp5oiXfu_5tSYAEY
+Message-ID: <CAJZ5v0ifCN7OWEw0DHpULSmXn4nCb9EdJMjQPJwmdoF_y0nfjA@mail.gmail.com>
+Subject: Re: [PATCH v7 14/24] ACPI: property: Refactor acpi_fwnode_get_reference_args()
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John, Prabhakar,
+On Wed, Jul 2, 2025 at 7:15=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
+ wrote:
+>
+> From: Sunil V L <sunilvl@ventanamicro.com>
+>
+> Currently acpi_fwnode_get_reference_args() calls the public function
+> __acpi_node_get_property_reference() which ignores the nargs_prop
+> parameter.
 
-On Wed, 2 Jul 2025 at 02:57, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support to configure the PFC_OEN register on the RZ/G3E SoC for
-> specific pins that require direction control via output-enable.
->
-> On the RZ/G3E SoC, certain pins such as TXC_TXCLK must be switchable
-> between input and output modes depending on the PHY interface mode
-> (MII or RGMII). This behavior maps to the `output-enable` property in
-> the device tree and requires configuring the PFC_OEN register.
->
-> Update the r9a09g047_variable_pin_cfg array to include PB1, PE1, PL0,
-> PL1, PL2, and PL4 with PIN_CFG_OEN flags to indicate support for this
-> feature. Define a new rzg3e_hwcfg structure with SoC-specific pin names
-> used for OEN bit mapping.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Which I suppose is a problem.  Why is it so?
 
-Thanks for your patch!
+> To fix this, make __acpi_node_get_property_reference() to
+> call the static acpi_fwnode_get_reference() so that callers of
+> fwnode_get_reference_args() can still pass a valid property name to
+> fetch the number of arguments.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+Are the current callers of acpi_fwnode_get_reference_args() going to
+be affected by this change and if so, then how?
 
-> @@ -3283,6 +3307,19 @@ static const char * const rzv2h_oen_pin_names[] = {
->         "XSPI0_CKN", "XSPI0_CKP"
->  };
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  drivers/acpi/property.c | 101 ++++++++++++++++++++--------------------
+>  1 file changed, 50 insertions(+), 51 deletions(-)
 >
-> +static const char * const rzg3e_oen_pin_names[] = {
-> +       "PB1", "PE1", "PL4", "PL1", "PL2", "PL0"
-> +};
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 436019d96027..d4863746fb11 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -882,45 +882,10 @@ static struct fwnode_handle *acpi_parse_string_ref(=
+const struct fwnode_handle *f
+>         return &dn->fwnode;
+>  }
+>
+> -/**
+> - * __acpi_node_get_property_reference - returns handle to the referenced=
+ object
+> - * @fwnode: Firmware node to get the property from
+> - * @propname: Name of the property
+> - * @index: Index of the reference to return
+> - * @num_args: Maximum number of arguments after each reference
+> - * @args: Location to store the returned reference with optional argumen=
+ts
+> - *       (may be NULL)
+> - *
+> - * Find property with @name, verifify that it is a package containing at=
+ least
+> - * one object reference and if so, store the ACPI device object pointer =
+to the
+> - * target object in @args->adev.  If the reference includes arguments, s=
+tore
+> - * them in the @args->args[] array.
+> - *
+> - * If there's more than one reference in the property value package, @in=
+dex is
+> - * used to select the one to return.
+> - *
+> - * It is possible to leave holes in the property value set like in the
+> - * example below:
+> - *
+> - * Package () {
+> - *     "cs-gpios",
+> - *     Package () {
+> - *        ^GPIO, 19, 0, 0,
+> - *        ^GPIO, 20, 0, 0,
+> - *        0,
+> - *        ^GPIO, 21, 0, 0,
+> - *     }
+> - * }
+> - *
+> - * Calling this function with index %2 or index %3 return %-ENOENT. If t=
+he
+> - * property does not contain any more values %-ENOENT is returned. The N=
+ULL
+> - * entry must be single integer and preferably contain value %0.
+> - *
+> - * Return: %0 on success, negative error code on failure.
+> - */
+> -int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
+e,
+> -       const char *propname, size_t index, size_t num_args,
+> -       struct fwnode_reference_args *args)
+> +static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fw=
+node,
+> +                                         const char *propname, const cha=
+r *nargs_prop,
+> +                                         unsigned int args_count, unsign=
+ed int index,
+> +                                         struct fwnode_reference_args *a=
+rgs)
+>  {
+>         const union acpi_object *element, *end;
+>         const union acpi_object *obj;
+> @@ -999,7 +964,7 @@ int __acpi_node_get_property_reference(const struct f=
+wnode_handle *fwnode,
+>
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+>                                                 acpi_fwnode_handle(device=
+),
+> -                                               &element, end, num_args);
+> +                                               &element, end, args_count=
+);
+>                         if (ret < 0)
+>                                 return ret;
+>
+> @@ -1017,7 +982,7 @@ int __acpi_node_get_property_reference(const struct =
+fwnode_handle *fwnode,
+>
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+>                                                 ref_fwnode, &element, end=
+,
+> -                                               num_args);
+> +                                               args_count);
+>                         if (ret < 0)
+>                                 return ret;
+>
+> @@ -1039,6 +1004,50 @@ int __acpi_node_get_property_reference(const struc=
+t fwnode_handle *fwnode,
+>
+>         return -ENOENT;
+>  }
 > +
-> +static const struct rzg2l_hwcfg rzg3e_hwcfg = {
-> +       .regs = {
-> +               .pwpr = 0x3c04,
-> +       },
-> +       .tint_start_index = 17,
-> +       .oen_pin_names = rzg3e_oen_pin_names,
-> +       .oen_pin_names_len = ARRAY_SIZE(rzg3e_oen_pin_names),
-> +};
-> +
->  static const struct rzg2l_hwcfg rzv2h_hwcfg = {
->         .regs = {
->                 .pwpr = 0x3c04,
-> @@ -3352,7 +3389,7 @@ static struct rzg2l_pinctrl_data r9a09g047_data = {
->         .dedicated_pins = rzg3e_dedicated_pins,
->         .n_port_pins = ARRAY_SIZE(r9a09g047_gpio_configs) * RZG2L_PINS_PER_PORT,
->         .n_dedicated_pins = ARRAY_SIZE(rzg3e_dedicated_pins),
-> -       .hwcfg = &rzv2h_hwcfg,
-> +       .hwcfg = &rzg3e_hwcfg,
->         .variable_pin_cfg = r9a09g047_variable_pin_cfg,
->         .n_variable_pin_cfg = ARRAY_SIZE(r9a09g047_variable_pin_cfg),
->         .num_custom_params = ARRAY_SIZE(renesas_rzv2h_custom_bindings),
-
-I would rather use the existing .oen_{read,write}() abstraction,
-and thus provide new rzg3e_oen_{read,write}() implementations:
-
-    -    .oen_read = &rzv2h_oen_read,
-    -    .oen_write = &rzv2h_oen_write,
-    +    .oen_read = &rzg3e_oen_read,
-    +    .oen_write = &rzg3e_oen_write,
-
-Of course this requires refactoring the existing rzv2h_pin_to_oen_bit()
-and rzv2h_oen_{read,write}() functions to avoid duplication.
-Do you agree?
-
-The actual pin parts LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +/**
+> + * __acpi_node_get_property_reference - returns handle to the referenced=
+ object
+> + * @fwnode: Firmware node to get the property from
+> + * @propname: Name of the property
+> + * @index: Index of the reference to return
+> + * @num_args: Maximum number of arguments after each reference
+> + * @args: Location to store the returned reference with optional argumen=
+ts
+> + *       (may be NULL)
+> + *
+> + * Find property with @name, verifify that it is a package containing at=
+ least
+> + * one object reference and if so, store the ACPI device object pointer =
+to the
+> + * target object in @args->adev.  If the reference includes arguments, s=
+tore
+> + * them in the @args->args[] array.
+> + *
+> + * If there's more than one reference in the property value package, @in=
+dex is
+> + * used to select the one to return.
+> + *
+> + * It is possible to leave holes in the property value set like in the
+> + * example below:
+> + *
+> + * Package () {
+> + *     "cs-gpios",
+> + *     Package () {
+> + *        ^GPIO, 19, 0, 0,
+> + *        ^GPIO, 20, 0, 0,
+> + *        0,
+> + *        ^GPIO, 21, 0, 0,
+> + *     }
+> + * }
+> + *
+> + * Calling this function with index %2 or index %3 return %-ENOENT. If t=
+he
+> + * property does not contain any more values %-ENOENT is returned. The N=
+ULL
+> + * entry must be single integer and preferably contain value %0.
+> + *
+> + * Return: %0 on success, negative error code on failure.
+> + */
+> +int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
+e,
+> +                                      const char *propname, size_t index=
+,
+> +                                      size_t num_args,
+> +                                      struct fwnode_reference_args *args=
+)
+> +{
+> +       return acpi_fwnode_get_reference_args(fwnode, propname, NULL, ind=
+ex, num_args, args);
+> +}
+>  EXPORT_SYMBOL_GPL(__acpi_node_get_property_reference);
+>
+>  static int acpi_data_prop_read_single(const struct acpi_device_data *dat=
+a,
+> @@ -1558,16 +1567,6 @@ acpi_fwnode_property_read_string_array(const struc=
+t fwnode_handle *fwnode,
+>                                    val, nval);
+>  }
+>
+> -static int
+> -acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+> -                              const char *prop, const char *nargs_prop,
+> -                              unsigned int args_count, unsigned int inde=
+x,
+> -                              struct fwnode_reference_args *args)
+> -{
+> -       return __acpi_node_get_property_reference(fwnode, prop, index,
+> -                                                 args_count, args);
+> -}
+> -
+>  static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwno=
+de)
+>  {
+>         const struct acpi_device *adev;
+> --
+> 2.43.0
+>
+>
