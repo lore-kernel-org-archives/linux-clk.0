@@ -1,213 +1,150 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9724CE08;
-	Wed,  2 Jul 2025 00:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751417861; cv=none; b=osmHEaGPht3LDZDCqzFuJPecXbqEvpJgqrzFOv8UdqLNoV3SOHNvHOrmLJDzx8cGeQrpqMtja6rrHeeHtXn9+GN0cgw1wsY+eOLj2zh5wlK70j7rPQH/I53XO7MYuUxOH1BV0InIwVj3pIqzBoeFfQC0CG/xwtMIl2OSwYiWVZI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751417861; c=relaxed/simple;
-	bh=fQBAnkI5rjMDZQo6P8/3QVUINwHo/QDB3Xt13H5B0vc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pTvwpMm7T6b6yTEzD1y/o6zhm7/sb5rfdig/b0rTzepNulfbkjfiyqVZ7YGVT7JdIz2jNcwfw4TyG44pYwRG+80yMJxDfbODzWUdvXNaN7KyJNmMMF/RYYnPlrZhNWbKTVhxqUwSQ0vEXlFN5GLIldt4/NL206UWeZjX87N+PFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: J5+YdmRNSKOnN3uomudF6w==
-X-CSE-MsgGUID: oWfC5T+vSCu7irK4krP6oA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Jul 2025 09:57:38 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.9])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C1FA740E798E;
-	Wed,  2 Jul 2025 09:57:32 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	richardcochran@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v4 4/4] arm64: dts: renesas: rzg3e-smarc-som: Enable eth{0-1} (GBETH) interfaces
-Date: Wed,  2 Jul 2025 02:57:06 +0200
-Message-ID: <20250702005706.1200059-5-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250702005706.1200059-1-john.madieu.xa@bp.renesas.com>
-References: <20250702005706.1200059-1-john.madieu.xa@bp.renesas.com>
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBEB46BF;
+	Wed,  2 Jul 2025 02:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751424803; cv=pass; b=AI0BHiRXoNqP7mb9Il8ddIrFBLeZIFsYmueWbvL/dhKgDu0VLIBFa/g7pslrearONbX08TeRQ/QVoIC76G668d33KluJTG8wiLb8M3zIrN3hbd3uUty0CU29UTCPQ2L7KiNIkEHW8QvWWdK6vVTLNZwvzCGUeJ+WnzVenZZLI5E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751424803; c=relaxed/simple;
+	bh=8djG8WqbgQUjheVgZ2REIAEuyGK2m7kH11olGFqdbSU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G0TSRQ1uNoO9CIsS2ggyxiqDzNkdKViSZADYYiGrDnqJRM9GW4Q5YOcKm08YOU5/s+r1Q4xST6WxSMN32OkOMl2vX1E6kVSO5jl4qZpZ4sxQtjWo/F70Zoo8ZgXTf8snuGyvxL+A+JklXpLH9NKWrAvNuhxABRlhMxnbRL+lZh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=aZa8P6c6; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="aZa8P6c6"
+ARC-Seal: i=1; a=rsa-sha256; t=1751424742; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mrA3avk9M/kuiMlSOraXS90FYqh0uN7Iwu6NapwxmSegHecv5+P4PUbEMsTeOrRusu1BagsOFD6Ft+rQJAETUjm/3BCg8x38Sngb2r3jtdxoEcJL4BbtE2vO27ELCchZgt24AWoBljLbYjwRQGS9hY2Q39s0IRn7CXVGNH+D2x8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751424742; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8djG8WqbgQUjheVgZ2REIAEuyGK2m7kH11olGFqdbSU=; 
+	b=HViJtwRdnwVaWMUd+/Rho9adtqSpBKBmwx4P9X5KnlMUBJvMR2rZQoDGBEQOzXNV5kjq8kaHF1LskRhdXTJ2EO0Rj0UVXg4PWI8xLebK1G2O1st7snNv4/NBnODZbaF+IdT1oPV1nzNzKg5i8wIe/SGlCMkU7v+TAY1FhCkVz80=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751424742;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=8djG8WqbgQUjheVgZ2REIAEuyGK2m7kH11olGFqdbSU=;
+	b=aZa8P6c6JFbALioZzkB15M/OExk2j5KPthXbGCX9mnmtMnvLkWJNSrpIkXQoksMn
+	VrA0lPoiyXlg1YxBxyo5ALCKSqfpaTCOS/XeYEX3YMaWdJL2uqyq8/CXFgU6e1ih5K5
+	Zehy4xmgE8dWIEvBV/b+rRdid/cpmoXXrz74mXGeiDqXD/P5Xm6Cvnc0LcKr6CCT8ro
+	eDIjS9pHFy5YYrm6IzVL8pamvuqO55GB1IRDTJq0eikQYut6tjGH/nVeEHi6NyZonoN
+	q4sqIiLCTSMQzFAHkP1qterjuJrSDLais/B9aj8urMv9zLAF26BLxWs9aqTWICdbJvE
+	/l3ltWEUYg==
+Received: by mx.zohomail.com with SMTPS id 1751424740371995.4237846805278;
+	Tue, 1 Jul 2025 19:52:20 -0700 (PDT)
+Message-ID: <4bc1c1fd9aa1e97a04d964fc5601155ade52cd2d.camel@icenowy.me>
+Subject: Re: [PATCH 5/5] drm/sun4i: Run the mixer clock at 297 MHz on V3s
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-gpio@vger.kernel.org
+Cc: Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>,  David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>,  Icenowy Zheng
+ <icenowy@aosc.xyz>, Andre Przywara <andre.przywara@arm.com>
+Date: Wed, 02 Jul 2025 10:52:10 +0800
+In-Reply-To: <20250701201124.812882-6-paulk@sys-base.io>
+References: <20250701201124.812882-1-paulk@sys-base.io>
+	 <20250701201124.812882-6-paulk@sys-base.io>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Enable the Gigabit Ethernet Interfaces (GBETH) populated on the RZ/G3E SMARC EVK
+=E5=9C=A8 2025-07-01=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 22:11 +0200=EF=BC=
+=8CPaul Kocialkowski=E5=86=99=E9=81=93=EF=BC=9A
+> The DE mixer clock is currently set to run at 150 MHz, while the
+> Allwinner BSP configures it at 300 MHz and other platforms typically
+> run at 297 MHz.
+>=20
+> 150 MHz appears to be enough given the restricted graphics
+> capabilities
+> of the SoC (with a work area of only 1024x1024). However it typically
+> causes the DE clock to be parented to the periph0 pll instead of the
+> video PLL.
+>=20
+> While this should generally not be a concern, it appears (based on
+> experimentation) that both the DE and TCON clocks need to be parented
+> to the same PLL for these units to work. While we cannot represent
+> this
+> constraint in the clock driver, it appears that the TCON clock will
+> often get parented to the video pll (typically running at 297 MHz for
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
+Ah I think pixel clocks are arbitary and nothing could be predicted
+about it...
 
-Changes:
-
-v2:
-No changes but resending without dt-bindings patch
-
-v3:
-Updates mdio separately, based on phandles instead of node redefinition
-
-v4:
- - Update pinmux to add OEN support
- - Drops Tb and Rb tags initially collected
-
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 111 ++++++++++++++++++
- 1 file changed, 111 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-index f99a09d04ddd..f930e98a7ea9 100644
---- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-@@ -26,6 +26,8 @@ / {
- 	compatible = "renesas,rzg3e-smarcm", "renesas,r9a09g047e57", "renesas,r9a09g047";
- 
- 	aliases {
-+		ethernet0 = &eth0;
-+		ethernet1 = &eth1;
- 		i2c2 = &i2c2;
- 		mmc0 = &sdhi0;
- 		mmc2 = &sdhi2;
-@@ -77,6 +79,24 @@ &audio_extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&eth0 {
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
-+
-+	pinctrl-0 = <&eth0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&eth1 {
-+	phy-handle = <&phy1>;
-+	phy-mode = "rgmii-id";
-+
-+	pinctrl-0 = <&eth1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 	mali-supply = <&reg_vdd0p8v_others>;
-@@ -102,7 +122,98 @@ raa215300: pmic@12 {
- 	};
- };
- 
-+&mdio0 {
-+	phy0: ethernet-phy@7 {
-+		compatible = "ethernet-phy-id0022.1640",
-+			     "ethernet-phy-ieee802.3-c22";
-+		reg = <7>;
-+		interrupts-extended = <&icu 3 IRQ_TYPE_LEVEL_LOW>;
-+		rxc-skew-psec = <1400>;
-+		txc-skew-psec = <1400>;
-+		rxdv-skew-psec = <0>;
-+		txdv-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+
-+&mdio1 {
-+	phy1: ethernet-phy@7 {
-+		compatible = "ethernet-phy-id0022.1640",
-+			     "ethernet-phy-ieee802.3-c22";
-+		reg = <7>;
-+		interrupts-extended = <&icu 16 IRQ_TYPE_LEVEL_LOW>;
-+		rxc-skew-psec = <1400>;
-+		txc-skew-psec = <1400>;
-+		rxdv-skew-psec = <0>;
-+		txdv-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+
- &pinctrl {
-+	eth0_pins: eth0 {
-+		clk0 {
-+			pinmux = <RZG3E_PORT_PINMUX(B, 1, 1)>; /* TXC */
-+			output-enable;
-+		};
-+
-+		ctrl0 {
-+			pinmux = <RZG3E_PORT_PINMUX(A, 1, 1)>, /* MDC */
-+				 <RZG3E_PORT_PINMUX(A, 0, 1)>, /* MDIO */
-+				 <RZG3E_PORT_PINMUX(C, 2, 15)>, /* PHY_INTR (IRQ2) */
-+				 <RZG3E_PORT_PINMUX(C, 1, 1)>, /* RXD3 */
-+				 <RZG3E_PORT_PINMUX(C, 0, 1)>, /* RXD2 */
-+				 <RZG3E_PORT_PINMUX(B, 7, 1)>, /* RXD1 */
-+				 <RZG3E_PORT_PINMUX(B, 6, 1)>, /* RXD0 */
-+				 <RZG3E_PORT_PINMUX(B, 0, 1)>, /* RXC */
-+				 <RZG3E_PORT_PINMUX(A, 2, 1)>, /* RX_CTL */
-+				 <RZG3E_PORT_PINMUX(B, 5, 1)>, /* TXD3 */
-+				 <RZG3E_PORT_PINMUX(B, 4, 1)>, /* TXD2 */
-+				 <RZG3E_PORT_PINMUX(B, 3, 1)>, /* TXD1 */
-+				 <RZG3E_PORT_PINMUX(B, 2, 1)>, /* TXD0 */
-+				 <RZG3E_PORT_PINMUX(A, 3, 1)>; /* TX_CTL */
-+		};
-+	};
-+
-+	eth1_pins: eth1 {
-+		clk1 {
-+			pinmux = <RZG3E_PORT_PINMUX(E, 1, 1)>; /* TXC */
-+			output-enable;
-+		};
-+
-+		ctrl1 {
-+
-+			pinmux = <RZG3E_PORT_PINMUX(D, 1, 1)>, /* MDC */
-+				 <RZG3E_PORT_PINMUX(D, 0, 1)>, /* MDIO */
-+				 <RZG3E_PORT_PINMUX(F, 2, 15)>, /* PHY_INTR (IRQ15) */
-+				 <RZG3E_PORT_PINMUX(F, 1, 1)>, /* RXD3 */
-+				 <RZG3E_PORT_PINMUX(F, 0, 1)>, /* RXD2 */
-+				 <RZG3E_PORT_PINMUX(E, 7, 1)>, /* RXD1 */
-+				 <RZG3E_PORT_PINMUX(E, 6, 1)>, /* RXD0 */
-+				 <RZG3E_PORT_PINMUX(E, 0, 1)>, /* RXC */
-+				 <RZG3E_PORT_PINMUX(D, 2, 1)>, /* RX_CTL */
-+				 <RZG3E_PORT_PINMUX(E, 5, 1)>, /* TXD3 */
-+				 <RZG3E_PORT_PINMUX(E, 4, 1)>, /* TXD2 */
-+				 <RZG3E_PORT_PINMUX(E, 3, 1)>, /* TXD1 */
-+				 <RZG3E_PORT_PINMUX(E, 2, 1)>, /* TXD0 */
-+				 <RZG3E_PORT_PINMUX(D, 3, 1)>; /* TX_CTL */
-+		};
-+	};
-+
- 	i2c2_pins: i2c {
- 		pinmux = <RZG3E_PORT_PINMUX(3, 4, 1)>, /* SCL2 */
- 			 <RZG3E_PORT_PINMUX(3, 5, 1)>; /* SDA2 */
--- 
-2.25.1
+> the CSI units needs), for instance when driving displays with a 33
+> MHz
+> pixel clock (33 being a natural divider of 297).
+>=20
+> Running the DE clock at 297 MHz will typically result in parenting to
+> the video pll instead of the periph0 pll, thus making the display
+> output functional.
+>=20
+> This is all a bit fragile but it solves the issue with displays
+> running
+> at 33 Mhz and brings V3s to use the same frequency as other
+> platforms,
+> making support more unified.
+>=20
+> Also align and sort the fields of the v3s mixer config while at it.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> ---
+> =C2=A0drivers/gpu/drm/sun4i/sun8i_mixer.c | 12 ++++++------
+> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> index 8b41d33baa30..35fdc2451060 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -670,12 +670,12 @@ static const struct sun8i_mixer_cfg
+> sun8i_r40_mixer1_cfg =3D {
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg =3D {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.vi_num =3D 2,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.ui_num =3D 1,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.scaler_mask =3D 0x3,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.scanline_yuv =3D 2048,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.ccsc =3D CCSC_MIXER0_LAYOUT,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.mod_rate =3D 150000000,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.ccsc=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=3D CCSC_MIXER0_LAYOUT,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.mod_rate=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=3D 297000000,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.scaler_mask=C2=A0=C2=A0=C2=A0=
+=C2=A0=3D 0x3,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.scanline_yuv=C2=A0=C2=A0=C2=
+=A0=3D 2048,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.ui_num=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=3D 1,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.vi_num=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=3D 2,
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct sun8i_mixer_cfg sun20i_d1_mixer0_cfg =3D {
 
