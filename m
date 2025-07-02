@@ -1,66 +1,67 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52FA2FD5BB
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16C62FD5B9
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470063; cv=none; b=efYlv5biS6fUdL7ElmnhJ68L8HBxFLpyQLjrNPn2YtTQGBweTELxuQT3aHSdddPbu12e4VH1TuFCZ5H6RrVv3cW/XFxyz15ZWPx3oe4lz8W1Ior7VdhdGDe4YNbzdUn9B2xOYh5cO6g/huUMSG3lJAt+KfVVrV9Vb13Mc5xnOv8=
+	t=1751470063; cv=none; b=EzNTb5DwF2/qbPl7wCTGOHU0nvCW4/46F22G3snO/z+KrDkZSo1NeAuCxGgwtQbYkensKJEAroQBmBdyQ6nyEmoXmMO1/hC4e6ARHmzshf17BMH1T31g2evva+84vVY2GyNvyHqpv5YMiItwIyqwPVeseeGMoJhUjt+nRx0AgCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751470063; c=relaxed/simple;
-	bh=UjktwdRyVGsFy6U0LeiahV0EMG/NVFT7hHKNN0gErHQ=;
+	bh=ssDaR4wz9jG+IVUW3bzaW/s+xN9zK8sGhakg0LDPY+Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I/A8PfgGqKI54TNz4sIHfztg8CNwnz3u7NEkrR+KB6zQWOSU9iNBmWx5FZ06wMcu/OZeJqNz7+0TdXr+NJz06wok0HOZL5VuvNDNoZofb5PKoYc60Cs8ZaL80Cdwt7wiliYa6jd9GU0JL5Xhtr/ZVsOFQBrB2dgoIugZlyqtiaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=L/An8rEM; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=pYyQi3V4e/4k4Z2sHSU/xux+QZ5N9zMTAnftTEitkZF2+nRxhQ0R25aeA1MDyOvYZG8eDng0egPFrEGTEPbIrAGwaDHZId+P0pgYfJPWUpsA2/jj8M4jAohikALNkAX7+gqY0hqMSvfGlkAwZmcgRpph8bduRPhnupe/a8jOnfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jn9DVSyw; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="L/An8rEM"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso47043085e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jn9DVSyw"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so4013288f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470056; x=1752074856; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470057; x=1752074857; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OmxcQ91zf2meP3ZiqVdkCTGbHErgxG67WorhFT8FRbs=;
-        b=L/An8rEMo7aKbp6zLuM5c8Fol+KMgOwE2Se8y495sppvnVz2iRGiWxggzW8SVzourr
-         7Z+/5mxcwcikkgHCRHnYMXmiKiPWsJ2Sh2wzayTr3yI2l3wZ3/rV0f0IvLQoKguf1Fu4
-         JXNiF48IVpALsS6LXjacbmOCB8v4DS5rOIqyUYK3HIlKnk5jlnCeULxCC+sLK+qEreIe
-         Bbz/7l3sXY+lQQ6vx4b55IVVHgxKYxD7MtngdWcm04DSvH12Ww3zBo4XC8jyLRjEK6Rg
-         lyraeh4LuNKia20gjv557aeJy/pfFSnIPXxzLcbyE+fn1Zsym1gpmUVgnWRY0kvSfTW8
-         HjzQ==
+        bh=NZFizNzZeDwxlG4/SOUoWjAfRTsGu/AR5Ui24dmicOw=;
+        b=jn9DVSywx7o50rqReqZqXdwtdYO4oyMt0i64l9L1HSg8lX2FqS5H7JC3sRa6KLhWzt
+         xtdC4cc7kOxIYDA+m3mFrv+MIMsWaXW5PfOhUmUvvihnkPp5m7vO/B8ZJTXuWJLQGRI3
+         yClN+AH9ad/+CZV33MpZ1ADo+XzmCKOVk8xIrVAC0LSSdiC9ItYynk/ZVmDcJuNSF4oc
+         nAyuuKUBDgXlqPMRcCvnKL7UZEZq0qMgCBQ39BE3Ppi7t6kTHxnrLc1/OCoB1XgQQkOp
+         mep3hUI5Zq71rEhrIb0Rw00t1ZFSV4EBZMY1lAxQao6GHf0eytXejIcDm6Bh0UFgl52e
+         oy0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751470056; x=1752074856;
+        d=1e100.net; s=20230601; t=1751470057; x=1752074857;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OmxcQ91zf2meP3ZiqVdkCTGbHErgxG67WorhFT8FRbs=;
-        b=MPDFBooxH0DBp/xIik9ZMyOERJP8SuReIKjUfpgtURZDkAGdr1nYae6preU1bTGuTf
-         DtnMLzRaLn16EvD+S3MaWCokmfo4E9Suv43xlY4yql2X/mZLAJo2RGYPzlnlJgd3AjiT
-         /fgGK2DM3BLSOItlVK/Pams5CMvURujtfpcFomtZC3+/pAigrAXZIa8EzPHds1qMI4oZ
-         9REiIfdCX0OnMOM27Etp6+nbFjSPIOciuGpK6kxJTq7jIRxw8GSGv0RCBvsDn5urXeJb
-         XIsw6Pe/cwhbMEstLvOuWz5m85RzSeuXbaHW+hO1K7u1F99dmZcGifzph6cEAh5dP59e
-         OGZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMEZ2NggBuYQHYjorhLdK7uZzFVe2FIG2GMw+L+J5kefHoS3W/RWi8PMYVvqw/kqXv2f7LlcRtlIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ZQN1fARQHZER8uzzkbSxEhXjrq9JjF5G31Q27vzYDN2MqIFC
-	KeW8Y+cOoZoVGpCQyXcqEM3sIBfA2ZWGuOM7aSK5t02XAguCf7fhikiTCp3j/FfHG8c=
-X-Gm-Gg: ASbGncsrykB7jaH63vstsL2wksCRRBagrUQcyW0pnZ9oXAk7aEmN8cATNI8oFjxvZxs
-	eKz9SfY5vBrL0Z14QPIHQCWTC/uDXwLGImHkDUIFQt8HB6NQhkNakGXKETJd0dDVdrObvZBtg4G
-	NgCi1aed5lkmyEYJtQ9UD0WmPJhYBaC2S/9HjK2JpKh7YEGd2jqeoK01vYjE5hRlsQda8i8Zh/s
-	Y+mXO1dIhw56uFC6dFPFAzw9qorV9SP43qkFWHh+NbU516TL4kolFVPp2/eNFXd5x2CwdnFqRcR
-	l/SlcZ4i9UtnzZAgHZB4QVNgbyFsW8G81vNTofJuelzP7xXBywI56soVFZqkiTMwI2rAqkv71Od
-	k3OPmghGtxAk=
-X-Google-Smtp-Source: AGHT+IEP6ZPoDLWYbageCLDDfqTeXTLnPbckiWlmV17Myav0+cJQ4vKxIJ/ioeeFGIkkRkjelgPusA==
-X-Received: by 2002:a05:600c:46c7:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-454a91ce35bmr8150905e9.25.1751470055761;
-        Wed, 02 Jul 2025 08:27:35 -0700 (PDT)
+        bh=NZFizNzZeDwxlG4/SOUoWjAfRTsGu/AR5Ui24dmicOw=;
+        b=qHo9Gya6iIddqeDBWDA3Y2SZDFqZd0ZOaOb9vSt0SBPbMmVUXl6G7IKhBe1DdKiO+T
+         t8m1dcmd5WqwX5DsLNASbVT+9Ky9Zc4GKbDzhhBDpbuic8fxtZdIDqkgFxCUJw227Q/L
+         AJeLDdamDRPRGtnG8jZ1YtVBZKadY3HIodLIFAz8o0wVHmGBx/bDfooq7p5xAcMa/h3S
+         7eEKslFVnc8JtQCW/Hp/C42QGRTEoUJ/EXYUBTfMQtYpzvP57VegryeDvpyX4j93P2Wi
+         y7TLY8jW5f55DhniTF/K+2NUO3Q8F/i9uzy0wjKArhHyXmSwxKRFYUfw9I3uVEwemID9
+         xHzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGznM7KA+DBSPb5Th6YS7f3rsyjab45Z9EOywFvCUD+XpGlIHkZ+c2hg9VReyqlkIhfM0QyVzskxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRkaPPVOhzjmYSM1o44+ll1Q7F3r0O82XSbu9p4KYgQzmWFbk8
+	HFntZn6rYCU4TQ8QfGCOAs0K2kGFBmaGqzh10QSpsHuWzSjXnIMPLPN25XYoy+qnmmI01hddtte
+	fYZxl
+X-Gm-Gg: ASbGnct3EBEL86xezhrWYico67DjGlR9MbaIcr7toDI7RJcfMo21fyDIVxSeUp9PCJ1
+	tA5zFbx9ObxsUWlrAm+17yfhq2eKezzFvi2rHceckaFLnNlsTKig2z9z3qqSpMZTdaJO3IWEN3t
+	0oq7kSyt9Q7OUyuig6MLkn9VcvATY2DwudlJtuBOLqmg2fkD7VPiezXHzu+L/d76ffGeISjh2MG
+	jI/5XGw/ztfEbGrMV96yvMeFrcG1Vt2XF11VZFUbms8fbSGXq4WztPUz88noxMYkmtWgfAefZGb
+	S8mDXucbpjQWzKEBgMrQaXoPqwDN45y6q7lW74HkMTZ1Atq3qx9mnl70fmOqTjrZm4qfytYeuW1
+	D
+X-Google-Smtp-Source: AGHT+IF24IwkUpTRhOzSih3Uk3Xy9Ey1JQd9FnEQ32rPMPJHNrcWp9J2a3eLo2t/S0yOg0DJBYaVKg==
+X-Received: by 2002:a5d:64c4:0:b0:3a4:e502:81e1 with SMTP id ffacd0b85a97d-3b2018c241bmr2829917f8f.52.1751470056666;
+        Wed, 02 Jul 2025 08:27:36 -0700 (PDT)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.34
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 08:27:34 -0700 (PDT)
+        Wed, 02 Jul 2025 08:27:36 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 02 Jul 2025 17:26:20 +0200
-Subject: [PATCH 22/26] clk: amlogic: introduce a common pclk definition
+Date: Wed, 02 Jul 2025 17:26:21 +0200
+Subject: [PATCH 23/26] clk: amlogic: use the common pclk definition
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-meson-clk-cleanup-24-v1-22-e163c9a1fc21@baylibre.com>
+Message-Id: <20250702-meson-clk-cleanup-24-v1-23-e163c9a1fc21@baylibre.com>
 References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 In-Reply-To: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -79,238 +80,249 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10081; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=UjktwdRyVGsFy6U0LeiahV0EMG/NVFT7hHKNN0gErHQ=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/KiklSh5+OYIADxksPwX+ASBwG2qM8bNl4h
- X4PLve0xWqJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPygAKCRDm/A8cN/La
- hUMSD/wNZ6buCptDsfX0F7i6s82vCm79tI8uZ2m2yxe+zmY55pR1VfD+UyhZbtyqF6MC4NZ+mZg
- nzLJ+TUc5hG9Na6/g4bBg9dgYB3dukzQ2bR3a+L1H0aXOjwRPYgARIcXqZmmR/mtkBd84wtaEod
- Grn9PFmYwdBMStatLSZfzie0Cmm2YIS8trYBgsAvzTPgt3dUwCe0k21RRSwLLfuto0Kvi9aPhP8
- OmOgHSaz6/K+cI77ANRNX0k7D6X0cgk0Vr8w0EvB7a0LXczIACFYcLMnKLrtkUuYLyqrIzs4o2O
- 6Op41WcdO8NpDk9pa8TEqqC1YpCrMUzzgkXySVEcFjtLxvpn0nlj0EgvMAuvgUkJqTaNv3K9ooC
- yCH8gNzS3bTq0gu3XUnl+ZoWR+zsU2RojkcYUrY/R/Sqeennsg7eWVVMUDlC3i/q7/ubjFzCKEu
- xm7Ik1V5px603IYf1Gyia4js97dqW0nZDI23+DZQvof8revLhFuZTVFgD/Bn9vGvXZqCeRDR2iz
- XcYaJKkBG3vVgZLqVVIkWYr0mnrG0avnp00OBMnW26rC4JQVulPRO3fHkgzX8XX+EioG0VSzwG7
- xtzOnJFdSAHtOFWoarmtmJRoJtn+gFeP4AsVBd0dThZI2DRBxXcuiqH3DwHyRV/XNSFyPmbIiKo
- 79aXEVaYezfxGNQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9875; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=ssDaR4wz9jG+IVUW3bzaW/s+xN9zK8sGhakg0LDPY+Q=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/LBSs116AIECGxYGVG9zbAYzeZGrNC4zYz8
+ y9OqUR0oMSJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPywAKCRDm/A8cN/La
+ hapdEAC0txIhiAF5JVyixaFEUIvo6bO+P+U90UBDfyetIF0ahvgGCX9D7yRl7QeavIOaoMwag4Q
+ 3UVKrs+4527yuN15JKV9Bdv62cRJFTP8NMDRBgPOKCk4sPTB5IlUKLQt6+OmSdJB0FeSfP5y+00
+ rnU0APno9EV0jtAJx72G9wfEJfftNp6UrWDgx0Zxoa+ATLVNGENCMP2OcCuf/yh+xGcepRvOC8V
+ ikEoH59ya9+veFEAOt+EnuMx6iqecfmSGl+UmNjSgrV6EHOvuYec7GyckTw549CprnUntPlp9EW
+ /5zCr9ZgH7+pdNVXhULoQ3tlRhAJuHP0y6ejhABQxCP8BFOshv0YtLMdlLa9VKgYba7evpiINxt
+ sPgwLPVt4fUajoqpA9z3zlUW2osawSj51HSiZ1FOjZdh/nEIJ5WtWl9KbPPY5FShMhg9vZqn7de
+ 6YbSJfW5hxkOReT2LJv5QR+IJmcWOu8pjkdLbjzU2qTfyKwMOYcq0tDKhltET3RBFG2YUZmGNeD
+ kJ6biBSRt7ok0/WdQvn0V7g9iA+LYy6cg7qOL3jhlxjxjCkum8qnVNm+iYdIDhLLgaFXSviDXUY
+ eOVqItzszrIivJ6dDfkEYcVu1wX6oFwyXwr2UZELeJluQ6FQj3YDx92/dsKJLZZNIHE5fgI9LBt
+ wf8vo+kqhrOiGOQ==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-All Amlogic peripheral clocks are more or less the same. The only thing
-that differs is the parent data.
-
-Adapt the common pclk definition so it takes clk_parent_data and can be
-used by all controllers.
+Replace marcros defining pclks with the common one, reducing code
+duplication.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/a1-peripherals.c   |  4 +++-
- drivers/clk/meson/axg.c              |  4 +++-
- drivers/clk/meson/g12a.c             |  6 ++++--
- drivers/clk/meson/gxbb.c             | 26 +++++++++++++++++---------
- drivers/clk/meson/meson-clkc-utils.h | 12 ++++++------
- drivers/clk/meson/meson8b.c          | 31 ++++++++++++++++++-------------
- drivers/clk/meson/s4-peripherals.c   |  4 +++-
- 7 files changed, 54 insertions(+), 33 deletions(-)
+ drivers/clk/meson/axg-aoclk.c      | 35 +++++++++-----------------
+ drivers/clk/meson/c3-peripherals.c | 34 +++++++-------------------
+ drivers/clk/meson/g12a-aoclk.c     | 50 +++++++++++++++-----------------------
+ drivers/clk/meson/gxbb-aoclk.c     | 33 +++++++++----------------
+ 4 files changed, 51 insertions(+), 101 deletions(-)
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index a7bd3822df18f5e043e58e2d7bbcaa24345ea404..5e0d58c01405c1925a5c25ee6d0a547fd2e69911 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -1840,8 +1840,10 @@ static struct clk_regmap a1_cecb_32k_out = {
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 74c2f51424f11cc04a80a3a4918e4de0a5d11d08..902fbd34039cc06d512f1237a1e5d9050fd00b4b 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -34,30 +34,19 @@
+ #define AO_RTC_ALT_CLK_CNTL0	0x94
+ #define AO_RTC_ALT_CLK_CNTL1	0x98
+ 
+-#define AXG_AO_GATE(_name, _bit, _flags)				\
+-static struct clk_regmap axg_ao_##_name = {				\
+-	.data = &(struct clk_regmap_gate_data) {			\
+-		.offset = (AO_RTI_GEN_CNTL_REG0),			\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name =  "axg_ao_" #_name,				\
+-		.ops = &clk_regmap_gate_ops,				\
+-		.parent_data = &(const struct clk_parent_data) {	\
+-			.fw_name = "mpeg-clk",				\
+-		},							\
+-		.num_parents = 1,					\
+-		.flags = (_flags),					\
+-	},								\
+-}
++static const struct clk_parent_data axg_ao_pclk_parents = { .fw_name = "mpeg-clk" };
+ 
+-AXG_AO_GATE(remote,	0, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(i2c_master,	1, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(i2c_slave,	2, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(uart1,	3, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(uart2,	5, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(ir_blaster,	6, CLK_IGNORE_UNUSED);
+-AXG_AO_GATE(saradc,	7, CLK_IGNORE_UNUSED);
++#define AXG_AO_GATE(_name, _bit, _flags)		       \
++	MESON_PCLK(axg_ao_##_name, AO_RTI_GEN_CNTL_REG0, _bit, \
++		   &axg_ao_pclk_parents, _flags)
++
++static AXG_AO_GATE(remote,	0, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(i2c_master,	1, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(i2c_slave,	2, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(uart1,	3, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(uart2,	5, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(ir_blaster,	6, CLK_IGNORE_UNUSED);
++static AXG_AO_GATE(saradc,	7, CLK_IGNORE_UNUSED);
+ 
+ static struct clk_regmap axg_ao_cts_oscin = {
+ 	.data = &(struct clk_regmap_gate_data){
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index e9c1ef99be13d0542b8a972ceffe69c8a9977118..02c9820cd98655e57a290859b595cf09d39e5fe3 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -164,30 +164,13 @@ static struct clk_regmap c3_rtc_clk = {
  	},
  };
  
-+static const struct clk_parent_data a1_pclk_parents = { .hw = &a1_sys.hw };
+-#define C3_PCLK(_name, _reg, _bit, _fw_name, _ops, _flags)		\
+-struct clk_regmap c3_##_name = {					\
+-	.data = &(struct clk_regmap_gate_data){				\
+-		.offset = (_reg),					\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "c3_" #_name,					\
+-		.ops = _ops,						\
+-		.parent_data = &(const struct clk_parent_data) {	\
+-			.fw_name = (_fw_name),				\
+-		},							\
+-		.num_parents = 1,					\
+-		.flags = (_flags),					\
+-	},								\
+-}
++static const struct clk_parent_data c3_sys_pclk_parents = { .fw_name = "sysclk" };
+ 
+-#define C3_SYS_PCLK(_name, _reg, _bit, _flags)				\
+-	C3_PCLK(_name, _reg, _bit, "sysclk",				\
+-		&clk_regmap_gate_ops, _flags)
++#define C3_SYS_PCLK(_name, _reg, _bit, _flags) \
++	MESON_PCLK(c3_##_name, _reg, _bit, &c3_sys_pclk_parents, _flags)
+ 
+-#define C3_SYS_PCLK_RO(_name, _reg, _bit)				\
+-	C3_PCLK(_name, _reg, _bit, "sysclk",				\
+-		&clk_regmap_gate_ro_ops, 0)
++#define C3_SYS_PCLK_RO(_name, _reg, _bit) \
++	MESON_PCLK_RO(c3_##_name, _reg, _bit, &c3_sys_pclk_parents, 0)
+ 
+ static C3_SYS_PCLK(sys_reset_ctrl,	SYS_CLK_EN0_REG0, 1, 0);
+ static C3_SYS_PCLK(sys_pwr_ctrl,	SYS_CLK_EN0_REG0, 3, 0);
+@@ -290,9 +273,10 @@ static C3_SYS_PCLK(sys_vc9000e,		SYS_CLK_EN0_REG2, 2, 0);
+ static C3_SYS_PCLK(sys_pwm_mn,		SYS_CLK_EN0_REG2, 3, 0);
+ static C3_SYS_PCLK(sys_sd_emmc_b,	SYS_CLK_EN0_REG2, 4, 0);
+ 
+-#define C3_AXI_PCLK(_name, _reg, _bit, _flags)				\
+-	C3_PCLK(_name, _reg, _bit, "axiclk",				\
+-		&clk_regmap_gate_ops, _flags)
++static const struct clk_parent_data c3_axi_pclk_parents = { .fw_name = "axiclk" };
 +
- #define A1_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(a1_##_name, _reg, _bit, &a1_sys.hw, _flags)
-+	MESON_PCLK(a1_##_name, _reg, _bit, &a1_pclk_parents, _flags)
++#define C3_AXI_PCLK(_name, _reg, _bit, _flags) \
++	MESON_PCLK(c3_##_name, _reg, _bit, &c3_axi_pclk_parents, _flags)
+ 
+ /*
+  * NOTE: axi_sys_nic provides the clock to the AXI bus of the system NIC. After
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index 45e4df393feb6f916b6e035ad71e379e6e30ee99..96981da271fa1453ebbe433e36cff4409661fa6a 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -37,22 +37,10 @@
+ #define AO_RTC_ALT_CLK_CNTL0	0x94
+ #define AO_RTC_ALT_CLK_CNTL1	0x98
+ 
+-#define G12A_AO_PCLK(_name, _reg, _bit, _flags)				\
+-static struct clk_regmap g12a_ao_##_name = {				\
+-	.data = &(struct clk_regmap_gate_data) {			\
+-		.offset = (_reg),					\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name =  "g12a_ao_" #_name,				\
+-		.ops = &clk_regmap_gate_ops,				\
+-		.parent_data = &(const struct clk_parent_data) {	\
+-			.fw_name = "mpeg-clk",				\
+-		},							\
+-		.num_parents = 1,					\
+-		.flags = (_flags),					\
+-	},								\
+-}
++static const struct clk_parent_data g12a_ao_pclk_parents = { .fw_name = "mpeg-clk" };
++
++#define G12A_AO_PCLK(_name, _reg, _bit, _flags) \
++	MESON_PCLK(g12a_ao_##_name, _reg, _bit, &g12a_ao_pclk_parents, _flags)
  
  /*
   * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index d83482d5da6ddc09b3dfaf77c6898456ef9f0d39..e41d1ead28ce2e949cb65955fc9ae9dc0d788c08 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -1915,8 +1915,10 @@ static struct clk_regmap axg_gen_clk = {
- 	},
- };
+@@ -63,22 +51,22 @@ static struct clk_regmap g12a_ao_##_name = {				\
+  *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
+  *    for a particular clock.
+  */
+-G12A_AO_PCLK(ahb,	AO_CLK_GATE0,    0, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(ir_in,	AO_CLK_GATE0,    1, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(i2c_m0,	AO_CLK_GATE0,    2, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(i2c_s0,	AO_CLK_GATE0,    3, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(uart,	AO_CLK_GATE0,    4, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(prod_i2c,	AO_CLK_GATE0,    5, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(uart2,	AO_CLK_GATE0,    6, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(ir_out,	AO_CLK_GATE0,    7, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(saradc,	AO_CLK_GATE0,    8, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(ahb,	AO_CLK_GATE0,    0, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(ir_in,	AO_CLK_GATE0,    1, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(i2c_m0,	AO_CLK_GATE0,    2, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(i2c_s0,	AO_CLK_GATE0,    3, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(uart,	AO_CLK_GATE0,    4, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(prod_i2c,	AO_CLK_GATE0,    5, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(uart2,	AO_CLK_GATE0,    6, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(ir_out,	AO_CLK_GATE0,    7, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(saradc,	AO_CLK_GATE0,    8, CLK_IGNORE_UNUSED);
  
-+static const struct clk_parent_data axg_pclk_parents = { .hw = &axg_clk81.hw };
+-G12A_AO_PCLK(mailbox,	AO_CLK_GATE0_SP, 0, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(m3,	AO_CLK_GATE0_SP, 1, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(ahb_sram,	AO_CLK_GATE0_SP, 2, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(rti,	AO_CLK_GATE0_SP, 3, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(m4_fclk,	AO_CLK_GATE0_SP, 4, CLK_IGNORE_UNUSED);
+-G12A_AO_PCLK(m4_hclk,	AO_CLK_GATE0_SP, 5, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(mailbox,	AO_CLK_GATE0_SP, 0, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(m3,		AO_CLK_GATE0_SP, 1, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(ahb_sram,	AO_CLK_GATE0_SP, 2, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(rti,	AO_CLK_GATE0_SP, 3, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(m4_fclk,	AO_CLK_GATE0_SP, 4, CLK_IGNORE_UNUSED);
++static G12A_AO_PCLK(m4_hclk,	AO_CLK_GATE0_SP, 5, CLK_IGNORE_UNUSED);
+ 
+ static struct clk_regmap g12a_ao_cts_oscin = {
+ 	.data = &(struct clk_regmap_gate_data){
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 2bf45fd7fe4ba0783e736fbbb126209870985b22..c7dfb3a06cb5f70c98f65bb91b937e1b870b34fe 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -23,29 +23,18 @@
+ #define AO_RTC_ALT_CLK_CNTL0	0x94
+ #define AO_RTC_ALT_CLK_CNTL1	0x98
+ 
+-#define GXBB_AO_PCLK(_name, _bit, _flags)					\
+-static struct clk_regmap gxbb_ao_##_name = {				\
+-	.data = &(struct clk_regmap_gate_data) {			\
+-		.offset = AO_RTI_GEN_CNTL_REG0,				\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "gxbb_ao_" #_name,				\
+-		.ops = &clk_regmap_gate_ops,				\
+-		.parent_data = &(const struct clk_parent_data) {	\
+-			.fw_name = "mpeg-clk",				\
+-		},							\
+-		.num_parents = 1,					\
+-		.flags = (_flags),					\
+-	},								\
+-}
++static const struct clk_parent_data gxbb_ao_pclk_parents = { .fw_name = "mpeg-clk" };
+ 
+-GXBB_AO_PCLK(remote,		0, CLK_IGNORE_UNUSED);
+-GXBB_AO_PCLK(i2c_master,	1, CLK_IGNORE_UNUSED);
+-GXBB_AO_PCLK(i2c_slave,		2, CLK_IGNORE_UNUSED);
+-GXBB_AO_PCLK(uart1,		3, CLK_IGNORE_UNUSED);
+-GXBB_AO_PCLK(uart2,		5, CLK_IGNORE_UNUSED);
+-GXBB_AO_PCLK(ir_blaster,	6, CLK_IGNORE_UNUSED);
++#define GXBB_AO_PCLK(_name, _bit, _flags)			\
++	MESON_PCLK(gxbb_ao_##_name, AO_RTI_GEN_CNTL_REG0, _bit, \
++		   &gxbb_ao_pclk_parents, _flags)
 +
- #define AXG_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(axg_##_name, _reg, _bit, &axg_clk81.hw, _flags)
-+	MESON_PCLK(axg_##_name, _reg, _bit, &axg_pclk_parents, _flags)
++static GXBB_AO_PCLK(remote,	0, CLK_IGNORE_UNUSED);
++static GXBB_AO_PCLK(i2c_master,	1, CLK_IGNORE_UNUSED);
++static GXBB_AO_PCLK(i2c_slave,	2, CLK_IGNORE_UNUSED);
++static GXBB_AO_PCLK(uart1,	3, CLK_IGNORE_UNUSED);
++static GXBB_AO_PCLK(uart2,	5, CLK_IGNORE_UNUSED);
++static GXBB_AO_PCLK(ir_blaster,	6, CLK_IGNORE_UNUSED);
  
- /*
-  * Everything Else (EE) domain gates
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 7a737bfde4e62ec3d18db570e62cc77fb415676c..edd70b1d5df8a0581ef930d599e633171434e34e 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4384,11 +4384,13 @@ static struct clk_regmap sm1_nna_core_clk = {
- 	},
- };
- 
-+static const struct clk_parent_data g12a_pclk_parents = { .hw = &g12a_clk81.hw };
-+
- #define G12A_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(_name, _reg, _bit, &g12a_clk81.hw, _flags)
-+	MESON_PCLK(_name, _reg, _bit, &g12a_pclk_parents, _flags)
- 
- #define G12A_PCLK_RO(_name, _reg, _bit, _flags) \
--	MESON_PCLK_RO(_name, _reg, _bit, &g12a_clk81.hw, _flags)
-+	MESON_PCLK_RO(_name, _reg, _bit, &g12a_pclk_parents, _flags)
- 
- /*
-  * Everything Else (EE) domain gates
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index e2a88dc29901fe4617427907b382e878ae6ff7ae..4c253d001be9c0604fc87bb3d6ea5241b489948b 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -2721,8 +2721,10 @@ static struct clk_regmap gxbb_gen_clk = {
- 	},
- };
- 
-+static const struct clk_parent_data gxbb_pclk_parents = { .hw = &gxbb_clk81.hw };
-+
- #define GXBB_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(_name, _reg, _bit, &gxbb_clk81.hw, _flags)
-+	MESON_PCLK(_name, _reg, _bit, &gxbb_pclk_parents, _flags)
- 
- /*
-  * Everything Else (EE) domain gates
-@@ -2817,14 +2819,20 @@ static GXBB_PCLK(gxbb_ao_iface,		HHI_GCLK_AO, 3, CLK_IGNORE_UNUSED);
- static GXBB_PCLK(gxbb_ao_i2c,		HHI_GCLK_AO, 4, CLK_IGNORE_UNUSED);
- 
- /* AIU gates */
--static MESON_PCLK(gxbb_aiu_glue,	HHI_GCLK_MPEG1,  6, &gxbb_aiu.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_iec958,		HHI_GCLK_MPEG1,  7, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_i2s_out,		HHI_GCLK_MPEG1,  8, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_amclk,		HHI_GCLK_MPEG1,  9, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_aififo2,		HHI_GCLK_MPEG1, 10, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_mixer,		HHI_GCLK_MPEG1, 11, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_mixer_iface,	HHI_GCLK_MPEG1, 12, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
--static MESON_PCLK(gxbb_adc,		HHI_GCLK_MPEG1, 13, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static const struct clk_parent_data gxbb_aiu_glue_parents = { .hw = &gxbb_aiu.hw };
-+static MESON_PCLK(gxbb_aiu_glue, HHI_GCLK_MPEG1,  6, &gxbb_aiu_glue_parents, CLK_IGNORE_UNUSED);
-+
-+static const struct clk_parent_data gxbb_aiu_pclk_parents = { .hw = &gxbb_aiu_glue.hw };
-+#define GXBB_AIU_PCLK(_name, _bit, _flags) \
-+	MESON_PCLK(_name, HHI_GCLK_MPEG1, _bit, &gxbb_aiu_pclk_parents, _flags)
-+
-+static GXBB_AIU_PCLK(gxbb_iec958,	 7, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_i2s_out,	 8, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_amclk,	 9, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_aififo2,	10, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_mixer,	11, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_mixer_iface,	12, CLK_IGNORE_UNUSED);
-+static GXBB_AIU_PCLK(gxbb_adc,		13, CLK_IGNORE_UNUSED);
- 
- /* Array of all clocks provided by this provider */
- 
-diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
-index 03e38992c4c73ff4ee24f0fa99b7c34134376992..95d9f85f7ca22f63a16f8665d6f7a250b21bfdb8 100644
---- a/drivers/clk/meson/meson-clkc-utils.h
-+++ b/drivers/clk/meson/meson-clkc-utils.h
-@@ -27,7 +27,7 @@ struct meson_clkc_data {
- int meson_clkc_syscon_probe(struct platform_device *pdev);
- int meson_clkc_mmio_probe(struct platform_device *pdev);
- 
--#define __MESON_PCLK(_name, _reg, _bit, _ops, _pname, _flags)		\
-+#define __MESON_PCLK(_name, _reg, _bit, _ops, _pdata, _flags)		\
- struct clk_regmap _name = {						\
- 	.data = &(struct clk_regmap_gate_data) {			\
- 		.offset = (_reg),					\
-@@ -36,16 +36,16 @@ struct clk_regmap _name = {						\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name,						\
- 		.ops = _ops,						\
--		.parent_hws = (const struct clk_hw *[]) { _pname },	\
-+		.parent_data = (_pdata),				\
- 		.num_parents = 1,					\
- 		.flags = (_flags),					\
- 	},								\
- }
- 
--#define MESON_PCLK(_name, _reg, _bit, _pname, _flags)			\
--	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ops, _pname, _flags)
-+#define MESON_PCLK(_name, _reg, _bit, _pdata, _flags)			\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ops, _pdata, _flags)
- 
--#define MESON_PCLK_RO(_name, _reg, _bit, _pname, _flags)		\
--	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname, _flags)
-+#define MESON_PCLK_RO(_name, _reg, _bit, _pdata, _flags)		\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pdata, _flags)
- 
- #endif
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index a16ebbbf664cdd56b2c74db4f88a8d0a22d2ddc3..95d0b9cbd90404ee1c7ec551a2748665b4ef9ccd 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -2701,8 +2701,10 @@ static struct clk_regmap meson8b_cts_i958 = {
- 	},
- };
- 
-+static const struct clk_parent_data meson8b_pclk_parents = { .hw = &meson8b_clk81.hw };
-+
- #define MESON8B_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(_name, _reg, _bit, &meson8b_clk81.hw, _flags)
-+	MESON_PCLK(_name, _reg, _bit, &meson8b_pclk_parents, _flags)
- 
- /*
-  * Everything Else (EE) domain gates
-@@ -2785,18 +2787,21 @@ static MESON8B_PCLK(meson8b_vclk2_other,	HHI_GCLK_OTHER, 26, CLK_IGNORE_UNUSED);
- static MESON8B_PCLK(meson8b_edp,		HHI_GCLK_OTHER, 31, CLK_IGNORE_UNUSED);
- 
- /* AIU gates */
--static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw, CLK_IGNORE_UNUSED);
--
--#define MESON_AIU_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw, _flags)
--
--static MESON_AIU_PCLK(meson8b_iec958,		HHI_GCLK_MPEG1,  7, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_i2s_out,		HHI_GCLK_MPEG1,  8, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_amclk,		HHI_GCLK_MPEG1,  9, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_aififo2,		HHI_GCLK_MPEG1, 10, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_mixer,		HHI_GCLK_MPEG1, 11, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_mixer_iface,	HHI_GCLK_MPEG1, 12, CLK_IGNORE_UNUSED);
--static MESON_AIU_PCLK(meson8b_adc,		HHI_GCLK_MPEG1, 13, CLK_IGNORE_UNUSED);
-+static const struct clk_parent_data meson8b_aiu_glue_parents = { .hw = &meson8b_aiu.hw };
-+static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6,
-+		  &meson8b_aiu_glue_parents, CLK_IGNORE_UNUSED);
-+
-+static const struct clk_parent_data meson8b_aiu_pclk_parents = { .hw = &meson8b_aiu_glue.hw };
-+#define MESON8B_AIU_PCLK(_name, _bit, _flags) \
-+	MESON_PCLK(_name, HHI_GCLK_MPEG1, _bit, &meson8b_aiu_pclk_parents, _flags)
-+
-+static MESON8B_AIU_PCLK(meson8b_iec958,		  7, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_i2s_out,	  8, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_amclk,		  9, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_aififo2,	 10, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_mixer,		 11, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_mixer_iface,	 12, CLK_IGNORE_UNUSED);
-+static MESON8B_AIU_PCLK(meson8b_adc,		 13, CLK_IGNORE_UNUSED);
- 
- /* Always On (AO) domain gates */
- 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 23b51d84d8de40aa540dbc6dd5db9fb627e579de..3e048e645b080f9e5982ef908e3f9c43578a0b5f 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3165,8 +3165,10 @@ static struct clk_regmap s4_gen_clk = {
- 	},
- };
- 
-+static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
-+
- #define S4_PCLK(_name, _reg, _bit, _flags) \
--	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw, _flags)
-+	MESON_PCLK(_name, _reg, _bit, &s4_pclk_parents, _flags)
- 
- /*
-  * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
+ static struct clk_regmap gxbb_ao_cts_oscin = {
+ 	.data = &(struct clk_regmap_gate_data){
 
 -- 
 2.47.2
