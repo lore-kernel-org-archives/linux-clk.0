@@ -1,140 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1DA2741C0;
-	Wed,  2 Jul 2025 13:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3D9265293;
+	Wed,  2 Jul 2025 13:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462173; cv=none; b=klB6XNP+3XOb/BpmbEhHhrMeB6B4/c6DFMg+vgKkMc9xqXVB3HHWVWb63hKkgYCpHVTVR7bkHJdq8gz6ODXdY0KUHeP3ACPEtolZFnEXapmR9LlrhLKGdcn4+mAzCMxAGogzpyKU4oHXPnze+8VrZh/uFn/Md0cUAgTQHsIP7hI=
+	t=1751463451; cv=none; b=sO7uzCQ9JB9hq8hCVXV/tU8zUS8LHVh68limAE2NgcW9g5XmgDMxnUYoLt4rpvs8k+K7H9IoDFaicsLzM1fBt/p1np1hhodOHUqdIvYwy4bbyipnoTgWNSfGldDroIQBYjZHT7/MT32e94NrlP2ezjWfVElReptXGKtqTqSL1To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462173; c=relaxed/simple;
-	bh=GdEMIMP/ZD2NlQMB7UwdH4vkioz/Fr9+gYnj68JSXJE=;
+	s=arc-20240116; t=1751463451; c=relaxed/simple;
+	bh=paLD67x1FzaRwqR/xpvFzQ8Fc9DlFlVSRz8qIEb5eEc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HRmmO+3DRYIw+95Be5ritqnFBF/UAiZW+D3N3rXuBlG+slYnFNzCveO5/02dFsYe50pziF5x0wzeRKITQnhDFHeHNrK0sovdjfW3BBAkEbhPJLsQs+ynPA57p2eJ1KHcdWfG3HWIa/J3TwBkg/GiRoIFJu84f6J2bdDBeNbn2bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8gk/D1N; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8gk/D1N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33346C4CEF1;
-	Wed,  2 Jul 2025 13:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751462173;
-	bh=GdEMIMP/ZD2NlQMB7UwdH4vkioz/Fr9+gYnj68JSXJE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K8gk/D1N97NJRGD8yl+gE3NWFQ+5KuP9HYW2FqRyQ/4JTJEPBM8X/N982uJJ6EzMR
-	 VsYVfyeUXgaaFLZYStMMQjnubPBkNAnDKUWGWHn9cVf2eQkAeknknYNqnZUPYNNYRs
-	 WIkGwK8fpIZ7R1NHzL//sWRtHihvtdClFEPPnuAPf1PqwWK6XtQu0SVtpUo8vmDLWG
-	 kS62HZt1jSyObot7BUj2ILorYHb7/RMCH9MqByKhQSIF2WGVnxDTl94yP52JgglKFz
-	 jfA1dqr6x0/RSi7JDqTzDdcqvlJ+u7ExRK1D37Ec/MFkGavGNzb/QLw/eIQtNa7dYY
-	 xECWnyEfd/wNQ==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-6118b000506so1630266eaf.0;
-        Wed, 02 Jul 2025 06:16:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDs5D46GfyjnLOrN+I1ctIxWwASMv+z7qa0e7z0ifbcg6i2wwYD+GCIsVNir8xLF6EG+BURhIXuU3jlQ==@vger.kernel.org, AJvYcCWi4ydMWnI46TPvr97ZoqxKYLjuJaEaE63Y+bFAaWjEyZgmuw9LXBt1O82PsyzWmm1RnlUPqYtfNNNms8Cf@vger.kernel.org, AJvYcCX5Bxg6kJBYUt68W2XVrtPLx+duycWI6UZdxGL7hrHHyAswQ7DNamIjOLPHBbUE5RraLbAthpCDWLFt@vger.kernel.org, AJvYcCXcr3V3LRXlxUItxvDUbjb/+c0yT0ayxsiygVuT3T89TUPCUEnHnRWX5+ePjFEKMHuXwxXvAsu66FWA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdwDYJ7lNQZax+QSsBLF72GKKtjwZz1GVdQFA6rzpgHF5FFvrB
-	+OJnDgm1S/4QIA+hZQEYB/058A3+W03SGTQoK2W1xCOM63Z7TvXo46LUravygMocU3NfU4obP+P
-	e2KH5YRNZY7jfgHagP6QwLGq3gUWU770=
-X-Google-Smtp-Source: AGHT+IExuMqttOKIUYDi+vcXqSuKCbKvlhqQnT1REYwcx9EA5ftg4W7ZWLLFZPOL0rfqf8a4k8cL0HPmiaY5KvT1aRo=
-X-Received: by 2002:a05:6820:1e0d:b0:611:af6f:ee77 with SMTP id
- 006d021491bc7-612010dfe12mr1692210eaf.8.1751462172310; Wed, 02 Jul 2025
- 06:16:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=cluka6Z0cWBLIHN7sG6a+RsERmtklCYFWKcv5HVMPxhYVKW/HQoBg+pupAQjA4WDLh9F+MsEnKEJF+stCRbyFY4IxsCKsZXVmHy+rfM8HCG/a2UVu7ZcYxEG+noYPcc41EdT3iiA62oxDEep0Sr3o1eix+9yhS6QcoKU0PWTGp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4e7e5b6207bso1258771137.2;
+        Wed, 02 Jul 2025 06:37:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751463447; x=1752068247;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HPDxw2ki8ShPYUI34Gu+fJWCqybrGWaID95/meCOhV8=;
+        b=h1xrc8fgwQO/r9sfveQBwvsq4rUazyztzKCmX4JDa7RZdcFjMPWxm90NrLQZqJPlCK
+         JjhHo+5U8ahc6ckb//JVqg8bTbmcDQTZLNlvL0gjCmjl4sfXpAputrTjlWeZc/fjHyoV
+         jtr7xgN8KEKh7JOgovpLphAc761k4hmYCRamW3YmDzgyWeItp1pty6BQvPzsKntsLKO5
+         K6xI/GvaW01Nzf3NHAOVzqP+Yr0+1xz75+8Y3SlJbqGxzLZ4b0jdkrj+xXMcRYixuD6W
+         1bNfvHZOcSu0kdItZnj6mztseit8PymEz6tpWXopIOO+8Yde3t0IFWW+tPmoW55r8fbz
+         65zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0gnVubyS0VdKUJv+xAfuKZpUnwFk749sqP6YVPUyea7TDbuCVe64ml3spHCst3OG/uNDkjT9XDOq0@vger.kernel.org, AJvYcCVpVdLOg36CqzgYPgZJ7wM+ccvCopw5v8GZmzlKYuUmKFeREc8YKoKn/rrXRZuGNPgSV6y31JclWgzzSrxj@vger.kernel.org, AJvYcCVrrm5oD4zUoGmDtZqxTzpgl1dD7mK63r+/wDgKwvdrsBsEJPotFChvUE/2HfCXAPPsb2JxE2Upsvln@vger.kernel.org, AJvYcCWzyLjAEeeqFRxxBA8K+d12VGOZJ4VcZz1pkJRd7vdjphwmilk6Retg6N8eEzTRzlJp7xn81FsuWO7v8sSiVC5x7g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMar2o/KOeD8DJHifKvjIQHxKurqe20lSB2u7X3Lla9tfyVHdv
+	xgJ5MJbXAQdGK3R7L8h2k/eTEuL9AsLQgQQh6bbBVwx/myAyIHocPhwiU9p/B57N
+X-Gm-Gg: ASbGncu7v+VtPmbtxLIf8nFtR6Bb/cOo2ycyZGdpKvX+5XxCUTHK9m9qFeKOTHzN3pS
+	RXSiBuZzzkKXDO+KnqbOavaxndCqEOvligU08wxSt9VNbdQaOwDNGQrDWjPelpVYTskPjlxk45y
+	gIMm5tIB2a/WIk0s4+TMUOALfa+hAurMGtEO7xSQqVwzZqphJ0W1kxb/aZfu0QQgTDpghmtUhnL
+	KNp1MbVBx9KZnlvhtoO4TbWYuw5sDLUJhBU/X67P1QC0u2qZGaP+YYlHmHclFFAB7MMxv2RP6AD
+	GcY5pVT66OMwNl4dKsfHF17t3UTrxYhvitObs/F023umYqL5BPr6/sZBRRlaJhkLTm/MztsAdsx
+	4LaOoMFifm1VZQUQHp9FOCd3G
+X-Google-Smtp-Source: AGHT+IGpYnoOwBAUW76Ioy85tZfB46PELnL/75aSLlcKuL2VHEDnMgqkxi1d/jEn3dk3KifF31XNXg==
+X-Received: by 2002:a05:6102:d92:b0:4e6:ddd0:96f7 with SMTP id ada2fe7eead31-4f1611d69e5mr1227194137.13.1751463447142;
+        Wed, 02 Jul 2025 06:37:27 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-884d1c377e4sm2442883241.12.2025.07.02.06.37.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 06:37:26 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8815049d0a8so1105148241.2;
+        Wed, 02 Jul 2025 06:37:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCViAaFvbCHF2jsTMTxe+GkK/xUx62r9lxqDgG3ZeuYnsNjO3qFXjakDwD6eWC+iFa7vlD9SF1awD2HR@vger.kernel.org, AJvYcCWB+q5lMBK+T2IWvtKFwmyY7kb/8yt6Vi9H7BjT+UuSu1G6g0hKddaDOyBT5M3zEyaV7RiCRa29cfvi@vger.kernel.org, AJvYcCXK2gKP3jCa4Aiq5/ZToZPx01BNhQvGQbIeT4Qn/QGWPmJhfHLJCpYr5OTCkOwLD7gY4WaWsyIdHpg/CxZGvzn4qBo=@vger.kernel.org, AJvYcCXUgsI7PVBETUplGlLWjYTUeZwsQe33x8c6qiP42imIxkyVn8mG/NVdSBQO5CjlS1OKFw4KkkmAeUtrhW8d@vger.kernel.org
+X-Received: by 2002:a05:6102:cd2:b0:4e5:ac99:e466 with SMTP id
+ ada2fe7eead31-4f16123a957mr1134312137.18.1751463446206; Wed, 02 Jul 2025
+ 06:37:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
- <20250702051345.1460497-16-apatel@ventanamicro.com> <CAJZ5v0iYYuK2GF2Pg3NiO4vLFzoYm6Q3Dnk5O2DkMJm1R3qSfQ@mail.gmail.com>
- <aGUaFX9WgTW1I_ZO@smile.fi.intel.com> <CAJZ5v0h=qzS67Xu6NUfN_LmQUmKF9=AtkaRrTx81td0m-mRNNg@mail.gmail.com>
- <aGUsg121lenWHL-w@smile.fi.intel.com>
-In-Reply-To: <aGUsg121lenWHL-w@smile.fi.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 2 Jul 2025 15:16:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ja5eUiAn7Ht5+-7-b40JtzsCqmztN9WdtLY=kJ7vbtQw@mail.gmail.com>
-X-Gm-Features: Ac12FXwc4zqpJNNErqBqjCI2hKLQ3Xi8ekft38n4p6qLhM2Gh3XrHd9uynY6pvk
-Message-ID: <CAJZ5v0ja5eUiAn7Ht5+-7-b40JtzsCqmztN9WdtLY=kJ7vbtQw@mail.gmail.com>
-Subject: Re: [PATCH v7 15/24] ACPI: property: Add support for cells property
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Anup Patel <apatel@ventanamicro.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+References: <20250625141705.151383-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250625141705.151383-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250625141705.151383-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Jul 2025 15:37:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXbr5Rb7SNzYTQz+rBNuRrLCC4mf+XauTFA8FArFZzfNQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyffxCRE32g6fggFgUAuaDMG4TZHuxf_OzpBlyzNjf5XBDeWtqxbEOjIos
+Message-ID: <CAMuHMdXbr5Rb7SNzYTQz+rBNuRrLCC4mf+XauTFA8FArFZzfNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas,r9a09g077/87: Add
+ SDHI_CLKHS clock ID
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 2, 2025 at 2:56=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Jul 02, 2025 at 02:39:30PM +0200, Rafael J. Wysocki wrote:
-> > On Wed, Jul 2, 2025 at 1:38=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Wed, Jul 02, 2025 at 12:20:55PM +0200, Rafael J. Wysocki wrote:
-> > > > On Wed, Jul 2, 2025 at 7:16=E2=80=AFAM Anup Patel <apatel@ventanami=
-cro.com> wrote:
->
-> ...
->
-> > > > >  static int acpi_fwnode_get_reference_args(const struct fwnode_ha=
-ndle *fwnode,
-> > > > >                                           const char *propname, c=
-onst char *nargs_prop,
-> > > > >                                           unsigned int args_count=
-, unsigned int index,
-> > >
-> > > > >         const struct acpi_device_data *data;
-> > > > >         struct fwnode_handle *ref_fwnode;
-> > > > >         struct acpi_device *device;
-> > > > > +       unsigned int nargs_count;
-> > > > >         int ret, idx =3D 0;
-> > >
-> > > > > +                       nargs_count =3D acpi_fwnode_get_args_coun=
-t(device, nargs_prop);
-> > > >
-> > > > I think it should work the same way as it used to for the callers t=
-hat
-> > > > pass args_count, so maybe
-> > > >
-> > > > if (!args_count)
-> > > >         args_count =3D acpi_fwnode_get_args_count(device, nargs_pro=
-p);
-> > >
-> > > But this is different variable.
-> >
-> > Of course it is different.  It is an acpi_fwnode_get_reference_args() p=
-arameter.
-> >
-> > > > >                         element++;
-> > > > > -
-> > > > >                         ret =3D acpi_get_ref_args(idx =3D=3D inde=
-x ? args : NULL,
-> > > > >                                                 acpi_fwnode_handl=
-e(device),
-> > > > > -                                               &element, end, ar=
-gs_count);
-> > > > > +                                               &element, end,
-> > > > > +                                               nargs_count ? nar=
-gs_count : args_count);
-> > > >
-> > > > And this change would not be necessary?
-> > >
-> > > This is not the same check as proposed above.
-> >
-> > No, it is not.
-> >
-> > It just makes the function work the same way it did before the change
-> > for the callers who passed nozero args_count and so they might be
-> > forgiven expecting that it would be taken into account.
->
-> I see your point now. But do we have such a user? I dunno.
+Hi Prabhakar,
 
-Well, __acpi_node_get_property_reference() gets called in a couple of place=
-s.
+On Wed, 25 Jun 2025 at 16:17, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the SDHI high-speed clock (SDHI_CLKHS) definition for the Renesas
+> RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs. SDHI_CLKHS is used as
+> a core clock for the SDHI IP and operates at 800MHz.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Thanks for your patch!
+
+>  include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h | 1 +
+>  include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h | 1 +
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will split, and queue in renesas-r9a09g077-dt-binding-defs resp.
+renesas-r9a09g087-dt-binding-defs, to be shared by renesas-clk and
+renesas-devel.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
