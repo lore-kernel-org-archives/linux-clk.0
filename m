@@ -1,48 +1,65 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4E5246781;
-	Wed,  2 Jul 2025 10:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0342264A76
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 10:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751452434; cv=none; b=Z8jVb0fj6ByY97qZd1EMMKmUhxXDNd8ty7y//qvOnTAEuUrGSzksocJaImkx97YJjSIY96Sjz7T0PtOM0u+f40p+z/c08epzoNCHDTRGQKLKJhAGQ+bfYZWGS2zMdgx6SZvtcYZnn8Ch4W9WSYksJMMCJ+PrJG+a2zW2kBGGYg4=
+	t=1751453775; cv=none; b=tVdmeG45n+QMCXrknuw5gu40MxC+/NmCy2RiSYz1FS3piW/1ySMqwQNMIJ4/RXIfvDT1x+IZNTnsgmE7yWCAaeIZcsAnIGeP4IShg8XmE/OeO0/7dZfyalzzyc/qFmcKNzXmqfume4I68sQXczlSHkX1CvY2EPPYDUOcR7QjxO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751452434; c=relaxed/simple;
-	bh=Zr4lURcAt0rx9IueClgNCAvtqGi3g4wuS+sj1uYDWIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oOtuKmLK6v2j04LjssOSkpdkQ0YZS1cRe5FF0b5yoigfnJ4kb1sMzDQ+EHIpGjRpaZQc+8F4WSY4YR0oRU4OwiKzOpLRHwzCGZvyu4le8iB6bI0ECz3nYYwz+rrisTovlCD524m/q15CGl2aVcxeY5A50E6rkcuw1wc7IMga14M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RQ0+mZIp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1751453775; c=relaxed/simple;
+	bh=yz5YFA4oK6aUwp5EM6RoGwk2x3CcGuJZ9jnhzV4Yj8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UFWfhbTWw+mJbDch+9hnNvs4DEn9rrbJuH8eaWPHZFUSNpIGVD7fCG54HYRsSxtwUVyWIXpXRc3VIb0TdbpZKBfytk/oS+lKbxppeb3dObNzYCKWFx1RhoW9ndFn0voka4bAIOKAUzc7ss3Q448E4IvN8x2+f6gLp8NKGlq1BRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=avtyLTtJ; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RQ0+mZIp"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56235evB020939;
-	Wed, 2 Jul 2025 10:33:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tyuuEW55huNUHGYc+9oBljKgGuuKmVR8um5xHUVVKiE=; b=RQ0+mZIpNSh3Iz8A
-	RhHHe/+V1EIUnRYRbCEqxvllc8tpS6BrYL8QMLhA00tqScPxK2S61Ajr5QW7IyHn
-	69UqGMyj1bg7FxZXrArNwefXmRzc/8eEhUkmA6Yo5ibCoi4ScJ0tUqm97HP3yvkX
-	sKP6xOJASdNFBdRp+pUSu9YELcP0ceE/Mpup9XSxnNB4QNvCnfjce4P8Lz6K8dX6
-	LNVMWDwmrOLcztG1rROXp3+9ncHuXE+94fWNOCJyExgWIG3g/sZq8FKGoO09Y984
-	1fJgj7HbYAxmP3doQUwjBWCjneo+ENIponHFK9sT3jLUYl4iMX8AGUwZLfyim+F4
-	EE3Mmg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn2xt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 10:33:40 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 562AXdZl022880
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Jul 2025 10:33:39 GMT
-Received: from [10.253.36.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
- 2025 03:33:33 -0700
-Message-ID: <ade0437b-3c23-4174-b4c5-6c90037abf14@quicinc.com>
-Date: Wed, 2 Jul 2025 18:33:31 +0800
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="avtyLTtJ"
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-86efcef9194so240593839f.0
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 03:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1751453773; x=1752058573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eVakVqHDVi/nEEBTUBbK2KldnbMSaWZ1ZSLAJh1Ij5o=;
+        b=avtyLTtJ7LMiuKKzhuylDVlyQY6V2TLEv1el011c0IpUdSs8kvL6eoi2xpYuCdDOXE
+         x2qAnkPzctJiiv8Ip0DBvlIl5GZFKNsOmWWZ2ZgUId0pmpqq4KkTNYQU+tgKXkCc3cKr
+         7Jk3l4twwf26lcEcvyNzJVL3ups9SlrMI1NvnkJWL7g0qTrnmX159DZbzPSrxQFhgWx/
+         ++O4WTsxtfGikX9ImQILCodeFMvFBwsbAfsJEoQX8ZJ1iioIg+dQmjidUojGWFRye7QZ
+         9MdLKCRzmKJ2/WASq5/p1QuE/FA/D5lyCmG07Euuh4JSeA/gQWrbwq+8mP11uYaNzvG4
+         DpzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751453773; x=1752058573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVakVqHDVi/nEEBTUBbK2KldnbMSaWZ1ZSLAJh1Ij5o=;
+        b=n3qSHiaUykZfzqypKkQOvUh/YQtCCh/ufyo82+OI2tnuKMRHaKQHJDWIVbeOX9kIT/
+         0pLnOzfJshRT8n5c+qzk0RxwwbCcE8QoeArG4kD2CllIS2dkUVKczUJIsZmwG1I2GtuB
+         AU4j3eMbiDikOWniDxIVwhGaj8p/oReMgbEBsQVap6EZS08A2D0mTlr6b9h4cjqGIENr
+         4eEpcIAfdRfo4DOo1g5oXuDEe05H/8XIaaVhgRsl4vFn7+0FKGI0VxDCj1+CsMJi6bkW
+         118MGzujBI5h35msdMfW6ecflXv0Q47p3J+3VXtENVHiYJMt3ZhAmDzLYbL5RfL6HRHJ
+         MwOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZcb9+c1SDmsiUXq6PkXHg/Se7qfJ/Xg+PQS2OQOeEu6Hvh/gjud2eh4/M1vwYKcTOMZ1Uig4FtXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywedz4gK+v/ut8LTr6LbGmIWJNO/VRPQ+6Tqcfq0sarEM8TC9nd
+	rC2KtqK3UoQsClHEpOLod9Fafjrrp3D39MCIRbHWL2II+DWJJet1LUUI1QY6G4Vp3Sk=
+X-Gm-Gg: ASbGncv39NfdnYZqW8r/vGgNusGC3a8HGO2CQRwbBy2kao1KdCNOqy+bG/fDfqSybcY
+	KJj5WQtN2mIjsSj6O1aMkx1enruLveLU1fPgQNwW4YfrFVGqJ8siMsyL1BTGZQ8KEDiZ4y8w0BM
+	UUGplAO2uRqD6peYXs2m59+V9NzLCP1thhjEgg9UK792/KaeCMNYl+pX7g5zTmgOrG2ISBbzcko
+	8IlHEmoxWqXV5qeDZiY7vyrVqagK1agQG/zqwaxoleYZjxO8kLO7ftL4KNK5SKp81jL80CpEJq0
+	ZxW/FjyVohgvRSScjCIzbBJOYYGEzuk7t07MHERmOFvayLYu+mw8N2QZmVthzTckVHSkEbVKt2V
+	E4YEill51mCObjZlHWu4G7wImnQ==
+X-Google-Smtp-Source: AGHT+IH8nNKJXNfh+T2vOZJlqIemJT4UY7Zp92Fh4jhfNOQw5R6U/NR89uGXnsLbbnrSsXhZHL8VPA==
+X-Received: by 2002:a5e:c641:0:b0:86c:f0d9:553 with SMTP id ca18e2360f4ac-876c6a0c90cmr288271039f.5.1751453772830;
+        Wed, 02 Jul 2025 03:56:12 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50204aa8a44sm2926145173.108.2025.07.02.03.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 03:56:12 -0700 (PDT)
+Message-ID: <1a88fde8-7fc6-4f55-b25b-cd67b72b73d5@riscstar.com>
+Date: Wed, 2 Jul 2025 05:56:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,170 +67,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] dt-bindings: clock: qcom: Add NSS clock controller
- for IPQ5424 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>
-References: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
- <20250627-qcom_ipq5424_nsscc-v2-5-8d392f65102a@quicinc.com>
- <20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin>
+Subject: Re: [PATCH v11 0/6] reset: spacemit: add K1 reset support
+To: Philipp Zabel <p.zabel@pengutronix.de>, Yixun Lan <dlan@gentoo.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, heylenay@4d2.org,
+ inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250613011139.1201702-1-elder@riscstar.com>
+ <20250618111737-GYA157089@gentoo> <20250702061717-GYA304216@gentoo>
+ <0580d4e254705be3765be168ce17c8a1c2e12f8f.camel@pengutronix.de>
 Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA4NSBTYWx0ZWRfX8ic95YwncjRA
- R4a/ZplQ4CcTmnpeSbBXjN38NorRfGm7Ty1Ot++Z+mRMrbEH9rm4bVxtycdNHSp9qs2NibUFiba
- kjc7NUW4FXBBu43LDB5pY51vR2GQA/dKl1FJsaseUplIdTgdZyMO3i7dTNjVgVkzjbfCIjE7Rl/
- 3Ix9k4evJes1nmfqFZNw0lcj84C4dO0tuPZtHAFUUDLTXcJLlNRPYb7WGY+ysmlTfLV0c+sdl8v
- 4YuekVKu7AqhaSS/CRFirak/41IDSoojDw/IqV/BmHWeTxChg4hDHYl/pW4QSyKyskU5l1B/EB3
- PF/ecM+oIhCfBcFQ7C35HXitpcR1HEUniMkTIPhtm+jEGrtmOWnBbEqGp9WeFC19yOHfYVQkzxc
- aUItSPNWmB+JABtSCmH/8jMDuGsSFA+COQfNGsMpKt2sxLzyGvq+yv1AF81Y2K2MGL2nXb7Z
-X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=68650b04 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gEfo2CItAAAA:8
- a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=l8XhYvs3ogmA2MLIGYEA:9 a=QEXdDO2ut3YA:10
- a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ZJFKHmu4BoQDsqmwOJcsqj0rTrgYuXIn
-X-Proofpoint-GUID: ZJFKHmu4BoQDsqmwOJcsqj0rTrgYuXIn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507020085
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <0580d4e254705be3765be168ce17c8a1c2e12f8f.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 7/1/2025 4:22 PM, Krzysztof Kozlowski wrote:
-> On Fri, Jun 27, 2025 at 08:09:21PM +0800, Luo Jie wrote:
->> NSS clock controller provides the clocks and resets to the networking
->> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
->> devices.
+On 7/2/25 5:14 AM, Philipp Zabel wrote:
+> On Mi, 2025-07-02 at 06:17 +0000, Yixun Lan wrote:
+>> Hi Philipp,
 >>
->> Add the compatible "qcom,ipq5424-nsscc" support based on the current
->> IPQ9574 NSS clock controller DT binding file. ICC clocks are always
->> provided by the NSS clock controller of IPQ9574 and IPQ5424, so add
->> interconnect-cells as required DT property.
+>> On 11:17 Wed 18 Jun     , Yixun Lan wrote:
+>>> Hi ALL,
+>>>    As the reset driver going through several review cycles,
+>>> it becomes quite calm down now, I'd like to request to merge
+>>> it into v6.17, because various drivers (pwm, emac..) will depend
+>>> on it, even in the worst case if there is problem, I believe Alex
+>>> will help to address..
+>>>
+>>> Hi Philipp,
+>>>    I'd like to query if you willing to take the reset driver -
+>>> patch [5/6] through the reset tree? It sounds more intuitive,
+>>> which also will avoid potential conflicts with Kconfig/Makefile..
+>>>    I've created a prerequisite immutable tag which could be
+>>> shared between clock and reset subsytem. It's tag -
+>>> spacemit-reset-deps-for-6.17 at SpacemiT's SoC tree [1], which
+>>> effectively are patches [1-4] of this series.
+>>> But, to make your life easy, I've also applied patch [5/6] at tag
+>>> spacemit-reset-drv-for-6.17 [2] which has a small macro adjustment
+>>> requested by Alex at [3]
+>>>    Let me know what you think of this, thanks
+>>>
+>> Just want to ping this, what do you want from my side to proceed?
 >>
->> Also add master/slave ids for IPQ5424 networking interfaces, which is
->> used by nss-ipq5424 driver for providing interconnect services using
->> icc-clk framework.
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 70 +++++++++++++++++++---
->>   include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++
->>   include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 ++++
->>   include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 ++++++++++++++
->>   4 files changed, 186 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->> index 17252b6ea3be..0029a148a397 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->> @@ -4,7 +4,7 @@
->>   $id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
->>   $schema: http://devicetree.org/meta-schemas/core.yaml#
->>   
->> -title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
->> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574 and IPQ5424
->>   
->>   maintainers:
->>     - Bjorn Andersson <andersson@kernel.org>
->> @@ -12,21 +12,29 @@ maintainers:
->>   
->>   description: |
->>     Qualcomm networking sub system clock control module provides the clocks,
->> -  resets on IPQ9574
->> +  resets on IPQ9574 and IPQ5424
->>   
->> -  See also::
->> +  See also:
->> +    include/dt-bindings/clock/qcom,ipq5424-nsscc.h
->>       include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->> +    include/dt-bindings/reset/qcom,ipq5424-nsscc.h
->>       include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>   
->>   properties:
->>     compatible:
->> -    const: qcom,ipq9574-nsscc
->> +    enum:
->> +      - qcom,ipq5424-nsscc
->> +      - qcom,ipq9574-nsscc
->>   
->>     clocks:
->>       items:
->>         - description: Board XO source
->> -      - description: CMN_PLL NSS 1200MHz (Bias PLL cc) clock source
->> -      - description: CMN_PLL PPE 353MHz (Bias PLL ubi nc) clock source
->> +      - description: CMN_PLL NSS (Bias PLL cc) clock source. This clock rate
->> +          can vary for different IPQ SoCs. For example, it is 1200 MHz on the
->> +          IPQ9574 and 300 MHz on the IPQ5424.
->> +      - description: CMN_PLL PPE (Bias PLL ubi nc) clock source. The clock
->> +          rate can vary for different IPQ SoCs. For example, it is 353 MHz
->> +          on the IPQ9574 and 375 MHz on the IPQ5424
->>         - description: GCC GPLL0 OUT AUX clock source
->>         - description: Uniphy0 NSS Rx clock source
->>         - description: Uniphy0 NSS Tx clock source
->> @@ -42,8 +50,12 @@ properties:
->>     clock-names:
->>       items:
->>         - const: xo
->> -      - const: nss_1200
->> -      - const: ppe_353
->> +      - enum:
->> +          - nss_1200
->> +          - nss
+>> or do you want me to send a more formal Pull-Request for [1],
+>> then you can apply patch [5/6] (still need to fix the macro of [3])
 > 
-> No, that's the same clock.
+> Please send a v12, so that the latest modifications are on the list.
+> 
+> I'd prefer to either pick patches 1 and 5 from the list, or, if you
+> provide a tag with only patch 1 to be pulled into both clk and reset
+> trees, to merge that and then pick patch 5.
 
-OK.
+I will send v12 this morning.	-Alex
 
-> 
-> 
->> +      - enum:
->> +          - ppe_353
->> +          - ppe
-> 
-> No, that's the same clock!
-> 
-> The frequencies are not part of input pin. Input pin tells you this is
-> clock for PPE, not this is clock for PPE 353 and another for PPE xxx.
-> 
-> Best regards,
-> Krzysztof
-> 
 
-Ok. Our only concern with dropping the suffix and using a common name
-was renaming the existing property (initially added for IPQ9574 SoC)
-from 'ppe_353' to 'ppe'. However I do agree that dropping suffix is the
-better approach. Thanks for the suggestion.
+> regards
+> Philipp
 
