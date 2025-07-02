@@ -1,116 +1,257 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0512A1AA;
-	Wed,  2 Jul 2025 03:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751425851; cv=pass; b=pG/5s3PEAeE7VPE48I5zGwGTzjdBd+3p5SDSZR+6NEfMQAQI93Q3/2t4dRp65MINixscSGFuVi0EaiFQn4y86H6VC1xa69VdQD+N0tRYsJrCg8eTg8ItISqLx0iz8Vj89zxnZUMMooa9yLeSgtvNXCdtid2Ldsu6Y94XsJ1ZBA8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751425851; c=relaxed/simple;
-	bh=vB/bRw7mFEOpN1qxnHiykYCOW17QQ/rr/o+IPmh4y5Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EOdYukiz9pt/MGzr14KJ+gjtSOwoKgn8GPRlwJjQyymfRkOUQKGW0OsBDI1VyrVO64FlQt7XIaM0yYoBOLV/GpTPE9pyFuQOffrkgqvBeakqW+nKsVBOx90URDAQetVH1dRWwhFkJkBn+VVYmbSLRVGqMwyqeqH8m00c6Qe2iFY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=cFlxaOsx; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B581F1932
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 05:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751433167; cv=none; b=q3erUAX09wNFgkQYEosftHBUje0clsd5mylcDIYybJTHvvZhIRXMUPBbvx6ErK1I4pi8o2NWom68Ucux9Xsmh2xTLJ64BmG7gl6HnIkcVgBXQzqhEVWtlFjrdEcaQKaUq0JKdfM5f8tQIAhrSGhGxJtjBUoPajv1NJt4HeqUViM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751433167; c=relaxed/simple;
+	bh=8joN0LJaVDQo10RWLcdBh1pnMQwFO9WgLer/ZxCUWzw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C0cZU820tXlXRMknYVyZ9Eg3jojH1Q1eT3Fp0Z4npQPZtvr5/19WmxlP7Rg5JHxW0My6Jm/UMg7uLaUjdncUzTOGx/BZbsRTWNlIa6hIMaG17uA0zNzFfgAUO233BS2hiYFLkzEEo16jt/35uVe25XPHIjmAJ18wsVEkREyIYBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=YyKniiLV; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="cFlxaOsx"
-ARC-Seal: i=1; a=rsa-sha256; t=1751425814; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Xr2cK+CvHwCuLF6dqXXOm/rllWOBEN3wTLEfVyx3HLw+Tx8nsUmMnmuBj9W6XziZWV+cj7hneaVu7wXBvA9yzfX+uT8PfA9a3p5HwkhipQD2Hi8Xucq88FlOlY4pcH3wFl+HKzuIAniXGtsoSaUhEzM1p/lWq/xgTZ0kzAjX/Cg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751425814; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vB/bRw7mFEOpN1qxnHiykYCOW17QQ/rr/o+IPmh4y5Q=; 
-	b=UNQtavYyRj4TxsQRH734yLFUks9OFmyPo2t8gUt0F+p0DqsZwx+9Vb4/qx5LDBac+Id+oPXfwziiUXBEoj2i2GBuJCRkua6Vl0sTET2IkDZRcFxuucIYmvIrJMnf+U19+gfKFLNOaksL5yYROvfLrJMN8FbcSgkugQLt8YvvJiI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751425814;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=vB/bRw7mFEOpN1qxnHiykYCOW17QQ/rr/o+IPmh4y5Q=;
-	b=cFlxaOsxOq+v8V4Nltv2Ir58bEEoGVmiSvLcstC5HyUk/RCZcqn+vgiFAuJxBWWo
-	EdHlWnIUU+E6xh7d06gfViIrGt4VDk619PqpMN+p550b/GFbehA2rAgvIg8L3Z5G/Cm
-	8eKKru+QCFjsQHFklTpaCyHWVwVEoBwf19cNevA5B9IjJFAQ/v3IbIJtu9ZmPYCWunE
-	854MkUXIw5et57gmT36wcwLJqRsXavJgFP9dGRMZ0XpWB7UbCJu1fXzaqNcaRYbBAao
-	vMFrIZi6sSXF7a/ZEEt+nOwGVpeniKAaRbqPmrIj8PxpGr8TvSPdquQwtjARmUNfBFH
-	EyDbRayMsw==
-Received: by mx.zohomail.com with SMTPS id 175142581211425.435655253733216;
-	Tue, 1 Jul 2025 20:10:12 -0700 (PDT)
-Message-ID: <4a9b51f36da2500604f8d1099b0765f1e3764f10.camel@icenowy.me>
-Subject: Re: [PATCH 3/5] clk: sunxi-ng: v3s: Fix CSI1 MCLK clock name
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-gpio@vger.kernel.org
-Cc: Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>,  David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>,  Icenowy Zheng
- <icenowy@aosc.xyz>, Andre Przywara <andre.przywara@arm.com>
-Date: Wed, 02 Jul 2025 11:10:02 +0800
-In-Reply-To: <20250701201124.812882-4-paulk@sys-base.io>
-References: <20250701201124.812882-1-paulk@sys-base.io>
-	 <20250701201124.812882-4-paulk@sys-base.io>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="YyKniiLV"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-555163cd09aso3236097e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 22:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751433163; x=1752037963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3QcssW5aPUXiwFCK6L0jNYXP8OcK0Ow1AwcYh0ozcCo=;
+        b=YyKniiLV6eBXt/y5x1AOWoIdyUkYxzXBnf+9dy0g9hTOXHyEwBH1zF16dFf4BXXexO
+         82P/PQWPPm/Q2oMhydqFn34MrTk3scnqMoFNdQqXXImojNZRuYqbv6PNL0OjU9EsUWSU
+         36rBgdixMfeuqdycBMdAiBjSnCub/Hmf0JkjV25b5SEyLWUDz/2RJddIs9vWdtNw7x5Y
+         Qc2uKpFo4OPKAiOTkDvBHrw/9DqIe0Vz/P+Zi+tyE2dsRr8tpPjJt/3e/5g5xQmH9WAI
+         LNeYtfejnYSUqIGlTVRuhX6OxcApAT6idWOkj51yS4UF5fLcdT4XfeogI7PSDHk7jXYa
+         x1mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751433163; x=1752037963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3QcssW5aPUXiwFCK6L0jNYXP8OcK0Ow1AwcYh0ozcCo=;
+        b=Gn85aIao4iPE3xsMp8Oah3qC2NwkpSsJG6xLoeQkopquMTAPs8nLGAFryuydEa9Pt0
+         09HvhH3/M9hzBdUahxU72hots9RHF3w1tCa/Y2bSGb5I5jI1mJksLVpBYfVeTqrS6m0d
+         blZAdDHOlc/CKm9KNK/P6njy4CD5jdZbFdApG3DlbADvJjkatL61gwPnetx7BS9g4Xxp
+         pSPhaDweCCCXv1mIbw7nDlD8zQmVL5JZBy67zUDtPs5cPSbZjiJq5LCxbKkq8pvY/USx
+         7P9CqoD3pkebXqDLuTDlRPe7Ce5hI7dR+2OtSpRbomRMaKadCjHk48pgK6ZoTjaUcjzA
+         C8IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuH6Eu2VqBK/J13lHC9jqx5Zv6rEhqeFRmUd7brXp2TZoYBS+V9NtRl2QIcluPkGYbH+lQfVgV1PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDjzw01YR74J2LqTr57dWmaXJqkucP+cfmq1PDoHfO3WMqet7z
+	TM+8xaxlTUCQOIb6qvMjnBVHNggz3G7cpILaRWy6oMxEkZIMASFMRtukYRp4eWJIzgM2ivcIJms
+	dMNZ519kre9ofmQ/9AX4cjUBw5LDzRY9BFGt3HXJu3A==
+X-Gm-Gg: ASbGncuPwJHbb6rM1YZpTr09u0IPCKGN8JXHPSNlFw9Ym7BF+khusYwt+0zM10YZg6R
+	w2I+g9wbd8C3voLIkDK5QFBplTyAvnvcE2x0SFFg09NaojgndC7aQ2eEC8GyzWmuw01jyYg/FNF
+	UEiYtJ6xZjAhN1zrgCKtCVJgaev9WEdPSf9FwKBrL8Cg==
+X-Google-Smtp-Source: AGHT+IHnMwkcE019cehQGVZuZ2PCc2mXaZWfa5Vu4PPJs8TwzfcwxSziD3rK0AJBRgR42ABbfp9UlrabtH6IyI6G4xc=
+X-Received: by 2002:a05:6512:1149:b0:553:2a16:2513 with SMTP id
+ 2adb3069b0e04-5562834d984mr520094e87.47.1751433162994; Tue, 01 Jul 2025
+ 22:12:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+References: <20250618121358.503781-1-apatel@ventanamicro.com> <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
+In-Reply-To: <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Wed, 2 Jul 2025 10:42:30 +0530
+X-Gm-Features: Ac12FXw2Suv7g_fgLu8mKqGnO_4g0j4o5PKhZ4nu9THoUoVNJahAiAcKL0Xp8_U
+Message-ID: <CAK9=C2Uk9D6ZBJTq7xQ1ztjx5Z29aHmU5nu+JteK=i80=4LOFQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/23] Linux SBI MPXY and RPMI drivers
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Alexandre Ghiti <alex@ghiti.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-=E5=9C=A8 2025-07-01=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 22:11 +0200=EF=BC=
-=8CPaul Kocialkowski=E5=86=99=E9=81=93=EF=BC=9A
-> The CSI1 MCLK clock is reported as "csi-mclk" while it is specific to
-> CSI1 as the name of the definition indicates. Fix it in the driver.
->=20
-> Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
-> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> ---
-> =C2=A0drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> index d12791b31a9d..86d933d1ac72 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-> @@ -366,7 +366,7 @@ static const char * const csi_sclk_parents[] =3D {
-> "pll-video", "pll-isp" };
-> =C2=A0static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk",
-> csi_sclk_parents,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x134, 16, 4, 24, 3, BIT(31),=
- 0);
-> =C2=A0
-> -static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi-mclk",
-> csi_mclk_parents,
-> +static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi1-mclk",
-> csi_mclk_parents,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x134, 0, 5, 8, 3, BIT(15), 0=
-);
+Hi Jassi,
 
-Yes, there exists csi0-mclk.
+On Sun, Jun 22, 2025 at 9:56=E2=80=AFPM Jassi Brar <jassisinghbrar@gmail.co=
+m> wrote:
+>
+> On Wed, Jun 18, 2025 at 7:14=E2=80=AFAM Anup Patel <apatel@ventanamicro.c=
+om> wrote:
+> >
+> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
+> > are frozen and in public review at the RISC-V International.
+> >
+> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
+> > and RPMI system MSI driver This series also includes ACPI support
+> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
+> >
+> > These patches can be found in the riscv_sbi_mpxy_mailbox_v6 branch
+> > at: https://github.com/avpatel/linux.git
+> >
+> > To test these patches, boot Linux on "virt,rpmi=3Don,aia=3Daplic-imsic"
+> > machine with OpenSBI and QEMU from the dev-upstream branch at:
+> > https://github.com/ventanamicro/opensbi.git
+> > https://github.com/ventanamicro/qemu.git
+> >
+> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+> > [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
+> >
+> > Changes since v5:
+> >  - Rebased the series on Linux-6.16-rc2
+> >  - Added Conor's Reviewed-by in all DT binding patches
+> >  - Addressed Andy's comments on PATCH5
+> >  - Addressed Tglx's comments on PATCH12 and PATCH21
+> >
+> > Changes since v4:
+> >  - Rebased the series on Linux-6.16-rc1
+> >  - Dropped PATCH1 since a similar change is already merged
+> >    https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@=
+rivosinc.com/
+> >  - Addressed Andy's comments on PATCH4, PATCH5, PATCH6, PATCH7,
+> >    PATCH13, and PATCH17
+> >  - Addressed Atish's comments on PATCH11 and PATCH12
+> >  - Addressed Conor's comments on PATCH9
+> >
+> > Changes since v3:
+> >  - Rebased the series on Linux-6.15-rc7
+> >  - Updated PATCH2 DT bindings as-per Rob's suggestion
+> >  - Improved request_threaded_irq() usage in PATCH7
+> >  - Updated PATCH10 clk-rpmi driver as-per commments from Andy
+> >  - Updated PATCH13 irq-riscv-rpmi-sysmsi driver as-per comments
+> >    from Andy and Tglx
+> >  - Addressed ACPI related comments in PATCH14, PATCH15, PATCH18,
+> >    PATCH20 and PATCH21
+> >
+> > Changes since v2:
+> >  - Dropped the "RFC" tag from series since the SBI v3.0 and
+> >    RPMI v1.0 specifications are now frozen
+> >  - Rebased the series on Linux-6.15-rc5
+> >  - Split PATCH8 of v2 into two patches adding separate DT
+> >    bindings for "riscv,rpmi-mpxy-clock" and "riscv,rpmi-clock"
+> >  - Split PATCH10 of v2 into two patches adding separate DT
+> >    bindings for "riscv,rpmi-mpxy-system-msi" and
+> >    "riscv,rpmi-system-msi"
+> >  - Addressed comments from TGLX on PATCH11 of v2 adding irqchip
+> >    driver for RPMI system MSI
+> >  - Addressed ACPI related comments in PATCH15 and PATCH16 of v2
+> >  - New PATCH17 and PATCH18 in this series
+> >
+> > Changes since v1:
+> >  - Addressed DT bindings related comments in PATCH2, PATCH3, and
+> >    PATCH7 of v1 series
+> >  - Addressed comments in PATCH6 and PATCH8 of v1 series
+> >  - New PATCH6 in v2 series to allow fwnode based mailbox channel
+> >    request
+> >  - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
+> >    controller driver
+> >  - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
+> >    mailbox driver and RPMI system MSI driver
+> >  - New PATCH17 to enable required kconfig option to allow graceful
+> >    shutdown on QEMU virt machine
+> >
+> > Anup Patel (13):
+> >   dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+> >   dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
+> >   RISC-V: Add defines for the SBI message proxy extension
+> >   mailbox: Add common header for RPMI messages sent via mailbox
+> >   mailbox: Allow controller specific mapping using fwnode
+> >   mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
+> >   dt-bindings: clock: Add RPMI clock service message proxy bindings
+> >   dt-bindings: clock: Add RPMI clock service controller bindings
+> >   dt-bindings: Add RPMI system MSI message proxy bindings
+> >   dt-bindings: Add RPMI system MSI interrupt controller bindings
+> >   irqchip: Add driver for the RPMI system MSI service group
+> >   RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
+> >   MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
+> >
+> > Rahul Pathak (1):
+> >   clk: Add clock driver for the RISC-V RPMI clock service group
+> >
+> > Sunil V L (9):
+> >   ACPI: property: Refactor acpi_fwnode_get_reference_args()
+> >   ACPI: property: Add support for cells property
+> >   ACPI: scan: Update honor list for RPMI System MSI
+> >   ACPI: RISC-V: Create interrupt controller list in sorted order
+> >   ACPI: RISC-V: Add support to update gsi range
+> >   ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+> >   irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
+> >   mailbox/riscv-sbi-mpxy: Add ACPI support
+> >   irqchip/riscv-rpmi-sysmsi: Add ACPI support
+> >
+> >  .../bindings/clock/riscv,rpmi-clock.yaml      |   64 ++
+> >  .../bindings/clock/riscv,rpmi-mpxy-clock.yaml |   64 ++
+> >  .../riscv,rpmi-mpxy-system-msi.yaml           |   67 ++
+> >  .../riscv,rpmi-system-msi.yaml                |   74 ++
+> >  .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  124 ++
+> >  .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   51 +
+> >  MAINTAINERS                                   |   15 +
+> >  arch/riscv/configs/defconfig                  |    2 +
+> >  arch/riscv/include/asm/irq.h                  |    6 +
+> >  arch/riscv/include/asm/sbi.h                  |   63 +
+> >  drivers/acpi/property.c                       |  123 +-
+> >  drivers/acpi/riscv/irq.c                      |   75 +-
+> >  drivers/acpi/scan.c                           |    2 +
+> >  drivers/base/property.c                       |    2 +-
+> >  drivers/clk/Kconfig                           |    8 +
+> >  drivers/clk/Makefile                          |    1 +
+> >  drivers/clk/clk-rpmi.c                        |  590 ++++++++++
+> >  drivers/irqchip/Kconfig                       |    7 +
+> >  drivers/irqchip/Makefile                      |    1 +
+> >  drivers/irqchip/irq-riscv-imsic-early.c       |    2 +
+> >  drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  324 ++++++
+> >  drivers/mailbox/Kconfig                       |   11 +
+> >  drivers/mailbox/Makefile                      |    2 +
+> >  drivers/mailbox/mailbox.c                     |   65 +-
+> >  drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1012 +++++++++++++++++
+> >  include/linux/byteorder/generic.h             |   16 +
+> >  include/linux/mailbox/riscv-rpmi-message.h    |  238 ++++
+> >  include/linux/mailbox_controller.h            |    3 +
+> >  include/linux/wordpart.h                      |   16 +
+> >  29 files changed, 2948 insertions(+), 80 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-=
+clock.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-=
+mpxy-clock.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-control=
+ler/riscv,rpmi-mpxy-system-msi.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/interrupt-control=
+ler/riscv,rpmi-system-msi.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpm=
+i-shmem-mbox.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi=
+-mpxy-mbox.yaml
+> >  create mode 100644 drivers/clk/clk-rpmi.c
+> >  create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+> >  create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+> >  create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
+> >
+> I am ok with the mailbox patches. How are these to be picked into
+> mailbox and other subsystems? Maybe sculpt out a separate patchset for
+> the mailbox?
 
-Reviewed-By: Icenowy Zheng <uwu@icenowy.me>
+The usual mechanism for a series touching multiple
+subsystems is to provide a shared tag so that other
+maintainers can avoid conflicts.
 
-> =C2=A0
-> =C2=A0static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+I will post a v7 pretty soon so Alexandre Ghiti (RISC-V)
+or yourself (mailbox) can push it to your -next branch
+and provide a shared tag at appropriate time.
 
+Regards,
+Anup
