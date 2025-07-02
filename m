@@ -1,229 +1,176 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA8D1E5711
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 21:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75379230BE4
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 22:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751490181; cv=none; b=EL8fJMi6jE9B1yRlNZHV2v7hsBmJBhBRFqeaVvYG1Y3evBpkGdrdM0sMLpk1AqyKVNW/6lHya5ILg1gUWsid0spsJNZwqrjguKG/BHiWOD+s3CT/hBHMWSClNEp7K7oH7hfoT2lLoh5gl2lJPsSjBGPMdd9fmZMpVzlzwx60tQ8=
+	t=1751495353; cv=none; b=EQM66So5Q+EFtFeg+qOeFM4Fm0KsQXo2DKgkjKOpytIzhg14y/mg6YdCJHz7R2BWpou2mLE7roFwynWyQZyZWZDRUHnhB21J/c0u1xtDzCHjnqiG5ybi4whqU9+OQmQbOPVdv0p4dkGbqsAMeT/n9AFgzc+jsu0GqRqsvyh1Gb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751490181; c=relaxed/simple;
-	bh=4vQ93QOR7sUMLGuKKWYA5MqL8eulcSCyBQPNC6yOAz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cw37fck0tlj00So+QNH7Xmtma8P0CNxHQzpUQnDwalWbKQKifo8DLA2KTrr5F/kyhjqAow4mYs2niS+7tMkkTrv/2hDcOyusLnxIo1VtmUqD6uXuuDUP0+iDbt5/MophTQJQjU5yA+wihGrz6erzH/FIilsMa9eukiU/a8U46L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lcN/2g1d; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1751495353; c=relaxed/simple;
+	bh=up5bIfuRe1fh3Im2a2gPebVavaYz7/DHfHtuntIyrf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NszH9sJnATfSZHFR+VkylP50b0o6FeHI1irsIvfYvd2+dtW3dvnhjomcQhZAuEaMTNhHMmIlaLyuNs5NxSGMwe+jLKr0jhpWQQSfH/ldmsU8NX//hfu8rHzrEqNPo0KFvqxxbDc3JYnhuW4Xq0ESG5HEZRud2djcK0ZO3Zt/lhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Wz3TSuHy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lcN/2g1d"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d3e7503333so700893285a.3
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 14:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751490178; x=1752094978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EJ91IALf7qL2mLAV9e8zmgMyOJhT80+BeW9rsMA6c10=;
-        b=lcN/2g1dPDvkVT7gcoUnSi5cF3fKLcQFP47h2jxNP4+OcUJX3+z1EU1MijGnA+BhCa
-         6iU5o9D3lUwJH3ZGp2PjvTSuSum1AwrsX5uImQ0WRn318fBx1NNley0entkaXTkt6NTm
-         3/UX3hYj8GjY4/HaWdPaSpEfcNtGjd+dCnGGJ2qZ8GNX12N5iSlrrNbHXENl9JTDfQ9X
-         Zm0NAcugGC9AiyDy6Ogy/IiI5tkPv0enAUSdCACh1H2+APpm35gUKOfxcsQH/RtQ2rWY
-         qmIY+NjArnY1+Pja8Y6cT8f5xIS/pT1fb8dw6o2CguZLfJ3F57jldd3pi8uG2OCXRWmy
-         Zuyw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Wz3TSuHy"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562CRv9K018560
+	for <linux-clk@vger.kernel.org>; Wed, 2 Jul 2025 22:29:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BgDDI86k+9nrqehhROmR+AQC
+	x3airBLaLzyH+/CSltk=; b=Wz3TSuHy8B9lSuyMjnWMsvL8ffmgZOBUjpAb9o+B
+	WxvSXCHUXubtjRRdR8Hwf1xFjBDhL4n+XhdVygBtclHUPRU6vCW1Utc2QjFVGEyv
+	EDWTZd4a2i42N8SKSwIBMNFqf4tlzdvsoinqos4/7/6Wp+G02mGS/BKtZYEqptXc
+	fFpaqvJcU5pUSWI9Rh30GRqNYsEvErvQ6IzXWIVtx9HZc6vuEIaMlZXtABs6+a35
+	g5vz8OPC3uJcuGso2lHWIfYtSiP3I3QKKcg1l4bKfsILU2ZJCk6G2cvkzdKSXcTh
+	3177S7rczzTCCKpAyZPFKaeOAxn4r5A4zXgNOBqt4F0Agg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8fxp9hx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 22:29:10 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d399065d55so1005223785a.1
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 15:29:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751490178; x=1752094978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EJ91IALf7qL2mLAV9e8zmgMyOJhT80+BeW9rsMA6c10=;
-        b=t0O0yINW5jTOdLy/GUbHj7iXZCr/LdiaYsCRIj3CGsZ83EFTNf1i4KgISmIE52DcYu
-         J8kvKrsQlRuBY8ak7YuBZVaa6qk6FjaEoDRJMxORGGVKOml9FjXpBVab8pmyBIDJT1Sv
-         eL3kS3iS5JuJV2oLGype1DZ1YEEOKZjZcOesHk8mv/GVWH+tqJdghwVi5NojL4TeC/Uw
-         nnYv8cGKoQNaSK72nOJ0E/4NvrS3ySyAxSkutK9z7Wmyq1hmPpG95j2+TWn3fxjM5Vci
-         WmrsUGIzPoe/v+wuBs5IRbDKyHjdR+u1admpjaotdXILzOlJDZsXRF73fHITf6KVCCWG
-         iDRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUk14ZCWmpLLSi5Arb5kqun0nr26bFnS38ftfyKxpcjSJXj528xskRwIeEqfZ2fd+vKcZDYPhhe/wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfohSUBjRDtU+JcrFlBAqJ+IwO9noz0i03D8eK15Tka6OHfSzn
-	JJSZ+7HTUOJkfSPooJwiC6plv3qC2UXmwtfcQmdcoxbWnQ+iAz3PLNq3m5wGPTo6jcVU6oXpxo5
-	//FojSup8p899Hv67Wyw45EpKYv8tre1AWUBObCG8
-X-Gm-Gg: ASbGncsozYYUKMO5p6pb2ReGBiDybPdZVvSzv/WDshdSUm7dWgiTuVuzc0jZDSO4XDO
-	V+c95Ily47fzt02Rj4l3EU7uqkgIeqEDIYS6LDxLA6nDWXMpY871horP/ZeL7ThdMEBM50cbe9P
-	pX7d6XVPM0H50Ph9WcefBOpHxTjipOGuIyAzNH4B5n7BL8gmdWVwgk5cI8w/k14sfKdOV7kjtR
-X-Google-Smtp-Source: AGHT+IHZLJBo9iF9+nKbDyZZYnf6PcVxrcD0+f+tDZM+7z0OQ6NWXKWPaxUOSfKFFIK+EtLpeM3pSDTuYA14QV/DaCA=
-X-Received: by 2002:a05:620a:280d:b0:7d3:f0a0:ea5f with SMTP id
- af79cd13be357-7d5d13f3399mr185371785a.22.1751490177645; Wed, 02 Jul 2025
- 14:02:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751495349; x=1752100149;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BgDDI86k+9nrqehhROmR+AQCx3airBLaLzyH+/CSltk=;
+        b=QFde/Qyiu2aTQ154h5jhtrwQIu7zYF5t/SpH5+f90ukHNR94LMrDw24gtXFFMG4iXs
+         w9JH0X4CSMQ3sGmU5EqVBoxVTpxELq9v4PqeIoUJrxAYtvLTZDCApoX/optkzsMFG/AG
+         F17rTm0LixkuYZ5rDC4i9Kdxwhsuttt1HhrBVHZHd5dRDrwkrBOyXJaVbsulA9W4BnqD
+         kVYkGpvQ+BDVzyVhzWWQ4RE5u9yMRl/Fp5KIUVU2p1kjyiOAA7A2C4drv9Bk7YzDGUZV
+         wJDjp3PFU+25M0GxE69+bMtLi1EOt9onQPNwh+djwSnwVl6XnvJhb7fR9/wbOKbfNUM4
+         cItQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSQ4oSqnAPYzhl738o7eU4wc3TAvrCwfSLUJgu8iQ0d+nett6AHxY/xWja9rF9j/O+o+oDY2Avj58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCle4K8lfP4VeI3w2cAt/r+bQnVzAWCtm+Wu9PaHqEEDF2+qDu
+	xkQqX5CivliqM9KEUcN/UbRNGeSJ7yAHMwD1T8l6LAZE8TBAXDZyXh51zNuroL/YTn4UkmeEr1y
+	15+E+vo+qXhAj/QzI64CsW77Hml+EV67S0U9pyXYnInLuGXz3o+gmJCkvT67ydmo=
+X-Gm-Gg: ASbGncvJ5M81LWjPsH5TTTw4GzJSas2mWkxPQcnJdmyw3UIDdqbikRalbWDTQCRA4vK
+	c/ecpgZcVyAurEV9/d2lw5DLR8YWX99fHQK1I1sqK6qJJQ9jyw3cixHeGwby+dHTPFj00loI5DI
+	IA0XUTd5gX/zZHMHKMN4S6bJY+vdCOepqw7ybPx573NIeCVT6sRCZGTOIm9dGACsEuGE5hsOcwm
+	x28BAH6qj9o9c+5jDh7hcH5v9BtaTFTx/VRVBTlIFl8kbvWn3H7NAK1pIlaFaiSL07ZCOX3YePx
+	0XfRd56XHVkBpZnni8sNm/buG56HhVMc6yWgv5pAuktOqlTZfWhxXSxigZwmQ2SudFaBz5R8rXz
+	DLeTDhy5PwHcamFDUOXwwyNwEdm2CjRrPYRU=
+X-Received: by 2002:a05:620a:46a6:b0:7d4:5c30:2acd with SMTP id af79cd13be357-7d5c4717717mr613057085a.28.1751495349316;
+        Wed, 02 Jul 2025 15:29:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrSVTOJQ9y1rva3UBmjLIEBviVC9kwZsRJcNapTvyl3wOwWuQm4n9kgbG/8VBXUhQbv5kwMQ==
+X-Received: by 2002:a05:620a:46a6:b0:7d4:5c30:2acd with SMTP id af79cd13be357-7d5c4717717mr613052785a.28.1751495348903;
+        Wed, 02 Jul 2025 15:29:08 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2eff7dsm2261580e87.246.2025.07.02.15.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 15:29:07 -0700 (PDT)
+Date: Thu, 3 Jul 2025 01:29:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
+ compatible
+Message-ID: <mzmer4g7df7xqhnstpfhyzcm2irpmsk4iwtx6esjksp34lpkk5@76lrsoyb5cp6>
+References: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
+ <20250702-sc8180x-videocc-dt-v3-1-916d443d8a38@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-5-herve.codina@bootlin.com> <CAJZ5v0g01QzAkpnJGdjEuif9h==tyB94tU3nCbumx_Ya3EOoDQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g01QzAkpnJGdjEuif9h==tyB94tU3nCbumx_Ya3EOoDQ@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 2 Jul 2025 14:02:20 -0700
-X-Gm-Features: Ac12FXwhrjwNcoQlswzlpTiwmASKCStdWYLWRIuHlvNKRRZirJ70zPEsjhz1ybo
-Message-ID: <CAGETcx85vKLcFcWBR2G005Nup8UkmVZFLYgd4DuUBOKxHvJn8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 04/28] driver core: Avoid warning when removing a
- device while its supplier is unbinding
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Peter Rosin <peda@axentia.se>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-sc8180x-videocc-dt-v3-1-916d443d8a38@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDE4NiBTYWx0ZWRfX+pARH85YvyuN
+ DzviEUUlcY2A39hQU4Yrp5fMHGIsOeT3mRUlThRWiAeDZ5hO5fa3TkNMHiK2V7zD3f9fdaNyXd8
+ 9tnmR2RozpkuX29EB7f4M+4FqMSQEo74g3xptcZQowtjTVUUtxj8JQK+kSuMXlKl4fcbPwVZLPt
+ 9jzZuS6C8R71BtgpsTggS+awNg66l8gTQxu9mxTktky/4FzxKMf2IyfY8lHQ84bWVEIGTzn6qKl
+ fJFiN4yQBccuE7C70TVi30QV4ET03WlWYbbclsGCWyRTFTynrrnDxpNPdE3iFCRNELZ9CNcpXX0
+ g9hYqow2tPhDHe8m+N0eDLRnEvf2avrMIM5PgQM+ktUTle5itr3mjLyZrqNxFBEIUEnbLRXJQ8B
+ 5d3njUuFF0jKMoOpH70TDyYCROIunY1xBYrcSpWs91nEh6F5ES0rmr8jU79ABTwcikdWSv/X
+X-Proofpoint-GUID: ChuDVH8pxYeNBtCEyh9ZaqKAT-ra3xcY
+X-Proofpoint-ORIG-GUID: ChuDVH8pxYeNBtCEyh9ZaqKAT-ra3xcY
+X-Authority-Analysis: v=2.4 cv=TqPmhCXh c=1 sm=1 tr=0 ts=6865b2b6 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=_TNEKbHo1ymzoaDRxC8A:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020186
 
-On Wed, Jul 2, 2025 at 11:22=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Fri, Jun 13, 2025 at 3:48=E2=80=AFPM Herve Codina <herve.codina@bootli=
-n.com> wrote:
-> >
-> > During driver removal, the following warning can appear:
-> >    WARNING: CPU: 1 PID: 139 at drivers/base/core.c:1497 __device_links_=
-no_driver+0xcc/0xfc
-> >    ...
-> >    Call trace:
-> >      __device_links_no_driver+0xcc/0xfc (P)
-> >      device_links_driver_cleanup+0xa8/0xf0
-> >      device_release_driver_internal+0x208/0x23c
-> >      device_links_unbind_consumers+0xe0/0x108
-> >      device_release_driver_internal+0xec/0x23c
-> >      device_links_unbind_consumers+0xe0/0x108
-> >      device_release_driver_internal+0xec/0x23c
-> >      device_links_unbind_consumers+0xe0/0x108
-> >      device_release_driver_internal+0xec/0x23c
-> >      driver_detach+0xa0/0x12c
-> >      bus_remove_driver+0x6c/0xbc
-> >      driver_unregister+0x30/0x60
-> >      pci_unregister_driver+0x20/0x9c
-> >      lan966x_pci_driver_exit+0x18/0xa90 [lan966x_pci]
-> >
-> > This warning is triggered when a consumer is removed because the links
-> > status of its supplier is not DL_DEV_DRIVER_BOUND and the link flag
-> > DL_FLAG_SYNC_STATE_ONLY is not set.
-> >
-> > The topology in terms of consumers/suppliers used was the following
-> > (consumer ---> supplier):
-> >
-> >       i2c -----------> OIC ----> PCI device
-> >        |                ^
-> >        |                |
-> >        +---> pinctrl ---+
-> >
-> > When the PCI device is removed, the OIC (interrupt controller) has to b=
-e
-> > removed. In order to remove the OIC, pinctrl and i2c need to be removed
-> > and to remove pinctrl, i2c need to be removed. The removal order is:
-> >   1) i2c
-> >   2) pinctrl
-> >   3) OIC
-> >   4) PCI device
-> >
-> > In details, the removal sequence is the following (with 0000:01:00.0 th=
-e
-> > PCI device):
-> >   driver_detach: call device_release_driver_internal(0000:01:00.0)...
-> >     device_links_busy(0000:01:00.0):
-> >       links->status =3D DL_DEV_UNBINDING
-> >     device_links_unbind_consumers(0000:01:00.0):
-> >       0000:01:00.0--oic link->status =3D DL_STATE_SUPPLIER_UNBIND
-> >       call device_release_driver_internal(oic)...
-> >         device_links_busy(oic):
-> >           links->status =3D DL_DEV_UNBINDING
-> >         device_links_unbind_consumers(oic):
-> >           oic--pinctrl link->status =3D DL_STATE_SUPPLIER_UNBIND
-> >           call device_release_driver_internal(pinctrl)...
-> >             device_links_busy(pinctrl):
-> >               links->status =3D DL_DEV_UNBINDING
-> >             device_links_unbind_consumers(pinctrl):
-> >               pinctrl--i2c link->status =3D DL_STATE_SUPPLIER_UNBIND
-> >               call device_release_driver_internal(i2c)...
-> >                 device_links_busy(i2c): links->status =3D DL_DEV_UNBIND=
-ING
-> >                 __device_links_no_driver(i2c)...
-> >                   pinctrl--i2c link->status is DL_STATE_SUPPLIER_UNBIND
-> >                   oic--i2c link->status is DL_STATE_ACTIVE
-> >                   oic--i2c link->supplier->links.status is DL_DEV_UNBIN=
-DING
-> >
-> > The warning is triggered by the i2c removal because the OIC (supplier)
-> > links status is not DL_DEV_DRIVER_BOUND. Its links status is indeed set
-> > to DL_DEV_UNBINDING.
-> >
-> > It is perfectly legit to have the links status set to DL_DEV_UNBINDING
-> > in that case. Indeed we had started to unbind the OIC which triggered
-> > the consumer unbinding and didn't finish yet when the i2c is unbound.
-> >
-> > Avoid the warning when the supplier links status is set to
-> > DL_DEV_UNBINDING and thus support this removal sequence without any
-> > warnings.
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->
-> The change is OK, so
->
-> Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
+On Wed, Jul 02, 2025 at 08:43:13PM +0530, Satya Priya Kakitapalli wrote:
+> The sc8180x video clock controller block is identical to that
+> of sm8150. Add a new compatible string for sc8180x videocc and
+> use sm8150 as fallback.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml       | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> index 5f7738d6835c4ba999402e163fc85a07e3a47a5a..b490caaf843243a7a96395fdd2b99972a45679f9 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> @@ -23,13 +23,17 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - qcom,sc7180-videocc
+> -      - qcom,sc7280-videocc
+> -      - qcom,sdm845-videocc
+> -      - qcom,sm6350-videocc
+> -      - qcom,sm8150-videocc
+> -      - qcom,sm8250-videocc
+> +    oneOf:
+> +      - enum:
+> +          - qcom,sc7180-videocc
+> +          - qcom,sc7280-videocc
+> +          - qcom,sdm845-videocc
+> +          - qcom,sm6350-videocc
+> +          - qcom,sm8150-videocc
+> +          - qcom,sm8250-videocc
+> +      - items:
+> +          - const: qcom,sc8180x-videocc
+> +          - const: qcom,sm8150-videocc
+>  
+>    clocks:
+>      minItems: 1
+> @@ -111,6 +115,7 @@ allOf:
+>        properties:
+>          compatible:
+>            enum:
+> +            - qcom,sc8180x-videocc
 
-You can add mine too.
+Is there a need for this? Isn't it already covered by the SM8150 entry?
 
-Reviewed-by: Saravana Kannan <saravanak@google.com>
+>              - qcom,sm8150-videocc
+>      then:
+>        properties:
+> 
+> -- 
+> 2.25.1
+> 
 
--Saravana
-
->
-> but it will clash with
->
-> https://lore.kernel.org/linux-pm/2793309.mvXUDI8C0e@rjwysocki.net/
->
-> that's been queued up by Greg AFAICS.
->
-> > ---
-> >  drivers/base/core.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index 8fead097c404..ce367c44f642 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -1494,7 +1494,8 @@ static void __device_links_no_driver(struct devic=
-e *dev)
-> >                 if (link->supplier->links.status =3D=3D DL_DEV_DRIVER_B=
-OUND) {
-> >                         WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
-> >                 } else {
-> > -                       WARN_ON(!(link->flags & DL_FLAG_SYNC_STATE_ONLY=
-));
-> > +                       WARN_ON(link->supplier->links.status !=3D DL_DE=
-V_UNBINDING &&
-> > +                               !(link->flags & DL_FLAG_SYNC_STATE_ONLY=
-));
-> >                         WRITE_ONCE(link->status, DL_STATE_DORMANT);
-> >                 }
-> >         }
-> > --
-> > 2.49.0
-> >
+-- 
+With best wishes
+Dmitry
