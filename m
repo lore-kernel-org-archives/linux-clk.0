@@ -1,67 +1,66 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81062D3736
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0242D7818
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470055; cv=none; b=kaGOTnZdJYSiVv+B+0ggdkSCpCZD8uYDgqH+cEjGs/TK1OW6IYmH8px8jXocgOJ0LxL8NVs10JEF7y36ilA2AL2CH7NcjcvPqHfIPH7SLfgcCSBjGl5JIa9Bn9WqezPhM7sIo1V9OGL/XKO4RCUgD1AtR8JL75t4war+JNIU1YI=
+	t=1751470056; cv=none; b=byMxpa0K9ykFnCVraJzTo8Y0OsHcJ+gKFj+9ysjF/P4befpJCosNAC9tHFTwXEND9ytSuirYp56zuFDTWa8GBThSHEqRkOpfV6yEMyJvsK+i4wZ8vLwj4n0VC/3djEGvHGgPnX7But4zvQWXq1XZ3EF4TJ5vgVcG4JZLglf8stM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470055; c=relaxed/simple;
-	bh=ZNrs19WXbXf3c8BcGFBvvWk7485+N0i0pb3qke0AdCY=;
+	s=arc-20240116; t=1751470056; c=relaxed/simple;
+	bh=pDD38k0SIxrSHiG/SWcjxn+yqzh3OgAiTIc+fdsRAf4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gu4BBKjj1+VZP/0WuUJOSmpQWwu34KktNXvR+Qm0GgEfLFpxHCbRtwUV7wwvBpvrc/6PbTEgXobCyqR4oPi/1gMYuaGPJ/ouGOC1U+cTMp2xDUC5rEN6DlrqQgYDaUj0yQkz91naZ6xW5/mY5zXFsUEoGM2l5rtPVawYxyk198M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=znOW7ofQ; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:To:Cc; b=GcPFNqPNhGoIp6AJjmwf9/fehPlNOCgwbIpi5OzSA2LumSXymD/1LcEKOUPbp3ADFywACMiEeTBfCz7/PuRV5Wj5swyHl9+IGPxaynRs045fZaC18bjs5LZzdSdJfNuBNw2nups+7tpK0hr5KmWZNkXbbyU7/ESYM842d62gSGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Xcg+V/gG; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="znOW7ofQ"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451ebd3d149so25207805e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Xcg+V/gG"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-450ccda1a6eso37065195e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470050; x=1752074850; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470049; x=1752074849; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YIzTaynUnodwii+be4z9ccfRn5hxHLnj1WR8qQ5jqUg=;
-        b=znOW7ofQpoabMdHtobiVT9zXr8s507TCFeWngz3LApQ+VIRke014N4rOwJBoesZSp+
-         pUPyt2MysN80QXARYuCPTIOt76m9SZ3vXNJRjW+vvIPZ9yQQWQCu3s9/Ubin15Fog1PT
-         eFfEL6OlHjZEoBJq1jKDYIxNTgE7KJYR61RHbl9aaSpLqkIUwDgtuMWgqtycFlnmuUhf
-         BsYz7RIxWD68HnlCaRTns68Tzd7DnTwAmuN0TV0iLYHrHs+UclRufI9M/ecXWQ4wgc7H
-         Gc6gg3XjI/wMg6epuHVXkL3qpdXix/vYdkwYKvSsUXiip73LjR8KyZFyh9DKg2lVkIgp
-         /QTA==
+        bh=nUNhaEN8gzwDkf+1nNZTJLoKinJ1pGlF7GtwCVhKJLE=;
+        b=Xcg+V/gG4Xm4UTJGAJxDGRJ4ffjn7v3GwTdms4V5tQnxqeFxTemFBTltbZXA5CXqlV
+         59/vnh7AAhbZlOZnkl/9sdxLrAw7Ro7N4nypALXUdfkxDCLq+vKQE6mqpk/wV+H31yPb
+         4RexDxLEEFh7TLWhVKsHP+VJ243n0UG7bp5xdOtBNq3tFagFjVmbZiaYxRRQ83xnvcCA
+         KAj3+sQgv0phTzJog9oYrhnmlwa2jxTl3GI1n1kfkvMu1KUjhjiZ+zJEYRdjpyXczn8T
+         hWrdfENv7UYTHHFoISq7lvCfaJQ51WnmnEIUMRs/Jp7geaGQv+abGX9JALDzE3mVo88c
+         1slA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751470050; x=1752074850;
+        d=1e100.net; s=20230601; t=1751470049; x=1752074849;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YIzTaynUnodwii+be4z9ccfRn5hxHLnj1WR8qQ5jqUg=;
-        b=JLAL3uMNZ/Z0P0igga1KroWM89LyUXu6SiG8L7uJ+s+2R0OgAEY0PZ0tVGUpw+xn+L
-         9GGliFoxBB8nLmqVOMyozUB24HSHV+mBslQ0+oKhaPCi3kc8Is4kDOzQ0dDT45kvE/hI
-         flJlnxcv+lA0b6XM/Prur9fSOy4O0vPxFPUF5LMW3Khp+zGnyV3eskdYrmO3izU23J6+
-         N0GlVuWMTcXjBS5gD9qrzJZVVELBWffrWEcqdJCPhMkhTBXakCBTO6tCAmlStMmB5Y59
-         8NXkSqkbf76DPN7LDFpx/llzGV7YkqEBz0+Yvx7P8B1o1+LFfnpFXMPxr4piMZ8WPpvc
-         RsEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqFgJGFlAiFI+UqLx2z/AKuybUj1iWiOqPu8eRfQLhf48H9VImJnzsqoaGf2swCHekYgBoLYHbk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznutZcVdv6P6rIQdwdw2fnl65xwukyNECVyETzfoBarSrY4I9o
-	L7gjte6k4TWDN1Ygws+KnkHiEZQDk13b+3cWBSqERU0TMAwXX3Nn0U/4wmaCtDdVRoI=
-X-Gm-Gg: ASbGncvmzP7iuOI1amXcbwW6sxQJNL5CgwDvImTqukei8lBYNYO5yZL8UFUYEnYdPCM
-	omK5PonKaldTbLS59BI+v86rZw1pi3O+1QvW5v8+TM3PYgyvFQ+H/jbM8mEIfkCpNL09lFn8jKE
-	ubSky+W7VCassh3DDkp6/nC1NIuUpcPXPi9/YolW0YfI3IAshV5edr0AaxNaeUIDnrPLfEHmWKT
-	nJtpr4GXX1wOw9q3fGGXOGVL50WOxPkWwfc5FF2UZpuRkMEpFJRugF3nCAIqwWSH/z/YEvZpsqi
-	uajjlkLnv17qSDPQ+lz8IakyLoj1+alUY0WMKMCwGFOUR6XGVcvuu7jcTBX+Bju/o5fELX8drTs
-	L
-X-Google-Smtp-Source: AGHT+IETEiGm3zFOOgtdRLN+7QC4k4+28PEvFEfcFcVpqekr/FapI6qrJoqscH+sAz/rFycKlggxuw==
-X-Received: by 2002:a05:6000:42c8:b0:3a5:8a68:b81b with SMTP id ffacd0b85a97d-3b20110d6eemr1991784f8f.44.1751470050024;
-        Wed, 02 Jul 2025 08:27:30 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=nUNhaEN8gzwDkf+1nNZTJLoKinJ1pGlF7GtwCVhKJLE=;
+        b=ayDvzqQSV1eCKBPjiNaV5vt3qTLAGYip/eIMeTdICUaEoQOaI318jIi+bXY0Tg7LkQ
+         zaPDAmcfqQ0ZmmI9SZeO55Dx47DRMaMsZLbBnoxllZllz3UP/+v5RfMKSyXJpOgSS/Cs
+         tsNf8h5X14nkdzZe3arsCHcdtqhuLo/RyFaBwWaLTdengM/Bhmt/x3JTUWvtiGgv/aUo
+         ez9XJt3KBDE1DYZF9xajWhB38imy+KCAxSlaW3w95driv3x7PpNFMHldSyfrglkjUbEo
+         8w35Np93gZ78LrlXpBM6+i9IUUKS8f4RvpCfjGzUgt7y5QAf9sqp4rm3/JIefWBt7NT0
+         V31A==
+X-Forwarded-Encrypted: i=1; AJvYcCXFYY4FoYKlfQMRDZq9o05UQ4aQRTHUvCOdxZSzSnYAlX36eguWcbWqnzk2k9trjUZGdGFISyEXFeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV+up6jNIebIbVzI0mLbQr9i3PSu2gE1IZv0U2r/xopZV7gw+8
+	K9rxB7zo5ney/SpLgVukIZQGJUJ3n3EvbTYwwmBEBDOzDU4VtI/Fr6QTxAsYgo/sPuU=
+X-Gm-Gg: ASbGncv+02D32voW/eiHCNbWWRJ6dxsWB2wZmShNHYT93Ep+xRiIiL7pJPzo6JL15zH
+	JBdCaf0pO3SsR4NBSgWdYYnVkCt4geBjW2yBpd4CG8mDzCzvzLoyvwAUZpT1Mxe3bhBLreKikfQ
+	9C2GVCNUAp1Gn6FO+mrpUMl5OaUoPuy5oa3StqI3Sfos4iES0Cj8XPKSGKOXhuvleNsuY0fSQjj
+	ixYFxgkPnvB7HldXB4rptjqPrB99LSTj8k/ZYhQoDm7E6z8MyDzKREO5lW+hOaTroOsH6mcg3/Z
+	x5/IPU4pWjhw6RevBZFQIzUhXmqtTIIlGSU3ZVyzpgikS6tlY0llStxuOgPWYDxvxHmHCimMVPb
+	F
+X-Google-Smtp-Source: AGHT+IF5sq3L5rbtucbJzAATx3BzQioRLaZZqwtzwDYJYPBfxUgrQVqfp37cllquwb8S+2PlibE59w==
+X-Received: by 2002:a05:600c:840f:b0:450:d3b9:4bac with SMTP id 5b1f17b1804b1-454a9ca9fe5mr623515e9.28.1751470049058;
         Wed, 02 Jul 2025 08:27:29 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 08:27:28 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 02 Jul 2025 17:26:14 +0200
-Subject: [PATCH 16/26] clk: amlogic: add probe helper for mmio based
- controllers
+Date: Wed, 02 Jul 2025 17:26:13 +0200
+Subject: [PATCH 15/26] clk: amlogic: drop meson-clkcee
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-meson-clk-cleanup-24-v1-16-e163c9a1fc21@baylibre.com>
+Message-Id: <20250702-meson-clk-cleanup-24-v1-15-e163c9a1fc21@baylibre.com>
 References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 In-Reply-To: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -80,137 +79,475 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3664; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=ZNrs19WXbXf3c8BcGFBvvWk7485+N0i0pb3qke0AdCY=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/F0jD3XQaHm0ZVzgbudKf7GhQakFUk9ZREZ
- 5+1cgLPWdWJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPxQAKCRDm/A8cN/La
- hbskD/9n3QwiKqzIuzwoX+mGeWr9i/7T99ISAljw5mLqk+sbhjj0PBiKsw1v9hrxu9U8Kh+CEPI
- B+aT6v3yqH2/a+LDzyx+To3+3btNqMtZ3WsrM1R6jVk3E4KMrCgnIJ+t7QCxQ+mhwETim28ENqr
- WJgtQl1TK1sNpWjULaGf4DP5GgLQ5Hi3Axx9LFOzwexGDYjUYIhiBGzpqv8/DmjeRA1kwzgaD+b
- rj/AxWOjJxGtPgSoOI4utu11ObaVXLUwr9nx+Euey11fGoJ4JXZzD1McmS0iwwfotbhYsnIIsSV
- Oziu+GGNBzC01E8vgvorN/20PLUbZCu/wTSMgeplnNvBx2224Jg5sfhrYDA/6sZUYINhAYsShHA
- lndkR8ZDv45SIQsuJz6R9S8inujqCzOEoJmORsojjiqJOaMvbitvjs7LbFqj29fE9R44phlCBTr
- ogWr7KsSHJ+vpEtPL2BvR/PH0xxM2MX0utTfpyvkqqp/Ugj6X9QiuHUNDOcqdPqOVbwem+8rwCD
- lgo13neGmTaR+DDF4Oszz132sCTSH1PzpR50Bf7+BQTOXWpa07b9sbIudV3sQwH56/SzGKQpmpE
- loZ8zoZLDVQ+6hyg+nsByhPJbbHlGnGNJFV6NcpG1tImAHISToLyhq9GOM4QGOm/Sar56/uP0Is
- KsnYM0es4dlW+qQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14449; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=pDD38k0SIxrSHiG/SWcjxn+yqzh3OgAiTIc+fdsRAf4=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/EIoCTJpyZwX6o6uh8j8f3tw/5Hji6gO2mW
+ qz2zRxtE3+JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPxAAKCRDm/A8cN/La
+ heAPD/9ILZWvS/2NA5AtwkX1v0mhNe75Qhho2KElCMyT2hwtHEyEaLz0WZkib/9kDxJzJbzdEph
+ MB4uQ9mXSwXeL03+xSXvLNqOUfsc9B3OUrinKTP9JRRdRyLX8QRH2yyR5dsWX3RWOhuoceDPJmq
+ xUOuXXp6kiRBMusEs4ItltSPnaaXWPyMEt6AV1uWqJSfvGUTcAE21RA0DcTkYl1n5EBEN6rDPHw
+ zgDwKJ39jh6myL6TOLuUM/IMB3RIoWZqawQvMl7kJ7zcdIydNqekuUPLRVs0+kVs9+VmknIkx0f
+ VrV9MWxVDYtT01PmA6c1nwhB1Ztc7H2URCWWxVAMxIIKO2HzB66kshGFU1oXG55bRJO/SBvvwfh
+ L0RcAP+rnB0QGZDAKz/TDwip0s+fKUeIIvaX5NwKujb7V5fTpS0mEHwCDFNX/irjoPNWItl149H
+ Km/erAZNY5WTYU1ipMIUS3bj8xg5ivl+LJ28N4MOjWOChOEAOS7z1kDlbBEJHH+j1xEfoGayrp8
+ 1U9GNQcvmDOS2O9RCu+y6kuv4p3/KGrxddYZ0X8gR5m9QTNli5d5YduZq58jm0KpT2M8gOalo53
+ H0wk11UMr6s0YXdoR+hVJVtzqbg8/LJOBJTTKpocP/sBenSy5N/wCeJKt3tyo+RqTeIpq2zgEkv
+ IO98yX/19eDyefA==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add a 2nd probe function helper for mmio based controllers, which
-are getting the memory region from a resource instead of a syscon.
+What is being done by the Amlogic clock controller registration helper for
+EE controllers could benefit other controllers. As such, having a specific
+module for this makes little sense.
+
+Move the helper function to clkc-utils and rename it to describe what it
+does, registering syscon based controller, instead of what it serves.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/meson-clkc-utils.c | 65 ++++++++++++++++++++++++++++--------
- drivers/clk/meson/meson-clkc-utils.h |  1 +
- 2 files changed, 53 insertions(+), 13 deletions(-)
+ drivers/clk/meson/Kconfig            | 13 +++-----
+ drivers/clk/meson/Makefile           |  1 -
+ drivers/clk/meson/axg.c              |  6 ++--
+ drivers/clk/meson/g12a.c             | 28 ++++++++---------
+ drivers/clk/meson/gxbb.c             |  8 ++---
+ drivers/clk/meson/meson-clkc-utils.c | 50 +++++++++++++++++++++++++++++-
+ drivers/clk/meson/meson-clkc-utils.h | 10 ++++++
+ drivers/clk/meson/meson-eeclk.c      | 60 ------------------------------------
+ drivers/clk/meson/meson-eeclk.h      | 24 ---------------
+ 9 files changed, 85 insertions(+), 115 deletions(-)
 
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 7197d23543b8bb8a9020cde316170b50bc359a6c..71481607a6d55d14898f9ecca68f004ccc6f6231 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -36,6 +36,8 @@ config COMMON_CLK_MESON_VCLK
+ 	select COMMON_CLK_MESON_REGMAP
+ 
+ config COMMON_CLK_MESON_CLKC_UTILS
++	select REGMAP
++	select MFD_SYSCON
+ 	tristate
+ 
+ config COMMON_CLK_MESON_AO_CLKC
+@@ -44,11 +46,6 @@ config COMMON_CLK_MESON_AO_CLKC
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select RESET_CONTROLLER
+ 
+-config COMMON_CLK_MESON_EE_CLKC
+-	tristate
+-	select COMMON_CLK_MESON_REGMAP
+-	select COMMON_CLK_MESON_CLKC_UTILS
+-
+ config COMMON_CLK_MESON_CPU_DYNDIV
+ 	tristate
+ 	select COMMON_CLK_MESON_REGMAP
+@@ -73,12 +70,12 @@ config COMMON_CLK_GXBB
+ 	depends on ARM64
+ 	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_AO_CLKC
+-	select COMMON_CLK_MESON_EE_CLKC
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+@@ -89,11 +86,11 @@ config COMMON_CLK_AXG
+ 	depends on ARM64
+ 	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_AO_CLKC
+-	select COMMON_CLK_MESON_EE_CLKC
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
+@@ -167,11 +164,11 @@ config COMMON_CLK_G12A
+ 	depends on ARM64
+ 	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_AO_CLKC
+-	select COMMON_CLK_MESON_EE_CLKC
+ 	select COMMON_CLK_MESON_CPU_DYNDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+ 	select COMMON_CLK_MESON_VCLK
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index bc56a47931c1d27db7dde72b73d9842c93e74f62..c6998e752c683ec9d1736a6811b1cfd71559b289 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -5,7 +5,6 @@ obj-$(CONFIG_COMMON_CLK_MESON_CLKC_UTILS) += meson-clkc-utils.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+ obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+-obj-$(CONFIG_COMMON_CLK_MESON_EE_CLKC) += meson-eeclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON_MPLL) += clk-mpll.o
+ obj-$(CONFIG_COMMON_CLK_MESON_PHASE) += clk-phase.o
+ obj-$(CONFIG_COMMON_CLK_MESON_PLL) += clk-pll.o
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 3839dfe9c7c540c2aec731be84e4e6520264c525..675f051ea5241b0f51e54a238470e4fe947e5ba5 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -18,7 +18,7 @@
+ #include "clk-regmap.h"
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+-#include "meson-eeclk.h"
++#include "meson-clkc-utils.h"
+ 
+ #include <dt-bindings/clock/axg-clkc.h>
+ 
+@@ -2110,7 +2110,7 @@ static struct clk_hw *axg_hw_clks[] = {
+ 	[CLKID_VDIN_MEAS]		= &axg_vdin_meas.hw,
+ };
+ 
+-static const struct meson_eeclkc_data axg_clkc_data = {
++static const struct meson_clkc_data axg_clkc_data = {
+ 	.hw_clks = {
+ 		.hws = axg_hw_clks,
+ 		.num = ARRAY_SIZE(axg_hw_clks),
+@@ -2124,7 +2124,7 @@ static const struct of_device_id axg_clkc_match_table[] = {
+ MODULE_DEVICE_TABLE(of, axg_clkc_match_table);
+ 
+ static struct platform_driver axg_clkc_driver = {
+-	.probe		= meson_eeclkc_probe,
++	.probe		= meson_clkc_syscon_probe,
+ 	.driver		= {
+ 		.name	= "axg-clkc",
+ 		.of_match_table = axg_clkc_match_table,
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 9de0531821a8f0297273189b44a81024d8bf9093..cdaaa165a0ff1f3b4d5250a96428c54cc3e37381 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -23,7 +23,7 @@
+ #include "clk-cpu-dyndiv.h"
+ #include "vid-pll-div.h"
+ #include "vclk.h"
+-#include "meson-eeclk.h"
++#include "meson-clkc-utils.h"
+ 
+ #include <dt-bindings/clock/g12a-clkc.h>
+ 
+@@ -5360,26 +5360,26 @@ static int g12a_dvfs_setup(struct platform_device *pdev)
+ }
+ 
+ struct g12a_clkc_data {
+-	const struct meson_eeclkc_data eeclkc_data;
++	const struct meson_clkc_data clkc_data;
+ 	int (*dvfs_setup)(struct platform_device *pdev);
+ };
+ 
+ static int g12a_clkc_probe(struct platform_device *pdev)
+ {
+-	const struct meson_eeclkc_data *eeclkc_data;
++	const struct meson_clkc_data *clkc_data;
+ 	const struct g12a_clkc_data *g12a_data;
+ 	int ret;
+ 
+-	eeclkc_data = of_device_get_match_data(&pdev->dev);
+-	if (!eeclkc_data)
++	clkc_data = of_device_get_match_data(&pdev->dev);
++	if (!clkc_data)
+ 		return -EINVAL;
+ 
+-	ret = meson_eeclkc_probe(pdev);
++	ret = meson_clkc_syscon_probe(pdev);
+ 	if (ret)
+ 		return ret;
+ 
+-	g12a_data = container_of(eeclkc_data, struct g12a_clkc_data,
+-				 eeclkc_data);
++	g12a_data = container_of(clkc_data, struct g12a_clkc_data,
++				 clkc_data);
+ 
+ 	if (g12a_data->dvfs_setup)
+ 		return g12a_data->dvfs_setup(pdev);
+@@ -5388,7 +5388,7 @@ static int g12a_clkc_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct g12a_clkc_data g12a_clkc_data = {
+-	.eeclkc_data = {
++	.clkc_data = {
+ 		.hw_clks = {
+ 			.hws = g12a_hw_clks,
+ 			.num = ARRAY_SIZE(g12a_hw_clks),
+@@ -5400,7 +5400,7 @@ static const struct g12a_clkc_data g12a_clkc_data = {
+ };
+ 
+ static const struct g12a_clkc_data g12b_clkc_data = {
+-	.eeclkc_data = {
++	.clkc_data = {
+ 		.hw_clks = {
+ 			.hws = g12b_hw_clks,
+ 			.num = ARRAY_SIZE(g12b_hw_clks),
+@@ -5410,7 +5410,7 @@ static const struct g12a_clkc_data g12b_clkc_data = {
+ };
+ 
+ static const struct g12a_clkc_data sm1_clkc_data = {
+-	.eeclkc_data = {
++	.clkc_data = {
+ 		.hw_clks = {
+ 			.hws = sm1_hw_clks,
+ 			.num = ARRAY_SIZE(sm1_hw_clks),
+@@ -5422,15 +5422,15 @@ static const struct g12a_clkc_data sm1_clkc_data = {
+ static const struct of_device_id g12a_clkc_match_table[] = {
+ 	{
+ 		.compatible = "amlogic,g12a-clkc",
+-		.data = &g12a_clkc_data.eeclkc_data
++		.data = &g12a_clkc_data.clkc_data
+ 	},
+ 	{
+ 		.compatible = "amlogic,g12b-clkc",
+-		.data = &g12b_clkc_data.eeclkc_data
++		.data = &g12b_clkc_data.clkc_data
+ 	},
+ 	{
+ 		.compatible = "amlogic,sm1-clkc",
+-		.data = &sm1_clkc_data.eeclkc_data
++		.data = &sm1_clkc_data.clkc_data
+ 	},
+ 	{}
+ };
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index f969e3cf9566de5dff615d59360729d963507b36..a57cdf884ae900f8651b2cd84c5019270e684026 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -13,7 +13,7 @@
+ #include "clk-regmap.h"
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+-#include "meson-eeclk.h"
++#include "meson-clkc-utils.h"
+ #include "vid-pll-div.h"
+ 
+ #include <dt-bindings/clock/gxbb-clkc.h>
+@@ -3234,14 +3234,14 @@ static struct clk_hw *gxl_hw_clks[] = {
+ 	[CLKID_ACODEC]		    = &gxl_acodec.hw,
+ };
+ 
+-static const struct meson_eeclkc_data gxbb_clkc_data = {
++static const struct meson_clkc_data gxbb_clkc_data = {
+ 	.hw_clks = {
+ 		.hws = gxbb_hw_clks,
+ 		.num = ARRAY_SIZE(gxbb_hw_clks),
+ 	},
+ };
+ 
+-static const struct meson_eeclkc_data gxl_clkc_data = {
++static const struct meson_clkc_data gxl_clkc_data = {
+ 	.hw_clks = {
+ 		.hws = gxl_hw_clks,
+ 		.num = ARRAY_SIZE(gxl_hw_clks),
+@@ -3256,7 +3256,7 @@ static const struct of_device_id gxbb_clkc_match_table[] = {
+ MODULE_DEVICE_TABLE(of, gxbb_clkc_match_table);
+ 
+ static struct platform_driver gxbb_clkc_driver = {
+-	.probe		= meson_eeclkc_probe,
++	.probe		= meson_clkc_syscon_probe,
+ 	.driver		= {
+ 		.name	= "gxbb-clkc",
+ 		.of_match_table = gxbb_clkc_match_table,
 diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
-index 49f562d0f203b9a7d15b5119100216564c10cb21..272b2dd8c95e73e6c021cbf8852dd64733fa00e0 100644
+index 6937d1482719bda00da127381025a165907e5db6..49f562d0f203b9a7d15b5119100216564c10cb21 100644
 --- a/drivers/clk/meson/meson-clkc-utils.c
 +++ b/drivers/clk/meson/meson-clkc-utils.c
-@@ -26,12 +26,9 @@ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_da
+@@ -3,9 +3,13 @@
+  * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+  */
+ 
+-#include <linux/of_device.h>
+ #include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
+ #include "meson-clkc-utils.h"
+ 
+ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
+@@ -22,6 +26,50 @@ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_da
  }
  EXPORT_SYMBOL_NS_GPL(meson_clk_hw_get, "CLK_MESON");
  
--int meson_clkc_syscon_probe(struct platform_device *pdev)
-+static int meson_clkc_init(struct device *dev, struct regmap *map)
- {
- 	const struct meson_clkc_data *data;
--	struct device *dev = &pdev->dev;
--	struct device_node *np;
--	struct regmap *map;
- 	struct clk_hw *hw;
- 	int ret, i;
- 
-@@ -39,15 +36,6 @@ int meson_clkc_syscon_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -EINVAL;
- 
--	np = of_get_parent(dev->of_node);
--	map = syscon_node_to_regmap(np);
--	of_node_put(np);
--	if (IS_ERR(map)) {
--		dev_err(dev,
--			"failed to get parent syscon regmap\n");
--		return PTR_ERR(map);
--	}
--
- 	if (data->init_count)
- 		regmap_multi_reg_write(map, data->init_regs, data->init_count);
- 
-@@ -68,8 +56,59 @@ int meson_clkc_syscon_probe(struct platform_device *pdev)
- 
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
-+
 +int meson_clkc_syscon_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np;
-+	struct regmap *map;
-+
-+	np = of_get_parent(dev->of_node);
-+	map = syscon_node_to_regmap(np);
-+	of_node_put(np);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "failed to get parent syscon regmap\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	return meson_clkc_init(dev, map);
-+}
- EXPORT_SYMBOL_NS_GPL(meson_clkc_syscon_probe, "CLK_MESON");
- 
-+static const struct regmap_config base_clkc_regmap_cfg = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+};
-+
-+int meson_clkc_mmio_probe(struct platform_device *pdev)
 +{
 +	const struct meson_clkc_data *data;
 +	struct device *dev = &pdev->dev;
-+	struct regmap_config regmap_cfg;
-+	struct resource *res;
-+	void __iomem *base;
++	struct device_node *np;
 +	struct regmap *map;
++	struct clk_hw *hw;
++	int ret, i;
 +
 +	data = of_device_get_match_data(dev);
 +	if (!data)
 +		return -EINVAL;
 +
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	memcpy(&regmap_cfg, &base_clkc_regmap_cfg, sizeof(regmap_cfg));
-+	regmap_cfg.max_register = resource_size(res) - 4;
-+
-+	map = devm_regmap_init_mmio(dev, base, &regmap_cfg);
-+	if (IS_ERR(map))
++	np = of_get_parent(dev->of_node);
++	map = syscon_node_to_regmap(np);
++	of_node_put(np);
++	if (IS_ERR(map)) {
++		dev_err(dev,
++			"failed to get parent syscon regmap\n");
 +		return PTR_ERR(map);
++	}
 +
-+	return meson_clkc_init(dev, map);
++	if (data->init_count)
++		regmap_multi_reg_write(map, data->init_regs, data->init_count);
++
++	for (i = 0; i < data->hw_clks.num; i++) {
++		hw = data->hw_clks.hws[i];
++
++		/* array might be sparse */
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "registering %s clock failed\n",
++				hw->init->name);
++			return ret;
++		}
++	}
++
++	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
 +}
-+EXPORT_SYMBOL_NS_GPL(meson_clkc_mmio_probe, "CLK_MESON");
++EXPORT_SYMBOL_NS_GPL(meson_clkc_syscon_probe, "CLK_MESON");
 +
  MODULE_DESCRIPTION("Amlogic Clock Controller Utilities");
  MODULE_LICENSE("GPL");
  MODULE_IMPORT_NS("CLK_MESON");
 diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
-index 26cd47544302b28ca1a342e178956559a84b152a..b45f85f630d7190fb6509b088f05f17ca91fa1c8 100644
+index fe6f407289496c5c4821b7c9e5a6b6e8a45068b2..26cd47544302b28ca1a342e178956559a84b152a 100644
 --- a/drivers/clk/meson/meson-clkc-utils.h
 +++ b/drivers/clk/meson/meson-clkc-utils.h
-@@ -25,5 +25,6 @@ struct meson_clkc_data {
- };
+@@ -9,6 +9,8 @@
+ #include <linux/of_device.h>
+ #include <linux/clk-provider.h>
  
- int meson_clkc_syscon_probe(struct platform_device *pdev);
-+int meson_clkc_mmio_probe(struct platform_device *pdev);
++struct platform_device;
++
+ struct meson_clk_hw_data {
+ 	struct clk_hw	**hws;
+ 	unsigned int	num;
+@@ -16,4 +18,12 @@ struct meson_clk_hw_data {
  
+ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
+ 
++struct meson_clkc_data {
++	const struct reg_sequence	*init_regs;
++	unsigned int			init_count;
++	struct meson_clk_hw_data	hw_clks;
++};
++
++int meson_clkc_syscon_probe(struct platform_device *pdev);
++
  #endif
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+deleted file mode 100644
+index 6236bf970d79e85b1e739c713c03f35a00c291b9..0000000000000000000000000000000000000000
+--- a/drivers/clk/meson/meson-eeclk.c
++++ /dev/null
+@@ -1,60 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (c) 2019 BayLibre, SAS.
+- * Author: Jerome Brunet <jbrunet@baylibre.com>
+- */
+-
+-#include <linux/clk-provider.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include <linux/mfd/syscon.h>
+-#include <linux/regmap.h>
+-#include <linux/module.h>
+-
+-#include "clk-regmap.h"
+-#include "meson-eeclk.h"
+-
+-int meson_eeclkc_probe(struct platform_device *pdev)
+-{
+-	const struct meson_eeclkc_data *data;
+-	struct device *dev = &pdev->dev;
+-	struct device_node *np;
+-	struct regmap *map;
+-	int ret, i;
+-
+-	data = of_device_get_match_data(dev);
+-	if (!data)
+-		return -EINVAL;
+-
+-	/* Get the hhi system controller node */
+-	np = of_get_parent(dev->of_node);
+-	map = syscon_node_to_regmap(np);
+-	of_node_put(np);
+-	if (IS_ERR(map)) {
+-		dev_err(dev,
+-			"failed to get HHI regmap\n");
+-		return PTR_ERR(map);
+-	}
+-
+-	if (data->init_count)
+-		regmap_multi_reg_write(map, data->init_regs, data->init_count);
+-
+-	for (i = 0; i < data->hw_clks.num; i++) {
+-		/* array might be sparse */
+-		if (!data->hw_clks.hws[i])
+-			continue;
+-
+-		ret = devm_clk_hw_register(dev, data->hw_clks.hws[i]);
+-		if (ret) {
+-			dev_err(dev, "Clock registration failed\n");
+-			return ret;
+-		}
+-	}
+-
+-	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
+-}
+-EXPORT_SYMBOL_NS_GPL(meson_eeclkc_probe, "CLK_MESON");
+-
+-MODULE_DESCRIPTION("Amlogic Main Clock Controller Helpers");
+-MODULE_LICENSE("GPL");
+-MODULE_IMPORT_NS("CLK_MESON");
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+deleted file mode 100644
+index 6a81d67b46b2270315e24eb58042de8c09b37763..0000000000000000000000000000000000000000
+--- a/drivers/clk/meson/meson-eeclk.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Copyright (c) 2019 BayLibre, SAS.
+- * Author: Jerome Brunet <jbrunet@baylibre.com>
+- */
+-
+-#ifndef __MESON_CLKC_H
+-#define __MESON_CLKC_H
+-
+-#include <linux/clk-provider.h>
+-#include "clk-regmap.h"
+-#include "meson-clkc-utils.h"
+-
+-struct platform_device;
+-
+-struct meson_eeclkc_data {
+-	const struct reg_sequence	*init_regs;
+-	unsigned int			init_count;
+-	struct meson_clk_hw_data	hw_clks;
+-};
+-
+-int meson_eeclkc_probe(struct platform_device *pdev);
+-
+-#endif /* __MESON_CLKC_H */
 
 -- 
 2.47.2
