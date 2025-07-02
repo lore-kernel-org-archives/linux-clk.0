@@ -1,167 +1,102 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6552620D5;
-	Wed,  2 Jul 2025 11:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45630246781;
+	Wed,  2 Jul 2025 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751455003; cv=none; b=ZWvIlkyQM1WOUp5fJVeyi5dH+rKm7YdzoqdAih2gi1c3DYd0SYoXsPZDrbwP2FSVhs0oMY0amlld5g4XBiNtgBM9wAuLN+g8FJz0uo8LncNtE/n28nmdPRTTTnK2fwdP77Z73F/SGlXFmzowIl6YRhIMViudcoh5X6gy4Wn1fKc=
+	t=1751455865; cv=none; b=KW+LDgJq6k8mHZ5gM1XWvO21RQRrtOB2mp4+GRPxynYVpisp3edgCUKG4B4dLFtS55Nrx5EmxswV+0bvv3c/8HV1NggAcHX9KnSEx5Cn/5apm+zhonRV4g6mHZGlhJZHpge8snEN4Bk/pHfvzVVMRG/2Q4pLX/ZZhd67HIiK/oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751455003; c=relaxed/simple;
-	bh=iai0tW//mVRNAaFjjMnCpnaKmwhfswFybX05OfYaVN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qa3Tz6nLQ61ilSva4eYqC1aHuejoI6gZgbBfjeBaiaYRKVLAiV27Mfb0r5i7ZMUAgciDuojJEYRf6nRdAg/ckAWLy+oh6NtObDzjJqIppK5Zzr3MD6wPrXLY0V2M1GRhdcLQ9YJV4OAJhm9q/JKwH28p7l6qfb3ys4SR8bmz7MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cinJtd5W; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1751455865; c=relaxed/simple;
+	bh=BQCMzYb6py2zdb+YdFBHZxoeQM3A3WG6DoBX46UnyrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jB83k2jrCBSLBljYsnChVGjdjVWwSgSv5bevq1EXmiAiZSl/IDT2Y2vhFVB9kTn2QYYEpi/CS8kwRTymya0li2/qb/kjTe/v8iD9mg1PzUruczv0KoOYfMeGtZ+vECOfER4LvyHX81HR4TjMbyXYMCwXWaYP0SCYW0BbRhf+03g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NM1XnPg3; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cinJtd5W"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-453643020bdso58137615e9.1;
-        Wed, 02 Jul 2025 04:16:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751455000; x=1752059800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=549RYgSqBKWypR35lL4+7WsRiiZbDOpf2dghVsPGmpY=;
-        b=cinJtd5WaVCtDTZ011LM8TWoc/p3qFiro//4Eda/f1QqMs/JSvhrC1Nj6tf6jXLeHC
-         4+SPETwi/Dv6L78QqXwIZavuDGRESoHN2B2VFU+kaq4yDSOLAETzAeWhJIs7h4YtHFqC
-         cxSvEy7OJrKyfK3KjyW0cjQSKfJZdVh4Ynj7CWE6s2RD/ef8LKIrh+B4flBJA8FcgqKN
-         1l3NOognVJ96oJzZuAJItE9/apuMcLedKrVzXhBxCcsoSZZ0WEWmxSMldTF3lhWiURI9
-         xc2259kwh8mbIHvpjMmApsgep81hsUq9LG7YXPF1KY6znG0j2oSOK2ejkqE6wSI5bkFJ
-         a4ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751455000; x=1752059800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=549RYgSqBKWypR35lL4+7WsRiiZbDOpf2dghVsPGmpY=;
-        b=MsS24RrNBbKhgkTDpTfLiqyZbvq5UkVrezjXL5zf06BqCZHR5cdpY4F94DzITJWdaJ
-         CONePv5wEVZc9IkUYBb+QeThvRyRqrdSTb8BVymANq2y6oNgA9b0bS1cIvXJ0a9SURGd
-         6tb1lCeRrHLwECl4rH3v4eUS3VnXYOz53JbmXuJG4mIpqdKFfMrTMqkPjpksSqW4o0XE
-         mio8U/LmZ9MZy1J8xXLn6pvhc7HrG1Ak9mqq/w63aBonFNo/BU6Mu1zAruIRWPgRf8Fz
-         2BMO+62N0X9kCJKvciePpNlr9Kcn+yzOi4SocS7MH53CA7DdBO7Ga/Tn3vhCTqwHsMBt
-         tCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1mtDbCvn7nXKo2jp15ctZr1gAMEysNJnuAb+4sei2zbuQGziP5qodyi9r5geVzEWgRbKybweqpfIT@vger.kernel.org, AJvYcCVjLpwKt4wWKwHtISflVyiguP/atBkF5lHCOgmpOFze+l2IfjbvYLEbB8FkJvz4cEK46+gENXl8Adjuv1Pz@vger.kernel.org, AJvYcCWJDwfSBKp01wFRXVIlBHh+8sMrhaChgI4W7tsil6aJZjSwyEIAW/pod9uHEDX19AEFLcP6lLVx8qg0fs7sej9bVlk=@vger.kernel.org, AJvYcCWTDmOh0aPCk7i/sI5I0uAhI1XifmMoAtmtpXLgf01ri1aLB/1WSeIbV9BC2O7+Dj0vfmlsLsT7Y/q0@vger.kernel.org, AJvYcCXOBH19+uYvcm3gk4ktZPVavvtQDpqJcM015WMoP+hdCFpIEny3Q3mFS1KtrNhv53Ur8xiZ5HCD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhxKnnJSKASmDRz4e/baB/Icz1TlG00vTyN8rKlAfmDuMpjGgQ
-	vRLuVseWPePiIE5ADILcASu9Z62J58KiV3f2+87NNpxdeUQIoG7NlVyuxlHgrJ4IPd4SVk5NjQz
-	haYpt3L1yKupk7RMRtXWjVODlaIdFDY3qNOk8
-X-Gm-Gg: ASbGncsjMbiu0nUWhO2OMViKtGzssirWIOGlfUNdv7kQmHJk8XKtu2NTxSKyEFeJpfi
-	5Z2WQRihAsltul05f3mWPEZnqjJ7WMuMLadqoH57eRhDcsMt2hQuqPKxQcQgaX3rLMUwiCsiplI
-	SdRIgjucI/zYuPPrEFf1f/3zOkwK85iGwtPE1PII23D7H3LrG0kJnGc2QFTtbgCnHvaN66zgGH6
-	vuBksQ8rP8kZNo=
-X-Google-Smtp-Source: AGHT+IFeKN0FvjV/iKqE42THXeDbLi9oziLlix03inqM9yiGjQuLrcguM/r8tfbOm1mYwyZ+nUwAsTk4bCYzYh2DZSA=
-X-Received: by 2002:a05:600c:628c:b0:442:ccf9:e6f2 with SMTP id
- 5b1f17b1804b1-454a3708f05mr28698715e9.16.1751454999782; Wed, 02 Jul 2025
- 04:16:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NM1XnPg3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751455865; x=1782991865;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BQCMzYb6py2zdb+YdFBHZxoeQM3A3WG6DoBX46UnyrI=;
+  b=NM1XnPg3myCeU+pXEhN9Tek1tPhAYdzp5DgAFBRLWV1cx/FpOyD6TCLP
+   rRipg3oUn14ZMclOzjiJX7Q8LsucCkhXpE4SkLi5uOsAszhnpcFe4nVCc
+   k4ThFFhpTKguj8C7nU72ziU5IPzQn8Lz1SxzSo2oOsoARKBo9Cc37v2UV
+   N8cyBN84ApPIAME/n6tKoG1x0aO6c21I1pRxoZnSAJpZM75Xjr1bkkd3F
+   PJhsb/XMntCS9mmude1JcsJLvlSqtTFEHaH4U+CtO0qon9/bApYZ2y8LE
+   TZUfccFU9rX3LMiEEz3S3O1+GLVg05mYcLKAazOeUmIDY1PzdCfvzP/CW
+   Q==;
+X-CSE-ConnectionGUID: Z6kCnSQ5Sf2PMssCiFudbw==
+X-CSE-MsgGUID: ap5u5udrS4uFiIQuNtFKGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="79186476"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="79186476"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:31:04 -0700
+X-CSE-ConnectionGUID: GgPq3gDpQmWwNZsum2/JhQ==
+X-CSE-MsgGUID: ITHP5AsvTvGxhlUG+acF+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153456263"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:30:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWvfw-0000000Bu4U-04v5;
+	Wed, 02 Jul 2025 14:30:52 +0300
+Date: Wed, 2 Jul 2025 14:30:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 06/24] byteorder: Add memcpy_to_le32() and
+ memcpy_from_le32()
+Message-ID: <aGUYa6PWYFy4TyLg@smile.fi.intel.com>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-7-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702005706.1200059-1-john.madieu.xa@bp.renesas.com>
- <20250702005706.1200059-4-john.madieu.xa@bp.renesas.com> <CAMuHMdVOhJaYuKqJeJA4N1n-_a=msyaYbiSHpaMw8OkHrprZSA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVOhJaYuKqJeJA4N1n-_a=msyaYbiSHpaMw8OkHrprZSA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 2 Jul 2025 12:16:13 +0100
-X-Gm-Features: Ac12FXxKgI7r15K6Lifif8agJoG7VZyyIB7KQTuknktkKr34MscCH7t7bPpgpoA
-Message-ID: <CA+V-a8tUVgvYeMd5g8Y_FUTiE1v0eNcYFvdJsW2Rk3-a2ui1DA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] pinctrl: renesas: rzg2l: Add PFC_OEN support for
- RZ/G3E SoC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	richardcochran@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, netdev@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	john.madieu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702051345.1460497-7-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Geert,
+On Wed, Jul 02, 2025 at 10:43:27AM +0530, Anup Patel wrote:
+> Add common memcpy APIs for copying u32 array to/from __le32 array.
 
-Thank you for the review.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Wed, Jul 2, 2025 at 10:55=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi John, Prabhakar,
->
-> On Wed, 2 Jul 2025 at 02:57, John Madieu <john.madieu.xa@bp.renesas.com> =
-wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support to configure the PFC_OEN register on the RZ/G3E SoC for
-> > specific pins that require direction control via output-enable.
-> >
-> > On the RZ/G3E SoC, certain pins such as TXC_TXCLK must be switchable
-> > between input and output modes depending on the PHY interface mode
-> > (MII or RGMII). This behavior maps to the `output-enable` property in
-> > the device tree and requires configuring the PFC_OEN register.
-> >
-> > Update the r9a09g047_variable_pin_cfg array to include PB1, PE1, PL0,
-> > PL1, PL2, and PL4 with PIN_CFG_OEN flags to indicate support for this
-> > feature. Define a new rzg3e_hwcfg structure with SoC-specific pin names
-> > used for OEN bit mapping.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->
-> > @@ -3283,6 +3307,19 @@ static const char * const rzv2h_oen_pin_names[] =
-=3D {
-> >         "XSPI0_CKN", "XSPI0_CKP"
-> >  };
-> >
-> > +static const char * const rzg3e_oen_pin_names[] =3D {
-> > +       "PB1", "PE1", "PL4", "PL1", "PL2", "PL0"
-> > +};
-> > +
-> > +static const struct rzg2l_hwcfg rzg3e_hwcfg =3D {
-> > +       .regs =3D {
-> > +               .pwpr =3D 0x3c04,
-> > +       },
-> > +       .tint_start_index =3D 17,
-> > +       .oen_pin_names =3D rzg3e_oen_pin_names,
-> > +       .oen_pin_names_len =3D ARRAY_SIZE(rzg3e_oen_pin_names),
-> > +};
-> > +
-> >  static const struct rzg2l_hwcfg rzv2h_hwcfg =3D {
-> >         .regs =3D {
-> >                 .pwpr =3D 0x3c04,
-> > @@ -3352,7 +3389,7 @@ static struct rzg2l_pinctrl_data r9a09g047_data =
-=3D {
-> >         .dedicated_pins =3D rzg3e_dedicated_pins,
-> >         .n_port_pins =3D ARRAY_SIZE(r9a09g047_gpio_configs) * RZG2L_PIN=
-S_PER_PORT,
-> >         .n_dedicated_pins =3D ARRAY_SIZE(rzg3e_dedicated_pins),
-> > -       .hwcfg =3D &rzv2h_hwcfg,
-> > +       .hwcfg =3D &rzg3e_hwcfg,
-> >         .variable_pin_cfg =3D r9a09g047_variable_pin_cfg,
-> >         .n_variable_pin_cfg =3D ARRAY_SIZE(r9a09g047_variable_pin_cfg),
-> >         .num_custom_params =3D ARRAY_SIZE(renesas_rzv2h_custom_bindings=
-),
->
-> I would rather use the existing .oen_{read,write}() abstraction,
-> and thus provide new rzg3e_oen_{read,write}() implementations:
->
-Ok.
+-- 
+With Best Regards,
+Andy Shevchenko
 
->     -    .oen_read =3D &rzv2h_oen_read,
->     -    .oen_write =3D &rzv2h_oen_write,
->     +    .oen_read =3D &rzg3e_oen_read,
->     +    .oen_write =3D &rzg3e_oen_write,
->
-> Of course this requires refactoring the existing rzv2h_pin_to_oen_bit()
-> and rzv2h_oen_{read,write}() functions to avoid duplication.
-> Do you agree?
->
-Agreed.
 
-Cheers,
-Prabhakar
