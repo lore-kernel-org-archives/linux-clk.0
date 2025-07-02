@@ -1,141 +1,153 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89251FE44B
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 05:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EC578F4F;
+	Wed,  2 Jul 2025 06:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751433430; cv=none; b=IqRtTvFrrpCDeNboXtmMlK+VU+m8SrvemSVR8SGvf1tbVN6dwIR9D25jtvpZ875oY8oChQCF5YqHS8nkdon9CMF82CRc2Zgv0TySkbEkqjkUa3fbtc18aK+XqPVZv5PBBChipzlj7uzAVOifPLNLrBXr2J206Mfd7ECH6uXMwAI=
+	t=1751437058; cv=none; b=d8Snl21lvDR2QOIvyoolmwjhY0R1ArMdePR62kgQX6C/cDMGWRGuZKOrzAxk9xJGS23F/Iq+k+Qx/HJyZRQyhYBOThB2oG9dH8pD5xWhESVY+b5XqhkSmBINptvv1NJdnkJoycnyl7xNx7xUDrMgZkKmty0oTV1U3Ocbj3Ume8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751433430; c=relaxed/simple;
-	bh=SIZVTA1dBlDgHWuqKkMeHUlssl6BYErjNhZuMkc2v6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cRWxRUl/mJ19c47ol1g7XCXRdh4q4hYk35tqZXK9E/tgCdTS2GfdJKVwgHmSDvpNFo+epsj+34BX+EwgJVhOt05BVZqKe6Qo00OEPCoekyTHzO7JHk2JZEr4yGD6T3kncOd5bpG0AlgLhap9s2WdmAhqWBEpxeYi3duy9ehkrZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CUCd63pG; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CUCd63pG"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23636167b30so37279095ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Jul 2025 22:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751433428; x=1752038228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t84+O6WBdBY0SCc3BtWc+Gw5ZYyMJomoxrVu9jQtsgg=;
-        b=CUCd63pGeGu4fUzMEvMVeiJTYiKkqwGwjNi21xlBefLtX/hUB1ogxNyQDNZrl/P1iN
-         feJFYgm2b18q4Oirn5PGBEtFyvn8x70pW1I/3mFb7UdRn4q6TSlB2blJ4sChn8XmSCwQ
-         s9rfXaikuXMpNZC6KVi7uZd7oO7glF9aCF2bZSSN9WdahH3lF5mQcDtLFoueSnSu/kJy
-         N1t3yG3FX4dQQGGY49xs4MfXUexnM3TNJ8Ii88lno/lERrej6ydoNqAAhs1FJQ7pGOFs
-         iZWFGRlI5ugSEG9Zsb3a7mzq/ytyNK2FTow2ak7ocZnGoWxWw67Ag6VCrpW/4gcrz6m4
-         vvaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751433428; x=1752038228;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t84+O6WBdBY0SCc3BtWc+Gw5ZYyMJomoxrVu9jQtsgg=;
-        b=h/48+WtZZ8Myzrydn9RpWVQRnfcJ4n9Qv3zmZctj+jZiwg7F6I+bql6TgU3NSorX7P
-         3k6Av7UuC3NcQFgUtauCbTHLerJH4F3mV7HZK//gWTvPNzD3o9IjiI3omSNGrthoTwbR
-         Mw6QhlzmP23ge0877GEMJigpqTOQ1xBVdhTvNlGS3qWpmp7U4jWTslTD6y3A+K2D07lQ
-         0JzxIDETkk/SdQIjpKtxHR8vtjzOoDd/NqGWYmdS0kqr8SXiWhkcUQuuo1O7ZQ2YzFVH
-         T7QkrFIsxGS3Xad29Wp3MYMudYpWGav+B29zwgEP3TkMOsOqSZVDEjrzXYPAm0/uAJKn
-         Long==
-X-Forwarded-Encrypted: i=1; AJvYcCVpVMHP/OSzokwIAJzR7mqD3dPhtl2BLk1JgyB91coTFxDY+xml+6KesFmEkwADv/0OL9I4Mu04yHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK31XOTpFYdUf3bJOoG1DnKR+hE7nBqhVsy1SP0mfQ4leTw6Xu
-	amMu45/7Pqhd8/Mq/RcZCrK1RsZjNMtXZGXDUWRn2CZgcg7k8nfEwL4h63HJXsJmSrQ=
-X-Gm-Gg: ASbGncsl4IcFOiyydFW36/6q1vQduOrlr1tU6n9Grv/nzFibwmr5kdIlogcyesVrLV6
-	0HrpE9QamQDJ+88GNBdeaDA66Mjuh+gw0K4ZzrRISQ2PG2T6sRydmOcg59FwbKB9yTydle1GuxL
-	zVy03AHoC0QS5jpEUfG0Y8LUOIGaUWSrD9p8ltMWzk5/X/AxKT79vIF2K/ZwTJ1UEBLmBMfSgAf
-	gs3RLuR68JcAOWURTkLzEPVq2gB81Rti8aC8IyhqyiWCZiYfbV9LD73K+b4N27xsBaTM5Y4yoWS
-	hOQbao9tcoRFxoRG9baFKxDCBLstkdmNI3Ej9ea1MKrzYJt+3UkyuDfflKtsUWRd+5oj152iz5y
-	HLf78OikV55zTjFOI
-X-Google-Smtp-Source: AGHT+IHF9jCGgWd1zPtdr7P6gyUcMpmB+BURtwnVFT7vtNKBR1DlMS0ym17Nq8ulkiJ1AGOTzoV1rA==
-X-Received: by 2002:a17:902:cf4f:b0:235:27b6:a897 with SMTP id d9443c01a7336-23c6e552a2bmr15106685ad.34.1751433427932;
-        Tue, 01 Jul 2025 22:17:07 -0700 (PDT)
-Received: from localhost.localdomain ([14.141.91.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c6fe31933sm4719595ad.220.2025.07.01.22.17.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 22:17:07 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v7 24/24] MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-Date: Wed,  2 Jul 2025 10:43:45 +0530
-Message-ID: <20250702051345.1460497-25-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250702051345.1460497-1-apatel@ventanamicro.com>
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+	s=arc-20240116; t=1751437058; c=relaxed/simple;
+	bh=wkSag4op++cUlt6HIXv9iZfn0kjA54lgKctVP4tDiqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=grN/1LLSMgH5lfFgoxWjvTgCIKc4tO5u7GvIrgvH8x/KSo7Z7384WT2y/7RauLleFIkabgU5Pn3Eh8CpyCm85WiipTKKfVLC3sWf82TZlBcnMM3CDL1posY/NEfBxqIEWKYz3P8m3d89YZlj/jfqyfePZP4hucEW9I1zqQiA9hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 86AE7341F5E;
+	Wed, 02 Jul 2025 06:17:35 +0000 (UTC)
+Date: Wed, 2 Jul 2025 06:17:17 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
+	guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/6] reset: spacemit: add K1 reset support
+Message-ID: <20250702061717-GYA304216@gentoo>
+References: <20250613011139.1201702-1-elder@riscstar.com>
+ <20250618111737-GYA157089@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618111737-GYA157089@gentoo>
 
-Add Rahul and myself as maintainers for RISC-V RPMI and MPXY drivers.
+Hi Philipp,
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+On 11:17 Wed 18 Jun     , Yixun Lan wrote:
+> Hi ALL,
+>   As the reset driver going through several review cycles,
+> it becomes quite calm down now, I'd like to request to merge
+> it into v6.17, because various drivers (pwm, emac..) will depend
+> on it, even in the worst case if there is problem, I believe Alex
+> will help to address..
+> 
+> Hi Philipp,
+>   I'd like to query if you willing to take the reset driver -
+> patch [5/6] through the reset tree? It sounds more intuitive,
+> which also will avoid potential conflicts with Kconfig/Makefile..
+>   I've created a prerequisite immutable tag which could be
+> shared between clock and reset subsytem. It's tag -
+> spacemit-reset-deps-for-6.17 at SpacemiT's SoC tree [1], which 
+> effectively are patches [1-4] of this series.
+> But, to make your life easy, I've also applied patch [5/6] at tag
+> spacemit-reset-drv-for-6.17 [2] which has a small macro adjustment
+> requested by Alex at [3]
+>   Let me know what you think of this, thanks
+> 
+Just want to ping this, what do you want from my side to proceed?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4bac4ea21b64..c22434a2756b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21397,6 +21397,21 @@ F:	drivers/perf/riscv_pmu.c
- F:	drivers/perf/riscv_pmu_legacy.c
- F:	drivers/perf/riscv_pmu_sbi.c
- 
-+RISC-V RPMI AND MPXY DRIVERS
-+M:	Rahul Pathak <rahul@summations.net>
-+M:	Anup Patel <anup@brainfault.org>
-+L:	linux-riscv@lists.infradead.org
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-+F:	drivers/clk/clk-rpmi.c
-+F:	drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-+F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
-+F:	include/linux/mailbox/riscv-rpmi-message.h
-+
- RISC-V SPACEMIT SoC Support
- M:	Yixun Lan <dlan@gentoo.org>
- L:	linux-riscv@lists.infradead.org
+or do you want me to send a more formal Pull-Request for [1],
+then you can apply patch [5/6] (still need to fix the macro of [3])
+
+
+> 
+> Link: https://github.com/spacemit-com/linux/releases/tag/spacemit-reset-deps-for-6.17 [1]
+> Link: https://github.com/spacemit-com/linux/releases/tag/spacemit-reset-drv-for-6.17 [2]
+> Link: https://lore.kernel.org/all/528522d9-0467-428c-820a-9e9c8a6166e7@riscstar.com/ [3]
+> 
+> On 20:11 Thu 12 Jun     , Alex Elder wrote:
+> > This series adds reset controller support for the SpacemiT K1 SoC.
+> > A SpacemiT reset controller is implemented as an auxiliary device
+> > associated with a clock controller (CCU).  A new header file
+> > holds definitions used by both the clock and reset drivers.
+> > 
+> > In this version several "multi-bit" resets have been redefined as
+> > individual ones.  For example, RESET_AUDIO had a mask that included
+> > 3 bits.  Now there are 3 separate resets (one for each bit):
+> > RESET_AUDIO_SYS; RESET_AUDIO_MCU_CORE; and RESET_AUDIO_APMU.
+> > 
+> > The reset symbols affected (their previous names) are:
+> >     RESET_USB3_0 ->
+> >       RESET_USB30_AHB,  RESET_USB30_VCC, RESET_USB30_PHY 
+> >     RESET_AUDIO ->
+> >       RESET_AUDIO_SYS, RESET_AUDIO_MCU, RESET_AUDIO_APMU
+> >     RESET_PCIE0 ->
+> >       RESET_PCI0_DBI, RESET_PCI0_SLV, RESET_PCI0_MSTR, RESET_PCI0_GLB
+> >     RESET_PCIE1 ->
+> >       RESET_PCI1_DBI, RESET_PCI1_SLV, RESET_PCI1_MSTR, RESET_PCI1_GLB
+> >     RESET_PCIE2 ->
+> >       RESET_PCI2_DBI, RESET_PCI2_SLV, RESET_PCI2_MSTR, RESET_PCI2_GLB
+> > 
+> > No other code has changed since v10.
+> > 
+> > All of these patches are available here:
+> >   https://github.com/riscstar/linux/tree/outgoing/reset-v11
+> > 
+> > 					-Alex
+> > 
+> > Between version 10 and version 11:
+> >   - Rebased onto Linux v6.16-rc1
+> >   - Redefined several "multi-bit" resets as individual ones.
+> > 
+> > Here is version 10 of this series.
+> >   https://lore.kernel.org/lkml/20250513215345.3631593-1-elder@riscstar.com/
+> > 
+> > All other history is available via that link, so I won't reproduce
+> > it again here.
+> > 
+> > Alex Elder (6):
+> >   dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+> >   soc: spacemit: create a header for clock/reset registers
+> >   clk: spacemit: set up reset auxiliary devices
+> >   clk: spacemit: define three reset-only CCUs
+> >   reset: spacemit: add support for SpacemiT CCU resets
+> >   riscv: dts: spacemit: add reset support for the K1 SoC
+> > 
+> >  .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
+> >  arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 ++
+> >  drivers/clk/spacemit/Kconfig                  |   1 +
+> >  drivers/clk/spacemit/ccu-k1.c                 | 239 +++++++-------
+> >  drivers/reset/Kconfig                         |   9 +
+> >  drivers/reset/Makefile                        |   1 +
+> >  drivers/reset/reset-spacemit.c                | 304 ++++++++++++++++++
+> >  .../dt-bindings/clock/spacemit,k1-syscon.h    | 141 ++++++++
+> >  include/soc/spacemit/k1-syscon.h              | 160 +++++++++
+> >  9 files changed, 775 insertions(+), 127 deletions(-)
+> >  create mode 100644 drivers/reset/reset-spacemit.c
+> >  create mode 100644 include/soc/spacemit/k1-syscon.h
+> > 
+> > 
+> > base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> > -- 
+> > 2.45.2
+> > 
+> 
+> -- 
+> Yixun Lan (dlan)
+
 -- 
-2.43.0
-
+Yixun Lan (dlan)
