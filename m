@@ -1,96 +1,157 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF293253F35
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 13:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664562E9EB2;
+	Wed,  2 Jul 2025 14:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464197; cv=none; b=N+sAc30yvpGcEqq0s3h/T7ibpyRf8+qprQdUHpHv08xhIBWX9DHBQ095B3G8FiqYD7/GL21nXGCWoGAuNJlgoAwAu58xtEunb+M6A9GFsX7hu7qHGuH/izH7iBZLI7U8ejsmoraju6edtQC1LmWo4FMuSTtei1NgmGdVe0hoeDA=
+	t=1751465746; cv=none; b=pLWc7OHIb+aFdkPAThZIZHtamQY0sd2DjKXy/qlR0W6LW/S7BfuXSWpE13Ue/2o2jL5uHqCdGuc9caKt5bFOoVsSHH1z9sF04oNFfv9pBo7phDArEXBNAQO54IzMQrBNdOICaW5+D/CziL5n+ZN56WqZDsSUOqbNp1mL2Mc4tuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464197; c=relaxed/simple;
-	bh=w7Xyb40cJn24nN7twBJleYXadnkJ+HhRYSlYtmT9oX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YwRnlNU3ePzwMJu2z6PmVf47lrXmvgLa8mk+Eq8x0Sar0ulI18k5FbZs+6QakuCgR0to2gze5HwBNVeAwzG7b/+n8Rbo5Z7craTvvoEoLuqA0wYJ6/YOUXVcCdc68aXiSJBMxmbxy4F0iTwQpFSxJjVRhGsTWaFWXQnO01ae/uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3K63wgx0; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1751465746; c=relaxed/simple;
+	bh=AjSA6Bdq5vB9w+D1KK5HtFTazyanZB6oZ2EEmsWUSP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VTGVPIFfOOVdqbzO4v8ClVYej6Ew7nMLCnL3cYlbCum4yVzVu2F2wUrLEWCuuShkDYVDvfOLZ9J9MgM6ZYCQR0wCS5uMPTyyjBq7+pO9fwEGIIEE00Q+sv+PWoetGBpQnW+3XBg75Wg1tRK74NMvVp7M/Rki+lbLgfJs/VDJNzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dBDQHoEX; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3K63wgx0"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4537deebb01so23673475e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 06:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751464193; x=1752068993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tp6qbi+ZUsoL8Zvytk6fdxJM4TvJdtmSvks0lRTguZA=;
-        b=3K63wgx0kjClNkPRLLN6rQXGVANDR0ScVQwCYi6iPF1hEtRqqa3i+2Hhv3b60xdk1m
-         mUKQML+XOJJyr8dxdCuh+B7dCYueI3zAtgLT+OX4xQ050gcuJAfB+2royXCnivDRjaQS
-         CkIMkB/Y5XLSmtD0xyB+3BpPmHq/emlqjziZOUm8TOmmPgMyUtKUoDfgjI4Ir4xg7Fxo
-         vme0wAIvMAqYxLOu04KFh/LPOdhrbpInlHhxbmMoW2KOnnV/948ZEQjEC9rsl0k408Hv
-         jgs6MA9U7bswb76ko5Qec4Fj/Ai6emwYj28OdhLV42CpXB47cC93vdxMtun2UFZ8dmdx
-         P/rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464193; x=1752068993;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tp6qbi+ZUsoL8Zvytk6fdxJM4TvJdtmSvks0lRTguZA=;
-        b=Z/8h8F6DN/0pKC+Jle17ffkjpeGEtvI4uCcuO6vVDuawEDqpfl6q2Ol54VCAzwbc1K
-         aX7ahdAatum9f+bfk5XzPTZaNHjW7uBybNi7CRN+HqARDFZIgltzL+RDE6dxIWk8oiJf
-         GJF5dWat1Dg0y4zu+LLddXvRp/vdcgTCPORhYnxXLJGqQkdLE86Y2B7dsAKdWxbTchrg
-         vc1V0zHyaW0jYWyGKDY9PftiIIsEoaJGJBN8jdUTVmD9/rvxPTUrXKFQtFe1lcN2YTPZ
-         Qi3jql8n682W7ZQHm+zEJOluDze977OnAOTm6WD4UE2lDdspTT5Jmzq+6hnrgKzA53u5
-         lebQ==
-X-Gm-Message-State: AOJu0YwUpD/CIez1AlfpoU6TVoHfxWPW53WwdV5EAlVLNuTmnkKxefqp
-	8oiFlTk4nTKKQVrt07dU9kU6iq6KwmtjRGOzwJm3lyyOYg01wtgsT1FBU9dIPiC5/dY=
-X-Gm-Gg: ASbGncuuKUl5EPABW0iXnAOQe3gAhjBNCYyiPVSrjH3XGlb1Yu32PhIlE5e+7sC2sR/
-	Dj9wX/HFQFqGM90GQ/fA9qhWKyAb9LAHMBAYxlZp0f31YqDnvmJKayThi7usu5IeUGJB2/LP+tP
-	Rr50YNp/68iiNadyP7vFyPpgivjuq8hwv6d+xlM6KjVdPTIRnQ2D+3ffSEN9LUTtA83/WsW+WaB
-	MSBDYMYyciSwdXel3CXU64POsR1p2aERv3FEUBn69lPzCJ4e0JfcmPm277Nxr2wcBvCBvFJ36/e
-	aUKHAWWMrW3WxMkV+pV4p0KnStBzjpK8uQvZNCkXux7l6jmPG6+zCr1dNn8kg+4n
-X-Google-Smtp-Source: AGHT+IE0aYFuuB17fOVm7tTLCtf+dmCjdxDuykMapL/v/tu9OvfMxXQZ2W+1BibdIhnsoHzg8jgH7g==
-X-Received: by 2002:a05:600c:3b15:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-454a36e59e5mr27310635e9.11.1751464192987;
-        Wed, 02 Jul 2025 06:49:52 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4538234be76sm229611545e9.15.2025.07.02.06.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 06:49:52 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/3] clk: amlogic: drop clk_regmap tables
-Date: Wed,  2 Jul 2025 15:49:47 +0200
-Message-ID: <175146414026.853943.10828213278410339328.b4-ty@baylibre.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250623-amlogic-clk-drop-clk-regmap-tables-v4-0-ff04918211cc@baylibre.com>
-References: <20250623-amlogic-clk-drop-clk-regmap-tables-v4-0-ff04918211cc@baylibre.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dBDQHoEX"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562DIwPT009778;
+	Wed, 2 Jul 2025 16:15:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VR6E01Xg6J6Izs0olt9dR6pYp+S5ROquFthL7GlUqPs=; b=dBDQHoEXqF/md8Ai
+	OKxTINMTwYY9+MXakIisn2u4OHsDwVaws4+1VieBQiNXPftGP0VE8IKDZH79YV9C
+	gDu+8iKUecC6lTA5ex8FURzdpDRCP4m/LQweQkCWaJTIbkrTllzw7aH+Rxeuwntn
+	utlstZrXHzSVULtL2Cc2OeUtYOrfnxH6LYJk/mWHDIEXpYkQRK9ktb31DLmb16v8
+	IQ4M7f9TAHR4Q0aCT0gLzcFyIT99ZXhPfBCV/NcxixuYXHjqrUI8h1A2+IEiQK0n
+	OkuVflyw9cWVeufHcOel2SUgz5K4BtxO8qghv8cKOOkUm6NRS9TCAHbMDBGTCt8h
+	+QRk2A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmb9wc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 16:15:22 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 46F9340050;
+	Wed,  2 Jul 2025 16:14:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 22C18BB2448;
+	Wed,  2 Jul 2025 16:13:50 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
+ 2025 16:13:49 +0200
+Message-ID: <164e93e7-b9b1-45ff-8418-3a381b2bc781@foss.st.com>
+Date: Wed, 2 Jul 2025 16:13:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Philipp Zabel <p.zabel@pengutronix.de>, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien
+ Chevallier <gatien.chevallier@foss.st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
 
-Applied to clk-meson (clk-meson-next), thanks!
+Hi Philip
 
-[1/3] clk: amlogic: get regmap with clk_regmap_init
-      https://github.com/BayLibre/clk-meson/commit/21ed19d11863
-[2/3] clk: amlogic: drop clk_regmap tables
-      https://github.com/BayLibre/clk-meson/commit/4cb53fff9db2
-[3/3] clk: amlogic: s4: remove unused data
-      https://github.com/BayLibre/clk-meson/commit/8a65268500b0
+On 6/30/25 10:38, Philipp Zabel wrote:
+> On Mo, 2025-06-23 at 11:27 +0200, Clément Le Goffic wrote:
+>> Introduce the driver for the DDR Performance Monitor available on
+>> STM32MPU SoC.
+>>
+>> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
+>> that come from the DDR Controller such as read or write events.
+>>
+>> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
+>> counter, there is a notion of set of events.
+>> Events from different sets cannot be monitored at the same time.
+>> The first chosen event selects the set.
+>> The set is coded in the first two bytes of the config value which is on 4
+>> bytes.
+>>
+>> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
+>> and may be secured by bootloaders.
+>> Access controllers allow to check access to a resource. Use the access
+>> controller defined in the devicetree to know about the access to the
+>> DDRPERFM clock.
+>>
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>>   drivers/perf/Kconfig         |  11 +
+>>   drivers/perf/Makefile        |   1 +
+>>   drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 905 insertions(+)
+>>
+> [...]
+>> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
+>> new file mode 100644
+>> index 000000000000..c0bce1f446a0
+>> --- /dev/null
+>> +++ b/drivers/perf/stm32_ddr_pmu.c
+>> @@ -0,0 +1,893 @@
+> [...]
+>> +	if (of_property_present(pdev->dev.of_node, "resets")) {
+>> +		rst = devm_reset_control_get(&pdev->dev, NULL);
+> 
+> Use devm_reset_control_get_optional_exclusive() instead. It returns
+> NULL if the device tree doesn't contain a resets property.
+
+Ok I will have a look, thank you
+
+> 
+>> +		if (IS_ERR(rst)) {
+>> +			dev_err(&pdev->dev, "Failed to get reset\n");
+> 
+> Please consider using dev_err_probe() instead.
+
+Ok
+
+>> +			ret = PTR_ERR(rst);
+>> +			goto err_clk;
+>> +		}
+>> +		reset_control_assert(rst);
+>> +		reset_control_deassert(rst);
+> 
+> These can be done unconditionally, as they are no-ops for rst == NULL.
+
+Indeed
 
 Best regards,
---
-Jerome
+Clément
