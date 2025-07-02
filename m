@@ -1,153 +1,92 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EC578F4F;
-	Wed,  2 Jul 2025 06:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F571DF977;
+	Wed,  2 Jul 2025 07:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751437058; cv=none; b=d8Snl21lvDR2QOIvyoolmwjhY0R1ArMdePR62kgQX6C/cDMGWRGuZKOrzAxk9xJGS23F/Iq+k+Qx/HJyZRQyhYBOThB2oG9dH8pD5xWhESVY+b5XqhkSmBINptvv1NJdnkJoycnyl7xNx7xUDrMgZkKmty0oTV1U3Ocbj3Ume8A=
+	t=1751440916; cv=none; b=mwMliEePsU6qy8l2OzvqApqBHxXVxRBxZtsYke/0TKvGFRTxceh6pg425qCwFi3p4AikLVwzterO0srjamUV1p6V2+hrztsgW74kcKnliQm+0x/+sTTY+UoT1SSq2d7eAFzXtKAOpF45H9gI+uXU8DoJ094Kms2eX8uZKWl0Bx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751437058; c=relaxed/simple;
-	bh=wkSag4op++cUlt6HIXv9iZfn0kjA54lgKctVP4tDiqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grN/1LLSMgH5lfFgoxWjvTgCIKc4tO5u7GvIrgvH8x/KSo7Z7384WT2y/7RauLleFIkabgU5Pn3Eh8CpyCm85WiipTKKfVLC3sWf82TZlBcnMM3CDL1posY/NEfBxqIEWKYz3P8m3d89YZlj/jfqyfePZP4hucEW9I1zqQiA9hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 86AE7341F5E;
-	Wed, 02 Jul 2025 06:17:35 +0000 (UTC)
-Date: Wed, 2 Jul 2025 06:17:17 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
-	guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 0/6] reset: spacemit: add K1 reset support
-Message-ID: <20250702061717-GYA304216@gentoo>
-References: <20250613011139.1201702-1-elder@riscstar.com>
- <20250618111737-GYA157089@gentoo>
+	s=arc-20240116; t=1751440916; c=relaxed/simple;
+	bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PNhZX5MVQpq0oQT2FbQXu1apQYCskhhOrl3b/y4JrIMY6n+VUuuRLHFJ2Y17LCKzzdifRI6CzmVYNttTEMtT98CeXJoR7WISjOlqpM0AAyha+XaBo0YYohWGo5p+YgrYBft1VUiOlnwtc4Kk0gSTgy7ZdrU0dC2naPwoybSOw8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32addf54a00so34284241fa.1;
+        Wed, 02 Jul 2025 00:21:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751440907; x=1752045707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
+        b=Vejqni5DMN1uW2nmcJA7oQdfqsYG9yb3CjIt4Rpo3LWm6LPDQ64Kk6q503lY9A5aob
+         GX5tphyWWXVzk82FyptVu6G3hGkbiWIwG/pTukDvwD5JSd+XnWXEQYWf6Sp/oe65dg7L
+         iaAiXG/f3VApjAL4bCXfh5YiaCog+sI7c8oC1/Z7LcP8Px7qIFV0PL3gny/Bh05E3fre
+         Lr7VhSniFuPs26GLYUGhuxeoGZj73yi0j+H48zTD69zl4+fq71G8nt8whN326W14PeSB
+         qnIiLtMskXN8ruO4+ZakoW4nVkQM/9AFKZGzqAFx4Gy/rsZMGx/59oBlndj5cKHtQ7ab
+         XCzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGyyXLOQmeqZhUQhXbymfvC+yuBA27zDOy1PYaJ49tpSLEKDtWkSwWR3AWKYLL5IRNHHv4B3tMDrN8I5WM@vger.kernel.org, AJvYcCUtVZAw4y1kZwg450/VWycek/waB5jdjBepgIRBvzVHKKXAeBI/i2cabH56/0ahzSDoxn4pkMsbU2hOLA==@vger.kernel.org, AJvYcCVGVnWdSCs6FUQEMSKhdrPfSbfiyMIDtzW4zdISde4SKvkKnmYljx0AiT/RJkCuCEXTlYY8hPxrcOPH@vger.kernel.org, AJvYcCXdrJ2nfZMjvStzm9NTswAiNacjb/3REuGFv2LVFSwLopp9RYFDrncifVI411EwTTSh2iJMYL/mE8h6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvDmJqnFctUbin0gtOgva+v48+dvPEzvwQkmCyqu9I15mn7SwP
+	knWt5LUUriuLHNQQ13kC6MDw99mkOdxwemSSvZapWl7DhhF/8JZ3MjXzz9rNjAP/
+X-Gm-Gg: ASbGncv/LaoyPB6FIh4v6f86SXHQFHzworeq4U4Kwc9cygAiLrW5T7CDTGa+f5tdOiP
+	5vSc4RPOXv1o1jgGK1JrrJUT2FnmqYPfZLOAj084mc1EoKqmBbhEonL2NYwinka2OYOwBX44Gcj
+	i7v4E1UUClcbVPlSfNU/NFejUtKbI0hoIOTyBWpbQ+Q5Ca6aKTV6M7nyluDYYrVSMNSH6l5TPZx
+	FfRleYsuIgKgBOoMX3hc0nSS/izQmXIAzwNMixnttNTpT/1liKqCrUTuXIhrEJRk4MGj2wDalmn
+	xn5xm/pVfvgplOapYRCktS+SaNoJ6ogbYHSIz+XdJu+ksHoUu9zw8kBLe0yOvzyT25GS7g2jOQB
+	DrBFLqe6vYCxM3e1lSk4=
+X-Google-Smtp-Source: AGHT+IHgLRqkzL+NlyH8Y6vVuR8370P3PmAbmab6X52g4MP/vDndubojlp9QRSfXIxwvisq4oLRqMA==
+X-Received: by 2002:a05:6512:3ba6:b0:553:24bb:daa1 with SMTP id 2adb3069b0e04-5562829f64dmr616313e87.11.1751440906742;
+        Wed, 02 Jul 2025 00:21:46 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2c5e6esm2056383e87.156.2025.07.02.00.21.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b43cce9efso33353911fa.3;
+        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0wwoySBpjLrgSHrtrl/b0FSEySBxY6scQIaEULw88HLqwX9P73b0fM9jtFjbjr7iubQpmrxifM+fFzg==@vger.kernel.org, AJvYcCUolpaqVoLQqb1N8wwTecjngshn9OzEu7QVTJ698PjumqY0lqVtcKznYNCXljHGDrFEpNmPrJrl2uf2@vger.kernel.org, AJvYcCWOXOZ6+6W5B7k30IbhssfBQWiO8gVIfTeVEYtF5z/TQjcCia4FlYorpVQVFA3G/+3sqfXnKqsNjmhL@vger.kernel.org, AJvYcCXA0xoWBOtN5TQAt06UVlQrN/nRHnvjZRz4QLotZx7EqbOhqO/YVkc8gGQNlaBISUS+sYCBMD9EerWMuv9K@vger.kernel.org
+X-Received: by 2002:a2e:881a:0:b0:32a:6e77:3e57 with SMTP id
+ 38308e7fff4ca-32e00059701mr5163051fa.21.1751440904870; Wed, 02 Jul 2025
+ 00:21:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618111737-GYA157089@gentoo>
+References: <20250701201124.812882-1-paulk@sys-base.io> <20250701201124.812882-2-paulk@sys-base.io>
+In-Reply-To: <20250701201124.812882-2-paulk@sys-base.io>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 Jul 2025 15:21:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
+X-Gm-Features: Ac12FXzCUNmtlDRkeXVtg02FaWchFlhOllywrVEAHXAtLHX_qmyxYGIEnu1zURg
+Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: sunxi: v3s: Fix wrong comment about UART2 pinmux
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, 
+	Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.xyz>, 
+	Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Philipp,
+On Wed, Jul 2, 2025 at 4:13=E2=80=AFAM Paul Kocialkowski <paulk@sys-base.io=
+> wrote:
+>
+> The original comment doesn't match the pin attribution, probably due
+> to a hasty copy/paste.
+>
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-On 11:17 Wed 18 Jun     , Yixun Lan wrote:
-> Hi ALL,
->   As the reset driver going through several review cycles,
-> it becomes quite calm down now, I'd like to request to merge
-> it into v6.17, because various drivers (pwm, emac..) will depend
-> on it, even in the worst case if there is problem, I believe Alex
-> will help to address..
-> 
-> Hi Philipp,
->   I'd like to query if you willing to take the reset driver -
-> patch [5/6] through the reset tree? It sounds more intuitive,
-> which also will avoid potential conflicts with Kconfig/Makefile..
->   I've created a prerequisite immutable tag which could be
-> shared between clock and reset subsytem. It's tag -
-> spacemit-reset-deps-for-6.17 at SpacemiT's SoC tree [1], which 
-> effectively are patches [1-4] of this series.
-> But, to make your life easy, I've also applied patch [5/6] at tag
-> spacemit-reset-drv-for-6.17 [2] which has a small macro adjustment
-> requested by Alex at [3]
->   Let me know what you think of this, thanks
-> 
-Just want to ping this, what do you want from my side to proceed?
-
-or do you want me to send a more formal Pull-Request for [1],
-then you can apply patch [5/6] (still need to fix the macro of [3])
-
-
-> 
-> Link: https://github.com/spacemit-com/linux/releases/tag/spacemit-reset-deps-for-6.17 [1]
-> Link: https://github.com/spacemit-com/linux/releases/tag/spacemit-reset-drv-for-6.17 [2]
-> Link: https://lore.kernel.org/all/528522d9-0467-428c-820a-9e9c8a6166e7@riscstar.com/ [3]
-> 
-> On 20:11 Thu 12 Jun     , Alex Elder wrote:
-> > This series adds reset controller support for the SpacemiT K1 SoC.
-> > A SpacemiT reset controller is implemented as an auxiliary device
-> > associated with a clock controller (CCU).  A new header file
-> > holds definitions used by both the clock and reset drivers.
-> > 
-> > In this version several "multi-bit" resets have been redefined as
-> > individual ones.  For example, RESET_AUDIO had a mask that included
-> > 3 bits.  Now there are 3 separate resets (one for each bit):
-> > RESET_AUDIO_SYS; RESET_AUDIO_MCU_CORE; and RESET_AUDIO_APMU.
-> > 
-> > The reset symbols affected (their previous names) are:
-> >     RESET_USB3_0 ->
-> >       RESET_USB30_AHB,  RESET_USB30_VCC, RESET_USB30_PHY 
-> >     RESET_AUDIO ->
-> >       RESET_AUDIO_SYS, RESET_AUDIO_MCU, RESET_AUDIO_APMU
-> >     RESET_PCIE0 ->
-> >       RESET_PCI0_DBI, RESET_PCI0_SLV, RESET_PCI0_MSTR, RESET_PCI0_GLB
-> >     RESET_PCIE1 ->
-> >       RESET_PCI1_DBI, RESET_PCI1_SLV, RESET_PCI1_MSTR, RESET_PCI1_GLB
-> >     RESET_PCIE2 ->
-> >       RESET_PCI2_DBI, RESET_PCI2_SLV, RESET_PCI2_MSTR, RESET_PCI2_GLB
-> > 
-> > No other code has changed since v10.
-> > 
-> > All of these patches are available here:
-> >   https://github.com/riscstar/linux/tree/outgoing/reset-v11
-> > 
-> > 					-Alex
-> > 
-> > Between version 10 and version 11:
-> >   - Rebased onto Linux v6.16-rc1
-> >   - Redefined several "multi-bit" resets as individual ones.
-> > 
-> > Here is version 10 of this series.
-> >   https://lore.kernel.org/lkml/20250513215345.3631593-1-elder@riscstar.com/
-> > 
-> > All other history is available via that link, so I won't reproduce
-> > it again here.
-> > 
-> > Alex Elder (6):
-> >   dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-> >   soc: spacemit: create a header for clock/reset registers
-> >   clk: spacemit: set up reset auxiliary devices
-> >   clk: spacemit: define three reset-only CCUs
-> >   reset: spacemit: add support for SpacemiT CCU resets
-> >   riscv: dts: spacemit: add reset support for the K1 SoC
-> > 
-> >  .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
-> >  arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 ++
-> >  drivers/clk/spacemit/Kconfig                  |   1 +
-> >  drivers/clk/spacemit/ccu-k1.c                 | 239 +++++++-------
-> >  drivers/reset/Kconfig                         |   9 +
-> >  drivers/reset/Makefile                        |   1 +
-> >  drivers/reset/reset-spacemit.c                | 304 ++++++++++++++++++
-> >  .../dt-bindings/clock/spacemit,k1-syscon.h    | 141 ++++++++
-> >  include/soc/spacemit/k1-syscon.h              | 160 +++++++++
-> >  9 files changed, 775 insertions(+), 127 deletions(-)
-> >  create mode 100644 drivers/reset/reset-spacemit.c
-> >  create mode 100644 include/soc/spacemit/k1-syscon.h
-> > 
-> > 
-> > base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> > -- 
-> > 2.45.2
-> > 
-> 
-> -- 
-> Yixun Lan (dlan)
-
--- 
-Yixun Lan (dlan)
+Acked-by Chen-Yu Tsai <wens@csie.org>
