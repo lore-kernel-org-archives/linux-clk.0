@@ -1,66 +1,66 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E672FD597
-	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672C52FF483
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470065; cv=none; b=OYxucMvgp+evHvdbQWCUU5vxhki1HEzvbAGZqXvBM+4V8BhMahmFKC+MiIz+A8xxnDoeT9BPrXeTQpd5WaWh2e9z6DYB4QxrCsosDapeJ+iBNAX0O8doBu9MCaNObhI6q+FwfhiWpx0XLrt3WVgIZ264/Ru2M53AOgx167bzC/k=
+	t=1751470067; cv=none; b=NCHBDYTEkdRNmm5qS8UBTw6ySe7jbiUIh0XHKmXWQVVmV9TeXSiUQk4a43AVES5TJ7KPErgHc6/RZX3WAnB1mJgWBg3MhOmmaDqRK0evDEXz+Sb53Rq0zdwp/dl+62rx4Lw+7hi0UYu17XlfvRijJ1s3NyNcQ6H9U6wtHJdXTrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470065; c=relaxed/simple;
-	bh=vUWjevL//Sdj5OIrwIx+iEpnlCrG5yc8pc9H9GBJWK8=;
+	s=arc-20240116; t=1751470067; c=relaxed/simple;
+	bh=0XolTSN9OEuc3oqxZff5/9uDdWtVO1N6nfCdJuJ8PzE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iUP2isl1X9tIuxKLRZHCHi8ZjVv9E5rhhBjVa9BQ8FCymOQ2cK14zbjEG9pePiJ02Nb7rHKD15F9q99MxSgOvJCspHg4Fdv2/lKBqwNqvvB1oRyktEuLCRZx38aMgGgD9YppHJ7PyAfbttOkq1ZZnqix+ffwhgTK9802ceCeuTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HSb2KKZF; arc=none smtp.client-ip=209.85.221.49
+	 In-Reply-To:To:Cc; b=NERaC1QXs1EQwTkdVA/0L4k+gD3pQ+IzZRThvmPu1Xuvhvdhpbja+iPDRWdc8uSCv5YQz6Ck7uA2xSwWAaULAIz2jxhVsUXPeAR17PDfyxjufu+CMMVb8tNnkCJLhIzNDVBbu0QoNLms1G65duUZ5a6K6LAywDmerit63qV6HAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mIIAVkVo; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HSb2KKZF"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a5123c1533so2610469f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mIIAVkVo"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a5123c1533so2610505f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470055; x=1752074855; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470059; x=1752074859; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YfpZOaF7NdHw84lAfWgBReL2ZxsCyFmu1HpaIsdU7x0=;
-        b=HSb2KKZFm0EwhyHzxSuHmFm+QONpv8K5PMS6B26q0gttK9VVvCh6dyXq3m0tEJXWwI
-         BQ4nRSs8mF3bXJIa5aeTU0d8xq5QjfcQTJMJcmKxjnmEnv6mhtc8nULBQ/ksBAybw3ST
-         VQ8Udqhkl3NM8IlSr6tmRRCe1Y2R5XyKh7+hW5PEsoifV+P34bF24kHCpBjFynKwZnST
-         84xkvXXeR4rDx3PVyMg+bm81Dir0KCHsAO8pRonfXAwzskZ9od/rFrDD3XMeKxmBGJMN
-         c2RWY30hU0LVjHOF+WPG6mu1EYYXhSVw5puRfeGVa9DuQj6uzRjuUTJqrBPgwPdb5MxZ
-         +35Q==
+        bh=U5S+iEa8IdsVyvXDRXqAUiD8piNfUvjAGL8/4g6Co+g=;
+        b=mIIAVkVo5CKSntHdm2qhjidkisH2waspgGQRgq9Hgv6TlZTew1cnf7I2po2VJC4ihB
+         3iEjU1fe7iN2IVCrEILgGXRCwTVNDH5XYhHJuTyanD4ExWQRKXdVK3KvkT0rmXdiDa0u
+         c2Kh578qgo3GaoDVv22Karx3BDd4HGH9vPeeDH+Gxl45kO/G02xNjKBi0wIYYyDtbMQT
+         u3fD8XbL/AVwYrGbsyIufXbMAH4uDRVZHi3UJWlV6uJa7VInwZERg/iXc2ih5Yqt09aP
+         HU7BafpBA7sht7e481yldN28qZaUb9dgJVKGdLzxr+reOz+OWZmGMJQ81p2/AF2YHwMv
+         4M4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751470055; x=1752074855;
+        d=1e100.net; s=20230601; t=1751470059; x=1752074859;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YfpZOaF7NdHw84lAfWgBReL2ZxsCyFmu1HpaIsdU7x0=;
-        b=ulqC8hth+tvGRHLdu2HfDKBQxGijltPAZeMCf5521DGSz08BbgwMdJprI83BCmJVyO
-         MKfjAd7ZNbwEnIIbzQyPEnoktxSUZg8W3jyOcQxsap9ku88rklMSc2gzribz+UYaIsrP
-         LeMCjgGCfSCwYsumwjX3SPnwRBj3qQ2VKso7excr+vlVKF8AGsnid+2nHYU+4fqPAKIT
-         okRTQ6T28g6WIDgtR9ZfE6WEMlz7l6J9O2hWKVi8dMnRx/dI0jxP6iS0EmMg3iDNhlrg
-         TvCI21wZymyQAOQ7oX9mrfXVHB4Aywm7YcSA2r/mujOnkDhXwccJrTWxL2YsV8QI1GSM
-         HKsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtxyYsT0IorOgbKgrt32IiluugNRtczJQwVPfXA4oI9rsWg+w97VKCmEVPBbeCmhH9GEqJjsQLhME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPZChH7QjnE+Bf8Ugh+vCq/oVSgOxY8WGBz7yGAY9S5R27jT8S
-	tCoN71g13kdTdOZLHp4bfzEFjVwiWxYThWvdl/GtNoCFUHB5hueilOO4SMWu7fWA4OI=
-X-Gm-Gg: ASbGncvkMFVJ/+MQk9dsh5vdB1S/MdKwIZtdaIGvUsP76xApMr+VWQUjsqx0ziWFt6+
-	SgdS6JcooFKJD8BDmrdkfbQjr/NPr0zDhK8bl7FNxJwlXNlk6A2RvI2s077RPT56ra02BPdJrm1
-	mhp1OwdNygYJZ2xsba7Rrs4EJgPLn5BxKu0DyOGljenITuKUzI7RnIkLTIfFAJnbvYpf7KFXZoY
-	z4FgrjrdhwtR9/nO2Rf8gv4KWfk3fd9I5vQ2ADnv6fTOYfWbWuqH9ilJ+C6ibPLQQWkrO0o7Sjg
-	FAmHhiY4HbsKfX6Z8n9AEwIy8eqJyoGWN0xgp0z1SqUxl4cLnLecwoEPrSnHTRBEwp1nRIdTDRb
-	b
-X-Google-Smtp-Source: AGHT+IGV2BAejYTMoTxVn4DOH51fhyCyRsN+Y7/LyZkrxBkSthDkFsXgxebiXBkrdki0maq18YVFig==
-X-Received: by 2002:a05:6000:250d:b0:3a5:8abe:a267 with SMTP id ffacd0b85a97d-3b2019b7fc0mr2552914f8f.29.1751470054517;
-        Wed, 02 Jul 2025 08:27:34 -0700 (PDT)
+        bh=U5S+iEa8IdsVyvXDRXqAUiD8piNfUvjAGL8/4g6Co+g=;
+        b=pWdfx1sFC3aBMNBbBdya4V8nJVZGDghAdGEi4aZJpU8dN3/LT5tCwUdqKv1Msswuzf
+         YzVz4yxSeshki3PIihYBCc+mT04V8jNF0lLGKnaEYnqWHBVxEjcv2NdYzRXhwWGJvHHZ
+         l2wHohNAIj680EURzSKLBfb63De3Z5uc8y+PPhHv57lRQ4i9GnvjIz+NP7HxNL59Twat
+         1GhFQTtBpo9QgNJ7AobYTA7N6Loe+Undvyiyx/6v2pRwOd6m5hXZJwp4fmwCPhjL6sJ4
+         QBPSj41kajCvyhw0ywdJC0fgGRyqdtnpuLpfo5EWHN5H1IMBEkiLUashuQQOM3sQw728
+         elwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYx6M2VDutsBcKyxbXHEMVofZg5/DQKU1srELI9BY5rDvbmr6L6BB4+wYBzxHeqVek6fH1HbarNco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzRLC49Qy10j9B5/jUcng0gISm+cGsxJ3u5asbF4LVQ/RiuaUG
+	HsZN91gOCK+UOMwtwpVNZ3X4LJc/OFAi8pDgLqXFgM8KTrt3x4zBYBHWj8WW9gUgNTY=
+X-Gm-Gg: ASbGnctseGMoBc5hhMdEypTW3OXMp7zBggaJIjAUPxVW978/3TY5j8Mf5VCD5Ghqd/T
+	PK3AJRep7paoZgYs4io9rxmk6E5zYLNbc0LJC9NfUvxYg0rLcouIAESWs6PgBgSwHw52y5brs76
+	KKAmFA4DfU57UNXd1bBfPpVan9uSj7WKEnMEHcnj/o6WqDAag9IF+vTYiLOaaa6CkWlwVFHNjfI
+	4BealzEnyZ6io+mFlZ7c3k4ciaCXIFbAflOhCspkfmcCi7X2DCHBfkFDYp5da/2WkZiDVbQ1ABl
+	WxjFS64RWHwYwenmJUdBCqH8HDY1kqvgxhNIKftUZl3wyT94Y4z+Dx0tH8RJQXhSDYbTDFRHvR3
+	k
+X-Google-Smtp-Source: AGHT+IFzpF57eta57Xgw+2HTRnLf235Ya6f87nGG+nlvfqjZNxIWnB/0q/88pGWrsxwwrZqhdy02pw==
+X-Received: by 2002:a05:6000:26c2:b0:3a4:f52d:8b05 with SMTP id ffacd0b85a97d-3b2019b80bcmr2882664f8f.35.1751470058520;
+        Wed, 02 Jul 2025 08:27:38 -0700 (PDT)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.33
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 08:27:33 -0700 (PDT)
+        Wed, 02 Jul 2025 08:27:37 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 02 Jul 2025 17:26:19 +0200
-Subject: [PATCH 21/26] clk: amlogic: pclk explicitly use CLK_IGNORE_UNUSED
+Date: Wed, 02 Jul 2025 17:26:23 +0200
+Subject: [PATCH 25/26] clk: amlogic: align s4 and c3 pwm clock descriptions
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-meson-clk-cleanup-24-v1-21-e163c9a1fc21@baylibre.com>
+Message-Id: <20250702-meson-clk-cleanup-24-v1-25-e163c9a1fc21@baylibre.com>
 References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 In-Reply-To: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -79,1215 +79,792 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=65074; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=vUWjevL//Sdj5OIrwIx+iEpnlCrG5yc8pc9H9GBJWK8=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/JIL3qFLte/1YEwhVDGKv3iQ0DOUAevvYyD
- CyHGC6he66JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPyQAKCRDm/A8cN/La
- hYKBEACQRrMZQ8S2KPPAUU2+0/ZU7WgqAor8KoDV1//Mbdd3toYC4/38bk52Ojd9/DcRMZlpVgc
- FcbQEZdKu750UCqona0BuH6TPVgx6qC2IRxF2of1J7+mv5yutJcg/lyDoTx+3b2ms40t7UTTNyu
- 5O34rOq7GeVgomruX6jX55YFKsrIqNKV7OhBOWqWnd0mwl9DDv0MknN12dEaArtVsPjksd01lTU
- bPPDsHlOWsr0lwrQn+W8vxJRVs039kGvS9OEftMU0dIXZVJFeyUNa/eYrh2YanphRpdQehjrxdY
- U72VrKBtSJkp6a2rYHVFODMY1OYmQr70o4PZgNWuVmN5xfIg9CO4WkmKVuix4tHSdH8qw54Up1u
- Y8/SDFpHEHCajkgxNTDUC9SCadRm4amCKM8iidLKMGZaRiYrNf5xQrz1jDNmYxNYkt3IpRfABnV
- Fe7rHSaKf68uB5gBP/LdyqSulv0mXlF1zStU9WgcX5JsnESpMLRkxceOFnezu7p3hoOCof2EjzT
- 4zhdRpGvVDBU80SbPrRczv2+vat5QqONUD5KAQy56q9gC6illOGXnVkeq7+Qz6PxbcQgNe0eqwS
- jdxUC+wbfB5I5kmAoAolq6DB/iGK+eIG+8uK1cN+sGALkL/KyOsvfs93t8T1VMnfPtH7S7Ax8jQ
- rHIjJgpDYyPOE6w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=23797; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=0XolTSN9OEuc3oqxZff5/9uDdWtVO1N6nfCdJuJ8PzE=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/N3en7Oc/O38sMsx2hNRLUUGOX1T7ReZLnf
+ uwsaFyRd1CJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPzQAKCRDm/A8cN/La
+ hYGrEACHTf4xN/DA8h7vS15XupFyMIp1q9fdcBeoKHtfzn3qICLzUdhIBzq+3Tj6AHEBMvudmI/
+ H1x0c0cjzh/iu2TD0p+JQeaF/RZhlwQRSmi/YZXrL8jKmwC4+OzrUfWRAgNL9kv45MZKrtBMpt8
+ gNI5hHEW46XFuyYY0qjcnTYqn0Vu5ha3Ill4pGjDVpgaNXMYmqNuXwfGD3HrDndkjrlDzP9rkMA
+ 86+2iEAssPmjgAA23WW4xlK/NTMzNXRAQFRjzVhmu9IFsunjY/ZNjsToFOETU2NP/XBARPNm4Hn
+ IeWBdNHlmbGWozc+VPpr58ykEtEb32Xy9lUa/RRMtZwWODNGgKCF1WkDsScuZ41B6Hr+QPmuM9B
+ Mp5xymNXwNge+G4LURTLSjvV6NVxNw0Ail1T0cy+djTwuTM9j2QEOtjGzIhNTEdqS9kNXZvgqDe
+ EmRMQZkJ2kYAPuXjKg/hn0Wq4FsxZnzFCo6ek7XRXkEc+sRM/ySQIwNKleHM1ZWu9PVAKDGMQcd
+ iImhYGQ6vlWqroQqfElWzytyfzFgf5JYiW2FlPZgalyXjOr3AeW1NhAnoBLe3XUqzmWEbxULtKi
+ O+y+mES7i2EcMMt1xNXis6qjmEq66Bcef3WOJZf+gLbG/VZO6tLgoNThiS5vkoD6Bm61UMGdc2p
+ 2K9FT5XnwZspk5w==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Every usage of CLK_IGNORE_UNUSED should be explicitly motivated and
-documented. However, the PCLK macros used by most Amlogic platforms are
-adding that flag systematically. Because of this, all pclks are marked with
-CLK_IGNORE_UNUSED, without any form of distinction or motivation.
+s4 and c3 follow exactly the same structure when it comes to PWM clocks but
+differ in the way these clocks are described, for no obvious reason.
 
-This may have been fine in the early days of CCF but it is not anymore.
-
-Just removing the flag is not an option at this stage since it could cause
-regression on existing platforms.
-
-Instead, drop the flag from the macro definition and add it to the each
-clock definition, for the existing clocks. This makes quite a nasty change
-but it will make it a lot easier for people to contribute to fixing the
-problem, clock by clock. It will also prevent new platform from being added
-with a silent use of the flag.
+Align the description of the pwm clocks of these SoCs with the composite
+clock helpers.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/a1-peripherals.c   | 125 ++++++++++++-----------
- drivers/clk/meson/axg-aoclk.c        |  18 ++--
- drivers/clk/meson/axg.c              | 110 ++++++++++----------
- drivers/clk/meson/g12a-aoclk.c       |  49 ++++-----
- drivers/clk/meson/g12a.c             | 176 ++++++++++++++++----------------
- drivers/clk/meson/gxbb-aoclk.c       |  16 +--
- drivers/clk/meson/gxbb.c             | 188 ++++++++++++++++++-----------------
- drivers/clk/meson/meson-clkc-utils.h |  12 +--
- drivers/clk/meson/meson8b.c          | 183 ++++++++++++++++++----------------
- drivers/clk/meson/s4-peripherals.c   | 119 ++++++++++++----------
- 10 files changed, 528 insertions(+), 468 deletions(-)
+ drivers/clk/meson/c3-peripherals.c | 204 +++++----------
+ drivers/clk/meson/s4-peripherals.c | 508 +++----------------------------------
+ 2 files changed, 103 insertions(+), 609 deletions(-)
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index b2feb8fe4775e38a17d8aa9ce9b992b3e1fb2bb8..a7bd3822df18f5e043e58e2d7bbcaa24345ea404 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -1840,64 +1840,73 @@ static struct clk_regmap a1_cecb_32k_out = {
- 	},
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index 02c9820cd98655e57a290859b595cf09d39e5fe3..fd35f9b7994720d069c5f72142d6064790d40b60 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -48,6 +48,15 @@
+ #define SPIFC_CLK_CTRL				0x1a0
+ #define NNA_CLK_CTRL				0x220
+ 
++#define C3_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
++	MESON_COMP_SEL(c3_, _name, _reg, _shift, _mask, _pdata, NULL, 0, 0)
++
++#define C3_COMP_DIV(_name, _reg, _shift, _width) \
++	MESON_COMP_DIV(c3_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
++
++#define C3_COMP_GATE(_name, _reg, _bit) \
++	MESON_COMP_GATE(c3_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
++
+ static struct clk_regmap c3_rtc_xtal_clkin = {
+ 	.data = &(struct clk_regmap_gate_data) {
+ 		.offset = RTC_BY_OSCIN_CTRL0,
+@@ -512,146 +521,61 @@ static const struct clk_parent_data c3_pwm_parents[] = {
+ 	{ .fw_name = "fdiv3" }
  };
  
--#define A1_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(a1_##_name, _reg, _bit, &a1_sys.hw)
+-#define C3_PWM_CLK_MUX(_name, _reg, _shift) {			\
+-	.data = &(struct clk_regmap_mux_data) {			\
+-		.offset = _reg,					\
+-		.mask = 0x3,					\
+-		.shift = _shift,				\
+-	},							\
+-	.hw.init = &(struct clk_init_data) {			\
+-		.name = #_name "_sel",				\
+-		.ops = &clk_regmap_mux_ops,			\
+-		.parent_data = c3_pwm_parents,			\
+-		.num_parents = ARRAY_SIZE(c3_pwm_parents),	\
+-	},							\
+-}
 -
--static A1_PCLK(clktree,		SYS_CLK_EN0,	0);
--static A1_PCLK(reset_ctrl,	SYS_CLK_EN0,	1);
--static A1_PCLK(analog_ctrl,	SYS_CLK_EN0,	2);
--static A1_PCLK(pwr_ctrl,	SYS_CLK_EN0,	3);
--static A1_PCLK(pad_ctrl,	SYS_CLK_EN0,	4);
--static A1_PCLK(sys_ctrl,	SYS_CLK_EN0,	5);
--static A1_PCLK(temp_sensor,	SYS_CLK_EN0,	6);
--static A1_PCLK(am2axi_dev,	SYS_CLK_EN0,	7);
--static A1_PCLK(spicc_b,		SYS_CLK_EN0,	8);
--static A1_PCLK(spicc_a,		SYS_CLK_EN0,	9);
--static A1_PCLK(msr,		SYS_CLK_EN0,	10);
--static A1_PCLK(audio,		SYS_CLK_EN0,	11);
--static A1_PCLK(jtag_ctrl,	SYS_CLK_EN0,	12);
--static A1_PCLK(saradc_en,	SYS_CLK_EN0,	13);
--static A1_PCLK(pwm_ef,		SYS_CLK_EN0,	14);
--static A1_PCLK(pwm_cd,		SYS_CLK_EN0,	15);
--static A1_PCLK(pwm_ab,		SYS_CLK_EN0,	16);
--static A1_PCLK(cec,		SYS_CLK_EN0,	17);
--static A1_PCLK(i2c_s,		SYS_CLK_EN0,	18);
--static A1_PCLK(ir_ctrl,		SYS_CLK_EN0,	19);
--static A1_PCLK(i2c_m_d,		SYS_CLK_EN0,	20);
--static A1_PCLK(i2c_m_c,		SYS_CLK_EN0,	21);
--static A1_PCLK(i2c_m_b,		SYS_CLK_EN0,	22);
--static A1_PCLK(i2c_m_a,		SYS_CLK_EN0,	23);
--static A1_PCLK(acodec,		SYS_CLK_EN0,	24);
--static A1_PCLK(otp,		SYS_CLK_EN0,	25);
--static A1_PCLK(sd_emmc_a,	SYS_CLK_EN0,	26);
--static A1_PCLK(usb_phy,		SYS_CLK_EN0,	27);
--static A1_PCLK(usb_ctrl,	SYS_CLK_EN0,	28);
--static A1_PCLK(sys_dspb,	SYS_CLK_EN0,	29);
--static A1_PCLK(sys_dspa,	SYS_CLK_EN0,	30);
--static A1_PCLK(dma,		SYS_CLK_EN0,	31);
+-#define C3_PWM_CLK_DIV(_name, _reg, _shift) {			\
+-	.data = &(struct clk_regmap_div_data) {			\
+-		.offset = _reg,					\
+-		.shift = _shift,				\
+-		.width = 8,					\
+-	},							\
+-	.hw.init = &(struct clk_init_data) {			\
+-		.name = #_name "_div",				\
+-		.ops = &clk_regmap_divider_ops,			\
+-		.parent_names = (const char *[]) { #_name "_sel" },\
+-		.num_parents = 1,				\
+-		.flags = CLK_SET_RATE_PARENT,			\
+-	},							\
+-}
 -
--static A1_PCLK(irq_ctrl,	SYS_CLK_EN1,	0);
--static A1_PCLK(nic,		SYS_CLK_EN1,	1);
--static A1_PCLK(gic,		SYS_CLK_EN1,	2);
--static A1_PCLK(uart_c,		SYS_CLK_EN1,	3);
--static A1_PCLK(uart_b,		SYS_CLK_EN1,	4);
--static A1_PCLK(uart_a,		SYS_CLK_EN1,	5);
--static A1_PCLK(sys_psram,	SYS_CLK_EN1,	6);
--static A1_PCLK(rsa,		SYS_CLK_EN1,	8);
--static A1_PCLK(coresight,	SYS_CLK_EN1,	9);
+-#define C3_PWM_CLK_GATE(_name, _reg, _bit) {			\
+-	.data = &(struct clk_regmap_gate_data) {		\
+-		.offset = _reg,					\
+-		.bit_idx = _bit,				\
+-	},							\
+-	.hw.init = &(struct clk_init_data) {			\
+-		.name = #_name,					\
+-		.ops = &clk_regmap_gate_ops,			\
+-		.parent_names = (const char *[]) { #_name "_div" },\
+-		.num_parents = 1,				\
+-		.flags = CLK_SET_RATE_PARENT,			\
+-	},							\
+-}
 -
--static A1_PCLK(am2axi_vad,	AXI_CLK_EN,	0);
--static A1_PCLK(audio_vad,	AXI_CLK_EN,	1);
--static A1_PCLK(axi_dmc,		AXI_CLK_EN,	3);
--static A1_PCLK(axi_psram,	AXI_CLK_EN,	4);
--static A1_PCLK(ramb,		AXI_CLK_EN,	5);
--static A1_PCLK(rama,		AXI_CLK_EN,	6);
--static A1_PCLK(axi_spifc,	AXI_CLK_EN,	7);
--static A1_PCLK(axi_nic,		AXI_CLK_EN,	8);
--static A1_PCLK(axi_dma,		AXI_CLK_EN,	9);
--static A1_PCLK(cpu_ctrl,	AXI_CLK_EN,	10);
--static A1_PCLK(rom,		AXI_CLK_EN,	11);
--static A1_PCLK(prod_i2c,	AXI_CLK_EN,	12);
-+#define A1_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(a1_##_name, _reg, _bit, &a1_sys.hw, _flags)
+-static struct clk_regmap c3_pwm_a_sel =
+-	C3_PWM_CLK_MUX(pwm_a, PWM_CLK_AB_CTRL, 9);
+-static struct clk_regmap c3_pwm_a_div =
+-	C3_PWM_CLK_DIV(pwm_a, PWM_CLK_AB_CTRL, 0);
+-static struct clk_regmap c3_pwm_a =
+-	C3_PWM_CLK_GATE(pwm_a, PWM_CLK_AB_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_b_sel =
+-	C3_PWM_CLK_MUX(pwm_b, PWM_CLK_AB_CTRL, 25);
+-static struct clk_regmap c3_pwm_b_div =
+-	C3_PWM_CLK_DIV(pwm_b, PWM_CLK_AB_CTRL, 16);
+-static struct clk_regmap c3_pwm_b =
+-	C3_PWM_CLK_GATE(pwm_b, PWM_CLK_AB_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_c_sel =
+-	C3_PWM_CLK_MUX(pwm_c, PWM_CLK_CD_CTRL, 9);
+-static struct clk_regmap c3_pwm_c_div =
+-	C3_PWM_CLK_DIV(pwm_c, PWM_CLK_CD_CTRL, 0);
+-static struct clk_regmap c3_pwm_c =
+-	C3_PWM_CLK_GATE(pwm_c, PWM_CLK_CD_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_d_sel =
+-	C3_PWM_CLK_MUX(pwm_d, PWM_CLK_CD_CTRL, 25);
+-static struct clk_regmap c3_pwm_d_div =
+-	C3_PWM_CLK_DIV(pwm_d, PWM_CLK_CD_CTRL, 16);
+-static struct clk_regmap c3_pwm_d =
+-	C3_PWM_CLK_GATE(pwm_d, PWM_CLK_CD_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_e_sel =
+-	C3_PWM_CLK_MUX(pwm_e, PWM_CLK_EF_CTRL, 9);
+-static struct clk_regmap c3_pwm_e_div =
+-	C3_PWM_CLK_DIV(pwm_e, PWM_CLK_EF_CTRL, 0);
+-static struct clk_regmap c3_pwm_e =
+-	C3_PWM_CLK_GATE(pwm_e, PWM_CLK_EF_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_f_sel =
+-	C3_PWM_CLK_MUX(pwm_f, PWM_CLK_EF_CTRL, 25);
+-static struct clk_regmap c3_pwm_f_div =
+-	C3_PWM_CLK_DIV(pwm_f, PWM_CLK_EF_CTRL, 16);
+-static struct clk_regmap c3_pwm_f =
+-	C3_PWM_CLK_GATE(pwm_f, PWM_CLK_EF_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_g_sel =
+-	C3_PWM_CLK_MUX(pwm_g, PWM_CLK_GH_CTRL, 9);
+-static struct clk_regmap c3_pwm_g_div =
+-	C3_PWM_CLK_DIV(pwm_g, PWM_CLK_GH_CTRL, 0);
+-static struct clk_regmap c3_pwm_g =
+-	C3_PWM_CLK_GATE(pwm_g, PWM_CLK_GH_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_h_sel =
+-	C3_PWM_CLK_MUX(pwm_h, PWM_CLK_GH_CTRL, 25);
+-static struct clk_regmap c3_pwm_h_div =
+-	C3_PWM_CLK_DIV(pwm_h, PWM_CLK_GH_CTRL, 16);
+-static struct clk_regmap c3_pwm_h =
+-	C3_PWM_CLK_GATE(pwm_h, PWM_CLK_GH_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_i_sel =
+-	C3_PWM_CLK_MUX(pwm_i, PWM_CLK_IJ_CTRL, 9);
+-static struct clk_regmap c3_pwm_i_div =
+-	C3_PWM_CLK_DIV(pwm_i, PWM_CLK_IJ_CTRL, 0);
+-static struct clk_regmap c3_pwm_i =
+-	C3_PWM_CLK_GATE(pwm_i, PWM_CLK_IJ_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_j_sel =
+-	C3_PWM_CLK_MUX(pwm_j, PWM_CLK_IJ_CTRL, 25);
+-static struct clk_regmap c3_pwm_j_div =
+-	C3_PWM_CLK_DIV(pwm_j, PWM_CLK_IJ_CTRL, 16);
+-static struct clk_regmap c3_pwm_j =
+-	C3_PWM_CLK_GATE(pwm_j, PWM_CLK_IJ_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_k_sel =
+-	C3_PWM_CLK_MUX(pwm_k, PWM_CLK_KL_CTRL, 9);
+-static struct clk_regmap c3_pwm_k_div =
+-	C3_PWM_CLK_DIV(pwm_k, PWM_CLK_KL_CTRL, 0);
+-static struct clk_regmap c3_pwm_k =
+-	C3_PWM_CLK_GATE(pwm_k, PWM_CLK_KL_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_l_sel =
+-	C3_PWM_CLK_MUX(pwm_l, PWM_CLK_KL_CTRL, 25);
+-static struct clk_regmap c3_pwm_l_div =
+-	C3_PWM_CLK_DIV(pwm_l, PWM_CLK_KL_CTRL, 16);
+-static struct clk_regmap c3_pwm_l =
+-	C3_PWM_CLK_GATE(pwm_l, PWM_CLK_KL_CTRL, 24);
+-
+-static struct clk_regmap c3_pwm_m_sel =
+-	C3_PWM_CLK_MUX(pwm_m, PWM_CLK_MN_CTRL, 9);
+-static struct clk_regmap c3_pwm_m_div =
+-	C3_PWM_CLK_DIV(pwm_m, PWM_CLK_MN_CTRL, 0);
+-static struct clk_regmap c3_pwm_m =
+-	C3_PWM_CLK_GATE(pwm_m, PWM_CLK_MN_CTRL, 8);
+-
+-static struct clk_regmap c3_pwm_n_sel =
+-	C3_PWM_CLK_MUX(pwm_n, PWM_CLK_MN_CTRL, 25);
+-static struct clk_regmap c3_pwm_n_div =
+-	C3_PWM_CLK_DIV(pwm_n, PWM_CLK_MN_CTRL, 16);
+-static struct clk_regmap c3_pwm_n =
+-	C3_PWM_CLK_GATE(pwm_n, PWM_CLK_MN_CTRL, 24);
++static C3_COMP_SEL(pwm_a, PWM_CLK_AB_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_a, PWM_CLK_AB_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_a, PWM_CLK_AB_CTRL, 8);
 +
-+/*
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static A1_PCLK(clktree,		SYS_CLK_EN0,	 0, CLK_IGNORE_UNUSED);
-+static A1_PCLK(reset_ctrl,	SYS_CLK_EN0,	 1, CLK_IGNORE_UNUSED);
-+static A1_PCLK(analog_ctrl,	SYS_CLK_EN0,	 2, CLK_IGNORE_UNUSED);
-+static A1_PCLK(pwr_ctrl,	SYS_CLK_EN0,	 3, CLK_IGNORE_UNUSED);
-+static A1_PCLK(pad_ctrl,	SYS_CLK_EN0,	 4, CLK_IGNORE_UNUSED);
-+static A1_PCLK(sys_ctrl,	SYS_CLK_EN0,	 5, CLK_IGNORE_UNUSED);
-+static A1_PCLK(temp_sensor,	SYS_CLK_EN0,	 6, CLK_IGNORE_UNUSED);
-+static A1_PCLK(am2axi_dev,	SYS_CLK_EN0,	 7, CLK_IGNORE_UNUSED);
-+static A1_PCLK(spicc_b,		SYS_CLK_EN0,	 8, CLK_IGNORE_UNUSED);
-+static A1_PCLK(spicc_a,		SYS_CLK_EN0,	 9, CLK_IGNORE_UNUSED);
-+static A1_PCLK(msr,		SYS_CLK_EN0,	10, CLK_IGNORE_UNUSED);
-+static A1_PCLK(audio,		SYS_CLK_EN0,	11, CLK_IGNORE_UNUSED);
-+static A1_PCLK(jtag_ctrl,	SYS_CLK_EN0,	12, CLK_IGNORE_UNUSED);
-+static A1_PCLK(saradc_en,	SYS_CLK_EN0,	13, CLK_IGNORE_UNUSED);
-+static A1_PCLK(pwm_ef,		SYS_CLK_EN0,	14, CLK_IGNORE_UNUSED);
-+static A1_PCLK(pwm_cd,		SYS_CLK_EN0,	15, CLK_IGNORE_UNUSED);
-+static A1_PCLK(pwm_ab,		SYS_CLK_EN0,	16, CLK_IGNORE_UNUSED);
-+static A1_PCLK(cec,		SYS_CLK_EN0,	17, CLK_IGNORE_UNUSED);
-+static A1_PCLK(i2c_s,		SYS_CLK_EN0,	18, CLK_IGNORE_UNUSED);
-+static A1_PCLK(ir_ctrl,		SYS_CLK_EN0,	19, CLK_IGNORE_UNUSED);
-+static A1_PCLK(i2c_m_d,		SYS_CLK_EN0,	20, CLK_IGNORE_UNUSED);
-+static A1_PCLK(i2c_m_c,		SYS_CLK_EN0,	21, CLK_IGNORE_UNUSED);
-+static A1_PCLK(i2c_m_b,		SYS_CLK_EN0,	22, CLK_IGNORE_UNUSED);
-+static A1_PCLK(i2c_m_a,		SYS_CLK_EN0,	23, CLK_IGNORE_UNUSED);
-+static A1_PCLK(acodec,		SYS_CLK_EN0,	24, CLK_IGNORE_UNUSED);
-+static A1_PCLK(otp,		SYS_CLK_EN0,	25, CLK_IGNORE_UNUSED);
-+static A1_PCLK(sd_emmc_a,	SYS_CLK_EN0,	26, CLK_IGNORE_UNUSED);
-+static A1_PCLK(usb_phy,		SYS_CLK_EN0,	27, CLK_IGNORE_UNUSED);
-+static A1_PCLK(usb_ctrl,	SYS_CLK_EN0,	28, CLK_IGNORE_UNUSED);
-+static A1_PCLK(sys_dspb,	SYS_CLK_EN0,	29, CLK_IGNORE_UNUSED);
-+static A1_PCLK(sys_dspa,	SYS_CLK_EN0,	30, CLK_IGNORE_UNUSED);
-+static A1_PCLK(dma,		SYS_CLK_EN0,	31, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_b, PWM_CLK_AB_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_b, PWM_CLK_AB_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_b, PWM_CLK_AB_CTRL, 24);
 +
-+static A1_PCLK(irq_ctrl,	SYS_CLK_EN1,	 0, CLK_IGNORE_UNUSED);
-+static A1_PCLK(nic,		SYS_CLK_EN1,	 1, CLK_IGNORE_UNUSED);
-+static A1_PCLK(gic,		SYS_CLK_EN1,	 2, CLK_IGNORE_UNUSED);
-+static A1_PCLK(uart_c,		SYS_CLK_EN1,	 3, CLK_IGNORE_UNUSED);
-+static A1_PCLK(uart_b,		SYS_CLK_EN1,	 4, CLK_IGNORE_UNUSED);
-+static A1_PCLK(uart_a,		SYS_CLK_EN1,	 5, CLK_IGNORE_UNUSED);
-+static A1_PCLK(sys_psram,	SYS_CLK_EN1,	 6, CLK_IGNORE_UNUSED);
-+static A1_PCLK(rsa,		SYS_CLK_EN1,	 8, CLK_IGNORE_UNUSED);
-+static A1_PCLK(coresight,	SYS_CLK_EN1,	 9, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_c, PWM_CLK_CD_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_c, PWM_CLK_CD_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_c, PWM_CLK_CD_CTRL, 8);
 +
-+static A1_PCLK(am2axi_vad,	AXI_CLK_EN,	 0, CLK_IGNORE_UNUSED);
-+static A1_PCLK(audio_vad,	AXI_CLK_EN,	 1, CLK_IGNORE_UNUSED);
-+static A1_PCLK(axi_dmc,		AXI_CLK_EN,	 3, CLK_IGNORE_UNUSED);
-+static A1_PCLK(axi_psram,	AXI_CLK_EN,	 4, CLK_IGNORE_UNUSED);
-+static A1_PCLK(ramb,		AXI_CLK_EN,	 5, CLK_IGNORE_UNUSED);
-+static A1_PCLK(rama,		AXI_CLK_EN,	 6, CLK_IGNORE_UNUSED);
-+static A1_PCLK(axi_spifc,	AXI_CLK_EN,	 7, CLK_IGNORE_UNUSED);
-+static A1_PCLK(axi_nic,		AXI_CLK_EN,	 8, CLK_IGNORE_UNUSED);
-+static A1_PCLK(axi_dma,		AXI_CLK_EN,	 9, CLK_IGNORE_UNUSED);
-+static A1_PCLK(cpu_ctrl,	AXI_CLK_EN,	10, CLK_IGNORE_UNUSED);
-+static A1_PCLK(rom,		AXI_CLK_EN,	11, CLK_IGNORE_UNUSED);
-+static A1_PCLK(prod_i2c,	AXI_CLK_EN,	12, CLK_IGNORE_UNUSED);
- 
- /* Array of all clocks registered by this provider */
- static struct clk_hw *a1_peripherals_hw_clks[] = {
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index efc33fd18c197df233d537e5f8244a376d4d0924..74c2f51424f11cc04a80a3a4918e4de0a5d11d08 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -34,7 +34,7 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
- 
--#define AXG_AO_GATE(_name, _bit)					\
-+#define AXG_AO_GATE(_name, _bit, _flags)				\
- static struct clk_regmap axg_ao_##_name = {				\
- 	.data = &(struct clk_regmap_gate_data) {			\
- 		.offset = (AO_RTI_GEN_CNTL_REG0),			\
-@@ -47,17 +47,17 @@ static struct clk_regmap axg_ao_##_name = {				\
- 			.fw_name = "mpeg-clk",				\
- 		},							\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
-+		.flags = (_flags),					\
- 	},								\
- }
- 
--AXG_AO_GATE(remote, 0);
--AXG_AO_GATE(i2c_master, 1);
--AXG_AO_GATE(i2c_slave, 2);
--AXG_AO_GATE(uart1, 3);
--AXG_AO_GATE(uart2, 5);
--AXG_AO_GATE(ir_blaster, 6);
--AXG_AO_GATE(saradc, 7);
-+AXG_AO_GATE(remote,	0, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(i2c_master,	1, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(i2c_slave,	2, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(uart1,	3, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(uart2,	5, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(ir_blaster,	6, CLK_IGNORE_UNUSED);
-+AXG_AO_GATE(saradc,	7, CLK_IGNORE_UNUSED);
- 
- static struct clk_regmap axg_ao_cts_oscin = {
- 	.data = &(struct clk_regmap_gate_data){
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 675f051ea5241b0f51e54a238470e4fe947e5ba5..d83482d5da6ddc09b3dfaf77c6898456ef9f0d39 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -1915,59 +1915,69 @@ static struct clk_regmap axg_gen_clk = {
- 	},
- };
- 
--#define AXG_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(axg_##_name, _reg, _bit, &axg_clk81.hw)
--
--/* Everything Else (EE) domain gates */
--static AXG_PCLK(ddr,			HHI_GCLK_MPEG0,  0);
--static AXG_PCLK(audio_locker,		HHI_GCLK_MPEG0,  2);
--static AXG_PCLK(mipi_dsi_host,		HHI_GCLK_MPEG0,  3);
--static AXG_PCLK(isa,			HHI_GCLK_MPEG0,  5);
--static AXG_PCLK(pl301,			HHI_GCLK_MPEG0,  6);
--static AXG_PCLK(periphs,		HHI_GCLK_MPEG0,  7);
--static AXG_PCLK(spicc_0,		HHI_GCLK_MPEG0,  8);
--static AXG_PCLK(i2c,			HHI_GCLK_MPEG0,  9);
--static AXG_PCLK(rng0,			HHI_GCLK_MPEG0, 12);
--static AXG_PCLK(uart0,			HHI_GCLK_MPEG0, 13);
--static AXG_PCLK(mipi_dsi_phy,		HHI_GCLK_MPEG0, 14);
--static AXG_PCLK(spicc_1,		HHI_GCLK_MPEG0, 15);
--static AXG_PCLK(pcie_a,			HHI_GCLK_MPEG0, 16);
--static AXG_PCLK(pcie_b,			HHI_GCLK_MPEG0, 17);
--static AXG_PCLK(hiu_reg,		HHI_GCLK_MPEG0, 19);
--static AXG_PCLK(assist_misc,		HHI_GCLK_MPEG0, 23);
--static AXG_PCLK(emmc_b,			HHI_GCLK_MPEG0, 25);
--static AXG_PCLK(emmc_c,			HHI_GCLK_MPEG0, 26);
--static AXG_PCLK(dma,			HHI_GCLK_MPEG0, 27);
--static AXG_PCLK(spi,			HHI_GCLK_MPEG0, 30);
--
--static AXG_PCLK(audio,			HHI_GCLK_MPEG1,  0);
--static AXG_PCLK(eth_core,		HHI_GCLK_MPEG1,  3);
--static AXG_PCLK(uart1,			HHI_GCLK_MPEG1, 16);
--static AXG_PCLK(g2d,			HHI_GCLK_MPEG1, 20);
--static AXG_PCLK(usb0,			HHI_GCLK_MPEG1, 21);
--static AXG_PCLK(usb1,			HHI_GCLK_MPEG1, 22);
--static AXG_PCLK(reset,			HHI_GCLK_MPEG1, 23);
--static AXG_PCLK(usb_general,		HHI_GCLK_MPEG1, 26);
--static AXG_PCLK(ahb_arb0,		HHI_GCLK_MPEG1, 29);
--static AXG_PCLK(efuse,			HHI_GCLK_MPEG1, 30);
--static AXG_PCLK(boot_rom,		HHI_GCLK_MPEG1, 31);
--
--static AXG_PCLK(ahb_data_bus,		HHI_GCLK_MPEG2,  1);
--static AXG_PCLK(ahb_ctrl_bus,		HHI_GCLK_MPEG2,  2);
--static AXG_PCLK(usb1_to_ddr,		HHI_GCLK_MPEG2,  8);
--static AXG_PCLK(usb0_to_ddr,		HHI_GCLK_MPEG2,  9);
--static AXG_PCLK(mmc_pclk,		HHI_GCLK_MPEG2, 11);
--static AXG_PCLK(vpu_intr,		HHI_GCLK_MPEG2, 25);
--static AXG_PCLK(sec_ahb_ahb3_bridge,	HHI_GCLK_MPEG2, 26);
--static AXG_PCLK(gic,			HHI_GCLK_MPEG2, 30);
-+#define AXG_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(axg_##_name, _reg, _bit, &axg_clk81.hw, _flags)
++static C3_COMP_SEL(pwm_d, PWM_CLK_CD_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_d, PWM_CLK_CD_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_d, PWM_CLK_CD_CTRL, 24);
 +
-+/*
-+ * Everything Else (EE) domain gates
-+ *
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static AXG_PCLK(ddr,			HHI_GCLK_MPEG0,  0, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(audio_locker,		HHI_GCLK_MPEG0,  2, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(mipi_dsi_host,		HHI_GCLK_MPEG0,  3, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(isa,			HHI_GCLK_MPEG0,  5, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(pl301,			HHI_GCLK_MPEG0,  6, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(periphs,		HHI_GCLK_MPEG0,  7, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(spicc_0,		HHI_GCLK_MPEG0,  8, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(i2c,			HHI_GCLK_MPEG0,  9, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(rng0,			HHI_GCLK_MPEG0, 12, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(uart0,			HHI_GCLK_MPEG0, 13, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(mipi_dsi_phy,		HHI_GCLK_MPEG0, 14, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(spicc_1,		HHI_GCLK_MPEG0, 15, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(pcie_a,			HHI_GCLK_MPEG0, 16, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(pcie_b,			HHI_GCLK_MPEG0, 17, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(hiu_reg,		HHI_GCLK_MPEG0, 19, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(assist_misc,		HHI_GCLK_MPEG0, 23, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(emmc_b,			HHI_GCLK_MPEG0, 25, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(emmc_c,			HHI_GCLK_MPEG0, 26, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(dma,			HHI_GCLK_MPEG0, 27, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(spi,			HHI_GCLK_MPEG0, 30, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_e, PWM_CLK_EF_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_e, PWM_CLK_EF_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_e, PWM_CLK_EF_CTRL, 8);
 +
-+static AXG_PCLK(audio,			HHI_GCLK_MPEG1,  0, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(eth_core,		HHI_GCLK_MPEG1,  3, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(uart1,			HHI_GCLK_MPEG1, 16, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(g2d,			HHI_GCLK_MPEG1, 20, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(usb0,			HHI_GCLK_MPEG1, 21, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(usb1,			HHI_GCLK_MPEG1, 22, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(reset,			HHI_GCLK_MPEG1, 23, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(usb_general,		HHI_GCLK_MPEG1, 26, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ahb_arb0,		HHI_GCLK_MPEG1, 29, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(efuse,			HHI_GCLK_MPEG1, 30, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(boot_rom,		HHI_GCLK_MPEG1, 31, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_f, PWM_CLK_EF_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_f, PWM_CLK_EF_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_f, PWM_CLK_EF_CTRL, 24);
 +
-+static AXG_PCLK(ahb_data_bus,		HHI_GCLK_MPEG2,  1, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ahb_ctrl_bus,		HHI_GCLK_MPEG2,  2, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(usb1_to_ddr,		HHI_GCLK_MPEG2,  8, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(usb0_to_ddr,		HHI_GCLK_MPEG2,  9, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(mmc_pclk,		HHI_GCLK_MPEG2, 11, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(vpu_intr,		HHI_GCLK_MPEG2, 25, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(sec_ahb_ahb3_bridge,	HHI_GCLK_MPEG2, 26, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(gic,			HHI_GCLK_MPEG2, 30, CLK_IGNORE_UNUSED);
- 
- /* Always On (AO) domain gates */
- 
--static AXG_PCLK(ao_media_cpu,		HHI_GCLK_AO, 0);
--static AXG_PCLK(ao_ahb_sram,		HHI_GCLK_AO, 1);
--static AXG_PCLK(ao_ahb_bus,		HHI_GCLK_AO, 2);
--static AXG_PCLK(ao_iface,		HHI_GCLK_AO, 3);
--static AXG_PCLK(ao_i2c,			HHI_GCLK_AO, 4);
-+static AXG_PCLK(ao_media_cpu,		HHI_GCLK_AO, 0, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ao_ahb_sram,		HHI_GCLK_AO, 1, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ao_ahb_bus,		HHI_GCLK_AO, 2, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ao_iface,		HHI_GCLK_AO, 3, CLK_IGNORE_UNUSED);
-+static AXG_PCLK(ao_i2c,			HHI_GCLK_AO, 4, CLK_IGNORE_UNUSED);
- 
- /* Array of all clocks provided by this provider */
- 
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-index 872a7b800bb86bdf1ead56c3eec7e47f30637dbd..45e4df393feb6f916b6e035ad71e379e6e30ee99 100644
---- a/drivers/clk/meson/g12a-aoclk.c
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -37,13 +37,7 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
- 
--/*
-- * Like every other peripheral clock gate in Amlogic Clock drivers,
-- * we are using CLK_IGNORE_UNUSED here, so we keep the state of the
-- * bootloader. The goal is to remove this flag at some point.
-- * Actually removing it will require some extensive test to be done safely.
-- */
--#define G12A_AO_PCLK(_name, _reg, _bit)					\
-+#define G12A_AO_PCLK(_name, _reg, _bit, _flags)				\
- static struct clk_regmap g12a_ao_##_name = {				\
- 	.data = &(struct clk_regmap_gate_data) {			\
- 		.offset = (_reg),					\
-@@ -56,26 +50,35 @@ static struct clk_regmap g12a_ao_##_name = {				\
- 			.fw_name = "mpeg-clk",				\
- 		},							\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
-+		.flags = (_flags),					\
- 	},								\
- }
- 
--G12A_AO_PCLK(ahb,	AO_CLK_GATE0,    0);
--G12A_AO_PCLK(ir_in,	AO_CLK_GATE0,    1);
--G12A_AO_PCLK(i2c_m0,	AO_CLK_GATE0,    2);
--G12A_AO_PCLK(i2c_s0,	AO_CLK_GATE0,    3);
--G12A_AO_PCLK(uart,	AO_CLK_GATE0,    4);
--G12A_AO_PCLK(prod_i2c,	AO_CLK_GATE0,    5);
--G12A_AO_PCLK(uart2,	AO_CLK_GATE0,    6);
--G12A_AO_PCLK(ir_out,	AO_CLK_GATE0,    7);
--G12A_AO_PCLK(saradc,	AO_CLK_GATE0,    8);
-+/*
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+G12A_AO_PCLK(ahb,	AO_CLK_GATE0,    0, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(ir_in,	AO_CLK_GATE0,    1, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(i2c_m0,	AO_CLK_GATE0,    2, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(i2c_s0,	AO_CLK_GATE0,    3, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(uart,	AO_CLK_GATE0,    4, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(prod_i2c,	AO_CLK_GATE0,    5, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(uart2,	AO_CLK_GATE0,    6, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(ir_out,	AO_CLK_GATE0,    7, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(saradc,	AO_CLK_GATE0,    8, CLK_IGNORE_UNUSED);
- 
--G12A_AO_PCLK(mailbox,	AO_CLK_GATE0_SP, 0);
--G12A_AO_PCLK(m3,	AO_CLK_GATE0_SP, 1);
--G12A_AO_PCLK(ahb_sram,	AO_CLK_GATE0_SP, 2);
--G12A_AO_PCLK(rti,	AO_CLK_GATE0_SP, 3);
--G12A_AO_PCLK(m4_fclk,	AO_CLK_GATE0_SP, 4);
--G12A_AO_PCLK(m4_hclk,	AO_CLK_GATE0_SP, 5);
-+G12A_AO_PCLK(mailbox,	AO_CLK_GATE0_SP, 0, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(m3,	AO_CLK_GATE0_SP, 1, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(ahb_sram,	AO_CLK_GATE0_SP, 2, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(rti,	AO_CLK_GATE0_SP, 3, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(m4_fclk,	AO_CLK_GATE0_SP, 4, CLK_IGNORE_UNUSED);
-+G12A_AO_PCLK(m4_hclk,	AO_CLK_GATE0_SP, 5, CLK_IGNORE_UNUSED);
- 
- static struct clk_regmap g12a_ao_cts_oscin = {
- 	.data = &(struct clk_regmap_gate_data){
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index cdaaa165a0ff1f3b4d5250a96428c54cc3e37381..7a737bfde4e62ec3d18db570e62cc77fb415676c 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4384,89 +4384,99 @@ static struct clk_regmap sm1_nna_core_clk = {
- 	},
- };
- 
--#define G12A_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(_name, _reg, _bit, &g12a_clk81.hw)
--
--#define G12A_PCLK_RO(_name, _reg, _bit) \
--	MESON_PCLK_RO(_name, _reg, _bit, &g12a_clk81.hw)
--
--/* Everything Else (EE) domain gates */
--static G12A_PCLK(g12a_ddr,			HHI_GCLK_MPEG0,	0);
--static G12A_PCLK(g12a_dos,			HHI_GCLK_MPEG0,	1);
--static G12A_PCLK(g12a_audio_locker,		HHI_GCLK_MPEG0,	2);
--static G12A_PCLK(g12a_mipi_dsi_host,		HHI_GCLK_MPEG0,	3);
--static G12A_PCLK(g12a_eth_phy,			HHI_GCLK_MPEG0,	4);
--static G12A_PCLK(g12a_isa,			HHI_GCLK_MPEG0,	5);
--static G12A_PCLK(g12a_pl301,			HHI_GCLK_MPEG0,	6);
--static G12A_PCLK(g12a_periphs,			HHI_GCLK_MPEG0,	7);
--static G12A_PCLK(g12a_spicc_0,			HHI_GCLK_MPEG0,	8);
--static G12A_PCLK(g12a_i2c,			HHI_GCLK_MPEG0,	9);
--static G12A_PCLK(g12a_sana,			HHI_GCLK_MPEG0,	10);
--static G12A_PCLK(g12a_sd,			HHI_GCLK_MPEG0,	11);
--static G12A_PCLK(g12a_rng0,			HHI_GCLK_MPEG0,	12);
--static G12A_PCLK(g12a_uart0,			HHI_GCLK_MPEG0,	13);
--static G12A_PCLK(g12a_spicc_1,			HHI_GCLK_MPEG0,	14);
--static G12A_PCLK(g12a_hiu_reg,			HHI_GCLK_MPEG0,	19);
--static G12A_PCLK(g12a_mipi_dsi_phy,		HHI_GCLK_MPEG0,	20);
--static G12A_PCLK(g12a_assist_misc,		HHI_GCLK_MPEG0,	23);
--static G12A_PCLK(g12a_emmc_a,			HHI_GCLK_MPEG0,	24);
--static G12A_PCLK(g12a_emmc_b,			HHI_GCLK_MPEG0,	25);
--static G12A_PCLK(g12a_emmc_c,			HHI_GCLK_MPEG0,	26);
--static G12A_PCLK(g12a_audio_codec,		HHI_GCLK_MPEG0,	28);
--
--static G12A_PCLK(g12a_audio,			HHI_GCLK_MPEG1,	0);
--static G12A_PCLK(g12a_eth_core,			HHI_GCLK_MPEG1,	3);
--static G12A_PCLK(g12a_demux,			HHI_GCLK_MPEG1,	4);
--static G12A_PCLK(g12a_audio_ififo,		HHI_GCLK_MPEG1,	11);
--static G12A_PCLK(g12a_adc,			HHI_GCLK_MPEG1,	13);
--static G12A_PCLK(g12a_uart1,			HHI_GCLK_MPEG1,	16);
--static G12A_PCLK(g12a_g2d,			HHI_GCLK_MPEG1,	20);
--static G12A_PCLK(g12a_reset,			HHI_GCLK_MPEG1,	23);
--static G12A_PCLK(g12a_pcie_comb,		HHI_GCLK_MPEG1,	24);
--static G12A_PCLK(g12a_parser,			HHI_GCLK_MPEG1,	25);
--static G12A_PCLK(g12a_usb_general,		HHI_GCLK_MPEG1,	26);
--static G12A_PCLK(g12a_pcie_phy,			HHI_GCLK_MPEG1,	27);
--static G12A_PCLK(g12a_ahb_arb0,			HHI_GCLK_MPEG1,	29);
--
--static G12A_PCLK(g12a_ahb_data_bus,		HHI_GCLK_MPEG2,	1);
--static G12A_PCLK(g12a_ahb_ctrl_bus,		HHI_GCLK_MPEG2,	2);
--static G12A_PCLK(g12a_htx_hdcp22,		HHI_GCLK_MPEG2,	3);
--static G12A_PCLK(g12a_htx_pclk,			HHI_GCLK_MPEG2,	4);
--static G12A_PCLK(g12a_bt656,			HHI_GCLK_MPEG2,	6);
--static G12A_PCLK(g12a_usb1_to_ddr,		HHI_GCLK_MPEG2,	8);
--static G12A_PCLK(g12b_mipi_isp_gate,		HHI_GCLK_MPEG2,	17);
--static G12A_PCLK(g12a_mmc_pclk,			HHI_GCLK_MPEG2,	11);
--static G12A_PCLK(g12a_uart2,			HHI_GCLK_MPEG2,	15);
--static G12A_PCLK(g12a_vpu_intr,			HHI_GCLK_MPEG2,	25);
--static G12A_PCLK(g12b_csi_phy1,			HHI_GCLK_MPEG2,	28);
--static G12A_PCLK(g12b_csi_phy0,			HHI_GCLK_MPEG2,	29);
--static G12A_PCLK(g12a_gic,			HHI_GCLK_MPEG2,	30);
--
--static G12A_PCLK(g12a_vclk2_venci0,		HHI_GCLK_OTHER,	1);
--static G12A_PCLK(g12a_vclk2_venci1,		HHI_GCLK_OTHER,	2);
--static G12A_PCLK(g12a_vclk2_vencp0,		HHI_GCLK_OTHER,	3);
--static G12A_PCLK(g12a_vclk2_vencp1,		HHI_GCLK_OTHER,	4);
--static G12A_PCLK(g12a_vclk2_venct0,		HHI_GCLK_OTHER,	5);
--static G12A_PCLK(g12a_vclk2_venct1,		HHI_GCLK_OTHER,	6);
--static G12A_PCLK(g12a_vclk2_other,		HHI_GCLK_OTHER,	7);
--static G12A_PCLK(g12a_vclk2_enci,		HHI_GCLK_OTHER,	8);
--static G12A_PCLK(g12a_vclk2_encp,		HHI_GCLK_OTHER,	9);
--static G12A_PCLK(g12a_dac_clk,			HHI_GCLK_OTHER,	10);
--static G12A_PCLK(g12a_aoclk_gate,		HHI_GCLK_OTHER,	14);
--static G12A_PCLK(g12a_iec958_gate,		HHI_GCLK_OTHER,	16);
--static G12A_PCLK(g12a_enc480p,			HHI_GCLK_OTHER,	20);
--static G12A_PCLK(g12a_rng1,			HHI_GCLK_OTHER,	21);
--static G12A_PCLK(g12a_vclk2_enct,		HHI_GCLK_OTHER,	22);
--static G12A_PCLK(g12a_vclk2_encl,		HHI_GCLK_OTHER,	23);
--static G12A_PCLK(g12a_vclk2_venclmmc,		HHI_GCLK_OTHER,	24);
--static G12A_PCLK(g12a_vclk2_vencl,		HHI_GCLK_OTHER,	25);
--static G12A_PCLK(g12a_vclk2_other1,		HHI_GCLK_OTHER,	26);
--
--static G12A_PCLK_RO(g12a_dma,			HHI_GCLK_OTHER2, 0);
--static G12A_PCLK_RO(g12a_efuse,			HHI_GCLK_OTHER2, 1);
--static G12A_PCLK_RO(g12a_rom_boot,		HHI_GCLK_OTHER2, 2);
--static G12A_PCLK_RO(g12a_reset_sec,		HHI_GCLK_OTHER2, 3);
--static G12A_PCLK_RO(g12a_sec_ahb_apb3,		HHI_GCLK_OTHER2, 4);
-+#define G12A_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(_name, _reg, _bit, &g12a_clk81.hw, _flags)
++static C3_COMP_SEL(pwm_g, PWM_CLK_GH_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_g, PWM_CLK_GH_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_g, PWM_CLK_GH_CTRL, 8);
 +
-+#define G12A_PCLK_RO(_name, _reg, _bit, _flags) \
-+	MESON_PCLK_RO(_name, _reg, _bit, &g12a_clk81.hw, _flags)
++static C3_COMP_SEL(pwm_h, PWM_CLK_GH_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_h, PWM_CLK_GH_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_h, PWM_CLK_GH_CTRL, 24);
 +
-+/*
-+ * Everything Else (EE) domain gates
-+ *
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static G12A_PCLK(g12a_ddr,			HHI_GCLK_MPEG0,	 0, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_dos,			HHI_GCLK_MPEG0,	 1, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_audio_locker,		HHI_GCLK_MPEG0,	 2, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_mipi_dsi_host,		HHI_GCLK_MPEG0,	 3, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_eth_phy,			HHI_GCLK_MPEG0,	 4, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_isa,			HHI_GCLK_MPEG0,	 5, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_pl301,			HHI_GCLK_MPEG0,	 6, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_periphs,			HHI_GCLK_MPEG0,	 7, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_spicc_0,			HHI_GCLK_MPEG0,	 8, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_i2c,			HHI_GCLK_MPEG0,	 9, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_sana,			HHI_GCLK_MPEG0,	10, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_sd,			HHI_GCLK_MPEG0,	11, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_rng0,			HHI_GCLK_MPEG0,	12, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_uart0,			HHI_GCLK_MPEG0,	13, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_spicc_1,			HHI_GCLK_MPEG0,	14, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_hiu_reg,			HHI_GCLK_MPEG0,	19, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_mipi_dsi_phy,		HHI_GCLK_MPEG0,	20, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_assist_misc,		HHI_GCLK_MPEG0,	23, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_emmc_a,			HHI_GCLK_MPEG0,	24, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_emmc_b,			HHI_GCLK_MPEG0,	25, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_emmc_c,			HHI_GCLK_MPEG0,	26, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_audio_codec,		HHI_GCLK_MPEG0,	28, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_i, PWM_CLK_IJ_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_i, PWM_CLK_IJ_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_i, PWM_CLK_IJ_CTRL, 8);
 +
-+static G12A_PCLK(g12a_audio,			HHI_GCLK_MPEG1,	 0, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_eth_core,			HHI_GCLK_MPEG1,	 3, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_demux,			HHI_GCLK_MPEG1,	 4, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_audio_ififo,		HHI_GCLK_MPEG1,	11, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_adc,			HHI_GCLK_MPEG1,	13, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_uart1,			HHI_GCLK_MPEG1,	16, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_g2d,			HHI_GCLK_MPEG1,	20, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_reset,			HHI_GCLK_MPEG1,	23, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_pcie_comb,		HHI_GCLK_MPEG1,	24, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_parser,			HHI_GCLK_MPEG1,	25, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_usb_general,		HHI_GCLK_MPEG1,	26, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_pcie_phy,			HHI_GCLK_MPEG1,	27, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_ahb_arb0,			HHI_GCLK_MPEG1,	29, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_j, PWM_CLK_IJ_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_j, PWM_CLK_IJ_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_j, PWM_CLK_IJ_CTRL, 24);
 +
-+static G12A_PCLK(g12a_ahb_data_bus,		HHI_GCLK_MPEG2,	 1, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_ahb_ctrl_bus,		HHI_GCLK_MPEG2,	 2, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_htx_hdcp22,		HHI_GCLK_MPEG2,	 3, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_htx_pclk,			HHI_GCLK_MPEG2,	 4, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_bt656,			HHI_GCLK_MPEG2,	 6, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_usb1_to_ddr,		HHI_GCLK_MPEG2,	 8, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12b_mipi_isp_gate,		HHI_GCLK_MPEG2,	17, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_mmc_pclk,			HHI_GCLK_MPEG2,	11, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_uart2,			HHI_GCLK_MPEG2,	15, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vpu_intr,			HHI_GCLK_MPEG2,	25, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12b_csi_phy1,			HHI_GCLK_MPEG2,	28, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12b_csi_phy0,			HHI_GCLK_MPEG2,	29, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_gic,			HHI_GCLK_MPEG2,	30, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_k, PWM_CLK_KL_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_k, PWM_CLK_KL_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_k, PWM_CLK_KL_CTRL, 8);
 +
-+static G12A_PCLK(g12a_vclk2_venci0,		HHI_GCLK_OTHER,	 1, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_venci1,		HHI_GCLK_OTHER,	 2, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_vencp0,		HHI_GCLK_OTHER,	 3, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_vencp1,		HHI_GCLK_OTHER,	 4, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_venct0,		HHI_GCLK_OTHER,	 5, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_venct1,		HHI_GCLK_OTHER,	 6, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_other,		HHI_GCLK_OTHER,	 7, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_enci,		HHI_GCLK_OTHER,	 8, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_encp,		HHI_GCLK_OTHER,	 9, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_dac_clk,			HHI_GCLK_OTHER,	10, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_aoclk_gate,		HHI_GCLK_OTHER,	14, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_iec958_gate,		HHI_GCLK_OTHER,	16, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_enc480p,			HHI_GCLK_OTHER,	20, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_rng1,			HHI_GCLK_OTHER,	21, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_enct,		HHI_GCLK_OTHER,	22, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_encl,		HHI_GCLK_OTHER,	23, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_venclmmc,		HHI_GCLK_OTHER,	24, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_vencl,		HHI_GCLK_OTHER,	25, CLK_IGNORE_UNUSED);
-+static G12A_PCLK(g12a_vclk2_other1,		HHI_GCLK_OTHER,	26, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_l, PWM_CLK_KL_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_l, PWM_CLK_KL_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_l, PWM_CLK_KL_CTRL, 24);
 +
-+static G12A_PCLK_RO(g12a_dma,			HHI_GCLK_OTHER2, 0, 0);
-+static G12A_PCLK_RO(g12a_efuse,			HHI_GCLK_OTHER2, 1, 0);
-+static G12A_PCLK_RO(g12a_rom_boot,		HHI_GCLK_OTHER2, 2, 0);
-+static G12A_PCLK_RO(g12a_reset_sec,		HHI_GCLK_OTHER2, 3, 0);
-+static G12A_PCLK_RO(g12a_sec_ahb_apb3,		HHI_GCLK_OTHER2, 4, 0);
- 
- /* Array of all clocks provided by this provider */
- static struct clk_hw *g12a_hw_clks[] = {
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index ce8d2e9e071759ab8b8aa8619ad7400f1513c319..2bf45fd7fe4ba0783e736fbbb126209870985b22 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -23,7 +23,7 @@
- #define AO_RTC_ALT_CLK_CNTL0	0x94
- #define AO_RTC_ALT_CLK_CNTL1	0x98
- 
--#define GXBB_AO_PCLK(_name, _bit)					\
-+#define GXBB_AO_PCLK(_name, _bit, _flags)					\
- static struct clk_regmap gxbb_ao_##_name = {				\
- 	.data = &(struct clk_regmap_gate_data) {			\
- 		.offset = AO_RTI_GEN_CNTL_REG0,				\
-@@ -36,16 +36,16 @@ static struct clk_regmap gxbb_ao_##_name = {				\
- 			.fw_name = "mpeg-clk",				\
- 		},							\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
-+		.flags = (_flags),					\
- 	},								\
- }
- 
--GXBB_AO_PCLK(remote,		0);
--GXBB_AO_PCLK(i2c_master,	1);
--GXBB_AO_PCLK(i2c_slave,		2);
--GXBB_AO_PCLK(uart1,		3);
--GXBB_AO_PCLK(uart2,		5);
--GXBB_AO_PCLK(ir_blaster,	6);
-+GXBB_AO_PCLK(remote,		0, CLK_IGNORE_UNUSED);
-+GXBB_AO_PCLK(i2c_master,	1, CLK_IGNORE_UNUSED);
-+GXBB_AO_PCLK(i2c_slave,		2, CLK_IGNORE_UNUSED);
-+GXBB_AO_PCLK(uart1,		3, CLK_IGNORE_UNUSED);
-+GXBB_AO_PCLK(uart2,		5, CLK_IGNORE_UNUSED);
-+GXBB_AO_PCLK(ir_blaster,	6, CLK_IGNORE_UNUSED);
- 
- static struct clk_regmap gxbb_ao_cts_oscin = {
- 	.data = &(struct clk_regmap_gate_data){
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a57cdf884ae900f8651b2cd84c5019270e684026..e2a88dc29901fe4617427907b382e878ae6ff7ae 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -2721,100 +2721,110 @@ static struct clk_regmap gxbb_gen_clk = {
- 	},
- };
- 
--#define GXBB_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(_name, _reg, _bit, &gxbb_clk81.hw)
--
--/* Everything Else (EE) domain gates */
--static GXBB_PCLK(gxbb_ddr,		HHI_GCLK_MPEG0, 0);
--static GXBB_PCLK(gxbb_dos,		HHI_GCLK_MPEG0, 1);
--static GXBB_PCLK(gxbb_isa,		HHI_GCLK_MPEG0, 5);
--static GXBB_PCLK(gxbb_pl301,		HHI_GCLK_MPEG0, 6);
--static GXBB_PCLK(gxbb_periphs,		HHI_GCLK_MPEG0, 7);
--static GXBB_PCLK(gxbb_spicc,		HHI_GCLK_MPEG0, 8);
--static GXBB_PCLK(gxbb_i2c,		HHI_GCLK_MPEG0, 9);
--static GXBB_PCLK(gxbb_sana,		HHI_GCLK_MPEG0, 10);
--static GXBB_PCLK(gxbb_smart_card,	HHI_GCLK_MPEG0, 11);
--static GXBB_PCLK(gxbb_rng0,		HHI_GCLK_MPEG0, 12);
--static GXBB_PCLK(gxbb_uart0,		HHI_GCLK_MPEG0, 13);
--static GXBB_PCLK(gxbb_sdhc,		HHI_GCLK_MPEG0, 14);
--static GXBB_PCLK(gxbb_stream,		HHI_GCLK_MPEG0, 15);
--static GXBB_PCLK(gxbb_async_fifo,	HHI_GCLK_MPEG0, 16);
--static GXBB_PCLK(gxbb_sdio,		HHI_GCLK_MPEG0, 17);
--static GXBB_PCLK(gxbb_abuf,		HHI_GCLK_MPEG0, 18);
--static GXBB_PCLK(gxbb_hiu_iface,	HHI_GCLK_MPEG0, 19);
--static GXBB_PCLK(gxbb_assist_misc,	HHI_GCLK_MPEG0, 23);
--static GXBB_PCLK(gxbb_emmc_a,		HHI_GCLK_MPEG0, 24);
--static GXBB_PCLK(gxbb_emmc_b,		HHI_GCLK_MPEG0, 25);
--static GXBB_PCLK(gxbb_emmc_c,		HHI_GCLK_MPEG0, 26);
--static GXBB_PCLK(gxl_acodec,		HHI_GCLK_MPEG0, 28);
--static GXBB_PCLK(gxbb_spi,		HHI_GCLK_MPEG0, 30);
--
--static GXBB_PCLK(gxbb_i2s_spdif,	HHI_GCLK_MPEG1, 2);
--static GXBB_PCLK(gxbb_eth,		HHI_GCLK_MPEG1, 3);
--static GXBB_PCLK(gxbb_demux,		HHI_GCLK_MPEG1, 4);
--static GXBB_PCLK(gxbb_blkmv,		HHI_GCLK_MPEG1, 14);
--static GXBB_PCLK(gxbb_aiu,		HHI_GCLK_MPEG1, 15);
--static GXBB_PCLK(gxbb_uart1,		HHI_GCLK_MPEG1, 16);
--static GXBB_PCLK(gxbb_g2d,		HHI_GCLK_MPEG1, 20);
--static GXBB_PCLK(gxbb_usb0,		HHI_GCLK_MPEG1, 21);
--static GXBB_PCLK(gxbb_usb1,		HHI_GCLK_MPEG1, 22);
--static GXBB_PCLK(gxbb_reset,		HHI_GCLK_MPEG1, 23);
--static GXBB_PCLK(gxbb_nand,		HHI_GCLK_MPEG1, 24);
--static GXBB_PCLK(gxbb_dos_parser,	HHI_GCLK_MPEG1, 25);
--static GXBB_PCLK(gxbb_usb,		HHI_GCLK_MPEG1, 26);
--static GXBB_PCLK(gxbb_vdin1,		HHI_GCLK_MPEG1, 28);
--static GXBB_PCLK(gxbb_ahb_arb0,		HHI_GCLK_MPEG1, 29);
--static GXBB_PCLK(gxbb_efuse,		HHI_GCLK_MPEG1, 30);
--static GXBB_PCLK(gxbb_boot_rom,		HHI_GCLK_MPEG1, 31);
--
--static GXBB_PCLK(gxbb_ahb_data_bus,	HHI_GCLK_MPEG2, 1);
--static GXBB_PCLK(gxbb_ahb_ctrl_bus,	HHI_GCLK_MPEG2, 2);
--static GXBB_PCLK(gxbb_hdmi_intr_sync,	HHI_GCLK_MPEG2, 3);
--static GXBB_PCLK(gxbb_hdmi_pclk,	HHI_GCLK_MPEG2, 4);
--static GXBB_PCLK(gxbb_usb1_ddr_bridge,	HHI_GCLK_MPEG2, 8);
--static GXBB_PCLK(gxbb_usb0_ddr_bridge,	HHI_GCLK_MPEG2, 9);
--static GXBB_PCLK(gxbb_mmc_pclk,		HHI_GCLK_MPEG2, 11);
--static GXBB_PCLK(gxbb_dvin,		HHI_GCLK_MPEG2, 12);
--static GXBB_PCLK(gxbb_uart2,		HHI_GCLK_MPEG2, 15);
--static GXBB_PCLK(gxbb_sar_adc,		HHI_GCLK_MPEG2, 22);
--static GXBB_PCLK(gxbb_vpu_intr,		HHI_GCLK_MPEG2, 25);
--static GXBB_PCLK(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
--static GXBB_PCLK(gxbb_clk81_a53,	HHI_GCLK_MPEG2, 29);
--
--static GXBB_PCLK(gxbb_vclk2_venci0,	HHI_GCLK_OTHER, 1);
--static GXBB_PCLK(gxbb_vclk2_venci1,	HHI_GCLK_OTHER, 2);
--static GXBB_PCLK(gxbb_vclk2_vencp0,	HHI_GCLK_OTHER, 3);
--static GXBB_PCLK(gxbb_vclk2_vencp1,	HHI_GCLK_OTHER, 4);
--static GXBB_PCLK(gxbb_gclk_venci_int0,	HHI_GCLK_OTHER, 8);
--static GXBB_PCLK(gxbb_gclk_vencp_int,	HHI_GCLK_OTHER, 9);
--static GXBB_PCLK(gxbb_dac_clk,		HHI_GCLK_OTHER, 10);
--static GXBB_PCLK(gxbb_aoclk_gate,	HHI_GCLK_OTHER, 14);
--static GXBB_PCLK(gxbb_iec958_gate,	HHI_GCLK_OTHER, 16);
--static GXBB_PCLK(gxbb_enc480p,		HHI_GCLK_OTHER, 20);
--static GXBB_PCLK(gxbb_rng1,		HHI_GCLK_OTHER, 21);
--static GXBB_PCLK(gxbb_gclk_venci_int1,	HHI_GCLK_OTHER, 22);
--static GXBB_PCLK(gxbb_vclk2_venclmcc,	HHI_GCLK_OTHER, 24);
--static GXBB_PCLK(gxbb_vclk2_vencl,	HHI_GCLK_OTHER, 25);
--static GXBB_PCLK(gxbb_vclk_other,	HHI_GCLK_OTHER, 26);
--static GXBB_PCLK(gxbb_edp,		HHI_GCLK_OTHER, 31);
-+#define GXBB_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(_name, _reg, _bit, &gxbb_clk81.hw, _flags)
++static C3_COMP_SEL(pwm_m, PWM_CLK_MN_CTRL, 9, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_m, PWM_CLK_MN_CTRL, 0, 8);
++static C3_COMP_GATE(pwm_m, PWM_CLK_MN_CTRL, 8);
 +
-+/*
-+ * Everything Else (EE) domain gates
-+ *
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static GXBB_PCLK(gxbb_ddr,		HHI_GCLK_MPEG0,  0, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_dos,		HHI_GCLK_MPEG0,  1, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_isa,		HHI_GCLK_MPEG0,  5, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_pl301,		HHI_GCLK_MPEG0,  6, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_periphs,		HHI_GCLK_MPEG0,  7, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_spicc,		HHI_GCLK_MPEG0,  8, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_i2c,		HHI_GCLK_MPEG0,  9, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_sana,		HHI_GCLK_MPEG0, 10, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_smart_card,	HHI_GCLK_MPEG0, 11, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_rng0,		HHI_GCLK_MPEG0, 12, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_uart0,		HHI_GCLK_MPEG0, 13, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_sdhc,		HHI_GCLK_MPEG0, 14, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_stream,		HHI_GCLK_MPEG0, 15, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_async_fifo,	HHI_GCLK_MPEG0, 16, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_sdio,		HHI_GCLK_MPEG0, 17, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_abuf,		HHI_GCLK_MPEG0, 18, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_hiu_iface,	HHI_GCLK_MPEG0, 19, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_assist_misc,	HHI_GCLK_MPEG0, 23, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_emmc_a,		HHI_GCLK_MPEG0, 24, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_emmc_b,		HHI_GCLK_MPEG0, 25, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_emmc_c,		HHI_GCLK_MPEG0, 26, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxl_acodec,		HHI_GCLK_MPEG0, 28, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_spi,		HHI_GCLK_MPEG0, 30, CLK_IGNORE_UNUSED);
-+
-+static GXBB_PCLK(gxbb_i2s_spdif,	HHI_GCLK_MPEG1,  2, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_eth,		HHI_GCLK_MPEG1,  3, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_demux,		HHI_GCLK_MPEG1,  4, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_blkmv,		HHI_GCLK_MPEG1, 14, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_aiu,		HHI_GCLK_MPEG1, 15, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_uart1,		HHI_GCLK_MPEG1, 16, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_g2d,		HHI_GCLK_MPEG1, 20, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_usb0,		HHI_GCLK_MPEG1, 21, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_usb1,		HHI_GCLK_MPEG1, 22, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_reset,		HHI_GCLK_MPEG1, 23, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_nand,		HHI_GCLK_MPEG1, 24, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_dos_parser,	HHI_GCLK_MPEG1, 25, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_usb,		HHI_GCLK_MPEG1, 26, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vdin1,		HHI_GCLK_MPEG1, 28, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ahb_arb0,		HHI_GCLK_MPEG1, 29, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_efuse,		HHI_GCLK_MPEG1, 30, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_boot_rom,		HHI_GCLK_MPEG1, 31, CLK_IGNORE_UNUSED);
-+
-+static GXBB_PCLK(gxbb_ahb_data_bus,	HHI_GCLK_MPEG2,  1, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ahb_ctrl_bus,	HHI_GCLK_MPEG2,  2, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_hdmi_intr_sync,	HHI_GCLK_MPEG2,  3, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_hdmi_pclk,	HHI_GCLK_MPEG2,  4, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_usb1_ddr_bridge,	HHI_GCLK_MPEG2,  8, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_usb0_ddr_bridge,	HHI_GCLK_MPEG2,  9, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_mmc_pclk,		HHI_GCLK_MPEG2, 11, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_dvin,		HHI_GCLK_MPEG2, 12, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_uart2,		HHI_GCLK_MPEG2, 15, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_sar_adc,		HHI_GCLK_MPEG2, 22, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vpu_intr,		HHI_GCLK_MPEG2, 25, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_clk81_a53,	HHI_GCLK_MPEG2, 29, CLK_IGNORE_UNUSED);
-+
-+static GXBB_PCLK(gxbb_vclk2_venci0,	HHI_GCLK_OTHER,  1, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk2_venci1,	HHI_GCLK_OTHER,  2, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk2_vencp0,	HHI_GCLK_OTHER,  3, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk2_vencp1,	HHI_GCLK_OTHER,  4, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_gclk_venci_int0,	HHI_GCLK_OTHER,  8, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_gclk_vencp_int,	HHI_GCLK_OTHER,  9, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_dac_clk,		HHI_GCLK_OTHER, 10, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_aoclk_gate,	HHI_GCLK_OTHER, 14, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_iec958_gate,	HHI_GCLK_OTHER, 16, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_enc480p,		HHI_GCLK_OTHER, 20, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_rng1,		HHI_GCLK_OTHER, 21, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_gclk_venci_int1,	HHI_GCLK_OTHER, 22, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk2_venclmcc,	HHI_GCLK_OTHER, 24, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk2_vencl,	HHI_GCLK_OTHER, 25, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_vclk_other,	HHI_GCLK_OTHER, 26, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_edp,		HHI_GCLK_OTHER, 31, CLK_IGNORE_UNUSED);
++static C3_COMP_SEL(pwm_n, PWM_CLK_MN_CTRL, 25, 0x3, c3_pwm_parents);
++static C3_COMP_DIV(pwm_n, PWM_CLK_MN_CTRL, 16, 8);
++static C3_COMP_GATE(pwm_n, PWM_CLK_MN_CTRL, 24);
  
- /* Always On (AO) domain gates */
- 
--static GXBB_PCLK(gxbb_ao_media_cpu,	HHI_GCLK_AO, 0);
--static GXBB_PCLK(gxbb_ao_ahb_sram,	HHI_GCLK_AO, 1);
--static GXBB_PCLK(gxbb_ao_ahb_bus,	HHI_GCLK_AO, 2);
--static GXBB_PCLK(gxbb_ao_iface,		HHI_GCLK_AO, 3);
--static GXBB_PCLK(gxbb_ao_i2c,		HHI_GCLK_AO, 4);
-+static GXBB_PCLK(gxbb_ao_media_cpu,	HHI_GCLK_AO, 0, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ao_ahb_sram,	HHI_GCLK_AO, 1, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ao_ahb_bus,	HHI_GCLK_AO, 2, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ao_iface,		HHI_GCLK_AO, 3, CLK_IGNORE_UNUSED);
-+static GXBB_PCLK(gxbb_ao_i2c,		HHI_GCLK_AO, 4, CLK_IGNORE_UNUSED);
- 
- /* AIU gates */
--static MESON_PCLK(gxbb_aiu_glue,	HHI_GCLK_MPEG1,  6, &gxbb_aiu.hw);
--static MESON_PCLK(gxbb_iec958,		HHI_GCLK_MPEG1,  7, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_i2s_out,		HHI_GCLK_MPEG1,  8, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_amclk,		HHI_GCLK_MPEG1,  9, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_aififo2,		HHI_GCLK_MPEG1, 10, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_mixer,		HHI_GCLK_MPEG1, 11, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_mixer_iface,	HHI_GCLK_MPEG1, 12, &gxbb_aiu_glue.hw);
--static MESON_PCLK(gxbb_adc,		HHI_GCLK_MPEG1, 13, &gxbb_aiu_glue.hw);
-+static MESON_PCLK(gxbb_aiu_glue,	HHI_GCLK_MPEG1,  6, &gxbb_aiu.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_iec958,		HHI_GCLK_MPEG1,  7, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_i2s_out,		HHI_GCLK_MPEG1,  8, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_amclk,		HHI_GCLK_MPEG1,  9, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_aififo2,		HHI_GCLK_MPEG1, 10, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_mixer,		HHI_GCLK_MPEG1, 11, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_mixer_iface,	HHI_GCLK_MPEG1, 12, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
-+static MESON_PCLK(gxbb_adc,		HHI_GCLK_MPEG1, 13, &gxbb_aiu_glue.hw, CLK_IGNORE_UNUSED);
- 
- /* Array of all clocks provided by this provider */
- 
-diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
-index 3e1fb7efe6da1f5d8e55993541d12d40464a47f5..03e38992c4c73ff4ee24f0fa99b7c34134376992 100644
---- a/drivers/clk/meson/meson-clkc-utils.h
-+++ b/drivers/clk/meson/meson-clkc-utils.h
-@@ -27,7 +27,7 @@ struct meson_clkc_data {
- int meson_clkc_syscon_probe(struct platform_device *pdev);
- int meson_clkc_mmio_probe(struct platform_device *pdev);
- 
--#define __MESON_PCLK(_name, _reg, _bit, _ops, _pname)			\
-+#define __MESON_PCLK(_name, _reg, _bit, _ops, _pname, _flags)		\
- struct clk_regmap _name = {						\
- 	.data = &(struct clk_regmap_gate_data) {			\
- 		.offset = (_reg),					\
-@@ -38,14 +38,14 @@ struct clk_regmap _name = {						\
- 		.ops = _ops,						\
- 		.parent_hws = (const struct clk_hw *[]) { _pname },	\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
-+		.flags = (_flags),					\
- 	},								\
- }
- 
--#define MESON_PCLK(_name, _reg, _bit, _pname)	\
--	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ops, _pname)
-+#define MESON_PCLK(_name, _reg, _bit, _pname, _flags)			\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ops, _pname, _flags)
- 
--#define MESON_PCLK_RO(_name, _reg, _bit, _pname)	\
--	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname)
-+#define MESON_PCLK_RO(_name, _reg, _bit, _pname, _flags)		\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname, _flags)
- 
- #endif
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 446e57d45d8deeab9516a923ddddcba7fa274203..a16ebbbf664cdd56b2c74db4f88a8d0a22d2ddc3 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -2701,100 +2701,109 @@ static struct clk_regmap meson8b_cts_i958 = {
- 	},
- };
- 
--#define MESON8B_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(_name, _reg, _bit, &meson8b_clk81.hw)
--
--/* Everything Else (EE) domain gates */
--
--static MESON8B_PCLK(meson8b_ddr,		HHI_GCLK_MPEG0, 0);
--static MESON8B_PCLK(meson8b_dos,		HHI_GCLK_MPEG0, 1);
--static MESON8B_PCLK(meson8b_isa,		HHI_GCLK_MPEG0, 5);
--static MESON8B_PCLK(meson8b_pl301,		HHI_GCLK_MPEG0, 6);
--static MESON8B_PCLK(meson8b_periphs,		HHI_GCLK_MPEG0, 7);
--static MESON8B_PCLK(meson8b_spicc,		HHI_GCLK_MPEG0, 8);
--static MESON8B_PCLK(meson8b_i2c,		HHI_GCLK_MPEG0, 9);
--static MESON8B_PCLK(meson8b_sar_adc,		HHI_GCLK_MPEG0, 10);
--static MESON8B_PCLK(meson8b_smart_card,		HHI_GCLK_MPEG0, 11);
--static MESON8B_PCLK(meson8b_rng0,		HHI_GCLK_MPEG0, 12);
--static MESON8B_PCLK(meson8b_uart0,		HHI_GCLK_MPEG0, 13);
--static MESON8B_PCLK(meson8b_sdhc,		HHI_GCLK_MPEG0, 14);
--static MESON8B_PCLK(meson8b_stream,		HHI_GCLK_MPEG0, 15);
--static MESON8B_PCLK(meson8b_async_fifo,		HHI_GCLK_MPEG0, 16);
--static MESON8B_PCLK(meson8b_sdio,		HHI_GCLK_MPEG0, 17);
--static MESON8B_PCLK(meson8b_abuf,		HHI_GCLK_MPEG0, 18);
--static MESON8B_PCLK(meson8b_hiu_iface,		HHI_GCLK_MPEG0, 19);
--static MESON8B_PCLK(meson8b_assist_misc,	HHI_GCLK_MPEG0, 23);
--static MESON8B_PCLK(meson8b_spi,		HHI_GCLK_MPEG0, 30);
--
--static MESON8B_PCLK(meson8b_i2s_spdif,		HHI_GCLK_MPEG1, 2);
--static MESON8B_PCLK(meson8b_eth,		HHI_GCLK_MPEG1, 3);
--static MESON8B_PCLK(meson8b_demux,		HHI_GCLK_MPEG1, 4);
--static MESON8B_PCLK(meson8b_blkmv,		HHI_GCLK_MPEG1, 14);
--static MESON8B_PCLK(meson8b_aiu,		HHI_GCLK_MPEG1, 15);
--static MESON8B_PCLK(meson8b_uart1,		HHI_GCLK_MPEG1, 16);
--static MESON8B_PCLK(meson8b_g2d,		HHI_GCLK_MPEG1, 20);
--static MESON8B_PCLK(meson8b_usb0,		HHI_GCLK_MPEG1, 21);
--static MESON8B_PCLK(meson8b_usb1,		HHI_GCLK_MPEG1, 22);
--static MESON8B_PCLK(meson8b_reset,		HHI_GCLK_MPEG1, 23);
--static MESON8B_PCLK(meson8b_nand,		HHI_GCLK_MPEG1, 24);
--static MESON8B_PCLK(meson8b_dos_parser,		HHI_GCLK_MPEG1, 25);
--static MESON8B_PCLK(meson8b_usb,		HHI_GCLK_MPEG1, 26);
--static MESON8B_PCLK(meson8b_vdin1,		HHI_GCLK_MPEG1, 28);
--static MESON8B_PCLK(meson8b_ahb_arb0,		HHI_GCLK_MPEG1, 29);
--static MESON8B_PCLK(meson8b_efuse,		HHI_GCLK_MPEG1, 30);
--static MESON8B_PCLK(meson8b_boot_rom,		HHI_GCLK_MPEG1, 31);
--
--static MESON8B_PCLK(meson8b_ahb_data_bus,	HHI_GCLK_MPEG2, 1);
--static MESON8B_PCLK(meson8b_ahb_ctrl_bus,	HHI_GCLK_MPEG2, 2);
--static MESON8B_PCLK(meson8b_hdmi_intr_sync,	HHI_GCLK_MPEG2, 3);
--static MESON8B_PCLK(meson8b_hdmi_pclk,		HHI_GCLK_MPEG2, 4);
--static MESON8B_PCLK(meson8b_usb1_ddr_bridge,	HHI_GCLK_MPEG2, 8);
--static MESON8B_PCLK(meson8b_usb0_ddr_bridge,	HHI_GCLK_MPEG2, 9);
--static MESON8B_PCLK(meson8b_mmc_pclk,		HHI_GCLK_MPEG2, 11);
--static MESON8B_PCLK(meson8b_dvin,		HHI_GCLK_MPEG2, 12);
--static MESON8B_PCLK(meson8b_uart2,		HHI_GCLK_MPEG2, 15);
--static MESON8B_PCLK(meson8b_sana,		HHI_GCLK_MPEG2, 22);
--static MESON8B_PCLK(meson8b_vpu_intr,		HHI_GCLK_MPEG2, 25);
--static MESON8B_PCLK(meson8b_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
--static MESON8B_PCLK(meson8b_clk81_a9,		HHI_GCLK_MPEG2, 29);
--
--static MESON8B_PCLK(meson8b_vclk2_venci0,	HHI_GCLK_OTHER, 1);
--static MESON8B_PCLK(meson8b_vclk2_venci1,	HHI_GCLK_OTHER, 2);
--static MESON8B_PCLK(meson8b_vclk2_vencp0,	HHI_GCLK_OTHER, 3);
--static MESON8B_PCLK(meson8b_vclk2_vencp1,	HHI_GCLK_OTHER, 4);
--static MESON8B_PCLK(meson8b_gclk_venci_int,	HHI_GCLK_OTHER, 8);
--static MESON8B_PCLK(meson8b_gclk_vencp_int,	HHI_GCLK_OTHER, 9);
--static MESON8B_PCLK(meson8b_dac_clk,		HHI_GCLK_OTHER, 10);
--static MESON8B_PCLK(meson8b_aoclk_gate,		HHI_GCLK_OTHER, 14);
--static MESON8B_PCLK(meson8b_iec958_gate,	HHI_GCLK_OTHER, 16);
--static MESON8B_PCLK(meson8b_enc480p,		HHI_GCLK_OTHER, 20);
--static MESON8B_PCLK(meson8b_rng1,		HHI_GCLK_OTHER, 21);
--static MESON8B_PCLK(meson8b_gclk_vencl_int,	HHI_GCLK_OTHER, 22);
--static MESON8B_PCLK(meson8b_vclk2_venclmcc,	HHI_GCLK_OTHER, 24);
--static MESON8B_PCLK(meson8b_vclk2_vencl,	HHI_GCLK_OTHER, 25);
--static MESON8B_PCLK(meson8b_vclk2_other,	HHI_GCLK_OTHER, 26);
--static MESON8B_PCLK(meson8b_edp,		HHI_GCLK_OTHER, 31);
-+#define MESON8B_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(_name, _reg, _bit, &meson8b_clk81.hw, _flags)
-+
-+/*
-+ * Everything Else (EE) domain gates
-+ *
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static MESON8B_PCLK(meson8b_ddr,		HHI_GCLK_MPEG0,  0, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_dos,		HHI_GCLK_MPEG0,  1, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_isa,		HHI_GCLK_MPEG0,  5, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_pl301,		HHI_GCLK_MPEG0,  6, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_periphs,		HHI_GCLK_MPEG0,  7, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_spicc,		HHI_GCLK_MPEG0,  8, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_i2c,		HHI_GCLK_MPEG0,  9, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_sar_adc,		HHI_GCLK_MPEG0, 10, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_smart_card,		HHI_GCLK_MPEG0, 11, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_rng0,		HHI_GCLK_MPEG0, 12, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_uart0,		HHI_GCLK_MPEG0, 13, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_sdhc,		HHI_GCLK_MPEG0, 14, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_stream,		HHI_GCLK_MPEG0, 15, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_async_fifo,		HHI_GCLK_MPEG0, 16, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_sdio,		HHI_GCLK_MPEG0, 17, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_abuf,		HHI_GCLK_MPEG0, 18, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_hiu_iface,		HHI_GCLK_MPEG0, 19, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_assist_misc,	HHI_GCLK_MPEG0, 23, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_spi,		HHI_GCLK_MPEG0, 30, CLK_IGNORE_UNUSED);
-+
-+static MESON8B_PCLK(meson8b_i2s_spdif,		HHI_GCLK_MPEG1,  2, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_eth,		HHI_GCLK_MPEG1,  3, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_demux,		HHI_GCLK_MPEG1,  4, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_blkmv,		HHI_GCLK_MPEG1, 14, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_aiu,		HHI_GCLK_MPEG1, 15, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_uart1,		HHI_GCLK_MPEG1, 16, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_g2d,		HHI_GCLK_MPEG1, 20, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_usb0,		HHI_GCLK_MPEG1, 21, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_usb1,		HHI_GCLK_MPEG1, 22, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_reset,		HHI_GCLK_MPEG1, 23, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_nand,		HHI_GCLK_MPEG1, 24, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_dos_parser,		HHI_GCLK_MPEG1, 25, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_usb,		HHI_GCLK_MPEG1, 26, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vdin1,		HHI_GCLK_MPEG1, 28, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_ahb_arb0,		HHI_GCLK_MPEG1, 29, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_efuse,		HHI_GCLK_MPEG1, 30, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_boot_rom,		HHI_GCLK_MPEG1, 31, CLK_IGNORE_UNUSED);
-+
-+static MESON8B_PCLK(meson8b_ahb_data_bus,	HHI_GCLK_MPEG2,  1, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_ahb_ctrl_bus,	HHI_GCLK_MPEG2,  2, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_hdmi_intr_sync,	HHI_GCLK_MPEG2,  3, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_hdmi_pclk,		HHI_GCLK_MPEG2,  4, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_usb1_ddr_bridge,	HHI_GCLK_MPEG2,  8, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_usb0_ddr_bridge,	HHI_GCLK_MPEG2,  9, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_mmc_pclk,		HHI_GCLK_MPEG2, 11, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_dvin,		HHI_GCLK_MPEG2, 12, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_uart2,		HHI_GCLK_MPEG2, 15, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_sana,		HHI_GCLK_MPEG2, 22, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vpu_intr,		HHI_GCLK_MPEG2, 25, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_clk81_a9,		HHI_GCLK_MPEG2, 29, CLK_IGNORE_UNUSED);
-+
-+static MESON8B_PCLK(meson8b_vclk2_venci0,	HHI_GCLK_OTHER,  1, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_venci1,	HHI_GCLK_OTHER,  2, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_vencp0,	HHI_GCLK_OTHER,  3, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_vencp1,	HHI_GCLK_OTHER,  4, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_gclk_venci_int,	HHI_GCLK_OTHER,  8, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_gclk_vencp_int,	HHI_GCLK_OTHER,  9, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_dac_clk,		HHI_GCLK_OTHER, 10, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_aoclk_gate,		HHI_GCLK_OTHER, 14, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_iec958_gate,	HHI_GCLK_OTHER, 16, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_enc480p,		HHI_GCLK_OTHER, 20, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_rng1,		HHI_GCLK_OTHER, 21, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_gclk_vencl_int,	HHI_GCLK_OTHER, 22, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_venclmcc,	HHI_GCLK_OTHER, 24, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_vencl,	HHI_GCLK_OTHER, 25, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_vclk2_other,	HHI_GCLK_OTHER, 26, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_edp,		HHI_GCLK_OTHER, 31, CLK_IGNORE_UNUSED);
- 
- /* AIU gates */
--static MESON_PCLK(meson8b_aiu_glue,		HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw);
-+static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw, CLK_IGNORE_UNUSED);
- 
--#define MESON_AIU_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw)
-+#define MESON_AIU_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw, _flags)
- 
--static MESON_AIU_PCLK(meson8b_iec958,		HHI_GCLK_MPEG1, 7);
--static MESON_AIU_PCLK(meson8b_i2s_out,		HHI_GCLK_MPEG1, 8);
--static MESON_AIU_PCLK(meson8b_amclk,		HHI_GCLK_MPEG1, 9);
--static MESON_AIU_PCLK(meson8b_aififo2,		HHI_GCLK_MPEG1, 10);
--static MESON_AIU_PCLK(meson8b_mixer,		HHI_GCLK_MPEG1, 11);
--static MESON_AIU_PCLK(meson8b_mixer_iface,	HHI_GCLK_MPEG1, 12);
--static MESON_AIU_PCLK(meson8b_adc,		HHI_GCLK_MPEG1, 13);
-+static MESON_AIU_PCLK(meson8b_iec958,		HHI_GCLK_MPEG1,  7, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_i2s_out,		HHI_GCLK_MPEG1,  8, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_amclk,		HHI_GCLK_MPEG1,  9, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_aififo2,		HHI_GCLK_MPEG1, 10, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_mixer,		HHI_GCLK_MPEG1, 11, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_mixer_iface,	HHI_GCLK_MPEG1, 12, CLK_IGNORE_UNUSED);
-+static MESON_AIU_PCLK(meson8b_adc,		HHI_GCLK_MPEG1, 13, CLK_IGNORE_UNUSED);
- 
- /* Always On (AO) domain gates */
- 
--static MESON8B_PCLK(meson8b_ao_media_cpu,	HHI_GCLK_AO, 0);
--static MESON8B_PCLK(meson8b_ao_ahb_sram,	HHI_GCLK_AO, 1);
--static MESON8B_PCLK(meson8b_ao_ahb_bus,		HHI_GCLK_AO, 2);
--static MESON8B_PCLK(meson8b_ao_iface,		HHI_GCLK_AO, 3);
-+static MESON8B_PCLK(meson8b_ao_media_cpu,	HHI_GCLK_AO, 0, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_ao_ahb_sram,	HHI_GCLK_AO, 1, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_ao_ahb_bus,		HHI_GCLK_AO, 2, CLK_IGNORE_UNUSED);
-+static MESON8B_PCLK(meson8b_ao_iface,		HHI_GCLK_AO, 3, CLK_IGNORE_UNUSED);
- 
- static struct clk_hw *meson8_hw_clks[] = {
- 	[CLKID_PLL_FIXED]	    = &meson8b_fixed_pll.hw,
+ static const struct clk_parent_data c3_spicc_parents[] = {
+ 	{ .fw_name = "oscin" },
 diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index fc1500df926d056ce17252987dd91095a8399b55..23b51d84d8de40aa540dbc6dd5db9fb627e579de 100644
+index 3e048e645b080f9e5982ef908e3f9c43578a0b5f..6d69b132d1e1f5950d73757c45b920c9c9052344 100644
 --- a/drivers/clk/meson/s4-peripherals.c
 +++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3165,61 +3165,70 @@ static struct clk_regmap s4_gen_clk = {
- 	},
+@@ -62,6 +62,15 @@
+ #define CLKCTRL_PWM_CLK_IJ_CTRL                    0x190
+ #define CLKCTRL_DEMOD_CLK_CTRL                     0x200
+ 
++#define S4_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
++	MESON_COMP_SEL(s4_, _name, _reg, _shift, _mask, _pdata, NULL, 0, 0)
++
++#define S4_COMP_DIV(_name, _reg, _shift, _width) \
++	MESON_COMP_DIV(s4_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
++
++#define S4_COMP_GATE(_name, _reg, _bit) \
++	MESON_COMP_GATE(s4_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
++
+ static struct clk_regmap s4_rtc_32k_by_oscin_clkin = {
+ 	.data = &(struct clk_regmap_gate_data){
+ 		.offset = CLKCTRL_RTC_BY_OSCIN_CTRL0,
+@@ -2559,484 +2568,45 @@ static const struct clk_parent_data s4_pwm_parents[] = {
+ 	{ .fw_name = "fclk_div3", },
  };
  
--#define S4_PCLK(_name, _reg, _bit) \
--	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw)
+-static struct clk_regmap s4_pwm_a_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_a_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
 -
--static S4_PCLK(s4_ddr,		CLKCTRL_SYS_CLK_EN0_REG0, 0);
--static S4_PCLK(s4_dos,		CLKCTRL_SYS_CLK_EN0_REG0, 1);
--static S4_PCLK(s4_ethphy,	CLKCTRL_SYS_CLK_EN0_REG0, 4);
--static S4_PCLK(s4_mali,		CLKCTRL_SYS_CLK_EN0_REG0, 6);
--static S4_PCLK(s4_aocpu,	CLKCTRL_SYS_CLK_EN0_REG0, 13);
--static S4_PCLK(s4_aucpu,	CLKCTRL_SYS_CLK_EN0_REG0, 14);
--static S4_PCLK(s4_cec,		CLKCTRL_SYS_CLK_EN0_REG0, 16);
--static S4_PCLK(s4_sdemmca,	CLKCTRL_SYS_CLK_EN0_REG0, 24);
--static S4_PCLK(s4_sdemmcb,	CLKCTRL_SYS_CLK_EN0_REG0, 25);
--static S4_PCLK(s4_nand,		CLKCTRL_SYS_CLK_EN0_REG0, 26);
--static S4_PCLK(s4_smartcard,	CLKCTRL_SYS_CLK_EN0_REG0, 27);
--static S4_PCLK(s4_acodec,	CLKCTRL_SYS_CLK_EN0_REG0, 28);
--static S4_PCLK(s4_spifc,	CLKCTRL_SYS_CLK_EN0_REG0, 29);
--static S4_PCLK(s4_msr_clk,	CLKCTRL_SYS_CLK_EN0_REG0, 30);
--static S4_PCLK(s4_ir_ctrl,	CLKCTRL_SYS_CLK_EN0_REG0, 31);
+-static struct clk_regmap s4_pwm_a_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.shift = 0,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_a_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_a_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
 -
--static S4_PCLK(s4_audio,	CLKCTRL_SYS_CLK_EN0_REG1, 0);
--static S4_PCLK(s4_eth,		CLKCTRL_SYS_CLK_EN0_REG1, 3);
--static S4_PCLK(s4_uart_a,	CLKCTRL_SYS_CLK_EN0_REG1, 5);
--static S4_PCLK(s4_uart_b,	CLKCTRL_SYS_CLK_EN0_REG1, 6);
--static S4_PCLK(s4_uart_c,	CLKCTRL_SYS_CLK_EN0_REG1, 7);
--static S4_PCLK(s4_uart_d,	CLKCTRL_SYS_CLK_EN0_REG1, 8);
--static S4_PCLK(s4_uart_e,	CLKCTRL_SYS_CLK_EN0_REG1, 9);
--static S4_PCLK(s4_aififo,	CLKCTRL_SYS_CLK_EN0_REG1, 11);
--static S4_PCLK(s4_ts_ddr,	CLKCTRL_SYS_CLK_EN0_REG1, 15);
--static S4_PCLK(s4_ts_pll,	CLKCTRL_SYS_CLK_EN0_REG1, 16);
--static S4_PCLK(s4_g2d,		CLKCTRL_SYS_CLK_EN0_REG1, 20);
--static S4_PCLK(s4_spicc0,	CLKCTRL_SYS_CLK_EN0_REG1, 21);
--static S4_PCLK(s4_usb,		CLKCTRL_SYS_CLK_EN0_REG1, 26);
--static S4_PCLK(s4_i2c_m_a,	CLKCTRL_SYS_CLK_EN0_REG1, 30);
--static S4_PCLK(s4_i2c_m_b,	CLKCTRL_SYS_CLK_EN0_REG1, 31);
+-static struct clk_regmap s4_pwm_a = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_a_gate",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_a_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
 -
--static S4_PCLK(s4_i2c_m_c,	CLKCTRL_SYS_CLK_EN0_REG2, 0);
--static S4_PCLK(s4_i2c_m_d,	CLKCTRL_SYS_CLK_EN0_REG2, 1);
--static S4_PCLK(s4_i2c_m_e,	CLKCTRL_SYS_CLK_EN0_REG2, 2);
--static S4_PCLK(s4_hdmitx_apb,	CLKCTRL_SYS_CLK_EN0_REG2, 4);
--static S4_PCLK(s4_i2c_s_a,	CLKCTRL_SYS_CLK_EN0_REG2, 5);
--static S4_PCLK(s4_usb1_to_ddr,	CLKCTRL_SYS_CLK_EN0_REG2, 8);
--static S4_PCLK(s4_hdcp22,	CLKCTRL_SYS_CLK_EN0_REG2, 10);
--static S4_PCLK(s4_mmc_apb,	CLKCTRL_SYS_CLK_EN0_REG2, 11);
--static S4_PCLK(s4_rsa,		CLKCTRL_SYS_CLK_EN0_REG2, 18);
--static S4_PCLK(s4_cpu_debug,	CLKCTRL_SYS_CLK_EN0_REG2, 19);
--static S4_PCLK(s4_vpu_intr,	CLKCTRL_SYS_CLK_EN0_REG2, 25);
--static S4_PCLK(s4_demod,	CLKCTRL_SYS_CLK_EN0_REG2, 27);
--static S4_PCLK(s4_sar_adc,	CLKCTRL_SYS_CLK_EN0_REG2, 28);
--static S4_PCLK(s4_gic,		CLKCTRL_SYS_CLK_EN0_REG2, 30);
+-static struct clk_regmap s4_pwm_b_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.mask = 0x3,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_b_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
 -
--static S4_PCLK(s4_pwm_ab,	CLKCTRL_SYS_CLK_EN0_REG3, 7);
--static S4_PCLK(s4_pwm_cd,	CLKCTRL_SYS_CLK_EN0_REG3, 8);
--static S4_PCLK(s4_pwm_ef,	CLKCTRL_SYS_CLK_EN0_REG3, 9);
--static S4_PCLK(s4_pwm_gh,	CLKCTRL_SYS_CLK_EN0_REG3, 10);
--static S4_PCLK(s4_pwm_ij,	CLKCTRL_SYS_CLK_EN0_REG3, 11);
-+#define S4_PCLK(_name, _reg, _bit, _flags) \
-+	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw, _flags)
-+
-+/*
-+ * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-+ * Users are encouraged to test without it and submit changes to:
-+ *  - remove the flag if not necessary
-+ *  - replace the flag with something more adequate, such as CLK_IS_CRITICAL,
-+ *    if appropriate.
-+ *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
-+ *    for a particular clock.
-+ */
-+static S4_PCLK(s4_ddr,		CLKCTRL_SYS_CLK_EN0_REG0,  0, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_dos,		CLKCTRL_SYS_CLK_EN0_REG0,  1, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_ethphy,	CLKCTRL_SYS_CLK_EN0_REG0,  4, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_mali,		CLKCTRL_SYS_CLK_EN0_REG0,  6, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_aocpu,	CLKCTRL_SYS_CLK_EN0_REG0, 13, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_aucpu,	CLKCTRL_SYS_CLK_EN0_REG0, 14, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_cec,		CLKCTRL_SYS_CLK_EN0_REG0, 16, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_sdemmca,	CLKCTRL_SYS_CLK_EN0_REG0, 24, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_sdemmcb,	CLKCTRL_SYS_CLK_EN0_REG0, 25, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_nand,		CLKCTRL_SYS_CLK_EN0_REG0, 26, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_smartcard,	CLKCTRL_SYS_CLK_EN0_REG0, 27, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_acodec,	CLKCTRL_SYS_CLK_EN0_REG0, 28, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_spifc,	CLKCTRL_SYS_CLK_EN0_REG0, 29, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_msr_clk,	CLKCTRL_SYS_CLK_EN0_REG0, 30, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_ir_ctrl,	CLKCTRL_SYS_CLK_EN0_REG0, 31, CLK_IGNORE_UNUSED);
-+
-+static S4_PCLK(s4_audio,	CLKCTRL_SYS_CLK_EN0_REG1,  0, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_eth,		CLKCTRL_SYS_CLK_EN0_REG1,  3, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_uart_a,	CLKCTRL_SYS_CLK_EN0_REG1,  5, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_uart_b,	CLKCTRL_SYS_CLK_EN0_REG1,  6, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_uart_c,	CLKCTRL_SYS_CLK_EN0_REG1,  7, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_uart_d,	CLKCTRL_SYS_CLK_EN0_REG1,  8, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_uart_e,	CLKCTRL_SYS_CLK_EN0_REG1,  9, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_aififo,	CLKCTRL_SYS_CLK_EN0_REG1, 11, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_ts_ddr,	CLKCTRL_SYS_CLK_EN0_REG1, 15, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_ts_pll,	CLKCTRL_SYS_CLK_EN0_REG1, 16, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_g2d,		CLKCTRL_SYS_CLK_EN0_REG1, 20, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_spicc0,	CLKCTRL_SYS_CLK_EN0_REG1, 21, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_usb,		CLKCTRL_SYS_CLK_EN0_REG1, 26, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_i2c_m_a,	CLKCTRL_SYS_CLK_EN0_REG1, 30, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_i2c_m_b,	CLKCTRL_SYS_CLK_EN0_REG1, 31, CLK_IGNORE_UNUSED);
-+
-+static S4_PCLK(s4_i2c_m_c,	CLKCTRL_SYS_CLK_EN0_REG2,  0, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_i2c_m_d,	CLKCTRL_SYS_CLK_EN0_REG2,  1, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_i2c_m_e,	CLKCTRL_SYS_CLK_EN0_REG2,  2, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_hdmitx_apb,	CLKCTRL_SYS_CLK_EN0_REG2,  4, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_i2c_s_a,	CLKCTRL_SYS_CLK_EN0_REG2,  5, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_usb1_to_ddr,	CLKCTRL_SYS_CLK_EN0_REG2,  8, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_hdcp22,	CLKCTRL_SYS_CLK_EN0_REG2, 10, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_mmc_apb,	CLKCTRL_SYS_CLK_EN0_REG2, 11, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_rsa,		CLKCTRL_SYS_CLK_EN0_REG2, 18, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_cpu_debug,	CLKCTRL_SYS_CLK_EN0_REG2, 19, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_vpu_intr,	CLKCTRL_SYS_CLK_EN0_REG2, 25, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_demod,	CLKCTRL_SYS_CLK_EN0_REG2, 27, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_sar_adc,	CLKCTRL_SYS_CLK_EN0_REG2, 28, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_gic,		CLKCTRL_SYS_CLK_EN0_REG2, 30, CLK_IGNORE_UNUSED);
-+
-+static S4_PCLK(s4_pwm_ab,	CLKCTRL_SYS_CLK_EN0_REG3,  7, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_pwm_cd,	CLKCTRL_SYS_CLK_EN0_REG3,  8, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_pwm_ef,	CLKCTRL_SYS_CLK_EN0_REG3,  9, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_pwm_gh,	CLKCTRL_SYS_CLK_EN0_REG3, 10, CLK_IGNORE_UNUSED);
-+static S4_PCLK(s4_pwm_ij,	CLKCTRL_SYS_CLK_EN0_REG3, 11, CLK_IGNORE_UNUSED);
+-static struct clk_regmap s4_pwm_b_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.shift = 16,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_b_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_b_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_b = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_b",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_b_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_c_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_c_mux",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_c_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.shift = 0,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_c_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_c_sel.hw
+-		},
+-		.num_parents = 1,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_c = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_c",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_c_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_d_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.mask = 0x3,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_d_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_d_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.shift = 16,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_d_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_d_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_d = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_CD_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_d",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_d_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_e_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_e_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_e_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.shift = 0,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_e_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_e_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_e = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_e",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_e_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_f_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.mask = 0x3,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_f_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
++static S4_COMP_SEL(pwm_a, CLKCTRL_PWM_CLK_AB_CTRL, 9, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_a, CLKCTRL_PWM_CLK_AB_CTRL, 0, 8);
++static S4_COMP_GATE(pwm_a, CLKCTRL_PWM_CLK_AB_CTRL, 8);
  
- /* Array of all clocks provided by this provider */
- static struct clk_hw *s4_peripherals_hw_clks[] = {
+-static struct clk_regmap s4_pwm_f_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.shift = 16,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_f_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_f_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_b, CLKCTRL_PWM_CLK_AB_CTRL, 25, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_b, CLKCTRL_PWM_CLK_AB_CTRL, 16, 8);
++static S4_COMP_GATE(pwm_b, CLKCTRL_PWM_CLK_AB_CTRL, 24);
+ 
+-static struct clk_regmap s4_pwm_f = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_EF_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_f",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_f_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_c, CLKCTRL_PWM_CLK_CD_CTRL, 9, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_c, CLKCTRL_PWM_CLK_CD_CTRL, 0, 8);
++static S4_COMP_GATE(pwm_c, CLKCTRL_PWM_CLK_CD_CTRL, 8);
+ 
+-static struct clk_regmap s4_pwm_g_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_g_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
++static S4_COMP_SEL(pwm_d, CLKCTRL_PWM_CLK_CD_CTRL, 25, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_d, CLKCTRL_PWM_CLK_CD_CTRL, 16, 8);
++static S4_COMP_GATE(pwm_d, CLKCTRL_PWM_CLK_CD_CTRL, 24);
+ 
+-static struct clk_regmap s4_pwm_g_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.shift = 0,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_g_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_g_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_e, CLKCTRL_PWM_CLK_EF_CTRL, 9, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_e, CLKCTRL_PWM_CLK_EF_CTRL, 0, 8);
++static S4_COMP_GATE(pwm_e, CLKCTRL_PWM_CLK_EF_CTRL, 8);
+ 
+-static struct clk_regmap s4_pwm_g = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_g",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_g_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_f, CLKCTRL_PWM_CLK_EF_CTRL, 25, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_f, CLKCTRL_PWM_CLK_EF_CTRL, 16, 8);
++static S4_COMP_GATE(pwm_f, CLKCTRL_PWM_CLK_EF_CTRL, 24);
+ 
+-static struct clk_regmap s4_pwm_h_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.mask = 0x3,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_h_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
++static S4_COMP_SEL(pwm_g, CLKCTRL_PWM_CLK_GH_CTRL, 9, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_g, CLKCTRL_PWM_CLK_GH_CTRL, 0, 8);
++static S4_COMP_GATE(pwm_g, CLKCTRL_PWM_CLK_GH_CTRL, 8);
+ 
+-static struct clk_regmap s4_pwm_h_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.shift = 16,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_h_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_h_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 25, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 16, 8);
++static S4_COMP_GATE(pwm_h, CLKCTRL_PWM_CLK_GH_CTRL, 24);
+ 
+-static struct clk_regmap s4_pwm_h = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_GH_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_h",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_h_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_i, CLKCTRL_PWM_CLK_IJ_CTRL, 9, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_i, CLKCTRL_PWM_CLK_IJ_CTRL, 0, 8);
++static S4_COMP_GATE(pwm_i, CLKCTRL_PWM_CLK_IJ_CTRL, 8);
+ 
+-static struct clk_regmap s4_pwm_i_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_i_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_i_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.shift = 0,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_i_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_i_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_i = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_i",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_i_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_j_sel = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.mask = 0x3,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_j_sel",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_pwm_parents,
+-		.num_parents = ARRAY_SIZE(s4_pwm_parents),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_j_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.shift = 16,
+-		.width = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_j_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_j_sel.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_pwm_j = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_PWM_CLK_IJ_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "pwm_j",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_pwm_j_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
++static S4_COMP_SEL(pwm_j, CLKCTRL_PWM_CLK_IJ_CTRL, 25, 0x3, s4_pwm_parents);
++static S4_COMP_DIV(pwm_j, CLKCTRL_PWM_CLK_IJ_CTRL, 16, 8);
++static S4_COMP_GATE(pwm_j, CLKCTRL_PWM_CLK_IJ_CTRL, 24);
+ 
+ static struct clk_regmap s4_saradc_sel = {
+ 	.data = &(struct clk_regmap_mux_data) {
 
 -- 
 2.47.2
