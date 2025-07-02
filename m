@@ -1,50 +1,66 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105F62F533C;
-	Wed,  2 Jul 2025 15:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E3288CA4
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 15:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751469222; cv=none; b=RY++KcbHJ+mAgLtq0toEJbAfIAr2eNZvY8uBPiuhenoCcJkxhcPgF1X67wCm6zCwdvD0TQmXCyQJ2xxaRFAIzFOIiNYWBV5GQ15j9qQ5j6MmHlAIsBXRkogVJC1pN7OQ1mc6QL27G7n7ILSpkVWeBYHKj84IDkLNM60g3GpEVIc=
+	t=1751470037; cv=none; b=FGTTx+qdlXGB4Za3iEhX71OcR2aB2d6WvrkKq+0W1C50ObiN3H24dlw313uKXBX34eYTDPuT3Ws8Ny9TE0Nly5iWdEQqVodjVl2IEJ1zcR9fYyJ8Vk49375SjyMVPpX9QOXG4vDptPYYoWBIBCzwYLrcPwNlroL9N3Xd0Sevn00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751469222; c=relaxed/simple;
-	bh=iDfjW0ZYeaf2VMJr1Ahi4pGoCHXLk7QhFzoFFc4ZUoA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=EaF9NyZ8N1FC1X9hknqeJctRE/a0TGKsoXsz5urGkU4fH9dTKS2GTC4ci3EgFSOQcnxf+3u73Opwand8fQ4DjUtTdzgf4M4cEwm1OPeMb+GdJdiKXzAw4i1BRGwNWiwwsoDasvD/qQeO8T8yM4qxsrkR9o7xpiWtLOhDIonQE/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RPecq4fm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1751470037; c=relaxed/simple;
+	bh=LJVxQf7NdIcUrlOkMpBxQHCXouOiNXQbPohW3ECQIQk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S9CMfoMFFyKob8V+eMCtvGTvWSH6OYVoDN8osW40hdt1dBJyJIYpF1hGmFllPVM0yFNw73xps4vhvwr4527P1cNwTZ9Lr+W/6CPKghs2j7Q56/n8D9jSMQp21x4mGCozYNC0hOztiEMN5CD831im22Pd0Owt4DFCyBo1bktCV0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Sj5lrHbl; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RPecq4fm"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562DHwqa002603;
-	Wed, 2 Jul 2025 15:13:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RwZTQbL75/1moTLXzC1AwqoLs4/vgd6yXqL79a3xzaE=; b=RPecq4fmtjjBDc8w
-	zoArENpVw74NWztw7Ue4tSP47Lv6fsVR+9kMVGtePBQuHswALycHsu2euvrydHQR
-	5pLTAsRG1/6rYpgIqIzDheU7S+xKtxq/Llds5jKhkYZi170AhvZyyIeoqsruTA1t
-	1IxBCz+L9uUcqlrXIl+GygYWO9WvEkekTSuABhNIRJNWXzDiqDShs7dXxutJ3LE0
-	wHM+sId2sdiskfbVMso+V1kKgYfYpgrRdRrSOQWYyzXnoBqWOI6mt0GYAVlFiXgA
-	wFogC+cS8Tm8DamhG6lRYjvLY4V0yqYJBkFNijHe/rDTH0RYDLoKmtC6upw2xEnr
-	6S9IOA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j9pcw1w3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 15:13:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 562FDbsW010624
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Jul 2025 15:13:37 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 2 Jul 2025 08:13:32 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Wed, 2 Jul 2025 20:43:14 +0530
-Subject: [PATCH v3 2/2] arm64: dts: qcom: sc8180x: Add video clock
- controller node
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Sj5lrHbl"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a54690d369so4351831f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 08:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470033; x=1752074833; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZEXD2+i9jrIQND3h3J1ExPn/hJoUIEOFDjyNRmi8MA=;
+        b=Sj5lrHblMIfQ9wMMSxtj6jIvfESWaVoILlDEqW2+t/jq1SIFWFooJbhjdJQmqiiyE7
+         h1nTutbkkxzq+RhPsprELq09EPcqQlbavNU0SOTikpJaXDelsSutui+j9jvVePoPtClu
+         6TsB7E4nlBha7PRA+SyM6AtzeOegrBogJ2VCWGHE9mL0ZaQ7u8NHQcLe59x7exjcJnYU
+         hhCgwcFdu5s3Yema9T2BBkWlirCpnA8k7BqNYvPHzILlpisaFZDqhGe+DxrMd+1oXrRH
+         uU7TBNi8GLou4q/yhDt2PVUkG53448uvzCTnkJMJzGTJM1f0IP6KODfe88txz0psYhVX
+         GtTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751470033; x=1752074833;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mZEXD2+i9jrIQND3h3J1ExPn/hJoUIEOFDjyNRmi8MA=;
+        b=MEheaJqVB8tQVxXpOvFtImbOlaY5hyxrGt68Lvw5Aizht51men3PBfFdtaF8DECgpd
+         H3zvMLT2gWhVVwFT8qq7pqkix3DgRt5HEYkmcdkAShnu+JRXJzfjDw+9ogKlyC1afowu
+         cm3anacGRBWguCD3OVAvs44fGV/d44QOpodo6tCVRqIKMdFcgAmV9W1dHQ+ts4jM9X+n
+         ADbSmSEc8X71x5H2nR143gHBiSYo15kpSDnqbw7IU6l/U6XtD6TaPd74aEC3xQD+FLnT
+         bbPciHb+Jn4UH/HB4L3GYcYVGYxbq2JSkIH8dfp0odYaqfiOoLKbUgD5JANz3NScU5U5
+         PPjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEfRBe4TjrM6TcfmaAY/Vo0Gm5Ts8Svv+edu5SKDpuiRqNCThV2FfA71JwevZ9zNaVfAfTcUiHBL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLeo4PVg6E3KhWdh9wrZxHvwZ1I+KR2exJPOn2PoWd06m3cpZt
+	OtyhWJ+KSCO6MAx7J2EmR85XqPSBSBOQUVJCu41GynR9N4jO1CTlDAnxXSs+zwwF/gw=
+X-Gm-Gg: ASbGncvNm9rhPGxYzsrcwcWdyUsUZU4Srj4MHyvo4qYCm5iEv3JavByOOUUiTQqJSfH
+	L9zGUvYDZUbfKzxOlzq44rxIkrgEkBVWJY0NePwyYEXjpIt1h16e2bHceAs/3cvo1fr2T5c/y5p
+	BdDm3HxK4CZjwj/lpoRdRRhxLx7dkgRzvuPyhWkVMvsndjvytFxvqd8A4tW0HNkYoM0l51Lq879
+	74h2NWtMQu07/3uKLUqc7MGip2nYuh13s3qrlsNZ4nleaUuxsT8AlsSw+SdfSBxcPZ9bmJcGlrw
+	272qJ6s2SmCp7BbNmPSLlgoEzfuEIYeylw8M2g7+ecH+FgsA71SeKTsYa5nIU08SiZWAcgs+bkX
+	Y
+X-Google-Smtp-Source: AGHT+IECpWxeElBoSmJlvb93CQNlef939HEeihtXTY2qzYHwnEYlCFa1/geWXCnGm0yUCufzbNrdFg==
+X-Received: by 2002:a05:6000:4028:b0:3a5:287b:da02 with SMTP id ffacd0b85a97d-3b200b4657bmr2630366f8f.40.1751470032604;
+        Wed, 02 Jul 2025 08:27:12 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 08:27:11 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 00/26] clk: amlogic: clock controllers clean-up and
+ factorisation
+Date: Wed, 02 Jul 2025 17:25:58 +0200
+Message-Id: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,98 +69,137 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250702-sc8180x-videocc-dt-v3-2-916d443d8a38@quicinc.com>
-References: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
-In-Reply-To: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIZPZWgC/x2MMQqAMAwAvyKZDZhQBP2KOGiNGtRWWhSh+HeLw
+ w033CWIElQitEWCILdG9S4LlQXYdXCLoE7ZgSs2xER4SPQO7b5lZHDXiWzQkB2FGjY1NZDTM8i
+ sz7/t+vf9AECO6ihmAAAA
+X-Change-ID: 20241211-meson-clk-cleanup-24-41cbe1924619
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4yR0qTn3s5JChJ0YiHZKdSRRVOF6YIjY
-X-Proofpoint-ORIG-GUID: 4yR0qTn3s5JChJ0YiHZKdSRRVOF6YIjY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEyNSBTYWx0ZWRfX5Q0XmYEFZ019
- rDY6G8vSoSzDP7LwzZzYLwJSz8Vj6ILqr9/n0GjrwP9np8tgkaTU4iKxX0RGdYsgDGi1JkowG4E
- UmiHv9d7cXf6vykigsI5VLFGQEBzDSpAgAeaiCNC9Zv6kkM4mY/2OadUiRPtS/ojeJybWg9S9j1
- b4cZlmv4LWUUdX+UT8ha9NRBzPt8XsGkkVeHIr0njsNnf/V5OUebXkBu9kF+BUUkOxzmv7H40Dv
- Nl3VqLkvOow9AQwW76XpShSlQAO9mX0VhTQLgUEQTvckjrydDMPNpKeut/lGzhQ4f5H5+dGepIb
- cI3VhTMkq4RuITBLJ/y3NRJmlluIpgOD/Yk9OTrCCHEQmLk7CM5i1Nj3dM7U6d8zlqH16SqUlsZ
- ll3lRWTHslyd7npQGdd9ILhBQYQ62qh3FgevGdGmWdyvy0K4eoXobnUw33UAv8evEoUIcd4i
-X-Authority-Analysis: v=2.4 cv=QMFoRhLL c=1 sm=1 tr=0 ts=68654ca1 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=pPhMc3DFDLYxrPtO74kA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0 adultscore=0
- mlxlogscore=919 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
- clxscore=1015 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507020125
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5210; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=LJVxQf7NdIcUrlOkMpBxQHCXouOiNXQbPohW3ECQIQk=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU+yeQ57OOFVKwuT0WWvU3Gndq1dETWjEaNQW
+ UlN7cL+DN+JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPsgAKCRDm/A8cN/La
+ hYKJD/9+M0TmYQdd3/rSQbthQJaQj5IMrKfVvlmGpsIup6XF2eDdZesRI9d0dx3qbUusH/ZkSBv
+ dFZ360Mkrh3KmVvSMhQ27HhAnCl+4ikVzKiOFWsW40pJ1Njyi+OPi83jqPuQM0VRxmK8wsX+Je+
+ 3WnON3E8oX0i8v+AKXZFoygZwe4eoDSEdvA0Ecy1yZCZzRB6ZBO16GElQmdAU60A6/6A1F8YJv0
+ ixMR1YspvPjr2R2fXeM6RCgfhQ48u9Q98Tdmqv9jxuWIviHOF6TC12EinFxTXb+au6aOmHl97EN
+ 6lb9D4kh+xZ9hxHHEnaSvdEWG2i2SbFHo4vpe5fODA56uGN8f5uDAfzQATLlS98PxlaHqfOBxJp
+ 3rTkjnghRfIK42Pxpyeygsl/VHWjEHiF89WCvEPBuuXvfGp43PBK0HtI6s1y1GrLHph444DO84F
+ RnBQNrTWcHKJCPhERyUUB/0C7yTD/ndbZgmZzqnhIPA/B1ZrOxOcIdCRwd788VxIHo0YklB1Rr3
+ vLfVn0J1WNWl8JH5TY9UB2Q7jxZCN3U0mGZ5I3rVDjuhEO3S4O/57FXFIz8QewKGLhNXTAROkDl
+ d6t3WjrO19YZUDhgJGUOLsjPoKld6FZhT1/qRCLM/rA/1Luto/JmY34J2zJhIJDZ7YQTmI8EqJZ
+ lnruOJj7adMCW/w==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add device node for video clock controller on Qualcomm
-sc8180x platform.
+The work on this patchset started with the submission of the Amlogic t7
+peripheral clock controller [1]. This controller is fairly similar to
+existing controllers. Once again, it redefines the peripheral clock macro,
+the probe function and composite clock helpers, even if it is almost the
+same as in other controllers. This code duplication trend has been going on
+for too long and now is the time to properly address the problem.
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+There is clearly 4 parts in this patchset. These are sent together for v1
+to show why what the ugly first part is useful. If more versions are
+needed, the patchset will be split in 4.
+
+While all controllers are doing more or less the same things, tiny and
+often pointless differences have emerged between the controllers. This
+makes it harder to exploit SoC commonalities.
+
+The first part of this series deals with that problem and realign things
+up. There is nothing complicated going on there beside renaming. It is the
+ugly stuff, yet necessary, we have to go through to get to the interesting
+stuff afterwards. There is one change per controller for the review, with
+the intent to squash this into a single change on application.
+
+Second is the factorisation of the probe functions so those stop being
+copy/pasted in each clock controller drivers.
+
+Then the clean-up and factorisation for the PCLK macros, again to stop
+copy/paste but also the silent use CLK_IGNORE_UNUSED.
+
+Finally the introduction of macros for composite clock definitions. The
+same pattern as the for the PCLKs started to appear on s4, c3 and t7. Done
+properly, this could also help reduce the verbosity of the older
+controllers.
+
+With this, the c3-peripherals controller may be used as an example of what
+future similar controllers should look like.
+
+After this, there is still some house keeping to be done in the amlogic
+clock drivers:
+- Moving remaining reset drivers to the reset subsystem
+- Proper decoupling of clk-regmap from the clock controllers
+- Reduce verbosity of older controllers with the composite macros, where it
+  makes sense.
+
+[1]: https://lore.kernel.org/linux-clk/20250108094025.2664201-6-jian.hu@amlogic.com/
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Jerome Brunet (26):
+      clk: amlogic: a1-peripherals: naming consistency alignment
+      clk: amlogic: a1-pll: naming consistency alignment
+      clk: amlogic: axg-ao: naming consistency alignment
+      clk: amlogic: axg: naming consistency alignment
+      clk: amlogic: c3-peripherals: naming consistency alignment
+      clk: amlogic: c3-pll: naming consistency alignment
+      clk: amlogic: g12a-ao: naming consistency alignment
+      clk: amlogic: g12a: naming consistency alignment
+      clk: amlogic: gxbb-ao: naming consistency alignment
+      clk: amlogic: gxbb: naming consistency alignment
+      clk: amlogic: meson8b: naming consistency alignment
+      clk: amlogic: s4-peripherals: naming consistency alignment
+      clk: amlogic: s4-pll: naming consistency alignment
+      clk: amlogic: meson8-ddr: naming consistency alignment
+      clk: amlogic: drop meson-clkcee
+      clk: amlogic: add probe helper for mmio based controllers
+      clk: amlogic: use probe helper in mmio based controllers
+      clk: amlogic: aoclk: use clkc-utils syscon probe
+      clk: amlogic: move PCLK definition to clkc-utils
+      clk: amlogic: drop CLK_SET_RATE_PARENT from peripheral clocks
+      clk: amlogic: pclk explicitly use CLK_IGNORE_UNUSED
+      clk: amlogic: introduce a common pclk definition
+      clk: amlogic: use the common pclk definition
+      clk: amlogic: add composite clock helpers
+      clk: amlogic: align s4 and c3 pwm clock descriptions
+      clk: amlogic: c3-peripherals: use helper for basic composite clocks
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index b74ce3175d209b569e634073662307964158b340..e0dfa1eae8202881a02cc8531111792e7c962fa6 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sc8180x-camcc.h>
-+#include <dt-bindings/clock/qcom,videocc-sm8150.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sc8180x.h>
-@@ -2943,6 +2944,20 @@ usb_sec_dwc3_ss: endpoint {
- 			};
- 		};
- 
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sc8180x-videocc",
-+				     "qcom,sm8150-videocc";
-+			reg = <0 0x0ab00000 0 0x10000>;
-+			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			power-domains = <&rpmhpd SC8180X_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		camcc: clock-controller@ad00000 {
- 			compatible = "qcom,sc8180x-camcc";
- 			reg = <0 0x0ad00000 0 0x20000>;
+ drivers/clk/meson/Kconfig            |   13 +-
+ drivers/clk/meson/Makefile           |    1 -
+ drivers/clk/meson/a1-peripherals.c   |  995 +++++-----
+ drivers/clk/meson/a1-pll.c           |  124 +-
+ drivers/clk/meson/axg-aoclk.c        |  153 +-
+ drivers/clk/meson/axg.c              |  237 +--
+ drivers/clk/meson/c3-peripherals.c   | 2055 ++++++---------------
+ drivers/clk/meson/c3-pll.c           |  245 ++-
+ drivers/clk/meson/clk-regmap.h       |   20 -
+ drivers/clk/meson/g12a-aoclk.c       |  238 +--
+ drivers/clk/meson/g12a.c             | 3316 +++++++++++++++++-----------------
+ drivers/clk/meson/gxbb-aoclk.c       |  123 +-
+ drivers/clk/meson/gxbb.c             |  611 ++++---
+ drivers/clk/meson/meson-aoclk.c      |   32 +-
+ drivers/clk/meson/meson-aoclk.h      |    2 +-
+ drivers/clk/meson/meson-clkc-utils.c |   89 +-
+ drivers/clk/meson/meson-clkc-utils.h |   89 +
+ drivers/clk/meson/meson-eeclk.c      |   60 -
+ drivers/clk/meson/meson-eeclk.h      |   24 -
+ drivers/clk/meson/meson8-ddr.c       |   62 +-
+ drivers/clk/meson/meson8b.c          |  746 ++++----
+ drivers/clk/meson/s4-peripherals.c   | 1160 ++++--------
+ drivers/clk/meson/s4-pll.c           |   82 +-
+ 23 files changed, 4437 insertions(+), 6040 deletions(-)
+---
+base-commit: 2c37e1c671428002519e7615d786b9b692261052
+change-id: 20241211-meson-clk-cleanup-24-41cbe1924619
 
+Best regards,
 -- 
-2.25.1
+Jerome
 
