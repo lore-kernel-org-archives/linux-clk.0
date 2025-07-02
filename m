@@ -1,92 +1,164 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F571DF977;
-	Wed,  2 Jul 2025 07:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA9C23A995;
+	Wed,  2 Jul 2025 08:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751440916; cv=none; b=mwMliEePsU6qy8l2OzvqApqBHxXVxRBxZtsYke/0TKvGFRTxceh6pg425qCwFi3p4AikLVwzterO0srjamUV1p6V2+hrztsgW74kcKnliQm+0x/+sTTY+UoT1SSq2d7eAFzXtKAOpF45H9gI+uXU8DoJ094Kms2eX8uZKWl0Bx4=
+	t=1751445817; cv=none; b=lAdx9wzKkVwbwVtoG+SHrTWEH8ml53slJK/9oTaxLrRzChqvYG6luv7c3ggkNFRh8dEpxHTWS0BAmlAeNgnDcM5Sl9tuEIPL1YUULIL5kLmMUbBuQdwlos6uiEA2x0z3hQsU2dksov93+TzpA3eEDxTDO9X31Ge4sFVEkn/vtbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751440916; c=relaxed/simple;
-	bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PNhZX5MVQpq0oQT2FbQXu1apQYCskhhOrl3b/y4JrIMY6n+VUuuRLHFJ2Y17LCKzzdifRI6CzmVYNttTEMtT98CeXJoR7WISjOlqpM0AAyha+XaBo0YYohWGo5p+YgrYBft1VUiOlnwtc4Kk0gSTgy7ZdrU0dC2naPwoybSOw8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32addf54a00so34284241fa.1;
-        Wed, 02 Jul 2025 00:21:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751440907; x=1752045707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
-        b=Vejqni5DMN1uW2nmcJA7oQdfqsYG9yb3CjIt4Rpo3LWm6LPDQ64Kk6q503lY9A5aob
-         GX5tphyWWXVzk82FyptVu6G3hGkbiWIwG/pTukDvwD5JSd+XnWXEQYWf6Sp/oe65dg7L
-         iaAiXG/f3VApjAL4bCXfh5YiaCog+sI7c8oC1/Z7LcP8Px7qIFV0PL3gny/Bh05E3fre
-         Lr7VhSniFuPs26GLYUGhuxeoGZj73yi0j+H48zTD69zl4+fq71G8nt8whN326W14PeSB
-         qnIiLtMskXN8ruO4+ZakoW4nVkQM/9AFKZGzqAFx4Gy/rsZMGx/59oBlndj5cKHtQ7ab
-         XCzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGyyXLOQmeqZhUQhXbymfvC+yuBA27zDOy1PYaJ49tpSLEKDtWkSwWR3AWKYLL5IRNHHv4B3tMDrN8I5WM@vger.kernel.org, AJvYcCUtVZAw4y1kZwg450/VWycek/waB5jdjBepgIRBvzVHKKXAeBI/i2cabH56/0ahzSDoxn4pkMsbU2hOLA==@vger.kernel.org, AJvYcCVGVnWdSCs6FUQEMSKhdrPfSbfiyMIDtzW4zdISde4SKvkKnmYljx0AiT/RJkCuCEXTlYY8hPxrcOPH@vger.kernel.org, AJvYcCXdrJ2nfZMjvStzm9NTswAiNacjb/3REuGFv2LVFSwLopp9RYFDrncifVI411EwTTSh2iJMYL/mE8h6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvDmJqnFctUbin0gtOgva+v48+dvPEzvwQkmCyqu9I15mn7SwP
-	knWt5LUUriuLHNQQ13kC6MDw99mkOdxwemSSvZapWl7DhhF/8JZ3MjXzz9rNjAP/
-X-Gm-Gg: ASbGncv/LaoyPB6FIh4v6f86SXHQFHzworeq4U4Kwc9cygAiLrW5T7CDTGa+f5tdOiP
-	5vSc4RPOXv1o1jgGK1JrrJUT2FnmqYPfZLOAj084mc1EoKqmBbhEonL2NYwinka2OYOwBX44Gcj
-	i7v4E1UUClcbVPlSfNU/NFejUtKbI0hoIOTyBWpbQ+Q5Ca6aKTV6M7nyluDYYrVSMNSH6l5TPZx
-	FfRleYsuIgKgBOoMX3hc0nSS/izQmXIAzwNMixnttNTpT/1liKqCrUTuXIhrEJRk4MGj2wDalmn
-	xn5xm/pVfvgplOapYRCktS+SaNoJ6ogbYHSIz+XdJu+ksHoUu9zw8kBLe0yOvzyT25GS7g2jOQB
-	DrBFLqe6vYCxM3e1lSk4=
-X-Google-Smtp-Source: AGHT+IHgLRqkzL+NlyH8Y6vVuR8370P3PmAbmab6X52g4MP/vDndubojlp9QRSfXIxwvisq4oLRqMA==
-X-Received: by 2002:a05:6512:3ba6:b0:553:24bb:daa1 with SMTP id 2adb3069b0e04-5562829f64dmr616313e87.11.1751440906742;
-        Wed, 02 Jul 2025 00:21:46 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2c5e6esm2056383e87.156.2025.07.02.00.21.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b43cce9efso33353911fa.3;
-        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0wwoySBpjLrgSHrtrl/b0FSEySBxY6scQIaEULw88HLqwX9P73b0fM9jtFjbjr7iubQpmrxifM+fFzg==@vger.kernel.org, AJvYcCUolpaqVoLQqb1N8wwTecjngshn9OzEu7QVTJ698PjumqY0lqVtcKznYNCXljHGDrFEpNmPrJrl2uf2@vger.kernel.org, AJvYcCWOXOZ6+6W5B7k30IbhssfBQWiO8gVIfTeVEYtF5z/TQjcCia4FlYorpVQVFA3G/+3sqfXnKqsNjmhL@vger.kernel.org, AJvYcCXA0xoWBOtN5TQAt06UVlQrN/nRHnvjZRz4QLotZx7EqbOhqO/YVkc8gGQNlaBISUS+sYCBMD9EerWMuv9K@vger.kernel.org
-X-Received: by 2002:a2e:881a:0:b0:32a:6e77:3e57 with SMTP id
- 38308e7fff4ca-32e00059701mr5163051fa.21.1751440904870; Wed, 02 Jul 2025
- 00:21:44 -0700 (PDT)
+	s=arc-20240116; t=1751445817; c=relaxed/simple;
+	bh=/Mj9IbvLmcEdXds6zDfjwnUJ2vNA7j8nuWO6n4VjrAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kr09WIohx0Fgyi7Q5V8r4kKqylv91z99UE5Lp/ptv09iVosSmB8s1XjFi1EptNe/RvNrOHikzymALXP+nHtmM/Q5UhU8ARl0h4J8SGWbvd24jsahvUxaamp2iXo9LY3sOuDCSIs5uvo13GghhbpfL9ek14YZwNzz16GW13WV0y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OnKdYIJO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OnKdYIJO"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5622U1Sk020544;
+	Wed, 2 Jul 2025 08:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5RbAHSbae8Jj29ZSVUOTUguuPqjViFL1e6ZVXS1jCfM=; b=OnKdYIJOX6kzgIG8
+	FV16+1iUUADbnb2TMJxRqharHmeXLLVOUrxS7d+YgGmVfKsXerCrndtTsDldyAvz
+	kxumGv5iYwwat7kIxw2wulzNc9VT8Zp5Zrk1+/C1UUSx2zThH/20yt/rWonQE3Oz
+	k0f6W5XaOi7lJK352QnAcjtoP1X8eB+BNiUsZXzWa5HKRr+uBLVXtw73bO4gTZ+4
+	7DQ23C2tcEaRtctCutfQBom1elKcfPwJp+sHGG9iAEFuF8LoYehusXtydKbUEv+7
+	LVYR19vjPc99RLUeYnnmGsr4VO2pHpFY8hN45HuPRe54LIIq5NOXlPCwfUZTaAzR
+	kilxNA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn2h0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 08:43:25 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5628hOmg031410
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 08:43:24 GMT
+Received: from [10.217.217.109] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
+ 2025 01:43:19 -0700
+Message-ID: <4884d189-e43a-4932-af52-e1987bd7106c@quicinc.com>
+Date: Wed, 2 Jul 2025 14:13:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701201124.812882-1-paulk@sys-base.io> <20250701201124.812882-2-paulk@sys-base.io>
-In-Reply-To: <20250701201124.812882-2-paulk@sys-base.io>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 2 Jul 2025 15:21:32 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
-X-Gm-Features: Ac12FXzCUNmtlDRkeXVtg02FaWchFlhOllywrVEAHXAtLHX_qmyxYGIEnu1zURg
-Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
-Subject: Re: [PATCH 1/5] pinctrl: sunxi: v3s: Fix wrong comment about UART2 pinmux
-To: Paul Kocialkowski <paulk@sys-base.io>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, 
-	Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.xyz>, 
-	Andre Przywara <andre.przywara@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Ajit
+ Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250625-qcs615-mm-v10-clock-controllers-v10-0-ec48255f90d8@quicinc.com>
+ <20250625-qcs615-mm-v10-clock-controllers-v10-1-ec48255f90d8@quicinc.com>
+ <trwdfk2oz2udtbiqxh3ybuqbvasfqywmqxgi4xyvsknz6svs2r@icpp7snpq6c5>
+ <44dddd3f-d2d2-4d4b-831a-21e6d9050445@quicinc.com>
+ <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2OSBTYWx0ZWRfX8VcgtUhyolYE
+ VzR1RXp2VdwzTnrCopUKekm8qLZdpBh04QtuOXo8dJbDQSw6Xdzy5vJXf0uwXBd0gE1aa6GsjHo
+ Eq+UP46sNtfjAeq0r6rmQR+hFAGW8QHhIQPsFG02d9wVQjZEnsWHUlimx8kgUQDz2Tx5T08bBWz
+ uNuIKtPGXHKOL3uraFUOsUTvmz3poHoZ/yUzl+H9asmRwnfqfQeWF1I+IZP50hIQ6VxFYyaAR5E
+ wHEV9PYb8SU80DNxm+H//JlkA2n8jatGeYH2Ki3+D62sWbv1C1iLh3PLNmC2LKwriw7ZwchtZJ3
+ akOnR5a/x4eHFOkcnUDFkP2mUp9EVM0qKDSMkb2FV4YNUnZBDbCmxJ22apKKaBEJCiPm6e8Oyip
+ 1H+wf4BEMLPTPrqbZXcRldcfRexN0Anbj//UTVeDhHD33hH2BmEQxNhIAj9P1m0NaToa5yMR
+X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=6864f12d cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=O75FsbJ6qr0OxAJT8SUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
+X-Proofpoint-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020069
 
-On Wed, Jul 2, 2025 at 4:13=E2=80=AFAM Paul Kocialkowski <paulk@sys-base.io=
-> wrote:
->
-> The original comment doesn't match the pin attribution, probably due
-> to a hasty copy/paste.
->
-> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-Acked-by Chen-Yu Tsai <wens@csie.org>
+
+On 6/27/2025 6:07 PM, Dmitry Baryshkov wrote:
+> On 27/06/2025 13:13, Taniya Das wrote:
+>>
+>>
+>> On 6/25/2025 5:17 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Jun 25, 2025 at 04:13:26PM +0530, Taniya Das wrote:
+>>>> The alpha PLLs which slew to a new frequency at runtime would require
+>>>> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+>>>> which can support the slewing of the PLL to a new frequency.
+>>>>
+>>>> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>>   drivers/clk/qcom/clk-alpha-pll.c | 169 +++++++++++++++++++++++++++
+>>>> ++++++++++++
+>>>>   drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>>>>   2 files changed, 170 insertions(+)
+>>>>
+>>
+>>>> +    /*
+>>>> +     * Dynamic pll update will not support switching frequencies
+>>>> across
+>>>> +     * vco ranges. In those cases fall back to normal alpha set rate.
+>>>> +     */
+>>>> +    if (curr_vco->val != vco->val)
+>>>> +        return clk_alpha_pll_set_rate(hw, rate, parent_rate);
+>>>> +
+>>>> +    a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+>>>> +
+>>>> +    regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll),
+>>>> lower_32_bits(a));
+>>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+>>>> upper_32_bits(a));
+>>>
+>>> We have code that does this in __clk_alpha_pll_set_rate() and now you
+>>> are adding two more copies. Please extract PLL_L_VAL, PLL_ALPHA_VAL and
+>>> PLL_USER_CTL / PLL_VCO_MASK into a helper function.
+>>>
+>>
+>> Dmitry, I was thinking of implementing the following as a reusable
+>> helper since it can be leveraged by most of the functions. I'd
+>> appreciate your suggestions or feedback.
+> 
+> The code below looks good to me. Please use 'alpha' instead of 'a'.
+
+Thanks, I will use 'alpha' in the next patch.
+
+
+Taniya
+
