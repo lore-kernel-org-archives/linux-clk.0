@@ -1,157 +1,151 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664562E9EB2;
-	Wed,  2 Jul 2025 14:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEAF309DCD
+	for <linux-clk@vger.kernel.org>; Wed,  2 Jul 2025 14:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465746; cv=none; b=pLWc7OHIb+aFdkPAThZIZHtamQY0sd2DjKXy/qlR0W6LW/S7BfuXSWpE13Ue/2o2jL5uHqCdGuc9caKt5bFOoVsSHH1z9sF04oNFfv9pBo7phDArEXBNAQO54IzMQrBNdOICaW5+D/CziL5n+ZN56WqZDsSUOqbNp1mL2Mc4tuA=
+	t=1751467522; cv=none; b=ZFxBUwzZzrUdxBnwqvHUD4NTx3pIBrrCcu3Nd4uMlGp3qR3roJ4Aubc95Sy8hR+alSKRljtlAIyNZXLCkIy+IhszDtk8VsRBcw3lgMkBdAwy+GcJxpA1pJSpMhsKgUr3XlDq0r4WAaoMJMq/wxx1scQMHculx1fabacc5c5sTCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465746; c=relaxed/simple;
-	bh=AjSA6Bdq5vB9w+D1KK5HtFTazyanZB6oZ2EEmsWUSP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VTGVPIFfOOVdqbzO4v8ClVYej6Ew7nMLCnL3cYlbCum4yVzVu2F2wUrLEWCuuShkDYVDvfOLZ9J9MgM6ZYCQR0wCS5uMPTyyjBq7+pO9fwEGIIEE00Q+sv+PWoetGBpQnW+3XBg75Wg1tRK74NMvVp7M/Rki+lbLgfJs/VDJNzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dBDQHoEX; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1751467522; c=relaxed/simple;
+	bh=YCLtjEou17wI5SQ0333An2jcT7S7VeJx1PUsRLs7g3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeaZ5CF5u0emGtHQPqqy2B1jUh1f6O68MOS6gQqozfWe56yAZDw6KSmH7LrAEtpwUFbjhN6pffLgRRqWhuxeZPnQf+3J6LNuHmOJC2ruks8gyjEh+a0g9FkA6ciAIxpnvuK0ZUYa5ppBZa/rR1D01QXiM680t2KYIP2+JLPRGsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IzGM8IOk; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dBDQHoEX"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562DIwPT009778;
-	Wed, 2 Jul 2025 16:15:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	VR6E01Xg6J6Izs0olt9dR6pYp+S5ROquFthL7GlUqPs=; b=dBDQHoEXqF/md8Ai
-	OKxTINMTwYY9+MXakIisn2u4OHsDwVaws4+1VieBQiNXPftGP0VE8IKDZH79YV9C
-	gDu+8iKUecC6lTA5ex8FURzdpDRCP4m/LQweQkCWaJTIbkrTllzw7aH+Rxeuwntn
-	utlstZrXHzSVULtL2Cc2OeUtYOrfnxH6LYJk/mWHDIEXpYkQRK9ktb31DLmb16v8
-	IQ4M7f9TAHR4Q0aCT0gLzcFyIT99ZXhPfBCV/NcxixuYXHjqrUI8h1A2+IEiQK0n
-	OkuVflyw9cWVeufHcOel2SUgz5K4BtxO8qghv8cKOOkUm6NRS9TCAHbMDBGTCt8h
-	+QRk2A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmb9wc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 16:15:22 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 46F9340050;
-	Wed,  2 Jul 2025 16:14:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 22C18BB2448;
-	Wed,  2 Jul 2025 16:13:50 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 16:13:49 +0200
-Message-ID: <164e93e7-b9b1-45ff-8418-3a381b2bc781@foss.st.com>
-Date: Wed, 2 Jul 2025 16:13:48 +0200
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IzGM8IOk"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31329098ae8so5818836a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 02 Jul 2025 07:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751467520; x=1752072320; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ub3S+Dt/bu8miV+mMpV8No5VX9B8sDnT2TuQkds1xm4=;
+        b=IzGM8IOk5hZVxX8TIC1yu2d8gSyC3vh2teoMEuqulztZ1eLEJl4xWt4Y4LdwIAlLZS
+         z9O6YuEuT9Ko9LrwNpgEU7kDHCoLkCpywUpbBwFpJQtnVDqPPQ3JNFnukZHc8m5yp800
+         9Q3In8FDKQ9e8pDhKLGeargpLzjYxYhvBixwKU9UtSnI/Wl2cnWpt5YdEE6uM2YYa6CG
+         nWdpJKVJXBsNsLh3SGjCqwWf5EXLw9qdw+ANHDZCd4aYTZaRfKhdyXyNJox4b6HofaLN
+         LsHIjM+JveRoHNEAHscynr4HwbxI0SpYK/sIWnXT7IKx8HFEp4nJWZpDK2qEhUryDvkN
+         +fkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751467520; x=1752072320;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ub3S+Dt/bu8miV+mMpV8No5VX9B8sDnT2TuQkds1xm4=;
+        b=Vpx6UchT23cCQkDwlF66JQpLBAHst5CHpba4oJBdERuHlRCTW9GFQQkMJ0cgeM+DCH
+         3e/MBrcGpnTNlQU6C9HC8KN685FE7xzzAMMwL3BhSCVheamTGrDVWvkVK0WeHk/vJH3p
+         ezm00JfMUPkXrrGVaPCgFiSosgUJpH+VNHFHWueJkS426TL9p1+9Xf1SHidcU0oNYy1i
+         B+B/JMO4IORQSpyDospfJVtlA+RX0YDtR6uSkAalV2gsfAOhLpCK3nzo3Dw6MPDCJ9ep
+         OuDcJIPZ4DpDKbaRXPZXRZVW9gbmaV/MBf4Or2S14i89diErUtd2ordRbzEpHciTxMg8
+         qGMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeDHlJGpJL/iUcB0xISiTEZ4dS27pek+TXV7wBq4UhkyMySnoWHyEJeTIC6tHUkrCJzfp8uA0g31M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwHsi35a0ncVqTgOSJ3FRtNJqkinly96Bu+IafRW7qNU6bHS9F
+	PmchGiRlgLnuHvl4MqDVaE/FRezP/iiG5WHEsozHaq2qkIi2M2LERa9GYvF5LmBKb0s=
+X-Gm-Gg: ASbGncvPqh5F2UmQ8OTXSmL6n4EbcjuVv8POiyy7jrEp+Qtc+2Z4nc6gMPNT3IlWaAK
+	BEbxwb9+XD+x73WJObPNiMqZ5D0ZqCrpmy1fEjkPpHuJtbxC2lto6n2159OwzAL3gUxH1RagO7H
+	Icwk1h5s3jU2eE3FFGAs9OGVGUYPzBrAX0IT0XzK5xg0zAUUVtrPNz/DJQdqFvVmlr4suoqUxSx
+	IS4Xw7zopOtwcfA6U6pt3B2c4nl6jR2/Um7BTRTahmr8PmfCp+BJuv336wemW1n7xSl5s8mxp3G
+	wPDTmKnLvc5fveJz22m3K4eO09K5hDndaC8Yh2TehStmvHQZjjb0HZ1/QnkNIHREvJCu3PjlQI6
+	WtMxq
+X-Google-Smtp-Source: AGHT+IFPa9TeJNuPoAgMtcthgHelhMMx1yE/P2JRUakvM+iYhxMlIKjpAgWtoSbiHmHsdR0eqv5U7A==
+X-Received: by 2002:a17:90b:558d:b0:30e:e9f1:8447 with SMTP id 98e67ed59e1d1-31a917843a0mr4240732a91.4.1751467519591;
+        Wed, 02 Jul 2025 07:45:19 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9cc4c7c3sm17879a91.9.2025.07.02.07.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 07:45:19 -0700 (PDT)
+Date: Wed, 2 Jul 2025 20:15:04 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 14/24] ACPI: property: Refactor
+ acpi_fwnode_get_reference_args()
+Message-ID: <aGVF8Gqzs2YZf1Os@sunil-laptop>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-15-apatel@ventanamicro.com>
+ <CAJZ5v0ifCN7OWEw0DHpULSmXn4nCb9EdJMjQPJwmdoF_y0nfjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
-To: Philipp Zabel <p.zabel@pengutronix.de>, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien
- Chevallier <gatien.chevallier@foss.st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
- <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
- <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
+In-Reply-To: <CAJZ5v0ifCN7OWEw0DHpULSmXn4nCb9EdJMjQPJwmdoF_y0nfjA@mail.gmail.com>
 
-Hi Philip
-
-On 6/30/25 10:38, Philipp Zabel wrote:
-> On Mo, 2025-06-23 at 11:27 +0200, Clément Le Goffic wrote:
->> Introduce the driver for the DDR Performance Monitor available on
->> STM32MPU SoC.
->>
->> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
->> that come from the DDR Controller such as read or write events.
->>
->> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
->> counter, there is a notion of set of events.
->> Events from different sets cannot be monitored at the same time.
->> The first chosen event selects the set.
->> The set is coded in the first two bytes of the config value which is on 4
->> bytes.
->>
->> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
->> and may be secured by bootloaders.
->> Access controllers allow to check access to a resource. Use the access
->> controller defined in the devicetree to know about the access to the
->> DDRPERFM clock.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   drivers/perf/Kconfig         |  11 +
->>   drivers/perf/Makefile        |   1 +
->>   drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 905 insertions(+)
->>
-> [...]
->> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
->> new file mode 100644
->> index 000000000000..c0bce1f446a0
->> --- /dev/null
->> +++ b/drivers/perf/stm32_ddr_pmu.c
->> @@ -0,0 +1,893 @@
-> [...]
->> +	if (of_property_present(pdev->dev.of_node, "resets")) {
->> +		rst = devm_reset_control_get(&pdev->dev, NULL);
+On Wed, Jul 02, 2025 at 12:07:36PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jul 2, 2025 at 7:15 AM Anup Patel <apatel@ventanamicro.com> wrote:
+> >
+> > From: Sunil V L <sunilvl@ventanamicro.com>
+> >
+> > Currently acpi_fwnode_get_reference_args() calls the public function
+> > __acpi_node_get_property_reference() which ignores the nargs_prop
+> > parameter.
 > 
-> Use devm_reset_control_get_optional_exclusive() instead. It returns
-> NULL if the device tree doesn't contain a resets property.
-
-Ok I will have a look, thank you
-
+> Which I suppose is a problem.  Why is it so?
 > 
->> +		if (IS_ERR(rst)) {
->> +			dev_err(&pdev->dev, "Failed to get reset\n");
+fwnode_property_get_reference_args() documents as below.
+
+* @nargs_prop: The name of the property telling the number of
+ *              arguments in the referred node. NULL if @nargs is known,
+ *              otherwise @nargs is ignored. Only relevant on OF.
+ * @nargs:      Number of arguments. Ignored if @nargs_prop is non-NULL.
+
+You can see that nargs_prop is not supported with ACPI currently. Since
+fwnode_property_get_reference_args() calls
+__acpi_node_get_property_reference(), there is no way to determine the
+nargs from the nargs_prop currently with ACPI. Since
+fwnode_property_get_reference_args() is a common API across DT and ACPI,
+it is a problem for users.
+
+
+> > To fix this, make __acpi_node_get_property_reference() to
+> > call the static acpi_fwnode_get_reference() so that callers of
+> > fwnode_get_reference_args() can still pass a valid property name to
+> > fetch the number of arguments.
 > 
-> Please consider using dev_err_probe() instead.
-
-Ok
-
->> +			ret = PTR_ERR(rst);
->> +			goto err_clk;
->> +		}
->> +		reset_control_assert(rst);
->> +		reset_control_deassert(rst);
+> Are the current callers of acpi_fwnode_get_reference_args() going to
+> be affected by this change and if so, then how?
 > 
-> These can be done unconditionally, as they are no-ops for rst == NULL.
+Good question!. If some one is currently passing both valid nargs_prop and
+nargs with ACPI, now with this change it will start getting the value
+from nargs_prop which was simply ignored earlier. However, I see only 2
+combinations how fwnode_property_get_reference_args() is being used. 
 
-Indeed
+(nargs_prop = NULL) && (args_count !=0)
+or
+(nargs_prop != NULL) && (args_count = 0)
 
-Best regards,
-Clément
+So, IMO it should be safe to make this change. But let me know if I am
+missing something.
+
+Thanks!
+Sunil
