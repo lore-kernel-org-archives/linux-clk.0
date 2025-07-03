@@ -1,155 +1,262 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771582EBDF7;
-	Thu,  3 Jul 2025 14:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1439915442C;
+	Thu,  3 Jul 2025 15:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553191; cv=none; b=foke369Bft+FS0/brO+f8uyU95SRwUOAJApKUkGIx6B+IQjIabrLUmEAQMA0ucmPcimpuMn8N70K2rEf2eVRlzbgYjwzHtqgjqBqnCK8xjA70c/McplWd0klC8HYcyeG3zYeRnNttFZHTAVUF7Q/S9jnkZRcWeSNiYjfEtkkKqs=
+	t=1751555316; cv=none; b=XzJnIY2NPr2wHXqiVaAsV4Fk8JURykD9k9T/GKZydB/5g5yMpuKpZH8VJQnOdl8uQXSfdxpTBV4KNstEAICXvcD1qyHiccZPTL9JZoBmbSvjx0juVL9vk8s0XMJe11s9q13hattYb+0mAf5It4tdRSSInsjqDTv0gYhuRLlhMk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553191; c=relaxed/simple;
-	bh=QDQcYemNumpJkyuG0e7AEPmXkZuj/5OH8ZkCvxJeii4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBVjFNcI0hTUrJaSU3UN95xMwh0sWrOLLp8F5Rk7aJ8hN9fTzriwSUN3zOTcnfLrjK+Mpyh/mQZFFk1B2x/5QTUORHU6Z36Aieo9qqN5RRIP19YwRsYxJXXzyAD5jUpb7LvqnttQpZYETTIqmpirwpnmGbGvXlcXIhuVavFprt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDtlaxpl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1751555316; c=relaxed/simple;
+	bh=8GljKLrHpe9kEXKa3hqzrNoCIsl56DSFqDvkVIih/VM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Sc6/BQoNQNdwu8w7Zaiq/Wgo6+QgxsmVrSHskkbAz8z/XeRykUsLOjFL/eCeLlCNyfUsnGlFS/lXU/E3dm5ZQ8qNJyI/7MhxATTCWnBpfsQQFcbNnRh5QJ6ZXJp9lArg5E5Uwk/jKxYHEHw/ryPDgcv/c1oA1ERgLMM+lS5aRDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqiylDDl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDtlaxpl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751553189; x=1783089189;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QDQcYemNumpJkyuG0e7AEPmXkZuj/5OH8ZkCvxJeii4=;
-  b=NDtlaxpljzu1q+u9ZZTCzLoMZQVHU5ODq01/+90drdWnR77uWUca4Qht
-   wPp5x+/BmEnMVTZ7Ti3F3YZNbotehziQxWi/QX0eAWGxpuI91K9YbLmXg
-   /+ozDatAqC21XErULw8qcRh3PeUdTCMdHChyxfiDhk0nOBG+7bg8ImcX9
-   Dz95/WnffRqq3aNK3nHr8jLN0tXYZG4LnyUM3gzdJXmCJb+eojsgnRkfo
-   WVmjNXM+cW8rpfPUdmVcux/wVzWq2r9ZqCzYz9VvuRdnxbKIoqJ2von1q
-   EiCkzFb2g2J25Z4yaaguJLDNefrndojXzKfMSLBGC+nqPDA+wSbL10uEE
-   Q==;
-X-CSE-ConnectionGUID: 6BE6dySyRfmprrD7756arw==
-X-CSE-MsgGUID: sXsWJYgLRHq2HfDSxK4Uww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57691494"
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="57691494"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 07:33:08 -0700
-X-CSE-ConnectionGUID: rD2M51rKSdi1x5PzUhceIw==
-X-CSE-MsgGUID: UEtkloWDSZmDsJUfFaYINA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="154958463"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 07:33:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uXKzi-0000000CED8-1unY;
-	Thu, 03 Jul 2025 17:32:58 +0300
-Date: Thu, 3 Jul 2025 17:32:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Sunil V L <sunilvl@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 21/24] mailbox/riscv-sbi-mpxy: Add ACPI support
-Message-ID: <aGaUmpw1pVWNAmpb@smile.fi.intel.com>
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
- <20250702051345.1460497-22-apatel@ventanamicro.com>
- <aGUl_S9irfhlHmy2@smile.fi.intel.com>
- <aGZhWlxxQG0Z8awP@sunil-laptop>
- <aGaLiK0eW8Mc1YC3@smile.fi.intel.com>
- <CAK9=C2VjrOvcu=hEfxqw8R6Bwc1W5n9m_ksQ8vx02Lo8232wqQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqiylDDl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D734DC4CEED;
+	Thu,  3 Jul 2025 15:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751555315;
+	bh=8GljKLrHpe9kEXKa3hqzrNoCIsl56DSFqDvkVIih/VM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=sqiylDDl2AA2H7oObOdp9HnXMvLCM5hmnb6+/+MaxrqmX3gDy8ZShwCyGlfIyap/G
+	 +7azaRN8FrYZT4oKRXiUCRfO+CqSSXm5T9GXI84E6Pa2TuJkvuZQwAROBV5FE5VJ8h
+	 g9dT/h6I7czTQp/Rlz02Tp07mpnCYSt4Eoe/Po/8s6XjPEA6/2nULo6w+IShgITWpv
+	 9t/P2XvQXr9RVsxQdIg4h7R0n2vQk0Uai3C/J2zSGKxlJvqemQBwkQmFj6KwoFCxVz
+	 CBILc4T0vMxDj5eEIfvb3CzXrE1KOadGjHOtdX4cfhY9147utvIV7umZv8Jf5AgeeF
+	 vnxs7Lkq8KyeQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK9=C2VjrOvcu=hEfxqw8R6Bwc1W5n9m_ksQ8vx02Lo8232wqQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 03 Jul 2025 17:08:22 +0200
+Message-Id: <DB2IJ9HBIM0W.3N0JVGKX558QI@kernel.org>
+Cc: "Michal Rostecki" <vadorovsky@protonmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Brendan Higgins"
+ <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Rae Moar"
+ <rmoar@google.com>, "Danilo Krummrich" <dakr@kernel.org>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
+ <russ.weight@linux.dev>, "FUJITA Tomonori" <fujita.tomonori@gmail.com>,
+ "Rob Herring" <robh@kernel.org>, "Saravana Kannan" <saravanak@google.com>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Will Deacon" <will@kernel.org>, "Waiman Long" <longman@redhat.com>,
+ "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
+ <nick.desaulniers+lkml@gmail.com>, "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, "Andrew Lunn" <andrew@lunn.ch>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Dave
+ Ertman" <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
+ "Leon Romanovsky" <leon@kernel.org>, "Breno Leitao" <leitao@debian.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+ <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
+ <linux-pci@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <linux-block@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v13 2/5] rust: support formatting of foreign types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
+ <20250701-cstr-core-v13-2-29f7d3eb97a6@gmail.com>
+ <DB2BDSN1JH51.14ZZPETJORBC6@kernel.org>
+ <CAJ-ks9nC=AyBPXRY3nJ0NuZvjFskzMcOkVNrBEfXD2hZ5uRntQ@mail.gmail.com>
+In-Reply-To: <CAJ-ks9nC=AyBPXRY3nJ0NuZvjFskzMcOkVNrBEfXD2hZ5uRntQ@mail.gmail.com>
 
-On Thu, Jul 03, 2025 at 07:56:52PM +0530, Anup Patel wrote:
-> On Thu, Jul 3, 2025 at 7:24 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Jul 03, 2025 at 04:24:18PM +0530, Sunil V L wrote:
-> > > On Wed, Jul 02, 2025 at 03:28:45PM +0300, Andy Shevchenko wrote:
-> > > > On Wed, Jul 02, 2025 at 10:43:42AM +0530, Anup Patel wrote:
+On Thu Jul 3, 2025 at 3:55 PM CEST, Tamir Duberstein wrote:
+> On Thu, Jul 3, 2025 at 5:32=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
+rote:
+>> On Tue Jul 1, 2025 at 6:49 PM CEST, Tamir Duberstein wrote:
+>> > Introduce a `fmt!` macro which wraps all arguments in
+>> > `kernel::fmt::Adapter` and a `kernel::fmt::Display` trait. This enable=
+s
+>> > formatting of foreign types (like `core::ffi::CStr`) that do not
+>> > implement `core::fmt::Display` due to concerns around lossy conversion=
+s which
+>> > do not apply in the kernel.
+>> >
+>> > Replace all direct calls to `format_args!` with `fmt!`.
+>> >
+>> > Replace all implementations of `core::fmt::Display` with implementatio=
+ns
+>> > of `kernel::fmt::Display`.
+>> >
+>> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+>> > Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-Gene=
+ral/topic/Custom.20formatting/with/516476467
+>> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> > ---
+>> >  drivers/block/rnull.rs       |  2 +-
+>> >  drivers/gpu/nova-core/gpu.rs |  4 +-
+>> >  rust/kernel/block/mq.rs      |  2 +-
+>> >  rust/kernel/device.rs        |  2 +-
+>> >  rust/kernel/fmt.rs           | 89 +++++++++++++++++++++++++++++++++++=
+++++
+>> >  rust/kernel/kunit.rs         |  6 +--
+>> >  rust/kernel/lib.rs           |  1 +
+>> >  rust/kernel/prelude.rs       |  3 +-
+>> >  rust/kernel/print.rs         |  4 +-
+>> >  rust/kernel/seq_file.rs      |  2 +-
+>> >  rust/kernel/str.rs           | 22 ++++------
+>> >  rust/macros/fmt.rs           | 99 +++++++++++++++++++++++++++++++++++=
++++++++++
+>> >  rust/macros/lib.rs           | 19 +++++++++
+>> >  rust/macros/quote.rs         |  7 ++++
+>> >  scripts/rustdoc_test_gen.rs  |  2 +-
+>> >  15 files changed, 236 insertions(+), 28 deletions(-)
+>>
+>> This would be a lot easier to review if he proc-macro and the call
+>> replacement were different patches.
+>>
+>> Also the `kernel/fmt.rs` file should be a different commit.
+>
+> Can you help me understand why? The changes you ask to be separated
+> would all be in different files, so why would separate commits make it
+> easier to review?
 
-...
+It takes less time to go through the entire patch and give a RB. I can
+take smaller time chunks and don't have to get back into the entire
+context of the patch when I don't have 30-60min available.
 
-> > > > > -         if (dev_of_node(dev))
-> > > > > +         if (is_of_node(fwnode)) {
-> > > > >                   of_msi_configure(dev, dev_of_node(dev));
-> > > > > +         } else if (is_acpi_device_node(fwnode)) {
-> > > > > +                 msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
-> > > > > +                                                       DOMAIN_BUS_PLATFORM_MSI);
-> > > > > +                 dev_set_msi_domain(dev, msi_domain);
-> > > > > +         }
-> > > >
-> > > > Actually you don't need to have the if-else-if if I am not mistaken.
-> > > > The OF does almost the same as it's done in the second branch for ACPI case.
-> > > > How many MSI parents this may have?
-> > > >
-> > > OF already has a well defined interface to configure the MSI domain. The
-> > > mechanisms existing today are different for DT vs ACPI to find out the
-> > > fwnode of the MSI controller. So, it is done differently.
-> >
-> > I don't see how. The only difference I see is that OF iterates over all listed
-> > parents, if any, ACPI tries only one.
-> >
-> > So, perhaps it's a time to have a common API somewhere for this to be agnostic?
-> > Something like fwnode_msi_configure() in somewhere of IRQ MSI core?
-> 
-> There is an issue/gap in the DD framework which is being work-around
-> here. This issue manifest mostly in RISC-V land because in RISC-V both
-> MSI controller driver and drivers using MSI are regular platform drivers
-> while the probe ordering is ensured by dev_link support of DD framework
-> or the frameworks (like ACPI) creating the device.
-> 
-> As-per this issue, when platform devices (DT or ACPI) are created the
-> MSI domain instance is not available and hence set to NULL. The MSI
-> domain instance is only available after MSI controller driver is probed
-> so currently we explicitly do of_msi_configure() or dev_set_msi_domain()
-> in the driver using MSI as a work-around. Adding a common
-> fwnode_msi_configure() is only going to be an improvement to the
-> existing work-around which we should not have in the first place
-> hence not the right approach IMO.
-> 
-> In the long run, we need a clean fix for the above issue in the DD
-> framework such that platform drivers using MSI don't have to explicitly
-> do of_msi_configure() or dev_set_msi_domain().
+In this patch the biggest problem is the rename & addition of new
+things, maybe just adding 200 lines in those files could be okay to go
+together, see below for more.
 
-I see, thanks a lot for this explanation. Can you add a summary as a comment on
-top of the if-else-if in case it's not there already?
+> I prefer to keep things in one commit because the changes are highly
+> interdependent. The proc macro doesn't make sense without
+> kernel/fmt.rs and kernel/fmt.rs is useless without the proc macro.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I think that `Adapter`, the custom `Display` and their impl blocks
+don't need to be in the same commit as the proc-macro. They are related,
+but maybe someone is not well-versed in proc-macros and thus doesn't
+want to review that part.
 
+>> > diff --git a/rust/kernel/fmt.rs b/rust/kernel/fmt.rs
+>> > new file mode 100644
+>> > index 000000000000..348d16987de6
+>> > --- /dev/null
+>> > +++ b/rust/kernel/fmt.rs
+>> > @@ -0,0 +1,89 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +
+>> > +//! Formatting utilities.
+>> > +
+>> > +use core::fmt;
+>>
+>> I think we should pub export all types that we are still using from
+>> `core::fmt`. For example `Result`, `Formatter`, `Debug` etc.
+>>
+>> That way I can still use the same pattern of importing `fmt` and then
+>> writing
+>>
+>>     impl fmt::Display for MyType {
+>>         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {}
+>>     }
+>
+> Great idea, done for the next spin. It would be nice to be able to
+> lint against references to `core::fmt` outside of kernel/fmt.rs.
 
+I think there was something in clippy that can do that globally and we
+could allow that in this file?
+
+>> > +
+>> > +/// Internal adapter used to route allow implementations of formattin=
+g traits for foreign types.
+>> > +///
+>> > +/// It is inserted automatically by the [`fmt!`] macro and is not mea=
+nt to be used directly.
+>> > +///
+>> > +/// [`fmt!`]: crate::prelude::fmt!
+>> > +#[doc(hidden)]
+>> > +pub struct Adapter<T>(pub T);
+>> > +
+>> > +macro_rules! impl_fmt_adapter_forward {
+>> > +    ($($trait:ident),* $(,)?) =3D> {
+>> > +        $(
+>> > +            impl<T: fmt::$trait> fmt::$trait for Adapter<T> {
+>> > +                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Res=
+ult {
+>> > +                    let Self(t) =3D self;
+>> > +                    fmt::$trait::fmt(t, f)
+>> > +                }
+>> > +            }
+>> > +        )*
+>> > +    };
+>> > +}
+>> > +
+>> > +impl_fmt_adapter_forward!(Debug, LowerHex, UpperHex, Octal, Binary, P=
+ointer, LowerExp, UpperExp);
+>> > +
+>> > +/// A copy of [`fmt::Display`] that allows us to implement it for for=
+eign types.
+>> > +///
+>> > +/// Types should implement this trait rather than [`fmt::Display`]. T=
+ogether with the [`Adapter`]
+>> > +/// type and [`fmt!`] macro, it allows for formatting foreign types (=
+e.g. types from core) which do
+>> > +/// not implement [`fmt::Display`] directly.
+>> > +///
+>> > +/// [`fmt!`]: crate::prelude::fmt!
+>> > +pub trait Display {
+>> > +    /// Same as [`fmt::Display::fmt`].
+>> > +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;
+>> > +}
+>> > +
+>> > +impl<T: ?Sized + Display> Display for &T {
+>> > +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>> > +        Display::fmt(*self, f)
+>> > +    }
+>> > +}
+>> > +
+>> > +impl<T: ?Sized + Display> fmt::Display for Adapter<&T> {
+>> > +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>> > +        let Self(t) =3D self;
+>> > +        Display::fmt(t, f)
+>>
+>> Why not `Display::fmt(&self.0, f)`?
+>
+> I like destructuring because it shows me that there's only one field.
+> With `self.0` I don't see that.
+
+And what is the benefit here?
+
+>> > +
+>> > +    let mut args =3D TokenStream::from_iter(first_opt);
+>> > +    {
+>> > +        let mut flush =3D |args: &mut TokenStream, current: &mut Toke=
+nStream| {
+>>
+>> You don't need to pass `args` as a closure argument, since you always
+>> call it with `&mut args`.
+>
+> This doesn't work because of the borrow checker. If I wrote what you
+> suggest, then `args` is mutably borrowed by the closure, which
+> prohibits the mutable borrow needed for the .extend() call here:
+
+Ahh right... Well then it's fine.
+
+---
+Cheers,
+Benno
