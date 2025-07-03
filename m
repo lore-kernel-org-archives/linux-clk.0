@@ -1,262 +1,184 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022096.outbound.protection.outlook.com [40.107.75.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E73E2D77E3;
-	Thu,  3 Jul 2025 09:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751534663; cv=fail; b=mtPM/Q/JyKWAWSk6+NhaGEe3PZWGXYOWHirSjvi2zpNDJqVfaKHLh0Uwn8Ho8XVutJqqlkQtOvSE5bziPZdl+tc/xFuwunAIldmR+BpOGYmqwvkkIvWJXZaSRmKeIpiS4I6FETTNMunUwm9Y4F4rNTIuYHFyQS4/N9+APLn4rSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751534663; c=relaxed/simple;
-	bh=0362iGsZeesHdyE/PrOVuSDyhP3OrWacmeUkU0iOyfA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eQR4fG5ko1CrCvu5cEIuhCamGNHuifCmqHyYA+ahwUUsdBZraMKm4pBx7AaZFHU4gyj77zpk1Ne2pvWsYsushS2OQJQGO+SGMWaVNEclvMx14UpNF9bmgKlkkedBpWi5YMtLrhuJR5XgMFA3NklQqYH/6MlS42I4J1JQYaxKHdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=AIAaexRR; arc=fail smtp.client-ip=40.107.75.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2492B23BCF1
+	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751535078; cv=none; b=L82fsjMFXs/QK1xRPDtG3/NSa/AUmT3mu8Cak9ZoSpk1pQv0g4KLnhO39ZeZXLhOd8lXX3oAWmNB/nPvpGKcux8NnifzxSNh84T6vL6/JaD0qaubWm0QHG/epLQ4Vd5Z2GJ7/r0hVq/NN+Zds4ZoVd6Ds0XC+Vqr6+4vU3kLw/w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751535078; c=relaxed/simple;
+	bh=TuOOe17TTK0GmQ0tDt79qSc+86xnI17yc0LFNt1uwAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1pRdCa7VufEpd/YJwh+DOWprBK5gXVFqy1aFToGSdaDDFjI0mP3IZp0AfuIGpDg5jsXUnsJghQT0ED/xDuovkf3XXfzGmSKFx3nGWvhS7d7BDAFhbHRoVFKXUSyxNn6/+0cpeu6UNCyrTBo7a7l8KiG2OjzzopQqjghf3ZTpKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZJ0QpDZU; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="AIAaexRR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M3VJawjTC8Js/+Xk9/vhLsNzf+tC8Idzdn4ifcW72BGAVANqzht5eRBPGTNmvytUyZ6gSnDEusXj9AxrUrvGRvrRky7BspDq33DjpYUOrdhuOs6S1J8gt08HXIG2o0ZVY5UVT1x184r1YlKM48TfkbDY2ntVe0jVj1ov26H+DceC2hEPx9jXr36YgE0gViDYzF9fFgDfpo+FJvfMCaiaKt3hkEdyB9Mz5zt/FP/gi97St/Wmmf4PiE33zlnX+Ev4SLQfsy2OZ4WnRCuL4N0mNgll42C4jxMmwjnKKW7m+ZnxciPM+8x268XAM2E0TREEcTjuKvT409fPBdqQGxCFkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eFQhmM4Nk60c+wuX4KBIT87zeCSlbPnsea536NcW05o=;
- b=b5Gu7Gs5LP4N92Ug8twB/kQWYg4W3tS1uBAUfGu9G6qZmZ0i2R0l3IONBd90J2s88yLSSvZvh3xJFWH/wt/ZJ/0ktyPTsg9/0q7ui7NbhYeut2mj3UafQ9pa2XfqhlgeikiAzglYxrOmIb+35DP9MZ7luakoUsyolNJM2xlkCczpH1/vh3+s2lPD84lAdPTns1vlhjNlHle+11R4+2umaJ6VTu11UMbIEhxo1fF8uY6Pit0jgkWXMNsDxuhHqM3OcMzddgKhce/dppXq0ce2kBJRRQSJz9ieiyD8bP61Uumfa+17Lg3WLDjL4G6HcgtHaJxFiyl/LH9yNdkbjuZ5+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eFQhmM4Nk60c+wuX4KBIT87zeCSlbPnsea536NcW05o=;
- b=AIAaexRR4BoqKH7xzC6mrufYxNVSCl38dgsd0Xrftyk+kxHT8AQ3N7WJw0iibMMOzT79o28V+DnZhfWCPRMnfjO1B1Bg40ZEd0mzxm/4DJwpGTO/k6AuQUUZ45Z8keaSvwZ6jimYEQRvSqgzE0fgQUYZixl2RcjsF7Zw+2jjixol/SSjQr+OoqezZPMDsiTI0PuvccgqZNzEGWxkUPLZZ0KAH7Ef4qdJmlxOToKwcg2IGPfgs9LZviuss8IjDANjAh6HcvSeetcBy4y7Lh4be3rmntxnRnjKq2eALxjnQE3MsTDc5olIwP6WSJz5sYaEBrYRja83AY2i6LAIvOIGAg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by JH0PR03MB7559.apcprd03.prod.outlook.com (2603:1096:990:16::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Thu, 3 Jul
- 2025 09:24:15 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%6]) with mapi id 15.20.8901.021; Thu, 3 Jul 2025
- 09:24:14 +0000
-Message-ID: <2a124e5a-9efe-42c3-8193-a7e8cf1d59b5@amlogic.com>
-Date: Thu, 3 Jul 2025 17:23:49 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/26] clk: amlogic: c3-peripherals: naming consistency
- alignment
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
- <20250702-meson-clk-cleanup-24-v1-5-e163c9a1fc21@baylibre.com>
- <eb233f20-1927-4944-9b57-f90c998db19a@amlogic.com>
- <1jy0t5d8a2.fsf@starbuckisacylon.baylibre.com>
- <99ba0e33-cec2-4577-b949-010537a8c4df@amlogic.com>
- <1jtt3tbqam.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jtt3tbqam.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::20) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZJ0QpDZU"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23633a6ac50so98106435ad.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 02:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751535076; x=1752139876; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KYfn57qzkkmG/aFpndf/jcsizGLt8T7mJq7PMwyO3ks=;
+        b=ZJ0QpDZU0gZw+/ekmPbtcgxXuNpf2zz0Rx+6g8GJIrKPOqQzRd4uBc5Gb1GVg9Wkof
+         Syn2vpGr8bgHmi0PZWyaS7y+8x0OuobhmNzhE+fQDxEf1AI3b+MMDnFaszevYi4CuhRE
+         TZDAUKySD90MyFkJMNzI0bSjoduBOh6G8u5+wVswIB75rtEqdlc2QS8c/23zvWVmMala
+         P37UuXzFj1DpwHFnIcCPylCEBDid9nyuOZwXsfz9iCUa3JlXu0zpJ4h1xD67atgoOpiT
+         QbxqQwNDJsA42+6V6u9f6yoglM8kWLpOMYh1sxRvucVmp1E14hIGE7UjhXDuFsrTe/Rx
+         zWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751535076; x=1752139876;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYfn57qzkkmG/aFpndf/jcsizGLt8T7mJq7PMwyO3ks=;
+        b=a0UdFL1s7jn11a5bmppfnHKi6JRE5A37U9XyLmjPWnbmZ8bUTvgsGyTkCqgu00u1tB
+         rLVf8Fr1wUXY4HP5Z23DIK70O77gmgvJ0Xk1OrsTuKIhQzqTr+F7Z7B4Ly/XJXVjna/E
+         Kvx6FhFLCCpFSDc5oU+i/KQZGJvWiwPD/eDT0z8zAeWfuBzP9GiSk5OxZS8uyig13WpP
+         c/YgzHnwOiTr9qDlGfaaLUBHEb5+hZuStyqRPx+oEp5CLCmetWK5lRWGgJKjio136HUu
+         kNMSTGvXOF3thX1xvEy6zNEMQYbNmMBV5AlGpUxdH0XwEUS+NESFFp5YHIqGtwXqTpT2
+         H38A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7/42Memupor3h7PTVH/pifNuZcwr6pF1C4g0eCSzfBwE2lDHqIKqtfg0CrFMuBxHLJGyxPLsEdko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyMa6ovqhxx3pzMvSDJ0gi6CMtSJtX22RHvbyXJaai+XlJv4IH
+	Eh0yp00nAUHf2XzMMQWXekkNvpc37W9JqQfnqZLeiaHEtR9FKz79/vaz/mcgN5/Fodk=
+X-Gm-Gg: ASbGncu8uA761ei0BGMzQ5B+J5SVWDLX/VZk7GoFKbmTF8SwdZkYhcdjk0xAWuuWjyU
+	yJdmUiF1cXSYk1fgkYcfABYfWZsPzohjiDMiSBMKkKnhFe+Gq6v/iBiIQOaSTlfGSDZX81zqCmQ
+	I9IeOs06jMgtxm35etd6v8dAhSeydOqsDV46pIubB9WUQGljVmM4nnARXyK5LbMbOvUFpIg4nPY
+	Lx3wPUraPqV05cnkC/OS3NLIj6iqV6H75sLW00thkL0l/Cqym+xIYCLY/yjoGdWnIWcs4Xween/
+	WX2U+EOCQPsyc9RUbedO18Hm2aUBPEIJxaSzQzl3Oh+qiCLDwQ2Q220QymOnaQKTBKTMYQ==
+X-Google-Smtp-Source: AGHT+IHQ535n0QA2COW4KxgJhYDC5l8yNht6HeovLAUQ6LzoicprfT4zy9/VUUX2qQcf/7mXsoAJng==
+X-Received: by 2002:a17:903:19e7:b0:234:d292:be7a with SMTP id d9443c01a7336-23c6e4e4c8fmr85926675ad.1.1751535076424;
+        Thu, 03 Jul 2025 02:31:16 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f0babsm158604535ad.58.2025.07.03.02.31.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 02:31:15 -0700 (PDT)
+Date: Thu, 3 Jul 2025 15:01:00 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 15/24] ACPI: property: Add support for cells property
+Message-ID: <aGZN1HzGk1nBWEHw@sunil-laptop>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-16-apatel@ventanamicro.com>
+ <CAJZ5v0iYYuK2GF2Pg3NiO4vLFzoYm6Q3Dnk5O2DkMJm1R3qSfQ@mail.gmail.com>
+ <aGUaFX9WgTW1I_ZO@smile.fi.intel.com>
+ <CAJZ5v0h=qzS67Xu6NUfN_LmQUmKF9=AtkaRrTx81td0m-mRNNg@mail.gmail.com>
+ <aGVK7NxRdDIGRzNR@sunil-laptop>
+ <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|JH0PR03MB7559:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1d95d70-0415-441e-9cd7-08ddba13609a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0FaQnV2bXF4VkJkbU83c3pQU1ZtMkVFNUhZVWdqU1Q2cGp1MmdzbU9NR0pj?=
- =?utf-8?B?WWtVTStwQUluN2tNaTA2dG1ZMWZzUmwxSkZjV0JMczdDalk4MWRMM1RxU3hk?=
- =?utf-8?B?RzZieWNSRUU0M2ZpSEZxNCtsYm5XcXl2RE5BWFhtVkdLbUdjTnhlNFpUUjhZ?=
- =?utf-8?B?U1FDVngzcDhheURPM1FnNjJ5K2FUZjlhOW5KcTdZUnJwVjI3U2g3RFVzYWxC?=
- =?utf-8?B?dmNLS0JpVVFpWHN4QnN5VU15Q0xVOVR4Z0hDY1VjYk16eGs1ZENpWVh0ckp4?=
- =?utf-8?B?bmNjMnh5Q0ErdWZneW1mU0NJcElrTSthZWxXdURUQ1NHaVN6UnRjaUk2ZWtm?=
- =?utf-8?B?UkxwaS90VTJIWldQZFhlcWdUdjRZcmpKbi9LVWRkYld3bFZMUjg4YlRnTWYw?=
- =?utf-8?B?SmhyTGFuNmV6b0tqakp4R1ZJQ0FIVWttTHZQWGljQXo2aGxqbmpodzYvUyt2?=
- =?utf-8?B?T0dubEJ6SG91N0hXT1YwcDNveW5KcENMak1xOVNpcDZZRnR0YUNkRWVBeUZj?=
- =?utf-8?B?UU5rMjEzOUtLcGRQc0cwL202aHlvWEx0T0t4bDI2V1NwTmpMVnhtbEd3aVli?=
- =?utf-8?B?WU1CRFJJMkI5cHVFaVNIN0dYaWVtZEREYkcrbUxmdnp3VTVIcjh5UWl4M2NJ?=
- =?utf-8?B?cGh0RjFVWlNBNWVqZHdzcGdGQXBOUGZNNWM1ckYwRGhNdzFCWDdEMXd4Tmxa?=
- =?utf-8?B?VTErdUVOL0U2OFJIaVBlR0gvNlJYTUFpTjJVT21Ob2pQekVLbWxCeEJQUndD?=
- =?utf-8?B?MG9OYVNpWTJpQjZ6dXdsZXBDTi9wbFg3eG01ZTdqbUQva3dkNEtjaWhHOElR?=
- =?utf-8?B?U0l3dllhbGJacDcrTFVQUTExNHlyb2p3ZnlkVjJSa3NyT2Jpck11MVNRRHZr?=
- =?utf-8?B?djROWVdOaGo3dHc4eHloVzlmMER3Zk92aVVtREdtaTJWcnBvd29SdkxxTUVN?=
- =?utf-8?B?UzVDS050MVowRWZUL2M3dUVsZWhxSUFMcEZ3VjBKa01uVGNSa0RObVFUbVpw?=
- =?utf-8?B?V0RiN3lNa3I4YjVrUytxSk42NjljMU4rTjBqL3JpcnNiN2V4Nk9FYnh1WU1Q?=
- =?utf-8?B?ZWJDbnRHUVRnZnV0ZXA2UmxYMkFLeDFZVlNVV0dyWkJ1U0xGMlNkSno5eE1w?=
- =?utf-8?B?MjNuVkhaelNtYVN5Uzc5VHlTUzEyZURKWnBieGVjVjNweDFUU01PT01DTUFE?=
- =?utf-8?B?Z29XZnhNaXVXMUt4MGdRWkJCT2xjVUNpM0RTYng3NGszem1XL0hhNDFNTEZZ?=
- =?utf-8?B?ZWk4NE5pc0EzMitPT2xXNTlNZkIzL3RZc0lNVkgwbExVQTQ2c3FJYlNaWEM4?=
- =?utf-8?B?b2FxTk1ZZE1CU1VBeTMrT2plRkQ5VEE3NmcxcXFqME9aZUJDT3NUcXkzZjFG?=
- =?utf-8?B?dU9zbWZuNEVQdFM5MkFKeUtMUDRtYVZsTTJvOHNjeGZEaGIxOE5FZzk1bWZi?=
- =?utf-8?B?R1N4ODlwTjIxKysxS3BwM3d3SDBBS2w3QWd6WWNTY3JvYjA2Rm41SlZudzhr?=
- =?utf-8?B?b1lGREpPQ0wwc21sMW5MMTFKaUhOaGIwQVZJNEVaOWRCUjdsSVRzaENaR3Qx?=
- =?utf-8?B?ckZPRGFOOHNDbmp0Z3dDeVBYb0FJWVVjZXg0Qm5FbWd3T2xFUk5tdTdhcVov?=
- =?utf-8?B?c0c1V0lad2hhMm5COGVLNWZPUDVCZVlXUldYWnBXZnM0b0NFZk1UN2g0OGg4?=
- =?utf-8?B?TTRDRFZvQkM2TVVlRlNlSjhqZWlST0I2V0VJUlJBcVlDK2RKdE5QRXZmREY1?=
- =?utf-8?B?M2NzTDNyanBXd2c0TTBteFByckxoVHpEQVUrNVo4dkI4cmQ2TGF2MFNMNExN?=
- =?utf-8?B?RUpic2U2bStwc1FlbGN6d1oxeVJzQmhOVDRmekxwTlh4MXVtVjYxandqaFZZ?=
- =?utf-8?B?dEZxeWtVZFpLbVlBbXB1dG0zZzdIVWxvaStKUVdsWkwrR0VPQWZMUXBEUnNI?=
- =?utf-8?Q?9S6jSot8aQY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVJMTW0rYlpnMWsvTmNMUXlncWVUNVhHYzBpNENWTDJUK0VpL2ZXMnVRanB5?=
- =?utf-8?B?ek9zOERncGVaUHZ6ZGpQNkxuM1UxUk4rMGptbmRRdVZDYmxiRUhDSm1paVVL?=
- =?utf-8?B?aENWS3JsRU5zNzIzTzhjSEp3allwM1J4NTJZcGQ0dzNERE1jdy9oblhIa3V1?=
- =?utf-8?B?T3dBc042S3JqdERLVkVJbjZSVW5PT3A2VTlkQUFKbnRCUllwNTlkLzNYc2h3?=
- =?utf-8?B?MGxLUy9ZZTQ1WWdLQXFkbDhXU2dYZ1ZNbmc3WTd5Mjg4Sk80dTdKU0R4NXBY?=
- =?utf-8?B?NU5URXdaMENyRHlKUHBjVnVRN3ZvUklaKzE1T1dkWDJacmpuUEcrckljeTlO?=
- =?utf-8?B?ODZ0TEJtNDRNa2tJaEVUTWRyQjJaTnVxT1ptaGFuUlVpa1ZmS3JOai9vQzBk?=
- =?utf-8?B?VXlWeXpuZW1yT2Z2ekdqNmU2T1JMakJvaytibHN0NUYxVmlmeXhrRnZianhX?=
- =?utf-8?B?VTlOT1l2TkNuWFNzUlB5elpHbEk0TWIrY3pXU3dOb2lUQ1ZtaWVBcEVmOE1k?=
- =?utf-8?B?Ym9jVTZBNmdjYlNnTWZ3c050VHJQQ1ZYRDRqaVQ5YUM5bEptaCsvTkVmUEZK?=
- =?utf-8?B?YVB3QXcwZ2J3N04xTUtVaGxhbVZxQmErUjZydk1CU093dlZObUJXNjQwTk5h?=
- =?utf-8?B?d0lRSjM3WVoyTlN1L2xVN0V2WUtjN2FoU3pFYThiZ0M1V2s4bVAzVVVpMWJQ?=
- =?utf-8?B?T3EwcmZjbFZ6UzJIVXhyRGVRbk1HdVIvbFBUd0RjMUxFd2lmRjhMR1QrM1Ex?=
- =?utf-8?B?YVNoMkV6SHlMenFQNTB3L216SHRmMmxmaG00Z1d5enNONis5TUc5YnNpM3J4?=
- =?utf-8?B?VjUrUXZETzEwTXJCT3F5dThHOUhzd21TemdSdHlaVm1PODlLNFB6T2U3K08r?=
- =?utf-8?B?bGVXbjNueWJiK2VadndUT0lkK09ObElJeTlUSVA5QlZsU2MxMWpabEVCNWkw?=
- =?utf-8?B?bEhsRmk5d3lEQko0NjFJNTFDRFBrNFBlSDBZNHdKaXJpdHNBdEQ4QlgrcUdN?=
- =?utf-8?B?bVF4UHU5VWF0c0VvQzEvOHhpb2V4Q2E0aG91OWdlZEV0d3ZSc2FsUWFWak85?=
- =?utf-8?B?allTYmJEZHBrM1AzL0M1eWVGdU1OYlMxVE9VZmNmc0pjcitmR2JUUXpHakx1?=
- =?utf-8?B?VlFvTlZYSTA5akdFaklpTTZBdytjZDZ3OXFSdVRaYndaaW02ZG5oVi9aYmxs?=
- =?utf-8?B?SHJiMHhBNkVlVGs4dXRoZll3NTlrV2hNZ0xZeVpqNzVySWgzU0dNMHYrQmV1?=
- =?utf-8?B?WC9URU5EdmdTaEdwUGdlbE45Q2VFMFZwQ1E0UDl0WnlQWGxCajdsTTFaWE5L?=
- =?utf-8?B?WEdxUUw3QUs4YkFndzZ1cFhCbjE0UU9SMUNBTmlWVGxLeldOZCtidTZ1ZEkw?=
- =?utf-8?B?cGp4RmR1bzdNdFB1S1BwWkY5cmlaK2NUMkZ4OWR0ak85UGFITnRlM1ozeE96?=
- =?utf-8?B?WG5VdGwwMC8vU2dzWU5sZTM5QlhPV3RvNHFoTHQ1ZUZRRENGdGtpSHFVVHl3?=
- =?utf-8?B?OXcvQzZOdkVaRDU2Q3JOclZkVzdOVFNkd3l3SFpDd2pLR0Zoazh4UGEySERr?=
- =?utf-8?B?YWIyUTdPZVkva0hDTXhwa2ZsNFNMZDQ4NXhPNUk0SkpTSEl3akZQZFpxOXhq?=
- =?utf-8?B?Wm9Za3YwdnRyYmM0MHVLd3F5SXBYK2Y4VmZRLytlalZIL1VuSC9saGVRdmRK?=
- =?utf-8?B?ZGdXUnBoYWNFcDFpSmdFMWt1eWpWOTFCL2dwNVRUVFVNVlZPQTJxcjE3Qkl5?=
- =?utf-8?B?aEpZQnUzRE02UXVJNlNHS0ZTZnlWSEdlMllvVUF2SUtGY2wvYW9VYkVaZ1VR?=
- =?utf-8?B?b1MwbVcrZ091UTVIYzVxankxb1Y0WVd0aVFXa2l4MElxLzQyaWFVcHh0OXht?=
- =?utf-8?B?cEp3VUVaZ3RJenZSMHlYYk41b1psU1hMUFAwUnpXQ3ZVRkMzZjdtZ0pTNGto?=
- =?utf-8?B?TTl1M2MxNkhuaERCUjRIaDBrQStSZTFVUVJqRk5mMThOZFNiZEVkNlNXRzF3?=
- =?utf-8?B?UENlMzJrOFRTbTRYNE9QWEJMWmtjMFZEY2RWNHIzb25DWWJtU3VTY2M3eTJw?=
- =?utf-8?B?bTY2SEFvZVlwbGZyTzVHNnJKcXBnY2VkYyt0ZzRTSm85ZzA3a2Z3UXMwMVp3?=
- =?utf-8?Q?Dx0dz3fRFAMnvfd6OufNew/X0?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1d95d70-0415-441e-9cd7-08ddba13609a
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 09:24:14.6250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VsZNiIpgRqA1wQIY3d7eQeNsXgQD+m43p+rLOfZ7zuD1rFU/blLN3/5cUiAfsM0qC1q35yCuoANfqPqupln5+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7559
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
+
+On Wed, Jul 02, 2025 at 06:56:48PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jul 2, 2025 at 5:06 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
+> >
+> > On Wed, Jul 02, 2025 at 02:39:30PM +0200, Rafael J. Wysocki wrote:
+> > > On Wed, Jul 2, 2025 at 1:38 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > >
+> > > > On Wed, Jul 02, 2025 at 12:20:55PM +0200, Rafael J. Wysocki wrote:
+> > > > > On Wed, Jul 2, 2025 at 7:16 AM Anup Patel <apatel@ventanamicro.com> wrote:
+> > > >
+> > > > ...
+> > > >
+> > > > > >  static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+> > > > > >                                           const char *propname, const char *nargs_prop,
+> > > > > >                                           unsigned int args_count, unsigned int index,
+> > > >
+> > > > > >         const struct acpi_device_data *data;
+> > > > > >         struct fwnode_handle *ref_fwnode;
+> > > > > >         struct acpi_device *device;
+> > > > > > +       unsigned int nargs_count;
+> > > > > >         int ret, idx = 0;
+> > > >
+> > > > > > +                       nargs_count = acpi_fwnode_get_args_count(device, nargs_prop);
+> > > > >
+> > > > > I think it should work the same way as it used to for the callers that
+> > > > > pass args_count, so maybe
+> > > > >
+> > > > > if (!args_count)
+> > > > >         args_count = acpi_fwnode_get_args_count(device, nargs_prop);
+> > > >
+> > > > But this is different variable.
+> > >
+> > > Of course it is different.  It is an acpi_fwnode_get_reference_args() parameter.
+> > >
+> > > > > >                         element++;
+> > > > > > -
+> > > > > >                         ret = acpi_get_ref_args(idx == index ? args : NULL,
+> > > > > >                                                 acpi_fwnode_handle(device),
+> > > > > > -                                               &element, end, args_count);
+> > > > > > +                                               &element, end,
+> > > > > > +                                               nargs_count ? nargs_count : args_count);
+> > > > >
+> > > > > And this change would not be necessary?
+> > > >
+> > > > This is not the same check as proposed above.
+> > >
+> > > No, it is not.
+> > >
+> > > It just makes the function work the same way it did before the change
+> > > for the callers who passed nozero args_count and so they might be
+> > > forgiven expecting that it would be taken into account.
+> >
+> > But if we do like this, the expectation of
+> > fwnode_property_get_reference_args() will differ for DT and ACPI, right?
+> > I mean nargs_prop should take higher precedence than nargs.
+> 
+> So you basically want acpi_fwnode_get_reference_args() to take
+> nargs_prop into account (which could be explained much cleaner in the
+> patch changelogs).
+> 
+Sure. Let me improve the commit message in the next version.
+.
+> Also, your changes don't modify the behavior of
+> __acpi_node_get_property_reference() AFAICS, so this is OK.
+> 
+That's correct.
+
+> Never mind then, but you could pass nargs_prop along with the
+> additional device parameter to acpi_get_ref_args() and make that
+> function obtain the nargs_prop value.  In the patch, you need to get
+> the nargs_prop value before calling it anyway in both places in which
+> it is used.
+That's better. Let me update acpi_get_ref_args() itself in the next
+version.
+
+Thanks!
+Sunil
 
 
-On 7/3/2025 5:02 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
->>>>> -#define C3_CLK_GATE(_name, _reg, _bit, _fw_name, _ops, _flags)         \
->>>>> -struct clk_regmap _name = {                                            \
->>>>> +#define C3_PCLK(_name, _reg, _bit, _fw_name, _ops, _flags)             \
->>>>> +struct clk_regmap c3_##_name = {                                       \
->>>>>            .data = &(struct clk_regmap_gate_data){                         \
->>>>>                    .offset = (_reg),                                       \
->>>>>                    .bit_idx = (_bit),                                      \
->>>>>            },                                                              \
->>>>>            .hw.init = &(struct clk_init_data) {                            \
->>>>> -               .name = #_name,                                         \
->>>>> +               .name = "c3_" #_name,                                   \
->>>> Prefixing variable names with 'SoC' is understandable (to avoid duplicate
->>>> definitions and facilitate variable searching), but is it necessary to add
->>>> 'SoC' prefixes to clock names?
->>> This is part of the description but I'll ellaborate.
->>>
->>> Some controllers do so, some do not. This is a typical pointless
->>> difference that make code sharing difficult and lead to the duplication
->>> I'm addressing now.
->>
->> Yes, in fact most clock configurations are consistent across our SoCs. Over
->> the years, we've been continuously working to make our driver code more
->> 'common'
->> and efficient.
->>
-> No they are not consistent at all when it come to this
->
-> Controller prefixing the pclks:
-> * axg-ao
-> * axg
-> * g12-ao
-> * g12
-> * gxbb
-> * s4-periphs
->
-> Controllers not prefixing the pclks
-> * gxbb-ao
-> * a1-periphs
-> * c3-periphs
-> * meson8b
->
-> I do not want to invent new names to avoid the names clashes if the
-> prefixes are dropped. I tried that way and it was a mess.
->
-> As noted in the description, clock names will not be prefixed with SoC
-> name, *except* for the pclks for the historic reason explained above.
-
-
-Understood, I'm no further questions. Thanks!
-
-
-Reviewed-by: Chuan Liu <chuan.liu@amlogic.com>
-
-
->>> Both with and without are fine but picking one a sticking to it helps a
->>> lot. I would have preferred to drop the prefix from the pclk clock
->>> names, same as the other clock, but:
->>
->> I still prefer adding SoC prefixes to variable names but not to clock names.
->> clocks with the same name generally have similar functions across different
->> chips.
-> It is not a matter of preference.
->
->>
->>> * It would have changed more clock names and I prefer to minimize those
->>> changes
->>
->> Your recent patch series has already made significant changes, and this is
->> relatively a minor adjustment😉
->>
->>
->>> * It would have caused several name clashes with other clocks.
->>>
->>> so prefix it is for the peripheral clock.
->>>
->>> In the end, what matters is consistency.
->>>
->>>>>                    .ops = _ops,                                            \
->>>>>                    .parent_data = &(const struct clk_parent_data) {        \
->>>>> -                       .fw_name = #_fw_name,                           \
->>>>> +                       .fw_name = (_fw_name),                          \
->>>>>                    },                                                      \
->>>>>                    .num_parents = 1,                                       \
->>>>>                    .flags = (_flags),                                      \
->>>>>            },                                                              \
->>>>>     }
->>>> [...]
->>> --
->>> Jerome
-> --
-> Jerome
