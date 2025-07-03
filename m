@@ -1,184 +1,387 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2492B23BCF1
-	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 09:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68C81E8338;
+	Thu,  3 Jul 2025 09:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535078; cv=none; b=L82fsjMFXs/QK1xRPDtG3/NSa/AUmT3mu8Cak9ZoSpk1pQv0g4KLnhO39ZeZXLhOd8lXX3oAWmNB/nPvpGKcux8NnifzxSNh84T6vL6/JaD0qaubWm0QHG/epLQ4Vd5Z2GJ7/r0hVq/NN+Zds4ZoVd6Ds0XC+Vqr6+4vU3kLw/w=
+	t=1751535141; cv=none; b=QdlQs2Ws0Wmug/kDdgXRrlW23jFPjrbgrSFRLi6TjUAB5f9cluP3YatoBEpFiwm5ltFD+x5WpTMQv797cEUxnZvPxxmogeyXj81BR1lPMhZvc1xLEZvmBoR9J7TpSzB9xYuE9fAcnZVUYV4695diHRHQnqikufFs/S9O8GToc4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535078; c=relaxed/simple;
-	bh=TuOOe17TTK0GmQ0tDt79qSc+86xnI17yc0LFNt1uwAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1pRdCa7VufEpd/YJwh+DOWprBK5gXVFqy1aFToGSdaDDFjI0mP3IZp0AfuIGpDg5jsXUnsJghQT0ED/xDuovkf3XXfzGmSKFx3nGWvhS7d7BDAFhbHRoVFKXUSyxNn6/+0cpeu6UNCyrTBo7a7l8KiG2OjzzopQqjghf3ZTpKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZJ0QpDZU; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1751535141; c=relaxed/simple;
+	bh=WtO1DgUxyix8oDOSgjZfMtxXQjswM3LI+TSs1gDywZg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=l8GvH7Pdrtd4fJCoduqVchA49aHq03u5vBVzfqc5JkCBPapnlo+3Vk7ey0PBwRn1C9EUJ8cLDzZcp4QisnjwGKCJPpV3+EV1qQOZqq6b16ew+cYwtJ1c2FJadMiNicbETT8LWrda9mDjgF5tbdMC/XnqNf6I7WsBQNwFMw7n+pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdPt2XDh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZJ0QpDZU"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23633a6ac50so98106435ad.2
-        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 02:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751535076; x=1752139876; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KYfn57qzkkmG/aFpndf/jcsizGLt8T7mJq7PMwyO3ks=;
-        b=ZJ0QpDZU0gZw+/ekmPbtcgxXuNpf2zz0Rx+6g8GJIrKPOqQzRd4uBc5Gb1GVg9Wkof
-         Syn2vpGr8bgHmi0PZWyaS7y+8x0OuobhmNzhE+fQDxEf1AI3b+MMDnFaszevYi4CuhRE
-         TZDAUKySD90MyFkJMNzI0bSjoduBOh6G8u5+wVswIB75rtEqdlc2QS8c/23zvWVmMala
-         P37UuXzFj1DpwHFnIcCPylCEBDid9nyuOZwXsfz9iCUa3JlXu0zpJ4h1xD67atgoOpiT
-         QbxqQwNDJsA42+6V6u9f6yoglM8kWLpOMYh1sxRvucVmp1E14hIGE7UjhXDuFsrTe/Rx
-         zWUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751535076; x=1752139876;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYfn57qzkkmG/aFpndf/jcsizGLt8T7mJq7PMwyO3ks=;
-        b=a0UdFL1s7jn11a5bmppfnHKi6JRE5A37U9XyLmjPWnbmZ8bUTvgsGyTkCqgu00u1tB
-         rLVf8Fr1wUXY4HP5Z23DIK70O77gmgvJ0Xk1OrsTuKIhQzqTr+F7Z7B4Ly/XJXVjna/E
-         Kvx6FhFLCCpFSDc5oU+i/KQZGJvWiwPD/eDT0z8zAeWfuBzP9GiSk5OxZS8uyig13WpP
-         c/YgzHnwOiTr9qDlGfaaLUBHEb5+hZuStyqRPx+oEp5CLCmetWK5lRWGgJKjio136HUu
-         kNMSTGvXOF3thX1xvEy6zNEMQYbNmMBV5AlGpUxdH0XwEUS+NESFFp5YHIqGtwXqTpT2
-         H38A==
-X-Forwarded-Encrypted: i=1; AJvYcCW7/42Memupor3h7PTVH/pifNuZcwr6pF1C4g0eCSzfBwE2lDHqIKqtfg0CrFMuBxHLJGyxPLsEdko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyMa6ovqhxx3pzMvSDJ0gi6CMtSJtX22RHvbyXJaai+XlJv4IH
-	Eh0yp00nAUHf2XzMMQWXekkNvpc37W9JqQfnqZLeiaHEtR9FKz79/vaz/mcgN5/Fodk=
-X-Gm-Gg: ASbGncu8uA761ei0BGMzQ5B+J5SVWDLX/VZk7GoFKbmTF8SwdZkYhcdjk0xAWuuWjyU
-	yJdmUiF1cXSYk1fgkYcfABYfWZsPzohjiDMiSBMKkKnhFe+Gq6v/iBiIQOaSTlfGSDZX81zqCmQ
-	I9IeOs06jMgtxm35etd6v8dAhSeydOqsDV46pIubB9WUQGljVmM4nnARXyK5LbMbOvUFpIg4nPY
-	Lx3wPUraPqV05cnkC/OS3NLIj6iqV6H75sLW00thkL0l/Cqym+xIYCLY/yjoGdWnIWcs4Xween/
-	WX2U+EOCQPsyc9RUbedO18Hm2aUBPEIJxaSzQzl3Oh+qiCLDwQ2Q220QymOnaQKTBKTMYQ==
-X-Google-Smtp-Source: AGHT+IHQ535n0QA2COW4KxgJhYDC5l8yNht6HeovLAUQ6LzoicprfT4zy9/VUUX2qQcf/7mXsoAJng==
-X-Received: by 2002:a17:903:19e7:b0:234:d292:be7a with SMTP id d9443c01a7336-23c6e4e4c8fmr85926675ad.1.1751535076424;
-        Thu, 03 Jul 2025 02:31:16 -0700 (PDT)
-Received: from sunil-laptop ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f0babsm158604535ad.58.2025.07.03.02.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 02:31:15 -0700 (PDT)
-Date: Thu, 3 Jul 2025 15:01:00 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 15/24] ACPI: property: Add support for cells property
-Message-ID: <aGZN1HzGk1nBWEHw@sunil-laptop>
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
- <20250702051345.1460497-16-apatel@ventanamicro.com>
- <CAJZ5v0iYYuK2GF2Pg3NiO4vLFzoYm6Q3Dnk5O2DkMJm1R3qSfQ@mail.gmail.com>
- <aGUaFX9WgTW1I_ZO@smile.fi.intel.com>
- <CAJZ5v0h=qzS67Xu6NUfN_LmQUmKF9=AtkaRrTx81td0m-mRNNg@mail.gmail.com>
- <aGVK7NxRdDIGRzNR@sunil-laptop>
- <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdPt2XDh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD0DC4CEE3;
+	Thu,  3 Jul 2025 09:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751535139;
+	bh=WtO1DgUxyix8oDOSgjZfMtxXQjswM3LI+TSs1gDywZg=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=PdPt2XDhT93ntXTcvbBpnFi+Vp43qWrOTV8apH25X/OTbnhL7q3cDHTb+eEs1S6FN
+	 byoaUU84MkJoHRtB6frTgxrNxHJ07pzp7FkepC9If0jj/Woeiz8HWUFkxHC7CeQlR5
+	 T/5Iea4mPe/5Xf5+6YfdT7aRrUFon4wI1LeIJqR2/5nJvKSN9y/8Z+w5av1BnrjGCj
+	 inULlHQYluATDD3nWJfOJsLTnNmVB5K0jK8xLINhcQhHyS96/X5NCTLbc17DFX3OjI
+	 ay5ZRmAGoY67ktEqCeRBECvTPRbAc9Qcj4ukGwQrIHoHeiKjak6hbo3yOo4Cm8P9Gt
+	 LyMUdqnzaTcPw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0hTzrxqfejxSxqh9igiDp=8LkBw+FGSf9CJ7j3RyTJLBQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 03 Jul 2025 11:32:05 +0200
+Message-Id: <DB2BDSN1JH51.14ZZPETJORBC6@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+ <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
+ <linux-pci@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <linux-block@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v13 2/5] rust: support formatting of foreign types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>, "Michal Rostecki"
+ <vadorovsky@protonmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Brendan Higgins" <brendan.higgins@linux.dev>, "David Gow"
+ <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "FUJITA
+ Tomonori" <fujita.tomonori@gmail.com>, "Rob Herring" <robh@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Will Deacon"
+ <will@kernel.org>, "Waiman Long" <longman@redhat.com>, "Nathan Chancellor"
+ <nathan@kernel.org>, "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt"
+ <justinstitt@google.com>, "Andrew Lunn" <andrew@lunn.ch>, "Heiner Kallweit"
+ <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>, "Jens
+ Axboe" <axboe@kernel.dk>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, "Dave Ertman" <david.m.ertman@intel.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, "Leon Romanovsky" <leon@kernel.org>, "Breno
+ Leitao" <leitao@debian.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
+ <20250701-cstr-core-v13-2-29f7d3eb97a6@gmail.com>
+In-Reply-To: <20250701-cstr-core-v13-2-29f7d3eb97a6@gmail.com>
 
-On Wed, Jul 02, 2025 at 06:56:48PM +0200, Rafael J. Wysocki wrote:
-> On Wed, Jul 2, 2025 at 5:06 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
-> >
-> > On Wed, Jul 02, 2025 at 02:39:30PM +0200, Rafael J. Wysocki wrote:
-> > > On Wed, Jul 2, 2025 at 1:38 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > >
-> > > > On Wed, Jul 02, 2025 at 12:20:55PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Wed, Jul 2, 2025 at 7:16 AM Anup Patel <apatel@ventanamicro.com> wrote:
-> > > >
-> > > > ...
-> > > >
-> > > > > >  static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
-> > > > > >                                           const char *propname, const char *nargs_prop,
-> > > > > >                                           unsigned int args_count, unsigned int index,
-> > > >
-> > > > > >         const struct acpi_device_data *data;
-> > > > > >         struct fwnode_handle *ref_fwnode;
-> > > > > >         struct acpi_device *device;
-> > > > > > +       unsigned int nargs_count;
-> > > > > >         int ret, idx = 0;
-> > > >
-> > > > > > +                       nargs_count = acpi_fwnode_get_args_count(device, nargs_prop);
-> > > > >
-> > > > > I think it should work the same way as it used to for the callers that
-> > > > > pass args_count, so maybe
-> > > > >
-> > > > > if (!args_count)
-> > > > >         args_count = acpi_fwnode_get_args_count(device, nargs_prop);
-> > > >
-> > > > But this is different variable.
-> > >
-> > > Of course it is different.  It is an acpi_fwnode_get_reference_args() parameter.
-> > >
-> > > > > >                         element++;
-> > > > > > -
-> > > > > >                         ret = acpi_get_ref_args(idx == index ? args : NULL,
-> > > > > >                                                 acpi_fwnode_handle(device),
-> > > > > > -                                               &element, end, args_count);
-> > > > > > +                                               &element, end,
-> > > > > > +                                               nargs_count ? nargs_count : args_count);
-> > > > >
-> > > > > And this change would not be necessary?
-> > > >
-> > > > This is not the same check as proposed above.
-> > >
-> > > No, it is not.
-> > >
-> > > It just makes the function work the same way it did before the change
-> > > for the callers who passed nozero args_count and so they might be
-> > > forgiven expecting that it would be taken into account.
-> >
-> > But if we do like this, the expectation of
-> > fwnode_property_get_reference_args() will differ for DT and ACPI, right?
-> > I mean nargs_prop should take higher precedence than nargs.
-> 
-> So you basically want acpi_fwnode_get_reference_args() to take
-> nargs_prop into account (which could be explained much cleaner in the
-> patch changelogs).
-> 
-Sure. Let me improve the commit message in the next version.
-.
-> Also, your changes don't modify the behavior of
-> __acpi_node_get_property_reference() AFAICS, so this is OK.
-> 
-That's correct.
+On Tue Jul 1, 2025 at 6:49 PM CEST, Tamir Duberstein wrote:
+> Introduce a `fmt!` macro which wraps all arguments in
+> `kernel::fmt::Adapter` and a `kernel::fmt::Display` trait. This enables
+> formatting of foreign types (like `core::ffi::CStr`) that do not
+> implement `core::fmt::Display` due to concerns around lossy conversions w=
+hich
+> do not apply in the kernel.
+>
+> Replace all direct calls to `format_args!` with `fmt!`.
+>
+> Replace all implementations of `core::fmt::Display` with implementations
+> of `kernel::fmt::Display`.
+>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General=
+/topic/Custom.20formatting/with/516476467
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+>  drivers/block/rnull.rs       |  2 +-
+>  drivers/gpu/nova-core/gpu.rs |  4 +-
+>  rust/kernel/block/mq.rs      |  2 +-
+>  rust/kernel/device.rs        |  2 +-
+>  rust/kernel/fmt.rs           | 89 ++++++++++++++++++++++++++++++++++++++=
++
+>  rust/kernel/kunit.rs         |  6 +--
+>  rust/kernel/lib.rs           |  1 +
+>  rust/kernel/prelude.rs       |  3 +-
+>  rust/kernel/print.rs         |  4 +-
+>  rust/kernel/seq_file.rs      |  2 +-
+>  rust/kernel/str.rs           | 22 ++++------
+>  rust/macros/fmt.rs           | 99 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  rust/macros/lib.rs           | 19 +++++++++
+>  rust/macros/quote.rs         |  7 ++++
+>  scripts/rustdoc_test_gen.rs  |  2 +-
+>  15 files changed, 236 insertions(+), 28 deletions(-)
 
-> Never mind then, but you could pass nargs_prop along with the
-> additional device parameter to acpi_get_ref_args() and make that
-> function obtain the nargs_prop value.  In the patch, you need to get
-> the nargs_prop value before calling it anyway in both places in which
-> it is used.
-That's better. Let me update acpi_get_ref_args() itself in the next
-version.
+This would be a lot easier to review if he proc-macro and the call
+replacement were different patches.
 
-Thanks!
-Sunil
+Also the `kernel/fmt.rs` file should be a different commit.
 
+> diff --git a/rust/kernel/fmt.rs b/rust/kernel/fmt.rs
+> new file mode 100644
+> index 000000000000..348d16987de6
+> --- /dev/null
+> +++ b/rust/kernel/fmt.rs
+> @@ -0,0 +1,89 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Formatting utilities.
+> +
+> +use core::fmt;
 
+I think we should pub export all types that we are still using from
+`core::fmt`. For example `Result`, `Formatter`, `Debug` etc.
+
+That way I can still use the same pattern of importing `fmt` and then
+writing
+
+    impl fmt::Display for MyType {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {}
+    }
+
+> +
+> +/// Internal adapter used to route allow implementations of formatting t=
+raits for foreign types.
+> +///
+> +/// It is inserted automatically by the [`fmt!`] macro and is not meant =
+to be used directly.
+> +///
+> +/// [`fmt!`]: crate::prelude::fmt!
+> +#[doc(hidden)]
+> +pub struct Adapter<T>(pub T);
+> +
+> +macro_rules! impl_fmt_adapter_forward {
+> +    ($($trait:ident),* $(,)?) =3D> {
+> +        $(
+> +            impl<T: fmt::$trait> fmt::$trait for Adapter<T> {
+> +                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result=
+ {
+> +                    let Self(t) =3D self;
+> +                    fmt::$trait::fmt(t, f)
+> +                }
+> +            }
+> +        )*
+> +    };
+> +}
+> +
+> +impl_fmt_adapter_forward!(Debug, LowerHex, UpperHex, Octal, Binary, Poin=
+ter, LowerExp, UpperExp);
+> +
+> +/// A copy of [`fmt::Display`] that allows us to implement it for foreig=
+n types.
+> +///
+> +/// Types should implement this trait rather than [`fmt::Display`]. Toge=
+ther with the [`Adapter`]
+> +/// type and [`fmt!`] macro, it allows for formatting foreign types (e.g=
+. types from core) which do
+> +/// not implement [`fmt::Display`] directly.
+> +///
+> +/// [`fmt!`]: crate::prelude::fmt!
+> +pub trait Display {
+> +    /// Same as [`fmt::Display::fmt`].
+> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;
+> +}
+> +
+> +impl<T: ?Sized + Display> Display for &T {
+> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+> +        Display::fmt(*self, f)
+> +    }
+> +}
+> +
+> +impl<T: ?Sized + Display> fmt::Display for Adapter<&T> {
+> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+> +        let Self(t) =3D self;
+> +        Display::fmt(t, f)
+
+Why not `Display::fmt(&self.0, f)`?
+
+> +    }
+> +}
+> +
+> +macro_rules! impl_display_forward {
+> +    ($(
+> +        $( { $($generics:tt)* } )? $ty:ty $( { where $($where:tt)* } )?
+> +    ),* $(,)?) =3D> {
+> +        $(
+> +            impl$($($generics)*)? Display for $ty $(where $($where)*)? {
+> +                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result=
+ {
+> +                    fmt::Display::fmt(self, f)
+> +                }
+> +            }
+> +        )*
+> +    };
+> +}
+> +
+> +impl_display_forward!(
+> +    bool,
+> +    char,
+> +    core::panic::PanicInfo<'_>,
+> +    fmt::Arguments<'_>,
+> +    i128,
+> +    i16,
+> +    i32,
+> +    i64,
+> +    i8,
+> +    isize,
+> +    str,
+> +    u128,
+> +    u16,
+> +    u32,
+> +    u64,
+> +    u8,
+> +    usize,
+> +    {<T: ?Sized>} crate::sync::Arc<T> {where crate::sync::Arc<T>: fmt::D=
+isplay},
+> +    {<T: ?Sized>} crate::sync::UniqueArc<T> {where crate::sync::UniqueAr=
+c<T>: fmt::Display},
+> +);
+
+> diff --git a/rust/macros/fmt.rs b/rust/macros/fmt.rs
+> new file mode 100644
+> index 000000000000..edc37c220a89
+> --- /dev/null
+> +++ b/rust/macros/fmt.rs
+> @@ -0,0 +1,99 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +use proc_macro::{Ident, TokenStream, TokenTree};
+> +use std::collections::BTreeSet;
+> +
+> +/// Please see [`crate::fmt`] for documentation.
+> +pub(crate) fn fmt(input: TokenStream) -> TokenStream {
+> +    let mut input =3D input.into_iter();
+> +
+> +    let first_opt =3D input.next();
+> +    let first_owned_str;
+> +    let mut names =3D BTreeSet::new();
+> +    let first_lit =3D {
+> +        let Some((mut first_str, first_lit)) =3D (match first_opt.as_ref=
+() {
+> +            Some(TokenTree::Literal(first_lit)) =3D> {
+> +                first_owned_str =3D first_lit.to_string();
+> +                Some(first_owned_str.as_str()).and_then(|first| {
+> +                    let first =3D first.strip_prefix('"')?;
+> +                    let first =3D first.strip_suffix('"')?;
+> +                    Some((first, first_lit))
+
+You're only using first_lit to get the span later, so why not just get
+the span directly here?
+
+> +                })
+> +            }
+> +            _ =3D> None,
+> +        }) else {
+> +            return first_opt.into_iter().chain(input).collect();
+> +        };
+> +        while let Some((_, rest)) =3D first_str.split_once('{') {
+
+Let's put a comment above this loop mentioning [1] and saying that it
+parses the identifiers from the format arguments.
+
+[1]: https://doc.rust-lang.org/std/fmt/index.html#syntax
+
+> +            first_str =3D rest;
+> +            if let Some(rest) =3D first_str.strip_prefix('{') {
+> +                first_str =3D rest;
+> +                continue;
+> +            }
+> +            if let Some((name, rest)) =3D first_str.split_once('}') {
+> +                first_str =3D rest;
+> +                let name =3D name.split_once(':').map_or(name, |(name, _=
+)| name);
+> +                if !name.is_empty() && !name.chars().all(|c| c.is_ascii_=
+digit()) {
+> +                    names.insert(name);
+> +                }
+> +            }
+> +        }
+> +        first_lit
+> +    };
+> +
+> +    let first_span =3D first_lit.span();
+> +    let adapter =3D quote_spanned! {
+> +        first_span =3D> ::kernel::fmt::Adapter
+> +    };
+
+I think we should follow the formatting convention from the quote crate:
+
+    let adapter =3D quote_spanned!(first_span=3D> ::kernel::fmt::Adapter);
+
+> +
+> +    let mut args =3D TokenStream::from_iter(first_opt);
+> +    {
+> +        let mut flush =3D |args: &mut TokenStream, current: &mut TokenSt=
+ream| {
+
+You don't need to pass `args` as a closure argument, since you always
+call it with `&mut args`.
+
+> +            let current =3D std::mem::take(current);
+> +            if !current.is_empty() {
+> +                let (lhs, rhs) =3D (|| {
+> +                    let mut current =3D current.into_iter();
+> +                    let mut acc =3D TokenStream::new();
+> +                    while let Some(tt) =3D current.next() {
+> +                        // Split on `=3D` only once to handle cases like=
+ `a =3D b =3D c`.
+> +                        if matches!(&tt, TokenTree::Punct(p) if p.as_cha=
+r() =3D=3D '=3D') {
+> +                            names.remove(acc.to_string().as_str());
+> +                            // Include the `=3D` itself to keep the hand=
+ling below uniform.
+> +                            acc.extend([tt]);
+> +                            return (Some(acc), current.collect::<TokenSt=
+ream>());
+> +                        }
+> +                        acc.extend([tt]);
+> +                    }
+> +                    (None, acc)
+> +                })();
+> +                args.extend(quote_spanned! {
+> +                    first_span =3D> #lhs #adapter(&#rhs)
+> +                });
+> +            }
+> +        };
+> +
+> +        let mut current =3D TokenStream::new();
+
+Define this before the closure, then you don't need to pass it as an
+argument.
+
+---
+Cheers,
+Benno
+
+> +        for tt in input {
+> +            match &tt {
+> +                TokenTree::Punct(p) if p.as_char() =3D=3D ',' =3D> {
+> +                    flush(&mut args, &mut current);
+> +                    &mut args
+> +                }
+> +                _ =3D> &mut current,
+> +            }
+> +            .extend([tt]);
+> +        }
+> +        flush(&mut args, &mut current);
+> +    }
+> +
+> +    for name in names {
+> +        let name =3D Ident::new(name, first_span);
+> +        args.extend(quote_spanned! {
+> +            first_span =3D> , #name =3D #adapter(&#name)
+> +        });
+> +    }
+> +
+> +    quote_spanned! {
+> +        first_span =3D> ::core::format_args!(#args)
+> +    }
+> +}
