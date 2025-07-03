@@ -1,252 +1,129 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9122E610D
-	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 11:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FEB2E7BD9;
+	Thu,  3 Jul 2025 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751542077; cv=none; b=rBgBO190zEevfzigsVhAIkgIL0h6bXCijrpFImE03K/UYLSqUs5TX23z1rIYO68IYdXwuBv4lR2ADBZPmOkYYU01uu09cqL1Dg+TQCFNFAgTZOfacttqKVwd0KEy2APaHaOSecfJtO2gaYpCG2yRjwJiFw9tSIq3w2WE5pPuUMU=
+	t=1751550869; cv=none; b=OKUMMuhBtyouErkGNfKlrPWCg4KteOzPxtPoYasV4wYyFFnjAA6KdJF3IUnmEV1ArS3dsWi0LAQaY/CAO0iUlBvd4JD2L8lqv4ql6J+S9m0tLWwP1MmT3wg+poq4bNqmJWZ+o5RzRlihpbygMmzqrq1r8H9d6lsPY+zP9CCUoAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751542077; c=relaxed/simple;
-	bh=dKp9sNBVKhCMWq2ozbMkBemUSa+iPERmFu+4dZggoQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O5DYmvDtZ2zMggSDTK223l7MmTU9Mfvbni8S5zNw7/tIeSSlrqJcGfx0jaQ0NnYZUcuH1IAWVFK1i9sZh55Lc3cCPjXt+oEBWbNRWZ1gdWfH7hlKmEAWEVczUEEvXaoxsLMjXBtMiqcS8HdJaa5wCMGY6Nmh+eCHTBrB6FYfaU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cxqeRkAm; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1751550869; c=relaxed/simple;
+	bh=hkynFXqBgMDhBIacDm9GkRDPLniP47vYUeHzZhSjqPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eddCL/2WAqbhIxeoZTgXOOl8fIXVfLrTyiudTVnbBsQD5HtjZ42vGxRcZ13DLMz02BPaLrbh4vVX1LoPWFfrgEh3KqK2SpsJdGCKUf0UgFSRKkxmhTGtAVH/WXorWJTK09jGVvWoQtVi6aMc+S/Z6WVIJk5GaEIAqbKJaqJbFrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iuo4jH+Y; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cxqeRkAm"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-addda47ebeaso1646133966b.1
-        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 04:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751542072; x=1752146872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=amy1aSEWJFLjdFKle4TRafGT1dI6FK2dRgoWrJhpEoE=;
-        b=cxqeRkAmo+uhAkoMMQwvBP/akaaA+fW/9V9vZNVm2+J3NsvGJPkfzEQDkhNz6BvmOh
-         3sy7SDwTPiykFPgHxFKqPDV70lgxb9VitxB2zID8UhJEFqbjSr6/beF1A+paHxzJLbV2
-         fCsPFX0X2dXVHFISOIdTo8bHJzzw2i/2PWJU1fYLb+tV1f0mIKR8nnHFEOgX2m69aacR
-         NgtAX6hIBrFtiKatkSlnHgVieJORSNq7h/WbY5fRfJUzCPYMt6OG0G9qmrBkr2OuIoFH
-         BjAsSdZRFHbIo+yxKwu60qLSEiRdqqKoSmqYbWC/MXA7Fwv6q3tItqmJmsLAJS2Nzb1K
-         iL3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751542072; x=1752146872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=amy1aSEWJFLjdFKle4TRafGT1dI6FK2dRgoWrJhpEoE=;
-        b=YySAH9Nof2i7tzIH74+G8s7UfeVvdB8X5L75NIpqucG1Rbh1x866vTWzqsAMPLVJ2Z
-         EtY6Z1T5T5iG1SPiPgtM7pajpFE/vLqrAOnha2hORRUjbSbj3HIw6OOO4nSU6ZnVhk3e
-         v3qY2l58biu93HqybSsx2BMKD1LOtRHusFd3lThJi6aHLU6ExBUSJRotlmKB3dz05mAD
-         WLr0/OdUD9ne28ig0HMlAO8Pdfhm71zBDU8tayilFcv8czyB6xXRbm6VrODrHy+K43uz
-         MibdnQ2xsAmF0p0JQjLYumNx0RcCcG5VQ+4DVXEf3WBCxlyyKgyWZtp0Ow/6J0gztUXJ
-         2eLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn3sYYTJX1xz/Mp/kJFe3fOOIVBvW8Pl/fdemOrWyuu+CF+9ATMzVfrRCDCwsJJ0NhmPjmkyc4rJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWM5BsdX+sZU41nrLq6OP8I0PdhZAtOldrlUTJizISWAPYYvI7
-	5RhtnY2Ni/UjOi6XZJtPq/sgxsE36vRSVptFpzHklcGvDYmnVWGlpP9FLFsw6jNIKlQ=
-X-Gm-Gg: ASbGncu/oa1EQOJ7B3/yUrKyromwE/+RCDWp/L7oyX38tXt6hBRBO1rIl1DPY70SbL5
-	AX0q7Zopfgg48lTcJo7/jJLoa/KtlFiVtNoEzaahB4orQMstQknOrw11D/4cy/1vG+VPeamBilv
-	uXiOJrs8078TZuw2f/f7bum/cOVGb/Wi0RNI4nQJiHz2xnpE5mf1DvOyti4aufEWOI+wVUx5GD8
-	jo4vYSO3sxUHOZk6ju6GdaeyFZ8+ijoOOulgubthAH31DP8BpJliuCZ4Mq15gce9PfxApSu4D37
-	tagIDHlbPcdObH36tXYTQWPXp+UMi4Fd8M3wlJHmoES5SIK2zwlOpBmGtnnOEwdJF4AvxZjSoe/
-	3ts64It2DIFkmcok=
-X-Google-Smtp-Source: AGHT+IGtvsJyDMQsLfUDl9utWzUCxFT2n50ILIV0XhgAq1dND93ylmRMS+yE9TxwtIdCeTyEpsNdFg==
-X-Received: by 2002:a17:907:d644:b0:ae3:cd73:efde with SMTP id a640c23a62f3a-ae3d8b1b1d4mr273821366b.44.1751542072208;
-        Thu, 03 Jul 2025 04:27:52 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a75fsm1247016966b.67.2025.07.03.04.27.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 04:27:51 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: linux@armlinux.org.uk,
-	gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	leon@kernel.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org,
-	andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	wsa+renesas@sang-engineering.com,
-	ulf.hansson@linaro.org,
-	mathieu.poirier@linaro.org,
-	vkoul@kernel.org,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org,
-	robh@kernel.org,
-	jirislaby@kernel.org,
-	saravanak@google.com,
-	jic23@kernel.org,
-	dmitry.torokhov@gmail.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	bhelgaas@google.com,
-	geert@linux-m68k.org,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	fabrizio.castro.jz@renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v5 3/3] driver core: platform: Drop dev_pm_domain_detach() call
-Date: Thu,  3 Jul 2025 14:27:08 +0300
-Message-ID: <20250703112708.1621607-4-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iuo4jH+Y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751550868; x=1783086868;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hkynFXqBgMDhBIacDm9GkRDPLniP47vYUeHzZhSjqPE=;
+  b=Iuo4jH+YLzq6DVWUeAq2jZK5USPTOhYisKgOROVHg/s55NC2xcZdIgf0
+   PzjpnFL2MftsrgmnEDMTFfbtf3muJR/QAxJ02GQrOaKkMuTRJsQQhovfV
+   v35Mv2WwQ6nAERKeS+eRBoBvmOegCfkEZF5gkJ9INxf2mNArOtNgYn7Cm
+   yTBH7KMdEVwPnDYSu4pVeupIQ49IRuUpSB8h9l64Nc9ClYc3zPLWrChwh
+   Y3DQbyt6jLzAgHCXfz6SQOaaJoqJyqCPZrG+n90AnPye/txXQsSBlzw1Y
+   KUglGPg+/BhwkjfKc7xbopkhawHf0uEC7nd0lq1aJPpIxy6mWCVowht+j
+   w==;
+X-CSE-ConnectionGUID: AAjKmMZ4TRutFgd4UTxzpQ==
+X-CSE-MsgGUID: B3OULOP1Qom2ex9Jj1K0Ww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57686384"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="57686384"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 06:54:27 -0700
+X-CSE-ConnectionGUID: Sz8pfLTHRumN6SVidx2zkw==
+X-CSE-MsgGUID: LlSnEty4TaS4oZ+RxqLYkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="153790365"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 06:54:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uXKOG-0000000CDjq-1Yoc;
+	Thu, 03 Jul 2025 16:54:16 +0300
+Date: Thu, 3 Jul 2025 16:54:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 21/24] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <aGaLiK0eW8Mc1YC3@smile.fi.intel.com>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-22-apatel@ventanamicro.com>
+ <aGUl_S9irfhlHmy2@smile.fi.intel.com>
+ <aGZhWlxxQG0Z8awP@sunil-laptop>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGZhWlxxQG0Z8awP@sunil-laptop>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, Jul 03, 2025 at 04:24:18PM +0530, Sunil V L wrote:
+> On Wed, Jul 02, 2025 at 03:28:45PM +0300, Andy Shevchenko wrote:
+> > On Wed, Jul 02, 2025 at 10:43:42AM +0530, Anup Patel wrote:
 
-On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
-clocks are managed through PM domains. These PM domains, registered on
-behalf of the clock controller driver, are configured with
-GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
-clocks are enabled/disabled using runtime PM APIs. The power domains may
-also have power_on/power_off support implemented. After the device PM
-domain is powered off any CPU accesses to these domains leads to system
-aborts.
+...
 
-During probe, devices are attached to the PM domain controlling their
-clocks and power. Similarly, during removal, devices are detached from the
-PM domain.
+> > > -		if (dev_of_node(dev))
+> > > +		if (is_of_node(fwnode)) {
+> > >  			of_msi_configure(dev, dev_of_node(dev));
+> > > +		} else if (is_acpi_device_node(fwnode)) {
+> > > +			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
+> > > +							      DOMAIN_BUS_PLATFORM_MSI);
+> > > +			dev_set_msi_domain(dev, msi_domain);
+> > > +		}
+> > 
+> > Actually you don't need to have the if-else-if if I am not mistaken.
+> > The OF does almost the same as it's done in the second branch for ACPI case.
+> > How many MSI parents this may have?
+> > 
+> OF already has a well defined interface to configure the MSI domain. The
+> mechanisms existing today are different for DT vs ACPI to find out the
+> fwnode of the MSI controller. So, it is done differently.
 
-The detachment call stack is as follows:
+I don't see how. The only difference I see is that OF iterates over all listed
+parents, if any, ACPI tries only one.
 
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    __device_release_driver() ->
-      device_remove() ->
-        platform_remove() ->
-          dev_pm_domain_detach()
+So, perhaps it's a time to have a common API somewhere for this to be agnostic?
+Something like fwnode_msi_configure() in somewhere of IRQ MSI core?
 
-During driver unbind, after the device is detached from its PM domain,
-the device_unbind_cleanup() function is called, which subsequently invokes
-devres_release_all(). This function handles devres resource cleanup.
+> In RISC-V case at least, there will be only one MSI parent.
 
-If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
-cleanup process triggers the action or reset function for disabling runtime
-PM. This function is pm_runtime_disable_action(), which leads to the
-following call stack of interest when called:
-
-pm_runtime_disable_action() ->
-  pm_runtime_dont_use_autosuspend() ->
-    __pm_runtime_use_autosuspend() ->
-      update_autosuspend() ->
-        rpm_idle()
-
-The rpm_idle() function attempts to resume the device at runtime. However,
-at the point it is called, the device is no longer part of a PM domain
-(which manages clocks and power states). If the driver implements its own
-runtime PM APIs for specific functionalities - such as the rzg2l_adc
-driver - while also relying on the power domain subsystem for power
-management, rpm_idle() will invoke the driver's runtime PM API. However,
-since the device is no longer part of a PM domain at this point, the PM
-domain's runtime PM APIs will not be called. This leads to system aborts on
-Renesas SoCs.
-
-Another identified case is when a subsystem performs various cleanups
-using device_unbind_cleanup(), calling driver-specific APIs in the process.
-A known example is the thermal subsystem, which may call driver-specific
-APIs to disable the thermal device. The relevant call stack in this case
-is:
-
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    device_unbind_cleanup() ->
-      devres_release_all() ->
-        devm_thermal_of_zone_release() ->
-          thermal_zone_device_disable() ->
-            thermal_zone_device_set_mode() ->
-              struct thermal_zone_device_ops::change_mode()
-
-At the moment the driver-specific change_mode() API is called, the device
-is no longer part of its PM domain. Accessing its registers without proper
-power management leads to system aborts.
-
-Drop the call to dev_pm_domain_detach() from the platform bus remove
-function and rely on the newly introduced call in device_unbind_cleanup().
-This ensures the same effect, but the call now occurs after all
-driver-specific devres resources have been freed.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v5:
-- dropped tab in the call traces from patch description
-- used PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF
-
-Changes in v4:
-- dropped devm_pm_domain_attach() approach
-- adjusted patch description to reflect this
-
-Changes in v3:
-- adjusted the call to devm_pm_domain_attach() as it now gets
-  2 parameters
-
-Changes in v2:
-- dropped the devres group open/close approach and use
-  devm_pm_domain_attach()
-- adjusted patch description to reflect the new approach
-
- drivers/base/platform.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index df1ec34fdf56..09450349cf32 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1396,15 +1396,13 @@ static int platform_probe(struct device *_dev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON |
-+					 PD_FLAG_DETACH_POWER_OFF);
- 	if (ret)
- 		goto out;
- 
--	if (drv->probe) {
-+	if (drv->probe)
- 		ret = drv->probe(dev);
--		if (ret)
--			dev_pm_domain_detach(_dev, true);
--	}
- 
- out:
- 	if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
-@@ -1422,7 +1420,6 @@ static void platform_remove(struct device *_dev)
- 
- 	if (drv->remove)
- 		drv->remove(dev);
--	dev_pm_domain_detach(_dev, true);
- }
- 
- static void platform_shutdown(struct device *_dev)
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
