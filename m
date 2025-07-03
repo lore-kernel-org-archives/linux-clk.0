@@ -1,51 +1,51 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022097.outbound.protection.outlook.com [52.101.126.97])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022107.outbound.protection.outlook.com [40.107.75.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D680F29A9;
-	Thu,  3 Jul 2025 07:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC2E23A9A5;
+	Thu,  3 Jul 2025 07:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.107
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751527027; cv=fail; b=EDgIbcc5kpfExqE8hxnJXMNlGGy6HJzGID8Bzst3f5lsTxDWL2ZEBn0MmpUFLfs6lStdkrLOsPtM6IVyN+AvrAo9JDSBad2XWl/5cUrd9GCB9kDm0sAC6fdmTpONEEgC00eWEUzWIrXSo56Pl/59+GSuOzXF3Lm7tyOynfk85BQ=
+	t=1751527522; cv=fail; b=Ti3sSa54hBZRWPAMxQnuTSTSy+ptXGAAL/oGMyqFl1M23/DnKc/AOFTPSwXYa9E3/OiJ6DyQOLgv4Am6NS1zpYqc13WAaC+xW2NvWld1gJ9bXbIuiq0pQ9sTYm4VeZq5dLN7FRCT2qIsHX1TE3g8z3BS9/PZwxdJt8kOoafM6nw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751527027; c=relaxed/simple;
-	bh=FdBcEtbViYy81FZepkqaNhsA4pPNP91gQ9ivyS/Hj40=;
+	s=arc-20240116; t=1751527522; c=relaxed/simple;
+	bh=bCfnWt/g2zofChCCNejg3XdhTV5q5aKAzy8q86+yyq0=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ATzkqlquFwGtfCJt3XeP/kCxZyaAZOH9oghtADONpwFakBWxfpsDwCi8Rekar5C3gT/DirrqgEhX/5dhHyHajMHp7zX1IH5RWmKbZVZMEZHmrDzNvNjf3g6T9QH094/imlRumD0QteP0FawqOCCAUGh96xKBDoW1s2ll6ucXIxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=dvW8BIpH; arc=fail smtp.client-ip=52.101.126.97
+	 Content-Type:MIME-Version; b=sVkzbQOH096bL1cdPp82TDX4MnkhnuNUJ6hXqi8VgIIzbeQp4QfLuAeQnP8uwksu+xJxQ4p/JPdhfPW/MaP/uumbZ1vBpUQYgg5uzsroHIecoQELdshksG7/ywXfiWlBse5OjaQwrd/g4wAHWt3oasabSAwQWK9HROTaNH8gHE4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=XLjHwkZL; arc=fail smtp.client-ip=40.107.75.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="dvW8BIpH"
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="XLjHwkZL"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fzFajaBAV046Uqd8D6XIHR/tRzuQc72HqAyV8trLYU2ri9gaUHpwkRSZ1yf82deJ0Inxj4GBehNbD1XLiwzCshj3J4UY2KFH5p3yDcm1PNBX2mJOxocjPUQCYuz5VXEOUfzZNhOPNO4euUszVFdvwqs7yCU/VW69WblocgmVOJKAyy1tDs3AZrFS3a35Tw025q2yXCfrZNh+zeKoQdWdPFeJnolLKHn5f+g3LiodqxD//6y+ZaEN3ljxxwslf76U1Pd+inEUst3+BBTLmUy0/2Ts0Y2F5DWc+CEXOM6MSQmXhh2+p6SIZ0wONL+nlBsGVYkwgLGOvmwXYhO/EbUFhw==
+ b=ygftamp7kWdaO2xiX/67Kt0UxcrvZ/J804U6q4GcizBTbIuKxxdWV9mE/1Z21D1AGseOVRoolTxNn79aU8b/6CIDf9JwUU1BP/NcrMYw1aJOWxTyaLh0KdYD873ljhI9Hk90kT+SuH3glwIIn2wB2NZXeqAUDQ8G7x7V8wNBQQEs65X1u0wqjYFOWODGl4uOJ78Mi4rtxIoMw39v/bZ7yv2woTh8kDrpSNuhCeuDGeF80zyZNLrlTW4D33unnehxygWnmjr7c5bXBNPb4KxiDAk0WvaOhy/ZHtN1lJQWR1Qr5z6fEtf4XH+VZeL9wR8V7xEvz6toJds/xEgm3576Kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=10T+OzMrVdDB8TWFEz5Mxt9l2LKvg6ncGq10nbqvXbE=;
- b=So2Pb/mA66sBhvd0ETC/SHFZapYjELlkdLhM/u89FIBdTDr24qMPi8ofSdybP5VWKRXs6GC0BGPr/tWNHR2DVxqK9XJlZCytQj83+mLCiy6zTcvMhPuSq1HLnlboPBj+TTpgsJ7CfssegCVhEZWLmfugJ+U/nNTjSmVauVbox+WRtAuOHUrBSmfOSC49bq+byw+nbmTgy/WK3Hu3CPY8QcaQy8VCpktm4+sTYqsYSVwX0Asr4JSJRlY4HJkphiHd+aC6mnjieZLau+hhu7j6O45C1Qr73HC/GmvZN0ZDySlKs5nRaarmmCO0qazOQjCywTyxblJzrlHxcjKNrOylaA==
+ bh=FWJAb5yLzeTnv1YeZfVrpmG0ty8M+pf7F8R8jKwhT5k=;
+ b=jpiuBoRZnB44rSPdTejs2w97KIuL8PjfIo2yyBfL3mYnfe0+fbzIs0uqjkmwpS5nULgK3XOYMVkdegEVl3Qx56Ax+RJjKqb+t1WJ+sFWr/BwpN6SXmvjNMEZUmelai/WsiE7XCPYzEJMWnGuW6q92b7If6ilw5ipTwOG4u8hXygywRV77jDAloEFCy4oH2G9kalbKCMyJLx/Lh0OlEnJA5shB6lAGBK9INWPCFjIFpzNhe8npDcH4p/3H7JO5YR+KsWVbtswBNyOjexjgzIy55+PJPzrb2J1TMEuvvPdk3zA5gCn6QobcmHka2Q50aSvK3EppWn7qqAMNf8fqnWvtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
  dkim=pass header.d=amlogic.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=10T+OzMrVdDB8TWFEz5Mxt9l2LKvg6ncGq10nbqvXbE=;
- b=dvW8BIpH3XYMuP3OQrHirJe2Wop67pvRjUAbUuiEQNfcYkhLjOmyArXP+itRUl7c56zED0AYA4UvflzLZCE8USS/YB/JdNPPlJfa5M2RbgQ2TNQ0+gprpYRV7VNE0ScLOv18Dv/j1veCiUDrTFIW5guLzKiFZKFev15D/uvaOMdYOsGLr9nlQv5EOjzt29hM3Kc5d59bs93/BDiccGvv20BeFOgJX7GEJS1l0yTSoq8oHUx96tK0bjJEyaR5m43XRGAzvVnlGHXUF1ylD5UwARL3fedO0FdAYGkkHaWH5ZcnNWs/6ShFs9yODrjso3rHywYBdU2AzPyp0ElQVewC3g==
+ bh=FWJAb5yLzeTnv1YeZfVrpmG0ty8M+pf7F8R8jKwhT5k=;
+ b=XLjHwkZL19lQSIGD9zPNHpB502sVY3+VksOrLLdit3wtUhzH+HnMWhTo77tTB6yzcRmLQvaLkZqYnj6dmL60TCbOQ6gj+8DahaeBwPKJM/R2uyJRSXkbXW3CdVDmAQfy4VTeDHxAm5uliRFCxWREUztRpum6JLYZ5DceIFXVO9KbyyqL6Vk1DJaSytqRAEFPsTkYkPE4HYvpvf/agEQcPNgoJzkvzdXV5I0ffc369P6XX3h8gS4m1g7w8pFdHth/e4ft5eX5HiRXwGU6zb3VFG1AmdETJ3PL7lx8dlBlYA00umNPVS7+1bdik79zMc+NrkKMu5A9cgNW2+coE4Q0CQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amlogic.com;
 Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SI2PR03MB6613.apcprd03.prod.outlook.com (2603:1096:4:1e4::12) with
+ by SEZPR03MB7657.apcprd03.prod.outlook.com (2603:1096:101:130::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.30; Thu, 3 Jul
- 2025 07:17:02 +0000
+ 2025 07:25:16 +0000
 Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
  ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
  ([fe80::9d11:d1f6:1097:22ca%6]) with mapi id 15.20.8901.021; Thu, 3 Jul 2025
- 07:17:02 +0000
-Message-ID: <1fcf7e52-b265-4341-a360-93aaf293f131@amlogic.com>
-Date: Thu, 3 Jul 2025 15:16:36 +0800
+ 07:25:15 +0000
+Message-ID: <a9b6ffdc-489f-4be9-9005-e987df739901@amlogic.com>
+Date: Thu, 3 Jul 2025 15:24:50 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 23/26] clk: amlogic: use the common pclk definition
+Subject: Re: [PATCH 24/26] clk: amlogic: add composite clock helpers
 To: Jerome Brunet <jbrunet@baylibre.com>,
  Neil Armstrong <neil.armstrong@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -54,13 +54,14 @@ To: Jerome Brunet <jbrunet@baylibre.com>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
- <20250702-meson-clk-cleanup-24-v1-23-e163c9a1fc21@baylibre.com>
+ <20250702-meson-clk-cleanup-24-v1-24-e163c9a1fc21@baylibre.com>
 From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <20250702-meson-clk-cleanup-24-v1-23-e163c9a1fc21@baylibre.com>
+In-Reply-To: <20250702-meson-clk-cleanup-24-v1-24-e163c9a1fc21@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0040.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::9)
- To KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+X-ClientProxiedBy: SI2PR02CA0020.apcprd02.prod.outlook.com
+ (2603:1096:4:195::7) To KL1PR03MB5778.apcprd03.prod.outlook.com
+ (2603:1096:820:6d::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,96 +69,96 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SI2PR03MB6613:EE_
-X-MS-Office365-Filtering-Correlation-Id: e52b4126-2dff-4e9d-eb89-08ddba019b53
+X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB7657:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96b3ef41-8f25-4cdc-a02f-08ddba02c184
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UU5mVGhtUmRpZWVCZnpyM0YyUlRqZFY0a0FvZy9zbmtIQjhjNnNMRGNrZlZL?=
- =?utf-8?B?ZUN0dmt0Y3ZmUkdRaHpyQVIyL0RWZkgwYTNHbDBUV1Q0enA2Y3J2NVZHOGNC?=
- =?utf-8?B?Q0RXdGtzYjVmN1Yya0ZvcjNVeC95MHJRUGc5OS9yeDIvcHVKRWNRN2dOZ1hX?=
- =?utf-8?B?S2VhWGkzYlZKVmU5Z2lSemlZS3FXY2pqMEptZk9qbENDaWdwcUdNMllBVW02?=
- =?utf-8?B?M0dLVVNPazJPeVhtaUJoeXM1UGk5SU8vSnl6TjVjLy9SYUh2TEFUZVNmdWUw?=
- =?utf-8?B?WFZXdWVSUThUWG1VN2J2MGFIQy8vcUpXRTJ4N0R6YWdFZjlvelJlSWRxM3FF?=
- =?utf-8?B?NWFGa24rM2NHdHNTVm91R05mbjc0RzFIVGNBL3hENzJmeTEvK084L0lxRTFW?=
- =?utf-8?B?a2NuamRQV0k5ekc4Q0E4d05uT0ZnSThlcGpPc2tMZC84OC9ncFlkaUVmOW8v?=
- =?utf-8?B?T2tCOXM5V0VzSDlVYU5XWUxKN3hWZ2RuVk9HaituYjhCY21SQ3NJU2pqalBs?=
- =?utf-8?B?N3EvL29WMHIxVCtQS2hxMW15dnVqdHhrNVFUak9FaDlFTFJFS3JZenRyaVFQ?=
- =?utf-8?B?RmU3cTVscDk0RVZJWlJqL3BacDJadnJzbFMwZnBieDIxY29nYXRMZTZReHZ6?=
- =?utf-8?B?NXFiNm5ZZWZyUWJMSzhTa0JiTDFmTzhpaGRSSWJoQUdOdEhMbTRaVjRXQ0w2?=
- =?utf-8?B?NTI1ZWtVL1p1Ulh6a1JabTJld1dqUEEzcWhTSVlpZTRtTjJ1c1RkTU81Z3JP?=
- =?utf-8?B?Y2dQNDlVU2VIZ1VtZk51Snd2SzYvbDNNWjFUdFpIZ2YycUQ2VXJOWk5GVnN0?=
- =?utf-8?B?ZU40dEZQUVhrV25QYXZaa0tVZExlL3Ntam5VUUxXd2tvT3NhKy9aeU1YVjhu?=
- =?utf-8?B?YlNvdk5Md2FuMnhCL1E0WHhOTjJhSTFtYTRoNEtMTkthN3NUUUVPL1Zwc09D?=
- =?utf-8?B?cTZ3SXY1T3V6ZHQvR2NlYkZqQ21DeFUrbEhLY20yZlBMUWZNZ3A1UlhoSm8x?=
- =?utf-8?B?N2lUdU1mbUNuckMxdTFuL1dxVHdQUTBvK1Noci9iK29YWkpnQWtMK2N0WXBP?=
- =?utf-8?B?bUpLRE45UXRLWEthdW5rdUxydXVSaFpBZS9XQ01KcXJDVTAxVkplZHRFQ2JG?=
- =?utf-8?B?cW5aVTFtMFdwNjUyMTJLekhGYjFPUzZWRGhwRG0rRWszRytjWDBGZnVHbzNI?=
- =?utf-8?B?a29sbEM0VS83MjRaUEFLMmlUMjVXby9sYVp3eXViT1l0R3M5OGN4V1prSzVM?=
- =?utf-8?B?MS8zMW9Zd1ZCL3MwY2wrSkpMQkJBc3RNcGdkd0Ixd25NcE9iQTlZclM2SjNV?=
- =?utf-8?B?OTJ0b2lIZlk0V0E1OHJxRFhObmdEV2RtQ2ZkT3ZUd0VFZDBYTUovRGRsY3JS?=
- =?utf-8?B?RnpCbEd4WHZUdWRZd0lpVFZOTTVYbDdSLzBUZytBb1RrVWJIWXd0ZXVZOEg0?=
- =?utf-8?B?VTVIUkJ1UGMwNGZXODRhWXhDeUNud0NqT2FLTUI1RWUwN1NKdWp3blBBSTdI?=
- =?utf-8?B?dDR3MVZhSHRraEF2ZFVYaEtYK1hCQkZzbXZoVWJlSzZkdzN2TGJJSG9zSko4?=
- =?utf-8?B?M2Q2UEFiTzRtdFRRU0N2Mm5SRDdYeTFYbUpqRC9uWmZGZTlXaEhGd2QxL1BY?=
- =?utf-8?B?S2VhVjJHSFM2M21aa01BcTZKWDRVYnZFNFJoR1UyMzYxeTFINi9mWHNDdTQx?=
- =?utf-8?B?dGkrQk9abE1Jb0JpSEJrdDd2ckJsSDl3OUh6WnpadjlIQ0xsdURhbWFlcWNJ?=
- =?utf-8?B?U21oZkdwOWhScklPOExMYVBlQlZleVhoQlZOZzRQUHc1QTQrbTB5M0cwTzBJ?=
- =?utf-8?B?TGVQTnBmNFI5RzNJR3NMTC9iQ0xnM3JiSEVaeVE3a2ZqdHJOazV6NUZwSFB6?=
- =?utf-8?B?eWhMRVR6KzBZM1BSR0tZbWZiRmpYYlRoVy84SFI4Vmhzby9icTJMdml3ajNB?=
- =?utf-8?Q?no1zetQJPd4=3D?=
+	=?utf-8?B?Ymo0SDVkWjJnejl3cFBPOTFGRUlwL3JlM0JNNUVSMkFyazZNNTIvbmxCQURh?=
+ =?utf-8?B?dmE3ZkhHbjRIdGxCYVJPYmFFMWJYK0Y0Y2xVWFJnRk9lMWo5cE5JTkxlRDdn?=
+ =?utf-8?B?cFNyclRjQVAwV21hVUdDYWdmckhNSytDU09EY1FYRlBuZnJQTDlhMGZyaHhh?=
+ =?utf-8?B?QnJYL0pKNEhQZnhLZ1dPZjBIQnRadTA2S2E0UUdON2tmK0NveUt0NXFjY0dM?=
+ =?utf-8?B?VzRxUVJBdmZZTTRmQnpxQ0VRS3FoMGRqakc3dlVtUDF6dnVya3ZmT3dxdmpL?=
+ =?utf-8?B?cEw0aUQ3aUdmbVljVFRWSlE4MUhCTEhKME12OGRmK29aT2FqeUJyRHpXNzhH?=
+ =?utf-8?B?NnBvRktabEc2U2ZzanVuN1Vmdit3VFdCTmJrRGdHZFpEenRhOVhhRzdXMnk1?=
+ =?utf-8?B?dFpUbGFhNFYzVEFjVEJhM3BVWVpxUjNBK2dzb3l1MUg5d2N5YStvS3MvRngy?=
+ =?utf-8?B?bUxhM0o2MnczNHdzSTdpbmtmM3BjWGY2andqa0prdmJBSUxNTEp3NXd3anli?=
+ =?utf-8?B?WGRSWndJZ3ZSZ0JTMWVQSEIrN2REK0c4YU1DUmVxdkhIL2pucitKeWZpbFBm?=
+ =?utf-8?B?UXBhMXpVK1RCc2ZMOVYrcllLbllmU0tVcFJrWGVBYUJKRUQ5T3JpTmIyTVpj?=
+ =?utf-8?B?eHBobEZOcU5taDhJTy9jbXl0VmorY0xlSkhaVzZKMFBIQnd6WGNSTjJ3ZzI4?=
+ =?utf-8?B?S3NhcDdldy81ZElmZ3VmYjRPQ2oxZnZpeTF5STUwSjFmekNiQ1Q1Y0VKa1JN?=
+ =?utf-8?B?T05sNUpNM1k0K21EQSsxOVlvQkxJdEYyNENRZ1NodjcxNC9rL1BERXNER0tL?=
+ =?utf-8?B?Q2FpWVN3VDgzODhPZTdtQTlUVzg3V2VRVjduRG9yU1g1SDFoUDZ6MThxWnhI?=
+ =?utf-8?B?SXczcnY4aXJ0MTdrUlg2K0NvcEYzTjg4QTYzZjNiNkt1N1BVYnFmTWZuT0Ez?=
+ =?utf-8?B?WFdyRGlTVlR4RDhZQjh0aEhZM3Y5Wkd4dzNEUm9HMkNneEwycEJkeWhad080?=
+ =?utf-8?B?dmJ3WmpEU1RaVzNXVkc0bEUxVHRKTXQzWEdKOE41YnE3dXdVSDNTSXQwQjNu?=
+ =?utf-8?B?bk0ySTlmcVFDcXVLR201dTFsM3BUWXlPR0ErRGwwQ2dLOFlURWhqWGpQK3Bx?=
+ =?utf-8?B?NVpiWUtkbG1aNGY2Q25GKy9lU0ZRT2IzU1RtcnE2MkNqTGN0a05LelRDTU8r?=
+ =?utf-8?B?dUk1cnpMWFpUMmNaMUJucCtiQUhCVVpvcThtK29LMGZuM0duOVdOcmdkbVo3?=
+ =?utf-8?B?bERSTHI3TWRSWkJBUmtuNkp1cThkcGVhamozMmZnNi9XRWo2S0tZKzlEN09O?=
+ =?utf-8?B?K1kvNkdJVG9MS2FIRUlMQVloUzNidXJaSDJOdXlNUnZpS2V0WWFML2J6b2F5?=
+ =?utf-8?B?Z3NyL3lZWWhibSt2bXZ6NkxiTGU3N1JWQzlLY2o2Qkh5QUVmdWdQcGhWc3VI?=
+ =?utf-8?B?Z0tESzhUSjAwZUk3TStwZU92VHNOS1U2TUhKTGk0Ny9aQytxa05wNzIrVUgz?=
+ =?utf-8?B?M0UraG4xd00rbkdKOGVST2lVSzFOTGJnZU9GT3NaVlZpa1pZNDdwR25GUVc1?=
+ =?utf-8?B?MlJSeXlId1BPMnNjR2pDTU5BYlFSNmVtNVIyS3RYcWFZZ1lwQ0ZhVFRKT2dP?=
+ =?utf-8?B?ay9qWHhIa1NJcnUybi9nalBvZDVRcXZtZTNWMDltU3plYzcwQ3BBZzdCYTlQ?=
+ =?utf-8?B?SC91MXREZytFZDBsUVA1a2JEeHlmVFhKTmNoS1hIeFBKZk56Rk8wWW9nWjEw?=
+ =?utf-8?B?ZGVnMzAyaEJIWCtCeFUwcTh3a1FldnM1aVdDWEcwWWI0QW1jU0xkYmcxcXYz?=
+ =?utf-8?B?MWdYaE83RFhIRitsOGg5Ylp3ZHJZSndNOE5BdFNWTk5FMldxWTFid2Q0QStl?=
+ =?utf-8?B?MmRjdWo1ZGNFTHplL1FvTUZsWFNDQ1JmK3h0WXVGeHBOa2pOUlc1NTUzTTZN?=
+ =?utf-8?Q?vC4BSbvjgKY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NENXbWZRbmN2K2cxWXdqb3FDb0NHMlNQWUpmSTJOQ0NQVXNDMWllTjF6TUhM?=
- =?utf-8?B?b1dTVm5pZ2Z5aTQzQXpWYjQxbXZHcGcvM3BiSGxyMlpnMmo0SHFiWkdlMS9E?=
- =?utf-8?B?dkxsM3RDZXFDTWVRUkNmRko2emVnZ3JBZ3JSZGQ5TnJ2bzVzMmtWMDZFUGd2?=
- =?utf-8?B?SUIzV2U5bElQdVdxUi8ra2pZYlZicTcxak9ueXRhem9NQXlIS1dmWVUrK1ln?=
- =?utf-8?B?SHF2YjRGUUpIOVhYYmRuc3l3eFpRbmlkOWZjSDRKU2cwdlZKNm1ONVREN0hz?=
- =?utf-8?B?VXpzZ01WaGJ4ZHNjWFNDdmI2M2ptZy9ZUjNDWENnUThCekdvQ1FZZC81N01D?=
- =?utf-8?B?WnZ4cThtMkcwZHd0SkFpVXlSV2dsSnQ5aXJKaXhXRkUxby9ZdTVReHBTUitH?=
- =?utf-8?B?aC9DQXhQOFNjWlNBb1o2UFJ2dGVTaGNucTFWZlVZbFN1c0kzQkhjNGtJbjQz?=
- =?utf-8?B?aDRUNmFNQTFWQWpJUGZVYTJjZmpCZ2QwUlV3ME9KNE53THZnOTEvT0FSdkx1?=
- =?utf-8?B?TFI1Vm5SMnlDTHU0RjcyekgyY00zd2lOd3RPMlE3OWRiNGJiUmxWa00rUm5x?=
- =?utf-8?B?R0YwbGpaVEY3NUlhdW1vaVB6UUt1aEdPY2ZkeWhqUjRnbmVBZHVmTUQwVzBE?=
- =?utf-8?B?MVNzWHBGRmhENXEyQW1jN1UyeWZ6SnBoSWtsdU9IYTErU0s5MnVKeVdBeWpa?=
- =?utf-8?B?c0xRaWtaUlRzMUJaMVlTQVJOeTFDZHFnamlZdjBuelhza1FhNzQ2ZFhQb1dT?=
- =?utf-8?B?V2tnaHlpOCtjVXllVmZ5b2xKR3VXSmdPYUtOZ0lLcFdsQjF5T000dS9heUxN?=
- =?utf-8?B?WkY5NWZ4M0JMd0I2NnBxWW8yUEVHTVprRHBUck1pZVA5cUNUSDBhQ1VwOHBL?=
- =?utf-8?B?VEI3MHlDaHJIYjdQSCtQOHlzbFBsRm5vaFFtRWQ5TjFkL0hFZ3VJektBYThI?=
- =?utf-8?B?dTRQWSswQU9UTC9iWkMwQ1kxVHhLYnNWTlhlb0dxQWppS0xjT3dEOGZYYTFT?=
- =?utf-8?B?OExEWHBRN2s1enFhTHJRbEtsbVpBYkY1cEpGYWhvZHMvNUJ2MCtxQUYrRE1M?=
- =?utf-8?B?dXl6R0x6NVBKVGJBV2lxejRTa1VWbEN5b0NFRldkcU13ZWRqTjA5aktyejlP?=
- =?utf-8?B?V0ZTSDVjYnY3WkRoUGY0UTB4cUI5SzlCb1p1dUtDNVlRY3dBQXpXU09XVFRt?=
- =?utf-8?B?ZmNTSlp4eGxCMnhBNng3YTZlTTZYcTdCZUl6aThQTTdOakR5SG5DaXE4ck5J?=
- =?utf-8?B?dk9EbHE2QXg0YWpPL1VxZVVuai9RWnRmWVhCRVdEZmU5elNIUG5JSWFoYXln?=
- =?utf-8?B?UDArSjRCWk13WnFzVE0zS3dZNXBwenpxdjhJY2x5UVUrM3ZLMk5jOXJ4VzZi?=
- =?utf-8?B?ajg4L1pXa0g4Zzl3MjJvSVRFdnBrZ2JwczlIL3RVUmFnSmpWMGNDYytUM0tC?=
- =?utf-8?B?bEFOSHZWOEg1amtwUlVZVWE2ZVNWZnIzVmtoTXMzRUhMNXQvVTlQak96cFBF?=
- =?utf-8?B?eWdhZ0c0c0lGS3VoZWZmVWxEWVZ3TlNJWmVzZkxsY0ppUXpXckE4WStBa0g0?=
- =?utf-8?B?aCtIblMxWVJMQTVMdHMxbk5TLzdCUTBqMWlmSjNRMTRWeFBza293SnJPWWhE?=
- =?utf-8?B?WTgyaGR4Rzc0d0VBQUgvM0tteFlCNmRlckc5UmRIYmQ0dXZ6Q0tVVkcvY2s5?=
- =?utf-8?B?VkZsWjZmd0hHREhaNkhpc2pkaEp6NHFsZTNnaGd3WlYvbTdkaHgwOFgvYmNL?=
- =?utf-8?B?bU1qQ3RmcEZ5YUV6S1B2U00vaWU1OVJaenQ2cUVwMTFTS1NvMk5UUXRua0Rr?=
- =?utf-8?B?VSs3Yktrc0Z0YXVOdDlGSWN0YkRYcmxGRzlCeU1jVmdhWWpYdUZJOGoyVjhl?=
- =?utf-8?B?Vy9hdHZwQjhzcEVFKzhHRHVONEE1QkxPSCtvTzZqVjhSMnBuOU5mK3h3KzBU?=
- =?utf-8?B?aXdQUjU3c3dqajBxcHozcG5kN29MU0lHQS9ibVArNHlDL3E2K1krRTZiSkFO?=
- =?utf-8?B?MkphZ1dhZzgvM1o1KzZHemZoM1g0MThxTFNVZGJSWndqVzJ0TWY3Q0R5WHNT?=
- =?utf-8?B?ajVjeTd4R0pnS21yWDNKTksyQ3JMcCsxd2F2aytyZ3dISWF0aWNDbWhKZjRX?=
- =?utf-8?Q?Yb96xDY8CCMsNJRkZpH3p0syk?=
+	=?utf-8?B?LzZxb05ZYmVwRGxhWWdPYzBuRDUyT050Y0E1eHFLQUVjR09OVGpNQVE4ZWFy?=
+ =?utf-8?B?WnoxcHdzbXE0QzlxSERzTERqUWZqMTk4Tms3TjU0cGpYMzdzSGtMRmtaMkEy?=
+ =?utf-8?B?c3JYY0ZDU2l6My8rSTFHWlRESHhzTjVtRk9uMWtzbWViQWN4R3VKdm0zUVZQ?=
+ =?utf-8?B?RWc1a0p4M1lrbUdNTGVnV3JzbGtIc2hOQXR1bEIwV1B4UlZRa3dxZzJUUi96?=
+ =?utf-8?B?eUEvd0VGRGQzSTJlSU5VV2pOYi90K2tBWHJlbjRwaGlrODJYaGhPSXVIZGlP?=
+ =?utf-8?B?MUl6TjhjZVVKeitOV3dtaGw5d1VNcGNuL1IxcGxXSVlab1lyNmdtck5NUGMw?=
+ =?utf-8?B?bUpOOXhWaUtMMVRsZE9MRTRqc09xV29sNnZMUzNoWW5DaU5XeGdOcjB6Q2dz?=
+ =?utf-8?B?WGR0eGVKMlVzSml6UFNyMmI1Mk5MMlNGSk40NmV4MnQ0dndSVER2VUdjUnNQ?=
+ =?utf-8?B?Y3hhT01HZVRaUjY3NnFKQ1hHVU5kRGQ4N0xPQ2prazRyWXZYcUdQZHRCZ3o1?=
+ =?utf-8?B?bFBtR2ticmdOWDA1TGNERnZYMmU0dGxyak5XMHdoanRkZXJNWFkyMzQyNE5D?=
+ =?utf-8?B?S2tVSWpBeE1tTS9ud21tVHhndVQrNTdnUWJ1ckUySGxoRkhOdjljaE9KSGFX?=
+ =?utf-8?B?RVduaHR4cVZ3Y29XbzIyZzl0cmFmUzRRTEhPMDRmQWRxYU5CQWJTamtjYTVU?=
+ =?utf-8?B?R1czWllDenVKUHhQNTVjNzZlZHdhYTVJTGwwRFNEb0dTTmE5WnVJTTdKbjE2?=
+ =?utf-8?B?UC9BaVZsYkFCektpR3ZNZkpmNi9qbmE5OWZUazhmQWtwbTdSUW1UUlJsSTdt?=
+ =?utf-8?B?aU9wKytUUmxIZk4zeEJtTDlETUpSM2kzV25YeWpyZnJZbnRrdE9teE1Xa3lx?=
+ =?utf-8?B?NkFnTGd1d0NXL0wwclFqU04wY3gwejNHUzlJZWFmcmRqcWkvTjU5QmdvMWNI?=
+ =?utf-8?B?YXZrODU5MWM5VGF1NG9ZYllvd3dSQ2taVlI5MTIyVkdqUXZxR1o4TUZ6Rmt0?=
+ =?utf-8?B?NzRIanl5QzBVZ0duMkd0QXNscXgwK2hXSHBtUXVoWUM3alJhVXh3c2VZS0pR?=
+ =?utf-8?B?d1pyYkJwbGhiUm0wWWJsQ1Zsb00wM3plQjFLVVZEWFE3K2pRdk1MVW1wcGlz?=
+ =?utf-8?B?ZlBlbFdiSkx0NmZZM2RGK1g5WVBNcWc4eXhOMnFucG9hN2FlM0pzdThqbHhu?=
+ =?utf-8?B?U21QL3NURDFSRzFHcDRVdVlFRHo2WGlaK1UxUGVISmZ1SGNLdU5sL0V4WFNs?=
+ =?utf-8?B?bnFocFZvS0p6TkxFczU0azNhaTVMNDB5dnR3SXlNdTBVTjFJYTJmSkxkam5r?=
+ =?utf-8?B?bXM3T1Awb1hsTGlqb0JMWEVYTUtjUGJKVXh1YXJKWHhVL3FoL2w5ZC84aUlV?=
+ =?utf-8?B?SlVYYi9Zc3VJa0VISjhJTG03SEtRcXJSOC9VNEs0dy9MK1NnS1FMZGkzaFda?=
+ =?utf-8?B?cTJjS0RpdU9VaXpNZ1pJQmNGUnRyMXJteEgvSVI2b1AvRHRndkFJakErQ05l?=
+ =?utf-8?B?QXdnVGtrSktiaGgzZTRWeFVkL01DWEJ5WHljd01zWS81OUxrWUpKelRXaFc4?=
+ =?utf-8?B?aUVuOTYrMTNkOHRUZUN2SGpVdlVVY0JBZzc0K3hnRnJGN20rZWFEOFgzZFFN?=
+ =?utf-8?B?aEVVUHZFVVROUWFwK3ZnREJpeE9pVEhZbmR3dVM2enVic2RYR2lRTmhSOHFh?=
+ =?utf-8?B?NitqVnFjOHZ4OXozREVLTmtqSnRPSytSNTMrQUV4dUtvRHpEWDdLTUNNc1Zt?=
+ =?utf-8?B?aWZqQTRCWGdxcUpFNWFvU1pTZFJzd3VPREp3dWx1eGoxTlRZMXR1Qk00MHlp?=
+ =?utf-8?B?K2t3REZMcGtsU3NlMU9XY2czSkhZMzB6d2RrOGczZi9zRkpFUnNNV1pHODhh?=
+ =?utf-8?B?Vkp6Nlp6NERmY05aTXdwRWRHY0x0Y3ZoR3pHOGlYYjRxNXNGVythQlpKWVdM?=
+ =?utf-8?B?R016M0crOENNS1QxRW9WS1ovU2h2bVdqRENwd0NFT3NiSjl1dFJiSzVMSzZl?=
+ =?utf-8?B?RGJ0eWluSDBBZG9UT1VJdEpTWnQ0cjdaUVphemh4YTRLKzhENTZoNGxETlJT?=
+ =?utf-8?B?aHYzcm5NNVN3QXRMYWEweG53V3JWbC9oei9RU1hINExNNFJnanUxVm9laXpJ?=
+ =?utf-8?Q?OwP/AqSe/Bz9C+805jsNBnztt?=
 X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e52b4126-2dff-4e9d-eb89-08ddba019b53
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96b3ef41-8f25-4cdc-a02f-08ddba02c184
 X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 07:17:02.1439
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 07:25:15.7991
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fz2nBwcDWE77c6TrCzP8tMZampk5yR5I/KaHYoeRF/FUMRuijKyE7koVfBSF3GqzANmexJVYgQc1jvmyXOUoGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB6613
+X-MS-Exchange-CrossTenant-UserPrincipalName: hTAfOO1eSN5zV+mp1BQwzYHhvNDGnXToygx1qv1JiWh4vkNGmqAaTMrLULJtz5SvY94fgGmXf53VdSShcNW/eQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7657
 
 Hi Jerome:
 
@@ -165,238 +166,93 @@ Hi Jerome:
 On 7/2/2025 11:26 PM, Jerome Brunet wrote:
 > [ EXTERNAL EMAIL ]
 >
-> Replace marcros defining pclks with the common one, reducing code
-> duplication.
+> Device composite clocks tend to reproduce the usual sel/div/gate
+> arrangement.
+>
+> Add macros to help define simple composite clocks in the system.
+>
+> The idea is _not_ to replace all instances of mux, div or gate with those
+> macros. It is rather to use it for recurring and/or simple composite
+> clocks, reducing controller verbosity where it makes sense. This should
+> help reviews focus on the tricky parts.
 >
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->   drivers/clk/meson/axg-aoclk.c      | 35 +++++++++-----------------
->   drivers/clk/meson/c3-peripherals.c | 34 +++++++-------------------
->   drivers/clk/meson/g12a-aoclk.c     | 50 +++++++++++++++-----------------------
->   drivers/clk/meson/gxbb-aoclk.c     | 33 +++++++++----------------
->   4 files changed, 51 insertions(+), 101 deletions(-)
+>   drivers/clk/meson/meson-clkc-utils.h | 57 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 57 insertions(+)
 >
-> diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-> index 74c2f51424f11cc04a80a3a4918e4de0a5d11d08..902fbd34039cc06d512f1237a1e5d9050fd00b4b 100644
-> --- a/drivers/clk/meson/axg-aoclk.c
-> +++ b/drivers/clk/meson/axg-aoclk.c
-> @@ -34,30 +34,19 @@
->   #define AO_RTC_ALT_CLK_CNTL0   0x94
->   #define AO_RTC_ALT_CLK_CNTL1   0x98
+> diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
+> index 95d9f85f7ca22f63a16f8665d6f7a250b21bfdb8..ddadf14b4923781d8807546f35a1ba2e6a8a894a 100644
+> --- a/drivers/clk/meson/meson-clkc-utils.h
+> +++ b/drivers/clk/meson/meson-clkc-utils.h
+> @@ -48,4 +48,61 @@ struct clk_regmap _name = {                                          \
+>   #define MESON_PCLK_RO(_name, _reg, _bit, _pdata, _flags)               \
+>          __MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pdata, _flags)
 >
-> -#define AXG_AO_GATE(_name, _bit, _flags)                               \
-> -static struct clk_regmap axg_ao_##_name = {                            \
-> -       .data = &(struct clk_regmap_gate_data) {                        \
-> -               .offset = (AO_RTI_GEN_CNTL_REG0),                       \
-> -               .bit_idx = (_bit),                                      \
-> -       },                                                              \
-> -       .hw.init = &(struct clk_init_data) {                            \
-> -               .name =  "axg_ao_" #_name,                              \
-> -               .ops = &clk_regmap_gate_ops,                            \
-> -               .parent_data = &(const struct clk_parent_data) {        \
-> -                       .fw_name = "mpeg-clk",                          \
-> -               },                                                      \
-> -               .num_parents = 1,                                       \
-> -               .flags = (_flags),                                      \
-> -       },                                                              \
-> -}
-> +static const struct clk_parent_data axg_ao_pclk_parents = { .fw_name = "mpeg-clk" };
->
-> -AXG_AO_GATE(remote,    0, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(i2c_master,        1, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(i2c_slave, 2, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(uart1,     3, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(uart2,     5, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(ir_blaster,        6, CLK_IGNORE_UNUSED);
-> -AXG_AO_GATE(saradc,    7, CLK_IGNORE_UNUSED);
-> +#define AXG_AO_GATE(_name, _bit, _flags)                      \
-> +       MESON_PCLK(axg_ao_##_name, AO_RTI_GEN_CNTL_REG0, _bit, \
-> +                  &axg_ao_pclk_parents, _flags)
-> +
-> +static AXG_AO_GATE(remote,     0, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(i2c_master, 1, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(i2c_slave,  2, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(uart1,      3, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(uart2,      5, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(ir_blaster, 6, CLK_IGNORE_UNUSED);
-> +static AXG_AO_GATE(saradc,     7, CLK_IGNORE_UNUSED);
->
->   static struct clk_regmap axg_ao_cts_oscin = {
->          .data = &(struct clk_regmap_gate_data){
-> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
-> index e9c1ef99be13d0542b8a972ceffe69c8a9977118..02c9820cd98655e57a290859b595cf09d39e5fe3 100644
-> --- a/drivers/clk/meson/c3-peripherals.c
-> +++ b/drivers/clk/meson/c3-peripherals.c
-> @@ -164,30 +164,13 @@ static struct clk_regmap c3_rtc_clk = {
->          },
->   };
->
-> -#define C3_PCLK(_name, _reg, _bit, _fw_name, _ops, _flags)             \
-> -struct clk_regmap c3_##_name = {                                       \
-> -       .data = &(struct clk_regmap_gate_data){                         \
-> -               .offset = (_reg),                                       \
-> -               .bit_idx = (_bit),                                      \
-> -       },                                                              \
-> -       .hw.init = &(struct clk_init_data) {                            \
-> -               .name = "c3_" #_name,                                   \
-> -               .ops = _ops,                                            \
-> -               .parent_data = &(const struct clk_parent_data) {        \
-> -                       .fw_name = (_fw_name),                          \
-> -               },                                                      \
-> -               .num_parents = 1,                                       \
-> -               .flags = (_flags),                                      \
-> -       },                                                              \
-> -}
-> +static const struct clk_parent_data c3_sys_pclk_parents = { .fw_name = "sysclk" };
->
-> -#define C3_SYS_PCLK(_name, _reg, _bit, _flags)                         \
-> -       C3_PCLK(_name, _reg, _bit, "sysclk",                            \
-> -               &clk_regmap_gate_ops, _flags)
-> +#define C3_SYS_PCLK(_name, _reg, _bit, _flags) \
-> +       MESON_PCLK(c3_##_name, _reg, _bit, &c3_sys_pclk_parents, _flags)
->
-> -#define C3_SYS_PCLK_RO(_name, _reg, _bit)                              \
-> -       C3_PCLK(_name, _reg, _bit, "sysclk",                            \
-> -               &clk_regmap_gate_ro_ops, 0)
-> +#define C3_SYS_PCLK_RO(_name, _reg, _bit) \
-> +       MESON_PCLK_RO(c3_##_name, _reg, _bit, &c3_sys_pclk_parents, 0)
+> +/* Helpers for the usual sel/div/gate composite clocks */
+> +#define MESON_COMP_SEL(_prefix, _name, _reg, _shift, _mask, _pdata,    \
+> +                      _table, _dflags, _iflags)                        \
+> +struct clk_regmap _prefix##_name##_sel = {                             \
 
 
-Adding 'SoC' prefix to clock names appears redundant and inconsistent - only
-'sys_clk' carries this prefix while all other clock names don't.
+Can we apply the same naming style to the '**PCLK' clocks? The SoC prefix in
+clock names looks inconsistent and awkward.
 
 
->
->   static C3_SYS_PCLK(sys_reset_ctrl,     SYS_CLK_EN0_REG0, 1, 0);
->   static C3_SYS_PCLK(sys_pwr_ctrl,       SYS_CLK_EN0_REG0, 3, 0);
-> @@ -290,9 +273,10 @@ static C3_SYS_PCLK(sys_vc9000e,            SYS_CLK_EN0_REG2, 2, 0);
->   static C3_SYS_PCLK(sys_pwm_mn,         SYS_CLK_EN0_REG2, 3, 0);
->   static C3_SYS_PCLK(sys_sd_emmc_b,      SYS_CLK_EN0_REG2, 4, 0);
->
-> -#define C3_AXI_PCLK(_name, _reg, _bit, _flags)                         \
-> -       C3_PCLK(_name, _reg, _bit, "axiclk",                            \
-> -               &clk_regmap_gate_ops, _flags)
-> +static const struct clk_parent_data c3_axi_pclk_parents = { .fw_name = "axiclk" };
+> +       .data = &(struct clk_regmap_mux_data) {                         \
+> +               .offset = (_reg),                                       \
+> +               .mask = (_mask),                                        \
+> +               .shift = (_shift),                                      \
+> +               .flags = (_dflags),                                     \
+> +               .table = (_table),                                      \
+> +       },                                                              \
+> +       .hw.init = &(struct clk_init_data){                             \
+> +               .name = #_name "_sel",                                  \
+> +               .ops = &clk_regmap_mux_ops,                             \
+> +               .parent_data = _pdata,                                  \
+> +               .num_parents = ARRAY_SIZE(_pdata),                      \
+> +               .flags = (_iflags),                                     \
+> +       },                                                              \
+> +}
 > +
-> +#define C3_AXI_PCLK(_name, _reg, _bit, _flags) \
-> +       MESON_PCLK(c3_##_name, _reg, _bit, &c3_axi_pclk_parents, _flags)
->
->   /*
->    * NOTE: axi_sys_nic provides the clock to the AXI bus of the system NIC. After
-> diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-> index 45e4df393feb6f916b6e035ad71e379e6e30ee99..96981da271fa1453ebbe433e36cff4409661fa6a 100644
-> --- a/drivers/clk/meson/g12a-aoclk.c
-> +++ b/drivers/clk/meson/g12a-aoclk.c
-> @@ -37,22 +37,10 @@
->   #define AO_RTC_ALT_CLK_CNTL0   0x94
->   #define AO_RTC_ALT_CLK_CNTL1   0x98
->
-> -#define G12A_AO_PCLK(_name, _reg, _bit, _flags)                                \
-> -static struct clk_regmap g12a_ao_##_name = {                           \
-> -       .data = &(struct clk_regmap_gate_data) {                        \
-> -               .offset = (_reg),                                       \
-> -               .bit_idx = (_bit),                                      \
-> -       },                                                              \
-> -       .hw.init = &(struct clk_init_data) {                            \
-> -               .name =  "g12a_ao_" #_name,                             \
-> -               .ops = &clk_regmap_gate_ops,                            \
-> -               .parent_data = &(const struct clk_parent_data) {        \
-> -                       .fw_name = "mpeg-clk",                          \
-> -               },                                                      \
-> -               .num_parents = 1,                                       \
-> -               .flags = (_flags),                                      \
-> -       },                                                              \
-> -}
-> +static const struct clk_parent_data g12a_ao_pclk_parents = { .fw_name = "mpeg-clk" };
+> +#define MESON_COMP_DIV(_prefix, _name, _reg, _shift, _width,           \
+> +                      _dflags, _iflags)                                \
+> +struct clk_regmap _prefix##_name##_div = {                             \
+> +       .data = &(struct clk_regmap_div_data) {                         \
+> +               .offset = (_reg),                                       \
+> +               .shift = (_shift),                                      \
+> +               .width = (_width),                                      \
+> +               .flags = (_dflags),                                     \
+> +       },                                                              \
+> +       .hw.init = &(struct clk_init_data) {                            \
+> +               .name = #_name "_div",                                  \
+> +               .ops = &clk_regmap_divider_ops,                         \
+> +               .parent_hws = (const struct clk_hw *[]) {               \
+> +                       &_prefix##_name##_sel.hw                        \
+> +               },                                                      \
+> +               .num_parents = 1,                                       \
+> +               .flags = (_iflags),                                     \
+> +       },                                                              \
+> +}
 > +
-> +#define G12A_AO_PCLK(_name, _reg, _bit, _flags) \
-> +       MESON_PCLK(g12a_ao_##_name, _reg, _bit, &g12a_ao_pclk_parents, _flags)
->
->   /*
->    * NOTE: The gates below are marked with CLK_IGNORE_UNUSED for historic reasons
-> @@ -63,22 +51,22 @@ static struct clk_regmap g12a_ao_##_name = {                                \
->    *  - add a comment explaining why the use of CLK_IGNORE_UNUSED is desirable
->    *    for a particular clock.
->    */
-> -G12A_AO_PCLK(ahb,      AO_CLK_GATE0,    0, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(ir_in,    AO_CLK_GATE0,    1, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(i2c_m0,   AO_CLK_GATE0,    2, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(i2c_s0,   AO_CLK_GATE0,    3, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(uart,     AO_CLK_GATE0,    4, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(prod_i2c, AO_CLK_GATE0,    5, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(uart2,    AO_CLK_GATE0,    6, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(ir_out,   AO_CLK_GATE0,    7, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(saradc,   AO_CLK_GATE0,    8, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(ahb,       AO_CLK_GATE0,    0, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(ir_in,     AO_CLK_GATE0,    1, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(i2c_m0,    AO_CLK_GATE0,    2, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(i2c_s0,    AO_CLK_GATE0,    3, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(uart,      AO_CLK_GATE0,    4, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(prod_i2c,  AO_CLK_GATE0,    5, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(uart2,     AO_CLK_GATE0,    6, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(ir_out,    AO_CLK_GATE0,    7, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(saradc,    AO_CLK_GATE0,    8, CLK_IGNORE_UNUSED);
->
-> -G12A_AO_PCLK(mailbox,  AO_CLK_GATE0_SP, 0, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(m3,       AO_CLK_GATE0_SP, 1, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(ahb_sram, AO_CLK_GATE0_SP, 2, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(rti,      AO_CLK_GATE0_SP, 3, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(m4_fclk,  AO_CLK_GATE0_SP, 4, CLK_IGNORE_UNUSED);
-> -G12A_AO_PCLK(m4_hclk,  AO_CLK_GATE0_SP, 5, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(mailbox,   AO_CLK_GATE0_SP, 0, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(m3,                AO_CLK_GATE0_SP, 1, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(ahb_sram,  AO_CLK_GATE0_SP, 2, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(rti,       AO_CLK_GATE0_SP, 3, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(m4_fclk,   AO_CLK_GATE0_SP, 4, CLK_IGNORE_UNUSED);
-> +static G12A_AO_PCLK(m4_hclk,   AO_CLK_GATE0_SP, 5, CLK_IGNORE_UNUSED);
->
->   static struct clk_regmap g12a_ao_cts_oscin = {
->          .data = &(struct clk_regmap_gate_data){
-> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-> index 2bf45fd7fe4ba0783e736fbbb126209870985b22..c7dfb3a06cb5f70c98f65bb91b937e1b870b34fe 100644
-> --- a/drivers/clk/meson/gxbb-aoclk.c
-> +++ b/drivers/clk/meson/gxbb-aoclk.c
-> @@ -23,29 +23,18 @@
->   #define AO_RTC_ALT_CLK_CNTL0   0x94
->   #define AO_RTC_ALT_CLK_CNTL1   0x98
->
-> -#define GXBB_AO_PCLK(_name, _bit, _flags)                                      \
-> -static struct clk_regmap gxbb_ao_##_name = {                           \
-> -       .data = &(struct clk_regmap_gate_data) {                        \
-> -               .offset = AO_RTI_GEN_CNTL_REG0,                         \
-> -               .bit_idx = (_bit),                                      \
-> -       },                                                              \
-> -       .hw.init = &(struct clk_init_data) {                            \
-> -               .name = "gxbb_ao_" #_name,                              \
-> -               .ops = &clk_regmap_gate_ops,                            \
-> -               .parent_data = &(const struct clk_parent_data) {        \
-> -                       .fw_name = "mpeg-clk",                          \
-> -               },                                                      \
-> -               .num_parents = 1,                                       \
-> -               .flags = (_flags),                                      \
-> -       },                                                              \
-> -}
-> +static const struct clk_parent_data gxbb_ao_pclk_parents = { .fw_name = "mpeg-clk" };
->
-> -GXBB_AO_PCLK(remote,           0, CLK_IGNORE_UNUSED);
-> -GXBB_AO_PCLK(i2c_master,       1, CLK_IGNORE_UNUSED);
-> -GXBB_AO_PCLK(i2c_slave,                2, CLK_IGNORE_UNUSED);
-> -GXBB_AO_PCLK(uart1,            3, CLK_IGNORE_UNUSED);
-> -GXBB_AO_PCLK(uart2,            5, CLK_IGNORE_UNUSED);
-> -GXBB_AO_PCLK(ir_blaster,       6, CLK_IGNORE_UNUSED);
-> +#define GXBB_AO_PCLK(_name, _bit, _flags)                      \
-> +       MESON_PCLK(gxbb_ao_##_name, AO_RTI_GEN_CNTL_REG0, _bit, \
-> +                  &gxbb_ao_pclk_parents, _flags)
+> +#define MESON_COMP_GATE(_prefix, _name, _reg, _bit, _iflags)           \
+> +struct clk_regmap _prefix##_name = {                                   \
+> +       .data = &(struct clk_regmap_gate_data) {                        \
+> +               .offset = (_reg),                                       \
+> +               .bit_idx = (_bit),                                      \
+> +       },                                                              \
+> +       .hw.init = &(struct clk_init_data) {                            \
+> +               .name = #_name,                                         \
+> +               .ops = &clk_regmap_gate_ops,                            \
+> +               .parent_hws = (const struct clk_hw *[]) {               \
+> +                       &_prefix##_name##_div.hw                        \
+> +               },                                                      \
+> +               .num_parents = 1,                                       \
+> +               .flags = (_iflags),                                     \
+> +       },                                                              \
+> +}
 > +
-> +static GXBB_AO_PCLK(remote,    0, CLK_IGNORE_UNUSED);
-> +static GXBB_AO_PCLK(i2c_master,        1, CLK_IGNORE_UNUSED);
-> +static GXBB_AO_PCLK(i2c_slave, 2, CLK_IGNORE_UNUSED);
-> +static GXBB_AO_PCLK(uart1,     3, CLK_IGNORE_UNUSED);
-> +static GXBB_AO_PCLK(uart2,     5, CLK_IGNORE_UNUSED);
-> +static GXBB_AO_PCLK(ir_blaster,        6, CLK_IGNORE_UNUSED);
->
->   static struct clk_regmap gxbb_ao_cts_oscin = {
->          .data = &(struct clk_regmap_gate_data){
+>   #endif
 >
 > --
 > 2.47.2
