@@ -1,194 +1,208 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A4C1D63F0;
-	Thu,  3 Jul 2025 08:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A82D3A64
+	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 09:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532405; cv=none; b=CIxJWtj9Vs/yVZrVWh30fR6FoTcsc/vN6DABadz6Zlm8dkT9WgWIN7eGAQmLujLyGEbKFEbJwOTSh6pmr10+zp0cVqMAJxYhGFyGjD6N8f4aeFFOP3UKa+rAeEVt3QY68gwdgKhswjjj3dyE3ZxVt46XUEkCwRKdefAuYJclRDs=
+	t=1751533351; cv=none; b=ZU7fOrYuU2siRYaB9LhzRQVWG7l+YjiowEVh1YXAlCjdVKXl5ZFAM+MurQG+GU7+BxKbJENoCGL55JcD9vCu9rahzqs6PA6L8GSPPe/UJz+y/rClHuBtlBPdgZBXCjmfleril0Z5BYSeWKLw/q1hMNTuibKZqoNMlyXJp1Be5gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532405; c=relaxed/simple;
-	bh=oGnwNU54b6KjKEBNmnldSK7G2EHT2bg7bXi44Ajxx2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mGgnbG4emSswKOmOaqjQ+ux4ph16qD3PTorXTNW8O3j5peN42QuonMuObOdRk27z4GWAtc/tBo2pVRwhcoPA03jH5np7hEGMU0u5tkMr6X4nNef+KpOc5kOzcYl4L1vTHtUBmQFK6+wJHrn3EgHFCtL68zQV7Q4O//DxK6dUU7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LrYxjxAT; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1751533351; c=relaxed/simple;
+	bh=wSBzuFutXlxhtQUuNemypiuvl59GnjyGrzdoy8POasE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fyZElS4EYQOTs01dCfb0PJLxNaNE59EfqlYA/G4YYSMwy2WlXEv5GHBrSz0IZP+sc0gtb0aiBWQUPIMh8tdHDFUZ7MqKVxS6TLSxvQ0ZdS+ECaG5/V++rdlnAtsz19dl4RN/X+8i0SXs5zf9EOKe4Tzz54gB8vmHNyKH8yfUZQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xwrsGYbr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LrYxjxAT"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7AD90432F4;
-	Thu,  3 Jul 2025 08:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751532400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/cYj0q/giLszIR3kilyQWrZxMIeIjICge0MHLXkjJFo=;
-	b=LrYxjxAThrFQpeyWKPo7KHXblOcrN7BiWBU1ybIgmr/F8jlZn3oMMuFSHLRpDBJCmRCA1w
-	MsFwFPjimMNCZQBEGw0AUhUDK+RAMDTtWJ2veBlFxBS70NDSyClS2oazJsm9GXuSSiABnA
-	oV403Rb+nr5PpxxEXLcxSLdmT4WfVx+scbhDaUmQmv71EzmVWmfh952msl/4kd5FhS3UgG
-	H6v5SK89osI7/Zr7u5WkZX5kRsBq/netzt1snf3UAWVuxgU+g1X7fWrnla9+ir1xgj8s0A
-	kz1ZlldSa5AVR+gsrbQOELucUNukpblb0eV9CI8FzxxdgnsPKwKF60r3zk4j5Q==
-Date: Thu, 3 Jul 2025 10:46:36 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Pengutronix Kernel Team
- <kernel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
- Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len
- Brown <lenb@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso
- <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 00/28] lan966x pci device: Add support for SFPs
-Message-ID: <20250703104636.5012907d@bootlin.com>
-In-Reply-To: <20250627155837.GC3234475-robh@kernel.org>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
-	<20250627155837.GC3234475-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xwrsGYbr"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4531e146a24so45681755e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 02:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751533347; x=1752138147; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fLpRhZ8oYlqdUPrBtWQJGdWQR4/qJlb3vPx62hFSxUg=;
+        b=xwrsGYbrozg0+2KzHDsm/PMkYJdUio9n9EtabwAZdEPKRNBprYQmrmBThrExTr0yxG
+         4QJDL7myzv/ZvWXHp3IINF/51+ZOn8un0ezfg5SYgmSbvgh2JZbefB+CIsiHwfwfgtSI
+         Pqa3/GLwVwjHt+kj8xa3u/ejHTxA0UHzBOKMl1nD/dubgDxPhatT2OaYga4/YUu+OWe1
+         lztn8Yi2mSwy93iO+fHci9t4CDq5SHlHeg/vmWaWGkle3g/3xFmbL1wUuN27o7O7HdLt
+         kwVIUR/VHP66mAcL2ilySFJYWs5o+ydmN6BWd51ZzycG0qos2miPuEUBsrvLnYsWrq2u
+         IFxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751533347; x=1752138147;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fLpRhZ8oYlqdUPrBtWQJGdWQR4/qJlb3vPx62hFSxUg=;
+        b=nfG6wWhuQt24E5+gpnNfvyJT4qkrNdnPB7gRoY7r+afI0vNSafsIGNpKZXb+H5k7BR
+         meb3havCm2Os+gIIoEXxaK9nkHWFQvRgVmnkLHwRmQNMZUllXCAyN2JvSYa5asNLx0ku
+         lN4SXHyeamODWnRCUju0Th31avrFAkFkrhi1R1y9B3BynZMNnrC5Ruk1hRUb4in+E7zZ
+         2BOaMEJ2IGd/rYMF3TWNdlSTf9+00gmrzSJ4xvMClBG1jJeeChSqXiKgN5hG/YCDswen
+         vKJDOAdRWDTSTUEq2j4upxz2iQ4HJMDtWh1I/SufcwdGsn14ahNnO2jNklJdKPqqoY32
+         lkZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIfn7IGEPbqaSMgHmO81wkhIlRM9vu9j0G3JOSuyZirwYWkg/cFMMNnPfVO+iIDMEf28WNMpz6r0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhOdBjVSqKQGvs0FWEMLNbl7voFgckAUn/dtZVg+/pDxhIDaI7
+	9HHRpsejtcXmH0jfx+tbgVDcbexofqUaLuFkvdJC6sWUtGb9t2VJxeZxZstBhJ0CbX0=
+X-Gm-Gg: ASbGncvhuR+AU7IuxBagcJ0nYKTCNkNW51zH1KGMOPdBcn6wZRP3F96vSHZaZr7vEDt
+	Wa7cUM8Lclk6/a7BRYvXtaSc49jt3PYzEh/2DHdr4JaqhNaSkt4kxCTV8bt++vllI1GRAX1rbYM
+	vjdKBXvtAW9CCjacn2uoBS8BdSzBXlmrc1ME1bcYSb1+QKDf29hkb75b5DMhtyT16G/aSd1L15v
+	LTjMaPkKSrzIV9rCBx5T+apnv35jkExLh+fvXR17w/+ibF4VEWhNFKl/9wQucvWheFK2Vb+NeNQ
+	+cODolee69xlABdBbV2viVD/prSd6H/B8YjogCygpPTYsaholn7HlWDX/g7hk50ZSOXzAPxi
+X-Google-Smtp-Source: AGHT+IEpB6jnvVhDM96CIt4ZF+uBHmqcylICsBSVvBhL7X6XFgQme1VhuXRkTOD5F0uhXQjbeKMrBQ==
+X-Received: by 2002:a05:6000:4914:b0:3a4:eef5:dece with SMTP id ffacd0b85a97d-3b1ff9f5966mr5613528f8f.35.1751533346613;
+        Thu, 03 Jul 2025 02:02:26 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:1b4c:1be9:25d0:5634])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a892e52a35sm18381340f8f.57.2025.07.03.02.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 02:02:26 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/26] clk: amlogic: c3-peripherals: naming consistency
+ alignment
+In-Reply-To: <99ba0e33-cec2-4577-b949-010537a8c4df@amlogic.com> (Chuan Liu's
+	message of "Thu, 3 Jul 2025 16:31:12 +0800")
+References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
+	<20250702-meson-clk-cleanup-24-v1-5-e163c9a1fc21@baylibre.com>
+	<eb233f20-1927-4944-9b57-f90c998db19a@amlogic.com>
+	<1jy0t5d8a2.fsf@starbuckisacylon.baylibre.com>
+	<99ba0e33-cec2-4577-b949-010537a8c4df@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 03 Jul 2025 11:02:25 +0200
+Message-ID: <1jtt3tbqam.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleekgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvkeehmegsleektdemvgegtdgtmeeitgegfeemsgehsggsmegrgedvkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdekheemsgelkedtmegvgedttgemiegtgeefmegshegssgemrgegvdekpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeekpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgp
- dhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+>>>>
+>>>> -#define C3_CLK_GATE(_name, _reg, _bit, _fw_name, _ops, _flags)       =
+  \
+>>>> -struct clk_regmap _name =3D {                                        =
+    \
+>>>> +#define C3_PCLK(_name, _reg, _bit, _fw_name, _ops, _flags)           =
+  \
+>>>> +struct clk_regmap c3_##_name =3D {                                   =
+    \
+>>>>           .data =3D &(struct clk_regmap_gate_data){                   =
+      \
+>>>>                   .offset =3D (_reg),                                 =
+      \
+>>>>                   .bit_idx =3D (_bit),                                =
+      \
+>>>>           },                                                          =
+    \
+>>>>           .hw.init =3D &(struct clk_init_data) {                      =
+      \
+>>>> -               .name =3D #_name,                                     =
+    \
+>>>> +               .name =3D "c3_" #_name,                               =
+    \
+>>>
+>>> Prefixing variable names with 'SoC' is understandable (to avoid duplica=
+te
+>>> definitions and facilitate variable searching), but is it necessary to =
+add
+>>> 'SoC' prefixes to clock names?
+>> This is part of the description but I'll ellaborate.
+>>
+>> Some controllers do so, some do not. This is a typical pointless
+>> difference that make code sharing difficult and lead to the duplication
+>> I'm addressing now.
+>
+>
+> Yes, in fact most clock configurations are consistent across our SoCs. Ov=
+er
+> the years, we've been continuously working to make our driver code more
+> 'common'
+> and efficient.
+>
 
-On Fri, 27 Jun 2025 10:58:37 -0500
-Rob Herring <robh@kernel.org> wrote:
+No they are not consistent at all when it come to this
 
-> On Fri, Jun 13, 2025 at 03:47:40PM +0200, Herve Codina wrote:
-> > Hi,
-> > 
-> > This series add support for SFPs ports available on the LAN966x PCI
-> > device. In order to have the SFPs supported, additional devices are
-> > needed such as clock controller and I2C.
-> > 
-> > As a reminder, the LAN966x PCI device driver use a device-tree overlay
-> > to describe devices available on the PCI board. Adding support for SFPs
-> > ports consists in adding more devices in the already existing
-> > device-tree overlay.
-> > 
-> > With those devices added, the device-tree overlay is more complex and
-> > some consumer/supplier relationship are needed in order to remove
-> > devices in correct order when the LAN966x PCI driver is removed.
-> > 
-> > Those links are typically provided by fw_devlink and we faced some
-> > issues with fw_devlink and overlays.
-> > 
-> > This series gives the big picture related to the SFPs support from
-> > fixing issues to adding new devices. Of course, it can be split if
-> > needed.
-> > 
-> > The first part of the series (patch 1, 2 and 3) fixes fw_devlink when it
-> > is used with overlay. Patches 1 and 3 were previously sent by Saravana
-> > [0]. I just rebased them on top of v6.15-rc1 and added patch 2 in order
-> > to take into account feedback received on the series sent by Saravana.
-> > 
-> > Those modification were not sufficient in our case and so, on top of
-> > that, patch 4 and 5 fix some more issues related to fw_devlink.
-> > 
-> > Patches 6 to 12 introduce and use fw_devlink_set_device() in already
-> > existing code.
-> > 
-> > Patches 13 and 14 are related also to fw_devlink but specific to PCI and
-> > the device-tree nodes created during enumeration.
-> > 
-> > Patches 15, 15 and 17 are related fw_devlink too but specific to I2C
-> > muxes. Patches purpose is to correctly set a link between an adapter
-> > supplier and its consumer. Indeed, an i2c mux adapter's parent is not
-> > the i2c mux supplier but the adapter the i2c mux is connected to. Adding
-> > a new link between the adapter supplier involved when i2c muxes are used
-> > avoid a freeze observed during device removal.
-> > 
-> > Patch 18 adds support for fw_delink on x86. fw_devlink is needed to have
-> > the consumer/supplier relationship between devices in order to ensure a
-> > correct device removal order. Adding fw_devlink support for x86 has been
-> > tried in the past but was reverted [1] because it broke some systems.
-> > Instead of enabling fw_devlink on *all* x86 system or on *all* x86
-> > system except on those where it leads to issue, enable it only on system
-> > where it is needed.
-> > 
-> > Patches 19 and 20 allow to build clock and i2c controller used by the
-> > LAN966x PCI device when the LAN966x PCI device is enabled.
-> > 
-> > Patches 21 to 25 are specific to the LAN966x. They touch the current
-> > dtso, split it in dtsi/dtso files, rename the dtso and improve the
-> > driver to allow easier support for other boards.
-> > 
-> > The next patch (patch 26) update the LAN966x device-tree overlay itself
-> > to have the SPF ports and devices they depends on described.
-> > 
-> > The last two patches (patches 27 and 28) sort the existing drivers in
-> > the needed driver list available in the Kconfig help and add new drivers
-> > in this list keep the list up to date with the devices described in the
-> > device-tree overlay.
-> > 
-> > Once again, this series gives the big picture and can be split if
-> > needed. Let me know.  
-> 
-> Please suggest how you think this should get merged? There's 8 
-> maintainer trees involved here. Some parts can be merged independently? 
-> We need to spread over 2 cycles? Greg just takes it all?
-> 
-> Rob
+Controller prefixing the pclks:
+* axg-ao
+* axg
+* g12-ao
+* g12
+* gxbb
+* s4-periphs
 
-I will add this information in the next iteration.
+Controllers not prefixing the pclks
+* gxbb-ao
+* a1-periphs
+* c3-periphs
+* meson8b
 
-I think, the merge strategy could be the following:
- - patches 1 to 14 could be merged by driver core maintainers in cycle N
+I do not want to invent new names to avoid the names clashes if the
+prefixes are dropped. I tried that way and it was a mess.
 
- - patches 15 to 17 and 20 could be merged by I2C maintainers in cycle N
-   without any dependency issues against other patches.
+As noted in the description, clock names will not be prefixed with SoC
+name, *except* for the pclks for the historic reason explained above.
 
- - patch 18 could be merged by OF maintainers in cycle N without any
-   dependency issues
+>
+>>
+>> Both with and without are fine but picking one a sticking to it helps a
+>> lot. I would have preferred to drop the prefix from the pclk clock
+>> names, same as the other clock, but:
+>
+>
+> I still prefer adding SoC prefixes to variable names but not to clock nam=
+es.
+> clocks with the same name generally have similar functions across differe=
+nt
+> chips.
 
- - patch 19 could be merged by clock maintainers in cycle N without any
-   dependency issues.
+It is not a matter of preference.
 
- - patch 21 to 25 could be merged by misc maintainers in cycle N without any
-   dependency issues.
+>
+>
+>> * It would have changed more clock names and I prefer to minimize those
+>> changes
+>
+>
+> Your recent patch series has already made significant changes, and this is
+> relatively a minor adjustment=F0=9F=98=89
+>
+>
+>> * It would have caused several name clashes with other clocks.
+>>
+>> so prefix it is for the peripheral clock.
+>>
+>> In the end, what matters is consistency.
+>>
+>>>
+>>>>                   .ops =3D _ops,                                      =
+      \
+>>>>                   .parent_data =3D &(const struct clk_parent_data) {  =
+      \
+>>>> -                       .fw_name =3D #_fw_name,                       =
+    \
+>>>> +                       .fw_name =3D (_fw_name),                      =
+    \
+>>>>                   },                                                  =
+    \
+>>>>                   .num_parents =3D 1,                                 =
+      \
+>>>>                   .flags =3D (_flags),                                =
+      \
+>>>>           },                                                          =
+    \
+>>>>    }
+>>>
+>>> [...]
+>> --
+>> Jerome
 
- - patch 26 to 28, even if there is no compilation dependencies with other
-   patches, they need the other patches applied to have a working system and
-   so they could be merged in cycle N+1.
-
-Also, as the big picture and the goal of this series has been shown, I can
-extract patches from this series and send them alone depending on maintainers
-preferences.
-
-Maintainers, just tell me.
-
-Best regards,
-Hervé
+--=20
+Jerome
