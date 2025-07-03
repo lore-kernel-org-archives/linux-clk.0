@@ -1,62 +1,62 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AB42EACE1
-	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 15:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E5A17332C
+	for <linux-clk@vger.kernel.org>; Thu,  3 Jul 2025 15:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555441; cv=none; b=PvHRooD1p1W/BDPz9UwAEZ1WopiFqTTZbdBIs5FLR0eb21Zoo5mxWQ2K8/B9bJi42NTBI0jJe2CVtNQ/XKKn6MBsEsqOEHvWSvrwRYKdgQIg4o4LCoyl91MiX4jgCYmV7OjtCMurv7aH6BTAZrn1fgP0FWJu8jnaaseXixZIZ90=
+	t=1751555470; cv=none; b=LTimgibvDXxhxpFdr6KdF8LsWwWP3DI5h7H9IEcO0hhALlx3FQ5dwajJcjrPOETzH94MTBffPTHX9o24LVGu8bKNl8MFWT7QCNgBsfEhvRJGAEVvMPNEPUQFLcNDIburFzJk9Ir4SJp0svh5AnQdW3YjwhEVqbiJKQdtAei1lW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555441; c=relaxed/simple;
-	bh=HcpB7WcJRiu1n3uBKLFMvcSjTuFp3XqHuTv/XQqwXIY=;
+	s=arc-20240116; t=1751555470; c=relaxed/simple;
+	bh=QGSsl/5Ibq08H1mWTYhreoVrbh0mx1K0v5BCTNTA59s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EupZuB2gjQUWSUuf4mY4hpPsEevNlVqMxurisuJefef+ZLJhtey5iGUWu5cCAIsQUzDZBn8XHqJkTNdnlg+8IpteBEtDGgBJ1E4W7c2PlM33gcBc1YWVVjnWNoPB3JB9bSfjCsVLqQVvvhGwN4Hn1gkiHk5+Vdes5zBaU26I960=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iAATeiGj; arc=none smtp.client-ip=209.85.218.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vc7pDNCj977fvV8BbU4OJjx1X7NPSdrNMHBlEyQ9IhAyFlzpaiebxEwsgbkrgnu/tEMatL1W/bEGW6aouGAf9iqxfELAiQm9Y9gloY8bUBB31hbS1ZWGwm+HuWlnfu2ohxRvPwT+HOg1x156AGt2WyP66dk6f/m6T0/gPSj0Ups=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bjq3PSD2; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iAATeiGj"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0e0271d82so1466723766b.3
-        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 08:10:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bjq3PSD2"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so9041683a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 03 Jul 2025 08:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751555438; x=1752160238; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1751555466; x=1752160266; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gBhYZEvvr6wT0rA3y1ifWP+OcQau5rDJJM6LpP/dVA0=;
-        b=iAATeiGjUj5uhUVs20MUepRI9IH5zG4tHSzWgr2pgAIJ+nABbJ629e0H9W8+ytanES
-         tSXmDUzZoI2Q7qnuxdghkJejmZQVKv5yebZ5TS1fJakh/HEiLerx9cAXRBM9YRzOWhzk
-         r7fSME2UlGXJeUNLMnK1P4kf++Y8UEVFBbHzsoyYb7KRawKcWZNGTLsgjCqVwbRYT2vQ
-         BO8fSwWyvxB7RIiZHOEESCo/xCcYxRta0h6/7SEAEzmJGoNK+4zGNstWB3wAItbjQU8v
-         A3QkiHQsI0m5eMkaKWQ0ZbWGjvxovP/OwbRFZystR8ZEa56hFc2U3hMBmFhqvAcVtSC1
-         xzsA==
+        bh=AmKfwzTfOhC2oXAq+cEF+jaaYpcNa1VuxJKcbwQc1W0=;
+        b=Bjq3PSD2a7xMxFiM94OzmodQ/ejrh4n8rcnVYdMtSe53e9RMXBKKOASjrQoBN7+dx2
+         Fd4WDw81Ec+6F3KrQjQEwDdvcmNKmyAg0Ds2iQyL9kcqhxaY8x5UaWuh1jqcAb7Bp39k
+         8tn/piKtp/e6HoQemoGc7Jyhu8OuHZrsGzC/vr0IITkGJDHDKDyUjDm8J8W5QsLm5bOa
+         8pXQgL5C4x68veywqBp2QpOCi3KjMQ9XBokwkm6dDMh0ZEfaAR+FS8iSyCzgLufKfpCd
+         gfMC2ktz3S7YJLPF7+s01nUa2IPijmd5dljtg4xZFnZjfik27+5Es425KnAh4jHagi4d
+         oHzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751555438; x=1752160238;
+        d=1e100.net; s=20230601; t=1751555466; x=1752160266;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gBhYZEvvr6wT0rA3y1ifWP+OcQau5rDJJM6LpP/dVA0=;
-        b=e/ukpIlDnHJY77CdYlPBBNPk/eTYJgT249X+K5oltS/O6+sR7KilVZp3mhW0qDOhn2
-         nE/hVD0vaRWGdEMBI5a6TGu60FsyexFUB5DHfVE0E3V7awVgv8ZmoFV8Ysa/J1N+aUst
-         4Ky3gujk0GWhTkFXglV7xf4xTPVYgF78MbYu+X1m27YdTrq+KsPwg4Blt0az/7IYb+rg
-         KE70/trmPq4JedAYQgUdzWPOfWZggEnSkM56mnEk8CN83/VQJCU7q57dLgFNl72D2Q6b
-         Qb4ikLY9E1g0uxDtQ+sNq6mx0Whupnd7o64zM9kTNTHD9MpwODb++WGRnoRA6c9Y+RKI
-         bPEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWt4TM810FF8oua+rkMcbULR2FKsEjLmeyahLfHnwwp1UczTmEodETWMtZp/Vfh11ePX+rP7jl2go=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGeoeazyXWbYHxHZImhwgsXOh+NfwTJxva6lOlmYHyFPvzZUwK
-	hI66bfzmGoB8xJk9NGbRS4R6JX0BLurY4HB7btdLIScrZ7fIHd7c4WyTdSg9hVI/RI4=
-X-Gm-Gg: ASbGnctCHN5CZNK4H3xEtwjBEv1ykIaJFGZBAyugNlPHFnjNObfnKJuQiUEPPZNoq0v
-	bXd94mU/38UiX9tOmp17Jo+ZkSGaBP/n/czNnUrZepDfAty4JgUjNDft43o9ica1pXI1EeotI05
-	17bF1uIceh/7VSnTcpnixqTix6ck0WBsLYHAkaUgVr0f/WLLUdSbmtWC5jzb0uyh/4YcTKwDmsL
-	17lnXIEEv1FbkXXQreLEc475N2D/FGiwToiO3VwCWeyMS/6YkD9HTABrC4Uk2cv9SdAoO8AlCan
-	uUnAQmtSrlZWLqpfzh8KGBbLLO6Ugnu9ANDxDnDkePHVQRdQLcG0Q9umMVdQieFLX0WMFQ==
-X-Google-Smtp-Source: AGHT+IHFWA0SjfKo8Q9HvR8gkZ0iZby8sEu/tE1InGy6IA+SPlppSiNPUeimMeEYtk+3MIxhso8xqw==
-X-Received: by 2002:a17:907:3e0b:b0:ae3:bb0a:1cc2 with SMTP id a640c23a62f3a-ae3c2aaedd7mr750188166b.19.1751555438164;
-        Thu, 03 Jul 2025 08:10:38 -0700 (PDT)
+        bh=AmKfwzTfOhC2oXAq+cEF+jaaYpcNa1VuxJKcbwQc1W0=;
+        b=aJ/R4ECAU2C8FAC/3dl/nvGfNfXE4LZia3jxz3POnXviDcHGuFmZSIErSyY5XDH6F4
+         eLutNnkoNH515dEo3xt8bWg8HBkQMd7/Q0MMk6wC3NJIA8+qs03L+31e6pWcjERHgHVT
+         V6/uFTGKB1FPRqGc4VChDKAothCKEyckIYs8PRYMxDeFF8QzA9EEHFRn/2KGnSZiq8mX
+         fRqmhCd2jU8ryh8+m1IGX55dck3jPjx3eoqR3Ny3AnQ0gMJRlF+0oXyCujJisOAzsEmJ
+         MDqsjJFBg1c8kUHHX2iH32zcEbio5cpl4opPkcGsMIxLMlrIZPPIVpqIgKyvucI26l0r
+         SS7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVH45SRbEgG9APPW/hnuhU44dWaFs7U2+9F38DKJ8+4DNnRaUcgsosUQ7PZcsBA4gYZgLoWOH7v0dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1sB8PLx05hvxJgpa68QwPqTpUY5j8p8FkX5RcAC+dJhTKRQmg
+	GPkfC7hc8irUfcQCEydFcoXisZtgnNPXAi0QNAJvzW9zcAovaE7RigblvjXTkMRGzJs=
+X-Gm-Gg: ASbGnct+HqdhoRduRVRpln1vMlMYiR1yvZ7bxAcs9CSiGxAqBcsO7FaaLW+2IUSP70n
+	7veHSST0oLzKg59xMtW81S2Di4SXKVjKnk88hMU+N9N0r9u/enphflkjVnu/Qi4hrvITaAtE/az
+	X/DDbuwqbrji2fzU9qc7sPq/esp+b0CRE4C+seV8r9bbw0Yy3OJfL1NykRVDHDAFdybxFIjCmCs
+	MKQ+WGf/qwL4ZmnidnX17D5SAv/fsYRKwPt/Wb1IY5IkHfmQCCSX1petmnW7YSe+Ckcd1UxwhAz
+	29QizMvBSqfr9efCoNkxOVJgxPkcje9TRBGqwWsK5Eg8jTCpCYjXLIrNiXY=
+X-Google-Smtp-Source: AGHT+IHzpMVd5ZdMJKAden1BEk7leNnkWoWJcBZRiZrrIpoemL5vbs9A7FF6CC6wG99E12R7ltKp/Q==
+X-Received: by 2002:a50:a412:0:b0:604:bbd2:7c88 with SMTP id 4fb4d7f45d1cf-60e5350025emr5522209a12.26.1751555466332;
+        Thu, 03 Jul 2025 08:11:06 -0700 (PDT)
 Received: from linaro.org ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35363b369sm1274968066b.3.2025.07.03.08.10.36
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fbf791d06sm258603a12.2.2025.07.03.08.11.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 08:10:37 -0700 (PDT)
-Date: Thu, 3 Jul 2025 18:10:35 +0300
+        Thu, 03 Jul 2025 08:11:05 -0700 (PDT)
+Date: Thu, 3 Jul 2025 18:11:04 +0300
 From: Abel Vesa <abel.vesa@linaro.org>
 To: Peng Fan <peng.fan@nxp.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -68,12 +68,14 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
 	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: imx95-blk-ctl: Add clock for i.MX94
- LVDS/Display CSR
-Message-ID: <aGadazB4LbRvk1BM@linaro.org>
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Sandor Yu <Sandor.yu@nxp.com>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Subject: Re: [PATCH v2 3/5] clk: imx95-blk-ctl: Rename lvds and displaymix
+ csr blk
+Message-ID: <aGadiPWIKbqDVek9@linaro.org>
 References: <20250703-imx95-blk-ctl-7-1-v2-0-b378ad796330@nxp.com>
- <20250703-imx95-blk-ctl-7-1-v2-4-b378ad796330@nxp.com>
+ <20250703-imx95-blk-ctl-7-1-v2-3-b378ad796330@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,17 +84,16 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250703-imx95-blk-ctl-7-1-v2-4-b378ad796330@nxp.com>
+In-Reply-To: <20250703-imx95-blk-ctl-7-1-v2-3-b378ad796330@nxp.com>
 
-On 25-07-03 11:40:23, Peng Fan wrote:
-> i.MX94 BLK CTL LVDS CSR's LVDS_PHY_CLOCK_CONTRL register controls the clock
-> gating logic of LVDS units. Display CSR's DISPLAY_ENGINES_CLOCK_CONTROL
-> register controls the selection of the clock feeding the display engine.
+On 25-07-03 11:40:22, Peng Fan wrote:
+> From: Sandor Yu <Sandor.yu@nxp.com>
 > 
-> Add clock gate support for the two CSRs.
+> Rename i.MX95 lvds and displaymix csr blk drvdata in order to add
+> support for i.MX943.
 > 
-> While at here, reorder imx95_bc_of_match.
-> 
+> Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
