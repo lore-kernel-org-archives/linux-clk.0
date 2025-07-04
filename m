@@ -1,150 +1,135 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71CF2F273F
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 10:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D99244686
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 11:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751623887; cv=none; b=Xai5GPS3pPFaaXbTERTiXi+EyYrxKrdrqQi8fuHajfDU0ehEyA1aXRfN2uWuz5Nf9Q/wpr9jtJfi+1hiqIPzlXZVdLfsiMOwRD2fKW3oph7Ov4r8+sDBe/WvRVitIm4uX96B2dDeV4waXHYYakDecSapGSuDKFj5Mi1hM22hooI=
+	t=1751627179; cv=none; b=pOwcsQ+V9+tPnfGcCa3QLjgZNFVCMsMNuOkdX0YgVCQWpPs8UEo5PC+AVH9NmsfOmJ9afT0XQ0Ilp6fJrs6yusxaGfaR34MTgHc4IkkseYLrLm4IC5fJnoClV0oMEVUtU+EAp5NztBVm/su5Ddda+Z2pHLvtP979kQpIDnc7k34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751623887; c=relaxed/simple;
-	bh=ZJfiMH6yrhrW4z13OYY/q+7njP7HRfoaeaZaIxvoLsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AHkt76M+tUXlX4gtOEXmNIuJnKC71AlcF4C8wn6+sKFEgiP1KIR1sRvrmEICWXEwRRdOrzElZx0Url/gcTkZBrGAFD9ltzvo6BgdEMrS0S/RIU1tvvcP3CbBjcCQEzoIjDIOvRx6u7LUN2iIdw3Q/K4bpzpNX8es6BhBMt6hTJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NlfZj2fr; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1751627179; c=relaxed/simple;
+	bh=k3yRpHVV4mG8PD+9jKn9SDf4cJFDmVdprG2GMo1cjKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=opJAqwvIS+qm+HFMm6szm4pSR07h60r3wHpZs4/ksCWK7fCeJ0SnmWbdY1zElHq0v9Fmtr7fDrObSvJ2NmDBZPbbwE/vUNc86am8OfY7zVOmTVLiTQglUrv48CcyPUGRP1iSWnpltgUkyCOFTRC9R29bv4kr6Wg10j8n8XuVTEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KEOiVfWe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NlfZj2fr"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553b6a349ccso1023927e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 03:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751623884; x=1752228684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
-        b=NlfZj2frJ0MoI/3h7QveKv3Y0EgzXgLQw8j2Ge+Wo0BaXCzdjZufQmSA/ijuVDP9gi
-         gJz4g/4zLumrGQqytWbXxeWHMEK0gbxZzTnKz0n7dciwIIWnDBRKLTHvXypSBwF4d9i1
-         nzIqaSMslKbZh3agm9XKrIDh4JTKzk2qwzddiGAXIXGtyp7+cqPObMq3H+2oSMRCLEJG
-         JeqMmMdhVRY0YOqnhqCkiV5Ho1k8WTQduCIqx5tuK/tX66Mi0GDGRrjdo0KTeBKK6VPa
-         6dJSqsdmSoDN5QvRnopc0iXMyN3DGNdd08Za0D5A0OiMXr1MFTIDRjxVmRZAXd/GPNJZ
-         N2FA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KEOiVfWe"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5649960r032762
+	for <linux-clk@vger.kernel.org>; Fri, 4 Jul 2025 11:06:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2XxqMM/RSUTF2mZkG2gocViLCUQzGXcwFWZuP+ol460=; b=KEOiVfWeA44SOaKc
+	6xYZn8C2V3e+4xKSoxAAbHrk58XEX9tJJOKUl8s64JK5RUgE/AAqRWONcvhPBOdQ
+	hmrMgLROzm4Mv6Ca4LCOkWwop1V3Oyf0WV5lJl73s7yHeFcM/3AReTWNYk6qHqgQ
+	TeFALwk5GfIJpbaK/QB392LjbHHSVISiCk6T1V+61HoBPTUwCa6isi2WVSMGf8oF
+	UezQGSf17DhbDnaSq8vJnL/WbdIdYcMyYMHUXywvMRbQLuJNCOeSh8JB74nUEgy3
+	c40wF1Y83sy88TSPyckG9u6irCEUJi0B5O1TGop/4hm5ZnhULOXxnkRQRgvP61wf
+	d76bSA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7qmkgwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 11:06:16 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a6f59d5ac6so1513831cf.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 04:06:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751623884; x=1752228684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
-        b=sID3CO68siYNMgXhh+A9bQriMyGodI+BYSdoZ3ki6SNVb2wFgD2emjFbrz0RRKeK1d
-         X00C+9MGltMxNdkh6vd2uQ5tbvbL8i6pkKYyrkgsOn/ph2KtzP4toJQyBtfPh+vdIFlD
-         6whMwpSicLl6kBT3iI58EHXVE50C3iwyjlxGWNOKkGuUNBmljmr06O8L7LYW8JghVdp8
-         C3xKKCMc2TqlueyaGRZchHT/qSJQDVS6wSrHLHHMZlmj5njj2q6WaTygNlb76d6I2i9I
-         8r8c2aOUlX7p+FPGyHgv2IpnOH/C6tGt3YRmXeg6aV2Iv97hN1sZMG///BqqNt2OVLBS
-         3HJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqtV9l7fIVBX1dOV3XWIYCDh70xnY3BvqmR3ZVzbck+ai1P7nQBPo8cdTpwgLLp5mQlClreCjaSs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7kZv0V/9en4qV4gRgLBMPJCju5uXdfZ5M413WLmTMnhmzckad
-	w2xMDgeC8wdNtAGOL0D9r1M5cjUSvbhKfuoZ5iMtTLyTAkCFrrhzqGrYQ6j5nmtLP6oUyqaunpn
-	e+Tx+jW3El0eplal63qSUYFceCmOVZhHGnkjmDyWFtw==
-X-Gm-Gg: ASbGncvEDuvj+Su4UODmIw4K+OBDMj6zzr7Y32Za0p5OWaHqNWMnawuw01gTqXVA9/6
-	NKjFBfnNBI9r4lRXYXtObz5yRILEXxmSgWosgfo3S4/woMexmsHp9fU8h+KsjXd2T0Vdb4oPYgV
-	UX1zGZ43MUg+c48PNYvhErUypRKgJCz8BULBB9+EUYrV/MFpipZKWNyv8=
-X-Google-Smtp-Source: AGHT+IFYm/wR4jTRlbIDDwF6FIxEmPbVXFWiC29PN2h5l87b4kSraGLAGzH7R/iggEXemYKU5MQvLCtTcORv1zFuOus=
-X-Received: by 2002:a05:6512:3c94:b0:553:291f:92d with SMTP id
- 2adb3069b0e04-556e617c939mr532276e87.57.1751623883637; Fri, 04 Jul 2025
- 03:11:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751627176; x=1752231976;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2XxqMM/RSUTF2mZkG2gocViLCUQzGXcwFWZuP+ol460=;
+        b=G3Lqi554zVUoJVCwmXywm7e0yPvavAbIRvZZb9BnUCKvH6inC6tTikGBiuqj6W8NqK
+         MQ4y8zeyrI12rYGW/AzcJzmtGUehAuf8gsIpheiygjb5Bfj0dx4gQT1NMp1480OvYtOX
+         0ScxHUocpVTiKLPGoHPvL06AB4lw9Q6uWCVhR0vV35etGPccajZpVLNiQ/SNseIYxk8j
+         lfy8tadNQpML3FDMgfoOW8alfh3PqPdduqZaBxW95TLWnLqxOB9SoKbdZvWl/R2W4Lc6
+         3/Ei2vvnl+qofrR3FjVjDD+CiLZx3SO0BFXJ42y34pGn/1mi50M360X5TnmcZRCaQtG8
+         GNYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/qoe5erstCj1lrL9+pEmowb2iCDXFLk6lWW9xX+p06UePNzkVvzBDCiBBe878glBd+G0vwm6p/Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIIxVHYlTYfI2TuiNjjpjphPkVhg0AcjYAQukmWETknID7n1tG
+	1ZwMM3DiKLzoBm2RKpBYOMatI2r3i2C195zZRK/uFDRua9VVKk1zlEwi/WvpBsIKosoGSyB2h6A
+	77e08jtAaEqR+eiuUU91gn6aGo6wLQrLWwy60qfLXjMLsENhSb5PKBLpidBuNYUE=
+X-Gm-Gg: ASbGncshr8iQx5BkUzShP30WiAbnFZ0x4zgl6ig+pbpF4Jw4+whhsN9+enwTXZL3wWd
+	ZqaJ9OOXUI1BWKkyfafGc6SKj9JGycDet7eZpcavyXuVntB2YK48rkrrB4l6IDwP+EyxUsBXZEQ
+	8nH9uZU/XThl9LHolJhtjkNXQz2Tr3b0DBmLZl3lRVPupLx48BV/NFzWGltC7OvBNUcY3gmJfGa
+	T2jrPNtP0tAXnjIDeDwGsDEAR6nOzyejqtxciJ3V1+72UeB5vd8amOYOqZI9pp64u9rgz+G56hu
+	xH0a9I/h4JS7zW5iQOrH32rio9GMSda/84oX7DFoJLHarm+yBbz/vIqzngyXFEkTfpP3Fa5Xh/f
+	FYL7YkA==
+X-Received: by 2002:ac8:5fd0:0:b0:4a7:bed9:524c with SMTP id d75a77b69052e-4a9975cf1eemr9429611cf.11.1751627175932;
+        Fri, 04 Jul 2025 04:06:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEL00AfasMKdltGMxGM974NBZd0imq6S1Dc9fbvd0ZKYoSfNqzbgVRMjgXDHONPutQiSOAFdQ==
+X-Received: by 2002:ac8:5fd0:0:b0:4a7:bed9:524c with SMTP id d75a77b69052e-4a9975cf1eemr9429321cf.11.1751627175516;
+        Fri, 04 Jul 2025 04:06:15 -0700 (PDT)
+Received: from [192.168.1.106] (83.9.29.45.neoplus.adsl.tpnet.pl. [83.9.29.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02a23sm152666366b.112.2025.07.04.04.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 04:06:14 -0700 (PDT)
+Message-ID: <0e13833f-fc0c-4bb1-a1e4-fdba07c50768@oss.qualcomm.com>
+Date: Fri, 4 Jul 2025 13:06:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
-In-Reply-To: <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 4 Jul 2025 15:41:11 +0530
-X-Gm-Features: Ac12FXzuBcUQShERIhU7sx8yxPVr9NpYbWLk5Qb0GVfeL-KIfhtDK6Kn6d-Jp8I
-Message-ID: <CAK9=C2Xt5r0Vjw916U7hV7jR1iRwfaLpvhLYTLmWec_p_1pziw@mail.gmail.com>
-Subject: Re: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] clk: qcom: common: Add support to register rcg
+ dfs in qcom_cc_really_probe
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+ <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=C4TpyRP+ c=1 sm=1 tr=0 ts=6867b5a8 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=qmfFy4ndMtQ753Zl/n/b/A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
+ a=oQRPDSM0WpIYGLKzx8wA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: PlsIZHTEp3QTGYYMAlfnOvNfnbmGa6Kq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA4NSBTYWx0ZWRfX1W18pjoKWdkB
+ RHkUCHpHZiISWKYMWwKJ1iF5/jGpefmmNuIBDdgW7+NaEg7tquStbfJbHloLrRqq1VFGLaePoKg
+ Pzm+w7kytzVJ6etUiUxT9TwUY1u2+caevYAoCK48eQ6YI0FlpgPi44UhCPCHKmLhXlotWwIlEKe
+ 3eHJOlasBaRFwhmwl7+1jZw3LV6SIkDM5jhbeZ2zviFm/RnimXe92fec98DHSTqU/DAeqOd8Ap3
+ kIQicaoTnGBDSyKYqylvQYd3nc94QTu+neQN+tOvX5D9Gz+ql3yw1U2IjV8RYSRbqYSK9HH7Uiy
+ 9fa/laEiPbpwVZpb5WXDoZV1p+mVshgTWeV+x2K73pCFX5XZ5/0i7azD/wyB+Cyu86kn/RE+snr
+ sDLt1yK8RAwD8rnrSFVUIRKpBQan6/D69v6bxmJvHfbIfoEilKVY4daoGVBsSTo3AsHCvDeO
+X-Proofpoint-GUID: PlsIZHTEp3QTGYYMAlfnOvNfnbmGa6Kq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=954
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040085
 
-On Fri, Jul 4, 2025 at 1:15=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Fri, Jul 04, 2025 at 12:33:32PM +0530, Anup Patel wrote:
-> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
-> > are frozen and finished public review at the RISC-V International.
-> >
-> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
-> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
-> > and RPMI system MSI driver This series also includes ACPI support
-> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
-> >
-> > These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
-> > at: https://github.com/avpatel/linux.git
-> >
-> > To test these patches, boot Linux on "virt,rpmi=3Don,aia=3Daplic-imsic"
-> > machine with OpenSBI and QEMU from the dev-upstream branch at:
-> > https://github.com/ventanamicro/opensbi.git
-> > https://github.com/ventanamicro/qemu.git
-> >
-> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> > [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
-> >
-> > Changes since v7:
-> >  - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
->
-> Which comments? What exactly did you change? Provide in-patch changelogs
-> explaining this, because what you wrote is way too vague.
->
 
-Apologies for being a bit lazy here. Most changes are pretty straight forwa=
-rd
-except the improvements in PATCH14. More detailed change log is below ...
 
-Changes since v7:
- - Addressed enum related nits in PATCH3
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2VxhC6soxHtmacedbeCU=3DrFi84=
-Br1RvN2uPcBKoLhRaJw@mail.gmail.com/)
- - Addressed comments in PATCH7 as follows:
-   - Added minmax.h to includes
-   - Removed "rc" variable from mpxy_mbox_send_rpmi_data()
-   - Removed alignment and other checks from mpxy_mbox_peek_rpmi_data()
-   - Created separate function to restrict scope of channel_ids used
-in mpxy_mbox_probe()
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2Ume2CmBYHYob7HSJHu=3DZdfdWM=
-+4JYPgFJ9Hir5Oi8cOg@mail.gmail.com/)
- - Improved comments for struct rpmi_clk_rates in PATCH10
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2VfvsbFTjecQm0OSsssXbff7wC4f=
-qWf3CTmnpWSiaLcBw@mail.gmail.com/)
- - Improved refactoring of acpi_fwnode_get_reference_args() in PATCH14
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-15-apatel@ven=
-tanamicro.com/)
- - Improve nargs_count parsing in acpi_fwnode_get_reference_args() for PATC=
-H15
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-16-apatel@ven=
-tanamicro.com/)
- - Added more comments describing why need to explicitly set device
-MSI domain in PATCH21
-   (Refer, https://lore.kernel.org/all/aGaUmpw1pVWNAmpb@smile.fi.intel.com/=
-)
+On 04-Jul-25 09:16, Luca Weiss wrote:
+> Add support to register the rcg dfs in qcom_cc_really_probe(). This
+> allows users to move the call from the probe function to static
+> properties.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-Regards,
-Anup
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
