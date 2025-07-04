@@ -1,132 +1,138 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF43C2E0938
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 16:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ACB190676
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 17:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751645697; cv=none; b=N8xTxpmlIUtkLIU0ioJu071n8sOM6vs3AggxzgHpA37A4ScLLJRVZkNo9+XzwyvQEdprDHMGSXHlY5Q71qDlcXqKN3cnJVi5ajGasisl1MG7rXoQ0K0mttcoSOgu758wWjCjhQytB3iNn0N8vXzRXvlG9xTPJlZXvVj3ZNwzGfQ=
+	t=1751649691; cv=none; b=FUsZIzXdAhpGNJyUz98sQfDrHoeRNRUXoR/eSxAaiSAcIKjG1AR54Mn+4IEdj7CaWTIb3+vaRimjQoLvLqXojvdJI09FhxFsd+cKRddeBXRyk0v7+pW109c9SYPMJfeXpoCwwm/67Z4Idy4oro0h6PstIeIRZcJ6bpmeGoiL10c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751645697; c=relaxed/simple;
-	bh=BH1aKcd76IaUZZ/ToYr9eDZkVxa6rxOK7GvAzGHVDi4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QarQG6SENchI7guzjZ3nKJFi89Nq8KvqViHtCzG74gixxuFi5dYzcuEQinOQtlh4a0p0fbKvd8wbgNmXK1m7OV1UNXLITJ9lM7uyDP3IWvdhRSC/7S2xSZ6Zo72LvYuuyM36ao+Qq4VYDuvc1iLS46oqYPw1oV/g0/sD4b3NOLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BSCbg6+e; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1751649691; c=relaxed/simple;
+	bh=Q0uBPIsCwgQkS2rC47v+2moqu0wd8x5l/Azb8wYoj4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVEbR5gwo7U5aT6nst8HCAeAMgUXVmHrrAUMyjOPtFDZY0IGKq6vhAyLGNUxXDeKHZkmHRijZUswf5rQ6/L3b+rfqp84Dv7V8yZzv9g3jEJpKsN3razklPPCt7BkFewxgwSdMfqoooAiHs3Oxms8sEOP4jDYxzfoeG82Ym9s8sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H7ukLfzE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BSCbg6+e"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60702d77c60so2244273a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 09:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751645693; x=1752250493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YJ/8zy8l4B85cHtddHm5bMRDVmAGhs389YDqHOJWbP8=;
-        b=BSCbg6+eqWxsdM+U4V+a2msCtN9paviA8SqT1mQaT4m+JjPTt/qE6lzwqKeRrxFQbW
-         6/WpbORYsVosT4sAg1E3xuUgAHt8JD4ZiKTkoIOPFNEb6VVX5aIOOXZ3p6MeXqbTXNGs
-         DApTUTlwAEdFF6mEDQRMOFHHl6Da/4uPOfPYofeZDLvri0GYWXXzvOuFyNMKzq9zpfiK
-         x8iZ8bqRH8YWa3Ze5MxGT+46IGjwIIY1jQcb1W8CHAJIN2TNlwbaM/6LOZf7U54wGaKC
-         n0zdwpEQ1Ax9WdQtH8dCw9Nwfg+ZI9xBASWVofuaAXNqARrLnrR+6aL/TsEb4x6gF1jv
-         DubQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H7ukLfzE"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564B6M0u020361
+	for <linux-clk@vger.kernel.org>; Fri, 4 Jul 2025 17:21:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=DYd1Y/aOqrQmhXBusd+shb/Z
+	pX/EE96WqbgSK3mRMUQ=; b=H7ukLfzEoG0pXiV5Q1DEnsuRB4aJ+wt8FqnWDcJu
+	huGLhlMNlWi8HWvbovEsWZDplRGs/MCp1gGcy+Ev5wqKwzQXtnmT5AKjGY7v42k/
+	HT9T/udHQWYW649HtPaSKRKaaURhlaUUO3GfOMZQ4qEuwcurYPHM4z3Ts1+re746
+	43mvxnXr4doxv/0z+m3JArYiBu6bt9a29SWWm3LICfAfEnJpiENt5fjMYCVi92G1
+	M5T2KwKeBcY2tVRkgtFcUaBJGd61nYebtr9W/zHHHR9lSRnApOZuB8mtR7uh/5KE
+	ATk0rq8KqkgzoNP9KsAqldhjwsPnB5MlskJkMD/f7dUIrA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pdsh8vqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 17:21:23 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5e2872e57so170866585a.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 10:21:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751645693; x=1752250493;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YJ/8zy8l4B85cHtddHm5bMRDVmAGhs389YDqHOJWbP8=;
-        b=WQBrAvJ71p72iLhK/GNz9O9VjGRqFQ/2ZKAPzQa4RBUk6dg1BgmVSTLzNlac6QfuZq
-         ojW5SWZDocPjDcGQPk2cQ4MRWCqRNNRbmcwSMjRsm/9KsL1nLXsKsxdfOQjYefKj7ggP
-         UeU2po9scE3VbflKovwFJ1nNhUaDJduX7jUr9XsEFPnlHupsNulUeSVHI57qVxNnyNW7
-         aSfvPRh8Ctk2Vri+A1U89QehoYd8DAQwf6MD4YAzHDVcVjZ9IWrcQTM3dsZKz/k06Q/J
-         3Gcu0P4xyDXW3IGNIgyubsTND2cepq2uMKs3GLzxhhXAvgmSxuHr14CjUbrlIfPQK/vJ
-         4Pqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSLtbXmUhni0J/dtDI0pFRiUVKUaxA0wml26C+qLXQ0W8ax2YBTFTUQdf2Ct6iqiYaz06uKsEGQfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIMn2vA6DcQK9JZJ2gjBkStF7pxyI6/8eIaNL4ErzSZavu2kh/
-	u/j5Eali24yEApzyJ91USWu3zq4VsSh9rl4+wtxlJjanO+Of9+3pRXd9zlujvrCxmsk=
-X-Gm-Gg: ASbGncuzwhUmG4Jc07olGMtFVHcdScjePhnCcM7IZgrGTMb20SrQm4w9UaSRxb9UhU3
-	lIA00A/toqH0KZUb45W45KHpfjbWoJmYul25v+s34UDETLcodDXUMXjvFRxM23CtzguILVRYPIW
-	svPzMFgFrzLEqtWSTKo2mDRtPvmpK5YQn7Y8X7Xc6N7JAxPO1F09OjVV++DuytiaeylLFfKDlGT
-	Q0WCGQp2e77cCM6RuT4D/729uhf+3tTjHOWeRrLXlRUH9CizyhGRPN8XhCv3KmfVDdgQ7XMGaZ9
-	9jhhYfB+AdsoMWtjz9xjFJg1nBBNlVfLMmfU05pvG9bPJAE1Y5ONqF5oafskST7rRsIu9LJzRbW
-	yI2+b8WLAnJRJQZI=
-X-Google-Smtp-Source: AGHT+IGDhz0qhVTw0+Jv8lS4jO8NKu6i+6S1WnDonE3OKo10n+XAusMMQdVW5VodGZ41K5WwIdd9Lg==
-X-Received: by 2002:a17:907:72c2:b0:ae3:bd92:e69b with SMTP id a640c23a62f3a-ae3fbc4c2a9mr336020266b.7.1751645693200;
-        Fri, 04 Jul 2025 09:14:53 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d9215sm194703766b.2.2025.07.04.09.14.51
+        d=1e100.net; s=20230601; t=1751649682; x=1752254482;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYd1Y/aOqrQmhXBusd+shb/ZpX/EE96WqbgSK3mRMUQ=;
+        b=goq/j7p0hUMOke1QY6Or9+PgTdyJ6bhmBHkFWbXOKtsnDTZlytjleK2D1MKBfzd6oM
+         lu78BwWNwldt89zTUNxgcaYAY9ux9RYjR3x+p9IPK02AbUPpN568DYpv7qoNajvWsLoa
+         Ep/WYwZ+yBDKO5u+BjWxIaD5eBAyepsIiavynLNFM2LiPv4pFgpGj4h/gC7z8Go0wegm
+         9OyzeyyVLFvjd9nghA/kMvqz5G5b7OkLIAbe0Lq34B+0DaFGDVjfT+lI6DkRsuU7kseH
+         su67SzGhZl02b7zS9Lo8Z2bm1agiljatd7W7jbZGaFQKG1TckyIkVLmJS2MvU3mEUf2c
+         MF4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVoTgyHo+fQUMpICpHuxYb+svl0kequTXlzHLgC3BD7jXnn7CGHu3uOXywkKiv0LkACYg9kiaCBZo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1DjNkkAh0kl9HzfCem2ITnLEvWO/wDYRSg0YJpRwkNbfwgy3D
+	2eueug+z1Q83diBk+n2Vb/JF8pPDRcFAl4ZCJIivBtOEAHFjuvyMXmbqHe5Uwtp64RnpWlPTGYG
+	LBRejO5ikNLvUCmeYWYlxbVLsBeHpiQKYDLYQzluXRqRsZy6X8NYNnhhwWi98SQM=
+X-Gm-Gg: ASbGncuOAXjfT6FbEXB0FFmT6ZfybKamsjaYTspPyStgfZBkwrkDjhEigCO1GMksyJH
+	YrFkuUucpF4MqPS7O8vd3Hbrl5qaIQuHdy49tOSlHTYQwiuwGloHi29kKUqdDcUY+naLtM3BY0+
+	iJfwlz3zPu41xReGbTy6eExOqDg3xTi0vArrb6qji5gm2BIyYv4Z/AgDLGzN3zZh/g5ENI8sAQi
+	/FRuhLJuF6AFO4iJC6mAnsR2bz26EH065fVy35zn36RbZyIs98/Ntgz6YHCF2wGHn4b9JoVnI8Y
+	t6USJ5ouR9wDTNudutc+y5JqBYaI9BX3AUayDnILFlUCKJtxh8ecewPCUibz3xpqEZMTUbjcL9t
+	mv6RB9GgDdJ4PtgqS7AnnrX6e/mcFdtUhSv0=
+X-Received: by 2002:a05:620a:1aa1:b0:7d0:69ff:385a with SMTP id af79cd13be357-7d5df181d6cmr340761285a.58.1751649682223;
+        Fri, 04 Jul 2025 10:21:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpSHb1K1F6j7rtF41U6JYdzqqPCY5hlVllAFAv6HMtb8MQE1920mSMFj6b/sYXv0mfka0yuw==
+X-Received: by 2002:a05:620a:1aa1:b0:7d0:69ff:385a with SMTP id af79cd13be357-7d5df181d6cmr340757685a.58.1751649681648;
+        Fri, 04 Jul 2025 10:21:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384952e9sm301641e87.103.2025.07.04.10.21.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 09:14:52 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	lizhi.hou@amd.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 9/9] arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
-Date: Fri,  4 Jul 2025 19:14:09 +0300
-Message-ID: <20250704161410.3931884-10-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+        Fri, 04 Jul 2025 10:21:20 -0700 (PDT)
+Date: Fri, 4 Jul 2025 20:21:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+Message-ID: <s5fknuvs6w2bgyr65y7ajiyfk2ph5un6vofcxpcz4js6wcybbl@ab5vz4frdigi>
+References: <20250702-qcs615-mm-v10-clock-controllers-v11-0-9c216e1615ab@quicinc.com>
+ <20250702-qcs615-mm-v10-clock-controllers-v11-1-9c216e1615ab@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-qcs615-mm-v10-clock-controllers-v11-1-9c216e1615ab@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEzMSBTYWx0ZWRfX3Pd5F9Tee6jG
+ 9h4ceW6LKJqmz8VES/4qN22leAEa+9yhl4jlKqYBR09jWGPvTkOIOdh8wwhNaiaz70cSvYklzqS
+ PTiNDPr9w7R49O/gCoNnsx3qFX/Lt6nF9eEmpF1fGeIPcWWQeu/0XDsBfozyTKF4IUi/T/l/Wh4
+ +Dewa32J2BXQftnmR+tqkAE4u/w31WJD50Fv22c+T4hWpg1YE1EGtdkulIQpRn2eEIyKAmLl3+n
+ YS/LATUdtmVEeZyMDIEO3U18PDFwFt3+docGiCJgV0dW+kaoAtyhRbOZ0fUGniRHsMlDIz/eSeT
+ CE4TTHYTdtMVPvQTqcq2FbluuMKfQwas8NgPmRriArX8huIW46PLjOBMFq6u6A1pQYpI+N+NYUO
+ /InW8EEtbu7/GHOoGCRHeU0C3Mtk7L6fl/vHFv5w9sdampJIkPQUncUN5AfOZ0tR/xZt9c+2
+X-Authority-Analysis: v=2.4 cv=RJKzH5i+ c=1 sm=1 tr=0 ts=68680d93 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=0A9y-nFg0dDz6qeF-BMA:9
+ a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: l_rOur86xzRM6UjWiU6S9Xl1RiuyPpGN
+X-Proofpoint-GUID: l_rOur86xzRM6UjWiU6S9Xl1RiuyPpGN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_06,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ phishscore=0 priorityscore=1501 mlxscore=0 spamscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507040131
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Jul 02, 2025 at 02:34:21PM +0530, Taniya Das wrote:
+> The alpha PLLs which slew to a new frequency at runtime would require
+> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+> which can support the slewing of the PLL to a new frequency.
+> 
+> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 192 +++++++++++++++++++++++++++++++++++----
+>  drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>  2 files changed, 175 insertions(+), 18 deletions(-)
+> 
 
-Enable PCIe for the Renesas RZ/G3S SoC.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
 
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- none
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 739b19302865..b3533ba5be7e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -227,6 +227,7 @@ CONFIG_PCIE_MEDIATEK_GEN3=m
- CONFIG_PCI_TEGRA=y
- CONFIG_PCIE_RCAR_HOST=y
- CONFIG_PCIE_RCAR_EP=y
-+CONFIG_PCIE_RENESAS_RZG3S_HOST=m
- CONFIG_PCIE_ROCKCHIP_HOST=m
- CONFIG_PCI_XGENE=y
- CONFIG_PCI_IMX6_HOST=y
 -- 
-2.43.0
-
+With best wishes
+Dmitry
