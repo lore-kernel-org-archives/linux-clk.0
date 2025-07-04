@@ -1,143 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4B1293B61;
-	Fri,  4 Jul 2025 10:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71CF2F273F
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 10:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751623798; cv=none; b=XBdrhpDa/+z3W56N2gbnzZhJllid9a+HCRKtMsdD97Hugb2PDGjMAcrMRwiVUpKrhwiQfJcQvjpMb5TgGYpm1cVwOzpq87bbbdwCpObo1UDUPL0ljJHkmmAK39tHHHEj/gt+jIhU0+sTZTLwNSIA0/c6avMPOPr9/GzAW8BR4eU=
+	t=1751623887; cv=none; b=Xai5GPS3pPFaaXbTERTiXi+EyYrxKrdrqQi8fuHajfDU0ehEyA1aXRfN2uWuz5Nf9Q/wpr9jtJfi+1hiqIPzlXZVdLfsiMOwRD2fKW3oph7Ov4r8+sDBe/WvRVitIm4uX96B2dDeV4waXHYYakDecSapGSuDKFj5Mi1hM22hooI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751623798; c=relaxed/simple;
-	bh=sErifeomiBisSrJ5F/Z1EiOE+yjyaoOoLVJmALiwIss=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=QBSQrQtDxl3khpvRlIPU5qS8NjGQcj8bGfiG/4VLzik4oLgXwc2074TM6uBfJ6SgTIqix4uNEDSeMVkZzCLHc0Rh6MdthBE2RcCXqdqwRLBxsoLarlHh4+ZwhuqZwHzHjigPU/LkbovziNf9+Nbw1oaGQuvoXCNP18CP7DrmY1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjHFAeZa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751623887; c=relaxed/simple;
+	bh=ZJfiMH6yrhrW4z13OYY/q+7njP7HRfoaeaZaIxvoLsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AHkt76M+tUXlX4gtOEXmNIuJnKC71AlcF4C8wn6+sKFEgiP1KIR1sRvrmEICWXEwRRdOrzElZx0Url/gcTkZBrGAFD9ltzvo6BgdEMrS0S/RIU1tvvcP3CbBjcCQEzoIjDIOvRx6u7LUN2iIdw3Q/K4bpzpNX8es6BhBMt6hTJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NlfZj2fr; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjHFAeZa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB26C4CEE3;
-	Fri,  4 Jul 2025 10:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751623797;
-	bh=sErifeomiBisSrJ5F/Z1EiOE+yjyaoOoLVJmALiwIss=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=bjHFAeZaJFAnmlfy0BXQom4D2g8nROdZRV9VSgmHVyp34hx86laW5qYZ9hJt1xRQW
-	 0K0KO2yByzLe4dQZLFhD35Ow6d8OFCvrtXqBJsfVoIIfyv2UGdJYm4h3q0G5Jkpw5z
-	 wGhbmAF7CZg/+Usn4oPgUWLuVpcLqO00+9bczIkO/xSH+5IJAtnA1+gQ91n+wiBcP6
-	 B7oDcHjP2qL77G1iVen1zde1nv2qXrbY4ckstCIFg4BI/BrUjKystwvqi6oNlmq8/O
-	 6gVbjWvcNhrRjps2Q90t25m0FTomyUvTA0EnLcqcQEkGdXcBV9HXEB+8pGkJCpLBEg
-	 +vGw4nMjPXgxg==
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NlfZj2fr"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553b6a349ccso1023927e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 03:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751623884; x=1752228684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
+        b=NlfZj2frJ0MoI/3h7QveKv3Y0EgzXgLQw8j2Ge+Wo0BaXCzdjZufQmSA/ijuVDP9gi
+         gJz4g/4zLumrGQqytWbXxeWHMEK0gbxZzTnKz0n7dciwIIWnDBRKLTHvXypSBwF4d9i1
+         nzIqaSMslKbZh3agm9XKrIDh4JTKzk2qwzddiGAXIXGtyp7+cqPObMq3H+2oSMRCLEJG
+         JeqMmMdhVRY0YOqnhqCkiV5Ho1k8WTQduCIqx5tuK/tX66Mi0GDGRrjdo0KTeBKK6VPa
+         6dJSqsdmSoDN5QvRnopc0iXMyN3DGNdd08Za0D5A0OiMXr1MFTIDRjxVmRZAXd/GPNJZ
+         N2FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751623884; x=1752228684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
+        b=sID3CO68siYNMgXhh+A9bQriMyGodI+BYSdoZ3ki6SNVb2wFgD2emjFbrz0RRKeK1d
+         X00C+9MGltMxNdkh6vd2uQ5tbvbL8i6pkKYyrkgsOn/ph2KtzP4toJQyBtfPh+vdIFlD
+         6whMwpSicLl6kBT3iI58EHXVE50C3iwyjlxGWNOKkGuUNBmljmr06O8L7LYW8JghVdp8
+         C3xKKCMc2TqlueyaGRZchHT/qSJQDVS6wSrHLHHMZlmj5njj2q6WaTygNlb76d6I2i9I
+         8r8c2aOUlX7p+FPGyHgv2IpnOH/C6tGt3YRmXeg6aV2Iv97hN1sZMG///BqqNt2OVLBS
+         3HJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqtV9l7fIVBX1dOV3XWIYCDh70xnY3BvqmR3ZVzbck+ai1P7nQBPo8cdTpwgLLp5mQlClreCjaSs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7kZv0V/9en4qV4gRgLBMPJCju5uXdfZ5M413WLmTMnhmzckad
+	w2xMDgeC8wdNtAGOL0D9r1M5cjUSvbhKfuoZ5iMtTLyTAkCFrrhzqGrYQ6j5nmtLP6oUyqaunpn
+	e+Tx+jW3El0eplal63qSUYFceCmOVZhHGnkjmDyWFtw==
+X-Gm-Gg: ASbGncvEDuvj+Su4UODmIw4K+OBDMj6zzr7Y32Za0p5OWaHqNWMnawuw01gTqXVA9/6
+	NKjFBfnNBI9r4lRXYXtObz5yRILEXxmSgWosgfo3S4/woMexmsHp9fU8h+KsjXd2T0Vdb4oPYgV
+	UX1zGZ43MUg+c48PNYvhErUypRKgJCz8BULBB9+EUYrV/MFpipZKWNyv8=
+X-Google-Smtp-Source: AGHT+IFYm/wR4jTRlbIDDwF6FIxEmPbVXFWiC29PN2h5l87b4kSraGLAGzH7R/iggEXemYKU5MQvLCtTcORv1zFuOus=
+X-Received: by 2002:a05:6512:3c94:b0:553:291f:92d with SMTP id
+ 2adb3069b0e04-556e617c939mr532276e87.57.1751623883637; Fri, 04 Jul 2025
+ 03:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
+In-Reply-To: <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Fri, 4 Jul 2025 15:41:11 +0530
+X-Gm-Features: Ac12FXzuBcUQShERIhU7sx8yxPVr9NpYbWLk5Qb0GVfeL-KIfhtDK6Kn6d-Jp8I
+Message-ID: <CAK9=C2Xt5r0Vjw916U7hV7jR1iRwfaLpvhLYTLmWec_p_1pziw@mail.gmail.com>
+Subject: Re: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 04 Jul 2025 12:09:43 +0200
-Message-Id: <DB36T5JWBL10.2F56EDJ1XKAD0@kernel.org>
-Subject: Re: [PATCH v13 2/5] rust: support formatting of foreign types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Michal Rostecki" <vadorovsky@protonmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Brendan Higgins"
- <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Rae Moar"
- <rmoar@google.com>, "Danilo Krummrich" <dakr@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
- <russ.weight@linux.dev>, "FUJITA Tomonori" <fujita.tomonori@gmail.com>,
- "Rob Herring" <robh@kernel.org>, "Saravana Kannan" <saravanak@google.com>,
- "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Will Deacon" <will@kernel.org>, "Waiman Long" <longman@redhat.com>,
- "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
- <nick.desaulniers+lkml@gmail.com>, "Bill Wendling" <morbo@google.com>,
- "Justin Stitt" <justinstitt@google.com>, "Andrew Lunn" <andrew@lunn.ch>,
- "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell King"
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>, "Arnd
- Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Dave
- Ertman" <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
- "Leon Romanovsky" <leon@kernel.org>, "Breno Leitao" <leitao@debian.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
- <linux-pci@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <linux-block@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
- <20250701-cstr-core-v13-2-29f7d3eb97a6@gmail.com>
- <DB2BDSN1JH51.14ZZPETJORBC6@kernel.org>
- <CAJ-ks9nC=AyBPXRY3nJ0NuZvjFskzMcOkVNrBEfXD2hZ5uRntQ@mail.gmail.com>
- <DB2IJ9HBIM0W.3N0JVGKX558QI@kernel.org>
- <CAJ-ks9nF5+m+_bn0Pzi9yU0pw0TyN7Fs4x--mQ4ygyHz4A6hzg@mail.gmail.com>
- <DB2PIGAQHCJR.3BF8ZHECYH3KB@kernel.org>
- <CAJ-ks9=WmuXLJ6KkMEOP2jTvM_YBJO10SNsq0DU2J+_d4jp7qw@mail.gmail.com>
- <CAJ-ks9kNiOgPO7FF3cAbaSNtTWs0_PzQ4k4W0AxjHNFuMJnDcQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9kNiOgPO7FF3cAbaSNtTWs0_PzQ4k4W0AxjHNFuMJnDcQ@mail.gmail.com>
 
-On Fri Jul 4, 2025 at 1:23 AM CEST, Tamir Duberstein wrote:
-> On Thu, Jul 3, 2025 at 6:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+On Fri, Jul 4, 2025 at 1:15=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
 > wrote:
->> On Thu, Jul 3, 2025 at 4:36=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
-wrote:
->> >
->> > I don't understand, can't you just do:
->> >
->> > * add `rust/kernel/fmt.rs`,
->> > * add `rust/macros/fmt.rs`,
->> > * change all occurrences of `core::fmt` to `kernel::fmt` and
->> >   `format_args!` to `fmt!`.
->>
->> Yes, such a split could be done - I will do so in the next spin
->>
->>
->> > The last one could be split by subsystem, no? Some subsystems might
->> > interact and thus need simultaneous splitting, but there should be som=
-e
->> > independent ones.
->>
->> Yes, it probably can. As you say, some subsystems might interact - the
->> claimed benefit of doing this subsystem-by-subsystem split is that it
->> avoids conflicts with ongoing work that will conflict with a large
->> patch, but this is also the downside; if ongoing work changes the set
->> of interactions between subsystems then a maintainer may find
->> themselves unable to emit the log message they want (because one
->> subsystem is using kernel::fmt while another is still on core::fmt).
 >
-> I gave this a try. I ran into the problem that `format_args!` (and,
-> after this patch, `fmt!`) is at the center of `print_macro!`, which
-> itself underpins various other formatting macros. This means we'd have
-> to bifurcate the formatting infrastructure to support an incremental
-> migration. That's quite a bit of code, and likely quite a mess in the
-> resulting git history -- and that's setting aside the toil required to
-> figure out the correct combinations of subsystems that must migrate
-> together.
+> On Fri, Jul 04, 2025 at 12:33:32PM +0530, Anup Patel wrote:
+> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
+> > are frozen and finished public review at the RISC-V International.
+> >
+> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
+> > and RPMI system MSI driver This series also includes ACPI support
+> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
+> >
+> > These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
+> > at: https://github.com/avpatel/linux.git
+> >
+> > To test these patches, boot Linux on "virt,rpmi=3Don,aia=3Daplic-imsic"
+> > machine with OpenSBI and QEMU from the dev-upstream branch at:
+> > https://github.com/ventanamicro/opensbi.git
+> > https://github.com/ventanamicro/qemu.git
+> >
+> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+> > [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
+> >
+> > Changes since v7:
+> >  - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
+>
+> Which comments? What exactly did you change? Provide in-patch changelogs
+> explaining this, because what you wrote is way too vague.
+>
 
-So here is what we can do without duplicating the logic, though it
-requires multiple cycles:
+Apologies for being a bit lazy here. Most changes are pretty straight forwa=
+rd
+except the improvements in PATCH14. More detailed change log is below ...
 
-1. We merge the two `fmt.rs` files & each subsystem merges an
-   implementation of `kernel::fmt::Display` for their types, but keeps
-   the `core::fmt::Display` impl around.
-2. After all subsystems have merged the previous step, we change the
-   implementations of `print_macro!` to use `fmt!` instead of
-   `format_args!`.
-3. We remove all occurrences of `core::fmt` (& replace them with
-   `kernel::fmt`), removing the `core::fmt::Display` impls.
+Changes since v7:
+ - Addressed enum related nits in PATCH3
+   (Refer, https://lore.kernel.org/all/CAK9=3DC2VxhC6soxHtmacedbeCU=3DrFi84=
+Br1RvN2uPcBKoLhRaJw@mail.gmail.com/)
+ - Addressed comments in PATCH7 as follows:
+   - Added minmax.h to includes
+   - Removed "rc" variable from mpxy_mbox_send_rpmi_data()
+   - Removed alignment and other checks from mpxy_mbox_peek_rpmi_data()
+   - Created separate function to restrict scope of channel_ids used
+in mpxy_mbox_probe()
+   (Refer, https://lore.kernel.org/all/CAK9=3DC2Ume2CmBYHYob7HSJHu=3DZdfdWM=
++4JYPgFJ9Hir5Oi8cOg@mail.gmail.com/)
+ - Improved comments for struct rpmi_clk_rates in PATCH10
+   (Refer, https://lore.kernel.org/all/CAK9=3DC2VfvsbFTjecQm0OSsssXbff7wC4f=
+qWf3CTmnpWSiaLcBw@mail.gmail.com/)
+ - Improved refactoring of acpi_fwnode_get_reference_args() in PATCH14
+   (Refer, https://lore.kernel.org/all/20250702051345.1460497-15-apatel@ven=
+tanamicro.com/)
+ - Improve nargs_count parsing in acpi_fwnode_get_reference_args() for PATC=
+H15
+   (Refer, https://lore.kernel.org/all/20250702051345.1460497-16-apatel@ven=
+tanamicro.com/)
+ - Added more comments describing why need to explicitly set device
+MSI domain in PATCH21
+   (Refer, https://lore.kernel.org/all/aGaUmpw1pVWNAmpb@smile.fi.intel.com/=
+)
 
----
-Cheers,
-Benno
+Regards,
+Anup
