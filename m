@@ -1,62 +1,64 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FC230205E
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 13:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8389D306DBE
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 13:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751636620; cv=none; b=DMwdTppam4ekcUzHYePxNtr/dqPqbh5cmQ2Ym2qUW3n/rft4la86odP1KaQ7A2iSDJNJWN92KvEekm6hHv5SYU+eXW1ZNGrgbNgWWBA4DrXmCz8xxcd7l/gn6JVkS0Im0+tqlsVr/1bLqhrUrbawQZS40miqtU/BGWtLu+2voWk=
+	t=1751636621; cv=none; b=pFk9PPPwe6l+yMWgcO4WqVSvzyObbIBFm6Qd46GlIfy7HnSqubFgJcw7PaceZU/WixejQbEa6ZYSle5NOXYdZVhHI3DM5iU6QWckE/RvGVeL6xL/jFoSXrI7/HV5VU2SXiB7DBX6N1B7Zd9fCqaoNuD36wasCUlppjB9bIb8l9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751636620; c=relaxed/simple;
-	bh=qTydbvwsipxNicmaEZ+CKER7CcHb2CWmAMgsd8CYofI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qftAz1qGt4oUA/riKSu68n8be6fhacivAk0k3p0cyaXQ+FIeJm0ZaOFxQ7B4yfF9bKX6ahVWp94+zGKTcSu+XZYNZOr175xxmYzStVor4batrm/ZvbNcNyS3LITowOj9OJEedSOgqRtw7/uE2PpGpGaldFr7OV0AVni5wFdu9jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JE4+YTJr; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1751636621; c=relaxed/simple;
+	bh=363z4+ODj0eDk+G9J5eeG9fyE/Gsvi/bEcEURwyj2xE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SCXtoF+f3IQ1amDb/IL49GRF+05P6pzIuDFMWev1Ab80b+O1SL7yy3tL+wFUDtOmI2kvx3MehAqFJKjJrRWW08owTe/MATi5L7cdLQ9lkO2FloSLDEL2+xbZqk11flIYm+NQ4QhGU2uCrZvaQigk6qqABW1AcCPN9IXnRlShiWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fVN0YAzY; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JE4+YTJr"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo1552161a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 06:43:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fVN0YAzY"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so1849101a12.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 06:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751636615; x=1752241415; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVHE9lJ0YDRv5jonU7HwVUdVK1j8h+dQL57nzRKWT18=;
-        b=JE4+YTJr540uoJUiObsEN2jXNaeXLSKPq8Yv+zDsWB3o5/WxGUGSkitipqYjioAaaF
-         Kg4x+VCPa9vhQtvshxs8JXJkPu/iL6hjgp+4a8hhYRfuxKRsssmYpxv6hfqoaItAtYlK
-         7q1tp/0+xkYZ5pnsSfP7hpg1JXUP6v9qa6w32Rm54m9ylFr66LAn0ak6q1SHF6/5VjOc
-         neUbCKmLeViI+mAX00/oSSt4B5ZjPeUwJ3q4zLoeDeJl0JlVCTJ4ZNYwUvp2KCwgYGA3
-         SoTfTL4BlWzX0j5Gut4TDdTVi4FGyi01BLrI8OuGHcv+CHVcsvS+fME83urDYUTHpmp6
-         vFFg==
+        d=tuxon.dev; s=google; t=1751636618; x=1752241418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mIne4IF+NV24EtqbVzae+4FXgTFIsmLWApAJYxm1q38=;
+        b=fVN0YAzYgQy4Jyqu827zJly7kcPNPiFTx/DZlZzbw0oqswdsrwftnAvZOhrunItPus
+         hUjZ6HEHCV9VRn6QkqhZ2C1Sl7sYDljplNK+GMX22YFK/e6BOESZMBSNSauc7cSZUCCD
+         Yhsy9yd/VEpUCc9QOFl9C2FgWJHdkbrwfQHnVW8yDNQ+lpNQDnLpFPjQfk9C1eSy6qWe
+         DS5F76n9OQg1zKipzd1ZBsbvvsJESt3Ew55ZE2/C8phTreLkZgja9yPZb/7SIJ4rKSOs
+         j4Sj6ituTJnw7p4suurllbvbSbvJmBkL0JXe/yetbq7JnGB/SUayFqSU9hsfWf4St4YC
+         01EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751636615; x=1752241415;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RVHE9lJ0YDRv5jonU7HwVUdVK1j8h+dQL57nzRKWT18=;
-        b=XQxCto6jLF+WKjeUPaS4/8P+JUaJ/Ixswe1CYbIRJr/gooe5SlzU1zkFSAxuts3Pjc
-         v/+UWDliHWDkV7MoHfSbfEsTFYs9yTvjS0JGbDG8krKomCdZWrS6xph7eDvKfF41l7TZ
-         C/JSW9q0TNRSpP8y0AQqcwyLnYeJj8A8yp9Mu+zG6ZybWiXZ0PEqllf0o/XfTddvhZDj
-         XfiB4s/uq70GU+CKWklnFon0adIDu1hl7Iwe0JTfG117K9kzfhFF0+WR2g7emMkiwoKF
-         tFoGBz/yUDJvzz63UWQ/EzePSXArrXeaZsqMsskUqzJgvMhDMmIoy44rDWoruQvrgSBW
-         HvpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmsErLtpXbaseguCpWRSaNNwMaF1On+hD9ookEbqWr3vASzwV6qpsTVImD4o4FGra2+a4ikkdBgdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIvC9a2gIMjG/O8Wc4khchgklIElb+VcNS/zsREC/uBXhQH0uS
-	f4JM6tbiJGUWDaSSiEsRktSr0/A8ECKqNfHANaggnHUX7qK487n/KB/+ddFZPjlxdgI4JZDSoEt
-	CuHbN
-X-Gm-Gg: ASbGnctJEJ1yCVR7nirzPivfPjSsIncZIz8jsMtj7gQl74eetgCQLkDyREqXs+Eamao
-	OjyIDvUTh6CAH7tJDVpFE1BZwlezq4Lhhjq7DqBM//GqQZD5XlVCEqJr8tvhhcsh/1g1dpKVT0Z
-	TLf2vlCn/cU3g7MvhrSRVTahaOHNUnKIfpmrvKPigU/yZcObfkf3cMpPWmip9DDF4S7OgobgKOH
-	fKKnZIbftAA/kwZeDpTb7MAnAWzZh7Iq8ECVRtJUaX/e3EWSKlILv22TSP5bk1T6TXjX8F+IKIn
-	jy7YsBazizmllDp/d8s8aYH31Si1ixJA5QoF5RDVF2vMhfQ/vFiTl6zOH7ZQH0BAYaefyJ0rquv
-	UJy0XxsCosO2y3iNQ79gLv+Wu3w==
-X-Google-Smtp-Source: AGHT+IFGPw3v50tj/GPM1uEZkj/0eYHeSowBVbc3cQ6zDPa98ZgFCGKQvA42xxJtIW7UpUVkFtB5/w==
-X-Received: by 2002:a05:6402:5191:b0:60b:9f77:e514 with SMTP id 4fb4d7f45d1cf-60fd6510ce0mr1836018a12.10.1751636615396;
-        Fri, 04 Jul 2025 06:43:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751636618; x=1752241418;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mIne4IF+NV24EtqbVzae+4FXgTFIsmLWApAJYxm1q38=;
+        b=PqbryfUbBv2oNTZqih1Lm6qC+4ntf+4PEgreJ+8/cwEo3vFwMhghkNAGupwu9qVsvn
+         WxFnahmBSWfb5kRL+YIVuOUPXifQiWe6wv5xcIzp+iW701RrPmg7+fW1c1xM7JuqVCRs
+         VkWU8fNa8r4WImd0cXjBzBPioewXkTI3ukBLCzOqn3XtAg2sta08U4rZxndgEY3TLoQO
+         I7oEzDJDfT+OaJ0NxkR1MJL0h0ADnh5387zaGqVMio0Xe3sirNfMIgXT94/grE+VHRcY
+         Mo+sJ3OicEu0wlG/fEY+9LyufS9Z7pZC5+AU36ioHYHUClAk+MUgetf23BQ3pDrqHegD
+         bQzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWm5lNXOPrRriJrJFlRcZVcCE55ndNyTGAAa1lbIAVyK9ureHqF0vEt9XJW60TAxp80ie0VaD5NXxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9BpnqCxXEkPltb/UqBW3adX+AW3Z3csP5JN1GwwUQ95rhkCFX
+	vJ+C0lRgq7UrJzYg3XQyiDIVSYRviXPJbIZ5c2UPnB9aCCQsg0W27Ea20hXq6HL8Pc3sABNQ7zQ
+	xSuQD
+X-Gm-Gg: ASbGnctO+Sj6matfRTeSC07fBwtYasRjtDAcr1wmt9bnjnQJLwH1BdIreLhf18mGZ+4
+	kxib0zEzkvQ5lK9YDXS5MSoXJ3oSCZPuhHjKpMGhboGH/MZpOabODOXxkHTpCdItK6EZIeg/gkH
+	SvxakvT6mrXJSDTRKEhWkmjm2iYR73U6CtZiyp+ruXgA0bGb744Bv0Z9B0uQ5pPI0pQWxu+qUsa
+	3P/DfFCIkozxTyqI1c8TbCGWktAfyy/wb3jyMpKQNCJE7hA7pzPm2y6OYozh1FqIY1SHgqAyTzD
+	1YxUwLyShv9PurB2P2+lH32YvMbbFzpFBlYEa9CeUDSNeSxt3at+AFmOZS/OSS1DozDwhg+sUTb
+	WnLN2x4pWQtX6kiiuPXx1Tni8NA==
+X-Google-Smtp-Source: AGHT+IErurtR/HbMkmE1efqwIH6hRoIPysAMhNCXkZd1cXgXHG1/n5Cc+xiZ3wxJ4DJBTssmCTipZA==
+X-Received: by 2002:a05:6402:1ed3:b0:60c:5e47:3af5 with SMTP id 4fb4d7f45d1cf-60fcc62e4famr2920806a12.4.1751636616586;
+        Fri, 04 Jul 2025 06:43:36 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fd3895ac7sm1084916a12.30.2025.07.04.06.43.34
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fd3895ac7sm1084916a12.30.2025.07.04.06.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 06:43:34 -0700 (PDT)
+        Fri, 04 Jul 2025 06:43:36 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -67,10 +69,12 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 0/3] clk: renesas: Add MSTOP support for RZ/G2{L, LC, UL}, RZ/V2L, RZ/Five
-Date: Fri,  4 Jul 2025 16:43:25 +0300
-Message-ID: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 1/3] clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
+Date: Fri,  4 Jul 2025 16:43:26 +0300
+Message-ID: <20250704134328.3614317-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,27 +85,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+If MSTOP is not added for both clocks in a coupled pair, and the clocks
+are not disabled in the reverse order of their enable sequence, the MSTOP
+may remain enabled when disabling the clocks.
 
-Series adds MSTOP support for the RZ/G2{L, LC, UL}, RZ/V2L, RZ/Five
-SoCs.
+This happens because rzg2l_mod_clock_endisable() executes for coupled
+clocks only when a single clock from the pair is enabled. If one clock has
+no MSTOP defined, it can result in the MSTOP configuration being left
+active when the clocks are disabled out of order (i.e., not in the reverse
+order of enabling).
 
-Along with it, a fix for RZ/G3S MSTOP was included.
+Fixes: c49695952746 ("clk: renesas: r9a08g045: Drop power domain instantiation")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g045-cpg.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thank you,
-Claudiu Beznea
-
-Claudiu Beznea (3):
-  clk: renesas: r9a08g045-cpg: Add MSTOP for coupled clocks as well
-  clk: renesas: r9a07g044-cpg: Add MSTOP for RZ/G2L
-  clk: renesas: r9a07g043-cpg: Add MSTOP for RZ/G2UL
-
- drivers/clk/renesas/r9a07g043-cpg.c | 130 ++++++++++++------------
- drivers/clk/renesas/r9a07g044-cpg.c | 152 ++++++++++++++--------------
- drivers/clk/renesas/r9a08g045-cpg.c |   6 +-
- drivers/clk/renesas/rzg2l-cpg.h     |   1 +
- 4 files changed, 146 insertions(+), 143 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 405907925bb7..ed0661997928 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -256,11 +256,13 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 					MSTOP(BUS_PERI_COM, BIT(4))),
+ 	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0,
+ 					MSTOP(BUS_PERI_COM, BIT(2))),
+-	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0, 0),
++	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0,
++					MSTOP(BUS_PERI_COM, BIT(2))),
+ 	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8, 0),
+ 	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1,
+ 					MSTOP(BUS_PERI_COM, BIT(3))),
+-	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1, 0),
++	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1,
++					MSTOP(BUS_PERI_COM, BIT(3))),
+ 	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9, 0),
+ 	DEF_MOD("i2c0_pclk",		R9A08G045_I2C0_PCLK, R9A08G045_CLK_P0, 0x580, 0,
+ 					MSTOP(BUS_MCPU2, BIT(10))),
 -- 
 2.43.0
 
