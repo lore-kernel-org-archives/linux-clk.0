@@ -1,159 +1,134 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388D521CC40
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 11:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34862D0C98
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 11:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751627770; cv=none; b=mwCwiUHFMTcrOcp9QfH0cL4qMSbSA1RMSQt9zv1d0ABu9hyHHEs4rOQXVUyjReAjvio4JhBr3a3qFW/uZOYoUMuZbwdZe4hv16AJ4h5xMHCV2lfIXU3FgRXaZEfSWdmApDyV8PXxtzXgfc1eCGo+xLiWc+Sg58aqrAtzlGj7UcM=
+	t=1751629874; cv=none; b=TyAZjTiFB/bhSa3Y+1yao8Ol9/AeDceY5pV5KTCPdaYS5O5b9qeJOypXoALMjQspm/UPSvJpoY5stAlmMnIp/MczDNULWrcrmo00l4zmf3h7DChmxiAj4niaWr1uDogXMta1ah47to2w9aZfc9juOeiRF96QDW0ynB6Fj84Ukws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751627770; c=relaxed/simple;
-	bh=b9rtoKDrBAYC3BaF1M9Ck1YA+omLHf3ebvKNPvZnx2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jaa5slROf7KDSz1OqQbNPjnu8Ey8R2VG+YF5x1fDmkERDLy/cViTr8mEOvfMC4kjEYJxiPpDjbLhJG9JgCrkn6x4UDakkAdlu2JwHXgz90rBDY1zsmwy84BBGZrKjuIKkF3vko0nLvuimjQyx9LwKb9VMsYkVADDGekPAFfjdfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tQyS3S4B; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1751629874; c=relaxed/simple;
+	bh=5fikI+87o75mbLixisWkcdUIi9r+QELtxuF3rHOb/ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fYT662EkqXDNOEowhrMjekLe4DgBd97emOBTVVfk4/wH1cxD4Zf7P+emK3cxepZcgXTJALzq6IYek8EwZMv6b5l9790ebsbW3Z5q1p4hhVYdY0cota5Bpl2ZX+x5GXU3TN2GtJQRVTeFBO7s3VSXGiOHxGETgMEqPt/hVTF0Gws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CX5GUFg9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tQyS3S4B"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e85e06a7f63so700132276.1
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 04:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751627767; x=1752232567; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
-        b=tQyS3S4B2wbGP1Dqsu7JNrBtVdj91LQh2w8veoQ7h0MrGDi1p7vqMTB2KnEfYSxOYT
-         nCeOIdg0bzfoUS9fknPL6U/uxlkZoBZmwNkMV4zBDt1GmAfbMkwVeKutU2q2RNlrQDpR
-         6prf8vynMeEeFXAOcHn0YsENBARqw9mHcSL6Sq/8ElrEo3wIGrX7fqJWQ1wie3U8xryT
-         7IezF6IwbQ86ZUR+nRM3Q2oweyf2+uWHTZWLmUmL7uDSz65WecELfxdVUzs3c92fAZIL
-         AGmaOLE0mGwpaUqqqNHdyNAHU9oKyisiMgEfGXhUHqOvRVJrQrtdTvhr+8krET00XqJ5
-         CoMA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CX5GUFg9"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56486eb5028624
+	for <linux-clk@vger.kernel.org>; Fri, 4 Jul 2025 11:51:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N2vo/P6bZVJ6DuTuBUMGx/1yOw2ZUrq+gW27lFrqtTA=; b=CX5GUFg9ojZ7zVI/
+	u8kyfZ3pDEbufbdqhhRaPwZy1UQ17VmPigWj3Dhvh2t7FHOD1NcY7bdxxQPzFE5k
+	NuIK77LHyIxafexQlk9CqpVuoMGGByD+Vh7/uFS9XL6JLEHS4pVrQaYL4T4awV2S
+	W/Ml3Eolu8Bo2oaJY2Udl9ShJLZ3jRsEeHJG3DsWxtcPu2N8l2K6Tab+snZsV8Ra
+	Nx1dZBjyC78bqQdufztShPP3n+0MJiX2l1/hVJDX2L5RTWwDdOusQyhzLm+srWIF
+	AmrbKHkV9Z8BYakmfO67QYGg7IhWHnewE/R4CMEQ9w1Eam8mhh2P85G52EOHLfJW
+	EnVn9w==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bw4066-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 11:51:11 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6facde431b2so2093046d6.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 04:51:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751627767; x=1752232567;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PjpGYVa/Cr3/NCJD8CT9IY6HzXhXvTQMbsQZwOON6l4=;
-        b=LGyOepyylNWutAmBEktqjI2zspS2ZO6XIpGXX8LevfbDPXRBlOZl8Welpqnfkcrvle
-         E4ntdsJ2cDZEhVwrp0Mmf7/3W7hlttCRo/qwdXAIINyNTXz61SqBQMFylLGsj1pVc1C/
-         3nUbnDZztgCujxT7/EBJ39iICfFskqPfKpYM3yJ0uenyizy46WJwrMEShcEpcsX1GagB
-         AwhiAQo8qtsOAYlHJckwe1OFPnXH73VNlAb6vYXZXnta3gsyLsquZKO1hdKKswOG5N0H
-         uWVGQ9tEjXjRm5pdR3N2oOF+5uE9ygqT3Mtlrplw5rVLTYpWT3aulXraL8SdKhHTM+Wk
-         Kn5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHh6XgAawO8+SlMVoC1+ytlad6ubglOtbsufUMxWjfMS2cxsYVDDuX0WAl3a3pyfc4f1GgcTDVIPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFXL55Nu7aJKJ55xt1oT99hkmZ2OS7V1gr4JYBHQsNNQ/Rl+4v
-	u/G1LP7jMyt6GvU2XkmIsjeofSWeIVA9OSU+iINKguAlznptQEY9a0PRTAMq6i3B5+OtVBXFIP0
-	ACw94qqG5NaDCVIpIngvAgL53yO+iEAemFYqwQGS5jg==
-X-Gm-Gg: ASbGncuxbAhkJTvvCY8/V26KJrJoKdlWHhSP0Q4SMfT4vvgLZbL8kme5WsNx5UFsgsB
-	w/EkjHUaJg4EkoZVeaKoZ9GrB70lEtd+KUo6R1LuTHHa07oQXuqgvUQhQzpgg9r9WBy/HKVOFA9
-	drxmP7m/z2Uj/cHmkz4jb90zRYrY3BULWBu0g9WT13y67i
-X-Google-Smtp-Source: AGHT+IHAW8UyCQ9W+pvHvcTvef9aFULLZGbhQe98R4X9+6EEdiQxhHHKyUMUuOYP0+BDeQPC3PK4UvgN4CdOsI4nxiQ=
-X-Received: by 2002:a05:690c:9c09:b0:70f:9fcd:2075 with SMTP id
- 00721157ae682-71668c0e0ddmr26398687b3.3.1751627767124; Fri, 04 Jul 2025
- 04:16:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751629870; x=1752234670;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2vo/P6bZVJ6DuTuBUMGx/1yOw2ZUrq+gW27lFrqtTA=;
+        b=JP4zIZogEtp4qsr3hIF3quwd9bjWkf6i5zRPGyIkEy3wRZA8uil3too01DXfGMO1KG
+         s1WlczhBp6Xr81IuG2pkUBUtcPRBnDwrc8DxJ5Msep7lDASXbV8iuKb8pl2BeVhH5gpZ
+         vDqIFAwFY0OB3A8hslZVXYxekE2kLdAd7N4qAeXaa2c6GuwK3XGBTdqg6wUGCWcJnI8X
+         UagHmrhey/XVRXTYxPS7q0EaR3kJhMkWe4KeUGAgkvOO1MaWti+LLygh1IyNcV2KG7jl
+         y3V5OaBHC1D9WilDdyXxx4wqstif4PCqAnlsC9oV/KDTH5+N+PiOGaA/uTy0UE/COhX3
+         VBfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2C+iNuJ+xAgylyYnEHF+SNxNVADwQU/qeP3TAuhM3Sa3Ll6QtNm2pOR6LYv1zPf0tOCBCQ9e4Z8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCE28Z9bwU9usQg2chKMI2K/nos80hVVagDYke4SWhtR1o7fdw
+	n+Kd2R6fS3eseJsIerlOynxLdT7gu+/fz/X4CMDK5+Ha6cuoA8sngT8VYQx/47c5YIDvncVZSUI
+	vHA6KVLG/P15q7GoUlHGdGPTa7eKtlwupFN1U0fBBcWa8ArK1JpVThfN/EaP6WpY=
+X-Gm-Gg: ASbGncvXSNXf2ArbQuBpx5L5Ajl9ot8QhuWrH/hbbsHNHZZSfzLJqrFWRAjeMxY3iXe
+	SdcXy+TJ5GYxQBgi/BUenE24fVXA+TbGA8CyBvFWXTpDiegTJKkqEhaB0UQ7Ts0oRmi7Iopm8wo
+	8ONo2Fn3P0ITk4SCQIoZ3ua7qgFA0DmPngMi6pFVO5K4wz8qQTr1QNezLyb1shCppcP3i6NSB8S
+	TgVXwWi32DCgtL0drf7P9fvjoQsg8rWlQ+n/u/PyaM/vyB/wLNVTJyg+UBZCYu70v/VkqBzn6aG
+	BhLl0XUC0GEwqEoeysutvNculnw5sojqc6rcmkzsZvjOiuvq72VUHoAfaObSaYGV2JaL+1RlCtU
+	QxIPASA==
+X-Received: by 2002:a05:622a:11c3:b0:4a9:8e6a:92c3 with SMTP id d75a77b69052e-4a9978746c2mr10688321cf.11.1751629870298;
+        Fri, 04 Jul 2025 04:51:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWrN2NEryvPdcQsXVW0TeWgc3Ic5ZNhY0zdAQ1OKX4lqZG0xsfkEzP8WPFD5XVFAgSx6Nu+g==
+X-Received: by 2002:a05:622a:11c3:b0:4a9:8e6a:92c3 with SMTP id d75a77b69052e-4a9978746c2mr10688001cf.11.1751629869683;
+        Fri, 04 Jul 2025 04:51:09 -0700 (PDT)
+Received: from [192.168.1.106] (83.9.29.45.neoplus.adsl.tpnet.pl. [83.9.29.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02c6dsm158640266b.127.2025.07.04.04.51.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 04:51:09 -0700 (PDT)
+Message-ID: <76546615-e24b-4380-b1c4-8c381743d31c@oss.qualcomm.com>
+Date: Fri, 4 Jul 2025 13:51:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 4 Jul 2025 13:15:31 +0200
-X-Gm-Features: Ac12FXwfheYVCqCiLAFVR27m9ptp6dfE-AwljIFg4O16ch_FdabejHZIDOFh5ww
-Message-ID: <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
-To: Claudiu <claudiu.beznea@tuxon.dev>, rafael@kernel.org
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, 
-	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org, 
-	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, andersson@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	wsa+renesas@sang-engineering.com, mathieu.poirier@linaro.org, 
-	vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
-	pierre-louis.bossart@linux.dev, broonie@kernel.org, robh@kernel.org, 
-	jirislaby@kernel.org, saravanak@google.com, jic23@kernel.org, 
-	dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
-	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	fabrizio.castro.jz@renesas.com, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/11] clk: qcom: Add Global Clock controller (GCC)
+ driver for Milos
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+ <20250704-sm7635-clocks-v2-3-9e47a7c0d47f@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250704-sm7635-clocks-v2-3-9e47a7c0d47f@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: RGBsR2T30HStr1jzvlzJOKP7aUESWC2k
+X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=6867c02f cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=qmfFy4ndMtQ753Zl/n/b/A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
+ a=fvyRFVoqYMEcb97R5LQA:9 a=QEXdDO2ut3YA:10 a=AYr37p2UDEkA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: RGBsR2T30HStr1jzvlzJOKP7aUESWC2k
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA5MCBTYWx0ZWRfX3YGI5ETPtDOQ
+ W7Kh72PipK1lYuDBj6aOXPOoLHDf+3t7NS13gJ1C1KoXp9+t/DiI6W6pdr2Uuq2MpoAKBp1lfF/
+ LpMlqthTocCjokPuhku1LIs1baV239+h4nU0ksqKkvouF/48lENIUpFuNXVvQN2H9w/NBc8kvo/
+ Ya7/JMhzlVjGZ4ET5zIaIMur5gJWRRMSyzhXeb8Wlw9GQjIvL6a8ys3PPLRga7S709dNy9gvzza
+ 20ALcMM4cVmtQuWctZUFKMQDxLNPLdhyVZFuULjDsl0IKNclmtEo+qJfO7GIN2ut8wutz4sMIPK
+ obZWC2E0v40L2KFM5bwgIRbNbpf7RNpRgeICLyO+j82awHfQKvB+CTeskEfNVFaNrfrqc3HcMyO
+ z/gANjEVdMvLSqkRxVl0M4o8NqW0KQ9qiyYaNCuU9nOhqsDmvYxPRZ6owQGMaUqvWQoOWU2x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=919 adultscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040090
 
-On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Hi,
->
-> Series drops the dev_pm_domain_detach() from platform bus remove and
-> adds it in device_unbind_cleanup() to avoid runtime resumming the device
-> after it was detached from its PM domain.
->
-> Please provide your feedback.
->
-> Thank you,
-> Claudiu
->
-> Changes in v5:
-> - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
->   due to this a new patch was introduced
->   "PM: domains: Add flags to specify power on attach/detach"
->
-> Changes in v4:
-> - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
->   and used in device_unbind_cleanup()
->
-> Changes in v3:
-> - add devm_pm_domain_attach()
->
-> Changes in v2:
-> - dropped the devres group open/close approach and use
->   devm_pm_domain_attach()
-> - adjusted patch description to reflect the new approach
->
->
-> Claudiu Beznea (3):
->   PM: domains: Add flags to specify power on attach/detach
->   PM: domains: Detach on device_unbind_cleanup()
->   driver core: platform: Drop dev_pm_domain_detach() call
->
->  drivers/amba/bus.c                       |  4 ++--
->  drivers/base/auxiliary.c                 |  2 +-
->  drivers/base/dd.c                        |  2 ++
->  drivers/base/platform.c                  |  9 +++------
->  drivers/base/power/common.c              |  9 ++++++---
->  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
->  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
->  drivers/i2c/i2c-core-base.c              |  2 +-
->  drivers/mmc/core/sdio_bus.c              |  2 +-
->  drivers/rpmsg/rpmsg_core.c               |  2 +-
->  drivers/soundwire/bus_type.c             |  2 +-
->  drivers/spi/spi.c                        |  2 +-
->  drivers/tty/serdev/core.c                |  2 +-
->  include/linux/pm.h                       |  1 +
->  include/linux/pm_domain.h                | 10 ++++++++--
->  15 files changed, 31 insertions(+), 22 deletions(-)
->
-> --
-> 2.43.0
->
 
-The series looks good to me, please add:
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Rafael, do you intend to pick this via your tree?
+On 04-Jul-25 09:16, Luca Weiss wrote:
+> Add support for the global clock controller found on Milos (e.g. SM7635)
+> based devices.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-Another note, the similar thing that is being done in patch3 from the
-platform bus, is needed for other buses too (at least the amba bus for
-sure). Claudiu, are you planning to do that as a step on top - or are
-you expecting others to help out?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Kind regards
-Uffe
+Konrad
