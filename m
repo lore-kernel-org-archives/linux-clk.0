@@ -1,63 +1,63 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F71D2DC327
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 16:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2527F2E090C
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 16:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751645693; cv=none; b=qXlSclNJGyYBV6zXBlzGth+9+RsVQiW6Te4czvRrsLn1MSMeGAwEKCowqTEIhPFkBp2YQMbuMR4f7kQOAGhPS7PXwVu4R+rVMZE1fJJWoQH5lnOEMlKxeEJm6NkR7dDIT+HWF8+veRNfO86WUvdIrYp2NiiA2k4TYAMnIb1qKKw=
+	t=1751645695; cv=none; b=pZfUq06OQ3hnbaW31Zv1Zm18fcHrRldnY9ZT4YUtzswr5R4dQZEx55he7zrDG5HmidtDnTvWFH03CZADMHVrksrfq6ut9ol2rsfLRwoAx1VHfqpwm8tzRbMEjXupqyFUxSEx30tDhfNzApoKKzxrviQ9oq1m3bfpcrsqbQ2UYQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751645693; c=relaxed/simple;
-	bh=gR9Wn5lFTL1dH5LwfqEgIlxPVfhpUTsJpw7A7wwQ7mE=;
+	s=arc-20240116; t=1751645695; c=relaxed/simple;
+	bh=WguPuQh3/mnSf62tuhpCluxDoAVKFv7lhwgnIqAg2mA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FAiel8vEc0id8BbgBrmVQZIyFBHiMN/e27lWcp1q7y8GmRNihOBBefdLMACDGa8pwxvke6UuDXxJWDoQxOMDzNGPRwnKtYfWcKo6jv9+n+lp743pMaFhH/VazC+/i9Gvrh76sdzOfGnWnWncDJzuJ3rb6ZwclzfXc00I+C009eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m8REOPak; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=XCCjgO1lyJYOQEhkfuYanXICWom0Plt8WSRi7+UYmIy6nmmCSwlew3uziuHNPv0iCrz+7GDUZ88QKV9RVP/hgRZjt3dKNvRuWOIIoAQ1BCbJlp8Z3cvAAfftybzLlAYMK5GcSXri1P04Rih7abAxSvZsAw1ugr6309QEAT60C88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kNsxm4aQ; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m8REOPak"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae3a604b43bso180485266b.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 09:14:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kNsxm4aQ"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso1704037a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 09:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751645689; x=1752250489; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1751645691; x=1752250491; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RkNu2VPdZ05H1WkOeVUqdreqBFI4sSTNmK5wwP9pjsA=;
-        b=m8REOPakEYChY/mVGl38GgbbgXq8xyhEg1Or896sgrIw5Qzg1QW8elA6BNjvsChfYT
-         UFLIQDjY1bXM3NbgpofiqjFzcJvWpJEsIzIZelVjooXtoBfKkHKY7FsTCHKeA8mwUpu/
-         NOCQDWBd1vrZy61n8WxjirBvbk05J1Z9qph2yinwT/CdxV9eNucZFu7ljm3+nKXoZh6n
-         J7XFM2c+NHh+B3QPw0E1fTXCbQvUQRuSHCxqmZRlfXjRZwgGNmdR9XKpo7kc/dv6GZ+e
-         oXyMEpHgqwH/F7u4wbRgpRyW6kLmblDiseIaCrPuIqtWC7Ec4Sn9EVV0baoJ1UYM9+JI
-         uukg==
+        bh=EDg1DpjdtfK3/pj3Ed0aWvzIW/qZbuuI4Dyv55kxUjI=;
+        b=kNsxm4aQzR7UeO/Sg2pPhSVSa/aBvxxcStZmcjSqc6NnX6y3RNzAaB4a45xbKHnCl6
+         OjURboHgmHjDqY0UcT2awnFZGMJTtMLgk4gziU9qQ1TbNb1ouWGsB0xtNEBHanWq6CCF
+         q/Y79U/XX6PK15ZK8mFb2I8UBmyDe5kH9xPMaYfoTl4Efw+y1mwOm8Q7wIfxYRT3fq/E
+         E7AGP/eBjdDMmFSw8+yuMCJWyTbqmGIoBpk47m6t+rDEJKGFXtngaFACVEuEICuXj/rC
+         bEI4NbTz+Aq672q6ZUiVP3nJCUIDvcghA1Ta/+BjifYq48r7l2WRJq0HWJWH+SJ4QjYo
+         4GzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751645689; x=1752250489;
+        d=1e100.net; s=20230601; t=1751645691; x=1752250491;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RkNu2VPdZ05H1WkOeVUqdreqBFI4sSTNmK5wwP9pjsA=;
-        b=C4uBEDODJLCyb11vjGA/OW00sW0tAg6iru1YELVSsA+2sBiftlx/8b7vugsVR7Ugwx
-         mZpQzgbeDKCsT0KDJz5b5iBGwyQPh1CF7a9S9F8/jrAWsCIVfo0d77s+vfEm8i4gMQXP
-         mKqla6qbbseGKm5dNf4Eq9uoAO9aRtUmsP1N166oTSQvCY8RhZlmuMwmywEsbkjYLSrA
-         FBYqGRSmvIk92L+p1k9R4O1Anp2yYcYpcccHVkIBQyYBjp03p+9IIJT+i+Z43pR9KoSH
-         Oefa2PbmPh0ujKZCsGigTEs/F3C1yOapeImYxyIT48BtGzFCahDenrEo8N4dRrxIFbZp
-         /eqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAN3OqsBjRe/jciiBP5X6gcXX0cXyDacriiiujyUVATVJQU8jq8WiVZOlHb7E9+ObKFxXmV+mfcOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEyHGq755FjuEK2d/mzBiFhP0HFOgzBSDY9sApk6JEQUMGoezb
-	ZlId/WcbLu+tqEaj4+JvMp+1am2vUiZuHNktlHxRB/4WGa+XoE6WQAHNEa7nIC61BG0=
-X-Gm-Gg: ASbGncu8QwGDEM/0NlKj8qGUzt7zDUJqy6of7gOABUkR2tdykhehxixr8DkI0plNLTO
-	k+RnqO0gYF1+LpJn56YFMdkxQOemHlk+LQGLBi298ES9IrFHpZWTdWyVsjdrUA22muNqnhbusJz
-	FfvMin2v3npsiEk3aHzfGnlCK2lYd0l8bT5xN+KH4UNiSbMYd9mDLfc/EyVCXPgyhf0V8kieHLv
-	B/cu4xpRmAs4RhbzpaXSTU3QF6o6XyKSRjYkJDJW6LtOpNrtODbAkPSZTZbQUoeyoE5mcGgY7lW
-	2o/9S4bIErKHkkavEeHmmB005yfFcldzpF/3KwnUlqfZSfvaSPFHax0adVCBn1ZBNGkJUYvgflN
-	pGUan5m1rPZ2Tyxo=
-X-Google-Smtp-Source: AGHT+IF8OBJYopz78uTu4zjr9M4q7cZs8YsJ5lxwKzH9GFcsxUYxUdsvzpbrV/sgFDsSrcOtLDUf2g==
-X-Received: by 2002:a17:907:3d0c:b0:ae3:163a:f69a with SMTP id a640c23a62f3a-ae3fbd13e86mr283273366b.33.1751645689346;
-        Fri, 04 Jul 2025 09:14:49 -0700 (PDT)
+        bh=EDg1DpjdtfK3/pj3Ed0aWvzIW/qZbuuI4Dyv55kxUjI=;
+        b=Pi6Uykg5n2L+auJVtLcNeNT2Y+ylQXDxGBwCD8duDKeiTCMKh7jj+fP3ut6EG5/YsU
+         qqZOrEkb8nukDMgoq8It+H/We/NGT8WSN33KQaxwiQo9azScT7NyLCCFiTmZIUpDhTiq
+         ddfEBCReFCNja2OSXYE7cY8c0l0CZ4qrKKuCXpGqp6IQtKeBfWZkXd/f5s3QtF7Aem3z
+         bPF2Hbajt7jTtdNiGNAyfQX+8r4Ads6esL1DHiiwLd7j3coTLObsbRRVCyBFx5Bv1+N8
+         Galq04M797O8tKql0xrr5y8D3bZs57H1M/VdY1DcDkG6pZdNIGacL+YL4rsfTQiEhUHQ
+         gQoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXo2zUM2UfNkIS3xkL+jihyWQAHq+YzM85+zQW8pj3BVccNVs2hrIeCPxblRCPQitY5Hx9GK1QVk5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygzsIzTWy5jMvLda4cqjbiI1dN/eIIWPJ1oe6DWXyrQuyoQlMm
+	rea7CUdI+xGiDRwRZ1ljJ4Vy2QnQI9/TsVwRBfgtMy4a7ra0FBwLLa62c9hMM7D07f4=
+X-Gm-Gg: ASbGnctI5sUS2FR2TrGop8AbTiN6Q8CrhYq7q6dc87Xv50b65BQW+Xgt/HagitdTMEB
+	nHOgUX0fZ6CxvHNwykc/Cf+AuKwnGPy4Ea+eTKIgN1dAXZqHHngnVqknCGstklMok3fqFkeAtB8
+	AMJAmBlZaNaHraFGKM6BWV8oGqikr5IJLgWzJfk0bYl1HZ0XywIlg2kAj5Mqw6ZJCGODlQkja6D
+	kNRFUmFTZKb8CM2qLRAXbkmlAaqNbavsrbUUjAXxup6VGQdBJAIT8klVIpmoVeyodfIT/zayivi
+	+r49qLML9Mb9DteyobPIFh6ka6zTivhSBHBr2mj9ls94BodD7oy2xtDKnnacFhqH9e1mDPRfxUk
+	WwuJ+Ss/+TSj9V9A=
+X-Google-Smtp-Source: AGHT+IEZfr0ji4LDK9KAfq64DmhYMTWRTB1pQDXq1rT0Tuj0QwG5y9ROAnPBq8wcVt6C4csWmuVLvQ==
+X-Received: by 2002:a17:907:9621:b0:ae3:a717:e90c with SMTP id a640c23a62f3a-ae3fe695451mr259268966b.23.1751645691353;
+        Fri, 04 Jul 2025 09:14:51 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d9215sm194703766b.2.2025.07.04.09.14.47
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d9215sm194703766b.2.2025.07.04.09.14.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 09:14:48 -0700 (PDT)
+        Fri, 04 Jul 2025 09:14:50 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: bhelgaas@google.com,
@@ -84,9 +84,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe
-Date: Fri,  4 Jul 2025 19:14:07 +0300
-Message-ID: <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 8/9] arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+Date: Fri,  4 Jul 2025 19:14:08 +0300
+Message-ID: <20250704161410.3931884-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
@@ -100,8 +100,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The first 128MB of memory is reserved on this board for secure area.
-Update the PCIe dma-ranges property to reflect this.
+The RZ Smarc Carrier-II board has PCIe headers mounted on it. Enable PCIe
+support.
 
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
@@ -111,27 +111,40 @@ Changes in v3:
 - collected tags
 
 Changes in v2:
-- none, this patch is new
+- none
 
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 39845faec894..1b03820a6f02 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -214,6 +214,11 @@ &sdhi2 {
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index 5e044a4d0234..6e9e78aca0b0 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -132,6 +132,12 @@ power-monitor@44 {
+ 	};
  };
- #endif
  
 +&pcie {
-+	/* First 128MB is reserved for secure area. */
-+	dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
++	pinctrl-0 = <&pcie_pins>;
++	pinctrl-names = "default";
++	status = "okay";
 +};
 +
  &pinctrl {
- #if SW_CONFIG3 == SW_ON
- 	eth0-phy-irq-hog {
+ 	audio_clock_pins: audio-clock {
+ 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
+@@ -159,6 +165,11 @@ key-3-gpio-hog {
+ 		line-name = "key-3-gpio-irq";
+ 	};
+ 
++	pcie_pins: pcie {
++		pinmux = <RZG2L_PORT_PINMUX(13, 2, 2)>, /* PCIE_RST_OUT_B */
++			 <RZG2L_PORT_PINMUX(13, 3, 2)>; /* PCIE_CLKREQ_B */
++	};
++
+ 	scif0_pins: scif0 {
+ 		pinmux = <RZG2L_PORT_PINMUX(6, 3, 1)>, /* RXD */
+ 			 <RZG2L_PORT_PINMUX(6, 4, 1)>; /* TXD */
 -- 
 2.43.0
 
