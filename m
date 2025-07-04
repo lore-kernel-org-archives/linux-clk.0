@@ -1,178 +1,134 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FE030AAB1
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 13:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D23517A2F8
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 14:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751637075; cv=none; b=V5/rRuxNEoDKAQlmZxQEubzsPdAhKu284xGVidt67GMI58VESMxRqyEg+kbKwdabgewV+5twQVKvCrlX3RGVUZR3B/09mnztrBetvY7GdHyvxbZGmi/YbBBTfL5Ca4eZyaqgeCyLCTf8tVuYv597gvFN6oCDKkkwVyEoAvQ346c=
+	t=1751638417; cv=none; b=WPF5pri2hhV1KcGe+6HNAB2O7yL4j/Dogpc5yGXGOUv+l78N/FHhXr+ODAByUF7BEp+9X/Z6ahZU+//Cj18yMon5UBHuixw9Ov0Re+78EnvFz7bKu9P6j5mnj6fjRodV2rFrdwMrc+SzkMuWbjlMX1GX3l/mjbktErgmyheuBck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751637075; c=relaxed/simple;
-	bh=miC47NO9VePQREntYQ2C1ptH1JHrH445C2mxs1mptSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMQnuctddJVUcPuyDYxMGkvsTazycXygAaY+uQnsAnWsbYiPPr/UjgRAHbTHCt+d3B9U4zyEpsS4puol0DqkfzK8FLG3pjbDuf2xySByr8TFKEC4gN33B40JRVk7nsx1GOHWz/VT+94VfriWOuQhRzmxYHwDoNAbV0DhCpvveKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qRfmkpVD; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1751638417; c=relaxed/simple;
+	bh=uVBajTT2lSvw+Ur1hq0WlQKfumsobw7ctdnObFVhF5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEtynwZU0AbtZCzdbeSaVOHu/67+h5PwjOEVzY2Ryl6uSSOrtWxzaLmNKhrZ2gUxls0ecBW4xxj5Yg2rv6pcmiXwaKZOojv60HiwdOAAR++3BlDwIbNuPPrYK4EkJ5bQ8Ss6DA/kQXOSMMrqY2VdQwHhoT2DUz/pCsoOQv8c3jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PeyDfwkY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qRfmkpVD"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so165512166b.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 06:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1751637071; x=1752241871; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U+4pnbmOXAdM0mHM7kF6SCf+HmJcVo3mHL3EXrsTmvo=;
-        b=qRfmkpVD+xI+Npzbq1OPbfQdUTJO8vOQ9eX5GxigJa2Tqop1BOwVlQj/S9qRHzx5ty
-         viijJo0m9xgO15vGt3QzdtbbE6rX+kxUIf0SNjmKTWN7qsD9gzGXGHe8h/CxP8CoVAsJ
-         00dZtJsEQcSkR1yUpcFoxzwhyoSBPCtnHkiH7pz1pJKL4qKLN2dO55QZKACEisQXU1Gs
-         8cD0wWE1yYcbGiZRGvbY8OXL+JEzvXr/u3E7dDPab3pA1b6ir403KnL3zfp0tKgftnVm
-         C+18Q4E3kv2QP2/PxCrpcfMR1vC5fKkh00Rw/74AUPiotlD/MJ8bM0BoV7i5Hepz2DNo
-         icuw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PeyDfwkY"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564E6M3S007067
+	for <linux-clk@vger.kernel.org>; Fri, 4 Jul 2025 14:13:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=YD7pRGBpQkYgS0oJMpIrXcLP
+	EFNPQFjZEJbaEoDadqo=; b=PeyDfwkY5pNipDMJLyYuhrfBfNdPTq+52K469xlq
+	5AEgLviN4MGDzs3DzMGJv32AvMOr2bfd2UqikCHIdMjfwv7exWdHlZp1hlVTsXWZ
+	t6S0SEle6xMweRqoxr1dvyf4Vv3/q7gO0NHQL4zFAXptQEORwGZbcsrpV0X1r0+9
+	40s04kOXjRNvIrbMwgXioCPR5DN6l6hB49tG0SHNZSpqvyNl6py8yUTSE3JjvBlL
+	ENohqWGpN4Yc0B1RkDray1q9b/Zsws5ojYE50zCIjeHak/rr3UQ17HNvW0nkd99z
+	U5/fre07ag215bQX1myuuHmgoSfFKyQ4cQinMXvhrP9HOg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kn5jrr99-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 14:13:34 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d460764849so349889585a.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 07:13:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751637071; x=1752241871;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+4pnbmOXAdM0mHM7kF6SCf+HmJcVo3mHL3EXrsTmvo=;
-        b=HAUKGmbERBgKtTleExw0WAoCziw6jsi3exu6vOJD1xX3yN27tmFJlpYfqjcSf8Bp3j
-         VfudYi8skaHt9aGL3xH9va7pAKenpnb3hbbaPGJKHtxZFmlZmqf1XhqsiQas6G2Scp6d
-         p0Fue0JhUhcbHKGXlOHKwImWjCZh7/UEHzoHiw56iiDJA6x2vk7bepFahlwhL0eQZOM0
-         601uokuox69PomZS1m6DD9FvxwZUDlnBhBsdS798UBaR2wYi+sj22ltlhxQLK6TRExCe
-         3sXgH1l+ViN/ikOj/dNGqsTD53PSnOEalqY5vSAzoniJ69O7Lnj08HDK+OaWtwEECs0H
-         GhAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGNq70LuPuhQPgsonbLCmT98WEeDNk6ir7jViQQhcWhKyhRsBNvCDv/wWv9vxOFa0QPv+3QYNFXik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrn2OaK7JmFUMGQkKpWh4HH6UCb+4AGYsNnkVwpCVkYWXvcCYG
-	9zMhGT7FJ1zpUzXWcaal4AqrVVJJxH94Db0TqHyg/NCkDudiLiDElmiNmsD12yrRzjE=
-X-Gm-Gg: ASbGncvnPx834DJkzdnbcZjZVUTtOUmqiJ2x/+sfU4pOzH6PvtWpBoUG5ZNUV8dky6i
-	yJ2hFPzuDQNNWSSR09NRv850c8Fc6TZVCgfrjfxv/zu01BOtD0L+996NmahsbMcP3i21LB+Yp71
-	R2K7bRyLeplC1a4vqprmM3ItlDW6x35+dNFvxjFHQwCoySfUsGze8cHubcVHXfRHwmXjLx5yK6e
-	3Wb8iOq16waGEsEvry0Q5LY981RZ2tEZ9V0eqwLfahKXUrgSRodL+NDx5gCCCgjdWrsk6BVvAHk
-	oNd4NH+HhsN1OjMOs5W+fb15rlakfERm8Mf51BnTobyd030h+EMSEXGYxrV2fbz4m7dzdw==
-X-Google-Smtp-Source: AGHT+IEKaHL8J9Su0mB3XI0LmZS3jYa1Tv+ttRwStxrwJ7gZXvWH4fgHU4a56M1/TXoMiu+j5EZrtA==
-X-Received: by 2002:a17:907:6d26:b0:ae3:6cc8:e426 with SMTP id a640c23a62f3a-ae3fbc336f7mr270116966b.9.1751637071005;
-        Fri, 04 Jul 2025 06:51:11 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f692ecacsm179199366b.57.2025.07.04.06.51.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 06:51:10 -0700 (PDT)
-Message-ID: <930cf8e2-5716-4a36-8238-e573876db869@tuxon.dev>
-Date: Fri, 4 Jul 2025 16:51:06 +0300
+        d=1e100.net; s=20230601; t=1751638413; x=1752243213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YD7pRGBpQkYgS0oJMpIrXcLPEFNPQFjZEJbaEoDadqo=;
+        b=jxLHWvNYbP4qOaxOFyQty/g0z/XoYF/n32fNhs/6XVoHMmyxlnv1eLsCm61cPIgr1B
+         WjAeQa5VxH8v250tFTL5kQo+MkpakrIxof/0W8ZgEUKXjyT8BEXE/EYrWBT3Zy0Ewkzo
+         nVVog5PWMIH0ttVLxxIISTmfIlNcQI0fxfEX1nu+KX58QtVjuMAhHNr//gAuwuFb9ZiW
+         FtIBoOpHsehTBoyk956i6UQP+82UVZY/QNWTbuyOwb+3c/euonmVrgpaD4IUsHCPBiF5
+         Gl6387Q4MlVt+3P3T8djf2Br5NpPTxPjXgmpCly47s/JBtd4hRahmDhhh+m39dDy7BsE
+         P6FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWokc7ukUra86DC70/IxTeBzvbQ7fyzL5RnlUe2NE/uDzXHV9M4GIDMa3dK69wTiCmtP4H9qJ7ivSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYJlZPpfQc1q658mahXM510ld9e43nR6TKDWVNaAJFmKqquFeu
+	SeyDo5P6v9JAWLic5pl9gR3ALR8eIBN7y6ukhyrGfihSYj7ZkD5Adwos5IlrzvQisf23uztEpEX
+	EH7r6VtaC6C/zcniaG3OsSMz3LFVkfdmKdWn/VK5RewiVV9N+8VfiFuSrVa42+i4=
+X-Gm-Gg: ASbGncv9E9ddAOT4ro7ZvbhZ1+J5QlQOpZ58/tuyc2EORFKVYgZRcC64rbWVkjkFVgr
+	UrmpwcrWuS0hVBat9SghnwLmkWi4dez6CSV8Ymoc8h9jdZhMRQ2UlWfXknRLmIb+gz8Z8mgFiix
+	uwzw2o2vYGRL+TqC+g1SZ0tctDSV8YUNB9hYZ4a2sJTD2DV5d3TLqPUbG1RP4N3ax65TMfEiDRq
+	O0xBBA98Eb9p3x3seRBKZKxR7IJJ9EIlhKDPRUhIiAwU8ykzsaoQgYCQi2Wn2QHVG9zrPa/oSwD
+	Kma38MlvLdLVZOXth5wBw5nSjIqz77x34fWEU2wlPO/xg3bgRh9flAxeL70cZnA0FIDByCVB9g/
+	+qX6dd60DqN1H8rQ0yPKg8W7wE+D87oAX+fk=
+X-Received: by 2002:a05:620a:1a9d:b0:7d4:4b12:a39c with SMTP id af79cd13be357-7d5dc6b8a4amr450023585a.16.1751638412485;
+        Fri, 04 Jul 2025 07:13:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu4sJ6opy4orpQRjMYZ1e4zAyxiuU2Gx/Jb2naX2Aa1H9ZNaTc56q7JfZ9aa/NrAcO8+wGkA==
+X-Received: by 2002:a05:620a:1a9d:b0:7d4:4b12:a39c with SMTP id af79cd13be357-7d5dc6b8a4amr450012485a.16.1751638410869;
+        Fri, 04 Jul 2025 07:13:30 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55638494bb0sm261178e87.104.2025.07.04.07.13.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 07:13:30 -0700 (PDT)
+Date: Fri, 4 Jul 2025 17:13:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] clk: qcom: Add Graphics Clock controller
+ (GPUCC) driver for Milos
+Message-ID: <22mwkfbddaqrmfnkccn4ogjxdiq5hvbkiieebcbjtyk34ihmov@cnjp7c57ij3k>
+References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+ <20250704-sm7635-clocks-v2-9-9e47a7c0d47f@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
-To: Ulf Hansson <ulf.hansson@linaro.org>, rafael@kernel.org
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org,
- david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
- dakr@kernel.org, len.brown@intel.com, pavel@kernel.org,
- andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, wsa+renesas@sang-engineering.com,
- mathieu.poirier@linaro.org, vkoul@kernel.org,
- yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
- broonie@kernel.org, robh@kernel.org, jirislaby@kernel.org,
- saravanak@google.com, jic23@kernel.org, dmitry.torokhov@gmail.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
- bhelgaas@google.com, geert@linux-m68k.org, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, fabrizio.castro.jz@renesas.com,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704-sm7635-clocks-v2-9-9e47a7c0d47f@fairphone.com>
+X-Authority-Analysis: v=2.4 cv=KtJN2XWN c=1 sm=1 tr=0 ts=6867e18e cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=RwypAz-qddAaXUw-r8QA:9
+ a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: v-EAtRVD4K0pfYrZgkQHWCLkqEAL0qH6
+X-Proofpoint-GUID: v-EAtRVD4K0pfYrZgkQHWCLkqEAL0qH6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEwOCBTYWx0ZWRfXzZEcMspsUdeq
+ iW3T29CX8GZYJ7U6tF08H9js4qMthI11ma7FXEgmybWW0l3d/OfouFIihfbBp7VxlM1DDR/Wo+j
+ Uc5yBsngojPohH2Od1uytpd1niOt8RNpnXLmYA95h2cPwQsbBWRD6lhNI1ezlabUHwzdvLQwrQ+
+ 7LNdawdW/eIdg9cfsL9B8gZXI2UyEoMC8vvzDAF+zqn4135yc4Ru+xW8nl6AN0qHMQkxHVjQLXk
+ yQWj5nyaWKfgp3L1Ag4j7WA8q9azBCjFOmrCIpvgiRNYKVSxamDjfKOr4IYhBVH4ynqBgS8QGbL
+ Fm+zSx88A6tPjKFyvjyY8iaxely3fr5iD2wR3DeCtytFzuXEfnhDUstUCT/tg6nwOtMib1C9HmV
+ 9usxdGauKTYQ5prPjKT1buoa9LcZEvdbsagNdOsINd0cS258WnM1RXsjIs4GZzXVl9Efersv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040108
 
-Hi, Ulf,
-
-On 04.07.2025 14:15, Ulf Hansson wrote:
-> On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Hi,
->>
->> Series drops the dev_pm_domain_detach() from platform bus remove and
->> adds it in device_unbind_cleanup() to avoid runtime resumming the device
->> after it was detached from its PM domain.
->>
->> Please provide your feedback.
->>
->> Thank you,
->> Claudiu
->>
->> Changes in v5:
->> - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
->>   due to this a new patch was introduced
->>   "PM: domains: Add flags to specify power on attach/detach"
->>
->> Changes in v4:
->> - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
->>   and used in device_unbind_cleanup()
->>
->> Changes in v3:
->> - add devm_pm_domain_attach()
->>
->> Changes in v2:
->> - dropped the devres group open/close approach and use
->>   devm_pm_domain_attach()
->> - adjusted patch description to reflect the new approach
->>
->>
->> Claudiu Beznea (3):
->>   PM: domains: Add flags to specify power on attach/detach
->>   PM: domains: Detach on device_unbind_cleanup()
->>   driver core: platform: Drop dev_pm_domain_detach() call
->>
->>  drivers/amba/bus.c                       |  4 ++--
->>  drivers/base/auxiliary.c                 |  2 +-
->>  drivers/base/dd.c                        |  2 ++
->>  drivers/base/platform.c                  |  9 +++------
->>  drivers/base/power/common.c              |  9 ++++++---
->>  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
->>  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
->>  drivers/i2c/i2c-core-base.c              |  2 +-
->>  drivers/mmc/core/sdio_bus.c              |  2 +-
->>  drivers/rpmsg/rpmsg_core.c               |  2 +-
->>  drivers/soundwire/bus_type.c             |  2 +-
->>  drivers/spi/spi.c                        |  2 +-
->>  drivers/tty/serdev/core.c                |  2 +-
->>  include/linux/pm.h                       |  1 +
->>  include/linux/pm_domain.h                | 10 ++++++++--
->>  15 files changed, 31 insertions(+), 22 deletions(-)
->>
->> --
->> 2.43.0
->>
+On Fri, Jul 04, 2025 at 09:17:01AM +0200, Luca Weiss wrote:
+> Add support for the graphics clock controller found on Milos (e.g.
+> SM7635) based devices.
 > 
-> The series looks good to me, please add:
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  drivers/clk/qcom/Kconfig       |   9 +
+>  drivers/clk/qcom/Makefile      |   1 +
+>  drivers/clk/qcom/gpucc-milos.c | 562 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 572 insertions(+)
 > 
-> Rafael, do you intend to pick this via your tree?
-> 
-> Another note, the similar thing that is being done in patch3 from the
-> platform bus, is needed for other buses too (at least the amba bus for
-> sure). Claudiu, are you planning to do that as a step on top - or are
-> you expecting others to help out?
 
-My plan was to take care of it once the approach here (or something
-similar, if any) will end up in a release.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Thank you,
-Claudiu
 
-> 
-> Kind regards
-> Uffe
-
+-- 
+With best wishes
+Dmitry
