@@ -1,130 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B3D2F50B0;
-	Fri,  4 Jul 2025 13:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FC230205E
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 13:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751634099; cv=none; b=eaIvkhRVA6PAJJOGJnZApRdCxDy1nTl90Kob8hxCXJBoFAG1jhXVh1sSu3mpwyC81r8exZyxEi1I2vUBoThqZIcfTI7e2Tvij1NnHWXs6JagY+NxCgweWH0hoIKidNsm0jy58fO1/uvszHTJAnWkDSdQEVnISAKbM9TDkvk7IUA=
+	t=1751636620; cv=none; b=DMwdTppam4ekcUzHYePxNtr/dqPqbh5cmQ2Ym2qUW3n/rft4la86odP1KaQ7A2iSDJNJWN92KvEekm6hHv5SYU+eXW1ZNGrgbNgWWBA4DrXmCz8xxcd7l/gn6JVkS0Im0+tqlsVr/1bLqhrUrbawQZS40miqtU/BGWtLu+2voWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751634099; c=relaxed/simple;
-	bh=1SFIg86ScSSNsm00r4z39bxOC+QdfD7ofZFsNo39Gyw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QuDmR68sXHJu1VdwvmOy/8TKkuR13xrJO6c5cZ2Dm/63RUAXWFJo+uSeEfuIuoyWIfr+OSEYH50qX3xum/A/sAZZ72tqBtllDepreXqcg7TkhEkoSAQX7YcMVMYNoQfVX3DGY/+ZHLIamqaMI/wFSizpV1u5LYGB1BhBXd1C95s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTZQCGwh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751636620; c=relaxed/simple;
+	bh=qTydbvwsipxNicmaEZ+CKER7CcHb2CWmAMgsd8CYofI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qftAz1qGt4oUA/riKSu68n8be6fhacivAk0k3p0cyaXQ+FIeJm0ZaOFxQ7B4yfF9bKX6ahVWp94+zGKTcSu+XZYNZOr175xxmYzStVor4batrm/ZvbNcNyS3LITowOj9OJEedSOgqRtw7/uE2PpGpGaldFr7OV0AVni5wFdu9jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JE4+YTJr; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTZQCGwh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA72C4CEE3;
-	Fri,  4 Jul 2025 13:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751634099;
-	bh=1SFIg86ScSSNsm00r4z39bxOC+QdfD7ofZFsNo39Gyw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=VTZQCGwhAN+TexmrabJGl6LSW4Xumo1b3iyodJcqKKb2S+NtuyH0wgV0XP9jPivaQ
-	 QuIqn8AtkfhK0+gKQ1ejE0AWPSMFd9C0sa8nLfuIly2BzdyUP8Px0ho4oMaC2LnN3l
-	 4lB1zV53g1wSLGMaKO1dWQLG5r1vqzj/k5z4JY4BdlXr5S/IsxRkvkdm+tgkf2VgOx
-	 fZqh+B/8T9b4HB0rnSrjSrFm90CAihtJ2cuZ6KUhRJXNxo5H/Hqv9zo/6d3q3R8XPw
-	 gK1OTk3fERiW0Prtx9CO8/vhuUS5bARcvhok3yE2TSbAXA89qvtD+iuArw73v2kZOz
-	 bKOGfZaX9sCWQ==
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JE4+YTJr"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo1552161a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 06:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1751636615; x=1752241415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RVHE9lJ0YDRv5jonU7HwVUdVK1j8h+dQL57nzRKWT18=;
+        b=JE4+YTJr540uoJUiObsEN2jXNaeXLSKPq8Yv+zDsWB3o5/WxGUGSkitipqYjioAaaF
+         Kg4x+VCPa9vhQtvshxs8JXJkPu/iL6hjgp+4a8hhYRfuxKRsssmYpxv6hfqoaItAtYlK
+         7q1tp/0+xkYZ5pnsSfP7hpg1JXUP6v9qa6w32Rm54m9ylFr66LAn0ak6q1SHF6/5VjOc
+         neUbCKmLeViI+mAX00/oSSt4B5ZjPeUwJ3q4zLoeDeJl0JlVCTJ4ZNYwUvp2KCwgYGA3
+         SoTfTL4BlWzX0j5Gut4TDdTVi4FGyi01BLrI8OuGHcv+CHVcsvS+fME83urDYUTHpmp6
+         vFFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751636615; x=1752241415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RVHE9lJ0YDRv5jonU7HwVUdVK1j8h+dQL57nzRKWT18=;
+        b=XQxCto6jLF+WKjeUPaS4/8P+JUaJ/Ixswe1CYbIRJr/gooe5SlzU1zkFSAxuts3Pjc
+         v/+UWDliHWDkV7MoHfSbfEsTFYs9yTvjS0JGbDG8krKomCdZWrS6xph7eDvKfF41l7TZ
+         C/JSW9q0TNRSpP8y0AQqcwyLnYeJj8A8yp9Mu+zG6ZybWiXZ0PEqllf0o/XfTddvhZDj
+         XfiB4s/uq70GU+CKWklnFon0adIDu1hl7Iwe0JTfG117K9kzfhFF0+WR2g7emMkiwoKF
+         tFoGBz/yUDJvzz63UWQ/EzePSXArrXeaZsqMsskUqzJgvMhDMmIoy44rDWoruQvrgSBW
+         HvpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmsErLtpXbaseguCpWRSaNNwMaF1On+hD9ookEbqWr3vASzwV6qpsTVImD4o4FGra2+a4ikkdBgdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIvC9a2gIMjG/O8Wc4khchgklIElb+VcNS/zsREC/uBXhQH0uS
+	f4JM6tbiJGUWDaSSiEsRktSr0/A8ECKqNfHANaggnHUX7qK487n/KB/+ddFZPjlxdgI4JZDSoEt
+	CuHbN
+X-Gm-Gg: ASbGnctJEJ1yCVR7nirzPivfPjSsIncZIz8jsMtj7gQl74eetgCQLkDyREqXs+Eamao
+	OjyIDvUTh6CAH7tJDVpFE1BZwlezq4Lhhjq7DqBM//GqQZD5XlVCEqJr8tvhhcsh/1g1dpKVT0Z
+	TLf2vlCn/cU3g7MvhrSRVTahaOHNUnKIfpmrvKPigU/yZcObfkf3cMpPWmip9DDF4S7OgobgKOH
+	fKKnZIbftAA/kwZeDpTb7MAnAWzZh7Iq8ECVRtJUaX/e3EWSKlILv22TSP5bk1T6TXjX8F+IKIn
+	jy7YsBazizmllDp/d8s8aYH31Si1ixJA5QoF5RDVF2vMhfQ/vFiTl6zOH7ZQH0BAYaefyJ0rquv
+	UJy0XxsCosO2y3iNQ79gLv+Wu3w==
+X-Google-Smtp-Source: AGHT+IFGPw3v50tj/GPM1uEZkj/0eYHeSowBVbc3cQ6zDPa98ZgFCGKQvA42xxJtIW7UpUVkFtB5/w==
+X-Received: by 2002:a05:6402:5191:b0:60b:9f77:e514 with SMTP id 4fb4d7f45d1cf-60fd6510ce0mr1836018a12.10.1751636615396;
+        Fri, 04 Jul 2025 06:43:35 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.83])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fd3895ac7sm1084916a12.30.2025.07.04.06.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 06:43:34 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/3] clk: renesas: Add MSTOP support for RZ/G2{L, LC, UL}, RZ/V2L, RZ/Five
+Date: Fri,  4 Jul 2025 16:43:25 +0300
+Message-ID: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 04 Jul 2025 15:01:23 +0200
-Message-Id: <DB3AGL1QO4M4.2HANWHX9TF9WN@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
- <linux-pci@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <linux-block@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v13 4/5] rust: replace `kernel::c_str!` with C-Strings
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Michal Rostecki"
- <vadorovsky@protonmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Brendan Higgins" <brendan.higgins@linux.dev>, "David Gow"
- <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Danilo Krummrich"
- <dakr@kernel.org>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "FUJITA
- Tomonori" <fujita.tomonori@gmail.com>, "Rob Herring" <robh@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>, "Peter Zijlstra"
- <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Will Deacon"
- <will@kernel.org>, "Waiman Long" <longman@redhat.com>, "Nathan Chancellor"
- <nathan@kernel.org>, "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt"
- <justinstitt@google.com>, "Andrew Lunn" <andrew@lunn.ch>, "Heiner Kallweit"
- <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "David S.
- Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, "Arnd Bergmann" <arnd@arndb.de>, "Jens
- Axboe" <axboe@kernel.dk>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Dave Ertman" <david.m.ertman@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, "Leon Romanovsky" <leon@kernel.org>, "Breno
- Leitao" <leitao@debian.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
- <20250701-cstr-core-v13-4-29f7d3eb97a6@gmail.com>
-In-Reply-To: <20250701-cstr-core-v13-4-29f7d3eb97a6@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Jul 1, 2025 at 6:49 PM CEST, Tamir Duberstein wrote:
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible and rename
-> `kernel::c_str!` to `str_to_cstr!` to clarify its intended use.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-These two things can also be split? And it should also be possible to do
-this by-subsystem, right?
+Hi,
 
----
-Cheers,
-Benno
+Series adds MSTOP support for the RZ/G2{L, LC, UL}, RZ/V2L, RZ/Five
+SoCs.
 
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1075
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  drivers/block/rnull.rs                |  2 +-
->  drivers/cpufreq/rcpufreq_dt.rs        |  5 ++---
->  drivers/gpu/drm/nova/driver.rs        | 10 +++++-----
->  drivers/gpu/nova-core/driver.rs       |  6 +++---
->  drivers/net/phy/ax88796b_rust.rs      |  7 +++----
->  drivers/net/phy/qt2025.rs             |  5 ++---
->  rust/kernel/clk.rs                    |  6 ++----
->  rust/kernel/configfs.rs               |  9 +++++----
->  rust/kernel/cpufreq.rs                |  3 +--
->  rust/kernel/devres.rs                 |  2 +-
->  rust/kernel/drm/ioctl.rs              |  2 +-
->  rust/kernel/firmware.rs               |  6 +++---
->  rust/kernel/kunit.rs                  | 14 ++++++--------
->  rust/kernel/net/phy.rs                |  6 ++----
->  rust/kernel/platform.rs               |  4 ++--
->  rust/kernel/str.rs                    | 24 ++++++++++++++++--------
->  rust/kernel/sync.rs                   |  7 +++----
->  rust/kernel/sync/completion.rs        |  2 +-
->  rust/kernel/sync/lock/global.rs       |  3 ++-
->  rust/kernel/workqueue.rs              |  8 ++++----
->  rust/macros/kunit.rs                  | 10 +++++-----
->  rust/macros/module.rs                 |  2 +-
->  samples/rust/rust_configfs.rs         |  5 ++---
->  samples/rust/rust_driver_auxiliary.rs |  4 ++--
->  samples/rust/rust_driver_faux.rs      |  4 ++--
->  samples/rust/rust_driver_pci.rs       |  4 ++--
->  samples/rust/rust_driver_platform.rs  |  4 ++--
->  samples/rust/rust_misc_device.rs      |  3 +--
->  scripts/rustdoc_test_gen.rs           |  4 ++--
->  29 files changed, 84 insertions(+), 87 deletions(-)
+Along with it, a fix for RZ/G3S MSTOP was included.
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (3):
+  clk: renesas: r9a08g045-cpg: Add MSTOP for coupled clocks as well
+  clk: renesas: r9a07g044-cpg: Add MSTOP for RZ/G2L
+  clk: renesas: r9a07g043-cpg: Add MSTOP for RZ/G2UL
+
+ drivers/clk/renesas/r9a07g043-cpg.c | 130 ++++++++++++------------
+ drivers/clk/renesas/r9a07g044-cpg.c | 152 ++++++++++++++--------------
+ drivers/clk/renesas/r9a08g045-cpg.c |   6 +-
+ drivers/clk/renesas/rzg2l-cpg.h     |   1 +
+ 4 files changed, 146 insertions(+), 143 deletions(-)
+
+-- 
+2.43.0
+
