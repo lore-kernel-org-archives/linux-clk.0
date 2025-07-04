@@ -1,65 +1,67 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CDF1F463C
-	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 07:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C35262FF6
+	for <linux-clk@vger.kernel.org>; Fri,  4 Jul 2025 07:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751613436; cv=none; b=Q6YDhXu61bBQKSZVCWDcLf4QYiCPKGrqbcWoasz5kQrtSJ8h9YCWnzTKNS8O6kjoGlD3rYqs4B9imGLR0jCAOOfj0JnwEQrggoCMYw4QHj59Oa3C85+2IPK5CwXiIGJ0/zTYLSCoODWXJGv2QCqHcKFRdFaPy0YrT6fvrOGQcJQ=
+	t=1751613436; cv=none; b=HduokxL+DxtwK6mNGIcvB2GmKlGfqykuSqE6PagENFLZO2RTU1+lLQRg7lzgELCBKOMjhNGD5NZoYBokEXG4UmLLVrTjkR4oSJyAiEibJ3A7s4lJ5K6Ds8nJKgTY/EkLG/wIOWO7Bher97AtNHHjiOVnUX5VhBYcykP6rMI/+D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751613436; c=relaxed/simple;
-	bh=uth/TQpjLf3lBUfNxZBkzPLdFlA4ZgzmdxkY4dVv4aM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CpicakN66Gk8Lp9vewY2ojmYflN2uLiGuw7dSaQP8YH0E03vxwQj0MWLdcGZK2qmWZxHzP6WcxbMLQmIXRaKOr6J+2VOcEDwHo3+oZEUCZIWqLRnD7Z1inYPHO5Igugr0cWKz1gNbYEgYxXMyF77OTsP7GLkwFFhJc/EApiRWYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=PT3RMI4U; arc=none smtp.client-ip=209.85.218.50
+	bh=WEDOiEFaIuCIuMx9QpwHtbudKxci3T1kQojeog8ab1o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CUwh6EaWV6HgRO4qv5phNhYCnDJweoPhXvSYP/YibeehkC7ofHpTSaCvZiICJZevBTTZE1kiO/rPiQTipZps65q8D6Ds6Z+k+zoHeLxmrv1gVS8cumcZqfQT1tj27bHsRK0GRuOlWrGJay6vTOScpWfA8VwE0Iqdk1F9fCE7Ns4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=WEiXB9bX; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="PT3RMI4U"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae361e8ec32so137378666b.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 00:17:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="WEiXB9bX"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so985412a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Jul 2025 00:17:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1751613432; x=1752218232; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOxW8sDZSm4A9YicXJzPnN/tY8ldwMWP8nLye+j8a0A=;
-        b=PT3RMI4U9x9Gjja66CkPgfRaA7d6458nKW68fgMU5QIqTGKEgBZ4DM4ticQ6f8UPt7
-         6kuEw+CFgqXBKXPpTlyDi+wIVYx5ENjKE8bhc7IOrtp4qkQjAFHencB/2FPs7RRyNrh3
-         +J/deWZlarC38+0YUB6KOZuwDd1J9NizYZAHZ1HB5Mm34FWPF9l1MabFxgCPrikvy9cz
-         bVMDRoVH5sPnFh/mKCK9Rb8ivmO+h6ECtxeP4czX0UsluhCliyD/8V01ZCfYjqBSS55U
-         LU9mVLHqmrtlI5UMCj+FTeq3xWTIgBkDuxyxYSgLKoKnPAePlTqpjB+CdP0Jw0GJB67q
-         FINQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751613432; x=1752218232;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=fairphone.com; s=fair; t=1751613433; x=1752218233; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZOxW8sDZSm4A9YicXJzPnN/tY8ldwMWP8nLye+j8a0A=;
-        b=vPUxKhuvsz1iulJad9GnwGLfaNzu6/DrbzBb5C3UJfUsEsKEijYxWRbF0iiwqxZiee
-         h+GlpsHuuOcJXdX65jsYtjWgLMzcnBegxX/vxdA4aE9w0eGkLXayeQRdf/V6FVo+/kZ9
-         9P6tdkFfrhT8WKNVzOp7tUNocOMQqpLmKl457EkYrMVvZUecEoC78Ql7S4LQzZJWZmG1
-         CWebXBR521NBzXqQj/DWy/Lu0DhPksse8pmeacnBi8fLc+hZUqZK7+5krdgq98Ej3JIL
-         mSFdMK7uhQpvHdWZF29Pf/0HTWeCgHnF78tmT7uYPEsbAW9kYAPJByJeCOnJmbGkVYcm
-         Owvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQjBKAT90nPSU9kro5pMLEK5RDqt9ZYmRPH353B4kOP1VgR8eAR+1rpsdjempgUI6yRQ1O0XG7yVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoZGiHua2OYEu6hbMXezjR7ylH/cKN8xgALu5dDUbAOoSBb4tN
-	0jQebNGmIYZv/59Tmot1XyH3NQ9mkPT3xXanJw6xb/tmqHDKpR0P+fGOCuNYvv/f6i4=
-X-Gm-Gg: ASbGncukXrSQyqPc6t6FvCXJR7+uXvOvmwBVyMTeyopERjo+47IdbVflI+Jhlgj5/XC
-	60cIjh8tlhlK2VnPM94jEflGRxBMcx9cEk9htPCcRPu0O8HgljfhfIn1I8vUb9OoReSqourK7Qj
-	VYzTvpRl5p+RyebYG8iq7LvNj54UA3TxmsdfuyykzxOiGMWq7Y+Z+cKE/9GHssTEN4xyEcMTaGL
-	NGcFMnZEu6QFYFm2T1V+WGFwM3XzvPm36Xwst5GO3HL5Rd4BtQCQ1TFQvohbDrsrMVjMM1x3pR4
-	cJECRkWp58TKryWbeKO/NrlAXHs/3KjAf+ld7HSICcDKJxV0tJF87GJIgthH5YGfYiVl0oJpfcN
-	BGvMSLd6XiqHzJLYpVdNgppFwvTDYW2/F
-X-Google-Smtp-Source: AGHT+IEqkKAlFA3Wv0a0+O2lG4Gewr8tyBjRmd36nr0j0b20xOn8+R6sxOjM9dV8a5eD98pz9vYk5A==
-X-Received: by 2002:a17:906:6a08:b0:ae3:b654:165b with SMTP id a640c23a62f3a-ae3fbc7da25mr147143366b.24.1751613432382;
-        Fri, 04 Jul 2025 00:17:12 -0700 (PDT)
+        bh=ObV9aMDnHMMEJ0mO0zQzyaaA+ak9cS5sIBz04rXlZDY=;
+        b=WEiXB9bXfteLCo3nESaJaC+B6EiFb1UtxEXGA7DC9Bmlf9Z93Yixd5EoG6nttQ5XgK
+         J1bBeUN+mJVdwzpcel5TDvu327wBd9K+GOlznOPFkrc9PXPWB74hmIuHaazNtUSolmPu
+         PdhErDQooyy/EjVACcocZiz1hbWhA72nZ3RXCeftf60uWC0B8KQ2if9WoHN8+S9T2XIG
+         eRbtHbaF3lFAsQKgcD8qMhlmW1onwM9+6net19Pw0rS+/VIgH7wiEtQV9AfnP7cZBUjH
+         1F5SOHJiWtwbL/1wHRSFAR8QhVTs8K4XtaGCUOkN1s7Aj7vit/7yIMav/iygvwuwPB6L
+         dsOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751613433; x=1752218233;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ObV9aMDnHMMEJ0mO0zQzyaaA+ak9cS5sIBz04rXlZDY=;
+        b=wJUt8wZsWmCVwiqrjBEqZlpw9ISe8gJWZyexTnD/JTnEe221/YbJ1JlgMMNj0EgITg
+         jyd3J2Y7FSllhhv+moJLaArB7VYo7B9ZZON36fVCY9xN+gymuh8j1GyR+4CRi2T0P3zv
+         aDpVfBAaZKxhio8ctSomElhkFw2Abo6V0ZOib0T7K/T6dN2EHv4NmsLeY3BSVx4L4LcL
+         WO0VCKE43OeRqk7D7c2dr+1KoPEteuMKFUMUjhGLKmDF7/5cGyiB0bptQoBZT/GGpy60
+         xkNeXZYdN2UICHGBJoPxzWYFobvXw35ErliR1xqdtTvT80SKRqyXZuYbgbNk9bfbk6fC
+         jDqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSfU98iqHHo8HqoI5XvssS9sWXD1PuktoUM7kaOcfrUqUCFL+6RjbjZFraLgPravOB5//j0Dfqclo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy99dzXdB7cD969UYaZHg3c9TuCdA74cHmyvJBEPHvBnETnutkG
+	7upFhlPlrHSC6adpNkzpto26cT3oZSdZXZruocuS0ZqrSqrydi9z0xtAoYtwi0NLPU0=
+X-Gm-Gg: ASbGncv4WXP/GHF4Jq3LbX35Qinab2o6E0DPJKXAnSeIB7Se+gE64Qka8jqsPPzz7TH
+	1JLZLcUtava+lr6kE4qh0e00HHsj+wRdZHEp3bBLPerfT8hiyGCMLZk2jOyITBLuNCAyP6XH2W9
+	A5mvlSJwAppgfS9dV+NScafuBycm3Dgz2wHVp1GT1teQATbZcm6VjCh0W3SJlzLbSo3WOwjBZaO
+	Q33PH7uMp4JubnpzBMVOxJc/L0e+NSzIUn1J/wLfUm/76++xNKX3FkjHEpLecPyc6ae05X3Nm+n
+	T98gV1oiePgmG98CJ8gh9JJ1rE5eK3B8P/1VmjKlCnMMXNpobVmQ0SRM3oBey/Cuhyxd8ujhV5J
+	hnpOhpA5DHBG2HKzwsuRImB+QcshdMp65jMbV7eYYPJY=
+X-Google-Smtp-Source: AGHT+IEeV3Kn0cO3kR2tRlEoBkxBkhC7lFjM9MhwWz48Em0WJ4DrWIyGYbBz0+fejRI4ZiAN8fozmg==
+X-Received: by 2002:a17:906:6a28:b0:ae0:7db8:4189 with SMTP id a640c23a62f3a-ae3fbc56e59mr134073166b.18.1751613433448;
+        Fri, 04 Jul 2025 00:17:13 -0700 (PDT)
 Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d1ae3sm119401766b.7.2025.07.04.00.17.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d1ae3sm119401766b.7.2025.07.04.00.17.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 00:17:11 -0700 (PDT)
+        Fri, 04 Jul 2025 00:17:12 -0700 (PDT)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v2 00/11] Add clock drivers for Milos (SM7635)
-Date: Fri, 04 Jul 2025 09:16:52 +0200
-Message-Id: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+Date: Fri, 04 Jul 2025 09:16:53 +0200
+Subject: [PATCH v2 01/11] clk: qcom: common: Add support to register rcg
+ dfs in qcom_cc_really_probe
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,11 +70,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOR/Z2gC/13OwQ6CMAwG4FchO1sztsDAk+9hOMxRpFE23CbBE
- N7dCfHi8W/zf+3CAnrCwE7ZwjxOFMjZFMQhY6bX9oZAbcpMcFHwUnAIgyplAebhzD2AKuu6lbJ
- qjVQsdUaPHc2bd2lS7ilE598bP+Xf6U8q/qQpBw5Gy1xwlLrieO40+bF3Fo/GDaxZd97j85W+j
- PsNdtUBIe0HiqfM4hxh8xWXqbF+AAMtKwXfAAAA
-X-Change-ID: 20250620-sm7635-clocks-7699d338dc37
+Message-Id: <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
+References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+In-Reply-To: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -83,66 +83,57 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751613431; l=2902;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751613431; l=1425;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=uth/TQpjLf3lBUfNxZBkzPLdFlA4ZgzmdxkY4dVv4aM=;
- b=bd8e4tDnMHNsvuFQteHi6X9U/WdUlNYw8STR6kJwPXqS0m6W3BAkimsyn4EelbCoGmkh84Cx0
- VGHtKQWx6S9B2krWVcZjFHQxgmI84VUcpobGPg6+EqxIZPGXFTZSWkz
+ bh=WEDOiEFaIuCIuMx9QpwHtbudKxci3T1kQojeog8ab1o=;
+ b=8lgV4fcoO76mnpDOKf3MXb6JTVVbunfJKkGXJqbGA1kJqSDvkrKaCvRKkzUbioxE+iz/7wRo8
+ jjECGd4oVdHDozI0ZZsy9hvNox95UzV/nqjk+mRsclTKifsh4TN2ckr
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Document and add the clock drivers for GCC, CAMCC, DISPCC, GPUCC and
-VIDEOCC on the Milos SoC (e.g. SM7635).
+Add support to register the rcg dfs in qcom_cc_really_probe(). This
+allows users to move the call from the probe function to static
+properties.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
-Changes in v2:
-- Rebrand SM7635 to Milos as requested: https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
-- Use new qcom_cc_driver_data to configure e.g. always-on clks instead
-  of in probe function, plus some other related bits from the probe
-  function
-- Add patch to support registering rcg dfs in qcom_cc_really_probe
-- Link to v1: https://lore.kernel.org/r/20250625-sm7635-clocks-v1-0-ca3120e3a80e@fairphone.com
+ drivers/clk/qcom/common.c | 8 ++++++++
+ drivers/clk/qcom/common.h | 2 ++
+ 2 files changed, 10 insertions(+)
 
----
-Luca Weiss (11):
-      clk: qcom: common: Add support to register rcg dfs in qcom_cc_really_probe
-      dt-bindings: clock: qcom: document the Milos Global Clock Controller
-      clk: qcom: Add Global Clock controller (GCC) driver for Milos
-      dt-bindings: clock: qcom: document the Milos Camera Clock Controller
-      clk: qcom: Add Camera Clock controller (CAMCC) driver for Milos
-      dt-bindings: clock: qcom: document the Milos Display Clock Controller
-      clk: qcom: Add Display Clock controller (DISPCC) driver for Milos
-      dt-bindings: clock: qcom: document the Milos GPU Clock Controller
-      clk: qcom: Add Graphics Clock controller (GPUCC) driver for Milos
-      dt-bindings: clock: qcom: document the Milos Video Clock Controller
-      clk: qcom: Add Video Clock controller (VIDEOCC) driver for Milos
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index b3838d885db25f183979576e5c685c07dc6a7049..d53f290c6121f31d06cf244f72603b694966e216 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
+ 			goto put_rpm;
+ 	}
+ 
++	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
++		ret = qcom_cc_register_rcg_dfs(regmap,
++					       desc->dfs_rcgs,
++					       desc->num_dfs_rcgs);
++		if (ret)
++			goto put_rpm;
++	}
++
+ 	cc->rclks = rclks;
+ 	cc->num_rclks = num_clks;
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 0f4b2d40c65cf94de694226f63ca30f4181d0ce5..dbe7ebe5b8710fb03c1671ac9022e608a6aad35f 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -43,6 +43,8 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ 	struct clk_hw **clk_hws;
+ 	size_t num_clk_hws;
++	const struct clk_rcg_dfs_data *dfs_rcgs;
++	size_t num_dfs_rcgs;
+ 	const struct qcom_icc_hws_data *icc_hws;
+ 	size_t num_icc_hws;
+ 	unsigned int icc_first_node_id;
 
- .../bindings/clock/qcom,milos-camcc.yaml           |   51 +
- .../bindings/clock/qcom,milos-dispcc.yaml          |   63 +
- .../devicetree/bindings/clock/qcom,milos-gcc.yaml  |   62 +
- .../bindings/clock/qcom,milos-videocc.yaml         |   53 +
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
- drivers/clk/qcom/Kconfig                           |   47 +
- drivers/clk/qcom/Makefile                          |    5 +
- drivers/clk/qcom/camcc-milos.c                     | 2161 +++++++++++++
- drivers/clk/qcom/common.c                          |    8 +
- drivers/clk/qcom/common.h                          |    2 +
- drivers/clk/qcom/dispcc-milos.c                    |  974 ++++++
- drivers/clk/qcom/gcc-milos.c                       | 3225 ++++++++++++++++++++
- drivers/clk/qcom/gpucc-milos.c                     |  562 ++++
- drivers/clk/qcom/videocc-milos.c                   |  403 +++
- include/dt-bindings/clock/qcom,milos-camcc.h       |  131 +
- include/dt-bindings/clock/qcom,milos-dispcc.h      |   61 +
- include/dt-bindings/clock/qcom,milos-gcc.h         |  210 ++
- include/dt-bindings/clock/qcom,milos-gpucc.h       |   56 +
- include/dt-bindings/clock/qcom,milos-videocc.h     |   36 +
- 19 files changed, 8112 insertions(+)
----
-base-commit: b803ad80123e6efccfeeffa7cd37f98f642e37f4
-change-id: 20250620-sm7635-clocks-7699d338dc37
-
-Best regards,
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+2.50.0
 
