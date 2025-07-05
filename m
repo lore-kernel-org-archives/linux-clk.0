@@ -1,116 +1,106 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5771FE474;
-	Sat,  5 Jul 2025 08:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F823190676;
+	Sat,  5 Jul 2025 10:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751702701; cv=none; b=ayOVNnrjpiQlEHnOrSvPQ0falbp3Av6AtF/B9p3gUCq3XvlRhRKgN9FbWZlTae+oBv5gtocWQbBUcZEJnLccPf0p/kPQa07eaNzFSJvRKxcilBrNg6ic+pUY+VNZaqfiSfVlQC6oM9aV5xFh291g+KOqfGM+N3AqBTzdDC1/RDg=
+	t=1751709614; cv=none; b=qovZ6XcB4q4Lk6fF5LS5Vc+G25dUhUeQ+B1hKUB8wOxpYHF4uWAqSc9cq59UkSHiSdrAAMB3BLbrd3nEO7IUd0VGNtAe23ENnSzxqjfsqETWH77Z7FSYHnMKUGzXsOexkALmy2RfqUV20aDEg3Nunai7WeyPS4hWVe3OnfBJEGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751702701; c=relaxed/simple;
-	bh=U8NsfQg6c0knWs9dyk4H2KnEFXMYtXjYXDrkEYXnUb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0rl+dPl5tzYI3sMzDO2uuFCP5hzRTuW417RuQHgC47TLaaE2Wv1fY20lghC0olrqJESeUfFMRjI8eYqieHUZZNCC9B1ohZeaOpZ4o6BNGprfbwiXEYQ1aG/utnX49ATlcjWkrGc8rW5/LR402M1vMfOp397GsLDFDPMwa8Ipi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WovYhOnm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1751709614; c=relaxed/simple;
+	bh=hECT9/EJcb82eH/cbjmMyV050Rvo+4l/7Q8hVhSKXkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ESxbxxpJ8duJje0BsIn7o14qUtOcH26S6QWMlXM/q4Dzdxu1EfALOYpQdRMiR1nUL11Hv8u8CjgLDEEhPn3MnmXp0+sL18JfnkPDZQHb0XwHR71KP9xVs6QvriHg5QnOU8+f8CYQ8lIUUDWno1lBPZ+YK4voxiC9x6xQP7lSSxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=PvDAJMtE; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WovYhOnm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZyzKEihZDNZ16DmOGMSJ88ULGx/pSbICKS/fdJw2ya4=; b=WovYhOnmAWVhGBmVShxVSXCTwl
-	KsTC761cpyV/PL7pyO1+z87KG4GV/WJ5cZTpgj4Kw6nxQ5HZ6uDgyaA/G/6CqEJfp/U0bgh+VOJFS
-	0yOZfJvHjAhF4e6yYUVUNjWH8BzxdJ/qNqWFS3TdQMHJToKBKeHkHyGdHnexNZTTDYdA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uXxsY-000NJL-1K; Sat, 05 Jul 2025 10:04:10 +0200
-Date: Sat, 5 Jul 2025 10:04:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michal Rostecki <vadorovsky@protonmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	llvm@lists.linux.dev, linux-pci@vger.kernel.org,
-	nouveau@lists.freedesktop.org, linux-block@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v13 2/5] rust: support formatting of foreign types
-Message-ID: <a9bd145e-b634-41ca-972c-5f81e5e1033d@lunn.ch>
-References: <CAJ-ks9nC=AyBPXRY3nJ0NuZvjFskzMcOkVNrBEfXD2hZ5uRntQ@mail.gmail.com>
- <DB2IJ9HBIM0W.3N0JVGKX558QI@kernel.org>
- <CAJ-ks9nF5+m+_bn0Pzi9yU0pw0TyN7Fs4x--mQ4ygyHz4A6hzg@mail.gmail.com>
- <DB2PIGAQHCJR.3BF8ZHECYH3KB@kernel.org>
- <CAJ-ks9=WmuXLJ6KkMEOP2jTvM_YBJO10SNsq0DU2J+_d4jp7qw@mail.gmail.com>
- <CAJ-ks9kNiOgPO7FF3cAbaSNtTWs0_PzQ4k4W0AxjHNFuMJnDcQ@mail.gmail.com>
- <DB36T5JWBL10.2F56EDJ1XKAD0@kernel.org>
- <CAJ-ks9=Jutg+UAwCVER_X91BGxWzmVq=OdStDgLZjTyMQSEX6Q@mail.gmail.com>
- <CANiq72nZhgpbWOD4Evy-qw2J=G=RY4Hsoq9_rj6HGWMQW=2kTw@mail.gmail.com>
- <CAJ-ks9m4S1jujQvyt9TOvNMewjNSztps8vayGga+MnNU+0YUcQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="PvDAJMtE"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 0C3B2258E3;
+	Sat,  5 Jul 2025 12:00:08 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 13Z8MWAI8z9B; Sat,  5 Jul 2025 12:00:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751709607; bh=hECT9/EJcb82eH/cbjmMyV050Rvo+4l/7Q8hVhSKXkk=;
+	h=From:To:Cc:Subject:Date;
+	b=PvDAJMtE1sPk7O2fRyBcgAoTmn2BWvG6150Z5BNEqXAXYQ4oDvB5xMAq+jKRQXJv8
+	 QBrsxReQUhZ3VkR6j4BfmljwtHi3AmZrZH61VdRDmfBCQ7/hmvEdVCzuqqfog9Kxzq
+	 0AGp/1hcDN41j6lKYaycNlqyOevx3JDjHZozfnl/HOlffGi06OFPzlGkfEMiSfWzXd
+	 5Jq3kDNhxg24hDA9kZBNq35wAz2Twh1uihztFek3K3+u8XHomAyROhrrKqwCb5DGNa
+	 CP93fv1KNoR7KksfQezE7CA/YM10/l5A4dk1ecDSEFAtYX2/Ddw8JKwhUlmhpSMr03
+	 +EUEN8gWJUKvw==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH] clk: Avoid DT fetch in possible_parent_show if clk_hw is provided
+Date: Sat,  5 Jul 2025 09:58:17 +0000
+Message-ID: <20250705095816.29480-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-ks9m4S1jujQvyt9TOvNMewjNSztps8vayGga+MnNU+0YUcQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-> OK, with all the splitting requested, this comes out to ~54 patches.
-> I'll send the first bit (which can go in cycle 0) as v14.
+When showing a parent for which clk_core_get_parent_by_index fails, we
+may try using the parent's global name or the local name. If this fails
+either, the parent clock's clock-output-names is fetched through
+DT-index.
 
-FYI: Some subsystems have limits as to how many patches can be posted
-at once. e.g. for netdev, don't send more than 15.
+struct clk_hw pointer takes precedence with DT-index when registering
+clocks, thus most drivers only zero the index member of struct
+clk_parent_data when providing the parent through struct clk_hw pointer.
+If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
+will fail as well, in which case possible_parent_show will fetch the
+parent's clock-output-names property, treat the unintended, zeroed index
+as valid, and yield a misleading name if the clock controller does come
+with a clocks property.
 
-This is another rule about making it easier for reviewers. If i see 20
-patches, i will defer reviewing them until later, when i have more
-time. For a handful of patches, especially small obvious patches, i'm
-more likely to look at them straight away.
+Let's add an extra check against the struct clk_hw pointer, and only
+perform the DT-index-based fetch if it isn't provided.
 
-	Andrew
+Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks without parent string names")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+
+This was found when fixing the wrong parent description of
+clk-th1520-ap.c[1]. Without the patch,
+
+	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+	osc_24m cpu-pll1
+
+The first parent should be c910-i0, provided by an unresolvable struct
+clk_hw pointer. osc_24m is the first (and only) parent specified in
+devicetree for the clock controller. With the patch,
+
+	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+	(missing) cpu-pll1
+
+[1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@disroot.org/
+
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0565c87656cf..280d3a470228 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3594,7 +3594,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+ 	} else if (core->parents[i].fw_name) {
+ 		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+ 	} else {
+-		if (core->parents[i].index >= 0)
++		if (!core->parents[i].hw && core->parents[i].index >= 0)
+ 			name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
+ 		if (!name)
+ 			name = "(missing)";
+-- 
+2.49.0
+
