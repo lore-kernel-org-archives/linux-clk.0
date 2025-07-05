@@ -1,119 +1,175 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2F31946DF;
-	Sat,  5 Jul 2025 05:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751692860; cv=none; b=fqubtMnubwIRNevYmAqlpAGtEzZDKyOgQGQlYsgm68oTtXb1c+QlRRG44WmzCENmuViOM9VvaWNY60evxnJuYjMoNwhyEzqVbbONGlUcqQJL8WPQ8HNbz2PglTDgSFRvYpT/JF6X3jfzlXA1g18r7QDSOI7C2XbJSUDHAsc+x5U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751692860; c=relaxed/simple;
-	bh=0GwYxnGGoLNupxKVT8wRGKrtsp6rnrmBbWE444PArkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NIpizV3pVKf5WIIElU9jA9M8991Gv7dwxT4oZ6i7sMHJToGW7N2ae1rfawybb3RJUQhHalXjslW04vZntP4fC1oF8BJ5+T09k685EsflSKZ4baMtmUcde+eiNEWUlmMa/DEb99wAq1YIKDeYZEKs0mSULmUmRfRnM4hUprNLFss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MSoVsqft; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA90A137923;
+	Sat,  5 Jul 2025 06:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751697548; cv=pass; b=LQiD8K92DJcJn00DETrTVKpNYYZImNtHiwf3A8LAP6nUukuN0v4ISYV1E4l9wKEKsoaYm58+D7xFYOhZhnXeTxCxldqXDsJuhGshDthOlLjg+mnEdy9TJ0YJgLXaff+Ke5iMltOMDgLNdcAS5wsKphgEsPtJXbawAKKx1Tg7qNM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751697548; c=relaxed/simple;
+	bh=CH2qPrLkcS6/rRyNy716wJ2uYE0goUZR33taod3gHJ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CDfpdBtORiqpTEHMM0DUysdKhlFy+YyPWHB9QQQwrtgoyMAWAnjG+A23JQkaIPodfD0/BXKorVQ+dHrnXDZjzFXmR9mDaKv4I8K9pf8QmVW+OZCuh15n30ykXG2m6Ay5IvY4br3KFNGLNmiKv6SzBYirUC/tVLeMPi3yUSyPC+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=HOxNFUvQ; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MSoVsqft"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 04A6B25E27;
-	Sat,  5 Jul 2025 07:20:49 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id GWUZ7DIhG7RL; Sat,  5 Jul 2025 07:20:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751692848; bh=0GwYxnGGoLNupxKVT8wRGKrtsp6rnrmBbWE444PArkg=;
-	h=From:To:Cc:Subject:Date;
-	b=MSoVsqftLfTKwDshYxYI0jXrTommOflOBQCSgWjBsay/UVW6gFDoGsUCJ2S77+A0I
-	 8OoR/n9G1M/9PEF2oVDX0XtRXk7dCp39mlKR3/SP/aE166xZjs86WCKbTFLYi/KuuS
-	 GROa90cWUi3B9TAE68P15tFd1kJQJ2hTC1sQnEb37xcyd5tFiB7KR9Isaoil1g2jG3
-	 ebjxMDD3wkMLBVFSWdoZvEPmTVtTxrVAUdQFa96+O+o535LLUaWq9F0K4uD1MmHtVa
-	 Dy6EHq6K5zvxSyfyF3i5bAIwmB0hdRePI6UhE3uNILhqw0WkQzyjAw1ABK+9H3wQgi
-	 MS9oKwPHpzr0Q==
-From: Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH] clk: thead: th1520-ap: Correctly refer the parent for c910 and osc_12m
-Date: Sat,  5 Jul 2025 05:20:28 +0000
-Message-ID: <20250705052028.24611-1-ziyao@disroot.org>
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="HOxNFUvQ"
+ARC-Seal: i=1; a=rsa-sha256; t=1751697511; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ba1CjQ1O4J2LXAAhI1/BNai/cHTI02dav9Jykh0VNqWZ5tA6b/QQgXx8EOT7YgBn00BbK9pgSnaVMCnF5k+PLvoEdlza2MsjEc/pFzu5Vs6qyJIcZ59T98Q7q1CjUfiG5zB0Ifo5VMkNyYQ5oSRpGIDBgGaK+XgJ6NpoXx5cnKY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751697511; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CH2qPrLkcS6/rRyNy716wJ2uYE0goUZR33taod3gHJ8=; 
+	b=nSbqVkANhxPobO1ASZoTe1LiObQPaJZIrL+ufO6252zfixnJW/xwc2qk5DhLKUljS6x9Uv1gLjQVkCQQH/k/jpdUsMx6S4YmuQgkjrCinrrp4rr0KzR3R/H1MjOp8MFdc4DZCwH6LqHhp2g1iPIB52dQucp09jhN0s32UnVJoVU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751697510;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=CH2qPrLkcS6/rRyNy716wJ2uYE0goUZR33taod3gHJ8=;
+	b=HOxNFUvQWcAkedWJD8ypcC20qQMuuLPYIHnIXjNHIStLdIdNv7WEL/lvLgSJF6Uy
+	ZVJd5Dkg3pczKxngx/sCx64+jf4jW/AgUKQHESQMvlhYp3DNLuj7zvTfd8PlDIX0WvZ
+	A17g2P9nQ4QQcvUKXRknX1YSr0q5MmoueoIxN4RMHZxLniiB4c5Y6jaFLwTMY+dWzC4
+	Rxf2+7DaCFOKHufMGMhveZpt+ydSIYvNjFCHPFje/AtRn7ftDRN3sakGu2vJ4fM0sjg
+	ez/OrV0hQsnsL8DYyg6up8newPcH6pAt4csrU1wXUei9zR3krmt8fo6hhcFg4Bsl86J
+	OBFtziKWjg==
+Received: by mx.zohomail.com with SMTPS id 1751697508445426.7706701494434;
+	Fri, 4 Jul 2025 23:38:28 -0700 (PDT)
+Message-ID: <1d51b75f7b85ddb588bbb24366b36df63a60712e.camel@icenowy.me>
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: v3s: Fix de clock definition
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <mripard@kernel.org>
+Date: Sat, 05 Jul 2025 14:38:21 +0800
+In-Reply-To: <aGhNFe3wGLX8aUC6@collins>
+References: <20250704154008.3463257-1-paulk@sys-base.io>
+	 <4cd84b9e2227c9225d977107eb05b9c3813b8846.camel@icenowy.me>
+	 <aGhNFe3wGLX8aUC6@collins>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-clk_orphan_dump shows two suspicious orphan clocks on TH1520 when
-booting the kernel with mainline U-Boot,
-
-	$ cat /sys/kernel/debug/clk/clk_orphan_dump | jq 'keys'
-	[
-	  "c910",
-	  "osc_12m"
-	]
-
-where the correct parents should be c910-i0 for c910, and osc_24m for
-osc_12m.
-
-The correct parent of c910, c910-i0, is registered with
-devm_clk_hw_register_mux_parent_data_table(), which creates a clk_hw
-structure from scratch. But it's assigned as c910's parent by
-referring &c910_i0_clk.common.hw, confusing the CCF since this clk_hw
-structure is never registered.
-
-Meanwhile, osc_12m refers the external oscillator by setting
-clk_parent_data.fw_name to osc_24m, which is obviously wrong since no
-clock-names property is allowed for compatible thead,th1520-clk-ap.
-
-For c910, refer c910-i0 by its name; for osc_12m, refer the external
-clock input by index. This eliminates these orphan clocks.
-
-Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- drivers/clk/thead/clk-th1520-ap.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index ebfb1d59401d..74da1a61e6f0 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -427,7 +427,7 @@ static struct ccu_mux c910_i0_clk = {
- };
- 
- static const struct clk_parent_data c910_parents[] = {
--	{ .hw = &c910_i0_clk.common.hw },
-+	{ .index = -1, .name = "c910-i0" },
- 	{ .hw = &cpu_pll1_clk.common.hw }
- };
- 
-@@ -582,7 +582,14 @@ static const struct clk_parent_data peri2sys_apb_pclk_pd[] = {
- 	{ .hw = &peri2sys_apb_pclk.common.hw }
- };
- 
--static CLK_FIXED_FACTOR_FW_NAME(osc12m_clk, "osc_12m", "osc_24m", 2, 1, 0);
-+struct clk_fixed_factor osc12m_clk = {
-+	.div		= 2,
-+	.mult		= 1,
-+	.hw.init	= CLK_HW_INIT_PARENTS_DATA("osc_12m",
-+						   osc_24m_clk,
-+						   &clk_fixed_factor_ops,
-+						   0),
-+};
- 
- static const char * const out_parents[] = { "osc_24m", "osc_12m" };
- 
--- 
-2.49.0
+5ZyoIDIwMjUtMDctMDTmmJ/mnJ/kupTnmoQgMjM6NTIgKzAyMDDvvIxQYXVsIEtvY2lhbGtvd3Nr
+aeWGmemBk++8mgo+IEhpLAo+IAo+IExlIEZyaSAwNCBKdWwgMjUsIDIzOjU0LCBJY2Vub3d5IFpo
+ZW5nIGEgw6ljcml0IDoKPiA+IOWcqCAyMDI1LTA3LTA05pif5pyf5LqU55qEIDE3OjQwICswMjAw
+77yMUGF1bCBLb2NpYWxrb3dza2nlhpnpgZPvvJoKPiA+ID4gVGhlIGRlIGNsb2NrIGlzIG1hcmtl
+ZCB3aXRoIENMS19TRVRfUkFURV9QQVJFTlQsIHdoaWNoIGlzIHJlYWxseQo+ID4gPiBub3QKPiA+
+ID4gbmVjZXNzYXJ5IChhcyBjb25maXJtZWQgZnJvbSBleHBlcmltZW50YXRpb24pIGFuZCBzaWdu
+aWZpY2FudGx5Cj4gPiA+IHJlc3RyaWN0cyBmbGV4aWJpbGl0eSBmb3Igb3RoZXIgY2xvY2tzIHVz
+aW5nIHRoZSBzYW1lIHBhcmVudC4KPiA+IAo+ID4gV2l0aCBpdCBub3Qgc2V0dGluZyBwYXJlbnQs
+IGlzIGFyYml0YXJ5IHBpeGVsIGNsb2NrcyBzdGlsbAo+ID4gcG9zc2libGU/Cj4gCj4gQWJzb2x1
+dGVseSBhbmQgdGhlIGNsb2NrIHRyZWUgaXMgdmVyeSBtdWNoIGltcHJvdmVkLCBJIHRoaW5rIHRo
+ZSBmbGFnCj4gd2FzIHRoZQo+IHJlYXNvbiB0aGF0IHdhcyBwcmV2ZW50aW5nIGl0IGZyb20gbmF0
+dXJhbGx5IGtlZXBpbmcgdGhlIHRjb24gYW5kIGRlCj4gY2xvY2tzCj4gdW5kZXIgdGhlIHZpZGVv
+IHBsbCBpbiBteSBjYXNlLgo+IAo+IE5vdyBpdCBjYW4gcHJvdmlkZSBib3RoIHRoZSAzMyBNaHog
+Zm9yIHRoZSBwaXhlbCBjbG9jayBhbmQgcnVucyB0aGUKPiBtaXhlciBhdAo+IG5lYXJseSAxNTAg
+TUh6LiBUaGUgdmlkZW8gcGxsIG5vdyBydW5zIGF0IDI5NyBNSHogd2hpY2ggaXMgYSBwZXJmZWN0
+CgpEaWQgeW91IHRlc3Qgb3RoZXIgcGl4ZWwgY2xvY2tzPwoKSSBzdWdnZXN0IHlvdSB0byB0cnkg
+YSBSR0ItdG8tVkdBIGJyaWRnZSBhbmQgdGVzdCBwb3NzaWJsZSBwaXhlbCBjbG9ja3MKb24gdGhl
+IFZHQSBwb3J0LgoKPiBmaXQgZm9yCj4gY3NpLXNjbGsgY2FtZXJhIG1haW4gY2xvY2ssIHNvIHRo
+ZSBhbGdvcml0aG0gaXMgZG9pbmcgaXRzIGpvYiBhdCBpdHMKPiBiZXN0IQo+IAo+IFNvIHRoaXMg
+bWVhbnMgdGhhdCBJIG5vIGxvbmdlciBoYXZlIHRvIGNoYW5nZSB0aGUgbWl4ZXIgY2xvY2sgdG8g
+Mjk3Cj4gTUh6IHRvCj4ga2VlcCBpdCB1bmRlciB0aGUgdmlkZW8gcGxsLiBJdCBwcmV0dHkgbXVj
+aCBzb2x2ZXMgYWxsIG15IHByb2JsZW1zIGF0Cj4gb25jZS4KPiAKPiBIZXJlIGlzIHRoZSByZWxl
+dmFudCBjbGtfc3VtbWFyeSBleHRyYWN0Ogo+IMKgwqDCoCBwbGwtdmlkZW/CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDLCoMKgwqDCoMKgwqAgMsKgwqDCoMKg
+wqDCoMKgIDLCoMKgwqDCoMKgwqDCoAo+IDI5NzAwMDAwMMKgwqAgNTAwMDDCoMKgwqDCoMKgIDDC
+oMKgwqDCoCA1MDAwMMKgwqDCoMKgwqAgWcKgwqDCoMKgwqAKPiBkZXZpY2VsZXNzwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG5vX2Nvbm5lY3Rpb25faWTCoMKgwqDC
+oMKgwqDCoMKgIAo+IMKgwqDCoMKgwqDCoCBjc2ktc2Nsa8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAwwqDCoMKgwqDCoMKgIDDCoMKgwqDCoMKgwqDCoCAzwqDCoMKg
+wqDCoMKgwqAKPiAyOTcwMDAwMDDCoMKgIDUwMDAwwqDCoMKgwqDCoCAwwqDCoMKgwqAgNTAwMDDC
+oMKgwqDCoMKgIE7CoMKgwqDCoMKgwqDCoMKgCj4gMWNiODAwMC5pc3DCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1vZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoAo+IDFjYjAwMDAuY2FtZXJhwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBtb2TCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAKPiAxY2IxMDAwLmNzacKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+bW9kwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIAo+IMKgwqDCoMKg
+wqDCoCB0Y29uwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgMsKgwqDCoMKgwqDCoCAywqDCoMKgwqDCoMKgwqAgMcKgwqDCoMKgwqDCoMKgCj4gMzMwMDAw
+MDDCoMKgwqAgNTAwMDDCoMKgwqDCoMKgIDDCoMKgwqDCoCA1MDAwMMKgwqDCoMKgwqAgWcKgwqDC
+oMKgwqDCoMKgwqAgMWMwYzAwMC5sY2QtCj4gY29udHJvbGxlcsKgwqDCoMKgwqDCoMKgwqDCoCB0
+Y29uLWNoMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIAo+IMKgwqDCoMKgwqDCoMKg
+wqDCoCB0Y29uLWRhdGEtY2xvY2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDHCoMKgwqDCoMKgwqAg
+McKgwqDCoMKgwqDCoMKgIDHCoMKgwqDCoMKgwqDCoAo+IDMzMDAwMDAwwqDCoMKgIDUwMDAwwqDC
+oMKgwqDCoCAwwqDCoMKgwqAgNTAwMDDCoMKgwqDCoMKgIFnCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+Cj4gZGV2aWNlbGVzc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBu
+b19jb25uZWN0aW9uX2lkwqDCoMKgwqDCoMKgwqDCoCAKPiDCoMKgwqDCoMKgwqAgZGXCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMsKgwqDCoMKg
+wqDCoCAywqDCoMKgwqDCoMKgwqAgMMKgwqDCoMKgwqDCoMKgCj4gMjk3MDAwMDAwwqDCoCA1MDAw
+MMKgwqDCoMKgwqAgMMKgwqDCoMKgIDUwMDAwwqDCoMKgwqDCoCBZwqDCoMKgwqDCoMKgwqDCoAo+
+IDEwMDAwMDAuY2xvY2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbW9kwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIAo+IMKgwqDCoMKgwqDCoMKg
+wqDCoCB3Yi1kaXbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDDCoMKg
+wqDCoMKgwqAgMMKgwqDCoMKgwqDCoMKgIDDCoMKgwqDCoMKgwqDCoAo+IDI5NzAwMDAwMMKgwqAg
+NTAwMDDCoMKgwqDCoMKgIDDCoMKgwqDCoCA1MDAwMMKgwqDCoMKgwqAgWcKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAKPiBkZXZpY2VsZXNzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIG5vX2Nvbm5lY3Rpb25faWTCoMKgwqDCoMKgwqDCoMKgIAo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB3YsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAw
+wqDCoMKgwqDCoMKgIDDCoMKgwqDCoMKgwqDCoCAwwqDCoMKgwqDCoMKgwqAKPiAyOTcwMDAwMDDC
+oMKgIDUwMDAwwqDCoMKgwqDCoCAwwqDCoMKgwqAgNTAwMDDCoMKgwqDCoMKgIE7CoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgCj4gZGV2aWNlbGVzc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBub19jb25uZWN0aW9uX2lkwqDCoMKgwqDCoMKgwqDCoCAKPiDCoMKg
+wqDCoMKgwqDCoMKgwqAgbWl4ZXIwLWRpdsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDHCoMKgwqDCoMKgwqAgMcKgwqDCoMKgwqDCoMKgIDDCoMKgwqDCoMKgwqDCoAo+IDE0ODUwMDAw
+MMKgwqAgNTAwMDDCoMKgwqDCoMKgIDDCoMKgwqDCoCA1MDAwMMKgwqDCoMKgwqAgWcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAKPiBkZXZpY2VsZXNzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIG5vX2Nvbm5lY3Rpb25faWTCoMKgwqDCoMKgwqDCoMKgIAo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBtaXhlcjDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDHCoMKgwqDCoMKgwqAgMcKgwqDCoMKgwqDCoMKgIDDCoMKgwqDCoMKgwqDCoAo+IDE0ODUwMDAw
+MMKgwqAgNTAwMDDCoMKgwqDCoMKgIDDCoMKgwqDCoCA1MDAwMMKgwqDCoMKgwqAgWcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAKPiAxMTAwMDAwLm1peGVywqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIG1vZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCAKPiAKPiBDaGVlcnMsCj4gCj4gUGF1bAo+IAo+ID4gPiAKPiA+ID4gSW4gYWRkaXRpb24g
+dGhlIHNvdXJjZSBzZWxlY3Rpb24gKHBhcmVudCkgZmllbGQgaXMgbWFya2VkIGFzCj4gPiA+IHVz
+aW5nCj4gPiA+IDIgYml0cywgd2hlbiBpdCB0aGUgZG9jdW1lbnRhdGlvbiByZXBvcnRzIHRoYXQg
+aXQgdXNlcyAzLgo+ID4gPiAKPiA+ID4gRml4IGJvdGggaXNzdWVzIGluIHRoZSBkZSBjbG9jayBk
+ZWZpbml0aW9uLgo+ID4gPiAKPiA+ID4gRml4ZXM6IGQwZjExZDE0YjBiYyAoImNsazogc3VueGkt
+bmc6IGFkZCBzdXBwb3J0IGZvciBWM3MgQ0NVIikKPiA+ID4gU2lnbmVkLW9mZi1ieTogUGF1bCBL
+b2NpYWxrb3dza2kgPHBhdWxrQHN5cy1iYXNlLmlvPgo+ID4gPiAtLS0KPiA+ID4gwqBkcml2ZXJz
+L2Nsay9zdW54aS1uZy9jY3Utc3VuOGktdjNzLmMgfCAzICstLQo+ID4gPiDCoDEgZmlsZSBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuOGktdjNzLmMKPiA+ID4gYi9kcml2ZXJz
+L2Nsay9zdW54aS1uZy9jY3Utc3VuOGktdjNzLmMKPiA+ID4gaW5kZXggNTJlNDM2OTY2NGM1Li5k
+ZjM0NWE2MjBkOGQgMTAwNjQ0Cj4gPiA+IC0tLSBhL2RyaXZlcnMvY2xrL3N1bnhpLW5nL2NjdS1z
+dW44aS12M3MuYwo+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuOGktdjNz
+LmMKPiA+ID4gQEAgLTM0Nyw4ICszNDcsNyBAQCBzdGF0aWMKPiA+ID4gU1VOWElfQ0NVX0dBVEUo
+ZHJhbV9vaGNpX2NsayzCoMKgwqDCoMKgwqDCoMKgImRyYW0tb2hjaSIswqDCoMKgwqAiZHJhbSIs
+Cj4gPiA+IMKgCj4gPiA+IMKgc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBkZV9wYXJlbnRzW10g
+PSB7ICJwbGwtdmlkZW8iLCAicGxsLQo+ID4gPiBwZXJpcGgwIiB9Owo+ID4gPiDCoHN0YXRpYyBT
+VU5YSV9DQ1VfTV9XSVRIX01VWF9HQVRFKGRlX2NsaywgImRlIiwgZGVfcGFyZW50cywKPiA+ID4g
+LcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIDB4MTA0LCAwLCA0LCAyNCwgMiwgQklUKDMxKSwKPiA+ID4gLcKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIENMS19TRVRf
+UkFURV9QQVJFTlQpOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMHgxMDQsIDAsIDQsIDI0LCAzLCBCSVQoMzEpLCAw
+KTsKPiA+ID4gwqAKPiA+ID4gwqBzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IHRjb25fcGFyZW50
+c1tdID0geyAicGxsLXZpZGVvIiwgInBsbC0KPiA+ID4gcGVyaXBoMCIgfTsKPiA+ID4gwqBzdGF0
+aWMgU1VOWElfQ0NVX01fV0lUSF9NVVhfR0FURSh0Y29uX2NsaywgInRjb24iLCB0Y29uX3BhcmVu
+dHMsCj4gPiAKPiAKCg==
 
