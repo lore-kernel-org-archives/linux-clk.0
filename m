@@ -1,136 +1,96 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43604295D85
-	for <linux-clk@vger.kernel.org>; Mon,  7 Jul 2025 09:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A871F8755;
+	Mon,  7 Jul 2025 10:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751882229; cv=none; b=krQCnjTQy/9ZrJMm0LkNBnDXmr+gH8Vca6eYd6tvZ1hfYE1V3Wp0vpwm+L3u88baT4iK4IGA0D3XV1419wQjQkTnESWdDoh0J7bnGe8Vdcv/W/FmWeeIZ/DfTmHOvH8+jIQ6iRX5XFHHWjCygl2FwZOps8fVSxQ57Pw8zTDg8xM=
+	t=1751882543; cv=none; b=ZycrrIo1HvS2Dun6heIggJtt71iGQwcbKtvZBva8jYYIcPqd1ByLvznnfSZT0iqctzuR4ZGqEBoh1op/30b0ZIVjjbsYL44c6ZCnNI25EbXCqS5DR8xr1miFxqUbw5OwnGqF1yzJiMaOaaB85pOSeRB3XDqvjEhOvMFKlF8kFSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751882229; c=relaxed/simple;
-	bh=3Mu2inPeLurTgxYIMXmvWJLeE7eR7Fy6XDeF6vArhtI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KXyy1BHKW+xACm2TwEEqs3zDm0XVtsRFv91fay7ijTN/TlUwKbld8hVp7jte11RO+lxwc9L1tbinrNzFURrx7oGo0rkIS4gQDCo7GQ8MSBUA2VhSLV/OFBd+mgO7NjVMUNC3BHiJd58UBoul5OJHKcEmP4h64JwfyeZD9iRdTDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=iyEYlPkF; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="iyEYlPkF"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae3be3eabd8so587701066b.1
-        for <linux-clk@vger.kernel.org>; Mon, 07 Jul 2025 02:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1751882225; x=1752487025; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EOnXjDsqREhCmFz88p49UNo+eXUiRZ56Bd8zYTlBpIA=;
-        b=iyEYlPkFwUyAwTcMUvc97NQ6mZcgozgZfTX0JFclFwPj0oSZtjX/JbqZJpETRaRRby
-         YEbqmfxvwPF6TCMwNxzPnsa0o3Opk1iv3fXuRV6Lwg2SwK48FnwR/XhOm22NrMb74kDQ
-         ePNR/zFNKGRzBH5fk1VVK9qVbzTielD+ESYltioF5j6DVntVug/Kexisg4mAxgcm7tCg
-         BnKWvj8Xti5XhKIRUlTZtGcg+4tsWAvOWx4ZmUG7NzsgkN+RcoNB/83BMZDMQ0LBl5Cw
-         Pxl33yNqTpsIytR8Hq5qJjxHFdvCvYBX8QknIc7euv4vsYD7P95iQFWz59GEtSC0hwR6
-         +R/w==
+	s=arc-20240116; t=1751882543; c=relaxed/simple;
+	bh=vkru9bws1F+ARBeM4YsMUM2st4Em7q8l2KIm2ooe9NA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=THiIMeaxtK/lSh1EA8I52DYrUgTzfFnakGwAWGcLxz1ULv1qgmNNlzndGvStLsvpATh6ou5KQxC9M6tVVbKhfuMK9Vpd8RL191+p0mHBOVeNwnX0yrAsdLUOJwKCytAS9EAlSmIBiAB3z8KNjl6jUfka3XzECl9JtPX8pi4sUk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fb1be9ba89so31870346d6.2;
+        Mon, 07 Jul 2025 03:02:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751882225; x=1752487025;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EOnXjDsqREhCmFz88p49UNo+eXUiRZ56Bd8zYTlBpIA=;
-        b=aHcOFApEAbE6UPx+oeddyEHHLgmQQh1bEaw9Hkeet8RKyp50oCX19tezG/Bir/AwUo
-         Q7YMU6otwZsKzrxsoDxmbWxRiT6mSGHdu7eqaLibr5Zh7WFxH+TXj7whj6jXl95MjDlc
-         NxNrEKKgFHchKZzFUCrTGnEX//dR92O+apmgVLaQ3TROw9IIF90PZLsJ8vRq/5aMqm0G
-         1WJ2LEKQk3Np8o99aVxzdObkQafH56nvojwwg0q7QURB0R0MbmV2Tb+sewNY647NUSvE
-         rNGwo4aYlHrFCjBsmhP9+FsxcfYqyBC6K/tWz7mlmnu/qarCdX71K/29tdQ42+RWOYdp
-         M4YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4VAi0TZH+nU3nXCyeCzJhaExPr2Xkj8Yl8twwg4RnGoxOdf1suJumMI1ePPvc7OZcGf9uX0+6B3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaZPBxgex26tnsUqLbyo0Bphf47f/rURKO9EO9gJN+kn6qQ/en
-	kN7KtKUNfgYhQDnhjScCvTR+IVhi6aTCBrAjA7j9uv9Mt3XiopQK21EdCCBp0lQdREEPL3foqr5
-	n/Qb7
-X-Gm-Gg: ASbGncss/F8jtC3wpbSeRkm3mlI0R5/vGKokskbirzC6nSLFnPqDsJBYlcWNf3++B4P
-	HaeG+bOeijRzVLwcQHBaVKupNrAXz8zznYJK0i75xfZY0GWl6X5mZJqVupARaYYg36sfMICcKBS
-	vDVqJ07RT/88f1rgXLvIksLs4NasNdl6q4N72qWfffZhTphJKa4KC2rArPa1VTg5OThCTf+IDVX
-	z7EebWKOayVwS/LnPFlIHfd7dhMISBKfrg+7TzT8HVkuDT7lRcg9Utd2pcAmZRk7XN3KywH2j0v
-	LF/uXCnHdf4U6AFxn4jFQnkz1VDd2J0T45sxidz2TeJBPecIHIQLb/UqhDfZ8/j7ZWuwmGmL2ac
-	lJX0NBZbxrB1WCQdjDhCY6xCbUXnRrvaf
-X-Google-Smtp-Source: AGHT+IGKhMhFSGKlsIJ79aw5G6QurSRw8NCQFcx3lleMs7147mX87cuyeRhXpjtmLkhn9V0f7LM0PQ==
-X-Received: by 2002:a17:907:e90:b0:ae3:eab4:21ed with SMTP id a640c23a62f3a-ae3f80acbf7mr1348668966b.11.1751882225465;
-        Mon, 07 Jul 2025 02:57:05 -0700 (PDT)
-Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca6641fbsm5235815a12.3.2025.07.07.02.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 02:57:04 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 07 Jul 2025 11:56:40 +0200
-Subject: [PATCH v2 4/4] clk: qcom: tcsrcc-sm8650: Add support for Milos SoC
+        d=1e100.net; s=20230601; t=1751882540; x=1752487340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kAWVxOChxT99brNRnSRvqsjpYCXonES5TnFSFk+0jU8=;
+        b=OxTgic+7xpS3J5LJ9sST17zo+TGNRUVtjxnEknVzKQQj8NitzZF40RyMaiYkHnTqB7
+         +UdaBI2nhOuQ54tcaLM+K5v+cBph2991JSHfhFMdF/Q3MDxr3t5I4lGj2X+sq2Fsa0dr
+         fQ7u7x54NwK856MvYq/G6rsuzo+gWL+xN0w0knKj0396k36BKGLzWLWadlGYUDyJAx0v
+         uGpbNFE2eOCg8MWELqdyLowRJ7oGECS9drBHwOP0rC+s9m86tAOiLKZtOt/CAOKdXpSS
+         ko5r9CSCXHvJahweEZYFJzmp1eXcVgdSb8XtN/Ai4tpCVnrVGILpidZxx50ZFoHRbUVD
+         2Nfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2IC3F146/6N32k7eJ7i3bKbgBEmkgR4R5KPHxsXEZrE0Umh8AgIj809/f9x6bQOOGfIZx1683AmUCwQuWeXOMQNk=@vger.kernel.org, AJvYcCVXXSVDQhzhOGJb8KilIJ1GAT16RHJJHcj95rd0JyE8yoMR4cqnc/hQhgQQzcaNSnC5tqC1K0ENvlM=@vger.kernel.org, AJvYcCX2ZhDx1U6MTJ0AwcaeYp9coiOj/5g2rDDDR8NJt/YX8d1AdAeUMJw6Aia0EwsJ9FbZJdN1ldwe6NKmaiLL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz0WU2A7MGd1vChhrmDygDj6carmJ7B3QuGxvo5KcoLwCHQoic
+	AWqLpKUjDYhPR0SpVoBfNWITzj+20i0gMyZWLfbj+1CMO+2+sNVRlL04ee5T1qJw
+X-Gm-Gg: ASbGncscxowaB1WpSgvSD1i83v32vdthH/lEHDaeO10ODeAw9OsxEXijKklFlTYp0Da
+	nhB/L3SeH3t0hDy+A4wh34sSxBZcFdj0SRE+N46o0RLj0dn1xPPxirdrkorL7mE7TLzhTlZ63qA
+	v1LDoZ+7Hljm8hWOhUC4rvfz5FheChHe1wqWqND0VOheONTVrGskdIOwNa+S/xrOGspSzkYT/YL
+	ACZxrEENnl1s8PGXj4Qte4xX02yMypJyBO5Z+EcS9X80mabIIFh+pohuIjaijN8M97blOgARo1G
+	22ml/XGxdVoD8hFrfonUUnMUraiZYP4jjltIfrJAQB5c4dOsGfCp30CAEB5He3f4ImRW8gHj5+D
+	3JrIIyP1P/5pFWoSaqvS0JH/9yCoz
+X-Google-Smtp-Source: AGHT+IFVrEDF48C21dZwzvaqbmDGAzgnNksXEM5UZMq1n8w+O8QIG2ddSEEzWxetxnWnXdrVieTXjg==
+X-Received: by 2002:a05:6214:2b82:b0:704:79e4:aa4a with SMTP id 6a1803df08f44-70479e4aa8bmr3192066d6.18.1751882539362;
+        Mon, 07 Jul 2025 03:02:19 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d5aac7sm56081876d6.85.2025.07.07.03.02.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 03:02:18 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d38ddc198eso346403885a.1;
+        Mon, 07 Jul 2025 03:02:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVl8NMpdXTZ6+f/V88vMC+5M1U3l5/ujHRk4dLtC+7aVEmh5omGRI5IM921rZlARzjovrYa648ODHI=@vger.kernel.org, AJvYcCWQQuArJyb//Gp7kUSnQSKlCiw89Z+26tI6gVk2ydc9axbS1eBmR4ShjfZT3C9SeWZmri6zdaML/z4bWntF@vger.kernel.org, AJvYcCXWHmnDVYPjmRlT1jdXmndBG0u1sTE9lZMDCwWKEmUpt7duzpHG0tFsDpLshY3xjvoWsWScl4wv1vdfMJPFKQJfR5A=@vger.kernel.org
+X-Received: by 2002:a05:620a:450c:b0:7d5:dc2a:c5f8 with SMTP id
+ af79cd13be357-7d5df102f6bmr1328858485a.12.1751882538289; Mon, 07 Jul 2025
+ 03:02:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-sm7635-clocks-misc-v2-4-b49f19055768@fairphone.com>
-References: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
-In-Reply-To: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751882221; l=1444;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=3Mu2inPeLurTgxYIMXmvWJLeE7eR7Fy6XDeF6vArhtI=;
- b=Wtvm1YrlQYeQB2SHtJa+HyB8AdrvrSqn/xb3Iesq39ZhGe/BB5eqogjRlpyJs5iP8J2pzA7I9
- 3PdMXLLd6FaA9OORSwNJH0kAn/MNrc4SXMzR8zSMe8BHr8fmfVIiXy1
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+References: <20250704091009.58821-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250704091009.58821-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Jul 2025 12:02:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVzYBx-5Wfp4k_wUqO3Np6Sc+DB_2htX5uVNOqXnaRXbg@mail.gmail.com>
+X-Gm-Features: Ac12FXzx50lwWv0KDbni2_rquPePl51mbuS_ixobvgbkXsfenAFeImeuX7GhpcU
+Message-ID: <CAMuHMdVzYBx-5Wfp4k_wUqO3Np6Sc+DB_2htX5uVNOqXnaRXbg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g047: Fix typo
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	John Madieu <john.madieu.xa@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The Milos SoC has a very similar tcsrcc block, only TCSR_UFS_CLKREF_EN
-uses different regs, and both TCSR_USB2_CLKREF_EN and
-TCSR_USB3_CLKREF_EN are not present.
+Hi Biju,
 
-Modify these resources at probe if we're probing for Milos.
+On Fri, 4 Jul 2025 at 11:10, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Fix the typo et0_rxclk->et0_txclk for smux2_gbe0_txclk.
+>
+> Fixes: 17dc02f7d293 ("clk: renesas: r9a09g047: Add clock and reset signals for the GBETH IPs")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/tcsrcc-sm8650.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thanks for your patch!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As the bad commit is only present in renesas-clk, I will fold the
+fix into the original commit.
 
-diff --git a/drivers/clk/qcom/tcsrcc-sm8650.c b/drivers/clk/qcom/tcsrcc-sm8650.c
-index 11c7d6df48c7b39f661cc4c2df30387836d2ca60..3685dcde9a4bd5ebc62ae9c054e6b6a44d68d0c5 100644
---- a/drivers/clk/qcom/tcsrcc-sm8650.c
-+++ b/drivers/clk/qcom/tcsrcc-sm8650.c
-@@ -148,6 +148,7 @@ static const struct qcom_cc_desc tcsr_cc_sm8650_desc = {
- };
- 
- static const struct of_device_id tcsr_cc_sm8650_match_table[] = {
-+	{ .compatible = "qcom,milos-tcsr" },
- 	{ .compatible = "qcom,sm8650-tcsr" },
- 	{ }
- };
-@@ -155,6 +156,13 @@ MODULE_DEVICE_TABLE(of, tcsr_cc_sm8650_match_table);
- 
- static int tcsr_cc_sm8650_probe(struct platform_device *pdev)
- {
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,milos-tcsr")) {
-+		tcsr_ufs_clkref_en.halt_reg = 0x31118;
-+		tcsr_ufs_clkref_en.clkr.enable_reg = 0x31118;
-+		tcsr_cc_sm8650_clocks[TCSR_USB2_CLKREF_EN] = NULL;
-+		tcsr_cc_sm8650_clocks[TCSR_USB3_CLKREF_EN] = NULL;
-+	}
-+
- 	return qcom_cc_probe(pdev, &tcsr_cc_sm8650_desc);
- }
- 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.50.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
