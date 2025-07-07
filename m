@@ -1,150 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD67F262FF0;
-	Mon,  7 Jul 2025 18:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0AB1FBE8B;
+	Mon,  7 Jul 2025 20:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913812; cv=none; b=FE+1iLnT6ekWPO/MEBUcl766mMJmVnWSvPQ6at5tOpjK2FPSN+LU65xnlfeQcGvZOoaj5nGAoMvA1+nlfwCHBFnq5KKlA2elJm7iuvOHZTjc03cTPWKjhy9FVDPcE1xhjjvJnsoqIFiktu6Ru1T6Vo2NiO794rzao3bvL96/0Ew=
+	t=1751920758; cv=none; b=iWK7qD9zEYR8nMVaALdkh6rEaPzByh3R3AiJ2zr3pHQ8w842J9ic+20oyvTOVzhfB2Hxyyx33d+hJjEKnwb9WJpXbbDkrSvaBQmP2G8+xMRT3r2mBpaPzDOVXcUs7BiSD1HaOvyveeycTe5p8pyVK1gOvLxq2HvAK1/Jh7rJ3n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913812; c=relaxed/simple;
-	bh=hrM7TAUwUzWNU7f4k4yx1Gu9ZxX5m6dymI/e327xOKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdH406kFvGLfVRdgv9sRdiXwFre76j8Cm1g9IwyPPjVSqlT1gM35Dxa62cG4UwQ6gjWUs9kJJuXwHVJ7Ch8+RYQANshLK/2aQYXGGEcBb7GidrjKeUfE1l3eX/c6C3wmPbyzcJa3pofG8yRVmUD+hcKrGcd6uWwJA0k9bQzhUvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1Gc354h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751920758; c=relaxed/simple;
+	bh=kcrB6F2mxoqFMPRnDijT6o6h3KVvHamrCsmEhzHfJiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojZCsbENrfrohihtcqIR3QZ7Py5fctMO+0nrkDTAlfsovrC1JeBAb88jnwxzASgz4JGQuDkGdg0c+Ar9FpakvMuqoC7nawqx21Mx5zXsfm9WbuzvBptkMdQ52wNVzwPQWlZ0Gv6pNYb68AarYdtJiPMiN5jYwsEuI9BSejWglz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QWrYm+hV; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1Gc354h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77161C4AF0F;
-	Mon,  7 Jul 2025 18:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751913811;
-	bh=hrM7TAUwUzWNU7f4k4yx1Gu9ZxX5m6dymI/e327xOKY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I1Gc354hwbuJzz57xuHU0adjTwd//JV0gPzmskPDKzgFi0rUipml8X0O2V6LITrXo
-	 3E8TyhoiOVpRorL5Je7NJYQJm7wFgMsRyX73rzrAPpeRq5Y6mKZ/snvPp9NZnIQljo
-	 EJ/Yb7UdKN5WtGgio8YxdoU+yw6/C05cM08V0Q4zjByYzRZFUAg7rdN4loP5CZ0m7N
-	 DSAIL4wUpN9lWI2/2fezfjt8ic6poJ7CHum+6NsaPgJsidjfva1nIMP/bhQLou0fTs
-	 z74T2zsEVCgOebD+jix36p0L6MdL6vdi5pf9RYqMHBP7hnTRoskg4TuCI+hiEinqgi
-	 MQud3uX4AQx2g==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61390809a36so956977eaf.1;
-        Mon, 07 Jul 2025 11:43:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHutvs2AN81vZ6J6Q44DnFjKkFGsfTsMHcGCDetQlgfAE+a3iARkRtgaHwExh0oQKXOXqInpwmGaIa@vger.kernel.org, AJvYcCUo0ZaWXpF053kafWae7MwisDyQ0QlbMGyIEojlRqTWsH/zzJUeuZlDZMDfrevYJcfdo2TjWKJ5CQbL@vger.kernel.org, AJvYcCUwOqRHYxAO9vvknUtTXYhqSAWbZaurZJgn+NEYh+zHE2kW38f5gR3qywEvit0301JGgO9OPe5ce/AEDIjF05AVfA==@vger.kernel.org, AJvYcCV3+1Z22IW6zQmqMbl8WjcjY4zpbRxmlnnsWu0AMqaN4wbXtvSPjJJzFnxyPExWJZytA2r8tkWUJepuONNk@vger.kernel.org, AJvYcCV8JgaoCGEwfMiHrZI9nSaZ6n60BzWuf0DRBxy6tTFSkW7l11jFrnR34rCf/f1Sm72JCA8Y4t6ut8nG@vger.kernel.org, AJvYcCVAjpxXZce9ThTnKCtLFdNDBQJ6dFkbn4E1lYjAjfDgOhxZnbF/BdocT3/7/Xx72aeJrrLnR8FzoqmWAIJ6@vger.kernel.org, AJvYcCVgSUnObPlYLwb1yKcxjJ6OtcDsOYjJv8GIJNvHCYWyU9NYVqL0+ibanlbx80WuXgNgecQz/KhWc8qq@vger.kernel.org, AJvYcCVwzyL4hvT+Ci/bldHrMMZ9+H09l9AT17O5r31rmOXV15IztHMs8HrgsQVTID8q/ieBVikSVCnE2l55gEOZSN9dlYo=@vger.kernel.org, AJvYcCWlv+YsG3nt98nHkqFtTTWakByeRqg32/XeY6IA7Pu5cuU4C6uGVF3b4zLWtJtp74SU7eXQcPIOBuVSfiE=@vger.kernel.org, AJvYcCWtB2OrmkOSbK0Vu1CHes+E3pkuD5poesbhjL3HEtVYLVtu4+yn+eOawr5CY21GsbnY2mjbZM5xGzBb@vger.kernel.org, AJvYcCWxW6EtxI1dpYAYx59v5ff2MrnQUsU3u2e+GCDu/FYhc1sWB3lIXnJC2r5lNGqTCeFGSvrgYrVIJkg=@vger.kernel.org, AJvYcCXfL4M0d21XFlYxz9O0xXWGcCpQVj0YtD7X5IBJ7DcmnSDnjD7zrrcwBqRJgWJ992l2yxT/RJNTZmcuOb6i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4hAwDnHt3HYo7wiMB+zRmQf8Sg4F2mN7dks+B1034Qjsfrx5G
-	1LZ/VxRskxHsyYVoNLwEdExgiATxzrjleqOwKFoUxo6WcMLXhIuIXgLVmlYYohmWqlJFUla1Smw
-	lZT7gDMfj47W4I/CtgAVjjATrj+5zIW0=
-X-Google-Smtp-Source: AGHT+IGWFo0UcD4MojnRdJcVhqk/giYu4pxqlIjmLkAJEnDd4MWXJ9qI/qzV8bVwGlXxOpEoErWIuer/la1NZ2vHba8=
-X-Received: by 2002:a05:6820:c8d:b0:611:e30a:f9c7 with SMTP id
- 006d021491bc7-613c0292e6amr496213eaf.7.1751913810559; Mon, 07 Jul 2025
- 11:43:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QWrYm+hV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751920757; x=1783456757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kcrB6F2mxoqFMPRnDijT6o6h3KVvHamrCsmEhzHfJiQ=;
+  b=QWrYm+hVoOBvaM1dosFsuV3oloBBzgvWx/+Nzt06LYELr2u/hBitTrAu
+   vKUXPQi94q0i49hMvSRPNYx8yzZQuptMo/JIIPwvUR0sGemReV193bMcH
+   b0UJ+JAfWs6DT5kw/7vNlGeyQy05SW/dPUDZYuugdKAec7+F3MNJyL1zS
+   nlExRR7vvi7u02pLP0WZEtSyASWx5ijtjAl7OjydSygTQOT9e2x/xhw0D
+   PGnUk7eu4kyCydWVDRey9P9pcZCXT1+F2FKVZi4Pk1fgp/GOdrPV3xMOD
+   +WIvyQ6Zk/2+dxy6IP5ZEan5N/yHnGVcA9V5g448KYE2spKdF+cZ6+WLu
+   A==;
+X-CSE-ConnectionGUID: XZKvKVPcRwCC4J5Kor88kw==
+X-CSE-MsgGUID: im2bvxoLR7u+lY64K5yNkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64397516"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="64397516"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:39:16 -0700
+X-CSE-ConnectionGUID: vD4xfab6Q4iMgufgeuM4pw==
+X-CSE-MsgGUID: i1AYe1TLR5CbsO1FTsLDjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="192494134"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:39:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uYscD-0000000DOQV-12J7;
+	Mon, 07 Jul 2025 23:39:05 +0300
+Date: Mon, 7 Jul 2025 23:39:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/24] ACPI: property: Refactor
+ acpi_fwnode_get_reference_args() to support nargs_prop
+Message-ID: <aGwwaGmiIxdElk1Y@smile.fi.intel.com>
+References: <20250704070356.1683992-1-apatel@ventanamicro.com>
+ <20250704070356.1683992-15-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com> <CAJZ5v0gH9ZAK9br58KB0VEtG+4VdwO7vEKtrKbpcYOKnZPf7bg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gH9ZAK9br58KB0VEtG+4VdwO7vEKtrKbpcYOKnZPf7bg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 20:43:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gZK_JYgXYdbJ9pOBgrMO9sBa=VWP8HGOVV4C2mCOSSWg@mail.gmail.com>
-X-Gm-Features: Ac12FXx21d9hRiF0Pqe_4V96M5MioxLeGCoj8OSAh6lGgwSlfReCuBO8e1tghsQ
-Message-ID: <CAJZ5v0gZK_JYgXYdbJ9pOBgrMO9sBa=VWP8HGOVV4C2mCOSSWg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
-To: Ulf Hansson <ulf.hansson@linaro.org>, Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, 
-	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org, 
-	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, andersson@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	wsa+renesas@sang-engineering.com, mathieu.poirier@linaro.org, 
-	vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
-	pierre-louis.bossart@linux.dev, broonie@kernel.org, robh@kernel.org, 
-	jirislaby@kernel.org, saravanak@google.com, jic23@kernel.org, 
-	dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
-	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	fabrizio.castro.jz@renesas.com, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704070356.1683992-15-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jul 4, 2025 at 9:53=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Fri, Jul 4, 2025 at 1:16=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.or=
-g> wrote:
-> >
-> > On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > >
-> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >
-> > > Hi,
-> > >
-> > > Series drops the dev_pm_domain_detach() from platform bus remove and
-> > > adds it in device_unbind_cleanup() to avoid runtime resumming the dev=
-ice
-> > > after it was detached from its PM domain.
-> > >
-> > > Please provide your feedback.
-> > >
-> > > Thank you,
-> > > Claudiu
-> > >
-> > > Changes in v5:
-> > > - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
-> > >   due to this a new patch was introduced
-> > >   "PM: domains: Add flags to specify power on attach/detach"
-> > >
-> > > Changes in v4:
-> > > - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
-> > >   and used in device_unbind_cleanup()
-> > >
-> > > Changes in v3:
-> > > - add devm_pm_domain_attach()
-> > >
-> > > Changes in v2:
-> > > - dropped the devres group open/close approach and use
-> > >   devm_pm_domain_attach()
-> > > - adjusted patch description to reflect the new approach
-> > >
-> > >
-> > > Claudiu Beznea (3):
-> > >   PM: domains: Add flags to specify power on attach/detach
-> > >   PM: domains: Detach on device_unbind_cleanup()
-> > >   driver core: platform: Drop dev_pm_domain_detach() call
-> > >
-> > >  drivers/amba/bus.c                       |  4 ++--
-> > >  drivers/base/auxiliary.c                 |  2 +-
-> > >  drivers/base/dd.c                        |  2 ++
-> > >  drivers/base/platform.c                  |  9 +++------
-> > >  drivers/base/power/common.c              |  9 ++++++---
-> > >  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
-> > >  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
-> > >  drivers/i2c/i2c-core-base.c              |  2 +-
-> > >  drivers/mmc/core/sdio_bus.c              |  2 +-
-> > >  drivers/rpmsg/rpmsg_core.c               |  2 +-
-> > >  drivers/soundwire/bus_type.c             |  2 +-
-> > >  drivers/spi/spi.c                        |  2 +-
-> > >  drivers/tty/serdev/core.c                |  2 +-
-> > >  include/linux/pm.h                       |  1 +
-> > >  include/linux/pm_domain.h                | 10 ++++++++--
-> > >  15 files changed, 31 insertions(+), 22 deletions(-)
-> > >
-> > > --
-> > > 2.43.0
-> > >
-> >
-> > The series looks good to me, please add:
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >
-> > Rafael, do you intend to pick this via your tree?
->
-> I do in general, but I haven't looked at this version yet.  I'll get
-> to it early next week.
+On Fri, Jul 04, 2025 at 12:33:46PM +0530, Anup Patel wrote:
+> 
+> Currently, acpi_fwnode_get_reference_args() delegates to the internal
+> function __acpi_node_get_property_reference() to retrieve property
+> references. However, this function does not handle the nargs_prop (cells
+> property) parameter, and instead expects the number of arguments (nargs)
+> to be known or hardcoded.
+> 
+> As a result, when fwnode_property_get_reference_args() is used with a
+> valid nargs_prop, the ACPI backend ignores it, whereas the Device Tree
+> (DT) backend uses the #*-cells property from the reference node to
+> determine the number of arguments dynamically.
+> 
+> To support the nargs_prop in ACPI, refactor the code as follows:
+> 
+> - Move the implementation from __acpi_node_get_property_reference()
+>   into acpi_fwnode_get_reference_args().
+> 
+> - Update __acpi_node_get_property_reference() to call the (now updated)
+>   acpi_fwnode_get_reference_args() passing NULL as nargs_prop to keep
+>   the behavior of __acpi_node_get_property_reference() intact.
 
-Now applied as 6.17 material, thanks!
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
