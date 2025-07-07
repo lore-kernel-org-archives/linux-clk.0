@@ -1,203 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5C3224B0E;
-	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33213254844;
+	Mon,  7 Jul 2025 17:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907039; cv=none; b=mTztLtihQOJeZsq2SIpu+ltuofHdfCS6HYo8t+waknV2/U8k1nENX1e3zSvr4HZUqi7vsEIWiGFfooSApX92aMuBM1qWyXeWvDpAvB/o7bwkbv0DDpxbX0bDRAT31sOoZxU6QTUlkx0/A9K9/g8pC4z7cZO0lNo+qRBeNx4Pbz0=
+	t=1751909303; cv=none; b=q0QNwDZilrU9g043f/OcX9ISM5wuDCHXJKNlyTxbD1i3mu+752jvLGYvi7qTV3w8xzGt2GnR33d1Aegn6QNrhhD1bej5Y5j39wuFWA0Qh3UxwqlpILxBnX5UTzCe7mvt75opf0ES/Z8d5OCKQDM8HxqKVGcRfNXqc+Xb7JeDLQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907039; c=relaxed/simple;
-	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
+	s=arc-20240116; t=1751909303; c=relaxed/simple;
+	bh=DA0vYq7xQ92l2ohY6lnFRwwvg+usb4Pg+fhbyInf+a4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eyhkisEdnwrKVHMcGgQ4l7bcghz3ZbZ8HD5naIdoyOSFLZJlhvq1YKLcnbdrXt/z0ieg36DiEjSUMLLK15KPncwz3dKUtZTStz91Ap9uN1ySc3Vt5cK1lAUrK0JzvqtJHNLSqbD31KqHA04XOq1mJmsAMOSwis5kYoVwRQofOVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmFaFG9a; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=Wyz7BmNaLMnUqnIw92xcJU+12zRQtii7M7qUK6TxuT6E5B89ZOeQj1+JF38lZKNCKpm9cMRFdVUgOwI+duwLmQHX1ZhN2FwIyAaCKS39hWNPvds4HsELNAj+1H0Xj5WXukFIZJickp2LeBjNquc4uQTfwS9L5Mt5ucbruAbOXv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InjHwR5y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmFaFG9a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95487C4CEF1;
-	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InjHwR5y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFF4C4CEF4;
+	Mon,  7 Jul 2025 17:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751907038;
-	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QmFaFG9amTsKCMhZTdRsdRLBhzbA9RgaZYGw7TGX/1hNfeXtiwzqS577/OOcXfVOe
-	 VJ5VDUIUOkUQZbjDJ1waqGZyhKQO7/oelpE8cgIMrOTdHs7WjpGKuTpTKNGek7XAvZ
-	 wGdmbnZOA7lKx52GlkSCtztm4URBUMKpHvFuY1wt+ge9xmnS1+9Ay5d7vB1bpiTjUN
-	 1ZE33gDJOzihdZqw6Q040WHZgWYvyDg7pcE6IfxlTwgOMseNl0z+NMPWZq7tkY4xBY
-	 +QbM0DsXHkDFVXSYu09qZo5Zs4ofrP1/0B1w5uomHVQ8A7hyzi+xMMNUZiUPk4bpSp
-	 a6ydhRgQPR7tA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61208b86da2so784750eaf.2;
-        Mon, 07 Jul 2025 09:50:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6QB6LuEfEm+W36AK9wYtrRhrfePr5S+PI4YmzTMD6RdIOHW6pVO+EHiC7WhJ0sDjdNPpN2KqpVMS5PjjT@vger.kernel.org, AJvYcCVfTklTGF3hl78JEc7uQKcGsLIrczUnCzEd24Bo6gqKbfCqYs56nZgjWRO1JOZUapOymv91V4tbRijP@vger.kernel.org, AJvYcCWGgtVPTPh5uWE0FzN9ODyA/KU26Tx5AsUfUNdv0Tr0xsuagVbW5krqy9NIPamc1OMvYv9KkZhe1DTxIQ==@vger.kernel.org, AJvYcCXjHVU5Yq0NsDgRNNuMdvdtIsc2rn72XHyia31eLSnyMHVOcR/N0BzELY0XVCsD+PKakVXl32W+kIg8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyFXDmBQflpSLyFFG4aGm7Ek0QTNf+bIp8sa6eV2Ij0jXzFYmf
-	ApWaNSURKP+6iQSzAjjLMaVMYzLz0cOV7EKeOIvE6nG8XhPfZT4QZcbifB2N09IRQ+CMt18XP13
-	SxQt9+5pOVQcFvK4RHOmJWU24kmEi4wI=
-X-Google-Smtp-Source: AGHT+IHNACN6r3MQBzl2AxnxkY7b3vwCCOzvxM4DbSJ5BWQkgWMplMg/AADsP0wxtsyFOxnDcsFDRO8teU3gGL28ZLg=
-X-Received: by 2002:a05:6820:2901:b0:611:ab60:3003 with SMTP id
- 006d021491bc7-613c02a087bmr171510eaf.8.1751907037895; Mon, 07 Jul 2025
- 09:50:37 -0700 (PDT)
+	s=k20201202; t=1751909302;
+	bh=DA0vYq7xQ92l2ohY6lnFRwwvg+usb4Pg+fhbyInf+a4=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=InjHwR5yiJURFc32QyEd1ElrA8jBUJqwZ8RkJ+B4GfK/n7FXD5hG+RGeO/BOKa27A
+	 MwjkvAiYZJtVvqzEawYcHG3VFaCQlA5RKsal9NDycBtcUe2EutUyQkC6Kn9PF8lwq2
+	 sHw/1b1YqW79iFoMlq9bc+odY8w3LceQ4g/JGulNkLQD/oZHxqdFb//OxOm0ZWN4YB
+	 pn09uSlBNDl4zxkQftoT47W9hm9ySJIIKZLneAXTbWEsSRLXZvmoIlXvw2oCtIasu8
+	 40xY/X3u0Y7tdaDe/jBjhbsiF/9FTORO0wAHWXSXVf+uklisW2ns4ZQ+X3rRIZVHXD
+	 8KB5UXjAb/D1Q==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso29732941fa.0;
+        Mon, 07 Jul 2025 10:28:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK+sU7+sUVkf2qm0jkpzFHkSaD24x4ypNw6YmfHaGVaFefXGjkrxqX8LDjlBKi7dIHgJgaDtRQRXpe@vger.kernel.org, AJvYcCV0gbAVqegtcFZuGtnhj/qv0za1X8KTI+YXHgWPmYEQaTI4MEQBVPRbmBj98Al7IuWutKGOPHXGdcU=@vger.kernel.org, AJvYcCVLzWd/yb+GS4LiHodhZoCcn3YU60g/B2kx1dRIH2yS2kRWnqifTP/gX5uq0UNPOmY9sxVEMzS6bxlp2KP2@vger.kernel.org, AJvYcCXgdpnbVfj0tQ8YSIrGQIch9cVdSjpcwiDXaqEwjEX1b3P1SknUawOrCHq0fZpD5cBBSSWQuTUI3ts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUQo8+HOYffuKVxvio6F39eznXcuitCdyKWuMdmMiZOUWNC4hc
+	LRvpJ9a0N73L98WF8mtRS3YkbVBDhACGAboKN4ednXQ9KIcuOaNbyhNEqel2uHjsRI8HI9A14tJ
+	epar4ps22xXiHPCu4/viSJMhF6vUOmhA=
+X-Google-Smtp-Source: AGHT+IFY+rLsffZJVhzZIq/tx6edFSvqTm7LgThpPh+tF0NsB2IUIPiOdKkZUrVJDtPq9uSRlUjRqtYSBJv3s5pRILs=
+X-Received: by 2002:a05:651c:552:b0:32f:1f1b:1e68 with SMTP id
+ 38308e7fff4ca-32f1f1b32bamr22374831fa.18.1751909301146; Mon, 07 Jul 2025
+ 10:28:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-16-apatel@ventanamicro.com>
-In-Reply-To: <20250704070356.1683992-16-apatel@ventanamicro.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 18:50:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
-X-Gm-Features: Ac12FXzt6T3E94Z3HOk5kB7YG-fbGgkcx6q0up1mrENTBphzopL9rtBmotWtHfA
-Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
-Subject: Re: [PATCH v8 15/24] ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <VI2PR04MB11147CCEFE4204B852807AAF2E841A@VI2PR04MB11147.eurprd04.prod.outlook.com>
+ <20250707105816.GF11488@nxa18884-linux> <20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
+In-Reply-To: <20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 8 Jul 2025 01:28:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
+X-Gm-Features: Ac12FXzWY8P19qDkdGNQUB3iwV0nucG8riI9TSaqcqIAG1yNxhf63TFCmT9amp4
+Message-ID: <CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
+Subject: Re: Dead lock with clock global prepare_lock mutex and device's power.runtime_status
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Carlos Song <carlos.song@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"rafael@kernel.org" <rafael@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, Frank Li <frank.li@nxp.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "dakr@kernel.org" <dakr@kernel.org>, 
+	"festevam@gmail.com" <festevam@gmail.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "pavel@kernel.org" <pavel@kernel.org>, 
+	Bough Chen <haibo.chen@nxp.com>, "len.brown@intel.com" <len.brown@intel.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aisheng Dong <aisheng.dong@nxp.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jun Li <jun.li@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 4, 2025 at 9:07=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
- wrote:
->
-> From: Sunil V L <sunilvl@ventanamicro.com>
->
-> Currently, ACPI does not support the use of a nargs_prop (e.g.,
-> associated with a reference in fwnode_property_get_reference_args().
-> Instead, ACPI expects the number of arguments (nargs) to be explicitly
-> passed or known.
->
-> This behavior diverges from Open Firmware (OF), which allows the use of
-> a #*-cells property in the referenced node to determine the number of
-> arguments. Since fwnode_property_get_reference_args() is a common
-> interface used across both OF and ACPI firmware paradigms, it is
-> desirable to have a unified calling convention that works seamlessly for
-> both.
->
-> Add the support for ACPI to parse a nargs_prop from the referenced
-> fwnode, aligning its behavior with the OF backend. This allows drivers
-> and subsystems using fwnode_property_get_reference_args() to work in a
-> firmware-agnostic way without having to hardcode or special-case
-> argument counts for ACPI.
->
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Hi,
 
-LGTM now, so
+On Mon, Jul 7, 2025 at 7:05=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.d=
+e> wrote:
+>
+> On 07.07.2025 18:58:16, Peng Fan wrote:
+> > On Tue, Jul 01, 2025 at 03:16:08AM +0000, Carlos Song wrote:
+> > >Hi, All:
+> > >
+> > >We met the dead lock issue recently and think it should be common issu=
+e and not sure how to fix it.
+> > >
+> > >We use gpio-gate-clock clock provider (drivers/clk/clk-gpio.c), gpio i=
+s one of i2c gpio expander (drivers/gpio/gpio-pcf857x.c). Our i2c driver en=
+able run time pm (drivers/i2c/busses/i2c-imx-lpi2c.c [1]). System random bl=
+ocked when at reboot.
+> > >
+> > >The dead lock happen as below call stacks
+> > >
+> > >Task 117                                                Task 120
+> > >
+> > >schedule()
+> > >clk_prepare_lock()--> wait prepare_lock(mutex_lock)     schedule() wai=
+t for power.runtime_status exit RPM_SUSPENDING
+> > >                           ^^^^ A                       ^^^^ B
+> > >clk_bulk_unprepare()                                    rpm_resume()
+> > >lpi2c_runtime_suspend()                                 pm_runtime_res=
+ume_and_get()
+> > >...                                                     lpi2c_imx_xfer=
+()
+> > >                                                        ...
+> > >rpm_suspend() set RPM_SUSPENDING                        pcf857x_set();
+> > >                           ^^^^ B                       ...
+> > >                                                        clk_prepare_lo=
+ck() --> hold prepare_lock
+> > >                                                        ^^^^ A
+> > >                                                        ...
+> > >
+> >
+> > This is a common issue that clk use a big prepare lock which is easy
+> > to trigger dead lock with runtime pm. I recalled that pengutronix raise=
+d
+> > this, but could not find the information.
+>
+> Alexander Stein stumbled over this issue some time ago:
+>
+> | https://lore.kernel.org/all/20230421-kinfolk-glancing-e185fd9c47b4-mkl@=
+pengutronix.de/
+>
+> I encountered it too, while trying to add a clock provider driver for a
+> SPI attached CAN controller which uses runtime pm.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Miquel from Bootlin posted a more formal description of the problem and
+some possible solutions last year [1].
 
-> ---
->  drivers/acpi/property.c | 29 +++++++++++++++++++++++++----
->  drivers/base/property.c |  2 +-
->  2 files changed, 26 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index d4863746fb11..e92402deee77 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -804,13 +804,35 @@ acpi_fwnode_get_named_child_node(const struct fwnod=
-e_handle *fwnode,
->         return NULL;
->  }
->
-> +static unsigned int acpi_fwnode_get_args_count(struct fwnode_handle *fwn=
-ode,
-> +                                              const char *nargs_prop)
-> +{
-> +       const struct acpi_device_data *data;
-> +       const union acpi_object *obj;
-> +       int ret;
-> +
-> +       data =3D acpi_device_data_of_node(fwnode);
-> +       if (!data)
-> +               return 0;
-> +
-> +       ret =3D acpi_data_get_property(data, nargs_prop, ACPI_TYPE_INTEGE=
-R, &obj);
-> +       if (ret)
-> +               return 0;
-> +
-> +       return obj->integer.value;
-> +}
-> +
->  static int acpi_get_ref_args(struct fwnode_reference_args *args,
->                              struct fwnode_handle *ref_fwnode,
-> +                            const char *nargs_prop,
->                              const union acpi_object **element,
->                              const union acpi_object *end, size_t num_arg=
-s)
->  {
->         u32 nargs =3D 0, i;
->
-> +       if (nargs_prop)
-> +               num_args =3D acpi_fwnode_get_args_count(ref_fwnode, nargs=
-_prop);
-> +
->         /*
->          * Assume the following integer elements are all args. Stop count=
-ing on
->          * the first reference (possibly represented as a string) or end =
-of the
-> @@ -961,10 +983,10 @@ static int acpi_fwnode_get_reference_args(const str=
-uct fwnode_handle *fwnode,
->                                 return -EINVAL;
->
->                         element++;
-> -
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
->                                                 acpi_fwnode_handle(device=
-),
-> -                                               &element, end, args_count=
-);
-> +                                               nargs_prop, &element, end=
-,
-> +                                               args_count);
->                         if (ret < 0)
->                                 return ret;
->
-> @@ -979,9 +1001,8 @@ static int acpi_fwnode_get_reference_args(const stru=
-ct fwnode_handle *fwnode,
->                                 return -EINVAL;
->
->                         element++;
-> -
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
-> -                                               ref_fwnode, &element, end=
-,
-> +                                               ref_fwnode, nargs_prop, &=
-element, end,
->                                                 args_count);
->                         if (ret < 0)
->                                 return ret;
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index f626d5bbe806..6a63860579dd 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -578,7 +578,7 @@ EXPORT_SYMBOL_GPL(fwnode_property_match_property_stri=
-ng);
->   * @prop:      The name of the property
->   * @nargs_prop:        The name of the property telling the number of
->   *             arguments in the referred node. NULL if @nargs is known,
-> - *             otherwise @nargs is ignored. Only relevant on OF.
-> + *             otherwise @nargs is ignored.
->   * @nargs:     Number of arguments. Ignored if @nargs_prop is non-NULL.
->   * @index:     Index of the reference, from zero onwards.
->   * @args:      Result structure with reference and integer arguments.
-> --
-> 2.43.0
->
+[1] https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
