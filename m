@@ -1,149 +1,116 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02831C5D7D
-	for <linux-clk@vger.kernel.org>; Mon,  7 Jul 2025 10:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF52294A0A;
+	Mon,  7 Jul 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751884616; cv=none; b=hd/9pbW9kkVBBgreBJim6LilzwaBbios7dQ9dzlW2aQ1xrZomqi/G3FczUWiacPjWN85Qe2fe3QiRGz7Ai4/fr6OZEdqDcWO3n19LcvEZLjvav9hCZVxJEgM0iG3rlW98pQRi9R3Dnq4ioaXFtOZlTsGZII0KsREv5eLDtkqQ1U=
+	t=1751885055; cv=none; b=eUfPi94Qop6KFgsSP20gcgHRIx2IBaLRGcHo601zb0GivzF8V7vXRGXxbJZCTD1EBQ/A0J7fNgNSbpPN1iJ1FoBFq9IOwukZob5c1BUXgzW+9YfAuyT0zLbXCgNCVsZMLfXxnsuxWInPKCle1fRqkxxL851MjsCoQaFiILIFwOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751884616; c=relaxed/simple;
-	bh=G02K2U9rXWifDOXEz/sB1XMHZAqZUmAt5bkKs2nUZG8=;
+	s=arc-20240116; t=1751885055; c=relaxed/simple;
+	bh=c5yRczUDFSdAdgPbN6dY3TNT3pnHLBR0hx9+hGQJrKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARRd1y3Rioo2a4N4z8hhvMx1EqAIDzlnihrZMTJX+ZKVwe1PicoYrpPmhSQK4R+4rpluC6gVnRiLAd086PXjx0XjLbEmRaDbqcXvrUwdgduzgNwAU8nJVObSyxf43ZSu3mjE8YfVAbrVjEbSwieTPS/koUicmXE/oYadVFec0Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uYjD3-00057V-F6; Mon, 07 Jul 2025 12:36:29 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uYjD2-007EWv-1J;
-	Mon, 07 Jul 2025 12:36:28 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKTBCaixYPNXxAwuw3EtrHoMo/KTLehoSM8NeBA55uskeBgNC4rafwwPj/lff5Jb+ExqpN6PDiwzRhXfM8Q2aJAFQDHh+GDQbe/UGnxboElPStP2oMblOnQebHOEzhtX3rvawM53Rx0dKOngPykm+WVLfFBe2vWl5a2fHql2Zqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BB00443955D;
-	Mon, 07 Jul 2025 10:36:27 +0000 (UTC)
-Date: Mon, 7 Jul 2025 12:36:25 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Carlos Song <carlos.song@nxp.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "rafael@kernel.org" <rafael@kernel.org>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, Frank Li <frank.li@nxp.com>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "dakr@kernel.org" <dakr@kernel.org>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"pavel@kernel.org" <pavel@kernel.org>, Bough Chen <haibo.chen@nxp.com>, 
-	"len.brown@intel.com" <len.brown@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aisheng Dong <aisheng.dong@nxp.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	Jun Li <jun.li@nxp.com>
-Subject: Re: Dead lock with clock global prepare_lock mutex and device's
- power.runtime_status
-Message-ID: <20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
-References: <VI2PR04MB11147CCEFE4204B852807AAF2E841A@VI2PR04MB11147.eurprd04.prod.outlook.com>
- <20250707105816.GF11488@nxa18884-linux>
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id CCFDA3410B7;
+	Mon, 07 Jul 2025 10:44:12 +0000 (UTC)
+Date: Mon, 7 Jul 2025 10:44:03 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alex Elder <elder@riscstar.com>, linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable tag between SpacemiT's reset and clock
+ trees for v6.17
+Message-ID: <20250707104403-GYA312629@gentoo>
+References: <20250703151823-GYA312602@gentoo>
+ <daf9ddad1aa24ee18abdc11a9b26ef03bdcbae16.camel@pengutronix.de>
+ <20250706040646-GYA408198@gentoo>
+ <3732050b6b756868543012c1a1cebbe7cce74d61.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cndeefjy6bsasobx"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250707105816.GF11488@nxa18884-linux>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3732050b6b756868543012c1a1cebbe7cce74d61.camel@pengutronix.de>
 
+Hi Philipp,
 
---cndeefjy6bsasobx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: Dead lock with clock global prepare_lock mutex and device's
- power.runtime_status
-MIME-Version: 1.0
+On 11:46 Mon 07 Jul     , Philipp Zabel wrote:
+> On So, 2025-07-06 at 04:06 +0000, Yixun Lan wrote:
+> > Hi Philipp,
+> > 
+> > On 12:02 Fri 04 Jul     , Philipp Zabel wrote:
+> > > On Do, 2025-07-03 at 15:18 +0000, Yixun Lan wrote:
+> > > > Hi Philipp,
+> > > > 
+> > > > Please pull the following change into the reset tree. This
+> > > > allows you to apply the patch 5 of the SpacemiT reset driver [1].
+> > > > 
+> > > > Thanks,
+> > > > Yixun Lan
+> > > > 
+> > > > Link: https://lore.kernel.org/r/20250702113709.291748-6-elder@riscstar.com [1]
+> > > 
+> > > Sorry I didn't notice before, this is missing k1-syscon.h from Patch 2.
+> > >  
+> > no problem
+> > 
+> > > Can we get a clock maintainer ack to place patch 2 in the shared tag as
+> > > well? Otherwise you could split patch 2 into soc and clk parts.
+> > for the ack, I'd assume Stephen have no objection (Cc him explicitly)
+> > 
+> > technically, there is no problem to place more patches in the shared
+> > tag, since the tag will be both sent(by me) to clock and reset tree,
+> > so no conflicts in the end.
+> > 
+> > if you expect to at least pass compiling test with patch 5 in reset
+> > branch only, then patch 1, 2, 3 should be included, otherwise need to
+> > pull clk branch for additional dependency patches.
+> 
+> 3 as well? Oh, that's for struct spacemit_ccu_adev. IMHO this patch
+> series is not well structured for applying across trees. This should
+> have been a single patch that adds include/soc/spacemit/k1-syscon.h, to
+> be shared by both clk and reset trees, and no other dependencies
+> between clk and reset patches for this to work well.
 
-On 07.07.2025 18:58:16, Peng Fan wrote:
-> On Tue, Jul 01, 2025 at 03:16:08AM +0000, Carlos Song wrote:
-> >Hi, All:
-> >
-> >We met the dead lock issue recently and think it should be common issue =
-and not sure how to fix it.
-> >
-> >We use gpio-gate-clock clock provider (drivers/clk/clk-gpio.c), gpio is =
-one of i2c gpio expander (drivers/gpio/gpio-pcf857x.c). Our i2c driver enab=
-le run time pm (drivers/i2c/busses/i2c-imx-lpi2c.c [1]). System random bloc=
-ked when at reboot.
-> >
-> >The dead lock happen as below call stacks
-> >
-> >Task 117                                                Task 120
-> >
-> >schedule()
-> >clk_prepare_lock()--> wait prepare_lock(mutex_lock)     schedule() wait =
-for power.runtime_status exit RPM_SUSPENDING
-> >                           ^^^^ A                       ^^^^ B
-> >clk_bulk_unprepare()                                    rpm_resume()
-> >lpi2c_runtime_suspend()                                 pm_runtime_resum=
-e_and_get()
-> >...                                                     lpi2c_imx_xfer()
-> >                                                        ...
-> >rpm_suspend() set RPM_SUSPENDING                        pcf857x_set();
-> >                           ^^^^ B                       ...
-> >                                                        clk_prepare_lock=
-() --> hold prepare_lock
-> >                                                        ^^^^ A
-> >                                                        ...
-> >
->=20
-> This is a common issue that clk use a big prepare lock which is easy
-> to trigger dead lock with runtime pm. I recalled that pengutronix raised
-> this, but could not find the information.
+I feel this is much difficult, e.g. the patch 2 touches both drivers/clk
+and include/soc/spacemit/k1-syscon.h - moving definitions, and splitting
+into two patches sounds weird
 
-Alexander Stein stumbled over this issue some time ago:
+> 
+> > I would propose to have shared tag to include patch 1-4, then you can
+> > pick patch 5, in this way, it should both pass all tests (both
+> > compile-time and run-time)would would 
+> 
+> Since this is a new driver, passing run-time tests is not a concern.
+> Compile-time is, since that would break bisectability for everyone.
+> 
+make sense
 
-| https://lore.kernel.org/all/20230421-kinfolk-glancing-e185fd9c47b4-mkl@pe=
-ngutronix.de/
+> > what do you think?
+> 
+> I feel like it's easier and safer for the whole series to be merged via
+> the clk tree. Since this adds a new reset driver, the only possible
+> merge conflicts are trivial ones in drivers/reset/{Kconfig,Makefile}.
+> 
+ok, I agree, then let's route the whole series via clk tree, and I assume 
+Stephen is fine with this, since it's indeed much simple.
 
-I encountered it too, while trying to add a clock provider driver for a
-SPI attached CAN controller which uses runtime pm.
+thanks
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---cndeefjy6bsasobx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhroyYACgkQDHRl3/mQ
-kZyo1gf/bNfDioyKAk+LhbS/S8WU2c64fWY5vQcbThj413S7TcSnfnR9IlY7RDK3
-yyXLR72WESLDt0+ezCYs/G5H8yWdc5vRjEjorcY/LiIyCkCmqeBDZ+LTRHKcCQTj
-c1ueWZ8BN9n6tDpBqNG/BZxRn+NnTEB4/f66ioH0poon8ldWYEXBes3WoCPcwU6o
-hKSg5Z0ch/66R1veUV42bRYEf1C2WG1lCkhuG0QBugpR6jH74bYwMyjhmjlwE/nG
-8r4DabWOZ1peVEUh0BkRnUDp1qwGmviztuN5gOodGiCCoPn5AvarUIraNcS+x43J
-EXQzX+sCwlzPYWX1leAA0t0Albln6Q==
-=MHn4
------END PGP SIGNATURE-----
-
---cndeefjy6bsasobx--
+-- 
+Yixun Lan (dlan)
