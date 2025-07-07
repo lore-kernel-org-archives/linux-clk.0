@@ -1,65 +1,65 @@
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A2E28934F
-	for <linux-clk@vger.kernel.org>; Mon,  7 Jul 2025 12:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A29B289370
+	for <linux-clk@vger.kernel.org>; Mon,  7 Jul 2025 13:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751890789; cv=none; b=NpiScCNIJTQ0C4hEIDLUKMur41BIuq7PygulVg79+Ju2vQC6DMfRhogj4cMkfNU4zscAVr6anTascIaodO14xSmmxPJlpMpwsE+hKiERSjUWS31pFF4HAY8wSS4YDrdmTtJFd1kVt/lL6RluQn7GHYH2a0WWXktglv9N6GxnaSY=
+	t=1751894503; cv=none; b=ncsfC2Era+NkPYCpWssSZ6xHmG9ZlLGpxdV85HxTBm1HNGoAQrOeuAVk9ZCTLEvRqTTKeBxJ6DV7A6BThNJolAi7TzlzdzOk4wBz20iPMipYdEIuvkoyNRtivHNTScxfPNBkFpr0MHRRpnrQgd7294fbXUgI1AKcB2fodlBXlFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751890789; c=relaxed/simple;
-	bh=G2nuJk0ebAC3LWYePQqGnvMvK1ajrnj1SIODzaviyXA=;
+	s=arc-20240116; t=1751894503; c=relaxed/simple;
+	bh=CXhkXqeGB25hyxPTUQED9Jf3B5rltj8ADN0ocqEHMGA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rz+gPQVWdQ97ECdS1Tez9pMtex7WDtS0xML/bewA8AUl4QsrUw19UBBVFGurYeuaEBy1VkpGg0mCQZLgXvtfuvK3wNxSw6F3K9eIjNU334D5JEbIG2f/kP5tes9AqjLldtG+k08BWyk/792WAm5OaVViAab0tCLThJeHelntqJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=RTS1W6xz; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	 In-Reply-To:Content-Type; b=eFnFNzgPptq/MBEyjFp7XxS1CUTNIghuRBl+CLH17bD+m0GIliNeHh1E+r3UeUWoPPIei5LW7ukslHjSdo7vpe68Ikq4/vzCLa8KBJtNs4SKPISVaqCkMRQtPz/R2lJfyD2v5sArnuopwRTVSzvhmO8JJ8KttzLBsHuJDBSnkIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HaBClZ7c; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="RTS1W6xz"
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3e0570a9b83so10166435ab.1
-        for <linux-clk@vger.kernel.org>; Mon, 07 Jul 2025 05:19:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HaBClZ7c"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0b6532345so764140966b.1
+        for <linux-clk@vger.kernel.org>; Mon, 07 Jul 2025 06:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1751890786; x=1752495586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=tuxon.dev; s=google; t=1751894498; x=1752499298; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nxogMmaQmgY2q2qzD7nC3CsZ+3t0oYcFl9XYA4Lsn1M=;
-        b=RTS1W6xzNE1951iRffx6867cN5C8oWh7pekgfSoFAj/jnDyuZ64wz8GYtIhP7a1vsk
-         tY5VHGar0l1hF7m6fuzviSwrwYpYF8Gs9EbytWS/Zkc+ZnJcUnKLjGVa5fY9ItfcnkBC
-         RjCs7gXQ/qmFK6AtqkNR7NFTgPR1Zp0Xnb4DV60cauO2CNdGqDo6/dTEXDG1czKVmwyG
-         LHLz8s15waXDv/MUg6teSKIDC4BMJR66/e2024ramTEbr2R4xDreHKogssTPcL5rxoH5
-         S4/wkcWl7SIJPRYKLe+eKwr7PrOrZ2nR6/nBUU79krKEMvtQj/KB1OGuaAvGdkuvowNL
-         I0/g==
+        bh=88Hj80+JwKAktGuML0NE8iEsopKwegKtxu4E6+LCYcM=;
+        b=HaBClZ7c+r0lUmJeTPZOESdLBRQ2nKmWX+hxbwk+ZYI8/uJvFHsjvzKUJuhRw3hB0O
+         LBwo1kbw3eZZkUaGvooJ6NI2W8KLXB31LFpJGGPLXvd+L1AHEp1H3Hmx8uEu/KUGK9Cd
+         jXMAnqrGemZOUp5mvrr1IXf9M8HPD9txaQq+bvTynvWyxekPeVgJlZ8uB7MR30kiacwS
+         ungHquo+VtzNWai0XSabWwVTI7qenTQfgtfvtqfhcwE7u5j+uCyJ+oRTYvVArFqcB3Xz
+         RBSrRjU7oeOntlZklwT+O7bvLxsKzwrkS68Ln8nhjD0eLscBAXqyj9exryrb7hM2IP2H
+         ThiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751890786; x=1752495586;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1751894498; x=1752499298;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxogMmaQmgY2q2qzD7nC3CsZ+3t0oYcFl9XYA4Lsn1M=;
-        b=tvEGhTHpZaNgXSNLuSuO4jiok4gJ+JtJ6uELMjnaeSIlAT56l6ehksh+Ljv7z5cijP
-         N+Y/GoM8h+cpZ+Nfy1R8D7ggggtBXr0ua7/xuQrDXZhrqnAvD33SIutkEWjlVDc5PBMb
-         Po5tnKt9/x+UHHMf5gOoXVUpo+oRpnS0ukOXAev59DEhAJH+k1IUBSJ0MHaFvGw/FGxI
-         tNVw1EYeRyUW9XuQ9RL/fo/nmgMgU2hTehWnPGTABKAj7TiEN+E6k+rSF3X2CQbyNn+C
-         ckA4vvWHUrirlJugQcoMViRdvpGVs0JmwccpQK78u4ISblkS7ZAzOM6V49BRN6cQs/pb
-         d5rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmKpAq/LzKO8c21u9AsiMS4mA6E3nMKWTx6WZBfln7YPbYA/OEy597/P8MkggrKvH0y1AExsDF6kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTL4odWKxOsO9GKn73ZWq/nYkh0tXXvA+leDUVq8rewzYOc4on
-	5QDyBEyeZBUfPzLOKDtME2KTD8piQOQy0zR/fu0FTj0ujPo0Jy/IY6YCL+A8KP9uYQ4=
-X-Gm-Gg: ASbGncv1Gx3FIklY2sYKoilqKd7oh/VPMMR4yB+4bM78UNOxwB2sJVQc56YcMpkPPoa
-	KZL4z6tF/+18L5RMInXglkXsfA0RjAaI/C8NQnaQ+73NfK71A7k1Qn4FbaKctvu3JgB5DgB37JR
-	ZnG1pto2EaG4e2OiRWmmFF3WPIQ4Ic6zMqvu2WaF7GuWnWoUdBJ5u3lXtf1LpfrKQ5pGRAWEZaR
-	BJgWemu1nbEumiOeYpmQFT8DK4sXukm1p8On7IA02fvBFTA+viUyQAq0yqqstqc4gb7nHop7AsJ
-	kUxTlYG2ZKok9mNz29LtypykO2brFQVtQygLrC4Os8Ui+mp/G0rWJ8EeYqkpVZWmSgbnpUWq5Ez
-	n8jQAbzdH7mTIICFqafxvsan4SA==
-X-Google-Smtp-Source: AGHT+IHhI0FQyOogd1s/uXHV7ed2uK3z0eA0h1VaUBWuw5Kj8IBh7AKQNpwKJDcN3xx1YzBfgWCFWA==
-X-Received: by 2002:a05:6e02:1c0b:b0:3dd:d98c:cca9 with SMTP id e9e14a558f8ab-3e13ee8b5e8mr72520815ab.3.1751890786546;
-        Mon, 07 Jul 2025 05:19:46 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-503b59c92ebsm1619337173.46.2025.07.07.05.19.45
+        bh=88Hj80+JwKAktGuML0NE8iEsopKwegKtxu4E6+LCYcM=;
+        b=qOto1sQUwlm9EtudZs4UPZeCI9zJ7TPf4/E7NRtLji3H6A30gP1aa6z+R/LLknmBci
+         i+CZre4vJmZPLvK6DDmboxDGQGzL0xI7tygb26ukjUHG20/COH6mgyPaIBkiTEp+F93k
+         zphglGtx5aU1yGeQh/OKrw+TNOfULXBJ5q3nZknSc/Go+1+OysicdR/Zvj7hKQvwQe2K
+         l7XsScyRTpO55CcXg+FsMZm5d55ty0ERuzpFKVNfV5fPDg6YwsA7eGCDF/EcShnjHv7S
+         VTnpfYxfX0s/SNpqDQ5isOHO3pIqN8z6x/9Ei5bAGx9UBpZj82gNBDsTVBn+aYcoZRFZ
+         X4cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDzQ+S4Q42FhpZCyNHF30gDxeMHyhD3UH2/uxGYkG3+Tv7s5c9NImJUnupQhPux94pgjH334QVWsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFYuZydGr50HIWMwnN9Si6n18gxkqKBp9hkv1f9MKru6d8BAaQ
+	ulng90a4pGOjGjPkn+U/1gJxFxnKlJRdzuUf0LiSi8poP6mPpE+xwZ+NkQ83BQ6G7IU=
+X-Gm-Gg: ASbGnctIByEzC8OSTTvUcYzN2I9mRZBs8g8wWr1gijldvL3YdI/dt67QXBebKnPekCf
+	ynmhiKd9nlrAueB5sjBQlFc8R8bODGdAD8tgM+VLYl5BKaLS5v+WpPUdLX1i5pFNf6GSjRgpjdZ
+	HZSx0ylCrcXjRCmgMxCXvK3flRHf8BUXceAKBBwc8p28tV4/q2mmZrjJ1FES2oPca7y/dgM4A8l
+	HDxpOgfARKYJpMFSRGDPfVK3jfGTNzBaeD1OHo0//pu7AkPWXKnQIQRtg42sWQf5e3qoloBlEs9
+	anA98SkkZ7bfyUEqH+fYACmWPRl4isPX5Han7t97jRl1eLaP33C/j8PSZFzgD3w6anH5rDAvyW0
+	A1h0h
+X-Google-Smtp-Source: AGHT+IFzyM13jt1IUUvVQRLhZHeKZkbXOeQhUKcLed7ydJMeQcOb3SQDzYQWw0i7BJMGbpNC4bEPUg==
+X-Received: by 2002:a17:906:f58a:b0:ae0:a0ab:245f with SMTP id a640c23a62f3a-ae3f7a9d0bfmr1448060766b.0.1751894498203;
+        Mon, 07 Jul 2025 06:21:38 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02788sm707913166b.113.2025.07.07.06.21.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 05:19:46 -0700 (PDT)
-Message-ID: <7bdbef20-da43-4b23-9ae2-a0cf077fec92@riscstar.com>
-Date: Mon, 7 Jul 2025 07:19:45 -0500
+        Mon, 07 Jul 2025 06:21:37 -0700 (PDT)
+Message-ID: <54ceeadf-504e-42f6-8b0c-05269d18c44e@tuxon.dev>
+Date: Mon, 7 Jul 2025 16:21:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,104 +67,354 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: spacemit: mark K1 pll1_d8 as critical
-To: mturquette@baylibre.com, sboyd@kernel.org
-Cc: dlan@gentoo.org, heylenay@4d2.org, inochiama@outlook.com,
- guodong@riscstar.com, linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250612224856.1105924-1-elder@riscstar.com>
+Subject: Re: [PATCH v2 21/32] clk: at91: sama5d2: switch to parent_hw and
+ parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: robh@kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ varshini.rajendran@microchip.com
+References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
+ <6df068977c06a23b503bd9191a2a6cab880c9a1e.1750182562.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250612224856.1105924-1-elder@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <6df068977c06a23b503bd9191a2a6cab880c9a1e.1750182562.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/12/25 5:48 PM, Alex Elder wrote:
-> The pll1_d8 clock is enabled by the boot loader, and is ultimately a
-> parent for numerous clocks, including those used by APB and AXI buses.
-> Guodong Xu discovered that this clock got disabled while responding to
-> getting -EPROBE_DEFER when requesting a reset controller.
-> 
-> The needed clock (CLK_DMA, along with its parents) had already been
-> enabled.  To respond to the probe deferral return, the CLK_DMA clock
-> was disabled, and this led to parent clocks also reducing their enable
-> count.  When the enable count for pll1_d8 was decremented it became 0,
-> which caused it to be disabled.  This led to a system hang.
-> 
-> Marking that clock critical resolves this by preventing it from being
-> disabled.
-> 
-> Define a new macro CCU_FACTOR_GATE_DEFINE() to allow clock flags to
-> be supplied for a CCU_FACTOR_GATE clock.
+Hi, Ryan,
 
-Is there any reason this bug fix cannot be merged?  It was
-first posted a month ago, and although there was some initial
-discussion that led to revisions, this version has been waiting
-for over three weeks.
+On 24.06.2025 18:08, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> 
+> Switch SAMA5D2 clocks to use parent_hw and parent_data. Having
+> parent_hw instead of parent names improves to clock registration
+> speed and re-parenting. Extra time saved on registration is
+> ~410us when running at 492MHz.
 
-					-Alex
+Have you re-check this? I expected to no longer be valid.
+
 
 > 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> Tested-by: Guodong Xu <guodong@riscstar.com>
-> Reviewed-by: Haylen Chu <heylenay@4d2.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
-> v3: Define struct with static scope; added Haylen's Reviewed-by
-> v2: Reworded the description to provide better detail
+>  drivers/clk/at91/sama5d2.c | 168 +++++++++++++++++++------------------
+>  1 file changed, 86 insertions(+), 82 deletions(-)
 > 
->   drivers/clk/spacemit/ccu-k1.c  |  3 ++-
->   drivers/clk/spacemit/ccu_mix.h | 21 +++++++++++++--------
->   2 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index cdde37a052353..df65009a07bb1 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -170,7 +170,8 @@ CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4,
->   CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
-> -CCU_FACTOR_GATE_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1);
-> +CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
-> +		CLK_IS_CRITICAL);
->   CCU_FACTOR_GATE_DEFINE(pll1_d11_223p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(15), 11, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d13_189, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(16), 13, 1);
->   CCU_FACTOR_GATE_DEFINE(pll1_d23_106p8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(20), 23, 1);
-> diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> index 51d19f5d6aacb..54d40cd39b275 100644
-> --- a/drivers/clk/spacemit/ccu_mix.h
-> +++ b/drivers/clk/spacemit/ccu_mix.h
-> @@ -101,16 +101,21 @@ static struct ccu_mix _name = {							\
->   	}									\
->   }
->   
-> +#define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> +			       _mul, _flags)					\
-> +static struct ccu_mix _name = {							\
-> +	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> +	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> +	.common = {								\
-> +		.reg_ctrl	= _reg_ctrl,					\
-> +		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, _flags)	\
-> +	}									\
-> +}
-> +
->   #define CCU_FACTOR_GATE_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
->   			       _mul)						\
-> -static struct ccu_mix _name = {							\
-> -	.gate	= CCU_GATE_INIT(_mask_gate),					\
-> -	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-> -	.common = {								\
-> -		.reg_ctrl	= _reg_ctrl,					\
-> -		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, 0)	\
-> -	}									\
-> -}
-> +	CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-> +			       _mul, 0)
->   
->   #define CCU_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl, _shift, _width,		\
->   			    _mask_gate, _flags)					\
-> 
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+> index 8bbc34e22cda..538ffb8deedb 100644
+> --- a/drivers/clk/at91/sama5d2.c
+> +++ b/drivers/clk/at91/sama5d2.c
+> @@ -37,9 +37,9 @@ static const struct clk_pcr_layout sama5d2_pcr_layout = {
+>  	.pid_mask = GENMASK(6, 0),
+>  };
+>  
+> -static const struct {
+> +static struct {
+>  	char *n;
+> -	char *p;
+> +	struct clk_hw *parent_hw;
+>  	unsigned long flags;
+>  	u8 id;
+>  } sama5d2_systemck[] = {
+> @@ -47,14 +47,14 @@ static const struct {
+>  	 * ddrck feeds DDR controller and is enabled by bootloader thus we need
+>  	 * to keep it enabled in case there is no Linux consumer for it.
+>  	 */
+> -	{ .n = "ddrck", .p = "masterck_div", .id = 2, .flags = CLK_IS_CRITICAL },
+> -	{ .n = "lcdck", .p = "masterck_div", .id = 3 },
+> -	{ .n = "uhpck", .p = "usbck",        .id = 6 },
+> -	{ .n = "udpck", .p = "usbck",        .id = 7 },
+> -	{ .n = "pck0",  .p = "prog0",        .id = 8 },
+> -	{ .n = "pck1",  .p = "prog1",        .id = 9 },
+> -	{ .n = "pck2",  .p = "prog2",        .id = 10 },
+> -	{ .n = "iscck", .p = "masterck_div", .id = 18 },
+> +	{ .n = "ddrck", .id = 2, .flags = CLK_IS_CRITICAL },
+> +	{ .n = "lcdck", .id = 3 },
+> +	{ .n = "uhpck", .id = 6 },
+> +	{ .n = "udpck", .id = 7 },
+> +	{ .n = "pck0",  .id = 8 },
+> +	{ .n = "pck1",  .id = 9 },
+> +	{ .n = "pck2",  .id = 10 },
+> +	{ .n = "iscck", .id = 18 },
+>  };
+>  
+>  static const struct {
+> @@ -164,25 +164,15 @@ static const struct clk_programmable_layout sama5d2_programmable_layout = {
+>  
+>  static void __init sama5d2_pmc_setup(struct device_node *np)
+>  {
+> +	struct clk_hw *hw, *audio_fracck_hw, *usbck_hw, *main_rc_hw, *main_osc_hw;
+> +	const char *slow_clk_name = "slowck", *main_xtal_name = "main_xtal";
+> +	u8 slow_clk_index = 0, main_xtal_index = 1;
+>  	struct clk_range range = CLK_RANGE(0, 0);
+> -	const char *slck_name, *mainxtal_name;
+> -	struct pmc_data *sama5d2_pmc;
+> -	const char *parent_names[6];
+> +	struct clk_parent_data parent_data[6];
+>  	struct regmap *regmap, *regmap_sfr;
+> -	struct clk_hw *hw;
+> -	int i;
+> +	struct pmc_data *sama5d2_pmc;
+>  	bool bypass;
+> -
+> -	i = of_property_match_string(np, "clock-names", "slow_clk");
+> -	if (i < 0)
+> -		return;
+> -
+> -	slck_name = of_clk_get_parent_name(np, i);
+> -
+> -	i = of_property_match_string(np, "clock-names", "main_xtal");
+> -	if (i < 0)
+> -		return;
+> -	mainxtal_name = of_clk_get_parent_name(np, i);
+> +	int i;
+>  
+>  	regmap = device_node_to_regmap(np);
+>  	if (IS_ERR(regmap))
+> @@ -195,51 +185,52 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  	if (!sama5d2_pmc)
+>  		return;
+>  
+> -	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+> -					   100000000);
+> -	if (IS_ERR(hw))
+> +	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+> +						   100000000);
+> +	if (IS_ERR(main_rc_hw))
+>  		goto err_free;
+>  
+>  	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+>  
+> -	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL,
+> -					bypass);
+> -	if (IS_ERR(hw))
+> +	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
+> +						 &AT91_CLK_PD_NAME(main_xtal_name, main_xtal_index),
+> +						 bypass);
+> +	if (IS_ERR(main_osc_hw))
+>  		goto err_free;
+>  
+> -	parent_names[0] = "main_rc_osc";
+> -	parent_names[1] = "main_osc";
+> -	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, NULL, 2);
+> +	parent_data[0] = AT91_CLK_PD_HW(main_rc_hw);
+> +	parent_data[1] = AT91_CLK_PD_HW(main_osc_hw);
+> +	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_data, 2);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+>  	sama5d2_pmc->chws[PMC_MAIN] = hw;
+> -
+> -	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
+> +	hw = at91_clk_register_pll(regmap, "pllack", NULL,
+> +				   &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]), 0,
+>  				   &sama5d3_pll_layout, &plla_characteristics);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+> -	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
+> +	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, &AT91_CLK_PD_HW(hw));
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+>  	sama5d2_pmc->chws[PMC_PLLACK] = hw;
+>  
+> -	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
+> -					      "mainck");
+> -	if (IS_ERR(hw))
+> +	audio_fracck_hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck", NULL,
+> +							   &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]));
+> +	if (IS_ERR(audio_fracck_hw))
+>  		goto err_free;
+>  
+> -	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck",
+> -					     "audiopll_fracck");
+> +	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck", NULL,
+> +					     &AT91_CLK_PD_HW(audio_fracck_hw));
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+>  	sama5d2_pmc->chws[PMC_AUDIOPINCK] = hw;
+>  
+> -	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck",
+> -					     "audiopll_fracck");
+> +	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck", NULL,
+> +					     &AT91_CLK_PD_HW(audio_fracck_hw));
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+> @@ -249,25 +240,26 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  	if (IS_ERR(regmap_sfr))
+>  		regmap_sfr = NULL;
+>  
+> -	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck", NULL);
+> +	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", NULL,
+> +				    &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]));
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+>  	sama5d2_pmc->chws[PMC_UTMI] = hw;
+>  
+> -	parent_names[0] = slck_name;
+> -	parent_names[1] = "mainck";
+> -	parent_names[2] = "plladivck";
+> -	parent_names[3] = "utmick";
+> +	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
+> +	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
+> +	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
+> +	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
+>  	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
+> -					   parent_names, NULL,
+> +					   NULL, parent_data,
+>  					   &at91sam9x5_master_layout,
+>  					   &mck_characteristics, &mck_lock);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+> -	hw = at91_clk_register_master_div(regmap, "masterck_div",
+> -					  "masterck_pres", NULL,
+> +	hw = at91_clk_register_master_div(regmap, "masterck_div", NULL,
+> +					  &AT91_CLK_PD_HW(hw),
+>  					  &at91sam9x5_master_layout,
+>  					  &mck_characteristics, &mck_lock,
+>  					  CLK_SET_RATE_GATE, 0);
+> @@ -276,31 +268,32 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  
+>  	sama5d2_pmc->chws[PMC_MCK] = hw;
+>  
+> -	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div");
+> +	hw = at91_clk_register_h32mx(regmap, "h32mxck", NULL,
+> +				     &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]));
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+>  	sama5d2_pmc->chws[PMC_MCK2] = hw;
+>  
+> -	parent_names[0] = "plladivck";
+> -	parent_names[1] = "utmick";
+> -	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, NULL, 2);
+> -	if (IS_ERR(hw))
+> +	parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
+> +	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
+> +	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_data, 2);
+> +	if (IS_ERR(usbck_hw))
+>  		goto err_free;
+>  
+> -	parent_names[0] = slck_name;
+> -	parent_names[1] = "mainck";
+> -	parent_names[2] = "plladivck";
+> -	parent_names[3] = "utmick";
+> -	parent_names[4] = "masterck_div";
+> -	parent_names[5] = "audiopll_pmcck";
+> +	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
+> +	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
+> +	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
+> +	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
+> +	parent_data[4] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]);
+> +	parent_data[5] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_AUDIOPLLCK]);
+>  	for (i = 0; i < 3; i++) {
+>  		char name[6];
+>  
+>  		snprintf(name, sizeof(name), "prog%d", i);
+>  
+>  		hw = at91_clk_register_programmable(regmap, name,
+> -						    parent_names, NULL, 6, i,
+> +						    NULL, parent_data, 6, i,
+>  						    &sama5d2_programmable_layout,
+>  						    NULL);
+>  		if (IS_ERR(hw))
+> @@ -309,9 +302,18 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  		sama5d2_pmc->pchws[i] = hw;
+>  	}
+>  
+> +	/* Set systemck parent hws. */
+> +	sama5d2_systemck[0].parent_hw = sama5d2_pmc->chws[PMC_MCK];
+> +	sama5d2_systemck[1].parent_hw = sama5d2_pmc->chws[PMC_MCK];
+> +	sama5d2_systemck[2].parent_hw = usbck_hw;
+> +	sama5d2_systemck[3].parent_hw = usbck_hw;
+> +	sama5d2_systemck[4].parent_hw = sama5d2_pmc->pchws[0];
+> +	sama5d2_systemck[5].parent_hw = sama5d2_pmc->pchws[1];
+> +	sama5d2_systemck[6].parent_hw = sama5d2_pmc->pchws[2];
+> +	sama5d2_systemck[7].parent_hw = sama5d2_pmc->chws[PMC_MCK];
+>  	for (i = 0; i < ARRAY_SIZE(sama5d2_systemck); i++) {
+> -		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n,
+> -					      sama5d2_systemck[i].p, NULL,
+> +		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n, NULL,
+> +					      &AT91_CLK_PD_HW(sama5d2_systemck[i].parent_hw),
+>  					      sama5d2_systemck[i].id,
+>  					      sama5d2_systemck[i].flags);
+>  		if (IS_ERR(hw))
+> @@ -324,7 +326,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
+>  							 &sama5d2_pcr_layout,
+>  							 sama5d2_periphck[i].n,
+> -							 "masterck_div", NULL,
+> +							 NULL,
+> +							 &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]),
+>  							 sama5d2_periphck[i].id,
+>  							 &range, INT_MIN,
+>  							 sama5d2_periphck[i].flags);
+> @@ -338,7 +341,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
+>  							 &sama5d2_pcr_layout,
+>  							 sama5d2_periph32ck[i].n,
+> -							 "h32mxck", NULL,
+> +							 NULL,
+> +							 &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK2]),
+>  							 sama5d2_periph32ck[i].id,
+>  							 &sama5d2_periph32ck[i].r,
+>  							 INT_MIN, 0);
+> @@ -348,17 +352,17 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  		sama5d2_pmc->phws[sama5d2_periph32ck[i].id] = hw;
+>  	}
+>  
+> -	parent_names[0] = slck_name;
+> -	parent_names[1] = "mainck";
+> -	parent_names[2] = "plladivck";
+> -	parent_names[3] = "utmick";
+> -	parent_names[4] = "masterck_div";
+> -	parent_names[5] = "audiopll_pmcck";
+> +	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
+> +	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
+> +	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
+> +	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
+> +	parent_data[4] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]);
+> +	parent_data[5] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_AUDIOPLLCK]);
+>  	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
+>  		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+>  						 &sama5d2_pcr_layout,
+>  						 sama5d2_gck[i].n,
+> -						 parent_names, NULL, NULL, 6,
+> +						 NULL, parent_data, NULL, 6,
+>  						 sama5d2_gck[i].id,
+>  						 &sama5d2_gck[i].r,
+>  						 sama5d2_gck[i].chg_pid);
+> @@ -369,19 +373,19 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>  	}
+>  
+>  	if (regmap_sfr) {
+> -		parent_names[0] = "i2s0_clk";
+> -		parent_names[1] = "i2s0_gclk";
+> +		parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->phws[54]); /* i2s0_clk */
+> +		parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->ghws[54]); /* i2s0_gclk */
+>  		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s0_muxclk",
+> -					       parent_names, 2, 0);
+> +					       NULL, parent_data, 2, 0);
+>  		if (IS_ERR(hw))
+>  			goto err_free;
+>  
+>  		sama5d2_pmc->chws[PMC_I2S0_MUX] = hw;
+>  
+> -		parent_names[0] = "i2s1_clk";
+> -		parent_names[1] = "i2s1_gclk";
+> +		parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->phws[55]); /* i2s1_clk */
+> +		parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->ghws[55]); /* i2s1_gclk */
+>  		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s1_muxclk",
+> -					       parent_names, 2, 1);
+> +					       NULL, parent_data, 2, 1);
+>  		if (IS_ERR(hw))
+>  			goto err_free;
+>  
 
