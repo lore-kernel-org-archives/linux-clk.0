@@ -1,57 +1,41 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E77186E2E;
-	Sun,  6 Jul 2025 20:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BEB10E4;
+	Mon,  7 Jul 2025 01:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751832761; cv=none; b=iwkAMcyEVLqykmfqK+C2n5qSzXy+7VTV2KMXJsxLc59nVWhqqG9eRYBzUL6w2bDD0rNhUwmZyT1vhcnZJzXLd2RJqeXiwjD84jPhWlvp/zOPPEG19R1v9WFr8BAokM7wG3RBaq9vVjZ0x07UJZGJOYJhujWbOeT6P6HI3dkHVT8=
+	t=1751851119; cv=none; b=Tn47S87XJx8YsfgrLJpc0kWnsVH6OJ9nrUdQiVM95IjOEnUE0eN+xZLfrE+eFJmJ5sbO4SiT8s2/72AHNs8EVNiI/WRhsHWQDTG3m0KJGbMPaXCXXlznjE0oaHQprqsRAcF5QZS5VdR0LRfsNozhU0t0gGskVVZ334RjKkEL2/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751832761; c=relaxed/simple;
-	bh=JemThpQT4Mwgyp9MEbhDTRBUVRkJFW1Obj0vz65HHO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tIOEjr0PbDBd8Wi2OoXBSkECk6wz9i6WIwgnTVB3MNiSjcXjWlvn9+OKeNxJI5LZywUkysoPxS41FzC/Ss869FQGz+mjlx0JLKUvVL7Mt38KeHXArCB7VMnt0NVdN+hqFe+16HRQsVJ9F++doLUsfQEw9rqC+67KS9LZlyDmgw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lrTMXZH9; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lrTMXZH9"
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 566K1rqt030512;
-	Sun, 6 Jul 2025 20:12:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=mlKlCit7KddioLELQTykxFkx0pZeK
-	NfZqCUvvxa16zA=; b=lrTMXZH97aqnuRvrRFispPlgUFsLAtK/+PQY9BBQoqLmH
-	lb+SHvUZoA2OZPi35RLNkStmcZhzIm0CcdocxwTPd7rEJUr8x1B8OU9zKtD47JyZ
-	rAZZ34TXJGiqyz65aKsZlC5cRG70aPNI7UkU1Y6+jo2GB6AiBjGUx9vvpLNPBVWX
-	Ng/4TBgqBAmiItj2nWV3pENNxg4LR8ACHqYSUOouCTpIP7CGE1vAiaNRNorH8eIM
-	eso48Zei34vVNNgBHnJ8HoQIzzSuBs2WO+fF5sjxhIP78UbYpbQ/m371RmK+6myX
-	+i75DHnAS7kP/8SHWGBTY5/fPe3EFADwKlgIRWJog==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ptu7hggv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 06 Jul 2025 20:12:30 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 566G5uv3014045;
-	Sun, 6 Jul 2025 20:12:29 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptg88s19-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 06 Jul 2025 20:12:29 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 566KCTTJ023146;
-	Sun, 6 Jul 2025 20:12:29 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ptg88s14-1;
-	Sun, 06 Jul 2025 20:12:29 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: sboyd@kernel.org, vz@mleia.com, linux-clk@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, darren.kenny@oracle.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: nxp: Fix pll0 rate check condition in LPC18xx CGU driver
-Date: Sun,  6 Jul 2025 13:11:55 -0700
-Message-ID: <20250706201158.1371209-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1751851119; c=relaxed/simple;
+	bh=nYmHBfKC1In8qDW3GIo2UwVe9MvCXebLZr99Zm4j1bM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GtYHOW0HZoYMzxkGQ5JcwFEO+55nSH43GNGRhAvArbOEqBOPgOzL1YwkLzd6XW1VIuA9yteTDsZ6iSj/K/3WFwaK1ffO6kMHz0CuqxfdE7Olw93u6ElyMzPgRwxhohYBkbfLj/WUoVikkU/sFc5Gku5wFpwJnl7GiMuQnwuY/vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
+ 2025 09:18:26 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 7 Jul 2025 09:18:26 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>, "Rom
+ Lemarchand" <romlem@google.com>, William Kennington <wak@google.com>, "Yuxiao
+ Zhang" <yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v11 0/3] Add support for AST2700 clk driver
+Date: Mon, 7 Jul 2025 09:18:23 +0800
+Message-ID: <20250707011826.3719229-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,55 +43,136 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_07,2025-07-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507060129
-X-Proofpoint-ORIG-GUID: EO0OIwZfgGTKy9nO_qsIV_01g9htPlqV
-X-Proofpoint-GUID: EO0OIwZfgGTKy9nO_qsIV_01g9htPlqV
-X-Authority-Analysis: v=2.4 cv=IMQCChvG c=1 sm=1 tr=0 ts=686ad8ae b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=iP8tuSmc3zprJ4ZHs3IA:9 cc=ntf awl=host:13565
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA2MDEyOSBTYWx0ZWRfX2CL2OBE764C6 qIJGE8gMay+tFcHVlGbIjtpX/bCpMx8rigmATsDcITiRQnR+LlLYFQxPAQjENc0jcNYRSeYIuBK cROygX5PctzF1jTS9BG0G/NJlcuG81EVrHtAr9+eGwY1deWo8os2s/M68lRExpvthcUqHCPH0td
- yDA9TZ21DDx63nXv9XkvGc9yxhxFlT7YDlVKm9DdH9iD7lizUsEfsYdEFH7gGZW0XweRWcncI2d seFxKU+IqDyx3zOWoIDoIf8vi6Kc0q3togvOf9DvIAwwOUkDUpBKLviRBQPEAx6Hg1JfS5MWMfw k1SV1TrBXaMef5QzY4LBDalb20Q0+YD2lbMvMmJfTX1V+OHDbZZD7n7pXBoe8omGfuo+F0RQXf6
- XaqugMuJGLSvD0OBLArTAUPl667rGUqvGwGJXD7YSZsZqoZ/q9P1W09XejzlaAwxk48NjNfp
+Content-Type: text/plain
 
-The conditional check for the PLL0 multiplier 'm' used a logical AND
-instead of OR, making the range check ineffective. This patch replaces
-&& with || to correctly reject invalid values of 'm' that are either
-less than or equal to 0 or greater than LPC18XX_PLL0_MSEL_MAX.
+This patch series is add clk driver for AST2700.
 
-This ensures proper bounds checking during clk rate setting and rounding.
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-Fixes: b04e0b8fd544 ("clk: add lpc18xx cgu clk driver")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
 
-diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-index 81efa885069b2..7d8b2ed31abdf 100644
---- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-@@ -381,7 +381,7 @@ static long lpc18xx_pll0_round_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	m = DIV_ROUND_UP_ULL(*prate, rate * 2);
--	if (m <= 0 && m > LPC18XX_PLL0_MSEL_MAX) {
-+	if (m <= 0 || m > LPC18XX_PLL0_MSEL_MAX) {
- 		pr_warn("%s: unable to support rate %lu\n", __func__, rate);
- 		return -EINVAL;
- 	}
-@@ -402,7 +402,7 @@ static int lpc18xx_pll0_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	m = DIV_ROUND_UP_ULL(parent_rate, rate * 2);
--	if (m <= 0 && m > LPC18XX_PLL0_MSEL_MAX) {
-+	if (m <= 0 || m > LPC18XX_PLL0_MSEL_MAX) {
- 		pr_warn("%s: unable to support rate %lu\n", __func__, rate);
- 		return -EINVAL;
- 	}
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
+
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
+
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
+
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1138 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1412 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+
 -- 
-2.46.0
+2.34.1
 
