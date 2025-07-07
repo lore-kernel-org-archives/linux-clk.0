@@ -1,203 +1,290 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1E2E2EE2;
-	Mon,  7 Jul 2025 15:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054F2E370C;
+	Mon,  7 Jul 2025 16:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751901931; cv=none; b=FGoiC+AIpseR5MWcVzk9fa5WGsF5j9BiDxQy0DTZ3xAoPz7dS1KqNqrxp4SUpFf04lWrilfgKu9eicYPBkElDKpdrSYs4EFh4zp/btRFl4SxriJ5BAud1DJlqWS5LmtWTw7NBbryJY7T4EF0GfPDKBRV1ss1Zftcpl7HU0X/x2I=
+	t=1751906902; cv=none; b=Bmx2geicEvCOlSFDrCfAZfyTOqfmA3803O/y2Nt1I+lKqqdx1UoItwEM0xJHgmfBEI0/4exC+Z9VrS034JUJAGcvqC6hv2EPKzN5aeNrWpRnfvvNPbwlyVrUsOVblmDxo1Qoy2OvLgFexvYK3CGGj7Mu1keCiCcPfgMAQqZo0Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751901931; c=relaxed/simple;
-	bh=juWOZsgNPV5fS9ldL5u2tLkhsDJJKTTWAxca9hm39Ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NDC9W8YUM/1QpAWD+b8RGHNb4OukW2UtQ2QGGH2GDeiyJ1+c7WBp23+OE6EK4VgbQsSoEv3LnyO1stvnz5EGbvdZ7nZ+eRSJVjX3Au4Ljf5PTnD1zyU0ZV6H32nAF1GiEqCIo1352nM3ZaCJrxP5qBsTow9+UWMrgcGMx7aZQy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XyAstOaH; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1751906902; c=relaxed/simple;
+	bh=lr5Ok0BtzLVe2DMzdRYn2HLQ6o5Js7Aoy/d36/h8hMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u7d6sXUopfGXgBv1TNtgy7oMgljuZliSRXMzZ1Ke+aVQFeXQDkCByo6OObiRCp+ygJ7T+nY+4+94Tqx8gheEseSmXyN3Z660RcFV9F4n9QSjr8/Vq88DwM5I9Xvx26zuZZAsIsF9iM4fZogIagKSJTfp/ZqTS7JhLwgD86RioXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJL3ZCEM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XyAstOaH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1751901929; x=1783437929;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=juWOZsgNPV5fS9ldL5u2tLkhsDJJKTTWAxca9hm39Ys=;
-  b=XyAstOaH2ltaLxEb/7K8b8TXRcqQVz8wf8QcApIm2EVBNEP2CXECmCHl
-   eit1+/h8xWkx2q5T8P5JYoOAo8Q9zcHbKhqLGJVvePGo14ELyni+BRlHb
-   QMjT6HAcjelB+j0OYKgCjXgcJbXnZSfNPXa/y4JZusjFxUmcTFvbuyui+
-   jbMIQ0jTsAtxYYRY5LVlrPOA5mwweY/jBeDD0Ow4fT/ZyrXRvkI1bSxzR
-   6ZrEDjBnMa1CCWGnUBgygc4WZ1dW8c9l5hDty7zcpENhnoc8VwJI68/o1
-   oME5RMVu5x4OxMkhS2bdmkU0/vp6AWJUKIxHydQtEvQzGB/tuc0Bu+Omw
-   Q==;
-X-CSE-ConnectionGUID: ter5V2FMQaSxLNPqQc2Evw==
-X-CSE-MsgGUID: 4UssQHcNQUKVKnb/MD2MbQ==
-X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
-   d="scan'208";a="44281645"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jul 2025 08:25:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 7 Jul 2025 08:25:00 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Mon, 7 Jul 2025 08:25:00 -0700
-Message-ID: <784f30a8-e524-41fb-8b14-99483116e657@microchip.com>
-Date: Mon, 7 Jul 2025 08:24:59 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJL3ZCEM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84335C4CEFA;
+	Mon,  7 Jul 2025 16:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751906901;
+	bh=lr5Ok0BtzLVe2DMzdRYn2HLQ6o5Js7Aoy/d36/h8hMQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WJL3ZCEMDK6r6o718A0CMFAGlKrU4TlzSuYmw4B9Xkc2CR2QBc7fhnm+yhjjLwiIv
+	 hXiV0I2RF+VLDSFkFPeTuD6W0PBDLD28JDFNyX+e4CG3kBAVX04Az3yaG04MlgtHfU
+	 WcJ1wdfMVL7kKQA2EqMyrlmZDRAWw+E8LWhGEEo2+Q7QII0nzfGaR8LrhblPqGbg2+
+	 z4T1rylWUgHUucLPWRl6OTJY/KdGGDwa660tgEuA/KN+HaIfF///a24qPsXt8OgygK
+	 Yqeto7maIdjmk0+BdAE5vvOKApxXEc0Fa0UAqMLKnECoNLJ/d44lBadfzWBqyiJ5Wq
+	 P85tvLYhmyBUg==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6119cd1a154so1633329eaf.0;
+        Mon, 07 Jul 2025 09:48:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV27fdVXT7zkfP5TysGKXUfII3s7k2mJbkJZlSEh/YgWgnIh1oU3BrR+NrZYV90JcKKwJv77rild5f1@vger.kernel.org, AJvYcCVSA02YNVhCd8VEJ3wGvPEs870MmEkb6wfMcNFZtt8UyTeUWr2Yx2UR74xcXKB62D7s/ip0bTP0dS78@vger.kernel.org, AJvYcCX9HIktmvG5BWD97P5gzGQ6UucFapgCXmOdXcn8lZGW0cSw7WIaNgxqMOAT/Rz0RCdSj6BxkA0c1uaomA==@vger.kernel.org, AJvYcCXQJaaRPhg6guwIDWkCcPKuGx3k5rBjOgL7B/oOzC8TVdRySJiLQ5+fGzJv9IDNB3Tt3KmCKZn6zA5xPLvK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkIFP1Ad6v+vruQZF6M2+AoVhLjp83lG+MdujI7Q7b8H3AL9R+
+	Vd7SXfrDqcAlZ5wDlPIY5emQqMAaQch1i2y4tUVETNGq2xRMnLH7m1uZn2qx9PU4fy+ZrjdbQy7
+	r5GHvm9VMt0DMv871V6u6os/0/GQz/eo=
+X-Google-Smtp-Source: AGHT+IEL+yp0PljSvznfGMai9yp43Jg5JZrJU1ZvqcX+Hp8ViTDobsjmMWoaW+8AGloguCZxPuIaWdlqHhYISu0rqFo=
+X-Received: by 2002:a05:6820:1999:b0:611:31a:6ff5 with SMTP id
+ 006d021491bc7-61392c26c5fmr8986475eaf.7.1751906900608; Mon, 07 Jul 2025
+ 09:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/32] clk: at91: clk-sam9x60-pll: use clk_parent_data
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<varshini.rajendran@microchip.com>
-References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
- <cc085ca99d75fe59c13acd74782d8437bbc1d65d.1750182562.git.Ryan.Wanner@microchip.com>
- <486d447b-9984-4044-a620-1d73ffd54111@tuxon.dev>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <486d447b-9984-4044-a620-1d73ffd54111@tuxon.dev>
+References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-15-apatel@ventanamicro.com>
+In-Reply-To: <20250704070356.1683992-15-apatel@ventanamicro.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 7 Jul 2025 18:48:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iX2KRXb5CdY9FbnMSR5RUEG7eBn2QQQKj2wa4doWh_nw@mail.gmail.com>
+X-Gm-Features: Ac12FXwHpPP-bFT_eng9Gfv5MuT8xuYuEAg81du49PdE3XAR8ZaXZPBtBzvvsG0
+Message-ID: <CAJZ5v0iX2KRXb5CdY9FbnMSR5RUEG7eBn2QQQKj2wa4doWh_nw@mail.gmail.com>
+Subject: Re: [PATCH v8 14/24] ACPI: property: Refactor acpi_fwnode_get_reference_args()
+ to support nargs_prop
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/7/25 06:21, Claudiu Beznea wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hi, Ryan,
-> 
-> On 24.06.2025 18:08, Ryan.Wanner@microchip.com wrote:
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>
->> Use struct clk_parent_data instead of struct parent_hw as this leads
->> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
->> conversion of existing SoC specific clock drivers from parent_names to
->> modern clk_parent_data structures. As clk-sam9x60-pll need to know
->> parent's rate at initialization we pass it now from SoC specific drivers.
->> This will lead in the end at removing __clk_get_hw() in SoC specific
->> drivers (that will be solved by subsequent commits).
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> [ryan.wanner@microchip.com: Remove SoC specific driver changes, those
->> will be added in subsequent commits.]
-> 
-> With this, series is not bisectable.
-> 
-> Also, building this patch throws:
-> 
-> ../drivers/clk/at91/sama7g5.c: In function ‘sama7g5_pmc_setup’:
-> ../drivers/clk/at91/sama7g5.c:1054:12: warning: passing argument 5 of
-> ‘sam9x60_clk_register_frac_pll’ makes integer from pointer without a cast
-> [-Wint-conversion]
->  1054 |      NULL, parent_hw, i,
->       |            ^~~~~~~~~
->       |            |
->       |            struct clk_hw *
-> In file included from ../drivers/clk/at91/sama7g5.c:17:
-> ../drivers/clk/at91/pmc.h:260:24: note: expected ‘long unsigned int’ but
-> argument is of type ‘struct clk_hw *’
->   260 |          unsigned long parent_rate, u8 id,
->       |          ~~~~~~~~~~~~~~^~~~~~~~~~~
-> ../drivers/clk/at91/sama7d65.c: In function ‘sama7d65_pmc_setup’:
-> ../drivers/clk/at91/sama7d65.c:1175:12: warning: passing argument 5 of
-> ‘sam9x60_clk_register_frac_pll’ makes integer from pointer without a cast
-> [-Wint-conversion]
->  1175 |      NULL, parent_hw, i,
->       |            ^~~~~~~~~
->       |            |
->       |            struct clk_hw *
-> In file included from ../drivers/clk/at91/sama7d65.c:16:
-> ../drivers/clk/at91/pmc.h:260:24: note: expected ‘long unsigned int’ but
-> argument is of type ‘struct clk_hw *’
->   260 |          unsigned long parent_rate, u8 id,
->       |          ~~~~~~~~~~~~~~^~~~~~~~~~~
->   AR      drivers/clk/at91/built-in.a
-> 
-> 
-> Same for the rest of patches in this series following the "Remove SoC
-> specific driver changes" approach.
+On Fri, Jul 4, 2025 at 9:07=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
+ wrote:
+>
+> From: Sunil V L <sunilvl@ventanamicro.com>
+>
+> Currently, acpi_fwnode_get_reference_args() delegates to the internal
+> function __acpi_node_get_property_reference() to retrieve property
+> references. However, this function does not handle the nargs_prop (cells
+> property) parameter, and instead expects the number of arguments (nargs)
+> to be known or hardcoded.
+>
+> As a result, when fwnode_property_get_reference_args() is used with a
+> valid nargs_prop, the ACPI backend ignores it, whereas the Device Tree
+> (DT) backend uses the #*-cells property from the reference node to
+> determine the number of arguments dynamically.
+>
+> To support the nargs_prop in ACPI, refactor the code as follows:
+>
+> - Move the implementation from __acpi_node_get_property_reference()
+>   into acpi_fwnode_get_reference_args().
+>
+> - Update __acpi_node_get_property_reference() to call the (now updated)
+>   acpi_fwnode_get_reference_args() passing NULL as nargs_prop to keep
+>   the behavior of __acpi_node_get_property_reference() intact.
+>
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 
-Would the best approach be to make every patch atomic and change every
-SoC to match each clock function change or put back in the sama7g54
-clock driver changes that where combined?
+LGTM now, so
 
-> 
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->> ---
->>  drivers/clk/at91/clk-sam9x60-pll.c | 14 +++++---------
->>  drivers/clk/at91/pmc.h             |  5 +++--
->>  2 files changed, 8 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
->> index cefd9948e103..03a7d00dcc6d 100644
->> --- a/drivers/clk/at91/clk-sam9x60-pll.c
->> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
->> @@ -630,19 +630,19 @@ static const struct clk_ops sam9x60_fixed_div_pll_ops = {
->>
->>  struct clk_hw * __init
->>  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->> -                           const char *name, const char *parent_name,
->> -                           struct clk_hw *parent_hw, u8 id,
->> +                           const char *name, const struct clk_parent_data *parent_data,
->> +                           unsigned long parent_rate, u8 id,
->>                             const struct clk_pll_characteristics *characteristics,
->>                             const struct clk_pll_layout *layout, u32 flags)
->>  {
->>       struct sam9x60_frac *frac;
->>       struct clk_hw *hw;
->>       struct clk_init_data init = {};
->> -     unsigned long parent_rate, irqflags;
->> +     unsigned long irqflags;
->>       unsigned int val;
->>       int ret;
->>
->> -     if (id > PLL_MAX_ID || !lock || !parent_hw)
->> +     if (id > PLL_MAX_ID || !lock || !parent_data)
->>               return ERR_PTR(-EINVAL);
->>
->>       frac = kzalloc(sizeof(*frac), GFP_KERNEL);
->> @@ -650,10 +650,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->>               return ERR_PTR(-ENOMEM);
->>
->>       init.name = name;
->> -     if (parent_name)
->> -             init.parent_names = &parent_name;
->> -     else
->> -             init.parent_hws = (const struct clk_hw **)&parent_hw;
->> +     init.parent_data = (const struct clk_parent_data *)parent_data;
->>       init.num_parents = 1;
->>       if (flags & CLK_SET_RATE_GATE)
->>               init.ops = &sam9x60_frac_pll_ops;
->> @@ -684,7 +681,6 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->>                * its rate leading to enabling this PLL with unsupported
->>                * rate. This will lead to PLL not being locked at all.
->>                */
->> -             parent_rate = clk_hw_get_rate(parent_hw);
->>               if (!parent_rate) {
->>                       hw = ERR_PTR(-EINVAL);
->>                       goto free;
->> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
->> index 63d4c425bed5..b43f6652417f 100644
->> --- a/drivers/clk/at91/pmc.h
->> +++ b/drivers/clk/at91/pmc.h
->> @@ -255,8 +255,9 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
->>
->>  struct clk_hw * __init
->>  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->> -                           const char *name, const char *parent_name,
->> -                           struct clk_hw *parent_hw, u8 id,
->> +                           const char *name,
->> +                           const struct clk_parent_data *parent_data,
->> +                           unsigned long parent_rate, u8 id,
->>                             const struct clk_pll_characteristics *characteristics,
->>                             const struct clk_pll_layout *layout, u32 flags);
->>
-> 
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+> ---
+>  drivers/acpi/property.c | 101 ++++++++++++++++++++--------------------
+>  1 file changed, 50 insertions(+), 51 deletions(-)
+>
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 436019d96027..d4863746fb11 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -882,45 +882,10 @@ static struct fwnode_handle *acpi_parse_string_ref(=
+const struct fwnode_handle *f
+>         return &dn->fwnode;
+>  }
+>
+> -/**
+> - * __acpi_node_get_property_reference - returns handle to the referenced=
+ object
+> - * @fwnode: Firmware node to get the property from
+> - * @propname: Name of the property
+> - * @index: Index of the reference to return
+> - * @num_args: Maximum number of arguments after each reference
+> - * @args: Location to store the returned reference with optional argumen=
+ts
+> - *       (may be NULL)
+> - *
+> - * Find property with @name, verifify that it is a package containing at=
+ least
+> - * one object reference and if so, store the ACPI device object pointer =
+to the
+> - * target object in @args->adev.  If the reference includes arguments, s=
+tore
+> - * them in the @args->args[] array.
+> - *
+> - * If there's more than one reference in the property value package, @in=
+dex is
+> - * used to select the one to return.
+> - *
+> - * It is possible to leave holes in the property value set like in the
+> - * example below:
+> - *
+> - * Package () {
+> - *     "cs-gpios",
+> - *     Package () {
+> - *        ^GPIO, 19, 0, 0,
+> - *        ^GPIO, 20, 0, 0,
+> - *        0,
+> - *        ^GPIO, 21, 0, 0,
+> - *     }
+> - * }
+> - *
+> - * Calling this function with index %2 or index %3 return %-ENOENT. If t=
+he
+> - * property does not contain any more values %-ENOENT is returned. The N=
+ULL
+> - * entry must be single integer and preferably contain value %0.
+> - *
+> - * Return: %0 on success, negative error code on failure.
+> - */
+> -int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
+e,
+> -       const char *propname, size_t index, size_t num_args,
+> -       struct fwnode_reference_args *args)
+> +static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fw=
+node,
+> +                                         const char *propname, const cha=
+r *nargs_prop,
+> +                                         unsigned int args_count, unsign=
+ed int index,
+> +                                         struct fwnode_reference_args *a=
+rgs)
+>  {
+>         const union acpi_object *element, *end;
+>         const union acpi_object *obj;
+> @@ -999,7 +964,7 @@ int __acpi_node_get_property_reference(const struct f=
+wnode_handle *fwnode,
+>
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+>                                                 acpi_fwnode_handle(device=
+),
+> -                                               &element, end, num_args);
+> +                                               &element, end, args_count=
+);
+>                         if (ret < 0)
+>                                 return ret;
+>
+> @@ -1017,7 +982,7 @@ int __acpi_node_get_property_reference(const struct =
+fwnode_handle *fwnode,
+>
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+>                                                 ref_fwnode, &element, end=
+,
+> -                                               num_args);
+> +                                               args_count);
+>                         if (ret < 0)
+>                                 return ret;
+>
+> @@ -1039,6 +1004,50 @@ int __acpi_node_get_property_reference(const struc=
+t fwnode_handle *fwnode,
+>
+>         return -ENOENT;
+>  }
+> +
+> +/**
+> + * __acpi_node_get_property_reference - returns handle to the referenced=
+ object
+> + * @fwnode: Firmware node to get the property from
+> + * @propname: Name of the property
+> + * @index: Index of the reference to return
+> + * @num_args: Maximum number of arguments after each reference
+> + * @args: Location to store the returned reference with optional argumen=
+ts
+> + *       (may be NULL)
+> + *
+> + * Find property with @name, verifify that it is a package containing at=
+ least
+> + * one object reference and if so, store the ACPI device object pointer =
+to the
+> + * target object in @args->adev.  If the reference includes arguments, s=
+tore
+> + * them in the @args->args[] array.
+> + *
+> + * If there's more than one reference in the property value package, @in=
+dex is
+> + * used to select the one to return.
+> + *
+> + * It is possible to leave holes in the property value set like in the
+> + * example below:
+> + *
+> + * Package () {
+> + *     "cs-gpios",
+> + *     Package () {
+> + *        ^GPIO, 19, 0, 0,
+> + *        ^GPIO, 20, 0, 0,
+> + *        0,
+> + *        ^GPIO, 21, 0, 0,
+> + *     }
+> + * }
+> + *
+> + * Calling this function with index %2 or index %3 return %-ENOENT. If t=
+he
+> + * property does not contain any more values %-ENOENT is returned. The N=
+ULL
+> + * entry must be single integer and preferably contain value %0.
+> + *
+> + * Return: %0 on success, negative error code on failure.
+> + */
+> +int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
+e,
+> +                                      const char *propname, size_t index=
+,
+> +                                      size_t num_args,
+> +                                      struct fwnode_reference_args *args=
+)
+> +{
+> +       return acpi_fwnode_get_reference_args(fwnode, propname, NULL, ind=
+ex, num_args, args);
+> +}
+>  EXPORT_SYMBOL_GPL(__acpi_node_get_property_reference);
+>
+>  static int acpi_data_prop_read_single(const struct acpi_device_data *dat=
+a,
+> @@ -1558,16 +1567,6 @@ acpi_fwnode_property_read_string_array(const struc=
+t fwnode_handle *fwnode,
+>                                    val, nval);
+>  }
+>
+> -static int
+> -acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
+> -                              const char *prop, const char *nargs_prop,
+> -                              unsigned int args_count, unsigned int inde=
+x,
+> -                              struct fwnode_reference_args *args)
+> -{
+> -       return __acpi_node_get_property_reference(fwnode, prop, index,
+> -                                                 args_count, args);
+> -}
+> -
+>  static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwno=
+de)
+>  {
+>         const struct acpi_device *adev;
+> --
+> 2.43.0
+>
