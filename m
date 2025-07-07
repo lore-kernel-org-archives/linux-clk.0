@@ -1,42 +1,52 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB34F33993;
-	Mon,  7 Jul 2025 10:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A23D1FCF41
+	for <linux-clk@vger.kernel.org>; Mon,  7 Jul 2025 12:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751885277; cv=none; b=p9/c9gH1d97KnmpllDE2owQoDwiTC+pGg2WtTyFoSMReosSnzfQLy+rt3VFPgq3nzGiRg1E21kqoliGO5j484EJ/RSvOPOapRrupZLNGLQ8iGHECqZpblWS3YJnzAXnsj9x2KgS74su9mCMTAdiFg/nkFfgynhJReP3A1++T8bU=
+	t=1751889670; cv=none; b=q3EoO3jmgw2Bo3pkEZozi+h3RsqrcIY7gLnr+CeXS8zQyLWtuKa2SjZmgNJMZ/QxVRPNYGgaPQ/pLxQDINPfTn1JUg5n0GuUh8/tpNnChvvqDm+sBx9FTe6fe8abshApaisc+Dyop+c9YieVBRnYARVggjcH6GmM2A2w/2HCETA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751885277; c=relaxed/simple;
-	bh=AFyFDMaB9QNNosU1yyH1LUR5Emd2nUyKYRSxZ5Z3TTo=;
+	s=arc-20240116; t=1751889670; c=relaxed/simple;
+	bh=NYE1/zwxWHmOulQ+HuKvBZEAn3rmUhfmFV+pVMZCm9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8YO6ndtVpSALpT/9+Cd6zS/rzsuvVWPxNNsM5BtQXfIAvjr67XTxFyeAHjUlGSkzyYWKi33KQfIQbwOxPChFW2TScsM14ezjToKxk8u1Wk+WO9FgfoK/UU0hh0IyLP+AFgOwTlbCJwsl4v+GzyMIOBpUWv4zqupOz3qD5vxvIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E02023413F2;
-	Mon, 07 Jul 2025 10:47:54 +0000 (UTC)
-Date: Mon, 7 Jul 2025 10:47:50 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
-	guodong@riscstar.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 5/6] reset: spacemit: add support for SpacemiT CCU
- resets
-Message-ID: <20250707104750-GYA474251@gentoo>
-References: <20250702113709.291748-1-elder@riscstar.com>
- <20250702113709.291748-6-elder@riscstar.com>
- <33a20f6abac7400c8b4842b99c14ea118def2780.camel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSMzE+2FEH0U+kqYNLb7lKaFHxksM1EbZ8y4mBUYZHq7V9O/B2bJxiI1XmF+LpBtpFVyYm4txJGJMpI2EeuukMR2n0d8NVwVp7khmJlWwOeTlFJ2pJCdC0MHK841nCfKzRvGgaKPEP0sh47Y1dfIqTB6znz5J/TwoW2uk1HU/Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J/CH2BNN; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J/CH2BNN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=v6Qu
+	fareNLNn3UFYbV8ntusgGG8AMzvapPp5xVg2a8Q=; b=J/CH2BNNwBz/INtXzqUi
+	JzXmw4WYqaSpUAAl5/1nQT8ew9Vcj/uHeuDY4/TlaHIbmUr9vu3C9v4iGTMpG77P
+	5GzWM/Aa2pn3kjxwcRSglh8NniQese4kdaoTP/O6J1V8y2kIFx2uo/NN5MgDvycW
+	mX1ZNLG7AQUH1NisBz+5EdQVI5YmboE4V6rOALT7OaECyDBRR9Ywe99FCWm5jdbQ
+	mSlt21SJ9K+ib9+P2+HsOAe8oyJywIL6IREQsxZ5wXBH2dcRbmbUT73lnc2ltXlg
+	5h5l9EVJBJdbSP4R4ga7P5iTqAna5b89jaFCM2o1gF4bzyqI0BxWwNewC1eIQkTv
+	8Q==
+Received: (qmail 1234705 invoked from network); 7 Jul 2025 14:01:05 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 7 Jul 2025 14:01:05 +0200
+X-UD-Smtp-Session: l3s3148p1@ksEpmVU5CsIgAwDPXxVOAFK6vZd9m4LR
+Date: Mon, 7 Jul 2025 14:01:04 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 0/9] PCI: rzg3s-host: Add PCIe driver for Renesas
+ RZ/G3S SoC
+Message-ID: <aGu3AJHIEYgHVRQQ@shikoro>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <aGtsM22QYqekuiQA@shikoro>
+ <96af5f63-dbaf-4177-95e2-a6cc24019dc0@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,32 +55,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <33a20f6abac7400c8b4842b99c14ea118def2780.camel@pengutronix.de>
+In-Reply-To: <96af5f63-dbaf-4177-95e2-a6cc24019dc0@tuxon.dev>
 
-Hi Philipp, Stephen, Mike
-
-On 11:46 Mon 07 Jul     , Philipp Zabel wrote:
-> Hi Stephen, Mike
+On Mon, Jul 07, 2025 at 11:05:30AM +0300, Claudiu Beznea wrote:
+> Hi, Wolfram,
 > 
-> On Mi, 2025-07-02 at 06:37 -0500, Alex Elder wrote:
-> > Implement reset support for SpacemiT CCUs.  A SpacemiT reset controller
-> > device is an auxiliary device associated with a clock controller (CCU).
+> On 07.07.2025 09:41, Wolfram Sang wrote:
 > > 
-> > This patch defines the reset controllers for the MPMU, APBC, and MPMU
-> > CCUs, which already define clock controllers.  It also adds RCPU, RCPU2,
-> > and ACPB2 CCUs, which only define resets.
+> >> Please provide your feedback.
 > > 
-> > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > Reviewed-by: Yixun Lan <dlan@gentoo.org>
+> > What is this based on? I tried v6.16-rc4 and renesas-driver/master. Or
+> > is there a branch I could pull?
+> > 
 > 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-> To be merged via the clk tree, if Stephen is ok with that.
-> 
-ok, I'll just go ahead and prepare a PR for this,
-and leave Stephen to take care of the rest..
+> This is based on next-20250703. I pushed it here, as well:
+> https://github.com/claudiubeznea/linux/commits/claudiu/rzg3s/pcie-v3/
 
-thanks all!
--- 
-Yixun Lan (dlan)
+Thank you, I doubled checked and tested again. Still works, great!
+
