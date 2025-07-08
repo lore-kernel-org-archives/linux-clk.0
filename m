@@ -1,82 +1,72 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CC82DAFD8;
-	Tue,  8 Jul 2025 14:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C3821B199;
+	Tue,  8 Jul 2025 16:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984544; cv=none; b=ZVhYoI6N5qqUhSfbgTXMBPvQTkPapQmJr8Yv+y22iYoGJV/3uoU7mtzFjJFPK+1DaBa0JbWdig/1JRAMF5uPJvHGdFWqCqox/EqeopSSoaan/+WJnLAgwCMQKhaknNGKV4d3z4IFgQ+5sos6ctbqrGzKGTzA6XTs99C3oAmdxEw=
+	t=1751991423; cv=none; b=ct6m+PX7f1wKkZdL2BvxozD9eTDqm4G4g/HvTI694bwI9bE2ttjnUpQMZuWYZ17wpVmuAAa9s90eV6va2fahC2T1QV1svLZwXrCa4VC7gy98oToKs8zjEdMUkwJuLRmlI2/INB+dcvA8Q02iEL9RQlxBX2Atd25I7mKHhD/Th2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984544; c=relaxed/simple;
-	bh=aYV11MEcb7GflSp3VMmGl1ZdpHTzcEkEZNG0Yj98xnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVhX0Ed73zou6M0+JPXiBmX7Wu4QpqVJ1E6QSYSvBIs2uQ3An48f5N702SYFtEMuw3Lg0jiEkvocc517KsTj2eWUge0uMi0LoDZtH/FJNaRhL/wJV5/XN/GbZpsiYLN4FA9VGUdQE6CCODA4qPeq9Mp8qq8U83z943QJtt5GHgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 1397F340F90;
-	Tue, 08 Jul 2025 14:22:15 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	Alex Elder <elder@riscstar.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v12 0/6] reset: spacemit: add K1 reset support
-Date: Tue,  8 Jul 2025 22:22:05 +0800
-Message-ID: <175159801109.1876819.10159207553931838865.b4-ty@gentoo.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250702113709.291748-1-elder@riscstar.com>
-References: <20250702113709.291748-1-elder@riscstar.com>
+	s=arc-20240116; t=1751991423; c=relaxed/simple;
+	bh=nbGCmYL+a3SA2RRWksLD7uACXMII0cs1xS2gIUHJeeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ark8hvRjZx9pU9WPrntk8qP8SiHgWrAc9oMYncMAVNRgwoXFbCIgx/k9NvOV2gNRHtRkB0i+1SyQyEcqoiZvuwIBbSgT+xisXaTseJrf0Q+7N0t8AL876Fj3iEScRR4X2qpVT2sG9Tvoxke3CXeyySyodtyHl0ITPAa7CwG7KjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nteUQ4Mq; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nteUQ4Mq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC665C4CEED;
+	Tue,  8 Jul 2025 16:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751991423;
+	bh=nbGCmYL+a3SA2RRWksLD7uACXMII0cs1xS2gIUHJeeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nteUQ4MqJaaomEKaAVmOyO0KsiKqr+K9XvaCSQ8Y3SsSGh+9GrwopG/RPxPgam5h/
+	 I/grsXO8JtoslYXVSZepAC/UwZmigtruMZn+mIHTEzWbvpnj7q6MMoqZPsgbEjdA73
+	 +wfRMtVKGp0F2nMARO1vGmmJyUQxBleYTDhnauY5PNEm0MRpxdcEeHH3t1kPn5GvZ3
+	 LZ759JuwEtz0LvoGJKoktlENXDQ1680Jqh7B3WhSccqWpc9SKl2wi0aVVjdO3O0TVH
+	 PyiGbzxj8xWDB4z48EJ8nKiyMyzC6a/nRN9D57PMu2RBXYKDqonKfwmfyaFC94DRR1
+	 KAZEzGBV+If0Q==
+Date: Tue, 8 Jul 2025 11:17:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stefan Schmidt <stefan.schmidt@linaro.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,sm8450-videocc: Document
+ X1E80100 compatible
+Message-ID: <175199142127.518048.16838716470013972083.robh@kernel.org>
+References: <20250701-x1e-videocc-v1-0-785d393be502@linaro.org>
+ <20250701-x1e-videocc-v1-1-785d393be502@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-x1e-videocc-v1-1-785d393be502@linaro.org>
 
 
-On Wed, 02 Jul 2025 06:37:02 -0500, Alex Elder wrote:
-> This series adds reset controller support for the SpacemiT K1 SoC.
-> A SpacemiT reset controller is implemented as an auxiliary device
-> associated with a clock controller (CCU).  A new header file
-> holds definitions used by both the clock and reset drivers.
+On Tue, 01 Jul 2025 19:28:33 +0200, Stephan Gerhold wrote:
+> X1E80100 videocc is largely identical to SM8550, but needs slightly
+> different PLL frequencies. Add a separate qcom,x1e80100-videocc compatible
+> to the existing schema used for SM8550.
 > 
-> The only change in this version is that three of the the four resets
-> associated with each PCIe port have been renamed, to align better
-> with their corresponding clocks.  This affects patches 1 and 5.
-> For example, for PCIe port 0:
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> [...]
 
-Applied, thanks!
-
-[6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-      https://github.com/spacemit-com/linux/commit/2c0cf4fed0f440200833ddfc24ea02de2cdc217c
-
-Best regards,
--- 
-Yixun Lan
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
