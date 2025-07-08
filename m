@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961E1215766;
-	Tue,  8 Jul 2025 05:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DC72222C3;
+	Tue,  8 Jul 2025 06:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751952907; cv=none; b=VH1KWMt9YmB3loh9JT1jbyQcalgaguDutvRcwgb/cStxgJt30Y7KKJuxwSH6oPr64nHyROa7GKC+7F1FvitYkLY6phJ0hUmmR+wdM14JoYC3eDo8wMKytiofIstbZJBHxd2UoS2Tm1AJKc71WKX6C87IqsxRHCg22L5Od1WhYoI=
+	t=1751957571; cv=none; b=c/RhM0daQfu6GH1qBe+spLxDoiuVTtnZVG/NOy2C+mIBW2mnwj6xjpspB/bn7YG3cgYR/iJGx6OY+EqKqD8Fh7MHRpiYkqvUIHZlYgknzad9H0ibSxzxOMkHs1pKEyIenFZhVcjhP8vaPTulTCf7U9kym5hShMkG1hk9i8P4CLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751952907; c=relaxed/simple;
-	bh=lcKmR8z1bwwHYuaXERzEnvv+kx5ST+1SMKtrtEjJSFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VX/irxdj5Nra0jbDnEOhTGlFmISQ4DObPT9mPFOku6HuwwL/FrUJlgl8GQ4yEJCSfLXhbEkLCp11TC1eejHx63xgZJnE4hvJPAUiDfhvDYbcgMhgJI2Kc+Ex4t/6ZNVVVSqOOrFCnXi2L+XPptez3oSuL119Xcy9fOSOFW0ShUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jxHt0D21; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1751957571; c=relaxed/simple;
+	bh=jcG3qlnbWk8WqqGTJYaj2OrAGDNeIKWe3vfXI6RVxBk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=P7YlYF3wdqVeIBHR01BIcm32p7GfZrGIs6g6v86VyTism9pIRxqTkufasqoaz7UTOXsKpjNKHzgmTqaDH5lydqU6FZeCSK7T0f45UNI/2uQOC+J3D5vpGdYi/Rx8Hh3cNzECtHk9SQZ/SSpAqTwVW1IIXM5O9FWUCYK90BJN6aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ordBoJLk; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jxHt0D21"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567JWFhd013480;
-	Tue, 8 Jul 2025 05:34:58 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ordBoJLk"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567IN5Ik018796;
+	Tue, 8 Jul 2025 06:52:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XtuHaS2Jy0WZwH886iYibgw3OhQQrZROgwm063n+NXU=; b=jxHt0D217di6eQEd
-	cma6cOR9FaSdfHTCgngaE2Gp4Nb4BSJF0mqVjDV1w3Mv5YpPzLBh3s3PDyNHxgmi
-	SDLoIoZ65gDHJe+fByq6sSsmmCXUaYos8iwECtqGKMjNGdicwI6Z6KjGWnk2T5H8
-	jt5YMcxetxz2ol5F9hu3p9wczI/xEUSywQ34VBR+8NnjppIHJIXX/Q3KZQRsya2Y
-	mM1kf0hkD0zf0dBsVUvFAgCOFAlXu8RKM1pdXy+mdXXWueSnLeOHQ4uH48ODiQoG
-	3WGDtx+p+A5UQIm9R3gIwY7OiAdrULojcIQzAuCcc82kARxWm6pvSb2YKV8tdYhF
-	plMRQQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmu7e5-1
+	RufHfEATVHVY1xtSnpwn1IM85ww4BCIq7kfcaYeKcfM=; b=ordBoJLkNcOw6yYq
+	HMILTk0sRvTvsdc/4zKKz0FfWz4mUXtQLNJ1AxOICWXr16dQ02hXotyltV/MHNzk
+	wiGmVEbM19puzEnKkwWYkCmIBEdcsfxWo/w31AkoqOXYB1LqZgZYy1bIEbD+uDdS
+	GEbSG2MK4FRhoBhE2ND01oKRIEd6nbYhWZqfunqSruO450YaDF6rkZvHiNd3YbyI
+	og2PradV/Mfvd7bX2oB0j6peOg3iC8Hx5CUQV+xf8FzzIB75RuW8jq0wtuHeUJVt
+	91Qw/Ogpu5WolF4tEvR+J6DlnyhYLoU0XIJFWooLgWhoq4XIsDrooT4zwnuhf3uN
+	w2J02A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0wb582-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 05:34:58 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5685YvOi023571
+	Tue, 08 Jul 2025 06:52:46 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5686qj4u008058
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Jul 2025 05:34:57 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 8 Jul 2025 06:52:45 GMT
+Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
- 2025 22:34:52 -0700
-Message-ID: <64e27035-d124-470a-bc5b-66d254b6ff4f@quicinc.com>
-Date: Tue, 8 Jul 2025 11:04:46 +0530
+ 2025 23:52:40 -0700
+Message-ID: <8c3c55f3-5cfa-42a1-bf39-e1988315fbca@quicinc.com>
+Date: Tue, 8 Jul 2025 12:22:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,111 +50,114 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] clk: qcom: common: Add support to register rcg
- dfs in qcom_cc_really_probe
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
+ compatible
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski
 	<krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>
-References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
- <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
+ <20250702-sc8180x-videocc-dt-v3-1-916d443d8a38@quicinc.com>
+ <mzmer4g7df7xqhnstpfhyzcm2irpmsk4iwtx6esjksp34lpkk5@76lrsoyb5cp6>
+ <20250703-robust-analytic-hummingbird-88eb3b@krzk-bin>
+ <9c463005-3582-4bee-bd9f-cd0b415f5e65@quicinc.com>
 Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
+In-Reply-To: <9c463005-3582-4bee-bd9f-cd0b415f5e65@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686cae02 cx=c_pps
+X-Proofpoint-ORIG-GUID: 3V73cH9DMb2qhG2N_vDRFx314db7T_om
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA1NCBTYWx0ZWRfX9fsceRa1EYrd
+ XWjOUjmDOrQX/1zM6G2Qlyzuyydpt068TBpvuqcyGfbyxxG2dLED/jS35MdtirmPZLOzk9gtI80
+ 7uqJqG6J4mF67sD3I3VvFgvgF2gxPprNt//EBf5jRTqcmdDwsUzODI9upeDVNvJq5NN2gQh2Qwp
+ 6UQc5la2FKvG5jxClI/N5TRfQZJrCEGI/l2XTsL31Kkz78pjXltOejKdKzB4lLUqBvZHd+Hy9Y7
+ tSyIBbnWwzTftCzKa8XFSuV/nlMdHuExNNAvIUvDqNT0mknxIo3JvrqJ1HPZI0pCnejKKmKqFFA
+ +Y7TUwduMc5qR++uZ7RUndAkAJ4yMqtzApU+JsP3fVJMHTMqjXSvDGqoyX6giIDgBiTeiCs+ijr
+ EDgKa4DDVJgQgt2GmmlmgIPjlkkwE6SXI0Ua1u69h7H+2DqPjpTXfHrUe71rxchbzZlyvRVf
+X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686cc03e cx=c_pps
  a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8
- a=swBEb3uj_lsU-R2XRLEA:9 a=QEXdDO2ut3YA:10 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: RsgZlGII8_YBqFYUaCg9nb2PTHZOM0OZ
-X-Proofpoint-ORIG-GUID: RsgZlGII8_YBqFYUaCg9nb2PTHZOM0OZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA0MiBTYWx0ZWRfX1iredXkGUtyG
- 6/gxBZ5AmOh7EbeSGu9WMjidjMHO39W/grqJFQgbuWkghyrgrhpfnRQD5qpMVdts10dJr25k9S3
- c6NJ+5iMmVysNWVyj2xtSa0vE9KKkuoqfkVBoay/bCFO2aEI7FJwWBXruTGaFoK+n3g21vt7NNy
- wSISqhzPgTUmfji0nCt+1zMXvm7ypkK3u0U3qfeqk2/iJNOp+rQogtxX0g0ObcgI0YQOxCgOFzB
- SOyGcRTCDJrxLEXP3JiIRDfrPHuMjxYnmGtaXVVCup3sLu0fPMKwRkkDCFK0VA+0fGsHlTUZOdw
- 2Vd24DIWLlRSPXZKpZaMBdvwuXYuDIrQkpr4lnck4fohOKNd/rv+bJ0z5tm7V5txnqqvyJF3jI0
- wQgnYKJkXARMk4yhdj5LB719gcqnoHMwbXRVBfXh/3WrgSMEC/GlFRcjI9/CTCBjcbGB0aQ4
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=ela0q1gkDnq4QfPF5NsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 3V73cH9DMb2qhG2N_vDRFx314db7T_om
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
+ definitions=2025-07-08_02,2025-07-07_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080042
+ definitions=main-2507080054
+
+Hi Krzysztof,
 
 
+On 7/4/2025 4:41 PM, Satya Priya Kakitapalli wrote:
+>
+> On 7/3/2025 12:55 PM, Krzysztof Kozlowski wrote:
+>> On Thu, Jul 03, 2025 at 01:29:06AM +0300, Dmitry Baryshkov wrote:
+>>>> -      - qcom,sc7180-videocc
+>>>> -      - qcom,sc7280-videocc
+>>>> -      - qcom,sdm845-videocc
+>>>> -      - qcom,sm6350-videocc
+>>>> -      - qcom,sm8150-videocc
+>>>> -      - qcom,sm8250-videocc
+>>>> +    oneOf:
+>>>> +      - enum:
+>>>> +          - qcom,sc7180-videocc
+>>>> +          - qcom,sc7280-videocc
+>>>> +          - qcom,sdm845-videocc
+>>>> +          - qcom,sm6350-videocc
+>>>> +          - qcom,sm8150-videocc
+>>>> +          - qcom,sm8250-videocc
+>>>> +      - items:
+>>>> +          - const: qcom,sc8180x-videocc
+>>>> +          - const: qcom,sm8150-videocc
+>>>>       clocks:
+>>>>       minItems: 1
+>>>> @@ -111,6 +115,7 @@ allOf:
+>>>>         properties:
+>>>>           compatible:
+>>>>             enum:
+>>>> +            - qcom,sc8180x-videocc
+>>> Is there a need for this? Isn't it already covered by the SM8150 entry?
+>> Yes and no. Yes - some change here is needed as I explained. No - this
+>> exact change does not work, so it is obviously redundant.
+>
+>
+> Yes, I agree. I'll add 'contains:' throughout the schema and remove 
+> this compatible since anyway it matches with sm8150 compatible.
+>
 
-On 7/4/2025 12:46 PM, Luca Weiss wrote:
-> Add support to register the rcg dfs in qcom_cc_really_probe(). This
-> allows users to move the call from the probe function to static
-> properties.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  drivers/clk/qcom/common.c | 8 ++++++++
->  drivers/clk/qcom/common.h | 2 ++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index b3838d885db25f183979576e5c685c07dc6a7049..d53f290c6121f31d06cf244f72603b694966e216 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
->  			goto put_rpm;
->  	}
->  
-> +	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
-> +		ret = qcom_cc_register_rcg_dfs(regmap,
-> +					       desc->dfs_rcgs,
-> +					       desc->num_dfs_rcgs);
-> +		if (ret)
-> +			goto put_rpm;
-> +	}
-> +
->  	cc->rclks = rclks;
->  	cc->num_rclks = num_clks;
->  
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 0f4b2d40c65cf94de694226f63ca30f4181d0ce5..dbe7ebe5b8710fb03c1671ac9022e608a6aad35f 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -43,6 +43,8 @@ struct qcom_cc_desc {
->  	size_t num_gdscs;
->  	struct clk_hw **clk_hws;
->  	size_t num_clk_hws;
-> +	const struct clk_rcg_dfs_data *dfs_rcgs;
-> +	size_t num_dfs_rcgs;
+I checked this further and see that 'contains' is only needed for 
+devices having multiple compatibles or using fallback.
+Since we are not using the fallback for any of the other compatibles in 
+this schema, I will add contains only for the sm8150 if/then block.
 
-Since all other probe configurations are added in qcom_cc_driver_data struct, it is better to
-add rcg dfs data also to qcom_cc_driver_data struct instead of qcom_cc_desc.
 
-Thanks,
-Jagadeesh
-
->  	const struct qcom_icc_hws_data *icc_hws;
->  	size_t num_icc_hws;
->  	unsigned int icc_first_node_id;
-> 
+>
+> Thanks,
+>
+> Satya Priya
+>
+>
