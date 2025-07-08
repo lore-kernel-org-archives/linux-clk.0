@@ -1,68 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDA22BE04B;
-	Tue,  8 Jul 2025 08:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341DB23BD09;
+	Tue,  8 Jul 2025 09:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964726; cv=none; b=kMjZTDnAnVLKrQhFbI8Oa4jU6+aqIes1UpX3TInq1ZmRh7tglfYcZaZl5lXvyGcNOEKpPTCM12Zrb7E1DENcBrguk52FJs2ZLqFg7nsJj++DQCcVHxvbLR22qABMWJwfZz7xarXAbOISw8RnaClFNCZxVc3U4TRqXEbz7JrWz1E=
+	t=1751965802; cv=none; b=F8cAP0F6AGjg6iHYmOrcOt8PvLgZbL0Y3vW6uQ/jhXF/hyr1D18qC1x+KyIE5tlFbu55QFTkHUz1u1jzmYfitmh87IO6ZAPwBKYMri9/KXiuAp2ALkwZzASiG9hGkOECus15y7OpaimzonYgIsOjqaUtkripoSjLif0dIbaf/cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964726; c=relaxed/simple;
-	bh=no3EIa3+l7xCNHzn8X4T0WAUjmg9asbn4ZAZ6fjDVtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdL9XbQ/g2CPH2ZvzBlfHMG3MRUYYfbs6pPhf0ebXWnICgtAjmwFuz1bgr6+ZF818/sU2alp4eB19RJwU4c36AhLTtNgVo0Gj6N0RTsELGHA33A9YwfRkn8Xk/O+PomSWr76533sjnjMDZaduTTNvIo1N+qrQH6gMd8E5wbcKcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZonJT72f; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZonJT72f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1852AC4CEED;
-	Tue,  8 Jul 2025 08:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751964725;
-	bh=no3EIa3+l7xCNHzn8X4T0WAUjmg9asbn4ZAZ6fjDVtc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZonJT72fO/zsCh1F2pEs3Oo3qd/Fh7A+1omwHdHj8sh0gsHgd/2xFJ/WyMtmmX8C1
-	 7cRupQ8lxFZWjkZBBMHQ6u1+7GDzDV8O5EiBca+WRsjSZSwwckqKkOY8h+uOEqNl0V
-	 z/QLEZ2xqXljkToO5IbonkIQID00plJaeKXBdKoQb1ov5xHPhXNkCF2z6PVl8177X3
-	 sghwQoFIAQKL9cp3niEdF5EAPwcH6pqQSRe7PjMyPZ0EQK+sYSg/ar2Tx03MIb2yum
-	 FwOI5T2BUl5L/xd6Ktp3vUQSKgEnS7zDW+UAxoS3S8NBn3BeUfXhx3CEVJDo3uUYlk
-	 FYFuqMWq7U8DQ==
-Date: Tue, 8 Jul 2025 10:52:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Georgi Djakov <djakov@kernel.org>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 3/4] dt-bindings: interconnect: qcom,qcs615-rpmh: Drop
- IPA interconnects
-Message-ID: <20250708-fortunate-agate-coyote-e3b022@krzk-bin>
-References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
- <20250627-topic-qcs615_icc_ipa-v1-3-dc47596cde69@oss.qualcomm.com>
+	s=arc-20240116; t=1751965802; c=relaxed/simple;
+	bh=x8I+A7hb/9qw+eXlNU73nIGg8C5waMAV+rHPrmEgpko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=UO+hUtFXgOfeapw0lpbinpNT63Va4WUndn992q3Ffai4/UHIt/a10chSfibI/0VVG1ppHlxT654FxipXcYD0OyJyPNCFxT6iFSsFH6dnj+QdGl6Y41i0ixVRFknWv+/TiVCDL82PqPpeJ5mbKvIdRT94EhanpvnhUwiHv6Ioojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 8 Jul 2025 17:09:46 +0800 (GMT+08:00)
+Date: Tue, 8 Jul 2025 17:09:46 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Bo Gan" <ganboing@gmail.com>, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v3 2/2] clock: eswin: Add eic7700 clock driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <0f3aff5b-ff54-48a2-ae95-b344d311c3a1@gmail.com>
+References: <20250624103212.287-1-dongxuyang@eswincomputing.com>
+ <20250624103314.400-1-dongxuyang@eswincomputing.com>
+ <0f3aff5b-ff54-48a2-ae95-b344d311c3a1@gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-3-dc47596cde69@oss.qualcomm.com>
+Message-ID: <7a325b0b.2de1.197e94c605b.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgA31pRa4GxorO6qAA--.18310W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQERAmhr9m4gF
+	AAAs8
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Fri, Jun 27, 2025 at 09:37:57PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> This has been agreed to be characterized as a clock resource, not an
-> interconnect provider. Bring QCS615 in line with the expectation.
-> 
-> Fixes: 6c5e948f1fff ("dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in QCS615 SoC")
-
-You did not explain any bug here to fix. Difference in agreements in
-characterization does not feel like a bug.
-
-Best regards,
-Krzysztof
-
+SGkgQm8sCgpUaGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbiwgaXQgaW1wcm92ZXMgb3VyIGRy
+aXZlciBkZXZlbG9wbWVudCBlZmZvcnRzLgpQZXIgeW91ciByZWNvbW1lbmRhdGlvbnMsIHdlIHdp
+bGwgb3B0aW1pemUgdGhlIGRyaXZlciBwcm9ncmFtLgoKPiBPbiA2LzI0LzI1IDAzOjMzLCBkb25n
+eHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbSB3cm90ZToKPiBUaGlzIGlzIHRvdGFsbHkgd3Jvbmcg
+SSB0aGluay4gV2h5IGRvZXMgdGhlIGNsb2NrIGRyaXZlciBoYXZlIHRvIGNhcmUgYWJvdXQKPiBD
+UFUgdm9sdGFnZT8gVGhpcyBmdW5jdGlvbmFsaXR5IGJlbG9uZ3MgdG8gY3B1ZnJlcS4gWW91IGNh
+biB0YWtlIEpINzExMCBhcwo+IHJlZmVyZW5jZSBhbmQgc2VlIGhvdyBpdCdzIGRvbmU6IGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDIzMDYwNjEwNTY1Ni4xMjQzNTUtNC1tYXNvbi5odW9A
+c3RhcmZpdmV0ZWNoLmNvbS8KPiBMb29raW5nIGF0IGVzd2luIHZlbmRvciB1LWJvb3QsIGl0IHNl
+ZW1zIHlvdSBoYXZlIHNvbWUgU29DIHRoYXQgY2FuIG9wZXJhdGUKPiBhdCAxLjZHaHogd2l0aG91
+dCBidW1waW5nIHRoZSB2b2x0YWdlLiBXaHkgbm90IGRvIGl0IHZpYSBvcGVyYXRpbmctcG9pbnRz
+LXYyLAo+IGxpa2UgdGhlIG90aGVyIFNvQ3M/IEl0IGNhbiB0aGVuIGJlIG92ZXJyaWRkZW4gYnkg
+Ym9hcmQgZGV2aWNlLXRyZWUgYW5kIHUtYm9vdAo+IEFsc28gdGhlIGxvZ2ljIG9mIHN3aXRjaGlu
+ZyBjbG9jayBiZWZvcmUgY2hhbmdpbmcgUExMIHNob3VsZCBiZSBkb25lIHVzaW5nCj4gbm90aWZp
+ZXI6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjAyNDA4MjYwODA0MzAuMTc5Nzg4LTIteGlu
+Z3l1Lnd1QHN0YXJmaXZldGVjaC5jb20KPiBSZW1vdmUgdW5kb2N1bWVudGVkIHBhcmFtZXRlcnMg
+c3VjaCBhcyAiY3B1X25vX2Jvb3N0XzFfNmdoeiIgYW5kCj4gImNwdS1kZWZhdWx0LWZyZXF1ZW5j
+eSIuCgpXaGVuIGhpZ2hlciBjcHUgZnJlcXVlbmN5IGlzIGFwcGxpZWQsIHRoZSBoaWdoZXIgdm9s
+dGFnZSBtdXN0IGJlwqAKY29uZmlndXJlZCBhY2NvcmRpbmdseS4gU28sIGZyb20gbXkgcGVyc3Bl
+Y3RpdmUsIGl0J3MgYmV0dGVyIHRvCmltcGxlbWVudCB0aGUgY2xrLCByZWd1bGF0b3IgYW5kIGNw
+dSBmcmVxdWVuY3kgc2VwYXJhdGVseS4KY2xrLmMgYW5kIGNsay1laWM3NzAwLmMgYXJlIHJlc3Bv
+bnNpYmxlIGZvciBzZXR0aW5nIGNsayBvbmx5LgpyZWd1bGF0b3ItZWljNzcwMC5jIGlzIGZvciB2
+b2x0YWdlIGNvbmZpZ3VyYXRpb24uCmNwdWZyZXEtZWljNzcwMC5jIGlzIGZvciBjcHUgZnJlcXVl
+bmN5IGNvbmZpZ3VyYXRpb24sIGFuZCBpdCB3aWxsIGNhbGwKdGhlIEFQSXMgb2YgY2xrIGFuZCBy
+ZWd1bGF0b3IuCgpJcyB0aGlzIHRoZSByaWdodCBhcHByb2FjaD8KCj4gT3ZlcmFsbCBJIHRoaW5r
+IHlvdSBiZXR0ZXIgZG8gc29tZSByZWFsIGNsZWFudXAgYW5kIHJlZmFjdG9yIG9mIHRoaXMgcGF0
+Y2gKPiBiZWZvcmUgc2VuZGluZyBpdCBvdXQgYWdhaW4uIFRoZSBkcml2ZXIgaXMgcXVpdGUgbG9u
+ZywgYW5kIEkgc3VnZ2VzdCB5b3Ugc2hvdWxkCj4gY29uc2lkZXIgb3B0aW1pemluZy9jb25kZW5z
+aW5nIHRoZSBsb2dpYy4gSSBndWVzcyB5b3UgcHJvYmFibHkgY2FycmllZCBvdmVyIHRoZQo+IHNh
+bWUgY29kZSBhbmQgaGFja3MgeW91IG1hZGUgZm9yIHRoZSB2ZW5kb3IgdHJlZSAoZXN3aW5jb21w
+dXRpbmcvbGludXgtc3RhYmxlKQo+IFRoZXJlJ3Mgbm8gd2F5IHRoZXkgY2FuIGJlIGFjY2VwdGVk
+IGJ5IHVwc3RyZWFtLiBUYWtlIGEgbG9vayBhdCBvdGhlciBjbGsgdHJlZQo+IGltcGxlbWVudGF0
+aW9ucyBhbmQgc3BlbmQgc29tZSByZWFsIGVmZm9ydCBmaXhpbmcgdGhlIGNvZGUuIERvbid0IGxl
+dCB0aGUKPiByZXZpZXdlcnMgZ3JvdyBpbXBhdGllbnQgYnkgb25seSBjaGFuZ2luZyBzb21ldGhp
+bmcgc3VwZXJmaWNpYWxseS4KCldlJ2xsIGltcHJvdmUgdGhlIHF1YWxpdHkgb2Ygb3VyIHJlc3Bv
+bnNlcy4KCkJlc3QgcmVnYXJkcywKWHV5YW5nCg==
