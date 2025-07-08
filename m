@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129DA10A1F;
-	Tue,  8 Jul 2025 08:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B08F221D87;
+	Tue,  8 Jul 2025 08:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961658; cv=none; b=sgSgWDecpfxSZ5dCY9E9xLLDN3AS/0LR0O9HSo2v2UFESn5mWwVZbjbCQzBabDIXUCSOXr64/LwTJGodsWqo6xVZRHb7H9Qv1ixW+0gQ5LvSXe1TsNgdi+nXULZSaebXzIjtReXmfN61W7SmGQfcJ/XHXuJfuQsx13vFr9zcZsg=
+	t=1751964666; cv=none; b=lD0xzbSp/Iay5Vj63SAO/pBr6Lp5IVMtSXfUoBKS0NtO0epyt1taSrOKA54ljgnICqj3K6oLDUJ3A6r36mXaqBKM+SMZdseEjzAbmx1CqwdhNPuIdubeC7/1cPwa4hEL/z/994B8PM5M5YmandCXbE9zoRBmaGsW11lWiM0EVHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961658; c=relaxed/simple;
-	bh=jdS3BEKP95D3Rrf9pnCS5mK68sq8SKb7VurqMKU0HCo=;
+	s=arc-20240116; t=1751964666; c=relaxed/simple;
+	bh=N/0d0mKW07wFgRFLTBIlelDE6XtrInsDavk8ZqJpx5s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=om+FJ5wjTzQL3mavAF2sYxZH0MFqfKUv42PjqGaDw9+yMwRKxJHr+mY34H2HTaUJ8OLmiif+NEZop3Bao6edMqfn4BKQ/Q0gV+BJ6zKANaopVfcqXsHjLgApzd7dlTiOtOqFLpI6+RLagCVqiT7IAK7b1hMpyHvGRdKTUhf8AUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oH6QrbS0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=REeyhHl/ilDPqH95SICyVM7EjubbEqztugez+BY/VKDKBplVV5uuFVzeSXy/UQQck/dWfEYaxPdVfmrilNMZ4LUjjf1WDxT3dFflbpXNO8ssIWpdKqP/V6rCVfP9GNxlmfS7waS6G3xoDnIKDdUTCryhjVBDED4walXQjt/Uyr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyjkQPOt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oH6QrbS0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BEDC4CEF0;
-	Tue,  8 Jul 2025 08:00:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyjkQPOt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 514BEC4CEED;
+	Tue,  8 Jul 2025 08:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751961657;
-	bh=jdS3BEKP95D3Rrf9pnCS5mK68sq8SKb7VurqMKU0HCo=;
+	s=k20201202; t=1751964665;
+	bh=N/0d0mKW07wFgRFLTBIlelDE6XtrInsDavk8ZqJpx5s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oH6QrbS0wvPdemLePIKRnzt7juvhMVuJNd23Dfrk2JaiMQvv06TjcD/rBKAqsg2VZ
-	 MFT4W9KIJD2RvWB9trBGxN+vMuFgZncAi/65cOoDrAWx5dE7RAZjpR9eejeq7Yit2O
-	 4Zq2WDNb2WCCOgnn8yUknYUyCImONw99yrTY7gpJcDi8hcXSJHQ2RnL7+ORA6sgJD+
-	 iO967RVsMxEzL6O3Y6laYkTNDE8Ts3HXUWFExdNB3dTAZsu5nFSJZWCMMhZalfwxo2
-	 gFc35rJIw9zW7IB8lsUaGxMULpV8pAoZeI5kJmSZ2RUoZVSENMf8fQ333F8pdahXgQ
-	 rWqCbfa1HRQ5A==
-Date: Tue, 8 Jul 2025 10:00:53 +0200
+	b=GyjkQPOtw0ym/NrawZ2Hn26MiYvjJ2VzHekm5U8LVHv0NJsyc9lIRH84NvkZYNYSt
+	 2jzCq32+gtes2SzmX52d97LISK0cnyDUXlaHbuKusCLP0E8OOq/3upy+GtCxhuPfpj
+	 DYDQXMfCGKCzbY1Mjg1zmm8sdMalepsPeX10hz93durHXub9sSO6Z0ZaNtvs3yBkvN
+	 YS2iA/04qADiFOO+Nxgu8bHtrFD4Cm4gBSXrgXYYrTDMSrL2qqkJ3QPwPS2jJkXmYP
+	 YppHeyX7Gybx357//q7sPpvRPDyVA3iy1VOQC0BvodLAzQUbHwjQcQnxSUKUqtG7wo
+	 KZy5cignph7kg==
+Date: Tue, 8 Jul 2025 10:51:03 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: clock: qcom: document the Milos TCSR
- Clock Controller
-Message-ID: <20250708-swinging-sly-pegasus-c31dbd@krzk-bin>
-References: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
- <20250707-sm7635-clocks-misc-v2-3-b49f19055768@fairphone.com>
+	Georgi Djakov <djakov@kernel.org>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 1/4] arm64: dts: qcom: qcs615: Drop IPA interconnects
+Message-ID: <20250708-amiable-owl-of-enthusiasm-e75662@krzk-bin>
+References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
+ <20250627-topic-qcs615_icc_ipa-v1-1-dc47596cde69@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,18 +49,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250707-sm7635-clocks-misc-v2-3-b49f19055768@fairphone.com>
+In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-1-dc47596cde69@oss.qualcomm.com>
 
-On Mon, Jul 07, 2025 at 11:56:39AM +0200, Luca Weiss wrote:
-> Add bindings documentation for the Milos (e.g. SM7635) TCSR Clock
-> Controller.
+On Fri, Jun 27, 2025 at 09:37:55PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> In the same spirit as e.g. Commit 6314184be391 ("arm64: dts: qcom:
+> sc8180x: Drop ipa-virt interconnect") drop the resources that should
+> be taken care of through the clk-rpmh driver.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ------
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is non-bisectable and breaks the users. Should be the last patch,
+not the first, with explicit notice that it must wait after the next
+merge window.
+
+Plus this affects all outside users, which also should be somehow
+explained. "Spirit" of some other commit does not apply here. These are
+different products, different users. It needs its own rationale and
+justification.
 
 Best regards,
 Krzysztof
