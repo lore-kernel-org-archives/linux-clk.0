@@ -1,16 +1,16 @@
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FF32BEC28;
-	Tue,  8 Jul 2025 14:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CC82DAFD8;
+	Tue,  8 Jul 2025 14:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984293; cv=none; b=shTZ13k+LsQo/d6D37o1oC3KEQxgZnUeI3a+W8LAxvnTmtt73zkPgBJ7a+agxNWY6nBn1Ya8GRnQp4QVhr3MdCLnrm4pDGBZk6KJJRqI8ibhFT51lDVh5DynKU3JO/usEpxCq14eKLJ/FiJ+/3nJI53yT63+s7cXhz0yHXOss3s=
+	t=1751984544; cv=none; b=ZVhYoI6N5qqUhSfbgTXMBPvQTkPapQmJr8Yv+y22iYoGJV/3uoU7mtzFjJFPK+1DaBa0JbWdig/1JRAMF5uPJvHGdFWqCqox/EqeopSSoaan/+WJnLAgwCMQKhaknNGKV4d3z4IFgQ+5sos6ctbqrGzKGTzA6XTs99C3oAmdxEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984293; c=relaxed/simple;
-	bh=mBmRhIHUhdY6n86n8Ks5H5tBcLO3k6zSAihKEwFoLDY=;
+	s=arc-20240116; t=1751984544; c=relaxed/simple;
+	bh=aYV11MEcb7GflSp3VMmGl1ZdpHTzcEkEZNG0Yj98xnw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FY/qNvyqDLslRPiWhV+fStygklODfje6dsqM53nWD8OiRSTXHAvFNO9cqxN7NnFmA1I1gwqk9HwD9kAGCViBjmxbSY8rR7MNM6i8SA9t2uQmyqJ+USBFMAZhyiWL4o+guV91s6AOnfAXwN6jtIo+E+wDmiYi/x/x5v8aBagH4/4=
+	 MIME-Version:Content-Type; b=aVhX0Ed73zou6M0+JPXiBmX7Wu4QpqVJ1E6QSYSvBIs2uQ3An48f5N702SYFtEMuw3Lg0jiEkvocc517KsTj2eWUge0uMi0LoDZtH/FJNaRhL/wJV5/XN/GbZpsiYLN4FA9VGUdQE6CCODA4qPeq9Mp8qq8U83z943QJtt5GHgg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -19,8 +19,8 @@ Received: from ofsar (unknown [116.232.48.207])
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 624E1340ED3;
-	Tue, 08 Jul 2025 14:18:04 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 1397F340F90;
+	Tue, 08 Jul 2025 14:22:15 +0000 (UTC)
 From: Yixun Lan <dlan@gentoo.org>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -43,8 +43,8 @@ Cc: Yixun Lan <dlan@gentoo.org>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: (subset) [PATCH v12 0/6] reset: spacemit: add K1 reset support
-Date: Tue,  8 Jul 2025 22:17:56 +0800
-Message-ID: <175198407740.45243.8546777031638869570.b4-ty@gentoo.org>
+Date: Tue,  8 Jul 2025 22:22:05 +0800
+Message-ID: <175159801109.1876819.10159207553931838865.b4-ty@gentoo.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250702113709.291748-1-elder@riscstar.com>
 References: <20250702113709.291748-1-elder@riscstar.com>
@@ -73,16 +73,8 @@ On Wed, 02 Jul 2025 06:37:02 -0500, Alex Elder wrote:
 
 Applied, thanks!
 
-[1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-      https://github.com/spacemit-com/linux/commit/25a59e813cd2ca728047f657d64f9b29480be393
-[2/6] soc: spacemit: create a header for clock/reset registers
-      https://github.com/spacemit-com/linux/commit/bf6239ddaa6a73a44cd8ea3afec5fc82ed900038
-[3/6] clk: spacemit: set up reset auxiliary devices
-      https://github.com/spacemit-com/linux/commit/988543522ebd6a9af53c288833503f0501e401b0
-[4/6] clk: spacemit: define three reset-only CCUs
-      https://github.com/spacemit-com/linux/commit/024b84f661674dcfa1341c90ce654c485c4ab756
-[5/6] reset: spacemit: add support for SpacemiT CCU resets
-      https://github.com/spacemit-com/linux/commit/c479d7cf06c3d65532442fa368b058e05dbba1a2
+[6/6] riscv: dts: spacemit: add reset support for the K1 SoC
+      https://github.com/spacemit-com/linux/commit/2c0cf4fed0f440200833ddfc24ea02de2cdc217c
 
 Best regards,
 -- 
