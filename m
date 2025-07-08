@@ -1,73 +1,64 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F48719B3EC
-	for <linux-clk@vger.kernel.org>; Tue,  8 Jul 2025 10:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321B522ACF3
+	for <linux-clk@vger.kernel.org>; Tue,  8 Jul 2025 10:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968871; cv=none; b=GPVrllgN66frl2Ao+QebfZdKJtycXSi4hWMa+RUbhbYrT9Y7rditFq/WNCzTbPuPXfmKQdbEPFGfMqukc1TR23Hr43oszXaBq2licIfCULhPK4oEKv288d/vrlqILq9IAj96mWp5NSKP+4Ko6zMW5vmKHIaq3ynZF6aKwY05uCM=
+	t=1751969161; cv=none; b=nLWmVENOyU0Ciy0U7DMx9B+Zo1js+PL7OT1MalgYsoFIXC2Qzno+dN/Wm3/sVVa4DllhMubuNhnAeOn+x7uRfIxP4TcoRFlZdWiJQNXFZ2yjgsO3IyRGF5CcaxhB/5MyoSxICxs+G856Exfxn6XTYmwaj6IzCY667+HHnpq4t1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968871; c=relaxed/simple;
-	bh=gJEle21HfeHRg/MyaaNCJjVlwd7x02N2SP3mJGzdmA8=;
+	s=arc-20240116; t=1751969161; c=relaxed/simple;
+	bh=npw8gRSYyPhizWIvlYkY3o8UycV4g1GzUjZZirfa4LU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XbiykDudUnqIWoEWr3QiEfZXlEQjCb6rF+QFYO35st7OFtrRclCbWt6p34ixvVMWKd2HytmcjU4PMM5XMvx10q3Z2g333tEUvb9hErjc+CMhnyHIQQn6YrCIqMH6Q9+wLs83p9rXgHg+IdjQuzgIF6z5LU1uGT26gZ0EuEeQZ5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bdVbT8xq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=RuKztcCF4rqPQ7JMQcGly4P3WO89ZEJTSLFkr/XNTiTs/4FXCWTCYYTsdiYXBlXCZJBWxADQoB4V6YLzrGxcxrOTt3tiPwP1+5ap6beQFrWopM/SS0mUNzukzkvxZv2O9neSXEQvSHoyc3ZrVQV9ICoPAZsBIoMAFM3qgFSaFDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fRCTyowH; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bdVbT8xq"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5689Qfk4016846
-	for <linux-clk@vger.kernel.org>; Tue, 8 Jul 2025 10:01:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	483dfQ545JlIrRhF6KMFjkkyxIpCkMi//ibR/zkJguU=; b=bdVbT8xqpQH3m75O
-	kynfN+zTI0/3Ha2t48Mhs3Ncra/8lFCR53hNi7IdS1EAhjKhsW/T/p218vJHufPZ
-	jMMhmnbDq7Dqxt4JgHqNs9WdIodT75IACmOPPWn3xz1r9V+kDN6/5QsoL1JmpOPT
-	y88lyIb0OZwB8In+apHaSGgokWOT8FmlMBqbQTxSImnyVI4B9iQTwlgyvb1FZcYm
-	n2VKgz7M1No/U/ITNpdEBbYjgCmQYtVFlOKYgfFbt3VU59GlEak3ztVSDBXqeoQC
-	2ThtpaF7sQw023226bPrj+vLkCyNk8uk3+eQHcEYgH62uayBDcD3yqLucXDBFAsM
-	T+JBmw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmvkbw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 08 Jul 2025 10:01:08 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a804126ed6so13449821cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Jul 2025 03:01:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fRCTyowH"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0c4945c76so645356666b.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Jul 2025 03:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1751969157; x=1752573957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AFaofTBqf3jJFFOESX3JkhI6vcB/g19rZziWAPYTo4g=;
+        b=fRCTyowHGO8N/wndTMW8oRBNnjcF3QarC42ddnyQ5Yjo3OVL3PgbRg1L4dARk0BV/h
+         KaAbt5Ivf1fHNkXFDNLQi2TDVADEs/LjBiepF61i4RzLXiY+gP+KLb6KFBWBjY7JRrqT
+         +an1vPHAj6t7eG84lSY0xpDQaybNhbi0QETS4JJrbVltAnRwbcfnFwOUOArhB/580CqH
+         bgTDtVcurLM4HVr+lCb9FXxfvAKSBcukMmZCHVn5KTe3B1heoYWpmiwrulvdYX4F4a6H
+         kiz3k0QVXZUtkaYC9vw3di+M82Po0HFGGHl9ZdnVCIp+9AGjjMT2GELOiySucNQepCLZ
+         fG4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751968868; x=1752573668;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1751969157; x=1752573957;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=483dfQ545JlIrRhF6KMFjkkyxIpCkMi//ibR/zkJguU=;
-        b=bt0pQ5SObOgwsR8H9Ey84idq428qwOYGPSa8NlkRV16kdPjOrYvLaaXOrwa0sBvx9P
-         F6oEOIz2/Fi9WDZU+8Lht3xhxVwNf/bE4V0tOZyBRiSpPqOn43PQxaJUiukh/RplHTRi
-         oyn315vHYt/uCnbzlHcd9iMZOe6D/9JwY+z34N+DKxzsP7RdNzFC57VwUCL7SsYKbmlw
-         gX3ht1EwGRSqYWfYXNFSnbGuxjSsdeSKbfJ4uHubHkgRJ1TmF4/G58WFLe0yzXlSnkYp
-         8OhKLPoToIRVZSfdkduZK5HjMxLE96Rj5H07XgJs8RgvhcQ4f90I6fLiOsgzl7BdzIYh
-         0Abg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0XERenwlGsSEQCbaRD1Bru/q3M9oLDLsBhWKkQPdnC7mtbcAPFLmhsGWp5VK7coHi0S/NYbm0ZKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVii6JQbDBvRceJAzuTXtzcaVEw67/RIwzYjDRyvlMuR4Gz+DK
-	5nscd1fUeePiPT56WLeJO0MG1lSyGg1jllRT7qT7ggPHolv74zKkPfCaZuvR8+/pXpjRQZzXWtF
-	AsXoVUmEOe49LD8cKEqEWySLJUhUaSnrPHWfB/3v+G6bUw+HjlgOoeYMWYtIIDMs=
-X-Gm-Gg: ASbGncuureTKTlG+XeVvOlxaXdeaPRNxk4cVf3XLoo4mrbJgFbY+5NfXBa3cMLte1KO
-	jsjQPdvgnNxn2aGPQxbOJ3X8KjXrvP16OYnJLO2UDuBogCo1z/XyrEBVx6+AYP/lP+dQwaYFMq4
-	+qikjTlHBD5qE02lWyhZ7XTOhaMSTYQfd68hEQjZgGVcOjCjsYVqVlqZsL8RQCyM2+EVPzwQDwL
-	s6i29zTpuP2hTM1x2ggq2UaofYjcDcYkP1ouHK87z5BpEe/83TF7bc+q11NHJLKtV0PTlT6fZhB
-	b18ky/dgTYiYnCyJ4p7UUC3JTHNTXbCyqZNuGKc9eGTyBlV3bf2waiA1jG/2qAJ85wEkBzuKjGJ
-	YzJQ=
-X-Received: by 2002:a05:622a:5792:b0:4a4:40e8:6e23 with SMTP id d75a77b69052e-4a9af1cdd94mr55938281cf.2.1751968867524;
-        Tue, 08 Jul 2025 03:01:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZnC5Cdjb3gvmhNxFzfuEuiFwvA9CntFLERXntN3Kd6tNI1FJYzPO8V5RedGFE35zBoCMnEw==
-X-Received: by 2002:a05:622a:5792:b0:4a4:40e8:6e23 with SMTP id d75a77b69052e-4a9af1cdd94mr55937961cf.2.1751968866897;
-        Tue, 08 Jul 2025 03:01:06 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae411a5429esm634556866b.16.2025.07.08.03.00.57
+        bh=AFaofTBqf3jJFFOESX3JkhI6vcB/g19rZziWAPYTo4g=;
+        b=leasAorOT7QzJ7srYbe+NU6fz277PxRrsPXgtS9PdTomnltwAzGYGuwhABWEYa0y2x
+         bnEgcsFhyJNTO9BxrDkxt3YfEjedb8p217RFmP6COXeoCn/X4+/Ex9YxwtYmEJsbIflv
+         DaOVrsSiDp/FxbhREqU8sNAKAqBYEmPRPbStu1oCmQ2r2sh/riRLt4GgN0fAjatgX4Cv
+         qftyZQ5B0aAPpM5xdk4ddlUMcvGnKNzTO14XXfUmEEdV6VTWUjaFNDSykyiE4rAO2kmf
+         UxB5ChEGOYgV3707I5hyBL40ZMXALndqJcqX8KxpRiIlBe7TKep18ySDQGJXSM3H9Tud
+         RAUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnpa5tC5ygV9jhcsz+p4o+TuoXY/9ccfNWoEUlEBBACGGQNVm5AMqMpK6aevaNnJjCHAfhKUL7/CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7hCxbh50oVp3P+89EoHLpKj5v/4PWO5L1AL1aSr0697nHiDAN
+	4VDXPeu+sWEzliqLYUzo3HED6GHv30rFr8sFHPHkakFw9FES58NN3KvXSF3aAYD1+tg=
+X-Gm-Gg: ASbGnctsshWtafpnI5JpOniSRIk9VNBkgBHEkhr5GaREaNEGpReRi31Hhp9gIXwpIcS
+	y9AAnDiR/DIs9fYsnpTmnii/IEXzApQ+cnct4tkY0g6IgM2N3Ood4Kg5aUwbKbbWUQ3lw+T5gFB
+	hoidQHmXi82GtyzqYEXkjZi83KmDPbMuwqNDjxySaFlpCXjaUqS/w34kXrPTl0qZYUKaAxuFs1U
+	WYIuMKEDAvjfsioFpok69od7fHcrX7NgKMaJCucDpHw851wX/3l8P60VCIUlKRESHvGfG38gXka
+	2slR0Bm094angjQcROwoDbSHXZGTLLZKw6xwjX5CwvlPFyScPtbrBaWyfJQuTNDkEPMurw==
+X-Google-Smtp-Source: AGHT+IH1qd7qj95HCNmkjaef2cJo2Z48HEAQTcdtLEjCxkTcfgtf7esYUZor7+6jXUs9BBNtYqwt9Q==
+X-Received: by 2002:a17:906:24da:b0:ad8:a935:b8ff with SMTP id a640c23a62f3a-ae3fe59934amr1264867466b.31.1751969157067;
+        Tue, 08 Jul 2025 03:05:57 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6bb1d4dsm881665066b.178.2025.07.08.03.05.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 03:01:00 -0700 (PDT)
-Message-ID: <044bdfc9-85df-4f03-a4f8-8ef1717138dd@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 12:00:55 +0200
+        Tue, 08 Jul 2025 03:05:56 -0700 (PDT)
+Message-ID: <4f45e4d3-9b06-4669-ac1c-c277b9402831@tuxon.dev>
+Date: Tue, 8 Jul 2025 13:05:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,88 +66,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: qcs615: Drop IPA interconnects
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
- <20250627-topic-qcs615_icc_ipa-v1-1-dc47596cde69@oss.qualcomm.com>
- <20250708-amiable-owl-of-enthusiasm-e75662@krzk-bin>
+Subject: Re: [PATCH v2 03/32] clk: at91: clk-sam9x60-pll: use clk_parent_data
+To: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: robh@kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ varshini.rajendran@microchip.com
+References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
+ <cc085ca99d75fe59c13acd74782d8437bbc1d65d.1750182562.git.Ryan.Wanner@microchip.com>
+ <486d447b-9984-4044-a620-1d73ffd54111@tuxon.dev>
+ <784f30a8-e524-41fb-8b14-99483116e657@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250708-amiable-owl-of-enthusiasm-e75662@krzk-bin>
+In-Reply-To: <784f30a8-e524-41fb-8b14-99483116e657@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686cec64 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=mnq6psiAt-L2oik7x9cA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: V6bKjWsWtc_ib_9FLNqpiDN6z9EyjmQe
-X-Proofpoint-ORIG-GUID: V6bKjWsWtc_ib_9FLNqpiDN6z9EyjmQe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA4MiBTYWx0ZWRfX5EQ2iJB88RLB
- vMIVnPRUM0kSI16EZNT+t/wUIx4zDhMOxoD3vNv97t5ze+P38A7ilZNpQbtp51NvuJ5PrfT77Yn
- rJ5nloC8G30IipDNjRUhSVYivr53n0DKBa2t/BWXZiXHEDQw8UjdEhCRHXjRqeYibwPVF3jLDhE
- kIznQSIW3fKyxr9kgpf6QcESLNGUVNIUtt+Gck7R2I/H6H5lbny1Rzzut3c+DfRq1xVCaXTET92
- QgVb0PIpjLc72P5oFoFwDMSrPk2L6YTvQ9atNoESTQlWEGqH7ANe7wfENbLi1oOxkDAZCm3dN6k
- y93ww15JzEh0FUJkE29SNy0nX9IyKNyzkslEx/vRM36rjNSjPQ796gsp4Uf6bEUzd099XZ8kg3C
- L3Yfhy1dDO9Pif2PMfmpFQMopwdVoXOFhVP/qnuGsimCDRBceptzOI6H2p93nWC4fOn6/tDk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=895 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080082
 
-On 7/8/25 10:51 AM, Krzysztof Kozlowski wrote:
-> On Fri, Jun 27, 2025 at 09:37:55PM +0200, Konrad Dybcio wrote:
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->> In the same spirit as e.g. Commit 6314184be391 ("arm64: dts: qcom:
->> sc8180x: Drop ipa-virt interconnect") drop the resources that should
->> be taken care of through the clk-rpmh driver.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ------
-> 
-> This is non-bisectable and breaks the users.
+Hi, Ryan,
 
-Of which there are clearly none, as can be seen by the node not
-being referenced by any other one. I can add that to the commit
-message.
 
-This is actually as bisectable as it gets, since it goes out of
-the way to satisfy both compilation and dt-bindings checks
+On 07.07.2025 18:24, Ryan Wanner wrote:
+>> Same for the rest of patches in this series following the "Remove SoC
+>> specific driver changes" approach.
+> Would the best approach be to make every patch atomic and change every
+> SoC to match each clock function change 
 
-> Should be the last patch,> not the first, with explicit notice that it must wait after the next
-> merge window.
+Yes, this one.
 
-Patches to all three subsystems can go in independently to their
-respective trees (except maybe icc bindings going in before dts
-could spawn a dt-checker warning)
+Thank you,
+Claudiu
 
-> Plus this affects all outside users, which also should be somehow
-> explained. "Spirit" of some other commit does not apply here. These are
-> different products, different users. It needs its own rationale and
-> justification.
+> or put back in the sama7g54
+> clock driver changes that where combined?
 
-Yes and no, you're focusing on me referencing a different commit
-while I included the same rationale it presents later in the
-sentence.
-
-Konrad
