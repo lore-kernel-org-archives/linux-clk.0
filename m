@@ -1,119 +1,183 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7171FBE8B;
-	Mon,  7 Jul 2025 20:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0229019005E;
+	Tue,  8 Jul 2025 05:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920898; cv=none; b=Vcx/rSma/Qra5dDBnIGsdAJ+P2snQ0bXrjvhIfosXiMvQgcmhGkNwsY1MsIIuPmqgO+5FcV5fr/2nGT4CSQ/h/JXK7sPUJWBoZZozjKnEYBYXAcLaYXRpmwYCyb2/Cl5jEtEeKK4XrIR30OrC7SdlFf6kK07BqFUqiq5JeHymkM=
+	t=1751952565; cv=none; b=tvLhMaZAkDaeuEJJKTS2ntLH99NxAd8av5Kce5ewpF2xxopeMbVKR3QSL3EABACchK1jofh+76spO50GXpriHBCOQL3eMjrZ+cvgIUSKPQzjmMT2wSGCRaD+UKm8pLrdJWgGunooT5qNKPk8/rdi8sRydBL9bKj+ciGw8mARXCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920898; c=relaxed/simple;
-	bh=ZGQ4IAp72CD0dvJdEiopEpJnXGG+TmleeD6jQxCqY6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdMFAWCi1uE4mcp+bemPS+6Zl3BL+cJNigA8krLLk73TPGiXtZFg0L19PwUQSuKDsLp2aCrXg98/h3UL79Ie2QFky2UJ4eBb1OX5QDXL2U+jwkRdCGj7Vlj5LjCCln+KRfiCuMfOJFjs8gsl3vfohDPmHtGxAaUhqhqPq0NNKNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VeXjWCcK; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VeXjWCcK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751920897; x=1783456897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZGQ4IAp72CD0dvJdEiopEpJnXGG+TmleeD6jQxCqY6s=;
-  b=VeXjWCcKc82F7YtqXVKkjkpZb7zuBSwb2dDfpO3ykygCt2W2PxXe0tBi
-   OJDXxQbYaYqpxH260ZlJ3HU2m2JgmfKk+WtQNI1s3aUlsnT2pEq+mjIlc
-   RJ8EOH12IKnxbvwsPLKkHP3GNXSU9XDwKUyprpiMtHy/q81UASBJGzod7
-   HZjbgqhHMc20wS87auVCqkB6rMMkFQYeH/+Gb2mIv3D3gGP0EvaN2yNVK
-   yEvR+HE2dw5MwX/Ev1ALLalHUVKSeTJGlVxeWKlq3UANecQ6EWIAUGEiI
-   l8iJLkClwbX2bgQRpdOhd+o6hZENuKfosxn7JNtQGb5Rnt9IytXJlJ+yk
-   A==;
-X-CSE-ConnectionGUID: pLhOTarRScGlKkEvcdTynw==
-X-CSE-MsgGUID: S5A6f9z1T5OJXaIaatgzOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="79582753"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="79582753"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:41:35 -0700
-X-CSE-ConnectionGUID: 6ZV0IcV6Tc++xPaC45N/Cw==
-X-CSE-MsgGUID: G755qW21QSO3Gx55MFvZOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="186342805"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:41:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uYseS-0000000DORp-3aM4;
-	Mon, 07 Jul 2025 23:41:24 +0300
-Date: Mon, 7 Jul 2025 23:41:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 15/24] ACPI: Add support for nargs_prop in
- acpi_fwnode_get_reference_args()
-Message-ID: <aGww9GWPdwTFw2kl@smile.fi.intel.com>
-References: <20250704070356.1683992-1-apatel@ventanamicro.com>
- <20250704070356.1683992-16-apatel@ventanamicro.com>
+	s=arc-20240116; t=1751952565; c=relaxed/simple;
+	bh=0rsn2uNMnl7vfWMCrOeKinbuO0IGrhc32D7A+bp2UiE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B9wmu6XaPzijnCjwBu7Pd7A0wDixccywNyVJXqqheoDKnO0vobcPYsbEfe9tEaKbET4SFN8sMMFOgkT9aSU7B1tOsIaPev9XzMuKli1VA7hcGnSm/5tr5IdqDz7U2QR4uR3I9BsNpSXqjZvB8F2gd8wMibR/S0kSid46L1EJNZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 8 Jul
+ 2025 13:29:09 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 8 Jul 2025 13:29:09 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>, "Rom
+ Lemarchand" <romlem@google.com>, William Kennington <wak@google.com>, "Yuxiao
+ Zhang" <yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v12 0/3] Add support for AST2700 clk driver
+Date: Tue, 8 Jul 2025 13:29:06 +0800
+Message-ID: <20250708052909.4145983-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704070356.1683992-16-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Jul 04, 2025 at 12:33:47PM +0530, Anup Patel wrote:
-> 
-> Currently, ACPI does not support the use of a nargs_prop (e.g.,
-> associated with a reference in fwnode_property_get_reference_args().
-> Instead, ACPI expects the number of arguments (nargs) to be explicitly
-> passed or known.
-> 
-> This behavior diverges from Open Firmware (OF), which allows the use of
-> a #*-cells property in the referenced node to determine the number of
-> arguments. Since fwnode_property_get_reference_args() is a common
-> interface used across both OF and ACPI firmware paradigms, it is
-> desirable to have a unified calling convention that works seamlessly for
-> both.
-> 
-> Add the support for ACPI to parse a nargs_prop from the referenced
-> fwnode, aligning its behavior with the OF backend. This allows drivers
-> and subsystems using fwnode_property_get_reference_args() to work in a
-> firmware-agnostic way without having to hardcode or special-case
-> argument counts for ACPI.
+This patch series is add clk driver for AST2700.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
+
+v12:
+-fix mistakes commit message Acked-by:Krzysztof Kozlowski
+<krzysztof.kozloski@linaro.org> to Acked-by: Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org>
+
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
+
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
+
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
+
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
+
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1138 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1412 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
