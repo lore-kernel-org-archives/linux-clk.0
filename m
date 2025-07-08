@@ -1,159 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340832DD5F3;
-	Tue,  8 Jul 2025 12:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DABB2DCF75
+	for <linux-clk@vger.kernel.org>; Tue,  8 Jul 2025 13:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978860; cv=none; b=Jp9UwJm3vMunGrGnzwzEhKl4QE4TV3rvCtSpNygvXoCrJcJiwJE9w/vaAb7GlaH+ARK62vKI10Yilnf9upf6Ihn69Atv1XTYyM5g+i0iuZFqHP3rO1KVkZgESqAzzaN4h95eDoM6ugbxMzbGhphHTvjmAEvS/lKWvkNfCM91UWY=
+	t=1751980123; cv=none; b=LnaTJ9OmYZobJOTmyPj7O4zxCCCvSbWJkt82bLTNReZiw0nEKSuxTV3ooH7SYWt9Nrra1qQZBt4fwtM3PNpR6Dcyv0BtN7GIK89GNLP7Jn3aG0ljqmYQej/PqsTh7zC1fs/aHMO5AGh1WYzOVNUUPAdrNU2unRRsjbwcG9cw6SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978860; c=relaxed/simple;
-	bh=nVcGMtqovNhYLTO5f7VRPEzyfGwo4DPtY/nMhcKEtMw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yx49RasJt5eASClHKVx+MvYYwUUtqx/pPysVXKe8TIFTNU9jbJ825Er3tM1zrvF+PVMRQ9FU8MaWfjFw+1SMS345AX0BcDBtD1WpNZVSWlqEvkC/n8KhV5P2nfg9a5cJJ36p0QcKUn9xqykZzyPbYPoV1/l2pvSKWfrR5eozJXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=semBo5/H; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751980123; c=relaxed/simple;
+	bh=WzAnNBoWqDOEgWIAvOrUUm+cPnnAQsDqlITlF4IdpJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmiwhb9BOy/tqh/ukmWsBMFJ5VRLzmGOpfQI3+2Jz52bUw97NHiO0GbH2hqYzF7CwK5Ao6jwoZ3NY3WiQ7dTtfn7Sfh9dU7K3JCW4pdSU+6mc4fTG81vOoHz1u2Tzl1YXISbwsUFtyCM13hpJzovGOrypO9qyVv8BjTNmxV/N1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UJkmmfuH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="semBo5/H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A242C4CEED;
-	Tue,  8 Jul 2025 12:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978859;
-	bh=nVcGMtqovNhYLTO5f7VRPEzyfGwo4DPtY/nMhcKEtMw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=semBo5/HZQ3/yrkkXABfj8viKzKZDYYs4/ZA76H6cChJjHFqHQTp/oIdyCXUkkg+h
-	 B7am+Njnnl5+y+yOSAetXE6eFt+gZqwhYcsdadO2YSzlVv2mhT575cl/4RdtnqEGoV
-	 2bP5KmArXca7CCsOfJrWcV0TuPDOCDQ1xHi2+WqysPLwVE5j3KRrXkZg+CEYAogfjF
-	 1EqB5H9B3bgKbPx3e/TGj/orxodMDJlril6lJfMD6LcwlYHvkakJaRBh+NdjYwRVak
-	 V4OZgJEJsEPrveahrCPvhRckc+3UHP7ib5WsF2UMre8rZ7/jO7XOF1W6BzAmzSI6OV
-	 AyRQ60aYqmQ2Q==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 08 Jul 2025 14:47:22 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8750: Add GPU clock & IOMMU nodes
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UJkmmfuH"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAWVT025574
+	for <linux-clk@vger.kernel.org>; Tue, 8 Jul 2025 13:08:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KmIrXBmloEveFtaKUykatLGYGI7N92PV13SbV/egCdQ=; b=UJkmmfuHN0Jr6kLA
+	ld5/JgheNu5sbMNgZkiwYUgO4GjvZ0BhglW00c59meaADsYhrZJWYQqmA1gc/OUc
+	DUrnK/NvCvH5C3ONM0GjvGKFSW0GsKNdezqCPza8ZE4tevjkJ9e1npZeNjJmh0a+
+	INZ4fgtIBBYO0j6f6etpT389hYl24vuIu2PlUOUPRwGL81B4dcop5sZWnBHRiFtS
+	shOo7dNQC/vBBtAFgTDT/48Rt3FZKyaSlMLbcUDvTnThA0dRBC3CHwWIE5u6O4Qv
+	lz8B4EKeQFe+0hY6nqY73fapqXHeHNzj+ARgwUPzAaWQ1qY+sXoEn7n7SuSC6Xxx
+	t7bbIQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0wdcxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 08 Jul 2025 13:08:41 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d0979c176eso42181685a.1
+        for <linux-clk@vger.kernel.org>; Tue, 08 Jul 2025 06:08:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751980120; x=1752584920;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KmIrXBmloEveFtaKUykatLGYGI7N92PV13SbV/egCdQ=;
+        b=f+lfehMbQFjz0p98WtPWmrDKHGHPparCW0elAHngEdWzLY1zNUFo1d4Kfk9j6ep8fc
+         jiYGivN1t7Df4/g9qILl8raQjsCBQ+RWxu1gUqm8+YaDnE2Ak1X4nzlPKOF4LdEozzQO
+         9zmBtOCdpnz+N51LVvHMq/qKXv7Ibbp0fOeS0E2fmhVoRRNa13Mf964OHPKtKCz6xgZH
+         fExWy9HxLFNXtA+eFrtOY/Gglg7IC26YVVL1r2kXK+3mbCa00reX5+EsnhUy8dqczpwZ
+         1hoRxA/UY2pmbgu3DUkF88RSScLrIG/lnk1niKVP/je86yp1GprVj3vsDtYovRA8WEjT
+         /IeQ==
+X-Gm-Message-State: AOJu0Yx8l8TCKHo2OWi7NubJh3Wlt7/03qjQLy5AM2ioNOfzX3VxAASz
+	sNHBDSYNoD8eZpiluEHYzM0hp0A/b9BuikbTNcAZ2tJ8OSe3Tu3JN4g05Kw0WPU8V3qgg93ln+h
+	4ZKGGuU0WfJkEXq9D7NXRbm3p2+D9IE3DFFAIEOBcklL4dqt2DgBpUAdbjvldbQ4=
+X-Gm-Gg: ASbGncvIAqUe8Mr8PaB4XUZAr86XY5YiKUlvVKZ6dQrAas57JlJ5zvxO4dCpLRMtEzV
+	ZIXB5D/op8aD+YvXkxNYa9RulAM5JnQaPsRUzc2ciCWvF9bdE7DmLLJr/EPZBsOFdms9lSKhl0L
+	Rdu8lGDcBSQvfVrjrFCHzg9Jc4ZnClwTBYPBzNZ/OAzBrf463bK/KQqCrgafmbvvZdBtXHiwY7p
+	dHdLf18QylP2Bc92vtuiC6riWBvT7HcVklm3zMEQdMuJzTdZ1u/6wgA6DxOkR7H4rAQOQPMi1vh
+	5lQHCMDdBhRnXdLp+gpw+0jL+zMKWS19RxT3Qud3XcdX7H6uzyVgboRP3dJMBY1Djoft/6iDdzd
+	vep0=
+X-Received: by 2002:a05:620a:4148:b0:7d5:c1d9:939a with SMTP id af79cd13be357-7d5ddc689bfmr784813585a.9.1751980119791;
+        Tue, 08 Jul 2025 06:08:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjMkzcx+Tq4TsX9kndjZh7wHfMuEQIojKWDO/yYN17QbawLmZlZmFuRE1iLw+w/7zUU6OuFw==
+X-Received: by 2002:a05:620a:4148:b0:7d5:c1d9:939a with SMTP id af79cd13be357-7d5ddc689bfmr784811485a.9.1751980119240;
+        Tue, 08 Jul 2025 06:08:39 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6bb1edfsm883127366b.180.2025.07.08.06.08.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 06:08:38 -0700 (PDT)
+Message-ID: <fd367b55-fd20-4601-ab03-b398dcb326e7@oss.qualcomm.com>
+Date: Tue, 8 Jul 2025 15:08:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-topic-8750_gpucc-v1-3-86c86a504d47@oss.qualcomm.com>
-References: <20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com>
-In-Reply-To: <20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751978844; l=3538;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=7WkfONM1t9IOjJmIQnSYmNaGuqdmIeuahhgix3BR1tk=;
- b=Lbh77eD9/3OfcUSBIlsUsj8sjPlqjng4E/ZDYqC6/ERJib2Dqjgs/wCNIbDc26wkLNV+QjxCo
- glrzhhAnd8wCTNkI0vVa0OSvSx574/1tuiiI4WLV7kyepodxQbQo3Sb
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
-
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] clk: qcom: rpm: convert from round_rate() to
+ determine_rate()
+To: Brian Masney <bmasney@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+        Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
+References: <20250703-clk-cocci-drop-round-rate-v1-0-3a8da898367e@redhat.com>
+ <20250703-clk-cocci-drop-round-rate-v1-3-3a8da898367e@redhat.com>
+Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250703-clk-cocci-drop-round-rate-v1-3-3a8da898367e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: YHPt-li61ZbO9MZY6djqH-GIk03Bk3-z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEwOCBTYWx0ZWRfX2HvPE5nZNm1T
+ zqXzZnAkxpd17KhuUQciMjCzv49tGlN91sHO+Vn8WK9rRt1iNkDAJvMOn2H7uvGtuZJXL1fx8Do
+ 48tusGg8nycxLJ/tNsSnfZPFzoZqTRnp6cC0F2xoWRQsZyWW2CcaCEdWDlhF0+UUwOcMqJaUvHm
+ N6zWfVs5S8BEQJ6KykHZMBVyXHZ+eScnl9e8bed2Aj87RyVXk0qAmyZ753rGaAzbfxrWpsC/3rg
+ TMblPARUT07Q3tdxNuSseXvXTpttTABzHd6T1YzXxjSHcaVP7aJFM8P+Ebgk6kVc70pR0NVFo3d
+ L0Adl0R6TYEFaM6Cy3LLzqKHyuLDSq7YKaD8Zjs94JAnO0SFD/iWaYVZ/gy/e9lh+ZQgAZRIt/9
+ 3fDKAQefXqMvwnhomWx+kr7N/8qglK6JRaOvJz25D1Tao5/cUwVLZ/xf1HQhQ/eFLUK7anre
+X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686d1859 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8
+ a=oBXrOfH6mq4iYN50PBoA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: YHPt-li61ZbO9MZY6djqH-GIk03Bk3-z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=798 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080108
 
-Add the GPU_CC and GX_CC (brand new! as far as we're concerned, this
-is simply a separate block housing the GX GDSC) nodes, required to
-power up the graphics-related hardware.
+On 7/4/25 1:22 AM, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-Make use of it by enabling the associated IOMMU as well. The GPU itself
-needs some more work and will be enabled later.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 63 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 4643705021c6ca095a16d8d7cc3adac920b21e82..ca0770a34bed64183185aedde04f1bb96eebfa91 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sm8750-gcc.h>
-+#include <dt-bindings/clock/qcom,sm8750-gpucc.h>
- #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -3154,6 +3155,68 @@ tcsrcc: clock-controller@f204008 {
- 			#reset-cells = <1>;
- 		};
- 
-+		gxcc: clock-controller@3d64000 {
-+			compatible = "qcom,sm8750-gxcc";
-+			reg = <0x0 0x03d64000 0x0 0x6000>;
-+			power-domains = <&rpmhpd RPMHPD_GFX>,
-+					<&rpmhpd RPMHPD_MXC>,
-+					<&gpucc GPU_CC_CX_GDSC>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,sm8750-gpucc";
-+			reg = <0x0 0x03d90000 0x0 0x9800>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		adreno_smmu: iommu@3da0000 {
-+			compatible = "qcom,sm8750-smmu-500", "qcom,adreno-smmu",
-+				     "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x03da0000 0x0 0x40000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+			interrupts = <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 574 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 575 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 576 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 577 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 660 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 662 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 665 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 666 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 667 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 669 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 670 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 700 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-+			clock-names = "hlos";
-+			power-domains = <&gpucc GPU_CC_CX_GDSC>;
-+			dma-coherent;
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sm8750-smmu-500", "qcom,smmu-500", "arm,mmu-500";
- 			reg = <0x0 0x15000000 0x0 0x100000>;
-
--- 
-2.50.0
-
+Konrad
