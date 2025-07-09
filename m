@@ -1,160 +1,128 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869312D6636
-	for <linux-clk@vger.kernel.org>; Wed,  9 Jul 2025 11:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77D1C1F13;
+	Wed,  9 Jul 2025 12:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061732; cv=none; b=XN3ATQfnmYNJGZMq36LfDuDkOvXq8gOF/gqrB6U0XiFdreDJUrYvPTtow7vHmAGzA0BuX/vd+gf049rV8bf29uGEAx4hib75RF5ALQcLlvCsMiQpwLgKUfYfHp3terKcq5od1n+t+0uB2/miLqzE50NwnqNL6tNuJB0aA9j4INU=
+	t=1752062892; cv=none; b=AbqKM5fHhM4iCO4Pmy4fxVEFI+gsQ0lNDrI1tiebj7GzaOjGqh8ruOdYhDmgqGeBwvlgFBGrGK5WIIOByncT8qpb+BU+X5FvAmLJDOWFO7gQZn4VUChRzhRUvu/lG/LhSGw9X9CRVidiFnIWQuJ7grQQDFAH4utCcwg9pv6NHaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061732; c=relaxed/simple;
-	bh=LuFaLCJ0xTPoiWwHiRW6DMu6C4be3/3wdgnHwU5aw20=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Z/J3WnkG+zx+WRoxg8sQ75B4ax0i82OZJ1v75mwLc1lBKUJg/ajFWjU5RcJxTMTVCrlfFsPtrz5AqrEgOuynGgvLkwTEg8eAPnUcoHfdob9U5tUnajBFZuonSFuhdT2j8vf6Ss755k1qBToFRcjMSwb5BcVTc/74zOwKvgwDiTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=N6Qx6lO2; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1752062892; c=relaxed/simple;
+	bh=0TGwVBbfI4sy043o3QJVws4UO8A5MpgEz50iBrBsWKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUh/5zAzIprN1as7SYEL2SB7bSSpo0AFmHwIhoLZJqn6CQwB+8PHTDdvx/AC2p+lLlm44xmRM1DFuK9Kixrm1fyS5oNmuVGjTOL14zUaggP333ZsunwzdDZwAxWX05eQPw/KRSECRnNa++O2CWJWcJkka2BgAMIIxsRq3Vox7+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAxMDMb+; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="N6Qx6lO2"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ade76b8356cso994999766b.2
-        for <linux-clk@vger.kernel.org>; Wed, 09 Jul 2025 04:48:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAxMDMb+"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4f379662cso4765734f8f.0;
+        Wed, 09 Jul 2025 05:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752061729; x=1752666529; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R7251uwJfwlSq32A9Vp2rgzafVtiNna6bej3YLziW0U=;
-        b=N6Qx6lO2URXqxTheYpr0pbnhSDFAlFwTG/3+A0UDlh+TWi08qhFU7NLS4kHfJ5RkLc
-         fqRyFyyn0x4JezJj6FOUIThCMs/mSSa7+IVNYFO/dejS4h+iFB2f2euXiN/jJpJ77mDJ
-         n79c+jZGUU/mH7KnKAt/sJ/XW/eY6e616pUK+Y4m1F1gtljFQ5wsFy8r/JSUe8uaWx9l
-         apeqCUr1j11/vrv543D2c5eUWITRibL2488RJCAlN7r23isPhIPVIYdUL1nT4sDtmqAE
-         sne5ox5AjQzs9q3iDVt6MwYHfzlloI9WirB08iqZ5SMWr7qTg+hFeNWd3YcppJ8vH7Jn
-         FhZw==
+        d=gmail.com; s=20230601; t=1752062889; x=1752667689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
+        b=cAxMDMb+sddrYzl7Na50BgJ3H9iVEXC+49VKj+pUC6Alb/h9pDKJYm77VqKbD47ye+
+         /2Q5/ahrgJe0JJtvRkutPPxg5V6fh9kcmSjeN9Q8oxPxFyr5/ZpoHNgK7jrF99JybqE7
+         qHJ1RD5DCkynzWX4RIVhTlQ/a3gvILNRuJ3xDnIW8nNwlDalJn0868fAxQr6VVYVg8uD
+         qtBB6R8Y3j6uB2rM1Z7bq5NczWtrSecfx5IV+ggU8goZlMHZ2ZwAncTO+ppG2B+sb1IN
+         lxbjbhb6SQ/oMYg+C5IPqb20KNfEVtBRGTNgFuwoFDVhz8LyUkYzwQGEnwX4iF7zdQmw
+         mMng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752061729; x=1752666529;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R7251uwJfwlSq32A9Vp2rgzafVtiNna6bej3YLziW0U=;
-        b=QT+NU1EsbmoZkt+8sEi12AIYxHnBjWjhJ2YBNuF/4Ex9QUmQzHkynN5ELzUPFj43ET
-         eU2wbwwb0WkM8epOiXxIrbL/kNvd2lUuK+01Q5Z3j5z3IQf53avmuWjLTzAzcJ0Qoqde
-         k7X3GYstNtbm6oy5y49rBQLTXW83kPfwbJZUBP1Tpg4APcbNgdzhI4KrZ76gr2UIRR3a
-         nKjtc81ftOPzRfG+XB4/4QBfj9Xo3KNHdu0cMiJMe3YHDw/KBmjnp4DnnpQYJqlKdl0E
-         CpJxDVktbNsy8dE+T41zXLM5xRM6hMI8UxZEJ6ZGgKYp4idAVZRJkZEzVf+p6BYM/utO
-         kMYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYjH53os8BNpPfD7Kv/raA/9FUQ7felJlcn8Xv2SPgikGqHgv+q8Q7+mTmwuNSsBIWZAXhVyzLhWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJt1KUu9FFbfMRqGePm0KA/6Jq4blqeY8dkdCk1gnw7OZ4/3qE
-	OkdXFf3S2rE/azx74dCiq59UoCj3NBGzb7B/MprGijcnenI/a4alKpcHMjYVyvslumc=
-X-Gm-Gg: ASbGncuLLy08wT7K8dttpc5FXhM3S8dq8RzO0FQZE1Rt5y9klrou/jGGUjQxgQo4Bot
-	LVvOWQqQI3Ti78d6JioRnQ960/FM6x7UditVZFbsq5TIZQRBHVGZj+nwATiLf0IAejzFdfA5urj
-	o/WL8qP7w78iFf+a9vQrFhO9Tek2jsSDRkgbT6S4Q6BKb2xbLU5ml3l3e44tsMecSbC9tlBKhXi
-	Te49sr2Gx+QC2z5VQjthnMvcl1W2qaDh2gnpfF0G2ts5YfmBjzsh3YoPpvcnyrFX4YqCc1/6R0G
-	lXsF4l6/Ytol9XHwqGt6vXq7s+sRaGT4zDkdrh1s3rMmwNmvLf/vtrF9CwZPz6nXlQH3ZB6p4d7
-	tVxuOQccAjG+l7WqiyBtltbcsc+K6UHU=
-X-Google-Smtp-Source: AGHT+IFHTk7KUMsYqkCmoCKYDOQn2JjjlDGYad8nB1UbcgqlsPnK+ZRxIkDwhxTp1MQMCfkMx5xzIg==
-X-Received: by 2002:a17:907:f816:b0:ae0:a88e:6f20 with SMTP id a640c23a62f3a-ae6cf5b81dcmr253307366b.15.1752061728625;
-        Wed, 09 Jul 2025 04:48:48 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5feasm1091150266b.107.2025.07.09.04.48.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 04:48:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752062889; x=1752667689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
+        b=l0OJfZnJcU0/EhEV9zN8HdMRMe9vel2BVuzKrtx/OCBAAxLa50SBYpNovhMm7S1orp
+         uVGH2njYNID+2Ekmn8BhYxNYl65z1OyU+EPY/ktuGfSRvs8zJ3T6VPsWEl1X7LKY5WaZ
+         YSepUfy+R1YmZyQtDpUeud1Y/qlCh3alG21vwrFcqUqL9/GD/dBEix3/KSpdkJRNGD0D
+         gcZyCFj47EtFiqDTGagJ/xvjAF+crKxo78G8XSTmi369eu9bluyQZLLg6MBwA32peFay
+         4eVqDptTrkw/0CFrQ4bxCgnw4jIWJaNZ6yvvihnzmiACQTF8A0OA9Wjlv1ORQi4XG7oQ
+         1vgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW5xc8rfR1ZQniMHQg1LoRDrEsw9hHQKi8xTNR0D3SFNz4Py8LoFFwvcfuHeg6eWIU3O1gGL3NR7E=@vger.kernel.org, AJvYcCUemqk4R731VWpGicIhPIarxv54JPCvpj1J/5S89uw1WWecu8rBwYnWgFG/HI7i5fJXlUzR73XnW2PeZ0g=@vger.kernel.org, AJvYcCXF6OQ4qluHDBEGTlQin9CJB8mmWDw9W1/DD7ymjDKyFsm9HChcSWLcYAnbZUUQUEQfx8gGqYGNroEBaF7J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGaCpSFzMXP3B9gOtZ0YvEDJ7uSTWXDsMrbY6DYBmhtroCoTYN
+	UH5a3eNh8r2FIQnhLXPxuXcidG4fck+Owf4Kl7NeDC1oyeoCuEo9CQ74
+X-Gm-Gg: ASbGncvvlqDJAX9WbBJ4qtRi39bFRQjiqIgd+133QHZH9PJen/aVIqrqtYuEMTE55x7
+	tZH8NXM9pB9IutJthyHECcMpu+p0MphDJRXk5haSd2/TDGjBJSJIl2jQ91X8nzYRWO94CDFEass
+	EQ2OxlzASoyooEwpFoVoqiQvWXs+BD68W2D/HjMf66AIIqrFFCCTU1P2y5eMIyYjQszBV72UWaf
+	qn/Ndt6pGPddCDvGFHLADjYYcT3XJ/pu8mn5KBjx6agD9pyrHhOSx+Qttcx5o2UyXk6MMzYFxSz
+	+yuntTKUxb2eQdzcb1e/sbCXr3KQeMoCZbb0oxyk8kbRcyS3n8wUlwm/4t9IhkJsoFbhdhxgRaG
+	0lBZhjItlEDDhUygCQbuX7rdZFpLo1QG0m6kvovUJE2GI3GBV
+X-Google-Smtp-Source: AGHT+IEA39s86i/v0pMayG6MQCNXniIC/f1IoHZeBXiCa548AvyVLpkQNHziiLzE25s483vSNV2Eiw==
+X-Received: by 2002:a05:6000:40cb:b0:3a4:f038:af74 with SMTP id ffacd0b85a97d-3b5e45311b5mr1977474f8f.51.1752062888454;
+        Wed, 09 Jul 2025 05:08:08 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470caa1a2sm15396455f8f.42.2025.07.09.05.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 05:08:06 -0700 (PDT)
+Date: Wed, 9 Jul 2025 14:08:04 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
+ unsigned compare warning
+Message-ID: <jwlemmk4el6chr7fkzratg2si3s7rls3itq6ki7nbh4ssv3f4w@dxv5xnagtryr>
+References: <cover.1752046270.git.xiaopei01@kylinos.cn>
+ <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dwom3yesrtmpnusx"
+Content-Disposition: inline
+In-Reply-To: <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
+
+
+--dwom3yesrtmpnusx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 13:48:48 +0200
-Message-Id: <DB7I1Q9TD02L.2A18QMRU7VXHD@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Taniya Das"
- <quic_tdas@quicinc.com>, "Ajit Pandey" <quic_ajipan@quicinc.com>, "Imran
- Shaik" <quic_imrashai@quicinc.com>
-Subject: Re: [PATCH v2 01/11] clk: qcom: common: Add support to register rcg
- dfs in qcom_cc_really_probe
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Jagadeesh Kona" <quic_jkona@quicinc.com>, "Bjorn Andersson"
- <andersson@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
- <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
- <64e27035-d124-470a-bc5b-66d254b6ff4f@quicinc.com>
-In-Reply-To: <64e27035-d124-470a-bc5b-66d254b6ff4f@quicinc.com>
+Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
+ unsigned compare warning
+MIME-Version: 1.0
 
-Hi Jagadeesh,
+On Wed, Jul 09, 2025 at 03:37:13PM +0800, Pei Xiao wrote:
+> ./drivers/clk/tegra/clk-periph.c:59:5-9: WARNING:
+> 	Unsigned expression compared with zero: rate < 0
+>=20
+> The unsigned long 'rate' variable caused:
+> - Incorrect handling of negative errors
+> - Compile warning: "Unsigned expression compared with zero"
+>=20
+> Fix by changing to long type and adding req->rate cast.
+>=20
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+>  drivers/clk/tegra/clk-periph.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Tue Jul 8, 2025 at 7:34 AM CEST, Jagadeesh Kona wrote:
->
->
-> On 7/4/2025 12:46 PM, Luca Weiss wrote:
->> Add support to register the rcg dfs in qcom_cc_really_probe(). This
->> allows users to move the call from the probe function to static
->> properties.
->>=20
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>  drivers/clk/qcom/common.c | 8 ++++++++
->>  drivers/clk/qcom/common.h | 2 ++
->>  2 files changed, 10 insertions(+)
->>=20
->> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->> index b3838d885db25f183979576e5c685c07dc6a7049..d53f290c6121f31d06cf244f=
-72603b694966e216 100644
->> --- a/drivers/clk/qcom/common.c
->> +++ b/drivers/clk/qcom/common.c
->> @@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
->>  			goto put_rpm;
->>  	}
->> =20
->> +	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
->> +		ret =3D qcom_cc_register_rcg_dfs(regmap,
->> +					       desc->dfs_rcgs,
->> +					       desc->num_dfs_rcgs);
->> +		if (ret)
->> +			goto put_rpm;
->> +	}
->> +
->>  	cc->rclks =3D rclks;
->>  	cc->num_rclks =3D num_clks;
->> =20
->> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->> index 0f4b2d40c65cf94de694226f63ca30f4181d0ce5..dbe7ebe5b8710fb03c1671ac=
-9022e608a6aad35f 100644
->> --- a/drivers/clk/qcom/common.h
->> +++ b/drivers/clk/qcom/common.h
->> @@ -43,6 +43,8 @@ struct qcom_cc_desc {
->>  	size_t num_gdscs;
->>  	struct clk_hw **clk_hws;
->>  	size_t num_clk_hws;
->> +	const struct clk_rcg_dfs_data *dfs_rcgs;
->> +	size_t num_dfs_rcgs;
->
-> Since all other probe configurations are added in qcom_cc_driver_data str=
-uct, it is better to
-> add rcg dfs data also to qcom_cc_driver_data struct instead of qcom_cc_de=
-sc.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Dmitry suggested to use struct qcom_cc_desc:
-https://lore.kernel.org/linux-arm-msm/w4eujq72uqflqpsqshc7zhu6lkc7owufep2g2=
-rjacvzgj44vmf@auonp4ugbgow/
+--dwom3yesrtmpnusx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I personally don't have a preference.
+-----BEGIN PGP SIGNATURE-----
 
-Regards
-Luca
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuW6QACgkQ3SOs138+
+s6F5ew/+Kl2vGIaJ64fB7E6Xm2JjEiObyhSy9J7weUzAGKcRzIOGaZLJkU3hijLW
+RSBiQ5X4miuf8d4l6xMxKay1zEIS1fwFktZ8hMxxO0AHLUjNF0GbL1iI3zVOEpJw
+QlC9yIr8MIaIvlC/+5IkaTKVKbPdgZHQDZoqtFCuNW5dvlSE7Hi1net3t9UVuRk3
+uDRKnfGqsacjP1JRjkLFz3z+QxpWQaJmZVNpPkxclpm7ecdGWxf6+LkbuY//aOgc
+LBA1n3aeKe3YgHMZ/IWi+F9PDix+lrj3fveJKvYvJB5FrNhLauZa7b8na7nFpv1F
+VPs3DtI9F/xQr47gDK03/y49etZr+QHIzFSxnzLnRFfPwn2skdUTsxzoz0VgDTa5
+5SuGftvnWGC+8RokvKK6s0kBQrLqKc1qq9A8IHth8EPxiAKtHyb/XXzIRlRB2kX6
+EGwvGwos1dq8tooO64hdiDpze8+Hl9RBd3m10CjDH5hLsc+MQ06CKV8cPu5nTgZw
+1Xo5W23BnsieaQ+92lmm41UYEYh+SEow/XiwE0ze2I/gPXVdCLftQkpJs9LQMXX0
+zMiKhTd1Sl9lQ9zmoZygdSC6ii6lsIo8yrSOeRJCmQEFtsgZZWIwSSJEdxs8nP5W
+J7GXaF4nOriHIapiT2l3cRlWMdbrByhhFSkXUHAg4d2BmULY8Zo=
+=FfhE
+-----END PGP SIGNATURE-----
 
->
-> Thanks,
-> Jagadeesh
->
->>  	const struct qcom_icc_hws_data *icc_hws;
->>  	size_t num_icc_hws;
->>  	unsigned int icc_first_node_id;
->>=20
-
+--dwom3yesrtmpnusx--
