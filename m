@@ -1,122 +1,109 @@
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4145A273D8E;
-	Wed,  9 Jul 2025 07:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF9626B778;
+	Wed,  9 Jul 2025 07:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044909; cv=none; b=AUhDdj+oDab2csaRC0s0vuCc/AhERK7zLE+FPlND4u3Ig5KrYjrkk07u3+NSVXTIJuzx9J1lBfMEGA94rvGWhuZpt71GefxYMuK+37CsTGZkLvyY84Yts+68eYmbJAkfJ9QW5gs6xu/xegX23Q2mSwm60V1jlvud4CwwMFO6uEU=
+	t=1752045986; cv=none; b=k4l8bbcvcUwA+C4fm7PYijkChewD2OeCeGGTAac4WZIuaGRflLPvfaAEVxsMsbNzCaCgP9SwrSecNDWP94Rf5zRcoHVMvNQsEkLXo0nmpIza96DYncx/Gt+hrXkstbE963hDxR3QHzTAGh4tA2HeZdpkw5v51lExOb78fj2jeEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044909; c=relaxed/simple;
-	bh=0LtjXvqsRruXDJtU07Ulf5ytfTnCk8K7EwtmbcFBh/M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SNlvZ7HL1/OLPRvmL+RCVtx2hnZ7WpHt5P5IfSMuELD0DtYjFuGEupRxFP140fRHyQKYUOvBPe+F1x/4SvBbOnS9nDw8gZHZ5rlJOVVBj2buxayuCvYXqLPKOHEFF+MvP4qiVviZkBHfptomYNj6wVXVAZJD67UsHkLcjJmL5mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 9 Jul
- 2025 15:08:10 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 9 Jul 2025 15:08:10 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<p.zabel@pengutronix.de>, <horms@kernel.org>, <jacob.e.keller@intel.com>,
-	<u.kleine-koenig@baylibre.com>, <hkallweit1@gmail.com>
-CC: <BMC-SW@aspeedtech.com>
-Subject: [net-next v4 4/4] net: ftgmac100: Add optional reset control for RMII mode on Aspeed SoCs
-Date: Wed, 9 Jul 2025 15:08:09 +0800
-Message-ID: <20250709070809.2560688-5-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250709070809.2560688-1-jacky_chou@aspeedtech.com>
-References: <20250709070809.2560688-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1752045986; c=relaxed/simple;
+	bh=XGJO1qF1W88jDv2eYg4J5OBrEhD7F5oGqMlB4fWt0hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pcd6shxap76dYbGUwF7wY7Dpi4SseIZMa+TDorvvbOrZqPHaxVFQD/kMYIsxSFaV7wBrME1xvpnJxBIY+t/hZEZPTM5cq/MudboSwE2UoNQxTdRQqtxBAp/XUhzA8Er8x4O4zt6NdWkDEzLyRaXMALkKTR+8YNgvu9v/N1BoOoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArGgHdYC; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArGgHdYC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE05EC4CEF0;
+	Wed,  9 Jul 2025 07:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752045986;
+	bh=XGJO1qF1W88jDv2eYg4J5OBrEhD7F5oGqMlB4fWt0hQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ArGgHdYCKZHsx/nbUhRZhct5u/CYQqQXkROnnVmQgUpnfnLwDBWZl2erF0xvtbu+z
+	 3IX8+1MzKkeL5/NrksE78L5M8ciRQzZjAWXcF6sdvSgtPPfKttGcUokP1Zbv/JfKP0
+	 RngaMY2AK3Votb88feOEXLXj5/xxYSKmePwl4/NUBpbEDBcTxZ9bKu0zAoOr5muHLg
+	 CCuVzmR7GIJIImbeN5Ki635W7gHy30bbZYEdevgkoZnsTI/o7vzM9GnXMGwk8t/+1A
+	 Eo+ymv0XAJ0u46oXlN7DPQtr2erqhFq967A9PSD12h7G6yo02PbfoT5ALlMuMkLTMR
+	 UcVXDNBgOOzGQ==
+Date: Wed, 9 Jul 2025 09:26:23 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Yong Deng <yong.deng@magewell.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v8 1/9] dt-bindings: media: sun6i-a31-csi: Add optional
+ interconnect properties
+Message-ID: <20250709-misty-coot-of-fantasy-cfadfa@houat>
+References: <20250704154628.3468793-1-paulk@sys-base.io>
+ <20250704154628.3468793-2-paulk@sys-base.io>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3dp6stoy65fmjbt7"
+Content-Disposition: inline
+In-Reply-To: <20250704154628.3468793-2-paulk@sys-base.io>
 
-On Aspeed SoCs, the internal MAC reset is insufficient to fully reset the
-RMII interface; only the SoC-level reset line can properly reset the RMII
-logic. This patch adds support for an optional "resets" property in the
-device tree, allowing the driver to assert and deassert the SoC reset line
-when operating in RMII mode. This ensures the MAC and RMII interface are
-correctly reset and initialized.
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- drivers/net/ethernet/faraday/ftgmac100.c | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+--3dp6stoy65fmjbt7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 1/9] dt-bindings: media: sun6i-a31-csi: Add optional
+ interconnect properties
+MIME-Version: 1.0
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index a98d5af3f9e3..05b8e3743a79 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -9,6 +9,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/dma-mapping.h>
- #include <linux/etherdevice.h>
- #include <linux/ethtool.h>
-@@ -101,6 +102,8 @@ struct ftgmac100 {
- 
- 	/* AST2500/AST2600 RMII ref clock gate */
- 	struct clk *rclk;
-+	/* Aspeed reset control */
-+	struct reset_control *rst;
- 
- 	/* Link management */
- 	int cur_speed;
-@@ -148,6 +151,23 @@ static int ftgmac100_reset_and_config_mac(struct ftgmac100 *priv)
- {
- 	u32 maccr = 0;
- 
-+	/* Aspeed RMII needs SCU reset to clear status */
-+	if (priv->is_aspeed && priv->netdev->phydev->interface == PHY_INTERFACE_MODE_RMII) {
-+		int err;
-+
-+		err = reset_control_assert(priv->rst);
-+		if (err) {
-+			dev_err(priv->dev, "Failed to reset mac (%d)\n", err);
-+			return err;
-+		}
-+		usleep_range(10000, 20000);
-+		err = reset_control_deassert(priv->rst);
-+		if (err) {
-+			dev_err(priv->dev, "Failed to deassert mac reset (%d)\n", err);
-+			return err;
-+		}
-+	}
-+
- 	switch (priv->cur_speed) {
- 	case SPEED_10:
- 	case 0: /* no link */
-@@ -1968,6 +1988,12 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 
- 	}
- 
-+	priv->rst = devm_reset_control_get_optional_exclusive(priv->dev, NULL);
-+	if (IS_ERR(priv->rst)) {
-+		err = PTR_ERR(priv->rst);
-+		goto err_phy_connect;
-+	}
-+
- 	if (priv->is_aspeed) {
- 		err = ftgmac100_setup_clk(priv);
- 		if (err)
--- 
-2.34.1
+Hi,
 
+On Fri, Jul 04, 2025 at 05:46:18PM +0200, Paul Kocialkowski wrote:
+> An interconnect can be attached to the sun6i-a31-csi device, which is
+> useful to attach the dma memory offset. Add related properties.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> ---
+>  .../devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml  | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-=
+csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.=
+yaml
+> index 1aa5775ba2bc..978ef2dc0ae7 100644
+> --- a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> @@ -40,6 +40,12 @@ properties:
+>    resets:
+>      maxItems: 1
+> =20
+> +  interconnects:
+> +    maxItems: 1
+> +
+> +  interconnect-names:
+> +    const: dma-mem
+> +
+
+Is it really optional? My experience (despite being a bit outdated by
+now) was that it was required for some SoCs, and missing for others.
+
+Maxime
+
+--3dp6stoy65fmjbt7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG4ZmwAKCRAnX84Zoj2+
+dpfVAX4m0wIWlJi7yTBavd5fvPfWar3XkMuz34mrDcOQKDkPGg6ob/DSG06XQSRv
+JJDzvQQBfiDmcqsRoWtB2xTB/bD41pJBDgPdtqT5a0O13DZ464l3NFGDW16/98ZH
+pKK5MMhi4w==
+=m340
+-----END PGP SIGNATURE-----
+
+--3dp6stoy65fmjbt7--
