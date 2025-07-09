@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA054288CAA;
-	Wed,  9 Jul 2025 10:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C58289369;
+	Wed,  9 Jul 2025 10:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055693; cv=none; b=o55nZka9sqouBGyz/GT4j194qPivGZIQ/uhRk9+NFMwL3ovCrdOeb3A4te/M50Bjt/f/XhCxnyw45iLF8xZRIu2/YUvqV8QOIdBB3PAT92LvGIgesw2DpL61UZrBA1Sjo/cKpjvmdrIkR7fHIqd9HvLt4trEabChZRwt1uaULEM=
+	t=1752055758; cv=none; b=bPM7SiJmldAjkbY8K0CmU/eega0k1ljaTlM3jhTSrkMH2Fb4ZPR4v6FV5dHBxHNpihjzMp4paecGodSBO83ABKT1OAE1SJYsCTmR3GC7v2rbZGoKv1Gt91FFaIYhihFIynP/NC2mddc7pU4Tloaq3C7TIMjzR2rbss1PjUAf4+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055693; c=relaxed/simple;
-	bh=379ct7C+CteI4mrqc9lm3+XFP/V/7s8g7pUYj6VGV9A=;
+	s=arc-20240116; t=1752055758; c=relaxed/simple;
+	bh=UJJFTGdGHx/I8Ko6SRTWuJSkRz7Op4s2mu0Q7x7wAfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbYL9+m+xYarY6qC+aRCrxCjaSaGsRg7lJhOcvAu7t8kV//3phIZSnNJQfPQZIAUeDczw+F0lzmlwGy1PPENFREk5NBbrDtgRus4yi5QKYQIrtb6SCb9dWirEqizzmIUEBfHTdd8zmHV5rBFGyqjeK8f4R+BZkoS7fjgrkVvNTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMDY2S9k; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=GE058oN+Z4/K38UelSIy0gRO8Llx15okS4yGyXjoS4hL/FY209jxVvN/PAmlVbTzyDssM/NjnBitRxi4CbwYCbxU8TSeOArA3ISdXw60hdSnFLfgHuDh+9gbmydesjMlaw46FyxUafqpK3+lML3zjYyUkGGqlRfIQfTqnU0XXY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0+nrJgY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMDY2S9k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21AAAC4CEEF;
-	Wed,  9 Jul 2025 10:08:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0+nrJgY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB65C4CEF6;
+	Wed,  9 Jul 2025 10:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752055693;
-	bh=379ct7C+CteI4mrqc9lm3+XFP/V/7s8g7pUYj6VGV9A=;
+	s=k20201202; t=1752055758;
+	bh=UJJFTGdGHx/I8Ko6SRTWuJSkRz7Op4s2mu0Q7x7wAfo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nMDY2S9kSJ+6pgFgO+c/IV4FKqnCzagNAkGoXube/tcVIXezwilBSdDMFXV+UAhXb
-	 J1U0qBNbQNjdNFFEviTLiCf2hu+SZc7Q8tyU7FX47MqreMBoDUxJeWRbGP1e0a6p11
-	 VIXaAZ/Q+ivNHqic38Updpn/Jx/iBn+E/YZZ4KsfcPPGNTSnSP+hOlhX6Q+ztUsGwC
-	 BYu7o+EB4Im4lEPQ2l9kzLoIlfjdb0QfNU+BGUK0hXXMw5Ygs8JhhITL+BRweTQ0Vo
-	 p/eivPq//3gVmUI0oGxA0fLfC3MejsE0knOJy5XgRoxqm9E4GBOnqhWrYnGwfe57Vn
-	 4O6laCmaomnLQ==
-Message-ID: <e3d93a4b-4009-47f7-909e-b58a33015858@kernel.org>
-Date: Wed, 9 Jul 2025 12:08:07 +0200
+	b=T0+nrJgYJESbFXJ7lfr7j3b0HD8auEoAz5Ez8Wp4R6r6QR5pnQScWpcoqlFgdkrSR
+	 u+MHHqP0VgGhAIU0Hincp1pwhbtLiBYyL+R1psUrtDStQEBVH3Hd2CFG/YMAgFJgq1
+	 kL0jIiRd53wKm3nbKCX31WDeyQ76AfqglvkjRxs+4XynWi87ROjp65a1xwohW4KKDM
+	 xyUqXOKKsYTpquUNz9LLh+b+8mc4Iyg9ZbfKenFFmaUHYenCbQxhyB4GU2m4aDfBLg
+	 Q7lGQUFzq4AmxBa4kpyYZ4nThBKwoJfWVhDSmkNcwOc4glEknjJBaW40Gi/z3nTnvf
+	 DwUWgC/1Tr01g==
+Message-ID: <dc1686bf-712c-4829-afaa-c39acd8969bf@kernel.org>
+Date: Wed, 9 Jul 2025 12:09:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: clock: qcom,lcc: Reference qcom,gcc.yaml
+Subject: Re: [PATCH 5/8] dt-bindings: clock: qcom,qdu1000-ecpricc: Reference
+ qcom,gcc.yaml
 To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -49,7 +50,7 @@ Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
- <20250709-gcc-ref-fixes-v1-2-ceddde06775b@quicinc.com>
+ <20250709-gcc-ref-fixes-v1-5-ceddde06775b@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,7 +96,7 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250709-gcc-ref-fixes-v1-2-ceddde06775b@quicinc.com>
+In-Reply-To: <20250709-gcc-ref-fixes-v1-5-ceddde06775b@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -105,22 +106,10 @@ On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
 > 
 > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,lcc.yaml | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
+>  .../devicetree/bindings/clock/qcom,qdu1000-ecpricc.yaml | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> index 55985e562a34f8b1f5d8cff88fd733cdbae7d37c..b4b500dea527269a9a282b3f99714d5703dd9215 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> @@ -23,24 +23,11 @@ properties:
->    clock-names:
->      maxItems: 8
->  
-> -  '#clock-cells':
-> -    const: 1
-> -
-For the same reasons as further patch, no. You do not understand what is
-happening here (and commit msg must explain such things)...
+NAK
 
 Best regards,
 Krzysztof
