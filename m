@@ -1,28 +1,44 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EB7243954;
-	Wed,  9 Jul 2025 20:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A690B23B632;
+	Wed,  9 Jul 2025 20:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752092060; cv=none; b=oDZ3NQgLCsnQQ/EJ4vWrLCH88Qv0PyofFXTrgYZbigI1d0rZggqz91SIW1CSdeMIKzoLUipMA2y8zCgkxOV3jaTN5Ib9sYyKsRA2RRaun/L7ZJXImTVzn01yTDAl0YpO//I5ip7yEP1de3uZco/PBhH5Deg5eU4UaEBo6QPWBOA=
+	t=1752094578; cv=none; b=KaIvCgwdca2ODbY/l63hWCK7SzMbgNp5JEaNEkyOhfUU9OSRLbxJ8MjLWMY+F9OkhvNzJUq9YvW2PTMnezKT/H5ZWRljlRDCS249xhdxKjAzRGvNgVnNivOzxx6CLPnS2L5qLt3Oz7Xz/bYW8eAbb5Y9iEp58qtttrvzAKlhEuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752092060; c=relaxed/simple;
-	bh=baFOyU5jXIBmGqiXM+xoPbfVkQZ75rSm/M3/gWwE1SU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZTBLh9tAvDJ2sADTGfgJ/Ccn5dQ9o9Qqyhz2lFKSJPm+y+jwykKaX+UrVrGOoH+mdn5+rz7bM7mctYTft5mrAjmylxhGbQvZsA+ABZDSrodK5ePZ+JY0BfWut3ipOmyL/Z82uRLC95nxmwEMfAwj6qIrKdorJQw/vIuxk/hYMNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA42DC4CEEF;
-	Wed,  9 Jul 2025 20:14:14 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.17 (take two)
-Date: Wed,  9 Jul 2025 22:14:11 +0200
-Message-ID: <cover.1752090701.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752094578; c=relaxed/simple;
+	bh=7dXHDRgvA5zbVNSP6KYKV9R0As3bO9FaecgU+FjXVOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HO3TCADW4HFQhUIKOct3ISC0KbMonDqWaAQdq57xR9uL4UTT7sK6a8mgVZmNRHK371A1E1DIyvOipTnzKyidMCsYY8CVFe03+WiO6z/5JwqIIxx7JLi9Dfzgz6xD04co/bzW82xdyfgaTpSVyEOu4GY4SfuXMxVYlUrsXpzzDwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: SEHcO6xPRZWzKFG0VDFzGQ==
+X-CSE-MsgGUID: LGq+HqAxS1qpbo7yb7rcbA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jul 2025 05:56:08 +0900
+Received: from lenovo-p330.. (unknown [132.158.152.96])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4BCA64095590;
+	Thu, 10 Jul 2025 05:56:04 +0900 (JST)
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hien Huynh <hien.huynh.px@renesas.com>,
+	Nghia Vo <nghia.vo.zn@renesas.com>,
+	Hugo Villeneuve <hugo@hugovil.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/2] Remove hard coded values for MIPI-DSI
+Date: Wed,  9 Jul 2025 16:55:30 -0400
+Message-ID: <20250709205532.747596-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -31,82 +47,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi Mike, Stephen,
+When the initial drivers were submitted, some of the timing was hard coded and
+did not allow for any MIPI-DSI panel to be attached.
 
-The following changes since commit b7c26cbd5b704a350b3176669f47047153903bc9:
+This series assumes the follow patches have been applied.
+Both patches exist in drm-misc-next.
 
-  clk: renesas: rzv2h: Add missing include file (2025-06-26 16:28:50 +0200)
+5ce16c169a4c ("drm: renesas: rz-du: Add atomic_pre_enable")
+6f392f371650 ("drm: renesas: rz-du: Implement MIPI DSI host transfers")
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.17-tag2
 
-for you to fetch changes up to 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a:
+Chris Brandt (2):
+  clk: renesas: rzg2l: Remove DSI clock rate restrictions
+  drm: renesas: rz-du: Set DSI divider based on target MIPI device
 
-  clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well (2025-07-08 11:36:16 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.17 (take two)
-
-  - Add Expanded Serial Peripheral Interface (xSPI) clocks and resets on
-    RZ/V2H(P) and RZ/V2N,
-  - Add SPI (RSPI) clocks and resets on RZ/V2H(P),
-  - Add SDHI and I2C clocks on RZ/T2H and RZ/N2H,
-  - Add Ethernet clocks and resets on RZ/G3E,
-  - Miscellaneous fixes and improvements.
-
-Note that this includes DT binding definition updates for the RZ/N2H,
-RZ/T2H, RZ/V2H, and RZ/V2N SoCs, which are shared by clock driver and DT
-source files.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (1):
-      clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
-
-Fabrizio Castro (1):
-      clk: renesas: r9a09g057: Add entries for the RSPIs
-
-Geert Uytterhoeven (2):
-      Merge tag 'renesas-r9a09g087-dt-binding-defs-tag2' into renesas-clk-for-v6.17
-      Merge tag 'renesas-r9a09g057-dt-binding-defs-tag4' into renesas-clk-for-v6.17
-
-John Madieu (1):
-      clk: renesas: r9a09g047: Add clock and reset signals for the GBETH IPs
-
-Lad Prabhakar (10):
-      dt-bindings: clock: renesas,r9a09g056/57-cpg: Add XSPI core clock
-      dt-bindings: clock: renesas,r9a09g077/87: Add SDHI_CLKHS clock ID
-      clk: renesas: rzv2h: Drop redundant base pointer from pll_clk
-      clk: renesas: r9a09g077: Add PLL2 and SDHI clock support
-      clk: renesas: r9a09g077: Add RIIC module clocks
-      clk: renesas: r9a09g056: Add support for xspi mux and divider
-      clk: renesas: r9a09g057: Add support for xspi mux and divider
-      clk: renesas: rzv2h: Add fixed-factor module clocks with status reporting
-      clk: renesas: r9a09g056: Add XSPI clock/reset
-      clk: renesas: r9a09g057: Add XSPI clock/reset
-
- drivers/clk/renesas/r9a08g045-cpg.c                |  6 +-
- drivers/clk/renesas/r9a09g047-cpg.c                | 64 +++++++++++++++
- drivers/clk/renesas/r9a09g056-cpg.c                | 37 ++++++++-
- drivers/clk/renesas/r9a09g057-cpg.c                | 63 +++++++++++++-
- drivers/clk/renesas/r9a09g077-cpg.c                | 15 +++-
- drivers/clk/renesas/rzv2h-cpg.c                    | 95 +++++++++++++++++++++-
- drivers/clk/renesas/rzv2h-cpg.h                    | 24 ++++++
- include/dt-bindings/clock/renesas,r9a09g056-cpg.h  |  1 +
- include/dt-bindings/clock/renesas,r9a09g057-cpg.h  |  1 +
- .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |  1 +
- .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |  1 +
- 11 files changed, 297 insertions(+), 11 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
+ drivers/clk/renesas/rzg2l-cpg.c               | 113 ++++++++++++++++--
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    |  17 +++
+ include/linux/clk/renesas.h                   |   4 +
+ 3 files changed, 124 insertions(+), 10 deletions(-)
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.49.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
