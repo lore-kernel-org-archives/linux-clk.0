@@ -1,195 +1,233 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7130205B
-	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 21:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09B922338;
+	Thu, 10 Jul 2025 21:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752181934; cv=none; b=fYXN1Gb7vE1r5AQPbYi3gTmgVjMeHWpMJoFyLuE/aUXCRqoBYIPGDl8g8P0vS6nm/RaXmS9cQS2KVv12OGQumTtuI5KfSI9K62gnkmTriHZ1r4BKuHf6ldRp9hcRuXgtm5Ww36ru/rJNUoI6hf8Ox7gi4zQEWlkLWh22aGEbImE=
+	t=1752183801; cv=none; b=NIVJarGaABstffmyZT8esb/vn2+rUyVOUyFnvJjjRD4iLNO1u0KLP5CiMljwfxaTucLNBGO56DbBqRbskEvtY4YDB5eP/4WRqopx7B5KbZXVpn+PAkve1hveLq62huaRHROQU1NR5lNH7MPo/nO0B2dqtJualdLr5XrQAQlZrhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752181934; c=relaxed/simple;
-	bh=v3hdhBOHK0qUhvNSpx+BtyoEKUPgUNG99ieRMqbb8UE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bGxfAY1DsdUBZ5G5qjedSN/bV28IDJmzsu5I/eIWbOGBZxBvgW27vOcJnTGgRQ2y+zSXISG6VJGP5FmtI/06P6AckukN1t7U1UIzhVHoEBLnwvVObcqBgtj0h09JshkxMh5yZvj1LrLhAU3sexM/YVQTmbLmAeQSn33r5wxSg+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fNuigGG9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1752183801; c=relaxed/simple;
+	bh=JyiBXGkjI//nsHnGr36FD+TwOyb4q6nbGeOiX/MY7j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3GLa3c2jpnKU8OiH8o60xv8Iq+1VGbGFvob/i8BcZv9eq434Wz+Nkz3zl3mi0VO6s0ONTz2a6cuzzosdnvvMPB+3K0X58x181Emn8KB5fWCu6DuEeM7lh2CRLrsUxl2lDCqZ7O12lFV57HYz6Umip6TtdNYoEqzLL5gNZkS0Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUUT4Akx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fNuigGG9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752181931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UtfKlLhcG/kkS8hkYuoUj/IIA4KAh790Vr1OByvwXU8=;
-	b=fNuigGG9K5KmdjmZ/v8aifB//EJ1LnAw68+DB4usd5wNHesVRT85XTLaCxA8BTCgRXgyyw
-	H90wZvPrsdXgEA83CvZRZKdpR8Xnz5t2GakhZ3uWdFXyN6zDm07mFYxoAf8YfsBAVsWbxW
-	PGWkJjCav04vKOWjRt0ot5VxL2dCFxE=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-526-RmFd5rr8PQmao44j4tXafw-1; Thu, 10 Jul 2025 17:12:09 -0400
-X-MC-Unique: RmFd5rr8PQmao44j4tXafw-1
-X-Mimecast-MFC-AGG-ID: RmFd5rr8PQmao44j4tXafw_1752181929
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-234a102faa3so10457835ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 14:12:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752181928; x=1752786728;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UtfKlLhcG/kkS8hkYuoUj/IIA4KAh790Vr1OByvwXU8=;
-        b=vIsL6SDAPuuXUf0fAcLaHwxjEAxsecEL41ntt2oG0vVaEVqDejCfM+8rmgtFF4iw1B
-         iXTCzBWZ3Hi8nfHG0VdyG8mSb+JYrEyXqwVKluenJTBNnphZJWRa766XtNF/GOwgtu++
-         T0ITygVE+VRM2DAB4wRoozBOLUnRL9g0oAe0/SXeAA2MYjadX5GB1SxPCjySbgZ9Hruv
-         qFoFkdSs4n4OlXEEv2v2zL6UtMfjzytyrKSsUfmdTkWv/Lm5P8FDfBNxlDprEE9HDYGW
-         h9e36gJ/lqc72KC3bgZE+xK5SEqNrqmLeWKaz2I9okiHnpa+j5ZXE5tg1jNGPqYGa8Rc
-         +jjg==
-X-Gm-Message-State: AOJu0YwWhLIsHWs6DExalsSK01bv82bKCDq9QBbQk0cDnhWu6Bvfwb6h
-	dgZZy21XFEjhk+YBdBtSO6VBt5C+BCuiuZh5RXU8QYagPi9Vc/uEzDOxtMWDgyjiOlekbDt+4r3
-	3GvBW2YWIPDUEMaQ9YIecaCr+R4s1qg5vC4I5GQ7q2EdTI8qPvbbG4IKklljHaA==
-X-Gm-Gg: ASbGnctoPgaNaQiThlcL+tu3VtsdkwnLGaUcxfC/C2MO2Oz9mDYJXelcXYCjB0DDuou
-	8RpzpaM2OtrIV5m15V3RJLlZSJRPJ3QFIXU4fKYdbgkpHQ7WUq0BYy0X3/kWHcnFSI4fPLXxU5G
-	1SkigJgjmNdLCwenyWsUG/Bh+wq5Bk0XhHSR52UZWtVHlm+9HxmO0lsJaCDdtyYCBa3KyIPFBZM
-	UN69xEdSyR0ZrHenDZMoQY2XS/QnJKM7jNxl0nDV9iZ7lmwaKq0D7tST7IMnRcXCp9WObhNFsbR
-	PtFOgw0VxCqQfvOAAx//86eafxm4B9pTciyY2qzCULxLVw==
-X-Received: by 2002:a17:903:4b24:b0:23c:7c3b:4c61 with SMTP id d9443c01a7336-23dede2d292mr8885975ad.8.1752181928462;
-        Thu, 10 Jul 2025 14:12:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyfqFdZB30s9Ns2OTuViOndMsHrV92VUKAaa3t7UGJI0pLP81WIaExo2hP4WyXbE/2+Ovdog==
-X-Received: by 2002:a17:903:4b24:b0:23c:7c3b:4c61 with SMTP id d9443c01a7336-23dede2d292mr8885575ad.8.1752181928069;
-        Thu, 10 Jul 2025 14:12:08 -0700 (PDT)
-Received: from [10.144.155.224] ([2600:382:7716:65ad:9491:c054:6f2d:80ed])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de433e51asm27790595ad.180.2025.07.10.14.12.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:12:07 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 17:10:45 -0400
-Subject: [PATCH 13/13] clk: imx: scu: convert from round_rate() to
- determine_rate()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUUT4Akx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB50C4CEE3;
+	Thu, 10 Jul 2025 21:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752183800;
+	bh=JyiBXGkjI//nsHnGr36FD+TwOyb4q6nbGeOiX/MY7j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PUUT4AkxcRwna33gV6XOnJ3Rsuq2qYdbDV0JOhVDeNsXVoOLTYaLRYq3dAH45DJbe
+	 N3a39wBVOiLn2WpAot7yAx/XaiyAdpFT6ejiRdjocplZ7g/Tm9Cx/tozweMfkcHM8m
+	 ICrHjJHAgHHUCbFl0GuFMLUr2qwAoPaKGh4M/PaPcIPN5uK8+dhhEevnsE2tfw50lP
+	 olpIcHGlj2QY/JZ4dWAdTTyuWsHaWonvoMRKptcWzgpp9tcthlXiL1OiwzsTAYCafp
+	 qFM9+xqKgMeqn/L/TSxxoWh4fqqmYOfGy1ejmzC/rjq7FkLJby2uoAMWhG2zF4uDMQ
+	 JSUKWNfQjWGbQ==
+Date: Thu, 10 Jul 2025 16:43:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
+Message-ID: <20250710214319.GA4015161-robh@kernel.org>
+References: <20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com>
+ <20250708-topic-8750_gpucc-v1-1-86c86a504d47@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-clk-imx-round-rate-v1-13-5726f98e6d8d@redhat.com>
-References: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
-In-Reply-To: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752181866; l=3280;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=v3hdhBOHK0qUhvNSpx+BtyoEKUPgUNG99ieRMqbb8UE=;
- b=8ZgfFYF2KZsuweqpz1xsyECauFflmi/TsZyTLp4K/6NlZj8L/AQUvX4HpvZ6yVLmtnZpaXBYR
- CufxM/OrxNxAF1m7eYGGkqwIl0G3siaDy/4VyAsIls9Ss5jZ6J2R9M9
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-topic-8750_gpucc-v1-1-86c86a504d47@oss.qualcomm.com>
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+On Tue, Jul 08, 2025 at 02:47:20PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> The SM8750 features a "traditional" GPU_CC block, much of which is
+> controlled through the GMU microcontroller. Additionally, there's
+> an separate GX_CC block, where the GX GDSC is moved.
+> 
+> Add bindings to accommodate for that.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  5 ++
+>  .../bindings/clock/qcom,sm8750-gxcc.yaml           | 58 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm8750-gpucc.h      | 53 ++++++++++++++++++++
+>  3 files changed, 116 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
+> index 02968632fb3af34d6b3983a6a24aa742db1d59b1..d1b3557ab344b071d16dba4d5c6a267b7ab70573 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
+> @@ -20,6 +20,7 @@ description: |
+>      include/dt-bindings/clock/qcom,sm8550-gpucc.h
+>      include/dt-bindings/reset/qcom,sm8450-gpucc.h
+>      include/dt-bindings/reset/qcom,sm8650-gpucc.h
+> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
+>      include/dt-bindings/reset/qcom,x1e80100-gpucc.h
+>  
+>  properties:
+> @@ -31,6 +32,7 @@ properties:
+>        - qcom,sm8475-gpucc
+>        - qcom,sm8550-gpucc
+>        - qcom,sm8650-gpucc
+> +      - qcom,sm8750-gpucc
+>        - qcom,x1e80100-gpucc
+>        - qcom,x1p42100-gpucc
+>  
+> @@ -40,6 +42,9 @@ properties:
+>        - description: GPLL0 main branch source
+>        - description: GPLL0 div branch source
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - clocks
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f35839193d18b608e177b4d6561827dfa98c9aa1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gxcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Graphics Clock & Reset Controller on SM8750
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konradybcio@kernel.org>
+> +
+> +description: |
+> +  Qualcomm graphics clock control module provides the clocks, resets and power
+> +  domains on Qualcomm SoCs.
+> +
+> +  See also::
 
-This driver also implements both the determine_rate() and round_rate()
-clk ops, and the round_rate() clk ops is deprecated. When both are
-defined, clk_core_determine_round_nolock() from the clk core will only
-use the determine_rate() clk ops, so let's remove the round_rate() clk
-ops since it's unused.
+Don't need double colon.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/imx/clk-scu.c | 36 +++++++++---------------------------
- 1 file changed, 9 insertions(+), 27 deletions(-)
+> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm8750-gxcc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 3
 
-diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index b27186aaf2a15628910ea6a3d4aaa5320ec4295a..77c4cde8a72bd71653bbd2e95148bc1357ec1aae 100644
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -269,24 +269,6 @@ static int clk_scu_determine_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
--/*
-- * clk_scu_round_rate - Round clock rate for a SCU clock
-- * @hw: clock to round rate for
-- * @rate: rate to round
-- * @parent_rate: parent rate provided by common clock framework, not used
-- *
-- * Returns the current clock rate, or zero in failure.
-- */
--static long clk_scu_round_rate(struct clk_hw *hw, unsigned long rate,
--			       unsigned long *parent_rate)
--{
--	/*
--	 * Assume we support all the requested rate and let the SCU firmware
--	 * to handle the left work
--	 */
--	return rate;
--}
--
- static int clk_scu_atf_set_cpu_rate(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long parent_rate)
- {
-@@ -454,7 +436,7 @@ static const struct clk_ops clk_scu_ops = {
- 
- static const struct clk_ops clk_scu_cpu_ops = {
- 	.recalc_rate = clk_scu_recalc_rate,
--	.round_rate = clk_scu_round_rate,
-+	.determine_rate = clk_scu_determine_rate,
- 	.set_rate = clk_scu_atf_set_cpu_rate,
- 	.prepare = clk_scu_prepare,
- 	.unprepare = clk_scu_unprepare,
-@@ -462,7 +444,7 @@ static const struct clk_ops clk_scu_cpu_ops = {
- 
- static const struct clk_ops clk_scu_pi_ops = {
- 	.recalc_rate = clk_scu_recalc_rate,
--	.round_rate  = clk_scu_round_rate,
-+	.determine_rate = clk_scu_determine_rate,
- 	.set_rate    = clk_scu_set_rate,
- };
- 
-@@ -766,15 +748,15 @@ static unsigned long clk_gpr_div_scu_recalc_rate(struct clk_hw *hw,
- 	return err ? 0 : rate;
- }
- 
--static long clk_gpr_div_scu_round_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long *prate)
-+static int clk_gpr_div_scu_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
- {
--	if (rate < *prate)
--		rate = *prate / 2;
-+	if (req->rate < req->best_parent_rate)
-+		req->rate = req->best_parent_rate / 2;
- 	else
--		rate = *prate;
-+		req->rate = req->best_parent_rate;
- 
--	return rate;
-+	return 0;
- }
- 
- static int clk_gpr_div_scu_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -793,7 +775,7 @@ static int clk_gpr_div_scu_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops clk_gpr_div_scu_ops = {
- 	.recalc_rate = clk_gpr_div_scu_recalc_rate,
--	.round_rate = clk_gpr_div_scu_round_rate,
-+	.determine_rate = clk_gpr_div_scu_determine_rate,
- 	.set_rate = clk_gpr_div_scu_set_rate,
- };
- 
+You need to define what each power domain is.
 
--- 
-2.50.0
-
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - power-domains
+> +  - '#power-domain-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,sm8750-gpucc.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@3d64000 {
+> +            compatible = "qcom,sm8750-gxcc";
+> +            reg = <0x0 0x03d64000 0x0 0x6000>;
+> +            power-domains = <&rpmhpd RPMHPD_GFX>,
+> +                            <&rpmhpd RPMHPD_MXC>,
+> +                            <&gpucc GPU_CC_CX_GDSC>;
+> +            #power-domain-cells = <1>;
+> +        };
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,sm8750-gpucc.h b/include/dt-bindings/clock/qcom,sm8750-gpucc.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..98e2f5df78740bf298c6b1065972d7e58ee81713
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm8750-gpucc.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8750_H
+> +#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8750_H
+> +
+> +/* GPU_CC clocks */
+> +#define GPU_CC_AHB_CLK						0
+> +#define GPU_CC_CB_CLK						1
+> +#define GPU_CC_CX_ACCU_SHIFT_CLK				2
+> +#define GPU_CC_CX_FF_CLK					3
+> +#define GPU_CC_CX_GMU_CLK					4
+> +#define GPU_CC_CXO_AON_CLK					5
+> +#define GPU_CC_CXO_CLK						6
+> +#define GPU_CC_DEMET_CLK					7
+> +#define GPU_CC_DPM_CLK						8
+> +#define GPU_CC_FF_CLK_SRC					9
+> +#define GPU_CC_FREQ_MEASURE_CLK					10
+> +#define GPU_CC_GMU_CLK_SRC					11
+> +#define GPU_CC_GX_ACCU_SHIFT_CLK				12
+> +#define GPU_CC_GX_ACD_AHB_FF_CLK				13
+> +#define GPU_CC_GX_AHB_FF_CLK					14
+> +#define GPU_CC_GX_GMU_CLK					15
+> +#define GPU_CC_GX_RCG_AHB_FF_CLK				16
+> +#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK				17
+> +#define GPU_CC_HUB_AON_CLK					18
+> +#define GPU_CC_HUB_CLK_SRC					19
+> +#define GPU_CC_HUB_CX_INT_CLK					20
+> +#define GPU_CC_HUB_DIV_CLK_SRC					21
+> +#define GPU_CC_MEMNOC_GFX_CLK					22
+> +#define GPU_CC_PLL0						23
+> +#define GPU_CC_PLL0_OUT_EVEN					24
+> +#define GPU_CC_RSCC_HUB_AON_CLK					25
+> +#define GPU_CC_RSCC_XO_AON_CLK					26
+> +#define GPU_CC_SLEEP_CLK					27
+> +
+> +/* GPU_CC power domains */
+> +#define GPU_CC_CX_GDSC						0
+> +
+> +/* GPU_CC resets */
+> +#define GPU_CC_GPU_CC_CB_BCR					0
+> +#define GPU_CC_GPU_CC_CX_BCR					1
+> +#define GPU_CC_GPU_CC_FAST_HUB_BCR				2
+> +#define GPU_CC_GPU_CC_FF_BCR					3
+> +#define GPU_CC_GPU_CC_GMU_BCR					4
+> +#define GPU_CC_GPU_CC_GX_BCR					5
+> +#define GPU_CC_GPU_CC_XO_BCR					6
+> +
+> +/* GX_CC power domains */
+> +#define GX_CC_GX_GDSC						0
+> +
+> +#endif
+> 
+> -- 
+> 2.50.0
+> 
