@@ -1,33 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9326D2D6628;
-	Thu, 10 Jul 2025 10:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B8928B7C6;
+	Thu, 10 Jul 2025 10:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142460; cv=none; b=Dro31YAFQ7HfbBEuyeZNW/wWflRYzaK6krr52m3J0R9i7IKGVGd/tGcYdC2OwGaxaJRLYwaRnwbD0tx2MoQFdJJXYoUq33HS0yUK8+kzoaXiJNcq+LXZfdKYHIS6hfBQ60U2NYf4ydPogAEIGRTrN1qjoVnEUJEUcwybTSjQrII=
+	t=1752142911; cv=none; b=Su2pfogCcjirXEe2hWiko7qMG56d+zQr4Gz8JyAanhRVBdLRhpl6X/jvYsEGYN2dih5A6PYUyK28Ovs6/+NBSL+QjNo4+KmgXu+yETtlrs1En2+dKVdNTEbQ/fasJxZ7//qRHzVATVKUe95U6SqTseISedU+iIO8t+uDhiz7+qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142460; c=relaxed/simple;
-	bh=qATw6ZD37x/XT/B5MCjb1qOwnXiW8HLBo9mIN9I0R3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBY+eo5BgshJrVdLmnNfH3MlH6roc/cFeNNjOKj3+rvDCDImsss8M26VYC3IQzwzeo3MANR7UO8Lfxkvrf5Rh6YS1V9cVuK6FQmC9A2pqVEoM1lQi8gDEbAFMa6v1aTtZPpF5uQa8u0NceGjDpF73bws4xcf1BP6SX1KERI2Q9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyQIaiUs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752142911; c=relaxed/simple;
+	bh=A+9Sz68hzFxOWXlYTrr0jLnxA/21fIK4aonpJxZXUMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fHBoHvMdiG47SYQ/jrfpq7wxoYQVUo6sZvmUqze7IjoPeFQUQqGRNvJFdcMvT9HR5XaSebxtSKo+ktMY5bbJqkBbI/xEYSsFcp4iq8+DnoIivDmv2+El513/muvc+vQh5JWThocgqiF1f4vtf3BMYI08OMWIRHdEFa4Cy26hibQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ngO6uyn/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyQIaiUs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02EFC4CEF5;
-	Thu, 10 Jul 2025 10:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752142460;
-	bh=qATw6ZD37x/XT/B5MCjb1qOwnXiW8HLBo9mIN9I0R3g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DyQIaiUs1pOLCr6gIs/azzr6zC2/moryuNU3UAInevb5nD5O/dcuT8sE8gp8d5ZFl
-	 5VNvilLKEPrcZ2R75ojm5IYNV91VLqeOC9kW1B8ZmPpR96HVwZqqE93AofpeH2az7U
-	 I/M5XovAKqh3MfW3pt/G59uIxMzKQxKjfK+Z5GbEFZdFeZcosU5kTrGDUj+qHKCKfM
-	 quueYdCtq7I9FgyFob+ymo3624rGscjBcGF+IWhRZXA7D6FQYh69zMJMOz7vWzNV8U
-	 nTUKsPC5maC1U4GukMIC1sg5fg0fGy6PhNFuiuimPiXm5Ea8SYYncPv9FQrBUguvub
-	 DvcK8vYFUJFgA==
-Message-ID: <53130960-e054-4de9-b62a-cde384444a78@kernel.org>
-Date: Thu, 10 Jul 2025 12:14:10 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ngO6uyn/"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A97I30016625;
+	Thu, 10 Jul 2025 10:21:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tf3urf9uVqztqSfyUPaLE7aNRQmb9rU20q9mQcpzNms=; b=ngO6uyn/9GojR7e6
+	qs0WAwVOe6Tma28F8jn0r2Z7jr2kFNgSTwAp5g9vwTd566AXh6yRJ6Snq9GlU41d
+	xHlrsifdsyrIO6XEPTNpTbwXGkyz6tfqWHGV4/eXHsme9xx2128z/CkzhX189j4c
+	qwagUC+a8FJCEcPcXEt5hpHw7CJ4DsCslpGfhcprNEhvOgLFmT3i7suCOsjc5es/
+	TXxzg2RxWwbcr5teoHh6D6kQdtHPTdK8TD28WyCHw1pJ+RdXgRlV2oPIQmoFtjQE
+	FWMMWkbUqc1IHJ2BRdVDNW3KhT6zR1XmWV8SJXW001BFcKJtTFwqFJ8RlvTwSfSZ
+	mGuIbA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap4k1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 10:21:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AALiff026017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 10:21:44 GMT
+Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
+ 2025 03:21:38 -0700
+Message-ID: <80848e86-1c0d-4edf-ac25-006a5cd1779f@quicinc.com>
+Date: Thu, 10 Jul 2025 15:50:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,156 +50,108 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/16] arm64: dts: axis: Add initial device tree support
-To: Arnd Bergmann <arnd@arndb.de>, ksk4725@coasia.com,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Ravi Patel <ravi.patel@samsung.com>,
- SungMin Park <smn1196@coasia.com>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-15-ksk4725@coasia.com>
- <5494bedb-6907-43dc-8580-04ef1e47c8d0@app.fastmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/8] dt-bindings: clock: qcom,qcs404-turingcc: Reference
+ qcom,gcc.yaml
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jeff Hugo
+	<jeff.hugo@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
+ <20250709-gcc-ref-fixes-v1-4-ceddde06775b@quicinc.com>
+ <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5494bedb-6907-43dc-8580-04ef1e47c8d0@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+In-Reply-To: <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686f9439 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=OnOfrgqvBbQOueBi47sA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA4OCBTYWx0ZWRfX771G0X3zTjn+
+ izOg0Pd3JysxSLbyKmHiWovPpi1N+tMWga8ySHyl7pipoIrw0aM+rssH12sqvi5mP7ns1F+D1UE
+ I61OlqrdeH8Sz8bB4j3PYObFWW0wh0jehJ/mLdYUQNJyisO2ee+uhE8lZYff7ub+SFrrK+wMJ4u
+ y4JLX5hE3vGXnBxKF+t2YI2362aA1SgfsW2GXuSQ/G4LX/IJO7mkN27DhGHEI7eZhxFPETi2Cp7
+ gQ9e9vA/yNmos5WtTKHTYgc6vcaBUcP7QFH2WGBks+nVAcNFtC2U/VK3KoBLxRFgc6o8d08Bcjo
+ Q18izkAc36HHUb5F/4a6PBHBbwepSkeK+v9EkuO36W0HzJQLQWLessVNVbFlyVzhawPHrj3rc02
+ EqlKyylTf/VhYNH8WP0wGhJxltXDDW1NCqGyHntOmV54BKmGQ0RlO+89WMY/JuoTW36/rRUC
+X-Proofpoint-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507100088
 
-On 10/07/2025 09:48, Arnd Bergmann wrote:
-> On Thu, Jul 10, 2025, at 02:20, ksk4725@coasia.com wrote:
->> From: sungminpark <smn1196@coasia.com>
+
+On 7/9/2025 3:37 PM, Krzysztof Kozlowski wrote:
+> On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
+>> Reference the common qcom,gcc.yaml schema to unify the common
+>> parts of the binding.
 >>
->> Add initial device tree support for Axis ARTPEC-8 SoC and Grizzly board.
->> This SoC contains four cores of cortex-a53 CPUs and other various
->> peripheral IPs.
-> 
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index fa1e04e87d1d..371005f3f41a 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -2320,6 +2320,20 @@ F:	drivers/crypto/axis
->>  F:	drivers/mmc/host/usdhi6rol0.c
->>  F:	drivers/pinctrl/pinctrl-artpec*
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,qcs404-turingcc.yaml | 17 ++++-------------
+>>   1 file changed, 4 insertions(+), 13 deletions(-)
 >>
->> +ARM/ARTPEC ARM64 MACHINE SUPPORT
->> +M:	Jesper Nilsson <jesper.nilsson@axis.com>
->> +M:	Ravi Patel <ravi.patel@samsung.com>
->> +M:	SeonGu Kang <ksk4725@coasia.com>
->> +M:	SungMin Park <smn1196@coasia.com>
->> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->> +L:	linux-samsung-soc@vger.kernel.org
->> +L:	linux-arm-kernel@axis.com
->> +S:	Maintained
->> +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
->> +F:	arch/arm64/boot/dts/axis/
->> +F:	drivers/clk/samsung/clk-artpec*.c
->> +F:	include/dt-bindings/clock/axis,artpec*-clk.h
-> 
-> I'm trying to understand the SoC family tree here. I see that
-> you have an entry for ARTPEC SoCs above it, which currently
-> covers artpec6 (Cortex-A9, apparently not Samsung based).
-> 
-> Is the reason for having two entries here that artpec6/7 and
-> artpec8/9 are two separate SoC families, or is this just because
-> they are using 32-bit and 64-bit cores, respectively?
-
-These should be entirely different families. Artpec6 was not done by
-Samsung and this one - Artpec 8 - is basically Samsung SoC, just like
-they did designs for Tesla and Google GS101.
-
-I don't know about Artpec 9.
-
-All this should be explained in DTS or bindings commit msg, btw.
-
-> 
->>
->> +config ARCH_ARTPEC
->> +	bool "Axis Communications ARTPEC SoC Family"
->> +	help
->> +	   This enables support for the ARMv8 based ARTPEC SoC Family.
->> +
->> +config ARCH_ARTPEC8
->> +	bool "Axis ARTPEC-8 SoC Platform"
->> +	depends on ARCH_ARTPEC
->> +	depends on ARCH_EXYNOS
->> +	select ARM_GIC
->> +	help
->> +	  This enables support for the Axis ARTPEC-8 SoC.
->> +
-> 
-> I would prefer to be less fine-grained here, especially as
-> it seems that ARTPEC9 is again quite similar to ARTPEC8, as
-> far as I can guess from public information.
-> 
-> Could you fold both entries into a single ARCH_ARTPEC?
-
-So far ARCH_ARTPEC = ARCH_ARTPEC8, so obviously it can be folded. I
-don't know if Artpec 9 will ever be upstreamed. This Artpec 8 is like 4
-or 5 year effort - they sent first patches some years ago, but DTS was
-not ready. Therefore I think we should not assume there will be Artpec 9
-yet. If it comes, we can always split things.
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+>> index 033e010754a26bd03e02a364b0a6f36d87a3af62..794984f563fe3eb253aaf7524205097cf0c62711 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+>> @@ -13,26 +13,17 @@ properties:
+>>     compatible:
+>>       const: qcom,qcs404-turingcc
+>>   
+>> -  reg:
+>> -    maxItems: 1
+>> -
+>>     clocks:
+>>       maxItems: 1
+>>   
+>> -  '#clock-cells':
+>> -    const: 1
+>> -
+>> -  '#reset-cells':
+>> -    const: 1
+>> -
+>>   required:
+>>     - compatible
+>> -  - reg
+>>     - clocks
+>> -  - '#clock-cells'
+>> -  - '#reset-cells'
+> No, this becomes now power domain provider without explanation.
 
 
-Best regards,
-Krzysztof
+My bad, I will drop the files which do not have the power domain cells 
+in my next post.
+
+
+> Don't just blindly copy other people's commits without understanding them.
+>
+> Best regards,
+> Krzysztof
