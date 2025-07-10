@@ -1,47 +1,48 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A801F30207E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC1302CAA;
 	Thu, 10 Jul 2025 20:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752178079; cv=none; b=BXqkdgQskD98f0T29ZJNc8UiTkcuhw3Pl72fA6of1iEqsmyLe8vFrGZbuIawHyJ/IdFs30bP4oMTTY/p7xw07pYwQGSkCjdaiw7AkU0EinfJPvvdZ50pKlalc98KYcSF9P7qKghAmQUD/Ogs3GVQKj8QTrSjZ/8GajmcUbw7KIo=
+	t=1752178079; cv=none; b=AvmdIBurNSOg2bfSuG7R4xYyyEvwQrPqMZ1HTdMoiNFsA/9JvGunNzPd2nW6VJUrdKFpLjcfnISWy6+KgTGEt35ZWP7Mx3/7WBRPAkKpGdLypioCI5/eP8lWEyDk02+xdV2XoRDfRshp4IfXUlOjpxLO3v+ry905yqJQLsJpan8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752178079; c=relaxed/simple;
-	bh=ynLEXTV9etWCmaTp9hJxD+i62WVpqyZqxsuR5myYfmY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DS+1lWcrypECMubS0e8NO72PTlOpaJPhj/F/HeYM1AyRxwbfoSQp8v7LuIcEvDiQWyisSWQq5Ho6IKTrfI9EMML5Onbzj6WIG4QoNJWZJ26Lq5/omUaLz8Hf1bA8y6yf+k4v4uBlqoU+jq5worzKCel+u4m8o+G85vF0DIbeagk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RGr+JEBP; arc=none smtp.client-ip=68.232.154.123
+	bh=lA2OIDdTOCkwdk+6eUUqk+oLgsWQashBUKnhjCCsbEc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cZQG54uGEaTDSy+/mzP+YGroACMuHJax61jwfDHT0/4/vgOCHklO9KN+kd/ra51glTs6ginHnIs9U7CGToBQFRZZeZfEWZ05Bpt270Wg3Ee+xL5vmsEbYHP1wEiw3KEe8dngUl1BnLAe6kNF2NVzZtu8VwQ7AVyIygd12aRoYlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=g5pW/LLR; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RGr+JEBP"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g5pW/LLR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1752178077; x=1783714077;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ynLEXTV9etWCmaTp9hJxD+i62WVpqyZqxsuR5myYfmY=;
-  b=RGr+JEBPoE+xKYy7ElANeYU5Bpwn70nUAV93Tedro6KIUIVMv5Cn5CDm
-   6bYZk7IHlhgKXohfwX+E7ajpQuRtkWnO0AJ4qvAVWxF8zDxEijd4OrsRQ
-   gBO8Y+U2JYkDSViqbQLudImgyHqwNaCHDE9AhO7/fqBgQpTG7iatBa5t4
-   7b9ekJl7VEaVQZ7lveAiIKLU1eAjSQcJOIrexw89nTlvX/Rel+qH2uzw2
-   oxWJ2+Vj2kEz8MMpbMapDWaDpzpqtKSYMwzSbw9Utp46wvuNIX+iLJjLq
-   p+NAGxw2kbGtbOMQ1kTKmFwMNhFZS4a9Wjl1aGaXq3GZUMYm3s00nRjsd
-   w==;
-X-CSE-ConnectionGUID: VcY24SkbRKSMnNSaLxS1vA==
-X-CSE-MsgGUID: VK/4oCWZTe2MmqdZJVcdvw==
+  t=1752178079; x=1783714079;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lA2OIDdTOCkwdk+6eUUqk+oLgsWQashBUKnhjCCsbEc=;
+  b=g5pW/LLRPv3rAVWH6ES3TL7NPnBs3qd4XNzYiGfeVVLHQjtLfXB5ZeyL
+   i4Fb0a37J93ImaQtA/wyfpBtE4eyy33+E6N0/mZZf3hXAlLw/WoFvAvCt
+   m4NlRp/AVwrih4Lxr81kyxCCCQrIVRMe+1xFKrDX5RN3w/guDdT+pgIqE
+   A9WxfIckHze6T0WcybYuIeKSHkKS3QhxfPKr7HJdh4qaCecrngoq1+Hmk
+   iIMQneaEiSydkrOEQGW1E4qQNzks1wFJESFH3mdAFkuGACM8YNIn3+4Bk
+   Ka9oczkWobC7I3Rm/MSKZ1gzY+3fL0PNczVOVSAaZzMkkwjgCyenTfT23
+   A==;
+X-CSE-ConnectionGUID: qOQSLemoQZOGUxBCHa7nXg==
+X-CSE-MsgGUID: 1J0KURvdTXiUsa0PWS/rbQ==
 X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="44448155"
+   d="scan'208";a="275215690"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:50 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:41 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 10 Jul 2025 13:07:30 -0700
+ 15.1.2507.44; Thu, 10 Jul 2025 13:07:35 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:30 -0700
+ 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:35 -0700
 From: <Ryan.Wanner@microchip.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -49,10 +50,12 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <varshini.rajendran@microchip.com>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<robh@kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v3 00/32] clk: at91: add support for parent_data and
-Date: Thu, 10 Jul 2025 13:06:53 -0700
-Message-ID: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v3 32/32] clk: at91: sam9x7: Clean up formatting
+Date: Thu, 10 Jul 2025 13:07:25 -0700
+Message-ID: <6e904e4dbb0f591e0fd8200e948c3c0d8debec6f.1752176711.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,103 +67,45 @@ Content-Type: text/plain
 
 From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-This series adds support for parent data and parent _hw on the at91
-clock drivers. This also updates all the SoC specific clock drivers to
-use this format as well.
+Clean up variable formatting as well as add an extra space to improve
+readability.
 
-This is a continuation of the V1 of this series here [1].
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/sam9x7.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
-SoCs.
-
-Changes v1 -> V2:
-- Remove all the small sama7g54 SoC driver changes and put them in their
-  own patch.
-- Add the SAMA7D65 and the SAM9X75 to this update.
-- Add a patch to move all common used macros into the pmc.h file.
-- Update changes from v6.6 to v6.16.
-- Remove patches that where style fixes and include those in the update.
-
-Changes v2 -> v3:
-- Adjust each patch so they are fully atomic.
-- Add a patch to have the SAMA7D65 systemclocks use parent_data and
-  parent_hw.
-- Add a formatting cleanup patch for the SAM9X75.
-- Adjust commit messages that no longer show invalid information.
-
-
-1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
-
-
-Claudiu Beznea (28):
-  clk: at91: pmc: add macros for clk_parent_data
-  clk: at91: clk-sam9x60-pll: use clk_parent_data
-  clk: at91: clk-peripheral: switch to clk_parent_data
-  clk: at91: clk-main: switch to clk parent data
-  clk: at91: clk-utmi: use clk_parent_data
-  clk: at91: clk-master: use clk_parent_data
-  clk: at91: clk-programmable: use clk_parent_data
-  clk: at91: clk-generated: use clk_parent_data
-  clk: at91: clk-usb: add support for clk_parent_data
-  clk: at91: clk-system: use clk_parent_data
-  clk: at91: clk-pll: add support for parent_hw
-  clk: at91: clk-audio-pll: add support for parent_hw
-  clk: at91: clk-plldiv: add support for parent_hw
-  clk: at91: clk-h32mx: add support for parent_hw
-  clk: at91: clk-i2s-mux: add support for parent_hw
-  clk: at91: clk-smd: add support for clk_parent_data
-  clk: at91: clk-slow: add support for parent_hw
-  clk: at91: dt-compat: switch to parent_hw and parent_data
-  clk: at91: sam9x60: switch to parent_hw and parent_data
-  clk: at91: sama5d2: switch to parent_hw and parent_data
-  clk: at91: sama5d3: switch to parent_hw and parent_data
-  clk: at91: sama5d4: switch to parent_hw and parent_data
-  clk: at91: at91sam9x5: switch to parent_hw and parent_data
-  clk: at91: at91rm9200: switch to parent_hw and parent_data
-  clk: at91: at91sam9260: switch to parent_hw and parent_data
-  clk: at91: at91sam9g45: switch to parent_hw and parent_data
-  clk: at91: at91sam9n12: switch to parent_hw and parent_data
-  clk: at91: at91sam9rl: switch to clk_parent_data
-
-Ryan Wanner (4):
-  clk: at91: pmc: Move macro to header file
-  clk: at91: sam9x75: switch to parent_hw and parent_data
-  clk: at91: sama7d65: switch to parent_hw and parent_data
-  clk: at91: sam9x7: Clean up formatting
-
- drivers/clk/at91/at91rm9200.c       |  95 ++++----
- drivers/clk/at91/at91sam9260.c      | 136 ++++++------
- drivers/clk/at91/at91sam9g45.c      |  89 ++++----
- drivers/clk/at91/at91sam9n12.c      | 106 ++++-----
- drivers/clk/at91/at91sam9rl.c       |  63 +++---
- drivers/clk/at91/at91sam9x5.c       | 125 ++++++-----
- drivers/clk/at91/clk-audio-pll.c    |  28 ++-
- drivers/clk/at91/clk-generated.c    |   8 +-
- drivers/clk/at91/clk-h32mx.c        |  11 +-
- drivers/clk/at91/clk-i2s-mux.c      |   6 +-
- drivers/clk/at91/clk-main.c         |  16 +-
- drivers/clk/at91/clk-master.c       |  24 +-
- drivers/clk/at91/clk-peripheral.c   |  16 +-
- drivers/clk/at91/clk-pll.c          |   9 +-
- drivers/clk/at91/clk-plldiv.c       |  11 +-
- drivers/clk/at91/clk-programmable.c |   8 +-
- drivers/clk/at91/clk-sam9x60-pll.c  |  14 +-
- drivers/clk/at91/clk-slow.c         |   8 +-
- drivers/clk/at91/clk-smd.c          |  10 +-
- drivers/clk/at91/clk-system.c       |   8 +-
- drivers/clk/at91/clk-usb.c          |  41 ++--
- drivers/clk/at91/clk-utmi.c         |  16 +-
- drivers/clk/at91/dt-compat.c        |  80 +++++--
- drivers/clk/at91/pmc.h              |  66 +++---
- drivers/clk/at91/sam9x60.c          | 117 +++++-----
- drivers/clk/at91/sam9x7.c           | 328 ++++++++++++++++------------
- drivers/clk/at91/sama5d2.c          | 168 +++++++-------
- drivers/clk/at91/sama5d3.c          | 122 ++++++-----
- drivers/clk/at91/sama5d4.c          | 129 +++++------
- drivers/clk/at91/sama7d65.c         | 156 ++++++-------
- drivers/clk/at91/sama7g5.c          | 111 +++++-----
- 31 files changed, 1134 insertions(+), 991 deletions(-)
-
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index 56243f6f7e65..ce6ad2a0be98 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -739,16 +739,16 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+ {
+ 	u8 td_slck_index = 0, md_slck_index = 1, main_xtal_index = 2;
+ 	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *usbck_hw;
+-	struct clk_range range = CLK_RANGE(0, 0);
+ 	const char *const main_xtal_name = "main_xtal";
+ 	const char *const td_slck_name = "td_slck";
+ 	const char *const md_slck_name = "md_slck";
++	struct clk_range range = CLK_RANGE(0, 0);
++	struct clk_parent_data parent_data[9];
+ 	struct pmc_data *sam9x7_pmc;
+ 	void **clk_mux_buffer = NULL;
+ 	int clk_mux_buffer_size = 0;
+ 	struct clk *main_xtal;
+ 	struct regmap *regmap;
+-	struct clk_parent_data parent_data[9];
+ 	int i, j;
+ 
+ 	main_xtal = of_clk_get(np, main_xtal_index);
+@@ -943,6 +943,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+ 		PMC_INIT_TABLE(mux_table, 4);
+ 		PMC_FILL_TABLE(&mux_table[4], sam9x7_gck[i].pp_mux_table,
+ 			       sam9x7_gck[i].pp_count);
++
+ 		for (j = 0; j < sam9x7_gck[i].pp_count; j++) {
+ 			u8 pll_id = sam9x7_gck[i].pp[j].pll_id;
+ 			u8 pll_compid = sam9x7_gck[i].pp[j].pll_compid;
 -- 
 2.43.0
 
