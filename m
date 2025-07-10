@@ -1,153 +1,136 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937C2223DF1;
-	Thu, 10 Jul 2025 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1A72248B3;
+	Thu, 10 Jul 2025 13:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752152473; cv=none; b=Dj1VRkdap9BgGvPhc2tgJTATie/Ni6GhTkbysXvXh2/JQMsSkl66g1SqJ/HhCkXBEG7n1kTiT6T971/FgoygOfpUcYmc4R3xgNQhQtl098/g5kDaz/SxTrgOthIodaeqR5il1A/J8AYi9J1Fx7PbVQdc8crdJ2SqVinptTm/rdU=
+	t=1752154069; cv=none; b=mvfiAbHIp//T8ldOb16Eq5kvQuPjJMYgq5NuIHlwkS3i4Q/fSbQ+DrEdOJ1LnVPrCoLijna5l4m2pO4vQNI7cY96poUlgt5q7fR5dCEhh6N4xpVcIOrd/a/aqycmNb1eT3i44E2EvoH71OXLEagdn6114XIHpokuSR+tqbEGgTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752152473; c=relaxed/simple;
-	bh=BJrfyzG2K6+fMdXYhaKF808Csj5VeWQwIiioTzueKX0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Mn0CHuwqN6qjvNegkQtk+LmIXMsVTwKLqOTuDV+BGV//vSziC6/k2NhX1gpMxfOU9uMSSvaBA2dadhXkymeWeXUOit7m24Ij2cXtnXFD7q/EOffhnTVgOO1KxgaXPyr0nuMTYMV+r1j1aHbho4yZmGGM7EZ91hDQPghI//6TWRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i8dGylzF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1752154069; c=relaxed/simple;
+	bh=vntoWKUWJsvWv9hwsBZdihuxjDBsVvfEetv3fY2yT58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qjLZ4JRDo8eRt3Cmcc+7uMNAnb5ovJV1GiuT0xgp7nRZ75koeIDaqRVW8LGFbvNJ0S5QDMuFbpdEeQVE8LcL06jds+aKVG/OTPVXg1ek7fNwDrRFmgzbD3eZeAAB3u/Qo1gUV9D7HFdTPX0Q3YItooD6TyrZ3gbvKq1u603unhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzeW2jz1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i8dGylzF"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9fXTt003109;
-	Thu, 10 Jul 2025 13:01:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5q+2o9veVg+lilD+I3TWajUcimnQ8yLxQoRPxi+KAvU=; b=i8dGylzFcXGynt6D
-	+mrmblM38wiithbYNnwU+NzQHmwAGv4QCIlijLjG5u8qpGlb9og+LiRMelm6Djvi
-	CaEleHEnsLQNlv1atDYfpFIq5FpX9ioK74QDAhLGgYMK2V6awYcPI+uNFJ8aTzbO
-	AlzO65W2fBI/v/TGCVjenK5geRMGDaS9czRbOajQ2+ipcCy2NuZQOgHryEebfQbL
-	tfVVUeonqtP9ddNH0utY/Q0BDtQRZSD8WelELF0ExGcceV9pL51EQ1eVXdEuL6nT
-	Cbhqx94s1e34XqziUApdJMUKEdCuBpcn5gKtmhH4Bsh12vbJUdHIYeRLMj8hTLfD
-	s9p2vw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu2bg9f6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 13:01:06 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AD15k0016995
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 13:01:05 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 10 Jul 2025 06:01:01 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Thu, 10 Jul 2025 18:30:40 +0530
-Subject: [PATCH v4 2/2] arm64: dts: qcom: sc8180x: Add video clock
- controller node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzeW2jz1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5581FC4CEF5;
+	Thu, 10 Jul 2025 13:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752154068;
+	bh=vntoWKUWJsvWv9hwsBZdihuxjDBsVvfEetv3fY2yT58=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HzeW2jz1J1aL41c3ViUvNxalRw843mSfS4yNm0nq8UNo3kZyy+fpVmHhaHWcgnwzh
+	 59+yt+y+AP2LpHrWgoWNIutFFzc43S4fa8UbIsCa7anH2LjxADxzuaORNGxF3MQKkx
+	 423suvwXPLEr1Vxc+u6zVyFesjworpGt88ilmzFLMALXscT3zcoMjD0czaAuUzqyxO
+	 VBxMPkHNODt2yiUB4IIK/PV4+wjpbzq2MVG2EkMn44apsYs/ZyUcFRU0N0p7E3qFyW
+	 9rhkNtmn5RbvB78CWXb+BK0cpONGqoOCO60oWyjes8OFU03GPghFXYfCdTrtZqmz0b
+	 /+tDS4GwVxYYg==
+Message-ID: <c9bd8760-1c85-4aa6-9633-1f52ed4952c9@kernel.org>
+Date: Thu, 10 Jul 2025 15:27:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250710-sc8180x-videocc-dt-v4-2-07a9d9d5e0e6@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
+ compatible
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
 References: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
-In-Reply-To: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDExMSBTYWx0ZWRfXxWBqW6Bz79aW
- w6J43En8hudg91zTBpw6JCSeZFB76rOkSC83SueYzmh55NRZBCOeBZ9f2kysvWHjj/B9nbyyQ2a
- T9Ozryb5isX36n4O5+edbR86lTF1SktCBpcycXa+f9XhS/+yP8lgLT7Yxe6/haAfaBZaXF2oSKE
- MlLoV3wwqmHcvBcC0hAP6ksSr8RDTKZmHYNAn/2tSAZIlz10T6RGtDXzH/wcTtIhUU1poKs62cT
- wYmeiKLinZ3sW9bAyf3sYXmCpN6bn87FweEQNfFzXGBvD/LaWQmG+fHve2yy8z8Mm5AVR5L40Dj
- 49KWyrzvCeRQkulIPx0EjMzy5GxXVId+kqb0cVk7GFBjLdMXj75+CMt8LuECVDkcm/Lq7Cn1rcr
- oTqNAI19A6GDwh/B5C00qygn/QwVWkQmoMOpicG76Fc2egNS66fH4ZFneEGqEuRn0mj99DF5
-X-Proofpoint-ORIG-GUID: BgYgYkirza99i2OxgXnF9URiIWXTSlGa
-X-Proofpoint-GUID: BgYgYkirza99i2OxgXnF9URiIWXTSlGa
-X-Authority-Analysis: v=2.4 cv=erTfzppX c=1 sm=1 tr=0 ts=686fb992 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=3wTN53G7mrEkdP7EbdsA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=958 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507100111
+ <20250710-sc8180x-videocc-dt-v4-1-07a9d9d5e0e6@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250710-sc8180x-videocc-dt-v4-1-07a9d9d5e0e6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add device node for video clock controller on Qualcomm
-sc8180x platform.
+On 10/07/2025 15:00, Satya Priya Kakitapalli wrote:
+> The sc8180x video clock controller block is identical to that
+> of sm8150. Add a new compatible string for sc8180x videocc and
+> use sm8150 as fallback.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml    | 23 +++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index b74ce3175d209b569e634073662307964158b340..e0dfa1eae8202881a02cc8531111792e7c962fa6 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sc8180x-camcc.h>
-+#include <dt-bindings/clock/qcom,videocc-sm8150.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sc8180x.h>
-@@ -2943,6 +2944,20 @@ usb_sec_dwc3_ss: endpoint {
- 			};
- 		};
- 
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sc8180x-videocc",
-+				     "qcom,sm8150-videocc";
-+			reg = <0 0x0ab00000 0 0x10000>;
-+			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			power-domains = <&rpmhpd SC8180X_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		camcc: clock-controller@ad00000 {
- 			compatible = "qcom,sc8180x-camcc";
- 			reg = <0 0x0ad00000 0 0x20000>;
 
--- 
-2.25.1
+<form letter>
+This is a friendly reminder during the review process.
 
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
