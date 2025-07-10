@@ -1,58 +1,58 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC1302CAA;
-	Thu, 10 Jul 2025 20:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10D6303DF4;
+	Thu, 10 Jul 2025 20:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752178079; cv=none; b=AvmdIBurNSOg2bfSuG7R4xYyyEvwQrPqMZ1HTdMoiNFsA/9JvGunNzPd2nW6VJUrdKFpLjcfnISWy6+KgTGEt35ZWP7Mx3/7WBRPAkKpGdLypioCI5/eP8lWEyDk02+xdV2XoRDfRshp4IfXUlOjpxLO3v+ry905yqJQLsJpan8=
+	t=1752178081; cv=none; b=gJioLY+YbAMYPhmrQ/NDx3DHgdMbInlLRNm5kvRSJD9BqWf2ToG/hTQpaeRVo1ds+2RUyptYC2lXxm/WlLwagZz2/xaQ6noaRoSbnAIT4fnGM8trkg3lBuU1/jSgZeLI9wj8IBoQ0vIj19nOpqD36ABQLJXtJ4ZBPxQBls84QMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752178079; c=relaxed/simple;
-	bh=lA2OIDdTOCkwdk+6eUUqk+oLgsWQashBUKnhjCCsbEc=;
+	s=arc-20240116; t=1752178081; c=relaxed/simple;
+	bh=Zv0CC3WYKH/36O9O0t/SOoiKrmvlfng/rt5RJxB0L+A=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cZQG54uGEaTDSy+/mzP+YGroACMuHJax61jwfDHT0/4/vgOCHklO9KN+kd/ra51glTs6ginHnIs9U7CGToBQFRZZeZfEWZ05Bpt270Wg3Ee+xL5vmsEbYHP1wEiw3KEe8dngUl1BnLAe6kNF2NVzZtu8VwQ7AVyIygd12aRoYlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=g5pW/LLR; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=mdmqT3BIpm+W+bRs/mgl3YHnbqs8YZE9qj79Lv3yOW+nExv6IgoflYjmBW2B8RFk/nNQaFrXUXhpGCTQ5r/CSdhRrHswsg7FxR5PfwMWKzrXksPmpKUp6yIT/B/LhfCLnjz10CpDM8kCrwN9m7qlOAy7WmZQOl9hHZKLuLyKtqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mIKsCFcy; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g5pW/LLR"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mIKsCFcy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1752178079; x=1783714079;
+  t=1752178080; x=1783714080;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=lA2OIDdTOCkwdk+6eUUqk+oLgsWQashBUKnhjCCsbEc=;
-  b=g5pW/LLRPv3rAVWH6ES3TL7NPnBs3qd4XNzYiGfeVVLHQjtLfXB5ZeyL
-   i4Fb0a37J93ImaQtA/wyfpBtE4eyy33+E6N0/mZZf3hXAlLw/WoFvAvCt
-   m4NlRp/AVwrih4Lxr81kyxCCCQrIVRMe+1xFKrDX5RN3w/guDdT+pgIqE
-   A9WxfIckHze6T0WcybYuIeKSHkKS3QhxfPKr7HJdh4qaCecrngoq1+Hmk
-   iIMQneaEiSydkrOEQGW1E4qQNzks1wFJESFH3mdAFkuGACM8YNIn3+4Bk
-   Ka9oczkWobC7I3Rm/MSKZ1gzY+3fL0PNczVOVSAaZzMkkwjgCyenTfT23
-   A==;
-X-CSE-ConnectionGUID: qOQSLemoQZOGUxBCHa7nXg==
-X-CSE-MsgGUID: 1J0KURvdTXiUsa0PWS/rbQ==
+  bh=Zv0CC3WYKH/36O9O0t/SOoiKrmvlfng/rt5RJxB0L+A=;
+  b=mIKsCFcymSpO5x63OUtpavnqF/B+sgxjmkPorh7bE+zYvz9mnJhTZsnY
+   RjhQCGsIMD+x2/AiXhlUoIBV6u6FWqJ+Shiv8tQISQKjH57apQtQVbWUF
+   QZf9G1HjfZQ1//t23u4/lXR8S1goBdITrkBD2WZRDq0itaubAnDAC3syT
+   gfMCfXofNZWZbw1pdWFkv/7HRtkZMMfCl3LefkgS7e5AzH/nnIPOvlflh
+   VjGbbiHuCcO+MDh1OI6wbmkIkRwU+BEYaPDpkALABEXQSfu7piRyac1d4
+   2tb6qC1XprfhNS4YmvQ1QDqfALw0wGJ3c83qzrpWALxMYwTiumltboSK6
+   Q==;
+X-CSE-ConnectionGUID: VcY24SkbRKSMnNSaLxS1vA==
+X-CSE-MsgGUID: zr4ioYhrTsmq9eXidwg21Q==
 X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="275215690"
+   d="scan'208";a="44448156"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:41 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:51 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 10 Jul 2025 13:07:35 -0700
+ 15.1.2507.44; Thu, 10 Jul 2025 13:07:30 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:35 -0700
+ 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:30 -0700
 From: <Ryan.Wanner@microchip.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 	<claudiu.beznea@tuxon.dev>
 CC: <varshini.rajendran@microchip.com>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<robh@kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v3 32/32] clk: at91: sam9x7: Clean up formatting
-Date: Thu, 10 Jul 2025 13:07:25 -0700
-Message-ID: <6e904e4dbb0f591e0fd8200e948c3c0d8debec6f.1752176711.git.Ryan.Wanner@microchip.com>
+	<robh@kernel.org>
+Subject: [PATCH v3 01/32] clk: at91: pmc: add macros for clk_parent_data
+Date: Thu, 10 Jul 2025 13:06:54 -0700
+Message-ID: <f3ef0275345578c504b41710c67bfe1238c44c21.1752176711.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1752176711.git.Ryan.Wanner@microchip.com>
 References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
@@ -65,47 +65,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-Clean up variable formatting as well as add an extra space to improve
-readability.
+Add helpers to set parent_data objects in platform specific drivers.
 
+Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+[ryan.wanner@microchip.com: enclose complex macro with parentheses.]
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/sam9x7.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/at91/pmc.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-index 56243f6f7e65..ce6ad2a0be98 100644
---- a/drivers/clk/at91/sam9x7.c
-+++ b/drivers/clk/at91/sam9x7.c
-@@ -739,16 +739,16 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
- {
- 	u8 td_slck_index = 0, md_slck_index = 1, main_xtal_index = 2;
- 	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *usbck_hw;
--	struct clk_range range = CLK_RANGE(0, 0);
- 	const char *const main_xtal_name = "main_xtal";
- 	const char *const td_slck_name = "td_slck";
- 	const char *const md_slck_name = "md_slck";
-+	struct clk_range range = CLK_RANGE(0, 0);
-+	struct clk_parent_data parent_data[9];
- 	struct pmc_data *sam9x7_pmc;
- 	void **clk_mux_buffer = NULL;
- 	int clk_mux_buffer_size = 0;
- 	struct clk *main_xtal;
- 	struct regmap *regmap;
--	struct clk_parent_data parent_data[9];
- 	int i, j;
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 4fb29ca111f7..0b721a65b77f 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -15,6 +15,12 @@
  
- 	main_xtal = of_clk_get(np, main_xtal_index);
-@@ -943,6 +943,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
- 		PMC_INIT_TABLE(mux_table, 4);
- 		PMC_FILL_TABLE(&mux_table[4], sam9x7_gck[i].pp_mux_table,
- 			       sam9x7_gck[i].pp_count);
+ #include <dt-bindings/clock/at91.h>
+ 
++#define AT91_CLK_PD_NAME(n, i) ((struct clk_parent_data){ \
++	.hw = NULL, .name = (n), .fw_name = (n), .index = (i), \
++})
 +
- 		for (j = 0; j < sam9x7_gck[i].pp_count; j++) {
- 			u8 pll_id = sam9x7_gck[i].pp[j].pll_id;
- 			u8 pll_compid = sam9x7_gck[i].pp[j].pll_compid;
++#define AT91_CLK_PD_HW(h) ((struct clk_parent_data){ .hw = (h) })
++
+ extern spinlock_t pmc_pcr_lock;
+ 
+ struct pmc_data {
 -- 
 2.43.0
 
