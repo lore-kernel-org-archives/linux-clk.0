@@ -1,277 +1,165 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D12EFD9D
-	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 18:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F072FCFFD;
+	Thu, 10 Jul 2025 19:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171066; cv=none; b=MFX6U6MsomNMnjV5sLIwxW2dUako+yuD0PDf6Sk5UJUHALNcWN0ti/IO3dTIQy3uQQ+6rQ4e5atuBWn/vuMxW0Vi1RhIE8pUYaA13yPrwOEqSvETjN75i8QwW07HriDEEe78Oq9QOr+sxsSSww+jN7wxfYMzYhO91ZTs89PjvkM=
+	t=1752174333; cv=none; b=PLgYcOQhUKt6eJnMJJMaADDFhN9K/d6VzEE31ZFSNMrTveP1Qoksffyh3ldziZBLLb07iNCi3nnv31yWKm54cOGXEVHJKTyNsBFOoAboT2ftVTImJjovTo/zm5KLyVxJzcw7bDyYMSYujttsg34tIISg5uuo/rnbeBFL6U7wc1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171066; c=relaxed/simple;
-	bh=kyRQoyVM2bzWbnGPxc1gi9+NEdvtsmR7MWvYL04wqOE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=q/HJxE69onEG+cnh0A+wvTi/eLfjRluDfEP9qLCAG7s++82URK1NB+VyzfpeX6XlyqaRUcnukXor1vJ/QLojSVT2YpmhopLGzrisQC7+KR1cQ9NJety7ZsUsaUcsD6XxqUSunO7ZskFUkEKvLv5OI3wi7YK1KWzvjt21S8acc0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MX7dmqd9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1752174333; c=relaxed/simple;
+	bh=WTdySniEXJwh9zm+X3t0eM0XdacPv4vH2YSk2MMBsKM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=UbxNO71Hip5L92cLR+jwadKvLwKPCNBVkSvngdaHSM0BBY3FlR7f+F+dawbm6kTVRe4ZAEFWI3JjiZYL3jLrZOjWIq4WOwOMkk06/19mpcP+3Q6u7gj7McHYNJnXWNue/2yl9WQQu7nQI3bFIQJd9V9Qht47KBbCdXxt9RHl1k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdtcAp87; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MX7dmqd9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752171063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UDaamw5XinBR9QkXrVlCRaMipACe0i/+L3o+AWfTDMU=;
-	b=MX7dmqd9E4IBMZIpYOzdSqAlr1BEMMtW2g62ox1cWdA4T0VjDyQ8c1VTgbNMZ45eJdHU1X
-	2q0bR2lWtPTlvMvfmMbp4llKtM8CeuVq61V+oeLx3NLiHouDAqPpk+zEnC99xMIJlAqkeE
-	0wMDdXyHRnjGL5lHAdai0DDIHNTf56k=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-IWhSOG8nPTOmIO1Bo500Kg-1; Thu, 10 Jul 2025 14:11:02 -0400
-X-MC-Unique: IWhSOG8nPTOmIO1Bo500Kg-1
-X-Mimecast-MFC-AGG-ID: IWhSOG8nPTOmIO1Bo500Kg_1752171062
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d413a10b4cso214009685a.1
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 11:11:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752171061; x=1752775861;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UDaamw5XinBR9QkXrVlCRaMipACe0i/+L3o+AWfTDMU=;
-        b=f5TfNkx8dOMSjhU/ckCrbTDW42IXBxIznEPesN/3YeyoVSHQ44dG7Z9QFsEo4/pEGw
-         u3qaF9Dkd3jhPYgtTsbbdsQqjENXkYp7bbAbzO9xEbRp0W/9K0bcA1fO9Cud9vmVhZUD
-         p2XNXMDh8PQi+5vkfUy/WBIEdBPhsn0nSa5RlfPYK1n0SwUK/3zg6UwYovVayEPCrGP+
-         On4HOyvYgNde+xLQMzMEZgyYC94DJbVdT5ixQYxYn8/uV/yLvLH2vJUnl+sjlxYluxd4
-         gjSK2Kzp/ag6gqvF8T0Uehwifp7RhgEpuTa9SyNSjidArHeMXBVFe69qwwqVn5aJ6y5E
-         73Rg==
-X-Gm-Message-State: AOJu0Yw/zRpkhWdNPYQ6bt5Y5YiJFU0FddJS3FjGtbQaPlCsaQ7OQT6g
-	DwKQpXw09ST45mCCSUUODU7/8rXmkUsIquyLbL/jBoaYPGiVlFBxB3rnPjKcsVee4SANmqkZxup
-	1CZ+hsc/mNm368R9JaIyFKqI22AWwz9cZEeQRGViuzVv4RbgIshVr+sNxuAnd6IoJpFoH9O6s
-X-Gm-Gg: ASbGnct1GrqYmIPD2EZlxFoLaLR9iFBL79RWUV0/MKxWR5m1cUdzmq30MAUCOFvfmSq
-	yxXndriB3qG5bAl1f1yDb4IFgmVMv/61ZHF07r/haNelB54jrmN3JJB6C8dinWyxsuxcUpBln2A
-	2+wQExA3HSZ9Mg2SmA643JSw033leiHoZOYIJT1+LMybQ1iE6pKKMaaGFUHhZ9wbCdaJRvGE54Q
-	aGfoSoCTiPSg/2997RmbAgbneFS9GBYwD5BxTaiF2FCCM7PlFcCDTQkxB+H4GwVRmHCJTr1W0Cs
-	MXlXjeK7Mn8FacjNLjL0GQlJ/3H02wPNJpwcVwPMa7U1HGDt2y+8jnYAkoo1
-X-Received: by 2002:a05:620a:4726:b0:7d5:dcd9:57f4 with SMTP id af79cd13be357-7ddea818e2bmr78794785a.18.1752171061203;
-        Thu, 10 Jul 2025 11:11:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYWoqzrM13LlMP0WzQq6WZZk3qyqsWk5e4K0LKkki76ZGMrwuKyffsVmVRcU9EDW0/eLxBfw==
-X-Received: by 2002:a05:620a:4726:b0:7d5:dcd9:57f4 with SMTP id af79cd13be357-7ddea818e2bmr78788985a.18.1752171060677;
-        Thu, 10 Jul 2025 11:11:00 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde806289sm124403285a.78.2025.07.10.11.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 11:11:00 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 14:10:41 -0400
-Subject: [PATCH] hwmon: ltc4282: convert from round_rate() to
- determine_rate()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdtcAp87"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1CEC4CEF1;
+	Thu, 10 Jul 2025 19:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752174333;
+	bh=WTdySniEXJwh9zm+X3t0eM0XdacPv4vH2YSk2MMBsKM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=VdtcAp87DeTeG/zCy8Rcl8gCkk2Nu7vLr7M5VtJBWzktPQVdGQ/+fESZpbPew56kV
+	 TQiPcuDIEEBjy1opZeVlHqZIN4KR0iSZeS61tcOqGR0A1/aXSwzn6z4mRy079YeC/C
+	 OKw4mY2bVzuUX3oGv4cyV3w+e4YpsLWJdm+JCpaqhP34ufbdY3mqw68Klmp/wB3Och
+	 uE9wqx/nlC6aWFILKNz4gD+OzgRvmgsvTAFuIpKkMAPGXnfqBLju1Sy2P43jW3N2Ua
+	 fqaCF1pXxTWzArM5h3d2QByz72ZSOKsiXtjYCQ05BGGDVzniVYPH1o31/AL7tZ+uLZ
+	 91c2jWD80GYfg==
+Date: Thu, 10 Jul 2025 14:05:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-hwmon-round-rate-v1-1-64fbe4bf3d05@redhat.com>
-X-B4-Tracking: v=1; b=H4sIACACcGgC/x2MywqAIBAAfyX23IIaEvQr0cFqyz2ksfaC8N+TY
- C5zmHkhkTAl6KoXhC5OHEMRXVcweRdWQp6Lg1HGqlYr9PcWA0o8w4ziDkI9msK4WGcbKNkutPD
- zL/sh5w8hKVKwYgAAAA==
-X-Change-ID: 20250710-hwmon-round-rate-1b21b2bf5a53
-To: Nuno Sa <nuno.sa@analog.com>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>, Maxime Ripard <mripard@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752171059; l=5669;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=kyRQoyVM2bzWbnGPxc1gi9+NEdvtsmR7MWvYL04wqOE=;
- b=6eQpeXc1h08bv2MtiVCAFjsSZrIXlAVycUsMGd5pLQ4KsDXNvjBRCIiUC0L5D2hdf/GXf0G8Y
- 8Y30vGDGn/qB/i6oj2zQH7Ti/uRnt5rMGt6Znb6AwrL7fqIqUn6jpuy
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
+ jian.xu@amlogic.com, Mark Brown <broonie@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, zhe.wang@amlogic.com, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, 
+ shuai.li@amlogic.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, 
+ linux-arm-kernel@lists.infradead.org
+To: jiebing chen <jiebing.chen@amlogic.com>
+In-Reply-To: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+Message-Id: <175217427132.3135674.349171933373202278.robh@kernel.org>
+Subject: Re: [PATCH v5 0/6] Add support for S4 audio
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-appended to the "under-the-cut" portion of the patch.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Coccinelle semantic patch is below. It's large and I don't want to
-pollute the kernel changelog with the same code hundreds of times,
-so that's why it's included under the cut. For subsystems with more
-than one patch, I've included it on the cover letter.
+On Thu, 10 Jul 2025 11:35:36 +0800, jiebing chen wrote:
+> This series completes the end-to-end audio support
+> for S4 SoC from hardware bindings to driver implementation
+> and system integration.
+> 
+> 1 Device Tree Bindings Updates
+> Added audio power domain support for S4 SoC.Defined mclk/sclk pad clock IDs in AXG audio bindings.
+> Add S4 audio tocodec binding support.
+> 
+> 2 Driver Implementation
+> Implemented S4 tocodec driver for G12A architecture.
+> Add mclk pad divider support for S4 in AXG audio clock.
+> 
+> 3 Device Tree Integration
+> Add Amlogic S4 audio subsystem support in arm64 DTS.
+> 
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+> Changes in v5:
+> - Fix warning Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yam when make dt_binding_check
+> - The audio reg is mounted below the APB bus in dts file.
+> - Deal with pad clock in a distinct controller.
+> - Fix warning for sound/soc/meson/g12a-toacodec.c
+> - Link to v4: https://lore.kernel.org/r/20250319-audio_drvier-v4-0-686867fad719@amlogic.com
+> 
+> Changes in v4:
+> - fix dtb check warning
+> - add maxItems of power domain for dt-bindings
+> - fixed audio clock pads regmap base and reg offset
+> - use dapm widget to control tocodec bclk and mclk enable
+> - Link to v3: https://lore.kernel.org/r/20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com
+> 
+> Changes in v3:
+> - remove g12a tocodec switch event
+> - Modify the incorrect title for dt-bindings
+> - Link to v2: https://lore.kernel.org/r/20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com
+> 
+> Changes in v2:
+> - remove tdm pad control and change tocodec base on g12a
+> - change hifipll rate to support 24bit
+> - add s4 audio clock
+> - Link to v1: https://lore.kernel.org/r/20250113-audio_drvier-v1-0-8c14770f38a0@amlogic.com
+> 
+> ---
+> jiebing chen (6):
+>       dt-bindings: clock: meson: Add audio power domain for s4 soc
+>       dt-bindings: clock: axg-audio: Add mclk and sclk pad clock ids
+>       dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
+>       ASoC: meson: g12a-toacodec: Add s4 tocodec driver
+>       clk: meson: axg-audio: Add the mclk pad div for s4 chip
+>       arm64: dts: amlogic: Add Amlogic S4 Audio
+> 
+>  .../bindings/clock/amlogic,axg-audio-clkc.yaml     |  55 ++-
+>  .../bindings/sound/amlogic,g12a-toacodec.yaml      |   1 +
+>  .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 218 +++++++++++
+>  arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 387 ++++++++++++++++++
+>  drivers/clk/meson/axg-audio.c                      | 435 ++++++++++++++++++++-
+>  drivers/clk/meson/axg-audio.h                      |   6 +
+>  include/dt-bindings/clock/axg-audio-clkc.h         |  11 +
+>  sound/soc/meson/g12a-toacodec.c                    |  42 ++
+>  8 files changed, 1152 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
+> change-id: 20250110-audio_drvier-07a5381c494b
+> 
+> Best regards,
+> --
+> Jiebing Chen <jiebing.chen@amlogic.com>
+> 
+> 
+> 
 
-    virtual patch
 
-    // Look up the current name of the round_rate function
-    @ has_round_rate @
-    identifier round_rate_name =~ ".*_round_rate";
-    identifier hw_param, rate_param, parent_rate_param;
-    @@
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    	...
-    }
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-    // Rename the route_rate function name to determine_rate()
-    @ script:python generate_name depends on has_round_rate @
-    round_rate_name << has_round_rate.round_rate_name;
-    new_name;
-    @@
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
+  pip3 install dtschema --upgrade
 
-    // Change rate to req->rate; also change occurrences of 'return XXX'.
-    @ chg_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier ERR =~ "E.*";
-    expression E;
-    @@
 
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    -return -ERR;
-    +return -ERR;
-    |
-    - return rate_param;
-    + return 0;
-    |
-    - return E;
-    + req->rate = E;
-    +
-    + return 0;
-    |
-    - rate_param
-    + req->rate
-    )
-    ...>
-    }
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
 
-    // Coccinelle only transforms the first occurrence of the rate parameter
-    // Run a second time. FIXME: Is there a better way to do this?
-    @ chg_rate2 depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
 
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    - rate_param
-    + req->rate
-    ...>
-    }
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/amlogic/' for 20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com:
 
-    // Change parent_rate to req->best_parent_rate
-    @ chg_parent_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
+arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dtb: clock-controller@330000 (amlogic,s4-audio-clkc): reg: [[0, 3342336, 0, 216], [0, 3346048, 0, 16]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
+arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dtb: clock-controller@330e80 (amlogic,clock-pads-clkc): power-domains: False schema does not allow [[14, 7]]
+	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
+arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dtb: sound (amlogic,axg-sound-card): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
 
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    - *parent_rate_param
-    + req->best_parent_rate
-    |
-    - parent_rate_param
-    + &req->best_parent_rate
-    )
-    ...>
-    }
 
-    // Convert the function definition from round_rate() to determine_rate()
-    @ func_definition depends on chg_rate @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier generate_name.new_name;
-    @@
 
-    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-    -               unsigned long *parent_rate_param)
-    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
-    {
-        ...
-    }
 
-    // Update the ops from round_rate() to determine_rate()
-    @ ops depends on func_definition @
-    identifier has_round_rate.round_rate_name;
-    identifier generate_name.new_name;
-    @@
-
-    {
-        ...,
-    -   .round_rate = round_rate_name,
-    +   .determine_rate = new_name,
-        ...,
-    }
-
-Note that I used coccinelle 1.2 instead of 1.3 since the newer version
-adds unnecessary braces as described in this post.
-https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
----
- drivers/hwmon/ltc4282.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/hwmon/ltc4282.c b/drivers/hwmon/ltc4282.c
-index 424fa9e3a0993f74d7bd1b2e3c98acd954217a98..dbb30abcd343f3dac46bd87cc52638b75eb5b275 100644
---- a/drivers/hwmon/ltc4282.c
-+++ b/drivers/hwmon/ltc4282.c
-@@ -177,13 +177,15 @@ static const unsigned int ltc4282_out_rates[] = {
- 	LTC4282_CLKOUT_CNV, LTC4282_CLKOUT_SYSTEM
- };
- 
--static long ltc4282_round_rate(struct clk_hw *hw, unsigned long rate,
--			       unsigned long *parent_rate)
-+static int ltc4282_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
- {
--	int idx = find_closest(rate, ltc4282_out_rates,
-+	int idx = find_closest(req->rate, ltc4282_out_rates,
- 			       ARRAY_SIZE(ltc4282_out_rates));
- 
--	return ltc4282_out_rates[idx];
-+	req->rate = ltc4282_out_rates[idx];
-+
-+	return 0;
- }
- 
- static unsigned long ltc4282_recalc_rate(struct clk_hw *hw,
-@@ -1124,7 +1126,7 @@ static ssize_t ltc4282_energy_show(struct device *dev,
- 
- static const struct clk_ops ltc4282_ops = {
- 	.recalc_rate = ltc4282_recalc_rate,
--	.round_rate = ltc4282_round_rate,
-+	.determine_rate = ltc4282_determine_rate,
- 	.set_rate = ltc4282_set_rate,
- 	.disable = ltc4282_disable,
- };
-
----
-base-commit: b551c4e2a98a177a06148cf16505643cd2108386
-change-id: 20250710-hwmon-round-rate-1b21b2bf5a53
-
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
 
