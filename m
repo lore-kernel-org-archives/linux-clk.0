@@ -1,71 +1,71 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C225E2FE383
-	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 21:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC6C302064
+	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 21:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752181925; cv=none; b=WZtuF/EoAQ5NrZiYKLtGP4Pl/JlYiIK9zJ9uL3hdqOZN6sAW2A/j1TxcStDBfiC79Q9rrmmiZvjgfLtyvsoqxqlwlhOkrZ/14LImMo04sroF7gN2J+5CIPub+yLODz1zGI+HmGvYac5tI6cP05MV2niLcOnBk4Vv2um699B15iw=
+	t=1752181928; cv=none; b=Rl6e2hNIdfCwS8IoqDKt7X9uxGktFsIHVkze6n+Sri2aTsLw3kdUrs3JEbRfgTMB3rb29RdrkqtToxcam1vioJoMALeEcNTwXGjnzaXllLc/qxMxKvPUXEx7PQ0l5KnYQnca5qY/NDfVTf6X4FUpIsgomLS8jpbZnSfPFLLog+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752181925; c=relaxed/simple;
-	bh=1Mnzs5hamHNwjD4eoe2Nc0Akysaiis/eMWjsRi17QtU=;
+	s=arc-20240116; t=1752181928; c=relaxed/simple;
+	bh=eYghFW8p4DYIUBCaUWp+/iE+HslCUlPDg0t9I+XyN/I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y7NNJkufOaEaYXs56mrokCn92mRLSj5xeF++Y5MqyT3zAoWuhQsXxVKgbsIrlDAc1GGIK4hpMtXNfVJaZgooZNKTHsaHn+z6N5r4hYOfpPJJm51IoU9T/dXI2+/JX9uewmIINGqkTbBTvXaD+uG9H1SIbKvMZWeJRKYfEoXHviQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=byrLtddv; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=Frta6IZBBd5x6sBn756OZcI+kXekQtfJZeyRfawfoPujFLRHpx1luPup3T71/dzWhzVC3wpEBJuDGokXdvWunA+9GcsVIypMoSJmF8mZuIkb7Lo5oisJgiQDBFQpATnIqXna8O7SAySfi0tmyPhyY4KrEMmaN+cNQehF9SOmB9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dRefkhYZ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="byrLtddv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dRefkhYZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752181923;
+	s=mimecast20190719; t=1752181926;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eec3UsfcgEVhhdwW54XSs3vkceSbxenv80rfbs7M6mU=;
-	b=byrLtddv+rmwlOOXS3DZS+lvDL7JTwhXZzzzmGjv50n/1oNSzt7Dul+YCU9xhNMf7UrWoR
-	Jk5ETz7gQiyTZRdAD5JnIJj6LuadeeQQZB/q8kRBoJDv0yj5VZzYN3IhJOWpzB2jxQVYYr
-	8lzoyQaUj0LKltPhczXmm40Kr9WYMn0=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RMxn3qGVHET6C9gd+BL5oIIz2htkls+w6noefj8NRsw=;
+	b=dRefkhYZeD9b8MQ6Wox6ZYPS9fLCUrkgVSVLq6QtbyuJzvCwBtQko7fikVC16iUowfV8HU
+	e+b2oqmVqfq44nbA2EzSGtAQ88kwlapi+uIhlq8D7ZXuLBcgPJByOhLNm4BXOGMr/pqbtY
+	QraLzEXmIj+MN+Rn2TQKpJzY2m0fZAY=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-292-l0s9arNLNCyKXGwVxReo9w-1; Thu, 10 Jul 2025 17:11:59 -0400
-X-MC-Unique: l0s9arNLNCyKXGwVxReo9w-1
-X-Mimecast-MFC-AGG-ID: l0s9arNLNCyKXGwVxReo9w_1752181919
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-234a102faa3so10457195ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 14:11:59 -0700 (PDT)
+ us-mta-228-ruQatDNBPXSUYu18MVaRAw-1; Thu, 10 Jul 2025 17:12:04 -0400
+X-MC-Unique: ruQatDNBPXSUYu18MVaRAw-1
+X-Mimecast-MFC-AGG-ID: ruQatDNBPXSUYu18MVaRAw_1752181924
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so2189765a91.2
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 14:12:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752181918; x=1752786718;
+        d=1e100.net; s=20230601; t=1752181924; x=1752786724;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eec3UsfcgEVhhdwW54XSs3vkceSbxenv80rfbs7M6mU=;
-        b=FGtpmnth4DdhlOmDIYfZAN8VAqmtFrkl/SlOfQQvfEMO0R9TBZ/b0HVLxcNmKB+cxf
-         X9kZx9cAJKygpfejFAsz7g3KTD43+3UeixgLhMyUWyGSEyH+n5B8HYsmBUNg4inG8EVb
-         LaeMACSfk9sgKDexrUHE6I5YUyK8z4WP17tTHy43rprfc+2qB7tiZJgAAqOfchYdIHfY
-         9F0rNzjh1g8VFVkGbR8JpujUdltfTDbrGU+8AuCitEwtNSwR7OQtQuaCRXYD0KdYUCU9
-         tx5OU3Fo7FTBhlZpDAk+h3iIo4J2CILtqgylbMl6UMI6KC7ibOmPRwayj164/Sijb+Ol
-         h7BA==
-X-Gm-Message-State: AOJu0YyKv+3lig63MpwuyQkulMLOZx4higTlbRAvWBycupG57o8CRjkk
-	UB4FEk5+nhvcVsEbKHksQ3Y961XmH8vegPlDjL6hSlEcdz+IQt7jo2jWfjZOV3a5leVa+OfKfvb
-	FVwk8oumFpRAVyPnkTWNxdJuLI23Ddbc3um99JDdp6RYMqpS30EbBnd1FfKWSWg==
-X-Gm-Gg: ASbGncvzrN8cOhrbFvfDfJEPrtvku8o87dc1K+KAKzpAm/dlZupeF6jNJf6UuWz9jiQ
-	Mmxo2ZqYbwn1PF3yAL80j918FVoMTkIeSvL4RLIL4OPYFysbDVbKpaLlFKFyJArzJlXi3pmGmev
-	s8rTd+vofSgDTiDKOE1naNtU2RsznfyAQAK6PXJbcStDXHn6nwey9WftLSPN6uVfdlyvkkI+H7i
-	1XNqhehOCujSV+so2EYV/BWyPxJzEGK47jTtyS+ZdKHSu4VkYgLPdsz7FrnnPTFlpm7QFBefE0T
-	oLGgw+pn+jhq1RvmmTc46+RFPx+oXW124tfPuXE8LOSN5g==
-X-Received: by 2002:a17:903:7d0:b0:23d:dd63:2cdb with SMTP id d9443c01a7336-23dede396f6mr7862535ad.16.1752181918573;
-        Thu, 10 Jul 2025 14:11:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmMHFgZSFsF17fGhsct290lecnQH0glpDdFs3C6QEydqtsPPL9osBYSLMIUTdMcaqaL2jdsQ==
-X-Received: by 2002:a17:903:7d0:b0:23d:dd63:2cdb with SMTP id d9443c01a7336-23dede396f6mr7862235ad.16.1752181918207;
-        Thu, 10 Jul 2025 14:11:58 -0700 (PDT)
+        bh=RMxn3qGVHET6C9gd+BL5oIIz2htkls+w6noefj8NRsw=;
+        b=uogUEi2Ll8D2/3juKu6I9yBGpXUpLZVWq/tpMMAUK06VSw45TVLuCe1odfc8aCpR7r
+         GVp4VvKzi98McFp4OdAmrde3+RYvpyYEEnZhp9ioE/iHk5x46LnHan/dUmnXHpVtY2+J
+         wYqDmBslV0KSzEi5M7NHFx2ZLVs8zioxzbTKEeNu2/c3XILYmwrOjlDEGUsrNxj/UQvh
+         wakC/tzCWD+DtzpA0EMFR4pbIs85xYLNiM2MJcWEwOpWyWWkSKsQuaftO4W7/D+PK8/d
+         vygEs4mgdh+/HN8vRmMnqpnSzOdWN/S+ehQDopqjvBt2AbT3QKzqjOBn8l1HCUwndbNQ
+         YSMg==
+X-Gm-Message-State: AOJu0YzcQlDlTBj1AJnPT/ZO3EGYe/qnP5+JPMBMVVcvUGXRQJ7hXfHE
+	+YqpbMWDUc9WXgWzUHUd3cgfBdfuD9Lvh3JrmWo0rAApttv2MkQPKjxHbhyqKEQpGShSjtJVi39
+	ZgzuonnQvfHvllcuEHw5H8tVQVZwPrn0z0gxH2z09xsKUExH3ZLNH/ByNAR7hKA==
+X-Gm-Gg: ASbGncu0Zfu1B7IOZjt8KtwyuVkbz765eXMnd0q3/4E0go2rZbJ/Q/NRt+ZLVXOXxT6
+	0eJEDgS96LajsYbY8dfKs+r5rLVzfB/YtZDwdePK01Q2dmocJm/OEtcOhq8s1OE5dYRHMNWeKto
+	WQ+fyfUwpxhA0nabFkZ1YG9Ft+Yx7XyOaQpfg31qXsjTM6L0S5TtrtwgbEKMYTRg+aGu+kiUn4f
+	sea0sdM98HH1wQXS8cx4s3RQNWRdcclRmk7NgLq0b5ltZsQyAmFEs/fumY2TR6x9CYvEssEbcSR
+	tL5+OKuFlqa8pwBGCtrUQ5Rjxr2O
+X-Received: by 2002:a17:90b:4b83:b0:311:e8cc:4248 with SMTP id 98e67ed59e1d1-31c4f5d782fmr181003a91.33.1752181923699;
+        Thu, 10 Jul 2025 14:12:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZJwG4kbKUPKJJw9NlPg14COmpPc23m7MFfrg7F5+Wtg/2WFXr5ADA1o8ZCRL9BuYnk5dhrA==
+X-Received: by 2002:a17:90b:4b83:b0:311:e8cc:4248 with SMTP id 98e67ed59e1d1-31c4f5d782fmr180978a91.33.1752181923366;
+        Thu, 10 Jul 2025 14:12:03 -0700 (PDT)
 Received: from [10.144.155.224] ([2600:382:7716:65ad:9491:c054:6f2d:80ed])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de433e51asm27790595ad.180.2025.07.10.14.11.54
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de433e51asm27790595ad.180.2025.07.10.14.11.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:11:57 -0700 (PDT)
+        Thu, 10 Jul 2025 14:12:02 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 17:10:43 -0400
-Subject: [PATCH 11/13] clk: imx: pllv3: convert from round_rate() to
+Date: Thu, 10 Jul 2025 17:10:44 -0400
+Subject: [PATCH 12/13] clk: imx: pllv4: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -75,7 +75,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-clk-imx-round-rate-v1-11-5726f98e6d8d@redhat.com>
+Message-Id: <20250710-clk-imx-round-rate-v1-12-5726f98e6d8d@redhat.com>
 References: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
 In-Reply-To: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
@@ -88,11 +88,11 @@ Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752181866; l=6011;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752181866; l=3218;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=1Mnzs5hamHNwjD4eoe2Nc0Akysaiis/eMWjsRi17QtU=;
- b=Bn0rholCUM/KYZ+bos9FZIULcmCDJf69FbJGhUfMqhda6v7HWW4+01F8FLLh7G1zCTp5fW4s+
- Pa/glVq7xHrAcqK/CA6g1MuafscKjAGR6zdGyQGptxfaNl1bj9mMzlm
+ bh=eYghFW8p4DYIUBCaUWp+/iE+HslCUlPDg0t9I+XyN/I=;
+ b=GlygFKUJrkVpwE7GHwRPUG7uDzpRjwh+PDyr1kcDB3zP0XEHH7Gkt8tVur2GVkNuwZ24eg+r7
+ k/5dyQToeGkBYWaTeEwsUjiUla04efU+hrImZBsDIo9uilD8+vVwD3U
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
@@ -102,170 +102,97 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/imx/clk-pllv3.c | 72 +++++++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 32 deletions(-)
+ drivers/clk/imx/clk-pllv4.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 11fb238ee8f0ece8116d3d7cebbbb7deaa4aee68..b99508367bcb4d7f3ef12cdbb5f5d5dcbf526c31 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -117,13 +117,14 @@ static unsigned long clk_pllv3_recalc_rate(struct clk_hw *hw,
- 	return (div == 1) ? parent_rate * 22 : parent_rate * 20;
+diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+index 9b136c951762c23cb7424405e1a66ec70af57d5c..01d05b5d543852c9eb48d1ae2b63e8f32b4f4a89 100644
+--- a/drivers/clk/imx/clk-pllv4.c
++++ b/drivers/clk/imx/clk-pllv4.c
+@@ -95,11 +95,11 @@ static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
+ 	return (parent_rate * mult) + (u32)temp64;
  }
  
--static long clk_pllv3_round_rate(struct clk_hw *hw, unsigned long rate,
+-static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
 -				 unsigned long *prate)
-+static int clk_pllv3_determine_rate(struct clk_hw *hw,
++static int clk_pllv4_determine_rate(struct clk_hw *hw,
 +				    struct clk_rate_request *req)
  {
+ 	struct clk_pllv4 *pll = to_clk_pllv4(hw);
 -	unsigned long parent_rate = *prate;
 +	unsigned long parent_rate = req->best_parent_rate;
+ 	unsigned long round_rate, i;
+ 	u32 mfn, mfd = DEFAULT_MFD;
+ 	bool found = false;
+@@ -107,7 +107,7 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 mult;
  
--	return (rate >= parent_rate * 22) ? parent_rate * 22 :
--					    parent_rate * 20;
-+	req->rate = (req->rate >= parent_rate * 22) ? parent_rate * 22 : parent_rate * 20;
+ 	if (pll->use_mult_range) {
+-		temp64 = (u64)rate;
++		temp64 = (u64) req->rate;
+ 		do_div(temp64, parent_rate);
+ 		mult = temp64;
+ 		if (mult >= pllv4_mult_range[1] &&
+@@ -118,7 +118,7 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	} else {
+ 		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+ 			round_rate = parent_rate * pllv4_mult_table[i];
+-			if (rate >= round_rate) {
++			if (req->rate >= round_rate) {
+ 				found = true;
+ 				break;
+ 			}
+@@ -127,14 +127,16 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (!found) {
+ 		pr_warn("%s: unable to round rate %lu, parent rate %lu\n",
+-			clk_hw_get_name(hw), rate, parent_rate);
++			clk_hw_get_name(hw), req->rate, parent_rate);
++		req->rate = 0;
 +
-+	return 0;
- }
+ 		return 0;
+ 	}
  
- static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -152,7 +153,7 @@ static const struct clk_ops clk_pllv3_ops = {
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_recalc_rate,
--	.round_rate	= clk_pllv3_round_rate,
-+	.determine_rate = clk_pllv3_determine_rate,
- 	.set_rate	= clk_pllv3_set_rate,
- };
- 
-@@ -165,21 +166,23 @@ static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
- 	return parent_rate * div / 2;
- }
- 
--static long clk_pllv3_sys_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *prate)
-+static int clk_pllv3_sys_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
- {
--	unsigned long parent_rate = *prate;
-+	unsigned long parent_rate = req->best_parent_rate;
- 	unsigned long min_rate = parent_rate * 54 / 2;
- 	unsigned long max_rate = parent_rate * 108 / 2;
- 	u32 div;
- 
--	if (rate > max_rate)
--		rate = max_rate;
--	else if (rate < min_rate)
--		rate = min_rate;
--	div = rate * 2 / parent_rate;
-+	if (req->rate > max_rate)
-+		req->rate = max_rate;
-+	else if (req->rate < min_rate)
-+		req->rate = min_rate;
-+	div = req->rate * 2 / parent_rate;
- 
--	return parent_rate * div / 2;
-+	req->rate = parent_rate * div / 2;
-+
-+	return 0;
- }
- 
- static int clk_pllv3_sys_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -207,7 +210,7 @@ static const struct clk_ops clk_pllv3_sys_ops = {
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_sys_recalc_rate,
--	.round_rate	= clk_pllv3_sys_round_rate,
-+	.determine_rate = clk_pllv3_sys_determine_rate,
- 	.set_rate	= clk_pllv3_sys_set_rate,
- };
- 
-@@ -226,10 +229,10 @@ static unsigned long clk_pllv3_av_recalc_rate(struct clk_hw *hw,
- 	return parent_rate * div + (unsigned long)temp64;
- }
- 
--static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long *prate)
-+static int clk_pllv3_av_determine_rate(struct clk_hw *hw,
-+				       struct clk_rate_request *req)
- {
--	unsigned long parent_rate = *prate;
-+	unsigned long parent_rate = req->best_parent_rate;
- 	unsigned long min_rate = parent_rate * 27;
- 	unsigned long max_rate = parent_rate * 54;
- 	u32 div;
-@@ -237,16 +240,16 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 max_mfd = 0x3FFFFFFF;
- 	u64 temp64;
- 
--	if (rate > max_rate)
--		rate = max_rate;
--	else if (rate < min_rate)
--		rate = min_rate;
-+	if (req->rate > max_rate)
-+		req->rate = max_rate;
-+	else if (req->rate < min_rate)
-+		req->rate = min_rate;
- 
- 	if (parent_rate <= max_mfd)
+ 	if (parent_rate <= MAX_MFD)
  		mfd = parent_rate;
  
--	div = rate / parent_rate;
--	temp64 = (u64) (rate - div * parent_rate);
-+	div = req->rate / parent_rate;
-+	temp64 = (u64) (req->rate - div * parent_rate);
+-	temp64 = (u64)(rate - round_rate);
++	temp64 = (u64)(req->rate - round_rate);
  	temp64 *= mfd;
- 	temp64 = div64_ul(temp64, parent_rate);
+ 	do_div(temp64, parent_rate);
  	mfn = temp64;
-@@ -255,7 +258,9 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -145,14 +147,19 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * pair of mfn/mfd, we simply return the round_rate without using
+ 	 * the frac part.
+ 	 */
+-	if (mfn >= mfd)
+-		return round_rate;
++	if (mfn >= mfd) {
++		req->rate = round_rate;
++
++		return 0;
++	}
+ 
+ 	temp64 = (u64)parent_rate;
  	temp64 *= mfn;
  	do_div(temp64, mfd);
  
--	return parent_rate * div + (unsigned long)temp64;
-+	req->rate = parent_rate * div + (unsigned long)temp64;
+-	return round_rate + (u32)temp64;
++	req->rate = round_rate + (u32)temp64;
 +
 +	return 0;
  }
  
- static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -296,7 +301,7 @@ static const struct clk_ops clk_pllv3_av_ops = {
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_av_recalc_rate,
--	.round_rate	= clk_pllv3_av_round_rate,
-+	.determine_rate = clk_pllv3_av_determine_rate,
- 	.set_rate	= clk_pllv3_av_set_rate,
- };
+ static bool clk_pllv4_is_valid_mult(struct clk_pllv4 *pll, unsigned int mult)
+@@ -229,7 +236,7 @@ static void clk_pllv4_unprepare(struct clk_hw *hw)
  
-@@ -355,12 +360,15 @@ static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
- 	return clk_pllv3_vf610_mf_to_rate(parent_rate, mf);
- }
- 
--static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long *prate)
-+static int clk_pllv3_vf610_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
- {
--	struct clk_pllv3_vf610_mf mf = clk_pllv3_vf610_rate_to_mf(*prate, rate);
-+	struct clk_pllv3_vf610_mf mf = clk_pllv3_vf610_rate_to_mf(req->best_parent_rate,
-+								  req->rate);
-+
-+	req->rate = clk_pllv3_vf610_mf_to_rate(req->best_parent_rate, mf);
- 
--	return clk_pllv3_vf610_mf_to_rate(*prate, mf);
-+	return 0;
- }
- 
- static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -389,7 +397,7 @@ static const struct clk_ops clk_pllv3_vf610_ops = {
- 	.unprepare	= clk_pllv3_unprepare,
- 	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_vf610_recalc_rate,
--	.round_rate	= clk_pllv3_vf610_round_rate,
-+	.determine_rate = clk_pllv3_vf610_determine_rate,
- 	.set_rate	= clk_pllv3_vf610_set_rate,
- };
- 
+ static const struct clk_ops clk_pllv4_ops = {
+ 	.recalc_rate	= clk_pllv4_recalc_rate,
+-	.round_rate	= clk_pllv4_round_rate,
++	.determine_rate = clk_pllv4_determine_rate,
+ 	.set_rate	= clk_pllv4_set_rate,
+ 	.prepare	= clk_pllv4_prepare,
+ 	.unprepare	= clk_pllv4_unprepare,
 
 -- 
 2.50.0
