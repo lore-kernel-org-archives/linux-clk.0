@@ -1,160 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9952C327C
-	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 21:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9C92397A4;
+	Thu, 10 Jul 2025 22:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752183967; cv=none; b=egmnYWIGTi12oWLY0Tct4AwY8oqKJWYrLUw5m1jJKuLuVBb8QX1LP8u0NWi/qWgaeyn04ZhDmlitoNU/rRK/R8yugLN2xQWLC337wHQ97LsHopPXOtkICKrlNIlDMVMLC2OTXnQaZV+pMdP+nekCOmbvPgtMcD+G2XdrSS1axE0=
+	t=1752188053; cv=none; b=dcFtLewLbHQRuah9/feBn0pK1vmT4QtkKeVZqUUbG4NSY3XjrGR40P+sx8nK2OmSWdcsPCtKzCoWWsUF40shXvnaH6JLg7Qu7Tx83DvsWnloNLMRLptoVvq3UTc0tZFuYS3JJk1YCakO9XR7hgyQ/kZmyYnnZsNW9wTPIum3MGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752183967; c=relaxed/simple;
-	bh=WwQJN6ZawKi/951hM5T5RhPYqORrBWNZQWoglB5Pfsc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HAliOKFbMvFQqJ3Nxu1UfmesJVy6i0d+ZxA6pF2ymgONGf1NY14AS97XcMp+bkWZjqh7J1RHMYMP59yR+OkfFG88FmBDljyk3rRTg+zTivX3cnxoradqtVRHkuBQUFdoDl+QHk4opmVtKy6zSaBprDHLlraq4rDTE6Wf0FTMfUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J7q1w7vQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1752188053; c=relaxed/simple;
+	bh=C7sffkGR58/skNSnCNft/CdSrVspgq92A+XoY08I7pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJuWs9XFzkIZd4pN792Y+QgWyVkOuuuogp1lIZUAY6/bioEEdjPQX0GAI0kAhZaDFAOQfbgTOcQboGklw9+JPQHQQQNZFL/ilsIZvoQia5UqKvehAhpeEVnPZUtQ7vk+Yu0nzYyaARvca0CwzzuZNmDAt87GRyimeyirNQbxV+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDAIM/Mi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J7q1w7vQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752183965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBk0yxGrEunv5/A/4cPrErNnsvMiKw7TX8vV/spqNxg=;
-	b=J7q1w7vQWDM9PcYnJy0hag5Eh4PNHZD+dLzOzon3GfUiKhuX54DXW+VlTvY9zuPOtgrEsY
-	v597F4DYHGiM3L2Aa02flqXq6Gds3JsbuA45OBfLOlzu4cTARVQrb1ik4TcolDTsFw+fwX
-	jt8NK0apT5JctmUGnZtObGzlnDUj+b8=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-9MozUNFFP3OWPF_PUMvROw-1; Thu, 10 Jul 2025 17:46:02 -0400
-X-MC-Unique: 9MozUNFFP3OWPF_PUMvROw-1
-X-Mimecast-MFC-AGG-ID: 9MozUNFFP3OWPF_PUMvROw_1752183961
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2f75a1bb0easo549785fac.3
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 14:46:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752183961; x=1752788761;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aBk0yxGrEunv5/A/4cPrErNnsvMiKw7TX8vV/spqNxg=;
-        b=TM41bdZXWlpqM0Z/UmpkTVnoBflBdVOrXaaW5Tt0FYaViIiXLy7WpRZhAfbfvuFhxo
-         rGneCEuKp0iPbC9ipGsx6IRNtTTGR8TuNV0GgRqpB5xMcx35YiIgWRHJ2v+qtUnyvRQR
-         WG61jwfNWzVl0n3r+TwtRFnj/jcDLjDJ7fYmlUp4cO4bdcLiOWylJrEeIkhGS7WhURUM
-         yeDyfqb39uBLPga4kRfyoMC8zeRUKgeWfShwEd1dIw+LkL6F5XFyK94SBRPhiUyvKswQ
-         J9hCe5FDgwGRZAvxl4Jm5LDlT8VkxRKwASvGmUzoI0IMHd3aoPE7BXnY9thE9vozuQMH
-         q49A==
-X-Gm-Message-State: AOJu0Yy7dPQhps2/VWcf4vHe9UyIxJlJxf8wSbGVZGAQrenKzBeL2Di0
-	34YOfxiJ/NjLIXhS0jPNRlqn1nIkho/wUXVOwA0GrckXEHmS3kdJmbg0bzb3KRsFlg7Npw/tPUp
-	skSpA5FA2lXMk+H55NWWvxPtKEWPjalOsQODEjMx9ah/tOOqhlDfuC72CENCRtQ==
-X-Gm-Gg: ASbGnculz/K3UeB68au8hiE4uGvStn18qHdIhWLkP8+C/D6EWYZp9xjv3GqEd4NMF8i
-	6hf3MYsCZc844pnmrfORrPGPVNAKqLztL7O/MAIyHMt+PgoTvq5LjOAS4JqhI8UtxXVvvQShlfv
-	0uKRjS7XRVvV6dO11DI4GULDy2nIxPMtCYc/FzzvlHc978+bpZ+E8tCnuJ1bS+UNHmAP7Ja3H7w
-	NxoOALAR5PQVGp7142g7Ej7dSrPc9dmsW3hzMBfzM2FzgLTg/N1ztrZDaQuRzk0g0SbSPcLUTeD
-	POSBJekrNNaW0Rw8JmFhF+xRHzTsxsq1eSrSv/DopOz6
-X-Received: by 2002:a05:6808:1a0b:b0:40b:9361:cd69 with SMTP id 5614622812f47-4150dc2c900mr839384b6e.15.1752183961232;
-        Thu, 10 Jul 2025 14:46:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaRi2JdektnIiRyrF7MFlrXgAYDJZGe2gepSu0dNLxidhMxjuCa2Kk4y2JM8gnTkqE8elb0g==
-X-Received: by 2002:a05:6808:1a0b:b0:40b:9361:cd69 with SMTP id 5614622812f47-4150dc2c900mr839364b6e.15.1752183960869;
-        Thu, 10 Jul 2025 14:46:00 -0700 (PDT)
-Received: from [10.144.155.224] ([2600:382:8102:a87a:c1c4:9ad5:f0c:c0f7])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-41419baa00dsm345483b6e.22.2025.07.10.14.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:46:00 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 17:45:18 -0400
-Subject: [PATCH 6/6] clk: tegra: tegra210-emc: convert from round_rate() to
- determine_rate()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDAIM/Mi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2437C4CEE3;
+	Thu, 10 Jul 2025 22:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752188053;
+	bh=C7sffkGR58/skNSnCNft/CdSrVspgq92A+XoY08I7pw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fDAIM/Mi+/m+JpTdV/OxxbHepVbjHZLt3Whl3McL7s9TFF1pDcA38Va/dah89aGws
+	 TYq9f0nd2OrOBVJrgoDj+aYmAamLCfAobDzl4z68SrCYH9YQ0XqklhxA4oqJUMBnf+
+	 VNAg0oGNk2zSR7G3NV+5Rgmr1rzj2DWuqFvSCVm1bFwl1ekuW/vbOhgELK4jWPySIw
+	 RJJEOPN6jTNAWAceKWQnYM9uB1Mk3v6dLz9KfMMAQsAgUnKFbK2UUP0avIv2mJ4ig2
+	 ilq/2ANmEKeHVYoHYqfzbubLA5zRDtv0ow6YQ7YTpgYziaY65zhqLs+6gfwUzNEEe1
+	 7NlLf9rVs1WjA==
+Date: Thu, 10 Jul 2025 17:54:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Anusha Rao <quic_anusha@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+	quic_suruchia@quicinc.com
+Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
+ source clocks to drop rate
+Message-ID: <20250710225412.GA25762-robh@kernel.org>
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-clk-tegra-round-rate-v1-6-e48ac3df4279@redhat.com>
-References: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
-In-Reply-To: <20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752183937; l=2229;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=WwQJN6ZawKi/951hM5T5RhPYqORrBWNZQWoglB5Pfsc=;
- b=CVLu9H8KuBI4I8blZ+et/1D2flCxkr06u0XAQIT3E96eHM/iwdbt1AHiUiyMoBmVw91uLXXZS
- XXHUcotXL7SDJKhMQRwAo/LmG74X9VHGq1pvNWaQqus2eL19renJKMZ
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+On Thu, Jul 10, 2025 at 08:28:13PM +0800, Luo Jie wrote:
+> Drop the clock rate suffix from the NSS Clock Controller clock names for
+> PPE and NSS clocks. A generic name allows for easier extension of support
+> to additional SoCs that utilize same hardware design.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+This is an ABI change. You must state that here and provide a reason the 
+change is okay (assuming it is). Otherwise, you are stuck with the name 
+even if not optimal.
 
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 672ca8c184d2c6e9a7f26c07d036f3359af42bc4..fbf3c894eb56e3e702f0a1f67511463dc9d98643 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -86,22 +86,30 @@ static unsigned long tegra210_clk_emc_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP(parent_rate * 2, div);
- }
- 
--static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *prate)
-+static int tegra210_clk_emc_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
- {
- 	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
- 	struct tegra210_clk_emc_provider *provider = emc->provider;
- 	unsigned int i;
- 
--	if (!provider || !provider->configs || provider->num_configs == 0)
--		return clk_hw_get_rate(hw);
-+	if (!provider || !provider->configs || provider->num_configs == 0) {
-+		req->rate = clk_hw_get_rate(hw);
-+
-+		return 0;
-+	}
- 
- 	for (i = 0; i < provider->num_configs; i++) {
--		if (provider->configs[i].rate >= rate)
--			return provider->configs[i].rate;
-+		if (provider->configs[i].rate >= req->rate) {
-+			req->rate = provider->configs[i].rate;
-+
-+			return 0;
-+		}
- 	}
- 
--	return provider->configs[i - 1].rate;
-+	req->rate = provider->configs[i - 1].rate;
-+
-+	return 0;
- }
- 
- static struct clk *tegra210_clk_emc_find_parent(struct tegra210_clk_emc *emc,
-@@ -259,7 +267,7 @@ static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops tegra210_clk_emc_ops = {
- 	.get_parent = tegra210_clk_emc_get_parent,
- 	.recalc_rate = tegra210_clk_emc_recalc_rate,
--	.round_rate = tegra210_clk_emc_round_rate,
-+	.determine_rate = tegra210_clk_emc_determine_rate,
- 	.set_rate = tegra210_clk_emc_set_rate,
- };
- 
-
--- 
-2.50.0
-
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml        | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> index 17252b6ea3be..b9ca69172adc 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> @@ -25,8 +25,8 @@ properties:
+>    clocks:
+>      items:
+>        - description: Board XO source
+> -      - description: CMN_PLL NSS 1200MHz (Bias PLL cc) clock source
+> -      - description: CMN_PLL PPE 353MHz (Bias PLL ubi nc) clock source
+> +      - description: CMN_PLL NSS (Bias PLL cc) clock source
+> +      - description: CMN_PLL PPE (Bias PLL ubi nc) clock source
+>        - description: GCC GPLL0 OUT AUX clock source
+>        - description: Uniphy0 NSS Rx clock source
+>        - description: Uniphy0 NSS Tx clock source
+> @@ -42,8 +42,8 @@ properties:
+>    clock-names:
+>      items:
+>        - const: xo
+> -      - const: nss_1200
+> -      - const: ppe_353
+> +      - const: nss
+> +      - const: ppe
+>        - const: gpll0_out
+>        - const: uniphy0_rx
+>        - const: uniphy0_tx
+> @@ -82,8 +82,8 @@ examples:
+>                 <&uniphy 5>,
+>                 <&gcc GCC_NSSCC_CLK>;
+>        clock-names = "xo",
+> -                    "nss_1200",
+> -                    "ppe_353",
+> +                    "nss",
+> +                    "ppe",
+>                      "gpll0_out",
+>                      "uniphy0_rx",
+>                      "uniphy0_tx",
+> 
+> -- 
+> 2.34.1
+> 
