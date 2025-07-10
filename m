@@ -1,73 +1,73 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAAB2F2719
-	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 17:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945C2F2C4B
+	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 17:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752169423; cv=none; b=qrS5f+7sCq2zTz5sTd6sekw9dQqjQSG1MyciZcl1ZXCsH0UkoLjCz30Ju0NSI0o4CE218BDUkTwvd4a5+Mif40YKdBQ25XuTK5LWNszabC7zdEuaTyw0Xi8BkEm/Zh6A4JVVxm/UG4oxEdng0AH54j+Y6cABWURuek//FFTM46I=
+	t=1752169427; cv=none; b=dTOIaWmJIzojpYW8Sgc7D1OCpCBZn7Vf2DbwOAMgyl/GI/xnXuySEjaxoWQ0oAwr1mp+24uO6drwX3jgpMeMiJUSKJ+yovzFWueh2xDLMJxrQyICAv9/xj9UdjDXOvcDfWqw196zk0ecC32/8w7J7afp54i88oRvd2sx/JwKj4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752169423; c=relaxed/simple;
-	bh=QsQxnV5P1fb5ziwiaykq6XlQnnjBowQ0Qm5g74Jm8ZQ=;
+	s=arc-20240116; t=1752169427; c=relaxed/simple;
+	bh=OHsRnwsdtf93oenlkpM8OGpjPNCqkqTYz1ncE/Hukgk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B5ePg5r1Sj8v8rA3ZAeiGv7f+mmoewyI2zdczLt8heDL8wfvl5/r+96TcFAuyQV0SUXd/sqpvceUuPpVKksDHHxs7ch1zkCbBQBGI6O1yxPT1xxZ90Bg3YMGO/I91PW2gemW6pu5/f/1T3yKO8yr+bF51/xPSdaVVxaW2lLOzLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrbD/Gu2; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=qxbuigtcmmaCzaZd2QPYG3lWV3MQHQa6A1QD367StbmqxoONt+D+lrA0cOmZUXp7gpd5GVB8/9Fwa2hEELOlCGtEyWh9tGKy8624jTXhcqLrY5ViJC75sJtbuOzwE5gKUl+1ZrImfIDT2oqSOoeejWCqXeXBbyyZsyQkTqO8JVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FNh7qlXD; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrbD/Gu2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FNh7qlXD"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752169421;
+	s=mimecast20190719; t=1752169424;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YCUkHqw4OIJFHYNlmvSZg7Gb7N9mp6WEkDCfyaw9PXU=;
-	b=KrbD/Gu2fvGtJgy2zR1l438LVyMU4wyCcF6aL7v3Np7P2LaWs1vVicnNvnJ5TfWS0punHj
-	GT2pQ7poa1WZVXCL6aR9pK2zaLO6SPCo3fzk5uyitlTZQ+1pGJWl9FnyxNTWCLJvIdfMSr
-	f8yW8SswwyqdIxmrM0tyw1VezZVUIwg=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=exSjMafszsHf+hPI+jA3EKbDPNjmXxeN/VchItvqKMU=;
+	b=FNh7qlXD6m2QLcZ3QRT4K5kIxg92JTM+rUjeJk25DvzaNoB/evf4izVsHdYE8cqlmUJqOq
+	yiRnOq67x67x4T2EwgevrqcJJHL56py6c0HPE9dmZBN21DAgRpOBHaW2qTO/4ta4i+gN4K
+	dlNe6TpPpmEbjjMS2z/n9CJsbSfV2lU=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-536-igV0LNAjO52zeVAX7q79JQ-1; Thu, 10 Jul 2025 13:43:39 -0400
-X-MC-Unique: igV0LNAjO52zeVAX7q79JQ-1
-X-Mimecast-MFC-AGG-ID: igV0LNAjO52zeVAX7q79JQ_1752169419
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fb3bb94b5cso19707546d6.2
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 10:43:39 -0700 (PDT)
+ us-mta-602-DD-X_FtmOrOYPNzx7b8mQg-1; Thu, 10 Jul 2025 13:43:43 -0400
+X-MC-Unique: DD-X_FtmOrOYPNzx7b8mQg-1
+X-Mimecast-MFC-AGG-ID: DD-X_FtmOrOYPNzx7b8mQg_1752169423
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a9764b4dc9so22515961cf.2
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 10:43:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752169419; x=1752774219;
+        d=1e100.net; s=20230601; t=1752169423; x=1752774223;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YCUkHqw4OIJFHYNlmvSZg7Gb7N9mp6WEkDCfyaw9PXU=;
-        b=H2sa5DoADVRm5ud3v10SCakiDhMDxe/+RmDAVbFediEB2hI1BBPbw+jJijkz+Ye8Rp
-         dMT/1nwpuscXm1DP7/Kyh2HjKGPN29EC77thGrMPhlvw+qvdKWf1Zy3EZ4RSpGp5rT6I
-         qzljY5pG2JEjdkydazi2NQfMSgY5QAMun+/yJbWDYIIb5DU6VT7Pd1/gZhEZqp5FUK9M
-         hb2JzZgJFcV3dvVyLBm1b0Vw8uNAwTDAG4g4W4rdRZ+yzXh89pz48nE79NhsMkU7h8dC
-         oaPZAaq7p0q4S1LO++tQgyyXcB0EAL+rShY9P9lBY0MlnB5eeXc+Ytnw4DC0PzSCL2X7
-         wc6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEmvd/E7ifnsIZhq1JUIF3jZvVm+Rg+uIDUfQoIbx6PVtk73eForJpCH0Kg8+NgAdWVxNBY7jXYgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSCBFF0iGedj6he4FxskBEsPrdatbsI1BwT4mO2pCCLnbv1qQP
-	dgIXYa0zoY+Y8ONS1QNhW/NnUYC07Eie7GBRjQFUqHGEdyAACti8phQcCkMvKyPoaHWeMy3PHKN
-	ZEacp70IqsfMZ2x9G/qP4K5PgxWrMRV7C9wEtZhxx1mihvUvlDgUf++MzxIUP5g==
-X-Gm-Gg: ASbGncuNt7WqM1V3nd/A+1NqkoiAdmY11TRHksLtzgDTjcQj+Jw0m9L7jj4QU6YJJnP
-	m+kdajbwXpra+oIwSp9rmkg5cWfbIxDWqQXuMHXpe7QPo+J8SZ/4Iyx2VpbWLeW6D+0nPy7Ao8S
-	RKVu0Q91lCGDv69498UfDcDmMRmnLrlSLQFsnm0tupA8/tDMefYmfBGcXWdVe9LAHRC+a+qrvMy
-	tALu7eSbj0P2V+xeuV+B80KGfoG4ngE7Z+2irf1JEuk2oYROcLeo/R+D43CyfdrOQF46tMKHt+d
-	CJ079YnKKEIqSdCEqiGOKXgpaLedGoG6CVMZHLaMp8TJQvU2FE3kqBxjNLO8
-X-Received: by 2002:a05:6214:5883:b0:6f2:c88a:50b2 with SMTP id 6a1803df08f44-704a354cf6bmr4069886d6.3.1752169419273;
-        Thu, 10 Jul 2025 10:43:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHT9fVCmhXOEcnhqu3VFHhqJP8lRdJ7DzuHPSbjh7k32ODCAsPCUcL2Z7QyeRoPgckrF6a+A==
-X-Received: by 2002:a05:6214:5883:b0:6f2:c88a:50b2 with SMTP id 6a1803df08f44-704a354cf6bmr4069566d6.3.1752169418934;
-        Thu, 10 Jul 2025 10:43:38 -0700 (PDT)
+        bh=exSjMafszsHf+hPI+jA3EKbDPNjmXxeN/VchItvqKMU=;
+        b=JCUOmBXt7vReDxdwsfErMV6bl3v6vOmcgPH+pX51phNlfbKsaGlb3xUqk5y68TF7Hh
+         1EzB3X6lk2zgdJEKuGfsbOsy3w/1lt10KTYGk1S+QOPjyUIcAxad8EvA1bwzGcN20BSq
+         nDFQ8jEbwnmZKV07nlRITcbp4DWjZl6oFkC3DJwBcKDEm9h61qRLnwzYEa4caPXiMEMS
+         zZDewlohNmqlfY+nUz5bpN6Mkh8puMXULwMn+OxezXUgp00ICd1S7TTkPlcB3fgd2kzB
+         WjuKZYU7L9tmpEn+FJfZmQ9W7OW8XmtMC+2hPKxuuxOpYja6lzhkfioJ7xzm3LGq5mOu
+         aSjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUr58nWiUlN36MqGSnKJK5uKRZDXJEGLn2BbmN5O8T9i84kHS25wtDO/JqEnZRWFOWJn04rvC1QJDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxhyca7OMF+nWSUnqu+Osy5sRGsh1aDa+Net1tIChFQ71cTVjQ
+	evK9ESgHU0h7HHyWA954KvwlW/TzpEoq93+Mq3Ah+deLA7xnRvOV7e1ro8NtuH+DZQkVJgxMPlp
+	RNAZS2avb6nVY7hIXsn24WVO99eQiB1FlGPWEWIhBHQLIm1+rLdmM9ITPylYvMA==
+X-Gm-Gg: ASbGncvZ51T+8eC8xHMY2L4EdVB+j6wjmhb2C2U6VHxib1mfepP7punLow09sb9NxYo
+	mzk/7xvADXyEN6FbR1hDTbGksynH8jx3H6OAiMQqVnXsLep9RSuh9HQjITlk7n5NYoOzLtq4GBb
+	JOtk0PQFAQaYDBHxhm76uN03UDyOEc36LNpx0EvVuYo2z1s6l67pGaKbHzjogitvAJBVifjNhPe
+	AZiPf9fXJRXd3BPXnFW8WOvSvDqZVFhqvJrwohqcPptXqX4awWzE+kk8nBk30youupamDcgYJe6
+	HQkhkA67A26qKKSpJViClHcTDMKt8+q0uc4oEsFmk6vLaeuQFVGk/yYofZei
+X-Received: by 2002:ad4:4eab:0:b0:702:d7e1:9a61 with SMTP id 6a1803df08f44-704a4325359mr1692716d6.32.1752169422752;
+        Thu, 10 Jul 2025 10:43:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE946PzHD0RXk4GY5dDiYIFHgj5udxSitTpswAFFe0EalaGRnpP5sdgmvG0/oOdFa+px1bfeQ==
+X-Received: by 2002:ad4:4eab:0:b0:702:d7e1:9a61 with SMTP id 6a1803df08f44-704a4325359mr1692226d6.32.1752169422349;
+        Thu, 10 Jul 2025 10:43:42 -0700 (PDT)
 Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d71419sm10652876d6.86.2025.07.10.10.43.35
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d71419sm10652876d6.86.2025.07.10.10.43.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 10:43:38 -0700 (PDT)
+        Thu, 10 Jul 2025 10:43:41 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 13:43:08 -0400
-Subject: [PATCH 7/9] drm/stm/lvds: convert from round_rate() to
- determine_rate()
+Date: Thu, 10 Jul 2025 13:43:09 -0400
+Subject: [PATCH 8/9] drm/sun4i/sun4i_hdmi_ddc_clk: convert from
+ round_rate() to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-drm-clk-round-rate-v1-7-601b9ea384c3@redhat.com>
+Message-Id: <20250710-drm-clk-round-rate-v1-8-601b9ea384c3@redhat.com>
 References: <20250710-drm-clk-round-rate-v1-0-601b9ea384c3@redhat.com>
 In-Reply-To: <20250710-drm-clk-round-rate-v1-0-601b9ea384c3@redhat.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>, 
@@ -105,11 +105,11 @@ Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
  freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
  linux-sunxi@lists.linux.dev, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752169393; l=2097;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752169393; l=1647;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=QsQxnV5P1fb5ziwiaykq6XlQnnjBowQ0Qm5g74Jm8ZQ=;
- b=Ksw8mIL+2RRN/KI5dE4mx3sGUsPAEzJtg6FBiWBslMJaF5i+drzv8/2cRkcR9a0IBfQcYS2SG
- tVJ/WPvWyYACv81xH4ZsEZ5zwtnc4MB29saRvfEdAfzM+LmC3xps5M8
+ bh=OHsRnwsdtf93oenlkpM8OGpjPNCqkqTYz1ncE/Hukgk=;
+ b=ho7GtAWEeFJp5Ux6aTEtHmHkJKzsUOAKpGEfNDI+F7l5XbF1qK2v1eRvTIse1y82RTcxYpTS9
+ vSPNZAJFAqpDDKhg/zIW7SbizIxqSMy8J+QnCYzoa0xmplhJw/HPvrO
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
@@ -119,52 +119,42 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/gpu/drm/stm/lvds.c | 12 +++++++-----
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 12 +++++++-----
  1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/stm/lvds.c b/drivers/gpu/drm/stm/lvds.c
-index 07788e8d3d8302a3951e97d64736b721033998d3..fe38c0984b2b552e1ccaef4d1e589b9d86a40ee3 100644
---- a/drivers/gpu/drm/stm/lvds.c
-+++ b/drivers/gpu/drm/stm/lvds.c
-@@ -682,8 +682,8 @@ static unsigned long lvds_pixel_clk_recalc_rate(struct clk_hw *hw,
- 	return (unsigned long)lvds->pixel_clock_rate;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+index 12430b9d4e930f7e7b0536a5cabdf788ba182176..b1beadb9bb59f8fffd23fd5f1a175d7385cd5e06 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+@@ -59,13 +59,15 @@ static unsigned long sun4i_ddc_calc_divider(unsigned long rate,
+ 	return best_rate;
  }
  
--static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *parent_rate)
-+static int lvds_pixel_clk_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
+-static long sun4i_ddc_round_rate(struct clk_hw *hw, unsigned long rate,
+-				 unsigned long *prate)
++static int sun4i_ddc_determine_rate(struct clk_hw *hw,
++				    struct clk_rate_request *req)
  {
- 	struct stm_lvds *lvds = container_of(hw, struct stm_lvds, lvds_ck_px);
- 	unsigned int pll_in_khz, bdiv = 0, mdiv = 0, ndiv = 0;
-@@ -703,7 +703,7 @@ static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	mode = list_first_entry(&connector->modes,
- 				struct drm_display_mode, head);
+ 	struct sun4i_ddc *ddc = hw_to_ddc(hw);
  
--	pll_in_khz = (unsigned int)(*parent_rate / 1000);
-+	pll_in_khz = (unsigned int)(req->best_parent_rate / 1000);
- 
- 	if (lvds_is_dual_link(lvds->link_type))
- 		multiplier = 2;
-@@ -719,14 +719,16 @@ static long lvds_pixel_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	lvds->pixel_clock_rate = (unsigned long)pll_get_clkout_khz(pll_in_khz, bdiv, mdiv, ndiv)
- 					 * 1000 * multiplier / 7;
- 
--	return lvds->pixel_clock_rate;
-+	req->rate = lvds->pixel_clock_rate;
+-	return sun4i_ddc_calc_divider(rate, *prate, ddc->pre_div,
+-				      ddc->m_offset, NULL, NULL);
++	req->rate = sun4i_ddc_calc_divider(req->rate, req->best_parent_rate,
++					   ddc->pre_div, ddc->m_offset, NULL, NULL);
 +
 +	return 0;
  }
  
- static const struct clk_ops lvds_pixel_clk_ops = {
- 	.enable = lvds_pixel_clk_enable,
- 	.disable = lvds_pixel_clk_disable,
- 	.recalc_rate = lvds_pixel_clk_recalc_rate,
--	.round_rate = lvds_pixel_clk_round_rate,
-+	.determine_rate = lvds_pixel_clk_determine_rate,
+ static unsigned long sun4i_ddc_recalc_rate(struct clk_hw *hw,
+@@ -101,7 +103,7 @@ static int sun4i_ddc_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ static const struct clk_ops sun4i_ddc_ops = {
+ 	.recalc_rate	= sun4i_ddc_recalc_rate,
+-	.round_rate	= sun4i_ddc_round_rate,
++	.determine_rate = sun4i_ddc_determine_rate,
+ 	.set_rate	= sun4i_ddc_set_rate,
  };
  
- static const struct clk_init_data clk_data = {
 
 -- 
 2.50.0
