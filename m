@@ -1,177 +1,191 @@
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C8A1F1313;
-	Thu, 10 Jul 2025 07:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36347287278
+	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 08:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133717; cv=none; b=ZK+OWyM04ay5+DUHfrcJ5yjETjBcKvsdWOEBlHT+gKM6Ft91mduJvmXDLFmjOKb8XARI6k8RrXpyWlA7BqjUhbKyEL6DDsn6lqMlHMwtBaCSJvttrIWNsGxPSypflp0rEhSQusswmTq4A9u3odb+cj4zmDrbm/WlI296T58R5Sw=
+	t=1752135520; cv=none; b=oJh6rDAiF8z0fDSZBW9O6IpuALyJXxpXTLjoTdYXTEeNa5UMSSkR6D7UwJ1sAkKTfaEdLPTawLRoBk28wxAjKvZybQGXeu6lFGPWHVnSfPjggmu46Eq/2lM2sIRvLekVCKVGPKDI4BM8JMR0H/rFFP1BqdpgueLyaBFMOi2QDtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133717; c=relaxed/simple;
-	bh=NrxJi9mtfyDGqO728dsGOwO3Lk8FmcnbL6fsms/datc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=sydzqFuovseNy5nDIZZtBzDyJQ/qcBgipZ15x6YXdjuoXMBe3bePqEaaks/9BaZM2k7wtt47CXKzVWGjEzcPyfYZKsoupAGFQqqYjcywKAI3vF1x6iCStgA///Weo4zJtyNvtQ7ysPgGIDWu5fDgPLV1nHPq+ACO/C3KLkcrKJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Vk43m7rp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NQl9a9qS; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1752135520; c=relaxed/simple;
+	bh=+EL8OLuDMLLMp/uF/e6dXFiI7pnVxxZAUL8Ph+lLE9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9oR/pVN2v0uHbd5U99F2Mfb06DXdooHUTXHw/luh30ln+YSTUaQDDe+xE8DJ4Eu0XOzsfYSkDO4KPh5s2n6dx9OSKiuNr93cRUxuGQicch623LX+1S7YDfNTnW6qGEVv+UmkfjzfBZvjjfg7BPFLVxMBNFjLW4WBcPuS14o37k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=T7lu3Vnm; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Vk43m7rp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NQl9a9qS"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 89DD01D001AA;
-	Thu, 10 Jul 2025 03:48:32 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 03:48:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752133712;
-	 x=1752220112; bh=VFGB/39PUQRNUuopd0MS0kGVSVfgQHVyMjplY4VKnOg=; b=
-	Vk43m7rpatUNVCIm/eUsqs4Ivfk2UAWEuI+3QdpF6tq/2p2Lh+ghW7sXZwf7ePRP
-	lp1BH169XV5kIeDOARAgRA1RkWeVcUsv5pGboRcW25/sB+En4ZlTAFgBwWAqCEBZ
-	N9xOxBE2ykDt0nVZlO/n22T/8p5uvUXSFGRb9RaHZfatZP18GgfRuciyDsrhcmbm
-	T5izMMofJ6sb6QNuY6GAVceWyMpZNCLpIMpkhU9qE5hSwxNe2bS34pCqadzKGk3V
-	B3aEQ378TjhU+DW3V7s5SRStGQvK8NOuqvkX5LHnL2qTCskFnh+RZWKx+s7ySJDf
-	A4UYNGq8sf1naJ1hGcTAmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752133712; x=
-	1752220112; bh=VFGB/39PUQRNUuopd0MS0kGVSVfgQHVyMjplY4VKnOg=; b=N
-	Ql9a9qSupN5QGTE+AgKygTP9In0dw1wIlfecsFJ11CmzNeXW44dST/zm5C5AUR2b
-	iSSmoJ0E6wL/POomU+JF0IfWJEsWhwtmfvVq1Pxt6gUz4jHWE49Zepy0+KHEfR88
-	698DKrgkzF5BR+Y5zvGYmiaSORLqleZ/IzjJJqF3iJ2YA/QHfap8g84DpKZjMYPi
-	JOnnhgsF8Kilim/YzjuZGNPt43Ds0VSBrXOBLPhDwJ3x7baR0v3jfUTZ9Qg99LKL
-	DcAC30i6Ohxdg1j9FLowUyK3DEhVPGivjApMA+aYkfmgGmkd7fO1EXEqbAa2b5Pj
-	/rp61DMIPZWEGWMnrRsjA==
-X-ME-Sender: <xms:TnBvaFCPUNXTh3IvTOxOLzdDHNHZNRbcvlNXqh5rRJbrXGkNso61Bg>
-    <xme:TnBvaDgBxfku5Iv_jnwEfXQWOxZj7ezk_uh2m_oMLc8idRJhArJNus_I6hZ3EKQqv
-    G8LwwXBAqKoRUK_sRc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleekkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefjedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
-    htthhopehjvghsphgvrhdrnhhilhhsshhonhesrgigihhsrdgtohhmpdhrtghpthhtohep
-    lhhinhhugidqrghrmhdqkhgvrhhnvghlsegrgihishdrtghomhdprhgtphhtthhopehmth
-    hurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepghifkhdutddu
-    feestghorghsihgrrdgtohhmpdhrtghpthhtohephhhgkhhimhdtheestghorghsihgrrd
-    gtohhmpdhrtghpthhtohepkhgvnhhkihhmsegtohgrshhirgdrtghomhdprhgtphhtthho
-    pehkshhkgeejvdehsegtohgrshhirgdrtghomhdprhgtphhtthhopehmihhnghihohhunh
-    hgsghosegtohgrshhirgdrtghomh
-X-ME-Proxy: <xmx:TnBvaGptIpdFPbsUo13BNf8hpBhqyqysy3fq_yWLHl13xPdF6tSqxA>
-    <xmx:TnBvaGe9Vhef7xcrOIfQrP9rdJviWHKY6trwBHqDzDAQFB2ePiR0gA>
-    <xmx:TnBvaM9YcmmE4mbvyo2Gkxwpd7nYsDvTmU_J2YlrV-Dqs2KmNiNmLw>
-    <xmx:TnBvaHGUb8p777hi5CV08Iy0wnhXfH-l5giCPKNtmAy72YNH5WICTw>
-    <xmx:UHBvaOxDqHidI8CwbxD1Qo4ftx7FkbIJU0nBSF2y3Yd3Sf3_svEj6zLU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8E75D700065; Thu, 10 Jul 2025 03:48:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T7lu3Vnm"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60702d77c60so1235213a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 01:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1752135516; x=1752740316; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i+oHkXFsQKm+K3CLYzLMU5QyZ7WKR1z3LIfoPESoqL4=;
+        b=T7lu3VnmOshfhr6amPPYBXpJwZhGCv4zFOfJBKLe/ZhfcGhflJBpJGU3FMeYiiwUIZ
+         ErIXRyw/UtbcNwXaS8Bj5Xz1X8LcpLqZIL49v/b4u8DVqtA6ZIyPrHMsgRlNMgPyGqzX
+         esD6MI4o80RMLZvsoaR6zrmyoy9NzcgnAtmWLabhc7ASAyzdm8kvfMqB9wmu/otBHgTI
+         kkmLDQIK5uv05ElOYOoT+2RjohoNB9bMeTIRnRqPTiOQRAaIyCccGr0DBr8w36D08o4E
+         D1jstfuYXaCW9RDW+E+gME5uDyf4/Lu2IHizBig1wPvHPYsjrnYx8ubAaKTqDLah4GQn
+         jXkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752135516; x=1752740316;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+oHkXFsQKm+K3CLYzLMU5QyZ7WKR1z3LIfoPESoqL4=;
+        b=IdryrpFo4G+2rhxbcca4eY30dyir/ZvMhMjueSR1Hs3hYK6hephgfo2CoK6SA4y+9J
+         O+zQxIyg8STwftGGm1Jm12x3uYHXqRsZmYRvVrE2CP6+PDIKHGlPv6qsXX4mvKQLOr8g
+         rbIE1roZbuztekuIV08irWhjRQi5YmbCPeUKGLFwwhCe6OXexJMAYLe7REYql/6Jyp/6
+         PINBGTNTmoLhuStwennwCsRM5UyyKQrYh3e/3NXq756tGj9I8l7DLY/ZHmEeOAkn49Rg
+         Ft831Np8OpnakwwABnCUFl308znYPbEXDaQqBokuFehgOS1nsOdwKar+X/mQxA7s9GhJ
+         u7oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxQD8pqgXvBcrdJQXOZ8BsHMSJYFWB5Z+p/gFgMRjNkzb/EbTJbuN7r5f3jL+j1+VhFZl6VaGqkDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc9UM+AvpAUZ6U3NLsDyc1qHYtr5MHeGcdES+5OuckePlSCqb3
+	1WElwnF2Grc4VP5mrcqrxbQQ/YxCrAAIOwaMdFbSARRBHDbwcNB3+3AYK8y6EJhqMy68Bzt4nXa
+	GhdZs
+X-Gm-Gg: ASbGncsYIsgtdoHyEsATv4e8o5nFxbO4miOvc2Weyjv+z5/ZmZuR4hDlkAH3dkDqrsU
+	AGzetk9eP1A24t9rxC5gcs9xkM+j4eo9SDFoRcoXk/y4HlPOQ0fXrZtiwmQzonSBDKvnonlbvGt
+	dNVRoz/xtApYFv2guBhpg7xg2pYIrZfDR2zynMxP+jaMoM07AOoNB9P41hYYoOw3BBr2336M4ng
+	rQ2lNOh1FNGwD8A5kaAnBCWSTh3ur90IqD7b8/B63m44ij0w1aGpjgxfQN3xpuPQZLFD6lur8Wm
+	zjSSndU6KLTQwIDxqj5fduaR3yeZosN8TYJvObCZxfws32wVAE3V3J7VwPLH1aTFJT9giQ==
+X-Google-Smtp-Source: AGHT+IH9+Y6zBGxlZWXtPGIuD+2CIc9sCQ4CgPX4kZA/Pa+VR6uPN5Br/i9pvGmZ/oOvowIV9udbPQ==
+X-Received: by 2002:a17:907:7288:b0:ae3:5da3:1a23 with SMTP id a640c23a62f3a-ae6cf5c7dbemr583384266b.21.1752135516414;
+        Thu, 10 Jul 2025 01:18:36 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82e3a8csm88075366b.154.2025.07.10.01.18.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 01:18:35 -0700 (PDT)
+Message-ID: <d1a16315-8e17-446e-87f2-57f18046288c@tuxon.dev>
+Date: Thu, 10 Jul 2025 11:18:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T040df5ea49d69849
-Date: Thu, 10 Jul 2025 09:48:10 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: ksk4725@coasia.com, "Jesper Nilsson" <jesper.nilsson@axis.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Alim Akhtar" <alim.akhtar@samsung.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Tomasz Figa" <tomasz.figa@gmail.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Ravi Patel" <ravi.patel@samsung.com>, "SungMin Park" <smn1196@coasia.com>
-Cc: kenkim <kenkim@coasia.com>, "Jongshin Park" <pjsin865@coasia.com>,
- "GunWoo Kim" <gwk1013@coasia.com>, "HaGyeong Kim" <hgkim05@coasia.com>,
- "GyoungBo Min" <mingyoungbo@coasia.com>,
- "Pankaj Dubey" <pankaj.dubey@samsung.com>,
- "Shradha Todi" <shradha.t@samsung.com>, "Inbaraj E" <inbaraj.e@samsung.com>,
- "Swathi K S" <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- "Dongjin Yang" <dj76.yang@samsung.com>,
- "Sang Min Kim" <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, soc@lists.linux.dev
-Message-Id: <5494bedb-6907-43dc-8580-04ef1e47c8d0@app.fastmail.com>
-In-Reply-To: <20250710002047.1573841-15-ksk4725@coasia.com>
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-15-ksk4725@coasia.com>
-Subject: Re: [PATCH 14/16] arm64: dts: axis: Add initial device tree support
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: sam9x7: update pll clk ranges
+To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
+ sboyd@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Patrice.Vilchez@microchip.com
+References: <20250610084503.69749-1-varshini.rajendran@microchip.com>
+ <c51b2b64-24a7-4e14-bdd8-c4a356423100@tuxon.dev>
+ <0652df01-13e8-4fb8-a2e0-35820d83ac3d@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <0652df01-13e8-4fb8-a2e0-35820d83ac3d@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025, at 02:20, ksk4725@coasia.com wrote:
-> From: sungminpark <smn1196@coasia.com>
->
-> Add initial device tree support for Axis ARTPEC-8 SoC and Grizzly board.
-> This SoC contains four cores of cortex-a53 CPUs and other various
-> peripheral IPs.
+Hi, Varshini,
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa1e04e87d1d..371005f3f41a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2320,6 +2320,20 @@ F:	drivers/crypto/axis
->  F:	drivers/mmc/host/usdhi6rol0.c
->  F:	drivers/pinctrl/pinctrl-artpec*
+On 24.06.2025 12:09, Varshini.Rajendran@microchip.com wrote:
+> Hi Claudiu,
 > 
-> +ARM/ARTPEC ARM64 MACHINE SUPPORT
-> +M:	Jesper Nilsson <jesper.nilsson@axis.com>
-> +M:	Ravi Patel <ravi.patel@samsung.com>
-> +M:	SeonGu Kang <ksk4725@coasia.com>
-> +M:	SungMin Park <smn1196@coasia.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
-> +L:	linux-arm-kernel@axis.com
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
-> +F:	arch/arm64/boot/dts/axis/
-> +F:	drivers/clk/samsung/clk-artpec*.c
-> +F:	include/dt-bindings/clock/axis,artpec*-clk.h
-
-I'm trying to understand the SoC family tree here. I see that
-you have an entry for ARTPEC SoCs above it, which currently
-covers artpec6 (Cortex-A9, apparently not Samsung based).
-
-Is the reason for having two entries here that artpec6/7 and
-artpec8/9 are two separate SoC families, or is this just because
-they are using 32-bit and 64-bit cores, respectively?
-
+> On 24/06/25 12:34 pm, Claudiu Beznea wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> Hi, Varshini,
+>>
+>> On 10.06.2025 11:45, Varshini Rajendran wrote:
+>>> Update the min, max ranges of the PLL clocks according to the latest
+>>> datasheet to be coherent in the driver. This patch apparently solves
+>>> issues in obtaining the right sdio frequency.
+>>>
+>>> Fixes: 33013b43e271 ("clk: at91: sam9x7: add sam9x7 pmc driver")
+>>> Suggested-by: Patrice Vilchez <Patrice.Vilchez@microchip.com>
+>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+>>> ---
+>>>   drivers/clk/at91/sam9x7.c | 20 ++++++++++----------
+>>>   1 file changed, 10 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+>>> index cbb8b220f16b..ffab32b047a0 100644
+>>> --- a/drivers/clk/at91/sam9x7.c
+>>> +++ b/drivers/clk/at91/sam9x7.c
+>>> @@ -61,44 +61,44 @@ static const struct clk_master_layout sam9x7_master_layout = {
+>>>
+>>>   /* Fractional PLL core output range. */
+>>>   static const struct clk_range plla_core_outputs[] = {
+>>> -     { .min = 375000000, .max = 1600000000 },
+>>> +     { .min = 800000000, .max = 1600000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range upll_core_outputs[] = {
+>>> -     { .min = 600000000, .max = 1200000000 },
+>>> +     { .min = 600000000, .max = 960000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range lvdspll_core_outputs[] = {
+>>> -     { .min = 400000000, .max = 800000000 },
+>>> +     { .min = 600000000, .max = 1200000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range audiopll_core_outputs[] = {
+>>> -     { .min = 400000000, .max = 800000000 },
+>>> +     { .min = 600000000, .max = 1200000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range plladiv2_core_outputs[] = {
+>>> -     { .min = 375000000, .max = 1600000000 },
+>>> +     { .min = 800000000, .max = 1600000000 },
+>>>   };
+>>>
+>>>   /* Fractional PLL output range. */
+>>>   static const struct clk_range plla_outputs[] = {
+>>> -     { .min = 732421, .max = 800000000 },
+>>> +     { .min = 400000000, .max = 800000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range upll_outputs[] = {
+>>> -     { .min = 300000000, .max = 600000000 },
+>>> +     { .min = 300000000, .max = 480000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range lvdspll_outputs[] = {
+>>> -     { .min = 10000000, .max = 800000000 },
+>>> +     { .min = 175000000, .max = 550000000 },
+>>>   };
+>>>
+>>>   static const struct clk_range audiopll_outputs[] = {
+>>> -     { .min = 10000000, .max = 800000000 },
+>>> +     { .min = 0, .max = 300000000 },
+>>
+>> Is this min value something valid?
 > 
-> +config ARCH_ARTPEC
-> +	bool "Axis Communications ARTPEC SoC Family"
-> +	help
-> +	   This enables support for the ARMv8 based ARTPEC SoC Family.
-> +
-> +config ARCH_ARTPEC8
-> +	bool "Axis ARTPEC-8 SoC Platform"
-> +	depends on ARCH_ARTPEC
-> +	depends on ARCH_EXYNOS
-> +	select ARM_GIC
-> +	help
-> +	  This enables support for the Axis ARTPEC-8 SoC.
-> +
+> Yes. This is a valid value mentioned in the datasheet. This is the range 
+> that fixes the issue of not being able to set low frequency values for 
+> the SDIO interface for instance.
 
-I would prefer to be less fine-grained here, especially as
-it seems that ARTPEC9 is again quite similar to ARTPEC8, as
-far as I can guess from public information.
+Sorry for the late reply. This range is for audiopll. Can you please
+explain in the commit message why this fixes issues with the SDIO interface.
 
-Could you fold both entries into a single ARCH_ARTPEC?
+Also, having zero here as min rate would involve, as of my code inspection,
+setting frac->mul = -1 for disabled PLLs on probe (I suppose audio PLLs are
+among them). Please check:
 
-     Arnd
+https://elixir.bootlin.com/linux/v6.15.5/source/drivers/clk/at91/clk-sam9x60-pll.c#L693
+
+Having frac->mul = -1 means frac->mul = 0xff meaning the HW registers will
+be set with the maximum multiplier. If my assumption is right, for a
+reference clock of 24MHz this will mean the Fcorepll will be 384MHz which
+is not in range for Fcorepll specifications (described by
+audiopll_core_outputs[]).
+
+This may be harmless if the PLL is unused at boot time, or reconfigured
+later, but if the PLL is just enabled later (w/o setting again the
+frequency) and the core output frequency is not in range (described by
+audiopll_core_outputs[]) it will lead to PLL lock to take forever and the
+execution to stuck.
+
+Can you please check this?
+
+Thank you,
+Claudiu
+
+
