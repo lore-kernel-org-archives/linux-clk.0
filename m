@@ -1,157 +1,72 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B8928B7C6;
-	Thu, 10 Jul 2025 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FB12222AB;
+	Thu, 10 Jul 2025 11:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142911; cv=none; b=Su2pfogCcjirXEe2hWiko7qMG56d+zQr4Gz8JyAanhRVBdLRhpl6X/jvYsEGYN2dih5A6PYUyK28Ovs6/+NBSL+QjNo4+KmgXu+yETtlrs1En2+dKVdNTEbQ/fasJxZ7//qRHzVATVKUe95U6SqTseISedU+iIO8t+uDhiz7+qQ=
+	t=1752148129; cv=none; b=ZdB7mABZuXR/kbZLS44MrsO4XtjVuOXnINKizX5GS8qUapsG/SIfjoZ7HDVf/CP2uvwLXs+bKHMQLQmRwO+XHiJXwpz/uuIZpaYNaLAxSWGmklQHMa5QT0XB/NLWFgcP+AdHzBf6S0UE59rEU6PleLgX+OEq0yZGDjelkBaasDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142911; c=relaxed/simple;
-	bh=A+9Sz68hzFxOWXlYTrr0jLnxA/21fIK4aonpJxZXUMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fHBoHvMdiG47SYQ/jrfpq7wxoYQVUo6sZvmUqze7IjoPeFQUQqGRNvJFdcMvT9HR5XaSebxtSKo+ktMY5bbJqkBbI/xEYSsFcp4iq8+DnoIivDmv2+El513/muvc+vQh5JWThocgqiF1f4vtf3BMYI08OMWIRHdEFa4Cy26hibQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ngO6uyn/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1752148129; c=relaxed/simple;
+	bh=Y8ODQ3usnbJxaB70tVVCgBYLeFbC+x4qHbjISxINAhg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ek/UxLE5LpohvNPATq5Aj91Hkp9p5N+wtX7bBp7dIKZuAuhosiR9XcmoqIdjur8q67atJ0DM45ONoArSqZFcUyHJnCP7mO59IRFh7TsB4Zu9zG8UDsQWoZOk2HKZ28txbrwfGO2h8JcisfrU6lgTXdTf6i+DdlvJo3DkinsV0Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=nRHLVAA9; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ngO6uyn/"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A97I30016625;
-	Thu, 10 Jul 2025 10:21:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tf3urf9uVqztqSfyUPaLE7aNRQmb9rU20q9mQcpzNms=; b=ngO6uyn/9GojR7e6
-	qs0WAwVOe6Tma28F8jn0r2Z7jr2kFNgSTwAp5g9vwTd566AXh6yRJ6Snq9GlU41d
-	xHlrsifdsyrIO6XEPTNpTbwXGkyz6tfqWHGV4/eXHsme9xx2128z/CkzhX189j4c
-	qwagUC+a8FJCEcPcXEt5hpHw7CJ4DsCslpGfhcprNEhvOgLFmT3i7suCOsjc5es/
-	TXxzg2RxWwbcr5teoHh6D6kQdtHPTdK8TD28WyCHw1pJ+RdXgRlV2oPIQmoFtjQE
-	FWMMWkbUqc1IHJ2BRdVDNW3KhT6zR1XmWV8SJXW001BFcKJtTFwqFJ8RlvTwSfSZ
-	mGuIbA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap4k1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 10:21:45 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AALiff026017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 10:21:44 GMT
-Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
- 2025 03:21:38 -0700
-Message-ID: <80848e86-1c0d-4edf-ac25-006a5cd1779f@quicinc.com>
-Date: Thu, 10 Jul 2025 15:50:57 +0530
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="nRHLVAA9"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=y4s+IUaUyh9dlQ/Hx8EWkCmljPen6fWuwD0jHRtCum8=; b=nRHLVAA91vDKuodTPolGnRickg
+	MZaOnRcGGAMfQxRoBaiOPM8+2tohT5OeBxIjdjRNeDIrx+xB5VeYB/NnDGzC4ooY0DAjB0ig+Bu6R
+	F6ZVldo36ZBFEJy6GloU1ozA0jnI8JnF6s0nHgkAx/SCSfpILFSUlF5/nHclT8x1Iviz4+MhM+O6s
+	3ZzGlk0uzhUc1I7OgVsMFrN2weqxgHFRa9Q215flxKPQo/gFflrO3gjwt4cMUew8kM1sgNZN+knzD
+	WXZcJBNywCOjf70pXwimIsehTUu4wtGRkdELWLA3Yg/zyEM8TYrT9rkskh3DgEyHvNDOh+pvB3jVx
+	8K8jSB7Q==;
+Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uZplY-0004dU-ES; Thu, 10 Jul 2025 13:48:40 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	sboyd@kernel.org,
+	zhangqing@rock-chips.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: rk3568: Add PLL rate for 132MHz
+Date: Thu, 10 Jul 2025 13:48:37 +0200
+Message-ID: <175214811246.1905791.3082982718132036980.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250615123922.661998-1-andyshrk@163.com>
+References: <20250615123922.661998-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] dt-bindings: clock: qcom,qcs404-turingcc: Reference
- qcom,gcc.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Hugo
-	<jeff.hugo@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
- <20250709-gcc-ref-fixes-v1-4-ceddde06775b@quicinc.com>
- <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686f9439 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=OnOfrgqvBbQOueBi47sA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA4OCBTYWx0ZWRfX771G0X3zTjn+
- izOg0Pd3JysxSLbyKmHiWovPpi1N+tMWga8ySHyl7pipoIrw0aM+rssH12sqvi5mP7ns1F+D1UE
- I61OlqrdeH8Sz8bB4j3PYObFWW0wh0jehJ/mLdYUQNJyisO2ee+uhE8lZYff7ub+SFrrK+wMJ4u
- y4JLX5hE3vGXnBxKF+t2YI2362aA1SgfsW2GXuSQ/G4LX/IJO7mkN27DhGHEI7eZhxFPETi2Cp7
- gQ9e9vA/yNmos5WtTKHTYgc6vcaBUcP7QFH2WGBks+nVAcNFtC2U/VK3KoBLxRFgc6o8d08Bcjo
- Q18izkAc36HHUb5F/4a6PBHBbwepSkeK+v9EkuO36W0HzJQLQWLessVNVbFlyVzhawPHrj3rc02
- EqlKyylTf/VhYNH8WP0wGhJxltXDDW1NCqGyHntOmV54BKmGQ0RlO+89WMY/JuoTW36/rRUC
-X-Proofpoint-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507100088
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-On 7/9/2025 3:37 PM, Krzysztof Kozlowski wrote:
-> On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
->> Reference the common qcom,gcc.yaml schema to unify the common
->> parts of the binding.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,qcs404-turingcc.yaml | 17 ++++-------------
->>   1 file changed, 4 insertions(+), 13 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> index 033e010754a26bd03e02a364b0a6f36d87a3af62..794984f563fe3eb253aaf7524205097cf0c62711 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> @@ -13,26 +13,17 @@ properties:
->>     compatible:
->>       const: qcom,qcs404-turingcc
->>   
->> -  reg:
->> -    maxItems: 1
->> -
->>     clocks:
->>       maxItems: 1
->>   
->> -  '#clock-cells':
->> -    const: 1
->> -
->> -  '#reset-cells':
->> -    const: 1
->> -
->>   required:
->>     - compatible
->> -  - reg
->>     - clocks
->> -  - '#clock-cells'
->> -  - '#reset-cells'
-> No, this becomes now power domain provider without explanation.
+On Sun, 15 Jun 2025 20:39:05 +0800, Andy Yan wrote:
+> Add PLL rate for 132 MHz to allow raydium-rm67200 panel with
+> 1080x1920 resolution to run at 60 fps that driven by VPLL.
+> 
+> 
 
+Applied, thanks!
 
-My bad, I will drop the files which do not have the power domain cells 
-in my next post.
+[1/1] clk: rockchip: rk3568: Add PLL rate for 132MHz
+      commit: 132b62280a9dbe38c627183ae7f1611de3ee0d9a
 
-
-> Don't just blindly copy other people's commits without understanding them.
->
-> Best regards,
-> Krzysztof
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
