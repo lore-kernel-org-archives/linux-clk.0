@@ -1,29 +1,29 @@
 Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595691805A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0741862A
 	for <linux-clk@vger.kernel.org>; Thu, 10 Jul 2025 00:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106864; cv=none; b=Wut5bCzWnEMRyOTNVCI3wWVGGSuamnZZAkTj1lMkmUj538Tt61OdRhYop8JBxC2LLb1LfsH/tb2WtnVK3IeOHQu1Qc923cG3BwkqydLumfUIQv5hUXT3pOB+0i+Epo4Qp9mQdmMBTQO6Otr+o/zZpij+V9qKySEB6zQ5hdLT23s=
+	t=1752106864; cv=none; b=E32iVmUQY8XVSEovs2b0JEiv3fzDnR8Fd1ChZBLepPovkGu+lAfWl1vaXOk6Sgft+NAC+esz89YLRYgPS6aWYmh5HCGDRTljO+rqPA761rk5tj+4kALk5DBMao9gWLgW/Wm6d/EI+kGTanhTUUMxva84RFyf9cpGl5Po4EdvRHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752106864; c=relaxed/simple;
-	bh=8vgv+qYIBssDu0PpaPFIKmoPLn4IZbctIWW+nNruduQ=;
+	bh=DPuahl419ZI8H8sIxt4+AyDZsbJtqz9HQjp9C1Tkzek=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QyNGQ2t4jFHBu5D33+Iw4Qgr9lPkkYpE93CrKs6Xu9zEoyiUkABBzYlVopk26jyU7We+faJ3/McS6LyyjQwOj0ZWWiS/EuOXLZI52veoHrrtysWQ3/z0YVAGhsXw9w989/sv3svRUT7fPDlugfyuqxrdpzk56h6ICuuOYd0cA2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=UeqXKGti; arc=none smtp.client-ip=112.168.119.159
+	 MIME-Version; b=FN/54esRmev2EjhdvtgfCV5/H/9bsz2k6sBfT8BxFbwJ7QRc2AAu3PFvndfAwq210zGuqagxt6qLqSfP308qKVcK+p9uIdiTpwA/BJpAj0MC+JxfrSTmJiz0WMzAuHOVQhIWrq7QdmZKavYdwPVupI7fOj2IZwAZIQ4KS/ZheFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=uMMMoSJ2; arc=none smtp.client-ip=112.168.119.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="UeqXKGti"
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="uMMMoSJ2"
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1752106851; bh=8vgv+qYIBssDu0PpaPFIKmoPLn4IZbctIWW+nNruduQ=;
-	l=7205; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=UeqXKGtibTgHwtcwQKzVJ5RFRwl3yJay/rB7BEoUA1ZFi5e+SjC+mco/OTYyjBzJd
-	 c3RyiO4HRZWHfWOHJDlk64npi+rFs8TCNNY+XjhyV//LC6ShXN5SUuq4POmFHRbnQ5
-	 tG7HmfqhnuqW6etU7+vnE9sBl16YBqgmn4TYTS3Y=
+	t=1752106856; bh=DPuahl419ZI8H8sIxt4+AyDZsbJtqz9HQjp9C1Tkzek=;
+	l=2845; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=uMMMoSJ2Jnq0N9tjsiml/673AJH3xj8Azva0xHCbjtgJ/p3fhDBy7Or71nZSAYiEG
+	 Zp0jA5ly/65J3Uy5Kv1Y7V2IAMO7RPlVqTCPyKD7bYMskiAWmjsWN6oUkTgxhkwxEc
+	 sGqCAl6RAtvwWPLGmZMIRd096rYwQmrHXyvs+jjs=
 Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
-	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:51 +0900
+	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:56 +0900
 X-Original-SENDERIP: 115.23.218.194
 X-Original-SENDERCOUNTRY: KR, South Korea 
 X-Original-MAILFROM: ksk4725@coasia.com
@@ -64,7 +64,8 @@ X-Original-RCPTTO: jesper.nilsson@axis.com,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
+	soc@lists.linux.dev,
+	v.pavani@samsung.com
 From: ksk4725@coasia.com
 To: Jesper Nilsson <jesper.nilsson@axis.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -103,10 +104,11 @@ Cc: kenkim <kenkim@coasia.com>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
-Subject: [PATCH 02/16] dt-bindings: clock: Add ARTPEC-8 CMU bindings
-Date: Thu, 10 Jul 2025 09:20:32 +0900
-Message-Id: <20250710002047.1573841-3-ksk4725@coasia.com>
+	soc@lists.linux.dev,
+	Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH 06/16] clk: samsung: artpec-8: Add clock support for CMU_BUS block
+Date: Thu, 10 Jul 2025 09:20:36 +0900
+Message-Id: <20250710002047.1573841-7-ksk4725@coasia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
@@ -120,254 +122,78 @@ Content-Transfer-Encoding: 8bit
 
 From: Hakyeong Kim <hgkim05@coasia.com>
 
-Add dt-schema for ARTPEC-8 SoC clock controller.
+Add clock support for below CMU block in ARTPEC-8 SoC.
+ - CMU_BUS
 
-Add device-tree binding definitions for following CMU blocks:
-- CMU_CMU
-- CMU_BUS
-- CMU_CORE
-- CMU_CPUCL
-- CMU_FSYS
-- CMU_IMEM
-- CMU_PERI
-
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
 ---
- .../bindings/clock/axis,artpec8-clock.yaml    | 224 ++++++++++++++++++
- 1 file changed, 224 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+ drivers/clk/samsung/clk-artpec8.c | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml b/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
-new file mode 100644
-index 000000000000..baacea10599b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
-@@ -0,0 +1,224 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/axis,artpec8-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/samsung/clk-artpec8.c b/drivers/clk/samsung/clk-artpec8.c
+index 1ef9e52ad24b..648abdd2f510 100644
+--- a/drivers/clk/samsung/clk-artpec8.c
++++ b/drivers/clk/samsung/clk-artpec8.c
+@@ -15,6 +15,7 @@
+ 
+ /* NOTE: Must be equal to the last clock ID increased by one */
+ #define CMU_CMU_NR_CLK			(DOUT_CLKCMU_VPP_CORE + 1)
++#define CMU_BUS_NR_CLK			(DOUT_CLK_BUS_PCLK + 1)
+ #define CMU_IMEM_NR_CLK			(MOUT_IMEM_JPEG_USER + 1)
+ 
+ /* register offset definitions for cmu_cmu (0x12400000) */
+@@ -431,6 +432,50 @@ static void __init artpec8_clk_cmu_cmu_init(struct device_node *np)
+ CLK_OF_DECLARE(artpec8_clk_cmu_cmu, "axis,artpec8-cmu-cmu",
+ 	       artpec8_clk_cmu_cmu_init);
+ 
++/* Register Offset definitions for CMU_BUS (0x12c10000) */
++#define PLL_CON0_MUX_CLK_BUS_ACLK_USER			0x0100
++#define PLL_CON0_MUX_CLK_BUS_DLP_USER			0x0120
++#define DIV_CLK_BUS_PCLK				0x1800
 +
-+title: Axis ARTPEC-8 SoC clock controller
++static const unsigned long cmu_bus_clk_regs[] __initconst = {
++	PLL_CON0_MUX_CLK_BUS_ACLK_USER,
++	PLL_CON0_MUX_CLK_BUS_DLP_USER,
++	DIV_CLK_BUS_PCLK,
++};
 +
-+maintainers:
-+  - Jesper Nilsson <jesper.nilsson@axis.com>
++PNAME(mout_clk_bus_aclk_user_p) = { "fin_pll", "dout_clkcmu_bus_bus" };
++PNAME(mout_clk_bus_dlp_user_p) = { "fin_pll", "dout_clkcmu_bus_dlp" };
 +
-+description: |
-+  ARTPEC-8 clock controller is comprised of several CMU units, generating
-+  clocks for different domains. Those CMU units are modeled as separate device
-+  tree nodes, and might depend on each other. The root clock in that root tree
-+  is an external clock: OSCCLK (25 MHz). This external clock must be defined
-+  as a fixed-rate clock in dts.
++static const struct samsung_mux_clock cmu_bus_mux_clks[] __initconst = {
++	MUX(MOUT_CLK_BUS_ACLK_USER, "mout_clk_bus_aclk_user",
++	    mout_clk_bus_aclk_user_p, PLL_CON0_MUX_CLK_BUS_ACLK_USER, 4, 1),
++	MUX(MOUT_CLK_BUS_DLP_USER, "mout_clk_bus_dlp_user",
++	    mout_clk_bus_dlp_user_p, PLL_CON0_MUX_CLK_BUS_DLP_USER, 4, 1),
++};
 +
-+  CMU_CMU is a top-level CMU, where all base clocks are prepared using PLLs and
-+  dividers; all other clocks of function blocks (other CMUs) are usually
-+  derived from CMU_CMU.
++static const struct samsung_div_clock cmu_bus_div_clks[] __initconst = {
++	DIV(DOUT_CLK_BUS_PCLK, "dout_clk_bus_pclk", "mout_clk_bus_aclk_user",
++	    DIV_CLK_BUS_PCLK, 0, 4),
++};
 +
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All clocks available for usage
-+  in clock consumer nodes are defined as preprocessor macros in
-+  'include/dt-bindings/clock/axis,artpec8-clk.h' header.
++static const struct samsung_cmu_info cmu_bus_info __initconst = {
++	.mux_clks		= cmu_bus_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cmu_bus_mux_clks),
++	.div_clks		= cmu_bus_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cmu_bus_div_clks),
++	.nr_clk_ids		= CMU_BUS_NR_CLK,
++	.clk_regs		= cmu_bus_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cmu_bus_clk_regs),
++};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - axis,artpec8-cmu-cmu
-+      - axis,artpec8-cmu-bus
-+      - axis,artpec8-cmu-core
-+      - axis,artpec8-cmu-cpucl
-+      - axis,artpec8-cmu-fsys
-+      - axis,artpec8-cmu-imem
-+      - axis,artpec8-cmu-peri
++static void __init artpec8_clk_cmu_bus_init(struct device_node *np)
++{
++	samsung_cmu_register_one(np, &cmu_bus_info);
++}
 +
-+  clocks:
-+    minItems: 1
-+    maxItems: 5
++CLK_OF_DECLARE(artpec8_clk_cmu_bus, "axis,artpec8-cmu-bus",
++	       artpec8_clk_cmu_bus_init);
 +
-+  clock-names:
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-cmu
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-bus
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_BUS BUS clock (from CMU_CMU)
-+            - description: CMU_BUS DLP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_bus_bus
-+            - const: dout_clkcmu_bus_dlp
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-core
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_CORE main clock (from CMU_CMU)
-+            - description: CMU_CORE DLP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_core_main
-+            - const: dout_clkcmu_core_dlp
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-cpucl
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_CPUCL switch clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_cpucl_switch
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-fsys
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_FSYS SCAN0 clock (from CMU_CMU)
-+            - description: CMU_FSYS SCAN1 clock (from CMU_CMU)
-+            - description: CMU_FSYS BUS clock (from CMU_CMU)
-+            - description: CMU_FSYS IP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_fsys_scan0
-+            - const: dout_clkcmu_fsys_scan1
-+            - const: dout_clkcmu_fsys_bus
-+            - const: dout_clkcmu_fsys_ip
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-imem
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_IMEM ACLK clock (from CMU_CMU)
-+            - description: CMU_IMEM JPEG clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_imem_aclk
-+            - const: dout_clkcmu_imem_jpeg
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: axis,artpec8-cmu-peri
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_PERI IP clock (from CMU_CMU)
-+            - description: CMU_PERI AUDIO clock (from CMU_CMU)
-+            - description: CMU_PERI DISP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_clkcmu_peri_ip
-+            - const: dout_clkcmu_peri_audio
-+            - const: dout_clkcmu_peri_disp
-+
-+additionalProperties: false
-+
-+examples:
-+  # Clock controller node for CMU_FSYS
-+  - |
-+    #include <dt-bindings/clock/axis,artpec8-clk.h>
-+
-+    cmu_fsys: clock-controller@16c10000 {
-+        compatible = "axis,artpec8-cmu-fsys";
-+        reg = <0x16c10000 0x4000>;
-+        #clock-cells = <1>;
-+        clocks = <&fin_pll>,
-+                 <&cmu_cmu DOUT_CLKCMU_FSYS_SCAN0>,
-+                 <&cmu_cmu DOUT_CLKCMU_FSYS_SCAN1>,
-+                 <&cmu_cmu DOUT_CLKCMU_FSYS_BUS>,
-+                 <&cmu_cmu DOUT_CLKCMU_FSYS_IP>;
-+        clock-names = "fin_pll",
-+                      "dout_clkcmu_fsys_scan0",
-+                      "dout_clkcmu_fsys_scan1",
-+                      "dout_clkcmu_fsys_bus",
-+                      "dout_clkcmu_fsys_ip";
-+    };
-+
-+...
+ /* Register Offset definitions for CMU_IMEM (0x10010000) */
+ #define PLL_CON0_MUX_CLK_IMEM_ACLK_USER			0x0100
+ #define PLL_CON0_MUX_CLK_IMEM_JPEG_USER			0x0120
 -- 
 2.34.1
 
