@@ -1,188 +1,300 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012060.outbound.protection.outlook.com [52.101.66.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97F611E;
-	Fri, 11 Jul 2025 02:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752201089; cv=none; b=JEGcFPn6olruuVk4m1NuNfKSZWjg2hJ2kjecJx2wDQ04GZH8dm8woWRy3aCXdzuKV+uRkgOWi7JTZ2HJhEuWTB9s3UFUObaYX9G+OML3aVtp36Vx4nbkcpaXS8rkBwQxaY/P4BN+rjGUy92D2cRc2VEH209XdydqFIqMbiiSj4I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752201089; c=relaxed/simple;
-	bh=1H7MhhPsRYIi3B2WvPg7/QFrezoDYvrrBJBrddaWH/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBm//efczSDBE8n2QCeJYgiijxeQ/bqkIvTe6Tdu/2L74z6KmAjB+QKmURs981PYAGkinvYlwvr8ZE/4PX8e942fpNRHGLDV9nDJPqs+o87AC1hZ3XYwukAblNBAhZXtszRqlJGkKgweBhUo7mR6bas/ys38VkBWaOtyrc5yrVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=e65/0Cdq; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53C11AF0AF;
+	Fri, 11 Jul 2025 04:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752206615; cv=fail; b=E1bhiLdTxdTqGQl2kD4ZZiyv2UqgV6aDrv6LZlcCM13CuSqhKAJcJTRi5MKl/92GvIhIkJ/3i5F4tn2jdEJmjLIw9SWImg47cjolm6dcM90twLLcKQizlS2mmdQTp0pHLLhip2x053NXfIQFKysqzwbjqVp2vgAMbPCrLIzDLV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752206615; c=relaxed/simple;
+	bh=24FrrqSzHfePmDnbQOYcTYioGYUDZvphhFst56/N16U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UfptLeXK+gRPr4tVFlRH74IOyING5ScmZN+eZtqaItFuU4S/EkUnOVQWw8ZQL0DV2IkhwpsduWcdb6q5+WwOT4ymjDexQsvjq3hNOOTmOo2UXXbXpbk1YdquEY365blO91KHpRKL71gc2IK2EpWgi7y4H9c1hw+xL+1q9VVmZBw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=buvUSmpj; arc=fail smtp.client-ip=52.101.66.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="e65/0Cdq"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A796B207A3;
-	Fri, 11 Jul 2025 04:31:23 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id nd2XZagNVK2w; Fri, 11 Jul 2025 04:31:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752201082; bh=1H7MhhPsRYIi3B2WvPg7/QFrezoDYvrrBJBrddaWH/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=e65/0CdqgXBqH3SXxJ+7OS9YEV2xg+rDLMIRey+xXyVv6EHaA+T14aue9BeiEIBi8
-	 uoGa7TyaiUR8IcPQVeGGHZFtuJiyyGL7S1m9DQVcPo81uV0ZEgAFWEly/3sTI0k53i
-	 v8/5PquQTmb82voUxyrnoYxf0H53FfNdzUUNAMreVowKw7qaK9kK6YwC8tPUerbub3
-	 uvSagapy8Gy33k63uVANzdDSiju5rr4gRAZ1qTzo1Q0pAN7qVC9plxLPPiYZelnhkd
-	 BQKoiViszZYTS37UsY1w3cpZKty5JBM0m9eS2jt3LsCJZVegL/YGJ56pLHyhE1W7mz
-	 KqsgN3jYbJI6w==
-Date: Fri, 11 Jul 2025 02:31:07 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="buvUSmpj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xPdGkn0iwi0d2dsBNaV4Se+HVr47tc8s9XI12bGSOa4Js0oh4xnJhB420i+sQuMLj7PGeC8T5qcN3GD/y7GYZjIlQwmK9CqazYSyU2TeacBOU+O3GwiPTinDWwOavduTa3ZmxNZAOZ7cyHoYa2vXU2WFvhUDI/XiX8iBupVifNMwwgNlShYHxwMpNUrg0LHR5gvnvPZCaUNOH9Oa7mZYzlBxGW0BmRAxZxTeY0viiZgfsq8B9EXC+RNeGFMOtFooNCxE+x/9LrHxWc5u8x2DBOtZhobWj2Vhn52+MxCbA5ksMY2hVH7eeC55weaA9XgmhvKtGI4wAE3IaDAZAF997w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6+0rZkrQpOxV7V+r21Nnsh/bW8MW4ZCy8VKc/lQzlTQ=;
+ b=D65+uwqVASWdGjMYW8+Pyw0TnSB+G3hwHWCbACFFn2g+JGCvtPJOvHclEPbjE605QzNS1NRLlcI8hX64c8Ikmk1z1pmOi6FcskPM2TC3Jg03OV92YZTOqRB8mXL9VbxMhdDYLID9mrr7f1DA1yobvwGZEYfe2Mt1w18O4DLrTCDAx6MLUG/XXdoHMGFwYhsV0DMY8rdsWCMfThsgn5T+8G30He4ZfxUEwYwHFRdSWMeLMFfRQiwR4SFPLOBaxvnfm9m9EzELQQtfH/Tv0ux8XWYI2nRxHMIwRqQLJCcnDxHgpEAvw871V+YRPRsZvucqpcD6THnbmjQ6BcPDcR6VbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6+0rZkrQpOxV7V+r21Nnsh/bW8MW4ZCy8VKc/lQzlTQ=;
+ b=buvUSmpjA5OjSRZdiKVskohw9GmXyPvbyiDk4fh3820iuTk5tNCmtFqSrTURN73+U/7sUd8IvIHTbBqyHT17U+uSUfx4CAaMA1KAw3O6dMUdFcubWwOkPJcTD1OFYfen0S9TPGNkoCvXJXmCHVKAlvA5LGVYuP/6Ocz+825jGkO317zQ/e904DcntRzTXAg/iGwu+LLAK3d0R85MMnOPGGhL30HoN2aPSfOzABkhbmmaXpJvmcS9lst4KGm+VGc8oT5i3hZTuGH9tJz0cGPutFP9SmdgP/tdK94e5KZrKT43GMRQ+QGlhRS+fqQObus+Gu0AplX25kPtOQ6fAcGPIQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8245.eurprd04.prod.outlook.com (2603:10a6:20b:3f9::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 04:03:29 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
+ 04:03:28 +0000
+Date: Fri, 11 Jul 2025 00:03:22 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: loongson2: Add Loongson
- 2K0300 compatible
-Message-ID: <aHB3Wvu-CVlYzhU7@pie.lan>
-References: <20250617162426.12629-1-ziyao@disroot.org>
- <20250617162426.12629-2-ziyao@disroot.org>
- <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
- <aF6FtaNB6XgkvUX7@pie>
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	Abel Vesa <abel.vesa@linaro.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] clk: imx95-blk-ctl: Cache registers when RPM
+ routines are called
+Message-ID: <aHCNCokZxIRNPgT6@lizhi-Precision-Tower-5810>
+References: <20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com>
+ <20250709122332.2874632-2-laurentiu.palcu@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709122332.2874632-2-laurentiu.palcu@oss.nxp.com>
+X-ClientProxiedBy: AM0PR08CA0001.eurprd08.prod.outlook.com
+ (2603:10a6:208:d2::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aF6FtaNB6XgkvUX7@pie>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8245:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1377af6e-ff13-4130-7fe1-08ddc02fe48b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|52116014|7416014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?c7n4L8jXFME5f/oJvXOUtiy1fxaB1zPHLeJmC9fYrKE+uOxahP3h6J8LFC03?=
+ =?us-ascii?Q?ICX/5WplC8V7Wvvke1VfMJ2MRsPa62RGybzTbb0BCHJZb9C4i+UzKpwFWouF?=
+ =?us-ascii?Q?AIwVsCljv8gpvHwWg20IgnMd3n0FkpQed2jcQ5GxmfzDJRBM4KF3KJOAzJJP?=
+ =?us-ascii?Q?EuN2HLoRmNz1q4cb9zbpMZqVTyzccyBomGJKOBrMAjHznm6sgoWSWfUrQErr?=
+ =?us-ascii?Q?a5CdcwlzotrXrLC/Rhr93zFYLTtcvDJpcJ1QBFoBLcr++j5QgA+xVbXFWeUn?=
+ =?us-ascii?Q?ue6gkLeEqRCb+JKQ8B854YavOMsO31AbobSAF9qvh24n5O9vzCvWT1dkMC9C?=
+ =?us-ascii?Q?CYt+/a/LkNSLhdvKwiHdEwmXg3hQNxt1GtlgnFujz9797NKPYu3EeEY+71oY?=
+ =?us-ascii?Q?bdOTKfna5nfwaaXEvL1fyVJY6rYMvShdFgCGYbPIrTeVfxnvx3YXamvBzXSl?=
+ =?us-ascii?Q?NNcLAK2NcVdTCsZ8AwkKYZVjpi+clTYJpFlVffiMlvpKwmXBBx9Z4hMohUlL?=
+ =?us-ascii?Q?pWPZ/Knt4AFmDKtAvAkuxwbRh25+ejScZ3dQu3gt96aOuC479AHoF5oseUTD?=
+ =?us-ascii?Q?MP6f2NPMvFXatYA91drmGWQEQ6YWPQIcwjexEb+G9ffIFgYwpbb6F/oIRQzm?=
+ =?us-ascii?Q?dUmEdo8K36MgAQiEHLhur6BRmCl2eJ1GJqDXhevhU/NUOSV3Lq6nSRFYvGgx?=
+ =?us-ascii?Q?WvNYhd8+k4c2VKoZzBUFWTxKOPW4zb8AIDDK+jjt3CGFZZCvhzsH5CL/gADG?=
+ =?us-ascii?Q?dHpZvIFOT0jR5EBbOyqpueUpN+UQ57kr4vU1MxQB4iJjgwZyechE3GZc+4QU?=
+ =?us-ascii?Q?ygl8o4AqIY6sLV1iGK87PaMLYl14kB9++MAgmXApxyKzQJWcjW0RpN+ZArEc?=
+ =?us-ascii?Q?TEoG0zVaUt/If4GnjsuaNRXtWHS5K1XrYeNSbj1Zw4KmDfZO1ETH8JhtuKsB?=
+ =?us-ascii?Q?3GzApXX07oYIE2T6KfvtnVN7O36NF51ApL03x4VJyHleG9L6KnWcN7hCfUcb?=
+ =?us-ascii?Q?xvVElLgwJhl98ZVFAMNCWnICNFbN+LaNOt+fWNqMZnQ1dcHVW/z5gn2pjLDZ?=
+ =?us-ascii?Q?uLv0YypOumqXHPQYj02MHmXkC+SftL8JBq7ffPqzRmfpWamjD0ARwH8egrCH?=
+ =?us-ascii?Q?5VFLbQaPYoNJxASUJqHYt9DR2eStMwdTMe/pAuE/ehtC9bZwFNCw092kJRt2?=
+ =?us-ascii?Q?lmUevQQVamyOxKYNCjO3wJ+/UQs9lmMP1Fqp40e/EJrmQqFOGvKUBseh9kO2?=
+ =?us-ascii?Q?0j//m54i3duKpAeU29UttUwge0gp0Fv+B/T4SpY0vTY8Fyhup7CVvVmKUmVh?=
+ =?us-ascii?Q?CGEpkXK6If1Q29TYq7L01US0ddRxaUTMhq6kePJXNBb4nhmRsEIWhtMNi1jv?=
+ =?us-ascii?Q?zAlQZ0/cAz+4FgyaFWPUIe6NlP//6VEGu5ne5pIDMqDaW0Z3TQXy6utypFDg?=
+ =?us-ascii?Q?g8wFqsVo3Ebqf4htIzwi7hDfGfSiMDDvf24y8Uuksm5x0YdC0G7iyd4anyUK?=
+ =?us-ascii?Q?70M2G/NqHRM+/Ws=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KC1lwv5xDqhTHj8jqSyLw3bPiR2VDnIV6MlO1yPWNic+QkMyAOdTcQNaRZmI?=
+ =?us-ascii?Q?yqXoWlNksSTSU3d7bLrWberjcM7SZ1RMUPWuFInexSsrmM8covVpe9S265S4?=
+ =?us-ascii?Q?cXwDc6XQhskmf8c6SSpKaNLCkFpQl//IaoFVOSfFbhLhbLDa/knm+5tCXAfh?=
+ =?us-ascii?Q?wZWK3T8F/SLb4afWY8E/MNQ5HITjawJZ3fxbIQBXhvyD2Rurum/n6YZxs0WK?=
+ =?us-ascii?Q?RgtLWHlqEHwFrU80hg8ZSenHhtagUMyNQ0h+IvyoVwXYmM21kCqGqObjKgcM?=
+ =?us-ascii?Q?afLvykWvoXjh2ExFnbt34UmX9haLeqj1z0qHwYjCgKgNby9KgeSliEDqC+Su?=
+ =?us-ascii?Q?BCCMFgyy4udVHMu6l8tyYR9ECuBR6p/x5URonLKT3UEWf0VGVrRck0C0FalZ?=
+ =?us-ascii?Q?9dEbldK6F9BM6kkyXDoEgf0nRKqoZFoxIiVTXGUf2TxS74CShm5U7Pds+qnx?=
+ =?us-ascii?Q?1N/58KH4YLMEoj1JZ6MFCsqZva1pbjrnxuOkiyE8SfEWAO8Qn8AKmH2YQ+cw?=
+ =?us-ascii?Q?tJbyyVeYGLkCr5F7zcjs0pHeXGh4WrYLcFGLc+bjwI/QwsFyCGOSb3yhBLVI?=
+ =?us-ascii?Q?SZPxVDFO4Q2MvXZpGbI0wUQt/pGs5igHupCS9SZ0vqNwWz+0VWMl396SpHki?=
+ =?us-ascii?Q?eQkNKiMOvXKo6+D5u8O/qiweCnixxlG9Tp5Kdyouty2fVj6xX6NAt6Z2UDYW?=
+ =?us-ascii?Q?8eE7F8IbLKMl4YJYMzH/txUFR9UcwXPopThrTM3Ja87cgQnYHNP2Kbh+1MaB?=
+ =?us-ascii?Q?TUbV7uv610H5SS0Ls+Uc1ihVrJ9RMRvTDP3UtXetnwDCZsIUf28pNbTsyDds?=
+ =?us-ascii?Q?Ml6woTc1bmtKHicIuSjyP+t/fXoJYbkWeDmT+/3vg0SxAMy4foipZWQNuVqx?=
+ =?us-ascii?Q?HrSLrUgOsCHPu0YD9YpbGAbnUi+2cn3gJbLDZVKZ1UnFyuj7teyFOPq9Nzlv?=
+ =?us-ascii?Q?LkTfiifi/slnfKjWjMl49YTOYZeHsZVr/ydJ60SWIZV8+sjL3Chq4SXxPNPf?=
+ =?us-ascii?Q?bN0HLmt6vcK9trTHO0ELuzyFczOPTJ8LH03JLIkpoIlDUpsJ4TCbHqTU7WdP?=
+ =?us-ascii?Q?ikWe5NivtV0onX+hj7xbdmX/PhTSj7PaYz25RgNUUxYLvrVER6x3rep2ZTaX?=
+ =?us-ascii?Q?bsBabFhs6gPcrZXXPoKaBTG9uHQ2CfHKRXuAvXLOfe7c7y2MzGu5YvrFI42g?=
+ =?us-ascii?Q?IPtAoQEvpOZ2OELicEJYtOJIQEX2gtAjDiwIyfaJvui+tRj2MaTxcMXOqXtV?=
+ =?us-ascii?Q?d/Clxe9WhH/5oKv08+skOcqzoOlEpKQl2NBmyGa+SKNZ/hAWaeXTdrvrm9Pp?=
+ =?us-ascii?Q?KSgiZ06/GOgsmclN1BAfhJ5vZGJaCXAumh7h0PJoNXsd8vnkdzHXqzqk0s+5?=
+ =?us-ascii?Q?0R+EhfLRu7gYeDg++rbT7RpowQwA1iuA68trWjq4qxyVf6oVbYZ4+uYDPuxK?=
+ =?us-ascii?Q?YLPh0dXrCIL1ZyUVdL52Rn0gHJM+A/mteFeOKA3uMA3Bhx9ddQYejNPxVEBW?=
+ =?us-ascii?Q?VIB0/WuM25lJN4xwpvJ+AkIt38VyXpGLF6o/5jvJ4pKBsScYknIL/p1iFAmD?=
+ =?us-ascii?Q?ZMlEeztGo92JMKoqn30dp0lvYaREqgVNEmu8YIHf?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1377af6e-ff13-4130-7fe1-08ddc02fe48b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 04:03:28.8657
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BFbkk66Gellz2ENpPSYARcAzmPQKpHypC4o44UJ2prZy5VZbpoIfzxtioYsSjbO2EzM+V8akfDFUJmGAuCF1kQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8245
 
-On Fri, Jun 27, 2025 at 11:52:41AM +0000, Yao Zi wrote:
-> On Fri, Jun 27, 2025 at 10:03:53AM +0200, Krzysztof Kozlowski wrote:
-> > On Tue, Jun 17, 2025 at 04:24:19PM +0000, Yao Zi wrote:
-> > > Document the clock controller shipped in Loongson 2K0300 SoC, which
-> > > generates various clock signals for SoC peripherals.
-> > > 
-> > > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
-> > > external clock input, and a separate dt-binding header is used for
-> > > cleanness.
-> > > 
-> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > > ---
-> > >  .../bindings/clock/loongson,ls2k-clk.yaml     | 26 ++++++---
-> > >  MAINTAINERS                                   |  1 +
-> > >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
-> > >  3 files changed, 75 insertions(+), 6 deletions(-)
-> > >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > > index 4f79cdb417ab..3e0a894cfb2f 100644
-> > > --- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > > @@ -16,6 +16,7 @@ description: |
-> > >  properties:
-> > >    compatible:
-> > >      enum:
-> > > +      - loongson,ls2k0300-clk
-> > >        - loongson,ls2k0500-clk
-> > >        - loongson,ls2k-clk  # This is for Loongson-2K1000
-> > >        - loongson,ls2k2000-clk
-> > > @@ -24,19 +25,32 @@ properties:
-> > >      maxItems: 1
-> > >  
-> > >    clocks:
-> > > -    items:
-> > > -      - description: 100m ref
-> > > +    maxItems: 1
-> > >  
-> > > -  clock-names:
-> > > -    items:
-> > > -      - const: ref_100m
-> > > +  clock-names: true
-> > 
-> > No. How does this implement my comment?
+Subject:
+save and store registers at suspend()/resume() function
 
-Hi Krzysztof,
+On Wed, Jul 09, 2025 at 03:23:20PM +0300, Laurentiu Palcu wrote:
+> If runtime PM is used for the clock providers and they're part of a
+> power domain, then the power domain supply will be cut off when runtime
+> suspended. That means all BLK CTL registers belonging to that power
+> domain will be reset. Hence, the clock settings will revert to default
+> values messing up the consumer clock settings.
 
-> I'm sorry that I forgot about the suggestion of dropping clock-names for
-> the new compatible.
-> 
-> Is it acceptable to remove the description of clocks property, keep
-> clock-names property as-is, and use an allOf block to disallow
-> clocks-names for the new 2K0300 compatible? Thanks for your explanation.
+Needn't "hence ..."
 
-Could you please provide some further comments on this? The schema will
-look like,
+Save/restore register value at suspend/resume functions to fix this problem.
 
-	clocks:
-	  maxItems: 1
+>
+> Also, fix the suspend/resume routines as well, as the clock was left ON
+> when going to suspend.
 
-	clock-names:
-	  items:
-	    - const: ref_100m
+Do you means fix the problem clock left ON after suspend?
 
-	...
+Pomain cut off, why clock can left on?
 
-	allOf:
-	  - if:
-	      properties:
-	        compatible:
-	          contains:
-	            const: loongson,ls2k0300-clk
-	    then:
-	      properties:
-	        clock-names: false
-	    else:
-	      required:
-	        - clock-names
+>
+> Fixes: 5224b189462f ("clk: imx: add i.MX95 BLK CTL clk driver")
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx95-blk-ctl.c | 55 ++++++++++++++++++-----------
+>  1 file changed, 34 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> index 7e88877a62451..7f9bbca517284 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -448,12 +448,36 @@ static int imx95_bc_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>
+> +static void __maybe_unused imx95_bc_save_reg(struct imx95_blk_ctl *bc)
+> +{
+> +	const struct imx95_blk_ctl_dev_data *bc_data;
+> +
+> +	bc_data = of_device_get_match_data(bc->dev);
+> +	if (!bc_data)
+> +		return;
+> +
+> +	bc->clk_reg_restore = readl(bc->base + bc_data->clk_reg_offset);
+> +}
+> +
+> +static void __maybe_unused imx95_bc_restore_reg(struct imx95_blk_ctl *bc)
+> +{
+> +	const struct imx95_blk_ctl_dev_data *bc_data;
+> +
+> +	bc_data = of_device_get_match_data(bc->dev);
 
-Thanks for your time and suggestion.
+Generally, bc_data should in imx95_blk_ctl_dev_data and set once at probe.
 
-> > It makes no sense, why 100m even appeared here. I already objected last
-> > time!
-> > 
-> > >  
-> > >    '#clock-cells':
-> > >      const: 1
-> > >      description:
-> > >        The clock consumer should specify the desired clock by having the clock
-> > >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-> > > -      for the full list of Loongson-2 SoC clock IDs.
-> > > +      and include/dt-bindings/clock/loongson,ls2k0300-clk.h for the full list of
-> > > +      Loongson-2 SoC clock IDs.
-> > > +
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: loongson,ls2k0300-clk
-> > > +    then:
-> > > +      properties:
-> > > +        clock-names:
-> > > +          const: ref_120m
-> > 
-> > NAK, stop doing this pattern. You already got comment on this.
-> 
-> Oops, I missed the comment about dropping the frequency (or the full
-> clock-names property) from clock-names when writing v2, and I've decided
-> to drop the clock-names property completely for the 2K0300 compatible.
-> 
-> Sorry again for my mistake.
-> 
-> > Best regards,
-> > Krzysztof
-> > 
-> > 
-> 
-> Best regards,
-> Yao Zi
-> 
+So imx95_bc_save_reg() and imx95_bc_restore_reg() will be simpfied.
 
-Regards,
-Yao Zi
+> +	if (!bc_data)
+> +		return;
+> +
+> +	writel(bc->clk_reg_restore, bc->base + bc_data->clk_reg_offset);
+> +}
+> +
+>  #ifdef CONFIG_PM
+>  static int imx95_bc_runtime_suspend(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+>
+> +	imx95_bc_save_reg(bc);
+
+this help function just one line. direct use
+
+writel(bc->clk_reg_restore, bc->base + bc->bc_data->clk_reg_offset);
+
+>  	clk_disable_unprepare(bc->clk_apb);
+> +
+>  	return 0;
+>  }
+>
+> @@ -461,7 +485,10 @@ static int imx95_bc_runtime_resume(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+>
+> -	return clk_prepare_enable(bc->clk_apb);
+> +	clk_prepare_enable(bc->clk_apb);
+
+Need check ret value;
+
+> +	imx95_bc_restore_reg(bc);
+> +
+> +	return 0;
+>  }
+>  #endif
+>
+> @@ -469,22 +496,12 @@ static int imx95_bc_runtime_resume(struct device *dev)
+>  static int imx95_bc_suspend(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> -	const struct imx95_blk_ctl_dev_data *bc_data;
+> -	int ret;
+>
+> -	bc_data = of_device_get_match_data(dev);
+> -	if (!bc_data)
+> +	if (pm_runtime_suspended(dev))
+>  		return 0;
+>
+> -	if (bc_data->rpm_enabled) {
+> -		ret = pm_runtime_get_sync(bc->dev);
+> -		if (ret < 0) {
+> -			pm_runtime_put_noidle(bc->dev);
+> -			return ret;
+> -		}
+> -	}
+> -
+> -	bc->clk_reg_restore = readl(bc->base + bc_data->clk_reg_offset);
+> +	imx95_bc_save_reg(bc);
+> +	clk_disable_unprepare(bc->clk_apb);
+>
+>  	return 0;
+>  }
+> @@ -492,16 +509,12 @@ static int imx95_bc_suspend(struct device *dev)
+>  static int imx95_bc_resume(struct device *dev)
+>  {
+>  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> -	const struct imx95_blk_ctl_dev_data *bc_data;
+>
+> -	bc_data = of_device_get_match_data(dev);
+> -	if (!bc_data)
+> +	if (pm_runtime_suspended(dev))
+>  		return 0;
+>
+> -	writel(bc->clk_reg_restore, bc->base + bc_data->clk_reg_offset);
+> -
+> -	if (bc_data->rpm_enabled)
+> -		pm_runtime_put(bc->dev);
+> +	clk_prepare_enable(bc->clk_apb);
+> +	imx95_bc_restore_reg(bc);
+>
+>  	return 0;
+>  }
+
+look like imx95_bc_suspend(resume) is simple enough
+
+Can you use DEFINE_RUNTIME_DEV_PM_OPS?
+
+Frank
+
+> --
+> 2.46.1
+>
