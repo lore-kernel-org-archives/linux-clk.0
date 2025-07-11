@@ -1,95 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F611DED77;
-	Fri, 11 Jul 2025 08:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBCC18DF6E;
+	Fri, 11 Jul 2025 08:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223077; cv=none; b=ARtBRD+GeWtHdcnyW5dO8Vlk/Mm9nzsJ+B1ACJPTb+TElSoNZnYatwr/yyv0gISlWEr1je4lonFMGyFxe871gAp4Di61d6gGfFzR3ka9Mi2UL2p4W3Vek85Zv3UBYeaPLu9c7uK+iOri9EKuG2hEhEIEe0NCLlVKcNI/hXofb3A=
+	t=1752223908; cv=none; b=M+K+MYT+32MDTloryijf1n4MdbAknfavh9Sa79YsnmjdoOJ75si8KiFCsFBDXEcJ92OJtOmkRx794qbG8ncXzVIDxlMliBpM1dm45a9QhaRLKCyI3YbxonfcmRa/MLotAzMoA1v7WqnDSgBtFFwSZr6K5abX6rSb+3Ay7hhsDgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223077; c=relaxed/simple;
-	bh=eyV4X++/VGEzxaguebcqSjDqRWFXr+hAR8/E84bBbo4=;
+	s=arc-20240116; t=1752223908; c=relaxed/simple;
+	bh=BVo7j5DGUp5cax0t1bvbZwiXqosmMCAmt2dyA2wY4Ng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjwoL0UYP08y3ftRM5fBeA1YXTr2PC/Q0xjC9v89E4uFw/4+9MjJzTcZP5cHufTFIyYgcaCWfNA/qOAGccY229tPeJKPhoo54syNXiwRVSI698ZeXE5z4uX+Yx+LQqIuRDJr1luGUb/OwLFGHp/rtxLzc2kliVXFf7Gtizms0kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ip9QS0q1; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ip9QS0q1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88DA7C4CEED;
-	Fri, 11 Jul 2025 08:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752223076;
-	bh=eyV4X++/VGEzxaguebcqSjDqRWFXr+hAR8/E84bBbo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ip9QS0q1Oh7taDoQfGWcgwPMmN/hoN6SmTPcIcH9mZ1EjLwPjZC+5SxmrHICfI/Y+
-	 Hkyqi9EQoNA0FOfl6OBmW8rgypMiyHSGB8wRoVCbljOJ6eoUOZU7n1sT90PP9KrqZB
-	 akE6Oef7QNgRjYuqgumt3epv/VBaVmxVx3369AZqOM2t/5tmv/JsO3Z8EdkmIeD4tI
-	 gwnmD1cc94RLaa6jS667Zh7lkwj44Hy0Xkk7dGc/rekbhlz+FKVgOw7W3GKrFbSMSr
-	 4dATtbLHVxzxiS9Apilik6ayWhjZSVG62W50oTDV6NtWc95q2NycUTwM7nPoiLazlu
-	 85FwllO+rm4Fw==
-Date: Fri, 11 Jul 2025 09:37:52 +0100
-From: Mark Brown <broonie@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ds1NL0HDgXm+N3GZz/p1qqu0mFwjPFF/eOs1/garFxS83g0NLsEzoDNUKfmxCzE17dlnN4w0MCDkX99i0js6YQ7P5AqQ0HyJ743ocEKnpIbcfk683lvgbx6I/gkbqEcE2aHlszwjDrKYo5KDZJVSqyf6ogIv2Oap0rC137E+grY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D699516F2;
+	Fri, 11 Jul 2025 01:51:34 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D9C93F6A8;
+	Fri, 11 Jul 2025 01:51:42 -0700 (PDT)
+Date: Fri, 11 Jul 2025 09:51:39 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 To: Brian Masney <bmasney@redhat.com>
-Cc: Support Opensource <support.opensource@diasemi.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Oder Chiou <oder_chiou@realtek.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+Cc: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/6] sound: convert from clk round_rate() to
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: versatile: clock: convert from round_rate() to
  determine_rate()
-Message-ID: <aHDNYFdAefD0iiyM@finisterre.sirena.org.uk>
-References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
+Message-ID: <20250711-invaluable-enchanted-baboon-53fb4f@sudeepholla>
+References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
+ <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YnpWRE/TMlIzvZ9t"
-Content-Disposition: inline
-In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-X-Cookie: Do not cut switchbacks.
-
-
---YnpWRE/TMlIzvZ9t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
 
-On Thu, Jul 10, 2025 at 11:51:06AM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the rtc subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
+On Thu, Jul 10, 2025 at 07:42:18PM -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
---YnpWRE/TMlIzvZ9t
-Content-Type: application/pgp-signature; name="signature.asc"
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  arch/arm/mach-versatile/spc.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/mach-versatile/spc.c b/arch/arm/mach-versatile/spc.c
+> index 790092734cf6155daa63c44a1e5af00ecef30737..812db32448fcd415fa1a60f8bb971661369151e1 100644
+> --- a/arch/arm/mach-versatile/spc.c
+> +++ b/arch/arm/mach-versatile/spc.c
+> @@ -497,12 +497,13 @@ static unsigned long spc_recalc_rate(struct clk_hw *hw,
+>  	return freq * 1000;
+>  }
+>  
+> -static long spc_round_rate(struct clk_hw *hw, unsigned long drate,
+> -		unsigned long *parent_rate)
+> +static int spc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+>  {
+>  	struct clk_spc *spc = to_clk_spc(hw);
+>  
+> -	return ve_spc_round_performance(spc->cluster, drate);
+> +	req->rate = ve_spc_round_performance(spc->cluster, req->rate);
+> +
+> +	return 0;
+>  }
+>  
+>  static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -515,7 +516,7 @@ static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  static struct clk_ops clk_spc_ops = {
+>  	.recalc_rate = spc_recalc_rate,
+> -	.round_rate = spc_round_rate,
+> +	.determine_rate = spc_determine_rate,
+>  	.set_rate = spc_set_rate,
+>  };
+>  
+> 
+> -- 
+> 2.50.0
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhwzV8ACgkQJNaLcl1U
-h9A6mQf+Mw4rOQ3YyKPyHMvM67lMhdwxJj81LDMaZnJrgOzRgYNwVehAF6z/3sjh
-qE9RvCkeO6G1c5ngoFta8gB3Ba2chjtNsYln9QP8sxMhhzsQ/7hiiykf6NxALakJ
-DR9tsOcL1vl2WKaCZ1HitICcSuWY6cLbTUpH0q85mv6rH1AJ0WdN8HHIw++p6m32
-NMwkqwyG8z677hO9RdI1QwT4itEoh83UzLWoORxBTto7L/WnyP4uFrT2XefgEjE2
-tBWfG9WPoG8Howvt2/8o+nnLbVwOnxeXkPE4TfC01MyK82f9voFg2EHSpuKiR9Gf
-Gu40mCfxcvb/iKz7V9zpon/05BytBQ==
-=OeRb
------END PGP SIGNATURE-----
-
---YnpWRE/TMlIzvZ9t--
+-- 
+Regards,
+Sudeep
