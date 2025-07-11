@@ -1,242 +1,225 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF52D3725
-	for <linux-clk@vger.kernel.org>; Fri, 11 Jul 2025 12:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7602D3755
+	for <linux-clk@vger.kernel.org>; Fri, 11 Jul 2025 12:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752238687; cv=none; b=CTNKTRi3PNOHM1skceafXqZ9YwMtzqaeDoARFMJcc11jOzJX3Vqu9xmAr2Udsw4b/i7XpCTeKfqXUPEvWh+fTs4zdjENoc0hDrJDeXdLbqu2Aj+43zZpObj8zQUNiWmcmzPACbhHp/UTsj9mqakHuXO/KDVcfrKwxQKEUemwZGc=
+	t=1752238687; cv=none; b=Ib3kGjRL8JiIdsWnK5lpR9qkcYc7BLraOtqhZ9bcF+JVzVyilN7IxoQTLmvhQG6zNNidFOvIE2lPSd10dAGxu+MxDi4ZyBubBatEW8BkA+zCi7OZBjj5KpsM4QsKR5uckjHFxKDE9Sdr58YKO4anP9zcTkPId3uclXVBE/0/bXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752238687; c=relaxed/simple;
-	bh=ARQH5plKMm19kFZhc3GQAE5K+XVHhM3KOLEMyl/IL9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I4/fBpw5gK31mei3d+CaqgKA4xSIdN10lwbtnnFunRgHojmnchc0ZT2NUxrOjt8XYk0KCmb9Ep24mqMjyCgulgPn2moB8vAU+HKFxZqcedogaPq4GMCG6nsqs8Nh7d7alSGUUEqaSkK/QOZRPKz8hld7q4tHw+c4avHhGgxtCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=SAa/5HEZ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	bh=z7ErzWgZz2lcwE7VC8GD8PglT60RCBstJiLuexGjqFM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NLSliozkbBlt0pyt0U4YPhUQQS+Q+wNXOFFeIpqGZnvL0WIxD1MsPhAszqZKso06FFbyklVWgiQqrnDW2hujVqO1UpSpoDkRHaUXN+hpL0K8McCImQT0rbdWodZcfMPk5zxnuHkg9oj6ZVp04xfbg1gdJh1Qgy/ZL3hA3mnfvDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgylRLGB; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="SAa/5HEZ"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso2937560a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Jul 2025 05:58:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgylRLGB"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a588da60dfso1499017f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 11 Jul 2025 05:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1752238682; x=1752843482; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=92a1BMGAgSFSlfdbtWZOCIjPJqcTtzOvDqxTIQeL8pE=;
-        b=SAa/5HEZPTSsUgjKnIaXQGT1DkCG+BHlNUYoL1DwBaQOCZObCHwqPrACnCw9QXnoGC
-         JzfzNKpTP44J0gOvCPd5Kc1sq9D8x/0Tk3zCEnTYx8tbwGjaVZlVgwRjCR+9SZvuSLyW
-         pGbPFSUh7Q+wQW3uvVLP+tQzQrC81cGNdEuMQkNI49JUFYsHUooXoYkWFriiotnU6b5c
-         eZeLQvhYKHB9kfJX8fTY5PsrApiBumHnkKzvWY9kVpEMYEKwqbo1PDpej/hpvHcTfmiO
-         14J4MoRffkbyaz32Wra2Ep6+Fu7BUtwZrbm4Ur0ScpNSY0/55DKP1l5REcI/Akmy9Z2x
-         8z/w==
+        d=linaro.org; s=google; t=1752238683; x=1752843483; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SygQZRMLWB/3Hi3WIMPPsYnBEPh0pO/xxiLevNlWXm0=;
+        b=xgylRLGBALRWZkQFD7I8NjX3BQJmesBLCB7MkARe+kELe9e5U7NPSTv7+tO3qulTow
+         ViuIcyoUhLtpgdLHRRhq4UDDTzUUpDAkBQLjnhYSond7ArZnNM27gy/j4vVssFa8vBBQ
+         xpXHZ3lsShWRDlaaC+TE6mSk5EVnDagCHNCSiSzIFc7mkOaAqtFZib9pafDvl4IObcpB
+         tJVOsvOfcKZWafZjZShW46iTV88HDYKGVJ6FqeV8k+UKV6g9I7+4nr39VHEZGg/SCYFl
+         9WRltskIzxZhUyy1wRwGqXS/uMBZbuu0Xrn8RxMrXCrRd8xHrolFhoD86x+xu2Qo9Kft
+         sAvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752238682; x=1752843482;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=92a1BMGAgSFSlfdbtWZOCIjPJqcTtzOvDqxTIQeL8pE=;
-        b=hmA6UpMZPjyj22IlQatGhS3cv7F4Tlk13KJwpr+k5s8agdfH3EJPp90XZNirL1/Ooo
-         EF9fVadC1takQimwQAuEx43lsK4lw35yTWXI+pqpcyWFQwNBlFHAnEuOxEEnR+3U0+YR
-         rXrmZY4uTc/nEJ5f0WbY47zB5qdovxcax5KgIAhTY3FjSEzFvEEZ7FDq0nF3FwGJY4T/
-         ZLH5ulp1ggYCSDfyZuGWEjl3Oi7pZ+hg6j3F2nPu4uLZmbPAn0Jrd2+7+rN3DuBvdzSz
-         tdh8bWC+r4InR108P9kq8CgXE50iqGNxuRIj/vuvnxyui12NMFfboVLmSMnjsLwnU5Ut
-         W5xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPFbx/MYqdRdOK3N/GevOLrRKyVqKyJmqWkydKByf8R6Ykv9TedO+NXGddy5b+/pN4AM/ZvWrqlbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTkgxWRq6ndeH4qQAtt2QLhChsrJeDVKb4P8V7OdEpVlf9J4zt
-	JTntxuCUgwvEug+TN0UNUddjUrQBKLwJpIJyafrDeqARIRT8z1875e2e4NJQG7+kS/s=
-X-Gm-Gg: ASbGncsBfVZy2yC4Eyg0smaWgbj9D8H+FM/xFQ6s/N44FktenLOhfItKeKyoLeJ3/9N
-	xwq6u0/+jIDKiGxjkEHmZhPhVoMJz4Wc4fdSrkcPFcwRgWmjyumAmNurjBKkvOimS/Yy6laFEUl
-	NeXN97ykDnhmTyoJEs9kj0nZCOLh91x6zwm/0oSUN0McB259mM/lZNwtVqBlTtJzbeLdtUwZpdS
-	J+8LeGvGKdzUw9wU2IiEborLV50mABpamm3baWAyasfKn7i9cM0liCmR4L7YhtljoZSqFXFhdxw
-	lmuIyAqeNj09haaExmHCdt/V2kJo93yT0kSygbEK5JVwzyhiX/MrcchgptY1i0kn8pZ5fz9oA2J
-	s1KzYz/unVX079p6Ah41upgD1BUxnAQ==
-X-Google-Smtp-Source: AGHT+IGQ76WU0AB+rvk/zt28ZNRFOKV2e22kKyB0M5bcv4nzPUIbvT27s8Y8oQFLMrTvDQ/Em2YmUg==
-X-Received: by 2002:a17:907:2684:b0:ade:36e4:ceba with SMTP id a640c23a62f3a-ae6fc3c4510mr344276566b.52.1752238682247;
+        d=1e100.net; s=20230601; t=1752238683; x=1752843483;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SygQZRMLWB/3Hi3WIMPPsYnBEPh0pO/xxiLevNlWXm0=;
+        b=wtbBh5dkF1HI1rVgPfzV6O6UlLobRciSRmh/Zv5T7xLETSR41EbKrd46T63XHJYa57
+         Vo8TQF0mYcU7uhsGT3W1WfXIPpUbNmqyPdCPc93jsFq9Wh5X1f/VtncP9ftAdfipOlgp
+         BW7blwA2VUwNeLlofbrt2g3jxNaTBkuK+d5JlqAAQl+dSPgjA12PDc9zdToA0gZZBhBC
+         9rLesDGm14t6FEG8Uaf/i69LAD2gPa7huqsIywuniPWzOsBLB57G1BeYcZHb3rmAlgGP
+         UA7eb795pdYRpIypKt3FgTdtd3uUfoLBYplT/xIYrY2MpWYIW1X+dYskmeGrAfINk+AX
+         cZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8e3tB9QIyP3dH1MnIxzrFdYjMDMvMKPbAZfyeVnwVwqxXWcWY29AZTQL1taPWYY/s0U2IVod4NJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/eOURpcAu6r0t7mtNmMR1d19co5MWjRt26VbatPAifWT/vT4
+	OqYUV2eYxWphSOlloT3pIT32nBR0OXvObqxXK7SRtRTRsbQN0WFONi2bOIKroRTskkw=
+X-Gm-Gg: ASbGncuvJBc+2lqNUJJtCYtqj6q1/0U5gSFO4vHzL4vrL3XnjTpq2U+mNdLQQm8qcsL
+	zOEkheGlWOz/QRwvRTeObqNoZffWsM3lzwwpo1yiBpFWh7v5HigM1XPyGYb3Ts0M1QlvqLx40u4
+	E6bskoqnttJ4joIt26xF6+xp3Sme0uI7c16HNay3NPo4H2WzGqpyyQpFU6S4RWfe3jprBzQZ3BY
+	5U7MPtybQss1gmyz9Lrb9BNW3wCwWIn0lcD6BzRbYPDZhMBivRPJntE7BMzHAg8oopHLEy2zLTY
+	LFpmwYpZEbMyZJZtcNAau7+coHFLYSBK9kjmuADfQKWCne/rmIFaNhqT40AeY0CRJZMr8vRGken
+	ccYsG7UHS+1hKsGr2dxondfR6NPCtqmiiMBe8jdyLoBR8u2lUQKsAsjYWfxtdcmfZ
+X-Google-Smtp-Source: AGHT+IHrgUwwe2lXMn1Q/z5OtEp434t2+S+ub5tceQuMhxyGeka1+BcADdUGP6jGMvP2g+I2e6pXZw==
+X-Received: by 2002:a05:6000:2d09:b0:3a6:d967:380e with SMTP id ffacd0b85a97d-3b5f187eb90mr2277964f8f.3.1752238683308;
+        Fri, 11 Jul 2025 05:58:03 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc1f70sm4373648f8f.27.2025.07.11.05.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 11 Jul 2025 05:58:02 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293ff2sm294908766b.111.2025.07.11.05.58.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 05:58:01 -0700 (PDT)
-Message-ID: <38b14d24-534a-447e-a930-6a96c693b7e4@tuxon.dev>
-Date: Fri, 11 Jul 2025 15:58:00 +0300
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Fri, 11 Jul 2025 13:57:55 +0100
+Subject: [PATCH v7 03/15] media: qcom: camss: Add legacy_phy flag to SoC
+ definition structures
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: at91: sam9x7: update pll clk ranges
-To: Varshini.Rajendran@microchip.com, mturquette@baylibre.com,
- sboyd@kernel.org, Nicolas.Ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Patrice.Vilchez@microchip.com
-References: <20250610084503.69749-1-varshini.rajendran@microchip.com>
- <c51b2b64-24a7-4e14-bdd8-c4a356423100@tuxon.dev>
- <0652df01-13e8-4fb8-a2e0-35820d83ac3d@microchip.com>
- <d1a16315-8e17-446e-87f2-57f18046288c@tuxon.dev>
- <e59a1c94-e6b3-49c8-aa78-78d031e8a6ec@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <e59a1c94-e6b3-49c8-aa78-78d031e8a6ec@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-3-0bc5da82f526@linaro.org>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4545;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=z7ErzWgZz2lcwE7VC8GD8PglT60RCBstJiLuexGjqFM=;
+ b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBocQpS0fJ7a90KGD7wa8oeGlT8tzfTaR7/9WbQL
+ ozZKej7ltKJAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaHEKUgAKCRAicTuzoY3I
+ OigfD/4zuPWhAjCsfxz1+IDCky+zUEaz6BnlcCvfEqZITu4nZDN84Oh0Zl6TplhdQf+tyFsuH18
+ E+7IMKIuy8oSNRZLd3JiSCnDUpOLx517RgagzGW4Pv47Jk2+BCvrtqfHErlvz1khHPhrHtwlpub
+ lDvfPTLjw4lFIHgeoVmc3NzDNZgIHFuBHTNR7B9z+LdYSGDK7fiDfdN9c43v0Qg4hqs44Yeuhx/
+ Fr59MfxG3ffqMcj6zgPSYdXq1HkM7US6pqrmuyM8iIvmSFWRgwbO8fx2ORwzWM/t3KWkPkC5mfe
+ p0a5XfAHugntdt2HXwg9+B32K/Bs/4YRtz4oasGu3me7APN5VPz7I6Uh2Y6DKMBZ5Ou+u+/TtF1
+ ixfTxwE52GbtpcUYTz/mSomtBP3C3zAIVp4mLa6gJDPc+F2KhVS5xnyOugQ2YBbT7b9+A+r8/I6
+ FgtxiQ2bHO58uMW8tjpASiXv7K3FRhCYwPpD9HT1cjkaolqJwTq9K+hJEHUn5YYyNOSEirIHwnt
+ biLtWwwlOPTERCriZmyuUq8jzgJWvvD7uy3+Vs/M/M6LEL08JwA6oQxBuVEleD4DtA9ryZLqR45
+ hzMwdu+TAwWRcWuz9hqI00TMR9RhEMoq9pWYPDb8q4zf0cbP1u76u52SvC/60Y7/hnRjiu+hKYe
+ xJ37CqnC6KBXQJQ==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Hi, Varshini,
+Flag which SoCs have legacy - builtin PHY code. This will be useful in
+subsequent patches to inform PHY bringup logic if legacy bindings are
+available.
 
-On 11.07.2025 10:38, Varshini.Rajendran@microchip.com wrote:
-> Hi Claudiu,
-> 
-> On 10/07/25 1:48 pm, Claudiu Beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> Hi, Varshini,
->>
->> On 24.06.2025 12:09, Varshini.Rajendran@microchip.com wrote:
->>> Hi Claudiu,
->>>
->>> On 24/06/25 12:34 pm, Claudiu Beznea wrote:
->>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>>>
->>>> Hi, Varshini,
->>>>
->>>> On 10.06.2025 11:45, Varshini Rajendran wrote:
->>>>> Update the min, max ranges of the PLL clocks according to the latest
->>>>> datasheet to be coherent in the driver. This patch apparently solves
->>>>> issues in obtaining the right sdio frequency.
->>>>>
->>>>> Fixes: 33013b43e271 ("clk: at91: sam9x7: add sam9x7 pmc driver")
->>>>> Suggested-by: Patrice Vilchez <Patrice.Vilchez@microchip.com>
->>>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->>>>> ---
->>>>>    drivers/clk/at91/sam9x7.c | 20 ++++++++++----------
->>>>>    1 file changed, 10 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
->>>>> index cbb8b220f16b..ffab32b047a0 100644
->>>>> --- a/drivers/clk/at91/sam9x7.c
->>>>> +++ b/drivers/clk/at91/sam9x7.c
->>>>> @@ -61,44 +61,44 @@ static const struct clk_master_layout sam9x7_master_layout = {
->>>>>
->>>>>    /* Fractional PLL core output range. */
->>>>>    static const struct clk_range plla_core_outputs[] = {
->>>>> -     { .min = 375000000, .max = 1600000000 },
->>>>> +     { .min = 800000000, .max = 1600000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range upll_core_outputs[] = {
->>>>> -     { .min = 600000000, .max = 1200000000 },
->>>>> +     { .min = 600000000, .max = 960000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range lvdspll_core_outputs[] = {
->>>>> -     { .min = 400000000, .max = 800000000 },
->>>>> +     { .min = 600000000, .max = 1200000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range audiopll_core_outputs[] = {
->>>>> -     { .min = 400000000, .max = 800000000 },
->>>>> +     { .min = 600000000, .max = 1200000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range plladiv2_core_outputs[] = {
->>>>> -     { .min = 375000000, .max = 1600000000 },
->>>>> +     { .min = 800000000, .max = 1600000000 },
->>>>>    };
->>>>>
->>>>>    /* Fractional PLL output range. */
->>>>>    static const struct clk_range plla_outputs[] = {
->>>>> -     { .min = 732421, .max = 800000000 },
->>>>> +     { .min = 400000000, .max = 800000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range upll_outputs[] = {
->>>>> -     { .min = 300000000, .max = 600000000 },
->>>>> +     { .min = 300000000, .max = 480000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range lvdspll_outputs[] = {
->>>>> -     { .min = 10000000, .max = 800000000 },
->>>>> +     { .min = 175000000, .max = 550000000 },
->>>>>    };
->>>>>
->>>>>    static const struct clk_range audiopll_outputs[] = {
->>>>> -     { .min = 10000000, .max = 800000000 },
->>>>> +     { .min = 0, .max = 300000000 },
->>>>
->>>> Is this min value something valid?
->>>
->>> Yes. This is a valid value mentioned in the datasheet. This is the range
->>> that fixes the issue of not being able to set low frequency values for
->>> the SDIO interface for instance.
->>
->> Sorry for the late reply. This range is for audiopll. Can you please
->> explain in the commit message why this fixes issues with the SDIO interface.
-> 
-> I can do that, while doing so, I can rephrase it as well. SDIO is just 
-> an example, It can potentially fix any range issues in any clock 
-> associated with peripherals can have.
-> 
->>
->> Also, having zero here as min rate would involve, as of my code inspection,
->> setting frac->mul = -1 for disabled PLLs on probe (I suppose audio PLLs are
->> among them). Please check:
->>
->> https://elixir.bootlin.com/linux/v6.15.5/source/drivers/clk/at91/clk-sam9x60-pll.c#L693
->>
->> Having frac->mul = -1 means frac->mul = 0xff meaning the HW registers will
->> be set with the maximum multiplier. If my assumption is right, for a
->> reference clock of 24MHz this will mean the Fcorepll will be 384MHz which
->> is not in range for Fcorepll specifications (described by
->> audiopll_core_outputs[]).
->>
->> This may be harmless if the PLL is unused at boot time, or reconfigured
->> later, but if the PLL is just enabled later (w/o setting again the
->> frequency) and the core output frequency is not in range (described by
->> audiopll_core_outputs[]) it will lead to PLL lock to take forever and the
->> execution to stuck.
->>
->> Can you please check this?
-> 
-> I inspected the code on my side and did the calculations and I didn't 
-> quite get the part how you arrived at the value 384MHz, my bad. But I 
-> did get your point.
-> 
-> What if I set the minimum AudioPLL output that can be obtained from the 
-> coreclk output range which is 600MHz minimum, which gives us 2343750Hz 
-> as the minimum AudioPLL frequency achievable from the divider part. If 
-> that is okay I can send another version of this patch.
-> 
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/media/platform/qcom/camss/camss.c | 11 +++++++++++
+ drivers/media/platform/qcom/camss/camss.h |  1 +
+ 2 files changed, 12 insertions(+)
 
-I've rechecked this on my side and I concluded I was wrong. The call:
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 23e57c7c8c43b9662e07212b26550d2734480fa3..c8103f8b754a29a63e32bb7bc213bfe14b4e0748 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -3724,6 +3724,7 @@ static void camss_remove(struct platform_device *pdev)
+ 
+ static const struct camss_resources msm8916_resources = {
+ 	.version = CAMSS_8x16,
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_8x16,
+ 	.csid_res = csid_res_8x16,
+ 	.ispif_res = &ispif_res_8x16,
+@@ -3736,6 +3737,7 @@ static const struct camss_resources msm8916_resources = {
+ 
+ static const struct camss_resources msm8953_resources = {
+ 	.version = CAMSS_8x53,
++	.legacy_phy = true,
+ 	.icc_res = icc_res_8x53,
+ 	.icc_path_num = ARRAY_SIZE(icc_res_8x53),
+ 	.csiphy_res = csiphy_res_8x96,
+@@ -3750,6 +3752,7 @@ static const struct camss_resources msm8953_resources = {
+ 
+ static const struct camss_resources msm8996_resources = {
+ 	.version = CAMSS_8x96,
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_8x96,
+ 	.csid_res = csid_res_8x96,
+ 	.ispif_res = &ispif_res_8x96,
+@@ -3762,6 +3765,7 @@ static const struct camss_resources msm8996_resources = {
+ 
+ static const struct camss_resources sdm660_resources = {
+ 	.version = CAMSS_660,
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_660,
+ 	.csid_res = csid_res_660,
+ 	.ispif_res = &ispif_res_660,
+@@ -3774,6 +3778,7 @@ static const struct camss_resources sdm660_resources = {
+ 
+ static const struct camss_resources sdm670_resources = {
+ 	.version = CAMSS_845,
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_670,
+ 	.csid_res = csid_res_670,
+ 	.vfe_res = vfe_res_670,
+@@ -3786,6 +3791,7 @@ static const struct camss_resources sdm670_resources = {
+ static const struct camss_resources sdm845_resources = {
+ 	.version = CAMSS_845,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_845,
+ 	.csid_res = csid_res_845,
+ 	.vfe_res = vfe_res_845,
+@@ -3798,6 +3804,7 @@ static const struct camss_resources sdm845_resources = {
+ static const struct camss_resources sm8250_resources = {
+ 	.version = CAMSS_8250,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_8250,
+ 	.csid_res = csid_res_8250,
+ 	.vfe_res = vfe_res_8250,
+@@ -3812,6 +3819,7 @@ static const struct camss_resources sm8250_resources = {
+ static const struct camss_resources sc8280xp_resources = {
+ 	.version = CAMSS_8280XP,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_sc8280xp,
+ 	.csid_res = csid_res_sc8280xp,
+ 	.ispif_res = NULL,
+@@ -3827,6 +3835,7 @@ static const struct camss_resources sc8280xp_resources = {
+ static const struct camss_resources sc7280_resources = {
+ 	.version = CAMSS_7280,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_7280,
+ 	.csid_res = csid_res_7280,
+ 	.vfe_res = vfe_res_7280,
+@@ -3841,6 +3850,7 @@ static const struct camss_resources sc7280_resources = {
+ static const struct camss_resources sm8550_resources = {
+ 	.version = CAMSS_8550,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_8550,
+ 	.csid_res = csid_res_8550,
+ 	.vfe_res = vfe_res_8550,
+@@ -3856,6 +3866,7 @@ static const struct camss_resources sm8550_resources = {
+ static const struct camss_resources x1e80100_resources = {
+ 	.version = CAMSS_X1E80100,
+ 	.pd_name = "top",
++	.legacy_phy = true,
+ 	.csiphy_res = csiphy_res_x1e80100,
+ 	.csid_res = csid_res_x1e80100,
+ 	.vfe_res = vfe_res_x1e80100,
+diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+index 63c0afee154a02194820016ccf554620d6521c8b..7ed8984ff192d5bcfca790b0900f8e48700347ea 100644
+--- a/drivers/media/platform/qcom/camss/camss.h
++++ b/drivers/media/platform/qcom/camss/camss.h
+@@ -97,6 +97,7 @@ enum icc_count {
+ struct camss_resources {
+ 	enum camss_version version;
+ 	const char *pd_name;
++	const bool legacy_phy;
+ 	const struct camss_subdev_resources *csiphy_res;
+ 	const struct camss_subdev_resources *csid_res;
+ 	const struct camss_subdev_resources *ispif_res;
 
-ret = sam9x60_frac_pll_compute_mul_frac(&frac->core,
-                                       characteristics->core_output[0].min,
-                                       parent_rate, true);
-
-from sam9x60_clk_register_frac_pll() is using
-characteristics->core_output[0].min as parameter but not
-characteristics->output[0].min as I initially considered. So, the change
-here should be OK.
-
-Sorry for confusion! Please re-send with the patch description adjusted and
-I'll apply it.
-
-Thank you,
-Claudiu
-
-
-> Thank you for spending the time to review my patch and for the detailed 
-> explanations.
-> 
->>
->> Thank you,
->> Claudiu
->>
->>
->>
-> 
-> 
+-- 
+2.49.0
 
