@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CF97D07D;
-	Sun, 13 Jul 2025 16:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524823C17;
+	Sun, 13 Jul 2025 16:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752424679; cv=none; b=MTgGptw6Rd3yqeJbp9VBeiQUYiYBivD0dVPA2D/D07qedrYz4jcOrDnAknoLOGXMWTtcvfQSA5KSJDdGsqzxTNdX8QQXCOnDr3PqEN/Erl3mm5H9rcK5CsHduyLeBh+ddQXdmCP/2lsUGby8kAlS0rdM0YDVkue3WAY5gfeHkOM=
+	t=1752425206; cv=none; b=b7KzoGiUm9C3GCAFdsDtSGg5ZSJFiBlCa8lQ5gRi+M5PwCnwpWUYRprG5deE3Mqt10T8QUQfL14OOnR27YujI/ep2Jy6DF2lleeIGGLifuEc7QD4gOkPNgoUwBsBUdi1/1C6nqgOw56fgr1v0SBvo4xle5Y1yJveTAE1LaaePvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752424679; c=relaxed/simple;
-	bh=DyU87YM5r7JRWP5w5WS4pMNHSytfp53SAvVCiNhkD8c=;
+	s=arc-20240116; t=1752425206; c=relaxed/simple;
+	bh=g9dw72VLQAWHJtOpKYtM+S8Zwnhwl7h+5NFfEjYDrqQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RXTDamN/WPpK/zTn/JsDCAPhca+Ph3G1JbxUnj/KXysSGetnwWC+KOb56pnl1xaUTmE0I6TxMwsc96x6sogiy/KHtyCMt27STuC5oBn/Mcs425VPx0O5WpGl+U+NHf431x+pBmHffHbUrmGFiwr+4STB+dn/U8zsROjDYQDJEDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7haL234; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=sb0RFGw5Xba9GiOQrtzICGNZVitkH5IAzrqLJxzSiA/vP4oYgJLAYu5ineoYysjuwflVA06CFEWA6n2Qd+lxjG4RoYKsntxDYM6li5uRl7A3ynNdu5DqUc7RCzKOkDhIrnIGL7XSL3pZLkjLE/KhYcQEBG7NUifbBzQ6hRDlifU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aibomoIf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7haL234"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EB8C4CEE3;
-	Sun, 13 Jul 2025 16:37:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aibomoIf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7AFC4CEE3;
+	Sun, 13 Jul 2025 16:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752424679;
-	bh=DyU87YM5r7JRWP5w5WS4pMNHSytfp53SAvVCiNhkD8c=;
+	s=k20201202; t=1752425205;
+	bh=g9dw72VLQAWHJtOpKYtM+S8Zwnhwl7h+5NFfEjYDrqQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=h7haL234gIcr37jKHim2EV+Ngygz433XZo4cwf5pIzBbhSgJsRVkfOiEJvKFbg/7K
-	 Lf0NAhuDM1hQsZmqXF+QdoSI3ngBTcLS0LtWEZ6AjhGGraEXKfQiP15mT75byP8TQZ
-	 veG1QD54xJb6YSVaWclBfYACnqx+Ah2dgJWoIltLdQYvWzdIkwIpEpDENv3BIpLDri
-	 lW4KMMz0Ubj7fUVs2LFfsaS9Ll7ZP69LHZ6WAv+Ws7lgdfnOeliAQWMQ7fqpuU07Fc
-	 KnxS6YhF8Qlu3EkxrvxNIoWhvBl3fmHDtvd5thZHJscpWMdMSfUpkL0dPV0B1SRiNg
-	 zsHANBiLa1Cyw==
+	b=aibomoIfweVUJ+BsiFGbW6qx0uIYc+4LEEfwrcbsU7JrbTRWzotDUMYINttnxbphh
+	 y6D9dtV4f0ih2NVJsKitVha8Hz1oi/DY0HXh98Ib95ROFT3tzXKTXuA94MJ/FzY9NO
+	 KBgJX78nFkSfDzfi31kjOhPSdLfSkoAdlFOYL103wy1TckUury0IbsfnAegMsVmf2Z
+	 GrdohLTPQaZn6o0PXQ1MYZ/+ibPII9OvRBg6LbZirMBWSfx5cdQT49BM90XQhXU7Bo
+	 7otxujTO9Pu7enpx3TX6PKMqfa8ozXXl2MJQx1uwqaboVwZ6x5dHiTaM93I6XkFZ84
+	 O0zRiry942M0g==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,34 +34,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1752090701.git.geert+renesas@glider.be>
-References: <cover.1752090701.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.17 (take two)
+In-Reply-To: <20250709191358.171004-2-krzysztof.kozlowski@linaro.org>
+References: <20250709191358.171004-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.17
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Sun, 13 Jul 2025 09:37:57 -0700
-Message-ID: <175242467795.1004940.2924957685701978498@lazor>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Sun, 13 Jul 2025 09:46:44 -0700
+Message-ID: <175242520461.1004940.5516510155875270578@lazor>
 User-Agent: alot/0.11
 
-Quoting Geert Uytterhoeven (2025-07-09 13:14:11)
->         Hi Mike, Stephen,
+Quoting Krzysztof Kozlowski (2025-07-09 12:13:57)
+> Hi,
 >=20
-> The following changes since commit b7c26cbd5b704a350b3176669f47047153903b=
-c9:
+> Clock drivers. The bindings were kept on separate branch, just in case, b=
+ut
+> eventually they were not shared outside.
 >=20
->   clk: renesas: rzv2h: Add missing include file (2025-06-26 16:28:50 +020=
-0)
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
+94:
+>=20
+>   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.17-tag2
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.17
 >=20
-> for you to fetch changes up to 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a:
+> for you to fetch changes up to 2d539f31ab0eb3eb3bd9491b7dcd52dec7967e15:
 >=20
->   clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well (2025-07-=
-08 11:36:16 +0200)
+>   clk: samsung: exynosautov920: add block hsi2 clock support (2025-06-12 =
+17:28:11 +0200)
 >=20
 > ----------------------------------------------------------------
 
