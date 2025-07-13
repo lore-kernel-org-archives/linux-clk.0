@@ -1,66 +1,66 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B801C6FE9
-	for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 08:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4545009
+	for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752394732; cv=none; b=q6iM1WBB3xkI07713WamDr8PZq62xnsDZR0dH3rbG+yweTbQHkEEMv5G8lpcizT7kU+6VT5IwjhnGIrrw89xRMO1oBqNQ5jSlE9Cfy+H/p5eskO73mQLft9gz2ZC3y6GYrhIlHWvDYVtr7Ks2RtiB/uIfSChkDlKzLSTYicXlxg=
+	t=1752394808; cv=none; b=lwBUPCx+9uIKCOUJT17g6y9sItAsYtbjX/MZlZSKi+yxvi+5Il8qNClraHPf/cDmgkzhHPcIHt4on293LrDDMM/0FzN/MQwiKShnw6kaKqyC1joxmr2vPH9iafC/H4XDhvFvi9V+tV/BIbXrzUFAFCJtUfuexmiuWaHPEyn/iXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752394732; c=relaxed/simple;
-	bh=KTmZ/6BZ/O4t61ihZqvtmbZeWoMlVti8WkWApvDe3mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kXcTQabqPJdpIy36aywpNd4LpNbXmiBqe6U6ESzCllGgZVf9oaZi8e/cQPkDvhCdsCCP0BEiwX5olf1U0f1AUer8P50EgRffMZYU+WCYnIcENzPf6Y+qSarh+eyrW0MwUZRKsGgdEJM82AiKYW8pyv0XIoyiOl466UxVxodemXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CQtCRigC; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1752394808; c=relaxed/simple;
+	bh=c3CMpqzcWhpk0RzXlUM6GTzeKaq9zbb8rgyjL3hbPCE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b4g96oKEW2huVF5sRqLbZqO8Ait0jQfxkY5vRqKfP5j17/ip1WwcMpFnc+bVaAHYJ6klOCSHKikUduvYWN1MpzB1qUa8cZzkBLqgSfmvxII0XFTXuSwJUx1+Gxbo4tDXNmThbQTf5psQdf05Xe13E4sZgeTPyJ+GE7nNNsAzid8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FjmE+0tS; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQtCRigC"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45611d82f2eso471585e9.0
-        for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 01:18:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjmE+0tS"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45611d82f2eso472665e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 01:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752394729; x=1752999529; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752394806; x=1752999606; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTmZ/6BZ/O4t61ihZqvtmbZeWoMlVti8WkWApvDe3mw=;
-        b=CQtCRigCoGzZegg8BdCZNFvYEy567+kPtQicDfHVcQl5FD3XqRVqDHfd5e1jis6Xuv
-         ypaD9hYBNajWMsYpveWe3O/5iX5jD6ba0uv5qvLnUfbNXTqnpQRFPLieWARagqx2Asu1
-         UOTGWs3g9ukDhzs7YtdVBlYJO5obiI5VqQa+367xw1vLOhTgU3nA15w3/AyegviGnQar
-         ezkoukjyCrUMLbQlmFR8zi0hev9xVNs60XtZT/bJ6H3HR5rcgKf/LUcwYDPopheZl2cR
-         NI226esjEJ4fK8Fz9CmKtLquVmXRZUqqFJjMk86MxwbwS5svxEGJH3OgSuXW/poi45s9
-         ijsg==
+        bh=ebTXJjZiToHpEJi+iYoNzkHIv4Hq08aW7mp+XQ1QYLc=;
+        b=FjmE+0tSdpOIshWmZzv67mdS4b2vny+th/JhcZonCaAEohZFDcDw5cqZNXsmNhoBCv
+         QutR1xwfmg4fH8HUsKOXHjNg0z79GrKaNDxyvbyMpe2Q+k7pMDa6ziMNLMPxmOtRCMzb
+         1yHrxlHmQI3nrBKaHCG6K7PjQNXKGes6He0EE32sIHEnnXYYcuC6t/zbZlcsJIiVmpuN
+         tSM9cK4X61wVn0QXvruRrNVjWP3r2tB7YuAslxSalSHrZa/P3nMp6+evFZdiLvQYXy6c
+         TJVh2DS7XG6PLlY/Vjgrk1DqlmbPj2emdYlZYXbFgviCI6e0M41ORcbczsukdw0oT+Jv
+         x/gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752394729; x=1752999529;
+        d=1e100.net; s=20230601; t=1752394806; x=1752999606;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
+         :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KTmZ/6BZ/O4t61ihZqvtmbZeWoMlVti8WkWApvDe3mw=;
-        b=KrjY0ap0VDo3Gcn/QPlGsVJ94jLuAYgMMs/rCR27yl/Tz5kFF58rDa1fLRCjd/aMkj
-         cM+wbhDX5qzGc38EzJgCD6Z4NM0Shnf7Iapg3k+KoS97C6qbn1FF82x2bkgBgEhdooAX
-         Aj2qyVcwLh9Lz84kESIqdtahJIlIQjE+76P6g3oHT54u43eYEtu6ivP/QapVlF0t+mF2
-         TbBhiw+fdoIwSjzQml6OJps7kgWIuRFIIRUgfuQ3I8/akKs9puXqLc8xc4G6zgYY3MBg
-         BiUD3yc3Lu6P9sVcPciwSrPL29mVOoBYevhNLh7sNsPDZ4G20T0NFk5cbM4E8QL41E9F
-         BAag==
-X-Forwarded-Encrypted: i=1; AJvYcCU0hZiT8QFHj55Rnu3sOtGPaUq5opSUuz7REta2LE1DFD2KHfUM9P7xNtDtkrlGNDfF0OvZxDB1w/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzs8jcS1+R0Pu+En9BwsvVm1ZdNIpcQQFD7+1ukq4TIDFF0jkv
-	ZAgJhl3wt6CjYFJ7pn0DY8jNIpEaDzHTvORkoc91V2O6pHZYR9yZlyxMSJ6sY3Tv1tY=
-X-Gm-Gg: ASbGncvCxpzXqYorSEXPGSYd7CensNdyNQD7KyFM1lV3X9Hu6E+V38QbuXtG4QlRlKL
-	/3CDz8j/8g2ONyDlP4IJk9dooxlMFi+C/7joERCJcet1Ds7v+CyzghvnC+mWeiyY22I+DYzxWdx
-	30zx1YRGsh58yeqal4ebKEWd3nFbKfYi3Gx79TcKMtkD4hqeHP7GmMpi2iPVs0Ryy6msHRpiAX1
-	dIRriHrSEvfq7YyefEw7JqxFdFks/Y29eSNVku3hYYCaqu7FU5kT+sFpvUzhepAA5o3SLzym7qj
-	yqMLGdvfsTIRQTxDw/kER1YtJVK0jjlVEEOIhthQSXiXrYhaKZlhBFuTymv+VupSn7P2YCDN3iZ
-	V26JnCe9w7hlHB06A61e7cF27Zc3/3V1jrIEa3meOzg==
-X-Google-Smtp-Source: AGHT+IGJGvm/pOF+GzVK/oWRlBC1xVudzXCD3nMUix4t2bX5U3lxlPgjlOfgtdzq6ruR1sMUg/Zasw==
-X-Received: by 2002:a05:600c:4714:b0:43b:c825:6cde with SMTP id 5b1f17b1804b1-454f4254765mr33922905e9.3.1752394729286;
-        Sun, 13 Jul 2025 01:18:49 -0700 (PDT)
+        bh=ebTXJjZiToHpEJi+iYoNzkHIv4Hq08aW7mp+XQ1QYLc=;
+        b=Kn1QIOD3/NTp3MYYI3sglF6W9FTR7YtABOvq5eJqNxw3RgS1qQPDW7+AXvPilUXB/z
+         JvR8RSn3MP7jYQJCVVhtCyL9kNidohTd8br+OLM47K7sTcmc9QZ2jCoa/kv9XCfroD7x
+         cFpsuAfI7fXvDCg/zRpSnJ72NoGiusMZCcx4tWkxDwdDuZ1nVxJT8Jc4b5AqqrCaweUh
+         gwy7lvjTdRvwhOSADjAVjjLPd1uuguXi2pQ5xegveNu3jZaZlopvZkTHBAASzbQWnzGO
+         3FBzT93LlOhskbjI/tFra5NHiU7k7Ta4U6kLI8yV6BFlMy97Nr51y5yOeGlUbCwSy/Yy
+         21FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEBrIRGKRI/mFZGLz6/lTee9xYInxVRuGSQQEANLLTXjlqvsMLSyE5cD6j7AuYQtYEfyX972wouQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvztowN7IHhurt6BR+ysejrat9hTdBE58Js4QJBkFSBWPnCL4r
+	l4+cOTkiwgMBynVxvIFi7GIReoBTRRZ1HfHVtfKpqQTQJNEMMGenC8hWLgIweDBrV7U=
+X-Gm-Gg: ASbGncsza0jwRjbQ8mDNFnNfhHKq053QiFxSsJx9jzWuVtOvtwD4xemzUy7IDH5q7do
+	0FryeJ46Lsh/OHe41zm34f6YJOCm0ZQ57tRdDLeZk57kaiCCP4HatFftLewvBg9zm3GNnZh2fJ8
+	9F9vPm6XtH3P+6SUnYHCCXlUkXz0wnGlaNy6uLGZsgYwtri32Haw1iLgkSZ3Ucd0wgI7PLciPeS
+	0E6QM+pdDkCI9l1dBOCsusubpptp5aWn9jHKZtnWBalcHdm1og9YgjG5gMYi/f/S6KvMAPADmga
+	q3LpXZPfRT6evzWnOi4mfhy4qFLbKfBfBlMglPRPN36wkmbHzl+WpMsQjC6yuZ1GqnePpoe+OdA
+	pXcTcEOOEgk9DDwL+bsxrJaru+TQ5ZfuLAgA4eZZT1Q==
+X-Google-Smtp-Source: AGHT+IFmFE6gTdvCswovb35OYCFZC9QaFdUknkpsjvODfkScXW0qJTMpt+tnEGxkYNRSte2VWD24nQ==
+X-Received: by 2002:a05:600c:c044:b0:456:11a6:a50a with SMTP id 5b1f17b1804b1-45611a6a859mr3579785e9.2.1752394805674;
+        Sun, 13 Jul 2025 01:20:05 -0700 (PDT)
 Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4560394e061sm40251575e9.31.2025.07.13.01.18.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd540b52sm96614785e9.28.2025.07.13.01.20.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Jul 2025 01:18:48 -0700 (PDT)
-Message-ID: <3376b0fb-f3c6-464a-9c35-30a3f589b856@linaro.org>
-Date: Sun, 13 Jul 2025 10:18:46 +0200
+        Sun, 13 Jul 2025 01:20:04 -0700 (PDT)
+Message-ID: <eac19ad2-78dc-44e9-bc02-517272ba737d@linaro.org>
+Date: Sun, 13 Jul 2025 10:20:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,6 +70,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v7 02/15] dt-bindings: media: qcom,x1e80100-camss: Convert
  from inline PHY definitions to PHY handles
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -84,7 +85,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-media@vger.kernel.org
 References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
  <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-2-0bc5da82f526@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <3376b0fb-f3c6-464a-9c35-30a3f589b856@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -130,19 +131,22 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-2-0bc5da82f526@linaro.org>
+In-Reply-To: <3376b0fb-f3c6-464a-9c35-30a3f589b856@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/07/2025 14:57, Bryan O'Donoghue wrote:
-> We currently do not have an upstream user of the x1e CAMSS schema which
-
-On first glance there is, in Linus tree:
-
-git grep qcom,x1e80100-camss
-drivers/media/platform/qcom/camss/camss.c
-
-If this wasn't released mention it.
+On 13/07/2025 10:18, Krzysztof Kozlowski wrote:
+> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
+>> We currently do not have an upstream user of the x1e CAMSS schema which
+> 
+> On first glance there is, in Linus tree:
+> 
+> git grep qcom,x1e80100-camss
+> drivers/media/platform/qcom/camss/camss.c
+> 
+> If this wasn't released mention it.
+... and then this should be marked as fixes and picked up fast, because
+you have only like 2 weeks to fix it.
 
 Best regards,
 Krzysztof
