@@ -1,33 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E521E1DF0;
-	Sun, 13 Jul 2025 08:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216E5188734
+	for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 09:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752395492; cv=none; b=T5VuADKmh5eFyAvnpFbXB7yjjKX4AxkyywAj5UXpZU6aSF0Fyu8nsOVXtN0qNhxA7U+qw166oQqgx+kpAMsPsvrMOT09ZoKFTIzXEKQEthuKhO5Oxau7ehaPpGOcDTT/qhrSDA5PjJH/QxIfGoOOz8U0scx0e/BKtrw3ycK/JqE=
+	t=1752397970; cv=none; b=C74uKCBTuptsb3pgbvK2RCftwFu68wWXbxEIgzC7eaB7LVYmvu1Ov8LH0Xe3W3VyEtLAYmz1dq3BHZHtfLzBUDJIWPeSVzQi634GmT/KVCNvCDi7NW/pvuUrFw0indxodqJCYW1vl9rErU7L1325ZlOENrZe4Nioebid02jGOKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752395492; c=relaxed/simple;
-	bh=6Zf/t+1GVnyk+GotW7/Ks3e1/HCM0lAbM4b8kI6lusA=;
+	s=arc-20240116; t=1752397970; c=relaxed/simple;
+	bh=ttP2+H/bej+IM7hX8rbyBToQUHpPpcZy6rtLIIOb6c0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrY3n0SW7hyLyMy355ol/e3P2NEn1UoI7OMVCboWYWRae0l2Sm7NZxaudbu5Su2QjZt4Q06v/KpMnouEcBajZiaNgspl92e9chJi21vjUz2g6p6RDYqiF2QgizB4aXFoME1EmCejYGh5+CBvUiImNs6I9WRE05wxv/aQPWP8fH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pt99lK3h; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=i8+nZk9e8TM/zrf3Jr6QqC+GVHz0xa2GEmSrdiLcov+L8CYjf5Ecq3N8jVU/zTiYGnHj0pP2KhJ8HTy2cCXDqSyFZ0TV+LvB300fo8LuYmrBjeR8ItzVmhjDNzC3GkxGe/h3fY8jU9bKTbwSKAtEgqX8YU0okXZEYmWGwncPg74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hRg1H883; arc=none smtp.client-ip=209.85.128.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pt99lK3h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BE9C4CEE3;
-	Sun, 13 Jul 2025 08:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752395491;
-	bh=6Zf/t+1GVnyk+GotW7/Ks3e1/HCM0lAbM4b8kI6lusA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pt99lK3hrHeG1pTCQ8g9j7GudCH8J+RKZHazmGAge+fTKGFn0jBzigfTcYK9/7jof
-	 yag9abuXwe9CrkrOpPOK1I0suKG+IG92TdzIe9Yi9VT5leqzrRbgvzxdFy8+k2Rppv
-	 Bogm8NrkLwnUPrr0GngAKE2V3VANB3UYWSxN6rMLlhtdNBZaF1cKquV354wnypIE2B
-	 zF0mq4T+dNMZeSVO7FIJHhGQ3Vqy/BOtUenzCktO2TEw1WNMQRgb86nUBltJjxvVVH
-	 fmy4roCUoLqkTKMafpjYQwrYTH7JnMfdSc5AfGStNxEFIeK4I3uiAtWXMsuZ6I+EEp
-	 BwXAxN3FPrNIg==
-Message-ID: <eba89d81-1dbb-4eed-8ad9-b49761aab49b@kernel.org>
-Date: Sun, 13 Jul 2025 10:31:21 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hRg1H883"
+Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-45363645a8eso23044625e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 02:12:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752397967; x=1753002767; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2bZfg9DF5nDVKhJoydkljHjxo8IZW88WiR/LfC60k7Y=;
+        b=hRg1H883qwLMSTjeEigBOEFhVD6QoGYt4zn8ehVVliF72zunVAlKF6WNNtBtgsOkjo
+         yeWypeD88AfwA0risdqQDYOTXkWQtUEI9wgSRcPWRTTeC1BDJzzxqhGjuU9Z6nnO12Th
+         JO0qvtjoh9undSE6DPYmGfRWpxzu1IdfljeRwn2if4+TgwT1cD8tPGYIGCSebmwD5r/d
+         3+oEqg0jYBrlmBwBR5I2hK4Pqr1ynD5FfMPE7/ElU5olYtwPe7GE2og0ReNSy//+d5/N
+         p9Hum00PCC1Sso5SS0NksWNep0lqBFuCcdpvC4NT8J51UWaugcDVmKOIBPdj/VdWsR50
+         CdlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752397967; x=1753002767;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bZfg9DF5nDVKhJoydkljHjxo8IZW88WiR/LfC60k7Y=;
+        b=RZhpIgNLBzvkGSi3jEssIWnJVMzyFcFnbieRQ+GHQi8aLqtm3fvtudrT8NTTCcaCYK
+         BQJqlA5gFNlyluNXOmwHeXsS8Jhn133sqQxf3Z8WKK0JXdI6Wyguo1+1vXQJ9Yk7F00W
+         AmUEm9dW2hro5yNyhpT6QhXkb9FK2aMIj22QhGFEtw3O169YgkNXq+w8dsHa+J9c26NR
+         kARkBi2mEWoeXclT2fyvwkBHbkUkSDY3K3wxmj2rKa61FTV8AyX9ePtU17/rAv8OxLoH
+         jbk05irWhYwsaFm4Ixt1sehc1H2zKi5E2Y4xhk9uDzDtu41XqvA1o+9Wwf1Xxtfz3Quw
+         M4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUB25W8ULP2/yeCioRSivAqUkahZv9WHqka5Tmkvv/F7Ex9hNy5ZOeO0zNKWE5KEACRcq7icitWFcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv2m796cZyh7/D2NT7a25A16LJZ0BPAwzQICX1JzpkOhHJp8Tv
+	VhmZVjSyifdjRFGGLuNfb7kGttRYFwDCVuiw3X4csFeyfDr2at7iQKWrqLSyz56gfZc=
+X-Gm-Gg: ASbGnctDnN2rWpS3ioQQvJ9ZzsyzoCuhnUAg1d9zR1yET7EA/sho0IpEvNGGYzCNZRK
+	YEWecQxO82jeVtFkWN6ibclMQMh8HlOs5n148OAbA9bA7wokAakgCqeZqBNScCN0EqhJk7Xohah
+	U7k4ihiZUb/LfG0NbATkQmR460xjw6HC83fF2TKLlbR6A+6jny3ici64xR3q4mKXAUe2B46TSBY
+	Of+Fa3kBFkdhh/9OywYKga0sSCIeZ+98XTfMGSZIestin+A7wKU1RoPljSOPvwWsNTeumUmUywv
+	kXMJAKfwEACFH+5d06FmYxSYH4BFj9edYXYC3JKGBpX+2KEyJ/KmW7k25FrBMJ13qM4QFtYLWWB
+	b/JP80yc4yRem7FGtMT2rsJXx6sZU+6NJxFGQ0hi22djPNP+g21YCI91JecrxrpA=
+X-Google-Smtp-Source: AGHT+IFYMtWgYdOmndlZ3GtfdgwsQKMDhvhnsOVqQJrHIBGY5YzlakXukB0kQt0B+MV4iFsnSxY0lA==
+X-Received: by 2002:a05:600c:1f8d:b0:442:e9eb:1b48 with SMTP id 5b1f17b1804b1-454f42692d9mr74678445e9.24.1752397967443;
+        Sun, 13 Jul 2025 02:12:47 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9268sm9235312f8f.41.2025.07.13.02.12.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Jul 2025 02:12:46 -0700 (PDT)
+Message-ID: <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
+Date: Sun, 13 Jul 2025 10:12:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,9 +67,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/15] arm64: dts: qcom: x1e80100: Add MIPI CSI PHY
- nodes
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+Subject: Re: [PATCH v7 01/15] dt-bindings: media: qcom,x1e80100-camss: Assign
+ correct main register bank to first address
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -46,91 +78,62 @@ To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
  <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
  Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-media@vger.kernel.org
 References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-8-0bc5da82f526@linaro.org>
- <ddea072c-c495-4414-a497-a2851211934e@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
+ <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ddea072c-c495-4414-a497-a2851211934e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/07/2025 10:28, Krzysztof Kozlowski wrote:
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> index 41245e8592f78edf141141f2f5b7c5b841318f46..e385d6f329616360e089ba352be450c9eca6aab6 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> @@ -5244,6 +5244,94 @@ cci1_i2c1: i2c-bus@1 {
->>  			};
->>  		};
->>  
->> +		csiphy0: csiphy@ace4000 {
+On 13/07/2025 09:15, Krzysztof Kozlowski wrote:
+> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
+>> The first register bank should be the 'main' register bank, in this case
+>> the CSID wrapper register is responsible for muxing PHY/TPG inputs directly
+>> to CSID or to other blocks such as the Sensor Front End.
+>>
+>> commit f4792eeaa971 ("dt-bindings: media: qcom,x1e80100-camss: Fix isp unit address")
 > 
-> phy@
+> I have next from few days ago and I don't have this commit.
+
+https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/1da245b6b73436be0d9936bb472f8a55900193cb
+
+>> assigned the address to the first register bank "csid0" whereas what we
+>> should have done is retained the unit address and moved csid_wrapper to be
+>> the first listed bank.
 > 
-> git grep csi.*phy@
-> git grep phy@
+> This is confusing. Did that commit change entries in the binding?
+Fixed the unit address.
 
-... although we do have ethernet-phy@ and usb-phy@ accepted, so it could
-also be csi-phy@. Up to you.
+What we _should_ have done is put csid_wrapper as the first entry.
+
 
 > 
->> +			compatible = "qcom,x1e80100-mipi-csi2-combo-phy";
+>>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   .../devicetree/bindings/media/qcom,x1e80100-camss.yaml       | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>> index b075341caafc1612e4faa3b7c1d0766e16646f7b..2438e08b894f4a3dc577cee4ab85184a3d7232b0 100644
+>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>> @@ -21,12 +21,12 @@ properties:
+>>   
+>>     reg-names:
+>>       items:
+>> +      - const: csid_wrapper
 > 
-> You should clearly express where the bindings are. I see only short
-> remark about some driver in v7 changelog, but you have here a weak
-> dependency, because this should not be accepted before the bindings
-> reach their maintainer and qcom maintainers need to be able to check on
-> that.
+> Anyway, this is ABI break, so needs some sort of explanation in the
+> commit msg. We don't break ABI for cleanup reasons, unless it wasn't
+> released yet etc.
+So I since we haven't added the node to a dts yet which to my 
+understanding means no ABI break.
 
-
-
-Best regards,
-Krzysztof
+---
+bod
