@@ -1,66 +1,66 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A6735977
-	for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 09:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329EB13AA53
+	for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 09:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752399266; cv=none; b=Fzlhg3tP64IWkISvzWN5uVVOL6LT5zmk4uSLU/kQIgzncA6wruId2IpcCQNkbh6P6dp5ZZXzBmdDN8DwP87eSbJIX6+oHMt+s+JGXJwv0uJrFTPxN4CF7F6rI4ULL68DSmBG9TQ6IQYQmKLzwYKRsO0cRrZiN2o/HxGMNRwP1Ow=
+	t=1752399574; cv=none; b=sEPrFIngIUqsOVPEHWqYu4f+ZVv+xQxrX4YGSbLyKe+jfsnGX7kte7N7mIAi7/FnwqBhPWazCEnQFTXtEOQBoTaRX3EWu2JWOSN91b8vDy2xO9CqbJAjnjPlgTcUR18Ksn/4xwRjJLaXDbbldYGq7ZQu14RKpDo3/VMP/dMSG/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752399266; c=relaxed/simple;
-	bh=nvYWDpwOyIKO8lUvECljv0v3IuZgo2JS4glB0ZiVqsc=;
+	s=arc-20240116; t=1752399574; c=relaxed/simple;
+	bh=xy7Z4dB0SZnUO/TJyQTV/ZIHJ+YGQLSRSuzFwWuOJJs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9dSGTig0zXWdVSiznCHRFooO2Zde6f7m26iQ7RRrAMAteJ2LeRs//+K+flGm0vJmxHC5BJlj9p7te+HyEZVqtc7LL1ztqQtF672nh7hjIoZIGfeZYhvdJw8W4rPNG3oGJUMtEvHs48pXdCkcc9ZqG4cr0CnvRo5clFjsItOhG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fvh58qfK; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=Uc2Rput/6gqrzM7FSoVKWyOi6YOjuC0NSIjZ44imOw5BdGjuDP06iIrXQpZJn5Vj7B0XbVQqcSJv4w5XNAyIDyJuwGVcyDi1ytaTsKC0vI+lXeas+XzTuZUUrFzHXYqteHlPY5IVCfM2AbWZ5pQc9qvNxyEyHwZphOMBodlON2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jbdo54Pn; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fvh58qfK"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so512515f8f.0
-        for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 02:34:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jbdo54Pn"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso3952665e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 13 Jul 2025 02:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752399262; x=1753004062; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752399571; x=1753004371; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=45s3aw7y5fpK20LsiI9PskSV8w/X1Mx3/1QFBvNQhok=;
-        b=Fvh58qfKxje30bW2bkeaR1sTpxfp3K/m6lj2aPOjN709dQrSPe1YecU6fncsmHDA2s
-         K5BGklrb8wVArlzSJ265bIPYxz4AaBop17ddbOA/J2ygksooyzxedZ2YJYQLlE0/v0mb
-         Tr3NDjtkqSSOnchQo71DrvJCvBW9s+JSeRq89S8jwXJQnXpvc2/x2nv4Tg+NDJr8hY4V
-         QuX84UsH/8BjpS7qZD9Md6dSPa5Jgu8bXncRxdsRsYtw6f2eqBS2xc+N9Ap0cn0hZ9am
-         rtkk8oDJlAOiomKGABiEIzw3hxwEuWyGRrOWSnEC615Bp5dWS2bA0IB+MCGN7kFfhBeI
-         2sZA==
+        bh=o2imWwtvIFUM/l/O0s1JDHC2tQgH1ev1xHjGwkKxShY=;
+        b=Jbdo54Pngeo10Ji66h1B1wVrgQL6HY4ooPttvsz1tfFCZfNlkx2qtKdazgDbJzO0b7
+         1o7X9Ght+A2DZciIQW4VOk9pD1MmZoNR8zS9J7JykZlnWZ6F3QmpDBUsjWERBHhT+ZZP
+         Oe1mPWfV6wO3q0Qrfm0lPeJdiHfoRS+DOCcsVOlxjQbaNOLwYUJ3oLTNlA0tgDrO0JSa
+         AYQMxRN7MWk0/93pKh0t/d1FWAAluCRpmHyMdjb7tD4Ts4uehDgVyUk7oMYyO3cXCo6P
+         2K/A5GSGwaYRa/f1BxdozI+hlR+X020WgstXKvfo21WOo58LVCj9sJ/1wzNmHcApw9Do
+         UK5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752399262; x=1753004062;
+        d=1e100.net; s=20230601; t=1752399571; x=1753004371;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=45s3aw7y5fpK20LsiI9PskSV8w/X1Mx3/1QFBvNQhok=;
-        b=IEM4fP6XLXKzVjSLauFU4CIpMUO5RFG/CvMOSAcGWO0VqMhtgvZijAAdhUdW1rI6tn
-         6S1zbsWiYqIGNsIaCs+WO8/B/XCbsNqg6VHWG4o0+PA22shKs/zkC464Vkejxa1/uV/9
-         n1ZjVn857KCFrk7+hJUUoBzL2RBlztcaf9WgV00K0xjz9sfRmb9ZEHDg89bDek8MARay
-         LsFdZLPyBojZfllnc+SVA54bPwztfAwq/wXN9cCqFfxPyc3yOrHGpLYasFnVr8V0QsO8
-         xZcj9CR2AaWSvNoh2MvAynOprKRCOR25L2TWXtoZscjjO8M0JwYfczJ8+/fytBm0Fe0b
-         vaGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXA7D/u4xFeZKB/uRVcKIxoD7DqAse+So5xypFCFKyVS6V+6bzAQz6wFLNBlG88QVJ8srU5Qx7H7ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMDLDN3lfBjOiQyjC13zoim1oe+LLv4SSZGeBv2MzbiLTHnm3G
-	u8tfrOWDlbJ8Pd3xvGfOWROnhBhsWEoZ8BGPJOV2tvfc0INmBHD+pWbxdWrJOq0zxDg=
-X-Gm-Gg: ASbGnctav02qyAC2u49xOfMk1rsdinujDLg/LXp9UcWI2GtujJTvj/caps40lyt8AZc
-	zLdYOq9Rk0ipxKJoqrq6GfwmNUB0W5VRyYAFkAiGPrKiMMXiBwiR0rrO+QDI8Yk43vcS9SL4lxH
-	DBnULBinR13V/+hImYCXg/MwX6onodd0p05ryAH0A5B2uJFB2vwFiVTAjity3BHm6VlEYyuSOiv
-	JdCG/4Hq8Yd+NprWqYTTcj1g9RzUZK++d0S8ih1OCVI2AYBIySe4dFIM+BOW9TYsnD9hpWMENYe
-	sktN656KNNSEQB/pMUQeG34VuwRlQlM0wQhl7fDr5A5WFIyAHUrn9dZfG9mT/G193C0cNKrEcag
-	e3NbQVo6NuZJeup4eXrrM+AweZqBnbwaFIcmB/EDPpQ==
-X-Google-Smtp-Source: AGHT+IHpGXWacaJnxOWB6dpQstz/rFAG1xykJjgK5RpjaY2n6Qir2rqS2Xejka+NEUqYuDBLcH9g6Q==
-X-Received: by 2002:a05:600c:3b0e:b0:439:9c0e:36e6 with SMTP id 5b1f17b1804b1-454ec169c83mr37004085e9.3.1752399261864;
-        Sun, 13 Jul 2025 02:34:21 -0700 (PDT)
+        bh=o2imWwtvIFUM/l/O0s1JDHC2tQgH1ev1xHjGwkKxShY=;
+        b=B0isvDvVF8dNqT+wHXVLEPJfK3ccZCsSbQMWV5LRlhVKtL7739QZt/ogP2urcpV0T7
+         zyImVtlf8LiFJNCh5xRvyLG0wWDYRB9Q0olkmjGXapyIDT+HhwyLAWTP+qTZFk2kjXD4
+         sxL44VualyUpH+r8dN47jL+gGd4MIGnKZjQxh+a2YcB1P0z3i5syu1+de07w7qeBGmKF
+         OHyoOKk0D3WYPgOwmOlQoi+3+DlagHXpIN49FnFYHaXVvvDEcOKuxYAnjoLEL84pW+TA
+         ENSDVzbgof4S85QLWXm28eoxyghF7DHJVfOCYGLmfuyemu28DMb7nEo3yhWfCbMo67E7
+         CKeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoBWvaUxgJK99l1L+y4I66ekCwbK7Z8TiTLvsMbDtqHP+gPr1+y1Ao994ZU6+YjFLwYXMEtK2ezX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvBLQMzHh0Eqm3Je9XY4ZzXCuZ5qLy74QWZg5wybKgiCJKYfp9
+	d6eMvFPs+2L/SWWGz/K2ntPqHW1m19GJP25QhIwRqYp/uKu8HfnJzuu28vRCnOuRQ4w=
+X-Gm-Gg: ASbGncsIP2AuxyyoEOQFwDhAT1E3rsZcBur1PyWvu0gD3NV1pRT66RNbXnQyk6meOLC
+	dy5Yl/66C+XVjr1jSR36zS+7OQc3gcnhC2zcpxXBVAeLJjQKKxcXRiRCVRJM0xvZyAfCEDsb5Tn
+	St3ym+D3t9Plxw7b8jpJAmw1PgQtD00QF+zLk5r2YLkFAI5Nf9F1IDNmsQ91CM9Ycu9+MpJXH74
+	Ie+LyD5YUE1enTAxdN4Mb4JZtIjbEhtX30ZOPJ+NO2ToA9VX/ty2U8V+GpAOHZhz0O+g+AGARXP
+	D9J4NESVNkTU8kXvfKF51FhL1InA+WgafubRi57310KB0WYdm8+zqe/rK08TAFqHN6yLC6szdC/
+	sqPa83fJlAfuSrMVb7zH6joFPctsef6fNX/fZWh9Z6g==
+X-Google-Smtp-Source: AGHT+IF6ORHe5JEYvPXdztAskmBBiLT4qYNeI+0/ouz0maJY1w1XXjzWo2XIGtoP1NknXRfYW7HoCw==
+X-Received: by 2002:a05:600c:8888:b0:442:e0e0:24d with SMTP id 5b1f17b1804b1-455e7b68d69mr20701065e9.7.1752399571488;
+        Sun, 13 Jul 2025 02:39:31 -0700 (PDT)
 Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5050d34sm139469995e9.9.2025.07.13.02.34.18
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-455f222e4f4sm58198895e9.10.2025.07.13.02.39.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Jul 2025 02:34:21 -0700 (PDT)
-Message-ID: <03ba99cb-18ef-48eb-9504-cbce752c85fd@linaro.org>
-Date: Sun, 13 Jul 2025 11:34:18 +0200
+        Sun, 13 Jul 2025 02:39:30 -0700 (PDT)
+Message-ID: <352421e6-f151-435b-8dce-6c02a6d0e747@linaro.org>
+Date: Sun, 13 Jul 2025 11:39:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/15] dt-bindings: media: qcom,x1e80100-camss: Assign
- correct main register bank to first address
+Subject: Re: [PATCH v7 02/15] dt-bindings: media: qcom,x1e80100-camss: Convert
+ from inline PHY definitions to PHY handles
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -83,9 +83,10 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-media@vger.kernel.org
 References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
- <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
- <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-2-0bc5da82f526@linaro.org>
+ <3376b0fb-f3c6-464a-9c35-30a3f589b856@linaro.org>
+ <eac19ad2-78dc-44e9-bc02-517272ba737d@linaro.org>
+ <3506d911-da9f-4639-9c83-aee0a637e9b4@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -132,72 +133,49 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
+In-Reply-To: <3506d911-da9f-4639-9c83-aee0a637e9b4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/07/2025 11:12, Bryan O'Donoghue wrote:
-> On 13/07/2025 09:15, Krzysztof Kozlowski wrote:
->> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
->>> The first register bank should be the 'main' register bank, in this case
->>> the CSID wrapper register is responsible for muxing PHY/TPG inputs directly
->>> to CSID or to other blocks such as the Sensor Front End.
+On 13/07/2025 11:14, Bryan O'Donoghue wrote:
+> On 13/07/2025 09:20, Krzysztof Kozlowski wrote:
+>> On 13/07/2025 10:18, Krzysztof Kozlowski wrote:
+>>> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
+>>>> We currently do not have an upstream user of the x1e CAMSS schema which
 >>>
->>> commit f4792eeaa971 ("dt-bindings: media: qcom,x1e80100-camss: Fix isp unit address")
->>
->> I have next from few days ago and I don't have this commit.
-> 
-> https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/1da245b6b73436be0d9936bb472f8a55900193cb
-> 
->>> assigned the address to the first register bank "csid0" whereas what we
->>> should have done is retained the unit address and moved csid_wrapper to be
->>> the first listed bank.
->>
->> This is confusing. Did that commit change entries in the binding?
-> Fixed the unit address.
-> 
-> What we _should_ have done is put csid_wrapper as the first entry.
-
-That's different problem then. The commit fixed only DTC warning and it
-was perfectly fine from that point of view. I would not refer it,
-because it just makes impression that commit was not correct or even
-complete.
-
-> 
-> 
->>
+>>> On first glance there is, in Linus tree:
 >>>
->>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>   .../devicetree/bindings/media/qcom,x1e80100-camss.yaml       | 12 ++++++------
->>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>> git grep qcom,x1e80100-camss
+>>> drivers/media/platform/qcom/camss/camss.c
 >>>
->>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> index b075341caafc1612e4faa3b7c1d0766e16646f7b..2438e08b894f4a3dc577cee4ab85184a3d7232b0 100644
->>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> @@ -21,12 +21,12 @@ properties:
->>>   
->>>     reg-names:
->>>       items:
->>> +      - const: csid_wrapper
+>>> If this wasn't released mention it.
+>> ... and then this should be marked as fixes and picked up fast, because
+>> you have only like 2 weeks to fix it.
 >>
->> Anyway, this is ABI break, so needs some sort of explanation in the
->> commit msg. We don't break ABI for cleanup reasons, unless it wasn't
->> released yet etc.
-> So I since we haven't added the node to a dts yet which to my 
-> understanding means no ABI break.
+>> Best regards,
+>> Krzysztof
+> 
+> I thought schema changes were acceptable so long as we haven't applied 
+> dts, which we haven't done yet.
 
-In-kernel DTS is one of the users, but not the only one. The kernel
-drivers implement the ABI and for them your DTS does not matter. You
-might not have DTS at all and still break the ABI. As mentioned in
-second patch - the ABI, expressed by dt docs, once released in final
-kernel version becomes the actual explicit ABI.
 
-This is the one which you should not break.
+Accepted DTS is just one story, but following your argumentation that
+docs do not define ABI break, then accepted DTS also does not matter,
+because it is always in the kernel sources synced with the ABI.
+Following your argument about "accepted DTS", what is different between:
+1. accepted DTS, then changed DT binding and changed DTS,
+2. not accepted DTS and changed DT binding?
 
-Kernel drivers can sometimes imply ABI (e.g. undocumented one) and
-that's another story.
+Why can't you accept DTS and then change it?
+
+Lack of in-kernel DTS is a good argument in your case, but you must
+mention ALL OTHER USERS:
+1. All drivers in Linux
+2. All other upstream projects, BSD, U-boot, everywhere upstream
+3. ... all possible other users of the ABI, so out of tree DTS and out
+of tree kernel folks. This one is close to impossible to prove...
+Luckily we assume this point does not apply here at all. No one out of
+upstream trees uses these new bindings.
 
 Best regards,
 Krzysztof
