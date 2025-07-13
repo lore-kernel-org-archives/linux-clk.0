@@ -1,86 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F61E37160;
-	Sun, 13 Jul 2025 17:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0D8275AF3;
+	Sun, 13 Jul 2025 18:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752426414; cv=none; b=broDBO0OtuRDYH8I15B3jbUHu2G3b5RujT0fk3nSPierTXWCfSA85d6k+1YuGJDZMx3P5lp6qvxs3f845TIS7OhErsJTkzGkKxCeZ2zPCcQxdHrQj5scyC59yjnV0/ECgDXmiLPevkNSKXnvThzs7Asq4/dJjWEN8qsFFlwZipg=
+	t=1752432168; cv=none; b=dEt2IJ3WNKawN7hjBe5Vs3+zhvKLM6/HTZavnTEKjxFc/Ya8rNhEXU62TVnBLKPVBuY91evpNsXirGRA3q+7DP+v2T0OrHhlFjZmb3szelEIgDkfMN4xx4Sux5VlAr2IZwGKLwXAs3+oN6PrGkDHebxyN3noC7enIEGMMqU7eVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752426414; c=relaxed/simple;
-	bh=OEZ7eLIEFl1LPSh8Fr+hYgEXUccuy8XYoLUfvat4/l0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=jgj6oIhS/espuEZOIxXYKoK0uHqObdIDXb0RhPWUSFqwgXbBhz0u5KNrdLXqN9k3128IZf5qrv9W28iLN7Y1bL/YPDlFcvSauEPAdQMNAKATQqXoTHSfVGz2ihSMA3Zw7RLQv/mmshGwnJGtgyjOjiISUCmGqb1IzllgkGdSEPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLiOSK48; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752432168; c=relaxed/simple;
+	bh=Bhcqu0hkYsNTrwY29ICbzmvHRFk59bU3ytbIRl7rC2I=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=c4l6HZriIp6GY6QVAw5IMXSkR2LNWXxK8d6PpuonMN1+moYuiA/Tj8T+37uxbH9OWMHfl4bt0XciaG3Lk82euenSESTT17i5coAm43TuUPI0rOdwndXKtQlBMSx0duQgfsJbysX7rJTzrQ2Z3YMd0zY1YfHxmic+92NnMuHdYxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLjOmMin; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLiOSK48"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011A0C4CEE3;
-	Sun, 13 Jul 2025 17:06:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLjOmMin"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395E6C4CEE3;
+	Sun, 13 Jul 2025 18:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752426414;
-	bh=OEZ7eLIEFl1LPSh8Fr+hYgEXUccuy8XYoLUfvat4/l0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BLiOSK48+OPpf6pNNiM/B9DEKnRTymJhOdyHgPRpL5CQ12I5bCS1g+GSDNJMuwOhh
-	 04s0XFVwRNpQhZhaNW0eVwppGHfHgKDbPOMr5+ezfVrdicIKC1roDcPWkj2q/hGC04
-	 QIQDyRDKRjrqx++BtIlqg9Jk9unSdJH+1UyS7SWls1uwYgANaB5Q9NmVPFUl7ToigZ
-	 tP/dcYq6q38u81PTDhDuTsetaVNTY48gsA4giD91n4/MSe1n1uEhz5mEyL08mQVxSa
-	 8eXMEaH+TkU16x6n1xl3I44ENC4aAFXazlaq1Leku83ELNbYjWIDVPBYCtXNgr1W/y
-	 BnKnk9MDPk7HA==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1752432168;
+	bh=Bhcqu0hkYsNTrwY29ICbzmvHRFk59bU3ytbIRl7rC2I=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=MLjOmMinQvTw4Ancg3YYnZCiK9+g0sj03ObVkptkIkoM0oGL4nNeYKVa5NShJ5cEq
+	 kvJrYkzIyle2D0QnCZmKbNK2nvUw9glJX4cyGzq7Xm4qRP/ziMPaQAFsnXNbXfVlts
+	 mK/wbvFfCpvcbLKJ3v0P6l1HJtchzhCmgMsXrHI6flwi0ciVdfuDWy9ZJBb6IO5sOL
+	 qe4LH0eNfSfJ1Ii0k2mpIIhEGcoa+CligT+WA0k/O2GTuRTK8WDSTagyORS2g7cFG0
+	 0dgNs4bz1QqgCLhbubYZLGaWSAouJ3MW9mMpE+GF6DYq0xo20ln4178xgrM7ucQMM2
+	 dwKxYAalzo4fg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE01E383B276;
+	Sun, 13 Jul 2025 18:43:10 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.16-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250713165256.1650456-1-sboyd@kernel.org>
+References: <20250713165256.1650456-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250713165256.1650456-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: a42b4dcc4f9f309a23e6de5ae57a680b9fd2ea10
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3cd752194e2ec2573d0e740f4a1edbfcc28257f5
+Message-Id: <175243218926.2836117.6613501768892174134.pr-tracker-bot@kernel.org>
+Date: Sun, 13 Jul 2025 18:43:09 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250709011528-GYA487904@gentoo>
-References: <20250709011528-GYA487904@gentoo>
-Subject: Re: [GIT PULL] clk: spacemit: add changes for v6.17
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Alex Elder <elder@riscstar.com>, Philipp Zabel <p.zabel@pengutronix.de>, Haylen Chu <heylenay@4d2.org>, linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-To: Yixun Lan <dlan@gentoo.org>
-Date: Sun, 13 Jul 2025 10:06:52 -0700
-Message-ID: <175242641282.1004940.6776191948188477776@lazor>
-User-Agent: alot/0.11
 
-Quoting Yixun Lan (2025-07-08 18:15:28)
-> Hi Stephen,
->=20
->  Here is clock changes for v6.17, please pull.
->=20
->  Basically, what we've added here are two changes:
->=20
->   1) Mark pll1_d8 clock as critical to prevent it from being shut down
->      in the resource withdrawal path once the probe phase fails
->=20
->   2) Extend K1 clock framework to support reset auxiliary devices, and
->      also route the reset driver via clock tree to avoid shared tags,
->      please see discussion here[1] with reset maintainer for more
->      details if needed.
->=20
->   Thank you!
->=20
->=20
-> Link: https://lore.kernel.org/r/3732050b6b756868543012c1a1cebbe7cce74d61.=
-camel@pengutronix.de [1]
->=20
-> Yixun Lan
->=20
-> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
-94:
->=20
->   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/spacemit-com/linux tags/spacemit-clk-for-6.17-1
->=20
-> for you to fetch changes up to c79550f69f0f21be069385c20cd6490b862ba2a5:
->=20
->   Merge tag 'spacemit-reset-for-6.17-1' of https://github.com/spacemit-co=
-m/linux (2025-07-07 22:07:15 +0800)
->=20
-> ----------------------------------------------------------------
+The pull request you sent on Sun, 13 Jul 2025 09:52:54 -0700:
 
-Thanks. Pulled into to clk-next
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3cd752194e2ec2573d0e740f4a1edbfcc28257f5
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
