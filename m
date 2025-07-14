@@ -1,192 +1,84 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF95B24466E;
-	Mon, 14 Jul 2025 11:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751917C77;
+	Mon, 14 Jul 2025 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752491100; cv=none; b=mAh9rBIqLNBEt2Y6W3yhdrhx2OTcECOYvstQdS7tKyaBOUH9hq5g14bruIAE4iHP6CcwduBnKxoX45ra/lA0SV2lld6YJ9DXlFeLQRHBGTuPIyJcb9Qd1TS8pD9PAXAXRgfcecn7BsWU0/py0V96KSwffC406b2+KKtfqn6D3OE=
+	t=1752492027; cv=none; b=HNSr3IlE4WzFW0QuNWA5wNo3otfAMXyBfMWcLVHRVDEB4rm3IZFszS4KQjtJ8v3hpz0wNPEM5WG/xSTsFuj0YWAwnbfXvgAfDFmF2pxOfzVL8+Mgn877cgne2mtSXrqQIMcChoX8zrfllWLm6zGAJ2igSLCyEYb4IVr58MDF0D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752491100; c=relaxed/simple;
-	bh=TAq8jWR1H6Dk7nwNylfnCyAy6GWTywF5ZgTZrrAoYVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ukbDYKZiUCzkGMMDrLXgJRhtUYdrCGt7cCa6Gv0gA6quvFP62H3Gkq5axJBXy82Yikqy7bPaiMdD28wPQN1oHLUtpmUqnO7y6TNX6Hu9MzfPatUBjqSiILxbiTrGi7ltD0N2abhJghdKg4W0gYJm/GsCj//4muRSdhGXKQxIUCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RK+GTZsM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1752492027; c=relaxed/simple;
+	bh=yyO1ARgaD0chxUdPV6nq/lVx78EqnrQvO7cKx+N0Xcc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=RWBdJ3c0apcy/pDOaM4TLE+2AwOZyZcOs5XRbAt8d8PzoQy1OZENvOnXg6XWLrlCVFRbgbC03pTs9E2XYoZr8yN1LSmtgv5LOTjitVo9SCxnVX272xFICzBos8iou1EG0QmWeb8Az97JXTVBKp56Kl377nnS5N46bOh0hi8uNfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1sKVGCQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RK+GTZsM"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E9alLa007564;
-	Mon, 14 Jul 2025 11:04:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nZ9yVraLjcMb5U62q1yreyl3/qOyt2WOU1ZNpLGeVy8=; b=RK+GTZsM/pj3lPv8
-	VP4iro/uk6t9cV+viMHjrfEf3aYLM/7LrGJ4uO4iKrFv8hOpX+RtNm8VD927vMwK
-	B0aI/Lsztcc3l3Vorzn/i5qZsfTwUvwF2D+P/c/lJOb2+HzCkkGR32WJY9OGIIqE
-	rDWyfj3hYsCUzOvQAEF1enBRICZb9+YMmF4QZiAYBF/yqx1Mp0ZIXS1ff3VAgtyP
-	zRLmt6y8lC26FEwhMzOTNO8v7AR+QKgInEFmXwmy/pnO/Ox4IczGl8oSh7XebRvM
-	Pobv6oErygmVtcVzEvnmuXErOduSgyApr2w+BWTOlUmKd96Vt4B0pX4mPDGyD4vc
-	IROOgQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ugvmvf8j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 11:04:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56EB4nKu007835
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Jul 2025 11:04:49 GMT
-Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 14 Jul
- 2025 04:04:43 -0700
-Message-ID: <b60d3297-8267-460f-9c4c-1519c511ac36@quicinc.com>
-Date: Mon, 14 Jul 2025 16:34:39 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1sKVGCQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F374C4CEF7;
+	Mon, 14 Jul 2025 11:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752492026;
+	bh=yyO1ARgaD0chxUdPV6nq/lVx78EqnrQvO7cKx+N0Xcc=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=T1sKVGCQiQdvyl/cIrNjaFkfKdIghzZjDABgUQVkPoZcEydnAmLGISsDlkF2nzUe0
+	 FnfuetExCJGdIdp3EpKqzxsGcY2zumfZ2wk57u8+1F/va1VYZAvTuldCeeRkxL4PH6
+	 ZTgQ8IzqNfHDLE/8p0Ilbp8QJWdrQ7OtdNeQC8sHgkxBlGYGYYGEiDqRVyIKBRiDFK
+	 7r1kchDXiXNFLIRBm7ZOZvlk4hx6ko6J0Xv4pBheLJQQ0kpyrV2aMO879FM4SNZfjs
+	 Qen023IiMr+Rpai/MMpXQeFmy8dQnnVBckFzyKZ7vk2+tauOCAapDlMiNEWZRKkiPU
+	 W7z9Dhgu5R0YA==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] clk: qcom: common: Add support to register rcg
- dfs in qcom_cc_really_probe
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>
-References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
- <20250704-sm7635-clocks-v2-1-9e47a7c0d47f@fairphone.com>
- <64e27035-d124-470a-bc5b-66d254b6ff4f@quicinc.com>
- <DB7I1Q9TD02L.2A18QMRU7VXHD@fairphone.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <DB7I1Q9TD02L.2A18QMRU7VXHD@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bhOCkV7K9MXd5t0hyzNCDuNHTArGI11v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA2NCBTYWx0ZWRfX9tawY0sOuwiS
- Nv2XRFBrVATzygrWSl1YUw1v0aD2edcX12TfpXGzjEDCjfgFd0wbrIzX9DOsygKZZS/fL0ou6eF
- HqPnS+cye2e4MJot3+mpZhOW5qZRFoRjH/voRhxKFdxnd15YpbeZEcdyNPbHvSpEDCFZY80IASc
- g48yFwRukmYJhiQxM5hqBy8Y6tRnvnpnF0cOIBa2Y9RdF3tEt6DHEUD1T+u0b33l6uynI5Ykg0i
- /3E5DeMGITExQDFpLaUOfrqNv1Rnl3gkks+gyFKkSeEozoFTC6W8oV4hNtPWPxjrXumjHRJrL2N
- /V7k1+gRnXBq5WdpdInrJo/Wz/OEa5KULPX66+NDX0KHCOwDPW8j4CwoiPzgbJ+RXCAe9lwj6Zq
- n0QGi1ZCSzsLFqS0J9lX2Q13rryxg2C9WRB2G2Lc0OGtqZ+A4m88nmqGx8swhkQiHpZWPV9N
-X-Proofpoint-ORIG-GUID: bhOCkV7K9MXd5t0hyzNCDuNHTArGI11v
-X-Authority-Analysis: v=2.4 cv=C4fpyRP+ c=1 sm=1 tr=0 ts=6874e452 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=6H0WHjuAAAAA:8 a=SgGjurSckTfw-wXoEH8A:9 a=QEXdDO2ut3YA:10
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507140064
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Jul 2025 13:20:14 +0200
+Message-Id: <DBBQKL12V4V0.W2CW7276D7WE@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "FUJITA Tomonori"
+ <fujita.tomonori@gmail.com>, "Andrew Lunn" <andrew@lunn.ch>, "Heiner
+ Kallweit" <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, "Eric Dumazet"
+ <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni"
+ <pabeni@redhat.com>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Breno Leitao" <leitao@debian.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Luis Chamberlain"
+ <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Brendan Higgins" <brendan.higgins@linux.dev>,
+ "David Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Jens
+ Axboe" <axboe@kernel.dk>, <linux-pm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <netdev@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>, <linux-block@vger.kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 00/17] rust: replace `kernel::c_str!` with C-Strings
+References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
+In-Reply-To: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
 
+On Thu Jul 10, 2025 at 5:31 PM CEST, Tamir Duberstein wrote:
+> This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
+> which both depend on step 1[3].
 
+For nova-core, auxiliary, device, firmware, PCI and platform,
 
-On 7/9/2025 5:18 PM, Luca Weiss wrote:
-> Hi Jagadeesh,
-> 
-> On Tue Jul 8, 2025 at 7:34 AM CEST, Jagadeesh Kona wrote:
->>
->>
->> On 7/4/2025 12:46 PM, Luca Weiss wrote:
->>> Add support to register the rcg dfs in qcom_cc_really_probe(). This
->>> allows users to move the call from the probe function to static
->>> properties.
->>>
->>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>> ---
->>>  drivers/clk/qcom/common.c | 8 ++++++++
->>>  drivers/clk/qcom/common.h | 2 ++
->>>  2 files changed, 10 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>> index b3838d885db25f183979576e5c685c07dc6a7049..d53f290c6121f31d06cf244f72603b694966e216 100644
->>> --- a/drivers/clk/qcom/common.c
->>> +++ b/drivers/clk/qcom/common.c
->>> @@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
->>>  			goto put_rpm;
->>>  	}
->>>  
->>> +	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
->>> +		ret = qcom_cc_register_rcg_dfs(regmap,
->>> +					       desc->dfs_rcgs,
->>> +					       desc->num_dfs_rcgs);
->>> +		if (ret)
->>> +			goto put_rpm;
->>> +	}
->>> +
->>>  	cc->rclks = rclks;
->>>  	cc->num_rclks = num_clks;
->>>  
->>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->>> index 0f4b2d40c65cf94de694226f63ca30f4181d0ce5..dbe7ebe5b8710fb03c1671ac9022e608a6aad35f 100644
->>> --- a/drivers/clk/qcom/common.h
->>> +++ b/drivers/clk/qcom/common.h
->>> @@ -43,6 +43,8 @@ struct qcom_cc_desc {
->>>  	size_t num_gdscs;
->>>  	struct clk_hw **clk_hws;
->>>  	size_t num_clk_hws;
->>> +	const struct clk_rcg_dfs_data *dfs_rcgs;
->>> +	size_t num_dfs_rcgs;
->>
->> Since all other probe configurations are added in qcom_cc_driver_data struct, it is better to
->> add rcg dfs data also to qcom_cc_driver_data struct instead of qcom_cc_desc.
-> 
-> Dmitry suggested to use struct qcom_cc_desc:
-> https://lore.kernel.org/linux-arm-msm/w4eujq72uqflqpsqshc7zhu6lkc7owufep2g2rjacvzgj44vmf@auonp4ugbgow/
-> 
-> I personally don't have a preference.
-> 
+	Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-Hi Luca, 
-
-As other probe configurations like critical clock cbcrs & pll configurations are part of driver_data, it is better
-to include this DFS data also in driver_data.
-
-Dmitry, I hope it is fine to move the above DFS data to qcom_cc_driver_data struct instead of qcom_cc_desc.
-
-Thanks,
-Jagadeesh
-
-> Regards
-> Luca
-> 
->>
->> Thanks,
->> Jagadeesh
->>
->>>  	const struct qcom_icc_hws_data *icc_hws;
->>>  	size_t num_icc_hws;
->>>  	unsigned int icc_first_node_id;
->>>
-> 
+(Note that there is quite some new stuff queued up in various trees that wi=
+ll
+need those changes as well.)
