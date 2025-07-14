@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9F71367;
-	Mon, 14 Jul 2025 06:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F09C221739;
+	Mon, 14 Jul 2025 06:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752473427; cv=none; b=KdSvS4+VcC1iUuO/jcltNY4yyrinMorOoKeESNJqR3XAsXwKuSj1Cpe6VHP31Z6eYYLDSB9SYTZjAu7yoYS/RTydn+kISL9RD4wqvmOaC0p18tYisdxzbrlPK87QkBD0+51v4c58rpjlR0d3x3eHaRr3A/spD+5bANntkGxEb+c=
+	t=1752473464; cv=none; b=MGM44pW9Jw8SOxyMg3U0uBaSmG3dZGpAANWNp1U1I+kSgPT8RKjdOTl4a4Cx8dj0Jzslnub5LxVF0ZuI99xsN8yu8RxacLXQBIuFyct5SvnUKzuibhxH7KuoAV0z/lQFBtbeQUD3aoMXpUr6rlnk3iCk4KjqhCf330Uozd7ilNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752473427; c=relaxed/simple;
-	bh=sPVH63ERWuJ0gCU0Toh0EsZGggjk+tM2bvgS8ziKjtY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pcKlwGLVadFr1gDHZ+cO76UCSa3XkDy7425+O9D6zz3OI6G8wRDaM27Ggnn0qge3c87B+7NGSB+aqUbzLNSiZ5oKj0jOdb7y9x5QrwCBohLzA/7odhEuBw3hA96VJIbVavaFmKNGsxQ04B+Hwxi8wpyFaMljQcgQrBhs7kYl8Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaJv8pQ3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752473464; c=relaxed/simple;
+	bh=cgoFQzidKJiXken5LY/zYRTNKdUK37df3G6JRzGndZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3lG+LzJoVUydaFJyPxXaVgV1LhppjOZDNR7REYhNRMlZLIvt28ebzHKN1JnrptzjLq0/N+c4XgxGSEIBqNMNULIgLRslNRsxavDnfs7SJmaHgAFK7BVzSi6mDzuC6aI5eazri9RHBulFE+JYMhEARqtkncc+zeQO3SXPUXcq4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msSspsSb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaJv8pQ3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FB0C4CEED;
-	Mon, 14 Jul 2025 06:10:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msSspsSb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5589DC4CEF6;
+	Mon, 14 Jul 2025 06:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752473426;
-	bh=sPVH63ERWuJ0gCU0Toh0EsZGggjk+tM2bvgS8ziKjtY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=QaJv8pQ3IEWpuz0ewUYGo/pLTZEU+OYHeFmmUe8KbRMu2Zo3dW1e/YSnwDMO7z4E1
-	 sScneBPFmM0DIfj7dQY0wLLGHnp+a/1FW2p0Px+WF4owvynLz89/rGfzadnXCzG0SP
-	 dw8vikP83U/QAx3k88q0BncJSTNZfA5bcGCUc7llTxAWRjpVdJws3d391Ox9+wwSgv
-	 1jLOaVvasXVitdyWHeaOeAQ0golomnld0CcyUAzwdBloxxTfsS6vMdtxrcbYHj4Tvk
-	 E+B5cQjFqBUINn0eNlAsBYhitlDAj74NMtMC296NY+X2Z9wZWwumSmrgBxSUm+gHg3
-	 PcDF+JLN460PA==
-Message-ID: <88ff3aa4-dfb0-4b65-a061-52544caf46f6@kernel.org>
-Date: Mon, 14 Jul 2025 08:10:18 +0200
+	s=k20201202; t=1752473463;
+	bh=cgoFQzidKJiXken5LY/zYRTNKdUK37df3G6JRzGndZs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=msSspsSbeo0L/K9rS2/HadP4jcVsXuS+yYzRrtqTnDsa6o/3PjXfFdoKBiPrh8ftQ
+	 uEWLJh7K1+Ib5SO9XX+UmifxLTVT18FxJhsfdL7uOyv2oiP9WfrjMbiZj85mhOwEXP
+	 /574fcXBWBEa1QFOR/tnEjrYORVsdVwq2yRzGP4kSoSbdgA2hSIqNtR4KPmSuxLPj8
+	 /dKlgAKebDFZbIzNQuhcl3zcGX0HGuER9hiP/xDaRRx2uM1J72s8TVqdOMpl2OWgQV
+	 n+h0YijhUjbGPu1HSmSdcNQbdNIigAOm7NxOSBPpm2R9uFPldRY6jgY9Ek/E5HgY3R
+	 FMSlhW0nR2+4w==
+Message-ID: <82f1a34f-bfdf-466f-9c44-2e58d172f3fd@kernel.org>
+Date: Mon, 14 Jul 2025 08:10:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,25 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] dt-bindings: clock: meson: Add audio power domain
- for s4 soc
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: jiebing chen <jiebing.chen@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+Subject: Re: [PATCH v5 3/6] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
+To: jiebing.chen@amlogic.com, Jerome Brunet <jbrunet@baylibre.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
  Kevin Hilman <khilman@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
 References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
- <20250710-audio_drvier-v5-1-d4155f1e7464@amlogic.com>
- <20250710-polite-cuddly-platypus-5fe9dc@krzk-bin>
+ <20250710-audio_drvier-v5-3-d4155f1e7464@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -98,36 +95,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250710-polite-cuddly-platypus-5fe9dc@krzk-bin>
+In-Reply-To: <20250710-audio_drvier-v5-3-d4155f1e7464@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/07/2025 11:56, Krzysztof Kozlowski wrote:
-> On Thu, Jul 10, 2025 at 11:35:37AM +0800, jiebing chen wrote:
->> The audio power domain has been detected on S4 device.
->> It must be enabled prior to audio operations.
->>
->> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
->> ---
->>  .../bindings/clock/amlogic,axg-audio-clkc.yaml     | 55 +++++++++++++++++++++-
->>  1 file changed, 54 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
->> index fd7982dd4ceab82389167079c2258a9acff51a76..c3f0bb9b2ff050394828ba339a7be0c9c48e9a76 100644
->> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
->> @@ -21,6 +21,8 @@ properties:
->>        - amlogic,axg-audio-clkc
->>        - amlogic,g12a-audio-clkc
->>        - amlogic,sm1-audio-clkc
->> +      - amlogic,s4-audio-clkc
->> +      - amlogic,clock-pads-clkc
+On 10/07/2025 05:35, jiebing chen via B4 Relay wrote:
+> From: jiebing chen <jiebing.chen@amlogic.com>
 > 
-> Keep the list sorted.
+> Add S4 SoC tocodec compatibility support.
 > 
-And now I noticed that I already asked for this at previous versions!
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
+> ---
 
-Respond to and implement feedback, not just ignore it.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
 
 Best regards,
 Krzysztof
