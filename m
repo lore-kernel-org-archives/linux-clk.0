@@ -1,78 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C534CF9;
-	Mon, 14 Jul 2025 06:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFB722FAF4;
+	Mon, 14 Jul 2025 07:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752475270; cv=none; b=Bq5RulJbYXUO7Eg19MM6KKV8QKcakckFdKK2uUPrWrFAMK3uGIwAVfzU8jJVzyEeWtNrHmPcY3+ZlwofAJ37xaYbDt/RKUKiebj/ENxi9Aehn3pyEx0UW/5PcCNodd/3eEtNjpvyb1vV3a2ecVvCGOdm4vU0IbFE8aLOQsfsAdM=
+	t=1752477689; cv=none; b=vFq/rV1MtPjYkibj6wP8NSOrl7US7rwtgd/AZA/DZAxNV6B7ZAzmMa+/qAkwrrZrRmjf0v7ismMC4poSEkAlwxQIouA5ASdXnhhG7OnK/hC09qF7kbeYjzOmdBXcJqX69lk1FNyUuGMKvN/oBL8wWbR6/NCF53yR7hoyyukaaic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752475270; c=relaxed/simple;
-	bh=5ATHMX9AThV1+HT52RPqloerGobaOpiT9IMioipvwzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGUjcoBBMe4ujOZoj/U/Bu/SK0g5bB0mWO33YUXEGWN2sRSTQPS43EudvOFOL/Y9DwnYUHZd4K+L6T4ZttHnznTAIRbr8UcHE+b1R/9g9xBs1bPV4TV/9vUxwWYoauVg8zXuw0AKwEjqJuHw5SweKwq2cZqzEgg+I0hgxPTQfJs=
+	s=arc-20240116; t=1752477689; c=relaxed/simple;
+	bh=On3f5QmbIzahqfXf4oZ2CTb5bfYv68ngIqpktQBem4Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WVkFtKt/DLmxJa1qDAdiYQrvW0pR6lSr7uPEIzQ9MBaCLw28K44Re0AGV9HxPZFsuE2/SIOxKUkafxcsFU5ubwsbQmSf9rlOpIdHcWEauuP+DxtOD8PUyarMs02wwf/+krBbYPZ7SwVQLbGgKNbEpHBJ2AMaaDHQKVsPZYrpYQw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBF2C4CEED;
-	Mon, 14 Jul 2025 06:41:09 +0000 (UTC)
-Date: Mon, 14 Jul 2025 08:41:06 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v7 01/15] dt-bindings: media: qcom,x1e80100-camss: Assign
- correct main register bank to first address
-Message-ID: <20250714-overjoyed-celadon-crocodile-4bec3a@krzk-bin>
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-1-0bc5da82f526@linaro.org>
- <f4fd544b-bd5e-49eb-83d9-290f77e503ef@linaro.org>
- <6ca1b24b-5f9d-48e7-9afd-7dac47b486b1@linaro.org>
- <03ba99cb-18ef-48eb-9504-cbce752c85fd@linaro.org>
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B96C4CEED;
+	Mon, 14 Jul 2025 07:21:29 +0000 (UTC)
+Received: from wens.tw (localhost [127.0.0.1])
+	by wens.tw (Postfix) with ESMTP id 57F2B5FB60;
+	Mon, 14 Jul 2025 15:21:26 +0800 (CST)
+From: Chen-Yu Tsai <wens@csie.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Paul Kocialkowski <paulk@sys-base.io>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Icenowy Zheng <icenowy@aosc.xyz>, 
+ Maxime Ripard <mripard@kernel.org>
+In-Reply-To: <20250704154008.3463257-1-paulk@sys-base.io>
+References: <20250704154008.3463257-1-paulk@sys-base.io>
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: v3s: Fix de clock definition
+Message-Id: <175247768623.1732129.17411169356635975497.b4-ty@csie.org>
+Date: Mon, 14 Jul 2025 15:21:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <03ba99cb-18ef-48eb-9504-cbce752c85fd@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sun, Jul 13, 2025 at 11:34:18AM +0200, Krzysztof Kozlowski wrote:
-> On 13/07/2025 11:12, Bryan O'Donoghue wrote:
-> > On 13/07/2025 09:15, Krzysztof Kozlowski wrote:
-> >> On 11/07/2025 14:57, Bryan O'Donoghue wrote:
-> >>> The first register bank should be the 'main' register bank, in this case
-> >>> the CSID wrapper register is responsible for muxing PHY/TPG inputs directly
-> >>> to CSID or to other blocks such as the Sensor Front End.
-> >>>
-> >>> commit f4792eeaa971 ("dt-bindings: media: qcom,x1e80100-camss: Fix isp unit address")
-> >>
-> >> I have next from few days ago and I don't have this commit.
-> > 
-> > https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/1da245b6b73436be0d9936bb472f8a55900193cb
-> > 
-> >>> assigned the address to the first register bank "csid0" whereas what we
-> >>> should have done is retained the unit address and moved csid_wrapper to be
-> >>> the first listed bank.
-> >>
-> >> This is confusing. Did that commit change entries in the binding?
-> > Fixed the unit address.
-> > 
-> > What we _should_ have done is put csid_wrapper as the first entry.
+On Fri, 04 Jul 2025 17:40:07 +0200, Paul Kocialkowski wrote:
+> The de clock is marked with CLK_SET_RATE_PARENT, which is really not
+> necessary (as confirmed from experimentation) and significantly
+> restricts flexibility for other clocks using the same parent.
 > 
-> That's different problem then. The commit fixed only DTC warning and it
-> was perfectly fine from that point of view. I would not refer it,
-> because it just makes impression that commit was not correct or even
-> complete.
+> In addition the source selection (parent) field is marked as using
+> 2 bits, when it the documentation reports that it uses 3.
+> 
+> [...]
 
-BTW, you have here also checkpatch warnings.
+Applied to sunxi/clk-for-6.17 in local tree, thanks!
+
+[1/2] clk: sunxi-ng: v3s: Fix de clock definition
+      commit: e8ab346f9907a1a3aa2f0e5decf849925c06ae2e
+[2/2] clk: sunxi-ng: v3s: Assign the de and tcon clocks to the video pll
+      commit: ea879ce83d360aa13acd54cf6af913885b69ed44
 
 Best regards,
-Krzysztof
+-- 
+Chen-Yu Tsai <wens@csie.org>
 
