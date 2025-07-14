@@ -1,73 +1,73 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB938253957
-	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3196B251791
+	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752499712; cv=none; b=JcL8Rld6ZkrBwfYWMT2x9gwpY1IR7RudaMEq/gEf22hDxQvUpGe84WCZz+EzSCjR/PkPdb+4cEePzxJMP90/aUQxib+4290SkhdAvUopxkuJ2tNNm+DgHz1VZnzn3TKIeRndULXdk37ocerBEMZy/9FpA4+jZ85t7AhaY1CXFwk=
+	t=1752499803; cv=none; b=SEiIcdIviyDlxFD79wOS+lniQj+pg5wmh3H6pwxeQ1+P8cJFPDSC31tCq96FVLgfm+ToFDHPGgb3yMKrG9cfZq8DIq4gmYPHnKlOmiz5SbT7QcUvLQdi/OJ4sTpw3hPEguhUrTdtOUXRRWzhfZ/F1uw0LwRRX6dNArYsyohdLdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752499712; c=relaxed/simple;
-	bh=oHEQKwBatWKUIOpL/sm9kI7CU4MvbWDSdi+bybgSb3Y=;
+	s=arc-20240116; t=1752499803; c=relaxed/simple;
+	bh=3uKXuWP37D0CEeXXM1tywrvm2McS8VXMhZeTn28VHoI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0bzx+Tob9BmjWJvAJFsaVMGQ/SqB5oSZ+l+BQn/BylVY1HYa7B6u0DVMs8HfU0ZtVQMIGv9CUdZ5knfJqEI+vzZfv9LCmOsgHbgSOnK0kdqOZCB+nxGt3fl9ixwYWSDJ9QvjPkg8YMoN3c0IQb7zAx8zxDdXjWqKwwkld5Mrq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KraOIjuM; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=FGHcCGVMSFmpLU8N7DtaobGLxfoC4nA6MmnzZH256J75LqGEU7aJQsg3pO/LUkiV1qyXG/ajHQAuzMWqgO+UJMeZCUdbTmqxEaXO+DV0r0iJj5doLpbHGaW/NSOoIyKNcseEl5GMaPNAPvreKPFrxFE3nCiz5YuiYWiREKs4EDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ni27Lgie; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KraOIjuM"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E9aDUr011767
-	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:28:23 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ni27Lgie"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E7RBle008440
+	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:30:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ob9U6sQ6B7CRRePb9koAuef4V+KwLq5wrBJm+EnY7mw=; b=KraOIjuMYxXVQhaX
-	kIZthTVA1UDkARf529A33L3Ay1OXUTbakbPknENdM/vzBHHWr5cqBo/IfPw1Sjha
-	acRjGHbUtpZ7Y8ks9h8O0OtODmuuAtzk3beBDqBQBMTJbo//x2ylTASYwks2rvmr
-	dYsQlszRZsS2qdfZ88J0cMxzxvGQ96fEiDVWGaf8Q8O1qFY/SdtYaVkCMXWkCSqx
-	VRP1ZUSShkQxeKLuKjnzA+K+3oeGZch/Y0WVSHbZqqOBnoztqLmFfh1DPt4VzZ4t
-	SW6Eh8+f1yQdfjkfzXvQTnWeSeoUPu6WcZ/EJ+SSayPySP17m9jo9dBMkl+l53MY
-	oTI3Ng==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufut4qp5-1
+	EwocCM6XUaxUM6zqzmqtMLsjRln2ZwRH5MrCIvcpmqQ=; b=ni27LgiegFlY/Rqd
+	7oocgMbfgVrGrmZLlh1wU+5fWe5lXdhnbpjBjLfspfNAvACzfPxjBDG7UJSHkVZs
+	/p8Fb2FeDKLIq/x/54voDnw7RDbpboVEDnftVbB4E4Kb2hiqXd3LMRZDFVHPRf/1
+	XZ89NbHnIfBMovimnGzgkobXxU4Pe5FRELVz6JAiTZsNY5QYRnOF+asOWCQu3v1k
+	h8MbmNIf23va0W4Zi3h7wMI48cUCLac/m+feu6lHP/SCfPeh/OmN5AM9HhDK2Sft
+	bapFm8gRZxa1kqQtkxYkffuQuyQI9G1P2cNHoF5wzhZeK3ysHiVBxOBpSy9dAbPj
+	KAOO6A==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47vwghh4a6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:28:23 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fd1dcf1c5bso11845226d6.3
-        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 06:28:23 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 13:30:00 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7dea67756f4so77946685a.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 06:30:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752499702; x=1753104502;
+        d=1e100.net; s=20230601; t=1752499799; x=1753104599;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ob9U6sQ6B7CRRePb9koAuef4V+KwLq5wrBJm+EnY7mw=;
-        b=sEJIzBKJFAjgjYTrLquxJDqLIfUDZRxeY8k98RpaqQqk+rVZHQpJL6E+o7bwwAJUqy
-         1iatQivMZpB/02Vk7FG5OrMyKX4ZyA164okkcETgzM6I19eNjYQI6g0KoIow2SyF1HDx
-         9pKpQsvXYdqLjQLm0EjooaDhpjPXFksDiddj7grivZfeRMLJTgsuN6XbN5En5NnyWROu
-         bmllqA/hINPjdwGyuBr9ecOefW99EzSW5Plu+3/fCfrKfz4IOh++6t0DsNS5tYcAhvnz
-         4+XsoB4AMzxQi/1jAmSSU+SE3PP4MEvqK7//IuZ5X0IFquTap0ura22esbreMyx5EJNT
-         gZhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr701LElaEhjJkKbX9RMoQVxWgVL/d/4+pFtq1kXWTTLLNV1r19crs3FP6LvcFnFLfjoFAj5N0QBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ziw7QwcfvOASTgk+0uSsiX//UXnR5MmB8oxUZHt3UEfiqAbC
-	6ix1am1xyHpvjlnIuPtn+RmaR128LOXIa8c9jkigISkwQwb3P7MOSYoZFmtsCIHyk97K2g6Qa9V
-	OtCnfDx/wrj16AWatCeUiUoyBacDmQI2pFvMPhRttI1oWxmd1tYPBxU6ZusJq3Ic=
-X-Gm-Gg: ASbGnctniOXKNCD1z3ty/grToMpBkrCk0dLC1p2aJEQLu5WbhyxTprwfgGELSy75T3Q
-	TFoVt2eiXWEinNr8JqGHhCvL2mr7goa9oKJk1pYprRI+7h/ZemNDpPFLHjV2CGfboyUQnWu659P
-	KjhKoLPDBmk1AWxePB7mZzuUjnpjw+89ULEvSaso01ag5Ad0+xnIF6smzYVu7dGSztDLEr9Sowq
-	DfWRgCOAPw0x6KUf2HmgaWp9tl06dfBSozNGU+VA0h0y7i1hwpFclihxLMRryR1Gfj/mdVYm5Op
-	w2QH079il/elcjnb7v/imao8UzFx6De2poOo8kxAEyf219FgRyQejWcdtAIVGpq+GTRoK5Gl3ex
-	fFe1dzzlfl5WFecHdDy30
-X-Received: by 2002:a05:620a:394b:b0:7c0:b3cd:9be0 with SMTP id af79cd13be357-7ddeb8a4a8cmr654570085a.10.1752499702318;
-        Mon, 14 Jul 2025 06:28:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8Im8XF0a7klJdUS69ADOk3tOusKi5hYyzJtkL4/kjokc0qUJhiJ6sJr4jnvb6Fh5hB1siVQ==
-X-Received: by 2002:a05:620a:394b:b0:7c0:b3cd:9be0 with SMTP id af79cd13be357-7ddeb8a4a8cmr654567185a.10.1752499701899;
-        Mon, 14 Jul 2025 06:28:21 -0700 (PDT)
+        bh=EwocCM6XUaxUM6zqzmqtMLsjRln2ZwRH5MrCIvcpmqQ=;
+        b=QfdzP9VXFg1tVQ94NJ8tqozMcOBXakwngHaQoQGiNaNVOHZN7zOFY3XYnchKAXqr2U
+         Rq2Bqi1kpbjaFY2FnFdIpz/lmTbO2NEXCmEKnvtX7UL0tPaUkutdART6F2MAEe/qQV6B
+         ZXl85ZUbGAAeMbk4SkVo9UiluyIwjR5curihj/aA8l8st5w5JmgdVycLLDarQ4e4BDQO
+         IFZLfELqYfonjZHCNK1fw50M2JGBMACC4wkN99J0YRx3TBv3miCVyw39nUTqh5BKh7LL
+         el3w93e1bpfWvtrOaBFDe8rDynUwzVUx2rxChsPrAtAiQJvLAZfOg/NnEe+9MSvCJOzs
+         G92Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfYMUNSKriwGcC6Q3qoom7sfvcV6WV6YbmlwTJ7vzIuKB9CuNhmcUUZ/fWFU3aQJPHrb7ronnowFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZgWZZTqk1kLZZKU2IuE7Ocu8fm9rSS0F3fxM2SB7vjdsuGe06
+	VGkdIOCLT+gKFkO9mhvjzGQH0SH3MHpdPLEFKAJCL4WlfJbjVxn3PZU0MaaxnBAJOYjqxawJ/PJ
+	83smym6+XZmq7VuWKrec04lt8alWJVrO202OueJYbag6QtBWgDGbcR1rQtqsEI64=
+X-Gm-Gg: ASbGnctesqj6/7/sVg0dvQwAeLZyaeyYi6YxtEgNT2tOSWXIsLHZK3NShGtjanFjimE
+	0CZaCVV/gcSROqeTqepK7YlMJW28YbsuEbrRUIbQ3DIwC6+9Eq/wVEwjJ9YDtzXmiVcP6wu/3F4
+	6swsK8sPFQhw8q4CYyEXEGVTukUv7TrWloq1hcKACiEnsxRN5aw0cf5HhIaa2ziLp4kdyifL3yE
+	QqAFjG4KkV5BV9hE14t48Uxto1jFLVKQIVHEjubAaFsjzPgZHr8mFUSJkWrxJK14BPwUYTql9cp
+	o2uz5E6OFZSm4LKHkcXDzjqrs7RGoKbjdBDwRmDgn0AIiTRIRehQaZyu8UrQ0ha+xJtGDWqNebS
+	6Bijkky0+cSnUwy7h/YvU
+X-Received: by 2002:a05:620a:4712:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e3297df03dmr166521885a.10.1752499798878;
+        Mon, 14 Jul 2025 06:29:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4pVl04wh4MC/yMhCnGpjY5MlKKeWfA0cK5VDPj8AHG8h6eRZW2+HItMHeuT0gOF1TXD/tzA==
+X-Received: by 2002:a05:620a:4712:b0:7e3:297d:ec32 with SMTP id af79cd13be357-7e3297df03dmr166519985a.10.1752499798442;
+        Mon, 14 Jul 2025 06:29:58 -0700 (PDT)
 Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91a0bsm819346166b.7.2025.07.14.06.28.19
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91c81sm830369866b.37.2025.07.14.06.29.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jul 2025 06:28:21 -0700 (PDT)
-Message-ID: <fc21ee61-188e-42a3-b9f6-4b81a72d388f@oss.qualcomm.com>
-Date: Mon, 14 Jul 2025 15:28:18 +0200
+        Mon, 14 Jul 2025 06:29:57 -0700 (PDT)
+Message-ID: <d35d95a9-2844-4940-bfa0-aaae58de48e1@oss.qualcomm.com>
+Date: Mon, 14 Jul 2025 15:29:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,8 +75,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/15] arm64: dts: qcom: x1e80100-crd: Add ov08x40 RGB
- sensor on CSIPHY4
+Subject: Re: [PATCH v7 12/15] arm64: dts: qcom: x1e80100-t14s: Add pm8010
+ camera PMIC with voltage levels for IR and RGB camera
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -95,72 +95,127 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org
 References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-11-0bc5da82f526@linaro.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-12-0bc5da82f526@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-11-0bc5da82f526@linaro.org>
+In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-12-0bc5da82f526@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=e7gGSbp/ c=1 sm=1 tr=0 ts=687505f7 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=qEq-IjhxTDjyFSs2OvYA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: zvcxbSY-VHwyReGvzyC2fZ2Z2ZE505_H
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA3OSBTYWx0ZWRfXz6Z3kSizE828
- SffCaPsWdBtTYw+h4X8pstpk0TSq9TUzWALM4kihbCDZQLf7QIo4AUU8IqFtIcHj1NA2nK0IvyI
- 0+BufljY1i9lxcQ3ZHOOaHB9kAot/LIVGiUmqaV965ImkBBM71T+fFq45y/b/J0N27+sFjuAfzo
- cqLN50TL38DrJvNxt1tDRuLRRco3ZxjJGphH4GHAdTr3BwTfZDRFLBhCZmIKvsMcDGxcuMtdgtg
- oIklSJsZk4vIEWCX42CWCzLnCOihVz+50CcWFWPHMxwllvN017C53bsbaebeg17VCh2b6uMuUSK
- FAhlDG0HLypHWj4LoGGwCMWKmZqlMZW4migULZ2K//mJ/QqaaqRHEj8fTgnK/cP5ZMyY4Eu7KYA
- jtHTzBb4G0PTP5/q4XwKMfX5t2240ppdH/RVDqpZRg5olQ51ntCH7kfyFnbRwf/9typcyqYT
-X-Proofpoint-ORIG-GUID: zvcxbSY-VHwyReGvzyC2fZ2Z2ZE505_H
+X-Authority-Analysis: v=2.4 cv=EbLIQOmC c=1 sm=1 tr=0 ts=68750658 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=tqOywgo3-Srlss81Y0MA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: HnMTG9yXbzymOSVoWdVvGncz3NnY6DE0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA3OSBTYWx0ZWRfX9QzkhnVGIYxy
+ cmAhHeYOiI+3oeDGTFRFZz2fzAJx5F2mP79vu37/QOTEDb97Fl3U23f6V1r7HS0BYz3ArGfounb
+ BZedGtpxUzdhKwfF4NjYnQdIxo8di1jjBhAXulOsWMjOqH6oi0vzRTyJcKHaFd1ZrTa3YhT5I9W
+ EVbrgJk4hNr5kMzCGdav60cPnv5Z0LvbWrbRtu6j86sOfMv2aMg1Iae/NVYF0XuWg9Wk+dF2Thy
+ ACG1h2FyrFLLIRTfxX5ZIV/rURjaHVAB7rJTP2ruNVxcDM0zOy7yMO89pu+1fnyoF4+lABC2a2d
+ ND91Dne+HDClvYoO5SwhpFSGVg+QgKvTn6jDJa54kYZZRhYCPj0HNfoJXqaXPNqijT9hLoWs37i
+ AY25xKOQ94sZPXPgCERBDCEmfgtkHULBkxJ4LqNvKHabAsQw5Tg2pnrl+KWAsACRGdWRAK2C
+X-Proofpoint-ORIG-GUID: HnMTG9yXbzymOSVoWdVvGncz3NnY6DE0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 suspectscore=0
- phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
- malwarescore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507140079
+ spamscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 impostorscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507140079
 
 On 7/11/25 2:58 PM, Bryan O'Donoghue wrote:
-> Define ov08x40 on cci1_i2c1. The RGB sensor appears on the AON CCI pins
-> connected to CSIPHY4 in four lane mode.
+> Add the PM8010 PMIC providing the following voltage rails:
+> 
+> vreg_l1m_r @ 1v2 IR sensor
+> vreg_l2m_r @ 1v2 RGB sensor
+> vreg_l3m_r @ 1v8 IR sensor
+> vreg_l4m_r @ 1v8 RGB sensor
+> vreg_l5m_r @ 2v8 IR sensor
+> vreg_l7m_r @ 2v8 RGB sensor
 > 
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi | 78 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
+>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> index 08268f60c305cd69baf937fced6d37f2ea788b62..ace4ab2b9fc0faac8233a40220aafba200ff05d9 100644
-> --- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> @@ -6,6 +6,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/gpio-keys.h>
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/phy/phy.h>
->  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> index e19daf0f41f1f081e4b0c04be71e37f6ef492b6d..c9215c1a37cf4e7bad1512f52afdfc18ea616127 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+> @@ -580,6 +580,13 @@ vreg_l6b_1p8: ldo6 {
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
 >  
-> @@ -996,6 +997,67 @@ &gpu {
->  	status = "okay";
->  };
->  
-> +&camss {
-> +	status = "okay";
+> +		vreg_l7b_2p8: ldo7 {
+> +			regulator-name = "vreg_l7b_2p8";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <2800000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
 > +
-> +	ports {
-> +		/*
-> +		 * port0 => csiphy0
-> +		 * port1 => csiphy1
-> +		 * port2 => csiphy2
-> +		 * port3 => csiphy4
+>  		vreg_l8b_3p0: ldo8 {
+>  			regulator-name = "vreg_l8b_3p0";
+>  			regulator-min-microvolt = <3072000>;
+> @@ -823,6 +830,58 @@ vreg_l3j_0p8: ldo3 {
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  	};
+> +
+> +	regulators-8 {
+> +		compatible = "qcom,pm8010-rpmh-regulators";
+> +		qcom,pmic-id = "m";
+> +
+> +		vdd-l1-l2-supply = <&vreg_s5j_1p2>;
+> +		vdd-l3-l4-supply = <&vreg_s4c_1p8>;
+> +		vdd-l7-supply = <&vreg_bob1>;
+> +
+> +		vreg_l1m_1p2: ldo1 {
+> +			regulator-name = "vreg_l1m_1p2";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1260000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l2m_1p2: ldo2 {
+> +			regulator-name = "vreg_l2m_1p2";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1260000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l3m_1p8: ldo3 {
+> +			regulator-name = "vreg_l3m_1p8";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1900000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l4m_1p8: ldo4 {
+> +			regulator-name = "vreg_l4m_1p8";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1900000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l5m_2p8: ldo5 {
+> +			regulator-name = "vreg_l5m_2p9";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <3072000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
+> +
+> +		vreg_l7m_2p8: ldo7 {
+> +			regulator-name = "vreg_l7m_2p9";
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <3072000>;
+> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+> +		};
 
-As I've mentioned in the past, this seems SoC-specific (and perhaps
-the csiphyN naming is confusing, as it refers to a lane within the
-phy, rather than the index of the instance of a phy..)
+Have you confirmed all these voltages on both T14s and yoga against
+schematics or similar?
+
+These vregs are widely configurable, so the reference values may
+not be what the hardware expects..
 
 Konrad
