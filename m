@@ -1,147 +1,141 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F52405FD;
-	Mon, 14 Jul 2025 09:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18522E3718;
+	Mon, 14 Jul 2025 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752484287; cv=none; b=FMRpTrDOP3JgaftzeSYUznwHi3N2FqYOdK2KbbjI5ohc1yWVvqbRy+lE5zROQtBBegpoF+hT2lqChjgDYKG+IIQh+qaiTheiPoPaRZznmiok2LtScjfoQwTKrKr5gydFkte+6WR4e6A1lQRtLjhSa1ueRFcPz8Q1mRrw/xHwKvY=
+	t=1752485752; cv=none; b=XxPipE6T3IUvEp3iK0kVPtajqyLdFZ3N7H8nxY8EpNluc3Go/A1R4gVf1KusQ5IzjouKl2DUDoqyjc/8HWLsieDWd0o7/rcuKcswNTTJTAf9EfoImGJDkHoe6tGPsAt3RDrFA+07VytLxwbHwBmURJ/wktotCrlbCKKdvbx5psU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752484287; c=relaxed/simple;
-	bh=TcXuSKCzrCCwa2pmT8ZHf1Y2DIXZfwVMWsiDggJctoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhwDvUc6xxSLnAnuBK5TuiAIvcD6xkxHXLLKggpY7aRgmQUXfa+U/v25CitJFlyRsXIAlKcZkSokkQSqqmQQeJQz/xZ/ZWOla3MYDkeRTmZBcjcv4+duxaVrUCdvXidEvqqM4DIXaq3tbCDJK0VY+EGvBzLiaOxrGkaYES2sbvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B5bbabNS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1752485752; c=relaxed/simple;
+	bh=GJVLDfxtNl/j4ZoNgtsTJXDQzR2Jxyppvp7EVZRz2DA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pm3Jp2cpk0eVWVokgvmM24RwjPvdEmljXj8FbESiDRholeACxhQrKmeGmn548+0xTKWxEJngXe7DOKtiHzmu/l5XQVp47T74yY+yVBIv1Te1bAYm6TtIduVLQ4UN7THx2rLY9e9Sjs0LKEGqzE4tcfOasdhXD85z913Rc48rcBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0+7kbuNM; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B5bbabNS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752484282;
-	bh=TcXuSKCzrCCwa2pmT8ZHf1Y2DIXZfwVMWsiDggJctoQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B5bbabNSKmfNjM9++JQ90q4tsvfZkUqd0NHtfw2dUAe7hIS3PaXzD7HksVYxhHNab
-	 wKmWXPRAWP00WwEUhjUURuoDXv7oP88Owx7G6axYcInakd5jvBrnwGh+5B5wZA4vej
-	 FNTQKY3beSXG+GhSo/assdVNtSQFqiyBf7htZu5HnMZ+a2Z7wS8ybeJW6BFMohb2dA
-	 gHU6GVhnlXLprKdYC8dD/uEoGkRf5Whwgh5nyLswGC1suMHvCJSzMMjnx79TXdKaIw
-	 73Aiuly5kWcvTP7AT6Jt21nMD/o/UlNg/whhB+786BLG3fTUndHJbCWCU3b63x2Ttj
-	 mUJscYPAujZRQ==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 57A9F17E0FFA;
-	Mon, 14 Jul 2025 11:11:22 +0200 (CEST)
-Message-ID: <751975b2-c9dc-4f89-9537-475773b16883@collabora.com>
-Date: Mon, 14 Jul 2025 12:11:21 +0300
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0+7kbuNM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1752485751; x=1784021751;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GJVLDfxtNl/j4ZoNgtsTJXDQzR2Jxyppvp7EVZRz2DA=;
+  b=0+7kbuNMsU7wQZw1co9nsbJLRotshWewPYFQGQWBv2EXZneFjcrSvf+B
+   JKRul9tuUFQSkf/+f0gmcVyDmYj9tHCQ2VNZcj0Ock6uLsQPsNpshguxd
+   KogHey8UcNi5d5BvtdF89kWzwGTgAM3hZeQMrAvkjAXW8pPxS9oyrJ8+a
+   cODOl/CZVHuMRKdVtK1E/nzSShqLQuAhEuBUN4yCWToJ2BCyzp7Is1yC/
+   AAEJxHVHay+mvuf7BqPmwKxeYTOITR8flEzAA0Uxx9lESRiMrqlLtMuNo
+   A7LGlh4sMn240AgC/PxKx4v+3PUs2RVdKX9v2UG77Dho/DWTnb+AFQzy6
+   w==;
+X-CSE-ConnectionGUID: mtYVE3x4Sj+UnhzZ7qysFg==
+X-CSE-MsgGUID: kFUKkyxyQiu7IpGMbzwELg==
+X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; 
+   d="scan'208";a="44552087"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Jul 2025 02:35:44 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 14 Jul 2025 02:35:19 -0700
+Received: from che-ll-i67070.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Mon, 14 Jul 2025 02:35:16 -0700
+From: Varshini Rajendran <varshini.rajendran@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Patrice Vilchez <Patrice.Vilchez@microchip.com>
+Subject: [PATCH v2] clk: at91: sam9x7: update pll clk ranges
+Date: Mon, 14 Jul 2025 15:05:12 +0530
+Message-ID: <20250714093512.29944-1-varshini.rajendran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] phy: rockchip: phy-rockchip-samsung-hdptx: convert
- from round_rate() to determine_rate()
-To: Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <mripard@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20250710-phy-clk-round-rate-v1-0-0ff274055e42@redhat.com>
- <20250710-phy-clk-round-rate-v1-8-0ff274055e42@redhat.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250710-phy-clk-round-rate-v1-8-0ff274055e42@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Brian,
+Update the min, max ranges of the PLL clocks according to the latest
+datasheet to be coherent in the driver. This patch solves the issues in
+configuring the clocks related to peripherals with the desired frequency
+within the range.
 
-On 7/10/25 7:07 PM, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> index 79db57ee90d1487b51f4ddadde870a275dd7b17b..f027d2caa4c2ebfc0fdec08bcebf3f415ff1a064 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> @@ -1869,8 +1869,8 @@ static unsigned long rk_hdptx_phy_clk_recalc_rate(struct clk_hw *hw,
->  	return hdptx->hw_rate;
->  }
->  
-> -static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> -					unsigned long *parent_rate)
-> +static int rk_hdptx_phy_clk_determine_rate(struct clk_hw *hw,
-> +					   struct clk_rate_request *req)
->  {
->  	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
->  
-> @@ -1879,14 +1879,17 @@ static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->  	 * To be dropped as soon as the RK DW HDMI QP bridge driver
->  	 * switches to make use of phy_configure().
->  	 */
-> -	if (!hdptx->restrict_rate_change && rate != hdptx->hdmi_cfg.tmds_char_rate) {
-> +	if (!hdptx->restrict_rate_change && req->rate != hdptx->hdmi_cfg.tmds_char_rate) {
->  		struct phy_configure_opts_hdmi hdmi = {
-> -			.tmds_char_rate = rate,
-> +			.tmds_char_rate = req->rate,
->  		};
->  		int ret = rk_hdptx_phy_verify_hdmi_config(hdptx, &hdmi);
->  
-> -		if (ret)
-> -			return ret;
-> +		if (ret) {
-> +			req->rate = ret;
+Fixes: 33013b43e271 ("clk: at91: sam9x7: add sam9x7 pmc driver")
+Suggested-by: Patrice Vilchez <Patrice.Vilchez@microchip.com>
+Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+---
+Changes in v2:
+- Adjusted the commit description to be generic.
+---
+ drivers/clk/at91/sam9x7.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-This is not quite right, since "ret" is expected to contain an error number,
-typically -EINVAL.
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index cbb8b220f16b..ffab32b047a0 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -61,44 +61,44 @@ static const struct clk_master_layout sam9x7_master_layout = {
+ 
+ /* Fractional PLL core output range. */
+ static const struct clk_range plla_core_outputs[] = {
+-	{ .min = 375000000, .max = 1600000000 },
++	{ .min = 800000000, .max = 1600000000 },
+ };
+ 
+ static const struct clk_range upll_core_outputs[] = {
+-	{ .min = 600000000, .max = 1200000000 },
++	{ .min = 600000000, .max = 960000000 },
+ };
+ 
+ static const struct clk_range lvdspll_core_outputs[] = {
+-	{ .min = 400000000, .max = 800000000 },
++	{ .min = 600000000, .max = 1200000000 },
+ };
+ 
+ static const struct clk_range audiopll_core_outputs[] = {
+-	{ .min = 400000000, .max = 800000000 },
++	{ .min = 600000000, .max = 1200000000 },
+ };
+ 
+ static const struct clk_range plladiv2_core_outputs[] = {
+-	{ .min = 375000000, .max = 1600000000 },
++	{ .min = 800000000, .max = 1600000000 },
+ };
+ 
+ /* Fractional PLL output range. */
+ static const struct clk_range plla_outputs[] = {
+-	{ .min = 732421, .max = 800000000 },
++	{ .min = 400000000, .max = 800000000 },
+ };
+ 
+ static const struct clk_range upll_outputs[] = {
+-	{ .min = 300000000, .max = 600000000 },
++	{ .min = 300000000, .max = 480000000 },
+ };
+ 
+ static const struct clk_range lvdspll_outputs[] = {
+-	{ .min = 10000000, .max = 800000000 },
++	{ .min = 175000000, .max = 550000000 },
+ };
+ 
+ static const struct clk_range audiopll_outputs[] = {
+-	{ .min = 10000000, .max = 800000000 },
++	{ .min = 0, .max = 300000000 },
+ };
+ 
+ static const struct clk_range plladiv2_outputs[] = {
+-	{ .min = 366210, .max = 400000000 },
++	{ .min = 200000000, .max = 400000000 },
+ };
+ 
+ /* PLL characteristics. */
+-- 
+2.34.1
 
-> +
-> +			return 0;
-
-We shall continue returning the error code here.
-
-Regards,
-Cristian
-
-> +		}
->  
->  		hdptx->hdmi_cfg = hdmi;
->  	}
-> @@ -1896,7 +1899,9 @@ static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->  	 * hence ensure rk_hdptx_phy_clk_set_rate() won't be invoked with
->  	 * a different rate argument.
->  	 */
-> -	return hdptx->hdmi_cfg.tmds_char_rate;
-> +	req->rate = hdptx->hdmi_cfg.tmds_char_rate;
-> +
-> +	return 0;
->  }
->  
->  static int rk_hdptx_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -1925,7 +1930,7 @@ static const struct clk_ops hdptx_phy_clk_ops = {
->  	.prepare = rk_hdptx_phy_clk_prepare,
->  	.unprepare = rk_hdptx_phy_clk_unprepare,
->  	.recalc_rate = rk_hdptx_phy_clk_recalc_rate,
-> -	.round_rate = rk_hdptx_phy_clk_round_rate,
-> +	.determine_rate = rk_hdptx_phy_clk_determine_rate,
->  	.set_rate = rk_hdptx_phy_clk_set_rate,
->  };
->  
-> 
