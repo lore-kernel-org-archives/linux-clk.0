@@ -1,183 +1,133 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375AC2E36FA;
-	Sun, 13 Jul 2025 20:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9F71367;
+	Mon, 14 Jul 2025 06:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752438912; cv=none; b=A+nVLbcpRw4pyUy9KgtOzBiBx8UGIwTlg5lFgncdN2fFYW+64n9Aw9J6XZFld3CZ0T9egApNIT+1xkZTSdLFj5tfj3QcXXzZSMmxiUDzGbIHt2VvYd8LXc0GyXWrxt+RkFIsRMSUPw79s0BFVSHY9s1xhVVdduhIiIxP9Mw0044=
+	t=1752473427; cv=none; b=KdSvS4+VcC1iUuO/jcltNY4yyrinMorOoKeESNJqR3XAsXwKuSj1Cpe6VHP31Z6eYYLDSB9SYTZjAu7yoYS/RTydn+kISL9RD4wqvmOaC0p18tYisdxzbrlPK87QkBD0+51v4c58rpjlR0d3x3eHaRr3A/spD+5bANntkGxEb+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752438912; c=relaxed/simple;
-	bh=Oyp7ETxjQXZYtgRVAn6gElLiMnFAOy4hYoB4qOBothY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ivmt+Kg361VCS/LX86LL0yhrx8NZzFGuMircrLyAZ7rE903KQqSSP0wdsNXZFkqBr1XYn3ZQzeoCZi7D5LGXPRnkbExWilbl8N9LICgMD+XRNwmDEQZg/wiO5XAW7IDfV5Q77XiMGyqKy7R1LKb0AI2l2ik9UcjurQVE1BgiA6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8fjL7Y/; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752473427; c=relaxed/simple;
+	bh=sPVH63ERWuJ0gCU0Toh0EsZGggjk+tM2bvgS8ziKjtY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pcKlwGLVadFr1gDHZ+cO76UCSa3XkDy7425+O9D6zz3OI6G8wRDaM27Ggnn0qge3c87B+7NGSB+aqUbzLNSiZ5oKj0jOdb7y9x5QrwCBohLzA/7odhEuBw3hA96VJIbVavaFmKNGsxQ04B+Hwxi8wpyFaMljQcgQrBhs7kYl8Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaJv8pQ3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8fjL7Y/"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so7889155e9.2;
-        Sun, 13 Jul 2025 13:35:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752438909; x=1753043709; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RQ6idt8wXYfGLyA4P/4xIcoRSI8FZxbhnZ/aUjNlza8=;
-        b=c8fjL7Y/vT9TRAvy8h2orfXsVSUZSzLFsDeUHfXTeMaeR4ztTwhbqWWPk/2G1BRQy2
-         GiTb8qmwcjtriKi1dfqa38AQ6QpLdOg0rqofsD8BDV7G7WpSG7LbTgeXCdH+j3hM3BT0
-         4BAr9CExV6TSXFCW5OgBQYQZlL12m6nFPeWx5w9a6vpYktjAw1kKjyovvVMWGCBRFal4
-         /eXTgR2m0Ur/RR2Tvh8gRkM8syDFYePrCA3bjJap3qXgyvnVXwues4tmxd9yUO10f4JL
-         LUYb4UWjHEgS5QHRsLfcZtHwT2xDSQ2fere1ze8pFnYY+1X4VD/pn0/AaHX604asJ8fl
-         6bgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752438909; x=1753043709;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RQ6idt8wXYfGLyA4P/4xIcoRSI8FZxbhnZ/aUjNlza8=;
-        b=rUrSJg0b3SDv1cPOvrCJSc3ePDUSOtQ7HYQMXpD+tmN2xddvmp0dfMPJZnlvPExp/2
-         uL1prtZWhLPGKPpGF1ySPmR7qEZ7JO3LsjeyR2X3etsE/8wlg4ROaeiK6VDerz9ZuhpW
-         kOSAJJf9YpamAP8A5n/Thha55ycCsFjnYlPPJ527gzBjnf+8qnb+YzTHMzlAIsRyhoN2
-         tuA0cPz/ozevGBs3uoblgQ2LBo/hqCuZyMBCs1NX544hFSEhwREpdJvwPeKoRcC6zkqg
-         P7DBetY3AOkFnLBXROkbe07dOW1b4Fbj2IyL4FsrwoKoPAGLPV5yRLw6Ez6OhQ1rNV89
-         FDYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHy9Mam+0vGTqatbRnHr+PPewKrACh3wnrFZ0z00FGDm914ZEwFMkE9u4pn2hTVDSaPASmG0wjCB7Tz4s=@vger.kernel.org, AJvYcCXD8JbSWcsfS2YvUZUX9o4TdajCFhBldYR0up9qT5zdBpt/63yQncIIIYIZZYogojbHcDhNLUB3TrPWYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWiic6CXEtFBhz2u1cASJOVZQbd3BrXYDHhmFOT50V9MUwR1PE
-	5QYpPulQti9eHIIlJvTCtvmocg/obsRDiBvj+wkXJ3cHPT71DbLMXTAL
-X-Gm-Gg: ASbGncs6XuQWYMFkwc07ocpKysy44q3Awq2ANtQlkFG7Ec51C3l5ioj0KYg0UK1oUu/
-	NPPpFyN8oDc+McukPCmwUlewuY0KCdtgZOzUMRbFiVGRqWOoLiJotIKs2AtfhGkBGCuSLUwXVR2
-	VMpmVURXN7nzPwyQggubZXK09zVKy2Rhx0Kretj2xgYr6ET9Z3FfC996XnGfXVhxT0nZg1mZOI9
-	MTZ0bapao5wg8TUr8/PENBUxqiHcAe6Cjm6eHClXaJ4ZH/YIzQ4XIVJRrSaKo3snR/79fVC+bFL
-	6uT1HZAYFTMb5av+fTBHV8vyoYICb/JyisLKIFTR/r/1CetJckiSkmxiH3Wg8ZQeRd5H09F1Fqz
-	hXDBLE8cLGXdBNYXAQipxDtRFWF66otx6lyiAwFm/qTJRWxBz95Kb/UOOfHmGpE9JmQheF/TOT8
-	NFVkZSxMUslk0oAbfam3q1eNE=
-X-Google-Smtp-Source: AGHT+IH4AVDkH02c07HSfsSSYjsNFz8Gnpusc8AYfW7vNFYqCGsRW7lQ5eG2tpWiRi0fKTIFLEfChA==
-X-Received: by 2002:a05:600c:4ed0:b0:456:1a41:f932 with SMTP id 5b1f17b1804b1-4561a41fd79mr11636015e9.22.1752438909101;
-        Sun, 13 Jul 2025 13:35:09 -0700 (PDT)
-Received: from dell.localnet (2a01-114f-400e-9dc0-0000-0000-0000-0540.ea.ipv6.supernova.orange.pl. [2a01:114f:400e:9dc0::540])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc22a8sm10793602f8f.34.2025.07.13.13.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Jul 2025 13:35:08 -0700 (PDT)
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Brian Masney <bmasney@redhat.com>
-Subject:
- Re: [PATCH 1/3] ARM: OMAP1: clock: convert from round_rate() to
- determine_rate()
-Date: Sun, 13 Jul 2025 22:35:06 +0200
-Message-ID: <6172340.lOV4Wx5bFT@dell>
-In-Reply-To: <20250710-arm32-clk-round-rate-v1-1-a9146b77aca9@redhat.com>
-References:
- <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
- <20250710-arm32-clk-round-rate-v1-1-a9146b77aca9@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaJv8pQ3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FB0C4CEED;
+	Mon, 14 Jul 2025 06:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752473426;
+	bh=sPVH63ERWuJ0gCU0Toh0EsZGggjk+tM2bvgS8ziKjtY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=QaJv8pQ3IEWpuz0ewUYGo/pLTZEU+OYHeFmmUe8KbRMu2Zo3dW1e/YSnwDMO7z4E1
+	 sScneBPFmM0DIfj7dQY0wLLGHnp+a/1FW2p0Px+WF4owvynLz89/rGfzadnXCzG0SP
+	 dw8vikP83U/QAx3k88q0BncJSTNZfA5bcGCUc7llTxAWRjpVdJws3d391Ox9+wwSgv
+	 1jLOaVvasXVitdyWHeaOeAQ0golomnld0CcyUAzwdBloxxTfsS6vMdtxrcbYHj4Tvk
+	 E+B5cQjFqBUINn0eNlAsBYhitlDAj74NMtMC296NY+X2Z9wZWwumSmrgBxSUm+gHg3
+	 PcDF+JLN460PA==
+Message-ID: <88ff3aa4-dfb0-4b65-a061-52544caf46f6@kernel.org>
+Date: Mon, 14 Jul 2025 08:10:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5023095.31r3eYUQgx";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/6] dt-bindings: clock: meson: Add audio power domain
+ for s4 soc
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: jiebing chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+ <20250710-audio_drvier-v5-1-d4155f1e7464@amlogic.com>
+ <20250710-polite-cuddly-platypus-5fe9dc@krzk-bin>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250710-polite-cuddly-platypus-5fe9dc@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---nextPart5023095.31r3eYUQgx
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Date: Sun, 13 Jul 2025 22:35:06 +0200
-Message-ID: <6172340.lOV4Wx5bFT@dell>
-MIME-Version: 1.0
-
-On Friday, 11 July 2025 01:42:16 CEST Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+On 10/07/2025 11:56, Krzysztof Kozlowski wrote:
+> On Thu, Jul 10, 2025 at 11:35:37AM +0800, jiebing chen wrote:
+>> The audio power domain has been detected on S4 device.
+>> It must be enabled prior to audio operations.
+>>
+>> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+>> ---
+>>  .../bindings/clock/amlogic,axg-audio-clkc.yaml     | 55 +++++++++++++++++++++-
+>>  1 file changed, 54 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+>> index fd7982dd4ceab82389167079c2258a9acff51a76..c3f0bb9b2ff050394828ba339a7be0c9c48e9a76 100644
+>> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+>> @@ -21,6 +21,8 @@ properties:
+>>        - amlogic,axg-audio-clkc
+>>        - amlogic,g12a-audio-clkc
+>>        - amlogic,sm1-audio-clkc
+>> +      - amlogic,s4-audio-clkc
+>> +      - amlogic,clock-pads-clkc
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-
-Acked-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-
-> ---
->  arch/arm/mach-omap1/clock.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
+> Keep the list sorted.
 > 
-> diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
-> index 83381e23fab983522ca01b8feffb861b02fee730..afc6404f62d39c4ddbac6f1ee04d889be6c47186 100644
-> --- a/arch/arm/mach-omap1/clock.c
-> +++ b/arch/arm/mach-omap1/clock.c
-> @@ -705,14 +705,21 @@ static unsigned long omap1_clk_recalc_rate(struct clk_hw *hw, unsigned long p_ra
->  	return clk->rate;
->  }
->  
-> -static long omap1_clk_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *p_rate)
-> +static int omap1_clk_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
->  {
->  	struct omap1_clk *clk = to_omap1_clk(hw);
->  
-> -	if (clk->round_rate != NULL)
-> -		return clk->round_rate(clk, rate, p_rate);
-> +	if (clk->round_rate != NULL) {
-> +		req->rate = clk->round_rate(clk, req->rate,
-> +					    &req->best_parent_rate);
->  
-> -	return omap1_clk_recalc_rate(hw, *p_rate);
-> +		return 0;
-> +	}
-> +
-> +	req->rate = omap1_clk_recalc_rate(hw, req->best_parent_rate);
-> +
-> +	return 0;
->  }
->  
->  static int omap1_clk_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long p_rate)
-> @@ -771,7 +778,7 @@ const struct clk_ops omap1_clk_gate_ops = {
->  
->  const struct clk_ops omap1_clk_rate_ops = {
->  	.recalc_rate	= omap1_clk_recalc_rate,
-> -	.round_rate	= omap1_clk_round_rate,
-> +	.determine_rate = omap1_clk_determine_rate,
->  	.set_rate	= omap1_clk_set_rate,
->  	.init		= omap1_clk_init_op,
->  };
-> @@ -784,7 +791,7 @@ const struct clk_ops omap1_clk_full_ops = {
->  	.disable_unused	= omap1_clk_disable_unused,
->  #endif
->  	.recalc_rate	= omap1_clk_recalc_rate,
-> -	.round_rate	= omap1_clk_round_rate,
-> +	.determine_rate = omap1_clk_determine_rate,
->  	.set_rate	= omap1_clk_set_rate,
->  	.init		= omap1_clk_init_op,
->  };
-> 
-> 
+And now I noticed that I already asked for this at previous versions!
 
+Respond to and implement feedback, not just ignore it.
 
---nextPart5023095.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEnyr6IsGnTYAeAkHJ2WqSnltsjBoFAmh0GHoACgkQ2WqSnlts
-jBr2jAf/bEu29PFvQWChV00x7wXHruop7Es3gHolRxKbv8LxnEtWZm4kkGIk36p2
-FQMQZxPbpRfn3zanPLBWAsmiXy+nvWrk9zBu/OEEY8r8QsVLZwU9VV81SAI6rNrz
-Tp89RkhQV8FsCoXVKZAIdvj1WOzpxVTeYJP3ds0IzQ49+Fpg+nWLSiaNH+awHky8
-Xqms5mXh/SP9almdFvaZKmeAVTPUQpxsUmGMCSxWuEoWaDHKxpDa6FcaZMGetg2C
-M7ZW3GznaKmZt906lQdvj2YcjonHirbjX3TULqMaDc16h/7h6BUWXr4Xt06VWTm6
-LLLhsNUuQjG59V9d6+CFawQ+CzteNw==
-=7sdR
------END PGP SIGNATURE-----
-
---nextPart5023095.31r3eYUQgx--
-
-
-
+Best regards,
+Krzysztof
