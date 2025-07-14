@@ -1,205 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CEC2673BB;
-	Mon, 14 Jul 2025 17:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1951662E7
+	for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 19:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752515076; cv=none; b=jWaCgKVFVGLas7bJjxWtRB492KdEECiEUy2fOXue5Mh9q2t85qRyYkkzo5fOoxHj2EMsIcyvAJMVyf5W7ohMfWZ5olUJJTpqcREEwb4BhvDRav7XwJKBDqfuzu4U+kl03IAH+engIYi08gka6AAoBvGZcTHLcknTX5ul+x1Qu04=
+	t=1752521986; cv=none; b=sHAet+OtpuKU7X3NI4/J3i6nNQHCsJUG4tB3z6EvwEjFh0ZC50V13zg6Egv4JWwMqjf+156iyt8HZhQ8LTf0EAXtYZImIPwYAeWaMdFfyDqGRqdxYwmz4aobWBoiLLyEGbYIUIyAnoE53FFn8ClaEzn0jhrPTUO3FPOPQZyiZy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752515076; c=relaxed/simple;
-	bh=FpIs8x3wOR4QDIl4rTH8WQCJsw8SVEQKjwt/hRvJVYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhDd+fZUabliKfGWJdeU3PMjNH5l0xT9gICLA8tSJDOwm5DpSUzzcPck8oFUbsXlIGvl4obSClegWwKyxjJfOYspky0u0IQehuBYo4CDKBQiirkhP2v2V8Kbx6ezwf4Ei6pCN+kHRexiS62Xs86eNhvlDp1C54w9AowHaAHa2yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8E9Iw0l; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752521986; c=relaxed/simple;
+	bh=5cSCYdKyaKnlsB59d7LA/sqcozRwuYbnW6S02DziChQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=P9k1Jc6sulWZibZQPlOyH+koekLd0fr1M46PWrxeyAER2YrKgD0To1TqYu9FtnR+seoW0WPeowQ2Ji/ewMoSazM3xzJMnRJVf0RvYNfgWknS8YxD3ZjxMDUtzHvl5JAG44KTnj7yS4Ph4Az+YKeN5kzr3pr4WIMU6eEnqbMBY0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F+lEts+O; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8E9Iw0l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6880C116B1;
-	Mon, 14 Jul 2025 17:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752515075;
-	bh=FpIs8x3wOR4QDIl4rTH8WQCJsw8SVEQKjwt/hRvJVYg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f8E9Iw0l1s3u4GUjtdigSpqe/0ME79OcCpJcopd+wcAm9W0iNGsHck2mRJKvqniJU
-	 cHL/+J4GYfwo7kkhEyKN+v82iEB05WpiZGbxMJZe3upnKFvtJxg6ER+J2rZ8Ljro7b
-	 HtlpKYIYp9AWyrd/hfP9TVfKZWJYS5uxWNgZ1d8Kf7g/suwYj0nle35JgGzKXFYUtk
-	 Xlika5iSvll0Z7lJGVjJd1uo3U4nim87L9hE1vH3YfcYIJ9Hn5fYLployw/rK7mYgl
-	 U7mAeuxWv7hPy5CfhW0ewERIQB281YFPfoMx8oomGNXvqLpyNor3Loid2VwjgkU6SR
-	 JsnHYrciiFveA==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0dad3a179so778957466b.1;
-        Mon, 14 Jul 2025 10:44:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUa3zdscG65kalu/1IepT0ifG3g+OvDyPIRPlV87cK+j3r1RK1vxYeqxeF8OteUYjEqKWBG7pv5WWsA@vger.kernel.org, AJvYcCV62ys/0XXl/4oIpfBaojjnIlYfq4PiTp7Lp0cBD0zka4xmD5EtaaAlJH180cMsMJEoKs6EK/iArDoK@vger.kernel.org, AJvYcCVOs8qkJPs+Csq9JAzawHHq27z2pYWPf92w55NnLaEAxGJDgamUuK7vvli0roKQOzOiRTNVOKjqaxA7@vger.kernel.org, AJvYcCVz5sfqK59RjHFvAagb16SlWM+/YpxZS6deUeDJT812shl3dKA5dd7A91YKlvTwMe6ZsKjkoIfkLTBWCg==@vger.kernel.org, AJvYcCW1tOQLGA4Kf3Yde7kXlLjupNBkksqmi7csa1nADCaa89L48xyNic7aTKrLJTAqNFBzJHhbLXOcaNHU@vger.kernel.org, AJvYcCW9+lCpYnAnL3be6MVypP6KAD8+JOkIMZDUVSKZniRixy4/mC8aaBcGHfBQtVSKcm/ee/5v9Hd8VFIRsWht@vger.kernel.org, AJvYcCWPcPujx1gNqSgOgrv+w7Xll+DIHVFylcUp5OYHVz8MgnH5vaAnNFBu3gc6CKrhCmeNjSyPmU4aEK62@vger.kernel.org, AJvYcCWakOZcvcIc3q4LoYGfe+4xFq+78Ob7CQNyEPjI5XKCNYR2MFruK5lixE6+rigpvfG0rmPw2EWPI7wG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIYZJ1o28VZ3wrJOdmMD9aRFV9nfHsUP+/xzDIO4MbRZFNdryA
-	IL/qPE9BRN3wpbsQRuhB5qh6wZUNs2lN+jvYDDz9Yj9zKav7jmCNaBiVWWmqOUtKmXK3ASH3VaF
-	jU1GUVwW1EUI5frT5JrVdRHx2u2DMwQ==
-X-Google-Smtp-Source: AGHT+IEGQ7nHD+/xyba/tE0S2QjAjkVhfLJ9Pp8nFl2aw5w2DKZ8hhnS6UxFCO7dT9w+GWuozWbDzLrfoixjq31W73I=
-X-Received: by 2002:a17:907:3c8e:b0:ae3:a3f7:ad8e with SMTP id
- a640c23a62f3a-ae6fbdec31emr1398694666b.25.1752515074068; Mon, 14 Jul 2025
- 10:44:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+lEts+O"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2eaf96c7579so2824571fac.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 12:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752521983; x=1753126783; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
+        b=F+lEts+OFVJIPuwVRnJK5F1pfmdT8s0b33WyPl3yTSpNzYc94+Ra3pdGqSBX9oXkZj
+         zc5FeOr9OPpCrRH3OUAE2AHItRNZXv0JzsCwrS4IQlZexQ/8ObfrLmgTilXyv757B5rS
+         sqTbM4JjI/euxM6GVNOWtBwz4PURIWU2GnNKOmguIxcWb2WuED7OQjtuH7NqUTcKCrcL
+         56GOombgsGoU6TcZCI8HQpOlxRl1dEo3smb1sYZGU5ks/yd7qjJOcwAinl9CsqCsUncx
+         V5T4qgOOy2+0ZK5j+7fhFq23EbhI9FM6PgC2MHLNaBRI5iN7mCjmUfEL5q7DQXkvT2D6
+         vpdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752521983; x=1753126783;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=urOya2QD0PAv3aRyUi92qVBccHFN0GyUQM4mpsavCC0=;
+        b=hqjEUGPTVvwx9Wr2ntnvAzFZaq+AGa/IrPufoGbImtTlkqeaWauNSOufzjFehC4w7c
+         IJVewf65VPsmbYfyQupWMwpYzKh2X+G9b10jIDHexZpXRFELU7bJBLAuzs1Mm+ZbPggJ
+         ROIuxxWRg4I/KXteoI7v8XBu7trZO/Ys0+Ro9X1TPREP+XCHhQFPdh2UJ3v9TVTvVpZp
+         eFds3ZUJqcwm9qZiNIRnxCIyM3JDRYNsmr+O8j2b0L0T0hR7sRc/V5/9Jo4hgUuoNfU+
+         vdjALUf3hGSRhIeLEyoH4+MMOArQI4KuR/76qRDdbN8CSiG5U0mYxPs7nGr+8uFWLFHm
+         JTFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDoAum4VK4FoX79QH9rl96rEH6lHUePbSlldvNWxCrGqgorVqzTRWrC5JspMx2onCCLIKrG7zQC38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemZrDsb7Pau8MdAwq/c80N4UlevEH5j8wJdSuNSboUVVy8mwp
+	p3zMc6GdX04+VOxHE99v98V2/m135FOMrazCgy+xbnr4BNWcF2/51jRW7HFFd+RRL+M=
+X-Gm-Gg: ASbGnctEGM9pcTw0RH3FUZgIxyJlmMg/7PUd1gu4BlKnH+1KoOZqwsrcNqlOzF1Cy8w
+	5w+hvV9DdiDz2QzXKq5fPfs/PA9mGyLOlLxpCmX06ze1FiXJefjzgy5QeIABaa+q0INAU9edBRi
+	EUu01e7k13BNLzP4EBCb4GHlLG16DNrvf62Eg6r0dVzOB/8rTVJbzxTWGMq+Q1DqxUuwdzH72fX
+	TEgawuOprI8BDsNsPUvIvGZD8ft2McpEMckphTx7okplx5E/JE9o/9DKBNgsn3UeLmupVSjGl+H
+	+tSC/ZbTBlF5vawEsi6tu16ixdRImLKS7AeD2n2/4uvbZeaVewo7v3CXJHgt8np+CdNCVrNXsfb
+	p0vYNu+7xk7yDD6pwkcKSQEQUV9M+qg==
+X-Google-Smtp-Source: AGHT+IG9YCfy/a8BjNGBo1GzQjJuR8GmP8UR9cv+uwP5yDJexmfxPdWGAOu8EtDFH9IyIV9EN6mZeg==
+X-Received: by 2002:a05:6870:c03:b0:296:bbc8:4a82 with SMTP id 586e51a60fabf-2ff2706c894mr10579426fac.27.1752521982792;
+        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:6bb2:d90f:e5da:befc])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12b62e8sm1674368a34.60.2025.07.14.12.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jul 2025 12:39:42 -0700 (PDT)
+Date: Mon, 14 Jul 2025 22:39:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Le Goffic <legoffic.clement@gmail.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Subject: Re: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
+Message-ID: <1fd92742-0958-4f64-8e50-4d0595fe74eb@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-6-herve.codina@bootlin.com> <20250627155200.GB3234475-robh@kernel.org>
- <20250703093302.4f7743ea@bootlin.com> <20250704105725.50cb72b9@bootlin.com>
-In-Reply-To: <20250704105725.50cb72b9@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 14 Jul 2025 12:44:22 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLnPxUKXo3+Qdv-C1kXa6zbL1zMKDQsg1--08EY4TwsKw@mail.gmail.com>
-X-Gm-Features: Ac12FXxDLTYP2NvcYJSixLW6cmzqJDujemRg676_boOWrjf2yfM7xtUL9oD9OWo
-Message-ID: <CAL_JsqLnPxUKXo3+Qdv-C1kXa6zbL1zMKDQsg1--08EY4TwsKw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/28] bus: simple-pm-bus: Populate child nodes at probe
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250711-ddrperfm-upstream-v2-9-cdece720348f@foss.st.com>
 
-On Fri, Jul 4, 2025 at 3:57=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
->
-> Hi Rob,
->
-> On Thu, 3 Jul 2025 09:33:02 +0200
-> Herve Codina <herve.codina@bootlin.com> wrote:
->
-> > Hi Rob,
-> >
-> > On Fri, 27 Jun 2025 10:52:00 -0500
-> > Rob Herring <robh@kernel.org> wrote:
-> >
-> > > On Fri, Jun 13, 2025 at 03:47:45PM +0200, Herve Codina wrote:
-> > > > The simple-pm-bus driver handles several simple busses. When it is =
-used
-> > > > with busses other than a compatible "simple-pm-bus", it doesn't pop=
-ulate
-> > > > its child devices during its probe.
-> > > >
-> > > > This confuses fw_devlink and results in wrong or missing devlinks.
-> > > >
-> > > > Once a driver is bound to a device and the probe() has been called,
-> > > > device_links_driver_bound() is called.
-> > > >
-> > > > This function performs operation based on the following assumption:
-> > > >     If a child firmware node of the bound device is not added as a
-> > > >     device, it will never be added.
-> > > >
-> > > > Among operations done on fw_devlinks of those "never be added" devi=
-ces,
-> > > > device_links_driver_bound() changes their supplier.
-> > > >
-> > > > With devices attached to a simple-bus compatible device, this chang=
-e
-> > > > leads to wrong devlinks where supplier of devices points to the dev=
-ice
-> > > > parent (i.e. simple-bus compatible device) instead of the device it=
-self
-> > > > (i.e. simple-bus child).
-> > > >
-> > > > When the device attached to the simple-bus is removed, because devl=
-inks
-> > > > are not correct, its consumers are not removed first.
-> > > >
-> > > > In order to have correct devlinks created, make the simple-pm-bus d=
-river
-> > > > compliant with the devlink assumption and create its child devices
-> > > > during its probe.
-> > >
-> > > IIRC, skipping child nodes was because there were problems with
-> > > letting the driver handle 'simple-bus'. How does this avoid that now?
-> >
-> > I don't know about the specific issues related to those problems. Do yo=
-u
-> > have some pointers about them?
-> >
-> > >
-> > > The root of_platform_populate() that created the simple-bus device th=
-at
-> > > gets us to the probe here will continue descending into child nodes.
-> > > Meanwhile, the probe here is also descending into those same child
-> > > nodes. Best case, that's just redundant. Worst case, won't you still
-> > > have the same problem if the first of_platform_populate() creates the
-> > > devices first?
-> > >
-> >
-> > Maybe we could simply avoid of_platform_populate() to be recursive when=
- a
-> > device populate by of_platform_populate() is one of devices handled by
-> > the simple-bus driver and let the simple-bus driver do the job.
-> >
-> > of_platform_populate will handle the first level. It will populate chil=
-dren
-> > of the node given to of_platform_populate() and the children of those
-> > children will be populate by the simple-bus driver.
-> >
-> > I could try a modification in that way. Do you think it could be a corr=
-ect
-> > solution?
-> >
->
-> I have started to look at this solution and it's going to be more complex
-> than than I thought.
->
-> Many MFD drivers uses a compatible of this kind (the same exist for bus
-> driver with "simple-bus"):
->   compatible =3D "foo,bar", "simple-mfd";
->
-> Usually the last compatible string ("simple-mfd" here) is a last fallback
-> and the first string is the more specific one.
->
-> In the problematic case, "foo,bar" has a specific driver and the driver
-> performs some operations at probe() but doesn't call of_platform_populate=
-()
-> and relies on the core to do the device creations (recursively) based on
-> the "simple,mfd" string present in the compatible property.
->
-> Some other calls of_platform_populate() in they probe (which I think is
-> correct) and in that case, the child device creation can be done at two
-> location: specific driver probe() and core.
->
-> You pointed out that the core could create devices before the specific
-> driver is probed. In that case, some of existing drivers calling
-> of_platform_populate() are going to have issues.
->
-> I can try to modify existing MFD and bus drivers (compatible fallback to
-> simple-mfd, simple-bus, ...) in order to have them call of_platform_popul=
-ate()
-> in they probe() and after all problematic drivers are converted, the
-> recursive creation of devices done in the core could be removed.
+Hi Clément,
 
-The problem is how does a bus driver know if there is a specific MFD
-driver or not? It doesn't. The MFD driver could be a module and loaded
-any time later. We'd really need some sort of unbind the generic
-driver and re-bind to a more specific driver when and if that driver
-appears. We could perhaps have a list of devices with a driver because
-in theory that should be a short list as the (broken) promise of
-simple-mfd is the child nodes have no dependency on the parent node
-which implies the parent doesn't have a driver. The specific
-compatible is there in case that assumption turns out wrong.
+kernel test robot noticed the following build warnings:
 
-Rob
+url:    https://github.com/intel-lab-lkp/linux/commits/Cl-ment-Le-Goffic/bus-firewall-move-stm32_firewall-header-file-in-include-folder/20250712-030518
+base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
+patch link:    https://lore.kernel.org/r/20250711-ddrperfm-upstream-v2-9-cdece720348f%40foss.st.com
+patch subject: [PATCH v2 09/16] perf: stm32: introduce DDRPERFM driver
+config: sh-randconfig-r071-20250712 (https://download.01.org/0day-ci/archive/20250712/202507122125.eve8lg60-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.4.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202507122125.eve8lg60-lkp@intel.com/
+
+smatch warnings:
+drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'pmu' (see line 376)
+drivers/perf/stm32_ddr_pmu.c:380 stm32_ddr_pmu_get_counter() warn: variable dereferenced before check 'event' (see line 377)
+
+vim +/pmu +380 drivers/perf/stm32_ddr_pmu.c
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  374  static int stm32_ddr_pmu_get_counter(struct stm32_ddr_pmu *pmu, struct perf_event *event)
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  375  {
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @376  	u32 time_cnt_idx = pmu->cfg->time_cnt_idx;
+                                                                           ^^^^^^^^
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @377  	u32 config = event->attr.config;
+                                                                     ^^^^^^^
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  378  	struct stm32_ddr_cnt *cnt;
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  379  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11 @380  	if (!pmu || !event)
+                                                            ^^^^^^^^^^^^^^
+Checks are too late.  The variables have already been dereferenced.
+
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  381  		return -EINVAL;
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  382  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  383  	pmu->selected_set = GROUP_VALUE(config);
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  384  
+73af3c4ba702d7 Clément Le Goffic 2025-07-11  385  	if (config == TIME_CNT) {
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
