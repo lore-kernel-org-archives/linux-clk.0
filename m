@@ -1,384 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E672264A9;
-	Tue, 15 Jul 2025 12:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD7C2E1C54
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 13:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752583903; cv=none; b=ZcAY7/yYOpOXRb2MfuY8qYStsaDAdF30ZB03njK7v863r1HZYXIeWFx2fKDWyZWfn+6MgRgNUc6SzrzmRo7DoaZds5xpkODta5u7vpdybGOC3LCXKLxRu+K83pT0XAYg1/+9XeGkJRjbSNVDJxJQLOqlDmyCnkkE9WeA+Dv/HyM=
+	t=1752584905; cv=none; b=GjkC3Or+pFnGAJLGcpEbo/HfWgEDWIU/UAYUmCQDYZlVikOKLekFWIWbAYkfdxTfRnuV8mSWJel8hEA6GIuvkwxvd7zRrvUr02ywyypPvULZMmkbnxfKmjQMTE1y5XznV7nMn4Y4rFQl7eb7WW+XS44YsysCe5iKpTxOAEaWVaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752583903; c=relaxed/simple;
-	bh=85dpZxDXnCCzOPyZ7BS5N9GgXCmsv2H8dUvkNv/cJN0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tUpcKnwVPGZhVde93ZV3svXLlzMoKix1bOx1DYrbgQvZoCqnJWsZypmWebST96aA5kI7+/lnQmwddXk/lsJGhgvbD/wUXQRFEd59NZPz4nYOIHzyCdrV5Xh5Ng3SoOd0EjoHYc970XpR6pvAHXjxqYzy3oYMwoBNXTrmiybzZBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pe5MYIjP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752584905; c=relaxed/simple;
+	bh=WnK15eyFGnOOiCqP/4GEMlvDMj+juzHnpjX7yiY+mlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cfpXegGD9NoFdYRkoPNP2ZBDDZhe7ESKHjltgfjT8WIiHG1/Wrko2wfbEnZE1PUe1V1Kh9a5weYN20cHchdmINUrPiM52eH3sjZiua7rUof/cchAtx5wocso4PJ9JIjmVmDfhmEAV1UWst6w6bsptxMSYRg5avS9x/9pHj+395g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yB0QQ4uf; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pe5MYIjP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 760A5C4CEF1;
-	Tue, 15 Jul 2025 12:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752583903;
-	bh=85dpZxDXnCCzOPyZ7BS5N9GgXCmsv2H8dUvkNv/cJN0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=pe5MYIjPKmTHjoFFQpWcLcj+S+aKet22gikbF2F7h+s0vRasKsX5F321Wth68tjnY
-	 TlNWeJ90IW11QdLL2vJ/4js5WXJ8qxAhzTsiVUV0pNTEisT6DJm/L9p+4SLYJmcpyS
-	 4+FtOXk6yz+uh3L1s0SIl3rf891P5ZXdIg7ZCtKIGHbQybPVx4MQYmOr0e6V+fQ/VJ
-	 QxydYep9eHnr8PDSNtCX34nDfL1Zo5tLlH4Bb8HXbIf4p5CEB1W/y+JxqNIoCE7UhN
-	 2xruvgMElJeIzOP1SjJbGIMnfZq8ixuesGXkqm/Og8KqrBvTJZeIM19t8yKEp2iV2N
-	 LuPMy4LZBG0og==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666B9C83F27;
-	Tue, 15 Jul 2025 12:51:43 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 15 Jul 2025 20:51:39 +0800
-Subject: [PATCH 2/2] clk: amlogic: add video-related clocks for S4 SoC
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yB0QQ4uf"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-558f7fc9d7fso209856e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 06:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752584901; x=1753189701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gq36CP0MCDZZzeTcntw2nMahOQrUrL9LQjFqfs8ZNN8=;
+        b=yB0QQ4ufMICg9Tf92uXHeDJK04V4HnNAd700fo/W6dWenTiVqN8T5/1qy84FP3obzV
+         20W1i3Wmxl37UmJX2z8+j6Ogk7NOIPFlzAYHPrACh0fbXga+B3GkdP3KG7L8ECoqQajs
+         KJpc8TQtkD7wEdcRFpaxi5pxjFVzn8f0r3CwG3LL/C9lzR7mvzBJjsVeNl5xx0dosUKD
+         nSRv1RRxFYSBAGFXfNKBNU0CskHhxyC3PHQpPVv0R4Xcf7nFJPqyLyCDmEz37ATAaApP
+         Bgg2kx/Zp9Titou62DEjEN1SyJOK1Kmi6TZuQ1M+Xo0YLTOvSfgWXGP4RTDzgm6ILhuY
+         ETUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752584901; x=1753189701;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gq36CP0MCDZZzeTcntw2nMahOQrUrL9LQjFqfs8ZNN8=;
+        b=LOxsAs5zpQrQK3z3bLhi6smhITE61GtMJ4piEDU7q9XN231bQT178OMJbPeMGnyZjI
+         9cJROB2wcOxzWOL7kjDwopZTEQLDngJKCUKEDrHgFVzDWBb+8TqlBDDW4uQzJr8KSzUa
+         lf6sQLrEqN34KAePdiNO396r5vOQQt+s/55rj1t8D/fnSzaHazirhRBcOboSts1R2Mw4
+         LJ9Z/nM9v37hbtmIasGM6U9dguJzujhx3lrTzghyBtTE5Hov6HA0GYB3efcg54XS4FAS
+         PvsZU+btlrsu0uSfVZxVW+5sLnLPGE83lzgFUaMmj+yqMkVcLrhlBEeL/4GSZVuYZiGd
+         PHIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6x45IvH0/Fdhr3AaVbDbNAAkwLueUNxK150IJTw1ATrHaTNIsxkEwlaf5nK2Nyt4zhY9URhPyXXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8Dyx20pcva+D//FYKZrTyTWbFeO5slkpmRdalPv9uLytCQz7
+	WOYTS0k5AWOy+a6Rdj0I+tHW2rBCYyDkwMkfIVIRjHf9bXRQQGSaqG09PPcU/4HKdDU=
+X-Gm-Gg: ASbGncuKntLeoxQNWlDwFM+eOYyPW+LcXk0uzlVx3IkVkIXgJZY/auOsoX+Edku76WN
+	gJiSXQ2lsbDGxNe1zABTnqB/VqtIF/bS+ZuXCFMZE635sQPuoTmesxwFyvF1pgggxUDcRw+s3HB
+	5JKRhpCJ5gD2Gc1N54swL5x7RVeg/esG/fqsOp4iNb2U7B5B8iLw3rTH704ATqLmHTsx2P22Dqv
+	izqr6gtGmP9hnrEx8Uc0TKZDcmQ5qi+A8hLR5JAmtjpFtowDF5EF11uFzhNsnVudovnsPqbnsOH
+	tTSJY3nJCceb/NOZJYeQA2B+t8amZ+6+TNkt2bKMmjmgkZZW/EZbEf0bZ1ICfDh9MsHmJYw3TmL
+	ixHAq/osNFIVrlu4wRePcmUuatrOWuPwljSthqQBmmNIxuOk/7DoDXTjKVvHauO1yFfYVXAxr/K
+	Ow
+X-Google-Smtp-Source: AGHT+IHMVeoHz8y2i5KJdatSFzaiHdlhoX4K7Fmxq+ulokvZuQc+6Z5CQPHMAkcSdnhIcDc9V2Ge5Q==
+X-Received: by 2002:a05:6512:3a8e:b0:556:2e02:6957 with SMTP id 2adb3069b0e04-55a1fdd8762mr204686e87.9.1752584899957;
+        Tue, 15 Jul 2025 06:08:19 -0700 (PDT)
+Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b5fa81sm2301334e87.142.2025.07.15.06.08.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 06:08:19 -0700 (PDT)
+Message-ID: <f753f088-474b-41bb-82d3-6684bea2f87e@linaro.org>
+Date: Tue, 15 Jul 2025 16:08:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
+ <ae0a309f-7e52-4d3c-8f26-989f22da5b07@linaro.org>
+ <GbVC82h7wSXQsAJh8XybKorKYy9wupjQLndjf_uYNXOZnk1UqS_tT4Yg9gzf8X3Kn55Mt5bXfcFrHtyMoFZ4-A==@protonmail.internalid>
+ <a4ebdf5c-8d4f-4994-afd9-22c8d889fe97@linaro.org>
+ <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-add_video_clk-v1-2-40e7f633f361@amlogic.com>
-References: <20250715-add_video_clk-v1-0-40e7f633f361@amlogic.com>
-In-Reply-To: <20250715-add_video_clk-v1-0-40e7f633f361@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752583900; l=8635;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=Krtad04/LG3f+yownUO/6hPuVzIprI6Y8mPsJSZ7oMw=;
- b=jMVksC6mymjR/byiSiIbxFAfx7pwBYMaXcaQETql3fxq9FmaUM3nN9ryk8syF2Odt2oCBZWxJ
- RjEY4HOiEX0BWIlX5Euy1Nr9fgwZqRu9fMde0pvZjR6DRkHeT2LdkmL
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On 7/15/25 14:16, Bryan O'Donoghue wrote:
+> On 15/07/2025 11:27, Vladimir Zapolskiy wrote:
+>>>> 1. This is an incorrect assumption, unfortunately it was not discussed
+>>>> previously for whatever reason, good news now it gets a discussion under
+>>>> drivers/phy changeset.
+>>> Perhaps you can explain why ?
+>> It's quite easy, sensors are not connected to CSIDs. Moreover data flows
+>> from any sensor can be processed on any CSID, there is no static hardware
+>> links, which are attempted to be introduced.
+> 
+> This statement is not correct.
 
-Add video encoder, demodulator and CVBS clocks.
+Please elaborate, what statement above is not correct?
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/meson/s4-peripherals.c | 256 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 256 insertions(+)
+> The port@ in CAMSS pertains to the camss-csiphy device not to the
+> camss-csid device, so there is no hard link to any specific CSID in the
+> dts scheme here.
 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index c9400cf54c84..f43526d506b1 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -44,6 +44,7 @@
- #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
- #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
- #define CLKCTRL_HDCP22_CTRL                        0x100
-+#define CLKCTRL_CDAC_CLK_CTRL                      0x108
- #define CLKCTRL_VDEC_CLK_CTRL                      0x140
- #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
- #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
-@@ -1117,6 +1118,22 @@ static struct clk_regmap s4_cts_encp_sel = {
- 	},
- };
- 
-+static struct clk_regmap s4_cts_encl_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = CLKCTRL_VIID_CLK_DIV,
-+		.mask = 0xf,
-+		.shift = 12,
-+		.table = mux_table_cts_sel,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_encl_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = s4_cts_parent_hws,
-+		.num_parents = ARRAY_SIZE(s4_cts_parent_hws),
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac_sel = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = CLKCTRL_VIID_CLK_DIV,
-@@ -1196,6 +1213,22 @@ static struct clk_regmap s4_cts_encp = {
- 	},
- };
- 
-+static struct clk_regmap s4_cts_encl = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 3,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cts_encl",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cts_encl_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac = {
- 	.data = &(struct clk_regmap_gate_data){
- 		.offset = CLKCTRL_VID_CLK_CTRL2,
-@@ -1228,6 +1261,56 @@ static struct clk_regmap s4_hdmi_tx = {
- 	},
- };
- 
-+static struct clk_regmap s4_lcd_an_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = CLKCTRL_VIID_CLK_DIV,
-+		.mask = 0x1,
-+		.shift = 11,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "lcd_an_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_vclk_div6.hw,
-+			&s4_vclk_div12.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_lcd_an_ph2 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 7,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "lcd_an_ph2",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_lcd_an_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_lcd_an_ph3 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 7,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "lcd_an_ph3",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_lcd_an_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- /* HDMI Clocks */
- static const struct clk_parent_data s4_hdmi_parent_data[] = {
- 	{ .fw_name = "xtal", },
-@@ -3174,6 +3257,165 @@ static struct clk_regmap s4_gen_clk = {
- 	},
- };
- 
-+/* CVBS DAC */
-+static struct clk_regmap s4_cdac_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal", },
-+			{ .fw_name = "fclk_div5" },
-+		},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.shift = 0,
-+		.width = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "fclk_div4" }
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 0,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 8
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/* CVBS ADC */
-+static struct clk_regmap s4_adc_extclk_in_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x7,
-+		.shift = 25,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div4" },
-+			{ .fw_name = "fclk_div3" },
-+			{ .fw_name = "fclk_div5" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "mpll2" },
-+			{ .fw_name = "gp0_pll" },
-+			{ .fw_name = "hifi_pll" }
-+		},
-+		.num_parents = 8,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 16,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 24
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- #define MESON_GATE(_name, _reg, _bit) \
- 	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw)
- 
-@@ -3453,6 +3695,20 @@ static struct clk_hw *s4_periphs_hw_clks[] = {
- 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_mux.hw,
- 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
- 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk_gate.hw,
-+	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
-+	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
-+	[CLKID_LCD_AN_SEL]		= &s4_lcd_an_sel.hw,
-+	[CLKID_LCD_AN_PH2]		= &s4_lcd_an_ph2.hw,
-+	[CLKID_LCD_AN_PH3]		= &s4_lcd_an_ph3.hw,
-+	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
-+	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
-+	[CLKID_CDAC]			= &s4_cdac.hw,
-+	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
-+	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
-+	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
-+	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
-+	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
-+	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
- };
- 
- static const struct regmap_config clkc_regmap_config = {
+And here it's just a confirmation that my statement above is correct,
+so please be consistent, and especially in any kind of accusations like
+you've just given above.
+
+Any of ports in CAMSS device tree are properties of CSIPHY IPs, and ports
+are not the properties of CSID or whatever is left in CAMSS after the
+extraction.
+
+If CSIPHYs are extracted from CAMSS into its own device tree node, so all
+CSIPHY only properties shall be removed from CAMSS, like CSIPHY reg,
+interrupts, clocks and ports as well.
 
 -- 
-2.42.0
-
-
+Best wishes,
+Vladimir
