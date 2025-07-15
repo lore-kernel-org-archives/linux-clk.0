@@ -1,67 +1,67 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F1E2C3262
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 07:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256502D8398
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 07:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752563964; cv=none; b=ZLx9mxfw7YoT5Hptcv0Opc99ncmOKU8PCG+c3++MCn21JgIUJOZjfLMrY1tpZ7SCLhInu9uWjlSuR/wVhhBao4AJrwlhlYx0ojx5QWzHGrzLpzk0Nuw44HVW3UASNPqXoqLQ3UbxjdubmzOwVy/oEXlGSKWBE4pVtPj+NJ0iC0k=
+	t=1752563970; cv=none; b=hIzYZtdYxzy9HLuuWgqeoSmGRaqqbZZFjdKwofyyVEbjYnA7QhyX+oMl2rBXzxIwoy1aabbZnKAZsr1Ij5mevEhCJ2GPoOVleBR/6BD6gNCoiOXu1D71D2/kgKCCPqWWSxhhJbztJxFWY4g/XLDQjm7c7AEc3pL/U4wgZdbi2Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752563964; c=relaxed/simple;
-	bh=CtlJuptn1iL4IKBp0RtnlJ33d5bOL7hNwbE9KGg32hU=;
+	s=arc-20240116; t=1752563970; c=relaxed/simple;
+	bh=VwfqHpso1OiiAuM6DJpcct+RzKRoptkbJ13YmmDEfKc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ahtPeB7INHgrv/rzbFmKMdIA++0K1dK/YwrlmwBuwjIbb6XbAPk/EbSq0R0/Ebg1J0ajyFEQKUQG0lX71zesPpR7Db+ZPttBUDsVTcQvQSLBpQfkVaM+L8xJ2MeeLbQKC8RC1i7ixEydo8CypLLPw3erTpleYYl0R+xtHaiqn1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=yoSKjm9r; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:To:Cc; b=TOquRu5GZ3ndg/sALAkgZ6kbrjLTnHdo/uC2r0ZCRVLIZYVccb/0kayovhKPPFikree1WRMuAjtY9G8bGV5ca/nXmJ/Pl5Pqb2lQj3lzuG1G80VRgFV5dS4TedCFdgYY9xEANW1vA6mF9TIFxjkBnhbxhZW06bKY4CPnp+hcm4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=QKCdeKuu; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="yoSKjm9r"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so8565958a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 00:19:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="QKCdeKuu"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso9811027a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 00:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752563960; x=1753168760; darn=vger.kernel.org;
+        d=fairphone.com; s=fair; t=1752563963; x=1753168763; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Elg4FLgRXQQbbxiu3aQgurp8VMDU0VAh8zp0Pr6xRrE=;
-        b=yoSKjm9rG5eHUY5CrsG+2WoKdkO/9yAOHIcRG2oNYCXrvNoTffAeYAfs76fa+UhNfu
-         qx9JaxaIcZW0PWvUbTxkgsRVYVOe8nwGEeEmZ8MPuEQh0yj8ndQEiZlafI5GnrxdlD5g
-         oZkhsE88CjRAfV55BpSXccWZ3L5+OVTm92w66L9W4dDEF9+shNhRuk6ZABdqEHXYfScU
-         0K59Ykhiaxz6HZECMT4CJlZISsqNQkHawsxLJTiAaYF0lRbk2HlUQzq7b23tzXkzCZfp
-         6KOMfkVWaeNeNv6VP3PpFyzB5yWrolp5PtIRcGbzozYfi+u8+Tctt8w4CXfrOtgPEdZJ
-         hzyA==
+        bh=ebfTDkzvLDE5Yl15rpM3HQGy6bi4xkSd/6v+gonqIYk=;
+        b=QKCdeKuuzotPPCj5KDzkusXsnAtpRpwUCYrJTga9tmAmxzef+mFeYMcJ4ziPXpPM9w
+         eHhrKtzx+lS8kbQU9XNGhPvbLTpHxpEGqE9lh7IQZ7EJ3w4zHaMOuQVO/Qcct4x2LY9U
+         LUuOjl8qbkQASOEqceDpRH8SIPJi1p10k8nSkBSDW7iC3FoAuAyrq2x6NEHJSn+D9pzW
+         PgMZ7qFI6ZsNEHnbB2NNTXglrj+vXYz/aQLrH2XCwcgmT/XUqA9eRywWRiOsWHPZkyQh
+         fuvrkiJjbHcNVdH/LP1wx5XrPaBZkyl+i9u1208u/YpXDh7IKKyIGxrsQuFEorEm6+6d
+         6wtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752563960; x=1753168760;
+        d=1e100.net; s=20230601; t=1752563963; x=1753168763;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Elg4FLgRXQQbbxiu3aQgurp8VMDU0VAh8zp0Pr6xRrE=;
-        b=GtFbHpqWYcUJ4yQHpmj8Nn2NctfP+mCXjwNHP6K5hXcBcrr/Cl+jP3hLma0EhexBLc
-         mgPVVfNx2fZGm6/IOSs86riFa6SK9PlowMtyWh7pYlgFpBibEHVxlm7WEEWUIT4dnolu
-         eevXNWDpS5Pnd+0ShnACiKXpL1DkGcg7lzmYWsJ2UVoQwucwdRm4QfaytlEzpLuuMrng
-         VDUOO0jnIh0Rg9IzkzaSqXaQUxODsJDTMJQ3noEtDQSLxXY+uf/hWEbqEfGDNCX4rYDB
-         XMSl/cdvOcxv+XRHTCOjdZrztAw5Qc6fyzY3Eqr23BMyeR1okB+epeTiOHUDS7epI53D
-         YZ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcWL2K/dGzXVNqc50q/rAwtUOwXusAPRmRI2Ql8YCaOJx+g9ArKUZP3G8j5cpJAKm/SwI9HeQ/fjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF6/VVyekPiDmD0A+St8pq4kUWK8aFq9Mi2mAQ95bAFsdX3seX
-	CSCvwH3wLwz5n4Yyh3c+UzAi+fXHXkgnRi4YgmC5SGZEc2G9s6KTJdbC+fGz1j58f/U=
-X-Gm-Gg: ASbGncs+RCP2/tVsa7klGOD8ZU48lCXnBLbqObAZZGNMCwCjg04Ky8V81qrTJ1vpuXW
-	m2unuQWw9hCjHuWYFk8YZhbSDKBC3ENga7H5Gw8BNV7WbuFsr5eRuDJBtEzqfBvCIRCdqDhtNIk
-	skota3jeYSVdSXwA6aegHLSXGSXvXTtVQJC0x+yRm4bOVxGLgjJKx43eiXCCf6AbRJr0S6azQUk
-	WZNEGBK0WZY8ZrLB1vkg5xxaOxSJ51g+aTR+rStBEc6lfcQB1I3+/+bQNqQmQQndg6J1uKhDG/I
-	YSbQnvcAlCq/K5KasvLtaLJ+WBfzbn7DMCciE7qyNQa65xPYYgcstiZKrxHCpAEqvco+xYQY0SY
-	qS7vlOY5i5pdMdIma91s4ox8GCqzIwzihijaSehjz92kQMC+qCNpWvFy4
-X-Google-Smtp-Source: AGHT+IHwifhTTMNtst73yrck3jQLdM0eBYspiEOGN9kQIJsXdaux1M0kB4WKiXb0CgqiPDeQZyMpZg==
-X-Received: by 2002:a05:6402:909:b0:609:9115:60f8 with SMTP id 4fb4d7f45d1cf-611e847f9e0mr12887313a12.21.1752563959742;
-        Tue, 15 Jul 2025 00:19:19 -0700 (PDT)
+        bh=ebfTDkzvLDE5Yl15rpM3HQGy6bi4xkSd/6v+gonqIYk=;
+        b=Rdm/2yhGanke8V/s9lFXl3/swxFG0EvAX0IPJ+BZqB9E08voP+0o61ITiXhRRHtKqn
+         T83QSqR0V976HtsHtTVMeG+OzqZyK1wt4zSbYqUDaWlxM7tDr2DpVc+U5hY0BqlF/QRU
+         vYhvcmkrvoVn1GjMDlIK3GVPjNXoEkiJkgO1w+4xbowGlW6NUG0yLkNTz58c511GCvb1
+         q2s8OlsFZlVBPOtE+1mJopSTtt79KDGPgLC9MQnp8S+Tfl/YElGMWIv47Xkd/UEAN7Bv
+         H3K3R+n20gz4po5pahJumwbDV7NTDngnDOHNwJcZzQrfaSEou6QN13pYir/of0Psgnun
+         9s0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQF4tlXaeQGi7Zv7UxgwPdH87UknO5RCPdZti1DnQteCi20Hs8sJSbjY1C1m08lYKY6bDCkfvZKAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwenFhVsMcooq9olhTT2Kr4bq7mZP/XKRruG2RR5tIXvj1Jabht
+	Vh/oxlR3D0XtoBV3MHRztvKmyRRhRUWTkJjDIhmw7zDACxN0E1uPPKt5Loni0QUGPHQ=
+X-Gm-Gg: ASbGnctOtEo8oTIrYHrGB9/jDnZFA+w0er4Uqzg8MUPXPDClH5EIhfA/DVOO2xVazas
+	/gztbh9y7Hc45iFMhWp4oDwNpac+MX7SgS5BaiH8rRPQocGYJV4Psc9qyW8joVyMxHFsHeul/LR
+	CoKWQUWe86GMFwQiar94BrZVddTvmPszETqKhGk+KAcm0g03/fpR4bI6T+q0qRhlgIwJUvUd4QD
+	CW0yKqJSaxql8c+CXBYxsgFIBdGSknskLU81quWgXZPx1NTepMjpvosayc7N4TUDqAFnP+sy3ZT
+	oGVNNap/zgniT+4RMRIAVQjCEkjQfQpDCfGq36P8UVGQcQHqEGfliei4PTnvPtU0yD/hdhtP40E
+	lhEQowDbvit3U/lIyAXMo4dVm9jmGMpwWZkLNRpD+gJafBDGI4rvAgltdE0z0Xrt2olU=
+X-Google-Smtp-Source: AGHT+IEzpO8yKzIUGGcqpv4AyMmLOO1LD+6dixvbi6e7JoxzmvCMWqqgGXUWVssoCXhI7a8Q2toY+g==
+X-Received: by 2002:a05:6402:51cf:b0:612:3d0c:a728 with SMTP id 4fb4d7f45d1cf-6123d0cacb0mr5469396a12.12.1752563963165;
+        Tue, 15 Jul 2025 00:19:23 -0700 (PDT)
 Received: from otso.local (212095005088.public.telering.at. [212.95.5.88])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976fcfcsm6873715a12.66.2025.07.15.00.19.18
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976fcfcsm6873715a12.66.2025.07.15.00.19.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 00:19:19 -0700 (PDT)
+        Tue, 15 Jul 2025 00:19:22 -0700 (PDT)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Tue, 15 Jul 2025 09:19:04 +0200
-Subject: [PATCH v3 04/11] dt-bindings: clock: qcom: document the Milos
- Camera Clock Controller
+Date: Tue, 15 Jul 2025 09:19:06 +0200
+Subject: [PATCH v3 06/11] dt-bindings: clock: qcom: document the Milos
+ Display Clock Controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250715-sm7635-clocks-v3-4-18f9faac4984@fairphone.com>
+Message-Id: <20250715-sm7635-clocks-v3-6-18f9faac4984@fairphone.com>
 References: <20250715-sm7635-clocks-v3-0-18f9faac4984@fairphone.com>
 In-Reply-To: <20250715-sm7635-clocks-v3-0-18f9faac4984@fairphone.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -84,59 +84,66 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  Luca Weiss <luca.weiss@fairphone.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752563952; l=6948;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752563952; l=5229;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=CtlJuptn1iL4IKBp0RtnlJ33d5bOL7hNwbE9KGg32hU=;
- b=AjNYOuq7bNFCFQfTRhkyoPaakLnKf9M0GisflI0r5v7+Jg+IMTRYDS1v3b2d48al7Q2NOGXe2
- XiR6eNijeZHCmwpg3b2hrOO7D8uwmxUKQXsH0xno1xWD5xEOmIolPGp
+ bh=VwfqHpso1OiiAuM6DJpcct+RzKRoptkbJ13YmmDEfKc=;
+ b=c3lyzuLhuyT7u6O7LbLbOaKmyQ/j6fC4TJ3WvxMwxlfjFw0nie4El1Y+0sbnOoRII1w+nRQ1B
+ LfPnfuVjsQZATWWns6vTx+MRAOIIgC6YL6oo6G4IHS2MORyCERClw4x
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add bindings documentation for the Milos (e.g. SM7635) Camera Clock Controller.
+Add bindings documentation for the Milos (e.g. SM7635) Display Clock
+Controller.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- .../bindings/clock/qcom,milos-camcc.yaml           |  51 ++++++++
- include/dt-bindings/clock/qcom,milos-camcc.h       | 131 +++++++++++++++++++++
- 2 files changed, 182 insertions(+)
+ .../bindings/clock/qcom,milos-dispcc.yaml          | 63 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,milos-dispcc.h      | 61 +++++++++++++++++++++
+ 2 files changed, 124 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,milos-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,milos-dispcc.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..f63149ecf3e1b98e60dba27093737ec84b66a899
+index 0000000000000000000000000000000000000000..94908804756b29bab228fd539c365945bd6b401a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml
-@@ -0,0 +1,51 @@
++++ b/Documentation/devicetree/bindings/clock/qcom,milos-dispcc.yaml
+@@ -0,0 +1,63 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/qcom,milos-camcc.yaml#
++$id: http://devicetree.org/schemas/clock/qcom,milos-dispcc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Qualcomm Camera Clock & Reset Controller on Milos
++title: Qualcomm Display Clock & Reset Controller on Milos
 +
 +maintainers:
 +  - Luca Weiss <luca.weiss@fairphone.com>
 +
 +description: |
-+  Qualcomm camera clock control module provides the clocks, resets and power
++  Qualcomm display clock control module provides the clocks, resets and power
 +  domains on Milos.
 +
-+  See also: include/dt-bindings/clock/qcom,milos-camcc.h
++  See also: include/dt-bindings/clock/qcom,milos-dispcc.h
 +
 +properties:
 +  compatible:
-+    const: qcom,milos-camcc
++    const: qcom,milos-dispcc
 +
 +  clocks:
 +    items:
 +      - description: Board XO source
 +      - description: Sleep clock source
-+      - description: Camera AHB clock from GCC
++      - description: Display's AHB clock
++      - description: GPLL0 source from GCC
++      - description: Byte clock from DSI PHY0
++      - description: Pixel clock from DSI PHY0
++      - description: Link clock from DP PHY0
++      - description: VCO DIV clock from DP PHY0
 +
 +required:
 +  - compatible
 +  - clocks
++  - '#power-domain-cells'
 +
 +allOf:
 +  - $ref: qcom,gcc.yaml#
@@ -146,153 +153,89 @@ index 0000000000000000000000000000000000000000..f63149ecf3e1b98e60dba27093737ec8
 +examples:
 +  - |
 +    #include <dt-bindings/clock/qcom,milos-gcc.h>
-+    clock-controller@adb0000 {
-+        compatible = "qcom,milos-camcc";
-+        reg = <0x0adb0000 0x40000>;
++    #include <dt-bindings/phy/phy-qcom-qmp.h>
++    clock-controller@af00000 {
++        compatible = "qcom,milos-dispcc";
++        reg = <0x0af00000 0x20000>;
 +        clocks = <&bi_tcxo_div2>,
 +                 <&sleep_clk>,
-+                 <&gcc GCC_CAMERA_AHB_CLK>;
++                 <&gcc GCC_DISP_AHB_CLK>,
++                 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
++                 <&mdss_dsi0_phy 0>,
++                 <&mdss_dsi0_phy 1>,
++                 <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
++                 <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
 +        #clock-cells = <1>;
 +        #reset-cells = <1>;
 +        #power-domain-cells = <1>;
 +    };
 +
 +...
-diff --git a/include/dt-bindings/clock/qcom,milos-camcc.h b/include/dt-bindings/clock/qcom,milos-camcc.h
+diff --git a/include/dt-bindings/clock/qcom,milos-dispcc.h b/include/dt-bindings/clock/qcom,milos-dispcc.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..21925dca9a20c9525c3800885e2d1357ab7b4661
+index 0000000000000000000000000000000000000000..c70f23f32f0ad637b25244d2bed1f17cdeffd69c
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,milos-camcc.h
-@@ -0,0 +1,131 @@
++++ b/include/dt-bindings/clock/qcom,milos-dispcc.h
+@@ -0,0 +1,61 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
 + * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_MILOS_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_MILOS_H
++#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_MILOS_H
++#define _DT_BINDINGS_CLK_QCOM_DISP_CC_MILOS_H
 +
-+/* CAM_CC clocks */
-+#define CAM_CC_PLL0						0
-+#define CAM_CC_PLL0_OUT_EVEN					1
-+#define CAM_CC_PLL0_OUT_ODD					2
-+#define CAM_CC_PLL1						3
-+#define CAM_CC_PLL1_OUT_EVEN					4
-+#define CAM_CC_PLL2						5
-+#define CAM_CC_PLL2_OUT_EVEN					6
-+#define CAM_CC_PLL3						7
-+#define CAM_CC_PLL3_OUT_EVEN					8
-+#define CAM_CC_PLL4						9
-+#define CAM_CC_PLL4_OUT_EVEN					10
-+#define CAM_CC_PLL5						11
-+#define CAM_CC_PLL5_OUT_EVEN					12
-+#define CAM_CC_PLL6						13
-+#define CAM_CC_PLL6_OUT_EVEN					14
-+#define CAM_CC_BPS_AHB_CLK					15
-+#define CAM_CC_BPS_AREG_CLK					16
-+#define CAM_CC_BPS_CLK						17
-+#define CAM_CC_BPS_CLK_SRC					18
-+#define CAM_CC_CAMNOC_ATB_CLK					19
-+#define CAM_CC_CAMNOC_AXI_CLK_SRC				20
-+#define CAM_CC_CAMNOC_AXI_HF_CLK				21
-+#define CAM_CC_CAMNOC_AXI_SF_CLK				22
-+#define CAM_CC_CAMNOC_NRT_AXI_CLK				23
-+#define CAM_CC_CAMNOC_RT_AXI_CLK				24
-+#define CAM_CC_CCI_0_CLK					25
-+#define CAM_CC_CCI_0_CLK_SRC					26
-+#define CAM_CC_CCI_1_CLK					27
-+#define CAM_CC_CCI_1_CLK_SRC					28
-+#define CAM_CC_CORE_AHB_CLK					29
-+#define CAM_CC_CPAS_AHB_CLK					30
-+#define CAM_CC_CPHY_RX_CLK_SRC					31
-+#define CAM_CC_CRE_AHB_CLK					32
-+#define CAM_CC_CRE_CLK						33
-+#define CAM_CC_CRE_CLK_SRC					34
-+#define CAM_CC_CSI0PHYTIMER_CLK					35
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				36
-+#define CAM_CC_CSI1PHYTIMER_CLK					37
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				38
-+#define CAM_CC_CSI2PHYTIMER_CLK					39
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				40
-+#define CAM_CC_CSI3PHYTIMER_CLK					41
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC				42
-+#define CAM_CC_CSIPHY0_CLK					43
-+#define CAM_CC_CSIPHY1_CLK					44
-+#define CAM_CC_CSIPHY2_CLK					45
-+#define CAM_CC_CSIPHY3_CLK					46
-+#define CAM_CC_FAST_AHB_CLK_SRC					47
-+#define CAM_CC_GDSC_CLK						48
-+#define CAM_CC_ICP_ATB_CLK					49
-+#define CAM_CC_ICP_CLK						50
-+#define CAM_CC_ICP_CLK_SRC					51
-+#define CAM_CC_ICP_CTI_CLK					52
-+#define CAM_CC_ICP_TS_CLK					53
-+#define CAM_CC_MCLK0_CLK					54
-+#define CAM_CC_MCLK0_CLK_SRC					55
-+#define CAM_CC_MCLK1_CLK					56
-+#define CAM_CC_MCLK1_CLK_SRC					57
-+#define CAM_CC_MCLK2_CLK					58
-+#define CAM_CC_MCLK2_CLK_SRC					59
-+#define CAM_CC_MCLK3_CLK					60
-+#define CAM_CC_MCLK3_CLK_SRC					61
-+#define CAM_CC_MCLK4_CLK					62
-+#define CAM_CC_MCLK4_CLK_SRC					63
-+#define CAM_CC_OPE_0_AHB_CLK					64
-+#define CAM_CC_OPE_0_AREG_CLK					65
-+#define CAM_CC_OPE_0_CLK					66
-+#define CAM_CC_OPE_0_CLK_SRC					67
-+#define CAM_CC_SLEEP_CLK					68
-+#define CAM_CC_SLEEP_CLK_SRC					69
-+#define CAM_CC_SLOW_AHB_CLK_SRC					70
-+#define CAM_CC_SOC_AHB_CLK					71
-+#define CAM_CC_SYS_TMR_CLK					72
-+#define CAM_CC_TFE_0_AHB_CLK					73
-+#define CAM_CC_TFE_0_CLK					74
-+#define CAM_CC_TFE_0_CLK_SRC					75
-+#define CAM_CC_TFE_0_CPHY_RX_CLK				76
-+#define CAM_CC_TFE_0_CSID_CLK					77
-+#define CAM_CC_TFE_0_CSID_CLK_SRC				78
-+#define CAM_CC_TFE_1_AHB_CLK					79
-+#define CAM_CC_TFE_1_CLK					80
-+#define CAM_CC_TFE_1_CLK_SRC					81
-+#define CAM_CC_TFE_1_CPHY_RX_CLK				82
-+#define CAM_CC_TFE_1_CSID_CLK					83
-+#define CAM_CC_TFE_1_CSID_CLK_SRC				84
-+#define CAM_CC_TFE_2_AHB_CLK					85
-+#define CAM_CC_TFE_2_CLK					86
-+#define CAM_CC_TFE_2_CLK_SRC					87
-+#define CAM_CC_TFE_2_CPHY_RX_CLK				88
-+#define CAM_CC_TFE_2_CSID_CLK					89
-+#define CAM_CC_TFE_2_CSID_CLK_SRC				90
-+#define CAM_CC_TOP_SHIFT_CLK					91
-+#define CAM_CC_XO_CLK_SRC					92
++/* DISP_CC clocks */
++#define DISP_CC_PLL0						0
++#define DISP_CC_MDSS_ACCU_CLK					1
++#define DISP_CC_MDSS_AHB1_CLK					2
++#define DISP_CC_MDSS_AHB_CLK					3
++#define DISP_CC_MDSS_AHB_CLK_SRC				4
++#define DISP_CC_MDSS_BYTE0_CLK					5
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				7
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				8
++#define DISP_CC_MDSS_DPTX0_AUX_CLK				9
++#define DISP_CC_MDSS_DPTX0_AUX_CLK_SRC				10
++#define DISP_CC_MDSS_DPTX0_CRYPTO_CLK				11
++#define DISP_CC_MDSS_DPTX0_LINK_CLK				12
++#define DISP_CC_MDSS_DPTX0_LINK_CLK_SRC				13
++#define DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC			14
++#define DISP_CC_MDSS_DPTX0_LINK_INTF_CLK			15
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK				16
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC			17
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK				18
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC			19
++#define DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK		20
++#define DISP_CC_MDSS_ESC0_CLK					21
++#define DISP_CC_MDSS_ESC0_CLK_SRC				22
++#define DISP_CC_MDSS_MDP1_CLK					23
++#define DISP_CC_MDSS_MDP_CLK					24
++#define DISP_CC_MDSS_MDP_CLK_SRC				25
++#define DISP_CC_MDSS_MDP_LUT1_CLK				26
++#define DISP_CC_MDSS_MDP_LUT_CLK				27
++#define DISP_CC_MDSS_NON_GDSC_AHB_CLK				28
++#define DISP_CC_MDSS_PCLK0_CLK					29
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				30
++#define DISP_CC_MDSS_RSCC_AHB_CLK				31
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				32
++#define DISP_CC_MDSS_VSYNC1_CLK					33
++#define DISP_CC_MDSS_VSYNC_CLK					34
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				35
++#define DISP_CC_SLEEP_CLK					36
++#define DISP_CC_SLEEP_CLK_SRC					37
++#define DISP_CC_XO_CLK						38
++#define DISP_CC_XO_CLK_SRC					39
 +
-+/* CAM_CC resets */
-+#define CAM_CC_BPS_BCR						0
-+#define CAM_CC_CAMNOC_BCR					1
-+#define CAM_CC_CAMSS_TOP_BCR					2
-+#define CAM_CC_CCI_0_BCR					3
-+#define CAM_CC_CCI_1_BCR					4
-+#define CAM_CC_CPAS_BCR						5
-+#define CAM_CC_CRE_BCR						6
-+#define CAM_CC_CSI0PHY_BCR					7
-+#define CAM_CC_CSI1PHY_BCR					8
-+#define CAM_CC_CSI2PHY_BCR					9
-+#define CAM_CC_CSI3PHY_BCR					10
-+#define CAM_CC_ICP_BCR						11
-+#define CAM_CC_MCLK0_BCR					12
-+#define CAM_CC_MCLK1_BCR					13
-+#define CAM_CC_MCLK2_BCR					14
-+#define CAM_CC_MCLK3_BCR					15
-+#define CAM_CC_MCLK4_BCR					16
-+#define CAM_CC_OPE_0_BCR					17
-+#define CAM_CC_TFE_0_BCR					18
-+#define CAM_CC_TFE_1_BCR					19
-+#define CAM_CC_TFE_2_BCR					20
++/* DISP_CC resets */
++#define DISP_CC_MDSS_CORE_BCR					0
++#define DISP_CC_MDSS_CORE_INT2_BCR				1
++#define DISP_CC_MDSS_RSCC_BCR					2
 +
-+/* CAM_CC power domains */
-+#define CAM_CC_CAMSS_TOP_GDSC					0
++/* DISP_CC power domains */
++#define DISP_CC_MDSS_CORE_GDSC					0
++#define DISP_CC_MDSS_CORE_INT2_GDSC				1
 +
 +#endif
 
