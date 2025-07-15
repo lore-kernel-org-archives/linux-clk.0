@@ -1,50 +1,66 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF2326CE18;
-	Tue, 15 Jul 2025 07:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0164157493
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 07:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752565242; cv=none; b=BwJnS90An9IztnVudB8O1J5JLO00EyEWLs0UhuBubtGwolFI/8/rFgvtnViJFxTlZjofb6DZGvKl1vU88URjabnX0ioYsNubnynXGs5PhbMgQZXYAjxj755sjOfd7c8PpMa/YBZe9coJR1tRwG6n2pffZ0GKdz9sqonNcfSFxvk=
+	t=1752565578; cv=none; b=jveYEusyOkM5f4mexj1g2S9nF1LI7rLNa7yh5jpxd1djTrkAZRhCF41NWYr1mWX07hh7KbfqiVIhrviB7zAWhaKmoT6gY7tICk+oXRjdEZ/9he6gbCEivUfl7Q+akVG19E+SYQWrHhJ/8Cp7Hn5GKRWShybK/JznjiMdJSSDyww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752565242; c=relaxed/simple;
-	bh=AA56a9ujAyfzajP+75j2ohL8o31ybChOdHGsW5rnxLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e4FrP8xpjWUwz94iwsLTwTsUFV+qUi6+b9pd3iAGZCfXyaKJEJl1VQ6wPNRMzJF0jt7/VjKvtLwcaN9EdT4FKsanSJqrr8Op/kiv+leJQ6FaIfrQ8L7BR2iAtvhasSQw9vezSvGAlxydP8xAB4gDr3koIncxqYIxZ2X7FblQBqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7kAjTzeN; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1752565578; c=relaxed/simple;
+	bh=IzIpovWOnc5f6gec2JUVRCeKBBVs9a0NAjuf3aEqXpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jc78BFssW/atLQbMwMTJWzB2I8UEavT3mXk2iYIEP8Y8SY2SC7vreUECAUraKndh9LqK3c+VK6ZbVFSeLVLtqcOwMxRAWLQQ5chPzOt0RLDAsN6fXKgcPkxd6kQiQEyjcEK7HRiiMXF9uiMGgD+tCWvttsCfiaw7cdDhCfY07Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oOCISA++; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7kAjTzeN"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56F6lxuk020561;
-	Tue, 15 Jul 2025 09:40:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	lJy4u2cOTJUFfRT/p8pwkIm5hoX5bxeCYsLaFA2bBsA=; b=7kAjTzeNW9FJV216
-	7OqeUNQPrLxCdIZ323fzJsJWpFke4072y6L1dk8QqL8V2Vpsfpf+JCVXMRI3MH4C
-	6lW9tUL2O+o+cMjwG2y4ygq793VuqJmdt37dIYs7qmpdWYRpMYE9nWvGWeAmRRrz
-	k7jZqRHdNfrNjKvZNqcPab9+hytQGubWNxDd7ZD9sxUxQKmwAPBy6EtbATRkVD1p
-	0EI7lnohov4idm03jKs7x0XVdjMQPwxzVE+PDjvGFOYYhvx9ECCObsYgZ60kRap5
-	oYEt9+iKARslZ1D2NdCMcaKTcpKdPsChEKJL4huaDlxZpwvRDzEVrPBtxfyX55oi
-	9KotqQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47uf22kuc1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Jul 2025 09:40:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1D20F40045;
-	Tue, 15 Jul 2025 09:38:42 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3AF65B5857F;
-	Tue, 15 Jul 2025 09:37:23 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 15 Jul
- 2025 09:37:22 +0200
-Message-ID: <765eccdc-7d51-42c6-bcba-07813077fc1d@foss.st.com>
-Date: Tue, 15 Jul 2025 09:37:00 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oOCISA++"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so750986f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 00:46:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752565575; x=1753170375; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PtX0e7Esm8rTzV71dVvhrf1harP8o5hQTrR50K8MNc=;
+        b=oOCISA++ICaEjfw14IO186Pc/lkJtDTRq7sVMZJX5hPcH9qDvDVaaN5RSqw/fXfEEc
+         05PUH1x8n19i/Awp26ZpEc8BBKbALEWP/0bncxCtmaYJZNza0HPVDdyDQ/rhBtLgBOHh
+         bMHQL4kUZlFPFVwVAniUHGpRAfU9THadSomoKmXRt8xfw3wb3+5Trq87C/UfJbJU5jG3
+         pS8JU5ssE0HbrscaOaTT58c+oL4bn4vWLTuYluN0fDgd2U2n7XdVbGfzOxGdOKxpPbHy
+         Tl0Pakf5rCZyXSSFtrWtPlucSo0bxAZ4oTsXNTmb2cc8TiQ600LT6M9s14V/SETFiHf1
+         tMww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752565575; x=1753170375;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/PtX0e7Esm8rTzV71dVvhrf1harP8o5hQTrR50K8MNc=;
+        b=KEojLbcyC2LC9ZNSNG6/Nlrm5xiXp5v3p4q50NBiSovS+lGw2AZ7vJrnLO6Fqb8F8j
+         Zrlapy59aj2go2+lkjyMCZ7Hc0XZSq1ZbdMJDzdVEetJhrCgW7xdx6TD7Yf2AMJ16gJK
+         PrZkRlBvuIYJDgHOiQxv8EGSPAMemnnVXp+umFGpl1/P6ojE+7KoOZcGzY1Iz0jqWp9k
+         0z6wWvMqN8Sxs94n8HnbsJcSdry7oPIavKUF8u6ZNhtBQXQ0hNLgcmYcAYd7E2+qbmY5
+         sM+B9GtJtHFZtz3pB4P/SS/jv0FWnIdw4/cl8p0OV4FWlgTa3Yh7mee3VYcADdkxFIt9
+         Xwmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBcS63Sho7Yend8VFgz3q9SeDc4y0VfLssuau3A78UZEF5PyBFiziZfDpWxsg2XKMIsd58mX1xap0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztkE1HqTY9LiBmRfcUEcHSMRHkeMc0VskvoatTFLjZDlKgZq3g
+	qKkLL5vNbOyB08eA17qLQk5XETALvlxvSyLrd4iItTKLV1YedeMLBAUNl+O3GSIJFDI=
+X-Gm-Gg: ASbGncuosOl1qPVTcxsGEErsGDdpwVWmPGG4xzaPRxmu2OvpKvIEqK3JJAYg6BikHVh
+	bAO+3/t278B4rTwqKCUERwL2i1fAeKnRFZuDAK9kvbCQLnRQOmVPuqv1u6J3tLMjwhnGHR+a7c9
+	dp8OTACx2KhcJqGLhB9jzJ/gdHbRAhq6scVct/2MMNSyqjcxx8xIyca/MoATM4bsEFTT0s8mZil
+	TXLAEgrVnf7dCPjr2j/RviTy4FVHG+swM+96SBhX76g/BEh68XKVAj4IcZwOXkS9Oo6uykPoJMQ
+	FWNbw1Re0yi5Cv5Z15ik1rYfxVj74HrfaszUQeV81q0PEAr2Coq24NIyQySvuaqgjdY68MY8F/f
+	SY9CZ0tU1qhw7YnT8JMt5wMxokD0Bss44AFK5Xckpkg==
+X-Google-Smtp-Source: AGHT+IEA6odCTSZRUo0FWmIxT6/Fuh+xtu40gUfLS89I3yzEOjI/ZLAh3ngB6RN8IMsZjRvEgri1dg==
+X-Received: by 2002:a05:6000:2c0c:b0:3a5:28f9:7175 with SMTP id ffacd0b85a97d-3b60b376944mr195053f8f.9.1752565575164;
+        Tue, 15 Jul 2025 00:46:15 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc2464sm14728597f8f.38.2025.07.15.00.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 00:46:14 -0700 (PDT)
+Message-ID: <8323e152-eb08-4a60-97e5-7b50b2aea7a3@linaro.org>
+Date: Tue, 15 Jul 2025 09:46:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,111 +68,102 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/16] dt-bindings: stm32: stm32mp25: add
- `access-controller-cell` property
-To: Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-2-cdece720348f@foss.st.com>
- <20250715031717.GA4144523-robh@kernel.org>
+Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
+ <5f3b2bda-92f9-479a-9af7-5d08e420121d@kernel.org>
+ <bd7cab62-f0ba-440d-8dc2-3304afe884df@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20250715031717.GA4144523-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-14_03,2025-07-14_01,2025-03-28_01
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <bd7cab62-f0ba-440d-8dc2-3304afe884df@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Rob,
-
-On 7/15/25 05:17, Rob Herring wrote:
-> On Fri, Jul 11, 2025 at 04:48:54PM +0200, Clément Le Goffic wrote:
->> RCC is able to check the availability of a clock.
->> Allow to query the RCC with a firewall ID.
+On 15/07/2025 09:19, Vladimir Zapolskiy wrote:
+> On 7/15/25 10:01, Krzysztof Kozlowski wrote:
+>> On 15/07/2025 08:53, Vladimir Zapolskiy wrote:
+>>>
+>>> 2. The whole new changes for legacy/new CSIPHY support is not present
+>>> in v1-v6 of this changeset, it just appears out of nowhere in the v7,
+>>> and since it is broken it should be removed from v8 expectedly.
+>>
+>>
+>> Why? If it is broken, should be fixed in v8, not dropped from v8.
 > 
-> If it is tied to a clock, do we need another provider? We have the
-> "protected clocks" thing, but that might be a bit different.
+> There is a conflict between these new v7 changes and another old and
+> still unreviewed/uncommented changeset, which provides quite a similar
+> functionality, but it has slightly different CSIPHY device tree node
+> descriptions and their connections to CAMSS.
 > 
+> This technical conflict should be resolved before making a bet which
 
-I couldn't find any reference to "protected-clocks" outside of qcom
-related code, is there a documentation? (Couldn't find it in
-clocks.yaml).
+Not really. People can propose different ideas, although I understand
+possible disappointment. You don't get however monopoly on doing something.
 
-The RCC is firewall-aware and has it's own firewall configuration at
-RCC level for some system resources. When checking access to a clock,
-or a reset, we're reading RCC registers, hence declaring it as an
-access-controller.
+> one of two CHIPHY series is better and should be fixed in the next
+> version.
 
-A RCC resource's firewall configuration usually covers more than a
-clock.
 
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> index 88e52f10d1ec..4d471e3d89bc 100644
->> --- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
->> @@ -31,6 +31,11 @@ properties:
->>     '#reset-cells':
->>       const: 1
->>   
->> +  '#access-controller-cells':
->> +    const: 1
->> +    description:
->> +      Contains the firewall ID associated to the peripheral.
->> +
->>     clocks:
->>       items:
->>         - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
->> @@ -123,6 +128,7 @@ required:
->>     - reg
->>     - '#clock-cells'
->>     - '#reset-cells'
->> +  - '#access-controller-cells'
->>     - clocks
->>   
->>   additionalProperties: false
->> @@ -136,6 +142,7 @@ examples:
->>           reg = <0x44200000 0x10000>;
->>           #clock-cells = <1>;
->>           #reset-cells = <1>;
->> +        #access-controller-cells = <1>;
->>           clocks =  <&scmi_clk CK_SCMI_HSE>,
->>                     <&scmi_clk CK_SCMI_HSI>,
->>                     <&scmi_clk CK_SCMI_MSI>,
->>
->> -- 
->> 2.43.0
->>
+Please provide links, otherwise it feels you are pushing back someone's
+idea for really vague reason.
 
 Best regards,
-Gatien
+Krzysztof
