@@ -1,154 +1,168 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137131D7E5B
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 15:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634E12264D5
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592340; cv=none; b=j/5oV9nQo0KTlQeNgUbKWWvWr/KbF82HdeCZELiZXKEmWBhKijcWHb3vPQeqB7a00m2vBXovcWek37L+rdlRKOg4m/zwSNrNruUUNF0x3Ju46yOggOqaZW9rHomfCLTSIENy8KQFic/LOH2/A9aZ8eyZs4Vq2DEg8X/Gyqf5970=
+	t=1752593162; cv=none; b=XJ70oXNBczDg/TRvc10qERjZ8w9zMEGOOO/d5y2gl+lg3x4lc2IAUAO1GzFH9aakZjnAmOcXWYIdl9L7/5r+xC2+xp8aLw4fjLOwYf5B/Y4BHYWG4VS1Mw5UxQAGGPy5RBRex4/qanJwjElPtlB8qLnbRmrP+fMfDBO4pS2aKs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592340; c=relaxed/simple;
-	bh=C7Bt6ty4O6b5hObsfJEEwxiNOyTN1VXF/4lKT7wSu18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSN/ORWnfLTEqQTQ24kVrZLepxwScm2194Mb0h7W6IAGYWjq1W+9njv6b3rKcLQ8oJrBe+tTkXTZ1oWsVN0bEMEQUixfN5yhaT79uX+KogCIuf8bH7jki/duWdwQEAtN9KGgQf/9gup4YQdGay87RqwkUajuZyMqaRP1up4y0fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ElfxlvT0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1752593162; c=relaxed/simple;
+	bh=xomn5vf15i0z+t9ioTU3UzRFpGuVxbhdf3uhcQIlnKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JSK1yg5Uw8wm8jtpZxndHy3n6BfUls2Lk7iYo5KOhEQghFaO3n44Qw8RcTdJhJagDzfet8Kx3WTD+2gY+YLN/Nbg5oDaBfH4kprYRs3qHq39ND7y+U8rzgHjZ/aECXOrxRkTtV0/Q4sidr/KphBg7IsaxtBTKPO3oSZok85lO9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=INCUKD2R; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ElfxlvT0"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56FE33sL027809
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 15:12:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/8/GQmYozt0hkVdJKNP3dY4c
-	27MmXYLwdf8DyqAf4/8=; b=ElfxlvT0VzYDBYqLPcqcx5u7gpdJm/0FYmMwnBnG
-	y+B4eho5GQ38s7gyWa5V2do3XLCADnVdKyNIdYEaRxCT0C1n6voidTAPb/dJ8PNM
-	cQjD55+s9FTC8E0DR8gaP1UR/8u1e6FZJsdhUG9oFq65KyWJvm1FKx/OIVGZhCDY
-	GqP34VrlblGX7kQjhS4nxUIVXBXKFZ9NLggE072UbjrSEaUUDqK9bPvusCTM1sc8
-	TYWch1G+ETibhGOgFvTa8N8/FWEZDaZpp8bAT7BoxZ0ifVXNJ6WcBNJaKwt99/uv
-	EPvODnurcR0dUiYP2bhTrorQpVZq/UucSCwyWS482wIFPA==
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ug380ueu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 15:12:17 +0000 (GMT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3df309d9842so129947985ab.3
-        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 08:12:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752592337; x=1753197137;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="INCUKD2R"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b2f369031so6343731fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 08:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752593158; x=1753197958; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/8/GQmYozt0hkVdJKNP3dY4c27MmXYLwdf8DyqAf4/8=;
-        b=vbqVHmtk+zKqcASpRC/26wUdr21wy1maypUSzkf2/NN2tiOKH0Odh4m8hLia8HEBAs
-         /+bbkGkbDiPEzmMAJe7W1eCUJzUgUFnnutGdoduA3uJVFbVUTwUALnc7h4ocQJ8PHldT
-         3XQznk/hjesGdrHSlGHaqwFmIoHB4oDG4jGyPNDEqfFwnlwLV4pIUn9kH/E4UNBBF9Gj
-         GB5NZk+JHuOsa/sVNO1BZokqSHrgxWGjylhwKvdTV3VMXfl3f06m6lVpJyy3A/cR9TG9
-         N0x/9Al2tXG/cBIlG1Ri40FToasrs2eDsIfnEzhjMHk0jnVJcOxKFh6G6JCLt/CoKCbk
-         fEXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOjRD39eu9XoJkhtdeSF4JYMPZypKXNy21YaFTKuF3IwTk+5MIXI1o7Tql8U/RwQ90H6L9eBk7tvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTD68aCFvkm26PLL7GmwEaI8vyIpy8YX1tuSqPxohgJ/I2gi1O
-	XkYhL2KX6SiMA+6oxh5gDJ+CNw/lPxb1i3Hc/5LjwyNldEunX0Kd28ERehtfIB+bNuGiMCSG9Vp
-	9XiMUKfFbl5GqKO8y5tz5CWpw/3wnbjbAUp2Q05gng5ZUBDStSns1+Hlr01tRGzw=
-X-Gm-Gg: ASbGncsWDHeOnXCEo+hfa+hYIWny/mhS6m1ksBuQiGtqVMCijR+W1wB4dY0vluYx0Uq
-	49vaF3U+jn7pJSJP20QYEv8EsqqXfB/Dwgb6OTHXdjNMKvffLTpowUDTLOkwVVf1oN2En9WX4qx
-	xd+CEEvKpXvaw0w2ZTcqsWlna/EnKLamcoP27HxwTOLljoj/4aKl+DXoXnhBR3HJqcT8Nw3wR4z
-	kna3frnVqz5kg7vADdk0FUMUeIwYRb6jxvfdjBLhMUm6ue+Gb7y/ntw472FYEoFawP4PjyZAmG+
-	gAaEglKgPKXyLTcXnc2DHKxP1lGdzIV33UkKNGkSZD8eqxanIEAEfwYq5KuB8a39rTVD7NpDqqq
-	7tEBWv9gGO+6tS6A6OwN4d9tSbE890d/Yvbr4K5XYYBoHTwarXixc
-X-Received: by 2002:a05:6e02:b23:b0:3e0:5042:6a0e with SMTP id e9e14a558f8ab-3e253317f2fmr190550705ab.14.1752592336618;
-        Tue, 15 Jul 2025 08:12:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuCcHGzu/NV0coaNVvZvnyxMM3fWdvavBShiCcBGZwVBVkpyKA9SgxNyTJ8HCuKA2VAmYM7Q==
-X-Received: by 2002:a05:6e02:b23:b0:3e0:5042:6a0e with SMTP id e9e14a558f8ab-3e253317f2fmr190549775ab.14.1752592336031;
-        Tue, 15 Jul 2025 08:12:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7f380dsm2345658e87.83.2025.07.15.08.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 08:12:15 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:12:13 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 3/9] drm/msm/disp/mdp4/mdp4_lvds_pll: convert from
- round_rate() to determine_rate()
-Message-ID: <tkqu2zt5yulnngwvda462fhmkmtmtjnwieruel6lfjr475h7ld@47goit7jldgk>
-References: <20250710-drm-clk-round-rate-v1-0-601b9ea384c3@redhat.com>
- <20250710-drm-clk-round-rate-v1-3-601b9ea384c3@redhat.com>
+        bh=eB2l8LirDQ3/3m1OWxvQpzeiYtShAHkpkyBAu7GfeKM=;
+        b=INCUKD2Rum6bpZZroqjDiQqKUyo8UjiuohCG+3ffjJrc7jcz5oOHLF3QMEjOBibaP9
+         CwBtP6LPc0fGwU/DcbGNxkRrdI4SqAXxhdpJcqZIazglFamVfYuaP4V0knnFx9CObU3L
+         ekLhZSuwbAeJ9GCk8/ky2PW28ZUXf8kLuS3OxJe4sT2Xn2FU7al9A4dgEN+QKfO/Nv29
+         qHyBT/WqI5jvmzRd07+SQuIYAE/RJ5/iJaNQDZPbO38x0BdTgylNrfQ5Boci6nD3gEC1
+         tY8PW+SJdYIVQpuzOcrvv8mnsr27wb2CH14iMGb1WMqeMSi/h49HGV6mMzfFrbKjP6bj
+         q9Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752593158; x=1753197958;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eB2l8LirDQ3/3m1OWxvQpzeiYtShAHkpkyBAu7GfeKM=;
+        b=knC26TdqGky4gKeIGHawB4LcOkglR8AF/KXCbyuFD/VOWJ0apD9eWbrjb1iPuwQgqr
+         FQkWyFfCaPoMtVFa2QGxrn7Cv/zAjlyVJeUGxKuqKJBWy6qcZxV0FfCwKQpXEWWI7dz2
+         vWX7IhsyPXdde6961zobh0k+RRdOKJM7dWtdbIRleap5ex+RTyIq7xApluF98OG2DSRf
+         o1ZJm6mtEE7eIUPXk48wcwtjdr9iqYd31QqPIp6phf/z6goCSbNO3wrX+s05Ab+WutAI
+         ifBieXm4hEzxxdnm1ax/ZfXsaVjruisbgIgVT37hLkBp4ETT+7xbv/XkKkVIERUZfRKY
+         byMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNlI2NuYQeM4te45/XjsiqOUv/nXLDeFMCA2lFTYhz2kf8MfxhgV553eLJGf43lJsK1m0Hh6a2AE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3dG+6u62UIl8v/Tom7LhVFCL2sCOBlSJ8tl09yS8w6QGd3Yk4
+	VA5ikdRn5HMjsKZrUyL6HAnrOBZXdLLmMxmBIzQDWTJVgOC00M2jY4bqLUT4jyzfA7U=
+X-Gm-Gg: ASbGnct17TvHcfjomeFAlxmJQMkHgAymnSSy2ZBW428nS6hK0u026kr7/cQZenZxfh2
+	txFa3oQsfQLdP/P2yoU2fK2IcSePy6ZejR1ystUyOiX1Tqg/yw+h20LQ6LtQVhFjjRfLdUgdj8U
+	zA+RQebp7ofIbma+/vLehvgVmSgZHBaMbb+xnVNCfgWXPjKLQEyR7e/CtCuPdTrY1N+a9B/MssX
+	U1H8wrIyjnJ1tZPHwEDHvlX8S5LsJp2wJN1X91Sp0YvJogU9j3YSpoP2ENZoPt78Mpw8KORVB0Y
+	093MhR+aUURFnmjz+rNQ69yO65Ll/uxIyiyh2XbJcNAJDweop1kgWYKX/93wuk60+yhgo2SPyfI
+	ZuZ7Mi3TdCl9ZCFhWGJSV8a12qkE3trM7CDqQwamhbRfYTe1X+SPDE6Valh5rDfHl2CG3sz2aoj
+	LZ
+X-Google-Smtp-Source: AGHT+IF3dqduT8P/WO27MvTE1kRxqSG27mj6p5eykY25Cj569ar5Hr43W9KJDXWVN/vPeuVB83X8RQ==
+X-Received: by 2002:a2e:b8d6:0:b0:32a:89bb:f8d9 with SMTP id 38308e7fff4ca-330873bdd0fmr2972821fa.6.1752593158292;
+        Tue, 15 Jul 2025 08:25:58 -0700 (PDT)
+Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32fa2913ca3sm19146791fa.18.2025.07.15.08.25.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 08:25:57 -0700 (PDT)
+Message-ID: <a58f2e68-41fa-4bed-9282-deb5e5435f4f@linaro.org>
+Date: Tue, 15 Jul 2025 18:25:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-drm-clk-round-rate-v1-3-601b9ea384c3@redhat.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE1MDEzOSBTYWx0ZWRfXwBTNfArZb6Zy
- wechFftUMVpUy8UB0v97gMRuVwzhsVJbNOPxuDO3mbknocbuzAfFeCHoouYorW4JGKqNx++O/KA
- Suhne/f2WmyTXKw2gpuupBLQ1Mhhyk7CLXp8iK1F7/5NsJXV5OkulYjDVxG8+3lUqIKlNAWqbd2
- 4+OPLm+Pm6ky/Blq2XbI5otEudpuHojiTclLtXI70NOJ6pQFizo68HJGijMim4cM+E6T4ea24Xz
- 1VAl44QJ0hArrElhkMYmVqJPCddUU7gqx+ai2IMDZ7KcrTx1dFY0AEqQF72WeRTsqHSB+TVXqtx
- Z7R8TlDADBIOslaLNXCPvYAvCUU0B6tt37fD4lNn3TK4oCeQ3WIwPxPUlmZv4Y8Eh8m6/xJAeN1
- 91VvhJJ8g0KMunt9xcTeZvga2im1jqlXJ1PgKoue7eKt1z0GpPKH8nid7QfpV3P6gsf9QwW6
-X-Proofpoint-GUID: 6F4NKR2MwJvY_kz_GsvcKoSF-dUjGFhO
-X-Authority-Analysis: v=2.4 cv=SZT3duRu c=1 sm=1 tr=0 ts=68766fd1 cx=c_pps
- a=i7ujPs/ZFudY1OxzqguLDw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=oBXrOfH6mq4iYN50PBoA:9
- a=CjuIK1q_8ugA:10 a=Ti5FldxQo0BAkOmdeC3H:22
-X-Proofpoint-ORIG-GUID: 6F4NKR2MwJvY_kz_GsvcKoSF-dUjGFhO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-15_04,2025-07-15_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=960 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507150139
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/15] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bryan O'Donoghue <bod.linux@nxsw.ie>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <9361e954-e2c9-41c6-be4c-12b0e4f367f5@linaro.org>
+ <ae0a309f-7e52-4d3c-8f26-989f22da5b07@linaro.org>
+ <GbVC82h7wSXQsAJh8XybKorKYy9wupjQLndjf_uYNXOZnk1UqS_tT4Yg9gzf8X3Kn55Mt5bXfcFrHtyMoFZ4-A==@protonmail.internalid>
+ <a4ebdf5c-8d4f-4994-afd9-22c8d889fe97@linaro.org>
+ <4281887a-e7c0-43bc-9e72-96f0e432c58f@nxsw.ie>
+ <f753f088-474b-41bb-82d3-6684bea2f87e@linaro.org>
+ <85c1a702-1a3a-4145-8f2b-240d61d6e72a@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <85c1a702-1a3a-4145-8f2b-240d61d6e72a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 01:43:04PM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+On 7/15/25 16:22, Bryan O'Donoghue wrote:
+> On 15/07/2025 14:08, Vladimir Zapolskiy wrote:
+>>>> It's quite easy, sensors are not connected to CSIDs. Moreover data flows
+>>>> from any sensor can be processed on any CSID, there is no static
+>>>> hardware
+>>>> links, which are attempted to be introduced.
+>>>
+>>> This statement is not correct.
+>>
+>> Please elaborate, what statement above is not correct?
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
+> "static hardware links, which are attempted to be introduced"
+> 
+> No such static hardware link is being attempted to be introduced, that
+> statement is incorrect or a misunderstanding of the intention.
+> 
+>>
+>>> The port@ in CAMSS pertains to the camss-csiphy device not to the
+>>> camss-csid device, so there is no hard link to any specific CSID in the
+>>> dts scheme here.
+>>
+>> And here it's just a confirmation that my statement above is correct,
+>> so please be consistent, and especially in any kind of accusations like
+>> you've just given above.
+> 
+> Sorry Vlad I don't see much basis litigating this further.
+> 
+> I've been very clear, I think we should have standalone CSIPHYs, there's
+> no reason to bury them inside of the CAMSS block - see CCI.
+
+I've never insisted on embedded CSIPHY device tree nodes under CAMSS
+device tree node, and I don't argue with it, it's kind of a red herring.
+
+Can you please write this comment on the relevant series discussion?
+
+https://lore.kernel.org/all/bed8c29c-1365-4005-aac7-1635a28295bf@linaro.org/
+
+> There's a clear way to do endpoints established from sensor to consumer,
+> there's no reason to give that data to the above CSIPHY driver, it has
+> no "use case" for it.
+
+Please don't ignore a different opinion shared by Konrad or me:
+
+https://lore.kernel.org/linux-media/427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com/
+
+It's unclear why this particular device tree properties are going to be
+added into some different device tree node. Since somebody made an effort
+to spot and discuss it, please share your brought effort as well.
+
+Unfortunately your series does not look technically correct due to the
+given reason, there should be a mitigation, and the defence in form of
+"it's been done always this (presumably wrong) way and shall be continued
+to be done this (presumably wrong) way" is barely acceptable.
+
+> Its unfortunate we've done parallel work but, I'd ask you at this point
+
+Reaching this point was not a coincidence, unfortunately.
+
+> to rebase your multiple sensor work on the proposed CSIPHY series here
+> and for drivers/phy.
 > 
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Please note that the technical discussion of this series has just started,
+so there is little sense to rebase anything else on top of incomplete work.
 
-Please take this via the drm-misc tree (I assume the rest is going to be
-merged that way).
+The practice of "don't look, don't see" shall not be normalized among
+Linux kernel maintainers.
 
 -- 
-With best wishes
-Dmitry
+Best wishes,
+Vladimir
