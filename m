@@ -1,69 +1,69 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4AC1A23BB
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 04:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E6F2D0C6E
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 04:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752554228; cv=none; b=glA5wi3ehceEnOHdnUabNu1ORqcnnHI0m/hga8Iq4VHhs6jAs8XNNHd9NBgJRW720G1vnNgZcbgVqaMxzGQOOvSyNDXSSs1UGqyWczxRx0/u2p+RwtiXbYSdj2J5jAXBsl35gWFLV+8HIfnOpFFkWgYAog8Xnn3hjf4ZBxiXJAA=
+	t=1752555232; cv=none; b=cFU/dIQaGUgzVLkY+zWKI5nWVjKniCt83pMN2JYg2FwmVIj6l9qD2IJmWt8gTeXkDAZEZrokYG/h0qOCv4gUQU0hg6xnDbU6/FHRLP3yKIcz4Aj4r8NiM1PSA4sa7uNpHx45KuCEDsEOzho23qF5MZ3mJ6pR+CYlR9U96b42/SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752554228; c=relaxed/simple;
-	bh=HEym2MfRYDRe1WStyHMOT8vdThlsV2VAJ0myxALEAgk=;
+	s=arc-20240116; t=1752555232; c=relaxed/simple;
+	bh=ATvi4aGPWZr7jsYVxGahNQIk0pvtoS1eIWZ4Pu0BH7w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kI0fB/3kMGgdE/XEMQfDtbb9Gv+hjl4uFd9TEzKgAs95h8mdzad7QbZj1QrB8jyzvAi9jJA2riiAgYsv/gBybfoiyYhOXjdchXtVhh5w1euCf0vBIYTMznQcU5dn/g9ADf4bYhBhLb8U4a1BK7exUAu+XK1FOVAqqID73nrFHLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A43henmj; arc=none smtp.client-ip=209.85.215.170
+	 To:Cc:Content-Type; b=WE9Ug86yWLGf2wvAGo6Uz9vVWzdaRS9TtqhdEjEqeZ5lYdwu3L7PICgtRMesN029vf0KbSMX8EDwDmSHbA/+L6HbpapOwmSLZ/3uKp75r3kftn4RtO+mrmPoFANwAJEL7KSFAbqsaVFGN/OYLKYo8hYdfbISV8TtbB3c0H/H39A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L24YxBLT; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A43henmj"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b31e076f714so4825609a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 21:37:06 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L24YxBLT"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso5202577a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 21:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752554226; x=1753159026; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1752555230; x=1753160030; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
-        b=A43henmj4KmroWVbHwKFQPtrnX1jzu3bqWZrGcEcn43gimxYAkUn3PRoJ30w9fVUBQ
-         0HYPp4Ti/KOmPGMhBaqOsQ5R7qRKn3IxWkeMxxoAp9qwQb3xwAMy9nJYouryCge+thrA
-         5GkzURi4DmrwjmLYQ3JDfXVRm36S1Fs7MGY3Y=
+        bh=Xxzs0W/OWz7Yf0jqBLWNHPj02B/wiWEvkccSHlPTKps=;
+        b=L24YxBLT+GxQFMGSG8FM/H990iO/donS2CplrP2rCVzLPK8dg7IMJEkmtU6PvC5/pX
+         SXcu4sGJIjHTIlfSzrW6LfJkNMbbAT0LeghtFDZeywiPtDntJR5Md5U4Kuk75uIJKFJa
+         AMYx/DnOuoAkafmdfaVdOz13oTDcVxi4JPpqA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752554226; x=1753159026;
+        d=1e100.net; s=20230601; t=1752555230; x=1753160030;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
-        b=vXxftNFXH3vYsBljlgq3TdXXGAL5lV92CebqR4luAD6KPonx0RC3f64yYNBgIFMKL9
-         LFkc0b18o3/v70BJH5tq30h1D7AhgBOAcrh6kcM+l3pOOuBHOcsouKxQQibaMNJutTuD
-         XkAvsuddol8+fAiF78OkGGQJa1ZFEc0W16bo0Xz5X7pLNFV2jda+1kzw+bzEwx+9FYjB
-         5EsHw+Ozfa9slOVg62adT3h8AgB5Ul09I0ys8riowt5cDp78PMZEZ571lJikvZ0thepS
-         oK6EwfSa597CpY5E9SAwsHx5Q3I7czx51wEP0gBzcN4yjKhzSEP1nB3BsFYxNGEHQXBE
-         q9jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVdwLIhVBD1gzQr81tZfLh3rpWcH2rYdVCslB7XLf+8bn5LILmWnCbc971nCD8w6Y3Gcu4eXnfWQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC2p0kUGCrS6oSmud3kdixto0WmuXa8aYUZuuTxy8y0dYx4pnQ
-	84FZun/wTPBmM+eHoe7uglxKiJDwcAiy/yUTIchqgYR+eMa8KqWk4SnewSMIipCEQRK3K1huS0D
-	pTxrHbG53lf85a/XU/ro61nPkTD3otrbt1Y940CoH
-X-Gm-Gg: ASbGncuhL32i4Qu7nA3s4fB9ztNT+BdRrf6fGxIxK2ozum35eGTzKsqK4B0zFegXoC5
-	6vNO9xARPusManOF7IN9MlBv4E98Z2SzVUJ7r2TB0pBEwxijEvPBYBDZo6hCPFoL0TnIQJLOU1i
-	L4rIIG/SHUGACu6Fy+LBIgzMtg+71j58EKtvHQq6Yzb+epK19LPzp9PGDfqtE8KDsGto8wDB/cI
-	Ie4e4j3yTqBteUm1oL5FaGXLgyG/qeH93jyRPBClIhTZg==
-X-Google-Smtp-Source: AGHT+IHf1xc3dLDnNYF/fDC0d2YbPGxvPK9FwAjwgXDKEU1kkJL2K+WT5K+79jl9PQ6eV0yj7I0MMHxdLoUbmyObj2Y=
-X-Received: by 2002:a17:90b:57ef:b0:30e:6a9d:d78b with SMTP id
- 98e67ed59e1d1-31c8f88d387mr3132859a91.12.1752554225889; Mon, 14 Jul 2025
- 21:37:05 -0700 (PDT)
+        bh=Xxzs0W/OWz7Yf0jqBLWNHPj02B/wiWEvkccSHlPTKps=;
+        b=mGudkbjZS/QRyDdSBxJT16KU85+SvWOqlK4HiLzm0H+5NMA/WgYbm/Ww/WAMVStxv3
+         rIO6fFpITr9kPZ3lO1xJLOQw6Shf0k0NCu4qojDb0Dm5GjV1rkF9bAXYZjZWZxLSCyhy
+         uQzGrV5KgeKhTR+XxfH35PdnZCmcvHlA6LPvMpBmpYqocTN+h7ib/+qRMMZTQhi3/exg
+         eDMao8GC/n0lg1S4+wcY0oIy5l6ZlRe9KGMjuFl26ePFNxNFGWZzA5F61Tha14ZfU4ju
+         eHWWJQRm4vg+twSpaxAxhLUAc9cjCUHDthnbUCWj+a1BsAispiDxP2uk7EV/bSfs7mVW
+         OBmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJZuz/elWLroSXoQDqHGbdGiPa9hSyC/APyjWDMJMduOu5obKqFUAZjXi8eldn81PXWNYLJMOhsd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQsQ96Qd2EayqHTHxVBx64mq1dHvx5Owq61p89+Pn3X+yjtDs5
+	CrP81csgwGY0W9mc4qXu8boA7MWcRcZK8ETn10gTSN/vq3IRDgOZKM2YZD5jHuCpZ6QFFjdKFPj
+	e0rpeq62m5egXx+rSAawVYveTCYYt3InWsz6YqmDF
+X-Gm-Gg: ASbGncvJGodkpMKXEtXtzEcf+1M0CWt3x25MT2WjRQrquPK7eb9TQFgsgXVSgW6DlOk
+	TAH91ija0lZOF+NTFlOii/G33PldGEMyu93YZQeiFvPw3N6398hwUTQWg2+MCRnx4pLF79E5Xjo
+	6w/hEcGxZfWnDw+YZ3ebUsxBkULBu+HmB78wH26MMIoJVIWZmNyCq4t8Wl3cge0frJE6hp+KExG
+	n/w8FquyMXhtd/CgT0rHXtWGRkD2xP4TwY=
+X-Google-Smtp-Source: AGHT+IG13a6ecncroinU2vqvFQBBadmDPhYtdK1UZWoU/n9vA+3Pboa6z8WAwc0a6SnJwk68A3zzrOg0RmDHIaFkD7I=
+X-Received: by 2002:a17:90b:5790:b0:311:b0ec:135b with SMTP id
+ 98e67ed59e1d1-31c4ccf06d1mr28107359a91.24.1752555230224; Mon, 14 Jul 2025
+ 21:53:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-19-laura.nao@collabora.com>
-In-Reply-To: <20250624143220.244549-19-laura.nao@collabora.com>
+References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-13-laura.nao@collabora.com>
+In-Reply-To: <20250624143220.244549-13-laura.nao@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 15 Jul 2025 12:36:52 +0800
-X-Gm-Features: Ac12FXyo_hm6-LevP76Ht3AHw10mSGdmwELcsNXs6PZZNLb0jYOFlkoLp35KGco
-Message-ID: <CAGXv+5ERCTTJVfgfY=LLTKasz7RpTdpPfHJDKtKiUfcYyrS8uQ@mail.gmail.com>
-Subject: Re: [PATCH v2 18/29] clk: mediatek: Add MT8196 adsp clock support
+Date: Tue, 15 Jul 2025 12:53:36 +0800
+X-Gm-Features: Ac12FXwBpf4BInit_x1dzKLocGTtxcJOU9mSygx6AUuM__BSzt1RWFNKQnx5RpI
+Message-ID: <CAGXv+5Fz4qBO-nPJu-bq0NEJK+md9XPJPPbd46TFCMS8=LQpAA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/29] clk: mediatek: Add MT8196 topckgen clock support
 To: Laura Nao <laura.nao@collabora.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
@@ -78,46 +78,324 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
+There's a lot of duplication in the driver.
+
 On Tue, Jun 24, 2025 at 10:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
 > wrote:
 >
-> Add support for the MT8196 adsp clock controller, which provides clock
-> gate control for Audio DSP.
+> Add support for the MT8196 topckgen clock controller, which provides
+> muxes and dividers for clock selection in other IP blocks.
 >
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
 ora.com>
 > Signed-off-by: Laura Nao <laura.nao@collabora.com>
 > ---
->  drivers/clk/mediatek/Kconfig           |   7 +
->  drivers/clk/mediatek/Makefile          |   1 +
->  drivers/clk/mediatek/clk-mt8196-adsp.c | 193 +++++++++++++++++++++++++
->  3 files changed, 201 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8196-adsp.c
+>  drivers/clk/mediatek/Makefile              |    2 +-
+>  drivers/clk/mediatek/clk-mt8196-topckgen.c | 1257 ++++++++++++++++++++
+>  2 files changed, 1258 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen.c
 >
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index cd12e7ff3e12..d4c97f64b42a 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -1068,6 +1068,13 @@ config COMMON_CLK_MT8196
->         help
->           This driver supports MediaTek MT8196 basic clocks.
->
-> +config COMMON_CLK_MT8196_ADSP
-> +       tristate "Clock driver for MediaTek MT8196 adsp"
-> +       depends on COMMON_CLK_MT8196
-> +       default m
-> +       help
-> +         This driver supports MediaTek MT8196 adsp clocks
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
+e
+> index b1773d2bcb3d..bc0e86e20074 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -160,7 +160,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VDOSYS) +=3D clk-mt819=
+5-vdo0.o clk-mt8195-vdo1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) +=3D clk-mt8195-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) +=3D clk-mt8195-vpp0.o clk-mt8195=
+-vpp1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) +=3D clk-mt8195-wpe.o
+> -obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o
+> +obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o clk-mt8196-=
+topckgen.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt8365.=
+o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) +=3D clk-mt8365-apu.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) +=3D clk-mt8365-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8196-topckgen.c b/drivers/clk/med=
+iatek/clk-mt8196-topckgen.c
+> new file mode 100644
+> index 000000000000..fc0c1227dd8d
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8196-topckgen.c
+> @@ -0,0 +1,1257 @@
+
+[...]
+
+> +static const char * const p_axi_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d8",
+> +       "mainpll_d5_d8",
+> +       "osc_d8",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d7_d2"
+> +};
+
+The next two lists are the same as the one above. Please merge them
+together.
+
+> +static const char * const ufs_pextp0_axi_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d8",
+> +       "mainpll_d5_d8",
+> +       "osc_d8",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d7_d2"
+> +};
 > +
+> +static const char * const pextp1_usb_axi_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d8",
+> +       "mainpll_d5_d8",
+> +       "osc_d8",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d7_d2"
+> +};
+> +
+> +static const char * const p_fmem_sub_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "osc_d4",
+> +       "univpll_d4_d4",
+> +       "mainpll_d5_d2",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d6",
+> +       "mainpll_d5",
+> +       "univpll_d5",
+> +       "mainpll_d4"
+> +};
+> +
+> +static const char * const ufs_pexpt0_mem_sub_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "osc_d4",
+> +       "univpll_d4_d4",
+> +       "mainpll_d5_d2",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d6",
+> +       "mainpll_d5",
+> +       "univpll_d5",
+> +       "mainpll_d4"
+> +};
 
-This is part of the AFE block, and really should not be a separate
-device node nor driver. The AFE driver should internalize all these
-controls and ideally model some of them as ASoC widgets so that DAPM
-can handle sequencing altogether.
+The next one is the same as the previous one. Please merge together.
 
-So please drop this patch, and also drop the entry from the binding.
+> +static const char * const pextp1_usb_mem_sub_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "osc_d4",
+> +       "univpll_d4_d4",
+> +       "mainpll_d5_d2",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d6",
+> +       "mainpll_d5",
+> +       "univpll_d5",
+> +       "mainpll_d4"
+> +};
+> +
+> +static const char * const p_noc_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "osc_d4",
+> +       "univpll_d4_d4",
+> +       "mainpll_d5_d2",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d6",
+> +       "mainpll_d5",
+> +       "univpll_d5",
+> +       "mainpll_d4",
+> +       "mainpll_d3"
+> +};
+> +
+> +static const char * const emi_n_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d4",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "emipll1_ck"
+> +};
 
-I've mentioned this to MediaTek's audio and clock owners, though I
-assume this request was somehow lost in the process.
+The next one is the same as the previous one.
 
+> +static const char * const emi_s_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d4",
+> +       "mainpll_d5_d8",
+> +       "mainpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "emipll1_ck"
+> +};
+
+[...]
+
+> +static const char * const spi0_b_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_d6_d4",
+> +       "univpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "univpll_d4_d4",
+> +       "mainpll_d6_d2",
+> +       "univpll_192m",
+> +       "univpll_d6_d2"
+> +};
+
+All the SPI clocks have the same set of parents. Please just have
+one list.
+
+[...]
+
+> +static const char * const msdc30_1_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_d6_d4",
+> +       "mainpll_d6_d2",
+> +       "univpll_d6_d2",
+> +       "msdcpll_d2"
+> +};
+
+Please merge the two msdc30 parent lists.
+
+> +static const char * const msdc30_2_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_d6_d4",
+> +       "mainpll_d6_d2",
+> +       "univpll_d6_d2",
+> +       "msdcpll_d2"
+> +};
+> +
+> +static const char * const disp_pwm_parents[] =3D {
+> +       "clk26m",
+> +       "osc_d32",
+> +       "osc_d8",
+> +       "univpll_d6_d4",
+> +       "univpll_d5_d4",
+> +       "osc_d4",
+> +       "mainpll_d4_d4"
+> +};
+> +
+> +static const char * const usb_1p_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_d5_d4"
+> +};
+
+The next one is the same as the previous one. Please merge together.
+
+> +static const char * const usb_xhci_1p_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_d5_d4"
+> +};
+> +
+> +static const char * const usb_fmcnt_p1_parents[] =3D {
+> +       "clk26m",
+> +       "univpll_192m_d4"
+> +};
+> +
+> +static const char * const i2c_p_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d8",
+> +       "univpll_d5_d4",
+> +       "mainpll_d4_d4",
+> +       "univpll_d5_d2"
+> +};
+
+All the I2C clocks have the same set of parents. Please just have
+one list.
+
+[...]
+
+> +static const char * const tl_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d5_d2"
+> +};
+
+The lists for the tl clocks are the same. Please merge.
+
+[...]
+
+> +static const char * const ssr_pka_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d7",
+> +       "mainpll_d6",
+> +       "mainpll_d5"
+> +};
+
+This one and the next could be merged.
+
+> +static const char * const ssr_dma_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d7",
+> +       "mainpll_d6",
+> +       "mainpll_d5"
+> +};
+> +
+> +static const char * const ssr_kdf_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d7"
+> +};
+> +
+> +static const char * const ssr_rng_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d5_d2",
+> +       "mainpll_d4_d2"
+> +};
+> +
+> +static const char * const spu0_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d7",
+> +       "mainpll_d6",
+> +       "mainpll_d5"
+> +};
+
+This one and the next could be merged.
+
+> +static const char * const spu1_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2",
+> +       "mainpll_d7",
+> +       "mainpll_d6",
+> +       "mainpll_d5"
+> +};
+> +
+> +static const char * const dxcc_parents[] =3D {
+> +       "clk26m",
+> +       "mainpll_d4_d8",
+> +       "mainpll_d4_d4",
+> +       "mainpll_d4_d2"
+> +};
+> +
+> +static const char * const apll_i2sin0_m_parents[] =3D {
+> +       "aud_1",
+> +       "aud_2"
+> +};
+
+All the audio interface clocks have the same set of parents. Please
+have just one list.
+
+[...]
+
+
+Thanks
 ChenYu
