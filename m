@@ -1,112 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F6C2D63F4;
-	Tue, 15 Jul 2025 04:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4AC1A23BB
+	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 04:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752552232; cv=none; b=SD+WCEnSaQEThHiHzPRG171gEQSNPK9ih9Smi9M88gj68J6ZSUq+PMVJNjyjSD0T/67jELTzFFhVYjEBaJ8di12CNk3wrVLqZ0Bho2q8FUQb8G/SylZNWEA9EWyRi8QOXZd1qqAei6sfENLHz8ENB3KVMX4a7KtO+8ni7OIoQ3E=
+	t=1752554228; cv=none; b=glA5wi3ehceEnOHdnUabNu1ORqcnnHI0m/hga8Iq4VHhs6jAs8XNNHd9NBgJRW720G1vnNgZcbgVqaMxzGQOOvSyNDXSSs1UGqyWczxRx0/u2p+RwtiXbYSdj2J5jAXBsl35gWFLV+8HIfnOpFFkWgYAog8Xnn3hjf4ZBxiXJAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752552232; c=relaxed/simple;
-	bh=htHW6rtHg7NSjIcI/4lWhbhWmP6UNSBw9fjzNoVOG+c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CswJ26wJc+h2/3Y74HKXyCCo/+2u1pqvRTshXQBrpWHZz0L+dUGrA9CjK/AyHFqWv8n8sBcJ13CoLSKmhHvnfgzWa2cjm3lLXdGNIXWNg5+v+h+kOh9HHTk5ZvHo0Ip98JFs2SKFH+/gnOVx9pqiOFoGGwmnUvWBiTe6tbssu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6O04kvv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752554228; c=relaxed/simple;
+	bh=HEym2MfRYDRe1WStyHMOT8vdThlsV2VAJ0myxALEAgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kI0fB/3kMGgdE/XEMQfDtbb9Gv+hjl4uFd9TEzKgAs95h8mdzad7QbZj1QrB8jyzvAi9jJA2riiAgYsv/gBybfoiyYhOXjdchXtVhh5w1euCf0vBIYTMznQcU5dn/g9ADf4bYhBhLb8U4a1BK7exUAu+XK1FOVAqqID73nrFHLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A43henmj; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6O04kvv"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D593FC4AF52;
-	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752552232;
-	bh=htHW6rtHg7NSjIcI/4lWhbhWmP6UNSBw9fjzNoVOG+c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=F6O04kvvIj2entXcpHjijwWVFKNbId5Ft7+2xkar8HPtwglWLAu3b62JxMSlHwvi4
-	 zA3rR33pp+21x37MHL7RkNQJ1oFYUb6dMdO3TV1qebXQBqbcFZq4+bS9gnkzvdHvJg
-	 MJFR8T5Dxoier5Q5BYDKb48TcCQRUb+k2+C5ux4V4pfkaPsTjHZ8cLFNtYpJYeLnhc
-	 9QstN6ruwurdg9vK5u5h6MuH3Hks6QTCq+/7sAUIVdQfwEonZQKr5jez8ZXV60QpAc
-	 c42tgrRMpCrn6xaXDmnWkXXrjhJo2fLQ/UJU+IjrYEuEIKipEwfyrUpK2xRB/N4pDT
-	 +0cg5Obh6xFmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C405BC83F2D;
-	Tue, 15 Jul 2025 04:03:50 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 14 Jul 2025 23:02:47 -0500
-Subject: [PATCH 04/17] dt-bindings: usb: tegra-xudc: Document Tegra210B01
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A43henmj"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b31e076f714so4825609a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 21:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1752554226; x=1753159026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
+        b=A43henmj4KmroWVbHwKFQPtrnX1jzu3bqWZrGcEcn43gimxYAkUn3PRoJ30w9fVUBQ
+         0HYPp4Ti/KOmPGMhBaqOsQ5R7qRKn3IxWkeMxxoAp9qwQb3xwAMy9nJYouryCge+thrA
+         5GkzURi4DmrwjmLYQ3JDfXVRm36S1Fs7MGY3Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752554226; x=1753159026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gqg4UcH4HOCD8WdGE4+ik0rgx/yjtc/u1ELlwLDaNkk=;
+        b=vXxftNFXH3vYsBljlgq3TdXXGAL5lV92CebqR4luAD6KPonx0RC3f64yYNBgIFMKL9
+         LFkc0b18o3/v70BJH5tq30h1D7AhgBOAcrh6kcM+l3pOOuBHOcsouKxQQibaMNJutTuD
+         XkAvsuddol8+fAiF78OkGGQJa1ZFEc0W16bo0Xz5X7pLNFV2jda+1kzw+bzEwx+9FYjB
+         5EsHw+Ozfa9slOVg62adT3h8AgB5Ul09I0ys8riowt5cDp78PMZEZ571lJikvZ0thepS
+         oK6EwfSa597CpY5E9SAwsHx5Q3I7czx51wEP0gBzcN4yjKhzSEP1nB3BsFYxNGEHQXBE
+         q9jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVdwLIhVBD1gzQr81tZfLh3rpWcH2rYdVCslB7XLf+8bn5LILmWnCbc971nCD8w6Y3Gcu4eXnfWQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC2p0kUGCrS6oSmud3kdixto0WmuXa8aYUZuuTxy8y0dYx4pnQ
+	84FZun/wTPBmM+eHoe7uglxKiJDwcAiy/yUTIchqgYR+eMa8KqWk4SnewSMIipCEQRK3K1huS0D
+	pTxrHbG53lf85a/XU/ro61nPkTD3otrbt1Y940CoH
+X-Gm-Gg: ASbGncuhL32i4Qu7nA3s4fB9ztNT+BdRrf6fGxIxK2ozum35eGTzKsqK4B0zFegXoC5
+	6vNO9xARPusManOF7IN9MlBv4E98Z2SzVUJ7r2TB0pBEwxijEvPBYBDZo6hCPFoL0TnIQJLOU1i
+	L4rIIG/SHUGACu6Fy+LBIgzMtg+71j58EKtvHQq6Yzb+epK19LPzp9PGDfqtE8KDsGto8wDB/cI
+	Ie4e4j3yTqBteUm1oL5FaGXLgyG/qeH93jyRPBClIhTZg==
+X-Google-Smtp-Source: AGHT+IHf1xc3dLDnNYF/fDC0d2YbPGxvPK9FwAjwgXDKEU1kkJL2K+WT5K+79jl9PQ6eV0yj7I0MMHxdLoUbmyObj2Y=
+X-Received: by 2002:a17:90b:57ef:b0:30e:6a9d:d78b with SMTP id
+ 98e67ed59e1d1-31c8f88d387mr3132859a91.12.1752554225889; Mon, 14 Jul 2025
+ 21:37:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250714-t210b01-v1-4-e3f5f7de5dce@gmail.com>
-References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
-In-Reply-To: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752552229; l=1146;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=Jyy45qLdZDq9DiQVnsxM/Qp0gR79KFt6neXymT4FCWQ=;
- b=TcCa6TVpGjZW7jzTH8gjJ6dgjSh/2EdBKGUTbaM2ZDtD0kBy23zs1eI/CDye8JwKO2xOUgB31
- lQDc77DFvRuA+nPAP4zJoCewfmgWm9F49iS26kbUgAvOq9BDkIfHDPO
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-19-laura.nao@collabora.com>
+In-Reply-To: <20250624143220.244549-19-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 15 Jul 2025 12:36:52 +0800
+X-Gm-Features: Ac12FXyo_hm6-LevP76Ht3AHw10mSGdmwELcsNXs6PZZNLb0jYOFlkoLp35KGco
+Message-ID: <CAGXv+5ERCTTJVfgfY=LLTKasz7RpTdpPfHJDKtKiUfcYyrS8uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 18/29] clk: mediatek: Add MT8196 adsp clock support
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Hi,
 
-Extend the Tegra XUSB controller device tree binding with Tegra210B01
-support.
+On Tue, Jun 24, 2025 at 10:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
+> wrote:
+>
+> Add support for the MT8196 adsp clock controller, which provides clock
+> gate control for Audio DSP.
+>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>  drivers/clk/mediatek/Kconfig           |   7 +
+>  drivers/clk/mediatek/Makefile          |   1 +
+>  drivers/clk/mediatek/clk-mt8196-adsp.c | 193 +++++++++++++++++++++++++
+>  3 files changed, 201 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-adsp.c
+>
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index cd12e7ff3e12..d4c97f64b42a 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -1068,6 +1068,13 @@ config COMMON_CLK_MT8196
+>         help
+>           This driver supports MediaTek MT8196 basic clocks.
+>
+> +config COMMON_CLK_MT8196_ADSP
+> +       tristate "Clock driver for MediaTek MT8196 adsp"
+> +       depends on COMMON_CLK_MT8196
+> +       default m
+> +       help
+> +         This driver supports MediaTek MT8196 adsp clocks
+> +
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+This is part of the AFE block, and really should not be a separate
+device node nor driver. The AFE driver should internalize all these
+controls and ideally model some of them as ASoC widgets so that DAPM
+can handle sequencing altogether.
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-index c6e661e8915ca4d3e905331299d981f4d3964314..4574e66e7c1d3d3c918991920bbf4f3ea0ee6ab2 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -20,6 +20,7 @@ properties:
-     items:
-       - enum:
-           - nvidia,tegra210-xudc # For Tegra210
-+          - nvidia,tegra210b01-xudc # For Tegra210B01
-           - nvidia,tegra186-xudc # For Tegra186
-           - nvidia,tegra194-xudc # For Tegra194
-           - nvidia,tegra234-xudc # For Tegra234
-@@ -130,6 +131,7 @@ allOf:
-           contains:
-             enum:
-               - nvidia,tegra210-xudc
-+              - nvidia,tegra210b01-xudc
-     then:
-       properties:
-         reg:
+So please drop this patch, and also drop the entry from the binding.
 
--- 
-2.50.0
+I've mentioned this to MediaTek's audio and clock owners, though I
+assume this request was somehow lost in the process.
 
-
+ChenYu
