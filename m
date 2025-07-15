@@ -1,134 +1,292 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010005.outbound.protection.outlook.com [52.101.69.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D46426A0EB
-	for <linux-clk@vger.kernel.org>; Tue, 15 Jul 2025 05:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752557205; cv=none; b=bxSyvjFyglxqYwdlAyRwu4k5i++gwwctG12Nqem/v9a9746VJzSrYMs6ShZz6ttHpB4q2R385A0iVsVQH06zQbEs7qLqplw6m6H5g3dAXGHIfTnBv5WD1HjnZJNsvE+C2mWy5nlcC0C0sAocgRXfqn4FgCDnKNYVIgpHF5aJQ1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752557205; c=relaxed/simple;
-	bh=Vok3sAiLujP5+hTf7U9u6KkZUMEHc7gwTOuzgIEBsWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gA8AqVAXrOng3dMcNjCxxd36VPIvqF/xJ2V9Ste8MRWSQDegss3N4frG/WBsWJ5mWaxoZFNreG+nUqqOxwxrmR00LQnkr8ZFzXuivUbIABuQIsSd5HdGK4xQWW4svoVbKVLt8ypDXnAFVz+fhYM64lidhCSFaYlf28akNm4b/QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UtP3Cg2J; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73862265CBD;
+	Tue, 15 Jul 2025 05:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752558446; cv=fail; b=pyKIvc5msreB+HZ1LsXcWnQO+fqkALtyM8M/KOh2uUOarBA1RTj0bmVBorWJXF7cn2WWvowpY6knBUbeZbWuqhktBXBu/SFnBiU8NKJxB0VePU7+j5p7RGRKOuz7S4+Nur3dIK6Raow2oI4wedZEHDImwN6jjySdUrVnUUbu/zM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752558446; c=relaxed/simple;
+	bh=KCjGKzWbWmzfueUUC3Iss6OqNE5m+2lHSR68hwNF2MQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ChmdvWDVj8fFahjgz40KxhlyA/13fx30Njf4oa3CA7sAPLKPsP+A3dIS7NBw9PXlNR0nthW6OSZNcGzLPP3hmJwt0dnk4kaQe8N58nCYF6gFUh/Q9kfXkHt9nHX2itJRvIG3dO5NZgl9G2FCQPmlm3QPMWFTTv5VC6lWeqIlXX8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=t/SdT/4h; arc=fail smtp.client-ip=52.101.69.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UtP3Cg2J"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-556fd896c99so4360263e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 14 Jul 2025 22:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1752557201; x=1753162001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EriOcw6Ti5BC4myF5JQ02kFXKB9Pwigas67q+yAyzZY=;
-        b=UtP3Cg2JB1Gh2e3V/wnmeHpFpvPqHf03QPPoGYlyiv4DE3nTeYn9cIdoM+J4oB0vsi
-         PLGdDg7yOAsnFwC6rLkIUTEldxTQyypC94wClnaRR+5ihly/0CW1wU6iWf/OupOtHKRp
-         hBArkONR4cuiWfaXs/peRUT7zJ4sIuutOL3jk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752557201; x=1753162001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EriOcw6Ti5BC4myF5JQ02kFXKB9Pwigas67q+yAyzZY=;
-        b=C3hFT1oaUg/J9WR+TemVgQTCwFGRRL2WOzAwMa6VmC6/e2TEOSd92DRrdeTp3dHQ53
-         NjiYzDl+TJ8oJAsJ2rQcs1xmChqYqjtRqHgJ/I3qSTdAiyY8fRHZZVv8tRliiR+kqrCP
-         gCr1RKaoWaci8sVqLeT1E2VwkWbRtmJGQuCXJYMU0KSktVSaf0j52o0US9gPE6XMgWuF
-         Rs7P1QGTrWIhoDgRApgqgYQRzF+Lvko6wlt4t0kFKOPaNH1kgcb1onnXjlSw/Z0qvFXK
-         VhirtLPMpMu6lzh/yS7hF7iSbkrCixwOpFZbBhQrP53qG/gxxOQt2g5DKS+Zig6HY55r
-         xrAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVac7TeeGY/cx5HFN14Q64QU7DBabjnhj5HCb0IxJYLH6sThg3X6zqLmdqcaJ1OCK5KuhgYb7b4/Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbwQPKro2LsbHKMth+RwEdVvGUg7ZjZ7hvBcdqrn/TLdkksqnP
-	gE8AeGlz8y3jOZrdKhNcMNOE0tMyUfwarZWQYqVh/T0F6rmMF3iGMT77MFg3HEu77ijahn2XTr3
-	pK4fRWdADR6cz5SM/zXCfeBDaFqcY/8o+RTQFY2b1
-X-Gm-Gg: ASbGncu/P7bstI0CY29XNeMWM+Sm1cdr5QVM2Z5Hg9geSRh3grKWiZUVhu7VCLmd/Hn
-	soHg7IbSiGmJ7YHQG79QDev0ynNGpu6rsnATJyBPFNJAlZI13t75ZMg7WzIFG6k5Yj0usDnk4qm
-	I4cNujGXi41AXNoIlaORKjFIOEzBKY1w1S07aD0jt2kzwaJPi1NRB5jh80Vnhf9VTD9FjdSbPr2
-	HB1IJjhNCEspUfBHurlcjp9oy3jokkij0E=
-X-Google-Smtp-Source: AGHT+IEQf0W1yeQYNRbpUyAxFlgjb3kYw5Q0BNqfDsziWw7aP+1TqaYvLMXYRwQa9tomb76nSKuU56uoGnkXehDyLpc=
-X-Received: by 2002:a05:6512:3b9c:b0:556:341b:fb0a with SMTP id
- 2adb3069b0e04-55a044ca226mr6271614e87.15.1752557201192; Mon, 14 Jul 2025
- 22:26:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="t/SdT/4h"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FFJ7AFtQUh+Yhuom6BCs5NRcYAORd72dxN4a3O17UPh2F7HPU03JDVNL40eEQHMMPqx158pGUbjSFYKpQrFRJZ5rz4NXI385PPKkhlxcR10X2u8ZD1VXTOwaBG9cnE8nk/+wqdokk9WbQfomTdUjgVQ3Csh68oxKjouzCOaKkQRuHbeTGFdrSwtzkytfsA0UIO6GbXOPBDXAZQjHK7TDOj875oa/F8W+aWFkQRaDbVLhp1eRCsXCBNwzsVcCsBJ3s48SUxE17NCOP29dS00abDAv7DW0Zt0uyabfrxQb2Gm94DYktUpPptKCZaMwWwIdPwJ4uyBu5N3XfNACILEImw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7SBEDoGFPiLPL3Ns4pnCJDA527hjLRBUGiMYrqaB0IM=;
+ b=AmcTMXSBfl7OmzyV0ll9PKe5SqjNSp3SRS7qNb67gZQZNXHY6XL5In8m/u2R43836RX+pdx3QbysVJp9WoXVa1juQUoyW3NLDC7I9SoZReOfO6J4g8QQEgr2RR0S0LXgIXCrB0qvSOxKzQV/em5XfSakJhdb+OHjA9RpzTvnuftSWmKQxyEvzhFP2S1uWieO0UhzGB7azbB+RNOYBDOnNW3a6w0Dp2pgR/EORXOjwK39wnp2BaDWe0Lu9/CbTAgLcqAbAv1fQnGjAEFQumjsc23l2Zoa5ThAjkvpxCPirHNiM9SAJiQWliguhcQrzlgr+HBxFiItGgQGc0PPDZPsBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7SBEDoGFPiLPL3Ns4pnCJDA527hjLRBUGiMYrqaB0IM=;
+ b=t/SdT/4heYRPPA18AeX3afvS3XisfZ5uRFvDIQg+RbhciA1oMZ6VC3yVisQjeuUEVTfywFSZ6pubD1PNctkuma2seb8Sa7V8/JNt6Y9QlS9sVj2XW40Lis8ZreRF9uEpURMiukMbrfPSOO22apn3kV9lhcvTCnWi7SGyTNFdhvtV+2O0KbNXm4EsDgclBvziyoU3T9TgTDPK9qjc35LrETDiUvotXmXPBVufI0qMWzGibtCvF04v+G6wzn2D7l5WgpPuAJmg5Wq3lhjSC3PvTSzEXMfaBrXxCNtXaLrDzh17iQTmsIzl8IZe01NZE2gAsQEuhtNo1OuyHg8Z86nwGg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA2PR04MB10311.eurprd04.prod.outlook.com (2603:10a6:102:413::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
+ 2025 05:47:19 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 05:47:19 +0000
+Date: Tue, 15 Jul 2025 14:57:42 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/13] clk: imx: convert from clk round_rate() to
+ determine_rate()
+Message-ID: <20250715065742.GD632@nxa18884-linux>
+References: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA0P287CA0009.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:d9::9) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624143220.244549-1-laura.nao@collabora.com> <20250624143220.244549-13-laura.nao@collabora.com>
-In-Reply-To: <20250624143220.244549-13-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 15 Jul 2025 13:26:30 +0800
-X-Gm-Features: Ac12FXx0XfJFXA_DIIE4IblGQiwtiWyeXBGiD295gCS64kpCUO8jzl3QeCZ10ZM
-Message-ID: <CAGXv+5EWEsLBS86G828ezpnD3x-MaC3F-AtyGFyzKxPvZ0GcAw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/29] clk: mediatek: Add MT8196 topckgen clock support
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA2PR04MB10311:EE_
+X-MS-Office365-Filtering-Correlation-Id: e22ca01e-6e6d-430a-ae7c-08ddc3630fb9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|19092799006|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ocNe+gtMdQG4moBmpOtpy9ERLmof25/AtUNHGz6MurDxj+bmN6xV986DZmfl?=
+ =?us-ascii?Q?eYpdl2Tiwb7B/jzGqL8DUtzUvmO3Lye0wbc44FaAvLv1dVoT3lIM+yJBF7dY?=
+ =?us-ascii?Q?cTR1cc5JOCkLDx55LbcWaCGi834RtsU7ZLLJw9l0HTvgsr/sLWCRUXzveV+S?=
+ =?us-ascii?Q?zUKyJHt6x7PDnwypPoJOZKRFPoLFZ/elfsR1vRl0/0LGpnCHW4I+8M7gcSi2?=
+ =?us-ascii?Q?nac7jlUy1ex4nCFNc8ev2mZ32iIJVwp/DdSDouARKBZOMD5Yc0+gHyYHO8aE?=
+ =?us-ascii?Q?ws4v+JDl6NwADiRg41xQtG0SbpV2U7rmiIX6LqNio2iE5bCd/x1aaCyIpvmq?=
+ =?us-ascii?Q?xGhsjaMsppmzc3nRY8QvZZ5xoEua2xkB2B8pHleImrrXyjE3dNdad23EfmNL?=
+ =?us-ascii?Q?hZKyoEARdlMIC6EjU/g2zWJt8WbQUyb8MGRxshhm7U4x3g9kCwX1V6mRDRQr?=
+ =?us-ascii?Q?Gbd3cQBQ9ZQE+oV/lu0Xu0GI6ofXOx3abQAdWd5kY+P5pQsQZwE7cS6/khYN?=
+ =?us-ascii?Q?1kwe4ki3TjTnLN9BI5Tg4/EZJTrwuP4L3FrdIwPC9UZdnH88rpflwMwzOGNh?=
+ =?us-ascii?Q?olH3kZ419etM3UNN8s8ae15E47k9HqkfHhWkegRWJH366Fz0ogIHJsAkomQG?=
+ =?us-ascii?Q?kjGRNCDXgy2OlEiLe91W00q6qC7PAjwDdu4JwNCMuhIwI5/c8m8wloyOV6wf?=
+ =?us-ascii?Q?rypciP8PGyupBf1eVzX6RWrQJXoHmJNKMuKXot+Q4cA7ycrUjJ/Prb59CX6R?=
+ =?us-ascii?Q?HNayiegZUbYui7H203Qx2hIGOj/ji6/ZwUaRhwKgMyxE2UjZOe5dgTSRInCR?=
+ =?us-ascii?Q?rcKhCi8w/vSiCqTFEyRlUiznCUVaNItTKzSHEp6uSk2XITNLCAkz690O3diE?=
+ =?us-ascii?Q?s59B9dd4Xm5XaUzVsWahMcEtNDwiE6rFyFQ5qn+godugMLS3U9i9TqqcQPRS?=
+ =?us-ascii?Q?fpG1IR+Mef9noy2Bil1g1/etbLI8Agn7Rna0vAJ2wGDJ8eO8eYuGRvjq/4GY?=
+ =?us-ascii?Q?W0JEkhrdpla9EgVwzBCWslGwVxYvqH0zs5icYI4qMmkjfVHeVf3yeKabrK+j?=
+ =?us-ascii?Q?eto5JCF4GZg+W5UtUJCpxrfbKzuHJimQMv+a6IjEj+iMS0an+ljhnTWEQIDu?=
+ =?us-ascii?Q?qk/HBYe/LBBx1gGqdcu5iK4svtJWZaB1Nl9tClyhMBrwo75Br7hUKKKGwwc7?=
+ =?us-ascii?Q?haHkrMcq35ff9JnEIyP4pNUnKvBJS0kmJmb3OoTkPHWkF3OD02sQ14VnpvTU?=
+ =?us-ascii?Q?eBDXwhTOINZb7oQoL6iSlTCUVRxwuD8Nr3QIqSx/VCSOMqVBNo/fTiBnC5k2?=
+ =?us-ascii?Q?8Xljqt6LI0sWA4gKubb+91EgXV/Upi3UJ22sfEOQBtBBi3FuFGS7M6reKOBe?=
+ =?us-ascii?Q?I9YSB8WRjLl9bqdgKce33aU9xxDp2THmhlmzBDUOCjgeyM8lvlk1HGq7ugAC?=
+ =?us-ascii?Q?wLlVWC4zvxQ0Mj5qm7+E0Ja32qhGk9NeJEgyjB0KDXVkw1I+FQD6rw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9ssu7gUVkDypsOdMAa0vwqwLUDbzVhcKlDYFJ/eAfoKm/VWVY2K7aQR/Arvh?=
+ =?us-ascii?Q?4M+USDAsvv0v4kZ5GpX/wafAkZa7l0NXcMRJMMn7EtwJXm+plOt0E4eHphgj?=
+ =?us-ascii?Q?GtAicKAA5EM4BCSHFlChdGyKk88cO5hqiWS2vxbiQMalMt66yoEw9MsTFnUG?=
+ =?us-ascii?Q?5DqU2RYCoisyg3furl05oCXaTFMAvCT5y5AzRLXkL+AY+uTt0Nn6TSbyApo/?=
+ =?us-ascii?Q?idTNyppRGQiPrh1fagspGy8U1qX977qWdaqkNWFDjWyoswEfzrJEwdE1KNlq?=
+ =?us-ascii?Q?0DSk32MJodkAXg/6MLyWD+PjzJ60pXEl417taZClmK8m/xXW7ijQUU5sKtfJ?=
+ =?us-ascii?Q?AlTsbwa1S3F3WT+GHqMlNMvktA2m/z96R1krRXVxLHRcUkQQCzyH8Mr9n4kS?=
+ =?us-ascii?Q?cR5lKRWhVNuhgSVqSO0PZob1Ouscj/0VAysfphCGaCglh0NJWmAwYQ4SGyZM?=
+ =?us-ascii?Q?z8jiK83q0tenUuFsRh5u+fej1wsR9aC+o4eCAl/xP2E1K+Uz39zgIFGaXEZp?=
+ =?us-ascii?Q?Xja/SwTWA9QDFy1SAloRV2f4ZT6uAW+f59RiA/y7ChDNH/mW21qKNkAWUMt8?=
+ =?us-ascii?Q?Chk0juIdqcc6qkvoJroOHznBk2L276tMabp/KdYeycDWLhENBxwp+qeJQssO?=
+ =?us-ascii?Q?GbT6rd3G3SyMAdafVkXb1HdUiMKC1EytdNZ/bwu3g9f4rP89GHZEShATMnqS?=
+ =?us-ascii?Q?NmtIqpIC57mL9iG6rr2uf7VaWMCceDgUGphhVg6Jo9lWK91OeauVssr+DZ4A?=
+ =?us-ascii?Q?6609aQ1qfW7AQ+BGQ3oBrqf+h3yg8+kxfg0gvtagQZNSqGKRzSCwxUPDwchS?=
+ =?us-ascii?Q?zsAsS99iD3cR5akIUoEQTSAtOWZioCiVwQuaGVwrm7QBdOTaPmL2pz5JM+Pc?=
+ =?us-ascii?Q?T+dTOWDv9Ct5q3/+BVikMun3lDruGOkxJYEs4TS59WHmeEuYHczypBfxW1mo?=
+ =?us-ascii?Q?B1On+HsM6jCMLjlrC75NM4SbNVL5dMod/8NTSUELX5QlKUdrvH9lZF4Hyp65?=
+ =?us-ascii?Q?b8JIXjzIGDrNiNFAi5Nf+xD1xs/a5X+uXX2LWxtCG/biv7Uwl8UpshqWY/4V?=
+ =?us-ascii?Q?4B4sDzKQnk8ah8fn46tSR0r7N0q8R/08oTwQLmnDsVKMAmXrriWPlwgkFBS1?=
+ =?us-ascii?Q?W+bnoFW+8syw2+5f5NyLWqLFMuKic2Gn+svdp+QVSNsHqXcTda7QMipcxPxY?=
+ =?us-ascii?Q?xerIT7dG9vr5uhCleZeXOHCYfCkP0Ehq0Kkc4hUo4dLJQQP7MnQ53HvesRSU?=
+ =?us-ascii?Q?dYsrXhE7UAsJBm3mUHKKBpnMfN/GLFKunCh8IeH1099dhXkhZp9QxhJtYCTt?=
+ =?us-ascii?Q?EHAdPagHOT8Ypu+k0rDrI1l9JH5nRl6RntkuZa2yyaw6b03+4u3hIrP+7aZ+?=
+ =?us-ascii?Q?80iyiFFyVUY3tVjiM6T83hZTm3IndxZ4g1ceg/V7OcinaK2ADxLD1KxMjn/n?=
+ =?us-ascii?Q?HCYEFiXtdHm0ovE+6rdTgDSyj4jvBENM/FBevPj1Ytwe7BmVBMsP3okV5OPS?=
+ =?us-ascii?Q?96hlNa+fUtW7nHqpiGaaA8dY1xItM3GQ59gNUHs682tKZCSfB4iRUT4quc4V?=
+ =?us-ascii?Q?UmmjpKpvwNU0UbsNSGh1F6g43th5W7et2h52jWnD?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e22ca01e-6e6d-430a-ae7c-08ddc3630fb9
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 05:47:19.2017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U73MjSIboTNWGDH0fJek+vR1EpaL0ckD+itAS3ZPU2p1tTFrbVQiW9rEq1N+fJwvTUpQwfKrsoncsXwvAh6kKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10311
 
-Another thing,
-
-On Tue, Jun 24, 2025 at 10:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
-> wrote:
+On Thu, Jul 10, 2025 at 05:10:32PM -0400, Brian Masney wrote:
+>The round_rate() clk ops is deprecated in the clk framework in favor
+>of the determine_rate() clk ops. The first two patches in this series
+>drops the round_rate() function since a determine_rate() function is
+>already implemented. The remaining patches convert the drivers using
+>the Coccinelle semantic patch posted below. I did a few minor cosmetic
+>cleanups of the code in a few cases.
 >
-> Add support for the MT8196 topckgen clock controller, which provides
-> muxes and dividers for clock selection in other IP blocks.
+>Coccinelle semantic patch:
 >
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  drivers/clk/mediatek/Makefile              |    2 +-
->  drivers/clk/mediatek/clk-mt8196-topckgen.c | 1257 ++++++++++++++++++++
->  2 files changed, 1258 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen.c
+>    virtual patch
 >
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
-e
-> index b1773d2bcb3d..bc0e86e20074 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -160,7 +160,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VDOSYS) +=3D clk-mt819=
-5-vdo0.o clk-mt8195-vdo1.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) +=3D clk-mt8195-venc.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) +=3D clk-mt8195-vpp0.o clk-mt8195=
--vpp1.o
->  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) +=3D clk-mt8195-wpe.o
-> -obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o
-> +obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o clk-mt8196-=
-topckgen.o
->  obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt8365.=
-o
->  obj-$(CONFIG_COMMON_CLK_MT8365_APU) +=3D clk-mt8365-apu.o
->  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) +=3D clk-mt8365-cam.o
-> diff --git a/drivers/clk/mediatek/clk-mt8196-topckgen.c b/drivers/clk/med=
-iatek/clk-mt8196-topckgen.c
-> new file mode 100644
-> index 000000000000..fc0c1227dd8d
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8196-topckgen.c
+>    // Look up the current name of the round_rate function
+>    @ has_round_rate @
+>    identifier round_rate_name =~ ".*_round_rate";
+>    identifier hw_param, rate_param, parent_rate_param;
+>    @@
+>
+>    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+>                  unsigned long *parent_rate_param)
+>    {
+>    	...
+>    }
+>
+>    // Rename the route_rate function name to determine_rate()
+>    @ script:python generate_name depends on has_round_rate @
+>    round_rate_name << has_round_rate.round_rate_name;
+>    new_name;
+>    @@
+>
+>    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
+>
+>    // Change rate to req->rate; also change occurrences of 'return XXX'.
+>    @ chg_rate depends on generate_name @
+>    identifier has_round_rate.round_rate_name;
+>    identifier has_round_rate.hw_param;
+>    identifier has_round_rate.rate_param;
+>    identifier has_round_rate.parent_rate_param;
+>    identifier ERR =~ "E.*";
+>    expression E;
+>    @@
+>
+>    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+>                  unsigned long *parent_rate_param)
+>    {
+>    <...
+>    (
+>    -return -ERR;
+>    +return -ERR;
+>    |
+>    - return rate_param;
+>    + return 0;
+>    |
+>    - return E;
+>    + req->rate = E;
+>    +
+>    + return 0;
+>    |
+>    - rate_param
+>    + req->rate
+>    )
+>    ...>
+>    }
+>
+>    // Coccinelle only transforms the first occurrence of the rate parameter
+>    // Run a second time. FIXME: Is there a better way to do this?
+>    @ chg_rate2 depends on generate_name @
+>    identifier has_round_rate.round_rate_name;
+>    identifier has_round_rate.hw_param;
+>    identifier has_round_rate.rate_param;
+>    identifier has_round_rate.parent_rate_param;
+>    @@
+>
+>    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+>                  unsigned long *parent_rate_param)
+>    {
+>    <...
+>    - rate_param
+>    + req->rate
+>    ...>
+>    }
+>
+>    // Change parent_rate to req->best_parent_rate
+>    @ chg_parent_rate depends on generate_name @
+>    identifier has_round_rate.round_rate_name;
+>    identifier has_round_rate.hw_param;
+>    identifier has_round_rate.rate_param;
+>    identifier has_round_rate.parent_rate_param;
+>    @@
+>
+>    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+>                  unsigned long *parent_rate_param)
+>    {
+>    <...
+>    (
+>    - *parent_rate_param
+>    + req->best_parent_rate
+>    |
+>    - parent_rate_param
+>    + &req->best_parent_rate
+>    )
+>    ...>
+>    }
+>
+>    // Convert the function definition from round_rate() to determine_rate()
+>    @ func_definition depends on chg_rate @
+>    identifier has_round_rate.round_rate_name;
+>    identifier has_round_rate.hw_param;
+>    identifier has_round_rate.rate_param;
+>    identifier has_round_rate.parent_rate_param;
+>    identifier generate_name.new_name;
+>    @@
+>
+>    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+>    -               unsigned long *parent_rate_param)
+>    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
+>    {
+>        ...
+>    }
+>
+>    // Update the ops from round_rate() to determine_rate()
+>    @ ops depends on func_definition @
+>    identifier has_round_rate.round_rate_name;
+>    identifier generate_name.new_name;
+>    @@
+>
+>    {
+>        ...,
+>    -   .round_rate = round_rate_name,
+>    +   .determine_rate = new_name,
+>        ...,
+>    }
+>
+>Note that I used coccinelle 1.2 instead of 1.3 since the newer version
+>adds unnecessary braces as described in this post.
+>https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+>
+>Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-[...]
-
-> +       FACTOR(CLK_TOP_APLL1_D4, "apll1_d4", "vlp_apll1", 1, 4),
-> +       FACTOR(CLK_TOP_APLL1_D8, "apll1_d8", "vlp_apll1", 1, 8),
-> +       FACTOR(CLK_TOP_APLL2_D4, "apll2_d4", "vlp_apll2", 1, 4),
-> +       FACTOR(CLK_TOP_APLL2_D8, "apll2_d8", "vlp_apll2", 1, 8),
-
-These aren't used anywhere in this driver, but they are referenced
-directly in the vlpckgen driver. Maybe these should be moved over
-to that driver instead? Otherwise we end up with some weird circular
-link between the two clock controllers which doesn't seem correct
-to me.
-
-[...]
+patchset LGTM:
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
