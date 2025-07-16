@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9492F50B8;
-	Wed, 16 Jul 2025 16:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9E52F547D;
+	Wed, 16 Jul 2025 16:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752682354; cv=none; b=YCUiF2VX7nyQr05HkVXPf4iaoRbNh82bceehNBHsqOyqYD8U19Vz3Z83wKsXhHVnYgsIuLdyrT5mrtWToqSuuSXqOxiiFfB3mFArrcXOgBzTsLqEGMKZa3jP0TPG9UZ/UtoJ5NtUB8pqaVFg61KEjlF79llY2CeEQWAEFtYDQdk=
+	t=1752683300; cv=none; b=UYfQrLXOUqAWBXOmIc0JGQqEyFMu8WM5+BWMo863YOZ+MObVmQ6r3ygnzv6cZYtLyEwQ47BuKXbrY4XvaYqPwM5+NcpIVr2iXSS7ALM0inAzjeH+k4DfelBNVcm261ICOvVhYipTRyIaM8AefknTJohCJb7w8ocGzMZGo8MJT5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752682354; c=relaxed/simple;
-	bh=4RIN2hrU1HdbS1s5ZZBlRAaPrj9Vh7exAp3T9fPos7Y=;
+	s=arc-20240116; t=1752683300; c=relaxed/simple;
+	bh=4zkpwfIOUUTyN1Ymt7KErCQ4PKOBKCudqIMM213+wAc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMRYrM3L10Ncxe9jwc4k2wtmuTFTPEYdDgEuvEnDXwV9k4iR8NObWziAjDQ7SFcXfixEQPvmSFuWYiCOut4I64+UYLnPMKgmW8oo5ApQJVohJZ7aW/B8lwprCjcdwZ9/f4Dq2xqZ4M06LW8AEOU173UsYnCJQDDcjrR27eq0R+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmOv575G; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=WM5Bj+jWlEH50+j3cgojiWaSWkyigpHs0Ny7jorpTRhS864e0kM0Gb/5wn9Si3G4MVJS8ooCla63EyxcERm6qz1Um9j6hekpLvjH9Wt/ld4HQft2icHVmD8ynpUK5Pet54dU2Ed1Q1KLCJah6MmR5plCG3kpy3rTy4F3RjRnJpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhwtlHDx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmOv575G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81F7C4CEF0;
-	Wed, 16 Jul 2025 16:12:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhwtlHDx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584C3C4CEE7;
+	Wed, 16 Jul 2025 16:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752682353;
-	bh=4RIN2hrU1HdbS1s5ZZBlRAaPrj9Vh7exAp3T9fPos7Y=;
+	s=k20201202; t=1752683300;
+	bh=4zkpwfIOUUTyN1Ymt7KErCQ4PKOBKCudqIMM213+wAc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TmOv575GgElyW1GgwdjsKZpwD0biAuRLbyahFdI459NXbSDSel2tjH/d4ZORLCNSa
-	 4W28Ip0Nr6Rnv8TvBcwxzaBjOtYEo8U9W1M2Hyg8XzKovfp/s1Eg5KKUsYxEPKbHPJ
-	 NcGIx0oCQSTirIX9ETB2cdOUxj4k4tpMIWehTlGk+n1S8cEfo1Gykt/PiYdMZLQcuP
-	 UWBCa9Aue8azcha+BCSTLX6zvTyVDb4vAIdns4u8JCCyJZMtBFPUxnOQWufl/n6UH+
-	 8OObnigHN9gMtkKpqDdUd9RVPqG929G8R3fMZSJttMV2lcALSFfm9TTT8v6yhAP//k
-	 0bIza3pnCN/Rg==
-Message-ID: <bfe8b558-444d-4fa7-9e01-e55aaf48f2d2@kernel.org>
-Date: Wed, 16 Jul 2025 18:12:28 +0200
+	b=ZhwtlHDxo0bHDXUvhCbEb3jQetqpelwrBM1oFaD6w9IJJrh+MZy3du8xmeE21mG6B
+	 rpQRdNsbxDlFCbE0upfvA+ATta/oCroZwO4Y5hg1RqHyRmvo2ppmq3k4XnsKeqglYs
+	 Q8q41xp6xJ+NPoLTyzUdywE8Hc8xAKQ0KBCqED1nO7H0bu3nxqkfKRxIvqMwH2i6UO
+	 xH+ZeHGa5/QjKHXxkBUnAYMZo9jbqAqqLgmTmQS+aOJ4f+JAmJ9Xkbia/1kHAIFEjI
+	 jA3fTkTGq3cxXQGvBUAfSWFWO5gvJ3WODk4hr8bL/FAJyjybiUAlwfhVHoS8fa+hXU
+	 B6r4DESs/4/2A==
+Message-ID: <28ea2b11-a269-4536-8306-185bf272bd60@kernel.org>
+Date: Wed, 16 Jul 2025 18:28:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Add support for Clock controllers for Glymur
+Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
+ Controller
 To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org,
  mturquette@baylibre.com, andersson@kernel.org, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, quic_rjendra@quicinc.com,
@@ -43,6 +44,7 @@ To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org,
 Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,19 +90,75 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/07/2025 17:20, Pankaj Patil wrote:
-> Add support for Global clock controller(GCC), TCSR and the RPMH clock
-> controller for the Qualcomm Glymur SoC.
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> 
+> Add support for Global clock controller for Glymur platform.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/Kconfig      |   10 +
+>  drivers/clk/qcom/Makefile     |    1 +
+>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
+>  3 files changed, 8634 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-glymur.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 051301007aa6..1d9e8c6aeaed 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
+>  	  Say Y if you want to support graphics controller devices and
+>  	  functionality such as 3D graphics.
+>  
+> +config SC_GCC_GLYMUR
 
-This is the first time this name appears, so if you do not have
-in-flight board bindings patch with full description please say some
-words here. This will allow the community to understand how this maps to
-other known products, of which 99.9% use model names, not internal
-codenames.
+G > 7, please order alphanumerically.
+
+> +	tristate "GLYMUR Global Clock Controller"
+> +	select QCOM_GDSC
+> +	depends on COMMON_CLK_QCOM
+> +	depends on ARM64 || COMPILE_TEST
+> +	help
+> +	  Support for the global clock controller on GLYMUR devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  I2C, USB, UFS, SDCC, etc.
+> +
+>  config SC_GCC_7180
+>  	tristate "SC7180 Global Clock Controller"
+>  	select QCOM_GDSC
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index bf95729678f6..cdc3d9ba9024 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -94,6 +94,7 @@ obj-$(CONFIG_SA_GPUCC_8775P) += gpucc-sa8775p.o
+>  obj-$(CONFIG_SA_VIDEOCC_8775P) += videocc-sa8775p.o
+>  obj-$(CONFIG_SAR_GCC_2130P) += gcc-sar2130p.o
+>  obj-$(CONFIG_SAR_GPUCC_2130P) += gpucc-sar2130p.o
+> +obj-$(CONFIG_SC_GCC_GLYMUR) += gcc-glymur.o
+
+Same here
+
+>  obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
+>  obj-$(CONFIG_SC_GCC_7280) += gcc-sc7280.o
+>  obj-$(CONFIG_SC_GCC_8180X) += gcc-sc8180x.o
+> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> new file mode 100644
+> index 000000000000..a1a6da62ed35
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-glymur.c
+> @@ -0,0 +1,8623 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+
+Missing date.
+
 
 Best regards,
 Krzysztof
