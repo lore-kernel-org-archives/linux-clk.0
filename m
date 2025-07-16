@@ -1,98 +1,167 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE27523E320;
-	Tue, 15 Jul 2025 23:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58D02857CD;
+	Wed, 16 Jul 2025 07:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752622120; cv=none; b=SEBA5taD65VCRIzuzJUsT0lHWQPMPG0zI+qoE9gk1WOZBGXDZX/X/Voulnq+wdOxJJZyXsxpDQCNiGAQNduK1vQIsG2hyCbIXl0Xp1zmjgo9YMd00OMEeJWrhTrzOz/Au46i/FH7VMg8H2VmwU2PtGAttI1Cyn2s0TJqCer4Q+w=
+	t=1752649496; cv=none; b=EFkTqZVIS69IZnlRb6DU5ARZ4jThdOxiLeIUCIXnayMD8GSPdC6NMOTVvRhS/aamp8P4Kxfjh5Wb3fkEWyhejp0zDj/CwKNApmrKOorPicJwvKjUEkzt5KK9NF6Nw3OKX/tJXppHrZCQcceUf+DuYypzM6M8nVXSNyseVnzGjQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752622120; c=relaxed/simple;
-	bh=KyPnLxCQanvEcVHmi+5itxw/D0+fsHEbld35/w59fLQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=NEJM4ou/VRElPFfqL/vv+nWnAhHIAeppzSloYDefeni/KT8ZmrUMT9Zuc4DuyrVI0a5xINh9t3PU7EPvGWPwrDStRz1nX52rVOxzyEKP+kFxKoB9TUd5e7tftSQppdKppW3zbwkK0iFuCTvPwkmuq6aecZ4gx8qW8xIpk/LnWEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAIkGsPy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752649496; c=relaxed/simple;
+	bh=n5jDS6P6Z09q/E7TBP2aC3Jqc7A6owgR1MsLzr1mN+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNRJaMLisH5LmXrQU2V9RbzmsCOWZf/G5QEVYquSM+ZxWCeXb1ZkoqdCl7kWnUg9Ls+6+nKalwF6/1RBYcBUrg6qaTtQnBVQLRnzpPrIPqzMzk78j640vJuHAUduNM9bBjU3vctid9gI0vhNa2feCem2lwXoR9owjqHYO9WEfXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFG6zI2u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAIkGsPy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFDCC4CEE3;
-	Tue, 15 Jul 2025 23:28:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFG6zI2u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9143C4CEF0;
+	Wed, 16 Jul 2025 07:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752622120;
-	bh=KyPnLxCQanvEcVHmi+5itxw/D0+fsHEbld35/w59fLQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=XAIkGsPyjcQ6Pvc5PUhmeJ21NBrlX7JTvq1l+YEI5nV0/V+8Y6bBzobpBZlmp/LN0
-	 WH/xQsRKt8+JcEO3pSK3kCrtRfqf0HAe9cKKm3HFw29I2QeqpyFbSUeY4fVkRgALA+
-	 v8GxKL9hZku9yzon7676VRTQ8Evq5BWSxmn7dxBS1o4pa5CcW+gpAu43XCLa9AbHw4
-	 P6X9SCvL7xIIQixJL6wbxJVjBSmeCPBkTb0i2GRYcYctOV187F2hi5foR4xSjB9Vy3
-	 AMw95fsEfpwKrT+DgtAlz1BnzsPUIDUPwbCIz8iwZoLOPvJQYaHGKHY5rak9ce3dv1
-	 oAxsG8WCPKBtQ==
-Date: Tue, 15 Jul 2025 18:28:39 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1752649494;
+	bh=n5jDS6P6Z09q/E7TBP2aC3Jqc7A6owgR1MsLzr1mN+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VFG6zI2u3XoXatQkR4SlZo52it/lESL/DyhxEF0NS77I3sT4leBM8M05KCYXtTesu
+	 BorGIFj7gurVfgONyWkOcyO1uw81eoyit106tHI6NsrirMjR3jB7QaItKM8FpP5IU6
+	 zGkh4I9oq4dE+2M3sXxfyxJ9RwSBH01O36TTvMawiFRFPZnNr4TPEDpeLA5KYweCCy
+	 qPY8RlIRorDHmHMLwKQK5eWp4XKMFSdHnAz8lC4YXzX39fVTMiqblPaX00Jkh8/U9L
+	 A30BmTkcku0hSCFi7Bk+dtU9eJl2slthDeh1Gz7tZQt+ADY2YV2mTtuESR+O86LVkL
+	 /1kJ73qVsWHlg==
+Date: Wed, 16 Jul 2025 09:04:51 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arseniy Velikanov <me@adomerle.pw>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek: Describe MT6789
+ clock controllers
+Message-ID: <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
+References: <20250715222221.29406-1-me@adomerle.pw>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Arseniy Velikanov <me@adomerle.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 In-Reply-To: <20250715222221.29406-1-me@adomerle.pw>
-References: <20250715222221.29406-1-me@adomerle.pw>
-Message-Id: <175262211911.2439655.2970589940654906363.robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek: Describe MT6789
- clock controllers
+
+On Wed, Jul 16, 2025 at 02:22:20AM +0400, Arseniy Velikanov wrote:
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-afe
+> +          - mediatek,mt6789-camsys
+> +          - mediatek,mt6789-camsys-rawa
+> +          - mediatek,mt6789-camsys-rawb
+> +          - mediatek,mt6789-imgsys
+> +          - mediatek,mt6789-imp-iic-wrap-c
+> +          - mediatek,mt6789-imp-iic-wrap-en
+> +          - mediatek,mt6789-imp-iic-wrap-w
+> +          - mediatek,mt6789-ipesys
+> +          - mediatek,mt6789-mdpsys
+> +          - mediatek,mt6789-mfgcfg
+> +          - mediatek,mt6789-vdecsys
+> +          - mediatek,mt6789-vencsys
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    afe: clock-controller@11210000 {
+> +        compatible = "mediatek,mt6789-afe";
+> +        reg = <0x11210000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+
+Drop the rest of nodes. One example is enough. They are ALL THE SAME.
+
+...
+
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..d6f70ee918ad
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-sys-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek System Clock Controller for MT6789
+> +
+> +maintainers:
+> +  - Arseniy Velikanov <me@adomerle.pw>
+> +
+> +description:
+> +  The Mediatek system clock controller provides various clocks and system configuration
+> +  like reset and bus protection on MT6789.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-apmixedsys
+
+Why this does not fit existing binding file? Or Mediatek maintainers
+preference was to switch to one-binding-per-SoC?
 
 
-On Wed, 16 Jul 2025 02:22:20 +0400, Arseniy Velikanov wrote:
-> Add new bindings for system clocks and functional clocks on
-> MediaTek MT6789.
-> 
-> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
-> ---
->  .../bindings/clock/mediatek,mt6789-clock.yaml | 142 +++++++
->  .../clock/mediatek,mt6789-sys-clock.yaml      |  68 +++
->  .../dt-bindings/clock/mediatek,mt6789-clk.h   | 390 ++++++++++++++++++
->  .../reset/mediatek,mt6789-resets.h            |  15 +
->  4 files changed, 615 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
->  create mode 100644 include/dt-bindings/clock/mediatek,mt6789-clk.h
->  create mode 100644 include/dt-bindings/reset/mediatek,mt6789-resets.h
-> 
+> +          - mediatek,mt6789-topckgen
+> +          - mediatek,mt6789-infracfg-ao
+> +          - mediatek,mt6789-mcusys
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    mcusys: syscon@c530000 {
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Drop unused labels, everywhere.
 
-yamllint warnings/errors:
+Also, node name is supposed to be clock or reset controller, not syscon.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.example.dtb: /example-2/syscon@10001000: failed to match any schema with compatible: ['mt6789-infracfg-ao', 'syscon']
-Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.example.dtb: /example-4/clock-controller@11f01000: failed to match any schema with compatible: ['mediatek,mt6789-imp-iic-wrap-n']
+> +      compatible = "mediatek,mt6789-mcusys", "syscon";
+> +      reg = <0xc530000 0x1000>;
+> +      #clock-cells = <1>;
+> +    };
+> +
 
-doc reference errors (make refcheckdocs):
+Drop the rest
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250715222221.29406-1-me@adomerle.pw
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
