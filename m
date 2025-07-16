@@ -1,107 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F120E704;
-	Wed, 16 Jul 2025 10:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554FF2F362F
+	for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 10:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752660890; cv=none; b=I2mIyj6pN+129lirOt/SErrcaHYuKi5uc+wbBGb5oZbqUQmGM6zpGhLeUFf/pTPV3EYI6HzeTWNIrHCcJ63PXC80aupq6kpD0H6RSuT4zV5j6LesqRaPebCnxChzlt7QQxQEpbewM1yYW+KCmDBEY7tFzWOLYorgBSX10HpSiJk=
+	t=1752663592; cv=none; b=mmSBWHtOvaoAconTFzs5M86us9myvolhntbzOo81SUITdzqTorox71f9E1rkmRxCOwHmFAELNiWTaqTNLEZM1pGUNRAmQNZzpGopgjaUlTSOHdUmjfMuBNCoaQ8vKcfH2c4Wi61jzY24v8srsZIFubqnJ2B0R929LK1YhNkzot4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752660890; c=relaxed/simple;
-	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dw7F7Xd++jy7ITZQdyXmRkX6BNfv9A5welbk8ZFoZj+2oxewT7pSj05NzGQbxaumazr1du0kCpNEuAYPEVu2bwTX+HbyXpOvo0c4Vd0EvONXBA7uvRWddPemD/YhD8Fv84z67knfq7gWQETV3ygTckXPZipRimwgR9MlowSe2iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOKeeCU/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752663592; c=relaxed/simple;
+	bh=RdqRsNDKKQgfrmCzzuSlgn+ij1i4HNnTBhYJQ0dea1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K8l1GFBbRu7E0wEdZFuXkuWNr2QXAQCf63rTJmZKkfjMhx0DuPjfhf2ajJprH/yg9TXtUWSbyEzHzwlOsfDBkW7/D6xRz+sIoPPIniuFpvfXQpOjkfc4R48XBesgmlFKp28+/jaMOWdQW5i57yRQl95LhNXPo4GwwVfY/9ZpWn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvLMByKW; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOKeeCU/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8949BC4CEF6;
-	Wed, 16 Jul 2025 10:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752660889;
-	bh=ZAJ4hltXuvDrA1GGiGb4i5399iwHMLmhNwupb9CXkxs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hOKeeCU/pjKMC2NPJSWQ8DxIWEIVjScFWz7ziwxLtCmiGmFGtOzcvx0qzFB0gHEwj
-	 y3OAaC7OkmqXklzm5qmGZyMddX5ZvHHv6x+F8EQa/5mf4t3Mz5v5IEQeyFH6uJt1ox
-	 8JIoXzdurcQ2DS5bSHmAiKnPPw2A5jNQca/KpbXj5/OACZlCbUj5ZZ5D78mG3bNOZA
-	 sWqPKHNfcwDb0aWX6xKZge46mh1CzDsLdG5AUcSzkBQQnYVSWO+9DZSBhXDlIqmFIC
-	 GJPGPGNigitGA8Jm2ggCFE+WNxwyG1EwuLnzjfEH4VMMs58WUl3jzo8TV/TU7g1oyn
-	 JYN71CvwLzciQ==
-From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Oder Chiou <oder_chiou@realtek.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-Subject: Re: [PATCH 0/6] sound: convert from clk round_rate() to
- determine_rate()
-Message-Id: <175266088527.17737.6588270584150732640.b4-ty@kernel.org>
-Date: Wed, 16 Jul 2025 11:14:45 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvLMByKW"
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-451d7b50815so42180325e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 03:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752663589; x=1753268389; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
+        b=gvLMByKWWrz/Je21u/3w94ywjHh/tG5rkSpEu7VlmghZTilm9RXPY+RVoMAMJXksla
+         b9+fiylhJAmnML3q9lrgDt8Soa2jVA6kO9EW+8HMNBSfZTwsPbwKMIoGlsy2/egVH2vT
+         NqCQ2qJ8JsWbNNntz/57I7zToJIPGQD2lnSY0FuXFT8ihW2nDdKoWQ+6MlCeji7EQLhc
+         Ab2p4nY7SHOewCtYwJbwg6o2thxcQjzuAv7XfMea5YV1njfFKtBW/M5HVpiGcgCPlmGi
+         waa/J0deZaea7W7wefY2Mf62WowpKH+70ZU3bFIVcoyEdSavBsyBMV5QF4rM54unV6GB
+         G6IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752663589; x=1753268389;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
+        b=juwcz4nYjzZfJI0LWnEG0Vcfy7mwDN3EZR/l+FtPvaEqWP4u/NUNUk7X4kL+oZe+D7
+         3uK56zKTx70cxYqpNlDYkHReD1VXNzZzUvvwfIMpJHLaVeY+7TyDjd84/V/Jf14QY6BS
+         IO8Bk/3TrjXUI3vmzBmiomRrxwxTSzLzapUXRfxhj4qthFWrrCOmT8XXvnf1+grX3OR1
+         mpNt0xw2Ij33zY2niKKWCh+0dI8TeyGBfAMSXe0vHJZleEKzSTwmu2fTaNp/aSiesyqH
+         MbjB/QGeZu6QslfN0Fbtocv3yRBbmDsyW/AJ0lqAqFJMkLfUsRvwd0l+9K+J5FueYBlX
+         YiTA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6RWBjgt1l+BM9V1s7ovAt/TWr5E5OOfExzoMfJmvoMVCnSUmuR9iAur/8Ic7AQCw61pg/MBoqeOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO7zw4YhLbNxUCy6wKu1oc+lvnSFn5FVZIErqUZWa6o3q51lEp
+	wJ+SinevSnZrR9M67vqwEtDY286pQBq4Ds6LUfkoGrLPTZvpCG2llwptFLfL0W+SKSg=
+X-Gm-Gg: ASbGncvTlrAI053F5iq2Z5XBvBMUgkyQe+am3LV0+1vMMCsuLsrHSM2uwU+wW/z/0E3
+	O+vpQHRbO4tKfkUFP+YLnjzFZNs/bDUdk77WdP26Mr6lbv96CpY9TBEckQEsLFmmNOp4/afS3P+
+	6zeqilrH0cZt+5HYRnl/KuBH90dES0KyLqNpLKod1oqWqhpEGPmKjJpJwiHIxk2Kz+8/NGb5oOY
+	6bpx0OIjNTCtvAbMiE1hS83T/Q4v4ai5ssxFc+RITalExWKbokhpswCpJIXliBwg4x9UhpWWxZN
+	gY8FpvaLg+fR1OyRM0NsheDdU1Wr67VCt4Q8VvLTTYl9MIIu7QCYEI5Cger1XYeVcBjWc0lIcbC
+	xxO3cZPk1abCdyPXR6Wq7HWTNqt+Im1ppVgmwLa0VD0Essg7iMGjDFS5AGNUziig=
+X-Google-Smtp-Source: AGHT+IFW0OX33KBpiLU6YOL+IJgDcuTQ1zq15zYqdjMf2JYYuPC7KCK+xgulExDW9Uc9Bd9opQZwkQ==
+X-Received: by 2002:a05:600c:3f09:b0:456:d25:e416 with SMTP id 5b1f17b1804b1-4562e331640mr20250845e9.6.1752663588670;
+        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b600722780sm9817655f8f.23.2025.07.16.03.59.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
+Message-ID: <40784fe0-3c70-4e1e-8b42-fa7230c2485d@linaro.org>
+Date: Wed, 16 Jul 2025 11:59:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/15] media: qcom: camss: Add support for PHY API
+ devices
+To: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
+ <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-4-0bc5da82f526@linaro.org>
+ <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 10 Jul 2025 11:51:06 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the rtc subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
-> 
-> Coccinelle semantic patch:
-> 
-> [...]
+On 16/07/2025 10:36, Loic Poulain wrote:
+>> +       if (!phy_np) {
+>> +               if (!res->legacy_phy)
+>> +                       return -ENODEV;
+>> +
+>> +               for (i = 0; i < camss->res->csiphy_num; i++) {
+>> +                       ret = msm_csiphy_subdev_init_legacy(camss, &camss->csiphy[i],
+>> +                                                           &res->csiphy_res[i],
+>> +                                                           res->csiphy_res[i].csiphy.id);
+>> +                       if (ret < 0) {
+>> +                               dev_err(camss->dev,
+>> +                                       "Failed to init csiphy%d sub-device: %d\n",
+>> +                                       i, ret);
+>> +                               return ret;
+>> +                       }
+>> +                       camss->csiphy[i].phy = ERR_PTR(-ENODEV);
+>>                  }
+> So what happens if we have `phy_np` and `!of_device_is_available`, we
+> just continue without any phy initialized?
 
-Applied to
+Hmm. Good question.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Yes but, that's probably not what we want.
 
-Thanks!
+Thanks, I will look into this.
 
-[1/6] sound: soc: codecs: da7219: convert from round_rate() to determine_rate()
-      commit: 8a4d73121d6bd9a70895e65d6d1014ed6b0a6c8e
-[2/6] sound: soc: codecs: rt5682: convert from round_rate() to determine_rate()
-      commit: 4e15a10f6fb254e33d73a6da3c4d00e3e64d2eb8
-[3/6] sound: soc: codecs: rt5682s: convert from round_rate() to determine_rate()
-      commit: a37d9c8aef1c78876eff0bc8980a889c083de89d
-[4/6] sound: soc: qcom: qdsp6: q6dsp-lpass-clocks: convert from round_rate() to determine_rate()
-      commit: fc62ed665eb2e8fb0f1e12ab9cdb578666704a76
-[5/6] sound: soc: stm: stm32_i2s: convert from round_rate() to determine_rate()
-      commit: afd529d740028a41fa750d4491b106cecbccba3e
-[6/6] sound: soc: stm: stm32_sai_sub: convert from round_rate() to determine_rate()
-      commit: d5f317fd5cd9dfdf5bbe11384001817760c12b75
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+---
+bod
