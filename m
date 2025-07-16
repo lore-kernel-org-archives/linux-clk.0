@@ -1,121 +1,94 @@
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554FF2F362F
-	for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 10:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03D92F431C
+	for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 12:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752663592; cv=none; b=mmSBWHtOvaoAconTFzs5M86us9myvolhntbzOo81SUITdzqTorox71f9E1rkmRxCOwHmFAELNiWTaqTNLEZM1pGUNRAmQNZzpGopgjaUlTSOHdUmjfMuBNCoaQ8vKcfH2c4Wi61jzY24v8srsZIFubqnJ2B0R929LK1YhNkzot4=
+	t=1752667455; cv=none; b=NJKEO5UjReo8I0Kih5F1SPKp8RaJpdHWmUJ6m9E2+Xs+EEUJtwOjwzHHbC79pIClQizMbrk6PzaCFeIoQmibwOvf53mvq2CclaM5wJk38IjJA0CKTT2QwjGZbK344+fA1uMkCgHxa3nE/z4VJqG6ZGe4iVewJFd7O9m+bxPzrLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752663592; c=relaxed/simple;
-	bh=RdqRsNDKKQgfrmCzzuSlgn+ij1i4HNnTBhYJQ0dea1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8l1GFBbRu7E0wEdZFuXkuWNr2QXAQCf63rTJmZKkfjMhx0DuPjfhf2ajJprH/yg9TXtUWSbyEzHzwlOsfDBkW7/D6xRz+sIoPPIniuFpvfXQpOjkfc4R48XBesgmlFKp28+/jaMOWdQW5i57yRQl95LhNXPo4GwwVfY/9ZpWn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvLMByKW; arc=none smtp.client-ip=209.85.128.68
+	s=arc-20240116; t=1752667455; c=relaxed/simple;
+	bh=TvaafB06rCr8tuOU9vZPWgCbFPy7lxlkirtCxoG7TnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugsCu1jXY2DSf7GzF86uCBHXdq+Qx6tnjCbqy/LAvFS43p4gp9KRAF4qH0UCgqHXapX9rcX9HmgM5N92ro3eSb7h/0+XlLewG/q93iRFLdxurmvjH/zoHEMzmVkykY43PPNJJdWAoxrrF4YdSZxMu+0WfRA/U4nXk6xmVihbMSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DKWIEuwd; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvLMByKW"
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-451d7b50815so42180325e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 03:59:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DKWIEuwd"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so10186309a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jul 2025 05:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752663589; x=1753268389; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
-        b=gvLMByKWWrz/Je21u/3w94ywjHh/tG5rkSpEu7VlmghZTilm9RXPY+RVoMAMJXksla
-         b9+fiylhJAmnML3q9lrgDt8Soa2jVA6kO9EW+8HMNBSfZTwsPbwKMIoGlsy2/egVH2vT
-         NqCQ2qJ8JsWbNNntz/57I7zToJIPGQD2lnSY0FuXFT8ihW2nDdKoWQ+6MlCeji7EQLhc
-         Ab2p4nY7SHOewCtYwJbwg6o2thxcQjzuAv7XfMea5YV1njfFKtBW/M5HVpiGcgCPlmGi
-         waa/J0deZaea7W7wefY2Mf62WowpKH+70ZU3bFIVcoyEdSavBsyBMV5QF4rM54unV6GB
-         G6IQ==
+        d=linaro.org; s=google; t=1752667452; x=1753272252; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lsXEE1hISIb4cJAFw3dYr+DwstAQXXeJCNfdlxzLq1c=;
+        b=DKWIEuwdV3WfAvD59J3wSXUSNPGCXpxIbgmNYePCmgf9TRt7rzkjeo7wygymi1F3qX
+         th9mPmmdC8O+Io47KjXRJT6Ym5JxSfilh5jxpUjWSFc3mHSKg+bVBCwQIQdw//5Ek13R
+         z0MHerMgQyQkeuPaxo2AN/P+rEoMbZMe7t9m++BNZIGsm27cE3L9REYAWLZMp+8De1wo
+         P1qZLCg6uLPZrzsxIG5xwyBGlf4Gm/5Gj5frtCd2ioofKVt55vIjzucAaysMgeCU567g
+         /5LSxauKDhRm+4dzVtu8GTippY8jEsgR4OR0kPuXh4iMa/+oa42D6Ns/+kSByzVcytou
+         AQnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752663589; x=1753268389;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ePoCatCn8uwrUkfz5cDfhTqogA3pDEPeb9x1/QWcKE=;
-        b=juwcz4nYjzZfJI0LWnEG0Vcfy7mwDN3EZR/l+FtPvaEqWP4u/NUNUk7X4kL+oZe+D7
-         3uK56zKTx70cxYqpNlDYkHReD1VXNzZzUvvwfIMpJHLaVeY+7TyDjd84/V/Jf14QY6BS
-         IO8Bk/3TrjXUI3vmzBmiomRrxwxTSzLzapUXRfxhj4qthFWrrCOmT8XXvnf1+grX3OR1
-         mpNt0xw2Ij33zY2niKKWCh+0dI8TeyGBfAMSXe0vHJZleEKzSTwmu2fTaNp/aSiesyqH
-         MbjB/QGeZu6QslfN0Fbtocv3yRBbmDsyW/AJ0lqAqFJMkLfUsRvwd0l+9K+J5FueYBlX
-         YiTA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6RWBjgt1l+BM9V1s7ovAt/TWr5E5OOfExzoMfJmvoMVCnSUmuR9iAur/8Ic7AQCw61pg/MBoqeOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO7zw4YhLbNxUCy6wKu1oc+lvnSFn5FVZIErqUZWa6o3q51lEp
-	wJ+SinevSnZrR9M67vqwEtDY286pQBq4Ds6LUfkoGrLPTZvpCG2llwptFLfL0W+SKSg=
-X-Gm-Gg: ASbGncvTlrAI053F5iq2Z5XBvBMUgkyQe+am3LV0+1vMMCsuLsrHSM2uwU+wW/z/0E3
-	O+vpQHRbO4tKfkUFP+YLnjzFZNs/bDUdk77WdP26Mr6lbv96CpY9TBEckQEsLFmmNOp4/afS3P+
-	6zeqilrH0cZt+5HYRnl/KuBH90dES0KyLqNpLKod1oqWqhpEGPmKjJpJwiHIxk2Kz+8/NGb5oOY
-	6bpx0OIjNTCtvAbMiE1hS83T/Q4v4ai5ssxFc+RITalExWKbokhpswCpJIXliBwg4x9UhpWWxZN
-	gY8FpvaLg+fR1OyRM0NsheDdU1Wr67VCt4Q8VvLTTYl9MIIu7QCYEI5Cger1XYeVcBjWc0lIcbC
-	xxO3cZPk1abCdyPXR6Wq7HWTNqt+Im1ppVgmwLa0VD0Essg7iMGjDFS5AGNUziig=
-X-Google-Smtp-Source: AGHT+IFW0OX33KBpiLU6YOL+IJgDcuTQ1zq15zYqdjMf2JYYuPC7KCK+xgulExDW9Uc9Bd9opQZwkQ==
-X-Received: by 2002:a05:600c:3f09:b0:456:d25:e416 with SMTP id 5b1f17b1804b1-4562e331640mr20250845e9.6.1752663588670;
-        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b600722780sm9817655f8f.23.2025.07.16.03.59.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Jul 2025 03:59:48 -0700 (PDT)
-Message-ID: <40784fe0-3c70-4e1e-8b42-fa7230c2485d@linaro.org>
-Date: Wed, 16 Jul 2025 11:59:46 +0100
+        d=1e100.net; s=20230601; t=1752667452; x=1753272252;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lsXEE1hISIb4cJAFw3dYr+DwstAQXXeJCNfdlxzLq1c=;
+        b=Rv/DLiAXWQ3C1OXpxD9825JA6bz4XHJrjQ2k0+ERFy45yqIouS4wxqkk10RF7grZ/w
+         8y6IoV1g0CBk76OGX34++6uBUZK5Db73OBkj/NRlqyvM0KpR3aB3R4Oryse6mvh95kpz
+         hP9CemyGDdeML9IMMVgLSNRsVydwxfOzH69HpOdPiykAVKqXJdjcndr4z8eygI4gs+IF
+         Xve9WyN91nwCjp3rJbnKX5HG8FextQwSnp43bFp9fgx7HT9B19dPW+xxc6fAaHTFk90G
+         oZebBeFhtJVYhpuDrD3ajBzBgA/9cm6Zh26L14LhXaKkLAtfjMiK+fj/wIW1jH6mQS3z
+         i6OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSp1Bktte0VANvjovIpa1LJN2qtWNvP/ZeUBQmyAEYBV3A05zFxaAWqE3rXKb0VhSEcH7R77TNio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYkXiE4HdCTy2svRfeVrq+xnfbYjFywN679altP/VM7bQS8TWX
+	E+0Qzc22QkuUaS+04jhPK+0+/BDdzBFtvcD7Ok/0ASxJPVwLAEMqHDrXSn3SDIBPEKQ=
+X-Gm-Gg: ASbGncvKfVUhNKbwlrVqUZPbyyT5VSq5/i5hVFvlKKTpVqO7Z1lLnN5ZMiLkuT7+EsE
+	JZJOpaspHfXTlde2zimfN9tbLU1/WsE1eMkVUL0VpL2x3pDopjZskdslsXKwgW5230b6z+XmPcw
+	E8fmRr4c1xEckwNJGxP/+xhJMz4ZvJyxmCHSFWH4OkdRIeDerF2hyQW0vx7MU/I2gXcE9ni7pjk
+	BjBNWLigcieb49seJPz4EVirfQAopqvFvR+ULy/JrBVe3sHJhkXOJF3pOHH/d5J6ANiCH4idL/E
+	Iv8JKG9CpdtDM0V6D/aj4wBsTFhnxmKpqKkv7Vhjxb9qaTBdzV6uBicN4tlaV2gsyvBzD4KZr8O
+	2JyT5qhkV1KpR+xy9lphNBTDJQb5p5w==
+X-Google-Smtp-Source: AGHT+IEhSGvwKZCfWmTvLUG6dGYIJWTd4OdkmaI9VTlT7Ykv1sEpL5pIQSQFmLdV3hms4bc49wFnVQ==
+X-Received: by 2002:a05:6402:348a:b0:606:df70:7aa2 with SMTP id 4fb4d7f45d1cf-61285bf41c5mr2186091a12.31.1752667451997;
+        Wed, 16 Jul 2025 05:04:11 -0700 (PDT)
+Received: from linaro.org ([82.79.186.23])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976d9f7sm8622193a12.54.2025.07.16.05.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 05:04:11 -0700 (PDT)
+Date: Wed, 16 Jul 2025 15:04:09 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] clk: imx95-blk-ctl: Save platform data in
+ imx95_blk_ctl structure
+Message-ID: <aHeVOYUhLu8uIhFe@linaro.org>
+References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
+ <20250716081519.3400158-2-laurentiu.palcu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/15] media: qcom: camss: Add support for PHY API
- devices
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-4-0bc5da82f526@linaro.org>
- <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <CAFEp6-0hDqgYsjOy2mCC6ssK2LkMM0z7L_szS+M_wSMeMe3pMg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716081519.3400158-2-laurentiu.palcu@oss.nxp.com>
 
-On 16/07/2025 10:36, Loic Poulain wrote:
->> +       if (!phy_np) {
->> +               if (!res->legacy_phy)
->> +                       return -ENODEV;
->> +
->> +               for (i = 0; i < camss->res->csiphy_num; i++) {
->> +                       ret = msm_csiphy_subdev_init_legacy(camss, &camss->csiphy[i],
->> +                                                           &res->csiphy_res[i],
->> +                                                           res->csiphy_res[i].csiphy.id);
->> +                       if (ret < 0) {
->> +                               dev_err(camss->dev,
->> +                                       "Failed to init csiphy%d sub-device: %d\n",
->> +                                       i, ret);
->> +                               return ret;
->> +                       }
->> +                       camss->csiphy[i].phy = ERR_PTR(-ENODEV);
->>                  }
-> So what happens if we have `phy_np` and `!of_device_is_available`, we
-> just continue without any phy initialized?
+On 25-07-16 11:15:05, Laurentiu Palcu wrote:
+> Currently, besides probe(), the platform data is read in both suspend()
+> and resume(). Let's avoid this by making pdata a member of imx95_blk_ctl
+> structure.
+> 
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 
-Hmm. Good question.
-
-Yes but, that's probably not what we want.
-
-Thanks, I will look into this.
-
----
-bod
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
