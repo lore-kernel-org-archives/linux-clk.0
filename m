@@ -1,55 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA960201269;
-	Thu, 17 Jul 2025 04:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973171ADFFB;
+	Thu, 17 Jul 2025 04:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726680; cv=none; b=QGAaLmTSfla+ls5lY4nYRerAFReVmncm+SuGFz9C0gpfMyzXIVbcbzkCNmTnjBiQUxo+GEps+AlL81HFaggEARxBxwT0gyVJkQltd/yHdmqqZUeVHaUHqicsA+WDFZ0N6JtJRxZGELfjtxeC2SsniCjnjLXht0AhOOOCbKw9Bis=
+	t=1752726682; cv=none; b=CDsNy6KHHYtAzXwajv4odW3a9m1W1fTPnXIfe9w1mi9YWlxTNh0G6jVnzDOJTrMPy87z6jpqrvd+AIwGiNDBnhnA5ipcr5v+HUKLS6e3YHYSqvBiwYQZ5fYAWoDcq+Z/pE/zNaqNDsSS7qHzxgNWmL0JOrOvW2tmNukZLOuAsD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726680; c=relaxed/simple;
-	bh=IM68S//NvUk9WOnAVFcOtxIP85pYqJsXzJfP01d3rmY=;
+	s=arc-20240116; t=1752726682; c=relaxed/simple;
+	bh=AYiGcW5LXQG22qWNR7kIzwJHzASQsDRufP44m+rTla4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q1y3SNTfarUHqchGxJ1qhOFRlOBUYe7Amvhv8q2pKUyGm/1fo75eyGiyG3pNcif6AG3XwzZF17aKhYqh1PXWBRZuxeOIVtVsZgsr+6/3Vke5cgCNvI/ZSsacuRkyNbSfLPsbb9Yw0kS9cJrANszDdFebyEJfqeWXTBZDKvevdqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDiskj3p; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=TsFEKmd5U6ySamszcgwcvCHb/eyVvp2v92urNwl+2w8uIbo5eFijFEpAlAMArQaWraVWGuz24m8QXR9TIHgOazGY3vOvJWNFydU1EJ/H7+IPEAk/qVLDA0wWi8Km+PrrZl7wzqO+IPNRsYv0cbkk2fkixrok+mIS/fJ5/EHISH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDwkfBVY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDiskj3p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB0DC4CEF8;
-	Thu, 17 Jul 2025 04:31:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDwkfBVY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30EB3C4CEFE;
+	Thu, 17 Jul 2025 04:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752726680;
-	bh=IM68S//NvUk9WOnAVFcOtxIP85pYqJsXzJfP01d3rmY=;
+	s=k20201202; t=1752726682;
+	bh=AYiGcW5LXQG22qWNR7kIzwJHzASQsDRufP44m+rTla4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PDiskj3pbtFFwWBsuiRXKd7QTukP+bg9n/LtZzr4+kMf8kZLpvFnCR1B5ePhqXRC0
-	 v/pPAjZ/En2daNHaSWiK22g8MBKKI/3IzaTtDKGTNiNNBp+Ixt2aluhMVezkqGqOWH
-	 ujyplu5d2UlgNap9+SBtTrTFtW00963rjBWlcplLNsAK+YqEeEAVQwRYl/Z5kvk1cy
-	 eoAO6lIbhJ0PAcTUU7WJr49iDDrjKp+BC7SwfXeLQgX5ba4AaXa0Tk/6l1dHK7kDF5
-	 GnaHkbBuZ2UBCtE0WeOwcRNo2MkhoKYphbhefkdDZFSBpTkcExnO9siG13/eVe38AK
-	 oMimYhtWBMudQ==
+	b=YDwkfBVYTJ46hnyCOjVU+bDIxuPNvO/O8VpVy5s5pUxt0t39WMFCbnz/7qyH/BKmD
+	 AxCcYVuLV3YQwbr3n1npYwW+k41P+oCeBpL64M6ZtckfgJIZk4/5JbfPQgrTQ1qurj
+	 OVqRBVvvNrrJ6uKwrghFPwjFICmnD5NxXfVgwXsxXnVVX26ZFdTb8t8EjwOfj1mtAn
+	 FQ0RxP4hFKOUe0ua2xBurqFKDMynHnsjNgx7uIHJAkVxy92N5rMf1UD3vyQrRR2roc
+	 KE0rb5MpVjtZRB19R4oDJiJ1t6+FnyZeZfFVVk5IC+jV0/WkGI23VTL+cUPqUIDCO8
+	 SLrUUhgk0INHg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@redhat.com>,
-	Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Luo Jie <quic_luoj@quicinc.com>,
+	Lee Jones <lee@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	George Moussalem <george.moussalem@outlook.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: (subset) [PATCH 00/10] clk: convert drivers from deprecated round_rate() to determine_rate()
-Date: Wed, 16 Jul 2025 23:30:53 -0500
-Message-ID: <175272667152.130869.11156864283181133253.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v4 0/5] Add CMN PLL clock controller support for IPQ5018
+Date: Wed, 16 Jul 2025 23:30:55 -0500
+Message-ID: <175272667141.130869.3942726331849650833.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250703-clk-cocci-drop-round-rate-v1-0-3a8da898367e@redhat.com>
-References: <20250703-clk-cocci-drop-round-rate-v1-0-3a8da898367e@redhat.com>
+In-Reply-To: <20250516-ipq5018-cmn-pll-v4-0-389a6b30e504@outlook.com>
+References: <20250516-ipq5018-cmn-pll-v4-0-389a6b30e504@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,33 +58,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 03 Jul 2025 19:22:24 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() ops, so let's go ahead and convert some of the
-> outstanding bcm, qcom, and sunxi drivers that have a round_rate()
-> implementation over to determine_rate() using the Coccinelle semantic
-> patch posted below.
+On Fri, 16 May 2025 16:36:07 +0400, George Moussalem wrote:
+> The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+> sleep at 32KHZ, and the ethernet block at 50MHZ.
 > 
-> This Coccinelle semantic patch is able to automatically convert ~95% of
-> the clk drivers, and I can clean up the remaining ones by hand. I'll
-> initially post some small changes to get feedback about the approach,
-> and I can post some larger series by submaintainer once we get
-> agreement that the approach looks good.
+> This patch series extends the CMN PLL driver to support IPQ5018. It also
+> adds the SoC specific header file to export the CMN PLL output clock
+> specifiers for IPQ5018. A new table of output clocks is added for the
+> CMN PLL of IPQ5018, which is acquired from the device according to the
+> compatible.
 > 
 > [...]
 
 Applied, thanks!
 
-[02/10] clk: qcom: gcc-ipq4019: convert from round_rate() to determine_rate()
-        commit: 3ebefed3d3afbda632b5647a06598e1bad1baeb6
-[03/10] clk: qcom: rpm: convert from round_rate() to determine_rate()
-        commit: 120c4b7a35a2e2414fc3e35b34526b60ac54515d
-[04/10] clk: qcom: rpmh: convert from round_rate() to determine_rate()
-        commit: 2c0dce7392fdc0fcca1f133114c7c4295ac69233
-[05/10] clk: qcom: smd-rpm: convert from round_rate() to determine_rate()
-        commit: 11add2107c04bdcfb499cdb96ab156a4646ec9e1
-[06/10] clk: qcom: spmi-pmic-div: convert from round_rate() to determine_rate()
-        commit: ebec04773bf313280fe1cd9c0877c73660e69a10
+[1/5] clk: qcom: ipq5018: keep XO clock always on
+      commit: 693a723291d0634eaea24cff2f9d807f3223f204
+[3/5] clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+      commit: 25d12630561d8d0906f1f5eceb055da3af67c8c9
 
 Best regards,
 -- 
