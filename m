@@ -1,43 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4821ADDB;
-	Thu, 17 Jul 2025 04:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C01B21E08A;
+	Thu, 17 Jul 2025 04:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726688; cv=none; b=GrBqUKOY/odROQ2di2Vc+dSy7va31vX/XtrusaU0Lt/aXhWyLD9Kmjnuzb659201VSrRgFWlIraAnBWbeyzgNkuba26Jqb91HAw7yyyGyRIvwguF1ohA9nCGt5lRlPPh/5+UePJ7jHOL8iPem/B6XtSZ7NPijzd++wryl4w7gSg=
+	t=1752726693; cv=none; b=lrHGvfGkVwnFRVBHjItzvd7vKGEHBPQVW9WNCS7cM1AkB+lPzZ4b7UX527SF/vNnfifpFAVuXEqrmOSEef8jyqISBb17xtNvxPCoeexftXW2UvoyzA8WaIdEv+3FGxoUcHcjYdFtI5GHp00H0aVJ/XArI+OTr4Ech3bzX9A80xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726688; c=relaxed/simple;
-	bh=HBA3bXloyBREvYHNaihCstK+AKSc5sT9kCCra/WUA6k=;
+	s=arc-20240116; t=1752726693; c=relaxed/simple;
+	bh=gkvKsxCE9vYwl89WQnYkjbibgd6wwagwBS60YSM87Jc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m+XC1tSbslUj6L6knOjt+hW29JpQjWon/5fPSHkqa7P7HjIauDK6YHpXjZsahQzfVhWhW7Sxq+46eqkYNCC/vKRokOPg0Wad1Xx0cMeHXlnWeSRD2pTvIcoppX7DkEsouOczN0jTeBn9BG5HpUE2JHvGo6jNIOJpsdSD3A22WIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxMK1G6g; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=RFKnagr/Rczy7u8Jdk166zVj6LC7dWXyGDUaBepyr02EeKu2Aqz8bAnNIb84z8uPBSeicVS0z9xloYD5sMHZzBn9CB5PR55FsY2K/9wzyiyyBXqRQd1nm2HQ95RqFnNEvZb2tZMnXw8kfd2toKPCl2VQm68yPcty49ZoNBU9wBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbntm4fn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxMK1G6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93684C4CEED;
-	Thu, 17 Jul 2025 04:31:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbntm4fn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2E0C4CEF9;
+	Thu, 17 Jul 2025 04:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752726688;
-	bh=HBA3bXloyBREvYHNaihCstK+AKSc5sT9kCCra/WUA6k=;
+	s=k20201202; t=1752726692;
+	bh=gkvKsxCE9vYwl89WQnYkjbibgd6wwagwBS60YSM87Jc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XxMK1G6geqzL/Rs94UuEpwHN2KqBq9igCTAgVkUqq1yPLzZJlITvnLNh0zyMMSSoD
-	 tyIuy4EERDO4UkE7Ab6QA1lXaoYq93hLECpsCXZNyZNVfede96AVGnfxMgRwFtXs+B
-	 dRGPenVbHnrAEH7KrTY5FyZ/UQlq5k7EqEZdDMcxoQ3PPgXoKHAG7gBpnAD1ZOBaYe
-	 Z0x7Dgsi6qHkRpit0rwgcOwiHQgaPXfXg/NVY0yNz84VSJQEil/EXPT+3vJK29jDEn
-	 isQPXJA+usyDqJZOVuJLtVrF5gEhGmGMD3oVkSDSKV15nxRSF+G3DFDVAwlE/2hqUK
-	 T/2sooEE5793A==
+	b=sbntm4fnJ2JrbttH8+ZANq9Z2ZXzLzpAuki1ccDzIjCuiZafwAqLas1hGVkxIStwz
+	 31r309C3JPtJqjOV1ofa/MMpj4XMudrxtaEkSSwH9LrAgV2vOyXtQUCwToPjLw7Of6
+	 0rA9grg5O6y4R7X2dkyKH/LJSwnh4AqDZN1Sjgj5fC3NTvHfTdkKqzP6IiU219rIXw
+	 koU0DE65L5CU/iZCqkbVSLFxqGkai3ZlJXQrY9A8Ma2Hwc7y+Q8ZAQqhaZzuW3s5zl
+	 rOWb8PMEtFs/krNmFPHkBWN69G3Q6InMC7qul2pYk07DdGhAA935Gt3vouekkdb0Kf
+	 agmOUNa4rpVOg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
-Date: Wed, 16 Jul 2025 23:31:02 -0500
-Message-ID: <175272667145.130869.8545942439591996371.b4-ty@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 0/4] Add RPMh and TCSR clock support for Milos (SM7635)
+Date: Wed, 16 Jul 2025 23:31:05 -0500
+Message-ID: <175272667153.130869.16754797596854470063.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
-References: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
+In-Reply-To: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
+References: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,17 +57,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 13 Jun 2025 12:22:45 +0200, Loic Poulain wrote:
-> The venus video driver will uses dev_pm_genpd_set_hwmode() API to switch
-> the video GDSC to HW and SW control modes at runtime. This requires domain
-> to have the HW_CTRL_TRIGGER flag.
+On Mon, 07 Jul 2025 11:56:36 +0200, Luca Weiss wrote:
+> Add support in the RPMh and TCSR clock drivers for the Milos SoC.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
-      commit: 9723807046601f6596fa71515a3bc81f202cde5c
+[1/4] dt-bindings: clock: qcom: Document the Milos RPMH Clock Controller
+      commit: 136e6393a5462502dc78c661fcf09f360c6f5d6b
+[2/4] clk: qcom: rpmh: Add support for RPMH clocks on Milos
+      commit: 4901838d2be20e00711f3b2b612acd1c7c754a88
+[3/4] dt-bindings: clock: qcom: document the Milos TCSR Clock Controller
+      commit: 5009024ad7c670066204c3153b177de20ea9d93b
+[4/4] clk: qcom: tcsrcc-sm8650: Add support for Milos SoC
+      commit: 7181c64fdd3e10e731568b2f44c3805173bd7b9c
 
 Best regards,
 -- 
