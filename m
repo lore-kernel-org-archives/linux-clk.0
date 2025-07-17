@@ -1,50 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD88A212B31;
-	Thu, 17 Jul 2025 04:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4821ADDB;
+	Thu, 17 Jul 2025 04:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726683; cv=none; b=aN/h95Om2H/Psa+QNN4/5lsC59cyqFWWgSelohlB0J4Jw2vqr9YglZq2A2tHqbxt9ZVxnOyzCgFlKIuXCdXXd6uNkwDbqRiy1CTU6i6uAITFV1d+tjuZ6mrrB6Ik7qltZdqxl46hJxuWM3tAmBj6r/9mElQGBRgG2qPaAs3TP0Q=
+	t=1752726688; cv=none; b=GrBqUKOY/odROQ2di2Vc+dSy7va31vX/XtrusaU0Lt/aXhWyLD9Kmjnuzb659201VSrRgFWlIraAnBWbeyzgNkuba26Jqb91HAw7yyyGyRIvwguF1ohA9nCGt5lRlPPh/5+UePJ7jHOL8iPem/B6XtSZ7NPijzd++wryl4w7gSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726683; c=relaxed/simple;
-	bh=edfDTGmOfJeXidNfxDIR5uleBhBQYCUMQ/3UFSsqxFs=;
+	s=arc-20240116; t=1752726688; c=relaxed/simple;
+	bh=HBA3bXloyBREvYHNaihCstK+AKSc5sT9kCCra/WUA6k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/cgoyK0VvjXfdIUzjdgtLMjvpw3vsgoxtHw8osFfNCDr6Y2lj+TK9jRXA4Xt9Ybv6e6SKfS9vbkSkR8ixi/j+kuRq7Q0dw03ffBHkbrDAw5CbvgsTJ51LKDtW4+uN8J5OIPmlSinOA5aJ2Wxl/xc6pKAIlxTpFzQzqWWQCFCzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idxAmB17; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=m+XC1tSbslUj6L6knOjt+hW29JpQjWon/5fPSHkqa7P7HjIauDK6YHpXjZsahQzfVhWhW7Sxq+46eqkYNCC/vKRokOPg0Wad1Xx0cMeHXlnWeSRD2pTvIcoppX7DkEsouOczN0jTeBn9BG5HpUE2JHvGo6jNIOJpsdSD3A22WIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxMK1G6g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idxAmB17"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F423C4CEF4;
-	Thu, 17 Jul 2025 04:31:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxMK1G6g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93684C4CEED;
+	Thu, 17 Jul 2025 04:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752726683;
-	bh=edfDTGmOfJeXidNfxDIR5uleBhBQYCUMQ/3UFSsqxFs=;
+	s=k20201202; t=1752726688;
+	bh=HBA3bXloyBREvYHNaihCstK+AKSc5sT9kCCra/WUA6k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=idxAmB17I0aRmg9niQNlmyQJLIeaxBXs+5Z5pHysU1lHIswUx5C+dAq04JpUMeXK2
-	 eIP+VbwwwMj3yjsp04yPrvEH0W9Vy5/F+GnLs3ITz2yTLb6mvPGusdMuXeTCoRspWU
-	 NxgGZ11fdbjcKKlaEZnptvF9PsF26OL0TjlU+R6aIEE6NFMpEYj2Jhvg1p9UzyzDSk
-	 /PCROZ07R0THjr7nnteqoAkRmOlf6QZOyuvf9e49UOOEI4CEbb+0aG9ei+kuXjSYiT
-	 81iRN++4JXSbvgMYV/RiPDoqAruK53zrjgq1LK2B5TJWv5OI2znjHbn/ijxfAi50Jv
-	 UlPDlf0hm4mWw==
+	b=XxMK1G6geqzL/Rs94UuEpwHN2KqBq9igCTAgVkUqq1yPLzZJlITvnLNh0zyMMSSoD
+	 tyIuy4EERDO4UkE7Ab6QA1lXaoYq93hLECpsCXZNyZNVfede96AVGnfxMgRwFtXs+B
+	 dRGPenVbHnrAEH7KrTY5FyZ/UQlq5k7EqEZdDMcxoQ3PPgXoKHAG7gBpnAD1ZOBaYe
+	 Z0x7Dgsi6qHkRpit0rwgcOwiHQgaPXfXg/NVY0yNz84VSJQEil/EXPT+3vJK29jDEn
+	 isQPXJA+usyDqJZOVuJLtVrF5gEhGmGMD3oVkSDSKV15nxRSF+G3DFDVAwlE/2hqUK
+	 T/2sooEE5793A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	George Moussalem <george.moussalem@outlook.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v6 0/3] Add support for the IPQ5018 Internal GE PHY
-Date: Wed, 16 Jul 2025 23:30:56 -0500
-Message-ID: <175272667146.130869.10854668334213374970.b4-ty@kernel.org>
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
+Date: Wed, 16 Jul 2025 23:31:02 -0500
+Message-ID: <175272667145.130869.8545942439591996371.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250630-ipq5018-ge-phy-v6-0-01be06378c15@outlook.com>
-References: <20250630-ipq5018-ge-phy-v6-0-01be06378c15@outlook.com>
+In-Reply-To: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
+References: <20250613102245.782511-1-loic.poulain@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,23 +48,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 30 Jun 2025 16:34:59 +0400, George Moussalem wrote:
-> The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
-> output pins that provide an MDI interface to either an external switch
-> in a PHY to PHY link architecture or directly to an attached RJ45
-> connector.
+On Fri, 13 Jun 2025 12:22:45 +0200, Loic Poulain wrote:
+> The venus video driver will uses dev_pm_genpd_set_hwmode() API to switch
+> the video GDSC to HW and SW control modes at runtime. This requires domain
+> to have the HW_CTRL_TRIGGER flag.
 > 
-> The PHY supports 10BASE-T/100BASE-TX/1000BASE-T link modes in SGMII
-> interface mode, CDT, auto-negotiation and 802.3az EEE.
 > 
-> [...]
 
 Applied, thanks!
 
-[2/3] arm64: dts: qcom: ipq5018: Add MDIO buses
-      commit: 23b3da8734e94acad2b98180cacbedf97754e1c1
-[3/3] arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
-      commit: a150a9c4807ab37d9f63112ef8e11710104a9d09
+[1/1] clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
+      commit: 9723807046601f6596fa71515a3bc81f202cde5c
 
 Best regards,
 -- 
