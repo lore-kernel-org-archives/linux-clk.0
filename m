@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C01B21E08A;
-	Thu, 17 Jul 2025 04:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2137D22156C;
+	Thu, 17 Jul 2025 04:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752726693; cv=none; b=lrHGvfGkVwnFRVBHjItzvd7vKGEHBPQVW9WNCS7cM1AkB+lPzZ4b7UX527SF/vNnfifpFAVuXEqrmOSEef8jyqISBb17xtNvxPCoeexftXW2UvoyzA8WaIdEv+3FGxoUcHcjYdFtI5GHp00H0aVJ/XArI+OTr4Ech3bzX9A80xE=
+	t=1752726696; cv=none; b=R4yncfLhAUf8zOcuLUzyXh1TCJBrojndQkB7gpMMPKNkwrM2JLZQIPCvYIf2iSZo+eaH1WB3hJ8G9MwD2CulHo6NJCYRuZgo/Eua+DF0xUGp4IuS6SeMVuEdYkWLunY9SsTYSWjcKDzIJ61MVYMfWkNNyxPh8mVc+ovzhLRhr9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752726693; c=relaxed/simple;
-	bh=gkvKsxCE9vYwl89WQnYkjbibgd6wwagwBS60YSM87Jc=;
+	s=arc-20240116; t=1752726696; c=relaxed/simple;
+	bh=gte0n1IPy5vUP3szt7JdTPRXmu6BeeRcJ1AV9NExVOU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RFKnagr/Rczy7u8Jdk166zVj6LC7dWXyGDUaBepyr02EeKu2Aqz8bAnNIb84z8uPBSeicVS0z9xloYD5sMHZzBn9CB5PR55FsY2K/9wzyiyyBXqRQd1nm2HQ95RqFnNEvZb2tZMnXw8kfd2toKPCl2VQm68yPcty49ZoNBU9wBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbntm4fn; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=fUyrTj+Whu+O4QLVDgPGU1Nno0GIJA3oh4NwsBG0HgRIaS1BIGI/MBmxpK/xSh/gaDMw/kPetUszYoPx3a4LDmhb8HT0CUPKSugVhOJY33/lRCHyOR2Q8Nc/TDa9lpd8nHdh4BPolRnFs8N4QqpbgaACZ+VA98RpPWqNjoXoVH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJe7Mm2n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbntm4fn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2E0C4CEF9;
-	Thu, 17 Jul 2025 04:31:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJe7Mm2n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9186FC4CEF5;
+	Thu, 17 Jul 2025 04:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752726692;
-	bh=gkvKsxCE9vYwl89WQnYkjbibgd6wwagwBS60YSM87Jc=;
+	s=k20201202; t=1752726695;
+	bh=gte0n1IPy5vUP3szt7JdTPRXmu6BeeRcJ1AV9NExVOU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sbntm4fnJ2JrbttH8+ZANq9Z2ZXzLzpAuki1ccDzIjCuiZafwAqLas1hGVkxIStwz
-	 31r309C3JPtJqjOV1ofa/MMpj4XMudrxtaEkSSwH9LrAgV2vOyXtQUCwToPjLw7Of6
-	 0rA9grg5O6y4R7X2dkyKH/LJSwnh4AqDZN1Sjgj5fC3NTvHfTdkKqzP6IiU219rIXw
-	 koU0DE65L5CU/iZCqkbVSLFxqGkai3ZlJXQrY9A8Ma2Hwc7y+Q8ZAQqhaZzuW3s5zl
-	 rOWb8PMEtFs/krNmFPHkBWN69G3Q6InMC7qul2pYk07DdGhAA935Gt3vouekkdb0Kf
-	 agmOUNa4rpVOg==
+	b=eJe7Mm2nd85GkvDTKCHvAYOfpA9es1Siy2trbF920m/ksfY7umA1X01er1zfSgaHm
+	 Ds9WpTsvQah+zyOuxERZ0++zw2+vqYxQhrqSjgqBe5/CwNOCRJNHcJnNkWt0fOIf5U
+	 n2BnQgqfBcWLm/edlNk4TySXV4n72ydt1XJwWAyUIKYL4isLLr7IqX/7DU9NB3icmc
+	 oRfxVX2CZ6Y3DKDtu65uCdIFL+3eNfHcsFy4ooN00A9m8J++wQlnMdo1tYU8rtJwRB
+	 3aLt0vjeQOTtSR0XEqF6wgeQc+81wfFLl0h6onEttMNSDnosDFCXM3Z2nF54yyKECS
+	 lM52v0dzMV/QA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Luca Weiss <luca.weiss@fairphone.com>
 Cc: ~postmarketos/upstreaming@lists.sr.ht,
 	phone-devel@vger.kernel.org,
@@ -40,13 +40,15 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/4] Add RPMh and TCSR clock support for Milos (SM7635)
-Date: Wed, 16 Jul 2025 23:31:05 -0500
-Message-ID: <175272667153.130869.16754797596854470063.b4-ty@kernel.org>
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v3 00/11] Add clock drivers for Milos
+Date: Wed, 16 Jul 2025 23:31:07 -0500
+Message-ID: <175272667155.130869.14196509096081261613.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
-References: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
+In-Reply-To: <20250715-sm7635-clocks-v3-0-18f9faac4984@fairphone.com>
+References: <20250715-sm7635-clocks-v3-0-18f9faac4984@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,21 +59,36 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 07 Jul 2025 11:56:36 +0200, Luca Weiss wrote:
-> Add support in the RPMh and TCSR clock drivers for the Milos SoC.
+On Tue, 15 Jul 2025 09:19:00 +0200, Luca Weiss wrote:
+> Document and add the clock drivers for GCC, CAMCC, DISPCC, GPUCC and
+> VIDEOCC on the Milos SoC (e.g. SM7635).
 > 
 > 
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom: Document the Milos RPMH Clock Controller
-      commit: 136e6393a5462502dc78c661fcf09f360c6f5d6b
-[2/4] clk: qcom: rpmh: Add support for RPMH clocks on Milos
-      commit: 4901838d2be20e00711f3b2b612acd1c7c754a88
-[3/4] dt-bindings: clock: qcom: document the Milos TCSR Clock Controller
-      commit: 5009024ad7c670066204c3153b177de20ea9d93b
-[4/4] clk: qcom: tcsrcc-sm8650: Add support for Milos SoC
-      commit: 7181c64fdd3e10e731568b2f44c3805173bd7b9c
+[01/11] clk: qcom: common: Add support to register rcg dfs in qcom_cc_really_probe
+        commit: b21b5b3ae0fce4db3eab052d3e3cc17890e78523
+[02/11] dt-bindings: clock: qcom: document the Milos Global Clock Controller
+        commit: 95ba6820a665c25f372a3cdc9c469bb0a86bf174
+[03/11] clk: qcom: Add Global Clock controller (GCC) driver for Milos
+        commit: 88174d5d94226b0f0931f4ae97913e498f76d2a2
+[04/11] dt-bindings: clock: qcom: document the Milos Camera Clock Controller
+        commit: dbb9d53b7197b6b13d0137c0ea45902ef26e2bb4
+[05/11] clk: qcom: Add Camera Clock controller (CAMCC) driver for Milos
+        commit: f003800e2d3596770fc42bfff7de9528923dafe2
+[06/11] dt-bindings: clock: qcom: document the Milos Display Clock Controller
+        commit: 63edb206a3a93f523579df7f49f2989aae4e8450
+[07/11] clk: qcom: Add Display Clock controller (DISPCC) driver for Milos
+        commit: f40b5217dce1832e5a270ee10f03d3d23233d720
+[08/11] dt-bindings: clock: qcom: document the Milos GPU Clock Controller
+        commit: 7e5368a14b8c295470ab07d2a9ad8ee9bf7187ee
+[09/11] clk: qcom: Add Graphics Clock controller (GPUCC) driver for Milos
+        commit: 980d7c84461a0ae88ec915735553067c7743ba4c
+[10/11] dt-bindings: clock: qcom: document the Milos Video Clock Controller
+        commit: a4937e9741867865bb307ae9dde6ef393b68540b
+[11/11] clk: qcom: Add Video Clock controller (VIDEOCC) driver for Milos
+        commit: 633a81bead863881373cf3399e26d9d10d31315e
 
 Best regards,
 -- 
