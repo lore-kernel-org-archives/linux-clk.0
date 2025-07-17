@@ -1,73 +1,73 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA492AEF5
-	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157B3223DE8
+	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752784480; cv=none; b=bfBY/BnXOowjQoAuCZwOe5NaNAmqMtfAKwu0HQyhJjeALYuDiGDTLZfdRI9+RTs/TLy3clVjnwQbxfalUzlgDFnfYlxO4har5nyC0L96SQcVXYWFbCLrLgn+dB7OKsSBKGtMw/1vgTsG9A5/ixyPbWhhKddQ4HXKdkdaaZ92KP0=
+	t=1752784834; cv=none; b=ii9+qIj0tLDQz1Aqb3hzJRzj/Zo4Z022BAKq4IKtOd6Dsyze45W31FGjf3GTFjWvTjC80ENqa/dda3puzIfkjO3LbkKRKixAFq80dO5wFGRF6xhnGM1ZSe+tZaq592WvjjGSx0LQ4IuCUV+6AvZM8P8f8+g5rdDs/DBMzPhjRGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752784480; c=relaxed/simple;
-	bh=hGJR3V/1tcHMB31VvpC4R8Zsvg2CwbMItsyk5iZAxy8=;
+	s=arc-20240116; t=1752784834; c=relaxed/simple;
+	bh=+PKURqZUiFLHGFdok2C2mZeAkQagOq/qdJTWlYR6YI4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJUM/0i7T6zr+iz6EiPV/gFR0OV3rsIrFRvOu4gvUsx3M35p4ezoBKziRtg8JNJH0rI26MQbawBC+Ly/x+ToTaL4tHqR9fAgXDYOPvd3YEWGCnZRiGhZLhCs3ORfPxpfQ4GCsVR/w4RCGgn4iaq2xqPXrR1BuFe6Hoittzaz/NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cqYJL4ES; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=XjmcQHdfPJ8HO8NeaMxQN488rtqGKeRZHF2t9RflSVunybqr4l2byQ+8McxRKNmDVTYTYWwMQJ1WbX0KD8oIbVIZwe6DMonoXEGIoNDn6AMeRz7e2ZQCk1g7Vc+U1tX/ILSiFmGZJNbf6WRDI/le6vlmDugkEuTbM5XSGXlp8Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BLkmmo7k; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cqYJL4ES"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCg0vT021705
-	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:34:38 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BLkmmo7k"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56HCljQN016003
+	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:40:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6kgP0d9tIR6NHctzVbidbhSLAjPMVFzktI4gkLXeKhY=; b=cqYJL4ESt1MD9auM
-	Nrg42kIguegh6DhejQY0DnvxiAmqQzzhVtWUht+pNUGbe0C6SQcwPwf1ZzVM4rbE
-	VlEIHpHPsYPwaAuPKBQ1QDjfAza5LT9R/pPT9TFRB4W3784Cq/qCuFlxbHTUVVIc
-	kmrMI/ry8lDEyK4pOKBMI1ofO+fWqNKAaJPH0EOsZzPPdjMdNm7404nvC3duQ7nN
-	fkG2Om5sqq3YOieAWk5LDh8xrw24vgVbHZpPsb9t8TIrH7aSaTbmgTwtZFD6QVuK
-	7wsWZSARXvYXbwsEQXYTi7dmozJBtZ3dkLFY1OtVrVDQt2Dg8S9M1GRN7WqdE5TO
-	T53f6A==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ufu8gxmr-1
+	HcA+kp3HypSPdvU2NDchUlEnmvRzp6s5z33xRBR58yg=; b=BLkmmo7kc3scYKxZ
+	mjfnbXvyG0g7oXjZUoiUEQ44uLA6XV5nH9+mSFD+fAkInK+06RhrU+wF5uqUFPXY
+	UCbek+1GQTOFiEvsYUvD655hpeVtv0OYahZP7QFc29/Q7s9AU0n+bdqxit4zCoDo
+	SrDSKDeMU2P+x7tTNOxEOTHR6+GhzvPofq9jZzr19qUHAU/zoTBBgXdzXKf1F9Yb
+	XFsAVz00EoI2V/4chGHDZsOaC7e/5ZOcZPyuK49/YV+lGWU9v6wawmujcXbSQuKY
+	UDjd9RHMkXuQ8FBJOTN9tI5+yasOyvyrr21eXBC+xby4vgIT/6k3RqwygmyWwxyr
+	aO7PFQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47w5dyv3xq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:34:38 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab65611676so2854681cf.0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 13:34:38 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 20:40:32 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab65611676so2867331cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 13:40:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752784477; x=1753389277;
+        d=1e100.net; s=20230601; t=1752784831; x=1753389631;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6kgP0d9tIR6NHctzVbidbhSLAjPMVFzktI4gkLXeKhY=;
-        b=OurPy4Jd/fqZGzF0MMSvBxv1NoscEra7h12wpc2YNFqvRyNExRDK6/YAGDisfsKD1X
-         +g4o5WJu2pj9w/ofFqnMfGos7siFpm/wR/M9f5z4B301NhUEW14BVwlVE2MHeXqbELkN
-         wJVFMPNfIRpQhFrk4t4ABqcTNkspyJ19FjIGUydTGGJbUndxfJSbqRNyEfjQRZPWwr55
-         P7y/Sis4nbvk6+SE97KM77bhXCwBvY/XSNMvkDFNiT1mwu+HZQXD5egqriFyCkkf/J3+
-         T7w/1M7k9EUTfFWoDskNctYHqgn3YHnxO6nv20Ilvg6lrdUT5oqjV/J8NFX6cLpVwIMO
-         ILgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5H8koI9Eme8bQiI3lxPqb1weeCOiTxKMvufPXRQOJxhaD1RYZqeuRP8Kmj0nl61ekChzIxGaFM/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa8OESZA20BDm6oETXVuO79jYoFbiQvwGZEds98BH3EbXZWU7A
-	RRicsIN06FuGOaj5QmGmiItovFwQG2Quk1feRPWpg7C/iHtg5ZNUtqMO74oWUcQHfDY6Pstvsi2
-	+SnIlszj13Dw/L70EIiKqHurRRFyEDS7OsLCAqvX8zhtO/sYuiI3CU5uK581txzk=
-X-Gm-Gg: ASbGncvMFUx4w4pX8sZ6SPcsJKURBgSanbjguZf9ADnTQRTGxcJWxaXUWH5X6B7VB/v
-	tKeMDgIh4DX0lc49dIZrH7yEXh+O64x/EOR5vFBjNlk5urWoiVEdXXMFfLE3f/brKg6mkC0MTi1
-	ltHlvDovZM3ND+0HheBfWDJAjUXGKGsP2t+bkN0JtcvAyqe3AJGp4L2OCgeYnrARJh8HUsVpAs+
-	1LDzI3XhinX1T+CSHmVcFHAuDRH2kkPLFh0PFvITQ6t57vbwjqfpFewT5k2WN6ELqVrxhQK4AFX
-	93Uc5yo7AwgFN6NA+9zsL3WdWnxhmKIiIZqYcPMV0vItvuwqGhgBQBKntRpR7KZ/XNOrRIuZHVg
-	1OCjDXUwlNW9RA9tuVyGl
-X-Received: by 2002:a05:620a:2b49:b0:7e3:3419:90d with SMTP id af79cd13be357-7e342adfc02mr465485985a.7.1752784477308;
-        Thu, 17 Jul 2025 13:34:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEupMN70iJ4oocSBV5jSP32Z5K9i0re731zgAYdP0kVX56HgTG8n+/PmtNQbmI3Nu0wihezSw==
-X-Received: by 2002:a05:620a:2b49:b0:7e3:3419:90d with SMTP id af79cd13be357-7e342adfc02mr465484885a.7.1752784476917;
-        Thu, 17 Jul 2025 13:34:36 -0700 (PDT)
+        bh=HcA+kp3HypSPdvU2NDchUlEnmvRzp6s5z33xRBR58yg=;
+        b=EBboL+VMoZBwk0nrA2zqpcMWiRBOlN5upDWKQfObU0Mip0LX8MGOs1EuIFFBkeUTfl
+         vVOHLCyPn8ZARXapu6L3cSQ2XwBj+lv7yt2p2AFVooGBXrgWCeUPB3pAl/Z/LBrTArs7
+         K3/95UwZdiqm5NXHIoY62MMCTwAQlPnAkouVHYkEgTYFFOkfBLU81U9ec09wrpQH+bVs
+         qBNbqHDGF6tQ1obpKK2RLKCQ/8phIvypXTZAUs+kuKuaIYyDQ8ZikItzkdm9RxfMVmyR
+         +BnItWAgPNURg69Qb08PmiIiMFpeDOaq1/dHBccY/0YbsL7lEFhLbI1WoaZA07F1/kUG
+         /gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCPR3a5OJLwZpX7zbX3851pAKytzB2+xAPGEZdrSwZTIhoJctXt4RJqaCzZ6+jN1O/qyojPLa6YIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYQ4C7NYG2nRjV/5lJvQ5VlbzMBdOUT/iZWGjudSWrO3EpeOpg
+	dHpm4ItoxW+72cIiS/1gU5XU9gh6BjXDwfTZ90QRmZHp7aVVDP0WMcj1SMxSz5uMtdiZ63KfPsg
+	BF/BP9a8sScoMIL3H1JamA12t5asCJnBPE9jbgwktdheLGVPiU5oKUUiqHZvB8zc=
+X-Gm-Gg: ASbGnctORcqACixMNA+wp3gv6nyActyyi97F3sluijvUjARjami7HTn8ntHzVuUQjnP
+	/S8qAeKhyOSSk8SUDWAU8tWJOY9Gm7Nqv+B89SIPbNetKJ1wXOdv2lh8xGp871dO8Ypc1emz6/9
+	Z1FJelTNXnuytle4L8QxTRAwrsxDTlXimm/Pu47lDhBpA8JvH/+3l4vOIWEq94mz7gYqe1xBV2h
+	t3rX77OXozMq9vZJ8lkXDVQJSY/SZQDhHb2YnDiNF0Z7tkYnvsBVoKmBD7LvCBIk1YS74lxDONO
+	XqQKCEt9R39c2h8kg5HdRRNlmT8+AHvSvpnSqj66IfoisT+AMVGG2YW451W1V27H2laPW4wy9sl
+	8cOVMK5trI4n4KIOXX3bB
+X-Received: by 2002:a05:622a:1211:b0:4ab:5d26:db88 with SMTP id d75a77b69052e-4ab909ca3c2mr62007901cf.3.1752784830692;
+        Thu, 17 Jul 2025 13:40:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGacEtOK6P1w0TqLkAVvy3zfLW2JrPG0JSKgt/e9kAEeqsdXApuxd5RMOc2e1Ib7SbZf4Jkog==
+X-Received: by 2002:a05:622a:1211:b0:4ab:5d26:db88 with SMTP id d75a77b69052e-4ab909ca3c2mr62007551cf.3.1752784829965;
+        Thu, 17 Jul 2025 13:40:29 -0700 (PDT)
 Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264fbcsm1437115666b.75.2025.07.17.13.34.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264fd2sm1430651366b.108.2025.07.17.13.40.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Jul 2025 13:34:36 -0700 (PDT)
-Message-ID: <27e4a27d-6e91-4e91-b55f-d6aa4a5be800@oss.qualcomm.com>
-Date: Thu, 17 Jul 2025 22:34:33 +0200
+        Thu, 17 Jul 2025 13:40:29 -0700 (PDT)
+Message-ID: <ad726c8c-0eb0-4498-a430-f906ea61c80f@oss.qualcomm.com>
+Date: Thu, 17 Jul 2025 22:40:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,102 +75,116 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/15] arm64: dts: qcom: x1e80100: Add MIPI CSI PHY
- nodes
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+Subject: Re: [PATCH v3 02/10] clk: qcom: ipq5424: Enable NSS NoC clocks to use
+ icc-clk
+To: Luo Jie <quic_luoj@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mauro Carvalho Chehab
- <mchehab@kernel.org>,
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
         Konrad Dybcio <konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-References: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org>
- <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-8-0bc5da82f526@linaro.org>
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
+        quic_pavir@quicinc.com, quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-2-f149dc461212@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-8-0bc5da82f526@linaro.org>
+In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-2-f149dc461212@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MSBTYWx0ZWRfX7yfiSilANmiE
- W8KRc7aaIs40IIvN1xqR7qWn4mE5jXlfsQH+cHYl/myXGBgCFC4O2YsCbzHCoe/eBoIiU5laGf1
- bJxGpNHsGVmA9+vtFMS1COLzCfBk1GVRkG9eV4TJ8A6C0OJnDm9VtgKPPAdzCemRT22G+gbWVSZ
- jon7Hm18NxK5jPyDx/ahoaNdYBUV/N5NKgCkJALic371SJHKwxD8r4qrcxEkaj7TE/wd2gOrSnD
- KpVm0mmBff+5e5OiOvMuB5CsvWscgPiwm0OdnCDXrZG/L0t7BxmePB527SUcFQySlBxQogHy20/
- Mc6rRr9ljgd3+Gud/V95xU7noBPMUXtnQqg0bHlaaaajMCVCNT55p/xZLpJYqGr0STWlkkvhAJq
- loM1v5DJwCbDmdAPCKPiE2AoeDPfjm1yU3wvKoAnqCYXwtwRQOe8deJUqYGH7DMKSh/Bdj+c
-X-Proofpoint-ORIG-GUID: CiYxnWVBfoHJN4-tt7dPUB04r-aheZKd
-X-Proofpoint-GUID: CiYxnWVBfoHJN4-tt7dPUB04r-aheZKd
-X-Authority-Analysis: v=2.4 cv=f59IBPyM c=1 sm=1 tr=0 ts=68795e5e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=jM4f9QFlUBkeW2BXBzcA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: rF5Wa7zH3WaRptHCkyT02dxJPvZ53G9I
+X-Authority-Analysis: v=2.4 cv=RtXFLDmK c=1 sm=1 tr=0 ts=68795fc0 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=53G8P9gWY_1ATa02Ga8A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE3MDE4MiBTYWx0ZWRfX+BklQHWqCvPQ
+ eDXws+x8e3SejEU+b5I6+vyK8dAXwCNcCapv/iuV6so617AvskhFRFfhjp1amA5mTFjTaAMSKcL
+ Wej0B/u0rG0BeTLgwU1CXl2JOKp/5o8tYvYKWJWaVuTTYyL2Mi/HqiHDCx8kYaSLcgDbZP61dj0
+ 8xeMvlyOJpl0Jfj36t1UKl5MkdEITe3cg1bQ0lyNdLdU+nfZbhM2UpIVvHS+NIoXx3RGrxcWO+u
+ dR1w4WYTGRf7smiZOE4betaSPGCy5Ec1Y3X/arJw66MORuGF2kHAArfLDDwAOKgDsLNA89pjwPt
+ sQmtShwpwwLzkG1isHBKveu6SnuKWChhjRVLRL7EIWrjP3VcjHg/435JQYqWf2iNjbZwiarw3H6
+ FCL/CJmr2wiJQoT0ZHiY2s6HO59BudxJGNxkWFc/T2xXk1JAGhGy4TLUwiVZWSxR4coZ6RKQ
+X-Proofpoint-GUID: rF5Wa7zH3WaRptHCkyT02dxJPvZ53G9I
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-17_03,2025-07-17_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507170181
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507170182
 
-On 7/11/25 2:58 PM, Bryan O'Donoghue wrote:
-> Add csiphy nodes for
+On 7/10/25 2:28 PM, Luo Jie wrote:
+> Add NSS NoC clocks using the icc-clk framework to create interconnect
+> paths. The network subsystem (NSS) can be connected to these NoCs.
+
+Are there any other similar clocks that we should expect to pop up
+in the future? We should most definitely have a single commit that
+takes care of everything that'll be used going forward.
+
+grep "\[.*NOC.*CLK\]" drivers/clk/qcom/gcc-ipq5424.c | wc -l
+
+returns a number of them that aren't described as icc clocks, most
+notably the GCC_CNOC_USB_CLK is consumed as a regular clock.
+
 > 
-> - csiphy0
-> - csiphy1
-> - csiphy2
-> - csiphy4
+> Also update to use the expected icc_first_node_id for registering the
+> icc clocks.
+
+This is a separate fix
+
 > 
-> The irregular naming of the PHYs comes directly from the hardware which for
-> whatever reason skipped csiphy3.
-> 
-> Separating the nodes from CAMSS as we have done with the sensor I2C bus aka
-> the CCI interface is justified since the CSIPHYs have their own pinouts and
-> voltage rails.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 88 ++++++++++++++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
+>  drivers/clk/qcom/gcc-ipq5424.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 41245e8592f78edf141141f2f5b7c5b841318f46..e385d6f329616360e089ba352be450c9eca6aab6 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -5244,6 +5244,94 @@ cci1_i2c1: i2c-bus@1 {
->  			};
->  		};
->  
-> +		csiphy0: csiphy@ace4000 {
-> +			compatible = "qcom,x1e80100-mipi-csi2-combo-phy";
-> +			reg = <0 0x0ace4000 0 0x2000>;
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "cpas_ahb",
-> +				      "csiphy",
-> +				      "csiphy_timer";
-> +
-> +			interrupts = <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
+> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
+> index 3d42f3d85c7a..3a01cb277cac 100644
+> --- a/drivers/clk/qcom/gcc-ipq5424.c
+> +++ b/drivers/clk/qcom/gcc-ipq5424.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
+> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
 
-I realize it may not be easy to test their functionality without the
-rest of CAMSS being enabled, but are the CSIPHY's registers accessible
-without the TOP GDSC being enabled?
+Please follow the latest recommendations for the copyright notices
 
 Konrad
+
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -3250,6 +3250,9 @@ static const struct qcom_icc_hws_data icc_ipq5424_hws[] = {
+>  	{ MASTER_ANOC_PCIE3, SLAVE_ANOC_PCIE3, GCC_ANOC_PCIE3_2LANE_M_CLK },
+>  	{ MASTER_CNOC_PCIE3, SLAVE_CNOC_PCIE3, GCC_CNOC_PCIE3_2LANE_S_CLK },
+>  	{ MASTER_CNOC_USB, SLAVE_CNOC_USB, GCC_CNOC_USB_CLK },
+> +	{ MASTER_NSSNOC_NSSCC, SLAVE_NSSNOC_NSSCC, GCC_NSSNOC_NSSCC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_0, SLAVE_NSSNOC_SNOC_0, GCC_NSSNOC_SNOC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_1, SLAVE_NSSNOC_SNOC_1, GCC_NSSNOC_SNOC_1_CLK },
+>  };
+>  
+>  static const struct of_device_id gcc_ipq5424_match_table[] = {
+> @@ -3284,6 +3287,7 @@ static const struct qcom_cc_desc gcc_ipq5424_desc = {
+>  	.num_clk_hws = ARRAY_SIZE(gcc_ipq5424_hws),
+>  	.icc_hws = icc_ipq5424_hws,
+>  	.num_icc_hws = ARRAY_SIZE(icc_ipq5424_hws),
+> +	.icc_first_node_id = IPQ_APPS_ID,
+>  };
+>  
+>  static int gcc_ipq5424_probe(struct platform_device *pdev)
+> 
