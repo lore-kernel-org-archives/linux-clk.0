@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F197C295DBA;
-	Thu, 17 Jul 2025 10:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCCB1DE8A3;
+	Thu, 17 Jul 2025 10:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752746899; cv=none; b=REQ/IC3qX44HpwrnLquIyk73nYDeWF1LGB8w59ukPoKXmExqzaF3pVwwKLUkdD9md/RSGMOxx47LK811LKzJgSsm0KlnUnkflIDfqY7BJDJmtLQZXiW6P1AmZ5zxtn+J7C21dPGDYTPF8CeABLaeB1K8KpL+hGRx3W+6stZppGc=
+	t=1752748593; cv=none; b=DcCAjK35uFB20CSdjrC6oWEUMogwzt8mSTaqChf9uduI8m4Jd5SY6ovPQ23vEKqLhLGWSQitlbAKvo1dpLsOncjEz8cKfyFHIXz4ZYJMJddL0fNlcpKEnwimSib0tBQqFJrBsBTQX3jb74Xu/vvRk3l70SZB6x5508oJCXilBKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752746899; c=relaxed/simple;
-	bh=4hP+nyTzsHr+HW8bo2r86lHJYv3b9wAQ8DWbNVa32jg=;
+	s=arc-20240116; t=1752748593; c=relaxed/simple;
+	bh=xqQlXd0lb1r+JYcGwIbgeT/oRINSjbiPGiuQzE3If+M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/0IIHTOL9JNLmtOR3AOfv04W7kaZF7B0dTJ/1byd8PpdfTto3jLnH6gS6T5Qj4oQfktdj/luPwztbZHLviLVU2zHT7bjX9YsheZVtW3pUn1lu9EhiyZXxA3bgdhAk5Ql3itxqQjhmOIWMwtFeI22kniFqbInRqAjvkeCqOVSG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsGOlj71; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=K2OBFTcWjX/JwopKRdA3R7OKU1hd04Vkj8gHbJnbq9tVJifFaPq73sbKFHSU6SnczTZxebuy7HBxNU5KT5TeAl9mLPJzNQNhjX91DFGUAnVHTVGSqOjwIC4V7JqJ2KhG9SpB9owu0+gd7EerWnWrj5OIUqdM66CRGnzNSnPk3a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ntDdZyBH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsGOlj71"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56691C4CEE3;
-	Thu, 17 Jul 2025 10:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752746896;
-	bh=4hP+nyTzsHr+HW8bo2r86lHJYv3b9wAQ8DWbNVa32jg=;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ntDdZyBH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752748590;
+	bh=xqQlXd0lb1r+JYcGwIbgeT/oRINSjbiPGiuQzE3If+M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tsGOlj71QTbjVVS4eK+K5Y1lblwMDlpMc8Wf8ZWAF2bSbk1ytL2w/z2bj46HRN8RK
-	 57t0UIhUFY+TwwNRf+gpNOa/5ooaQEwjPN2idbtKgnzlmsusVHGmLRvqfoURMtC/fT
-	 TCdz6tOb0tCYLXj2A7M3feWkzB0/w2Kdk9G8iU1NkygHqEJkFxwwapPKiUSSHsFjkb
-	 0r+LbeQ8YqhUxIL8Dufk67n+S8DGpEzXwDXEO8wCW1//FaB6KNdlbq+Xw8YWvm3fY7
-	 15cYza3sUK6aOMW9je5KoztIstgkiAXuS/ZHrFjroWtPWuPAsCqwQ4zd25eke6cUVQ
-	 SyzIS8sY1xZVw==
-Message-ID: <40534488-24f6-4958-b032-d45a177dfd80@kernel.org>
-Date: Thu, 17 Jul 2025 12:08:11 +0200
+	b=ntDdZyBHOgKnPOdEGQw/I5EL8KR2PXe6U3DisRLzypC795hgqWv+OLRQf+cWqSflJ
+	 2YeI3EMt87mUa5Cg0s575h9jR8fm13kTDSxreIvCvw/lVco+wq4FdPBTk7yC0DHQqm
+	 gV2pFTBonGcj0SPoICTLc4SrvRHRhgikxbb/HVonr+dl7pj+GKyMBnoUjd90nQcvkA
+	 y6W+3henmYDkJKk4A6F/HhMNTa13xyIjYIN1RFNzhAMBiKoEKwnkrAW2xdC5FHB9I2
+	 EpKeLcPsKbpTntbNSjiXw/dM72FLmBCfJJf96r9gbbpDTISuXkU8npuvY43xaSAOUa
+	 /G34kMeufYjng==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4FAD317E0B72;
+	Thu, 17 Jul 2025 12:36:29 +0200 (CEST)
+Message-ID: <0089a5e5-4e16-4d30-8b56-3811a6d7af88@collabora.com>
+Date: Thu, 17 Jul 2025 12:36:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,101 +42,141 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-To: Abel Vesa <abel.vesa@linaro.org>,
- Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com,
- linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
- <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
- <aHjJG2nrJJZvqxSu@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: mediatek: Describe MT6789
+ clock controllers
+To: Krzysztof Kozlowski <krzk@kernel.org>, Arseniy Velikanov <me@adomerle.pw>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250715222221.29406-1-me@adomerle.pw>
+ <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aHjJG2nrJJZvqxSu@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250716-manipulative-dormouse-of-current-9af4e6@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17/07/2025 11:57, Abel Vesa wrote:
-> On 25-07-16 20:50:17, Pankaj Patil wrote:
->> From: Taniya Das <taniya.das@oss.qualcomm.com>
->>
->> Add support for Global clock controller for Glymur platform.
->>
->> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->> ---
->>  drivers/clk/qcom/Kconfig      |   10 +
->>  drivers/clk/qcom/Makefile     |    1 +
->>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
->>  3 files changed, 8634 insertions(+)
->>  create mode 100644 drivers/clk/qcom/gcc-glymur.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 051301007aa6..1d9e8c6aeaed 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
->>  	  Say Y if you want to support graphics controller devices and
->>  	  functionality such as 3D graphics.
->>  
->> +config SC_GCC_GLYMUR
+Il 16/07/25 09:04, Krzysztof Kozlowski ha scritto:
+> On Wed, Jul 16, 2025 at 02:22:20AM +0400, Arseniy Velikanov wrote:
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - mediatek,mt6789-afe
+>> +          - mediatek,mt6789-camsys
+>> +          - mediatek,mt6789-camsys-rawa
+>> +          - mediatek,mt6789-camsys-rawb
+>> +          - mediatek,mt6789-imgsys
+>> +          - mediatek,mt6789-imp-iic-wrap-c
+>> +          - mediatek,mt6789-imp-iic-wrap-en
+>> +          - mediatek,mt6789-imp-iic-wrap-w
+>> +          - mediatek,mt6789-ipesys
+>> +          - mediatek,mt6789-mdpsys
+>> +          - mediatek,mt6789-mfgcfg
+>> +          - mediatek,mt6789-vdecsys
+>> +          - mediatek,mt6789-vencsys
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    afe: clock-controller@11210000 {
+>> +        compatible = "mediatek,mt6789-afe";
+>> +        reg = <0x11210000 0x1000>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> +
 > 
-> Wait, are we going back to this now?
+> Drop the rest of nodes. One example is enough. They are ALL THE SAME.
 > 
-> X Elite had CLK_X1E80100_GCC, so maybe this should be CLK_GLYMUR_GCC
-> then.
+> ...
+> 
+>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+>> new file mode 100644
+>> index 000000000000..d6f70ee918ad
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+>> @@ -0,0 +1,68 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-sys-clock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek System Clock Controller for MT6789
+>> +
+>> +maintainers:
+>> +  - Arseniy Velikanov <me@adomerle.pw>
+>> +
+>> +description:
+>> +  The Mediatek system clock controller provides various clocks and system configuration
+>> +  like reset and bus protection on MT6789.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +          - mediatek,mt6789-apmixedsys
+> 
+> Why this does not fit existing binding file? Or Mediatek maintainers
+> preference was to switch to one-binding-per-SoC?
+> 
+
+We have been using one binding per soc for sys-clock and multimedia clocks because
+the sys-clock has multiple clock controllers in one macro-block, while all of the
+multimedia (and peripheral, depending on the soc) are in different macro-blocks.
+There are also some historical reasons which aren't really relevant anymore.
+
+So, we do have mt{soc}-sys-clock.yaml, mt{soc}-clock.yaml - that's right.
+
+> 
+>> +          - mediatek,mt6789-topckgen
+>> +          - mediatek,mt6789-infracfg-ao
+>> +          - mediatek,mt6789-mcusys
+>> +      - const: syscon
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  '#reset-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    mcusys: syscon@c530000 {
+> 
+> Drop unused labels, everywhere.
+> 
+> Also, node name is supposed to be clock or reset controller, not syscon.
+> 
+
+MCUSYS is all three - but please use clock-controller.
+
+Cheers,
+Angelo
 
 
-Yeah, the SC is meaningless here, unless you call it CLK_SC8480XP_GCC,
-so the authors need to decide on one naming. Not mixtures..
-
-
-Best regards,
-Krzysztof
