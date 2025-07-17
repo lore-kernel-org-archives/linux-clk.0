@@ -1,261 +1,237 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011005.outbound.protection.outlook.com [52.101.65.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A9E1E572F;
-	Thu, 17 Jul 2025 15:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752766707; cv=fail; b=lEmPlbOP9u7ZqhJZx6HA+KwdssbtakJtnfThSKk+KcsBqBpEZB2YbNOD8F0e51Nd6L6YdaYvGch1o08KSqkgYGzn0Ox3myzbcMw4QFIUAYfjTY+jUcLFHKzEdEMwMFk6FIAkx+bsszS802raKTZe5mTcUs/v7B0sk/BiJQXT7U8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752766707; c=relaxed/simple;
-	bh=Ucf/R7ZHq4jt1LD2+Fc70rHbign/6Jmoi2clllCWz5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uwlzWYJZp3ejGtWNgULbPeAgCbJZp9hlOJ/O1eMVGB0aPhF26iwZKxIKiuro0eCnUTcLbGxffhsjrD57U2tzEtkKKGeKHs7dwSxt5ITkcREuEtKDTUwcYxizameO0nei8K9Mka3LyMUf+WQHDRChGVZTYzCtwvfRH1mDNJsglvY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XlkkyD6l; arc=fail smtp.client-ip=52.101.65.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9F287254;
+	Thu, 17 Jul 2025 17:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752773453; cv=none; b=e4Pjnfj62pFSPo5ViZhLBolajPSAUzElJtUhVhSm+aDM9kIwj6cw7NRNRpz6ixBOjD0DjsjXV/2ZhKPstYzzztcbUEkctKjm3wO1o2dneM/8okRRAwGdy7o3hphO7rJIXDSTM35J5gF5kTaWasLVrFNWmumftPFxnueHq0ZxrBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752773453; c=relaxed/simple;
+	bh=/pLsXovothPJruGBndBMhFdhBuU009HRKnVZRRUJY/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sAQLY1b0MiitHC3bAQU+cE2sU3GwEMcFcANVrgPy8Qq63YgkNM+jTD4p45aRauf24RSbT5IaA7TmQfdzvbQG3PpEA2RvWd4lJemS4WueHR/wYuSeMPPv7YAxNwQpW8xJFzcXSjjPyJFl/+GVGtqbGjas+d9k6MHNzbkqHo6Xk6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvn9fuBY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XlkkyD6l"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J73Nk8dxSt/MxL4bmS1ZDwjscPgjcS0eCwAr7Sj/ZW04SEvAG5VEeihCLzaea+w0vfzD/RZ/+UnaI6bWkVIyUd0/5EYRTk6zTrA52JbnaROeWqqKyNSU5p/uTI0Cmco4+5Pk5L+VcgWUVdu9wMtBrSGlxYNhUWRCNdi0fEYkS3n8cG11b26EPh5R9bmMpeqgDYN5bjcAQAS0pLVCrLrzRpEOpGw396VBeJCZzCH0OmCjJWVtwsFxvRPYvff62WuRMui/Ogo/4JSWjaB8gEk+ZqKE/oI6UmnTNMHTfIQG+190Kxg3qT0zR8oP5Yj9kZiL71gjauZaWzWtI2zdclwG1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YcGDk7oyl8cLtrQ3qrd0ata13NKrFfOstTfRAXipnVA=;
- b=j7+SEkeYdHEPIikVLvMhot/riL36K93f9Y6PDXHGtUug3rHawI3hrQ4e19tjV5zaCjij9OgCn3rUir5omFDpLLdaJ2xbDU31GQUfQCfKTJRLn9Ghpb7BCUzdqy4PHzKxl4GSAAckHoFGw39yFK7eXZDHQcvB7vncE7lxDzD1m6NV2rNGmMMq1u+XYCUWV4vvNQls3H9ym75jpwCODFn9Syg8nsfBLk9OA8QXtVZXGhOLP3G3V6o1ppi2wMV2MLacxO6VDE6vEsomXS6ZSJc8J0ojZi5ojYyEG57PSOseCe+fgJR+pIf6mrlHcdVFVEY2EzeoQqw9DOw/JMMcAMsrQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YcGDk7oyl8cLtrQ3qrd0ata13NKrFfOstTfRAXipnVA=;
- b=XlkkyD6l9myGPJMUx3uHZ8pjuyDAYuyP7umxqhPt1KqE6VmjQ/1PSaW6HzDRsld8pIPjPgmc5TWJsv4vKpYre11gjcPWl0gLcdi8vHr1xjy9HcAv8hRpk6aXwQgEtJPkyAlSrAa2K8k3nVYkSvCZwwYOffjDnTVWQFs/6kQQeQClGAkhjVFnO8L0moFHpDRx5M8vnkQs4IKuapAJEhWbSp7R+3sPyn+BorSWjztO73xpFh9ndpAd+EDAWm6L2QxYa1mpsRbFbYynfEZu5+Gn9q4IF2EyhUGSaupWeSWdqTnp5feMoqPRVIONURizvSlxO9SDzug/mBqRk6tvCW6wdA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM8PR04MB7250.eurprd04.prod.outlook.com (2603:10a6:20b:1dc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 17 Jul
- 2025 15:38:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8922.037; Thu, 17 Jul 2025
- 15:38:21 +0000
-Date: Thu, 17 Jul 2025 11:38:15 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] clk: imx95-blk-ctl: Save/restore registers when
- RPM routines are called
-Message-ID: <aHkY51MOgl4v2Y9/@lizhi-Precision-Tower-5810>
-References: <20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com>
- <20250716081519.3400158-3-laurentiu.palcu@oss.nxp.com>
- <aHfvbTpQ4LmexJpA@lizhi-Precision-Tower-5810>
- <lp3m4bahzbwvb6nfu2o6hsr5cux3y4rgdasbgba2jc774iei5a@plfpzihh7pen>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lp3m4bahzbwvb6nfu2o6hsr5cux3y4rgdasbgba2jc774iei5a@plfpzihh7pen>
-X-ClientProxiedBy: AM0PR02CA0155.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvn9fuBY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0F9C4CEE3;
+	Thu, 17 Jul 2025 17:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752773452;
+	bh=/pLsXovothPJruGBndBMhFdhBuU009HRKnVZRRUJY/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bvn9fuBYIQdA/I3AbcqXRhWhEIPtJ9ZpuPB/TpIutLy7ua/1waBrw1ZH4dVMP1GGA
+	 USu+wy3fCeACCSVIb8eihVtqiKMzDqRf92Itbi0gEVJXd3rzvklqMxVy++RddjdAvt
+	 qbR0aYDD56f4YHC7QvctaOPWoTdk4nuQcACB1I3Of0P6V73cO1tw48qHEBsR4G/l9c
+	 x7afxaiPH/4juxV4Hkaae+cPUQ+E8ZcAo9irND49FBkgHRVXcyOx4W+R14/5yICSA8
+	 00MrPtDpbI3iN56lkvBI+AooWCAfA4xx87QY2G0xg0IhgYk0UHMB0NvISIe6uuegWp
+	 BUMyJBpQk9NIA==
+Date: Thu, 17 Jul 2025 12:30:50 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <qawoswiuojk7no32jf2vejh4wcocv74fn37kn5xjqbbnwshmkv@r6yitwwx64xb>
+References: <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+ <aCNGSwL7043GoJBz@linaro.org>
+ <20250514160841.GA2427890-robh@kernel.org>
+ <aCUHTJGktLFhXq4Q@linaro.org>
+ <20250521-psychedelic-cute-grouse-ee1291@kuoka>
+ <aC-AqDa8cjq2AYeM@linaro.org>
+ <20250523-markhor-of-fortunate-experience-1f575e@kuoka>
+ <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
+ <175053907628.4372.13105365536734444855@lazor>
+ <aFlT7fLePVmvoxBQ@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7250:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02546a40-03e7-48fa-e1ff-08ddc547f5c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|376014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?woBzS/g0ozaiWd7Xa9ubtu2QJkRwg/hatLmH5o8AvlA1Rzp1mxcqxax3zHqL?=
- =?us-ascii?Q?kDzS0aJBGTWhin2Vly7V+PZL+O2CC70mN9Od35LJijlnjSd04/BBpwuxz2Qj?=
- =?us-ascii?Q?yPsCYXfj0den94XtkWQO+MFZrvXSKDln+nR3WjNVUfRKu+BO7GCMUdf1WAEN?=
- =?us-ascii?Q?AlcYvUotVnyHrygnceo9YUgzkKmibZAA5bNkHW5I2Dfv+2cXhza3q1IjzQsv?=
- =?us-ascii?Q?uBQrP+kYBa/PkWQdu1OhQtiyqhDM+BoeLwscdP5unKY1gGXgTDQlrkmtG1Xf?=
- =?us-ascii?Q?OoETHYzcM0nQ8Qog9wO1iJ4Eql8VUfcUUzXAKxOl6OMNmk1ZjFJsQ+rXuMd/?=
- =?us-ascii?Q?HhiRSBuZKpWnjPMHzcrdLbaQxH+AXRIOPhwDgIGHMj3I2ja2+n4kgm+zH2dG?=
- =?us-ascii?Q?nC7XpNUKRdTyK4lmr4syxLBCO9pCJhsWB0ZKWajeRIX8+LcHle9KR1I0XPKT?=
- =?us-ascii?Q?tQG2dVFWjJqPTM/z7wsYHcInYJHcw38O6I7e9MPYmJpLFGniOQuSTdSk5Wn4?=
- =?us-ascii?Q?nK58T7D7MicovFVw9VnY7rmfh/nr3TSKeJUJsCbDxmWNFyfPYB023Q2gr/0Y?=
- =?us-ascii?Q?Vew2Ynjo9uEsPR6VaLOTyRFo3v5yz0dGJipNvbwZMs5Y9ozX6jRmpyoBbJIR?=
- =?us-ascii?Q?2A0Drpy24fi7nMshBT0PA5Yz6sz52lOX9TYVbye2xyiC3t2LsOdTLC5FJTcj?=
- =?us-ascii?Q?cYBoFkVEi/hQroLJ+AkelPgqjpOKijz0PrTWuzC6dE9hvtbjxzRJhkuTckqx?=
- =?us-ascii?Q?t7ZtPeu3ooFSZvxez1YBP3YuvrF+QIG97jfvxrianD0TXXBNOzdJam0dmjiE?=
- =?us-ascii?Q?aitqbQ2owZBQx7VhNhwhmIeqWr5mDhMxmUvXI7EUm7RkFTuHHbP1ADQU7BN0?=
- =?us-ascii?Q?YKV9+nQTbi5tj/0ngWyPbpBpRy3G+50nRiau4+8k35lQ+m9AFV/80+NSAmmE?=
- =?us-ascii?Q?15SZqRgh2hqI5ccshPolmjkTYCOMJtay9CcHRVgJ9DrTc+ov1tFKrWX9rzTM?=
- =?us-ascii?Q?HDYSD5XHcJoTsXc44OL+Gp/hwid8py3rveozUEL94sVAF7imxNyLyl8fwhVE?=
- =?us-ascii?Q?QMJ4di5wSYZ+yWsTA9dsoB/v+P5nUcr+bHFbgl6XuzuLXi4s3qzd7YdhVQ2p?=
- =?us-ascii?Q?u+IMeyQu43K7vXM3Ywuqln7InoAJwtY+urDF1ACedhzMGG10z/9Q9IbDrjD/?=
- =?us-ascii?Q?Zi1imMl1BqNjsw04qFYgfNUng7ZxFGkh88pD0x49bIJvXNk9s6ODBPjMIG2g?=
- =?us-ascii?Q?Mmwcrz4UjNjY0DdvE3NjU08x3tzurUNrnpaSMo4+2p6obO9NtJLg326nFLUF?=
- =?us-ascii?Q?Nxy4G0x77dAWYGsdbM2t43AA8xq1rLBN0CJ3KhMj5X+DuLdUQMxEwrzk6+T2?=
- =?us-ascii?Q?I4d/U0BYLMzetCYhvigLZyyTjcDqwvhJRIzU/547m7IIUcN+VAxDdB0v41uy?=
- =?us-ascii?Q?0pCfcKsYM9vYT9ZPhJ5TbOIT6Qdh/HP3rCYWtspgFnqO+Jzl7WvB2w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XwpjlwUe/gaUoc0TS17Co42GdS2nK2w319jlrq/Ybf0H6N4la4U6javahobX?=
- =?us-ascii?Q?TFFJqYnVxARFwZEAOPhAdeCVPSu5t8WvawrdInCcl8nyJV4B82nsgK0MJTXp?=
- =?us-ascii?Q?gbB9AKuiBdUMMnsup2iufxxq5d6Jp8NCpBlbBA3VkjQWFY+NW9vHkHgfEa1/?=
- =?us-ascii?Q?vJGw9jExfO4V8mb5xSGDddb5o5oLj4DcLQUXk5cUmP6jUImHh4qp2iDJe36G?=
- =?us-ascii?Q?AV/R+0YaItb9kjjNpWMz44L1xX9/ZuAajgPz7O8eyKJPeJFS/LmiNDmt5Os/?=
- =?us-ascii?Q?Ox/EbctMNvlQIAug7W7Mn/kZiAZa8wE3jjsIdAqQEyYZsEcRHGL6ZtHSOn8E?=
- =?us-ascii?Q?hKc9PkFxA8XUn3uJJoT8mFdVh7R6nkvr8VZK79Lf0b6uIM8WS7Ah0SiuYYE5?=
- =?us-ascii?Q?EshSp3EpPoq5mBP+zO7XyxrzTLRY3bb+HMhrTQHoTzP/FRFmuR1V0Q8koe+G?=
- =?us-ascii?Q?qa9pi0VDahWfdXKhl1x4f755xPqaBPc1lkDA2o+kCvp9yTv0Ft9qZrjSdeHG?=
- =?us-ascii?Q?nZN3M0du1m6I8C/vZ8V3jXCBVyYZmbAZsMqKWJuOp0YiPTkQzI0H87ZWp78R?=
- =?us-ascii?Q?sCJC7dyIYOrrGBmIt/9bC8AXLyuwb4c6xTpXKG8OqAiU0ckUr9cDG4KtptFv?=
- =?us-ascii?Q?f03UzSwNILXKuhMcDCdp1VUddhhgBlaNkq2PXQCxxEPKh0htquY6NjY7I2nI?=
- =?us-ascii?Q?iVLiwCTTkuVhEeBvYayR0bLVKcgD7sv+j6kp/AM2b7GC3Ef17HAOEHHX/IY6?=
- =?us-ascii?Q?t8lPJWqDE/W5WfzHQLAhLoexV1Cwmiruq2eRmSaYPDx3hJogmrRqxQ/ijG0o?=
- =?us-ascii?Q?YTOSRm5ZCpUjBIuhYIrOmCOSDEsz/OhaHToBE6+3UR1D5nJAP/z1JExoFmyL?=
- =?us-ascii?Q?V8IER1AGkaVHgdz7fvHYx6DfYPuED+KYTntkB8aQRp6lDEXFiU3f0sA8doxC?=
- =?us-ascii?Q?+dA9IFbyV4qhfnlqkBWiXqKK77AKDyWDOceaJjZ4N/E2rU/DRbCITMamh5Nm?=
- =?us-ascii?Q?4MXqI/cM5FXV13KfINbMTnYZl6gGlLgWlDObpvQZTh/d8nvzSDT2wyCgvm8A?=
- =?us-ascii?Q?sZo0Yyso7yJvltUku6h/uScVTw1J5R+LOMwHjAVMdd6irCLXbubUV91BDCA4?=
- =?us-ascii?Q?IamkHS0iqGf8gO26Uqf+hxsvm53ygMOv/K9HIt6bkDxbzcXqZ95twV/BgT7e?=
- =?us-ascii?Q?AKzBewRBnSQvDlVMrFj8S3xaa2nwY2Dul4Gl2+R96+dNMJynZjASXClaHZr7?=
- =?us-ascii?Q?7JpLNJHxKU4VkBFwCc0k8czY5G9iY93WC7Ihbn4mhvupm2z9nhtLjzwdFZJH?=
- =?us-ascii?Q?1+GaPIJnc/kURa2b/BJC613ii4oArQNLAbVeffn4Gw14bqL762N0zDKR2nup?=
- =?us-ascii?Q?089KJuA2cUf0kBRiS+ZB/OtKlw6zrhZHKEglgYUU4Wfq+Ar3zyAXVR5ED05P?=
- =?us-ascii?Q?s6vqxePyy2mQR8i4eYMoFgP+d9LcocfVarHJkrDGaZVHMYzaBxHe8FCw5EkS?=
- =?us-ascii?Q?/qm3kHbiz6hzUFXnwiVMQ6cqrxKi4l01/4XRV8sgobsUn0ubIVP8dLzobXxW?=
- =?us-ascii?Q?xr1Mx6cf+mcL2e5bdTuzdsll8KKNUTze11+BummB?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02546a40-03e7-48fa-e1ff-08ddc547f5c9
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2025 15:38:21.5486
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HBeUf3lV5HL3psW+zVxIW5vpbahGriuUYDj4nNK8fC/DvUxdFIOJK6W+Ivn5TWxP1slwOnF0xPPijyKTWPdb+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7250
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFlT7fLePVmvoxBQ@linaro.org>
 
-On Thu, Jul 17, 2025 at 03:23:38PM +0300, Laurentiu Palcu wrote:
-> Hi Frank,
->
-> On Wed, Jul 16, 2025 at 02:29:01PM -0400, Frank Li wrote:
-> > On Wed, Jul 16, 2025 at 11:15:06AM +0300, Laurentiu Palcu wrote:
-> > > If runtime PM is used for the clock providers and they're part of a
-> > > power domain, then the power domain supply will be cut off when runtime
-> > > suspended. That means all BLK CTL registers belonging to that power
-> > > domain will be reset. Save the registers, then, before entering suspend
-> > > and restore them in resume.
-> > >
-> > > Also, fix the suspend/resume routines and make sure we disable/enable
-> > > the clock correctly.
-> > >
-> > > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> > > ---
-> > >  drivers/clk/imx/clk-imx95-blk-ctl.c | 25 +++++++++++++------------
-> > >  1 file changed, 13 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> > > index c72debaf3a60b..3f6bcc33bbe99 100644
-> > > --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-> > > +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> > > @@ -453,7 +453,9 @@ static int imx95_bc_runtime_suspend(struct device *dev)
-> > >  {
-> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> > >
-> > > +	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
-> > >  	clk_disable_unprepare(bc->clk_apb);
-> > > +
-> > >  	return 0;
-> > >  }
-> > >
-> > > @@ -461,7 +463,10 @@ static int imx95_bc_runtime_resume(struct device *dev)
-> > >  {
-> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> > >
-> > > -	return clk_prepare_enable(bc->clk_apb);
-> > > +	clk_prepare_enable(bc->clk_apb);
-> >
-> > Need check clk_prepare_enable()'s return value!
-> >
-> > > +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-> > > +
-> > > +	return 0;
-> > >  }
-> > >  #endif
-> > >
-> > > @@ -469,17 +474,12 @@ static int imx95_bc_runtime_resume(struct device *dev)
-> > >  static int imx95_bc_suspend(struct device *dev)
-> > >  {
-> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> > > -	int ret;
-> > >
-> > > -	if (bc->pdata->rpm_enabled) {
-> > > -		ret = pm_runtime_get_sync(bc->dev);
-> > > -		if (ret < 0) {
-> > > -			pm_runtime_put_noidle(bc->dev);
-> > > -			return ret;
-> > > -		}
-> > > -	}
-> > > +	if (pm_runtime_suspended(dev))
-> > > +		return 0;
-> > >
-> > >  	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
-> > > +	clk_disable_unprepare(bc->clk_apb);
-> > >
-> > >  	return 0;
-> > >  }
-> > > @@ -488,10 +488,11 @@ static int imx95_bc_resume(struct device *dev)
-> > >  {
-> > >  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> > >
-> > > -	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-> > > +	if (pm_runtime_suspended(dev))
-> > > +		return 0;
-> > >
-> > > -	if (bc->pdata->rpm_enabled)
-> > > -		pm_runtime_put(bc->dev);
-> > > +	clk_prepare_enable(bc->clk_apb);
-> > > +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-> > >
-> > >  	return 0;
-> > >  }
-> >
-> > Look like needn't imx95_bc_resume() and imx95_bc_suspend()
-> >
-> > DEFINE_RUNTIME_DEV_PM_OPS() will use pm_runtime_force_suspend(), which
-> > do similar things with above logic.
->
-> As I said for v1, we cannot use DEFINE_RUNTIME_DEV_PM_OPS(). This driver
-> is used for various clock providers and RPM can be disabled for some of
-> them (see rpm_enabled flag in platform data). When RPM is disabled and
-> DEFINE_RUNTIME_DEV_PM_OPS() is used, pm_runtime_force_suspend() is
-> called, as you pointed out, and suspend() is never called.
+On Mon, Jun 23, 2025 at 03:17:33PM +0200, Stephan Gerhold wrote:
+> wOn Sat, Jun 21, 2025 at 01:51:16PM -0700, Stephen Boyd wrote:
+> > Quoting Bjorn Andersson (2025-06-10 20:31:57)
+> > > I'm still sceptical here.
+> > > 
+> > > In the first snippet above, we describe a single IP block which provides
+> > > mailboxes and clocks.
+> > > 
+> > > In the second snippet we're saying that the IP block is a mailbox, and
+> > > then it somehow have a subcomponent which is a clock provider.
+> > > 
+> > > It seems to me that we're choosing the second option because it better
+> > > fits the Linux implementation, rather than that it would be a better
+> > > representation of the hardware. To the point that we can't even describe
+> > > the register range of the subcomponent...
+> > > 
+> > 
+> > Agreed. Don't workaround problems in the kernel by changing the binding
+> > to have sub-nodes.
+> 
+> I can describe the register range for the subcomponent if you prefer
+> (it's reg = <0x50 0xc>; within the parent component). That would be easy
+> to add.
+> 
+> Your more fundamental concern (working around problems in the kernel by
+> changing the binding) is a more tricky and subtle one. I had exactly the
+> same thought when I started making this patch series. However, if you
+> start looking more closely you will see that this is much easier said
+> than done. I tried to explain the problem already a few times (in the
+> cover letter, the commit messages and responses to this series), but let
+> me try again. Perhaps in different words it will become more
+> understandable.
+> 
+> Just for clarity, let's take the current device tree description again:
+> 
+> 	apcs1_mbox: mailbox@b011000 {
+> 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+> 		reg = <0x0b011000 0x1000>;
+> 		#mbox-cells = <1>;
+> 		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> 		clock-names = "pll", "aux", "ref";
+> 		#clock-cells = <0>;
+> 	};
+> 
+> Clearly this is a mailbox (#mbox-cells) and a clock controller
+> (#clock-cells). In the hardware these are stuffed into one register
+> region, but they don't have anything to do with each other. In
+> particular, the specified clocks are only used by the clock controller.
+> They are not used or related in any way to the mailbox component.
+> 
+> We need to have the mailbox available early to proceed with booting. The
+> clock controller can probe anytime later. The &rpmcc clock required by
+> the clock controller depends on having the mailbox available.
+> 
+> In Linux, I cannot get the mailbox driver to probe as long as the &rpmcc
+> clock is specified inside this device tree node (or by using
+> post-init-providers, but see [1]). This is not something I can fix in
+> the driver. The "problem in the kernel" you are referring to is
+> essentially "fw_devlink". Independent of the device-specific bindings we
+> define, it is built with the assumption that resources specified in a
+> device tree node are required to get a device functioning.
+> 
+> We usually want this behavior, but it doesn't work in this case. I argue
+> this is because we describe *two* devices as part of a *single* device
+> tree node. By splitting the *two* devices into *two* device tree nodes,
+> it is clear which resources belong to which device, and fw_devlink can
+> function correctly.
+> 
 
-Sorry, I missed your message at v1. do you know which flag impact this?
+We have many cases where there are cyclic links in the DeviceTree
+representation - clock controllers depending on clock providers that
+depend on the same clock controller, regulators being supplied by
+regulators of the same PMIC etc.
 
-Frank
+From a DeviceTree point of view this looks quite similar, but from an
+implementation perspective this is simpler than those examples - we
+don't even need to do async resolution per resource here.
 
->
+> You argue this is a problem to be solved in the kernel. In practice,
+> this would mean one of the following:
+> 
+>  - Remove fw_devlink from Linux.
+>  - Start adding device-specific quirks into the generic fw_devlink code.
+>    Hardcode device links that cannot be deferred from the device tree
+>    because our hardware description is too broad.
+> 
+> Both of these are not really desirable, right?
+> 
+
+fw_devlink is supposed to optimize the probe order, it must not prevent
+the system from booting just because there is cyclic dependencies
+between IP-blocks.
+
+If fw_devlink is authoritative in determining which order things must
+happen, then it needs to deal with these things.
+
+> I don't think there is a good way around making the hardware description
+> more precise by giving the two devices separate device tree nodes. There
+> are many different options for modelling these, and I would be fine with
+> all of them if you think one of them fits better:
+> 
+> Top-level siblings:
+> 
+> 	apcs1_mbox: mailbox@b011008 {
+> 		compatible = "qcom,msm8939-apcs-mbox";
+> 		reg = <0x0b011008 0x4>;
+> 		#mbox-cells = <1>;
+> 	};
+> 
+> 	apcs1_clk: clock-controller@b011050 {
+> 		compatible = "qcom,msm8939-apcs-clk";
+> 		reg = <0x0b011050 0xc>;
+> 		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> 		clock-names = "pll", "aux", "ref";
+> 		#clock-cells = <0>;		
+> 	};
+
+This doesn't scale to any example where you have more than single
+resources laid out in a convenient order.
+
+> 
+> Top-level syscon wrapper with two children:
+> 
+> 	syscon@b011000 {
+> 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+> 		reg = <0x0b011000 0x1000>;
+> 		#adress-cells = <1>;
+> 		#size-cells = <1>;
+> 		ranges = <0 0x0b011000 0x1000>;
+> 
+> 		apcs1_mbox: mailbox@8 {
+> 			compatible = "qcom,msm8939-apcs-mbox";
+> 			reg = <0x8 0x4>;
+> 			#mbox-cells = <1>;
+> 		};
+> 
+> 		apcs1_clk: clock-controller@50 {
+> 			compatible = "qcom,msm8939-apcs-clk";
+> 			reg = <0x0b011050 0xc>;
+> 			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> 			clock-names = "pll", "aux", "ref";
+> 			#clock-cells = <0>;
+> 		};
+> 	};
+
+This is clearly implementation-driven. Until fw_devlink "forced" you
+into this model we considered APCS KPSS global to be one entity.
+
+> 
+> Mailbox as parent (what I did in this series):
+> 
+> 	apcs1_mbox: mailbox@b011000 {
+> 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
+> 		reg = <0x0b011000 0x1000>;
+> 		#mbox-cells = <1>;
+> 
+> 		apcs1_clk: clock-controller {
+> 			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> 			clock-names = "pll", "aux", "ref";
+> 			#clock-cells = <0>;
+> 		};
+> 	};
+
+This is just a pragmatic variant of above.
+
+> 
+> Maybe it makes more sense with this explanation and the other options.
+> Let me know what you think!
+> 
+
+Regards,
+Bjorn
+
 > Thanks,
-> Laurentiu
->
-> >
-> > Frank
-> >
-> >
-> > > --
-> > > 2.34.1
-> > >
+> Stephan
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/aC-AqDa8cjq2AYeM@linaro.org/
