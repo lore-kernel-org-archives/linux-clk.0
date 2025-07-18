@@ -1,169 +1,201 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC3D29824E;
-	Fri, 18 Jul 2025 09:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C67129898C
+	for <linux-clk@vger.kernel.org>; Fri, 18 Jul 2025 09:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752830782; cv=none; b=FKG2mMO0Zp3meWVigMbcNEo1p9cVniNbq5bQc/3m4MrJiB1rGiJwVfnQrKD/u0fX3yi6vBxMN45wb0F0GBhkA041lgCyaAS0OUVA8kelri7KKSS3Js6QwkQXrKL6VF0Qw7O2A2lcv7eqyN/E+Tr6JgGt1RLqejlxPumlpnR5SGs=
+	t=1752830900; cv=none; b=lkpW0SsEPh5HJKUqfVFJNCIgFeezrVDjvUalfJNuB94pdZa0L0yP4FKwCKbKxGsIP+E/fyeWkyknUrmVsCn7DqQ3FSHdP5LrjbcXGL6phtIlLUXkkFseL9IctQ517djsBTBUj6GEhhIIkTCDKHDhRiQ0TiLSW2MbzXOJ4eixwEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752830782; c=relaxed/simple;
-	bh=fuvT3v3Xzq0r7FVfwU3PziQOx7mb046oNzfhheqrsHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gBZ/m2TcbJRD2T0BR0VZrfV1POWaE8oWCI5/r/0U6lIiPc4I0ZzEEHrh/jwff/tA2ECuagJ+W01myE5iKGNZPEu3k3NkTlP8huXliwqMu/jHe9/9baexkQlA9TiYFEVvNqjJxYRqSXbjnh8iu8oosaGwfXwAO4gZlHdzbuLOLsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVwtCmkb; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752830900; c=relaxed/simple;
+	bh=NbnKZfzGqskNbEfXayr5hGk/GwKuQRNSeP/X0NfYCeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRMTmtHMi9fYpxUNbDm9QFgx7v9i3AwsWvzVGSZRq3UUGddZynMl/j05ZH0YLAMxziZE77Sc8Y7gx7iBrY6Eo7jEkfRJwkYp2+zIhmnEuU6igLSSCSm3prfc8RhmdqxMjW9HsFXkVMTkR+XXi7S9khoVB8x1wJI5YBYuCtGwQqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HRxMhSIS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVwtCmkb"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6e2d85705so916340f8f.0;
-        Fri, 18 Jul 2025 02:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752830778; x=1753435578; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YgExZNhP/TQ7TZbqz2PLAB+ZQROoSd4CHB0RnRy8pHo=;
-        b=CVwtCmkb27Rfm1uab7y37Y5gZalhcnUNOcvUZgMUAuKc5EZA2xchunlF7lz3rVMGAJ
-         oVrkshVTYwxthIy3UkOPQxKYP2WTko02xjeHgNMUAL374zWaoDn/t9jU6D/oC/TGaMn+
-         YhMzvGKFoxotX7Bzl6dAJCV2MaG+44PdrHz2iGwOgLsGk8hDO9bHhR6pUx1H/+noiXyf
-         Y5UNyL2AgvWKaMhKHVuTDVqtP+yWZN/kL416FPngMx9Zm9c2pRbHtCBi4Paq23yinITX
-         sziKMm6O/hZe/8Nu96RTil0CazoU37X7wqnyXRecWso4hnjWd0OermEsESTLTYYmLAdO
-         jHxA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HRxMhSIS"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56I0DtEx015960
+	for <linux-clk@vger.kernel.org>; Fri, 18 Jul 2025 09:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1+VRe0Ju/sp1iGJc3RkyEXgFVAS/G2F4yjLjeyBrp8U=; b=HRxMhSISSIU/oC2I
+	fbV7H+d23qjgP3ITqLd6VHqpcNpA1JPdwO4DhtdRFd/Cio4n93BywGXELX8Ck3/7
+	oVixkQM2nHiG3W20ztqBz4RWvr9tIqpBucgGLvldcAcWgtaTQtDMRUSu6sNFdCAE
+	1KGyGGtiiF64hAFz2wzmx4pUBusBkKAD4Z0n5VM2CVvQC22WEsfQ888XrCkz5/f8
+	FZfNI8uuS3u+G6vJT18ZiEDtcmofujrxe5AuzCqElCrvxAnPjnoDY/SEzv5UdlUU
+	/c50vngyayo0IQE83pyZfflmEy/Iz1Dk2VeNK5ck5hRu6UGamiuJk/LzLcylGzSo
+	T81KzA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47y3tc2tn0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 18 Jul 2025 09:28:18 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7de3c682919so42808285a.2
+        for <linux-clk@vger.kernel.org>; Fri, 18 Jul 2025 02:28:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752830778; x=1753435578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YgExZNhP/TQ7TZbqz2PLAB+ZQROoSd4CHB0RnRy8pHo=;
-        b=iof8/WBIDhN0kVjDrtbkQ1GdbjGAdkkHEPDMoCruM0wiOvwnGPofOa+hOg+6/By5Ab
-         UZyWrZGfIDwZYEpTw7B/PnG0vDoze6UL6MgwSSn4ANsE7vhZVdnyua1IStErouzv1BbJ
-         /f/fHEoV7eIPNNmeHmUclPAapKQN2yePW17ujof6GedgPrkU92J3rpaLK3aOcPaXNpvm
-         kGbH5qUyVD4ofrBALlChdWX+zFrHxlorjW3uIrpSwE00WKG5j/EXrQXeClugmaMK7PA8
-         bBTda+1MaQcBW7tu4kPdsMZuzGAfsHecrS/WDXWYYxQLZvO5puOCFP08elE9EqZUbJT3
-         rAFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNWgm7eBPjGXSk+smHyEMAW5yRq28h2IZTirSsUqLxzLHgRD9ZINwrAlEkuS8Y5OOyD03M4p6WV8pH@vger.kernel.org, AJvYcCWDcx48WH/TakvvqrEx3VSIdRyDlcB+Ms2YZkG3a0LCi8Z+yGc2zr1RU4iVtwFH9A1qulEKZThCnZOZ@vger.kernel.org, AJvYcCWzyFdx/VYXstZIC88RDIhCGmtSuRR5zO3iX+krxGXW8T9mWa7JUtIuHtrjGcq2QaMZcPCaSb7ccmo0IWJl@vger.kernel.org, AJvYcCXAXa/JBqU6O7cCBXQk53/tDfmJIo0HPz37lFcfdHlJ+QXl3fjs0M/DTvpWTdVm3sCnIWoY01ppZokIIlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1f2tYm6CvTerCDfNwfkAx/AWB+jj98yCihLvyvtkfrUibyud7
-	SOlpWhebrrbRimv3INp/7iJWmwgxK0z7/mu76+YVm0apa/yz3MImrYqhxszi/WJQpgX6gBxKkT7
-	Pha+TshizRAXbKBhVzYJPa73b8BFtOilbmw==
-X-Gm-Gg: ASbGncuYkg0v/sMNCegzt75xGclqlS/REmniFZqMVDq7JMrhM2wd9kACCpQGeRvo+t3
-	RKOz+8OjCT1EmKoqSerzRY446QjLumEaZMLyIMxPAAUdRFPrqnzYecQptTgWTAudfj9yRF61ELy
-	f7fDXWJtSl0LilXWHpfSahRCtVF0RptEAZyk8hyfn0ZeMscCe7zZluMgXPFA6ue4eXZu9koIUPp
-	li/EvXWiTQ4k2I9EJg=
-X-Google-Smtp-Source: AGHT+IE0CZJqfMmd1YFPzJ7hCnSvHejeMeUg8VdqfZngXzMLICt2zU9gwaqmpvwTh2mK2YmmXBgGxVRTXD7xj0ov0CE=
-X-Received: by 2002:a05:6000:4305:b0:3a4:d0dc:184d with SMTP id
- ffacd0b85a97d-3b60dd95c4dmr8894808f8f.27.1752830778095; Fri, 18 Jul 2025
- 02:26:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752830897; x=1753435697;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+VRe0Ju/sp1iGJc3RkyEXgFVAS/G2F4yjLjeyBrp8U=;
+        b=srem3NM6//I/1m2lwZ3lzCx99OZ2WvBvf682xu4NRv0s1WQtLf7j9vqNq81/plTVxp
+         3I/tCVzqasbKt9SxAxhASoM16n6JuXPpDuLfeqqnGdhEcQ/SgEJOCv6Z/KiPqD2OyAXp
+         ZFucUfqRY83B2iVuzP7ZGeQMgN8FfzwMq4q+qQzabg6VdU86lfNXMCOnpoU5cgUr6Gr9
+         /NwQbK+RZLm50qQJLR7xbPVo1zvLxJpTp5wPvYR7kwLUtFUuobhdYsXdCpztKuZ/IIrA
+         2bgCRjNmmpKQSodyqHwRaEKYhEmGPFmMJCrd0iKDkRQOCGHa25uPlpn3bddPGRA04i7L
+         2JIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWaFvQgbK0rwko4fJbRsEyj9MzT9mTcIkvPKk3zfjxPy+gOvW2Fs+IEpZgYpppHYfPHPtik/thgUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybLQ64h29ccNb0UqUJ7kzvHO9dUHK89pka5QdQVJ/a5vkKghoQ
+	wNwFZs8syjeaRM3d5tyRX5uqq7dXzY8HVcC0hhnk50+281H8Z8LdbFzqYrJ/CdqNSJT1yfxAejp
+	yXOyJlQ/ir9YqlGFyYBikLt1GEp5nRJt9Zv2wnJ0kn9UUuBroFZ+6uv1lA3D5oMs=
+X-Gm-Gg: ASbGnctiw7K6YmbOiI8EOmtwytvPGrh/WvaONgYl45Z0dRHEPlRbtplkVR3wQ5JkxUt
+	hnmb5Utu+5LcjsNzAUwdTHTpulEvreZZR+fGGZJaJRM16ih2arQgb695cp23u+jLMiQzDstIKtQ
+	tX0Ifz0RP/YIDR+JC+WtyNL5NnRpA7SP6pMjKR8S9+7qpmBveZD1hERHjtnwcTOmKvGAnVaWuu1
+	iTkyz4JcFcUOm7+oOTV525H+xonlJgH9tq+NodXYJ7A3aU1QvvWydK2UvvgAc8qWxoCe++E+JIR
+	1Zjy90sPIR8g8ErbvC08O6Sf7kjsxB4wW6WwospcFFqGafkJCIuLzBGg18G/tGHKInvAmGugr2X
+	b9w8r5ArwDP7/t416OFjJ
+X-Received: by 2002:a05:620a:4153:b0:7d0:9ded:31e0 with SMTP id af79cd13be357-7e3429d39b2mr559975785a.0.1752830897033;
+        Fri, 18 Jul 2025 02:28:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC1R6EIQ1c6MEMXvvejqhCbTPlrLcU2EQqZ1eX8XkE7MU2u6NGRZ77ayYNHvIednR+yi5YWg==
+X-Received: by 2002:a05:620a:4153:b0:7d0:9ded:31e0 with SMTP id af79cd13be357-7e3429d39b2mr559972685a.0.1752830896492;
+        Fri, 18 Jul 2025 02:28:16 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c907bb58sm696134a12.57.2025.07.18.02.28.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jul 2025 02:28:15 -0700 (PDT)
+Message-ID: <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
+Date: Fri, 18 Jul 2025 11:28:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717142139.57621-1-clamor95@gmail.com> <4191623.PYKUYFuaPT@senjougahara>
- <CAPVz0n3W1yhrOsiYmYecxtPeYdZiK2_UY7vVc2tiYbYwfWPp7g@mail.gmail.com> <26197475.6Emhk5qWAg@senjougahara>
-In-Reply-To: <26197475.6Emhk5qWAg@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 18 Jul 2025 12:26:06 +0300
-X-Gm-Features: Ac12FXyATAxMwj6Lv9_7Hfs3i1vL0RU41Y-t1rhajaPZ2VFDLW-nCMuPkMpGoxs
-Message-ID: <CAPVz0n1f=bAHqZiF3yMGS2T5Bg6C=CbJbLCGQMGfiAqK1YVzFg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] ARM: tegra: add MIPI calibration binding for Tegra20/Tegra30
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
+ source clocks to drop rate
+To: Luo Jie <quic_luoj@quicinc.com>, Rob Herring <robh@kernel.org>
+Cc: Georgi Djakov <djakov@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
+ <20250710225412.GA25762-robh@kernel.org>
+ <93082ccd-40d2-4a6b-a526-c118c1730a45@oss.qualcomm.com>
+ <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Z5PsHGRA c=1 sm=1 tr=0 ts=687a13b2 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VT5E6NTcuoebdF1Bc4oA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: qnuJvm3qf7a8WD3QHoN9pLAJjGAnlXkb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE4MDA3NCBTYWx0ZWRfX+1tXHH2lv5r/
+ tkNikgvN9KZJwXUcu8bMm4oc1juLzry6TdfdkUzt2fT8TDpw2877P9k6DGSGLqd5XAvRjKzWLgD
+ aVwfuHFWcgzcgOxkIumz6WbJH9y1eU8E6/nN8Aaxhj/tWuSVp6mPcEVY+3tUtZDpQlsO9CvL8EI
+ HtrK7MMOFqcHufVxHDrPV7zMh3Fc7cmLV2MxmaMOQ0tFmy2j6cOQ9h5nH8znt7K2pd9KeJ9UE2M
+ R9djshk9wy3B71POCZt+sTirkrcOMYC4ADvUffI+AuYWDPwxsHqOaKLSlNwNNEaTL8M2m+pRjqR
+ H71SI6AR4pzbTVcD5kRYSIWprQwU8osppyypSI4hC/yshIVTNCbUKjKLgBU4dTyO1m9SSrbUDJA
+ Gsai4KHSJxjUxiHpLrjO9PBu2X36M2b8QaTOplTylwGxA7vVRi3dUztY9VRP9E61x9KyDFix
+X-Proofpoint-GUID: qnuJvm3qf7a8WD3QHoN9pLAJjGAnlXkb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-18_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507180074
 
-=D0=BF=D1=82, 18 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 12:22 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Friday, July 18, 2025 6:15=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D0=BF=D1=82, 18 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 12:01 =
-Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Thursday, July 17, 2025 11:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > Add MIPI calibration device node for Tegra20 and Tegra30.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >
-> > > >  arch/arm/boot/dts/nvidia/tegra20.dtsi | 14 ++++++++++++++
-> > > >  arch/arm/boot/dts/nvidia/tegra30.dtsi | 18 ++++++++++++++++++
-> > > >  2 files changed, 32 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> > > > b/arch/arm/boot/dts/nvidia/tegra20.dtsi index 92d422f83ea4..5212610=
-45cc8
-> > > > 100644
-> > > > --- a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> > > > +++ b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-> > > > @@ -74,6 +74,16 @@ vi@54080000 {
-> > > >
-> > > >                       status =3D "disabled";
-> > > >
-> > > >               };
-> > > >
-> > > > +             /* DSI MIPI calibration logic is a part of VI/CSI */
-> > > > +             mipi: mipi@54080220 {
-> > > > +                     compatible =3D "nvidia,tegra20-mipi";
-> > > > +                     reg =3D <0x54080220 0x100>;
-> > > > +                     clocks =3D <&tegra_car TEGRA20_CLK_VI>,
-> > > > +                              <&tegra_car TEGRA20_CLK_CSI>;
-> > > > +                     clock-names =3D "vi", "csi";
-> > > > +                     #nvidia,mipi-calibrate-cells =3D <1>;
-> > > > +             };
-> > > > +
-> > >
-> > > As you say in the comment, MIPI calibration on Tegra20/30 is part of
-> > > VI/CSI. We can't add a "mipi" device here since such a device doesn't
-> > > exist in the hardware hierarchy. We already have the VI device in the
-> > > device tree, so we need to use that.
-> >
-> > I understand your point, but embedding MIPI calibration logic into
-> > VI/CSI driver will bring up another lever of unnecessary complexity
-> > and excessive coding. While approach I have proposed preserves
-> > separation between CSI and DSI and reuses already existing MIPI
-> > calibration framework.
->
-> We can consider different driver architectures to simplify things, but th=
-e
-> device tree has to conform to hardware. The host1x bus has no 'mipi' devi=
-ce on
-> it so we can't put one in the device tree.
->
+On 7/18/25 11:12 AM, Luo Jie wrote:
+> 
+> 
+> On 7/11/2025 8:15 PM, Konrad Dybcio wrote:
+>> On 7/11/25 12:54 AM, Rob Herring wrote:
+>>> On Thu, Jul 10, 2025 at 08:28:13PM +0800, Luo Jie wrote:
+>>>> Drop the clock rate suffix from the NSS Clock Controller clock names for
+>>>> PPE and NSS clocks. A generic name allows for easier extension of support
+>>>> to additional SoCs that utilize same hardware design.
+>>>
+>>> This is an ABI change. You must state that here and provide a reason the
+>>> change is okay (assuming it is). Otherwise, you are stuck with the name
+>>> even if not optimal.
+>>
+>> The reason here seems to be simplifying the YAML.. which is not a good
+>> reason really..
+>>
+>> I would instead suggest keeping the clocks list as-is for ipq9574 (this
+>> existing case), whereas improving it for any new additions
+>>
+>> Konrad
+> 
+> Thanks Rob and Konrad for the comments.
+> 
+> "nss_1200" and "nss" refer to the same clock pin on different SoC.
+> As per Krzystof's previous comment on V2, including the frequency
+> as a suffix in the clock name is not required, since only the
+> frequencies vary across different IPQ SoCs, while the source clock
+> pins for 'PPE' and 'NSS' clocks are the same. Hence this ABI change
+> was deemed necessary.
+> 
+> By removing the frequency suffix, the device tree bindings becomes
+> more flexible and easier to extend for supporting new hardware
+> variants in the future.
+> 
+> Impact due to this ABI change: The NSS clock controller node is only
+> enabled for the IPQ9574 DTS. In this patch series, the corresponding
+> DTS changes for IPQ9574 are also included to align with this ABI
+> change.
 
-I assume then placing mipi node as CSI or VI child would resolve your conce=
-rn?
+The point of an ABI is to keep exposing the same interface without
+any change requirements, i.e. if a customer ships the DT from
+torvalds/master in firmware and is not willing to update it, they
+can no longer update the kernel without a workaround.
 
-> >
-> > > A driver for tegra20-vi already exists in
-> > > staging/drivers/media/tegra-video. We should aim not to break it. Per=
-haps
-> > > bring it out of staging? (At least partially, but then why not the wh=
-ole
-> > > thing.)
-> >
-> > It does not break VI/CSI, I have a WIP CSI implementation for
-> > Tegra20/Tegra30 which I hope to submit soon.
->
-> We have to use the tegra20-vi node as that matches hardware, and each nod=
-e can
-> only be probed to one device, hence the issue.
->
-> Great to see a CSI driver!
->
-> Mikko
->
-> >
-> > > Thanks,
-> > > Mikko
->
->
->
->
+> Please let me know if further clarification or adjustments are needed.
+
+What we're asking for is that you don't alter the name on the
+existing platform, but use a no-suffix version for the ones you
+introduce going forward
+
+i.e. (pseudo-YAML)
+
+if:
+  properties:
+    compatible:
+      - const: qcom,ipq9574-nsscc
+then:
+  properties:
+    clock-names:
+      items:
+        - clockname_1200
+else:
+  properties:
+    clock-names:
+      items:
+        - clockname # no suffix
+
+Konrad
