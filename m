@@ -1,255 +1,162 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE31400C;
-	Fri, 18 Jul 2025 03:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08891E521B
+	for <linux-clk@vger.kernel.org>; Fri, 18 Jul 2025 06:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752808644; cv=none; b=Wfc4hL8bF9KIDsp+Ka07wcgFFsx6h5HlDybUXJMIhpb6Ys5HuYDykfJIHVpOm+/fczxigkxQ5tvgN1EvnfbYimUNM3XAJPs1vzew66lex9RfGm9IOtbpK+84LANTCpoAQh9OZiCPu7Y3wrX05OlNy/1GdRT5NzZr7Qi3kFtiKfg=
+	t=1752819417; cv=none; b=c9hJzYu+kVfwlO+yuviKODTFO9CnMEzy98uHaRzJeTnIRj44ucC44zzQgR1ePSnGOG19P7EibcONDT2IVlO+ey1f37ryZvKm6W+d4FGmo7StPShz2uvhsKoOig5eb3xGOL9yUPfzk+PdlfddQPHk1z+eZMaK4vCit6RK18ldc+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752808644; c=relaxed/simple;
-	bh=lxayXSqvokqrTEjYHa9AUo75ZKKOi9qgsaPYBbCZaIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DG53uzPmEfwFmhPggzfhqbymm2cjW9vlS2621CL145E+fx/oTV/1CbaEG2y3PfG3NCwx60su/8qPBkz3JUFx67VrAeaBpYVk4aF0q+yxcI0gN65YyLE8VAuEXUsmmQfuBzVMeEGsC5Zke6B2FTpLSe1ZIp8+zVPP65R2j3tKokQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIefvjJ/; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752819417; c=relaxed/simple;
+	bh=I8UNMCDFBAAb+YBj8JFoJcvOE7xS5z4swcVBq99wvHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHvudjOK3Xi/tHVkO7P6wR+wzwR9CstOHWMA/tSjnIijCpgSC8BcwkD4eVdecEe7ahXkCzdn85QjK2cfCF6vryAwohwKbJOrmIxzGFYdwTUUmWLcmIl8oz3ZwDhpFrqTKuMqvtKGwvBpBqiZskbSMs+70mqg6ZxRET3VsCGgE+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FOGhYs8z; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIefvjJ/"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45634205adaso7945375e9.2;
-        Thu, 17 Jul 2025 20:17:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FOGhYs8z"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-606b39b19b6so276220a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jul 2025 23:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752808640; x=1753413440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+xLyVZDIwAcj1HEAQ8+4rL33smyGPoUW6kEINY6RwQw=;
-        b=SIefvjJ/AKmHXvHga+Nj3yod6PyftaFiRv+H/HLajRb7Z6AX4BddN6KP8BlMzGZZrZ
-         +9yuVLyC3Dlrj5QBYI0MiJKc8YIlHXCg/7kXxiyoUSBLTVGl8z+zqzYJ85qMoEOK48ta
-         r9A6lojcE7dyqtBZ4Q69LkdckL1PkPRS4UiIyxvLlRU6QnwDIi/GtJfbqgn4nIUaFFNF
-         Pt66BwQr7AOJf2xI+QBpu6tyLLeSiusitXRtwWsMhibYfRvcWW0dLXVYH8LNFWTwkjPQ
-         +n/ZuPv287iG4DAPdy8vayPGykOBxYcWCjnsDpqReNhZNbrvBFYWiDlk4G0brnRtj1Sh
-         1SwA==
+        d=linaro.org; s=google; t=1752819414; x=1753424214; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=z1JxVJ0cGy/4vRl8q2hnJqL2Htk4WJ35GqE3f6gUHZE=;
+        b=FOGhYs8zqqnQFV2xhcyXfdbwKe8YM0Az1gJs7235ZwYECWiDSdsvbKBjjZ7rDqOSm3
+         8X+mC6eAkbso/TcZ3GQPAPmD0WQLoY0jDfCEEJbhhOaQsTBfbsBVXaqCjEqCJaIIdqCe
+         9ijA2P7u/tWEH7Z1JZ5NsweZhNIfi6VarD3Ms7JxssnH/Keuk1cOMm38+yDxXTxB2hl2
+         GARU34bZ1ophaVAv4fSEwpPmWuNfYCh/MU27/abeFQg1EeljLC/IrHaxpIbVCGOBhdRu
+         BA05hrL3kXO6JDMkmKmwtxuKgZc6eRzCJBrDhRxXQM/kMYOeRvXf3q0kN6b75V19XzEO
+         SeRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752808640; x=1753413440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+xLyVZDIwAcj1HEAQ8+4rL33smyGPoUW6kEINY6RwQw=;
-        b=E5nfKHSDw+Wkwtt3Cw3pgzvhBr9A6EiUUc/k3tFgR1EvMGlvWCiD7E4lcJaxVSogRL
-         f7CsV5aHr1o69+dK3oyOAuCjC4Jr9skmCTu58Uwp4UB3O9zsNGIUsxhL3gonkZ1slapl
-         oCGwbS1CzYYZhCeowoVFh6LdbL/oPlKQsjOQGokpklBLLNH5IyPzI6xxSJ7Xf3S9Pj//
-         u9RLrWSUrHcrQ9A+KeiqiI5TBvvsT2mA3Xw5ldWAZ9gRcSL25SpdDXHGqHMrGrNZS5Ve
-         DsRTa/aoHT4GjeXbI1hIIpM4sTLddSjFzyokjFhf0Uod2nXSaC6Jo7Q5b6FhKFjw2yjS
-         2YuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6zUmfDfE55kdsmNd/uC5QG/FkOorbpIuQWjgcx+0opl/SCiFbNph6w5Fu4TJ883cerWclzRXfQsCdCT9@vger.kernel.org, AJvYcCWfUpSrIiCLPa2jYBLdBiUociKMBmrl5fEnuk+qZ3+VzA48yrt9JlGx6E4mciRVhAfFci0fqZkTqjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfuCa5/GN8HTdPUV1DW8vwcQ1BGfI6kPGxyBUSg61bmg0RovJf
-	reYHT3v7Krb9Ng/em8SIrrujQDuIvZxSQhv+UusxXRv+FhSJq9Rxk5zg9OAbo49UxzITZIyjAWR
-	jiEY1r0UsZs/Sy3X1TNo/DwxbcccJyEU=
-X-Gm-Gg: ASbGncsbUsIDxQzLfnFCybsu/m+ulvDpJn4N3Z+BIeMREfR+PLypJIPMZ0WbsBAKvMY
-	P/0szEhyyn7Mwaxu9kjoALR4YaoBpOynq5keRY1htjt0OJBnnXVL6k/4Msh3F2zTVPFIui8Yvh1
-	ppHkkYqYBtxNHAimK2/9XFjDEVLo5BoM6JLspoG2+GX4OpLN66/gMsWbsw6f40XL4bUnK+BNxNS
-	6YmJJTd
-X-Google-Smtp-Source: AGHT+IF6HqZhMnM1S5SriTeRFu45wU1jwnPvEWa5YJwPLmPns1dVqf+yP0H+WgfkvxP0STMyHCOWZiUQMc0r+vOOQWk=
-X-Received: by 2002:a5d:6f1d:0:b0:3b2:fe46:9812 with SMTP id
- ffacd0b85a97d-3b60e4d3e2cmr5229036f8f.19.1752808640240; Thu, 17 Jul 2025
- 20:17:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752819414; x=1753424214;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z1JxVJ0cGy/4vRl8q2hnJqL2Htk4WJ35GqE3f6gUHZE=;
+        b=k5OAAl+NA252UGVU5O5/dUYiotqLITuWgJqg0q0CkiATfyR5wRtpmZgfpYY/h7GyS9
+         TfAJUTP6zWnWKmc41NfUv6K74XF1ZfrvJnFugSQv1gAeOOqV0vi7tJ9trqOtRrPZIJAW
+         kxzuzjubGRv4+rxFwonOWovXln4PobPf5TPdr2TwTSIbE7bYLMD3MItirdiEfuwJVY8M
+         lL3jQHOxblAC1nIjNa9K3UTUYyXMWwTtZ96rRWr+TaZm3LN4y3VHblMJ0HlCylQ0iGnH
+         o25qb3LWgso/SqJtQrkHg0JrD9ydiPLKnL854fjnhYXImW7dCqL0Xylirr8GmtCCeLta
+         m84g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/qwVkTdJLFi3ynWdWMjxVENxjE/U7iVgEda+rm0b7BQt6sTtxabRONSApmvdzZAC/T4t4sWF33XY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxColvOzh9Nj6TocyhLmMMHhR6lol7Iohhinq+d7c6C7fMm3Zp9
+	mE/tr1sBTPd2RqWyAuUcj7OYqKNUKwojhnLcb0sRYHK2Aqt0kuwtRYY5ak0/xdeg+3Q=
+X-Gm-Gg: ASbGnctFnoBfxspMBx23KXRvAuttYSkj1t7ygTlJsiqaYl3jBlWueru2tk1jBhK989b
+	z+XFMtKyg19vtBmTVobN58djJLHNlQV75n7gNuIxVPIcAa4ms43/O5Xbhssfm70KkFCvTrb5FWj
+	uYISTGwW35n7le/EhvCfMo1dDck8vzuJzHtUHlPhs4APOKJdU72IufaI8Tn/D4JkfqxnM9c24Yk
+	k31+REWcLLdANuc8DXPJuu1Vbiej1I4qSFJLJLuUvfM/+LzwpmBioxERINHqUfdMNEFNeQnGMtd
+	9AVJNzCHKsU46Wxy/yqTGcbHus5NwaCgHT7F2UpZqi0Y2EtDwGtV0oSgDnkM3OErFmDdGiApLCb
+	hgryjo6dTmhwBUMkppjJdy488mAAsS2PJi9/BnEMXbg==
+X-Google-Smtp-Source: AGHT+IEw3Mcsz89XFSoarNt5H3TImNWXTbq78NJurRa8he4GJCSKW9GRBJizI3fHv5QihPCFF6p8UA==
+X-Received: by 2002:a05:6402:13cb:b0:612:ce8b:8e2b with SMTP id 4fb4d7f45d1cf-612ce8b9481mr223054a12.7.1752819413593;
+        Thu, 17 Jul 2025 23:16:53 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f335e9sm489075a12.17.2025.07.17.23.16.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Jul 2025 23:16:52 -0700 (PDT)
+Message-ID: <b8d6edef-6809-4166-b936-fd000513df90@linaro.org>
+Date: Fri, 18 Jul 2025 08:16:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com>
-In-Reply-To: <20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Thu, 17 Jul 2025 23:16:43 -0400
-X-Gm-Features: Ac12FXxu7iDTL6EHvyzjs4TsEjO7dBDwq7U1sYpuaMmupzIdSEt8fvtu992HPZw
-Message-ID: <CAJFTR8TfctXn=+o0SbjUgC0xHu6w7JPrAR7rERrL1u1EvLgKyw@mail.gmail.com>
-Subject: Re: [PATCH] clk: spacemit: fix sspax_clk
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Yixun Lan <dlan@gentoo.org>, linux-clk@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] dt-bindings: Fixup x1e80100 to add DP MST support
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Danila Tikhonov
+ <danila@jiaxyga.com>, cros-qcom-dts-watchers@chromium.org
+Cc: Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Yongxing Mou <quic_yongmou@quicinc.com>
+References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
+ <20250717-dp_mst_bindings-v3-1-72ce08285703@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250717-dp_mst_bindings-v3-1-72ce08285703@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 10:10=E2=80=AFPM Troy Mitchell
-<troy.mitchell@linux.spacemit.com> wrote:
->
-> In the SpacemiT public document, when the FNCLKSEL field of
-> the APBC_SSPAX_CLK_RST register is 7 (3'b111),
-> which is a reserved value. And BIT3 of the same register is
-> a reserved bit.
->
-> But the document is wrong, the actual situation is:
-> when FNCLKSEL is 7 (3'b111), and the purpose of bit 3 is
-> if to select i2s_bclk as the parent clock.
->
-> And only when FNCLKSEL is 7 (3'b111), The bit 3 is not a reserved bit.
->
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c  |  4 ++--
->  drivers/clk/spacemit/ccu_mix.c | 29 +++++++++++++++++++++++++++++
->  drivers/clk/spacemit/ccu_mix.h | 14 ++++++++++++++
->  3 files changed, 45 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.=
-c
-> index cdde37a0523537c2f436e481ae8d6ec5a581b87e..0e22f6fb2c45b68ab20a9b156=
-3a1a6dec1a7e16c 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -359,8 +359,8 @@ static const struct clk_parent_data sspa_parents[] =
-=3D {
->         CCU_PARENT_HW(pll1_d3072_0p8),
->         CCU_PARENT_HW(i2s_bclk),
->  };
-> -CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, B=
-IT(1), 0);
-> -CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, B=
-IT(1), 0);
-> +CCU_SSPA_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4,=
- 3, BIT(1), 0);
-> +CCU_SSPA_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4,=
- 3, BIT(1), 0);
->  CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1=
-), 0);
->  CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1),=
- 0);
->  CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT=
-(1), 0);
-> diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mi=
-x.c
-> index 9b852aa61f78aed5256bfe6fc3b01932d6db6256..bfc65fc00df67299523eb5d1d=
-2ed479c61fc6141 100644
-> --- a/drivers/clk/spacemit/ccu_mix.c
-> +++ b/drivers/clk/spacemit/ccu_mix.c
-> @@ -191,6 +191,25 @@ static int ccu_mux_set_parent(struct clk_hw *hw, u8 =
-index)
->         return ccu_mix_trigger_fc(hw);
->  }
->
-> +static int ccu_mux_set_sspa_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct ccu_mix *mix =3D hw_to_ccu_mix(hw);
-> +       struct ccu_mux_config *mux =3D &mix->mux;
-> +       u32 mask, val;
-> +
-> +       mask =3D GENMASK(mux->width + mux->shift - 1, mux->shift);
-> +       val =3D index << mux->shift;
-> +
-> +       if (index =3D=3D 7) {
-> +               mask |=3D BIT(3);
-> +               val |=3D BIT(3);
+On 18/07/2025 01:28, Jessica Zhang wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> Add x1e80100 to the dp-controller bindings, fix the
+> displayport-controller reg bindings, and drop
+> assigned-clock-parents/assigned-clocks
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
 
-Can the value 3 here be a macro like FNCLKSEL_SSPX_I2S_BCLK_PARENT.
-A comment would be nice too.
 
-> +       }
-> +
-> +       ccu_update(&mix->common, ctrl, mask, val);
-> +
-> +       return ccu_mix_trigger_fc(hw);
-> +}
-> +
->  const struct clk_ops spacemit_ccu_gate_ops =3D {
->         .disable        =3D ccu_gate_disable,
->         .enable         =3D ccu_gate_enable,
-> @@ -235,6 +254,16 @@ const struct clk_ops spacemit_ccu_mux_gate_ops =3D {
->         .set_parent     =3D ccu_mux_set_parent,
->  };
->
-> +const struct clk_ops spacemit_ccu_sspa_mux_gate_ops =3D {
-> +       .disable        =3D ccu_gate_disable,
-> +       .enable         =3D ccu_gate_enable,
-> +       .is_enabled     =3D ccu_gate_is_enabled,
-> +
-> +       .determine_rate =3D ccu_mix_determine_rate,
-> +       .get_parent     =3D ccu_mux_get_parent,
-> +       .set_parent     =3D ccu_mux_set_sspa_parent,
-> +};
-> +
->  const struct clk_ops spacemit_ccu_div_gate_ops =3D {
->         .disable        =3D ccu_gate_disable,
->         .enable         =3D ccu_gate_enable,
-> diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mi=
-x.h
-> index 51d19f5d6aacb7203d1eddf96047cf3174533601..7753446386353bf849787ed4e=
-c7c85c298238ab5 100644
-> --- a/drivers/clk/spacemit/ccu_mix.h
-> +++ b/drivers/clk/spacemit/ccu_mix.h
-> @@ -124,6 +124,19 @@ static struct ccu_mix _name =3D {                   =
-                                 \
->         }                                                                =
-       \
->  }
->
-> +#define CCU_SSPA_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl,            =
-       \
+That's not a correct tag really - drop the quotes. If this was added by
+b4, I think you might be using an older version.
 
-I think it would be better to add a flags bit to struct ccu_mux_config
-Then add CCU_MUX_GATE_DEFINE_FLAGS, something like how
-drivers/clk/nxp/clk-lpc18xx-ccu.c has CCU_BRANCH_HAVE_DIV2 and CCU_BRANCH_I=
-S_BUS
-This would allow for multiple different variants of the same mux to be
-added without having a bunch of
-peripheral specific functions.
 
-> +                                    _shift, _width, _mask_gate, _flags) =
-       \
-> +static struct ccu_mix _name =3D {                                       =
-                 \
-> +       .gate   =3D CCU_GATE_INIT(_mask_gate),                           =
-         \
-> +       .mux    =3D CCU_MUX_INIT(_shift, _width),                        =
-         \
-> +       .common =3D {                                                    =
-         \
-> +               .reg_ctrl       =3D _reg_ctrl,                           =
-         \
-> +               CCU_MIX_INITHW_PARENTS(_name, _parents,                  =
-       \
-> +                                      spacemit_ccu_sspa_mux_gate_ops,   =
-       \
-> +                                      _flags),                          =
-       \
-> +       }                                                                =
-       \
-> +}
-> +
->  #define CCU_DIV_GATE_DEFINE(_name, _parent, _reg_ctrl, _shift, _width,  =
-       \
->                             _mask_gate, _flags)                          =
-       \
->  static struct ccu_mix _name =3D {                                       =
-                 \
-> @@ -213,6 +226,7 @@ extern const struct clk_ops spacemit_ccu_div_ops;
->  extern const struct clk_ops spacemit_ccu_factor_gate_ops;
->  extern const struct clk_ops spacemit_ccu_div_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
-> +extern const struct clk_ops spacemit_ccu_sspa_mux_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
->  #endif /* _CCU_DIV_H_ */
->
-> ---
-> base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-> change-id: 20250717-k1-clk-i2s-e4272f1f915b
->
-> Best regards,
-> --
-> Troy Mitchell <troy.mitchell@linux.spacemit.com>
-
-Congrats on working at spacemit!!
-
-Thanks,
-Jesse Taube
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Best regards,
+Krzysztof
