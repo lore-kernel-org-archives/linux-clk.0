@@ -1,95 +1,128 @@
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2811885A5
-	for <linux-clk@vger.kernel.org>; Mon, 21 Jul 2025 19:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EB621FF3E;
+	Mon, 21 Jul 2025 20:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753124848; cv=none; b=SkL6+LqUdLTQ3sWWwan9VgyetsFZblOUI+w/y3kzAiWk1LA/0jjTviCf054d6tCPLY8C7WJiTCr7PV30jWTT+2SLFDxDbW7ZJGBVTt/2lYupqOdJxLLOmfiWVE10xJ9UGhiupkPTg7zW0YiNyPLPqmWgmljrTa/gKmYzU9+FKoU=
+	t=1753128568; cv=none; b=dkdJZwL2Mo2gpxmDZSHCBleD4Yyq4ofaHaeyZaggLSmz4Mm5V09FIKNoJhbwuBhUUsLEoCH/Y82Ey185Nz6/DFyZ0ejfamVI1UiTNXMConu5bn51ctO8fwDD40AmY/aoVzwNOjBZc0w2XyRa5tGiq2WXqRImCMPIcMZcXy2NP+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753124848; c=relaxed/simple;
-	bh=NXP5NHVsGpWELSbR40KFa7hFqpvwth6rjNEAGSXfBtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TULidTynLEp9X1pLIrHPC2pCPJUNxR36Y8XXB1CwYccN/aPBuioccoM6yw3zRZlovBgAke4sMcBna5EjzbA4DujbScyAJd+cx7iIXDb9IQXEbw5Uss0Whs3ELb3WQXI2oEQQNawonOXOirip0jUDDzz0kTUBhX8CoqzLaHTYWLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=w106IHoh; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+	s=arc-20240116; t=1753128568; c=relaxed/simple;
+	bh=0tI7Ckz46vRExgHt7/KrtPSDrZcdVJNbVoF8HN/Bt+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtuPoHWwgyApaRHoWVJEyD7VhKJI6Z5qJ10OtkC/Pb0rp7XDoWFtzozYLhVU1Iep23TnOBCWnbMbrfuJWtzdgwQWYiK5smbtRcgAy0Byo83kvE2w22orn08CXdKCbs91C6UVlLkpPce42e8u1upH+K0d9tCUQCRCiCI9iqd+/FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLNm4FZ5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="w106IHoh"
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 88DB9101C936
-	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 00:37:22 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 88DB9101C936
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1753124842; bh=NXP5NHVsGpWELSbR40KFa7hFqpvwth6rjNEAGSXfBtM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=w106IHohuBxNDHiEe/p3uAP47adKaV2YYoEEHn46UDIubPNk92jqAJWg9JTfDLavx
-	 2oGR6ifvSO4SOqn1WlFqk4pGeStmY50Twyf7P1Mv0y3nDiDHs96dQNvtjqA95PsA6L
-	 phc2yE+1UoKXJBGzxCfrjaa7YkMizh8u5CUyq0uA=
-Received: (qmail 3119 invoked by uid 510); 22 Jul 2025 00:37:22 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(-0.5/7.0):. Processed in 4.222403 secs; 22 Jul 2025 00:37:22 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 22 Jul 2025 00:37:18 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id C9E2C3414E0;
-	Tue, 22 Jul 2025 00:37:16 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 7C7431E812C1;
-	Tue, 22 Jul 2025 00:37:16 +0530 (IST)
-Date: Tue, 22 Jul 2025 00:37:10 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
-	heylenay@4d2.org, elder@riscstar.com, inochiama@outlook.com,
-	akhilesh@ee.iitb.ac.in, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	unicornxdotw@foxmail.com, jszhang@kernel.org,
-	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH] clk: spacemit: ccu_pll: fix error return value in
- recalc_rate callback
-Message-ID: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLNm4FZ5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3ACC4CEED;
+	Mon, 21 Jul 2025 20:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753128567;
+	bh=0tI7Ckz46vRExgHt7/KrtPSDrZcdVJNbVoF8HN/Bt+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DLNm4FZ5DqGkI0BU+e1MbrutQHnfbD5PddxRwA7qx8WwP7lB0AdvIUP/ThYm8iPFN
+	 SzXrVa8azY5hs/h1p1uGNUckSDkGI+j5pLuDgpF1xTD27zOPveIAn/U3TNhXOWxkLh
+	 iNa+jVUmuI78lSAg9urGHTuq+UnDFppKmiIM3TgHmxCbNwxN4OAcF8blVRSMn3Q9s2
+	 XdaY67ZvK907ChVjCXl2eRgw1fNC/xfInBrQmQYfBSlo30m6JyPTesbV1rgE9LbDoF
+	 a2gUXEOWrFnK/RNCSniPEmuDVSgcZIEkvoH+3R7565JMM81xzjMZ8u4JVPdN9I0rkv
+	 FLJoxRcsCc4sw==
+Date: Mon, 21 Jul 2025 15:09:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 05/16] dt-bindings: memory: add jedec,ddr[3-4]-channel
+ binding
+Message-ID: <20250721200926.GA1179079-robh@kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-5-cdece720348f@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250711-ddrperfm-upstream-v2-5-cdece720348f@foss.st.com>
 
-Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
-get correct rate entry. Follow .recalc_rate callback documentation
-as mentioned in include/linux/clk-provider.h for error return value.
+On Fri, Jul 11, 2025 at 04:48:57PM +0200, Clément Le Goffic wrote:
+> Introduce as per jedec,lpddrX-channel binding, jdec,ddr[3-4]-channel
+> binding.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 ++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+> new file mode 100644
+> index 000000000000..31daa22bcd4a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr-channel.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: DDR channel with chip/rank topology description
+> +
+> +description:
+> +  A DDR channel is a logical grouping of memory chips that are connected
+> +  to a host system. The main purpose of this node is to describe the
+> +  overall DDR topology of the system, including the amount of individual
+> +  DDR chips.
+> +
+> +maintainers:
+> +  - Clément Le Goffic <legoffic.clement@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - jedec,ddr3-channel
+> +      - jedec,ddr4-channel
+> +
+> +  io-width:
+> +    description:
+> +      The number of DQ pins in the channel. If this number is different
+> +      from (a multiple of) the io-width of the DDR chip, that means that
+> +      multiple instances of that type of chip are wired in parallel on this
+> +      channel (with the channel's DQ pins split up between the different
+> +      chips, and the CA, CS, etc. pins of the different chips all shorted
+> +      together).  This means that the total physical memory controlled by a
+> +      channel is equal to the sum of the densities of each rank on the
+> +      connected DDR chip, times the io-width of the channel divided by
+> +      the io-width of the DDR chip.
+> +    enum:
+> +      - 8
+> +      - 16
+> +      - 32
+> +      - 64
+> +      - 128
 
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
- drivers/clk/spacemit/ccu_pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is duplicating what's in jedec,lpddr-channel.yaml. Refactor or add 
+to it rather than duplicating.
 
-diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-index 4427dcfbbb97..45f540073a65 100644
---- a/drivers/clk/spacemit/ccu_pll.c
-+++ b/drivers/clk/spacemit/ccu_pll.c
-@@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
- 
- 	WARN_ON_ONCE(!entry);
- 
--	return entry ? entry->rate : -EINVAL;
-+	return entry ? entry->rate : 0;
- }
- 
- static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.34.1
+Is there some reason regular DDR3/4 doesn't have ranks? I'm pretty sure 
+it can...
 
+Rob
