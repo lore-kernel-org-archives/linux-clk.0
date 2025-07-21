@@ -1,93 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1BD1E5B6D;
-	Mon, 21 Jul 2025 14:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CD32989B4;
+	Mon, 21 Jul 2025 15:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108723; cv=none; b=EZZeCFjrJYfmyoOi/mqY4cW26aoAlykcxAn8g53I0zJK3Lwvm+qCafLMqR1agvGPRnvDAM0c6fhIzYcrPBLqAIuFpdMlfCM/V7Kl4ijN9Wk5LIXC+OFrUlS32eiCBLaYk6CK+2I0h+oHOoqMXxRti4x0T2y7k02ZA5iZUEPWAMY=
+	t=1753112866; cv=none; b=WWJQvAhqaWdNm6+ERyMZU4NUFcCSiHmb1oHwIPpJXLTu+T3NYV8cOqHzb6GwVA6HFHOqT3PUhMF3Ek+FsTJ+fv9pIZ0IrWovmaE4sIz8x1GsW50IaClAXephqqXjitlK4FDF/klswi6Q5r5C8wfKUFjSMWDLqFpfGbB8TrbrNwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108723; c=relaxed/simple;
-	bh=Rvu0r8kwgBxipAxQiYHn7UFFSL0RRcLSxbSDcMmsCk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5FESYZ+i1htr1l10Gf8WCSgIpABrvUvefuaJyYUsM/xm6SjZIQ0acOJ97GjIC6iUGOe+G1QftbTovy7EmosWpXRBvVySW51Zyga9EsRETznO+01ZiC9zvU1/sAtMsuvK5m7oOolKZDwgM3/U+wAcLGxHKdfMamD6WPYjLsXsYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4x3Q2iZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753112866; c=relaxed/simple;
+	bh=yf93avLfOcBjv9y23grxTOASqvyH83/l7cM6ZlT0nAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=URB4eYZzf6pObeOwSj72yKpxEBuzFT6MyPVHNuxnyKFKVv3Ml6r7tsUlAdtKj1Nisk+9Srv8gCy0b9QeINyUSyameQAy5dHG9T0cEwjJ7ZtcZSHzKsxMRjRRVVEL8zpjHDLm+zfIfeQhpU1Ncy6jyQzYF1iNZLr4hJMYv9HJleM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=3xbpjXFn; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4x3Q2iZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6F8C4CEED;
-	Mon, 21 Jul 2025 14:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753108722;
-	bh=Rvu0r8kwgBxipAxQiYHn7UFFSL0RRcLSxbSDcMmsCk0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y4x3Q2iZ7jBgZLWFnMQ7KoznQ+yd8/iBXZmW7dlOp2v2fOhN8IxBa2mQhqQ1D+YEq
-	 fjSPPj4Hc70435n9pdpKMWfnO4d6DMNFPBiUplWNay19MoO3K4vpbeO+oBeYltrzay
-	 TDHWDzpLwB5IxfYo57stXFmkV0bfQbo+udRi7Wiov0HblyScULYG7yPu0qdiUigdcW
-	 MnSkg8iWLCOwqo2sVSkmwmgBl5IwCwbQ1J46C3uGXt/9MxOof/4mgPdFLL2d7mjVH3
-	 JzigV2dqnJK5/3fykFefCnvac0mg0pz2elB0F+emFCnTEFDNUmdcV24Qgy1zawoi6Q
-	 JiGAWOREpG5GQ==
-Date: Mon, 21 Jul 2025 09:38:41 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Yongxing Mou <quic_yongmou@quicinc.com>,
-	Mahadevan <quic_mahap@quicinc.com>, Simona Vetter <simona@ffwll.ch>,
-	Sean Paul <sean@poorly.run>, Abel Vesa <abel.vesa@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	freedreno@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	David Airlie <airlied@gmail.com>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	devicetree@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>, linux-clk@vger.kernel.org,
-	Maxime Ripard <mripard@kernel.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] dt-bindings: display/msm: dp-controller: allow eDP for
- X1E8 and SA8775P
-Message-ID: <175310872113.600678.8339317766064145962.robh@kernel.org>
-References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
- <20250719091445.3126775-1-dmitry.baryshkov@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="3xbpjXFn"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LDt62k020590;
+	Mon, 21 Jul 2025 17:47:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	P1ZuzEzRREiwLydWZlhzK+dlWBAxlIhEYuf20M8l1eU=; b=3xbpjXFnyMs0SC5A
+	i2NSTVksJj+qckbzFNDpYbQCrsNAuBlK574aC/pSgp9d95ovb31I7jR/KuivJ7Z7
+	vrlAF+Tjwygg8on9g8Nk5p0sTilTUvoy9mumnLwxZBwjmm5NG/irpmq9NNUmkiFu
+	0wrn5CM/J1V4wrupgXWM38kPE8qB0Av7ZcgyJMY415Yd2dEUQK7cZuJkMRI5BKp/
+	DW2K9XPdF4dI97k5wGLSQiynVfnweB2tJ1SZhLZSWwfrcbbY7ZWOHj3Oq1ycURsO
+	5wh+4Djrh+l9cQH6KWUDkkJClULDqjLBmk0Ufn2f8W5yGH6gc1qtD7k05Ef/cmMt
+	a3Wd6g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g8hn2a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 17:47:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 822DF4007D;
+	Mon, 21 Jul 2025 17:46:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36E51768F09;
+	Mon, 21 Jul 2025 17:44:23 +0200 (CEST)
+Received: from [10.252.5.249] (10.252.5.249) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
+ 2025 17:44:21 +0200
+Message-ID: <162aa05f-69df-4607-bf47-fbec60589f95@foss.st.com>
+Date: Mon, 21 Jul 2025 17:44:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719091445.3126775-1-dmitry.baryshkov@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
+ stm32mp257f-dk board
+To: Rob Herring <robh@kernel.org>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
+ <20250715032020.GB4144523-robh@kernel.org>
+ <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
+ <20250715150224.GA1319886-robh@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250715150224.GA1319886-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
 
+Hi Rob
 
-On Sat, 19 Jul 2025 12:14:45 +0300, Dmitry Baryshkov wrote:
+On 7/15/25 17:02, Rob Herring wrote:
+> On Tue, Jul 15, 2025 at 10:32:09AM +0200, Clement LE GOFFIC wrote:
+>> Hi Rob,
+>>
+>> Thanks for the review !
+>>
+>> On 7/15/25 05:20, Rob Herring wrote:
+>>> On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
+>>>> Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
+>>>>
+>>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
+>>>>    1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> index a278a1e3ce03..a97b41f14ecc 100644
+>>>> --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> @@ -54,6 +54,13 @@ led-blue {
+>>>>    		};
+>>>>    	};
+>>>> +	lpddr_channel: lpddr4-channel {
+>>>> +		#address-cells = <1>;
+>>>> +		#size-cells = <0>;
+>>>> +		compatible = "jedec,lpddr4-channel";
+>>>
+>>> Not tested because this doesn't match the binding.
+>>
+>> Hmm, I've tested with make dtbs_check and dt_binding_check and it didn't
+>> complain on my side.
+>> What I have miss ?
 > 
-> On Qualcomm SA8775P and X1E80100 the DP controller might be driving
-> either a DisplayPort or a eDP sink (depending on the PHY that is tied to
-> the controller). Reflect that in the schema.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-> 
-> Jessica, your X1E8 patch also triggers warnings for several X1E8-based
-> laptops. Please include this patch into the series (either separately
-> or, better, by squashing into your first patch).
-> 
-> ---
->  .../bindings/display/msm/dp-controller.yaml   | 26 ++++++++++++++-----
->  1 file changed, 20 insertions(+), 6 deletions(-)
-> 
+> Oh wait, we already have a binding for that. I was confused with your
+> adding "jedec,ddr4-channel". Sorry for the noise.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+It's fine no worries.
+However, in the patch 8, I add the property "memory-channel" that is not 
+in the dtschema repo and I didn't get any reviews on it.
+Is it ok for you ? or maybe should we discuss it over there ?
+I can try to do a PR on the dtschema thought, if it is ok.
 
+Best regards,
+Clément
