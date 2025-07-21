@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B5519DF5F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887B1DFD96;
 	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753064240; cv=none; b=cvEnNQCZIosUHVj8vvNNT/Wbz2dBC+YCVdJkSi7HK+zlxVeuxvWX4J7ujTUgn8f8OafcSpXMmb4BsT7mBYOz+jlmKVY3P+0NkX4vurxNzTfUoFKBxhw5MmzIiBxten4hXxa3AyPzTh5COD1ka13zDratJZ+Rzut5o8+nLfjIq9A=
+	t=1753064240; cv=none; b=ZStC78JuqHeF/e+FnNY2v6hyLfeNJviScAQiMffQqbO39IpKiba10pwgXNluTd5yBtxrf+J9vjKBubdDhzb+BWjE12XSl58nS6Bg6TmT+nIg0Nzt7nUdp7rSpJ3zbxpHhb7ipLq1CvWiCDLQRv/t8QdH4Cf4CaVtp3CXdLPgWrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753064240; c=relaxed/simple;
-	bh=1KgFbaL830HAM3MNE3JN1EOY/k78cs8sRYCNSKRVHVY=;
+	bh=+N08sZPiGNzkS31ZMq73XQsRz/6PC2CS+i/IRLP1KHk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FHKg/AXELjuBurt+ULRN0Y19hBCHBQynGTJrbXpCYLcLJ0rLKtmLyQJaV4lAJx+S3NL2LEsTA71k8wz2+/47kXP8v0skQ/7YormMvtEYQvBJJEFcYL8v2vIgrYlUwxtFAlq/HV8fBioDh9lOJPnsvr8Bd7ZQ7usZDOhtefFAkFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzkh/bkL; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=kQKnT/Rt4hX6/N29pdvAncGn1Z18kjdNvt5zq0CLjb585xncoc8RXZUy9g3AF2h/dQvQCuejTDamHHYYOrbjTpFAJHV/e4bvBrVVO0CptLUf9ocfqvT4zmwQewVGiBxT5Tyi2nZ2HCBecuFl5yYq97pZBKmeuTXrD8oTmjCeJvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XH3v0xeD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzkh/bkL"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E14EC4CEEB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XH3v0xeD"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E76AC4CEF1;
 	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753064240;
-	bh=1KgFbaL830HAM3MNE3JN1EOY/k78cs8sRYCNSKRVHVY=;
+	bh=+N08sZPiGNzkS31ZMq73XQsRz/6PC2CS+i/IRLP1KHk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gzkh/bkLUngYB0guJzaogM9Bq4iRoEpFuxZo0WAfVTMVBhme+d6jHH5sB6H5emLNu
-	 Uo5FVprehHkgmHGO1plJJdLtSO9f680KuaxqqtSKK0AE6m6ddCbTXJECJoYT/3mTYU
-	 C3D6zKl9UJEZcBpLMDYGfTek16oywA4Uz1upXoEFenWR3ogH6r6DIzWaMixvSkLKA/
-	 DPIQo7KyqVQA5ZHoXQwMGamdia5+lTLt96eIdr4U+QlS1xAS4T/YCqfkyu0niuut0w
-	 K/e9EpDJehp/hqKLCf9/31OiKXR6ktpwuZ2LuBF/cWHOenqhCCbDuuWWQ0xhzbBTyr
-	 eoGga1EZCj21g==
+	b=XH3v0xeDRLUNwZvVLXSfSChV9/5puplFLP56SWDE8N5NLfT5/N/LwCLWq/iYq6RA6
+	 Twrq2+/RCq4IyvFUvGTq+2QDWNoYChaNQ9KjBpxhCmFCl1yRJLqGqPsG1ImF2yXzBg
+	 mFPzqxQV7iqMnP9uwdj2CnxUnqMsLsqCHewkrpsLgFt1DTmNmaH8ollUge3M98XfJt
+	 fPO33n8aja0zRgKXEwDNB8IApTbOvOSyqWCwHWbkcdf5DGj+9kSPUReTR3QIOi68uc
+	 VzK9XnSOGTYCtrL/3eEzHaQWpYNM8lTYEXCu5cYstFcvsKjlGuQkljqr/FCN/LnIPI
+	 yK/33ohkY1Kbw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A272C83F1A;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3385CC87FC3;
 	Mon, 21 Jul 2025 02:17:20 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 20 Jul 2025 21:14:55 -0500
-Subject: [PATCH v2 01/17] dt-bindings: soc: tegra: pmc: Document
+Date: Sun, 20 Jul 2025 21:14:57 -0500
+Subject: [PATCH v2 03/17] dt-bindings: usb: tegra-xusb: Document
  Tegra210B01
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250720-t210b01-v2-1-9cb209f1edfc@gmail.com>
+Message-Id: <20250720-t210b01-v2-3-9cb209f1edfc@gmail.com>
 References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -64,11 +64,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
  Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=1125;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753064238; l=944;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=C+H3bb9U6dJtsM1fYev4mV3ka4DfyhcjhUX21PtiIEg=;
- b=FUD75C8xpNKp9W6IDv1M2oqm3+8Ohtvt4e3rhyiaM6DMeLIqpXqSmKz/fUGQUGOwn4As2RRUZ
- z5b+oBwcUB3DJa1BYlxKYm7ppJU1nThUl+QZS/MJLkQ3ToK8Jy9ARby
+ bh=Nh6f3WIWhHTEV0li2SkjJP6VUkET3tGtA5Y1/bQ0xS4=;
+ b=MKvWtyQKbqNPY3woOWQs4qzFh2uYhbwzLsig4HH0zT8z9D2bKFHp/4x34k1Eh7LjoIRTzAg7A
+ Ru15aqCaWqjAkI7i/a/6aXmAV9EQVrtJke/6159qIKCBUyYDrQv4e+S
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -78,36 +78,29 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-Add the PMC driver compatible strings for Tegra210B01
+Add the compatible string for Tegra210B01 XUSB
 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-index 7140c312d8986b0b733c519b1e89e360d9602add..eddcafc2f9398ad6fb4d2d46b3181ab91c89a229 100644
---- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-@@ -18,6 +18,7 @@ properties:
-       - nvidia,tegra114-pmc
-       - nvidia,tegra124-pmc
-       - nvidia,tegra210-pmc
-+      - nvidia,tegra210b01-pmc
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
+index c0e313c70bbaba4f5da9cb090ab6f3027d274a2d..543355118282f52b276a087185709320dd8e09d6 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra210-xusb.yaml
+@@ -15,7 +15,9 @@ description: The Tegra xHCI controller supports both USB2 and USB3 interfaces
+ 
+ properties:
+   compatible:
+-    const: nvidia,tegra210-xusb
++    enum:
++      - nvidia,tegra210-xusb
++      - nvidia,tegra210b01-xusb
  
    reg:
-     maxItems: 1
-@@ -346,7 +347,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: nvidia,tegra210-pmc
-+            enum:
-+              - nvidia,tegra210-pmc
-+              - nvidia,tegra210b01-pmc
-     then:
-       properties:
-         pinmux:
+     items:
 
 -- 
 2.50.1
