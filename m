@@ -1,215 +1,614 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A12D6617;
-	Mon, 21 Jul 2025 14:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044EEB67A;
+	Mon, 21 Jul 2025 14:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107762; cv=none; b=ZrMDDBqk+zpNo1hkexvaC7px8RzlcGEU1Q1FDXmUqldX1KM1wyOyXJNBGRDmB7w5xUZl7yJQlKjO1gxxLRyTzNhZUPTDSv7shoI3eJ4QAXn8O+qN0AZW+p2Et6OnKUD5SMptoSqH0hhdne2iN92qRouNxRLZzHK9XvGxFsHUkf8=
+	t=1753108374; cv=none; b=uSNkGhOgJh+AD7YY44YtpkrXSJ/jSJsClDDpeiYJnz/IQR9ckupAm/CGyKm3CNpwgJLkH2/oGKx0jUrmNAjAaGQ22gJSVMc5QdKIL7WHJxTZIQg0AZIuSRT/sPcp68O6ArfFxTqkF3DQHHRaiIlzCFlcW8K1LplNfO5F99CrfEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107762; c=relaxed/simple;
-	bh=hjlOeyxnWBA0TOKevAsG8is1xc1FHdQAJGdi4sv+25E=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mqoav3kwgOP/VbHxjzmf2wCUm2aeVD6PisY/gK+7z33PpqM+Ru1sve2sAYeL47ScbVvVWfw4oq5PjNp3oJDUTYwgSR1a3G3n1IRvnbNq3XlLRoKuElswgV3V7a98VCBDEEDx6SajcbxCPvSp2NKs4GrkF+MHoHKwMpNwo90Trhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCPLqNbk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753108374; c=relaxed/simple;
+	bh=PANE1f7CRvQHvSbKY2ZlWaepLRWCIdwtuwmCRAeOBzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDpgMbT11Fexqhml/sElpOXSePSVI9epMz7ui2AF7H6J1UNpBdNF390qOsqMEjYEOWOvw0twFwbuFdo6QV3TckiqPyjC8qA9aC+UKi+QJJCIi2EsDughpzUsNk5bPoikrWPorLcybcYFrEjFtEfrhBMNZfP4soVpyvZpwIldMGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enrsrjKv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCPLqNbk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED11C4CEED;
-	Mon, 21 Jul 2025 14:22:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enrsrjKv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6275CC4CEED;
+	Mon, 21 Jul 2025 14:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753107761;
-	bh=hjlOeyxnWBA0TOKevAsG8is1xc1FHdQAJGdi4sv+25E=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=fCPLqNbk4Np3CnxgYlMcSjlwKA8svRsnfJNRoC4iuS5dWBr1Y2vz1VzwdiIa7oIRa
-	 AQKz+iYI7ERtgAC5sCquPQlu//5IKGu+UGUhg4WPE2tC2UwFo3VGWyKJHbKvusSR2B
-	 8RxcD7kdb2ufVVCa9KYGKaYWELY2AyMVk2HNk4RYO0fSLa2oy7PtuB3M87X4M8Z6x5
-	 cqmo37jgd3CxzOw+dZkFXQsSyruW4B0DfU+KzbvbwxWppZWNw0VPbLLeL3kJ/ZZ/9y
-	 q5U2unWXn3zw0cLYafQ/Nqc3AVhxvnSRIb9mVwkarwrcUnlcusUtj6rAeipq8m3s5Q
-	 F4xR+XYNhgQWA==
-Date: Mon, 21 Jul 2025 09:22:40 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1753108373;
+	bh=PANE1f7CRvQHvSbKY2ZlWaepLRWCIdwtuwmCRAeOBzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=enrsrjKvk9rWIhqco2b9GxcIq0lI6JGmXSjzEchw7BQ5F+05zNlrmv63QNj69SoiR
+	 5lqGfAsULMXMgLdPdvotxBtwQX5u+g4FZNiPpvpueZgDe+ZKllZjzEORL4/2W1b2Al
+	 znh5GM6e5bpULDGMr/UyX/Wx37YktYe+t7aL1IV17XZju8J5qpxrVsseitiKM+2L+x
+	 Dmc4sm3hVaM1dI0mX0nE7McS2sG/Jfdw5W9XS/1DoqrlaZQZvf/eDCLS+ukcVaf/gV
+	 /nt03bjwQLKMiPxOiAp1/ZOfZ7vof1X2JpQ3bjbwEbpz2arazvIBjr3m0YLhILx6Qc
+	 xkKrdWtWxKyjg==
+Date: Mon, 21 Jul 2025 09:32:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Arseniy Velikanov <me@adomerle.pw>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: Describe MT6789
+ clock controllers
+Message-ID: <20250721143252.GA586001-robh@kernel.org>
+References: <20250718181200.18092-1-me@adomerle.pw>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Azkali Manad <a.ffcc7@gmail.com>, Zhang Rui <rui.zhang@intel.com>, 
- linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
- devicetree@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
- Nagarjuna Kristam <nkristam@nvidia.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, linux-phy@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Thierry Reding <treding@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
- Mathias Nyman <mathias.nyman@intel.com>, Vinod Koul <vkoul@kernel.org>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Aaron Kling <webgeek1234@gmail.com>
-In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
-References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
-Message-Id: <175310755862.577282.10932067975211977362.robh@kernel.org>
-Subject: Re: [PATCH v2 00/17] arm64: tegra: Add Tegra210B01 support
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718181200.18092-1-me@adomerle.pw>
 
-
-On Sun, 20 Jul 2025 21:14:54 -0500, Aaron Kling wrote:
-> Also known as Tegra X1+, the Tegra210B01 has higher CPU and GPU clocks
-> than the original Tegra210.
+On Fri, Jul 18, 2025 at 10:11:59PM +0400, Arseniy Velikanov wrote:
+> Add new bindings for system clocks and functional clocks on
+> MediaTek MT6789.
 > 
-> This series adds Tegra210B01 support to several drivers, as a slight
-> extension to the existing Tegra210 support. Then adds a generic soc dtsi
-> in the same vein as other tegra archs. And finally adds a barebones
-> device dts to be used for dt checks. Further device support will be
-> submitted in later series.
-> 
-> Earlier internal revisions of this series included changes to the dfll
-> driver to support Tegra210B01, but those did not work in testing, thus
-> was dropped from the series. A bindings update to match is still in the
-> series so the soc dtsi can declare a separate compatible from Tegra210,
-> preventing the driver from attempting incorrect initialization on
-> Tegra210B01.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
 > ---
-> Changes in v2:
-> - Fix patch 1 subject
-> - Add descriptive name in patch 8
-> - Fix copy-paste error in patch 13, discovered by kernel ci
-> - Link to v1: https://lore.kernel.org/r/20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com
+>  .../bindings/clock/mediatek,mt6789-clock.yaml |  52 +++
+>  .../clock/mediatek,mt6789-sys-clock.yaml      |  47 +++
+>  .../dt-bindings/clock/mediatek,mt6789-clk.h   | 390 ++++++++++++++++++
+>  .../reset/mediatek,mt6789-resets.h            |  15 +
+>  4 files changed, 504 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt6789-clk.h
+>  create mode 100644 include/dt-bindings/reset/mediatek,mt6789-resets.h
 > 
-> ---
-> Aaron Kling (16):
->       dt-bindings: soc: tegra: pmc: Document Tegra210B01
->       dt-bindings: phy: tegra-xusb: Document Tegra210B01
->       dt-bindings: usb: tegra-xusb: Document Tegra210B01
->       dt-bindings: usb: tegra-xudc: Document Tegra210B01
->       dt-bindings: thermal: tegra: Document Tegra210B01
->       dt-bindings: clock: tegra: Document Tegra210B01
->       dt-bindings: clock: tegra124-dfll: Document Tegra210B01
->       dt-bindings: tegra: Document Shield TV 2019
->       phy: tegra: xusb: Add Tegra201B01 Support
->       usb: xhci: tegra: Add Tegra210B01 support
->       usb: gadget: tegra-xudc: Add Tegra210B01 Support
->       thermal: tegra: Add Tegra210B01 Support
->       clk: tegra: Add Tegra210B01 support
->       arm64: tegra: Add BPMP node for Tegra210
->       arm64: tegra: Add Tegra210B01 support
->       arm64: tegra: Add support for NVIDIA Shield TV Pro 2019
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.yaml
+> new file mode 100644
+> index 000000000000..93e2e7766e00
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-clock.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Functional Clock Controller for MT6789
+> +
+> +maintainers:
+> +  - Arseniy Velikanov <me@adomerle.pw>
+> +
+> +description:
+> +  The Mediatek functional clock controller provides various clocks on MT6789.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-afe
+> +          - mediatek,mt6789-camsys
+> +          - mediatek,mt6789-camsys-rawa
+> +          - mediatek,mt6789-camsys-rawb
+> +          - mediatek,mt6789-imgsys
+> +          - mediatek,mt6789-imp-iic-wrap-c
+> +          - mediatek,mt6789-imp-iic-wrap-en
+> +          - mediatek,mt6789-imp-iic-wrap-n
+> +          - mediatek,mt6789-imp-iic-wrap-w
+> +          - mediatek,mt6789-ipesys
+> +          - mediatek,mt6789-mdpsys
+> +          - mediatek,mt6789-mfgcfg
+> +          - mediatek,mt6789-vdecsys
+> +          - mediatek,mt6789-vencsys
+
+These can all just be added to mediatek,syscon.yaml.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@11210000 {
+> +        compatible = "mediatek,mt6789-afe";
+> +        reg = <0x11210000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..471d64f4f629
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6789-sys-clock.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt6789-sys-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek System Clock Controller for MT6789
+> +
+> +maintainers:
+> +  - Arseniy Velikanov <me@adomerle.pw>
+> +
+> +description:
+> +  The Mediatek system clock controller provides various clocks and system configuration
+
+Wrap lines at 80 char.
+
+> +  like reset and bus protection on MT6789.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6789-apmixedsys
+> +          - mediatek,mt6789-topckgen
+> +          - mediatek,mt6789-infracfg-ao
+> +          - mediatek,mt6789-mcusys
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+#clock-cells and #reset-cells shouldn't be optional. The h/w either 
+has clocks and resets or it doesn't. If these blocks don't have either 
+then they go in syscon.yaml. 
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@c530000 {
+> +        compatible = "mediatek,mt6789-mcusys", "syscon";
+> +        reg = <0xc530000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/mediatek,mt6789-clk.h b/include/dt-bindings/clock/mediatek,mt6789-clk.h
+> new file mode 100644
+> index 000000000000..72bc97f0fd8e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6789-clk.h
+> @@ -0,0 +1,390 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022 MediaTek Inc.
+> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6789_H
+> +#define _DT_BINDINGS_CLK_MT6789_H
+> +
+> +#define CLK_MCU_ARMPLL_LL_SEL	0
+> +#define CLK_MCU_ARMPLL_BL_SEL	1
+> +#define CLK_MCU_ARMPLL_BUS_SEL	2
+> +
+> +#define CLK_APMIXED_ARMPLL_LL	0
+> +#define CLK_APMIXED_ARMPLL_BL0	1
+> +#define CLK_APMIXED_CCIPLL	2
+> +#define CLK_APMIXED_MPLL	3
+> +#define CLK_APMIXED_MAINPLL	4
+> +#define CLK_APMIXED_UNIVPLL	5
+> +#define CLK_APMIXED_MSDCPLL	6
+> +#define CLK_APMIXED_MMPLL	7
+> +#define CLK_APMIXED_NPUPLL	8
+> +#define CLK_APMIXED_MFGPLL	9
+> +#define CLK_APMIXED_TVDPLL	10
+> +#define CLK_APMIXED_APLL1	11
+> +#define CLK_APMIXED_APLL2	12
+> +#define CLK_APMIXED_USBPLL	13
+> +
+> +#define CLK_TOP_MFGPLL	0
+> +#define CLK_TOP_MAINPLL_D4	1
+> +#define CLK_TOP_MAINPLL_D4_D2	2
+> +#define CLK_TOP_MAINPLL_D4_D4	3
+> +#define CLK_TOP_MAINPLL_D4_D8	4
+> +#define CLK_TOP_MAINPLL_D4_D16	5
+> +#define CLK_TOP_MAINPLL_D5	6
+> +#define CLK_TOP_MAINPLL_D5_D2	7
+> +#define CLK_TOP_MAINPLL_D5_D4	8
+> +#define CLK_TOP_MAINPLL_D5_D8	9
+> +#define CLK_TOP_MAINPLL_D6	10
+> +#define CLK_TOP_MAINPLL_D6_D2	11
+> +#define CLK_TOP_MAINPLL_D6_D4	12
+> +#define CLK_TOP_MAINPLL_D7	13
+> +#define CLK_TOP_MAINPLL_D7_D2	14
+> +#define CLK_TOP_MAINPLL_D7_D4	15
+> +#define CLK_TOP_MAINPLL_D7_D8	16
+> +#define CLK_TOP_MAINPLL_D9	17
+> +#define CLK_TOP_UNIVPLL_D4	18
+> +#define CLK_TOP_UNIVPLL_D4_D2	19
+> +#define CLK_TOP_UNIVPLL_D4_D4	20
+> +#define CLK_TOP_UNIVPLL_D4_D8	21
+> +#define CLK_TOP_UNIVPLL_D5	22
+> +#define CLK_TOP_UNIVPLL_D5_D2	23
+> +#define CLK_TOP_UNIVPLL_D5_D4	24
+> +#define CLK_TOP_UNIVPLL_D6	25
+> +#define CLK_TOP_UNIVPLL_D6_D2	26
+> +#define CLK_TOP_UNIVPLL_D6_D4	27
+> +#define CLK_TOP_UNIVPLL_D6_D8	28
+> +#define CLK_TOP_UNIVPLL_D6_D16	29
+> +#define CLK_TOP_UNIVPLL_D7	30
+> +#define CLK_TOP_UNIVPLL_192M_D2	31
+> +#define CLK_TOP_UNIVPLL_192M_D4	32
+> +#define CLK_TOP_UNIVPLL_192M_D8	33
+> +#define CLK_TOP_UNIVPLL_192M_D16	34
+> +#define CLK_TOP_UNIVPLL_192M_D32	35
+> +#define CLK_TOP_APLL1	36
+> +#define CLK_TOP_APLL1_D2	37
+> +#define CLK_TOP_APLL1_D4	38
+> +#define CLK_TOP_APLL1_D8	39
+> +#define CLK_TOP_APLL2	94
+> +#define CLK_TOP_APLL2_D2	40
+> +#define CLK_TOP_APLL2_D4	41
+> +#define CLK_TOP_APLL2_D8	42
+> +#define CLK_TOP_MMPLL_D4_D2	43
+> +#define CLK_TOP_MMPLL_D5_D2	44
+> +#define CLK_TOP_MMPLL_D6	45
+> +#define CLK_TOP_MMPLL_D6_D2	46
+> +#define CLK_TOP_MMPLL_D7	47
+> +#define CLK_TOP_MMPLL_D9	48
+> +#define CLK_TOP_NPUPLL	49
+> +#define CLK_TOP_TVDPLL	50
+> +#define CLK_TOP_MSDCPLL	51
+> +#define CLK_TOP_MSDCPLL_D2	52
+> +#define CLK_TOP_MSDCPLL_D4	53
+> +#define CLK_TOP_CLKRTC	54
+> +#define CLK_TOP_TCK_26M_MX9	55
+> +#define CLK_TOP_F26M_CK_D2	56
+> +#define CLK_TOP_OSC_D2	57
+> +#define CLK_TOP_OSC_D4	58
+> +#define CLK_TOP_OSC_D8	59
+> +#define CLK_TOP_OSC_D16	60
+> +#define CLK_TOP_OSC_D10	61
+> +#define CLK_TOP_OSC_D20	62
+> +#define CLK_TOP_F26M	63
+> +#define CLK_TOP_AXI	64
+> +#define CLK_TOP_DISP	65
+> +#define CLK_TOP_MDP	66
+> +#define CLK_TOP_IMG1	67
+> +#define CLK_TOP_IPE	68
+> +#define CLK_TOP_CAM	69
+> +#define CLK_TOP_MFG_REF	70
+> +#define CLK_TOP_MFG_PLL	71
+> +#define CLK_TOP_UART	72
+> +#define CLK_TOP_SPI	73
+> +#define CLK_TOP_MSDC50_0	74
+> +#define CLK_TOP_MSDC30_1	75
+> +#define CLK_TOP_AUDIO	76
+> +#define CLK_TOP_PWRAP_ULPOSC	77
+> +#define CLK_TOP_DISP_PWM	78
+> +#define CLK_TOP_USB_TOP	79
+> +#define CLK_TOP_I2C	80
+> +#define CLK_TOP_AUD_ENGEN1	81
+> +#define CLK_TOP_AUD_ENGEN2	82
+> +#define CLK_TOP_AES_UFSFDE	83
+> +#define CLK_TOP_UFS	84
+> +#define CLK_TOP_DPMAIF_MAIN	85
+> +#define CLK_TOP_VENC	86
+> +#define CLK_TOP_VDEC	87
+> +#define CLK_TOP_CAMTM	88
+> +#define CLK_TOP_PWM	89
+> +#define CLK_TOP_AUDIO_H	90
+> +#define CLK_TOP_DSI_OCC	91
+> +#define CLK_TOP_I2C_PSEUDO	92
+> +#define CLK_TOP_APDMA	93
+> +#define CLK_TOP_AXI_SEL 95
+> +#define CLK_TOP_SPM_SEL 96
+> +#define CLK_TOP_SCP_SEL 97
+> +#define CLK_TOP_BUS_AXIMEM_SEL	98
+> +#define CLK_TOP_DISP_SEL	99
+> +#define CLK_TOP_MDP_SEL	100
+> +#define CLK_TOP_IMG1_SEL 101
+> +#define CLK_TOP_IPE_SEL 102
+> +#define CLK_TOP_CAM_SEL  103
+> +#define CLK_TOP_MFG_REF_SEL	104
+> +#define CLK_TOP_MFG_PLL_SEL	105
+> +#define CLK_TOP_CAMTG_SEL	106
+> +#define CLK_TOP_CAMTG2_SEL	107
+> +#define CLK_TOP_CAMTG3_SEL	108
+> +#define CLK_TOP_CAMTG4_SEL	109
+> +#define CLK_TOP_CAMTG5_SEL	110
+> +#define CLK_TOP_CAMTG6_SEL	111
+> +#define CLK_TOP_UART_SEL	112
+> +#define CLK_TOP_SPI_SEL	113
+> +#define CLK_TOP_MSDC50_0_HCLK_SEL	114
+> +#define CLK_TOP_MSDC50_0_SEL	115
+> +#define CLK_TOP_MSDC30_1_SEL	116
+> +#define CLK_TOP_AUDIO_SEL	117
+> +#define CLK_TOP_AUD_INTBUS_SEL	118
+> +#define CLK_TOP_PWRAP_ULPOSC_SEL	119
+> +#define CLK_TOP_ATB_SEL	120
+> +#define CLK_TOP_SSPM_SEL	121
+> +#define CLK_TOP_SCAM_SEL	122
+> +#define CLK_TOP_DISP_PWM_SEL	123
+> +#define CLK_TOP_USB_TOP_SEL	124
+> +#define CLK_TOP_I2C_SEL	125
+> +#define CLK_TOP_SENINF_SEL	126
+> +#define CLK_TOP_SENINF1_SEL	127
+> +#define CLK_TOP_SENINF2_SEL	128
+> +#define CLK_TOP_SENINF3_SEL	129
+> +#define CLK_TOP_DXCC_SEL	130
+> +#define CLK_TOP_AUD_ENGEN1_SEL	131
+> +#define CLK_TOP_AUD_ENGEN2_SEL	132
+> +#define CLK_TOP_AES_UFSFDE_SEL	133
+> +#define CLK_TOP_UFS_SEL	134
+> +#define CLK_TOP_AUD_1_SEL	135
+> +#define CLK_TOP_AUD_2_SEL	136
+> +#define CLK_TOP_DPMAIF_MAIN_SEL	137
+> +#define CLK_TOP_VENC_SEL	138
+> +#define CLK_TOP_VDEC_SEL	139
+> +#define CLK_TOP_CAMTM_SEL	140
+> +#define CLK_TOP_PWM_SEL	141
+> +#define CLK_TOP_AUDIO_H_SEL	142
+> +#define CLK_TOP_SPMI_MST_SEL	143
+> +#define CLK_TOP_DVFSRC_SEL	144
+> +#define CLK_TOP_AES_MSDCFDE_SEL	145
+> +#define CLK_TOP_MCUPM_SEL	146
+> +#define CLK_TOP_DSI_OCC_SEL	147
+> +#define CLK_TOP_APLL_I2S0_MCK_SEL	148
+> +#define CLK_TOP_APLL_I2S1_MCK_SEL	149
+> +#define CLK_TOP_APLL_I2S2_MCK_SEL	150
+> +#define CLK_TOP_APLL_I2S3_MCK_SEL	151
+> +#define CLK_TOP_APLL_I2S4_MCK_SEL	152
+> +#define CLK_TOP_APLL_I2S5_MCK_SEL	153
+> +#define CLK_TOP_APLL_I2S6_MCK_SEL	154
+> +#define CLK_TOP_APLL_I2S7_MCK_SEL	155
+> +#define CLK_TOP_APLL_I2S8_MCK_SEL	156
+> +#define CLK_TOP_APLL_I2S9_MCK_SEL	157
+> +#define CLK_TOP_APLL12_CK_DIV0	158
+> +#define CLK_TOP_APLL12_CK_DIV1	159
+> +#define CLK_TOP_APLL12_CK_DIV2	160
+> +#define CLK_TOP_APLL12_CK_DIV3	161
+> +#define CLK_TOP_APLL12_CK_DIV4	162
+> +#define CLK_TOP_APLL12_CK_DIVB	163
+> +#define CLK_TOP_APLL12_CK_DIV5	164
+> +#define CLK_TOP_APLL12_CK_DIV6	165
+> +#define CLK_TOP_APLL12_CK_DIV7	166
+> +#define CLK_TOP_APLL12_CK_DIV8	167
+> +#define CLK_TOP_APLL12_CK_DIV9	168
+> +
+> +/* INFRACFG_AO */
+> +#define CLK_IFRAO_PMIC_TMR	0
+> +#define CLK_IFRAO_PMIC_AP	1
+> +#define CLK_IFRAO_GCE	2
+> +#define CLK_IFRAO_GCE2	3
+> +#define CLK_IFRAO_THERM	4
+> +#define CLK_IFRAO_I2C_PSEUDO	5
+> +#define CLK_IFRAO_APDMA_PSEUDO	6
+> +#define CLK_IFRAO_PWM_HCLK	7
+> +#define CLK_IFRAO_PWM1	8
+> +#define CLK_IFRAO_PWM2	9
+> +#define CLK_IFRAO_PWM3	10
+> +#define CLK_IFRAO_PWM4	11
+> +#define CLK_IFRAO_PWM	12
+> +#define CLK_IFRAO_UART0	13
+> +#define CLK_IFRAO_UART1	14
+> +#define CLK_IFRAO_UART2	15
+> +#define CLK_IFRAO_UART3	16
+> +#define CLK_IFRAO_GCE_26M	17
+> +#define CLK_IFRAO_BTIF	18
+> +#define CLK_IFRAO_SPI0	19
+> +#define CLK_IFRAO_MSDC0	20
+> +#define CLK_IFRAO_MSDC1	21
+> +#define CLK_IFRAO_MSDC0_SRC	22
+> +#define CLK_IFRAO_AUXADC	23
+> +#define CLK_IFRAO_CPUM	24
+> +#define CLK_IFRAO_CCIF1_AP	25
+> +#define CLK_IFRAO_CCIF1_MD	26
+> +#define CLK_IFRAO_AUXADC_MD	27
+> +#define CLK_IFRAO_MSDC1_SRC	28
+> +#define CLK_IFRAO_MSDC0_AES	29
+> +#define CLK_IFRAO_CCIF_AP	30
+> +#define CLK_IFRAO_DEBUGSYS	31
+> +#define CLK_IFRAO_AUDIO	32
+> +#define CLK_IFRAO_CCIF_MD	33
+> +#define CLK_IFRAO_SSUSB	34
+> +#define CLK_IFRAO_DISP_PWM	35
+> +#define CLK_IFRAO_CLDMA_BCLK	36
+> +#define CLK_IFRAO_AUDIO_26M_BCLK	37
+> +#define CLK_IFRAO_SPI1	38
+> +#define CLK_IFRAO_SPI2	39
+> +#define CLK_IFRAO_SPI3	40
+> +#define CLK_IFRAO_UNIPRO_SYSCLK	41
+> +#define CLK_IFRAO_UNIPRO_TICK	42
+> +#define CLK_IFRAO_UFS_SAP_BCLK	43
+> +#define CLK_IFRAO_SPI4	44
+> +#define CLK_IFRAO_SPI5	45
+> +#define CLK_IFRAO_CQ_DMA	46
+> +#define CLK_IFRAO_UFS	47
+> +#define CLK_IFRAO_UFS_AES	48
+> +#define CLK_IFRAO_AP_MSDC0	49
+> +#define CLK_IFRAO_MD_MSDC0	50
+> +#define CLK_IFRAO_CCIF5_MD	51
+> +#define CLK_IFRAO_CCIF2_AP	52
+> +#define CLK_IFRAO_CCIF2_MD	53
+> +#define CLK_IFRAO_FBIST2FPC	54
+> +#define CLK_IFRAO_DPMAIF_MAIN	55
+> +#define CLK_IFRAO_CCIF4_AP	56
+> +#define CLK_IFRAO_CCIF4_MD	57
+> +#define CLK_IFRAO_SPI6_CK	58
+> +#define CLK_IFRAO_SPI7_CK	59
+> +#define CLK_IFRAO_66MP_BUS_MCLK_CKP	60
+> +#define CLK_IFRAO_AP_DMA	61
+> +
+> +#define CLK_IMP_IIC_WRAP_C_I2C3	0
+> +#define CLK_IMP_IIC_WRAP_C_I2C5	1
+> +#define CLK_IMP_IIC_WRAP_C_I2C6	2
+> +
+> +#define CLK_IMP_IIC_WRAP_W_I2C0	0
+> +#define CLK_IMP_IIC_WRAP_W_I2C1	1
+> +
+> +#define CLK_IMP_IIC_WRAP_N_I2C7	0
+> +
+> +#define CLK_IMP_IIC_WRAP_EN_I2C2	0
+> +#define CLK_IMP_IIC_WRAP_EN_I2C4	1
+> +#define CLK_IMP_IIC_WRAP_EN_I2C8	2
+> +#define CLK_IMP_IIC_WRAP_EN_I2C9	3
+> +
+> +#define CLK_AFE_AFE	0
+> +#define CLK_AFE_22M	1
+> +#define CLK_AFE_24M	2
+> +#define CLK_AFE_APLL2_TUNER	3
+> +#define CLK_AFE_APLL_TUNER	4
+> +#define CLK_AFE_ADC	5
+> +#define CLK_AFE_DAC	6
+> +#define CLK_AFE_DAC_PREDIS	7
+> +#define CLK_AFE_TML	8
+> +#define CLK_AFE_NLE	9
+> +#define CLK_AFE_I2S1_BCLK	10
+> +#define CLK_AFE_I2S2_BCLK	11
+> +#define CLK_AFE_I2S3_BCLK	12
+> +#define CLK_AFE_I2S4_BCLK	13
+> +#define CLK_AFE_GENERAL3_ASRC	14
+> +#define CLK_AFE_CONNSYS_I2S_ASRC	15
+> +#define CLK_AFE_GENERAL1_ASRC	16
+> +#define CLK_AFE_GENERAL2_ASRC	17
+> +#define CLK_AFE_DAC_HIRES	18
+> +#define CLK_AFE_ADC_HIRES	19
+> +#define CLK_AFE_ADC_HIRES_TML	20
+> +
+> +#define CLK_MFGCFG_BG3D	0
+> +
+> +#define CLK_MM_DISP_MUTEX0	0
+> +#define CLK_MM_APB_BUS	1
+> +#define CLK_MM_DISP_OVL0	2
+> +#define CLK_MM_DISP_RDMA0	3
+> +#define CLK_MM_DISP_OVL0_2L	4
+> +#define CLK_MM_DISP_WDMA0	5
+> +#define CLK_MM_DISP_RSZ0	6
+> +#define CLK_MM_DISP_AAL0	7
+> +#define CLK_MM_DISP_CCORR0	8
+> +#define CLK_MM_DISP_COLOR0	9
+> +#define CLK_MM_SMI_INFRA	10
+> +#define CLK_MM_DISP_DSC_WRAP0	11
+> +#define CLK_MM_DISP_GAMMA0	12
+> +#define CLK_MM_DISP_POSTMASK0	13
+> +#define CLK_MM_DISP_DITHER0	14
+> +#define CLK_MM_SMI_COMMON	15
+> +#define CLK_MM_DSI0	16
+> +#define CLK_MM_DISP_FAKE_ENG0	17
+> +#define CLK_MM_DISP_FAKE_ENG1	18
+> +#define CLK_MM_SMI_GALS	19
+> +#define CLK_MM_SMI_IOMMU	20
+> +#define CLK_MM_DSI0_DSI_CK_DOMAIN	21
+> +#define CLK_MM_DISP_26M	22
+> +
+> +#define CLK_IMGSYS_LARB9	0
+> +#define CLK_IMGSYS_LARB10	1
+> +#define CLK_IMGSYS_DIP	2
+> +#define CLK_IMGSYS_GALS	3
+> +
+> +#define CLK_VDE2_LARB1_CKEN	0
+> +#define CLK_VDE2_LAT_CKEN	1
+> +#define CLK_VDE2_LAT_ACTIVE	2
+> +#define CLK_VDE2_LAT_CKEN_ENG	3
+> +#define CLK_VDE2_MINI_MDP_CKEN_CFG_RG	4
+> +#define CLK_VDE2_VDEC_CKEN	5
+> +#define CLK_VDE2_VDEC_ACTIVE	6
+> +#define CLK_VDE2_VDEC_CKEN_ENG	7
+> +
+> +#define CLK_VEN1_CKE0_LARB	0
+> +#define CLK_VEN1_CKE1_VENC	1
+> +#define CLK_VEN1_CKE2_JPGENC	2
+> +#define CLK_VEN1_CKE5_GALS	3
+> +
+> +#define CLK_CAM_M_LARB13	0
+> +#define CLK_CAM_M_LARB14	1
+> +#define CLK_CAM_M_CAM	2
+> +#define CLK_CAM_M_CAMTG	3
+> +#define CLK_CAM_M_SENINF	4
+> +#define CLK_CAM_M_CAMSV1	5
+> +#define CLK_CAM_M_CAMSV2	6
+> +#define CLK_CAM_M_CAMSV3	7
+> +#define CLK_CAM_M_MRAW0	8
+> +#define CLK_CAM_M_FAKE_ENG	9
+> +#define CLK_CAM_M_CAM2MM_GALS	10
+> +
+> +#define CLK_CAM_RA_LARBX	0
+> +#define CLK_CAM_RA_CAM	1
+> +#define CLK_CAM_RA_CAMTG	2
+> +
+> +#define CLK_CAM_RB_LARBX	0
+> +#define CLK_CAM_RB_CAM	1
+> +#define CLK_CAM_RB_CAMTG	2
+> +
+> +#define CLK_IPE_LARB19	0
+> +#define CLK_IPE_LARB20	1
+> +#define CLK_IPE_SMI_SUBCOM	2
+> +#define CLK_IPE_FD	3
+> +#define CLK_IPE_FE	4
+> +#define CLK_IPE_RSC	5
+> +#define CLK_IPE_DPE	6
+> +#define CLK_IPE_GALS	7
+> +
+> +#define CLK_MDP_RDMA0	0
+> +#define CLK_MDP_TDSHP0	1
+> +#define CLK_MDP_IMG_DL_ASYNC0	2
+> +#define CLK_MDP_IMG_DL_ASYNC1	3
+> +#define CLK_MDP_SMI0	4
+> +#define CLK_MDP_APB_BUS	5
+> +#define CLK_MDP_WROT0	6
+> +#define CLK_MDP_RSZ0	7
+> +#define CLK_MDP_HDR0	8
+> +#define CLK_MDP_MUTEX0	9
+> +#define CLK_MDP_WROT1	10
+> +#define CLK_MDP_RSZ1	11
+> +#define CLK_MDP_FAKE_ENG0	12
+> +#define CLK_MDP_AAL0	13
+> +#define CLK_MDP_IMG_DL_RELAY0_ASYNC0	14
+> +#define CLK_MDP_IMG_DL_RELAY1_ASYNC1	15
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6789_H */
+> diff --git a/include/dt-bindings/reset/mediatek,mt6789-resets.h b/include/dt-bindings/reset/mediatek,mt6789-resets.h
+> new file mode 100644
+> index 000000000000..b2a9890eee61
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6789-resets.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2025 Arseniy Velikanov <me@adomerle.pw>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT6789
+> +#define _DT_BINDINGS_RESET_CONTROLLER_MT6789
+> +
+> +/* INFRA resets */
+> +#define MT6789_INFRA_RST0_LVTS_AP_SWRST		0
+> +#define MT6789_INFRA_RST1_UFSHCI_SWRST		1
+> +#define MT6789_INFRA_RST2_UNIPRO_SWRST		2
+> +#define MT6789_INFRA_RST3_UFS_CRYPTO_SWRST	3
+> +
+> +#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT6789 */
+> -- 
+> 2.50.0
 > 
-> Azkali Manad (1):
->       soc/tegra: pmc: Add Tegra210B01 support
-> 
->  Documentation/devicetree/bindings/arm/tegra.yaml   |    6 +
->  .../bindings/clock/nvidia,tegra124-dfll.txt        |    1 +
->  .../bindings/clock/nvidia,tegra20-car.yaml         |    1 +
->  .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  |    4 +-
->  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |    5 +-
->  .../bindings/thermal/nvidia,tegra124-soctherm.yaml |    2 +
->  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml |    2 +
->  .../bindings/usb/nvidia,tegra210-xusb.yaml         |    4 +-
->  arch/arm64/boot/dts/nvidia/Makefile                |    1 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   11 +
->  .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts |   10 +
->  arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  |   70 +
->  arch/arm64/boot/dts/nvidia/tegra210b01.dtsi        |   64 +
->  drivers/clk/tegra/Makefile                         |    1 +
->  drivers/clk/tegra/clk-tegra-periph.c               |    3 +
->  drivers/clk/tegra/clk-tegra210b01.c                | 3758 ++++++++++++++++++++
->  drivers/clk/tegra/clk-utils.c                      |    5 +-
->  drivers/clk/tegra/clk.c                            |   19 +-
->  drivers/clk/tegra/clk.h                            |    6 +
->  drivers/phy/tegra/xusb-tegra210.c                  |   41 +
->  drivers/phy/tegra/xusb.c                           |    4 +
->  drivers/phy/tegra/xusb.h                           |    1 +
->  drivers/soc/tegra/pmc.c                            |  117 +
->  drivers/thermal/tegra/soctherm.c                   |    4 +
->  drivers/thermal/tegra/soctherm.h                   |    1 +
->  drivers/thermal/tegra/tegra210-soctherm.c          |   78 +
->  drivers/usb/gadget/udc/tegra-xudc.c                |   20 +
->  drivers/usb/host/xhci-tegra.c                      |   25 +
->  include/dt-bindings/clock/tegra210-car.h           |    5 +-
->  29 files changed, 4262 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
-> change-id: 20250509-t210b01-c154ca0f8994
-> 
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 347e9f5043c89695b01e66b3ed111755afcf1911
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250720-t210b01-v2-0-9cb209f1edfc@gmail.com:
-
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /pcie@1003000: failed to match any schema with compatible: ['nvidia,tegra210-pcie']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /host1x@50000000/tsec@54100000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /host1x@50000000/tsec@54500000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /gpu@57000000: failed to match any schema with compatible: ['nvidia,gm20b']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /interrupt-controller@60004000: failed to match any schema with compatible: ['nvidia,tegra210-ictlr']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /memory-controller@70019000: failed to match any schema with compatible: ['nvidia,tegra210-mc']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra210b01-dfll']
-arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: usb-phy@7d000000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
-	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
-	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /usb-phy@7d000000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: usb-phy@7d004000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
-	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
-	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /usb-phy@7d004000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: cpu@0 (arm,cortex-a57): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: cpu@0 (arm,cortex-a57): Unevaluated properties are not allowed ('clock-latency' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: thermal-zones: mem-thermal:cooling-maps: 'dram-active', 'dram-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
-arch/arm64/boot/dts/nvidia/tegra210-p2371-0000.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210-p2571.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
-
-
-
-
-
