@@ -1,86 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18722DECAA
-	for <linux-clk@vger.kernel.org>; Mon, 21 Jul 2025 17:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D45421FF2B
+	for <linux-clk@vger.kernel.org>; Mon, 21 Jul 2025 18:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753119783; cv=none; b=nV2nBrf2EHv/lS++9EUAQrlbgxK6wRCZHjllIRLzkZ/QCjQhKAXKFRZf0RtelFMdbOhF3yYbcvWGUL6pz84UjsgX3SxYeUGEhvL+oXFbL9vcM6jBMa3Sa9QHEJPTMrF+CEon7wUZAJkRaOmbGUyFZMX+oSWudIHdfw7qf6k4lBs=
+	t=1753124389; cv=none; b=KRQ7uG6M27W3Kzb42PbvOTZYjHh8MRTSFDsj+XoSgrx3o6AxNMw7oZnFISI1/SbxP5KMKOa/B8v2LXjssCkCw33OZ863oPEc22HRT1sjfrjeriJRR8zBPupUXqJw2yea4LGTA3RkGmBtkHpymvHHvDLS4gF6//6qpC4db6zU+eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753119783; c=relaxed/simple;
-	bh=XoJjYqS6/hSyXdRtMUnU0RZZfulFb6pXKIkPWE6tVOE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=oX0f6jEKU2FHBEl/qXL4g7RxTQFe2+vpjbHWvoKq5mCjTOrC+0YCjuS5BwIILLelCtQnh2IGvH/hFEFJhQlPho3i2WIINBZsW0fJe1WCYF+0KcLCbUBU7bSWRYVMsnMEOjd8NiWYLMsCjdw25zzqwVewOAcldIW7d3Hv3orHNWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d19clrLf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753124389; c=relaxed/simple;
+	bh=HGLwuU4D+TUfqsZVVo04GFZdHAqGvPqWRxCyM/vPrtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Vm30ibE+ECHXMWiZBw+14X85M01uKNB5XB0D8Bf6lL53OMJogsHyGkqBofTg/36UD9TBxXs0sC/YHaPNgmtBiZ3agE2CRLHlOrV2Gmif3lQCQBztU3iWNjkz3RTW9mmiI9s41+q9XJv+EvagoS7evPe6Tf/rsOkN79SLpDJC2n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=fgrNnZVu; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d19clrLf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79CA5C4CEED;
-	Mon, 21 Jul 2025 17:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753119782;
-	bh=XoJjYqS6/hSyXdRtMUnU0RZZfulFb6pXKIkPWE6tVOE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=d19clrLfqVrlIKLaehbiYisqF1sSFoxxSb+XWsfdacSGi8mReu0kqAsXHt0fHA6eF
-	 CelOUs3JD2kdhElZBtPH+BZOeGmvfyV1arj2ZDplvsysJHEbSXMXv8raGlaLU2SIXA
-	 xsH1H0g9bA2HqVZVye9/AyoVvESQ6B4V4WzXDu3Z81b++QrRus0XoNdrVMLBDckUoN
-	 TDbjJsHYRLM/FRSJYFTk9ydpQqrbx8yWTWBo2+jOU4hbqLYbjwcMldkeoUcVLngs6b
-	 mbC3F1tPfRMOzgpS7xYZJX2uhcbkXHy+3Xe6SuVxVwzNYTSxRxEvv9pqvJApplnZpH
-	 T9xZbE00CiyTQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="fgrNnZVu"
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 80ACF101C931
+	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 00:29:34 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 80ACF101C931
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753124374; bh=HGLwuU4D+TUfqsZVVo04GFZdHAqGvPqWRxCyM/vPrtk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fgrNnZVuxHtNXvQhEzFgZbSMESSpacQkPL5pPuuKDddyUMZ3qThYSKgeHDbwQLgXC
+	 f450tK2nYV4C0VXVNK+LGdmMVFctzHDdoIzdZruGdFwODVi8Z6rVODSAJ4yPwWoxcU
+	 Qp4k5G3hCkj9vNvRm3vx6DO7UKMDYnf+BmB5HnRY=
+Received: (qmail 12007 invoked by uid 510); 22 Jul 2025 00:29:34 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.105765 secs; 22 Jul 2025 00:29:34 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 22 Jul 2025 00:29:30 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 390F036003B;
+	Tue, 22 Jul 2025 00:29:29 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id CA8801E812C1;
+	Tue, 22 Jul 2025 00:29:28 +0530 (IST)
+Date: Tue, 22 Jul 2025 00:29:23 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
+	heylenay@4d2.org, elder@riscstar.com, inochiama@outlook.com,
+	akhilesh@ee.iitb.ac.in, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	unicornxdotw@foxmail.com, jszhang@kernel.org,
+	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] clk: spacemit: fix error handling in
+ ccu_pll_set_rate/_round_rate
+Message-ID: <aH6OC1aV6IcQnoSC@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j7c09pf23.fsf@starbuckisacylon.baylibre.com>
-References: <1j7c09pf23.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: amlogic updates for v6.17
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>, linux-amlogic <linux-amlogic@lists.infradead.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 21 Jul 2025 10:43:01 -0700
-Message-ID: <175311978158.4111.6766617410857124161@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Quoting Jerome Brunet (2025-07-15 09:57:40)
->=20
-> Hi Stephen,
->=20
-> Here are the Amlogic clock updates for v6.17. This one is a bit larger
-> than usual. It depends on the changes in your clk-hw-device branch and
-> is based on it.
->=20
-> There is the conclusion of a long standing topic around reset drivers in
-> clock, this time using the generic helper to create the auxiliary
-> device.
->=20
-> There is also the beginning of clean up of the amlogic controllers with
-> more coming in future releases.
->=20
-> Nothing is overly complicated in there but it makes quite a large diff
-> since it touches all existing controllers.
->=20
-> Please pull.
-> Cheers
->=20
-> Jerome
->=20
-> The following changes since commit ac32d031f508e46c19ab38d6ba8b53fc28df99=
-45:
->=20
->   clk: tests: add clk_hw_get_dev() and clk_hw_get_of_node() tests (2025-0=
-6-20 00:15:39 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.17-1
->=20
-> for you to fetch changes up to 8a65268500b00ecee5402ef9f80618ff73f30707:
->=20
->   clk: amlogic: s4: remove unused data (2025-07-02 15:38:19 +0200)
->=20
-> ----------------------------------------------------------------
+Initialize best_entry pointer with NULL in ccu_pll_lookup_best_rate()
+to avoid returning garbage value when function fails to assign it
+a valid rate entry. Avoid passing invalid rate entry reference to
+ccu_pll_update_param by adding appropriate error handling in
+ccu_pll_set_rate and ccu_pll_round_rate.
+Address the effects of uninitialized pointer as reported
+by smatch and coverity static code analysis tools.
 
-Thanks. Pulled into to clk-next
+Addresses-Coverity-ID: 1649164
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202505111057.ejK2J56K-lkp@intel.com/
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+ drivers/clk/spacemit/ccu_pll.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+index 4427dcfbbb97..3fc6a30f98b7 100644
+--- a/drivers/clk/spacemit/ccu_pll.c
++++ b/drivers/clk/spacemit/ccu_pll.c
+@@ -21,7 +21,7 @@ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_best_rate(struct ccu_pll *p
+ 							       unsigned long rate)
+ {
+ 	struct ccu_pll_config *config = &pll->config;
+-	const struct ccu_pll_rate_tbl *best_entry;
++	const struct ccu_pll_rate_tbl *best_entry = NULL;
+ 	unsigned long best_delta = ULONG_MAX;
+ 	int i;
+ 
+@@ -107,6 +107,10 @@ static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	const struct ccu_pll_rate_tbl *entry;
+ 
+ 	entry = ccu_pll_lookup_best_rate(pll, rate);
++
++	if (!entry)
++		return -EINVAL;
++
+ 	ccu_pll_update_param(pll, entry);
+ 
+ 	return 0;
+@@ -129,8 +133,11 @@ static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long *prate)
+ {
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	const struct ccu_pll_rate_tbl *entry;
++
++	entry = ccu_pll_lookup_best_rate(pll, rate);
+ 
+-	return ccu_pll_lookup_best_rate(pll, rate)->rate;
++	return entry ? entry->rate : 0;
+ }
+ 
+ static int ccu_pll_init(struct clk_hw *hw)
+-- 
+2.34.1
+
