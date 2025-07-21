@@ -1,241 +1,215 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011008.outbound.protection.outlook.com [40.107.130.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BAA3C0C;
-	Mon, 21 Jul 2025 12:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100796; cv=fail; b=LkhY6QoiFy+l8A9m3/NCDcdDLdRxR1Il6CvctVunCoyG0AKAGvX63RNKqnzZcqLxqdNUqT0t4Dp9fTjmRg23Xn9k6TLOHUhnibAIWtSW+FYgR1ICr+pSBmlr8/tGNPt+sxNTFZJ+KeVXR99BZ0jyd+/x/ZWa9oSUUEAzbq4kjpg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100796; c=relaxed/simple;
-	bh=uu2qiwgtlP5QiTwPszxmRCFsDVVzqsVuAPqk3oVF1t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PKIxMJL4K4nhqJSm5psRQVLhohc4WtYixtzSow3AVfe4i4nEGxblGeSqozSVxw1Zc329eLE++oLcwE2BlrDc7ioPolZf0ZFcHmdiU2LEyOQm68ribdayCn1kJxZrwpb1FQRWhrst/ABfNu7oqBagw8ET78OK5oOCB6uqUasAe/w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ncOqW8X9; arc=fail smtp.client-ip=40.107.130.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A12D6617;
+	Mon, 21 Jul 2025 14:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753107762; cv=none; b=ZrMDDBqk+zpNo1hkexvaC7px8RzlcGEU1Q1FDXmUqldX1KM1wyOyXJNBGRDmB7w5xUZl7yJQlKjO1gxxLRyTzNhZUPTDSv7shoI3eJ4QAXn8O+qN0AZW+p2Et6OnKUD5SMptoSqH0hhdne2iN92qRouNxRLZzHK9XvGxFsHUkf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753107762; c=relaxed/simple;
+	bh=hjlOeyxnWBA0TOKevAsG8is1xc1FHdQAJGdi4sv+25E=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=mqoav3kwgOP/VbHxjzmf2wCUm2aeVD6PisY/gK+7z33PpqM+Ru1sve2sAYeL47ScbVvVWfw4oq5PjNp3oJDUTYwgSR1a3G3n1IRvnbNq3XlLRoKuElswgV3V7a98VCBDEEDx6SajcbxCPvSp2NKs4GrkF+MHoHKwMpNwo90Trhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCPLqNbk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ncOqW8X9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w3GZNER4hoZrIIL5iWXmmUEsIcdAcbXkfr1zTm03QerXKXLYMfjDFxXouvdOvihkDvY09bAHAtiiLPhD6/CtRchVZ3q9WWfSHBtg4YwzsriLZ/tynOxdlyZOmbbKpasqAM/U7vd6RuuLbfJirD+PMnBakSTTTrPW+Tw31bs4ZsjJjIHKoc1dQLAUKM5+qUYIhyHQBrN3YtS0ZeaYHuosdtEOmnk/ihQpj3E3hU2RdHWGDPAri9MLkRhIDTsuUApnXUzfGB6qD3ypjkuzE3VKlX5nkDh797l9FziLEDW1CibqTmfkcTCaOozNjAXrMEHAYefgwPWcctL7jMsrxAq9zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=piJwhJQ919phfQ5OxKysnUVS95zLVy0Ri9N7o+nxZk8=;
- b=nepNABozmhIK0AupjAxA/cWFW8tP5GHGajUxVRB6dsDZfG1qtVm4qqlmtMpNAXfnK6WpjOkfWXkQ+tEeWnIXtaBuP4/9hHmEue8AMRoWw7uiFU7FXMqncXqUMEV5Mo1BsQ4G0pbdBzeQHh4+NbyrlwwvLCO72FZINR5q4NGy4IOQKK3K49VnX3t3dkiUDOI2zx5s+6xDwINLRG5npFAWkCAUfZGPQARU3PP//e9guinkB4Yzr1Y3Oo5DkVNPX2o4OkKIPT87H2nmcIHuCGZMeOHW73+HyxcBmi2RMlz6WGd3+1lqDYYHdDIZDBZU9n2+oG4adEJ92HGKfZSSYlHMJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=piJwhJQ919phfQ5OxKysnUVS95zLVy0Ri9N7o+nxZk8=;
- b=ncOqW8X9REHPBpnaNc/oA8hP+GDzv24TPV6a7K9QmOSeXsm58uyq7v/+W9r7vdQjqd050W2l7YFnXwI2FpbVbt1kEipZ75JNa5k/qVKfYpekYq8TdtcSDG73tD07ct5qPjgvxSybSBZeMknH10LIRVp/xqB6gLKABOZFdbKaIDhghyBb5I8p3mTD+zocfDIcoJGPZaHBwA/QIGUa+9GO5srju+RDe4l00aUDAPEOeFhcnBWM8dQOmpdrP4rrbaOmCzQylsiUnNSYEROiG9xNUEuAixMe3mqAxyam19927phX/S9V45i/YY0mQsQGzPnr1NJovNQ1rM+nNz7asP+EaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB9PR04MB9260.eurprd04.prod.outlook.com (2603:10a6:10:370::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 12:26:30 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 12:26:30 +0000
-Date: Mon, 21 Jul 2025 21:36:56 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v3 6/6] arm64: dts: imx943: Add LVDS/DISPLAY CSR nodes
-Message-ID: <20250721133656.GB27698@nxa18884-linux.ap.freescale.net>
-References: <20250707-imx95-blk-ctl-7-1-v3-0-c1b676ec13be@nxp.com>
- <20250707-imx95-blk-ctl-7-1-v3-6-c1b676ec13be@nxp.com>
- <o4sxmotqixib4tqbvjb5m3l6tnbwbjzodywla4ezf66zmwd2t2@5bd27bkfnsy2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <o4sxmotqixib4tqbvjb5m3l6tnbwbjzodywla4ezf66zmwd2t2@5bd27bkfnsy2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0049.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::10) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCPLqNbk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED11C4CEED;
+	Mon, 21 Jul 2025 14:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753107761;
+	bh=hjlOeyxnWBA0TOKevAsG8is1xc1FHdQAJGdi4sv+25E=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=fCPLqNbk4Np3CnxgYlMcSjlwKA8svRsnfJNRoC4iuS5dWBr1Y2vz1VzwdiIa7oIRa
+	 AQKz+iYI7ERtgAC5sCquPQlu//5IKGu+UGUhg4WPE2tC2UwFo3VGWyKJHbKvusSR2B
+	 8RxcD7kdb2ufVVCa9KYGKaYWELY2AyMVk2HNk4RYO0fSLa2oy7PtuB3M87X4M8Z6x5
+	 cqmo37jgd3CxzOw+dZkFXQsSyruW4B0DfU+KzbvbwxWppZWNw0VPbLLeL3kJ/ZZ/9y
+	 q5U2unWXn3zw0cLYafQ/Nqc3AVhxvnSRIb9mVwkarwrcUnlcusUtj6rAeipq8m3s5Q
+	 F4xR+XYNhgQWA==
+Date: Mon, 21 Jul 2025 09:22:40 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB9260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04c5fd78-7281-40eb-9c72-08ddc851d20e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3kU+bgdIxyYZ23kfFxyAJxpJzyrLOsxvo4WL2pcynqveTmk1/oGmilXIdkP6?=
- =?us-ascii?Q?PC7WrYxpvgD2egRBdaSnzhTDe0Pv8s+EgToY9+rS6acnlya10LPExao2hw+u?=
- =?us-ascii?Q?ee+3G2QVk1m3sZVo6W0cuqBQpgr8ikiDrWKJfKqN75G3RqgJQDjKVqmu7cLn?=
- =?us-ascii?Q?asJyCg1cWdVN9BMel5iecFZHMrRaXhOd508GXy094yVHuwC09XrOs1pFpHQk?=
- =?us-ascii?Q?EggQ/i2hh76vCZRMHwOXLN5FVBxEZz1zPWI+UPIUNkIh2WCMmjKOSDc4p5fr?=
- =?us-ascii?Q?rTgoc+N99PedX6Rh7VaUCNmM6FXqXVtlDq/kPBfJDLWnpuf8JVu6CSkmO/L3?=
- =?us-ascii?Q?NTpeEuSYrUVJ+KyhxGaob8BLHbOrvP+2MQBXa8QbxbEzotSCGj1dEu+14T2i?=
- =?us-ascii?Q?hr9IHhyTdR0vWBNjZRDGCP3sCoeZHEDkw4+GGiqpJG7LqLaXj24hwzIkW4Sa?=
- =?us-ascii?Q?UN9WtTsiS+GrQfLOaRu95QnUHU6m9idbmaPfhdK+nuvuizc/ftI2wiCgGejO?=
- =?us-ascii?Q?kHwD8rGmhplJIgIYbnG+UHdXfSXT3oS7PfOAH/dWfFMVSqpvWGTScrEhUkJA?=
- =?us-ascii?Q?fSBaqcV9ule9uwJa6isqxekQA3276dyv8UxjZyZxk/NyOWKffmt2OSsMYcGE?=
- =?us-ascii?Q?tB/MkQMty8e1IWeiDXgmuA1P4a72LVVz2HJDHrCS/G2/ZvVrlzjjoo1xg3qI?=
- =?us-ascii?Q?GN8drObklwtUfpDXPiiYJkPBCnCSDBUkFlwyh4mqCVhXS/miBE7hWuAw/I/t?=
- =?us-ascii?Q?S6/lLX36k3u3+gQVnbCed3ebP7lmH9jjoFzJnzKyJ8HyHBrkkA57J/ajsSBc?=
- =?us-ascii?Q?svCzoBbccOslNIYU+o9YxCz8MAUUOUdAQtBv+685xXGM+eBatW6zKYeXpfTA?=
- =?us-ascii?Q?9Y8FR1EPA/ftLS4buuR0FmBTu3og0aeUMznh1xYVD+2mUByGEsX9hNpki0OR?=
- =?us-ascii?Q?rwf2yZtiUh3N8BMGeXdxgRINCgzOzrF5XNmPHgczCdHCe7u40wDZ/t0IyOcw?=
- =?us-ascii?Q?stxYSS7SZ7kKpIOIbGTqY2PJ/IErOj/VpEoumWG8f4McphExtIe8/vbaRMU8?=
- =?us-ascii?Q?tzJTVqYTG2OVjezc1fjxVcT79Zg6LXHCY0X5L4xhxb1dWxsDC2K5D8FhFMW7?=
- =?us-ascii?Q?yPvGokICgShL3tIqmIljKHnio8EYhgRNdEpY0HRecTwBiSwqGEJdxQUwU5S/?=
- =?us-ascii?Q?PC2uKymHFLYlRQMRXYg4xTLXYQ1CmJrG2GUfwhnFxm5/T8J29GomJIft6faK?=
- =?us-ascii?Q?tXmVi1C+2VCPsERSlF0at1OkO9awp9afx29SXVFBrDK3uxtT37eloBbWHXmC?=
- =?us-ascii?Q?epeQ531C3rKrF8u7edn898EXyLt4WqTn8geJdrt8bLAosSWU28avD1mU/ERT?=
- =?us-ascii?Q?XwKbOrFAm1BZVMLxjnggb29311Z/YaslYThzRJkfgltNw6e08BkfmRQ0KVnm?=
- =?us-ascii?Q?rzLud1EwWRGVMRN8l8HDbvP88FMelWdZ1/o/9MEXuPrr56yzDYVnmg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xGTloRC7j/PNmuV3/AfGeKY25rlk7Yr4pQuSe4i6KXfB/aRkSGOcHJN3a5ng?=
- =?us-ascii?Q?HVwgXP+lhdvd6xp/RjnRJzojDcjzXCCDh6orkMyTCodEN2tixajETj7kAjLw?=
- =?us-ascii?Q?vnBgHFfyXcb4i4nZpgEnPGYz+nUM22EyPl1YAbobmdxLfVL+7QRmSL74/Dg9?=
- =?us-ascii?Q?nKQBP3X/4WcHHZ/qPRNopnIwlLewzppU1jBLRkAwTwnBcm1BYEbAR6xrNcH7?=
- =?us-ascii?Q?gc4uVlIsR6Lb44RZtnxKvAR7FYnLjVP87SLfWJr/+/f4ORlPN8mtWPUJzjLv?=
- =?us-ascii?Q?zrt9DRfXJtA8aw8gdAl6m2esTtjSxTZNpRZyfbmqBbmYLQjbf5nok/LWsCPB?=
- =?us-ascii?Q?UQRFEdWLTdaMZnkeuf2YbQ3DQsbEYEsd9QDPCprksQRRrEOkduAOVHNLo2fW?=
- =?us-ascii?Q?TfW/WI0JpLdxxwGL8oNObXttbercWV4OSBaK1NfQZbLtzQxtKUhQklDo0Pfi?=
- =?us-ascii?Q?VjFPcxopoaEeHFCC5BNsrd3IP+Xbd0W1HrtAzFXrvrUU3Q3g1EUYUwmoNIBZ?=
- =?us-ascii?Q?03MJJpHa82j0NN0cKGXWoPSMEPanDJXlv/BckfUISMcHoU0pjzaNlktGSu93?=
- =?us-ascii?Q?JaOUJ3K8x+TLWhJ8tSRq8k5z04L/LhwbHsqHDwZFIxEAuf5OnfDHZciJDScT?=
- =?us-ascii?Q?edyyNR7YXHoBdFjRypLH9SyNNitul4fi4m98ilamEMEGjwCCtzG8KH28Nl0o?=
- =?us-ascii?Q?CjGxVyc78Yya94DqL3ORj3L6iuseM0b/U2h91jvS74Mee7aAjuNwFeKcpbb4?=
- =?us-ascii?Q?/D6zLMG6Wx9iwSMiJd6Qw0U3E6JwbVFOAg3q53HvY3NBkEV+NY4cVJqJmoxB?=
- =?us-ascii?Q?5GOuguuP80I+cxE8ynrRRlrGFcUcqLV4UWAp3rL0ZwQDZwCjnZnyNvdDIoVz?=
- =?us-ascii?Q?VskgRCeUfA5rJL5pAV5SQr1HPCa548HZoyPpq1yhSRspB7PMHWhkFv7+NTug?=
- =?us-ascii?Q?PH9LklERc0NRqk2o5a5osPVccosQy/7zi4JUscGGHZKzVWdR8X58EzolzSB0?=
- =?us-ascii?Q?OoMnKQcaV82AKzixluRBz3ExQGa+ouhXZPj3NterAdAHooSQH4uOt4AiceFq?=
- =?us-ascii?Q?AsGNYpc+5/oWzMSOXRVk+aS35IweW8++cNil5kK1zd1VIPPk1LX+hFyecmyV?=
- =?us-ascii?Q?EbWhwp9JRnqDuLwDf3CztdcOmP6sGT8l31eWzgyuVOyonKP8N82HrQzKlS41?=
- =?us-ascii?Q?2yux2HYaGKjUSVgjNIbOK/RCCYQ5mo/nVwy5/gYaGP/FEW9JwyW8eUjlsVPF?=
- =?us-ascii?Q?Z2RhiV9dtoCDSrdu+YL5HY1Gx/l/tAbDgbOQQCdPQXUgfDDQ9Jl0dbF6X9Yj?=
- =?us-ascii?Q?20jACZzylR4vK3Dvp6UeRvMNOB3ySJuS07AL6rr6yHkDoOBVQ3q08A0c/eCs?=
- =?us-ascii?Q?ImS8BqrxKLE1nZzz8sdIUEOKCv2R7uG08IwIWQo87w3yFdke/78Dr2HfWLph?=
- =?us-ascii?Q?PADCSoOuucf+m77AIX5wZ1+RrMftR2Oa6ZUlzSrTS7ryQ02jPJU4/33l/tHL?=
- =?us-ascii?Q?YqTCcsnJoF1e0+5JCjwKDHFG5deN9Cbo6pvLwWW2fIp330/uw8in0E+0Tw2N?=
- =?us-ascii?Q?CMqK0mbbubnNwoTsky13rwjQmF4znxf51YcuBwcl?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04c5fd78-7281-40eb-9c72-08ddc851d20e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 12:26:30.1873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XJoXwCk88/pQFmk6PtEVD3Lap0b+DHIoRbwP+rwbkFmk6ukM524intt99THniZ3Xvibh5Ff6GjkJktosAvuXIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9260
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Azkali Manad <a.ffcc7@gmail.com>, Zhang Rui <rui.zhang@intel.com>, 
+ linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ devicetree@vger.kernel.org, JC Kuo <jckuo@nvidia.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Nagarjuna Kristam <nkristam@nvidia.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, linux-phy@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Thierry Reding <treding@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+ Mathias Nyman <mathias.nyman@intel.com>, Vinod Koul <vkoul@kernel.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
+References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
+Message-Id: <175310755862.577282.10932067975211977362.robh@kernel.org>
+Subject: Re: [PATCH v2 00/17] arm64: tegra: Add Tegra210B01 support
 
-On Tue, Jul 08, 2025 at 03:19:26PM +0300, Laurentiu Palcu wrote:
->Hi Peng,
->
->On Mon, Jul 07, 2025 at 10:24:42AM +0800, Peng Fan wrote:
->> Add nodes for LVDS/DISPLAY CSR.
->> 
->> Add clock-ldb-pll-div7 node which is used for clock source of DISPLAY CSR.
->> 
->> Reviewed-by: Frank Li <Frank.Li@nxp.com>
->> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx943.dtsi | 34 +++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> index 45b8da758e87771c0775eb799ce2da3aac37c060..657c81b6016f21270a1b13d636af72c14ab4f8ef 100644
->> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> @@ -3,6 +3,8 @@
->>   * Copyright 2025 NXP
->>   */
->>  
->> +#include <dt-bindings/clock/nxp,imx94-clock.h>
->> +
->>  #include "imx94.dtsi"
->>  
->>  / {
->> @@ -145,4 +147,36 @@ l3_cache: l3-cache {
->>  			cache-unified;
->>  		};
->>  	};
->> +
->> +	clock-ldb-pll-div7 {
->
->You need to add a label to this node, so it can be referenced from
->other nodes. I hit this issue while trying to prepare the DCIF patches
->for sending upstream, using your latest patchset.
 
-Thanks for the comment. Let's add a label when there is a real reference
-in the file. Since you adds the label in your patch to support i.MX943
-DCIF as we talked, I will leave this patch at it is.
+On Sun, 20 Jul 2025 21:14:54 -0500, Aaron Kling wrote:
+> Also known as Tegra X1+, the Tegra210B01 has higher CPU and GPU clocks
+> than the original Tegra210.
+> 
+> This series adds Tegra210B01 support to several drivers, as a slight
+> extension to the existing Tegra210 support. Then adds a generic soc dtsi
+> in the same vein as other tegra archs. And finally adds a barebones
+> device dts to be used for dt checks. Further device support will be
+> submitted in later series.
+> 
+> Earlier internal revisions of this series included changes to the dfll
+> driver to support Tegra210B01, but those did not work in testing, thus
+> was dropped from the series. A bindings update to match is still in the
+> series so the soc dtsi can declare a separate compatible from Tegra210,
+> preventing the driver from attempting incorrect initialization on
+> Tegra210B01.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Fix patch 1 subject
+> - Add descriptive name in patch 8
+> - Fix copy-paste error in patch 13, discovered by kernel ci
+> - Link to v1: https://lore.kernel.org/r/20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com
+> 
+> ---
+> Aaron Kling (16):
+>       dt-bindings: soc: tegra: pmc: Document Tegra210B01
+>       dt-bindings: phy: tegra-xusb: Document Tegra210B01
+>       dt-bindings: usb: tegra-xusb: Document Tegra210B01
+>       dt-bindings: usb: tegra-xudc: Document Tegra210B01
+>       dt-bindings: thermal: tegra: Document Tegra210B01
+>       dt-bindings: clock: tegra: Document Tegra210B01
+>       dt-bindings: clock: tegra124-dfll: Document Tegra210B01
+>       dt-bindings: tegra: Document Shield TV 2019
+>       phy: tegra: xusb: Add Tegra201B01 Support
+>       usb: xhci: tegra: Add Tegra210B01 support
+>       usb: gadget: tegra-xudc: Add Tegra210B01 Support
+>       thermal: tegra: Add Tegra210B01 Support
+>       clk: tegra: Add Tegra210B01 support
+>       arm64: tegra: Add BPMP node for Tegra210
+>       arm64: tegra: Add Tegra210B01 support
+>       arm64: tegra: Add support for NVIDIA Shield TV Pro 2019
+> 
+> Azkali Manad (1):
+>       soc/tegra: pmc: Add Tegra210B01 support
+> 
+>  Documentation/devicetree/bindings/arm/tegra.yaml   |    6 +
+>  .../bindings/clock/nvidia,tegra124-dfll.txt        |    1 +
+>  .../bindings/clock/nvidia,tegra20-car.yaml         |    1 +
+>  .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  |    4 +-
+>  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |    5 +-
+>  .../bindings/thermal/nvidia,tegra124-soctherm.yaml |    2 +
+>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml |    2 +
+>  .../bindings/usb/nvidia,tegra210-xusb.yaml         |    4 +-
+>  arch/arm64/boot/dts/nvidia/Makefile                |    1 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   11 +
+>  .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts |   10 +
+>  arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  |   70 +
+>  arch/arm64/boot/dts/nvidia/tegra210b01.dtsi        |   64 +
+>  drivers/clk/tegra/Makefile                         |    1 +
+>  drivers/clk/tegra/clk-tegra-periph.c               |    3 +
+>  drivers/clk/tegra/clk-tegra210b01.c                | 3758 ++++++++++++++++++++
+>  drivers/clk/tegra/clk-utils.c                      |    5 +-
+>  drivers/clk/tegra/clk.c                            |   19 +-
+>  drivers/clk/tegra/clk.h                            |    6 +
+>  drivers/phy/tegra/xusb-tegra210.c                  |   41 +
+>  drivers/phy/tegra/xusb.c                           |    4 +
+>  drivers/phy/tegra/xusb.h                           |    1 +
+>  drivers/soc/tegra/pmc.c                            |  117 +
+>  drivers/thermal/tegra/soctherm.c                   |    4 +
+>  drivers/thermal/tegra/soctherm.h                   |    1 +
+>  drivers/thermal/tegra/tegra210-soctherm.c          |   78 +
+>  drivers/usb/gadget/udc/tegra-xudc.c                |   20 +
+>  drivers/usb/host/xhci-tegra.c                      |   25 +
+>  include/dt-bindings/clock/tegra210-car.h           |    5 +-
+>  29 files changed, 4262 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
+> change-id: 20250509-t210b01-c154ca0f8994
+> 
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+> 
+> 
+> 
 
-Thanks,
-Peng
 
->
->Thanks,
->Laurentiu
->
->> +		compatible = "fixed-factor-clock";
->> +		#clock-cells = <0>;
->> +		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
->> +		clock-div = <7>;
->> +		clock-mult = <1>;
->> +		clock-output-names = "ldb_pll_div7";
->> +	};
->> +
->> +	soc {
->> +		dispmix_csr: syscon@4b010000 {
->> +			compatible = "nxp,imx94-display-csr", "syscon";
->> +			reg = <0x0 0x4b010000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +			assigned-clocks = <&scmi_clk IMX94_CLK_DISPAXI>,
->> +					  <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			assigned-clock-parents = <&scmi_clk IMX94_CLK_SYSPLL1_PFD1>,
->> +						 <&scmi_clk IMX94_CLK_SYSPLL1_PFD1_DIV2>;
->> +			assigned-clock-rates = <400000000>,  <133333333>;
->> +		};
->> +
->> +		lvds_csr: syscon@4b0c0000 {
->> +			compatible = "nxp,imx94-lvds-csr", "syscon";
->> +			reg = <0x0 0x4b0c0000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +		};
->> +	};
->>  };
->> 
->> -- 
->> 2.37.1
->> 
->> 
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 347e9f5043c89695b01e66b3ed111755afcf1911
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250720-t210b01-v2-0-9cb209f1edfc@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /pcie@1003000: failed to match any schema with compatible: ['nvidia,tegra210-pcie']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /host1x@50000000/tsec@54100000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /host1x@50000000/tsec@54500000: failed to match any schema with compatible: ['nvidia,tegra210-tsec']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /gpu@57000000: failed to match any schema with compatible: ['nvidia,gm20b']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /interrupt-controller@60004000: failed to match any schema with compatible: ['nvidia,tegra210-ictlr']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /dma@60020000: failed to match any schema with compatible: ['nvidia,tegra210-apbdma', 'nvidia,tegra148-apbdma']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /memory-controller@70019000: failed to match any schema with compatible: ['nvidia,tegra210-mc']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra210b01-dfll']
+arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: usb-phy@7d000000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
+	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /usb-phy@7d000000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: usb-phy@7d004000 (nvidia,tegra210-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
+	['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy'] is too long
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra124-usb-phy', 'nvidia,tegra114-usb-phy']
+	'nvidia,tegra210-usb-phy' is not one of ['nvidia,tegra30-usb-phy', 'nvidia,tegra20-usb-phy']
+	from schema $id: http://devicetree.org/schemas/phy/nvidia,tegra20-usb-phy.yaml#
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: /usb-phy@7d004000: failed to match any schema with compatible: ['nvidia,tegra210-usb-phy', 'nvidia,tegra30-usb-phy']
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: cpu@0 (arm,cortex-a57): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: cpu@0 (arm,cortex-a57): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm64/boot/dts/nvidia/tegra210b01-p2894-0050-a08.dtb: thermal-zones: mem-thermal:cooling-maps: 'dram-active', 'dram-passive' do not match any of the regexes: '^map[-a-zA-Z0-9]*$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-0000.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210-p2571.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb: /bpmp@70016000: failed to match any schema with compatible: ['nvidia,tegra210-bpmp']
+
+
+
+
+
