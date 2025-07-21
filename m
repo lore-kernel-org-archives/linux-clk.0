@@ -1,52 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865221D5AA;
-	Mon, 21 Jul 2025 09:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9F628D8C8;
+	Mon, 21 Jul 2025 09:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088838; cv=none; b=Go3zX4IVPUqMY2Xhs3kW2c/SpuCQUQE07Px4Y/7gFbcG/eR7cH32xU9H0D5aCVAeBfxi4ppTX6/QdQOChwbaPD4c3c1qHS1hkGxOCzj5GIsXo7vhv/7yRbz5xP/lxHI4nDMVXnAMFFi7x4e9GuWQWpd4VOMzkOgAGDOeuigv/+M=
+	t=1753089579; cv=none; b=IH/+zcE0bZMp+R6T8cssItBk9rAHL6YONz7uD+pcIBvAU7hyXHaPuYPR+c4l0NJOE5dLBn8NI9TS9eVXm50MJyI6muH4skmQaeZ4HnHpL62v16NiWbdbTDlwFuThqLT7UlSsPQt8vPCHnavgl0VjsNlZGbpANfSd1vdOLXPcS3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088838; c=relaxed/simple;
-	bh=mWbYUZ8RpLg7sOJxNI1MKrXpqhPZ6q61NO8r6g1VBL4=;
+	s=arc-20240116; t=1753089579; c=relaxed/simple;
+	bh=1O6qgZHNCTzxqtoMwL2LoFK2ceOAh2w0TjTzof8c+Hg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0r/KkOl+OLmovvqvcciz5MhVRBWa7sCjW5EhXQ9Y5C6iEWsJoZhHQQD4Z6hIJyAVcyKvmN+gczzxtNf7DvTJpj+f0zHprzNpclaAhKKRbwAu9FHy0Wb5A/uQKH0Fi8K4VBuM6FNreRvwtxR5Z+/8voKwoSCxIr4Zz+tB8o91RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UN1h/7cl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHDbaH0A0EFjtawjnhG+9SViApqqhnoxZvJJcI9O8jdm7WhHNhwJnTWedUZODw/BQGQAyAE6xKcXPv3Sl0XUyYbm8D7Yi7WgznmRniZ5xxBnG6ubllsYh26fd/j29GNciHyXaeAHRED2j3yjshtiENm5GguUrjrKNKym5jl0pTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prIb9brq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN1h/7cl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBB4C4CEED;
-	Mon, 21 Jul 2025 09:07:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prIb9brq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC75AC4CEED;
+	Mon, 21 Jul 2025 09:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753088836;
-	bh=mWbYUZ8RpLg7sOJxNI1MKrXpqhPZ6q61NO8r6g1VBL4=;
+	s=k20201202; t=1753089578;
+	bh=1O6qgZHNCTzxqtoMwL2LoFK2ceOAh2w0TjTzof8c+Hg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UN1h/7clLpuilJSIuDW6BgG2LU/Flp/JeMU1x1rxzWje9mT+WqDL3tq35C9NCu1+3
-	 J1WWmV1kj+/HeOfsdY7LOxE+f4sX5mA/RowNQ71AM8wE0SF541udqLwfvQGFO+So1z
-	 ueMPbao8XuTqLtD1JXIITALW3ZCzf9VfxMsMZIFoG4dyTLURNE8lMGc4P4CRHBfgrD
-	 krx70SFQzeY7gVh2pkg44a1G14sa8NB+CoXCwE9R8HIpHxDE1NO9zbpO2w01+WvzGd
-	 8kPcK1mGUXCJ+JA2y8fnDIg/BsyZPtQJbFnKC48KdC1HVGpRJW1OUH72brBOGCxJi7
-	 Dhn4x7kOQLs3Q==
-Date: Mon, 21 Jul 2025 11:07:14 +0200
+	b=prIb9brqCDoJJMvY+L+ynnNCx6xgVEHxxu8CcuPcizoGs6SwxSjRzTjNt3viua4Q4
+	 lHOx/7IVJ3HL4SceNVesqW3oIBALN0p6sP/jwbxudcGNHNpU8whIvgU8O1Dw/8E84/
+	 Wi9wAEtv5gONeO741RX1pFpJGDnQYq1ngb7kLNNgtC8mg7f5ePkLdUXRkYtOp3+o2I
+	 4GPBh31u/DWcLS0ZSxsJgkqkj4/uijJKq7mXwZOG5hZKs8R3vD39D313CBr+ct5Cp5
+	 63//0lpqsxtM53VlRyBRzaATIqadPWCFRihpZlYf2QfS/lWorw+PNev2uDCAud1eZJ
+	 sJHrVxnmG0ifg==
+Date: Mon, 21 Jul 2025 11:19:35 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nagarjuna Kristam <nkristam@nvidia.com>, 
-	JC Kuo <jckuo@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 01/17] dt-bindings: soc: tegra: pmc: Document
- Tegra210B01
-Message-ID: <20250721-logical-lorikeet-of-upgrade-6dce4f@kuoka>
-References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
- <20250720-t210b01-v2-1-9cb209f1edfc@gmail.com>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com, linux-clk@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: clock: qcom: Add bindings documentation
+ for the Glymur TCSR
+Message-ID: <20250721-striped-defiant-hippo-6dee44@kuoka>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-3-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,32 +46,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250720-t210b01-v2-1-9cb209f1edfc@gmail.com>
+In-Reply-To: <20250716152017.4070029-3-pankaj.patil@oss.qualcomm.com>
 
-On Sun, Jul 20, 2025 at 09:14:55PM -0500, Aaron Kling wrote:
-> Add the PMC driver compatible strings for Tegra210B01
-
-And what is Tegra210B01? Do not say what you are doing - it is obvious
-from the diff. In this case here say what you are ADDING, what hardware
-is this.
-
+On Wed, Jul 16, 2025 at 08:50:12PM +0530, Pankaj Patil wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> The Glymur TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
+> this to the TCSR clock controller binding together with identifiers for
+> the clocks
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+And same for documentation...
+
 > ---
->  Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml      |  3 +++
+>  .../dt-bindings/clock/qcom,glymur-tcsrcc.h    | 24 +++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsrcc.h
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> index 7140c312d8986b0b733c519b1e89e360d9602add..eddcafc2f9398ad6fb4d2d46b3181ab91c89a229 100644
-> --- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> @@ -18,6 +18,7 @@ properties:
->        - nvidia,tegra114-pmc
->        - nvidia,tegra124-pmc
->        - nvidia,tegra210-pmc
-> +      - nvidia,tegra210b01-pmc
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> index f3afbb25e868..9fbf88836782 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> @@ -8,12 +8,14 @@ title: Qualcomm TCSR Clock Controller on SM8550
+>  
+>  maintainers:
+>    - Bjorn Andersson <andersson@kernel.org>
+> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>  
+>  description: |
+>    Qualcomm TCSR clock control module provides the clocks, resets and
+>    power domains on SM8550
+>  
+>    See also:
+> +  - include/dt-bindings/clock/qcom,glymur-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8550-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8650-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8750-tcsr.h
+> @@ -22,6 +24,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,glymur-tcsr
+>            - qcom,sar2130p-tcsr
+>            - qcom,sm8550-tcsr
+>            - qcom,sm8650-tcsr
+> diff --git a/include/dt-bindings/clock/qcom,glymur-tcsrcc.h b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+> new file mode 100644
+> index 000000000000..72614226b113
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
 
-Why they are not compatible? Commit msg is also silent on that.
+Filename matching compatible.
 
 Best regards,
 Krzysztof
