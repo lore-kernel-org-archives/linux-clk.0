@@ -1,340 +1,119 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9352155CB3;
-	Tue, 22 Jul 2025 10:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5381DDC3
+	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 12:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753181572; cv=none; b=YB2AxcPK+UEO4w84E8pVc9IBBPU+eggVFGWIxBPw/LxL7cpwCDCUaldl/sPxukH1N5otUQ7uIZxm5YeGbiLr7tnapx6zMI8KMgMuvkjbuFZX/wXx0/JpZUgq/jxqGFnnjYj3eWVdJCDZs3KeB2ppiOVugr8Zp9LBymIztLNkfXE=
+	t=1753187582; cv=none; b=FIhuElquDN9/8Nn1rkm/PNe+uTckxMkF3AP4RN5h5VtEvAD7IzeT9gnZ3ulEqloAnswJ/XQPeTU4rDSGttA7WDLrQv+NFBaR0+E2yrcV7A4h5oEP+rXQ1aQRuHlAzXVmfq6O6BgBxTxoq0EOlfwz2MUVovhmnwm7W5VUIw9UBYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753181572; c=relaxed/simple;
-	bh=dGCgiF63wh9ujAd3rXkaVlG91f8mb9WyF1hcxbsejLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DhdqT7EI/qjVTbzBVisP7z098xKkpFxPhEIrrelnV4Qny1rptpE7iaZexNK4Pouh+f3XjNn0JS9lZ4BI4bBbu9XWbGqxmxYYfHRnpqKnEngWuQ/qnJdTSOVsVBPX/7PRn5oNbIj1og8CEblmLPcvPAx8JJmcP8MrTqa9USLJdrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OfW2ttUl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1753187582; c=relaxed/simple;
+	bh=XhhXlVRw6F1HLo12SCcAfi2XIRnFu3XLfX0xBUiPuF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QA65ONFJ/8zXJ49unnRz+Qd8JdgyFP2nistIO31xuxB173oRtbshqPvXpStSIMr3W833t8K6RciPjlTV0Yn4vG4rjWi8rryMsRi+J4DzUkxTvsP8yNmWMJnGwanGV5s+XzNHAhwbRWsTpNCnIdYnuk4CUumw1BQs0qG+b2uK15o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=mn8J/94c; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OfW2ttUl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753181568;
-	bh=dGCgiF63wh9ujAd3rXkaVlG91f8mb9WyF1hcxbsejLY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OfW2ttUl+lir7OfWoJSI1AKVyrcbkofseiyAupBPX6BLa9Kgb2EjIERn7FcRu8ylc
-	 w7Mie5adgmV5Xb9WMRElfoP2cN9zvqc9K1OUiHI/GbhN6zf/4LqlNklCkXyAov+gqq
-	 5rcgqo1detU+150S+X4gq5mCTuLPEfvnhDyEGZE5L8+YvLOfHC23v+ZcAckpGy9HvJ
-	 S9eePqrTHegUaLOa6XhI6hHmciCTAA6UmGDHo0j8PMmLyv9SYSLeFczJEnUyriPMyM
-	 uyu//SzbUwIjulxRVFOCevgq0x3qrVUlOGaCD4bXOsS+tmDx+uwFIsUb2pgzR2P2wN
-	 S8opaZ2AXsI2Q==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C1DFB17E0D15;
-	Tue, 22 Jul 2025 12:52:47 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: wenst@chromium.org
-Cc: angelogioacchino.delregno@collabora.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	guangjie.song@mediatek.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	netdev@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com,
-	robh@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v2 14/29] clk: mediatek: Add MT8196 vlpckgen clock support 
-Date: Tue, 22 Jul 2025 12:52:03 +0200
-Message-Id: <20250722105203.33151-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAGXv+5ErtDLNf3u5OdHrEBdrA-2bPA5wy32S+Bqd1c_1Z9u1pA@mail.gmail.com>
-References: <CAGXv+5ErtDLNf3u5OdHrEBdrA-2bPA5wy32S+Bqd1c_1Z9u1pA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="mn8J/94c"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fac7147cb8so78909756d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 05:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753187580; x=1753792380; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
+        b=mn8J/94ckas+qD6AHT1wxCGpWUUDbTsFqRK2rmVvvc2KJP+c37eNIDchT4R232r0V9
+         JICl9zzUkYIkjSRJY+h3o7vY5fQFOEWUzjgTUBxhk89P7WAQZuQz9N6OzFIUVommiUdK
+         e9DqWKT3cCZEvsSshQXzoLnD3/gWD2srsF6lHwNa3MdkuB5gTrw0HJ+4+OL/zF1OdLDD
+         Hk+jE+yqqqNzVe6WvPWMGNiN97rfPjRlrMpg7EfwBZaYQ2dXdO490NqSM1YJlZ9bv0Dk
+         UvL7km8+wBo8iqBB+Ir+S1c0LDEoNiURLpQn6tUSF621M0vbt/FF4pZaabKtpq6L//po
+         WimA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753187580; x=1753792380;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
+        b=Wd6YU8Yq05GQMWMNFSYEPz9hAVc0qaFQTxMAHkl3dcXgyJRpryvuTOHw7Te1VwyuL2
+         hLWbjQT81fU+MpZmS0J3lPZnnI8xSnX1TIyq3m3vPR55YA2m7YGU0DvUP8AJfjuUwSzK
+         O+K6Ggz5zaDioFYFOkxhZXOCs7/gMrE3vN2L3cbiXEebs586tlMy26LN3ystPavNixGi
+         6QMHr2yQEmnWjoEsNtLxj5EikFYB7fFKIseYPrAMdb4PrwTWlgGb94opsGbSVwq0/f2m
+         RAmpDp5IBQL6vLTCJmhSatQCZC1b/U9w1Ku0XKwdaB7VdKKTDNSSnefaY4KTBmCthjYY
+         92OA==
+X-Gm-Message-State: AOJu0YylQ69yX7lfEL773VB9uFZUTGBLnybY8xk1Wb6GFID6rrXOv5O0
+	X32lvducVZ8J8jk89wrCppZLcXDpkAI8xsu3yKD7kwqpxLLHgyg+ERWd9VsC8maZNzQ=
+X-Gm-Gg: ASbGnctDtmjS/fGUDsdsEq8COQTlzkmPwue8PGhtBkN0yX+gLbXU0sREK+j5FdThwhM
+	WdHkp3ACKQPGSRrgfQI2o8crsbeNi0SZTTSMzEzOPa8y3Prxe46O1gug6CHC5dzk+ZQl4Vdr9h3
+	7w7sWVys4fKgEU+wMubMHRg2fJ9n8Jgk9bdJXQ9+o8iZOBH6wlYwbC4aoDsLei5QQ9/aHwDvCpM
+	tuJ82FjF/H3yc0vZnM6snAzb66ccBTnpTSEUnPLijqaFNoM69Xkka0PuMvH9HKWL8MM3dJNO1mX
+	hfXyxRb65KT2C9OAigvGnaOCYVc3eEjUgK6Fs1HtL3Kv67MpQBYg/mAFJTQLEEVTySVs+I0Er5m
+	gfshWhve0GdiSJN+ufdIfRBSHJwZPLNk+c3OstLIDQbGqcVLTsNd891+IKkYwIJjLZbxfQiM=
+X-Google-Smtp-Source: AGHT+IG1XORWN4jprJEi5Zq8+C3EGaNg8eBzovmEwMCoERAkUr764LT8y1WytHb49WzOljrg37pQSg==
+X-Received: by 2002:a05:6214:5886:b0:6fa:c2a4:f806 with SMTP id 6a1803df08f44-7051a11461dmr225240826d6.29.1753187578843;
+        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051baa8760sm50251346d6.92.2025.07.22.05.32.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
+Message-ID: <d6f147bf-2816-47d7-9a48-47562b8dde06@riscstar.com>
+Date: Tue, 22 Jul 2025 07:32:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
+ recalc_rate callback
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, mturquette@baylibre.com,
+ sboyd@kernel.org, dlan@gentoo.org, heylenay@4d2.org, inochiama@outlook.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heylenay@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ unicornxdotw@foxmail.com, jszhang@kernel.org,
+ zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+ skhan@linuxfoundation.org
+References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/18/25 10:31, Chen-Yu Tsai wrote:
-> On Tue, Jul 15, 2025 at 3:28 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
->>
->> Hi,
->>
->>
->> On Tue, Jun 24, 2025 at 10:33 PM Laura Nao <laura.nao@collabora.com> wrote:
->>>
->>> Add support for the MT8196 vlpckgen clock controller, which provides
->>> muxes and dividers for clock selection in other IP blocks.
->>>
->>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>> ---
->>>  drivers/clk/mediatek/Makefile              |   2 +-
->>>  drivers/clk/mediatek/clk-mt8196-vlpckgen.c | 769 +++++++++++++++++++++
->>>  2 files changed, 770 insertions(+), 1 deletion(-)
->>>  create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
->>>
->>> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
->>> index 0688d7bf4979..24683dd51783 100644
->>> --- a/drivers/clk/mediatek/Makefile
->>> +++ b/drivers/clk/mediatek/Makefile
->>> @@ -161,7 +161,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) += clk-mt8195-venc.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) += clk-mt8195-vpp0.o clk-mt8195-vpp1.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) += clk-mt8195-wpe.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o \
->>> -                                  clk-mt8196-topckgen2.o
->>> +                                  clk-mt8196-topckgen2.o clk-mt8196-vlpckgen.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
->>>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
->>> diff --git a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
->>> new file mode 100644
->>> index 000000000000..23a673dd4c5c
->>> --- /dev/null
->>> +++ b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
->>> @@ -0,0 +1,769 @@
->>
->> [...]
->>
->>> +static const char * const vlp_camtg0_parents[] = {
->>> +       "clk26m",
->>> +       "univpll_192m_d32",
->>> +       "univpll_192m_d16",
->>> +       "clk13m",
->>> +       "osc_d40",
->>> +       "osc_d32",
->>> +       "univpll_192m_d10",
->>> +       "univpll_192m_d8",
->>> +       "univpll_d6_d16",
->>> +       "ulposc3",
->>> +       "osc_d20",
->>> +       "ck2_tvdpll1_d16",
->>> +       "univpll_d6_d8"
->>> +};
->>
->> It seems all the vlp_camtg* parents are the same. Please merge them
->> and just have one list.
->>
->>> +static const char * const vlp_sspm_26m_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d20"
->>> +};
->>> +
->>> +static const char * const vlp_ulposc_sspm_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d2",
->>> +       "mainpll_d4_d2"
->>> +};
->>> +
->>> +static const char * const vlp_vlp_pbus_26m_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d20"
->>> +};
->>> +
->>> +static const char * const vlp_debug_err_flag_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d20"
->>> +};
->>> +
->>> +static const char * const vlp_dpmsrdma_parents[] = {
->>> +       "clk26m",
->>> +       "mainpll_d7_d2"
->>> +};
->>> +
->>> +static const char * const vlp_vlp_pbus_156m_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d2",
->>> +       "mainpll_d7_d2",
->>> +       "mainpll_d7"
->>> +};
->>> +
->>> +static const char * const vlp_spm_parents[] = {
->>> +       "clk26m",
->>> +       "mainpll_d7_d4"
->>> +};
->>> +
->>> +static const char * const vlp_mminfra_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d4",
->>> +       "mainpll_d3"
->>> +};
->>> +
->>> +static const char * const vlp_usb_parents[] = {
->>> +       "clk26m",
->>> +       "mainpll_d9"
->>> +};
->>
->> The previous and the next one are the same.
->>
->>> +static const char * const vlp_usb_xhci_parents[] = {
->>> +       "clk26m",
->>> +       "mainpll_d9"
->>> +};
->>> +
->>> +static const char * const vlp_noc_vlp_parents[] = {
->>> +       "clk26m",
->>> +       "osc_d20",
->>> +       "mainpll_d9"
->>> +};
->>> +
->>> +static const char * const vlp_audio_h_parents[] = {
->>> +       "clk26m",
->>> +       "vlp_apll1",
->>> +       "vlp_apll2"
->>> +};
->>> +
->>> +static const char * const vlp_aud_engen1_parents[] = {
->>> +       "clk26m",
->>> +       "apll1_d8",
->>> +       "apll1_d4"
->>> +};
->>
->> The previous and the next one are the same.
->>
->>> +static const char * const vlp_aud_engen2_parents[] = {
->>> +       "clk26m",
->>> +       "apll2_d8",
->>> +       "apll2_d4"
->>> +};
->>> +
->>> +static const char * const vlp_aud_intbus_parents[] = {
->>> +       "clk26m",
->>> +       "mainpll_d7_d4",
->>> +       "mainpll_d4_d4"
->>> +};
->
-> Also, all these audio related clocks (audio_h, aud_engen1, aud_engen2
-> aud_intbus) have a "vlp_clk26m" clock as their parent. It should be:
->
->   - clk26m (clk26m from the top ckgen domain)
->   - vlp_clk26m (clk26m from the VLP domain)
->   - (from PLLs)
->   - (from PLLs)
->
-> Moreover, an offline discussion with the audio owner suggests that
-> of the two 26 MHz clock parents, we really just want the one from
-> the VLP domain, as that one is usable even under suspend. This
-> could be done by providing an index table.
->
+On 7/21/25 2:07 PM, Akhilesh Patil wrote:
+> Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+> get correct rate entry. Follow .recalc_rate callback documentation
+> as mentioned in include/linux/clk-provider.h for error return value.
 
-Hi ChenYu,
+"If the driver cannot figure out a rate for this clock, it
+must return 0."
 
-Thanks for the feedback - I’ll make these changes along with the 
-previous suggestions and submit a v3.
+Looks good.
 
-Best,
+Reviewed-by: Alex Elder <elder@riscstar.com>
 
-Laura
-
-> ChenYu
->
->>> +
->>> +static const char * const vlp_spvlp_26m
->>
->> [...]
->>
->>> +static int clk_mt8196_vlp_probe(struct platform_device *pdev)
->>> +{
->>> +       struct clk_hw_onecell_data *clk_data;
->>> +       int r;
->>> +       struct device_node *node = pdev->dev.of_node;
->>> +
->>> +       clk_data = mtk_alloc_clk_data(ARRAY_SIZE(vlp_muxes) +
->>> +                                     ARRAY_SIZE(vlp_plls));
->>> +       if (!clk_data)
->>> +               return -ENOMEM;
->>> +
->>> +       r = mtk_clk_register_muxes(&pdev->dev, vlp_muxes, ARRAY_SIZE(vlp_muxes),
->>> +                                  node, &mt8196_clk_vlp_lock, clk_data);
->>> +       if (r)
->>> +               goto free_clk_data;
->>> +
->>> +       r = mtk_clk_register_plls(node, vlp_plls, ARRAY_SIZE(vlp_plls),
->>> +                                 clk_data);
->>> +       if (r)
->>> +               goto unregister_muxes;
->>> +
->>> +       r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>> +       if (r)
->>> +               goto unregister_plls;
->>> +
->>> +       platform_set_drvdata(pdev, clk_data);
->>> +
->>> +       return r;
->>> +
->>> +unregister_plls:
->>> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data);
->>> +unregister_muxes:
->>> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_data);
->>> +free_clk_data:
->>> +       mtk_free_clk_data(clk_data);
->>
->> The AFE driver sets some tuner parameters in the VLPCKGEN block at probe
->> time. Maybe we could do that here instead?
->>
->> /* vlp_cksys_clk: 0x1c016000 */
->> #define VLP_APLL1_TUNER_CON0 0x02a4
->> #define VLP_APLL2_TUNER_CON0 0x02a8
->>
->> /* vlp apll1 tuner default value*/
->> #define VLP_APLL1_TUNER_CON0_VALUE 0x6f28bd4d
->> /* vlp apll2 tuner default value + 1*/
->> #define VLP_APLL2_TUNER_CON0_VALUE 0x78fd5265
->>
->>        regmap_write(afe_priv->vlp_ck, VLP_APLL1_TUNER_CON0,
->> VLP_APLL1_TUNER_CON0_VALUE);
->>        regmap_write(afe_priv->vlp_ck, VLP_APLL2_TUNER_CON0,
->> VLP_APLL2_TUNER_CON0_VALUE);
->>
->> ChenYu
->>
->>> +
->>> +       return r;
->>> +}
->>> +
->>> +static void clk_mt8196_vlp_remove(struct platform_device *pdev)
->>> +{
->>> +       struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
->>> +       struct device_node *node = pdev->dev.of_node;
->>> +
->>> +       of_clk_del_provider(node);
->>> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data);
->>> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_data);
->>> +       mtk_free_clk_data(clk_data);
->>> +}
->>> +
->>> +static const struct of_device_id of_match_clk_mt8196_vlp_ck[] = {
->>> +       { .compatible = "mediatek,mt8196-vlpckgen" },
->>> +       { /* sentinel */ }
->>> +};
->>> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vlp_ck);
->>> +
->>> +static struct platform_driver clk_mt8196_vlp_drv = {
->>> +       .probe = clk_mt8196_vlp_probe,
->>> +       .remove = clk_mt8196_vlp_remove,
->>> +       .driver = {
->>> +               .name = "clk-mt8196-vlpck",
->>> +               .of_match_table = of_match_clk_mt8196_vlp_ck,
->>> +       },
->>> +};
->>> +
->>> +MODULE_DESCRIPTION("MediaTek MT8196 VLP clock generator driver");
->>> +module_platform_driver(clk_mt8196_vlp_drv);
->>> +MODULE_LICENSE("GPL");
->>> --
->>> 2.39.5
->>>
+> 
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> ---
+>   drivers/clk/spacemit/ccu_pll.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+> index 4427dcfbbb97..45f540073a65 100644
+> --- a/drivers/clk/spacemit/ccu_pll.c
+> +++ b/drivers/clk/spacemit/ccu_pll.c
+> @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+>   
+>   	WARN_ON_ONCE(!entry);
+>   
+> -	return entry ? entry->rate : -EINVAL;
+> +	return entry ? entry->rate : 0;
+>   }
+>   
+>   static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
 
