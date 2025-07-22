@@ -1,171 +1,268 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAF02C158F;
-	Tue, 22 Jul 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD86828C2DC;
+	Tue, 22 Jul 2025 08:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169894; cv=none; b=nNPh4qNJ2yfU7FLah1vPKr24FGotdHCErj90fQoEQmKInAUjcQ9bSTTY/Bytqw+n3YatbqumaJQcemSa62PIoeWgOXOE87rk4EKLKw3D7eE1G2PkFS9NSDhQ+3UUT9edTA/jknfGmprjX4y4kH7M+rvkV5HdXlz3XVjnxdyHlhc=
+	t=1753171617; cv=none; b=skrx8wAXtaKm3r3YBw4b8hPxzVrL2to+AZZez/lrF4huKtQhhKZ69DeOedmkDkuxH65AnRxOMcxEfr2VsR/HUQ1j8xdhf0ahJPpcoClfELBr/1CsRdrWrpjaCmVthxOgz96fa8OqjT3NT235bnxle3DtdYm+O1Z7jzyxzQH1zTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169894; c=relaxed/simple;
-	bh=tU/hC7YARMy7oCIo5NRGQiO3UOJ8Lk4XsFZ1nZnZ9NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SfoinEAHeLSxYvUD+61WAkl0RdHNhU2cfoW6oOzLGJNUdWVvZpR1LBqZK6rsZWlf3FznAQX5Q3hiw7TsLOvQmeZ812gUnV7BxQRAockWeMLgcoPyVXTmKnm4XnOZKWzoAGaI+P8kcX+/j6N03YH5KD8gEx/w24EOVlNKX4LoMS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6eOnM2ju; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1753171617; c=relaxed/simple;
+	bh=hVGzWh4Vvx6CSvwzllIJGxjDisw7/fzLjSvjtPvZXg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EdfPhzPCx+/gfECQWJQl3yWojsnja5A20uIkpc10mlT9rnsK4YZcKinqDESVy/Wi7YLR4BZ8qCtu98tl6gYcswFJK+zzZc0ZIvCA3Gnb7jxD/796OY79th/y24n0fY4bx/EWvgJdN9hSmR/4zs0BLYo0gu7gBIlBC5V1SLl2m9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FmwpoXPT; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6eOnM2ju"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7YcI1017113;
-	Tue, 22 Jul 2025 09:37:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	0zlU1QEnD+GWl8jLtn5YK4PZ5fpcfWzBw9uHGSBFh90=; b=6eOnM2juSbRcr0EU
-	IFyVZkojXeQ6Q+YR1EBl3sKBCrityklC8iGDAreH+nVxIlQpGGJ1de2LWFwc4l+l
-	GHdzI1aEcjrUG02EEdibktt04EsuROdoHalxZc6A/VFGiV2d32zsW/LP3ZkEoX8L
-	ed7/sijJ7vkE5DhE2qQgYCwZk7ehjOBdHFYiVBGxRKng/BGeMgMSFprH5ze62kZr
-	rdI9euM21E3mDHLQTqM0HE2BU2fY7b1L1YSL/0CRLPYRX5Nqjz+RIPRaUovQk6Au
-	arroznHHnk0RY1lQ6URTxAejKDuzunNFX2iACfiTmpBsv3BZltL9HBZqRv3WTZUo
-	DVCk5Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4hq09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:37:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 571CB4005B;
-	Tue, 22 Jul 2025 09:36:26 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1132476DC2F;
-	Tue, 22 Jul 2025 09:35:09 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
- 2025 09:35:07 +0200
-Message-ID: <ed0efd83-8471-4fce-9745-54d85d6268f9@foss.st.com>
-Date: Tue, 22 Jul 2025 09:35:06 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FmwpoXPT"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 846932000A;
+	Tue, 22 Jul 2025 10:06:51 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id NSkwosCWrUf5; Tue, 22 Jul 2025 10:06:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1753171609; bh=hVGzWh4Vvx6CSvwzllIJGxjDisw7/fzLjSvjtPvZXg4=;
+	h=From:To:Cc:Subject:Date;
+	b=FmwpoXPTomLG7E+ru7ZPJ4rQaH8ipe8Zzlm9sgucYGXveZW6SxBMqfJfqmWOBys2V
+	 LfISEBCIlmFxH1K6dvIBGmnhSmCN2qwEMfCHIIVkY62W9Nq1N/ZNj6LzK+v3Gz4D6c
+	 wuP0tQePpFjHt42066+rluAn1ehkwHmQq2hxkJBMW1q0wIsWi2iXrQVRm/Kcd5obJb
+	 ep/4hQK3tQZRgfi7dfXVQZ8Bmqo/6SLgat/zjkPmLWYAyKdUxzQuDb2cSKO7wY3r9x
+	 2ES10eSAX/IzxtbhW5eEfVTfEFZgkeR0conowNalcl1Hecn31Fecuxm5zMcpbZuEE0
+	 AGEEKAva0DgbA==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v3] clk: thead: th1520-ap: Describe mux clocks with clk_mux
+Date: Tue, 22 Jul 2025 08:05:36 +0000
+Message-ID: <20250722080535.60027-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/16] dt-bindings: memory: add jedec,ddr[3-4]-channel
- binding
-To: Rob Herring <robh@kernel.org>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-5-cdece720348f@foss.st.com>
- <20250721200926.GA1179079-robh@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250721200926.GA1179079-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
 
-Hi Rob,
+Mux clocks are now described with a customized ccu_mux structure
+consisting of ccu_internal and ccu_common substructures, and registered
+later with devm_clk_hw_register_mux_parent_data_table(). As this helper
+always allocates a new clk_hw structure, it's extremely hard to use mux
+clocks as parents statically by clk_hw pointers, since CCF has no
+knowledge about the clk_hw structure embedded in ccu_mux.
 
-On 7/21/25 22:09, Rob Herring wrote:
-> On Fri, Jul 11, 2025 at 04:48:57PM +0200, Clément Le Goffic wrote:
->> Introduce as per jedec,lpddrX-channel binding, jdec,ddr[3-4]-channel
->> binding.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 ++++++++++++++++++++++
->>   1 file changed, 53 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
->> new file mode 100644
->> index 000000000000..31daa22bcd4a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
->> @@ -0,0 +1,53 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr-channel.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: DDR channel with chip/rank topology description
->> +
->> +description:
->> +  A DDR channel is a logical grouping of memory chips that are connected
->> +  to a host system. The main purpose of this node is to describe the
->> +  overall DDR topology of the system, including the amount of individual
->> +  DDR chips.
->> +
->> +maintainers:
->> +  - Clément Le Goffic <legoffic.clement@gmail.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - jedec,ddr3-channel
->> +      - jedec,ddr4-channel
->> +
->> +  io-width:
->> +    description:
->> +      The number of DQ pins in the channel. If this number is different
->> +      from (a multiple of) the io-width of the DDR chip, that means that
->> +      multiple instances of that type of chip are wired in parallel on this
->> +      channel (with the channel's DQ pins split up between the different
->> +      chips, and the CA, CS, etc. pins of the different chips all shorted
->> +      together).  This means that the total physical memory controlled by a
->> +      channel is equal to the sum of the densities of each rank on the
->> +      connected DDR chip, times the io-width of the channel divided by
->> +      the io-width of the DDR chip.
->> +    enum:
->> +      - 8
->> +      - 16
->> +      - 32
->> +      - 64
->> +      - 128
-> 
-> This is duplicating what's in jedec,lpddr-channel.yaml. Refactor or add
-> to it rather than duplicating.
+This scheme already causes issues for clock c910, which takes a mux
+clock, c910-i0, as a possible parent. With mainline U-Boot that
+reparents c910 to c910-i0 at boottime, c910 is considered as an orphan
+by CCF.
 
-Yes I wanted something unique as "jedec,lpddr-channel.yaml" is 
-specifically for lpddr.
-I think I'll refactor and rename it "jedec,memory-channel.yaml" so it is 
-more generic.
+This patch refactors handling of mux clocks, embeds a clk_mux structure
+in ccu_mux directly. Instead of calling devm_clk_hw_register_mux_*(),
+we could register mux clocks on our own without allocating any new
+clk_hw pointer, fixing c910 clock's issue.
 
-> Is there some reason regular DDR3/4 doesn't have ranks? I'm pretty sure
-> it can...
+Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
 
-Yes it does but I wasn't needing it and they are not required in case of 
-lpddr. It will be fixed by refactoring jedec,lpddr-channel.yaml binding.
+This replaces the second patch in v2 of series "Fix orphan clocks in
+clk-th1520-ap driver".
 
-Best regards,
-Clément
+Note that the c910's issue cannot be reproduced with vendor U-Boot,
+which always reparents c910 to its second parent, cpu-pll1. Another way
+to confirm the bug is to examine
+/sys/kernel/debug/clk/c910/clk_possible_parents, which obviously doesn't
+match c910's definition. There's another patch[1] explaining and fixing
+the issue that the unknown parent isn't shown as "(missing)" in debugfs.
 
+[1]: https://lore.kernel.org/linux-clk/20250705095816.29480-2-ziyao@disroot.org/
 
+Changed from v2:
+- Avoid referring c910-i0 as parent for c910 with global names. Instead,
+  refactor mux clock handling to make referring to mux clocks by clk_hw
+  pointers possible
+- Link to v2: https://lore.kernel.org/linux-riscv/20250710092135.61049-1-ziyao@disroot.org/
+
+Changed from v1:
+- Split the two fixes into separate patches
+- Link to v1: https://lore.kernel.org/all/20250705052028.24611-1-ziyao@disroot.org/
+
+ drivers/clk/thead/clk-th1520-ap.c | 95 ++++++++++++-------------------
+ 1 file changed, 37 insertions(+), 58 deletions(-)
+
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index 5a102beb6ac1..cf1bba58f641 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -42,8 +42,9 @@ struct ccu_common {
+ };
+ 
+ struct ccu_mux {
+-	struct ccu_internal	mux;
+-	struct ccu_common	common;
++	int			clkid;
++	u32			reg;
++	struct clk_mux		mux;
+ };
+ 
+ struct ccu_gate {
+@@ -75,6 +76,17 @@ struct ccu_pll {
+ 		.flags	= _flags,					\
+ 	}
+ 
++#define TH_CCU_MUX(_name, _parents, _shift, _width)			\
++	{								\
++		.mask		= GENMASK(_width - 1, 0),		\
++		.shift		= _shift,				\
++		.hw.init	= CLK_HW_INIT_PARENTS_DATA(		\
++					_name,				\
++					_parents,			\
++					&clk_mux_ops,			\
++					0),				\
++	}
++
+ #define CCU_GATE(_clkid, _struct, _name, _parent, _reg, _gate, _flags)	\
+ 	struct ccu_gate _struct = {					\
+ 		.enable	= _gate,					\
+@@ -94,13 +106,6 @@ static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
+ 	return container_of(hw, struct ccu_common, hw);
+ }
+ 
+-static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
+-{
+-	struct ccu_common *common = hw_to_ccu_common(hw);
+-
+-	return container_of(common, struct ccu_mux, common);
+-}
+-
+ static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
+@@ -415,32 +420,20 @@ static const struct clk_parent_data c910_i0_parents[] = {
+ };
+ 
+ static struct ccu_mux c910_i0_clk = {
+-	.mux	= TH_CCU_ARG(1, 1),
+-	.common	= {
+-		.clkid		= CLK_C910_I0,
+-		.cfg0		= 0x100,
+-		.hw.init	= CLK_HW_INIT_PARENTS_DATA("c910-i0",
+-					      c910_i0_parents,
+-					      &clk_mux_ops,
+-					      0),
+-	}
++	.clkid	= CLK_C910_I0,
++	.reg	= 0x100,
++	.mux	= TH_CCU_MUX("c910-i0", c910_i0_parents, 1, 1),
+ };
+ 
+ static const struct clk_parent_data c910_parents[] = {
+-	{ .hw = &c910_i0_clk.common.hw },
++	{ .hw = &c910_i0_clk.mux.hw },
+ 	{ .hw = &cpu_pll1_clk.common.hw }
+ };
+ 
+ static struct ccu_mux c910_clk = {
+-	.mux	= TH_CCU_ARG(0, 1),
+-	.common	= {
+-		.clkid		= CLK_C910,
+-		.cfg0		= 0x100,
+-		.hw.init	= CLK_HW_INIT_PARENTS_DATA("c910",
+-					      c910_parents,
+-					      &clk_mux_ops,
+-					      0),
+-	}
++	.clkid	= CLK_C910,
++	.reg	= 0x100,
++	.mux	= TH_CCU_MUX("c910", c910_parents, 0, 1),
+ };
+ 
+ static const struct clk_parent_data ahb2_cpusys_parents[] = {
+@@ -925,15 +918,9 @@ static const struct clk_parent_data uart_sclk_parents[] = {
+ };
+ 
+ static struct ccu_mux uart_sclk = {
+-	.mux	= TH_CCU_ARG(0, 1),
+-	.common	= {
+-		.clkid          = CLK_UART_SCLK,
+-		.cfg0		= 0x210,
+-		.hw.init	= CLK_HW_INIT_PARENTS_DATA("uart-sclk",
+-					      uart_sclk_parents,
+-					      &clk_mux_ops,
+-					      0),
+-	}
++	.clkid	= CLK_UART_SCLK,
++	.reg	= 0x210,
++	.mux	= TH_CCU_MUX("uart-sclk", uart_sclk_parents, 0, 1),
+ };
+ 
+ static struct ccu_common *th1520_pll_clks[] = {
+@@ -970,10 +957,10 @@ static struct ccu_common *th1520_div_clks[] = {
+ 	&dpu1_clk.common,
+ };
+ 
+-static struct ccu_common *th1520_mux_clks[] = {
+-	&c910_i0_clk.common,
+-	&c910_clk.common,
+-	&uart_sclk.common,
++static struct ccu_mux *th1520_mux_clks[] = {
++	&c910_i0_clk,
++	&c910_clk,
++	&uart_sclk,
+ };
+ 
+ static struct ccu_common *th1520_gate_clks[] = {
+@@ -1075,7 +1062,7 @@ static const struct regmap_config th1520_clk_regmap_config = {
+ struct th1520_plat_data {
+ 	struct ccu_common **th1520_pll_clks;
+ 	struct ccu_common **th1520_div_clks;
+-	struct ccu_common **th1520_mux_clks;
++	struct ccu_mux	  **th1520_mux_clks;
+ 	struct ccu_common **th1520_gate_clks;
+ 
+ 	int nr_clks;
+@@ -1162,23 +1149,15 @@ static int th1520_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for (i = 0; i < plat_data->nr_mux_clks; i++) {
+-		struct ccu_mux *cm = hw_to_ccu_mux(&plat_data->th1520_mux_clks[i]->hw);
+-		const struct clk_init_data *init = cm->common.hw.init;
+-
+-		plat_data->th1520_mux_clks[i]->map = map;
+-		hw = devm_clk_hw_register_mux_parent_data_table(dev,
+-								init->name,
+-								init->parent_data,
+-								init->num_parents,
+-								0,
+-								base + cm->common.cfg0,
+-								cm->mux.shift,
+-								cm->mux.width,
+-								0, NULL, NULL);
+-		if (IS_ERR(hw))
+-			return PTR_ERR(hw);
++		struct ccu_mux *cm = plat_data->th1520_mux_clks[i];
++
++		cm->mux.reg = base + cm->reg;
++
++		ret = devm_clk_hw_register(dev, &cm->mux.hw);
++		if (ret)
++			return ret;
+ 
+-		priv->hws[cm->common.clkid] = hw;
++		priv->hws[cm->clkid] = &cm->mux.hw;
+ 	}
+ 
+ 	for (i = 0; i < plat_data->nr_gate_clks; i++) {
+-- 
+2.50.1
 
