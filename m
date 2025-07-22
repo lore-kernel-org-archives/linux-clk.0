@@ -1,119 +1,92 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5381DDC3
-	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 12:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FBEA32;
+	Tue, 22 Jul 2025 14:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187582; cv=none; b=FIhuElquDN9/8Nn1rkm/PNe+uTckxMkF3AP4RN5h5VtEvAD7IzeT9gnZ3ulEqloAnswJ/XQPeTU4rDSGttA7WDLrQv+NFBaR0+E2yrcV7A4h5oEP+rXQ1aQRuHlAzXVmfq6O6BgBxTxoq0EOlfwz2MUVovhmnwm7W5VUIw9UBYQ=
+	t=1753193076; cv=none; b=QYrH8yv541/qVHtMGvrrYe/YyEh42wfzY78zv6JTRHRe3uOlfq7IpW5vgMjWoxdhu2iigHs7U1UTEow8YNVu7y9H68UN53PGUzGGPIMFmEr9uVQQUmtWkAzSxGWvY2XygNSGqqFD9SG5phLD/l8TPg1x9O6jI5+KHtExv4xvkbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187582; c=relaxed/simple;
-	bh=XhhXlVRw6F1HLo12SCcAfi2XIRnFu3XLfX0xBUiPuF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QA65ONFJ/8zXJ49unnRz+Qd8JdgyFP2nistIO31xuxB173oRtbshqPvXpStSIMr3W833t8K6RciPjlTV0Yn4vG4rjWi8rryMsRi+J4DzUkxTvsP8yNmWMJnGwanGV5s+XzNHAhwbRWsTpNCnIdYnuk4CUumw1BQs0qG+b2uK15o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=mn8J/94c; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1753193076; c=relaxed/simple;
+	bh=uPFuamjn8JgXag9RFI74J/C90ZWWlQSjqj7GpBmomJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSq1lqGBOzEvEGRxi7yvn7WM/M3aVugrrA2k4LBHar+XQvJ+b8q0AO9DSkWUcuxj+/nb9kB6TDW4fa+RoigRZj5YaLXCW9CwV27i6sosh77R3uWXY4ikEMbBZuOGyvAKb57Ws8iV/rNyuP4UeDGotz5oOMH77XS28jSqBsdEyEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWkFl8nC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="mn8J/94c"
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fac7147cb8so78909756d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 05:33:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753187580; x=1753792380; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
-        b=mn8J/94ckas+qD6AHT1wxCGpWUUDbTsFqRK2rmVvvc2KJP+c37eNIDchT4R232r0V9
-         JICl9zzUkYIkjSRJY+h3o7vY5fQFOEWUzjgTUBxhk89P7WAQZuQz9N6OzFIUVommiUdK
-         e9DqWKT3cCZEvsSshQXzoLnD3/gWD2srsF6lHwNa3MdkuB5gTrw0HJ+4+OL/zF1OdLDD
-         Hk+jE+yqqqNzVe6WvPWMGNiN97rfPjRlrMpg7EfwBZaYQ2dXdO490NqSM1YJlZ9bv0Dk
-         UvL7km8+wBo8iqBB+Ir+S1c0LDEoNiURLpQn6tUSF621M0vbt/FF4pZaabKtpq6L//po
-         WimA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753187580; x=1753792380;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
-        b=Wd6YU8Yq05GQMWMNFSYEPz9hAVc0qaFQTxMAHkl3dcXgyJRpryvuTOHw7Te1VwyuL2
-         hLWbjQT81fU+MpZmS0J3lPZnnI8xSnX1TIyq3m3vPR55YA2m7YGU0DvUP8AJfjuUwSzK
-         O+K6Ggz5zaDioFYFOkxhZXOCs7/gMrE3vN2L3cbiXEebs586tlMy26LN3ystPavNixGi
-         6QMHr2yQEmnWjoEsNtLxj5EikFYB7fFKIseYPrAMdb4PrwTWlgGb94opsGbSVwq0/f2m
-         RAmpDp5IBQL6vLTCJmhSatQCZC1b/U9w1Ku0XKwdaB7VdKKTDNSSnefaY4KTBmCthjYY
-         92OA==
-X-Gm-Message-State: AOJu0YylQ69yX7lfEL773VB9uFZUTGBLnybY8xk1Wb6GFID6rrXOv5O0
-	X32lvducVZ8J8jk89wrCppZLcXDpkAI8xsu3yKD7kwqpxLLHgyg+ERWd9VsC8maZNzQ=
-X-Gm-Gg: ASbGnctDtmjS/fGUDsdsEq8COQTlzkmPwue8PGhtBkN0yX+gLbXU0sREK+j5FdThwhM
-	WdHkp3ACKQPGSRrgfQI2o8crsbeNi0SZTTSMzEzOPa8y3Prxe46O1gug6CHC5dzk+ZQl4Vdr9h3
-	7w7sWVys4fKgEU+wMubMHRg2fJ9n8Jgk9bdJXQ9+o8iZOBH6wlYwbC4aoDsLei5QQ9/aHwDvCpM
-	tuJ82FjF/H3yc0vZnM6snAzb66ccBTnpTSEUnPLijqaFNoM69Xkka0PuMvH9HKWL8MM3dJNO1mX
-	hfXyxRb65KT2C9OAigvGnaOCYVc3eEjUgK6Fs1HtL3Kv67MpQBYg/mAFJTQLEEVTySVs+I0Er5m
-	gfshWhve0GdiSJN+ufdIfRBSHJwZPLNk+c3OstLIDQbGqcVLTsNd891+IKkYwIJjLZbxfQiM=
-X-Google-Smtp-Source: AGHT+IG1XORWN4jprJEi5Zq8+C3EGaNg8eBzovmEwMCoERAkUr764LT8y1WytHb49WzOljrg37pQSg==
-X-Received: by 2002:a05:6214:5886:b0:6fa:c2a4:f806 with SMTP id 6a1803df08f44-7051a11461dmr225240826d6.29.1753187578843;
-        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
-Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051baa8760sm50251346d6.92.2025.07.22.05.32.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
-Message-ID: <d6f147bf-2816-47d7-9a48-47562b8dde06@riscstar.com>
-Date: Tue, 22 Jul 2025 07:32:56 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWkFl8nC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85268C4CEF1;
+	Tue, 22 Jul 2025 14:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753193075;
+	bh=uPFuamjn8JgXag9RFI74J/C90ZWWlQSjqj7GpBmomJ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sWkFl8nCPLNDlOJMG6Ch0dE8liwQT/TjEDMiX0lMwJnuLusjuKrCzLod80NRSELUo
+	 u8NHIk9I5drvAO5b8cWaslWSSVtrI12ORXbU6cnC3czmox0Gpc/eBFVmQbv7WsXDHP
+	 7XI0tTvIdC3OANtPZeGtvVmL87/AUfVlow3h8BPE2czQ//X9ztlbTiQMaD2B0vzKbf
+	 q9hGEfFkRTSDPXvxHMcUnuRjST9bZDk/bPZV2PYpDIsFdoH6g089xiau1VqsOdWm+K
+	 5yrtXZWYlUbYU8EfrX/vfKb1ZfK13RF2n1xAXnRVjHWsiZpxmDlx7rVQTbvJetcEdK
+	 Bwqfe2NYx+UOw==
+Date: Tue, 22 Jul 2025 16:04:31 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Peter Rosin <peda@axentia.se>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Wolfram Sang <wsa@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 15/28] i2c: core: Introduce i2c_get_adapter_physdev()
+Message-ID: <sk6dwbont52x7zt3woqghurkkkms72f3zxubbadi2gp2yj3sbw@wdstymdtzouc>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-16-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
- recalc_rate callback
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, mturquette@baylibre.com,
- sboyd@kernel.org, dlan@gentoo.org, heylenay@4d2.org, inochiama@outlook.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- heylenay@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- unicornxdotw@foxmail.com, jszhang@kernel.org,
- zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
- skhan@linuxfoundation.org
-References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613134817.681832-16-herve.codina@bootlin.com>
 
-On 7/21/25 2:07 PM, Akhilesh Patil wrote:
-> Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
-> get correct rate entry. Follow .recalc_rate callback documentation
-> as mentioned in include/linux/clk-provider.h for error return value.
+Hi Herve,
 
-"If the driver cannot figure out a rate for this clock, it
-must return 0."
-
-Looks good.
-
-Reviewed-by: Alex Elder <elder@riscstar.com>
-
+On Fri, Jun 13, 2025 at 03:47:55PM +0200, Herve Codina wrote:
+> The physical device providing an I2C adapter is the device that calls
+> i2c_add_adapter() or variants and i2c_del_adapter().
 > 
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> ---
->   drivers/clk/spacemit/ccu_pll.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Most of the time this physical device is the parent of the adapter
+> device.
 > 
-> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-> index 4427dcfbbb97..45f540073a65 100644
-> --- a/drivers/clk/spacemit/ccu_pll.c
-> +++ b/drivers/clk/spacemit/ccu_pll.c
-> @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
->   
->   	WARN_ON_ONCE(!entry);
->   
-> -	return entry ? entry->rate : -EINVAL;
-> +	return entry ? entry->rate : 0;
->   }
->   
->   static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> Exceptions exist with i2c muxes. Indeed, in case of i2c muxes, the
+> parent of the mux adapter device points to the adapter device the mux is
+> connected to instead of the physical of this mux adapter.
+> 
+> Introduce i2c_get_adapter_physdev() and a new physdev field in the
+> adapter structure in order to ease the adapter physical device
+> retrieval.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
+Makes sense to me,
+
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+Thanks,
+Andi
