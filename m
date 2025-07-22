@@ -1,173 +1,340 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B15288C0A;
-	Tue, 22 Jul 2025 10:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9352155CB3;
+	Tue, 22 Jul 2025 10:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178983; cv=none; b=Iy/eKg8kiJlUytoIy1QPJNbXaTI9s2XXLnPqI9igUjKZFNV1YT4Aa+oqviNt3MYhKnaDWt8XbVzD5/qbEvGqmJTxAPCwT91qQoK/q9jsGQqTdK3HN92bGzLT++/DMBwsZZxJpi6Tpe7c1+zrR7lE8+nLcL9pYpkV90zZLl+4iis=
+	t=1753181572; cv=none; b=YB2AxcPK+UEO4w84E8pVc9IBBPU+eggVFGWIxBPw/LxL7cpwCDCUaldl/sPxukH1N5otUQ7uIZxm5YeGbiLr7tnapx6zMI8KMgMuvkjbuFZX/wXx0/JpZUgq/jxqGFnnjYj3eWVdJCDZs3KeB2ppiOVugr8Zp9LBymIztLNkfXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178983; c=relaxed/simple;
-	bh=c77M5+AjDGCL+xjZzhin0cl7QZLtfKeuoPcGiiWC2Dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGs/o/nWrscsrwz40qa4a/vRT8jNrLmz5B/AnGNbYtNA+kd4s/kUhPxYbZbBkn2PrW4Z5fxgGeRvFngZwt8anH6DFYk+4Y/dc6r5llOnvcvr+a/gvNEziiA1XtJD6FeTWqxg4FVdlj9s7KFeD1l6+8nPqOW9RGkpeuIVtGAA+30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cqeK+ber; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1753181572; c=relaxed/simple;
+	bh=dGCgiF63wh9ujAd3rXkaVlG91f8mb9WyF1hcxbsejLY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DhdqT7EI/qjVTbzBVisP7z098xKkpFxPhEIrrelnV4Qny1rptpE7iaZexNK4Pouh+f3XjNn0JS9lZ4BI4bBbu9XWbGqxmxYYfHRnpqKnEngWuQ/qnJdTSOVsVBPX/7PRn5oNbIj1og8CEblmLPcvPAx8JJmcP8MrTqa9USLJdrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OfW2ttUl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cqeK+ber"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5A42720D77;
-	Tue, 22 Jul 2025 12:09:37 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id y5IZS-10NB0S; Tue, 22 Jul 2025 12:09:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1753178976; bh=c77M5+AjDGCL+xjZzhin0cl7QZLtfKeuoPcGiiWC2Dk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cqeK+berFWewY/R24UqFkJOwkmtREVJwqBwQeUOTVxBn/ydsUG4PZbN3k/Bd8jiPa
-	 eqSExBh72YGqJuw+dN6CDwzFivTyXTJpArqUolzDWBlX5jkxX9CqNzGMF8+93Lmo5D
-	 0ZWBwqbBQT7cZfsCJIfhNLCph4hBLNFvWshWlRwg3O8PQa/IelDTNkBL5IzQIisswh
-	 c/KFKbcHrDslkkU6no5PxUsY2ZNBR2jYAnRGiuz7ApIb1+e9jNrtzaEp8Ka8r5n39O
-	 zkMvWni/DJhWRbXQPnmiTpTPsaalSXDnCQzlqPH1IZldD0qIRf0kOkANl4rGI9n96t
-	 cYVdg5DFv85cA==
-Date: Tue, 22 Jul 2025 10:09:23 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Alex Elder <elder@riscstar.com>,
-	Haylen Chu <heylenay@4d2.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK
- for SSPA
-Message-ID: <aH9jUyzGb53B-aOu@pie>
-References: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
- <20250722-k1-clk-i2s-v2-2-2f8edfe3dab4@linux.spacemit.com>
- <20250722092101-GYB724801@gentoo>
- <B79CAF56E128A7B3+aH9Zb9zNm6y_ovvW@LT-Guozexi>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OfW2ttUl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753181568;
+	bh=dGCgiF63wh9ujAd3rXkaVlG91f8mb9WyF1hcxbsejLY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OfW2ttUl+lir7OfWoJSI1AKVyrcbkofseiyAupBPX6BLa9Kgb2EjIERn7FcRu8ylc
+	 w7Mie5adgmV5Xb9WMRElfoP2cN9zvqc9K1OUiHI/GbhN6zf/4LqlNklCkXyAov+gqq
+	 5rcgqo1detU+150S+X4gq5mCTuLPEfvnhDyEGZE5L8+YvLOfHC23v+ZcAckpGy9HvJ
+	 S9eePqrTHegUaLOa6XhI6hHmciCTAA6UmGDHo0j8PMmLyv9SYSLeFczJEnUyriPMyM
+	 uyu//SzbUwIjulxRVFOCevgq0x3qrVUlOGaCD4bXOsS+tmDx+uwFIsUb2pgzR2P2wN
+	 S8opaZ2AXsI2Q==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C1DFB17E0D15;
+	Tue, 22 Jul 2025 12:52:47 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: wenst@chromium.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v2 14/29] clk: mediatek: Add MT8196 vlpckgen clock support 
+Date: Tue, 22 Jul 2025 12:52:03 +0200
+Message-Id: <20250722105203.33151-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGXv+5ErtDLNf3u5OdHrEBdrA-2bPA5wy32S+Bqd1c_1Z9u1pA@mail.gmail.com>
+References: <CAGXv+5ErtDLNf3u5OdHrEBdrA-2bPA5wy32S+Bqd1c_1Z9u1pA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B79CAF56E128A7B3+aH9Zb9zNm6y_ovvW@LT-Guozexi>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025 at 05:27:11PM +0800, Troy Mitchell wrote:
-> On Tue, Jul 22, 2025 at 05:21:01PM +0800, Yixun Lan wrote:
-> > Hi Troy,
-> > 
-> > On 15:36 Tue 22 Jul     , Troy Mitchell wrote:
-> > > This patch adds macro definitions: SSPAx_I2S_BCLK,
-> > this is obvious, so no need to repeat, please add something useful
-> > 
-> > > to introduce a dummy gate for i2s_bclk.
-> >                 ~~~~~~ 'virtual'? if it isn't a real gate clock,
-> > 	but I'm not sure it's a good approach to introduce such
-> > 	virtual clock if underlying hw doesn't comply with this
-> I'll leave this question to others.
-> 
-> > 
-> > > 
-> > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > ---
-> > >  include/dt-bindings/clock/spacemit,k1-syscon.h | 114 +++++++++++++------------
-> > >  1 file changed, 58 insertions(+), 56 deletions(-)
-> > dt-binding patch should always go first
-> get it
-> 
-> > 
-> > > 
-> > > diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
-> > > index 35968ae98246609c889eb4a7d08b4ff7360de53b..6914ccf5be45a1071d5b6eac354cacb67888e00c 100644
-> > > --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-> > > +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-> > > @@ -123,62 +123,64 @@
-> > >  #define CLK_TIMERS2		41
-> > >  #define CLK_AIB			42
-> > >  #define CLK_ONEWIRE		43
-> > > -#define CLK_SSPA0		44
-> > > -#define CLK_SSPA1		45
-> > > -#define CLK_DRO			46
-> > > -#define CLK_IR			47
-> > > -#define CLK_TSEN		48
-> > > -#define CLK_IPC_AP2AUD		49
-> > > -#define CLK_CAN0		50
-> > > -#define CLK_CAN0_BUS		51
-> > > -#define CLK_UART0_BUS		52
-> > > -#define CLK_UART2_BUS		53
-> > > -#define CLK_UART3_BUS		54
-> > > -#define CLK_UART4_BUS		55
-> > > -#define CLK_UART5_BUS		56
-> > > -#define CLK_UART6_BUS		57
-> > > -#define CLK_UART7_BUS		58
-> > > -#define CLK_UART8_BUS		59
-> > > -#define CLK_UART9_BUS		60
-> > > -#define CLK_GPIO_BUS		61
-> > > -#define CLK_PWM0_BUS		62
-> > > -#define CLK_PWM1_BUS		63
-> > > -#define CLK_PWM2_BUS		64
-> > > -#define CLK_PWM3_BUS		65
-> > > -#define CLK_PWM4_BUS		66
-> > > -#define CLK_PWM5_BUS		67
-> > > -#define CLK_PWM6_BUS		68
-> > > -#define CLK_PWM7_BUS		69
-> > > -#define CLK_PWM8_BUS		70
-> > > -#define CLK_PWM9_BUS		71
-> > > -#define CLK_PWM10_BUS		72
-> > > -#define CLK_PWM11_BUS		73
-> > > -#define CLK_PWM12_BUS		74
-> > > -#define CLK_PWM13_BUS		75
-> > > -#define CLK_PWM14_BUS		76
-> > > -#define CLK_PWM15_BUS		77
-> > > -#define CLK_PWM16_BUS		78
-> > > -#define CLK_PWM17_BUS		79
-> > > -#define CLK_PWM18_BUS		80
-> > > -#define CLK_PWM19_BUS		81
-> > > -#define CLK_SSP3_BUS		82
-> > > -#define CLK_RTC_BUS		83
-> > > -#define CLK_TWSI0_BUS		84
-> > > -#define CLK_TWSI1_BUS		85
-> > > -#define CLK_TWSI2_BUS		86
-> > > -#define CLK_TWSI4_BUS		87
-> > > -#define CLK_TWSI5_BUS		88
-> > > -#define CLK_TWSI6_BUS		89
-> > > -#define CLK_TWSI7_BUS		90
-> > > -#define CLK_TWSI8_BUS		91
-> > > -#define CLK_TIMERS1_BUS		92
-> > > -#define CLK_TIMERS2_BUS		93
-> > > -#define CLK_AIB_BUS		94
-> > > -#define CLK_ONEWIRE_BUS		95
-> > > -#define CLK_SSPA0_BUS		96
-> > > -#define CLK_SSPA1_BUS		97
-> > > -#define CLK_TSEN_BUS		98
-> > > -#define CLK_IPC_AP2AUD_BUS	99
-> > > +#define CLK_SSPA0_I2S_BCLK	44
-> > > +#define CLK_SSPA1_I2S_BCLK	45
-> > just append the clock at the end, instead of doing massive renaming
-> The c file is written in the same order as the h file,
-> and I don't want to disrupt this order..
-> 
-> So should I keep this style or just append at the end?
+On 7/18/25 10:31, Chen-Yu Tsai wrote:
+> On Tue, Jul 15, 2025 at 3:28 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
+>>
+>> Hi,
+>>
+>>
+>> On Tue, Jun 24, 2025 at 10:33 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>>
+>>> Add support for the MT8196 vlpckgen clock controller, which provides
+>>> muxes and dividers for clock selection in other IP blocks.
+>>>
+>>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>>> ---
+>>>  drivers/clk/mediatek/Makefile              |   2 +-
+>>>  drivers/clk/mediatek/clk-mt8196-vlpckgen.c | 769 +++++++++++++++++++++
+>>>  2 files changed, 770 insertions(+), 1 deletion(-)
+>>>  create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+>>>
+>>> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+>>> index 0688d7bf4979..24683dd51783 100644
+>>> --- a/drivers/clk/mediatek/Makefile
+>>> +++ b/drivers/clk/mediatek/Makefile
+>>> @@ -161,7 +161,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) += clk-mt8195-venc.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) += clk-mt8195-vpp0.o clk-mt8195-vpp1.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) += clk-mt8195-wpe.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o \
+>>> -                                  clk-mt8196-topckgen2.o
+>>> +                                  clk-mt8196-topckgen2.o clk-mt8196-vlpckgen.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
+>>>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
+>>> diff --git a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+>>> new file mode 100644
+>>> index 000000000000..23a673dd4c5c
+>>> --- /dev/null
+>>> +++ b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+>>> @@ -0,0 +1,769 @@
+>>
+>> [...]
+>>
+>>> +static const char * const vlp_camtg0_parents[] = {
+>>> +       "clk26m",
+>>> +       "univpll_192m_d32",
+>>> +       "univpll_192m_d16",
+>>> +       "clk13m",
+>>> +       "osc_d40",
+>>> +       "osc_d32",
+>>> +       "univpll_192m_d10",
+>>> +       "univpll_192m_d8",
+>>> +       "univpll_d6_d16",
+>>> +       "ulposc3",
+>>> +       "osc_d20",
+>>> +       "ck2_tvdpll1_d16",
+>>> +       "univpll_d6_d8"
+>>> +};
+>>
+>> It seems all the vlp_camtg* parents are the same. Please merge them
+>> and just have one list.
+>>
+>>> +static const char * const vlp_sspm_26m_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d20"
+>>> +};
+>>> +
+>>> +static const char * const vlp_ulposc_sspm_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d2",
+>>> +       "mainpll_d4_d2"
+>>> +};
+>>> +
+>>> +static const char * const vlp_vlp_pbus_26m_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d20"
+>>> +};
+>>> +
+>>> +static const char * const vlp_debug_err_flag_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d20"
+>>> +};
+>>> +
+>>> +static const char * const vlp_dpmsrdma_parents[] = {
+>>> +       "clk26m",
+>>> +       "mainpll_d7_d2"
+>>> +};
+>>> +
+>>> +static const char * const vlp_vlp_pbus_156m_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d2",
+>>> +       "mainpll_d7_d2",
+>>> +       "mainpll_d7"
+>>> +};
+>>> +
+>>> +static const char * const vlp_spm_parents[] = {
+>>> +       "clk26m",
+>>> +       "mainpll_d7_d4"
+>>> +};
+>>> +
+>>> +static const char * const vlp_mminfra_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d4",
+>>> +       "mainpll_d3"
+>>> +};
+>>> +
+>>> +static const char * const vlp_usb_parents[] = {
+>>> +       "clk26m",
+>>> +       "mainpll_d9"
+>>> +};
+>>
+>> The previous and the next one are the same.
+>>
+>>> +static const char * const vlp_usb_xhci_parents[] = {
+>>> +       "clk26m",
+>>> +       "mainpll_d9"
+>>> +};
+>>> +
+>>> +static const char * const vlp_noc_vlp_parents[] = {
+>>> +       "clk26m",
+>>> +       "osc_d20",
+>>> +       "mainpll_d9"
+>>> +};
+>>> +
+>>> +static const char * const vlp_audio_h_parents[] = {
+>>> +       "clk26m",
+>>> +       "vlp_apll1",
+>>> +       "vlp_apll2"
+>>> +};
+>>> +
+>>> +static const char * const vlp_aud_engen1_parents[] = {
+>>> +       "clk26m",
+>>> +       "apll1_d8",
+>>> +       "apll1_d4"
+>>> +};
+>>
+>> The previous and the next one are the same.
+>>
+>>> +static const char * const vlp_aud_engen2_parents[] = {
+>>> +       "clk26m",
+>>> +       "apll2_d8",
+>>> +       "apll2_d4"
+>>> +};
+>>> +
+>>> +static const char * const vlp_aud_intbus_parents[] = {
+>>> +       "clk26m",
+>>> +       "mainpll_d7_d4",
+>>> +       "mainpll_d4_d4"
+>>> +};
+>
+> Also, all these audio related clocks (audio_h, aud_engen1, aud_engen2
+> aud_intbus) have a "vlp_clk26m" clock as their parent. It should be:
+>
+>   - clk26m (clk26m from the top ckgen domain)
+>   - vlp_clk26m (clk26m from the VLP domain)
+>   - (from PLLs)
+>   - (from PLLs)
+>
+> Moreover, an offline discussion with the audio owner suggests that
+> of the two 26 MHz clock parents, we really just want the one from
+> the VLP domain, as that one is usable even under suspend. This
+> could be done by providing an index table.
+>
 
-This isn't only a style issue. This patch breaks devicetree ABI, old
-devicetree won't work with the change. Please don't modify existing
-definitions but only add new ones.
+Hi ChenYu,
 
->                 - Troy
-> > 
-> > > +#define CLK_SSPA0		46
-> > > +#define CLK_SSPA1		47
-> > > +#define CLK_DRO			48
+Thanks for the feedback - I’ll make these changes along with the 
+previous suggestions and submit a v3.
 
-Regards,
-Yao Zi
+Best,
+
+Laura
+
+> ChenYu
+>
+>>> +
+>>> +static const char * const vlp_spvlp_26m
+>>
+>> [...]
+>>
+>>> +static int clk_mt8196_vlp_probe(struct platform_device *pdev)
+>>> +{
+>>> +       struct clk_hw_onecell_data *clk_data;
+>>> +       int r;
+>>> +       struct device_node *node = pdev->dev.of_node;
+>>> +
+>>> +       clk_data = mtk_alloc_clk_data(ARRAY_SIZE(vlp_muxes) +
+>>> +                                     ARRAY_SIZE(vlp_plls));
+>>> +       if (!clk_data)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       r = mtk_clk_register_muxes(&pdev->dev, vlp_muxes, ARRAY_SIZE(vlp_muxes),
+>>> +                                  node, &mt8196_clk_vlp_lock, clk_data);
+>>> +       if (r)
+>>> +               goto free_clk_data;
+>>> +
+>>> +       r = mtk_clk_register_plls(node, vlp_plls, ARRAY_SIZE(vlp_plls),
+>>> +                                 clk_data);
+>>> +       if (r)
+>>> +               goto unregister_muxes;
+>>> +
+>>> +       r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+>>> +       if (r)
+>>> +               goto unregister_plls;
+>>> +
+>>> +       platform_set_drvdata(pdev, clk_data);
+>>> +
+>>> +       return r;
+>>> +
+>>> +unregister_plls:
+>>> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data);
+>>> +unregister_muxes:
+>>> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_data);
+>>> +free_clk_data:
+>>> +       mtk_free_clk_data(clk_data);
+>>
+>> The AFE driver sets some tuner parameters in the VLPCKGEN block at probe
+>> time. Maybe we could do that here instead?
+>>
+>> /* vlp_cksys_clk: 0x1c016000 */
+>> #define VLP_APLL1_TUNER_CON0 0x02a4
+>> #define VLP_APLL2_TUNER_CON0 0x02a8
+>>
+>> /* vlp apll1 tuner default value*/
+>> #define VLP_APLL1_TUNER_CON0_VALUE 0x6f28bd4d
+>> /* vlp apll2 tuner default value + 1*/
+>> #define VLP_APLL2_TUNER_CON0_VALUE 0x78fd5265
+>>
+>>        regmap_write(afe_priv->vlp_ck, VLP_APLL1_TUNER_CON0,
+>> VLP_APLL1_TUNER_CON0_VALUE);
+>>        regmap_write(afe_priv->vlp_ck, VLP_APLL2_TUNER_CON0,
+>> VLP_APLL2_TUNER_CON0_VALUE);
+>>
+>> ChenYu
+>>
+>>> +
+>>> +       return r;
+>>> +}
+>>> +
+>>> +static void clk_mt8196_vlp_remove(struct platform_device *pdev)
+>>> +{
+>>> +       struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
+>>> +       struct device_node *node = pdev->dev.of_node;
+>>> +
+>>> +       of_clk_del_provider(node);
+>>> +       mtk_clk_unregister_plls(vlp_plls, ARRAY_SIZE(vlp_plls), clk_data);
+>>> +       mtk_clk_unregister_muxes(vlp_muxes, ARRAY_SIZE(vlp_muxes), clk_data);
+>>> +       mtk_free_clk_data(clk_data);
+>>> +}
+>>> +
+>>> +static const struct of_device_id of_match_clk_mt8196_vlp_ck[] = {
+>>> +       { .compatible = "mediatek,mt8196-vlpckgen" },
+>>> +       { /* sentinel */ }
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vlp_ck);
+>>> +
+>>> +static struct platform_driver clk_mt8196_vlp_drv = {
+>>> +       .probe = clk_mt8196_vlp_probe,
+>>> +       .remove = clk_mt8196_vlp_remove,
+>>> +       .driver = {
+>>> +               .name = "clk-mt8196-vlpck",
+>>> +               .of_match_table = of_match_clk_mt8196_vlp_ck,
+>>> +       },
+>>> +};
+>>> +
+>>> +MODULE_DESCRIPTION("MediaTek MT8196 VLP clock generator driver");
+>>> +module_platform_driver(clk_mt8196_vlp_drv);
+>>> +MODULE_LICENSE("GPL");
+>>> --
+>>> 2.39.5
+>>>
+
