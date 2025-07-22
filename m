@@ -1,68 +1,69 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8A286D7C
-	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 21:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E8728B7FF
+	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 21:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221484; cv=none; b=gxH9qiFuVD2Fi7OOFbu0LibcVz15IozytMzeLXKEVnboy8lC/B1sv2EgA24+b6MNSetxT2gAq6ntAVbVMsQEOohU7t0L3NP9O0zVEnLiUVxpFOY0AfbNK0UmIGcpmrdwgedc2zBkh0vNmvsqCf3CU6Z8+7ZH3FiyRbbsi984lmU=
+	t=1753221500; cv=none; b=l+HUNu+E/IrWnAK8XqB5wISEIm/H6+rRHJwC6FCCPeO/2YxYD1e9TSj1YjizqU7LeLeKK30slAw2ichxaWppiIJx8BeLz/xEl74cos/IwELOHPeilvf+HzQhzBHSNwjyeSnQKsf7CtFO4APs6cvo3I84rfRT0tHXNgNWLUH92yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221484; c=relaxed/simple;
-	bh=lYiKyYXdjjhyUxtYTcfFpjzBCFZEpw5hRFn/BBVvuuw=;
+	s=arc-20240116; t=1753221500; c=relaxed/simple;
+	bh=EngUjsKE6ntaSga2u9NxwJiCa0I8KWoIYhdBjksfnBg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L22vkyrWYP9n5Zp3DDEOLwhwEIkujT2qgJSwuhxmuHEd4kvWNHN8Hzy48TXCb1pGP++hb9OMTeq/to/9NdjRyiCj4rYX0BE5jc1GYbtJjZ9qxLdJ8gn+9IiTkl7kYdSlI4ulOpYbe75NI7xbq7G4xE7WVP1MnnfR6GLXzkDoSdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PgQxFV3x; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=qjcJKnIIX3vPLDMr24kyMo/AvVhnG0tVf+m8+TrI1n+kzq9Fn3civNnqs5ftmp2WtAs4L6MdhKZnfix4UtA0UiYFpaA3JDVw2M85ZdlWgl4FUEezellkh39UofFSh48BtisiZ5R9PpRF5AKFMLcstFnGINDKNfxmKD7nGhHyOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UVCLt9hr; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PgQxFV3x"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso4721a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 14:58:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UVCLt9hr"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2193a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 14:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753221481; x=1753826281; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753221497; x=1753826297; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=w8hcD+fzN/rLyW2ntnhyBmLcEi4uK+H7gUEsQ2j7Juc=;
-        b=PgQxFV3xVIYVzvqWxGeXB8OHIHNRoHKHmCv76q4RO7nQqdxZQcLB1ty5/mVtzmWnwG
-         CYrnztOoFpxdfzJbLKQ+RtauRKd5aUt8LmxexpNafhIWydzVe1oLnNWOnH7bcJc5Plae
-         Phwml768EXjZoAvaIxiXDoeC4RIPomr8tMQlc=
+        bh=XphRFYGKTpOm5xqnRvI7xsnYVXmfTKHiTieuuJNNgkI=;
+        b=UVCLt9hrIkRO21cndqVwG+FcQW3FCo2GmRfwuZDHOlTrI7SNrja+Mpmf7h185ZpHBH
+         HJny8RyTGLnAEK7fUBtNYdmPGFyHl8jSDINWskWNGEE2vM2twjUD0oAZ0W0Dt8nCS3MB
+         BHBj+GuCntnl741iXcVqJ3fnk3DhBbTd2LN0g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753221481; x=1753826281;
+        d=1e100.net; s=20230601; t=1753221497; x=1753826297;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w8hcD+fzN/rLyW2ntnhyBmLcEi4uK+H7gUEsQ2j7Juc=;
-        b=XCIrex1azmky9r3P278O9x5ZDjrRBKSo/XaZ1+JPp5uRWx2CrVnfe6f2hZTCYhjnTk
-         qcbz57dxVgvEDpiJdBu6YXJsi8zQTuxKk5R+19GjoI8BnArA1rZYFXO8/TOZg1RU0NCM
-         +wJ95lBKNuqH/owFiFbqdP89HCJ7/Ekaje+Hl7whzoEc02h3Bi/CK9yrLZ0ycMXQq9e+
-         pnSKtvsDiXvDOBgvysaY/GuIV68Efa71v60yFmAY6dF9Dgx9ESN+pQEByYQaBgU2PpUn
-         qEcEmSCKcLokDIUMSl0RN/1e20zOZY0pbY7moETDmRQ0MKv9YAA6qqGEJXd3fEuW9+4v
-         Lqmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWmViP4mdCVvVHihS9YpkqMvXVr3G3eeNNMX4wX4MFRGycQMCBWRb/7oNon2u9C4m7CXTMHBZcdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVv893phnfiI1qcGb/IcNW+MtzaXvZu7Dv4jcZwMSI5UD05Gp1
-	oJ3vnFvfq9JItwd1uvCwoyUXLKBOMTQn4bROpLbDTgw4TShu+DoBHITi7UvGdRefkxQ5ETKS5Ee
-	tT1GkR/vm6Ax9sBh5/ydPx2VNwB62L63kBqiM8Mmg
-X-Gm-Gg: ASbGnctT+LWpK2jPTEA91KfpuR+6UGcfJ9KId8QbpBFumI/5QSFeoJWj1OEQleCuSaQ
-	qPlF9a3zz+1w8H5yLQpBJ/OoR1wy5SayntaycGUJHwzLppClqQr3JtaclosMgn17zyK4rvjOZ92
-	kKaXTtSgPPyGwjHGrkZd1DWg2OBjhfAD7TWcZSQ4K3tIwc0TsbbABj5bRezAXrFsvrlKitSMs/Z
-	8AjeFwzABwvFaQlE+VQCuDBBoGAvNb9Tw==
-X-Google-Smtp-Source: AGHT+IFuRyHVLlTc9+mvjyXn9nDzKUxgSkHkWINR1NMMOVHEBiRhg+HBPAtm00VgI63bbY4a+rdh39BgoHymQ+H8ciM=
-X-Received: by 2002:a50:cd42:0:b0:612:ce4f:39c with SMTP id
- 4fb4d7f45d1cf-6149a332acamr34752a12.0.1753221481275; Tue, 22 Jul 2025
- 14:58:01 -0700 (PDT)
+        bh=XphRFYGKTpOm5xqnRvI7xsnYVXmfTKHiTieuuJNNgkI=;
+        b=ItcFuwjxlPk6xU9kIPdaU/MGsbBzGAuoJenKZ7Hsb9fXe8Duk7n6k4GleZuFsLqyi+
+         zSJ6KG6QXefBIVSG0OVnFvsGjlhQOZjHPvcaYtyZKgSnwjqkYMXMrJO//rhVI9qX8D3v
+         bSf84tQBIlHQ3a9YodcrkV6fMlhddmOJ0iV0DbAPfsSixjV6N2XRWBpkuzBfD8Q1QNOR
+         LOi9S+KCOtTPaz6VabKffovluCl/tB0Csoj1ytoobA0DkZ5cpK5lDmydT6JtXwGSL3Uy
+         xtPUT7NwUVrMuX17Ja4SA5rFT8tjWybuDMJYEE3Jl2MJElQfWcO2DVYxcoFXdVp5pGi+
+         B8og==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RAAPTgr6nNLpKASK2dWe2qeiGjh06N+9Leo74Ak+4Q6z1fzzGDlgbr4sapUEMYrhKDtdgYznNfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpMnXr+r5N5br/eU6rTByz11Sy7r5UrLnP2UPwJV9j84xYgXLs
+	6mDxACVJlUbLB49kUeAunEoGMRlnHcnQtp2rbp2bdVq1EzmY7yafRrLKl1QgldQfaQmFVXPnZNc
+	3WzEvUhEOw0JKaqcTIMuUVC56nWpAUwoDyRsjj5K5
+X-Gm-Gg: ASbGncshuhpxVubWU88yq1311/ovnP/1cacx8wyBQGypgSw4SvpkenVrbxZSFAq8c3Z
+	dL5S6ZGw3pIH8Emclk/+PwvAfBbw5WZTrzsnEJ+a+FBUqnYodQGjDHN6QfR3LTD7uuRx2eGFIfW
+	YFgVYwaeLIigSmlvbymnwrL3gD9lGcyl+kdxTSc28zs/WlplsqoPhyogp5ftm4tM1tfVyYrGwbf
+	zsS0LHcBSJE2XQHzx1OF2CmFkN5n2TIVWQtC3Udp0MP
+X-Google-Smtp-Source: AGHT+IFp5y+l1fTW8GtjpxnnyEe4EWyuH/zYE3JF5LoJQi9huRUvCNpCO/HKD9InP/jd87P+NKE1aVh/xMR3qwPcil0=
+X-Received: by 2002:a50:cd11:0:b0:612:7599:65c7 with SMTP id
+ 4fb4d7f45d1cf-6149ac2e0b6mr29581a12.6.1753221496595; Tue, 22 Jul 2025
+ 14:58:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com> <20250722-ddrperfm-upstream-v3-6-7b7a4f3dc8a0@foss.st.com>
-In-Reply-To: <20250722-ddrperfm-upstream-v3-6-7b7a4f3dc8a0@foss.st.com>
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com> <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
+In-Reply-To: <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
 From: Julius Werner <jwerner@chromium.org>
-Date: Tue, 22 Jul 2025 14:57:48 -0700
-X-Gm-Features: Ac12FXzhD62MTJBHmWXOCNn35YJ884MYdMc4gPYhqJDJjbLE29Cjc-kRxryta0g
-Message-ID: <CAODwPW_7aYdEzdUJ7b2nT4-zS9bu_hbNqjc7+_wSHbedXZXJ=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 06/19] dt-bindings: memory: introduce DDR4
+Date: Tue, 22 Jul 2025 14:58:03 -0700
+X-Gm-Features: Ac12FXx4M-_tpsnv6SoYOcaCR3mVKSUiARmyCSX04o5wxXNHMo0oAxmxSQQ0MIM
+Message-ID: <CAODwPW-kVcnVtVakXs7aBcwb_nv0bLTaK5PKNo4zmJaJ=VC8Wg@mail.gmail.com>
+Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
+ binding into memory channel
 To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
 Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -77,12 +78,27 @@ Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herr
 	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{4}$"
+> +  purpose of this node is to overall memory topology of the system, including the
 
-This pattern doesn't really make sense when DDR4 doesn't have the same
-manufacturer ID / revision ID format as LPDDR. You could either only
-leave the fallback constant for now, or define a new auto-generated
-format that matches what DDR4 SPD provides (which I believe, if I read
-Wikipedia right, is a two byte manufacturer ID and then an up to 20
-character ASCII part number string -- so it could be
-`^ddr4-[0-9a-f{2},[0-9A-Za-z]{1,20}$`).
+nit: Might take the opportunity to fix the typo here (missing words:
+"is to describe the overall memory topology").
+
+>    - Julius Werner <jwerner@chromium.org>
+
+Why remove me? (Although I'm also not really sure why I'm maintainer
+for this file and Krzysztof for all the others, tbh.)
+
+>  examples:
+>    - |
+
+I think that's a load-bearing pipe character you're removing here?
+
+> -    lpddr-channel0 {
+> +    memory-channel0 {
+
+Just to double-check, the name of this node doesn't really mean
+anything and isn't directly interpreted by the kernel, right? I'm fine
+with changing the example here to fit better with the new expanded
+scope of the schema, but we have existing firmware that generates
+nodes with the `lpddr-channel0` name, I want to make sure that it
+won't break from making changes here.
