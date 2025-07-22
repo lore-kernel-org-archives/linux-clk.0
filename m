@@ -1,65 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44BFF4FA;
-	Tue, 22 Jul 2025 00:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B23156677;
+	Tue, 22 Jul 2025 01:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753144127; cv=none; b=IRgEuVvo+T6CjuwIIgYGbJvlDBVbtLmcwV0ADuWYfWieo+VfPEyxlir4LtAtF1DLokDmOtswPoGysd1Zl5jJnR/GnHtj2Y4MjrQSgGAQIbupI641TwX38o1mbGV+sjApiy+wHk9knti6fXHscYuAyOFhACuYJLyYL4er2pVuv9Y=
+	t=1753146525; cv=none; b=blngHyfaEd83rx0rb0Bk6vZDKJgk3znHlc/hkfXyu00HOb4U31RxknUE22jRlZq8Ce/r8+VB3qhNwAcXcXHxHkzxxTineSTfr0XBvyZ+abI7g0OXXmxSc390FJH/9OdEcULVAm+cpcqOxVSQOPlnZWBuw0RSJZ1qs8yOo8Ym8Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753144127; c=relaxed/simple;
-	bh=lkj2iz50e05gBdLMWwNIikXAisnhw8Y2ADazq8uUrJk=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=h/0r61C1Ejn4wJse9UyRGTixJl6lUp/MWebaoBottGhC1IFRZUGSD1Vadz0RZVFqcO7r79boE+3w5JywhjMyujsPlHuv7jse/JlAZH5IV559Wr8HdvGogaDcBV4aEZH6cOyPdMNmTPwxFyoRW62rBispT2dYD4JdqN23t9SivBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEv/04ix; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753146525; c=relaxed/simple;
+	bh=hzdmz95quMdnRHb2ogS+Jsja1esz0IU+CTYKaAqwBy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ3O+bdlnsW3MtA27PrVAnV6wj6nB95daEq8Q8adBOJ0AnlDWnDd1n/WruNHcNpqLpuVM7lkmyIf/ble0WFOvJHrr+lvmsDcmXvBKAxREFeb4NU6y4XDV93CFb9YZI88ULRewMXn3QJRBwP3GKvXU7O4wqIhLDx91OZiW3mWuEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=YpjlIG9X; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=et0UNwGo; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEv/04ix"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD274C4CEF5;
-	Tue, 22 Jul 2025 00:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753144127;
-	bh=lkj2iz50e05gBdLMWwNIikXAisnhw8Y2ADazq8uUrJk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kEv/04ix+WN83EBGQ2ITPE7dRRqyn2TYr0hPFBeC1uwEEbUPIioGTnHk+ZPypCgTR
-	 ndhYPeDwg1XyOtwSM85mEoXm63qiQNSQrTwlukrFvF7uD2IPucXTSb8eocJOBHw04r
-	 s2QbWCygpfMvGuhOZN5t5jwSO1ZQ4mQc4e8Da6cwktHK6AP91guOOthb8fZnBLV4Wv
-	 QDmANOZpvpwipchlDrekCi62O1zIPzNcmMFzrh8znGhbcKBHCzakM/pyBM1oHuQAmw
-	 t0mRBLhqF5RjOa3FiQIE5HjgDv3fi98lrmfFkTdECD3GjDwFxvZxrvXuVUiOq2FjhK
-	 9FKAX0T72D4NQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="YpjlIG9X";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="et0UNwGo"
+Received: from localhost (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id EC46212FB405;
+	Mon, 21 Jul 2025 18:08:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1753146522; bh=hzdmz95quMdnRHb2ogS+Jsja1esz0IU+CTYKaAqwBy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YpjlIG9X0fYRhCy7fPJxukgUtsATP1cL7cp/jkkFfEypXx4DQ0ZUIuEr7k/FFTBlM
+	 y1YxXEBBOwpkk9cacvkm8XRybsyHXzkxiwCOcP5YsyS5pXNAq4iJb7zWl7dAB/V3hb
+	 WTuytjfzmKPJwLVREVSkEmH2QEDD4hXC+3kzCe07jLdMEM91by8GptsNhMq2nM4V8w
+	 lKrXyTK4AAmkZy85a2SSRowJRloY6lar5ASCefHNuwzqT8Wo0xqkMk5SeAYpotbHfl
+	 d3+n5fZR8P3wtwvUOWCs7Kk0sJ6OpotRKY0K9k5/K6BuYtL4ErUl/mL/Ib/ArKGVVq
+	 2s9t4ThajmKvA==
+X-Virus-Scanned: amavis at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id SLCFKPPPdY6W; Mon, 21 Jul 2025 18:08:39 -0700 (PDT)
+Received: from ketchup (unknown [117.171.64.151])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id A2A2A12FB43F;
+	Mon, 21 Jul 2025 18:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1753146519; bh=hzdmz95quMdnRHb2ogS+Jsja1esz0IU+CTYKaAqwBy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=et0UNwGoYlgBCdiG4K4MpGoiHLRWz+FgFR125Mrse1zkZk7CFpTTBqiri2ZzY4fpm
+	 GQiRwoXFGAR/R0e2usVbi5884N6XQIV5cK1HzIcA1A2qaprVDYD2cnHhY25u8N0NwS
+	 sJ+X4Oj29p/U+BnnrffO499qQIZP9oiT1SWd6Oml2++dGNxc75fSshucIfLbZQz+Sd
+	 3XbTrSCo1cZmuDl2cE2zL71A6Gy9bi8yFHQ9MilMiIV0IzUzUonJ4HgzufCrLbwF4p
+	 qTcRRyFksV57gP5lc98J8nY0ljbWZLIuiAlqnAMQSU99+OieavZypLHDt7dXHOdWAt
+	 7lwgYYyFgS8qQ==
+Date: Tue, 22 Jul 2025 01:08:30 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, mturquette@baylibre.com,
+	sboyd@kernel.org, dlan@gentoo.org, elder@riscstar.com,
+	inochiama@outlook.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	unicornxdotw@foxmail.com, jszhang@kernel.org,
+	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
+ recalc_rate callback
+Message-ID: <aH7kjkC_YSEi7dFz@ketchup>
+References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aHt0ojYyO1OEZTmG@x1>
-References: <aHt0ojYyO1OEZTmG@x1>
-Subject: Re: [GIT PULL] clk: thead: Updates for v6.17
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal Wilczynski <m.wilczynski@samsung.com>, Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>
-Date: Mon, 21 Jul 2025 17:28:38 -0700
-Message-ID: <175314411891.3513.15061789735684884470@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
 
-Quoting Drew Fustini (2025-07-19 03:34:10)
-> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
-94:
->=20
->   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/th=
-ead-clk-for-v6.17
->=20
-> for you to fetch changes up to d274c77ffa202b70ad01d579f33b73b4de123375:
->=20
->   clk: thead: th1520-ap: Correctly refer the parent of osc_12m (2025-07-1=
-3 12:46:58 -0700)
->=20
-> ----------------------------------------------------------------
+On Tue, Jul 22, 2025 at 12:37:10AM +0530, Akhilesh Patil wrote:
+> Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+> get correct rate entry. Follow .recalc_rate callback documentation
+> as mentioned in include/linux/clk-provider.h for error return value.
 
-Thanks. Pulled into to clk-next
+Nice catch, thanks.
+
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+
+Here misses a Fixes tag. With this added,
+
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
+
+> ---
+>  drivers/clk/spacemit/ccu_pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+> index 4427dcfbbb97..45f540073a65 100644
+> --- a/drivers/clk/spacemit/ccu_pll.c
+> +++ b/drivers/clk/spacemit/ccu_pll.c
+> @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+>  
+>  	WARN_ON_ONCE(!entry);
+>  
+> -	return entry ? entry->rate : -EINVAL;
+> +	return entry ? entry->rate : 0;
+>  }
+>  
+>  static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> -- 
+> 2.34.1
+> 
