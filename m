@@ -1,41 +1,40 @@
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652E32D3723;
-	Tue, 22 Jul 2025 07:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FC728C5BD;
+	Tue, 22 Jul 2025 07:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169848; cv=none; b=TxfJmNzwtv1CdTx/S/IHGJwZ9nvwdoScZzGuHgdxG9e2LLQzor87B8dbGc77K1EIMW+C6kD2TYIiqo+YAW1m8d9w+RjhyJMMJ3bdewQiKaRcR1CfB4rjmXadcZKQXkAlZOzeIZGBPAeBjr9D9Q7XyxLzqkJghCZ48yHVGOb89lE=
+	t=1753169850; cv=none; b=VQ4E9MH0avKqqQcOKsjt1xAi/pPVpJGS75ke2rn1+muYI9lVYvp97B4lj/1u5oHMxvhQNHSXD1mbWZB6joEKYtWWQLGcV13SAvtXI1Ms/tiT2nQwfZwRU6P77LdqcjkdHFfPCt5Q5diTOTdaWRV43x2F067qknlTMz0CxjwgH+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169848; c=relaxed/simple;
-	bh=0XUvAvsfHaff6g28QDK8UZbmnijtvMKUzjxWMgcstW0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mcqar4ZWU8XMArg25xLO4D3XNby3uTD/2f2H+RM8wJBUGIi0Tk0e2Ws58XVALiLBY1YmdvULUuHW6gkhOhzvmLGeDKvyoo9CwSJigPxJk8r2xrC294JSNCQx+YbnirnJp9oAYA8XHnYAlcuQB5q9sFcjt9cBFMOWgVcZlgkE9B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Jd8wLbL1; arc=none smtp.client-ip=18.169.211.239
+	s=arc-20240116; t=1753169850; c=relaxed/simple;
+	bh=1EK2TQsFCA6A4Rh5b5WVVEqCK3IkUuA1s0DimdzqhBc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=doPnOhoPYSb6/7vEPHT49zhPPqG69FB5ruj9qBpOF3AYte7La1Yl9l7S23C1fF2mKxd2X28hBD4c59og2JY7YH6nNiS4GjKXeWrmPYit/bYCRb+3+L2gn0vmLn4npIhIoLUiajvEUVSgWcluuGbsCIpYq7Fro8bkYr1ytikG5ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=eKmk7hNG; arc=none smtp.client-ip=54.254.200.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Jd8wLbL1"
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="eKmk7hNG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1753169831;
-	bh=JUyZIy4STLgGKV6n0Rtjh+3mXpolfFOBxvl+rc7sCTw=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=Jd8wLbL1MjJWf5mP2M3KuXPQ2VoHHYxpkeZmWggqptGi4uVAl+p4UQQ7Vb5sdi+kt
-	 WwF3QnJ6RhYRPD/aEAk1c2BCe0gH+w5CUl2ma+JqLKoMiN5+HWm335AxYFZJkCtoSb
-	 P205E/YUnV8sdx5JLpitd5v9NQthEDUYQOgu/mwg=
-X-QQ-mid: esmtpgz14t1753169829t213f62df
-X-QQ-Originating-IP: BRDEE0KNGCSRu018HljDnqbQ5/Bkizy8x9JNb6qaSPA=
+	s=mxsw2412; t=1753169829;
+	bh=pQ0rrp8kQpeiLV2GXPkNYYVhyLLgxjuHpx2u2oAf54o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=eKmk7hNG47wZhbqGZY7NRR0pJ6Yd6akWfuxo5X83Cn0Rxtn/eXnub3S5PzQ8+vWyJ
+	 Bq42S/qdNGz4qgU0n5mjnbK0L3mx3dI2I8DOaPrmtOuDYlYhBQt8jzMtDm7rASzDX3
+	 JJ/Q/KZr4RKGanHXYsV/T8zxdnXWyUo015jxrJvI=
+X-QQ-mid: esmtpsz20t1753169822t9cc06cca
+X-QQ-Originating-IP: o/6alvnXRlytoxVwMjxbpu188hGl4Y8IZ2m7pvs1yY8=
 Received: from = ( [61.145.255.150])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 15:37:07 +0800 (CST)
+	id ; Tue, 22 Jul 2025 15:36:59 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1888360680555149108
-EX-QQ-RecipientCnt: 15
+X-BIZMAIL-ID: 3472028324407458743
+EX-QQ-RecipientCnt: 16
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Tue, 22 Jul 2025 15:36:31 +0800
-Subject: [PATCH v2 2/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for
- SSPA
+Subject: [PATCH v2 0/2] clk: spacemit: fix sspax_clk
+Date: Tue, 22 Jul 2025 15:36:29 +0800
+Message-Id: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,9 +43,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-k1-clk-i2s-v2-2-2f8edfe3dab4@linux.spacemit.com>
-References: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
-In-Reply-To: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIAH0/f2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Nz3WxD3eScbN1Mo2LdVBMjc6M0wzRLQ9MkJaCGgqLUtMwKsGHRsbW
+ 1ADGwC4pcAAAA
+X-Change-ID: 20250717-k1-clk-i2s-e4272f1f915b
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
  Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
@@ -56,171 +56,75 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Yao Zi <ziyao@disroot.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753169819; l=3905;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753169819; l=1511;
  i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=0XUvAvsfHaff6g28QDK8UZbmnijtvMKUzjxWMgcstW0=;
- b=k5GPBMnuflbw6w5YYY/wSRbxzcKYTo+sAbNQujyR6OtwOjWRfniZlDNr1on6JbxWYRTUA4F5f
- GD09MtbJb+CC1vZ/84afMi0wLhIAFI0yt6fILL4Gv1ss8U3sJb4ccou
+ bh=1EK2TQsFCA6A4Rh5b5WVVEqCK3IkUuA1s0DimdzqhBc=;
+ b=CTQULKaJ7/EjE652+6Wzwt9+vLnkF0x+lT+4hZ+GRPFNvj6L07fYzAjrjnWRajGOzpU/Xx05C
+ VFmJL1uAPltA3TPbGZ8DBw0dpsEJhVQKGmbHAqDsmGLU0W7P6pUmkXa
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MoZqUia8aYdxJYUWpm9FkMaaL3pC8L7ePcF0YGgHG+PA+oca32o406+H
-	RWnDvawZQnyP6zaiui35fGhdFfdCfZ+VEY0SiE+wz/hxI7Ahw6Tz18feGJ7tz6SEVRjveNf
-	F5/1OsjIxrs/NCTZT8k44cFP2t1tabV2/VxukinrCU77whqzF17s97nNC6VezXnLJXo9D+2
-	sJWO8A1+yUZ0HdDq1BKNIk/A3Yuib1c4jD4GHiHzGa4p2J8eKASxHz+VwA0bmk3yHhH/ke6
-	3zQRTdPIkuqx8gEQgOecDj43vgGCWxDEkBlTHzZTalF322kaeqfHKf78I9OSblXSe+SP0p8
-	2FtWspUrxl1TEg0LYOU2HvFWs/BjsJrEvvUVQsNRRiVOwwGnqTLjS5FzXc0ZmBhPVZncKDi
-	10bCYoLjvs7Iz0w0m92U8DLBk2OA6dV37exv+HiVAwzrpKNwYQMl9+gtJHqCWxw7isJJKrX
-	hyv+wJGYtPybB+5M9eeaZHgyc+cTWyK5ulgUv/rtbKRRJXQc4xIm7M8LZSwZnxhPo8qW6f5
-	7IL6fa0sUp1BxPLIktvHY8B69L0VcC10D43YV6BSbaWz2cShYaaprlscBdu96AeNib9NiU+
-	BepfvJDNDTQxs3sX8F9rHu6WMZP2NAbaMjBTrzSCCKuSFw/U8ixDAhWdeIjcv8GH2UmYGyp
-	H9UPvJDVkcnq9XzFQgTTKf4r24QKD7sXCG+Y4P88rnQZWAo8y5DL23h6FZYdK/cNBAa48ck
-	c1v0srNioms6Orkl29/yASgCevREZI7HsJ6k0naO0ninArfr2v6QvzzYjWhAHk0jFEgm3wE
-	j4y9ZYVT4ynbyMlFvPDAYEnz5GzSkEwYxqp1NL12lrpxBJmaXB1mJ3LY5o4dWfeJ4QNKuhq
-	HY78v5Vg/IaRWA0CvS2uYolaGA93NBNObFKHyi4Ez40QUBr/dcmVbb7MfZrj4fH/4s2Jn93
-	Pu/n1j90TWF0RRJIuNY08iQJFCvlu7xvA1uuYtxcxit0i2Ok0t0E6/HvSNnSLrqum6QU36p
-	Lu3yDRssaDYVANYSsfEv0xYfxLEEGTTZAWeYT18mtT+sSCdWCldjD+u7R8PMBoFKUkk41jw
-	lI1/dQfxDxPFsv3XqoM6CE=
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NnnkygtrMG+qS7QcHiAl5iHK/Y1OfqDGRj8gmtLCwp2AmEnynzPU6haR
+	z9Ru1tshzE5Mb83G+R2EKp5EAQf5PVzHqNClkeOu30PAwJYTrr6/0LNbgSH7ivXpHPsyhwQ
+	87x5is0SCWhzsnNLbpoJM0ouQptazQrXcxMgKF48DKgaCCkkuGIt3s1126Bw+1xslscy9QS
+	OpQIWP4xqEjcuTtg4D54fE4yBduGC4UjtY6vrQ5A+l6pKoIot0YNY6CVGI2GtxPDIccQqGF
+	u83jIPiDOBJd2Lafq/T8KyhANoIxzKRKGuTfRtvqCUXm+gky1NOPNkrUYgUgb0JiSsseFSr
+	TyiNeZUG6JFZwdD3dkiMRpct7CV3sSGHq0BbrbrI0Aj62ceMea7Xt/cyc1oCkcLKCoUPN+0
+	KWTY7l0CnM2gzWTAntgShCtfhqZCj2Pk6dvsejx6oAg0I2hV4Kt/3Y93P6xmyUYczDbk6nM
+	QodZaQLt1KaZVSxFTYIIN1/hS9XZ37e/7kqonPLrl6H52KD5aAM6lfdPsMz4+YOEfRLxeBs
+	LKo0SE9C+oH/llt1F5U7VJh+UzFV/p33DQAmCK0GFSXOrdyPe022dTNuwEnu9SeQtEzL9F0
+	SkLmz9rIUI7Yf9zcXXjcQkXGkmR0l45cK4E1amgyqXEO86uAyPdJyXVIOteLBoRTwux9YFz
+	1HgDjUyj5fM/FbYCRyuFzARdZzWlMGKGL+5/Np8a5cJHv8AUT1VcCXouFRyNBAtJP02ZMPd
+	Z36N5fW3gOEnQ/ykt/nTlVkhXok8yyQMok4brRsD5Q6F8npZm3+GowFecPZy/+rn4ro7OgA
+	jR2sWeIGUNbqwqLnDGzjwwj+WlMV++hZevVPKOE42y1+NytaQPTp3NmCn5UwkgB/SPLoBfu
+	NKQIH4/A5J9owlr2MI0FJQd5reii9xV0nuj43RSepmIsycPaqcVO7PN9XKf+6lLrNYk2Xt6
+	Qd7Lnmbb8jmaBM83aM2hHW9jCaMb1VgKc/LP6IBZZowNtGMdiFlRHps6xMME4iJiluJr304
+	fLi0ExAPrxmI6cGjehTCxbdYDu1+PH6gt6hzYnqrJoPSl6W5yami5ZiURoCmkHqXSxjjaba
+	Rm0ywG3Q48x1n2AFQwKW6NNl9gaOlL7CQNe3sU/t229
 X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 X-QQ-RECHKSPAM: 0
 
-This patch adds macro definitions: SSPAx_I2S_BCLK,
-to introduce a dummy gate for i2s_bclk.
+In the SpacemiT public document, when the FNCLKSEL field of
+the APBC_SSPAX_CLK_RST register is 7 (3'b111),
+which is a reserved value. And BIT3 of the same register is
+a reserved bit.
+
+But the documentation is incorrect. In reality, the value 7 (3'b111)
+of FNCLKSEL is not reserved. Instead, it indicates that i2s_bclk is
+selected as the parent clock. Similarly, bit 3 is not reserved either.
+When FNCLKSEL is set to 7, bit 3 determines whether i2s_bclk is actually
+enabled as the parent clock.
+
+In all other cases (i.e., when FNCLKSEL is not 7), bit 3 has no effect.
+
+Importantly, whenever FNCLKSEL is set to 7, bit 3 must also be set to 1,
+otherwise the selection of i2s_bclk becomes invalid.
 
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
+Change log in v2:
+  - Use dummy gate instead of new function for sspa
+  - Add Suggested-by tag: Yao Zi
+  - Add Fixes tag
+  - Link to v1: https://lore.kernel.org/all/20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com/
+
+---
+Troy Mitchell (2):
+      clk: spacemit: fix sspax_clk
+      dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for SSPA
+
+ drivers/clk/spacemit/ccu-k1.c                  |  25 +++++-
  include/dt-bindings/clock/spacemit,k1-syscon.h | 114 +++++++++++++------------
- 1 file changed, 58 insertions(+), 56 deletions(-)
+ 2 files changed, 79 insertions(+), 60 deletions(-)
+---
+base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+change-id: 20250717-k1-clk-i2s-e4272f1f915b
 
-diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
-index 35968ae98246609c889eb4a7d08b4ff7360de53b..6914ccf5be45a1071d5b6eac354cacb67888e00c 100644
---- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-+++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-@@ -123,62 +123,64 @@
- #define CLK_TIMERS2		41
- #define CLK_AIB			42
- #define CLK_ONEWIRE		43
--#define CLK_SSPA0		44
--#define CLK_SSPA1		45
--#define CLK_DRO			46
--#define CLK_IR			47
--#define CLK_TSEN		48
--#define CLK_IPC_AP2AUD		49
--#define CLK_CAN0		50
--#define CLK_CAN0_BUS		51
--#define CLK_UART0_BUS		52
--#define CLK_UART2_BUS		53
--#define CLK_UART3_BUS		54
--#define CLK_UART4_BUS		55
--#define CLK_UART5_BUS		56
--#define CLK_UART6_BUS		57
--#define CLK_UART7_BUS		58
--#define CLK_UART8_BUS		59
--#define CLK_UART9_BUS		60
--#define CLK_GPIO_BUS		61
--#define CLK_PWM0_BUS		62
--#define CLK_PWM1_BUS		63
--#define CLK_PWM2_BUS		64
--#define CLK_PWM3_BUS		65
--#define CLK_PWM4_BUS		66
--#define CLK_PWM5_BUS		67
--#define CLK_PWM6_BUS		68
--#define CLK_PWM7_BUS		69
--#define CLK_PWM8_BUS		70
--#define CLK_PWM9_BUS		71
--#define CLK_PWM10_BUS		72
--#define CLK_PWM11_BUS		73
--#define CLK_PWM12_BUS		74
--#define CLK_PWM13_BUS		75
--#define CLK_PWM14_BUS		76
--#define CLK_PWM15_BUS		77
--#define CLK_PWM16_BUS		78
--#define CLK_PWM17_BUS		79
--#define CLK_PWM18_BUS		80
--#define CLK_PWM19_BUS		81
--#define CLK_SSP3_BUS		82
--#define CLK_RTC_BUS		83
--#define CLK_TWSI0_BUS		84
--#define CLK_TWSI1_BUS		85
--#define CLK_TWSI2_BUS		86
--#define CLK_TWSI4_BUS		87
--#define CLK_TWSI5_BUS		88
--#define CLK_TWSI6_BUS		89
--#define CLK_TWSI7_BUS		90
--#define CLK_TWSI8_BUS		91
--#define CLK_TIMERS1_BUS		92
--#define CLK_TIMERS2_BUS		93
--#define CLK_AIB_BUS		94
--#define CLK_ONEWIRE_BUS		95
--#define CLK_SSPA0_BUS		96
--#define CLK_SSPA1_BUS		97
--#define CLK_TSEN_BUS		98
--#define CLK_IPC_AP2AUD_BUS	99
-+#define CLK_SSPA0_I2S_BCLK	44
-+#define CLK_SSPA1_I2S_BCLK	45
-+#define CLK_SSPA0		46
-+#define CLK_SSPA1		47
-+#define CLK_DRO			48
-+#define CLK_IR			49
-+#define CLK_TSEN		50
-+#define CLK_IPC_AP2AUD		51
-+#define CLK_CAN0		52
-+#define CLK_CAN0_BUS		53
-+#define CLK_UART0_BUS		54
-+#define CLK_UART2_BUS		55
-+#define CLK_UART3_BUS		56
-+#define CLK_UART4_BUS		57
-+#define CLK_UART5_BUS		58
-+#define CLK_UART6_BUS		59
-+#define CLK_UART7_BUS		60
-+#define CLK_UART8_BUS		61
-+#define CLK_UART9_BUS		62
-+#define CLK_GPIO_BUS		63
-+#define CLK_PWM0_BUS		64
-+#define CLK_PWM1_BUS		65
-+#define CLK_PWM2_BUS		66
-+#define CLK_PWM3_BUS		67
-+#define CLK_PWM4_BUS		68
-+#define CLK_PWM5_BUS		69
-+#define CLK_PWM6_BUS		70
-+#define CLK_PWM7_BUS		71
-+#define CLK_PWM8_BUS		72
-+#define CLK_PWM9_BUS		73
-+#define CLK_PWM10_BUS		74
-+#define CLK_PWM11_BUS		75
-+#define CLK_PWM12_BUS		76
-+#define CLK_PWM13_BUS		77
-+#define CLK_PWM14_BUS		78
-+#define CLK_PWM15_BUS		79
-+#define CLK_PWM16_BUS		80
-+#define CLK_PWM17_BUS		81
-+#define CLK_PWM18_BUS		82
-+#define CLK_PWM19_BUS		83
-+#define CLK_SSP3_BUS		84
-+#define CLK_RTC_BUS		85
-+#define CLK_TWSI0_BUS		86
-+#define CLK_TWSI1_BUS		87
-+#define CLK_TWSI2_BUS		88
-+#define CLK_TWSI4_BUS		89
-+#define CLK_TWSI5_BUS		90
-+#define CLK_TWSI6_BUS		91
-+#define CLK_TWSI7_BUS		92
-+#define CLK_TWSI8_BUS		93
-+#define CLK_TIMERS1_BUS		94
-+#define CLK_TIMERS2_BUS		95
-+#define CLK_AIB_BUS		96
-+#define CLK_ONEWIRE_BUS		97
-+#define CLK_SSPA0_BUS		98
-+#define CLK_SSPA1_BUS		99
-+#define CLK_TSEN_BUS		100
-+#define CLK_IPC_AP2AUD_BUS	101
- 
- /* APMU clocks */
- #define CLK_CCI550		0
-
+Best regards,
 -- 
-2.50.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
