@@ -1,104 +1,102 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E8728B7FF
-	for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 21:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772A9184;
+	Wed, 23 Jul 2025 00:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221500; cv=none; b=l+HUNu+E/IrWnAK8XqB5wISEIm/H6+rRHJwC6FCCPeO/2YxYD1e9TSj1YjizqU7LeLeKK30slAw2ichxaWppiIJx8BeLz/xEl74cos/IwELOHPeilvf+HzQhzBHSNwjyeSnQKsf7CtFO4APs6cvo3I84rfRT0tHXNgNWLUH92yk=
+	t=1753229229; cv=none; b=FYog+76wDr4a/dReX+hs6DQKD5Rc8X9oiOHboGoVbrirNdhclWJjhYKCoU8wzbNVu2ZcJcxw7uvUmBx1F4MHjjClIHCt1/PW4YnO9n8CWndXYYnHX2Jk0LfaSNMBB7K4F1p4Nr4prKfI1QMlIo/nG0mgZQZVYCyCoQOq3eU6lYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221500; c=relaxed/simple;
-	bh=EngUjsKE6ntaSga2u9NxwJiCa0I8KWoIYhdBjksfnBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qjcJKnIIX3vPLDMr24kyMo/AvVhnG0tVf+m8+TrI1n+kzq9Fn3civNnqs5ftmp2WtAs4L6MdhKZnfix4UtA0UiYFpaA3JDVw2M85ZdlWgl4FUEezellkh39UofFSh48BtisiZ5R9PpRF5AKFMLcstFnGINDKNfxmKD7nGhHyOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UVCLt9hr; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1753229229; c=relaxed/simple;
+	bh=T1uMkldXB60o/GHBIhUkrUgZ400UoTd0hvAVPNTV9ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfD/axMyzCp63TrK47lNOk7bow8eP+5x2+oNWZoUCIP4BT5G6IEYCReA8unFjri5u7MSfEfVnxTCBWOU0zTezpT/1a4qwgV7XnuYvUwagdkRUOyBjvjQbsla5FQMvnc7jV/p7YF/wh+6E/C6HBMXQQhRTavZAzWeV5vVfgl52Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVj8/JYZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UVCLt9hr"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2193a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 22 Jul 2025 14:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753221497; x=1753826297; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XphRFYGKTpOm5xqnRvI7xsnYVXmfTKHiTieuuJNNgkI=;
-        b=UVCLt9hrIkRO21cndqVwG+FcQW3FCo2GmRfwuZDHOlTrI7SNrja+Mpmf7h185ZpHBH
-         HJny8RyTGLnAEK7fUBtNYdmPGFyHl8jSDINWskWNGEE2vM2twjUD0oAZ0W0Dt8nCS3MB
-         BHBj+GuCntnl741iXcVqJ3fnk3DhBbTd2LN0g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753221497; x=1753826297;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XphRFYGKTpOm5xqnRvI7xsnYVXmfTKHiTieuuJNNgkI=;
-        b=ItcFuwjxlPk6xU9kIPdaU/MGsbBzGAuoJenKZ7Hsb9fXe8Duk7n6k4GleZuFsLqyi+
-         zSJ6KG6QXefBIVSG0OVnFvsGjlhQOZjHPvcaYtyZKgSnwjqkYMXMrJO//rhVI9qX8D3v
-         bSf84tQBIlHQ3a9YodcrkV6fMlhddmOJ0iV0DbAPfsSixjV6N2XRWBpkuzBfD8Q1QNOR
-         LOi9S+KCOtTPaz6VabKffovluCl/tB0Csoj1ytoobA0DkZ5cpK5lDmydT6JtXwGSL3Uy
-         xtPUT7NwUVrMuX17Ja4SA5rFT8tjWybuDMJYEE3Jl2MJElQfWcO2DVYxcoFXdVp5pGi+
-         B8og==
-X-Forwarded-Encrypted: i=1; AJvYcCW7RAAPTgr6nNLpKASK2dWe2qeiGjh06N+9Leo74Ak+4Q6z1fzzGDlgbr4sapUEMYrhKDtdgYznNfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpMnXr+r5N5br/eU6rTByz11Sy7r5UrLnP2UPwJV9j84xYgXLs
-	6mDxACVJlUbLB49kUeAunEoGMRlnHcnQtp2rbp2bdVq1EzmY7yafRrLKl1QgldQfaQmFVXPnZNc
-	3WzEvUhEOw0JKaqcTIMuUVC56nWpAUwoDyRsjj5K5
-X-Gm-Gg: ASbGncshuhpxVubWU88yq1311/ovnP/1cacx8wyBQGypgSw4SvpkenVrbxZSFAq8c3Z
-	dL5S6ZGw3pIH8Emclk/+PwvAfBbw5WZTrzsnEJ+a+FBUqnYodQGjDHN6QfR3LTD7uuRx2eGFIfW
-	YFgVYwaeLIigSmlvbymnwrL3gD9lGcyl+kdxTSc28zs/WlplsqoPhyogp5ftm4tM1tfVyYrGwbf
-	zsS0LHcBSJE2XQHzx1OF2CmFkN5n2TIVWQtC3Udp0MP
-X-Google-Smtp-Source: AGHT+IFp5y+l1fTW8GtjpxnnyEe4EWyuH/zYE3JF5LoJQi9huRUvCNpCO/HKD9InP/jd87P+NKE1aVh/xMR3qwPcil0=
-X-Received: by 2002:a50:cd11:0:b0:612:7599:65c7 with SMTP id
- 4fb4d7f45d1cf-6149ac2e0b6mr29581a12.6.1753221496595; Tue, 22 Jul 2025
- 14:58:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVj8/JYZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C438DC4CEEB;
+	Wed, 23 Jul 2025 00:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753229228;
+	bh=T1uMkldXB60o/GHBIhUkrUgZ400UoTd0hvAVPNTV9ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PVj8/JYZUEDetgHxhIHVqgIK0ZRtqkmctDXvOOHBi7tCxiclLISeODTJ4LvOiJsEw
+	 mFH5c2MlJXA1THON4u2Or7reHLvLQqFW5oZa3MtGNaDvtMwQH4y1wbooVj2fy8TeKS
+	 bCpnfKPasQpjB+K3jgJhIvozcDXDs+r48J1+FuCrI856C3wtwydwPIbzRW1nclcfOB
+	 xVYnmWe7CBuYdM1yCdduVD1qwjH3PfXycg2pu88nET9VKfen+tqcdyWXXqbHMoQWj1
+	 9E0s3szUZwu6huiwCd+Dfjq4RkFhP10qObqmWAyoWhpRHxXkb6VOoEGxp8yiMl7TB+
+	 SEyYyDRXe8gaA==
+Date: Tue, 22 Jul 2025 17:07:07 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: thead: th1520-ap: Describe mux clocks with
+ clk_mux
+Message-ID: <aIAnq5jWARhj8XuO@x1>
+References: <20250722080535.60027-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com> <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
-In-Reply-To: <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Tue, 22 Jul 2025 14:58:03 -0700
-X-Gm-Features: Ac12FXx4M-_tpsnv6SoYOcaCR3mVKSUiARmyCSX04o5wxXNHMo0oAxmxSQQ0MIM
-Message-ID: <CAODwPW-kVcnVtVakXs7aBcwb_nv0bLTaK5PKNo4zmJaJ=VC8Wg@mail.gmail.com>
-Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
- binding into memory channel
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
-	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722080535.60027-2-ziyao@disroot.org>
 
-> +  purpose of this node is to overall memory topology of the system, including the
+On Tue, Jul 22, 2025 at 08:05:36AM +0000, Yao Zi wrote:
+> Mux clocks are now described with a customized ccu_mux structure
+> consisting of ccu_internal and ccu_common substructures, and registered
+> later with devm_clk_hw_register_mux_parent_data_table(). As this helper
+> always allocates a new clk_hw structure, it's extremely hard to use mux
+> clocks as parents statically by clk_hw pointers, since CCF has no
+> knowledge about the clk_hw structure embedded in ccu_mux.
+> 
+> This scheme already causes issues for clock c910, which takes a mux
+> clock, c910-i0, as a possible parent. With mainline U-Boot that
+> reparents c910 to c910-i0 at boottime, c910 is considered as an orphan
+> by CCF.
+> 
+> This patch refactors handling of mux clocks, embeds a clk_mux structure
+> in ccu_mux directly. Instead of calling devm_clk_hw_register_mux_*(),
+> we could register mux clocks on our own without allocating any new
+> clk_hw pointer, fixing c910 clock's issue.
+> 
+> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+> 
+> This replaces the second patch in v2 of series "Fix orphan clocks in
+> clk-th1520-ap driver".
+> 
+> Note that the c910's issue cannot be reproduced with vendor U-Boot,
+> which always reparents c910 to its second parent, cpu-pll1. Another way
+> to confirm the bug is to examine
+> /sys/kernel/debug/clk/c910/clk_possible_parents, which obviously doesn't
+> match c910's definition. There's another patch[1] explaining and fixing
+> the issue that the unknown parent isn't shown as "(missing)" in debugfs.
 
-nit: Might take the opportunity to fix the typo here (missing words:
-"is to describe the overall memory topology").
+Reviewed-by: Drew Fustini <dfustini@kernel.org>
 
->    - Julius Werner <jwerner@chromium.org>
+Thank you for refactoring the c910_i0 parent fix without using strings
+in the parent data.
 
-Why remove me? (Although I'm also not really sure why I'm maintainer
-for this file and Krzysztof for all the others, tbh.)
+Before: 
 
->  examples:
->    - |
+==> /sys/kernel/debug/clk/c910/clk_possible_parents <==
+osc_24m cpu-pll1
 
-I think that's a load-bearing pipe character you're removing here?
+After:
 
-> -    lpddr-channel0 {
-> +    memory-channel0 {
+==> /sys/kernel/debug/clk/c910/clk_possible_parents <==
+c910-i0 cpu-pll1
 
-Just to double-check, the name of this node doesn't really mean
-anything and isn't directly interpreted by the kernel, right? I'm fine
-with changing the example here to fit better with the new expanded
-scope of the schema, but we have existing firmware that generates
-nodes with the `lpddr-channel0` name, I want to make sure that it
-won't break from making changes here.
+The system still boots okay without clk_ignore_unused and peripherals
+like serial, emmc and ethernet are functional.
+
+Thanks,
+Drew
