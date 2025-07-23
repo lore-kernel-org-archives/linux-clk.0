@@ -1,71 +1,57 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43582287246
-	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 10:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A24029E0E8;
+	Wed, 23 Jul 2025 11:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267149; cv=none; b=lIhBn+csRt1H0+2+/prN4JkSsjuavTNkiFgk8Z+P+OQ5emrNEP9Q3i1kKBj+jvlVt68glUH/3TT3JUzAWCLk5qQjnRca87PwcR4z1kENlEPdFgHelXqNreBsdkevjWd/2MNbEKRQwDRKC2WHLt+Gb5q3dU2mE/oKTp39/DmysV8=
+	t=1753268925; cv=none; b=s4HLU+xUCyfpoV6671JJ9B8fPpVnNEUhsU3UpVmKRNWPhP0+cA4R8MA7QhIFf29x+psCDtHvMLYLl0EVeSrCHqjk0D2DcRCrlsutvxqjj7XiO6b9ddohssa2KQGnLnBoRLoxpUCM23rwZr7q5ObYpfjxukDy1f/oMVVUCxkVW3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267149; c=relaxed/simple;
-	bh=9WicMZ0FvlfVMTRmnsa6r0HX0R3VrCim8HjIAXHgfK8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lGvqmcfJQm0NiXyxaQOaqyfjEzHEHGpZHbsdIwyVmT85Q/Xh0ONDYrBhJSwGnN6wo92dbGufnBRgDOUgNf2p3BVsZBVKKh+7v5eno1gh31np5W09ECMOLIbKNBtDyznt3yECLxI3LxTVelxnG+Ne8aFsqTxHcz2Dn5aJnJK0f00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aKxY8/rj; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753268925; c=relaxed/simple;
+	bh=K3w6uW7+FkG9Ji2qt8oJ24ueGeZk9Jaai+N9sMm+7xA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kvc4l+muYEGQA9yTzcOHVRtNRIhZ2+GDapfKepEbOCD3x9nhVN2qpFRMP3elthGalLCRdNR+vHQEBGqVxGay0qxrIuR/1oQN4EpMZY61zj9noULQQBeaoQRd9jtGwzarO0Amru0Vj0UqFvkT542N2cTRqRBSCOqSwrkg4CGeyMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pphmrJId; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aKxY8/rj"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so10641531a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 03:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753267145; x=1753871945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J5iTEuPm8PXvAv97xyJNqssuf7uJW8wkgDFwGB5kF8I=;
-        b=aKxY8/rjtR8+8K5D4WzWCfjKebpwL0U4ecg9FzszL1UADlRQubUbJfOGXmRq+Ioswh
-         kxG5gPOvr8MK/A1NNZ+UZWmm7HQEpMk89rJXOkFj6GwK4ShRv5Ltl1ZwEA5yctwBbAgk
-         KXhEiFb57A+AET3W20oUn8ifNeczmNJYSTc0CMGWpv1FLp0cvsGeBwAtx40SV0BLWxdJ
-         m+LNsKz/v+GurNWg1Ei1qaRDwFvYKZ8giyZ5NagbQ0M5NbWKRKqxqedmlz2YUM2QjCl3
-         S2iSipu6CBaH5Xd3qq+wkDLlWAXUtH9v+DHJyiicyzD1nYMFBIBqCnFlMo7SVLZag9II
-         Tc/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753267145; x=1753871945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J5iTEuPm8PXvAv97xyJNqssuf7uJW8wkgDFwGB5kF8I=;
-        b=SNJCce7JUKpfp18BgK3x4pmZ2dh88kiKe1lpLcaRz01824Y/TIBQuCAWxlUIRjaU6J
-         qmVZXC5wu9MvnX4LuxGwSw8FldVbGadIz+62FUfVlWtKLZwJEcxlTGcgL0LsyeZK/9rN
-         IEEqJ4qbsi34uLoAcRQYA5dKwRl6WQZrnlxWG0+mdbg+nIj3i3YWT/3regbDr/iA1bts
-         nacZjaC07DP8GpLYclGLag657sVMdgOpGkfB/X/EXAoxZvQgOdduT7WfvRo/QM0SoShe
-         rpYw43CZzDuuAvJ5/sSkCQ25d4UmblcQXRhFgvRocFpeCXI5lDsU+4O2ED78rFukdZEU
-         P/Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWleWY1mHgHM3qPNh2+yJdM2aPaRJxQLMdh6R+OW8ju02eU9uAczBnUQPbe6dud8OEFI8uYSfGzZpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuYuyZcAI3zOMFIWut1gH1Fc1y3+r3IDv6q9fvAjP3Psg2hytM
-	1EbQ/rIQi+/VgoCMBph/a8V70SIb6qkyfop+zXc1HT2X2rKm+HIJPe4xR4P95e1M7r8=
-X-Gm-Gg: ASbGncs+UCdobFi9+7Emp1OKVsybG26rTPgefHjFeYC643lgM6zTx2cPiDKrked6c2/
-	delyr94MMchWmzawvxIzuO4jeSwnSdFBjBh+rZf+BWPMJ80vdtc3EtjpxuUD64HF1Yo9G7EucKC
-	ZBCcSkHNhZ6KFmXP/iY5RWHIZEx2SdJZ3HEbM8IWj4bPKNp0EBR454uNwyrQZSdSUBuf6+zi4yh
-	fIAsP+INVj355hDSkr+bZ60gHrf/l6qWQ7gBQ5UFw1ShWXsXvPBZt/18E4SUWRSFTvjpWOhojUK
-	AvzD74UvMBb5KQFL1S9//TGWncvmBF7Jqbed9kUcoIPOk3h3qz7d6fACkYA//dea0FvWuvOkU9B
-	q2NnwcbBbW/Hdl45fS8143UI0ioduXHE=
-X-Google-Smtp-Source: AGHT+IE9kD3d46UGakbV9lDnsOWGYgjtTl2vVJnO3SnTKV+RHc/bdrYKZCM4+1r0ZRNOsbXZk/HelA==
-X-Received: by 2002:a05:6402:5244:b0:607:f558:e328 with SMTP id 4fb4d7f45d1cf-6149b40d059mr2124453a12.5.1753267145272;
-        Wed, 23 Jul 2025 03:39:05 -0700 (PDT)
-Received: from hackbox.lan ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f5cf4esm8150799a12.32.2025.07.23.03.39.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 03:39:04 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.17
-Date: Wed, 23 Jul 2025 13:38:44 +0300
-Message-Id: <20250723103844.1641282-1-abel.vesa@linaro.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pphmrJId"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9WF6l011562;
+	Wed, 23 Jul 2025 11:08:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GiH4Z/1nBBDNEtWTVbil1x
+	vmT/ysuluJja5uRWPK2xI=; b=pphmrJId1Q/xNV9jXA6KhX8cM/atpaZkqQlQrX
+	eTYDy3qVKPDY+PXxTTVaR/SuPiZpQIK2AknftTeKcPAahITxIyHVZHX64Yk8L7XQ
+	216mL8m3VemY7tChIsL0aRFd4VvblTn14yZ3kuPQqVn8fmvqtErQ2fA8gsc74Sn/
+	J9AGuh8b0vm/6UroOy27E5aWdnSMJbKLKJVlYmniPGcGjxOEFussSA/qECBiA/3Y
+	7RTG/zOSKq9ZfXZkO/tE+BIpG66uy2mNAB+ctSg1ott1uPwtM2xCwf6B0mM7F/lA
+	k2VEO/0sjLPdivGw0/DjoGMjkINhzC4S6sTrKxaQ4U3HEJzA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047qcw7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 11:08:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56NB8Z5c021774
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 11:08:35 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 23 Jul 2025 04:08:30 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_mdalam@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH 0/4] Enable cpufreq for IPQ5424
+Date: Wed, 23 Jul 2025 16:38:11 +0530
+Message-ID: <20250723110815.2865403-1-quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -74,46 +60,61 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfX30q8AyqSj+cx
+ GH37qbvFuKIHdfCSP1B9xxbg17QTv+uR+zPEn+UyVNYC9TD/z4nRTa82lSNRFjVsXanbRpJDE0u
+ ZR6CgjoPhD3PygiFIhp6kHF0e7zlgB5NdumEuLavJNYiILgQRlLc31vGWqnLZ1kN9/s3ueMlrck
+ pVkT6WOEMDb65bB8R9ud84LYcPIGU5tMkDhGusSYZNbTuTocbVtRbupzwCJ/R7h4qDXZhfTOf10
+ 7w20eZmQW/Ajdlo7BoAdzRLFqhtCD/Knp7RCr2+8Zv/iDy6zZC6tQpwRrv4YAI13vg6hc5rXxOt
+ 1TaKZjDJWHcPFp0gD7dXrIMGFcGk6+t5iUA7dIVEk5prvShog1L7fYf/0zDIkmeePOYIDg+FFiY
+ 9unDgSiX3pZ9U9nEpv1gxZcRyQ1crDOY9s7cYu61WW/tjgfuxWnPwnrnt/gXxV0IEKCuac2C
+X-Proofpoint-ORIG-GUID: znyQuB2L7GNzK_l9r-E8rVfzm3XBI4Mz
+X-Proofpoint-GUID: znyQuB2L7GNzK_l9r-E8rVfzm3XBI4Mz
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=6880c2b4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=j41EFXsdaNRYK4k_7XoA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=832 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230094
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+Add support for the APSS PLL, RCG and clock enable for ipq5424.
+The PLL, RCG register space are clubbed. Hence adding new APSS driver
+for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+Md Sadre Alam (1):
+  cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
 
-are available in the Git repository at:
+Sricharan Ramabadhran (3):
+  dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock
+    controller
+  clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
+  arm64: dts: qcom: ipq5424: Enable cpufreq
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.17
+ .../bindings/clock/qcom,ipq5424-apss-clk.yaml |  61 ++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  65 ++++
+ drivers/clk/qcom/Kconfig                      |   7 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/apss-ipq5424.c               | 282 ++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   1 +
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   5 +
+ include/dt-bindings/clock/qcom,apss-ipq.h     |   6 +
+ .../dt-bindings/interconnect/qcom,ipq5424.h   |   3 +
+ 9 files changed, 431 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+ create mode 100644 drivers/clk/qcom/apss-ipq5424.c
 
-for you to fetch changes up to c78865241ecffaff7ce5db00ed5b71c1a70c0ff1:
+-- 
+2.34.1
 
-  MAINTAINERS: Update i.MX Clock Entry (2025-07-21 10:33:57 +0300)
-
-----------------------------------------------------------------
-i.MX clock changes for 6.17
-
-- Document bindings for i.MX94 LVDS/Display CSR
-- Fix synchronous abort in i.MX95 BLK CTL driver
-- Rename LVDS and displaymix CSR BLK needed for supporting i.MX943
-- Add i.MX94 LVDS/Display CSR clock to the i.MX95 BLK CTL
-- Update MAINTAINERS entry to include both nxp,imx* and fsl,imx*
-
-----------------------------------------------------------------
-Laurentiu Palcu (1):
-      clk: imx95-blk-ctl: Fix synchronous abort
-
-Peng Fan (3):
-      dt-bindings: clock: Add support for i.MX94 LVDS/DISPLAY CSR
-      clk: imx95-blk-ctl: Add clock for i.MX94 LVDS/Display CSR
-      MAINTAINERS: Update i.MX Clock Entry
-
-Sandor Yu (1):
-      clk: imx95-blk-ctl: Rename lvds and displaymix csr blk
-
-Xiaolei Wang (1):
-      clk: imx: Fix an out-of-bounds access in dispmix_csr_clk_dev_data
-
- .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  2 +
- MAINTAINERS                                        |  4 +-
- drivers/clk/imx/clk-imx95-blk-ctl.c                | 95 +++++++++++++++++-----
- include/dt-bindings/clock/nxp,imx94-clock.h        | 13 +++
- 4 files changed, 91 insertions(+), 23 deletions(-)
- create mode 100644 include/dt-bindings/clock/nxp,imx94-clock.h
