@@ -1,33 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FEB42A8C;
-	Wed, 23 Jul 2025 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A804228505C
+	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258701; cv=none; b=qQ+5WrCMRj+Hb/KOF6dj5rnOOkKoCz3Q2SR2zuNNxRAjwEuQxg+yyH4ohTbVsGJQL1rDpIMU+OvD3TMYACG335ln6rrCsWxFSKvOoNGLNReH6YJhtElWJFhSTKQ4JwvnrU3L2DlwMFxeEjuvZkqGQ5hdhkmAJewSX7gcc7wbekI=
+	t=1753262507; cv=none; b=B7nv8wHT9IN0jfo23n9yXrpZKFuCQ4uVq7gZWiB7+xBMKkUvQUE2+reAU747ERAe9apdvopKmmnon62q0mZO+ciaSZNUELJZrHST2w63OFUhI6WVjLmqz+FnbD+lTk4ix9ILMJiyGQYR3PE7RDyS2xQ8L0UdPxXsXLbdwshcIn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258701; c=relaxed/simple;
-	bh=dHylhm/pqm6wYGNi8fXJQ6QLjgTcpxqj1PGxAzSd3Po=;
+	s=arc-20240116; t=1753262507; c=relaxed/simple;
+	bh=lhb31hAfmJWv+pFCSk8uxuRQUATQK2rglMLyJJynjCc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IibsijeXN0onfMiXLXym9qF8F/bsJm3FjKUZK+TUORNxuNafZ3lEinJgMN8cTiga5TvBWOtQ17VXiTVhOLZ4BHf4TBzXzrIIpsndj14JwSMQvBuiM5etoIplpOdcwIQ1Jrjt56yvLA022BvhXeKXso7eDAqdboljRTWUMrlqk3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jkhh1Xdq; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=nO8OEvAPx/7rjyTY4f9gZ7qJWxXQ2RaB7M1h76AetsZ+CFreSh4nYwoY6ShED6NB5XXSkfU2bH/j49jFOe2TUAjOu1ONlHfDb6jgGDCLz1/DBgWnBgeix6wfVmjJn6f3Ozf7u8cQG9uDACKj0YOMFiuKXfa0dTAm7wzVqL0KDV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V7zfWItt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jkhh1Xdq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD05C4CEE7;
-	Wed, 23 Jul 2025 08:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753258698;
-	bh=dHylhm/pqm6wYGNi8fXJQ6QLjgTcpxqj1PGxAzSd3Po=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jkhh1XdqkDlR2Hu8iK4h1ypUimAqjQJ70vcYl8f1jH6M2pB6pNvj4+pvznLADJ+CI
-	 FIrMqwnRDDQRhgRdh9qGlkeoI7E/1L/t3+pETDkJgs1Pa+ybWq5eDh0wdQNUV+ZUSR
-	 +noOecUen1Ao18K5E3wd+8V8FjkghiqLyrCBi2hyiNh6xeADjxq7q3F/g9FYjBQgy3
-	 /BND2Rlmop491f7VPJJ8tpBqybVVbLa1UFWvTnNCl1dZ72DEQOyz5ohhGaJ6Vykgt3
-	 z5pFb/octyktBknfLqBa4rX/Gp0oUF9YlZpgR17cnuFeuNuwy9vbpjPB55CgM9Dq3H
-	 ZX74NXTj2WQIA==
-Message-ID: <221cbc67-6b23-4e68-b870-114742e6fa61@kernel.org>
-Date: Wed, 23 Jul 2025 10:18:11 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V7zfWItt"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMO6ti019720
+	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 09:21:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nb/6O3iiOkNyz5fp5T+ekQVrNaBGU510DuWWGBJBlD4=; b=V7zfWItt8+wifj2c
+	wRGy4DMLzDM013wvEXJwXusO5btF7AzB+r6aldVoaL5uO4VAa6viLxSt+a4Pmgt3
+	HcKWLrUAeu7vl7TThd4d8/7sGJcCtgCIdAuy9cPKWRqj1CTQG05IF7dbC3oS+7eU
+	m48Pm468vZl/Gtt4NnuL+y7V1RBIq2ci8OfqdxKGSSMx7a9P7y82wn0LqzV0lQIQ
+	i/c6t3dCmbMZtg+wNAN389e0dJElI7niMdLrT8Xij8HFmEVn+kSd2dut2gcFD16l
+	7JfeqonA4DxqDUvnLzzWwKF1fUXnAWFLzbWeN6sTddgjYz6dt1q1PS4yjIw4kSy1
+	XiDzgg==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6psc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 09:21:44 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-311a6b43ed7so5033922a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 02:21:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753262503; x=1753867303;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nb/6O3iiOkNyz5fp5T+ekQVrNaBGU510DuWWGBJBlD4=;
+        b=eINRAT8DQAbAotjABRt2yN4g0bHdspk/+imeKTvss9mnyCQkH44iMGZLTdHVJuPoGX
+         YGFl4N/CFjktuddMrgSi/uTNIIYXaQA/YXy9m0IJKZZ7ciA89WyltgAzpJDCco0TPjQX
+         t9CYHPbnETaF1mdMNi0Boi2NZnWp+Zct4g0PvsniF8UbftQmVo3WANwbDm4ko9otJ2G/
+         NAtYzWuZt0Wr0fadkiva6Ed1lkl+nit9EQfU+EIv/kYsb+ubEZhOUqXxjIXD2XiOv/1j
+         J6N4wCl3l6zjKDXOsVcij8bnpgeaxEFHs+yM74vRU/mcjupNewuQX0Ed+VyDqmfUS3bO
+         YB9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXScfYA9GQKbGyDrtGdH+ybFB9cUlJ0JJjj7AD210UhnORGXoRdWlFqz5cEto8X9Oy384l6zVlN56M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+EI3B0AsnJD87bXPjpgvThgfu1/gyJvp5jXlo84l9R5O3k4u/
+	xerNZ6MnWgTIkcL/NzCA5LxlgOw/C25KUANTqt0hbtwco3WejaN8Knar0etmJBlBeZKDbchJrRS
+	TyNNSIXydMwuysDVdNMjFnJTIoOyQ8I3IGnw0kSEgItBQ5P9AvyKwv/PcVhNQXB0=
+X-Gm-Gg: ASbGnctrXV0tewvUvTVpZtcPw/ZMgJsRVug+aoxvCULUMBHXpGfCWrlkBUlSvsTneVX
+	wDt/zNCtpsiilVmLlmGoDazj2NPW5L9VMSkMw8At+GHo13pLlnfh83+o9hVXjziu+q1pIQG7P33
+	uxRYS+K9fNqz3NjyExPJtOwG2zX64tuNf+EsJey6v+exBm9WXvLlPzh05n+vHU4Ae+2jePwNZC2
+	GZ390x7KSyF9PWdWeJSS3xiYSI4uhJ+uck/GAeoxZOIZ8wZxQRB4Sod7LmBr+9DJ5pE8mBcfPjC
+	oNLRI7bpXTB0a9YoeXCe12mU9oXRnW0Y6v+hCAqP/AZ6eO0a577qKenohoYOXSewdcc=
+X-Received: by 2002:a17:90b:3f8f:b0:312:639:a058 with SMTP id 98e67ed59e1d1-31e5082e792mr3737776a91.27.1753262503137;
+        Wed, 23 Jul 2025 02:21:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEt87+pV3bznhTxSzIjTAcYlS83i2dw2B8Ky3HyJPtNmRuAysXZs8ygxv0dO+g66ulY7n8p3A==
+X-Received: by 2002:a17:90b:3f8f:b0:312:639:a058 with SMTP id 98e67ed59e1d1-31e5082e792mr3737742a91.27.1753262502629;
+        Wed, 23 Jul 2025 02:21:42 -0700 (PDT)
+Received: from [10.217.216.26] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2ff63683sm7223957a12.41.2025.07.23.02.21.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 02:21:42 -0700 (PDT)
+Message-ID: <ff05ceaf-6e32-4d66-ac2b-a1b55f41adbb@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 14:51:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,93 +74,119 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
- binding into memory channel
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- Julius Werner <jwerner@chromium.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Le Goffic <legoffic.clement@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
- <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
- <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
- <e9e33fc7-4705-4e6d-bd33-ce9dc1a9b94e@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/7] dt-bindings: clock: qcom: Add bindings documentation
+ for the Glymur TCSR
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        quic_rjendra@quicinc.com, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-3-pankaj.patil@oss.qualcomm.com>
+ <20250721-striped-defiant-hippo-6dee44@kuoka>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e9e33fc7-4705-4e6d-bd33-ce9dc1a9b94e@foss.st.com>
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20250721-striped-defiant-hippo-6dee44@kuoka>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=6880a9a8 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8
+ a=VwQbUJbxAAAA:8 a=CvYCOFMdU_owP9l6gQwA:9 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-ORIG-GUID: gdAJyQ9-UkGnAFuUXHDroeRsydyPXm_5
+X-Proofpoint-GUID: gdAJyQ9-UkGnAFuUXHDroeRsydyPXm_5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA3OCBTYWx0ZWRfXw/pnO6YIthnO
+ 5fw/AqGiWEcyeIomI73ZZkH8UtiwW368OGjmB5nZiBjnrOUz2AMhX+RnMTX9tfOWqaC9+oOFvbS
+ sLAfHCTnwl8BBcpVa82I5fC7ObhFMzgsvEyw9e8BAImHbW0qBpBz7mG60gsZhdHSX8K3q2zrpKz
+ GfESoPLtt7cq7UGptYWeCqNgRUErdbGHrNhklx9EXveT2fx1znNhDDZEzD65g+++p7gY70amnaA
+ LPxZtDvz3Ym/kJ4vjf/qc0hged+Glc22Wo4UXN+yGlTu0v0e1EfmdxiIvPKcfdbswQbsIv2Zcty
+ CHLz5eKzfESJeipdbYJVqMuyf+eJmHdGsGfyohQ4M2DBl6V0eGOBKyAiaHlo9iriQq50kFWslRH
+ xlv4THJdtHciY969bEQO236mxe9zRW1awYBvTzuhcty2nuERQ7qB6zP5J8gQY3PACxSlXi7k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230078
 
-On 23/07/2025 10:10, Clement LE GOFFIC wrote:
-> Hi Krzysztof,
-> 
-> On 7/23/25 08:57, Krzysztof Kozlowski wrote:
->> On Tue, Jul 22, 2025 at 04:03:24PM +0200, Clément Le Goffic wrote:
->>> LPDDR and DDR channels exist and share the same properties, they have a
->>> compatible, ranks, and an io-width.
+
+
+On 7/21/2025 2:49 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jul 16, 2025 at 08:50:12PM +0530, Pankaj Patil wrote:
+>> From: Taniya Das <taniya.das@oss.qualcomm.com>
 >>
->> Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
->> don't think all memory types do.
+>> The Glymur TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
+>> this to the TCSR clock controller binding together with identifiers for
+>> the clocks
 >>
->> I think this should be renamed to sdram-channel.
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > 
-> Ok, do you want me to also the memory-props patch into sdram-props ?
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
+> And same for documentation...
+>
 
-Yes.
+Will fix this as well.
 
-Best regards,
-Krzysztof
+
+>> ---
+>>  .../bindings/clock/qcom,sm8550-tcsr.yaml      |  3 +++
+>>  .../dt-bindings/clock/qcom,glymur-tcsrcc.h    | 24 +++++++++++++++++++
+>>  2 files changed, 27 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> index f3afbb25e868..9fbf88836782 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> @@ -8,12 +8,14 @@ title: Qualcomm TCSR Clock Controller on SM8550
+>>  
+>>  maintainers:
+>>    - Bjorn Andersson <andersson@kernel.org>
+>> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>>  
+>>  description: |
+>>    Qualcomm TCSR clock control module provides the clocks, resets and
+>>    power domains on SM8550
+>>  
+>>    See also:
+>> +  - include/dt-bindings/clock/qcom,glymur-tcsr.h
+>>    - include/dt-bindings/clock/qcom,sm8550-tcsr.h
+>>    - include/dt-bindings/clock/qcom,sm8650-tcsr.h
+>>    - include/dt-bindings/clock/qcom,sm8750-tcsr.h
+>> @@ -22,6 +24,7 @@ properties:
+>>    compatible:
+>>      items:
+>>        - enum:
+>> +          - qcom,glymur-tcsr
+>>            - qcom,sar2130p-tcsr
+>>            - qcom,sm8550-tcsr
+>>            - qcom,sm8650-tcsr
+>> diff --git a/include/dt-bindings/clock/qcom,glymur-tcsrcc.h b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+>> new file mode 100644
+>> index 000000000000..72614226b113
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+> 
+> Filename matching compatible.
+> 
+> Best regards,
+> Krzysztof
+> 
+
+
+Yes, I will take care.
+-- 
+Thanks,
+Taniya Das
+
