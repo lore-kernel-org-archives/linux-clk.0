@@ -1,103 +1,123 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073992E765C
-	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 13:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA132E92DC;
+	Wed, 23 Jul 2025 13:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276228; cv=none; b=dNNzXtpNd74mBgo4PMTdR0tR0yWclmXzHo1bhuTp/U0j492yho9Zx1baBC6Rorlcm/ZESScmxWJYmmHoHe4HTa8s//3jhJwu5tFGkhA0QxLi4v3sMnTii7PF9TvusoM3WuvEw2dtO7rS8v7UNul1996WBz2W720hT0aAzSnHUt8=
+	t=1753276233; cv=none; b=cvQ+FQc4Ssp7n8Fpv9HzkhwFBEC0RqTpPMNEHawslNzXbEecHreKsSC3bkSJr2cxBbjyzoBeW7wCPH1PknZneEghLZSRcLBV/yHHLb1KvuaS7FzLKKIlZ1mRBpNQDkzRhBbhX8E0BZuFmEfxATaZFJoRRzA7HlKxnH2l+uyuF8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276228; c=relaxed/simple;
-	bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3a+NFgYAMqXKXkARayfK3Zgd/Ac7pQshr1x0wxluQEgSH7jwHrVua1qL7699WfP/nUcEPBy103sdYOc1U+DGf4ap9m6H4hhWyFtQ5aZ13RgvQxOrHTqPCKQ1i3OH8Tg8lEKULx1mp94su+K/yrG4xtQtzk/Qa4YFciVU3AROfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=pIHmasZB; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
+	s=arc-20240116; t=1753276233; c=relaxed/simple;
+	bh=c5RN1PJ2jWZpcD31tgu2dPIQqUIfEUl+l6dcon/cpoo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=s0Mjl85a+9StOanr3BFr9kIyjBUtWTIVl849IQdJdY+qHakkV5Gp4LE9RliB3qAhWeg1Tr/kt64IBP6rorhrjjydSG8IAlqLHRUytp0QE0WGd8lsOMcP5c044TgKzAxgDftp7+0E+aInbUc2p6sbL9GONj3LsiqieG2wWmV17F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s3esZPP0; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="pIHmasZB"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a582e09144so3597126f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 06:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1753276224; x=1753881024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
-        b=pIHmasZBcQ74ijjsISLBNbNCOz53btNAxANZfw66j3L2LkNuGcfR2DrQFNtLXsBQwD
-         VHNy38J5cr3iwKR29fa/BQZXz8P9XEq5NA5EWr9fmPhClXmBWFLxPpbWhAk6hn5TOoeU
-         s77tnfton5cD9h0NxX9sGNATlGU15cKyAY53l8jdOu86e8SG5f0Zl1ktAqPx7xUWeB+g
-         N0qK0CeWNDfSZU1v4dNQIF1CXDX5dEObdKUWXeDv/8rUCcXsXDVr7WjgzJh7w4HATBxM
-         sqS0a8Jai4OfHpaCbNM+1wf2hMkZlks83DkytfKCx/95sRkomREJJGUUYIX5VB2t30Lx
-         3DaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753276224; x=1753881024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
-        b=iPsgsc/WHC8ASJtDWDG5zdOkSVXdTVdMig17ifi576TmgpplDfRJrVSqrGjjMDVa/G
-         bDfp2yDLy0LrQTD49GRxFEMtkIItwjyd7bOUrb4NDIzxhMZo1dN5Cq8PjsEL/rSjBOfy
-         DWYIxP6CLE7/cZa3pIFXVmVGwcoZj9dCCPkBLyZvcIK0BJ8tkY5FR68oDuh4sI4oqqpO
-         wzfYrOZr2UyyJAnTtmdj2Rqbr/wFse0DxBAlfHTObBLm47C25+knN5KSB7kZIPo/ls0u
-         hAW+jK+5UImarbgiT9TBtuHD+uhVP9KteICjHmgtZPEiWjktSbb4j1Q5eyjxFwwt/Zhi
-         rx1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWssU/eR2K6kRMXKtzAgjbLSc0TwadWyeYej4uCrSM5QSjPrKmn/jXfR6Ltqhub86aeFqaCQ77iBag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFrtpHKBJR71UUp4KSWpMRldUnGEFPjEwl4MqyhMKxqtZPYbJy
-	CQaKns8Kcp/4/LPhXgWLN/6fLX+2pe1zZhXjzi2qfhQrczCsRNJX4WkzQwvDeuawJ1M=
-X-Gm-Gg: ASbGnctxxZuZbAVHg2RitcmMKAzgbA9TydUzsIJX6NRtJBFPmvKj4S7U+BwwVslK6ZB
-	vY/KBz2TOYQT21f3Kah1OzCBv+BcSu/jBym5vtw6ImzBoltVMANeWeNP8wh3dIujgCavYzYLjs6
-	z8kEZGTcOJMM6j1oZpHHDkdA6wKc29e2rijRmVQRdFtJt1PIj0WOpXGQa5reAAKIkRb816mGekZ
-	YwxeDTQy7fMM8PLoqaNUEWPi8nauzHmlPKgZUQSGEKwyDAMPftDmCl7E2DGThkEehl4w+4v+Cmz
-	549SPtGl/ajzvX5WGpHA0q6Vv+zLs3g0GCinM+vl9Kjhc8bqK8r5hWRcbnhpx8kgAF+F7rmvlph
-	TfYkr+mD6PqaScTOcHbe7mjcTy485nqUka4f9INnQiZJiwtFBUVu2Jgbk5kvWnf4UmAfelqW5El
-	L6LCZ58DnUhDWz
-X-Google-Smtp-Source: AGHT+IHaikAjtXSOK7TzkgieFuqf48w0q0zzAkHwiGU+rMcHAorrKzxT8fl3tGpNBEzEAzrmfTi+OA==
-X-Received: by 2002:a05:6000:40da:b0:3a4:eae1:a79f with SMTP id ffacd0b85a97d-3b768ef3c90mr2447676f8f.33.1753276224129;
-        Wed, 23 Jul 2025 06:10:24 -0700 (PDT)
-Received: from ?IPV6:2a02:1807:2a00:3400:7fcb:5e01:8f11:1009? ([2a02:1807:2a00:3400:7fcb:5e01:8f11:1009])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c813sm16511400f8f.84.2025.07.23.06.10.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 06:10:23 -0700 (PDT)
-Message-ID: <fd4eba94-50f5-46c9-8675-cc0aaa4601c6@hammernet.be>
-Date: Wed, 23 Jul 2025 15:10:22 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s3esZPP0"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCdO5j011745;
+	Wed, 23 Jul 2025 15:10:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	eJrc2cACDhSOzVDLTaVrQsrujHpWGGs7dlhdmyDAAho=; b=s3esZPP0f2302i9X
+	pAR1321AM5JqN+umO4XEDaPgg0A7xVIb8G1WgUH/FyF2Hs6hCAbjiIcfes19wMSE
+	e4Vdxjg7hp11CRami6FvKDoryND8uzscTJT5kDVH6ynpgLTMeaAbsg1qJNd0I7XF
+	yeqiQ2JWG8NKDFT/09SHD1erc2NXg8Pyhy4+uKt9J6G1HgtYsvCsB3eLCthzLrmc
+	mJKBXSrbJXL5nL4iI7I5J1aV3wfHzixRPZkZYfy5K5bgYXge/p9t4+zRPgeJQ0zG
+	1Dnjxb69xMu/9+m4TBQ9qLGolTfm9Vgkjr3Oqh359Qc7QxOUceXGedirSOk24qy9
+	XVTRrg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g8uvgw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 15:10:17 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 78AFF40058;
+	Wed, 23 Jul 2025 15:08:29 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5840877E331;
+	Wed, 23 Jul 2025 15:06:17 +0200 (CEST)
+Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Jul
+ 2025 15:06:17 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Wed, 23 Jul 2025 15:06:03 +0200
+Subject: [PATCH v4 19/20] arm64: dts: st: support ddrperfm on
+ stm32mp257f-dk
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: spacemit: fix resource leak in
- spacemit_ccu_reset_register
-To: Yixun Lan <dlan@gentoo.org>
-Cc: sboyd@kernel.org, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev, linux-clk@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250723124020.60897-1-hendrik.hamerlinck@hammernet.be>
- <20250723125416-GYA738759@gentoo>
-Content-Language: en-US
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250723125416-GYA738759@gentoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250723-ddrperfm-upstream-v4-19-1aa53ca319f4@foss.st.com>
+References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
+In-Reply-To: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        Julius Werner <jwerner@chromium.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-8018a
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
 
-Hello Yixun,
+Configure DDRPERFM node on stm32mp257f-dk board.
+Disable the node as DDRPERFM will produce an error message if it's clock
+(shared with the DDRCTRL on STM32MP25x) is secured by common bootloaders.
 
-Thank you for the review.
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-On 7/23/25 14:54, Yixun Lan wrote:
->> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
->> Fixes: 988543522ebd ("clk: spacemit: set up reset auxiliary devices")
-> Can you put Fixes tag before SoB? I'd suggest to follow tip tree's docs
->
-> https://docs.kernel.org/process/maintainer-tip.html
-> 4.2.6. Ordering of commit tags
->
-> otherwise, looks good
-Thanks for pointing that out. I'll send the corrected version in the v2
-and make sure to follow the guidelines in the future.
->
-> Reviewed-by: Yixun Lan <dlan@gentoo.org>
+diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+index 45ffa358c800..81b115280bd4 100644
+--- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
++++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+@@ -84,6 +84,11 @@ &arm_wdt {
+ 	status = "okay";
+ };
+ 
++&ddrperfm {
++	memory-channel = <&lpddr_channel>;
++	status = "disabled";
++};
++
+ &scmi_regu {
+ 	scmi_vddio1: regulator@0 {
+ 		regulator-min-microvolt = <1800000>;
+
+-- 
+2.43.0
 
