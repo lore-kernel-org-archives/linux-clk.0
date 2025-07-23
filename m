@@ -1,109 +1,172 @@
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902B91DA23
-	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 05:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547BD271443;
+	Wed, 23 Jul 2025 06:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753249071; cv=none; b=H9wroKqEtaxxpYcE1clYYsKWSys25Wbv6PF74XDjL557p03KAJEzjthBcOq3TWinNOjM3DAvKAG2S8MbGV5RiHy9b0kjtJeXLzj+Zn1fSPGRC0FhWqbZLgs2tWF4Gg56709LuGLR3CIyr4dZ+XS7+sCZsZcfYM6b2NRSwZsSciY=
+	t=1753253834; cv=none; b=J+Oy+0GrYJZLm2QtLhoNYdya0zcizjYI8NjjG6ZuiOz2XzFdjQmUvnqMbivtIZtg9loysgIsBOsQkOAjz1nfpNvRkOss5PQ+Ya0A46BPa22+jW+TjJEvrnVCOEpbOKy35xtCU3S+jDJblBSHSikQvh7iY9jZGfVz3XgvLF6RTOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753249071; c=relaxed/simple;
-	bh=jgmU0mVrM9TEWK9SDqyK12S6GaRiPg9G1If9CLN/p8M=;
+	s=arc-20240116; t=1753253834; c=relaxed/simple;
+	bh=JIfE9XgM6zvzb89Yq0cMzIJaAN+lyRfDNIOGeiBWxII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XH6I1vHjBHRdFPU7ldr4p+euYTjQHIPyzX8gUqLU0het64YL87wt43kNz7U/twn5rrmJ4EIXhVdJtK1ckRnY612TLiPrCF3jcqFBRv7jkllkSwXMJdouSVoX2xZ1Zq9z1iDAxEYCLuopOasWMvBdmcFPe2IP6uZdWUGohUUmbpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=nuvd4NNk; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQ+I58NMznPTw/Ydt2qgum8IV7lmXP2ggf6ZP5UTtuw7d5/epPwrxnkhAvwgQTlr81OCe1V8XNEtrunKk/le/FJk7hr2SPFzCj9nMKealbDQh77eQFutHuZTGPpLqSl0u1vOSi1vPIWKaMa3Ch1cAcjCC1djzgwNXLRlP2apLx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0iXpUXS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="nuvd4NNk"
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 7F5D71014A48
-	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 11:07:47 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 7F5D71014A48
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1753249067; bh=jgmU0mVrM9TEWK9SDqyK12S6GaRiPg9G1If9CLN/p8M=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0iXpUXS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E611C4CEF4;
+	Wed, 23 Jul 2025 06:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753253833;
+	bh=JIfE9XgM6zvzb89Yq0cMzIJaAN+lyRfDNIOGeiBWxII=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nuvd4NNkx9+OaWJx8MshqRM6HGFPCey7VmVboKOkbDftyBkdZPud0RFn8SnWFzEtt
-	 dupzPgNxoowLXB5IZhR6ulEonRR2v0VyilSdbojQeZP33hmNQfROUlRvE8x2Wetwd7
-	 TWuB1VNhN351k1gOh0+VwWFzwZ53Rl3ryenCN72Y=
-Received: (qmail 15488 invoked by uid 510); 23 Jul 2025 11:07:47 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.944097 secs; 23 Jul 2025 11:07:47 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 23 Jul 2025 11:07:43 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id 4BA853414F2;
-	Wed, 23 Jul 2025 11:07:42 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 034231E81366;
-	Wed, 23 Jul 2025 11:07:42 +0530 (IST)
-Date: Wed, 23 Jul 2025 11:07:36 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Haylen Chu <heylenay@4d2.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
-	elder@riscstar.com, inochiama@outlook.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, heylenay@outlook.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, unicornxdotw@foxmail.com,
-	jszhang@kernel.org, zhangmeng.kevin@linux.spacemit.com,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
- recalc_rate callback
-Message-ID: <aIB1IPa9HBDh+Vns@bhairav-test.ee.iitb.ac.in>
-References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
- <aH7kjkC_YSEi7dFz@ketchup>
+	b=s0iXpUXSq5lTOFR2KZjz0yWzsRJGefnwMpQCGHqr2UHa+TIw2Dh6DzOZXkf8/imon
+	 0bGr7Kgp/lD+i2mZIEJHxxOrDZmTrjQijh2UL2b84WaquG04VZ9Ut5MFYvOnr049Z9
+	 LuUu7yzOLeUrjOixMjKJ+PacUYHUpY3rvXeDFGyFjVRco6nszYyy1P+4Y8UFZ2ZySJ
+	 sfOXhwU16i3QFTgGWkkM9J+on6wmCtANTQAqUNKz8E/sT7me5gRRseuJpGvOTgIysJ
+	 jdEOoygpFDk7HA1ZMpBca197nzb3zukm8DY8FJySkg1wd+/LExayXRMrnNsEsWI7oe
+	 MKCdWHMbjk7GQ==
+Date: Wed, 23 Jul 2025 08:57:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Jonathan Corbet <corbet@lwn.net>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Le Goffic <legoffic.clement@gmail.com>, 
+	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
+ binding into memory channel
+Message-ID: <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
+ <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aH7kjkC_YSEi7dFz@ketchup>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
 
-On Tue, Jul 22, 2025 at 01:08:30AM +0000, Haylen Chu wrote:
-> On Tue, Jul 22, 2025 at 12:37:10AM +0530, Akhilesh Patil wrote:
-> > Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
-> > get correct rate entry. Follow .recalc_rate callback documentation
-> > as mentioned in include/linux/clk-provider.h for error return value.
-> 
-> Nice catch, thanks.
-> 
-> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> 
-> Here misses a Fixes tag. With this added,
-> 
-> Reviewed-by: Haylen Chu <heylenay@4d2.org>
-> 
-Thanks Haylen and Alex for the review. Sent V2 patch with Fixes tag.
+On Tue, Jul 22, 2025 at 04:03:24PM +0200, Cl=C3=A9ment Le Goffic wrote:
+> LPDDR and DDR channels exist and share the same properties, they have a
+> compatible, ranks, and an io-width.
 
-> > ---
-> >  drivers/clk/spacemit/ccu_pll.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-> > index 4427dcfbbb97..45f540073a65 100644
-> > --- a/drivers/clk/spacemit/ccu_pll.c
-> > +++ b/drivers/clk/spacemit/ccu_pll.c
-> > @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
-> >  
-> >  	WARN_ON_ONCE(!entry);
-> >  
-> > -	return entry ? entry->rate : -EINVAL;
-> > +	return entry ? entry->rate : 0;
-> >  }
-> >  
-> >  static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> > -- 
-> > 2.34.1
-> > 
+Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
+don't think all memory types do.
+
+I think this should be renamed to sdram-channel.
+
+>=20
+> Signed-off-by: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  ...pddr-channel.yaml =3D> jedec,memory-channel.yaml} | 26 +++++++++++---=
+--------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jed=
+ec,lpddr-channel.yaml b/Documentation/devicetree/bindings/memory-controller=
+s/ddr/jedec,memory-channel.yaml
+> similarity index 82%
+> rename from Documentation/devicetree/bindings/memory-controllers/ddr/jede=
+c,lpddr-channel.yaml
+> rename to Documentation/devicetree/bindings/memory-controllers/ddr/jedec,=
+memory-channel.yaml
+> index 34b5bd153f63..3bf3a63466eb 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpdd=
+r-channel.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,memo=
+ry-channel.yaml
+> @@ -1,16 +1,16 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,lpddr-ch=
+annel.yaml#
+> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,memory-c=
+hannel.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: LPDDR channel with chip/rank topology description
+> +title: Memory channel with chip/rank topology description
+> =20
+>  description:
+> -  An LPDDR channel is a completely independent set of LPDDR pins (DQ, CA=
+, CS,
+> -  CK, etc.) that connect one or more LPDDR chips to a host system. The m=
+ain
+> -  purpose of this node is to overall LPDDR topology of the system, inclu=
+ding the
+> -  amount of individual LPDDR chips and the ranks per chip.
+> +  A memory channel is a completely independent set of pins (DQ, CA, CS,
+
+A memory channel of SDRAM memory like DDR SDRAM or LPDDR SDRAM is ...
+
+> +  CK, etc.) that connect one or more memory chips to a host system. The =
+main
+> +  purpose of this node is to overall memory topology of the system, incl=
+uding the
+> +  amount of individual memory chips and the ranks per chip.
+> =20
+>  maintainers:
+>    - Julius Werner <jwerner@chromium.org>
+> @@ -26,14 +26,14 @@ properties:
+>    io-width:
+>      description:
+>        The number of DQ pins in the channel. If this number is different
+> -      from (a multiple of) the io-width of the LPDDR chip, that means th=
+at
+> +      from (a multiple of) the io-width of the memory chip, that means t=
+hat
+>        multiple instances of that type of chip are wired in parallel on t=
+his
+>        channel (with the channel's DQ pins split up between the different
+>        chips, and the CA, CS, etc. pins of the different chips all shorted
+>        together).  This means that the total physical memory controlled b=
+y a
+>        channel is equal to the sum of the densities of each rank on the
+> -      connected LPDDR chip, times the io-width of the channel divided by
+> -      the io-width of the LPDDR chip.
+> +      connected memory chip, times the io-width of the channel divided by
+> +      the io-width of the memory chip.
+>      enum:
+>        - 8
+>        - 16
+> @@ -51,8 +51,8 @@ patternProperties:
+>    "^rank@[0-9]+$":
+>      type: object
+>      description:
+> -      Each physical LPDDR chip may have one or more ranks. Ranks are
+> -      internal but fully independent sub-units of the chip. Each LPDDR b=
+us
+> +      Each physical memory chip may have one or more ranks. Ranks are
+> +      internal but fully independent sub-units of the chip. Each memory =
+bus
+>        transaction on the channel targets exactly one rank, based on the
+>        state of the CS pins. Different ranks may have different densities=
+ and
+>        timing requirements.
+> @@ -107,7 +107,7 @@ additionalProperties: false
+> =20
+>  examples:
+>    - |
+> -    lpddr-channel0 {
+> +    memory-channel0 {
+
+If doing this, then separate commit based on generic node name
+convention. But then we need to come with generic node name first,
+sdram-channel?
+
+And also '-0', not '0' suffix.
+
+Best regards,
+Krzysztof
+
