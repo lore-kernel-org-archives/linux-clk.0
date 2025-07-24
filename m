@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE7E182D2;
-	Thu, 24 Jul 2025 21:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8F8230BCC;
+	Thu, 24 Jul 2025 22:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753393601; cv=none; b=qAI+z0CPtmF+0qz/Z31cPz5szfzX6gy8G55WrhyOZYvYuMl6qaAnj3s+FHLJhGwfuuArYqIOwybfpEoqxilYJd7Bc+Sr8YVmcPq0KO53Xqe+h7MlO6CXNhKPu9s0C8W6YpY5bswvuna8d8xgXGbVqWTYPYCwV90oHzrr0CJ5aKs=
+	t=1753394820; cv=none; b=NxapVaGFer6Lh6DDFPn3BW8894qM8yjE2p7Zn7ONlI1ex/p5X9icLjaP70gjW8joEFNVTHCDBkIfrXPREceayXSDkBOcy153mWqUWeKJpN83yawksyBsWutjK8nJBb2X3onKofdx1HP9IU3VcR6uVx5r3nnIQ4baP4mcS5q9NMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753393601; c=relaxed/simple;
-	bh=44md6pA4ZzVglA3NS+dgGyjtnir2qbYnclL9GMjcIRw=;
+	s=arc-20240116; t=1753394820; c=relaxed/simple;
+	bh=H4bI8MigaMkypNpkii9+xYRtzoc4ShGUP1lY8l1HJE4=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZZrQvXGp1oejc4Ee1OLlxUq8mcg6uqYWMvuxfPk6t/bHvuuGs++HgzCHS1hkXZuRhXgULGfiygd6PbNOQN626qhE9beYUUgVaCERmhQrs0Lv9FtscKU9brZuKwP1bthPsEPmLR+fFPr2g3mst7LJsVPO21Dh6redud0sA2D2U6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0FvR+Jp; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=ZkOKQ3QI5LgJ8jNXobpSF1lbQ5eG9idYOo6Mic7+fHr72jpcj3MUyvF8gg6WEL3qqqkhzc4fgwVNHURRDpaCSbYKVz4TzwPZXnGhENYkb3wQqfqTp5U+sumHUF/s4U1k11aPtTiq4PgzQbigy/sTS64b/PUCtkyhPWcv5i6NXWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksI732Z4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0FvR+Jp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3331C4CEED;
-	Thu, 24 Jul 2025 21:46:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksI732Z4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEF4C4CEED;
+	Thu, 24 Jul 2025 22:07:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753393600;
-	bh=44md6pA4ZzVglA3NS+dgGyjtnir2qbYnclL9GMjcIRw=;
+	s=k20201202; t=1753394820;
+	bh=H4bI8MigaMkypNpkii9+xYRtzoc4ShGUP1lY8l1HJE4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=p0FvR+Jp1bqoen3eT/19dZX/XAStD+iMCHjGZxETIjLzaY6NcsQ1ohiEil2rs2Pvh
-	 yV3rZBSjjKYdohz4crIHm3se3RQw/eSu0oxgJlbe5Yo+pK3SGkBNu5c0Z259kSmoQn
-	 BWKL9fvKo/1HpS3mDNhXJxHtlR5bLLyz0qBuVhcBxAULRhIPb/7+p1vRJEzVeBIcyI
-	 8chYNJIq++NmHwxJYZLenr5hxptR0atFQ+VgP9CmabxdXlXNYWHYvJVm6tIiqK5Fk3
-	 cIVAAPFN09KkgpRdCD8gufvbReganpd+CTsXktm8IahOR/4Wt7h05Lmj2z1mLSVQMa
-	 TYk6Z/8K8lIKw==
+	b=ksI732Z46/mkBky8OU6QC/3H2CN751lTILAbTuLw6NiZGamBTd1OUolE0tXAR4/6C
+	 fw059+tkbgkFjNHv5H7qVTdtJSD2udS2vVY5LeJr75oeUtESTg82jCFe/KLzIACpnR
+	 w56OsBpfZs41hMG4VbdTc1SIPCjVmsnmLgYJTcZmGBKyHsF05KaZWELHF43jOeYfuw
+	 ezlp3wsvZ7x/ceRFeX5ZLyDWGPF9wQuwfLhjMnMnZfTe/GmHkyi8YpSETZVXnnq2nl
+	 McadAsd+WCHeHnE6RkNIzDYll06qorlWxiklF7dOnNZpHMGXFNPAhYz6QlmTF1J+mw
+	 U1ajbwJndOmoQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,23 +34,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250704075401.3217179-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com> <20250704075401.3217179-1-sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH 07/80] clk: qcom: Remove redundant pm_runtime_mark_last_busy() calls
+In-Reply-To: <aIKcFzsCvvz0PCBW@x1>
+References: <aIKcFzsCvvz0PCBW@x1>
+Subject: Re: [GIT PULL] clk: thead: Updates for v6.17, part 2
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 24 Jul 2025 14:46:39 -0700
-Message-ID: <175339359981.3513.4796612957232915828@lazor>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>
+Date: Thu, 24 Jul 2025 15:06:58 -0700
+Message-ID: <175339481888.3513.6668397032978631593@lazor>
 User-Agent: alot/0.11
 
-Quoting Sakari Ailus (2025-07-04 00:54:01)
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+Quoting Drew Fustini (2025-07-24 13:48:23)
+> Hi Stephen,
 >=20
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
+> I'm sending this followup PR in case there is still time to include it
+> for your 6.17 PR. Yao Zi refactored mux clk registration which fixes an
+> orphan mux clk issue which would occur when booting with mainline uboot.
+>=20
+> Thanks,
+> Drew
+>=20
+> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
+94:
+>=20
+>   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/th=
+ead-clk-for-v6.17-p2
+>=20
+> for you to fetch changes up to 54edba916e2913b0893b0f6404b73155d48374ea:
+>=20
+>   clk: thead: th1520-ap: Describe mux clocks with clk_mux (2025-07-22 15:=
+40:54 -0700)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into to clk-next
