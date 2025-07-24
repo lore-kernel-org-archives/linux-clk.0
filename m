@@ -1,132 +1,161 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668027F9
-	for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 21:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0928E2749E8;
+	Thu, 24 Jul 2025 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753307318; cv=none; b=fRe6hmR6ZdeKdpd2PeoFioHAlatPk+pRYarIp81ndsJVv/KUom65io9g/h9lAip7x0xSeGwRfj/1m21/WAOWdgTp+CRJ6Yy7XenaFSN0TZcLSRabOxVOvErhavLjqVv+frDBnK6dWPiMBmKjd10jhZHWtyNNV8p591wAPnAOgQw=
+	t=1753344844; cv=none; b=LsQYFm8rCciFbaKm9AnlTgghpxINuJ4oVL/B4Kp56DHQ7jJksBhaG48gw2RxfIWuj8CuiSbX0awQ7g0WtDnZ/aSGewCKQ4r44tTSxAk2nLX7mbmA4PP5An7czEwXtT0LtiqhIkLZZH3LfJT7sN06MbOmnCKJoPSX6Y2EYpF09Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753307318; c=relaxed/simple;
-	bh=hmDFVGB3e5lJKHPj2nV0N+TQauvjtNcfS7zNmuXI2+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tFVpFXoaVQLwmySulofjnLLl6oqtw2vFbhzj1hdSsrAdw26OTYagBSfTddnG5+kJbEVtabWOVS9DWtb/9I5DURoi20wrsZoXrZDM72BrvNZ4BZGDVRWJJrzx507VCiyGlC7YuyUw0TxLHWfTQbRbNlcQAGRXqzgt+AIsmOFi3s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L00Ogef6; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1753344844; c=relaxed/simple;
+	bh=be/TV7DsQTgAMaqFuPJ87zxEaHVLnfypSiqhdxwc3EY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pua3tPn0Jif7hmkuql0al2NI0TBEmDPhZMw8I+VEnkKLrFMRLsViCW32cOBY8BOaOOTYB+t5MlLjj4mz4HopaO3mXx4V65eakCz5Pb+0E4vm8vd+LxHEEuiLchw3did/E4uPPP1v2PBcrp/OuoofvtCzIGa2nmYlLBxGGYnCRGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjmW/oZS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L00Ogef6"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so3510a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Jul 2025 14:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753307315; x=1753912115; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=urCBknSfoBxunYc3x4TdwqCRcefY8UK7ESNufBc9V5U=;
-        b=L00Ogef6AVXYklHfKTL60sm9mYzOQqVhffloVPAHXppU6QIRTlyBY0YW4Jq7sh/9Yr
-         AuoDkJAWCqG2L4FmReSWmh0b+qq+octBXu7GxV9YNvIJWquYjIWOxSh2JCwLTroiNgrA
-         Sm6pFcfPUGA8j88ybJblzjaF4X0IL8Qgxk35U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753307315; x=1753912115;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=urCBknSfoBxunYc3x4TdwqCRcefY8UK7ESNufBc9V5U=;
-        b=qxlxlYEiB55ILI8t+ijRHNsXa2BuTV6CtLHL0zjzoNKj3xVeLJwNm31At4YI6cIxOU
-         +6vtVa+nTdoCniZP4bVByolnWqQMtOw6E/vWy4u0wUEAMxOODQW/cg2oNvttvgaRACd+
-         03rYxjhdNVg+EKI/WEpAtKID0G2aiiKbvtVH5bD6yUAhIpXZG53EwCD6H/Xwn2mv9yKr
-         HL3uWwY+Y8IxVQ9w5bu3ds9kyNqKDJyAEcexmlhKC1f7oRhioyl1y2jzlHuCmK/0uKZj
-         YuzWizYuu2KzD9AKh2Wr9kyKkI7Ykq8SOGFkwWtxuXxvn2jm1TRxBf4qk/qaLYEPyodb
-         iF9A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1KjBgwO6pM9BvqlIEUmWfSAbhEDIWLYfwmIBAhBI25Szf8qyIaa3CFmhvvdrzS58skE9SCbuZnHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7KB2t6UL4I9rR1ojo4Mu0UW4UALps92Et+hAr8XqkrfcrNkUY
-	iZrOXQukVQbTd8rSVWs63Z4RX+pC4rxXgybdB/BIeRTmzjB9EeCR1LuYqdNxOi4NXJB2PoSHc5R
-	kOWpZhwgZRKMGGuaTu4sZG4hbku24wrz/COajTCpR
-X-Gm-Gg: ASbGnctEa+6nDHdWyic2bAyOZwbrtzCT8KHHKLgxn3v5mijjnFeR3PGIor4QFwkBEM1
-	+1uyBvlT/BCRhUByH5WQsuFW2zGszkui4irpspjTxKxLe+Br60B5sf+aeUIMXSHk9D/liqlWeEs
-	yiJEIxguibD7W3IeadJablYRHk85ZskGKbbOoep1nPC4M/2dfMLtj1R55R7MRMs1K9d4XD7dJxW
-	x4cO/vYeIRYYynykMK/dUYRdWBYOsb0iEEXLm0NlY49
-X-Google-Smtp-Source: AGHT+IE29O588oLM6SeiuCxCPB4k1tkTOOJCtmrayG7KngivziL2hZUa8WDJp6fjlpiSMU5FMaGeqaamK89e2HKbNPg=
-X-Received: by 2002:a05:6402:cbc:b0:607:d206:7657 with SMTP id
- 4fb4d7f45d1cf-614c4dff31amr25156a12.2.1753307314360; Wed, 23 Jul 2025
- 14:48:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjmW/oZS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1875BC4CEED;
+	Thu, 24 Jul 2025 08:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753344843;
+	bh=be/TV7DsQTgAMaqFuPJ87zxEaHVLnfypSiqhdxwc3EY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OjmW/oZSiZg40w7QefsB5RDF1gR/c5sKUb1/6D2I5MWwT5CaTsyrozNbZIB2fWs1C
+	 99tZC+kdMvZjNPPXcmJKqCotUYE664ufSp/9qsUaILCWayzEsvlAIsgCFTDphkQKRn
+	 FuB015KzhxoGC47W67yrRQTUV2bAmLR0ZV2YRERgRh4YOKcfUgdO09heVGmAHTkIrk
+	 1tGmNh6nMMBdjmTF0Sj1EPIAM/R15ElpRBjpkX4yqz25dv+9E1jWhMg0GyQFrUDRxI
+	 gsXAz8BAZWyg8Hou0CXnCp6tkP8Gg1vvD6hyxyUP1jrtEy19qJdLSx8LtLpksS5fro
+	 yykLqYzwtBicw==
+Date: Thu, 24 Jul 2025 10:14:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org, djakov@kernel.org, 
+	quic_srichara@quicinc.com, quic_mdalam@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+Message-ID: <20250724-remarkable-kind-ibex-3bb86c@kuoka>
+References: <20250723110815.2865403-1-quic_varada@quicinc.com>
+ <20250723110815.2865403-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com> <20250723-ddrperfm-upstream-v4-5-1aa53ca319f4@foss.st.com>
-In-Reply-To: <20250723-ddrperfm-upstream-v4-5-1aa53ca319f4@foss.st.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Wed, 23 Jul 2025 14:48:21 -0700
-X-Gm-Features: Ac12FXxzDR1_uTCXgfJ-I1tKRpXZw5fnYQthEfx3HR3N-6vAUe5POy6l3eogw2g
-Message-ID: <CAODwPW_kex5Agqxg_i-XC308scEpUJU0me55G7iZ8nB9LC0acg@mail.gmail.com>
-Subject: Re: [PATCH v4 05/20] dt-bindings: memory: factorise LPDDR props into
- SDRAM props
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
-	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250723110815.2865403-2-quic_varada@quicinc.com>
 
-> +      Compatible strings can be either explicit vendor names and part numbers
-> +      (e.g. elpida,ECB240ABACN), or generated strings of the form
-> +      (lp)?ddrX-Y,Z where X, Y and Z are in lower case hexadecimal with leading
-> +      zeroes and :
-> +        - X is the SDRAM version (2, 3, 4, etc.)
-> +        - for LPDDR :
-> +          - Y is the manufacturer ID (from MR5), 2 bytes
-> +          - Z is the revision ID (from MR6 and MR7), 4 bytes
+On Wed, Jul 23, 2025 at 04:38:12PM +0530, Varadarajan Narayanan wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> The RCG and PLL have a separate register space from the GCC.
+> Also the L3 cache has a separate pll and needs to be scaled along
+> with the CPU.
+> 
+> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> [ Added interconnect related changes ]
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v2: Add #interconnect-cells to help enable L3 pll as ICC clock
+>     Add master/slave ids
 
-It's actually one byte manufacturer, two bytes revision. The YY,ZZZZ
-is supposed to represent the amount of hex digits needed.
+and v1 was where? I cannot find it in the inbox, no lore links.
 
-> +        - for DDR4 with SPD, according to JEDEC SPD4.1.2.L-6 :
-> +          - Y is the manufacturer ID, 2 bytes, from bytes 320 and 321
-> +          - Z is the revision ID, 1 byte, from byte 349
 
-I don't think this will identify a part unambiguously, I would expect
-the DDR revision ID to be specific to the part number. (In fact, we're
-also not sure whether manufacturer+revision identifies LPDDR parts
-unambiguously for every vendor, we just didn't have anything more to
-work with there.) I would suggest to use either `ddrX-YYYY,AAA...,ZZ`
-or `ddrX-YYYY,ZZ,AAA...` (where AAA... is the part number string from
-SPD 329-348 without the trailing spaces). The first version looks a
-bit more natural but it might get confusing on the off chance that
-someone uses a comma in a part number string.
+> ---
+>  .../bindings/clock/qcom,ipq5424-apss-clk.yaml | 61 +++++++++++++++++++
+>  include/dt-bindings/clock/qcom,apss-ipq.h     |  6 ++
+>  .../dt-bindings/interconnect/qcom,ipq5424.h   |  3 +
+>  3 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+> new file mode 100644
+> index 000000000000..abb9eb78d271
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,ipq5424-apss-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm APSS IPQ5424 Clock Controller
+> +
+> +maintainers:
+> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> +  - Md Sadre Alam <quic_mdalam@quicinc.com>
 
-> +      The latter form can be useful when SDRAM nodes are created at runtime by
-> +      boot firmware that doesn't have access to static part number information.
+Are you sure? Why they do not send their code then? Usually sending
+other poeple's code means they do not care or moved on or changed jobs.
 
-nit: This text slightly doesn't make sense anymore when in the DDR
-case we do actually have the part number. I guess the real thing the
-bootloader wouldn't have access to is the JEDEC manufacturer ID to
-name mapping.
+> +
+> +description: |
 
-> +      SDRAM revision ID:
-> +        - LPDDR SDRAM, decoded from Mode Register 6 and 7.
-> +        - DDR4 SDRAM, decoded from the SPD from bytes 349 according to
-> +          JEDEC SPD4.1.2.L-6.
+Do not need '|' unless you need to preserve formatting.
 
-nit: Clarify that this is always two bytes for LPDDR and always one
-byte for DDR.
+> +  The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> +  The RCG and PLL have a separate register space from the GCC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq5424-apss-clk
 
-> +      Density of SDRAM chip in megabits:
-> +        - LPDDR SDRAM, decoded from Mode Register 8.
-> +        - DDR4 SDRAM, decoded from the SPD from bytes 322 to 325 according to
-> +          JEDEC SPD4.1.2.L-6.
+Missing blank line
 
-Are these numbers correct? I downloaded SPD4.1.2.L-6 now and it looks
-like 322 is manufacturing location and 323-324 are manufacturing date.
-(Also, I think all of these are specific to DDR4 (and possibly 5?),
-but not to earlier versions. I don't think we need to list it for
-every version, but we should at least be specific what it applies to.)
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Reference to the XO clock.
+> +      - description: Reference to the GPLL0 clock.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +      - const: gpll0
+
+You do not name the inputs according how provider calls them. You name
+them based on the INPUT. pll? source? bus?
+
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#interconnect-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#interconnect-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,ipq5424-gcc.h>
+> +
+> +    apss_clk: apss-clock@fa80000 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Best regards,
+Krzysztof
+
