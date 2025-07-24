@@ -1,98 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B52274B38;
-	Thu, 24 Jul 2025 08:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D195D274B37;
+	Thu, 24 Jul 2025 08:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345265; cv=none; b=VkK5ZRX6Q7br2FYRH52p/JuGpIr5+s+P7/jpgcdgN3iBPDaquTS5POe8BWaiUn/JGsKC9xMW/ZNl1VU4DZTcPOG6RJdp2uj/yQYlj341ZoWkakUu+jgrYPFjasadf0jGbsE8cChZYps7HOti4OeDWU0+DVc/ca/RexGLvFZDlrY=
+	t=1753346353; cv=none; b=WY6900U6fisak9m4HLo1MgNZGBjctsYgNuDpePm2+CFzPqz1pHR+STc112OQiSrXcZYJ5huG4+yXii8MH6Zzt5TazPcvosOzNSwU92VcfFmXJSKqb6bU366nO8FN13nXplSosxDvmMB4uMeDcsVx2g80j6jMky1zInkoRqm7m5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345265; c=relaxed/simple;
-	bh=U7RF3SdhySZA3ed/iA8u3Y4WkTs3IVBv6Wn0InNYTFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9XtrIKpPxRWWo2voetVaxq4oOhPi7pZNPQLAnGq24zVfhbXPMhVeTYjC7yfHkb94YV/y4N4yTk4L1iUKJpxlP9l08uexqzQvSrFK7yIUossiXqWRkgqCkQRsNE8L5bDXDDEvpJXkwMJ8+Hz4evqYHl9ZVvB9hbbybBcHTGwHFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kee/8K20; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753346353; c=relaxed/simple;
+	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZM70HYjRHVC7Xh2kfglm/YGbbm4y9xBPQHUBY7+koKTyiVc5m4IruyXmR/O8JwO/60nnlZtNnNxNfE59KuJ9Vy0Ua3AoCJXSTv0aH3lk/bmW4IFGKUIncDwYA9G0UZC94AbowGOF2sGEhbwhLlEV3uEY/6e8s/fwC1uylVLqWSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QAKurpH/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kee/8K20"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2881FC4CEED;
-	Thu, 24 Jul 2025 08:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753345264;
-	bh=U7RF3SdhySZA3ed/iA8u3Y4WkTs3IVBv6Wn0InNYTFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kee/8K20y2oVRm2lwbOpjCrRGxzGrb8xrFnnXkk9DFRGt88+2RoBpwZeZmIxdW5Zm
-	 MJBI7nb7Vex8GIe/ncNyLlmr3haY760YgKjXKjxlMj3KoZ2YRRxNCSIhtFBI5zxqP4
-	 TV1AntMFyX+1UCuO55Vd5zNZDjqqO8T5h4eLBLuQFaOF+5TKWTcXWWNIl/lNle5BE8
-	 R13lFMXoBjk71XLHA6+TdwMy5y5YS1F5oAK27voDqqTqAcqMGbPZiPwADaKlGHDV7N
-	 ssv3e7oOtRzHg9QmcUy0o84g8j6Bn0Pr4vex75Z1Efq7HfHgOXaZYAupKPb0sGkgrT
-	 +epB0gN90BDAw==
-Date: Thu, 24 Jul 2025 10:21:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: sm8750: Add GPU clock & IOMMU
- nodes
-Message-ID: <20250724-serious-famous-python-e30a04@kuoka>
-References: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
- <20250723-topic-8750_gpucc-v2-3-56c93b84c390@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QAKurpH/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753346344;
+	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QAKurpH/cGlJDYa3bpE9sc3ZroFZ7RvOgUgOMxeTqXFFjvK7yrfRgUp3i29v6aPDO
+	 pXWKtIl/Q3181+IoYdWf6mZB8D/GW5j/FQokVoESudhWnbovMvszgprUeoMWaZB6/Y
+	 NQj6LiGUvYJFXJqBzZ7U9aS9MeSz6pARSkLemnSAsZJNhWSTOHDWX3nDp9JR2kA9Wh
+	 R7LOpSwSLt7UQFYrLn2Xtdx8Ke/ZQoTJafaGT/A4UP0UNSN7Nvx/lEJSWcHk8g3+xY
+	 2sObhWmefeDSoHgSC3o/SLB67hLFoce9if6Zezw7BFngpsXkbVc4gEgsC4KRXOem3o
+	 XRYq9tXygKGSw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 87CDE17E0FC2;
+	Thu, 24 Jul 2025 10:39:03 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	u.kleine-koenig@baylibre.com,
+	geert+renesas@glider.be,
+	chun-jie.chen@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] clk: mediatek: mt8195-infra_ao: Fix parent for infra_ao_hdmi_26m
+Date: Thu, 24 Jul 2025 10:38:28 +0200
+Message-ID: <20250724083828.60941-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250723-topic-8750_gpucc-v2-3-56c93b84c390@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 10:38:50PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Add the GPU_CC and GX_CC (brand new! as far as we're concerned, this
-> is simply a separate block housing the GX GDSC) nodes, required to
-> power up the graphics-related hardware.
-> 
-> Make use of it by enabling the associated IOMMU as well. The GPU itself
-> needs some more work and will be enabled later.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8750.dtsi | 63 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> index 4643705021c6ca095a16d8d7cc3adac920b21e82..ca0770a34bed64183185aedde04f1bb96eebfa91 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> @@ -5,6 +5,7 @@
->  
->  #include <dt-bindings/clock/qcom,rpmh.h>
->  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
-> +#include <dt-bindings/clock/qcom,sm8750-gpucc.h>
->  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
->  #include <dt-bindings/dma/qcom-gpi.h>
->  #include <dt-bindings/gpio/gpio.h>
-> @@ -3154,6 +3155,68 @@ tcsrcc: clock-controller@f204008 {
->  			#reset-cells = <1>;
->  		};
->  
-> +		gxcc: clock-controller@3d64000 {
+The infrastructure gate for the HDMI specific crystal needs the
+top_hdmi_xtal clock to be configured in order to ungate the 26m
+clock to the HDMI IP, and it wouldn't work without.
 
-Not a clock controller based on properties below.
+Reparent the infra_ao_hdmi_26m clock to top_hdmi_xtal to fix that.
 
-> +			compatible = "qcom,sm8750-gxcc";
-> +			reg = <0x0 0x03d64000 0x0 0x6000>;
-> +			power-domains = <&rpmhpd RPMHPD_GFX>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&gpucc GPU_CC_CX_GDSC>;
-> +			#power-domain-cells = <1>;
-> +		};
+Fixes: e2edf59dec0b ("clk: mediatek: Add MT8195 infrastructure clock support")
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/mediatek/clk-mt8195-infra_ao.c b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
+index bb648a88e43a..ad47fdb23460 100644
+--- a/drivers/clk/mediatek/clk-mt8195-infra_ao.c
++++ b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
+@@ -103,7 +103,7 @@ static const struct mtk_gate infra_ao_clks[] = {
+ 	GATE_INFRA_AO0(CLK_INFRA_AO_CQ_DMA_FPC, "infra_ao_cq_dma_fpc", "fpc", 28),
+ 	GATE_INFRA_AO0(CLK_INFRA_AO_UART5, "infra_ao_uart5", "top_uart", 29),
+ 	/* INFRA_AO1 */
+-	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "clk26m", 0),
++	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "top_hdmi_xtal", 0),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_SPI0, "infra_ao_spi0", "top_spi", 1),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC0, "infra_ao_msdc0", "top_msdc50_0_hclk", 2),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC1, "infra_ao_msdc1", "top_axi", 4),
+-- 
+2.50.1
 
