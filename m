@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86CE1F4CAC;
-	Thu, 24 Jul 2025 21:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC16C190664;
+	Thu, 24 Jul 2025 21:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753391531; cv=none; b=bCVfu9sYABSCEKIVP2bjNCYAGdLu/SwPgGGDt/wsZh7s7nz8VRZ7d2vYbDWFYCI0mDGilKLNkBo1StADnlRFXZlVUqAAYpLHAj0utCiEeUi4yg1KkWhYDjxNi75/c/UUDZEESlJDh221Io7vNfo4Hb1iEWBQO7hmn/MU80Ldt+o=
+	t=1753391894; cv=none; b=ASC399QM5Id1azy6PDHktdJDneVo2AvHvGoWjE2rsCgM2wWGKlnNqBXWxjIw8kPcI600oOj9U4i4NR0kq9R7O1YnbDGhtvIFJOj5ZyHjVwtNiBqJTDdu/RX/Y45vm2NVrFvwVjvsgjiFTvPorFBE4RIS69WI7GJopydJwYKUpk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753391531; c=relaxed/simple;
-	bh=WqXl0oSRFmrg57tuZy0QoZl1j1CEs9cN8MESRjdRHP4=;
+	s=arc-20240116; t=1753391894; c=relaxed/simple;
+	bh=je2F6ZuuHECpICwip9oYkHBZEO0DnwRYGEBFSL91pJg=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=GZ403s5MJbeH60knaoiWMuBv/zrWh8ExA46iX5aWbCbSLvQ41bXYBYw3CzOLxNFOpjzB6IOam4zzUzG5t3HHDzI8RWXvGpJxiz30PEVWwve0ClnLtHWIy1dB6DOmlG5QsbcE6K000SBnUYFfyMz8KI9Ynaol4EmY4QH65aJueBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPOxXiig; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=ijXE6F8H897IyWebzvdM7tkhZpnOwAroPi8hvKOw414vM9bOSY+RPPaKT27pZu2F6+6vTV8jEHHguW+iKUBxMDfxlzyQs184lSyZwy4kAvQJsiuikaO9EZoX8mVPrHliiRoPm4kzbY6noDgmWx5yU8fdy17sN3ijIwiozoYkAp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQjOQfI9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPOxXiig"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31197C4CEED;
-	Thu, 24 Jul 2025 21:12:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQjOQfI9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 123CDC4CEED;
+	Thu, 24 Jul 2025 21:18:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753391531;
-	bh=WqXl0oSRFmrg57tuZy0QoZl1j1CEs9cN8MESRjdRHP4=;
+	s=k20201202; t=1753391894;
+	bh=je2F6ZuuHECpICwip9oYkHBZEO0DnwRYGEBFSL91pJg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=RPOxXiigZl0IXkgqZbHsY81oVCLVvAoJciliVxuiWWMaQqiPkDjZlE9n/sj09zX71
-	 Dl1/yQA8b3WYfqbg0YhxW+1zBaH+l9gtEEcgRbf7vah3tc58mnoy+XENlbv9Ng7wiD
-	 nb5TXscnns4PJWAGEs2w9/sxN7I8Xefu/0bXqI8bYxhWKG51JSvXc7dEzx5ehvuxuC
-	 SyIuPfzaFcKlwgcyrHZMUT3KRLQVIC61JdYzwFbX76TXZhHQmS7Fss36NiuCxxxWKf
-	 0plZfSmyMR/lxZ5VvZ26LkqBgVf8yCyqeQbaj2qtcY2GciIM2tBrBIWx22mXNnjHGt
-	 iJz8Yhq3prg1Q==
+	b=iQjOQfI9xGyBJV47DQ3QOipJG1RJ5Dlx4CUxKvSuJX6O04kG/Tf6jx2ndLFI5/0tC
+	 ct8IHUtWRuraaeZsSWuWAyvF1LspKeUut+/nNCP6W0cBsOREQDE6kKlfwSSfC65+Uy
+	 6T9JU4ulifyeNIk4jRxAkVx2WyHTtjVIcy2FBHbGhRolG3+PnM/2aEKj1ALU/mqz1G
+	 mW9Tvc50BQE7bMH2myICs7CYY0f5S6MdyKK71CLcTKdKuOfyAl2/BXXOM7jmtKjsL+
+	 7OiJBgkprEfxk/Cfverb+TsmKfygAOFkU3nlwNyXqzRwpeor1iA2nBVqseXfFp50VU
+	 TslULrpvQwPGA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,17 +34,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250630232658.3701225-1-robh@kernel.org>
-References: <20250630232658.3701225-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Convert maxim,max9485 to DT schema
+In-Reply-To: <20250630232652.3701007-1-robh@kernel.org>
+References: <20250630232652.3701007-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: Convert microchip,pic32mzda-clk to DT schema
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Conor Dooley <conor+dt@kernel.org>, Daniel Mack <daniel@zonque.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>
-Date: Thu, 24 Jul 2025 14:12:10 -0700
-Message-ID: <175339153034.3513.1217988806822508120@lazor>
+To: Chandra Mandal <purna.mandal@microchip.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>
+Date: Thu, 24 Jul 2025 14:18:12 -0700
+Message-ID: <175339189273.3513.2071408676369082143@lazor>
 User-Agent: alot/0.11
 
-Quoting Rob Herring (Arm) (2025-06-30 16:26:57)
+Quoting Rob Herring (Arm) (2025-06-30 16:26:51)
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
 
