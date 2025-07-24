@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC7A221555;
-	Thu, 24 Jul 2025 19:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1220126A;
+	Thu, 24 Jul 2025 19:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384954; cv=none; b=G6VBi3Qxr+ESq0bcSf28TaJDOqXlntPst7ccBR/P6Wj8Vs1HQSSG3XKogQC7We7wjVhtFSheArShFqX/njm36HQl//48wlOFevNJyXZnAmlTOocnvxKs9YxKHuSUaTUABTMIkS2oUa9n0g/CL97ndtUe/zv5LWwFWmGwm2vjE/Y=
+	t=1753385189; cv=none; b=o4ZSnWDSXfDGy3UlrgjakS4OGUYaDOa6Gm3F03OJQdcc2+D76HpJxrFBUiw9c5yqYMx34v3ACfgxqjHJ+Q1uJzKfywtANyNcSP08z9M4kJedAwuyQPNPAfaWfrMc8hLBDiOpfTNZgGL96qA6kWEwen2ckTnkGrVAOib4DZUaAYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384954; c=relaxed/simple;
-	bh=jj8pVnFNMiNYDteUIsSWX/VH+9PwWP61n4vluNJvB1c=;
+	s=arc-20240116; t=1753385189; c=relaxed/simple;
+	bh=xfsvX/sSwdyRpEMZfbnUT8tTJvTmoG3ftDvHhZaSh1Y=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=mWyw/nY9r6B3GOHtqZIazCBbU+WYQql3PgXdu3sZHtcypXN2BFaLq9VrB2le0BQlPm9SJNOFrGvAR09OLABAh5Fb2fLcZwV//kNZBn0N6fPF8hG3JGw2APqIRWS4x1HmnfnSe00DI9/CX6gJe5IXw1ovssJgkh/B7s/I3J+Cd34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JP4DpbEG; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=WrwfzFE4wjKhyex4yHItzWobNNn0j8n14qHYJafSOwT5f9KHwbCqEdta9wcgpgq82ds1yN9SvbFjCQgTE7p2s+z+dNhG1/RZoxIMU625jm1GnZXd/Ma5ZCrS5zHPfk8MHzy7MJU4FsftgR9ZusxaviP8WrXkqCfwQyGSBenIEsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCPrNc9i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JP4DpbEG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B95C4CEED;
-	Thu, 24 Jul 2025 19:22:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCPrNc9i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A709BC4CEED;
+	Thu, 24 Jul 2025 19:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753384953;
-	bh=jj8pVnFNMiNYDteUIsSWX/VH+9PwWP61n4vluNJvB1c=;
+	s=k20201202; t=1753385188;
+	bh=xfsvX/sSwdyRpEMZfbnUT8tTJvTmoG3ftDvHhZaSh1Y=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=JP4DpbEGnXNG4pxomPNbh7wyNqtl3p3tfk15it7SvuC5EU/AUK3xCl7GiZCTR9Lps
-	 P59KCtoHcZY8Kt3fuwDaCdEofCsZ+O2kcnm4Xxht0ovB9C7hKY89bPrUgsCHdb41ux
-	 nI/85YlCXU1VGf6pGGFMF/noWuTYyfJyRELul2jqgZeaItu1lPcu8zqWjz+qE0cQ2m
-	 2/aPWVuDUStJZUVVNbGnVvUm3ObEtWkKeSGOnW4F+vaW1/N/Z2R9sSwnKz4jA2u5aq
-	 HE33+aVk+euD9a4eFRH6nSAvvAaKTV3TVaQEWHp/RefkzCzeLNPCuI03aGSkFFS1k+
-	 mBCB3/TTC0snA==
+	b=ZCPrNc9i/e+2FAh7K6Z5Apnzd8BU8aSRRdBKLk80TTk2vLg0jBGU30TMffqckvVlD
+	 2yEKH085K8EMCIi6TK/CG+AoshWQ01nPjyXa6o103roGPOBXr0ApOtTsTCQ/1e097v
+	 54+aRGnibXJsguj3RGWpWs+ZEo4lCDE4JrePswSfjhbmn+hb1n6WVK2V84bNJiA0Xz
+	 49+sIdClhCfzscv9FRAKtMwPVVJBNYpKv55lg6mDkMkHMbsmZDMTfNctjmMDGP8z3F
+	 UIuJ3Lr5Woq6MQSVjRhfFiLcvU+2I6Cv4xsHO3Nyi9I3JrkQgnLkyxDxWvgX6I5zkp
+	 YupOwIUkp+ScQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,31 +34,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250723103844.1641282-1-abel.vesa@linaro.org>
-References: <20250723103844.1641282-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.17
+In-Reply-To: <20250717-bindings-double-colon-v1-1-c04abc180fcd@fairphone.com>
+References: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com> <20250717-bindings-double-colon-v1-1-c04abc180fcd@fairphone.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Remove double colon from description
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Thu, 24 Jul 2025 12:22:32 -0700
-Message-ID: <175338495202.3513.695095414806833302@lazor>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+To: Abel Vesa <abel.vesa@linaro.org>, Ajit Pandey <quic_ajipan@quicinc.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>, David Wronek <david@mainlining.org>, Dmitry Baryshkov <lumag@kernel.org>, Georgi Djakov <djakov@kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>, Iskren Chernev <me@iskren.info>, Jens Reidel <adrian@travitia.xyz>, Jonathan Marek <jonathan@marek.ca>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, Manivannan Sadhasivam <mani@kernel.org>, Martin Botka <martin.botka@somainline.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Priya Kakitapalli <quic_skakitap@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Rob Herring <robh@kernel.org>, Robert Marko <robert.markoo@sartura.hr>, Shawn Guo <shawn.guo@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, Vinod Koul <vkoul@kernel.org>, krishna Lanka <quic_vamslank@quicinc.com>
+Date: Thu, 24 Jul 2025 12:26:27 -0700
+Message-ID: <175338518784.3513.15713025865524328468@lazor>
 User-Agent: alot/0.11
 
-Quoting Abel Vesa (2025-07-23 03:38:44)
-> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
-94:
+Quoting Luca Weiss (2025-07-16 23:54:44)
+> No double colon is necessary in the description. Fix it for all bindings
+> so future bindings won't have the same copy-paste mistake.
 >=20
->   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.17
->=20
-> for you to fetch changes up to c78865241ecffaff7ce5db00ed5b71c1a70c0ff1:
->=20
->   MAINTAINERS: Update i.MX Clock Entry (2025-07-21 10:33:57 +0300)
->=20
-> ----------------------------------------------------------------
+> Reported-by: Rob Herring <robh@kernel.org>
+> Closes: https://lore.kernel.org/lkml/20250625150458.GA1182597-robh@kernel=
+.org/
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-Thanks. Pulled into to clk-next
+Applied to clk-next
