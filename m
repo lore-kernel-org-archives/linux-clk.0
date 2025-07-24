@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18C623BCFD;
-	Thu, 24 Jul 2025 22:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484623BCF1;
+	Thu, 24 Jul 2025 22:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753395196; cv=none; b=sM/GhAJrp9Mwtd1xSBzZR+M117EWInj+r8utVv7UhI+PBtmK3hyEs8VS5Cmiic1gqlaWLj8aiTcXrI4w7pu5b2RdjDBVPZmsQJ/kwlh37OEpRG8eP3k9rLmSERzy4fv5AT1QJD+aSeYDS9mOpoVDQhHRpFC91mcdME522EYi7LY=
+	t=1753395327; cv=none; b=fgkbWy39XBCA8jX1yS0lFgmwjVp3X78W8hkVQpoZ0XTBAcIfNETFoVdaJY88DJ+JmDwXfwEc/huGBptv+9syWMWStjg7/+1Q/wHcivd6tL+O4XTISeAicmtrVMTzLONoVA3jeaT2jJqGGKq7kCxF/o5C+vo1qWEIVdW8PCxLUhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753395196; c=relaxed/simple;
-	bh=+6PqI7wk8F+44CmUhhhxedAyzpbRRvtFWn62OQCLp1w=;
+	s=arc-20240116; t=1753395327; c=relaxed/simple;
+	bh=grSCuiAwDCBeCFH+68Z8byC7gM3bxL4Cu93vNJLHf8w=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=GXvPfXLDI7rya2v2xb1ugt57VcqeU2gKwzVH5BZw806mJC4UEUAuJadeqb/YxamTdkO5ASc6FEjdbfWN5cjZ7tMVT0iSuwkVROtPGqIO3icIo7UdCEC7hPQ3buq5T37ROii1pz43OEc7BVSI9N67otFQrJCcvEBlUdsKsFy43yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DY7//GDA; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=mp9wYmFrWSYxsMl59+28UK/DKZ3ZwYe1Ogid1/QOU2Dp3E8OeK4wWikwb/+dYTf1fA9z1N9Dcq0CN4apTeePP7QmV0WntbBx65LQ3ZiScMrhx3bIsWQX7VMxFxldKH195Wj8WhO+IHPLc4bT860RsnKjdgfHi6DYtHcVLZHH02w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E66zGOvb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DY7//GDA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B84C4CEED;
-	Thu, 24 Jul 2025 22:13:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E66zGOvb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 666DEC4CEED;
+	Thu, 24 Jul 2025 22:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753395196;
-	bh=+6PqI7wk8F+44CmUhhhxedAyzpbRRvtFWn62OQCLp1w=;
+	s=k20201202; t=1753395326;
+	bh=grSCuiAwDCBeCFH+68Z8byC7gM3bxL4Cu93vNJLHf8w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DY7//GDAoJpj2q4lePqWYrSLlldprUf9tIydinsX4uqwx73bzmlS0cV1xbN0hexUs
-	 IvynkqCBPFhApYmOSbovmvcEAoQycfDjN4O8YrGLVzA0f03hLWQXO9z1kA6wPm1LEj
-	 GT7yXWMFxZ//rGYBIhqa6URfEiN4P3eyqmszAVIknnAcD6cxKr4a+XajFjoysUf/sj
-	 BPrw4NAnnHpu9G8NEUCQ4/8f8SjP3QpokNsgljANb/M0i2FGWvTfY/AmWz6tFQjaVk
-	 lVS0XcnrZabaZTJJLEdqvYEUOwQZN7su3T8oIHZo2jQKl6Tr4+RLrp9qdzgQ9zMbE4
-	 hFA7vU/PbEyVQ==
+	b=E66zGOvbXj5RU5mFjLO7+U5lA78MW2mEnLgq4Yw10ocYgTS9wWCaT5qcComr+19ca
+	 moKsRzn4JTOUmxti3xQ42p3YtHr+01g4y8gfg2RJcsN52svsajtgN90h3wBSls8GPW
+	 7HL3BHdnI9arfRP+sXSiQ8SLIQzflf5l7kEfnbsozcwjyS76YO2KQqIX5KRqEK4y/0
+	 UYCVaYrr3/uzzmpf5rdnmG6VyGj4ubuDBboQ7ILH/HK5yaqaRdF/pta+ooCSJf92zB
+	 7n71Gs4+X+M2tbji+lOShk7cM2F7U0ZRnJY5G/jvxJqjJ/2STLXPoRkjOvqjEYRYDQ
+	 MAbAd2ix4Y+Eg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,46 +34,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <776638cc-cbd9-4747-82eb-e11bcc6c8bdd@zohomail.com>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com> <776638cc-cbd9-4747-82eb-e11bcc6c8bdd@zohomail.com>
-Subject: Re: [PATCH v6 0/3] riscv: canaan: Add support for K230-Canmv clock
+In-Reply-To: <20250710-clk-imx-round-rate-v1-13-5726f98e6d8d@redhat.com>
+References: <20250710-clk-imx-round-rate-v1-0-5726f98e6d8d@redhat.com> <20250710-clk-imx-round-rate-v1-13-5726f98e6d8d@redhat.com>
+Subject: Re: [PATCH 13/13] clk: imx: scu: convert from round_rate() to determine_rate()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>, Troy Mitchell <TroyMitchell988@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Xukai Wang <kingxukai@zohomail.com>
-Date: Thu, 24 Jul 2025 15:13:15 -0700
-Message-ID: <175339519523.3513.2798631977806639092@lazor>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+To: Abel Vesa <abelvesa@kernel.org>, Brian Masney <bmasney@redhat.com>, Fabio Estevam <festevam@gmail.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
+Date: Thu, 24 Jul 2025 15:15:24 -0700
+Message-ID: <175339532491.3513.6017087056878306040@lazor>
 User-Agent: alot/0.11
 
-Quoting Xukai Wang (2025-07-13 09:48:44)
+Quoting Brian Masney (2025-07-10 14:10:45)
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
 >=20
-> I'm working on a Linux clock driver and have encountered a question
-> regarding how to properly represent a particular type of clock source.
+> This driver also implements both the determine_rate() and round_rate()
+> clk ops, and the round_rate() clk ops is deprecated. When both are
+> defined, clk_core_determine_round_nolock() from the clk core will only
+> use the determine_rate() clk ops, so let's remove the round_rate() clk
+> ops since it's unused.
 >=20
-> In K230 SoC, there's a mux clock whose parent can optionally be an
-> external pulse signal, which is counted via a pin (the input is not
-> generated internally but comes from an external source). I=E2=80=99m wond=
-ering:
->=20
-> Should this external pulse signal be modeled as a clock within the
-> Common Clock Framework (CCF)?
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-Likely, yes.
-
->=20
-> If so, what would be the correct way to register or describe such a
-> clock in the driver?
-
-If it is a fixed rate pulse signal I would use a fixed rate clk node at
-the root of the DT tree:
-
-	clock-50000 {
-		compatible =3D "fixed-clock";
-		#clock-cells =3D <0>;
-		clock-frequency =3D <50000>;
-	}
-
-If you need pinctrl settings to make that clk work you can assign them
-in that node, although I don't know if I've ever seen such a case
-before. If the external parent clk needs to be gated you'll need to
-write a more featured driver, unless it can be controlled with a gpio or
-something like that.
+Applied to clk-next
