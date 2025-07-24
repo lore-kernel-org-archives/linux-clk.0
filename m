@@ -1,54 +1,56 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D195D274B37;
-	Thu, 24 Jul 2025 08:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5345727144C;
+	Thu, 24 Jul 2025 08:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346353; cv=none; b=WY6900U6fisak9m4HLo1MgNZGBjctsYgNuDpePm2+CFzPqz1pHR+STc112OQiSrXcZYJ5huG4+yXii8MH6Zzt5TazPcvosOzNSwU92VcfFmXJSKqb6bU366nO8FN13nXplSosxDvmMB4uMeDcsVx2g80j6jMky1zInkoRqm7m5M=
+	t=1753346354; cv=none; b=sajumKQG858+ZqaXZ0f6EM+1HhyuGu2/daltORHeD41hCgT1paUy8kmTT/ON9ijMzFP9f1jSMzs4ndZPcTEEmHYIAySm5lESEM5U4lyQ6vCu17lrs54g5CLIopyJhzeHMfUNGKitv7R9H1YcIwh0/G2utDHFK1sOf3pxHGQ0eEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346353; c=relaxed/simple;
-	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZM70HYjRHVC7Xh2kfglm/YGbbm4y9xBPQHUBY7+koKTyiVc5m4IruyXmR/O8JwO/60nnlZtNnNxNfE59KuJ9Vy0Ua3AoCJXSTv0aH3lk/bmW4IFGKUIncDwYA9G0UZC94AbowGOF2sGEhbwhLlEV3uEY/6e8s/fwC1uylVLqWSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QAKurpH/; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1753346354; c=relaxed/simple;
+	bh=UpI8W9Kvq+tlAPwkA1q2e9J/sYFjFWemYloJYK9MbHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TdxncRUYrLF8LWFimFDeLwo+TMp/f0MJT9f7oH5N7hDDT+JORDYfUjpZ2WqVcyIb3rdkk0RmkKwCYx3LmOcel4OoGYRhyKd0HbGzsEsq0+YvXaOBCsQ3s6+0+AT2ZIqojdzHdN6Lb+ojZTIdikL21cYRqeWA0BVW3PpCDAYBe3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XcbR6SGG; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QAKurpH/"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XcbR6SGG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753346344;
-	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
+	s=mail; t=1753346350;
+	bh=UpI8W9Kvq+tlAPwkA1q2e9J/sYFjFWemYloJYK9MbHw=;
 	h=From:To:Cc:Subject:Date:From;
-	b=QAKurpH/cGlJDYa3bpE9sc3ZroFZ7RvOgUgOMxeTqXFFjvK7yrfRgUp3i29v6aPDO
-	 pXWKtIl/Q3181+IoYdWf6mZB8D/GW5j/FQokVoESudhWnbovMvszgprUeoMWaZB6/Y
-	 NQj6LiGUvYJFXJqBzZ7U9aS9MeSz6pARSkLemnSAsZJNhWSTOHDWX3nDp9JR2kA9Wh
-	 R7LOpSwSLt7UQFYrLn2Xtdx8Ke/ZQoTJafaGT/A4UP0UNSN7Nvx/lEJSWcHk8g3+xY
-	 2sObhWmefeDSoHgSC3o/SLB67hLFoce9if6Zezw7BFngpsXkbVc4gEgsC4KRXOem3o
-	 XRYq9tXygKGSw==
+	b=XcbR6SGGbV4KWfCGLnSjJiqjso3xW6s4zKFOBJLJYJys0FgUk9O0GeNN1IK9ArYwO
+	 n27vGLPgYIJ5Qrt/s1MdbQK44wLaOIJtVbGVIOXvX4aeedd5Y6A1bIrW1dy64WOQnW
+	 yOhzmaGt+qkEMf/JfjnjwD/snGiDCl2HraVglvCOvx0V1GcHLTD5Migzu8wjZgJTlK
+	 SAcBjEpHZPlg+z8GEb6TDHGX+1pVcNOyLURiWyfBMwJjoPGFEP9Bby6DLzlFpDGFuJ
+	 cBl2YOhbdpNkq3d4MPoDLfiYOuRPo69UPi3d8nYNh+q34G49dmkj0E+wo2gnngHSuO
+	 qifcyID/BWowg==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 87CDE17E0FC2;
-	Thu, 24 Jul 2025 10:39:03 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A8F8117E1062;
+	Thu, 24 Jul 2025 10:39:09 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: sboyd@kernel.org
-Cc: mturquette@baylibre.com,
+To: robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	u.kleine-koenig@baylibre.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
 	geert+renesas@glider.be,
-	chun-jie.chen@mediatek.com,
-	wenst@chromium.org,
-	linux-clk@vger.kernel.org,
+	u.kleine-koenig@baylibre.com,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH] clk: mediatek: mt8195-infra_ao: Fix parent for infra_ao_hdmi_26m
-Date: Thu, 24 Jul 2025 10:38:28 +0200
-Message-ID: <20250724083828.60941-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 1/3] dt-bindings: clock: mt7622: Add AFE_MRGIF clock
+Date: Thu, 24 Jul 2025 10:39:05 +0200
+Message-ID: <20250724083907.61313-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -58,31 +60,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The infrastructure gate for the HDMI specific crystal needs the
-top_hdmi_xtal clock to be configured in order to ungate the 26m
-clock to the HDMI IP, and it wouldn't work without.
+Add the missing AFE Merge Interface clock to MT7622 to make use of
+it in the audio subsystem.
 
-Reparent the infra_ao_hdmi_26m clock to top_hdmi_xtal to fix that.
+While at it, also remove the useless CLK_AUDIO_NR_CLK definition.
 
-Fixes: e2edf59dec0b ("clk: mediatek: Add MT8195 infrastructure clock support")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt8195-infra_ao.c | 2 +-
+ include/dt-bindings/clock/mt7622-clk.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-infra_ao.c b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-index bb648a88e43a..ad47fdb23460 100644
---- a/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-+++ b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-@@ -103,7 +103,7 @@ static const struct mtk_gate infra_ao_clks[] = {
- 	GATE_INFRA_AO0(CLK_INFRA_AO_CQ_DMA_FPC, "infra_ao_cq_dma_fpc", "fpc", 28),
- 	GATE_INFRA_AO0(CLK_INFRA_AO_UART5, "infra_ao_uart5", "top_uart", 29),
- 	/* INFRA_AO1 */
--	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "clk26m", 0),
-+	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "top_hdmi_xtal", 0),
- 	GATE_INFRA_AO1(CLK_INFRA_AO_SPI0, "infra_ao_spi0", "top_spi", 1),
- 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC0, "infra_ao_msdc0", "top_msdc50_0_hclk", 2),
- 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC1, "infra_ao_msdc1", "top_axi", 4),
+diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+index c12e7eab0788..a173eb132892 100644
+--- a/include/dt-bindings/clock/mt7622-clk.h
++++ b/include/dt-bindings/clock/mt7622-clk.h
+@@ -228,7 +228,7 @@
+ #define CLK_AUDIO_MEM_ASRC4		44
+ #define CLK_AUDIO_MEM_ASRC5		45
+ #define CLK_AUDIO_AFE_CONN		46
+-#define CLK_AUDIO_NR_CLK		47
++#define CLK_AUDIO_AFE_MRGIF		47
+ 
+ /* SSUSBSYS */
+ 
 -- 
 2.50.1
 
