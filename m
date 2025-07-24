@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720882741B1;
-	Thu, 24 Jul 2025 08:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B52274B38;
+	Thu, 24 Jul 2025 08:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345086; cv=none; b=m3GcjrdybnF0vEMBgjbRmreMysZNESVa4yOafK3hREseOyCAmlcRcoN6YWDa6+6oD7tZFuXmFT3HY/LhekDFhPbZO5pc0DYAcnJ8dbuUA3NVAPpuy8i0bH+4zfRvi4tQVK9C4I+pejIg6q9u0A+qnbDixkQ5Z3xSLATTD3ZwNq4=
+	t=1753345265; cv=none; b=VkK5ZRX6Q7br2FYRH52p/JuGpIr5+s+P7/jpgcdgN3iBPDaquTS5POe8BWaiUn/JGsKC9xMW/ZNl1VU4DZTcPOG6RJdp2uj/yQYlj341ZoWkakUu+jgrYPFjasadf0jGbsE8cChZYps7HOti4OeDWU0+DVc/ca/RexGLvFZDlrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345086; c=relaxed/simple;
-	bh=OL9bBpIegpyWIY833O11UHbhceAp80SpQbly2RuewQg=;
+	s=arc-20240116; t=1753345265; c=relaxed/simple;
+	bh=U7RF3SdhySZA3ed/iA8u3Y4WkTs3IVBv6Wn0InNYTFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLjRkGC1GrjcTuDpes9UbGrQie82cJXcTzfhHxyPDOde+RnWI9DdQ2ziJ0pf+ZOG+n9chORW3ZtBglknorQSJCV6nFOwTkyyGTqlLQgJhnhYoMzYgzAhkBtZI+BDOtfBFZqL5OLligiITr2OMPITjNNpVBSKEJvVyK8/YvZ6wzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAzLCrI/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9XtrIKpPxRWWo2voetVaxq4oOhPi7pZNPQLAnGq24zVfhbXPMhVeTYjC7yfHkb94YV/y4N4yTk4L1iUKJpxlP9l08uexqzQvSrFK7yIUossiXqWRkgqCkQRsNE8L5bDXDDEvpJXkwMJ8+Hz4evqYHl9ZVvB9hbbybBcHTGwHFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kee/8K20; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAzLCrI/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 707F6C4CEED;
-	Thu, 24 Jul 2025 08:18:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kee/8K20"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2881FC4CEED;
+	Thu, 24 Jul 2025 08:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753345085;
-	bh=OL9bBpIegpyWIY833O11UHbhceAp80SpQbly2RuewQg=;
+	s=k20201202; t=1753345264;
+	bh=U7RF3SdhySZA3ed/iA8u3Y4WkTs3IVBv6Wn0InNYTFs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GAzLCrI/PqXie1AHtKRR9uuKU0WJYsRN0VNr/7uJWdIStT5vNl40ZH4x1vXOKuJAW
-	 dq+bQKnZVX9dOsbXLV41nWsD/abCalVd8ltVnbHe94IVwu3RwRbMd395W/vcVUxctK
-	 aeuQNhRkhQE0obYfs+Rx8SYmDkD3CCIAGePxpQoBSRg2C3XBkaLCARrlYj7KEbs8vy
-	 zPi0iowVFiBNiCnFiyxCPKwHBNPYr1lXGPRJmFNAu8SEL8BkIGfZa5SXlQtg3aNE1k
-	 ogVsvJeLkNXs4XRuGubXa6JQSYHyMX1CVXH994VZU9MVRyNgjwyKl2g+crFX29NAvR
-	 3tDZWTVKndB4w==
-Date: Thu, 24 Jul 2025 10:18:02 +0200
+	b=kee/8K20y2oVRm2lwbOpjCrRGxzGrb8xrFnnXkk9DFRGt88+2RoBpwZeZmIxdW5Zm
+	 MJBI7nb7Vex8GIe/ncNyLlmr3haY760YgKjXKjxlMj3KoZ2YRRxNCSIhtFBI5zxqP4
+	 TV1AntMFyX+1UCuO55Vd5zNZDjqqO8T5h4eLBLuQFaOF+5TKWTcXWWNIl/lNle5BE8
+	 R13lFMXoBjk71XLHA6+TdwMy5y5YS1F5oAK27voDqqTqAcqMGbPZiPwADaKlGHDV7N
+	 ssv3e7oOtRzHg9QmcUy0o84g8j6Bn0Pr4vex75Z1Efq7HfHgOXaZYAupKPb0sGkgrT
+	 +epB0gN90BDAw==
+Date: Thu, 24 Jul 2025 10:21:02 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Konrad Dybcio <konradybcio@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -35,10 +35,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
-Message-ID: <20250724-blazing-therapeutic-python-1e96ca@kuoka>
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: sm8750: Add GPU clock & IOMMU
+ nodes
+Message-ID: <20250724-serious-famous-python-e30a04@kuoka>
 References: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
- <20250723-topic-8750_gpucc-v2-1-56c93b84c390@oss.qualcomm.com>
+ <20250723-topic-8750_gpucc-v2-3-56c93b84c390@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,138 +48,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250723-topic-8750_gpucc-v2-1-56c93b84c390@oss.qualcomm.com>
+In-Reply-To: <20250723-topic-8750_gpucc-v2-3-56c93b84c390@oss.qualcomm.com>
 
-On Wed, Jul 23, 2025 at 10:38:48PM +0200, Konrad Dybcio wrote:
+On Wed, Jul 23, 2025 at 10:38:50PM +0200, Konrad Dybcio wrote:
 > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> The SM8750 features a "traditional" GPU_CC block, much of which is
-> controlled through the GMU microcontroller. Additionally, there's
-> an separate GX_CC block, where the GX GDSC is moved.
+> Add the GPU_CC and GX_CC (brand new! as far as we're concerned, this
+> is simply a separate block housing the GX GDSC) nodes, required to
+> power up the graphics-related hardware.
 > 
-> Add bindings to accommodate for that.
+> Make use of it by enabling the associated IOMMU as well. The GPU itself
+> needs some more work and will be enabled later.
 > 
 > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
->  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  5 ++
->  .../bindings/clock/qcom,sm8750-gxcc.yaml           | 61 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm8750-gpucc.h      | 53 +++++++++++++++++++
->  3 files changed, 119 insertions(+)
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 63 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> index 02968632fb3af34d6b3983a6a24aa742db1d59b1..d1b3557ab344b071d16dba4d5c6a267b7ab70573 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> @@ -20,6 +20,7 @@ description: |
->      include/dt-bindings/clock/qcom,sm8550-gpucc.h
->      include/dt-bindings/reset/qcom,sm8450-gpucc.h
->      include/dt-bindings/reset/qcom,sm8650-gpucc.h
-> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
->      include/dt-bindings/reset/qcom,x1e80100-gpucc.h
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index 4643705021c6ca095a16d8d7cc3adac920b21e82..ca0770a34bed64183185aedde04f1bb96eebfa91 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -5,6 +5,7 @@
 >  
->  properties:
-> @@ -31,6 +32,7 @@ properties:
->        - qcom,sm8475-gpucc
->        - qcom,sm8550-gpucc
->        - qcom,sm8650-gpucc
-> +      - qcom,sm8750-gpucc
->        - qcom,x1e80100-gpucc
->        - qcom,x1p42100-gpucc
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+>  #include <dt-bindings/clock/qcom,sm8750-gcc.h>
+> +#include <dt-bindings/clock/qcom,sm8750-gpucc.h>
+>  #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+>  #include <dt-bindings/gpio/gpio.h>
+> @@ -3154,6 +3155,68 @@ tcsrcc: clock-controller@f204008 {
+>  			#reset-cells = <1>;
+>  		};
 >  
-> @@ -40,6 +42,9 @@ properties:
->        - description: GPLL0 main branch source
->        - description: GPLL0 div branch source
->  
-> +  power-domains:
-> +    maxItems: 1
+> +		gxcc: clock-controller@3d64000 {
 
-This should be a different binding or you need to restrict other
-variants here.
+Not a clock controller based on properties below.
 
-> +
->  required:
->    - compatible
->    - clocks
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b900c19156f5a2ba4e0f7c95276c771f615fdf23
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8750-gxcc.yaml
-
-There is nothing for clocks in the binding. Place power domain providers
-in their directory.
-
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8750-gxcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller on SM8750
-
-There is no clocks nor resets here. Only power domains.
-
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konradybcio@kernel.org>
-> +
-> +description: |
-> +  Qualcomm graphics clock control module provides the clocks, resets and power
-
-Also confusing.
-
-> +  domains on Qualcomm SoCs.
-> +
-> +  See also:
-> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
-
-reset or clock path?
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm8750-gxcc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    items:
-> +      - description: GFX voltage rail
-> +      - description: MX_COLLAPSIBLE voltage rail
-> +      - description: GPU_CC_CX GDSC
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - power-domains
-> +  - '#power-domain-cells'
-> +
-
-You miss ref... or this is a bit confusing.
-
-> +unevaluatedProperties: false
-
-additionalProperties instead
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,sm8750-gpucc.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@3d64000 {
-
-No, clock controllers have clock-cells. This cannot be a clock
-controller if it does not have any clocks for anyone to use.
+> +			compatible = "qcom,sm8750-gxcc";
+> +			reg = <0x0 0x03d64000 0x0 0x6000>;
+> +			power-domains = <&rpmhpd RPMHPD_GFX>,
+> +					<&rpmhpd RPMHPD_MXC>,
+> +					<&gpucc GPU_CC_CX_GDSC>;
+> +			#power-domain-cells = <1>;
+> +		};
 
 Best regards,
 Krzysztof
