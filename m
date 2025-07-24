@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0626C383;
-	Thu, 24 Jul 2025 21:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A0F2EE5F6;
+	Thu, 24 Jul 2025 21:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392158; cv=none; b=lXQ73gLT3gB91NE2wfGMPd3DulpcZ7mQ5s0q+PXi7k/e/19vxSrkd/mGLkAeXnbiZdcuxMaT4bz3XOzcV5BzCiIShCVUaV+uanlK8DKLaE3ElQMwY1bGCG4OS/cDbdnls4s5wXnbbn8y+/ILBwxIHBoBw/oNCRLmS1kPwDXwcRM=
+	t=1753392294; cv=none; b=RURQRrwDS5Jm5CFVlDNXvmYY+A1oz5TUymZJQdQ5k/VsbhRdsLWqQSkSRBCNJ1qE1fJzAm0jO9WMvew+cdkpPOanyzTxpkTtInm2pmgLTidRJxedZ02+obpWxGs5piD2s5sQXOvW73wfe2WRUXhjJKHIQejvIe+8z43xjya3P40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392158; c=relaxed/simple;
-	bh=NV1hvyxJKKzHIHZJgLDzRN+VIKp6B6Xs0+8rC4DRIDE=;
+	s=arc-20240116; t=1753392294; c=relaxed/simple;
+	bh=XF9wki9AjDCraP3PkW3hEqMnoy89UeAnuDiZvWolUoQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=hWSuO1Ug9dyoLtEXBAW0yT53ubQWjjNVAwF60gpVuSwmX//AuYWb6SSnxMkNtc4CPYLjPKg4glIgTBiQPCXUT7iOtsyp/yuWmYXnZCpKf7/e+VFD+b75e0qlIPyPZORxsZDCALnZzQ0haKxjkCMpmPxcYrwc/OF9NuiamQiXvss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEd9Zfdy; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=d3h7yFYtudKxlIYIT99xRx3GXNSgmzHmglXoKvwae/qPhfbAJh4uLtN5jvmU8G07NHsM3vBuIhnHOmVEa9C4jWOnz05u/7BvhN8W6OsqdaaD87/6DYq/0P+UANe38vq+Cv6523qQvwW8J2e+Pbk0ai/8pjG/GW3XIL2A6wSjNH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpVDTtmn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEd9Zfdy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC00C4CEED;
-	Thu, 24 Jul 2025 21:22:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpVDTtmn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D667CC4CEED;
+	Thu, 24 Jul 2025 21:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753392158;
-	bh=NV1hvyxJKKzHIHZJgLDzRN+VIKp6B6Xs0+8rC4DRIDE=;
+	s=k20201202; t=1753392293;
+	bh=XF9wki9AjDCraP3PkW3hEqMnoy89UeAnuDiZvWolUoQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sEd9ZfdyJQTyCzKPnuPMCpoxHqB5c9+FRjFP2oBBQpVfQYU0Bt6HM+EDyYQEaPmvK
-	 rMcTRyDOXrjMRE1DUe5/JU7o2atRbIOLzuFZ14KoXEoit5S6hF5tgOv+taUhuLzLvw
-	 hyQbOhQb7tkafsmqyNBnLl2EIM2CeQ3LLR5tbIojaL55eS0zkMv3jIpvq9vbXlOGid
-	 EiJwofk81/NKmKqxIM9ZC/AlALe3dZALRpAqaVYxqB9J+FPCEoxFLAeILBOwE8+Psi
-	 TW3Lk/7iLL05cN/g4avOf5AMUjyyR6F70t/P7IRSNAtPEH+DJJjeODGRlrBeTRlQf4
-	 k3G1db2u0lSLA==
+	b=TpVDTtmnke03qtUEM6XIe7WRETHGZba0w/dTkUEFESVK6kJkUu9ET7u/rEdgl4bGx
+	 2EfRXLHH+i865D9SfrkseELWYD78ivz0BkiFnnzfeHYll1nkdAXSzp9qNT/KigbhAy
+	 T5NiCU8nM+JrweBAZePm38tiRglzXSaeo6nE37mL1qsPw5wL8nRe1MxIARw6gt8vcQ
+	 8sQUw65v/p2D0hPaA7kgvgfml9H9l59fExztLX1CwHYZM2Lu281UiO6W2v2a5oRSb7
+	 sXmpIoxIWLKlTPQkXdbzWLZ3US4iGFhbInUbA7oANY0Ki5BVzlaTW/c4pyT0PuBrxO
+	 eIxpilMnzjWcA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,18 +34,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250630232625.3700213-1-robh@kernel.org>
-References: <20250630232625.3700213-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Convert qca,ath79-pll to DT schema
+In-Reply-To: <20250625231053.1134589-2-florian.fainelli@broadcom.com>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com> <20250625231053.1134589-2-florian.fainelli@broadcom.com>
+Subject: Re: [PATCH 01/16] MAINTAINERS: Include clk.py under COMMON CLK FRAMEWORK entry
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>, Antony Pavlov <antonynpavlov@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>
-Date: Thu, 24 Jul 2025 14:22:37 -0700
-Message-ID: <175339215777.3513.3466941664741809283@lazor>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J. Wysocki <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Liam R. Howlett <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kent Overstreet <kent.overstreet@linux.dev>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Uladzislau Rezki <urezki@gmail.com>, Matthew Wilcox <willy@infradead.org>, Kuan-Ying Lee <kuan-ying.lee@canonical.com>, Ilya Leoshkevich <iii@linux.ibm.com>, Etienne Buira <etienne.buira@free.fr>, Antonio Quartulli <antonio@mandelbit.com>, Illia Ostapyshyn <illia@yshyn.com>, linux-clk@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, kasan-dev@googlegroups.com, maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Florian Fainelli <florian.fainelli@broadcom.com>, linux-kernel@vger.kernel.org
+Date: Thu, 24 Jul 2025 14:24:53 -0700
+Message-ID: <175339229300.3513.16413844188162316683@lazor>
 User-Agent: alot/0.11
 
-Quoting Rob Herring (Arm) (2025-06-30 16:26:24)
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Quoting Florian Fainelli (2025-06-25 16:10:38)
+> Include the GDB scripts file under scripts/gdb/linux/clk.py under the
+> COMMON CLK subsystem since it parses internal data structures that
+> depend upon that subsystem.
+>=20
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > ---
 
 Applied to clk-next
