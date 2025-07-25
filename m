@@ -1,188 +1,270 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB32D320B
-	for <linux-clk@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A3C1A4F3C;
+	Fri, 25 Jul 2025 10:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753435865; cv=none; b=RZsC9mV0mgPkY7XXVIBPnhjQL/BoHu+if1knouTDIxCdFDKcdY6BYvrrKi9oPB2/zrm3peZsIztoL4DjHaTeMpHfV2YNptKZleJy3P9FJQSCkVsIfonjNBwNUXFI+WRAB2WJvDHAZLTSuwbJRlZTLyrtZTY/6Sry/jGbVFRKXU4=
+	t=1753441023; cv=none; b=dHQh+B5oodNNcGQmHRZza4Mb9nDlC36TGoQFL8O0/oTA0GNAa5DY+rnp2m0FCJD/V5qTasf9QlX36aJYlLiit8efTZVvKcTfuz1t9G/+tdJk+IZG1Nwd73wY/y7mHqmO7Unajxk5VJaPmOK+HF8gJYqyZwcB9gwcT+v3zyv/8bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753435865; c=relaxed/simple;
-	bh=nUHw6qP239Oq8jyKrq+quvMkdXJhaA8f0RlXWhVYRvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Or0NhUPnOm5I1LVCKlLRY4t8MCMiEqO8hzVlmyvxWH1K3xZwV56ec/YOCFHg83jdnX7VhEo/2W2Q785CuCJnOTeyqjT2XfLWnxgwMA+LDq2VwMYjOJAT03Yx6G/NsLEU+N+wAZpEqugGunZFTRLZhU4kQL+cwJT2y8GTH6RPYf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H0AgewKN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H0AgewKN"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P8hQi4026758
-	for <linux-clk@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UHICGwDwDl8daLhetFxgvsPtxOilAqYGnlpMT/3FILM=; b=H0AgewKNMaOsW8EU
-	f62QnRdnuAMqJkLNTgd73eMxoIxelTBzL/moR+Xlwlx7jqG2DmfoV0xu/YRgdZlB
-	xjV9TT2nKmIbjxQATJhS+BIeiFTG5vIA03BIWcbpbBGzfFltb0IR/rRhLfAtDeRp
-	yeurOMn+YsbaQwf5K4mjwMG/wUExUPmXs+udOFOY/qTko0jTHZ65VCxPNYa4iN/G
-	BiNliyjDAnj3cAD38IzoXaFCZV5OcalSlh8toeYKFqyNMJmeyBeNaJ7mKg2iTo3b
-	BE/W8zYo8dhDtnMyHKfyg9/+nbf4yr4J8Z3r+KlJ6+tb//C+uJb2Tylf7ctol42n
-	MLmBbQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2u1j9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 25 Jul 2025 09:31:03 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e344f333beso35493985a.2
-        for <linux-clk@vger.kernel.org>; Fri, 25 Jul 2025 02:31:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753435862; x=1754040662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHICGwDwDl8daLhetFxgvsPtxOilAqYGnlpMT/3FILM=;
-        b=IKR59uDBuZbtiSYw1KGwFw1NaKbDlw2+idI0zEDWub9vyP7byWNJWoo5lEFtNh3gVp
-         7qHz/H079U/T4jYj7XPoxfOQ9zp7nylxUYVs3rhxSoYtWFKqWJhjTBfcnI0WZzDUp9Qz
-         1kq506Cnl4d7ao5+HiylpSDtseQb8SohNdtD3nOY8mFtCA8Yxg//fit2OXfcUzec+MnS
-         8/GNPUa2U0lKOQVglBqCGIx/PqsG9KLNzR7oVMYsCAb3IU3gc7+OhIiVZcdo2WoMwtbN
-         HQ6Qamd3/2fgPVHzklHWH3w0PodexqAnz28IFR109w//tXuv1KY6uoR72/faUGJymknp
-         o2JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKz0DP28racuoOJ5GKKIni6HbJA3WJ3M3kho8wl0Z3a9WKBfEuIweyE2gR5CgIm92GUFsTl0STDnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzE4u9QkfkBq5O1varOQ9nPqYzImD66DpVu4mjINYzdavgBicW
-	MNSBjL4bkFt7hKF7Jv7VLKSgm6e/na3ipcH2+AVUxaFUq74UkJpUC+8KAq7qPp5KmI7xXYSFDSD
-	rjKfyx/w0Iq1lInmccx9Iat32Sq4IFlj8K4wftv+UOxfvH3Owc9NgQUpang+2HfakeB5WYKw=
-X-Gm-Gg: ASbGnctun59G7wa2aWW8+N5zsb7yqKa6cubP2rFk92Jga5U15zMPdAPmkzqWNtVEAMj
-	PEZfXst5UnU8baqc+xzS3McucvjMFUD0HxhkOFLOx3inYi1pkBalzX2Jnref16uOvc/nBqiJLJh
-	nntXQxPnzNfwQIw5lCY7J5RbAirR3pxANxhdiUe0Xmf0Xcox4oIG0Q4meKt07QitZJe4cU+DhKU
-	MsXQmAoX8ABcDSTtbjAAdNs8BOS88j6AtF4xeUpP50ViYVTtvYoNZk/KaalX/IMp3AAsrUmVwND
-	RijON/njeAoQmdJWdYVd9Pb69gOZaLb+vS8RSRNp3epa6IA4PqaMqwBtsnSoWl+TYBr38J12pI7
-	4VmY8ATGLP+uBDdViPg==
-X-Received: by 2002:a05:620a:472b:b0:7e3:49b9:d06a with SMTP id af79cd13be357-7e63bfa59f0mr48179785a.9.1753435861414;
-        Fri, 25 Jul 2025 02:31:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2nBHxoBD5pfk+D4HZkaX/oRldqRoW3uOXw1dgDzm0zFAJsz26a1olh1gz5zMUTAt4W1if2w==
-X-Received: by 2002:a05:620a:472b:b0:7e3:49b9:d06a with SMTP id af79cd13be357-7e63bfa59f0mr48176885a.9.1753435860738;
-        Fri, 25 Jul 2025 02:31:00 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cd650basm240182766b.58.2025.07.25.02.30.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 02:31:00 -0700 (PDT)
-Message-ID: <54b617c1-bd1b-4244-b75d-57eaaa2c083d@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 11:30:57 +0200
+	s=arc-20240116; t=1753441023; c=relaxed/simple;
+	bh=MszVLV3l7szP0DsCNUSlI6uuZgiTHWwNYaXVQghmqB0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bWgDkUYh+mijT23jAqScWF36BBHRSRzN4QZXj2DISfIlX7akJ8yp1gFHTS6MTZhrLPLs73S4za2YSL7OWllZyMzHm2TVCHF0d0f8zRTMXUjA5xcOs60ZYBO9yRyBlJfiAvFt6+Fqu0IWaoKm/KHl7FtsanZBR7Xrt0UInQM1G8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bpPpz1MQQz6HJRn;
+	Fri, 25 Jul 2025 18:52:59 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A06C61400DC;
+	Fri, 25 Jul 2025 18:56:57 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Jul
+ 2025 12:56:56 +0200
+Date: Fri, 25 Jul 2025 11:56:55 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, "Gatien
+ Chevallier" <gatien.chevallier@foss.st.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Gabriel
+ Fernandez" <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, Julius Werner
+	<jwerner@chromium.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 12/19] perf: stm32: introduce DDRPERFM driver
+Message-ID: <20250725115655.00002304@huawei.com>
+In-Reply-To: <20250722-ddrperfm-upstream-v3-12-7b7a4f3dc8a0@foss.st.com>
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
+	<20250722-ddrperfm-upstream-v3-12-7b7a4f3dc8a0@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
- <20250723-topic-8750_gpucc-v2-1-56c93b84c390@oss.qualcomm.com>
- <20250724-blazing-therapeutic-python-1e96ca@kuoka>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250724-blazing-therapeutic-python-1e96ca@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA4MCBTYWx0ZWRfX1BAuj1lkoRqO
- UmcprKkh+KB/LojGSE7r3/Y6zNUeQwqFHuIhSjvIzrH7p1nuhoS3g8yp2sKZlKOJ4Glg3PIIUmT
- q/hkPo1xLXXcL2e3JuC3kCfloLoWVdvAwRgXlyIDKj5eUg78uJNciEPZG2OiySAAPijCE/n356u
- +Z9B0aKAxviG//BndoEYKW7R0TPX7UnVwjTk1VwdVwBd2IF6Z5cmLZ6iE3OEWj3I30Nx132RsWb
- 5lIQR57iYed7V4twrSMEg2CgAIPt7bV4fQxzd8Imu/0xRusie1VmHlItLAoOgC2mqKOfc7ohRZL
- Unrngc8KFnx679UcJe2AGeKP0fdscwtxyj/WBkpJGzQcFvz7M2iPraXLUisS5gvnrPN8X/Vb9/F
- 4u5CuIc6hsD3QlmuVHpWC2NmrrVSA6RPiekknwDWLPxwOwtDqytmlRvI0sL8TocTexVpxmDL
-X-Proofpoint-ORIG-GUID: 4J9b_eW-h5025jOBc4S8S5_orpXD1x0J
-X-Authority-Analysis: v=2.4 cv=FcA3xI+6 c=1 sm=1 tr=0 ts=68834ed7 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ZXpw8kv6nMavt5JzddgA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: 4J9b_eW-h5025jOBc4S8S5_orpXD1x0J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 adultscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 clxscore=1015 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507250080
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 7/24/25 10:18 AM, Krzysztof Kozlowski wrote:
-> On Wed, Jul 23, 2025 at 10:38:48PM +0200, Konrad Dybcio wrote:
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->> The SM8750 features a "traditional" GPU_CC block, much of which is
->> controlled through the GMU microcontroller. Additionally, there's
->> an separate GX_CC block, where the GX GDSC is moved.
->>
->> Add bindings to accommodate for that.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  5 ++
->>  .../bindings/clock/qcom,sm8750-gxcc.yaml           | 61 ++++++++++++++++++++++
->>  include/dt-bindings/clock/qcom,sm8750-gpucc.h      | 53 +++++++++++++++++++
->>  3 files changed, 119 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> index 02968632fb3af34d6b3983a6a24aa742db1d59b1..d1b3557ab344b071d16dba4d5c6a267b7ab70573 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
->> @@ -20,6 +20,7 @@ description: |
->>      include/dt-bindings/clock/qcom,sm8550-gpucc.h
->>      include/dt-bindings/reset/qcom,sm8450-gpucc.h
->>      include/dt-bindings/reset/qcom,sm8650-gpucc.h
->> +    include/dt-bindings/reset/qcom,sm8750-gpucc.h
->>      include/dt-bindings/reset/qcom,x1e80100-gpucc.h
->>  
->>  properties:
->> @@ -31,6 +32,7 @@ properties:
->>        - qcom,sm8475-gpucc
->>        - qcom,sm8550-gpucc
->>        - qcom,sm8650-gpucc
->> +      - qcom,sm8750-gpucc
->>        - qcom,x1e80100-gpucc
->>        - qcom,x1p42100-gpucc
->>  
->> @@ -40,6 +42,9 @@ properties:
->>        - description: GPLL0 main branch source
->>        - description: GPLL0 div branch source
->>  
->> +  power-domains:
->> +    maxItems: 1
-> 
-> This should be a different binding or you need to restrict other
-> variants here.
+On Tue, 22 Jul 2025 16:03:29 +0200
+Cl=E9ment Le Goffic <clement.legoffic@foss.st.com> wrote:
 
-Actually looks like this is the same case as the recent videocc changes
-(15 year old technical debt catching up to us..)
+> Introduce the driver for the DDR Performance Monitor available on
+> STM32MPU SoC.
+>=20
+> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
+> that come from the DDR Controller such as read or write events.
+>=20
+> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
+> counter, there is a notion of set of events.
+> Events from different sets cannot be monitored at the same time.
+> The first chosen event selects the set.
+> The set is coded in the first two bytes of the config value which is on 4
+> bytes.
+>=20
+> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
+> and may be secured by bootloaders.
+> Access controllers allow to check access to a resource. Use the access
+> controller defined in the devicetree to know about the access to the
+> DDRPERFM clock.
+>=20
+> Signed-off-by: Cl=E9ment Le Goffic <clement.legoffic@foss.st.com>
+Hi Cl=E9ment,
 
-I'll send a mass-fixup for this.
+Minor comments inline.,
 
-Some platforms require 2 and some require 3 entries here. Do I have to
-restrict them very specifically, or can I do:
+Thanks,
 
-power-domains:
-  description:
-    Power domains required for the clock controller to operate
-  minItems: 2
-  items:
-    - description: CX power domain
-    - description: MX power domain
-    - description: MXC power domain
+Jonathan
 
-?
+> --- /dev/null
+> +++ b/drivers/perf/stm32_ddr_pmu.c
+> @@ -0,0 +1,896 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025, STMicroelectronics - All Rights Reserved
+> + * Author: Cl=E9ment Le Goffic <clement.legoffic@foss.st.com> for STMicr=
+oelectronics.
+> + */
+> +
+> +#include <linux/bus/stm32_firewall_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/hrtimer.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+Why? =20
+Looks like of.h is needed so you should include that directly.
 
-Konrad
+Check all your headers.  mod_devicetable.h should be here
+for instance.
+
+> +#include <linux/perf_event.h>
+> +#include <linux/reset.h>
+
+> +
+> +static void stm32_ddr_pmu_event_del(struct perf_event *event, int flags)
+> +{
+> +	struct stm32_ddr_pmu *pmu =3D to_stm32_ddr_pmu(event->pmu);
+> +	struct stm32_ddr_cnt *counter =3D event->pmu_private;
+> +	bool events =3D true;
+> +
+> +	stm32_ddr_pmu_event_stop(event, PERF_EF_UPDATE);
+> +
+> +	stm32_ddr_pmu_free_counter(pmu, counter);
+> +
+> +	for (int i =3D 0; i < pmu->cfg->counters_nb; i++)
+> +		events =3D !list_empty(&pmu->counters[i]);
+What is this trying to do?  It seems to be only setting
+	events =3D !list_empty(&pmu->counters[pmu->cfg_counters_nb - 1]);
+
+If so just check that but my guess it you care if there is anything
+in any of them lists.
+
+> +
+> +	/* If there is activity nothing to do */
+> +	if (events)
+> +		return;
+> +
+> +	hrtimer_cancel(&pmu->hrtimer);
+> +	stm32_ddr_stop_counters(pmu);
+> +
+> +	pmu->selected_set =3D -1;
+> +
+> +	clk_disable(pmu->clk);
+> +}
+
+
+> +static int stm32_ddr_pmu_get_memory_type(struct stm32_ddr_pmu *pmu)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(pmu->dev);
+> +	struct device_node *memchan;
+> +
+> +	memchan =3D of_parse_phandle(pdev->dev.of_node, "memory-channel", 0);
+> +	if (!memchan)
+> +		return dev_err_probe(&pdev->dev, -EINVAL,
+> +				     "Missing device-tree property 'memory-channel'\n");
+> +
+> +	if (of_device_is_compatible(memchan, "jedec,lpddr4-channel"))
+
+Random thought, feel free to ignore.
+I wonder if it's worth using an of_device_id match table here?
+
+
+> +		pmu->dram_type =3D STM32_DDR_PMU_LPDDR4;
+> +	else if (of_device_is_compatible(memchan, "jedec,lpddr3-channel"))
+> +		pmu->dram_type =3D STM32_DDR_PMU_LPDDR3;
+> +	else if (of_device_is_compatible(memchan, "jedec,ddr4-channel"))
+> +		pmu->dram_type =3D STM32_DDR_PMU_DDR4;
+> +	else if (of_device_is_compatible(memchan, "jedec,ddr3-channel"))
+> +		pmu->dram_type =3D STM32_DDR_PMU_DDR3;
+> +	else
+> +		return dev_err_probe(&pdev->dev, -EINVAL, "Unsupported memory channel =
+type\n");
+> +
+> +	if (pmu->dram_type =3D=3D STM32_DDR_PMU_LPDDR3)
+> +		dev_warn(&pdev->dev,
+> +			 "LPDDR3 supported by DDRPERFM but not supported by DDRCTRL/DDRPHY\n"=
+);
+> +
+> +	return 0;
+> +}
+
+> +static struct attribute *stm32_ddr_pmu_events_attrs_mp[] =3D {
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd, PERF_OP_IS_RD),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_wr, PERF_OP_IS_WR),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_activate, PERF_OP_IS_ACTIVATE),
+> +	STM32_DDR_PMU_EVENT_ATTR(ctl_idle, CTL_IDLE),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_req_with_no_credit, PERF_HPR_REQ_WITH=
+_NO_CREDIT),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_req_with_no_credit, PERF_LPR_REQ_WITH=
+_NO_CREDIT),
+> +	STM32_DDR_PMU_EVENT_ATTR(cactive_ddrc, CACTIVE_DDRC),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_powerdown, PERF_OP_IS_ENTER_P=
+OWERDOWN),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_refresh, PERF_OP_IS_REFRESH),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_selfresh_mode, PERF_SELFRESH_MODE),
+> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req, DFI_LP_REQ),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_xact_when_critical, PERF_HPR_XACT_WHE=
+N_CRITICAL),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_xact_when_critical, PERF_LPR_XACT_WHE=
+N_CRITICAL),
+> +	STM32_DDR_PMU_EVENT_ATTR(perf_wr_xact_when_critical, PERF_WR_XACT_WHEN_=
+CRITICAL),
+> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req_cpy, DFI_LP_REQ),  /* Suffixed '_cp=
+y' to allow the
+> +								* choice between sets 2 and 3
+> +								*/
+> +	STM32_DDR_PMU_EVENT_ATTR(time_cnt, TIME_CNT),
+> +	NULL,
+
+No trailing comma for a terminating entry like this.  You got the other cas=
+es
+so I guess this one just got missed.
+
+> +};
+
+> +static int stm32_ddr_pmu_device_probe(struct platform_device *pdev)
+> +{
+> +	struct stm32_firewall firewall;
+> +	struct stm32_ddr_pmu *pmu;
+> +	struct reset_control *rst;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	pmu =3D devm_kzalloc(&pdev->dev, struct_size(pmu, counters, MP2_CNT_NB)=
+, GFP_KERNEL);
+> +	if (!pmu)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, pmu);
+> +	pmu->dev =3D &pdev->dev;
+> +
+> +	pmu->cfg =3D device_get_match_data(pmu->dev);
+> +
+> +	pmu->membase =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+> +	if (IS_ERR(pmu->membase))
+> +		return PTR_ERR(pmu->membase);
+> +
+> +	if (of_property_present(pmu->dev->of_node, "access-controllers")) {
+> +		ret =3D stm32_firewall_get_firewall(pmu->dev->of_node, &firewall, 1);
+
+Jiri is busy driving dev_fwnode() thorugh to get rid of all the directly re=
+ferences
+to of_node.  Probably better to use that here from the start.
+
+
+> +		if (ret)
+> +			return dev_err_probe(pmu->dev, ret, "Failed to get firewall\n");
+> +		ret =3D stm32_firewall_grant_access_by_id(&firewall, firewall.firewall=
+_id);
+> +		if (ret)
+> +			return dev_err_probe(pmu->dev, ret, "Failed to grant access\n");
+> +	}
+> +
+> +	pmu->clk =3D devm_clk_get_optional_enabled(pmu->dev, NULL);
+> +	if (IS_ERR(pmu->clk))
+> +		return dev_err_probe(pmu->dev, PTR_ERR(pmu->clk), "Failed to get prepa=
+re clock\n");
+
+Comment doesn't match code. This is going to enabled, not just prepared.
+
+> +
+> +	rst =3D devm_reset_control_get_optional_exclusive(pmu->dev, NULL);
+> +	if (IS_ERR(rst))
+> +		return dev_err_probe(pmu->dev, PTR_ERR(rst), "Failed to get reset\n");
+
+> +}
+
+
