@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71025393C;
-	Fri, 25 Jul 2025 20:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA2722F767;
+	Fri, 25 Jul 2025 23:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753473937; cv=none; b=EIgf8KNOnQVCA1t8K4i4t5kVyUtc0lTWJnX0ZTLzfaMedQmHHzyiIstwUcN8+YoU1PzqLYT7wixiWdSe72OKtmUrQH9zbZMekoWZJRs/2lrXjKuMI5t1KZilf5eAe+I9JL96gPUkWWH+ZINVUYPT8HuheyOzD+XSjZ8N/9UVWes=
+	t=1753485155; cv=none; b=hUvAC8qdhHGdQomHPiPQRBT5ySyupPoQZvYr0SIJlOKIWbNMgi62ySSnhQ/TkFt0VS3vhJe3Vr/wTVp/iOnBItHIpjtm7D1pALl5OoMOoGrayZNDLW3OyH2RuaYeqYczu/RqavaB2IA6qGygkGskDF4F+GZ0hX8+KRIIAhGHFYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753473937; c=relaxed/simple;
-	bh=Q2jZW7v9hu+TpLa3xYjqej6AtWSM3G3mIsRSK1nrrV4=;
+	s=arc-20240116; t=1753485155; c=relaxed/simple;
+	bh=lKPeV4dbiMZgeOgy5vCWxzKkrNkCOUiKusQlfwyyh4g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8s8jLPQYShiJYSZR7W4nAPtFtg7ZYry/HDr4SuvYyjcleJZDscAQFysaeFlgiCNLRlvhVoEnq0QwziOR2SjQDtRNZe/eln5tUheVGMHJLJIvlrvYkVxgW4otICQEgLoQ+GTZfHJ4/PF0CYKq+7/xRKVXnUnUTVFGte+zrGyQDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYyt4KE/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dwe8Ep+3E6WnFRQ8awZeT5YBoi8lQIrnu2c4rob0FhYzuqRxVBapbD3DuTL9aYjgzsLwk+hBwaU5UFeAuIZLabjbgc0G99H8Jy+3wdJh9n4aTQ8B2L7wLZY5JnJ7Ayg6plQq/GYmUBLOmKhRJXAeKikxsQtXiPYwc+QcedxvJFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUO6gcNm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYyt4KE/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C308AC4CEE7;
-	Fri, 25 Jul 2025 20:05:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUO6gcNm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F03C4CEE7;
+	Fri, 25 Jul 2025 23:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753473935;
-	bh=Q2jZW7v9hu+TpLa3xYjqej6AtWSM3G3mIsRSK1nrrV4=;
+	s=k20201202; t=1753485155;
+	bh=lKPeV4dbiMZgeOgy5vCWxzKkrNkCOUiKusQlfwyyh4g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BYyt4KE/LNDKndF9oqGXS6Zhkx92ObAXyUnaVzcFEs+wFhiOwhQ6vC0lrB3fFdWmn
-	 nVVHDtQgHFKR43P4y+uk/SaOdD7P9KPYZCM8gBNh4GJ5gG5lmNZHUWrBqaFpnPUcUj
-	 19QI3ewFM5rz4IzbyS5KIv4NtPC04bBCg8z7x1rAmyXc7grFqCRVD7uF1OevZr176e
-	 es++8I+y+mYSKcrw7zXT+x9B0+dJDSfAHnDJ+QpsNoYz1uoRPycknATR00XMZ5In1C
-	 lCBt7IQEs5DXZR7zfxC2GRYQWjrtBU9xwM2axK0B2Tvl1RLeDW2Wpge2nCsusoEYwP
-	 HjjMDrPiwOO0Q==
-Date: Fri, 25 Jul 2025 15:05:34 -0500
+	b=eUO6gcNman3Vtu/exvEYRzEjR7cFwafa00xuS8x2urfr/gOW2Bj7tembJ35BQTYTM
+	 sg1PZAIPVXEHqG9QluUBkbzuEdOZRuljdC6ARmZ8pyWDWdeVH5i0aatgDw3RtEdxEg
+	 xpPlkVUvOHHg19vB7hidb0J5UytvvysKl/vIvKGSIUtThtJWJLydupBWpQiuEqjs+d
+	 EzUemwm89JaJBGb4llfCrohBuQSTN0iG/CNdVtQYdI5LqZlXNTaLvXEVJPyV5Ma7mP
+	 IiLffzZHtemi1ChCQZZQA3i9Qtc0PnkfDdorR1wTC+RJH5m1NC7GGDg4VXVy14umvk
+	 lCRTefb+Hgb5w==
+Date: Fri, 25 Jul 2025 18:12:34 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: srinivas.kandagatla@oss.qualcomm.com
-Cc: conor+dt@kernel.org, srini@kernel.org, devicetree@vger.kernel.org,
-	andersson@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, linux-sound@vger.kernel.org,
-	broonie@kernel.org, sboyd@kernel.org
-Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: lpass-wsa: remove un-used
- include
-Message-ID: <175347393332.1760852.9382967903042104261.robh@kernel.org>
-References: <20250724134229.103001-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250724134229.103001-2-srinivas.kandagatla@oss.qualcomm.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: u.kleine-koenig@baylibre.com, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sboyd@kernel.org, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, geert+renesas@glider.be,
+	kernel@collabora.com, devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com
+Subject: Re: [PATCH 1/3] dt-bindings: clock: mt7622: Add AFE_MRGIF clock
+Message-ID: <175348515340.2008768.1491160057381781606.robh@kernel.org>
+References: <20250724083907.61313-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,20 +47,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724134229.103001-2-srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <20250724083907.61313-1-angelogioacchino.delregno@collabora.com>
 
 
-On Thu, 24 Jul 2025 14:42:28 +0100, srinivas.kandagatla@oss.qualcomm.com wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+On Thu, 24 Jul 2025 10:39:05 +0200, AngeloGioacchino Del Regno wrote:
+> Add the missing AFE Merge Interface clock to MT7622 to make use of
+> it in the audio subsystem.
 > 
-> qcom,sm8250-lpass-aoncc.h is really not used in the bindings, this patch
-> removes it, this also enables us to cleanup some of the dead code in
-> kernel.
+> While at it, also remove the useless CLK_AUDIO_NR_CLK definition.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  .../devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml          | 1 -
->  1 file changed, 1 deletion(-)
+>  include/dt-bindings/clock/mt7622-clk.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
