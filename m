@@ -1,219 +1,104 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A1D4C83;
-	Fri, 25 Jul 2025 04:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DDB1E47AD;
+	Fri, 25 Jul 2025 06:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753417143; cv=none; b=aouCgjXVj0Y44qvCPD3bhNWFt7juYVuXZXi0qZK+5pk0y7FaD14NajxwlfmcgeMBY1zX7Jf8FjnxkpaYC3NkNHN/n9ow+4wsX+6+o9Ta2UFUFs5B4CPcl77K3a3k6WI4NyPnCQqbubDa0ClrDIyzgSTVx89ho3N8abrvluSHX4U=
+	t=1753424940; cv=none; b=FO48qD+WcTVNvAq/FvVoWtTnCuNLAkhPQbM2wOOZ1WzEySQ/VhKy+gegRVXeqc0RTnW43BLSWcoUo7gGmrptadipZqZ0H/V2Lou6PwclAuYe5kWgQtCHosaeux6l6qOJfmQaLVK/OhuLIqo2GAPensoNI0v5STS6qWLnB0ALYQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753417143; c=relaxed/simple;
-	bh=g1aDJWjOkWNwnIq5x6LnbqOtD31oH9lR+AgkfVnB93s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8qHDkEEIJCTRGe1/26IehcaWwOYGpxzWJAnTzCCmVqvxD5mf5gSREqp849pwMliyRjIA0hqxPRJpMhXpjvafmcuM7zVUELKatj9kIpNas0l0D0FLFlngJ+IgvrAhU56rASSrWg4zOzWWnz5zvK4cwqrAAYM/M0ZT+AKnfMyy0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WxLYRf+o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1753424940; c=relaxed/simple;
+	bh=VQH+xE6ZoTuqpyFyKteztZNHzCADRhzgbBu3kyjh5c0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jx65RtJpEBWcx258eMK5V3pR/KlLpt+kgz40fqYtBtRL331e0QPEz7BG8+0PygqGTr0EfA+qnP6nx5GNOpEyG9ga/bjMMUvHB4b2i6eOm5zu8UjfexfOil2fX2fHVTkFKjJWOzzGT9laWsCD/2rmEDQT/XNEGGvLK2/gyMCTYYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmZUfVjC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WxLYRf+o"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLmVIF009335;
-	Fri, 25 Jul 2025 04:18:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Tlv+F7fsCTtMIea6rPvY6FhY
-	V4OOI+NyNZ9VIr4Thuc=; b=WxLYRf+oQL2HF3QBsnTkgzIR60brxENI4vkz9Bgf
-	LPRN13NkAA8F2I1RswUe/9GQAOa//pVmsKfpn9kRlt2OlgtyAX+GAk47R97kiHur
-	BwD4+vjOTkSwHpsyNh9FNYuMv5k/IgJMR2KnNYQTbVWgjzvXuSmQvODTBA2MLlWM
-	yOwz03v7oQYXsP4HndPRf/Gd31cYHLSxKx1aQz8SG6LvVrOGIWfN6D4H2HLbEb+z
-	pgeh27OxIx9rwJNQ+ABiFNCEhc4vC0VPA/gYKEpkTYaC1uVXAoFnYWMrfjrPiYOf
-	NKsRck2MTif1rKUO97DmGp9gsb9sRil4S7ZAvzMzP+61WQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2t0rx2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 04:18:55 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56P4IstF020187
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Jul 2025 04:18:54 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 24 Jul 2025 21:18:49 -0700
-Date: Fri, 25 Jul 2025 09:48:45 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_mdalam@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-Message-ID: <aIMFpW6yH9IRmyqj@hu-varada-blr.qualcomm.com>
-References: <20250723110815.2865403-1-quic_varada@quicinc.com>
- <20250723110815.2865403-2-quic_varada@quicinc.com>
- <20250724-remarkable-kind-ibex-3bb86c@kuoka>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmZUfVjC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C19AC4CEF5;
+	Fri, 25 Jul 2025 06:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753424939;
+	bh=VQH+xE6ZoTuqpyFyKteztZNHzCADRhzgbBu3kyjh5c0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qmZUfVjCUmAhHbmsESN4mdyO2TDZfWfEh7QAxlFmcyHNu+ZNOGGV8DP+q6IjtVwj8
+	 2xxHU0jWmkKooIVt3EpLKojT8bmFsN2t0I7lBnEaCzuX92rheTF122hXR6MkSdOfur
+	 0w6CwssFHJYhyLplzQ+U0E7pKqa+a7Wuv+qEwDz7rLblSCoHaVBkpim7tzXDmP8l5L
+	 fCle9nwF1rbhQzzb1kjoxZtlBVR88+qKPHjIarlufIwG6YnK3O9Nf4FLB450DHfPhF
+	 T6BuByiRXGjuF64xoVcJT7ZntBvA2LEeAkLWro5XxNtS1/FVRkt//0n6ABxIhGwlGI
+	 ozsNGp5mazywA==
+Message-ID: <68bacde1-05b0-490b-a254-4ea48641fd8f@kernel.org>
+Date: Fri, 25 Jul 2025 08:28:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250724-remarkable-kind-ibex-3bb86c@kuoka>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=BMKzrEQG c=1 sm=1 tr=0 ts=688305af cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=gEfo2CItAAAA:8 a=UXIAUNObAAAA:8 a=HD4o69LU_PO5Mj1lfZQA:9
- a=CjuIK1q_8ugA:10 a=bFq2RbqkfqsA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=sptkURWiP4Gy88Gu7hUp:22 a=a1s67YnXd6TbAZZNj1wK:22
-X-Proofpoint-ORIG-GUID: 46DBbXXfpUfL5-9phqL9eQuNHb2apaeM
-X-Proofpoint-GUID: 46DBbXXfpUfL5-9phqL9eQuNHb2apaeM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDAzMyBTYWx0ZWRfX0N8mOsQquu40
- EkM4XN2NzsWNCySs8tW0AQsYmy2CXi4k0G9acy5ijPySJjtuWBBh93ZeRxwTRsETWEBStDeIcLp
- NEWkbX7D6RqEr/pkBsaYv8mfbXVxEAcK6PQMveIHt/4lKBG9BkAl2NILTQXZOucDcOr2JuVp24m
- s9VibtnmeAL4ykg+6WpQVIlEVHlFCZB7CtJ1Ay3pTSGPbpFnWqdT9tw5SuhqMtb3Pq3Wej6rmd1
- MHtKzVbOcxQHIdJM6Fu7PW813XtVBr+xbdrGGxkDXgKbUQ8Y0fg+4yF9mieJRq3QG35n4/7HchE
- F7LhTjh+HY8pnt/ro4qndKlS3XQnnlbO5+INfyunyYJ9maCVdgMxeLeFvkdWJYz8eYq9eX+ZIZe
- kCwbAP5BhEU4DZ6GcP1fszEQG7r0Olj4K4lKZVD2yFhW+CXo9qsIt1YoHUWhFIG3/wwaWVYe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250033
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers/clk/clk-asm9260.c: Fix typo 'devide' -> 'divide'
+To: =?UTF-8?Q?Ignacio_Pe=C3=B1a?= <ignacio.pena87@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250725041524.73660-1-ignacio.pena87@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250725041524.73660-1-ignacio.pena87@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 10:14:01AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Jul 23, 2025 at 04:38:12PM +0530, Varadarajan Narayanan wrote:
-> > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> >
-> > The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
-> > The RCG and PLL have a separate register space from the GCC.
-> > Also the L3 cache has a separate pll and needs to be scaled along
-> > with the CPU.
-> >
-> > Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> > Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > [ Added interconnect related changes ]
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v2: Add #interconnect-cells to help enable L3 pll as ICC clock
-> >     Add master/slave ids
->
-> and v1 was where? I cannot find it in the inbox, no lore links.
+On 25/07/2025 06:15, Ignacio Peña wrote:
+> Fix spelling mistake.
+> 
+> No functional change.
+> 
+> Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
+> ---
+>  drivers/clk/clk-asm9260.c | 4 ++--
 
-v1 - https://lore.kernel.org/linux-arm-msm/20250127093128.2611247-1-quic_srichara@quicinc.com/
+This was already sent by Bjorn.
 
-Will add this while posting the next version.
-
-> > ---
-> >  .../bindings/clock/qcom,ipq5424-apss-clk.yaml | 61 +++++++++++++++++++
-> >  include/dt-bindings/clock/qcom,apss-ipq.h     |  6 ++
-> >  .../dt-bindings/interconnect/qcom,ipq5424.h   |  3 +
-> >  3 files changed, 70 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
-> > new file mode 100644
-> > index 000000000000..abb9eb78d271
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
-> > @@ -0,0 +1,61 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,ipq5424-apss-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm APSS IPQ5424 Clock Controller
-> > +
-> > +maintainers:
-> > +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > +  - Md Sadre Alam <quic_mdalam@quicinc.com>
->
-> Are you sure? Why they do not send their code then? Usually sending
-> other poeple's code means they do not care or moved on or changed jobs.
-
-They changed projects. Shall I append myself to the above list
-or replace them with myself.
-
-> > +
-> > +description: |
->
-> Do not need '|' unless you need to preserve formatting.
-
-ok.
-
-> > +  The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
-> > +  The RCG and PLL have a separate register space from the GCC.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qcom,ipq5424-apss-clk
->
-> Missing blank line
-
-ok.
-
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Reference to the XO clock.
-> > +      - description: Reference to the GPLL0 clock.
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: xo
-> > +      - const: gpll0
->
-> You do not name the inputs according how provider calls them. You name
-> them based on the INPUT. pll? source? bus?
-
-Will check and update.
-
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#interconnect-cells':
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - '#clock-cells'
-> > +  - '#interconnect-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/qcom,ipq5424-gcc.h>
-> > +
-> > +    apss_clk: apss-clock@fa80000 {
->
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-Thanks for the feedback. Will post a new version addressing these.
-
--Varada
+Best regards,
+Krzysztof
