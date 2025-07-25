@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6352BAF4;
-	Fri, 25 Jul 2025 01:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057B1C84C6;
+	Fri, 25 Jul 2025 01:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753406236; cv=none; b=LsM3ZeHzVOJcgYQQ5G1U2h9yc2Hq0KDsXkmEoB3x8iBvKtX0+pRx7ADC4TOePsNUv21PrOavabU9zjOf2wPpg5fULloJynByk3Ye3dGfC9/XRf2Tnl5ByuXRVcPTGNXoOei/NzaQIvAeS5jPy4mmuVazfM3CzOTUQX8Vity3HgY=
+	t=1753406486; cv=none; b=VIY9bi0fY3z7vS0b6dygttK8ggww4GzQ3TaXREfv50GhHiEVYC821sPKdhbbiR3qxv/fFsp8OVRUUbWcDp6olIu5b7sY+liHALx7OjpxIhi5HJoWk9giHA/Ro+PmjC0nearC8hloMxIe1ChgjPmr1sRl+oed4yIzBEhyt7ynKeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753406236; c=relaxed/simple;
-	bh=MnFJ7F8dY8RvB8dXoNRYk2Dv6tZAdeeE7q2scZZoEqo=;
+	s=arc-20240116; t=1753406486; c=relaxed/simple;
+	bh=MwqHEfaufpCZenjp6i2XUuWCEA4wM5dG9Nbu1j4rcuc=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=egdeXJG1exf/9WoYJFv3gqbE5qtZRzyGlxgwz06Ns/p5601+HmSqrYG8oGAcebUbDHDJYvwRl3VuGods9YRsVS7xqCxztuj3cUhmo7ZNcDPvpZimuT9MQbLwj1mjWKrb6SIGPqX/t80drPOK+idLC+KpW15uac4GEx+g9XaVa9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+aJSYfp; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=EREiUA2lS2/oW8Jq09nz02i7qWhKZ8f8iLB586oOHaFB7MRTOYoteb+WjjRbu0JprjcHEEE4IZTKg6cwlE666c16rbXRG2EvIw9OEx32M0PbXQzGor3zA90klGz8pbIAEhvuewNwW64Dq+H/aEWhYOi6HZLRJ97iGSu4wEa0Aw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1Rk3hWs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+aJSYfp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A8CC4CEED;
-	Fri, 25 Jul 2025 01:17:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1Rk3hWs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB5D7C4CEF6;
+	Fri, 25 Jul 2025 01:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753406236;
-	bh=MnFJ7F8dY8RvB8dXoNRYk2Dv6tZAdeeE7q2scZZoEqo=;
+	s=k20201202; t=1753406486;
+	bh=MwqHEfaufpCZenjp6i2XUuWCEA4wM5dG9Nbu1j4rcuc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=o+aJSYfpF5TboYnl9G/eoK+bTmhLeJ66iWVe6BHwQs3bR/2tvsw9pQxqOpyt0EOw2
-	 TR+gdWEvAmJfeENxYksaR7BmiI4XrAvoEULKXdbWDm2dxTG46REvQdPhjgS4S3qaiu
-	 0j9I2mS9GM//n0dGFnc+7f3FMdJ+u1Bc7g9v7KAbQCRDP8KD0RrIJD+IBXF5NqQFI1
-	 EXfKIEqY1uQMhAUY1IdgJO95MPT+5mwsfTHzxNbM6DN7n/QHnOFz7+s+mOt20WEbQE
-	 0vxfdpXeVLCMFrNzaKs8lLosT4jCFDObiDSRtGeW6R35BG9oAD3iEj581vNe6K8GyH
-	 BM0yjnIR2/5mg==
+	b=m1Rk3hWsOdacTaqRQmyKq2WcAz4JOiCCmafCCpJZccGewpWk5tGPQ8vUmkzPGQNtx
+	 Nae3LJoRHEwKyp1nMtsPRvccMrdF64rL2Kwoq4uUk9osiNEPUvWp858ZzH2tvAnyKp
+	 L57gcyS169BmwAj5aTWef7sjQKz2aikszYiwkniZivAlFvilRhoL07uCJePxeU0z7D
+	 6mediv7gl4GjUtxouU0P4vAmIV3kWOuq+zyrSkJWTedoI/jwOQxK2WKce1EjRxufSD
+	 UdcrsM6goolXixPwQPkVuanLvYRSH+rGkJrILKsKqPPuKKhZkRK51RqEMAWbC+nVoY
+	 t8BHUQy0d00Lw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,34 +34,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-8-0ca23747c23e@samsung.com>
-References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com> <CGME20250623180907eucas1p10c0ca6b667debcc8139402d97e4ef800@eucas1p1.samsung.com> <20250623-rust-next-pwm-working-fan-for-sending-v5-8-0ca23747c23e@samsung.com>
-Subject: Re: [PATCH v5 8/9] riscv: dts: thead: Add PVT node
+In-Reply-To: <20250710-core-cstr-cstrings-v1-4-027420ea799e@gmail.com>
+References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com> <20250710-core-cstr-cstrings-v1-4-027420ea799e@gmail.com>
+Subject: Re: [PATCH 04/17] rust: clk: replace `kernel::c_str!` with C-Strings
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-To: Albert Ou <aou@eecs.berkeley.edu>, Alex Gaynor <alex.gaynor@gmail.com>, Alexandre Ghiti <alex@ghiti.fr>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Boqun Feng <boqun.feng@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Fu Wei <wefu@redhat.com>, Gary Guo <gary@garyguo.net>, Guo Ren <guoren@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Michal Wilczynski <m.wilczynski@samsung.com>, Miguel Ojeda <ojeda@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Trevor Gross <tmgross@umich.edu>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Date: Thu, 24 Jul 2025 18:17:15 -0700
-Message-ID: <175340623531.3513.5896709502242556676@lazor>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-block@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
+To: Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Benno Lossin <lossin@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Boqun Feng <boqun.feng@gmail.com>, Brendan Higgins <brendan.higgins@linux.dev>, Breno Leitao <leitao@debian.org>, Danilo Krummrich <dakr@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, David Airlie <airlied@gmail.com>, David Gow <davidgow@google.com>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Gary Guo <gary@garyguo.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heiner Kallweit <hkallweit1@gmail.com>, Ira Weiny <ira.weiny@intel.com>, Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Leon Romanovsky <leon@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rae Moar <rmoar@google.com>, Rafael J. Wysocki <rafael@kernel.org>, Russ Weight <russ.weight@linux.dev>, Russell King <linux@armlinux.org.uk>, Simona Vetter <simona@ffwll.ch>, Tamir Duberstein <tamird@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, Trevor Gross <tmgross@umich.edu>, Viresh Kumar <viresh.kumar@linaro.org>
+Date: Thu, 24 Jul 2025 18:21:24 -0700
+Message-ID: <175340648493.3513.9465215631125389438@lazor>
 User-Agent: alot/0.11
 
-Quoting Michal Wilczynski (2025-06-23 11:08:56)
-> Add PVT DT node for thermal sensor.
+Quoting Tamir Duberstein (2025-07-10 08:31:07)
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
 >=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 > ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/=
-thead/th1520.dtsi
-> index 26996422e1efe5d2dde68819c2cec1c3fa782a23..bef30780034e06b07aa29b27b=
-0225ea891a4b531 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -669,6 +669,17 @@ padctrl_aosys: pinctrl@fffff4a000 {
->                         thead,pad-group =3D <1>;
->                 };
-> =20
-> +               pvt: pvt@fffff4e000 {
 
-Node name should probably be 'thermal-sensor@fffff4e000' then.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
