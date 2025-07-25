@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057B1C84C6;
-	Fri, 25 Jul 2025 01:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9A522DA06;
+	Fri, 25 Jul 2025 02:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753406486; cv=none; b=VIY9bi0fY3z7vS0b6dygttK8ggww4GzQ3TaXREfv50GhHiEVYC821sPKdhbbiR3qxv/fFsp8OVRUUbWcDp6olIu5b7sY+liHALx7OjpxIhi5HJoWk9giHA/Ro+PmjC0nearC8hloMxIe1ChgjPmr1sRl+oed4yIzBEhyt7ynKeg=
+	t=1753410980; cv=none; b=KxwFmK8C+s0hOGDBSzN7QJNJgWbi9qZHoARpOnH1kPrjuTMZFqUGilKjPxNTTERRD9jUY3C0n5qQQ/E1AGHQNmZy0zIz0SYWV/5oZarcPHdxYvJHfTx/cBkuNQ8OrRJmMiKVN0HQA0FnF83wnISyPtk7tiAwYA2TNEVqP74CLvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753406486; c=relaxed/simple;
-	bh=MwqHEfaufpCZenjp6i2XUuWCEA4wM5dG9Nbu1j4rcuc=;
+	s=arc-20240116; t=1753410980; c=relaxed/simple;
+	bh=PD6yNKlOQ50g3fj8b0UIlHxrb5aRw2tI6N7hOAC57p8=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=EREiUA2lS2/oW8Jq09nz02i7qWhKZ8f8iLB586oOHaFB7MRTOYoteb+WjjRbu0JprjcHEEE4IZTKg6cwlE666c16rbXRG2EvIw9OEx32M0PbXQzGor3zA90klGz8pbIAEhvuewNwW64Dq+H/aEWhYOi6HZLRJ97iGSu4wEa0Aw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1Rk3hWs; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=K8Z0vjETYlLxRN2QbKtVNTVlQDeTyy64b9yHmtHslNIRnjkXpNrcyiIy/pp5rBJBI2hhY2layrbF/+ZoiuOSQEtiksidGIXQP1mlZZKX+dx/FpoOGvRUg09GAKzFZQaKZHlSB4SlyZsrUMY6CMQVwovvaIL949fLqsLkQ25/tyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qC6IAGoM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1Rk3hWs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB5D7C4CEF6;
-	Fri, 25 Jul 2025 01:21:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qC6IAGoM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5198C4CEEF;
+	Fri, 25 Jul 2025 02:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753406486;
-	bh=MwqHEfaufpCZenjp6i2XUuWCEA4wM5dG9Nbu1j4rcuc=;
+	s=k20201202; t=1753410978;
+	bh=PD6yNKlOQ50g3fj8b0UIlHxrb5aRw2tI6N7hOAC57p8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=m1Rk3hWsOdacTaqRQmyKq2WcAz4JOiCCmafCCpJZccGewpWk5tGPQ8vUmkzPGQNtx
-	 Nae3LJoRHEwKyp1nMtsPRvccMrdF64rL2Kwoq4uUk9osiNEPUvWp858ZzH2tvAnyKp
-	 L57gcyS169BmwAj5aTWef7sjQKz2aikszYiwkniZivAlFvilRhoL07uCJePxeU0z7D
-	 6mediv7gl4GjUtxouU0P4vAmIV3kWOuq+zyrSkJWTedoI/jwOQxK2WKce1EjRxufSD
-	 UdcrsM6goolXixPwQPkVuanLvYRSH+rGkJrILKsKqPPuKKhZkRK51RqEMAWbC+nVoY
-	 t8BHUQy0d00Lw==
+	b=qC6IAGoM+G8TVtULOwiKQ5AsRtfRGXLRrS55E3Yx1n7Neh+BrVVTgodw/mCXSoNhn
+	 XbdC/e9jNOCv/sJDEsaHPILKHzsE7BkjKnNG04amtL6pGwbWWE2zPHBRvGKR1E1xmQ
+	 p8/sdLJCtCj3zhLTvqAW1oD0lwIWmDQroUDSn1/5NfdyLg7ku13ob6l157bBncDvmK
+	 KsVehsHQnqmu50XY6hduGoklsed6kJlkvJ3/GZWiZloX/wfb/f2rAQpOHT3O7K9iI0
+	 uynUU+3XXxyUNEVUJ1NX8DnDMrcpfUptNjnsKePBgRsNJ0LKfMWMgz9mEiL3w9hIW5
+	 Rue7fw8s3Lthg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,23 +34,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250710-core-cstr-cstrings-v1-4-027420ea799e@gmail.com>
-References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com> <20250710-core-cstr-cstrings-v1-4-027420ea799e@gmail.com>
-Subject: Re: [PATCH 04/17] rust: clk: replace `kernel::c_str!` with C-Strings
+In-Reply-To: <aIBzVClNQOBrjIFG@bhairav-test.ee.iitb.ac.in>
+References: <aIBzVClNQOBrjIFG@bhairav-test.ee.iitb.ac.in>
+Subject: Re: [PATCH v2] clk: spacemit: ccu_pll: fix error return value in recalc_rate callback
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-block@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-To: Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Benno Lossin <lossin@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Boqun Feng <boqun.feng@gmail.com>, Brendan Higgins <brendan.higgins@linux.dev>, Breno Leitao <leitao@debian.org>, Danilo Krummrich <dakr@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, David Airlie <airlied@gmail.com>, David Gow <davidgow@google.com>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Gary Guo <gary@garyguo.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heiner Kallweit <hkallweit1@gmail.com>, Ira Weiny <ira.weiny@intel.com>, Jakub Kicinski <kuba@kernel.org>, Jens Axboe <axboe@kernel.dk>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Leon Romanovsky <leon@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rae Moar <rmoar@google.com>, Rafael J. Wysocki <rafael@kernel.org>, Russ Weight <russ.weight@linux.dev>, Russell King <linux@armlinux.org.uk>, Simona Vetter <simona@ffwll.ch>, Tamir Duberstein <tamird@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, Trevor Gross <tmgross@umich.edu>, Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 24 Jul 2025 18:21:24 -0700
-Message-ID: <175340648493.3513.9465215631125389438@lazor>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, unicornxdotw@foxmail.com, jszhang@kernel.org, zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+To: akhilesh@ee.iitb.ac.in, alex@ghiti.fr, aou@eecs.berkeley.edu, conor+dt@kernel.org, dlan@gentoo.org, elder@riscstar.com, heylenay@4d2.org, heylenay@outlook.com, inochiama@outlook.com, krzk+dt@kernel.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org
+Date: Thu, 24 Jul 2025 19:36:17 -0700
+Message-ID: <175341097796.3513.9495899738615799188@lazor>
 User-Agent: alot/0.11
 
-Quoting Tamir Duberstein (2025-07-10 08:31:07)
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
+Quoting Akhilesh Patil (2025-07-22 22:29:56)
+> Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+> get correct rate entry. Follow .recalc_rate callback documentation
+> as mentioned in include/linux/clk-provider.h for error return value.
 >=20
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 S=
+oC")
+> Reviewed-by: Haylen Chu <heylenay@4d2.org>
+> Reviewed-by: Alex Elder <elder@riscstar.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
