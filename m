@@ -1,43 +1,41 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A34EED8;
-	Sat, 26 Jul 2025 05:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753507398; cv=pass; b=UbVk49XdwbxohuIPtHyB4hLpVjxGflm039KKhnXlly+51Q2C0UyqAmIt6i37/g6kKiv7pdHzqaKq0CPWv7Yw9xzA/j1ya8csk55k/eVMYHQIGuFNfyHdDBpFC/AV5A9CwWqbo4fAR6qgyuleRb2fQI5Hm7ag7w+6Dik5VAirDOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753507398; c=relaxed/simple;
-	bh=8L0TsRqECk8oxKkh0p8Lf7rHLY7w0aiGtCeNjsLF7ak=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926197B3E1;
+	Sat, 26 Jul 2025 09:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753521440; cv=none; b=BdUAL3Gw9RFBitm9QDGhgCSjoRTPBslIA+IvjYs7VwmwIymynkA+CzOysrmaG54yX1MWzViC8V0tqxaeWm0GubD94zbaAfvfJ99JgbkJSO1u8zHwptrHYkvmaqUDJMTCmgwPmi9yzN79DKblmxRgOK/UKmCrmgMyksTDVEtkp5U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753521440; c=relaxed/simple;
+	bh=rYQXAPwFrkfu4EDcSXActYD6Nyvq+NgQYf/ZkZuhzlo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGUj2KvfplGXjvV5ZQZbyTPMswJwA+v8dLt8MWgBPxJMwz9eNyzQPaEraUWzWPlgV9miokt2srREFhGtd8G1w2Ps7s0cLfwmvdABIIZG+l8BnYNImqR3X+n9MIqvzTgHvbo6+orSttg2luDXp6XBIywZZFBYEscn9o8hnRCM6HM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Sd2GZqii; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	 In-Reply-To:Content-Type; b=AdJFaa96anJnnXW7CRezuI1gre/WcUf7Wura64GkubqlsMxG2AFnc5z+TICdRwI5ubrEmft5nhqzJ0iIoGWCdLJAoDNqg0etbXLMkGkQf/q23XWYldSfEx6DZJQPvyhiM9w7aN8E9e8TjcsL+TFyS0XnpQ5tuWvfH2ohCwvvbvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OCvbdlZn; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Sd2GZqii"
-ARC-Seal: i=1; a=rsa-sha256; t=1753507380; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i0agtowXXKYFSAlOsS8xUPqmzYDHud40K5NHwrE6N3YvftVmEA954C5rlJnFEh9SvBg3ReCxTB1RQtFEsXuNV3ZBWqH8YB7zt3NlgBAccpYFxMFxyykWzBJMWYhBbPPxRYm111gebhWyO4teJM3ludtbicZN0y938k9mdMC6oys=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753507380; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mmNwg6ueXxCadafwT4lips5HbPEdPE1RcKAk/DHerao=; 
-	b=eW6XxyGu8A3WtuK70zypZPduHdACYu8WrZQZLprZzG711jC7CSRxU87efrDZ/kst3xkhQc9mWxHVA7THIE6uRMAVJDmk65zNdPmUiYXmAblAXuF3Y3p8wdUFc4lS5ZvfcQIZ8hiWSMvaazIxNOhRooaZOKNKMK41w22fGxcI1Xg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753507380;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=mmNwg6ueXxCadafwT4lips5HbPEdPE1RcKAk/DHerao=;
-	b=Sd2GZqii9J7K2i+4KyFQrPpU0ReER2s6hMO3c+oxxsUjJZfw0uHu+VUdbXbY7aG7
-	vw0S6Vqe14ImXHpfWMSH1OhwzyIMGj8O1JlyBKKLUNuooQ9adQ0dioQqxT6uP0EYvYl
-	Oe/vfGeF3qKlIe2AxaEVkDIoqB7uJqE1dWgYUI6Y=
-Received: by mx.zohomail.com with SMTPS id 1753507373478583.4224143944394;
-	Fri, 25 Jul 2025 22:22:53 -0700 (PDT)
-Message-ID: <cde19d45-fbd6-4b8c-b04f-e34811d62ae8@zohomail.com>
-Date: Sat, 26 Jul 2025 13:22:46 +0800
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OCvbdlZn"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id fb0cukqvwUD3Ufb0cuKgwl; Sat, 26 Jul 2025 11:16:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753521365;
+	bh=U9kZSAtVAyocpLhrZ9KiXiugbdUh7RrQVALIu5fxuzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=OCvbdlZnVDK2N/wzU0aKjr2jm6Nsst80VLqT1nNeVHZbjWWsN6OFia3uA70eSfZNO
+	 7OGU5fjPs/uNw0dxunLKRsUapLSG0ldiYlYJhscbgLMZKmoOfv3NTqNYbu6lk19A+m
+	 /HXeKzkyrTTrq+oCFGpxRy2A4ClYVWK+UbyK+PzpsArrQN4yBmSVxEOrZUE/Axex6i
+	 vBB9GusVrJEi/3wuH5acGlg1RJO6qimGCNkTmKCcN/ola7+YvE16gI9p9G6AmBI5Wa
+	 hesOS78cOiZ1Ri3M6ppMsIF0b92fPNzpsmxcK0oVcU7A18HaisFjz+tlXamheXAE3z
+	 Ud5fC/IqdwhQQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 26 Jul 2025 11:16:04 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <ed5fcfec-6330-46e8-a302-5cf1d8b3a9ce@wanadoo.fr>
+Date: Sat, 26 Jul 2025 11:16:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,73 +43,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] riscv: canaan: Add support for K230-Canmv clock
-To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
- <776638cc-cbd9-4747-82eb-e11bcc6c8bdd@zohomail.com>
- <175339519523.3513.2798631977806639092@lazor>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <175339519523.3513.2798631977806639092@lazor>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] clk: spacemit: fix resource leak in
+ spacemit_ccu_reset_register
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>, sboyd@kernel.org,
+ dlan@gentoo.org
+Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250723132504.66273-1-hendrik.hamerlinck@hammernet.be>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250723132504.66273-1-hendrik.hamerlinck@hammernet.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270c568dcf46d7bd9a6ca9bde60000df18909873772a153d341f279040e2ef74d0e9fe6602cd0fae:zu080112272084c8b289bc0c5b040e9e3500009ab072e80699b0abcbefb7032cae82cc441631b6531d467a59:rf0801122c2d91ede877ecf69152271edf0000f5f0466ce28d08f638bbfd1d1d3c2ccd19fe675d2edb74cde1f734449b92:ZohoMail
-X-ZohoMailClient: External
+
+Le 23/07/2025 à 15:25, Hendrik Hamerlinck a écrit :
+> The function spacemit_ccu_reset_register() allocates memory for an
+> auxiliary device. If auxiliary_device_add() fails, it skips cleanup of
+> these resources, resulting in leaks.
+> 
+> Fix this by using the appropriate error handling path.
+> 
+> Fixes: 988543522ebd ("clk: spacemit: set up reset auxiliary devices")
+> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+> Reviewed-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> Changes in v2:
+> - Properly place the Fixes tip.
+> ---
+>   drivers/clk/spacemit/ccu-k1.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index 65e6de030717..5bb85e32c6cf 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+> @@ -1059,7 +1059,7 @@ static int spacemit_ccu_reset_register(struct device *dev,
+>   	ret = auxiliary_device_add(adev);
+>   	if (ret) {
+>   		auxiliary_device_uninit(adev);
+> -		return ret;
+> +		goto err_free_aux_id;
+>   	}
+>   
+>   	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
 
 
-On 2025/7/25 06:13, Stephen Boyd wrote:
-> Quoting Xukai Wang (2025-07-13 09:48:44)
->> I'm working on a Linux clock driver and have encountered a question
->> regarding how to properly represent a particular type of clock source.
->>
->> In K230 SoC, there's a mux clock whose parent can optionally be an
->> external pulse signal, which is counted via a pin (the input is not
->> generated internally but comes from an external source). I’m wondering:
->>
->> Should this external pulse signal be modeled as a clock within the
->> Common Clock Framework (CCF)?
-> Likely, yes.
->
->> If so, what would be the correct way to register or describe such a
->> clock in the driver?
-> If it is a fixed rate pulse signal I would use a fixed rate clk node at
-> the root of the DT tree:
->
-> 	clock-50000 {
-> 		compatible = "fixed-clock";
-> 		#clock-cells = <0>;
-> 		clock-frequency = <50000>;
-> 	}
->
-> If you need pinctrl settings to make that clk work you can assign them
-> in that node, although I don't know if I've ever seen such a case
-> before. 
-Thanks for your reply and helpful explanation!
+Hi,
 
-Regarding the timer-pulse-in, the documentation describes it as:
+I'm not sure this is correct.
 
-"can be used to count external input signal with frequency less than
-1MHz and duty cycle from 0~100%"
+auxiliary_device_uninit() which is called if auxiliary_device_add() 
+fails should already do the clean-up.
 
-So the input frequency is not fixed in practice.
+So I would say that this patch adds a double-free issue and should not 
+be applied.
 
-Given that, modeling it as a fixed-rate clock might not be accurate.
+If I'm right, note that Stephen has already added a "Applied to clk-next"
 
-And I'm considering whether a more feature-rich driver is needed to
-handle the dynamically changing external clock, or if there's a better
-way to describe such a clock in the CCF.
+CJ
 
-> If the external parent clk needs to be gated you'll need to
-> write a more featured driver, unless it can be controlled with a gpio or
-> something like that.
-and I think it doesn't need to be gated.
+
