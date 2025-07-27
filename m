@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC3E86338;
-	Sun, 27 Jul 2025 06:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45471B4F2C;
+	Sun, 27 Jul 2025 06:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753598997; cv=none; b=KrarwDcUYcMJbuwZ6owMoxzDDhdKIipa6nrGgEZlSY69zMnMVn5ipWi9LQ8XMPI2SOQpu+5Z/AMRT2HR2kF6xXXLGRv9QrDr/Kx+VdRMRRenuL3OLjEaBMWa8xXAxEoiDd/gPOQv/ddT068OgcnhOs3SF7l6gvEc0jTcus/1isU=
+	t=1753599136; cv=none; b=h52Q0lWUeueAIzlEFXrDODRmwgkXV6uUf2IJbQp/dJho1vr5hzjVQr3cDJC3eggV2Cj6LUmSq2G4E21iAWLz7DFGf7FTSgIZUH4Qkzx6sLv6HScfsA8c6EQvMR8ZHkOjU/ZT0ss9d8QJZmmvVwkg1Q5BaxIrFTsV2FmmQ6v6A6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753598997; c=relaxed/simple;
-	bh=V8dORW7tMmAV30KNYrKlxeJictFmCZaadOCk6OMgZz8=;
+	s=arc-20240116; t=1753599136; c=relaxed/simple;
+	bh=89nwfcpWhG4The5bzIvwZ2AeAhUiGyIGCu9Y2b09isU=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qkIlKBEOl61BgD3HcLqexpS6+PGYocnn1WI5ZRpWD7HvgVAltsuLhmclejXDRxWrD1QPerzDPwGYQ0DHo0iyZrx7mJ2YWMoR1hTObXA6WOR/z6FeG3HiMgt5gnCeK4fQuSqB/WY70b5a6vJIf3slKYECtzRxZcv53il+klY01Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkfrWAcW; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=brYBems6lCbrZYWqiFOXMUusF4qSomXLRlMxvJFJd6qNal7MuSIW2NAZT331Z2oqgC8VD9FXF1I/nvp8ndH7rDTiDuxGURFPEUcpdqdD89K51C1o5taxwHxr2Nw5XFhftvvAGrfdHFFwjeGw2yueSGjvIuIRi3kiuP5RBYRBnGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWSRK1Nw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkfrWAcW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62CBC4CEEB;
-	Sun, 27 Jul 2025 06:49:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWSRK1Nw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E0EC4CEF4;
+	Sun, 27 Jul 2025 06:52:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753598996;
-	bh=V8dORW7tMmAV30KNYrKlxeJictFmCZaadOCk6OMgZz8=;
+	s=k20201202; t=1753599136;
+	bh=89nwfcpWhG4The5bzIvwZ2AeAhUiGyIGCu9Y2b09isU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TkfrWAcWHX7zsosnsQB0FI4KnLCQOKQ3V7LL4n+fdkaVTrBDFABJGwJmh/OW1vRYG
-	 gB9xMtV2FCMzW3XxLaqdRm+FUo6gOlFaRKK9sx6HrrYF9sVbZsrQg3TcizEUJQ0hd9
-	 5yzsmkX8Iij62zuIOdNg7RG7mo5GS/dyw7NQn5KRwuiTKyWOGg9X0JZ+rThitrF4VN
-	 IUZzCob7yRt0+7/8awaNE5iEsbQf7jBvMmP1ASuDpWh6WwOvcCiN6Rq+QVorFedLiM
-	 zpIILQLxyXo9VmY1N02pUFxHP8qz+P9xqE/lVXGu/vKySpLV/nUzpUQ832xNatjHVG
-	 fxMRGoWt8Rorg==
+	b=SWSRK1NwIfXiI9zTmyS8ZK9xXaK6cQvQM0oUQh5BoAoBlQn1EtkA9lWi1d7rr/b8i
+	 klO3eLs1W7vf7OdFcUQzWdevZ6Adoo2/SVTKJ+3doPvXPZZ9HVHY1YvkleJcckaNwm
+	 AyMiHq9/l7j0RweaJ2izT/7RWqwe7Zp7IL8wQicYNNhVVgtN2aC2rnyqLB8YHOQJef
+	 WTvNrB2PBNN7F1dAz12aOCc/Kf2tHd8MC1Fg2qJqoRm0EanG92oNtPUzSpBDCBptYr
+	 QyAEVciEaE/Yd3aoIT/sMI7fPfWZO/WpujmBTbtOIcwMkChk+mIu/ShyLA5+JfMc53
+	 /MvxQx9Oq462w==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,23 +34,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250723203819.2910289-1-helgaas@kernel.org>
-References: <20250723203819.2910289-1-helgaas@kernel.org>
-Subject: Re: [PATCH] clk: Fix typos
+In-Reply-To: <20250625054114.28273-1-shubhrajyoti.datta@amd.com>
+References: <20250625054114.28273-1-shubhrajyoti.datta@amd.com>
+Subject: Re: [PATCH] clk: clocking-wizard: Fix the round rate handling for versal
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Sat, 26 Jul 2025 23:49:56 -0700
-Message-ID: <175359899601.3513.3112185819678160186@lazor>
+Cc: git@amd.com, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 26 Jul 2025 23:52:15 -0700
+Message-ID: <175359913574.3513.18062722598979944673@lazor>
 User-Agent: alot/0.11
 
-Quoting Bjorn Helgaas (2025-07-23 13:38:10)
-> From: Bjorn Helgaas <bhelgaas@google.com>
+Quoting Shubhrajyoti Datta (2025-06-24 22:41:14)
+> Fix the `clk_round_rate` implementation for Versal platforms by calling
+> the Versal-specific divider calculation helper. The existing code used
+> the generic divider routine, which results in incorrect round rate.
 >=20
-> Fix typos, mostly in comments except CLKGATE_SEPERATED_* (definition and
-> uses updated).
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Fixes: 7681f64e6404 ("clk: clocking-wizard: calculate dividers fractional=
+ parts")
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 > ---
 
 Applied to clk-next
