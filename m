@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9216680BEC;
-	Sun, 27 Jul 2025 06:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A57374C4;
+	Sun, 27 Jul 2025 06:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753597397; cv=none; b=PwmrsakhrrzYZr1v2GsujI2j0KSTM4Ws273Tov8H9sJdHKpuJv8FPBNzKb7FpVHRy8YfMPzGJ/uUoX1tj+TkEMqKY4fscfomf6SUGd53hJeCxYLbuTllHvlVTIgW06ErWja52lG+HaKKwWtnqEUf+MhkfCsPaMyhFIVdm1LYLxI=
+	t=1753598934; cv=none; b=PyUe3TCqJHkllVVWSnyFDldKB7CHOhz+ehGmg6DXjQpbrXu4DLxgF9cIeTE9h0NYd1Mwjg7aewxa4950LMweOnGFJhD2YkuKCn/gIGZPY8HuaJYMdI2n5tgFhaMhKSX1coMp0mwP/cWYSysFf1p1EC+hDpyqNWyQ+5snDBmhMBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753597397; c=relaxed/simple;
-	bh=oJXTL/Zk785tlpPm70/cIQWrdlgSqqCiqp958NXEF5M=;
+	s=arc-20240116; t=1753598934; c=relaxed/simple;
+	bh=FPkM309Se8TKNOMQia+CHlwJ5P4QHlEg39teSfFx7MM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=P26EQ3N+S1CUPuNQYjuuKPo7Z05ewgdPyGQOXyGG3fZEA5EwUWoqs1EYuituCyMVjN9l0bA4X6kCQt94NEV1hv46YfFfmJjQdReBO1p8VNrdbuvmuXs/of5ysCNM2Ds/8TNt2Hxu3JhzYePOH1U8N+joFEsNQVv+QWwAsot0Ajo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWhjhQ6K; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=G57IAxWSjx6ih3uqFku/F+Kmicob7BlMwRJQ94tc13B+xBHvLGX0hU30aTKtHa8Kjl4MLteHbuEPAgu77mDle859i0UqNWXmTn64hPapuol2d757ttX6ZkZofHCM08Hl35QUeQW3FhByH46XkX44mgi7W2C9j3lPtZzaPLCJNNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfbkF7yt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWhjhQ6K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8408C4CEEB;
-	Sun, 27 Jul 2025 06:23:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfbkF7yt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DBBC4CEEB;
+	Sun, 27 Jul 2025 06:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753597396;
-	bh=oJXTL/Zk785tlpPm70/cIQWrdlgSqqCiqp958NXEF5M=;
+	s=k20201202; t=1753598932;
+	bh=FPkM309Se8TKNOMQia+CHlwJ5P4QHlEg39teSfFx7MM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=HWhjhQ6KbKLXoPdeTyB5LOXufqiM2iT/wrf+qvxaU0LpSZagfsiI+PQ5bCdQfMQnC
-	 TTQPSqWPZTYTetLcLBauOKSMTT6bvhmyYjcQX58vuxWYDVe+1EjZ0HyRq8kU72iSK4
-	 CpbL42eBkBClBpYWDe+8VdUEY7QuSOXvRGpzj9djFYCI8lro4bmrdQ3vB7xkM1VNjJ
-	 +qLDX3Cmpv0mRFn2MyMaX9tIkUG735pg248E1egfKCZV+KWGkWx32oSZdoVLbaRCbr
-	 poIB3YhbgyAojRjMuMKpqPvWohdYcv14K2uszRVdOaBY8Oq5ok2WyJJ+RN2vP6X+eL
-	 MlhS5B2p+1Vdg==
+	b=cfbkF7ytF1GoiRWGm2JGpC/kksNoGJL2BSC+NgXC3l/M8Px90XwJrYytn3GM9a/Kr
+	 uzgBmksQu6wASS++VRi3LW9zhx3y00d9rG0M38+sEs6eg9+LFjPnYyAkUNuw91rWH0
+	 X3KSsdZpFmlmwukilCLqz8ov3f7hOX4JT7WMaJBQynTKsjBxj4DG2Zx7aASdwuMGFc
+	 r4mPlb8XkY00zInr2U3LJ4cMt/PdiFr/T0tGj/XoPGA2jkCPMYlhYJZscI3PehFbzc
+	 LzxD2+U6N6qvp0VYODMYvMUBfy/pF/Ae/mnqBapkNPcCTjc1YPnWsG0hu/gXj5C/HD
+	 5vo6pWntBDwzQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,56 +34,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAK9=C2UDV3xCpKxZmT4NsRvN=hCcQrcx0fr-QFD2fuOrqmXmHA@mail.gmail.com>
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-9-apatel@ventanamicro.com> <175341132347.3513.7184287611040628050@lazor> <CAK9=C2UDV3xCpKxZmT4NsRvN=hCcQrcx0fr-QFD2fuOrqmXmHA@mail.gmail.com>
-Subject: Re: [PATCH v8 08/24] dt-bindings: clock: Add RPMI clock service message proxy bindings
+In-Reply-To: <20250727021756.657115-1-andersson@kernel.org>
+References: <20250727021756.657115-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updated for v6.17
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Date: Sat, 26 Jul 2025 23:23:15 -0700
-Message-ID: <175359739515.3513.8664828076215459722@lazor>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Luca Weiss <luca.weiss@fairphone.com>, Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Brian Masney <bmasney@redhat.com>, Stephan Gerhold <stephan.gerhold@linaro.org>, George Moussalem <george.moussalem@outlook.com>, Luo Jie <quic_luoj@quicinc.com>, Christian Marangi <ansuelsmth@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Sat, 26 Jul 2025 23:48:51 -0700
+Message-ID: <175359893163.3513.9647317962157940113@lazor>
 User-Agent: alot/0.11
 
-Quoting Anup Patel (2025-07-25 09:16:12)
-> On Fri, Jul 25, 2025 at 8:12=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Anup Patel (2025-07-04 00:03:40)
-> > > Add device tree bindings for the RPMI clock service group based
-> > > message proxy implemented by the SBI implementation (machine mode
-> > > firmware or hypervisor).
-> > >
-> > > The RPMI clock service group is defined by the RISC-V platform
-> > > management interface (RPMI) specification.
-> > >
-> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > [...]
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    clock-controller {
-> >
-> > Maybe the name should be 'clock-service' then? I don't understand SBI so
-> > not sure why this is in DT to begin with. Is something consuming this
-> > node? Or a driver is binding to it?
+Quoting Bjorn Andersson (2025-07-26 19:17:55)
 >=20
-> SBI is a syscall style interface between SBI implementation (aka
-> M-mode firmware or hypervisor) and supervisor software (aka
-> Linux kernel).
+> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
+94:
 >=20
-> We have DT based drivers in OpenSBI (M-mode firmware). This
-> binding allows Clock message proxy driver to be probed on the
-> OpenSBI side. The clock message proxy driver allows Linux
-> RPMI clock driver to send RPMI messages via OpenSBI as
-> proxy thereby sharing the RPMI transport between OpenSBI
-> and Linux kernel.
+>   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.17
+>=20
+> for you to fetch changes up to 45dd59885ca8d283f365774a82b9b785b65c8d37:
+>=20
+>   dt-bindings: clock: qcom,sm4450-dispcc: Reference qcom,gcc.yaml (2025-0=
+7-19 22:42:28 -0500)
+>=20
+> ----------------------------------------------------------------
 
-Let me try to clarify my confusion. A 'clock-controller' node without a
-'#clock-cells' property is confusing.
-
-It's not providing clks? The SBI firmware is not discoverable? Do you
-have a pointer to the DTS for this node and the clock controller node in
-the next patch? I'd like to understand why this is named a clock
-controller when it doesn't provide clks.
+Thanks. Pulled into to clk-next
