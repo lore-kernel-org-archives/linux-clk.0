@@ -1,57 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45471B4F2C;
-	Sun, 27 Jul 2025 06:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B8D29405;
+	Mon, 28 Jul 2025 05:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753599136; cv=none; b=h52Q0lWUeueAIzlEFXrDODRmwgkXV6uUf2IJbQp/dJho1vr5hzjVQr3cDJC3eggV2Cj6LUmSq2G4E21iAWLz7DFGf7FTSgIZUH4Qkzx6sLv6HScfsA8c6EQvMR8ZHkOjU/ZT0ss9d8QJZmmvVwkg1Q5BaxIrFTsV2FmmQ6v6A6M=
+	t=1753678899; cv=none; b=XH0SzjCN18DiGLVq0iz49VpXeQT6NoRYNJuhVI5HB4O7jmg6uBzhNWLLeWq1+oj4gMcwSxtQsw4A1WP9+fdNQYul9LByZniyC16xKo0nlqU/1ftABjteISYKgPgOxH5eFhHLeg1TtR/QOx/yHFMUXM8tUx9Lr4yS/8L8BYUDXDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753599136; c=relaxed/simple;
-	bh=89nwfcpWhG4The5bzIvwZ2AeAhUiGyIGCu9Y2b09isU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=brYBems6lCbrZYWqiFOXMUusF4qSomXLRlMxvJFJd6qNal7MuSIW2NAZT331Z2oqgC8VD9FXF1I/nvp8ndH7rDTiDuxGURFPEUcpdqdD89K51C1o5taxwHxr2Nw5XFhftvvAGrfdHFFwjeGw2yueSGjvIuIRi3kiuP5RBYRBnGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWSRK1Nw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753678899; c=relaxed/simple;
+	bh=h2t9VTTQvPqtnd9UzMdzQzgUqidHexMKRE2szkipEdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZSQvK+mVmzq3ZomhnFGudu86eHYOQIWiMGccYX3Gm3zeq9lnbUnPM0S4YafPFCUJ5gjO8/vgYCXytAlRcfDi6xlg1ji//ZLbp+1/FhE4om7xYgYgTgYdGtwc5RpgM7weUsbxAds8VkqCsubP6OCylrAO/gu1M49huZTIWmPJk84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXNaKFBR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWSRK1Nw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E0EC4CEF4;
-	Sun, 27 Jul 2025 06:52:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXNaKFBR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5D3C4CEE7;
+	Mon, 28 Jul 2025 05:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753599136;
-	bh=89nwfcpWhG4The5bzIvwZ2AeAhUiGyIGCu9Y2b09isU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SWSRK1NwIfXiI9zTmyS8ZK9xXaK6cQvQM0oUQh5BoAoBlQn1EtkA9lWi1d7rr/b8i
-	 klO3eLs1W7vf7OdFcUQzWdevZ6Adoo2/SVTKJ+3doPvXPZZ9HVHY1YvkleJcckaNwm
-	 AyMiHq9/l7j0RweaJ2izT/7RWqwe7Zp7IL8wQicYNNhVVgtN2aC2rnyqLB8YHOQJef
-	 WTvNrB2PBNN7F1dAz12aOCc/Kf2tHd8MC1Fg2qJqoRm0EanG92oNtPUzSpBDCBptYr
-	 QyAEVciEaE/Yd3aoIT/sMI7fPfWZO/WpujmBTbtOIcwMkChk+mIu/ShyLA5+JfMc53
-	 /MvxQx9Oq462w==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1753678896;
+	bh=h2t9VTTQvPqtnd9UzMdzQzgUqidHexMKRE2szkipEdA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EXNaKFBRdbopl6nr3kNPc+/DouSIxexmqT5HFrpckAEnXXMGix6yizKJoWFAoxdkJ
+	 b+bVnnmmdkE9iFP8603Szq479ZfWotj+5h6TcepiUsrO/EJSU18AUqeAPMd/FfmSjd
+	 DNVgEzSIBtSv5Hnq8nyIJYf8XCyjdbk5lyXb0T4WbcqBbOSaDYc/E54Xj7oIfI9njV
+	 3mD9FKjD6iadgDe3tkoNi5yCc1XvLEReI+/a6/zvn03wCp1WFUnYPZVTR6vt6saGkr
+	 Y216jJKItQto4xX1digPCX6XOAPmj5C5H1TcUVGQxyRtr78ME8DuEJ6C8iZuuxkR4W
+	 3+FzZ0o0lraOw==
+Message-ID: <5b8d42d5-d034-4495-9d28-27478a606d62@kernel.org>
+Date: Mon, 28 Jul 2025 07:01:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250625054114.28273-1-shubhrajyoti.datta@amd.com>
-References: <20250625054114.28273-1-shubhrajyoti.datta@amd.com>
-Subject: Re: [PATCH] clk: clocking-wizard: Fix the round rate handling for versal
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: git@amd.com, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 26 Jul 2025 23:52:15 -0700
-Message-ID: <175359913574.3513.18062722598979944673@lazor>
-User-Agent: alot/0.11
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
+ <20250723-topic-8750_gpucc-v2-1-56c93b84c390@oss.qualcomm.com>
+ <20250724-blazing-therapeutic-python-1e96ca@kuoka>
+ <54b617c1-bd1b-4244-b75d-57eaaa2c083d@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <54b617c1-bd1b-4244-b75d-57eaaa2c083d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Shubhrajyoti Datta (2025-06-24 22:41:14)
-> Fix the `clk_round_rate` implementation for Versal platforms by calling
-> the Versal-specific divider calculation helper. The existing code used
-> the generic divider routine, which results in incorrect round rate.
->=20
-> Fixes: 7681f64e6404 ("clk: clocking-wizard: calculate dividers fractional=
- parts")
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> ---
+On 25/07/2025 11:30, Konrad Dybcio wrote:
+>>>  
+>>> @@ -40,6 +42,9 @@ properties:
+>>>        - description: GPLL0 main branch source
+>>>        - description: GPLL0 div branch source
+>>>  
+>>> +  power-domains:
+>>> +    maxItems: 1
+>>
+>> This should be a different binding or you need to restrict other
+>> variants here.
+> 
+> Actually looks like this is the same case as the recent videocc changes
+> (15 year old technical debt catching up to us..)
+> 
+> I'll send a mass-fixup for this.
+> 
+> Some platforms require 2 and some require 3 entries here. Do I have to
+> restrict them very specifically, or can I do:
+> 
+> power-domains:
+>   description:
+>     Power domains required for the clock controller to operate
+>   minItems: 2
+>   items:
+>     - description: CX power domain
+>     - description: MX power domain
+>     - description: MXC power domain
+> 
+> ?
 
-Applied to clk-next
+This is correct and should be in top level, but you still need to
+restrict them per each variant (minItems: 3 or maxItems: 2).
+
+> 
+> Konrad
+
+
+Best regards,
+Krzysztof
