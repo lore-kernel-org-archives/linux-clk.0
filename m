@@ -1,162 +1,237 @@
-Received: from mail-qt1-f196.google.com (mail-qt1-f196.google.com [209.85.160.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C2626B76D;
-	Mon, 28 Jul 2025 14:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4564D2905
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 14:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753712456; cv=none; b=BvtHHyO/E67jr4NO9MDyeZCYBzdLFJh4KSWDV6F/MGmTgfMaH28OthCIJVMd4NY6jcED5kW1fFTlnLnnq8bUxFI5XdDAUauXDREDo12l2njX6sKS1LI1YNkUc9kTfuv9k+MpOo8j9PlZracT46giUXG0sDjqvdddPwZZ74gmB5U=
+	t=1753713125; cv=none; b=Ioh01Y5mEc9OVr0wWiTUHUtyznLKsiMaOQYggcb5EHlnmqHWGmP0k9oeTdDRcujewv8/xH8KtC72Cds1GzNXO5JrXAZSMRgz5ASJNqQUQBH/A9g3PB69W+lbc/xz4JgFzU1EPgFyW6qi4IiZxAweRn+8ETS1K81ucX7t0Kh7mpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753712456; c=relaxed/simple;
-	bh=uvU3LuSqoqO9vOKX5HTH0ipYicugJ67Oj+k5+VRnS3M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JCo+Ybj0SRRglHGLzxoi/bJE7CGmnq+UytEf6NcEbq3ybzDSxPAay2+m1AgIgAIhVXkunEKMre4EoYqI+c6U2vClsPPxeXRwiVMCbRTIdXxVkfMEexMcU0OQlJ+AH+5RhM61U2QPPqS5dcbSH2SEc//CyTOAVJQDoZgiITF7fPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/Hu61MM; arc=none smtp.client-ip=209.85.160.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/Hu61MM"
-Received: by mail-qt1-f196.google.com with SMTP id d75a77b69052e-4ab814c4f2dso83011621cf.1;
-        Mon, 28 Jul 2025 07:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753712453; x=1754317253; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kwpHZPpXI0p0rDKtDHDqYa7tblu6wTfxnrUTp9ZaScY=;
-        b=k/Hu61MMI9agfrqaSiefVSRV84PtIw6wDjxMRBzKu7lTmozF3TUfUlEUj6/V7v3Bz8
-         mH4j0a4m+msOvWvtvz40qWpl6WVl5QLIeWO50Z6ppO0bZjKv7bldySoB7z8zbrI+EfSr
-         b5A0cqYTOPe1tbu9F0tFiDxxXWrVgi9bq1UGCZXA8CWKkxkA8wmpgkcf6AoZhh6IMlOJ
-         B93kLa3gNgeUcQugOQoQhJNkRp+FSv0U4tdUuxr0ZVKyRDPyubYcmOlIiOoCfgCWq3oQ
-         R9ggTfX+ltqd9Z9SsW3CaOGnjfVsltH4d//sjSKiC9N7G4gQqlB7/LWNpXr4PBbb/P6T
-         rKBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753712453; x=1754317253;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kwpHZPpXI0p0rDKtDHDqYa7tblu6wTfxnrUTp9ZaScY=;
-        b=rm1HRBMSIZywuotiaYm1QCB7n9sofbsR3GDLN1TvpliCaLZuI8rAWTqt/vgFnhsU7/
-         6Pyd9boeWeu7nhGgbwx5zmJQjhf1+BQpWC9CUVsn1N4CD0Ii3qNpv2GICYpblomdFU38
-         Lc9uyWc4F4CLP0zmulb3dAq1mlVt5y7N+Cl7uK1uVS3A/T5czHn5TkY8YaMBtv/zcklk
-         wRW+ozUPxjBbmsKSnkQOV1QmCTp4KgOJwVNoNmtvXBWFuo1wShXKDRxkbiLkk0qSb3V9
-         nSOnnY08dourq+n3dv+Kki79GDIKj6ZF5cCN5lzfPfJ0JB+9YsdqcuKadN9exhKsug0z
-         2ZQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLNOouWXYcQGDVVIwjfDFMlJUIjWZrgPpMU7HMyhSK3arvSuDqiix2wHpfrSl2eV5Hy3KJpP5iGamWoeW6@vger.kernel.org, AJvYcCXWkgd70PIA/2TRGKQr37PM+07gOm7KaZYjydE8L227eabKIuGP03d9tF3VbmLht9hbRKfOzGKVBUd/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWmkPdYRviQjulztNtE/W6gkOCUicBGCj7Mv9qA2TGDfdrV7hG
-	0RB4VrZkemXqUawPWzidxL1VqPDEdr+limIZBHD14jQrpPpwlLF4NEGHdZnx2vbCWTiwMw==
-X-Gm-Gg: ASbGncuyGYhWsWVmbLpXN5eADRbfrkyDZ9o6j9hSwjIXsj92wTSCEJFvUUu9U5LMpaW
-	etd7JHJi+iOtqWThpIjRkMCNCqtt/KnRnCe019tNqkGQeoOk2krZ35Msa2owdN4veoPyb57DPv9
-	XiKrU5YHhvin2RcGoiXwSsRJTc0G0vuBYPrHm7IT5So99TtCyF8BDA1nK4URDSsMg1QICxvl1IG
-	Rm+uF0ShXGY9kGOr6TSy3FtwyiAv3lpef8XQ3XK9ARF7fEEXPwAvSDuXhoOEQalkdmPPeaYA1mE
-	SaMGmfU4l+pdx+wwSJHHc5wZQ+7xW0u7D5qbHwB9F/yFhkmn7g293cchy4vmB4+RW71u4ff6VLu
-	uLi/J3yZJ93x+JAdJ+MxsK1ac5TFy/zCP
-X-Google-Smtp-Source: AGHT+IGNkNTYdf6BLasYK8+uoS65PqFGHaWC/DpiGuyNp2KNVMbN6+x1bh6pNoVy9S9XOmC8dksPIw==
-X-Received: by 2002:a05:6a00:1a8c:b0:746:24c9:c92e with SMTP id d2e1a72fcca58-76332b4ffe8mr20182948b3a.8.1753712440665;
-        Mon, 28 Jul 2025 07:20:40 -0700 (PDT)
-Received: from localhost ([2408:8256:2284:4127:de49:6dc9:a446:157a])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-768faf4bb9asm893691b3a.132.2025.07.28.07.20.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 07:20:40 -0700 (PDT)
-From: Troy Mitchell <troymitchell988@gmail.com>
-X-Google-Original-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 28 Jul 2025 22:20:16 +0800
-Subject: [PATCH v3 2/2] clk: spacemit: fix sspax_clk
+	s=arc-20240116; t=1753713125; c=relaxed/simple;
+	bh=GiRCTvogn7ntbALPFxjjkV0sjmOTi5Vnv3UdhDhu2P8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NUkbXpVsvinEpJDGKj5QvjQ074nq6tH3ujKuvLk/AGLndxDEjVpp5fEB6+MLe6JJ7QEw18frdQx4jh4VNWVpjpLHm8Xqq7owYzc09xrjoBTnAuHiM7PU7oyMnDDdQvK+V1xa+s/aRd4fwnhU0RLFoicAX/W0cjMM45u4OnqgFZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ugOtH-0001dE-Rg; Mon, 28 Jul 2025 16:31:47 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ugOtF-00AitJ-1n;
+	Mon, 28 Jul 2025 16:31:45 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ugOtF-000Y2W-1V;
+	Mon, 28 Jul 2025 16:31:45 +0200
+Message-ID: <4a0f042e4019888e81835d14e6edd86f89e41cb9.camel@pengutronix.de>
+Subject: Re: [PATCH 2/3] drm/v3d: Allocate all resources before enabling the
+ clock
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz
+ Julienne <nsaenz@kernel.org>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Maxime
+ Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>, Iago Toral
+ Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>, Dave
+ Stevenson <dave.stevenson@raspberrypi.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	Broadcom internal kernel review list
+	 <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+Date: Mon, 28 Jul 2025 16:31:45 +0200
+In-Reply-To: <20250728-v3d-power-management-v1-2-780f922b1048@igalia.com>
+References: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
+	 <20250728-v3d-power-management-v1-2-780f922b1048@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-k1-clk-i2s-v3-2-5d7579f02227@linux.spacemit.com>
-References: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
-In-Reply-To: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Yao Zi <ziyao@disroot.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753712415; l=2875;
- i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=uvU3LuSqoqO9vOKX5HTH0ipYicugJ67Oj+k5+VRnS3M=;
- b=RwJKdnLixQKy07JYdGH7iFd0nnjBb6RbhYTaUrhC1Qraje6WyuilaOhHmgkWSnYvZDzbRCoeZ
- d8+uAlhTgKBAJoi9L54Y7Y3XNDmjaIt5i8vUIYspoyyyo0431qObHps
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Hardware Requirement:
-When FNCLKSEL in APBC_SSPAX_CLK_RST is set to 7 (3'b111),
-BIT3 must be set to 1 for the SSPAx parent clock to be I2S_BCLK.
+Hi Ma=C3=ADra,
 
-This patch introduces SSPAx_I2S_BCLK as a virtual gate to enable BIT3.
+On Mo, 2025-07-28 at 09:35 -0300, Ma=C3=ADra Canal wrote:
+> Move all resource allocation operations before actually enabling the
+> clock,
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Suggested-by: Yao Zi <ziyao@disroot.org>
----
- drivers/clk/spacemit/ccu-k1.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+This patch moves code even before requesting the clock.
+But I don't think this is necessary, see below.
 
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index cdde37a0523537c2f436e481ae8d6ec5a581b87e..24a561499a7c11b6a661c026f0bd2fac28fe7b04 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -349,7 +349,10 @@ CCU_GATE_DEFINE(aib_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_AIB_CLK_RST, BIT(1),
- 
- CCU_GATE_DEFINE(onewire_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_ONEWIRE_CLK_RST, BIT(1), 0);
- 
--static const struct clk_parent_data sspa_parents[] = {
-+CCU_GATE_DEFINE(sspa0_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA0_CLK_RST, BIT(3), 0);
-+CCU_GATE_DEFINE(sspa1_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA1_CLK_RST, BIT(3), 0);
-+
-+static const struct clk_parent_data sspa0_parents[] = {
- 	CCU_PARENT_HW(pll1_d384_6p4),
- 	CCU_PARENT_HW(pll1_d192_12p8),
- 	CCU_PARENT_HW(pll1_d96_25p6),
-@@ -357,10 +360,22 @@ static const struct clk_parent_data sspa_parents[] = {
- 	CCU_PARENT_HW(pll1_d768_3p2),
- 	CCU_PARENT_HW(pll1_d1536_1p6),
- 	CCU_PARENT_HW(pll1_d3072_0p8),
--	CCU_PARENT_HW(i2s_bclk),
-+	CCU_PARENT_HW(sspa0_i2s_bclk),
- };
--CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
--CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(sspa0_clk, sspa0_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data sspa1_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(sspa1_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(sspa1_clk, sspa1_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-+
- CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1), 0);
- CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1), 0);
- CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(1), 0);
-@@ -965,6 +980,8 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
- 	[CLK_SSPA1_BUS]		= &sspa1_bus_clk.common.hw,
- 	[CLK_TSEN_BUS]		= &tsen_bus_clk.common.hw,
- 	[CLK_IPC_AP2AUD_BUS]	= &ipc_ap2aud_bus_clk.common.hw,
-+	[CLK_SSPA0_I2S_BCLK]	= &sspa0_i2s_bclk.common.hw,
-+	[CLK_SSPA1_I2S_BCLK]	= &sspa1_i2s_bclk.common.hw,
- };
- 
- static const struct spacemit_ccu_data k1_ccu_apbc_data = {
+> as those operation don't require the GPU to be powered on.
+>=20
+> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.c | 92 ++++++++++++++++++++++---------------=
+------
+>  drivers/gpu/drm/v3d/v3d_drv.h |  3 +-
+>  drivers/gpu/drm/v3d/v3d_gem.c | 14 +++++--
+>  drivers/gpu/drm/v3d/v3d_irq.c | 15 +++----
+>  4 files changed, 66 insertions(+), 58 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.=
+c
+> index 2def155ce496ec5f159f6bda9929aeaae141d1a6..6e6b830bee6587e4170fd64d3=
+54916766e59d2e5 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> @@ -347,14 +347,55 @@ static int v3d_platform_drm_probe(struct platform_d=
+evice *pdev)
+>  			return ret;
+>  	}
+> =20
+> +	if (v3d->ver < V3D_GEN_41) {
+> +		ret =3D map_regs(v3d, &v3d->gca_regs, "gca");
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	v3d->reset =3D devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(v3d->reset)) {
+> +		ret =3D PTR_ERR(v3d->reset);
+> +
+> +		if (ret =3D=3D -EPROBE_DEFER)
+> +			return ret;
+> +
+> +		v3d->reset =3D NULL;
 
--- 
-2.50.0
+Drive-by comment, not an issue with this (code-moving) patch: It looks
+like this open-codes devm_reset_control_get_optional_exclusive().
 
+> +		ret =3D map_regs(v3d, &v3d->bridge_regs, "bridge");
+> +		if (ret) {
+> +			dev_err(dev,
+> +				"Failed to get reset control or bridge regs\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	v3d->mmu_scratch =3D dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
+> +					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
+> +	if (!v3d->mmu_scratch) {
+> +		dev_err(dev, "Failed to allocate MMU scratch page\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret =3D v3d_gem_allocate(drm);
+> +	if (ret)
+> +		goto dma_free;
+> +
+> +	ret =3D v3d_irq_init(v3d);
+> +	if (ret)
+> +		goto gem_destroy;
+
+These functions needing manual cleanup are called before another devm_
+function below. With this, resources are not freed in inverse order of
+allocation. I don't see whether mixing devm and non-devm initialization
+is an actual problem in this case, but it would look cleaner if the
+devm_clk_get_optional() below was just moved back up before
+dma_alloc_wc().
+
+If there are also devm_ functions called from inside the v3d_
+functions, it might be better to move all cleanup into devm actions.
+
+> +	v3d_perfmon_init(v3d);
+> +
+>  	v3d->clk =3D devm_clk_get_optional(dev, NULL);
+> -	if (IS_ERR(v3d->clk))
+> -		return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock\=
+n");
+> +	if (IS_ERR(v3d->clk)) {
+> +		ret =3D dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock=
+\n");
+> +		goto gem_destroy;
+> +	}
+> =20
+>  	ret =3D clk_prepare_enable(v3d->clk);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Couldn't enable the V3D clock\n");
+> -		return ret;
+> +		goto gem_destroy;
+>  	}
+> =20
+>  	v3d_idle_sms(v3d);
+> @@ -381,45 +422,8 @@ static int v3d_platform_drm_probe(struct platform_de=
+vice *pdev)
+>  	ident3 =3D V3D_READ(V3D_HUB_IDENT3);
+>  	v3d->rev =3D V3D_GET_FIELD(ident3, V3D_HUB_IDENT3_IPREV);
+> =20
+> -	v3d_perfmon_init(v3d);
+> -
+> -	v3d->reset =3D devm_reset_control_get_exclusive(dev, NULL);
+> -	if (IS_ERR(v3d->reset)) {
+> -		ret =3D PTR_ERR(v3d->reset);
+> -
+> -		if (ret =3D=3D -EPROBE_DEFER)
+> -			goto clk_disable;
+> -
+> -		v3d->reset =3D NULL;
+> -		ret =3D map_regs(v3d, &v3d->bridge_regs, "bridge");
+> -		if (ret) {
+> -			dev_err(dev,
+> -				"Failed to get reset control or bridge regs\n");
+> -			goto clk_disable;
+> -		}
+> -	}
+> -
+> -	if (v3d->ver < V3D_GEN_41) {
+> -		ret =3D map_regs(v3d, &v3d->gca_regs, "gca");
+> -		if (ret)
+> -			goto clk_disable;
+> -	}
+> -
+> -	v3d->mmu_scratch =3D dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
+> -					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
+> -	if (!v3d->mmu_scratch) {
+> -		dev_err(dev, "Failed to allocate MMU scratch page\n");
+> -		ret =3D -ENOMEM;
+> -		goto clk_disable;
+> -	}
+> -
+> -	ret =3D v3d_gem_init(drm);
+> -	if (ret)
+> -		goto dma_free;
+> -
+> -	ret =3D v3d_irq_init(v3d);
+> -	if (ret)
+> -		goto gem_destroy;
+> +	v3d_gem_init(drm);
+> +	v3d_irq_enable(v3d);
+> =20
+>  	ret =3D drm_dev_register(drm, 0);
+>  	if (ret)
+> @@ -435,12 +439,12 @@ static int v3d_platform_drm_probe(struct platform_d=
+evice *pdev)
+>  	drm_dev_unregister(drm);
+>  irq_disable:
+>  	v3d_irq_disable(v3d);
+> +clk_disable:
+> +	clk_disable_unprepare(v3d->clk);
+
+clk_disable_unprepare() is moved up in the error path, but not in
+v3d_platform_drm_remove(). Should this be kept consistent?
+
+>  gem_destroy:
+>  	v3d_gem_destroy(drm);
+>  dma_free:
+>  	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
+> -clk_disable:
+> -	clk_disable_unprepare(v3d->clk);
+>  	return ret;
+>  }
+
+regards
+Philipp
