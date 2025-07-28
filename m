@@ -1,237 +1,138 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4564D2905
-	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 14:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF77A8F6E;
+	Mon, 28 Jul 2025 15:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753713125; cv=none; b=Ioh01Y5mEc9OVr0wWiTUHUtyznLKsiMaOQYggcb5EHlnmqHWGmP0k9oeTdDRcujewv8/xH8KtC72Cds1GzNXO5JrXAZSMRgz5ASJNqQUQBH/A9g3PB69W+lbc/xz4JgFzU1EPgFyW6qi4IiZxAweRn+8ETS1K81ucX7t0Kh7mpM=
+	t=1753716782; cv=none; b=CzCL9KVwMWS01WfJRrmTSSE5RNqxeSmn98yVPiR/KOz1EE+xM2PXbAChmN1g7Ly3YJxbRBAbptm3vs2pNr4VWtZbJ6hD7tqiLWVgs9RmTuGQXTMK1OCSkt0y4je9v35n9uhyyiFPLkrhOD08DhqH0USPAKnHOjooYvX6LIyFEtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753713125; c=relaxed/simple;
-	bh=GiRCTvogn7ntbALPFxjjkV0sjmOTi5Vnv3UdhDhu2P8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NUkbXpVsvinEpJDGKj5QvjQ074nq6tH3ujKuvLk/AGLndxDEjVpp5fEB6+MLe6JJ7QEw18frdQx4jh4VNWVpjpLHm8Xqq7owYzc09xrjoBTnAuHiM7PU7oyMnDDdQvK+V1xa+s/aRd4fwnhU0RLFoicAX/W0cjMM45u4OnqgFZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1ugOtH-0001dE-Rg; Mon, 28 Jul 2025 16:31:47 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1ugOtF-00AitJ-1n;
-	Mon, 28 Jul 2025 16:31:45 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1ugOtF-000Y2W-1V;
-	Mon, 28 Jul 2025 16:31:45 +0200
-Message-ID: <4a0f042e4019888e81835d14e6edd86f89e41cb9.camel@pengutronix.de>
-Subject: Re: [PATCH 2/3] drm/v3d: Allocate all resources before enabling the
- clock
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz
- Julienne <nsaenz@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Maxime
- Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>, Iago Toral
- Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>, Dave
- Stevenson <dave.stevenson@raspberrypi.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	Broadcom internal kernel review list
-	 <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-Date: Mon, 28 Jul 2025 16:31:45 +0200
-In-Reply-To: <20250728-v3d-power-management-v1-2-780f922b1048@igalia.com>
-References: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
-	 <20250728-v3d-power-management-v1-2-780f922b1048@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1753716782; c=relaxed/simple;
+	bh=2PIpfN3dZvXiQ9iIBgbBu5gRJSTkbuCQSySSFGDtB9c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=grAFQ7WCnh9B7YaVSOZxOwi4FezTcYsOTp3iyhZa0RNOSLnWsasKNMIWhDuwxCkLSQANwJ8wbv7KyMZR1pC9YbKQMMYpvdeWoCYarEmzjcIZQSLxRfqVT8xsfQ/QzKV1EqruRsknFidAffh0VNEa11i2VQyd3Ek9gLKCOyEGRko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BKjbs/xs; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BKjbs/xs"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SDmqUL025850;
+	Mon, 28 Jul 2025 17:32:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	L5U4iOIMzTLQcNGAWLcYUHl7amMuMgZWgZO8MaFVrQk=; b=BKjbs/xs31c7FSK6
+	R7Hw18HQ/9sqBmYKB0lJ24Om3mySIoCQUhNKsOM9eaxfgWKe1vxufD07ZCSE7a6b
+	VI4iAG0DRoeerDPWNPUUAi2++vS0oGTT4mUMNZAfmehmY1mc+7Tpj5T4zT/lDW0A
+	Wy5v6lI01wD/63+TaMivxAbpjZ1OhYmWdJKZMODqtgFu/hyPWd4IUQRQRIPfSO6g
+	UQGOmuWcLg1r4nJ6QmCdriRfKje71aZ5yhK7foBX+WP0P1rhiDvF+W6FPRdYF1Oc
+	N8/5Tak5VIaC4pC8FAAbc2rCxOee3BauQ4G1SvwemaxM0OgZpU+V6sruODTUrMeo
+	6M4rPA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 484pc28w27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 17:32:40 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4637940045;
+	Mon, 28 Jul 2025 17:31:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5F84776DC2C;
+	Mon, 28 Jul 2025 17:29:51 +0200 (CEST)
+Received: from localhost (10.252.23.100) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Jul
+ 2025 17:29:51 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Mon, 28 Jul 2025 17:29:33 +0200
+Subject: [PATCH v5 02/20] dt-bindings: stm32: stm32mp25: add
+ `#access-controller-cells` property
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250728-ddrperfm-upstream-v5-2-03f1be8ad396@foss.st.com>
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+In-Reply-To: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        Julius Werner <jwerner@chromium.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-8018a
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
 
-Hi Ma=C3=ADra,
+RCC is able to check the availability of a clock.
+Allow to query the RCC with a firewall ID.
 
-On Mo, 2025-07-28 at 09:35 -0300, Ma=C3=ADra Canal wrote:
-> Move all resource allocation operations before actually enabling the
-> clock,
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This patch moves code even before requesting the clock.
-But I don't think this is necessary, see below.
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+index 88e52f10d1ec..4d471e3d89bc 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+@@ -31,6 +31,11 @@ properties:
+   '#reset-cells':
+     const: 1
+ 
++  '#access-controller-cells':
++    const: 1
++    description:
++      Contains the firewall ID associated to the peripheral.
++
+   clocks:
+     items:
+       - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
+@@ -123,6 +128,7 @@ required:
+   - reg
+   - '#clock-cells'
+   - '#reset-cells'
++  - '#access-controller-cells'
+   - clocks
+ 
+ additionalProperties: false
+@@ -136,6 +142,7 @@ examples:
+         reg = <0x44200000 0x10000>;
+         #clock-cells = <1>;
+         #reset-cells = <1>;
++        #access-controller-cells = <1>;
+         clocks =  <&scmi_clk CK_SCMI_HSE>,
+                   <&scmi_clk CK_SCMI_HSI>,
+                   <&scmi_clk CK_SCMI_MSI>,
 
-> as those operation don't require the GPU to be powered on.
->=20
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> ---
->  drivers/gpu/drm/v3d/v3d_drv.c | 92 ++++++++++++++++++++++---------------=
-------
->  drivers/gpu/drm/v3d/v3d_drv.h |  3 +-
->  drivers/gpu/drm/v3d/v3d_gem.c | 14 +++++--
->  drivers/gpu/drm/v3d/v3d_irq.c | 15 +++----
->  4 files changed, 66 insertions(+), 58 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.=
-c
-> index 2def155ce496ec5f159f6bda9929aeaae141d1a6..6e6b830bee6587e4170fd64d3=
-54916766e59d2e5 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> @@ -347,14 +347,55 @@ static int v3d_platform_drm_probe(struct platform_d=
-evice *pdev)
->  			return ret;
->  	}
-> =20
-> +	if (v3d->ver < V3D_GEN_41) {
-> +		ret =3D map_regs(v3d, &v3d->gca_regs, "gca");
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	v3d->reset =3D devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(v3d->reset)) {
-> +		ret =3D PTR_ERR(v3d->reset);
-> +
-> +		if (ret =3D=3D -EPROBE_DEFER)
-> +			return ret;
-> +
-> +		v3d->reset =3D NULL;
+-- 
+2.43.0
 
-Drive-by comment, not an issue with this (code-moving) patch: It looks
-like this open-codes devm_reset_control_get_optional_exclusive().
-
-> +		ret =3D map_regs(v3d, &v3d->bridge_regs, "bridge");
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"Failed to get reset control or bridge regs\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	v3d->mmu_scratch =3D dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
-> +					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
-> +	if (!v3d->mmu_scratch) {
-> +		dev_err(dev, "Failed to allocate MMU scratch page\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret =3D v3d_gem_allocate(drm);
-> +	if (ret)
-> +		goto dma_free;
-> +
-> +	ret =3D v3d_irq_init(v3d);
-> +	if (ret)
-> +		goto gem_destroy;
-
-These functions needing manual cleanup are called before another devm_
-function below. With this, resources are not freed in inverse order of
-allocation. I don't see whether mixing devm and non-devm initialization
-is an actual problem in this case, but it would look cleaner if the
-devm_clk_get_optional() below was just moved back up before
-dma_alloc_wc().
-
-If there are also devm_ functions called from inside the v3d_
-functions, it might be better to move all cleanup into devm actions.
-
-> +	v3d_perfmon_init(v3d);
-> +
->  	v3d->clk =3D devm_clk_get_optional(dev, NULL);
-> -	if (IS_ERR(v3d->clk))
-> -		return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock\=
-n");
-> +	if (IS_ERR(v3d->clk)) {
-> +		ret =3D dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock=
-\n");
-> +		goto gem_destroy;
-> +	}
-> =20
->  	ret =3D clk_prepare_enable(v3d->clk);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Couldn't enable the V3D clock\n");
-> -		return ret;
-> +		goto gem_destroy;
->  	}
-> =20
->  	v3d_idle_sms(v3d);
-> @@ -381,45 +422,8 @@ static int v3d_platform_drm_probe(struct platform_de=
-vice *pdev)
->  	ident3 =3D V3D_READ(V3D_HUB_IDENT3);
->  	v3d->rev =3D V3D_GET_FIELD(ident3, V3D_HUB_IDENT3_IPREV);
-> =20
-> -	v3d_perfmon_init(v3d);
-> -
-> -	v3d->reset =3D devm_reset_control_get_exclusive(dev, NULL);
-> -	if (IS_ERR(v3d->reset)) {
-> -		ret =3D PTR_ERR(v3d->reset);
-> -
-> -		if (ret =3D=3D -EPROBE_DEFER)
-> -			goto clk_disable;
-> -
-> -		v3d->reset =3D NULL;
-> -		ret =3D map_regs(v3d, &v3d->bridge_regs, "bridge");
-> -		if (ret) {
-> -			dev_err(dev,
-> -				"Failed to get reset control or bridge regs\n");
-> -			goto clk_disable;
-> -		}
-> -	}
-> -
-> -	if (v3d->ver < V3D_GEN_41) {
-> -		ret =3D map_regs(v3d, &v3d->gca_regs, "gca");
-> -		if (ret)
-> -			goto clk_disable;
-> -	}
-> -
-> -	v3d->mmu_scratch =3D dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
-> -					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
-> -	if (!v3d->mmu_scratch) {
-> -		dev_err(dev, "Failed to allocate MMU scratch page\n");
-> -		ret =3D -ENOMEM;
-> -		goto clk_disable;
-> -	}
-> -
-> -	ret =3D v3d_gem_init(drm);
-> -	if (ret)
-> -		goto dma_free;
-> -
-> -	ret =3D v3d_irq_init(v3d);
-> -	if (ret)
-> -		goto gem_destroy;
-> +	v3d_gem_init(drm);
-> +	v3d_irq_enable(v3d);
-> =20
->  	ret =3D drm_dev_register(drm, 0);
->  	if (ret)
-> @@ -435,12 +439,12 @@ static int v3d_platform_drm_probe(struct platform_d=
-evice *pdev)
->  	drm_dev_unregister(drm);
->  irq_disable:
->  	v3d_irq_disable(v3d);
-> +clk_disable:
-> +	clk_disable_unprepare(v3d->clk);
-
-clk_disable_unprepare() is moved up in the error path, but not in
-v3d_platform_drm_remove(). Should this be kept consistent?
-
->  gem_destroy:
->  	v3d_gem_destroy(drm);
->  dma_free:
->  	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
-> -clk_disable:
-> -	clk_disable_unprepare(v3d->clk);
->  	return ret;
->  }
-
-regards
-Philipp
