@@ -1,61 +1,63 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C8F21B199
-	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 09:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0174A22ACE3
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753695662; cv=none; b=K8Kc8RNXIGjJLpoxiubXJcxXBS4X2WlJP2QufYwlNbP92/eoHhBtE9hAMYRM6Sm48fKyR81QU+VriHVcEEdKUE65mtxihtqdYqpMafp0BffZjlJP3eZe6BIhjDDdw9Db5t2xtCU2dsD7UY2iOUgc8sQhbh29PFscaV5+0Xp7tfU=
+	t=1753695670; cv=none; b=QmAoC3+vvWhk79CX8lyIYovIWitLC5DJPJz+Y6vrxmI40eO6nzYEIYXm79bGtNeNCvtDgX0Hl4p0N2mvBrJGIvlgeaxJMkOW8Kno336Miodb9Gy4rOVTHtmufFdHmZZkrm4faUCnu33/HIf9gPbkbb3m6/OHreVvGZ6DjnPkqEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753695662; c=relaxed/simple;
-	bh=tky27jZP/AN6RswI7LVwyym5k7vJldwCLuCO4YwFXj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DMSoqwLX1LvbEf/aT2f5G4n6LkVLbukiMRLsA9t8g84YIOPD0eZh4m36sK8jnDT0MCBMI1RUGI+V52a7z65RkR9yB38NZFMiN+KTZIkNYqYMeD0Mf74kLNudgWVw6GoSSIEw+IWpfAiglgwHzrNdWaSRWZqB12r26Ilwfo0ayXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IjAY9oCB; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1753695670; c=relaxed/simple;
+	bh=B3l9G9xHfhvz8EaPHO3ldfTP94vcz4sc4fSmpOQNlnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CT2rViiifUkGNVCl4q3WV8xYPL544MKgYLwcdwyFd5n5XQrPLkdaqKL24R8FL5an2YZkEEaKGJQpGhvQYIQGpuS4mtu+GqnBP5KZio+URq6cJAsRx0bqpsrxLIjMDZcM0rbj3J76ieruA/ZzeELMMjqvGIyzyrdGxGx8drGyPyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=P9SRYLmP; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IjAY9oCB"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3137c20213cso4080656a91.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 02:40:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="P9SRYLmP"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-313eeb77b1fso3322917a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 02:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1753695658; x=1754300458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=25NsLwgQxU6OoVi/DUTMUdIs8rRQolxUNPKDhe6xPck=;
-        b=IjAY9oCB87BsJ9LZcOxQWQOf2NBEZ0wbRwMzJgf47Nn9b6V/KYLhl3K0MVn5xjLdks
-         bQyIuCLE1TLHirJCHYKedUdEWX0vKQA3zqQgg45gkyCZGiFO5puz95Xu0090guQGHGZL
-         gbRCw5QsrOgOC3DceqAd1VahmvHdtQyqVnaIjgWAuEanY19BhXaukGNEvRk0L3SOCsSo
-         YYoJobGVr6Nm7SUGnRc1UDse3lbAb+mLgp5yRSCmArdznLhk52szaw3Sx68YT8kF93hW
-         2PfyzeJfuVV9FvwnOyiI/ivNrOXcGY5L2eATHrogm38IOR4VNF87WUJAeje4E7/dna40
-         r2nA==
+        d=ventanamicro.com; s=google; t=1753695668; x=1754300468; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ziNNelNAtU8Lu0O2/2Qc6bW/trdK9/SPi3ZGrwyyiyE=;
+        b=P9SRYLmPNTb9GFAgQQVRm0jb+9WOQlbv4/GstcEDwi9/3ox6m5tIgXWEsJnq54LVc0
+         uBlYXqg8VZOyM3ui26gGD6LSOdTCJ9ItCeZzgDRrSz2eXGzp3tuevL6Inb0/Y7wvU9fm
+         iY1b0A7/gpkp4l62E5RB6BqeRUpOz1fM9ZcEwQ6FB3ZqtvImsXjoXRqI//0XGKVlAv6z
+         rXn7ME/xf3hNdWK8mXBa0IUAGUaKkYjen+Ep4FP3PMyKNLInm8bVs9gm3U+3yncg6Qcn
+         T74XIcMc2mt/YC/lMyYQA6TFc2X6V63re4BW7SseEQax9Czdic1i9PRrd2TEIedoRdqL
+         37GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753695658; x=1754300458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=25NsLwgQxU6OoVi/DUTMUdIs8rRQolxUNPKDhe6xPck=;
-        b=aTOw2sUeXjzCiYObLfE94hJS44SVROhbvxEnDAqQq02VVlaLRa3rfsA1iPb/rM6WCV
-         ccg8HLcEjFOYbtZxkcmOlE40JEwn40mKVSose0ep0NoTwxM8DMaswcVXh1PcY+MP58CJ
-         feXWnSUZw91Us9E6a7dUgkF360duPDL4hfJtLJX3oqNeIA8QHSYPvHGz1vPHF9exB7Yv
-         B3q9On7FGxSpgVFbw+jIkTU+mr0zgTIQnZSB0/UV0CFquWQwDCrN+IxMYzKUIIdqbKFc
-         gnvYR7fdIhVkpgnlfJB4FYuF0/51Vbf4tDtCxvewbziQvGCNzsaMzV74u3waatqd6RPN
-         o4xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9QayO9tarxItbInIZwIKt9NCndcqdZ5CiJftSLo+haT+A01IIXAveT1NEOCEi8d60KSSN3pY8jIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvkHeAoIx2TlSEc0pY/LqzNXJ/BNbnFXwInt1Q8KcyW/o3QEuJ
-	g0bMfehKPJ8MUGwX6mjmIEbBrmACzXGKKIBHSksSssXQWsbD5hRcf2/gBn6VpTHTlRY=
-X-Gm-Gg: ASbGncuj67syDQxmx5lsmnrEw9W/s8BYUNzMPC38Y0IZtQZk4kup7kVGvDOZcoNiS2l
-	qh3KzHLog0JGUYG4h2890wA0wyCGFWli2qnkccNH4zNkBHrEM4rhV4DYDpTC6xC1OJA33cYwKGv
-	KB9oGQlbjjH9O+5gJaBSdiYSHe+i8aIx2eIZZ3FnGPw13VPrD4zwvEnncOXBvT+2rY4ar11NuaW
-	82GrZidgVpXMRAd1vbRXMFfOlfs1c50GVLF9RQd7L3tILJgAOYkBTb2eb3zCHbToqJZgt+xjbq9
-	Uejau93cF2YHaICb3OkLgmWuTBPWByO2dKWbZRhsj+GDX1MSc2r9w1QJ7VTbCsY5pColXyghhiu
-	fY8VzzHKRnMZGph9M3OY4n+yLMyuQk5HNVAY1jUojMbJA70tPn+wnKeoc7xgW
-X-Google-Smtp-Source: AGHT+IEmvT+SOvzEcdLdlRaaKWgRWUpUW8p4SklxnxOFXQ6plZqK680P2Sf3GArKsbF5pMJNWebOLg==
-X-Received: by 2002:a17:90b:39cd:b0:31f:7c9:2e66 with SMTP id 98e67ed59e1d1-31f07c92f41mr1489966a91.28.1753695658070;
-        Mon, 28 Jul 2025 02:40:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753695668; x=1754300468;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ziNNelNAtU8Lu0O2/2Qc6bW/trdK9/SPi3ZGrwyyiyE=;
+        b=tDPa9Dtyj/nJ49q1HQMBireIOsbr8Jn0m91VI97i0c9GFm5urd/WNZE5yC4ffKT5yg
+         t4OluFRgVMSUKRqY+pES8It6FH4t6hDbnI9Hwi+h4+TOh8rFmqE4R846tvdCK4joFyed
+         FgSfyontvwMgQoQgxvpOqnXLJ86yJLLBZc0TmCYkVGf6OQX+mnqh3lpBy1kQjMuJ6k15
+         eKwDl3dtHsv3bs6UtIYe1az3jHuuHFLRGUheOYYv3xdIoU/POr7hTuh134ZfZONRfc32
+         8vhyX1TCcsOwIYri+Ic5Hc2xipolWmSF3CRu8/Php3CNofBxNFceZ2wCzYIOXBFeuwv+
+         nLfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqYxpfcVk5wKPx+2HmMgAj5zUpZ+gyrANSI2hNnb5kz2t27/az7cFtkA7b5zPnxOTRXiBaww4lDSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsigU7YpNeGVcFrXqSw8sweaHH81ZJzQPR694nf6oW61VyD5JG
+	7P+urv8Icgo9QpKtBgnIQ93sKZnR0f63Fr0M8HH7W2mfQDTjGCI1vq5M4fPf8qU2fN4=
+X-Gm-Gg: ASbGnctpKEt0L1GKgSDLgHRijdIQCQ1rXZ0H/URiDUgoBRt8xtqXbtR0O0mjt+Powkq
+	heJ1nvpy/Qrl7+4jyxcLlASCOWkvE4/J/fZYxC95gKNsPbNYgjJstjf/BNA+aR2Mz5C0V5giAqx
+	RFIDEIA6E7Ocqng4LZrOA/qyK67G3qcE6ogwmdLusLirUqczR3NuKDKbcr5cx7opuGMhIvPvaGI
+	wZOO4Dn4kVCxOOoCkae1jq5ZdgOPrUSkyK1F9lh98VlyZU+ED08RJPcgbP2bb7lZT9lV/zts4z/
+	oFKxInBh9DN9xlVm50PLroGf05Dw0KjIGzVj2U2eJSZCgSWox44LGKwBZlOFNqAm8TbosmrNkxc
+	Q6RmK3oKBRFFffmneUA7BBfacD027D17ESV5SrdB6YOvIxIql+Cw/Kyw+lTuSPQRkB1m5fko=
+X-Google-Smtp-Source: AGHT+IHEr8CG7nl3bZOzKIacTPyWTw/OgW8BgxiKylSqn49CvgsxlgWeDnJe16LwuelGnGiskjDCEg==
+X-Received: by 2002:a17:90b:4e84:b0:31f:1715:a6e2 with SMTP id 98e67ed59e1d1-31f1715ae77mr387658a91.21.1753695667978;
+        Mon, 28 Jul 2025 02:41:07 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.19.28])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.40.49
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e832fbf99sm5396230a91.1.2025.07.28.02.40.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 02:40:57 -0700 (PDT)
+        Mon, 28 Jul 2025 02:41:07 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -86,11 +88,14 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-acpi@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v9 00/24] Linux SBI MPXY and RPMI drivers
-Date: Mon, 28 Jul 2025 15:10:08 +0530
-Message-ID: <20250728094032.63545-1-apatel@ventanamicro.com>
+	Anup Patel <apatel@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v9 01/24] dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+Date: Mon, 28 Jul 2025 15:10:09 +0530
+Message-ID: <20250728094032.63545-2-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250728094032.63545-1-apatel@ventanamicro.com>
+References: <20250728094032.63545-1-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,178 +104,146 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
-are ratified by the RISC-V International.
+Add device tree bindings for the common RISC-V Platform Management
+Interface (RPMI) shared memory transport as a mailbox controller.
 
-Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
-Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
-and RPMI system MSI driver This series also includes ACPI support
-for SBI MPXY mailbox controller and RPMI system MSI drivers.
-
-These patches can be found in the riscv_sbi_mpxy_mailbox_v9 branch
-at: https://github.com/avpatel/linux.git
-
-To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
-machine with OpenSBI and QEMU from the dev-upstream branch at:
-https://github.com/ventanamicro/opensbi.git
-https://github.com/ventanamicro/qemu.git
-
-[1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-[2] https://github.com/riscv-non-isa/riscv-rpmi/releases
-
-Changes since v8:
- - Added Jassi's Acked-by in mailbox related patches
- - Renamed "clock-controller" DT node to "clock-service" DT node
-   in PATCH8 as suggested by Stephen Boyd
-
-Changes since v7:
- - Addressed enum related nits in PATCH3
-   (Refer, https://lore.kernel.org/all/CAK9=C2VxhC6soxHtmacedbeCU=rFi84Br1RvN2uPcBKoLhRaJw@mail.gmail.com/)
- - Addressed comments in PATCH7 as follows:
-   - Added minmax.h to includes
-   - Removed "rc" variable from mpxy_mbox_send_rpmi_data()
-   - Removed alignment and other checks from mpxy_mbox_peek_rpmi_data()
-   - Created separate function to restrict scope of channel_ids used in mpxy_mbox_probe()
-   (Refer, https://lore.kernel.org/all/CAK9=C2Ume2CmBYHYob7HSJHu=ZdfdWM+4JYPgFJ9Hir5Oi8cOg@mail.gmail.com/)
- - Improved comments for struct rpmi_clk_rates in PATCH10
-   (Refer, https://lore.kernel.org/all/CAK9=C2VfvsbFTjecQm0OSsssXbff7wC4fqWf3CTmnpWSiaLcBw@mail.gmail.com/)
- - Improved refactoring of acpi_fwnode_get_reference_args() in PATCH14
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-15-apatel@ventanamicro.com/)
- - Improve nargs_count parsing in acpi_fwnode_get_reference_args() for PATCH15
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-16-apatel@ventanamicro.com/)
- - Added more comments describing why need to explicitly set device MSI domain in PATCH21
-   (Refer, https://lore.kernel.org/all/aGaUmpw1pVWNAmpb@smile.fi.intel.com/)
-
-Changes since v6:
- - Rebased the series on Linux-6.16-rc4
- - Added Stephen's Reviewed-by in appropriate patches
- - Addressed Andy's comments on PATCH5, PATCH6, PATCH9, and PATCH14
- - New PATCH6 in this series which is factored-out from PATCH7
-
-Changes since v5:
- - Rebased the series on Linux-6.16-rc2
- - Added Conor's Reviewed-by in all DT binding patches
- - Addressed Andy's comments on PATCH5
- - Addressed Tglx's comments on PATCH12 and PATCH21
-
-Changes since v4:
- - Rebased the series on Linux-6.16-rc1
- - Dropped PATCH1 since a similar change is already merged
-   https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@rivosinc.com/
- - Addressed Andy's comments on PATCH4, PATCH5, PATCH6, PATCH7,
-   PATCH13, and PATCH17
- - Addressed Atish's comments on PATCH11 and PATCH12
- - Addressed Conor's comments on PATCH9
-
-Changes since v3:
- - Rebased the series on Linux-6.15-rc7
- - Updated PATCH2 DT bindings as-per Rob's suggestion
- - Improved request_threaded_irq() usage in PATCH7
- - Updated PATCH10 clk-rpmi driver as-per commments from Andy
- - Updated PATCH13 irq-riscv-rpmi-sysmsi driver as-per comments
-   from Andy and Tglx
- - Addressed ACPI related comments in PATCH14, PATCH15, PATCH18,
-   PATCH20 and PATCH21
-
-Changes since v2:
- - Dropped the "RFC" tag from series since the SBI v3.0 and
-   RPMI v1.0 specifications are now frozen
- - Rebased the series on Linux-6.15-rc5
- - Split PATCH8 of v2 into two patches adding separate DT
-   bindings for "riscv,rpmi-mpxy-clock" and "riscv,rpmi-clock"
- - Split PATCH10 of v2 into two patches adding separate DT
-   bindings for "riscv,rpmi-mpxy-system-msi" and
-   "riscv,rpmi-system-msi"
- - Addressed comments from TGLX on PATCH11 of v2 adding irqchip
-   driver for RPMI system MSI
- - Addressed ACPI related comments in PATCH15 and PATCH16 of v2
- - New PATCH17 and PATCH18 in this series
-
-Changes since v1:
- - Addressed DT bindings related comments in PATCH2, PATCH3, and
-   PATCH7 of v1 series
- - Addressed comments in PATCH6 and PATCH8 of v1 series
- - New PATCH6 in v2 series to allow fwnode based mailbox channel
-   request
- - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
-   controller driver
- - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
-   mailbox driver and RPMI system MSI driver
- - New PATCH17 to enable required kconfig option to allow graceful
-   shutdown on QEMU virt machine
-
-Anup Patel (14):
-  dt-bindings: mailbox: Add bindings for RPMI shared memory transport
-  dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
-  RISC-V: Add defines for the SBI message proxy extension
-  mailbox: Add common header for RPMI messages sent via mailbox
-  mailbox: Allow controller specific mapping using fwnode
-  byteorder: Add memcpy_to_le32() and memcpy_from_le32()
-  mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
-  dt-bindings: clock: Add RPMI clock service message proxy bindings
-  dt-bindings: clock: Add RPMI clock service controller bindings
-  dt-bindings: Add RPMI system MSI message proxy bindings
-  dt-bindings: Add RPMI system MSI interrupt controller bindings
-  irqchip: Add driver for the RPMI system MSI service group
-  RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
-  MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-
-Rahul Pathak (1):
-  clk: Add clock driver for the RISC-V RPMI clock service group
-
-Sunil V L (9):
-  ACPI: property: Refactor acpi_fwnode_get_reference_args() to support
-    nargs_prop
-  ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
-  ACPI: scan: Update honor list for RPMI System MSI
-  ACPI: RISC-V: Create interrupt controller list in sorted order
-  ACPI: RISC-V: Add support to update gsi range
-  ACPI: RISC-V: Add RPMI System MSI to GSI mapping
-  irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
-  mailbox/riscv-sbi-mpxy: Add ACPI support
-  irqchip/riscv-rpmi-sysmsi: Add ACPI support
-
- .../bindings/clock/riscv,rpmi-clock.yaml      |   64 ++
- .../bindings/clock/riscv,rpmi-mpxy-clock.yaml |   64 ++
- .../riscv,rpmi-mpxy-system-msi.yaml           |   67 ++
- .../riscv,rpmi-system-msi.yaml                |   74 ++
- .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  124 ++
- .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   51 +
- MAINTAINERS                                   |   15 +
- arch/riscv/configs/defconfig                  |    2 +
- arch/riscv/include/asm/irq.h                  |    6 +
- arch/riscv/include/asm/sbi.h                  |   63 +
- drivers/acpi/property.c                       |  128 ++-
- drivers/acpi/riscv/irq.c                      |   75 +-
- drivers/acpi/scan.c                           |    2 +
- drivers/base/property.c                       |    2 +-
- drivers/clk/Kconfig                           |    8 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/clk-rpmi.c                        |  616 ++++++++++
- drivers/irqchip/Kconfig                       |    7 +
- drivers/irqchip/Makefile                      |    1 +
- drivers/irqchip/irq-riscv-imsic-early.c       |    2 +
- drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  328 ++++++
- drivers/mailbox/Kconfig                       |   11 +
- drivers/mailbox/Makefile                      |    2 +
- drivers/mailbox/mailbox.c                     |   65 +-
- drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1017 +++++++++++++++++
- include/linux/byteorder/generic.h             |   16 +
- include/linux/mailbox/riscv-rpmi-message.h    |  243 ++++
- include/linux/mailbox_controller.h            |    3 +
- include/linux/wordpart.h                      |   16 +
- 29 files changed, 2990 insertions(+), 83 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 124 ++++++++++++++++++
+ 1 file changed, 124 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
- create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
- create mode 100644 drivers/clk/clk-rpmi.c
- create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
- create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
- create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
 
+diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+new file mode 100644
+index 000000000000..3aabc52a0c03
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mailbox/riscv,rpmi-shmem-mbox.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: RISC-V Platform Management Interface (RPMI) shared memory mailbox
++
++maintainers:
++  - Anup Patel <anup@brainfault.org>
++
++description: |
++  The RISC-V Platform Management Interface (RPMI) [1] defines a common shared
++  memory based RPMI transport. This RPMI shared memory transport integrates as
++  mailbox controller in the SBI implementation or supervisor software whereas
++  each RPMI service group is mailbox client in the SBI implementation and
++  supervisor software.
++
++  ===========================================
++  References
++  ===========================================
++
++  [1] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
++      https://github.com/riscv-non-isa/riscv-rpmi/releases
++
++properties:
++  compatible:
++    const: riscv,rpmi-shmem-mbox
++
++  reg:
++    minItems: 2
++    items:
++      - description: A2P request queue base address
++      - description: P2A acknowledgment queue base address
++      - description: P2A request queue base address
++      - description: A2P acknowledgment queue base address
++      - description: A2P doorbell address
++
++  reg-names:
++    minItems: 2
++    items:
++      - const: a2p-req
++      - const: p2a-ack
++      - enum: [ p2a-req, a2p-doorbell ]
++      - const: a2p-ack
++      - const: a2p-doorbell
++
++  interrupts:
++    maxItems: 1
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a wired
++      interrupt and this property specifies the interrupt source.
++
++  msi-parent:
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a system MSI
++      and this property specifies the target MSI controller.
++
++  riscv,slot-size:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 64
++    description:
++      Power-of-2 RPMI slot size of the RPMI shared memory transport.
++
++  riscv,a2p-doorbell-value:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    default: 0x1
++    description:
++      Value written to the 32-bit A2P doorbell register.
++
++  riscv,p2a-doorbell-sysmsi-index:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The RPMI shared memory transport supports P2A doorbell as a system MSI
++      and this property specifies system MSI index to be used for configuring
++      the P2A doorbell MSI.
++
++  "#mbox-cells":
++    const: 1
++    description:
++      The first cell specifies RPMI service group ID.
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - riscv,slot-size
++  - "#mbox-cells"
++
++anyOf:
++  - required:
++      - interrupts
++  - required:
++      - msi-parent
++
++additionalProperties: false
++
++examples:
++  - |
++    // Example 1 (RPMI shared memory with only 2 queues):
++    mailbox@10080000 {
++        compatible = "riscv,rpmi-shmem-mbox";
++        reg = <0x10080000 0x10000>,
++              <0x10090000 0x10000>;
++        reg-names = "a2p-req", "p2a-ack";
++        msi-parent = <&imsic_mlevel>;
++        riscv,slot-size = <64>;
++        #mbox-cells = <1>;
++    };
++  - |
++    // Example 2 (RPMI shared memory with only 4 queues):
++    mailbox@10001000 {
++        compatible = "riscv,rpmi-shmem-mbox";
++        reg = <0x10001000 0x800>,
++              <0x10001800 0x800>,
++              <0x10002000 0x800>,
++              <0x10002800 0x800>,
++              <0x10003000 0x4>;
++        reg-names = "a2p-req", "p2a-ack", "p2a-req", "a2p-ack", "a2p-doorbell";
++        msi-parent = <&imsic_mlevel>;
++        riscv,slot-size = <64>;
++        riscv,a2p-doorbell-value = <0x00008000>;
++        #mbox-cells = <1>;
++    };
 -- 
 2.43.0
 
