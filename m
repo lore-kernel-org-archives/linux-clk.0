@@ -1,123 +1,195 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B148D248F70;
-	Mon, 28 Jul 2025 20:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7013B1CAB3
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 21:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753734490; cv=none; b=Ecm+UHxS2ZnTFoEN7NYYvjHDKzg2HfPP5eoLEEubuKe+LXttXa8h5IFmGP1R4lUuHl7cjDlpTX5Am1lB3xgg+VaOuTKnsANXo38W4MHZL/czYpG2Fp1kctRSKZCUSRsfukeOjGMbbj14bH0U9XTZGlFGDDPtdvmJ6G8EF3DYtNA=
+	t=1753736448; cv=none; b=Iy/twRe/kFvexAvMFGrFZMXwQCBxUbDm6lkjCQWg5gQ2BworDiAHMS969tAYprbADei+Gf3rJoTCBuc1dXAYgqaY0aRv8RtsWgvsHfJK05+CQsRO5isR00FfdMBIoJfnJPihfb45sPm3TdyAt9LdNwexlC6KhpR0HMLQwJILcyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753734490; c=relaxed/simple;
-	bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NUoQhnI55TUeuqhsWDVByi7JqZp1I/IB7k4uqHeUla8hBo0s8Y1tDRCYPc+oP9nsGbdKp89ADOaJHovy5M857+/tOCvYdRzdRS9Mpo9aPi3ESS1yNlUAOBIy6hzSC5WASFyH1v2NRN3TxuSRHnDuSq9EecMbJRAYuPClQ7xZIA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MkR8mSwi; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753736448; c=relaxed/simple;
+	bh=ZLJqbJsq5/249gZ3WmNrKkb4m92zY89eiUxRmm1XnBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+w6lKPhTRGVvGprDeic/Ccsy1TM8e+M7wmUxn84HAcAyXmSpNCmxxHHUYmNI3Xlf9iBMdcXBKwA+S3qgpX+p1ZmxyiBO2jBW4PAJ8f6RM6mv880JKSn6y2E1/oMVJkpYale5tLyzyAVyn+26iNtMmbyA+gXIdyyQxHs+EWlUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=WAKTjq9/; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkR8mSwi"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b7892609a5so753759f8f.1;
-        Mon, 28 Jul 2025 13:28:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753734487; x=1754339287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
-        b=MkR8mSwic7uFuolVwEdh9l5Z3Ke+RWCX7955C/6qvGY5Mc/Gy0jetIBFxuhU62O3Is
-         ArVljuBkbyP7QNfRgCZZq913DqSowaT63U9ZgVmf+0IRux86VWfuZOY6GY3egjUNpSzU
-         eDS22/dwFcelKch4FyS5vqKU9YLsXq8JFcvuPSyrwsx650ZmlKf4YImUbXzgqq40I3WC
-         4byEFAFy9CcBmJo3AuDWvS9rO0GBWKpGUpklMMhRmd7syEbwbAg1UJmInqvvchSG99Z+
-         hUvqCTizAj7l+l0o95g17mEWGFF8nIWQjRIReLefNKG8894Qz84r4kcf3YHHAKtvBJwu
-         qDbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753734487; x=1754339287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3p7uNtOcYKX9AeLZxdOrba2Sw841/DoiWzWyyL7dQNI=;
-        b=uwc8kHUlpwSqvlr2dxxGr0TVfnA5IkvZpSuEnDa+OY1GGua3p/nHcadeyJkiTy0u9E
-         YMOtHpencEyex3sDLspMfXQklfAjeo+Uzx2zHrtwpU0weV4xybTNTUFJ8dG6zzfT5x+D
-         mHMgYXlAB5kvKLLZLglOJ1ITyAgFfozkwNwHPhm9/a9jjeR5YXxsSqLBxm5taOCYtQJa
-         aq7m3laL8xeCK94spEKRyQoiuWGXIRurEupRI1V7TbIVXe6c/+yAWZz6ENxUhC4yxDHK
-         XGz24lLNMSw0B4CbdNHcKvT1V3twMhgw+oJ51I4H9KFPzRpG20cX6XioGTbJYM0zHtF8
-         lG+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZLrRDKoT5NPLmPpMB56LzXFebfKedY2/adVZfNMFHdSf7ppfKYg5hayqqEVu1ARvaPzTjMlzSmZmujVqLgWPrl7U=@vger.kernel.org, AJvYcCWYVESHsbh0U1KA0B4RNQoJ0If2hqskQn5L7mfB+tkX+KoW98PNGa6YXoYqrdIDQ47cwsua/5z6C8AY@vger.kernel.org, AJvYcCX5L9FiEXNm+7+Nf105pqChdaK7mEj2/5Yw3fTzZxnCFw/t2niSCk6mK/Bcn5Fik0NaNsKHQEbAgyBDE7od@vger.kernel.org, AJvYcCXyzMLdeQM0gs6ZFYw71dLhiuhbbsY455iSk5Pvav9IUIyHIYiC4njWHtC/nn/Z7hq+CIdQfEWz0lh1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFG9Wgx4pbUB8/J28f3f1ZJaRMxGD/RQyuh//XCGcd8n+7mqkD
-	eHkcYnw2GLIPBwAntXM7jnBOX7kGbgCsVTteWTkFB81S/zkpoewMrBpn/qlInEEFWjiTiQJMNTq
-	zgLZ+l5Q0NDQTEPcyx/83hUUIW+a7uXU=
-X-Gm-Gg: ASbGncubfpli44DelKc55wahuGrhq2or8Z9UJIthcQeW3HdC5cOrXdu4YEK48/exrKJ
-	HOU0o+fNf3/QxCZ2lwt64AbToinHtq7fewHg3zqQXwiHaMXXLvQMWT5I9V3sYqjDwOhAHPrxPTH
-	tIDMC7gXDGEhTuS/ab/hSdbkQA3yqCueir3IJZ78IZ9Ikt+LmfF0xrFAGNNs9fSYMzaRhL0bAMn
-	d3+0g9V
-X-Google-Smtp-Source: AGHT+IG+tkX084ob9BPVH1wtp96BCaHvXOaWH/vJW6Hx67Y885Vfn0RXp7T9tAucn/9SDqLbh3dP5wGLiKEFiQ7iBaQ=
-X-Received: by 2002:a5d:588e:0:b0:3a4:d9fa:f1ed with SMTP id
- ffacd0b85a97d-3b776728f9dmr8247114f8f.13.1753734486875; Mon, 28 Jul 2025
- 13:28:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="WAKTjq9/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1753736443; x=1754341243; i=wahrenst@gmx.net;
+	bh=J/Oy88lUm0FvJGz5wLKgjQPt0tOXP/VHyBYdDBP1ZbI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WAKTjq9/lYD3Ykm6ciWyw60DDlY6MpdkbkBBeBg5ZI2kziCU+1OxvU1jxu4xS20/
+	 zCaE60R08Fy+csCD+9HcfG12hQxJbcTcxM6YmfXCm2TkGVNdT/Cu/5/1IwG2sVT4A
+	 zvjUcajqdOByBljHf/wSqPDO8o9Yvb2PFg5mJIzvyQPID2uf2GfV5Q02SjJpQNLYS
+	 t8DPdXBNLFIY6BEanczLjXko9ansP5WPg1Y2O6t/LVsGvUqy/jUJt1D6hhGpvVATa
+	 DopjdUftouIW2NzZsYgZJ/0QRcUAe+XjnLWbOTgh0yeG+o0r/+oY73n1J3O7ZD6a4
+	 B+zxJDoHRna1Dzx5VQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([79.235.143.227]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mg6Zw-1uC8U10nzK-00lZe3; Mon, 28
+ Jul 2025 23:00:43 +0200
+Message-ID: <e18ed574-e84e-4812-86c0-5cfd14860030@gmx.net>
+Date: Mon, 28 Jul 2025 23:00:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 28 Jul 2025 21:27:39 +0100
-X-Gm-Features: Ac12FXzC9Bz7YbuCg4MGPdK7g0FCBbcgsYDYVglx3jjRJspjbkFCpGAuDcBuHBM
-Message-ID: <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas,dsi:
- Document RZ/V2H(P) and RZ/V2N
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Power Management for Raspberry Pi V3D GPU
+To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
+ Iago Toral Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+References: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OMv3nR2OBn7j1J7/9IrOQZWL+dHJrL6Q1VJxVofqORmkzTy4gmp
+ mzZd8gfr0KkDWw1dtZtyBQv8T69cPuFkkm42liRy4Pqa4DzJcU8RoxkU1syGnfaMw6N2pY3
+ pfD11Ceg3dIdv6Y255jBBEfPZ+Mf0vpP31PdSkFdOy9P4DOyTGXCxWFYEd0YMrvzb6NKNrC
+ crpYv2Bea9bua75w8JKmw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8RrSjGKtHYA=;MiesSgyKfKIlscGxbeexIXgBOpg
+ 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
 
-Hi All,
+Hi,
 
-On Mon, Jul 28, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
+Am 28.07.25 um 14:35 schrieb Ma=C3=ADra Canal:
+> This series introduces Runtime PM for Raspberry Pi's GPU, V3D.
+> Currently, the GPU clock stays up during the whole operation, even if
+> the GPU is idle. By introducing Runtime PM, we can now turn off the
+> clock completely during idle. For example, with this series, when
+> checking `vcgencmd measure_clock v3d` in the Raspberry Pi 5, we get:
 >
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> (idle)
 >
-> Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
-> RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
-> with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
-> RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
-> five clocks instead of six.
+> $ vcgencmd measure_clock v3d
+> frequency(0)=3D0
 >
-> To reflect these hardware differences, update the binding schema to
-> support the reduced clock and reset requirements for RZ/V2H(P).
+> (running glmark2)
 >
-> Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
-> RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
-> reused for RZ/V2N.
+> $ vcgencmd measure_clock v3d
+> frequency(0)=3D960016128
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> To implement PM for V3D, it was needed to add a prepare and unprepare
+> hook to RPi's firmware clocks. Currently, they don't turn on and off,
+> nor lower the clock rate. Therefore, PATCH 1/3 addresses this issue in
+> clk/bcm/clk-raspberrypi.c.
+>
+> The other two patches are related to PM enablement in the V3D driver.
+Maybe you want to cherry-pick this older patch and integrate it into=20
+your series? [2]
+
+[2] -=20
+https://github.com/lategoodbye/linux-dev/commit/2ee5e1205922b06100206e760e=
+d8aefe0b6d322f
+>
+> To ease testing in Raspberry Pi 4 and 5, I prepared a downstream branch
+> backporting this series to rpi-6.12.y [1].
+>
+> [1] https://github.com/mairacanal/linux-rpi/tree/v3d/downstream/power-ma=
+nagement-v2
+>
+> Best Regards,
+> - Ma=C3=ADra
+>
 > ---
-> v6->v7:
-> - Renamed pllclk to pllrefclk
-> - Preserved the reviewed by tag from Geert and Krzysztof
+> Ma=C3=ADra Canal (3):
+>        clk: bcm: rpi: Turn firmware clock on/off when preparing/unprepar=
+ing
+>        drm/v3d: Allocate all resources before enabling the clock
+>        drm/v3d: Introduce Runtime Power Management
 >
-- Included support for RZ/V2N in the same patch
-- Updated commit description.
+>   drivers/clk/bcm/clk-raspberrypi.c |  41 ++++++++-
+>   drivers/gpu/drm/v3d/Makefile      |   3 +-
+>   drivers/gpu/drm/v3d/v3d_debugfs.c |  23 ++++-
+>   drivers/gpu/drm/v3d/v3d_drv.c     | 171 +++++++++++++++++++-----------=
+=2D-------
+>   drivers/gpu/drm/v3d/v3d_drv.h     |  21 ++++-
+>   drivers/gpu/drm/v3d/v3d_gem.c     |  18 +++-
+>   drivers/gpu/drm/v3d/v3d_irq.c     |  15 ++--
+>   drivers/gpu/drm/v3d/v3d_mmu.c     |  12 ++-
+>   drivers/gpu/drm/v3d/v3d_power.c   |  79 ++++++++++++++++++
+>   drivers/gpu/drm/v3d/v3d_submit.c  |  19 ++++-
+>   10 files changed, 291 insertions(+), 111 deletions(-)
+> ---
+> base-commit: a7352c849492a30b5d8491fcb9314ab376a3942f
+> change-id: 20250728-v3d-power-management-eebb2024dc96
+>
 
-I missed mentioning the above.
-
-Cheers,
-Prabhakar
