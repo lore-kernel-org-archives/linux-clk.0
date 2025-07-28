@@ -1,161 +1,139 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B85212B2F
-	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 17:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7719D275B1E
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 17:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753722667; cv=none; b=T88okCvcKQZ672cmWXXwW3HF/H/Dzn4P54F0Vth2WXi7dBUpLghT7qdkPP9fPyRASDmzuZomMgk6KpuC8T3gfD3FNYlQNajf9VSuVR+yTqf7QwmI6ndD0ytlqlIBuvmjAHnWHcmCzpN1xlFkqt9ZTOf/NaQ8PBNweE3yK1stvTE=
+	t=1753723779; cv=none; b=MyfLiNTZJFmwVmFvUJ03acnzjg48CQ06xGzlpXOiw/+zEf2vbZ6h2unfZbMfFihs74WlxZcpnNRo5DXxrnX1TsadF+UM4N8yr2WoRv0UsJqKlfHAtBFucWymLyujN1aPwhpp2Bd/5bDxIQXqUuoTiNNYIeeuW22v9nO/NIk/dmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753722667; c=relaxed/simple;
-	bh=bKx7T1DLQcbdvNXKkdxjhh9o20FMdCO0YBI0USo5qRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mO9Qsk1kJCaXXxR7ToKtecfHFxt0PRV6Z+rI8EayxWmIKpHPF7xQdF+FQ/hTTei85zi5tHSi30SooVQ6tTBRA4A/o7RI2l24gE10NqMbLmZydYTEVPNGUxn0P7UjTGbp+UTSEQAtCV+61y+oyCJl3FCZ650Arr6qduNROH/v330=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WxAHBuzj; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753723779; c=relaxed/simple;
+	bh=28otr1PWkOxwqfxwLLylhjzkns3AMN2v2kaXHqkXC2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TVQ5y6hfZWZbLoiL+FP8qpRo96MCj9IMGw9/gbw2BohJkGmr/rQc//4hrw3iSxJTjIGAQmNtWRtCx3ryoypPdJL5llWrCZ8VLgFjaaxIGBsWOEwtzIvOrd01nBMdX4YchItkzSkKt6fvtDCCXb+nZ6OlfhBX8+cQW/E1KMwQiNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ndKoGrrT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxAHBuzj"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so911807966b.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 10:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753722664; x=1754327464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QR1arBx0XvaSp1oUXc3PyontAThuSk/8jS2zweGYDNE=;
-        b=WxAHBuzj/5k9vPu0wCo7mPeSQvYKrJIm7erozXLuNjSfF4PmjuO+72WfufvbcrFhiI
-         JfUCB+W8t0wtkf9OogyKUFcHiAMjTQlMAgG7sjW0DriH87kFpSC1Giv+5D+nB48ql+9+
-         LdIc308cu3Sp7e28RA/kHTbHNOOXRRa/p6FIwlcFsTAqRg+4YHrfI2k6jMa7Yx/yZsPZ
-         wmq351hrSbbf5sx7Ew3qor4YTG22RbC+GMvcKNkh1AOIj7xlED5HOJRQee9lNswW2Lhq
-         fU3NaIbo3ZTejCgXB5oEn0Y8FTu4ImiZYjd7PnGzZ8bxvIF5URNuYTu5HrIIGStV9bQ7
-         ywmQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ndKoGrrT"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SAlNcj023477
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 17:29:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	psaO0fhsKdZfRWyiSo8tAjmdJAZtx/Aq71yeJdW+1SU=; b=ndKoGrrTK4M7C3OK
+	pJsr0X1o6iGXLpLdHSJMYA3nNmPMVy8YnfWcKsI0V24n8mRJ30912LCJ68cySYTA
+	hfPm65aTNTTuYz4nCCQxJOMPy0k4FFTnNO6HsayVQT0wM8jz3cNItEyY5QZXP9Aq
+	m6RXERo6e5UHBvGsmQcXeDtYn9NPlo+9anT9DJ5jzbKHnkoKJEQ8f2NPA/8BQR2f
+	xAQDzWymlbnEoh7tvRyoLvSiUxLZx502nms9tzSHpOCnNN01lPqwdcpUFp0HtBmv
+	n0dYC7pn2qe+tMIEQFxq1nMPi8UWO7Gv61+tIiWsbqKTGaKtDGdPjeLbUWZlKkZl
+	5krA8g==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484r6qnam4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 17:29:32 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so7045479a91.2
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 10:29:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753722664; x=1754327464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QR1arBx0XvaSp1oUXc3PyontAThuSk/8jS2zweGYDNE=;
-        b=Bo2hgbsG/QFIBdngRBvCCVpEB26lyu6Ie8xxC+1qTXdb1j5o5ftYkQLurTsZ+xgnUK
-         ul9qGYocAhYhs0ovGKkyYOi8p3Etlx9bhhlJy2F0JgjQVvCSnhbENLsZcHPk4iACv/Of
-         Q7sIbHsXOfnct/sfrPo5DvBjMR4NQh7gBCAh5GIoUgGO+cfkrTxUBUJaULx0E1H7LAWN
-         zuNBJ2Cqv3aCHfX3xB7r9dxFf4WgWpRJwkgyFkJyefRh7MCM1aCpfLaynCJe7tHHxUSc
-         iPbO3ZX2/RySP6LzXZ7PBNtSsJesqsg3IzpRV/gxBRE2pDbS/SDKEy2qyQ9fynJNWKrv
-         9WUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8X11lClJBcSA9lbdyvrt0FitkglUc7jcBel0999M4WiaEjrLfJC5MmeKpfiVa0BrB+jZtHzFxGhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT4zuZ2XLcl/M6tYCetAK/Cb4TgWjcPMJQjxJ9Gs2kFy2nQj5h
-	pBrL1F3MRFDZ4DCj1XTkDPWtP9tF/VCUX1dbx6gsijMo3S3K1X/lmn8hUAahL1dNkDc=
-X-Gm-Gg: ASbGnctt0fy8D8+tupJT7TZL1CHiJmsqmz+K9VL5gVWBQX1Ock48pci+zViqmPc5+4w
-	BZ514wGdyfkf2BGoS9IJcaZ/M0Hn1rulSH6prTTD4VXSaENHqwwlbq4jyTzX+kMJs9qcjVK6QJI
-	lz3KWhgsNdeiOwq6qMMCrXmiEgjI3Es3704VONeAaO3775rnHmI0eTlcWxx5wk6Tct8chWAj3kb
-	p1rr4vNCBScGVSStmBFX5RUuM2I742sjFwyDJkT9LX4r3j9sn0Tls4FlgDM1+HSMBP6SqUCjn9Q
-	sXBmXgbCUcsqSB1YWtD7sIJQK3I9H/MkP8zi0tupgHqqkIHVtQnHNJNfKWDie8/7TSIHXH25aXX
-	Qqs7R1y0BX7fzw8ne6q8yi4Ge948PR6ug6g==
-X-Google-Smtp-Source: AGHT+IFd/ukbJWEyAyiMoVr3cixjoIXsXy8y7hQtFjRtY748SHCa7Gi1Pqlg3oMU0d8uaJRO6rYQqw==
-X-Received: by 2002:a17:907:1ca3:b0:ad4:d00f:b4ca with SMTP id a640c23a62f3a-af619a0795cmr1251448066b.50.1753722663537;
-        Mon, 28 Jul 2025 10:11:03 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:e460:c4f3:f28e:97ef])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af63585ff5asm452983566b.11.2025.07.28.10.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 10:11:03 -0700 (PDT)
-Date: Mon, 28 Jul 2025 19:10:58 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
-Message-ID: <aIevIuMDA5R8igmi@linaro.org>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
- <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1753723771; x=1754328571;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=psaO0fhsKdZfRWyiSo8tAjmdJAZtx/Aq71yeJdW+1SU=;
+        b=Fl/pUCAt1QgVbkB8gfOlPfUcVq2357q8Y44nuJJAYMTykvlxakc1idrsr5Crrd8cmf
+         CdvZKM9fyDvP9Y6LUpySM9boVRE7d1htUNlpMBkbgEgfA/4uu61y0S1hduSH8CXN0tUh
+         B7zwbFRIB3ZewGXYMBu9OXeeNTSKt8FHZJ7EUYrfk+UCWlhz77bJLT/8jHSD6jz8XOPW
+         caZr1zo7jdjrd1+q7uW/Yyg8xJXEcCn/xT0ceGNuaqIzVqDAKUtCaJvkwOODcTWgcFkS
+         RgfD984xf6pjcLtjlrq31TuRrJUOZACdvl21QV0p3P1JeRh6QReVjXopiR5zbgo3rBj3
+         1VtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL5LbMuE5VKEI1xn4Q0I/F0M316J38C7b7bYhIlu53FxmFXUievhqTcPXKmevQNX7ILwaHx2QghX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb36dx2nrWBeXXclpAW9YIkg8Qr7NtN52GoS0TxopF91ZuaAv5
+	rliz7htlEgQOAakKDr4+Oyd/2mwb0xq1i4O9kVyGNzdp20vDQ3frcbauy8gBW3rfcS4gGtoSxkG
+	UP9XgeyyvSHUj+J48A3rv4TBqImW2NPzBq9Inv6hqdxuFSor1KOWmpJjI2UMDzSc=
+X-Gm-Gg: ASbGncuiHcUt4l3czbrloFZ+Jm9YpiRfGhRntcwn11dPgDWOBl9gy4vcBDmZSMmHIy8
+	tZbZRqvWtZ+k4OKcHZ0di+sZVS/0zqAr+kNOaD74Hru6MARqwixJ2VDdUfdRD7xyJCPlLwbTfk6
+	UDgsSuYU9rG24ILfB9empsovQTypk3iWNqEkXsmsgfh1lPFdsFUEkNyI9FHYuERPq4YrbNAehEl
+	S8fXMlrFK5PC8Gt2f2/l5ZJRt/sJ8krr95jQP6PM05HyR5Zr44b8nl2M3gIbf4rdM3uf8QlWyhr
+	/J4DAqhUx6EyCV8PnWSXbP3ZD5F9bgP9f382XfEl8RNlSUPgNa42GfCDEQf5l8yJBXY=
+X-Received: by 2002:a17:90b:5830:b0:312:e731:5a66 with SMTP id 98e67ed59e1d1-31e77a09df5mr14812100a91.3.1753723771407;
+        Mon, 28 Jul 2025 10:29:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2TlcuOoZ/w9fSJKReXr19wg4i7BNBJ46J1r389MBi3VQRREXKv6EbL1QihQHnNxN6OtEqmw==
+X-Received: by 2002:a17:90b:5830:b0:312:e731:5a66 with SMTP id 98e67ed59e1d1-31e77a09df5mr14812056a91.3.1753723770840;
+        Mon, 28 Jul 2025 10:29:30 -0700 (PDT)
+Received: from [192.168.0.195] ([49.204.31.18])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e663a71fbsm10033869a91.35.2025.07.28.10.29.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 10:29:30 -0700 (PDT)
+Message-ID: <713d1c82-6c48-484a-9995-2d7311cbf2fb@oss.qualcomm.com>
+Date: Mon, 28 Jul 2025 22:59:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: qcom: Document the Glymur TCSR
+ Clock Controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250724-glymur_clock_controllers-v2-0-ab95c07002b4@oss.qualcomm.com>
+ <20250724-glymur_clock_controllers-v2-2-ab95c07002b4@oss.qualcomm.com>
+ <20250725-chubby-spiked-tanuki-eefcd9@kuoka>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20250725-chubby-spiked-tanuki-eefcd9@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDEyNyBTYWx0ZWRfX9v8unhPqbupd
+ HsTKlukeTdktHtOFFkBgwmvxF8MBmU4iFt9SDfRAFj1w+EIzTemak9AJECvUlt5zMOuBhnYLpLF
+ J6oQA+7nyKMsTNasMjsokaCqeFYaXDTkSzX6vuJ6AzYi71U56NSFtR7RafY0FHODX3WKBmCkIq7
+ qGV6o1+d4not2zPSYo9W8lzixoMV2U3teCVchu+vT0o2i6PoRqbBnv932IQByTgZAPdK4WTqxsp
+ WCUxw8hTlR7cL7bnWI7g1PvTWC8tfS3Ih5pROgIW8jTCkFKpfNcNs9LmxVFtDk849V70edyMhLr
+ HpwekFuOX+y8YM4w/QLDijT3+q1crQQDZ9t5tOvGKDUmFYj67+5TSsrKmELQmnUSiLrX8KxxvqP
+ cXMxzW4PRAA4s61iVEh65WljgqYkhE6T3tZRvEN6VE+UCrRdidzRmMhshnid03j3A4GkKb1h
+X-Proofpoint-ORIG-GUID: YiqnJLQjBgEexrW3-RT_dZNI3Ub16TE_
+X-Authority-Analysis: v=2.4 cv=ea89f6EH c=1 sm=1 tr=0 ts=6887b37c cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=6kochd2Oe038OFj2Hkel3A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=_CRzW6w8_PcMKYmKewAA:9
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: YiqnJLQjBgEexrW3-RT_dZNI3Ub16TE_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=979 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507280127
 
-On Mon, Jul 28, 2025 at 06:16:24PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+
+On 7/25/2025 1:19 PM, Krzysztof Kozlowski wrote:
+> On Thu, Jul 24, 2025 at 02:59:10PM +0530, Taniya Das wrote:
+>> Add documentation to support the Glymur Clock Controller, which is
 > 
-> A number of power rails must be powered on in order for GPU_CC to
-> function. Ensure that's conveyed to the OS.
+> What is "Glymur Clock Controller"? GCC? But this is TCSR? Please write
+> accurate commit messages.
 > 
-> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>> necessary to provide a complete description of the clock control module.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
->  			clocks = <&bi_tcxo_div2>,
->  				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
->  				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> +					<&rpmhpd RPMHPD_MX>,
-> +					<&rpmhpd RPMHPD_GFX>,
-> +					<&rpmhpd RPMHPD_GMXC>;
-> +
->  			#clock-cells = <1>;
->  			#reset-cells = <1>;
->  			#power-domain-cells = <1>;
+> That's redundant, just describe the hardware.
 > 
+Sure, will fix in the next patch.
 
-To repeat your own message from a couple of months back [1]:
-
-> You shouldn't be messing with VDD_GFX on platforms with a GMU.
->
-> Parts of the clock controller are backed by one of the MX rails,
-> with some logic depending on CX/GFX, but handling of the latter is
-> fully deferred to the GMU firmware.
->
-> Konrad
-
-Please describe somewhere in the cover letter or the individual patches
-how this relates to the responsibilities of the GMU. I searched for
-"GMU" in the patch series and couldn't find any note about this.
-
-Also: How much is a plain "power on" votes (without a corresponding
-"required-opps") really worth nowadays? An arbitrary low voltage level
-on those rails won't be sufficient to make the GPU_CC actually
-"function". Do you need "required-opps" here? In the videocc/camcc case
-we have those.
-
+-- 
 Thanks,
-Stephan
+Taniya Das
 
-[1]: https://lore.kernel.org/linux-arm-msm/2dae7d88-4b3e-452f-9555-05f10b42dabc@oss.qualcomm.com/
