@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490A2259C;
-	Tue, 29 Jul 2025 13:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7E2AF07
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 14:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797478; cv=none; b=F9rMrPQVJADt1CjALWOeAwm/yB7/Z+tTG4JHbaGOEMVns4b+2TUmdVfK8+gvL4F309L+XbLfR5VxUQcVc91F8K+FLktAdy0xm48z9PqBVHXfOMjM2i41HQr5tLkwro31zu7yF6dqMPzcJ8aeIuBJVSdQs41MWuo11ah5bbcjhNs=
+	t=1753800590; cv=none; b=Yc+5JTAyw4jjg35umGN1oVXs/vudExYOYSle6rN5ZHouy18TF20gM1L3zVeGVh/OrBMkB6F8xkJBVsEhbgAc5IcfyjVnSG9udMRSozRBvrxJDnGAUxKbAQAyvAYZvD97L1TSrcgIA6uNtquDNRGtfTG2Id3QEabATWRWMFqn4zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797478; c=relaxed/simple;
-	bh=AX7eZDNmkJrEgW0Z7fDJWxMDlVgr1LZpviDEOOeKIL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XKFgmDzjLflD8PJ9rS2JXkvyBmqapxN+AyU51tTvCKM5pBY2xbo4s6DUT3A1XezRhwxSGfcmB0sxsC0QI/o8ht/gdXLPq9d9dZuzSgIdMy7GSHaaOoD5s8cSNPfzNyG7lrdVsbdM9oLbaekR8fDCbwYQl3zzANEqA7n+Z2agBeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnNxdQG0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753800590; c=relaxed/simple;
+	bh=r1UFwYmz+BrZUMtrDL/wYAGPPAvKhZrnCmrHrv4UKII=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Om+bWubwnSmYc+Z4iyOq8xsw3e5+bip9wnfYYZpmbX4DUHce2N9YprXvySwtf/NnDkDCMLzkTzdaVrcFUR8vhwhbCmzSeVOfiIgNQKh5TSVbD2kGge4c7sFSPvk7wxjBAWURxI7ckVA/s0uThY5Rz6ZLcRt9cQM3KYxUzpl1KhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bmn6cDz8; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnNxdQG0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1644C4CEF4;
-	Tue, 29 Jul 2025 13:57:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753797477;
-	bh=AX7eZDNmkJrEgW0Z7fDJWxMDlVgr1LZpviDEOOeKIL4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gnNxdQG0DNWnJg+YHdQbXI0C3jbbNqOqJANMAHS0QZmb21lenjqAXFtqtc26lZ8t3
-	 BItM+qaMYFlrtcv8Ad7md1GdJa0vlvcXw7+JO8Z0NtHqajm4EsHO0EetPlD2guvQ6O
-	 3YKxFenQxcWTkErACwte5tqYEOWO4RIpJJfWdSK2nfwYr68XCvQADIsPmS4ouAnbv/
-	 t66m5hucPd29Xdvp78iGK5WQDli5e1W7IEvK7Ajw4tci1yksrRi5o5o5WbHRH7IeMU
-	 CGMIFCtkcgkPk0v2hbNYfJLaEmCNkkH/+4tA4Ej2uDg3Q94MaY3W+s8lvZDrf0tVZi
-	 cnb7UKdSpQEqA==
-Message-ID: <5029ba6e-fa5f-41a5-a1df-bb9117973bd8@kernel.org>
-Date: Tue, 29 Jul 2025 15:57:50 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bmn6cDz8"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d7b50815so36972175e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 07:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753800587; x=1754405387; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I2Tf3e5iOqKYNcNlcuxa0oZJpIWmxXLdr8GMxVlz+Bk=;
+        b=Bmn6cDz8coWYujkE7kKSU+5/kVyJiF7nTTu4K5EkBGX2w9WgwRvbbz9K6lDA5PTSSo
+         rSHRjdsZ5jWRRn3vwj22EJPKryn+/pmHYF7IdQSjZCO1sMWT9tdCHW0DykUoh3th/N/P
+         QUnZhfjEWLH8QWzsqFqJk73C3nUMKtoG1s//bv1sjSBTWtsj0bi50oB6yyzYdKctySJu
+         XB6R+fbVJ+eIMiw5umTINmz4E/JvfbOeFVxzGbMrieGcjTg6aqJg46wxe7dluyuaWVqI
+         w11CXFW5LVqDFjf8fJf0q6S5uZ5eDSniyr2JaPM2huI7X3QTnef+cZ4MWHNYcpQahfbY
+         6+6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753800587; x=1754405387;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I2Tf3e5iOqKYNcNlcuxa0oZJpIWmxXLdr8GMxVlz+Bk=;
+        b=Tt5pSe8Yi+WSuuzuv2WJ9ZvTk6N96KpB5hRlp2lfgK+NfoN4MgVImgO84K2zg+ukAb
+         Dof7AGhMbSYhzFKXijytoBSyF4xnID16ooUKtzwDcIF1IdjELbVy/l4NX4taqmEA5c6B
+         wVgfur4r7mwUDyGfw4Px8qIjZ6kWVoxSJActvfiAZQ5Zl11Zx189mQnOUJ+tLr7M7x13
+         PdkZN/wPSOFuIbDuP6ACcLvZcZXHnwLhIWuU0AAVbffXbfjVFed7XeGgZ8a7yATC/CEP
+         iUfL8m0wiCh7ODJY3HfUw5fG41tKkZ2j2i1EsHhMbfWCX4CZnzcGHZ4q7K3oIdwbVuL0
+         772g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBOoltk79LJYM41eLIM3T2vLsL+YbEqk4SLUzjpO+pECvYWcyNM3PHuLUhDbS257ojlV/Rz1uqZ/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpu6Uh1E5OWmKXfcl95a03Y9A0ODq4MzS/Yb6nYmtxkC+Mb7YH
+	toXlJ3wJnreiVezWMVBcmGsSRNmOTXrtQrwGi7GtfTJLm9I+LfXxdcvuarlj/0jyp8I=
+X-Gm-Gg: ASbGncvYHX3CUv3TOC6uZ1eypBPiAnJBiwf9qXe/o1dSpa8B6oZ9dNeQ12fbDinfsYz
+	T3s2Gzt9zShVXGTij85y05jZVd5UM6Ae5volaOs+IdglEIw2KGL2HorrSG4EzDQ1k4QPOSXaLqI
+	0AmhhxS5wQAjQL3i722mJg1fVyC0iLotbJk87y5dNoPAC1Aiz1DQb7Q/6AOiFBkxx8TgrHT3Gsd
+	zOLq2rTShJpDT/8kQcKNPUEaTa+fYjql7vddmiKUCJeJrjlRBatkRLD6ZOjVVE+isCqx4moXBWs
+	XGAPUW8lnvGgTYyNLliWpqggQ2dDjlFgluovk/THJEjAxyKsZv7DTjw4erCi5HrWtYrm8sS+Sra
+	birl6mv1XPYu847ZmWJmIIU9fz51H5AeyNmZI9QHrn3uXEeJsLIS/2sRHIPDm94N71IRX0m4y
+X-Google-Smtp-Source: AGHT+IGs+i9gy28kaa/QqdfY4LVRaZI+Pn4+pjakJLPgQYO8ePjbRR7h1sRiSp3ATzjonbD4ntYgzQ==
+X-Received: by 2002:a05:600c:3e0b:b0:456:1e5a:8879 with SMTP id 5b1f17b1804b1-45892b9c21fmr947055e9.9.1753800586710;
+        Tue, 29 Jul 2025 07:49:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3ae8:20b:c783:9328? ([2a01:e0a:3d9:2080:3ae8:20b:c783:9328])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377f0sm200315055e9.6.2025.07.29.07.49.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 07:49:46 -0700 (PDT)
+Message-ID: <8e56e1a8-7b26-44df-ad57-e2092cb5c9ab@linaro.org>
+Date: Tue, 29 Jul 2025 16:49:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,109 +69,91 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
- source clocks to drop rate
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Luo Jie <quic_luoj@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Georgi Djakov <djakov@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 00/18] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
- quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
- quic_suruchia@quicinc.com
-References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
- <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
- <20250710225412.GA25762-robh@kernel.org>
- <93082ccd-40d2-4a6b-a526-c118c1730a45@oss.qualcomm.com>
- <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
- <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
- <830f3989-d1ac-4b7c-8888-397452fe0abe@quicinc.com>
- <c67d7d8c-ae39-420f-b48b-d7454deb1fc9@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c67d7d8c-ae39-420f-b48b-d7454deb1fc9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 29/07/2025 15:53, Konrad Dybcio wrote:
->>
->> We had adopted this proposal in version 2 previously, but as noted in
->> the discussion linked below, Krzysztof had suggested to avoid using the
->> clock rate in the clock names when defining the constraints for them.
->> However I do agree that we should keep the interface for IPQ9574
->> unchanged and instead use a generic clock name to support the newer
->> SoCs.
->>
->> https://lore.kernel.org/all/20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin/
->>
->> Request Krzysztof to provide his comments as well, on whether we can
->> follow your suggested approach to avoid breaking ABI for IPQ9574.
+Hi,
+
+On 30/05/2025 15:20, Jagadeesh Kona wrote:
+> In recent QCOM chipsets, PLLs require more than one power domain to be
+> kept ON to configure the PLL. But the current code doesn't enable all
+> the required power domains while configuring the PLLs, this leads to
+> functional issues due to suboptimal settings of PLLs.
 > 
-> Krzysztof, should the bindings be improved-through-breaking, or should
+> To address this, add support for handling runtime power management,
+> configuring plls and enabling critical clocks from qcom_cc_really_probe.
+> The clock controller can specify PLLs, critical clocks, and runtime PM
+> requirements using the descriptor data. The code in qcom_cc_really_probe()
+> ensures all necessary power domains are enabled before configuring PLLs
+> or critical clocks.
+> 
+> This series fixes the below warning reported in SM8550 venus testing due
+> to video_cc_pll0 not properly getting configured during videocc probe
+> 
+> [   46.535132] Lucid PLL latch failed. Output may be unstable!
+> 
+> The patch adding support to configure the PLLs from common code is
+> picked from below series and updated it.
+> https://lore.kernel.org/all/20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com/
+> 
+> This series is dependent on bindings patch in below Vladimir's series, hence
+> included the Vladimir's series patches also in this series and updated them.
+> https://lore.kernel.org/all/20250303225521.1780611-1-vladimir.zapolskiy@linaro.org/
 
 
-Unfortunately not, you should not change them for such reason.
+Could you re-spin patches 13 to 18 to fix the bindings checks ?
 
-> there simply be a new YAML with un-suffixed entries, where new platforms
-> would be added down the line?
+Thanks,
+Neil
 
+<snip>
 
-Either new binding file or here with allOf:if:then differences per
-variant. Depends on readability.
-
-
-Best regards,
-Krzysztof
