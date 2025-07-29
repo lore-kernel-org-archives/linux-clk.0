@@ -1,68 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5F919D09C;
-	Tue, 29 Jul 2025 09:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B472777E4
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 09:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753779624; cv=none; b=lQGLgH8JajBc+mk6h0DHq92nSStOkVJDhJVx6hC/Wlo9Scl/Y2OiXMRRFlfEzNJa1gyeLmsoyAYvgX4bffi1hOYtg9/Kz8UF4BrmMTpOIr7QqYWa7oN6ctgQ9ohgKzUz9fT79xEUtzEvqQmo/pTp5iDoRtNuLA6pH9nN0oI7/Po=
+	t=1753782628; cv=none; b=USod06zEl/nWfV6IzLnI5kOcWOmIW9qw81JLgtNzfSvKvW3yU3qgGo/oeRgvDSK+FjPcsD9lZguBtmXw3On3ejR3Q8GFKDpSGKHPYlaLGnnUIkPqc34fec7l6pgwc1YqZeLP1DmTKJJ5J80MIMxfbFusyjKFbA9XpheEt7by+sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753779624; c=relaxed/simple;
-	bh=NqJOUVSnRAuwlsdCgD7CCgnH8jeSEv6tZOvVIi96fe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iinNY42oSVIUwp42jZ0IOrmp9FOGXzx6+oVi06y0vI9f3nwVq8o09GEY7VR6TxdydcFSmbbYv5dhT1zr8teBTtWA4pkHNRUKxx0Eeygtzw13qE6Pw89lO+kXdODdTmQHdcoW1z3UV6CKZiSY9Y6MtNlCXZ65uedNZMNb51Tsk+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9/ONf1Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753782628; c=relaxed/simple;
+	bh=NF67huj+JZXEKbMxs4q9eQUot7kyPEQ1/jmQAO1Bfhg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gJOPTqTTtgvFQ3SHBvsgJ98e84lCAOvkKnxeJ5ROM/5EyEkzNLCMkxVtp+R37Gpmoo1KI2Q/YwFFkUrwUnfcz4ZNIZ2+fJ5Bl+TtA0DdkDpFu6vGy/zXX4IYZmt8Znb2HIZzhiXrhym6ugZImQTt8eANU7DnQR4jrp0xFwa2Fb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=Richa.Bharti@siemens.com header.b=d9CFyWjV; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9/ONf1Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B44EC4CEF5;
-	Tue, 29 Jul 2025 09:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753779623;
-	bh=NqJOUVSnRAuwlsdCgD7CCgnH8jeSEv6tZOvVIi96fe0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e9/ONf1Q+KuJNq6cweFcLhJ18FPRsgO8u0mQMekNt0xpmNy793rHy0kQ+DdM5HYC6
-	 2UzUNmYpjbNGQgiUrH1v8kBq+w+ymTb4f3ng10d8eO7F+yPPbS1qmfo6FkYRcwGL8u
-	 7H0k6BBIsLziLN2niIlGUNTkOOC2tvslr367DVjbiRUGcvQiIABCHOObjB4PpyYpCf
-	 yzlLmNk1je9ZKfwLmQtdonw6uEBeX1ngP8M9R8Nuclo3KHyYV9pCsglI02dZPQCq3y
-	 iobG/xREiel0brKSIRkZkYqIF5ApsV7K0GhKXkgxuGjo4b2zTEst4UFKSDqLuFr7lZ
-	 gcDlvw0zhiDwQ==
-Date: Tue, 29 Jul 2025 11:00:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, Alex Elder <elder@riscstar.com>, 
-	Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@outlook.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK
- for SSPA
-Message-ID: <20250729-stylish-antique-cassowary-4e3c4c@kuoka>
-References: <20250728-k1-clk-i2s-v3-0-5d7579f02227@linux.spacemit.com>
- <20250728-k1-clk-i2s-v3-1-5d7579f02227@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=Richa.Bharti@siemens.com header.b="d9CFyWjV"
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250729095015aca6e55fb9aae7ef86
+        for <linux-clk@vger.kernel.org>;
+        Tue, 29 Jul 2025 11:50:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=Richa.Bharti@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=uM0t5DDiNTeF4HYXChPFC6deNZRomgtgmzVjY7dKA2I=;
+ b=d9CFyWjVUFzO9VgOsWMeaHTPt1pVZfVlCb62mfVCLhP2enMJ4rosykCaNGwUhn42Czo3x2
+ nYpd4X8etmxc2R3BkDtTfk+m9patazN1mX58d9KSyUwSxEIF8SZ/v0bex4hFa6O0olMdfB8G
+ 8Tw+uTgnn3RJKNNW4i1FGe6Qgv1eYzctOl6S4+BQLqUd1pdwSoYCYiikWfIlUQBcF53dEQ7q
+ SfPSoSlZXIAj8EwQkGKvl/d626C6Gebhbq7mSPi6Ug12lsghlR0s7ROD2gtAm1W0Be6qOkX7
+ PuNA1XuHZc5ID5o4iSAlhcL/GLlFDVVCPg00M8j/GIUvmXwlKDVaztOw==;
+From: Richa Bharti <Richa.Bharti@siemens.com>
+To: andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	srikanth.krishnakar@siemens.com,
+	cedric.hombourger@siemens.com,
+	Richa Bharti <Richa.Bharti@siemens.com>
+Subject: [PATCH] clk: qcom: gcc-qcs615: Fix gcc_sdcc2_apps_clk_src
+Date: Tue, 29 Jul 2025 15:19:43 +0530
+Message-Id: <20250729094943.863392-1-Richa.Bharti@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250728-k1-clk-i2s-v3-1-5d7579f02227@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1331316:519-21489:flowmailer
 
-On Mon, Jul 28, 2025 at 10:20:15PM +0800, Troy Mitchell wrote:
-> In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
-> register it in the driver, this patch introduces the macro definition.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+On QCS615, we see the same issue as reported on SM8250 and SM6350:
+"gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during boot.
+This is due to GPLL7 not being enabled by default as a parent clock.
 
-Your SoB does not match from.
+Setting `.flags = CLK_OPS_PARENT_ENABLE` ensures that the parent (GPLL7)
+gets prepared and enabled when switching to it, fixing the warning.
 
-> ---
->  include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
->  1 file changed, 2 insertions(+)
+Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
+Signed-off-by: Richa Bharti <Richa.Bharti@siemens.com>
+---
+This change is similar to upstream commits:
+- SM8250: 783cb693828c ("clk: qcom: gcc-sm8250: Fix
+  gcc_sdcc2_apps_clk_src")
+- SM6350: df04d166d1f3 ("clk: qcom: gcc-sm6350: Fix
+  gcc_sdcc2_apps_clk_src")
+---
+ drivers/clk/qcom/gcc-qcs615.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/gcc-qcs615.c b/drivers/clk/qcom/gcc-qcs615.c
+index 9695446bc2a3..b281f0dfe165 100644
+--- a/drivers/clk/qcom/gcc-qcs615.c
++++ b/drivers/clk/qcom/gcc-qcs615.c
+@@ -830,6 +830,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_data = gcc_parent_data_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
++		.flags = CLK_OPS_PARENT_ENABLE,
+ 		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+-- 
+2.39.5
 
