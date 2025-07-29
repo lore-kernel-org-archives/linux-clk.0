@@ -1,200 +1,102 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261C7259CAB
-	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 06:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BE7263C8E
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 07:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770867; cv=none; b=LdJyb+mt2Lc8e2PFaZOM1UQx2F1pzQb/NCSti5uWUGeNPlWfrecgF4smDkiygEHoYvPwBTOsDkn/Y7wF0RxkjNM/MRoxvqdHgVryEiIvvihXTBALE6C6Cn2zvO6hpfXyB8daFtWGbbvcrrvvrWSGZARWg4qyNlGRtWRIAgERnMI=
+	t=1753774054; cv=none; b=dnA8Wpg7U/9mAdducA3fkxie9U3ogEfjgOstO5pyXQntjktJBfhzs8SG+6Z1MCQjOlYD5JqBtMjOYHs8obaK6Yf3Ah7+885d8n4bfBidwPEzjblQEzXXaXaEAeQiYScSz8RZt0AMQ8mcYKxL5H76GYcNYUNKb+h/OPZCGYSE44Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770867; c=relaxed/simple;
-	bh=DsSSixPFpacQb6ndKjAb6W1B+Y6D+l4BcUMKXYwMUtQ=;
+	s=arc-20240116; t=1753774054; c=relaxed/simple;
+	bh=1tfbbzkMLJ4su0Eq5fDHoD0tAesEFs6z/NL27gGK0kc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iR8r8p9UfZDIh9T65G3koUCHxbdUwzcTSA1v+WZf7rm7prTyACLyT3rTBB5jYXST6y5BfkBHcfh/w070nwe0Zx8LJmKwwPC1Iybe/JS/ehRTiBZgNFbXPMakmMcmrQVvZZW6CG5XLZ2j3lGfdlM6bjawX+WBYfmv4ASv2zWthPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SnQwSh4x; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=OND0ELLnybfuCEURb4hn55REjs2ZGFh4jDn4sZ4SAa14w9DK82NEMSjPhOZ86HFZvbzlsT/4hDYjkHkoV11uyjrGZsNpWjDEQKHt9JPm07eZ7+OVaYEc6RR1kF6/x88iUmHItEdmWQEbQNF5k26nJn+M42RZ8KgWm3K7ZROUBbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goaYjTSH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SnQwSh4x"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-612b67dcb89so7980844a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jul 2025 23:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753770863; x=1754375663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0wJ7p1KnoPTtuiUiUre3TQUdtSHj428TRzShsa/CgUA=;
-        b=SnQwSh4xLbzVXkBUaFnq94Epnq3ZNDiTi68ypeGyiEdUYKViwgRHNjnCaKvWpi7kMk
-         2QG5XmqRjPKvKwIcSkjRm2KOichadQAqaGNoIRee0kHVQFLPb2cT7t+8UKGaGMFM//w0
-         isO+M3+o3LyvguwMyNH/FTuhVItk1NUAKamR8Ppyksb5PzBvArQBLQKrp150r+eS3O/E
-         XnSXcpTJfNijidSSDb5e+lDXPzeDhrq2A1mAnbn3wL3sIvWx0O3xtjnkbu6eJVX7Qihb
-         vyBZc399hfjbck0sy2SL+6UdLKsnfgDu3PJv+4Hnu/c/29hupjDXHb2Jy/jTgE2Sz+FB
-         niTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753770863; x=1754375663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wJ7p1KnoPTtuiUiUre3TQUdtSHj428TRzShsa/CgUA=;
-        b=FCvCLuJ+h0YDf+L6e7Otz2mWoQEqxB2/GcaaDKvsMcB182un+bYxAneRko1Nh1dXwa
-         4y6tQOJArE3qagSzM5FnSzv0GYZgjQdY8p1oqU9xCITDi1jjBzWhsgzWGVysEaqMqOUu
-         skLsFmS+WXXHSpcPBqKAcBPggDgL6diQqXXQ4rX5eZOJtK0atzO6i1InXi3vaOakiD+9
-         FLmzsyiYPz2UoYmwWd1svwUire+rauUm0Qvy7F6OWPwpPe0TNFMY3Mj3wjot259EYDbX
-         Pjp2IVComoIoXrsnS8544tTZirnukh8KCGD/0BcGECDzgMci7JQZE3JgkFy49W85F+mn
-         tleA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjHcR4L8WgdLsEbhZSpchnuurHK8T50rFsjP92zy80KydWDIePQBsegrtLWOddSwTIO2gFqZo/zMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoXCUWZ2sodmVmS0MfwFX3V4SiFFZGRlNDh/0ztp5rSIT/UAIy
-	oqxwfNF7ZeFUy5vtriOY6mMUygYMmwiHz9Egg5r824bVyedPPv/q/5qUkQXLQPuzyUs=
-X-Gm-Gg: ASbGncuGno2mqUwezD8Zn4tSFTzbiu+uL/wtuPUbTqqWqMMb6WXMMryoQe/agOqZYCv
-	4bMvu8/rJeyyMTr6oKyqjRe89ivn1QMVTOpzHWHjyLw3GnaBWg0ikiqa5U6uOhzKz9fRwQegxEw
-	gpj7fJ6KA0XHNnOCuiMxxYJr50GzeMnT++kuHdLc8lbIdA1kXX0idkbWUD7BgWYkmzcNXdo/pfu
-	ICSgAseWQ3Brw+gyHfU+eB0XIj7nqN/34j7C8n5vS7qnWExcVU26MTUSpFufdSvuAaYdpE6jSnn
-	cFCHR0B2Qmb6zukrnK8UH4KJogm+tAI5xQLZ+t1TGmDXYf7MAZzKlqKI/UgfUptNUXqFnZ0iUir
-	fe3VigxmCYyOuy4elrjQ3ekfjJkP6MUoT/A==
-X-Google-Smtp-Source: AGHT+IHwnRZ8V94I2dIRwpv7xzVyb90S3UZWn2P7FJ9P3VAU65PFBP1DY/UxTAXlXrCCU2xReoJaYw==
-X-Received: by 2002:a17:907:9686:b0:ae3:64e8:8c5c with SMTP id a640c23a62f3a-af61b5e8a5amr1548200866b.14.1753770862879;
-        Mon, 28 Jul 2025 23:34:22 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:a1a0:92bf:def8:453d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635aa32d2sm541086966b.100.2025.07.28.23.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 23:34:22 -0700 (PDT)
-Date: Tue, 29 Jul 2025 08:34:18 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
-Message-ID: <aIhrav7GKpsbVpto@linaro.org>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
- <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
- <aIevIuMDA5R8igmi@linaro.org>
- <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goaYjTSH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D6FC4CEFA;
+	Tue, 29 Jul 2025 07:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753774053;
+	bh=1tfbbzkMLJ4su0Eq5fDHoD0tAesEFs6z/NL27gGK0kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=goaYjTSHOpBLCp9UcX1vxeNDQqZ2C/hiGlkVaXLEnISbc6VN0AUnK7yjALpUczIz7
+	 0amNFL+Ct9MMV7dWpySjPKUW0X6zBzG39qOhYKIBO372J6tn+zwVOLFM7UcZXxOVvj
+	 zCsTQxBypNl+Gsv9EhFYDWsyUbCW/kmdWqCEEw2IFzNq7z7q+Jllb/LjZvQiled2n7
+	 4h+KTaz4A5FeKUevbvbwm1B1qQIZsWZ2xSv7ZGqL3u5BRNBQQUrRmmmYEmNfyLxddP
+	 heFPwTY/8B2TbxmN4ORXSUc3Edl1fj4mKfg6/zfGG/BDT9jaNnqVoKhkNiQ/JIiacT
+	 MsZu+vvoArSYQ==
+Date: Tue, 29 Jul 2025 09:27:31 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Melissa Wen <mwen@igalia.com>, 
+	Iago Toral Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+Subject: Re: [PATCH 1/3] clk: bcm: rpi: Turn firmware clock on/off when
+ preparing/unpreparing
+Message-ID: <20250729-tall-fluffy-grouse-f5deec@houat>
+References: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
+ <20250728-v3d-power-management-v1-1-780f922b1048@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="n2s32cgvask3qzwk"
 Content-Disposition: inline
-In-Reply-To: <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
+In-Reply-To: <20250728-v3d-power-management-v1-1-780f922b1048@igalia.com>
 
-On Mon, Jul 28, 2025 at 11:31:10PM +0200, Konrad Dybcio wrote:
-> On 7/28/25 7:10 PM, Stephan Gerhold wrote:
-> > On Mon, Jul 28, 2025 at 06:16:24PM +0200, Konrad Dybcio wrote:
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> A number of power rails must be powered on in order for GPU_CC to
-> >> function. Ensure that's conveyed to the OS.
-> >>
-> >> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
-> >> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> @@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
-> >>  			clocks = <&bi_tcxo_div2>,
-> >>  				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
-> >>  				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-> >> +
-> >> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> >> +					<&rpmhpd RPMHPD_MX>,
-> >> +					<&rpmhpd RPMHPD_GFX>,
-> >> +					<&rpmhpd RPMHPD_GMXC>;
-> >> +
-> >>  			#clock-cells = <1>;
-> >>  			#reset-cells = <1>;
-> >>  			#power-domain-cells = <1>;
-> >>
-> > 
-> > To repeat your own message from a couple of months back [1]:
-> > 
-> >> You shouldn't be messing with VDD_GFX on platforms with a GMU.
-> >>
-> >> Parts of the clock controller are backed by one of the MX rails,
-> >> with some logic depending on CX/GFX, but handling of the latter is
-> >> fully deferred to the GMU firmware.
-> >>
-> >> Konrad
-> > 
-> > Please describe somewhere in the cover letter or the individual patches
-> > how this relates to the responsibilities of the GMU. I searched for
-> > "GMU" in the patch series and couldn't find any note about this.
-> > 
-> > Also: How much is a plain "power on" votes (without a corresponding
-> > "required-opps") really worth nowadays? An arbitrary low voltage level
-> > on those rails won't be sufficient to make the GPU_CC actually
-> > "function". Do you need "required-opps" here? In the videocc/camcc case
-> > we have those.
-> 
-> Right, I failed to capture this.
-> 
-> The GFX rail should be powered on before unclamping the GX_GDSC (as
-> per the programming guide). The clock controller HPG however doesn't
-> seem to have a concept of RPMh, so it says something that amounts to
-> "tell the PMIC to supply power on this rail". In Linux, since Commit
-> e3e56c050ab6 ("soc: qcom: rpmhpd: Make power_on actually enable the
-> domain") we don't really need a defined level for this (perhaps it's
-> more ""portable"" across potential fuse-bins if we don't hardcode the
-> lowest level anyway?).
 
-Thanks, I forgot that we have this commit.
+--n2s32cgvask3qzwk
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/3] clk: bcm: rpi: Turn firmware clock on/off when
+ preparing/unpreparing
+MIME-Version: 1.0
 
-> 
-> However after that happens, the level scaling is done by the GMU
-> firmware. This holds for allOf CX/MX/GFX. I'm not super sure if
-> both MX and (G)MXC need to both be captured together - downstream
-> seems to describe MXC as a child of MX (in socname-regulators.dtsi),
-> but I'm not really sure this is true in hardware.
-> 
-> The GPU driver currently first enables the GX_GDSC and only then
-> does it kickstart the GMU firmware. Downstream seems to do that as
-> well. So on a second thought, since we've not seen any errors so
-> far, it calls into question what role the GFX rail plays in the
-> GX_GDSC's powering up..
-> 
+Hi Ma=EDra,
 
-It might play a role, but we wouldn't know since AFAICT we don't support
-enabling the GX_GDSC. Look at the beautiful gdsc_gx_do_nothing_enable()
-function, it basically just defers the entire task to the GMU. The GDSC
-just exists in Linux so we can turn it *off* during GMU crashes. :D
+On Mon, Jul 28, 2025 at 09:35:38AM -0300, Ma=EDra Canal wrote:
+> Currently, when we prepare or unprepare RPi's clocks, we don't actually
+> enable/disable the firmware clock. This means that
+> `clk_disable_unprepare()` doesn't actually change the clock state at
+> all, nor does it lowers the clock rate.
+>=20
+> From the Mailbox Property Interface documentation [1], we can see that
+> we should use `RPI_FIRMWARE_SET_CLOCK_STATE` to set the clock state
+> off/on. Therefore, use `RPI_FIRMWARE_SET_CLOCK_STATE` to create a
+> prepare and an unprepare hook for RPi's firmware clock.
+>=20
+> As now the clocks are actually turned off, some of them are now marked
+> with CLK_IGNORE_UNUSED or CLK_IS_CRITICAL, as those are required since
+> early boot or are required during reboot.
 
-I think we should identify precisely which votes we are missing, instead
-of making blanket votes for all the power rails somehow related to the
-GPU. In this case this means: Which rails do we need to vote for to make
-the GMU turn on? If there are no votes necessary after the GMU is on,
-it's better to have none IMO.
+What difference is there between the CLK_IGNORE_UNUSED and
+CLK_IS_CRITICAL clocks?
 
-Thanks,
-Stephan
+I'm asking, because CLK_IGNORE_UNUSED is mostly useless, and
+CLK_IS_CRITICAL is probably what you're looking for for all of them.
+
+Maxime
+
+--n2s32cgvask3qzwk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIh33gAKCRAnX84Zoj2+
+dsGHAYCE7DMrIRIs46iEKrBa6NG56LrGKUNEa1Ohv9us6PuvoIDPo8i4FgZGJPWn
+4k9SvhkBgPML7cwLjOb+Uo1kEcrBQjk3Y3N5YhH5HiWzdIK7xdBBA4OnKkmXKPDB
+TPP038pu+Q==
+=L4PT
+-----END PGP SIGNATURE-----
+
+--n2s32cgvask3qzwk--
