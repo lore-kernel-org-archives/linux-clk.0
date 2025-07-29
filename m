@@ -1,132 +1,163 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F660B8A
-	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 16:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753806020; cv=none; b=mzIFWPg6L5KA3EPjyupGJ8eFJG4Ilwx7fg1lusJ/WLz/M9lB6ethRglQYUw25ikctrbvIBmNIS389f+0+hfPbldv7VQxzjvFqbcMwDiJV4m5StVuIS5pNddFHQY4jDknSPs1WCmOAwi78DR5kf8kIVysIShRfxombym5YacrTh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753806020; c=relaxed/simple;
-	bh=e2F0EAPbhykf1R6/1wKYrkvldcEsIKZ5mzV5MVkPDXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gkSNoH/tKbOTa4c80qQy25Z0yjCHm/qwK5oRhG5yIubb+9yWRd67hm9125oEwB0ng0Sz+deedCXpSO3yxn9S9BgGXs6jzho8pDSGWKP/0fkuXsn3r8J7dEYKPhNgSQ0ytypIF2ka4YJkzUtC1UZTxXT7MSuuyA+u8pGweiyEIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=J/WM7Br/; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277BE23E324;
+	Tue, 29 Jul 2025 18:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753815077; cv=pass; b=mfmBbF55+nZ8gNRR2t1Vez+JkXMe4qoCceq532GXKeNL9v0QBTUVt4AnKoI70ZzIBUFGzH5G4Hjs8/Xtl9XE6Msl/+WhMFPX84efRdBiKVMDitNjC3AUbdv8bXP3FlNBzjtwsVSYgLOkxrL6TangFDvfaQpApeDmi6g0XUwmb7U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753815077; c=relaxed/simple;
+	bh=n2CWN2x2l1dHh0h0H2sOKWcHIPFI4iTlpbfJzMlK7cY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M6ru81bVCMg5TkcM85A+c0b4MYGozGiNTU1EUf6FVF6GwHHTYxLJekQpyqtcAtPpzupTL50tCDNNIHn+sNSN51xmHLuVjNu9CahekNkEo6VCtDG6Pa6NFOwz0bjrjzX4nNLJ2P6VL5cUrVYZ67HtSMKuddQPBftBiI2mxeVc6iM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=QTXadgLJ; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="J/WM7Br/"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KGFA8/qiQ+o5ik256RDNP9cmkGCnpiaOPIJzZoy/5Ng=; b=J/WM7Br/52lWhQbcO7aHla1y5p
-	5RsC9rVz3mPL2FPeb0A/4Nsm5XFZ/0/ashoMwVG90zt5ikDDKrPxaNyRMrP2+S1v46sXvzasGG2+7
-	ZiIp2Oj5nx4dNlEDttCUAbimB43Jstyk3atw9MQQh5NAJLEpxh/7zuk7Z/dukVkAql6skdHJXsQSV
-	Dw9atacsews1INTF+jeiP1w4w2cSKeicOHK3+Aqnx7OSW3uHHQTnYshpKsQP5E6LhthMWlStqwWQP
-	jf8ZveMmDSGoeI6TP3LAAaqPujqyOTzDlKGMV0DL5+jI7RfNsthHw0bB+LAF/eTfDd0oSE3T0JGEz
-	ZBGL0Fag==;
-Received: from [189.7.87.79] (helo=[192.168.0.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1ugn3c-005VsR-Th; Tue, 29 Jul 2025 18:20:05 +0200
-Message-ID: <b8c0f9be-a57e-49b3-8113-cbb9307facd9@igalia.com>
-Date: Tue, 29 Jul 2025 13:19:56 -0300
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="QTXadgLJ"
+ARC-Seal: i=1; a=rsa-sha256; t=1753815061; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lfVWOoXS+LgP15Qvit768VxAZVOmKP72hmaTCmuBjOD8xVM2EpL1b7CitdQu6WJgJuioDjQWIeyQkFUhBC22KuLNMwAdeUNKKjCOR9ViOrjUYHVQQXYQKetjKXeewxYzr8U+IkLfRwsmlZ8rqvuSDBk5Xn5UrEyIYqPegGQ5Ewg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753815061; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=A2/WDk0QKHr89RGR1UjuT7L6rDGPE40x7ppQgs+nh84=; 
+	b=OSalVrC1OOiOURN/TrAeXjhIRqje2Ux3Iri+0hhFOxh9hQMYTpQJCNC0RFLAfCPE+kjIVIF+ZaJK3xKPnogNmO2oTcTrleEm1vpsY501d3c+EuLaYZjLRPo1U4+dKCsJ4YXORrPd+SdMVkcEvAEJBgZOePM/7S6vb8TJ6rJ54I0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753815061;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=A2/WDk0QKHr89RGR1UjuT7L6rDGPE40x7ppQgs+nh84=;
+	b=QTXadgLJpnXMrXP84g/tWIBl2j/v0B5xZ+qnqeMi4GYRSLlpyRTMkBdTY6J4uoU+
+	G9u0AIi3DoWMAYJ9V2T8PtEN+3XzT6vBI/2OUX8Yw2UMubJ1itDG8opsTJ3ZoDq9ovK
+	GSHoZbcJOOiUP3QQH20+47EJpHQipiBE9pD3Mf1Q=
+Received: by mx.zohomail.com with SMTPS id 1753815053448149.70271118807636;
+	Tue, 29 Jul 2025 11:50:53 -0700 (PDT)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH v7 0/3] riscv: canaan: Add support for K230 clock
+Date: Wed, 30 Jul 2025 02:43:50 +0800
+Message-Id: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] clk: bcm: rpi: Turn firmware clock on/off when
- preparing/unpreparing
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20250728-v3d-power-management-v1-0-780f922b1048@igalia.com>
- <20250728-v3d-power-management-v1-1-780f922b1048@igalia.com>
- <20250729-tall-fluffy-grouse-f5deec@houat>
- <1bc23ad0-7273-4ddf-a0ef-4a80186f2581@igalia.com>
- <20250729-whispering-accelerated-raptor-134e8a@houat>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250729-whispering-accelerated-raptor-134e8a@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGYWiWgC/3XQwW7bMAwG4FcJfK4HiZREKae9x9CDTFKN0SZu7
+ TTYVuTdJycrWjeuT6bhj/zJt2bSsdep2W7emlFP/dQPh1rQ3abhXT48aNtLrRsw4CyY0HaufQQ
+ 0LT89tgl8QSwqgaGp4nnU0v++dPt1f61HfXmtTY/Xj02XJ2152O/743ZjVHOKZGLMAEIo0WoKU
+ ZTQEQuT+uQKXVvnI+9qlu1GVDKyIyimPqWIMywixCUIdl5rJ8kk3MwJdv10HMY/l/VOeInwfxN
+ abHLCtr50lpK3MSrRz7/Dbtjn/ulHTTsHqMwbC3DLulLI+8yJC68zMHjLMABTsuA8wZLNwU/uU
+ 1jrltxVbtkkzqFDF/M3Uy3dMp+Tz+h8DMmuTLWfpkJacls5gM3JkkajssLhnddTmbjkMHPq0GT
+ g7GGN+w+OX0/mKycXpV4DIiqu74xgbpnRJCYm9i7GlanhY6qzfsnDPLVITMUB1R++8PP5/A+lK
+ 0m7QgMAAA==
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Troy Mitchell <TroyMitchell988@gmail.com>
+X-Mailer: b4 0.14.2
+Feedback-ID: rr08011227085f753b32b67c07c57af6e1000098fd39d7d09c906738c05fd983005c16f029c8ae2a743d188a:zu08011227a90148eb2256a904900d3abe0000b868a409a0df257a51efeb8cd3f29c07a04b3bb70087ef0183:rf0801122d3ee8070ec6c6a95ef57335d80000be361b2c57506e2b3567069c8c7e423816597f9112e1a6d2e374a7256cb813:ZohoMail
+X-ZohoMailClient: External
 
-Hi Maxime,
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+PLLs and an external pulse input, with the controller managing these
+sources and their derived clocks.
 
-On 29/07/25 09:14, Maxime Ripard wrote:
-> On Tue, Jul 29, 2025 at 08:53:51AM -0300, Maíra Canal wrote:
->> Hi Maxime,
->>
->> On 29/07/25 04:27, Maxime Ripard wrote:
->>> Hi Maíra,
->>>
->>> On Mon, Jul 28, 2025 at 09:35:38AM -0300, Maíra Canal wrote:
->>>> Currently, when we prepare or unprepare RPi's clocks, we don't actually
->>>> enable/disable the firmware clock. This means that
->>>> `clk_disable_unprepare()` doesn't actually change the clock state at
->>>> all, nor does it lowers the clock rate.
->>>>
->>>>   From the Mailbox Property Interface documentation [1], we can see that
->>>> we should use `RPI_FIRMWARE_SET_CLOCK_STATE` to set the clock state
->>>> off/on. Therefore, use `RPI_FIRMWARE_SET_CLOCK_STATE` to create a
->>>> prepare and an unprepare hook for RPi's firmware clock.
->>>>
->>>> As now the clocks are actually turned off, some of them are now marked
->>>> with CLK_IGNORE_UNUSED or CLK_IS_CRITICAL, as those are required since
->>>> early boot or are required during reboot.
->>>
->>> What difference is there between the CLK_IGNORE_UNUSED and
->>> CLK_IS_CRITICAL clocks?
->>
->>  From my understanding, CLK_IGNORE_UNUSED will prevent the clock to be
->> gated during boot (on "clk: Disabling unused clocks"), but after it, the
->> clock can be gated.
->>
->> With CLK_IS_CRITICAL, the clock will never be disabled.
-> 
-> Yeah, that's correct.
-> 
->> For example, RPI_FIRMWARE_M2MC_CLK_ID is used by vc4. It needs to be
->> enabled at boot (I tested; if not enabled, it won't boot). However,
->> after vc4 is probed, we would like vc4 to have control of it and be able
->> to unprepare it in `vc4_hdmi_runtime_suspend()`. If I set it as
->> CLK_IS_CRITICAL, vc4 won't be able to unprepare it.
-> 
-> If the clock can be disabled by Linux, but it breaks some drivers if
-> it's not enabled during their probe, something is fishy somewhere, and
-> it's likely it would be just as broken if you compiled the driver as a
-> module.
-> 
-> Even then, some of the other clocks should probably never be disabled,
-> like the CPU clock.
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
 
-I'll mark RPI_FIRMWARE_ARM_CLK_ID and RPI_FIRMWARE_CORE_CLK_ID as
-critical. Are there any other clocks you think should never be disabled?
+Link: https://github.com/ruyisdk/linux-xuantie-kernel/blob/linux-6.6.36/arch/riscv/boot/dts/canaan/k230_clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
 
-> 
->> I only set RPI_FIRMWARE_PIXEL_BVB_CLK_ID as critical, as, otherwise, the
->> RPi won't reboot.
-> 
-> Why?
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 
-I'll have to dig a bit into vc4 HDMI code and to investigate the reason
-(and maybe fix the issue there).
+---
+Changes in v7:
+- Rename K230_PLL_STATUS_MASK to K230_PLL_LOCK_STATUS_MASK
+- Add clkdev for PLLs to register lookup
+- Add macros to generate repeat variables definition
+- Refine the definitions of k230 clocks
+- Split composite clks into rate, gate, mux, fixed_factor clk
+- Replace k230_clk_hw_onecell_get with of_clk_hw_onecell_get for
+  clock provider
+- Drop k230_sysclk and use clk_mux, clk_gate and clk_fixed_factor
+  as the data structures.
+- Replace one loop registration with individual registration for
+  each type.
+- Link to v6: https://lore.kernel.org/r/20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com
 
-Best Regards,
-- Maíra
+Changes in v6:
+- Remove some redundant comments in struct declaration.
+- Replace the Vendor's code source link with a new one.
+- Link to v5: https://lore.kernel.org/r/20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com
+
+Changes in v5:
+- Fix incorrect base-commit and add prerequisite-patch-id.
+- Replace dummy apb_clk with real ones for UARTs.
+- Add IDs of UARTs clock and DMA clocks in the binding header.
+- Replace k230_clk_cfgs[] array with corresponding named variables.
+- Remove some redundant checks in clk_ops.
+- Drop the unnecessary parenthesis and type casts.
+- Modify return value handling in probe path to avoid redundant print.
+- Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
+
+Changes in v4:
+- Remove redundant onecell_get callback and add_provider function
+for pll_divs.
+- Modify the base-commit in cover letter.
+- Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
+
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
+
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
+
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add bindings for Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock definition for K230
+
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   61 +
+ arch/riscv/boot/dts/canaan/k230-canmv.dts          |   11 +
+ arch/riscv/boot/dts/canaan/k230-evb.dts            |   11 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   26 +-
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 2456 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |  223 ++
+ 8 files changed, 2787 insertions(+), 8 deletions(-)
+---
+base-commit: 0eea987088a22d73d81e968de7347cdc7e594f72
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
+
+Best regards,
+-- 
+Xukai Wang <kingxukai@zohomail.com>
 
