@@ -1,73 +1,73 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA956347DD
-	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17071A2643
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753795746; cv=none; b=InxdzWVlLQ7/0IWZo7VnebXjGOtyBUbsGXaxe1pPqyd3TqNJD3xFHUiNShS89p63BXvajv8UyleeMJlN8SxikAgxqxuT/Kta48wArK+eIgRTR3BGxOthVIHbXY72aHqC50Qn6MXitHS1bnqPNT1Myr7pGVjxHcHh1tF2OkTY/x8=
+	t=1753797232; cv=none; b=Fah+epqvqTvhCNZ7IQaUh7bzBpbf2hUP38qzJlfVlA5kN6AL/LB14HeEprKZbPX9ZcTZrTUKRx8OIgRgW9VRGzG9woH7WpVo3OpiFOMgYmJow6lOWXVLaPt1S89FqttBAMdgb9bSwrvFQtV5xm1L922BO7XB1ta9X60OjDLMKr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753795746; c=relaxed/simple;
-	bh=fnAXK3gfqgcC7/NAyRO1/1pjDs0DPP/sApVyNzGYdZs=;
+	s=arc-20240116; t=1753797232; c=relaxed/simple;
+	bh=7KGd7j82dDK+ybam3fPzsTNJLqBsuymq0GgV9H6+e4o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YO1f31gEluqOOFiodTiNxkdxzVvV3NVnlfeCXKQRjHAYNPpER6fuusHZMIQR8NuoEBZXBNxu4+leim+AHgTDmEhqvjTkqZsv3Zni4+q7yfvXQI9vBcKfmRTwC9kP7Wgh9z68xJYWbXXW5R2thOhFWJ73f5Dst4763maXWDKT3OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FGQQ6qY3; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=r17kTa2mvFeJ1jCq7LPTZRfJAUWR0e+Awa/0py7Q0zSBah/2+amsM0LeeSa3Al4yyi8vALHykvv9+D0d1YwuViRFqtol5nwFFwrGrxKNyX13cvJOgt48MlHgZvFHhYS4HltuMNkMFjTMbvP8bathJSH8ilnHuRO842mJK9knY60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f8uyGyDb; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FGQQ6qY3"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T8r5TN014570
-	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:29:03 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f8uyGyDb"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T9UaGa006916
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:53:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FhXDYfPPwtkj5AyH1dzVWUPlMdS8XJcp0relIk410Iw=; b=FGQQ6qY3lZY9ePjT
-	HtNXiUXkicKcPd6x6tO6WWOCTY2M6axafq+H32LdKzK9v8Jx40EaEQzFwxmF0nyR
-	vXaG9uELdpu8xoQhzERof9tEy1n8W7yF93M4nAiTFL0PiHRQvdSJtelbWZKQhsBl
-	qP6j+M+OtZyi+7hZ0M5c56YY7PST2EwDPtaXQ3xWz/RnTsIdD2s0OwWwwbe6mubJ
-	mb5MTrdEsd1hh6wXmFGZicJgypPO4UApk36WCy2pI2i9SDd2uor9kM80axIoAuwa
-	crA06MMhJgMRTeiRtEEE33VT9KwZ0NRbY4BYYmHB46Zj0l400HYV8E/RsHNBwP9r
-	KktUDQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q3xr663-1
+	uIz2sC5rEvjeL5lDn/RzFAavsZ2n0Q13ZJnx4oJFPBI=; b=f8uyGyDbhemwKOn8
+	iFRaSRVt3n5zuPyusne6/n6UyImffomcNSmo7wRFQ8O+DHCdGM+s56Tybz2Yd5nt
+	fXI/5YpxUJow8wXke+xRfygm4WEsrJC6wGzoEKdJ2svj1QOsoyXNbjoAw7ZpbGUs
+	+psQp2QXMj0Ip7Txngg0jOc0jlN3NOTUcmCoh6qVlSdjgFMVWQ+ebEqvGRilmTci
+	5jijlFQKSrlhVHEyBGHXV7ccxUA3odPaj23e+8nu4bVduvmWNqiUdlbu+4FZ2wT2
+	Y2EQizrsFzP5FgrtW4JDMCwg7J9Vm13eR+ojDCuIE5DrKIJRan5oR6qGJv3qN1ix
+	HZdDrA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcr8ff3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:29:02 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab3bd0f8d5so14278611cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 06:29:02 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 13:53:49 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e2b5396898so27182485a.0
+        for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 06:53:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753795742; x=1754400542;
+        d=1e100.net; s=20230601; t=1753797229; x=1754402029;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FhXDYfPPwtkj5AyH1dzVWUPlMdS8XJcp0relIk410Iw=;
-        b=dKR/aGI5N5JjGmVjws56PwjLgNKrZoBX9EURMbOOMc32HL5OfWU3PIRJcNt5jPdY4W
-         1GHZi3Li5WGySeq+Hn4oiyTiqa8ISsUgyJ4OPbRUHi2lwkTT76BDFFvJxIJa2kyD+SbZ
-         PH7ZtpzYOOWRx4maRHw63+23grvD8mZr4NbHs5/yDGdnvNGhCpdUJ4FuhMjxju3F+YMS
-         W+FVY7GE+Xm+FT7f5sWp15Xd9lNuJRZf+U33R0LdD4Mi6nDUvI/Zs3Y77Z+dgUErTFuv
-         G2MfovvLLpg1hXtiVPTn1zdz16dzaHzBX4L1qIXigDaGEaUQYKkoUjvU55AAo1IzGP2T
-         Sw9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDaoDfxfniL2IIvi2QwsIQ823LheBRPHI9uDPOCtaEccYBnteTs6Uv2OJK/1+HdA8sB/UVI+CCa2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBsc0bYFusyq4Tpp2JviK1iFVXO9A889sDxFRMEg4NIuVHbh1A
-	WvOVIa/QR9a6ylImjeiN173PDmpwacSFHV3OXvx8cteX7Xb9k16RPxT4OyqGl0KOzJ49SPW/6K3
-	wXcNLFr1Hlz76Uc9Zr+CT7DMICkA8r+FV0Ewc298zLxs6idMEoCjFMJb96UQXoLU=
-X-Gm-Gg: ASbGncsAhnEoroosm5+nMtupNjY5dZLF8XVqbOoJxiaLmzHrQF98XLbgke9fHRuyGny
-	60Yw6Rq/Yd9fSaienXXkVOkRVXGEZoPvUa9tP4wg2LHrH2WuftESbZljxa7coW36M/KFt0cTC3d
-	ihQKXNMRVUI+HHFBmgnh3mlfy8c1fgaT+d+ypGtJLVqoEEcismepg4cHOvrVPIWdXSQqMYVXE0d
-	FOTPACFePvM6Cv/s4UctEle52SkEHL59hU3PIQRkoVuH2eoIAk/qrZsGRpWh9O5RQW5z/XIKeme
-	jyAe6nIAuZWdsR2icKbgGJLv8AbLavArNWjf2K8QJseyblFhrDMrMSEWQKyt+LBuMu+JayimFhQ
-	CRIDm/9vSr8fhX8EfLQ==
-X-Received: by 2002:ac8:5e4c:0:b0:4ab:6d02:c061 with SMTP id d75a77b69052e-4ae8ee0ec0emr85525101cf.6.1753795741601;
-        Tue, 29 Jul 2025 06:29:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXKq2xaIvarfhRnuoE1bKTGMTI9LUV8M5rVt9cHs30QApy9wY+ryT5G578A4lyjZdiK0oliw==
-X-Received: by 2002:ac8:5e4c:0:b0:4ab:6d02:c061 with SMTP id d75a77b69052e-4ae8ee0ec0emr85524591cf.6.1753795740997;
-        Tue, 29 Jul 2025 06:29:00 -0700 (PDT)
+        bh=uIz2sC5rEvjeL5lDn/RzFAavsZ2n0Q13ZJnx4oJFPBI=;
+        b=mdH1acyN1iouvXSQLdjBRKK93hPmy2V2hZaPOJGZXg1zSzwvN6ES81fMuHfqBQI02i
+         quD1ZFA00Zn4XM8MswyRSflfe+/UAXetlcv8ZxD7+IcoZtlnwEv3AS9RoZGEoM8f2z1t
+         rgozA01ogECVTg1fs+3b/UP0WXhCGEQeIIeWgrNcf7ECzN/HQdfNTKLYTGGyxCh9cJ7L
+         bNNyzno1f8RySRJMRMQ5iVXW8mho0fjIgcK77OSUQb2ixGyfxgIFZYZMQotVDx4dNxIe
+         Q35IhKmjRnls849fmtV5bN4TtWLwlRxf+Ok2JFkfcTusDuI30invKy21eDEFfDlvDAtD
+         Vzqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF5pk7VTTPU74jmTOpzu8VXcmr0WBnpaEmtAsU5i+OaTnPpmxKrFlZZxtRJ7QLi9IPh80TRCZ2rdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaJ3qPnlZ7stgh89sNdF4z/7RouR2TXDR9q+1jpPzWL+5fkJ6b
+	GESMbqdKOVpBmtatVTSIjPzx3Oepc4ZwnpBVtKJ1zPd5hRPSHvk5IidiTgTIIkUlH6YAS2K5lPm
+	qhiFIELv/dPMkE5r8xFILBn5HnWyfwl7awWhEpRZ4EeNIS/oC+9YcTIER1ESWIts=
+X-Gm-Gg: ASbGncsKja0amAoErxDbG4WUlHC372GF6h+U4qASxuqmPDXngImJveZ/fgvNR0OzHK3
+	EKOLOciZLMnmi9HU8cl51kZ8abnjcaff2ODamVPQM5nDNCI3plN8yCTA0W9zh1h4aNlEKPyx0mH
+	ZiSFiA5f++672q9EcGmI8zVdlej/AcUqxFdVqicGcl9fdg1NWWJtG7L1zntKFr/loRFJLTOuEu5
+	kSqGDXMdbDlsC9SV7sY2wneeFSIuRz4iUZq7YUEkp5yxtSgzJT4nhkTLZl6JWrA+ozLcCUK4YLo
+	fFBAaEMVixN62+mhrYc/PyduvhTRY/3j48sCba2EYFIbt/G3FCPZejB7EzmIPbn7j7arXwzixp7
+	YgTgZHGg9+V+SFdKRwQ==
+X-Received: by 2002:a05:620a:4502:b0:7e3:2e02:4849 with SMTP id af79cd13be357-7e66d73f600mr4096685a.9.1753797228630;
+        Tue, 29 Jul 2025 06:53:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2rZ50HIoP3F9/NtATSvU3RTcoTLz7GUYh9uMTOF98nuj610nPOwpQK2hdrfHtttMfHeiLQw==
+X-Received: by 2002:a05:620a:4502:b0:7e3:2e02:4849 with SMTP id af79cd13be357-7e66d73f600mr4093185a.9.1753797228016;
+        Tue, 29 Jul 2025 06:53:48 -0700 (PDT)
 Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a66719sm574050766b.73.2025.07.29.06.28.56
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6156591fe7bsm1187250a12.51.2025.07.29.06.53.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 06:29:00 -0700 (PDT)
-Message-ID: <0a1337d7-ee3e-47de-a401-b25586e813e4@oss.qualcomm.com>
-Date: Tue, 29 Jul 2025 15:28:55 +0200
+        Tue, 29 Jul 2025 06:53:47 -0700 (PDT)
+Message-ID: <c67d7d8c-ae39-420f-b48b-d7454deb1fc9@oss.qualcomm.com>
+Date: Tue, 29 Jul 2025 15:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,179 +75,152 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Johan Hovold
- <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
+ source clocks to drop rate
+To: Luo Jie <quic_luoj@quicinc.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Georgi Djakov <djakov@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley
  <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Richard Acayan <mailingradian@gmail.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Luca Weiss
- <luca.weiss@fairphone.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
- <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
- <aIevIuMDA5R8igmi@linaro.org>
- <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
- <aIhrav7GKpsbVpto@linaro.org>
- <6b903628-9abf-4b9e-971e-e9338308d693@oss.qualcomm.com>
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
+ <20250710225412.GA25762-robh@kernel.org>
+ <93082ccd-40d2-4a6b-a526-c118c1730a45@oss.qualcomm.com>
+ <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
+ <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
+ <830f3989-d1ac-4b7c-8888-397452fe0abe@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <6b903628-9abf-4b9e-971e-e9338308d693@oss.qualcomm.com>
+In-Reply-To: <830f3989-d1ac-4b7c-8888-397452fe0abe@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=6888cc9e cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=y9L28JTQkOqf6k3egjQA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: bD7JFLs_KLvcmkr7RzXm5P1rK6LgTzLP
-X-Proofpoint-GUID: bD7JFLs_KLvcmkr7RzXm5P1rK6LgTzLP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDEwNCBTYWx0ZWRfX7tder8zmsof7
- KmJfXKQK+aOn9sOPw0ukk7CZTs3QXYBRQtikKKrQGv5QDb+5AiIIHoFy3JSEEfnB0MQN0VqTpuU
- FlgujFBikTPh+cpVdsl6czoAktJIq4xsJRW6kWaFgoz3Rozssln6Rw4oAWQZIMLBXZMZKLk4PE+
- J/Ht8GIm0vW+rMkOuLKvWr54Q68DP+fHlaIMMPKcQiyMMGCVe8HOa2ztAMN9ukCZeBPFcPvSgZB
- jMGTF5bGTU+xyFGG4vEcGD/vzqJKx9tjdUs8WBkKeU+Y4f2Cmnw67L4pcvNk3no12qeIHhOhVfZ
- JuvHO6yn/JdF8vxIiv3vneZEc6DjwIJrLi+GqXiqjlK0KoT9v9l/aQT8SvPQ+nY+9638B7VdGZ0
- DtDZZ6t9M1vePU2zE5o+B6mzFMdwnwTa+wA13AWEQfLyLg5v51zyOjPW2P5vJq4V8OAsR/B7
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDEwNyBTYWx0ZWRfXwoe/5847omjf
+ UoHXd6Wq2qndokqaR41UfXkG2e3AqR3Hrv4tIrtSw7AEYSnBi2SC3xlX9HSoNTr6SCNsbZqkxgy
+ NwYT4pMRNUcIeAdrA2B+fk5qanl2xkQuubtJPKC8uCacWri7nU5TOgceQihCoTVCsrkRM4e2trS
+ HgjUnD/40Q/tWfMi8TCyKcdEjW/WAXONUi6gqzdBEGvNriV+itIJi70OYpEf/8dvyVMS5lAziPh
+ kvEFfRRkbjTYGRUwwMGnWbDmHxyutKLj+OP/kryKVQxHA5LTOQCFKAQ1yPsO2+nnI3t1TBowrwR
+ Jk6XJSrujfW1+ZtP3OZKaAAY8nmxmU/6RflMWd/8xN+MnqgPrzClZuDyO0JzUE9cC6rwfbrqTWO
+ ajKZmsajYHWqCdLl3xAAfsQ8L6bTPvECszJUzGP9XrEaAk1oJooY2XpgRBZQ01rHhQ/uDVTR
+X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=6888d26d cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=RShGOoz45MAMUC7vXQcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: eoJT4aiXiV9eOsEmgyq-IRclBIkXBL3L
+X-Proofpoint-ORIG-GUID: eoJT4aiXiV9eOsEmgyq-IRclBIkXBL3L
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507290104
+ definitions=main-2507290107
 
-On 7/29/25 10:23 AM, Konrad Dybcio wrote:
-> On 7/29/25 8:34 AM, Stephan Gerhold wrote:
->> On Mon, Jul 28, 2025 at 11:31:10PM +0200, Konrad Dybcio wrote:
->>> On 7/28/25 7:10 PM, Stephan Gerhold wrote:
->>>> On Mon, Jul 28, 2025 at 06:16:24PM +0200, Konrad Dybcio wrote:
->>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>>
->>>>> A number of power rails must be powered on in order for GPU_CC to
->>>>> function. Ensure that's conveyed to the OS.
->>>>>
->>>>> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
->>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>> ---
->>>>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
->>>>>  1 file changed, 6 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>> index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>>>> @@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
->>>>>  			clocks = <&bi_tcxo_div2>,
->>>>>  				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
->>>>>  				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
->>>>> +
->>>>> +			power-domains = <&rpmhpd RPMHPD_CX>,
->>>>> +					<&rpmhpd RPMHPD_MX>,
->>>>> +					<&rpmhpd RPMHPD_GFX>,
->>>>> +					<&rpmhpd RPMHPD_GMXC>;
->>>>> +
->>>>>  			#clock-cells = <1>;
->>>>>  			#reset-cells = <1>;
->>>>>  			#power-domain-cells = <1>;
->>>>>
->>>>
->>>> To repeat your own message from a couple of months back [1]:
->>>>
->>>>> You shouldn't be messing with VDD_GFX on platforms with a GMU.
->>>>>
->>>>> Parts of the clock controller are backed by one of the MX rails,
->>>>> with some logic depending on CX/GFX, but handling of the latter is
->>>>> fully deferred to the GMU firmware.
->>>>>
->>>>> Konrad
->>>>
->>>> Please describe somewhere in the cover letter or the individual patches
->>>> how this relates to the responsibilities of the GMU. I searched for
->>>> "GMU" in the patch series and couldn't find any note about this.
->>>>
->>>> Also: How much is a plain "power on" votes (without a corresponding
->>>> "required-opps") really worth nowadays? An arbitrary low voltage level
->>>> on those rails won't be sufficient to make the GPU_CC actually
->>>> "function". Do you need "required-opps" here? In the videocc/camcc case
->>>> we have those.
->>>
->>> Right, I failed to capture this.
->>>
->>> The GFX rail should be powered on before unclamping the GX_GDSC (as
->>> per the programming guide). The clock controller HPG however doesn't
->>> seem to have a concept of RPMh, so it says something that amounts to
->>> "tell the PMIC to supply power on this rail". In Linux, since Commit
->>> e3e56c050ab6 ("soc: qcom: rpmhpd: Make power_on actually enable the
->>> domain") we don't really need a defined level for this (perhaps it's
->>> more ""portable"" across potential fuse-bins if we don't hardcode the
->>> lowest level anyway?).
->>
->> Thanks, I forgot that we have this commit.
->>
->>>
->>> However after that happens, the level scaling is done by the GMU
->>> firmware. This holds for allOf CX/MX/GFX. I'm not super sure if
->>> both MX and (G)MXC need to both be captured together - downstream
->>> seems to describe MXC as a child of MX (in socname-regulators.dtsi),
->>> but I'm not really sure this is true in hardware.
->>>
->>> The GPU driver currently first enables the GX_GDSC and only then
->>> does it kickstart the GMU firmware. Downstream seems to do that as
->>> well. So on a second thought, since we've not seen any errors so
->>> far, it calls into question what role the GFX rail plays in the
->>> GX_GDSC's powering up..
->>>
->>
->> It might play a role, but we wouldn't know since AFAICT we don't support
->> enabling the GX_GDSC. Look at the beautiful gdsc_gx_do_nothing_enable()
->> function, it basically just defers the entire task to the GMU. The GDSC
->> just exists in Linux so we can turn it *off* during GMU crashes. :D
+On 7/18/25 5:51 PM, Luo Jie wrote:
 > 
-> OHHHHH snap! I, on the other hand, forgot we have *that* commit..
 > 
->> I think we should identify precisely which votes we are missing, instead
->> of making blanket votes for all the power rails somehow related to the
->> GPU. In this case this means: Which rails do we need to vote for to make
->> the GMU turn on? If there are no votes necessary after the GMU is on,
->> it's better to have none IMO.
+> On 7/18/2025 5:28 PM, Konrad Dybcio wrote:
+>> On 7/18/25 11:12 AM, Luo Jie wrote:
+>>>
+>>>
+>>> On 7/11/2025 8:15 PM, Konrad Dybcio wrote:
+>>>> On 7/11/25 12:54 AM, Rob Herring wrote:
+>>>>> On Thu, Jul 10, 2025 at 08:28:13PM +0800, Luo Jie wrote:
+>>>>>> Drop the clock rate suffix from the NSS Clock Controller clock names for
+>>>>>> PPE and NSS clocks. A generic name allows for easier extension of support
+>>>>>> to additional SoCs that utilize same hardware design.
+>>>>>
+>>>>> This is an ABI change. You must state that here and provide a reason the
+>>>>> change is okay (assuming it is). Otherwise, you are stuck with the name
+>>>>> even if not optimal.
+>>>>
+>>>> The reason here seems to be simplifying the YAML.. which is not a good
+>>>> reason really..
+>>>>
+>>>> I would instead suggest keeping the clocks list as-is for ipq9574 (this
+>>>> existing case), whereas improving it for any new additions
+>>>>
+>>>> Konrad
+>>>
+>>> Thanks Rob and Konrad for the comments.
+>>>
+>>> "nss_1200" and "nss" refer to the same clock pin on different SoC.
+>>> As per Krzystof's previous comment on V2, including the frequency
+>>> as a suffix in the clock name is not required, since only the
+>>> frequencies vary across different IPQ SoCs, while the source clock
+>>> pins for 'PPE' and 'NSS' clocks are the same. Hence this ABI change
+>>> was deemed necessary.
+>>>
+>>> By removing the frequency suffix, the device tree bindings becomes
+>>> more flexible and easier to extend for supporting new hardware
+>>> variants in the future.
+>>>
+>>> Impact due to this ABI change: The NSS clock controller node is only
+>>> enabled for the IPQ9574 DTS. In this patch series, the corresponding
+>>> DTS changes for IPQ9574 are also included to align with this ABI
+>>> change.
+>>
+>> The point of an ABI is to keep exposing the same interface without
+>> any change requirements, i.e. if a customer ships the DT from
+>> torvalds/master in firmware and is not willing to update it, they
+>> can no longer update the kernel without a workaround.
+>>
+>>> Please let me know if further clarification or adjustments are needed.
+>>
+>> What we're asking for is that you don't alter the name on the
+>> existing platform, but use a no-suffix version for the ones you
+>> introduce going forward
+>>
+>> i.e. (pseudo-YAML)
+>>
+>> if:
+>>    properties:
+>>      compatible:
+>>        - const: qcom,ipq9574-nsscc
+>> then:
+>>    properties:
+>>      clock-names:
+>>        items:
+>>          - clockname_1200
+>> else:
+>>    properties:
+>>      clock-names:
+>>        items:
+>>          - clockname # no suffix
+>>
+>> Konrad
 > 
-> The GMU pokes at RPMh directly (see a6xx_hfi.c), so we indeed just
-> need to make sure that it can turn on.. Which in short means the
-> *C*X_GDSC must be able to power up, which doesn't have any special
-> requirements. The only question that's left is basically whether
-> MX_C must be on. I'll try testing that in practice.
+> We had adopted this proposal in version 2 previously, but as noted in
+> the discussion linked below, Krzysztof had suggested to avoid using the
+> clock rate in the clock names when defining the constraints for them.
+> However I do agree that we should keep the interface for IPQ9574
+> unchanged and instead use a generic clock name to support the newer
+> SoCs.
+> 
+> https://lore.kernel.org/all/20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin/
+> 
+> Request Krzysztof to provide his comments as well, on whether we can
+> follow your suggested approach to avoid breaking ABI for IPQ9574.
 
-So this is apparently difficult, at least on SC8280XP, where something
-seems to be voting on MXC and it only seems to shut down when entering
-CXPC. I would imagine/hope this is not the case on newer platforms, but
-I don't have a way to fully confirm this at the moment..
+Krzysztof, should the bindings be improved-through-breaking, or should
+there simply be a new YAML with un-suffixed entries, where new platforms
+would be added down the line?
 
 Konrad
