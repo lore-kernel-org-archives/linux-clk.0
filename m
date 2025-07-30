@@ -1,358 +1,189 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB772D23A3;
-	Wed, 30 Jul 2025 10:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873127; cv=none; b=sPskVDIWOykM/KMpZBHZ/HAjlnLUi33V89vFclW8X7B8hoFASyrbiTkQfYNjNOlTNm1n78D3dv8TKbaM5zsrKiQYXZNpIHqRiDGpSLsaIVDRhSJFzDABm0h7reagV6TEC59P62nVBgUyJoJpT43E3ychsAa9GvM7qmBsI2hEGKk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873127; c=relaxed/simple;
-	bh=SRyBI5NIhbbZACiV/QBYkv1QDLE8nc/hjl4+RIHRxJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SrPRGnf6f7oEs7JwNJRbaYRGDH/OC6o47iTHYzCo0ZjEjkqSoLgy9OQF1sebh6CMdxwXGD6Y7L9t7nNzdWHcrf3B0a1Rr9rZaw9NW3aBsSb0n4oAeGWI+UeglPuLqUtvTDp6skcFgn67cGZ8Ib0oDPmZOVsLBkb+ldjZeMWG7J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fhrrs3lg; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4C25761;
+	Wed, 30 Jul 2025 11:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753874482; cv=pass; b=N0XjJpekwUuX61FJbeXGrFkX6b7LiKTMZ1Q0unDDVLAJIg0c4OwbVcev3LGpa7sBNalOgGRyvd9VSPX1xNBPj3GZr3Rk/blazxLsdEYbdenPfWbxzIgacAjyrDv+uDe161FtEazsJltXGj29QzXck/woKi+RAKQYcRttncYmVkM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753874482; c=relaxed/simple;
+	bh=tbCibIy2cmD+3opvuXp1KpJuZJv+jtvN1A9fuYyZZxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fjMsX/dahACmEJe+O6tij2h4I7alkllfObzcs6ahbHv3R7FoRt4lUzz8DLgNxj3AYFlVHG1yMpWbk9URYvcSIymToHFjQPjD0N+irn3LNOSSCweiPubwpysLVCQ/FuQgDDl26/flaVvT2P5jjqWqx60hWuKuqotxVMFCXRfAR7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=SVMEXXGo; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fhrrs3lg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753873123;
-	bh=SRyBI5NIhbbZACiV/QBYkv1QDLE8nc/hjl4+RIHRxJo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fhrrs3lglThomlxYMidSmHtHmHrBJ/opJ/3uz73ZEXbbsTIeO+qxGx31w/V/8Ygxg
-	 ENJGc/b3TdlyaMcZJaNWgotJocSCS95idlvmZANZIOEZv+QBO10pHUgmV9zOwF0Ynk
-	 CmD/hfP3VfoMOVCSs5fbqBQ36Eb7UcBsXjn7IFqxvw3tq7Rr6RRnRKvuCIWQGPlGZB
-	 H1kdKkrXW7ZleBmn16tZrB3FXtDogi3ewFqXUcE/4BMmqDnvhQ55a40rmN64x5wmxM
-	 GAKSkXsrPTd50+0YnGG2fYezg/xRNGq7xuu6+2MsjjHxSo7l2C16KboDDbkOOD2z38
-	 xmjz23FtbNT9A==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:4db2:e926:c82d:3276])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3835417E1511;
-	Wed, 30 Jul 2025 12:58:42 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com,
-	wenst@chromium.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>,
-	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>
-Subject: [PATCH v3 27/27] clk: mediatek: Add MT8196 vencsys clock support
-Date: Wed, 30 Jul 2025 12:56:53 +0200
-Message-Id: <20250730105653.64910-28-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730105653.64910-1-laura.nao@collabora.com>
-References: <20250730105653.64910-1-laura.nao@collabora.com>
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="SVMEXXGo"
+ARC-Seal: i=1; a=rsa-sha256; t=1753874463; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E8r8UTppfiLYDUKk0iKnk8G8/FN1FpODiWadA9FBObOHIUyt4+/SAyHoGwfo46HIndDDoFteDSt1WMnutOaImJhOmy+rQexDY3RzHypvTD6CR4BlGxZNGMEIgYrgO2F6rarDQveFgOiDgzhHzMXaWl2D8yADnrykjQeU7q9sx38=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753874463; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8Oz8gEKqQKUEqMecwoAV5BMdQ44ozr0nc/GN/7ECVkk=; 
+	b=oLz/jflwJpTuDqk1ujOH9BxpbpSMpgfmSH7gOuadElCB9kWs8VIybTG09k0yq+6VJs52fLk0fsVrBU+KEkH5e/2n6higSulN2zYW6lzyGSTrelZtiNiW4994efaEu/9KlrFKMjKaIguaCHe8iuXE7G93+PP0XDDYYb6rvGJRcG4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753874463;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=8Oz8gEKqQKUEqMecwoAV5BMdQ44ozr0nc/GN/7ECVkk=;
+	b=SVMEXXGoydW4JlJFuYIzvP8ubzv4KonrfST271YiBRYjVfVmTtVUBq/+vew0kFIs
+	whQiqqJAHtHrWijhCPSgNfM4ccbpugxt1vpMG9IXkf8BiNIb2LgN0PxkQ7judxfFcf3
+	qfIXHt/kQufJpoDDlvE4Hxt/2/QlizuLHJ/63xi4=
+Received: by mx.zohomail.com with SMTPS id 175387445597336.57491374987171;
+	Wed, 30 Jul 2025 04:20:55 -0700 (PDT)
+Message-ID: <122a51eb-21e1-4cb4-b42b-fcb7e01cf64e@zohomail.com>
+Date: Wed, 30 Jul 2025 19:20:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
+ <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
+ <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr0801122705379e726ccbd43f37e10cb6000094e63ed90cacde45cdbc9d713d3e27ea8ff19fee53717ce07d:zu080112272a964b8e78150ea41f6bca3600003d8e0fa10c7b72419c2cccc5a40a808f82a51dfb38244fb1a8:rf0801122c10cdd9d1176d37f07bf07f420000feac9293e220c0d9b6cd3327d2d7bf3d02e2af548a215b4f7b53805f1cdd:ZohoMail
+X-ZohoMailClient: External
 
-Add support for the MT8196 vencsys clock controller, which provides
-clock gate control for the video encoder.
 
-Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
----
- drivers/clk/mediatek/Kconfig           |   7 +
- drivers/clk/mediatek/Makefile          |   1 +
- drivers/clk/mediatek/clk-mt8196-venc.c | 235 +++++++++++++++++++++++++
- 3 files changed, 243 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8196-venc.c
-
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 4c7f6715ed63..53472d7de18c 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -1124,6 +1124,13 @@ config COMMON_CLK_MT8196_VDECSYS
- 	help
- 	  This driver supports MediaTek MT8196 vdecsys clocks.
- 
-+config COMMON_CLK_MT8196_VENCSYS
-+	tristate "Clock driver for MediaTek MT8196 vencsys"
-+	depends on COMMON_CLK_MT8196
-+	default m
-+	help
-+	  This driver supports MediaTek MT8196 vencsys clocks.
-+
- config COMMON_CLK_MT8365
- 	tristate "Clock driver for MediaTek MT8365"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 54e895b73ecf..4daba371342f 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -172,6 +172,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196_MMSYS) += clk-mt8196-disp0.o clk-mt8196-disp1.o c
- obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
- obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
- obj-$(CONFIG_COMMON_CLK_MT8196_VDECSYS) += clk-mt8196-vdec.o
-+obj-$(CONFIG_COMMON_CLK_MT8196_VENCSYS) += clk-mt8196-venc.o
- obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
- obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
- obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8196-venc.c b/drivers/clk/mediatek/clk-mt8196-venc.c
-new file mode 100644
-index 000000000000..ecbd42629e9f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8196-venc.c
-@@ -0,0 +1,235 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ *                    Guangjie Song <guangjie.song@mediatek.com>
-+ * Copyright (c) 2025 Collabora Ltd.
-+ *                    Laura Nao <laura.nao@collabora.com>
-+ */
-+#include <dt-bindings/clock/mediatek,mt8196-clock.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+static const struct mtk_gate_regs ven10_cg_regs = {
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x8,
-+	.sta_ofs = 0x0,
-+};
-+
-+static const struct mtk_gate_regs ven10_hwv_regs = {
-+	.set_ofs = 0x00b8,
-+	.clr_ofs = 0x00bc,
-+	.sta_ofs = 0x2c5c,
-+};
-+
-+static const struct mtk_gate_regs ven11_cg_regs = {
-+	.set_ofs = 0x10,
-+	.clr_ofs = 0x14,
-+	.sta_ofs = 0x10,
-+};
-+
-+static const struct mtk_gate_regs ven11_hwv_regs = {
-+	.set_ofs = 0x00c0,
-+	.clr_ofs = 0x00c4,
-+	.sta_ofs = 0x2c60,
-+};
-+
-+#define GATE_VEN10(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven10_cg_regs,			\
-+		.shift = _shift,			\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+#define GATE_HWV_VEN10_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.parent_name = _parent,					\
-+		.regs = &ven10_cg_regs,					\
-+		.hwv_regs = &ven10_hwv_regs,				\
-+		.shift = _shift,					\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,		\
-+		.flags = (_flags) |					\
-+			 CLK_OPS_PARENT_ENABLE,				\
-+	}
-+
-+#define GATE_HWV_VEN10(_id, _name, _parent, _shift)	\
-+	GATE_HWV_VEN10_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_HWV_VEN11(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven11_cg_regs,			\
-+		.hwv_regs = &ven11_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE		\
-+	}
-+
-+static const struct mtk_gate ven1_clks[] = {
-+	/* VEN10 */
-+	GATE_HWV_VEN10(CLK_VEN1_CKE0_LARB, "ven1_larb", "venc", 0),
-+	GATE_HWV_VEN10(CLK_VEN1_CKE1_VENC, "ven1_venc", "venc", 4),
-+	GATE_VEN10(CLK_VEN1_CKE2_JPGENC, "ven1_jpgenc", "venc", 8),
-+	GATE_VEN10(CLK_VEN1_CKE3_JPGDEC, "ven1_jpgdec", "venc", 12),
-+	GATE_VEN10(CLK_VEN1_CKE4_JPGDEC_C1, "ven1_jpgdec_c1", "venc", 16),
-+	GATE_HWV_VEN10(CLK_VEN1_CKE5_GALS, "ven1_gals", "venc", 28),
-+	GATE_HWV_VEN10(CLK_VEN1_CKE29_VENC_ADAB_CTRL, "ven1_venc_adab_ctrl",
-+			"venc", 29),
-+	GATE_HWV_VEN10_FLAGS(CLK_VEN1_CKE29_VENC_XPC_CTRL,
-+			      "ven1_venc_xpc_ctrl", "venc", 30,
-+			      CLK_IGNORE_UNUSED),
-+	GATE_HWV_VEN10(CLK_VEN1_CKE6_GALS_SRAM, "ven1_gals_sram", "venc", 31),
-+	/* VEN11 */
-+	GATE_HWV_VEN11(CLK_VEN1_RES_FLAT, "ven1_res_flat", "venc", 0),
-+};
-+
-+static const struct mtk_clk_desc ven1_mcd = {
-+	.clks = ven1_clks,
-+	.num_clks = ARRAY_SIZE(ven1_clks),
-+	.need_runtime_pm = true,
-+};
-+
-+static const struct mtk_gate_regs ven20_hwv_regs = {
-+	.set_ofs = 0x00c8,
-+	.clr_ofs = 0x00cc,
-+	.sta_ofs = 0x2c64,
-+};
-+
-+static const struct mtk_gate_regs ven21_hwv_regs = {
-+	.set_ofs = 0x00d0,
-+	.clr_ofs = 0x00d4,
-+	.sta_ofs = 0x2c68,
-+};
-+
-+#define GATE_VEN20(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven10_cg_regs,			\
-+		.shift = _shift,			\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+#define GATE_HWV_VEN20(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven10_cg_regs,			\
-+		.hwv_regs = &ven20_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VEN21(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven11_cg_regs,			\
-+		.hwv_regs = &ven21_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr,	\
-+		.flags = CLK_OPS_PARENT_ENABLE		\
-+	}
-+
-+static const struct mtk_gate ven2_clks[] = {
-+	/* VEN20 */
-+	GATE_HWV_VEN20(CLK_VEN2_CKE0_LARB, "ven2_larb", "venc", 0),
-+	GATE_HWV_VEN20(CLK_VEN2_CKE1_VENC, "ven2_venc", "venc", 4),
-+	GATE_VEN20(CLK_VEN2_CKE2_JPGENC, "ven2_jpgenc", "venc", 8),
-+	GATE_VEN20(CLK_VEN2_CKE3_JPGDEC, "ven2_jpgdec", "venc", 12),
-+	GATE_HWV_VEN20(CLK_VEN2_CKE5_GALS, "ven2_gals", "venc", 28),
-+	GATE_HWV_VEN20(CLK_VEN2_CKE29_VENC_XPC_CTRL, "ven2_venc_xpc_ctrl", "venc", 30),
-+	GATE_HWV_VEN20(CLK_VEN2_CKE6_GALS_SRAM, "ven2_gals_sram", "venc", 31),
-+	/* VEN21 */
-+	GATE_HWV_VEN21(CLK_VEN2_RES_FLAT, "ven2_res_flat", "venc", 0),
-+};
-+
-+static const struct mtk_clk_desc ven2_mcd = {
-+	.clks = ven2_clks,
-+	.num_clks = ARRAY_SIZE(ven2_clks),
-+	.need_runtime_pm = true,
-+};
-+
-+static const struct mtk_gate_regs ven_c20_hwv_regs = {
-+	.set_ofs = 0x00d8,
-+	.clr_ofs = 0x00dc,
-+	.sta_ofs = 0x2c6c,
-+};
-+
-+static const struct mtk_gate_regs ven_c21_hwv_regs = {
-+	.set_ofs = 0x00e0,
-+	.clr_ofs = 0x00e4,
-+	.sta_ofs = 0x2c70,
-+};
-+
-+#define GATE_HWV_VEN_C20(_id, _name, _parent, _shift) {\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven10_cg_regs,		\
-+		.hwv_regs = &ven_c20_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VEN_C21(_id, _name, _parent, _shift) {\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &ven11_cg_regs,		\
-+		.hwv_regs = &ven_c21_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr,	\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+static const struct mtk_gate ven_c2_clks[] = {
-+	/* VEN_C20 */
-+	GATE_HWV_VEN_C20(CLK_VEN_C2_CKE0_LARB, "ven_c2_larb", "venc", 0),
-+	GATE_HWV_VEN_C20(CLK_VEN_C2_CKE1_VENC, "ven_c2_venc", "venc", 4),
-+	GATE_HWV_VEN_C20(CLK_VEN_C2_CKE5_GALS, "ven_c2_gals", "venc", 28),
-+	GATE_HWV_VEN_C20(CLK_VEN_C2_CKE29_VENC_XPC_CTRL, "ven_c2_venc_xpc_ctrl",
-+			  "venc", 30),
-+	GATE_HWV_VEN_C20(CLK_VEN_C2_CKE6_GALS_SRAM, "ven_c2_gals_sram", "venc", 31),
-+	/* VEN_C21 */
-+	GATE_HWV_VEN_C21(CLK_VEN_C2_RES_FLAT, "ven_c2_res_flat", "venc", 0),
-+};
-+
-+static const struct mtk_clk_desc ven_c2_mcd = {
-+	.clks = ven_c2_clks,
-+	.num_clks = ARRAY_SIZE(ven_c2_clks),
-+	.need_runtime_pm = true,
-+};
-+
-+static const struct of_device_id of_match_clk_mt8196_venc[] = {
-+	{ .compatible = "mediatek,mt8196-vencsys", .data = &ven1_mcd },
-+	{ .compatible = "mediatek,mt8196-vencsys-c1", .data = &ven2_mcd },
-+	{ .compatible = "mediatek,mt8196-vencsys-c2", .data = &ven_c2_mcd },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_venc);
-+
-+static struct platform_driver clk_mt8196_venc_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8196-venc",
-+		.of_match_table = of_match_clk_mt8196_venc,
-+	},
-+};
-+module_platform_driver(clk_mt8196_venc_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8196 Video Encoders clocks driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.5
-
+On 2025/7/30 15:05, Krzysztof Kozlowski wrote:
+> On Wed, Jul 30, 2025 at 02:43:51AM +0800, Xukai Wang wrote:
+>> This patch adds the Device Tree binding for the clock controller
+>> on Canaan k230. The binding defines the clocks and the required
+>> properties to configure them correctly.
+>>
+>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>> ---
+>>  .../devicetree/bindings/clock/canaan,k230-clk.yaml |  61 ++++++
+>>  include/dt-bindings/clock/canaan,k230-clk.h        | 223 +++++++++++++++++++++
+>>  2 files changed, 284 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..f2aa509b12bce1a69679f6d7e2853273233266d5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> @@ -0,0 +1,61 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Clock
+>> +
+>> +maintainers:
+>> +  - Xukai Wang <kingxukai@zohomail.com>
+>> +
+>> +description:
+>> +  The Canaan K230 clock controller generates various clocks for SoC
+>> +  peripherals. See include/dt-bindings/clock/canaan,k230-clk.h for
+>> +  valid clock IDs.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: canaan,k230-clk
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: PLL control registers
+>> +      - description: Sysclk control registers
+>> +
+>> +  clocks:
+>> +    minItems: 1
+> No, drop. Hardware is not flexible.
+OK.
+>
+>> +    items:
+>> +      - description: Main external reference clock
+>> +      - description:
+>> +          External clock which used as the pulse input
+>> +          for the timer to provide timing signals.
+> So what is the difference that you removed my Rb? Only this? I do not
+> see any differences (and don't tell me, you claim some random indice
+> numbers as change DT maintainer would need to re-review...)
+Sorry about that. Since canaan/k230-clk.yaml was updated with new
+clocks, I thought it might require a re-review. I didn't mean to cause
+unnecessary noise.
+>
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+> No, drop. Hardware is not flexible.
+OK.
+>
+>> +    items:
+>> +      - const: osc24m
+>> +      - const: timer-pulse-in
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@91102000 {
+>> +        compatible = "canaan,k230-clk";
+>> +        reg = <0x91102000 0x40>,
+>> +              <0x91100000 0x108>;
+>> +        clocks = <&osc24m>;
+>> +        clock-names = "osc24m";
+> Incomplete. Post complete hardware.
+OK.
+>
+>> +        #clock-cells = <1>;
+>> +    };
+>> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..9eee9440a4f14583eac845b649e5685d623132e1
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
+>> @@ -0,0 +1,223 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +/*
+>> + * Kendryte Canaan K230 Clock Drivers
+>> + *
+>> + * Author: Xukai Wang <kingxukai@zohomail.com>
+>> + */
+>> +
+>> +#ifndef __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+>> +#define __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+>> +
+>> +/* Kendryte K230 SoC clock identifiers (arbitrary values) */
+> Drop comment, redundant and obvious.
+OK, I'll drop it.
+>
+> Best regards,
+> Krzysztof
+>
