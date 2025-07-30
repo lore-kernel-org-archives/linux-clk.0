@@ -1,123 +1,168 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200B1E571B
-	for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 06:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0BAE55B;
+	Wed, 30 Jul 2025 07:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753856641; cv=none; b=u5VW0MpKxAQz06z2qerAC1eq2lxL2fk4W3MigXRwy6Kim0Hz+GGv2rm6jEA3MQU94xGbYY13TAhwmGiE6IgwWZjr1fMzTPJ9olioLke8st6/ykcaNV4Rzvr8+4yXnu0LriRdsRNSxqIIg0zDv1MkSd6rbTivazrcGKXMAcsE5IA=
+	t=1753859160; cv=none; b=K7jg5dr8szSRn+tDEiCiLtc84enDeKM7ient+sKip7GP4liX2AXvGhdABwI4FMt/F1bAKu1vj/5CETOct/BpMv8094632trvIiiJtEA/iWowrgu2Vuf1RNp83L0p5+Voln+71Si0bK43alY8UF29RxXQuDv/wd+NwAypSY/QWlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753856641; c=relaxed/simple;
-	bh=dGxjiNGntEIpDeEM5UuFmfE0zBkCHQ41vYKGFK5F1UU=;
+	s=arc-20240116; t=1753859160; c=relaxed/simple;
+	bh=A2mlfbNrB71eIpXbDCYMDyraLJzE4wkjolpqa+Ojhr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUxe0wlwVFPv07crJPPXeFkbyl+Fx5mRt1l4mbgZKD6AwUOzGfzDBbDSwY/4rvMJnznT3kAKbdfcps2CsIMz5no+Y7gL8luLTiipq8lCo37BPlXUVfbFgQnRJhzMhc3y25cFGfYffwgxKVzEDeaSou4K3YxuZBxDFYP9aFyVD/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=glC7O/9/; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbAj3U5YAqPH6ZmEpV6v2ufHIm7NR6U6S9c738BFVjUsMT5L/lpNkUzVttwyAy2qxnwiw0AYbzr0FMT1wufpAlBG5ZVQ7G7Qvs4n5leqhrdlp+SZOekVDDAk3osnHjctH5k6r0cV9aZFB+lr3A/7ZMggwKQkDRmPYRlMGT7TAIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OH2PE5j7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="glC7O/9/"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7698e914cd2so2129537b3a.3
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jul 2025 23:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753856639; x=1754461439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4CidS/GccUuP6Xpj1XQrTjZ3SEq5HS8jiXMJq8sMBjg=;
-        b=glC7O/9/yWsxnYal0JEbxhj9n1fopOLNO+udRVRQ1C6QtBWifvxAUS2j+EtDpSElG6
-         Mz31rEo1/8Qon7KT4m3PvzRPrOywX5YXSa+RuA7tfv9m502YSWZ0FXiZWlT7/dKOp2gQ
-         /aFabtAw47jpaZdGgILKxrz1TrLE03R7pSAH2JZh7XlcZn6d2SNgalMQFXi0TT9wb6oD
-         Ea0zxP0PO7VzdD04kE+N7Rvidk60MdgiBZBIv+gZPbt15qdgvH8bUtVR6bH8LTPY72Ge
-         2YMrCKtgQzL3ORXxJNaLOMSZdjVMOPkvbfi4e8qnPr7OOK4JMFoDe3V/2Bx61ZvIvkIo
-         tf2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753856639; x=1754461439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4CidS/GccUuP6Xpj1XQrTjZ3SEq5HS8jiXMJq8sMBjg=;
-        b=HNooGxD++dPbRFvWlYaFIIdGbJ+/FNLcFn+VoxQRExzX//kauCP3PR0LwzksIpCtx5
-         hv3gmBFsSw+QIEGSjy3+1CdknPnfgjGDtKTy3M0FfpRdgQArbhx8abXIk2yElGc1VTJg
-         EtaLBlNpiq+rqvQXnzIFqgtKAeSt69NrOG41FvFtykiLO8EvuAtZrHQ730L3DFzEGq2/
-         xcRi+gFuvIOnoljg+1IQhJRy2uTyFGqAzB/6mX/VqlNU+ECzE/yR1xFbiuO9HGZ/wpsK
-         tjX7rg7grudgyMMrNG16nWzctUP1uwwbgVcO4Wx5ep0NIQtNApa6Eh08FJwVqcG08BZ5
-         CC8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQmGcJLkO9m+SeqCuTOHDPpE7JhpQshV/DOZMAQBI3BmF6T8oIkcK8cMyFX9PFio6rxtn3pPgBy3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT4coGsnGP9lM7r+P5f++3Vy8N3TnWnsMqnA3AAq9xn6PxA207
-	7itbK89UY9FKXS1v+oZY0Cudpjxj7K9MRAKRg5IuG1HgFJLkF2FUXcQxNpTzbOeRvMg=
-X-Gm-Gg: ASbGncvED4PCNi7k52q2G5c8eTHPczhlLIqzpXbUpnjeRRKB4xwZzgNRnKWgMPsSK0n
-	LD4C8jIWhm9Fn5PSfSndThdkUau1vA6zHytYPCvTS3cOUErqUrSmkMPjnTbORp3bRmBf8N00HO8
-	jhCV48fJxn5Ae5XZgZoeoyk1HTWw6ZIo8YVc7x0ZLOeM5uTpbYvY6QLqISxfPbtIvk0s1ikNgu5
-	+LQDEqKZPjkflf+xEq74bn7l+7ts5LLzgqjRvJotSV1a0TnvCRBSl9+kJGJq6XeJFYQIqLdJJKv
-	t0yeuo+8/BWvtex231OHp70u3AIKEJKMMbKFtw3FY4k842OLOT/uytvAgBTL204xBEVKg/LvnBL
-	sonDCntN5EoA6SeuaG/ikeeQ=
-X-Google-Smtp-Source: AGHT+IFRAuObLQYS4Oy55+Xz2guxb/KTSj4E0KIUP/TcZUmzaODEEpLK7Md4GtPX+Txxpk521QOfKQ==
-X-Received: by 2002:a05:6a20:7489:b0:233:bbcf:749e with SMTP id adf61e73a8af0-23dc0d595d3mr3912159637.8.1753856639378;
-        Tue, 29 Jul 2025 23:23:59 -0700 (PDT)
-Received: from localhost ([122.172.85.40])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640881f595sm9045271b3a.27.2025.07.29.23.23.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 23:23:58 -0700 (PDT)
-Date: Wed, 30 Jul 2025 11:53:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>, linux-clk@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-Message-ID: <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OH2PE5j7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385C0C4CEE7;
+	Wed, 30 Jul 2025 07:05:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753859159;
+	bh=A2mlfbNrB71eIpXbDCYMDyraLJzE4wkjolpqa+Ojhr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OH2PE5j7oPam6lUWMZD2p/UexAxTItW39O5xw/PTELUxZzWtcDpdn5DfnfOXStS0q
+	 xR3KKmfX2O5CiqhowuuYzEu2DogwTf5BkQHPb0Ry4887tB3iKxDTyvLRSi5r2ke4Qm
+	 wsw15GaaHa8iB71ZvI4Gkc4sswhrmvBQrgIH75TnhA6mdCNC/+37L2C+laQIueAEDn
+	 Rzhnd0vF5eudyKCpaLPPTbWr2yfLhFiWEJu618LyvTSk1lJGYfwl5JRShiw1lKCxSg
+	 rSU2jZ8MTY9epOH4z9d/sw5pxxMJ584Cu5iTV4iuY6cS8+BRS3nkZKoEVNo+MDYbip
+	 vaNjRcV9neWeg==
+Date: Wed, 30 Jul 2025 09:05:57 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Xukai Wang <kingxukai@zohomail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Samuel Holland <samuel.holland@sifive.com>, Troy Mitchell <TroyMitchell988@gmail.com>
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+Message-ID: <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
+References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
+ <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+In-Reply-To: <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
 
-On 29-07-25, 18:38, Daniel Almeida wrote:
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
->      /// A reference-counted clock.
->      ///
->      /// Rust abstraction for the C [`struct clk`].
->      ///
-> +    /// A [`Clk`] instance represents a clock that can be in one of several
-> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
-> +    ///
-> +    /// No action needs to be taken when a [`Clk`] is dropped. The calls to
-> +    /// `clk_unprepare()` and `clk_disable()` will be placed as applicable.
-> +    ///
-> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], but its
-> +    /// inner `struct clk` pointer is `NULL`. This interfaces correctly with the
-> +    /// C API and also exposes all the methods of a regular [`Clk`] to users.
-> +    ///
->      /// # Invariants
->      ///
->      /// A [`Clk`] instance holds either a pointer to a valid [`struct clk`] created by the C
-> @@ -99,20 +160,39 @@ mod common_clk {
->      /// Instances of this type are reference-counted. Calling [`Clk::get`] ensures that the
->      /// allocation remains valid for the lifetime of the [`Clk`].
->      ///
-> -    /// ## Examples
-> +    /// The [`Prepared`] state is associated with a single count of
-> +    /// `clk_prepare()`, and the [`Enabled`] state is associated with a single
-> +    /// count of `clk_enable()`, and the [`Enabled`] state is associated with a
-> +    /// single count of `clk_prepare` and `clk_enable()`.
+On Wed, Jul 30, 2025 at 02:43:51AM +0800, Xukai Wang wrote:
+> This patch adds the Device Tree binding for the clock controller
+> on Canaan k230. The binding defines the clocks and the required
+> properties to configure them correctly.
+> 
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> ---
+>  .../devicetree/bindings/clock/canaan,k230-clk.yaml |  61 ++++++
+>  include/dt-bindings/clock/canaan,k230-clk.h        | 223 +++++++++++++++++++++
+>  2 files changed, 284 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f2aa509b12bce1a69679f6d7e2853273233266d5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Canaan Kendryte K230 Clock
+> +
+> +maintainers:
+> +  - Xukai Wang <kingxukai@zohomail.com>
+> +
+> +description:
+> +  The Canaan K230 clock controller generates various clocks for SoC
+> +  peripherals. See include/dt-bindings/clock/canaan,k230-clk.h for
+> +  valid clock IDs.
+> +
+> +properties:
+> +  compatible:
+> +    const: canaan,k230-clk
+> +
+> +  reg:
+> +    items:
+> +      - description: PLL control registers
+> +      - description: Sysclk control registers
+> +
+> +  clocks:
+> +    minItems: 1
 
-You have mentioned the `Enabled` state twice. Also clk_prepare() ?
+No, drop. Hardware is not flexible.
 
-No objections from my side. Thanks.
+> +    items:
+> +      - description: Main external reference clock
+> +      - description:
+> +          External clock which used as the pulse input
+> +          for the timer to provide timing signals.
 
--- 
-viresh
+So what is the difference that you removed my Rb? Only this? I do not
+see any differences (and don't tell me, you claim some random indice
+numbers as change DT maintainer would need to re-review...)
+
+> +
+> +  clock-names:
+> +    minItems: 1
+
+No, drop. Hardware is not flexible.
+
+> +    items:
+> +      - const: osc24m
+> +      - const: timer-pulse-in
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@91102000 {
+> +        compatible = "canaan,k230-clk";
+> +        reg = <0x91102000 0x40>,
+> +              <0x91100000 0x108>;
+> +        clocks = <&osc24m>;
+> +        clock-names = "osc24m";
+
+Incomplete. Post complete hardware.
+
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9eee9440a4f14583eac845b649e5685d623132e1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
+> @@ -0,0 +1,223 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Kendryte Canaan K230 Clock Drivers
+> + *
+> + * Author: Xukai Wang <kingxukai@zohomail.com>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+> +#define __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+> +
+> +/* Kendryte K230 SoC clock identifiers (arbitrary values) */
+
+Drop comment, redundant and obvious.
+
+Best regards,
+Krzysztof
+
