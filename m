@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0BAE55B;
-	Wed, 30 Jul 2025 07:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865F01F1932;
+	Wed, 30 Jul 2025 07:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859160; cv=none; b=K7jg5dr8szSRn+tDEiCiLtc84enDeKM7ient+sKip7GP4liX2AXvGhdABwI4FMt/F1bAKu1vj/5CETOct/BpMv8094632trvIiiJtEA/iWowrgu2Vuf1RNp83L0p5+Voln+71Si0bK43alY8UF29RxXQuDv/wd+NwAypSY/QWlk=
+	t=1753859201; cv=none; b=RqBfryc/MGhfVxcdCsPggaN4R6msS/8J5BoSszyOOiRpeGEH2MeyVdrsh+/fg7Wu4Nw+HC75b7Y+fdKY7+qqkOsAlitSf1Gy9uCXX9e1U8wuNi2eReNJCiEoEwx/tsags7e26zy9LFf3r3N7iEfvI0m5k2FS9srSNjf/udso/bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859160; c=relaxed/simple;
-	bh=A2mlfbNrB71eIpXbDCYMDyraLJzE4wkjolpqa+Ojhr4=;
+	s=arc-20240116; t=1753859201; c=relaxed/simple;
+	bh=KlI1XPaFmUg2EcZ0srrQoO2VB9R/Kuj5mD2SUgA4Yho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbAj3U5YAqPH6ZmEpV6v2ufHIm7NR6U6S9c738BFVjUsMT5L/lpNkUzVttwyAy2qxnwiw0AYbzr0FMT1wufpAlBG5ZVQ7G7Qvs4n5leqhrdlp+SZOekVDDAk3osnHjctH5k6r0cV9aZFB+lr3A/7ZMggwKQkDRmPYRlMGT7TAIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OH2PE5j7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=L74n9/yFjp6Z4BVzXlmrVxHVs6If/Mq4zfapwp/5EhibtM1kvFjm78w6iUWCQSqe99EpvjBB70ThF/iGN39/nRCdh+GSDbTPGE+mRfvkoleYjwIKKx3nH2RbLyFLZHqx9qeVg7sEsHgfWRH+VdJwOxpAlWMv83ln/4DVrs2kMUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgTLrhnx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OH2PE5j7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385C0C4CEE7;
-	Wed, 30 Jul 2025 07:05:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgTLrhnx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA33C4CEE7;
+	Wed, 30 Jul 2025 07:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753859159;
-	bh=A2mlfbNrB71eIpXbDCYMDyraLJzE4wkjolpqa+Ojhr4=;
+	s=k20201202; t=1753859201;
+	bh=KlI1XPaFmUg2EcZ0srrQoO2VB9R/Kuj5mD2SUgA4Yho=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OH2PE5j7oPam6lUWMZD2p/UexAxTItW39O5xw/PTELUxZzWtcDpdn5DfnfOXStS0q
-	 xR3KKmfX2O5CiqhowuuYzEu2DogwTf5BkQHPb0Ry4887tB3iKxDTyvLRSi5r2ke4Qm
-	 wsw15GaaHa8iB71ZvI4Gkc4sswhrmvBQrgIH75TnhA6mdCNC/+37L2C+laQIueAEDn
-	 Rzhnd0vF5eudyKCpaLPPTbWr2yfLhFiWEJu618LyvTSk1lJGYfwl5JRShiw1lKCxSg
-	 rSU2jZ8MTY9epOH4z9d/sw5pxxMJ584Cu5iTV4iuY6cS8+BRS3nkZKoEVNo+MDYbip
-	 vaNjRcV9neWeg==
-Date: Wed, 30 Jul 2025 09:05:57 +0200
+	b=VgTLrhnxvCTrx9QaVzU9EIM2tTnQ9jk06DoDKo1YEgouN01AsKMo5YVcOkoliFp0u
+	 0uxNM2NW9iHq2EgCrzaBF14wUjCbVtGUQCPSghydc1Sd1nwxEz+fuce4nC1mluLc+C
+	 a7Rn+9kfaD6COIA5FHkWtfnTqQ9Jd1kRvFSx6i6xJQu8QHdZnw3zqzkTSg3X4v+a2C
+	 0e3yibcFCUcyWUPUIY+kE+0eg0E7+A4EaNfgwqeMqThVaH9WmuOkqvnu992OSc5s9L
+	 k/PV2AnKGPgMrndn5g8nn39Vi1hcF/m65dVdPcRG/MobFxDuH+o9nIF43sm5HHDY/P
+	 I2fNRSVSURb1A==
+Date: Wed, 30 Jul 2025 09:06:38 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Xukai Wang <kingxukai@zohomail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
@@ -36,11 +36,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
 	Samuel Holland <samuel.holland@sifive.com>, Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-Message-ID: <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
+Subject: Re: [PATCH v7 3/3] riscv: dts: canaan: Add clock definition for K230
+Message-ID: <20250730-laughing-dancing-emu-5540d6@kuoka>
 References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
- <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
+ <20250730-b4-k230-clk-v7-3-c57d3bb593d3@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,119 +48,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
+In-Reply-To: <20250730-b4-k230-clk-v7-3-c57d3bb593d3@zohomail.com>
 
-On Wed, Jul 30, 2025 at 02:43:51AM +0800, Xukai Wang wrote:
-> This patch adds the Device Tree binding for the clock controller
-> on Canaan k230. The binding defines the clocks and the required
-> properties to configure them correctly.
+On Wed, Jul 30, 2025 at 02:43:53AM +0800, Xukai Wang wrote:
+> This patch describes the clock controller integrated in K230 SoC
+> and replace dummy clocks with the real ones for UARTs.
 > 
+> For k230-canmv and k230-evb, they provide an additional external
+> pulse input through a pin to serve as clock source.
+> 
+> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
 > Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 > ---
->  .../devicetree/bindings/clock/canaan,k230-clk.yaml |  61 ++++++
->  include/dt-bindings/clock/canaan,k230-clk.h        | 223 +++++++++++++++++++++
->  2 files changed, 284 insertions(+)
+>  arch/riscv/boot/dts/canaan/k230-canmv.dts | 11 +++++++++++
+>  arch/riscv/boot/dts/canaan/k230-evb.dts   | 11 +++++++++++
+>  arch/riscv/boot/dts/canaan/k230.dtsi      | 26 ++++++++++++++++++--------
+>  3 files changed, 40 insertions(+), 8 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f2aa509b12bce1a69679f6d7e2853273233266d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+> index 9565915cead6ad2381ea8249b616e79575feb896..6579d39e2c1690d9e9c2b9c884db528c37473204 100644
+> --- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
+> +++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+> @@ -17,8 +17,19 @@ ddr: memory@0 {
+>  		device_type = "memory";
+>  		reg = <0x0 0x0 0x0 0x20000000>;
+>  	};
 > +
-> +title: Canaan Kendryte K230 Clock
-> +
-> +maintainers:
-> +  - Xukai Wang <kingxukai@zohomail.com>
-> +
-> +description:
-> +  The Canaan K230 clock controller generates various clocks for SoC
-> +  peripherals. See include/dt-bindings/clock/canaan,k230-clk.h for
-> +  valid clock IDs.
-> +
-> +properties:
-> +  compatible:
-> +    const: canaan,k230-clk
-> +
-> +  reg:
-> +    items:
-> +      - description: PLL control registers
-> +      - description: Sysclk control registers
-> +
-> +  clocks:
-> +    minItems: 1
+> +	timerx_pulse_in: timer_pulse_in {
 
-No, drop. Hardware is not flexible.
+Follow DTS coding style.
 
-> +    items:
-> +      - description: Main external reference clock
-> +      - description:
-> +          External clock which used as the pulse input
-> +          for the timer to provide timing signals.
-
-So what is the difference that you removed my Rb? Only this? I do not
-see any differences (and don't tell me, you claim some random indice
-numbers as change DT maintainer would need to re-review...)
-
-> +
-> +  clock-names:
-> +    minItems: 1
-
-No, drop. Hardware is not flexible.
-
-> +    items:
-> +      - const: osc24m
-> +      - const: timer-pulse-in
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@91102000 {
-> +        compatible = "canaan,k230-clk";
-> +        reg = <0x91102000 0x40>,
-> +              <0x91100000 0x108>;
-> +        clocks = <&osc24m>;
-> +        clock-names = "osc24m";
-
-Incomplete. Post complete hardware.
-
-> +        #clock-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9eee9440a4f14583eac845b649e5685d623132e1
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
-> @@ -0,0 +1,223 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Kendryte Canaan K230 Clock Drivers
-> + *
-> + * Author: Xukai Wang <kingxukai@zohomail.com>
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CANAAN_K230_CLOCK_H__
-> +#define __DT_BINDINGS_CANAAN_K230_CLOCK_H__
-> +
-> +/* Kendryte K230 SoC clock identifiers (arbitrary values) */
-
-Drop comment, redundant and obvious.
+Please use name for all fixed clocks which matches current format
+recommendation: 'clock-<freq>' (see also the pattern in the binding for
+any other options).
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
 
 Best regards,
 Krzysztof
