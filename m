@@ -1,134 +1,118 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7B725761
-	for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 18:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D32E0B59
+	for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 18:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753898984; cv=none; b=gdVwBqpYINly8ldm9i1vCHe1Yw7QmiFWsDj0jZPZJGw1ksoHRYkKk/0dc+QC5LYPnPBB75TLvFSggdIt2XGJntWnrDEXjl3SpOqXO2LvzhmVMCP/4NXhJ7j9cA0NU5N08kKCj38C7zPAisMWFzaT+xZi/i1o/aYd7HHWaXwJ9ZI=
+	t=1753900072; cv=none; b=qMienH8ICkCtN7j+KH/U3OnyahXI0U6XGfawRQbhmRuCYGZjBmfH3B2+5+j8WWL1fNdiLpOlnON2adPBfNDcRpDyTGyVvEI652zQ4cGGvzgLFXcn2RVCODENlUgI6IxQnl8xX6XvbszDy7I7sdKfRnUBLRH0ozor9ouBiQ5SMu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753898984; c=relaxed/simple;
-	bh=uysVQLDbrNrO2Dt1d2Mtse/kMVt7UURpOikxiU2uC7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PztbNvskoRt5/tGussaABBwIgiDqplmIUvBXjT1Zks3oQMayWX8wHKmM26vOH7Tjen0LT0NKfntZ4FoFB+CyEpOvyfKxtuIv3jxD8DWvR+TuqIED3yAoqw78nZlJQJH3nUKG4jn8GZErfV4KuCC+hgi2rtiJO6ZLXlO27IuLw+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kxFC/qMW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1753900072; c=relaxed/simple;
+	bh=fbya6ziaDH/sLgBKG7AReAjVhsTbBpl/73dg3q1ld58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DlUUhPLnHkBl3qlksN/4eim43ZEjcMB+Lkw9a09islbP0x1ueQ/MIoUj4SgfS4u0VJw4Zyj/pvx4HLcZaaS1S70LHoRXdPTCZPvm0JQJiQ7gMrwr/Ej6rmgUErSgaWQvVvLcMPbADbA9HLoOc/FHnG8PvvGqvcaC3uSp3rpRQ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ktawGwQ1; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kxFC/qMW"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCb8w7029139
-	for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 18:09:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=nvtzYg1hl8x/PPGrm3YFV7F+
-	GFXE8yyZC3xOnR+O4uo=; b=kxFC/qMWH5RhBuGIQfIVYvRLv+aomLMieSlJGYsU
-	xig53nUEDThyVhZ06mgZJVfStk6i5zT+GZ17rgL/vruU8hf08feCb/o06DnKwrnj
-	PgX2apy5TW2ejJBXMqzk6E0JWyL/pxbSkfjIKj5WSRL6xOiJ9UO+n08CFXnhqr4W
-	/Nw6+U26cU8l0kGp4nZPwAL9giQ6c2SynBcVXPo/4DFinJEDXgiNypKwzQkn5YyA
-	wW1JMmfLi878vC1rNsATsxKKtT3EaKgZLomoGrAe0mu+SuhoR4fSCOIl1I4b20h7
-	GuGwrfAW/GHzlrzWmC3G4dy1NNJjL6apHngweFTCwDXqdQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrd1ha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 18:09:42 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7073f820d42so1142716d6.2
-        for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 11:09:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ktawGwQ1"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6154c7b3ee7so1825a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 11:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753900069; x=1754504869; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6r4c8nkwybj2LXJUlPp2AEc+KFr7lzVJbq1YiFmFnQ=;
+        b=ktawGwQ1WtoTeUeJdGWnpp6Fc28yPbf2RQZNyJSE2f49/eytsVX7bJmlrHoYx4RIbL
+         fhxr1r0wnIitTVBqubsT+Edlccm/TD7CvPQFhCNdQfuGJZR9eyzcoCebFF7kc5ie3R51
+         QFvG1J7CxNYkpFJAavoIe4nt074t3eju85fHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753898981; x=1754503781;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nvtzYg1hl8x/PPGrm3YFV7F+GFXE8yyZC3xOnR+O4uo=;
-        b=iKxS+sijaeAcCbXAQRYBGwwrFaF65M1iFEWsLxXvGlJQXuJj0NX1NjdY9uXF1K8/AX
-         NV8hVqDu9CWvSo0Awa86cYKQyq3Jmw3wKS9DEsYWDIGQKW0TeXSMQBxvl++LNqwsKJXC
-         KQDccmBZTkgiMPLVo6XUoH6+ByuyrfgGLO8go0yIAwomwqdEWXDN+jL6r3Jg27n9SPnk
-         Ut9KEvkg9fOcK8VjFX6z85tGhgcB3giq9vMZxFqFOTIPj+2ygsKeOgHfox/KomYt1oZH
-         7e7imu564BrJOg2MOJjTC55Zk+Ek3/5528iA4s+yAyngw+eBf/CWZXWGaWaiReRFs4Bn
-         IXXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjK0Krgj2KCXIb6F+A0AVBZQYQgFGeQ2U8D7SNcnaPlHWgwJKnxdgiIIV68ahBgysPbWb2SJ/83+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFaxdhnvmyfLWmNwc8RmDu9eUkxfhZJ0EvPPnXWOyouBIMCZtm
-	YOnl738Qc7VAoSFv4J9CWknr6S0i9b2nNs1ufI8PrAmxrnI/FJZk0dxV0kAgDndF29PsHncqow3
-	kOpHOQlR8/4PpHA8bIW5vkCAFY7Jo9dsCdf3sFe8PiNlUgIbBmkvRwFAL2C1DTPg=
-X-Gm-Gg: ASbGncvdZcibzBXlW35GmmlMe2NcisHhvXImOpE/XNIUYkLri4VGBcIMH1Q2HNOoVMQ
-	LqEGiszUhwmQa9f0A5BuJHKtcwQLvvwScgP0sUPxGYNHsBpxPB+8AFQLciMWQS2tUvkqJ+xZDO9
-	isiTiw23lms3wnW8+uarVDWq04PxP7zsmJxuPYfQzhiLaJYYNvr0vZzqm4Gm4WAwxBNjXYJaxxV
-	29azq1Acc/qsgzBHGQUZJlCRDivgjaZYiCjnicQLjKerPDX5YH4uUVTVkJO3Hiew6jmQoO9K1co
-	m92nyZWwbIBZ/3h3XCb3RtIaKTAMMQOdvJLgbuNKvt8XZrVpXLONFJEJcT0lNH+YppLUEiVhqwY
-	vPkW95wpSmlJHLk41UEA2wmla7qNKHk45GkLhl1Qc6jaDxklnZrqs
-X-Received: by 2002:a05:6214:248d:b0:707:5fbf:26d2 with SMTP id 6a1803df08f44-70766d59498mr60197066d6.2.1753898981322;
-        Wed, 30 Jul 2025 11:09:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJt6gobol1sslUNlmAmCuSnfF9g1pOZQ34oC0tL/it58uEDXC0isYw713JWBv+Uf2VQAj2Bg==
-X-Received: by 2002:a05:6214:248d:b0:707:5fbf:26d2 with SMTP id 6a1803df08f44-70766d59498mr60196546d6.2.1753898980852;
-        Wed, 30 Jul 2025 11:09:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b63375a82sm2251205e87.134.2025.07.30.11.09.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 11:09:40 -0700 (PDT)
-Date: Wed, 30 Jul 2025 21:09:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to
- eDP refclk
-Message-ID: <qu54efmofss6247jdnnrsxvuojlf6fyex4h4c5rzrinbtznwin@2vysndddddy6>
-References: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
+        d=1e100.net; s=20230601; t=1753900069; x=1754504869;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y6r4c8nkwybj2LXJUlPp2AEc+KFr7lzVJbq1YiFmFnQ=;
+        b=dSokKndViIqQ08TKOUev9eZ6cHzxK/Sgl/G0vNiutKK5TELFhw+c+ZMBiEVzV8piRR
+         YK0Y2RTgHAe40JFR58LV7rWqM0cm/VlPWLHauXY801bkqvVMclEaV+RiI6PiBfAEZrFR
+         1WmTqqokc8dxIGPrCgGTsCvk9OLR/fnnQ7/h2amUaGyIqcZs6Vf9Wm5mMLovL3xAzgCm
+         7Gg/0Zsf/WaWDxZnBhQnmUU0TiVldeW4FYLW9AD5nEM947Faisu+hsGRuIxWdNJ9Ypdi
+         TpPC9eDzAwkpU1ak97P3YSFnTQOmlYaPFzv/hHNVcF/mSyWKsBfvz+v0VRexnefWKRMK
+         s/FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwKTfND3jRjvKLjGv+dE40Wpk85x5/Uti2vAg5ipKDGZQcGxMMrLD3MvlFAvmAlMMLIF1cTv8aSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQY14zOSaUhl+jRVZJ1A8Yk0/B8lIIBplxMw1j3+CBU99B/3IJ
+	GsfIwDwZeGmoaypSG8W2L7AsyD9A6KDb1C1CUmczCf09PCEX6hW8z7S1rRI27ejrLmvGid07y6O
+	XieTQhiyIlzet7aFE/i2LIVg3fL3eaEQ8ixLFYqOf
+X-Gm-Gg: ASbGncuUckm/8vjo38J00BC4WVXRRx37cy3/KM5Wq9Z3Ild4uhKsaaEERp4sJkVFSgV
+	IAvBl4rRk/NVD6O4K6nDVlfFSdXLS+AYDxvW1B8QDNMtO3JFhCflCyuGiUPaPmUYYYudK9LkLMX
+	pq6NiIXfxDzEZW1Oc4617eAshe5EXvv0JQL8bfTZK0kxH6F3ebYNyRa1WoCVgBoCSmRs7rgjs2h
+	dlqpY0+d+sYTCPFkQ==
+X-Google-Smtp-Source: AGHT+IH3UPStIjtEwhYQSCAV6DutX/5ZbdtIndLiNMPcdjaVtjZJm+vQdKhY+hsQZbuxeOMWz/367Av3WxhmS8SMryo=
+X-Received: by 2002:a05:6402:2883:b0:60e:2e88:13b4 with SMTP id
+ 4fb4d7f45d1cf-615a62ab546mr9757a12.3.1753900068649; Wed, 30 Jul 2025 11:27:48
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDEzMSBTYWx0ZWRfX4WbBtfymCiVn
- YL6f+OqMdKg7rGP072MkKtHliAGhNd1/GV47V38tjnZmqhEZY/92G7JOPzyasy50K5lj40+5oej
- JaxLyYSq71dsRh8dwOjh0gnNOF6VCYb2Pq5OBYvPoJWjtlzvspl0T95N76OdGyierK+NyJr44hC
- y0vlc2PDj5nswy7qjjQ04pnPU/+A31Ei7fLu11gVEYk2L+VMZ2BuVpJQNUOCzsO+Tlk1XWhxLL0
- RCeebrSyCQL5a5CfONXk621rGjLCKnbMmgE093L91qFmOZn42IjTf/IF3EPbSaI++AvEBM3Osgw
- 4Ct97i1B5VH3vlNcXV9MPJOGO+cOzqHkP2jP6V5vct4RBS37ENR017SBJbHfglh6jpQnDMcHNcB
- xvVBb+++R+F0bzPqTofFpySXkblGT1KoN5Ly2104rNtoNrtX6op0jxnjQqzgafWibAh2cejP
-X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688a5fe6 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=wC1PSKU0_OW3W4-qnQoA:9 a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: eFiTs3tBsMbtsdd7jvyKlYd9lesAu9Ps
-X-Proofpoint-ORIG-GUID: eFiTs3tBsMbtsdd7jvyKlYd9lesAu9Ps
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_05,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=584 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507300131
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com> <20250728-ddrperfm-upstream-v5-5-03f1be8ad396@foss.st.com>
+In-Reply-To: <20250728-ddrperfm-upstream-v5-5-03f1be8ad396@foss.st.com>
+From: Julius Werner <jwerner@chromium.org>
+Date: Wed, 30 Jul 2025 11:27:36 -0700
+X-Gm-Features: Ac12FXxlAvE9QxWzw-TPizj7qPTosxk0R2iemsaWz7FP_QlsARKGUQ4HcK2OYu8
+Message-ID: <CAODwPW-FjCtPGYkNYozo0ybEjz_rVOeDqkvEPiCmQ6M2in0OeQ@mail.gmail.com>
+Subject: Re: [PATCH v5 05/20] dt-bindings: memory: factorise LPDDR props into
+ SDRAM props
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
+	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
+	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 30, 2025 at 07:11:12PM +0300, Abel Vesa wrote:
-> All the other ref clocks provided by this driver have the bi_tcxo
-> as parent. The eDP refclk is the only one without a parent, leading
-> to reporting its rate as 0. So set its parent to bi_tcxo, just like
-> the rest of the refclks.
-> 
-> Cc: stable@vger.kernel.org # v6.9
-> Fixes: 06aff116199c ("clk: qcom: Add TCSR clock driver for x1e80100")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/clk/qcom/tcsrcc-x1e80100.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+> +      Compatible strings can be either explicit vendor names and part numbers
+> +      (e.g. elpida,ECB240ABACN), or generated strings of the form
+> +      lpddrX,YY,ZZZZ or ddrX-YYYY,AAAA...,ZZZZ where X, Y, A and Z are in lower
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+If the revision ID is only one byte for DDR, there should be only two Zs.
 
+> +      case hexadecimal with leading zeroes.
 
--- 
-With best wishes
-Dmitry
+AAAA is not hexadecimal, it's a verbatim ASCII string (at least that's
+how I would define it, for readability).
+
+> +      For LPDDR and DDR SDRAM, X is the SDRAM version (2, 3, 4, etc.).
+> +      For LPDDR SDRAM:
+> +        - YY is the manufacturer ID (from MR5), 1 byte
+> +        - ZZZZ is the revision ID (from MR6 and MR7), 2 bytes
+> +      For DDR4 SDRAM with SPD, according to JEDEC SPD4.1.2.L-6 :
+> +        - YYYY is the manufacturer ID, 2 bytes, from bytes 320 and 321
+> +        - AAAA... is the part number, 20 bytes, from bytes 329 to 348
+
+This should clarify that it is excluding trailing spaces (so only the
+significant part of those 20 bytes, since they're supposed to be
+padded with spaces at the end).
+
+> +        - Z is the revision ID, 1 byte, from byte 349
+> +      The former form is useful when the SDRAM vendor and part number are
+> +      known, such as when the SDRAM is soldered on the board.
+
+This inversion of the statement is a bit odd? I think it's more
+important to explain why we need the latter form (or just explain
+both).
+
+> +      SDRAM revision ID:
+> +        - LPDDR SDRAM, decoded from Mode Register 6 and 7, always 2 bytes.
+> +        - DDR4 SDRAM, decoded from the SPD from byte 349 according to
+> +          JEDEC SPD4.1.2.L-6.
+
+nit: Add "always one byte" for clarity and consistency with the LPDDR
+equivalent.
