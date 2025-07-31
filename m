@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59FDA921;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB09FA921;
+	Thu, 31 Jul 2025 16:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980414; cv=none; b=CBlwggY09J4vi9RgRCrvZbZl8PJvSg/hcFzR8q6fumfStyprrFktY7BIGFOHKC8oDLiYNV4egE+i0RY/nRBihc9tz107WsXiSGfWZUVtXnF34bs7RBmft0gI0v/wd3xRvYLeXiejW7FK2j5Men1GR0+zI/IBEv/g8zseQO+nd6A=
+	t=1753980631; cv=none; b=iX8W3SGMVETNM6h17XP9tZg6LxyiD8neezZ/z793EZ7ucht96qIikpBBHki3PRYzTFYFEJ1SdqLxU/gaB8Y2r9IkywV3o9qm/z1BbzZYNhGE0nK2CMoiImuyAQHzhH9+XODRyWPUMl8yvcy9QvbsLpDvE3iCr1iptP7yAznXVgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980414; c=relaxed/simple;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
+	s=arc-20240116; t=1753980631; c=relaxed/simple;
+	bh=TnKnojD8pZKJi4gCb3oaHc/q/bUH6sldEJl1RFC71Ic=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RBS0da45HfdjFgvw6ArMBJtUwDUmQ1k4PgVArU4kelFi7Qv09uvyKvznjhp9T07s0xd/LNmG0al018M23n8DTVpzK49THQC6WI45QBHnPl0/inatEf+ouzOq7TywUHLGpr/TP8YpqiJDudQUBXso6b5PjcWGPUKU/c0Gt87stBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPXGXw+s; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=EqZjcoY6gcfPSc/qTDSXWoxR6h4XVQ1UkWF+Id3bu6/YwPrXv7GvhS1NyD5mXcPmuEquhEdBLQzERxugn8DkF5QIPH75Q1VJxLIU9IWfC9burxY71E7/eZkUe5zkuS+8b9eZyjNSgQFFl6uYSqHPfbHE80iuxupBPYwY+bbLpFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvI/b5aF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPXGXw+s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DF4C4CEEF;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvI/b5aF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6497EC4CEEF;
+	Thu, 31 Jul 2025 16:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753980413;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
+	s=k20201202; t=1753980630;
+	bh=TnKnojD8pZKJi4gCb3oaHc/q/bUH6sldEJl1RFC71Ic=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sPXGXw+scJs3C7UZI/DA7MkT8ZN7ufgUcQDo6OoT3wd0tG1XIxdEmW42mDTr2FwvB
-	 +g2toyhn+m4aah5rzF3VTaYgwwnfqkAUadACT2JKaGyZoyNkSAengCkwSnWhj089yJ
-	 KRLUQFV8aP3CfE6SS5dlWSxgtaAwf2DyO0uuJvY5Mg9t6FgEUvQEqLETVtBmGG4LVE
-	 FAy5pKc8Lv2IS284454L5lY1pw78sQaMjs1qNnoExK+AbO43poml56YaYA2ZT0WZJ/
-	 0uveNgKYd+S2bTIiBTMYW7opEXNGfiiklXc3bTfggoVvJOq11Kxa0M3sB9m6ZRGo0h
-	 oQmOrF2fr/Qag==
+	b=pvI/b5aF6F/b4g9tlhY8oUo1Ig1H8yGtRHeHW3f/o1UWV40cD4BBGkAcOsk+fUUkq
+	 t5915J68JfcApQqbtP7tR0W/6pfx7X2brVDHan+cFlUMGlGYS1EDpW1vHH86KCcVNI
+	 0W8HHYbOqwrdqKMpEuVecdsMfGxlnMH5glU+li8srCZvckxSP59NreNrdTZIp57S+L
+	 P6Vc+XQgYK/sdnIXSOx+3agXDHQFeVTAMeQhUQC5YUUhRbhWZvD3cBtWK8t6rsGeko
+	 ETHFk6uY0xrNO8dYQmayv5GVyh9xR+LLrVXeJFmHcWxOpv6/pIRrccu90K0pK7GsCN
+	 2pSj/vtBWAgvQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,41 +34,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org> <20250730145100.GA6782@google.com> <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
+In-Reply-To: <CAK9=C2WRVHZ4FdoW0fKRRFg6qAC5asn03dHj_NXkMKfBXKkXdA@mail.gmail.com>
+References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-9-apatel@ventanamicro.com> <175341132347.3513.7184287611040628050@lazor> <CAK9=C2UDV3xCpKxZmT4NsRvN=hCcQrcx0fr-QFD2fuOrqmXmHA@mail.gmail.com> <175359739515.3513.8664828076215459722@lazor> <CAK9=C2WRVHZ4FdoW0fKRRFg6qAC5asn03dHj_NXkMKfBXKkXdA@mail.gmail.com>
+Subject: Re: [PATCH v8 08/24] dt-bindings: clock: Add RPMI clock service message proxy bindings
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>
-Date: Thu, 31 Jul 2025 09:46:51 -0700
-Message-ID: <175398041189.3513.13629420060562627196@lazor>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-acp <i@vger.kernel.org>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 31 Jul 2025 09:50:29 -0700
+Message-ID: <175398062959.3513.15195554063633980579@lazor>
 User-Agent: alot/0.11
 
-Quoting Andr=C3=A9 Draszik (2025-07-31 03:20:56)
-> On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
-> > On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
-> >=20
-> > > Original cover letter further down.
-> > >=20
-> > > This is a resend of two patches from the original series that haven't
-> > > been merged yet. That series was merged except for the attached two
-> > > patches here. Other than rebasing against next-20250729 there are no
-> > > changes to them.
-> > >=20
-> > > Lee, I think Stephen's intention was to get these two merged via the
-> > > MFD tree please.
-> >=20
-> > Although I have no issue with this, it does seem a little odd now that
-> > the set consists of only Clk patches.=C2=A0 Let me know what you / Step=
-hen
-> > decide.
+Quoting Anup Patel (2025-07-28 02:19:23)
+> On Sun, Jul 27, 2025 at 11:53=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> =
+wrote:
+> >
+> > It's not providing clks? The SBI firmware is not discoverable? Do you
+> > have a pointer to the DTS for this node and the clock controller node in
+> > the next patch? I'd like to understand why this is named a clock
+> > controller when it doesn't provide clks.
 >=20
-> Thanks Lee.
->=20
-> I simply went by Stephen's ACK, which to me implies he wanted it merged
-> via a different tree (mfd). I guess at this stage it doesn't matter anymo=
-re,
-> since all the core changes are in already.
->=20
+> The firmware driver is not providing clks. Also, the SBI firmware and
+> various SBI extensions are indeed discoverable from supervisor software.
 
-I'll pick it up after the merge window closes.
+If SBI extensions are discoverable from software why do we need a DT
+binding?
