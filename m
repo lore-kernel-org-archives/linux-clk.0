@@ -1,92 +1,151 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E0D1DF267;
-	Thu, 31 Jul 2025 05:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA750242D7D
+	for <linux-clk@vger.kernel.org>; Thu, 31 Jul 2025 05:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753940082; cv=none; b=Jh3aZeLmwyDAAOEPUbxQ8v8ALU38sngbf/7ISvkjYXaR3yY4s4xtjv+bbL4Md/ePWA6fRqVA4wR1DlH+0EQrf5LO2V5UhCqFN9Ng/AIPNlCb+SfdAyAt9BClz8x47hn27NITvo3yw2GSGZ/YbIgUSM5JxqkhXT49tNsmdRHTBuE=
+	t=1753940396; cv=none; b=ByWUMUd3Fib+1WhCYTU6xtFRkCkrIRZsIaWPIJ85gcxPSXNbOTph9wcLyODd1e8M8WGKe3gzayE9ctPIoXZCbgwUC89eYWYKI4ibYup8NAJuM83FYqGYv7HMXiOm8HUz1kENuYAZSL+kTxT3ONt8F2Kgt6om9ICswQb7ZwW4t9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753940082; c=relaxed/simple;
-	bh=P4Sp2GDUfFML3x1uoKRtS9TflaYxWalc0AI94nd7XtQ=;
+	s=arc-20240116; t=1753940396; c=relaxed/simple;
+	bh=vsSfQTv1GnUrDdf1LZJoge8igmimcPg14ako4+S5MGk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NPJwem2SrC6BugzgKViFm1juAZACp9sB0XlYZU2pcFvOYaNNCgjEu9nrNI79jZksw2SrplycaiLtx26fgHct8qdhRQbjRic4CHTruSKCPU2gnkxKWvXpjl7nwe9eJ9+P2SCdwBXAzWqfNqfD+AbZD2flghw/LtkA7GEGBzlqcuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4WUWTFB; arc=none smtp.client-ip=209.85.216.46
+	 To:Cc:Content-Type; b=U5M189rEdKatyKi/vTDn821pFkV0YwvfOKerBBPUgwBOnbj2NNZ6SCtTHqC+TQXb4hd4KlDF5hpOQ/B1npngSAklLpmtbzhjzA80r9KrtCHIZyyqkLyXuF/tX6xFgK5jFieW/IVoV0Ej1+CKSf2mcicP0cmsYL/418/5IdMJPaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gmx4QPPs; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4WUWTFB"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so89001a91.3;
-        Wed, 30 Jul 2025 22:34:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmx4QPPs"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b31d578e774so1077191a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jul 2025 22:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753940080; x=1754544880; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753940394; x=1754545194; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P4Sp2GDUfFML3x1uoKRtS9TflaYxWalc0AI94nd7XtQ=;
-        b=G4WUWTFBUjCbLHzMpfOvhHVmDOB43CEbUwPdHJZeNudZuvQVupLg3k2+XG2DjyA7kP
-         pn8rHFUx4jEIiYa88nn1WaH8ynXkHUk94zo9/B4Pg123YvixQhXm4XrkSPi6xc99Wx/B
-         iT2C/lgzhx3Hr41D0dKaKwQSsuGnD8D2XwT28aQMMrHf8UN7LWo1cwcplDo5ZAwge6s8
-         y7JXy1/YA2aPWF+aRcXm+Qm/1SFbip7hPM69n3S8auFg2JKvo8I0RmmZbHXnjFAP/1Ql
-         /CznT/ZrhN5/5FwJVSTQBP2MojCeyy0j0TFvLPUsAHsWt9HptaG7xELbhW+0uM7ZmWt6
-         tgpQ==
+        bh=HyR8ctYmx3hEaQQ7Ej343UwP10RXzS7rd++ptfwUqxQ=;
+        b=gmx4QPPsmokNl39AxYWgozCwhios3tRzjjRtxZWRQ4W2vVJOEQRMqH0ga6dBOwKqUk
+         2nIUWJYp9Q4OVyJ7qeIXMSni5f0TpftPDl8lSaUJaNmkIe0HKffQr2jnWlC0IYFWWgHb
+         FJ6Sh9jkX0vuribIgsBW2xwDhHCo6N09RxjwJuEC1Y7ytZFRbfxecY7HlOZ5TeXq8hiw
+         6QDjKCj+18ELTAQ+hSFR0qOYbkWNXHWC0u5Z7JrzP7nPZNMXX8XS7lYr+yrs0h9h0jSU
+         ikGBXf8TBmZQCBKlzJcGUhpy9d0MvGzachBxOqYlg0QUuwTvTU5Wk5M5hkt7irLvt6Uj
+         x9QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753940080; x=1754544880;
+        d=1e100.net; s=20230601; t=1753940394; x=1754545194;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P4Sp2GDUfFML3x1uoKRtS9TflaYxWalc0AI94nd7XtQ=;
-        b=R/dbN0b1aC94z3P9sfi8wHzqAmRrxvB7Q3h27VfUS85HdHJtlrkbJ4mv0Psj8a+cAX
-         C+tVkcwR6qRBOp9fPI0zF9am55PMitvv0Ps2yowMhpwg6ZzUIVGxAirUxjeV1BzqlcWT
-         y12qxTk3gugPgkf42jk68jCoZLChrMCOzpNbhpstfwFdJMJMIi7Yv8GUQFYM6iisAytR
-         xI14tYJoz1xRQtbOdSh5HXjSHMXo3LjuG1dxSxbwFDoffeKAAEGzkL8g/VzQiCITf/+N
-         +j+Z441wtLn9FzvdZNbI2qNA57nlr846F0WYYSINH+N3oOEYlmNDhotdb0+cfreqnoh7
-         oiwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWywLHM3fmZX2sHCiCLGKRUgWeTQgq0+qgyLuzwU91nhoGqudT1SpXuGdK0bWNGGTF+aNBdHmUNhBc=@vger.kernel.org, AJvYcCXtWjxNs1W2UO4Llg4hB5/3UNHnAq0hIFi+PFqT2Z3KcVbg9hGk+ovv9LPUXJIyKkgwbZQ7PDFglokebd2K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2s1e1OBt7m/0BVejAhhtgkKyZpd/CKGxAS7q+y1+odyWkEZnF
-	GIOIJhxurmSWJLOaTkhiNvmT4qN7Gpf7EanYjolMK3LTboSu8pFHtm4mMFTO8kbG9B/5zw4hBwS
-	3RSanUUnaxIsHzU18xKmotdGnuyvH4uA=
-X-Gm-Gg: ASbGncteS/S9JQP0q1Y6Ncv+gJ2c/Z+IQiQ28SrpyquRCuDpfMaoCOFhl3x2MD4Voje
-	DzqUnX4rDWMd2Ms/UzGOyG3NoZv5hBo0AO5dagfSIJQo0OFylS684K/9xfD9tXYvf1VjTidhVQC
-	5Zta9ISR0l7fz14nTm7/eBs2JPiD3dEEOTVS82egl/kCzC4Mh08mk9X2svrnqReF2B/wIf69zMz
-	A1e
-X-Google-Smtp-Source: AGHT+IHXrxbbNNYCinyHQoskYKFqoXHqmo6YX2SFTgg5APWeBRHOh1sgrx3dY4RlljDqEABe85zpkVvrzPg+EkqADTg=
-X-Received: by 2002:a17:90b:5847:b0:31f:42cd:6900 with SMTP id
- 98e67ed59e1d1-31f5dd9de96mr9675756a91.12.1753940079962; Wed, 30 Jul 2025
- 22:34:39 -0700 (PDT)
+        bh=HyR8ctYmx3hEaQQ7Ej343UwP10RXzS7rd++ptfwUqxQ=;
+        b=iHI2L/leSUvy5uLSOqX0iC/FtxbjPvFOJsqctW6OPdQzw+CU0kI9JOZtGbX7Y1zFrP
+         jmdXQb4ZXYrOJUQt+o3DgR7pDpg1wj74FXXpSBJNXlZQMogFHuRjWwnHiAg+L4o+Rm2V
+         jyiLmNoLHa/fotRqp98SV8w6Q+AI/1gKUSQGccJbWoOj3WpiipkIB1Qq1xYyF+3lZBOW
+         kkA+is6iwP6R9GqkfOTRvMZMXOZNxa/mTDtJ+gJGU+v6jlWBZeipB8K5tG0TcYo3g4qX
+         FbC8mIroPDWTNdBr9KGvaKilbiCXzk/TGvR84crL9fcVJ28m4Y4wsJLBdtspmt4KVAAn
+         GOeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW45Vu9IjUaeZCvS5uxXEXWfjzZWXYK2SAKx9mMhqxR5y6zv18kYaEf9rrA6H7oCsI5mOBbn9Cm8Ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiUWpWVFXg6tYAHY+p7+IBEe4tUBxnSECBEij3qJySkihDcs6/
+	JBa1OYcByHZTerc9ZB4d+6zbUF/Sa8ME+VoD5icx5YLKCpUR7U1Tm7de8Au+eqGyFX7+WZayhiU
+	CwVjr3Fiw2WQQ+tQ3pXb8t+z9Z2L+KYE=
+X-Gm-Gg: ASbGnctakkTPxfE70OkamECiX9NHmpFqR/+rliSxwRYNJ5z6ifhpMTZZfYw5GkXJ5QM
+	Yr5gZvgdotWMsSL5yksRfEGtKmcwF6uw6zGNhVg4CuMQ4jp46VZ8msGeH/D6zHvp/4d9TFRoBzi
+	A5yznJhGxNTvANrCrh9wpFuQtRm+MdBbhct1xiT5gIhKvkQjacGibbz7m6oYadQGbk9D4R78jZ2
+	+TbDibcE/tSpAo=
+X-Google-Smtp-Source: AGHT+IEN/5Uprcdhi7MsoFJRqmRXFZ/0UsdnfeTS9e/DUeCreLww1zDlGo75i7TCkRFGHCCKIBUwn6KQMum1mYiQZPg=
+X-Received: by 2002:a17:90b:2243:b0:31e:fe21:ca43 with SMTP id
+ 98e67ed59e1d1-320da5a2970mr1180603a91.4.1753940394106; Wed, 30 Jul 2025
+ 22:39:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730125932.357379-1-laurentiu.palcu@oss.nxp.com> <20250730125932.357379-2-laurentiu.palcu@oss.nxp.com>
-In-Reply-To: <20250730125932.357379-2-laurentiu.palcu@oss.nxp.com>
+References: <20250729033817.1239646-1-ping.bai@nxp.com> <aIqChYG0c2d9yCEL@lizhi-Precision-Tower-5810>
+ <AS8PR04MB8642778C7A89226E7CA31DBF8727A@AS8PR04MB8642.eurprd04.prod.outlook.com>
+In-Reply-To: <AS8PR04MB8642778C7A89226E7CA31DBF8727A@AS8PR04MB8642.eurprd04.prod.outlook.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 31 Jul 2025 08:36:47 +0300
-X-Gm-Features: Ac12FXy6016R5yBjERUVNjJ9NaURXNKHJ2pnztmaFYpAtiC1FehtoRDqe3M3hL0
-Message-ID: <CAEnQRZC5UDTMeF==2POenjw+YK6X4rCPCH_XN1Jq+ULJLofuqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx95-blk-ctl: Save platform data in
- imx95_blk_ctl structure
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Thu, 31 Jul 2025 08:42:02 +0300
+X-Gm-Features: Ac12FXz7cKv6okxguz8Xj7yPba2RBV229ftYfVp9GxCGOkavwmf_UYtiRc0KAyg
+Message-ID: <CAEnQRZCVB0+wQVqQYwcvwDW-F-_e6moH+T4pePGsDrbWyVY0yw@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: Add some delay before deassert the reset
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 3:59=E2=80=AFPM Laurentiu Palcu
-<laurentiu.palcu@oss.nxp.com> wrote:
+On Thu, Jul 31, 2025 at 3:39=E2=80=AFAM Jacky Bai <ping.bai@nxp.com> wrote:
 >
-> Add a platform data (pdata) member to struct imx95_blk_ctl to store the
-> result of of_device_get_match_data() during probe to avoid redundant
-> calls in suspend and resume functions.
+> > Subject: Re: [PATCH] clk: imx: Add some delay before deassert the reset
+> >
+> > On Tue, Jul 29, 2025 at 11:38:17AM +0800, Jacky Bai wrote:
+> > > Some of the PCCs on i.MX8ULP have a sw_rst bit to control the
+> > > peripheral reset through SW method. For peripherals like GPU that nee=
+d
+> > > sync reset, some delay is necessary befere & after release the reset
+> > > to make sure the HW is reset into a known status. So add some delay
+> > > before & after release reset.
+> >
+> > Nit: wrap at 75 char.
 >
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> Thx.
+>
+> >
+> > >
+> > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/clk/imx/clk-composite-7ulp.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/imx/clk-composite-7ulp.c
+> > > b/drivers/clk/imx/clk-composite-7ulp.c
+> > > index 8ed2e0ad2769..710fe4f84465 100644
+> > > --- a/drivers/clk/imx/clk-composite-7ulp.c
+> > > +++ b/drivers/clk/imx/clk-composite-7ulp.c
+> > > @@ -7,6 +7,7 @@
+> > >
+> > >  #include <linux/bits.h>
+> > >  #include <linux/clk-provider.h>
+> > > +#include <linux/delay.h>
+> > >  #include <linux/err.h>
+> > >  #include <linux/io.h>
+> > >  #include <linux/slab.h>
+> > > @@ -36,6 +37,9 @@ static int pcc_gate_enable(struct clk_hw *hw)
+> > >     if (ret)
+> > >             return ret;
+> > >
+> > > +   /* wait before release reset */
+> > > +   udelay(1);
+> > > +
+> >
+> > It is quite small value. udelay()'s implement is not necessary to acces=
+s MMIO
+> > register space. (arm64 use cp15)
+> >
+>
+> 1us should be enough as the GPU IP reset propagation only need 128 cycle
+> of its own clock(> 200MHz). the first udelay is to add some margin to mak=
+e
+> sure the GPU clock is stable.
+>
+> > writel(val, gate->reg);
+> > udelay(1); // it may less than 1us as what you expect, because previous=
+ write
+> > have not reach target place yet.
+> >
+> > It needs a readl() before udelay(1) to make sure value actually reach t=
+o target
+> > place.
 
-LGTM,
+I think we should capture this explanation in a comment above the udelay.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+/* wait before release reset */ doesn't really tell much. We should
+explain *why*
+a code change is needed. The *what* is obvious from the code.
+
+thanks,
+Daniel.
