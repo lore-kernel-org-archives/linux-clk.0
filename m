@@ -1,183 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259BA2D0C82;
-	Thu, 31 Jul 2025 13:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F28928D8DA;
+	Thu, 31 Jul 2025 14:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970084; cv=none; b=MoK0eedM3cvf1ugFDQwNU95gaVmpxfha0OSxaoypL/g1ZqbVCqnHd0hbA+EKxseA2zSKp4DxJ3V2QpOMpZwsuw9ssswUCtpwEoWrRCi0/GZ8TEl0+ph8scGQae1BUh2/n9Gwft9VqLT01kFb+XvW3LlLSUXu41+I4P9j0Vmjqww=
+	t=1753971282; cv=none; b=Ixoil6k7XME3X57HMAumOO/EPxqCKQEQx7IJPnIds498gDk5il1cQ24moW3NOejdVe6vjkD0LfxyK6Kv2SlARIwx7AKC3JaiK6IAgEldbYlqrC63uVctjNfPFTlNzYY7rRrwaGC2JyVO01zVI/db30F56yZy8ZvPzsOg8rtqiuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970084; c=relaxed/simple;
-	bh=eMaB/jC7BQOujSeVyd65hlSZ/jJUt5A5InXdWSnL42Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWnAAnRXeiDsecs05YMPlGBOZTpgVQ4OqRqTZgxfnFMWMU9KYxEFY8PWyWED5JLMipOyKSXXIQQ8B4tcyp7Z4CWbjNsyqoTyc2dRUhpFnA8PTU/fU6mkI997H9X6tcRCO1eiq/u/c4FaoUkiHXE+Xqr1mxPczmC/oPIJcn0iqTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfD/b5JD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753971282; c=relaxed/simple;
+	bh=MeZJ7iFErxrIWkTZf3XiMeKPBVZVufDsMgudwp5Pj30=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FhKiYkAvpa2Epy7RjpYEcORAtxWlC/BNRexgjPWV5TIiRbsGVZzkKBgxxI5hh1MkwzYvvIZ7+p3epOFOq9PGfq08dU06OhYh4piyQBoDY4mS8sWdg7n1LRqdI/XjtH1rkkju5OZZzUKW0/kzdi3w3sYbkEULg30uyQkR+miFp0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=wc/6XWjF; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfD/b5JD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B785C4CEEF;
-	Thu, 31 Jul 2025 13:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753970083;
-	bh=eMaB/jC7BQOujSeVyd65hlSZ/jJUt5A5InXdWSnL42Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LfD/b5JDEM4tfHtFXQ7drTEt8aleNybYQzijLgWsq+p+xNnv2CcV45z6g8k5blx1h
-	 LJf5RQXMtCD81I18Q730/r1cE/tRooUKRse/MQ/98Qlo+4ZFt5C5W6s1FmE+UiT+fF
-	 fGCKKTUwxi15kn0RnwXrfshq0blX42oaFLSpFa3U91GiH3JSQOhvC16wow3IWEPPzg
-	 +pTr7wJssZyyxv0p2wNtIHbABvZknQz/dtOcZFP113btCZgTq6Cw9xoAYeYBAp1nma
-	 sfJnJs0Bctps/fzgTBSZSILD6YtS6wqLAFG+Uucid+jkpoas5T2SOHxJMNGtmE2Wsc
-	 MbABvN8U+VXfA==
-Date: Thu, 31 Jul 2025 08:54:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Gatien Chevallier <gatien.chevallier@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Le Goffic <legoffic.clement@gmail.com>,
-	Julius Werner <jwerner@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 12/20] dt-bindings: perf: stm32: introduce DDRPERFM
- dt-bindings
-Message-ID: <20250731135442.GA2139000-robh@kernel.org>
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
- <20250728-ddrperfm-upstream-v5-12-03f1be8ad396@foss.st.com>
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="wc/6XWjF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1753971260;
+	bh=y5AT6lF5XTZBycAdijjBHgbPYBOSCrxMOhOkBi/y28E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=wc/6XWjFrjtvGx6PXHZArOubpKzFeSyRiZbvvk+vWtDIkz+ILUHEc+edZMAsGxlKr
+	 M+rBPLo4ZqfwM90ODTq5PrWiHMqD4tCQpMU5KGM7SZgFPVMr38TREcMd3I45maTbyO
+	 BFYC5XVQcu5hP3HGCeNuN5WBJjLk3bejTzokWhrc=
+X-QQ-mid: zesmtpip2t1753971254tbad9d452
+X-QQ-Originating-IP: kw5QdBICyGZpE/R01gvvA+wL8LDI2K5Km7e1hNHDSm4=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 31 Jul 2025 22:14:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11873278860039367758
+EX-QQ-RecipientCnt: 16
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH RESEND v3 0/2] clk: spacemit: fix sspax_clk
+Date: Thu, 31 Jul 2025 22:14:05 +0800
+Message-Id: <20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250728-ddrperfm-upstream-v5-12-03f1be8ad396@foss.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC16i2gC/23NPw+CMBAF8K9COlsCV0jByUFWBx2NA5SrXPgbi
+ g2G8N1tcMHE8d3L/d7CDI6Ehh29hY1oyVDfuSAOHlNV3j2RU+kygwDiQIaS1yFXTc0JDMcIJOh
+ Qp2FcMPcwjKhp3rA7u2a37HJmD3evyEz9+N42LGztlwPYcxZ4wEEnWGoUZV5Ep4a61+ybIVfY0
+ uSrvt08K/ZG8mMIZ8SljGWqAwCQf411XT+BjA8f+QAAAA==
+X-Change-ID: 20250717-k1-clk-i2s-e4272f1f915b
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Yao Zi <ziyao@disroot.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753971252; l=1801;
+ i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
+ bh=MeZJ7iFErxrIWkTZf3XiMeKPBVZVufDsMgudwp5Pj30=;
+ b=l5Pw2gYPmhUkf1L5UIOu0v+z7f9SM0aedihENvDPX6gEWxnmNZNHB+um3AiA0UeUkp491rvx8
+ D1hJ639UelfARKtSab+txoWd56/wQa1RXBmSAMdfXDLfnHbhwxgcdUS
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MWcocoo7mKajzQAUh/oZwuWFFrVg6hQz5vSZvAWlEMK85Q6SaIEN7apG
+	zmOG9sskcnZ+YzpTWCOjTfV3YGGukoVd1gAbkKHG1jkjfTvsU1xmPl4adhBu5len5VmpMG0
+	A37VwNWt3N0WfPlXj1ffFLP9Nq+RQPV0OPsLBB3Lidiu888ZruFS4NzCN9qYwdx6z4amONa
+	R+iYVWbg3FVNdOoaI0PqFHI9FHqw9oLzhN4e/jFGqq+RLgwd47Y4ktzWfrzz4v7Qc9IJBzn
+	prZs+wae3tn4CL5qfS94vhpyKwU0xS591bzkftTNL6VPaoingAMsOb2X9ogLVsXuYyjCBXF
+	UA+X4vHlJ8fsxBB2rOf/hRVzyO3yiRAKQLB6FW5I/7BJPz5HrClxkbWdyAnccGhN2y+Ws5O
+	Fe/dnSsUvj6KLnS7EOmleA6uIFsBBWB3tvlPdh62jRQtfLN9u9KpsPNo3b5cqfz5xvZ6ArT
+	mELyKouRJkUJgz/TqJJ/q+isjKXOUvY26Nr0h1ldcVbRCcVYH+zNhLdZEbuNAyiTBYaewuH
+	YQHuzVHJnbatJQg/C4RFqhNpL5epIEdkxprBQT6y01zb2AicGgqwRkqR/Ll/9dxsrREdjro
+	H2trP/q5dibt1n2h1Y5tQI5nLK8Sp0dnhxv0uATImpCT5KEpK9ywMfPz1SSobfWYKR6gLd/
+	oOVaO6OIPlu4JVYdgbawf0WwIiKIt+rcGwQCFWqYc+90hRz6EqCrS6GO4zRExGuyL1kLTlj
+	L3B0VNj/9cBnA9ElSoK3xTzcTC6mu2iWAjqkCFzuV0MaBuEQ1Lp++jSIH+RWS2kH09agm/9
+	QzS4C6QXFPfDLchUXdq4J/rE/DH0RbVT8f5zw374iuuzLTiEYakM58pYlmK4u7I58w/L2vH
+	GDG5UMK4yO74CdO68E6bGTnqeWdx21sT8Spy6Cuczsq2N8Cq8h5aJibjeyciAoy4dtfRAvb
+	9SiT5dg9JrljW8IULKYSc4R0hIe/Ef55g8u2lDkcEFST1r65yIaon6F0C1IZsx7gC19zQW+
+	lli9LOtLQ665wiitbfiWBQcxVDnjD/5Yfcv4Yy3R5Z0+5iq9/Qmg4mQgj62/YF1sA1yGsBK
+	+bNloM9GzLgqv+pbPY8NASTsN8GN66eACIDpRA2b7GfxxNAYkpU/fzd1ci6rU4JtUN+1KEd
+	mMyxmO5scyAJjHt72rG3Va7rQA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Jul 28, 2025 at 05:29:43PM +0200, Clément Le Goffic wrote:
-> DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
-> It allows to monitor DDR events that come from the DDR Controller
-> such as read or write events.
-> 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml | 94 ++++++++++++++++++++++
->  1 file changed, 94 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
-> new file mode 100644
-> index 000000000000..1d97861e3d44
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/perf/st,stm32-ddr-pmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +maintainers:
-> +  - Clément Le Goffic <legoffic.clement@gmail.com>
-> +
-> +title: STMicroelectronics STM32 DDR Performance Monitor (DDRPERFM)
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: st,stm32mp131-ddr-pmu
-> +      - items:
-> +          - enum:
-> +              - st,stm32mp151-ddr-pmu
-> +          - const: st,stm32mp131-ddr-pmu
-> +      - items:
-> +          - const: st,stm32mp251-ddr-pmu
+In the SpacemiT public document, when the FNCLKSEL field of
+the APBC_SSPAX_CLK_RST register is 7 (3'b111),
+which is a reserved value. And BIT3 of the same register is
+a reserved bit.
 
-This and the 1st entry can be a single enum.
+But the documentation is incorrect. In reality, the value 7 (3'b111)
+of FNCLKSEL is not reserved. Instead, it indicates that i2s_bclk is
+selected as the parent clock. Similarly, bit 3 is not reserved either.
+When FNCLKSEL is set to 7, bit 3 determines whether i2s_bclk is actually
+enabled as the parent clock.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  access-controllers:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  memory-channel:
-> +    description:
-> +      The memory channel this DDRPERFM is attached to.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: st,stm32mp131-ddr-pmu
-> +    then:
-> +      required:
-> +        - clocks
-> +        - resets
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: st,stm32mp251-ddr-pmu
-> +    then:
-> +      required:
-> +        - access-controllers
-> +        - memory-channel
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/stm32mp1-clks.h>
-> +    #include <dt-bindings/reset/stm32mp1-resets.h>
-> +
-> +    perf@5a007000 {
-> +        compatible = "st,stm32mp151-ddr-pmu", "st,stm32mp131-ddr-pmu";
-> +        reg = <0x5a007000 0x400>;
-> +        clocks = <&rcc DDRPERFM>;
-> +        resets = <&rcc DDRPERFM_R>;
-> +    };
-> +
-> +  - |
-> +    ddr_channel: sdram-channel-0 {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        compatible = "jedec,ddr4-channel";
-> +        io-width = <16>;
-> +    };
-> +
-> +    perf@48041000 {
-> +      compatible = "st,stm32mp251-ddr-pmu";
-> +      reg = <0x48041000 0x400>;
-> +      access-controllers = <&rcc 104>;
-> +      memory-channel = <&ddr_channel>;
-> +    };
-> 
-> -- 
-> 2.43.0
-> 
+In all other cases (i.e., when FNCLKSEL is not 7), bit 3 has no effect.
+
+Importantly, whenever FNCLKSEL is set to 7, bit 3 must also be set to 1,
+otherwise the selection of i2s_bclk becomes invalid.
+
+Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+I sent with a wrong email so resend.
+---
+Changes in v3:
+  - Fixing ABI-breaking behavior
+  - Modify commit msgs
+  - Link to v2: https://lore.kernel.org/r/20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com
+
+Changes in v2:
+  - Use virtual gate instead of new function for sspa
+  - Add Suggested-by tag: Yao Zi
+  - Add Fixes tag
+  - Link to v1: https://lore.kernel.org/all/20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com/
+
+---
+Troy Mitchell (2):
+      dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for SSPA
+      clk: spacemit: fix sspax_clk
+
+ drivers/clk/spacemit/ccu-k1.c                  | 25 +++++++++++++++++++++----
+ include/dt-bindings/clock/spacemit,k1-syscon.h |  2 ++
+ 2 files changed, 23 insertions(+), 4 deletions(-)
+---
+base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+change-id: 20250717-k1-clk-i2s-e4272f1f915b
+
+Best regards,
+-- 
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
