@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC259A921;
-	Thu, 31 Jul 2025 16:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59FDA921;
+	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980354; cv=none; b=FE9KmKIVOaboKHOkJZgiM8pAAT7UWHdC5YJPkIgBg/+HKe7hFrQcxAQ+BwbgSfBZXSkhkZ3d22IW93keH80QDt/3NWvwkriI9hfl4gyZuMNT6K+H4V9zVx/dWd0QVOitTmvbXqh6V1Fu8bfmpGJxPmpV/yLUtvV+GWOUXfPUa6Q=
+	t=1753980414; cv=none; b=CBlwggY09J4vi9RgRCrvZbZl8PJvSg/hcFzR8q6fumfStyprrFktY7BIGFOHKC8oDLiYNV4egE+i0RY/nRBihc9tz107WsXiSGfWZUVtXnF34bs7RBmft0gI0v/wd3xRvYLeXiejW7FK2j5Men1GR0+zI/IBEv/g8zseQO+nd6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980354; c=relaxed/simple;
-	bh=SJczIBKf58p8fWy5tLAGEcT+vxfqpb7u7WWqnALnrQY=;
+	s=arc-20240116; t=1753980414; c=relaxed/simple;
+	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=bxn71xH/1PcxnrjP9UKVHHA1ZmnHqy97OD31gEp+iiy3LDlV1NnBDaGVc8PVMJQJhJ76jD0xd8u2AvQ63sCoYIay4FCio85dNhLT+w8goBOdX8mreSl1s+NcYeEOjbcl2uZRuFYvPoO2y/WRJ+7iPTJz2GxKPNIlYHgldNiKL0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9d95se9; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=RBS0da45HfdjFgvw6ArMBJtUwDUmQ1k4PgVArU4kelFi7Qv09uvyKvznjhp9T07s0xd/LNmG0al018M23n8DTVpzK49THQC6WI45QBHnPl0/inatEf+ouzOq7TywUHLGpr/TP8YpqiJDudQUBXso6b5PjcWGPUKU/c0Gt87stBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPXGXw+s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9d95se9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D19CC4CEEF;
-	Thu, 31 Jul 2025 16:45:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPXGXw+s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DF4C4CEEF;
+	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753980354;
-	bh=SJczIBKf58p8fWy5tLAGEcT+vxfqpb7u7WWqnALnrQY=;
+	s=k20201202; t=1753980413;
+	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=U9d95se9SF+ha5QrduNx9gwIaunq5uNtt4gDNt7KWM3VS2GHtyg4h7MukrWxwdEB5
-	 Jac7JgEAyaUTvGJ+P6R3XTe6cbwVKWDEu/vMMnbjnATBUNM9l5JqtCEmgzZTTaGTnp
-	 NrgBvGnh4rdMKMm6NDkzDfU0DW2GE1wId92D4+sr0UFPC/S63d7jqk90bBi1DQ5aDn
-	 pmXoPh491Zo5Db75xkaIbl9wDglpBj9J2G/CBy/pfV9vNhkeheAKv5yaXrFYTss6Ii
-	 zGKPwx4NXk/bS8nUR2Zlu9jGHMzVSPx12NjLHHF+bVXbbn1lqNG/oSkO8t3hz39QFy
-	 e51ldbbXcShww==
+	b=sPXGXw+scJs3C7UZI/DA7MkT8ZN7ufgUcQDo6OoT3wd0tG1XIxdEmW42mDTr2FwvB
+	 +g2toyhn+m4aah5rzF3VTaYgwwnfqkAUadACT2JKaGyZoyNkSAengCkwSnWhj089yJ
+	 KRLUQFV8aP3CfE6SS5dlWSxgtaAwf2DyO0uuJvY5Mg9t6FgEUvQEqLETVtBmGG4LVE
+	 FAy5pKc8Lv2IS284454L5lY1pw78sQaMjs1qNnoExK+AbO43poml56YaYA2ZT0WZJ/
+	 0uveNgKYd+S2bTIiBTMYW7opEXNGfiiklXc3bTfggoVvJOq11Kxa0M3sB9m6ZRGo0h
+	 oQmOrF2fr/Qag==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,50 +34,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
-References: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
-Subject: Re: [PATCH] clk: Add fault tolerance to of_clk_hw_onecell_get()
+In-Reply-To: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
+References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org> <20250730145100.GA6782@google.com> <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
+Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>, Michael Turquette <mturquette@baylibre.com>, chuan.liu@amlogic.com
-Date: Thu, 31 Jul 2025 09:45:53 -0700
-Message-ID: <175398035351.3513.14541914855277799230@lazor>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>
+Date: Thu, 31 Jul 2025 09:46:51 -0700
+Message-ID: <175398041189.3513.13629420060562627196@lazor>
 User-Agent: alot/0.11
 
-Quoting Chuan Liu via B4 Relay (2025-07-31 05:39:58)
-> From: Chuan Liu <chuan.liu@amlogic.com>
+Quoting Andr=C3=A9 Draszik (2025-07-31 03:20:56)
+> On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
+> > On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
+> >=20
+> > > Original cover letter further down.
+> > >=20
+> > > This is a resend of two patches from the original series that haven't
+> > > been merged yet. That series was merged except for the attached two
+> > > patches here. Other than rebasing against next-20250729 there are no
+> > > changes to them.
+> > >=20
+> > > Lee, I think Stephen's intention was to get these two merged via the
+> > > MFD tree please.
+> >=20
+> > Although I have no issue with this, it does seem a little odd now that
+> > the set consists of only Clk patches.=C2=A0 Let me know what you / Step=
+hen
+> > decide.
 >=20
-> In specific cases, even a clk_provider managing only a single clock may
-> reference of_clk_hw_onecell_get() to access its member clocks, as seen
-> in implementations like clk-scmi.
+> Thanks Lee.
 >=20
-> For a clk_provider with only one clock, when calling
-> of_parse_phandle_with_args(), the phandle_args->args[] members are not
-> assigned. In this case, the reference to phandle_args->args[0] in
-> of_clk_hw_onecell_get() becomes invalid. If phandle_args->args[0]
-> initially contains a non-zero value, this will trigger an error.
+> I simply went by Stephen's ACK, which to me implies he wanted it merged
+> via a different tree (mfd). I guess at this stage it doesn't matter anymo=
+re,
+> since all the core changes are in already.
 >=20
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
-> Error conditions observed:
->=20
-> scmi_clk: protocol@14 {
->         reg =3D <0x14>;
->         #clock-cells =3D <0>;
-> };
->=20
-> phandle1: clock-controller@1 {
->         #clock-cells =3D <1>;
-> }
->=20
-> clock-consumer@2 {
->         assigned-clocks =3D <&phandle1 1>,
->                           <&scmi_clk>;
->         assigned-clock-rates =3D <xxx>,
->                                <xxx>;
-> }
->=20
-> Under these conditions, executing of_clk_set_defaults() triggers the
-> error: 'of_clk_hw_onecell_get: invalid index 1'.
 
-Please write a KUnit test.
+I'll pick it up after the merge window closes.
