@@ -1,129 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E6020D50C;
-	Fri,  1 Aug 2025 09:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A70239E69;
+	Fri,  1 Aug 2025 11:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039442; cv=none; b=GeEr7RzT94iBT3bOW/MW8vnsaNguWDV9dyl7NQq8fdugJ16TjURU7EQfN/hVMzWI56kY6mE5332BAtVnzHrOLnJsFLKnO/2QWFhywq4j7EJLOLp5PM329pwS+Y6gT18ePKeSCchtRxXNX883i0j0PCworN8mqYBx7tw43XYIe5A=
+	t=1754047090; cv=none; b=lq4R85hCwDDUJgzPAbAgDMDTxA9Gt0qAVVW1vyjgMiwdHi7ysOisV9ELxAvSlk7ggdQogj5aAbQNkL3voFE9UnI0UQTdpXkaxiGefc39C3EVcfkqJcn8unmFzm7ivtmixVsOg1GDczjB4MYQQ62Gb982n7g16/J3S47af6ZR4Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039442; c=relaxed/simple;
-	bh=3nbg1I5E3GeZKawoY/D6ZcFXmMbptFSwP7oM5e9/i3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0RHMTRW5SCWsgOOal8susOF7IZjb118YBGV1mfzRWg1EzCD9EPaAMVGzdZ8C6Qif7Wvx8fgi7kNiacC3fWCVtjHQgTaCOHmJQIU2mkwudfPdGIq0SjTor6O7nBMpGuEmcJaPMxBsuReVc+UsiBjkcw1UYDFtmYnfWRzxh6yR2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WY1RSewN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754047090; c=relaxed/simple;
+	bh=vU24Rbtm0qkvmBCpmr+GYFE8OyNzvp1wYgPZVrYsMQI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=abAKMciuUUD3prp/Eb0ZECcZHdCGszLEMaCi+mvnkYi8SDxVWvKrWgv91ynd56xWQHz/wY9+tDaT+HOnO9vqBuAC2y9E7Hv6W8cpogPmsWgdZEBQEj1yXeKwwFfhDRofbtEE6oRmd3ZAZxCSCBPIguxBvndXhJlTE733r60qGlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kyAnGIB9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY1RSewN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E86C4CEE7;
-	Fri,  1 Aug 2025 09:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754039441;
-	bh=3nbg1I5E3GeZKawoY/D6ZcFXmMbptFSwP7oM5e9/i3g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WY1RSewN1F7+zuCssMWZRRRs2QDJC5aeEuTky/x1hRFbzfuAeGQ0gIZuuKqjqZZ/N
-	 mZXRLvoaDHGUN+7JmtKExmnW2A5KbuWWk8HM2yvChEiVCDmNHmgwETdpMVurWcThYV
-	 YHV62EpgbrNW/LEmk3gaSICwM1MOKur2T77cmVn9yzfL/1eYDuxudXdWU+c59AuzcE
-	 2vXNBPklEvW8luFF8ppoZA3OdQ8kyM0tzv8RCYm1FMJc0EvcocQQ7a9JjySEGwSh3i
-	 QiNthNPsLWP8h59fqxI5HqoMnulP0f00IfIBMJE3l+PGvJHEe5QNhhYcC047boJUrG
-	 CeS0n+UX+7qUA==
-Message-ID: <48610dd9-16c0-48ec-9997-2de9e0f7b3b6@kernel.org>
-Date: Fri, 1 Aug 2025 11:10:36 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kyAnGIB9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754047087;
+	bh=vU24Rbtm0qkvmBCpmr+GYFE8OyNzvp1wYgPZVrYsMQI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=kyAnGIB98LHZRdNTavPx6q1F35dD8JxU7OTKE/GovJYD2QCneLHNNMusM/Nuauwkm
+	 lea4bGbFwhrne0by4YUTPvTOC6U3KnKcBD6+LoqV7vz5f/lHf5e8CPjiWHQCz+Fwvk
+	 5nyMhpgQluT/QGcXGSc9FLSgqSy1SoefIYDKkIk6OGm1eN/QgdW5Ad27Dj2APN2Emt
+	 xtorYFTGeVaPeIjlSzzM3SdMT8D3rSPj7bDGO0v6hCUYCojAEpzwPswIRCmmQOY5gH
+	 yPHe4H79ib6M+OO5CKPNb2lqd5Mbs8EaLItATf+pznXn1uoS2YOGX1t+QNyYxnf5eM
+	 oQfH1/W4HJg5A==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2d600c8f85cF092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 04F6417E0256;
+	Fri,  1 Aug 2025 13:18:05 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Date: Fri, 01 Aug 2025 13:18:03 +0200
+Subject: [PATCH 1/9] dt-bindings: clock: mediatek: Add power-domains
+ property
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] dt-bindings: clock: qcom: Document the Glymur TCSR
- Clock Controller
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
- <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-2-227cfe5c8ef4@oss.qualcomm.com>
- <20250730-mottled-myrtle-bull-3ae03c@kuoka>
- <9cb06263-2a61-4acd-a9cc-157abb832d62@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <9cb06263-2a61-4acd-a9cc-157abb832d62@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+In-Reply-To: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 01/08/2025 06:14, Taniya Das wrote:
-> 
-> 
-> On 7/30/2025 12:47 PM, Krzysztof Kozlowski wrote:
->> On Tue, Jul 29, 2025 at 11:12:36AM +0530, Taniya Das wrote:
->>> Add bindings documentation for the Glymur TCSR Clock Controller.
->>
->> Same question as for v1, what is Glymur?
-> 
-> Glymur is the Qualcomm's next gen compute SoC.
+The mt8183-mfgcfg node uses a power domain in its device tree node.
+To prevent schema validation warnings, add the optional `power-domains`
+property to the binding schema for mediatek syscon clocks.
 
-Explain it in at least one commit msg, not in reply to me.
+Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
+---
+ Documentation/devicetree/bindings/clock/mediatek,syscon.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
->>
->> Where is any DTS using this (or explanation of lack of DTS)?
->>
-> 
-> Krzysztof, the DTS will be posted separately once the driver and
-> bindings are reviewed.
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
+index a86a64893c675ac134af609b3a49242565db6ad8..1011bc46cfcb97b90b86019e95a7e4bc8a819342 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
+@@ -76,6 +76,9 @@ properties:
+           - const: mediatek,mt2701-vdecsys
+           - const: syscon
+ 
++  power-domains:
++    maxItems: 1
++
+   reg:
+     maxItems: 1
+ 
 
-Hm? That's not what I was told thus I ask. I am sure that above is not
-true, but if you insist and put it that way it is incorrect. You cannot
-send DTS because you wait with drivers to be reviewed. We want to see
-entire picture.
+-- 
+2.50.1
 
-Best regards,
-Krzysztof
