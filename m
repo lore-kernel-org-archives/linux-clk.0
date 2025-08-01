@@ -1,80 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4801221D3F8;
-	Fri,  1 Aug 2025 17:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB74F28E574;
+	Fri,  1 Aug 2025 19:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754069420; cv=none; b=j1ythgd2itXFUz26Zp6h6uGbFgB10CRRU+qYUcU8/4JvLapzCZQN8K8Jq0MZS/9V0RPPun4ICjtWnM1qbibnaSElPy9w7jUKhGaGVUA1C0UR1TmpiFiC2IxOMlHdFvV6w10RlifHnWHCZV3I3HfbMFwE5rbkI2iT57en/wAXmRM=
+	t=1754076605; cv=none; b=R2rnfTaeFzMzfVceKVGwGIr4aKiyO3CBkE+OBIqsVZiOxUul0JE5oYB42rCgG97U4dMZg5o89bdUQjYj/v46YI39eXv6LJot5i+9o6GY/KZennurD29/m6jHEzmpgNJsXqaB4ylygNbdLPdjnCsH4Kkcmu3jqNA3v0K6EVKMpOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754069420; c=relaxed/simple;
-	bh=lPzXpIa795/UAYucbxhQ/lqbSXcKmzSge/LIrsTQc54=;
+	s=arc-20240116; t=1754076605; c=relaxed/simple;
+	bh=QIvDp326hx442oBNoCgvRKhpRZCrpyZ4MgfHtvxx6IE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twQgoYFthksj+YtQKeVu5hpRgutTJS0Gtw8KQyE4GaapggFs5Qwwvk5XBLJV6uXyIzJr1EZQNV7Ufjy4T/MRbrYsFq9CXu3YfGiwJtYOVXg3yrng+7Iw0gp7jZS8h0D0/ho6NTyC33C/uJ1EmrfEvlljM/HebKlIgqOXFuzwBDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezHZJ7uc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWNqtLaXAal73KYjj5HiHNXyw0rr6eWrSo2Vgd4PZeOw/BoEOYslJdBAfJRX6jOCePeuy+ekgqaMAZSYz48laHCtnjSTueO5Xg9iBDsoObxMWWNC2xJTxpu0+i/KH8oE2jBAdhvA7unwvpzSo4fZg0UjFhzvnxiEkifJ+j/28jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCWzLlIw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezHZJ7uc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A6BC4CEE7;
-	Fri,  1 Aug 2025 17:30:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCWzLlIw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE9DDC4CEF9;
+	Fri,  1 Aug 2025 19:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754069418;
-	bh=lPzXpIa795/UAYucbxhQ/lqbSXcKmzSge/LIrsTQc54=;
+	s=k20201202; t=1754076605;
+	bh=QIvDp326hx442oBNoCgvRKhpRZCrpyZ4MgfHtvxx6IE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ezHZJ7ucJnfPB4oUWD7FF4veHqBSUYQO2rfX/4jx70xPeYunQKDZVqndyemghEcFp
-	 wH72RD4J/7gVUSywdQYJcrYLSkwp/ssF096SBbwlDhv6WYZacp3jkTl8KTJFIkFfz6
-	 7rmu4tRICpaEqH2QyycjnjQY/mbfeQ8rZn6JbsOtlY9n4AYXAkTmGWRNgtTd2qtd0S
-	 XLHwEBbWmDbQzJtWu1Gcqv++nwwKSyOSpenznLrG4iN3Fgf7axEOl+0HOLsLftmQw9
-	 /Px4kVZLiq4qV57VJDVMFwLtznFe7mVTOktcyyiM5owy9f3YZMhX4sSW6CF24ufleb
-	 2bvuniSyGEjCg==
-Date: Fri, 1 Aug 2025 12:30:18 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: kernel@collabora.com, Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
+	b=bCWzLlIwA5rDCTigq8lmDf6xXVWEH5l56fpQ1pITJxnI/fmNgoB6H3Pw74iGDw4HO
+	 TlZ22QHpVCkxkQ6th79r4Trrpul16lQao0LebbJN15zjjS52eSClE2IIZxH3CRg08A
+	 jmH/8sb91gI/7KL7A/C0WRPVAaCxEC6xUnHupP3oXEPBR7+nz5XcA7+IhUTUBkwCVa
+	 50Nl8g8Kw1l+J0RqbdIEGkMb5zYZHYg0+0KOeccfKiAZpy8gEvZ6Pk+rWwn6fH5B3L
+	 H35pt1PEfxDfi8ACewevcQbTXWBYqVRV3uUM5uoi4JZp8YUFlO5EG3tfG0cw1QAcjN
+	 U5sCjPuDNzCrw==
+Date: Fri, 1 Aug 2025 20:29:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Enric Balletbo i Serra <eballetbo@kernel.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-mediatek@lists.infradead.org,
-	Weiyi Lu <weiyi.lu@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Julien Massot <jmassot@collabora.com>, devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
-	Ikjoon Jang <ikjn@chromium.org>, linux-clk@vger.kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 7/9] dt-bindings: pinctrl: mediatek: mt8183: Allow
- gpio-line-names
-Message-ID: <175406941584.3116245.5714988449223130745.robh@kernel.org>
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
- <20250801-mtk-dtb-warnings-v1-7-6ba4e432427b@collabora.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of
+ SoCs
+Message-ID: <20250801-tinfoil-revenue-6fec31c1f099@spud>
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cJFA5TX8jbyuGS70"
+Content-Disposition: inline
+In-Reply-To: <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
+
+
+--cJFA5TX8jbyuGS70
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250801-mtk-dtb-warnings-v1-7-6ba4e432427b@collabora.com>
+Content-Transfer-Encoding: quoted-printable
 
-
-On Fri, 01 Aug 2025 13:18:09 +0200, Julien Massot wrote:
-> Add support for the 'gpio-line-names' property in the MT8183 pinctrl
-> binding.
-> This allows naming the GPIOs, which is already done in several
-> device trees (e.g. mt8183-kukui-jacuzzi.dtsi, mt8183-kukui-kakadu.dtsi,
-> mt8183-kukui-krane.dtsi), but was previously generating DT schema
-> warnings.
-> 
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+On Fri, Aug 01, 2025 at 10:48:22AM +0200, Tommaso Merciai wrote:
+> The DMAC block on the RZ/G3E SoC is identical to the one found on the
+> RZ/V2H(P) SoC.
+>=20
+> No driver changes are required, as `renesas,r9a09g057-dmac` will be used
+> as a fallback compatible string on the RZ/G3E SoC.
+>=20
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > ---
->  Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+--cJFA5TX8jbyuGS70
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaI0VtwAKCRB4tDGHoIJi
+0oBYAP9dYasfH1OnF5QpY61qg4/gKEjB/ZtQBUyYa/Ehppx0awEAqZg8y8ipVZkW
+4s+38ILPHghdhASqX4rkk+zv7fP+Ogc=
+=ML3I
+-----END PGP SIGNATURE-----
+
+--cJFA5TX8jbyuGS70--
