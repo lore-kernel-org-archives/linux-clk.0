@@ -1,202 +1,156 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023107.outbound.protection.outlook.com [52.101.127.107])
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F365173451;
-	Fri,  1 Aug 2025 02:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754016052; cv=fail; b=u6w57tNK2CJyBwnWv7NIgfH8PZKppSHk7/1EoJ4ayGV52qJdHx0L7Pix0C4soeYRhweVaFDfJ9JQscO2NTMYSv/YUIUBbZCpPkkjp4bbUbMjvQyPfdmcZyK+du5wthU+S1MUxOrKfuRXr/HbJ4WLaagC3NubsN/LBkfttFUt0Gw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754016052; c=relaxed/simple;
-	bh=SnJvMEtORjmCBTGOFNZbTZem5zEMqaXe+vLFeSuWHnE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iAFfaff7B5N/ZSoCXWw/rl5PC+C2fiGhJE1suR1l0hUGBckNsV0dvxSAev2K9zzh5ayg4E7Gs5OtZObE5cQWL0yps2NUTxIoi2zBmsKaT1hnrISEkSdUNVWjNBTiMpiW4pUixYiHQb2s8m12LA5bM2M0d50YV5EihmfbBMNoWXc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=tF5BrzNZ; arc=fail smtp.client-ip=52.101.127.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E613EFF3;
+	Fri,  1 Aug 2025 03:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754019821; cv=none; b=M81iHL/xabVywfhPmbn3JsdcRdGDYW3luLN+5cKnY2ZarB3sh+TS6CCYt3twcxWLbnWg70I1vaR7rnNAlV4YEiz/81bweHDFTJ0rx7BTYRhyIXT0DfGELMOR/Zf0VuYc5rtnhv5AP1RCZcGK3k73s7HbkzJ2D5cp9tan9/qJNfA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754019821; c=relaxed/simple;
+	bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHoS8Ah2rVxX7mTsnyMMf40b92EL4UyV+PwsIKSSGsmreVtakbW6UtWA46+j6F4hVab6biMZV69xQdHw3G0eJH2/4Cc3vgyCvYen7fWYuILtK/qKjSjVsGP0a51VsH9WUpdRyCN2J8smf0M/ngiC9hJ8dNTEIXHkHG5dEpsrkr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=dTD6gLEJ; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=pnRgjqoe; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="tF5BrzNZ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h188k7TKD6dEFgiTn5v0MWLrFRFzRqI6QrbBWFtU07zco/9Yyw5fbyzsPJaOZc+PQkZ/G9XuexRTbffD48oYtB4FP3hb0q8jZE+i8eNRzClrHnuYWDH5usKQl6MpfUL9SLJrIQOtUPtbZmvN48rupysOfnRM62HsDYJolIutxOzdD5YT3ZqrxeUJ+X2EhWqA9ivWyCLjDbPvI+ewgTG98IRJiunwWr6sX4r3q5baS20RFR4ZEpVso8EIyWENabgpcGx/bjYhfrLJorgZRovs+dyGDbsHUP/JPTpTgU3yMMgAgcxgLEAjZjOrVC1c8BrDAa0k2N+pX+jP/w5IYqHQjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EZLq1vvwsDP14HmITFIDa/VLEkifkZ0pLED/ow/FeQU=;
- b=LYK9u++xgR9D3/F6W3RlTfvKNOfS+QAdvpwGKVumD+oAWNcKP7HRlbO/N299TkfnpbBNeOG450kJfyCvjFCSNEAqKmDNNvEIGu63adwddz78Yp7bIE3gfV5OuvA/WzH6ntWW+Y7hJjet2EZVkzuIZKXIQRmbVQ1ffQeO3uN2F784z4Fu9iUKk10BBflby9GUSnw7X1Cfnxc25cusr2Mx+8aCUAdMLdB5Gcj7YTreJtqy7/MM4OM+zzvpl7jdcC7pDcSH00NZVdTg5xCEUY47Ks1h32m/lWb/OwgRLVtd5C8v1z4+aodwNF2MRaAQ7fGP9X5IUK1KysIq/4uLCIDFZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EZLq1vvwsDP14HmITFIDa/VLEkifkZ0pLED/ow/FeQU=;
- b=tF5BrzNZzyIyNNrdPmFDtfyHxQlK5Fk0qdPjXbO17rkprAsTY/wdDT4lNk9tYmc66qeuRPdsVYMNBwjFWRvWJrpobNqV5OqSLp0nqkihhVDXly6RDdLJqIPhguvf/eXcQ5C72G/GrEB1UpK5YfxLHvT3pYAMpQT2GJM4XXT9QzSrpcRVQaETILbHbAb+6qPLKkZqyaOwfmqjq3jC8Htb5AUjRvZ1z0dGkYJLLoF1kmVVxcHzQuJFaF++HgbkG9ZGh2GRGNEz1W+mJ8/wKFCQrhLXZubn88ZVl5HeOyPpuKgr/efMSYBNwDazg5uA5xsZQkiA/wvetBthWDTx6VMIfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by PUZPR03MB6887.apcprd03.prod.outlook.com (2603:1096:301:101::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Fri, 1 Aug
- 2025 02:40:46 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%4]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
- 02:40:46 +0000
-Message-ID: <f815a5ff-920e-4842-9d6b-f4a11944b9b7@amlogic.com>
-Date: Fri, 1 Aug 2025 10:40:06 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Add fault tolerance to of_clk_hw_onecell_get()
-To: Stephen Boyd <sboyd@kernel.org>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
- <175398035351.3513.14541914855277799230@lazor>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <175398035351.3513.14541914855277799230@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR04CA0213.apcprd04.prod.outlook.com
- (2603:1096:4:187::11) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="dTD6gLEJ";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="pnRgjqoe"
+Received: from localhost (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 77F3F12FB41C;
+	Thu, 31 Jul 2025 20:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1754018742; bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTD6gLEJ2CxMefUxfELj+QGXw7f1ofNLfDbbteWeH0CUnHdx0xr3kDgc+CCm60WTv
+	 mP1RYMfwcVQ/EyKU3dx9NbiQcnP1y/NgPN8L6n/tVAKt8X14V/zj7k6I5miD0iJvSQ
+	 M+y8cSVF9F+3h1rLhWuTCH5W7NZSKmSs5UhIZ98vzXJqJUtSkst6j4fW/RdduEC6Ha
+	 0tUV/5BgD7dFkgj9woUOasCD7LjOWjPUJzL1Kpe/MibT3ttBJ2DUxdy13lS8P7Vdjc
+	 4YAjbNfvE89YPtIoHOJyLwVHwyc8eLU722xMB1ko0CfWIuu41vrrkDmJw4UpvNNQ9K
+	 KuPg/DJbTyJRQ==
+X-Virus-Scanned: amavis at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id W3_rfJeT08lw; Thu, 31 Jul 2025 20:25:39 -0700 (PDT)
+Received: from ketchup (unknown [117.171.66.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id C3E1112FB405;
+	Thu, 31 Jul 2025 20:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1754018739; bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pnRgjqoe3THj7xbnE85paANZv0icsEkbjpr9Ce/YDMcF8rblWRxnJYHNON/ekjKd3
+	 305OiLnwCecZ4BuKK1fhaIYEv4S8/FKCH53aIkZUekhlJ0D4GfdSHyKwYdt054iKvQ
+	 uxpy51q9ELngIZpIOzeYhRUCFdk/fjzf4DWzPyza9oQJVOY0yf3LdJ6FIK2DNXFPtv
+	 LAJuxvSIOw8s/tyc9Yl8bAeaTRMxSg2wXtK99TYKyEQF25L5vbmUweZ3RUNCInRnQF
+	 LqZImkf8dO+8NGI+FWXtyZ8B1DoUKLENjYg37vf5FY9eJ9mxSsuwTjuGvNvHhnGzZp
+	 ROz16puH1/qzg==
+Date: Fri, 1 Aug 2025 03:25:32 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH RESEND v3 2/2] clk: spacemit: fix sspax_clk
+Message-ID: <aIwzrHKD-GiZ0oFv@ketchup>
+References: <20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com>
+ <20250731-k1-clk-i2s-v3-2-2f655ddb0c6f@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|PUZPR03MB6887:EE_
-X-MS-Office365-Filtering-Correlation-Id: a63338b6-0d4b-4ece-418e-08ddd0a4d18d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a3Faa0JZSlA5RmFaTTF4UG8vdFgyNThnM0pqb3VYUUN5c1QwbEpkckJUSUdB?=
- =?utf-8?B?UzlaTC9IMnNOeUFzcEhhSlBFbk9EMU5FSFlNQ2pNTXhsdFFYV2UwdTFsd2JE?=
- =?utf-8?B?SU5KRXZKWFZIUEtweWFoM0JWVW16MzJqaGQ5Zm1USGlPR2UvK1RDRm9FNGxW?=
- =?utf-8?B?WVRZRzdRRmIwekJHOUlFajJNWG95RFU2Zmp2ZE5wTkdIQUxjVjY4RXlTQXVU?=
- =?utf-8?B?dXFGek5PY012RDhYMEJMbjkwMWMwZWxOZklqbmJxV0Z4NWNLaXQwUkd2L1dL?=
- =?utf-8?B?ZWszdHU3bjM4MXExN0E2eEtxS1V6QW55UVBnVTd0NE5kbFh2TEQ2OURONU9j?=
- =?utf-8?B?MkNtRjg5TWoraG0zT1VNUVBkOXdWSldaM2gxN0x1NFZpbGcrcXg0UkJINzdl?=
- =?utf-8?B?eHdSb0VWQWdkNmpPSzNMc21UNE15MGFWWVJIOVN1amd4dFltTEdTMEZ5d2lG?=
- =?utf-8?B?ZytmU0ZaL29DMUNXVjg3YjBVeDludmIzSGNkZmpWd1FsRHByVkZQaTRXclFL?=
- =?utf-8?B?dzZJQ3RCVWQ4V2c4NDNIVzh5aTJiVzFvSVZPZEhrb1QyNmVlN3ovUnArdVZM?=
- =?utf-8?B?Qit1MmlRa0xoZWY1QzlVTjFYV2JsUEVqSll6cTNFRFQ0eEJ1RkozaTk2cmtW?=
- =?utf-8?B?NXZld2NIN3V3UUdkeE9zY2ttanFpK3Bxb3RJOUtRNlJsVmxPMERGaUZaeksw?=
- =?utf-8?B?aTVtd04xbzcvb2Q4VDhFSmQ5cTF6RHJzaHhKSG5WRXZWUm9XZzBPUEcxOTRq?=
- =?utf-8?B?S0d1c05UOXpnTjd6ZlJzc3ZHWXVSOWFlUjFBd0JPNHNJZ1Z1UW5ZQndtK0pU?=
- =?utf-8?B?TU9vTXV4emVwWTJZc2pEVXpobCtudEJRWkFNYjl6czVpYW90RisxY2t5NENE?=
- =?utf-8?B?ZUpxVER0Z1NKdVBpc0tiN2pUdWd3U1hpWDgxU09rWmp1TjJsMXhjT2V6TVVa?=
- =?utf-8?B?MWM3YWpieEdWTy9jVWwyTmY4TUpyUlltcVJUMXRZSjRmTG13VFE2TmRMYVBx?=
- =?utf-8?B?dW9zdmZFRXluWTFxOGFjNzc1T1drNjZpVko3cFlycmRjN0g3NS9ldVRRN1Rz?=
- =?utf-8?B?T2Z6cW45S3FOM3FIbzBrMGp6NXRwTWtZREtDU2RoWXExa3lOZ1I0dVF6bFcx?=
- =?utf-8?B?S2lZOWNrbis2QTYxVDNtRTlhTDJuRUdUVzRnZ1ZFVkxyTDB6Nk9GRC9LdVYx?=
- =?utf-8?B?OElRb3VSODZPRUhLeVp1dlh1V290UW1ON3MwbTBOUXRrSjViVXhJMXZXWFJI?=
- =?utf-8?B?dEN1VVNOb0lJdVQ2ODRJN0NKWmkzb1JhZWhYM0VlaTBDR041WUNmSlBMZUI3?=
- =?utf-8?B?MU1yai9hbGN0Y3J6bFJ3UHNaWEdSajROSVkyOE9WMEl4WXhjNWxuYVFXOHpB?=
- =?utf-8?B?QmYwU3NoVjVtMFZET3VhRHVOMVFRZnZiOER2eTVVQnk1V3BQcVk4emx5Qnkw?=
- =?utf-8?B?eFUvcS9ra0k1OGZTckpFcisvOFVuckV6aGdNeDlnbTV2OWkySURVcVJrZC9p?=
- =?utf-8?B?dTM1Tmhqd1IwQlJMUU5Lcm9sejJoRGhkQlRFMVFFbld4a3kxSHBib3JRZWJO?=
- =?utf-8?B?ZDQzSE41ZTcwUTFHNmJqd1dkTFpMNU1mNHdOTnZ1NWdVZEJXMG5qK0E0cE91?=
- =?utf-8?B?V2ZqcDl0UjZQR0YydGUrMDlTQlpnb3IrZnU0WkhIbW1CT1VSR2IrT25CaG80?=
- =?utf-8?B?UXc0dVo4MXd4Y3RXTDlocVVXOVNzaDVxeVdHbVVIWkFIeHc4QnZWS2YydHgx?=
- =?utf-8?B?U1RCbzFaNXArZEVmamJBTEdhL3NYb0MzeDYzNW5MUVJ0R2pRZnVJTXZtYXJL?=
- =?utf-8?B?Z0JjT3VXSXUvY0g1SzVqRWNITGd5c3RlRFJHSmVWZ2pSRnN3c1hsL1B0M0Yx?=
- =?utf-8?B?TndzNFVhUDEzL1VYNzVXem1CVENldm9pallVaGx4UWdiRlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzhwWmdwQjNkeTM3OVFSd2IweXc1UzgvTzJCUkloSkwrTFphK0tRc3ZDcTZQ?=
- =?utf-8?B?KzYyaCtpUnhDWjlQUnFmRXNnOXlBSEhWaWpSMlBEWEp5YlNMVHRKdU5scDk2?=
- =?utf-8?B?UXhkOUtEVFpRUzV6RGRya041cVdBSjhZR3lvWEdBcnQvaEY1TnN1VlRyNlhU?=
- =?utf-8?B?S1RWN29KL281MkN0UDFEQ2xBQ1B4bm9XanJUcm9MMUszaHVWS0VQZDZlZ3B5?=
- =?utf-8?B?bVpmbzM2ZTE0bmhTZmJ4RTcwNit5WTZIcDRpaFVkemNRTnd6WDRXd1JaWUpF?=
- =?utf-8?B?dFV1RlJLbzZ5R1N3Ym8vSFJ5ZkZpNVBicWR3MVJ0S3R5UXF4bE9Hc0tsYnlu?=
- =?utf-8?B?a1hkNkl0Ti9zd0VzZllUbXFUQVNpSnI2NzZHblM0Z1JrVUR2VHYwUmZXcjFh?=
- =?utf-8?B?RjlzbU9HSGZuT3lyaUE4V2NHOTBiWCtwR2Q4ai9YaERDWVcrR1RCZ05lK0pi?=
- =?utf-8?B?cFkwRTRicEFyOWo4MWlmWDRTRDU0ckoybVN4Z1F2YVJFVlQ4V2FZSWg4L1JJ?=
- =?utf-8?B?Z21Xak5OaGFjc1JmL25TTUxkQllqdWN1S3BQNnFRWFpHbnZxYms1eU52NzdW?=
- =?utf-8?B?Vy9sUGVsUHZTemxNL1ZjMnMrbis1YW5qZ3ZxUWMvNGw3NnBCRVRBL2IrM1kr?=
- =?utf-8?B?SXAxUFdaOTQzNWwrTHNYcUxOR1poU0JBWVozNkNyT1FFM0dSZTVvVGlPSFRN?=
- =?utf-8?B?UEV3QXN0eU52bEsyVFVjZE1vWUQ3NmsvdWFFQXB3ZjJMalNmOU10Q2VBTVU2?=
- =?utf-8?B?Z3RTenlLWnFac1J2RlJtbVJpaU9BaVhxKzVPWWFHNXhTVkxDSmROWmk0c1FT?=
- =?utf-8?B?bGp0cXFIYUFwS2VoeFFDMk0xZm9mb1haZE90WmNPbldmNGZZYXdYZklLZzNp?=
- =?utf-8?B?cG9QeTBSZks0bEVGUkNKR05XUkpQcDFNbEdLK2lZaXlyS1laV21EWG9uTVhG?=
- =?utf-8?B?ZVVkWE1heE1XaERuem5ib1E2Tm52amhFVDhFK0d0dG1TY2pmbU9neG9aMm5q?=
- =?utf-8?B?ZWlyRG5IMWRUaW1CbHh0OG5QeUlmWUJ0Rjd4eTN0MHFOOWVrVVRqS2t2bFZL?=
- =?utf-8?B?TzJJMHJicS93L2dIWjVvUGJSbVFidTFrMk02RDVFall1c2xpSThSR0pobHVr?=
- =?utf-8?B?UE15TDNWTXZiMlcwM1JHR2E3U2ttUmw0K2VqTnBqK0Y1bkJkRndQbDMvVWxa?=
- =?utf-8?B?NDNvbVNERW9zQjkwSEhxNDBWTC9mTm5zWno2RHpGN1hoeWR6TUtSSkE1MVlQ?=
- =?utf-8?B?cklFc3E2V0k2RjkwZ2ZUN1o2cEtqcVJIbldpOE54K0lwN1EwN1JFeVZ5MG9u?=
- =?utf-8?B?ek1kNHY2VWRtYXE5ck5YTzdRNlFpZ2RVVlJHbXk1Y0RoRXEybVlHM1paKzZ2?=
- =?utf-8?B?MnBzMHRlQVQ2MHJrVldPOVdtRGxuLzdjbmlzZHJpS3N6NEphcHAxQTB3bnVp?=
- =?utf-8?B?d2dyRXByRkp5ZGhqQ3JTSFVsWWdLdzdQMHBZbElVT0VoVHNyREF1SGZLcXFs?=
- =?utf-8?B?bm9WeWZad05WejV1bHlXY2k1emFlcHRUQVhqTk1RNGxjR3JpYU5rRkVERlJP?=
- =?utf-8?B?bUNoU2ZvWWFveEthSTZYdG5kSDlSY0FSdEVEWTVHQzl5R2JyNjNidWNSZTY0?=
- =?utf-8?B?b0U5SWxhRFZmMVplTXF2NkFsUXl3QUc3Z3ZMR0tIQmxjTEtQYzFHTkxRWnVh?=
- =?utf-8?B?MDZTdnNwTWFmUGZMcGFKR29pdW1uak4zYjJGdWR1bndoS3djUmprMkRBd1RG?=
- =?utf-8?B?ZHhZYjI1UUZxLytnY3dObWdWb1pHSUVkajBiZTNJOEd0S2JOMS9SQ1AvZitC?=
- =?utf-8?B?K1ZPTUpNWkZHUld2ODBoSEdoOElwV3ljc2J0OG92d2tzRjBrSUZ1cnI3OExt?=
- =?utf-8?B?NjlRbHppV1gwOEtqcDhOZUZyelRaSytrcWJabHVJYnBXWHQ3SG9mNm9OWjNZ?=
- =?utf-8?B?VVhrdEd2V010ajBKQzZ3c1ZnQ1pTcGpqTEVhVUNzejhGcGc4N1N3dXoxVndG?=
- =?utf-8?B?SEsrbnQvYVMwTTMwdFY3aU1VbVVxZU5tQmJPeUVXdXV3M1lNYmFFaUVMTm9h?=
- =?utf-8?B?eXJSVXlEVkdpZ000ZHZMUUk2K1hjT2VQMktKSCtjNjhPZU42dnU5b0FCM1lw?=
- =?utf-8?Q?VJFZ1/1SIRtCwgKs6XaCD5kYj?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a63338b6-0d4b-4ece-418e-08ddd0a4d18d
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 02:40:46.7189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DbBGqIGptOr2lh8tE49XDFNA1Gq8CIRQHMrN2s37JZ8rnMJ9GBOGPzWXyT8Ad033wrS/P7T/4JKTxZB6KBdOZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR03MB6887
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731-k1-clk-i2s-v3-2-2f655ddb0c6f@linux.spacemit.com>
 
-Hi Stephen:
+On Thu, Jul 31, 2025 at 10:14:07PM +0800, Troy Mitchell wrote:
+> Hardware Requirement:
+> When FNCLKSEL in APBC_SSPAX_CLK_RST is set to 7 (3'b111),
+> BIT3 must be set to 1 for the SSPAx parent clock to be I2S_BCLK.
 
-   Thanks for the quick feedback. I'll improve the KUnit tests and send v2.
+The change itself looks good to me. But additionally, maybe it's helpful
+to have a comment explaining this, just like twsi8_clk's case.
 
+> This patch introduces SSPAx_I2S_BCLK as a virtual gate to enable BIT3.
+> 
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Suggested-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
 
-On 8/1/2025 12:45 AM, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
->
-> Quoting Chuan Liu via B4 Relay (2025-07-31 05:39:58)
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> In specific cases, even a clk_provider managing only a single clock may
->> reference of_clk_hw_onecell_get() to access its member clocks, as seen
->> in implementations like clk-scmi.
->>
->> For a clk_provider with only one clock, when calling
->> of_parse_phandle_with_args(), the phandle_args->args[] members are not
->> assigned. In this case, the reference to phandle_args->args[0] in
->> of_clk_hw_onecell_get() becomes invalid. If phandle_args->args[0]
->> initially contains a non-zero value, this will trigger an error.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->> Error conditions observed:
->>
->> scmi_clk: protocol@14 {
->>          reg = <0x14>;
->>          #clock-cells = <0>;
->> };
->>
->> phandle1: clock-controller@1 {
->>          #clock-cells = <1>;
->> }
->>
->> clock-consumer@2 {
->>          assigned-clocks = <&phandle1 1>,
->>                            <&scmi_clk>;
->>          assigned-clock-rates = <xxx>,
->>                                 <xxx>;
->> }
->>
->> Under these conditions, executing of_clk_set_defaults() triggers the
->> error: 'of_clk_hw_onecell_get: invalid index 1'.
-> Please write a KUnit test.
+With a comment added, feel free to add my
+
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
+
+Regards,
+Haylen Chu
+
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index cdde37a0523537c2f436e481ae8d6ec5a581b87e..24a561499a7c11b6a661c026f0bd2fac28fe7b04 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+> @@ -349,7 +349,10 @@ CCU_GATE_DEFINE(aib_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_AIB_CLK_RST, BIT(1),
+>  
+>  CCU_GATE_DEFINE(onewire_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_ONEWIRE_CLK_RST, BIT(1), 0);
+>  
+> -static const struct clk_parent_data sspa_parents[] = {
+> +CCU_GATE_DEFINE(sspa0_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA0_CLK_RST, BIT(3), 0);
+> +CCU_GATE_DEFINE(sspa1_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA1_CLK_RST, BIT(3), 0);
+> +
+> +static const struct clk_parent_data sspa0_parents[] = {
+>  	CCU_PARENT_HW(pll1_d384_6p4),
+>  	CCU_PARENT_HW(pll1_d192_12p8),
+>  	CCU_PARENT_HW(pll1_d96_25p6),
+> @@ -357,10 +360,22 @@ static const struct clk_parent_data sspa_parents[] = {
+>  	CCU_PARENT_HW(pll1_d768_3p2),
+>  	CCU_PARENT_HW(pll1_d1536_1p6),
+>  	CCU_PARENT_HW(pll1_d3072_0p8),
+> -	CCU_PARENT_HW(i2s_bclk),
+> +	CCU_PARENT_HW(sspa0_i2s_bclk),
+>  };
+> -CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
+> -CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
+> +CCU_MUX_GATE_DEFINE(sspa0_clk, sspa0_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
+> +
+> +static const struct clk_parent_data sspa1_parents[] = {
+> +	CCU_PARENT_HW(pll1_d384_6p4),
+> +	CCU_PARENT_HW(pll1_d192_12p8),
+> +	CCU_PARENT_HW(pll1_d96_25p6),
+> +	CCU_PARENT_HW(pll1_d48_51p2),
+> +	CCU_PARENT_HW(pll1_d768_3p2),
+> +	CCU_PARENT_HW(pll1_d1536_1p6),
+> +	CCU_PARENT_HW(pll1_d3072_0p8),
+> +	CCU_PARENT_HW(sspa1_i2s_bclk),
+> +};
+> +CCU_MUX_GATE_DEFINE(sspa1_clk, sspa1_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
+> +
+>  CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1), 0);
+>  CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1), 0);
+>  CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(1), 0);
+> @@ -965,6 +980,8 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
+>  	[CLK_SSPA1_BUS]		= &sspa1_bus_clk.common.hw,
+>  	[CLK_TSEN_BUS]		= &tsen_bus_clk.common.hw,
+>  	[CLK_IPC_AP2AUD_BUS]	= &ipc_ap2aud_bus_clk.common.hw,
+> +	[CLK_SSPA0_I2S_BCLK]	= &sspa0_i2s_bclk.common.hw,
+> +	[CLK_SSPA1_I2S_BCLK]	= &sspa1_i2s_bclk.common.hw,
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_apbc_data = {
+> 
+> -- 
+> 2.50.0
+> 
