@@ -1,541 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FF256D;
-	Sat,  2 Aug 2025 11:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9BD233733
+	for <linux-clk@vger.kernel.org>; Sat,  2 Aug 2025 12:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754135092; cv=none; b=e0oBNEG2/8pOd2iAnqP2CJ46ybjY5n04wFSlwvGf4/tANTRyiixUHmT06DwhkvlbQe/JRW1WPwuF90LMNgV46zegArBSCs6X5hE/Ha8Bpbg0bQFvWrb1VXjvZKcvNMJuGnNzCWYASZh3FRNTLZZJ06Ej+tMNGp4AAqrwUB0YfHI=
+	t=1754139005; cv=none; b=kQms9T+iQfUdwA5xewDlMZQANtuUSSI2p5HRCBgh101N/OHSXhIu4xCkSRmFmsNCWq1M4tpQ/zmK70Bjtrr3pYOuFowngt8ThQ9sHFLfglHafa/9KeSsDF9axORr8v6ZescNGbLx33aQjXGMWKQ5t3/mT+gmLolr+WLM5krGe6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754135092; c=relaxed/simple;
-	bh=XOKcrEu4OfAVcHRgTZHChdZFSVDpLasDM85Bx+xaXq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KRHnF8rEpuLNlQN9NqqmvFUy5p223GI2A8oOAqtqIIYyquFemkQ05b0LNpDp7Ahuat3V6zrll1ZRtwkfa2IITXQGhcwi5N6zJmpi2foucWvRj9fnBKG7b9JcxQnkcLP96StApE4zZvf7UfNfaNbrAVcli1XuaDNMxLYlijltGEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyGR9ZQe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754139005; c=relaxed/simple;
+	bh=DDMxBlOpeXigU7SdNlj4+9RZ77YTA2Gt3b2HP27L7dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRgRhZQNE+TGxHg7ZvtKC8yLpVG3G1tK+tmYmhW3yAOWpxvfdTtf6hoqt5qP+Cwk8ALUQjBcTUzoh0H1RZckGX1fN6fLQh8t0DSYqtywpt5QW+c3fL8xBnWVM4cI2oYRyYXLgqjIvW9bNgAsyXljNb5KL8GuRtLUbQNfcvKdXKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AEWjyQz2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyGR9ZQe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1ADC4CEEF;
-	Sat,  2 Aug 2025 11:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754135092;
-	bh=XOKcrEu4OfAVcHRgTZHChdZFSVDpLasDM85Bx+xaXq8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uyGR9ZQe3yLOLSKHRgNO96lev+Emzn7uzqzCcwPYdZ1SWJKn4nbEDdm1URcgUXcOF
-	 XS5suTogxL6RLMOOpufkgahIJdBfapNel1pLv1UWJTngwGRdZjGvTFXOF24Av2JkLC
-	 833RZRQzRRg3vSp4P+toaRvceHSJIoaDOnrEsvC/goEielZdyavc1fifbOpLv11IJV
-	 Mv49KMNc6FhIjOElSBwr6ucENGJXm4onqOG5pFvEx+y1aPXttqLYKCdMdlqengJs9v
-	 1ZZpfi4LuDMYaDMYp6RgfLJfkMpD0QLIILE6i659I0dM65bf7aqSoZ+tzPqRbfVd65
-	 /fpayPW14piGg==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 02 Aug 2025 13:44:44 +0200
-Subject: [PATCH] clk: qcom: Remove double-space after assignment operator
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AEWjyQz2"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5725gCV3004293
+	for <linux-clk@vger.kernel.org>; Sat, 2 Aug 2025 12:50:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=shOOynL8Ccw5asfZKPoZ1X7+
+	Lw+OuwsF+Sk8PffaCnU=; b=AEWjyQz2hvb5rWPynNineWgSEZK/fr1jF4IE+SL4
+	z0gqtSCLUozdo4OnnS0C7mIqXPNpDCA8cfnv4otHy90lH/iLlYICv2KHev50N1lC
+	gF8chnEef6WBTLezUB4Gwc8GAtLJHK32q+dNTRGRMOt/wWJxREh+GDG7zeh/NrPS
+	KhHCfML0n+e7oc+AhPxpDk/d+2NJtnie+P7OoSqriQXvrI4u5QezcOGlkqW46Ymw
+	vja6NQCtHdF1byJ1aGvgbkNCgRUtTWIyKPaexBvVujf+9UEgXs+CAwSX0Fd7cFFb
+	MJHyV/DIqnd/s2wXGv7x+n0o6emUrHAiSyEGM47W9NR8Aw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489aw70s4g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 02 Aug 2025 12:50:03 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4af0100c03fso39228041cf.2
+        for <linux-clk@vger.kernel.org>; Sat, 02 Aug 2025 05:50:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754139002; x=1754743802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=shOOynL8Ccw5asfZKPoZ1X7+Lw+OuwsF+Sk8PffaCnU=;
+        b=m/G4pQ1cwdqyzADRMNAlDckhguQuNmpCl12lQFhuEopS7XUzw+hadnMkzEm3Q15k11
+         XoeQyjg2nlgqBW5l0iwzaoy4TwB6QzhtUP/tcofDvDfY6xnBndTM6AaZas2e/x47i5j9
+         46Ojiouz5lnHEDYzdwYel7Yf2BNyaBuCxD4zI2kXWzH+06eQ8FXk4vZ5/F1n7vnA3LPF
+         BpJ8e16429ymJA31ihB8Wge1OT+qEWGQzDgAxuo9qapp8zoVliTKA7WYOpaa9OZjAtxI
+         yuaSG/AeWxeL2B3H6EIP0OtvAulQ3NLSLpDSTF+3Ek/FEYMnDmjUU7rz2LdZ9W0pAmNf
+         EXXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8CEjqF9jXvGd7j1aq7A397ICbauuoOEo28ek/sMls+cpWD2rT+BP2T4H4mUo5ROyaF0qHDqAbM6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqcNqjNS1YyU29D/0qJIA9g+Je8U7Vwni2Kz9a4F0aRKbwhB19
+	seQEsXtNzSpMjVfCn1bwDUWv/ak1cVpJfO73R4EGowxijywMp6SL6VBoNmNbOD0rslQkTP3rf2w
+	yoRKcMAisr7uCBhiPJ3R29WpZ1C6lgOJiwGMnUbANCM8Ut9xWQ73GKpiTyfxZRdSQ9sYW7I0=
+X-Gm-Gg: ASbGncv6Y+EPui91zUfZTyzIJdKhSxab/KtCzR7wtriGSmXVru//wP2HPj4dZOzwaH+
+	9g1zzqBtB86CDoxAncVvyCDqdDAOCfmkReupRfG7mZsvdvzA1m3WGfFD0vpG8QRY1PTNgSnczZB
+	0J3a7O7OsCfemwN2Gs3wTFCTHoikyPircHUsQiMrHopBB61RAX9i2uTBrD8GjGbekL66mVzHMdv
+	DPnLxdrJ2YlswvxL2wSYPileYKbDzgQj9NEdIU+qEs10w5AzXrx1CzAetiji5duJKLjCP/ufOzE
+	enHTpEvWKdvkNDFy1NAI0E7drE/xs/+hDjKxluS65XB1x0BJG2Geb+v/r9baTcJu8Lv4JeEpRNW
+	pUE7HEJl6NbERU3IFZizNxU4PKLUyspRe2aW+AX0UJnR7aDWN/XQz
+X-Received: by 2002:a05:622a:1ba3:b0:4ab:3b66:55dd with SMTP id d75a77b69052e-4af1092f38cmr51204861cf.17.1754139001849;
+        Sat, 02 Aug 2025 05:50:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkTUAPmdqW3GA3NPJwI8LqzCsK5Fu9z5hE49dbLUGEiD4djuJtZr6faz2CbncWbE7dsaBxlg==
+X-Received: by 2002:a05:622a:1ba3:b0:4ab:3b66:55dd with SMTP id d75a77b69052e-4af1092f38cmr51204371cf.17.1754139001330;
+        Sat, 02 Aug 2025 05:50:01 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88daec97sm975399e87.189.2025.08.02.05.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 05:50:00 -0700 (PDT)
+Date: Sat, 2 Aug 2025 15:49:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: qcom: Remove double-space after assignment operator
+Message-ID: <dnph3mrkujlutt3bqvahvby2fmmmyfzxk7ighvx5kqqfbbctuo@akernmcqntdb>
+References: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIACv6jWgC/x3M0QpAMBSA4VfRubaaoeRVJM3ZGSey2ZCSd7dcf
- hf//0CkwBShzR4IdHFktyUUeQY4620iwSYZlFS1bKQSh/OMAtdl2HEw7hxXil4jCa2qQtq6NJZ
- GSLkPZPn+113/vh9HUswIagAAAA==
-X-Change-ID: 20250802-topic-clk_qc_doublespace-a2410f53dfeb
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754135087; l=18960;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=XQd1kCgHNqQSO54u2eQxwlF0bpqItFXkJIUhsAHL5BE=;
- b=8NOZoluNETmqL4iKdm4Zf0QUGXGtRdgHgCGtdrhT7tPQ7QTiXxYP3o1cPSnQJIOOClRxQ8Yew
- +aMmGcuzrn6AyKW5yngwi2Tpcg2MO4l8qJnILsCkAbynQL1wwJFQ4AC
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
+X-Proofpoint-GUID: 6LejzX_HWHCu6Ay9xuxigQE9RmQTUD7q
+X-Proofpoint-ORIG-GUID: 6LejzX_HWHCu6Ay9xuxigQE9RmQTUD7q
+X-Authority-Analysis: v=2.4 cv=MrZS63ae c=1 sm=1 tr=0 ts=688e097b cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=wXdJWVuGbmjov8BqX20A:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDEwNSBTYWx0ZWRfXy7CAoV1hWtzU
+ pqYfkzkO4uoz33GUdXJfjdR43kro092lULX3WkCx6qmexKUj1l9+Kb0af04RXYJRHjfrtWbPpRk
+ gkyNl8SSbuFi6Xyiw0W5CCDjQrC5zsrMQF8rcaTSeHJH+eEfpjpaR/MPAKi6luZLBgAi4vQXlc5
+ ISIseZP4DAG2DNIMByt58ePSDlm6PQr6eKhzJhxHHm9pZktuStAb9YOQYPRococFW9qwOP0+Kil
+ ITicOqpp0s2A0Ajix92QzJRpgBWMHB8Y2oAdZYZYwXE5QVGH/H9wO2ul6z6UCog8VYPdZUTRKd+
+ vUfxV3gASmn9SvTKh1VdQmN4o33NNrnALbhxyF1elHgtK1PfzKBcijDtXOa+XMF73tpGTsfdvcm
+ If06l3DKspEczXtq7ZfN8nkhGSIWU+EScyccx1BB/g1qm+LhBM9O0wsiVqBJPcz/RQYgMSmx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 mlxlogscore=928 priorityscore=1501
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508020105
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Sat, Aug 02, 2025 at 01:44:44PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> This is an oddly common hiccup across clk/qcom.. Remove it in hopes to
+> reduce spread through copy-paste.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/a7-pll.c              |  2 +-
+>  drivers/clk/qcom/clk-alpha-pll.c       | 26 +++++++++++++-------------
+>  drivers/clk/qcom/clk-rcg.c             |  2 +-
+>  drivers/clk/qcom/clk-rcg2.c            |  8 ++++----
+>  drivers/clk/qcom/clk-rpmh.c            |  6 +++---
+>  drivers/clk/qcom/clk-smd-rpm.c         |  8 ++++----
+>  drivers/clk/qcom/gcc-qcs404.c          |  2 +-
+>  drivers/clk/qcom/gpucc-sa8775p.c       |  6 +++---
+>  drivers/clk/qcom/gpucc-sc7180.c        |  2 +-
+>  drivers/clk/qcom/gpucc-sm6350.c        |  4 ++--
+>  drivers/clk/qcom/gpucc-sm8150.c        |  2 +-
+>  drivers/clk/qcom/gpucc-sm8250.c        |  2 +-
+>  drivers/clk/qcom/lpassaudiocc-sc7280.c |  4 ++--
+>  drivers/clk/qcom/lpasscc-sc8280xp.c    |  4 ++--
+>  drivers/clk/qcom/lpasscc-sm6115.c      |  2 +-
+>  drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 +-
+>  drivers/clk/qcom/mmcc-sdm660.c         |  2 +-
+>  drivers/clk/qcom/nsscc-ipq9574.c       |  2 +-
+>  18 files changed, 43 insertions(+), 43 deletions(-)
+> 
 
-This is an oddly common hiccup across clk/qcom.. Remove it in hopes to
-reduce spread through copy-paste.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/clk/qcom/a7-pll.c              |  2 +-
- drivers/clk/qcom/clk-alpha-pll.c       | 26 +++++++++++++-------------
- drivers/clk/qcom/clk-rcg.c             |  2 +-
- drivers/clk/qcom/clk-rcg2.c            |  8 ++++----
- drivers/clk/qcom/clk-rpmh.c            |  6 +++---
- drivers/clk/qcom/clk-smd-rpm.c         |  8 ++++----
- drivers/clk/qcom/gcc-qcs404.c          |  2 +-
- drivers/clk/qcom/gpucc-sa8775p.c       |  6 +++---
- drivers/clk/qcom/gpucc-sc7180.c        |  2 +-
- drivers/clk/qcom/gpucc-sm6350.c        |  4 ++--
- drivers/clk/qcom/gpucc-sm8150.c        |  2 +-
- drivers/clk/qcom/gpucc-sm8250.c        |  2 +-
- drivers/clk/qcom/lpassaudiocc-sc7280.c |  4 ++--
- drivers/clk/qcom/lpasscc-sc8280xp.c    |  4 ++--
- drivers/clk/qcom/lpasscc-sm6115.c      |  2 +-
- drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 +-
- drivers/clk/qcom/mmcc-sdm660.c         |  2 +-
- drivers/clk/qcom/nsscc-ipq9574.c       |  2 +-
- 18 files changed, 43 insertions(+), 43 deletions(-)
+> 
 
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-index c4a53e5db229f24c8d6c75d398d595bb148af64b..bf7159f5b456a9d7e8ceef0fd89cd9e64b613a6c 100644
---- a/drivers/clk/qcom/a7-pll.c
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -27,7 +27,7 @@ static struct clk_alpha_pll a7pll = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "a7pll",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index fec6eb376e2707deda11609fe5d0d45082048a0b..81a1ce42285f7eb19dba92cb7415c7e694a829dd 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -66,7 +66,7 @@
- #define GET_PLL_TYPE(pll)	(((pll)->regs - clk_alpha_pll_regs[0]) / PLL_OFF_MAX_REGS)
- 
- const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
--	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-+	[CLK_ALPHA_PLL_TYPE_DEFAULT] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-@@ -77,7 +77,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL_U] = 0x20,
- 		[PLL_OFF_STATUS] = 0x24,
- 	},
--	[CLK_ALPHA_PLL_TYPE_HUAYRA] =  {
-+	[CLK_ALPHA_PLL_TYPE_HUAYRA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x10,
-@@ -87,7 +87,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL_U] = 0x20,
- 		[PLL_OFF_STATUS] = 0x24,
- 	},
--	[CLK_ALPHA_PLL_TYPE_HUAYRA_APSS] =  {
-+	[CLK_ALPHA_PLL_TYPE_HUAYRA_APSS] = {
- 		[PLL_OFF_L_VAL] = 0x08,
- 		[PLL_OFF_ALPHA_VAL] = 0x10,
- 		[PLL_OFF_USER_CTL] = 0x18,
-@@ -97,7 +97,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x30,
- 		[PLL_OFF_TEST_CTL_U] = 0x34,
- 	},
--	[CLK_ALPHA_PLL_TYPE_HUAYRA_2290] =  {
-+	[CLK_ALPHA_PLL_TYPE_HUAYRA_2290] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-@@ -110,7 +110,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_OPMODE] = 0x28,
- 		[PLL_OFF_STATUS] = 0x38,
- 	},
--	[CLK_ALPHA_PLL_TYPE_BRAMMO] =  {
-+	[CLK_ALPHA_PLL_TYPE_BRAMMO] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-@@ -119,7 +119,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x1c,
- 		[PLL_OFF_STATUS] = 0x24,
- 	},
--	[CLK_ALPHA_PLL_TYPE_FABIA] =  {
-+	[CLK_ALPHA_PLL_TYPE_FABIA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_USER_CTL] = 0x0c,
- 		[PLL_OFF_USER_CTL_U] = 0x10,
-@@ -147,7 +147,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_OPMODE] = 0x38,
- 		[PLL_OFF_ALPHA_VAL] = 0x40,
- 	},
--	[CLK_ALPHA_PLL_TYPE_AGERA] =  {
-+	[CLK_ALPHA_PLL_TYPE_AGERA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-@@ -157,7 +157,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL_U] = 0x1c,
- 		[PLL_OFF_STATUS] = 0x2c,
- 	},
--	[CLK_ALPHA_PLL_TYPE_ZONDA] =  {
-+	[CLK_ALPHA_PLL_TYPE_ZONDA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-@@ -243,7 +243,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x28,
- 		[PLL_OFF_TEST_CTL_U] = 0x2c,
- 	},
--	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] =  {
-+	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-@@ -254,7 +254,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_CONFIG_CTL] = 0x20,
- 		[PLL_OFF_STATUS] = 0x24,
- 	},
--	[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO] =  {
-+	[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-@@ -275,7 +275,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_TEST_CTL] = 0x30,
- 		[PLL_OFF_TEST_CTL_U] = 0x34,
- 	},
--	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] =  {
-+	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_USER_CTL] = 0x08,
- 		[PLL_OFF_USER_CTL_U] = 0x0c,
-@@ -286,7 +286,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_ALPHA_VAL] = 0x24,
- 		[PLL_OFF_ALPHA_VAL_U] = 0x28,
- 	},
--	[CLK_ALPHA_PLL_TYPE_ZONDA_OLE] =  {
-+	[CLK_ALPHA_PLL_TYPE_ZONDA_OLE] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-@@ -301,7 +301,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_OPMODE] = 0x30,
- 		[PLL_OFF_STATUS] = 0x3c,
- 	},
--	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
-+	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_ALPHA_VAL] = 0x08,
- 		[PLL_OFF_TEST_CTL] = 0x0c,
-diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
-index 987141c91fe0bc323d84529afbf6c96d247a55a3..31f0650b48bac3ad0f56b719c9979cac5b2f1e4b 100644
---- a/drivers/clk/qcom/clk-rcg.c
-+++ b/drivers/clk/qcom/clk-rcg.c
-@@ -423,7 +423,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
- 			rate = tmp;
- 		}
- 	} else {
--		rate =  clk_hw_get_rate(p);
-+		rate = clk_hw_get_rate(p);
- 	}
- 	req->best_parent_hw = p;
- 	req->best_parent_rate = rate;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 8001fd9faf9d1e642fae056b6e8cc9b24db9604b..e18cb8807d73534c6437c08aeb524353a2eab06f 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -201,7 +201,7 @@ __clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate, u32 cfg)
- 		regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
- 		m &= mask;
- 		regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &n);
--		n =  ~n;
-+		n = ~n;
- 		n &= mask;
- 		n += m;
- 		mode = cfg & CFG_MODE_MASK;
-@@ -274,7 +274,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
- 			rate = tmp;
- 		}
- 	} else {
--		rate =  clk_hw_get_rate(p);
-+		rate = clk_hw_get_rate(p);
- 	}
- 	req->best_parent_hw = p;
- 	req->best_parent_rate = rate;
-@@ -311,7 +311,7 @@ __clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
- 		if (!p)
- 			continue;
- 
--		parent_rate =  clk_hw_get_rate(p);
-+		parent_rate = clk_hw_get_rate(p);
- 		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
- 
- 		if (rate == req_rate) {
-@@ -382,7 +382,7 @@ static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_mult
- 			rate = tmp;
- 		}
- 	} else {
--		rate =  clk_hw_get_rate(p);
-+		rate = clk_hw_get_rate(p);
- 	}
- 
- 	req->best_parent_hw = p;
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 1496fb3de4be8db0cae13e6358745660f286267a..5103a464d86d3cb4c0ce3ff68956178dd58b1864 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -87,7 +87,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
- 		.hw.init = &(struct clk_init_data){			\
- 			.ops = &clk_rpmh_ops,				\
- 			.name = #_name,					\
--			.parent_data =  &(const struct clk_parent_data){ \
-+			.parent_data = &(const struct clk_parent_data){ \
- 					.fw_name = "xo",		\
- 					.name = "xo_board",		\
- 			},						\
-@@ -105,7 +105,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
- 		.hw.init = &(struct clk_init_data){			\
- 			.ops = &clk_rpmh_ops,				\
- 			.name = #_name "_ao",				\
--			.parent_data =  &(const struct clk_parent_data){ \
-+			.parent_data = &(const struct clk_parent_data){ \
- 					.fw_name = "xo",		\
- 					.name = "xo_board",		\
- 			},						\
-@@ -182,7 +182,7 @@ static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
- 	}
- 
- 	c->last_sent_aggr_state = c->aggr_state;
--	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
-+	c->peer->last_sent_aggr_state = c->last_sent_aggr_state;
- 
- 	return 0;
- }
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 3bf6df3884a542e7be572f2319990c2bfa7bc642..103db984a40b950bd33fba668a292be46af6326e 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -30,7 +30,7 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_ops,			      \
- 			.name = #_name,					      \
--			.parent_data =  &(const struct clk_parent_data){      \
-+			.parent_data = &(const struct clk_parent_data){       \
- 					.fw_name = "xo",		      \
- 					.name = "xo_board",		      \
- 			},						      \
-@@ -47,7 +47,7 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_ops,			      \
- 			.name = #_active,				      \
--			.parent_data =  &(const struct clk_parent_data){      \
-+			.parent_data = &(const struct clk_parent_data){       \
- 					.fw_name = "xo",		      \
- 					.name = "xo_board",		      \
- 			},						      \
-@@ -74,7 +74,7 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_branch_ops,			      \
- 			.name = #_name,					      \
--			.parent_data =  &(const struct clk_parent_data){      \
-+			.parent_data = &(const struct clk_parent_data){       \
- 					.fw_name = "xo",		      \
- 					.name = "xo_board",		      \
- 			},						      \
-@@ -92,7 +92,7 @@
- 		.hw.init = &(struct clk_init_data){			      \
- 			.ops = &clk_smd_rpm_branch_ops,			      \
- 			.name = #_active,				      \
--			.parent_data =  &(const struct clk_parent_data){      \
-+			.parent_data = &(const struct clk_parent_data){       \
- 					.fw_name = "xo",		      \
- 					.name = "xo_board",		      \
- 			},						      \
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 5ca003c9bfba89bee2e626b3c35936452cc02765..efc75a3814ab690bc19251f49fcc598dc4033b17 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2754,7 +2754,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
- 	[GCC_DCC_CLK] = &gcc_dcc_clk.clkr,
- 	[GCC_DCC_XO_CLK] = &gcc_dcc_xo_clk.clkr,
- 	[GCC_WCSS_Q6_AHB_CLK] = &gcc_wdsp_q6ss_ahbs_clk.clkr,
--	[GCC_WCSS_Q6_AXIM_CLK] =  &gcc_wdsp_q6ss_axim_clk.clkr,
-+	[GCC_WCSS_Q6_AXIM_CLK] = &gcc_wdsp_q6ss_axim_clk.clkr,
- 
- };
- 
-diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
-index 78cad622cb5a08bbde890dc6a33c2a24538901d9..25dcc5912f99530f72de98c4e5a9beb948628f6a 100644
---- a/drivers/clk/qcom/gpucc-sa8775p.c
-+++ b/drivers/clk/qcom/gpucc-sa8775p.c
-@@ -365,7 +365,7 @@ static struct clk_branch gpu_cc_cx_gmu_clk = {
- 				&gpu_cc_gmu_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
--			.flags =  CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_aon_ops,
- 		},
- 	},
-@@ -414,7 +414,7 @@ static struct clk_branch gpu_cc_cxo_clk = {
- 				&gpu_cc_xo_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
--			.flags =  CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -499,7 +499,7 @@ static struct clk_branch gpu_cc_hub_cx_int_clk = {
- 				&gpu_cc_hub_cx_int_div_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
--			.flags =  CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_aon_ops,
- 		},
- 	},
-diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
-index a7bf44544b956db3dd476869177ba9858401e7ac..97287488e05a03d4342d2fa0699c57d4534c92ea 100644
---- a/drivers/clk/qcom/gpucc-sc7180.c
-+++ b/drivers/clk/qcom/gpucc-sc7180.c
-@@ -42,7 +42,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
-index ee89c42413f885f21f1470b1f7887d052e52a75e..efbee1518dd333b08a7a71aa65d50181d9cbfaf2 100644
---- a/drivers/clk/qcom/gpucc-sm6350.c
-+++ b/drivers/clk/qcom/gpucc-sm6350.c
-@@ -67,7 +67,7 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll0",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.index = DT_BI_TCXO,
- 				.fw_name = "bi_tcxo",
- 			},
-@@ -111,7 +111,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.index = DT_BI_TCXO,
- 				.fw_name = "bi_tcxo",
- 			},
-diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
-index 7ce91208c0bc0fb0009e0974d7d45378d8df8427..5701031c17f39ce214bd5755190c4e671318da80 100644
---- a/drivers/clk/qcom/gpucc-sm8150.c
-+++ b/drivers/clk/qcom/gpucc-sm8150.c
-@@ -53,7 +53,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-diff --git a/drivers/clk/qcom/gpucc-sm8250.c b/drivers/clk/qcom/gpucc-sm8250.c
-index ca0a1681d352c41bf2dc4ef7746ad7e5ec1626e2..eee3208640cdc6c53114dad262d68454ce44685c 100644
---- a/drivers/clk/qcom/gpucc-sm8250.c
-+++ b/drivers/clk/qcom/gpucc-sm8250.c
-@@ -56,7 +56,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
--			.parent_data =  &(const struct clk_parent_data){
-+			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 3ff123bffa114de447c96a250862a533e82d6e64..7e217296928930c482184c712dcf5db6c0d45ea8 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -709,8 +709,8 @@ static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
- };
- 
- static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
--	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
--	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-+	[LPASS_AUDIO_SWR_RX_CGCR] = { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_TX_CGCR] = { 0xa8, 1 },
- 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
- };
- 
-diff --git a/drivers/clk/qcom/lpasscc-sc8280xp.c b/drivers/clk/qcom/lpasscc-sc8280xp.c
-index 9fd9498d7dc8ac96c97ebe7b97d1c269090212a8..ff839788c40e4da9df934ba86740fa3b4851a2da 100644
---- a/drivers/clk/qcom/lpasscc-sc8280xp.c
-+++ b/drivers/clk/qcom/lpasscc-sc8280xp.c
-@@ -18,9 +18,9 @@
- #include "reset.h"
- 
- static const struct qcom_reset_map lpass_audiocc_sc8280xp_resets[] = {
--	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_RX_CGCR] = { 0xa0, 1 },
- 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
--	[LPASS_AUDIO_SWR_WSA2_CGCR] =  { 0xd8, 1 },
-+	[LPASS_AUDIO_SWR_WSA2_CGCR] = { 0xd8, 1 },
- };
- 
- static const struct regmap_config lpass_audiocc_sc8280xp_regmap_config = {
-diff --git a/drivers/clk/qcom/lpasscc-sm6115.c b/drivers/clk/qcom/lpasscc-sm6115.c
-index 8ffdab71b94836f1a5e0aa5792baf4b41216a281..ac6d219233b4c3a39d882ac4826bf88307533b81 100644
---- a/drivers/clk/qcom/lpasscc-sm6115.c
-+++ b/drivers/clk/qcom/lpasscc-sm6115.c
-@@ -17,7 +17,7 @@
- #include "reset.h"
- 
- static const struct qcom_reset_map lpass_audiocc_sm6115_resets[] = {
--	[LPASS_AUDIO_SWR_RX_CGCR] =  { .reg = 0x98, .bit = 1, .udelay = 500 },
-+	[LPASS_AUDIO_SWR_RX_CGCR] = { .reg = 0x98, .bit = 1, .udelay = 500 },
- };
- 
- static struct regmap_config lpass_audiocc_sm6115_regmap_config = {
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 5937b071533b68b7f5b4c9d5b8c23e3292ed212c..5174bd3dcdc571505b6a0c8f67d14cf9e5e22135 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -42,7 +42,7 @@ static const struct alpha_pll_config lpass_lpaaudio_dig_pll_config = {
- };
- 
- static const u8 clk_alpha_pll_regs_offset[][PLL_OFF_MAX_REGS] = {
--	[CLK_ALPHA_PLL_TYPE_FABIA] =  {
-+	[CLK_ALPHA_PLL_TYPE_FABIA] = {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_CAL_L_VAL] = 0x8,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
-index e69fc65b13da2b519af413137353693473ee258a..b723c536dfb6ce4ad0b9fc70345303ac2f691819 100644
---- a/drivers/clk/qcom/mmcc-sdm660.c
-+++ b/drivers/clk/qcom/mmcc-sdm660.c
-@@ -74,7 +74,7 @@ static struct clk_alpha_pll mmpll0 = {
- 	},
- };
- 
--static struct clk_alpha_pll mmpll6 =  {
-+static struct clk_alpha_pll mmpll6 = {
- 	.offset = 0xf0,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
- 	.clkr = {
-diff --git a/drivers/clk/qcom/nsscc-ipq9574.c b/drivers/clk/qcom/nsscc-ipq9574.c
-index 64c6b05ff066b4f148c0911318cb316fd96de907..c8b11b04a7c225c5a80a07ba21ba575d3e45015f 100644
---- a/drivers/clk/qcom/nsscc-ipq9574.c
-+++ b/drivers/clk/qcom/nsscc-ipq9574.c
-@@ -3016,7 +3016,7 @@ static const struct qcom_reset_map nss_cc_ipq9574_resets[] = {
- 	[NSSPORT4_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(5, 4) },
- 	[NSSPORT5_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(3, 2) },
- 	[NSSPORT6_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(1, 0) },
--	[EDMA_HW_RESET] =  { .reg = 0x28a08, .bitmask = GENMASK(16, 15) },
-+	[EDMA_HW_RESET] = { .reg = 0x28a08, .bitmask = GENMASK(16, 15) },
- };
- 
- static const struct regmap_config nss_cc_ipq9574_regmap_config = {
-
----
-base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
-change-id: 20250802-topic-clk_qc_doublespace-a2410f53dfeb
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
+With best wishes
+Dmitry
