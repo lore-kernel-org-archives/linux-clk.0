@@ -1,47 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D7A1A2C0B;
-	Sun,  3 Aug 2025 16:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB51F4C99
+	for <linux-clk@vger.kernel.org>; Sun,  3 Aug 2025 20:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754239780; cv=none; b=C1PJjeR4MLpS3enY6QU1Q6V6W/UYKR7u7KqY/9JKM2TMCrI5+m3HENhyZXZaU031yh/gF9+JW+JCx+4S5RjkACqE9j6QuL4QVM9LmeRGrofskwcBOAtJV4/fIupB8/B4HC6krBuZB0rZYREnxDb/N3P49B2XTpN9eOY2NOhJK9s=
+	t=1754253607; cv=none; b=VlBdlGMjmK0BC17S1/I6lN7Dmq3F3OodXJIjIV3yHUt6srNOeNk/CxaIgvhpKw2vtjq4LbTTz/+vp4k9NU+chheH52nPFXMFALq4r8BNg8d7iE/O4uC9Q2tLwSvrgP/5Xez9DMB/RCrqTkwtgZZh0d5GrYjIzymJSNK0T3iYcC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754239780; c=relaxed/simple;
-	bh=ukGOvHSLxM6DOts4OpuXE4dv5VI5mr9YJi8g6MkF0F8=;
+	s=arc-20240116; t=1754253607; c=relaxed/simple;
+	bh=tzLH/YUExqTegN4sI56xlZ8maB8KzJUjpOhBuVYG1JA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NG9Erp3We8SmEwR0zUeLBOQnF4WPIkBzeb+PMJOUjt20GAQtJJ1ZlBc1i4O8V3I80Jaqaa/NTeNmxWYL1bwthF5LcL/io5hNE2qngiy2tyLrFCpApHVou00jhUO/7xNEfhrfQdQd7J3hrulAmxvA3CvcchhGVi8KNzfW6uLMjmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+k8/WMG; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBetfrRi/LaVG0M3WOFRhnH8MZ9NZ4X4U1/hIXkuiEJpEdYlYrT7xtQ5YAIhhRFjt27zWnBGpuvhq5t5HkPdoUoRR7tT8TprtFKFLdjB9U8aPNxot3JC+7Sc5TDxNTu0ns3eV5nP0mAUxNOB8mpguAvX+onboSrQyoaD7zEVdN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KKRVs//S; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+k8/WMG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696C9C4CEEB;
-	Sun,  3 Aug 2025 16:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754239778;
-	bh=ukGOvHSLxM6DOts4OpuXE4dv5VI5mr9YJi8g6MkF0F8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+k8/WMG4E+UOPnYVLvs4p9NCXzqsIT4GD3eHe3wEFBCjFJPfeUkxeFgUwSUEm+mO
-	 KDlqeqVOfMSzaY4cTvPQ79TG8Ya5yHUFAwiZUp+SIRijb+oJEAokS9ca70iX3CXfeb
-	 qyXuPP67Mo5zAOB4AgdtByEw9E2AfVVzEHzGryH0JAcW8K/xdPwAnJvGEq3M1hI8HW
-	 cgyaP5eMt2RToJRQ6CSmvdviwj2A/Cs1KFqhxC/lkCRzui7dyNS68Z8OdhLrr0Sar8
-	 TFr/xrsCD+3rbZpYuLATYAUuGa365gkJCy/F+wQ+hX9AmSOuuw4A5aaEywp/mVVqET
-	 zvHnOH7tsztwg==
-Date: Sun, 3 Aug 2025 11:49:37 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	linux-riscv@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KKRVs//S"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=5vm0
+	SxJu7Lne/9TVu7ssZXea18OLLC2K5dYsygJBt9M=; b=KKRVs//S+sQ92DcZ4KMq
+	u8nsdEZ9MfJ8tF9+2mIEnMKa16OXkFhageH6Q3dusOQHzpClzDFxFhQ6DqxKIqyK
+	Uf3NBHVB0NKgalwxkup9TG+R7v+ahB5EFSvjt8WEnHBdbEx3SmTO6JltOg3rUBQV
+	kx30VnagDoDnl085prpZDQkQPhnx3BeetweZr9+itITcepP1ErvhOlEutMUVlCMu
+	oG5ZgggbyNfeSyrs5j7AHZYstpvrNGAfHGIR7jUIcMYCfycsPBiiImpXM45eWsM9
+	un0A3l69l+xmhVFCkT05XjGxeQNA+OXeTC4vAwJOBCeZl7ifxDL/zHPzY62FsRnj
+	qA==
+Received: (qmail 1644961 invoked from network); 3 Aug 2025 22:40:01 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Aug 2025 22:40:01 +0200
+X-UD-Smtp-Session: l3s3148p1@0xPE/ns7QIoujntd
+Date: Sun, 3 Aug 2025 22:40:01 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Sven Peter <sven@kernel.org>
+Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org, Haylen Chu <heylenay@4d2.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH RESEND v3 1/2] dt-bindings: clock: spacemit:
- CLK_SSPA_I2S_BCLK for SSPA
-Message-ID: <175423977710.518524.17027664815968438984.robh@kernel.org>
-References: <20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com>
- <20250731-k1-clk-i2s-v3-1-2f655ddb0c6f@linux.spacemit.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	iommu@lists.linux.dev, linux-input@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 05/11] i2c: apple: Drop default ARCH_APPLE in Kconfig
+Message-ID: <aI_JIZhHGg9GcD-D@shikoro>
+References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
+ <20250612-apple-kconfig-defconfig-v1-5-0e6f9cb512c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,18 +65,16 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250731-k1-clk-i2s-v3-1-2f655ddb0c6f@linux.spacemit.com>
+In-Reply-To: <20250612-apple-kconfig-defconfig-v1-5-0e6f9cb512c1@kernel.org>
 
-
-On Thu, 31 Jul 2025 22:14:06 +0800, Troy Mitchell wrote:
-> In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
-> register it in the driver, this patch introduces the macro definition.
+On Thu, Jun 12, 2025 at 09:11:29PM +0000, Sven Peter wrote:
+> When the first driver for Apple Silicon was upstreamed we accidentally
+> included `default ARCH_APPLE` in its Kconfig which then spread to almost
+> every subsequent driver. As soon as ARCH_APPLE is set to y this will
+> pull in many drivers as built-ins which is not what we want.
+> Thus, drop `default ARCH_APPLE` from Kconfig.
 > 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> Signed-off-by: Sven Peter <sven@kernel.org>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Applied to for-next (for 6.17 mergewindow), thanks!
 
