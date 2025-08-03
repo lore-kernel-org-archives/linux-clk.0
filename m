@@ -1,83 +1,57 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9BD233733
-	for <linux-clk@vger.kernel.org>; Sat,  2 Aug 2025 12:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33D62F29;
+	Sun,  3 Aug 2025 01:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754139005; cv=none; b=kQms9T+iQfUdwA5xewDlMZQANtuUSSI2p5HRCBgh101N/OHSXhIu4xCkSRmFmsNCWq1M4tpQ/zmK70Bjtrr3pYOuFowngt8ThQ9sHFLfglHafa/9KeSsDF9axORr8v6ZescNGbLx33aQjXGMWKQ5t3/mT+gmLolr+WLM5krGe6A=
+	t=1754182918; cv=none; b=YbdSikrX2un2xhskD9+05kDHvEVDEU+OcP0mAZUYQc7VLxTSv+UmL6/l7vruPs9y/wUo1ibJbRb7Jxy3a/mrupjI2UUeNy1zoV80ltDmOtynxbS1c50bLgm4fa8DB0Kc9zZGKsHzB/EKXzUQiYsn9CxokrTG7xnFYhwvjFcK8Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754139005; c=relaxed/simple;
-	bh=DDMxBlOpeXigU7SdNlj4+9RZ77YTA2Gt3b2HP27L7dI=;
+	s=arc-20240116; t=1754182918; c=relaxed/simple;
+	bh=wbhG94bTOLli9sAnU1nb+7xW3n983Xe2P9tkf4FiPtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRgRhZQNE+TGxHg7ZvtKC8yLpVG3G1tK+tmYmhW3yAOWpxvfdTtf6hoqt5qP+Cwk8ALUQjBcTUzoh0H1RZckGX1fN6fLQh8t0DSYqtywpt5QW+c3fL8xBnWVM4cI2oYRyYXLgqjIvW9bNgAsyXljNb5KL8GuRtLUbQNfcvKdXKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AEWjyQz2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM4a27zt23/nlHxcbMyqxT87qrrsU/GS6yfTcgfa3lspGF1REdMJk1aJAH6iLB+l+DL6vQAHNnM4n/bhayuFSn8d2WBYBb0bq297efekR5EueYWrhmQjS/+gS1SqkqF+93j5GAkEKx5rGQvlUxAY6PyOqIsQzzDrcTr5R0cqAyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=me7oGRjP; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AEWjyQz2"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5725gCV3004293
-	for <linux-clk@vger.kernel.org>; Sat, 2 Aug 2025 12:50:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=shOOynL8Ccw5asfZKPoZ1X7+
-	Lw+OuwsF+Sk8PffaCnU=; b=AEWjyQz2hvb5rWPynNineWgSEZK/fr1jF4IE+SL4
-	z0gqtSCLUozdo4OnnS0C7mIqXPNpDCA8cfnv4otHy90lH/iLlYICv2KHev50N1lC
-	gF8chnEef6WBTLezUB4Gwc8GAtLJHK32q+dNTRGRMOt/wWJxREh+GDG7zeh/NrPS
-	KhHCfML0n+e7oc+AhPxpDk/d+2NJtnie+P7OoSqriQXvrI4u5QezcOGlkqW46Ymw
-	vja6NQCtHdF1byJ1aGvgbkNCgRUtTWIyKPaexBvVujf+9UEgXs+CAwSX0Fd7cFFb
-	MJHyV/DIqnd/s2wXGv7x+n0o6emUrHAiSyEGM47W9NR8Aw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489aw70s4g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 02 Aug 2025 12:50:03 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4af0100c03fso39228041cf.2
-        for <linux-clk@vger.kernel.org>; Sat, 02 Aug 2025 05:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754139002; x=1754743802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=shOOynL8Ccw5asfZKPoZ1X7+Lw+OuwsF+Sk8PffaCnU=;
-        b=m/G4pQ1cwdqyzADRMNAlDckhguQuNmpCl12lQFhuEopS7XUzw+hadnMkzEm3Q15k11
-         XoeQyjg2nlgqBW5l0iwzaoy4TwB6QzhtUP/tcofDvDfY6xnBndTM6AaZas2e/x47i5j9
-         46Ojiouz5lnHEDYzdwYel7Yf2BNyaBuCxD4zI2kXWzH+06eQ8FXk4vZ5/F1n7vnA3LPF
-         BpJ8e16429ymJA31ihB8Wge1OT+qEWGQzDgAxuo9qapp8zoVliTKA7WYOpaa9OZjAtxI
-         yuaSG/AeWxeL2B3H6EIP0OtvAulQ3NLSLpDSTF+3Ek/FEYMnDmjUU7rz2LdZ9W0pAmNf
-         EXXg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8CEjqF9jXvGd7j1aq7A397ICbauuoOEo28ek/sMls+cpWD2rT+BP2T4H4mUo5ROyaF0qHDqAbM6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqcNqjNS1YyU29D/0qJIA9g+Je8U7Vwni2Kz9a4F0aRKbwhB19
-	seQEsXtNzSpMjVfCn1bwDUWv/ak1cVpJfO73R4EGowxijywMp6SL6VBoNmNbOD0rslQkTP3rf2w
-	yoRKcMAisr7uCBhiPJ3R29WpZ1C6lgOJiwGMnUbANCM8Ut9xWQ73GKpiTyfxZRdSQ9sYW7I0=
-X-Gm-Gg: ASbGncv6Y+EPui91zUfZTyzIJdKhSxab/KtCzR7wtriGSmXVru//wP2HPj4dZOzwaH+
-	9g1zzqBtB86CDoxAncVvyCDqdDAOCfmkReupRfG7mZsvdvzA1m3WGfFD0vpG8QRY1PTNgSnczZB
-	0J3a7O7OsCfemwN2Gs3wTFCTHoikyPircHUsQiMrHopBB61RAX9i2uTBrD8GjGbekL66mVzHMdv
-	DPnLxdrJ2YlswvxL2wSYPileYKbDzgQj9NEdIU+qEs10w5AzXrx1CzAetiji5duJKLjCP/ufOzE
-	enHTpEvWKdvkNDFy1NAI0E7drE/xs/+hDjKxluS65XB1x0BJG2Geb+v/r9baTcJu8Lv4JeEpRNW
-	pUE7HEJl6NbERU3IFZizNxU4PKLUyspRe2aW+AX0UJnR7aDWN/XQz
-X-Received: by 2002:a05:622a:1ba3:b0:4ab:3b66:55dd with SMTP id d75a77b69052e-4af1092f38cmr51204861cf.17.1754139001849;
-        Sat, 02 Aug 2025 05:50:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkTUAPmdqW3GA3NPJwI8LqzCsK5Fu9z5hE49dbLUGEiD4djuJtZr6faz2CbncWbE7dsaBxlg==
-X-Received: by 2002:a05:622a:1ba3:b0:4ab:3b66:55dd with SMTP id d75a77b69052e-4af1092f38cmr51204371cf.17.1754139001330;
-        Sat, 02 Aug 2025 05:50:01 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88daec97sm975399e87.189.2025.08.02.05.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 05:50:00 -0700 (PDT)
-Date: Sat, 2 Aug 2025 15:49:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] clk: qcom: Remove double-space after assignment operator
-Message-ID: <dnph3mrkujlutt3bqvahvby2fmmmyfzxk7ighvx5kqqfbbctuo@akernmcqntdb>
-References: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="me7oGRjP"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4BC4E43390;
+	Sun,  3 Aug 2025 01:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754182907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xbH8hOkjMz5i59oT3KbdPFr9gL61/+cWeH+sH8L1hf4=;
+	b=me7oGRjPlj9OSgUS7mP2TCViY2896IWqAGfAc6dIhlrLfGj2780LVpIoFSAQpq/rQkj7p+
+	Wp0e8NbM8aNFESGRby0PxDH+xwt/RumYvtZwipFDkrhwKOt/Z3FN1K4pyAABjZF9XkqxLn
+	d7xxNlwjI4c7xs4AJEC/q+LTyTS3CONLCpWmGl/tp0EWaQ/qeM/oFmiSvP2cBsN4gSz+Zn
+	nw5f1R4bafZ3F8U3mDNgmiv4wvgf+tInw4n9AdjnT+4cnnvKcyGWS+vbS2qLBbKvEvebQF
+	WhJ74TcfbIYLJd789PNtto8/q3ZTqoVgSjeEhdv66zgyXBa6uD32JyJ7rH2bYg==
+Date: Sun, 3 Aug 2025 03:01:45 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Akinobu Mita <akinobu.mita@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Mia Lin <mimi05633@gmail.com>,
+	Michael McCormick <michael.mccormick@enatel.net>,
+	Heiko Schocher <hs@denx.de>, Parthiban Nallathambi <pn@denx.de>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH 00/15] rtc: convert from clk round_rate() to
+ determine_rate() and fix a few bugs
+Message-ID: <175418267001.2341527.14209599648775421774.b4-ty@bootlin.com>
+References: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,63 +60,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
-X-Proofpoint-GUID: 6LejzX_HWHCu6Ay9xuxigQE9RmQTUD7q
-X-Proofpoint-ORIG-GUID: 6LejzX_HWHCu6Ay9xuxigQE9RmQTUD7q
-X-Authority-Analysis: v=2.4 cv=MrZS63ae c=1 sm=1 tr=0 ts=688e097b cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=wXdJWVuGbmjov8BqX20A:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDEwNSBTYWx0ZWRfXy7CAoV1hWtzU
- pqYfkzkO4uoz33GUdXJfjdR43kro092lULX3WkCx6qmexKUj1l9+Kb0af04RXYJRHjfrtWbPpRk
- gkyNl8SSbuFi6Xyiw0W5CCDjQrC5zsrMQF8rcaTSeHJH+eEfpjpaR/MPAKi6luZLBgAi4vQXlc5
- ISIseZP4DAG2DNIMByt58ePSDlm6PQr6eKhzJhxHHm9pZktuStAb9YOQYPRococFW9qwOP0+Kil
- ITicOqpp0s2A0Ajix92QzJRpgBWMHB8Y2oAdZYZYwXE5QVGH/H9wO2ul6z6UCog8VYPdZUTRKd+
- vUfxV3gASmn9SvTKh1VdQmN4o33NNrnALbhxyF1elHgtK1PfzKBcijDtXOa+XMF73tpGTsfdvcm
- If06l3DKspEczXtq7ZfN8nkhGSIWU+EScyccx1BB/g1qm+LhBM9O0wsiVqBJPcz/RQYgMSmx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 phishscore=0 mlxlogscore=928 priorityscore=1501
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508020105
+In-Reply-To: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdektdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrkhhinhhosghurdhmihhtrgesghhmrghilhdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmp
+ dhrtghpthhtohephhgvihhkohesshhnthgvtghhrdguvgdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghvihhfihhshhhmrghnjedtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmrghimhhonhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehtrghlihdrphgvrhhrhidusehgmhgrihhlrdgtohhmpdhrtghpthhtohepvhgvnhhtuhhrvgesghhoohhglhgvrdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Sat, Aug 02, 2025 at 01:44:44PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Thu, 10 Jul 2025 11:20:20 -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> drivers in the rtc subsystem using the Coccinelle semantic patch
+> posted below. I did a few minor cosmetic cleanups of the code in a
+> few cases.
 > 
-> This is an oddly common hiccup across clk/qcom.. Remove it in hopes to
-> reduce spread through copy-paste.
+> I also noticed that in some of the drivers that if round_rate() is
+> called with a requested rate higher than the highest supported rate,
+> then the clock is disabled. According to the clk API, round_rate()
+> should instead return the highest supported rate. This series also
+> updates the functions to return the maximum supported rate.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/a7-pll.c              |  2 +-
->  drivers/clk/qcom/clk-alpha-pll.c       | 26 +++++++++++++-------------
->  drivers/clk/qcom/clk-rcg.c             |  2 +-
->  drivers/clk/qcom/clk-rcg2.c            |  8 ++++----
->  drivers/clk/qcom/clk-rpmh.c            |  6 +++---
->  drivers/clk/qcom/clk-smd-rpm.c         |  8 ++++----
->  drivers/clk/qcom/gcc-qcs404.c          |  2 +-
->  drivers/clk/qcom/gpucc-sa8775p.c       |  6 +++---
->  drivers/clk/qcom/gpucc-sc7180.c        |  2 +-
->  drivers/clk/qcom/gpucc-sm6350.c        |  4 ++--
->  drivers/clk/qcom/gpucc-sm8150.c        |  2 +-
->  drivers/clk/qcom/gpucc-sm8250.c        |  2 +-
->  drivers/clk/qcom/lpassaudiocc-sc7280.c |  4 ++--
->  drivers/clk/qcom/lpasscc-sc8280xp.c    |  4 ++--
->  drivers/clk/qcom/lpasscc-sm6115.c      |  2 +-
->  drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 +-
->  drivers/clk/qcom/mmcc-sdm660.c         |  2 +-
->  drivers/clk/qcom/nsscc-ipq9574.c       |  2 +-
->  18 files changed, 43 insertions(+), 43 deletions(-)
-> 
+> [...]
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Applied, thanks!
 
-> 
+[01/15] rtc: ds1307: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/cf6eb547a24a
+[02/15] rtc: hym8563: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/d0a518eb0a69
+[03/15] rtc: nct3018y: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/437c59e4b222
+[04/15] rtc: pcf85063: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/186ae1869880
+[05/15] rtc: pcf8563: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/906726a5efee
+[06/15] rtc: rv3028: fix incorrect maximum clock rate handling
+        https://git.kernel.org/abelloni/c/b574acb3cf75
+[07/15] rtc: ds1307: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/31b5fea399d5
+[08/15] rtc: hym8563: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/394a4b920a72
+[09/15] rtc: m41t80: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/e05d81b75efd
+[10/15] rtc: max31335: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/9e0dfc7962b3
+[11/15] rtc: nct3018y: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/1251d043f764
+[12/15] rtc: pcf85063: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/ad853657d791
+[13/15] rtc: pcf8563: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/e6f1af719ea1
+[14/15] rtc: rv3028: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/c4253b091441
+[15/15] rtc: rv3032: convert from round_rate() to determine_rate()
+        https://git.kernel.org/abelloni/c/35d6aae85b36
+
+Best regards,
 
 -- 
-With best wishes
-Dmitry
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
