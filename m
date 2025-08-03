@@ -1,43 +1,33 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952CB1A2C11;
-	Sun,  3 Aug 2025 02:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754189905; cv=pass; b=s97D928w8Xaj2t93z5QiF5OWhlS3nxOq5nFPCNiGL0zqt1MIITp3+yeIbQ1Ez59U/yjn4wJ/tQ8r8CF3vkg3ZkwyMgA6nIi8ygqeHiBHy9hjEsm7HB6XS4gqVG6EY1THQkgA/Gwjk29SzgPtyPIR+zF9p+XwmwcXqgSd8XRJldI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754189905; c=relaxed/simple;
-	bh=xZKHgRz3uSqshLrdkkYFl9Qnm6/OL0+pgAadhN6KXW0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEBE6ADD;
+	Sun,  3 Aug 2025 08:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754208954; cv=none; b=VC10vIs3Swn9gJvmw+kE1F6SCRQYruQLqOOXmPG8Ur/DkKkpU6UVpTeJDeftXMkbC6VdK7U4r0WjePsL6aaQNhJeJNZIZCjmHbLPYuvxpkH5QzV11yA/V5B7GTgYNGj7m8G8Kc3R80dj8C2INUGmMH1YunmGbwAAFVZQLZI5jfw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754208954; c=relaxed/simple;
+	bh=a+B5Pvv2XMw84hBjmHdDDrvrkZHaY0NB9xp/6axrcn8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=usgHa5vzUHFv+EMIzEidyltmawWUTiwsYn1lsQfAJdsarsGvr2/qo2xuLY5QJoIQRXJ6e0GTZ+O5LdId0KvjZM055WbsGzaw+672xIwoRfI1F8TuTaCLKWQMadJa9Uie4vDjU8dEbOrL8ZWewvM2T4FQm0cVmBl4PNYAyYPEKw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=f3oaib0s; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	 In-Reply-To:Content-Type; b=Wesbg00NGtu2aChGfJe6PEuhxpMEYTy1PnVzCwi8ITGIt3tMzEeztwx2d0EVcfAT7P0l7LwHYcQESPLbHxc+Ia7sBgpOTkuh529EpOi1nU7Cq4/FSfIy1ZKF+80TlQOzAIs6HJbGsaCpIjVqnwSM/W7ni7wSR1kaPBiazSd8Qwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dw6baU3u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="f3oaib0s"
-ARC-Seal: i=1; a=rsa-sha256; t=1754189887; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LkVdGpsewSq7EUoNkwSZFDq48TcI9YZ9dASr5aKolIkup9zpqRImu/LWAePVcXK1JheZfAtDHSRNNlMEQZGzxAqR4y3j+yaRPTlvhf0Zl0au3tKquKtQ+Sf1Rv5v5noeCI3CCJMe7e+GKIrqHPOs3aWBVNtLnqWrI03PtnDPyzY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754189887; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=; 
-	b=kToYBY8sLrcxmNM+NeoNfHuK5XmkaeElmo60w+600pWaLxADpC3vG3BLOvPTM7zD89+Z13C03f1eEJNBXHo6iNS9SzWtOrY9e+Yq1D9itN/wkqZ3kSOlKAlC43eUu/OEedOGCdvVN//t8eZF+osIAx1Se62ZuYdrZoEkGtYh9l4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754189887;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=;
-	b=f3oaib0sr5t8khGJjviKaV+9fuUvEnxpxVlM7HTtYPOHT0yoi2mD2j7aZdwd7OFA
-	3/sTyG5wQ8t9o1QU4epqE+HJzZzjHTx613da8X9x6NRHY8rAkXUh30QLNAxohmvuBJG
-	0C2JvkINc/i6YyIF3bli6UZEpd3wrJ7iJYwiuORQ=
-Received: by mx.zohomail.com with SMTPS id 1754189881012449.99415784449957;
-	Sat, 2 Aug 2025 19:58:01 -0700 (PDT)
-Message-ID: <757cf40c-a48f-4980-b638-35a29a91ecb3@zohomail.com>
-Date: Sun, 3 Aug 2025 10:57:55 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dw6baU3u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FBD9C4CEEB;
+	Sun,  3 Aug 2025 08:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754208953;
+	bh=a+B5Pvv2XMw84hBjmHdDDrvrkZHaY0NB9xp/6axrcn8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dw6baU3uEmA1DcRzroDg3t6hBVCoZ00yM8CBowicsYkWJ0xjZLkkGxMw1o2T8PKPV
+	 m9AAmKhTkIcJT/uOfnZWHtHRRXTV22wX+M7aIa0gYUEojNCiziDs5QYbCtA3ry6ue3
+	 yG1MJOnzcJwoNagZZ8VD7Aisnw4c8WGBmu4i7mvvOKm+3Dm0/+aQXbXBrLPU6S9K3K
+	 Oo0c0LXbJRNYHOfK9EABaJ/NSo1RZPbBs3LHz4A6QxiL3A0VPXItW8bQJuSmV8JgOc
+	 6eBotvvZ736ttai5riAYgCat8OzLlTZq5FfxIOgYEnXOTZUnbYmp71ThouS4RkuNpN
+	 Lx71Xo3AIc+ng==
+Message-ID: <46590c06-a9e5-4469-873a-ec312f70cc9a@kernel.org>
+Date: Sun, 3 Aug 2025 10:15:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,68 +35,89 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] riscv: dts: canaan: Add clock definition for K230
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
- <20250730-b4-k230-clk-v7-3-c57d3bb593d3@zohomail.com>
- <20250730-laughing-dancing-emu-5540d6@kuoka>
-From: Xukai Wang <kingxukai@zohomail.com>
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
+ clock controllers
+To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ p.zabel@pengutronix.de, richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com, wenst@chromium.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ kernel@collabora.com, =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?=
+ <nfraprado@collabora.com>
+References: <20250730105653.64910-1-laura.nao@collabora.com>
+ <20250730105653.64910-10-laura.nao@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20250730-laughing-dancing-emu-5540d6@kuoka>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250730105653.64910-10-laura.nao@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227eed8815bf276c5c4b75ffa5600006591fb6f11eb539136822dedc845eb4f784c06394fc0181388:zu080112278cb6ca04e82c2e93804d320600000b8ddb55721fc1512e19cc5620ff577603d30229fcb367ab14:rf0801122c266281f77e22f90ba2a807280000940c7b3693dc9be470390b6e4b350d435e079e35d9802a6494db8e13fbcf:ZohoMail
-X-ZohoMailClient: External
+
+On 30/07/2025 12:56, Laura Nao wrote:
+> +
+> +  mediatek,hardware-voter:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+> +      MCU manages clock and power domain control across the AP and other
+> +      remote processors. By aggregating their votes, it ensures clocks are
+> +      safely enabled/disabled and power domains are active before register
+> +      access.
 
 
-On 2025/7/30 15:06, Krzysztof Kozlowski wrote:
-> On Wed, Jul 30, 2025 at 02:43:53AM +0800, Xukai Wang wrote:
->> This patch describes the clock controller integrated in K230 SoC
->> and replace dummy clocks with the real ones for UARTs.
->>
->> For k230-canmv and k230-evb, they provide an additional external
->> pulse input through a pin to serve as clock source.
->>
->> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>  arch/riscv/boot/dts/canaan/k230-canmv.dts | 11 +++++++++++
->>  arch/riscv/boot/dts/canaan/k230-evb.dts   | 11 +++++++++++
->>  arch/riscv/boot/dts/canaan/k230.dtsi      | 26 ++++++++++++++++++--------
->>  3 files changed, 40 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> index 9565915cead6ad2381ea8249b616e79575feb896..6579d39e2c1690d9e9c2b9c884db528c37473204 100644
->> --- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> +++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> @@ -17,8 +17,19 @@ ddr: memory@0 {
->>  		device_type = "memory";
->>  		reg = <0x0 0x0 0x0 0x20000000>;
->>  	};
->> +
->> +	timerx_pulse_in: timer_pulse_in {
-> Follow DTS coding style.
->
-> Please use name for all fixed clocks which matches current format
-> recommendation: 'clock-<freq>' (see also the pattern in the binding for
-> any other options).
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+No improvements, I already commented on this.
 
-Got it, I'll update it to clock-50m as recommended.
+I also said:
 
-Thanks for pointing it out.
+"I already commented on this, so don't send v3 with the same."
 
->
-> Best regards,
-> Krzysztof
->
+NAK
+
+
+Best regards,
+Krzysztof
