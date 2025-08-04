@@ -1,126 +1,119 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F4D24468A;
-	Mon,  4 Aug 2025 07:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A7917D346;
+	Mon,  4 Aug 2025 08:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294384; cv=none; b=ka2u7o67lonbYKO9ixN9SMpYOLwrMzJesN48xc4LiXw+1Ro945Kiw8TwNyIqY3K5HbLbacYee52S9Pr6I8BQAYlKYr+3vt9os432dz6o1GTychwsPEjPR7r/5oIjCsprq1dvhVxL1LG8kpDN9lsqL8k3PPu1eVTqIghkwr9XWbg=
+	t=1754296594; cv=none; b=s9NXQqHacf+oxBpMCrhN544kYLlS4OUtTPf4aMtX4wxHhEwG+zala8YZiLvz/jtguJed6iwUDVlfKrqIhYmt6pyvnkUJHvicTCVQsuor3GasunC48rLiVzkK2lLa52UKWq0eTwLeySM55Y7u3iIsJSung05feNKtm/KudNdIYbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294384; c=relaxed/simple;
-	bh=IBXZ7nSQOKi0kqZYEQGLEV58gS4Z53xGfxUWv08M4f8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uI4LqyXSP+JalThJxpSsCzkSbkH2goUtV04zaOsN6wm0x7xpWVnfUbasoLT/608NTkfPLJ0XsDCOEx8Y/3NmYuWVLS0ecOCyIgapVM0bdXVL0XBtsJ8bl9PhqzFYHq82oQs410t1Wy6nGLqID04AxedWiXeYu2Bh5RlNnnhePUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ltw4DBWg; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1754296594; c=relaxed/simple;
+	bh=q5NIFYfPGBPjvoRsywWnULzZC4/llLvrlCsM4PPmad8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KUgj0kdI15kLWuhBXOII0nuO0sK0tBI/NHLCyIshqIO0KIX/lFJFnUlPPrEN8Kyrj705GsCaD/BFKsGNvXx8uCjhiR/KKgxQkpykfVI9WTeH0dbHByPudTcLikd8DrvVj3UfXljeovimIyWLuCTZFeZ/7Ko9pcEerpw47g8+4bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GEWJMHXX; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ltw4DBWg"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GEWJMHXX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754294381;
-	bh=IBXZ7nSQOKi0kqZYEQGLEV58gS4Z53xGfxUWv08M4f8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ltw4DBWglDgA5GAc6JaQwwgXfzFmD0Ngc/7DTsm/ftT4OLSHJg+9t+fB2+eEAOp/G
-	 xp+aEw/HrAL2sTNdcXPUiePzn99rqHR3k6pLb2VZYwPH7YNbCBg2AJMrCnfcLz8RPk
-	 KF4qq4/BN3c9VnNtXCNNd5xGD6LQ8depQpJQdDE/xHgMDu7wM5Rn9koqEGs9/tsFDw
-	 9j+pn9SP2d/9O95CZa8fsAtz/TF4LHQJbwtVm7MmUT4fIpLSEMqBcSz3OcsUZklYhF
-	 pHMoeA7SJb1Clk5+sVZVN/WpyQeEhL1RkcYvUCFTkyd4ekJRVcTxYAUaRnp7N38Rj/
-	 V+GJHXPhHnUjA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=mail; t=1754296589;
+	bh=q5NIFYfPGBPjvoRsywWnULzZC4/llLvrlCsM4PPmad8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GEWJMHXX5RsnmTOJN70LagzbEdSWbWeG4Gm61w/fGPuV9/F2aWcIOTOKQ7vzDwUyN
+	 OkenWlIlBSnw9Tv6NaFVkxYARemn6szzVyFYaTjo5LWRmmRwvElFOoEDQLZ4e7uR6v
+	 XXeCXGjhOr0eUfI56Cv8Ca62P7gl4EJ1YuCCOW41LGr3PbvaZI1DjnARAP02ZgAgxR
+	 1fm88wpkzejL8TBWl0wcpl1Yxz9Pgf0lAC2MAJ2ACjY+qOFmbnP9+y2CA9p+F7co5W
+	 cR1Ah377dwBdY/0CVgJzYZ4zDm2DJlbVoSdh/NJDYcbIrtNhKBQNPPe3LPLwiV4FU1
+	 aErpIcMLRVAww==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:169:2004:39f0:9afe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1135E17E04DA;
-	Mon,  4 Aug 2025 09:59:40 +0200 (CEST)
-Message-ID: <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
-Date: Mon, 4 Aug 2025 09:59:39 +0200
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 38AC217E0B8C;
+	Mon,  4 Aug 2025 10:36:28 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: krzk@kernel.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	nfraprado@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org,
+	wenst@chromium.org
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196 clock controllers
+Date: Mon,  4 Aug 2025 10:35:40 +0200
+Message-Id: <20250804083540.19099-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
+References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] dt-bindings: clock: mediatek: Add power-domains
- property
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ikjoon Jang <ikjn@chromium.org>,
- Enric Balletbo i Serra <eballetbo@kernel.org>,
- Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
- Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
- <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 01/08/25 13:18, Julien Massot ha scritto:
-> The mt8183-mfgcfg node uses a power domain in its device tree node.
-> To prevent schema validation warnings, add the optional `power-domains`
-> property to the binding schema for mediatek syscon clocks.
-> 
-> Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+Hi,
 
-Is MT8183 the only one?
+On 8/3/25 10:17, Krzysztof Kozlowski wrote:
+> On 01/08/2025 15:57, Rob Herring wrote:
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#reset-cells':
+>>> +    const: 1
+>>> +    description:
+>>> +      Reset lines for PEXTP0/1 and UFS blocks.
+>>> +
+>>> +  mediatek,hardware-voter:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+>>> +      MCU manages clock and power domain control across the AP and other
+>>> +      remote processors. By aggregating their votes, it ensures clocks are
+>>> +      safely enabled/disabled and power domains are active before register
+>>> +      access.
+>>
+>> I thought this was going away based on v2 discussion?
+>
+> Yes, I asked to drop it and do not include it in v3. There was also
+> discussion clarifying review.
+>
+> I am really surprised that review meant nothing and code is still the same.
+>
 
-if:
-   properties:
-     compatible:
-       contains:
-         - const: mediatek,mt8183-mfgcfg
-         ^^^^^^^(if it's not just mt8183, this should be an enum)
+This has been re-submitted as-is, following the outcome of the discussion 
+here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
 
-then:
-   properties:
-     power-domains: true
-else:
-   properties:
-     power-domains: false
+We haven't found a viable alternative to the current approach so far, and
+the thread outlines why other options don’t apply. I'm happy to continue 
+the discussion there if anyone has further suggestions or ideas on how 
+to address this.
 
-(check if the above is correct, don't blindly trust what I wrote! :P)
+Thanks,
 
-after which:
+Laura
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-(if it's not only mt8183, keep the R-b on this commit regardless)
-
-Cheers,
-Angelo
-
-> ---
->   Documentation/devicetree/bindings/clock/mediatek,syscon.yaml | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> index a86a64893c675ac134af609b3a49242565db6ad8..1011bc46cfcb97b90b86019e95a7e4bc8a819342 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,syscon.yaml
-> @@ -76,6 +76,9 @@ properties:
->             - const: mediatek,mt2701-vdecsys
->             - const: syscon
->   
-> +  power-domains:
-> +    maxItems: 1
-> +
->     reg:
->       maxItems: 1
->   
-> 
-
+> Best regards,
+> Krzysztof
 
