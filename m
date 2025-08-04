@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE681E25ED;
-	Mon,  4 Aug 2025 09:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9AC24337D;
+	Mon,  4 Aug 2025 09:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754299023; cv=none; b=u5Ax7P2GO08lUk14VnPAovxcgQycgNIUBtUuMBZDo5n8r+rB/HaVh33elnFQeNMcaeSogznBW1MVTF9ZzOzpZzKHosuqDDMbjLuDB5GAkiAr00oMFvqsGqlqkVwPLzlz8UfJ73zedNH9bIBMP4hU+sl1ZpJpLlgAUwmA3/crFPA=
+	t=1754299682; cv=none; b=hJV7IpZIDf2rdeTJ9+3Dgw7p8alAL60OTR3Sg+heaQ+QCtoDz+Gb7+kxzag8UheIkquqeMcnd9MAQP3OTVRz8z9bYcb1qNa1Vuir0j+iQDNeSSXKeLImKSoNjXm/QpiR0OyeNkMSF/mjW9fIdkKFKHM/ZUYyxiIADhVd94Lwcjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754299023; c=relaxed/simple;
-	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
+	s=arc-20240116; t=1754299682; c=relaxed/simple;
+	bh=LH7EqOf3AoVilTrkyp113dp+uJr0ORzeMHBnEtkb4Fw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=REtUDmZpQkqmmoD5nYkRS1vVxeDSvfLPph/2R9joi52EFQ31NoL23DDq/ZAyTDVEq5rBUZTzCBcsBnQhzqmufB7Nb1tUqAlsGHmiSPaGw9eZJaSjtpe/0NDGlfewolVRxiTSsmkqvt04EzmuhT1nXMmzclr8OMmbQFwP12zfONk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osMPqxSo; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=o8e0j/Yws2brEOme4N7KiMdMYSFUoCFwvJiA/SDWu0Qg8eB1tNp3P18o+2TvmjbkXJST++1AB+9D+ZrzRSMb2pM9cDak5rsDSf/QyNbEEESR4r3cH273K++vH9KAOElbgNdgxIDPr18Abtgv4hQ0PnX/kwvUkjjh66BFZAyTZng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SL5z7Hhr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osMPqxSo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B3AC4CEE7;
-	Mon,  4 Aug 2025 09:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754299023;
-	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SL5z7Hhr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754299678;
+	bh=LH7EqOf3AoVilTrkyp113dp+uJr0ORzeMHBnEtkb4Fw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=osMPqxSoJzNl3bn01WpryG1a0u/BHDAg9w4pIEkbtevWpxJxtf2+VjPb7lAl7BLBU
-	 Qs/AIkmK94xLthtXzHJJ4Z+KQAW4ZM8tcEBFTup56paTzwnG3RJmOxZmq5wco+WXv6
-	 YIWLmSAuv0xtVJQSSWBN+gyVyesB4eAGWzug/ehK3qJiTZ8miE3IZ/VgAY52FM2DLw
-	 JN/hiX+XFF2P8uOqQeHNV9IMhqCB7sn8KGd/f/gWJvRCxTbiKoUzzGoY8EEOuGe6Lx
-	 UW4THIK1X1qmKlpBdeVs5zOtCzBnccha6rNfXq6hxBjlVlTOVz5dRUIFqJmWinIQvj
-	 SM+p0QWiJFQKA==
-Message-ID: <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
-Date: Mon, 4 Aug 2025 11:16:56 +0200
+	b=SL5z7HhrZCD+bHt6ys6TBTbVFUWFxEV5hkIFT1afE5vLWkcsGZfrwaSoNKmeP/Z0s
+	 WVxm0wU/qm+3r1lr/SF9I5k9ZCsNBI9vnsICfAPNHjiJbLR19PHgzbe786qzU+y1Fq
+	 yZ3fE6eQbBCOyNbJROfvLyTk6VNzvPuaiNaTX7K2MAYBx83M4qkipSvBwniPwV1zYI
+	 a2PlrbQVA1TryfGxwW6edcgmnsYBwsX6Um2fSk4SQ3YK0PZWkbKigly99uIlu3x/w+
+	 yd0KXLZlT29zX74Xzm3t4dyEWRx8fU7+eU/Uy7GTN17BxJrePPiwVoRA4SqGdgJjcV
+	 8Ho6rf6+rUSaw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 18F9617E0B8C;
+	Mon,  4 Aug 2025 11:27:57 +0200 (CEST)
+Message-ID: <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
+Date: Mon, 4 Aug 2025 11:27:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,120 +44,106 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
  clock controllers
-To: Laura Nao <laura.nao@collabora.com>
-Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, guangjie.song@mediatek.com,
- kernel@collabora.com, krzk+dt@kernel.org,
+To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
+ <laura.nao@collabora.com>, wenst@chromium.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
+ guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
  matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
  nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org, wenst@chromium.org
+ robh@kernel.org, sboyd@kernel.org
 References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
  <20250804083540.19099-1-laura.nao@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250804083540.19099-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 04/08/2025 10:35, Laura Nao wrote:
-> Hi,
-> 
-> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
->> On 01/08/2025 15:57, Rob Herring wrote:
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  '#clock-cells':
->>>> +    const: 1
->>>> +
->>>> +  '#reset-cells':
->>>> +    const: 1
->>>> +    description:
->>>> +      Reset lines for PEXTP0/1 and UFS blocks.
->>>> +
->>>> +  mediatek,hardware-voter:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +    description:
->>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
->>>> +      MCU manages clock and power domain control across the AP and other
->>>> +      remote processors. By aggregating their votes, it ensures clocks are
->>>> +      safely enabled/disabled and power domains are active before register
->>>> +      access.
+Il 04/08/25 11:16, Krzysztof Kozlowski ha scritto:
+> On 04/08/2025 10:35, Laura Nao wrote:
+>> Hi,
+>>
+>> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
+>>> On 01/08/2025 15:57, Rob Herring wrote:
+>>>>> +  reg:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  '#clock-cells':
+>>>>> +    const: 1
+>>>>> +
+>>>>> +  '#reset-cells':
+>>>>> +    const: 1
+>>>>> +    description:
+>>>>> +      Reset lines for PEXTP0/1 and UFS blocks.
+>>>>> +
+>>>>> +  mediatek,hardware-voter:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>> +    description:
+>>>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+>>>>> +      MCU manages clock and power domain control across the AP and other
+>>>>> +      remote processors. By aggregating their votes, it ensures clocks are
+>>>>> +      safely enabled/disabled and power domains are active before register
+>>>>> +      access.
+>>>>
+>>>> I thought this was going away based on v2 discussion?
 >>>
->>> I thought this was going away based on v2 discussion?
+>>> Yes, I asked to drop it and do not include it in v3. There was also
+>>> discussion clarifying review.
+>>>
+>>> I am really surprised that review meant nothing and code is still the same.
+>>>
 >>
->> Yes, I asked to drop it and do not include it in v3. There was also
->> discussion clarifying review.
+>> This has been re-submitted as-is, following the outcome of the discussion
+>> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
 >>
->> I am really surprised that review meant nothing and code is still the same.
+>> We haven't found a viable alternative to the current approach so far, and
+>> the thread outlines why other options don’t apply. I'm happy to continue
+>> the discussion there if anyone has further suggestions or ideas on how
+>> to address this.
 >>
 > 
-> This has been re-submitted as-is, following the outcome of the discussion 
-> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
+> And where is any of that resolution/new facts in the commit msg? You
+> must clearly reflect long discussions like that in the commit msg.
+
+On that, I agree. That's a miss.
+
 > 
-> We haven't found a viable alternative to the current approach so far, and
-> the thread outlines why other options don’t apply. I'm happy to continue 
-> the discussion there if anyone has further suggestions or ideas on how 
-> to address this.
+> There was no objection from Chen to use clocks or power domains as I
+> requested.
+
+Sorry Krzysztof, but now I really think that you don't understand the basics of
+MediaTek SoCs and how they're split in hardware - and I'm sorry again, but to me
+it really looks like that you're not even trying to understand it.
+
+> The objection was about DUPLICATING interfaces or nodes.
+
+I don't see that duplication. The interface to each clock controller for each
+of the hardware subdomains of each controller is scattered all around the (broken
+by hardware and by concept, if you missed that in the discussion) HW Voter MMIO.
+
+There are multiple clock controllers in the hardware.
+Each of those has its own interface to the HWV.
+
+And there are some that require you to write to both its HWV interface and to the
+clock controller specific MMIO at the same time for the same operation. I explained
+that in the big discussion that Laura linked.
+
 > 
+> And what was the resolution:
+> 
+> "Regarding that to be a single clock controller,"
+> 
+> So where is the clock controller? I still see HW voter!
 
-And where is any of that resolution/new facts in the commit msg? You
-must clearly reflect long discussions like that in the commit msg.
+"especially the mux-gate clocks can't really be put in one single clock controller
+because to manage those we have to write to the HWV *and* to the clock controller
+MMIO"
 
-There was no objection from Chen to use clocks or power domains as I
-requested. The objection was about DUPLICATING interfaces or nodes.
+Clarifying that, "the clock controller" -> "each clock controller of each hardware
+subdomain" (not a single clock controller, excuse my bad wording).
 
-And what was the resolution:
-
-"Regarding that to be a single clock controller,"
-
-So where is the clock controller? I still see HW voter!
-
-
-Best regards,
-Krzysztof
+Regards,
+Angelo
