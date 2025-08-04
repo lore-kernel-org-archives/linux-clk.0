@@ -1,152 +1,127 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BE8E571;
-	Mon,  4 Aug 2025 14:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C001D8DE1;
+	Mon,  4 Aug 2025 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318162; cv=none; b=Zjpwfhmdd7jTpHFUz9yIXiNU5quUXFDjtbnVSAmxfmvoTHvf1PlchS60pPFyVmXKou9QKsrkq4sjcV8EbWGqU+Jnjhx7Y2foNOu8HxugSroiFeY+5yPDMMHQfVNNynFdZ0kX+5kWD5VPlxszLmzm8EXPtxQM+NEK3r2U78Vbq7c=
+	t=1754322910; cv=none; b=raZkSnAA5Ykh2LgDDNg37KBNaq7V40AkrJHVW0sFISshqES5jiTFYWJYVLXygEKQMfFK6vQzIesMNk6jS2xzk0wwGQZHmzqTkvlovX5euLDEB3KlnByKIUtdRcrCfSgs24qUbDK8l6eS/IDtTChgsj6+zC6kK0YOQWlT5SDrg5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318162; c=relaxed/simple;
-	bh=sWaXa9Y+pMSXtZBUh/MPyteQ3dMc1Cweu4GCjbTzfro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qpi7D/WTDYnDrZfMR2hZCt1jdbb2N8Oeb51bUP1LdaSyp8nngmwWzrRt7ziXz5IrY8rCiB58c/bBrpnyWaYOUwTfJ5k3+freXKrGbo2wgdRH/6bBB/+qHk8tiwoIRk+HsLiZGp04hyt6Nq/evMurbTf4LCk/uQB/lvNjijsSiDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZuhHqwjq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1754322910; c=relaxed/simple;
+	bh=0RInGftqr9XRMlJ/2LtTpF9XOnE5vTNAAeVp+UUujvo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T2GygxhhVQVo/fOnn6dzk4cJ/+L6WwadBu8kE161I89DpDeWQFxc1oB+sQ/9rQFKliysH5y2jI45uYZ6ZNI/NEcUuGyBfw5fQTMV4/KRNAgoIZyWlfG7ka98F82dDXqdGIiWJl5kpPBDaeV3LAFNpek5X58RlOccZYAWPVqP98U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZPLrbls; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZuhHqwjq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754318158;
-	bh=sWaXa9Y+pMSXtZBUh/MPyteQ3dMc1Cweu4GCjbTzfro=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZuhHqwjq+73WlntaHabAZHUCB+U/ijomZ3hYfYsyyoFIhD8clx+ycmXKN2gwQpMae
-	 CbcYXeBNKXVXbufjrpWLQCcdwwh1/GZTy4TX7lbQ27ycPgZZyWAxvhIferpVfh8mcj
-	 bkOyCOTbih0d8JB5iwVMRimtvLnB2vmikTx4GDlOOJtWjw6zFpESeZnpcc9kpO6pVX
-	 cy8jd/MoEXJTu1qXnUlRQIr1ZFDl54Goa61QK1E6Y/hmttwde0tiCxfheKpKb+02fP
-	 Rzu7OMcrWdYFbr6iAjyTv99vJoRnnxQlpMkjZp7CY0ORe4BxSUD/9wPOzpO+lE0zs6
-	 fV4ZRwQqMGXtw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F3FFB17E0DD0;
-	Mon,  4 Aug 2025 16:35:57 +0200 (CEST)
-Message-ID: <4330785c-6564-4c66-b298-75655106e99f@collabora.com>
-Date: Mon, 4 Aug 2025 16:35:57 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZPLrbls"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so941028966b.1;
+        Mon, 04 Aug 2025 08:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754322905; x=1754927705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QbOV3QZD0GW4oDlvtbd47RUfYokiKQ6TvK1Q7vUQ2Os=;
+        b=JZPLrblshRQJN+WN5TyJCy3o8LD41fwgVyDYf22mqPacu+W9pAODh9BcqOycS8FLal
+         hep82aG9D/m3tBqchSUKyf8TiCZjV4PGY0ES20ORCn4w0M97qr04g00V/xe2zX/ytcY/
+         v5tddRfxITA7Uq5GRyfNZGL26aGlD7MDysoqJk55eqD+eP5p40ZdiXM4k4A8Y5QsHN5O
+         Obftg6icBM34Sbv+hR02rLv0WvmOFWObUtHt7nPpJ39sn9eNslnricBXNI0wegRVOzBx
+         7ZwZLHpwcRnNpSgG0ySnpBX5mKLdRh8/aNk1CzjNQMoJ51pmo12/2XOD0AoOJS+0uVi6
+         5DYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754322905; x=1754927705;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QbOV3QZD0GW4oDlvtbd47RUfYokiKQ6TvK1Q7vUQ2Os=;
+        b=BLx3czMaqbxlPi+N5M5rOaq+49qN3tD216imfq8tZFQ1BUYEUgFrjXUO5g0QEB3LFV
+         pOZNC65Uz9CalV35pzOZNjurkVm54sqUoSH/U/kOs6WJVWVI6MhCRAIvvYp1oUtrBF+i
+         7wZgi9IhseBYUhSVkaOk75IShp8gnVyoVst01Gl7ah5cpNz64zd1UZm1RhTOD+3y3HSS
+         rAmdCrQ2RhPD84vtMuHYhPTgirECHgsBqSIsU6enbYgSk3221O9/vxC7b+OcR0hds3EP
+         Oab5NAdvPVDeKv1l6a/GhdTW99Q/2pX22N8Adlo1uSWkF6SoW/RwH+kBLwZiRN9W9kCk
+         a6hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA/WrYBgui29qAqlK9R+FzMsPOVcox9S10f68H5iju8KVafje1Wdmzq0QCQummQEkihaytopzAsOzCrSlf@vger.kernel.org, AJvYcCUQ2kCMqHp3puFPjrI8dY3kyUHf/ZkzGATLKyn50QG7d2k3r5kqozwoknPYqE+szFj7aE/Pp6mxZkY+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq1zNd79aJd5bmz+7HgUBtdMeH4pOkZpkpJSDcfdsdvSonGdhG
+	W1KmYiqu2CNNZuyLWWhO7QsqSWu89czIIsI4AsdMVW0NKiWCxZQQXhoB
+X-Gm-Gg: ASbGncvWhY3GHXZQTK0GQa1uCx/7Hq8Hz+I7gM1Jh0JwLND5JDiCB9b5CMOgFGbAj4i
+	ZGcL+TIsTEy9142wnusxUvvpJ0Y29RtDR64yF2YqzatwZMkVRPGWvuEnhbUC79PriKwzvrktSHQ
+	3fj4BB4gLCBW8W2R6pbmkuA3uPNFFCqsURYesBlav20q99oCW2QivAT+4mRGfe1H9FsAbf5pOTZ
+	oXUhJu2NTbJLRDHahusEm1EBWwcF4TfohQ9+wqXxMiSQTPWIm4wSEuoSWLBLlFrYnx+mHZ5YS7i
+	c2DR78+w9JzNbMVUAZwmfSDSEnR7TLKHipNdjX8D9kL4VWS9Ow5pesXBJKqN1litIocGrzW4c9f
+	u2ZD4PwYm3S/hF1k3kpJO9PhMB0qSnTXuJEMZLZiqXADs3ZeY6NuQWwu7aHQ=
+X-Google-Smtp-Source: AGHT+IHyIOC79MxZuaH2TPvpwT3MuiubkEYDKGpSHW/WfHAFoajW6vgxXCNDRLPV71q+6lpnE/9g4Q==
+X-Received: by 2002:a17:906:c147:b0:ae3:caba:2c07 with SMTP id a640c23a62f3a-af9400220ccmr1004902066b.18.1754322905163;
+        Mon, 04 Aug 2025 08:55:05 -0700 (PDT)
+Received: from playground.localdomain ([82.79.237.20])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a075a74sm761114266b.17.2025.08.04.08.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 08:55:04 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH 0/7] Add support for i.MX8ULP's SIM LPAV
+Date: Mon,  4 Aug 2025 11:54:00 -0400
+Message-Id: <20250804155407.285353-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
- <laura.nao@collabora.com>, wenst@chromium.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
- nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org
-References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
- <20250804083540.19099-1-laura.nao@collabora.com>
- <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
- <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
- <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
- <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
- <2555e9fe-3bc0-4f89-9d0b-2f7f946632e7@kernel.org>
- <ed0884fc-e43a-4f5b-8701-3645c406b37d@kernel.org>
- <3a499702-ba75-4d8a-b38d-222a62bffb34@collabora.com>
- <0fe4165d-f198-42cc-9c2f-f1e51bd96716@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0fe4165d-f198-42cc-9c2f-f1e51bd96716@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 04/08/25 16:33, Krzysztof Kozlowski ha scritto:
-> On 04/08/2025 16:31, AngeloGioacchino Del Regno wrote:
->> Il 04/08/25 16:19, Krzysztof Kozlowski ha scritto:
->>> On 04/08/2025 15:58, Krzysztof Kozlowski wrote:
->>>>>
->>>>> So, what should we do then?
->>>>>
->>>>> Change it to "mediatek,clock-hw-refcounter", and adding a comment to the binding
->>>>> saying that this is called "Hardware Voter (HWV)" in the datasheets?
->>>>>
->>>>> Or is using the "interconnect" property without any driver in the interconnect API
->>>>> actually legit? - Because to me it doesn't look like being legit (and if it is, it
->>>>> shouldn't be, as I'm sure that everyone would expect an interconnect API driver
->>>>> when encountering an "interconnect" property in DT), and if so, we should just add
->>>>
->>>> Why you would not add any interconnect driver for interconnect API?
->>>> Look, the current phandle allows you to poke in some other MMIO space
->>>> for the purpose of enabling the clock FOO? So interconnect or power
->>>> domains or whatever allows you to have existing or new driver to receive
->>>> xlate() and, when requested resources associated with clock FOO.
->>>
->>> Something got here cut. Last sentence is supposed to be:
->>>
->>> "So interconnect or power
->>> domains or whatever allows you to have existing or new driver to receive
->>> xlate() and, when requested, toggle the resources associated with clock
->>> FOO."
->>>
->>>>
->>>> Instead of the FOO clock driver poking resources, you do
->>>> clk_prepare_enable() or pm_domain or icc_enable().
->>>
->>> I looked now at the driver and see your clock drivers poking via regmap
->>> to other MMIO. That's exactly usecase of syscon and exactly the pattern
->>> *we are usually discouraging*. It's limited, non-scalable and vendor-driven.
->>>
->>
->> If the HWV wasn't BROKEN, I'd be the first one to go for generic stuff, but
->> since it is what it is, adding bloat to generic, non vendor-driven APIs would
->> be bad.
->>
->>> If this was a power domain provider then:
->>> 1. Your clock drivers would only do runtime PM.
->>
->> The clock drivers would have to get a list of power domain that is *equal to*
->> (in their amount) the list of clocks.
->> But then those are not power domains, as those registers in the MCU are ONLY
->> ungating a clock and nothing else in the current state of the hardware.
->>
->>> 2. Your MCU would be the power domain controller doing whatever is
->>> necessary - toggling these set/clr bits - when given clock is enabled.
->>
->> That MCU does support power domain voting (for two power domains in the main
->> PD Controller, and for all power domains in the multimedia PD controller), and
->> this is something completely separated from the *clock* controllers.
->>
->> Just to make the picture complete for you: the power domains that this MCU can
->> manage are not in any way related to the clocks that it can manage. At all.
-> 
-> 
-> OK, thanks for explanations. Please rephrase commit msg and property
-> description in v4. I am fine in using "hardware voter" terminology in
-> some places, so it will match datasheet, but I want to make it clear
-> that it is not voting for resources how we usually understand it. It's
-> just syscon stuff, poking in other system-like device registers because
-> hardware is like that.
-> 
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-I'm happy that we finally reached a conclusion that works for both of us, and
-I am sorry that all this went on for weeks with (very) long discussions.
+The LPAV System Integration Module (SIM) is an IP found inside i.MX8ULP's
+LPAV subsystem, which offers clock gating, reset line
+assertion/de-assertion, and various other misc. options.
 
-Thanks for that.
+This series adds support for the IP by introducing a new clock HW provider
+driver and by modifying i.MX8MP's AUDIOMIX block control reset driver to
+allow it to be used for i.MX8ULP's SIM LPAV as well. Since the IP also has
+MUX-ing capabilities, the DT node is marked as a syscon, therefore
+allowing the usage of the MMIO MUX driver.
 
-Regards,
-Angelo
+This series is a spin-off from [1].
 
-> 
-> Best regards,
-> Krzysztof
+[1]: https://lore.kernel.org/lkml/20240922174225.75948-1-laurentiumihalcea111@gmail.com/
 
+Laurentiu Mihalcea (7):
+  dt-bindings: reset: imx8ulp: add SIM LPAV reset ID definitions
+  dt-bindings: clock: imx8ulp: add SIM LPAV clock gate ID definitions
+  dt-bindings: clock: document 8ULP's SIM LPAV
+  clk: imx: add driver for imx8ulp's sim lpav
+  reset: imx8mp-audiomix: Extend the driver usage
+  reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
+  arm64: dts: imx8ulp: add sim lpav node
+
+ .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  |  69 ++++++++
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  11 ++
+ drivers/clk/imx/Makefile                      |   1 +
+ drivers/clk/imx/clk-imx8ulp-sim-lpav.c        | 162 ++++++++++++++++++
+ drivers/reset/reset-imx8mp-audiomix.c         |  63 ++++++-
+ include/dt-bindings/clock/imx8ulp-clock.h     |   7 +
+ .../reset/imx8ulp-reset-sim-lpav.h            |  16 ++
+ 7 files changed, 327 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+ create mode 100644 include/dt-bindings/reset/imx8ulp-reset-sim-lpav.h
+
+-- 
+2.34.1
 
