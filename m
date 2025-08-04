@@ -1,69 +1,69 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544B01ACECE;
-	Mon,  4 Aug 2025 10:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D691F30BB;
+	Mon,  4 Aug 2025 10:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301624; cv=none; b=n7OB1k+7x0qTBxDpMKCwI4Y5kUn4vGCFKBs4BU0KRs/xtTPoi8giNxgt5vh603GGEYnydkSTw6XroX1TbBBewc/cBw2ThtUWTbzZ6xromJU3I4eFEhsEJwLYoJL6YoYlmR2D3fo/oyd4pu7ybo+q5PvklecsmNDVY9YQR6lbKOw=
+	t=1754302732; cv=none; b=iU6laKDbM7michA1cBffo0+TCWpHXbdw7jCaSmEUFqm0ZThimHWrUnzdmdTSyu9UTmOosCZ4CTv5Wjssm1712mURUJXrct+1wCNr/NW17YgsQocu2W/y5EN2aUQhqVg9/DIrdQtVR3WqGmoS/7Zb2tn07nPdkcVoYpWGsLNlktw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301624; c=relaxed/simple;
-	bh=mpe7T74dmtR2fuAVUZ57VuLLcRGspxTnziRewsuDca8=;
+	s=arc-20240116; t=1754302732; c=relaxed/simple;
+	bh=Edyu03zA6kX+GZ7JETsugqJG7N+ZD74ozJ+ugckD4MA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUuq7HHAYrfsRFmUdyOTeICW+RWNtu2UOPsitEfzUe5PL5vXKVuBQWMdGLVx0SYs/ztkM4bn85s4OIaUsyJb818u7wO0zxt92yMH2m70owgiW9ZR+QC9IaS+Itfm2suo8qtrEtmAAjTSW9lR0S/+TNeexk7eJkOxqVlqkLirRmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+	 To:Cc:Content-Type; b=fcntZCT/XxrLRN6RqvVbWKt+OrOjG9F63Se0LksdZzKF4hJRHZPTyIzmURgTUWhHYq10sYozSJ/ykUBlDYi3khiSmt8egWZUapGxJsA4uzAyR11vNnZeFRW/AW4vhgAKhhtl6/ipbAPdKVOjvhlt1Gv+UITOizN5/D6XFFp1XWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53987d78f0bso93784e0c.2;
-        Mon, 04 Aug 2025 03:00:21 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4fe7dd45935so653251137.1;
+        Mon, 04 Aug 2025 03:18:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754301620; x=1754906420;
+        d=1e100.net; s=20230601; t=1754302729; x=1754907529;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eS3bsjfBxf7Nb9K34UhVoW/iQd5gmVco36iifAHyUH4=;
-        b=QwKJaMQde2rW6Ch+bldUMckL7T7aXSLDQPe6hiXI+l2xlAm+olGXUvq0ZCISSci1sN
-         fW3IOwVKAkQlj1ZHNPuVrfz2PlUGjtwIMYXOhDivPpQmh5oKh/+oOIYAwGyzV/N+dVEi
-         pzHlHtfXRRnIyKtWEF4Fo+O5TtwCfdDFcVCQBMtt687EUYuQrR7iS3ywPrbe2xs5FaCi
-         JWde+CTA0wOYctBJ5yk2xqQLQ60z9d1Cmf9S9kTT61Eiemk5jAT/HQX1eCrj9O0oJyCS
-         75GkkwfxQAo6zDjbMkxaDBgbr6fq4PzuEZKfbT/RVTSgr+qN/NjkDZ5ZrjeYvwJSIq7H
-         yMiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhqqfCKS/ltYuR7Ah9u6Qh4UDi+X7pArNlyVROfB+9jQd2iaV462B+uQiyo2wXZEaFW4RdbBXKWHY=@vger.kernel.org, AJvYcCUslQhpbKtk3GNLWQHzic6l3GkHhSL1GovuFDGxx0fF8KOZ8qXUz225le7fBb+HdtmnQHcDZ0fP77eOACJ3@vger.kernel.org, AJvYcCW4fYvVrWzvEV3e2hpGK8Dc2c6TVpMx29xNjmn5MxDk8fn/UNzYkd91x/+SGoCZVFaJ9EW5FxU04b/z+Wr1MyqTGIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjabdmI2DCosl+2arMFPs+BCunXE9dSP4e232QHHYpjDF1BiG/
-	rLTOTqtyk6UMP/yLyPyVAFrF/Cg2m0/53GpUt5K1zfYttQcRiGtcCTG0u1377k8g
-X-Gm-Gg: ASbGncu8C/mVFJengRbCfkfnzQzsOAPMFiw24JKuRD6owEOK1A5dA/G+AxJfD4uDR1W
-	21gXO1NqFKQfpc5PErQxwy7qJAya71U4DbCHy5UyoDu72n2vOMHQbc8mkUPIkqMBwTbnXbvx3LS
-	USnsOKb3hYRmbrWiO/1rdEGHpjaogSz6y6MzV8M2OcCz8kBj2LEPktkk0cHy60abhbJsTrmV0f1
-	qLEnvoIdnDKwdDejfrIBOQ1C6YKP3rzBppBDDpwoPbtx9l5LfVDK09j2qDo2N40Wa1/ayfY0hAH
-	jVFpzGG8Yt9Uzxi1aSbiOVcQBN2ooDFMTEdI7y8JhYepXnwP1SJepzpToXJd9am3j2MIgr4PBvM
-	cQE6fcrODOg8scXWy6TIVnDE9k2jCDo4kw4cpO+0xxQ4ZmoJZbSvF6lpTw+vJ
-X-Google-Smtp-Source: AGHT+IENtw1Pl2XfXzdX5f/eq7kLU/oCjtOnKedw46nsNgdICvK8xN5ZPz+sxsbSSFUILJi8BcEYtQ==
-X-Received: by 2002:a05:6122:1697:b0:535:e789:6ccc with SMTP id 71dfb90a1353d-5395f1f80f0mr3360433e0c.3.1754301619863;
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d4f0bdsm2709173e0c.36.2025.08.04.03.00.19
+        bh=me5NB77V8+KG1kUND+GKU1clCy+piwMeUvhbeEFZ+hs=;
+        b=KRpBTfKl3W67siRJqerDXADsxd/NyHBwJqAL2wcI5IquAj1U9RAZaXKRKubhO4d7JK
+         rGStzLOCh8AhEJO4rvHdnCK2+aCy4gHdV3ao2aJaaCNSzboQaw4+p+x+ZNzDzxM/3aUd
+         xz7L5JOBcifZNYBtOFIeFAjBbytKQjlP/t09WjEVucd9XV6cUkvSF7NeuJoI9gDCixBN
+         5+QX+wwXo6jeCDl+7ZZr33dgViiKGITvN1vQeHvVz7WiwT/DlpZ7FeMHYB/LZXIbj9uK
+         Fx+ndVi+EU2pCI+ri4r6pNEyFZXgcN2DLIMvzyoYUDh1LMLQCuRX/3Z7GlJRrQ7PhpZa
+         Vi3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Y9Ro17HM3gWUV6Y+vCp4/QkoYmQQf0yAfj2UKT823LdcmnbDQrJWyk0xkDxFfWPF7qbC8VWMzN9UdpQ8@vger.kernel.org, AJvYcCVUEM0ztFuUc4QXNy06HCJz7X49qIvpWY6Vm7/Fg0qGBmL4keRHrFYV4XwM7GtAiTM7ghxCopUZa08=@vger.kernel.org, AJvYcCVr9xyS3i+SSYXdtr919KTUL/Qs6sOxrcHLspXVy43sIDWWdTHxXB2cCY6YSC/+D/ueV7hA/dlGFEX1lXUbKghyVXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdy5xXdFPeAfi9j7dOpGTgFsUPc95KdK9dRPNpC49hneyYK+ln
+	tt5L4uSJfa5sGrAVLJL8qLDaWHSxVd1yU5PnD2v42BA9KZLqPCnEuVkn/msu1Yfz
+X-Gm-Gg: ASbGncvqyNyv/gk8JUkdRPLM3z3QIk1IyMKaZyya78p+eEcd0A/P2NTdh9q4nXGmF8K
+	uvvuPUxMLqJ5ZggThVtmKvrHjIIRREgCFKCoE33pNx2Xov7e6G9Xw02TGxROArC+zZnH3oqyk8D
+	lSerrJnwOm9xil6PxscUseEy2Oe1xPPeBRiL7hBM1sFKNhPAq37RBn9NoSBln3JoAXRnMi9HHM7
+	IfLBbXDAJmSRH/3DH5kybTFmv/cAKGYdAHQBCgfiAlnWKfmQD7LojlotLxKStTZb6YHVwjdOdhx
+	zETDDNpvcGsqqwxuwKSur0EMA/BQG/rrGAU4B+yRrWthgNcbDFjsxFtiww34X7apEdSMDDp189m
+	HvyrAxVzX8Iue2/DZj0x3Ati/bOaGSovaR3YJuld0dYn9F63yTecplRopdiVPzv32
+X-Google-Smtp-Source: AGHT+IFxKt0wgqrsY8GDR81DIOnEv/4vwImKHsGIHI+ClZ3eo1oqBBOkWtv/g+S7stILZap31OwqIQ==
+X-Received: by 2002:a05:6102:54aa:b0:4fd:3b67:4572 with SMTP id ada2fe7eead31-4fdc3638538mr3004472137.15.1754302729312;
+        Mon, 04 Aug 2025 03:18:49 -0700 (PDT)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4b98sm2226630137.3.2025.08.04.03.18.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-88bbfe763ecso920708241.3;
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWRpxZTJrV5fJo/e8kx/ldMqzPArUSCBsUCdwtKi4n0G3PqejQ1HfrfLspnTyI5gsLyWXa9Cp4HtfRzx2F@vger.kernel.org, AJvYcCWuqvVOvNhZjvog5m69Uoo+6PIIg/rDDcZWWxgCf/34g6AkP3LXiIavkiq1xxkNFwKXfT+nL/v/vYKiaFVkkAZDRWE=@vger.kernel.org, AJvYcCXr+tQSaaxvtbuIy1x1d2mYECxbXET0ML7sZq2kWMtgp5ZH9uziSooLc6Dx96HzXNMbpkc7/D7TG+4=@vger.kernel.org
-X-Received: by 2002:a05:6102:c4b:b0:4e7:bf03:cd79 with SMTP id
- ada2fe7eead31-4fdc1f3ba82mr2731697137.5.1754301618843; Mon, 04 Aug 2025
- 03:00:18 -0700 (PDT)
+        Mon, 04 Aug 2025 03:18:48 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53924027b19so748042e0c.1;
+        Mon, 04 Aug 2025 03:18:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcM68aJZJrRWtnWoxIX9tctKbaMRveQA7vDJAxv4lObwk4YtXijK+0qk1B8WtOK8NFO0AhmaKIh3U=@vger.kernel.org, AJvYcCWLSX4lKjXy7y7SKmutablISxJM6c7C83uZOuSTF/UUv3verkrQZI1R0AaNCld9fPcxUtfO/J0PiT/wvXTxEKZUS/E=@vger.kernel.org, AJvYcCXAVABbfzEVklRhBIoy2RLxBZI/YbmLzGBjx5DNl+lODMTo5EUoGscbrXKzZCeSz8+49yYArLlI6Hk2diOM@vger.kernel.org
+X-Received: by 2002:a05:6122:1821:b0:538:dbd2:2ece with SMTP id
+ 71dfb90a1353d-5395f37e06emr3171358e0c.11.1754302728529; Mon, 04 Aug 2025
+ 03:18:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com> <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
+References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com> <20250704134328.3614317-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250704134328.3614317-4-claudiu.beznea.uj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Aug 2025 12:00:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
-X-Gm-Features: Ac12FXxP7Z5IRMS9eyyB2n6CzdU8SZtDG8X1mpfYCayxF7CUSCgAeogY_9GSFEo
-Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
+Date: Mon, 4 Aug 2025 12:18:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXfGg6KfKt4dGf8NrboEPXF7fnq+dcM=sppYcgcq3csvw@mail.gmail.com>
+X-Gm-Features: Ac12FXx7Vhm0XByKZa2yKekC1miTeBva5wEp_EGzUgpOPZHMtMsRux6QxliBBCY
+Message-ID: <CAMuHMdXfGg6KfKt4dGf8NrboEPXF7fnq+dcM=sppYcgcq3csvw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
 To: Claudiu <claudiu.beznea@tuxon.dev>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
@@ -76,41 +76,26 @@ Hi Claudiu,
 On Fri, 4 Jul 2025 at 15:43, Claudiu <claudiu.beznea@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Add MSTOP configuration for all the module clocks on the RZ/G2L
-> based SoCs (RZ/G2L, RZ/G2LC).
+> Add MSTOP configuration for all the module clocks on the RZ/G2UL
+> based SoCs (RZ/G2UL, RZ/V2L, RZ/Five).
 >
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Thanks for your patch!
 
-> --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> @@ -242,163 +242,163 @@ static const struct {
->  } mod_clks = {
->         .common = {
+> --- a/drivers/clk/renesas/r9a07g043-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
+>         DEF_MOD("canfd",        R9A07G043_CANFD_PCLK, R9A07G043_CLK_P0,
+> -                               0x594, 0, 0),
+> +                               0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
+>         DEF_MOD("gpio",         R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
+>                                 0x598, 0, 0),
 
->                 DEF_MOD("gpu_clk",      R9A07G044_GPU_CLK, R9A07G044_CLK_G,
-> -                                       0x558, 0, 0),
-> +                                       0x558, 0, MSTOP(BUS_REG1, BIT(4))),
->                 DEF_MOD("gpu_axi_clk",  R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
->                                         0x558, 1, 0),
->                 DEF_MOD("gpu_ace_clk",  R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
->                                         0x558, 2, 0),
+MSTOP(BUS_PERI_CPU, BIT(6))?
 
-Perhaps these two should have "MSTOP(BUS_REG1, BIT(4))", too?
-
->                 DEF_MOD("canfd",        R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
-> -                                       0x594, 0, 0),
-> +                                       0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
->                 DEF_MOD("gpio",         R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
->                                         0x598, 0, 0),
-
-"MSTOP(BUS_PERI_CPU, BIT(6))"?
-
->                 DEF_MOD("adc_adclk",    R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
-> -                                       0x5a8, 0, 0),
-> +                                       0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
-
+>         DEF_MOD("adc_adclk",    R9A07G043_ADC_ADCLK, R9A07G043_CLK_TSU,
+> -                               0x5a8, 0, 0),
+> +                               0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
 
 The rest LGTM.
 
