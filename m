@@ -1,40 +1,33 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DAE1DED4A;
-	Mon,  4 Aug 2025 14:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE6926E703;
+	Mon,  4 Aug 2025 14:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754316955; cv=none; b=X8sXxz20v+ZEwtWuZ6nx7uI/f3rwVioK/m7rh5oEAdnmTrQJkobJT9G/curc58HOchenf5gBBFr7ZxOgrWpkoqqMyoIf+AEwBnKnDpLvc7jmZ3OgDf1TdyrFX3FsmZytDdfQR15RM9fCr3SRbzXqdHmxBJQaYZaSOUonIAy5g0Y=
+	t=1754317159; cv=none; b=RmmKO/JRFu2dsdb7mzaro81EJPLf5ugqJzfwdrXAjuxWAV40yQQqvkKJAB48RodronxA/NPjbqF3Horp+qLbW0wrVp7ebF1C4MXMj1jxoSiOL6zaK2jhYMCnAOMywSVPCecl838mQClyyoGqK8xzZjwRcmdUCZOxRPrMt9VaA/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754316955; c=relaxed/simple;
-	bh=tRn0xbDxVMK94MG9Cb3SGKBbHQrrDqm+3NMj4MZj5s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nfBsy9FbyNFRvKN+ZpJBndGyhvkjCiHeSetLO3eDn9uI+kpW/fFNkwL2114aHQf6cLOfdsz3FmYjusOrc4k5VKU2X5UeiPebLv4O4vEoODLPZZTASv9t6ylKcbt+rTID43uwO8ytyoQ+3dkcyevpToH0NL8AiouhnACZ0Vv7skE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=koaccehe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1754317159; c=relaxed/simple;
+	bh=SjJSeEYpC8XNqF4m5DqAU8lWdtGSO9pN6bQ0yYPAzdk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m0ZxkO5NfBZTjnAJIMjbNcaAYjfYr52cm3CdsVIrB5GQ9o+92Jbshqu+8Vgw9nTIBEwiUWYm7RwJGA9HVn9CZkqNR7pncMX0LjZ9lSjOQJpSnYc4SOSETAt9ACdzHlycYRqNvUK0Q8Q3pl0fdaDSjBNX6hnW/HGvt8/WRi5pp8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=deNP3Dnv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="koaccehe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754316950;
-	bh=tRn0xbDxVMK94MG9Cb3SGKBbHQrrDqm+3NMj4MZj5s0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=koaccehefL7o3Jn8URhyuqKY0Yragys0YLh5NB4horLo+SxjExon6RFZ1q1t1pilF
-	 4WTuPyLeOEXOScf9tpixGCN6z++ZlIm3wYpA+LEiG2wI9ARNlb4hav9qlLlasrKN6N
-	 HTWLiNK2qnnKzZ42dIXDvHy//VkIGaTuwnIPIID6YYlcfnVk1jowrpW/YgDYzUdi4f
-	 DHcaKZ5fsGmsp+PSJeBXUY97RuH1U7X6GNxvt/YR8TNR3HnVk3om1Qu+qN/hW5uUMK
-	 KzQ+JiPfAETH+1nvL5Yor2V/03DeynnvCjBlvjsJXTE84z5bBbIZC3TgybCpX3qEUB
-	 p+KaONoIpFM7Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 02B6517E153A;
-	Mon,  4 Aug 2025 16:15:49 +0200 (CEST)
-Message-ID: <62edb8e3-aff6-4225-b520-f4b73aef145d@collabora.com>
-Date: Mon, 4 Aug 2025 16:15:49 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="deNP3Dnv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA74C4CEE7;
+	Mon,  4 Aug 2025 14:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754317156;
+	bh=SjJSeEYpC8XNqF4m5DqAU8lWdtGSO9pN6bQ0yYPAzdk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=deNP3DnvHkJ2HSq68I0MNQfdiri4MkDm0lE+b0b8Haf2PfDnyij9j9+1u7N/dfglh
+	 W9yspUm5bXEPmtZn4P5v7oZfotQYBFZJEOTWN7LmaxUFiYiVlmjPvlGrBtGbR7i3WZ
+	 h5l/D4BSA5CkbXtc9WCfSk65924x71zlAxEmZFwp+EefKY0LctMis4XlgU3mOHVQ/9
+	 rvFzE3en6MYB9P1VytSn6hdgnyeVKcvjfoHHKTd55Dz9uCtpJtREqRpAvS0JKErgUm
+	 s/ODUfZdbeIeoPmq5LcB7DN25ZWTm4RphbTrZBeBGzTrIgkQ3gkz8VpdzqfpKyhWt4
+	 jXaTfTuM8ogPg==
+Message-ID: <ed0884fc-e43a-4f5b-8701-3645c406b37d@kernel.org>
+Date: Mon, 4 Aug 2025 16:19:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,8 +37,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
  clock controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
- <laura.nao@collabora.com>, wenst@chromium.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Laura Nao <laura.nao@collabora.com>, wenst@chromium.org
 Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
  guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -60,111 +54,55 @@ References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
  <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
  <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
  <2555e9fe-3bc0-4f89-9d0b-2f7f946632e7@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
 In-Reply-To: <2555e9fe-3bc0-4f89-9d0b-2f7f946632e7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 04/08/25 15:58, Krzysztof Kozlowski ha scritto:
-> On 04/08/2025 15:27, AngeloGioacchino Del Regno wrote:
->>
->> We discussed about aggregating votes, yes, in software - this instead is a
->> *broken* hardware that does the aggregation internally and does not require
->> nor want external drivers to do the aggregation.
->>
->>> Maybe it is just the name, so avoid all the confusing "votes" if this is
->>> not voting system. If this is a voting system, then don't use custom
->>> phandles.
->>
->> Being it fundamentally *broken*, this being a voting system is what the hardware
->> initially wanted to be - but effectively, since it requires YOU to:
->>    - Make sure that power supplies are turned on, if not, turn them on by "touching"
->>      HW registers (so, without any assistance from the voter MCU), if any;
->>    - Turn on parent clocks manually, if any, before using the "voter mcu" to try
->>      to ungate that clock; and
->>      - Enable the "FENC" manually, after the mcu says that the clock was ungated.
-> 
-> 
-> I understand that "YOU" as Linux driver, when you want to do something
-> (e.g. toggle) a clock?
-
-"you" == Linux driver, yes.
-
-> If so this looks a lot like power domain, although with some differences.
-> 
-
-A power domain ungates power to something.
-
-These are clocks, giving a (x) (M)Hz signal to something.
-
->>
->> in the current state, it is just an hardware managed refcounting system and
->> nothing else, because the MCU seems to be unfinished, hence, again, b r o k e n.
->>
->> Note that by "manually" I always mean "with direct writes to a clock controller's
->> registerS, and without any automation/assistance from the HWV MCU".
->>
->> We're using the "hardware-voter" name because this is how MediaTek calls it in the
->> datasheets, and no it doesn't really *deserve* that name for what it is exactly in
->> MT8196 and MT6991.
-> 
-> Please capture most/all of this in the property description, so it will
-> be clear that we treat it as some sort of exception and other users of
-> that property would need similar rationale.
-> 
-> I am asking for this because I do not want this to be re-used for any
-> other work which would represent something like real voting for
-> resources. I want it to be clear for whoever looks at it later during
-> new SoC bringup.
-
-Okay, now that sounds reasonable, and that sounds like a clear suggestion with
-a clear action to take.
-
-Perfect.
-
-Laura, please do exactly that.
-
-P.S.: I understand what you're trying to do here, and I agree; preventing stuff
-like this for things that aren't as broken as this is completely right.
-
-> 
-> If you send the same code as v4, the same commit msg, just like Laura
-> did twice in v2 and v3, I will just keep NAKing via mutt macro because
-> it's a waste of my time.
-> 
-
-My time isn't infinite, either :-)
-
->>
->> And mind you - if using the "interconnect" property for this means that we have to
->> add an interconnect driver for it, no, we will not do that, as placing a software
-> 
-> Existing driver(s) can be as well interconnect providers. Same with
-> power domains.
-> 
-> I do not talk here how you should implement this in the drivers.
-> 
->> vote that votes clocks in a a voter MCU that does exactly what the interconnect
-> 
-> What is a "software vote"? How did you encode it in DT? Via that phandle?
-> 
->> driver would do - then requiring virtual/fake clocks - is not a good solution.
-> 
-> We do not add "software votes" in DT as separate properties, because
-> they are "software". So maybe that's another problem here...
-> 
-
-Indeed - the point is, the only way to make this *broken* thing to work with an
-interconnect provider would be to place a software vote to place a vote in the HW
-voter, which would be ugly and wrong.
-
-But anyway, a solution was reached. Let's just stop and avoid useless discussions
-about what X could be if hardware Y wasn't broken; that'd be just a waste of time.
-
-Regards,
-Angelo
-
+On 04/08/2025 15:58, Krzysztof Kozlowski wrote:
 >>
 >> So, what should we do then?
 >>
@@ -181,13 +119,28 @@ Angelo
 > for the purpose of enabling the clock FOO? So interconnect or power
 > domains or whatever allows you to have existing or new driver to receive
 > xlate() and, when requested resources associated with clock FOO.
+
+Something got here cut. Last sentence is supposed to be:
+
+"So interconnect or power
+domains or whatever allows you to have existing or new driver to receive
+xlate() and, when requested, toggle the resources associated with clock
+FOO."
+
 > 
 > Instead of the FOO clock driver poking resources, you do
 > clk_prepare_enable() or pm_domain or icc_enable().
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+
+I looked now at the driver and see your clock drivers poking via regmap
+to other MMIO. That's exactly usecase of syscon and exactly the pattern
+*we are usually discouraging*. It's limited, non-scalable and vendor-driven.
+
+If this was a power domain provider then:
+1. Your clock drivers would only do runtime PM.
+2. Your MCU would be the power domain controller doing whatever is
+necessary - toggling these set/clr bits - when given clock is enabled.
+And it really looks like what you described...
 
 
+Best regards,
+Krzysztof
