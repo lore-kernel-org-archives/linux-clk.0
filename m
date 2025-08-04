@@ -1,149 +1,166 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9AC24337D;
-	Mon,  4 Aug 2025 09:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA01F244671
+	for <linux-clk@vger.kernel.org>; Mon,  4 Aug 2025 09:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754299682; cv=none; b=hJV7IpZIDf2rdeTJ9+3Dgw7p8alAL60OTR3Sg+heaQ+QCtoDz+Gb7+kxzag8UheIkquqeMcnd9MAQP3OTVRz8z9bYcb1qNa1Vuir0j+iQDNeSSXKeLImKSoNjXm/QpiR0OyeNkMSF/mjW9fIdkKFKHM/ZUYyxiIADhVd94Lwcjk=
+	t=1754300175; cv=none; b=qZp/bW2HpiJ1uu/CPmnkFFSb0zmqKgk7epeO/KP0oy8dy30AGnv557Pkx4CntVrYnEB3pcTbzFb70X9+WhDbNdsvG0Rt+aCb65hlFov1hdvxSlhxXUWYGVQWuZr2K1gCE4U9AZrRPNLRdGIpDTtcL8mDdBDfmHQK7O0qQRMpoqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754299682; c=relaxed/simple;
-	bh=LH7EqOf3AoVilTrkyp113dp+uJr0ORzeMHBnEtkb4Fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o8e0j/Yws2brEOme4N7KiMdMYSFUoCFwvJiA/SDWu0Qg8eB1tNp3P18o+2TvmjbkXJST++1AB+9D+ZrzRSMb2pM9cDak5rsDSf/QyNbEEESR4r3cH273K++vH9KAOElbgNdgxIDPr18Abtgv4hQ0PnX/kwvUkjjh66BFZAyTZng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SL5z7Hhr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1754300175; c=relaxed/simple;
+	bh=0FpsZ6JoH+cK+BXMA2yOEAppQCFXR21ptAdDtJv7E34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUvnxw6O3of8evQHDO/l5j9fSXEiBEw8JRECfIOW+toXPZsiAQ+PV1L00D8tmAhaoTImT+GEUSSldydmTkt0tr4Z8gtV4/k+u39mCOc1qXbDJUrKelI1Nqz4/KNqQn4Gs+kviHGJyYkNahceM1Oy1yRwkAsVNeOD94RyI9/UD/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rXW1+1OB; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SL5z7Hhr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754299678;
-	bh=LH7EqOf3AoVilTrkyp113dp+uJr0ORzeMHBnEtkb4Fw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SL5z7HhrZCD+bHt6ys6TBTbVFUWFxEV5hkIFT1afE5vLWkcsGZfrwaSoNKmeP/Z0s
-	 WVxm0wU/qm+3r1lr/SF9I5k9ZCsNBI9vnsICfAPNHjiJbLR19PHgzbe786qzU+y1Fq
-	 yZ3fE6eQbBCOyNbJROfvLyTk6VNzvPuaiNaTX7K2MAYBx83M4qkipSvBwniPwV1zYI
-	 a2PlrbQVA1TryfGxwW6edcgmnsYBwsX6Um2fSk4SQ3YK0PZWkbKigly99uIlu3x/w+
-	 yd0KXLZlT29zX74Xzm3t4dyEWRx8fU7+eU/Uy7GTN17BxJrePPiwVoRA4SqGdgJjcV
-	 8Ho6rf6+rUSaw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 18F9617E0B8C;
-	Mon,  4 Aug 2025 11:27:57 +0200 (CEST)
-Message-ID: <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
-Date: Mon, 4 Aug 2025 11:27:56 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXW1+1OB"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6155e75a9acso5835610a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 04 Aug 2025 02:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754300172; x=1754904972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sx/lxIAWEYJpuVdb8IP1+iNGaxJ4NDbVF47nIMg6N4I=;
+        b=rXW1+1OBSpV1cEXvF8uB325VSz/CzCuanFvI5MP+gjCDCDx+Kz/7VhOxxLhDDrLv6X
+         PIIdNhgUaWzfnxeDLQLgufbogQN4Y1fv+ym47mSv2dM8udRPe6JKcvAbKL2yLXr4cFDF
+         49wDTfH7uEdyhrqEpen8+VDJlV9g5G2g4/vZt8qyAbWg9Vd5pcZhSbaqV3Vjlbmkyr3v
+         BTGs2MiQ8HZIBNzQJOimqClGDeCmq4a6oq6jLsBm9z6lrDktYfjBmGnG3MPaATkdJmXM
+         dSIDTTqJI8XaNqAOusKmpDDN/F9cqLcxOznDluNilfMCAsBUdGGVpkoIz6uqLLyfBM/z
+         wWig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754300172; x=1754904972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sx/lxIAWEYJpuVdb8IP1+iNGaxJ4NDbVF47nIMg6N4I=;
+        b=LoWhRrUC+v4Vh6N8YsntG4qL8/OfxHtxmjBrCs3DOx1cj37VIf7LfqHGmhrSoZgCgM
+         mODdJdU3hzBb857cUfFCKYQOZQ1tKt0Bc1YPAsKhOLH8Cx8LGjw7c/Nbye8HBxLQQcWP
+         LzDXa96N1DGDajC+vU3iDjgPjghuhZMHue9aPo9CdypAAipaOmqStOJbaxIVZppIePCs
+         KlKkTMJ91jA8QYDaoYWW+mvf5p2JfpbyzQOYGGAMO4yXZa/OgP7NVp2azh44KqBy9oRI
+         zQPsjd3cBdIprgCoWIDj0SZkQdcNJAELZ/1S45j7yoMIUczDHrKJ7nRpCBVxpE8mZ4vm
+         D0/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqc1pV3u+oUvzbYVwbVKTUvDTISJU9goFYD2PlQQo+rLy5d69FpkxwX9GkxptMVB0fOulN384Z7ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9HmAMFMZlijf2+4hJUEf05R/RCKCkotpUAjtUO2UpU8SnPv9k
+	qG2ZIrt6kXIFn/5Vi37osZ2Ut0NrAVPb1ogkvntoh0P4GbDJxDzR8iNRHDHZ3lNwSNs=
+X-Gm-Gg: ASbGncsw2cfTD9/GRjBtVwHSk8lGQ/1Nz9vEYkTAlOaLZDuRJy5H+/fzjP6hiZ3cr8Q
+	69mBVMljEXNuUrFpjXZp+zg8bFj5jLs1cT6sCHzZTimoqEgmapMcPvITQoj1QFmtxZE91gtLdM4
+	t1hNuZF171CixgrT9AqC1poyU5GYfWZ+KqIof9X/QrTljWEKqb4YVkxfrpkCqzno/o69WhMCw6L
+	R8pIrSQvb5ZjX7PE3TqRvlnhA6Ve/0p+LSmshb8Cu7nEVrlr84dH5EZPeQXL/9kIH2IwiS+jU+7
+	QcRPbJyuGVpaJ3qFIaPkeuzCGEyrXAFWxElxXtIf6Kh3ARvzKNB7jShvemfqTUVtl+yVG7rbxnb
+	muiSMgdCFKtaIimsXn0E=
+X-Google-Smtp-Source: AGHT+IEse4UFP82AYQdL5AatCM1CmVz//wV+clV83DiHGQLKKi0fbsuM8BYmlRcA2F5+4QJrB65tfA==
+X-Received: by 2002:a17:906:794a:b0:ae8:fd2d:44b8 with SMTP id a640c23a62f3a-af9401b2de3mr877768766b.29.1754300172022;
+        Mon, 04 Aug 2025 02:36:12 -0700 (PDT)
+Received: from linaro.org ([82.79.186.23])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078a28sm713481866b.3.2025.08.04.02.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 02:36:11 -0700 (PDT)
+Date: Mon, 4 Aug 2025 12:36:09 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, kernel@oss.qualcomm.com,
+	Pankaj Patil <quic_pankpati@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
+Message-ID: <aJB/CRBUk+7x2jgT@linaro.org>
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
+ <aIoBFeo00PPZncCs@linaro.org>
+ <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
+ <aIxRKHKdBHDefDs2@linaro.org>
+ <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+ <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
- <laura.nao@collabora.com>, wenst@chromium.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
- nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org
-References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
- <20250804083540.19099-1-laura.nao@collabora.com>
- <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
 
-Il 04/08/25 11:16, Krzysztof Kozlowski ha scritto:
-> On 04/08/2025 10:35, Laura Nao wrote:
->> Hi,
->>
->> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
->>> On 01/08/2025 15:57, Rob Herring wrote:
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  '#clock-cells':
->>>>> +    const: 1
->>>>> +
->>>>> +  '#reset-cells':
->>>>> +    const: 1
->>>>> +    description:
->>>>> +      Reset lines for PEXTP0/1 and UFS blocks.
->>>>> +
->>>>> +  mediatek,hardware-voter:
->>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>>> +    description:
->>>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
->>>>> +      MCU manages clock and power domain control across the AP and other
->>>>> +      remote processors. By aggregating their votes, it ensures clocks are
->>>>> +      safely enabled/disabled and power domains are active before register
->>>>> +      access.
->>>>
->>>> I thought this was going away based on v2 discussion?
->>>
->>> Yes, I asked to drop it and do not include it in v3. There was also
->>> discussion clarifying review.
->>>
->>> I am really surprised that review meant nothing and code is still the same.
->>>
->>
->> This has been re-submitted as-is, following the outcome of the discussion
->> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
->>
->> We haven't found a viable alternative to the current approach so far, and
->> the thread outlines why other options don’t apply. I'm happy to continue
->> the discussion there if anyone has further suggestions or ideas on how
->> to address this.
->>
+On 25-08-04 14:30:00, Taniya Das wrote:
 > 
-> And where is any of that resolution/new facts in the commit msg? You
-> must clearly reflect long discussions like that in the commit msg.
-
-On that, I agree. That's a miss.
-
 > 
-> There was no objection from Chen to use clocks or power domains as I
-> requested.
+> On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
+> > On 8/1/25 7:31 AM, Abel Vesa wrote:
+> >> On 25-08-01 10:02:15, Taniya Das wrote:
+> >>>
+> >>>
+> >>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
+> >>>> On 25-07-29 11:12:37, Taniya Das wrote:
+> >>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
+> >>>>> provides refclks for PCIE, USB, and UFS.
+> >>>>>
+> >>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> >>>>> ---
+> >>>>>  drivers/clk/qcom/Kconfig         |   8 ++
+> >>>>>  drivers/clk/qcom/Makefile        |   1 +
+> >>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
+> >>>>>  3 files changed, 266 insertions(+)
+> >>>>>
+> >>>>
+> >>>> [...]
+> >>>>
+> >>>>> +
+> >>>>> +static struct clk_branch tcsr_edp_clkref_en = {
+> >>>>> +	.halt_reg = 0x1c,
+> >>>>> +	.halt_check = BRANCH_HALT_DELAY,
+> >>>>> +	.clkr = {
+> >>>>> +		.enable_reg = 0x1c,
+> >>>>> +		.enable_mask = BIT(0),
+> >>>>> +		.hw.init = &(const struct clk_init_data) {
+> >>>>> +			.name = "tcsr_edp_clkref_en",
+> >>>>> +			.ops = &clk_branch2_ops,
+> >>>>
+> >>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
+> >>>>
+> >>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
+> >>>> which is obviously not the case.
+> >>>>
+> >>>> Bringing this here since there is a disconnect between X Elite and
+> >>>> Glymur w.r.t this now.
+> >>>
+> >>>
+> >>> The ref clocks are not required to be have a parent of bi_tcxo as these
+> >>> ideally can be left enabled(as a subsystem requirement) even if HLOS
+> >>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
+> >>> HLOS/APSS will not allow APSS to collapse.
+> >>
+> >> Is there a scenario where the APSS is collapsed and still the ref clock
+> >> needs to stay enabled ? Sorry, this doesn't make sense to me.
+> > 
+> > MDSS is capable of displaying things from a buffer when the CPU is off,
+> > AFAICU
+> > 
+> > We can do CXO_AO instead to have it auto-collapse if it's just Linux
+> > requesting it to stay on, I think.
+> > 
+> 
+> Thanks Konrad for adding the display use case.
 
-Sorry Krzysztof, but now I really think that you don't understand the basics of
-MediaTek SoCs and how they're split in hardware - and I'm sorry again, but to me
-it really looks like that you're not even trying to understand it.
+OK, that usecase makes sense then.
 
-> The objection was about DUPLICATING interfaces or nodes.
+> Abel, we earlier also had some PCIe, USB use cases where we had to leave
+> the ref clocks ON and APSS could collapse.
 
-I don't see that duplication. The interface to each clock controller for each
-of the hardware subdomains of each controller is scattered all around the (broken
-by hardware and by concept, if you missed that in the discussion) HW Voter MMIO.
-
-There are multiple clock controllers in the hardware.
-Each of those has its own interface to the HWV.
-
-And there are some that require you to write to both its HWV interface and to the
-clock controller specific MMIO at the same time for the same operation. I explained
-that in the big discussion that Laura linked.
+Then we need to model that in a different way. Leaving those clocks
+without parents should not be the option. Maybe the CXO_AO is the best
+option then.
 
 > 
-> And what was the resolution:
 > 
-> "Regarding that to be a single clock controller,"
+> -- 
+> Thanks,
+> Taniya Das
 > 
-> So where is the clock controller? I still see HW voter!
-
-"especially the mux-gate clocks can't really be put in one single clock controller
-because to manage those we have to write to the HWV *and* to the clock controller
-MMIO"
-
-Clarifying that, "the clock controller" -> "each clock controller of each hardware
-subdomain" (not a single clock controller, excuse my bad wording).
-
-Regards,
-Angelo
