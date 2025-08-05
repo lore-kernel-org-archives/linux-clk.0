@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502FD255E20;
-	Tue,  5 Aug 2025 09:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB624EEC0;
+	Tue,  5 Aug 2025 09:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384626; cv=none; b=Odf69Qc7iVw/DqLSAZVej6rjm8OSCDSWOxrWoKbOfntT/uQtGFa1mJWx1w0DbmJfFn4TdwskkyeVYaKKl8pGF4rsQXf0hhEcUf7UWW+6Y5AvRtpsDmt7zKjNjFpiHev5NSq0o0O/leSqkBLjZxQjvgtVPEPC8yEiwxAgLlMw24A=
+	t=1754384785; cv=none; b=fxxxq4Ohkx5T4YXttQimFLcwCn+1yhlLkXbPDC+lgSq+wku5vpxVuhoWCYNqPgdqxYMbjp/YWjoBUs4zMBJeauALcy0Av1PhcHYB1lT3S/bbevM+o58Lfae3kekRmPX2HwK3iJeWyAZM7ar+m8fRGayszRyD0pxO4dIZQHiQI0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384626; c=relaxed/simple;
-	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
+	s=arc-20240116; t=1754384785; c=relaxed/simple;
+	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AAwWW7NWg2WxJh9ij7sJfCTnZobL6urn6/04lMXgg2fDjoOiiEA3qvTkVvA3C7N+YwX8tnNDa7ClOTELJ3u837/Fs4MladSFcjy+dMKSgXJCkWqpHrEdtNZCwrBwxb/4ID61ySx1i57CC8ColFRsyJvMmIqBg097aZ23WOC9YWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l57AS8tP; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RRikTIB/PftTkwY1ocXRZ/MlRlKKP9RQIPfzUy7oYjSXfohpmzmYSvTPiEmviAVVdAlG1edxn9ZdPQbzOfOlICNut/U9lLyzVWdIzT3nUqJCZQOpWoCDgyMmevItgkfsRNK6noLyEwYxXT8rVc+r4RHGwyU+3K0Tad14xc/0cVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/sIxMDH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l57AS8tP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B84C4CEF0;
-	Tue,  5 Aug 2025 09:03:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/sIxMDH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4337EC4CEF0;
+	Tue,  5 Aug 2025 09:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754384624;
-	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
+	s=k20201202; t=1754384785;
+	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l57AS8tPO/TU2LnmMVBLk8M1XntNd9ifxy+61taiX5Hly6vneP249ZdWeTMx9ESpv
-	 lRQABqW7cI2rvyBVEKUuhtJtN0FPCqj4nNn/LgMluhIVXbhXyvpU2upTPzmaFMg4fH
-	 +qKs2dPeKBZD67JJLo+Rp9q45BOiXn7AJ4KM+v+isYOppD73bENARFTuGbfZW4cOTR
-	 f0O4p2iOJ8pbdW+Yckkc5DPH9IGjdTLvAk6+td6EJKOxIzJoGKueJJ5U6AZZ7dvjme
-	 ILvAn6PoRC7LPDX+BvO05Dm+nyDGAnTsCNobFBmrirO1GrI5mfImYlalxOOb0RcYXT
-	 JYjcxVS0yEDIg==
-Message-ID: <e61ce15a-b16d-4975-9467-5e3758003dd9@kernel.org>
-Date: Tue, 5 Aug 2025 11:03:40 +0200
+	b=F/sIxMDHzO8y3tkfbV1zC4tD0skZmoIJgbZ9W5QswezhWfvs4G9nxB9EkpqQkkevO
+	 Fur9pKF/sEBikTzIivkTt4VfkIM7s+68QZnBVOtl3282NgEuiCRfn18Qg7NiUgO9WD
+	 hlC7hXCXOwjQl9yfJhzGl+e/H+W6bWLob8N5JfzMrZ3InzmkyUTJUHNIRunGoKaThT
+	 rEuoW8bLyQlXzWPvfWkvErtWhAKrIfq07dOn12wDMcXmnr8AA/qcZW7fsU9KfXqvs/
+	 Yw06v4RBmj87jqFnV0UWW4AehY+/2Hay7lDVH5ityNnqL7mwnEkLcSaE0sZgWLlY3a
+	 X7hFfrlcy32lQ==
+Message-ID: <553ec151-14b0-4959-a04f-1b9fe5a9bbda@kernel.org>
+Date: Tue, 5 Aug 2025 11:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si514/544 to DT schema
+Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si5341 to DT schema
 To: "Rob Herring (Arm)" <robh@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250804222042.4083656-1-robh@kernel.org>
+References: <20250804222034.4083410-1-robh@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,19 +88,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250804222042.4083656-1-robh@kernel.org>
+In-Reply-To: <20250804222034.4083410-1-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/08/2025 00:20, Rob Herring (Arm) wrote:
-> Convert the Silicon Labs SI514 and SI544 bindings to DT schema format.
-> Combine the bindings into a single schema as they are the same.
+> Convert the Silicon Labs SI5341 binding to DT schema format. It's a
+> straight-forward conversion.
 > 
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../bindings/clock/silabs,si514.txt           | 24 ---------
->  .../bindings/clock/silabs,si544.txt           | 25 ---------
->  .../bindings/clock/silabs,si544.yaml          | 54 +++++++++++++++++++
+>  .../bindings/clock/silabs,si5341.txt          | 175 --------------
+>  .../bindings/clock/silabs,si5341.yaml         | 217 ++++++++++++++++++
+>  2 files changed, 217 insertions(+), 175 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.yaml
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
