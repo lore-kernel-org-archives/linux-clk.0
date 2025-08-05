@@ -1,92 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9261626F471;
-	Tue,  5 Aug 2025 10:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B691F19A;
+	Tue,  5 Aug 2025 13:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754389571; cv=none; b=DyVTXxZeZKBziuL0zzmVKdH6LfWns+jJrX+nMEETqQwrmXn7yGPufH3c3YnBM/Uolc4Drs840/KaotHYFAIxUmKfGDfXvwsAMgrddIB7ccTrVxKIu55H1ZEqI71o5ZcHCcd2D303eKzd+QACi9FTUWbIc6K1iJSySjVKnXvJiGs=
+	t=1754398918; cv=none; b=nqbGZugD0XmK7J9p31uogWa6PBYVRvINP+8PSrx5J2+YnbKnlRD+FBGLRpiee5UJAKoh6QfPHX/1K5hYQZZ5gO7VGeZgNxzBnDbnAd4/FHP1+caQA+5FXSM2Jwd2lULPeUpqh5Aw1t4kCXNxPkIu7p+ZpBtgXloZoFUc/oUxD+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754389571; c=relaxed/simple;
-	bh=7rVCW8r3zVl85kYTCUUV6L2jUD/buUjnRV58z2gANgw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B8orTqS99KfBmbhWqAO0f9uITohPDK/TPjqa6km+P1jZ2YmeE1I/MxTo43dRSQbbHK1oWP6iaKEAHTMTkEYPAWAm6EHLBBD6SAiFhal1Mzv/FvB9goytU1Ym/BEo3osYUTtyEVAwsLE+bTzOyn+BRQv5EX5I0UzBdKbMSjz5g9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwoTVTx4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754398918; c=relaxed/simple;
+	bh=5BkvHDYGZxcrey1OnIOFiDWh/mlgsN57huK66iChlDA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UTURHsc1RrCFKxZdocQ8tdzwwDgtS08zXnjpIGZ7QxYIRlkOYbCcvrqKLfbIJSNXRGdbEf12vcjDgoBxS0xO/tGt4MF2jBQvMH2ttg1Y+Jl1IW9BlvaKk/VMjW7+0EHtPG+iWGpStXQPp2JsyuM4UuOjKEetjyTnRXJw4VkBsPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=uHEJ1rrp; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwoTVTx4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B305C4CEF0;
-	Tue,  5 Aug 2025 10:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754389569;
-	bh=7rVCW8r3zVl85kYTCUUV6L2jUD/buUjnRV58z2gANgw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=IwoTVTx4oNSU7IOKbmF7O2xSfNdMOPq0wbdkfw4i7d5TfO5D3heN8DJqVZr1VEYnK
-	 quER2OQsDmLwn1JObdmMN+13OmNTo4cX/uvdiDUuF/WOROEJb7q6/2gjIx0dmjIDv5
-	 i3AP17v9diEQ9fP7XVQPphxJDAufssFw+w8vNEKubh5hIrSIDmlpODh1tI3bmm0ZtL
-	 3/24lzJZyv0+rS7ImFsU+61TcSAlJ0Tmli5ZDZUwzwWKa6SpwNeJo4HksoiUnDAMK6
-	 VoLVZbjkcQeazkEvm4Sy+OGtHKVdKZuHCyl0lktdkLpQk/m0BRI5Ddwk1C7KVosqm1
-	 ytphFokTAMVfg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, FUJITA
- Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner
- Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens
- Axboe <axboe@kernel.dk>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-block@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH 05/17] rust: configfs: replace `kernel::c_str!` with
- C-Strings
-In-Reply-To: <20250710-core-cstr-cstrings-v1-5-027420ea799e@gmail.com>
-References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
- <TL_feIg3npvj8WCrzUSpylClaDUBbZJFcZH8Z98hw2z7jzoH6u9Jbai8xtai6QsrTCDBbQD-cg_IpvXq1ZxqgQ==@protonmail.internalid>
- <20250710-core-cstr-cstrings-v1-5-027420ea799e@gmail.com>
-Date: Tue, 05 Aug 2025 12:25:50 +0200
-Message-ID: <878qjy9ia9.fsf@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="uHEJ1rrp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1754398896;
+	bh=FVBPVEeUd1bxjQJhz//RpBXorx7jPTLOEKGvJHJaQ6I=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=uHEJ1rrp8lcFNQEhaZH83d0TGSxh9/MSb2rI3Tk71G4A78BOeZEnlqSzxd8bdC0gl
+	 4aI8s8HHr62oWtRKRFX4+EBbzWUp74TfTUR0EDaWVYFaErzExwm6f17+9lZKHHgj9Y
+	 Ehg63CRZep78d6sUEKcUIlloLxYs1XprVwDfObZ8=
+X-QQ-mid: zesmtpip2t1754398895tfe7aa0dd
+X-QQ-Originating-IP: CPpRJvHoFk9wwvAZxLC1CoM7Jc+eYsDtqwv2sfJO/dA=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 05 Aug 2025 21:01:33 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9963814642751996560
+EX-QQ-RecipientCnt: 15
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Tue, 05 Aug 2025 21:01:09 +0800
+Subject: [PATCH v4 1/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for
+ SSPA
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250805-k1-clk-i2s-v4-1-038181284dd4@linux.spacemit.com>
+References: <20250805-k1-clk-i2s-v4-0-038181284dd4@linux.spacemit.com>
+In-Reply-To: <20250805-k1-clk-i2s-v4-0-038181284dd4@linux.spacemit.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754398873; l=907;
+ i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
+ bh=5BkvHDYGZxcrey1OnIOFiDWh/mlgsN57huK66iChlDA=;
+ b=SxTtW4MUMwC7dLisiqic3znXA6OPJqUWvrb5W5Pn6+JFG8K/Yh3eUkw2+FCEHT/mEu4vhreEc
+ rAhO0DskONhChyvl0uXygnVqsvgGn/ntlTHpow6ebqltPYLSEQ4B0QC
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NaNf4b06WLAJYE2riTHfVtee7rzDHiQpvZJQ1KX3K2Ckt9m3ntLBJ7fX
+	j4XLjWgkYORaEBslikgF/c5CYH9ccOobIEKZHxZyyspmCosCdPkg3Zm9zZMSg1J1SGSpCbn
+	N8DeePNO4Kj3UFFp+XSrPDAnsaTUNAtuMrdbjc9JPiK7QR8LhugWZ2gzbNOBLS6H6qvc4zl
+	V6G9QsP2eOEVOmG4a1W07/xYbW7qNMKsRUXHJ6TKjv4RFdIOM94rzgN0Up1jXpso3XFxjEg
+	AB0nZrr1nnDJEtRiobnc8E7xUlmA5yoyDY8xco8VQLqRFWR2iPhkHOunLLQrSiJxQLIDgMQ
+	CrumY2uadwFXMLORKDexupj00Fe8rMRfY7QJEsOtz5maK/y0NZUaU7IfIuz/AXbnWaN34uN
+	FgYgdlEMTkma4zEwsr8T0K7CXuicHAXbA00E7f3txp4kM7hS448I3gOxlS7sgXTiyCNUsqJ
+	QTguwVsgJY+YL0jqryuB1Vifh0XcAUOIpNWvhrownD2RfoxrrfFhem+M5Yb3HPAg+5/TtgN
+	NPimnszEhJI+eiRjMeQPbcvT/iXLP/vbIpUZVkQ7p4Q+I9a78Vgh8pMW+BQ8PJNh26czQnt
+	4mA6pfvft9R/MATxkwrG1cW3idow0huF/uA+U8CMMv3GuOEsjBZupKN4x7bB/aWqXG+EF7i
+	CZgwEmed7+YKPq2J6Dj+jNSWNpnu6ZJhi/faZg8K1yJYbh8kEWFUnN8Jc371y9FRm+kKhJm
+	mn1Dq8/aqvIE8qShDHEUQGENJku9+D7DhFLUrOMWrh2HKHgfg1gzwBlOYwpH2svSbBSI+HD
+	6/aRUtYHhissNt2hQ5PE7jz/BBTzw4sNtRt5Hr7ze2dPYrWpxAgBdMqRlsE58dBjoPKwPCz
+	IJr2MMR5uGpvG0ty/Astx7r/wlfa3g79lhONDlljnwTUVKVNgLRTNQgtEbePE00E/T7ChzU
+	y9pF+ijfV8VzU4X6k+ZdvDNWPLGPmFXSmJSik75QyRsXz6rdHgJPgwZHvofwKkZ6+Je6Jtw
+	rETLImEZ010dfH5rIVYVuQSmKdg9CYvnFdG3K38khV9awWd0Ml3QLc9Es4hyGgWSTt8MiCK
+	pr3nRfbN1+XYZZgRpTRdFMaysO+MmCRaBuOTRG8OzFNZmBOe8J0xgFv//tikN12tQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
+register it in the driver, this patch introduces the macro definition.
 
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+ include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+index 35968ae98246609c889eb4a7d08b4ff7360de53b..9be578953d71e79e93eb10eaa35b47b97812e826 100644
+--- a/include/dt-bindings/clock/spacemit,k1-syscon.h
++++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+@@ -179,6 +179,8 @@
+ #define CLK_SSPA1_BUS		97
+ #define CLK_TSEN_BUS		98
+ #define CLK_IPC_AP2AUD_BUS	99
++#define CLK_SSPA0_I2S_BCLK	100
++#define CLK_SSPA1_I2S_BCLK	101
+ 
+ /* APMU clocks */
+ #define CLK_CCI550		0
 
-
-Best regards,
-Andreas Hindborg
-
+-- 
+2.50.0
 
