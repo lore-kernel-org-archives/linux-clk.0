@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6503A175A5;
-	Tue,  5 Aug 2025 06:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A1A42A82;
+	Tue,  5 Aug 2025 07:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754374585; cv=none; b=pQPiiCLR9D21dTictJzGPHkaFgx16M0XxxO8Licwr/ceW3vRIHZYGjTjT38JU9DYPwyJTMzooSYZHlqk3bWqqV/vh6tp/wVC7AVWP4PjajElKWWsK+jIoZM2RlO4yy3XDgZj3l3HA9i4LbC5bDoBoERC8rvryVjC4XESD/xN5os=
+	t=1754377287; cv=none; b=g55mQkyI2d57GEm1cSnCYJ+WxAwfWlAh0VgCjesd1iIonEH7X1R+fItkDLnP/OAXQ0arhmNla156hRO2SGCU6OnqryNoQIFDa7dGn1A3XZWk24kPQs/H84CPB+gKCke424dxXE4VqNCNY52Lk8SwqIAHN+/I41hi4peNI5/MT7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754374585; c=relaxed/simple;
-	bh=E4DnAqs5juCZtQM1q8zq4eWD0Gdeu/dFvmY6c1wEMxw=;
+	s=arc-20240116; t=1754377287; c=relaxed/simple;
+	bh=JC1N8+EDHFSvpQmSWYP4IQBCKd4LuqodETgoH4R7NJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2dDtkqdQUsH1scyGxxvtxzxUPoWrfkqJTY6gGGoAwt6SuIHKVQL1dZsgjZUE/fJZE7MEegxu4pK+8vw2vMJ+8f+A1FhaJt/bPOcDJcbJilyg0l0ChisCPuHoTkzDxebnQXgZ1uxTFqupFtrsHmlEFXAzo3ihfQiOZmHRdkJ7w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJ/4Ru0T; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEqyVJ39Zvn8y993Yxk1itvk605WuNr2rOlVzQBWfNXz5vPCkuMTvMHgFSb+BPgppXZmIdo/xHZq/32rzQveVw5UQ8LhaaH5+0qW3XVd/KeJQ88UwRVlD7mkQSmVMVrnlcfUGmeNUz7jePTg4C9tw9903mBJNS5hf/9MK/aKQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar9ji4xR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJ/4Ru0T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E23C4CEF4;
-	Tue,  5 Aug 2025 06:16:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar9ji4xR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6CB2C4CEF4;
+	Tue,  5 Aug 2025 07:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754374584;
-	bh=E4DnAqs5juCZtQM1q8zq4eWD0Gdeu/dFvmY6c1wEMxw=;
+	s=k20201202; t=1754377287;
+	bh=JC1N8+EDHFSvpQmSWYP4IQBCKd4LuqodETgoH4R7NJg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pJ/4Ru0TvNSs/1mdSeiR+23gvRUnlX2FrhHXehiRQlAHgboxcESB4VPRLlD+hfkq1
-	 UJcqlHcJOCH4rAS3wcL4pWVXA+bcKHT0NzKlNhXNy/bYAgPDG5zZpBDfHBnRanoNPP
-	 LIdpgx7xzCqXUIuv6c+Y5g7MjNUso/aENwVC37dtoovy4iASKhwtbHMZLVq+jMsr2U
-	 vB5elp+HLmLu0SHb9PAewt7pTwBuJMoY5NjEZC6lMmNdXQM/JkP09J6JYWh/n1QbXf
-	 N8XoCbeud6ic6fpBI+xNCfLCfjJeE5tCkwnduo4CG11lZgPs9+MBRs6ogzA3ESiWFg
-	 YTNQmGGc9j1Kw==
-Date: Tue, 5 Aug 2025 08:16:22 +0200
+	b=Ar9ji4xRtlUqcDAwsHuBWUNlxjyu681opyVGK5UyqWJZhuLYNNNBsQ+/ZN2+elZLe
+	 aZtUhbs2A8YMj77XDSJ3dV+0Ry61v9NCfdH+dlFAlcbXWkaPEOkBO4Ol5nR0TYqat5
+	 MQORFDAutzwQv1tfuRxqGAAoG4j2dScNl8wFKgsuia2wG94uOmVckNYPsS32bfV8Nz
+	 lV1zcYh2lV5c5Ns/T6AObeT7LwnDHO2y7qdXGvkNFsho5STMSi83UjUK/3+wFUOPCf
+	 bmmLMB17PNGOUVoevocn+MaFmfgNcI2LYkAYRd5tNkyH9KF8GJAuuFKIST6frG0DRM
+	 APQ1fABVfbDCw==
+Date: Tue, 5 Aug 2025 09:01:24 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org, djakov@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>, Md Sadre Alam <quic_mdalam@quicinc.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-Message-ID: <20250805-polite-prawn-from-heaven-bccc9b@kuoka>
-References: <20250804112041.845135-1-quic_varada@quicinc.com>
- <20250804112041.845135-2-quic_varada@quicinc.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH 1/7] dt-bindings: reset: imx8ulp: add SIM LPAV reset ID
+ definitions
+Message-ID: <20250805-efficient-amigurumi-kingfisher-ffdb56@kuoka>
+References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com>
+ <20250804155407.285353-2-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,23 +49,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250804112041.845135-2-quic_varada@quicinc.com>
+In-Reply-To: <20250804155407.285353-2-laurentiumihalcea111@gmail.com>
 
-On Mon, Aug 04, 2025 at 04:50:38PM +0530, Varadarajan Narayanan wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Mon, Aug 04, 2025 at 11:54:01AM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > 
-> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
-> The RCG and PLL have a separate register space from the GCC.
-> Also the L3 cache has a separate pll and needs to be scaled along
-> with the CPU.
+> Add ID definitions for i.MX8ULP's SIM LPAV reset lines.
 > 
-> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> [ Added interconnect related changes ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  .../dt-bindings/reset/imx8ulp-reset-sim-lpav.h   | 16 ++++++++++++++++
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This belongs to the bindings patch.
+
+Also, use proper filename - compatible.
 
 Best regards,
 Krzysztof
