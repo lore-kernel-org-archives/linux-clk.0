@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB624EEC0;
-	Tue,  5 Aug 2025 09:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F78242D70;
+	Tue,  5 Aug 2025 09:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754384785; cv=none; b=fxxxq4Ohkx5T4YXttQimFLcwCn+1yhlLkXbPDC+lgSq+wku5vpxVuhoWCYNqPgdqxYMbjp/YWjoBUs4zMBJeauALcy0Av1PhcHYB1lT3S/bbevM+o58Lfae3kekRmPX2HwK3iJeWyAZM7ar+m8fRGayszRyD0pxO4dIZQHiQI0U=
+	t=1754384896; cv=none; b=lU79K+I1e96uqZ3TBybrhDuEnnx6xEyDLZoI42wdEs8hAF5bCLGOEy8o7MTiEHDCGotyyuHquzDDfHqW7zVbtnRa8tBjtGMKyss+OdK1xuXIACUnoqAhQriRNiPapVt1MBj1bjNWzuWCLE9en/g8I3yMtx9X1O/2GfBgbf7DfPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754384785; c=relaxed/simple;
-	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
+	s=arc-20240116; t=1754384896; c=relaxed/simple;
+	bh=k3PgLhJMkOy34gFql2Xeonl5kwQJa9DVarO1kFlPPDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RRikTIB/PftTkwY1ocXRZ/MlRlKKP9RQIPfzUy7oYjSXfohpmzmYSvTPiEmviAVVdAlG1edxn9ZdPQbzOfOlICNut/U9lLyzVWdIzT3nUqJCZQOpWoCDgyMmevItgkfsRNK6noLyEwYxXT8rVc+r4RHGwyU+3K0Tad14xc/0cVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/sIxMDH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=aEBejjbyOWcKicbeylu2Un1YGU4mGSnGHj9Sa5zMtqjsvXCH2Cdhxo2J5VSlVtqAl7Gt6cYLGGhrKL+II92hqFAVScWlidFfS7JuoAG7dIhtDLtFwGBBtGIxwv1wjoyD0myV7hAqC8V6txvu9kM/30zo4Qng3hhqOIRBw4gP/go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUwDCNC7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/sIxMDH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4337EC4CEF0;
-	Tue,  5 Aug 2025 09:06:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUwDCNC7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC111C4CEF0;
+	Tue,  5 Aug 2025 09:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754384785;
-	bh=bHndM6uct/4//TOkuU5nYXl569PYXX3Iwegad1w5mH0=;
+	s=k20201202; t=1754384895;
+	bh=k3PgLhJMkOy34gFql2Xeonl5kwQJa9DVarO1kFlPPDY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F/sIxMDHzO8y3tkfbV1zC4tD0skZmoIJgbZ9W5QswezhWfvs4G9nxB9EkpqQkkevO
-	 Fur9pKF/sEBikTzIivkTt4VfkIM7s+68QZnBVOtl3282NgEuiCRfn18Qg7NiUgO9WD
-	 hlC7hXCXOwjQl9yfJhzGl+e/H+W6bWLob8N5JfzMrZ3InzmkyUTJUHNIRunGoKaThT
-	 rEuoW8bLyQlXzWPvfWkvErtWhAKrIfq07dOn12wDMcXmnr8AA/qcZW7fsU9KfXqvs/
-	 Yw06v4RBmj87jqFnV0UWW4AehY+/2Hay7lDVH5ityNnqL7mwnEkLcSaE0sZgWLlY3a
-	 X7hFfrlcy32lQ==
-Message-ID: <553ec151-14b0-4959-a04f-1b9fe5a9bbda@kernel.org>
-Date: Tue, 5 Aug 2025 11:06:21 +0200
+	b=tUwDCNC7/q4zxOA/GCeYSdjrwfoq0yML2KRuGzq/gDvafcblNlcw3xco5ikbSncdd
+	 evVERbpQTxLimvfiFLYXu14ppizn2q/knd2xmSAFWqtYxmtmvMJkJSi/Mm4G9jsB5l
+	 C995X5UeH8aknqjp/Xj6ui8w3TfvZmmc2nVv/PLh/rNXN7Q73+mqKTBquKLkHWCSRD
+	 /+YojTSQsTw9Z9/t4fbeAdqAzcozsVKjvXQDrEd9nx1+k/Ik7EFkmeX64wL6T39RLl
+	 d2b515EIw37dlUX6Yj2yE1J2nOo4sNPm4tZ87cWDxPlVp+gNA6Xr49EpT1gb7gQQdO
+	 AQInEz6/aYCAw==
+Message-ID: <77e0b333-d1a0-4b10-a35a-efc83dec894b@kernel.org>
+Date: Tue, 5 Aug 2025 11:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,14 +35,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si5341 to DT schema
+Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si570 to DT schema
 To: "Rob Herring (Arm)" <robh@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
+ Conor Dooley <conor+dt@kernel.org>,
+ Soren Brinkmann <soren.brinkmann@xilinx.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250804222034.4083410-1-robh@kernel.org>
+References: <20250804222010.4082782-1-robh@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,21 +89,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250804222034.4083410-1-robh@kernel.org>
+In-Reply-To: <20250804222010.4082782-1-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/08/2025 00:20, Rob Herring (Arm) wrote:
-> Convert the Silicon Labs SI5341 binding to DT schema format. It's a
+> Convert the Silicon Labs SI570 binding to DT schema format. It's a
 > straight-forward conversion.
 > 
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/clock/silabs,si5341.txt          | 175 --------------
->  .../bindings/clock/silabs,si5341.yaml         | 217 ++++++++++++++++++
->  2 files changed, 217 insertions(+), 175 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si5341.yaml
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
