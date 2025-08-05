@@ -1,72 +1,72 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D342494C2;
-	Tue,  5 Aug 2025 07:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC3246335;
+	Tue,  5 Aug 2025 07:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380193; cv=none; b=cM6KmndKSzD0akYC2TLo6FZk9j9S5+1RsTNLiRNXvqoz07Wm+vHfakl0h13UoKgGilmsqyW1rrvQO7SNN5Ltik0kX+j1Q8pkHu94rRu8lOzoFDNFVsbqb7toaiAJR/u/DOOR0jtwbM2W6t7+JwlNdxJDTfqcuYGFi8GzzXfYbvw=
+	t=1754380310; cv=none; b=E1WKueNYpoUZaLJaP+okElIRZUPqcWhs2zdVMnRzRUcCYFKwEIxLV6LRP/PndPsOggc0WwR906h2yRATMjz1yd+PPiuH6SzC2//Xrl9MX8VNNaNjAhsC+/gQEpS0/NIoWPvoY4LXOv4vD8MsF1AnOwFWjwtQpUjGx32PWX55hXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380193; c=relaxed/simple;
-	bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
+	s=arc-20240116; t=1754380310; c=relaxed/simple;
+	bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=javb0XHf7I4QoZ+4thDE1FITeZGWxGbq3O9ijk0sa+MK7xWT6ZC+RgKSXq0Y0IVoAyT0sGfOzxMx1FCm2Ck0IdDuCOBEO5sUZydJkEI2MPb7xfZOqsdI1vlareiXJ1Irt/nb+bbpwHTP+Ral09lY8CPJdDDE5f68lRx1d3bqdPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EadUrHEr; arc=none smtp.client-ip=209.85.216.46
+	 To:Cc:Content-Type; b=CxKzO6+A7kt20z/CBV1LLKJXkpz/jUhy/EU5VY60Iov7Mmpw1nZmQbWd3EqvwjpSqBR8feJEarIyc+X41B3EN7dcnj35EaXJZn1tYPDrnsRP07Yf40M6KX2zYiJb14TrmM6oodCGUwvuiA1/nQwo1jz20nr5lPrY2SNZj9vGsyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2cgZxKH; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EadUrHEr"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so4217064a91.3;
-        Tue, 05 Aug 2025 00:49:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2cgZxKH"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74264d1832eso4793310b3a.0;
+        Tue, 05 Aug 2025 00:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754380191; x=1754984991; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754380308; x=1754985108; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
-        b=EadUrHErW7vkKVzl00F3FnUKop06BdBOUwAWBTJ/jLXlgIsxqZ+8kqL88766on1UwV
-         eQfx9ktCLHWBeq/H0YuyzJ0+kMN0iTz+/ZJQvlRjbaD5bzE7f8ToqGKr7xjGvRN3BzVi
-         xmAworfeB+0VRbIiGG03DsDUBwHGl/eJzHfcgd3GNu94nBwQzEK0XnnRNAk6TFzeLK7O
-         X9ZK5lnoI/i2NpMg4VZDacHorXYwVxFB+pF3hcrlnMgr5/l+oAygz2BuOqJFADamye46
-         pJPEBmWiqyg9dnTsSDKkc9iVCHK3OPENjEmIg2ixO27gRZ1q2VhChzNt89v7lZUtN1tX
-         uP+A==
+        bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
+        b=J2cgZxKH/eHMTeM1BE0oDCuTRYylYFR8qVR/qIwVnwxP+Tlgxb36MfbsSejxv2WCXG
+         52+DjNlwFYm+nYZ6ih9bXS1gQwdcSIPZ9M8ZtZu57Ty1aTjDCWiChohpErU2UU6I5xcN
+         4EI7ukt0mw9zWf8QtJKBaXQK/jFCeDRtFPWybmSDk607+hzLgz7OtBALtaL8BXH56abR
+         qAxWVH1s6PDp82+mMvC84tgPLt2hFZdsz0kskZ6INPecoZv7YE9DLcbYy89VYr/eU8yV
+         AJutN9UCE3AhDntpPyIfYHIomdjczQRUBBKfYPijE6GZoOUPIra+RJGhDvq/J+BdWvQc
+         edxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380191; x=1754984991;
+        d=1e100.net; s=20230601; t=1754380308; x=1754985108;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nWNH5eCqyP/FjxukcloV1DRoOBCv8QarpVQi1BOYK0s=;
-        b=cFb4j6q0HqXorDVtP2O4iKF1PoB+PW5tII80FMsjzb8B35sP3V2Tkq6aXtnt3ornEF
-         MxQapLveu/XNvhetzV6uBrL+Uovq+Q20OzBre6gB5LJfK4OSFLsBpS3IlfQjXwmHc0Wn
-         mNaWDWLlrzjTWh6tQvtxT2vV6kp/TrRWwPLDSf13TMm7ODZbjjE8WD4gHnbanKlZe24M
-         OvXxGgbkDsu/PkSs6B4GQ5Gc1gHNBUV9uJnKzyLVllxQ+NS11ztAfPFrUSp2YbbGsHvG
-         IRX6nI4s0VG6XGggGyrCn4N0E6Q+vNxyZH1I5mCvKfaLwF896htt2g18YD86qpWHgM7b
-         Yc/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnUnVDL3BKkr5HOjapt32R3IP27+U58Ti+hUGXizeeWy0o+6t9E/UfuRppZx6qFmgkV2jzVLMSyeZFh+x/@vger.kernel.org, AJvYcCV+lNOxyNTWseiE90V0eJ2wgcxgxp8Qum/TrE2cA/uOvtkH7YLFGBouJs8mZTv5NlJm180qibnd05D7@vger.kernel.org, AJvYcCWvirG7aCPvtX1SyV9/dw/42nM36oIe+HYoFW9ZYGBuftTePQdL0XWv9T64zEc+xoTVlYOqdBrtzugd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrH0jkNSrgIqzG6gT3xMgXqvjC6379zBYxGVFjXJXsImGpePfU
-	DuwTxrrGx89AVHpBiBRj9wknUlCLSdVOrOUwtx0v4tZ2+4ESoRV/vb6lCke8ibgonbnsML5lswx
-	iI6me6L1znQ4SnNcu0QGb3q6AzxwNNMI=
-X-Gm-Gg: ASbGncvFd4momJpNrv6P7wDbpE1ASeMcC25ZvhCTEb1oXCYZQo7OnZCGbINAelFljfX
-	bj9ZwyJesdlqIRuV8CE84v1A86N98aTTpSaqp0mVn4TEoi3WfG0DM7sqXQ189lawizbIA1PU848
-	6bPRLpu8rjS4aeY1qJhi5dENm2e/e/FAUKMXMfCpyC9dsSGdD0jBsLMqGECgDyHviwQg7TpR6MP
-	DJ9
-X-Google-Smtp-Source: AGHT+IGzN/lG60iP8C5y42/6GZHUdwFTfQPnirMANk8NvV5b0No4/sTpu/QFLlH7OULW0Qi45yw+Mon+tegHBGVKjCQ=
-X-Received: by 2002:a17:90b:3e84:b0:321:1df6:97d3 with SMTP id
- 98e67ed59e1d1-3211df698c4mr12468336a91.4.1754380190738; Tue, 05 Aug 2025
- 00:49:50 -0700 (PDT)
+        bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
+        b=OKpDebHmK59CWaWcK8i2VkdL/koVkHZEURyzmnxH/7/Xfajg1sGv7ZL5tc6J2gqCKo
+         avXmurHiSc+xOjDWPRcZrHTx0ETxr0gpEQZ7u83c4F3tyqZRurCgkyG0XfxdmZrG+W9V
+         C8lViM8ztRal9nKAckbKD1R3aq8DIR2V5nzzcCtiqss0fXwQVtKuDxdKhknDOHyUpFbr
+         jNrR/p/bpJlot8g8sxtJdAWno9lDP7aMs0bsp940nSxg6DTLlduR4p+0q7D25etVTgEA
+         dn28a4ZY4YlxBZiwJ7QAsvd4Y9kraZn7RMPEqwl+xT2JFlCHxjr4iwAN2SlNVO5aVJk/
+         6p5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvPp2633LGLJhk+jrMYYGx+Vx8r+sJkTQSLo2v3542LXFT7nFMTH6PSJ44CQgfrk+k1VIcr1TaBNWo@vger.kernel.org, AJvYcCVhI+Loki5PaNz8z0obl7JDwt4lTt5XHEojQfxCnfjmdOhDWws5xGxqH0rh//WIUElu9295C/C0Xpsj@vger.kernel.org, AJvYcCWFxZR4fIMj3Ns+0nKU91hLdWMvpCgRMFDp0ETdBqmJtOGBY3nJtq/nC601IvfVgdTEiPeGROUQ/1PhMc/o@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx19UTg4GG1tWbNBmvO27b+XcStVfG3s/o3CTWCgYK5F2JTMKoG
+	xNCBUu9nSHaqT00SY4ymI1Lw8yuKk5oTwKssfIUXs7ppSUkhMIYc6cLurPJX5emxj4TmHllPaD6
+	rxtad+KD1Ro/rm4/VVqP2p+kHFjaHgkY=
+X-Gm-Gg: ASbGncviLzcFGEe7WanWrLkoQR10EbpmiUAUhD8ROp3CNGtbs/IwmZjcbQVGP4n7D08
+	JLm2Ed2ut5LqvJ3PR+b5LH+HX2v5+4OUqHPnnIVGKz7UrK4jvvRUp5uY+kt/+tvrGy21DeM2snM
+	UsrjqHnjtLFnOxp7c5fjOMXE22fDSkpKjI12ewGo+pI8588Rb+7yjE2E+IQk5xckZXplulD/CZI
+	q6Y
+X-Google-Smtp-Source: AGHT+IEWmtpQKbGUq/1bFP8Lljg+twjtflzwS9IvD3UxctPY665t4Ffz1Dc9oQm0cJB3lp//A3+8o9nPMjYNlLQTx4A=
+X-Received: by 2002:a05:6a20:6a0a:b0:240:198:77be with SMTP id
+ adf61e73a8af0-24001987cadmr11786044637.42.1754380308033; Tue, 05 Aug 2025
+ 00:51:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com> <20250804155407.285353-6-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20250804155407.285353-6-laurentiumihalcea111@gmail.com>
+References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com> <20250804155407.285353-7-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250804155407.285353-7-laurentiumihalcea111@gmail.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 5 Aug 2025 10:51:56 +0300
-X-Gm-Features: Ac12FXz_yTxmGlhhGe-fi7WMSXizT1iAGAYfFnkICkWhi-5XkkI01xGLjDZkakI
-Message-ID: <CAEnQRZAAwmivz-uu2Z88Ky71eJ=5oRjdSJqqSQ2S4JT2cwQpOA@mail.gmail.com>
-Subject: Re: [PATCH 5/7] reset: imx8mp-audiomix: Extend the driver usage
+Date: Tue, 5 Aug 2025 10:53:50 +0300
+X-Gm-Features: Ac12FXzs-8MGoSs0GqH7OpNp3C2Lxecj08a45oMAKLepSFZX4ZB558QC9xKWl9w
+Message-ID: <CAEnQRZDxMc43_U1kwnFDLnQbYgpKDmPYkdqB6dd44K62Ka1GqQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
 To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -78,31 +78,12 @@ Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 6:57=E2=80=AFPM Laurentiu Mihalcea
+On Mon, Aug 4, 2025 at 6:59=E2=80=AFPM Laurentiu Mihalcea
 <laurentiumihalcea111@gmail.com> wrote:
 >
 > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >
-> Some NXP SoCs integrate one or more, per-subsystem, block control IPs,
-> which allow users to control the assertion and de-assertion of the
-> reset lines tied to some peripherals present in said subsystems. Some
-> examples of such SoCs include i.MX8MP with AUDIOMIX block control and
-> i.MX8ULP with SIM LPAV.
->
-> Some of the aformentioned block control IPs exhibit a common pattern with
-> respect to the assertion and de-assertion of the reset lines. Namely, the
-> user is able to control the state of the reset line by toggling a bit fro=
-m
-> one of the IP's registers.
->
-> Linux can take advantage of this pattern and, instead of having one drive=
-r
-> for each block control IP, a single, more generic driver could be used.
->
-> To allow this to happen, the previous approach, in which a single reset
-> map is used, is replaced by a per-driver approach, in which each auxiliar=
-y
-> device driver holds a reference to a certain reset map.
+> Support i.MX8ULP's SIM LPAV by adding its reset map definition.
 >
 > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
