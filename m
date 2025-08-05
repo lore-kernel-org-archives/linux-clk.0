@@ -1,90 +1,108 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC3246335;
-	Tue,  5 Aug 2025 07:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502FD255E20;
+	Tue,  5 Aug 2025 09:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380310; cv=none; b=E1WKueNYpoUZaLJaP+okElIRZUPqcWhs2zdVMnRzRUcCYFKwEIxLV6LRP/PndPsOggc0WwR906h2yRATMjz1yd+PPiuH6SzC2//Xrl9MX8VNNaNjAhsC+/gQEpS0/NIoWPvoY4LXOv4vD8MsF1AnOwFWjwtQpUjGx32PWX55hXg=
+	t=1754384626; cv=none; b=Odf69Qc7iVw/DqLSAZVej6rjm8OSCDSWOxrWoKbOfntT/uQtGFa1mJWx1w0DbmJfFn4TdwskkyeVYaKKl8pGF4rsQXf0hhEcUf7UWW+6Y5AvRtpsDmt7zKjNjFpiHev5NSq0o0O/leSqkBLjZxQjvgtVPEPC8yEiwxAgLlMw24A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380310; c=relaxed/simple;
-	bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CxKzO6+A7kt20z/CBV1LLKJXkpz/jUhy/EU5VY60Iov7Mmpw1nZmQbWd3EqvwjpSqBR8feJEarIyc+X41B3EN7dcnj35EaXJZn1tYPDrnsRP07Yf40M6KX2zYiJb14TrmM6oodCGUwvuiA1/nQwo1jz20nr5lPrY2SNZj9vGsyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2cgZxKH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754384626; c=relaxed/simple;
+	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AAwWW7NWg2WxJh9ij7sJfCTnZobL6urn6/04lMXgg2fDjoOiiEA3qvTkVvA3C7N+YwX8tnNDa7ClOTELJ3u837/Fs4MladSFcjy+dMKSgXJCkWqpHrEdtNZCwrBwxb/4ID61ySx1i57CC8ColFRsyJvMmIqBg097aZ23WOC9YWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l57AS8tP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2cgZxKH"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74264d1832eso4793310b3a.0;
-        Tue, 05 Aug 2025 00:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754380308; x=1754985108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
-        b=J2cgZxKH/eHMTeM1BE0oDCuTRYylYFR8qVR/qIwVnwxP+Tlgxb36MfbsSejxv2WCXG
-         52+DjNlwFYm+nYZ6ih9bXS1gQwdcSIPZ9M8ZtZu57Ty1aTjDCWiChohpErU2UU6I5xcN
-         4EI7ukt0mw9zWf8QtJKBaXQK/jFCeDRtFPWybmSDk607+hzLgz7OtBALtaL8BXH56abR
-         qAxWVH1s6PDp82+mMvC84tgPLt2hFZdsz0kskZ6INPecoZv7YE9DLcbYy89VYr/eU8yV
-         AJutN9UCE3AhDntpPyIfYHIomdjczQRUBBKfYPijE6GZoOUPIra+RJGhDvq/J+BdWvQc
-         edxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754380308; x=1754985108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DF14p86C1doTAXUJtzsz/T5aS+HX53wfXuMCNvC5Hto=;
-        b=OKpDebHmK59CWaWcK8i2VkdL/koVkHZEURyzmnxH/7/Xfajg1sGv7ZL5tc6J2gqCKo
-         avXmurHiSc+xOjDWPRcZrHTx0ETxr0gpEQZ7u83c4F3tyqZRurCgkyG0XfxdmZrG+W9V
-         C8lViM8ztRal9nKAckbKD1R3aq8DIR2V5nzzcCtiqss0fXwQVtKuDxdKhknDOHyUpFbr
-         jNrR/p/bpJlot8g8sxtJdAWno9lDP7aMs0bsp940nSxg6DTLlduR4p+0q7D25etVTgEA
-         dn28a4ZY4YlxBZiwJ7QAsvd4Y9kraZn7RMPEqwl+xT2JFlCHxjr4iwAN2SlNVO5aVJk/
-         6p5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvPp2633LGLJhk+jrMYYGx+Vx8r+sJkTQSLo2v3542LXFT7nFMTH6PSJ44CQgfrk+k1VIcr1TaBNWo@vger.kernel.org, AJvYcCVhI+Loki5PaNz8z0obl7JDwt4lTt5XHEojQfxCnfjmdOhDWws5xGxqH0rh//WIUElu9295C/C0Xpsj@vger.kernel.org, AJvYcCWFxZR4fIMj3Ns+0nKU91hLdWMvpCgRMFDp0ETdBqmJtOGBY3nJtq/nC601IvfVgdTEiPeGROUQ/1PhMc/o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx19UTg4GG1tWbNBmvO27b+XcStVfG3s/o3CTWCgYK5F2JTMKoG
-	xNCBUu9nSHaqT00SY4ymI1Lw8yuKk5oTwKssfIUXs7ppSUkhMIYc6cLurPJX5emxj4TmHllPaD6
-	rxtad+KD1Ro/rm4/VVqP2p+kHFjaHgkY=
-X-Gm-Gg: ASbGncviLzcFGEe7WanWrLkoQR10EbpmiUAUhD8ROp3CNGtbs/IwmZjcbQVGP4n7D08
-	JLm2Ed2ut5LqvJ3PR+b5LH+HX2v5+4OUqHPnnIVGKz7UrK4jvvRUp5uY+kt/+tvrGy21DeM2snM
-	UsrjqHnjtLFnOxp7c5fjOMXE22fDSkpKjI12ewGo+pI8588Rb+7yjE2E+IQk5xckZXplulD/CZI
-	q6Y
-X-Google-Smtp-Source: AGHT+IEWmtpQKbGUq/1bFP8Lljg+twjtflzwS9IvD3UxctPY665t4Ffz1Dc9oQm0cJB3lp//A3+8o9nPMjYNlLQTx4A=
-X-Received: by 2002:a05:6a20:6a0a:b0:240:198:77be with SMTP id
- adf61e73a8af0-24001987cadmr11786044637.42.1754380308033; Tue, 05 Aug 2025
- 00:51:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l57AS8tP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B84C4CEF0;
+	Tue,  5 Aug 2025 09:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754384624;
+	bh=ocE+IikMad3OqkP0qUgk3RW8u9AF5Pg6tQ8XXN8yM6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l57AS8tPO/TU2LnmMVBLk8M1XntNd9ifxy+61taiX5Hly6vneP249ZdWeTMx9ESpv
+	 lRQABqW7cI2rvyBVEKUuhtJtN0FPCqj4nNn/LgMluhIVXbhXyvpU2upTPzmaFMg4fH
+	 +qKs2dPeKBZD67JJLo+Rp9q45BOiXn7AJ4KM+v+isYOppD73bENARFTuGbfZW4cOTR
+	 f0O4p2iOJ8pbdW+Yckkc5DPH9IGjdTLvAk6+td6EJKOxIzJoGKueJJ5U6AZZ7dvjme
+	 ILvAn6PoRC7LPDX+BvO05Dm+nyDGAnTsCNobFBmrirO1GrI5mfImYlalxOOb0RcYXT
+	 JYjcxVS0yEDIg==
+Message-ID: <e61ce15a-b16d-4975-9467-5e3758003dd9@kernel.org>
+Date: Tue, 5 Aug 2025 11:03:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com> <20250804155407.285353-7-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20250804155407.285353-7-laurentiumihalcea111@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 5 Aug 2025 10:53:50 +0300
-X-Gm-Features: Ac12FXzs-8MGoSs0GqH7OpNp3C2Lxecj08a45oMAKLepSFZX4ZB558QC9xKWl9w
-Message-ID: <CAEnQRZDxMc43_U1kwnFDLnQbYgpKDmPYkdqB6dd44K62Ka1GqQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: Convert silabs,si514/544 to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250804222042.4083656-1-robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804222042.4083656-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 4, 2025 at 6:59=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> Support i.MX8ULP's SIM LPAV by adding its reset map definition.
->
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On 05/08/2025 00:20, Rob Herring (Arm) wrote:
+> Convert the Silicon Labs SI514 and SI544 bindings to DT schema format.
+> Combine the bindings into a single schema as they are the same.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/silabs,si514.txt           | 24 ---------
+>  .../bindings/clock/silabs,si544.txt           | 25 ---------
+>  .../bindings/clock/silabs,si544.yaml          | 54 +++++++++++++++++++
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
