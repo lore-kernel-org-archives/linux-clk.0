@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D11842A82;
-	Tue,  5 Aug 2025 07:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DB0220F2F;
+	Tue,  5 Aug 2025 07:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377424; cv=none; b=EpmLAqRVAE9LBDewgNmjl+TpwNE70E5AW6dK2tG179aa8rgUuf7c1sO2VAV7sh04myWONOpZRTrOTlglUVZzrZDTfZni9m4PFilYcXYkkkSPhPv9/IVYKjFqcOvdVYOuvfO0/WQyXYM6Z9ufc0azGhY++cvVPG9mx3XElgrfQas=
+	t=1754377495; cv=none; b=A4Cqo6+aXgK3B9NOo9555HTGhED6pc4o5YpTs6qUTnB1M2t+8X9B8spz5VA8QClRvwJzOJDxalKR3o9rijtIgWzL64LTtBNB/odXEMcfLFMp8KEoHUpJFiy74TpeisJ25ofKwmuykccn+QoYYIm2u7Wsyxw82zgopyLRGWOqcdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377424; c=relaxed/simple;
-	bh=yXD8h9EgHiHTH4CdVRohSkHvzdSIIfetCc8/xZomUnE=;
+	s=arc-20240116; t=1754377495; c=relaxed/simple;
+	bh=/Vjc7dPiKpSMHncnvcg3zB0rZF6suQTb0GyJfrR95ug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVkC9vlmboOKfM3ag/GcYGIsYpqs1hm5VzX0jF/u7XJ7l4PZ8ouCLdC1p+Q9yt2+NPi9MEBXrEGp8v3AMKLYfjZwEOzGS6g8zrmEvyifOZuPaD4clRU8guC4DJTrzmTGOiOBQwerUMHjGYhmLiSs22BJ1+vy6sSricnF9RcW8uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLZgX9wS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SabAmw/UXBnEuRaHXAREz00lzge1q7OSzVA8VJr1U9PYgQWw7tf/ElpaoGIVtVHNGkDhOkdNlUPMCJIScpIlZCm3fPY/oxBryBNMOr8U1ZA4I1L6VDtmfhlHtTFeQpDjwVR2oqMHeL89r8eAbhczfXahhFtxqUERClHckRSgIhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T457rMSO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLZgX9wS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D7C0C4CEF6;
-	Tue,  5 Aug 2025 07:03:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T457rMSO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF66C4CEF4;
+	Tue,  5 Aug 2025 07:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754377423;
-	bh=yXD8h9EgHiHTH4CdVRohSkHvzdSIIfetCc8/xZomUnE=;
+	s=k20201202; t=1754377495;
+	bh=/Vjc7dPiKpSMHncnvcg3zB0rZF6suQTb0GyJfrR95ug=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cLZgX9wSoU3mzbpD35QgvO/nbft/KXCcOOBwcItVpEgiNKmsu0tMBCnTBThyOcmQY
-	 SAcLH1FpcB/x/hucxJRD9W8j0tMQQvMrKUIsgNgKCc25sMEnIU/i90EcSA069ZQEiY
-	 T1oohSzDMmYoK+D8qnuccfHDBOaIj7ZTobX8tQ2U6jndSnp+SbxEnvxh/nwz5JqcSc
-	 SK9N6dLnROh1I4BY6o0CIBS45FEEOaO8jNndXRGi5Q9y5C16bxUBNbI3szKvSLQVzF
-	 7q11K9L3JHihrF7IDCHyrXCOuVcw90RMhHbjwRWqfuBKQx3fkzRCmYlaW6c8EjNN+x
-	 +8vacZuT3nMIA==
-Date: Tue, 5 Aug 2025 09:03:41 +0200
+	b=T457rMSOs2GWm0OCYkOhChWCzuRHcmFgP6+ididzUU9XipN/SiymdU52ZuV/B8+Sb
+	 ZC2arXUxo+bqKAeEFu3Ms5BoVZHKsVEkjV2LAWJ2754dyldP02FuqVHDri41RYbRXR
+	 IH/rr0XS8E384rGRwonHVhnhfSRcamZNZO3OaOEut5Hxjj6+KU/JryH6J8VqPQOzzB
+	 hTbEBnB2dXp+tT+iqFy/xHOdwdI7x7OFb75e6s7H7+DUGrBAolT2lvBaZ5Gf2SbfQd
+	 VGcWcwSw5KjxKFmglyVrObpo7JMfCfnrmI3/qTg8wLTvwKnx2Mq5xIX1bxtKiIHQhX
+	 V3Cyrqf4ZwYQQ==
+Date: Tue, 5 Aug 2025 09:04:52 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 3/7] dt-bindings: clock: document 8ULP's SIM LPAV
-Message-ID: <20250805-stereotyped-precise-vicugna-1c78ff@kuoka>
-References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com>
- <20250804155407.285353-4-laurentiumihalcea111@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: Remove unused fujitsu,mb86s70-crg11
+ binding
+Message-ID: <20250805-resourceful-beautiful-petrel-d0ffcb@kuoka>
+References: <20250804175304.3423965-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,110 +45,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250804155407.285353-4-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250804175304.3423965-1-robh@kernel.org>
 
-On Mon, Aug 04, 2025 at 11:54:03AM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Mon, Aug 04, 2025 at 12:53:03PM -0500, Rob Herring (Arm) wrote:
+> The fujitsu,mb86s70-crg11 binding is unused. The driver for it was removed
+> in 2017. It's not used for Synquacer DT either like some other mb86s70
+> bindings are.
 > 
-> Add documentation for i.MX8ULP's SIM LPAV module.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 69 +++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
-> new file mode 100644
-> index 000000000000..ef44f50921f8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
-> +
-> +maintainers:
-> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> +
-> +description:
-> +  The i.MX8ULP LPAV subsystem contains a block control module known as
-> +  SIM LPAV, which offers functionalities such as clock gating or reset
-> +  line assertion/de-assertion.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,imx8ulp-sim-lpav
-> +      - const: syscon
+>  .../bindings/clock/fujitsu,mb86s70-crg11.txt  | 26 -------------------
+>  1 file changed, 26 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/fujitsu,mb86s70-crg11.txt
 
-Why is this syscon?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    items:
-> +      - const: lpav_bus
-> +      - const: hifi_core
-> +      - const: hifi_plat
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description: clock ID
-
-Drop description, redundant. Look how other bindings write this.
-
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +    description: reset ID
-
-Ditto
-
-> +
-> +  mux-controller:
-> +    $ref: /schemas/mux/reg-mux.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-
-reset cells and mux controller.
-
-
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/imx8ulp-clock.h>
-> +
-> +    clock-controller@2da50000 {
-> +        compatible = "fsl,imx8ulp-sim-lpav", "syscon";
-> +        reg = <0x2da50000 0x10000>;
-> +        clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
-> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
-> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
-> +        clock-names = "lpav_bus", "hifi_core", "hifi_plat";
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-
-Incomplete node - missing properties/child. Post complete binding and
-complete example.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
