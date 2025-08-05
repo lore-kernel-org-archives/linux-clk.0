@@ -1,85 +1,107 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12818FC92;
-	Tue,  5 Aug 2025 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7CD28136B;
+	Tue,  5 Aug 2025 17:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754406345; cv=none; b=lXJEbmaUiTpnem8WaUO/PDxCJWgmnTBfgLg/YqEXy3aaqZe7nRjHYeA6ZPi5lO5qqBv8p6zGTiNWD7rXxZzRfIAc6hnqPoRlluqGGl1mZBSOkcb6QrDiWQ8UK6h1Hegz9Qj6vC3PhsDxHLqm48bOWdgH6IPsXexBcSfHkk0fJe4=
+	t=1754414033; cv=none; b=SoFgf1pW1b/WDR+M1o0vKvVF0M7prV7WN8B94/s8xg41e/BdMmJvjscO55H5HVBfottnh1RfPSOnMsbaCn3uK/0Pk1VaMcDyZzHSQHCNcLYAZ9bTs//BPCt1di6bXxb0kd5myhcc3KFGC7E6oYA94LxdTwf/77KQh8Zjj/DUIf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754406345; c=relaxed/simple;
-	bh=81PMYlqM/y1cobIvGWv6NmLT8uHoL246gy0zJP1C1Hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iCt4eQbn43OdNE+75/YfGBvP1mNA6kU93H9f6hIwFInwwO9WxWxkNMvCyucraKrVtoSU4XfrvzQMQe3fV5SHKHr3RCYJ7RKJfDSrls6HUEzTiarnn2x2/ZDjEBF9d2OJrGeQVCCdxAKrJBTrTcFYo6NGLc5BgBYTLrwDLKmhiQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=gx5mqEmL; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1754414033; c=relaxed/simple;
+	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksCahA2xgyHdjYUpta+9LbxEw1HXr7p6xrhSfxeLKUT3ugGZXrXrvqsz9VRi020FTQ/nbT0lFyZHjeK+53CeJy3HKe8Up4m9mG6VqOTr75J2Lm4KtbTgOBOsR6VPtDeev/Wms3DUehV+FL9JQyFwfWhsFiSBrpbz8222CFB2AFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzsjP5ci; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="gx5mqEmL"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 4D785204DA;
-	Tue,  5 Aug 2025 17:05:43 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Wv6F2cCIqU_R; Tue,  5 Aug 2025 17:05:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754406342; bh=81PMYlqM/y1cobIvGWv6NmLT8uHoL246gy0zJP1C1Hk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=gx5mqEmLGTRTCB8WYMPylE4e1nEcEm6yYwA5XL6b1xbrYLzSwrf9TYrccQENl/2iR
-	 0mRQ9MinmqsNus88RQ/b3s0kxKUo6u+1mAdCyDB+VtBWk2YQWacpZa4OoGRYyvbnwO
-	 vyIwL2K25PzWkP5RFLhM//JvG/VEZeJ8hlvrTE6Do6eu+coE3Lcq1JTonAisfYodRN
-	 Hu78ICP2j0adzyFj87Yq0Lwehw7dU4GQxmOUCsH02jGdIvaOyxTRF0rN2jqlLTj4qu
-	 a6I6R2QB5NV5wo7QxrmVZUTjicHeIf/mJbyWEkbEhx/CAGnJu6PopZyZgQgsXFN9Id
-	 oLRyc1zhbrhUA==
-From: Yao Zi <ziyao@disroot.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzsjP5ci"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFFE6C4CEF0;
+	Tue,  5 Aug 2025 17:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754414033;
+	bh=kFLtP7kLi6TZXaFEe1UXPz9zTqnkNWTqbzGcM1j1sPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mzsjP5ciz19VA8OYXPXGI3ps14D5SxS7bD9pxYQPAycE7Y4pHpSw4SS0UcE7MZLJK
+	 T0nkWr8PsG/9TjOF1GRpxVkvzT7db4zoXaZdRtioihy15x5sVlSB8Bs7VFkS4USG+H
+	 Jh8TXTGLuuhc2eWztbTmwYGT/92FpvmiC7XnpNWVLkRkIATERWrsm+4LumZ0x/SisN
+	 2Gugtnz8V8UuBGzMQgNBJ2r7eA4Qo27++wMMC4E07nPsGl+UN4J0Ds/hvhUs0pb2M1
+	 GPJCs5jNFr05si0U+WdLxZcTfZde5GzbWAjEOalxyRTUAQY34FeGxmnKczRm4z5JzF
+	 8oifLKq6fY5+w==
+Date: Tue, 5 Aug 2025 18:13:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Cc: sboyd@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v3 8/8] LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
-Date: Tue,  5 Aug 2025 15:01:47 +0000
-Message-ID: <20250805150147.25909-9-ziyao@disroot.org>
-In-Reply-To: <20250805150147.25909-1-ziyao@disroot.org>
-References: <20250805150147.25909-1-ziyao@disroot.org>
+	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] clk: divider, gate: create regmap-backed copies
+ of gate and divider clocks
+Message-ID: <20250805-slit-scrunch-e19f8afec16d@spud>
+References: <20250623-levitate-nugget-08c9a01f401d@spud>
+ <20250623-spleen-rambling-8bd898f2788e@spud>
+ <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="M9zeZAJc7XAA2HBY"
+Content-Disposition: inline
+In-Reply-To: <f059ef8e-1834-4d21-bb17-8670cf7cd90f@foss.st.com>
 
-The property isn't required anymore as the supply clock of UART0 has
-been described.
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts | 1 -
- 1 file changed, 1 deletion(-)
+--M9zeZAJc7XAA2HBY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts b/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-index a033c086461f..1bdfff7fae92 100644
---- a/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-+++ b/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-@@ -40,6 +40,5 @@ linux,cma {
- };
- 
- &uart0 {
--	clock-frequency = <100000000>;
- 	status = "okay";
- };
--- 
-2.50.1
+On Thu, Jul 31, 2025 at 01:23:49PM +0200, Gabriel FERNANDEZ wrote:
+>=20
+> On 6/23/25 14:56, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Implement regmap-backed copies of gate and divider clocks by replacing
+> > the iomem pointer to the clock registers with a regmap and offset
+> > within.
+> >=20
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Hi Conor,
+>=20
+> Excellent patch, thank you! I really needed this and will be using it.
+>=20
+> I would also be interested in having a similar regmap-backed implementati=
+on
+> for the multiplexer clock.=C2=A0 Do you have any plans to work on this as=
+ well?
+> If not, I=E2=80=99d be happy to propose a patch for it, with your agreeme=
+nt.
 
+The only types of clock my driver needed were gate and divider, so those
+were all I focused on. I don't really have a plan to implement more,
+particular given the lack of feedback here means that I don't even know
+if what I have done is what Stephen wants. The rest of your comments
+seem reasonable, and I'll try to implement them in a new version.
+
+--M9zeZAJc7XAA2HBY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJI7ywAKCRB4tDGHoIJi
+0sR1AP4zQnrLebu8U863VAtOFHm+6M8gEW/WnUp3VMypOqgoIAEA6d9iEeY01BHW
+S8o+uJeKAfF5/WvpbXoU0kZQT2osNwQ=
+=urpw
+-----END PGP SIGNATURE-----
+
+--M9zeZAJc7XAA2HBY--
