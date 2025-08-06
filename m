@@ -1,94 +1,164 @@
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC03E28B514;
-	Wed,  6 Aug 2025 09:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC39B28A1C2
+	for <linux-clk@vger.kernel.org>; Wed,  6 Aug 2025 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754473752; cv=none; b=Qd5QPtQJ1JfehThfoGINc4IRCTIiO4BpKutZeEVybtdHM0675Zsm7Y+8HFqFPiBpFaiL9Zh+biQpybtD6Bs8mm+ktWnZlLq2W0hZFomYsHgF3EFl3Rn8wPiakspEhtcag6jP1almfSS5LdHXtZOWBp1BuDyZnEZxfikbko2Lwqo=
+	t=1754474259; cv=none; b=tD0FkFdbDqS0limsBQewOWH2KvQpWFp69z6isdBepaTIHkT+Ic5a0TUThBs6QGtP4kwxqn71sW02urVg7gojRnjGlMBT13kY3UV4ULwHvoSQ+s28DGyhHXTidSLWikf6Lh5cOWoUVhWsJ+YCw70Xsh6U0cHHMNXY6OtauQVKyBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754473752; c=relaxed/simple;
-	bh=KgpeG4/8kIZi+Q5pZBGORmIM9sqvgWvdhd9ciu1Zz/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/3FLxp2SEcj47HS4MDb7Sgai5A8UwMePB7L5pKWcSf/j3A42Pz1jPTwYdYBlKEGff/C/5KpFUAJmqWUDLoLkM1+y8M8u3Pg5eoGb3ohEqEZHZQhtWz6dPV6go4CGFgoW+s1+jO052IoxNstQ0+EfqCngHNn5fpwyzILaiQO8UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fbf83972d4so2034084137.1;
-        Wed, 06 Aug 2025 02:49:10 -0700 (PDT)
+	s=arc-20240116; t=1754474259; c=relaxed/simple;
+	bh=lsYFOYME95FfYHQgxD2fXes4j/sNpClVL4HShdy3UpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMPnQmuX50ro8RUe7MKQ0Z0xAfM9F1tlymBjNG7xq/ZJpz0NwEyP6gMIUjPcSnsW/gcHXCo0gZGhIPBzsvzQQjyloWOCVRNhM6+onjaRecu9WsqYZYSEC+PAnuIJi1aBBKSCsFBc8rL/mOcSJuO2E6VnBpUCJKZlVaVJOb59G7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OsJ6d9NW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OsJ6d9NW"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5765iwsE028344
+	for <linux-clk@vger.kernel.org>; Wed, 6 Aug 2025 09:57:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IqxXBbq7cPgkYcO7MMpR2qxt2qS4qD02969cwFn8hIk=; b=OsJ6d9NWKHJkMZoa
+	hswbPYW7K9UASdz9PiijZCTgAMlVGh6jlG1/CShuLCAd3YwCCmKUoXO4qtn7bJ9L
+	M/N4wGTswbUQzraUQD25IqWF0JAIUIaE9zCy/VFuL3x9C8WKNOeQXjm8L92UV/5G
+	QBSdlA30mx9SiuY3mdQYnlNDIExNRl2YasdrSG12Hluh3BtlXwwjPdd2yfpjCQv9
+	T+TgBjbHSVOmsFPXmp81Yv1MRqVxjem/jt2wJfH9g4XZUScn4DAIe0aq7lOT7BFq
+	BkgSm+MjcqfEmCXlxcwvbFwtl26XSn1k7McNKHkdp8YC5HyxfeHREY7RctRd1GI3
+	QPtZEw==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvxtctk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 06 Aug 2025 09:57:36 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b38d8ee46a5so759228a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 06 Aug 2025 02:57:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754473749; x=1755078549;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ohW4yi6GOrjKp+9BF6Pd1f4PnxwG1hBCVQESPIRW15I=;
-        b=mvzRlmNzBJk+1JSp8XbKq4Z+8RGQdjygK85yQI6Fx4UnM0hfu6QkKeKnPXTFZSmAsv
-         kANIShD4oIESUMsH+fY8N36lPnWqIOtYWcclHHzwKuNYvLhPL+4+NGrf6Ylly0KxYe5o
-         itxyDP3qI8NGG4mGQNsGgKdaQcx2k8xnZVqnwZYzK8ywHePuyJXIjTfxfPirLPMsmPro
-         +ZoBb2Uo9Xm+wUOcg1xQnzMFIm4b+QNa0Aaj8cfFqn3V+QNM060CAeObIPEYO5t9e3Xg
-         JU/KthCdarnpavfhDQLTxHNWcHMxmQHitnXQTgCxEahwAn3mFxPPDVW12Ssx+16M0+xW
-         /OxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoX6BFIZpvxjGqVawrcwQTGnQTqMlX/TAotKrW/vsiui2m6oeSl0PTjodByMa5hJVJP7sRpO7HNWOBUCyRoLuFjj4=@vger.kernel.org, AJvYcCWnlJ6XujqgbTj68wYfE4sy+kfjW5Q7SNrlfbQgA/TIhaKhbTgwGsOGRr2N+tMgk3vsp/0xMjCTC554oePW@vger.kernel.org, AJvYcCXXSNCo6BijPVTxt4lFw+dQqzwnW78SDUDVmbU0BzdLc22A+VFBcFgMPgRy0y2eG/bOCsr48cuo7Sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQXPbJajr7wrCB/udmRn1SByvIuG7mb6qVRF9GJ8aRzmoLISjE
-	oLh2l7RekI3ApovPvVHVcaTBi/k+Tn4sMHFzdMEGygZq2i3VCTeFloJewOIUkVlj
-X-Gm-Gg: ASbGnctReWcFmCeJcFfT3jpdHh9YthzuZ+Kc397hkVc4R3JWVb5wA6i/8r8o3iWEQq2
-	obHnhudOSYvWr1pSoekm+CqTb81LzkRgb3Pl0i0T/3aR6o8rxAOM90qQAuq8TqmolO7zemoJSw/
-	uj4uit9R98xnxj0uFXOT26BB1TRpZtygm5Xr8Uq+AkfYkd+Z7DL67dXDmYxasvL74szih2SLIW3
-	WAGB/U03vWssUXotuZbAU+X9fQn4UsaM/3uR/rOdU15eDNjw9DRqRo5JmqPW3oB7MeImXH0gH5N
-	oXPkjuItzGP7qgsIUQbycFMCzFDIBfbPMHXwrX4Fu3j9Me797/0T4z39fuWi4geq+cfrHB8WnrX
-	QkWNJcUnjOQs2jwdu6xWenujFDO+v5zL71ytFTawUHuQGhdcppoYjagkjMEC+
-X-Google-Smtp-Source: AGHT+IGmP3SxaQVS5gDa2okN+Mt6UVN3osYAZwoX4LtTeCy6dTbrS7DSKUfWCQ88aS+B12DekbwseA==
-X-Received: by 2002:a05:6102:d93:b0:4e5:aa74:ac0 with SMTP id ada2fe7eead31-503715d0ff0mr648138137.8.1754473749440;
-        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4befsm3395572137.4.2025.08.06.02.49.09
+        d=1e100.net; s=20230601; t=1754474253; x=1755079053;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqxXBbq7cPgkYcO7MMpR2qxt2qS4qD02969cwFn8hIk=;
+        b=ZPHkXG5hlr62ULSTYGmvpwmXC4/ZGHs0/vEyla9IC55AazaThlAB7nd/PMLQeOBzAc
+         UzLxLlmtOyPdj/v9av5Bak9dCDdsaXW91eh1ereWMq2Jgqpxr9Altlnz/i32YbG3BDZQ
+         2cqw+nOYbb2nvba2STFNsxKqY5iFJPMCzWQqZUE0LwRMophWGJgL4r7J9WOfQfSe+uKe
+         YTO47V4bcIdinHwsbqWbQHuzJ204626JA2he/8FcL/m4IkPW1qzrbIEL07EfZEzL0ShL
+         zkPFsgGSOgsmNO8defupJjGPWsd8XE9B9P45aRYfWmNQuXBUcCISAsTnGTS60UXVmuMF
+         9FDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcq8gQ0edg5L0cMu4liGnPCqRRK3lAwHh/H/PmnN29elGsmhJI6ebWMMTi7i0jak5BzHiyZ9yMWsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1KAebMKuOuWIv3Rur6RvvKJI9efS1dwFKSqTMlYs0GN7p6t4R
+	doEmGzLJIQc+BRihg+NeGW+s4QrKmp6woDNjYKOuuqIV5esfPPCA9d4tyALOgTaIczvMfSWkaZI
+	TmIweJ9H6CSpX5o6K7iRocnmfGSN0MBoplJZG40thsf7uK0grpM1Me9cXbtaB72Y=
+X-Gm-Gg: ASbGnctpoyZCtFUNKLft+fU496OXdjMW1GwFdCvyF7z0SAttf0F4NY5pdyxJc61jwFT
+	NkPgEja6TiOrsEjxrMqVoUWfmzbO+KhU8ObiZ2vXTtO6Bm1Fsxm1nOvQy3FTAc9l2P8u20UbcND
+	1C4TU70lgveuO2gO7rttZLtcrgyx2RSuGx34qzcMfoKaoR0OiTtD2KfEAMoEc9+Y1dJEh9sC5RJ
+	PW2Md3cTGApGDkDTCzG02n4lhT1GuVLLNNwMQEbP5bD589GzVYoioY9dVqhbWlWRrCI096FRnTR
+	LnKOiPT55iDEaVyOhikdpcT9WlBgYO6Cu6ARE0PbovpoVN5hKVOGOTdeLSnhmkeYHJM=
+X-Received: by 2002:a05:6a21:9989:b0:240:1132:6ff with SMTP id adf61e73a8af0-2403193f793mr4134197637.7.1754474253325;
+        Wed, 06 Aug 2025 02:57:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvOm29N4CcerImZ0VqJXj8dtUuBPdLJmLmcso/logCxwkr3fV34DG4P2Oi7ic0GJV//FM8EA==
+X-Received: by 2002:a05:6a21:9989:b0:240:1132:6ff with SMTP id adf61e73a8af0-2403193f793mr4134150637.7.1754474252843;
+        Wed, 06 Aug 2025 02:57:32 -0700 (PDT)
+Received: from [10.217.216.26] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0b57sm13036378a12.31.2025.08.06.02.57.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4fc83dda10bso1696222137.0;
-        Wed, 06 Aug 2025 02:49:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWPIMNJtUrGl/QRvdwW9WVXK+aLydTsi4PLKPQZ+nHJFQ0CuLqUJfCpJPp96N553QgXuKl9V0mXlq6kfGw+@vger.kernel.org, AJvYcCWRiBhjzcWL3/qZrc+aPxhMSLZdJHsjWXG2OvnV6Wd/AWhocIHyIPPcFln+eLRi0m33C/tPfR9tQUs=@vger.kernel.org, AJvYcCWdx2tEc9rCLyTkDtJxBbKDRPj49IUQv5l7YSmxZncL47L4T2TzjMiCFHKORQTfWpNRW3OkDxC8waLgrQRgHKIz1D0=@vger.kernel.org
-X-Received: by 2002:a05:6102:5111:b0:4e9:add0:2816 with SMTP id
- ada2fe7eead31-503710c71b4mr715537137.5.1754473748972; Wed, 06 Aug 2025
- 02:49:08 -0700 (PDT)
+        Wed, 06 Aug 2025 02:57:32 -0700 (PDT)
+Message-ID: <5d75904a-05f5-4cee-9ff3-821b692f6a6f@oss.qualcomm.com>
+Date: Wed, 6 Aug 2025 15:27:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806092129.621194-1-claudiu.beznea.uj@bp.renesas.com> <20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Aug 2025 11:48:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV5Ws+ADfQKM9fFS24B4aznN1DJwL0bsZ9268+afFkCog@mail.gmail.com>
-X-Gm-Features: Ac12FXwbzlNBQPuwzzfANplLaHQV3rogC4lb4UusjcCTRyRThDnCEQB2JILSN80
-Message-ID: <CAMuHMdV5Ws+ADfQKM9fFS24B4aznN1DJwL0bsZ9268+afFkCog@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] clk: renesas: r9a07g04[34]: Use tabs instead of spaces
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] dt-bindings: clock: qcom: Document the Glymur TCSR
+ Clock Controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-2-227cfe5c8ef4@oss.qualcomm.com>
+ <20250730-mottled-myrtle-bull-3ae03c@kuoka>
+ <9cb06263-2a61-4acd-a9cc-157abb832d62@oss.qualcomm.com>
+ <48610dd9-16c0-48ec-9997-2de9e0f7b3b6@kernel.org>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <48610dd9-16c0-48ec-9997-2de9e0f7b3b6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX6WjuDdcpGQfs
+ ZfD8GwykEsg5275NYqZmT/SQBusggO7054OFqz6aqLNYuT+4cBFcVyDLYYbKSWFUiqmdSb0rQIR
+ Kl5bRt1/l8EIIXuBNETNFb5BZWvD+KfMxQgAnfTwJWK5VLkgwg0AegB16lk2DGvRcGQ3oJlqqRq
+ ZF6ZjDDLpogAZkZUp0hOSXsr06czNd7SuUryBte5cwNU7EFIZpUd/94ptnqC4W6/gi77iG4GgSt
+ SFMV2l6dZxzaVcyLs96nzxM3oiKE7X7k33dzUyzQlmrHh1PLPVo9G4Va9J9MF62njRgFrj3i3KP
+ HkExa6i6FBELvMl4HQjbkmZO5NxanwQgfJGVRzOSk5noA+Vyp3+g7KiVNrQO4aAy+MBJdOOF19l
+ KNvuELJA
+X-Proofpoint-ORIG-GUID: AhYPanNDESBrkOsPPOHl1Q0iODkcwxlD
+X-Proofpoint-GUID: AhYPanNDESBrkOsPPOHl1Q0iODkcwxlD
+X-Authority-Analysis: v=2.4 cv=U5WSDfru c=1 sm=1 tr=0 ts=68932710 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=xJKRXGaZASgMo-ZfVxMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ phishscore=0 impostorscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Wed, 6 Aug 2025 at 11:21, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Use tabs instead of spaces in the CRU clock descriptions to match the
-> formatting used in the rest of the clock definitions.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18.
 
-Gr{oetje,eeting}s,
+On 8/1/2025 2:40 PM, Krzysztof Kozlowski wrote:
+> On 01/08/2025 06:14, Taniya Das wrote:
+>>
+>>
+>> On 7/30/2025 12:47 PM, Krzysztof Kozlowski wrote:
+>>> On Tue, Jul 29, 2025 at 11:12:36AM +0530, Taniya Das wrote:
+>>>> Add bindings documentation for the Glymur TCSR Clock Controller.
+>>>
+>>> Same question as for v1, what is Glymur?
+>>
+>> Glymur is the Qualcomm's next gen compute SoC.
+> 
+> Explain it in at least one commit msg, not in reply to me.
+> 
 
-                        Geert
+Yes, I will explain it in my next patchset.
+
+>>
+>>>
+>>> Where is any DTS using this (or explanation of lack of DTS)?
+>>>
+>>
+>> Krzysztof, the DTS will be posted separately once the driver and
+>> bindings are reviewed.
+> 
+> Hm? That's not what I was told thus I ask. I am sure that above is not
+> true, but if you insist and put it that way it is incorrect. You cannot
+> send DTS because you wait with drivers to be reviewed. We want to see
+> entire picture.
+> 
+
+Sorry for the confusion, Krzysztof. What I meant to convey is that we
+plan to post the DTS after the public announcement of the SoC, which is
+expected to happen within the next couple of months. In the meantime,
+we’re hoping to get the code reviewed.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks,
+Taniya Das
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
