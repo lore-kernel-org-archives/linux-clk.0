@@ -1,123 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A653289E2A;
-	Wed,  6 Aug 2025 11:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A9D28B7C6;
+	Wed,  6 Aug 2025 12:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754480861; cv=none; b=gF09/ryVzfQ1//hG1SFa2Jjdo09d+n98zM2arfCIq67fkSZ2yWlJvBJu4t3hmQiBCEmMZz4xrMi8d5SzH3i8KY0XYW0yvcgi+M9zye/1u/SdelcdFe9LoA4FIRALG+oA3DDehIHyI5YyxFRxLEOGHEAT9k++2tbA80X6zJbqHaw=
+	t=1754483442; cv=none; b=HoLBAk528Cgf1Ss3wH8xaWDoG0rBmWhJXAkPiuufsbSUUFFuc61C6J+bEEccuS3sT9CxyUUdEOXhyAvJxtQgo2M7MTpw7PWIVkTSJgMTrr/x4WkVr/nfGNt869B4ybn+a2AeO+RE/ZNAuiuvg2I83vawx9vGN0DsnQ56S1Gbn+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754480861; c=relaxed/simple;
-	bh=RheRVwO2FUpu0rsXqKFB0Lfg7HiZelCTGFoLKDQeza0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TtWRnvVAR1NPn9pLvYyVs7qzybnJCwufKiQA0OhYXkBIkcRko4hk6bRPfL3lYfNj64dG/AESwta1UmXZEjnR7eEfQ5NgBFKnAs0+7wjdVukQCOG9kJcvyxVQ/8T5hsptXi4Lr8o842nRRqqhWwEeKBnud/E8qyHYPs7ZcMNvJtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzqf0A5S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754483442; c=relaxed/simple;
+	bh=mSYUh+T5LKyYNPZakKmsiXm0B30JrcVYTIzk5jrro4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Geu+Bq8iQTTc1L9OjZ6NRVTo+nlKoOpJWHnWQEKfyx+D1oBArBFH72dvXc1kzhkZF002Hv19D3q6pBx2kf6tD03IvOZ9MjxJvCcAsMhaVWfXE0SWqjEORAiXovovyDl/i7ofwVAaYwDzW+1/E9k2Spoxt7n9s87/Q5piBGz7GFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EW9Iebdd; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzqf0A5S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7675C4CEE7;
-	Wed,  6 Aug 2025 11:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754480861;
-	bh=RheRVwO2FUpu0rsXqKFB0Lfg7HiZelCTGFoLKDQeza0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jzqf0A5SwGAQSZMDlWO9vYFStboxN1q7RIlaqsxZR1JXlCz2JJI6eObw5YnajiSqX
-	 AIvx5Xo5HJELRn8eqVYMSbRvD3gYJxStIk5JE0BWTFVhXuIqEV28h7nK0unDv9E+Zr
-	 hSgaaDQhnx/gEJ/UKuXrRk5u94+KaUyAQWicron54Vv8VlFZSWguG2GqS8chhS1RjW
-	 VlfJEAMJTMd8HNQI/g/8SHippEdfxoz4hqAWx8wrhdn71bAj9PwmD21rwUhUAaHjxY
-	 0wvQ6AhuYvU5bUNjcNLi1jC22EAB24VGiIAUkSVf1CJ6BKr1TLWca+9PzDIKjI6Ppv
-	 Nb5TmLUr/5K2A==
-Message-ID: <70bd9beb-2f7f-4132-88a4-8d81d70ac50b@kernel.org>
-Date: Wed, 6 Aug 2025 13:47:34 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EW9Iebdd"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 08CFA2578E;
+	Wed,  6 Aug 2025 14:30:37 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 4fCJ_2J-kINn; Wed,  6 Aug 2025 14:30:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1754483435; bh=mSYUh+T5LKyYNPZakKmsiXm0B30JrcVYTIzk5jrro4U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EW9IebddAIj6oJPaTxR3Luvi4SbR+tvpbpNMG4Xj3dp25aspX/Uy9BxH+402f6UaE
+	 Amy73reDlzOr7ogRTw8hdC/8nYocyT3fwYS+06foQVMca4qzGcPv+r6gTDSJjq8yz5
+	 tJV4IHOyYZ7bKOn8tYLXdDXN17B1zEDlrypVJamaeuPwrYTvvXz0zFPdRgZqsq9qTQ
+	 e+IDPelK0nsSE42p4lWLeL2Ak0pOe6Wb8lLl6P2tNp9n67rluJtdgfLWrUUqP6gBAj
+	 5eDP4HJNC/5YmisBT/FaBKOGvN8G1XNZSshtDlFdLxQ1aJU7arFmE+fxRQzStfjDJV
+	 yF3dYv5OFCsQg==
+Date: Wed, 6 Aug 2025 12:30:18 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: loongson2: Add Loongson
+ 2K0300 compatible
+Message-ID: <aJNK2uI4HTIV99vz@pie>
+References: <20250805150147.25909-1-ziyao@disroot.org>
+ <20250805150147.25909-2-ziyao@disroot.org>
+ <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
- djakov@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Md Sadre Alam <quic_mdalam@quicinc.com>
-References: <20250806112807.2726890-1-quic_varada@quicinc.com>
- <20250806112807.2726890-2-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250806112807.2726890-2-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
 
-On 06/08/2025 13:28, Varadarajan Narayanan wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Wed, Aug 06, 2025 at 04:36:50PM +0800, Huacai Chen wrote:
+> On Tue, Aug 5, 2025 at 11:03 PM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > Document the clock controller shipped in Loongson 2K0300 SoC, which
+> > generates various clock signals for SoC peripherals.
+> >
+> > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
+> > external clock input, and a separate dt-binding header is used for
+> > cleanness.
+> >
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  .../bindings/clock/loongson,ls2k-clk.yaml     | 21 ++++++--
+> >  MAINTAINERS                                   |  1 +
+> >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
+> >  3 files changed, 72 insertions(+), 4 deletions(-)
+> >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> >
+
+...
+
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 4912b8a83bbb..7960e65d7dfc 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14365,6 +14365,7 @@ S:      Maintained
+> >  F:     Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> >  F:     drivers/clk/clk-loongson2.c
+> >  F:     include/dt-bindings/clock/loongson,ls2k-clk.h
+> > +F:     include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> I think ls2k0300-clk.h can be merged into ls2k-clk.h
+
+Honestly I think a separate header makes the purpose more clear, and
+follows the convention that name of binding header matches the
+compatible, but I'm willing to change if you really consider merging
+them together is better and dt-binding maintainer agrees on this.
+
+> Huacai
+
+Thanks,
+Yao Zi
+
+> >
+> >  LOONGSON SPI DRIVER
+> >  M:     Yinbo Zhu <zhuyinbo@loongson.cn>
+> > diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> > new file mode 100644
+> > index 000000000000..5e8f7b2f33f2
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> > @@ -0,0 +1,54 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> > +/*
+> > + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
+> > + */
+> > +#ifndef _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> > +#define _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> > +
+> > +/* Derivied from REFCLK */
+> > +#define LS2K0300_CLK_STABLE                    0
+> > +#define LS2K0300_PLL_NODE                      1
+> > +#define LS2K0300_PLL_DDR                       2
+> > +#define LS2K0300_PLL_PIX                       3
+> > +#define LS2K0300_CLK_THSENS                    4
+> > +
+> > +/* Derived from PLL_NODE */
+> > +#define LS2K0300_CLK_NODE_DIV                  5
+> > +#define LS2K0300_CLK_NODE_PLL_GATE             6
+> > +#define LS2K0300_CLK_NODE_SCALE                        7
+> > +#define LS2K0300_CLK_NODE_GATE                 8
+> > +#define LS2K0300_CLK_GMAC_DIV                  9
+> > +#define LS2K0300_CLK_GMAC_GATE                 10
+> > +#define LS2K0300_CLK_I2S_DIV                   11
+> > +#define LS2K0300_CLK_I2S_SCALE                 12
+> > +#define LS2K0300_CLK_I2S_GATE                  13
+> > +
+> > +/* Derived from PLL_DDR */
+> > +#define LS2K0300_CLK_DDR_DIV                   14
+> > +#define LS2K0300_CLK_DDR_GATE                  15
+> > +#define LS2K0300_CLK_NET_DIV                   16
+> > +#define LS2K0300_CLK_NET_GATE                  17
+> > +#define LS2K0300_CLK_DEV_DIV                   18
+> > +#define LS2K0300_CLK_DEV_GATE                  19
+> > +
+> > +/* Derived from PLL_PIX */
+> > +#define LS2K0300_CLK_PIX_DIV                   20
+> > +#define LS2K0300_CLK_PIX_PLL_GATE              21
+> > +#define LS2K0300_CLK_PIX_SCALE                 22
+> > +#define LS2K0300_CLK_PIX_GATE                  23
+> > +#define LS2K0300_CLK_GMACBP_DIV                        24
+> > +#define LS2K0300_CLK_GMACBP_GATE               25
+> > +
+> > +/* Derived from CLK_DEV */
+> > +#define LS2K0300_CLK_USB_SCALE                 26
+> > +#define LS2K0300_CLK_USB_GATE                  27
+> > +#define LS2K0300_CLK_APB_SCALE                 28
+> > +#define LS2K0300_CLK_APB_GATE                  29
+> > +#define LS2K0300_CLK_BOOT_SCALE                        30
+> > +#define LS2K0300_CLK_BOOT_GATE                 31
+> > +#define LS2K0300_CLK_SDIO_SCALE                        32
+> > +#define LS2K0300_CLK_SDIO_GATE                 33
+> > +
+> > +#define LS2K0300_CLK_GMAC_IN                   34
+> > +
+> > +#endif // _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
+> > --
+> > 2.50.1
+> >
 > 
-> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
-> The RCG and PLL have a separate register space from the GCC.
-> Also the L3 cache has a separate pll and needs to be scaled along
-> with the CPU.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-This is oddly placed. Did you use b4 that it appeared here?
-
-> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> [ Added interconnect related changes ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v6: Add 'Reviewed-by: Krzysztof Kozlowski'
->     Drop 'clock-names'
-
-Best regards,
-Krzysztof
