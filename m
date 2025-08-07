@@ -1,35 +1,40 @@
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8376F289373;
-	Wed,  6 Aug 2025 17:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585724C6C;
+	Thu,  7 Aug 2025 01:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754501719; cv=none; b=O3kni13sk0CpsYRAdTf6OeC2Xwn91GlfaplospHTK1tRroQLfFYTz+ea867jGDBFX1gmhvCHJ0PG8qwUL2TnKLCZNCEFOG9+5ZjFx6MpbW98HWC7I0m8A/Y11Uy4/BHFWgXWzoU/deguiD6qcKSf4P0Hh8ViGbVYwyD1EJ1tyTQ=
+	t=1754530239; cv=none; b=BzdN3Y00YQTYvbEgx0TbrRoSzS7OcMZH1pqY9PUIVB5UPa4r0noH/6h1IdKSBgVo+HfwgIszHC7n5FV0w0kfWqnIoPsnWQv+SE++wBpUkGyO/hxKLnLNLn//ARj5jeCbInkRnmH540qbsIMPOzj083EHCfNv6MnEAtbLvQlqY+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754501719; c=relaxed/simple;
-	bh=eJGICosdXjxas1ToQdEVslbW48DwDha7KI4VsUvnZU4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iijoAkD7nzumUvJF8D+2jB6iVJEF+/qQ3UW1EQ/prgAM4K7wBbyc/d98i73FxQbSDLPwfTIoipleUpa4XxKkk2Ji7+5bX0pTcqMA6L/MjrTvUxHfQQttCpGnvMC6HupwYBrFU4FXKTQ1MEgvtvDpMM31dAL2HmXNw/xZjcemW8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=Oxlo+nVB; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+	s=arc-20240116; t=1754530239; c=relaxed/simple;
+	bh=Zsnd2yhm0e8Z7N/XbjGsxi9+PjwfVA0yvEOrhmxO1r8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UBwTEvMFTiUPF9yTjt0kFhz6mEp3Umdzg28r6G+nRzApVanOekC5Qp/77qOOBVR/I4faWX23T+63RE5Zb2wKxEUK4PW6okeQ0EQYw3gKgU0jK4Y0s2PvN6MwvCN0Nt0tBiyXuck41v9oAIto90PPlzUct1UR22wqzQi7ZrvI1bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Q3NgA8OL; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="Oxlo+nVB"
-DKIM-Signature: a=rsa-sha256; bh=uqGmJn8cJZgdCQ0s0hosjUCyOf8EkpHhMcNeiToi7DM=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1754501632; v=1; x=1754933632;
- b=Oxlo+nVBCnRdZT1wE0LNmuNE8GlrGS86Jm//yANCp0yD7Wykci7snNLbOJCYBIO6FXHwwZcD
- pzy3JGhgAeX+be8t6sQHKyzPu/FDP6i43T7RvOi8DEM3v6HQn1EjNj+Wbd/WO4FGuUI0T2lbLEs
- NKhGj/2nKS6Pi5s81j/FJKjaHp3ATW6vhY21y3Lc9xLbU3kOPYScmIVJGxbYC2IzbgGzle1/Q/S
- OK+G7dUY0lPNyK7TsUAOnrEevUnzToV8ngbeyvn+TyfqaI+GMpl6Tcs1QcBSaJKLLwZ+TIPBMLP
- ig0VMZng12VR0k9nmSpq88hw/3om4Z7cxJU3AFqbzwu8Q==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 795d6579; Wed, 06 Aug 2025 19:33:52 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Wed, 06 Aug 2025 19:33:23 +0200
-Subject: [PATCH RFC 4/5] MAINTAINERS: PXA1908: Add power domain controller
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Q3NgA8OL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1754530213;
+	bh=R55Ce30YMHeTG1lDNGUKrl/+gpE/GNdMkbzIFbY7bEI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=Q3NgA8OLeYRV5iBUy+2dGz2qBTQU8LjhtidAZdKz/Vz+rbIhH7Up/tfdfzVmnO+hS
+	 /hSiHa/ivVVwDQW+Av93e6h1kVUwvYlgHlaEbpLvVgotPGE/NGPu2ixRCgugBB18Tb
+	 B90jKWVQz0YTTk68tYoOHMT/RvecvwgWMDDMOamA=
+X-QQ-mid: esmtpgz16t1754530212t66e66a1a
+X-QQ-Originating-IP: 87YQa/E+l5byIBWQdG0icPTbS7PxkSsJP/II3qCKtys=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 07 Aug 2025 09:30:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5881493761293327476
+EX-QQ-RecipientCnt: 16
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH 0/2] clk: spacemit: fix i2s clock
+Date: Thu, 07 Aug 2025 09:30:09 +0800
+Message-Id: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,60 +42,87 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250806-pxa1908-genpd-v1-4-16409309fc72@dujemihanovic.xyz>
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
-In-Reply-To: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKEBlGgC/x3MSwqAIBRG4a3IHXdBpeixlWgg9VeXwkIjAmnvS
+ cMz+E6iiCCI1KlEAbdEOXwOUygaV+cXsEy5yWpb6UaXvBke943FRl7gEdyVBQOoddkCpnaU7Rk
+ wy/N/++F9PyMipt1nAAAA
+X-Change-ID: 20250804-k1-clk-i2s-generation-eee7049ee17a
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1156;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=eJGICosdXjxas1ToQdEVslbW48DwDha7KI4VsUvnZU4=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBmTJ/45pGTdFuJ03XYXV7mHxocLPjnGy+d/Xfbimntcr
- VZG5V3zjlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZjIyR6G/0F9f7a0fqxOU2J7
- w7F0Kfss1nO/6lQf9AlMrc5eYJ9WLMvI8EbgdZifmF/uyzNXhC89bbdYeKJXpTZA8e3RB/8if2Q
- GsQMA
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754530210; l=1573;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=Zsnd2yhm0e8Z7N/XbjGsxi9+PjwfVA0yvEOrhmxO1r8=;
+ b=0y4pPVuvzy8we9mgGSoUWCZEz15xMZi/SA/847+BJGpcTkqgMsSMohCJM+mYV7GLAqMsRhOle
+ LXLTBsvHm+6Cxooaj4TmFAcWbbyM7yOuDY9ZtiUXZegifGLQyE6s7is
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OPv1v8QuUFDkJsuwDqEIRadsHqLmzvDVecahBjMLuUPJ0NX57+fmdXMx
+	3G4Jfk/vA9kMJlkz6r+ENoe8rLKQ9MCXsjx7WOqQHKd796JvgvtbaLxeE3I/QUqj8B8RLRj
+	wNsDSanul2lqSo+Xr1Pxi6QFWu79vzgdBRRobArxj6ix3Zb32mTs7qvhO0H46OIr39iNj1r
+	sa57hH8wRgHhgFMfe9j+J7TQ97Bp+SwvkTnet6hcRSTNROfR7Ilu8y/paTyhtdSIucTE+x8
+	KiM9gj9nli2zGh4WAmdWubh2efivCRS0lMbACUkoZtEdBCfTHYnxv0gy106PhpEek8Y6lcS
+	ksvT8hwSHbha7NWCcVKzVunnXyt5reEw6UcNKF1/nZzpuDEz4CPfK1V7n+ce2Afj39B+WJB
+	RminYSU1yjnQBBfsaCkVJvleKcCoHb1T2Ze6gxgIJ9AZRMwBFSfc5uhTTJB3u2Yc3alGvvF
+	BO6iEQ3dcW7g2VxwYA/fC664igyaeSRD9sFBbrKV1GRqYh7MFTC4XAjVzfni/5b+C0g6ojB
+	vH0CNLGDEmzEBNUf+3vsNjhIa7crJGP222OZzBI9hElTBzwBUsW0n9JQjAzFyzvwrHljEEN
+	MOaR2Ox8CpQxxfFIOFsSOjtnD4Zn+4v+pUSQx1FBj1kWOUhD+VqPsWl7hNQqV0PqO7p01DH
+	f5OE8Qnd1FfqgUTk+gXQ15SrsC3T//4b45pD0uuvLx8AreCh/ng0mgrGrFNMZjCgXmzSYlD
+	wNS7s91KZV/UhSnxnjpEBx+rLTLJUKQPYp8eN96cu4EYUZ/ryDQrju6sCpfkFQWrKXBbHmD
+	vRTJuS+6u5BfcsVnsEaR/fRI0OILezRtETcrLwdwylS0pzAl4xOxr2ANw8GBuQOGdw3X3OF
+	oZBt615UVTu56sBt1bHhmyU6sjKLLI2/Z6oJ/qqnjlWyu+7onCkcgNTU3I4UxKfNETbz8n7
+	9xq7AepOWpDeRWNWolvCUEoo8/DMUIdGA4rwaKpEyDOAuRdOEvqLU1mjThqdqOoXVmz1H/+
+	QRoNZJI+u7ZHBdWpHvWv0onLLNC2sowiwB6KSrmt3aywhtwsM5fAmwgYBtYL/NBp3fEWWPE
+	pLn53GFduAXG3/B7Bo/t6bn8DnD0IMt0FxIVwjmyGNGkzMUQmS/WS+WdBsldfvjcw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Add the new PXA1908 power domain driver under the PXA1908 entry. Also
-add the clock schema (unintentionally omitted previously) and a link to
-the PXA1908 mainlining chatroom.
+Previously, the driver defined two clocks for the I2S controller:
+i2s_bclk and its parent i2s_sysclk.
 
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+Both i2s_bclk and i2s_sysclk were treated as fixed-rate clocks,
+which clearly does not reflect the practical requirements for I2S operation.
+
+Additionally, the original driver overlooked some upstream clock sources.
+
+To fix the I2S clock, this series also introduces several new clock definition macros.
+
+The I2S clock hierarchy can be found here [1].
+
+Link:
+https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+[1]
+
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+Troy Mitchell (2):
+      dt-bindings: clock: spacemit: introduce i2s pre-clock
+      clk: spacemit: introduce i2s pre-clock and fix i2s clock
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fda151dbf229e48d791e082b1f6be2e43fdb8d1c..905f3027d00e0cd5edf59fdc7dcf6aa69ec608d5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2869,9 +2869,14 @@ ARM/Marvell PXA1908 SOC support
- M:	Duje Mihanović <duje@dujemihanovic.xyz>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+C:	irc://irc.oftc.net/pxa1908-mainline
-+F:	Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-+F:	Documentation/devicetree/bindings/power/marvell,pxa1908-power-controller.yaml
- F:	arch/arm64/boot/dts/marvell/mmp/
- F:	drivers/clk/mmp/clk-pxa1908*.c
-+F:	drivers/pmdomain/marvell/
- F:	include/dt-bindings/clock/marvell,pxa1908.h
-+F:	include/dt-bindings/power/marvell,pxa1908-power.h
- 
- ARM/Mediatek RTC DRIVER
- M:	Eddie Huang <eddie.huang@mediatek.com>
+ drivers/clk/spacemit/ccu-k1.c                  | 34 ++++++++++++++++---
+ drivers/clk/spacemit/ccu_common.h              | 13 +++++++
+ drivers/clk/spacemit/ccu_ddn.c                 | 47 ++++++++++++++++++++++----
+ drivers/clk/spacemit/ccu_ddn.h                 | 25 ++++++++++++--
+ drivers/clk/spacemit/ccu_mix.c                 | 47 +++++++++++++++++++-------
+ drivers/clk/spacemit/ccu_mix.h                 | 26 ++++++++------
+ include/dt-bindings/clock/spacemit,k1-syscon.h |  3 ++
+ include/soc/spacemit/k1-syscon.h               |  7 ++--
+ 8 files changed, 164 insertions(+), 38 deletions(-)
+---
+base-commit: e991acf1bce7a428794514cbbe216973c9c0a3c8
+change-id: 20250804-k1-clk-i2s-generation-eee7049ee17a
 
+Best regards,
 -- 
-2.50.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
