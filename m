@@ -1,213 +1,140 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C1B23CB;
-	Thu,  7 Aug 2025 03:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE96A15624D;
+	Thu,  7 Aug 2025 04:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754535742; cv=none; b=qWLMoYwitAHfB0LAZbgVR6Cz4AOpH9f6KYybzNS2zmMD/d1RKgHzJ/0/1imSMhn4WwFBOnhV7x/1dyQZkXnL983afyJZwPwLAQ6FwCzAhbxv1HYklzrTCy/nOAWLodncnk2B0VYUNMMTUNaySbyvUrRkZ/icAA6qA5LFQgedFzw=
+	t=1754541530; cv=none; b=hBbiLV31bBm/kWUoz62EPWidZ60LSjK9CtuBoQvl0JjSTNFrYdKnmMeZbjXIyMDr9wx6zDORd4WYbkm4OoSMf9vo5PNGPUlahFXjxb1VHINa6nUbxmKSAIW9t/psxXLBegR6fs5pJwsajaUT6MBEeA/XgRtQ7V3jJ3T/3iEClsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754535742; c=relaxed/simple;
-	bh=OlG6Mjad+haShvjgVxRjEO8qyOkeqUokqCYlSq/LmOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSIimaWwXywN4jf2n6axy7JCav/NdjqTsQSq9GXVz+XDNFiYEZ8ufNnKdZmyPNDfcpfdGdHsPzSEmTFJIVs4fYF5em/+6253LyhASIT7aIlar0TTvOttYrAF0XlRe7D6CA2g4Xy/WZGIq5a89BybRyF9tUVTII633IS3Ao3CW8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=TXTN/5mf; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=jdQbIJFM; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1754541530; c=relaxed/simple;
+	bh=oeNPa5TVrpkGMGYTKy9xRknrP7CuBl7m6/5rkTjeuBw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/XfL06TFp5Vf0pQuH2vrU/E+tamWMAIYI3eFZ54TO5hwzLNqnbaYCzCmQR4dvstkIo/HaNgjxQN+gbJ7LBboM+KsYD/0bG+cWijT6zx8Mi/XLusIKyuQgI+gco/NmK6jaVfsP8Q8JSGy3Qb1RV7FqpffjN5AnbabiP7wdJwOsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nAKs73uJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="TXTN/5mf";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="jdQbIJFM"
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 0651212FB437;
-	Wed, 06 Aug 2025 20:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754535732; bh=OlG6Mjad+haShvjgVxRjEO8qyOkeqUokqCYlSq/LmOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TXTN/5mfzl3clvuzeNNCQqhgS3ri7dhlpu+I0HZ8hCExsjLgQZza5mRYngJnFOCdt
-	 QMMHl5PeQUnYrYfRdZqF42XnbQ8I/InFsaqP2Ga5ukt1tGP7sDkN65jOBI0th2zjbm
-	 yZQDO3vtBhsLMGn2ATB3fAtWx2HnTwoeovg1fRoh87KZ+zSDrerKPfitBL0AlxL0el
-	 KoTDIrCPbFDH7T5fMAWIjhiSLNqUemLUQQh7W97JORnHnP/jjCtR0z2zMPlnoB/YcB
-	 ZON1baYiSywej3CmQdkF4CfP29vHh4Tg4BMEIrNgOvfwBMc7SO1VNa1R4y5RzxfExI
-	 fvZZZXxUu72Xw==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id gl8dWHxY44b0; Wed,  6 Aug 2025 20:02:08 -0700 (PDT)
-Received: from ketchup (unknown [117.171.64.140])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id DFB9F12FB405;
-	Wed, 06 Aug 2025 20:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754535728; bh=OlG6Mjad+haShvjgVxRjEO8qyOkeqUokqCYlSq/LmOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jdQbIJFMt8WAoxsnjXZFVNWrtk5ZoKmMLJKLhs+Sty3jfPVUykp/dEx5g5p8GM1vE
-	 tz0BI+Q8zz4xuY1mi/aheQnq8s3erhUaSWzITIJhoWX0m0SZgPQ0OyIO35fbV3FXeX
-	 P3Lu1RbtHCwfmW6TPt4wzDep3irr9FB57xSeUhWhO007dfJ3h3WVI3pAQxONgFglSQ
-	 51+k7EWCuf0/i2BRrKwwdRS2Sc5YlR2QaPc95GDu8gkWjqDSioIY1dVCu3+ol79apX
-	 6rT5aAUKX8NAEby3Q4qljx8zXn2Nh+TlCoENJOcKh9/ZOTXNYv90jfhJvEkBPGFPiB
-	 iS0r5elCNRvSw==
-Date: Thu, 7 Aug 2025 03:02:00 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH 2/2] clk: spacemit: introduce i2s pre-clock and fix i2s
- clock
-Message-ID: <aJQXKN_ccpWVJ5oZ@ketchup>
-References: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
- <20250807-k1-clk-i2s-generation-v1-2-7dc25eb4e4d3@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nAKs73uJ"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577225c9019554;
+	Thu, 7 Aug 2025 04:38:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7PJAO7jsB4C4aNkssIY6PS8I
+	opO4EUYICROrgeu88pk=; b=nAKs73uJqIw+JKe6jiTM558NPWDsD5J2TnWNAZBS
+	HTcrpa7qu7ddDyNj9PTe9fw3Z8W7zIMFKbMwHiDG2zymL+nXs6TR+dFQq9KXTIIF
+	mwzuQ4Pkz12R/zNafVLDcznNje3yYWPto6eQgz9RLdadFJs1x/+RozdLpwt7Aqfm
+	O8BjNner/pcS3Q67PKdA6Zcu/IN30WlI7aGFgnZLe6VZeb3fgckXc1cTBteLEPo6
+	czx/IBoIqK39fjNwwHGstMKnW2HXztrjwfNrwmF15W/O9vwlFMA9HSEw35MoI4Y9
+	WRKQXxlPCVsGVV8Fgo7PvKMJWrzWxeLIb2FW0QUci5v1tg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy6vyw0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 04:38:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5774ci16030961
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 04:38:44 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 6 Aug 2025 21:38:38 -0700
+Date: Thu, 7 Aug 2025 10:08:34 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>,
+        "Sricharan
+ Ramabadhran" <quic_srichara@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Md Sadre Alam <quic_mdalam@quicinc.com>
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+Message-ID: <aJQtyouomCxI8Rfa@hu-varada-blr.qualcomm.com>
+References: <20250806112807.2726890-1-quic_varada@quicinc.com>
+ <20250806112807.2726890-2-quic_varada@quicinc.com>
+ <70bd9beb-2f7f-4132-88a4-8d81d70ac50b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250807-k1-clk-i2s-generation-v1-2-7dc25eb4e4d3@linux.spacemit.com>
+In-Reply-To: <70bd9beb-2f7f-4132-88a4-8d81d70ac50b@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RuPmWPQNJ8tZiKS3DYDQi90MNWBMXzh_
+X-Proofpoint-GUID: RuPmWPQNJ8tZiKS3DYDQi90MNWBMXzh_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX5m0KuM0ECCFM
+ uhSbQjoT/4Ac1WV7rVfpTa08wEa/03BUc1k74IQG4EPdFBMKBKsVtW5H0xq13EEOBMGpQ+l3iOI
+ lSA75eHaz7yapF9tVCAeNr6BmY037Czr89x5xIqCcj2pXqf92Qh82n3AL0+Bi9T/LOxszQQSduQ
+ gvRjEFqETzMU/eacDy5zi5+8rUaWnt2p6ACzeaVBvmiWpEsYME/IlVpnABmlzQHAwEuLhd9fonC
+ /P4A25kdEPLJvHRemyiw6IaqKknuEZ85kg3J0nmI88qIS18bRYZ7MGlfFjKiINvMtOegJvTAyXA
+ VqzeCqQZSi7vpJS5k5+ppUumVPwM2JEfxZjOhp0cGa4bkO+qJ8B1N/7Ns2CbZI5w7Y9II69ap0X
+ tbDfJ8IX
+X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=68942dd4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=KKAkSRfTAAAA:8 a=pgpCuyf8vpdT2N1z9QMA:9 a=CjuIK1q_8ugA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Thu, Aug 07, 2025 at 09:30:11AM +0800, Troy Mitchell wrote:
-> Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-> for real I2S use cases.
+On Wed, Aug 06, 2025 at 01:47:34PM +0200, Krzysztof Kozlowski wrote:
+> On 06/08/2025 13:28, Varadarajan Narayanan wrote:
+> > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> >
+> > The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> > The RCG and PLL have a separate register space from the GCC.
+> > Also the L3 cache has a separate pll and needs to be scaled along
+> > with the CPU.
+> >
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> This is oddly placed. Did you use b4 that it appeared here?
 
-This is a little misleading: they're modeled as gates with fixed-factor
-for now whose rate is calculated from their parents instead of defined
-statically. You could avoid possible confusion by replacing "fixed-rate"
-with "fixed-factor".
+b4 places like this
 
-> Moreover, the current I2S clock configuration does not work as expected
-> due to missing parent clocks.
-> 
-> This patch adds the missing parent clocks, defines i2s_sysclk as
-> a DDN clock, and i2s_bclk as a DIV clock.
-> 
-> The i2s_sysclk behaves as an M/N fractional divider in hardware,
-> with an additional gate control.
-> 
-> To properly model this, CCU_DDN_GATE_DEFINE is introduced.
+	Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+	Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+	Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+	[ Added interconnect related changes ]
+	Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+	Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Could it be represented as a DDN clock taking a gate as parent? Just
-like what is described in the published clock diagram. Generally I'd
-like to avoid introducing more clock types, there're already a lot.
+Since I haven't seen Reviewed-by coming after Signed-off-by, Was not
+sure if my Signed-off-by should come before or after the Reviewed-by.
+So, manually placed it there. If this is not ok, will use how b4's
+placement itself and post the next version. Kindly, let me know.
 
-> The original DDN operations applied an implicit divide-by-2, which should
-> not be a default behavior.
-> 
-> This patch removes that assumption, letting each clock define its
-> actual behavior explicitly.
-> 
-> The i2s_bclk is a non-linear, discrete divider clock.
-> The previous macro only supported linear dividers,
-> so CCU_DIV_TABLE_GATE_DEFINE is introduced to support
-> the hardware accurately.
+Thanks
+Varada
 
-The divider IS linear, from the perspective of functionality, it just
-implies a 1/2 factor. Could it be represented as an usual divider and a
-1/2 fixed factor?
-
-> The I2S-related clock registers can be found here [1].
-
-So this patch actually does four separate things,
-
-- Introduce a gate-capable variant of DDN clocks
-- Make the pre-divider of DDN clocks flexible
-- Support looking up mappings between register values and divisors
-  through a table when calculating rates of dividers
-- Fix the definition of i2s_bclk and i2s_sysclk
-
-IMHO it's better to split them into separate patches for clearness.
-
-> Link:
-> https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-> [1]
-> 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-> Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c     | 34 ++++++++++++++++++++++++----
->  drivers/clk/spacemit/ccu_common.h | 13 +++++++++++
->  drivers/clk/spacemit/ccu_ddn.c    | 47 ++++++++++++++++++++++++++++++++++-----
->  drivers/clk/spacemit/ccu_ddn.h    | 25 +++++++++++++++++++--
->  drivers/clk/spacemit/ccu_mix.c    | 47 +++++++++++++++++++++++++++++----------
->  drivers/clk/spacemit/ccu_mix.h    | 26 +++++++++++++---------
->  include/soc/spacemit/k1-syscon.h  |  7 +++---
->  7 files changed, 161 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 65e6de030717afa60eefab7bda88f9a13b857650..a6773d4c2ff32d270e1f09b0d93cfff727ea98fa 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -136,13 +136,36 @@ CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
-
-...
-
-> +static const struct clk_div_table i2s_bclk_div_table[] = {
-> +	{ .val = 0, .div = 2 },
-> +	{ .val = 1, .div = 4 },
-> +	{ .val = 2, .div = 6 },
-> +	{ .val = 3, .div = 8 },
-> +	{ /* sentinel */ },
-> +};
-
-This is just a normal 0-based divider if you divide the divisor by 2.
-
-> +CCU_DIV_TABLE_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR,
-> +			  27, 2, i2s_bclk_div_table, BIT(29), 0);
->  
->  static const struct clk_parent_data apb_parents[] = {
->  	CCU_PARENT_HW(pll1_d96_25p6),
-> @@ -756,6 +779,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
->  	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
->  	[CLK_APB]		= &apb_clk.common.hw,
->  	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
-> +	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
-> +	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-> +	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-
-...
-
-> diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-> index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..253db8a602fe43a1109e2ba248af11109c7baa22 100644
-> --- a/include/soc/spacemit/k1-syscon.h
-> +++ b/include/soc/spacemit/k1-syscon.h
-> @@ -29,10 +29,11 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
->  #define APBS_PLL3_SWCR3			0x12c
->  
->  /* MPMU register offset */
-> +#define MPMU_FCCR			0x0008
->  #define MPMU_POSR			0x0010
-> -#define  POSR_PLL1_LOCK			BIT(27)
-> -#define  POSR_PLL2_LOCK			BIT(28)
-> -#define  POSR_PLL3_LOCK			BIT(29)
-> +#define POSR_PLL1_LOCK			BIT(27)
-> +#define POSR_PLL2_LOCK			BIT(28)
-> +#define POSR_PLL3_LOCK			BIT(29)
-
-This reformatting doesn't seem related to the patch.
-
->  #define MPMU_SUCCR			0x0014
->  #define MPMU_ISCCR			0x0044
->  #define MPMU_WDTPCR			0x0200
-> 
-> -- 
-> 2.50.1
-> 
-
-Best regards,
-Haylen Chu
+> > Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> > Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > [ Added interconnect related changes ]
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v6: Add 'Reviewed-by: Krzysztof Kozlowski'
+> >     Drop 'clock-names'
+>
+> Best regards,
+> Krzysztof
