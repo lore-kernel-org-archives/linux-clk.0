@@ -1,135 +1,159 @@
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A9B79E1
-	for <linux-clk@vger.kernel.org>; Thu,  7 Aug 2025 10:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C84710957;
+	Thu,  7 Aug 2025 11:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561076; cv=none; b=LCCZIFL7c1ue5q8BH91elxUWIKo+bN6vShesvqruqQVPN4ZPS/VXGL/RuW+IsSu+lHV/7h46AGZznuYREVuWdvWworsp8QYGHSbnmMa/QP4Jev/b3+FczeZuHGoQCTEf3tPMbooC62lp/PMjDwotM8UyEibkfY9uFgA2NLQD+9s=
+	t=1754565526; cv=none; b=R40sF+N+/nsYUPrKKUSgjPPcvl4KQGpQS9BINHfkh1kB8mZGcudJEXSD6jWiWC+3mk7Nz/sHNEE2WC6RqWLg1a7ul5jZv9GB662sRX6YxBasR/TWawpp9qHziIJHUoXgtuoGYPbDMIRj9d4CQMCIqzQ2ytOwF/Ylp2Wow+qw2Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561076; c=relaxed/simple;
-	bh=v5J95RbVq1z7j0CBduLbYcWe25djTBYTApvThmtWUbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iH9VV385BEe9pEqlYkxVXqvjyFcERKCSSVKOibLMKcgekRgJldMPXjIs6rQH5DmpEPgdHjdFhp42wqrgzR0JRABa+dPvuL/cUVnBLEChWCSj/slZcIPxN6qyhoDqAlFTRew496R4k8Hp51NK01TdSrnx6MJocKA1qQM2ZT7/RbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sER3LyUg; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1754565526; c=relaxed/simple;
+	bh=SNXnu7Rt9Zoc2uVopx6+PRx7OnYFz9kFvWry42q0m1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jxieN5fHMDsU7D1svhA3FsGV9gz4GigD8znSE1vICidjm/Zv6cUWjghWZ+1bbEIoE9+pv2VX3J92vZ8qTQ57L7bkQc2aDEJb+lL9pGmX1nIZCzETVjPPbMES7zm3zZ02ixHls9zu2f6CVBwVopVa07JaTRgrFLv5atxCZ1FdHqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klW2AVwf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sER3LyUg"
-Message-ID: <85c9d06b-b62a-45b8-964c-d37f1176f0b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754561062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1eg2qejZVe0Hwmtk3aZSvEFkMvRjpU3KbucvKTo7QaA=;
-	b=sER3LyUgpOZl05+iAak3MJa/McPHLLz0+GbGgiNgTk5LE7MFU9uQU6Rd3gjaz6Xv4UENFT
-	+9JgbB3R41YDXON1qn0A5WiK/eMIZjzEpTTT6G5qi0hBIioWnfYkwWsiL4cdoC37aCXF+b
-	cqpZjqxgsjy2v0HOiSqkrh4/6abyD3Y=
-Date: Thu, 7 Aug 2025 18:04:04 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klW2AVwf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B192CC4CEFA;
+	Thu,  7 Aug 2025 11:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754565525;
+	bh=SNXnu7Rt9Zoc2uVopx6+PRx7OnYFz9kFvWry42q0m1c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=klW2AVwfEp3Pifc6IN1Bhegq8gYIJQ/uezN0WoV/6txnRafEnLnrKYNG5lZDdKPVU
+	 DziJY9s6NAkHfuLMbHrQTJuwfwdQMwCwusQ/HTHu3iFsUiqlwm2JkmSJFNUjsvM/1o
+	 tAF4Atbyqb93U3m73gYXmzUc1lvTut34t6O1Alum8aAq0kVb+qTkBSwUfE5SeelLwZ
+	 Ukt/jyPVmcCDIxzb5VaE1OElA1B5fU4oqW0I2QrQfoZQaWwd0BLGAqWGCazlGkHz0o
+	 03U1GD4Jl40Cbue3XsZN5PmbSdwa0iWHZxOqjWQA9Md3IqelejguZq++6cIAcRAHrB
+	 6WYNqrMKh6wsQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af9a25f091fso134120966b.0;
+        Thu, 07 Aug 2025 04:18:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxAnEagEHBJ5ONWNoIwsJhRLj1tILZRRRGacBM6CJblefZrGkXpJMOkH/N+1w4GNay0Bi2CgkSXexB@vger.kernel.org, AJvYcCVYiwqtv9EyaU+D/So1sVh56BY20iVGX+wa1gih67fuvCtiTZop+Yf5PqT+skdRvgNwfAH3UIjTnYbVe41X@vger.kernel.org, AJvYcCXGlCl5vNKA5Q84SuiiL4qhl/czVQ9jqooGllBIBWhS+jp19WKwEUHCs0t06yE9x95sMk2s9Xy3gQAQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw64lSph+bcjgXeOFBkxnmJqHpaSSkWwve5uZsCIVj5sm9cm6dr
+	jaf7hqdk7LXFdXGW6r5AywkeR6sqYgRFTWqvxazD2Xf5D7fjibPNrOfvlBIebnwLuPoJ+hTURbP
+	Mv8t93MOb8sgMSY7dB2XaDRcR2HweK1o=
+X-Google-Smtp-Source: AGHT+IHEjSHnG7sgGC41mrjTccGY+FWHNNKIvN23/AttbupNxhHTNKLac68J3AfeFYH2LfWy5QXo/Ok67IaGK8fFSqQ=
+X-Received: by 2002:a17:907:7f0d:b0:ae0:bee7:ad7c with SMTP id
+ a640c23a62f3a-af9904565e6mr584086366b.46.1754565524213; Thu, 07 Aug 2025
+ 04:18:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: loongson2: Add Loongson 2K0300
- compatible
-To: Huacai Chen <chenhuacai@kernel.org>, Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250805150147.25909-1-ziyao@disroot.org>
- <20250805150147.25909-2-ziyao@disroot.org>
- <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
- <aJNK2uI4HTIV99vz@pie>
- <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250805150147.25909-1-ziyao@disroot.org> <20250805150147.25909-4-ziyao@disroot.org>
+In-Reply-To: <20250805150147.25909-4-ziyao@disroot.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 7 Aug 2025 19:18:33 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H59x+KGJ8Jr4bDG7EG78aFSN=Rn7ZbkroPwHw-YPTf49Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzsjaHwZ-WI0P5JgdkTbdSE9eiqwcWiBL1ouBoKsAyt9EMwkNbWUsVsgt8
+Message-ID: <CAAhV-H59x+KGJ8Jr4bDG7EG78aFSN=Rn7ZbkroPwHw-YPTf49Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] clk: loongson2: Support scale clocks with an
+ alternative mode
+To: Yao Zi <ziyao@disroot.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 8/7/25 12:44 PM, Huacai Chen 写道:
-> On Wed, Aug 6, 2025 at 8:30 PM Yao Zi <ziyao@disroot.org> wrote:
->>
->> On Wed, Aug 06, 2025 at 04:36:50PM +0800, Huacai Chen wrote:
->>> On Tue, Aug 5, 2025 at 11:03 PM Yao Zi <ziyao@disroot.org> wrote:
->>>>
->>>> Document the clock controller shipped in Loongson 2K0300 SoC, which
->>>> generates various clock signals for SoC peripherals.
->>>>
->>>> Differing from previous generations of SoCs, 2K0300 requires a 120MHz
->>>> external clock input, and a separate dt-binding header is used for
->>>> cleanness.
->>>>
->>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
->>>> ---
->>>>   .../bindings/clock/loongson,ls2k-clk.yaml     | 21 ++++++--
->>>>   MAINTAINERS                                   |  1 +
->>>>   .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
->>>>   3 files changed, 72 insertions(+), 4 deletions(-)
->>>>   create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
->>>>
->>
->> ...
->>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 4912b8a83bbb..7960e65d7dfc 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -14365,6 +14365,7 @@ S:      Maintained
->>>>   F:     Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->>>>   F:     drivers/clk/clk-loongson2.c
->>>>   F:     include/dt-bindings/clock/loongson,ls2k-clk.h
->>>> +F:     include/dt-bindings/clock/loongson,ls2k0300-clk.h
->>> I think ls2k0300-clk.h can be merged into ls2k-clk.h
->>
->> Honestly I think a separate header makes the purpose more clear, and
->> follows the convention that name of binding header matches the
->> compatible, but I'm willing to change if you really consider merging
->> them together is better and dt-binding maintainer agrees on this.
+Hi, Yao,
 
-> I think merging is better, because:
-On this premise，pick my tag:
+Can the subject line use "clk: loongson2: Allow ..." like Patch-2 and Patch=
+-4?
 
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+Huacai
 
-Thanks,
-Yanteng
-> 1, loongson,ls2k-clk.h has already contains ls2k500, ls2k1000,
-> ls2k2000, so ls2k300 is not special.
-> 2, ls2k500, ls2k1000, ls2k2000 and ls2k300 use the same driver
-> (drivers/clk/clk-loongson2.c), it is not necessary to include two
-> headers.
-> 
-> And moreover, existing code uses NODE_PLL/DDR_PLL naming, ls2k300 uses
-> PLL_NODE/PLL_DDR is not so good.
-> 
-> 
-> Huacai
-> 
->>
->>> Huacai
->>
->> Thanks,
->> Yao Zi
->>
->>>>
->>>>   LOONGSON SPI DRIVER
->>>>   M:     Yinbo Zhu <zhuyinbo@loongson.cn>
->>>> diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
-
->>>> 2.50.1
->>>>
->>>
->>
-
+On Tue, Aug 5, 2025 at 11:04=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+>
+> Loongson 2K0300 and 2K1500 ship scale clocks with an alternative mode.
+> There's one mode bit in clock configuration register indicating the
+> operation mode.
+>
+> When mode bit is unset, the scale clock acts the same as previous
+> generation of scale clocks. When it's set, a different equation for
+> calculating result frequency, Fout =3D Fin / (scale + 1), is used.
+>
+> This patch adds frequency calculation support for the scale clock
+> variant. A helper macro, CLK_SCALE_MODE, is added to simplify
+> definitions.
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/clk/clk-loongson2.c | 26 +++++++++++++++++++++++---
+>  1 file changed, 23 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+> index cc3fb13e770f..bba97270376c 100644
+> --- a/drivers/clk/clk-loongson2.c
+> +++ b/drivers/clk/clk-loongson2.c
+> @@ -42,6 +42,7 @@ struct loongson2_clk_data {
+>         u8 div_width;
+>         u8 mult_shift;
+>         u8 mult_width;
+> +       u8 bit_idx;
+>  };
+>
+>  struct loongson2_clk_board_info {
+> @@ -96,6 +97,19 @@ struct loongson2_clk_board_info {
+>                 .div_width      =3D _dwidth,                      \
+>         }
+>
+> +#define CLK_SCALE_MODE(_id, _name, _pname, _offset,            \
+> +                 _dshift, _dwidth, _midx)                      \
+> +       {                                                       \
+> +               .id             =3D _id,                          \
+> +               .type           =3D CLK_TYPE_SCALE,               \
+> +               .name           =3D _name,                        \
+> +               .parent_name    =3D _pname,                       \
+> +               .reg_offset     =3D _offset,                      \
+> +               .div_shift      =3D _dshift,                      \
+> +               .div_width      =3D _dwidth,                      \
+> +               .bit_idx        =3D _midx + 1,                    \
+> +       }
+> +
+>  #define CLK_GATE(_id, _name, _pname, _offset, _bidx)           \
+>         {                                                       \
+>                 .id             =3D _id,                          \
+> @@ -243,13 +257,18 @@ static const struct clk_ops loongson2_pll_recalc_op=
+s =3D {
+>  static unsigned long loongson2_freqscale_recalc_rate(struct clk_hw *hw,
+>                                                      unsigned long parent=
+_rate)
+>  {
+> -       u64 val, mult;
+> +       u64 val, scale;
+> +       u32 mode =3D 0;
+>         struct loongson2_clk_data *clk =3D to_loongson2_clk(hw);
+>
+>         val  =3D readq(clk->reg);
+> -       mult =3D loongson2_rate_part(val, clk->div_shift, clk->div_width)=
+ + 1;
+> +       scale =3D loongson2_rate_part(val, clk->div_shift, clk->div_width=
+) + 1;
+> +
+> +       if (clk->bit_idx)
+> +               mode =3D val & BIT(clk->bit_idx - 1);
+>
+> -       return div_u64((u64)parent_rate * mult, 8);
+> +       return mode =3D=3D 0 ? div_u64((u64)parent_rate * scale, 8) :
+> +                          div_u64((u64)parent_rate, scale);
+>  }
+>
+>  static const struct clk_ops loongson2_freqscale_recalc_ops =3D {
+> @@ -284,6 +303,7 @@ static struct clk_hw *loongson2_clk_register(struct l=
+oongson2_clk_provider *clp,
+>         clk->div_width  =3D cld->div_width;
+>         clk->mult_shift =3D cld->mult_shift;
+>         clk->mult_width =3D cld->mult_width;
+> +       clk->bit_idx    =3D cld->bit_idx;
+>         clk->hw.init    =3D &init;
+>
+>         hw =3D &clk->hw;
+> --
+> 2.50.1
+>
