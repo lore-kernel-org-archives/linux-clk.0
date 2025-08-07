@@ -1,192 +1,242 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0E9155A4D;
-	Thu,  7 Aug 2025 04:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8EC221DBA
+	for <linux-clk@vger.kernel.org>; Thu,  7 Aug 2025 06:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754541880; cv=none; b=ENYBlOYsJ+fAjeOTXtB5myIdP+RqTs/ocWCf7MP3oqhPF7QzEhf1yAqElvhF/O1cKPA2Px02FmcGuTtZvH5jlqtOaPJMnjrTILFpQ4T/r8sOVX+1cqx3uUIoJRBAtzDYBrNlF/KMczqZRZ7HXAMWDQTEVdcLJfisV7KHkKLBO48=
+	t=1754549811; cv=none; b=gtJqV91DfQlkm6bxFXoEsNBcoLNAp5nbFKWRWROHhzO0LACqvzxDLLeR50iei3pemqsw5U7s3F31+jDSPWzO+BDSXCVBCYAtDr1/sAKAhme2JUrDLRTO5s+2JDCqx+UW6606pQ+SdOuN5z0uudJZVSuA1QMoUmwna59Bqk8TQks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754541880; c=relaxed/simple;
-	bh=H2tz/jiA0ySaOi8+9h3NVAk+KJNOv1IwQWCmPAnIpvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxzBFNYZUyuDAH5uT6TgLAtmtmRk2JtqtjPRuS5ZYh89Nj0z6iMWYTUpi56WaFN0dbim4PjHkdOyQTkbSbkSKQ1dy4e1ZYLzZODkCI+xdor+vaXFa3WEtOsehOJTSE36mASfotKbsAYx7dWwYXOQM9pLa0ZMgrxdCYWQBjHXlQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsQY+AXa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754549811; c=relaxed/simple;
+	bh=0tHwYlbjNv+IOAqOwfpjCekQ4CCu0rh6z3eMye582FE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=BnFyY1O5C3uvmcYJZT81rxRbaS9RKJsJmaDAejTczpBiK3sreaQYnHQX+Rb7SQb6nmvauGf/wpR/YjQFj64vuWLOqsSMe7Ca0ZCvhQE0B8BwaAFLppYElW27fj2L/Mg0ubgNoSDGx1i/JkS+Ptf3574R10AbqJWA3VfxDaqyQh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YIPPEn/6; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsQY+AXa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C253C4AF09;
-	Thu,  7 Aug 2025 04:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754541880;
-	bh=H2tz/jiA0ySaOi8+9h3NVAk+KJNOv1IwQWCmPAnIpvM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dsQY+AXaEPRTDdf6GuzqvlmG46Y5WTRpNX1/FLoDUejwmCCNoa0HoR7TaLkYdDFiT
-	 NyLcrY27wC55XqynM/rbChPZWhv7yfcEZzGanaOp+K3RqRiUoEWAU3HkvIJGUL2WwI
-	 GX/IPGceIEQKcvDqHZOuJTdB4UQ1c6EP39r87RMEtcBWrNqhToEm2wN79OhEFPuxlv
-	 EOoZbOccDcLq3LMqRBcKC5Z5aXVtE3oCvZA3Tqj/QJ5pc27YvpEQXzFHdRvW8vIROF
-	 Mo1MFXvXsBGUZXUmp3JDwbpBWjGIutY1ox8O2YeKhRoGUkMCp+gdYwoxMNlnX283IE
-	 Y2enPLFj2eW1g==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-615d1865b2dso889587a12.0;
-        Wed, 06 Aug 2025 21:44:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEmicS2mIJrlBKUJoGiuSTMbDLSMal740irIbtyhIVt0yoTDmcZgEl7TlINAZKOg5N48cvTE/VvS+d@vger.kernel.org, AJvYcCWKY7FZhnGEHjLivlVRBD6Ju7yYqFjOQupI7CC6VHpgQCsbQdDVQknHKbQdyNBKUj0iFwqbzfgmqJQG@vger.kernel.org, AJvYcCWLryBpCrR13oMqQ3ieKEt4QXjzAVUGsFb/XdGkqtQP++xuP9Qf82cBcwKAB86Js2rPZqgKYIKbJycdrGiC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysev8sLd1gHOqm2rAtAwEOV073JvQTWH0IldHW43xNGTfry3Z7
-	W/fNh05PTODxnXpQAi9txEEg9E84hP3l0Z1E8xS5vuJp0wYDJvJ1cN5ajWemNTHpBKLondE6m3s
-	tOArtbOMkAwJwx+TYrlC4F8AHXBfxlkk=
-X-Google-Smtp-Source: AGHT+IGrRybApbhNW9KNFV1klMF1FbM4yZ9LSK2e6/JLza8lZpqw+tjFKRayB7UvCmU5B3pVnX5yE0d0pNEIITo4YpU=
-X-Received: by 2002:a17:907:d11:b0:ae0:aa0d:7bfa with SMTP id
- a640c23a62f3a-af990483abdmr455142266b.50.1754541878858; Wed, 06 Aug 2025
- 21:44:38 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YIPPEn/6"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250807065647epoutp015b5a2c6a6e3c8ba2915fce6199fdbf1e~ZacDoFuEX0833808338epoutp01E
+	for <linux-clk@vger.kernel.org>; Thu,  7 Aug 2025 06:56:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250807065647epoutp015b5a2c6a6e3c8ba2915fce6199fdbf1e~ZacDoFuEX0833808338epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754549807;
+	bh=0tHwYlbjNv+IOAqOwfpjCekQ4CCu0rh6z3eMye582FE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=YIPPEn/6tzYnoC0dr0ncPgF6DHzVE5UwPkucWuTHP+PvLngOhnXKfFpvzOJNvsTEc
+	 2EtCMCs9m59R9uGm9EagqckaCdcjNv08McNBsfcd1YANyyn8nVMZXu9/xvhWxLqXNt
+	 BSpxbf7A8MKBigow3FVNEoa1e8aVZaRPHmYas3CU=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250807065646epcas5p17687f208b8b43806346e6bc2c9967e99~ZacCrN9OP0038200382epcas5p1W;
+	Thu,  7 Aug 2025 06:56:46 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4byHyP0GMqz6B9m5; Thu,  7 Aug
+	2025 06:56:45 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250807065644epcas5p125fc65c6d04e995d92f2afd90b7b1ade~ZacA7TA-d2200722007epcas5p1A;
+	Thu,  7 Aug 2025 06:56:44 +0000 (GMT)
+Received: from INBRO001561 (unknown [107.122.12.6]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250807065638epsmtip203f2ebd5a413ef0d6985fa5abfd83190~Zab8DqqO-1646416464epsmtip2T;
+	Thu,  7 Aug 2025 06:56:38 +0000 (GMT)
+From: "Pankaj Dubey" <pankaj.dubey@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'SeonGu Kang'"
+	<ksk4725@coasia.com>, "'Jesper Nilsson'" <jesper.nilsson@axis.com>,
+	"'Michael	Turquette'" <mturquette@baylibre.com>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>, "'Krzysztof
+ Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
+	"'Sylwester Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Alim	Akhtar'" <alim.akhtar@samsung.com>, "'Linus
+ Walleij'" <linus.walleij@linaro.org>, "'Tomasz Figa'"
+	<tomasz.figa@gmail.com>, "'Catalin	Marinas'" <catalin.marinas@arm.com>,
+	"'Will Deacon'" <will@kernel.org>, "'Arnd	Bergmann'" <arnd@arndb.de>
+Cc: "'kenkim'" <kenkim@coasia.com>, "'Jongshin Park'" <pjsin865@coasia.com>,
+	"'GunWoo Kim'" <gwk1013@coasia.com>, "'HaGyeong Kim'" <hgkim05@coasia.com>,
+	"'GyoungBo Min'" <mingyoungbo@coasia.com>, "'SungMin Park'"
+	<smn1196@coasia.com>, "'Shradha Todi'" <shradha.t@samsung.com>, "'Ravi
+ Patel'" <ravi.patel@samsung.com>, "'Inbaraj E'" <inbaraj.e@samsung.com>,
+	"'Swathi K S'" <swathi.ks@samsung.com>, "'Hrishikesh'"
+	<hrishikesh.d@samsung.com>, "'Dongjin	Yang'" <dj76.yang@samsung.com>, "'Sang
+ Min Kim'" <hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<soc@lists.linux.dev>
+In-Reply-To: <ef3b8e12-0677-4e49-bf2c-b8136c9a6908@kernel.org>
+Subject: RE: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
+Date: Thu, 7 Aug 2025 12:26:27 +0530
+Message-ID: <013301dc0768$6f58dc40$4e0a94c0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805150147.25909-1-ziyao@disroot.org> <20250805150147.25909-2-ziyao@disroot.org>
- <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com> <aJNK2uI4HTIV99vz@pie>
-In-Reply-To: <aJNK2uI4HTIV99vz@pie>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 7 Aug 2025 12:44:27 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-X-Gm-Features: Ac12FXyDeYGtDiwcXXZ0oUtKVa2wU9cPPsmgheTY7V8BNGDo1iUsYwV9AEaMBY0
-Message-ID: <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: loongson2: Add Loongson 2K0300 compatible
-To: Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGJY/8wx4BImu0YLFPVfwpfqUmFNgKXZrJuAgeQag4A83Fv2QHBXkcOAZGX7yoCWvFQXwHgUMUuAOJp+3+0i+6vkA==
+Content-Language: en-us
+X-CMS-MailID: 20250807065644epcas5p125fc65c6d04e995d92f2afd90b7b1ade
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	<847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
+	<bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
+	<CGME20250721064006epcas5p4617b0450e69f72c94d2b3ae7b1d200e7@epcas5p4.samsung.com>
+	<99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
+	<000501dc06ab$37f09440$a7d1bcc0$@samsung.com>
+	<e334f106-d9f3-4a21-8cdd-e9d23dd2755d@kernel.org>
+	<002001dc06b1$540dc980$fc295c80$@samsung.com>
+	<ef3b8e12-0677-4e49-bf2c-b8136c9a6908@kernel.org>
 
-On Wed, Aug 6, 2025 at 8:30=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
->
-> On Wed, Aug 06, 2025 at 04:36:50PM +0800, Huacai Chen wrote:
-> > On Tue, Aug 5, 2025 at 11:03=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrot=
-e:
-> > >
-> > > Document the clock controller shipped in Loongson 2K0300 SoC, which
-> > > generates various clock signals for SoC peripherals.
-> > >
-> > > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
-> > > external clock input, and a separate dt-binding header is used for
-> > > cleanness.
-> > >
-> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > > ---
-> > >  .../bindings/clock/loongson,ls2k-clk.yaml     | 21 ++++++--
-> > >  MAINTAINERS                                   |  1 +
-> > >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++=
-++
-> > >  3 files changed, 72 insertions(+), 4 deletions(-)
-> > >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > >
->
-> ...
->
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 4912b8a83bbb..7960e65d7dfc 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -14365,6 +14365,7 @@ S:      Maintained
-> > >  F:     Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yam=
-l
-> > >  F:     drivers/clk/clk-loongson2.c
-> > >  F:     include/dt-bindings/clock/loongson,ls2k-clk.h
-> > > +F:     include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > I think ls2k0300-clk.h can be merged into ls2k-clk.h
->
-> Honestly I think a separate header makes the purpose more clear, and
-> follows the convention that name of binding header matches the
-> compatible, but I'm willing to change if you really consider merging
-> them together is better and dt-binding maintainer agrees on this.
-I think merging is better, because:
-1, loongson,ls2k-clk.h has already contains ls2k500, ls2k1000,
-ls2k2000, so ls2k300 is not special.
-2, ls2k500, ls2k1000, ls2k2000 and ls2k300 use the same driver
-(drivers/clk/clk-loongson2.c), it is not necessary to include two
-headers.
-
-And moreover, existing code uses NODE_PLL/DDR_PLL naming, ls2k300 uses
-PLL_NODE/PLL_DDR is not so good.
-
-
-Huacai
-
->
-> > Huacai
->
-> Thanks,
-> Yao Zi
->
-> > >
-> > >  LOONGSON SPI DRIVER
-> > >  M:     Yinbo Zhu <zhuyinbo@loongson.cn>
-> > > diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/incl=
-ude/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > > new file mode 100644
-> > > index 000000000000..5e8f7b2f33f2
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > > @@ -0,0 +1,54 @@
-> > > +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> > > +/*
-> > > + * Copyright (C) 2025 Yao Zi <ziyao@disroot.org>
-> > > + */
-> > > +#ifndef _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > > +#define _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > > +
-> > > +/* Derivied from REFCLK */
-> > > +#define LS2K0300_CLK_STABLE                    0
-> > > +#define LS2K0300_PLL_NODE                      1
-> > > +#define LS2K0300_PLL_DDR                       2
-> > > +#define LS2K0300_PLL_PIX                       3
-> > > +#define LS2K0300_CLK_THSENS                    4
-> > > +
-> > > +/* Derived from PLL_NODE */
-> > > +#define LS2K0300_CLK_NODE_DIV                  5
-> > > +#define LS2K0300_CLK_NODE_PLL_GATE             6
-> > > +#define LS2K0300_CLK_NODE_SCALE                        7
-> > > +#define LS2K0300_CLK_NODE_GATE                 8
-> > > +#define LS2K0300_CLK_GMAC_DIV                  9
-> > > +#define LS2K0300_CLK_GMAC_GATE                 10
-> > > +#define LS2K0300_CLK_I2S_DIV                   11
-> > > +#define LS2K0300_CLK_I2S_SCALE                 12
-> > > +#define LS2K0300_CLK_I2S_GATE                  13
-> > > +
-> > > +/* Derived from PLL_DDR */
-> > > +#define LS2K0300_CLK_DDR_DIV                   14
-> > > +#define LS2K0300_CLK_DDR_GATE                  15
-> > > +#define LS2K0300_CLK_NET_DIV                   16
-> > > +#define LS2K0300_CLK_NET_GATE                  17
-> > > +#define LS2K0300_CLK_DEV_DIV                   18
-> > > +#define LS2K0300_CLK_DEV_GATE                  19
-> > > +
-> > > +/* Derived from PLL_PIX */
-> > > +#define LS2K0300_CLK_PIX_DIV                   20
-> > > +#define LS2K0300_CLK_PIX_PLL_GATE              21
-> > > +#define LS2K0300_CLK_PIX_SCALE                 22
-> > > +#define LS2K0300_CLK_PIX_GATE                  23
-> > > +#define LS2K0300_CLK_GMACBP_DIV                        24
-> > > +#define LS2K0300_CLK_GMACBP_GATE               25
-> > > +
-> > > +/* Derived from CLK_DEV */
-> > > +#define LS2K0300_CLK_USB_SCALE                 26
-> > > +#define LS2K0300_CLK_USB_GATE                  27
-> > > +#define LS2K0300_CLK_APB_SCALE                 28
-> > > +#define LS2K0300_CLK_APB_GATE                  29
-> > > +#define LS2K0300_CLK_BOOT_SCALE                        30
-> > > +#define LS2K0300_CLK_BOOT_GATE                 31
-> > > +#define LS2K0300_CLK_SDIO_SCALE                        32
-> > > +#define LS2K0300_CLK_SDIO_GATE                 33
-> > > +
-> > > +#define LS2K0300_CLK_GMAC_IN                   34
-> > > +
-> > > +#endif // _DT_BINDINGS_CLK_LOONGSON_LS2K300_H_
-> > > --
-> > > 2.50.1
-> > >
+> Subject: Re: =5BPATCH 00/16=5D Add support for the Axis ARTPEC-8 SoC
+>=20
+> On 06/08/2025 11:05, Pankaj Dubey wrote:
 > >
->
+> >> Also SAME strict DT compliance profile will be applied. (see more on
+> >> that below)
+> >>
+> >>>
+> >>> Given that ARTPEC-8 is a distinct SoC with its own set of IPs, we bel=
+ieve
+> it's
+> >> reasonable
+> >>> to create a separate directory for it, similar to FSD.
+> >>
+> >> No. It was a mistake for FSD to keep it separate why? Because there is
+> >> no single non-Samsung stuff there. I am afraid exactly the same will
+> >> happen there.
+> >>
+> >
+> > I am not sure, why you are saying this as a mistake, in case next versi=
+on of
+> FSD
+>=20
+>=20
+> My mistake that I agreed on that, based on promise that =22there will be
+> non Samsung stuff=22 and that =22non Samsung stuff=22 never happened.
+>=20
+
+I am not authorized to comment on FSD's non Samsung stuff at this moment.
+But I got your point.
+
+> > or ARTPEC is manufactured (ODM) by another vendor in that case, won't i=
+t
+> > create problems?
+>=20
+>=20
+> No problems here. Non-Samsung Artpec/Axis soc will not go there. It will
+> go the top-level axis directory, just like artpec-6
+>=20
+
+Okay, understood. I assume Axis team will be fine with this approach.
+Let me align with them internally and address all the review comments in v2=
+.=20
+
+>=20
+> >
+> > For example ARTPEC-6/7 (ARM based) have their own directories as
+> =22arch/arm/boot/dts/axis/=22
+> > These were not Samsung (ODM) manufactures SoCs.
+> >
+> > But ARTPEC-8/9 (ARM64) based SoCs are samsung manufactured. What if
+> the next version say
+> > ARTPEC-10 is not samsung manufactured, so different version of products
+> (SoCs) from
+> > same vendor (OEM), in this case Axis, will have code in separate direct=
+ories
+> and with different maintainers?
+>=20
+> It will be the same with Google Pixel for whatever they decide in the
+> future. dts/exynos/google/ + dts/google/.
+>=20
+> I know that this is not ideal, but for me grouping samsung stuff
+> together is far more important, because there is much, much more to
+> share between two SoCs designed by Samsung, than Axis-9 and future
+> non-Samsung Axis-10. And I have =60git grep=60 as argument:
+> git grep compatible -- arch/arm64/boot/dts/tesla/
+>=20
+> and point me to any Tesla IP. Zero results.
+>=20
+>=20
+> >
+> >> Based on above list of blocks this should be done like Google is done,
+> >> so it goes as subdirectory of samsung (exynos). Can be called axis or
+> >> artpec-8.
+> >
+> > I will suggest to keep axis, knowing the fact that sooner after artpec-=
+8
+> patches gets approved and merged
+> > we have plan to upstream artpec-9 (ARM64, Samsung manufactured) as
+> well.
+> >
+> >>
+> >> To clarify: Only this SoC, not others which are not Samsung.
+> >>
+> >>>
+> >>> We will remove Samsung and Coasia teams from the maintainers list in
+> v2
+> >> and only
+> >>> Axis team will be maintainer.
+> >>
+> >> A bit unexpected or rather: just use names of people who WILL be
+> >> maintaining it. If this is Jesper and Lars, great. Just don't add
+> >> entries just because they are managers.
+> >
+> > AFAIK, Jesper will be taking care.
+> >
+> >>
+> >>>
+> >>> Maintainer list for previous generation of Axis chips (ARM based) is
+> already
+> >> present,
+> >>> so this will be merged into that.
+> >>
+> >> Existing Artpec entry does not have tree mentioned, so if you choose
+> >> above, you must not add the tree, since the tree is provided by Samsun=
+g
+> SoC.
+> >>
+> >
+> > OK
+> >
+> >> OTOH, how are you going to add there strict DT compliance? Existing ax=
+is
+> >> is not following this, but artpec-8, as a Samsung derivative, MUST
+> >> FOLLOW strict DT compliance. And this should be clearly marked in
+> >> maintainer entry, just like everywhere else.
+> >>
+> >
+> > As I said this is tricky situation, though artpec-8 is derivative of sa=
+msung, we
+> can't confirm
+> > if future versions (> 9) will be samsung derivative.
+> >
+> > But this would be case for all such custom ASIC manufactured by samsung=
+,
+> so I would like to
+> > understand how this will be handled?
+>=20
+>=20
+> I suggest to do the same as Google and when I say Google in this email,
+> I mean Pixel/GS101. Google was easier because there was no prior entry
+> and Axis has, so you will have two Axis entries. But I don't see how we
+> can add clean-dts profiles to the existing Axis entry, if you decide to
+> include Artpec-8 in that one.
+>=20
+
+Okay we will have separate dts profile aligned with Exynos DT compliance fo=
+r
+ARM64 based Axis SoCs which are manufactured by Samsung at this moment.=20
+
+>=20
+> Best regards,
+> Krzysztof
+
