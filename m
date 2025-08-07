@@ -1,55 +1,47 @@
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDCF79E1;
-	Thu,  7 Aug 2025 15:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CDB26562A;
+	Thu,  7 Aug 2025 15:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754580595; cv=none; b=NQ35QJS3kri0eXihdXqiWOPNURWFndfBVinTyTBWwB/uA/HBIbUxWqfMpsXGdhSSqA3d+U/IGArmCTv3rD/BRr8GGmYGVBiJPt6l4b5gXKhKueqCK6yIoSDcayM1WxmG2NCFblI8kTwwk2cXe/kB1zdcO/EyQembP2/GPdfIONs=
+	t=1754581237; cv=none; b=Q3aA16kdoywiNXcGYjamafsOZwfbOn+ipAfoSKsSj3CBP807y69PGwLUkacOpYaEbV+43ROCy9QTyJ4RIrndcCvTrbsXp+45/HwQJoWWsqNl9WBM+Zu1zwCdeSt+IVkDRgMb8lXNygxD04aCB2lohorEDDrGPzjqqO10YV/1NrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754580595; c=relaxed/simple;
-	bh=JDkJkErFKX9RQyyIdOKl+y9by9iWdYoaFq9gT2vqHP0=;
+	s=arc-20240116; t=1754581237; c=relaxed/simple;
+	bh=oxkXLZvPp3BqQEgtA6OlLjO1pulHs/NQGwamKgBjikQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEAc9wXw+yUyb6F3Dqs41tmrFS8ElnsjdGTMVq6GyKrPGtMoUC9ZYK/WMugtKXID2aI5pUyiplcS0Y8p8k8SXyo6p7HNqjPZDBAezBnwjIrvnUGcnxPluuSxGsSnvWzFi+KWiHv878N467v+WCTroRscLPrJieRQVm15R5hSFY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 623241F00050;
-	Thu,  7 Aug 2025 15:29:43 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 226F6B012B4; Thu,  7 Aug 2025 15:29:39 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 6AAF7B012B0;
-	Thu,  7 Aug 2025 15:29:37 +0000 (UTC)
-Date: Thu, 7 Aug 2025 17:29:35 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7xumc6mtPahNAR0h+jX3S5hH28CttGlEaOJneAyg9Q69eDoUcdQauA+1qi4rGzo91x0zclgxmEB7fp0CTu9/IaB9kufcsUVTsexFirQvNeyIKj4hcxDDUumGKmSox1eFNdO0j/mj6+4pZfZd4zxngLs2mttj1JxdmtunLOp/ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDdnwW0D; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDdnwW0D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B39CC4CEEB;
+	Thu,  7 Aug 2025 15:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754581234;
+	bh=oxkXLZvPp3BqQEgtA6OlLjO1pulHs/NQGwamKgBjikQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rDdnwW0DKcf/KVyf/uUqQ8cftSD+Xa9fB2BIXHgOnz7NdndcxH2o+EPXPHUVwwAeb
+	 CEPycnxuWPsTGUfG3cL65ht6RKlV99cwxjQUTRmqEbZ9uJ40mxPS6CKA8EKyXQ+6Cb
+	 uJag1T1BbVniRqyZuK3rXvJpSWiR70+E3WkXllCLdHFZB0dsElwF37SsTNpf96w8Kz
+	 NdolM9USSXP1YkV/ehKsWaHmVypfFMkXVQ/+1J+gTT4i6M0OzQ9KKSb1fEpMy7J1Ce
+	 bvtImt3bohQcqn2mUV4blTq6Z/dw/PjdX/7qEfhs1wyO4nlfz8L+dNYEce1yOkSeqg
+	 xhj1OqNdeEPqw==
+Date: Thu, 7 Aug 2025 16:40:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 09/22] iommu: sun50i: make reset control optional
-Message-ID: <aJTGX7z5QaneVAVs@shepard>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-9-13b52f71fb14@linumiz.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC 0/5] Marvell PXA1908 power domains
+Message-ID: <20250807-avatar-comply-30aa8001aa82@spud>
+References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,82 +49,74 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r6JMmJ4BvieUD1JH"
+	protocol="application/pgp-signature"; boundary="61gm189z7gN5234q"
 Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-9-13b52f71fb14@linumiz.com>
+In-Reply-To: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
 
 
---r6JMmJ4BvieUD1JH
+--61gm189z7gN5234q
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Aug 06, 2025 at 07:33:19PM +0200, Duje Mihanovi=C4=87 wrote:
+> Hello,
+>=20
+> This series implements support for the power domains found in Marvell's
+> PXA1908 SoC. The domains control power for the graphics, video and image
+> processors along with the DSI PHY.
+>=20
+> The series is based on master as the MAINTAINERS and device tree patches
+> depend on the very recently merged initial Marvell PXA1908 support series.
+> That series can be found at the following link:
+> https://lore.kernel.org/all/20250708-pxa1908-lkml-v16-0-b4392c484180@duje=
+mihanovic.xyz
 
-On Fri 27 Dec 24, 16:37, Parthiban Nallathambi wrote:
-> A133/A100 SoC doesn't have reset control from the CCU. Get reset
-> control line optionally.
+It's not clear to me, nor mentioned anywhere I could see, why this is an
+RFC. What are you actually soliciting feedback on?
 
-With the dt bindings fixed, this:
-Reviewed-by: Paul Kocialkowski <paulk@sys-base.io>
-
-Although feel free to use a first uppercase later in the title after sun50i!
-
-Cheers,
-
-Paul
-
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+>=20
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 > ---
->  drivers/iommu/sun50i-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Duje Mihanovi=C4=87 (5):
+>       dt-bindings: clock: marvell,pxa1908: Add simple-mfd, syscon compati=
+ble to apmu
+>       dt-bindings: power: Add Marvell PXA1908 domains
+>       pmdomain: marvell: Add PXA1908 power domains
+>       MAINTAINERS: PXA1908: Add power domain controller
+>       arm64: dts: marvell: pxa1908: Add power controller
 >=20
-> diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
-> index 8d8f11854676..2ba804d682dc 100644
-> --- a/drivers/iommu/sun50i-iommu.c
-> +++ b/drivers/iommu/sun50i-iommu.c
-> @@ -1030,7 +1030,7 @@ static int sun50i_iommu_probe(struct platform_devic=
-e *pdev)
->  		goto err_free_cache;
->  	}
-> =20
-> -	iommu->reset =3D devm_reset_control_get(&pdev->dev, NULL);
-> +	iommu->reset =3D devm_reset_control_get_optional(&pdev->dev, NULL);
->  	if (IS_ERR(iommu->reset)) {
->  		dev_err(&pdev->dev, "Couldn't get our reset line.\n");
->  		ret =3D PTR_ERR(iommu->reset);
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  36 ++-
+>  .../power/marvell,pxa1908-power-controller.yaml    | 105 +++++++
+>  MAINTAINERS                                        |   5 +
+>  .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |   1 +
+>  arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |  36 ++-
+>  drivers/pmdomain/Kconfig                           |   1 +
+>  drivers/pmdomain/Makefile                          |   1 +
+>  drivers/pmdomain/marvell/Kconfig                   |  16 +
+>  drivers/pmdomain/marvell/Makefile                  |   3 +
+>  .../pmdomain/marvell/pxa1908-power-controller.c    | 347 +++++++++++++++=
+++++++
+>  include/dt-bindings/power/marvell,pxa1908-power.h  |  17 +
+>  11 files changed, 561 insertions(+), 7 deletions(-)
+> ---
+> base-commit: cca7a0aae8958c9b1cd14116cb8b2f22ace2205e
+> change-id: 20250803-pxa1908-genpd-15918db5260c
 >=20
+> Best regards,
 > --=20
-> 2.39.5
+> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 >=20
->=20
 
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---r6JMmJ4BvieUD1JH
-Content-Type: application/pgp-signature; name=signature.asc
+--61gm189z7gN5234q
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmiUxl8ACgkQhP3B6o/u
-lQx11g//SV1ixRT6s+TozocWIV+MP1xw+AZD5hEjtTQ94o3x2r/fbEdRtxGLxRYM
-YJe8mZkZCifNu+QgBg78/DiCw0wsnRXA3y7gfMnIvk501LovWrpX2lFmdYnVBu9O
-WIJpWrZzMb3dku5kVhC87X7IOxLL4ORnM8BKOJ4T2iZvxlBTRmMyzV9iujvthL1M
-wYhQDxJ+Dj6sDNjPE/HonEJQMlv8MiYWZHZSUPZxBMlxaCZ96gqPhjpS/ZF5VKdx
-w8oVitiYduHemohWVRcqv8Rrl9ZLat5kLm5ikgMv3iv07lXrxd93v41x1nS1pYO6
-ahBa8PwTf4AZ91eJfulyiteRqnUZgG3iyI0+Ao12tyeN8WOlBo009cW6j5Y6q8u7
-Pxppv1+zfxY2VX+Ws0hCHYXLFPVeuaUzvMKsXlAVxai3NgOTj0PgEoOCGwCdQw3K
-kQCq0/T9GCJa66mc8jyuslUTBPKuUTJBJa10s6X60rCQaAVMDYEv/TfM8Vo0MidK
-Pw9VpmlUgPK/bLTAB7D9q2vYrSLP43UHMUOVC6OG+4dNEdpk10sx/qalZS1Ly/eN
-eDA9iYwUFeJdc5iS6/BAM0dgylbnaBQ23nldgwYa8HdEGG+SpXfBafdRNKBk+rEI
-NkzLWI9FRp/JLXkWCFoUSgAdIAvjaIqoeupMjNTS8UXLORXeebk=
-=UG1q
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJTI7AAKCRB4tDGHoIJi
+0qRUAPsGIBNq7EJeNjCewk/s7WezXIszK4j07CCitkja8bCHUQD/QUq7puCrhLyP
+vAJwA5dguhkavA4C1I5FPJDQbUdK5gM=
+=rOfT
 -----END PGP SIGNATURE-----
 
---r6JMmJ4BvieUD1JH--
+--61gm189z7gN5234q--
