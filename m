@@ -1,86 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C8C21FF38;
-	Thu,  7 Aug 2025 07:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8346D23C4FD;
+	Thu,  7 Aug 2025 07:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551366; cv=none; b=lJWWMDF7QzsrsVYdKb3G2alcPVcmOv2H41sih9cvq2cyZpuVRVGSurpjeS+4vSuZxlZzLzoNAcipyF6IMxmFA8/asJ5PgxmREoEcdzNlzlxqe1UkyuZ9beVCJn+G5zZ0qEzPxD42s4FWQ5zn6AkoxJZ/rzziuthU3jOxhzzS9LI=
+	t=1754551618; cv=none; b=nxD1jdE1GO3/BD1uHMZ0ptYEKnKTO0a8VV+0qCQ9xMe1wAKPMWTGQ4WboduQcLIKgT8YR2RUcLUJV4yuqhzAt5ZGBlCHFTMx7LhhcudNbyj/VEY++vVn4jhNuRwYyFkhtBJMaOn4TWfrFdaVYomqR4yLv5AKEjG5RbtlHZX40y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551366; c=relaxed/simple;
-	bh=Ln9J9actxLc5xAPkKcOUzVs/qhtgBmwzriztB3+/cmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jzB3Oq4hvvZBXb0lEzq12HZd0mxJa3tq78W3mH+s3wejbRoF4y/dyN7h7ZxUsAVhgx7g7gbU1LSVcB57Wypydl8xVnjRyN6l/9WbWzvI14rTXAJqR3JdvSnTA5c/GTuAy7fM6JLBWJWozNKxB7jF6dCx0vYSNR0sDFPtKWW/+5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGi1Vs0Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754551618; c=relaxed/simple;
+	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSyraXSqwzVU0RqBosm/VcSUvEm9h8pg1sWZQh7+RFSMdLXIojJJUn5emeYLsvA1rT/AJ26E8RAwIQoLoytoIGMPohSmr99dds3w5Cy6kJnHKPnDq9qJV8F69bf70uyXBuhO61lpCcY3tfEaMF8sudF6eZoe2bgtLp4ec5ThQUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RARr7oXY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGi1Vs0Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA492C4CEED;
-	Thu,  7 Aug 2025 07:22:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RARr7oXY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6275DC4CEED;
+	Thu,  7 Aug 2025 07:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754551366;
-	bh=Ln9J9actxLc5xAPkKcOUzVs/qhtgBmwzriztB3+/cmE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jGi1Vs0QAHh2DtPS3WJ3u84vyALTfZW3h9vlITtAezquX5Z42LSXN08ReZ6+JWi11
-	 HqBo31+LKEGCk2TiZ2Dp88+Y16ZojTXlcr4vQSoF9CyFxqJpoyju1tZa/FtTN1p2UN
-	 EYQDXNceougVgyj+pm+/j3NuS3w5k5lxOHIPKWdWlahKmQ5e8eDqsMGrkDpE7NT9rY
-	 MVCWvq+UBqkmgrw/suERUYoU1kJ4jGkAVAmpJzwyOYRzDrB3g62b7beM2+UQCzPmAd
-	 UZd9N2xQA7JIvVvX6BgMvD1FtpkmA/pyHywD0ccd8ij0MfcwPRVkXSINU3ZQTm19Zi
-	 R99ylN4DJVOlQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Tomer Maimon <tmaimon77@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Yixun Lan <dlan@gentoo.org>,
-	Sven Peter <sven@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: npcm: select CONFIG_AUXILIARY_BUS
-Date: Thu,  7 Aug 2025 09:22:37 +0200
-Message-Id: <20250807072241.4190376-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1754551618;
+	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RARr7oXYIsoOmGGKVYK80eGl+V7p9fEMpd6wq8gkvI2QAw3Pdn/Qza1dm4JMuQIrR
+	 ckHcFFIbPjSyYXr/bDzKd9wTpftvlrtlWh15XwQH58GQlO6e+zJGVNp3500ZZn5QYD
+	 5QneCWxxF3IjJSq5ND/6IsuN9KFsCuZch9rp7IJaEKeFaWa8yXIY41vKuTh9M5iowv
+	 ulfCsz9H9JMuN7Rc6ASg0VhV8C/3QfmVDNQteffZ4he+83stLI7XNfGWr4Vd5y9RNR
+	 e6HhbcXI/axVm5F+nI+ndKUr629ax2PLvQV26eyZ57qaiXWLKFxTy2cm/t4Tz3sNwv
+	 ItroFzgrdWagw==
+Date: Thu, 7 Aug 2025 09:26:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>, 
+	Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Marek Vasut <marex@denx.de>, Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 0/9] Add support for i.MX94 DCIF
+Message-ID: <20250807-psychedelic-vulture-of-valor-d743cc@kuoka>
+References: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Aug 06, 2025 at 06:05:07PM +0300, Laurentiu Palcu wrote:
+> Hi,
+> 
+> This patch-set adds support for the i.MX94 Display Control Interface.
+> It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
+> needs the BLK CTL changes [2] that I spinned off from v2 in a different
+> patchset.
+> 
+> Also, included in the patch-set are a few extra patches that the DCIF
+> driver depends on for functioning properly:
+>  * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
+> 			   contains a patch (2/9) from Liu Ying that was already reviewed
+> 			   and was part of another patch-set ([3]), but was never merged;
+> 
+> v3:
+>  * Removed the BLK CTL patches and created a separate patch set [2] for them;
+>  * Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
+>  * Removed the DCIF QoS functionality until I find a better way to
+>    implement it through syscon. QoS functionality will be added in
+>    subsequent patches. Also, used devm_clk_bulk_get_all() and used
+>    dev_err_probe() as suggested;
+>  * Addressed Frank's and Krzysztof's comments on the DCIF bindings;
 
-There are very rare randconfig builds that turn on this driver but
-don't already select CONFIG_AUXILIARY_BUS from another driver, and
-this results in a build failure:
+What exactly changed? I cannot find v2 of one of the patches, no lore
+links here, so with incomplete changelog I say you make it difficult for
+me to review it.
 
-arm-linux-gnueabi-ld: drivers/clk/clk-npcm8xx.o: in function `npcm8xx_clock_driver_init':
-clk-npcm8xx.c:(.init.text+0x18): undefined reference to `__auxiliary_driver_register'
-
-Select the bus here, as all other clk drivers using it do.
-
-Fixes: e0b255df027e ("clk: npcm8xx: add clock controller")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4d56475f94fc..b1425aed6593 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -364,6 +364,7 @@ config COMMON_CLK_LOCHNAGAR
- config COMMON_CLK_NPCM8XX
- 	tristate "Clock driver for the NPCM8XX SoC Family"
- 	depends on ARCH_NPCM || COMPILE_TEST
-+	select AUXILIARY_BUS
- 	help
- 	  This driver supports the clocks on the Nuvoton BMC NPCM8XX SoC Family,
- 	  all the clocks are initialized by the bootloader, so this driver
--- 
-2.39.5
+Best regards,
+Krzysztof
 
