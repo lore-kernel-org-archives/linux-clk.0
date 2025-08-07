@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8346D23C4FD;
-	Thu,  7 Aug 2025 07:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4554423184F;
+	Thu,  7 Aug 2025 07:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551618; cv=none; b=nxD1jdE1GO3/BD1uHMZ0ptYEKnKTO0a8VV+0qCQ9xMe1wAKPMWTGQ4WboduQcLIKgT8YR2RUcLUJV4yuqhzAt5ZGBlCHFTMx7LhhcudNbyj/VEY++vVn4jhNuRwYyFkhtBJMaOn4TWfrFdaVYomqR4yLv5AKEjG5RbtlHZX40y0=
+	t=1754551748; cv=none; b=ZKhw6bd1i6fNbxImZwlFdDvLrkv35DIZAHtg4Lqgvhrh/py2ICojJvPc1BO7Sgbr+y8LfpVL00nJrPPOY7YZBrLPQ3xFGAS+eU593XQ4Q4f+pBnnX6+9+s8sdMWWwDGI8sDl4GqQ43BeRCC4gKnqsNlW26WotO9n2JAqpVLSGLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551618; c=relaxed/simple;
-	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
+	s=arc-20240116; t=1754551748; c=relaxed/simple;
+	bh=BPOrOe6Ks1WSFeqdgv+rLZaq6MjbwOFkeEJJHOUYbIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSyraXSqwzVU0RqBosm/VcSUvEm9h8pg1sWZQh7+RFSMdLXIojJJUn5emeYLsvA1rT/AJ26E8RAwIQoLoytoIGMPohSmr99dds3w5Cy6kJnHKPnDq9qJV8F69bf70uyXBuhO61lpCcY3tfEaMF8sudF6eZoe2bgtLp4ec5ThQUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RARr7oXY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=M71ZtKjYt/FW3fE2hIM8zlETX9bpCjsmJJfku2zxYHUCHz4Uq/GHbKj7ukl1lF3J2wwSxJ/nGpa9HyNw0NNxgaZjFX+UbAeWeEZ0/Ab9TSiEYnJ4+PjP0GM+06SwL2N+BDkR0QNGvBiZt7CuvMANxeG21W3Qn2lIkn1ci0H6Jb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LdWc4I8g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RARr7oXY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6275DC4CEED;
-	Thu,  7 Aug 2025 07:26:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LdWc4I8g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A37C4CEEB;
+	Thu,  7 Aug 2025 07:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754551618;
-	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
+	s=k20201202; t=1754551747;
+	bh=BPOrOe6Ks1WSFeqdgv+rLZaq6MjbwOFkeEJJHOUYbIU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RARr7oXYIsoOmGGKVYK80eGl+V7p9fEMpd6wq8gkvI2QAw3Pdn/Qza1dm4JMuQIrR
-	 ckHcFFIbPjSyYXr/bDzKd9wTpftvlrtlWh15XwQH58GQlO6e+zJGVNp3500ZZn5QYD
-	 5QneCWxxF3IjJSq5ND/6IsuN9KFsCuZch9rp7IJaEKeFaWa8yXIY41vKuTh9M5iowv
-	 ulfCsz9H9JMuN7Rc6ASg0VhV8C/3QfmVDNQteffZ4he+83stLI7XNfGWr4Vd5y9RNR
-	 e6HhbcXI/axVm5F+nI+ndKUr629ax2PLvQV26eyZ57qaiXWLKFxTy2cm/t4Tz3sNwv
-	 ItroFzgrdWagw==
-Date: Thu, 7 Aug 2025 09:26:55 +0200
+	b=LdWc4I8gF0rtG32Vov1M61PgSNVNH5fNQBqZavWPSx6RrwL9naqlfeKshageFZsEa
+	 pcullofjttvEKmZNgF7FlPvOtXhiaQJ3Hi5idPJqtzJNu6wxBt8tccKuSuqE163Mtt
+	 aw6i++aPgfPE+0fJXFS/uJ5w9tMWlPl2n33m0Tw0fbG52ZnzctZQlUd/kw9tTCWxTl
+	 RZB15zs8KVwtYd8E31X0imhQyAFM2FqUkkxifWTHSzsvwoC6vU9PAi65uBVgW4UvXm
+	 NnXQGhSM7zby1FRQ1uC2w2nZqk+ww7vYElEmLoI+UTD0gD3om89MxeYsxHdpSO9y3v
+	 aglCu0I9UNmXA==
+Date: Thu, 7 Aug 2025 09:29:05 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>, 
@@ -34,19 +34,14 @@ Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Marek Vasut <marex@denx.de>, Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 0/9] Add support for i.MX94 DCIF
-Message-ID: <20250807-psychedelic-vulture-of-valor-d743cc@kuoka>
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/9] dt-bindings: clock: nxp,imx95-blk-ctl: Add
+ optional ldb property
+Message-ID: <20250807-airborne-rich-lobster-6f8e2e@kuoka>
 References: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+ <20250806150521.2174797-7-laurentiu.palcu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,34 +50,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+In-Reply-To: <20250806150521.2174797-7-laurentiu.palcu@oss.nxp.com>
 
-On Wed, Aug 06, 2025 at 06:05:07PM +0300, Laurentiu Palcu wrote:
-> Hi,
-> 
-> This patch-set adds support for the i.MX94 Display Control Interface.
-> It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
-> needs the BLK CTL changes [2] that I spinned off from v2 in a different
-> patchset.
-> 
-> Also, included in the patch-set are a few extra patches that the DCIF
-> driver depends on for functioning properly:
->  * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
-> 			   contains a patch (2/9) from Liu Ying that was already reviewed
-> 			   and was part of another patch-set ([3]), but was never merged;
-> 
-> v3:
->  * Removed the BLK CTL patches and created a separate patch set [2] for them;
->  * Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
->  * Removed the DCIF QoS functionality until I find a better way to
->    implement it through syscon. QoS functionality will be added in
->    subsequent patches. Also, used devm_clk_bulk_get_all() and used
->    dev_err_probe() as suggested;
->  * Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+On Wed, Aug 06, 2025 at 06:05:13PM +0300, Laurentiu Palcu wrote:
+> Since the BLK CTL registers, like the LVDS CSR, can be used to control the
+> LVDS Display Bridge controllers, add optional 'ldb' property to handle
+> these use cases.
 
-What exactly changed? I cannot find v2 of one of the patches, no lore
-links here, so with incomplete changelog I say you make it difficult for
-me to review it.
+You did not add property here. You added child node.
+
+I don't understand the rationale at all. How the registers could appear
+in this hardware? What changed that registers were not there?
+
+Why every device here has ldb child? Why camera has ldb?
 
 Best regards,
 Krzysztof
