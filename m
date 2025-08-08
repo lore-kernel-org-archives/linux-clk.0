@@ -1,65 +1,65 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DB327584D
-	for <linux-clk@vger.kernel.org>; Fri,  8 Aug 2025 11:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE880276046
+	for <linux-clk@vger.kernel.org>; Fri,  8 Aug 2025 11:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652288; cv=none; b=NUq4q8K/NTRHK+BWB67ie0EzscHyHmJ1N2jHLbgbngGhMEnxh2HOW1mwPCDlZIRCW+SDkXXAECn/qrtu3L2z3VuAikAdyTzXMRYAvxSseMA5QuizV+EzRXsEmOpc3XmSYwLKEB/7wJOb1Cg/qeZ6+7mFrpv5gXp+xhFQtWkYyNM=
+	t=1754652350; cv=none; b=n9P15yL6DM8tZuY5BlI7qlUrnb7jDEElMJst9op4b/aA4sgB2OhZLep///MZE1FLw8xvW8ucPO415qUjC/zOHGlCJRrsacXnvAc7L3plV3aJ18Yklbo9ZITP5nspyPT0fiytGFh1AKkSbP4lDF7rtOK6PobPmJRX1Qcn7NXuCG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652288; c=relaxed/simple;
-	bh=tdqmTZskz+yQCU0OtNWJ7hb3SLauZy7LX8Gd3jyLS4Q=;
+	s=arc-20240116; t=1754652350; c=relaxed/simple;
+	bh=QA+SPUv+ZJM564GNbwnCFpJZjmCakzVI2B7d0dDz/P0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VEx1IL87a6r5AjmCrOPhXuO1tsC3LKjVF94NmlAQsg48/8YTUpf/eHwgSxmFKA1dMcIDRE+sOKeFWc2s9qMRlf5nKL6Z3p7Tum97eeHnRuACeBjMEHXx0h1HrvV9tgNywhsIB0WNcVqqEi+ZuIGFAvpQ5Rvqj99l/Id/70UIjrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fN9GHOOf; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=aJSFiLOMLvlvkYEM3FyXMTbZzIzS5ybpCHWEnxDIZlEgJM6YITPUouyM75ZcYouVqiqHUaAyIbokv10yTjIp7qyClYKg+fEuz7o7RG5yJApin/xdaBZc14yVFDL5JgCv3NbBCXlWIKxepLKodGQkJHA54Yhk5cZxmxWbpv0HqPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=B4ST1Bxh; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fN9GHOOf"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so16748715e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 04:24:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="B4ST1Bxh"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b7823559a5so933240f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 04:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754652285; x=1755257085; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1754652345; x=1755257145; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WDaDKFrE9tePMwqIpXfK3gAKisGxx+wlPAiFTrZ+JsA=;
-        b=fN9GHOOff3ZEYCkEguHUtX8uGA0gAEZF67S3H+eextsE/KrKMpS1HFfVm/Q/Hf8dSd
-         EaIz3Bxxa6hXvRNGpAjtqCgcNmT1nIwRJcZcI+Zhy0iO+tJ4HqxL7zo6W2PBxzGANZkv
-         NSk6tPHvj1kBAfo5igO9cOejjMtv9LsyVBMMMdeJw5Efe1gCCdNhhBLaDBUYcyZJYmWr
-         aIx7qnHovjrVuEm/BbShu2n9m5m2/y6zZdo0diZL3qyym22CfSBQHA77RpswFKDrqpF8
-         xxBwLfAm47whs8aXsUmU+mhcPHTlPIieoPS/VmvVQgQy8rYAJxDupii152uNWYHfVTj6
-         jKFw==
+        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
+        b=B4ST1BxhwH48Z49rewmBOYuuKHqK7zc55gHqNZJJXhgFp+EHc+tKNMkCOtWvF9AWpe
+         9mmhjj/RhsSRMqZ0MSvotKyPi5Lfm3EMVWkVKE8nVKgZfFlsfGGpAkBonRcFvnInGI8Z
+         G5BgYHruv8iZCoWdS2iwvfzDF78EBuZ7YwHRfhawXE6cA2gaJQ0XECZCrUtvjIPt4OTT
+         dTo+GO7MCI70U/tuai1oAFZSUI2z5eg3KUcZeYRV3rnHigrISuz7ZRReuSuAVI8oVDfq
+         p7mIZl5brtJ3heD2P6idvBH6ItqWyjC3126U1bqz5qwqOueg09x487B1QVX5ps/qMovM
+         r4xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652285; x=1755257085;
+        d=1e100.net; s=20230601; t=1754652345; x=1755257145;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WDaDKFrE9tePMwqIpXfK3gAKisGxx+wlPAiFTrZ+JsA=;
-        b=NFL0SP8v0VQmC5aN1KB3UtRIyV20Lh2ef2iC4GVe5cQv3iXgjmZvJA2w5dP2GoJQOg
-         eUr59AQckrhWSr28vcKolu36uDZ+tKuYaw0JdoDDdIr+88soPK/6KCghrwdZh/azBrYt
-         SONcwB+1FoJ+MqZoTjCBE13B8MWo6uvZ1aOthcfymVw5QljViNkxEK7VB8PAogfcHGT4
-         O6HASeFps4CZOBhr7YP6uw070SeOi0nJMCpvA5elEQQj3nVYV8EkiebGUD4otkUCA0LC
-         odF7vFEgzohZLRoEfnmxYEHQ0eFEASlbYZoyAZnMzkVqtdGDcVaZ2SAWyz0dwrIw2C4W
-         LH/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6WhF9emhkn2nTqNh555folF5EHfUkWkU3+7UEKohuzAI8ztFLglcnStTXFY0jO8LeLe3G8VMob4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN/D+eMpmuCUNGWCM/ia6oXPAxKLqfHOEkgW4NEc9vy0OT2SBZ
-	xG76TtzrqOEFfLMupZRwpksw4G8XlIpR2380GJ6UjsB6Qwo5B3v8NX3xN6EqO/2yyRk=
-X-Gm-Gg: ASbGnctTUbZdsCsnLpc4lNiyF10n2LEjG2ZALZgGTWkuicQkwpt7hJHcYjBSINCTwQQ
-	pbNgvGh41oBG8cxHdEi4fsixBY/cx8A8mLc/3My16E58pZpcRRQVK9uVnKuwgAPZSNXO8WBHjCS
-	XEGLby9Q4rBPrqnStdlbjKA80NbI5Ozb5Q9egeZwF5UXAPaCsq/ylPplWhFVThG8dvJ1yl4Wrf+
-	FSNQrl0FjgjiEchXDUXPruY2y18U0dFUHknWAgckBgzKuYDzxj7t6KxycdXZxOwwKL6iICM1HDK
-	RZnucmVI48YwZ53jJrIzC7k0/4DcBLZ99h/5bcHgajfr2upN0IMBEXgnuE++iksIHJlIvKTTzDb
-	yYhMaPvs5SeWipMD/V5Dir3bkzvjT4fI=
-X-Google-Smtp-Source: AGHT+IGFc+AaIxGFA2SLKc1CBodgdE5FKKCWRuNF/M1Z18xEptVX+bZf7YDkhLJM8Nb3ewYalAQT8w==
-X-Received: by 2002:a05:600c:4f4b:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-459f4e9df86mr24463835e9.4.1754652284753;
-        Fri, 08 Aug 2025 04:24:44 -0700 (PDT)
+        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
+        b=dot8kZlgojLH0alhX399gAv+qh7V5b+YoO2Ih8FNfzQAbyL0PGqEuCbsbQ1SL/+O4s
+         1R6HTLGk+OQoiMSIqEUU0R5CVaAPubwqfZJqAK8RyygQuEdpZMltZ0sAZ+wjhL8TrnCD
+         wA5cJizaHBNhVbVy9ZIrrGgIVnTLndHtooZi0qEe+dyglykmbJWhgt6XP49pafTaZjMR
+         X6KYRwOB15HQZ6AZT0+fUHx0SEWSym5XKJy4MFMzPDX5RV1WBvnf8lX59g0D/Wpi1AH9
+         x/SbYqosvUFXXUDKIydkTFSf5xIDj7j7S6XY0ZOfXs+ak2VpVKfuIOEbYwprFeDjQFzi
+         X4FA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5WI77pOjtJ+Bi8dqhlXS6x2V0I7oIoAXqRh5Mf0YW6NEMLFv8x2ZroMQVjr2j2hvZHI1eqZ9+XT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRlOOhmQprwuhCVBJDLSUeU4HEWuL0cmyq9qyv2XC6fLIuRFOo
+	NpBA/zmbiTsejOHQmLGgFHyc04RsKrfP/2Ja7EJ+QsGgiCz1GJVf2fiyTfx3Ne9JFdA=
+X-Gm-Gg: ASbGncvmFsNiRSrLE1fr6qC0aMt/5t7jbLznvvKXKtT4lN+bkWOLxUXTc+/QNLlAZ0a
+	u7RrDfwOE/BpEAshcSWVm4NqEBUtdKmzqQ+SgUIYFy5FaxsZLN6GN1eS7LhjNq3E8bsv9liX3ts
+	hG3rMOGZPj0hWXOlHHkpsRvFNKMjTf6OQKxbcMPv1PQjIwzCxncQ/9KwGm38mvf3c9c+2Fm+xLi
+	SgtGOSGnrzuphcVeFTS6nqjsMRsSv9Q83m1eaOMYAAd2cbVkRQuqSx9vzUlSWtUxjb02OxecD6x
+	FfW8VZMJD0ysDRKsC1GUEHRCFJtKyaOzrIJbiqHUx2pxkersH5NdmboKSdgfzY9QQuHYZdX5VAh
+	a5xsNw/jKg89mONrT+6Aft94F2qZV7xJLWeXQqRBGVg==
+X-Google-Smtp-Source: AGHT+IG+d+QVEEJZwj2dMpvlEXKWBGDwCt68UnmyWGJ/cwYSS+LXI8Tj/fvC7ktt2tblrQA7hmZ3Sw==
+X-Received: by 2002:a05:6000:24c5:b0:3b7:8f49:94f7 with SMTP id ffacd0b85a97d-3b900b4d8b6mr2051559f8f.31.1754652344801;
+        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6867193sm128153435e9.6.2025.08.08.04.24.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58553f8sm141920125e9.14.2025.08.08.04.25.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 04:24:44 -0700 (PDT)
-Message-ID: <efdf5d48-c105-4e1b-8dbe-14706302aa2d@tuxon.dev>
-Date: Fri, 8 Aug 2025 14:24:42 +0300
+        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
+Message-ID: <71d109a1-211a-45ee-8525-03f1859b789a@tuxon.dev>
+Date: Fri, 8 Aug 2025 14:25:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
- dma-ranges for PCIe
+Subject: Re: [PATCH v3 4/9] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
+ documentation for the PCIe IP on Renesas RZ/G3S
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
  mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -80,63 +80,131 @@ Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
  linux-clk@vger.kernel.org, Claudiu Beznea
  <claudiu.beznea.uj@bp.renesas.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250708165540.GA2148533@bhelgaas>
+References: <20250708163407.GA2149616@bhelgaas>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20250708165540.GA2148533@bhelgaas>
+In-Reply-To: <20250708163407.GA2149616@bhelgaas>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi, Bjorn,
 
-On 08.07.2025 19:55, Bjorn Helgaas wrote:
-> On Fri, Jul 04, 2025 at 07:14:07PM +0300, Claudiu wrote:
+On 08.07.2025 19:34, Bjorn Helgaas wrote:
+> On Fri, Jul 04, 2025 at 07:14:04PM +0300, Claudiu wrote:
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> The first 128MB of memory is reserved on this board for secure area.
->> Update the PCIe dma-ranges property to reflect this.
+>> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
+>> Base Specification 4.0. It is designed for root complex applications and
+>> features a single-lane (x1) implementation. Add documentation for it.
 > 
-> Can we include a sentence or two about what the "secure area" means?
+>> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
+> 
+> The "r9a08g045s33" in the filename seems oddly specific.  Does it
+> leave room for descendants of the current chip that will inevitably be
+> added in the future?  Most bindings are named with a fairly generic
+> family name, e.g., "fsl,layerscape", "hisilicon,kirin", "intel,
+> keembay", "samsung,exynos", etc.
+> 
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    bus {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        pcie@11e40000 {
+>> +            compatible = "renesas,r9a08g045s33-pcie";
+>> +            reg = <0 0x11e40000 0 0x10000>;
+>> +            ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
+>> +            dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0 0x38000000>;
+>> +            bus-range = <0x0 0xff>;
+>> +            clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
+>> +                     <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
+>> +            clock-names = "aclk", "pm";
+>> +            resets = <&cpg R9A08G045_PCI_ARESETN>,
+>> +                     <&cpg R9A08G045_PCI_RST_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_GP_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_PS_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_RSM_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_CFG_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_LOAD_B>;
+>> +            reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
+>> +                          "rst_rsm_b", "rst_cfg_b", "rst_load_b";
+>> +            interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
+>> +            interrupt-names = "serr", "serr_cor", "serr_nonfatal",
+>> +                              "serr_fatal", "axi_err", "inta",
+>> +                              "intb", "intc", "intd", "msi",
+>> +                              "link_bandwidth", "pm_pme", "dma",
+>> +                              "pcie_evt", "msg", "all";
+>> +            #interrupt-cells = <1>;
+>> +            interrupt-controller;
+>> +            interrupt-map-mask = <0 0 0 7>;
+>> +            interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INT A */
+>> +                            <0 0 0 2 &pcie 0 0 0 1>, /* INT B */
+>> +                            <0 0 0 3 &pcie 0 0 0 2>, /* INT C */
+>> +                            <0 0 0 4 &pcie 0 0 0 3>; /* INT D */
+> 
+> The spec styles these closed up: "INTA", "INTB", etc.
 
 I'll update it.
 
-Basically, it is a RAM region that is used by firmware.
+> 
+>> +            device_type = "pci";
+>> +            num-lanes = <1>;
+>> +            #address-cells = <3>;
+>> +            #size-cells = <2>;
+>> +            power-domains = <&cpg>;
+>> +            vendor-id = <0x1912>;
+>> +            device-id = <0x0033>;
+> 
+> Some of this is specific to a Root Port, not to the Root Complex as a
+> whole.  E.g., device-type = "pci", num-lanes, vendor-id, device-id,
+> are Root Port properties.  Some of the resets, clocks, and interrupts
+> might be as well.
+> 
+> I really want to separate those out because even though this
+> particular version of this PCIe controller only supports a single Root
+> Port, there are other controllers (and possibly future iterations of
+> this controller) that support multiple Root Ports, and it makes
+> maintenance easier if the DT bindings and the driver structures are
+> similar.
 
-Thank you for your review,
+I'll ask the Renesas HW team about the resets and clocks as the HW manual
+don't offer any information about this.
+
+If they will confirm some of the clocks and/or resets could be controlled
+as part of a port then patch 3/9 "PCI: of_property: Restore the arguments
+of the next level parent" in this series will not be needed anymore. Would
+you prefer me to abandon it or post it as individual patch, if any?
+
+> 
+> This email includes pointers to sample DT bindings and driver code
+> that is structured to allow multiple Root Ports:
+> 
+>   https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
+
+Thank you for this!
+
+And, thank you for your review,
 Claudiu
 
-> I don't know how to connect this with anything in the driver.
 > 
->> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - collected tags
->>
->> Changes in v2:
->> - none, this patch is new
->>
->>  arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> index 39845faec894..1b03820a6f02 100644
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> @@ -214,6 +214,11 @@ &sdhi2 {
->>  };
->>  #endif
->>  
->> +&pcie {
->> +	/* First 128MB is reserved for secure area. */
->> +	dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
->> +};
->> +
->>  &pinctrl {
->>  #if SW_CONFIG3 == SW_ON
->>  	eth0-phy-irq-hog {
->> -- 
->> 2.43.0
->>
+> Bjorn
 
