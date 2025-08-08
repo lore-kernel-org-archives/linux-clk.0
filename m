@@ -1,256 +1,190 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B631A264F8A;
-	Fri,  8 Aug 2025 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300082676C2
+	for <linux-clk@vger.kernel.org>; Fri,  8 Aug 2025 09:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754642377; cv=none; b=mjoVD51tpIY+MYw2GZJMepGhPe9QmXE609aJmvi1egeOXJehiU/JJQVxt4LP46qGe49g2zz8VXBAWVr0AESHeeq1HgGCLjQ4K7x1uLsk35b6YE23eGhPs7FiQxxyxHuvSe/Fg2G1v9AnqPy9Eve9MQ2vD1vSGhPwIXrWbvZ9m+I=
+	t=1754644920; cv=none; b=Oj2KjLe2iJT0/NSOg1YB3H5ocVEFqMcbj4pQ2AetamzmVQEEuUBDmK2u0aSs0M8z4+nsjrVVm+m6QazdqFn5cJwiFK3RaLuax4UTuyqRo4MpxYAaFDTwexmg53h2zXazODQGQIAlLG0QhaS6vpUpUYubEk4iquIADWv3Pe5YAZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754642377; c=relaxed/simple;
-	bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxl+Pq26/D1dwPGreWuEUsw4EracSTDbg2r0eqYBD3EFu/nTf2XhA8Zz94ZxJknc2s1MTWf1+wPb/CK42UxVK+/9lDiy/OXMf+1k8Kzyqdupa6ac6ULWaLIXaCDu3GkXSYj56TbSo7BH5w08YJ4qazEQgtKE0nZb/RF+5shQrJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=N2LjNYcL; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=r1PoWh6/; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1754644920; c=relaxed/simple;
+	bh=+LRvJeJfjFFMg5w+plJD0jeehIK7GSgpPpZ2/CDxvLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oUXLyf8zd9uQiPeSVlXxqN08gkBzLlAe45vcE64wkXWi0IUtn9ze8cv0rgoj6Rbz6FhRIxMfI/3N7c48pITA+BsCwO14UJ/TlRZ3EbW714gmtMPs5V/A7MEf+BUW1R5y1FmkMgJ/GB5g9HeycFgz/Yn9d3p71aSZXvDdWMsArWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nE1oFDjz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="N2LjNYcL";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="r1PoWh6/"
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id C63E912FB458;
-	Fri, 08 Aug 2025 01:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754642373; bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N2LjNYcL9eqKmruQHc21P2hU8hg2IOYCBvjctagJ2Az1XMnr6X1nETA8xEf6cn68q
-	 MgPY5cR99L0oGpWxt4Pv4fXeSjjtE1YVzExFRvkVIIdZ61lBxWpOtrnMl0/rCyasdT
-	 c+Ai+3jh+PASw0+utr1RVGMpTt8trDLutpwblovCkG0yHDTKBekvbs69ibIJ2IcEz2
-	 BLaxkxk2vkzB+efa1tj1e5zWTjfUgqRgjdgNKBOOOQQ87q/vetYpegQKuTuzt5fuZP
-	 CB4UbqLXJq6pzNRckiHoilscaf51nNRl/SXVCgmqLED2JGLVE+b47ND7SAO/pHarW8
-	 3hf3Ae2OwHRzQ==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id eWhw2vAtAcjx; Fri,  8 Aug 2025 01:39:29 -0700 (PDT)
-Received: from ketchup (unknown [117.171.65.140])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 3CC5E12FB405;
-	Fri, 08 Aug 2025 01:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754642369; bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r1PoWh6/voAcLo+G3AldL51Mrxwo3fgOzUJ231BYpZMALndqcZt3QlOBSfemJA19H
-	 kwwY2YvN0/GRdNkrZ8jDY+l7vGohCA9EXKtKPKxiqmAUR14LPEekyJcdGlFjSHIxA0
-	 SJMag4t3qxCnJ4iSOBLPoDTHMIHASCtek+9JGfIm6ceErU1zou5T/WXm0/SEN3HkdV
-	 pOzk04iJZC62qCiRkrj1owif8d/dmrNPYYL526bNgqGAIgE3M+g7yn+z68mclJi09s
-	 A6oiDTG5kllPNHkVts88BQMzzCA9LRBnzRda8JMAtBkWi3SKYAf08H/ZnXJpAfJHFq
-	 m50KPmH+j6keA==
-Date: Fri, 8 Aug 2025 08:39:22 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH 2/2] clk: spacemit: introduce i2s pre-clock and fix i2s
- clock
-Message-ID: <aJW3uvqI--Bwrld3@ketchup>
-References: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
- <20250807-k1-clk-i2s-generation-v1-2-7dc25eb4e4d3@linux.spacemit.com>
- <aJQXKN_ccpWVJ5oZ@ketchup>
- <C7EA7A1D0F9884EB+aJVcqFqix0GF_RnX@LT-Guozexi>
- <aJV2EIC_0E1FQX7L@ketchup>
- <78351F50C5DA0C45+aJWaWKEyO_f2a6Kp@LT-Guozexi>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nE1oFDjz"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5786lMOi007839
+	for <linux-clk@vger.kernel.org>; Fri, 8 Aug 2025 09:21:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zLqDCDW47C/rBLkuL0CDYXX3PXQC6B7lLgRqBiiYRmE=; b=nE1oFDjzKsd9bkN/
+	BVedQP/mKeYD+w6+XSyAWpH0OIaq+aqnQa8ok1LmdnGXCE0ttNeXC+wmapu0wLvd
+	m0mPm8HtdFAndd49h/hl1Lz/UEoEnESg1QuAtW3SPXNcConYgEh5libkcNFIjdwE
+	7qCjl19kI/T/sdUh1vTlpTLv3XkOP4jfcoVlFhqUG2mk/41j5elyqrSUwoCU6W2F
+	/XVIEdnQf17MsFEyiWNDuS2BV9tB8dYCCIHAJ/GCSz0kWRO76XwlREniSY5K5ccL
+	BkU/NP3p/mubqwaF+x/IL0i+u8pHWkYfon7075034Jgsb5JDn2Mf4eeDAB/MYgwu
+	5VdJdg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy71fqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 09:21:58 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-31f3cfdd3d3so2195318a91.3
+        for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 02:21:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754644917; x=1755249717;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zLqDCDW47C/rBLkuL0CDYXX3PXQC6B7lLgRqBiiYRmE=;
+        b=oZIdYtl7JYjuvsz3PTQnzwtZh+cZQVLB1EvZTBd8lVryXZTkRh7ffCOK0vNqjyu2L/
+         7gF3diw3bpg++oMW3JSAy35VrX6MSfiWmsPd8C1V6hdgGMCnk8Gkv8J2g5vtK6wcCaYI
+         rpiLKjGyAsL06Kge3+OxSdCkcHYZnYGY4l7tJWsBuzqJfMmNa9N1bGjnHhne+udkXCCX
+         UFN6AAKp5s0OHH4CUtwOqBWXoOc7BiCeFNNW/qi+WdCZgKTdEdEKLVnRyS+rfhSN7Np2
+         /lr2oWpVewUkix0cLnoBLe9uC8+LP74wfRt3J9RmDAfY9hRKP60glvfZ1xEkMOnZKPRc
+         GAng==
+X-Forwarded-Encrypted: i=1; AJvYcCVVc1bO4YgbOfH/nkOEvD2tcKrdMh1AmoGG+CeTI/sUVxWsaUj7JMWBfAky3tlP7h3TRkgTc7KZmMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQlYEgw1MaO5eLsdFL+9DPBYRKCrWVA6TGwHOiyIFY2tT0wdr8
+	mv8E+42Wv/mLHKi/8ibDeJJchDKpvl0QkSm76n+cLwPP8C9RBYdQO3zEbhS4JeDXJEvYSP8FaUy
+	zai8dx6h18afgCfJevIkGB5Fa5Tw7zdSh/npUZ0xLj6uozUSSB7ffH+75aHkFFSY=
+X-Gm-Gg: ASbGncukTmuNuRJJtpeb6evTqZMVjQfz9Uk4wJqPdBXn/zgLT3KVJQu/SNqDWKJGx4g
+	VMN1jNalkJ/hRME/P7bKcemZW8XCAmPaDKrbGKgnq/YWsGwogKuft24Mz5Fuw1YZiJcjwgwhcTF
+	zsC7scH0KQVOaFqJIgEtmPsG/u+bGWUHJPxxstgCclHEDKV/ctM79sGgBARgrWDH7myBdcnZdvc
+	JW2ietX0KWWpOpqvmjt4poFID0auNOCdKMkMcHOFgwy9S2cmUfcismiMrVZWBAwyckiUQAJC1BW
+	VDiiev3l+m/YrQSXiZDWKKvt5m/uWqjguY24RyS/Xru62iRk+CeA6N7Qty4hyZiLMlU=
+X-Received: by 2002:a17:90b:55cb:b0:31f:ca:63cd with SMTP id 98e67ed59e1d1-321839e9a33mr3492807a91.2.1754644917288;
+        Fri, 08 Aug 2025 02:21:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4uXTfQa1MeL3UI0IGJQ6NZ1M0GNenD3TaPrzwHHNOEp7HbRnfFH/NMIAJMm8cm52lQHbQIQ==
+X-Received: by 2002:a17:90b:55cb:b0:31f:ca:63cd with SMTP id 98e67ed59e1d1-321839e9a33mr3492757a91.2.1754644916703;
+        Fri, 08 Aug 2025 02:21:56 -0700 (PDT)
+Received: from [10.218.30.152] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da5719sm24531355a91.6.2025.08.08.02.21.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 02:21:56 -0700 (PDT)
+Message-ID: <7c1bd3d6-159f-4269-a22a-34290f1be0cf@oss.qualcomm.com>
+Date: Fri, 8 Aug 2025 14:51:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
+ shared_floor_ops
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
+ <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
+ <c54e8ac4-9753-47bf-af57-47410cee8ed7@oss.qualcomm.com>
+ <d6a2937f-7d63-4f17-a6fb-8632ec4d60c8@oss.qualcomm.com>
+ <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
+ <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <78351F50C5DA0C45+aJWaWKEyO_f2a6Kp@LT-Guozexi>
+X-Proofpoint-ORIG-GUID: giXAPltqpMXLJ_cI2x5gVxicygVwwyWl
+X-Proofpoint-GUID: giXAPltqpMXLJ_cI2x5gVxicygVwwyWl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX7WaiIua6HWIR
+ cD66s2lEydxzwVaAfdxM5S1SCOkG196vGq4/XbWCZZlX20gyvaM712EvsEkzBf/O0v1L9mzFDfr
+ ZiJFt8S3rq8iOn5CPFPE/mL2qepnSUpG66bd2boSOm5Sx2dSyS4yoswVfFN7XkjZk6Uskny/zec
+ OAt4cMwMEbPc74TxlJk3WjxSTreZNdSrQ+8LoqAVlVJIHTPF+y1DRvKyNQ5ydnU+hDQ/6DAMc2U
+ Km2HGVZxzRxIvvv3sZIpNfW6svj7vOwv9IUVcH150puHX7x94/QbBo9oGTgVCQIbIXGBUT2B5RE
+ urQxo/LqZPf3nz5HpC2Cavs+21gtVExu1RUMBNV1Rh5ntw4s+bigBbMnjfA8gMU1xFvLZnMvL9F
+ jWKu3R6z
+X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=6895c1b6 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=wbLa1xrU48ZvrQgpvw4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Fri, Aug 08, 2025 at 02:34:00PM +0800, Troy Mitchell wrote:
-> On Fri, Aug 08, 2025 at 03:59:12AM +0000, Haylen Chu wrote:
-> > On Fri, Aug 08, 2025 at 10:10:48AM +0800, Troy Mitchell wrote:
-> > > Hi, Haylen!
-> > > 
-> > > On Thu, Aug 07, 2025 at 03:02:00AM +0000, Haylen Chu wrote:
-> > > > On Thu, Aug 07, 2025 at 09:30:11AM +0800, Troy Mitchell wrote:
-> > > > > Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-> > > > > for real I2S use cases.
-> > > > 
-> > > > This is a little misleading: they're modeled as gates with fixed-factor
-> > > > for now whose rate is calculated from their parents instead of defined
-> > > > statically. You could avoid possible confusion by replacing "fixed-rate"
-> > > > with "fixed-factor".
-> > > >
-> > > I'll change it in next version.
-> > > 
-> > > > 
-> > > > > Moreover, the current I2S clock configuration does not work as expected
-> > > > > due to missing parent clocks.
-> > > > > 
-> > > > > This patch adds the missing parent clocks, defines i2s_sysclk as
-> > > > > a DDN clock, and i2s_bclk as a DIV clock.
-> > > > > 
-> > > > > The i2s_sysclk behaves as an M/N fractional divider in hardware,
-> > > > > with an additional gate control.
-> > > > > 
-> > > > > To properly model this, CCU_DDN_GATE_DEFINE is introduced.
-> > > > 
-> > > > Could it be represented as a DDN clock taking a gate as parent? Just
-> > > > like what is described in the published clock diagram. Generally I'd
-> > > > like to avoid introducing more clock types, there're already a lot.
-> > > Uh, our new chip(K3) may uses this macro that I introduced..
-> > > so I don't wanna take a gate as parent everywhere..
-> > > how about we leave it? ;)
-> > 
-> > I wasn't proposing a workaround. What will go wrong if a gate is taken
-> > as parent of DDN everywhere? 
-> I think this a bit troublesome...
 
-I don't agree. It just costs one extra line and one extra macro.
 
-> > Not to mention this DDN variant actually
-> > duplicates the code in ccu_mix.c.
-> >
-> So I’ve ultimately decided not to introduce DDN_GATE.
-> I’ll change the macro for i2s_sysclk_src from
-> CCU_MUX_DEFINE to CCU_MUX_GATE_DEFINE.
+On 8/7/2025 10:32 PM, Konrad Dybcio wrote:
+> On 8/6/25 11:39 AM, Taniya Das wrote:
+>>
+>>
+>> On 8/6/2025 3:00 PM, Konrad Dybcio wrote:
+>>> On 8/6/25 11:27 AM, Taniya Das wrote:
+>>>>
+>>>>
+>>>> On 8/5/2025 10:52 AM, Dmitry Baryshkov wrote:
+>>>>> On Mon, Aug 04, 2025 at 11:59:21PM +0530, Taniya Das wrote:
+>>>>>> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
+>>>>>> boot. This happens due to the floor_ops tries to update the rcg
+>>>>>> configuration even if the clock is not enabled.
+>>>>>
+>>>>> This has been working for other platforms (I see Milos, SAR2130P,
+>>>>> SM6375, SC8280XP, SM8550, SM8650 using shared ops, all other platforms
+>>>>> seem to use non-shared ops). What's the difference? Should we switch all
+>>>>> platforms? Is it related to the hypervisor?
+>>>>>
+>>>>
+>>>> If a set rate is called on a clock before clock enable, the
+>>>
+>>> Is this something we should just fix up the drivers not to do?
+>>>
+>>
+>> I do not think CCF has any such limitation where the clock should be
+>> enabled and then a clock rate should be invoked. We should handle it
+>> gracefully and that is what we have now when the caching capabilities
+>> were added in the code. This has been already in our downstream drivers.
 > 
-> What do you think? From the clock tree perspective, this should be fine.
-
-Thanks for the change, it's fine for me, too.
-
-> > 
-> > > > 
-> > > > > The original DDN operations applied an implicit divide-by-2, which should
-> > > > > not be a default behavior.
-> > > > > 
-> > > > > This patch removes that assumption, letting each clock define its
-> > > > > actual behavior explicitly.
-> > > > > 
-> > > > > The i2s_bclk is a non-linear, discrete divider clock.
-> > > > > The previous macro only supported linear dividers,
-> > > > > so CCU_DIV_TABLE_GATE_DEFINE is introduced to support
-> > > > > the hardware accurately.
-> > > > 
-> > > > The divider IS linear, from the perspective of functionality, it just
-> > > > implies a 1/2 factor. Could it be represented as an usual divider and a
-> > > > 1/2 fixed factor?
-> > > ditto.
-> > > 
-> > > I know you don't wanna introduce new macro..
-> > 
-> > It's not about new macros. It's about new clock types. And the solution
-> > I proposed for the divider with a factor isn't meant to be a workaround.
-> > 
-> > For the divider's case, I think combining a fixed-factor and a normal
-> > divider looks more clean than introducing a new LUT. It solves the
-> > problem for K1, right?
-> yes, It solves.
+> Should we do CFG caching on *all* RCGs to avoid having to scratch our
+> heads over which ops to use with each clock individually?
 > 
-> > 
-> > > But K3 requires this, so whether it is introduced now or future,
-> > > the final result is the same.
-> > 
-> > Could you please confirm whether K3's dividers requiring this patch are
-> > really non-linear or just imply a fixed-factor?
-> I will confirm this point.
+
+Yes, Konrad, that’s definitely the cleanest approach. If you're okay
+with it, we can proceed with the current change first and then follow up
+with a broader cleanup of the rcg2 ops. As part of that, we can also
+transition the relevant SDCC clock targets to use floor_ops. This way,
+we can avoid the rcg configuration failure logs in the boot sequence on
+QCS615.
+
+>>
+>> We can add the fix to do a check 'clk_hw_is_enabled(hw)' in the normal
+>> rcg2_ops/rcg2_floor/ceil_ops as well, then we can use them.
 > 
-> If I send v2 without removing the CCU_DIV_TABLE_GATE_DEFINE macro,
-> that would mean K3 really needs it.
-
-Thanks, this will help.
-
-> > 
-> > > Please leave it..
-> > > > 
-> > > > > The I2S-related clock registers can be found here [1].
-> > > > 
-> > > > So this patch actually does four separate things,
-> > > > 
-> > > > - Introduce a gate-capable variant of DDN clocks
-> > > > - Make the pre-divider of DDN clocks flexible
-> > > > - Support looking up mappings between register values and divisors
-> > > >   through a table when calculating rates of dividers
-> > > > - Fix the definition of i2s_bclk and i2s_sysclk
-> > > > 
-> > > > IMHO it's better to split them into separate patches for clearness.
-> > > Ok, I will split them into separate patches.
-> > 
-> > Thanks, that'll be easier to review.
-> > 
-> > > ...
-> > > > 
-> > > > ...
-> > > > 
-> > > > > diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-> > > > > index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..253db8a602fe43a1109e2ba248af11109c7baa22 100644
-> > > > > --- a/include/soc/spacemit/k1-syscon.h
-> > > > > +++ b/include/soc/spacemit/k1-syscon.h
-> > > > > @@ -29,10 +29,11 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
-> > > > >  #define APBS_PLL3_SWCR3			0x12c
-> > > > >  
-> > > > >  /* MPMU register offset */
-> > > > > +#define MPMU_FCCR			0x0008
-> > > > >  #define MPMU_POSR			0x0010
-> > > > > -#define  POSR_PLL1_LOCK			BIT(27)
-> > > > > -#define  POSR_PLL2_LOCK			BIT(28)
-> > > > > -#define  POSR_PLL3_LOCK			BIT(29)
-> > > > > +#define POSR_PLL1_LOCK			BIT(27)
-> > > > > +#define POSR_PLL2_LOCK			BIT(28)
-> > > > > +#define POSR_PLL3_LOCK			BIT(29)
-> > > > 
-> > > > This reformatting doesn't seem related to the patch.
-> > > It's worth that create a new commit to reformatting it?
-> > 
-> > IIRC, the indentation is intended to show the relationship between
-> > register bits and offsets, which seems easier to read for me. 
-> Sry I ignore this..
+> FWIW this is not the first time this issue has popped up..
 > 
-> But isn’t the POSR prefix already sufficient to indicate the relationship?
-
-I think the original form is easier to read, isn't it? Even if you don't
-think so, this change obviously exceeds scope of this patch and please
-separate a series for discussion.
-
-> Have a nice day!
+> I don't remember the details other than what I sent in the thread
 > 
->                 - Troy
+> https://lore.kernel.org/linux-arm-msm/20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org/
+> 
 
-Best regards,
-Haylen Chu
+Yes, but as I mentioned the new ops looks much cleaner, so wanted to
+take this approach.
 
-> > Do you
-> > have a good reason to change it?
-> > 
-> > >                 - Troy
-> > > > 
-> > > > >  #define MPMU_SUCCR			0x0014
-> > > > >  #define MPMU_ISCCR			0x0044
-> > > > >  #define MPMU_WDTPCR			0x0200
-> > > > > 
-> > > > > -- 
-> > > > > 2.50.1
-> > > > > 
-> > > > 
-> > > > Best regards,
-> > > > Haylen Chu
-> > > > 
-> > 
-> > Best regards,
-> > Haylen Chu
-> > 
+> Konrad
+>>
+>> AFAIK the eMMC framework has this code and this is not limited to drivers.
+>>
+> 
+
+-- 
+Thanks,
+Taniya Das
+
