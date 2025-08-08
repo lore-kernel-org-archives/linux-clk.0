@@ -1,72 +1,72 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300082676C2
-	for <linux-clk@vger.kernel.org>; Fri,  8 Aug 2025 09:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EFE270EAE
+	for <linux-clk@vger.kernel.org>; Fri,  8 Aug 2025 09:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754644920; cv=none; b=Oj2KjLe2iJT0/NSOg1YB3H5ocVEFqMcbj4pQ2AetamzmVQEEuUBDmK2u0aSs0M8z4+nsjrVVm+m6QazdqFn5cJwiFK3RaLuax4UTuyqRo4MpxYAaFDTwexmg53h2zXazODQGQIAlLG0QhaS6vpUpUYubEk4iquIADWv3Pe5YAZo=
+	t=1754646880; cv=none; b=JWHGJL2ohiNDfvkX69QX8a96V4Gw9Z2tnk3V9nojDYM3N4b7qwhTvvNrFkPEH4UGC44ZvwmK4ClHhwGDlE1pNTG9LEdGTc2EKy2oQ4MogsCsrVtb/4Ups0O6sZcfMwaQl4JGJkMQCBdu//HErhmzBohEXwcWdqaJ2LmQaqAH1sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754644920; c=relaxed/simple;
-	bh=+LRvJeJfjFFMg5w+plJD0jeehIK7GSgpPpZ2/CDxvLY=;
+	s=arc-20240116; t=1754646880; c=relaxed/simple;
+	bh=IZewFj/uk0R0C1cmRQpY3xYNslex4bPpK5Xu4ZFWs0o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUXLyf8zd9uQiPeSVlXxqN08gkBzLlAe45vcE64wkXWi0IUtn9ze8cv0rgoj6Rbz6FhRIxMfI/3N7c48pITA+BsCwO14UJ/TlRZ3EbW714gmtMPs5V/A7MEf+BUW1R5y1FmkMgJ/GB5g9HeycFgz/Yn9d3p71aSZXvDdWMsArWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nE1oFDjz; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=To07fL+H5USRUzO/oyEu5ijmTRY759fOAaEBH6UzXCdl1Tus/MMnszDIQQWxvGrMPGU9C/8M+cFGVOYbvCbRNT+1SlRqVQZOIDgnq7HllEb2/dJzYNGZraaoa/I+covZ3GN0dCXkQPBY+qK1AVvxeaRvQ6fvS/UzHhJTTSlLUc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Enr9R5U2; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nE1oFDjz"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5786lMOi007839
-	for <linux-clk@vger.kernel.org>; Fri, 8 Aug 2025 09:21:58 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Enr9R5U2"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5787Nkv9032599
+	for <linux-clk@vger.kernel.org>; Fri, 8 Aug 2025 09:54:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zLqDCDW47C/rBLkuL0CDYXX3PXQC6B7lLgRqBiiYRmE=; b=nE1oFDjzKsd9bkN/
-	BVedQP/mKeYD+w6+XSyAWpH0OIaq+aqnQa8ok1LmdnGXCE0ttNeXC+wmapu0wLvd
-	m0mPm8HtdFAndd49h/hl1Lz/UEoEnESg1QuAtW3SPXNcConYgEh5libkcNFIjdwE
-	7qCjl19kI/T/sdUh1vTlpTLv3XkOP4jfcoVlFhqUG2mk/41j5elyqrSUwoCU6W2F
-	/XVIEdnQf17MsFEyiWNDuS2BV9tB8dYCCIHAJ/GCSz0kWRO76XwlREniSY5K5ccL
-	BkU/NP3p/mubqwaF+x/IL0i+u8pHWkYfon7075034Jgsb5JDn2Mf4eeDAB/MYgwu
-	5VdJdg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy71fqu-1
+	VrNxZb2huOQDxcBDq9vEBgeyKvEis3Dpfn3A/mVFAjo=; b=Enr9R5U2jRHG/1qY
+	xAwRbjDa/z93bN5wnZuSo9+Q5AetTe/yAjx1+te4u6hunpJ571wpZ+l6y7ddlm1V
+	R6ADxwPfgeA2tkVCa1r219C3D8YjrOV9nmcRAcM7ZYTROBbeEo5pLlBwEQIL8zmN
+	0NdM7WVOdLfXnLz1SilT59rTLCu2XtBhtsXk9EE36X7hlrTnhelZt9hE3gKKe4g8
+	sfnYAET2bhPs7t0dahEqafyhROtHuM8kUVuJbDTzIV5+1nfLhNaCcNlVEaOK24bi
+	5mQQpC1IqGcLH7R/C8MjPpC2BTap5UyuC1PM6ESTA4L31S9aDQgYI5mLp/FwieFT
+	hCCjDw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw39hn6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 09:21:58 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-31f3cfdd3d3so2195318a91.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 02:21:58 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 09:54:35 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b423dcff27aso3479709a12.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 Aug 2025 02:54:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754644917; x=1755249717;
+        d=1e100.net; s=20230601; t=1754646874; x=1755251674;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zLqDCDW47C/rBLkuL0CDYXX3PXQC6B7lLgRqBiiYRmE=;
-        b=oZIdYtl7JYjuvsz3PTQnzwtZh+cZQVLB1EvZTBd8lVryXZTkRh7ffCOK0vNqjyu2L/
-         7gF3diw3bpg++oMW3JSAy35VrX6MSfiWmsPd8C1V6hdgGMCnk8Gkv8J2g5vtK6wcCaYI
-         rpiLKjGyAsL06Kge3+OxSdCkcHYZnYGY4l7tJWsBuzqJfMmNa9N1bGjnHhne+udkXCCX
-         UFN6AAKp5s0OHH4CUtwOqBWXoOc7BiCeFNNW/qi+WdCZgKTdEdEKLVnRyS+rfhSN7Np2
-         /lr2oWpVewUkix0cLnoBLe9uC8+LP74wfRt3J9RmDAfY9hRKP60glvfZ1xEkMOnZKPRc
-         GAng==
-X-Forwarded-Encrypted: i=1; AJvYcCVVc1bO4YgbOfH/nkOEvD2tcKrdMh1AmoGG+CeTI/sUVxWsaUj7JMWBfAky3tlP7h3TRkgTc7KZmMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQlYEgw1MaO5eLsdFL+9DPBYRKCrWVA6TGwHOiyIFY2tT0wdr8
-	mv8E+42Wv/mLHKi/8ibDeJJchDKpvl0QkSm76n+cLwPP8C9RBYdQO3zEbhS4JeDXJEvYSP8FaUy
-	zai8dx6h18afgCfJevIkGB5Fa5Tw7zdSh/npUZ0xLj6uozUSSB7ffH+75aHkFFSY=
-X-Gm-Gg: ASbGncukTmuNuRJJtpeb6evTqZMVjQfz9Uk4wJqPdBXn/zgLT3KVJQu/SNqDWKJGx4g
-	VMN1jNalkJ/hRME/P7bKcemZW8XCAmPaDKrbGKgnq/YWsGwogKuft24Mz5Fuw1YZiJcjwgwhcTF
-	zsC7scH0KQVOaFqJIgEtmPsG/u+bGWUHJPxxstgCclHEDKV/ctM79sGgBARgrWDH7myBdcnZdvc
-	JW2ietX0KWWpOpqvmjt4poFID0auNOCdKMkMcHOFgwy9S2cmUfcismiMrVZWBAwyckiUQAJC1BW
-	VDiiev3l+m/YrQSXiZDWKKvt5m/uWqjguY24RyS/Xru62iRk+CeA6N7Qty4hyZiLMlU=
-X-Received: by 2002:a17:90b:55cb:b0:31f:ca:63cd with SMTP id 98e67ed59e1d1-321839e9a33mr3492807a91.2.1754644917288;
-        Fri, 08 Aug 2025 02:21:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4uXTfQa1MeL3UI0IGJQ6NZ1M0GNenD3TaPrzwHHNOEp7HbRnfFH/NMIAJMm8cm52lQHbQIQ==
-X-Received: by 2002:a17:90b:55cb:b0:31f:ca:63cd with SMTP id 98e67ed59e1d1-321839e9a33mr3492757a91.2.1754644916703;
-        Fri, 08 Aug 2025 02:21:56 -0700 (PDT)
-Received: from [10.218.30.152] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da5719sm24531355a91.6.2025.08.08.02.21.52
+        bh=VrNxZb2huOQDxcBDq9vEBgeyKvEis3Dpfn3A/mVFAjo=;
+        b=CqeKvAysyr1CvPJNQbWImZnw3v828rX3K68cO75y90O5Tm0RKtoZpbAJj9Zt0xYoWh
+         DGIZP2B5a0rz9isi005Q3RBZ34QuhgEXcIb5pyH7sn9JvturT1Elzniku8fhYXhFmcf8
+         4ajvtO56dwCTXITLlRbfwDbNC/3EFCFTm6ChqXPHkjR5u0yHYb8jcMBxN9hDaiJCHHuY
+         FYI9wKjNVGsPCueXNo2eU78N8FVLvm16UAn6Ts6Rn5uFujkxdaZdQDU2mjVBaSqu/QDV
+         NZjARHUIshuELhpCqbgmXkdR/Bpy9TO5P3YlkAEkYQzVxSM94S10bShMVEJebtjPvcT5
+         A/Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYz9WDCM/ST+ZBT+9pC9hGx2XKTuLSeXiSeY/gTzy/Hzl70bmfEVS8y7DC5FOMxoUDplTOer7Pbqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSIdfnXidm5jt/j5gqjhBampkusOnkX9i//GdLYB1QOWe5nmQE
+	2lScLW+xM1XpX1j33zLMbQihf2eWJs9xzbCtGy5CB33fKStlbnTRxnmigNLv4m5IMgBJ34rNWPQ
+	noGvmG45GQgEAJrGmcDgDHWdzDaMVAsQdPZQO4hWSE/UKVHa+TydIRfWp5pLCxWE=
+X-Gm-Gg: ASbGnctXwb151heQXD+8MBssgTk7ux2pSrRAgYLaOOgT6tprnkZ0wpdtwKS/g2LKzgd
+	fEiAyWU+ywUZj2BxlSO3aSH4YYI9V5X3YEcgjnDdNkIcsssxj4PYcjSFnjOlWBgU5hC8CPvEHOV
+	ZktH48mKlOZY/hwQXP58t1pU7Z06utaNCj1dUntdK5/RR5qKS2g1r60DPKh36MzO4TCumUAFgSo
+	1doJCC1nRgGib+jZEBU9PCMHgOmWyh21GryfvrPI9im3Xy7F3RKfLdx/2G8ybaocYzKOvow0prY
+	qMWte5WUnON1a2IUxIK+IQY+Tnsq+iIq2Qga+Ud7hv/nSxJvdXsaKh7lSLtdDzg/VRPl
+X-Received: by 2002:a05:6a20:6a25:b0:238:351a:6442 with SMTP id adf61e73a8af0-2405522ee22mr3230464637.45.1754646873873;
+        Fri, 08 Aug 2025 02:54:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMdPYl8Hb5De2uaasmqy64rhr2pYi2WZQYfw282Gwlr2/RoFYRSAeOW9+wrqhGxbXy2C32XQ==
+X-Received: by 2002:a05:6a20:6a25:b0:238:351a:6442 with SMTP id adf61e73a8af0-2405522ee22mr3230442637.45.1754646873431;
+        Fri, 08 Aug 2025 02:54:33 -0700 (PDT)
+Received: from [10.217.217.159] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f6fesm19918035b3a.26.2025.08.08.02.54.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 02:21:56 -0700 (PDT)
-Message-ID: <7c1bd3d6-159f-4269-a22a-34290f1be0cf@oss.qualcomm.com>
-Date: Fri, 8 Aug 2025 14:51:50 +0530
+        Fri, 08 Aug 2025 02:54:33 -0700 (PDT)
+Message-ID: <d8c5a4f1-a867-46b6-8519-81c0eba37501@oss.qualcomm.com>
+Date: Fri, 8 Aug 2025 15:24:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,115 +74,161 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
- shared_floor_ops
+Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
 To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
- <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
- <c54e8ac4-9753-47bf-af57-47410cee8ed7@oss.qualcomm.com>
- <d6a2937f-7d63-4f17-a6fb-8632ec4d60c8@oss.qualcomm.com>
- <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
- <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
+ <aIoBFeo00PPZncCs@linaro.org>
+ <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
+ <aIxRKHKdBHDefDs2@linaro.org>
+ <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+ <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
+ <3fc425fd-39fa-4efc-bc98-da86a88bfb1a@oss.qualcomm.com>
+ <c2f39786-5780-4124-9e41-6971428aa267@oss.qualcomm.com>
+ <9e3b4706-c61a-4d69-be84-a5b6fc90eb35@oss.qualcomm.com>
+ <462b4010-fd79-4682-b9d2-31ffdd53b75a@oss.qualcomm.com>
+ <ffbd9302-75f1-4148-881a-767fa413c825@oss.qualcomm.com>
 Content-Language: en-US
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
+In-Reply-To: <ffbd9302-75f1-4148-881a-767fa413c825@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: giXAPltqpMXLJ_cI2x5gVxicygVwwyWl
-X-Proofpoint-GUID: giXAPltqpMXLJ_cI2x5gVxicygVwwyWl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX7WaiIua6HWIR
- cD66s2lEydxzwVaAfdxM5S1SCOkG196vGq4/XbWCZZlX20gyvaM712EvsEkzBf/O0v1L9mzFDfr
- ZiJFt8S3rq8iOn5CPFPE/mL2qepnSUpG66bd2boSOm5Sx2dSyS4yoswVfFN7XkjZk6Uskny/zec
- OAt4cMwMEbPc74TxlJk3WjxSTreZNdSrQ+8LoqAVlVJIHTPF+y1DRvKyNQ5ydnU+hDQ/6DAMc2U
- Km2HGVZxzRxIvvv3sZIpNfW6svj7vOwv9IUVcH150puHX7x94/QbBo9oGTgVCQIbIXGBUT2B5RE
- urQxo/LqZPf3nz5HpC2Cavs+21gtVExu1RUMBNV1Rh5ntw4s+bigBbMnjfA8gMU1xFvLZnMvL9F
- jWKu3R6z
-X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=6895c1b6 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=wbLa1xrU48ZvrQgpvw4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22 a=cvBusfyB2V15izCimMoJ:22
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX5DQQ9PUAZlt0
+ XVFCXifPsPwzAy6Y5g4oP9gxq1bzMRujk9dta2UTJ3qM3pfi4GoTFLEHzJkjhUr4fZ6SWFxo9JB
+ CiNInYbhW1Qj4wRvD/Rti8cePh0dKc2MN4YxZ1/Al4RxuLYRinR7M5RrgpYayraqeTKPhW0J0Ek
+ 6snmQ83OYQ1vornSsdaSYiPxrgxtuCl3k2LP1NnZ36HqiiXLUsCPhyTZRgtb2P8ZL8hUE03ot7R
+ xUBKfeJF1m8PJmXgZ96cDAADObqtVZ/c73c2ThxtJQXgAtzxvuimzXKOypKEW/2CufltWMaT4kw
+ Ps21mKlXJIPIhSt+SaKjVXhy/UW6fNclVpPRzvjK0tcRpB49ynYS1oiAs0IfKFD3NkIXVRV1VAh
+ VJvJZ8lt
+X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=6895c95b cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=zhkC1EFh2bCrlkiyJb0A:9
+ a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: sXdCBLPc7ymGphyykcTutDkJoz4DTnO_
+X-Proofpoint-ORIG-GUID: sXdCBLPc7ymGphyykcTutDkJoz4DTnO_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-08_02,2025-08-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
 
 
-On 8/7/2025 10:32 PM, Konrad Dybcio wrote:
-> On 8/6/25 11:39 AM, Taniya Das wrote:
+On 8/7/2025 6:37 PM, Konrad Dybcio wrote:
+> On 8/6/25 12:21 PM, Taniya Das wrote:
 >>
 >>
->> On 8/6/2025 3:00 PM, Konrad Dybcio wrote:
->>> On 8/6/25 11:27 AM, Taniya Das wrote:
+>> On 8/6/2025 3:34 PM, Konrad Dybcio wrote:
+>>> On 8/4/25 4:21 PM, Taniya Das wrote:
 >>>>
 >>>>
->>>> On 8/5/2025 10:52 AM, Dmitry Baryshkov wrote:
->>>>> On Mon, Aug 04, 2025 at 11:59:21PM +0530, Taniya Das wrote:
->>>>>> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
->>>>>> boot. This happens due to the floor_ops tries to update the rcg
->>>>>> configuration even if the clock is not enabled.
+>>>> On 8/4/2025 6:40 PM, Konrad Dybcio wrote:
+>>>>> On 8/4/25 11:00 AM, Taniya Das wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
+>>>>>>> On 8/1/25 7:31 AM, Abel Vesa wrote:
+>>>>>>>> On 25-08-01 10:02:15, Taniya Das wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
+>>>>>>>>>> On 25-07-29 11:12:37, Taniya Das wrote:
+>>>>>>>>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
+>>>>>>>>>>> provides refclks for PCIE, USB, and UFS.
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>>  drivers/clk/qcom/Kconfig         |   8 ++
+>>>>>>>>>>>  drivers/clk/qcom/Makefile        |   1 +
+>>>>>>>>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>  3 files changed, 266 insertions(+)
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> [...]
+>>>>>>>>>>
+>>>>>>>>>>> +
+>>>>>>>>>>> +static struct clk_branch tcsr_edp_clkref_en = {
+>>>>>>>>>>> +	.halt_reg = 0x1c,
+>>>>>>>>>>> +	.halt_check = BRANCH_HALT_DELAY,
+>>>>>>>>>>> +	.clkr = {
+>>>>>>>>>>> +		.enable_reg = 0x1c,
+>>>>>>>>>>> +		.enable_mask = BIT(0),
+>>>>>>>>>>> +		.hw.init = &(const struct clk_init_data) {
+>>>>>>>>>>> +			.name = "tcsr_edp_clkref_en",
+>>>>>>>>>>> +			.ops = &clk_branch2_ops,
+>>>>>>>>>>
+>>>>>>>>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
+>>>>>>>>>>
+>>>>>>>>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
+>>>>>>>>>> which is obviously not the case.
+>>>>>>>>>>
+>>>>>>>>>> Bringing this here since there is a disconnect between X Elite and
+>>>>>>>>>> Glymur w.r.t this now.
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The ref clocks are not required to be have a parent of bi_tcxo as these
+>>>>>>>>> ideally can be left enabled(as a subsystem requirement) even if HLOS
+>>>>>>>>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
+>>>>>>>>> HLOS/APSS will not allow APSS to collapse.
+>>>>>>>>
+>>>>>>>> Is there a scenario where the APSS is collapsed and still the ref clock
+>>>>>>>> needs to stay enabled ? Sorry, this doesn't make sense to me.
+>>>>>>>
+>>>>>>> MDSS is capable of displaying things from a buffer when the CPU is off,
+>>>>>>> AFAICU
+>>>>>>>
+>>>>>>> We can do CXO_AO instead to have it auto-collapse if it's just Linux
+>>>>>>> requesting it to stay on, I think.
+>>>>>>>
+>>>>>>
+>>>>>> Thanks Konrad for adding the display use case.
+>>>>>> Abel, we earlier also had some PCIe, USB use cases where we had to leave
+>>>>>> the ref clocks ON and APSS could collapse.
 >>>>>
->>>>> This has been working for other platforms (I see Milos, SAR2130P,
->>>>> SM6375, SC8280XP, SM8550, SM8650 using shared ops, all other platforms
->>>>> seem to use non-shared ops). What's the difference? Should we switch all
->>>>> platforms? Is it related to the hypervisor?
+>>>>> XO votes will prevent CX collapse, not APSS collapse. CX also powers
+>>>>> USB and PCIe so that only makes sense.
+>>>>>
+>>>>> I think it's fair to just stick XO as the parent of every refclock
+>>>>> today and think about the what-ifs (such as the mdss case I mentioned
+>>>>> above) later - especially since we have no infra to take full advantage
+>>>>> of it today (non-APSS RSCs etc.)
 >>>>>
 >>>>
->>>> If a set rate is called on a clock before clock enable, the
+>>>> When ref clock have been part of GCC, then also they didn't have any xo
+>>>> as the parent, similar design we kept when it was moved to TCSR as well.
 >>>
->>> Is this something we should just fix up the drivers not to do?
+>>> Perhaps we've been running on luck (i.e. XO votes being cast through
+>>> another device / clock as a second order effect) all this time.. I'd
+>>> happily move towards formal correctness.
 >>>
 >>
->> I do not think CCF has any such limitation where the clock should be
->> enabled and then a clock rate should be invoked. We should handle it
->> gracefully and that is what we have now when the caching capabilities
->> were added in the code. This has been already in our downstream drivers.
+>> I would like to stay with no XO linkage to TCSR. Any driver has specific
+>> XO requirement should vote for the rpmhcc XO or XO_AO.
 > 
-> Should we do CFG caching on *all* RCGs to avoid having to scratch our
-> heads over which ops to use with each clock individually?
-> 
-
-Yes, Konrad, that’s definitely the cleanest approach. If you're okay
-with it, we can proceed with the current change first and then follow up
-with a broader cleanup of the rcg2 ops. As part of that, we can also
-transition the relevant SDCC clock targets to use floor_ops. This way,
-we can avoid the rcg configuration failure logs in the boot sequence on
-QCS615.
-
->>
->> We can add the fix to do a check 'clk_hw_is_enabled(hw)' in the normal
->> rcg2_ops/rcg2_floor/ceil_ops as well, then we can use them.
-> 
-> FWIW this is not the first time this issue has popped up..
-> 
-> I don't remember the details other than what I sent in the thread
-> 
-> https://lore.kernel.org/linux-arm-msm/20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org/
+> Every driver has an XO requirement, as we happen not to have any
+> other crystals onboard.. The clock plan says that these refclks
+> are direct children of XO too
 > 
 
-Yes, but as I mentioned the new ops looks much cleaner, so wanted to
-take this approach.
-
-> Konrad
->>
->> AFAIK the eMMC framework has this code and this is not limited to drivers.
->>
-> 
+The refclocks are just not the direct XO, there could be other source as
+well. But I am okay to add the XO parent if it helps the use case on X
+Elite and then following use cases on Glymur. I will add the XO parent
+in the next patchset.
 
 -- 
 Thanks,
