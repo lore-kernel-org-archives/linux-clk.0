@@ -1,71 +1,71 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE7F2BCF47
-	for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 22:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0942D6630
+	for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 22:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754864527; cv=none; b=achCOSwmhGlJvtCx9mu/aIrbPcQ0jb4ts5MaOUhMIv8mFSb6k4ZkDXHN5vN0p88KQriORyPpVM5zLutvzmScERs3Wosbs7q+RQ5vEmEAQwAjZb4RXnmMiFxSkn9nR7cUdBQTnwFWd79QyNyIBbUSp3JL5rsyL2BIuR2m9FndoWs=
+	t=1754864678; cv=none; b=l732CErpEsT1yv20i0Xnr7jD5Q/8Sy8tPmvcibg8CXi0+snv06VwmoHP3BA0YPp1nJRYpRLgwWf5qA4IZipMriNDI7QjOkXbY3QwEQPgRe0+cH5dgWbzcqqF8hNGG6gzdVxEAktRzNCX8psDrCtJdV+9nW38EdebST55twq25ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754864527; c=relaxed/simple;
-	bh=L6jvK6ACaYL1SKlK5QC34DBWw1qmKVlL/yCAWgBC/h0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sl8NIkC1eeU15bNU1msCHIjWmSx0dkmM3p/Z71jfk0vecc2sAZEv2A22LP0HoM+M2immcrimOIHjmtKbp97AhwPw3k2xfj6j8E3zwQZa0hOUpYELax/EGj3SxCYsY5To/MNfcbVWPAWRHx8oQntgChaEPbZ+TEGNW4ie/xfo3hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AZrPyt22; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1754864678; c=relaxed/simple;
+	bh=SGSec+EQWjKUsfxRcIYsyrxplqR++XYwLaxooXSSvvw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f/NbUmcT4rbGENT8NcQ1Rktfb6KhsenU+jFAI2x/CmOpagF1se3aVre4kNpv8xtSkJ2iFoZ62NQAHV+k7naEbmlAB6qWBRMf2TCQ8BSPPhM876uA20SMedxgDTM2BA5Rr47bzRWyZTtVXTpkBzV0O8AZz8lFDo5zIxoWpu/187A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLYD4EAH; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AZrPyt22"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLYD4EAH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754864525;
+	s=mimecast20190719; t=1754864673;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=DTxIrdPV4iWneFJR6EUg7IhXT4i8rDJLDvWWCgyO0NI=;
-	b=AZrPyt22ePN2WmzeU9hW3DNsR7k93Ya3XLYGNPsVzymlk64P5/GPWNs4djgXUEtpwXkDNk
-	WHoewDdwMfZN5x3dUAUM7LVaJXWnll2/CDQloufvjv+GRqyOoSilUXhnLCFmIdKyGbtLkM
-	5IrnLP9A2VFy4H4vzPXpPzJMOAyJ1Zg=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DsLJnbX2CWZtNzZ1OcDHZ6+zw0frPO9S9vsrOrlu7po=;
+	b=hLYD4EAHE4vaRhRFZVQA1BILl3Ykdi5jVuusAphzCNuLjKkYGdFaLbsiOssTuk/vXvqOcW
+	o7CrEwyb8S/jBpDGkAAmGYPxiX9Q1k1Ri4aCysjicMxcy0wQTOHNlNIbxb2Uja7AHnjAoy
+	KeW/doIMgeZ+ahTnZc4nqFsOw1F0I9Q=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-Utn3n7lyM7WFsdrMDGUGYw-1; Sun, 10 Aug 2025 18:22:03 -0400
-X-MC-Unique: Utn3n7lyM7WFsdrMDGUGYw-1
-X-Mimecast-MFC-AGG-ID: Utn3n7lyM7WFsdrMDGUGYw_1754864523
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4af210c5cf3so160866821cf.1
-        for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 15:22:03 -0700 (PDT)
+ us-mta-418-dPzOTSebPWibS43G6JFoIA-1; Sun, 10 Aug 2025 18:24:31 -0400
+X-MC-Unique: dPzOTSebPWibS43G6JFoIA-1
+X-Mimecast-MFC-AGG-ID: dPzOTSebPWibS43G6JFoIA_1754864670
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e69e201c51so908070385a.1
+        for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 15:24:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754864522; x=1755469322;
+        d=1e100.net; s=20230601; t=1754864670; x=1755469470;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DTxIrdPV4iWneFJR6EUg7IhXT4i8rDJLDvWWCgyO0NI=;
-        b=nVw7vfkxgNsrP4SWHiuAsXOIXGDKlnhVgsgp1oPTRb4XCCLM+fQjCkymTzIJ/5WLTi
-         +a+rFU9LQnwz3QxUCPrBzd5czbCYjcexbrbsZ5kmR4Saf//4Eeo2BGQr1U056jeljAIM
-         GwGKnRJvPzmbbYUdAfvGBChiMmRS+KJoFDOW5dhiPyL3IaXX3sy1llU/ux1+wyHHIZOA
-         1APo+2uA0LCYMCBRH+EkE86gYvK8M3/UFi7tL0sDzE8NVm1Ko9uNR/P3oM8zrf2yufpr
-         AEXhnMRXanHrQirCvcMhNSJMwUEC9TxY2CGhLToghM4pPKv+BNgLkgHlWmasy4XxqH0j
-         BGgA==
-X-Gm-Message-State: AOJu0Yx4aAUS7bQmDpUX1TTS9SV3frWFNnjuHbvwjtuuyRBjoYLbcPn/
-	hJsfR3p8SCutA8fQIF3xoCMFi0+aqLD/RJRswGtJlYpKRY34RVfjrX8YhrdE7WGvk3tm/xumNxX
-	CaQQ0tZpM+e0u2TLDcTKQfZ29clzggkjhcoSfVnbYPp7AarBvZ8Soa/XwxJuc8G9e+tUP/Q==
-X-Gm-Gg: ASbGnctE/fhDK6Y7RVj484RS5lZmN+9eYI19A4E9Bba4E3fq/j4uUeDderkKprqVaKF
-	AHldNqZFmcNv55qsEcmMmu5NdSj+n3s8H/adV2Zm9OijaiYH1JO/Riat2OjA9wdOT42vYso7Glj
-	qw5rmWfPhoKl6h+dAVW31BQnqfZyIQjpBVZCq0F/NLggxizLOmvoonCYTqJeAC+dANjsizYYpMF
-	KhjHptTyi5YwlzgeV94liECyRutEpkhF7ayY7Zd0ziff/V0lwb869OAaOUjvWRjMtZSnBqC+cBK
-	BRBTGe6Q4qOerZNtX7YB4tHCS5AJ8k/8tuuGyO2BkFB0CYRIGIHV108iceg6IdArk806QEXRW3q
-	pvpUlBQ==
-X-Received: by 2002:ac8:5d0f:0:b0:4b0:8092:9912 with SMTP id d75a77b69052e-4b0aed42512mr175423861cf.19.1754864522405;
-        Sun, 10 Aug 2025 15:22:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0/+zhF0BEbIolaJOCDjorPdn+0fQDWtw+ZQnbIpL+/rhtw0D1XSan+ygZuYsN1eYwat9u9w==
-X-Received: by 2002:ac8:5d0f:0:b0:4b0:8092:9912 with SMTP id d75a77b69052e-4b0aed42512mr175423681cf.19.1754864521987;
-        Sun, 10 Aug 2025 15:22:01 -0700 (PDT)
+        bh=DsLJnbX2CWZtNzZ1OcDHZ6+zw0frPO9S9vsrOrlu7po=;
+        b=iqP0V09QKfnlhaYySLIAZUXYN6Iw7C/wstNoy88rOBmzmr9hSEiwVTXVi4E8T3fvi9
+         tiReHYB6hhI/wXavktc4NhqAgXddMMBCLSX5qSTQBwcXkLuYuZilsvt6m4uMsB4sPoUE
+         EtQgBap/2J//T5LGrYa59Bhxggi45fdZYGbPnpVpLqJb2aYIZNCuToj+tsLGLWY+ecr8
+         JUAqa/A/Re4OEJ428CeVAxKwWXuX0VDkIEIZu9pEDekWdQLd/fuGBb8DEBQ8yp1IfDVK
+         Dmx/FNqd8r36GUiOaK/498t19X2illq7ZLd+uT1cSRtap1SS5/38mCMKF0puNxh5q8Bw
+         sxWw==
+X-Gm-Message-State: AOJu0YwtU7GGYYC2NVzev0VCdk6BZfe2HcXoa3/SXOq32OsVm3zuGZP3
+	AviY9eTc4XBvWdo9IgTLp1W+WCOo2Pn53Rad90aPaiIQ/WK/M2tsm6PWXSB+s3suKnoQhSZ5ayR
+	meptQNkn+dVkC/NGoUQaBPDDOx2Vq+xfguzX0hKdnE9OLJ8pm6EaR2fa/qARD6A==
+X-Gm-Gg: ASbGncsbBDnpYL2h9M0Lm2mwV6fU6GQWxreeSVqc3KY9MDGRurwJ0nx+2zCfhtk8VZ3
+	BkSULIq+k4nEDmX03+EXU9Qyxk+5+TJs+FPx3Z8oU1Nla2iJmovnRApFjTaHi1rGtXfW5rDTa0a
+	qU77CcvPX5YxPNOYSl0OGm7KEhz8rljivXX16J1EgbfW/clvydZ4mP951IjrgBaGxZDM7fqQXGq
+	OSvHbmU8KIxNmFyVOAHZFg8d7xZgHtrqRy14pGR+yC/2i21eVN6NXLNIMhUcmYsyLL3Vavw/P6A
+	UguzcnfImWXuuKly5h0fWZc/YJ8hhdj2W6tquKxMfkjsmhtJ5vd72zQoTaHn6tvk9BGXAowB01j
+	E/9tO/w==
+X-Received: by 2002:a05:620a:7202:b0:7e8:2998:51e9 with SMTP id af79cd13be357-7e82c75fcbcmr921980385a.32.1754864670042;
+        Sun, 10 Aug 2025 15:24:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfZ1YzRY3j+zDzQiBRzGaCbAkWEl6UfwFm1tYgoAJVmJujnBFCV7yyaVBd09br3SkByw4KDA==
+X-Received: by 2002:a05:620a:7202:b0:7e8:2998:51e9 with SMTP id af79cd13be357-7e82c75fcbcmr921977585a.32.1754864669639;
+        Sun, 10 Aug 2025 15:24:29 -0700 (PDT)
 Received: from [10.144.145.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e816a9a3cdsm714913185a.23.2025.08.10.15.21.59
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b0867b7b70sm74050441cf.9.2025.08.10.15.24.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 15:22:01 -0700 (PDT)
+        Sun, 10 Aug 2025 15:24:29 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Sun, 10 Aug 2025 18:21:51 -0400
-Subject: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
- to determine_rate()
+Date: Sun, 10 Aug 2025 18:24:14 -0400
+Subject: [PATCH] net: cadence: macb: convert from round_rate() to
+ determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,203 +74,127 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
-X-B4-Tracking: v=1; b=H4sIAH4bmWgC/x3MQQqAIBBA0avErBsorcSuEi1Ep5qNxVgRhHdPW
- r7F/y8kEqYEY/WC0M2J91jQ1hX4zcWVkEMxqEb1jVEWD/KMsl8xoLiTsO/0oK2yhvwApTqEFn7
- +4zTn/AGKlAVXYQAAAA==
-X-Change-ID: 20250729-peci-round-rate-543639297ec6
-To: Iwona Winiarska <iwona.winiarska@intel.com>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+Message-Id: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAA0cmWgC/x3MMQqAMAxA0auUzAbaooheRRyCTTVLlbSKIN7d4
+ viG/x/IrMIZRvOA8iVZ9lThGgPLRmlllFAN3vrO9n7AxAV1P1NApcJonWv7yIEGilCjQznK/Q+
+ n+X0/6Gb5/WAAAAA=
+X-Change-ID: 20250729-net-round-rate-01147feda9af
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
  Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
- openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754864519; l=5809;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754864666; l=3055;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=L6jvK6ACaYL1SKlK5QC34DBWw1qmKVlL/yCAWgBC/h0=;
- b=ExfjZ3UpYQJq/TbnRfU0VlhnPXC/BUUDuaJmbmTAojaDwiZAdey0YvI5/J2A7xXNMUS9wkF5N
- vb2GIQ8yHxiAnFyZY8qfOjL4oDD/6ms/NRhowThZjXsoS9w0+utR2C+
+ bh=SGSec+EQWjKUsfxRcIYsyrxplqR++XYwLaxooXSSvvw=;
+ b=VlXqvJ2j2K8T7qZ6gDnZKdk0xvGKLfpw0ErL2SsM89sdyKwSzDeTzqTfmr4nlHao+o7kILkOl
+ 2kuTkv2p1lLBQHzyzOLh+NSk3F84nKm10XJn38FozI5LJMvotkmqP07
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
 The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-appended to the "under-the-cut" portion of the patch.
+round_rate() to determine_rate().
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-Coccinelle semantic patch is below. It's large and I don't want to
-pollute the kernel changelog with the same code hundreds of times,
-so that's why it's included under the cut. For subsystems with more
-than one patch, I've included it on the cover letter.
+ drivers/net/ethernet/cadence/macb_main.c | 61 ++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
 
-    virtual patch
-
-    // Look up the current name of the round_rate function
-    @ has_round_rate @
-    identifier round_rate_name =~ ".*_round_rate";
-    identifier hw_param, rate_param, parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    	...
-    }
-
-    // Rename the route_rate function name to determine_rate()
-    @ script:python generate_name depends on has_round_rate @
-    round_rate_name << has_round_rate.round_rate_name;
-    new_name;
-    @@
-
-    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
-
-    // Change rate to req->rate; also change occurrences of 'return XXX'.
-    @ chg_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier ERR =~ "E.*";
-    expression E;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    -return -ERR;
-    +return -ERR;
-    |
-    - return rate_param;
-    + return 0;
-    |
-    - return E;
-    + req->rate = E;
-    +
-    + return 0;
-    |
-    - rate_param
-    + req->rate
-    )
-    ...>
-    }
-
-    // Coccinelle only transforms the first occurrence of the rate parameter
-    // Run a second time. FIXME: Is there a better way to do this?
-    @ chg_rate2 depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    - rate_param
-    + req->rate
-    ...>
-    }
-
-    // Change parent_rate to req->best_parent_rate
-    @ chg_parent_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    - *parent_rate_param
-    + req->best_parent_rate
-    |
-    - parent_rate_param
-    + &req->best_parent_rate
-    )
-    ...>
-    }
-
-    // Convert the function definition from round_rate() to determine_rate()
-    @ func_definition depends on chg_rate @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier generate_name.new_name;
-    @@
-
-    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-    -               unsigned long *parent_rate_param)
-    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
-    {
-        ...
-    }
-
-    // Update the ops from round_rate() to determine_rate()
-    @ ops depends on func_definition @
-    identifier has_round_rate.round_rate_name;
-    identifier generate_name.new_name;
-    @@
-
-    {
-        ...,
-    -   .round_rate = round_rate_name,
-    +   .determine_rate = new_name,
-        ...,
-    }
-
-Note that I used coccinelle 1.2 instead of 1.3 since the newer version
-adds unnecessary braces as described in this post.
-https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
----
- drivers/peci/controller/peci-aspeed.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/peci/controller/peci-aspeed.c b/drivers/peci/controller/peci-aspeed.c
-index ad3a7d71ed4c61e6123dcbbad264812cb83cbb07..a0c99ecf7f3805a1cdac55a8d5db9c61ad3cf37c 100644
---- a/drivers/peci/controller/peci-aspeed.c
-+++ b/drivers/peci/controller/peci-aspeed.c
-@@ -362,12 +362,14 @@ static int clk_aspeed_peci_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index ce95fad8cedd7331d4818ba9f73fb6970249e85c..ce55a1f59b50dd85fa92bf139d06e6120d109e89 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -4822,36 +4822,45 @@ static unsigned long fu540_macb_tx_recalc_rate(struct clk_hw *hw,
+ 	return mgmt->rate;
  }
  
--static long clk_aspeed_peci_round_rate(struct clk_hw *hw, unsigned long rate,
--				       unsigned long *prate)
-+static int clk_aspeed_peci_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
- {
--	int div = clk_aspeed_peci_get_div(rate, prate);
-+	int div = clk_aspeed_peci_get_div(req->rate, &req->best_parent_rate);
- 
--	return DIV_ROUND_UP_ULL(*prate, div);
-+	req->rate = DIV_ROUND_UP_ULL(req->best_parent_rate, div);
+-static long fu540_macb_tx_round_rate(struct clk_hw *hw, unsigned long rate,
+-				     unsigned long *parent_rate)
+-{
+-	if (WARN_ON(rate < 2500000))
+-		return 2500000;
+-	else if (rate == 2500000)
+-		return 2500000;
+-	else if (WARN_ON(rate < 13750000))
+-		return 2500000;
+-	else if (WARN_ON(rate < 25000000))
+-		return 25000000;
+-	else if (rate == 25000000)
+-		return 25000000;
+-	else if (WARN_ON(rate < 75000000))
+-		return 25000000;
+-	else if (WARN_ON(rate < 125000000))
+-		return 125000000;
+-	else if (rate == 125000000)
+-		return 125000000;
+-
+-	WARN_ON(rate > 125000000);
+-
+-	return 125000000;
++static int fu540_macb_tx_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	if (WARN_ON(req->rate < 2500000))
++		req->rate = 2500000;
++	else if (req->rate == 2500000)
++		req->rate = 2500000;
++	else if (WARN_ON(req->rate < 13750000))
++		req->rate = 2500000;
++	else if (WARN_ON(req->rate < 25000000))
++		req->rate = 25000000;
++	else if (req->rate == 25000000)
++		req->rate = 25000000;
++	else if (WARN_ON(req->rate < 75000000))
++		req->rate = 25000000;
++	else if (WARN_ON(req->rate < 125000000))
++		req->rate = 125000000;
++	else if (req->rate == 125000000)
++		req->rate = 125000000;
++	else if (WARN_ON(req->rate > 125000000))
++		req->rate = 125000000;
++	else
++		req->rate = 125000000;
 +
 +	return 0;
  }
  
- static unsigned long clk_aspeed_peci_recalc_rate(struct clk_hw *hw, unsigned long prate)
-@@ -394,7 +396,7 @@ static unsigned long clk_aspeed_peci_recalc_rate(struct clk_hw *hw, unsigned lon
+ static int fu540_macb_tx_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+-	rate = fu540_macb_tx_round_rate(hw, rate, &parent_rate);
+-	if (rate != 125000000)
++	struct clk_rate_request req;
++	int ret;
++
++	clk_hw_init_rate_request(hw, &req, rate);
++	ret = fu540_macb_tx_determine_rate(hw, &req);
++	if (ret != 0)
++		return ret;
++
++	if (req.rate != 125000000)
+ 		iowrite32(1, mgmt->reg);
+ 	else
+ 		iowrite32(0, mgmt->reg);
+@@ -4862,7 +4871,7 @@ static int fu540_macb_tx_set_rate(struct clk_hw *hw, unsigned long rate,
  
- static const struct clk_ops clk_aspeed_peci_ops = {
- 	.set_rate = clk_aspeed_peci_set_rate,
--	.round_rate = clk_aspeed_peci_round_rate,
-+	.determine_rate = clk_aspeed_peci_determine_rate,
- 	.recalc_rate = clk_aspeed_peci_recalc_rate,
+ static const struct clk_ops fu540_c000_ops = {
+ 	.recalc_rate = fu540_macb_tx_recalc_rate,
+-	.round_rate = fu540_macb_tx_round_rate,
++	.determine_rate = fu540_macb_tx_determine_rate,
+ 	.set_rate = fu540_macb_tx_set_rate,
  };
  
 
 ---
 base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250729-peci-round-rate-543639297ec6
+change-id: 20250729-net-round-rate-01147feda9af
 
 Best regards,
 -- 
