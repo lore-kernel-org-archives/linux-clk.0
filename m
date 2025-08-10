@@ -1,71 +1,72 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391B119E7F9
-	for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 22:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218824466F
+	for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 22:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754865457; cv=none; b=IHexbDfWh7hUiXO3FIgfBTtS67ljFoS+WnP8oA0vUdj8vGnwW5nIw2AW3HFbJRECnfcs4R7btgX3WPXTLTOlRHqZvVCYGGX45Z1Bz3Vzstr+4LH2F9+QccMZzqtOASwFjxCehiRyLIc07iF/ud9RxIRuXjJSTMXPregu9dAsEEE=
+	t=1754866663; cv=none; b=RzQORsbGfxRyl9mpQvBeExAJd1IQtrWcNtyjwkOuyKLoqPCp5k7jJ94gqoflqly+nk92ENRrnoUyPM8IAXcMd9CE8akkVIgn9jdl4FILb3HmwOLIbAMBUQNTi50dw2IITJJogXM8oalVPJs/tdqPlxdvOXASABtCWaLES01VAAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754865457; c=relaxed/simple;
-	bh=meq0bX7mDoXROc9zguZ8B+x1Av8NFVxhuJLsAfGxMM0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LQTmoNM06y49a9YKOt8/3qpOMmAydKHEiIUZecl1cEFpDw9Mc0L0wwPhKFdCb1XAR+ZBrzXPpMULZ61uIaHdx9hPFhRmY9B8GH6kDmBkb5bS0tKflfW+yolA0w2k3vGinNx1FaY5TtN6JI9a/6YGNfOyrPDGlM/HV5AvIFDw8ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eq6tYMJT; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1754866663; c=relaxed/simple;
+	bh=JaAY31vIHr1AnR/PdVT7SbRgepffO5uQ0Q3tUmIzuWo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tO8g44UThafjxyo8fkjv03/4l41ErH4p19XVb/lquDOO+RMo4iApbXaNFjGI7LscAepeN8ftBKrYNEYfdRDqcfx7HEncPgsY1lsFVAo8o8WvqUOmRoJrJ+dKF94Tj/wmQ5tFtwQwzhavTjpWQzGwJxO+9fu1x/CPD23IOATUuKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eqisef1s; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eq6tYMJT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eqisef1s"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754865455;
+	s=mimecast20190719; t=1754866659;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=a+XJl/ofyE5M4mj3w7aAb/RfjRLgr/5H/Di0mrRB1LI=;
-	b=Eq6tYMJTrDR387huwTWNZfj9rHDTZrSarTqbK9961jfRVEwMfidT7632B/Xf+5NJNxO81Q
-	rsyh22gVR0faHunAZztTd2G6lkkJUb6NnKjmuXK8lpHRj+6xuU1h1DwdXY2UcEVnMVi7fP
-	jUt247GaTEbJH77DlbrwnW5z8zgdNsU=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=si0D3G2RgusoFtCAx5lqtxcOAXD0FY3ZlF3b+krcW9c=;
+	b=Eqisef1s3HcQ3VxWLQ+wDNV8TE3FIuR5ct99NwX96Eo93wCEcw2fGwgk0U0Q2magKs/ze/
+	hF4wkaOVyl4AmZ/u5oXChGRIKi8smeYCqscLj/EdeprnBXmX4KrfYevdNqNWHRWYjoUlvy
+	iBikhU6jlKjujBjG377CPWmfUDwGFy8=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-bLe-trIiNqOdYoUkRMUMGw-1; Sun, 10 Aug 2025 18:37:33 -0400
-X-MC-Unique: bLe-trIiNqOdYoUkRMUMGw-1
-X-Mimecast-MFC-AGG-ID: bLe-trIiNqOdYoUkRMUMGw_1754865453
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70747c020daso79325716d6.0
-        for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 15:37:33 -0700 (PDT)
+ us-mta-19-3EhKL2quNaebXDhya9Kn0A-1; Sun, 10 Aug 2025 18:57:38 -0400
+X-MC-Unique: 3EhKL2quNaebXDhya9Kn0A-1
+X-Mimecast-MFC-AGG-ID: 3EhKL2quNaebXDhya9Kn0A_1754866658
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7074f138855so71732066d6.1
+        for <linux-clk@vger.kernel.org>; Sun, 10 Aug 2025 15:57:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754865453; x=1755470253;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1754866658; x=1755471458;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a+XJl/ofyE5M4mj3w7aAb/RfjRLgr/5H/Di0mrRB1LI=;
-        b=eHQlNNwrTd7s5RUf5X/oOUxgYsWcNXcFJjnCiHUPucOn6CzgrqqkR+kDnQPAs2srq0
-         iY4DSJoq7ZqwGGarTFxdWJWuqNsxfkgr6cxBw/r7UEje3ly2hCgnSAFgaQ4zbKr5VQRw
-         ++/6tQ95C7Ien7ymSTMw1DLjIxdCXozuGnzuBBQiRUb/YiCVDFHRT9Kdazsf9SKc+FmG
-         9G7uzdcLebJ3PRBU0pBgSdPdLPGZm/P62Uf3ks2bYCUtPBay8MiCSaoW1C5qTvTYDinr
-         DhBik1pvJ2rAqg6qpLJOFLaS1xdI1YwLDJcOqqzm86F24KqcI0BClEfHZlKpXjEtradj
-         tzKA==
-X-Gm-Message-State: AOJu0YycHm1o+wHx5j1imU072ljYo0cuvnCYl41vMyI9GtAbvvUirs+u
-	WOGq2/0Avk1SmqRbnf4aUEL5Ndgao5Xm2/13fRxxcUItF1KIXMsd9tBdaIoKPGbaB65X04pVDko
-	Sl3gevy0b5iPltnfHGKrP9YHvaoHV2FD0GKLJjB8fyRuRXj3Cbn6a+Ka8fi3udA==
-X-Gm-Gg: ASbGncuJ+OLBUGfzs/9dsYvlRdsP3fHwCuFrk0wjbHQWtalAAVLW+wcYITUn1KVsVXp
-	qHP2fAgw3eFOZet4SQRrQElJl/WEBQnfHC5A8G/lMiERyjblFPWJ9UGIbSyL7VEt8ar/ECyTz8j
-	MB/+vDiPmLpGs6zhG0PEZ1CNc8KGlhp1UQw3tKVPMAzrvHyllrkFe/pPBdTggDe6GgdpannB9he
-	LuJBL8HYOaE6DHsW3bPo8oKYs7zAj3eHeBxmqSD1zH+BkgeWVLozK2FYYp7gqJKoNWH/uuMeCrW
-	bDe0LpEk4covfJPtHcDWnu9/rqGPe+zqBW2u0Uqgf7TjGOqnIgJB11OR5DwLLspa8emBU2VFVUj
-	TwFtrBg==
-X-Received: by 2002:a05:6214:f21:b0:707:3c3c:39ed with SMTP id 6a1803df08f44-7099b655f18mr151097656d6.0.1754865452736;
-        Sun, 10 Aug 2025 15:37:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzCJW32oe98GKQXmd85A7B5PLB1EPuwgRFHWt7z/lpPyjUYJGVx8hiHq2jmHPMRcrjYmpBNQ==
-X-Received: by 2002:a05:6214:f21:b0:707:3c3c:39ed with SMTP id 6a1803df08f44-7099b655f18mr151097446d6.0.1754865452269;
-        Sun, 10 Aug 2025 15:37:32 -0700 (PDT)
+        bh=si0D3G2RgusoFtCAx5lqtxcOAXD0FY3ZlF3b+krcW9c=;
+        b=CaP37nZD2q2uABVmk18HRWiDYhwmbOcpA14zV55QUPHDxSngnS9VQpcwIpxbVwFyrE
+         neoJUOUCJHx/QUXknvHpWSDC52TO2JuIZ8slPfR4QsLbP9pRIflP27FHyqugayYvrfef
+         mvm/ZTzuQqjguR7C36THK1/4cIIi7zAKOI5t5enOlr6fDMLkCXNoqoj3dT4RiU5vKbDB
+         al6uQ0f/KCkyGZOcJDIM/Gfj00BBp66Wc14R3fwaXkiIVqFr6UV+WHMFsAZPRY7lZGja
+         2uqQCHRpkoQD5Kg95btNsurFZQN2YZuEWV8CNr0kzS+y1wuZ45rbxMD3GiGPKeNpTq5I
+         s5Ow==
+X-Gm-Message-State: AOJu0YzWOd62qy9MRL/L+0uI8vQkmGhyANJbAJTiaAxZyLY8quwz8QlL
+	vFGaRQOo9KF8s8GZVZp67Rab0xBt112D8iCoaGcpJ+taTgeHP6IeTLiNIkFiL6fEjYCJFmWLrTu
+	PQ3yYa6mMfQa14px24XVtY2VD8a4OW+o6iTDsKCiFdLSR06tKrd0CqmnP1Pajxw==
+X-Gm-Gg: ASbGncsus0wi+jNVR0j6/6VMf7hTci/9DwYH7WSUErwpL+9zndqPHL3zYjS2GX1uj6t
+	6jqshOp3q9TmNZkq/zvuzt9yPCLhJjj0lCmXTbYO0ZBb7ag8J5QPdityUBRfydV3PZ1RR9khlGW
+	oNvzTRVUKtx/WPIt354SWHSRZkzYzA4U8CT7MUDnBUo7BF/MI20dmlUOlvvzdH97CO6xFfnuXF2
+	iawM6N4ZPxxBOFPZ9j7cEhaFuH0lVv3iRqQeXTxx8J1WYx+rd6UTmjfbTwVRC53+kk8Xl5Yupc0
+	UqggDV1DfLgw1m4f4ryNlXkTNrZmye6q56bE/fVdJgLa+eX2Z1w+PA6KZSzri6glTd4+nWk1hsB
+	e4l8eEQ==
+X-Received: by 2002:a05:6214:20a7:b0:707:3a96:9f08 with SMTP id 6a1803df08f44-7099a2848a5mr126872606d6.8.1754866657754;
+        Sun, 10 Aug 2025 15:57:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHAbaldZwTwU3XZPCaVO+4i58d5gxtzTBKTXlOSCBQfI10ooKRZRe4bhUtMWpYbhTRna4XCCA==
+X-Received: by 2002:a05:6214:20a7:b0:707:3a96:9f08 with SMTP id 6a1803df08f44-7099a2848a5mr126872486d6.8.1754866657289;
+        Sun, 10 Aug 2025 15:57:37 -0700 (PDT)
 Received: from [10.144.145.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077e263efcsm144763386d6.85.2025.08.10.15.37.21
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077cdd9916sm144266336d6.61.2025.08.10.15.57.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 15:37:31 -0700 (PDT)
+        Sun, 10 Aug 2025 15:57:36 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Sun, 10 Aug 2025 18:37:10 -0400
-Subject: [PATCH] clocksource: ingenic-sysost: convert from round_rate() to
+Subject: [PATCH v2 0/7] drm/msm/dsi/phy: convert from clk round_rate() to
  determine_rate()
+Date: Sun, 10 Aug 2025 18:57:24 -0400
+Message-Id: <20250810-drm-msm-phy-clk-round-rate-v2-0-0fd1f7979c83@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,39 +75,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250810-clocksource-round-rate-v1-1-486ef53e45eb@redhat.com>
-X-B4-Tracking: v=1; b=H4sIABUfmWgC/x3MQQrCMBBG4auUWTsQA02rVxEXYfJrByWRiS2F0
- rs3dPkt3tuowhSV7t1GhkWrltxwvXQkU8xvsKZm8s73bvA3lm+RTy2zCdjKnBNb/INHRIQUnCA
- M1OKf4aXrOX489/0A3e4FmmgAAAA=
-X-Change-ID: 20250729-clocksource-round-rate-8eae6d60ce67
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <mripard@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
+X-B4-Tracking: v=1; b=H4sIANUjmWgC/x3MQQqEMAwAwK9IzgZiUZT9injQNmpwWyXdFUX8u
+ 8XjXOaCyCoc4ZNdoLxLlDUkmDwDO/dhYhSXDIZMRXVB6NSjjx63+UT7XVDXf3Co/Y/R2qEgV5X
+ cUAkp2JRHOd687e77AXsMTxNsAAAA
+X-Change-ID: 20250710-drm-msm-phy-clk-round-rate-ccb10d54e804
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754865441; l=6634;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754866653; l=5434;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=meq0bX7mDoXROc9zguZ8B+x1Av8NFVxhuJLsAfGxMM0=;
- b=07y06Mp/1nerDBs5szSBwoA7sp3zjViOMSYcOsDPZb+WUlA1fKy2L1L81AmRJOd0xc9hPleCU
- QLTx6xjR1Q4D3KozgqTJNjP/ytvNAnO63+PhgerzVjEZw+tzt80P+8I
+ bh=JaAY31vIHr1AnR/PdVT7SbRgepffO5uQ0Q3tUmIzuWo=;
+ b=T0+/U/eBiA9HzCRQ0vS4+nTHalxsy65T1JSQ6j2JLt0YaV2vLDByc8I4BgMY9dbmNykIg2GZ8
+ uMp+tXTTXzVAuSsFHzyiJCG0P6pxr7XlGyf4MT0JtKXE2za244ubNig
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-appended to the "under-the-cut" portion of the patch.
+The round_rate() clk ops is deprecated in the clk framework in favor
+of the determine_rate() clk ops, so let's go ahead and convert the
+drivers in the drm/msm/dsi/phy subsystem using the Coccinelle semantic
+patch posted below. I did a few minor cosmetic cleanups of the code in a
+few cases.
 
-While changes are being made to 'struct clk_ops', let's also go ahead
-and fix the formatting of set_rate so that everything lines up as
-expected.
+Changes since v1:
+- Converted over to use clamp_t() (Konrad)
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Coccinelle semantic patch is below. It's large and I don't want to
-pollute the kernel changelog with the same code hundreds of times,
-so that's why it's included under the cut. For subsystems with more
-than one patch, I've included it on the cover letter.
+Coccinelle semantic patch:
 
     virtual patch
 
@@ -234,68 +235,29 @@ than one patch, I've included it on the cover letter.
 Note that I used coccinelle 1.2 instead of 1.3 since the newer version
 adds unnecessary braces as described in this post.
 https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clocksource/ingenic-sysost.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+Brian Masney (7):
+      drm/msm/dsi_phy_10nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_14nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_28nm_8960: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_28nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_7nm: convert from round_rate() to determine_rate()
+      drm/msm/hdmi_phy_8996: convert from round_rate() to determine_rate()
+      drm/msm/hdmi_phy_8998: convert from round_rate() to determine_rate()
 
-diff --git a/drivers/clocksource/ingenic-sysost.c b/drivers/clocksource/ingenic-sysost.c
-index cb6fc2f152d467bbb2777f39eca94eb33dd4e179..e79cfb0b8e05f68896bc4e6caf6597bfe41c91a2 100644
---- a/drivers/clocksource/ingenic-sysost.c
-+++ b/drivers/clocksource/ingenic-sysost.c
-@@ -127,18 +127,23 @@ static u8 ingenic_ost_get_prescale(unsigned long rate, unsigned long req_rate)
- 	return 2; /* /16 divider */
- }
- 
--static long ingenic_ost_round_rate(struct clk_hw *hw, unsigned long req_rate,
--		unsigned long *parent_rate)
-+static int ingenic_ost_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
- {
--	unsigned long rate = *parent_rate;
-+	unsigned long rate = req->best_parent_rate;
- 	u8 prescale;
- 
--	if (req_rate > rate)
--		return rate;
-+	if (req->rate > rate) {
-+		req->rate = rate;
- 
--	prescale = ingenic_ost_get_prescale(rate, req_rate);
-+		return 0;
-+	}
-+
-+	prescale = ingenic_ost_get_prescale(rate, req->rate);
- 
--	return rate >> (prescale * 2);
-+	req->rate = rate >> (prescale * 2);
-+
-+	return 0;
- }
- 
- static int ingenic_ost_percpu_timer_set_rate(struct clk_hw *hw, unsigned long req_rate,
-@@ -175,14 +180,14 @@ static int ingenic_ost_global_timer_set_rate(struct clk_hw *hw, unsigned long re
- 
- static const struct clk_ops ingenic_ost_percpu_timer_ops = {
- 	.recalc_rate	= ingenic_ost_percpu_timer_recalc_rate,
--	.round_rate		= ingenic_ost_round_rate,
--	.set_rate		= ingenic_ost_percpu_timer_set_rate,
-+	.determine_rate = ingenic_ost_determine_rate,
-+	.set_rate	= ingenic_ost_percpu_timer_set_rate,
- };
- 
- static const struct clk_ops ingenic_ost_global_timer_ops = {
- 	.recalc_rate	= ingenic_ost_global_timer_recalc_rate,
--	.round_rate		= ingenic_ost_round_rate,
--	.set_rate		= ingenic_ost_global_timer_set_rate,
-+	.determine_rate = ingenic_ost_determine_rate,
-+	.set_rate	= ingenic_ost_global_timer_set_rate,
- };
- 
- static const char * const ingenic_ost_clk_parents[] = { "ext" };
-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 16 +++++-------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 34 ++++++++++++-------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 21 ++++++++-------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 32 +++++++++++------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 16 +++++-------
+ drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c        | 16 +++++-------
+ drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c        | 16 +++++-------
+ 7 files changed, 69 insertions(+), 82 deletions(-)
 ---
 base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250729-clocksource-round-rate-8eae6d60ce67
+change-id: 20250710-drm-msm-phy-clk-round-rate-ccb10d54e804
 
 Best regards,
 -- 
