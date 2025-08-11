@@ -1,158 +1,71 @@
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34520CCE5
-	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 14:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFD6E555;
+	Mon, 11 Aug 2025 14:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921455; cv=none; b=Ib5KtmvBoqjd1dPsWto8mJUBR1gUQ0B51/Teu8F9SHyWQjbYGxZviVgokZKOmZL1IoZynzRGjfka9dYtMI5sz9T7D76z+RALarx5cuT4VnPzAMHnDUtR1cMjrjJYvoZWuku36hi9bkFZ4aHzpw3yxd4RNBKzcxnRpQex8CPN7S4=
+	t=1754924246; cv=none; b=GRrXeg7F4xNYzAaqH7PRr3jtt6mNGmEj8mCJBC2TZMLb/eGrG8qhdjcbmMRoYf935OkPr1Hvr+L+QXJpUOd8CUkxIvReNY54ppyYXyjY5fS76+hUi5OhDm1bTwHk12SRAkdsjSUYbNYXFa5RX3HE1UlabXcgJkRIP4ba6aRZhuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921455; c=relaxed/simple;
-	bh=YQdnjakWI6X1ZHqFhx7ybyszvQDMdraK7i+ce55DJ9Q=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ar7+zQS8OuMoSbPqhkUNYckaEPfh4KLhGGla12sju71uz78VCipkPu7EEJVIv4WvEIL8YC+NQkzm78T7eff6V6IsWvNaZwfs4i4CyUgEW9fA2cu1jW0Zl2AuDxM/9jtwU0EV8q30xlENtCNWgB7jot5F1Efc/J42p+LTXvKYHy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KzniqePJ; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1754924246; c=relaxed/simple;
+	bh=oq38uB5DipW7YdbYA9bax6TfPFx48orh8SsizKxB+Cw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=blPTuOGOa61EYkDk93vJdFbwDz1coP6jPSYg0oMwuMeVnjW9fwQT8io16rGtekXnqQn4VVsCY50meWcsq/SSMYYMfkrIUACiSXKuwUObxQZ5BcnhhgVt0tnGjl4Ty+c4XUGaAX30O1rf/uzfMzWwzxWQfdAbd21qmwibsCV0YcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIPq813X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KzniqePJ"
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-61576e33ce9so7541474a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754921451; x=1755526251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
-        b=KzniqePJ8BhCyIuG/HFbx8JlA4LqYA8hoQ4DW/g1hCknkihDX+ct9RMafEot1gWoKL
-         RBi7t5LHoAslJYNxQicWQA1HsAajiFIy4eQjrOPLBVeLTIZHH3Jwoz47pJyees8MFfcv
-         XUbwCImvfbyGp5JNc8Km7W5v0/FpjkAYorsskyJcpZ8sei2KCdVc7Rp9DZOG+Yd/FAzs
-         ceQrku/WelAwPWMnemBSjYHE78JqWARZcDeN+2ve5e04pB2kGjDoG9RXtW88m9tNwr5Y
-         J77nQI8UpGlH1eB5MlwiGXDOHtjp/s3mlMxaT/d4WcrBZV2o1pUsHLN42KMNG5+4mf3v
-         AY1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921451; x=1755526251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
-        b=wSN7ANfh5q2NuFaQTCNWAsc3qoqC2OJKH41rfKPrVz3ikXGK53j8gnmvSERu8Qb3J4
-         jkNL2zktNlsIqDHMAhqRcCtZtqlAa08ab2PMeIOie0k4db2bwHquaE9bDuK6u7wfL4zr
-         4oI4SV8RFT/3S96m1ykHWr7vxxaojEsMCfR7z4qoSen3VWQLSxFLnd9Wqza8GZUnSjjV
-         UcTqwgxb8UoksP8VfaSu4S+OKGs72xl4EIy+KbOJy6HuwfJJ3TdWvAzJJFpVsdGjo3aO
-         gd11+QsJs1C/sRY60/9VOuCL5UyD0QhDysMMPVnMmsTIBVQikm3SZ2pxzODeHMnKtlQM
-         NLUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF/+HCCb2Y09LkETkwVfu0LBfVPTtzQWoIDYFKrF5SCPgMsKvWHDWuSluBsg7kywwXaA3zQw7XS2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQPydc8R7LCNIJPbIVMjUtb8WlFncphb9Fw+Gac9h9iPBrnTdY
-	9Ah70/eCHXItadnJHgpR41F6HmwmDmr5v0cD9sCzhmC0St1oKRpzXPMylOmsAU4civo=
-X-Gm-Gg: ASbGncsfGa6sJ5TiYbnSDGm5+4TFE4aFByQWuAQbGW/Le5vMFh8LUJDPwmnFMurQSdP
-	qUqsSem39CmnI1+fWe20SBVHzzC2Ms6LaSFZ3VD3NdYy3s+fpdfkchQUnkh0nJMJQBUKWXYSB/M
-	0kCx6J2jXLhWQABGPAa6x0VO+fDaxtxQhX+4bgH/Foo0j43EKkthJBkQd0FA5YJ6wpIlnq2oLRL
-	MFfqk+te2iOYoYYO7gT69OQ87vEJl7AvAL5KD5UZD83pyAZCjuNaYTW5SSYhwCD/pUv7vsJA9x+
-	VyLNtFav3flPryHr4jQQWWcLd4XUJLT/5yvTTvcV3k/kc7baGzFLdCE8peITviJGT2fWREQygZk
-	8+2LMC4LKBjpVcOTKWI6WBIGsPjpGNJs6Vv9OBvFXnrya11afXQp3/kBJK6IAvXd0WA==
-X-Google-Smtp-Source: AGHT+IGSXO0okwpD5kpNnaGjEGTT73fQPhYl2aV7TxCeznx0RSbicpQ7u0NLlVgRRhjgMGZAIA2ZgA==
-X-Received: by 2002:a05:6402:3491:b0:618:4a1b:e311 with SMTP id 4fb4d7f45d1cf-6184a1be33amr433396a12.3.1754921451307;
-        Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
-Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm18398979a12.26.2025.08.11.07.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIPq813X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E46C4CEED;
+	Mon, 11 Aug 2025 14:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754924245;
+	bh=oq38uB5DipW7YdbYA9bax6TfPFx48orh8SsizKxB+Cw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oIPq813XUUyhs82FhUW1Q29vxS4cds9p+x4zIuyg6q0og//0E25eqZ/KrC2noDQvA
+	 S/ymYaL6E9bsP9dQYjYZi9AVV+UoEqS1OZnPzO0lYFgTT2lWlHt3x9XSPGooARQh0n
+	 rKBpI+L4LY82WfYT0673Y8KKG4iV0YU4DfJS+0MPkx1XOISDr13Zerw/VX7HnOAtBa
+	 BM6imsXYb4KjDuXto83XErdfPNHR7JcvK533E4GJc2MVO+tKJrAuQMQJ5cDerIJX7o
+	 0wFKvTsDGHzn/R6z2b9WVhC6XX+dD+7rei3UX+Bmnhig7OSGXZ15EyHnoZUq6Sz3ac
+	 QtCpvBlfcjqZw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com,
-	Matthias Brugger <mbrugger@suse.com>,
-	iivanov@suse.de,
-	svarbanov@suse.de
-Subject: [PATCH 2/2] arm64: dts: broadcom: amend the comment about the role of BCM2712 board DTS
-Date: Mon, 11 Aug 2025 16:12:35 +0200
-Message-ID: <47f6368a77d6bd846c02942d20c07dd48e0ae7df.1754914766.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1754914766.git.andrea.porta@suse.com>
-References: <cover.1754914766.git.andrea.porta@suse.com>
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to eDP refclk
+Date: Mon, 11 Aug 2025 09:57:19 -0500
+Message-ID: <175492423749.121102.7449698379457693030.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
+References: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Current board DTS for Raspberry Pi5 states that bcm2712-rpi-5-b.dts
-should not be modified and all declarations should go in the overlay
-board DTS instead (bcm2712-rpi-5-b-ovl-rp1.dts).
 
-There's a caveat though: there's currently no infrastructure to reliably
-reference nodes that have not been declared yet, as is the case when
-loading those nodes from a runtime overlay. For more details about
-these limitations see [1] and follow-ups.
+On Wed, 30 Jul 2025 19:11:12 +0300, Abel Vesa wrote:
+> All the other ref clocks provided by this driver have the bi_tcxo
+> as parent. The eDP refclk is the only one without a parent, leading
+> to reporting its rate as 0. So set its parent to bi_tcxo, just like
+> the rest of the refclks.
+> 
+> 
 
-Change the comment to make it clear which DTS file will host specific
-nodes, especially the RP1 related nodes which should be customized
-outside the overlay DTS.
+Applied, thanks!
 
-Link
-[1] - https://lore.kernel.org/all/CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com/
+[1/1] clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to eDP refclk
+      commit: 039cfa2cee7e02f6d89772ac6104e5327d4619cb
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
----
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index adad85e68f1b..865f092608a6 100644
---- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -4,8 +4,14 @@
-  * the RP1 driver to load the RP1 dtb overlay at runtime, while
-  * bcm2712-rpi-5-b.dts (this file) is the fully defined one (i.e. it
-  * already contains RP1 node, so no overlay is loaded nor needed).
-- * This file is not intended to be modified, nodes should be added
-- * to the included bcm2712-rpi-5-b-ovl-rp1.dts.
-+ * This file is intended to host the override nodes for the RP1 peripherals,
-+ * e.g. to declare the phy of the ethernet interface or the custom pin setup
-+ * for several RP1 peripherals.
-+ * This in turn is due to the fact that there's no current generic
-+ * infrastructure to reference nodes (i.e. the nodes in rp1-common.dtsi) that
-+ * are not yet defined in the DT since they are loaded at runtime via overlay.
-+ * All other nodes that do not have anything to do with RP1 should be added
-+ * to the included bcm2712-rpi-5-b-ovl-rp1.dts instead.
-  */
- 
- /dts-v1/;
+Best regards,
 -- 
-2.35.3
-
+Bjorn Andersson <andersson@kernel.org>
