@@ -1,118 +1,141 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686061F1505
-	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E848214812;
+	Mon, 11 Aug 2025 07:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754895719; cv=none; b=ZVBz8auYId1Ai599Ih1ctmMSCX/ev6cJtzs4V6NVmPjsfqKfGc4YyagySdx57MP0WTKUMELp+Vfd1esHAz2nVqV4b39w1AHbMFuX/0uDQJ7kYMpBpUCRzbgLoPXfsN953QnPpgbXi0oJeg8lfjSgQoq1Ch3Go0soKb4iBubVuB8=
+	t=1754898698; cv=none; b=DBAZRQC6rkc6du7QyBrsoRyW/O+RK3ezLnC2nez81BNy6X4g7gWWNlCNKS9jdQdFRp0+K230AiMp7rnsq+GTCWCyY7zH3rPk6a5N03CnF6A9YZt6HpAmDc4PiUfeRvPet6UnO3vXpti9btDnVMEqB3LeN/zp70brbh1in2fSX28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754895719; c=relaxed/simple;
-	bh=i5i+o2f+rrl/OAOkHKuvWRjEKuAxEakK5GVIkg3Co6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hggxvVCY6feciS6OvESCwpdS7KREFqy6gljJDxU7UYMgPUl8tcpnjoVhlEzOndL1CbEjTtggUH+5fxoVaaohebYrW82FE1WEZZ29ukrzARx55l7YIXuN8q/jENXi4FAiKRMVKiWD8/DqVjgNALlzdPOGZE/M7VzmpmSlPpc1Htc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SZQz9W81; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1754898698; c=relaxed/simple;
+	bh=eDYhdFkvDEKMSCUBsqX/ZY/pLN/yh/QrTwDSJZUjOMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MTB4a0Wx7V0B9q5wPVxNotPq5zdG7bbycUFUj3CsBnLlzARh75w0PMHns7YqOVSv3g3b/NL5enxyWV4UCE/Pn1ktR7jqTs0OPfAKHu1cFf8WLYVQz/13RGm+ON93C2mEvFNcdcRUC+nmw8p16k380ltooJgmSLzHhcDgFa85CQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZV0jLXX5; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZQz9W81"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b429db71b3dso2548616a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 00:01:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZV0jLXX5"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31f325c1bc1so3536823a91.1;
+        Mon, 11 Aug 2025 00:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754895717; x=1755500517; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
-        b=SZQz9W81/mXFsNxJ/m3ywX8jkIBpAonPnoei/q2JpUG5H5shjzuloeEut9f5VOTkSZ
-         8HtUlOLiknpX9bxHSZM4vD61gZ+mrCfdAzka1joWQg0DaZ2Y2DJyoRjzzR1YiSlFnf8c
-         FFPfVHfyjSWC1TWZbhntRW3MvERT286sVK5rNpwSF4qtlaYsVrFE063JIXP5ioKYeInm
-         VvQjWFa8QcGP8pAWKtsn05XqknTOF/UIhkhqsDfxA7JGhgoCWzAJBvXbWmRhX46dR9BD
-         FntrFGOsuiSC3CCgKdZxmM+cud8WuLuzGF/7dqphZQnTAQtyR1nOz7Cnrtsbe8IHdPCE
-         G6Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754895717; x=1755500517;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754898695; x=1755503495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
-        b=jweF8aVhuubEJ1wUJoUkfEMilvF+vAmjllBxTN0x/kankA5TDiai67ZGP8WoPI7kx2
-         XFx+joFu0P5Fpb1SZ21WpLtOtwbPJC4++6P/cWcu/xxLwQM1Hgw57KFw+iqVynkn2rOI
-         vxXWC1ZmYAb1W5X9uH+VdL1F4ewFDytsMn0dg3bjPgxVbcUN2yz0fvhAJPHBhW1F6+cO
-         LRpS9JOtq+Pkjb6QOJt3ntaJEYJ/axcholuLnd5AFJfCuDXq1RX3V+AmJghf/+gZHBCC
-         x0WrXZxc9whOrEKXFlf64yMY3+k0W5usST/Yri0FXf5eDDVtE5oV7ld3xXJKMryBkzoS
-         Xv7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXikXB6jGHG+hyAKPUP+LVl1KPnq9PPrcrn6ptpSvbQSzqPe16t2fn6lqDS7yF30fzgPCs3CKHn8lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDB47o3JxqL4EirocGsZojNEnO0T94+RXmF4SdbAPjHXUTeOj+
-	CNqTdKk938mxI9raXUkiVgTPuDMSZRJOVRHeAClQxz+e6IPSaMJB9TDyK4ROQpYG0Qg=
-X-Gm-Gg: ASbGncvRSk8htagzlIEm9hdpEp3hfQJc/oFCDuU7BB2TOFtaVpKu1/Blh8/7kjTVuO3
-	5Gmd6/yWO83ipuUfeJ5PxFZvwoY7I0I+kVAZyBKMFB5BETtvNr3IBz5EV4yZFeZwK3jfT/5bEwf
-	a508TNbsuw858ZsucnSmceju9vDOKhbIdZfNEhOZYUGaw2gLUaYqlKiooOfhmPNkCujwT0iYg/C
-	zW9AXjPSTIyEJyQ6Jt3w0GMem/Vagclw0wHb2EJ4Mn1tZmqmiyDoNjzstfyjfTpfD/cyKRPG20o
-	IdM3P1TEHkqzTJchPpdXxXNK5OT3xC3TMEKSR7jDRD8q8Ak73rY8HQgfU9jZL2e8Gtdone5epsa
-	4PpyZgwn5yK5h9AzKRMZspD+myEel2mjTxWk=
-X-Google-Smtp-Source: AGHT+IGfBYscmszLcQ4WIVww+p90HeYYLjnd7VEGcPNozcJMTJpfpN4Si84n434k13+c6xYJKAYYSQ==
-X-Received: by 2002:a17:902:fc4e:b0:240:469d:beb0 with SMTP id d9443c01a7336-242c21fc427mr199498845ad.31.1754895716651;
-        Mon, 11 Aug 2025 00:01:56 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899aaecsm265961735ad.119.2025.08.11.00.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 00:01:55 -0700 (PDT)
-Date: Mon, 11 Aug 2025 12:31:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	konradybcio@kernel.org, rafael@kernel.org, ilia.lin@kernel.org,
-	djakov@kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v6 3/4] cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
-Message-ID: <20250811070153.5rjj2cudgs7rwiwc@vireshk-i7>
-References: <20250806112807.2726890-1-quic_varada@quicinc.com>
- <20250806112807.2726890-4-quic_varada@quicinc.com>
+        bh=t3xRtr6M1P9wX7tV81cfWikdjjexqfGZcN2hcrfLYYQ=;
+        b=ZV0jLXX5HfF/Ht0swvY0inp5EzLKOpyohJ46AtZRNSPEXGLfUPCRnrghabMs3seMuJ
+         ORz4vpLibruMygMFK0jHmPnSHwoqKGpROJOKlWl0y94g7c+8fSPBW/aKZfPJksMwnRSQ
+         Iq3xvHMgi7HLBf7Q/eGUoqW3l3fzOgTotj3GRtb7KllmMB0ouvFExfvTTspJg7LLaFbD
+         Ut00B9ne+VHFA+Y9ykeIkW78TmhS/0rxk2wkJRoKxYlOQ7dq13jSlzNatBJdKV9hxO2t
+         0fs0YjvWoA+TPGOnjjQbYvoKbFA8PlmqJtBW5zbBcOrsiM8cGOSovsOXIXCppzBBjS2G
+         wy8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754898695; x=1755503495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t3xRtr6M1P9wX7tV81cfWikdjjexqfGZcN2hcrfLYYQ=;
+        b=qfRPxPy/9saxQ89s9rAN1qplxs+xtdsqwtC63m6OzLKIwMCKBU7ImeTnvssf+EBE5N
+         vJx4E4JKLzsEBAL0b+yPQAkETm5Xro3DH7FhIRnlUGBobgQeZSoSuXQwKaJcs7bm5Jtt
+         JBNYcHLEVaEQbz1BXG/yH0ypMnjKEpsew0AIcw1hrJEJbhlor9S7BiSahN+iHFSabIQM
+         YtVokVMtmkJLCebHsBBq1Ng4qCAEMx13iHPHzFog+4Y4KKVmGCXX7xqWtyu02r0Vens7
+         UIzpsMzuPekQFLeJ/dC9/9q66X7fj11+hqGABmRHl1D/3I89iiqdQpBOyrkal2XtOS2n
+         rshg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHLjHQLzEvhOGOcOkY6lNxrKZiaEgQSUCaRzUVrKMCw/H/w3ib87GJBZ+OzuwAbP2Ufd50hFliIStSvQ==@vger.kernel.org, AJvYcCWUQA1AyWnPpbfrN69T6viioJ0Nv3wTuHbCSJF4MgHwdG00GdRSbQuBv0QBofL9gm4mgw+VxVxIbL0=@vger.kernel.org, AJvYcCX+s3flOFj6AEbe0kQwmM9jOtRe7neOumoGyZbr0+HlzO73Lp9Df8IoJE3RpsBkcoHF2xjk6fiOsVxF25Mr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTti8Zww3MnU6sU7Vo+TKUcOPN7TueC3daVbzJUMPR4B1SJZ+g
+	aUit0iKTRFhWzamaxNUn+Rab6xq5LDRGIsroqWTQtp44uOzojeO0YjrIlX2XxeLcm91r02PczjH
+	V2yUoqf9+x5TPyuqzUgH0pAwjfArzmxc=
+X-Gm-Gg: ASbGnctfMyF6NLaqOg70SosoQrO2aV/OvUzUqdY+zlViKbwSRfO/Z3dWKJwyKN3R8Ju
+	uZ7W8GrC5CGiIZuO8MdZtzTScydggTBPYPzxj8pDSLdOqGV/ZJvUv8S/m6eGPJjgudFlfE2KlLA
+	NzfGIjbhVsah/Kz0qba9Uhyi+M5YJIOrQCCDU6l52E8GfZkMdULqZ5ejBjRaLOT4W/xPK5yalHQ
+	+TjWwELOr5TsiR7/WCQqTHfT1xTJ9uI4VsAgf/lsw==
+X-Google-Smtp-Source: AGHT+IFoI4O7db2aWyY9WfND40nRAMadxahx9od9MPZOHjzWuSx6zjin2h/26ZiK9wrc6AfNeWR34nP/gxzbBL4IpaY=
+X-Received: by 2002:a17:90b:2d8c:b0:31f:36da:3f85 with SMTP id
+ 98e67ed59e1d1-32183b3f091mr19910930a91.17.1754898695275; Mon, 11 Aug 2025
+ 00:51:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806112807.2726890-4-quic_varada@quicinc.com>
+References: <20250810-mips-round-rate-v1-1-54e424c520dd@redhat.com>
+In-Reply-To: <20250810-mips-round-rate-v1-1-54e424c520dd@redhat.com>
+From: Manuel Lauss <manuel.lauss@gmail.com>
+Date: Mon, 11 Aug 2025 09:50:58 +0200
+X-Gm-Features: Ac12FXy8qu7moTdWXMrS4YcI0u2cSYYyLSaH29X5-uJyViANWfUfyggPhoPIvi4
+Message-ID: <CAOLZvyHqkBA_=xFSXFrnWX9O_82LV0xi9UEeSSA3ZgDXaNTpAg@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: Alchemy: convert from round_rate() to determine_rate()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Maxime Ripard <mripard@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06-08-25, 16:58, Varadarajan Narayanan wrote:
-> From: Md Sadre Alam <quic_mdalam@quicinc.com>
-> 
-> IPQ5424 have different OPPs available for the CPU based on
-> SoC variant. This can be determined through use of an eFuse
-> register present in the silicon.
-> 
-> Added support for ipq5424 on nvmem driver which helps to
-> determine OPPs at runtime based on the eFuse register which
-> has the CPU frequency limits. opp-supported-hw dt binding
-> can be used to indicate the available OPPs for each limit.
-> 
-> nvmem driver also creates the "cpufreq-dt" platform_device after
-> passing the version matching data to the OPP framework so that the
-> cpufreq-dt handles the actual cpufreq implementation.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> [ Changed '!=' based check to '==' based check ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+Hello,
+
+On Mon, Aug 11, 2025 at 12:30=E2=80=AFAM Brian Masney <bmasney@redhat.com> =
+wrote:
+[...]
+>  arch/mips/alchemy/common/clock.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/=
+clock.c
+> index 6c8996e20a7ddc4ddaf924fc43a98c882c4110f7..551b0d21d9dc4b67d9909c030=
+5db659daa8e84d9 100644
+> --- a/arch/mips/alchemy/common/clock.c
+> +++ b/arch/mips/alchemy/common/clock.c
+> @@ -211,30 +211,34 @@ static int alchemy_clk_aux_setr(struct clk_hw *hw,
+>         return 0;
+>  }
+>
+> -static long alchemy_clk_aux_roundr(struct clk_hw *hw,
+> -                                           unsigned long rate,
+> -                                           unsigned long *parent_rate)
+> +static int alchemy_clk_aux_determine_rate(struct clk_hw *hw,
+> +                                         struct clk_rate_request *req)
+>  {
+>         struct alchemy_auxpll_clk *a =3D to_auxpll_clk(hw);
+>         unsigned long mult;
+>
+> -       if (!rate || !*parent_rate)
+> +       if (!req->rate || !req->best_parent_rate) {
+> +               req->rate =3D 0;
+> +
+>                 return 0;
+> +       }
+>
+> -       mult =3D rate / (*parent_rate);
+> +       mult =3D req->rate / req->best_parent_rate;
+>
+>         if (mult && (mult < 7))
+>                 mult =3D 7;
+>         if (mult > a->maxmult)
+>                 mult =3D a->maxmult;
+>
+> -       return (*parent_rate) * mult;
+> +       req->rate =3D req->best_parent_rate * mult;
+> +
+> +       return 0;
+>  }
+>
+>  static const struct clk_ops alchemy_clkops_aux =3D {
+>         .recalc_rate    =3D alchemy_clk_aux_recalc,
+>         .set_rate       =3D alchemy_clk_aux_setr,
+> -       .round_rate     =3D alchemy_clk_aux_roundr,
+> +       .determine_rate =3D alchemy_clk_aux_determine_rate,
+>  };
+>
+>  static struct clk __init *alchemy_clk_setup_aux(const char *parent_name,
+>
 > ---
-> v5: Add 'Acked-by: Viresh Kumar'
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 5 +++++
->  2 files changed, 6 insertions(+)
 
-Applied. Thanks.
+I've run-tested this on an Alchemy DB1300 board, and it works just fine.
+In case it matters:
+Tested-by: Manuel Lauss <manuel.lauss@gmail.com>
 
--- 
-viresh
+Thanks!
+     Manuel
