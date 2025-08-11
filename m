@@ -1,124 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413762D6636;
-	Mon, 11 Aug 2025 06:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686061F1505
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754894924; cv=none; b=rh+dyl4WY8RcJL7Pu466QmVwBK7FrT6nuRKoCyI4fegJgCwVf7hTn04zMUUOwaB+2lMcGM3kPxyHG/na188+K9YYCL/aX81UwfEvE6/f3UN4uBbwrBE9se+xTZXt1YjbNc076uLMZTrwsM3BeBGVukRcRVjEgoSB8i7fqGrcPJo=
+	t=1754895719; cv=none; b=ZVBz8auYId1Ai599Ih1ctmMSCX/ev6cJtzs4V6NVmPjsfqKfGc4YyagySdx57MP0WTKUMELp+Vfd1esHAz2nVqV4b39w1AHbMFuX/0uDQJ7kYMpBpUCRzbgLoPXfsN953QnPpgbXi0oJeg8lfjSgQoq1Ch3Go0soKb4iBubVuB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754894924; c=relaxed/simple;
-	bh=UFskI9Uetx9Moyp7eZo+dMCASbA5Ga+jaqTNTrGajqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ey4JPii+xgSJq5D6nIdmv/TOrRULCs4CsZEdRUvC89DMY9Bs17nw1zmLlFTEjrTn7tK31Wa2Qa++pPLJPbwdZuQUZArDsiMwes8t/M7fe8c9z3q5DJf5uWMrSGkkh53+SNy6E55uJMDyNTqAJmT/tWHPAlbIg8YpgAFZ2FpSKxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2tPNA5a; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754895719; c=relaxed/simple;
+	bh=i5i+o2f+rrl/OAOkHKuvWRjEKuAxEakK5GVIkg3Co6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hggxvVCY6feciS6OvESCwpdS7KREFqy6gljJDxU7UYMgPUl8tcpnjoVhlEzOndL1CbEjTtggUH+5fxoVaaohebYrW82FE1WEZZ29ukrzARx55l7YIXuN8q/jENXi4FAiKRMVKiWD8/DqVjgNALlzdPOGZE/M7VzmpmSlPpc1Htc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SZQz9W81; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2tPNA5a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68627C4CEED;
-	Mon, 11 Aug 2025 06:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754894923;
-	bh=UFskI9Uetx9Moyp7eZo+dMCASbA5Ga+jaqTNTrGajqc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G2tPNA5aK5uIsvMw7ygPwrqcWpMoKGmCBV4bquqArD/5JqL53Iz/nufRoOXAlIv8z
-	 sMzZIh6vwwsZE6MWvD4eol3yo3Cc5e5z+HBJcA8s8YbhIvx4QhtWQi+6Gzuv9j9I3Q
-	 atS3WiaU13E1JdCoQ3veK09m2kAis3Vb60k2jnrUuaGsYxprd7ULgLxW6SQaV6swlv
-	 riJrDun0dIvekEdYtWxruTQ5qdwEwB5/YI5/9tR/x4OXi/U9W0O46rQKYEMy0BM+DC
-	 gyFU937VinN66EuRTV+DGB6FS8nrI6MYZNMqVMDfPFTm01NxMgvIL0mcuaVkIpQ2N7
-	 MlyfaA9hanm2w==
-Message-ID: <f8ad7883-d879-47ce-aafc-7c5f741f3c18@kernel.org>
-Date: Mon, 11 Aug 2025 08:48:37 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZQz9W81"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b429db71b3dso2548616a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 00:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754895717; x=1755500517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
+        b=SZQz9W81/mXFsNxJ/m3ywX8jkIBpAonPnoei/q2JpUG5H5shjzuloeEut9f5VOTkSZ
+         8HtUlOLiknpX9bxHSZM4vD61gZ+mrCfdAzka1joWQg0DaZ2Y2DJyoRjzzR1YiSlFnf8c
+         FFPfVHfyjSWC1TWZbhntRW3MvERT286sVK5rNpwSF4qtlaYsVrFE063JIXP5ioKYeInm
+         VvQjWFa8QcGP8pAWKtsn05XqknTOF/UIhkhqsDfxA7JGhgoCWzAJBvXbWmRhX46dR9BD
+         FntrFGOsuiSC3CCgKdZxmM+cud8WuLuzGF/7dqphZQnTAQtyR1nOz7Cnrtsbe8IHdPCE
+         G6Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754895717; x=1755500517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VHEw2IHzxA4wFPAA7C102H9OqGdRlerd4Wo31dulLWQ=;
+        b=jweF8aVhuubEJ1wUJoUkfEMilvF+vAmjllBxTN0x/kankA5TDiai67ZGP8WoPI7kx2
+         XFx+joFu0P5Fpb1SZ21WpLtOtwbPJC4++6P/cWcu/xxLwQM1Hgw57KFw+iqVynkn2rOI
+         vxXWC1ZmYAb1W5X9uH+VdL1F4ewFDytsMn0dg3bjPgxVbcUN2yz0fvhAJPHBhW1F6+cO
+         LRpS9JOtq+Pkjb6QOJt3ntaJEYJ/axcholuLnd5AFJfCuDXq1RX3V+AmJghf/+gZHBCC
+         x0WrXZxc9whOrEKXFlf64yMY3+k0W5usST/Yri0FXf5eDDVtE5oV7ld3xXJKMryBkzoS
+         Xv7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXikXB6jGHG+hyAKPUP+LVl1KPnq9PPrcrn6ptpSvbQSzqPe16t2fn6lqDS7yF30fzgPCs3CKHn8lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDB47o3JxqL4EirocGsZojNEnO0T94+RXmF4SdbAPjHXUTeOj+
+	CNqTdKk938mxI9raXUkiVgTPuDMSZRJOVRHeAClQxz+e6IPSaMJB9TDyK4ROQpYG0Qg=
+X-Gm-Gg: ASbGncvRSk8htagzlIEm9hdpEp3hfQJc/oFCDuU7BB2TOFtaVpKu1/Blh8/7kjTVuO3
+	5Gmd6/yWO83ipuUfeJ5PxFZvwoY7I0I+kVAZyBKMFB5BETtvNr3IBz5EV4yZFeZwK3jfT/5bEwf
+	a508TNbsuw858ZsucnSmceju9vDOKhbIdZfNEhOZYUGaw2gLUaYqlKiooOfhmPNkCujwT0iYg/C
+	zW9AXjPSTIyEJyQ6Jt3w0GMem/Vagclw0wHb2EJ4Mn1tZmqmiyDoNjzstfyjfTpfD/cyKRPG20o
+	IdM3P1TEHkqzTJchPpdXxXNK5OT3xC3TMEKSR7jDRD8q8Ak73rY8HQgfU9jZL2e8Gtdone5epsa
+	4PpyZgwn5yK5h9AzKRMZspD+myEel2mjTxWk=
+X-Google-Smtp-Source: AGHT+IGfBYscmszLcQ4WIVww+p90HeYYLjnd7VEGcPNozcJMTJpfpN4Si84n434k13+c6xYJKAYYSQ==
+X-Received: by 2002:a17:902:fc4e:b0:240:469d:beb0 with SMTP id d9443c01a7336-242c21fc427mr199498845ad.31.1754895716651;
+        Mon, 11 Aug 2025 00:01:56 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899aaecsm265961735ad.119.2025.08.11.00.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 00:01:55 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:31:53 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	konradybcio@kernel.org, rafael@kernel.org, ilia.lin@kernel.org,
+	djakov@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v6 3/4] cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
+Message-ID: <20250811070153.5rjj2cudgs7rwiwc@vireshk-i7>
+References: <20250806112807.2726890-1-quic_varada@quicinc.com>
+ <20250806112807.2726890-4-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
- nodes
-To: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
- shin.son@samsung.com, alim.akhtar@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, dev.tailor@samsung.com,
- chandan.vn@samsung.com, karthik.sun@samsung.com
-References: <20250808142146.3181062-1-raghav.s@samsung.com>
- <CGME20250808141247epcas5p2c254f35146a6ea35b5c49c4316ba30a3@epcas5p2.samsung.com>
- <20250808142146.3181062-4-raghav.s@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250808142146.3181062-4-raghav.s@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806112807.2726890-4-quic_varada@quicinc.com>
 
-On 08/08/2025 16:21, Raghav Sharma wrote:
-> Add required dt node for CMU_M2M block, which provides
-> clocks for M2M IP
+On 06-08-25, 16:58, Varadarajan Narayanan wrote:
+> From: Md Sadre Alam <quic_mdalam@quicinc.com>
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> IPQ5424 have different OPPs available for the CPU based on
+> SoC variant. This can be determined through use of an eFuse
+> register present in the silicon.
+> 
+> Added support for ipq5424 on nvmem driver which helps to
+> determine OPPs at runtime based on the eFuse register which
+> has the CPU frequency limits. opp-supported-hw dt binding
+> can be used to indicate the available OPPs for each limit.
+> 
+> nvmem driver also creates the "cpufreq-dt" platform_device after
+> passing the version matching data to the OPP framework so that the
+> cpufreq-dt handles the actual cpufreq implementation.
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> [ Changed '!=' based check to '==' based check ]
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 0fdf2062930a..086d6bbc18b8 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1454,6 +1454,19 @@ pinctrl_aud: pinctrl@1a460000 {
->  			reg = <0x1a460000 0x10000>;
->  		};
->  
-> +		cmu_m2m: clock-controller@0x1a800000 {
+> v5: Add 'Acked-by: Viresh Kumar'
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 5 +++++
+>  2 files changed, 6 insertions(+)
 
+Applied. Thanks.
 
-Are you sure this satisfies tests required by Samsung SoC maintainer
-profile?
-
-Best regards,
-Krzysztof
+-- 
+viresh
