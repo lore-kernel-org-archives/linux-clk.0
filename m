@@ -1,185 +1,132 @@
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5466E23BCF5;
-	Mon, 11 Aug 2025 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B02120F07C
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 14:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921109; cv=none; b=kZUSGUNroSbgh24SJHiINMdR+3aTLiyiPrkUJ6ytNFAz5UXCBQwm0UNaKwbgUoP0zeYpwfprBUtuWF4vQUsNo5sgKdMEc0aHG16P0xoiysga/fQ0NTx0RzhPc+WLaCOTtcz0fBcPtE9Gnx1yAiVeL26Gv+xkdJ3STfm178zseMQ=
+	t=1754921452; cv=none; b=n0itjCpk/3laLoNNZBHOsbdRZX0r8CEZAyK7ntg6cvRG1vpYfjfhimOVqhPbdBpR4Lj7hhgfG8R9IzzJsb4/52TZQK0gpxTjld2CVVqlL/JVbWGuUFNwocsfEi2QvjWD11wimwMYGfitokzCQnFPcQRawAjvWuC26j+kN0fNWpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921109; c=relaxed/simple;
-	bh=/eP5t1s0TqmJIvJ8sxEMoPxPa8mRQSEXNyaZxgSUlDo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e0NB4bH7v7+MqFHBeuSQvyRLgV8/pVG9uzAbti7oW+jg6/NyBLN4WqLQkjEeb7iz0Ud+smj3mG7Ht6aYJdKl7RDN0AdoqfYXsKNrED4MI/M1pWXscuqZPuEXWmnI57BU/Xmtzf5crOGZ+z2uH62pFpBsA2PFGtBIzfeBa+BBXdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=PpR8rMpZ; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1754921452; c=relaxed/simple;
+	bh=H6l53B4wZkFz+nYR8PTiIJtmbUzH50h27nGG3cRI8Sc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WdE9W4UQSZHNiytZkUrd2+i9o4shDISXww/tuvz2N8jg/3mQ+aGJI3qqizRQR/KGGr73AmTzgitGE1Vu98BeVpR7wPMa2dG5tbeQGG1vEOCGpJqqpFq6Hd2u4WcuFSBP9172Zy+9CCrknIfKMYW/0ChMb83OPd9qTFb3F23OFKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fl+fs+EQ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="PpR8rMpZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1754921091;
-	bh=oUvLpctbzw/WmMzpaNN8M2oVwo9YJxXCqlSJR/iqBr4=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=PpR8rMpZadtp6AJTmxAaNaejQAbvdZuhyYchCHs9cQVWRiLb0ggFzFqjAFFUblaQo
-	 V/OM16U7ZhMzJIJpudurQZeh8Yo1Q00hPgRlt6mTAdxp1CvH1cLKRSMH2shyAgneut
-	 DAakkYe4btH/T+qnRulXl/4G5XBk48POVAPZc51k=
-X-QQ-mid: zesmtpip3t1754921090t5adf6c6f
-X-QQ-Originating-IP: 77QCtEo+rzaJ27LWZg1zIIO7xOaXq4U7Kmzsi4q9YBI=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Aug 2025 22:04:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11959351235578941372
-EX-QQ-RecipientCnt: 16
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 11 Aug 2025 22:04:30 +0800
-Subject: [PATCH v2 4/4] clk: spacemit: fix i2s clock
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fl+fs+EQ"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af91a6b7a06so743287766b.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754921449; x=1755526249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ohexk0G5qQQ/U7tEXowxhsg85cDA9yyayQBpZFpm+6I=;
+        b=fl+fs+EQ0/qEbV8FxYfSO+imznSFeyHbU1wPY8Tcom67VpGWEKjvGWd+W5DAf7tTor
+         lbRPSFfi6ErSoGmerRdABTyBRCzHTCcZ8BwD09epmyCaWWO6zT19Sd8Qy0oAioINqQj6
+         eJ8F+RVTy/wnHEm6zrxMpwq4R+EF0H1YMFR9ERklfDjT37wRU+lcJN5Vrdl/FSaqyJQw
+         kKp7XnAl/vWez5gbojjcxg1mFlc8DbS9+rCeBe+HJaSOaIolk9bTUySfxYOca9QPJNtG
+         sEGjj2RanbdN4fzB+K96MwQ5C7wF5qEIMyZ+lIWSm/Q3SYwSDfR52Qtu2FhL836xegsv
+         I0Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754921449; x=1755526249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ohexk0G5qQQ/U7tEXowxhsg85cDA9yyayQBpZFpm+6I=;
+        b=DQNoyvvJH3xzvz7FFb0gIY74tWj7utYmcx4+800I7u8l/0T0FE++6cjAVaetQzj9b8
+         3VjNAmViWI//GJ++21ZO2cP4FTx2UFrVB70pJs7Yj8qDa7rH7mQZZx4CEscOTYrAK7Xa
+         +YlRA2FsWSSshla3xC1c0oNx8v5nxVnB9OUo97+6dzaY9q5AxDvefG3YPcZ/1zk4Z1QT
+         RJl4kuPWLNwMxvEkIr20emfjjfp+dI07HdLN2g1tj4Lb2GwHtpG40Fww20KLGFlY4GOq
+         4RnOw+mpG6fTYCFxBb9z2RUztwCu6ivCdUJwiCJydzuPYH265fPs4Lv9krHGMykBzSSl
+         a0Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWilPAerjMO8GaY4DQQdTwMS3PpWJ1tB5KRPdP5Tzs941y+8yjNF55rRSQV3hDpET+ODBPP5HY9idc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYuEmKSeejY8U5jOr+Hg5KHmwNkP/oj1IHroNAE7tY0UuKSF0H
+	dy+3eFrgpETqWyGbVM5LyAxQ8/CIiLZNVKdWCv6fGeVVaLUyzTUHvJeg2GKaB2H/RVE=
+X-Gm-Gg: ASbGncuwhCkErvZb09F0SGnt6uv4ajD5SuJY5wSF8iw+IsalCSy7ZvIj7EhtYqYyv4a
+	X1pioRIQ/NPuGhEBdfg45hiK4Q+kSZbh+FgtxL4Dt7ip2nfA+xxmMPoKsAADHUulFrEz4kF+1+2
+	yVMLU9kyzrdy3SVHffIAbT8oaPBnkd/Ea21HT2fIukypcMNd65t9t/WMThK6HZMg8mTypO4amR2
+	oxteBlx3A4TW45KYEmqfGFsiDmYFiWVlwOLrZ4Ssuu0z44lp7duQI03I8alXw8T3kjBglCNu7Nr
+	Bd5NmqcK5RQ0Xa+8+L/NPFb39bONAaQGaBu5flNKLV8GdLbkgIfsSasl3n1f6VdR/a2zJoyGFyI
+	n11maxwN9y5ODAG3R2o6d7iYdpTGiXrLXto9YMYpHjpysNzcnacurs7f3QuD0tyaKgA==
+X-Google-Smtp-Source: AGHT+IHdBKFk8Hdz0O5Qrkqv+q1AVcT+ToZrNVbbDng2NMf7Xf+fMHPhcyvkBGiKagZpBw13o0Tyeg==
+X-Received: by 2002:a17:907:c1c:b0:af9:71c2:9c3 with SMTP id a640c23a62f3a-af9c647bce8mr1317574966b.35.1754921448512;
+        Mon, 11 Aug 2025 07:10:48 -0700 (PDT)
+Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23bedcsm2030552266b.120.2025.08.11.07.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 07:10:48 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>,
+	iivanov@suse.de,
+	svarbanov@suse.de
+Subject: [PATCH 0/2] Establish the roles of board DTSes for Raspberry Pi5
+Date: Mon, 11 Aug 2025 16:12:33 +0200
+Message-ID: <cover.1754914766.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-k1-clk-i2s-generation-v2-4-e4d3ec268b7a@linux.spacemit.com>
-References: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
-In-Reply-To: <20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754921074; l=4205;
- i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=/eP5t1s0TqmJIvJ8sxEMoPxPa8mRQSEXNyaZxgSUlDo=;
- b=p3HEwh3FPsXPkPLayk+Nv8p8KIP+CiyvupGRdd/M1EW0hj4BIzjQBvfOmJJNmHfWUf4zpTd/I
- nJgeuQ4Q9vuDlqsdURTkbApXuDuq6R9iYSatGTdLH23AW4EG0Ve1q42
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NYSbNmQ6i3UflGZQAhExDUD5lezifgMNpg/HQ1y4ZLzfvJpN3ogzQQwc
-	OClc6N7TR4/Mz+5fYUZG0dtigTV+p7cnXhu35WSp28lmhVwoI6RpjYmOv1MiDQwDvxDVGFy
-	VY6kbg3oezvzNIpp170m21rA0V6NOiVFowef0WyXOJtfBsuF4UmvDx+UD56s/8n8UMpDIF7
-	mWZ00dOOJOo3EdUZwXUbloRolVgzEcvhewsYYncpjDVj34207OP7ycRs5hrdVOZf7k/MABt
-	yhf6wXG/p94NgPac5yAV0/yjFL1dgU+P8tMKj047P9noiKJ4TQvJESkax6AupUml7hR23Q6
-	mJbUl3UW2xRUu67eOsE2Yx9PelRIGnyj4ImELM3BPEpH5QeKkpanDN8JVR8zt7RmaatqGcM
-	AouqxkonTeIdPyy4c0cJ8/rsB80QMVF7338X8U6207WQ090WgzZHaFlVJIuRH40RKAr6Sjj
-	CbdhKeKQfIXvOfx5AzTw8kOkbyz0BJf8/cAU8oskaasVWhoTbN47wBF3MMDjCKaafRPmRHQ
-	j+lSNSFdusI7CjQRZM3jBDdYx9tZQf/F9xQXeQrBZ6fXXUfnpm1Uf26ySGTfTEHvXp0MlX2
-	4tVh7g0mEDUca8U0WaZzwCC4ZEPvWnn3YZvgYrw8aOOmAMK3qpwld9JDdJHRaBH958LuJ/S
-	+AkevnVIbnIcrX7DczPgDsC2eqRjlGVZHyag6CqnYCaewUrDQyTKsgh9rLeX6dvjQdQgOIW
-	wrENzLyg1aHOzEYpYLZixq1wsNtSNrxgW+JnT4N+c2X5Ypr3tJwn9YJ82Ho52PR9UWc6a/x
-	n3XWvpqVnxG2zFViht4tFNg3P17sYc4dX1ZIIRxKQNzq0WCcavh2fAb8xLNOx0h8nS1C0PT
-	ws6xnxsHJFjNRTjEHS7jKGRudJsOB0UW4hnOJFfNXd/FhmDQ90PtVYrjZg501peYDBBml2j
-	hNKjM/yx1CwbXgw4S3gCwpqMBb1FDMjsfgSUxE6qsjXDVf82Rqyrn19YqYuHYCDcC3096Pr
-	WJYtH5rYqa9DMxP9ji/s1xIIKpXLTyBQjBYCNKWqH7BpCvjvs9Vh872WBMvgFH+PdhjTj/0
-	8otdT8tiRWD71bdUGBwTmob+NkcUACYbFRsALWFboueB3isN548EDet7w7KnIeGPSvvljK1
-	ktQnHkq6yc4Wm6vIz9gx/qoTSNlz7dZ6fZ7o
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-Defining i2s_bclk and i2s_sysclk as fixed-factor clocks is insufficient
-for real I2S use cases.
+Hi,
 
-Moreover, the current I2S clock configuration does not work as expected
-due to missing parent clocks.
+this patchset is composed of the following:
 
-This patch adds the missing parent clocks, defines i2s_sysclk as
-a DDN clock, and i2s_bclk as a DIV clock.
+- patch 1: just a cleanup to get rid of duplicated declarations in the
+  board DTS for BCM2712.
 
-The I2S-related clock registers can be found here [1].
+- patch 2: explicitly states what BCM2712 board DTS will host the
+  customized nodes that refer to RP1 internal peripherals. This is
+  important so that followup patches add the nodes to the correct
+  DTS file. For more information about why it has to be done, please
+  take a look to the patch comment.
 
-Link:
-https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-[1]
+Andrea della Porta (2):
+  arm64: dts: broadcom: delete redundant pcie enablement nodes
+  arm64: dts: broadcom: amend the comment about the role of BCM2712
+    board DTS
 
-Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
- drivers/clk/spacemit/ccu-k1.c    | 28 +++++++++++++++++++++++-----
- include/soc/spacemit/k1-syscon.h |  1 +
- 2 files changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 65e6de030717afa60eefab7bda88f9a13b857650..3a885d64fb09144bb0d40024fea9415d66eba01b 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -136,13 +136,28 @@ CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
- CCU_GATE_DEFINE(pll1_d2_1228p8, CCU_PARENT_HW(pll1_d2), MPMU_ACGR, BIT(16), 0);
- 
- CCU_GATE_DEFINE(slow_uart, CCU_PARENT_NAME(osc), MPMU_ACGR, BIT(1), CLK_IGNORE_UNUSED);
--CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 0);
--CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 0);
-+CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 2, 0);
-+CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
- 
- CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
- 
--CCU_FACTOR_GATE_DEFINE(i2s_sysclk, CCU_PARENT_HW(pll1_d16_153p6), MPMU_ISCCR, BIT(31), 50, 1);
--CCU_FACTOR_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, BIT(29), 1, 1);
-+CCU_FACTOR_DEFINE(i2s_153p6, CCU_PARENT_HW(pll1_d8_307p2), 2, 1);
-+
-+static const struct clk_parent_data i2s_153p6_base_parents[] = {
-+	CCU_PARENT_HW(i2s_153p6),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DEFINE(i2s_153p6_base, i2s_153p6_base_parents, MPMU_FCCR, 29, 1, 0);
-+
-+static const struct clk_parent_data i2s_sysclk_src_parents[] = {
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(i2s_153p6_base)
-+};
-+CCU_MUX_GATE_DEFINE(i2s_sysclk_src, i2s_sysclk_src_parents, MPMU_ISCCR, 30, 1, BIT(31), 0);
-+
-+CCU_DDN_DEFINE(i2s_sysclk, i2s_sysclk_src, MPMU_ISCCR, 0, 15, 15, 12, 1, 0);
-+
-+CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, 27, 2, BIT(29), 2, 0);
- 
- static const struct clk_parent_data apb_parents[] = {
- 	CCU_PARENT_HW(pll1_d96_25p6),
-@@ -639,7 +654,7 @@ static const struct clk_parent_data emmc_parents[] = {
- CCU_MUX_DIV_GATE_FC_DEFINE(emmc_clk, emmc_parents, APMU_PMUA_EM_CLK_RES_CTRL, 8, 3, BIT(11),
- 			   6, 2, BIT(4), 0);
- CCU_DIV_GATE_DEFINE(emmc_x_clk, CCU_PARENT_HW(pll1_d2_1228p8), APMU_PMUA_EM_CLK_RES_CTRL, 12,
--		    3, BIT(15), 0);
-+		    3, BIT(15), 1, 0);
- 
- static const struct clk_parent_data audio_parents[] = {
- 	CCU_PARENT_HW(pll1_aud_245p7),
-@@ -756,6 +771,9 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
- 	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
- 	[CLK_APB]		= &apb_clk.common.hw,
- 	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
-+	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
-+	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-+	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
- };
- 
- static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
-diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..354751562c55523ef8a22be931ddd8aca9651084 100644
---- a/include/soc/spacemit/k1-syscon.h
-+++ b/include/soc/spacemit/k1-syscon.h
-@@ -30,6 +30,7 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
- 
- /* MPMU register offset */
- #define MPMU_POSR			0x0010
-+#define MPMU_FCCR			0x0008
- #define  POSR_PLL1_LOCK			BIT(27)
- #define  POSR_PLL2_LOCK			BIT(28)
- #define  POSR_PLL3_LOCK			BIT(29)
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts      | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 -- 
-2.50.1
+2.35.3
 
