@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA7D2F49FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAABD2F3C3E;
 	Mon, 11 Aug 2025 15:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925519; cv=none; b=eiItNnrYcz+lDIQSxP+L0DfiseImDBljSawEtRAQ+p8hHouamfzaUiFqpcllBipf37i41GWqzc58aKnMCMAtu1W44E10c0q//k5qMk6AQPIIUa5QJadR6xdW460NHorsnW/h/rguj0YDUVluvm0ffw64NJyo68ZbLMGbaG2rl7o=
+	t=1754925518; cv=none; b=f0oHCLbUemeb7NcOahkHhmB7Tk1dThh++L3CEcURBbqDC7KjfnNnrbZYlM4gX8FwCm7zwxS5smzFVY4YgG7wcm+6aMoJ8u2hF16BqYNxTQRVfmwjwJnYG4kgIb1lTlGv6505AeSoHOxFL2TLBpV6z4yoR99/scHsTWxo5EtUptk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925519; c=relaxed/simple;
-	bh=I06g9EZ+WeE9wpMdXbgUNj6cuTI+vnV/N4MiCLjBRto=;
+	s=arc-20240116; t=1754925518; c=relaxed/simple;
+	bh=uWr8f50WYVoQV7Ccl1uBbME03HF6scdVafmMAIIh/BY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BfYvzAwZISoiqyDyq2MtURD4WHcm325jwPAExcAItiwWXaEw3vcNnfK63xVD76N57JPov3gZ3F5a/P+X9rvV9ttvbA2SH5tKSfvWa5frz/CQ/8HUlFFsKQF6kWubAMrPX9dkqck+XtAki2lgcCMGe+dQfcD584i90W4XswlYRQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muXlH9I1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Tv/ncRCNYrkEoJXBEnwodF5H+FA8L5WIH1B8d3ODtsk4Ytg0An2qxCOpaXtJbn8GFOsvwy+WrJnFRRLJvTxTG8b/K93Iy4MqnAB/zyYzU5qJnU3RR+ISQH6/lANqgpAUFdO/oPUNBYmaUbO98JvvZ3HwwzyiOHU46LBNOONwCW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAzC2oTW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muXlH9I1"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F222C4FE0F;
-	Mon, 11 Aug 2025 15:18:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAzC2oTW"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 42AEDC567CD;
+	Mon, 11 Aug 2025 15:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925516;
-	bh=I06g9EZ+WeE9wpMdXbgUNj6cuTI+vnV/N4MiCLjBRto=;
+	s=k20201202; t=1754925515;
+	bh=uWr8f50WYVoQV7Ccl1uBbME03HF6scdVafmMAIIh/BY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=muXlH9I12xudI1gel43aCQiNXldBaYO92+fpo+deer1eYA+4PlBbVjrbo2tjk3OR/
-	 32k3HwoanF4BrW2/Jgdx+E/GCQifGj83wRm3+dlt0O08zO0kU3osha3vowrnGesSXa
-	 KH+fcCiZKrtwotho5j7Dz+jZmbhMOsNygrJXw2xpjwBefljTfL0goVnOeJN1H+yVtw
-	 atj9gVbqosDL5GEq5X0jviMCtdNJIYEKQ1jH203gIl7+COrVZKwwATn4A7P6VSiaoT
-	 Ak+n9Uvtgs/kfxSukJYgfEUZIVtnjb5XPhoxXywbPNwd5vxyIVFKmfr87UeGhayu50
-	 49Oc0JXirtPvg==
+	b=eAzC2oTWYDS441ObEBuaT04xUZasg4T1J0+xaQtxRzfh4/5H26IdDqKI6LC+hpvy3
+	 wqQN9AuC3p8wCCzRm5h7yL4jA5eD5VG0LRaSjZiiLhWrd9ZTrOoczb0MHd2veDXE+R
+	 GDO9FWVjujeylCq5jSbM7r+mMRtcQQ1MXl+P59mD0C1XjVDxVPnxgS8DzFr7lDoQT/
+	 C01IzSOXVO/4MApsipeRGz9Ok1L0sAODGSO7T+Mpp73l8+KzMxXRXGTh3AfPzFVTCZ
+	 +IsoYOKUexM6U3Hsq65PxR2lo69ZCFiErnZJVn3Pqo6dzV7dzrGeYFM0LNMtfJKKkZ
+	 wi+NC8AQwseXg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D5ACA0ED3;
-	Mon, 11 Aug 2025 15:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FC3CA0EC4;
+	Mon, 11 Aug 2025 15:18:35 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:19:40 -0400
-Subject: [PATCH 108/114] clk: versatile: icst: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:19:30 -0400
+Subject: [PATCH 098/114] clk: samsung: cpu: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-108-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-98-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=3737;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1677;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=s6RrIFratukpDYKqOi9KzbyMVPMeFX+Sv4XuD3QoLpU=;
- b=u+oEBWc/MchojuVxUSN0tz+lCPTO3tXOYo+ZzRrOF/c29BFEP2K2uZuXAcj8p7GUxOUfw7pDI
- LHL7LIH8TfNAi3s/C2jJXayNi/tsw7YnWMh8Xvmo0uF0O2HJvTdYhBb
+ bh=AN0ZkbVaUA8tTGFU3Eedcp5VCTSIYinCM4zH/lp4X78=;
+ b=RwUb+yzBQLB+WhHb6DN83KgnRynAOTouCccpnzeigffDx2MvdwSsrfb0Vh3mRKT/FE0BRBfYn
+ IcUx/VLPXc3DmbtsVLaXc9AOM1IUOIEBSv3DRIAvouKcG5+tKABo2of
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,121 +127,41 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/versatile/clk-icst.c | 72 +++++++++++++++++++++++++---------------
- 1 file changed, 45 insertions(+), 27 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index b69c3fbdfbce66876d5b1d4faaf4050759e44561..86ca04ad9fab0334f7b051377db709338a1f7244 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -234,39 +234,51 @@ static unsigned long icst_recalc_rate(struct clk_hw *hw,
- 	return icst->rate;
- }
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 4e1ebd8a30b1b422e33a4bb4527006e36c41666f..300f8d5d3c48d8c08fa599aad74526cd9dd822c7 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -567,12 +567,14 @@ static int exynos850_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ /* -------------------------------------------------------------------------- */
  
--static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
--			    unsigned long *prate)
-+static int icst_determine_rate(struct clk_hw *hw,
-+			       struct clk_rate_request *req)
+ /* Common round rate callback usable for all types of CPU clocks */
+-static long exynos_cpuclk_round_rate(struct clk_hw *hw, unsigned long drate,
+-				     unsigned long *prate)
++static int exynos_cpuclk_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
  {
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
- 
- 	if (icst->ctype == ICST_INTEGRATOR_AP_CM ||
- 	    icst->ctype == ICST_INTEGRATOR_CP_CM_CORE) {
--		if (rate <= 12000000)
--			return 12000000;
--		if (rate >= 160000000)
--			return 160000000;
--		/* Slam to closest megahertz */
--		return DIV_ROUND_CLOSEST(rate, 1000000) * 1000000;
-+		if (req->rate <= 12000000)
-+			req->rate = 12000000;
-+		else if (req->rate >= 160000000)
-+			req->rate = 160000000;
-+		else {
-+			/* Slam to closest megahertz */
-+			req->rate = DIV_ROUND_CLOSEST(req->rate, 1000000) * 1000000;
-+		}
-+
-+		return 0;
- 	}
- 
- 	if (icst->ctype == ICST_INTEGRATOR_CP_CM_MEM) {
--		if (rate <= 6000000)
--			return 6000000;
--		if (rate >= 66000000)
--			return 66000000;
--		/* Slam to closest 0.5 megahertz */
--		return DIV_ROUND_CLOSEST(rate, 500000) * 500000;
-+		if (req->rate <= 6000000)
-+			req->rate = 6000000;
-+		else if (req->rate >= 66000000)
-+			req->rate = 66000000;
-+		else {
-+			/* Slam to closest 0.5 megahertz */
-+			req->rate = DIV_ROUND_CLOSEST(req->rate, 500000) * 500000;
-+		}
-+
-+		return 0;
- 	}
- 
- 	if (icst->ctype == ICST_INTEGRATOR_AP_SYS) {
- 		/* Divides between 3 and 50 MHz in steps of 0.25 MHz */
--		if (rate <= 3000000)
--			return 3000000;
--		if (rate >= 50000000)
--			return 5000000;
--		/* Slam to closest 0.25 MHz */
--		return DIV_ROUND_CLOSEST(rate, 250000) * 250000;
-+		if (req->rate <= 3000000)
-+			req->rate = 3000000;
-+		else if (req->rate >= 50000000)
-+			req->rate = 5000000;
-+		else {
-+			/* Slam to closest 0.25 MHz */
-+			req->rate = DIV_ROUND_CLOSEST(req->rate, 250000) * 250000;
-+		}
-+
-+		return 0;
- 	}
- 
- 	if (icst->ctype == ICST_INTEGRATOR_AP_PCI) {
-@@ -274,14 +286,20 @@ static long icst_round_rate(struct clk_hw *hw, unsigned long rate,
- 		 * If we're below or less than halfway from 25 to 33 MHz
- 		 * select 25 MHz
- 		 */
--		if (rate <= 25000000 || rate < 29000000)
--			return 25000000;
--		/* Else just return the default frequency */
--		return 33000000;
-+		if (req->rate <= 25000000 || req->rate < 29000000)
-+			req->rate = 25000000;
-+		else {
-+			/* Else just return the default frequency */
-+			req->rate = 33000000;
-+		}
-+
-+		return 0;
- 	}
- 
--	vco = icst_hz_to_vco(icst->params, rate);
--	return icst_hz(icst->params, vco);
-+	vco = icst_hz_to_vco(icst->params, req->rate);
-+	req->rate = icst_hz(icst->params, vco);
+ 	struct clk_hw *parent = clk_hw_get_parent(hw);
+-	*prate = clk_hw_round_rate(parent, drate);
+-	return *prate;
++	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
++	req->rate = req->best_parent_rate;
 +
 +	return 0;
  }
  
- static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -329,7 +347,7 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
+ /* Common recalc rate callback usable for all types of CPU clocks */
+@@ -591,7 +593,7 @@ static unsigned long exynos_cpuclk_recalc_rate(struct clk_hw *hw,
  
- static const struct clk_ops icst_ops = {
- 	.recalc_rate = icst_recalc_rate,
--	.round_rate = icst_round_rate,
-+	.determine_rate = icst_determine_rate,
- 	.set_rate = icst_set_rate,
+ static const struct clk_ops exynos_cpuclk_clk_ops = {
+ 	.recalc_rate = exynos_cpuclk_recalc_rate,
+-	.round_rate = exynos_cpuclk_round_rate,
++	.determine_rate = exynos_cpuclk_determine_rate,
  };
  
+ /*
 
 -- 
 2.50.1
