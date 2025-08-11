@@ -1,72 +1,73 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF562253A7
-	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 10:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D205426B759
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 10:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909790; cv=none; b=cvq7M0Z6W9huQL7NL+KJWkJDgtE+lLw+9LOxQsWb6GmUEI7y62gOddIfZ7256KI1dwH1EaVX29BSBODj92W4jNG98YT8+BmG2vi35qajgT8wD668VUg+CUYoxqLWLRAVUtBBvgvOynesprJfvYFHqSUMl7pAzK2EY4v5u9/y49o=
+	t=1754909793; cv=none; b=iaqfQD1/N+NmD404MyGPy7XFvBsSzidWS6emNRqCTtF8F+tJiIQKnRnhh8a++JTaoMoa88WafBq1eXql6X7cdQjXMWCIasnGeyTpuBZibRxGRFWHtP30ByywxChlW3p6yGAqUmRftMLoK8xyutQAnWfl5le/aS6fXrsnDQV4dlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909790; c=relaxed/simple;
-	bh=PIea/i4Y2q/6salydRYDw/qDzf1o1hZNE4V2kDbPHLM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ojj9GBD2+xQaEep/3sXDuj4WX0OqYmI/ZPucv2BQSULODHKZqbufuIpsCl2s6C9YG2Q3lXl6xbePM9RXv3F8i3+Bc7GsWt6ehF7qiG2kKNrtzmAt/d4j3dwAbNT4Y8mWfJj7g25k8an9mW15ig5BVRkOAM4x6/luepWJ7UzHa04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SwZ68FYa; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1754909793; c=relaxed/simple;
+	bh=cxbqZ4pGz5eouMzBVW3NyN413s0i735X+YyBDIP1KBA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=goGmsibTvoWi9O9/7GvapxnXfGV3Hxb3nx3CGjazH1SfU25PzISq1Yycy1GTLarMTPs0JiIbVhDFhpFiqjFINO3coo0yDl3UTlE0ZXBpAN84p0ukJfPdSAztbv3SAfSDE8v3kjz0C1/0IlPJ5aUuQTFNudtQbsPuuyFykPrFn6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XUvkGGxE; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SwZ68FYa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XUvkGGxE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754909786;
+	s=mimecast20190719; t=1754909790;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cXP3JhYEHDsI5xw9s9ngejjJCnQI06FB4xWiEKgLmT8=;
-	b=SwZ68FYaYJVuatpEdEyfRD7K4sF/MHegrpXtISlSQO2MEayGidQRdwzhYDvVDzrrVXmzre
-	SKtWrQ23FhxdQzCQUCwWT8Fc1H3yQwFGjtYlpShsBmaIwJaIgq296Izs8tcYIvWY2Fa/OY
-	1CYv6AiEqnOe7WZCVlKzuJMT/iFN65U=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oItVFGO2Yky7AW4ur1CICLCJs15wxQxwvYfZhdFHqm0=;
+	b=XUvkGGxEe+h1WmIbg/eyl2fCDWGsH82NDvxo0Pd+C72IHlKf56j9dvQz/tlJs1YK+Vn5N6
+	77LGXvnSvCT46SKgtftFqcYRB0rx7gnbKGCHkD8qb7R/BQ6YLSHF+Z29uoDT1WucT2ESoK
+	TCIF087SsfZw9+R3BIB3tSGGeoJUZqo=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-111-SJmIxyOpMPu4VWpPO6kqhA-1; Mon, 11 Aug 2025 06:56:25 -0400
-X-MC-Unique: SJmIxyOpMPu4VWpPO6kqhA-1
-X-Mimecast-MFC-AGG-ID: SJmIxyOpMPu4VWpPO6kqhA_1754909785
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e8106a41e7so1030784885a.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 03:56:25 -0700 (PDT)
+ us-mta-221-REg7m21hNU-JuB46ihtZ0Q-1; Mon, 11 Aug 2025 06:56:29 -0400
+X-MC-Unique: REg7m21hNU-JuB46ihtZ0Q-1
+X-Mimecast-MFC-AGG-ID: REg7m21hNU-JuB46ihtZ0Q_1754909789
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e6c4ae500bso440563585a.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 03:56:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754909785; x=1755514585;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cXP3JhYEHDsI5xw9s9ngejjJCnQI06FB4xWiEKgLmT8=;
-        b=m3ED3vNiyVtDqlqXIEbciD1TFaiGvELDNL+zpLgeVtQ8BUoVC7q1TYcVjgUhF4yeGG
-         TvCYfOySTIJxpKORzWklQBvFWFiO1wYNbw6x/IHI6iIaTZskuwCFmbi/0lpnIt3PQ1h7
-         /XwTXzzFgztBjYc8sLkcZEla+6GMisB5LLf8eZSEp99byMAkhTImzwvOtxqrhxkrdUaM
-         xm3GFDtmISooQo6f/Ha3/wf8JXY8nC4wbo5Qriq6IqqeJcheno0zyvg2vutR7nTZ11vI
-         a/+QveQ/KRcpHZVVjZL/IxpV9p+iG5fUH63wm5X+Z7vceahxWWse70OPQl0NmY0L+o3x
-         F+9w==
-X-Gm-Message-State: AOJu0Yx6HWtgCjzQwSZ8LsRNGiDl8MFSHm0EggWyI4QivpqzQcKQWMLG
-	JNmPs4y4X1vePB+OXb4EMTYeZOqALr8a2Sqx28QLZvDFpxstId6yKVB/WZMxYi3B9pSQ9jlD+e6
-	4/NADcpYIImQvUWaaSJaBM8P4923izA2EuJH+PvjOaWIFcquyUppnWA0IpuszgQ==
-X-Gm-Gg: ASbGncubPYewvP5WyVzfNe/BPAk/oR8XS/Flw3IN3DnbDYrXLrRaA7+EOxdX52tGHwq
-	w7siLz3EPOJEvrPvmIy3e6n2VMmZcYHczKLw84CIFcPGxUedIxlb+BcF0rHxncQY7f5A609tch4
-	QsgK9zBmClE8Cskcx34qQfeEso1hyWAU0oAM6ClXdmucMfkrqeipNSP7CQ86yKjmp+nyjrA+Uhr
-	RIq/LibPevqr1F7Y3FJTcM7Puq1GbUR0NOIzndwoxDvxMH6Tt44yKQZ7XL/g9FwsU8tuONzWGw+
-	P6zI/cud7j/sSfMJbGvV8fRI6qgmhUPLAkENvPSee1qBbXl0CiI/vg6VJCl7dSb/qXOK4OT+Y/t
-	PMJE=
-X-Received: by 2002:a05:620a:19a7:b0:7e6:8580:67f9 with SMTP id af79cd13be357-7e82c7268b7mr1766290385a.39.1754909785175;
-        Mon, 11 Aug 2025 03:56:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHR8+CCi/SOVhR+SKRFj6lKvJMHxUZZffNiDttlUcNIvFehaFMGmyLzcvBT31Mi5D8YTjxp6w==
-X-Received: by 2002:a05:620a:19a7:b0:7e6:8580:67f9 with SMTP id af79cd13be357-7e82c7268b7mr1766283185a.39.1754909784503;
-        Mon, 11 Aug 2025 03:56:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754909789; x=1755514589;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oItVFGO2Yky7AW4ur1CICLCJs15wxQxwvYfZhdFHqm0=;
+        b=mS/YQWPgavak+zSBArUmYQvLSxIHlh66gjHlyVF8pt0Q5jGVXUj71fHyI0CH3eY1RC
+         2dZlmEQ0oD+bpv5Eb4uf5UP6717fa158NGHAFtmLZ7ctPkuU+NX9RNhi71BKPxY0S31p
+         yYGfQRKzsRN11Dax5cHhvXzRPI4ve2iuaM6fifFc0RFqwTeI2jqret+xSRXkyTNmlHGc
+         vtAZcgIkOG55eohXmWSh7DxTYeV5VxG7N09/vId2VxmG64vGp+WGBAqY6OxYE/wnllNN
+         H26fVh1hyD6bLew7ML5ihCwJBl7ovwD5+cM11M1PykrIB73Hq5bKyoM2werv83fbQt5v
+         MtPg==
+X-Gm-Message-State: AOJu0YykXpkGEcFb4+UHgjEimijRQTtpZVqp9IxB/5rJxH6J0dIp3yQP
+	YsTTNdh8u7uAdrBOXtattQX1xxiIFcsXD6wAm6PckmRJOdDfq1iA0Zl676ghk+f+bxjVksZv/tx
+	ZWMZqIQpNxg/GU94Y7U2RYHX8wbY60bLKMmfHfg5G/Qz+JFFatbhLyK5ckG1Eiw==
+X-Gm-Gg: ASbGnctMmEik4gcdsJbpJXefhgCjMTsoqn0/hYMXntTQcFhF2joe2c2YQVOxVaQ17r+
+	AG/dszb9N2gc9vdjdU8L8RmIoI59jsTjfYnDcWKTuWNog2+MRpO4yVDjaLieOmbwBfwA2Qb8d81
+	ptr3muizBqXiQ+dORT2tWtCKKNQzdQcaqFwPXgnIdl1qgqZbm85B4eK0y9eroPyDbYS5N1/+wxn
+	mV/NXXxXS5jIkgPnL/YfWIIB+CcXRII4r9/8cUZE+lnEdDEbjr1NTAxwLbhYH6w+d6cVwBuP7Ie
+	E2GO8a9YG/HcF7hSBODhcqcI+5yTRUq+D3uzVWqy5Dm63mbgBOg1evZ2Q0GvH2oYZrBQadbQoAL
+	QLdc=
+X-Received: by 2002:a05:620a:4482:b0:7e8:4fef:bfdf with SMTP id af79cd13be357-7e84fefc2camr275378385a.45.1754909788913;
+        Mon, 11 Aug 2025 03:56:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGc+TLWI2xokcRtB+yecJngyy21noRPTcC3sO0sgVUYXnKnFuXDagMBjiVXOuloOtpZxIcGpQ==
+X-Received: by 2002:a05:620a:4482:b0:7e8:4fef:bfdf with SMTP id af79cd13be357-7e84fefc2camr275371485a.45.1754909788147;
+        Mon, 11 Aug 2025 03:56:28 -0700 (PDT)
 Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e698de2df7sm1273446485a.80.2025.08.11.03.56.21
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e698de2df7sm1273446485a.80.2025.08.11.03.56.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 03:56:23 -0700 (PDT)
+        Mon, 11 Aug 2025 03:56:27 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v2 0/9] drm: convert from clk round_rate() to
+Date: Mon, 11 Aug 2025 06:56:05 -0400
+Subject: [PATCH v2 1/9] drm/imx/ipuv3/imx-tve: convert from round_rate() to
  determine_rate()
-Date: Mon, 11 Aug 2025 06:56:04 -0400
-Message-Id: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,10 +76,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEXMmWgC/x2M0QpAQBAAf0X7bOucJH5FHs7dYsPRHlK6f3d5n
- KaZFwIJU4A2e0Ho5sC7T6DzDOxs/ETILjFopStVFwqdbGjXBWW/vEMxJ+GQVNNYZUtTQwoPoZG
- ff9r1MX5z1hFLZAAAAA==
-X-Change-ID: 20250710-drm-clk-round-rate-b25099c0c3a7
+Message-Id: <20250811-drm-clk-round-rate-v2-1-4a91ccf239cf@redhat.com>
+References: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
+In-Reply-To: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -103,185 +103,66 @@ Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-sunxi@lists.linux.dev, Brian Masney <bmasney@redhat.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ linux-sunxi@lists.linux.dev, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754909781; l=5717;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754909781; l=1689;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=PIea/i4Y2q/6salydRYDw/qDzf1o1hZNE4V2kDbPHLM=;
- b=Fjs6oyZBop8brn89Wis9Wmv9d/YiKRi2CsQG8Y9p4VeZHPd25iPf4ZojTiOdduqVItv0hvHzz
- qP6WUnq2F02AwCFtKnsda9khMDCy+eoFbTEarTYyadGpvit3bjTpK8f
+ bh=cxbqZ4pGz5eouMzBVW3NyN413s0i735X+YyBDIP1KBA=;
+ b=6DBm6LwfY0nfMA421HhZNkFETdBD0OvYJlukZJUarU0DQPM5TzD76GN5AVvolZqrFAvmrp1nP
+ jvbNFGe7dHWC4XgQV+dlyA/bvSpVN7ZZvyR5/1pWXfn+rHkgHaXmtum
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-The round_rate() clk ops is deprecated in the clk framework in favor
-of the determine_rate() clk ops, so let's go ahead and convert the
-drivers in the drm subsystem using the Coccinelle semantic patch
-posted below. I did a few minor cosmetic cleanups of the code in a
-few cases.
-
-Changes since v1:
-- Drop space after the cast (Maxime)
-- Added various Acked-by and Reviewed-by tags
-
-Coccinelle semantic patch:
-
-    virtual patch
-
-    // Look up the current name of the round_rate function
-    @ has_round_rate @
-    identifier round_rate_name =~ ".*_round_rate";
-    identifier hw_param, rate_param, parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    	...
-    }
-
-    // Rename the route_rate function name to determine_rate()
-    @ script:python generate_name depends on has_round_rate @
-    round_rate_name << has_round_rate.round_rate_name;
-    new_name;
-    @@
-
-    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
-
-    // Change rate to req->rate; also change occurrences of 'return XXX'.
-    @ chg_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier ERR =~ "E.*";
-    expression E;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    -return -ERR;
-    +return -ERR;
-    |
-    - return rate_param;
-    + return 0;
-    |
-    - return E;
-    + req->rate = E;
-    +
-    + return 0;
-    |
-    - rate_param
-    + req->rate
-    )
-    ...>
-    }
-
-    // Coccinelle only transforms the first occurrence of the rate parameter
-    // Run a second time. FIXME: Is there a better way to do this?
-    @ chg_rate2 depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    - rate_param
-    + req->rate
-    ...>
-    }
-
-    // Change parent_rate to req->best_parent_rate
-    @ chg_parent_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    - *parent_rate_param
-    + req->best_parent_rate
-    |
-    - parent_rate_param
-    + &req->best_parent_rate
-    )
-    ...>
-    }
-
-    // Convert the function definition from round_rate() to determine_rate()
-    @ func_definition depends on chg_rate @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier generate_name.new_name;
-    @@
-
-    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-    -               unsigned long *parent_rate_param)
-    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
-    {
-        ...
-    }
-
-    // Update the ops from round_rate() to determine_rate()
-    @ ops depends on func_definition @
-    identifier has_round_rate.round_rate_name;
-    identifier generate_name.new_name;
-    @@
-
-    {
-        ...,
-    -   .round_rate = round_rate_name,
-    +   .determine_rate = new_name,
-        ...,
-    }
-
-Note that I used coccinelle 1.2 instead of 1.3 since the newer version
-adds unnecessary braces as described in this post.
-https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+The round_rate() clk ops is deprecated, so migrate this driver from
+round_rate() to determine_rate() using the Coccinelle semantic patch
+on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-Brian Masney (9):
-      drm/imx/ipuv3/imx-tve: convert from round_rate() to determine_rate()
-      drm/mcde/mcde_clk_div: convert from round_rate() to determine_rate()
-      drm/msm/disp/mdp4/mdp4_lvds_pll: convert from round_rate() to determine_rate()
-      drm/msm/hdmi_pll_8960: convert from round_rate() to determine_rate()
-      drm/pl111: convert from round_rate() to determine_rate()
-      drm/stm/dw_mipi_dsi-stm: convert from round_rate() to determine_rate()
-      drm/stm/lvds: convert from round_rate() to determine_rate()
-      drm/sun4i/sun4i_hdmi_ddc_clk: convert from round_rate() to determine_rate()
-      drm/sun4i/sun4i_tcon_dclk: convert from round_rate() to determine_rate()
+ drivers/gpu/drm/imx/ipuv3/imx-tve.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
- drivers/gpu/drm/imx/ipuv3/imx-tve.c           | 17 ++++++++++-------
- drivers/gpu/drm/mcde/mcde_clk_div.c           | 13 ++++++++-----
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c | 13 ++++++++-----
- drivers/gpu/drm/msm/hdmi/hdmi_pll_8960.c      | 12 +++++++-----
- drivers/gpu/drm/pl111/pl111_display.c         | 13 ++++++++-----
- drivers/gpu/drm/stm/dw_mipi_dsi-stm.c         | 14 ++++++++------
- drivers/gpu/drm/stm/lvds.c                    | 12 +++++++-----
- drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c    | 12 +++++++-----
- drivers/gpu/drm/sun4i/sun4i_tcon_dclk.c       | 18 ++++++++++--------
- 9 files changed, 73 insertions(+), 51 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250710-drm-clk-round-rate-b25099c0c3a7
+diff --git a/drivers/gpu/drm/imx/ipuv3/imx-tve.c b/drivers/gpu/drm/imx/ipuv3/imx-tve.c
+index c5629e155d25aef5b43445bc18c6c90039c99974..63f23b821b0be66a8e8a379e1375ffd98552e72f 100644
+--- a/drivers/gpu/drm/imx/ipuv3/imx-tve.c
++++ b/drivers/gpu/drm/imx/ipuv3/imx-tve.c
+@@ -368,17 +368,20 @@ static unsigned long clk_tve_di_recalc_rate(struct clk_hw *hw,
+ 	return 0;
+ }
+ 
+-static long clk_tve_di_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *prate)
++static int clk_tve_di_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
+ {
+ 	unsigned long div;
+ 
+-	div = *prate / rate;
++	div = req->best_parent_rate / req->rate;
+ 	if (div >= 4)
+-		return *prate / 4;
++		req->rate = req->best_parent_rate / 4;
+ 	else if (div >= 2)
+-		return *prate / 2;
+-	return *prate;
++		req->rate = req->best_parent_rate / 2;
++	else
++		req->rate = req->best_parent_rate;
++
++	return 0;
+ }
+ 
+ static int clk_tve_di_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -409,7 +412,7 @@ static int clk_tve_di_set_rate(struct clk_hw *hw, unsigned long rate,
+ }
+ 
+ static const struct clk_ops clk_tve_di_ops = {
+-	.round_rate = clk_tve_di_round_rate,
++	.determine_rate = clk_tve_di_determine_rate,
+ 	.set_rate = clk_tve_di_set_rate,
+ 	.recalc_rate = clk_tve_di_recalc_rate,
+ };
 
-Best regards,
 -- 
-Brian Masney <bmasney@redhat.com>
+2.50.1
 
