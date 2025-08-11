@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA53B2EA49B;
-	Mon, 11 Aug 2025 15:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D26B2EACF7;
+	Mon, 11 Aug 2025 15:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925512; cv=none; b=e4+rSAOxgy6Y7Up+i3JWoTW2VL83lfPtEQtxO0vhy2ZT/H+lQmEcglBZNM8tYuLwvSAjRRk7ETJYzqpNafimnLYQTHN0E2OSyA5ffw3K5dZ3DKHJI8sCgTRD9HuS2FIls0ot0tPvMBCiL3W9ntRl157p82UnYD+DrGRb6t2HKMs=
+	t=1754925513; cv=none; b=N+esugATQjr63VKq+L/gpimSOq43TmufWGlxj/ZP0d0quIMAX96Rn0jjAL+6xqxcRo5h6TkjRu3Bi+HA56FUFbCS9t5JeQBiX+Opcle9YRsFowjnIrbsaLPYMsuMDswTWz4Z+s60vy9BGHq6PZggSqBjSt2cOT4xUQGei1U42D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925512; c=relaxed/simple;
-	bh=T6svf9I7sAp3NdpQAtgmdqBSvkBTYYQQ/oqhcJFt+cs=;
+	s=arc-20240116; t=1754925513; c=relaxed/simple;
+	bh=RNPN2SiCBEbc+AcF/cCn7c00+Qgz+KU2YQyyc+F0hh8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EcMxBinRxifRxLG/bP6/oxnSrPiSExUX3D7OOXOXbVv7OB/qOcD8CMPcT0cHYV4/AqL99PXfFpMdcrqlHzbxUkCsjKG65nOGrRSa0JkZTeJecwOQAojhC2Oc/tVc+1Oljz4T+0S13eWmKsgDEAKdstzawAJcUeFkon7q2LDpru0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAjnmagr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Xauk1OOxIgOs73en6GuZa+vXKS21JQQ/pJp8use+76XhMwncNFLBcpRFxDZstRFTDBwZ4uuBSW55bmBhknLHe3dSqv7DJBeKFoy0/wQK3dHM2B8GXEs2GTyxIyAtAX0csDUs9p/7yICAeqsVkBKuv30wDZOI/+wqgN9d/qGAmWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2hwY9sd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAjnmagr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 42D85C4FE94;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2hwY9sd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A86C0C2BCB3;
 	Mon, 11 Aug 2025 15:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754925511;
-	bh=T6svf9I7sAp3NdpQAtgmdqBSvkBTYYQQ/oqhcJFt+cs=;
+	bh=RNPN2SiCBEbc+AcF/cCn7c00+Qgz+KU2YQyyc+F0hh8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TAjnmagrq0XbpUXlIikGEB89htJlCqnQn8attoZAmMIBC0vTypnkbuWerGLtyGayL
-	 ZCyzFmXd90CtA64Y3wWr0cn+j8kWZpMfq9GIK38WHCTxwVlHM3eHDM4Zn1VRdzOp5w
-	 tqLs36mH5ww9mQi/MqdAWFbH/jgle2kpCmOyQfk6QqZGYsc+co6Zyhf3amRv9u5wcG
-	 cVgxdKV8GWyhEP8yrTv4bGwMtk+o8JwVq/zB5AkqpdCy5QONvrLDT06LCKXtmwijBX
-	 x1z84gu4IzNhKig8+QF7aYeMBtrSbnlAjUTbyr5ZrNZkni2w0UYviXLaF6UYA8IILJ
-	 Qlj6RFONUCfjA==
+	b=t2hwY9sdUh0bm2cJzQus5a7pmmTtJ1p10X4Pqq7bErinFn93puCU3RhuSQpXD2VNM
+	 DnkH6sDiwtEZg22wt1xhACCaFQ62Pc1UmsR9IaV+toF64SMmorMGwW732gtr/gc/pw
+	 ifeOCgQ5KLWkEJhudQ26hBMLXqB0Kj7jgpcxi2F5lfPPkVF+O/9lhcc1tC7AJkLcqX
+	 v8jbZ7VNKkS+6lqWI7MxnHy9aWKmNrbu/7sQcqSVyYnIb9emYa9URvMUZuEoKbh2Y3
+	 cgWU5ZO60SSbJthgMpeKsFlEGR3JL43AVOJYC6+FQA5yuppJuAXHVVxaNXGEAm+SpV
+	 lKC9os4EPHuHQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F17C87FDA;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96794CA0EC8;
 	Mon, 11 Aug 2025 15:18:31 +0000 (UTC)
 From: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
-Date: Mon, 11 Aug 2025 11:18:51 -0400
-Subject: [PATCH 059/114] clk: stm32: stm32mp1: convert from round_rate() to
+Date: Mon, 11 Aug 2025 11:18:55 -0400
+Subject: [PATCH 063/114] clk: wm831x: convert from round_rate() to
  determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250811-clk-for-stephen-round-rate-v1-59-b3bf97b038dc@redhat.com>
+Message-Id: <20250811-clk-for-stephen-round-rate-v1-63-b3bf97b038dc@redhat.com>
 References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1570;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754925498; l=1764;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=OMkXt6ulJtXQgDcGvQq+EbcFPGGf/lhpnwaFULBTG/M=;
- b=DbiFC17Emo7Oq3yS/Q8DEleOwuM3UzLqwJsExDRUQv2YV/5reOSWynDQcyu56einvRfRTfkkf
- 1w8rwQURnM6CW7TRxqi99xc57cksAjuZA/1y38sQVZHcgRkw7E4uayU
+ bh=i3mGQJOb3sx5V+uesOSQVIfVUYnnH5uB5xAx+9cEFco=;
+ b=aidwsVEIvZ+L+XneRcHzWbpXu94vZIAi7Yj2KRjHRri8gKtW0c35Ea1zgQaMMkInRQPd/tOVx
+ 9oCiKSbQHxUBeyDV1JzfSaCerGqesbxDPGJP4z48iYQ/SSe7+qsc6RO
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 X-Endpoint-Received: by B4 Relay for bmasney@redhat.com/20250528 with
@@ -127,42 +127,48 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/stm32/clk-stm32mp1.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/clk/clk-wm831x.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
-index b8b45ed22f981df580506f3d4ca801ba11d2bab2..2d9ccd96ec98c05eb836d632bfd9903de60ba1bb 100644
---- a/drivers/clk/stm32/clk-stm32mp1.c
-+++ b/drivers/clk/stm32/clk-stm32mp1.c
-@@ -970,12 +970,15 @@ static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
- 	return mult;
+diff --git a/drivers/clk/clk-wm831x.c b/drivers/clk/clk-wm831x.c
+index 34e9d4d541e25c1adf766b48333f11c2d5b219fb..263e927138c2ead84d9f154d5e0f2d7b068f1c1f 100644
+--- a/drivers/clk/clk-wm831x.c
++++ b/drivers/clk/clk-wm831x.c
+@@ -133,18 +133,20 @@ static unsigned long wm831x_fll_recalc_rate(struct clk_hw *hw,
+ 	return 0;
  }
  
--static long timer_ker_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *parent_rate)
-+static int timer_ker_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
+-static long wm831x_fll_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *unused)
++static int wm831x_fll_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
  {
--	unsigned long factor = __bestmult(hw, rate, *parent_rate);
-+	unsigned long factor = __bestmult(hw, req->rate,
-+					  req->best_parent_rate);
+ 	int best = 0;
+ 	int i;
  
--	return *parent_rate * factor;
-+	req->rate = req->best_parent_rate * factor;
+ 	for (i = 0; i < ARRAY_SIZE(wm831x_fll_auto_rates); i++)
+-		if (abs(wm831x_fll_auto_rates[i] - rate) <
+-		    abs(wm831x_fll_auto_rates[best] - rate))
++		if (abs(wm831x_fll_auto_rates[i] - req->rate) <
++		    abs(wm831x_fll_auto_rates[best] - req->rate))
+ 			best = i;
+ 
+-	return wm831x_fll_auto_rates[best];
++	req->rate = wm831x_fll_auto_rates[best];
 +
 +	return 0;
  }
  
- static int timer_ker_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1026,7 +1029,7 @@ static unsigned long timer_ker_recalc_rate(struct clk_hw *hw,
- 
- static const struct clk_ops timer_ker_ops = {
- 	.recalc_rate	= timer_ker_recalc_rate,
--	.round_rate	= timer_ker_round_rate,
-+	.determine_rate = timer_ker_determine_rate,
- 	.set_rate	= timer_ker_set_rate,
- 
- };
+ static int wm831x_fll_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -214,7 +216,7 @@ static const struct clk_ops wm831x_fll_ops = {
+ 	.is_prepared = wm831x_fll_is_prepared,
+ 	.prepare = wm831x_fll_prepare,
+ 	.unprepare = wm831x_fll_unprepare,
+-	.round_rate = wm831x_fll_round_rate,
++	.determine_rate = wm831x_fll_determine_rate,
+ 	.recalc_rate = wm831x_fll_recalc_rate,
+ 	.set_rate = wm831x_fll_set_rate,
+ 	.get_parent = wm831x_fll_get_parent,
 
 -- 
 2.50.1
