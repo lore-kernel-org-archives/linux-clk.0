@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487C957C9F;
-	Mon, 11 Aug 2025 06:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413762D6636;
+	Mon, 11 Aug 2025 06:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754894302; cv=none; b=WgntM784+fTOtLV7KyjJ8Jw1nwiVq7e351ha60fqzsW5/p05hUMzY22AwWGIbewZEzV3vha9J+Bb+wuzyRenZFf3XBpJ5UAam6j+Hr3oVnUGutuwXDAEajaOTJ+axF0gHkmnZhj4eWQK1wlfiSmFBJYpeiTV3R/xFRiB0I2ItxU=
+	t=1754894924; cv=none; b=rh+dyl4WY8RcJL7Pu466QmVwBK7FrT6nuRKoCyI4fegJgCwVf7hTn04zMUUOwaB+2lMcGM3kPxyHG/na188+K9YYCL/aX81UwfEvE6/f3UN4uBbwrBE9se+xTZXt1YjbNc076uLMZTrwsM3BeBGVukRcRVjEgoSB8i7fqGrcPJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754894302; c=relaxed/simple;
-	bh=A5HEG7XgJUt4wjPWMnHqs0rS7OShpT65SYqFRjxhiXU=;
+	s=arc-20240116; t=1754894924; c=relaxed/simple;
+	bh=UFskI9Uetx9Moyp7eZo+dMCASbA5Ga+jaqTNTrGajqc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWje8NBJL4capxKUlCnd8gUzvuR8MBrlQjJmw+RECCeNde1nZittT2AiPoDYmQniOV9t/m+lnuiIo8TDaPm3sUlqYq+Z7adTxEUuMnSUuzlriZZLcIVEdxMtPSJqMuPPacNsniGwEvHuidIpAFpsGUL6ABB9gpbH4YXbcbjwgwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kR6TbhiA; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ey4JPii+xgSJq5D6nIdmv/TOrRULCs4CsZEdRUvC89DMY9Bs17nw1zmLlFTEjrTn7tK31Wa2Qa++pPLJPbwdZuQUZArDsiMwes8t/M7fe8c9z3q5DJf5uWMrSGkkh53+SNy6E55uJMDyNTqAJmT/tWHPAlbIg8YpgAFZ2FpSKxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2tPNA5a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kR6TbhiA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1041AC4CEED;
-	Mon, 11 Aug 2025 06:38:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2tPNA5a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68627C4CEED;
+	Mon, 11 Aug 2025 06:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754894301;
-	bh=A5HEG7XgJUt4wjPWMnHqs0rS7OShpT65SYqFRjxhiXU=;
+	s=k20201202; t=1754894923;
+	bh=UFskI9Uetx9Moyp7eZo+dMCASbA5Ga+jaqTNTrGajqc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kR6TbhiAqxfztq3KKWeWWvwKDgFDoRrVqhzKHD2Xt3GylgtlYhVNnzTZnoYXWSOLy
-	 y/GqKM8fRiKGOxO+3HdHx69g4aaFJsM7CcprCk6oMtgW/Rh71woZFvNsnL/KSqzDWk
-	 1LG+tTru1MVEyUB7su9OkF/b00C4G8nnk2d/IgWNjiP0g35PGrSDPQUewCif6sU3Xb
-	 K9TYDVTxg7Uli123Onqld3fF3UdorYodRMb3N8cJRSCxJKVLF3Rc/n7YvLjGf/u15Y
-	 mHcBPm0EuR4UHqcvhMy7xXLscsXYo7ci4AjsAq5zLRObbacFVH/qChZYeg+bvfn123
-	 QVOCb8zrMuSzQ==
-Message-ID: <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
-Date: Mon, 11 Aug 2025 08:38:15 +0200
+	b=G2tPNA5aK5uIsvMw7ygPwrqcWpMoKGmCBV4bquqArD/5JqL53Iz/nufRoOXAlIv8z
+	 sMzZIh6vwwsZE6MWvD4eol3yo3Cc5e5z+HBJcA8s8YbhIvx4QhtWQi+6Gzuv9j9I3Q
+	 atS3WiaU13E1JdCoQ3veK09m2kAis3Vb60k2jnrUuaGsYxprd7ULgLxW6SQaV6swlv
+	 riJrDun0dIvekEdYtWxruTQ5qdwEwB5/YI5/9tR/x4OXi/U9W0O46rQKYEMy0BM+DC
+	 gyFU937VinN66EuRTV+DGB6FS8nrI6MYZNMqVMDfPFTm01NxMgvIL0mcuaVkIpQ2N7
+	 MlyfaA9hanm2w==
+Message-ID: <f8ad7883-d879-47ce-aafc-7c5f741f3c18@kernel.org>
+Date: Mon, 11 Aug 2025 08:48:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <20250806-pxa1908-genpd-v1-2-16409309fc72@dujemihanovic.xyz>
- <20250808-portable-expert-turkey-4f8f19@kuoka> <2017616.PYKUYFuaPT@radijator>
-Content-Language: en-US
+Subject: Re: [PATCH v1 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
+ nodes
+To: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
+ shin.son@samsung.com, alim.akhtar@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dev.tailor@samsung.com,
+ chandan.vn@samsung.com, karthik.sun@samsung.com
+References: <20250808142146.3181062-1-raghav.s@samsung.com>
+ <CGME20250808141247epcas5p2c254f35146a6ea35b5c49c4316ba30a3@epcas5p2.samsung.com>
+ <20250808142146.3181062-4-raghav.s@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -94,56 +93,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <2017616.PYKUYFuaPT@radijator>
+In-Reply-To: <20250808142146.3181062-4-raghav.s@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 08/08/2025 21:46, Duje Mihanović wrote:
-> On Friday, 8 August 2025 09:34:54 Central European Summer Time Krzysztof Kozlowski wrote:
->> On Wed, Aug 06, 2025 at 07:33:21PM +0200, Duje Mihanović wrote:
->>> +          A number of phandles to clocks that need to be enabled during
->>> domain +          power up.
->>
->> This does not exist in your example, so it is just confusing.
+On 08/08/2025 16:21, Raghav Sharma wrote:
+> Add required dt node for CMU_M2M block, which provides
+> clocks for M2M IP
 > 
-> This is because I have not implemented any of the clocks used by the
-> domains at this moment.
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> Actually, I am not sure anymore whether it is necessary to assign
-> clocks to the domains as I have just yesterday successfully brought up
-> the GPU with some out-of-tree code and that did not require giving the
-> domains any clocks even though the vendor kernel does this. Should I
-> just go with that and drop all clock handling from the power domain
-> driver, at which point there would be no need for the individual domain
-> nodes? If not, how should I in the future assign clocks to the domains?
-
-I am asking to see complete binding with complete DTS in example and
-submitted to SoC maintainer.
-
-I did not comment on drivers. This is not a driver patch.
-
-> 
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/power/marvell,pxa1908-power.h>
->>> +
->>> +    clock-controller@d4282800 {
->>> +      compatible = "marvell,pxa1908-apmu", "simple-mfd", "syscon";
->>> +      reg = <0xd4282800 0x400>;
->>> +      #clock-cells = <1>;
->>> +
->>> +      power-controller {
->>> +        compatible = "marvell,pxa1908-power-controller";
->>
->> No address space, so this should be folded into the parent.
-> 
-> By this, do you mean that the clock driver registers the power domain
-> controller through devm_mfd_add_devices()?
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index 0fdf2062930a..086d6bbc18b8 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -1454,6 +1454,19 @@ pinctrl_aud: pinctrl@1a460000 {
+>  			reg = <0x1a460000 0x10000>;
+>  		};
+>  
+> +		cmu_m2m: clock-controller@0x1a800000 {
 
 
-There are multiple ways this is being solved but NONE of them are
-binding ways. You again bring driver into bindings discussion.
-
+Are you sure this satisfies tests required by Samsung SoC maintainer
+profile?
 
 Best regards,
 Krzysztof
