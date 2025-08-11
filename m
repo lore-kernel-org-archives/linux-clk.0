@@ -1,92 +1,130 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01651DF977;
-	Mon, 11 Aug 2025 08:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3202101AE
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 09:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899701; cv=none; b=ar1xTndU9X8lQ1OyBTqLs76FgWB5N7pknjQrPtk0wMda0lDneXxrUNFPflu1SXcoP9BL+/oP+SlAl75/bQf+AhmQH9FtpCNoe3BgxW5QWu9MqbObH1hWCMDfoA05eDYK8slLxZFgO+2nmIbHWTs74Aoi+GI9iFlDwkadWvLSsp4=
+	t=1754902973; cv=none; b=n/ulIxMCwOnnd+XpzSmqvqcxU2D6SWU+E0PGkGNjw6VNClJDF+e8zeDslHUw2LKHa2cVVwDr+EJ9QAoUJNpDih6/zZ+WdGfFhBw5HW1Msf5v+WqcAAHG0fHvOKQbt7Ji//1qRXogvNVt6PJwnBifubXRKk7xDH97q/0FbuZJ43Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899701; c=relaxed/simple;
-	bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A8Noy4bD0v71iDev7VodhEj5frNaeYFX2tVBNZ1G44x25uFdJiKGUWwLxG6qojv1NHjLNPlJIpN+e4g2R28Q/vPkdXN4GuBowb0RgWxEGxEurlxovagDX3rW4FF2Qq8RRsN8ESVVsEeaFBRgI4Jb8C3vGW3ywpO3UHm75UA7e4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Os/5BV6t; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754902973; c=relaxed/simple;
+	bh=tdgwIQdJG+orKkZyHmIqAu1docbT/zmwkliWXBBtmGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MuCSfNEd1oRTPIqjCjP8K7ioYVoqT3hfWi97TVkDsCGsciJ9Twr9xF8Susozqp1pRA6p4W/NkEmUA9oo3JXyy0Sw2OP4QllC2mu4SUnWhzLM9/6HNNzhLecNUnRvLcSPDhhQfcS96//OanogXr8ZAu/Bg4Cq7djacfVergJhLKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FfYtt73T; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Os/5BV6t"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso2513504f8f.1;
-        Mon, 11 Aug 2025 01:08:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754899698; x=1755504498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
-        b=Os/5BV6tl7pdbXbcQvR9Qmqgd9wtWXmaa2lKknOSnKQZ42hS3XQ98bRvwosM2147tr
-         YSqarj8MPyOciXHzJ36HGjMUc0qrG83eG/s8PoauLEHEgWw1gLwNlBbib3X1ImR/5gyC
-         wz3pm4JlslTICT2RdG9ZcMvaR+K3Ieir9MXjiKtM3b+0/cU8ZFPgRJga4WkYsjVuG8Dn
-         jR4HaP2cObuu+oRjns5ae2OQ0AfWgxew2pLxqtihu6Pi9KQJssLlX62YGujy/QK9JAnN
-         udVyYPIAeXY7iOM0p+Y9NoP+JHuTF2BJ3JH750G35/5MF0FEMBqpLbNn3exDCpAMfaHu
-         QxJg==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FfYtt73T"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57ALqfh9008276
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 09:02:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tdgwIQdJG+orKkZyHmIqAu1docbT/zmwkliWXBBtmGE=; b=FfYtt73TZBF5+9/z
+	qDBn8YF/XFOCvLK8+/qPa/2rX2ieN8UifIMXB6c0XGgtZc1uOHxrG9sMzXaVOTMW
+	ODfXLj1cqgiE94V7Sea1ZRVhXpTDS/YT6vK+Yvf9qP58EoLphFNO4V/PM5YrTbWf
+	FafAbgxCz2Qt8Yw7MP+UTHtXhHT+jMd/ERgqL2Zs9FTpY1iCxL63eu3dJfUX9Lvn
+	ZNby5h2tNk1xx+IBNHTohCpm3kk82W7QcvKl6CL1SXR2Ar9b2D8DTx7Dlc4J1rRz
+	koCBHRw1vEqu+UufFE7wk4xUFFporON534+10M3shJ38oZofnfetpOYD09MFP//G
+	+w1TSw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxq6up9f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 09:02:51 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4af23fa7c0cso12196701cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 02:02:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754899698; x=1755504498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oTajOSV4WD49or58jFFQKgPCdX5azB7+7ubfHvm6hdk=;
-        b=l8exdwSgPJ7qJ7NNPArFGrilPTPhYofLliM66dYF5/2+GeX97pNSCehAm0+lhbw1Mw
-         5AsxRMnTiWq27EWIsyS2PJKv60HMl1zXMK/DS3fIB3nGlwBaQGdYtcY/eVt8wbYpllu0
-         VvGZK3JgiZogXAb5SCNfbgLQEdnSRkLS5MmR6x7wTaAi0dQGi0gv4oNBftP5FW3b1o1b
-         V8pBqiU3Gr0HzcT8Id5N8hEpPr1vQnO/lcFsf81lt2s644yNkih+VvLObX+eT6Lxkwpm
-         ceEw+fH4A9JnfnNYvwvPygsjqfNNuu4MUBUUq//wzUvsFajna94FRvrGuhSaGeisbFHf
-         nIhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW//AMxV6S3w711b9aLSLJP06aMFsEOqfF9dCVYBF3M1KEWSlfU7lzSulTmaS02coesDd2T74Mswf0=@vger.kernel.org, AJvYcCWJkjhg1YceI755cTEi5q0hu8BYjR7iS7VXfUvEL24WluBypl+e6fCIDniy6cmE3uW1wmExRTb4xCno8Eiw@vger.kernel.org, AJvYcCWLd/H0opB342JS1GMbFabtaOFHpF/fgkdpdNNVuWmH1hwITAmvHhnqcBwCW+3tgdW8etCbCrmYcD/PdAM=@vger.kernel.org, AJvYcCWt/IfVrpr3LQHP1iP9tZaOGeeQI2ZIKh7P/Dsyd3jHOcKYvYqr9i6WJ+qgaXt4xh/QH59uDS3iybY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywme7huZrN2d0zQIBl+iEv6Qk3e/dk98nT/BjmIABsxpLNqAPQF
-	dtfVyeLMUvs7GhH6GoP8GjkEskrEDUPh9mZomZnkc7m/A2Qac1nDiKZIku+sLDEQrtM/yuhr99U
-	oku4J39xXVsC5AnmKQDuAcLn7vkG205s=
-X-Gm-Gg: ASbGncsLgGixc/LXIbDzybZq/YHgZtbYYAb0F9CaFNJL1DSva8nZf2Raa19EGbKZ6SH
-	U0UoVGDTK7Vq9AdQMUSnx8oB5a2gIX8RS3JeDHU3i72VYIIVww7spgqWtudnfu1fFBYv4XGsoiP
-	DTdEdEOToqr99kQyveHk9bMlUhaQ1B9G+5+ceKSar4+QbjBFP0j583H4MC2ykKLa8cpsKfNTl19
-	E1z+m2E
-X-Google-Smtp-Source: AGHT+IFQYThriVYkG4l41Pm2m9DFlqkAsl8e3bqSyDSoX90aAt2MINDbXW1290ReIK6ddDx+CRDXeZBfKaC3t21oGiA=
-X-Received: by 2002:adf:f8c6:0:b0:3b9:469:6b3b with SMTP id
- ffacd0b85a97d-3b904696caemr6356507f8f.6.1754899697803; Mon, 11 Aug 2025
- 01:08:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754902970; x=1755507770;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdgwIQdJG+orKkZyHmIqAu1docbT/zmwkliWXBBtmGE=;
+        b=o8q5fi8bafRT+XPRMrM1f11hBe89eYxryGoCaohC/+a6AB1/mhs2YLszbZJ+x5K0t4
+         wSdB6MhXIVS5JoPY1cIRNxeLUoqnvJ8lCcM61VcO3v8RrNEn20NhQaSK6u4/GqJCk4sH
+         PPnI/1G1jnfWDnBBDF1WvWmOwzR9B1GlsFiV/TvFaqalrJZ5fDku0QbGRUQz3By1TeGw
+         NKT2dZv2frwKyVREJpMsNjtm+VciE4xopl7DBw0m5Q0tHHO0wb1CP4tOP31dK3q4/X7Z
+         qFQhb1XYBW0YpQIZpevvDDkVNZoonIaCwiqvcM0MTdFwfahux5DYYOSbk/3O1oHnDQGC
+         OnzA==
+X-Gm-Message-State: AOJu0Yz5Sm2gi8PxUgkU81RLMJdQ8FTUNfw3M0X09ZNQh2cJCJvNo4tQ
+	TlDO9PBky2qjWZ6rnesj5uPphCSV5gJDX+9uwT2A9RJv57WC5ZivueAi8wYMvRaL5au9DPwrOMp
+	FMRmiUCDfTsraodqJmGYFe7luvsC8frYJ8Ggkrizq151oUDymHGNTU75aTc2w9BM=
+X-Gm-Gg: ASbGnctlIfy461MEUBOKlymaN6DtsadLF/ors7D+rNRygyUO9wqLo30MG1BYhiDv76W
+	AzmhAmXLjyQEodFxUq9Z/cjOGWNIdkVS8i3q6f3uWNDtnRrrWfWUdln02WVlGYbDylSFq5PY/02
+	gFkuQrglyuP3LZaVLLVZ/DWFDO/cpCILbPVDe4EoIRzZujpzOT8aUETVxA8eQHpQGKoFJMcv43F
+	C6AL9xvffb6FLoaAL0rpyKqroBmvXOMPIUhGDhyIqR44Agv4i8DZ8fAdfYOMUe1cPxPA1bwzAqa
+	2aW7yTXknQUxPiqDRMRjxZnQhJ9CfTfoe4P2Mnm74b+wAVZ7lL9Ns+cowWjvwNBIzjiMdm2w8Te
+	UyoxHnZY7dOajfvdFKQ==
+X-Received: by 2002:ac8:5d51:0:b0:4a9:9695:64c0 with SMTP id d75a77b69052e-4b0c1b28bf5mr48920861cf.8.1754902970261;
+        Mon, 11 Aug 2025 02:02:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5TWRviyLEMQPzvh4QVbqH5jPy1ZuqxzZtRDTRJ9JxfjUgmBuPx6tAaaAYzS0THJjvJINbNA==
+X-Received: by 2002:ac8:5d51:0:b0:4a9:9695:64c0 with SMTP id d75a77b69052e-4b0c1b28bf5mr48920671cf.8.1754902969784;
+        Mon, 11 Aug 2025 02:02:49 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0afsm1977783566b.117.2025.08.11.02.02.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 02:02:49 -0700 (PDT)
+Message-ID: <d00689fb-8074-48df-ae95-bcdf5e756111@oss.qualcomm.com>
+Date: Mon, 11 Aug 2025 11:02:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321095556.91425-1-clamor95@gmail.com> <20250321095556.91425-2-clamor95@gmail.com>
- <svbpvo5cpwonxae46wre7ar2w4yf5j2xbfkb4hek6xgnue3jpl@5v57pp4iz7uv>
-In-Reply-To: <svbpvo5cpwonxae46wre7ar2w4yf5j2xbfkb4hek6xgnue3jpl@5v57pp4iz7uv>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 11 Aug 2025 11:08:06 +0300
-X-Gm-Features: Ac12FXyu7jeVTLZAUsdCRGtClrszgFd-4CORCMHoBadETFSPKYo1vU9UwGhKTwo
-Message-ID: <CAPVz0n18VGrY-dAAUPq4iZMX149hpSWshXPCf32ZxKUwrtHcbg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] drm/msm/dsi/phy: convert from clk round_rate() to
+ determine_rate()
+To: Brian Masney <bmasney@redhat.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20250810-drm-msm-phy-clk-round-rate-v2-0-0fd1f7979c83@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250810-drm-msm-phy-clk-round-rate-v2-0-0fd1f7979c83@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyOCBTYWx0ZWRfX5KFfAzQNM7UD
+ Qj2GK8i6zi7XzbIRitOcAmnT+pMRGoC4Mujq6VY/6t8R6lIOq7rEEMJDkfM66NRKOft8uliJOaT
+ D9mT2A/VDTpc6UsDNXeeQQNXIwCa4XOkXn0c7i8MJoj2MOBe8P8YaBbD0iHgCMFgrAvUdr2Ga4C
+ ASlSxMp1yo6W9bf2JC0QfAflJw2uoJ8wOIAXMOvibCV4lB5ay+BqqzoMFKpnS+vyhPT8uGMVSUa
+ OKbFuFqPxz3EXRhynzzn+7noHCxmpjXegR0cuSWoaIHKyHwYrr1mw5qMXi9ARay978xVIkczRH7
+ HRQYxC+lIg+9XiYmxELgAxOCv+yXI6CoY1VMZRs4oei2ol8PAlwFKnoeZfuNLifXGfO07gwOASK
+ m6GxRraV
+X-Authority-Analysis: v=2.4 cv=QYhmvtbv c=1 sm=1 tr=0 ts=6899b1bb cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=aS93HcZ8ji4XsMPHnqgA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: bWaBtGM-hzYGGzf2QMyWtpGl5D_m6q-u
+X-Proofpoint-ORIG-GUID: bWaBtGM-hzYGGzf2QMyWtpGl5D_m6q-u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508090028
 
-=D0=B2=D1=82, 10 =D1=87=D0=B5=D1=80=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 14:0=
-9 Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Fri, Mar 21, 2025 at 11:55:54AM +0200, Svyatoslav Ryhel wrote:
-> > Tegra 4 is fully compatible with existing Tegra K1 cpufreq driver.
->
-> It might be confusing to refer to this as both Tegra 4 and Tegra114. I
-> think it'd be better to stick with just Tegra114. Otherwise:
->
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+On 8/11/25 12:57 AM, Brian Masney wrote:
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's go ahead and convert the
+> drivers in the drm/msm/dsi/phy subsystem using the Coccinelle semantic
+> patch posted below. I did a few minor cosmetic cleanups of the code in a
+> few cases.
 
-Your review applies only to this patch to to entire series?
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
