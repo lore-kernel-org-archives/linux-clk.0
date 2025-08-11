@@ -1,74 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4F20FAA4;
-	Mon, 11 Aug 2025 23:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2E8283CBF;
+	Mon, 11 Aug 2025 23:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754954851; cv=none; b=UF8/VKaBwNHklgWbxiXsTXgErjCfQvZIiKzyGvG1fLpaSKbc32BNrJzCxWCXxkW7w1Fw9/XTEIxVezFrH6FlaVbrIjT/B540ihayJYt8O93pcdoBGjjZa30XdNm8NWO1e2CNJPLS/xbhrUkd8RzbYcMhFG98jffOyEbYBS407Ek=
+	t=1754954854; cv=none; b=CyBl+ILw1g1N/gvKk/vYw67DfI0IbwIfSmO1BJ6yAs50S3KJP8EXl7mc8FT61sbhR8p2zL+6Kwjb80pJCi+TgYjp5eVjgeAMPDQZmrPw9VJN3qEkd0snSshePfu4Bux+jKjdIqJkhAPz+knymc/HUe1wWcuOgjb/JFnpU4L0tlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754954851; c=relaxed/simple;
-	bh=6yPyPa/6VABXX3mCsisBs6+EkiTsHKndMvRPv8Pn4D8=;
+	s=arc-20240116; t=1754954854; c=relaxed/simple;
+	bh=chIQDZpRnyTsv6ULEvKC5vZHNloJA0QOssDX7HgJMd8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g3VsqhZ/Yl0waxJ7ICxA9boIM8an9cNIP1ajECKCYhFzXIKcyaL/bLFf5la2p3OToJkOgaJ1XqGeqj9knFYNOtrwmsg6lGnoMcruaw3JrAAJg2j80KvOnLstvrqzCGFoM5cU1TSfCn/SA7/p1ff4B3+GsUfVVuKfKYx9hafCdT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ay9sd5Xo; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ghNLlC+IstpL/a2GV2xHi++SCKdOZmN90bv2KOhlKgiQi/YWhrYSIcbPlKwHXnDlH7Xn483wm8Cziw9CEl5eZlf4exXS1F5oFQBcbHc2x3fDf+FTZ8EkL7uVEtmnrQxMcH/swEKm/V0v3hBYMYM8vH6c9A+WcYQ11BNzXnfK82w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSUDJo7u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ay9sd5Xo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29640C4CEF6;
-	Mon, 11 Aug 2025 23:27:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSUDJo7u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD2CC4CEFA;
+	Mon, 11 Aug 2025 23:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754954850;
-	bh=6yPyPa/6VABXX3mCsisBs6+EkiTsHKndMvRPv8Pn4D8=;
+	s=k20201202; t=1754954854;
+	bh=chIQDZpRnyTsv6ULEvKC5vZHNloJA0QOssDX7HgJMd8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ay9sd5XoJ+twG1J89m7Xi1nPexzaNbPNHDBcWBDajyjzrirR4kNn9TfiF5/h8rgd2
-	 R3pBcbwMTM/AcF0NPxU5+grulSf5eAr+uBsNit6c8CtUPVbd7Jmt+hkBPzh1OXcLeK
-	 2ZNeLi9yb7zktHcqbOY/0O1GWIF53fzZ7DKfPJtbfoKg0DjnOul51jMKCZxAJepNNz
-	 WSoQUqLoEce1iptTXJw5YdIpF6cU6EL3g2mlfQwnm8hcRspaCwjt89L+rqcjB7+Plh
-	 5/1qwHPdPfl8VbJpVznhK/OQHMs+IKbZ39yYl7kD5IT3cgzTileUMJ3nQCHl0YdAeg
-	 SaAb7KAqY3y6w==
+	b=XSUDJo7udsUbzksDJ/70xCNx42Cvjnk2OtAWfz2daAhs20cHuwi8bf02VOd+xqi4k
+	 2Nn2IYfyPe3okxKEizeoMQGhr2QnZkyRsMCjfzDBYg1t9xTabQVEulMj5wcgZZlujt
+	 oKCWOZ+n+haVzvFh8fwRkPaoAnMV4Q7SeMIcRdh6k5IMVNnoO/AovrJby/30Kdn/hA
+	 sg16HMghh2Vk7VuAXDQesIN12ul0THqtKVRevOLmWbH4iENjHzJGEINP0uCiZvH66z
+	 mZ4Kydfje8FDnVxShyhJ3ieM4VCbJgpniUjfNHQ0qaxJFxTDTl6YUACejsDITzKIfg
+	 CMco14nCmlYOw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+To: Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Martin Botka <martin.botka@somainline.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Robert Marko <robert.markoo@sartura.hr>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	krishna Lanka <quic_vamslank@quicinc.com>,
-	Iskren Chernev <me@iskren.info>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
 	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	David Wronek <david@mainlining.org>,
-	Jens Reidel <adrian@travitia.xyz>,
-	Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
 	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] Remove double colon from description in dt-bindings
-Date: Mon, 11 Aug 2025 18:27:02 -0500
-Message-ID: <175495482449.157244.9662741916220392763.b4-ty@kernel.org>
+	linux-clk@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v4 0/2] Add video clock controller DT support for sc8180x
+Date: Mon, 11 Aug 2025 18:27:06 -0500
+Message-ID: <175495482479.157244.11839510617849896155.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
-References: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com>
+In-Reply-To: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
+References: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,18 +59,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 17 Jul 2025 08:54:43 +0200, Luca Weiss wrote:
-> As requested by Rob[0], remove the double colons found in various
-> bindings with "See also:: ".
+On Thu, 10 Jul 2025 18:30:38 +0530, Satya Priya Kakitapalli wrote:
 > 
-> [0] https://lore.kernel.org/lkml/20250625150458.GA1182597-robh@kernel.org/
-> 
-> 
+
 
 Applied, thanks!
 
-[3/3] dt-bindings: soc: qcom,rpmh-rsc: Remove double colon from description
-      commit: a6c4d92fcc74b4402d1ecdf6f4a7304a37a69ada
+[1/2] dt-bindings: clock: qcom,videocc: Add sc8180x compatible
+      commit: f87dea8b362b29ab8a54d1f35a0430017a716ee1
 
 Best regards,
 -- 
