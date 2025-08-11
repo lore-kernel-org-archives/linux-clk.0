@@ -1,82 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2A82E7187;
-	Mon, 11 Aug 2025 18:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393062DBF5E;
+	Mon, 11 Aug 2025 21:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754937688; cv=none; b=CFfoZzBmRPTavXVOcvzdczF75BiU1Md3Vfv2p0+dPKe1A2h9mUY/iaGoGWd0Qmm1dYUd+8Ag5JZGMSd/NxkcSpDicMrjGqIL9jZ5wOYRck/pphGXZ2IHXUNoAXK1Rbgki6d/DQxG54pkyZMsGgx4eG93oApxBqcrr6jlAGnWQ0I=
+	t=1754946688; cv=none; b=FqNV6mFyufP8HpNlVUuR9Ru07fgREN268G3imc/eqgEODfD/ZkUnHyDYoEvPj4LjUqdYLEq3htLn8VhLI1ziALC/w3bfs84+DZm03YKx2hRoSJsnBdnk8rpq0ORFLLxqpeo3StQx6Q6GMmNMXzaF+l5h8bvH8PASpIDRUegoDK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754937688; c=relaxed/simple;
-	bh=IjJ4HMTpAO8V6HCzJik+3cgjl/YHdVBEmguWgNN/URE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AW7jN2kMJG3lRm7sGoPHpeGQXBOWN6FAOvUWiCzQXDCiwEqpU9rxCbghcvhAQV5kVosaoDZInOq4aj6SGsFwQHQ1GpdFYN5b+w0BCwnfl3UzV9ECz/uj9llYymSbRlOw9+aleTAogxUIePx6XlKqMDljXsQVTC9ORnKHwkzDQR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rek3mcpp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754946688; c=relaxed/simple;
+	bh=bMFJMg+JfLXKlkC5wAUM3n6+D/HjWIAcPX4kjmfvdYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YI2jWGSS7UdZxOyZW3Uqk9gqs/5YnRsQH/tICewYdpLtcODu+9UybechBa4eFT/4YCdsyQPvwoIGi7iLv70D0LRN6iUe/C0xl3fnwplI41mW0iCsAOPO3WBuuWXrPmOHUbaHN0hX5xwh+mhKmzphQY6ztlO7BFHZ9OZGdgAN+UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MckaMkDZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rek3mcpp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81374C4CEF7;
-	Mon, 11 Aug 2025 18:41:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MckaMkDZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7200C4CEED;
+	Mon, 11 Aug 2025 21:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754937687;
-	bh=IjJ4HMTpAO8V6HCzJik+3cgjl/YHdVBEmguWgNN/URE=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=rek3mcpp72frlPHRh5khSE0n3qnhJvF628sQzDPS1zDtAif0IiSlR3jk+Y7emtnrd
-	 VrEZ9J3BONSqB3WeIvg7AOCrL6zuZRlybgtPImwYt1oCCDu3kbGvME1fcI2ax6b2XS
-	 VtItNrUZ9HU1w1Zf1IlKVS2h7fPMI5GWI/X7Y+q299fi/8y7KelwJBb9nLbydpPb+l
-	 5CbbSI8USCem00jx17bZg2S8sTCHYFSf/mZOlbl6FNgxMLSIyAx61EOihg+DpchV+O
-	 6unuVa27lnTyVdXhOwa+Liyc38qr1wid9tHirrneHurDBnGocpMs7uk0GY7xvxLp0+
-	 lwCZwAqCGYWvA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	konradybcio@kernel.org,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	ilia.lin@kernel.org,
-	djakov@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: Re: (subset) [PATCH v7 0/4] Enable cpufreq for IPQ5424
-Date: Mon, 11 Aug 2025 13:41:06 -0500
-Message-ID: <175493766084.138281.3748243184118825357.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250811090954.2854440-1-quic_varada@quicinc.com>
-References: <20250811090954.2854440-1-quic_varada@quicinc.com>
+	s=k20201202; t=1754946687;
+	bh=bMFJMg+JfLXKlkC5wAUM3n6+D/HjWIAcPX4kjmfvdYA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MckaMkDZvm2/GN4sU8l1Jp5BDDLyteoMMrOV5XidYYTvenJuWUVqxd+Gt+E0MeioZ
+	 Ja8PlcRm7/JZ1bjA7up7vZHLLJrnRSZNARpF9uvUQ77l9f+KngpgsTdB0LvpP5hqw5
+	 zZQiiqJuzCt9gG+64qIjqTlabt+u3Tr0Bs2p/klxNKBZTyA1EmYVBvzY3KAjHsB3rI
+	 aYoqc/hWEPFej08/mub/FXhTbqnvGkX4cjMQ79dZNb8uYvcD0eonDtp4NRViKrG1EN
+	 EiQHXKkDAdUTRAkrIoMXrAo0HmR0pc9tKN06jd5SUMYz5s534lRFmhvbFqUpLRFlnq
+	 e5wuiT/ZUxVgQ==
+Message-ID: <642f8456-982f-4cb3-9cd1-8b18232387b2@kernel.org>
+Date: Tue, 12 Aug 2025 00:11:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+ Md Sadre Alam <quic_mdalam@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250811090954.2854440-1-quic_varada@quicinc.com>
+ <20250811090954.2854440-2-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20250811090954.2854440-2-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Mon, 11 Aug 2025 14:39:50 +0530, Varadarajan Narayanan wrote:
-> CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
-> Add support for the APSS PLL, RCG and clock enable for ipq5424.
-> The PLL, RCG register space are clubbed. Hence adding new APSS driver
-> for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
-> modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
+On 8/11/25 12:09 PM, Varadarajan Narayanan wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 > 
-> v7: Fix 'Reviewed-by' placement for bindings patch
->     Use enum instead of clock names for l3 pll
->     Select IPQ_APSS_5424 if IPQ_GCC_5424 is enabled
+> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+> The RCG and PLL have a separate register space from the GCC.
+> Also the L3 cache has a separate pll and needs to be scaled along
+> with the CPU.
 > 
-> [...]
+> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> [ Added interconnect related changes ]
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v7: Fix 'Reviewed-by' placement
+> 
+> v6: Add 'Reviewed-by: Krzysztof Kozlowski'
+>      Drop 'clock-names'
+> 
+> v5: Remove previous maintainers
+>      Change clock@fa80000 to clock-controller@fa80000 in example
+>      Have one item per line for clocks and clock-names in example
+> 
+> v4: Add self to 'maintainers'
+>      s/gpll0/clk_ref/ in clock-names
+>      s/apss-clock/clock/ in example's node name
+> 
+> v2: Add #interconnect-cells to help enable L3 pll as ICC clock
+>      Add master/slave ids
+> ---
+>   .../bindings/clock/qcom,ipq5424-apss-clk.yaml | 55 +++++++++++++++++++
+>   include/dt-bindings/clock/qcom,apss-ipq.h     |  6 ++
+>   .../dt-bindings/interconnect/qcom,ipq5424.h   |  3 +
 
-Applied, thanks!
+Acked-by: Georgi Djakov <djakov@kernel.org>
 
-[2/4] clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
-      commit: 5bf83c54bab5eb15a2749c6c52b6f96d425490bc
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
