@@ -1,63 +1,63 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC69D211A19
-	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 14:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34520CCE5
+	for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 14:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921454; cv=none; b=nPy0VdZ6GwPPX5/pg0EavJhtwNHOMXvWkRfPHCKxNbvPb+BlQwiwB0tjovYFOj+eItWX4zb/D5XoRLnbn5kVtc5dMhtsp0IaK4XPbXiYirlGKe0m0lf+v6sPiBdj0bvk/6UW1uLWyihKRB3BEIyba7jRZcwvO0JFqWAnWPo4wGo=
+	t=1754921455; cv=none; b=Ib5KtmvBoqjd1dPsWto8mJUBR1gUQ0B51/Teu8F9SHyWQjbYGxZviVgokZKOmZL1IoZynzRGjfka9dYtMI5sz9T7D76z+RALarx5cuT4VnPzAMHnDUtR1cMjrjJYvoZWuku36hi9bkFZ4aHzpw3yxd4RNBKzcxnRpQex8CPN7S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921454; c=relaxed/simple;
-	bh=4QCFtRW/MxF9J/+GsGpUTijni3ULMWgMsH+JZsz8La4=;
+	s=arc-20240116; t=1754921455; c=relaxed/simple;
+	bh=YQdnjakWI6X1ZHqFhx7ybyszvQDMdraK7i+ce55DJ9Q=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GlDC1e4iA0yhdSwtKCT2YqkE02p2CBnTS7cXY/NQQNvkuSxwqR8BKC9Shku5r7tzq0wto++X3EMjEz90I1WEgM2YCQfmMRCoT6yTpyQ6C1TbPDFQLhT5GFP6tNLvE3hKv4Gc1IZPOI55KrJ8LsOAU5mo1PbQq3F9TqO4HjZTt8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=c9siHFSz; arc=none smtp.client-ip=209.85.208.50
+	 MIME-Version; b=ar7+zQS8OuMoSbPqhkUNYckaEPfh4KLhGGla12sju71uz78VCipkPu7EEJVIv4WvEIL8YC+NQkzm78T7eff6V6IsWvNaZwfs4i4CyUgEW9fA2cu1jW0Zl2AuDxM/9jtwU0EV8q30xlENtCNWgB7jot5F1Efc/J42p+LTXvKYHy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KzniqePJ; arc=none smtp.client-ip=209.85.208.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="c9siHFSz"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61564c06e0dso6975366a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KzniqePJ"
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-61576e33ce9so7541474a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Aug 2025 07:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754921450; x=1755526250; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1754921451; x=1755526251; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=63J39CyFqSLdGcoY+lFnsbjnjETWfUjBwWRQVTsQ3ZA=;
-        b=c9siHFSzeTYLdZdarn6XHrmrahFZ+2fzoQ5GVM1QNqaNmqvdVbbpLyOvSlbvSorGCl
-         aeQU2wkMqyK3cDjKcuoFDAnDNEYS3w7KO8v62suzc54O6PvAdDfvl/izbWndowEMp5yH
-         pHGDltoRLF9yEjG3PPbAy7+dJUXImyls+lzkuESrClSFH5dhuU6ABG7j+FnPcjEf3U3D
-         WcyKJM0DEjTU7l2QWihBzKmStm0WqsEQ+Co1pB70MEynRtzTNX9Ia5VjKXeMucQ/Yh8X
-         aYEOUMXxEOKbXA/4Ep/afb9PFxIvVvuW8+YNzXPoHq3gB/X5yDCuKFUJfKB9O5ZMkusi
-         NB4g==
+        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
+        b=KzniqePJ8BhCyIuG/HFbx8JlA4LqYA8hoQ4DW/g1hCknkihDX+ct9RMafEot1gWoKL
+         RBi7t5LHoAslJYNxQicWQA1HsAajiFIy4eQjrOPLBVeLTIZHH3Jwoz47pJyees8MFfcv
+         XUbwCImvfbyGp5JNc8Km7W5v0/FpjkAYorsskyJcpZ8sei2KCdVc7Rp9DZOG+Yd/FAzs
+         ceQrku/WelAwPWMnemBSjYHE78JqWARZcDeN+2ve5e04pB2kGjDoG9RXtW88m9tNwr5Y
+         J77nQI8UpGlH1eB5MlwiGXDOHtjp/s3mlMxaT/d4WcrBZV2o1pUsHLN42KMNG5+4mf3v
+         AY1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921450; x=1755526250;
+        d=1e100.net; s=20230601; t=1754921451; x=1755526251;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=63J39CyFqSLdGcoY+lFnsbjnjETWfUjBwWRQVTsQ3ZA=;
-        b=KCrbhiH4MQ64inXbfw9YRr/PqJkTrg4giTUOHsbUGT09ofW034zghwUUTu9uIUhXIL
-         a6K868c9x8z/6J/yOmI4f6VdESFiZUAo++UWRG1eTsZgHaU5+4hbTnyCBAaMuqY/dge5
-         nslKW+gN5JlOh9PRm6m6zkCr7Ml2r8lQXZ5EWGURUXQgaWTAFbKE15MCPEtA6QZXkYQV
-         ZhXFDlyooo6yetxEiPJbQCTJOdUDitCwmEJo4EAYaQy+FWZFNdNjqV3Y7eEcCbDAYgfF
-         6hgeek3foBREIzMLyKs79iSadgW3n1ar/OR17UiQwd4JUQ9wTEcG5JXUA0XSIUTXYbYx
-         uKjg==
-X-Forwarded-Encrypted: i=1; AJvYcCULgsgGMko2Fs7D0Nl6USp/jwHLWPC/OdiEXb40F5uRMrgqjqFJd2CI+LJnYzkMxGrI3oRc5U1YO0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqRFdO9EHHF2+7VJzJMHtMc063ixWRo0tkVtUT8MWszVHgvunZ
-	9rT2RcZk4XZbCPzVNvuJVlLwyUghgQ9LNAS8qbNdkSImM1jgZgqXtvoFutwMUAQivvM=
-X-Gm-Gg: ASbGncs+gp4U/a1S+dMBSyhXvgSQus/qy5PtKbA78mHQ7crvM6JXInpN6d+lXVXl7Dg
-	AjRj8u2c7uiXf63qperHpIVIM+32jyU6TNXHX7eyLqIQ2aPia1vSJHX7eVzsm8CO+6V59C20HlD
-	1eCOr2w0QkZ7qvvOHf3waPfF8lTmn0uqm9OTjcJjgsmUg/kvd+a3zNcw+5eRm0jo2RvWPqMD6aI
-	daDFB6rBOyTaV1Erzunr5WPo0eYMUqnOaxbe5iw3ODN9hFVujZvljJSA7oXQfSsLouXRSXRhonO
-	qjmXOowuX8Um0mvUD43gsnrtSr+LkFfxSrzl5c/4+N8UIw/9ij5aj3dkf8YyIxZ81WfH3iBNrgA
-	JEIIplwjYYpCbdPve0x2LUk0AYhWIZBMNrTo1kEc9ZxDG0mku8FPCIWD2/nSe4VThDw==
-X-Google-Smtp-Source: AGHT+IG/M8+ibyfZa1rZEJRPdNDgrfy4rJ6HCiKO3wMUuimZDr1wETFmlPT6yaYQrOBYlXmZ2auvCQ==
-X-Received: by 2002:a17:907:3f1b:b0:ae0:a597:2959 with SMTP id a640c23a62f3a-af9c6516d10mr1108890066b.32.1754921450120;
-        Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
+        bh=VlWQwa2PAoVxO2iD+h8/whtAT2rN/XrFrW/caXqog0A=;
+        b=wSN7ANfh5q2NuFaQTCNWAsc3qoqC2OJKH41rfKPrVz3ikXGK53j8gnmvSERu8Qb3J4
+         jkNL2zktNlsIqDHMAhqRcCtZtqlAa08ab2PMeIOie0k4db2bwHquaE9bDuK6u7wfL4zr
+         4oI4SV8RFT/3S96m1ykHWr7vxxaojEsMCfR7z4qoSen3VWQLSxFLnd9Wqza8GZUnSjjV
+         UcTqwgxb8UoksP8VfaSu4S+OKGs72xl4EIy+KbOJy6HuwfJJ3TdWvAzJJFpVsdGjo3aO
+         gd11+QsJs1C/sRY60/9VOuCL5UyD0QhDysMMPVnMmsTIBVQikm3SZ2pxzODeHMnKtlQM
+         NLUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF/+HCCb2Y09LkETkwVfu0LBfVPTtzQWoIDYFKrF5SCPgMsKvWHDWuSluBsg7kywwXaA3zQw7XS2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQPydc8R7LCNIJPbIVMjUtb8WlFncphb9Fw+Gac9h9iPBrnTdY
+	9Ah70/eCHXItadnJHgpR41F6HmwmDmr5v0cD9sCzhmC0St1oKRpzXPMylOmsAU4civo=
+X-Gm-Gg: ASbGncsfGa6sJ5TiYbnSDGm5+4TFE4aFByQWuAQbGW/Le5vMFh8LUJDPwmnFMurQSdP
+	qUqsSem39CmnI1+fWe20SBVHzzC2Ms6LaSFZ3VD3NdYy3s+fpdfkchQUnkh0nJMJQBUKWXYSB/M
+	0kCx6J2jXLhWQABGPAa6x0VO+fDaxtxQhX+4bgH/Foo0j43EKkthJBkQd0FA5YJ6wpIlnq2oLRL
+	MFfqk+te2iOYoYYO7gT69OQ87vEJl7AvAL5KD5UZD83pyAZCjuNaYTW5SSYhwCD/pUv7vsJA9x+
+	VyLNtFav3flPryHr4jQQWWcLd4XUJLT/5yvTTvcV3k/kc7baGzFLdCE8peITviJGT2fWREQygZk
+	8+2LMC4LKBjpVcOTKWI6WBIGsPjpGNJs6Vv9OBvFXnrya11afXQp3/kBJK6IAvXd0WA==
+X-Google-Smtp-Source: AGHT+IGSXO0okwpD5kpNnaGjEGTT73fQPhYl2aV7TxCeznx0RSbicpQ7u0NLlVgRRhjgMGZAIA2ZgA==
+X-Received: by 2002:a05:6402:3491:b0:618:4a1b:e311 with SMTP id 4fb4d7f45d1cf-6184a1be33amr433396a12.3.1754921451307;
+        Mon, 11 Aug 2025 07:10:51 -0700 (PDT)
 Received: from localhost (host-79-44-170-80.retail.telecomitalia.it. [79.44.170.80])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af9383590desm1818429466b.76.2025.08.11.07.10.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm18398979a12.26.2025.08.11.07.10.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 07:10:49 -0700 (PDT)
+        Mon, 11 Aug 2025 07:10:50 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -97,9 +97,9 @@ To: Andrea della Porta <andrea.porta@suse.com>,
 	Matthias Brugger <mbrugger@suse.com>,
 	iivanov@suse.de,
 	svarbanov@suse.de
-Subject: [PATCH 1/2] arm64: dts: broadcom: delete redundant pcie enablement nodes
-Date: Mon, 11 Aug 2025 16:12:34 +0200
-Message-ID: <2865b787d893fd1dcf816e1c96856711754d612d.1754914766.git.andrea.porta@suse.com>
+Subject: [PATCH 2/2] arm64: dts: broadcom: amend the comment about the role of BCM2712 board DTS
+Date: Mon, 11 Aug 2025 16:12:35 +0200
+Message-ID: <47f6368a77d6bd846c02942d20c07dd48e0ae7df.1754914766.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1754914766.git.andrea.porta@suse.com>
 References: <cover.1754914766.git.andrea.porta@suse.com>
@@ -111,33 +111,48 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pcie1 and pcie2 override nodes to enable the respective peripherals are
-declared both in bcm2712-rpi-5-b.dts and bcm2712-rpi-5-b-ovl-rp1.dts, which
-makes those declared in the former file redundant.
+Current board DTS for Raspberry Pi5 states that bcm2712-rpi-5-b.dts
+should not be modified and all declarations should go in the overlay
+board DTS instead (bcm2712-rpi-5-b-ovl-rp1.dts).
 
-Drop those redundant nodes from the board devicetree.
+There's a caveat though: there's currently no infrastructure to reliably
+reference nodes that have not been declared yet, as is the case when
+loading those nodes from a runtime overlay. For more details about
+these limitations see [1] and follow-ups.
+
+Change the comment to make it clear which DTS file will host specific
+nodes, especially the RP1 related nodes which should be customized
+outside the overlay DTS.
+
+Link
+[1] - https://lore.kernel.org/all/CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com/
 
 Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 ---
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index a70a9b158df3..adad85e68f1b 100644
+index adad85e68f1b..865f092608a6 100644
 --- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
 +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -15,11 +15,3 @@
- &pcie2 {
- 	#include "rp1-nexus.dtsi"
- };
--
--&pcie1 {
--	status = "okay";
--};
--
--&pcie2 {
--	status = "okay";
--};
+@@ -4,8 +4,14 @@
+  * the RP1 driver to load the RP1 dtb overlay at runtime, while
+  * bcm2712-rpi-5-b.dts (this file) is the fully defined one (i.e. it
+  * already contains RP1 node, so no overlay is loaded nor needed).
+- * This file is not intended to be modified, nodes should be added
+- * to the included bcm2712-rpi-5-b-ovl-rp1.dts.
++ * This file is intended to host the override nodes for the RP1 peripherals,
++ * e.g. to declare the phy of the ethernet interface or the custom pin setup
++ * for several RP1 peripherals.
++ * This in turn is due to the fact that there's no current generic
++ * infrastructure to reference nodes (i.e. the nodes in rp1-common.dtsi) that
++ * are not yet defined in the DT since they are loaded at runtime via overlay.
++ * All other nodes that do not have anything to do with RP1 should be added
++ * to the included bcm2712-rpi-5-b-ovl-rp1.dts instead.
+  */
+ 
+ /dts-v1/;
 -- 
 2.35.3
 
