@@ -1,255 +1,222 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6182D3744;
-	Tue, 12 Aug 2025 05:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7AB2E0914;
+	Tue, 12 Aug 2025 06:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754978232; cv=pass; b=kQG0SY5R0u+iz32KFxP0EMMpiYLAmQCE6e36KExbo4MbZW+V3B2agHXHv9qxnIR0KPBYqL/p2wz34AKFlx7d5DWfClZ1+yZQsZjgi3uSGRh5LwHnop+dOFDz7mSs7gXTuNU5fDIh3Sa00wKSS1LwBWprP6Lf+0qssY0NMKUHu1E=
+	t=1754978682; cv=pass; b=fd2NRAUfNsnapQRRmgAUxYkDffqPxlWlfgD+rKu0HnKRWF56ZhAiSxJSFTMUU2K+kJDBGXcK8jNXginxhsu47OvmHqIjDXFh45lcbZZ5QSoq49klad7wOxs76NZtj/QjK9qKnIvLAw2ED3kU1x9AL01RqX+seHRpE7lq4R4n/2w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754978232; c=relaxed/simple;
-	bh=u5yltoRs73Mz5AwR04UVLzpLRKwK/KJS0rkhgqWoP9Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dD0UK4ojCs/1rnFsgABxOWAdvJ6yPCDbryH2IpsPinUe1ix6kW4NBey74OVwrZvDi/M2/GdvTJ5HujXgEoB7W8PPZKaMGO4NH9OYS579/tVKajBUMXoZeCI/ZNnIJDiJxX8vc3c505y8xH2xvGZqnme4WH2KCotJ9+UF+7IhbsY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=ZBL4WQMn; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1754978682; c=relaxed/simple;
+	bh=Oj7h1+3VEbAuOlCnaTkn6ohHQgWVc0ziwpokiLzvu8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F1Qnn/wrwd3Fn+GKhNQGvcziYw9Ac3OjaItScSrwanfG00ujNAbaqjn0dL66yjs+V2XE/6krn0AMe3OhgJKj3p9T6eDPqEYnPptMqLKfxGTSTv9BhG9xy6FR3TchPNnSllngS9gWpkMN4R3yE8tJEqdwCt0nr131B1a9uxczzUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=pSNd9Lry; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="ZBL4WQMn"
-ARC-Seal: i=1; a=rsa-sha256; t=1754978217; cv=none; 
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="pSNd9Lry"
+ARC-Seal: i=1; a=rsa-sha256; t=1754978661; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=QUUPij5BDUFD6uOBDl9VRqXAhBwFssWK0bgMsuIBC10ff9blpeX7hH0CG/jXvoaT9NJhJtb3UwcpttYUcm3rcw4yno4lR8/qywDpixQqebN5l4mfwxWpmHj1Z698qRgtuJ2DYQjDEHyAXTEwEr6X7yGwiuYnBK5KLly+TpQyrss=
+	b=eqYsmiTI1jAQcPWtNUQbJbsuRugyGRpRCf7MlUEDeTLURrNHmG2BdJX1ad9GOAH6lkYtR2BcDlPE74Bw0lGc/QiBzQ8ydRewRiy0C/nN0KoMIKte51k1ho0yNTn06vPW6Qn7p8w8gI98WzoRtFRMfyBWqBCg+qdxTvN9p4jsLfM=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754978217; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=u5yltoRs73Mz5AwR04UVLzpLRKwK/KJS0rkhgqWoP9Y=; 
-	b=h/v+1hIT0n2RJCk/AQkbm1vmCS33pnA/OyT7YgBKzd+gFouSoK9ksUmzWftqWDJV3QpRlHWKmGPKQeKSv/JIZF9i51/NbULe87t1pi7tdcl013l2Hh2rUdufmyWB6D3YhaZU6SbowK0H5DQx8RTB73Rv4hqpwoR7V1g4ZF/olNY=
+	t=1754978661; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w0yBO0aEAFPE08+KXBu+vm/AbjI7BlOAlTCoLhNDrNE=; 
+	b=nz80XH3o8D2WTTFx3sj71n9uZRJ1jxjrF+jDpL0RJOBXz/Obzl3s3cXsAiBewkGUjDrZCTnRFVaSpPcHqmMP8w3PmmC5vsbLdG/HtDkZ7hyarar5QIRn8XyHntsGlQ9pJv4pPiDJuPuXwvSdl3zZ6sTMcR8hEDgjMxfCxzB/iKA=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=icenowy.me;
 	spf=pass  smtp.mailfrom=uwu@icenowy.me;
 	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754978217;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754978661;
 	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=u5yltoRs73Mz5AwR04UVLzpLRKwK/KJS0rkhgqWoP9Y=;
-	b=ZBL4WQMnujrrXJHE0oRRb2mGfngPDIMx5UpkEFDeVwgRz+MJNH20phGxnM6ySCpd
-	F+S8/9P/PP2IB4l88XGAFXZxkwuFqtqf7PSDvIaanUVKTRZmIrfgwNvfAjmKtPEJNLe
-	YhHEzoxNJBx6K1L0lZf7uBvY3Fxt9ljV1LAzhKblUwUqmZ3Hz7EE/ouMY59xVYXWrpl
-	SxgxTgjh1QPojxzSWz2+l5J8h3lkVVv60OY51PI5SUkLmyr1Zmw7MvYx7e75AHUm1yc
-	6pkBMNvu/dKLlAuVVSYhTGrvGe9jeDxen+e7htvaKugyXOwKtHuqf9KU8nLd4ax1vtO
-	fFe0DqgXMw==
-Received: by mx.zohomail.com with SMTPS id 1754978215083784.9954152295024;
-	Mon, 11 Aug 2025 22:56:55 -0700 (PDT)
-Message-ID: <702475b58c83704d753c9fabde9eea3ced20586c.camel@icenowy.me>
-Subject: Re: [PATCH 3/4] clk: thead: th1520-ap: set all AXI clocks to
- CLK_IS_CRITICAL
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=w0yBO0aEAFPE08+KXBu+vm/AbjI7BlOAlTCoLhNDrNE=;
+	b=pSNd9Lry4II7HqkrDPxTceswRg5hLZ1OVqX1fQN2yMp2CMzGcFuQyhrlkY2Ul7Jl
+	d2nBCZIssB24fsJtLRz4LUDJcdxTIzAMFW2GYAq+LpQZ8YElXgzdyrwLc4rZvFJlaTQ
+	1sodi/tnwqYPSDc/yjSP+LUpqkTriRlmMbNMR45CyCV1Wpq2R0guf68nRGwpjxkJet1
+	68R/qiSYqurq/XWhm71GP5jAntecObkFk1ZBiwUotoknZfZKvxOXNmrXW4OYxshOf6F
+	TnM2k9PUHqSwYve02FWGp9ZA1tcCcEa1sODB4k4krE4Lg2Fl7IIb77NoRZBTthhFLPr
+	6ejvCBvdiA==
+Received: by mx.zohomail.com with SMTPS id 1754978660093277.82751158659005;
+	Mon, 11 Aug 2025 23:04:20 -0700 (PDT)
 From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 12 Aug 2025 13:56:47 +0800
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 3/4 FIXED] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+Date: Tue, 12 Aug 2025 14:04:08 +0800
+Message-ID: <20250812060408.1979487-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250812054258.1968351-4-uwu@icenowy.me>
-References: <20250812054258.1968351-1-uwu@icenowy.me>
-	 <20250812054258.1968351-4-uwu@icenowy.me>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+References: <20250812054258.1968351-4-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-5ZyoIDIwMjUtMDgtMTLmmJ/mnJ/kuoznmoQgMTM6NDIgKzA4MDDvvIxJY2Vub3d5IFpoZW5n5YaZ
-6YGT77yaCj4gVGhlIEFYSSBjcm9zc2JhciBvZiBUSDE1MjAgaGFzIG5vIHByb3BlciB0aW1lb3V0
-IGhhbmRsaW5nLCB3aGljaAo+IG1lYW5zCj4gZ2F0aW5nIEFYSSBjbG9ja3MgY2FuIGVhc2lseSBs
-ZWFkIHRvIGJ1cyB0aW1lb3V0IGFuZCB0aHVzIHN5c3RlbQo+IGhhbmcuCj4gCj4gU2V0IGFsbCBB
-WEkgY2xvY2sgZ2F0ZXMgdG8gQ0xLX0lTX0NSSVRJQ0FMLiBBbGwgdGhlc2UgY2xvY2sgZ2F0ZXMg
-YXJlCj4gdW5nYXRlZCBieSBkZWZhdWx0IG9uIHN5c3RlbSByZXNldC4KPiAKPiBJbiBhZGRpdGlv
-biwgY29udmVydCBhbGwgY3VycmVudCBDTEtfSUdOT1JFX1VOVVNFRCB1c2FnZSB0bwo+IENMS19J
-U19DUklUSUNBTCB0byBwcmV2ZW50IHVud2FudGVkIGNsb2NrIGdhdGluZy4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDx1d3VAaWNlbm93eS5tZT4KPiAtLS0KPiDCoGRyaXZlcnMv
-Y2xrL3RoZWFkL2Nsay10aDE1MjAtYXAuYyB8IDQyICsrKysrKysrKysrKysrKystLS0tLS0tLS0t
-LS0tCj4gLS0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvdGhlYWQvY2xrLXRoMTUyMC1hcC5j
-Cj4gYi9kcml2ZXJzL2Nsay90aGVhZC9jbGstdGgxNTIwLWFwLmMKPiBpbmRleCAzZTgxZjMwNTFj
-ZDZjLi4wMTE3ZTVlYTFiZjU4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xrL3RoZWFkL2Nsay10
-aDE1MjAtYXAuYwo+ICsrKyBiL2RyaXZlcnMvY2xrL3RoZWFkL2Nsay10aDE1MjAtYXAuYwo+IEBA
-IC01ODksNyArNTg5LDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfZGl2IGF4aTRfY3B1c3lzMl9hY2xr
-ID0gewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmh3LmluaXTCoMKgwqDCoMKg
-wqDCoMKgPSBDTEtfSFdfSU5JVF9QQVJFTlRTX0hXKCJheGk0LQo+IGNwdXN5czItYWNsayIsCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGdtYWNfcGxsX2Nsa19wYXJlbnQsCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICZjY3VfZGl2X29wcywKPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAwKSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBDTEtfSVNfQ1JJVElDQUwpLAo+IMKgwqDCoMKgwqDCoMKgwqB9LAo+IMKgfTsKPiDC
-oAo+IEBAIC02MTEsNyArNjExLDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfZGl2IGF4aV9hY2xrID0g
-ewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmh3LmluaXTCoMKgwqDCoMKgwqDC
-oMKgPSBDTEtfSFdfSU5JVF9QQVJFTlRTX0RBVEEoImF4aS0KPiBhY2xrIiwKPiDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGF4aV9wYXJlbnRzLAo+IMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJmNjdV9kaXZf
-b3BzLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAw
-KSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiBD
-TEtfSVNfQ1JJVElDQUwpLAo+IMKgwqDCoMKgwqDCoMKgwqB9LAo+IMKgfTsKPiDCoAo+IEBAIC03
-NjAsNyArNzYwLDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfZGl2IGFwYl9wY2xrID0gewo+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmh3LmluaXTCoMKgwqDCoMKgwqDCoMKgPSBDTEtf
-SFdfSU5JVF9QQVJFTlRTX0RBVEEoImFwYi0KPiBwY2xrIiwKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGFwYl9wYXJlbnRzLAo+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJmNjdV9kaXZfb3BzLAo+IC3C
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IENMS19JR05P
-UkVfVU5VU0VEKSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAKPiBDTEtfSVNfQ1JJVElDQUwpLAo+IMKgwqDCoMKgwqDCoMKgwqB9LAo+IMKgfTsKPiDC
-oAo+IEBAIC03OTEsNyArNzkxLDcgQEAgc3RhdGljIHN0cnVjdCBjY3VfZGl2IHZpX2NsayA9IHsK
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC5ody5pbml0wqDCoMKgwqDCoMKgwqDC
-oD0gQ0xLX0hXX0lOSVRfUEFSRU5UU19IVygidmkiLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCB2aWRlb19wbGxfY2xrX3BhcmVudCwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgJmNjdV9kaXZfb3BzLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIDApLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIENMS19JU19DUklUSUNB
-TCksCj4gwqDCoMKgwqDCoMKgwqDCoH0sCj4gwqB9Owo+IMKgCj4gQEAgLTgxNiw3ICs4MTYsNyBA
-QCBzdGF0aWMgc3RydWN0IGNjdV9kaXYgdm9fYXhpX2NsayA9IHsKPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoC5ody5pbml0wqDCoMKgwqDCoMKgwqDCoD0gQ0xLX0hXX0lOSVRfUEFS
-RU5UU19IVygidm8tYXhpIiwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdmlk
-ZW9fcGxsX2Nsa19wYXJlbnQsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICZj
-Y3VfZGl2X29wcywKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAwKSwKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBDTEtfSVNfQ1JJVElDQUwpLAo+IMKgwqDCoMKg
-wqDCoMKgwqB9LAo+IMKgfTsKPiDCoAo+IEBAIC04NDEsNyArODQxLDcgQEAgc3RhdGljIHN0cnVj
-dCBjY3VfZGl2IHZwX2F4aV9jbGsgPSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAuaHcuaW5pdMKgwqDCoMKgwqDCoMKgwqA9IENMS19IV19JTklUX1BBUkVOVFNfSFcoInZwLWF4
-aSIsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHZpZGVvX3BsbF9jbGtfcGFy
-ZW50LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAmY2N1X2Rpdl9vcHMsCj4g
-LcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgQ0xLX0lHTk9SRV9VTlVTRUQpLAo+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIENMS19JU19DUklUSUNBTCksCj4gwqDCoMKg
-wqDCoMKgwqDCoH0sCj4gwqB9Owo+IMKgCj4gQEAgLTkwMiwyMyArOTAyLDI1IEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgY2xrX3BhcmVudF9kYXRhCj4gZW1tY19zZGlvX3JlZl9jbGtfcGRbXSA9IHsK
-PiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfQlJPTSwgYnJvbV9jbGssICJicm9tIiwgYWhiMl9jcHVz
-eXNfaGNsa19wZCwKPiAweDEwMCwgQklUKDQpLCAwKTsKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtf
-Qk1VLCBibXVfY2xrLCAiYm11IiwgYXhpNF9jcHVzeXMyX2FjbGtfcGQsCj4gMHgxMDAsIEJJVCg1
-KSwgMCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX0FPTjJDUFVfQTJYLCBhb24yY3B1X2EyeF9j
-bGssICJhb24yY3B1LWEyeCIsCj4gYXhpNF9jcHVzeXMyX2FjbGtfcGQsCj4gLcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoDB4MTM0LCBCSVQoOCksIDApOwo+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAweDEzNCwgQklUKDgpLCBDTEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGlj
-IENDVV9HQVRFKENMS19YMlhfQ1BVU1lTLCB4MnhfY3B1c3lzX2NsaywgIngyeC1jcHVzeXMiLAo+
-IGF4aTRfY3B1c3lzMl9hY2xrX3BkLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAw
-eDEzNCwgQklUKDcpLCAwKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMHgxMzQs
-IEJJVCg3KSwgQ0xLX0lTX0NSSVRJQ0FMKTsKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfQ1BVMkFP
-Tl9YMkgsIGNwdTJhb25feDJoX2NsaywgImNwdTJhb24teDJoIiwKPiBheGlfYWNsa19wZCwKPiAt
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMHgxMzgsIEJJVCg4KSwgQ0xLX0lHTk9SRV9V
-TlVTRUQpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAweDEzOCwgQklUKDgpLCBD
-TEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19DUFUyUEVSSV9YMkgsIGNw
-dTJwZXJpX3gyaF9jbGssICJjcHUycGVyaS14MmgiLAo+IGF4aTRfY3B1c3lzMl9hY2xrX3BkLAo+
-IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAweDE0MCwgQklUKDkpLCBDTEtfSUdOT1JF
-X1VOVVNFRCk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MTQwLCBCSVQoOSks
-IENMS19JU19DUklUSUNBTCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX1BFUklTWVNfQVBCMV9I
-Q0xLLCBwZXJpc3lzX2FwYjFfaGNsaywgInBlcmlzeXMtCj4gYXBiMS1oY2xrIiwgcGVyaXN5c19h
-aGJfaGNsa19wZCwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMHgxNTAsIEJJVCg5
-KSwgQ0xLX0lHTk9SRV9VTlVTRUQpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAw
-eDE1MCwgQklUKDkpLCBDTEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19Q
-RVJJU1lTX0FQQjJfSENMSywgcGVyaXN5c19hcGIyX2hjbGssICJwZXJpc3lzLQo+IGFwYjItaGNs
-ayIsIHBlcmlzeXNfYWhiX2hjbGtfcGQsCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oDB4MTUwLCBCSVQoMTApLCBDTEtfSUdOT1JFX1VOVVNFRCk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoDB4MTUwLCBCSVQoMTApLCBDTEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGlj
-IENDVV9HQVRFKENMS19QRVJJU1lTX0FQQjNfSENMSywgcGVyaXN5c19hcGIzX2hjbGssICJwZXJp
-c3lzLQo+IGFwYjMtaGNsayIsIHBlcmlzeXNfYWhiX2hjbGtfcGQsCj4gLcKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoDB4MTUwLCBCSVQoMTEpLCBDTEtfSUdOT1JFX1VOVVNFRCk7Cj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDB4MTUwLCBCSVQoMTEpLCBDTEtfSVNfQ1JJVElD
-QUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19QRVJJU1lTX0FQQjRfSENMSywgcGVyaXN5c19h
-cGI0X2hjbGssICJwZXJpc3lzLQo+IGFwYjQtaGNsayIsIHBlcmlzeXNfYWhiX2hjbGtfcGQsCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAweDE1MCwgQklUKDEyKSwgMCk7Cj4gwqBz
-dGF0aWMgQ0NVX0dBVEUoQ0xLX05QVV9BWEksIG5wdV9heGlfY2xrLCAibnB1LWF4aSIsIGF4aV9h
-Y2xrX3BkLAo+IDB4MWM4LCBCSVQoNSksIDApOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19DUFUy
-VlAsIGNwdTJ2cF9jbGssICJjcHUydnAiLCBheGlfYWNsa19wZCwKPiAweDFlMCwgQklUKDEzKSwg
-MCk7Cj4gK3N0YXRpYyBDQ1VfR0FURShDTEtfTlBVX0FYSSwgbnB1X2F4aV9jbGssICJucHUtYXhp
-IiwgYXhpX2FjbGtfcGQsCj4gMHgxYzgsIEJJVCg1KSwgQ0xLX0lTX0NSSVRJQ0FMKTsKPiArc3Rh
-dGljIENDVV9HQVRFKENMS19DUFUyVlAsIGNwdTJ2cF9jbGssICJjcHUydnAiLCBheGlfYWNsa19w
-ZCwKPiAweDFlMCwgQklUKDEzKSwgQ0xLX0lTX0NSSVRJQ0FMKTsKCk9vcHMuLi4gc29ycnksIG15
-IHJlYmFzZSBvcGVyYXRpb24gYnJva2UgdGhpcyBwYXRjaC4KClByZXZpb3VzbHkgdGhpcyBwYXRj
-aCB3YXMgdGhlIDR0aCAoaW4gdGhlIHNlcXVlbmNlIG9mIGJlaW5nIHdyaXR0ZW4pLApidXQgSSBy
-ZWJhc2VkIGl0IHRvIGJlIHRoZSAzcmQsIGFuZCB0aGlzIGNvZGUgYmVpbmcgaW4gdGhlIHNhbWUg
-Y2h1bmsKd2l0aCBwZXJpc3lzLWFwYjQtaGNsayBicmVha2VkIGl0LgoKPiDCoHN0YXRpYyBDQ1Vf
-R0FURShDTEtfRU1NQ19TRElPLCBlbW1jX3NkaW9fY2xrLCAiZW1tYy1zZGlvIiwKPiBlbW1jX3Nk
-aW9fcmVmX2Nsa19wZCwgMHgyMDQsIEJJVCgzMCksIDApOwo+IMKgc3RhdGljIENDVV9HQVRFKENM
-S19HTUFDMSwgZ21hYzFfY2xrLCAiZ21hYzEiLCBnbWFjX3BsbF9jbGtfcGQsCj4gMHgyMDQsIEJJ
-VCgyNiksIDApOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19QQURDVFJMMSwgcGFkY3RybDFfY2xr
-LCAicGFkY3RybDEiLAo+IHBlcmlzeXNfYXBiX3BjbGtfcGQsIDB4MjA0LCBCSVQoMjQpLCAwKTsK
-PiBAQCAtOTYyLDExICs5NjQsMTEgQEAgc3RhdGljIENDVV9HQVRFKENMS19TUkFNMiwgc3JhbTJf
-Y2xrLCAic3JhbTIiLAo+IGF4aV9hY2xrX3BkLCAweDIwYywgQklUKDIpLCAwKTsKPiDCoHN0YXRp
-YyBDQ1VfR0FURShDTEtfU1JBTTMsIHNyYW0zX2NsaywgInNyYW0zIiwgYXhpX2FjbGtfcGQsIDB4
-MjBjLAo+IEJJVCgxKSwgMCk7Cj4gwqAKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfQVhJNF9WT19B
-Q0xLLCBheGk0X3ZvX2FjbGssICJheGk0LXZvLWFjbGsiLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3BkLCAweDAsIEJJVCgwKSwgMCk7Cj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHZpZGVvX3BsbF9jbGtfcGQsIDB4MCwgQklUKDApLCBDTEtf
-SVNfQ1JJVElDQUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19HUFVfQ09SRSwgZ3B1X2NvcmVf
-Y2xrLCAiZ3B1LWNvcmUtY2xrIiwKPiB2aWRlb19wbGxfY2xrX3BkLAo+IMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgMHgwLCBCSVQoMyksIDApOwo+IMKgc3RhdGljIENDVV9HQVRFKENM
-S19HUFVfQ0ZHX0FDTEssIGdwdV9jZmdfYWNsaywgImdwdS1jZmctYWNsayIsCj4gLcKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHZpZGVvX3BsbF9jbGtfcGQsIDB4MCwgQklUKDQpLCAwKTsK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgwLCBC
-SVQoNCksIENMS19JU19DUklUSUNBTCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX0RQVV9QSVhF
-TENMSzAsIGRwdTBfcGl4ZWxjbGssICJkcHUwLXBpeGVsY2xrIiwKPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoGRwdTBfY2xrX3BkLCAweDAsIEJJVCg1KSwgQ0xLX1NFVF9SQVRFX1BB
-UkVOVCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX0RQVV9QSVhFTENMSzEsIGRwdTFfcGl4ZWxj
-bGssICJkcHUxLXBpeGVsY2xrIiwKPiBAQCAtOTk4LDkgKzEwMDAsOSBAQCBzdGF0aWMgQ0NVX0dB
-VEUoQ0xLX01JUElfRFNJMV9SRUZDTEssCj4gbWlwaV9kc2kxX3JlZmNsaywgIm1pcGktZHNpMS1y
-ZWZjbGsiLAo+IMKgc3RhdGljIENDVV9HQVRFKENMS19IRE1JX0kyUywgaGRtaV9pMnNfY2xrLCAi
-aGRtaS1pMnMtY2xrIiwKPiB2aWRlb19wbGxfY2xrX3BkLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgMHgwLCBCSVQoMTkpLCAwKTsKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfWDJI
-X0RQVTFfQUNMSywgeDJoX2RwdTFfYWNsaywgIngyaC1kcHUxLWFjbGsiLAo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3BkLCAweDAsIEJJVCgyMCksIDApOwo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3BkLCAweDAsIEJJ
-VCgyMCksIENMS19JU19DUklUSUNBTCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX1gySF9EUFVf
-QUNMSywgeDJoX2RwdV9hY2xrLCAieDJoLWRwdS1hY2xrIiwKPiAtwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgwLCBCSVQoMjEpLCAwKTsKPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgwLCBCSVQoMjEpLCBD
-TEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19BWEk0X1ZPX1BDTEssIGF4
-aTRfdm9fcGNsaywgImF4aTQtdm8tcGNsayIsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB2aWRlb19wbGxfY2xrX3BkLCAweDAsIEJJVCgyMiksIDApOwo+IMKgc3RhdGljIENDVV9H
-QVRFKENMS19JT1BNUF9WT1NZU19EUFVfUENMSywgaW9wbXBfdm9zeXNfZHB1X3BjbGssCj4gQEAg
-LTEwMTAsMTEgKzEwMTIsMTEgQEAgc3RhdGljIENDVV9HQVRFKENMS19JT1BNUF9WT1NZU19EUFUx
-X1BDTEssCj4gaW9wbXBfdm9zeXNfZHB1MV9wY2xrLAo+IMKgc3RhdGljIENDVV9HQVRFKENMS19J
-T1BNUF9WT1NZU19HUFVfUENMSywgaW9wbXBfdm9zeXNfZ3B1X3BjbGssCj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAiaW9wbXAtdm9zeXMtZ3B1LXBjbGsiLCB2aWRlb19wbGxfY2xr
-X3BkLCAweDAsCj4gQklUKDI1KSwgMCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX0lPUE1QX0RQ
-VTFfQUNMSywgaW9wbXBfZHB1MV9hY2xrLCAiaW9wbXAtZHB1MS0KPiBhY2xrIiwKPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgwLCBCSVQoMjcpLCAw
-KTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgw
-LCBCSVQoMjcpLCBDTEtfSVNfQ1JJVElDQUwpOwo+IMKgc3RhdGljIENDVV9HQVRFKENMS19JT1BN
-UF9EUFVfQUNMSywgaW9wbXBfZHB1X2FjbGssICJpb3BtcC1kcHUtCj4gYWNsayIsCj4gLcKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHZpZGVvX3BsbF9jbGtfcGQsIDB4MCwgQklUKDI4KSwg
-MCk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHZpZGVvX3BsbF9jbGtfcGQsIDB4
-MCwgQklUKDI4KSwgQ0xLX0lTX0NSSVRJQ0FMKTsKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfSU9Q
-TVBfR1BVX0FDTEssIGlvcG1wX2dwdV9hY2xrLCAiaW9wbXAtZ3B1LQo+IGFjbGsiLAo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3BkLCAweDAsIEJJVCgyOSks
-IDApOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB2aWRlb19wbGxfY2xrX3BkLCAw
-eDAsIEJJVCgyOSksIENMS19JU19DUklUSUNBTCk7Cj4gwqBzdGF0aWMgQ0NVX0dBVEUoQ0xLX01J
-UElEU0kwX1BJWENMSywgbWlwaV9kc2kwX3BpeGNsaywgIm1pcGktZHNpMC0KPiBwaXhjbGsiLAo+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmlkZW9fcGxsX2Nsa19wZCwgMHgwLCBC
-SVQoMzApLCAwKTsKPiDCoHN0YXRpYyBDQ1VfR0FURShDTEtfTUlQSURTSTFfUElYQ0xLLCBtaXBp
-X2RzaTFfcGl4Y2xrLCAibWlwaS1kc2kxLQo+IHBpeGNsayIsCgo=
+The AXI crossbar of TH1520 has no proper timeout handling, which means
+gating AXI clocks can easily lead to bus timeout and thus system hang.
+
+Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
+ungated by default on system reset.
+
+In addition, convert all current CLK_IGNORE_UNUSED usage to
+CLK_IS_CRITICAL to prevent unwanted clock gating.
+
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+This is for fixing my unfortunate rebasing error when tweaking the
+sequence of the patchset.
+
+Please ignore the original 3/4, which created a build failure because of
+forgetting to remove extra definition of npu-axi and cpu2vp.
+
+ drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index 2544e35a7bfa2..75ea1705cc08f 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -589,7 +589,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
+ 					      gmac_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -611,7 +611,7 @@ static struct ccu_div axi_aclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
+ 						      axi_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -760,7 +760,7 @@ static struct ccu_div apb_pclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
+ 						      apb_parents,
+ 						      &ccu_div_ops,
+-						      CLK_IGNORE_UNUSED),
++						      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -791,7 +791,7 @@ static struct ccu_div vi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -816,7 +816,7 @@ static struct ccu_div vo_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      0),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -841,7 +841,7 @@ static struct ccu_div vp_axi_clk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
+ 					      video_pll_clk_parent,
+ 					      &ccu_div_ops,
+-					      CLK_IGNORE_UNUSED),
++					      CLK_IS_CRITICAL),
+ 	},
+ };
+ 
+@@ -902,23 +902,23 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
+ static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
+ static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
+ static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
+-		0x134, BIT(8), 0);
++		0x134, BIT(8), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
+-		0x134, BIT(7), 0);
++		0x134, BIT(7), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
+-		0x138, BIT(8), CLK_IGNORE_UNUSED);
++		0x138, BIT(8), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
+-		0x140, BIT(9), CLK_IGNORE_UNUSED);
++		0x140, BIT(9), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(9), CLK_IGNORE_UNUSED);
++		0x150, BIT(9), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(10), CLK_IGNORE_UNUSED);
++		0x150, BIT(10), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(11), CLK_IGNORE_UNUSED);
++		0x150, BIT(11), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+ 		0x150, BIT(12), 0);
+-static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
+-static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
++static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), CLK_IS_CRITICAL);
++static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+ static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
+ static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+@@ -962,11 +962,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, BIT(2), 0);
+ static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, BIT(1), 0);
+ 
+ static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
+-		video_pll_clk_pd, 0x0, BIT(0), 0);
++		video_pll_clk_pd, 0x0, BIT(0), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
+ 		0x0, BIT(3), 0);
+ static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+-		video_pll_clk_pd, 0x0, BIT(4), 0);
++		video_pll_clk_pd, 0x0, BIT(4), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
+ 		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
+ static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
+@@ -998,9 +998,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
+ static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
+ 		0x0, BIT(19), 0);
+ static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, BIT(20), 0);
++		video_pll_clk_pd, 0x0, BIT(20), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(21), 0);
++		video_pll_clk_pd, 0x0, BIT(21), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
+ 		video_pll_clk_pd, 0x0, BIT(22), 0);
+ static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
+@@ -1010,11 +1010,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
+ static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
+ 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, BIT(25), 0);
+ static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
+-		video_pll_clk_pd, 0x0, BIT(27), 0);
++		video_pll_clk_pd, 0x0, BIT(27), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(28), 0);
++		video_pll_clk_pd, 0x0, BIT(28), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
+-		video_pll_clk_pd, 0x0, BIT(29), 0);
++		video_pll_clk_pd, 0x0, BIT(29), CLK_IS_CRITICAL);
+ static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
+ 		video_pll_clk_pd, 0x0, BIT(30), 0);
+ static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
+-- 
+2.50.1
 
