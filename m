@@ -1,173 +1,131 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C842E92C2;
-	Tue, 12 Aug 2025 09:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990260; cv=none; b=O6XlybJvAoSbgyxBcZ4KqVRi6g4w9NknxpHSw8F/UCRuiOcD6UCE07aiNtUhKFkiqa6p2ExEA4Zg+PEcdVPesNxqo61A/lGbisg5Qh9OHBrSUoVvu8ig/jmv5SC2ktWbYY640MPuskpqxySXUGn9W0NAEjmMhAzwFlCfjrQBGkw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990260; c=relaxed/simple;
-	bh=MgJgkqy4X7VBkdUHQgmnpgJcaBRPxSksxSZ/rty4i9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pkFTQP/zdQsAIn4053eSAtP/TBHZhklJkrUgxWOhfO/guCQzerTeKc9u6+KIE35q9hZ5TycqakRaUuMAHkp3feh/avgRXZVncB/mYoK82vHzgauEWQ9xhoPvJjS5tJ/voWljcK4yAzTyxImqYHJ228ox5xuPMo3E8WKdf3fWmzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgpR5eZC; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3D2E8DFA;
+	Tue, 12 Aug 2025 09:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754990295; cv=pass; b=m2ooUEaUBebLvOgAFlXvOntv8C/nWb5sLzogz9ON+bDV4AUDCGh60saUS7t1u1T5psSwARvEZLlpe53iDN9hItYE166hsXaxyJuVUROwtf0QYKoUQm7R+FYI19OKC3kvxRDOfMYNqS2vCD5IlQAgvut+CHLZlCKo6roNwtRij20=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754990295; c=relaxed/simple;
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IWG66FAWxZPxUgv8knZ91bJJoafCpfHP8tcBkC0WmgxjgRpuIyYD9+Ks6+SUyRaKs+lXdTcIv/n3W9K8N9bQwcyEdqQH/lzrZXp9A4fnPu9GebV3mI3lieLTRvmpS7HCRloN/cfA+LFk8Hd/0EHvh8gijELTJ0aHfPp4X6+9reU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=AOHW2uep; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgpR5eZC"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-433fa926c9eso3134381b6e.0;
-        Tue, 12 Aug 2025 02:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754990258; x=1755595058; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OsZfh7jnCZM1qIdbyzshEpg7lU806F0f1eIeVxq5DZ4=;
-        b=dgpR5eZC2d8TRvFbRYJkhqN8eEBMTUkC51PFOLOuuoV+qqwq7Bh4ZEdOl27Zg9xYrI
-         skh5QFjRtyijhEC/QHmmkWkCM8EUvX38CCTVHTN8QEiZhgzf0VPw2zxbLozqwS+Vt+qx
-         AJFhcfvikM/oJk6yu1IoqfHFT3pyYTIEQKlYXO57ARUHX+67yXXgr3KNqcMXUjY4/4VR
-         dSI65JfJRtBpks6KCCM0cekfiJUNI9TN4Eet6snpjwo/T9M0YnQALhVCle1GQHV1INNJ
-         XoJ7Ao/Je4P0xDNamUsfHw/WWHXOKIr5yUaPL2gnyGoVGXsq/j3ROyZOm+JJRlGfwIXh
-         QHXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754990258; x=1755595058;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OsZfh7jnCZM1qIdbyzshEpg7lU806F0f1eIeVxq5DZ4=;
-        b=lfIAI1skF1O/rk0EAWEeiu6HNK5GiVSOY/TJJ29lSF0OEgqA8ME81uSbqgc/0IuYsD
-         +DiJJx4quQ1TlqJcSMLCQzY4RLCgvbezkFyYVyTRTq1nk+dOZx7xMdMDnl7El2E/GChb
-         IoU4EQtNF0bZ6bNIFxgbfJQ+69NK2q+oRci7w+R+NYtujsLQdGnlMHMhu2EPrGH0oySv
-         Q1KpJFi5D+IFPs9IOXUjaaQO7l3qIyEeGWp3OcgGZThZUMgnLBtXqkCOqpQyOAoCqptl
-         CDbD2PzsLsH2IyG2y5xtj6ikF8Hv/vre2eylpC5vBLA0c7yA2ahduD8bVMNYbvlxVivl
-         m/MA==
-X-Forwarded-Encrypted: i=1; AJvYcCU14KdR0sdckBuOjnpg5DgCaJF0yA8aritcnKRM2yIOouT90/txK+psIjcuOXbzg437LCuk6i2ZpA==@vger.kernel.org, AJvYcCUbA3aWeC7maF85fz6PzczmwrAntNqyaKaP/oT/PdiWG0/wtsfBDU2C3O/wluydrzH6iqFZQyIjn2YS@vger.kernel.org, AJvYcCVE/BOGsSNmf6yncpczhRM86SjHdJytv4AOxl1bAgdT6ZoRXscy3pgF35VjnBO+cLCFix8YPN+KETAA/E4X@vger.kernel.org, AJvYcCVnYWrnTwsBvNa0hWlDaILxJtr4Qtu2wB2hDFvkURydT7Lmk15niJhrPDuvRWsppuO+8Gp+UNLBXgBPOA==@vger.kernel.org, AJvYcCWbjuqhlorFUiEemPY8hzuMYrWPWdK8xlzd7wfW6UZesCBioDZdaVB/+dMYqcxeF+DnE3+tV9TqyKZzV1LZw7oexQE=@vger.kernel.org, AJvYcCXG6J3awt3WSIj0g45MxqO715iv6nBOsZ4hAkXsrW5mz3pfaK0PisnjCEfMhzXSsR6vOd3lmXP0HN69/5GjmkV0r68=@vger.kernel.org, AJvYcCXbXMUH0GmioWdVvvPwRdDbek14OAzlTNKd7MJB2VPilcpecDZ3Jc6TatSa0u+euaSUP+iJ28QHOPZeC3fFxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YydCI3g01dnGQsYIs0hhNP+Yy8TLStkCn7Wm6gmIoX9BAy43qub
-	lfSg5/dziyNErwqDTin2CGNJciQi/mqP0AzjX3jqb+/ZUNzUnhn/g3Y66gJPHD1fGdTniL3JYeE
-	sgsEEdpiXK6phwUnTHmhAlFZuMEVBHwE=
-X-Gm-Gg: ASbGncvV/ye5N6hXepPjHi9DNaMzh2CcP489Vk0ZY0gPSkNHLFvQOx0SStnQtcLF5/5
-	wE0LdoQvTgxIuLjZEf2Z6TWuIXQ1wYLaCiSsTBXm/fqSLqDusIyuNETCOju2Ql1H5sSM1VP8t55
-	cohg5b4WnJAY+8u4rfzAhjUkc7nf8pHFj1ssAeeMRkHlkpe5dzlUsKwOxtCilGYQFzGiG4Rrkd+
-	ujHOosnN/NbVolYQcdwug==
-X-Google-Smtp-Source: AGHT+IGeKg+1AsHT8OzWJRaAIn4nQ5un+51PPsEFZqXXG7zkpSAAOASU4iUV34U5Po600E/i/8biPwPW0aGpB8iXi3U=
-X-Received: by 2002:a05:6808:30a4:b0:433:fd1b:73f3 with SMTP id
- 5614622812f47-43597b3b9d0mr10072751b6e.5.1754990257436; Tue, 12 Aug 2025
- 02:17:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="AOHW2uep"
+ARC-Seal: i=1; a=rsa-sha256; t=1754990274; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VGoHwuknbXdy2ikBZ1vGU0AWjSXzzg0mbeI+XAGjv3lI6bjWhYJe+W6PZpzvf8HkjK3FEkG0hbzKbj9V3ywie1c1s9+mF/rWWDDltZbfjZJIUwCWE+bS8HX80iAfnyPcTBj6Xx104uWUbmV+Oa3ioxqF0K7pS3vibr9TIfMQdq8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754990274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=; 
+	b=iROwg3CKcXXrofcmrd3Pz9aX8GMpSIOt+9JzonuH/ivzcEkUiZeTrHVWLhHOhh6ptgtWQc9DD+5D6dnEQCIKh32AZIYC4RI/zLvfmvFRFXEBgR1Pkd2lpOcBsGt1pX+Vn/TsJAiPd8JgpTzVH2WUmMAAo/FR/21H+8uYHOofBkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990274;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
+	b=AOHW2uepCwbOHaGmfXrIOS7xN5xZ7vXbAwjyRc/gFEbvSb0cBIkHga3zU+BlcgKz
+	3BvH+dgbFSBKdx7pivNHiOOdj2vL57zp2EjeRssbmNuOWeT14zFq6PzBkLGjmT27dsH
+	N2vailR+WOvTebM2bc0/ovf0YYJF4pKgh5PKfr2aVhP9/p31pZhjtpJw7utukub7JaO
+	owUadTOQY0NQwwKH/F8eQM3sujQxBj1euXhd7A+7RkKjYuPbx0xiYfunfRa9qkkf3Ap
+	xMKkSAgQ6bbvHvxwCrIK5dMfxFeP7rFq8PZYmXiIPDEx6mtPV5UWSr90dbaV97z+rZK
+	e1i/ZXUZ9A==
+Received: by mx.zohomail.com with SMTPS id 1754990271194111.10728242341895;
+	Tue, 12 Aug 2025 02:17:51 -0700 (PDT)
+Message-ID: <6d21521067409c483a8d7af39e43a6d579c98dc4.camel@icenowy.me>
+Subject: Re: [PATCH 4/4 FIXED] clk: thead: th1520-ap: fix parent of padctrl0
+ clock
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 12 Aug 2025 17:17:45 +0800
+In-Reply-To: <20250812060433.1979587-1-uwu@icenowy.me>
+References: <20250812054258.1968351-5-uwu@icenowy.me>
+	 <20250812060433.1979587-1-uwu@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-53-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-53-b3bf97b038dc@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Tue, 12 Aug 2025 17:17:01 +0800
-X-Gm-Features: Ac12FXwWvkLhtiiPhiHwQqmN1cgPTqDfCjN_x0Nmsu9rzni9NmKJK-aaPD6k1MI
-Message-ID: <CAAfSe-spVF480JyBwxFN=KH82CdKNR0oY87oR6fsR+-CUH356Q@mail.gmail.com>
-Subject: Re: [PATCH 053/114] clk: sprd: div: convert from round_rate() to determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-ZohoMailClient: External
 
-On Mon, 11 Aug 2025 at 23:18, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
->
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-
-Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
-
+=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 14:04 +0800=EF=BC=
+=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> The padctrl0 clock seems to be a child of the perisys_apb4_hclk
+> clock,
+> gating the later makes padctrl0 registers stuck.
+>=20
+> Fix this relationship.
+>=20
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 > ---
->  drivers/clk/sprd/div.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
-> index 936782c241271832c0a1957c99cbecc287351d1b..013423881968002d29c4e9536e7cd7b944779196 100644
-> --- a/drivers/clk/sprd/div.c
-> +++ b/drivers/clk/sprd/div.c
-> @@ -9,13 +9,16 @@
->
->  #include "div.h"
->
-> -static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                               unsigned long *parent_rate)
-> +static int sprd_div_determine_rate(struct clk_hw *hw,
-> +                                  struct clk_rate_request *req)
->  {
->         struct sprd_div *cd = hw_to_sprd_div(hw);
->
-> -       return divider_round_rate(&cd->common.hw, rate, parent_rate, NULL,
-> -                                 cd->div.width, 0);
-> +       req->rate = divider_round_rate(&cd->common.hw, req->rate,
-> +                                      &req->best_parent_rate,
-> +                                      NULL, cd->div.width, 0);
+> This is the consequence of fixing 3/4, because these two patches are
+> at
+> nearly the same position, and unfortunately get dependent by the
+> algorithm of diff.
+>=20
+> Ignore the original 4/4 and look at this too.
+>=20
+> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 7 ++++++-
+> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c
+> b/drivers/clk/thead/clk-th1520-ap.c
+> index 75ea1705cc08f..0ecedac50d6cb 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -917,13 +917,18 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK,
+> perisys_apb3_hclk, "perisys-apb3-hclk", p
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(11), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-
+> apb4-hclk", perisys_ahb_hclk_pd,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(12), 0);
 > +
-> +       return 0;
->  }
->
->  unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
-> @@ -75,7 +78,7 @@ static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
->
->  const struct clk_ops sprd_div_ops = {
->         .recalc_rate = sprd_div_recalc_rate,
-> -       .round_rate = sprd_div_round_rate,
-> +       .determine_rate = sprd_div_determine_rate,
->         .set_rate = sprd_div_set_rate,
->  };
->  EXPORT_SYMBOL_GPL(sprd_div_ops);
->
-> --
-> 2.50.1
->
->
+> +static const struct clk_parent_data perisys_apb4_hclk_pd[] =3D {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .hw =3D &perisys_apb4_hclk.c=
+ommon.hw },
+> +};
+> +
+> =C2=A0static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
+> 0x1c8, BIT(5), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
+> 0x1e0, BIT(13), CLK_IS_CRITICAL);
+> =C2=A0static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
+> emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+> =C2=A0static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
+> 0x204, BIT(26), 0);
+> =C2=A0static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
+> perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+> =C2=A0static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
+> perisys_apb_pclk_pd, 0x204, BIT(23), 0);
+> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> perisys_apb_pclk_pd, 0x204, BIT(22), 0);
+> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> perisys_apb4_hclk_pd, 0x204, BIT(22), 0);
+
+Oops looks like this does not work and orphans the clock...
+
+> =C2=A0static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
+> axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
+> =C2=A0static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
+> peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
+> =C2=A0static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
+> 0x204, BIT(19), 0);
+
