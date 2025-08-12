@@ -1,163 +1,137 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6D10E3;
-	Tue, 12 Aug 2025 15:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D192D8766;
+	Tue, 12 Aug 2025 16:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755013154; cv=none; b=ntMjPdejpXvBHRb9CgK+nrv+aUsAXRWGjH7qVbwjRpqsS21NJVa78OlUT2hBGNj/8stVyZJQlhHh67pzP043piPR3frKBNaLxgQy8zIqd/tYbBrZrXA7vBqmpomBZM0FDExUTUGTehlUp5vRw4i/frx4+gZVOjNIAprxqm1XXEc=
+	t=1755015381; cv=none; b=qMJv4wtA4FliHxS4cXElhU2nlio5F8to+lYhrddph7mlOOzIilF4KN3q2ZBf9Ylju61vynr9nyTMUE6KHxVdP1xNdCI6Li4AnG6gJlnUONMx0pw9k7lR3zZAv45/PBuT6f5+7Kyc2IrBtqGTenv1Hg1gIy8crVQBguq69uSyd80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755013154; c=relaxed/simple;
-	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
+	s=arc-20240116; t=1755015381; c=relaxed/simple;
+	bh=XBecqztfyjitlIby4MRK9UvSucBmQKequxv9bciCRpY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pt2CUML2WU0StiS8ogpgc9qfX0Fd/ncK9vppdttRzoQukRSvb7erxtgeupniJ7J5n+H4uJR8jsDmdpV8YMTg9LjtINh59L1whArUysy/XEc7lyMv5Qlc1aOTzJgC4qH8kuc7ZXV3K5wLw7Eijh/hITeBCEuRwr8eYH6LzSrR5vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiZpRdpD; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohLezRX5JINDpTWfKPn6/bB05dOf3q8d+vAzKkqbyYRS/P7R6LDKj+6oQS+qClYTsrJ8evsB/eEs24JEyRqTeocI5hkxL9faW5sDAR8HsvN/9F6/7q0zD9HcvIG8VztndV3PlpDWyKRjtOHd0khsfj+OBNF7YxsxjmFZRHolNi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1sY8rUP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiZpRdpD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284FDC4CEF0;
-	Tue, 12 Aug 2025 15:38:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1sY8rUP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA6FC4CEF0;
+	Tue, 12 Aug 2025 16:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755013153;
-	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
+	s=k20201202; t=1755015381;
+	bh=XBecqztfyjitlIby4MRK9UvSucBmQKequxv9bciCRpY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LiZpRdpDhra8HQLi6oTJvzINkJJSuv23n4QKhmL0GdIDFfOjMCDM1OqYhcWHHq3TI
-	 L28O5b3iPN5wVc9EXSMe1wiMP/NajukL3ql7pF4a85lv1fNAUZsV+TlMAAvN2rrzmr
-	 wRMnMSseO6nd8/EPTJY79HOmJ9zeY5vY0LS0u24hUa3icUGD8uDqDLMHMPTvWLEQv1
-	 l7Tw7lcXGU5Rs7ZD4eklupowdOLUecuU8uOFa6RlUoRtZfGlD+/8Ge0Ca3RaSQaoYZ
-	 h2ClWJH1Q8I12fZ++utjNSDaO59Bx51zYgkj3Rxo8YY8S6cPtFbxYBa0hRIu+GN5Me
-	 k5jWalHFpopnQ==
-Date: Tue, 12 Aug 2025 21:08:28 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	patches@opensource.cirrus.com, linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Subject: Re: [PATCH 079/114] clk: bm1880: convert from round_rate() to
- determine_rate()
-Message-ID: <tcl4eqicuqcptnbo4mcvjhacxkh2gh344k2bdrwfjbqflxspy7@x24np6pxjacf>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
+	b=b1sY8rUPaDz8gtbnafY5stBvo1y3WZ2zVAfNUFCAbTfNWJ8USrJsiP7EwDWcY1UAC
+	 J7VzId8T3Cc8R048vERfSfUogPYulLTJA63LWLYFCelPKgGATPN3nkTWIVO3+MLD46
+	 D/tzFWu6SGj3dUeZbA6JjFaMdGlqBqiFaUFoI/zVj9m7koN65RZh/cuadHz+p2Hbqp
+	 /wmXBgDnvB4jn4Qy7BpO4mA5npPbPPxTVS9/1blsBBD08XyqtdE/ZKuKH/Ghgt7t9x
+	 G+RPwofDPDm6g6uWeYWOcCKSsnPPdg68s3Mlu4UjMb6ujOR3vKT36uNz/vZ/F4H3N1
+	 WJ1cCup8bjgHg==
+Date: Tue, 12 Aug 2025 11:16:19 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Richa Bharti <Richa.Bharti@siemens.com>, mturquette@baylibre.com, 
+	sboyd@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, srikanth.krishnakar@siemens.com, cedric.hombourger@siemens.com
+Subject: Re: [PATCH] clk: qcom: gcc-qcs615: Fix gcc_sdcc2_apps_clk_src
+Message-ID: <qqtqberlztcqhs7rv32beec2w6soebpgxovo54omfqijt2nct3@odcwbd5idqnl>
+References: <20250729094943.863392-1-Richa.Bharti@siemens.com>
+ <81a1bd2c-ad4b-4042-9116-c1604e4f0d98@oss.qualcomm.com>
+ <e54l6omqbop5tlithm7cseldtbcz47sde6fo6wcoxvbordoa6w@l63sxertlypq>
+ <adcdeaf8-a3ba-46c2-af7d-e37bbc5341dd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
+In-Reply-To: <adcdeaf8-a3ba-46c2-af7d-e37bbc5341dd@oss.qualcomm.com>
 
-On Mon, Aug 11, 2025 at 11:19:11AM GMT, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
+On Tue, Aug 12, 2025 at 12:34:02PM +0530, Taniya Das wrote:
 > 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+> 
+> On 8/12/2025 9:20 AM, Bjorn Andersson wrote:
+> > On Tue, Jul 29, 2025 at 04:08:21PM +0530, Taniya Das wrote:
+> >>
+> >>
+> >> On 7/29/2025 3:19 PM, Richa Bharti wrote:
+> >>> On QCS615, we see the same issue as reported on SM8250 and SM6350:
+> >>> "gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during boot.
+> >>> This is due to GPLL7 not being enabled by default as a parent clock.
+> >>>
+> >>> Setting `.flags = CLK_OPS_PARENT_ENABLE` ensures that the parent (GPLL7)
+> >>> gets prepared and enabled when switching to it, fixing the warning.
+> >>>
+> >>> Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
+> >>> Signed-off-by: Richa Bharti <Richa.Bharti@siemens.com>
+> > 
+> > Thank you Richa for your patch!
+> > 
+> >>> ---
+> >>> This change is similar to upstream commits:
+> >>> - SM8250: 783cb693828c ("clk: qcom: gcc-sm8250: Fix
+> >>>   gcc_sdcc2_apps_clk_src")
+> >>> - SM6350: df04d166d1f3 ("clk: qcom: gcc-sm6350: Fix
+> >>>   gcc_sdcc2_apps_clk_src")
+> >>> ---
+> >>>  drivers/clk/qcom/gcc-qcs615.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/clk/qcom/gcc-qcs615.c b/drivers/clk/qcom/gcc-qcs615.c
+> >>> index 9695446bc2a3..b281f0dfe165 100644
+> >>> --- a/drivers/clk/qcom/gcc-qcs615.c
+> >>> +++ b/drivers/clk/qcom/gcc-qcs615.c
+> >>> @@ -830,6 +830,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+> >>>  		.name = "gcc_sdcc2_apps_clk_src",
+> >>>  		.parent_data = gcc_parent_data_8,
+> >>>  		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
+> >>> +		.flags = CLK_OPS_PARENT_ENABLE,
+> >>
+> >> This is not the correct way to fix it just because SM8250 and SM6350
+> >> uses this ops.
+> >>
+> >> We are testing the right fix internally and will be posting.
+> >>
+> > 
+> > Please use such opportunities to educate us, rather than just tell us to
+> > blindly wait for something (at least share your thoughts/hypothesis).
+> > 
+> 
+> Sure, Bjorn.
+> 
+> https://patchwork.kernel.org/project/linux-clk/patch/20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com/
+> 
+> The RCG configuration goes to a bad state because the current floor_ops
+> tries to update the rcg configuration even if the clock is not enabled.
+> 
+> The correct fix is to ensure we do that when the clock is actually
+> enabled which is brought it by the shared_floor_ops.
 > 
 
-Once this patch gets merged, the 'Coccinelle semantic patch on the cover letter
-of this series' becomes irrelevant. I'd suggest to either include the script
-here or do not mention it at all.
+Excellent, thanks for the explanation.
 
-- Mani
-
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/clk-bm1880.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
+> Please let me know if you still have any queries.
 > 
-> diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-> index 002f7360b1c6c6e3058606a0808115b48fd3147a..dac190bc6e19a6dd4be413ea52d41f74934a1aa9 100644
-> --- a/drivers/clk/clk-bm1880.c
-> +++ b/drivers/clk/clk-bm1880.c
-> @@ -608,8 +608,8 @@ static unsigned long bm1880_clk_div_recalc_rate(struct clk_hw *hw,
->  	return rate;
->  }
->  
-> -static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				      unsigned long *prate)
-> +static int bm1880_clk_div_determine_rate(struct clk_hw *hw,
-> +					 struct clk_rate_request *req)
->  {
->  	struct bm1880_div_hw_clock *div_hw = to_bm1880_div_clk(hw);
->  	struct bm1880_div_clock *div = &div_hw->div;
-> @@ -621,13 +621,18 @@ static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
->  		val = readl(reg_addr) >> div->shift;
->  		val &= clk_div_mask(div->width);
->  
-> -		return divider_ro_round_rate(hw, rate, prate, div->table,
-> -					     div->width, div->flags,
-> -					     val);
-> +		req->rate = divider_ro_round_rate(hw, req->rate,
-> +						  &req->best_parent_rate,
-> +						  div->table,
-> +						  div->width, div->flags, val);
-> +
-> +		return 0;
->  	}
->  
-> -	return divider_round_rate(hw, rate, prate, div->table,
-> -				  div->width, div->flags);
-> +	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-> +				       div->table, div->width, div->flags);
-> +
-> +	return 0;
->  }
->  
->  static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -665,7 +670,7 @@ static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  static const struct clk_ops bm1880_clk_div_ops = {
->  	.recalc_rate = bm1880_clk_div_recalc_rate,
-> -	.round_rate = bm1880_clk_div_round_rate,
-> +	.determine_rate = bm1880_clk_div_determine_rate,
->  	.set_rate = bm1880_clk_div_set_rate,
->  };
->  
+
+No concerns, this is exactly the kind of transparency I was looking for.
+
+Many thanks for the quick reply,
+Bjorn
+
+> > Regards,
+> > Bjorn
+> > 
+> >>>  		.ops = &clk_rcg2_floor_ops,
+> >>>  	},
+> >>>  };
+> >>
+> >> -- 
+> >> Thanks,
+> >> Taniya Das
+> >>
 > 
 > -- 
-> 2.50.1
+> Thanks,
+> Taniya Das
 > 
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
