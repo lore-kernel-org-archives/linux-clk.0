@@ -1,127 +1,191 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE74280308;
-	Tue, 12 Aug 2025 09:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCCE2EBBA6
+	for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 10:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754991974; cv=none; b=jD/CC+WpHB8qKOfbnBB9GJnu+S8Wg0IOq4KTAh3UWzdZWpNemEqElK+VqJ6wblUBp3NWRnpJVTdTS/Axqe30x1aqJFhsagk80yOBOEwta1w9Q6uk6r8yvlKwLkgylYQTHQupAvvjHGa5qbe4uq9TMt9MhqobPcHVAXWsnvqDddo=
+	t=1754995195; cv=none; b=DHBiLmNU9x8/gItIXl7uznbkAC28xfG+MSSOemyRNZ1maUOZ6YKbCXEUfVzNYQsSxTQK/IFTNF4AFWonFUlvoI+LdOyL57c3wkGy4QcKz+3HFarTO8GgICQi181Bt6KDit6fq6zHPRAEWZ/F2IDzg3EHVceNtg4P/6NnBhxRITM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754991974; c=relaxed/simple;
-	bh=a5W3LIIPs2omyjBIaORiELNf8Ee9yWsPoM3uxHAjEMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4t0ujWykTmDKi6NMeX5+QCq+E2Q4bM2sWAOCYoNUV99WwGcIYCFRSi9aP80qgoCX0eJTlcrCL7YxgoWsUKo2F415u19KIDxLzwfgz1pp/7bS6/2UN6MfMcMaN3SJKqHh36QvKGmFEOf3OGfcnimfV2ajg7Zju2yBZGnpS+os4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2iWcETs; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754995195; c=relaxed/simple;
+	bh=aKQ469kMuJqyRpyBBj4VAGrI2TpqLDn80ts4I+YLbE4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIns8tahlrgN42+RFtkXp/9TGROBuWxENkNa0gkpATe6SOgHeWulSnPliSRDnfQ/AKiz60xcB/E9PQJzAE86D5jFyYNL10VQWxHayhsJKyZC+koXNSHCmINkJQ2dfhSlNqtC4RxONP3PZyJVOnEL9EFsq+RwNy/rbFsU9TA/Cdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/w4E4vh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2iWcETs"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6182b3218aeso3501358a12.2;
-        Tue, 12 Aug 2025 02:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754991971; x=1755596771; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fjVIKjeUwxPFaZApTw5n61+HZBIH65P3mIOsayr0+Vc=;
-        b=h2iWcETsIJr1EVoap5Uof1EL7pmQ6GG5G/ek/yGsg27WYPzGxWlBNwqofVJuxGVWoG
-         9J0q7NTJJ6frSB2R+XFbqav3VK+TKJhRcVySRoT2koRMhRH9U2af8f58hj3t3Km74pXD
-         X8QP4DJpWo2SrfSzIAxvQLHr6K6tP8UN6c5TdowoGsegl7+de9HYiiznnFmdtwNmv8RC
-         NFSUhd146jmFoylImt2PZ9cn8FTYtsfSxNysIcJw2GPa/3SxNZwCznIpDj1Dymkj8oGU
-         0ThQC3Sh8zjbj7QgiU1ONuLBuYQDryHN1QHXzPFRE27iS/G++pP8gLS8I8K3LJr3XWW/
-         boWg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/w4E4vh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754995191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZNmGluZMVEODqqLey7tscfNEcE8jZgnd0oIotEJMQE8=;
+	b=S/w4E4vhnIv9g5/m9EpOWKn80bn4jOLxEYmhjX2Zk5jVtdrmkheWJ3H5FTJz+lA4GV7cpg
+	0HdTqXuvrzYOKAK1KSgY9ClDl19f1K7v1Dh2PBKtF4pjpzlLSn3qdkp0A7yJsCCYKnMm92
+	1h0YWugJgjLnJlwBhuZZdczNBgjsnjM=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-wiiVLceSPripFzpXKOVtVw-1; Tue, 12 Aug 2025 06:39:50 -0400
+X-MC-Unique: wiiVLceSPripFzpXKOVtVw-1
+X-Mimecast-MFC-AGG-ID: wiiVLceSPripFzpXKOVtVw_1754995190
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e348600cadso1256032885a.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 03:39:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754991971; x=1755596771;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fjVIKjeUwxPFaZApTw5n61+HZBIH65P3mIOsayr0+Vc=;
-        b=V8Bnhc9PjVlkwo5uAfQIJRw8RVjyKO4PFbLjL4KNMeyLqqE5m/LRXWh9JGfK7qHcag
-         DckOdV4TPoDiIvwQkbLmzz9vO81s0P40cqO0y37ESq01onPO1+kTP4mGCK90vrf9QyRO
-         cWB+OmNLBmFjipBz0xU/owOeHcRSGbHksIpHt+8pMPjBswXlbNXeQ+E7BlWe67wHjduF
-         LUx7HEx/EKqn+pyGF8gaJp3+6ZV49OFCSWtMEf9/99xFSX+G3L5ZPR1DripAwXmWpjj4
-         JN1Gh/Ld0wDLA2W+uFg1U4u+UP5GAkWwJ5edzjFbU3Ws73dncp8vQjOet4sfDNWyjueJ
-         XV4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVf3Z5JonGoDS3RYrKt2K+Fve3KMYLQUatiimTXArbo+j7dZgzQRPW5Q8Kha/njfdZeIDMLIu4lXfTD96bh@vger.kernel.org, AJvYcCWZJBgn1DJMON8IFz6iRnnkKkk8OXp4UNZvV3h78RiJppcMubtqmBkAPIBfSJFwdu9taV4lpGG66FCW@vger.kernel.org, AJvYcCXfB9xMtkxQdPYJyPezrmEoYGh4ThcM57ZvowM/t0+hd4vsUMxnka/4ZSF3eX0j0HmPP6Em0uLfwd/f@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhGlgIBDfTngqUjEt2gkWzdGzEPpk8pBl+/LIEFIAkhUutYZCJ
-	6/YMfTj+uhvhTgm4Akztvlpxinkk9qkU6xaQPwc9+Nq/7AvLX9tDDVnQ
-X-Gm-Gg: ASbGncvbEwpGv/I9zpNqRnxHtQUQo9LtQU35ZEF/NL1IDD5Ix+44ahJrgZAKHNIeMIr
-	XhJ91msD3rruw43BofX7jqCn6H5cJjtueK60F4HMYWJU+LLejMchtaOkVIhIPd/uOMG9gDFLrCH
-	fcuw8j7NL+8xu7La4dyE2j0eW3ByJPzvDdEp0y4AnNmTAl1qRb35oBa0f6PZeJop2x6PPmi0RZQ
-	GFnPFwQQ8pOj6Grijc+TKwBs9i9QJvg1rJEYQgWcKkyQBHkI7PHXjEnN4y/6YKs9rKvw3FYbt2H
-	wkXtlkcdYxMZRnX0U7nxJhtlaCRA+bTTE80sH3rPCzZhI/0qXHDr3i5T8RkuZneP3XnHySjcvTy
-	mQdiY/+7XJiyKNhU=
-X-Google-Smtp-Source: AGHT+IESCpxt101/vHoMm8x2v74Z4a4fzMUqHfeuz0IzBLGBuBbFHZ9DNlZ5ZtTnOo38czseJxE1kg==
-X-Received: by 2002:a05:6402:5246:b0:615:7fdf:9c4f with SMTP id 4fb4d7f45d1cf-6184ec90659mr1956866a12.24.1754991971059;
-        Tue, 12 Aug 2025 02:46:11 -0700 (PDT)
-Received: from nsa ([193.187.128.251])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6181ad55ebasm4716471a12.55.2025.08.12.02.46.09
+        d=1e100.net; s=20230601; t=1754995190; x=1755599990;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNmGluZMVEODqqLey7tscfNEcE8jZgnd0oIotEJMQE8=;
+        b=im4JgzeTd3cqUf22XAZFYiF5b64Y8JIIL3zqEFzSzLDtz6N/0vzAldDWV3M5gIdGQc
+         G6TPjjRrtRi660VmM5UTMD/lyOzcwsHnrL/WuWPUQ2a+vjDEqKq9mqMJJtKB9AmbRnu1
+         IeghGppKGwOF83RrPxk31M7iBt2jdC20BkGAJUicWlJQ+8xtC0sJLzvN7QvIaXa1eK6a
+         MsldXZZuZ+BslEA8GAAteCVHHvFwMZEpndjAdVx6kA/UjHVeBZegHPjUlw3I1g0cFGho
+         g/kdNIOMV+RsVPiXzOGgnQIkm9yyrP142iW4y5Z1iekFMlMzrpz7W7jJFYvb0hSpFjms
+         hYJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ8nOu3qRws9oLLmaUHv94Ev4perlVJxx4ILZNi3OrnyVTPsNtFycy+Fv/K7SGg9KU/L//2w+mzgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt6IsIdemrNbvmtUg83XkVhbCw6tQsMtHrjVsOswenJKUMJ/RL
+	3swlgWAA8Z23EQaF2lGxFLAwIi0HLutEFqVKzWIPFxRHhZBy5FooiasGkVewA3NXtaMuHO2SSfg
+	NDQ4qTM5iJhde7qOX9d9vaCXa0P/8uOi3+mTTpW2A57ElSu8zH4FuSOc9bc4JPw==
+X-Gm-Gg: ASbGncuOHE6ofLhWSKZqeOvrTtStiNl28aNVxs+uDAbW0YaQiSsYBs2ud9u2P1R6SxQ
+	VgcYsSAppcaQywIbEjPfTqR9yfeD3UsbLdEHqyhlFVavsUk/nffxGZLlrUzUHkUGN0Wq7XtEmB3
+	krAaG5P5ScCDHuoTzih/DLs6FVmJXle8Es7gnOOthxeEDzN7KV4y2b6gR1/PcyjSOK8kkfyuEXm
+	5XKSQmSfehzQeBK4Z1nV6gZ42oBxe91JBi4L9YG0yRLpQOs5HGBC7iDaKhFkrcfpVV+2pDPW80+
+	bE32wERDpDliHsZSG5Ujtk8QeRreAnlvUF2uAJiMwQP98fsnmy6lAS3T5YZIQaQ=
+X-Received: by 2002:a05:620a:126c:b0:7e8:15ce:bf9f with SMTP id af79cd13be357-7e8588b064emr355634785a.33.1754995189659;
+        Tue, 12 Aug 2025 03:39:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnBK/VwO9xaDEZqPIr5Ki0EDBjQlgku4qoR/ofUy7muXwNiOHVcU/4sdcTQibJSWhG5zm1ew==
+X-Received: by 2002:a05:620a:126c:b0:7e8:15ce:bf9f with SMTP id af79cd13be357-7e8588b064emr355631785a.33.1754995188996;
+        Tue, 12 Aug 2025 03:39:48 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f73101asm1727614485a.68.2025.08.12.03.39.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 02:46:10 -0700 (PDT)
-Date: Tue, 12 Aug 2025 10:46:28 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: adi,axi-clkgen: add
- clock-output-names property
-Message-ID: <oploom26lwx7hhrdauxoe7hgjf4ccfrnqrnh5pd3juqxh44d5q@rpiiooqkztxw>
-References: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
+        Tue, 12 Aug 2025 03:39:47 -0700 (PDT)
+Date: Tue, 12 Aug 2025 06:39:41 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Alex Helms <alexander.helms.jy@renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 000/114] clk: convert drivers from deprecated
+ round_rate() to determine_rate()
+Message-ID: <aJsZ7bs0OMXcrStU@x1>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Mon, Aug 11, 2025 at 05:17:01PM -0500, David Lechner wrote:
-> Add an optional `clock-output-names` property to the ADI AXI Clock
-> Generator binding. This is already being used in the Linux driver and
-> real-world dtbs, so we should document it to allow for correct binding
-> validation.
+On Mon, Aug 11, 2025 at 11:17:52AM -0400, Brian Masney via B4 Relay wrote:
+> Once all of my conversion patches across the various trees in the kernel
+> have been merged, I will post a small series that removes the
+> round_rate() op from the clk core and the documentation. Here's the
+> other patch series that are currently in flight that need to be merged
+> before we can remove round_rate() from the core.
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+> - arm32 (3): https://lore.kernel.org/linux-clk/20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com/T/
+> - clk/tegra (6): https://lore.kernel.org/linux-clk/20250710-clk-tegra-round-rate-v1-0-e48ac3df4279@redhat.com/T/
+> - clk/ti (7): https://lore.kernel.org/linux-clk/20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com/T/
+> - clocksource (1): https://lore.kernel.org/linux-clk/20250810-clocksource-round-rate-v1-1-486ef53e45eb@redhat.com/T/
+> - drm (9): https://lore.kernel.org/linux-clk/20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com/T/
+> - drm/msm (7): https://lore.kernel.org/linux-clk/20250810-drm-msm-phy-clk-round-rate-v2-0-0fd1f7979c83@redhat.com/T/
+> - i2c (1): https://lore.kernel.org/linux-clk/20250810-i2c-round-rate-v1-1-9488b57153e7@redhat.com/T/
+> - media (4): https://lore.kernel.org/linux-clk/20250710-media-clk-round-rate-v1-0-a9617b061741@redhat.com/T/
+> - mips (1): https://lore.kernel.org/linux-clk/20250810-mips-round-rate-v1-1-54e424c520dd@redhat.com/T/
+> - net (1): https://lore.kernel.org/linux-clk/20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com/T/
+> - peci (1): https://lore.kernel.org/linux-clk/20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com/T/
+> - phy (9): https://lore.kernel.org/linux-phy/20250810-phy-clk-round-rate-v2-0-9162470bb9f2@redhat.com/T/
+> - pmdomain (1): https://lore.kernel.org/linux-clk/20250810-pmdomain-round-rate-v1-1-1a90dbacdeb6@redhat.com/T/
+> - tty (1): https://lore.kernel.org/linux-clk/20250810-tty-round-rate-v1-1-849009f3bdfd@redhat.com/T/
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+Konrad noticed on patch 90 the space after the cast. I thought I fixed
+all of those by hand, but apparently not. I looked through this series
+(and the others above) with `grep "u64) "` and `grep "long) "`, and found
+4 other cases.
 
->  Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> index 2b2041818a0a44456ee986fe29d32346f68835f3..6eea1a41150a7c90153cffcfb5b4862c243b4e0f 100644
-> --- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> +++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> @@ -42,6 +42,9 @@ properties:
->            - const: clkin2
->            - const: s_axi_aclk
->  
-> +  clock-output-names:
-> +    maxItems: 1
-> +
->    '#clock-cells':
->      const: 0
->  
-> @@ -65,4 +68,5 @@ examples:
->        reg = <0xff000000 0x1000>;
->        clocks = <&osc 1>, <&clkc 15>;
->        clock-names = "clkin1", "s_axi_aclk";
-> +      clock-output-names = "spi_sclk";
->      };
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
-> 
-> Best regards,
-> -- 
-> David Lechner <dlechner@baylibre.com>
-> 
+Patch 38: clk: nxp: lpc32xx: convert from round_rate() to determine_rate()
+Patch 64: clk: x86: cgu: convert from round_rate() to determine_rate()
+Patch 68: clk: zynqmp: divider: convert from round_rate() to determine_rate()
+Patch 95: clk: rockchip: half-divider: convert from round_rate() to determine_rate()
+
+Brian
+
