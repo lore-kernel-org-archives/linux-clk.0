@@ -1,232 +1,205 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D222E6131
-	for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 08:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCFE2E765D
+	for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 09:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754988819; cv=none; b=dFJsfYH7smiikdkmdLQYuXx2Vf7yMbZ5/cSFJVhjEAc3jqrSHQFFhFNh8DPxNdQCA+yiXHyDnCgVqSxyYo5Pzmz+AN/CNdh6QPxBZbQc50z4hHrb8s3XChVWpIp66om0w7tnsBPJeP28oymAvwQKJg2AMIoxnpCavwHcBdIf7Fs=
+	t=1754990048; cv=none; b=YDBgRSYjcEhrxtLSycciipbMEbXmzQiJ3Sqvcel5toma1wKZgIz4DJTGHc2UCm1m7p77TXpsuU1RRdAVbvjbYfpHnDnX4YhS+Q3X5aiIzi8D8N82wuxvsp0X/HKZ+oxfhm1mbAA2zvMClM2WEYrIW4nDFusO9VXZms0M3DdRbyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754988819; c=relaxed/simple;
-	bh=q2OrfEa0/hqSk1C4Uj0WZG+bdxoGURzCevwAhFOq7KI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tKw3l2c0oyEiOJ4gpCuPOKfaQHEHTIUucDULlFewXJbHwqKBvz5+/J2ANhdAb2fUWYy7mmXdPMSEWYTYMjaV5AElyNvtd/PPoAFOUszx3wG2sbntdacxj2wey0qaKo/jmkpAW855vnK6NfCMxIzyAbRjk103imSOap0IhANVUjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WEGf6Wa8; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1754990048; c=relaxed/simple;
+	bh=nr4/zLMgjwtBkW7NNaGIi8b89hI3W0RdBciJLBm7x6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UyKv+ujMCb8nZbfNmGPkr6vrbZSNH6OUQGBL9SjdgFenAxOXEN7BbV6ZvCkaHlMBzvuzo0IVdSWTVVB++rcpAyRbyVzku9nIjni1Oag0xskTzncbMyP4QGfrzTa4z8lJDOBATX4Wv92nTrE4/bxk5TV5JcF4oJRAsfeTpKQQE2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IhtfSRQ2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WEGf6Wa8"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2403df11a2aso34698185ad.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 01:53:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1754988816; x=1755593616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kLPnD+avccUvVR9e4PceX6HClVP6oiTocKcKtm4OPbU=;
-        b=WEGf6Wa8hLiS8uA6NH9xw+Fcht0mtuQndKCOFMAtb/nMcxgx8VdQcX1LyrtB/5TFS8
-         ouNVlRFdbWtLBgVm6C4JlSHDCznXrS+Wxqzi3BwY87fasl9Ie4Ti6F4DChfcGns91XdG
-         O1KmbqsuNs3kDfrb3RjpWaTTUwJ4wXL7SPplE=
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IhtfSRQ2"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C5XP6v005212
+	for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 09:14:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TcdYyVsr8u2xyDR+M+UHLCKM6ilDd8iFcrZx6NwCMNw=; b=IhtfSRQ2YMp3r9Qb
+	QTBakXU39kXnh3NAEBJK+jxPUhNti+qh2TnSA3O6FuXxZMFWJ92mtfpgaYuzpKlM
+	79O6emmm+ijVk/GZsDz+7Y0utYD8xhI/HE1GcmNUUDbYPwtTK/pqvfAvkX1MCHXt
+	zLgnT0FMJcu8wg830X801jUiQpgV5Zh9XqCh+ADbELn2FnOS9gICrZzQd5ELXDqc
+	JMuHjW+zNFuPoGB+sR9PNb5guLJaT/oSku8iZRr5nqLYWea9Y4dIfvAon+7aBHnw
+	WWDckRpDvB5IABisZYJyWOoePRF2XmOtgsNh7HDAjsCYrKKntzAOspkZicbfU5RC
+	7W6NDg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhx5qqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 09:14:05 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7073674bc2aso19187126d6.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 02:14:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754988816; x=1755593616;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kLPnD+avccUvVR9e4PceX6HClVP6oiTocKcKtm4OPbU=;
-        b=tndHTd8N1m9uHQiiVU3GDYfdW8SEO+PYwKhP4i3mtTxgggrfKkWX6kXDc4dJIuUUmN
-         cIUzKkq+9t73CaNL+Gt5DaWfCsSFnv7bo2m1MO1KyPpsFFaKLpJ87V+6HjVYBBTVxDnT
-         v7Epc8XnzkgGMB5UnK08dyo3S7FRKw+gig37fQmKrBnRmBV+bLAaqi3ydoRigEpwQzeK
-         Nk2eb+aBmAqO1g0zRIrqGXlCKoFwoGqWbpOgKyiG02zpSoScVqkdaYAYvTixXICgad3P
-         c4kYbEbbsf6b/pubPt5QfY7U0H+U/tVFLYd8AMILpcIyiMeHLFKA8UiRxgB2PVQ6ZufJ
-         0YiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4BQsoQyK9DshR+xjQG07OX1ruK5DzC8vYiFZAptW+flumreRfPbxZKA6syAgKGlE6U42CzASOlqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb5zacFg1KtEni/uVUmUE/1wjynSXGSjTXX0Osq1v8s6XNuUw2
-	pjIXn6UWwN9rMQU962cIt1vQOIReBtyGX+RYB9gGCwhpDDfIn7WIGIftxImmI5KqFQ==
-X-Gm-Gg: ASbGncuoCWUVThcxlG7SFa6d0UPVL+D3HuU29uqlaqpKM0O9fQiYHU467CrCSJ72fCx
-	Xd6tvzi50SqI0hHDtPZxenoTfJ/TvXusUiQNopnNWBXMf/wcDBvu2D1cr6/cssQB6raoW7Gy6ZV
-	8IEe68DsmmZ34gSUEjJqtQHYsAtvchJDXeyVr9S9Iw4i78I4dqXaU1I+yPoOCv0ZOijEn/s4zne
-	q1M4jxkXIifVOxv9Ts0GO1HWSm+vLedUSl5yR+I/jnJ9wUpdx89bpcm8mcUp6pdvKUsbq5GV4Bd
-	SNPgdOq1tU9iVxp4hXPYkXgoZZlk4CkblwK8ADB3o0UVHZ9fSRM2SmeQ5uXV86tHkWqFDmxy2ml
-	uGn59hJIyrnHohMu26ziibLYXJzPDd6gItg8iel1q
-X-Google-Smtp-Source: AGHT+IE9waI3iD48I1Icaq2kvnzZzP6L7x3PIwO1bJzi0aVtk4t1U+vF1hQKX5e9Odzlm0z9y5S+vw==
-X-Received: by 2002:a17:903:a4d:b0:242:a0b0:3c1f with SMTP id d9443c01a7336-242fc230ecamr26464165ad.7.1754988815724;
-        Tue, 12 Aug 2025 01:53:35 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:f81e:7c91:8fbf:672a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-243017dd480sm10014365ad.33.2025.08.12.01.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 01:53:35 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: Use hashtable for global clk lookups
-Date: Tue, 12 Aug 2025 16:53:27 +0800
-Message-ID: <20250812085328.3306705-2-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.0.rc0.215.g125493bb4a-goog
-In-Reply-To: <20250812085328.3306705-1-wenst@chromium.org>
-References: <20250812085328.3306705-1-wenst@chromium.org>
+        d=1e100.net; s=20230601; t=1754990044; x=1755594844;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TcdYyVsr8u2xyDR+M+UHLCKM6ilDd8iFcrZx6NwCMNw=;
+        b=TrybE/FEPVHBiu4LBkFedaSBAgA2x026qAH7w9YffLcbNaXp4YWhTrcEgorv7obeX9
+         w9Lyb72LBagj5E9f7Axh3cDNqzzGwJYqrGyGkqUDzsj4+YwCZcVOb3RS0uzGd6N8CJGo
+         0zm+DeesQ21BrEF9hemSWSVZFOy78tG8/fO6Ffis1UqM55AWvjrgCezaDh/USdNj8DFj
+         Onlhb3NO0iM+mgdLkrTiecNGR69oonX2IP94bO4OdlXjyeUmKZYg6YpuJ5bxPyKDF0H3
+         udOmc2r7CVROsuknsFQADdta5NTRYKwbjzVFd4Be+s9XXdsYIgj3X1WpHmwO3FDiS1jd
+         0RoQ==
+X-Gm-Message-State: AOJu0Yy1ktFd2xlsgPLHjxNunhP4Nsl/4M+PfPQAzCJKJm36xadh5Dfr
+	L2LNbpgGQEn+BLNeyPGpkAg1WfnH8xnmJCoadRRosJiEg5TSy/9h54xT5UeF/kQ8sCuTxaz3xh0
+	ouK5e+y2n1ZlB5VTrQkuAWNqcLLZINaeHj/V5kpj8+XwDqyALG1EjKRij1sZAKJQ=
+X-Gm-Gg: ASbGncsdETXqvy+Lt5y+SU8mXyT1eQJ/pTbvPqMbOkkU97J3OCk59UsEnbTshc/em3I
+	V84kix8Fotq5VsPqO6cMl0cyJEn3hZE6fIjmtwRPFUuiUCEB3vbyhkNHcrqRINssVTGZ7a4S7r3
+	74XvnjMJl7o7ldZnUhmrU56WCaWBDGSey9ePDD4p61irn/rPy3GMRuTe3VWpq+Qjml91hYbwevy
+	aOi9OqiB9tRjsRDnU5P5I+2aAEX+mSh4x2eFDi0DSBDJM2C0M6fsNZcWXvyD6uK4sJc2BYEEx8u
+	RWKDr8jHv1+v2vsDJ7CapKrXmgupgIL7vBDWS7iISLvTTeT/oHFgiTC0YnHuiu71431SwihnMuv
+	mYi21dYOT+lfdCr4bjQ==
+X-Received: by 2002:a05:620a:462b:b0:7e6:3c48:408e with SMTP id af79cd13be357-7e860096e15mr26710785a.0.1754990044187;
+        Tue, 12 Aug 2025 02:14:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIPCXaPbFG7yAsR8pzw0t16fLvywO1iDk8kuIeOO1bInlVQuLKav0rw2YYkObsTH0QGuYx8w==
+X-Received: by 2002:a05:620a:462b:b0:7e6:3c48:408e with SMTP id af79cd13be357-7e860096e15mr26705885a.0.1754990043559;
+        Tue, 12 Aug 2025 02:14:03 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a1251sm2177380166b.30.2025.08.12.02.13.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 02:14:02 -0700 (PDT)
+Message-ID: <90f4eaaf-2513-4479-8647-b855a72e0e65@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 11:13:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 090/114] clk: qcom: alpha-pll: convert from round_rate()
+ to determine_rate()
+To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Chen Wang <unicorn_wang@outlook.com>,
+        Inochi Amaoto <inochiama@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Keguang Zhang
+ <keguang.zhang@gmail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
+        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Samuel Holland <samuel.holland@sifive.com>,
+        Yixun Lan <dlan@gentoo.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Daniel Machon <daniel.machon@microchip.com>,
+        UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+ <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>,
+        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Neal Gompa <neal@gompa.dev>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andrea della Porta
+ <andrea.porta@suse.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+        imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+        spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+        asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+        soc@lists.linux.dev
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-90-b3bf97b038dc@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-90-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfXwAgy+B5NnzgH
+ fcaVwm2BypfpmYAHGEHi5PO31oM2lgs858eBMyEoKDCNoNAM7IQrMuJn7alIQ70UKAbTRRNknS4
+ M+5v2tXDiOYpPk9jrkkypp/vkiy+uf367uZDwxhPUAr6k8thN+9wraPfkrbtdtPWRm9kCjgLPry
+ vDFmXJflti93X5ENnIbed7213eOc7OkritGT/7B2yplcZ4APk7EWW8+x14SsRULhKlzqBGGAFpg
+ +bkbLmRVnAavETxfJWhJbz49wQhxghZPIU6zXBkB4OhBh9bUZqlwsSpanrbYgz+Tzrncx78flsu
+ hntfo/hoZ+xpNW9cpaSLnKuEXmHYXagFaDxXSe9fCMnw0txbPiO2KL0LV3L/6oAObYNf0zCeAf3
+ q3LjcuxL
+X-Proofpoint-GUID: JucPC18Ev8rX2oGrxvhUjNlenzeJONw1
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689b05dd cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8
+ a=42SW9st40EnfI9Ma3XoA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: JucPC18Ev8rX2oGrxvhUjNlenzeJONw1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_04,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-A clk lookup using clk_core_lookup() is currently somewhat expensive
-since it has to walk the whole clk tree to find a match. This is
-extremely bad in the clk_core_init() function where it is used to look
-for clk name conflicts, which is always the worst case of walking the
-whole tree. Moreover, the number of clks checked increases as more
-clks are registered, causing each subsequent clk registration becoming
-slower.
+On 8/11/25 5:19 PM, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
+> 
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Note that prior to running the Coccinelle,
+> clk_alpha_pll_postdiv_round_ro_rate() was renamed to
+> clk_alpha_pll_postdiv_ro_round_rate().
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-Add a hashtable for doing clk lookups to replace the tree walk method.
-On arm64 this increases kernel memory usage by 4 KB for the hashtable,
-and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
-platform with around 800 clks, this reduces the time spent in
-clk_core_lookup() significantly:
+[...]
 
-          |      PID 0      |     kworker     |
-          | before |  after | before |  after |
-    -------------------------------------------
-    avg   | 203 us | 2.7 us | 123 us | 1.5 us |
-    -------------------------------------------
-    min   | 4.7 us | 2.3 us | 102 us | 0.9 us |
-    -------------------------------------------
-    max   | 867 us | 4.8 us | 237 us | 3.5 us |
-    -------------------------------------------
-    culm  | 109 ms | 1.5 ms |  21 ms | 0.3 ms |
+> +	req->rate = DIV_ROUND_UP_ULL((u64) req->best_parent_rate, div);
 
-This in turn reduces the time spent in clk_hw_register(), and
-ultimately, boot time. On a different system with close to 700 clks,
-This reduces boot time by around 110 ms. While this doesn't seem like
-a lot, this helps in cases where minimizing boot time is important.
+space after typecast is 'eeeh'
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/clk/clk.c | 50 +++++++++++++++++------------------------------
- 1 file changed, 18 insertions(+), 32 deletions(-)
+but the rest looks good
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2eb63d610cbb..2d54224fb3ef 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -12,6 +12,7 @@
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/hashtable.h>
- #include <linux/init.h>
- #include <linux/list.h>
- #include <linux/module.h>
-@@ -21,6 +22,8 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/string.h>
-+#include <linux/stringhash.h>
- 
- #include "clk.h"
- 
-@@ -33,6 +36,9 @@ static struct task_struct *enable_owner;
- static int prepare_refcnt;
- static int enable_refcnt;
- 
-+#define CLK_HASH_BITS 9
-+DEFINE_HASHTABLE(clk_hashtable, CLK_HASH_BITS);
-+
- static HLIST_HEAD(clk_root_list);
- static HLIST_HEAD(clk_orphan_list);
- static LIST_HEAD(clk_notifier_list);
-@@ -87,6 +93,7 @@ struct clk_core {
- 	struct clk_duty		duty;
- 	struct hlist_head	children;
- 	struct hlist_node	child_node;
-+	struct hlist_node	hashtable_node;
- 	struct hlist_head	clks;
- 	unsigned int		notifier_count;
- #ifdef CONFIG_DEBUG_FS
-@@ -395,45 +402,20 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
- 
--static struct clk_core *__clk_lookup_subtree(const char *name,
--					     struct clk_core *core)
--{
--	struct clk_core *child;
--	struct clk_core *ret;
--
--	if (!strcmp(core->name, name))
--		return core;
--
--	hlist_for_each_entry(child, &core->children, child_node) {
--		ret = __clk_lookup_subtree(name, child);
--		if (ret)
--			return ret;
--	}
--
--	return NULL;
--}
--
- static struct clk_core *clk_core_lookup(const char *name)
- {
--	struct clk_core *root_clk;
--	struct clk_core *ret;
-+	struct clk_core *core;
-+	u32 hash;
- 
- 	if (!name)
- 		return NULL;
- 
--	/* search the 'proper' clk tree first */
--	hlist_for_each_entry(root_clk, &clk_root_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
--		if (ret)
--			return ret;
--	}
-+	hash = full_name_hash(NULL, name, strlen(name));
- 
--	/* if not found, then search the orphan tree */
--	hlist_for_each_entry(root_clk, &clk_orphan_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
--		if (ret)
--			return ret;
--	}
-+	/* search the hashtable */
-+	hash_for_each_possible(clk_hashtable, core, hashtable_node, hash)
-+		if (!strcmp(core->name, name))
-+			return core;
- 
- 	return NULL;
- }
-@@ -4013,6 +3995,8 @@ static int __clk_core_init(struct clk_core *core)
- 		hlist_add_head(&core->child_node, &clk_orphan_list);
- 		core->orphan = true;
- 	}
-+	hash_add(clk_hashtable, &core->hashtable_node,
-+		 full_name_hash(NULL, core->name, strlen(core->name)));
- 
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
-@@ -4089,6 +4073,7 @@ static int __clk_core_init(struct clk_core *core)
- 	clk_pm_runtime_put(core);
- unlock:
- 	if (ret) {
-+		hash_del(&core->hashtable_node);
- 		hlist_del_init(&core->child_node);
- 		core->hw->core = NULL;
- 	}
-@@ -4610,6 +4595,7 @@ void clk_unregister(struct clk *clk)
- 
- 	clk_core_evict_parent_cache(clk->core);
- 
-+	hash_del(&clk->core->hashtable_node);
- 	hlist_del_init(&clk->core->child_node);
- 
- 	if (clk->core->prepare_count)
--- 
-2.51.0.rc0.215.g125493bb4a-goog
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
+Konrad
