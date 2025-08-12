@@ -1,137 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D192D8766;
-	Tue, 12 Aug 2025 16:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED682F8BC7;
+	Tue, 12 Aug 2025 16:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755015381; cv=none; b=qMJv4wtA4FliHxS4cXElhU2nlio5F8to+lYhrddph7mlOOzIilF4KN3q2ZBf9Ylju61vynr9nyTMUE6KHxVdP1xNdCI6Li4AnG6gJlnUONMx0pw9k7lR3zZAv45/PBuT6f5+7Kyc2IrBtqGTenv1Hg1gIy8crVQBguq69uSyd80=
+	t=1755015857; cv=none; b=iatycsiwkCePOWpl925NI536O9PWB4PrqFlbU0bs+nueWHLrbdNQBQswGASt2lW9sc5oCv67SewkO7FK2ayuuf4TGR9q5fUDqe2DJhoN/uAWWVl2vRo+8GY8XKSLQuXtUK7nxOWkAxfTDiaja5ZsoOgCHiksL12tauGiUgO1oNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755015381; c=relaxed/simple;
-	bh=XBecqztfyjitlIby4MRK9UvSucBmQKequxv9bciCRpY=;
+	s=arc-20240116; t=1755015857; c=relaxed/simple;
+	bh=30o4U4tFe32XjiNz5Xqo8vYYR40fKkKwC8cxKxV1ldA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohLezRX5JINDpTWfKPn6/bB05dOf3q8d+vAzKkqbyYRS/P7R6LDKj+6oQS+qClYTsrJ8evsB/eEs24JEyRqTeocI5hkxL9faW5sDAR8HsvN/9F6/7q0zD9HcvIG8VztndV3PlpDWyKRjtOHd0khsfj+OBNF7YxsxjmFZRHolNi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1sY8rUP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtaJ5oOHz+sgENDKxW/97PCNjwhGxRC4LTBj1BHPeksj8gXmlPvOtq0OhsjKp7FuGv4H+s+vi1ATo4XLAMrZ+8gTmoBKmjPdKgatMgkfUhi2yr/gyGAKwWhkEhK1esuCy6FYK7/Sjuu9c38QWN4YgWeXBAEdYl237twETzMabl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFQjCpvX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1sY8rUP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA6FC4CEF0;
-	Tue, 12 Aug 2025 16:16:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFQjCpvX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E94C4CEF0;
+	Tue, 12 Aug 2025 16:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755015381;
-	bh=XBecqztfyjitlIby4MRK9UvSucBmQKequxv9bciCRpY=;
+	s=k20201202; t=1755015857;
+	bh=30o4U4tFe32XjiNz5Xqo8vYYR40fKkKwC8cxKxV1ldA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1sY8rUPaDz8gtbnafY5stBvo1y3WZ2zVAfNUFCAbTfNWJ8USrJsiP7EwDWcY1UAC
-	 J7VzId8T3Cc8R048vERfSfUogPYulLTJA63LWLYFCelPKgGATPN3nkTWIVO3+MLD46
-	 D/tzFWu6SGj3dUeZbA6JjFaMdGlqBqiFaUFoI/zVj9m7koN65RZh/cuadHz+p2Hbqp
-	 /wmXBgDnvB4jn4Qy7BpO4mA5npPbPPxTVS9/1blsBBD08XyqtdE/ZKuKH/Ghgt7t9x
-	 G+RPwofDPDm6g6uWeYWOcCKSsnPPdg68s3Mlu4UjMb6ujOR3vKT36uNz/vZ/F4H3N1
-	 WJ1cCup8bjgHg==
-Date: Tue, 12 Aug 2025 11:16:19 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Richa Bharti <Richa.Bharti@siemens.com>, mturquette@baylibre.com, 
-	sboyd@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, srikanth.krishnakar@siemens.com, cedric.hombourger@siemens.com
-Subject: Re: [PATCH] clk: qcom: gcc-qcs615: Fix gcc_sdcc2_apps_clk_src
-Message-ID: <qqtqberlztcqhs7rv32beec2w6soebpgxovo54omfqijt2nct3@odcwbd5idqnl>
-References: <20250729094943.863392-1-Richa.Bharti@siemens.com>
- <81a1bd2c-ad4b-4042-9116-c1604e4f0d98@oss.qualcomm.com>
- <e54l6omqbop5tlithm7cseldtbcz47sde6fo6wcoxvbordoa6w@l63sxertlypq>
- <adcdeaf8-a3ba-46c2-af7d-e37bbc5341dd@oss.qualcomm.com>
+	b=YFQjCpvXvmuacmrZpk3++l3tgWJKfZp7c8w8aiWkYwkC668QD+n2jTqaJ+WTySpEB
+	 0CbOP2Hae2Oblck1IaZGYo3urSxA5DUxKbTkyvaVbPIv2Z0u+vxQbnnxqePAk2sLc+
+	 LAJpLiC6o/7K8d2m058b5PZ8ld+nNAcb1cnzL2UVbdnO0kICxaHuPCvK7DfbDmtBLW
+	 MgAOMmgnVAV7Z9LxsJETuxHKtKinze/1gWW1FLhOVK8fTWIbjzGPdRCXtiKA0Yxl/j
+	 cBVkzpL7l3m11RYSVECb4JkI8aYgAAtTX4gzoW08HwUDOHkUC/Eg0IuN6f2eAeYmph
+	 O3JQr1YZlmnTA==
+Date: Tue, 12 Aug 2025 09:24:15 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: thead: Misc changes to TH1520 clock driver
+Message-ID: <aJtqrz9y4/hR8fEu@x1>
+References: <20250812054258.1968351-1-uwu@icenowy.me>
+ <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <adcdeaf8-a3ba-46c2-af7d-e37bbc5341dd@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <50a61990b5009217dcc0ed74142c4ffeba137f73.camel@icenowy.me>
 
-On Tue, Aug 12, 2025 at 12:34:02PM +0530, Taniya Das wrote:
-> 
-> 
-> On 8/12/2025 9:20 AM, Bjorn Andersson wrote:
-> > On Tue, Jul 29, 2025 at 04:08:21PM +0530, Taniya Das wrote:
-> >>
-> >>
-> >> On 7/29/2025 3:19 PM, Richa Bharti wrote:
-> >>> On QCS615, we see the same issue as reported on SM8250 and SM6350:
-> >>> "gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during boot.
-> >>> This is due to GPLL7 not being enabled by default as a parent clock.
-> >>>
-> >>> Setting `.flags = CLK_OPS_PARENT_ENABLE` ensures that the parent (GPLL7)
-> >>> gets prepared and enabled when switching to it, fixing the warning.
-> >>>
-> >>> Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
-> >>> Signed-off-by: Richa Bharti <Richa.Bharti@siemens.com>
+On Tue, Aug 12, 2025 at 09:42:23PM +0800, Icenowy Zheng wrote:
+> 在 2025-08-12星期二的 13:42 +0800，Icenowy Zheng写道：
+> > This patchset is my changes to the TH1520 clock driver, mainly for
+> > supporting the display controller (the first 3).
 > > 
-> > Thank you Richa for your patch!
+> > The first two are functionality additions, with the first one adding
+> > support for enabling/disabling PLLs (for DPU PLL) and the second one
+> > adding support for changing DPU dividers.
 > > 
-> >>> ---
-> >>> This change is similar to upstream commits:
-> >>> - SM8250: 783cb693828c ("clk: qcom: gcc-sm8250: Fix
-> >>>   gcc_sdcc2_apps_clk_src")
-> >>> - SM6350: df04d166d1f3 ("clk: qcom: gcc-sm6350: Fix
-> >>>   gcc_sdcc2_apps_clk_src")
-> >>> ---
-> >>>  drivers/clk/qcom/gcc-qcs615.c | 1 +
-> >>>  1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/gcc-qcs615.c b/drivers/clk/qcom/gcc-qcs615.c
-> >>> index 9695446bc2a3..b281f0dfe165 100644
-> >>> --- a/drivers/clk/qcom/gcc-qcs615.c
-> >>> +++ b/drivers/clk/qcom/gcc-qcs615.c
-> >>> @@ -830,6 +830,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
-> >>>  		.name = "gcc_sdcc2_apps_clk_src",
-> >>>  		.parent_data = gcc_parent_data_8,
-> >>>  		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
-> >>> +		.flags = CLK_OPS_PARENT_ENABLE,
-> >>
-> >> This is not the correct way to fix it just because SM8250 and SM6350
-> >> uses this ops.
-> >>
-> >> We are testing the right fix internally and will be posting.
-> >>
+> > The 3rd one is to address hang issues met when testing the DPU driver
+> > w/o clk_ignore_unused command line option.
 > > 
-> > Please use such opportunities to educate us, rather than just tell us to
-> > blindly wait for something (at least share your thoughts/hypothesis).
+> > The 4th one has no relationship to display, and only exists for my
+> > need
+> > to change an arbitrary GPIO (well, GPIO3_3, the one controlling the
+> > fan
+> > on Lichee Pi 4A) with gpioset.
+> > 
+> > This patchset has a dependency (a 0th one) [1].
+> > 
+> > [1]
+> > https://lore.kernel.org/linux-riscv/20250809-fix_clocks_thead_aug_9-v1-1-299c33d7a593@samsung.com/
 > > 
 > 
-> Sure, Bjorn.
-> 
-> https://patchwork.kernel.org/project/linux-clk/patch/20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com/
-> 
-> The RCG configuration goes to a bad state because the current floor_ops
-> tries to update the rcg configuration even if the clock is not enabled.
-> 
-> The correct fix is to ensure we do that when the clock is actually
-> enabled which is brought it by the shared_floor_ops.
-> 
+> Oops, looks like this patchset deserves a new revision now...
 
-Excellent, thanks for the explanation.
+Thanks, that does make it easier to apply with 'b4 shazam'.
 
-> Please let me know if you still have any queries.
+> PATCH 2/4 has a round_rate() implementation, which is considered out-
+> of-date and determine_rate() will replace it.
+
+I saw your reply over in the big patchset from Brian Masney. That's good
+that we will be able to skip adding round_rate() to the driver.
+
+> PATCH 3/4 was broken during rebasing.
 > 
+> PATCH 4/4 is found to be not working (and even makes padctrl0 an orphan
+> clock). Yao Zi told me that I need to first do some changes to ccu_gate
+> code.
 
-No concerns, this is exactly the kind of transparency I was looking for.
+Is there a way to test the functionality without additional patches from
+your branch?
 
-Many thanks for the quick reply,
-Bjorn
+I look forward to v2. Thanks for working on the display. 
 
-> > Regards,
-> > Bjorn
-> > 
-> >>>  		.ops = &clk_rcg2_floor_ops,
-> >>>  	},
-> >>>  };
-> >>
-> >> -- 
-> >> Thanks,
-> >> Taniya Das
-> >>
-> 
-> -- 
-> Thanks,
-> Taniya Das
-> 
+-Drew
