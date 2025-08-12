@@ -1,131 +1,127 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3D2E8DFA;
-	Tue, 12 Aug 2025 09:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754990295; cv=pass; b=m2ooUEaUBebLvOgAFlXvOntv8C/nWb5sLzogz9ON+bDV4AUDCGh60saUS7t1u1T5psSwARvEZLlpe53iDN9hItYE166hsXaxyJuVUROwtf0QYKoUQm7R+FYI19OKC3kvxRDOfMYNqS2vCD5IlQAgvut+CHLZlCKo6roNwtRij20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754990295; c=relaxed/simple;
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IWG66FAWxZPxUgv8knZ91bJJoafCpfHP8tcBkC0WmgxjgRpuIyYD9+Ks6+SUyRaKs+lXdTcIv/n3W9K8N9bQwcyEdqQH/lzrZXp9A4fnPu9GebV3mI3lieLTRvmpS7HCRloN/cfA+LFk8Hd/0EHvh8gijELTJ0aHfPp4X6+9reU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=AOHW2uep; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE74280308;
+	Tue, 12 Aug 2025 09:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754991974; cv=none; b=jD/CC+WpHB8qKOfbnBB9GJnu+S8Wg0IOq4KTAh3UWzdZWpNemEqElK+VqJ6wblUBp3NWRnpJVTdTS/Axqe30x1aqJFhsagk80yOBOEwta1w9Q6uk6r8yvlKwLkgylYQTHQupAvvjHGa5qbe4uq9TMt9MhqobPcHVAXWsnvqDddo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754991974; c=relaxed/simple;
+	bh=a5W3LIIPs2omyjBIaORiELNf8Ee9yWsPoM3uxHAjEMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4t0ujWykTmDKi6NMeX5+QCq+E2Q4bM2sWAOCYoNUV99WwGcIYCFRSi9aP80qgoCX0eJTlcrCL7YxgoWsUKo2F415u19KIDxLzwfgz1pp/7bS6/2UN6MfMcMaN3SJKqHh36QvKGmFEOf3OGfcnimfV2ajg7Zju2yBZGnpS+os4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2iWcETs; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="AOHW2uep"
-ARC-Seal: i=1; a=rsa-sha256; t=1754990274; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VGoHwuknbXdy2ikBZ1vGU0AWjSXzzg0mbeI+XAGjv3lI6bjWhYJe+W6PZpzvf8HkjK3FEkG0hbzKbj9V3ywie1c1s9+mF/rWWDDltZbfjZJIUwCWE+bS8HX80iAfnyPcTBj6Xx104uWUbmV+Oa3ioxqF0K7pS3vibr9TIfMQdq8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754990274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=; 
-	b=iROwg3CKcXXrofcmrd3Pz9aX8GMpSIOt+9JzonuH/ivzcEkUiZeTrHVWLhHOhh6ptgtWQc9DD+5D6dnEQCIKh32AZIYC4RI/zLvfmvFRFXEBgR1Pkd2lpOcBsGt1pX+Vn/TsJAiPd8JgpTzVH2WUmMAAo/FR/21H+8uYHOofBkI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754990274;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=1+hInyaCbxnzsVD/At0u5EtgvJbYvgUqxLbC8ItIg3Y=;
-	b=AOHW2uepCwbOHaGmfXrIOS7xN5xZ7vXbAwjyRc/gFEbvSb0cBIkHga3zU+BlcgKz
-	3BvH+dgbFSBKdx7pivNHiOOdj2vL57zp2EjeRssbmNuOWeT14zFq6PzBkLGjmT27dsH
-	N2vailR+WOvTebM2bc0/ovf0YYJF4pKgh5PKfr2aVhP9/p31pZhjtpJw7utukub7JaO
-	owUadTOQY0NQwwKH/F8eQM3sujQxBj1euXhd7A+7RkKjYuPbx0xiYfunfRa9qkkf3Ap
-	xMKkSAgQ6bbvHvxwCrIK5dMfxFeP7rFq8PZYmXiIPDEx6mtPV5UWSr90dbaV97z+rZK
-	e1i/ZXUZ9A==
-Received: by mx.zohomail.com with SMTPS id 1754990271194111.10728242341895;
-	Tue, 12 Aug 2025 02:17:51 -0700 (PDT)
-Message-ID: <6d21521067409c483a8d7af39e43a6d579c98dc4.camel@icenowy.me>
-Subject: Re: [PATCH 4/4 FIXED] clk: thead: th1520-ap: fix parent of padctrl0
- clock
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2iWcETs"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6182b3218aeso3501358a12.2;
+        Tue, 12 Aug 2025 02:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754991971; x=1755596771; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fjVIKjeUwxPFaZApTw5n61+HZBIH65P3mIOsayr0+Vc=;
+        b=h2iWcETsIJr1EVoap5Uof1EL7pmQ6GG5G/ek/yGsg27WYPzGxWlBNwqofVJuxGVWoG
+         9J0q7NTJJ6frSB2R+XFbqav3VK+TKJhRcVySRoT2koRMhRH9U2af8f58hj3t3Km74pXD
+         X8QP4DJpWo2SrfSzIAxvQLHr6K6tP8UN6c5TdowoGsegl7+de9HYiiznnFmdtwNmv8RC
+         NFSUhd146jmFoylImt2PZ9cn8FTYtsfSxNysIcJw2GPa/3SxNZwCznIpDj1Dymkj8oGU
+         0ThQC3Sh8zjbj7QgiU1ONuLBuYQDryHN1QHXzPFRE27iS/G++pP8gLS8I8K3LJr3XWW/
+         boWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754991971; x=1755596771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjVIKjeUwxPFaZApTw5n61+HZBIH65P3mIOsayr0+Vc=;
+        b=V8Bnhc9PjVlkwo5uAfQIJRw8RVjyKO4PFbLjL4KNMeyLqqE5m/LRXWh9JGfK7qHcag
+         DckOdV4TPoDiIvwQkbLmzz9vO81s0P40cqO0y37ESq01onPO1+kTP4mGCK90vrf9QyRO
+         cWB+OmNLBmFjipBz0xU/owOeHcRSGbHksIpHt+8pMPjBswXlbNXeQ+E7BlWe67wHjduF
+         LUx7HEx/EKqn+pyGF8gaJp3+6ZV49OFCSWtMEf9/99xFSX+G3L5ZPR1DripAwXmWpjj4
+         JN1Gh/Ld0wDLA2W+uFg1U4u+UP5GAkWwJ5edzjFbU3Ws73dncp8vQjOet4sfDNWyjueJ
+         XV4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVf3Z5JonGoDS3RYrKt2K+Fve3KMYLQUatiimTXArbo+j7dZgzQRPW5Q8Kha/njfdZeIDMLIu4lXfTD96bh@vger.kernel.org, AJvYcCWZJBgn1DJMON8IFz6iRnnkKkk8OXp4UNZvV3h78RiJppcMubtqmBkAPIBfSJFwdu9taV4lpGG66FCW@vger.kernel.org, AJvYcCXfB9xMtkxQdPYJyPezrmEoYGh4ThcM57ZvowM/t0+hd4vsUMxnka/4ZSF3eX0j0HmPP6Em0uLfwd/f@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhGlgIBDfTngqUjEt2gkWzdGzEPpk8pBl+/LIEFIAkhUutYZCJ
+	6/YMfTj+uhvhTgm4Akztvlpxinkk9qkU6xaQPwc9+Nq/7AvLX9tDDVnQ
+X-Gm-Gg: ASbGncvbEwpGv/I9zpNqRnxHtQUQo9LtQU35ZEF/NL1IDD5Ix+44ahJrgZAKHNIeMIr
+	XhJ91msD3rruw43BofX7jqCn6H5cJjtueK60F4HMYWJU+LLejMchtaOkVIhIPd/uOMG9gDFLrCH
+	fcuw8j7NL+8xu7La4dyE2j0eW3ByJPzvDdEp0y4AnNmTAl1qRb35oBa0f6PZeJop2x6PPmi0RZQ
+	GFnPFwQQ8pOj6Grijc+TKwBs9i9QJvg1rJEYQgWcKkyQBHkI7PHXjEnN4y/6YKs9rKvw3FYbt2H
+	wkXtlkcdYxMZRnX0U7nxJhtlaCRA+bTTE80sH3rPCzZhI/0qXHDr3i5T8RkuZneP3XnHySjcvTy
+	mQdiY/+7XJiyKNhU=
+X-Google-Smtp-Source: AGHT+IESCpxt101/vHoMm8x2v74Z4a4fzMUqHfeuz0IzBLGBuBbFHZ9DNlZ5ZtTnOo38czseJxE1kg==
+X-Received: by 2002:a05:6402:5246:b0:615:7fdf:9c4f with SMTP id 4fb4d7f45d1cf-6184ec90659mr1956866a12.24.1754991971059;
+        Tue, 12 Aug 2025 02:46:11 -0700 (PDT)
+Received: from nsa ([193.187.128.251])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6181ad55ebasm4716471a12.55.2025.08.12.02.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 02:46:10 -0700 (PDT)
+Date: Tue, 12 Aug 2025 10:46:28 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Date: Tue, 12 Aug 2025 17:17:45 +0800
-In-Reply-To: <20250812060433.1979587-1-uwu@icenowy.me>
-References: <20250812054258.1968351-5-uwu@icenowy.me>
-	 <20250812060433.1979587-1-uwu@icenowy.me>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+Subject: Re: [PATCH] dt-bindings: clock: adi,axi-clkgen: add
+ clock-output-names property
+Message-ID: <oploom26lwx7hhrdauxoe7hgjf4ccfrnqrnh5pd3juqxh44d5q@rpiiooqkztxw>
+References: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
 
-=E5=9C=A8 2025-08-12=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 14:04 +0800=EF=BC=
-=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
-> The padctrl0 clock seems to be a child of the perisys_apb4_hclk
-> clock,
-> gating the later makes padctrl0 registers stuck.
->=20
-> Fix this relationship.
->=20
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+On Mon, Aug 11, 2025 at 05:17:01PM -0500, David Lechner wrote:
+> Add an optional `clock-output-names` property to the ADI AXI Clock
+> Generator binding. This is already being used in the Linux driver and
+> real-world dtbs, so we should document it to allow for correct binding
+> validation.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 > ---
-> This is the consequence of fixing 3/4, because these two patches are
-> at
-> nearly the same position, and unfortunately get dependent by the
-> algorithm of diff.
->=20
-> Ignore the original 4/4 and look at this too.
->=20
-> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 7 ++++++-
-> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c
-> b/drivers/clk/thead/clk-th1520-ap.c
-> index 75ea1705cc08f..0ecedac50d6cb 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -917,13 +917,18 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK,
-> perisys_apb3_hclk, "perisys-apb3-hclk", p
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(11), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-
-> apb4-hclk", perisys_ahb_hclk_pd,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A00x150, BIT(12), 0);
+
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+
+>  Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> index 2b2041818a0a44456ee986fe29d32346f68835f3..6eea1a41150a7c90153cffcfb5b4862c243b4e0f 100644
+> --- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> +++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> @@ -42,6 +42,9 @@ properties:
+>            - const: clkin2
+>            - const: s_axi_aclk
+>  
+> +  clock-output-names:
+> +    maxItems: 1
 > +
-> +static const struct clk_parent_data perisys_apb4_hclk_pd[] =3D {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .hw =3D &perisys_apb4_hclk.c=
-ommon.hw },
-> +};
-> +
-> =C2=A0static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
-> 0x1c8, BIT(5), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
-> 0x1e0, BIT(13), CLK_IS_CRITICAL);
-> =C2=A0static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
-> emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
-> =C2=A0static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
-> 0x204, BIT(26), 0);
-> =C2=A0static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
-> perisys_apb_pclk_pd, 0x204, BIT(24), 0);
-> =C2=A0static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
-> perisys_apb_pclk_pd, 0x204, BIT(23), 0);
-> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
-> perisys_apb_pclk_pd, 0x204, BIT(22), 0);
-> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
-> perisys_apb4_hclk_pd, 0x204, BIT(22), 0);
-
-Oops looks like this does not work and orphans the clock...
-
-> =C2=A0static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
-> axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
-> =C2=A0static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
-> peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
-> =C2=A0static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
-> 0x204, BIT(19), 0);
-
+>    '#clock-cells':
+>      const: 0
+>  
+> @@ -65,4 +68,5 @@ examples:
+>        reg = <0xff000000 0x1000>;
+>        clocks = <&osc 1>, <&clkc 15>;
+>        clock-names = "clkin1", "s_axi_aclk";
+> +      clock-output-names = "spi_sclk";
+>      };
+> 
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
