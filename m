@@ -1,133 +1,163 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB22DE703;
-	Tue, 12 Aug 2025 14:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6D10E3;
+	Tue, 12 Aug 2025 15:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755010499; cv=none; b=s/mDqy2CJDq25JIgmL1HzemYSQz5OsTwpsX92x8f+voiahdff0PE/0XadaZ0DySeRslxSN+Zto0E2LF8rw9yjRmgUhZ+uzg6J9JEmzUfNmV2jsTNX9wvfdSFwXIFZO3S1pgLR/wDO/xxEn+1q0XkxxGKMiGQiNRZMKdbjElT5e8=
+	t=1755013154; cv=none; b=ntMjPdejpXvBHRb9CgK+nrv+aUsAXRWGjH7qVbwjRpqsS21NJVa78OlUT2hBGNj/8stVyZJQlhHh67pzP043piPR3frKBNaLxgQy8zIqd/tYbBrZrXA7vBqmpomBZM0FDExUTUGTehlUp5vRw4i/frx4+gZVOjNIAprxqm1XXEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755010499; c=relaxed/simple;
-	bh=lJnQY+aWGBe5007j6NioyIK8Sb6art474dNbjRtW7y0=;
+	s=arc-20240116; t=1755013154; c=relaxed/simple;
+	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qe0fJvSs63Qa4IKbShAhs0GiwwvrKkmKKvZxk0ey2PVSvh2YCWv7joTjNnhJljRzg19mktH30p8AVKlJkfDfrSqZqUZeXHVu66Sx2nZwGbAEHU0rsOQ3u0n5i6iGgiN425KfqrpprqX6CowyJJLZlR7FZh3tKgNLU1R9UER4IM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct53i35n; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pt2CUML2WU0StiS8ogpgc9qfX0Fd/ncK9vppdttRzoQukRSvb7erxtgeupniJ7J5n+H4uJR8jsDmdpV8YMTg9LjtINh59L1whArUysy/XEc7lyMv5Qlc1aOTzJgC4qH8kuc7ZXV3K5wLw7Eijh/hITeBCEuRwr8eYH6LzSrR5vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiZpRdpD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct53i35n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C40FC4CEF0;
-	Tue, 12 Aug 2025 14:54:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiZpRdpD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284FDC4CEF0;
+	Tue, 12 Aug 2025 15:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755010499;
-	bh=lJnQY+aWGBe5007j6NioyIK8Sb6art474dNbjRtW7y0=;
+	s=k20201202; t=1755013153;
+	bh=iGUpF1C71k7qo9/61ohvQv5Z7z5laJQcZjUsXmHz/vc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ct53i35n+qUOyANFK08CZAoJcWjU4JRsrJp/fL+pa3KtkPdpUhDeMNO8NX/DOZjDY
-	 //JEvmLanzEAig7vgHAKqlUy6hoS1RhWc0WJWeT2nP9zOMilDT1wd4q02NcN98pC8o
-	 sfrke2dNyx0vozDKpi1hUjzL64BVWhdKOtxpLcNxym/lre5v9m00Y8a0ZDsHVM3VQT
-	 ghAG9AyFW6K42eDCQe421JZeocGqa4BakPlj0lf8iX0KuQ2RPAU82jUTMaLxetz2Mg
-	 Q2JA7CrBSP5ezl4P5ShWWffe7QKYbNktfe2rb3JjliobHciFkMVtj//V5kUIHC/Qwe
-	 vKPqKRFYKqOiA==
-Date: Tue, 12 Aug 2025 09:54:56 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: qcom: dispcc-sc7280: Add dispcc resets
-Message-ID: <fh3uvnu3ydgdtez77ruuhlgq2obry4jifn5w3kok2qbjdkmtoz@j6jsealfbxzu>
-References: <20250811-sc7280-mdss-reset-v1-0-83ceff1d48de@oss.qualcomm.com>
- <20250811-sc7280-mdss-reset-v1-2-83ceff1d48de@oss.qualcomm.com>
- <ed0341b3-4056-4826-bec7-e835a6da4fad@oss.qualcomm.com>
+	b=LiZpRdpDhra8HQLi6oTJvzINkJJSuv23n4QKhmL0GdIDFfOjMCDM1OqYhcWHHq3TI
+	 L28O5b3iPN5wVc9EXSMe1wiMP/NajukL3ql7pF4a85lv1fNAUZsV+TlMAAvN2rrzmr
+	 wRMnMSseO6nd8/EPTJY79HOmJ9zeY5vY0LS0u24hUa3icUGD8uDqDLMHMPTvWLEQv1
+	 l7Tw7lcXGU5Rs7ZD4eklupowdOLUecuU8uOFa6RlUoRtZfGlD+/8Ge0Ca3RaSQaoYZ
+	 h2ClWJH1Q8I12fZ++utjNSDaO59Bx51zYgkj3Rxo8YY8S6cPtFbxYBa0hRIu+GN5Me
+	 k5jWalHFpopnQ==
+Date: Tue, 12 Aug 2025 21:08:28 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 079/114] clk: bm1880: convert from round_rate() to
+ determine_rate()
+Message-ID: <tcl4eqicuqcptnbo4mcvjhacxkh2gh344k2bdrwfjbqflxspy7@x24np6pxjacf>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ed0341b3-4056-4826-bec7-e835a6da4fad@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-79-b3bf97b038dc@redhat.com>
 
-On Tue, Aug 12, 2025 at 10:35:30AM +0530, Taniya Das wrote:
+On Mon, Aug 11, 2025 at 11:19:11AM GMT, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
 > 
-> 
-> On 8/12/2025 8:41 AM, Bjorn Andersson wrote:
-> > Like many other platforms the sc7280 display clock controller provides
-> > a couple of resets for the display subsystem. In particular the
-> > MDSS_CORE_BCR is useful to reset the display subsystem to a known state
-> > during boot, so add these.
-> > 
-> 
-> In this issue I believe the requirement is to have a clean sheet and
-> restart the MDSS explicitly. Historically MDSS never required a BCR reset.
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
 > 
 
-On most targets we rely on the display driver coming up and configuring
-the hardware anew in a way that happens to be aligned with the existing
-state (boot splash) - or there was no state, which makes this easier.
+Once this patch gets merged, the 'Coccinelle semantic patch on the cover letter
+of this series' becomes irrelevant. I'd suggest to either include the script
+here or do not mention it at all.
 
-But I had to introduce the use of the BCR reset in compute platforms
-when I worked on DP, because some of the state left by the bootloader
-would conflict with what Linux was doing. Similar on this target, as
-we're trying to initialize the display driver, we get a bunch of iommu
-faults.
+- Mani
 
-Ultimately, the display driver should likely read back the hardware
-state and attempt a graceful transition between whatever state the
-bootloader left the hardware in and what Linux wants it to be.
-
-When this feature is implemented, the display driver can simply stop
-pulling the BCR.
-
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> > ---
-> >  drivers/clk/qcom/dispcc-sc7280.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
-> > index 8bdf57734a3d47fdf8bd2053640d8ef462677556..465dc06c87128182348a4e0ea384af779647bd84 100644
-> > --- a/drivers/clk/qcom/dispcc-sc7280.c
-> > +++ b/drivers/clk/qcom/dispcc-sc7280.c
-> > @@ -17,6 +17,7 @@
-> >  #include "clk-regmap-divider.h"
-> >  #include "common.h"
-> >  #include "gdsc.h"
-> > +#include "reset.h"
-> >  
-> >  enum {
-> >  	P_BI_TCXO,
-> > @@ -847,6 +848,11 @@ static struct gdsc *disp_cc_sc7280_gdscs[] = {
-> >  	[DISP_CC_MDSS_CORE_GDSC] = &disp_cc_mdss_core_gdsc,
-> >  };
-> >  
-> > +static const struct qcom_reset_map disp_cc_sc7280_resets[] = {
-> > +	[DISP_CC_MDSS_CORE_BCR] = { 0x1000 },
-> > +	[DISP_CC_MDSS_RSCC_BCR] = { 0x2000 },
-> > +};
-> > +
-> >  static const struct regmap_config disp_cc_sc7280_regmap_config = {
-> >  	.reg_bits = 32,
-> >  	.reg_stride = 4,
-> > @@ -861,6 +867,8 @@ static const struct qcom_cc_desc disp_cc_sc7280_desc = {
-> >  	.num_clks = ARRAY_SIZE(disp_cc_sc7280_clocks),
-> >  	.gdscs = disp_cc_sc7280_gdscs,
-> >  	.num_gdscs = ARRAY_SIZE(disp_cc_sc7280_gdscs),
-> > +	.resets = disp_cc_sc7280_resets,
-> > +	.num_resets = ARRAY_SIZE(disp_cc_sc7280_resets),
-> >  };
-> >  
-> >  static const struct of_device_id disp_cc_sc7280_match_table[] = {
-> > 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/clk/clk-bm1880.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
 > 
-> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+> index 002f7360b1c6c6e3058606a0808115b48fd3147a..dac190bc6e19a6dd4be413ea52d41f74934a1aa9 100644
+> --- a/drivers/clk/clk-bm1880.c
+> +++ b/drivers/clk/clk-bm1880.c
+> @@ -608,8 +608,8 @@ static unsigned long bm1880_clk_div_recalc_rate(struct clk_hw *hw,
+>  	return rate;
+>  }
+>  
+> -static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				      unsigned long *prate)
+> +static int bm1880_clk_div_determine_rate(struct clk_hw *hw,
+> +					 struct clk_rate_request *req)
+>  {
+>  	struct bm1880_div_hw_clock *div_hw = to_bm1880_div_clk(hw);
+>  	struct bm1880_div_clock *div = &div_hw->div;
+> @@ -621,13 +621,18 @@ static long bm1880_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+>  		val = readl(reg_addr) >> div->shift;
+>  		val &= clk_div_mask(div->width);
+>  
+> -		return divider_ro_round_rate(hw, rate, prate, div->table,
+> -					     div->width, div->flags,
+> -					     val);
+> +		req->rate = divider_ro_round_rate(hw, req->rate,
+> +						  &req->best_parent_rate,
+> +						  div->table,
+> +						  div->width, div->flags, val);
+> +
+> +		return 0;
+>  	}
+>  
+> -	return divider_round_rate(hw, rate, prate, div->table,
+> -				  div->width, div->flags);
+> +	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
+> +				       div->table, div->width, div->flags);
+> +
+> +	return 0;
+>  }
+>  
+>  static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -665,7 +670,7 @@ static int bm1880_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  static const struct clk_ops bm1880_clk_div_ops = {
+>  	.recalc_rate = bm1880_clk_div_recalc_rate,
+> -	.round_rate = bm1880_clk_div_round_rate,
+> +	.determine_rate = bm1880_clk_div_determine_rate,
+>  	.set_rate = bm1880_clk_div_set_rate,
+>  };
+>  
 > 
-
-Thanks,
-Bjorn
-
 > -- 
-> Thanks,
-> Taniya Das
+> 2.50.1
 > 
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
