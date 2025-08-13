@@ -1,116 +1,156 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C632FD7B9;
-	Wed, 13 Aug 2025 20:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32656188715;
+	Wed, 13 Aug 2025 21:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115925; cv=none; b=C5GjDD4/Pq/KOcrV+wPeKDvyX/iAC0mIiSdUBD0pvuB6sKvvaWIW5IPAIvSh/Ej8GiKd9sQV7Xj32DQbLXzhsq1im7Jtz9AYn+ssNYj2Pm7ilvs6JFJf+xxqVTEaeNQ8vrEa8Vk/NrgSx8KRVFffG6JrOCc9hB35oAI2Idv6kXU=
+	t=1755120528; cv=none; b=MUrWzpq/VQ83gThSSOaSPq2EsyiUZ3WXKJdR2OZJ4sXuDRbmpuY/f5tL9UjH9mi0Zyf+EHmMcTHfPDdcZOf5nnYU21AsxBOhsopFiKoFgef0O7oZz8XWgNer8ly8we5ZYTQGTd1jE1AtmxP9stT2YyMLP7zVA79C2kaksmtbMK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115925; c=relaxed/simple;
-	bh=Juf1ZTnx/FB2vFj4STFZmefBih8aOZWA68hdzIY4NFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JB5AJSzkOAuoNNWpWM6/mxFcqW4DWDAa05IPPI8B6A+k1q8f82MTGOPHrGPwH8WFxwza2Z62Q8i5PUMxFqiBseCBszGY1Y8l290CpEWaGDltftg5jdoJ+1caSUCrMFD06smVfCPrFhl6E8oj2NHZ8BLE+XYFtbilzDyOaUK8Lgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4096C4CEEF;
-	Wed, 13 Aug 2025 20:11:53 +0000 (UTC)
-Date: Wed, 13 Aug 2025 21:11:51 +0100
-From: Mark Brown <broonie@debian.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
-Message-ID: <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
-References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
+	s=arc-20240116; t=1755120528; c=relaxed/simple;
+	bh=w6o+Mcmx0kfk0qJVojOnLq3WRRaroXEK6NqPwh8WeEA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XYhyREiK/tvyMHw8zKkd/GmTE6N29YbHwQnyGP8p5dah4Hw96Qu7yS9KmDOclv0wuOuxMwH47DJeoN89gKFIzCxyoF425HNJu70plRPCmmi0Ab7Yvhi4EcaIU1O+x8p+yTZiiFcFYkvotXma12djaFwiencBflh0ghikQMgT5YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tW0weATX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tW0weATX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038F0C4CEEB;
+	Wed, 13 Aug 2025 21:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755120527;
+	bh=w6o+Mcmx0kfk0qJVojOnLq3WRRaroXEK6NqPwh8WeEA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tW0weATX4jZ11jXl3He1Ule5FSJuMatBGd51oT3bMN01eb3cT3/18BB0KpS64oSbV
+	 6A4QDHJDbE2i5JqtnfsyVBALsh6Bm5ABrlcwIeEaVVJKF8Ys4lmXD08V4Cf547I5mm
+	 6sCZgBGCfMRs6QPVrGxU4nTnD7f31+rWw2qkW80zdobtK+0W0QNMcTpZiJJZuxp3e3
+	 f72jB75x9bqVrnObcwmG+vOT476m4B3xoHJM2Tk0dvct2jHtt8v2WNoP/JeukhjYFa
+	 P4b7UnXzBQig+oKbLe5NjU5NaUCh5y3uOUysgIl6JhmCWTjHv+RyKuGvEMG/hhDxtg
+	 oUrRFt19OPnjQ==
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Andrea della Porta <andrea.porta@suse.com>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Andy Shevchenko <andy@kernel.org>, 
+ Andy Yan <andy.yan@rock-chips.com>, Avi Fishman <avifishman70@gmail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Benjamin Fair <benjaminfair@google.com>, 
+ Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ David Airlie <airlied@gmail.com>, David Lechner <dlechner@baylibre.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Drew Fustini <fustini@kernel.org>, dri-devel@lists.freedesktop.org, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Fu Wei <wefu@redhat.com>, 
+ Guo Ren <guoren@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, imx@lists.linux.dev, 
+ Iwona Winiarska <iwona.winiarska@intel.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Jonas Karlman <jonas@kwiboo.se>, 
+ Jonathan Cameron <jic23@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-actions@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-sunxi@lists.linux.dev, Liu Ying <victor.liu@nxp.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Nancy Yuen <yuenn@google.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Nicolin Chen <nicoleotsuka@gmail.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, openbmc@lists.ozlabs.org, 
+ Patrick Venture <venture@google.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Samuel Holland <samuel@sholland.org>, Sandy Huang <hjc@rock-chips.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Stephen Boyd <sboyd@kernel.org>, Takashi Iwai <tiwai@suse.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Tomer Maimon <tmaimon77@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ Vladimir Zapolskiy <vz@mleia.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Yangtao Li <tiny.windzz@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+In-Reply-To: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+Subject: Re: (subset) [PATCH 00/21] treewide: remove unneeded 'fast_io'
+ parameter in regmap_config
+Message-Id: <175512050873.352044.97744864083041762.b4-ty@kernel.org>
+Date: Wed, 13 Aug 2025 22:28:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6FVk2V0LrGBjdKpm"
-Content-Disposition: inline
-In-Reply-To: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
-X-Cookie: Turn the other cheek.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
+On Wed, 13 Aug 2025 18:14:46 +0200, Wolfram Sang wrote:
+> While working on a driver using regmap with MMIO, I wondered if I need
+> to set 'fast_io' in the config. Turned out I don't need to, so I added
+> documentation for it with commit ffc72771ff6e ("regmap: Annotate that
+> MMIO implies fast IO").
+> 
+> This series fixes the existing users in the tree which needlessly set
+> the flag. They have been found using this coccinelle script:
+> 
+> [...]
 
---6FVk2V0LrGBjdKpm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Wed, Aug 13, 2025 at 11:59:10AM -0400, Tamir Duberstein wrote:
-> This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
-> which both depend on step 1[3].
->=20
-> This series also has a minor merge conflict with a small change[4] that
-> was taken through driver-core-testing. This series is marked as
-> depending on that change; as such it contains the post-conflict patch.
->=20
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the previous series must go).
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Something seems to have gone wrong with your posting, both my mail
-server and the mail archives stop at patch 15.  If it were just rate
-limiting or greylisting I'd have expected things to have sorted
-themselves out by now for one or the other.
+Thanks!
 
---6FVk2V0LrGBjdKpm
-Content-Type: application/pgp-signature; name="signature.asc"
+[15/21] regulator: remove unneeded 'fast_io' parameter in regmap_config
+        commit: 37533933bfe92cd5a99ef4743f31dac62ccc8de0
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmic8YYACgkQJNaLcl1U
-h9Cumwf/YkCiNa2FUFyl0xap34GT0uNu8Xh2QH5gQa+2jI19lL8u1OybvUdzWI8N
-dryQmdo4BgnkEFiIeCiAWIUh8fHachIQqfAZfj8yJRexfSk3R0S/Nrg8CfGa9myh
-jkwom0F4sUSvZpsacG1c/oCya64UwN/bCgC+Yw2fivCPjjw/vz1JE5gtarpJEQly
-EJBbiexaSe0XYdtZ3cIT4wm0YElZqekk8U953MglLhWOOLXzt59bkslAam/8fori
-si1u/uVgWv1vyziB8dYHRa26Gsgy9OkgjCD0P64YWkoAV/uSnxsEo5wtWBx2ys1n
-pZ4kmgo8dh16iRQ7pqHeV2g3wE9HiQ==
-=xgNk
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---6FVk2V0LrGBjdKpm--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
