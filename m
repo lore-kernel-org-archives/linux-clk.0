@@ -1,108 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673F11E0DE2;
-	Wed, 13 Aug 2025 08:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2E527280E;
+	Wed, 13 Aug 2025 09:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073230; cv=none; b=JFu8JJbueSBsQUxbHhFmPChwJvhNwK+O+KYl8CzGBJ6+Z057qDsJr1nMatPohhrcwRdTxESggYh5nruSK8977RDAOm2XE5EE5CIkFsBxZzgLaDg8toAL+fNgTuWOWgit+9w3lw3e+RDRFrl9Q67QeaLU1sBNRAb3EAY5jTWu5ys=
+	t=1755076091; cv=none; b=KVuB4MrIQs1aQDnOV1Ox2SirZC1xVYjYJnYS/Lqgg9wko3k5QADFynXZlHjCC4Jmes/VURTwqmFr7G3swqh1PlO4Q9eJACpBp/5xIlYyBTSIziM64XcPm60JM7ytT8U8YNAuHl3BVPlWYhSY9m1tsrNrZp4RLqAv4ddAZChI+Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073230; c=relaxed/simple;
-	bh=6ayZlO2PSXhtLjxbAr30198jx2UL7fDJVteF34QqTfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyPJnxKp5JmkwPsCkhHHs1VZGHkv/a9MLg+eXbd89+oJqXf82EQvscXXuUo1DImQkHCdCPpEKd3udqudjAWzca9cRJ44bBDy7lo6o9JMBReHJ3PDUCEqsCRbKjtK2UhTbMK5JJ/lU0jOQfEcfUelLo8HaFUpT+2KZrXhrScGAeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2526C4CEEB;
-	Wed, 13 Aug 2025 08:20:27 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: mstp: Add genpd OF provider at postcore_initcall()
-Date: Wed, 13 Aug 2025 10:20:22 +0200
-Message-ID: <81ef5f8d5d31374b7852b05453c52d2f735062a2.1755073087.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755076091; c=relaxed/simple;
+	bh=/SPdHAwhvXyCqoH/t4/l4FNys/9/FT+CFV8bKu69lmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L7knbgfvoSv1a3+yKX+lc1RHA8j4Q6QPLM5+4XWngLQbVDCe4VGlrR5VWtXz2KRaLLaQqeSNGS8ScIi/Bbt9qTm5ukHAyWVacziXqX+w4KWVxkoywaUQEUvTCka7e86EnDzeMGuSE7/WR2UV3/HKw4giX60Ua+pR7e7uewP9cZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RBcxly02; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RBcxly02"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9806843283;
+	Wed, 13 Aug 2025 09:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755076079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zeW3w+muABU56lk8AynPRRMO7XtEP4qDrJkq+5Lwhw0=;
+	b=RBcxly02YqHg6yIG6IVGb6L0wWxwyXgbzexV7fz5MW/s00R1yXLzqz8R0Q4Hp6XCzFEgKy
+	aJQuxXVY2VuM3LcR+HuKLiDTJxPk7hPeIic299sk4PSxG2ekcA+2ZeJQZ9DJMqGpdiEK55
+	dlmn2pZocXR5RTpeMH7mXYpDsa1p5LBc6yeLbl5BB9RJI44aKGy2UdQyipWgEiGweTT6Zs
+	yKZjMHYwq/2e6TLrhQ1n/5tSh0xMWWU8ZMi+8EvpkTaKYRbcurnOinRJ6WojpOPIpt9hGK
+	EGL3JqryRCMP/IrQCvVCa6eDAFIGmMSS2+OxScw07Z8iZPtIZg8PP1xYwoncfg==
+Date: Wed, 13 Aug 2025 11:07:45 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org>
+Cc: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Cristian
+ Marussi <cristian.marussi@arm.com>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Cercueil <paul@crapouillou.net>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Taichi Sugaya <sugaya.taichi@socionext.com>,
+ Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Jacky Huang
+ <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Vladimir
+ Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk
+ <piotr.wojtaszczyk@timesys.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Orson Zhai
+ <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan
+ Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek
+ <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, Andreas
+ =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>, Manivannan Sadhasivam
+ <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+ <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa
+ <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max
+ Filippov <jcmvbkbc@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner
+ <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, Viresh Kumar
+ <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Alex Helms
+ <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Nobuhiro Iwamatsu
+ <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev,
+ linux-mips@vger.kernel.org, imx@lists.linux.dev,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com,
+ linux-actions@lists.infradead.org, asahi@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 106/114] clk: versaclock5: convert from round_rate() to
+ determine_rate()
+Message-ID: <20250813110745.63523645@booty>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-106-b3bf97b038dc@redhat.com>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+	<20250811-clk-for-stephen-round-rate-v1-106-b3bf97b038dc@redhat.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeehffejffekudfhkeeklefgjeeuheekffelheejgfeijeehieelkedttdfhjedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkeelpdhrtghpthhtohepuggvvhhnuhhllhdosghmrghsnhgvhidrrhgvughhrghtrdgtohhmsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsmhgrshhnvgihsehrvgguhhgrthdrtghomhdprhgtphhtthhopehmthhurhhqu
+ hgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtoheptghrihhsthhirghnrdhmrghruhhsshhisegrrhhmrdgtohhmpdhrtghpthhtohepuhhnihgtohhrnhgpfigrnhhgsehouhhtlhhoohhkrdgtohhmpdhrtghpthhtohepihhnohgthhhirghmrgesghhmrghilhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Genpd OF providers must now be registered after genpd bus registration.
-However, cpg_mstp_add_clk_domain() is only called from CLK_OF_DECLARE(),
-which is too early.  Hence on R-Car M1A, R-Car H1, and RZ/A1, the
-CPG/MSTP Clock Domain fails to register, and any devices residing in
-that clock domain fail to probe.
+On Mon, 11 Aug 2025 11:19:38 -0400
+Brian Masney via B4 Relay <devnull+bmasney.redhat.com@kernel.org> wrote:
 
-Fix this by splitting initialization into two steps:
-  - The first part keeps on registering the PM domain with genpd at
-    CLK_OF_DECLARE(),
-  - The second and new part moves the registration of the genpd OF
-    provider to a postcore_initcall().
+> From: Brian Masney <bmasney@redhat.com>
+> 
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-See also commit c5ae5a0c61120d0c ("pmdomain: renesas: rcar-sysc: Add
-genpd OF provider at postcore_initcall").
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Fixes: 18a3a510ecfd0e50 ("pmdomain: core: Add the genpd->dev to the genpd provider bus")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued as a fix in renesas-clk-for-v6.17.
-
-drivers/clk/mmp/clk-of-mmp2.c:mmp2_pm_domain_init() has the same issue.
-
-Note that R-Car H1 still booted fine, as the CPG/MSTP Clock Domain is no
-longer used directly on that SoC: all devices were moved to the R-Car
-SYSC PM Domain in commits 751e29bbb64ad091 ("ARM: dts: r8a7779: Use SYSC
-"always-on" PM Domain") and commit a03fa77d85a736d3 ("ARM: dts: r8a7779:
-Use SYSC "always-on" PM Domain for HSCIF"), and use the clock domain
-only indirectly from rcar-sysc through cpg_mstp_{at,de}tach_dev()).
----
- drivers/clk/renesas/clk-mstp.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 6b47bb5eee45f75b..5fcc81b92a973771 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -305,6 +305,9 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
-+static struct device_node *cpg_mstp_pd_np __initdata = NULL;
-+static struct generic_pm_domain *cpg_mstp_pd_genpd __initdata = NULL;
-+
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
- {
- 	struct generic_pm_domain *pd;
-@@ -326,5 +329,20 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
- 
--	of_genpd_add_provider_simple(np, pd);
-+	cpg_mstp_pd_np = of_node_get(np);
-+	cpg_mstp_pd_genpd = pd;
-+}
-+
-+static int __init cpg_mstp_pd_init_provider(void)
-+{
-+	int error;
-+
-+	if (!cpg_mstp_pd_np)
-+		return -ENODEV;
-+
-+	error = of_genpd_add_provider_simple(cpg_mstp_pd_np, cpg_mstp_pd_genpd);
-+
-+	of_node_put(cpg_mstp_pd_np);
-+	return error;
- }
-+postcore_initcall(cpg_mstp_pd_init_provider);
 -- 
-2.43.0
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
