@@ -1,367 +1,258 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF52417C5;
-	Wed, 13 Aug 2025 15:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099007; cv=fail; b=a6MM5C8s1JjAv2q7QTd9iYExogrI78u0zNIrBWUBNrup3Ca4WIelg90L9HK9yOiN2gDj5PmFGdcoARkVXBKQG52pMqmRaKpWsEzJdHXdwag9JtVQsSfA5VDidhcXye0obfXqoa7JEFgtYuIc6E2xmfMnCtgx3DsPtApaoOt8LBE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099007; c=relaxed/simple;
-	bh=5zlmvILjiyhmTBBu2Jjc7sEaKRqHSh/y7ygX1SHq8yo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jTuBsRUcTLt5AUeaA/ryoOWu7PsVipjPCoH9ikPyWDl4KOg3opFPbN3DTmpO/KHdduX2NdYFPZxkKWIJE7lCUaQKvOeVti8eo5/ox8dweKz0maPSAC7YA8Hi9SJkWmZf4jgJJXw3/k8S0r3VlCRcdm8J3T7ZY6falt17adbAm7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n0hVKW2c; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216D0274B2C;
+	Wed, 13 Aug 2025 15:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755100768; cv=none; b=RSA/BSSchTPlcrylmX6+1jyqLRmkTE7noxQHSQvOHZw6w9YR4ED0cfeaVxIoOlMaLJS8lGAuQv2jD85ZOr5XWaTK6a06V7Vwj1ZZZfV4RoAlIMbQdRpj7XbHmeWMVxdapH90gZgYIvyx6HdERFp9J2GSQJ4ZOh3cAekQUjQOfB4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755100768; c=relaxed/simple;
+	bh=aHDCE8lQvGzrfp/JMmQg+1FkzUJWoG4yR/VNY61gI24=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CFJVvbo4shlAO2fPZvk2OfnHHTja/TqwtnUUd4uhzsSRwQeFD/xQ6gEb+PzuGU0zgwLsQCaeFKP03Bjd1p/D37+SMw5VyxwTiv+VdbWjOTm1C2rmSagu/PHS7IspeYpBCXAFlnYHfGp/KhN7QabvDH2dWlbbMwokPwuZ4HvZxZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GV4+XO8Q; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n0hVKW2c"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755099006; x=1786635006;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=5zlmvILjiyhmTBBu2Jjc7sEaKRqHSh/y7ygX1SHq8yo=;
-  b=n0hVKW2c9ALrnVVaCqP+oUC06N5Mh9H68jqYUoSQEzWn6dWP3iRIoMkM
-   XT6L5pJvTWF8o2z7hdcf88SoCA6Ickc2puVdiWzObCbBQD1Fg5JFD2efn
-   Tx5PuiJ62w/cf6SWoLTA7mH3b2ZlfWvP6vWMkyUBJbYChPpeFua5PbrGs
-   mVKyq447krx8mjqLLT6bBIhLNcftALcQRlh+s0JVg/Lgc4RbFlAMuPXLq
-   warRcgZ59/MNX7+CVxEZOr6OVHK7MpqKQur6knp++V/gMjlMWnV1AgYtM
-   0djyYELhrHtsof2YnPMI4G/tN75gyptQc02oiu1+U/rjq2Xi2nIx1Ze+A
-   Q==;
-X-CSE-ConnectionGUID: +0DPvZhYRACcMaNIaDmGRQ==
-X-CSE-MsgGUID: wUKY/wQZRzO2mJ+6Cx8pag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57354223"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="asc'?scan'208";a="57354223"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 08:30:05 -0700
-X-CSE-ConnectionGUID: vc+Vrb40TF2CbTXFkq926A==
-X-CSE-MsgGUID: iScsm/u4Sb+n0IEdDAiM/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="asc'?scan'208";a="197493999"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 08:30:05 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 13 Aug 2025 08:30:04 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 13 Aug 2025 08:30:04 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.57) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 13 Aug 2025 08:30:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Px2wZKZqqjIX3BoPmFRQfWtI6qEnZ5i6Qibw664qXRWb3Mlpey1kAwtv39ewAJURkbpCX+8a7JgfTUk8lqpc+cn3mLr5cM5BkUDRUTYKs0GwZJM77QcXCbrpqdPlmpcTSOX+nVvDpKm3WnfFp0rr23f0V53Dyy7QmZkSLHAXpAQu/Im54LHv8AyZaLrBi2ux+Pv0gqZhLac3BVJCbEF6K0l4RxrPunlfvseZnz/t9rzzvD5Makvdsy3TeX4b2yNiZHEIBPz1GX2guOviztcFOHrv0LDgdMwaDyu9ylkw4LB8m+CQHNbazTxRyeE4YAcfGGNNZ37oNVh5W5c2nZ3enA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1IK596bsTAEVMKd4B4C25qSJd3opSD+fXNhw7HlBKis=;
- b=fNsRmmMzFLUU/uLCnqvxMAckijnJrLmiE/5Ydbsu2Yk/a0ChmoUZSVInCk27Y6s2wUsctgTR0Y0wgQtD3Onf2iN75igAKyycPtLpwjchmN3QB53QFhGV6AjzyVl4ew5d/xwPoO72ZwdF4PzBHw05+7wukqmrw9g28gFtkBdqqlYB2NC3oKasXlQ+K7Q3ccLmnOVBw663C+QAyNB1y66bWsq/hh98SLnezH2PF3f5SEWcIW7QnsHLJQd6MGqUHdtGq0I/NGnfRa1GC4eQP58KdlHE+GVTBriDvVBVPVySe+hPMf5DNZYv2uw/6VhJZMGcAnYtzewcOJzS3IRuZotgCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by SJ5PPF0DADD6EFE.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::80d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Wed, 13 Aug
- 2025 15:30:02 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3%5]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
- 15:30:01 +0000
-Message-ID: <b8eddc78-f9dd-491f-8c4e-98406ad6f8db@intel.com>
-Date: Wed, 13 Aug 2025 08:29:52 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: cadence: macb: convert from round_rate() to
- determine_rate()
-To: Brian Masney <bmasney@redhat.com>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, "Samuel
- Holland" <samuel.holland@sifive.com>, Maxime Ripard <mripard@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-References: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------Olu5p2Ey10CTaf2d10fiGV3U"
-X-ClientProxiedBy: MW4PR03CA0180.namprd03.prod.outlook.com
- (2603:10b6:303:8d::35) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GV4+XO8Q"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b10957f506so885251cf.0;
+        Wed, 13 Aug 2025 08:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755100765; x=1755705565; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b0whtI+aJ/lwfdA6IBx7EqaGS5GlUE+K1GZ8kbYrGWY=;
+        b=GV4+XO8Qb+ayrORqGOfMH7n95822/zxLkHW3NhKfqUHD4eASugyNm+6X5Vubkq+bRF
+         e9Bh7X4bEFFKrl9PMWXaS2hdAxJdVXeDBuI/P3KrHG9CzFUf3AgW1v/0Ol/IpvjsUgbK
+         eA+rvfHLj4n45bbidgc3L9mMeYGpzNm2Drpl8xqSA/lL0ODcwF8yyOO+hUHx3+CVOHrz
+         cnTBf3qYhyGalesn5m5jnCcBddyEluvLcAsP5Yip1ENyaLJHZiotiMwbofq0CDf1VQ24
+         hl/5QyW48bc5p841S+0YkfhgqmEW4+jNvePC263gDncunhogN3Eeaf+FB4FAoUwN6G4i
+         DgiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755100765; x=1755705565;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b0whtI+aJ/lwfdA6IBx7EqaGS5GlUE+K1GZ8kbYrGWY=;
+        b=XOhHg4N4JdxJXHiJ4ZjFVorFK4NmFFxEtjb5u257wNow8iml8lzRaZ8T9MwYsDlOdQ
+         6hDZ5gJ8pugrJQfuhyw48UJxLRqBUD9dOHy/hU6kfE/A/CTpCswoQn6q8c0NfmR0uXw8
+         qXEJJTSdQAldqgxIeEBPKa1raQ+7RhERymd0PwcqTJumlut2qyhYT22W4kIuraWQXb2Z
+         JPBe/8KfIbSXhwgBHG/0eI9RjcZb/jwCYUatUNLbXi9C6K+XHSTf70Trowq/c8uV1ZwH
+         uPukz5bF40RhEydC3u1bUtqRQLO/M9soudT/niox1Q8S0/+upZ59HKJVKKMNM3cM8gdT
+         6SHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU60H3r76dvUnpiYAq6ZpH6b3ijQgcXODjokvefso66FgktrWp5DBxMOQHOVL+q9VzYMm6jwm0hr5Jy@vger.kernel.org, AJvYcCUDcbcroZI9YVKl7Ea6jXlWYK80EnzMDsjrvh98/185FySugDlU6/eqXgEI2USdx4tigj2pU/7ICIVL@vger.kernel.org, AJvYcCUPNIVgMykw9JTWusqSmx18Kd4ttieGsxYax97hrtg99D3IpUXXJ5akc89EwTZD6IGGXQ6gHwWW@vger.kernel.org, AJvYcCVNwLd9XYPVYnMqGXG7yoPaFXcfuBkdTUWP409yI79SjIC2CAOx3yc50+VnflZc/+iGjQANMiFkW9i5PbiNHQ==@vger.kernel.org, AJvYcCVcYIw6W1IyfbvljRUVhnj8E2MSfvBZZMTHT79X1OYgRF4+XN5Z4lFpkWYnqwCh48JjlHPUcgPD+m+oNg==@vger.kernel.org, AJvYcCXBJitbI+eRsYH85y5b16gh3MW0zJLm9Hn8mGjdEkP9WgUnwH7cnHnJQlFeLjlLcvqLb+0XSFdIMFw6f4Cd8rs=@vger.kernel.org, AJvYcCXFwT0J6AVGqaZ4Tfi2YXCvE2iAOguFxIc/sXWa21qZ2Ke/c5ePzbqBI4Mm4/ogQx4pPyxpF1Egy5gjuvx+LDK1@vger.kernel.org, AJvYcCXRf0eUsgVXYmThCYhCnn7tcK3ALNNjKhdhdjSBrboDrPxEEGseYVrQ+NWDLWuoqZglKU8UGAL9k4s0BsCp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOivRo6LKLhlpwfET0npHPOCC6nN8iDPOv7EHJqpZGmk9dVZRg
+	SKTJWhY8hBVH/zvJvWqbJRkBcl1kC2VL2AFKr9P+6K2cJuvri7o3vPij
+X-Gm-Gg: ASbGncsnIEnKPRtG3rqbBM/TBxKo4FiopTyD7eUzbQbIGreJRWps9bG8IfmV4sHKfU4
+	1cqGNPpLCZPuw3s1rcSNsFC4EBEJC1pcikl0b8jG6JaElVvYjR/EefbtGJUgH16eooYfsVFR9F3
+	2QItymJvhWTdiuHO3a2OqN26WH2uEBdSWIZBajSPXsWb/1TgrXp94fFdqeO0OHodA88yGuPZHFz
+	V+pAIVtHrjNnyhm7mGchALdglPNuC3SbJpuzJBvkzoi9qyjAq/GFdPGGbwZEKS05M+QWc0Cp+lN
+	7ym8ChwMP3sIn029j94+6z4oLwFno5aHLbiUShZucnZtEdAAf/RPdMWTYHkAMgAkkeX9rsfaZv6
+	GcJ/D/d6t/pi7Z7l3fRGoQF+Jo68LamS4bmrPezuVpUZpvGQVl/4WUwklFxKXDIjOmgmGVf0miB
+	Unb8UwDF9z0UxMUvck3c0AReHiFKYhgrUyOpXFsEU=
+X-Google-Smtp-Source: AGHT+IH5bKPMcxOfEgPLnp/iCra4Z0v+g72GVh8C9pgOCOpkMw6QX69XzjlmvW75JgEFDH3PQhtWRQ==
+X-Received: by 2002:ac8:7d55:0:b0:4ab:67de:c791 with SMTP id d75a77b69052e-4b109b10015mr1017511cf.24.1755100764687;
+        Wed, 13 Aug 2025 08:59:24 -0700 (PDT)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2600:4808:6353:5c00:d445:7694:2051:518c])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b085ad7d08sm124482211cf.53.2025.08.13.08.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 08:59:23 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+Date: Wed, 13 Aug 2025 11:59:10 -0400
+Message-Id: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SJ5PPF0DADD6EFE:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2bcb215-5122-467f-506c-08ddda7e451b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?U3RIVks3b2hselpWck1kM1ZSdzNqbWtYL3BDZXV4ejM3QUdsUFVMODBydm5y?=
- =?utf-8?B?c3RKRVZiRStsMUxWNUFSeGpyeEpuV2huSG8rY3BMaGt1bEcyTlgvN2I5bk1x?=
- =?utf-8?B?NXBCd0Q3RjZWUysvaHV6VVZteVRjSXFkcGZ6OXdXcE55blQ1Sk1nVlgzWjQz?=
- =?utf-8?B?Sm01NjRJcXlYTUJzb05HNnMxWEYyRkVDZ0g2M1EyNTdweVRIZjNGQXZJK0Jv?=
- =?utf-8?B?anVabHpRNjhDb2IwM3FJb1E1NmxmaFNHbjhZZ05palBmVVZ4akhYa1pzbHJD?=
- =?utf-8?B?OGxXUmZCOEN3ME13UXFxa3EwN0lid2lNUTFOSURWRVp0QnNhRFI4NmhneVQr?=
- =?utf-8?B?R0YvM09ZZnVqSnI4Z3lNcHRYWDhqdnFFYzc1b1Y3OUVWNlBzckpCUGlWb0Uw?=
- =?utf-8?B?bThOZFBFYk5NRXRNZkliUjV1ZEJlY0lncmUxL0phQVVzMENJcjZGT1p6cHBW?=
- =?utf-8?B?aXpVSjRTWEsrYXVURi96QTNOL1pKWUM1aHlUcGJpczhkeGkvSUhHUUV1eEFi?=
- =?utf-8?B?VTJJeGNVa2FuNk5HWnp2UUtieVZnZTVGNk5jQVV0NnNpQ3piWC9BSkhCQndW?=
- =?utf-8?B?Tm1BZU9zTm9wdDgwcjkwWm95M1JjMXdScERiNHFPSWw4RllaTDBveFIrTjE1?=
- =?utf-8?B?Y21UVHpUdWJnLzk1dUlvNER5eEszT3ZhNjdsSlkzelBScGsyL3lwQTF0RUpl?=
- =?utf-8?B?ZkVFeWEvTCtyZDJPek5tOGdWQXhrbTF5dTlqM1BjYnVqa2ZDRDhqczBrMnQ3?=
- =?utf-8?B?d1J0Q2FhS0JqWXViTWs0dW85UDBPcTR4NFNlZjd5OGxTOHk2bnRCb1Bkcmds?=
- =?utf-8?B?T3hjZHA5WEdJTkFqSjFFaDRkTDBzMEFXQ1M5K3RyTGVUZlY5OGZSdWx6dGZ0?=
- =?utf-8?B?WVVSZHp5YkxMNHhvWDRYSFk0K21SUDNob0JXQ0d6T2xnQVlZM0xoRlc3N0tr?=
- =?utf-8?B?eTAyV0pYaHFxNm5yeEo0c1MrYTdHb0NQYTgxWEVaaXZmbFlqeDM4aUpxTERh?=
- =?utf-8?B?dVNVVEJrU0w2Y3hTUzY0R2k5bUFWeWt6S3MxcG1mTUlmbS9wMUlROEkvN05J?=
- =?utf-8?B?TUlVSk9OZGZJamJtejdVUmdPVDQzc2Rob3JpWi9yZDZ5KzI0aXVPWWZmbVZG?=
- =?utf-8?B?aEhNeUFoWWovdU9GTTlxckprNURReFRQbEhPTnYwQWhiUndJN3FIbUdCYzRG?=
- =?utf-8?B?QUMrMGQ3M3pxTVUzd3NSZE9FVUt6Y2pIK25KVWlLZ1ZNcmZDZTB3clZRSHgz?=
- =?utf-8?B?QWRsTjY0WFlMM3Z6WUhwM3d1MTVsK0RIcW1tR21MYjU1WllFSk9pbFQ0ZG9J?=
- =?utf-8?B?UURJNTY0bHFuQWdoTmxOb1dPYVhtaFBoaURwc3I0VUxvcys2UHQ5SEJ4Z1BZ?=
- =?utf-8?B?L241dzVYUDM3MmJvSlFab0N3U1ljdFFaRkVMN0t5V0hlUGV5ZDNMOXFOSGwy?=
- =?utf-8?B?aG8zbm42SEVQc004alJzV2IybmhDTVZldERDd1ZiUktjeVgyTVNITnUvYUNw?=
- =?utf-8?B?dXM3czBVa1d3aXRNOW50SGhjaUtiYXIxaUNmUjdnZDZ4VmdoZzNhQ2lnaGZD?=
- =?utf-8?B?d2Q4cWw1VmhTeXNzTXNTS3o0Szd2Q0VsaVkvZ1l2eHVMQWdkL0VqME1Cai9U?=
- =?utf-8?B?ZEpIVC9teEN6ajV5ejZSb2tTOHpwRXVlUmxnaHpKbW51UGJXekJKY05UeE9N?=
- =?utf-8?B?ZHpTaE5HUlhhc25teCtrNm1FVDhjaE9ERERTamhwY2h5VllKN3ZoVHlJT09a?=
- =?utf-8?B?QklMOVRlZXc3ZnI1OEhBRnJUcUR4dWU3eEpEYVJqc0tnVk1IcEV5MkdKZWNN?=
- =?utf-8?B?djNuOUp5OGUvQXRJclR2MEFUWWNuZ212cUdCYytSNWljT1phY3FITmpWOHM3?=
- =?utf-8?B?M01rM1RQVXJ3WWJGVGZaUjRNbnl4R29aUVN0dnBLbjBKb3dqWXVUK1V4N0Z6?=
- =?utf-8?B?d2hlTm1sOFlEL2tjbm5iMGJzbVZCWTNibDRKYUhOZVhIR0svanhJZStoSklD?=
- =?utf-8?B?bkp4M0wwRXFnPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QzY2UGQrRm5TTmVadHo4QXArNDFodit0cTl5S2V0Y1B3d0FabTZuS09ERSs0?=
- =?utf-8?B?VDRTMGVUVEwwbXU1RTZnblRWSS95SHJBVVM5dG11VzJoV3FXK1B6ZklseDdR?=
- =?utf-8?B?dmU4cm9lR01YbWQ2QTd3MEFvNnJvbnRONmxUSzdBQ21QRnA2dkxuOStvdzgr?=
- =?utf-8?B?UGdZQlhzb3NZQlB4ckVZQUVZQUlBU1ZBNlM4TzQ2S2dubU9nMXQ2SXhZS0hQ?=
- =?utf-8?B?SS85eWVlMjYvK1ZqVkhNaTlTWTRubGgxMW5wU2pBVWxiTXJ2eGRZVStNMUJj?=
- =?utf-8?B?c2txMC9LbTU0NFFhMmd5cS9DMk9xMHNpVENUU2dPNkRzanJPU29qa2NhVVda?=
- =?utf-8?B?cW84L2NnMm92SXRWL1JRSWtkdG1jTVJOb0d2U3YzbGp1VHN5TTVDZVlCcFUy?=
- =?utf-8?B?Y25wUkxDR2ptdmRsWTJXZ3gxa09qRVpIVjJMZ0phQUs5akg0Q0RnWXM1RkpV?=
- =?utf-8?B?ZzlMelBVME40RTFwTzN6cVAyK1VWN21zN0FkMnNscCs2WVh6YnFWYStod3Y2?=
- =?utf-8?B?NnhOMkgrY0pKMnNIWTEvRVlENmxOUkZIRUpMUkszaEZwYmpocnVjekQyays3?=
- =?utf-8?B?amRwZENabHNObjg2dVdOZUNNMWpxZnJFdFdLdXJkTXdaTDZueTIrNmFUaDQ1?=
- =?utf-8?B?LzZUMTFrR1dBNnJxKytlYVJScnZXU2ZiQ0toTy9NNkVXWXB4RytqZXVBR0tR?=
- =?utf-8?B?eGxXajVyRHZtbHQrcEthWGhPMnRLVWl5VjUyZFR3anRmdzFWYWRyMi9vVlBU?=
- =?utf-8?B?NjhxVnhmZXFjZG52bWpSVm1oVVpUZmNUMU1wWnVVU09HK3BIVWM4TmdHRHdS?=
- =?utf-8?B?WXJKeGxxTkFLdHpTOERWNExCYncycHNPYlBOZnNLNWNiWU11MDY3dTI0M2Zu?=
- =?utf-8?B?dHV6RVRvNG5aVUNJZXVBeUF6ZG1ZRUU2L3daNk05UDZJcDlwN1kwTjN2c21r?=
- =?utf-8?B?TTBtSlJKb0FLbTZIZkVEQmJjaktKbkt2YXNnbjhDczBtemJOcHZzY28ybzF6?=
- =?utf-8?B?OUl3RHhZT1ZaMkIvVG0yNnA4SHp3M3lyRmdNNTkyeW1KcVRQbGVEVC9BVDFY?=
- =?utf-8?B?MGdWaGJFcERVelMzeGk5NHJZYitMSHNxNk9QOGJFdzg0WWJtYnFMb2FNQk5O?=
- =?utf-8?B?TWZsTFBpYnY5NlNWa3V3d0xhVzQ3YVZqZUYraXQ4MTNwYjg1TmhaTit6MUE0?=
- =?utf-8?B?R1ZtRUhkd3V4RFZ5eHpYdnNubWYxbndQUzh3L0ljM2hoellaOHF3UHp1R2h3?=
- =?utf-8?B?aUd1cmV3NEk0STRXNVk5ckViUFBDMFovTGJ3TXpKdFlnZG1YbFU5TnQ0Z25p?=
- =?utf-8?B?c2VUV3YwRXpyQUNYUEw0U3J6bXIrYm1NSEdPR2hkbVlXdUxTbHRkQUJPYkFM?=
- =?utf-8?B?ODAwYkNTUHlpNkxNL1ZOc0VrN0E2c1BsZTdYbXEzU0k3ZWFEYWluaXhHcnVN?=
- =?utf-8?B?U01DZ3kzRW9UR2l3bExBVlFuZ1JDVm1DR1BEd0ZNSHd0T3R4RldpMjA2NmlL?=
- =?utf-8?B?elNvcXRzUlgyWXJ3bmhTWFJWZVZGYTJTQnY4dVBJUUhEOHZ2Nm5ZMjZ5eTFJ?=
- =?utf-8?B?OUVYUGJhVURSc0wrdTVhc3J1Q3VLbXh4czhhV09aUjY1M3R3TTQyRmg4SlI2?=
- =?utf-8?B?V25NWTVWMVNqN3hvZE1EQjlrcXFUYi9nZFlGK1p5M3VtSHhUWStsTkNoQlBZ?=
- =?utf-8?B?MlUrbWFNZ0FNRUtrOWpkQmxwZEV4eXBtNi9Ud2VXcWQ3M3ZBeW5kK2dHajZ2?=
- =?utf-8?B?RHA0MkVOczZmWVNtNWxRVFZ1cGtZKzFhYjBJTGhZYU14cnZnZ0ErYlBHcWpQ?=
- =?utf-8?B?U0g5d0ZDOUptVFk4TWUvTWtPM3JtN1ZHd3Q2UHJDTTVXb0VPYVdvK3ZLemtK?=
- =?utf-8?B?ZC9ZZm1JTnpwbCs3dTU2Uk9ETitoYk9GS0o5MXJ4cHRuN292alkzU3pML1M5?=
- =?utf-8?B?MkgwVG1GL2k3YXNSNG1Fb1JqRjUySXhGaFJlbTRVaytVb0duMjZCdDd5WThl?=
- =?utf-8?B?c3JZRHBsRE1Qa2NkUE5oYlFjaUtGTEwxT0RVOXV4V0xVNFQwZm1TUm5iblhR?=
- =?utf-8?B?aXdwMTlYNWQ0THYrT2IrcTQ4ZHdLdTIwV20rMzYwQ1ZzaElOSW16SmFSY3p2?=
- =?utf-8?B?Ty91NjRERmtQMU1rSDFkcHYySGh5Y0FtbFc1RFdyRFRoUmZ5YldHbXVvemxH?=
- =?utf-8?B?L3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2bcb215-5122-467f-506c-08ddda7e451b
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 15:30:01.8461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eyOffHf+x/ww4OFX6ALcZ60k8qm3X4F8a+lixGT/mCctLzWkxKj06t1qmZK8letNI1swLo8ibOOyqxPqaK1XyK7H7uiSXNk9wI9rQprNXkk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF0DADD6EFE
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE+2nGgC/5WQzWrEIBRGXyW4ruVeo/lb9T3KLG70mhGapNVMa
+ Bny7jWZoUw3hW6ET/B4OFeROAZOoiuuIvIaUpinPNRTIeyZpoFlcHkLBcpAjSDtHFnatMTjCNO
+ QJHoiqkrlwTuRH75H9uHzgL6ebjvyxyWzl9ul6CllyDyOYemKxhviElzVutrokpnB1QBN6chrx
+ 41nNM40ZkePnBIdUtlxV2qwfFDyNM2XRaJcSwnSaGNR91Zr71+GkcLbc/7z3xhCw5bAtNbgb8x
+ PoTtFAd7T7Cin+7avWlRgfbeiEXuLc0jLHL+O3iseMf5Ku2IWAFVrBUx12/KDwGnbtm/CeV1jw
+ AEAAA==
+X-Change-ID: 20250710-core-cstr-cstrings-1faaa632f0fd
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Jens Axboe <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1755100759; l=7346;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=aHDCE8lQvGzrfp/JMmQg+1FkzUJWoG4yR/VNY61gI24=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QGTTtsiwktq2/jtDQWZ3OsBeIX7b+1AYy/DJLjfLo7rG242TN6+wE3vHC3Ph8gTa/g64MF8rY1d
+ RTwisWWbFUQc=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
---------------Olu5p2Ey10CTaf2d10fiGV3U
-Content-Type: multipart/mixed; boundary="------------pypCuRN8OcftUZfJ6tZkfYHN";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Brian Masney <bmasney@redhat.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Message-ID: <b8eddc78-f9dd-491f-8c4e-98406ad6f8db@intel.com>
-Subject: Re: [PATCH] net: cadence: macb: convert from round_rate() to
- determine_rate()
-References: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
-In-Reply-To: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
+This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
+which both depend on step 1[3].
 
---------------pypCuRN8OcftUZfJ6tZkfYHN
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+This series also has a minor merge conflict with a small change[4] that
+was taken through driver-core-testing. This series is marked as
+depending on that change; as such it contains the post-conflict patch.
 
+Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+can be taken through Miguel's tree (where the previous series must go).
 
+Link  https://lore.kernel.org/all/20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com/ [0]
+Link: https://lore.kernel.org/all/20250709-core-cstr-fanout-1-v1-0-64308e7203fc@gmail.com/ [1]
+Link: https://lore.kernel.org/all/20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com/ [2]
+Link: https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com/ [3]
+Link: https://lore.kernel.org/all/20250704-cstr-include-aux-v1-1-e1a404ae92ac@gmail.com/ [4]
 
-On 8/10/2025 3:24 PM, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate().
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/net/ethernet/cadence/macb_main.c | 61 ++++++++++++++++++------=
---------
->  1 file changed, 35 insertions(+), 26 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/eth=
-ernet/cadence/macb_main.c
-> index ce95fad8cedd7331d4818ba9f73fb6970249e85c..ce55a1f59b50dd85fa92bf1=
-39d06e6120d109e89 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -4822,36 +4822,45 @@ static unsigned long fu540_macb_tx_recalc_rate(=
-struct clk_hw *hw,
->  	return mgmt->rate;
->  }
-> =20
-> -static long fu540_macb_tx_round_rate(struct clk_hw *hw, unsigned long =
-rate,
-> -				     unsigned long *parent_rate)
-> -{
-> -	if (WARN_ON(rate < 2500000))
-> -		return 2500000;
-> -	else if (rate =3D=3D 2500000)
-> -		return 2500000;
-> -	else if (WARN_ON(rate < 13750000))
-> -		return 2500000;
-> -	else if (WARN_ON(rate < 25000000))
-> -		return 25000000;
-> -	else if (rate =3D=3D 25000000)
-> -		return 25000000;
-> -	else if (WARN_ON(rate < 75000000))
-> -		return 25000000;
-> -	else if (WARN_ON(rate < 125000000))
-> -		return 125000000;
-> -	else if (rate =3D=3D 125000000)
-> -		return 125000000;
-> -
-> -	WARN_ON(rate > 125000000);
-> -
-> -	return 125000000;
-> +static int fu540_macb_tx_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request *req)
-> +{
-> +	if (WARN_ON(req->rate < 2500000))
-> +		req->rate =3D 2500000;
-> +	else if (req->rate =3D=3D 2500000)
-> +		req->rate =3D 2500000;
-> +	else if (WARN_ON(req->rate < 13750000))
-> +		req->rate =3D 2500000;
-> +	else if (WARN_ON(req->rate < 25000000))
-> +		req->rate =3D 25000000;
-> +	else if (req->rate =3D=3D 25000000)
-> +		req->rate =3D 25000000;
-> +	else if (WARN_ON(req->rate < 75000000))
-> +		req->rate =3D 25000000;
-> +	else if (WARN_ON(req->rate < 125000000))
-> +		req->rate =3D 125000000;
-> +	else if (req->rate =3D=3D 125000000)
-> +		req->rate =3D 125000000;
-> +	else if (WARN_ON(req->rate > 125000000))
-> +		req->rate =3D 125000000;
-> +	else
-> +		req->rate =3D 125000000;
-> +
-> +	return 0;
->  }
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v2:
+- Rebase.
+- Add two patches to address new code.
+- Drop incorrectly applied Acked-by tags from Danilo.
+- Link to v1: https://lore.kernel.org/r/20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com
 
-Quite a big diff for the minimal amount of actual changes. This looks a
-bit nicer with --word-diff to show that there's no real functional change=
-s.
+---
+Tamir Duberstein (19):
+      drivers: net: replace `kernel::c_str!` with C-Strings
+      gpu: nova-core: replace `kernel::c_str!` with C-Strings
+      rust: auxiliary: replace `kernel::c_str!` with C-Strings
+      rust: clk: replace `kernel::c_str!` with C-Strings
+      rust: configfs: replace `kernel::c_str!` with C-Strings
+      rust: cpufreq: replace `kernel::c_str!` with C-Strings
+      rust: device: replace `kernel::c_str!` with C-Strings
+      rust: firmware: replace `kernel::c_str!` with C-Strings
+      rust: kunit: replace `kernel::c_str!` with C-Strings
+      rust: macros: replace `kernel::c_str!` with C-Strings
+      rust: miscdevice: replace `kernel::c_str!` with C-Strings
+      rust: net: replace `kernel::c_str!` with C-Strings
+      rust: pci: replace `kernel::c_str!` with C-Strings
+      rust: platform: replace `kernel::c_str!` with C-Strings
+      rust: seq_file: replace `kernel::c_str!` with C-Strings
+      rust: str: replace `kernel::c_str!` with C-Strings
+      rust: sync: replace `kernel::c_str!` with C-Strings
+      rust: io: replace `kernel::c_str!` with C-Strings
+      rust: regulator: replace `kernel::c_str!` with C-Strings
 
-> =20
->  static int fu540_macb_tx_set_rate(struct clk_hw *hw, unsigned long rat=
-e,
->  				  unsigned long parent_rate)
->  {
-> -	rate =3D fu540_macb_tx_round_rate(hw, rate, &parent_rate);
-> -	if (rate !=3D 125000000)
-> +	struct clk_rate_request req;
-> +	int ret;
-> +
-> +	clk_hw_init_rate_request(hw, &req, rate);
-> +	ret =3D fu540_macb_tx_determine_rate(hw, &req);
-> +	if (ret !=3D 0)
-> +		return ret;
-> +
-> +	if (req.rate !=3D 125000000)
->  		iowrite32(1, mgmt->reg);
->  	else
->  		iowrite32(0, mgmt->reg);
-> @@ -4862,7 +4871,7 @@ static int fu540_macb_tx_set_rate(struct clk_hw *=
-hw, unsigned long rate,
-> =20
->  static const struct clk_ops fu540_c000_ops =3D {
->  	.recalc_rate =3D fu540_macb_tx_recalc_rate,
-> -	.round_rate =3D fu540_macb_tx_round_rate,
-> +	.determine_rate =3D fu540_macb_tx_determine_rate,
->  	.set_rate =3D fu540_macb_tx_set_rate,
->  };
-> =20
->=20
+ drivers/block/rnull.rs                |  2 +-
+ drivers/cpufreq/rcpufreq_dt.rs        |  5 ++---
+ drivers/gpu/drm/nova/driver.rs        | 10 +++++-----
+ drivers/gpu/nova-core/driver.rs       |  6 +++---
+ drivers/net/phy/ax88796b_rust.rs      |  7 +++----
+ drivers/net/phy/qt2025.rs             |  5 ++---
+ rust/kernel/clk.rs                    |  6 ++----
+ rust/kernel/configfs.rs               |  9 +++++----
+ rust/kernel/cpufreq.rs                |  3 +--
+ rust/kernel/device.rs                 |  4 +---
+ rust/kernel/device/property.rs        |  6 +++---
+ rust/kernel/firmware.rs               |  6 +++---
+ rust/kernel/io/mem.rs                 |  7 +++----
+ rust/kernel/kunit.rs                  | 11 ++++-------
+ rust/kernel/net/phy.rs                |  6 ++----
+ rust/kernel/platform.rs               |  6 +++---
+ rust/kernel/regulator.rs              |  9 +++------
+ rust/kernel/seq_file.rs               |  4 ++--
+ rust/kernel/str.rs                    |  5 ++---
+ rust/kernel/sync.rs                   |  5 ++---
+ rust/kernel/sync/completion.rs        |  2 +-
+ rust/kernel/workqueue.rs              |  8 ++++----
+ rust/macros/kunit.rs                  | 10 +++++-----
+ rust/macros/module.rs                 |  2 +-
+ samples/rust/rust_configfs.rs         |  5 ++---
+ samples/rust/rust_driver_auxiliary.rs |  4 ++--
+ samples/rust/rust_driver_faux.rs      |  4 ++--
+ samples/rust/rust_driver_pci.rs       |  4 ++--
+ samples/rust/rust_driver_platform.rs  | 30 ++++++++++++++----------------
+ samples/rust/rust_misc_device.rs      |  3 +--
+ scripts/rustdoc_test_gen.rs           |  4 ++--
+ 31 files changed, 88 insertions(+), 110 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250710-core-cstr-cstrings-1faaa632f0fd
+prerequisite-message-id: 20250813-core-cstr-fanout-1-v3-0-545c14bc44ff@gmail.com
+prerequisite-patch-id: 0ccc3545ff9bf22a67b79a944705cef2fb9c2bbf
+prerequisite-patch-id: b1866166714606d5c11a4d7506abe4c2f86dac8d
+prerequisite-patch-id: b575ae9ef33020b691c8c5a17bd1985676519e14
+prerequisite-patch-id: 8fee5e2daf0749362331dad4fc63d907a01b14e9
+prerequisite-patch-id: 366ef1f93fb40b1d039768f2041ff79995e7e228
+prerequisite-patch-id: 1d350291f9292f910081856d8f7d5e4d9545cfd1
+prerequisite-patch-id: 9a6a60bd2b209126de64c16a77a3a1d229dd898c
+prerequisite-patch-id: 08ae5855768ec3b4c68272b86d2a0e0667c9aa47
+prerequisite-patch-id: 801be981c2346617fa9412498930b68dc784693b
+prerequisite-patch-id: f0dbf0a55a27fe8e199e242d1f79ea800d1ddb66
+prerequisite-patch-id: c0b4abb4d44f7e63d002d0bfe5239296930c183e
+prerequisite-message-id: 20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com
+prerequisite-patch-id: 6711f2a2f25c12784057aa725a9482feef6bb6f0
+prerequisite-patch-id: 3b5144133c0e239e0a258c9aa4da0df2dd464e66
+prerequisite-patch-id: 589a352ba7f7c9aefefd84dfd3b6b20e290b0d14
+prerequisite-patch-id: 2a4b0b9170e25637b9eba0e516863bdcdb4149a8
+prerequisite-patch-id: 3d89601bba1fb01d190b0ba415b28ad9cbf1e209
+prerequisite-patch-id: 10923aebf24011b727f60496c0f9e0ad57e0a967
+prerequisite-patch-id: 9a7e8ba460358985147efd347658be31fbc78ba2
+prerequisite-patch-id: f79b8755f3d75effc581d09eafe5725043516aad
+prerequisite-patch-id: d598958c2d64dcb56a5cd64b088594be51b1d752
+prerequisite-change-id: 20250201-cstr-core-d4b9b69120cf:v15
+prerequisite-patch-id: 6711f2a2f25c12784057aa725a9482feef6bb6f0
+prerequisite-patch-id: 3b5144133c0e239e0a258c9aa4da0df2dd464e66
+prerequisite-patch-id: 0ccc3545ff9bf22a67b79a944705cef2fb9c2bbf
+prerequisite-patch-id: b1866166714606d5c11a4d7506abe4c2f86dac8d
+prerequisite-patch-id: 589a352ba7f7c9aefefd84dfd3b6b20e290b0d14
+prerequisite-patch-id: 2a4b0b9170e25637b9eba0e516863bdcdb4149a8
+prerequisite-patch-id: 3d89601bba1fb01d190b0ba415b28ad9cbf1e209
+prerequisite-patch-id: 10923aebf24011b727f60496c0f9e0ad57e0a967
+prerequisite-patch-id: 9a7e8ba460358985147efd347658be31fbc78ba2
+prerequisite-patch-id: f79b8755f3d75effc581d09eafe5725043516aad
+prerequisite-patch-id: d598958c2d64dcb56a5cd64b088594be51b1d752
+prerequisite-patch-id: b575ae9ef33020b691c8c5a17bd1985676519e14
+prerequisite-patch-id: 8fee5e2daf0749362331dad4fc63d907a01b14e9
+prerequisite-patch-id: 366ef1f93fb40b1d039768f2041ff79995e7e228
+prerequisite-patch-id: 1d350291f9292f910081856d8f7d5e4d9545cfd1
+prerequisite-patch-id: 9a6a60bd2b209126de64c16a77a3a1d229dd898c
+prerequisite-patch-id: 08ae5855768ec3b4c68272b86d2a0e0667c9aa47
+prerequisite-patch-id: 801be981c2346617fa9412498930b68dc784693b
+prerequisite-patch-id: f0dbf0a55a27fe8e199e242d1f79ea800d1ddb66
+prerequisite-patch-id: c0b4abb4d44f7e63d002d0bfe5239296930c183e
+prerequisite-patch-id: 9c0a6624ed7b7e1d0373985c5c084a844e7c49ce
+prerequisite-patch-id: e0ca756f740ab0ce7478bbf6510948ba89529a2f
+prerequisite-patch-id: 6d8dbdf864f79fc0c2820e702a7cb87753649ca0
+prerequisite-patch-id: 7d4d1d036043a85dcbaf0d09ea85768120efe094
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250729-net-round-rate-01147feda9af
->=20
-> Best regards,
-
-
---------------pypCuRN8OcftUZfJ6tZkfYHN--
-
---------------Olu5p2Ey10CTaf2d10fiGV3U
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaJyvcAUDAAAAAAAKCRBqll0+bw8o6Ksr
-AQCkXL82ForIpWTFKdL+6FhPfZRw/VM9XuuNCuQ8qDi/1gEAtbVWDbSEkAQQSlYc6aL2Xiw4zThE
-ym/azgmOsIrAlwE=
-=DC0p
------END PGP SIGNATURE-----
-
---------------Olu5p2Ey10CTaf2d10fiGV3U--
