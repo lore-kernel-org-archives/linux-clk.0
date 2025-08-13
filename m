@@ -1,221 +1,176 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835852D7392;
-	Wed, 13 Aug 2025 07:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070100; cv=pass; b=TX/LOiR++DeZf/Jukk7/NTtBsmUo3K7ZaWgDXBIIR0gQZveO+N3t25ZpUUSNy90pzY5qIFRiBgy4tn0lZG/Zf8/HsnkfoN/3/czK8z8Lhm9Did6Qx+mvk0skri2V1Vvy9RDz9aT5GNguWqCFveLeTyEAbhIFUVs727LySR8UaDA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070100; c=relaxed/simple;
-	bh=WfQGwG6AIli5tQ5UgzKBGZ+liVCl83y9idSDc8vSJfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DLoGmWM0UtOF8RuA5vBaAF6WgMNUf7i7LyWoW45hpFFJ+HE4//Xat+ow+umJGrjnKqV9hr1ujnf0s4MPWZ4yn1ZBuiY+K+kant8zwCkm7wcrbp3V820l4WaeMQDwDBKfUG7dAB5RcTRC59teFn6IpnNPSAQ2puCBwYhK49POZmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=OtUN4/IU; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC277464
+	for <linux-clk@vger.kernel.org>; Wed, 13 Aug 2025 07:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755071758; cv=none; b=jMnFEtfQFdrmu3q4sC3QDwXGDuKHrvckVwZovgo3S9j1DSQ7alMcXkintWYIARe8s888OrjewyoqAnRvxjVQ1WNm4CeqmbISzm8RcfCnJYuaGMEg/akSbTGwjAzto1uK/4qEdz5HwOgEb5WXt5U1bKBx+M8ZexJesSzqHZx4lkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755071758; c=relaxed/simple;
+	bh=N/EFTl//MUVpepPSVYfso39VLXLEkNVBQ8GJWEUsU5Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S9LVkRnq0ZyL61oZ680cUhDzUlhkuMuwnjtqRuongWR21XN92gZ457ILV+cQ0pulNuux63lgbQ9NBjlZ5Wh/WfZVRYhk5P3KgWpaoWWC5QXkugbd2dSem/RdEnrhwyJOqY6lsTgfyUIMHtd0ERtAJ1ouI1a4PshNS88UTAYs2D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WWCU/c9p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="OtUN4/IU"
-ARC-Seal: i=1; a=rsa-sha256; t=1755070084; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GaLTEOdq/Oq83qq10mXn+lrKHQWfpr/HxYEsyqcyCjj6p6aT9dwmTNZoJ90Egzc0egVTuH03UlWxRY9A2BqJSO1ozgENXMvVzSr7lXTi+K7ySl8uAyIQL/Z02ajPN3jjNM0qcqE5qlIT+O8qDJKA51DbT6paQRhLOC4lpC3O3Tc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755070084; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YA5K1QeOw6QZSnl5vIgv8mS6MWi8kYtpfARcgg+9RII=; 
-	b=lDupjT7fl9ieLaDG0nZj2TP65OhHp5iAp8P0ZlkXdFnidb/pzq+40ct0HeEbDmBrSBFmzgrFrEsGtXYeDMKO9kViB9ldGgvDrVxBrSDMpGG2okeDcd92oGBW8IVj7JkLHHWM/Phf5TH7VT0rwPXbWla3efeSDrYM4b+kKvtny4E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755070083;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=YA5K1QeOw6QZSnl5vIgv8mS6MWi8kYtpfARcgg+9RII=;
-	b=OtUN4/IUDTl5mOf48S5cbtEXIHeaV7f5g2Fwkdqnm4jguZji/hWbgD4SUwqNZzl7
-	8y2974zLP8LwaxnKoBTuVDqWMGnR/UOws9pGrN2l4XjXFgkoDvkyZzivtjwiI+ClJK2
-	3UY93l81raR56nwDYKiownGWsHql+wVz1dVGdTL2yFY0jabQnxT2qI15fo1gKogSKdm
-	mDWNwtLmYEnZ4CaDIWxK3HSSJUU51oa6CcRXMa87bFKIBCNy9fUW+riZdvlO0Pez7yY
-	BOOeWXDwIIP/DzmNPM2zwqWJ24jCydgQmwcJtCpOi12F/cxY3oSoq6cmB3zd6OJYOGe
-	3UEq7vQKKw==
-Received: by mx.zohomail.com with SMTPS id 1755070081771781.9115436334819;
-	Wed, 13 Aug 2025 00:28:01 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Han Gao <rabenda.cn@gmail.com>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2 3/3] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
-Date: Wed, 13 Aug 2025 15:27:02 +0800
-Message-ID: <20250813072702.2176993-4-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813072702.2176993-1-uwu@icenowy.me>
-References: <20250813072702.2176993-1-uwu@icenowy.me>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WWCU/c9p"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mOYm026071
+	for <linux-clk@vger.kernel.org>; Wed, 13 Aug 2025 07:55:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PbxeIGNssb8EQVu2gX91Sa
+	Cd/YhbWEN2gAOYLERC55E=; b=WWCU/c9pA94DPQT4oid+EvX0oHaVGN8N/YvZw5
+	yN06bSa7E/pAw4xrLqm0kzDM8QH8Dbca4+egb1J3s3ZMrbNqKITeEvXq0xQbKQQx
+	73eYmz+VNY86VhMkq+CrJreT4AlfROUUTOAM3uQx3a1xFlm2fZnvLDpTHl9Ki3BV
+	ABGsxuHsWM8G97Ajc+pmMf7/pggACSUsqiQ2Y4bEOb1AU2+qlpLR/JFPGyvhUvbp
+	gIJRukHGosjDEU8Om4I7dfcVtdlwG9w6r34ORRyZFmhfHv3O/N+aTLywj8lQQYuK
+	BYVtiYG7TLNcTArRSzuNbc8UeuqsmI5ittEp//vLu1zRYBlQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9su6k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 13 Aug 2025 07:55:56 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76bb326ad0bso6425248b3a.0
+        for <linux-clk@vger.kernel.org>; Wed, 13 Aug 2025 00:55:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755071755; x=1755676555;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PbxeIGNssb8EQVu2gX91SaCd/YhbWEN2gAOYLERC55E=;
+        b=lo9KbWt+vtnN+GPmfzYXt+Ckuhs/UZddFyzp7uxBaf5dIteiIzJJ+cm5B9hUj1OPWC
+         mbDzXIiKlmD0WAqUvy9pMk2bNdAluTLzEAg29d/wJ87HT4sbFk0f4ulmdW55MjMKTPOg
+         5Jugl1S6pI//hYsBB1gTaKoz6QksSr8n7VtVoHEWC+eyuQ3HNTM4xzVmgENIeDfXzPbn
+         O1xzy8jcxudQvPaPFkVGAkv1YO6Jf5LBzJEhtvVlUwM7nvJNC5mSKpRCz0Cr9zy348Iq
+         BOAgio7Sn4+D2P9rzZr+BYQIRkpAI3z8S0LNLhkev2Mg4PNdvU8j/avuGDdEaHN8X1d/
+         HoYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZvvEtPxUYiev/tIjzOQDMDgkQ81ij4TyqCSDU719s0xemWqhxMLy/WGZejgZIS9WT7yayicozFNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpvOM0P7TCIEIYQcPNxrb7YWPgu7feKoWjUd31G6GSM/RlXqGZ
+	/GQQ8g4ZXnl60oOUluhDHNEeCZ4YQ7DtK/OyQ9AQvPKfZqjPE01pdyBudIQ2eAjWx2mSUiQSu3f
+	kszZpuxTIaPnG7kTmkCiu8GPjQ1CovjRNTCcJOpiAgD3Qyy5faBb8pIt0lNmToeM=
+X-Gm-Gg: ASbGnctfG9dqCw2rrItyDliUTUHoSr/Q39HUwYu2Z1Wgqh6RPyW+pZFDkN+UFnW8tNA
+	rHACyL3cd3v+4mrXHYsaLIMbgy0vAbhkpq1d/DZB3N3xDz0zEafbHeOCHDf0Kn0gnwQ9JnbY9Ik
+	bMx9iM6c3AW3otkowdZLk6CXh6ixyp8pJO2a0dQyHfhgABAKF5v1bOTl0EfydciMTj+yHSO+gwy
+	pSuSGYFnSxhS1AikxxhiYAl74NSPujbBzEzN5mcVYuyoVX8+z17ElfoeaYEOuD8OF1k0Y9ettRt
+	WVpxtqjElJDf1cEnuwKJzyBmNq1ZUfwww3RC6vTd3wPEuhzzBvFzK3XwNxutg3Bc
+X-Received: by 2002:aa7:88d6:0:b0:76b:ffd1:7722 with SMTP id d2e1a72fcca58-76e20fe52ffmr3695009b3a.24.1755071755285;
+        Wed, 13 Aug 2025 00:55:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFejr+/favLOO8iLHlOBozznAzz7xZoBuIk5htMdciv+yIGlKh80pmUms50GL2E13VJAOM9w==
+X-Received: by 2002:aa7:88d6:0:b0:76b:ffd1:7722 with SMTP id d2e1a72fcca58-76e20fe52ffmr3694973b3a.24.1755071754778;
+        Wed, 13 Aug 2025 00:55:54 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd22csm31395754b3a.65.2025.08.13.00.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 00:55:54 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH v4 0/7] Add support for Clock controllers for Glymur SoC
+Date: Wed, 13 Aug 2025 13:25:16 +0530
+Message-Id: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOREnGgC/x3MQQqDMBAAwK/Inl1Ig5LYrxQPIa7p0piUjYoi/
+ r2hx7nMBYWEqcCzuUBo58I5VXRtA/7tUiDkqRq00r2yD40hnssm6GP2H/Q5rZJjJMG9w36w1sx
+ KW2cmqMFXaObjn7/G+/4BxyDCIGwAAAA=
+X-Change-ID: 20250812-glymur-clock-controller-v4-59887f028a7d
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689c450c cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=9iZiYaJo2d43-za_6isA:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: a0viHEyfouMVe7G2hcfrVA7Mii5yEi30
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX5mUgDHEXefbK
+ M3GM2hSiO2tCtvMBRURbVtDHuD2TMGIK5LnoC5zXJfnFeb7ni+KoYVGcEBb8j6wDc0fO3No8WX3
+ kc5yA6AMZx2ymSIDGINExkaQuDTOUS+OrUht2ZRlAAxMwoyL4/Z6HUrPY/ZZc2glKL15RauVky2
+ Bk3gCgPZJrYzEed5MHiQCDWOQxUZdvqeUrAtelYuYQtVsBF7QSPl7TlRDELm5LADLYF41YKMjpz
+ IGT4nu1ljRs+UWGw36H+yZoJ+o6M3w8j4zhYW2V2Du2nOXX0OW6w3nrmdrZyu+8AqdqDM2zD3ON
+ hr00qYF6RxS3nJKDvdqJhainltfEla4TLn+QaThXwlflOiudhV44o4zRWDjbBvZvsMJzy/mOvYE
+ 9zWLz579
+X-Proofpoint-GUID: a0viHEyfouMVe7G2hcfrVA7Mii5yEi30
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
-The AXI crossbar of TH1520 has no proper timeout handling, which means
-gating AXI clocks can easily lead to bus timeout and thus system hang.
+Introduce the support for Global clock controller(GCC), TCSR and the RPMH clock controller for
 
-Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
-ungated by default on system reset.
+Qualcomm's next gen compute SoC - Glymur.
 
-In addition, convert all current CLK_IGNORE_UNUSED usage to
-CLK_IS_CRITICAL to prevent unwanted clock gating.
+Device tree changes aren't part of this series and will be posted separately after the
+official announcement of the Glymur SoC.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+Changes in v4:
+ - Update the commit message for all dt-bindings to incorporate "Glymur SoC".
+ - Add the xo parent for the TCSR CC clocks[Abel]
+ - Update the GCC driver to cleanup dfs_rcgs as part of 'qcom_cc_driver_data'[Dmitry]
+ - Add RB tag from [Konrad]
+ - Fix the broken previous patchset links.
+ - Link to v3: https://lore.kernel.org/lkml/20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com/
+
+Changes in v3:
+- Update the commit message for all the dt-bindings [Krzysztof]
+- Update the commit message as required.
+- Link to v2: https://lore.kernel.org/all/20250724-glymur_clock_controllers-v2-0-ab95c07002b4@oss.qualcomm.com/
+
+Changes in v2:
+- Drop second/last, redundant "bindings" in TCSR and also align the
+  filename [Krzysztof]
+- Update the year to the copyright [Krzysztof]
+- Align to the new Kconfig name CLK_GLYMUR_GCC/TCSR [Abel, Bjorn]
+- Use qcom_cc_probe() for tcsrcc [Dmitry]
+- Add RB tag from [Dmitry] to patch #5
+- Link to v1: https://lore.kernel.org/lkml/20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com/
+
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
-No changes in v2 except for rebasing error fixes (which I sent as FIXED
-patches in v1).
+Taniya Das (7):
+      dt-bindings: clock: qcom-rpmhcc: Add support for Glymur SoCs
+      dt-bindings: clock: qcom: Document the Glymur SoC TCSR Clock Controller
+      clk: qcom: Add TCSR clock driver for Glymur SoC
+      clk: qcom: rpmh: Add support for Glymur rpmh clocks
+      clk: qcom: clk-alpha-pll: Add support for Taycan EKO_T PLL
+      dt-bindings: clock: qcom: document the Glymur Global Clock Controller
+      clk: qcom: gcc: Add support for Global Clock Controller
 
- drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ .../devicetree/bindings/clock/qcom,glymur-gcc.yaml |  122 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    3 +
+ drivers/clk/qcom/Kconfig                           |   17 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
+ drivers/clk/qcom/clk-rpmh.c                        |   22 +
+ drivers/clk/qcom/gcc-glymur.c                      | 8616 ++++++++++++++++++++
+ drivers/clk/qcom/tcsrcc-glymur.c                   |  313 +
+ include/dt-bindings/clock/qcom,glymur-gcc.h        |  578 ++
+ include/dt-bindings/clock/qcom,glymur-tcsr.h       |   24 +
+ 11 files changed, 9704 insertions(+)
+---
+base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
+change-id: 20250812-glymur-clock-controller-v4-59887f028a7d
 
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index b220a8ed22607..0224f2dde0f63 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -566,7 +566,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
- 					      gmac_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -588,7 +588,7 @@ static struct ccu_div axi_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
- 						      axi_parents,
- 						      &ccu_div_ops,
--						      0),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -737,7 +737,7 @@ static struct ccu_div apb_pclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
- 						      apb_parents,
- 						      &ccu_div_ops,
--						      CLK_IGNORE_UNUSED),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -768,7 +768,7 @@ static struct ccu_div vi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -793,7 +793,7 @@ static struct ccu_div vo_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -818,7 +818,7 @@ static struct ccu_div vp_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      CLK_IGNORE_UNUSED),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -879,23 +879,23 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
- static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, BIT(4), 0);
- static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, BIT(5), 0);
- static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
--		0x134, BIT(8), 0);
-+		0x134, BIT(8), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
--		0x134, BIT(7), 0);
-+		0x134, BIT(7), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
--		0x138, BIT(8), CLK_IGNORE_UNUSED);
-+		0x138, BIT(8), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
--		0x140, BIT(9), CLK_IGNORE_UNUSED);
-+		0x140, BIT(9), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
--		0x150, BIT(9), CLK_IGNORE_UNUSED);
-+		0x150, BIT(9), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
--		0x150, BIT(10), CLK_IGNORE_UNUSED);
-+		0x150, BIT(10), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
--		0x150, BIT(11), CLK_IGNORE_UNUSED);
-+		0x150, BIT(11), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
- 		0x150, BIT(12), 0);
--static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
--static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), 0);
-+static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), CLK_IS_CRITICAL);
-+static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, BIT(13), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
- static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, BIT(26), 0);
- static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, BIT(24), 0);
-@@ -939,11 +939,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, BIT(2), 0);
- static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, BIT(1), 0);
- 
- static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
--		video_pll_clk_pd, 0x0, BIT(0), 0);
-+		video_pll_clk_pd, 0x0, BIT(0), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
- 		0x0, BIT(3), 0);
- static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
--		video_pll_clk_pd, 0x0, BIT(4), 0);
-+		video_pll_clk_pd, 0x0, BIT(4), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
- 		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
- static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
-@@ -975,9 +975,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
- static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
- 		0x0, BIT(19), 0);
- static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
--		video_pll_clk_pd, 0x0, BIT(20), 0);
-+		video_pll_clk_pd, 0x0, BIT(20), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
--		video_pll_clk_pd, 0x0, BIT(21), 0);
-+		video_pll_clk_pd, 0x0, BIT(21), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
- 		video_pll_clk_pd, 0x0, BIT(22), 0);
- static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
-@@ -987,11 +987,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
- static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
- 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, BIT(25), 0);
- static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
--		video_pll_clk_pd, 0x0, BIT(27), 0);
-+		video_pll_clk_pd, 0x0, BIT(27), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
--		video_pll_clk_pd, 0x0, BIT(28), 0);
-+		video_pll_clk_pd, 0x0, BIT(28), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
--		video_pll_clk_pd, 0x0, BIT(29), 0);
-+		video_pll_clk_pd, 0x0, BIT(29), CLK_IS_CRITICAL);
- static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
- 		video_pll_clk_pd, 0x0, BIT(30), 0);
- static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
+Best regards,
 -- 
-2.50.1
+Taniya Das <taniya.das@oss.qualcomm.com>
 
