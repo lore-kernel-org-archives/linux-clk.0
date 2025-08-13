@@ -1,51 +1,61 @@
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18096249E5;
-	Wed, 13 Aug 2025 02:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241F529E101;
+	Wed, 13 Aug 2025 03:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755050833; cv=none; b=huzu8qRcCFIm3ZafyircuN4G7zOv2pzPDEU5Kofsh1t5XMgoo4UyAE+2lnBrEm3VhKTgP45U4vgUDF6ukvyMedjyf5yX9rHAREqt2DdQe5beO7MdX2ryIW/ciyrWb85uy9yMz8PucZrbiFa+80NQlPi1Bpaj5F7vVpv+2uglNGA=
+	t=1755055303; cv=none; b=tyOVR3bM+yP0DDvNt9TH17JQGX1z4AGRDpQQdDb75yAIEgJf71i54CbMU+Gd0WIhcizf7r3bShwypGKv7GaG8mtKBfvCyfVKfdcvXTv6R4Ne+pwvNnm3wTIhKNAv0FhUsdSv3xmXHvem+8hO96mcID6zxDoCJMzIOYaBjUaSlqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755050833; c=relaxed/simple;
-	bh=d6UdtNNuZaZ6bamfAHn8ybRPEHHUxUxuKOvOGDD16Tg=;
+	s=arc-20240116; t=1755055303; c=relaxed/simple;
+	bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cyqFEewGNEzO3yR9NUY2AtOwdzyOFgiY+NSFPPvgL8ztFAHY+6YcFhNZm0xY/ic+hhmvg210HUgOD//bVDXzaaepqkJ0hy0PLZA6WOJbbd7vbjbY/OZVakAM0H3InfmU/dYYTWbGUIvnLZrO1dKYK6/YKXmmUQGkjR3TmiNPI2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=DiLovhk3; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWPZFBm1SA6CS54Dm8BXbGoIIt565+bn7jeJxhMm3qAlK6A4mPYlayfwp5SSu58ocFuNfOsZNbFEqgFrGpHXYfgGEyTQZvs6/juh2iIMeshVx4BJOr4LE7kWgjb5exMXnaFZn4scYIeQvdoLxo0muTXjI0MMFUJ4P3G+uGGMNrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwijmR8r; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="DiLovhk3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755050666;
-	bh=ZnyIiSbiRujF2YLZ0WQOHqhpmTla+FMTYfJUDVo3fOM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=DiLovhk38v2dePx200QeDQJddeXOYY/5O2HtGNH37P2+8NfVdSAVjQ78CqKOfSu4c
-	 BWBxD1/UsK9vOEboHbI6Ue1z/WaceLzoZMzAtsRG9Iyltbz/l2FGVH/o1BeEGKjCZR
-	 OHiNxNMv//3SELNncDsz9USSC1GMlU8HhouIXEo4=
-X-QQ-mid: esmtpgz10t1755050657taffb3d78
-X-QQ-Originating-IP: jJ6yvrAGhILmpgoimcz/SSjmuoT5NvuhLbgu+tpbQwA=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 13 Aug 2025 10:04:16 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2947607227310690052
-EX-QQ-RecipientCnt: 11
-Date: Wed, 13 Aug 2025 10:04:16 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 2/4] clk: thead: support changing DPU pixel clock rate
-Message-ID: <17A2B2E9749103E7+aJvyoBfDZRzbFM_b@LT-Guozexi>
-References: <20250812054258.1968351-1-uwu@icenowy.me>
- <20250812054258.1968351-3-uwu@icenowy.me>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwijmR8r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755055302; x=1786591302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
+  b=RwijmR8rQSza60KMbn3UCk3IKtdVBgUnobl6OAVah9czcLBgGmEPXlrb
+   f8sjLLQDD4fQEhWy7prVEmg3/NuHbSxLJuRYOX2yjwlDNlB8YcAYgNQFK
+   vBuo3DHhN8LFgMjy+JfnmjFEREFxLOLePgPEof6ANWDs6MnWCD50ZXwXW
+   s2DzysBKa+pOyz5/hJL9neHctgEPMDnYVx4WesLbZx54MnpmuShhkU+mI
+   QVUsxowWK7Q8imDrnpZsK4JpL2Rdc42eTHZtKAqhfBA82aPqgLiKwX3KQ
+   JqdF5gflzVn4mx7zBAvNIHTFaxEKpoFvhvNxEWVzGwoQ3lqXL80pmtAxM
+   w==;
+X-CSE-ConnectionGUID: YLuAJ6c/TTSAgsRbuTfmWQ==
+X-CSE-MsgGUID: pI8t850ITJexTtrjQVsKNA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74789381"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="74789381"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 20:21:42 -0700
+X-CSE-ConnectionGUID: 84Cqx6gLT7a+m83CS2tacA==
+X-CSE-MsgGUID: AYDpHQp6RoyvGKKPg8xa/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170565614"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2025 20:21:39 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1um23E-0009Ui-38;
+	Wed, 13 Aug 2025 03:21:26 +0000
+Date: Wed, 13 Aug 2025 11:21:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: Use hashtable for global clk lookups
+Message-ID: <202508131125.ohtCwp4k-lkp@intel.com>
+References: <20250812085328.3306705-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,212 +64,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812054258.1968351-3-uwu@icenowy.me>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MwQdfXoP8nuzNQhFR1XlhqZ6exU9J3FHn0e02e8UI3DUE7xoOXSHdacD
-	0g+xL9PVWzKW++rnG7sT4yR9nqTmkER1vdhvN/190Ef/NlZ8b06gobg0xyibHL5TnSSWgP0
-	4cbsbzOoXhlEJJ5/fu1bx2pm9zNinnaD4Cp31kGhthfTocNGDMr5c8v+fQpew0hdQ1QYcGZ
-	2Ge0i34QwRWR71LsyzUGA51HAfWiqaRzpeepPQXHw7zfBl7mOjtkxUIua+T4TlYX2JUF6Lh
-	i+x4oyq/IyiP2Rdex8NU2BFb1eHr5QwJHVDItMIZH8svV5zAYfLjLTYBHXmzIOfptQS/0pn
-	tcoKxrUTtNyfqW5w4HaRIU9mQ+lopPCm4R8/tD96qDOeIC/O5P89KlIgA7Ahja9xiHVYiWc
-	2tEuZsd43ZqQJlBQwSLILlKEMbHU41vO7FDH080xT0b74KfpJbcsxl2pxH9mATBWAO2uuRZ
-	+B78va+U3X8C3XZD4D5QFQEKDpvLkf6iyxZmny3h1vGSr5BTOxwITXFhPk5Vb/OsmTCuZaQ
-	c1gHnagdICWZaRihiOW/XcpxWIVHIaCu7lN+/kL/Bl8L+Vy/jq0Syl8YiF6TveZ/QOcOjXw
-	0i7FI/p1SmTj7CIWUlO32H8sNYc1M+n6eSAVyLLfdcbEnmsZvINcOj6949wOaSC9S2XQitc
-	vGabJe+IOnkgcWnJNulDBsjzMKMV7//6BhRTUYqM9uxMc/Z0pOV59SwCS90MyW72oNSvkNf
-	H4lTpv04PeNFypFQ8G5lkYAvuy4jTsjV0MyURUpUEjZ0ZKDExklVP5c2Tb+HUyUeHJ2axfK
-	XPyVcBAr+VLqm4QuS9LhmE30vODSCEXEeJYZkOKRHpKiDJmfp3h8IvwnfAS69golhRmXZpa
-	hQk2dwj81fS36W9XQ+oGZF2ba4H1KBMza5P1kJ2+Ge/FXERkADkucgSYji4Vz8ZlZ6I7oeH
-	5n0+fI0jVxfE8/CWCO7YMzdjmL1YBx9Qwo/5nnxbLNVawGsZYUTvpSFx4Mh73grRaP0jm52
-	uZyEUHzojlU1gR1qUHtCuvH8pdzuV6npTRqW07Xl//I5Nuw1bP
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20250812085328.3306705-2-wenst@chromium.org>
 
-On Tue, Aug 12, 2025 at 01:42:56PM +0800, Icenowy Zheng wrote:
-> The DPU pixel clock rate corresponds to the required dot clock of the
-> display mode, so it needs to be tweakable.
-> 
-> Add support to change it, by adding generic divider setting code,
-> arming the code to the dpu0/dpu1 clocks, and setting the pixel clock
-> connected to the DPU (after a gate) to CLK_SET_RATE_PARENT to propagate
-> it to the dividers.
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
->  drivers/clk/thead/clk-th1520-ap.c | 87 +++++++++++++++++++++++++++++--
->  1 file changed, 82 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-> index 2f87c7c2c3baf..3e81f3051cd6c 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -55,6 +55,7 @@ struct ccu_gate {
->  
->  struct ccu_div {
->  	u32			enable;
-> +	u32			div_en;
->  	struct ccu_div_internal	div;
->  	struct ccu_internal	mux;
->  	struct ccu_common	common;
-> @@ -198,6 +199,78 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
->  	return rate;
->  }
->  
-> +static long ccu_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *parent_rate)
-> +{
-> +	struct ccu_div *cd = hw_to_ccu_div(hw);
-> +	unsigned int val;
-> +
-> +	if (!cd->div_en) {
-> +		regmap_read(cd->common.map, cd->common.cfg0, &val);
-> +		val = val >> cd->div.shift;
-> +		val &= GENMASK(cd->div.width - 1, 0);
-> +		return divider_ro_round_rate(hw, rate, parent_rate,
-> +					     NULL, cd->div.width, cd->div.flags,
-> +					     val);
-> +	} else {
-> +		return divider_round_rate(hw, rate, parent_rate,
-> +					  NULL, cd->div.width, cd->div.flags);
-> +	}
-How about this:
-```
-if (cd->div_en)
-  return divider_round_rate(hw, rate, parent_rate,
-          NULL, cd->div.width, cd->div.flags);
+Hi Chen-Yu,
 
+kernel test robot noticed the following build warnings:
 
-regmap_read(cd->common.map, cd->common.cfg0, &val);
-val = val >> cd->div.shift;
-val &= GENMASK(cd->div.width - 1, 0);
-return divider_ro_round_rate(hw, rate, parent_rate,
-			     NULL, cd->div.width, cd->div.flags,
-			     val);
-```
-  
-> +}
-> +
-> +static int ccu_div_determine_rate(struct clk_hw *hw,
-> +				  struct clk_rate_request *req)
-> +{
-> +	struct ccu_div *cd = hw_to_ccu_div(hw);
-> +	unsigned int val;
-> +
-> +	if (!cd->div_en) {
-> +		regmap_read(cd->common.map, cd->common.cfg0, &val);
-> +		val = val >> cd->div.shift;
-> +		val &= GENMASK(cd->div.width - 1, 0);
-> +		return divider_ro_determine_rate(hw, req, NULL,
-> +						 cd->div.width,
-> +						 cd->div.flags,
-> +						 val);
-> +	} else {
-> +		return divider_determine_rate(hw, req, NULL,
-> +					      cd->div.width, cd->div.flags);
-ditto.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.17-rc1 next-20250812]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +	}
-> +}
-> +
-> +static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long parent_rate)
-> +{
-> +	struct ccu_div *cd = hw_to_ccu_div(hw);
-> +	int val = divider_get_val(rate, parent_rate, NULL,
-> +				  cd->div.width, cd->div.flags);
-> +	unsigned int curr_val, reg_val;
-> +
-> +	if (val < 0)
-> +		return val;
-> +
-> +	regmap_read(cd->common.map, cd->common.cfg0, &reg_val);
-> +	curr_val = reg_val;
-> +	curr_val = curr_val >> cd->div.shift;
-> +	curr_val &= GENMASK(cd->div.width - 1, 0);
-> +
-> +	if (!cd->div_en && curr_val != val)
-> +		return -EINVAL;
-> +
-> +	reg_val &= ~cd->div_en;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +	udelay(1);
-> +
-> +	reg_val &= ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-> +	reg_val |= val << cd->div.shift;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +
-> +	reg_val |= cd->div_en;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +
-> +	return 0;
-> +}
-> +
->  static u8 ccu_div_get_parent(struct clk_hw *hw)
->  {
->  	struct ccu_div *cd = hw_to_ccu_div(hw);
-> @@ -240,7 +313,9 @@ static const struct clk_ops ccu_div_ops = {
->  	.get_parent	= ccu_div_get_parent,
->  	.set_parent	= ccu_div_set_parent,
->  	.recalc_rate	= ccu_div_recalc_rate,
-> -	.determine_rate	= clk_hw_determine_rate_no_reparent,
-> +	.round_rate	= ccu_div_round_rate,
-> +	.set_rate	= ccu_div_set_rate,
-> +	.determine_rate = ccu_div_determine_rate,
->  };
->  
->  static void ccu_pll_disable(struct clk_hw *hw)
-> @@ -784,6 +859,7 @@ static struct ccu_div venc_clk = {
->  };
->  
->  static struct ccu_div dpu0_clk = {
-> +	.div_en		= BIT(8),
->  	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
->  	.common		= {
->  		.clkid          = CLK_DPU0,
-> @@ -791,7 +867,7 @@ static struct ccu_div dpu0_clk = {
->  		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu0",
->  					      dpu0_pll_clk_parent,
->  					      &ccu_div_ops,
-> -					      0),
-> +					      CLK_SET_RATE_UNGATE),
->  	},
->  };
->  
-> @@ -800,6 +876,7 @@ static const struct clk_parent_data dpu0_clk_pd[] = {
->  };
->  
->  static struct ccu_div dpu1_clk = {
-> +	.div_en		= BIT(8),
->  	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
->  	.common		= {
->  		.clkid          = CLK_DPU1,
-> @@ -807,7 +884,7 @@ static struct ccu_div dpu1_clk = {
->  		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu1",
->  					      dpu1_pll_clk_parent,
->  					      &ccu_div_ops,
-> -					      0),
-> +					      CLK_SET_RATE_UNGATE),
->  	},
->  };
->  
-> @@ -891,9 +968,9 @@ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
->  static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
->  		video_pll_clk_pd, 0x0, BIT(4), 0);
->  static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
-> -		dpu0_clk_pd, 0x0, BIT(5), 0);
-> +		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
->  static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
-> -		dpu1_clk_pd, 0x0, BIT(6), 0);
-> +		dpu1_clk_pd, 0x0, BIT(6), CLK_SET_RATE_PARENT);
->  static CCU_GATE(CLK_DPU_HCLK, dpu_hclk, "dpu-hclk", video_pll_clk_pd, 0x0,
->  		BIT(7), 0);
->  static CCU_GATE(CLK_DPU_ACLK, dpu_aclk, "dpu-aclk", video_pll_clk_pd, 0x0,
-> -- 
-> 2.50.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/clk-Use-hashtable-for-global-clk-lookups/20250812-171958
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250812085328.3306705-2-wenst%40chromium.org
+patch subject: [PATCH 2/2] clk: Use hashtable for global clk lookups
+config: microblaze-randconfig-r131-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 12.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508131125.ohtCwp4k-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/clk.c:40:1: sparse: sparse: symbol 'clk_hashtable' was not declared. Should it be static?
+
+vim +/clk_hashtable +40 drivers/clk/clk.c
+
+    38	
+    39	#define CLK_HASH_BITS 9
+  > 40	DEFINE_HASHTABLE(clk_hashtable, CLK_HASH_BITS);
+    41	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
