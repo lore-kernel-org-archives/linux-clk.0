@@ -1,61 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241F529E101;
-	Wed, 13 Aug 2025 03:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4E42C08BE
+	for <linux-clk@vger.kernel.org>; Wed, 13 Aug 2025 05:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755055303; cv=none; b=tyOVR3bM+yP0DDvNt9TH17JQGX1z4AGRDpQQdDb75yAIEgJf71i54CbMU+Gd0WIhcizf7r3bShwypGKv7GaG8mtKBfvCyfVKfdcvXTv6R4Ne+pwvNnm3wTIhKNAv0FhUsdSv3xmXHvem+8hO96mcID6zxDoCJMzIOYaBjUaSlqo=
+	t=1755064133; cv=none; b=BisXMIbKZzbt58JFc93aYbHQicFb6V8eTd/Be25HTsPVPC/qOUYwx4xADC9/cWwVwhQMEqKOCANvpIx6+nG/TPlKFjokcRBcQSVHvAhYGoum4pEDrtwbObY5yKWzbbEqzTLrUUtacBaxt9XDjDchI7ohu7bDHKgp8rk0R1HUviA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755055303; c=relaxed/simple;
-	bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
+	s=arc-20240116; t=1755064133; c=relaxed/simple;
+	bh=0IyPMQRVWg5ixL3LBlEz+Tb1fH/4h9rT/zzQCy59j1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWPZFBm1SA6CS54Dm8BXbGoIIt565+bn7jeJxhMm3qAlK6A4mPYlayfwp5SSu58ocFuNfOsZNbFEqgFrGpHXYfgGEyTQZvs6/juh2iIMeshVx4BJOr4LE7kWgjb5exMXnaFZn4scYIeQvdoLxo0muTXjI0MMFUJ4P3G+uGGMNrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwijmR8r; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zsx5aKTE7vPft5v8IpuvsRgHg+d2OLvPp/DhsuUP59sa5cxypY6t4bJlBwvPi1adBNMvqT/0+5nnuy4JqN8s240gHfEaHzeDHwOeoHO+XonII4z+ERSZFT71vI4R48DYkbANcCx2+iKvM4FCHRgcuY4qJfrJu7KG3wUOQrobLRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mWyJeYc5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwijmR8r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755055302; x=1786591302;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
-  b=RwijmR8rQSza60KMbn3UCk3IKtdVBgUnobl6OAVah9czcLBgGmEPXlrb
-   f8sjLLQDD4fQEhWy7prVEmg3/NuHbSxLJuRYOX2yjwlDNlB8YcAYgNQFK
-   vBuo3DHhN8LFgMjy+JfnmjFEREFxLOLePgPEof6ANWDs6MnWCD50ZXwXW
-   s2DzysBKa+pOyz5/hJL9neHctgEPMDnYVx4WesLbZx54MnpmuShhkU+mI
-   QVUsxowWK7Q8imDrnpZsK4JpL2Rdc42eTHZtKAqhfBA82aPqgLiKwX3KQ
-   JqdF5gflzVn4mx7zBAvNIHTFaxEKpoFvhvNxEWVzGwoQ3lqXL80pmtAxM
-   w==;
-X-CSE-ConnectionGUID: YLuAJ6c/TTSAgsRbuTfmWQ==
-X-CSE-MsgGUID: pI8t850ITJexTtrjQVsKNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74789381"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="74789381"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 20:21:42 -0700
-X-CSE-ConnectionGUID: 84Cqx6gLT7a+m83CS2tacA==
-X-CSE-MsgGUID: AYDpHQp6RoyvGKKPg8xa/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170565614"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2025 20:21:39 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1um23E-0009Ui-38;
-	Wed, 13 Aug 2025 03:21:26 +0000
-Date: Wed, 13 Aug 2025 11:21:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: Use hashtable for global clk lookups
-Message-ID: <202508131125.ohtCwp4k-lkp@intel.com>
-References: <20250812085328.3306705-2-wenst@chromium.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWyJeYc5"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so59844095e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Aug 2025 22:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755064130; x=1755668930; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=br/KFQMisLWNAK11Jh+i4JA1Nu+Hjv1i9FwCDI747D4=;
+        b=mWyJeYc5JZX5QlS57FbJ35QUJ57T468ArYypNSifEE8botp4pS9Q8YAmMyWUry4cSm
+         VWxPQW2/WA9lkUlXYbY0VNJe31O0ZLmqlrU1sbny+zUyAJvBD9AW7Voc/KK8ibUwor6U
+         piuSNOhL2uopz9THUX5cDcww8yL0DmInr0W6QSIsNV1kg4IioNu84j9v+OdLzOebiP8o
+         tLk9A0JXSrQo/pFfNQAiJzMBkAJPdL3WXKL9ndesLdr7xYzJk13Iq4US634jlDJA5ynh
+         BNYXXoAVyZf9Phod/VfYqlmr7cyMguHYAN11+28VR/oWj3SUztVASJ8alXjshDbcNEsA
+         X4HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755064130; x=1755668930;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=br/KFQMisLWNAK11Jh+i4JA1Nu+Hjv1i9FwCDI747D4=;
+        b=QDBRD7HWh8h/u3E/P2CeA4T65HAQppLsHSGtr6DIilhkauLfE/r4VbAnet/IHXgNIH
+         jFaN/jXTShvVW5QI0D+TKn9qnvency0E4fYVkXOg8kZlbd+48t75T2ON56L39MPbwzBQ
+         kjK5f7echkRYYWkkI+v4XQI0lRUuT50aGSlsppGNweivWZUe/6nnirUnU12ZZlON+czD
+         wrFUDl98d2fAd18zsXyBgKRufybrQh1SDhYeu8BeijEWI8lQrL0vbx+TGqpSlJ+Tfc4Y
+         8Kj4RN/S06gS133oS0Dgqpa4XYfK8bM9B2r11ASYtrXBNG51tg7EdE30udcnSC9Qc9ky
+         LqwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVj+1kTGtksrSmVjF0aoIR65UQEpBzreFOsv0MAVt2zjCE62qw7F7WitKjy6akzi1BGEqE8lIbytw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiHkQ/9ixaMdPYEr8kL9UO8DSzCMKllWCjU6fQhErGyTzCKcp3
+	ZrmDQhwvu+aF6JkVqu4K6MyoM11SgkIH8Gwp9XwUyLXbyy6S0kzatkeBx883ObE6zrYwj4OJlyb
+	1MWpO
+X-Gm-Gg: ASbGncsx4TGvtAcrJ41dSS3A3E/bfveYFG3jr7IOSgI8bmVaALwHsm5qTTj9b7dbtTX
+	ZKAeY5gZLSXFAWRNbRSFUmUJsiZWh4m/jJjw85D+x6IDYsMJnQSoJ7d1Cc2Pg0OaZ9Pc3Mzq5Kv
+	sacP902n7jJzG5c2dwMwL6J/jlYTsLQxyPmRuxHAWoxHrUbDvA5IDMXQlz2IYx4wCNPR3iucGNJ
+	v7xKNWvfDPMeJzn6AGkgyAVcDDdgAXkwl8Xb9rYcX1vVv9EbNKsm4tfaED5eEzKoafnle44plI/
+	ZeV0sZ+/KYSYsXeVW2MnpYfcfI5huSb2TY8s97cbP6f3RLzFvWAxb1j+e0z3SJyak2eIrIPqwsq
+	iKfScovUJ3CaaIcBTdyLGi5ayizrjt9SfdRHDAw==
+X-Google-Smtp-Source: AGHT+IFcMDTK7Qu4ZC7nlXttWooxXbJSLLV2zHBxtvmzb4Q3sahk0UhmGPH7DhFAOinlsQYal8xNDw==
+X-Received: by 2002:a05:600c:1649:b0:456:1560:7c63 with SMTP id 5b1f17b1804b1-45a1787a29emr3451565e9.3.1755064130316;
+        Tue, 12 Aug 2025 22:48:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3bf93dsm46609898f8f.27.2025.08.12.22.48.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 22:48:49 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:48:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] clk: conf: Support assigned-clock-sscs
+Message-ID: <aJwnH2mlRdqp1K1u@stanley.mountain>
+References: <20250812-clk-ssc-version1-v1-0-cef60f20d770@nxp.com>
+ <20250812-clk-ssc-version1-v1-2-cef60f20d770@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,41 +81,133 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812085328.3306705-2-wenst@chromium.org>
+In-Reply-To: <20250812-clk-ssc-version1-v1-2-cef60f20d770@nxp.com>
 
-Hi Chen-Yu,
+On Tue, Aug 12, 2025 at 08:17:06PM +0800, Peng Fan wrote:
+> Parse the Spread Spectrum Configuration(SSC) from device tree and configure
+> them before using the clock.
+> 
+> Each SSC is three u32 elements which means '<modfreq spreaddepth
+> modmethod>', so assigned-clock-sscs is an array of multiple three u32
+> elements.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk-conf.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+> index 303a0bb26e54a95655ce094a35b989c97ebc6fd8..81a2c1f8ca4c44df2c54c1e51f800f533c9453b3 100644
+> --- a/drivers/clk/clk-conf.c
+> +++ b/drivers/clk/clk-conf.c
+> @@ -155,6 +155,72 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+>  	return 0;
+>  }
+>  
+> +static int __set_clk_spread_spectrum(struct device_node *node, bool clk_supplier)
+> +{
+> +	u32 *sscs __free(kfree) = NULL;
+> +	u32 elem_size = sizeof(u32) * 3;
+> +	struct of_phandle_args clkspec;
+> +	int rc, count, index;
+> +	struct clk *clk;
+> +
+> +	/* modfreq, spreadPercent, modmethod */
+> +	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
+> +	if (count > 0) {
+> +		sscs = kcalloc(count, elem_size, GFP_KERNEL);
+> +		if (!sscs)
+> +			return -ENOMEM;
+> +		rc = of_property_read_u32_array(node,
+> +						"assigned-clock-sscs",
+> +						sscs, count * 3);
+> +	} else {
+> +		return 0;
+> +	}
+> +
+> +	if (rc)
+> +		return rc;
 
-kernel test robot noticed the following build warnings:
+Nit pick: Please, flip these conditions around.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.17-rc1 next-20250812]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
+	if (count <= 0)
+		return 0;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/clk-Use-hashtable-for-global-clk-lookups/20250812-171958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250812085328.3306705-2-wenst%40chromium.org
-patch subject: [PATCH 2/2] clk: Use hashtable for global clk lookups
-config: microblaze-randconfig-r131-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 12.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/reproduce)
+	sscs = kcalloc(count, elem_size, GFP_KERNEL);
+	if (!sscs)
+		return -ENOMEM;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508131125.ohtCwp4k-lkp@intel.com/
+	rc = of_property_read_u32_array(node, "assigned-clock-sscs", sscs,
+					count * 3);
+	if (rc)
+		return rc;
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/clk.c:40:1: sparse: sparse: symbol 'clk_hashtable' was not declared. Should it be static?
+> +
+> +	for (index = 0; index < count; index++) {
+> +		u32 modfreq_hz = sscs[index * 3], spread_bp = sscs[index * 3 + 1];
+> +		u32 method = sscs[index * 3 + 2];
 
-vim +/clk_hashtable +40 drivers/clk/clk.c
+This math would be nicer if you created a struct:
 
-    38	
-    39	#define CLK_HASH_BITS 9
-  > 40	DEFINE_HASHTABLE(clk_hashtable, CLK_HASH_BITS);
-    41	
+struct spread_config {
+	u32 modfreq_hz;
+	u32 spread_depth;
+	u32 method;
+};
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Then you could use that instead of sscs.
+
+	for (i = 0; i < count; i++) {
+		struct spread_config *conf = &configs[i];
+		struct clk_hw *hw;
+
+		if (!conf->modfreq_hz && !conf->spread_depth && !conf->method)
+			continue;
+
+> +		struct clk_hw *hw;
+> +
+> +		if (modfreq_hz || spread_bp || method) {
+> +			rc = of_parse_phandle_with_args(node, "assigned-clocks",
+> +					"#clock-cells",	index, &clkspec);
+> +			if (rc < 0) {
+> +				/* skip empty (null) phandles */
+> +				if (rc == -ENOENT)
+> +					continue;
+> +				else
+> +					return rc;
+> +			}
+> +
+> +			if (clkspec.np == node && !clk_supplier) {
+
+Could you add a comment for this condition?  It's strange to me that we
+don't iterate through the whole array.
+
+regards,
+dan carpenter
+
+> +				of_node_put(clkspec.np);
+> +				return 0;
+> +			}
+> +
+> +			clk = of_clk_get_from_provider(&clkspec);
+> +			of_node_put(clkspec.np);
+> +			if (IS_ERR(clk)) {
+> +				if (PTR_ERR(clk) != -EPROBE_DEFER)
+> +					pr_warn("clk: couldn't get clock %d for %pOF\n",
+> +						index, node);
+> +				return PTR_ERR(clk);
+> +			}
+> +
+> +			hw = __clk_get_hw(clk);
+> +			rc = clk_hw_set_spread_spectrum(hw, modfreq_hz, spread_bp, method);
+> +			if (rc < 0)
+> +				pr_err("clk: couldn't set %s clk spread spectrum %u %u %u: %d\n",
+> +				       __clk_get_name(clk), modfreq_hz, spread_bp, method, rc);
+> +			clk_put(clk);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
