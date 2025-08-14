@@ -1,116 +1,172 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0AC2EAD0D;
-	Thu, 14 Aug 2025 09:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41247271465
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162458; cv=none; b=tas6mO3ZA3tLpnYP10BhaedqODzEiQejs49esWTvt7yrRcfYcYkeshENuljoHUfBqJ+KIg3ymyyE92+kHXH3/M5tn/18Axu3Rx6zJVQqL9nHPYmrNC/SrQe6ud143fKSLAtzMv0LImSFpJvwVjkPSbzawVGk9mFtPfTtA8qweeg=
+	t=1755163102; cv=none; b=qEhp6IbNSbPm9arO0pe37QXLJJ8F4abIuVCn3rTiOcdPWjx8lVzIJqEXV7DxPGuTyX6/Sp6RNVzQK7UEhqOCaDsEHdh/0+nEcAU8mcBvzrum++hkSrr9cSnYmza6PVng4EpwwduQtiA5GPTE1EsOjHgtIYWQKdume/+Dpil2jcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162458; c=relaxed/simple;
-	bh=w8hCbPXfmihu7zR72JNGg3vbfSeuvBM7obhn0s4J7IU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KsgTihtT+eq8SXnymtHhw9hHT8Zg25T9G7R97Isd5tUEygr5UF7zHki3daTGozDYLPyVZrhAwrkyU1jWPOO9hxC0SkLfzprSqpfhT+T8BOMPsYQ9JifkTOxS+79ez3JzQXqEL+BmKbm+9nakEtxGv/DCChmiOkUlxNxLazKw3hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf8P/+q7; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755163102; c=relaxed/simple;
+	bh=sfXErAu2y829baB7asLxYKvQd/EDsFZz8LkUJdrlX+s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YPddfv5PiCdGGHtjt7IT43kgfDsQhOToA9HdEKFoY8xXOr76cfUy5hRojEhcMhtByFIXtUf92XW5sCEiRpZecIp60n0AMA//9DOfZTCsI77/S8+9UiuhBH3iIuO/KXvPB3gRt7buL1Z51N2ZC017HYeX1k8dkIxEYmEm/jYdr5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vrskjrDW; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf8P/+q7"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4717006ea9so75049a12.0;
-        Thu, 14 Aug 2025 02:07:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vrskjrDW"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9d41bfa35so566622f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 02:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755162455; x=1755767255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L58BGBn53CdEaQI/pHX66dG5GkpXtAAIQcYXknidNg4=;
-        b=Xf8P/+q7FP7Sj6wUfRijJLt6MHzwIgFGKK3Hy+/iaRBWNmJuKnEgp6Q4heqzKmy/ns
-         CbI6us6t0QerSP9xU4HCyBAnFO47uXNHXmDTEWFDE4aFl3F5tw1EMXrHhwaSP+Q94Yle
-         hUbYVGt33Rl4FUjof+vKYA3XEAGntJgIiKneoa6py0QbM1xesztFcO0PJlfLO/KPayfk
-         KbzFIZVWKytOYTo70RHDQFLmhTYeuaKaxxOkBZxC70kMplRE79PdCvYuqPa8Hq/oyrDP
-         ieTWI3j8jVmZRD9aRu9AZuZL+UhL997ePMlnNvAUIbatTYk+36efO+YO7O0aq6Vs8DaZ
-         7qxg==
+        d=linaro.org; s=google; t=1755163097; x=1755767897; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffaHlWpu8RE7aequBY+27dl9SNuH9GqRdQDvB6bAj+s=;
+        b=vrskjrDW+yTCwnAjf2FdtgrY3NMOG87/i8gdo4OdV8sqSd461Cme9WWyLcr8JVcp60
+         bct5xwOOehrBp2YNXZmdltdbbhHBai2Upp05ETDkzqFdVtkgEVwialYPA72Txdz3PLao
+         nLohiPbY74h5VYeYSfzQSfaTFP1aJNtheSufIDOKTva2OjZTsztWTCqm/ZlhKny7Eiok
+         iE1SS+bCDWRFbT9/hSW2T79L549PJnnQZFVm3UgqGxFcchHOHHDwc4P5qXmbN0stlgrp
+         4iSq17Wa9pULfjrEjasYVhnPVpYvQFvbD4z8VhlYh1rxlTy2V3EOncRDl12R0AobRLkj
+         V7lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755162455; x=1755767255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L58BGBn53CdEaQI/pHX66dG5GkpXtAAIQcYXknidNg4=;
-        b=S1DHe7qi75DsfyW67moRz6bTP62osfv4ZupVGK66+/6oRl/PSBBrpxouOA3s0CK+/J
-         eVeuQ1mNW+ATUkgbrOub/RJu5cMNsZuFZI2O2s01GlVIudT15VlPvi31NoSysrV0I/os
-         aVYTDNLR8S3lb7pSeDeQD1Y4n5d82Sb6ASiJ8HH9C+AgCUMz/yZuOQyTSR2XsVIWAvkT
-         1tfHA2IIUyf7STmWmv5VCsH0unkXUZrLNgzaVI/RBKtSQ2XqptqYMHuv1EtcxLTj0nXV
-         Nr3ERjmLyxOCGWQ2sOEZaekqoFppCx2c1336nLoWSXz6WSP4N+InZTmzBoBl5l4qO17R
-         La1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AkLqzX62Vycq+X6usAtf/cvgf3AuXGjPMkTI5weB5qRSez+BRbQPp0VwlXAi8l6t6j5XcN6i@vger.kernel.org, AJvYcCUwuph8ybeUT2N+0zvQDwO/H6dav7+g/3s7KdJDGD4tHT73X+tE+FVegC8zuKNl182WSqoaLbPtQjI=@vger.kernel.org, AJvYcCV10rheNuYpNIv9Osg6EBPwerim/bHVHpgLsdwESRLoMhXEXTYw3Io03QZozPaa+nRh+WYL+3hoX80D@vger.kernel.org, AJvYcCVwLNHl+ID6/Mk6+JKZ3yCFOn5nOsH7AfmBmJybSY1PXDzdUTPH/dVuvZ036iQnRjUFqnHiwu3BFaPpDFL6@vger.kernel.org, AJvYcCWU64E2Bp0aS+//LKch0vW1UXHMSEz6PgT8bo77hg7nGHusEgUdCYOp4WqjVpmDmrVSGSl9wQN6LXE8PTZzXhG+@vger.kernel.org, AJvYcCWdbDoZ13ifKjijbNra1QB+3WrB9S7KIM3u7yTRScbvEWDRq5R5A/ySrT9+wgKeLQMo1WtBVxdQAJJwyw==@vger.kernel.org, AJvYcCX445xNq7eU4zuJA/nSWvEm96C59lCZYfvEIUslFz8g4O8hivF2aQ0VWYkKENKl2/90MdduNfdC33C5@vger.kernel.org, AJvYcCXDrwJ8uyybzhIeAp2qlzh0mixgbHHjA9WAqkaFZmBkGgDrf0QyPf6JONV3+Y/HKmq4mupee4IslTmAYfGCXto=@vger.kernel.org, AJvYcCXfV82ubBzNsUdCdy60J2WTzXOtVfNtxdObhOckteiU0awOI7UNKhP/w/7Ds2KXNuiCEi5+9Jtya9bnx1W67A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YypINaXScbYWu7AGqasYGV8fdyR3+x9hPlk+3U2Vr5IEgIvclm8
-	TFzwmHPLFMzEx3AggrVZ99bzcKxt2fjFBRfTRbQewEezlSqj6NnVPkWqnjD/lUMDNgUmSe3GZSF
-	lykirKCdz7P7+z8jZZE+LKaVYuYSSCMf78Th3BwE=
-X-Gm-Gg: ASbGncvc/qynT4YZKqaP9Sy1oQaLptA0kKszFqn87yqjhQVN1bnzA5BpLAQtpKgyJxv
-	DNf6bsK2GhoDrE2MqVcHfNhoyX9mM9xiDFQLIJN6MYP4WIWtzgsaihTxUhWYtMpqW++OdzckXGL
-	arntGWRa5tL8xRO6g7m32YglmVjV7rPn7awFAh53Z28pQXssmWj0nmaGr8wApLqHwNurFUA/gkV
-	f6a
-X-Google-Smtp-Source: AGHT+IGz6bvQQDm0FDjw3b6Z4zK6LWUctdhJrkeBml6MEiQLxKVKVm/2E3KeNDssnbiZd1rTjK+/reiEgrFQf4jGtow=
-X-Received: by 2002:a17:902:ec8d:b0:240:5c13:979a with SMTP id
- d9443c01a7336-2430d22a83dmr44771485ad.9.1755162454741; Thu, 14 Aug 2025
- 02:07:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755163097; x=1755767897;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ffaHlWpu8RE7aequBY+27dl9SNuH9GqRdQDvB6bAj+s=;
+        b=QA+RKbWqqrar6YvkJ4AeK9D8VkDnujJnM8L+iJySNRjU/AEiUbwWfaEnOOHRv3Hv3Y
+         hhmv25RZA3Pe01o6etZs6pfkPcZZVmEU0DCoAJMm4JYtxu9M+6PNaq0gUBZQvY1xvGJK
+         xoDFGvpNCSMzC307cO6RTApEJtuyCiD86LGTrgJ2GcwTsKEgYIYdG991Lnf6pvB5PONW
+         /OHNN06hynO0vBN2p/oYmGlwMPqzKkW+uECwfkAGI1DMtxKoFczR1PCAv5H3I0Ya1B6G
+         4Ab+WWvn4s09X5loMvC2v6f4YD2kTzemTY0A4RGkkMCBh8RJZJKCAYNuhZ0pexZcQNZl
+         pP6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUw4kUMNRc3COlddTgYc27VBH5gnrkc05QIoVjBzGhGnJMKCr8jhAFD3qFN4GqCId1E2YbQY4Q7TNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4h0clMBcPxVGLKLRpZHw3OxQBcX0T5VihiDwkMG4qRbMA03Oz
+	i+kuAPWxBNtDJufAWbuBzWi+Btaz/1kvll4lNuWLauqUtLz8IRcMec5ntNLI9LPdO3w=
+X-Gm-Gg: ASbGncv6W6UyeSHPYXDzaKSWjCCnkJ4KjGgYh3zFlp6Tx4TM4c/BsC99Nmyl6KvIpKe
+	ezchjbb+OZB6tVyyv3ZE0ba/W7cM6vfy1YflWDFVijbZUf8bFVka+DVTETODNTaX2ztno2FVSRb
+	SANlAeJ0dtitQc9NGYIheZm/p1Xi6gMrBAERuQMYMr1Y064pEXvY8q385JzuwN+nPsWfjtvSmkg
+	zLrQk9Mg0Fvw0FzRhBrwT/Go8bujMaa8K4eV6qLKkJjevtY36OaNFaCW4NwQWR29tWl+3jzq2A4
+	iGLPqPHPzxmnsEooVycZqW4dy97S2Si9tFhGOE4pDzdd8fqEP5ECMtn/j6DZ6alS+A0bsdddefz
+	aT5WoBjQh7ncKtesJVBVTeH+3WBauWKw1GLs31WmjZ8AJvhQ=
+X-Google-Smtp-Source: AGHT+IGCOwNbc5nUe5UXc9T+LlZ8/LSjfCjdWogYZwRPwtV/r3ZErXEW4EvaurTmA3Z5w5QHIDd2wA==
+X-Received: by 2002:a05:6000:420b:b0:3b7:76e8:b9f7 with SMTP id ffacd0b85a97d-3b9e414d51emr1806910f8f.10.1755163097393;
+        Thu, 14 Aug 2025 02:18:17 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:ea13:2485:4711:708])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c74876csm13861925e9.14.2025.08.14.02.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 02:18:17 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay applying
+ clock defaults
+Date: Thu, 14 Aug 2025 11:18:05 +0200
+Message-Id: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
- <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk> <aJ2dST9C8QLUcftA@google.com>
-In-Reply-To: <aJ2dST9C8QLUcftA@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 14 Aug 2025 11:07:23 +0200
-X-Gm-Features: Ac12FXw9McZU8Dlo3fmof7Lor15J3uB_TM7gEYyMiiYtjURPvTaxggH_LYJAg0o
-Message-ID: <CANiq72nnXG8mzGD5ydu1pMpaBAHTWvfQWSo0w38xefu=1JSURA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Mark Brown <broonie@debian.org>, Tamir Duberstein <tamird@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM2pnWgC/x3MQQqAIBBA0avErBswSbCuEi3ExhoyC60oorsn7
+ f7b/AcSRaYEbfFApJMTryGjKguwkwkjIQ/ZIIVUQlcSN292t8YFB/LmRuvnXM4cfk9Y10JIrRq
+ nrIJ82CI5vv5717/vBzozBnltAAAA
+X-Change-ID: 20250812-platform-delay-clk-defaults-44002859f5c5
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Michael Walle <mwalle@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Aug 14, 2025 at 10:24=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Tamir mentioned to me that he ran into a daily limit on the number of
-> emails he could send.
+Currently, the platform driver core always calls of_clk_set_defaults()
+before calling the driver probe() function. This will apply any
+"assigned-clock-parents" and "assigned-clock-rates" specified in the device
+tree. However, in some situations, these defaults cannot be safely applied
+before the driver has performed some early initialization. Otherwise, the
+clock operations might fail or the device could malfunction.
 
-He is posting the updates around the migration in Zulip:
+This is the case for the DP/DSI controller on some Qualcomm platforms. We
+use assigned-clock-parents there to bind the DP/DSI link clocks to the PHY,
+but this fails if the PHY is not already powered on. We often bypass this
+problem because the boot firmware already sets up the correct clock parent,
+but this is not always the case.
 
-    https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/top=
-ic/CStr.20migration/near/527957336
+Michael had a somewhat related problem in the PVR driver recently [1],
+where of_clk_set_defaults() needs to be called a second time from the PVR
+driver (after the GPU has been powered on) to make the assigned-clock-rates
+work correctly.
 
-Cheers,
-Miguel
+I propose adding a simple flag to the platform_driver struct that skips the
+call to of_clk_set_defaults(). The platform driver can then call it later
+after the necessary initialization was performed (in my case: after the PHY
+was fully enabled for the first time).
+
+There are also alternative solutions that I considered, but so far
+I discarded them in favor of this simple one:
+
+ - Avoid use of assigned-clock-parents: We could move the clocks from
+   "assigned-clock-parents" to "clocks" and call clk_set_parent() manually
+   from the driver. This is what we did for DSI on SM8750 (see commit
+   80dd5911cbfd ("drm/msm/dsi: Add support for SM8750")).
+
+   This is the most realistic alternative, but it has a few disadvantages:
+
+    - We need additional boilerplate in the driver to assign all the clock
+      parents, that would be normally hidden by of_clk_set_defaults().
+
+    - We need to change the existing DT bindings for a number of platforms
+      just to workaround this limitation in the Linux driver stack. The DT
+      does not specify when to apply the assigned-clock-parents, so there
+      is nothing wrong with the current hardware description.
+
+ - Use clock subsystem CLK_OPS_PARENT_ENABLE flag: In theory, this would
+   enable the new parent before we try to reparent to it. It does not work
+   in this situation, because the clock subsystem does not have enough
+   information to power on the PHY. Only the DP/DSI driver has.
+
+ - Cache the new parent in the clock driver: We could try to workaround
+   this problem in the clock driver, by delaying application of the new
+   clock parent until the parent actually gets enabled. From the
+   perspective of the clock subsystem, the clock would be already
+   reparented. This would create an inconsistent state: What if the clock
+   is already running off some other parent and we get a clk_set_rate()
+   before the parent clock gets enabled? It would operate on the new
+   parent, but the actual rate is still being derived from the old parent.
+
+[1]: https://lore.kernel.org/r/20250716134717.4085567-3-mwalle@kernel.org/
+
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (2):
+      driver core: platform: Add option to skip/delay applying clock defaults
+      drm/msm: dp: Delay applying clock defaults until PHY is fully enabled
+
+ drivers/base/platform.c             |  8 +++++---
+ drivers/gpu/drm/msm/dp/dp_ctrl.c    | 10 ++++++++++
+ drivers/gpu/drm/msm/dp/dp_display.c |  2 ++
+ include/linux/platform_device.h     |  6 ++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250812-platform-delay-clk-defaults-44002859f5c5
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
