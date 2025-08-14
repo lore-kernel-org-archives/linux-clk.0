@@ -1,115 +1,183 @@
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FDE23BCEE;
-	Thu, 14 Aug 2025 22:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB828312F
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 22:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755209412; cv=none; b=iTPDmYHf5BSEacUBFYlJLTVgxv7Ki1hLEDzjHlKO36X03vq776D7UVBFDS+y9duV49GOccn5AZkJOTLiFj0iJEW3u7Xup4JGvxlotjsJpyydL55KBly48LdmiCURO9apuOK5L3H44MqvCb9LbLZ+w63F+aSctHDvhPiQtv1JZYs=
+	t=1755211870; cv=none; b=Ufk9cXjXlz2BEnlfgKEicyQ8li3f19Y52Ag3vIfz8Sqos+U2jHuvSZBLAcIvywdSyGgbbZTIBuFM3kKVhwPtnNxROVu6h0k32sqDuU5TIjVBZGa+fR6HhwPfq91+A21SwO1UIOPQmPuND2Zg5pbXuGq1xAfqYNJm7IMbP5iWhKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755209412; c=relaxed/simple;
-	bh=73+i7s5/6//7zCSSfaQ+2ayeMbsLNPENCWgflm8i12w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDuucB5ryk6gAlCFC9qLAXOoWhP4cAEJo6MrGuUF0j0ELlAMFIKEq4awuz+EMBIi9z1rtFPeQR6FDRKLmNEbXEzT1Ft0ns/hI20CvaThoobvOlKyjrwXmYiWY5UsuqFIrJIwYa8X2doHJwVIMiV9GKw749ZLWaWSkXdk76/DGQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=RW4vGmT3; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+	s=arc-20240116; t=1755211870; c=relaxed/simple;
+	bh=VsRfvsLbvMPweRFwX9yd1l+oGWIeHLlnNvKbVKtNBMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NmmZflm+sdUZebr9y5qrtR1/DGsBaUfQ0N6Piz2jQ4/UfbXLLEw/4O10wI3Tl/TXhnomI0J+bI5XNlmtI5nVCtM7hUHwvOyAh7loQ3MHYtHzEoFy6vvYFESDJQ0rZFFaScF5IPn0tYSNVai0bx0zwBzctZ1Vftcw2OC84lfYfqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MU9v0qYU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="RW4vGmT3"
-DKIM-Signature: a=rsa-sha256; bh=4I4y9p6g8uF8af8xJlIXiua7qXTwOk9TC6eFyAo4fSU=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1755209309; v=1; x=1755641309;
- b=RW4vGmT3R7bc2vG9KFYpnuFLleUhLnYO+7xmmnOO0qdejks4AnsXnAKLztVj3Zok4BR+BaR8
- qYT7D32NS5vPehpUhEJ0PnzmKeHK3wBbJDuuiZ1i0yXx8LUtiZlh554u9JwAQrlIcc5wzZuxNFa
- 333pGYlnUW/r8vBL9RcmcoEFlOp1d2xkyKfegGcSwQcrz2IWdXxEUxW6JGCmqkyNXgu1KD+XxMz
- oz8x/c9TjraSLSa16/Idxa8o+qGdnStRy4QPuCp7XtpHUKf+VIvQa268KD2WQGpCe3zSDljGll3
- PMGvK+jX3bMshWzcDkRHDGMmY2kWOLzLj/AcgvT6NiOJw==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id f24866f2; Fri, 15 Aug 2025 00:08:29 +0200
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
- Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
-Date: Fri, 15 Aug 2025 00:08:28 +0200
-Message-ID: <1950265.tdWV9SEqCh@radijator>
-In-Reply-To: <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
-References:
- <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <2017616.PYKUYFuaPT@radijator>
- <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MU9v0qYU"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EI90lE031866
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 22:51:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=At5mFz1vkSy2faOkC/EtnV9d
+	eGFeKo96q35XzSytUj0=; b=MU9v0qYUV+xumib0ODJKcZrNBxxl+lSpjy8TNlgZ
+	9v9eV1aYSpbpAPYits6nrach4CQU1KixVp9hLJpHsjZK+TLqDyWYLK0XatS/X99j
+	iV/k+fwTaLr10voXU1QcBHyEBAearCgIja/3rEWYtwEchiOQ98/Dg8aA2lzsiH+a
+	2poOjUwxiMiLVi/yZ/TLJ94FLK1cxSCwmdzBKQdEOSoO/7vxMN03f6FTwPTj2D8e
+	aGB+s8oYduUEOX5pm8XdnI08aq87QrPJdzckw6ErIOG1WRnA9NeC1kif4f/igcE6
+	d4B3d6QUGsqPKqNsAfP03KAT3oXupMaFK4WhdJEBquwQCg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4na78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 22:51:07 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2ebafe0aso1252726b3a.3
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 15:51:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755211865; x=1755816665;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=At5mFz1vkSy2faOkC/EtnV9deGFeKo96q35XzSytUj0=;
+        b=QygP+BqqBLOSZ28hTelQ9qWACTZ6uMb0J5U9VQnzjoJJ0v51SSgOltaVET5X8Z9CVE
+         1OKJAjMR3aAVysRarX26c+sg7MxojBsE6DQ2NyDwaBUjTNF8+XZcouKO5GilpdkqkQrp
+         90FmM/EPMvXedVYuStIvTMhOBCPIU26eC7+mb1fMPn5xR+JeuWF+w/Z7UeoZ+6SsBkjT
+         Ps/B5VmjsPjaeFWNZU1khxUoIOkSVIwBQWRLEgW1MJO4zpDy2W/D4UgVyHfbQTKYScic
+         hCydJYsIJ1Ub13F7MaLbnaPWtN3Rm7+zhuzDRPU9ibzr/icflz4v4A9k8u/vcaOtfGn2
+         Gi5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWucU/Xl1sK1uuacwSoB+AEUgcia9txx9/5erPfKgmlZTNqgqtOj4NIz2pJovEEfLm2zM6byw80Ceg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yychdq3sBlkdP5CojP61oDtdglEdtpEpP8OCL/JfsXiNr7xZ436
+	qbfOr0pXqPDGlHXGVLbFHC30Hzo26BsOAwcRNYreKJbALtuyrivq+LWU0t9KR2pnI9VYjSVAoKz
+	O/rey3jZ+P8wC8EtjkNPP017lb/eVx7dyhLu5ku7FtHlHgk5vjV2DFF0ZR6KkjCMNC0eMglU=
+X-Gm-Gg: ASbGnctWlGbh0TmSiy4p0nN4DTHsWCvpGoQxKnOxsai5aiwoPjt7WOn+ev9A24UJSAO
+	kzLzosQjDK5nL3AHvVoMoCDjjmNPvNufuGBkH4s9RSwfTWErcEvUSIcjsyerrPkteeev0NCkDNT
+	XigqMEySpPkM+I9W2WKVb9PLSiwPPsYQDUHu1vr5k0df247YVVal5xjaBTiJ117U1WSsX1LjWCY
+	ayK9fnufIcpIYmrPGHrFhF3y3mEc4XHY/Y7msgFHl4tWs2pd4DDS9DsHuj39I4Uz38/cpoIwqZ1
+	ya//Hbw/rgLeipUomi/yOYMxJdZC16UFThpbjwxTA48vht9jVwGN9BVNxHSrZo2Z5fWsGoPM2N6
+	RiUhr+TsPUrJWZk7WLfKK4P0=
+X-Received: by 2002:a05:6a00:a0e:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-76e31eedebdmr7910298b3a.8.1755211865655;
+        Thu, 14 Aug 2025 15:51:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE82TPNJ3ll/m6MhFabEUR14MGIKrwXTkhR8iXZvn445BnTFS2znQUAA1pHvzWHlQz+zbMePQ==
+X-Received: by 2002:a05:6a00:a0e:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-76e31eedebdmr7910261b3a.8.1755211865187;
+        Thu, 14 Aug 2025 15:51:05 -0700 (PDT)
+Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c61705bd7sm14513362b3a.31.2025.08.14.15.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 15:51:04 -0700 (PDT)
+Date: Thu, 14 Aug 2025 15:51:02 -0700
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_rjendra@quicinc.com,
+        taniya.das@oss.qualcomm.com, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
+ Controller
+Message-ID: <aJ5l+0Fv7nm2vKuZ@hu-bjorande-lv.qualcomm.com>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
+ <28ea2b11-a269-4536-8306-185bf272bd60@kernel.org>
+ <2yekmjqihkzsfjr223vepigfj4hfruleigguhrlekp6s7riuxk@ta5kghr2kafi>
+ <4559a710-8b4f-4988-b063-40486fe0ffe2@kernel.org>
+ <2025081338-backwash-oak-0677@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=duje@dujemihanovic.xyz;
- keydata=
- mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KUR
- 1amUgTWloYW5vdmnEhyA8ZHVqZS5taWhhbm92aWNAc2tvbGUuaHI+iJkEMBYKAEEWIQRt/0HWDf
- MUtbdrpjCtMZNSRY+tAwUCaJ5XkSMdIEFkZHJlc3MgYm91bmNlcyBhcyBvZiB+MzEvMDgvMjAyN
- QAKCRCtMZNSRY+tA/N/AQDth3Xl3wNcETvWPqqfYfyw4BFqbOD05A/W0/G0ZIjFzgD+PZVts3sN
- p5WuEwIxUrWxwavWJQBJwhXeWdru5ol82gmImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60
- DBQJmiSH/AhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw
- 8A/i4lPOL7NaYoYePDql8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xq
- h2MRcNmJCHA1YhWAbQoRHVqZSBNaWhhbm92acSHIDxkdWplQGR1amVtaWhhbm92aWMueHl6PoiZ
- BBMWCgBBFiEEbf9B1g3zFLW3a6YwrTGTUkWPrQMFAmaJIc4CGwMFCQlmAYAFCwkIBwICIgIGFQo
- JCAsCBBYCAwECHgcCF4AACgkQrTGTUkWPrQPUYAEAlVKitl0w6Wun+hC0JIf8bnc0TnrH8kcDxV
- f5lAF38fcA/j8RxR/p558NTFUyHZt2Sa5AqxVkaA4aJekySytWe1YGuDgEZokhzhIKKwYBBAGXV
- QEFAQEHQMRz0l4Dnk6Vl9YqC+ZGDDpr8SkFDyYOXqdBMGad3VccAwEIB4h+BBgWCgAmFiEEbf9B
- 1g3zFLW3a6YwrTGTUkWPrQMFAmaJIc4CGwwFCQlmAYAACgkQrTGTUkWPrQMbkwD+K6jiXYYMRnV
- l/5dpL//wXB1cM72ceR9tXYweMXg1lfABAOugzMF0xypW9zwYAEWVNOAaPsqtEPPYfBY3IXxl6m
- sB
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025081338-backwash-oak-0677@gregkh>
+X-Proofpoint-GUID: HwPPeOMZwEOy5W-Xoh2ZYJ1uBKR4Ff_j
+X-Proofpoint-ORIG-GUID: HwPPeOMZwEOy5W-Xoh2ZYJ1uBKR4Ff_j
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX3un7mlCWNDXS
+ O74fSUn9DlgbhCspuPAoMPKu0TZ2f6yYaQExBd2rTJBhLwozUXP9e6rtLE2YT46ZgYwana5BtlQ
+ +MrO0IrFSXOkjxwZHAUPFvD+urpf8xmJsgjUu1/LncRrKfGVtxoZ1YTrUp9K1+ras5pnFIyaO7V
+ Ds6ITmutMw6KH+PdfaT/UVl+MwlywHDtDSFrQxm2h38oMfvrlvjS9s/NVFUBfnNM/JvzPKp5fWP
+ E/penHE9kZSxJLTbMGG/5b4rI4w6xTbFiP6NOxZMvBQ2JF8cSe1L8pDpQDPw3uxB87s15MwjSxT
+ v0EHal4yCJ/2I1Wm8ECtdNt3WGUBL4xeOGw8lbYQLQo9KVVa+bbiAkjTTKXhhQciDwiS8iIBEmW
+ snZHALwF
+X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689e685b cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=mDV3o1hIAAAA:8 a=xkPlMqQ6EUx7zbaPWWUA:9
+ a=CjuIK1q_8ugA:10 a=JEtk54xxEQEA:10 a=UDyAGHZwfzgA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-14_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
-On Monday, 11 August 2025 08:38:15 Central European Summer Time=20
-Krzysztof Kozlowski wrote:
-> On 08/08/2025 21:46, Duje Mihanovi=C4=87 wrote:
-> > On Friday, 8 August 2025 09:34:54 Central European Summer Time Krzyszto=
-f=20
-> > Kozlowski wrote:
-> >> On Wed, Aug 06, 2025 at 07:33:21PM +0200, Duje Mihanovi=C4=87 wrote:
-> >>> +          A number of phandles to clocks that need to be enabled dur=
-ing
-> >>> domain +          power up.
-> >>=20
-> >> This does not exist in your example, so it is just confusing.
-> >=20
-> > This is because I have not implemented any of the clocks used by the
-> > domains at this moment.
-> >=20
-> > Actually, I am not sure anymore whether it is necessary to assign
-> > clocks to the domains as I have just yesterday successfully brought up
-> > the GPU with some out-of-tree code and that did not require giving the
-> > domains any clocks even though the vendor kernel does this. Should I
-> > just go with that and drop all clock handling from the power domain
-> > driver, at which point there would be no need for the individual domain
-> > nodes? If not, how should I in the future assign clocks to the domains?
->=20
-> I am asking to see complete binding with complete DTS in example and
-> submitted to SoC maintainer.
+On Wed, Aug 13, 2025 at 06:19:20PM +0200, Greg KH wrote:
+> On Sun, Jul 20, 2025 at 02:18:19PM +0200, Krzysztof Kozlowski wrote:
+> > On 20/07/2025 05:46, Bjorn Andersson wrote:
+> > > On Wed, Jul 16, 2025 at 06:28:15PM +0200, Krzysztof Kozlowski wrote:
+> > >> On 16/07/2025 17:20, Pankaj Patil wrote:
+> > > [..]
+> > >>> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> > >>> new file mode 100644
+> > >>> index 000000000000..a1a6da62ed35
+> > >>> --- /dev/null
+> > >>> +++ b/drivers/clk/qcom/gcc-glymur.c
+> > >>> @@ -0,0 +1,8623 @@
+> > >>> +// SPDX-License-Identifier: GPL-2.0-only
+> > >>> +/*
+> > >>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> > >>
+> > >> Missing date.
+> > >>
+> > > 
+> > > Per updated company guidelines we don't want a year here. Please let us
+> > > know if you have any concerns with this.
+> > > 
+> > I remember the guidelines and they were about publishing your code, not
+> > about contributing to open-source projects. And whatever you have
+> > internally does not cover us at all. You can have internal guideline
+> > saying you need to buy me a beer or I need to buy you a beer. Does not
+> > matter.
+> > 
+> > That above copyright statement without date does not adhere to expected
+> > format. Explanation how this should be written:
+> > 
+> > https://www.gnu.org/licenses/gpl-howto.en.html#copyright-notice
+> > 
+> > The GPL-2.0 license in the kernel also uses date:
+> > 
+> > "Copyright (C) <year>  <name of author>    "
+> > 
+> > There is no option without date in the license or GPL faq. I am not a
+> > lawyer, so no clue whether this is what we want, but I also should not
+> > be my task to figure out whether different copyright statement is okay
+> > or not. It's your burden.
+> > 
+> > Or drop the Copyright statement complete to avoid any questions.
+> 
+> Note, we don't take legal advice from the FSF :)
+> 
+> That being said, any/none of the above is just fine, there's not even a
+> requirement for a copyright line at all.  It's up to the author of the
+> file as to the format for what they want to do in the end, none of it
+> matters to the actual existance of the copyright itself, which is
+> implicit with or without a copyright line.
+> 
 
-Hm, so if in the example (and the actual DTS) each domain is assigned a clo=
-ck,=20
-can I then keep the domain and domain controller nodes like Mediatek and=20
-Rockchip have?
+Thank you for your guidance, Greg.
 
-Does SoC maintainer here mean the SoC mailing list or the maintainer of the=
-=20
-particular SoC family in question?
+Then we choose to follow the format used in this patch, without the
+year, going forward.
 
-Regards,
-=2D-
-Duje
+Thank you,
+Bjorn
 
-
-
+> thanks,
+> 
+> greg "I talk to too many lawyers" k-h
