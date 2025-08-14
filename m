@@ -1,53 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123822797BA;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FDE23BCEE;
+	Thu, 14 Aug 2025 22:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207697; cv=none; b=UGqV8qIisizdnuKsgLAX/MGO5TdfTQPyLmteNohrKy4feJ9AFHcYG0fgfgC/JEbbmPXphcxdnqO+TAfq+9kvqmXW+bBgxImn26ccQj3God7puFNulDJmt9ZMyRfV3KtAGIScC2DDgmZiqQjqUQEpYd6tASzOG18pHY+f7ZTVPNg=
+	t=1755209412; cv=none; b=iTPDmYHf5BSEacUBFYlJLTVgxv7Ki1hLEDzjHlKO36X03vq776D7UVBFDS+y9duV49GOccn5AZkJOTLiFj0iJEW3u7Xup4JGvxlotjsJpyydL55KBly48LdmiCURO9apuOK5L3H44MqvCb9LbLZ+w63F+aSctHDvhPiQtv1JZYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207697; c=relaxed/simple;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=p4hjq7TRC4o4Weq/+Gi4GOWM+k5l14ih+vz1qIQzHBdn8OopJSIbLwUKA42uYh8WM4DvE3sKuDazQuN21OD7MXPoEK91j1yMNRnqN2zEKfgaPpVnqWaFYfYo9ui4ff/uTYrQEYbID/s5ntIZVnPOnW4y0jwQzWqs7pEEPY6HTt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQy1QfcY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755209412; c=relaxed/simple;
+	bh=73+i7s5/6//7zCSSfaQ+2ayeMbsLNPENCWgflm8i12w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hDuucB5ryk6gAlCFC9qLAXOoWhP4cAEJo6MrGuUF0j0ELlAMFIKEq4awuz+EMBIi9z1rtFPeQR6FDRKLmNEbXEzT1Ft0ns/hI20CvaThoobvOlKyjrwXmYiWY5UsuqFIrJIwYa8X2doHJwVIMiV9GKw749ZLWaWSkXdk76/DGQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=RW4vGmT3; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQy1QfcY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD6DC4CEED;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755207696;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fQy1QfcYi6G3NyoT6dV/uFuKhUVwGc/zgCUhIHB2O/gGhcZTYoiyBSRAJMoTtW6IH
-	 Mv8JRu4/L8/krgBguoxJiTDbfYh02bpG6YasNnvVaqEGUmr6eeWSq76Jnm7AC0yZDq
-	 /WBcdFDcqbPbvmfgkXscAksouv7UA++PYNWKCCVfwh98wMOa47Pt783bYrtexfMYX2
-	 Ly9jLXoCjQSquoOoAyH/yrUrkhpAgzN6e0myG8IkavImtvB6FzxkSgBnnYqcUTHWJ2
-	 MZDPcSs60Rrmyh1TFHy0DG8YFTg64dPkMI1EOs4v/lqgdBeB6xdiuRpt7kjDZ72e7f
-	 dGgF+Yoo3357g==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="RW4vGmT3"
+DKIM-Signature: a=rsa-sha256; bh=4I4y9p6g8uF8af8xJlIXiua7qXTwOk9TC6eFyAo4fSU=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1755209309; v=1; x=1755641309;
+ b=RW4vGmT3R7bc2vG9KFYpnuFLleUhLnYO+7xmmnOO0qdejks4AnsXnAKLztVj3Zok4BR+BaR8
+ qYT7D32NS5vPehpUhEJ0PnzmKeHK3wBbJDuuiZ1i0yXx8LUtiZlh554u9JwAQrlIcc5wzZuxNFa
+ 333pGYlnUW/r8vBL9RcmcoEFlOp1d2xkyKfegGcSwQcrz2IWdXxEUxW6JGCmqkyNXgu1KD+XxMz
+ oz8x/c9TjraSLSa16/Idxa8o+qGdnStRy4QPuCp7XtpHUKf+VIvQa268KD2WQGpCe3zSDljGll3
+ PMGvK+jX3bMshWzcDkRHDGMmY2kWOLzLj/AcgvT6NiOJw==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id f24866f2; Fri, 15 Aug 2025 00:08:29 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
+ Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
+Date: Fri, 15 Aug 2025 00:08:28 +0200
+Message-ID: <1950265.tdWV9SEqCh@radijator>
+In-Reply-To: <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
+References:
+ <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+ <2017616.PYKUYFuaPT@radijator>
+ <dfaa36d6-41b2-46c1-ba14-e2fb5c9815e6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Autocrypt: addr=duje@dujemihanovic.xyz;
+ keydata=
+ mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KUR
+ 1amUgTWloYW5vdmnEhyA8ZHVqZS5taWhhbm92aWNAc2tvbGUuaHI+iJkEMBYKAEEWIQRt/0HWDf
+ MUtbdrpjCtMZNSRY+tAwUCaJ5XkSMdIEFkZHJlc3MgYm91bmNlcyBhcyBvZiB+MzEvMDgvMjAyN
+ QAKCRCtMZNSRY+tA/N/AQDth3Xl3wNcETvWPqqfYfyw4BFqbOD05A/W0/G0ZIjFzgD+PZVts3sN
+ p5WuEwIxUrWxwavWJQBJwhXeWdru5ol82gmImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60
+ DBQJmiSH/AhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw
+ 8A/i4lPOL7NaYoYePDql8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xq
+ h2MRcNmJCHA1YhWAbQoRHVqZSBNaWhhbm92acSHIDxkdWplQGR1amVtaWhhbm92aWMueHl6PoiZ
+ BBMWCgBBFiEEbf9B1g3zFLW3a6YwrTGTUkWPrQMFAmaJIc4CGwMFCQlmAYAFCwkIBwICIgIGFQo
+ JCAsCBBYCAwECHgcCF4AACgkQrTGTUkWPrQPUYAEAlVKitl0w6Wun+hC0JIf8bnc0TnrH8kcDxV
+ f5lAF38fcA/j8RxR/p558NTFUyHZt2Sa5AqxVkaA4aJekySytWe1YGuDgEZokhzhIKKwYBBAGXV
+ QEFAQEHQMRz0l4Dnk6Vl9YqC+ZGDDpr8SkFDyYOXqdBMGad3VccAwEIB4h+BBgWCgAmFiEEbf9B
+ 1g3zFLW3a6YwrTGTUkWPrQMFAmaJIc4CGwwFCQlmAYAACgkQrTGTUkWPrQMbkwD+K6jiXYYMRnV
+ l/5dpL//wXB1cM72ceR9tXYweMXg1lfABAOugzMF0xypW9zwYAEWVNOAaPsqtEPPYfBY3IXxl6m
+ sB
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-References: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>, Liao Yuanhong <liaoyuanhong@vivo.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Date: Thu, 14 Aug 2025 14:41:35 -0700
-Message-ID: <175520769592.11333.15146346000732948341@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset="utf-8"
 
-Quoting Liao Yuanhong (2025-08-13 02:40:03)
-> Remove unnecessary semicolons.
+On Monday, 11 August 2025 08:38:15 Central European Summer Time=20
+Krzysztof Kozlowski wrote:
+> On 08/08/2025 21:46, Duje Mihanovi=C4=87 wrote:
+> > On Friday, 8 August 2025 09:34:54 Central European Summer Time Krzyszto=
+f=20
+> > Kozlowski wrote:
+> >> On Wed, Aug 06, 2025 at 07:33:21PM +0200, Duje Mihanovi=C4=87 wrote:
+> >>> +          A number of phandles to clocks that need to be enabled dur=
+ing
+> >>> domain +          power up.
+> >>=20
+> >> This does not exist in your example, so it is just confusing.
+> >=20
+> > This is because I have not implemented any of the clocks used by the
+> > domains at this moment.
+> >=20
+> > Actually, I am not sure anymore whether it is necessary to assign
+> > clocks to the domains as I have just yesterday successfully brought up
+> > the GPU with some out-of-tree code and that did not require giving the
+> > domains any clocks even though the vendor kernel does this. Should I
+> > just go with that and drop all clock handling from the power domain
+> > driver, at which point there would be no need for the individual domain
+> > nodes? If not, how should I in the future assign clocks to the domains?
 >=20
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
+> I am asking to see complete binding with complete DTS in example and
+> submitted to SoC maintainer.
 
-Applied to clk-next
+Hm, so if in the example (and the actual DTS) each domain is assigned a clo=
+ck,=20
+can I then keep the domain and domain controller nodes like Mediatek and=20
+Rockchip have?
+
+Does SoC maintainer here mean the SoC mailing list or the maintainer of the=
+=20
+particular SoC family in question?
+
+Regards,
+=2D-
+Duje
+
+
+
