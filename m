@@ -1,100 +1,64 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC8B269CE1
-	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 04:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236E323AE62
+	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 04:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755490404; cv=none; b=W4Kxg6dUaM7KdX4aDO5Txu8JENRrmUTfvlzgf+uGjHqt7n5Qr4VPJ6nLacv+mtv94U5nbmSJpXJUnrI8Y351D1B9wPs/hibLr+KhCcS/CMGOG3LH3jcw6wGWvpoR6de0RBpAIybn1DtJ6FWl0itCD3IVXhd7LNB9GCcMDQwOG/8=
+	t=1755491843; cv=none; b=sQwooVUk8E5YLOg3b8l5a38k+qWAJ8igiXrPhebpFqSQl/aYYnjA14nH079DJBZ7z8KyWXOlmXMKLxLwYu87HSIzabkjakbODsSHOw749nKYlh8maOS8tA0aSnCJbOS9ihz44Tiks6CbB39wG5fCIuket0eDmWS7IQeC9DITmAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755490404; c=relaxed/simple;
-	bh=t7NZai6cVoSZUb1jEl1jkTYbe9sRSs4UCr60ihc6DlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DEkzDBHMLZ2Ev3JOP4yos5zdVhn7Y4+F4u8Dm1ph7TeGfmEQiNLV9OXPcXtw/S9wJiIUFcsPYkR2O8HXL5lmWfZQHEfD6fasqsxAo2ksCauZpX8khV/vOxBx2po+EbXpYhtN1ar0fbVWrku/NKknOpeKMFRvb2Eo2mnvUiIRg4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bjUvMBLU; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1755491843; c=relaxed/simple;
+	bh=GGMEHVB0X2VGIc4wzUyfGmQwSg52QCIC5HEXNyGM8To=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=GnzRsOAfhJxz8nO41EnCxDwNF9I8VSEhncVpYJNK5L/+V6yGK34riGhCNBElDF9kpda8Cqi7mOab/qiJS9eQlNaynhvFFkl5azEer6XjYl4HFZF9hhdq+UdN/x67MBF5nrSVnI1mgczmnQnhj5/OGc+LENmOmJ4p2TKLPR3K/SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hs6f1N5I; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bjUvMBLU"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so3430445a91.1
-        for <linux-clk@vger.kernel.org>; Sun, 17 Aug 2025 21:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755490402; x=1756095202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PujbwOz9dknJBj0WiTvzomVt33H+ylTg1a04PuImAic=;
-        b=bjUvMBLUiMSGcvfX3ukFcf279nI6DcxdY5uzQWWkWPcszcRg9guWb2w0Fzv0HUT74F
-         qdTp7rya3Jbmi6MmQNU2oG5yR6m1JvRZKYO/QMXwJV4NKHH1/poTNP3D3eyScFdtpcaz
-         7QB4b6BeIjv0FomZFtY/B3k8defAy8RnlG4G5W1Lam0lCPTDDyGxIMS4xlUwjTAh/wwB
-         8wELw+xaoD5XDjR01eBVTcTmqC4aLxVIMf7pemAs7ZLlly1F+PxdWG1jhF6U3uNct8SU
-         S9+1Je61v3AIK3YWmt0hSsqnfenbFekkgLMEi5ASYxvJOgIfugNhEBxypT2pUaVMUatv
-         WlJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755490402; x=1756095202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PujbwOz9dknJBj0WiTvzomVt33H+ylTg1a04PuImAic=;
-        b=w0cN7jYs7s6dkTXW3+dyHdTwWv7/KdvAkRh3p8DbvQfoJ7uY2TtupYmFVn6bQdH5yU
-         D8HmmmKpusjpaBmWMDB8sgmxmk4du9MyFqwzF9I6dWc5NzrTtFyBCt97abMyBIdqwQ1i
-         fKLZbjzyHA5SiRXZwOwoifI7+pYiIG9ImauiQHUwKOs9/ko7PZENw0DWlM7oeQ4ZvTsE
-         cYtbseS92S/Esg5CWNB2V69x764/csqkwQiH4IrQQHDSHR1T1qz8sCL8Ps/O3lEYzQ/s
-         omBlMj5MhOD9shee0aAfixWh9tZ8X8uj/hGh82TTcdTaoCjOaRCE58Cq8bfYrh2o9uq8
-         lBsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWq4CdTulN/yLKeAOnsdblnGJ4WO8odiCgQKmyO/g/rSVNuFB4krB+yBTVBfIa0yOAF3/Am5vYHESI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRLNfJzLoRnStgrZWUuZSL9nfddIzh26fUT/TClfxHFAdW0eON
-	Lz/qcWPTpMZtyBZahRGIAxsHzCKwISgcZERTcFbUOdDJYikTxs8qw3gTepZJ1Rm9600=
-X-Gm-Gg: ASbGncukA0sUTTNDsvjiFlJn7dgJMl26bxZIkEwPLap/f0xio9JV/+NrkjxITtmYvtn
-	y6mUIpaZzDUgSVtm/7x4P7j6lHh+8i8Vj4nMWiOTY8eF+lgl0OkKEksAxHK1aYlsnWdmN6UvTCB
-	/n4A9t6Sq4gD5rVBT0YotJI1UD1f/uarATOe41ShA87zUllisJcSY7ne3/PnB/aOc7g0Zq8TCu4
-	lUeN2ARr/63oBQ+qIqPkb5L19bw0tQbHJqFCoMoD1/ErhuZqPj+jGbHn90s4CqCYNRBHdhXtWJe
-	WXcXe2UoOzo6ZogH5dWAPcbaV/cevrbCdlRLE1J3QpJfXbQcN0tqhLdzpd4GXqs+aAFsgD0FRvS
-	egwQ05Ljf0I48Io3avyuPDBvAxRWlL+cbMOc/mv+e5pvMCZGa+baF7g==
-X-Google-Smtp-Source: AGHT+IHd64OLVzgyUo/oPlpqgL2RhIpctnfrLzAnLHSZJO6tBzpwKW59cA8/JZnKdWHEIOpAgVUkNw==
-X-Received: by 2002:a17:90b:2681:b0:321:c9cf:deaa with SMTP id 98e67ed59e1d1-323297bdeb6mr20158792a91.17.1755490402208;
-        Sun, 17 Aug 2025 21:13:22 -0700 (PDT)
-Received: from localhost.localdomain ([122.171.17.53])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32343c70356sm6560972a91.25.2025.08.17.21.13.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Aug 2025 21:13:21 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v10 24/24] MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-Date: Mon, 18 Aug 2025 09:39:20 +0530
-Message-ID: <20250818040920.272664-25-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250818040920.272664-1-apatel@ventanamicro.com>
-References: <20250818040920.272664-1-apatel@ventanamicro.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hs6f1N5I"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250818043719epoutp04628b5cbd2aac6b1d039f1aeee8050d76~cwobTCF812679726797epoutp04w
+	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 04:37:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250818043719epoutp04628b5cbd2aac6b1d039f1aeee8050d76~cwobTCF812679726797epoutp04w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755491839;
+	bh=44MXY/Ntu9rAF0ovbjOJnvuaxkF7loC1JC6bTAe9rcc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hs6f1N5IFuWk+6F5dtOPgis0vajdlWb4bFzF6EZRtUBVaHfpqrLJBxqSBsHDZKBT5
+	 /+rsGn7ltJQhYRWmKrNxZBVrFXUCdRALJQY8zXdS4dWcoKrdxSRj7civ/mQSjEkLCz
+	 7WWIA4dGzeIvz5Ob5KdBV6bfzRa5QfZsBIzhMQ8I=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250818043718epcas5p3efbcae916de49e498b30a4a88463536a~cwoat_LHK0408004080epcas5p3U;
+	Mon, 18 Aug 2025 04:37:18 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c50LG6cnmz6B9mL; Mon, 18 Aug
+	2025 04:37:10 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250814140956epcas5p480aa24441933523484da5c241a201d3c~bp3QEJitT1225312253epcas5p4t;
+	Thu, 14 Aug 2025 14:09:56 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250814140952epsmtip2b069f926cc266c22788710b6b7b5e597~bp3MNOvQB1162411624epsmtip2h;
+	Thu, 14 Aug 2025 14:09:52 +0000 (GMT)
+From: Inbaraj E <inbaraj.e@samsung.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
+	s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+	cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+	martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+	catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+	ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+	linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+	festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Inbaraj E <inbaraj.e@samsung.com>
+Subject: [PATCH v2 00/12] Add FSD CSI support
+Date: Thu, 14 Aug 2025 19:39:31 +0530
+Message-ID: <20250814140943.22531-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,40 +66,73 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250814140956epcas5p480aa24441933523484da5c241a201d3c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814140956epcas5p480aa24441933523484da5c241a201d3c
+References: <CGME20250814140956epcas5p480aa24441933523484da5c241a201d3c@epcas5p4.samsung.com>
 
-Add Rahul and myself as maintainers for RISC-V RPMI and MPXY drivers.
+FSD CSI(Camera Serial Interface) IP bundles Link controller and DMA
+controller for receiving frames. FSD SoC has 12 instances of CSI IP and
+3 D-PHY. 4 instances of CSI IP use 1 D-PHY.
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index daf520a13bdf..c675625504de 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21698,6 +21698,21 @@ F:	drivers/perf/riscv_pmu.c
- F:	drivers/perf/riscv_pmu_legacy.c
- F:	drivers/perf/riscv_pmu_sbi.c
+This patch series does the following:
+1) Refactor the imx-mipi-csis driver to support platform specific
+clock names and interrupt handlers through device specific data
+(struct mipi_csis_info).
+2) Add FSD CSI link controller support in imx-mipi-csis driver.
+3) Introduce a new media driver for FSD CSI DMA providing support for
+video capture and streaming.
  
-+RISC-V RPMI AND MPXY DRIVERS
-+M:	Rahul Pathak <rahul@summations.net>
-+M:	Anup Patel <anup@brainfault.org>
-+L:	linux-riscv@lists.infradead.org
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-+F:	drivers/clk/clk-rpmi.c
-+F:	drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-+F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
-+F:	include/linux/mailbox/riscv-rpmi-message.h
-+
- RISC-V SPACEMIT SoC Support
- M:	Yixun Lan <dlan@gentoo.org>
- L:	linux-riscv@lists.infradead.org
+These patches were tested on the FSD platform using the
+capture_raw_frames application.
+
+Changes since v1:
+1. Addressed review comments from Laurent Pinchart to integrate the
+with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
+
+Here is the link to v1 patch for reference:
+https://patchwork.kernel.org/project/linux-media/patch/7e7832c16925386b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/
+
+Inbaraj E (12):
+  dt-bindings: clock: Add CAM_CSI clock macro for FSD
+  clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
+  dt-bindings: media: nxp: Add support for FSD SoC
+  arm64: dts: fsd: Add CSI nodes
+  media: imx-mipi-csis: Move clk to mipi_csis_info structure
+  media: imx-mipi-csis: Move irq flag and handler to mipi_csis_info
+    structure
+  media: imx-mipi-csis: Add support to configure specific vc
+  media: imx-mipi-csis: Add support to dump all vc regs
+  media: imx-mipi-csis: Add support for FSD CSI Rx
+  dt-bindings: media: fsd: Document CSIS DMA controller
+  arm64: defconfig: Enable FSD CSIS DMA driver
+  media: fsd-csis: Add support for FSD CSIS DMA
+
+ .../bindings/media/nxp,imx-mipi-csi2.yaml     |   88 +-
+ .../bindings/media/tesla,fsd-csis-media.yaml  |   74 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         |   96 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  552 ++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 |   28 +-
+ drivers/media/platform/nxp/imx-mipi-csis.c    |  354 +++-
+ drivers/media/platform/samsung/Kconfig        |    1 +
+ drivers/media/platform/samsung/Makefile       |    1 +
+ .../media/platform/samsung/fsd-csis/Kconfig   |   16 +
+ .../media/platform/samsung/fsd-csis/Makefile  |    3 +
+ .../platform/samsung/fsd-csis/fsd-csis.c      | 1730 +++++++++++++++++
+ include/dt-bindings/clock/fsd-clk.h           |   13 +
+ 14 files changed, 2890 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/Kconfig
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/Makefile
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/fsd-csis.c
+
 -- 
-2.43.0
+2.49.0
 
