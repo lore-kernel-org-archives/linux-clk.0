@@ -1,81 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B41A27587D;
-	Thu, 14 Aug 2025 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A442E7F02
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 08:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158998; cv=none; b=LfaOFGv75NPMkTVb5tdBnHBShjHWoi0dyLF486W6UE8uTurJC4rRuEunCB7zl5FtzL9TfYLumBzBEPawgWS9HDjCdusGcrN6cEI55qwYoX0BK9ActBuUhyjAcKRIk+ZiIIgHav7MBv1p2tByLPKjuyEVYLY4/6ogdZn/ybGZdsk=
+	t=1755159886; cv=none; b=WcJHWMe4mCmNwgBoTjK7G2/kErk4qCaxB/tuAXwqTMbMpaxnkEXDL8O5Q+uX/dAlvxB3krO3u012FbQ41E4bTbrB3PeBC8qDb92ayaqkOj/FYJw0EgcUZvjhZxzsYkFDgs2aTFC76/POGJJ0jB+0CbIerXJtw2IC77VmMYBXT94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755158998; c=relaxed/simple;
-	bh=kRPvWk3+oRUyAKWoxWpoP6qQ6GBUxFbJ97WPacEf5u0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bv7lkE0awBZ8qbpGneErpQkErjUwNa9IRBFlWPfG6WlsItM6C3fFQG7Ls31FedHIpNf8SVwj69d8necf7zxFj2tQG8G9K2hyKLH+Eungk2S06UEJRh/E7e2ZBFBhC86EC2/6ZATOuDyt2jbeDM5bQUMy+nsW8aW9HbsPmkPDltk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBeMTkpN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755159886; c=relaxed/simple;
+	bh=01JJlSModoqysW+sRDKwyF6wO+ZTlR4O5R5WhdmWmU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oyVYLvMzqpUYj9TDDxqLKBNiS9aG2zGZhn0PYw0fnQfR2kpDoMVQwqNfhtAB7g0qJBHpV3dZ7HBT7q4ThxCiddrEzbqz5AQTR4Scy+ZWlsqRn+bMk0PFLriKPF+CTuZlkcaemwufXN+I90DOj+ItgA66NV6WuILny/4hv7rqGJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1YV6rWN; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBeMTkpN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35B7C4CEEF;
-	Thu, 14 Aug 2025 08:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755158998;
-	bh=kRPvWk3+oRUyAKWoxWpoP6qQ6GBUxFbJ97WPacEf5u0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sBeMTkpNRQ5SMWT7ZAp2DlQx+p1b5GxjQ90xd+qujp2z88tZSe1o1w66tYD0np7E6
-	 xxgEHQ8N7dm0c6d+68JcHimSbYXP0rKMj+ijzqWbiCZDMHMQ28Uh2TdmDM+enwXKX2
-	 ZtNzViLBtn4w3fKFgYXQ6zdEg0oCxvDSDM6dQZnrKJAKKc160kIvMNkQXFcD2iEUkr
-	 8P4kbIf5GMil5bQAmtAfLNEp7pkxuyp51dLxlo3Awq1ylfOd/4I7lyXhEyRzdBj7+S
-	 VA893SUFzYMiC7IZfc9r6HvKfLpmPemjVQ3PldDqIUN9LZJZ8+Im90gb2QgJ6cDI68
-	 M3D5ZMBhGDymQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCC239D0C3A;
-	Thu, 14 Aug 2025 08:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1YV6rWN"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b00149cso2132585e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 01:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755159882; x=1755764682; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
+        b=v1YV6rWNmU6fsaHjl4Aai9kCoub56MSu6ji+yAqRobOgvUtCVokLnu/7FVpgK43Ax5
+         VVTst6wVaTIjTD/1Dw9t+CzUf3AyOwIg5515ucymvGnfx28L/uIOGSQRS5cwKUA4csna
+         Jy2EP47cb/GBaEAA86liWMLeXlajFf2WBYhZSbbBj2Yk6GGyTyUxWoTjHI6gJC6DsLNb
+         Qg1nd5QPetY17WeE4yUUEXKSXo3V5khlF2xGZmc1qjnUrc0ctrREG8Zi9/jhAbbuCgjt
+         KSKKA7Knd9IQqfKV9AuX0icnKtdAKSnlQisnyVxIov4/yiM4Jxk3f/z9qp0CzY9kq15+
+         IqXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755159882; x=1755764682;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
+        b=YvhNOUd7dM9oNF4D3udMJ8WPhRmmZQKIu8X53qOXzXUi5BPxc9yUfomzLxLmPqG7x1
+         F6Ze1lOP1bA+0iv2JyrgSsmi5kF1mQAlewcb6+eBLrQzH+g1kOWu8GEeZoIradyIRXfr
+         kp1Y6ZTtOMMCutwm+kWalVUe6O6bp2erJCY2ymuASL2gSeFOeNhxYDfobaHE7jvJNa4S
+         MkXJyf3dlXKVL4QLHd/+S6KVcPufZ3FAhlpEQtdk5fzakVV5F+xVzJNWSOfOGGfO5Pdd
+         rQZmtQ+7Dlmgoc8LLtUuobN1k07cdRptg8JnOZlFJWp/JCdnxe+iYia62krSQBNHxpYs
+         XM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUB4okpaURzvfNEKC03VnsqNgONbbGl14FYMwL+xGqo48Jq6gF2Xcewx6jQ7kpmRJapHaQOYJWjF1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVirv97FUH4ijF+q6I8u2MM6o4SQUyalvzmwTW1IjMU8KTMXVO
+	XdkIn8V9Us68rlPVWSxPBF0GmTTrobF1CguCYjqKMXV+4DwUm0TWVnuLnEx7VMZzjHvv/0TFyuM
+	16DITDUIGpLgbJQSglQ==
+X-Google-Smtp-Source: AGHT+IEGivgrzos4CoGDHY7uH0CTjOvIWOyqPK2uMv3U+POUyDq1mhFpmt0OotkxsQj2w6KHcsTz1JVeOL0tM4c=
+X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:458:a7ae:4acf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:190a:b0:459:d6a6:792 with SMTP id 5b1f17b1804b1-45a1b67a1ddmr13345765e9.29.1755159881981;
+ Thu, 14 Aug 2025 01:24:41 -0700 (PDT)
+Date: Thu, 14 Aug 2025 08:24:41 +0000
+In-Reply-To: <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: cadence: macb: convert from round_rate() to
- determine_rate()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175515900950.181378.1619500424714699903.git-patchwork-notify@kernel.org>
-Date: Thu, 14 Aug 2025 08:10:09 +0000
-References: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
-In-Reply-To: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, paul.walmsley@sifive.com,
- samuel.holland@sifive.com, mripard@kernel.org, sboyd@kernel.org,
- linux-clk@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Mime-Version: 1.0
+References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com> <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
+Message-ID: <aJ2dST9C8QLUcftA@google.com>
+Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+From: Alice Ryhl <aliceryhl@google.com>
+To: Mark Brown <broonie@debian.org>
+Cc: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sun, 10 Aug 2025 18:24:14 -0400 you wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate().
+On Wed, Aug 13, 2025 at 09:11:51PM +0100, Mark Brown wrote:
+> On Wed, Aug 13, 2025 at 11:59:10AM -0400, Tamir Duberstein wrote:
+> > This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
+> > which both depend on step 1[3].
+> > 
+> > This series also has a minor merge conflict with a small change[4] that
+> > was taken through driver-core-testing. This series is marked as
+> > depending on that change; as such it contains the post-conflict patch.
+> > 
+> > Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> > can be taken through Miguel's tree (where the previous series must go).
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/net/ethernet/cadence/macb_main.c | 61 ++++++++++++++++++--------------
->  1 file changed, 35 insertions(+), 26 deletions(-)
-> 
-> [...]
+> Something seems to have gone wrong with your posting, both my mail
+> server and the mail archives stop at patch 15.  If it were just rate
+> limiting or greylisting I'd have expected things to have sorted
+> themselves out by now for one or the other.
 
-Here is the summary with links:
-  - net: cadence: macb: convert from round_rate() to determine_rate()
-    https://git.kernel.org/netdev/net-next/c/40e819747b45
+Tamir mentioned to me that he ran into a daily limit on the number of
+emails he could send.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alice
