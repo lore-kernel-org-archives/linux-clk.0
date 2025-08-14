@@ -1,85 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ED41FDA94;
-	Thu, 14 Aug 2025 19:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EBE250BF2
+	for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 20:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755200970; cv=none; b=bTEdxPYU97FRJ4Nj50xe/PRHyy4GIi2VolcD3u5RrbhTdZD4icskL1lZFuNcdmrl+1qJHh+3AtbakiZtfJtxdxaDUCYKGPyCqSd9b3rQrNIoDUZ0wNIPAjfX88kN9C07R7IKFphGbR7rEmTRCEx9bZZprGsZbCdxy65mzC8O+nc=
+	t=1755202200; cv=none; b=sIYFn7EydmYfKNnPh6lGl6ACIYdVzYk6eQ2gRLZHh7wUm6SxsZzcQ/MQdoqHiW0y/UvVnkVhKbq+19adR51qE1Q8bhwaVczFnPu76AmzjqLiLfveo1lKa4zr63XXozI44SLaa8Vycd4SYtZt2YqA34CyY2tm/10VeXEU3sIKqJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755200970; c=relaxed/simple;
-	bh=FDZFQC0aLlMCsIRJIiDYmFrxp1l6sILU+HNXJsM5qQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ry7JtpG3I7TydS87ZR+HUh08A+TedFKBS6d9BX1R6TUtKQjW2XIrkJbZ6+TEt9c47D37m8sXtgD55pzWoxRbMi4tmtyyu80E6yuEARXxoQqanwZudtp9DH6ozfOO2mH0kjuCEaYJuukMVH25iJLVrVK0qedWdIqsMRmd4ZSJ6/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snY8DzlG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755202200; c=relaxed/simple;
+	bh=Cvog2/UbOYY0KN7uBOJXNO5+xVx8w3a06fpF5BvF69A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fKoPGsBIsZ4EjV0Vn3xk9csaHbOiVXmvFwHinAaJmQY8/BlA4z7p/ZnRZlE3XxevPY0VZgFVDjsOAO35RnQhKHz+xtE7qjNieRoP3x51sPF9nfCjGNXNlEj/Nm4XaIfwd0RRVwQgYpf48raKH8H8/A3HLo8liQLmhZrIxP3hSKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=OHH6e1hr; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snY8DzlG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4EA4C4CEED;
-	Thu, 14 Aug 2025 19:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755200969;
-	bh=FDZFQC0aLlMCsIRJIiDYmFrxp1l6sILU+HNXJsM5qQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snY8DzlGq82nc4Ja2q23JAy1iXFU9FyOEhT6NkRparTGnSKde838KDBMHolIE2M4i
-	 lyoC1/7jigkjUc5A3LqXutWd7ClVZeUYxLIIDbEvtonryqonrwf4yB3Pr5Pa2067lc
-	 3DjNUvpcDi/bDcQydscUImb0ApGeeA2E4ChKpo0KVrcwUuovzOLh8PF8EQkVUyGAzr
-	 WmV6bLeeQ/7X75pW6JCXWWNaANclMCo1slzO94hw6AIIi8gT5NPeAbt08eRWUbubTy
-	 WGNQO9OS82ukPQVKnBWzxvuVqMtFhDrvdkT/K5vvOjJk2mX/40sqiirY1g01exifDF
-	 hSE6XTysWrvRQ==
-Date: Thu, 14 Aug 2025 20:49:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/4] dt-bindings: clock: renesas,r9a09g047-cpg: Add GPT
- core clocks
-Message-ID: <20250814-rehydrate-pamperer-6844756aa66f@spud>
-References: <20250814124832.76266-1-biju.das.jz@bp.renesas.com>
- <20250814124832.76266-4-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="OHH6e1hr"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70a88ddc000so15311716d6.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 13:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=libre.computer; s=google; t=1755202197; x=1755806997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7OonhXd2J8nBVykMZsnyPIpsB/2woXa2NsCt/BWEBOM=;
+        b=OHH6e1hr2UiM1Wsu+7s86HvYpTMIKOPQzXfqAPJrVD5GnjmlL24oLtqlhk6Z1U3Xx+
+         zERTyiwAAy/tN7rzm9LEUm6Xi0vhcUsOG0wu4ROw6gZnpLqYWVqXn5Oze7TMTDiXxHFr
+         SsSaQKMSi4d/eHfY1Ms55wZryTNtnxact9qJy34hJ9UkPGs9h+AMiZJL3prYzxszRceS
+         grzzVrllzG16I3xKicNw+6mjmcaMS+bBYUcAFllYAXBeN8lKA2abcu88MNmRpHBAVZF8
+         6ouASmSZNv3GqoCVYNVIRDI8Wm9Fujd/yuMvXt4pPVIvtqpzGVV2GRUnPzGTcRb2sYSW
+         ZGgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755202197; x=1755806997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7OonhXd2J8nBVykMZsnyPIpsB/2woXa2NsCt/BWEBOM=;
+        b=bXyhF1Q2Foq5ee0uWggtKnVuuLyBHAnOWtP+9iFyp7Zb86kagSiekMrHs8H/1GkD/4
+         naehEDXh3mLbvNl+tf+daxJtKm3hLM2h2JVtdfSOwyk5T//lXRXg67BboHOGs9IsJAEf
+         LxKxlxD8hCHAihzGEXQvF9EymnDf4EhggPYE5n03aEtr+dPXwPAeG8ucx354JfebwS4k
+         FDQqaRE6KxFYuGwOwCfWmCbL2sd7fPJUZ25s1IvfWAnkEQjwGShHdpB24FrGErLKKuQn
+         ZCrT10MiSu+0UJ2jvke1pigAmOA+Eyibi/0V4L1VDvQDoWYAsyX3zpENu6bOzqnzo1RW
+         gxPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhDP7oaLWIQabGU41IgU7CoxXFMXG37Q9RF+DBaQtfGdgSzTbuo5UHz/fZ61T5gHlyVlYWlxYHn/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxptvvtX8BiJERo0Bx28LmTiWegF+QmO+apC8Fh5+gh2f8OoAuk
+	SHnWHEsc0iFdKMrtGFuDHPDEQSJERZzq1cjCNmgb07kMKUV6Y3ecEhuyM0r3Co3AOA==
+X-Gm-Gg: ASbGnctmQ2ARukI2c7XDn7ST98nZPEQe1GkFVU29ve/E/MZenUaSW9xJcYElo4qloZW
+	uhTLjhQf+awHLxsRYAP76qwkjnIpobm1x/EN3OSEvpyeAJ4+VkeiQQKlqSgYBrtr/6VB63mycxZ
+	iBvauiI7nxlIceS9nqMlw6CBt1Koae8r21CoiEjfFSLXlLVLc2Wt8m+15HbudT7p5OE8OJt98RO
+	fjk4kApMZ6Sw/ICbAQNLi3JnEz+VTW39FmLxSvU4TqRL1g5e0XvAR6XT8nr/Rrrnpj3dcU2mOzu
+	rVC+ayrJiN+EcvWxZjxQFA/3XcBsQdmq2wCoCq/EWmP5H1+gHKs98F5LByt7HTEoPC7o994tkHr
+	LlB8+bWCj+G1ddxQXXHdZUHjLm8w=
+X-Google-Smtp-Source: AGHT+IF9yvU2GiDOI9/uRKPRYD6OuBCxZE7IqB303/rhDfSaT/Vz79QLGfLeMmb2anmChCdl3JacAQ==
+X-Received: by 2002:a05:6214:1c8d:b0:707:4daf:641 with SMTP id 6a1803df08f44-70af5b2d44fmr73346196d6.39.1755202196510;
+        Thu, 14 Aug 2025 13:09:56 -0700 (PDT)
+Received: from localhost ([172.56.29.94])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70adc1cd94csm17651476d6.14.2025.08.14.13.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 13:09:56 -0700 (PDT)
+From: Da Xue <da@libre.computer>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Da Xue <da@libre.computer>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson-g12a: fix bit range for fixed sys and hifi pll
+Date: Thu, 14 Aug 2025 16:09:53 -0400
+Message-ID: <20250814200953.1969944-1-da@libre.computer>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u1t7YverpT1duXok"
-Content-Disposition: inline
-In-Reply-To: <20250814124832.76266-4-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
+The bit range 17:0 does not match the datasheet for A311D / S905D3.
+Change the bit range to 19:0 for FIX and HIFI PLLs to match datasheet.
 
---u1t7YverpT1duXok
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There's no frac for sys pll so add that as well.
 
-On Thu, Aug 14, 2025 at 01:48:26PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Add definitions for GPT core clocks in the R9A09G047 CPG DT bindings
-> header file.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Da Xue <da@libre.computer>
+---
+ drivers/clk/meson/g12a.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 66f0e817e416..f78cca619ca5 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -157,7 +157,7 @@ static struct clk_regmap g12a_fixed_pll_dco = {
+ 		.frac = {
+ 			.reg_off = HHI_FIX_PLL_CNTL1,
+ 			.shift   = 0,
+-			.width   = 17,
++			.width   = 19,
+ 		},
+ 		.l = {
+ 			.reg_off = HHI_FIX_PLL_CNTL0,
+@@ -223,6 +223,11 @@ static struct clk_regmap g12a_sys_pll_dco = {
+ 			.shift   = 10,
+ 			.width   = 5,
+ 		},
++		.frac = {
++			.reg_off = HHI_SYS_PLL_CNTL1,
++			.shift   = 0,
++			.width   = 19,
++		},
+ 		.l = {
+ 			.reg_off = HHI_SYS_PLL_CNTL0,
+ 			.shift   = 31,
+@@ -1901,7 +1906,7 @@ static struct clk_regmap g12a_hifi_pll_dco = {
+ 		.frac = {
+ 			.reg_off = HHI_HIFI_PLL_CNTL1,
+ 			.shift   = 0,
+-			.width   = 17,
++			.width   = 19,
+ 		},
+ 		.l = {
+ 			.reg_off = HHI_HIFI_PLL_CNTL0,
+-- 
+2.47.2
 
---u1t7YverpT1duXok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ49xAAKCRB4tDGHoIJi
-0rdUAQCyYiH1QQZND0PtUekndQ5DZs0IBFb7DYR8oJXraerWBgD7BCuc+6qLGwoJ
-fmWWzXvxD8TTQrsQgTAVLBfPkyTMkw8=
-=i2eG
------END PGP SIGNATURE-----
-
---u1t7YverpT1duXok--
