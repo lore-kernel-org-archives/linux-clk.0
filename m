@@ -1,72 +1,67 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D0129A9F3;
-	Thu, 14 Aug 2025 07:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AFD2D12E7;
+	Thu, 14 Aug 2025 08:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157544; cv=none; b=RYOIy6lWLQ+CCqpNRyi6CDGX7o6sCgV/MVOqF3Hv1qaLjKiXsk1Zl9vyD1y4+zm+77Fv+GBs/uYEMmhM9WSJvaWBo0FuV94vKDFG9F8Kco+wqB8Adp6GldkgWEjXSksJgTEeblQ7wwzhhoKGNIgJ1Crjq+nx4HzWJaw4R8VoYgo=
+	t=1755158756; cv=none; b=l/iN5dPjMes5CSEM/TBxkjvNeH4Zqr3etFshXAgJWqGHFhRKioHlUBveswjaHxknSnXfnkhpMrsDhmFajwjTeLjGpmrRsQvDXGSfB4YfLvPZaSw3+sK4Hll8kVmbNIvYy3sT2WUdDCewtjisxJI9I+5CroeiBb075GrRIOaDdYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157544; c=relaxed/simple;
-	bh=ncqHU0v1iEmUcJfIYKSHufZX6y2o2ZSRc2qysk2DdCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K9E3mzG3lMgVWetugQ5+b9CG6A4o7vOA2UYPfuYJEgW4uaqSg/4R4bJNlrpHB0a4iBPwv8fU9187n232sEY0n1llquPM/D1cpVIaU0GRa80yWMjwEs6kvCZub8VJ1dfSKJNX87kMxl05smoFJ9pwAHwheJmNYkXL6wv/7tQya2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Q1fQ7Rb6; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1755158756; c=relaxed/simple;
+	bh=HUjRoUBiPA6qKjrIqUqj+tWWPwrwSnjORUlp6OeXZaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPr992x7Gp9VpQoDCF+wEg+899DHgvOppOOLxUTRwK2OcRSlT6RslGK/EOFw8cGRBmXX7Gvm0DYguYeyhN6L36wfGe19cEBS1HQy80KkMIk7+XubUy+8fXT/bIjNqzzHwCxBATck7tPP8pF7nX8Io+dCuE2YjoSYDCO7Rn2qrIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5/XWItu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Q1fQ7Rb6"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=qNvBeXZ+P8UApe0dbki/ordaapboF2t4cf+gcZmp5Kg=; b=Q1fQ7Rb6hwaJ4lXdpVjF9d13ga
-	HhkZcnGiQBM8IjIuGRHb7BjO7TFY8EdhvX5e7jWcnQSMUpZlWO4cMX8MdOJ9By2R+cP5/ixkpK6Sl
-	Y35Lc5kNF8+yoVsaNU0IV1fbRMBsRdKaMWA8RQh0rg2scUbTqvrFtQjB2prXjTln8Q6xFIY4oNvSz
-	Ai4UVs7tpNoD3GyaB+XGuGB3E8dlPCDXJ4mmpx9mejBil69Gg5zI4I4v2LZRkQx7CoB0oSsS+X1Lu
-	1J63IDSEOO+ZsNOPYgppR5ZFMNqf6vNDEtu9Kbn4zQpZZghOyUAw4rL8X95p0aQHwXFShbDtAB7st
-	Q/8ILBTA==;
-Date: Thu, 14 Aug 2025 09:45:27 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
- <mripard@kernel.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] clk: ti: convert from clk round_rate() to
- determine_rate()
-Message-ID: <20250814094527.29745592@akair>
-In-Reply-To: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
-References: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5/XWItu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA8DC4CEF4;
+	Thu, 14 Aug 2025 08:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755158755;
+	bh=HUjRoUBiPA6qKjrIqUqj+tWWPwrwSnjORUlp6OeXZaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V5/XWItusZsyqPyNHbtQySAAEa88+ND8yVFrvjobJDf7KWOF+a4XTNQZykaPKTQ45
+	 dTQCjk9f7QGHcTJXyWBcO2D2AscS7DK4YWE2q8MxtfiWHKhxa9kkSWymw4D1Jc9bT5
+	 XoRURi3jFZDfmwLWdgv8fYfNyiYJ5wxxOIxEnKHMFobWJGP6Rm//potJokUboqP9s8
+	 5cafsbJ5tm5K/zuDz5TkTo74gTe9ZG8vJsniKpjTB74pWq4RPr9V/unVE419nSMqCf
+	 T3X3BdFaSKeZOVkfhU30BdvFdxKs+RfoHmnwQg1x2JE0msRQgeOqRQdoZEGzLk+EDo
+	 5yzo7BRy3iFbQ==
+Date: Thu, 14 Aug 2025 10:05:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: qcom-rpmhcc: Add support for
+ Glymur SoCs
+Message-ID: <20250814-positive-defiant-hyrax-f62bad@kuoka>
+References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
+ <20250813-glymur-clock-controller-v4-v4-1-a408b390b22c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813-glymur-clock-controller-v4-v4-1-a408b390b22c@oss.qualcomm.com>
 
-Am Mon, 11 Aug 2025 08:48:05 -0400
-schrieb Brian Masney <bmasney@redhat.com>:
-
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops. The first two patches in this series
-> drops the round_rate() function since a determine_rate() function is
-> already implemented. The remaining patches convert the drivers using
-> the Coccinelle semantic patch posted below. I did a few minor cosmetic
-> cleanups of the code in a few cases.
+On Wed, Aug 13, 2025 at 01:25:17PM +0530, Taniya Das wrote:
+> Add bindings and update documentation compatible for RPMh clock
+> controller on Glymur SoC.
 > 
-> I want to call out the changes to the dpll driver since a fair number
-> of changes had to be done outside of Coccinelle. I unfortunately don't
-> have this particular hardware on hand, so I was not able to test it.
-> I broke the changes to this driver up into smaller chunks to make it
-> easier to review.
-> 
-Tested-by: Anddreas Kemnade <andreas@kemnade.info> # OMAP3 GTA04, OMAP4 Panda
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-No new scary things seen on boot. Can someone check this on AM3, too?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Regards,
-Andreas
+Best regards,
+Krzysztof
+
