@@ -1,138 +1,120 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8D5217F34;
-	Thu, 14 Aug 2025 15:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC97332142D;
+	Thu, 14 Aug 2025 15:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185410; cv=none; b=k7rOo7uJVir9MYoLiuz4umSFH/aM7hL3b9G09uOmNUCWQedFh2p9nlMuuZxXfIkfKJCsxkUigagRjheewOfIhdg232rOjRJ4eaYPXthFA+1kVcrYYoB1a77paXHcxWbU8/N4IxxXSMJ7LpGHbyruZcy7Nueu9x68iakeBNNWCvY=
+	t=1755186106; cv=none; b=YEtLtcXCqiiESgayM1QvXovEcpvKc+4rYDxEkpW0s/EG35lLL2x7yk2XqjFGaesop07mJ4wYzmZlwaWyQQLqE6hbdxDsFeGnRVhTcpIwgQ6rmjFmiPHIzFbdgGhIVPtOTCjkvRmP9N35vs0q/NzWsYsWkMIVfzafwLI3aXfVUF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185410; c=relaxed/simple;
-	bh=QYRUK4EXKQ3Br3Wc32yS0rLX0zRpM2iSrQbV0k4msLA=;
+	s=arc-20240116; t=1755186106; c=relaxed/simple;
+	bh=zl4nprwzlKIUy3Q1chqqvC05f1gTCgwe+zmNz+8kyuM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5HaWJNB5yFOWH6ORohcWcjxlNHxkOlGsKLnAmPqyscyHSFNo7kq5OUrqGGCp6C7e42BMNNGupoqRf6DyZwQ6TFFZSIogP4IZWK4cA74b8oa9iUzFCB7+U+p64mxiQB/mAtjLohw4qzWxsMh3MNWIy5gAXao3fcIRK+Nyv1jb5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=VAL+Y1KaLZYF2dleE9zDDB6n0xHjJLK2N7FP5k0HVkBPBLIGXRYAKRCnkaTlL3kNYJUxJLktlY7YgQhg9hLKacjMx2GstCE2VLYU7GpQPjVpdBzQj5mAgXbugVHwlf/Bg3zxGO6N/rVZFfSX1j8SjjXy94j8VwtyzJ/E4VrhfvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4nWMfdS; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381ed5567so549123a34.1;
-        Thu, 14 Aug 2025 08:30:09 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4nWMfdS"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9e4148134so571991f8f.2;
+        Thu, 14 Aug 2025 08:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755186103; x=1755790903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktELRpls4QKsQ+KH2BZha8Abn8cFNHSmcdeY0FLg2aM=;
+        b=Q4nWMfdScEAhNVZG1U9ZCYHV+JBFgkduiuwgBsIEaeZVF+Zg8ateA/v/f1ue8UaOu7
+         v0KoSPcx7hMsA5kV51kV0+04IIUI5bSWKUv3k5ki0591k+5zkO+GDRt0Zn1a1UxZH4wy
+         jYwK8tTsVgPhz6vpGhYsO5anq23qSX+ULeyeNPzOfksg+xPjzo3Ss4a8wsh37cLfE0ez
+         4Cte1DJe/HdD+Twnz3WEZexpzl9MfUc4H6OFobAd1RUXY2spGqKO9kUmLP9q3cO2dsfw
+         /jdVQi/hslhPnQ73xSubJb4h0f7YN6iT1SdpwJEXHD1sFYHOdA8YWvGpc/T2L5x9j1wZ
+         CpEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755185408; x=1755790208;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n9du/Bs1Vwkuk15qOOpl62+YeIchI37tbTZ/WdEUy2s=;
-        b=WaHN2/mYnRT+unxLRZOZ+kEa3l1yZdDfqt7WWxL9VEVeCN7GwnyTLXeHAUkrlga27k
-         7+OV3iSRxu6EKR5KS8H8hQ47/PGO7LfStqt9DG9dlyginSlE5s30L3XmdiaHRs5LOsjt
-         XCMHvOi7AgaNy93QOKKuZ/Bz3/uq3V8QMiRymwVJziXgsXkgNOIx+fUBVQ39LOuWGTIi
-         peA8nuuB9l4ZcI0F1zQ2U6rkd5hTccS2ejCK6xQ0DSJ5SxzER4tWaqvGDaZVkCGTXYys
-         U8lPGvBBiTKYxiJxFFgewcYuEfOupqaGFQa7WG5uY5w/F36mTJgSNxwLAdalGjOyxP9v
-         AC9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU4gRhRyvAySezY67c6igw65uZ5HuUFdUpoTdGUxBE2gVibmJQIFkqO8MVWGU6DYNzCRnEMANcH7Q==@vger.kernel.org, AJvYcCUBVf5+8s4eAmJe9ntYm4gGyLCWcDxy/+0J+Q1svNLn6l8p/vCQDAAclRja7xM4LZFq6p7ei6o0LzL0VQ==@vger.kernel.org, AJvYcCUWur4iOlN14ame+Y5nhwwpzIli8pvJxmrW4CqWKzk+tbSygDcmQhE10i921un6B9JsWCFSW1DYKscpekooww==@vger.kernel.org, AJvYcCVVW9nJ++owPEt/fgroLh2NS4H6t88vdsOfxBEVMcwYTHgGa5EmadgnIYKcQvi9XMMJlc9VgmdN6PVom4dYP/Ze4FI=@vger.kernel.org, AJvYcCVs48fAsh1ErLmLhzxf/Fao4/5VJMoacj8/M6ik8A8q8ax4Un4D/DpvAvFSER7QUojHCNxa+Qdwq2YilcC79SZAvR8=@vger.kernel.org, AJvYcCWn8oFMEqlJoluVsfrFni2hJ2x1XxXdUa0PFsmbfbKEkN4hdMzH3LYjl6Ng1Pmih15J/Yj9I12qIFeEGMqf@vger.kernel.org, AJvYcCXGTOzeWqWg5O15R60qs/XJaO5jsrr8x7y17lG23YB0rfG+GT2hCjnllMbhrVi7SG11h4sWf1j56C2y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBDw0THRN4Q46qgLQkFoW8FpLg3CaVPomqdcCkOsZhPQ/woOyx
-	kakVk76E0EdfNMXS8TvQBvlQIj4muuTJRldymROE1iPF4IM7o0X29lF++927D1oZ
-X-Gm-Gg: ASbGncscS+Sbh+mDgUneinz05aB0yT7boHrW9WHr8ADWJnj8pGBhVVgWQ0gOOEDIbA8
-	M2KADpZKSCgrAJFNzv/FqKyQ/ZHwuWHAydHAvTjmEUz+c/Lu4SN34KKYf8q7MMUK4Bb/9zImor+
-	VUAipw396zRgvllF1NLWDmiTD5LKdawyfIUzugTlXMUKAIBG/q8CEMU2Grb7J88TJKU43THncG5
-	Yg37bn0IHJXSAGfTa9+fprHoWlnWLwPy2wmLqLgJ5rLIwJ8saMw75+CxkOUmZuhQV0jjvhBlY1s
-	CedxA0s/4KSeokUBoPmFLWjZFcXoYs/+xW65Qez9q75TBi9m4j1X0ymLkM5oUFeTIWc/gZrQIWw
-	4QcHhJ4k2l4jkoIznp1sHJCP9PvRmaMbN/P0XO0hSfWT7v1FEE3nYSL8XDXVS2JIZ7b+md6g=
-X-Google-Smtp-Source: AGHT+IEBDxnMmtw1mGlZxi3sooeebHiN8D20hnUAg1n9o8DiDqOJlvJCPF0OHdbMATdI2suzUal3RA==
-X-Received: by 2002:a05:6830:661a:b0:741:b827:feda with SMTP id 46e09a7af769-74382c02786mr2278808a34.25.1755185408212;
-        Thu, 14 Aug 2025 08:30:08 -0700 (PDT)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f7a3e73sm1514152a34.0.2025.08.14.08.30.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:30:07 -0700 (PDT)
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-74381dd4c61so502515a34.0;
-        Thu, 14 Aug 2025 08:30:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+5+VbG8A5HplG2YF5gMN5YBXYrcmt9co6DXu2dQwbs115RxWEzBT9tkbWPviUZ4scC9pEZTvAXot0phoM@vger.kernel.org, AJvYcCU3caaQfm9J4CkDm4Xxc6tFebVuGkUM7gzmc4IG/nOWQ+RGV7JV3RWHCNb7otHImvLJbTBtV7ug4w==@vger.kernel.org, AJvYcCV2VHiy91g1zcG/3ec3wR8HE3lY+kGnSpTXsd3eOwakmPO7vK8KgU/5s3dipWYSgKPMD4s4IcQNMRdq@vger.kernel.org, AJvYcCW4a0S7PVZTtUTpIQmbikGoIZRXYqpq9pXzuimfZpxc8ANuu8bZjJEInNdct40klHVS83YARanaQoAStmdyQQ==@vger.kernel.org, AJvYcCWN1BCj0jaVuIfUzcr11dN35Ed8iFJQWDts/s9d3mlHrzsFwVOnHGyBnBA8ScXEp4iwHGHqk1dIv+CSO6wvhRuMdoM=@vger.kernel.org, AJvYcCWroU6fm2UL6HGy7s6/1XLC4aiaSan0APJb+J8iwBvVGfR1obVluDaebcomd6+Didl11tP24iNmZOb3CQ==@vger.kernel.org, AJvYcCXxrcwzKyKPkXZczkpFUZYAhPpGyTGoRBJT7H+MGODzLbDOSxwhPLfWHeaesnsC17nG6oo5ueIdRwdnOZbuLMx8Eh8=@vger.kernel.org
-X-Received: by 2002:a05:690c:700b:b0:719:f582:be17 with SMTP id
- 00721157ae682-71d635fe81bmr48846567b3.35.1755183986689; Thu, 14 Aug 2025
- 08:06:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755186103; x=1755790903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ktELRpls4QKsQ+KH2BZha8Abn8cFNHSmcdeY0FLg2aM=;
+        b=f3yr+Mn7qCysNYfH04jARnz3eszq4lw02AN1NtPuhZH2REUdYmSCn/xepaRAB2HKRA
+         wfcnTLrhet4GiyE5dVB2LbZfoI7shK8BR8oaewryqVDfZU2gO4kuAv3khFLhjYqu6h8t
+         idFpVh3d7L4tNA4gKiI+GPrm3yqdlDcKIci4mwEWzqXS4Pucv8l5rrlmIJS8QaznjMgT
+         gyNPkLJBrcnI2CEDv26a4LMMfUOUEBykcdTNk7+XixWdqzTV8Y4yYAmr63Azg1iwPoHC
+         ofGizgXtgYgh4/HmuWTdE0QxoaERjw4cmP6WFIhOJYNCGygcnnAfnqlDVzDSTOeSy1Kg
+         tLcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcitugla5kTRncrgDRM3qQ8IqVtzUokuaMohSBdJ02Xos42EQLRAjSTlG2dfEuGI0eI6DsfSq42pfTDNUo1VIGMOg=@vger.kernel.org, AJvYcCUj4Le+y8AeeHiMQ1DqMx7wEpZ0Cre9q3RBbm6l70gEkNSsi4CJRO7JwQdSJu8Y9SqfnVsWrzcmiA8=@vger.kernel.org, AJvYcCUz3ZKXpHT+AKWRGl1DQLsbMH/4WLzkixiydQvteUlJ4P52DXQtupUxdGRxre5ukfFuSwtrns94t2rjob8w@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVqGOyHQ70NFoLiLkxgaR6x+Fq4I/Gx8rzq7y2bZDaaXEDPVaa
+	df3BG4R7SnFM7mw1SntsmZZbG0+LTIY8VWxJWIeXKLFMRJGZR8bCGiqPNglN215eUdhugO5r1Jj
+	oE2fpbHHq/HPfcozmK3i8DzHXgEfy/iw=
+X-Gm-Gg: ASbGncszVZco4AZFI7Jc0Ns+2XxZ6BJvt1CF9W/m3dNxiNUV6wkg4bRz8syfS/iffAI
+	ytfjYU+XGYRxIzRDa+MQlPeowctiakT8gkJz5P+f9axVvD8ZkPyRWUDSDhlbOELBFyY9zj23uPG
+	YNbkUCzaJJig7tbfBW2pzQQ3ZCNkNbhBau20TF1sx4Oq0vJnYIYj+LcnWTPDExHDCerxLWw/IUG
+	IBNb13KqekLIBnLOh6pnJ4AGphgog==
+X-Google-Smtp-Source: AGHT+IGQgleFbs3fqH8e7omz0i7Nmtu61u6PAbtgtfqbSxLsswwUcW494BMucvo3CZ8wNBXE9dUepyV6QozxJXwGwGk=
+X-Received: by 2002:a05:6000:2911:b0:3b8:eb7d:f82a with SMTP id
+ ffacd0b85a97d-3b9edf8ffd8mr2692507f8f.3.1755186102745; Thu, 14 Aug 2025
+ 08:41:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-92-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-92-b3bf97b038dc@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Aug 2025 17:06:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUR9phiPyhi9=f3gdA_f5oRmaX=ucj8SUquXQEq7bUTkg@mail.gmail.com>
-X-Gm-Features: Ac12FXzt8_e3pGt50aBSDpwDZhCGVBhDLrUDheSmsSXHpMoy_pb5BR_R7aHtEdE
-Message-ID: <CAMuHMdUR9phiPyhi9=f3gdA_f5oRmaX=ucj8SUquXQEq7bUTkg@mail.gmail.com>
-Subject: Re: [PATCH 092/114] clk: renesas: rzg2l-cpg: convert from
- round_rate() to determine_rate()
-To: bmasney@redhat.com
+References: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 14 Aug 2025 16:41:16 +0100
+X-Gm-Features: Ac12FXwpnVSDGCBCyDNMKTSpRaNyFLKuvEwIe3vB0vFeD7XDuR4X6tcs-Yc227M
+Message-ID: <CA+V-a8smWQaYvt+kbRb_tmhH+-2Zt+eag=unJECH=xSUzjRrRQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 11 Aug 2025 at 17:19, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
-> From: Brian Masney <bmasney@redhat.com>
+Hi Geert,
+
+Thank you for the review.
+
+On Thu, Aug 14, 2025 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+> Hi Prabhakar,
 >
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> On Tue, 12 Aug 2025 at 19:17, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add asynchronous core clocks and module clocks for SCI channels 1
+> > through 5 on the RZ/T2H SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+> > @@ -48,6 +48,11 @@
+> >  #define DIVCA55S       CONF_PACK(SCKCR2, 12, 1)
+> >
+> >  #define DIVSCI0ASYNC   CONF_PACK(SCKCR3, 6, 2)
+> > +#define DIVSCI1ASYNC   CONF_PACK(SCKCR3, 8, 2)
+> > +#define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
+> > +#define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
+> > +#define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
+> > +#define DIVSCI5ASYNC   CONF_PACK(SCKCR2, 18, 2)
+>
+> Please move the last one to the previous block, next to the other
+> SCKCR2 definitions.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.18, with the above fixed.
+>
+Thanks for taking care of it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
