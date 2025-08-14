@@ -1,110 +1,124 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE762FF653;
-	Thu, 14 Aug 2025 01:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9D17CA1B;
+	Thu, 14 Aug 2025 03:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755133559; cv=none; b=Wrk5OLuXWVIPME1lxe/nXzR2xCS52KizN8l3H2drJhZFSqI/O4mOFhKGQKjaDKvV2PMq/u3AxCcozjr0/e4IrVg8yLCpbusn2T3g92/sFmNp+Td67bpIeDbv/wYynDHg2hFHhJkgAEZz61WqKfkT3vaeK3q1oC1bZy43usSbWTA=
+	t=1755140929; cv=none; b=TqyEJdccc/EFzJCJ36tHA38YP2jhAtqeIQ2X7mMB1LsGlb89nvn42hgOTmic+8R2WqS6OoznqMbVc3hkLo6agMFM50+rZBcvTbs7h6eUC/mrb+CSbQWsDbvKe4w8n8hkdpRGvJ9HAyD4RhGfCyiyc3zGAGLxPEgSAzdExCqk+c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755133559; c=relaxed/simple;
-	bh=GHq+UdFILVZZcTmyOuJYpLnjJl4RNHxMErvsBexshnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G4zW1JZ/wojDSpzDnvmZ6P7RZSj3cCjI5NmsKXlzlNZ5Jvl1QguoEgWjufGfZfHp+FiB4k3Obza2StXyGi1tSjKWWUYOKyv8GVWsyZOCOIBhMNAlRgHh+3FPlkQwPeWC3mc7nVVyHWlVtFOFFhwWg7iXK2EVpIQHHJTpmYCco18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aElfw9Pu; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1755140929; c=relaxed/simple;
+	bh=XMoDAuCN1ioFag0z3tig59rfJ/M/O4cipfIwE477rSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gg5go+Pkvkt+2T65bWAnzF5ea7+GHeXX3sr7HRY4/wBaxOJC7p68ALFUHYb8pyItpK7F+43co/86z9InzX6xPWSlWxFLoRwAmynBzkK0hApikEBEKRLwOOZSI6Onge/vftpzFNLMBSvUWjaGqrp0Hh8K5oiJx1E4VlsGAJ7Ohe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8IIJGvT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aElfw9Pu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755133558; x=1786669558;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GHq+UdFILVZZcTmyOuJYpLnjJl4RNHxMErvsBexshnY=;
-  b=aElfw9PugSRRSNtTahKi3+HvFQUMRuTnoJ9rTUczDl+o149MGaoxahHK
-   I61UwOph4raZFaLrQNcvRr+ZE6SHTE6lZFladu8vFggtLBmVJ9/rnF3wF
-   3aWap22ACwbQNGydUPVx11izsAO5SP9kVZOcZki9KcjLh15eBNzpp/Wug
-   ATRMmO9RbjW6IB6BKZ1BH/4Kuns60d/Vf+IOxFjFrnBHC0/jVtRBWGkyN
-   ZMb1WO5q5OBAZ7l1xivZnGO/UAcWL32CGyz84bbnF5vFX4OVeCY7ejcuR
-   /qaQVcRswX9cr7m2UcMGont3wNNV+ZqAo+ZVSDdcoe0ZXmfq6yp7lDNCr
-   w==;
-X-CSE-ConnectionGUID: zU/+TjczSNevZRb4Ys/9cQ==
-X-CSE-MsgGUID: 1v7uULTJQHGl3QVMHj/hKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68522886"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="68522886"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 18:05:57 -0700
-X-CSE-ConnectionGUID: GyU04fsaR2OYGBt93Y2/8w==
-X-CSE-MsgGUID: ewk1E047T+a1xTM9ypDf9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166997295"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 13 Aug 2025 18:05:53 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umMPc-000ATw-07;
-	Thu, 14 Aug 2025 01:05:48 +0000
-Date: Thu, 14 Aug 2025 09:05:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v2 4/4] clk: spacemit: fix i2s clock
-Message-ID: <202508140828.p7rvt41N-lkp@intel.com>
-References: <20250811-k1-clk-i2s-generation-v2-4-e4d3ec268b7a@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8IIJGvT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499E8C4CEF6;
+	Thu, 14 Aug 2025 03:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755140929;
+	bh=XMoDAuCN1ioFag0z3tig59rfJ/M/O4cipfIwE477rSU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=o8IIJGvTiYTrLUfAiII30d6SgzYwkSVpXwPMgFtHgHlwGrmo0bAesHhiKMAaOYZfq
+	 Gut42r0slDm/dLdTKSN9HZrepND3kAlZnWM9qr9sq0BfZdUNvnw6DEWnb1rwQMwAdn
+	 W1ZzHO/54PkunKuxskcEb7NnZJk5TJIbYkC1nAFYLrVPQGHs2RK/lXhqCGFLhxRDBH
+	 oic6jrAr3LDRtK4uaEGcknahxIQ8IgygFTrxfyENk2qsIumarXgMfHaIsJxxGN1E7s
+	 +PYiUaeT1S/8VhE/I4bbq68YXfVpa1nTw8MGLz2VXUhIvc1ay14vcgAMPr5ev0pEHj
+	 Nx1aEOresxypQ==
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so307694f8f.2;
+        Wed, 13 Aug 2025 20:08:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUk5b6Q9ilpfT3CILv1ALZTjYLL4R12OZzuJS2SOHzh/IXidiT9WMLlbtn4LlO1xAEFfUI+YNS+Xyo=@vger.kernel.org, AJvYcCW5AaXyjcoVnNGubO2HYLpb/Z2WEFJoHLZf+B77Z91p4dtIL/oymHh658R9YjqnDQsWO3iB1x1P//4758kh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQHOjZpxbbGdebI2UH7uuiB4oAC9mQ1YQGzjEGc31M+2a6DuGx
+	svuHqa7QCmJ/U1lZ4vvHcrBQBHBne1/B4W45UrpGRQBSmV9c7zC4da1/3/qIE5GmOdGtMd7mxBf
+	tA/uVGmOSsxBVxOssUQ21jGEVkmIaMyc=
+X-Google-Smtp-Source: AGHT+IHGd7cgmKnfjDug7VCZOddgtHMo0WTzcqAwgWgOWT8QpHL13mPQ+EjzzmkPDFoDHnBeDEdISH57LxmKuzEzqio=
+X-Received: by 2002:a05:6000:2505:b0:3b7:6828:5f71 with SMTP id
+ ffacd0b85a97d-3b9edf1ad51mr1227756f8f.9.1755140927522; Wed, 13 Aug 2025
+ 20:08:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-k1-clk-i2s-generation-v2-4-e4d3ec268b7a@linux.spacemit.com>
+References: <20250813171136.2213309-1-uwu@icenowy.me> <20250813171136.2213309-3-uwu@icenowy.me>
+In-Reply-To: <20250813171136.2213309-3-uwu@icenowy.me>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 14 Aug 2025 11:08:35 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTT-ryXrM87BwvK_wp9F_ZEsqUHKJdkxKbtJmiq_07g2rA@mail.gmail.com>
+X-Gm-Features: Ac12FXzVcxaStMtfbYxgXX23VvxyuR7WndlfjsAegHOeemSEsiMSjGU5Ja913-I
+Message-ID: <CAJF2gTT-ryXrM87BwvK_wp9F_ZEsqUHKJdkxKbtJmiq_07g2rA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: thead: th1520-ap: fix parent of padctrl0 clock
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Drew Fustini <fustini@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Yao Zi <ziyao@disroot.org>, 
+	Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Troy,
+On Thu, Aug 14, 2025 at 1:12=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me> wrot=
+e:
+>
+> The padctrl0 clock seems to be a child of the perisys_apb4_hclk clock,
+> gating the later makes padctrl0 registers stuck too.
+>
+> Fix this relationship.
+Should it add a "Fixes:" tag?
 
-kernel test robot noticed the following build warnings:
+Others, LGTM!
 
-[auto build test WARNING on 8f5ae30d69d7543eee0d70083daf4de8fe15d585]
+Reviewed-by: Guo Ren <guoren@kernel.org>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Troy-Mitchell/dt-bindings-clock-spacemit-introduce-i2s-pre-clock-to-fix-i2s-clock/20250811-221114
-base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
-patch link:    https://lore.kernel.org/r/20250811-k1-clk-i2s-generation-v2-4-e4d3ec268b7a%40linux.spacemit.com
-patch subject: [PATCH v2 4/4] clk: spacemit: fix i2s clock
-config: riscv-randconfig-r112-20250813 (https://download.01.org/0day-ci/archive/20250814/202508140828.p7rvt41N-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce: (https://download.01.org/0day-ci/archive/20250814/202508140828.p7rvt41N-lkp@intel.com/reproduce)
+>
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th=
+1520-ap.c
+> index d08e7fb387e50..f6f3d63d53353 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -888,13 +888,16 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3=
+_hclk, "perisys-apb3-hclk", p
+>                 0x150, 11, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-=
+hclk", perisys_ahb_hclk_pd,
+>                 0x150, 12, 0);
+> +static const struct clk_parent_data perisys_apb4_hclk_pd[] =3D {
+> +       { .hw =3D &perisys_apb4_hclk.gate.hw },
+> +};
+>  static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8,=
+ 5, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13=
+, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref=
+_clk_pd, 0x204, 30, 0);
+>  static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 2=
+6, 0);
+>  static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk=
+_pd, 0x204, 24, 0);
+>  static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0=
+x204, 23, 0);
+> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb_pclk=
+_pd, 0x204, 22, 0);
+> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb4_hcl=
+k_pd, 0x204, 22, 0);
+>  static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi", axi4_cpusys2_acl=
+k_pd, 0x204, 21, 0);
+>  static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk", peri2sys_apb_pclk_pd,=
+ 0x204, 20, 0);
+>  static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd, 0x204, 1=
+9, 0);
+> --
+> 2.50.1
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508140828.p7rvt41N-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/spacemit/ccu-k1.c:160:1: sparse: sparse: Initializer entry defined twice
-   drivers/clk/spacemit/ccu-k1.c:160:1: sparse:   also defined here
-   drivers/clk/spacemit/ccu-k1.c:656:1: sparse: sparse: Initializer entry defined twice
-   drivers/clk/spacemit/ccu-k1.c:656:1: sparse:   also defined here
-
-vim +160 drivers/clk/spacemit/ccu-k1.c
-
-   159	
- > 160	CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_sysclk), MPMU_ISCCR, 27, 2, BIT(29), 2, 0);
-   161	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Best Regards
+ Guo Ren
