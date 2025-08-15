@@ -1,119 +1,148 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6CA299A83
-	for <linux-clk@vger.kernel.org>; Fri, 15 Aug 2025 07:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82E8192D97;
+	Fri, 15 Aug 2025 09:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755244304; cv=none; b=kxnfxT75DAdTdwmlNi+EXrDYfZ8J+xn9M09DxIMSGcfVK99JP3sov9yiHhEbg4uezVF+F7xOVhXUvy6B4asiH4BFUkp9GE7PtDN9jaMVr3o6lgggZQ+7cgRLEEBoO4bf1kIf6kD3s7jXd8I7546veXZxVzT/Ubj23KGUEGwPN/k=
+	t=1755250571; cv=none; b=pCYz1mR1vFl28IZ3x18j4+oClQ8VELgwsdP28U309+/H5lns9iaD/iN30KdtyLshUFZU/CxF+uWk4DBoWbVTIwDSVh9zjHMZ9xwTkogqwI7w1LC5AZ4Vc/tFrKPET10lCGtnaYnbNX9Bk/5HxwuZzVhB4+u67pG5JH4kQ+S7J0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755244304; c=relaxed/simple;
-	bh=wM1U30RQbt9hBouuD0ezUDPgcheiH5LPKBmgTE1Ky2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMxCaS/RC8VIndEuZBeK7wWl9qFDTJuDF6Z0rBWyuDIA/oMrgDZJ7ukDFEleKwpPPPJzv+xlLn5CCYEuiRbDk2+qRPY+/0/+iAk6Ms92iQlgiukTj+tHvQwNcAgGmQ6KHiEK7zX4/qzXHKE31Q9j1g5tigZTuSojvV879R+VKII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cwK3dEm0; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cwK3dEm0"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9dc5cd4cbso1264698f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Aug 2025 00:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755244300; x=1755849100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7m6KRZ644lLKsPQroVf0XIC4bXSKC2MeWxzfY2tyrfE=;
-        b=cwK3dEm0J8ToNAu7/73elVZ2CRHijlXZxaEMLdAUAjVM4OWcJNV1syrQWrOlBIqfj7
-         O2kRa/P4sKSQByEKMyt1pwr4/8Dm58L+rLc5mYiOsUCx65kNpuKw6GbuRvNkrHekQi/q
-         /P0OFVexU127j+w3XftVsN1rW9hyjMY+qYop6VUI7tkMDZBywEJ4P9XVFkmK39SeT4wS
-         UvKy+FcfutYMwXyJ/ze3yIuRuDcadiqsDjSQpO1NAPZkrpTef4B3dWyY8LkyuP1Ve1+T
-         +ALQi64bcegzIruddJYTlD/njTkqORezTOF9qiwzIiGmUZfikTl/bb561kTi2ZCzTock
-         mu/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755244300; x=1755849100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7m6KRZ644lLKsPQroVf0XIC4bXSKC2MeWxzfY2tyrfE=;
-        b=mtGmBPd3dZQ5xInygX/zTpYfG4DdZUDDDJr/k4ueFnakC5md88zmmKcWlFUBXvQF3E
-         VNitGDGg0jZrFA4fjYfjQA9ucGcF1tWlWZ9YWit1oPdO/D9UOyzW40Aegh1etRaemdzd
-         g692GjeXg1X6eCe/wmiZ8Ce3Z2CoCBHlsZ1CS+9W8/iW8noXdc4goNmrkeB7ZSWbOt0f
-         n3fWXSerQU0Pod4QRlaNfkuX0X5rVgmkFX+EOrk02Fe4eaUVcz2S+uwddH0OBpuNta5m
-         9R7dgkPLs4nmyqOoL79zrLIDmOZwhwOmB+h3rf0jN/OXUrr1YNihg831iKSOUFr5GGTz
-         MK7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5NAV7T/jVOfG9h0Av4CtSkXy7TB1yRAaR9Rj7cCQvMPJkIxcarxzl/Bz0GjqJfthLfY/Bj7jfgnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0j3u68Gr8mK2ryT2jUXKK/9vdjUSRp6skld7gfOnlRPzwq+mF
-	FMtOARPDFVZ7UNmdQ+Xuq300ZW5u5k9rVBL23CZhdlnG/QCnkUrF+siNAR3o4x80nzQ=
-X-Gm-Gg: ASbGncsNuUdZkQ5301MJmY22NIxswlP5sQZX99NuDPQ3yIJdPeNAYBdKTBki6XEO/eE
-	ZnlunBf4Y+G3obXxrFOUYnd8HLYhX15l/X5otUuHuKDaV++O9K6xXW396yerTS1aCN81bmaltwu
-	7tmYcIqEzP18tb/RX29veiup5eiaI7bZZYEOPEJ6dYCWMF9enJ6EIEcRLpfFB9ckZV73jeZL9Ym
-	P0rVz5oNTMW+lRMoXuqPyU0/wUwdM6rRftRFNHW0MOXiCoRRXO1dR7mk3yQinwjxjv2D77JMUof
-	XIYwwiPVl9QnMFCowfQW8FbBpdQWaQQACwKXh2QFheCRzUzfH2yHVlvSU/WN2ESpUeCHiTM+y34
-	4l7nznZwI6PwmvIzuUyKdO5F2dI4=
-X-Google-Smtp-Source: AGHT+IHGaYmTmAXRjZNxgrE/I/LGdmAsoAt1BCBaN3PbkpwZZAN5Rl0gISUa4t157xbfeVhA78qhSA==
-X-Received: by 2002:a05:6000:430b:b0:3b7:9589:1fd1 with SMTP id ffacd0b85a97d-3bb68fdc587mr833175f8f.44.1755244300612;
-        Fri, 15 Aug 2025 00:51:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb64758d27sm1004077f8f.9.2025.08.15.00.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Aug 2025 00:51:40 -0700 (PDT)
-Date: Fri, 15 Aug 2025 10:51:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] clk: conf: Support assigned-clock-sscs
-Message-ID: <aJ7nCL0PS0DX8rtk@stanley.mountain>
-References: <20250812-clk-ssc-version1-v1-0-cef60f20d770@nxp.com>
- <20250812-clk-ssc-version1-v1-2-cef60f20d770@nxp.com>
- <aJwnH2mlRdqp1K1u@stanley.mountain>
- <20250815071249.GA20726@nxa18884-linux.ap.freescale.net>
+	s=arc-20240116; t=1755250571; c=relaxed/simple;
+	bh=xCrzwTtukmApHlzLgvOkumWzJgSzcKNdfEs8OU3tVYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k20MS1ID1v/c0LrzuEQSeP51wFHBWCWqFJO1uExLhv0IhWmyo/S8cHJNgEnA24WwU9SDZu47jLn3qSU/FX6HRxycy/EFFa4INCrfyX1IaMPJermOq/otfIJpmHT4netuMRL2LhLsa2HFmjeWrz73ES4+ZIQqtsY5mw0cHfyvzjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgAHHxB1_55ouQy_AA--.59061S2;
+	Fri, 15 Aug 2025 17:35:51 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux-riscv@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v4 0/3] Add driver support for ESWIN eic700 SoC clock controller
+Date: Fri, 15 Aug 2025 17:35:39 +0800
+Message-Id: <20250815093539.975-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250815071249.GA20726@nxa18884-linux.ap.freescale.net>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAHHxB1_55ouQy_AA--.59061S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF15GF15Cw1UGrW3Kr4kJFb_yoW5KF45pF
+	4kCr98Cr1qgryxXan7ta4IgFyrZanxXFWjkryxXw15Z3429a4vyF4ftFy5AF97Ar1fAw1D
+	tr1aga10kF4UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRuHqcUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Fri, Aug 15, 2025 at 04:50:42PM +0800, Peng Fan wrote:
-> >> +		if (modfreq_hz || spread_bp || method) {
-> >> +			rc = of_parse_phandle_with_args(node, "assigned-clocks",
-> >> +					"#clock-cells",	index, &clkspec);
-> >> +			if (rc < 0) {
-> >> +				/* skip empty (null) phandles */
-> >> +				if (rc == -ENOENT)
-> >> +					continue;
-> >> +				else
-> >> +					return rc;
-> >> +			}
-> >> +
-> >> +			if (clkspec.np == node && !clk_supplier) {
-> >
-> >Could you add a comment for this condition?  It's strange to me that we
-> >don't iterate through the whole array.
-> 
-> I just follow the logic in __set_clk_parents and __set_clk_rates, nothing
-> special here.
-> 
-> It is just like to phase out cases as below:
->   node-x {
-> 	/* node-x is not a clk provider, but assigned-clocks uses node-x phandle */
-> 	assigned-clocks = <&node-x   XYZ>;
->   }
-> 
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Ah.  Great.  Thanks.
+This series depends on the vendor prefix patch [1] and config option patch [2].
 
-regards,
-dan carpenter
+[1] https://lore.kernel.org/all/20250616112316.3833343-4-pinkesh.vaghela@einfochips.com/
+[2] https://lore.kernel.org/all/20250616112316.3833343-3-pinkesh.vaghela@einfochips.com/
+
+Updates:
+
+  Changes in v4:
+  - Updated YAML file
+    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
+    - Dropped $ref of cpu-default-frequency.
+    - Added cpu-default-frequency for required.
+    - Removed cpu-default-frequency in updated file, because there was no
+      need to add cpu-default-frequency.
+    - Moved DIVIDER to DIV.
+    - Arranged the IDs in order.
+    - Dropped EIC7700_NR_CLKS.
+    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
+      and used clock device nodes.
+    - According to the updated driver codes, the YAML has been updated.
+  - Updated driver file
+    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
+      "cpu-default-frequency".
+    - Modified the comment and used the correct Linux coding style.
+    - Removed codes of voltage, because it was not the clock driver.
+    - Updated the formula of clock frequency calculation. Removed the logic
+      that only used register selection.
+    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
+      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
+      The specific implementation of clock registration was in clk.c.
+    - Added eic7700-clocks.dtsi.
+    - Moved device information to DTS. Put all clocks' node in the
+      eic7700-clocks.dtsi.
+
+  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
+
+  Changes in v3:
+  - Update example, drop child node and add '#clock-cells' to the parent
+    node.
+  - Change parent node from sys-crg to clock-controller for this yaml.
+  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
+    dt_binding_check". And these are not necessary.
+  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
+  - Drop Reviewed-by, this is misunderstanding. We have not received such
+    an email.
+  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Update example, drop child node.
+  - Clear warnings/errors for using "make dt_binding_check".
+  - Change to the correct format.
+  - Drop some non-stanard code.
+  - Use dev_err_probe() in probe functions.
+  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+  riscv: dts: eswin: Add clock driver support
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |  381 +++
+ arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi | 2283 +++++++++++++++++
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   10 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               |   44 +
+ drivers/clk/eswin/clk.c                       |  734 ++++++
+ drivers/clk/eswin/clk.h                       |   69 +
+ 9 files changed, 3531 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+
+--
+2.17.1
 
