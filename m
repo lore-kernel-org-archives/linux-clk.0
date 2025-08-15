@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA035962;
-	Fri, 15 Aug 2025 00:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFB21547E7;
+	Fri, 15 Aug 2025 00:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755217155; cv=none; b=j0zOxktKOqVAlAV8PR3DE7pkStDnHnsd2tD9hZOpswYfnOQlcCQjut1vcGplyk/B/0xI7mooSDnGsvOGKNqpcQ/e21U4c15fCWi4jiWks6yIrrb1x1mComhPSeyKiOwj4dIHOYnd52hcFuh+L6kaRMM/VziABCcsuwixoUTJ/hs=
+	t=1755217944; cv=none; b=PKYckIu4E7tmU0nDBCPojiC73CfXTxfwTskR/KlSkIF+083IQeXkWBY2H++H1pWdY++bwNJH65F56Yrrj+atYTlxRXSixuxo2IjDuX/EzLzKVuvjQEM29bGgqQfPdk6PO1nqu17A2w4ygZZyQ4eQKZVXEiMIVkfGyj4MJPPuz1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755217155; c=relaxed/simple;
-	bh=g4zR21hNRbpIwW2GjR4PpTESla0shxBvfcD4TLxCbgw=;
+	s=arc-20240116; t=1755217944; c=relaxed/simple;
+	bh=137LREHYlf3O0nOm9QpaXT3ohL/dKVWc4fbvyJZAR2Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYyqS32MWqAuCDhju125zVypePM3MKIxWukkGouVcQ3Fs2boV11I/p9OmZfI3EhzuDS5NUtpObJl9zfEA/Ebg7K7J7pjjNxf6CACsebF2dF1Go2ngzRoB84kd42pdzYy85IrW3P+tekrFDae5mzXH7Mv/ZGRINRtktIIpiavtdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd73VYw0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pW0jKVYq66lXDmYZ6aYwW2Bkht17BUf0c0QadW97urwjKEG7pcqAgtCBBWkkRKG3WhIHB8tIImJbW6FykGjrrn5QzZOOiwdom1GTJwMFqZI5h1za0cv3awWt5588M5RT0SvLpGu81kabnMsLYrPJ2YRRvcOM5cZo1N92oai8QdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8zbGxbI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd73VYw0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3238EC4CEED;
-	Fri, 15 Aug 2025 00:19:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8zbGxbI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA15EC4CEED;
+	Fri, 15 Aug 2025 00:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755217155;
-	bh=g4zR21hNRbpIwW2GjR4PpTESla0shxBvfcD4TLxCbgw=;
+	s=k20201202; t=1755217944;
+	bh=137LREHYlf3O0nOm9QpaXT3ohL/dKVWc4fbvyJZAR2Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kd73VYw0MpCR4rPM18k9+ZktOhzAEjAUwD1o8+Fe6aPeWrMhI1AZwI0YZvijEZy8c
-	 fIiewGAMhP1MPHIXrCt2fbHgPm8P616BSrRfUptBE8iCnanb4v1yJRSbg8klLocbi8
-	 UpenqMDDDJBI97YRl2wpQn/HxQPQElh6IeoTiaS9IxlLmjLcVzS8jqfAcKWiAOBz+Z
-	 FX+J6kNwaChIWnBSokvk+FKXB9J1hZzAamhiBG/nAy3NInMS++71/n7lUq8XXIdg++
-	 V965Neoi4auIKv6LnymCAB15UyDqBG0ZxcC77/ogBns/5F5svd6x51x2um7UuqagQC
-	 +AiIUSXjUYkbg==
-Date: Thu, 14 Aug 2025 17:19:13 -0700
+	b=a8zbGxbIa1IvVDqW2E6Y08jD3EhIjoEBs0kLOAGBQ5AJpdUDpaxkM6AEgMCp/I+Rf
+	 pEu+stkbCruZaRbD17WbvwEU0o6QhiqF1ulkBpFCULNoN+IV0JxslqN6vwxke2wUFr
+	 DLs+vdzvTX1clE7UKCHHow8ajxCA78I1gCpHyDYwZmFs03f7m/M0hGNF0/D+beByiz
+	 z8u8dsoqiJ8u7eXTxPrbUjy86s/O58Atwp0NmYwfrwhN92pOGUMF2Tn5nHvFqKgFZf
+	 zIE+NetzGOfBPVNCv6onQFw9vgyOn9Pb1S+wgVclhGBDg9A0RXfhjYx6tdm25/3bNY
+	 JI0SiQ38DytNQ==
+Date: Thu, 14 Aug 2025 17:32:22 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Icenowy Zheng <uwu@icenowy.me>
 Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
@@ -36,11 +36,10 @@ Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
 	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
 	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: thead: add support for enabling/disabling
- PLLs
-Message-ID: <aJ59AfgQNHUpMM7x@x1>
+Subject: Re: [PATCH v2 2/3] clk: thead: support changing DPU pixel clock rate
+Message-ID: <aJ6AFttcM+jUHHQy@x1>
 References: <20250813072702.2176993-1-uwu@icenowy.me>
- <20250813072702.2176993-2-uwu@icenowy.me>
+ <20250813072702.2176993-3-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,32 +48,69 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250813072702.2176993-2-uwu@icenowy.me>
+In-Reply-To: <20250813072702.2176993-3-uwu@icenowy.me>
 
-On Wed, Aug 13, 2025 at 03:27:00PM +0800, Icenowy Zheng wrote:
-> The 2nd control word of T-Head TH1520 PLLs contains a bit to put the VCO
-> into reset state, which means disabling the PLL.
+On Wed, Aug 13, 2025 at 03:27:01PM +0800, Icenowy Zheng wrote:
+> The DPU pixel clock rate corresponds to the required dot clock of the
+> display mode, so it needs to be tweakable.
 > 
-> Some PLLs are put to disabled state by the bootloader, and the clock
-> driver should be able to enable them.
+> Add support to change it, by adding generic divider setting code,
+> arming the code to the dpu0/dpu1 clocks, and setting the pixel clock
+> connected to the DPU (after a gate) to CLK_SET_RATE_PARENT to propagate
+> it to the dividers.
 > 
-> Add support for enabling/disabling PLLs. PLLs other than DPU ones are
-> set CLK_IS_CRITICAL to prevent killing the system -- they're meant to
-> drive CPU or system buses (even the GMAC/Video ones are driving arbitrary
-> buses).
-
-Do you think there is a way in the future to allow disabling PLLs for
-run-time power management?  I think it is more important right now to
-get hardware peripherals working upstream like you are doing, but I was
-curious if there is the potential to do something more granular in the
-future.
-
 > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 > ---
-> No changes in v2.
+> Changes in v2:
+> - Dropped round_rate() because of deprecation.
+> - Changed the logic of determine_rate() to early return if the divider
+>   could be changed.
 > 
->  drivers/clk/thead/clk-th1520-ap.c | 38 +++++++++++++++++++++++++++----
->  1 file changed, 33 insertions(+), 5 deletions(-)
+>  drivers/clk/thead/clk-th1520-ap.c | 64 ++++++++++++++++++++++++++++---
+>  1 file changed, 59 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index 0b5458af8c550..b220a8ed22607 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -55,6 +55,7 @@ struct ccu_gate {
+>  
+>  struct ccu_div {
+>  	u32			enable;
+> +	u32			div_en;
+>  	struct ccu_div_internal	div;
+>  	struct ccu_internal	mux;
+>  	struct ccu_common	common;
+> @@ -198,6 +199,56 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+>  	return rate;
+>  }
+>  
+> +static int ccu_div_determine_rate(struct clk_hw *hw,
+> +				  struct clk_rate_request *req)
+> +{
+> +	struct ccu_div *cd = hw_to_ccu_div(hw);
+> +	unsigned int val;
+> +
+> +	if (cd->div_en)
+> +		return divider_determine_rate(hw, req, NULL,
+> +					      cd->div.width, cd->div.flags);
+> +
+> +	regmap_read(cd->common.map, cd->common.cfg0, &val);
+> +	val = val >> cd->div.shift;
+> +	val &= GENMASK(cd->div.width - 1, 0);
+> +	return divider_ro_determine_rate(hw, req, NULL, cd->div.width,
+> +					 cd->div.flags, val);
+> +}
+> +
+> +static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				      unsigned long parent_rate)
+
+This should line up with open parenthesis. Other than that nit:
 
 Reviewed-by: Drew Fustini <fustini@kernel.org>
 
+If no other issues arise on this series, then I can just fix it up when
+applying.
+
+Thanks,
+Drew
