@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADD42D0604;
-	Fri, 15 Aug 2025 23:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686EE2D3727;
+	Fri, 15 Aug 2025 23:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755300498; cv=none; b=fjyETT6Sx0qDKDnAUUMdzxOgl0upugKAjvNjalPyRtD/fS58XCX8wDQ+dfWn/6zLkELXJ1h2XqbNSApafsxND+KdI8LamUICw8F+hJsQ6iuqwWRi8WKt/xq6OujPc2YpNqUYePRMEwQoLH15m0eATBn4rTOS8wub9RSwHqFokQU=
+	t=1755301504; cv=none; b=k5z8aar58j7nzZeCZy+ikPHCkaIUe6XQSjOkWNim6+sKR810jiaKygpLr7j7RWtMZ7xYchd1JjRvFBwNU6ne0jyMGBscZJfICkiexF34+g+CtlKqUMlE9lDoeNfNRWmEYEJOAUox8WuoMgHxSkTdjnN2S5MhCgjDlLA/G05T3Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755300498; c=relaxed/simple;
-	bh=yelvL4dmdgGDCuYleeyGfJDg/UCsmwpvJL6w2P4pq9Y=;
+	s=arc-20240116; t=1755301504; c=relaxed/simple;
+	bh=PmcBMUQVb7YUhAvAzMDl9UseO4hrrR3ph0w6p79xwlI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TiM/ud0Wuc7Vp6ilz7O2JP4rBxscY/RZ+FyDCMtP9xaNs7L24vsTiK+WAJLaTjar0NMxwgllvkdEI2Mx+wa3bLz0wZgDfd2I4svx0PhrK0fgSxDLtdEhCOaMzhJDcfxqF/eQvCTWQ7Es6ilUqjvDpE3FBruxW/nc2pmRJDVLKmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqZ/cddD; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtqciWVjgxqv+nacW2/SNAq7xGkHXCPadZf7AxfTm+JdZzelnPnCU4ewF7Y8l/pZFBM2FGmGB3m3mX0ksn0khk01tSpKLkYJapeOURbO2/pYGcRx+hMyXzKOKJ11IK0o4kaT74HTqlRkuLw3Ow5l3QV+lT6zFAjftqe3WWGzhkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjKM+RrD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqZ/cddD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB6EC4CEEB;
-	Fri, 15 Aug 2025 23:28:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjKM+RrD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8341C4CEEB;
+	Fri, 15 Aug 2025 23:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755300497;
-	bh=yelvL4dmdgGDCuYleeyGfJDg/UCsmwpvJL6w2P4pq9Y=;
+	s=k20201202; t=1755301503;
+	bh=PmcBMUQVb7YUhAvAzMDl9UseO4hrrR3ph0w6p79xwlI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qqZ/cddDsjxUfDISYYsis1AnupksV+QZJvj/YQxMXXKrirybYWyGnqw4PTI0aVdd+
-	 pxFnuuiJgd9gmjWa8pYiKfv32etx+dk8lCdNquGmfr1fOoVUhT5fTJ7mrwGhdQv4Ll
-	 tfD9RtqC5vHwZnWXxNNm3C90yD6ORuJhYYbS+RjXwvm7+2O1/OVM/silVmrhYWae9X
-	 vySHsADtZwuNMD2Y4Cfis2d3DMNyrDy8iHeXTb36Tokv20bn9lLvF697GOZtguRFZX
-	 fYGX9qi5NT9pH2dXdHmo+BthrW9mAkS/jAKzuBtZymXoOb73866JopEaRl/xRnv3hQ
-	 zY8JPn3asjiTA==
-Date: Fri, 15 Aug 2025 16:28:16 -0700
+	b=gjKM+RrD0htfrl3ryPG7UBplETzrOIHPabW/sMTd6k1OBSHoq7M/aM+JYITLHQRma
+	 fVtLCabVsDEJGQH112zivFtuVbNagpD3qy7MV+EGVH9W4lQ6tTOUJ5N/e5kTlkDMNs
+	 dRJ9VOcKtmZPcipyz+Eb49/Mq0cpqqdmu2wnpTpcdvOKStyup1PwPkibFzl7KU3OUO
+	 7PfURkhmTtbQTu3Ntn+DR0WMhCtNzSgDPOcQBYqC4WwZvN4Alm2ZvM3/I/U8wSd9Ja
+	 4K1xhfgaCZejxkA8BSY984mGxPOTpgA/GU0CKsTC0+PzBazsyEcXAdVZk6+WMjuMoG
+	 YTOOFMN20l8JA==
+Date: Fri, 15 Aug 2025 16:45:02 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Icenowy Zheng <uwu@icenowy.me>
 Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
@@ -36,43 +36,61 @@ Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
 	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
 	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: thead: th1520-ap: allow gate cascade and fix
- padctrl0
-Message-ID: <aJ/CkFlRNFCYNoOS@x1>
+Subject: Re: [PATCH 2/2] clk: thead: th1520-ap: fix parent of padctrl0 clock
+Message-ID: <aJ/GfmLjU/K4FJOM@x1>
 References: <20250813171136.2213309-1-uwu@icenowy.me>
- <eedd44480a76840e1fec73d4433c772c5bdc7011.camel@icenowy.me>
+ <20250813171136.2213309-3-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eedd44480a76840e1fec73d4433c772c5bdc7011.camel@icenowy.me>
+In-Reply-To: <20250813171136.2213309-3-uwu@icenowy.me>
 
-On Thu, Aug 14, 2025 at 01:16:16AM +0800, Icenowy Zheng wrote:
-> 在 2025-08-14星期四的 01:11 +0800，Icenowy Zheng写道：
-> > Current ccu_gate implementation does not easily allow gates to be
-> > clock
-> > parents because of the waste of struct clk_hw in struct ccu_gate;
-> > however it's found that the padctrl0 apb clock gate seems to be
-> > downstream of perisys-apb4-hclk, gating the latter w/o gating the
-> > former
-> > makes the padctrl0 registers inaccessible too.
-> > 
-> > Fix this by refactor ccu_gate code, mimicing what Yao Zi did on
-> > ccu_mux; and then assign perisys-apb4-hclk as parent of padctrl0 bus
-> > gate.
+On Thu, Aug 14, 2025 at 01:11:36AM +0800, Icenowy Zheng wrote:
+> The padctrl0 clock seems to be a child of the perisys_apb4_hclk clock,
+> gating the later makes padctrl0 registers stuck too.
 > 
-> Forgot to mention a easy test of this patchset:
+> Fix this relationship.
 > 
-> Just install `gpioset` from `libgpiod` on a Lichee Pi 4A, plug a fan to
-> its fan port, and run `gpioset 3 3=1`. The expected behavior is the fan
-> starts to spin (because GPIO3_3 is the pin controlling the fan),
-> however without this patchset Linux will fail to switch that pin.
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index d08e7fb387e50..f6f3d63d53353 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -888,13 +888,16 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", p
+>  		0x150, 11, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+>  		0x150, 12, 0);
+> +static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
+> +	{ .hw = &perisys_apb4_hclk.gate.hw },
+> +};
 
-Thanks. That worked great and the fan is spinning :)
+Nit: when I run checkpatch on the whole file, it warns that there should
+be a blank line after function/struct/union/enum declarations. Probably
+best to insert a new line here.
 
-Drew
+>  static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, 30, 0);
+>  static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 26, 0);
+>  static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, 24, 0);
+>  static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, 23, 0);
+> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb_pclk_pd, 0x204, 22, 0);
+> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb4_hclk_pd, 0x204, 22, 0);
+>  static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi", axi4_cpusys2_aclk_pd, 0x204, 21, 0);
+>  static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk", peri2sys_apb_pclk_pd, 0x204, 20, 0);
+>  static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd, 0x204, 19, 0);
+> -- 
+> 2.50.1
+
+Aside from that nit:
+
+Reviewed-by: Drew Fustini <fustini@kernel.org>
