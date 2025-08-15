@@ -1,69 +1,69 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9C277C8E
-	for <linux-clk@vger.kernel.org>; Fri, 15 Aug 2025 03:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7E521A43C
+	for <linux-clk@vger.kernel.org>; Fri, 15 Aug 2025 03:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229405; cv=none; b=jtVJYORGn+dxDPg0hAWxvuACevehQJgigO0qC+ucxaEiiHRhzZCOHrIpsLiRuYwxodkDj4zqGDNM1NQQoPkK1UJ8Op14pMBPxnNh3SuUsH0CYW03inlx9ecY4Byc8FPdWvtbiuWBbi5wWaqFEAu12HNkZn52ENlolgp2pke4RDU=
+	t=1755229861; cv=none; b=jeIOOoqqRF2/GZnSGAJfB+ymSxgLhtdVRDq4FFEmT5h5i2xsf4k8BKQ0HZ96sZa9RrmqJmyPB4F/WYOGwlfRkIvhgqOkWQHGzCxUsquuNpW+YWklsQ4C5lWcsVQ93bdZ3EdPqQZsPKEaCM8K0Hmz6rqiWTIZomzODLUeXPN98r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229405; c=relaxed/simple;
-	bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
+	s=arc-20240116; t=1755229861; c=relaxed/simple;
+	bh=c2pC85ElO+tZ8p0q9KcefHan237MX0I5q5DFQRsj70M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EBZvltLGftfY07M3C4UElV6vOpAx+5iGlfTon1f7S6Zmm00FYXSa/rmC0bHJgsnKJGY2s0Od5C7osw20wr+OypZvPNiwB5fSB0NmoWTk471QgAmUqj5aDYChPFwGFJK5Ljy9lx+grBjatczIy2nNkS/JzP3f54Q12WUsf7Uq9zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kwvNuP2C; arc=none smtp.client-ip=209.85.167.44
+	 To:Cc:Content-Type; b=gHMQompdWFAhUK0AhoMA9o9dedSnf25xKQZrvHgUJuId9EKpTbHXgpJbn/ePAhel9IvN2jzBhVl0XECM4VJyzy6yY45qjZ06o2zaPIfn/uPlvp4eEckMmimC/Nk9ApZYc9M+TEKQR4aior+clck4YejxVuvBv+IAE+aVSYbeTYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VESgFop9; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kwvNuP2C"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce5287a47so1451706e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 20:43:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VESgFop9"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce5284d63so1452218e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 20:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755229401; x=1755834201; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1755229857; x=1755834657; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
-        b=kwvNuP2CIZOJMuv6JQVxGZF7wCgfvL/cCINTMjR+jI/e/I80srcqTzD2IdB5OTKOMh
-         EjKdYYT91g00ngvRlnd9VdncuLw6ZyCiOPuAYcgMit/ol2jw6VcOU90uXEEYkqmcO70+
-         g1GFtDCE8xJdE7Nmm3IKuPmbxweVaak5KzfD8=
+        bh=mNCpJgQjq+GS4YzNy98cq9BJV9qzo09+hdPjGhITOTw=;
+        b=VESgFop9JXpWUWdR9s3k1FiQgAjftZp2l0yfa8NmqS5SmyE7zyCIsLYxSO6Rx/0Ka1
+         ZtH/yp4SfNDz5THsdsdQ3BEMRlfqwbLTScOXan3jcYhhrI6Vx2xaaD07zuxGVNyDmfyC
+         s9g3iCUH1r8iHRuBA+NSd1O1VJZZVd29cK3RY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755229401; x=1755834201;
+        d=1e100.net; s=20230601; t=1755229857; x=1755834657;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b1bVscfxC4uFT/CEoA/bhRidOult40TJcVZcOy00MCI=;
-        b=TU1PMSr9Wrst8Er8vXPD75bcC/zf13vc0HvQn//rb8BKmtYNL9MUN9xngUCncqcE9c
-         +tdmD5v08K+LPLfq6qbnAoLcU94R+14zjSIqi/p5zOa7VBMGzmVyaaUDDsFAXBqWtJ+y
-         ujS6yivjR7fwdX7muFBDHu9C6qyxPO7Z9a6/0kjCAisYfFRWw2wpBrQUIZjJ6q7DRPTR
-         c2a5qSFCZrQ8rOuD+JiGDJ/2Lnh5Qz+0CxgeZyCOvguEm1Li04N0ais9r81A0i+vd/4K
-         +r/9cbPXGLZhlbEPtLWlOhpcCS9IuxEU6UEhw7+mOCDj6IGngqQefr0HG/0oCkDgR4+i
-         aGPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/8KjZt83/juHxCeFQd8QgOEz/IT0f8beM45xV3jtCK/9ku/3ASy6sn3mlcgQLqgztwFiQ60W7C/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjR7EGhX+sqEw4ixlfEGUR9eFjL9lsytZmqFtemql5UGn+JjGm
-	7sduPTi5Is4Ds/BkM/STblqo34AJwFtX3C3oj2y54sbK1cO21FLX99XnncnOxvjr6Jn2xMDRcxo
-	LWfP6I36Ll6phLAzyga7W57cyz4vB+xPW+cqVYPcM
-X-Gm-Gg: ASbGncuoJkiqhfL32/pA6aU6Fv3n5R1TgRRj8joyz/MLhA3oGAeXK7O3+O/UzsCCmYE
-	N3h4bYom7ndjVGarBysn+tQ5OOqovMPKC1Dhny/0+d35vcs1CrOqcnPFbQXvvuWyyeF1hJCJkdg
-	Ek7PjXC8IOQ+jXYi6qWPihj0Uu+6GJCkJAHtK79DtWEsNk2kKVLenSV2uCyxvtqD6b1RFdOGOyN
-	XSj4FoJ1xlOk3f2xB1De5lnSqsA5WCN8ClVFw==
-X-Google-Smtp-Source: AGHT+IEqCwdjtNotzKv7k6sNon11epPQ9Q7yaZt1pImrKpO8J5PSviVGiMjVATClFXgSR2SA/yoBT6p78Ov7Q+2gotM=
-X-Received: by 2002:a05:6512:3e0d:b0:55b:84e7:e14a with SMTP id
- 2adb3069b0e04-55ceeb42b0fmr131122e87.25.1755229401420; Thu, 14 Aug 2025
- 20:43:21 -0700 (PDT)
+        bh=mNCpJgQjq+GS4YzNy98cq9BJV9qzo09+hdPjGhITOTw=;
+        b=Z5xcaNeWz57MQf33xlkM8BKhaC29hL2sw0E8sLq/xBifWSP5pXtLewNON6kNiT7Sdp
+         41bRHEZUZDXFLMGEfCoEszS8HMbixaSLDtDVuv89hndlSQmARurqJdNY1EIbUkZOSg6J
+         hkrY7E5WGp7KKlmwlrJdulXHnrTIg5NCnOU8gjOyJTrZFhh10d7KdNspOSf/Czci6hcq
+         khHSw9fHwyDxZr7TQonbC9V7Ro3JOLGaue3ApSIUG4xOl95ecR/qR0AljlGFOKrYUQf6
+         CCn13WtLwQIQ4CsBQ51mndoK7XOZkGbuy/01rqHBdbz+9nXW6jyVKUN9cn6VFo7AH/J/
+         slRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7RWSTJ8cX+hk6Y4R4FcLuwJlAI4rApS8ecWHgru3HSpyGECe5bBVK6H38pR6McS501nqiGmGPuVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg1Nw0Ui699l1nqbUvfvyaV6YXS62oxhVDo7huSJ2SMzZedVBI
+	nQWhLJ0duoZSTSeNO+M0vo8uql0hRs2cRrwIAI8l237CkA3dc8SAWn5n0JZoiPqAYRSNZ8VDCRE
+	pyboDivSOzt7dqEdI8OFi0bmu8YIxPvkMvX6OWbbv
+X-Gm-Gg: ASbGncsxslW3pjuZpAqU0SsuW+9G4KSqWZFtM06pcQ1Wx3O5YWcSaxM8nKz3B8hwfsy
+	acWejJtADcsSwMRSuSVF9ykAcN8HvITHFT7DewM7GsSfetbqkRWiEWPsqfaCDad07J0dNFTXjTP
+	IOyIQlpxyPzs/b7BObCB9kx2COGIxrIdz1O5hSGHfFMqrV26XnzTxPOQpic7XnQXK6Y1zhbUbs+
+	iiMljQbXhxx+zhlfL8ZbJYgpgNaWxpUUrf2hg==
+X-Google-Smtp-Source: AGHT+IHanR5W4aT2CMpF63TjQl6R4IN1HWWDRZ1tieU0aIdSV3su7803eNqcJODnfoQ+Iaia8tnU4ymR0P29h1PYZxw=
+X-Received: by 2002:a05:6512:110c:b0:55b:814a:a7fa with SMTP id
+ 2adb3069b0e04-55ce6276b14mr1674516e87.8.1755229857008; Thu, 14 Aug 2025
+ 20:50:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-9-laura.nao@collabora.com>
-In-Reply-To: <20250805135447.149231-9-laura.nao@collabora.com>
+References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-16-laura.nao@collabora.com>
+In-Reply-To: <20250805135447.149231-16-laura.nao@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 15 Aug 2025 12:43:10 +0900
-X-Gm-Features: Ac12FXzyZO_yczjiRVwJ_XiOUJ7K7LAiS8kN-QE11MKfkqUjTCK5j2sczcKt2tQ
-Message-ID: <CAGXv+5FwV1YuBoefMAX1UvOd1=cg9Ld1ZawyNts1BR8YMezhKQ@mail.gmail.com>
-Subject: Re: [PATCH v4 08/27] clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
+Date: Fri, 15 Aug 2025 12:50:46 +0900
+X-Gm-Features: Ac12FXwHRx7C4fyOWZyt0EB-zyYHFrLdTdYy_27o2coqKVBHEp62jlgbsZo1EGQ
+Message-ID: <CAGXv+5GH6ypcuXn9+XED7du_CJaeDs3M1ODjtN7pDH_FA0gmjg@mail.gmail.com>
+Subject: Re: [PATCH v4 15/27] clk: mediatek: Add MT8196 ufssys clock support
 To: Laura Nao <laura.nao@collabora.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
@@ -79,15 +79,190 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
  wrote:
 >
-> On MT8196, some clocks use one register for parent selection and
-> gating, and a separate register for frequency division. Since composite
-> clocks can combine a mux, divider, and gate in a single entity, add a
-> macro to simplify registration of such clocks by combining parent
-> selection, frequency scaling, and enable control into one definition.
+> Add support for the MT8196 ufssys clock controller, which provides clock
+> gate control for UFS.
 >
 > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 > Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>  drivers/clk/mediatek/Kconfig             |   7 ++
+>  drivers/clk/mediatek/Makefile            |   1 +
+>  drivers/clk/mediatek/clk-mt8196-ufs_ao.c | 109 +++++++++++++++++++++++
+>  3 files changed, 117 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+>
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 1e0c6f177ecd..d99c39a7f10e 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -1010,6 +1010,13 @@ config COMMON_CLK_MT8196
+>         help
+>           This driver supports MediaTek MT8196 basic clocks.
+>
+> +config COMMON_CLK_MT8196_UFSSYS
+> +       tristate "Clock driver for MediaTek MT8196 ufssys"
+> +       depends on COMMON_CLK_MT8196
+> +       default COMMON_CLK_MT8196
+> +       help
+> +         This driver supports MediaTek MT8196 ufssys clocks.
+> +
+>  config COMMON_CLK_MT8365
+>         tristate "Clock driver for MediaTek MT8365"
+>         depends on ARCH_MEDIATEK || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
+e
+> index 8888ffd3d7ba..1a497de00846 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -153,6 +153,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) +=3D clk-mt819=
+5-wpe.o
+>  obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o clk-mt8196-=
+topckgen.o \
+>                                    clk-mt8196-topckgen2.o clk-mt8196-vlpc=
+kgen.o \
+>                                    clk-mt8196-peri_ao.o
+> +obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) +=3D clk-mt8196-ufs_ao.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt8365.=
+o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) +=3D clk-mt8365-apu.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) +=3D clk-mt8365-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8196-ufs_ao.c b/drivers/clk/media=
+tek/clk-mt8196-ufs_ao.c
+> new file mode 100644
+> index 000000000000..858706b3ba6f
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025 MediaTek Inc.
+> + *                    Guangjie Song <guangjie.song@mediatek.com>
+> + * Copyright (c) 2025 Collabora Ltd.
+> + *                    Laura Nao <laura.nao@collabora.com>
+> + */
+> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
+> +#include <dt-bindings/reset/mediatek,mt8196-resets.h>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Nit: add empty line here for separation.
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-gate.h"
+> +#include "clk-mtk.h"
+> +
+> +#define MT8196_UFSAO_RST0_SET_OFFSET   0x48
+> +#define MT8196_UFSAO_RST1_SET_OFFSET   0x148
+> +
+> +static const struct mtk_gate_regs ufsao0_cg_regs =3D {
+> +       .set_ofs =3D 0x108,
+> +       .clr_ofs =3D 0x10c,
+> +       .sta_ofs =3D 0x104,
+> +};
+> +
+> +static const struct mtk_gate_regs ufsao1_cg_regs =3D {
+> +       .set_ofs =3D 0x8,
+> +       .clr_ofs =3D 0xc,
+> +       .sta_ofs =3D 0x4,
+> +};
+> +
+> +#define GATE_UFSAO0(_id, _name, _parent, _shift) {     \
+> +               .id =3D _id,                              \
+> +               .name =3D _name,                          \
+> +               .parent_name =3D _parent,                 \
+> +               .regs =3D &ufsao0_cg_regs,                \
+> +               .shift =3D _shift,                        \
+> +               .flags =3D CLK_OPS_PARENT_ENABLE,         \
+
+This probably doesn't work correctly, since not every clock defined
+below has the "ufs" clock as its parent. If the requirement is that
+the "ufs" clock be enabled for accessing this register, it is going
+to fail (badly).
+
+ChenYu
+
+> +               .ops =3D &mtk_clk_gate_ops_setclr,        \
+> +       }
+> +
+> +#define GATE_UFSAO1(_id, _name, _parent, _shift) {     \
+> +               .id =3D _id,                              \
+> +               .name =3D _name,                          \
+> +               .parent_name =3D _parent,                 \
+> +               .regs =3D &ufsao1_cg_regs,                \
+> +               .shift =3D _shift,                        \
+> +               .flags =3D CLK_OPS_PARENT_ENABLE,         \
+> +               .ops =3D &mtk_clk_gate_ops_setclr,        \
+> +       }
+> +
+> +static const struct mtk_gate ufsao_clks[] =3D {
+> +       /* UFSAO0 */
+> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_UFS, "ufsao_ufshci_ufs", "ufs", 0),
+> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_AES, "ufsao_ufshci_aes", "aes_ufsfde=
+", 1),
+> +       /* UFSAO1 */
+> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_TX_SYM, "ufsao_unipro_tx_sym", "clk2=
+6m", 0),
+> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM0, "ufsao_unipro_rx_sym0", "cl=
+k26m", 1),
+> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM1, "ufsao_unipro_rx_sym1", "cl=
+k26m", 2),
+> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SYS, "ufsao_unipro_sys", "ufs", 3),
+> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SAP, "ufsao_unipro_sap", "clk26m", 4=
+),
+> +       GATE_UFSAO1(CLK_UFSAO_PHY_SAP, "ufsao_phy_sap", "clk26m", 8),
+> +};
+> +
+> +static u16 ufsao_rst_ofs[] =3D {
+> +       MT8196_UFSAO_RST0_SET_OFFSET,
+> +       MT8196_UFSAO_RST1_SET_OFFSET
+> +};
+> +
+> +static u16 ufsao_rst_idx_map[] =3D {
+> +       [MT8196_UFSAO_RST0_UFS_MPHY] =3D 8,
+> +       [MT8196_UFSAO_RST1_UFS_UNIPRO] =3D 1 * RST_NR_PER_BANK + 0,
+> +       [MT8196_UFSAO_RST1_UFS_CRYPTO] =3D 1 * RST_NR_PER_BANK + 1,
+> +       [MT8196_UFSAO_RST1_UFSHCI] =3D 1 * RST_NR_PER_BANK + 2,
+> +};
+> +
+> +static const struct mtk_clk_rst_desc ufsao_rst_desc =3D {
+> +       .version =3D MTK_RST_SET_CLR,
+> +       .rst_bank_ofs =3D ufsao_rst_ofs,
+> +       .rst_bank_nr =3D ARRAY_SIZE(ufsao_rst_ofs),
+> +       .rst_idx_map =3D ufsao_rst_idx_map,
+> +       .rst_idx_map_nr =3D ARRAY_SIZE(ufsao_rst_idx_map),
+> +};
+> +
+> +static const struct mtk_clk_desc ufsao_mcd =3D {
+> +       .clks =3D ufsao_clks,
+> +       .num_clks =3D ARRAY_SIZE(ufsao_clks),
+> +       .rst_desc =3D &ufsao_rst_desc,
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8196_ufs_ao[] =3D {
+> +       { .compatible =3D "mediatek,mt8196-ufscfg-ao", .data =3D &ufsao_m=
+cd },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_ufs_ao);
+> +
+> +static struct platform_driver clk_mt8196_ufs_ao_drv =3D {
+> +       .probe =3D mtk_clk_simple_probe,
+> +       .remove =3D mtk_clk_simple_remove,
+> +       .driver =3D {
+> +               .name =3D "clk-mt8196-ufs-ao",
+> +               .of_match_table =3D of_match_clk_mt8196_ufs_ao,
+> +       },
+> +};
+> +
+> +module_platform_driver(clk_mt8196_ufs_ao_drv);
+> +MODULE_DESCRIPTION("MediaTek MT8196 ufs_ao clocks driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.39.5
+>
