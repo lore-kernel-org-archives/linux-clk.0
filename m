@@ -1,210 +1,93 @@
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390B1922FA;
-	Fri, 15 Aug 2025 02:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0316A29B23E
+	for <linux-clk@vger.kernel.org>; Fri, 15 Aug 2025 03:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755224604; cv=none; b=uxjj24h18JKPdFoH3BLLxpk56pGwPySEG0450VOSfmGLXXnl+fSW1kuyfctDpOLXFLjaMhnUCWkOPMJY6cACWLiTb7wqpjgmIW0NwXeSgu4nqzUiOrbymdQrQTWo1Qf95Nq09I2j9Dng/7usYP0fCVKRztMbms6cf+xD1zm9SIE=
+	t=1755227034; cv=none; b=BCArGi/92/GxWYr4Tq/cDstYJjA+zRs3N7KS0I2xbEqNou4m75IwYFgP3jLxSfK8SizxKowSCzEq0eR8ESWX5f0oPcM0bkQlYEXsjW9MXmhjeahF1oQU7Ciae+B+m9Vb+O3js9NSp8e95upL92zfoEJTRgsikvArZZ/B29sNMaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755224604; c=relaxed/simple;
-	bh=XruUVYyoFszbeJGWSb3rZHzycGQGngep9xPazeWgbMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sg55mn59Ar//2Xy/fJfM6SfjTicvnJvjXhcZmHENQ5P6d4RDRKOc0WhkgQ6k/Tgk04j5UvHhTIbs+MyafQxJppA2n7xPAM6QeutrMELMDVoc54UXUc1b1FoUUhUE0MzljlWHwyB6BlXUtLmEnf5qwX9e90Qu6ZsvzGqfnc2gT3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=jRZgONT5; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1755227034; c=relaxed/simple;
+	bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NCDxZhFPEQtf7/h9uF7BUkvxab2hHXBb6j+GrR0n7UTt7A1YvzHzHulOpVi1feHpEb1CqNTDQVIFlTNJGQMs6dhPxRW3rN9eegOQ8iL2U5z+cTUmZP6MKnOu8Q6IG8LJuMml50HnE10w612hB9d5sNXHfPYSsmUxKRsq4SoRu1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eFSyTybM; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="jRZgONT5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755224594;
-	bh=Niaj4OMwo4W2fUafjFNulcdi+Nlm7R7eM7SD6asWCMs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=jRZgONT5a/yyaF4bL4Tr6GJbw7bbNi6SfF8jagTU6NUGls0wvnbllyaP/H5atOc41
-	 D0ujqqEcTL6p65sFLo7SP8fRTqr5EJ9h2NlrXEXgtIWIzAp69p/BJmpjn4cPmTbOxA
-	 5tne02m3/g2lB1eMaWmnd5QurHDUthcdhnAthXzM=
-X-QQ-mid: zesmtpgz7t1755224593t961c5431
-X-QQ-Originating-IP: 9mkEVNaVfiiSECCslKxiFqq//seDD1r4T4Oyt/0nWFw=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 15 Aug 2025 10:23:12 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14240890600098775965
-EX-QQ-RecipientCnt: 13
-Date: Fri, 15 Aug 2025 10:23:12 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v2 2/3] clk: thead: support changing DPU pixel clock rate
-Message-ID: <B226CDDA4BC5D173+aJ6aEPwUqM91jnLv@LT-Guozexi>
-References: <20250813072702.2176993-1-uwu@icenowy.me>
- <20250813072702.2176993-3-uwu@icenowy.me>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eFSyTybM"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce5097493so1625386e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Aug 2025 20:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755227031; x=1755831831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
+        b=eFSyTybMep2zGs8cgTE9pFyv+RTx1qg/TRgwPwPzjOQ7yhv/VSIHID5g3GxVInSYYs
+         MEYzYAInQbb171Zo4sOPVbxWclPPKuptT/OeJ9TBJAvsCWXlngg9fkFLbU6PW1q805dl
+         OiqErf0N1aN3mvk2cDicMkezFJiuU/xQAQxCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755227031; x=1755831831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HinHQKZUtxe4t41iR9D9bn+PEZ105vFBbOQmMnTwk9Y=;
+        b=hO1DojvW9kqE6/DD4fuLIi0YswZtID1bXUrvch728sZkBO59i81qMSEu/jAcVaRPO4
+         egtUvucL5hnm0u6uwkGg7NSu1xz+Fin4hMEyjkTxX3lLeaTRADtZq6vhCxFVH2LgLrhB
+         idz0x1hvyTvyIy5SiNgJwvRX9YtO2GXeYb0wEGdCdbWHx9/BpnhbWdfK/HBF9JcfWmn8
+         pVAGn31KaWHueO5xq668cRpYSPB8A2bk0xQKPHbpxLj4aLkjT2d1+2k/UWmK2NdoIkXv
+         hYUVWwPtT2E1SPrhbqWWl+/Dlo3ipoFF3wGt8TCIdnxDjjP0PY+He13Jr0PNH0m4sjOC
+         MC2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVSWRDsEaSRNGtDoCakOi+1HmU7N/6VtG0s++v8QNavwXqMtC6+rE0TxfNI5VZ4kNwEFnFtt1j46r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXw8grZgkzqJqKJ8tr/8ffRxLTGLsoj090R/qvLCNFU+3oBnsK
+	+aMwcp0rGcFk5TTF/ieUXGiU84ZP6L4fJ/1L6BaqcaJj+cpV/fuOZzTQ22VtM8I/mXo6G2gaYuV
+	wZOVLkdPfprPdUV3E9apEcV2S/1emsyS4rp9nJE6f
+X-Gm-Gg: ASbGncv/kL7iYM2AMk6x7kF3XgcpQEMR9nwLK45IZp/5fzcRzrBieB/g4WvG0Uh2bwA
+	p3QPQdBDuuieMLzrXtyo9o/v/JuQalF8ni66Uukf0XzElYk0H1J5FLQzoKq6E6lSueI8LmVtuWl
+	HRwwuTasyYYViq6VYhgwEY0NVgesAKSOclsG/+9OQR+OJEWaMOGif1UdWzYlNaW6QCWBbHN5Avo
+	GiZ0vidtw+Scn47Ly5O5CIdbvSzVmwv4ebfyw==
+X-Google-Smtp-Source: AGHT+IE5oudoWOuExXFcWc613ObdeU+xcba/kkjYM4lQww+ElYzSmi2/gSXFiaP7UzcFCgh/kx+W9zwxu3OJ8SIUDuU=
+X-Received: by 2002:a05:6512:1104:b0:553:a9af:9e43 with SMTP id
+ 2adb3069b0e04-55ceeb906demr143594e87.53.1755227031067; Thu, 14 Aug 2025
+ 20:03:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813072702.2176993-3-uwu@icenowy.me>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MV3nwXc78CnhQWAZy3cypx8a4zJ++TjPzIyWj/FVGrLqXHir0ddWBLIW
-	MYf/gd3OZClEo0fqa50QReXZOkXIIhkttngqZ57QV1b4an7xBa/cOMEgPeAoWAlLS2x97J2
-	w8MgStQiLabAPj+GnCbkz745juSlrsPvr3n2VqWU3FbdVnKZh8SJRulBjo4NcD39oXFIKb3
-	Urkrc63FLdyoxvC2lCXZfPcEDs/Sc9XPw6Gh5V+B4jdr3ymLHJeBs1xZE+FA3Oakhb/6BbM
-	s7oJJhk1TUbZndRrJI/MXOp7eNWUGfIZ7iXsefv0AfoVXIzHiK0xleKtXfrOBAkmL5zcFPj
-	HBQ7DgCdsmZUdggojpdfA52kNFG5f+hcgg7JL26ZXOFtjPhA+FE/kGi4cIShfGkhAvEg0dn
-	8zFtQptCFKQHKN/maSVOCBw3TZLUVJhLqPfmCVFp3Hzqw7/DYcdCvflHDo4jcOIMzZ7pfrp
-	e9pEam8t2WNewk/ZNONAFv6hsZdLdTqAKZu/0xAZySvK5kAlsEb7aH0eSkZ8H2UbvqhbyzC
-	wXNNHqLFKejnLiaFccp3aMmMu27MkkrP4fDE7fhEYpD5UasvrHREU+wGkl/NPtdrXXjGm8B
-	WrmJc7KH6Yxx1L2H/j05dMCKwdgO3Rh8qqJUxHTDoGezC/gZ7TtTG9w2SHOkrifpbxpNJC0
-	ciJZDzBWWbzHQBZO+mhb5bT3ygQ/cAG4m8o1RWaUfumrmiXuR1Vp+IuUlK028Q4yK8/ypEu
-	J3OaUs8qhIjC05A8xT2/3SIq5Imyzxq1/A3MnN4Yi9JXwwNwQiX6C2Gfryr656l6umxgdtV
-	YgZcCBI2umDqv5PHe9AiilJN2sSmvmHcIwBa9JxfAXj5Fpe7WltyZItqFKqlGkrjafQgiQa
-	f42dV7BTAJEuPnbExxxFiTnmi+sQKJ+AAMaIinzc6lw473fClye68vWH0ziqUD8yJb6mJLK
-	E0sxexc36NeifHdBCNOZsT6wgA4xODT+dE8NzA8GjmuVlXyWD9Lj1myVKM25CbTeG/0LTLV
-	wkVisR2Y+FFaGBqD3taVpIAWrcsHk+6L9je/hZOdaxr5hNPL2XLP4NMF33Ul6ofX+fLQL8Y
-	g==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+References: <20250805135447.149231-1-laura.nao@collabora.com> <20250805135447.149231-2-laura.nao@collabora.com>
+In-Reply-To: <20250805135447.149231-2-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 15 Aug 2025 12:03:40 +0900
+X-Gm-Features: Ac12FXzlE2kni0q5NyqXgX7d170kjvAVh0V3KwwS63urIxRRXRRBW2zdHpmR4vA
+Message-ID: <CAGXv+5GDU45O46A+mpdu1HQ_sfT2Su4fgFCtr4xPjoRPzwOWmg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/27] clk: mediatek: clk-pll: Add set/clr regs for
+ shared PLL enable control
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 03:27:01PM +0800, Icenowy Zheng wrote:
-> The DPU pixel clock rate corresponds to the required dot clock of the
-> display mode, so it needs to be tweakable.
-> 
-> Add support to change it, by adding generic divider setting code,
-> arming the code to the dpu0/dpu1 clocks, and setting the pixel clock
-> connected to the DPU (after a gate) to CLK_SET_RATE_PARENT to propagate
-> it to the dividers.
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
-> Changes in v2:
-> - Dropped round_rate() because of deprecation.
-> - Changed the logic of determine_rate() to early return if the divider
->   could be changed.
-> 
->  drivers/clk/thead/clk-th1520-ap.c | 64 ++++++++++++++++++++++++++++---
->  1 file changed, 59 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-> index 0b5458af8c550..b220a8ed22607 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -55,6 +55,7 @@ struct ccu_gate {
->  
-...
-> +static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long parent_rate)
-> +{
-> +	struct ccu_div *cd = hw_to_ccu_div(hw);
-> +	int val = divider_get_val(rate, parent_rate, NULL,
-> +				  cd->div.width, cd->div.flags);
-> +	unsigned int curr_val, reg_val;
-> +
-> +	if (val < 0)
-> +		return val;
-> +
-> +	regmap_read(cd->common.map, cd->common.cfg0, &reg_val);
-> +	curr_val = reg_val;
-uh? remove this line.
+On Tue, Aug 5, 2025 at 10:55=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
+ wrote:
+>
+> On MT8196, there are set/clr registers to control a shared PLL enable
+> register. These are intended to prevent different masters from
+> manipulating the PLLs independently. Add the corresponding en_set_reg
+> and en_clr_reg fields to the mtk_pll_data structure.
+>
+> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 
-                - Troy
-
-> +	curr_val = curr_val >> cd->div.shift;
-> +	curr_val &= GENMASK(cd->div.width - 1, 0);
-> +
-> +	if (!cd->div_en && curr_val != val)
-> +		return -EINVAL;
-> +
-> +	reg_val &= ~cd->div_en;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +	udelay(1);
-> +
-> +	reg_val &= ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-> +	reg_val |= val << cd->div.shift;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +
-> +	reg_val |= cd->div_en;
-> +	regmap_write(cd->common.map, cd->common.cfg0, reg_val);
-> +
-> +	return 0;
-> +}
-> +
->  static u8 ccu_div_get_parent(struct clk_hw *hw)
->  {
->  	struct ccu_div *cd = hw_to_ccu_div(hw);
-> @@ -240,7 +291,8 @@ static const struct clk_ops ccu_div_ops = {
->  	.get_parent	= ccu_div_get_parent,
->  	.set_parent	= ccu_div_set_parent,
->  	.recalc_rate	= ccu_div_recalc_rate,
-> -	.determine_rate	= clk_hw_determine_rate_no_reparent,
-> +	.set_rate	= ccu_div_set_rate,
-> +	.determine_rate = ccu_div_determine_rate,
->  };
->  
->  static void ccu_pll_disable(struct clk_hw *hw)
-> @@ -784,6 +836,7 @@ static struct ccu_div venc_clk = {
->  };
->  
->  static struct ccu_div dpu0_clk = {
-> +	.div_en		= BIT(8),
->  	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
->  	.common		= {
->  		.clkid          = CLK_DPU0,
-> @@ -791,7 +844,7 @@ static struct ccu_div dpu0_clk = {
->  		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu0",
->  					      dpu0_pll_clk_parent,
->  					      &ccu_div_ops,
-> -					      0),
-> +					      CLK_SET_RATE_UNGATE),
->  	},
->  };
->  
-> @@ -800,6 +853,7 @@ static const struct clk_parent_data dpu0_clk_pd[] = {
->  };
->  
->  static struct ccu_div dpu1_clk = {
-> +	.div_en		= BIT(8),
->  	.div		= TH_CCU_DIV_FLAGS(0, 8, CLK_DIVIDER_ONE_BASED),
->  	.common		= {
->  		.clkid          = CLK_DPU1,
-> @@ -807,7 +861,7 @@ static struct ccu_div dpu1_clk = {
->  		.hw.init	= CLK_HW_INIT_PARENTS_HW("dpu1",
->  					      dpu1_pll_clk_parent,
->  					      &ccu_div_ops,
-> -					      0),
-> +					      CLK_SET_RATE_UNGATE),
->  	},
->  };
->  
-> @@ -891,9 +945,9 @@ static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
->  static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
->  		video_pll_clk_pd, 0x0, BIT(4), 0);
->  static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
-> -		dpu0_clk_pd, 0x0, BIT(5), 0);
-> +		dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
->  static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
-> -		dpu1_clk_pd, 0x0, BIT(6), 0);
-> +		dpu1_clk_pd, 0x0, BIT(6), CLK_SET_RATE_PARENT);
->  static CCU_GATE(CLK_DPU_HCLK, dpu_hclk, "dpu-hclk", video_pll_clk_pd, 0x0,
->  		BIT(7), 0);
->  static CCU_GATE(CLK_DPU_ACLK, dpu_aclk, "dpu-aclk", video_pll_clk_pd, 0x0,
-> -- 
-> 2.50.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
