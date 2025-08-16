@@ -1,78 +1,81 @@
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43BE22D7A5;
-	Sat, 16 Aug 2025 15:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F453176E9;
+	Sat, 16 Aug 2025 23:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755357289; cv=none; b=uTqgPwP8uur6mmnDjNn1eG7Ag6gb3/4DrDG35izSJ7kz4pbZFdX2BwNTrrmG10aSV/QN/f1mGi1StLlPJk/8wmr95/dAXo3YnfLngOId2VhnHnxOBRvE+pEtC6SpIjDFnx0ACxsO9bMu0sHujIdbTykpmH0/JaLkq5BkGE3Pkm0=
+	t=1755386201; cv=none; b=U3LIOXNkYoK6skO39kZzASNGP7B6UDWq16MfAUc1nCc29s3KGHVAoPqLKAHUv0GweJOe4/iZMFHrjFWLoiAQpse2+Uq6atzE1HCGayT2nzwryolNRBG0m7tX0XJhnVdT8u880dzM5fCh17YUeRkdDDFVWJ/iLwLopb5NM7Awe4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755357289; c=relaxed/simple;
-	bh=OSQDEVYojpqUsVcDydeFyzVEZCVIa8DW4oEeyDGqo8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myBsYPMH/4jFu07OogdKvXDNXiH68sY1D/VqlBhAEEhkCu9zGfGMbD7XqpFjIgY8+QAmmuZzs0UQNHVu/2wdMJNzNE1k1oR1fdW6qdYACt0EvqfaTGAA44ICDLdo8mzu0/+2+rg14jiSajKFlR3PEnJg+Kec1hll0h4wKRXPiws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=TXqIFPiu; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+	s=arc-20240116; t=1755386201; c=relaxed/simple;
+	bh=OHkAbGlDKsYvfqX+OzqqHwvaoFnMvxEZtaai09lKiY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpDXqD4ymFKdKnJQqoBgFFIA/cgYT7OrLGmqyb3gyvp67d/nBnQjbI1QXD6xdelBYBeceMso9Wh8b+echdbtHxJdTtQso9bCjeadGdw+yf8hn+gD4YngAQgxo8/NMtwyEkvaY3r3bGnU+NtbJi+IC/AufeD3NnuMUBOv+Qu7Sdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTI2DQ+Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="TXqIFPiu"
-DKIM-Signature: a=rsa-sha256; bh=OSQDEVYojpqUsVcDydeFyzVEZCVIa8DW4oEeyDGqo8E=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1755357181; v=1; x=1755789181;
- b=TXqIFPiu6ruM8+TZCP7ahhsw6qYop9K/l1fCNrrqliT1uZk7vu1AzGR1/A19LlPkTANLZoEu
- aOhte95klePHknLPz9jeiQ1J8m8KWcUc1qD3YANM04M4R+5VWBwv408nNHpSfhvZqD3o1IudYE/
- 5oy/nQtqAeBqojkzXAH6V2Uzy5kvJVOMRVPBenkGd6eL1JY6MgHZftTadmQ3EnqrCFIgt44XpiP
- WI2rJgMDlEz3yd8Nyje075Ns+6LtDmlpKQeXihPAM2dZ/vuzDXp5BH70FaW+orF8e0etwUYrkk4
- Zk4pf5s0w+ttb0XY7QjBJfHZK+MBrwqHddhw9+/QhPdvg==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 12f6888e; Sat, 16 Aug 2025 17:13:01 +0200
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>,
- Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
-Date: Sat, 16 Aug 2025 17:13:00 +0200
-Message-ID: <6196438.lOV4Wx5bFT@radijator>
-In-Reply-To: <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
-References:
- <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <1950265.tdWV9SEqCh@radijator>
- <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTI2DQ+Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F6BC4CEEF;
+	Sat, 16 Aug 2025 23:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755386201;
+	bh=OHkAbGlDKsYvfqX+OzqqHwvaoFnMvxEZtaai09lKiY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tTI2DQ+ZYBGZ3nagYB/0VvE8BZYgTsR+poCS+c20iBCA1LNtz+awi6X/uTLW93f4H
+	 CTkmgeiWSyzoFRonRwF4lsgq8AqO1GWTfsRmrAEHJ8Sb/rCuj33jBhlVFIqNuvZ/zP
+	 FGrl1zqsKj7JsawWickGyKG5x1qZhpK5RClHKalq9jt4WxY6ro7Qe2Z5BnepSjaj66
+	 5NweiLL0qJiSbwQV4W6JhM1HYu97aoaL3MTtKqMhBD2eB5QrwV7G3T24r8+DFgjvYR
+	 0Ha1aQKx5sODtppA0Lr4uZQttGLIab42iBgSCxky8bzF9hFajM6ljHVYJQvBywwoQ1
+	 t8d3LpALm9LKQ==
+Date: Sat, 16 Aug 2025 16:16:39 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.dev>
+Cc: Icenowy Zheng <uwu@icenowy.me>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: thead: th1520-ap: describe gate clocks with
+ clk_gate
+Message-ID: <aKERV0c7jat//279@x1>
+References: <20250813171136.2213309-1-uwu@icenowy.me>
+ <20250813171136.2213309-2-uwu@icenowy.me>
+ <aKA9QxKo3fg-bdNa@troy-wujie14pro-arch>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKA9QxKo3fg-bdNa@troy-wujie14pro-arch>
 
-On Friday, 15 August 2025 08:08:24 Central European Summer Time Krzysztof K=
-ozlowski wrote:
-> On 15/08/2025 00:08, Duje Mihanovi=C4=87 wrote:
-> > > I am asking to see complete binding with complete DTS in example and
-> > > submitted to SoC maintainer.
-> >=20
-> > Hm, so if in the example (and the actual DTS) each domain is assigned a
-> > clock, can I then keep the domain and domain controller nodes like Medi=
-atek
-> > and Rockchip have?
->=20
-> You would need to point me to specific files or show some code.
+On Sat, Aug 16, 2025 at 04:11:47PM +0800, Troy Mitchell wrote:
+> On Thu, Aug 14, 2025 at 01:11:35AM +0800, Icenowy Zheng wrote:
+> > Similar to previous situation of mux clocks, the gate clocks of
+> > clk-th1520-ap drivers are also using a helper that creates a temporary
+> > struct clk_hw and abandons the struct clk_hw in struct ccu_common, which
+> > prevents clock gates to be clock parents.
+> > 
+> > Do the similar refactor of dropping struct ccu_common and directly use
+> > struct clk_gate here.
+> > 
+> > This patch mimics the refactor done on struct ccu_mux at [1].
+> > 
+> > [1] https://lore.kernel.org/all/20250722080535.60027-2-ziyao@disroot.org/
+> Should we remove this link to the cover-letter?
+>                 - Troy
 
-Sure, mediatek,power-controller.yaml and rockchip,power-controller.yaml
-in Documentation/devicetree/bindings/power.
+Good point. Yes, I think this would be better than a link as it is now
+in master:
 
-Regards,
-=2D-
-Duje
+54edba916e29 ("clk: thead: th1520-ap: Describe mux clocks with clk_mux")
 
+There is already v2 posted so no need for v3 just for this. I can fixup
+when applying.
 
-
+Thanks,
+Drew
