@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D126634;
-	Sat, 16 Aug 2025 09:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110AD24A043;
+	Sat, 16 Aug 2025 09:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336727; cv=none; b=DMiziW0knAHSzcEE2LE6y5CtPL8mO2PH3Yrk1QKG1lpCoFOb54IF1Q5WM82B6nxILDemVWenq8NorWcjfvejTGzoEq+GN9YHpfArB6X721ATmnB81+3g3Ep95lb0/fs0WT0I2IkMTGuo+8iGpWrxFDjOeGlLQ5VnQWXUDd1sc48=
+	t=1755336794; cv=none; b=brdMc4mGbKdRzTK3no4xmFklOs9LAypu2i6o1suPs36qLz+npPJJnKuc+nLLUYYq8Q39FslL/9ENkc2j4KSIrRXxQfxLt0AMnUJVawQdxYbPj7yEcej5nrrybpqLwj6J0UOHVyvA0bNoYODAQKidYbqYgveKBXcZSUoxhCQiIqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336727; c=relaxed/simple;
-	bh=oEyF2eJ6WhDQJU764/6uBj7AJ/pKHLod7UwFKVQuEmI=;
+	s=arc-20240116; t=1755336794; c=relaxed/simple;
+	bh=CGm9yLJptkx/owDsJQBhgom8+2ST8ifFCJpbZhGlWus=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JdSHpl53mgS9NQQidoJanqsmoFOB896WkW4JPDjjwIQjEIuuSeve4SfTBzcXiykKE9J2Jnk2LpVEbhpn5ZnUhrJXBwyNSW0nHMRgEGG7elgDct9HQex3rcOBTY192BZDnp+jM1v9LPFS7l0WaJQpmytIk2ds7S+hFm9xlwc/uyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qeiDbmo8; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=OumtKLtWjVgad+DeCbLrNK3+woiPX63Qb1MLfq/YL2HXHoK/MFz+OaPdBWksUhQjt1/bPYMCj/Q5c4K2L6cDO6KxQhKlBH2YSwAkD2DZRw9/taTBkNUx5/vJBtgOmaY+FX2Im2SFl9ufC8BhLFrVYDgHLKZq7UVoY7MGILg7nW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWylBKzm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qeiDbmo8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD12C4CEEF;
-	Sat, 16 Aug 2025 09:32:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWylBKzm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AFAC4CEEF;
+	Sat, 16 Aug 2025 09:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755336726;
-	bh=oEyF2eJ6WhDQJU764/6uBj7AJ/pKHLod7UwFKVQuEmI=;
+	s=k20201202; t=1755336793;
+	bh=CGm9yLJptkx/owDsJQBhgom8+2ST8ifFCJpbZhGlWus=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qeiDbmo8SFZVpreHbV3TyxkEafKo6aIVu8hKK+LyPE/V9/Ml8s+IuYUOYHN1/wt2R
-	 zlUpiX8S66IOKUYiRkkEwUzry4zqQ7he5t+c2FeIHW0wwpUTm3Ofzc4LDMWraEtxEQ
-	 cGnyyTPXKHQOgL9WHex/YXEtfQr9phCkyBU2lBSLuHU9RYHJeOkXFDIOkzQM34xlX1
-	 hQSyrZIGBi+9Qjm+DDMeXFezd6oCUWcQ6qKIx4m3dck7eBVBXCQ5u2eR5TFv/GPydy
-	 LRnZ1Ql07ABzPJCh5U4lvLdiUSKzTOIgxRgDp64ipA8qsxdWi6dp/W6n9zDmGjRDDO
-	 BS05vfLm/V1rA==
-Message-ID: <5e89d0c7-5ac5-4376-bc6e-c7ff8ee05024@kernel.org>
-Date: Sat, 16 Aug 2025 11:32:00 +0200
+	b=LWylBKzmboh6g8QmqLgQs7AM6K5L8Ww3TEfU0JKccbD8j58oEDnl4gEKayAhdfpZX
+	 r6zVnfVUCKMPN8BuOTY8mnF4r5G2Tzu21HFIQeU0kJ+0QX+v4PH/7CuRpUAPNWskel
+	 fb1pLoAWdJAqchrxf38Z6rnzaWcq99jMrqZiXG+Nrcm38nek4IZ9+3o1x4aBT5e9pK
+	 i4wA4r1F+z6jvEASMqrWEv0IjaHPQtYDi9tHRRnYQcF8enh9sqptmILGMUg9rP7pbH
+	 iHMKhNcmlNzE9cJFcB8cWSA42xM8L8p0G+DwEwYFDaSC+wD2aD05H/GdbYcKeKa78g
+	 ofyMhmRA4sUNg==
+Message-ID: <484e4ff2-c7b2-4087-8850-5a972e7c82b4@kernel.org>
+Date: Sat, 16 Aug 2025 11:33:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] arm64: dts: allwinner: a523: add USB3.0 phy node
+Subject: Re: [PATCH 4/7] phy: allwinner: a523: add USB3/PCIe PHY driver
 To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -49,7 +49,7 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
 References: <20250816084700.569524-1-iuncuim@gmail.com>
- <20250816084700.569524-6-iuncuim@gmail.com>
+ <20250816084700.569524-5-iuncuim@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,27 +95,76 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250816084700.569524-6-iuncuim@gmail.com>
+In-Reply-To: <20250816084700.569524-5-iuncuim@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/08/2025 10:46, iuncuim wrote:
-> From: Mikhail Kalashnikov <iuncuim@gmail.com>
-> 
-> After adding the phy driver, we can also add phy node. In addition to the
-> clk and reset lines, the power domain PD_PCIE is declared in this node
-> according to the bsp dtb. So let's mention it. 
-> Currently, phy driver does not support role selection and only works in
-> USB3.0 mode.
-> 
-> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> +
+> +	phy->reset = devm_reset_control_get(dev, NULL);
+> +	if (IS_ERR(phy->reset)) {
+> +		dev_err(dev, "failed to get reset control\n");
+> +		return PTR_ERR(phy->reset);
 
-Please organize your patches correctly. One DTS was in the middle of
-patchset, other is at the end. They all must be at the end, because you
-cannot have dependency of driver on DTS.
+Syntax is return dev_err_probe.
+
+> +	}
+> +
+> +	phy->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(phy->regs))
+> +		return PTR_ERR(phy->regs);
+> +
+> +	phy->regs_clk = phy->regs + PHY_CLK_OFFSET;
+> +	if (IS_ERR(phy->regs_clk))
+> +		return PTR_ERR(phy->regs_clk);
+> +
+> +	phy->phy = devm_phy_create(dev, NULL, &sun55i_usb3_pcie_phy_ops);
+> +	if (IS_ERR(phy->phy)) {
+> +		dev_err(dev, "failed to create PHY\n");
+> +		return PTR_ERR(phy->phy);
+> +	}
+> +
+> +	phy_set_drvdata(phy->phy, phy);
+> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +
+> +	ret = sun55i_usb3_pcie_clk_init(phy);
+> +	if (ret)
+> +		return ret;
+> +	dev_info(phy->dev, "phy version is: 0x%x\n", readl(phy->regs));
+
+
+This should be rather dev_dbg. See coding style.
+
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +static const struct of_device_id sun55i_usb3_pcie_phy_of_match[] = {
+> +	{ .compatible = "allwinner,sun55i-a523-usb3-pcie-phy" },
+
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, sun55i_usb3_pcie_phy_of_match);
+> +
+> +static struct platform_driver sun55i_usb3_pcie_phy_driver = {
+> +	.probe	= sun55i_usb3_pcie_phy_probe,
+> +	.driver = {
+> +		.of_match_table	= sun55i_usb3_pcie_phy_of_match,
+> +		.name  = "sun55i-usb3-pcie-phy",
+> +	}
+> +};
+> +module_platform_driver(sun55i_usb3_pcie_phy_driver);
+> +
+> +MODULE_DESCRIPTION("Allwinner A523 USB3/PCIe phy driver");
+> +MODULE_AUTHOR("Mikhail Kalashnikov <iuncuim@gmail.com>");
+> +MODULE_LICENSE("GPL");
+
 
 Best regards,
 Krzysztof
