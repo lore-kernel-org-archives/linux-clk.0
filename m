@@ -1,229 +1,119 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B6923D29F;
-	Sat, 16 Aug 2025 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755335543; cv=pass; b=m6Q+aMk7vZhRtF5E/JUX2ISWiFo4OCADS9gVi9Eiy1wyzFH14SyvuwMjQB4LCRivHZNiZ/GykkE4yJtCnfC/W2FPdDDICicQ703YKipmjEoea9/Ggl6qM86jO9A9z5teb3kbFxep+zOJaOH+TGTQbIMKY+iEwinNXPE/vK3uxco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755335543; c=relaxed/simple;
-	bh=sxntlmaX9skVoC/D7k0co6oe2BLpEuvezNW/dGjNWQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dc6ryjpQgaTgXBZGTF2C+q7mjSfSckYuh1jP6cB9La2qSL0OBblFmHSCdsgOwcleQtDE7BWyxEKd2skNm28JWw4wlvlpK2o28c/7KXFf3rQg2Iv6eVH3sNC1tyF4O+G9jQPOtvWST9nJRKeKXmVD4Sw+meBVIUpAh5BEFpa4zsU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MDB8eRBh; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534C6242D84;
+	Sat, 16 Aug 2025 09:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755336608; cv=none; b=R1GN0L6rTydThwVqdmE5gCFDw1+8+nEJfXVexAukOUYWpKH9xPrkdc7RwC0Tb4rBIYne3opJ4v85A6jubQ9o4vv2s1n/W+ZK0Us4NAo8MInzjNKbvwkh31qmq2LTYYNOLi867RuWYo4YJKrlhGcIVvoE/kHzpFw9xC2UUPDm79I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755336608; c=relaxed/simple;
+	bh=L2pDXt7Di7jsWWHk1cqmaqgT51d11o638zJ41+YNieA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nM40YSF7Ngayt35WkHPg8Ik/Na9TYDY8zTnGxxT9jdKYYFT2u3MV3FgbThmH/I/RXf0uRb/UWqIdY/+szVTPpuiKOdD1heYxmTNvgKt6zlN21z75X8EhrHmiz4nLU9hDdNqWZ64XfrZBFimIVnD/1eN/2LEyeiefHwrarn25K3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxn2Ubou; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MDB8eRBh"
-ARC-Seal: i=1; a=rsa-sha256; t=1755335526; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mdit7eKotHavbQ2FTFFdYRrLobT1upX7wtgcYrNQD6jYKYItSAyZZiglbGzYpMRoljnRAFcgltakEKZqsxZe+4UWGlWdUKPOCkiMNoEtgHj9B0JjUYatVxJpkICGmDyXOuPEwFCkNoeckiU+9BiWhhY7DdSx4HL9g6cjkUFt9ys=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755335526; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NRlRSlmdIvW6NmRYLkNnaaRN4ad5e91BviukfyqBzLo=; 
-	b=NxKmgHBqUQB8IMOiDwHNqsOj5zLHmktNFTgrXhwwRbe43WdRTWr256b4MSJvbh3/LbS9u9eBgnZELEabshNUalEQT0t2Lz4qpyy0N2yaw2luVwUVzIXRuSHz6qYDnXilVofg84YQXKC13OikiMHk6XP7+Pu43dmknrJt2NK5oUE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755335526;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=NRlRSlmdIvW6NmRYLkNnaaRN4ad5e91BviukfyqBzLo=;
-	b=MDB8eRBhMH344Z6it9ItfGqQp5shI/jeiBD+vArrMbeVbAIeO2gHWnSFPiL0oSaf
-	aIFDYe1mDkyATA57Mc+g5A8TnvyeE04drQNFJNic+N4LXpaipocOXco5WQ5KecOC5hD
-	nhTVu2vYIZu6CJAVN9GnodeG5tpRc4Ko5RSNvxtv4McdyRkexJ+Ezu46Q6NGlV93tpy
-	GQlAEJjP8G5yB3FUI7oSOZqLmL3aT+7UxfOk/AwHc4papu5GtUCfTSi8gxi4CkVuN40
-	MtMFFXk573ey8DAmAHaRmfS03vpTVTDJOUydrOI9j7U4uHK+8jg3PUAwY6JnC6Jezwy
-	rjSFmahjMA==
-Received: by mx.zohomail.com with SMTPS id 1755335523279919.8290029794405;
-	Sat, 16 Aug 2025 02:12:03 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v3 4/4] clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
-Date: Sat, 16 Aug 2025 17:11:13 +0800
-Message-ID: <20250816091113.2596048-5-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250816091113.2596048-1-uwu@icenowy.me>
-References: <20250816091113.2596048-1-uwu@icenowy.me>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxn2Ubou"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91131C4CEEF;
+	Sat, 16 Aug 2025 09:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755336607;
+	bh=L2pDXt7Di7jsWWHk1cqmaqgT51d11o638zJ41+YNieA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dxn2Ubou6yl9kFWMgk/D7RxcLoM2tDpKhszvc4dgSOULYOESiXAGX0J6gYgEa2anA
+	 bSyFjMdc/kk5DAIuSMix4zeJtOITqNGpIFUbSJYZqlSWlD+yrNwoNz+1fgbRBomRfr
+	 zNn4CvsRYzpm4PgZpQP2cXDTx53/Lkzrno+9UMT24isuxs7NaoqX97rtVI7LTxRyxI
+	 cLI1CGXEUeLE0VS2kUSVcj38Jli0NZNNSLsvG/2+cdWDMccLxF4HBRbqEohMLUO9xz
+	 8pbhAVLVVUtd/BoYUqvHtgrBhFGwo4S0er/oFx2XxMzOKdXG50ykdBqX5WVi2n2HNY
+	 WEi8RSTQnoRWg==
+Message-ID: <0e149bdb-8830-42a2-927b-a489b4195015@kernel.org>
+Date: Sat, 16 Aug 2025 11:30:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] clk: sunxi-ng: a523: add missing usb related clocks
+To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Andre Przywara
+ <andre.przywara@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
+References: <20250816084700.569524-1-iuncuim@gmail.com>
+ <20250816084700.569524-2-iuncuim@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250816084700.569524-2-iuncuim@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The AXI crossbar of TH1520 has no proper timeout handling, which means
-gating AXI clocks can easily lead to bus timeout and thus system hang.
+On 16/08/2025 10:46, iuncuim wrote:
+> From: Mikhail Kalashnikov <iuncuim@gmail.com>
+> 
+> Several clocks were omitted when adding the original driver. These clocks
+> are necessary for USB 3.0 to work correctly. I added these declarations
+> according to the driver's BSP code.
+> 
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c      | 32 +++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.h      |  2 +-
+>  include/dt-bindings/clock/sun55i-a523-ccu.h |  4 +++
 
-Set all AXI clock gates to CLK_IS_CRITICAL. All these clock gates are
-ungated by default on system reset.
 
-In addition, convert all current CLK_IGNORE_UNUSED usage to
-CLK_IS_CRITICAL to prevent unwanted clock gating.
+Bindings should be a separate patch. Checkpatch should also suggest that.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-Reviewed-by: Drew Fustini <fustini@kernel.org>
----
-No changes in v2 except for rebasing error fixes (which I sent as FIXED
-patches in v1).
-Changes in v3:
-- Rebased atop ccu_gate refactor.
-- Added Drew's R-b.
-
- drivers/clk/thead/clk-th1520-ap.c | 44 +++++++++++++++----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 54222b3219ccf..26e55e1c60148 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -559,7 +559,7 @@ static struct ccu_div axi4_cpusys2_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("axi4-cpusys2-aclk",
- 					      gmac_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -581,7 +581,7 @@ static struct ccu_div axi_aclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("axi-aclk",
- 						      axi_parents,
- 						      &ccu_div_ops,
--						      0),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -730,7 +730,7 @@ static struct ccu_div apb_pclk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
- 						      apb_parents,
- 						      &ccu_div_ops,
--						      CLK_IGNORE_UNUSED),
-+						      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -761,7 +761,7 @@ static struct ccu_div vi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -786,7 +786,7 @@ static struct ccu_div vo_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vo-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -811,7 +811,7 @@ static struct ccu_div vp_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      CLK_IGNORE_UNUSED),
-+					      CLK_IS_CRITICAL),
- 	},
- };
- 
-@@ -872,27 +872,27 @@ static const struct clk_parent_data emmc_sdio_ref_clk_pd[] = {
- static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd, 0x100, 4, 0);
- static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd, 0x100, 5, 0);
- static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x", axi4_cpusys2_aclk_pd,
--		0x134, 8, 0);
-+		0x134, 8, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_pd,
--		0x134, 7, 0);
-+		0x134, 7, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd,
--		0x138, 8, CLK_IGNORE_UNUSED);
-+		0x138, 8, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
--		0x140, 9, CLK_IGNORE_UNUSED);
-+		0x140, 9, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
--		0x150, 9, CLK_IGNORE_UNUSED);
-+		0x150, 9, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
--		0x150, 10, CLK_IGNORE_UNUSED);
-+		0x150, 10, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
--		0x150, 11, CLK_IGNORE_UNUSED);
-+		0x150, 11, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
- 		0x150, 12, 0);
- static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
- 	{ .hw = &perisys_apb4_hclk.gate.hw },
- };
- 
--static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, 0);
--static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, 0);
-+static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, CLK_IS_CRITICAL);
-+static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, 30, 0);
- static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 26, 0);
- static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, 24, 0);
-@@ -936,11 +936,11 @@ static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, 2, 0);
- static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, 1, 0);
- 
- static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
--		video_pll_clk_pd, 0x0, 0, 0);
-+		video_pll_clk_pd, 0x0, 0, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
- 		0x0, 3, 0);
- static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
--		video_pll_clk_pd, 0x0, 4, 0);
-+		video_pll_clk_pd, 0x0, 4, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
- 		dpu0_clk_pd, 0x0, 5, CLK_SET_RATE_PARENT);
- static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
-@@ -972,9 +972,9 @@ static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
- static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
- 		0x0, 19, 0);
- static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
--		video_pll_clk_pd, 0x0, 20, 0);
-+		video_pll_clk_pd, 0x0, 20, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
--		video_pll_clk_pd, 0x0, 21, 0);
-+		video_pll_clk_pd, 0x0, 21, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
- 		video_pll_clk_pd, 0x0, 22, 0);
- static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
-@@ -984,11 +984,11 @@ static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
- static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
- 		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, 25, 0);
- static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
--		video_pll_clk_pd, 0x0, 27, 0);
-+		video_pll_clk_pd, 0x0, 27, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
--		video_pll_clk_pd, 0x0, 28, 0);
-+		video_pll_clk_pd, 0x0, 28, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
--		video_pll_clk_pd, 0x0, 29, 0);
-+		video_pll_clk_pd, 0x0, 29, CLK_IS_CRITICAL);
- static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
- 		video_pll_clk_pd, 0x0, 30, 0);
- static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
--- 
-2.50.1
-
+Best regards,
+Krzysztof
