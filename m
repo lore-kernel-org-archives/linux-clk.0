@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534C6242D84;
-	Sat, 16 Aug 2025 09:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD3F17A2FC;
+	Sat, 16 Aug 2025 09:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336608; cv=none; b=R1GN0L6rTydThwVqdmE5gCFDw1+8+nEJfXVexAukOUYWpKH9xPrkdc7RwC0Tb4rBIYne3opJ4v85A6jubQ9o4vv2s1n/W+ZK0Us4NAo8MInzjNKbvwkh31qmq2LTYYNOLi867RuWYo4YJKrlhGcIVvoE/kHzpFw9xC2UUPDm79I=
+	t=1755336679; cv=none; b=j7tTvTMhES27ymc7Vbxqo1z1wA1hIh3jp1pTr/AWdI3ucPNY6i0Jmf/SQiFnFwcWVaWVoOA9zTNQFfxEvre/J0i3JgvRZEdlH3MRfXnSNBpf571EiM8yOnOJFVCo6LejqBdXiMMvh02P5UaJ3OFSH+vE8IcpzUEsegyzjnsj/z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336608; c=relaxed/simple;
-	bh=L2pDXt7Di7jsWWHk1cqmaqgT51d11o638zJ41+YNieA=;
+	s=arc-20240116; t=1755336679; c=relaxed/simple;
+	bh=b3nZU4EntGbWNXI7FIE7S/NEvJ6E/2WZETtliu2GRLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nM40YSF7Ngayt35WkHPg8Ik/Na9TYDY8zTnGxxT9jdKYYFT2u3MV3FgbThmH/I/RXf0uRb/UWqIdY/+szVTPpuiKOdD1heYxmTNvgKt6zlN21z75X8EhrHmiz4nLU9hDdNqWZ64XfrZBFimIVnD/1eN/2LEyeiefHwrarn25K3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxn2Ubou; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=eAhv/x8S/D6OPipSYSsfobJCSHuVkrmeOQdh0AmaFh63h7vPbAlfc4sup2UhtAa9UL2QjpXHRjI6+jxYk1I7vr89/8AAwFXBGlmpNdGW0WuXnZM5tnNOFZVm0VKUvIOU8mQr6Jc5LVwzVfXtfZJkYvthrXgGyAdtG/0dYZUgQxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+EN03jD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxn2Ubou"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91131C4CEEF;
-	Sat, 16 Aug 2025 09:30:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+EN03jD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D396C4CEEF;
+	Sat, 16 Aug 2025 09:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755336607;
-	bh=L2pDXt7Di7jsWWHk1cqmaqgT51d11o638zJ41+YNieA=;
+	s=k20201202; t=1755336678;
+	bh=b3nZU4EntGbWNXI7FIE7S/NEvJ6E/2WZETtliu2GRLk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dxn2Ubou6yl9kFWMgk/D7RxcLoM2tDpKhszvc4dgSOULYOESiXAGX0J6gYgEa2anA
-	 bSyFjMdc/kk5DAIuSMix4zeJtOITqNGpIFUbSJYZqlSWlD+yrNwoNz+1fgbRBomRfr
-	 zNn4CvsRYzpm4PgZpQP2cXDTx53/Lkzrno+9UMT24isuxs7NaoqX97rtVI7LTxRyxI
-	 cLI1CGXEUeLE0VS2kUSVcj38Jli0NZNNSLsvG/2+cdWDMccLxF4HBRbqEohMLUO9xz
-	 8pbhAVLVVUtd/BoYUqvHtgrBhFGwo4S0er/oFx2XxMzOKdXG50ykdBqX5WVi2n2HNY
-	 WEi8RSTQnoRWg==
-Message-ID: <0e149bdb-8830-42a2-927b-a489b4195015@kernel.org>
-Date: Sat, 16 Aug 2025 11:30:01 +0200
+	b=j+EN03jDrf9NJ3ILfY2KjleJ2Of4kMKFqry7Vd5Uvr8odKcnjF7QzIXFGNOlCMq2q
+	 0S9BDOC5FGe2n9S9/nOm+8zb9hZRYhYd5Gwsal/pWpT4OPOFxsoBwW6ZzO1nXKRMeH
+	 Zu2J/3Dr3iMncjIaYqltAOAG+INEQc+s7uErdkFWNCYSUBpIM+eki0gtj6/MCIzV3K
+	 L3ux2shZReP2/IFYG3K48D8WrSUveqCj3TKhcmAhql0sYp70fhHawjqSAIC2+qpEGF
+	 KIL3fQY2mB+uPaguUjGymuoHW+JkJtWBXDZAwuItb6qT+vLTbMI/WCgQVDVRuhdUEW
+	 WII4dlUkMXYCQ==
+Message-ID: <c7468189-deee-449f-b7d0-fa1830ca88fc@kernel.org>
+Date: Sat, 16 Aug 2025 11:31:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] clk: sunxi-ng: a523: add missing usb related clocks
+Subject: Re: [PATCH 2/7] arm64: dts: allwinner: a523: add third usb2 phy
 To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -49,9 +49,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
 References: <20250816084700.569524-1-iuncuim@gmail.com>
- <20250816084700.569524-2-iuncuim@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250816084700.569524-3-iuncuim@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -95,25 +95,44 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250816084700.569524-2-iuncuim@gmail.com>
+In-Reply-To: <20250816084700.569524-3-iuncuim@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/08/2025 10:46, iuncuim wrote:
 > From: Mikhail Kalashnikov <iuncuim@gmail.com>
 > 
-> Several clocks were omitted when adding the original driver. These clocks
-> are necessary for USB 3.0 to work correctly. I added these declarations
-> according to the driver's BSP code.
+> It seems that there are actually three usb2 phys in the processor, which
+> makes it incompatible with D1.
+> The third phy is used together with USB3/PCIe combophy with DWC3
+> controller. In the BSP code, the third PHY requires a separate glue
+> driver, but it seems that it is not needed.
+> According to the BSP code, the third phy does not have a reset line; the
+> only reset is declared in the DWC3 node, but none of this is documented.
+> Since sun4i-usb-phy driver requires a reset, I added RST_BUS_3 here.
 > 
 > Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c      | 32 +++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.h      |  2 +-
->  include/dt-bindings/clock/sun55i-a523-ccu.h |  4 +++
+>  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 21 ++++++++++++-------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> index 6b6f2296b..e4ed4fa82 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> @@ -503,22 +503,27 @@ usb_otg: usb@4100000 {
+>  		};
+>  
+>  		usbphy: phy@4100400 {
+> -			compatible = "allwinner,sun55i-a523-usb-phy",
+> -				     "allwinner,sun20i-d1-usb-phy";
+> +			compatible = "allwinner,sun55i-a523-usb-phy";
 
 
-Bindings should be a separate patch. Checkpatch should also suggest that.
+That's potential break of all users. Also, having third phy (so
+additional piece) is not making things incompatible.
+
+
 
 Best regards,
 Krzysztof
