@@ -1,97 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69ED1FFC41;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220CC849C
+	for <linux-clk@vger.kernel.org>; Sat, 16 Aug 2025 08:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755323660; cv=none; b=IG7yBvLox28e2tQ26hEftPbPyyYBDKG1zmLdQADMvRooDH2FLWSEGADYV70F38HT2TNUpoIjNFPqaoVqXHvdkVdtwMjjX5l7grxtUl8bBhVP8Mld3hSzsdy95xDWTIKrY7isjhT9w6dRciBXWL6ncXnuETOjWBArNK1TiHM0j7E=
+	t=1755331331; cv=none; b=nnJhtHkd98Jv6YbO06236/wTcrt2dMCAKx2gCNvxG3ZSjnsl9P7az+UyCF9zqRqjswT92sOfZxOwS25eQvLWdQBNIIHm4kczvXUDludW/LGWUNxvN4ny2t1CIJCO6VNB6l8v1pNDND9x34YKT2YcYsoj9zEyun0dasgMBQe0IaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755323660; c=relaxed/simple;
-	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kavr93jh7K4JqjwEX0+l99ZEJMEycHWQK29T4Oso19x8RE3FykY3RsMujB8JF1uFkD5ChTW39IaQ3ALcy6X+00XXxZvODO0Shc7/Zy8gZxZYWjm2Blla6oJb7jIzmzMprS7pyB9HiCF/gGytQeaE9uSsrMMIOTJanOM/XnFL7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKXGWhuf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755331331; c=relaxed/simple;
+	bh=xeZB0/MV2mRIdGtensK7l2hpViEnBkI48t/wlVNfDAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIknzQIB6TS8E2+eqtrVRR9B6PGaA4IV1TtLIhLbVxSKyX+IEy/iuJvDusS31z4Vh3MyAxE54WgX4iXSEpiThcNYUOIsmF90sdbGBNY2SjYkB0lo3p17HxiYhgahg776yDBY6ruF8jphMEThoroGS9V/vlRnCJmrEESK55x76Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mAiimklo; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKXGWhuf"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B851C4CEFC;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755323659;
-	bh=v9/DprQXu1Orp8O2tW51C5gJxOsix4kY869zpymYn20=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RKXGWhufXinkH7S7ODTw2OU/BXCIQyjsaO83N16UgK4XRGbdNKIdLwvlJURE1FOY6
-	 aTcT3ak3405nBvlDIHBuzSkBkrma/ddOeZ49zYL53ChGZwtU6NwDZ9zt7erwZ/7wUG
-	 ydY6heDuAuaDjtWZfyFQrWIPD4E5gpdFXO/ebAVbAxKsTHkk8SXggeskgjltRoORfU
-	 ZgLs0tGXGDU17sjdvhReiUnQJDnoz2Kgbp8LVndEBsosWartPcDoEcsF0oefPcpwln
-	 0yRXuMcSqPMQqnFoKuI3FQ8JVBAKtNqBkms6ZfXle/kAzZt9XfZT/zB1JtZCZvJOJc
-	 1IyOSCXPbAxmg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3378ACA0EE9;
-	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sat, 16 Aug 2025 00:53:37 -0500
-Subject: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mAiimklo"
+Date: Sat, 16 Aug 2025 16:01:37 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755331316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EOo8GB7o2DUvLMEWO0WKIusOz/pycPiItGuieZ5F3Os=;
+	b=mAiimklowZnC4ncMq5D5aWLLDUqkRnWsS0Zb8uiLFJk6xsZlYeQwpzLnQlJLWAvu5qZPZZ
+	hApNxZdJ7X7JaX91swUNSvOpWLb5HikunvI7RwMKSSQs5HXU41sqIy4nt1GNQIa3dpCLEb
+	l8jepjAqxubbQp6bzKtRojk+3g2IF6g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Troy Mitchell <troy.mitchell@linux.dev>
+To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.dev>
+Subject: Re: [PATCH 2/2] clk: thead: th1520-ap: fix parent of padctrl0 clock
+Message-ID: <aKA64Xj-2GCCVRgg@troy-wujie14pro-arch>
+References: <20250813171136.2213309-1-uwu@icenowy.me>
+ <20250813171136.2213309-3-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250816-tegra210-speedo-v1-5-a981360adc27@gmail.com>
-References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
-In-Reply-To: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
- Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=935;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=JtR2frb8U61WYYSqhxHsZ+WqeNipPuKmeW1w+OFmzpU=;
- b=c8aF1tlFVKvuMAgjpH17Vx+W6YJ9ly6+2UZTmDmo879riiX6BemOb25Mah5RxcSAtHIDCI+VW
- kPtnx+v5hAcB7G6R9kog0SaaaP/PtAG4t6pc175XEY1HjM4RniK+1dA
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813171136.2213309-3-uwu@icenowy.me>
+X-Migadu-Flow: FLOW_OUT
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Thu, Aug 14, 2025 at 01:11:36AM +0800, Icenowy Zheng wrote:
+> The padctrl0 clock seems to be a child of the perisys_apb4_hclk clock,
+> gating the later makes padctrl0 registers stuck too.
+> 
+> Fix this relationship.
+> 
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+With fixing what Drew said, feel free to add:
 
-P3450's cpu is only rated for 1.4 GHz while the CVB table it uses tries
-to scale to 1.5 GHz. Set an appropriate limit on the maximum scaling
-frequency.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index ec0e84cb83ef9bf8f0e52e2958db33666813917c..10f878d3f50815d1f0297d15669048ab9cad73ee 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -594,6 +594,7 @@ clock@70110000 {
- 		nvidia,droop-ctrl = <0x00000f00>;
- 		nvidia,force-mode = <1>;
- 		nvidia,sample-rate = <25000>;
-+		nvidia,dfll-max-freq = <1479000000>;
- 
- 		nvidia,pwm-min-microvolts = <708000>;
- 		nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
-
--- 
-2.50.1
-
-
+Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
+> 
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index d08e7fb387e50..f6f3d63d53353 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -888,13 +888,16 @@ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", p
+>  		0x150, 11, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+>  		0x150, 12, 0);
+> +static const struct clk_parent_data perisys_apb4_hclk_pd[] = {
+> +	{ .hw = &perisys_apb4_hclk.gate.hw },
+> +};
+>  static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, 5, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd, 0x1e0, 13, CLK_IS_CRITICAL);
+>  static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio", emmc_sdio_ref_clk_pd, 0x204, 30, 0);
+>  static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd, 0x204, 26, 0);
+>  static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1", perisys_apb_pclk_pd, 0x204, 24, 0);
+>  static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart", perisys_apb_pclk_pd, 0x204, 23, 0);
+> -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb_pclk_pd, 0x204, 22, 0);
+> +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0", perisys_apb4_hclk_pd, 0x204, 22, 0);
+>  static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi", axi4_cpusys2_aclk_pd, 0x204, 21, 0);
+>  static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk", peri2sys_apb_pclk_pd, 0x204, 20, 0);
+>  static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd, 0x204, 19, 0);
+> -- 
+> 2.50.1
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
