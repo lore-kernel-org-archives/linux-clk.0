@@ -1,72 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B94202963;
-	Fri, 15 Aug 2025 23:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C84AFBF0;
+	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755301537; cv=none; b=DdRsoMB7ygBJQPRaKeIZCoG99wIwOFr9XJQQt1X/6ZCZyVHpV+CTRnn7o7kWqJ4h3uV9NaWzJ/EnNrVKiPkwI1sm/XQ+gKq5mQlQkiPQf9zLouaoN+w6iiZONYsjpjOBCz8Wzt6dPTh9+wDL9Cw12XnKqbV7eAATxbR/ybk90Kk=
+	t=1755323659; cv=none; b=TeGvolFndQpodp/UBaM4Rj+ujQLAAq6fCyCf3a5r08an5fP1aXZIU2VDVh7P06sDHkLSi6TslW3CftUmcO0f2YhzC4/qv40LVpQfIdKNOaeb7guni9efbUHgWZzE32Ydlizp2+NdhdrIG/rP3p4D9KtkYc4wdUG1klJxhsx2Peg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755301537; c=relaxed/simple;
-	bh=g68O3WmYOhk4y5L79Ofa0c3kpmvbkMRbUGdK4BAXSrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIpcBBsizvSeEbJB+vDUDhIlvV4bA88i7Y/DIXEKKIa1kZUBm597KQm/sg51kGDofqFR7SRVqZQ21cW0D/CzWoclWebTv30OEOo8xV4PKYdokd3tQkB0HMQgV7cNsLPfVM97fXpAYTHdaXpTtGcSvaM9QZ73TbioMttC+XrF/FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAocX+1X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755323659; c=relaxed/simple;
+	bh=cOotQfb3hXrw4Cc4Ozk3KZs+QDC0iDdLyslVoGta5QQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KuWYlBaEvuTCtx0Ht8MU8562P2a5vg/zKXAyJyN14E8t0BlmJpvz/He8l0RHnVCY8BPujaHRJ4rSfdOqt4RK0TfroNDM44r+XRTe/AoIRS6kffOfSFfo4hCc6/QcXEJgYrFmV2H1Nq3jaxkk+BBiJv+sW+ergpguCXLWGRNCoKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evScQ224; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAocX+1X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB8FC4CEEB;
-	Fri, 15 Aug 2025 23:45:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evScQ224"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C25DC4CEF5;
+	Sat, 16 Aug 2025 05:54:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755301537;
-	bh=g68O3WmYOhk4y5L79Ofa0c3kpmvbkMRbUGdK4BAXSrM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AAocX+1XJ55zDaEfebP8eiItlhPcEHOFkcM8AAnOFUHjfUQZjIHRIu54XvhsRnYLW
-	 X248Ua9VPnXnKIUrafSn3+h7l/XhKWoB4eLmAX5wlpzfaH8/0vS0X8czOTA+ASzB0f
-	 dm9xpwP9Wdn64dMZkMJQEse9JfdW+abCZXscpSSmwI47YRqgevHpFPs/baByOAIR5M
-	 woPb7GKTEm6uWNDgjZJCvIHjGIwfpmBBhrLZGm/7y6YtqpHEDSkU42I1Vx8b+gTZUd
-	 bWFtBe7D41YF2EzFcuR1zVWK3CTOoM+L43sG72lVF7tuTGVc+OP56Es5BGtG0Kp9cQ
-	 gbHrpTQN6a2Pw==
-Date: Fri, 15 Aug 2025 16:45:35 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Yao Zi <ziyao@disroot.org>, Han Gao <rabenda.cn@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: thead: th1520-ap: describe gate clocks with
- clk_gate
-Message-ID: <aJ/Gn2BeN4w2Yy9y@x1>
-References: <20250813171136.2213309-1-uwu@icenowy.me>
- <20250813171136.2213309-2-uwu@icenowy.me>
+	s=k20201202; t=1755323659;
+	bh=cOotQfb3hXrw4Cc4Ozk3KZs+QDC0iDdLyslVoGta5QQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=evScQ2246WRm+K6XcJD7i8B6eT/naoG2Fr7u7kYeiquxX5KLsK5q9cbnxIvNaVi1d
+	 E9EXOwKEsjaxrIblZHRx9o5jcqNGZNaO7goupJwfXSMP5FFrhfckeykqndcFMKdPHZ
+	 ROLeBh//6NnPXrji7ZoSu/kXl6e08IAWBC/Ce9z2FpaiMyWR7thikpyN3R0Qvh5x+M
+	 V+IgTY6UoiOC6lINfsu/DQjvpstdd7G8cSh9gkqxSpIep3jdL6S9qDBSldFP0QTXqe
+	 CMhc4e68jF9j5ivlPvPwFAQG1AmpwbMgzXTd+y3mrD+q8XjqDjfIPQR3hnfVTIkgDQ
+	 eJ7RviHAUZXrA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C86CA0EE6;
+	Sat, 16 Aug 2025 05:54:18 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sat, 16 Aug 2025 00:53:33 -0500
+Subject: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813171136.2213309-2-uwu@icenowy.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250816-tegra210-speedo-v1-1-a981360adc27@gmail.com>
+References: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+In-Reply-To: <20250816-tegra210-speedo-v1-0-a981360adc27@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755323658; l=1074;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=i008IfPSaYeZDCxQCAJ7fiLJ8vYgRkhMPyZzDoavqYE=;
+ b=RsGAR4X/ZLdBD17nQiWJrjizisf+BJBjuFoEXnTzahSr2JDZ4hFiMsowb5/xLuAlDn6sOrX9X
+ gmronvaJJWgAovoTwAAj/SWd+3XthQrlMvT1oUzBKVEHfVcnNjjYmMI
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Thu, Aug 14, 2025 at 01:11:35AM +0800, Icenowy Zheng wrote:
-> Similar to previous situation of mux clocks, the gate clocks of
-> clk-th1520-ap drivers are also using a helper that creates a temporary
-> struct clk_hw and abandons the struct clk_hw in struct ccu_common, which
-> prevents clock gates to be clock parents.
-> 
-> Do the similar refactor of dropping struct ccu_common and directly use
-> struct clk_gate here.
-> 
-> This patch mimics the refactor done on struct ccu_mux at [1].
-> 
-> [1] https://lore.kernel.org/all/20250722080535.60027-2-ziyao@disroot.org/
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
->  drivers/clk/thead/clk-th1520-ap.c | 382 +++++++++++++++---------------
->  1 file changed, 185 insertions(+), 197 deletions(-)
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+Some devices report a cpu speedo value that corresponds to a table that
+scales beyond the chips capability. This allows devices to set a lower
+limit.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..6cdbabc1f036a767bdc8e5df64eeff34171a3b85 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -70,6 +70,9 @@ Required properties for PWM mode:
+   - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+   - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+ 
++Optional properties for limiting frequency:
++- nvidia,dfll-max-freq: Maximum scaling frequency.
++
+ Example for I2C:
+ 
+ clock@70110000 {
+
+-- 
+2.50.1
+
+
