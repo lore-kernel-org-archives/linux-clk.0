@@ -1,170 +1,230 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110AD24A043;
-	Sat, 16 Aug 2025 09:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9DC231845
+	for <linux-clk@vger.kernel.org>; Sat, 16 Aug 2025 10:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755336794; cv=none; b=brdMc4mGbKdRzTK3no4xmFklOs9LAypu2i6o1suPs36qLz+npPJJnKuc+nLLUYYq8Q39FslL/9ENkc2j4KSIrRXxQfxLt0AMnUJVawQdxYbPj7yEcej5nrrybpqLwj6J0UOHVyvA0bNoYODAQKidYbqYgveKBXcZSUoxhCQiIqo=
+	t=1755340115; cv=none; b=bJH4JKAS6cPPGSBPGigOEcpBnmY5EnxC6hcamAQQFJB+6ACLZtos/TAuxPefHWN98sZTUHGoW7M8pdgqHaPC4PEVN91n8ZxVdvwms+HioRSlqoeeJ3weL+4N5KJktAUAM9wwrw1NEuO1Jr8EzIFJKjpC5RQEPLR+PACakKrgou4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755336794; c=relaxed/simple;
-	bh=CGm9yLJptkx/owDsJQBhgom8+2ST8ifFCJpbZhGlWus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OumtKLtWjVgad+DeCbLrNK3+woiPX63Qb1MLfq/YL2HXHoK/MFz+OaPdBWksUhQjt1/bPYMCj/Q5c4K2L6cDO6KxQhKlBH2YSwAkD2DZRw9/taTBkNUx5/vJBtgOmaY+FX2Im2SFl9ufC8BhLFrVYDgHLKZq7UVoY7MGILg7nW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWylBKzm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755340115; c=relaxed/simple;
+	bh=M27dDn9ubdQQdmD+XfPR8sXcJOZh8/obVDeIaeOJP/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dCRRojiZ1J/R4Ke3Iee8IEwWtfe5jt4kPv6xOafxbG+f2W1wbTyJsFwJfo56o0w2V6AOp+9OYEFMRbaJuUCURGs2k01y+RHs8TSJ5reh/I9QauTmeVUNC7SCz4tcPO5nnB6vE1rey/lZSwVMMjZbQUDsPHKydseRLCPA4nNype8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CfL6pN4Z; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWylBKzm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AFAC4CEEF;
-	Sat, 16 Aug 2025 09:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755336793;
-	bh=CGm9yLJptkx/owDsJQBhgom8+2ST8ifFCJpbZhGlWus=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LWylBKzmboh6g8QmqLgQs7AM6K5L8Ww3TEfU0JKccbD8j58oEDnl4gEKayAhdfpZX
-	 r6zVnfVUCKMPN8BuOTY8mnF4r5G2Tzu21HFIQeU0kJ+0QX+v4PH/7CuRpUAPNWskel
-	 fb1pLoAWdJAqchrxf38Z6rnzaWcq99jMrqZiXG+Nrcm38nek4IZ9+3o1x4aBT5e9pK
-	 i4wA4r1F+z6jvEASMqrWEv0IjaHPQtYDi9tHRRnYQcF8enh9sqptmILGMUg9rP7pbH
-	 iHMKhNcmlNzE9cJFcB8cWSA42xM8L8p0G+DwEwYFDaSC+wD2aD05H/GdbYcKeKa78g
-	 ofyMhmRA4sUNg==
-Message-ID: <484e4ff2-c7b2-4087-8850-5a972e7c82b4@kernel.org>
-Date: Sat, 16 Aug 2025 11:33:07 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CfL6pN4Z"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b916fda762so1765553f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 16 Aug 2025 03:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755340111; x=1755944911; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXh81VKf/4Dbcz4RJiYvjkoUvnAUmKw8U6C7gKFu26o=;
+        b=CfL6pN4Z97zlxaWSAEIIkUAi4Q7aehjNll5ZIxE9PbdP89iaNrOTE7KrQoR9iovf3r
+         heJHrQN3MnMIWgi4XwsgBmWpS8i6guPJiu7RDKx4ol81PYurMEXCAdjwSKfpXmlMRo7b
+         IDLYp5NeTC5DL6b1Ob//ALcqRMGAHG52wmejYxUBiCYisIznz7SpGKQ1lZa3OVEEdwZj
+         L2EZFTAhF9cfMlUOnbOxc6u6KTe21L4TfIdu/aikuTs14AyuoUTF4zpGn+ACt7t2FOtx
+         aAqDIkBfy8pB/eWNwFG0bIhQK698WSqVn5vRAIwUjPFzE7kFQndgGH05DAibVTisbMcI
+         eOxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755340111; x=1755944911;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oXh81VKf/4Dbcz4RJiYvjkoUvnAUmKw8U6C7gKFu26o=;
+        b=XNESHtGXsoJ+yBm7nEWJDEBE60muhNxdfQn9IhVlMLud+0RCUnJebJS6+aH1zN/b7F
+         qZ1k1QZPxIRViV2/CKaCh0YsxbFt+TR3U4V/zvfDG0nOFer6U386O45n7HvA3+x43Upd
+         cZIRYcd3QhtQX4qJJcAWlQKuMPeOjkhrOG2fVDHf3LedUvSoufMbOSbXx+9CjCJWgnv1
+         M2oU2RmQgl3VwSUbbWmE+uao9ZcXAS9l+ihC8vG/C2wDSWRYsRrPqjmcAgn3K03bx73c
+         VzckMuDQmd+dKuk/tn8U2QnF23wwahv3ai/M96Y+b+5Rd3YVuY+bn84VsEZxzOxhQbQL
+         l6GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXizNRhEsrLpw1jgaAxqPtzlxaBLFDM9gfZPAi83uwlZAWG/N+MroZ2vw9L5PFS3WIOx3ZRFcR9HJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz02Ee3S1QKg0lApoIrjrPnnlAdNS83LmA4wFeewyytAtz8KT6d
+	UZPC7tVE8OhtcaKxLCsVbY83sxuQjY9LRf05daZm8BfmZhujtOrMPKGOPObYikZO9Ts=
+X-Gm-Gg: ASbGncuEJE5+6pKEgyiS8woleVIMjQxaWyHov9GQXuwJBG+tu37rN94xFvDYiVRPEBX
+	bW14h+TGBrqK8PSjcNXgglCy7ZcEdWM1vBNB+Yp2udVEdTvJFITktsyHf44y7U/VNVOYSczKqpF
+	n+KLjcLvoYwwC7fj5M/VLjc2UUk0C3/OljLPDS+D5nVAfaJVcrbaG3biWWh8fTkIl9LHaQz8chk
+	rC20IQxkaT1zI9qC5r7qFfwlU3Ywz5RdvrcFyoAudxsMIJ6zWswTaccFi9Thj7LUw/vNPyeBQu9
+	We8AVYVohHb5HfkvPSa4qnu1tjjVvVAwGS0hIFI2UTVkTJUfSr0zg6CQ29LZsIV6vq5kmLYUNuy
+	/RLlwkN594eIkNpn1JvHylqA478VPolj8fNKu7zHsw/c=
+X-Google-Smtp-Source: AGHT+IGficK1F5saavRVPWTAr0TpxR29hX57+5MvmQ1Uy0vcX036uC8t1FcIRPlsb5Lhb78Ct3ryAg==
+X-Received: by 2002:a05:6000:2f84:b0:3b8:d337:cc2d with SMTP id ffacd0b85a97d-3ba508eb0b2mr7593550f8f.18.1755340111506;
+        Sat, 16 Aug 2025 03:28:31 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb676c971bsm5185226f8f.32.2025.08.16.03.28.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Aug 2025 03:28:31 -0700 (PDT)
+Date: Sat, 16 Aug 2025 13:28:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Biju <biju.das.au@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mod
+ clocks
+Message-ID: <202508160958.ounSAlER-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] phy: allwinner: a523: add USB3/PCIe PHY driver
-To: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Andre Przywara
- <andre.przywara@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
-References: <20250816084700.569524-1-iuncuim@gmail.com>
- <20250816084700.569524-5-iuncuim@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250816084700.569524-5-iuncuim@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814124832.76266-3-biju.das.jz@bp.renesas.com>
 
-On 16/08/2025 10:46, iuncuim wrote:
-> +
-> +	phy->reset = devm_reset_control_get(dev, NULL);
-> +	if (IS_ERR(phy->reset)) {
-> +		dev_err(dev, "failed to get reset control\n");
-> +		return PTR_ERR(phy->reset);
+Hi Biju,
 
-Syntax is return dev_err_probe.
+kernel test robot noticed the following build warnings:
 
-> +	}
-> +
-> +	phy->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(phy->regs))
-> +		return PTR_ERR(phy->regs);
-> +
-> +	phy->regs_clk = phy->regs + PHY_CLK_OFFSET;
-> +	if (IS_ERR(phy->regs_clk))
-> +		return PTR_ERR(phy->regs_clk);
-> +
-> +	phy->phy = devm_phy_create(dev, NULL, &sun55i_usb3_pcie_phy_ops);
-> +	if (IS_ERR(phy->phy)) {
-> +		dev_err(dev, "failed to create PHY\n");
-> +		return PTR_ERR(phy->phy);
-> +	}
-> +
-> +	phy_set_drvdata(phy->phy, phy);
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +
-> +	ret = sun55i_usb3_pcie_clk_init(phy);
-> +	if (ret)
-> +		return ret;
-> +	dev_info(phy->dev, "phy version is: 0x%x\n", readl(phy->regs));
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Biju/clk-renesas-rzv2h-Refactor-rzv2h_cpg_fixed_mod_status_clk_register/20250814-205111
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20250814124832.76266-3-biju.das.jz%40bp.renesas.com
+patch subject: [PATCH 2/4] clk: renesas: rzv2h: Add support for parent mod clocks
+config: hexagon-randconfig-r072-20250815 (https://download.01.org/0day-ci/archive/20250816/202508160958.ounSAlER-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 93d24b6b7b148c47a2fa228a4ef31524fa1d9f3f)
 
-This should be rather dev_dbg. See coding style.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202508160958.ounSAlER-lkp@intel.com/
 
-> +
-> +	return PTR_ERR_OR_ZERO(phy_provider);
-> +}
-> +
-> +static const struct of_device_id sun55i_usb3_pcie_phy_of_match[] = {
-> +	{ .compatible = "allwinner,sun55i-a523-usb3-pcie-phy" },
+New smatch warnings:
+drivers/clk/renesas/rzv2h-cpg.c:875 rzv2h_cpg_register_mod_clk() warn: passing zero to 'PTR_ERR'
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+vim +/PTR_ERR +875 drivers/clk/renesas/rzv2h-cpg.c
 
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, sun55i_usb3_pcie_phy_of_match);
-> +
-> +static struct platform_driver sun55i_usb3_pcie_phy_driver = {
-> +	.probe	= sun55i_usb3_pcie_phy_probe,
-> +	.driver = {
-> +		.of_match_table	= sun55i_usb3_pcie_phy_of_match,
-> +		.name  = "sun55i-usb3-pcie-phy",
-> +	}
-> +};
-> +module_platform_driver(sun55i_usb3_pcie_phy_driver);
-> +
-> +MODULE_DESCRIPTION("Allwinner A523 USB3/PCIe phy driver");
-> +MODULE_AUTHOR("Mikhail Kalashnikov <iuncuim@gmail.com>");
-> +MODULE_LICENSE("GPL");
+dd22e56217495e Lad Prabhakar 2024-07-29  770  static void __init
+dd22e56217495e Lad Prabhakar 2024-07-29  771  rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+dd22e56217495e Lad Prabhakar 2024-07-29  772  			   struct rzv2h_cpg_priv *priv)
+dd22e56217495e Lad Prabhakar 2024-07-29  773  {
+dd22e56217495e Lad Prabhakar 2024-07-29  774  	struct mod_clock *clock = NULL;
+dd22e56217495e Lad Prabhakar 2024-07-29  775  	struct device *dev = priv->dev;
+dd22e56217495e Lad Prabhakar 2024-07-29  776  	struct clk_init_data init;
+dd22e56217495e Lad Prabhakar 2024-07-29  777  	struct clk *parent, *clk;
+dd22e56217495e Lad Prabhakar 2024-07-29  778  	const char *parent_name;
+dd22e56217495e Lad Prabhakar 2024-07-29  779  	unsigned int id;
+dd22e56217495e Lad Prabhakar 2024-07-29  780  	int ret;
+dd22e56217495e Lad Prabhakar 2024-07-29  781  
+dd22e56217495e Lad Prabhakar 2024-07-29  782  	id = GET_MOD_CLK_ID(priv->num_core_clks, mod->on_index, mod->on_bit);
+dd22e56217495e Lad Prabhakar 2024-07-29  783  	WARN_DEBUG(id >= priv->num_core_clks + priv->num_mod_clks);
+dd22e56217495e Lad Prabhakar 2024-07-29  784  	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
+dd22e56217495e Lad Prabhakar 2024-07-29  785  	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
+dd22e56217495e Lad Prabhakar 2024-07-29  786  
+dd22e56217495e Lad Prabhakar 2024-07-29  787  	parent = priv->clks[mod->parent];
+dd22e56217495e Lad Prabhakar 2024-07-29  788  	if (IS_ERR(parent)) {
+dd22e56217495e Lad Prabhakar 2024-07-29  789  		clk = parent;
+dd22e56217495e Lad Prabhakar 2024-07-29  790  		goto fail;
+dd22e56217495e Lad Prabhakar 2024-07-29  791  	}
+dd22e56217495e Lad Prabhakar 2024-07-29  792  
+dd22e56217495e Lad Prabhakar 2024-07-29  793  	clock = devm_kzalloc(dev, sizeof(*clock), GFP_KERNEL);
+dd22e56217495e Lad Prabhakar 2024-07-29  794  	if (!clock) {
+dd22e56217495e Lad Prabhakar 2024-07-29  795  		clk = ERR_PTR(-ENOMEM);
+dd22e56217495e Lad Prabhakar 2024-07-29  796  		goto fail;
+dd22e56217495e Lad Prabhakar 2024-07-29  797  	}
+dd22e56217495e Lad Prabhakar 2024-07-29  798  
+dd22e56217495e Lad Prabhakar 2024-07-29  799  	init.name = mod->name;
+dd22e56217495e Lad Prabhakar 2024-07-29  800  	init.ops = &rzv2h_mod_clock_ops;
+dd22e56217495e Lad Prabhakar 2024-07-29  801  	init.flags = CLK_SET_RATE_PARENT;
+dd22e56217495e Lad Prabhakar 2024-07-29  802  	if (mod->critical)
+dd22e56217495e Lad Prabhakar 2024-07-29  803  		init.flags |= CLK_IS_CRITICAL;
+dd22e56217495e Lad Prabhakar 2024-07-29  804  
+dd22e56217495e Lad Prabhakar 2024-07-29  805  	parent_name = __clk_get_name(parent);
+dd22e56217495e Lad Prabhakar 2024-07-29  806  	init.parent_names = &parent_name;
+dd22e56217495e Lad Prabhakar 2024-07-29  807  	init.num_parents = 1;
+dd22e56217495e Lad Prabhakar 2024-07-29  808  
+dd22e56217495e Lad Prabhakar 2024-07-29  809  	clock->on_index = mod->on_index;
+dd22e56217495e Lad Prabhakar 2024-07-29  810  	clock->on_bit = mod->on_bit;
+dd22e56217495e Lad Prabhakar 2024-07-29  811  	clock->mon_index = mod->mon_index;
+dd22e56217495e Lad Prabhakar 2024-07-29  812  	clock->mon_bit = mod->mon_bit;
+03108a2614ecab Lad Prabhakar 2024-12-02  813  	clock->no_pm = mod->no_pm;
+899e7ede4c19c6 Lad Prabhakar 2025-05-09  814  	clock->ext_clk_mux_index = mod->ext_clk_mux_index;
+dd22e56217495e Lad Prabhakar 2024-07-29  815  	clock->priv = priv;
+dd22e56217495e Lad Prabhakar 2024-07-29  816  	clock->hw.init = &init;
+9b6e63a777ea5f Biju Das      2024-12-13  817  	clock->mstop_data = mod->mstop_data;
+dd22e56217495e Lad Prabhakar 2024-07-29  818  
+dd22e56217495e Lad Prabhakar 2024-07-29  819  	ret = devm_clk_hw_register(dev, &clock->hw);
+dd22e56217495e Lad Prabhakar 2024-07-29  820  	if (ret) {
+dd22e56217495e Lad Prabhakar 2024-07-29  821  		clk = ERR_PTR(ret);
+dd22e56217495e Lad Prabhakar 2024-07-29  822  		goto fail;
+dd22e56217495e Lad Prabhakar 2024-07-29  823  	}
+dd22e56217495e Lad Prabhakar 2024-07-29  824  
+dd22e56217495e Lad Prabhakar 2024-07-29  825  	priv->clks[id] = clock->hw.clk;
+18610e6bf54faa Biju Das      2025-08-14  826  	if (mod->child_name) {
+18610e6bf54faa Biju Das      2025-08-14  827  		WARN_DEBUG(mod->child >= priv->num_core_clks);
+18610e6bf54faa Biju Das      2025-08-14  828  		WARN_DEBUG(PTR_ERR(priv->clks[mod->child]) != -ENOENT);
+18610e6bf54faa Biju Das      2025-08-14  829  
+18610e6bf54faa Biju Das      2025-08-14  830  		clk = rzv2h_cpg_mod_status_clk_register(priv, mod->child_name, mod->name, 1, 1,
+18610e6bf54faa Biju Das      2025-08-14  831  							FIXED_MOD_CONF_PACK(mod->mon_index,
+18610e6bf54faa Biju Das      2025-08-14  832  									    mod->mon_bit));
+18610e6bf54faa Biju Das      2025-08-14  833  		if (IS_ERR_OR_NULL(clk))
+18610e6bf54faa Biju Das      2025-08-14  834  			goto fail;
 
+This isn't how IS_ERR_OR_NULL() is supposed to work...  :(  The NULL should
+be treated like success, it shouldn't print an error message, unless it's
+something like:
 
-Best regards,
-Krzysztof
+	WARN_ON_ONCE(!clk); // rzv2h_cpg_mod_status_clk_register() is buggy
+
+I have written a blog about how how IS_ERR_OR_NULL() is supposed to work:
+https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
+
+18610e6bf54faa Biju Das      2025-08-14  835  		priv->clks[mod->child] = clk;
+18610e6bf54faa Biju Das      2025-08-14  836  	}
+dd22e56217495e Lad Prabhakar 2024-07-29  837  
+9b6e63a777ea5f Biju Das      2024-12-13  838  	/*
+9b6e63a777ea5f Biju Das      2024-12-13  839  	 * Ensure the module clocks and MSTOP bits are synchronized when they are
+9b6e63a777ea5f Biju Das      2024-12-13  840  	 * turned ON by the bootloader. Enable MSTOP bits for module clocks that were
+9b6e63a777ea5f Biju Das      2024-12-13  841  	 * turned ON in an earlier boot stage.
+9b6e63a777ea5f Biju Das      2024-12-13  842  	 */
+9b6e63a777ea5f Biju Das      2024-12-13  843  	if (clock->mstop_data != BUS_MSTOP_NONE &&
+9b6e63a777ea5f Biju Das      2024-12-13  844  	    !mod->critical && rzv2h_mod_clock_is_enabled(&clock->hw)) {
+9b6e63a777ea5f Biju Das      2024-12-13  845  		rzv2h_mod_clock_mstop_enable(priv, clock->mstop_data);
+9b6e63a777ea5f Biju Das      2024-12-13  846  	} else if (clock->mstop_data != BUS_MSTOP_NONE && mod->critical) {
+9b6e63a777ea5f Biju Das      2024-12-13  847  		unsigned long mstop_mask = FIELD_GET(BUS_MSTOP_BITS_MASK, clock->mstop_data);
+9b6e63a777ea5f Biju Das      2024-12-13  848  		u16 mstop_index = FIELD_GET(BUS_MSTOP_IDX_MASK, clock->mstop_data);
+69ac2acd209a15 Biju Das      2025-02-22  849  		atomic_t *mstop = &priv->mstop_count[mstop_index * 16];
+9b6e63a777ea5f Biju Das      2024-12-13  850  		unsigned long flags;
+9b6e63a777ea5f Biju Das      2024-12-13  851  		unsigned int i;
+9b6e63a777ea5f Biju Das      2024-12-13  852  		u32 val = 0;
+9b6e63a777ea5f Biju Das      2024-12-13  853  
+9b6e63a777ea5f Biju Das      2024-12-13  854  		/*
+9b6e63a777ea5f Biju Das      2024-12-13  855  		 * Critical clocks are turned ON immediately upon registration, and the
+9b6e63a777ea5f Biju Das      2024-12-13  856  		 * MSTOP counter is updated through the rzv2h_mod_clock_enable() path.
+9b6e63a777ea5f Biju Das      2024-12-13  857  		 * However, if the critical clocks were already turned ON by the initial
+9b6e63a777ea5f Biju Das      2024-12-13  858  		 * bootloader, synchronize the atomic counter here and clear the MSTOP bit.
+9b6e63a777ea5f Biju Das      2024-12-13  859  		 */
+9b6e63a777ea5f Biju Das      2024-12-13  860  		spin_lock_irqsave(&priv->rmw_lock, flags);
+9b6e63a777ea5f Biju Das      2024-12-13  861  		for_each_set_bit(i, &mstop_mask, 16) {
+9b6e63a777ea5f Biju Das      2024-12-13  862  			if (atomic_read(&mstop[i]))
+9b6e63a777ea5f Biju Das      2024-12-13  863  				continue;
+9b6e63a777ea5f Biju Das      2024-12-13  864  			val |= BIT(i) << 16;
+9b6e63a777ea5f Biju Das      2024-12-13  865  			atomic_inc(&mstop[i]);
+9b6e63a777ea5f Biju Das      2024-12-13  866  		}
+9b6e63a777ea5f Biju Das      2024-12-13  867  		if (val)
+9b6e63a777ea5f Biju Das      2024-12-13  868  			writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
+9b6e63a777ea5f Biju Das      2024-12-13  869  		spin_unlock_irqrestore(&priv->rmw_lock, flags);
+9b6e63a777ea5f Biju Das      2024-12-13  870  	}
+9b6e63a777ea5f Biju Das      2024-12-13  871  
+dd22e56217495e Lad Prabhakar 2024-07-29  872  	return;
+dd22e56217495e Lad Prabhakar 2024-07-29  873  
+dd22e56217495e Lad Prabhakar 2024-07-29  874  fail:
+dd22e56217495e Lad Prabhakar 2024-07-29 @875  	dev_err(dev, "Failed to register module clock %s: %ld\n",
+dd22e56217495e Lad Prabhakar 2024-07-29  876  		mod->name, PTR_ERR(clk));
+dd22e56217495e Lad Prabhakar 2024-07-29  877  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
