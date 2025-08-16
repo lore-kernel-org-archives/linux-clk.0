@@ -1,40 +1,42 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACB026281;
-	Sat, 16 Aug 2025 13:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A5B28F935;
+	Sat, 16 Aug 2025 13:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755351250; cv=none; b=ZxYd0IxZDD04l4yNwAW/EreuYo8FIuBc27PskK7baE2ethkXnWLsEDQRwjS6phkJ6dRr5e1Bsf5LJVHGqOXcQI2+NSZkVMUJWFDUiedAAI/G475EdksjjsE8cuTMnlmwlkFsFTCen0u/+izVVqbzzUaJWM0Truwjwbs+CT3zeB0=
+	t=1755351670; cv=none; b=TOjMDhikmpA9e6OQHC7ExZ6OyaHTPe6CTaUTUOtcG572LH9jKFA35v4o19x/iLQF3p6DGfZXy8hphAsT3SoW7IIMF4gIueUIVzLJCqpVQy+KswdVY84LpXOb2Z+M8mEnCzCUffckT5/gXwEe25HQ0yIJ/F5JJWCH+LISx4qmufM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755351250; c=relaxed/simple;
-	bh=sQQoLhpMijiAs0tCXeUL1nZEAmraz+fwhbqr5RfrM9c=;
+	s=arc-20240116; t=1755351670; c=relaxed/simple;
+	bh=yFJOuOfrq4mcsgQ29r2oL+raFCXvkdkV/rGPNMzmrkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=darLSJSOU24t8fUV4kBG3mUHLlN0i2zOVU+LrXIU2aGoEbGtrdAiQCPmn19dOWtCirlYZjN3UY8kBKAhPvWExLEQHM59r1rCjHqIF9bVnypWlgAgYS4qHitGrRBR4QguwIJMuwfohCsarXc+h/e2dfgmXhMiwSOc/9TO76RbXeo=
+	 MIME-Version:Content-Type; b=NVFfT2DMwpAkp0ilncQhPpnQgzC2PGdsf6L6IwW56Y7EtriCqGstVbPXTyKtA0sg73D25BKaampZCUPRBDeKSNVWLrRaS1kLkwJ7ATX+SZoMvDzfypRNnz9OM6J7Mx2LkAiWVyWF8DTNq939Mm4Cn0e1H4xGn4b4zlycV9yfTrU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 940551691;
-	Sat, 16 Aug 2025 06:33:59 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF0CC1691;
+	Sat, 16 Aug 2025 06:40:59 -0700 (PDT)
 Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 874CD3F5A1;
-	Sat, 16 Aug 2025 06:34:05 -0700 (PDT)
-Date: Sat, 16 Aug 2025 14:31:17 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31C473F5A1;
+	Sat, 16 Aug 2025 06:41:05 -0700 (PDT)
+Date: Sat, 16 Aug 2025 14:38:13 +0100
 From: Andre Przywara <andre.przywara@arm.com>
-To: iuncuim <iuncuim@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 3/7] phy: sun4i-usb: a523: add support for the USB2 PHY
-Message-ID: <20250816143117.4b86ecc6@minigeek.lan>
-In-Reply-To: <20250816084700.569524-4-iuncuim@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 2/7] arm64: dts: allwinner: a523: add third usb2 phy
+Message-ID: <20250816143813.77551ff2@minigeek.lan>
+In-Reply-To: <c7468189-deee-449f-b7d0-fa1830ca88fc@kernel.org>
 References: <20250816084700.569524-1-iuncuim@gmail.com>
-	<20250816084700.569524-4-iuncuim@gmail.com>
+	<20250816084700.569524-3-iuncuim@gmail.com>
+	<c7468189-deee-449f-b7d0-fa1830ca88fc@kernel.org>
 Organization: Arm Ltd.
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
@@ -46,85 +48,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 16 Aug 2025 16:46:56 +0800
-iuncuim <iuncuim@gmail.com> wrote:
+On Sat, 16 Aug 2025 11:31:12 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Hi Mikhail,
-
-many thanks for posting these patches, that's a nice surprise to see
-this moving forward!
-
-I think there are some issues with this series, but we can surely iron
-those out.
-
-> From: Mikhail Kalashnikov <iuncuim@gmail.com>
+> On 16/08/2025 10:46, iuncuim wrote:
+> > From: Mikhail Kalashnikov <iuncuim@gmail.com>
+> > 
+> > It seems that there are actually three usb2 phys in the processor, which
+> > makes it incompatible with D1.
+> > The third phy is used together with USB3/PCIe combophy with DWC3
+> > controller. In the BSP code, the third PHY requires a separate glue
+> > driver, but it seems that it is not needed.
+> > According to the BSP code, the third phy does not have a reset line; the
+> > only reset is declared in the DWC3 node, but none of this is documented.
+> > Since sun4i-usb-phy driver requires a reset, I added RST_BUS_3 here.
+> > 
+> > Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+> > ---
+> >  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 21 ++++++++++++-------
+> >  1 file changed, 13 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> > index 6b6f2296b..e4ed4fa82 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> > @@ -503,22 +503,27 @@ usb_otg: usb@4100000 {
+> >  		};
+> >  
+> >  		usbphy: phy@4100400 {
+> > -			compatible = "allwinner,sun55i-a523-usb-phy",
+> > -				     "allwinner,sun20i-d1-usb-phy";
+> > +			compatible = "allwinner,sun55i-a523-usb-phy";  
 > 
-> Previously, USB PHY was compatible with D1 and did not require
-> separatedata options. But now we need to add a third PHY, which makes it
-> incompatible. The third PHY is used together with USB3/PCIe combophy with
-> DWC3 controller.
+> 
+> That's potential break of all users. Also, having third phy (so
+> additional piece) is not making things incompatible.
 
-It is really used together? I think on IRC we lately established that
-the USB2.0 and USB3.0 parts are somewhat independent, and I think the
-Radxa board wires PHY1 to the D-/D+ pins of the USB3.0 socket, instead
-of PHY2.
+Yes, we would want to keep the fallback, to allow newer DTs working on
+older kernel. As the Linux driver is implemented right now, it's not
+fully compatible, since it ties the number of PHYs to the compatible
+string - but that's a Linux implementation choice, not something really
+related to the binding. And as I replied on the driver patch, that
+breaks anyway, and I think we can change it there to preserve
+compatibility, and make everyone happy: newer DTs on older kernels,
+older DTs on newer kernels, and all working within the kernel's
+capability.
 
-Regardless: this change would be a compatibility break: When a new
-kernel with this change sees an old DT, it would bail out, because it
-doesn't find the resources for the third PHY in the DT.
-
-What I'd suggest instead is to drop the hardcoded assumption about the
-number of PHYs, and instead just enumerate all "pmu<x>" cells in
-reg-names. That would work with both old and new DTs, and then we can
-also keep the fallback compatible name in the DT, to allow new DTs on
-older kernels (for instance a U-Boot provided DT on a stable kernel).
-
-As an added benefit, it would make future enablement easier, as we are
-more likely to find a matching compatible string, even when the number
-of PHYs differ.
+Oh, and it looks like there are whitespace issues in the patch ...
 
 Cheers,
 Andre
-
-> In the BSP code, the third PHY requires a separate glue
-> driver, but it seems that it is not needed.
-
-
-
-
-
-> 
-> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> ---
->  drivers/phy/allwinner/phy-sun4i-usb.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-> index 8873aed3a..bb79339f2 100644
-> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
-> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-> @@ -1025,6 +1025,15 @@ static const struct sun4i_usb_phy_cfg sun50i_h616_cfg = {
->  	.siddq_in_base = true,
->  };
->  
-> +static const struct sun4i_usb_phy_cfg sun55i_a523_cfg = {
-> +	.num_phys = 3,
-> +	.phyctl_offset = REG_PHYCTL_A33,
-> +	.dedicated_clocks = true,
-> +	.hci_phy_ctl_clear = PHY_CTL_SIDDQ,
-> +	.phy0_dual_route = true,
-> +	.siddq_in_base = true,
-> +};
-> +
->  static const struct of_device_id sun4i_usb_phy_of_match[] = {
->  	{ .compatible = "allwinner,sun4i-a10-usb-phy", .data = &sun4i_a10_cfg },
->  	{ .compatible = "allwinner,sun5i-a13-usb-phy", .data = &sun5i_a13_cfg },
-> @@ -1041,6 +1050,7 @@ static const struct of_device_id sun4i_usb_phy_of_match[] = {
->  	  .data = &sun50i_a64_cfg},
->  	{ .compatible = "allwinner,sun50i-h6-usb-phy", .data = &sun50i_h6_cfg },
->  	{ .compatible = "allwinner,sun50i-h616-usb-phy", .data = &sun50i_h616_cfg },
-> +	{ .compatible = "allwinner,sun55i-a523-usb-phy", .data = &sun55i_a523_cfg },
->  	{ .compatible = "allwinner,suniv-f1c100s-usb-phy",
->  	  .data = &suniv_f1c100s_cfg },
->  	{ },
-
