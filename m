@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8429E1C75E2;
-	Sun, 17 Aug 2025 06:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937201F4706;
+	Sun, 17 Aug 2025 07:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755411289; cv=none; b=gqAEwUSW5rUnFNZNqDynH/ChwrsSjkVhtHiAivxZ6XZhl2WlTv3zBtM8yZdU6BnCPydmGNDdCCV3RYYC6RT33ravYXOk+czUBKivPVjEMMtfPnBnXtATQenNMUEBq/jJLzuprlR+501r1YXWE5YpBJ1vEnCiVV2mhyv9NcY5V3g=
+	t=1755415151; cv=none; b=E7G6MVcIV+VjRYPUorQl/2i7kjxL7d+ujGXnTfUOjB7YESUs8qAIP5I7HvdOxeZ472FH5BAlAbEW3bIaQwfshUb8d/bTMQtlp8EPe4k6MwtZHdFKfgHnkaK1ZZk6dm0W3vmrvkTa6/99Y2ZMyZEhKbm8gzx/CATC9B25h6Qdrq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755411289; c=relaxed/simple;
-	bh=FjnyjISls+IwhhvqV3CdP32QGr0K26AOzU5vLlgcAsE=;
+	s=arc-20240116; t=1755415151; c=relaxed/simple;
+	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdaOB3DaIShm9LSEXqxk1dymixOU7T7ZbZG/iIfQAR8O/aldf8lW2wEq+V1T/RzmOPddOhzTkxxzKCS6BqpOlLg+khZMSlcUcf+7HFQnqRD7jXfRR+w4hzfyFKB9nlQ+d6RlH+v2fdp8aqd4suCAx+afLbfPYpE4poy4KxdIss4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqjcg51b; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RmMomjObPBSOtPoF3XNmI+wyBoafk11X0VajHabF+/Y1EYP6WOH7LltmyHTf99ULL1Up3BP7VXy1R9QO90AlX3uqXkP3EK8eP2WuI9uBE3pPba9N5PCe5LGqOZ0ut5uTMAA1j4Fxp2KqzaNnWjvFNXaL3Wb0qzlca1tz5ASxLwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIzZcZhr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqjcg51b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E41C4CEEB;
-	Sun, 17 Aug 2025 06:14:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIzZcZhr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CD7C4CEEB;
+	Sun, 17 Aug 2025 07:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755411289;
-	bh=FjnyjISls+IwhhvqV3CdP32QGr0K26AOzU5vLlgcAsE=;
+	s=k20201202; t=1755415151;
+	bh=JFDiGM0BVBryvFA/mMw/si31ekZeLVsvinEiadWqIdM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dqjcg51bwM8xslcGuw5W8w163m6q+bpK9eHvBLTK/sBTx5s5j/E0UcRGz2j6uRh15
-	 B09ChBfZE4kB6QnA9NmnU+4jA0CXefpx1bOQ2HMSlU5oP8gFjclxljQuV2GcLskZ1p
-	 AqvMSLeyyfxb+hgc4O60d/2HE3bCwQFOay4qmlqXzTOdvSNkEaKF0U1U9IwUoNfZQ3
-	 M1FFk+V47LYnAIrqBKjeQF+YwrhqOMYAG9jwwWs8NLqKTCbEg79TxAEUcNUa4JVLYC
-	 UKegg4k7CCSfRPNsopgrKFi64rgL6jkLfKtxa/Xr8DbUYd52fCSwkK0lCka84rSDVM
-	 Z8dgxsP9kUO1A==
-Message-ID: <49858742-8850-44bf-a844-9e26210515c5@kernel.org>
-Date: Sun, 17 Aug 2025 08:14:44 +0200
+	b=WIzZcZhrGmrVNBZxq2Gcv1VEeQrnro/YDTiryCPMd6mt1e64BabAxeKsbS0uHeo22
+	 Ny5/52BqNnV3tDlTDzpYQfOfc6YSXBJ2m4dxny6LtkDM4BgUo7zFPkSjAQM2ncRVQO
+	 W/p6VvaqCd+euTgxH7EQHRrvbST1sIfzqGfigtVABMstAI/Xok1w6kzPkQep4yWvPx
+	 mqpK7uToLeuiWm+OmFl8f7rR1rDUukrOlxFp/kUL+lvqCHmCcwl/2aHxBzkWDVDUx+
+	 Mq6IIMJFyRL6YM606LS+MtHiYWjlEarzzfrm4Mu3xBE5o206ysYn3ZpmmqO30aCh65
+	 gXqlZzu27L3Fg==
+Message-ID: <fb5083ff-4bee-4a0f-8774-54b492cd9a6d@kernel.org>
+Date: Sun, 17 Aug 2025 09:19:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>,
+ Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <1950265.tdWV9SEqCh@radijator>
- <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
- <6196438.lOV4Wx5bFT@radijator>
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+ <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
+ <20250730211151.GA1749004-robh@kernel.org>
+ <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,26 +100,65 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <6196438.lOV4Wx5bFT@radijator>
+In-Reply-To: <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 16/08/2025 17:13, Duje Mihanović wrote:
-> On Friday, 15 August 2025 08:08:24 Central European Summer Time Krzysztof Kozlowski wrote:
->> On 15/08/2025 00:08, Duje Mihanović wrote:
->>>> I am asking to see complete binding with complete DTS in example and
->>>> submitted to SoC maintainer.
->>>
->>> Hm, so if in the example (and the actual DTS) each domain is assigned a
->>> clock, can I then keep the domain and domain controller nodes like Mediatek
->>> and Rockchip have?
->>
->> You would need to point me to specific files or show some code.
+On 14/08/2025 16:42, Clément Le Goffic wrote:
+> Hi Rob,
 > 
-> Sure, mediatek,power-controller.yaml and rockchip,power-controller.yaml
-> in Documentation/devicetree/bindings/power.
+> On 30/07/2025 23:11, Rob Herring wrote:
+>> On Mon, Jul 28, 2025 at 05:29:37PM +0200, Clément Le Goffic wrote:
+>>> Introduce JEDEC compliant DDR bindings, that use new memory-props binding.
+>>>
+>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>> ---
+>>>   .../memory-controllers/ddr/jedec,ddr4.yaml         | 34 ++++++++++++++++++++++
+>>>   1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+>>> new file mode 100644
+>>> index 000000000000..f457066a2f8b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+>>> @@ -0,0 +1,34 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr4.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
+>>> +
+>>> +maintainers:
+>>> +  - Krzysztof Kozlowski <krzk@kernel.org>
+>>> +
+>>> +allOf:
+>>> +  - $ref: jedec,sdram-props.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{1}$"
+>>
+>> Shouldn't this be 'jedec,ddr4-...'
+> 
+> That's not the case for lpddr bindings, I wanted both lpddr and ddr 
+> bindings to be similar but this can change.
 
-I see, but your DTS is nothing like that.
+For LPDDR Julius introduced in commit 686fe63b2280 ("dt-bindings:
+memory: Add numeric LPDDR compatible string variant") ddr4-VENDORID
+pattern to distinguish individual manufacturers.
+
+Jedec is not really the vendor here.
+
+Is it the same case in DDR? You have a defined list of vendor IDs (also
+1 byte)?
+
+> 
+>>
+>>> +      - const: jedec,ddr4
+
 
 Best regards,
 Krzysztof
