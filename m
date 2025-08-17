@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8875524F;
-	Sun, 17 Aug 2025 06:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8429E1C75E2;
+	Sun, 17 Aug 2025 06:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755410866; cv=none; b=nRpzJM0ilDFO4gzEA/6QEinAtrd24wYLm1T7xwyhCyZD+ck19CDsByCsSpeuBx6OXyMHmoaafrey6KJKx8XKkMkJiOwPqN93Mo7CxrUL0qF7oE/SYXitluUjG4PSPd2y1pkUyM2AnW4x8tY9CJQp05q44YItzapSNbXUcpmE7J4=
+	t=1755411289; cv=none; b=gqAEwUSW5rUnFNZNqDynH/ChwrsSjkVhtHiAivxZ6XZhl2WlTv3zBtM8yZdU6BnCPydmGNDdCCV3RYYC6RT33ravYXOk+czUBKivPVjEMMtfPnBnXtATQenNMUEBq/jJLzuprlR+501r1YXWE5YpBJ1vEnCiVV2mhyv9NcY5V3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755410866; c=relaxed/simple;
-	bh=X02f05gY68FIyb1hXHqWMuC+nigmCvh2u0vEQs5OzG8=;
+	s=arc-20240116; t=1755411289; c=relaxed/simple;
+	bh=FjnyjISls+IwhhvqV3CdP32QGr0K26AOzU5vLlgcAsE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HrSbjfDQfVHImDtvhbAFFCizIxZqnnPDI0Sf2zE8Nv0nIOls48Klse+b7ZLO5moOcZZ1LlMz9pNOqvo7klnBmypATXUs7R0dkC8s6k5kEBVckL2iVyll0G2OyLFYrH3GfuzWzp68YrfVx8mWgosnPgAOENSUNO4aPw96smeo9g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLilhO/0; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=mdaOB3DaIShm9LSEXqxk1dymixOU7T7ZbZG/iIfQAR8O/aldf8lW2wEq+V1T/RzmOPddOhzTkxxzKCS6BqpOlLg+khZMSlcUcf+7HFQnqRD7jXfRR+w4hzfyFKB9nlQ+d6RlH+v2fdp8aqd4suCAx+afLbfPYpE4poy4KxdIss4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqjcg51b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLilhO/0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EAD8C4CEEB;
-	Sun, 17 Aug 2025 06:07:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqjcg51b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E41C4CEEB;
+	Sun, 17 Aug 2025 06:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755410865;
-	bh=X02f05gY68FIyb1hXHqWMuC+nigmCvh2u0vEQs5OzG8=;
+	s=k20201202; t=1755411289;
+	bh=FjnyjISls+IwhhvqV3CdP32QGr0K26AOzU5vLlgcAsE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HLilhO/0wlJQYRgcgAW+/NA9WWbn8955dZvrL/TOogoT0EUhpCvJW4jLCGc8qP6lk
-	 PA04F1yZu1C98lJZGAlbI1c5HPUNFIz4wZ4fxGFILrGUu+5xYKxr0WlLXKsP6/oHmW
-	 dPGs55iO4PzBCAJ3O2JhKc5Wfwbavi4iFitePMU1V9rxJzO2lfOXxbbYnIsHM9OWl3
-	 Xjt0aSq2Tidl/mrE/ASS7fRMRMBOixYFenN8i/4Npy7qevfewl/VhPJed0R1wkXgY7
-	 6fzadZX6cRKt8cOmjCXXVrZU7frnaGN3XKbKBn1WrBxu33Xc/JxHXHbrTV+CxqV0ug
-	 Lp6+f13UvD7NA==
-Message-ID: <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
-Date: Sun, 17 Aug 2025 08:07:39 +0200
+	b=dqjcg51bwM8xslcGuw5W8w163m6q+bpK9eHvBLTK/sBTx5s5j/E0UcRGz2j6uRh15
+	 B09ChBfZE4kB6QnA9NmnU+4jA0CXefpx1bOQ2HMSlU5oP8gFjclxljQuV2GcLskZ1p
+	 AqvMSLeyyfxb+hgc4O60d/2HE3bCwQFOay4qmlqXzTOdvSNkEaKF0U1U9IwUoNfZQ3
+	 M1FFk+V47LYnAIrqBKjeQF+YwrhqOMYAG9jwwWs8NLqKTCbEg79TxAEUcNUa4JVLYC
+	 UKegg4k7CCSfRPNsopgrKFi64rgL6jkLfKtxa/Xr8DbUYd52fCSwkK0lCka84rSDVM
+	 Z8dgxsP9kUO1A==
+Message-ID: <49858742-8850-44bf-a844-9e26210515c5@kernel.org>
+Date: Sun, 17 Aug 2025 08:14:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
- <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+ <1950265.tdWV9SEqCh@radijator>
+ <5e79b123-b29a-4edb-8e70-3b7fa6cd3674@kernel.org>
+ <6196438.lOV4Wx5bFT@radijator>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,48 +95,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <6196438.lOV4Wx5bFT@radijator>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15/08/2025 11:37, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 16/08/2025 17:13, Duje Mihanović wrote:
+> On Friday, 15 August 2025 08:08:24 Central European Summer Time Krzysztof Kozlowski wrote:
+>> On 15/08/2025 00:08, Duje Mihanović wrote:
+>>>> I am asking to see complete binding with complete DTS in example and
+>>>> submitted to SoC maintainer.
+>>>
+>>> Hm, so if in the example (and the actual DTS) each domain is assigned a
+>>> clock, can I then keep the domain and domain controller nodes like Mediatek
+>>> and Rockchip have?
+>>
+>> You would need to point me to specific files or show some code.
 > 
-> Add clock device tree support for eic7700 SoC.
-> 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> ---
->  arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi | 2283 +++++++++++++++++
->  1 file changed, 2283 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
-> 
-> diff --git a/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
-> new file mode 100644
-> index 000000000000..405d06f9190e
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/eswin/eic7700-clocks.dtsi
-> @@ -0,0 +1,2283 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (c) 2025, Beijing ESWIN Computing Technology Co., Ltd.
-> + */
-> +
-> +/ {
-> +	clock-controller@51828000 {
-> +		compatible = "eswin,eic7700-clock";
-> +		reg = <0x000000 0x51828000 0x000000 0x80000>;
-> +		#clock-cells = <0>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		/* fixed clock */
-> +		fixed_rate_clk_apll_fout2: fixed-rate-apll-fout2 {
+> Sure, mediatek,power-controller.yaml and rockchip,power-controller.yaml
+> in Documentation/devicetree/bindings/power.
 
-Such pattern was years ago NAKed.
-
-No, don't ever bring nodes per clock.
-
+I see, but your DTS is nothing like that.
 
 Best regards,
 Krzysztof
