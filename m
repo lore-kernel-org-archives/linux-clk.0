@@ -1,40 +1,40 @@
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2327D220687;
-	Mon, 18 Aug 2025 09:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0425F30DD32;
+	Mon, 18 Aug 2025 09:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755509336; cv=none; b=nKqxcKwMO9f2//wON7/F5+qT5dawlC9q32eiU4HZSM0Nw5za1LmyrJsdFhtNqC1x+zZMfFQ2RFhu90QPG/nqxEn/wKEnarOvceiorGAybp9YtIZ7xrATtZlfAOV685L6H8wDbhTU7oIMr6r9dGAU1D2bO9aq1x8xcgQqdIFU6ao=
+	t=1755509337; cv=none; b=iVrWc/x3cskGWHbA2o2jg5hrQ4ax3PCg1mgqcXXIzwF7B95EZvc3f9GF2fQAvc+EgrTG5xe9GRBZKliwFph9Ws/m4nNvm5WYom8p+COcTlFKNZcq/m96OlaOgqmZtILvaNMw2/UNpN1vBqe00wvuopR54zi4xMgF1u5GhmbC4c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755509336; c=relaxed/simple;
-	bh=FOB7j1hlhVZDsG+zyDRMWyOCbt8PIEXCVAaCiq/WXRc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nf/aBzGsmGjk2s3ZFIzMbd+UVWmGLeENf/aHubDSdnlFkDXkqcm50187e+ec0smGQbn2E7IbcyXKoKQya5TGxxi2MAw6on28XnlOZ3RivoHlQCCWIkRaEzwGNqFopTckDLIPxppte593o/RusJplRcxNO27qqEhjwrbneK2bIug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=c2L9gJ+G; arc=none smtp.client-ip=54.92.39.34
+	s=arc-20240116; t=1755509337; c=relaxed/simple;
+	bh=Ix8rQX7j+Djeow/6d/c6nvq5oESHFJilL/KybCgSlgw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OzgF2Ydgc4lDnLCiCbBj2Tj/jvLQVqqi39Oa9Mi2VMBAmA60vaYOV5EGVTPL0spE76hNoJvFnfoe0yFGmnqfXbkR3pf+BIZSUEn/UzHYY39nN7TIOrqB/NM7MdhuB+mmwm67b/wsyc3g72bzPZYB1UuLVq+dL3sTBKfuOHjp4Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=qyOGGBP/; arc=none smtp.client-ip=54.254.200.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="c2L9gJ+G"
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="qyOGGBP/"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1755509319;
-	bh=P0uoMf5MS5hqK/AadmBbjxqCSSW+t8LKJc1Paz1/HdI=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=c2L9gJ+GZUI2IhrlapTezgMA1hwdXeTzdf1ySEYLc0G2aa57WQ+M0BkMI4e28KPdp
-	 wI8gGt4r7wVU6pAZUUKmqxzUmY35UIpl6PwR+Xz2xtsCG+eZ0bwaCRPntA+WyLW9HB
-	 AG9ER5Dxi/iJUqPsOOPYn2pIzYLMxefhtd6Lvh+0=
-X-QQ-mid: zesmtpsz6t1755509318tefe082fa
-X-QQ-Originating-IP: h/AA42SpewFkwa0CFAT8ZKkIBNMIUI7l+DNAVLVoz1M=
+	s=mxsw2412; t=1755509316;
+	bh=9FmrJjqg/fw+am1I+fhbZiD9RUE7Ro4CHVIAUBMnukY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=qyOGGBP/hn5Wk5FtT/1ScBM0oIM4LhRh9JCdpJGFECU+a5xiLhns/pItogFMKKDMC
+	 rjg8T2fGKchIC/5XUmJgT27KeaCQABg8C8UEJXh2v58y5jNWMwZV7S2PIO6c+s+mAd
+	 e0dVw07wrwwFEf6OkNSJDd6Xft9RLEYvOZozQjAA=
+X-QQ-mid: zesmtpsz9t1755509309t6c580f51
+X-QQ-Originating-IP: cKEs5s2CY18in1J6kPHzPGnr423fzsum8U+lBY0rnm4=
 Received: from = ( [14.123.254.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 18 Aug 2025 17:28:35 +0800 (CST)
+	id ; Mon, 18 Aug 2025 17:28:27 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14834764785882491220
-EX-QQ-RecipientCnt: 16
+X-BIZMAIL-ID: 12055654906655040144
+EX-QQ-RecipientCnt: 17
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 18 Aug 2025 17:28:21 +0800
-Subject: [PATCH v3 2/3] clk: spacemit: introduce pre-div for ddn clock
+Subject: [PATCH v3 0/3] clk: spacemit: fix i2s clock
+Date: Mon, 18 Aug 2025 17:28:19 +0800
+Message-Id: <20250818-k1-clk-i2s-generation-v3-0-8139b22ae709@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,9 +43,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250818-k1-clk-i2s-generation-v3-2-8139b22ae709@linux.spacemit.com>
-References: <20250818-k1-clk-i2s-generation-v3-0-8139b22ae709@linux.spacemit.com>
-In-Reply-To: <20250818-k1-clk-i2s-generation-v3-0-8139b22ae709@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIADPyomgC/3WNQQ6CMBBFr0Jm7ZC2lFRdeQ/DopYRJkAhLRIM4
+ e5WEpcu30/e+xtECkwRrtkGgRaOPPoExSkD11rfEHKdGJRQpTgLjZ1E13fIKmJDnoKdk4FEZIS
+ +EEljIblToCevR/deJW45zmN4HzeL/K6/ovlTXCQKNLVTJT006bq49exfax4n62jgOXfjANW+7
+ x/sbrXMwwAAAA==
+X-Change-ID: 20250804-k1-clk-i2s-generation-eee7049ee17a
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -55,136 +57,90 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755509307; l=4228;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755509307; l=2086;
  i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=FOB7j1hlhVZDsG+zyDRMWyOCbt8PIEXCVAaCiq/WXRc=;
- b=M/lFs4kyl89mj2sEORYsOaGP3qlKajC1gTtgFdc/qX9ZBRO7aDVIo9wGpaaLa6UjHn9XEOTSZ
- O5QXfiPnJeZC/zgHitor1IuClRtwCBaR92PmkyrzarTgog/NntUIRYC
+ bh=Ix8rQX7j+Djeow/6d/c6nvq5oESHFJilL/KybCgSlgw=;
+ b=aVYL6kUleE+B4XSTi5WfXl0yVT2LMvgB+NBhSsLqFhYKv/I7ewX5NwYNxGO+PiNQIR32slhyb
+ LfpvAk33XQNDefyF9v2KUvgkSO5wVWUP0ih9HZ9ym8owffx6k/a6sC/
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NELwyfGakffP+9L3bDaMONw9vb6nlkH+SL0tIki6+Lhoki/bBZ+oRp91
-	MqgF6/sfSTp2XFH9IIwVYLl+8Nuxclypjb/v9hTn+IFW4qE8l63OhJKSepg/x/2tOv2G0cz
-	6AbpzKufG+eT72YEo/ViNTV/8e0Hkn1mkcvmwdTXDF/WE7PrR9bmU4cAFnIAT2vYSAs3cez
-	3cHKLPXEg0bddeDcnaa7t9Ll504V9zQCDPZU5Zq+tZHWDK7PaS4T/uoZ2vF9f1weDn2BHdp
-	M9Hxzadt2hdoDamDrmMzTb+g0wLZloN3tJ+Nz8ynl3eMtjBDZYEX8B/bvHVV/J6ideBiZnS
-	LDcu0Yb6BBscVddoQUBtwmGOglZd/ctw5P+Bp/glCal8CY9bAwMxsQCGCYtAETPP0tgQoug
-	7q/P7Rt4sjc9cndzlnBA0uN1QnA6htw0Ph8kB4AFleurSRMghMFvkQd7t1UaTfMOjoCSLaB
-	oG3kbnWuFVM0stzHDNJAXintwHh+CegIGPckL88E7fBJZLlDzc1GwmLi79TZTi9dMw3JohY
-	OGbLildh6Ees+3zduj1RZnX1uS33ijlV1Tp/inG2aFFAc+sQMNCXlLVs9Fk1ItFs1wlXx9R
-	gTfukO8PImQsAoueknhJvxg7N6Pxu8jffFVhEf+JM7XUawP5j3228EtOHYU93vM0BBxNRYn
-	lGI1HxP/tVnvHS4WLzZ9m1N4kZpFi1ODLxWKBJJXiMyewM+VpaJU8Ajx+LtzL/wKedyr7mv
-	UI/m69qE2igLhKRKYVvOExZOXL3dhEaUARPKIm6kTlrv+MrObmg7kFMaWkhjCuYEXIN6CYD
-	cJlqjaJ8UzNxEY1zLchmwjmmf79Fa6SG63fMO1eJpwD7L9q1GB8sBprvuVmrWEA9U/yE5a4
-	swcddASc6YEjslnXdw8oNul644wexl0NZGjC3TclFebZB/4fX6Klpt/QDKF/b3TbmtWRl+F
-	YvkrKx81dZnp9yNMn45giWbd8BnQS4FCAnl7So4zI3lJAzWCXRx27q/eqACo/LwTEOiNh1e
-	LqiBHzBuJO+ijYqzKgdYqHQL/XVu84Is8i8a3cqyh1hXU+ax7Zsjiiek41X5oZYT7LV6mvk
-	bgoz5S58/Fn1vDViZs3KfJD7d5um8fhuRsmbeMeVEOy
+X-QQ-XMAILINFO: N10XyoOyIIl0qJlBfOUj9zmUJS2acQKdoWHkIeHB89D6L77TxqFP9PQI
+	GVVAa/vuyScHRIo7MQZfWaafsm1FUImiRzByDLoWufRA+kGFqVMogbpgMWA389Cmub+jrmx
+	da5Uzddv1FHN8d+7WDH0HZ4qxgHvfHN4cxDB2jGUHLlSx+JrKbfr99uQpJEPshtSlMhu3ez
+	cw+WHmcoUS4yQxHQhiUYpRGW6X+Nh1kQvATA3Y2u3pHIl7f9veyZdFDMOtsUQnFzRM3vhiL
+	UwE8MUWHA7/54f8q7OkmF/YU/pn0pxi3JZsYJC0/vaKZGrXfaGHWmU4L4u0vqQAvv/aeOi/
+	TDpYn2nPWSvbpPJcDLZpI9+4WOO6ZyJ15gs+3wXio3STmN+a7BeplBh9Cnb5HTPaxuUV73X
+	aW2x6lLz53SCNxaaXSSse5ENaE26vaR7lr5NxB5bJcyqvDhJuyJqiKmEh5c86+A6dvc/2ub
+	Nj1+IXr/rYYzQa1FJ61Wl3PJfR6w9Y+CeqRZKoJKDELuoDDp8PNUSDfLkIv3iXZCoxraXen
+	tGfyjT0UWWS+Vh9LeVd+jzgni6GvExYjGemCOqarARS0fnjgTpO824hfv4ZKHFB3j3GmwWC
+	xNXSg1W52wvmvpueeR+ruM66yt5mmdV/jrDxUIRcXOFfm17Vaj4R6Wt8YMKAIgze6fQLgUj
+	m649Knag/3vTuNTJbpUKAVJaaMZfN6+1bcIjOkiR31p6eIZcID1Y0bNMlPHJyvSsppUdUmN
+	1pxTdoe9z7IxMTmfwZWKEg/F8VkdSyuIZZYjRkygmmTjYQyJmMycMJvdIFx/0rA0xIWFAcI
+	nWCWhGnjzBfMnPZfAnsB6MZiMW4dAySf1cgR9LnkJxDiUyOFQbMwKRJlCCPMhSPB5IFdIIP
+	6VDHQz7ZsLTqghc8tUtywkwgNyVC9lfrTzWNfYD44mmazZBGpEZpdXrZ4wH8F7X5pAZLCq8
+	cgx3gtbAI3dr0HTbmyerumMsBrMU2tPh0hNc7iSGKrjX1pjj42man2wVkxLd7cHQmOZzxno
+	eN2alJqpcmBbNdRuj9p+FPx2ewSmWQrIsDurtTYlCkQvqifG8dAi+anQ05QGoWEfXdNrCM0
+	1j0FzcEyXgd6HmGAFal/RM3j9m07fKayxJxtAuJDBHrM7BnVyux5ZNUJGEmSfcAFQ==
 X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 
-The original DDN operations applied an implicit divide-by-2, which should
-not be a default behavior.
+Previously, the driver defined two clocks for the I2S controller:
+i2s_bclk and its parent i2s_sysclk.
 
-This patch removes that assumption, letting each clock define its
-actual behavior explicitly.
+Both i2s_bclk and i2s_sysclk were treated as fixed-rate clocks,
+which clearly does not reflect the practical requirements for I2S operation.
+
+Additionally, the original driver overlooked some upstream clock sources.
+
+To fix the I2S clock, this series also introduces several new clock definition macros.
+
+The I2S clock hierarchy can be found here [1].
+
+Link:
+https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+[1]
 
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- drivers/clk/spacemit/ccu-k1.c  |  4 ++--
- drivers/clk/spacemit/ccu_ddn.c | 12 ++++++------
- drivers/clk/spacemit/ccu_ddn.h |  6 ++++--
- 3 files changed, 12 insertions(+), 10 deletions(-)
+Changes in v3:
+- remove factor for CCU_DIV_GATE_DEFINE
+- introduce I2S_BCLK_FACTOR as I2S_BCLK parent clock
+- adjust consumers in patch2/3
+- Link to v2: https://lore.kernel.org/all/20250811-k1-clk-i2s-generation-v2-0-e4d3ec268b7a@linux.spacemit.com/
 
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 65e6de030717afa60eefab7bda88f9a13b857650..7155824673fb450971439873b6b6163faf48c7e5 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -136,8 +136,8 @@ CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
- CCU_GATE_DEFINE(pll1_d2_1228p8, CCU_PARENT_HW(pll1_d2), MPMU_ACGR, BIT(16), 0);
- 
- CCU_GATE_DEFINE(slow_uart, CCU_PARENT_NAME(osc), MPMU_ACGR, BIT(1), CLK_IGNORE_UNUSED);
--CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 0);
--CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 0);
-+CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 2, 0);
-+CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
- 
- CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
- 
-diff --git a/drivers/clk/spacemit/ccu_ddn.c b/drivers/clk/spacemit/ccu_ddn.c
-index be311b045698e95a688a35858a8ac1bcfbffd2c7..06d86748182bd1959cdab5c18d0a882ee25dcade 100644
---- a/drivers/clk/spacemit/ccu_ddn.c
-+++ b/drivers/clk/spacemit/ccu_ddn.c
-@@ -22,21 +22,21 @@
- 
- #include "ccu_ddn.h"
- 
--static unsigned long ccu_ddn_calc_rate(unsigned long prate,
--				       unsigned long num, unsigned long den)
-+static unsigned long ccu_ddn_calc_rate(unsigned long prate, unsigned long num,
-+				       unsigned long den, unsigned int pre_div)
- {
--	return prate * den / 2 / num;
-+	return prate * den / pre_div / num;
- }
- 
- static unsigned long ccu_ddn_calc_best_rate(struct ccu_ddn *ddn,
- 					    unsigned long rate, unsigned long prate,
- 					    unsigned long *num, unsigned long *den)
- {
--	rational_best_approximation(rate, prate / 2,
-+	rational_best_approximation(rate, prate / ddn->pre_div,
- 				    ddn->den_mask >> ddn->den_shift,
- 				    ddn->num_mask >> ddn->num_shift,
- 				    den, num);
--	return ccu_ddn_calc_rate(prate, *num, *den);
-+	return ccu_ddn_calc_rate(prate, *num, *den, ddn->pre_div);
- }
- 
- static long ccu_ddn_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -58,7 +58,7 @@ static unsigned long ccu_ddn_recalc_rate(struct clk_hw *hw, unsigned long prate)
- 	num = (val & ddn->num_mask) >> ddn->num_shift;
- 	den = (val & ddn->den_mask) >> ddn->den_shift;
- 
--	return ccu_ddn_calc_rate(prate, num, den);
-+	return ccu_ddn_calc_rate(prate, num, den, ddn->pre_div);
- }
- 
- static int ccu_ddn_set_rate(struct clk_hw *hw, unsigned long rate,
-diff --git a/drivers/clk/spacemit/ccu_ddn.h b/drivers/clk/spacemit/ccu_ddn.h
-index a52fabe77d62eba16426867a9c13481e72f025c0..4838414a8e8dc04af49d3b8d39280efedbd75616 100644
---- a/drivers/clk/spacemit/ccu_ddn.h
-+++ b/drivers/clk/spacemit/ccu_ddn.h
-@@ -18,13 +18,14 @@ struct ccu_ddn {
- 	unsigned int num_shift;
- 	unsigned int den_mask;
- 	unsigned int den_shift;
-+	unsigned int pre_div;
- };
- 
- #define CCU_DDN_INIT(_name, _parent, _flags) \
- 	CLK_HW_INIT_HW(#_name, &_parent.common.hw, &spacemit_ccu_ddn_ops, _flags)
- 
- #define CCU_DDN_DEFINE(_name, _parent, _reg_ctrl, _num_shift, _num_width,	\
--		       _den_shift, _den_width, _flags)				\
-+		       _den_shift, _den_width, _pre_div, _flags)		\
- static struct ccu_ddn _name = {							\
- 	.common = {								\
- 		.reg_ctrl	= _reg_ctrl,					\
-@@ -33,7 +34,8 @@ static struct ccu_ddn _name = {							\
- 	.num_mask	= GENMASK(_num_shift + _num_width - 1, _num_shift),	\
- 	.num_shift	= _num_shift,						\
- 	.den_mask	= GENMASK(_den_shift + _den_width - 1, _den_shift),	\
--	.den_shift	= _den_shift,					\
-+	.den_shift	= _den_shift,						\
-+	.pre_div	= _pre_div,						\
- }
- 
- static inline struct ccu_ddn *hw_to_ccu_ddn(struct clk_hw *hw)
+Changes in v2:
+- remove CCU_DDN_GATE_DEFINE
+- remove CCU_DIV_TABLE_GATE_DEFINE
+- move gate of i2s_sysclk from DDN to MUX
+- introduce factor for CCU_DIV_GATE_DEFINE
+- modify commit message
+- split patch2/2 into separate patches
+- remove reformatting in k1-syscon.h
+- Link to v1: https://lore.kernel.org/r/20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com
 
+---
+Troy Mitchell (3):
+      dt-bindings: clock: spacemit: introduce i2s pre-clock to fix i2s clock
+      clk: spacemit: introduce pre-div for ddn clock
+      clk: spacemit: fix i2s clock
+
+ drivers/clk/spacemit/ccu-k1.c                  | 33 ++++++++++++++++++++++----
+ drivers/clk/spacemit/ccu_ddn.c                 | 12 +++++-----
+ drivers/clk/spacemit/ccu_ddn.h                 |  6 +++--
+ drivers/clk/spacemit/ccu_mix.h                 |  2 +-
+ include/dt-bindings/clock/spacemit,k1-syscon.h |  4 ++++
+ include/soc/spacemit/k1-syscon.h               |  1 +
+ 6 files changed, 45 insertions(+), 13 deletions(-)
+---
+base-commit: e3324912fe5a05a3ea439df476625e7c8efc2b9a
+change-id: 20250804-k1-clk-i2s-generation-eee7049ee17a
+
+Best regards,
 -- 
-2.50.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
