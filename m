@@ -1,97 +1,81 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9306B3451DD
-	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 20:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7C51E25F2;
+	Mon, 18 Aug 2025 22:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755547335; cv=none; b=Q/1Fp/VFte9ZfRVL5Khi1ofxPRwp+IAmuP1u6/PHLZ6I24oe7/nuZ59ceTFYGHxTMariz89UK6Esx590ocmA3/MGldt83DX41nXb4oelRiXAXQV2WDp/Wc+47mj62WOCMnF7eD5u/G+blBemi5gTLsw9ppY+0lbQr7mCMNyPGwA=
+	t=1755555007; cv=none; b=NcRxD0helI+pJQ2LgQh06dfUIR1nAqMlqLMFNSY+Fr6V1rY7x6I/cEpOFGgbm/gYegU5hGQGqQ8/05reeRJaHULN7iQoZK1bnjDVLtJfMEQC9xV3AYhHvxX8J9zIiQnDnfKtFFkQMTTw6hLef4X8KH5AkDezEO3vmzoBzgoFq/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755547335; c=relaxed/simple;
-	bh=qjmLUZjHQ5QD9oJntM9nVj7N7ya7TqMjrnF99c2YdS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1JWHjbRNvMJlYQASyzpEOpFJXTigsP3yFl4Cyxw3hcPMFlDA5g9Ta0xp9/vCm3waLYWch2ewtK73HSSMrNxdo8xe5Nt/qvlWrlr2r0aIJFjLxw+xJFWZIxRYgMnrGJp706IOtGMK8zBT0cboeR1V8A0wD9C7ghbqiH1sAvcD0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvVaJmpA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1755555007; c=relaxed/simple;
+	bh=xj3JxOXQyWu37kJaLPQqWy86cPH8xawvdDtVq3Ay34o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uq0+aqYbqOeDjLGBPNVJtouEVP3aCzVhAb9kkMiB2l37NvwV+wysmQC+XiFxiFXwZKm1Jz+kS3hYgThFqj01/InZsQxIX+eSqtKQDDGwqm2+GmLRYJ7G3+C97+wQXmjkk28/JobwHdbXW4VAHMLzz8kji8XjeIUmAcVySxy0M5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dohpnvq9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvVaJmpA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755547332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
-	b=dvVaJmpAuJfSkUAcngRfzMOLLgRjRGfSTRz60i11JxBKVngadB5sZg2b0MbZvsgIQGmmpc
-	GfoJFQ37Av6EibHcQ+7LLwn48uoV/diuEtXsGCZdvNJhT+q2TPtkimLWyNR2IgRcq+wRnt
-	uzhvv6RbADOmXeWCDDoKPtmo0cAYav4=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-451-epA0e0OePRyi9sjC-pDayA-1; Mon, 18 Aug 2025 16:02:11 -0400
-X-MC-Unique: epA0e0OePRyi9sjC-pDayA-1
-X-Mimecast-MFC-AGG-ID: epA0e0OePRyi9sjC-pDayA_1755547330
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-afcb7338319so332960166b.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 13:02:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755547330; x=1756152130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
-        b=sKh925BPE96IrrZF936jjcMK6BGZ8nuXJU/54iALTH/ZaCkiNe2tg9ARQ6XE5j9F5F
-         PtpFCn+1sgdChKFF9yGvGYLWbHeAuhEmyhQW5epnSLhJpl3SHmBE5bnQzHY6QWsA9/Vh
-         a2wLWfImx9lN6mNM4Mbya0bAkM29BeeWeHcMzccSjIw0gfXZ+X7acNMJ6Y9/RXC0Z/UD
-         gfMh+B6IfrHNjD9D/Vpp+3o85bOclI34BuUeU/ZiPuQOhmZaMUp/R33LgRnq92R/6gV/
-         JO1do7ezRrwVGORb1RAlRGf0yEHChBtjLznJLgZYGVkb9ORO/gFQFVM+Y/F5TEHTnflP
-         3OJQ==
-X-Gm-Message-State: AOJu0YxKysIdM5+VfanvirVRIxhpu5K02I77ua/r8sWVwraedxmsegiT
-	AYr6MLf86V3STRh0PeR5eMuDx0/JF3VH0ufaNa35u4s0pm5bDXJMjj5qZX0HROaWmJbrnLUuLqS
-	qo4Hc+31XFdE1GImCjylLUhp6gg088DrWb8Djszu3fFZEkNpz46jeWuKLY7xkh4fXHQzVBYqbSw
-	eaRmsPXSwq2Y3eHg55qxpUgxz/h6eLDHa1InlL
-X-Gm-Gg: ASbGnct75tmTYFH+3sc1+4S3mz2ZtkqlM6JKe3KL9Rk5G2qFpwcmc3b3Tv6iqhmgtEE
-	iGlSK0RyM6pf/rJhJqZNSutxtDo+mXry1mH8X1T5J2tVsFBYJzVe1/UfJL84DMw4s6LaQk/ABBL
-	FZozgOAv+uOTN4Vn7OEDxL/BT9Gq7D
-X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id a640c23a62f3a-afddcb815ffmr6650166b.24.1755547329847;
-        Mon, 18 Aug 2025 13:02:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/Z6YJYYcpHHX5vpa68pR+vUhD0YFs4ADGuF96s+2h4oESeiqbIO9Y8YyPLEqoOxV16y8wZ3QXEoGXDLW/TU4=
-X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id
- a640c23a62f3a-afddcb815ffmr6647666b.24.1755547329385; Mon, 18 Aug 2025
- 13:02:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dohpnvq9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5069AC4CEEB;
+	Mon, 18 Aug 2025 22:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755555006;
+	bh=xj3JxOXQyWu37kJaLPQqWy86cPH8xawvdDtVq3Ay34o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dohpnvq9ouhIqIN48XC6yPAtnj1Jhn5Bwfz5MrFpEaMb9xpOTAaZ4O4aR4Asqokfb
+	 xDjl+y9nGnQanpAMsYRmhcUtJzA1qXd8dZsG/RaoTo6or/Z/6bl+3Tv3rqcADUqZto
+	 +783ODkgwviLXxoskf9ZYVIi4moAI/mQskz2IULpdyhd/uQ10y7owTHNbVXAgArmWQ
+	 wIK0dPuMXd0ru5tdl691HFVFygW0cQ0E9AHd6M6fYoyYrHzfmd/DyWpOXyPgkxqW+w
+	 7/zDXhfnewFwJSrSa25aLYp7/+EpNjxYxBs3eUac+O36cXyPNGNiBzqp+WKe9HRvMQ
+	 zY4DsLBvpaXbQ==
+Date: Mon, 18 Aug 2025 15:10:04 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] clk: thead: th1520-ap: allow gate cascade and fix
+ padctrl0
+Message-ID: <aKOkvK2UHxLP0LNA@x1>
+References: <20250816084445.2582692-1-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com> <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
-In-Reply-To: <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
-From: Brian Masney <bmasney@redhat.com>
-Date: Mon, 18 Aug 2025 16:01:56 -0400
-X-Gm-Features: Ac12FXxrVE5SCQ9rFBJfDNiF5LVNb7p52sPwt4Nq3ZChgQz7oePbloiikJEf1XA
-Message-ID: <CABx5tq+yDZ2GL+ekvQAXHGXUbFF3KfwN5ts5020RpYFYZNcUzg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] clk: test: introduce clk_dummy_div for a mock divider
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816084445.2582692-1-uwu@icenowy.me>
 
-On Tue, Aug 12, 2025 at 10:40=E2=80=AFAM Brian Masney <bmasney@redhat.com> =
-wrote:
-> +static long clk_dummy_div_round_rate(struct clk_hw *hw, unsigned long ra=
-te,
-> +                                    unsigned long *parent_rate)
-> +{
-> +       return divider_round_rate(hw, rate, parent_rate, NULL,
-> +                                 CLK_DUMMY_DIV_WIDTH, CLK_DUMMY_DIV_FLAG=
-S);
-> +}
+On Sat, Aug 16, 2025 at 04:44:43PM +0800, Icenowy Zheng wrote:
+> Current ccu_gate implementation does not easily allow gates to be clock
+> parents because of the waste of struct clk_hw in struct ccu_gate;
+> however it's found that the padctrl0 apb clock gate seems to be
+> downstream of perisys-apb4-hclk, gating the latter w/o gating the former
+> makes the padctrl0 registers inaccessible too.
+> 
+> Fix this by refactor ccu_gate code, mimicing what Yao Zi did on
+> ccu_mux; and then assign perisys-apb4-hclk as parent of padctrl0 bus
+> gate.
+> 
+> Icenowy Zheng (2):
+>   clk: thead: th1520-ap: describe gate clocks with clk_gate
+>   clk: thead: th1520-ap: fix parent of padctrl0 clock
+> 
+>  drivers/clk/thead/clk-th1520-ap.c | 386 +++++++++++++++---------------
+>  1 file changed, 189 insertions(+), 197 deletions(-)
+> 
+> -- 
+> 2.50.1
 
-I sent the wrong version of this patch with the round_rate instead of
-the determine_rate implementation. Kind of ironic given that I posted
-various series across the kernel to get rid of round_rate!
+Thank you, I've applied this to thead-clk-for-next [1]:
 
-Brian
+9e99b992c887 clk: thead: th1520-ap: fix parent of padctrl0 clock
+aaa75cbd5d4f clk: thead: th1520-ap: describe gate clocks with clk_gate
 
+-Drew
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git/log/?h=thead-clk-for-next
