@@ -1,55 +1,55 @@
 Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796CE21CA0C;
-	Mon, 18 Aug 2025 09:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A031A83F7;
+	Mon, 18 Aug 2025 10:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755510561; cv=none; b=hk5m3cbbZZCjeSv5/0QqbqAwlg9na12qRmDSbQ8RhZ/MHlZF7nXYnHtHmOBIoWSHVpa+xGEjACCLdBEvDjWEPJ75owGcmsGJ4WPEcATdUZ+1h8tkEW95wWUAtAmH61ZE74erVVWE2sli1fJmz6+mjmnoO8qAGoZ9+8keexoQ9qQ=
+	t=1755511470; cv=none; b=WJBkGTX5/PpIIDE72VKCtWvT//XlE7KIB4WJ4MYjYrYnebRSZH9mtNrZbjFempsyDK2ckNdSwjiQ+HKFFKSJpPFgpHvgzz9Nf4v2bT0gK+WpkDCXu3lQz7qJyw+UZLnHNAM0IgIGKqGAMUiAezWXnWmYkky7oJBCOfEMCXxDCbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755510561; c=relaxed/simple;
-	bh=G/TSilIIny419+wjwN/t2gGm9Hi+eIHM7DbXOJEDR/Q=;
+	s=arc-20240116; t=1755511470; c=relaxed/simple;
+	bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aveHUAh8i6kVDRpFBw0oe5YhK1FSg2XAUcl1pNjrt2E1+zwzSoN9DSTRHf2HvDgKhj+P6qtlTgciBttK4wDuxKvfVY6AhatT8+TrnfZYYdM4K1AGlPG68waBrbTQh8dc1qYizOgv5+9BmokAQfa6ta+mifWa3xciE0gb4okLYoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ehE1dNDf; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0jyHjazn; arc=none smtp.client-ip=155.254.16.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDbxX3j82KRrEaPgVqSo3Byew7eR2U+eelHV0/CaEJ5ER7FI16U+6fAExXrC9wgOFxRMvnIsrHJb0j2WGvUTabab4Kb96nuHsst0EabU6rHeVWKDezuogI15g8/5hORvzvYsHqlUiwJb7MyRL9vE+PkCcdG/+Xy2c8EbCnsWjZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=bUTJerPi; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wr2h2Ieo; arc=none smtp.client-ip=155.254.16.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ehE1dNDf";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0jyHjazn"
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="bUTJerPi";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wr2h2Ieo"
 Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 8FF6F12FB9DF;
-	Mon, 18 Aug 2025 02:49:17 -0700 (PDT)
+	by bayard.4d2.org (Postfix) with ESMTP id 9FA0C12FB458;
+	Mon, 18 Aug 2025 03:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1755510557; bh=G/TSilIIny419+wjwN/t2gGm9Hi+eIHM7DbXOJEDR/Q=;
+	t=1755511467; bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ehE1dNDflSHrSI1XDw3/kMTk6XunMr7pZkesptPP9ZcgZ9eQHS21I5gFj65Bspvic
-	 9SOilobYM2UxwooLW6ojkDUVnatWPEaYq9/DNS00ab3LmAjE840weuQeaUrUI02TTw
-	 MzotrWhuc+v1vP6OOwdFNdl/AV259boFpcbE/OaMA9Ayl33hr3e04kNxtZKUq2Gi7M
-	 hllbooq0QeV7EddmJZIMKnD7hL+s/fpgOfkawrCfaON1YupZUB91zVDq09y92q0/MI
-	 3y8HeddVCRQi4rp92E/HKQYy2pf2m7poCJH8PIvKVJoYrJyEzx7TC0+j/gow9fESJB
-	 w69GhLgWYqxwA==
+	b=bUTJerPioqaY8k+zBGOi2XjjY4kTawdPV5Bv/XgJa+nWn6mffS5FoqUW61pE+PsOo
+	 f5ns+ddo9qlJORHSWUgEywbDF4OlpcNj616oGObQP3bCtUM5YXnbWzR8gLwLxVucS1
+	 Ccn38RVVYpV4BAJ014Fs973eFm/xMx/M/GlRCMtHDgY4nQIB+cKsT0fWEwAzQZ0oVh
+	 xxdqkswi+RO4Yz4w9/07BWO05Bs/2cCPnCyNZ4rZA1wuJqZbezZ/iuexuFPBBs+pG8
+	 4TXoCC0KNM9sosZqgB9lfLh31cGkIoY6z5EPG92TAst1dzlUlhXnePadW3j7SO3Z6V
+	 2DikY37PAMIHg==
 X-Virus-Scanned: amavis at 4d2.org
 Received: from bayard.4d2.org ([127.0.0.1])
  by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id VRxjUVBxbqYv; Mon, 18 Aug 2025 02:49:16 -0700 (PDT)
+ id JJRSaq7kXkgL; Mon, 18 Aug 2025 03:04:24 -0700 (PDT)
 Received: from ketchup (unknown [117.171.67.207])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 58EE012FB42D;
-	Mon, 18 Aug 2025 02:49:13 -0700 (PDT)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 6A54512FB42D;
+	Mon, 18 Aug 2025 03:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1755510556; bh=G/TSilIIny419+wjwN/t2gGm9Hi+eIHM7DbXOJEDR/Q=;
+	t=1755511464; bh=UWt7N+4RQyhLxa/8B24DwDg6beeMRBqY7R8dGE6WUXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0jyHjaznbZLTd5hBz72tL6eH29OiPyRhhDBoTFL3eIAEJ3iQWDz+kx7mlDgQV1CK0
-	 fIKTsi2ba5WbwjqD2gSVID+zmaJPLOvl8kN0JPeZjXlO9LAFeWOdDnIi0zzoRBG3/5
-	 1SrbHlFceI7LpiroCT+jH1hLANLpY5ikQSWZooUN8PMmHChGOYKKRx3Vqv+CUyZ7St
-	 wY3f+TlRA5n7yf1EQcn7d0mNllzO4GwrdMF0Z9PT+JEk3uNDM/mtvvLGZlE9wcC4uO
-	 bPmcoKppUWojRn4/jnajtjgm+Ke1aVGMUrDTMdT6Kbikk1E9ixtpc7VKPtjoS7X8gc
-	 TyOe8sQjx1VFA==
-Date: Mon, 18 Aug 2025 09:49:10 +0000
+	b=wr2h2IeoUDA798Uf9bZU+Gg3cx2Bm4QG0bT76RLbm4eOlL65g48kcYKssKY99S+NJ
+	 /DwILeS4fCJXt5CbbH1hUrHKGrE+LI/TJ4FtBWZNaZpQB60+VB6wopQge7CuLK+Wqj
+	 h8FKi/csxSXf0cLoBceC56t6Muo0QzUJaQ76jB3WRa7gprf30GfB73q2+qlceYdy9N
+	 ZMnBqGqidE5dHnaqGv7bY5oL4Nv6aGZh4xapAqk1v30/PXd7qxXArFrBfKLge2SRCh
+	 ylCd5ZgTTCA7zCYFrv1L641Qg4VaTea/0YokiTG2NG69y9HXwogsSxDFJi5AIufGyk
+	 6Defpki1+nmjw==
+Date: Mon, 18 Aug 2025 10:04:18 +0000
 From: Haylen Chu <heylenay@4d2.org>
 To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -62,10 +62,10 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH v3 2/3] clk: spacemit: introduce pre-div for ddn clock
-Message-ID: <aKL3FghKPUaQcagM@ketchup>
+Subject: Re: [PATCH v3 3/3] clk: spacemit: fix i2s clock
+Message-ID: <aKL6ormE1N72fwVG@ketchup>
 References: <20250818-k1-clk-i2s-generation-v3-0-8139b22ae709@linux.spacemit.com>
- <20250818-k1-clk-i2s-generation-v3-2-8139b22ae709@linux.spacemit.com>
+ <20250818-k1-clk-i2s-generation-v3-3-8139b22ae709@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,110 +74,94 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818-k1-clk-i2s-generation-v3-2-8139b22ae709@linux.spacemit.com>
+In-Reply-To: <20250818-k1-clk-i2s-generation-v3-3-8139b22ae709@linux.spacemit.com>
 
-On Mon, Aug 18, 2025 at 05:28:21PM +0800, Troy Mitchell wrote:
-> The original DDN operations applied an implicit divide-by-2, which should
-> not be a default behavior.
+On Mon, Aug 18, 2025 at 05:28:22PM +0800, Troy Mitchell wrote:
+> Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
+> for real I2S use cases.
 > 
-> This patch removes that assumption, letting each clock define its
-> actual behavior explicitly.
+> Moreover, the current I2S clock configuration does not work as expected
+> due to missing parent clocks.
 > 
+> This patch adds the missing parent clocks, defines i2s_sysclk as
+> a DDN clock, and i2s_bclk as a DIV clock.
+> 
+> A special note for i2s_bclk:
+> 
+> From the definition of register, The i2s_bclk is a non-linear,
+> discrete divider clock.
+
+No, it IS linear. It just comes with a 1/2 factor according to your code
+(I'm assuming there's a typo in the table below).
+
+> In calculus and related areas, a linear function is a function whose
+> graph is a straight line, that is, a polynomial function of degree
+> zero or one. (From Wikipedia)
+
+> The following table shows the correspondence between index
+> and frequency division coefficients:
+> 
+> | index |  div  |
+> |-------|-------|
+> |   0   |   2   |
+> |   1   |   4   |
+> |   2   |   6   |
+> |   2   |   8   |
+
+Index = 2 appears twice in the table. Is this a typo?
+
+> From a software perspective, introducing i2s_bclk_factor as the
+> parent of i2s_bclk is sufficient to address the issue.
+> 
+> The I2S-related clock registers can be found here [1].
+> 
+> Link:
+> https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+> [1]
+> 
+> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+> Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
+> Suggested-by: Haylen Chu <heylenay@4d2.org>
+> Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
 > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > ---
->  drivers/clk/spacemit/ccu-k1.c  |  4 ++--
->  drivers/clk/spacemit/ccu_ddn.c | 12 ++++++------
->  drivers/clk/spacemit/ccu_ddn.h |  6 ++++--
->  3 files changed, 12 insertions(+), 10 deletions(-)
-
-Reviewed-by: Haylen Chu <heylenay@4d2.org>
-
+>  drivers/clk/spacemit/ccu-k1.c    | 29 +++++++++++++++++++++++++++--
+>  drivers/clk/spacemit/ccu_mix.h   |  2 +-
+>  include/soc/spacemit/k1-syscon.h |  1 +
+>  3 files changed, 29 insertions(+), 3 deletions(-)
+> 
 > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 65e6de030717afa60eefab7bda88f9a13b857650..7155824673fb450971439873b6b6163faf48c7e5 100644
+> index 7155824673fb450971439873b6b6163faf48c7e5..b2c426b629a37a9901bbced26fc55c5f1b34eba5 100644
 > --- a/drivers/clk/spacemit/ccu-k1.c
 > +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -136,8 +136,8 @@ CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
->  CCU_GATE_DEFINE(pll1_d2_1228p8, CCU_PARENT_HW(pll1_d2), MPMU_ACGR, BIT(16), 0);
->  
->  CCU_GATE_DEFINE(slow_uart, CCU_PARENT_NAME(osc), MPMU_ACGR, BIT(1), CLK_IGNORE_UNUSED);
-> -CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 0);
-> -CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 0);
-> +CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 2, 0);
-> +CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
->  
->  CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
->  
-> diff --git a/drivers/clk/spacemit/ccu_ddn.c b/drivers/clk/spacemit/ccu_ddn.c
-> index be311b045698e95a688a35858a8ac1bcfbffd2c7..06d86748182bd1959cdab5c18d0a882ee25dcade 100644
-> --- a/drivers/clk/spacemit/ccu_ddn.c
-> +++ b/drivers/clk/spacemit/ccu_ddn.c
-> @@ -22,21 +22,21 @@
->  
->  #include "ccu_ddn.h"
->  
-> -static unsigned long ccu_ddn_calc_rate(unsigned long prate,
-> -				       unsigned long num, unsigned long den)
-> +static unsigned long ccu_ddn_calc_rate(unsigned long prate, unsigned long num,
-> +				       unsigned long den, unsigned int pre_div)
->  {
-> -	return prate * den / 2 / num;
-> +	return prate * den / pre_div / num;
->  }
->  
->  static unsigned long ccu_ddn_calc_best_rate(struct ccu_ddn *ddn,
->  					    unsigned long rate, unsigned long prate,
->  					    unsigned long *num, unsigned long *den)
->  {
-> -	rational_best_approximation(rate, prate / 2,
-> +	rational_best_approximation(rate, prate / ddn->pre_div,
->  				    ddn->den_mask >> ddn->den_shift,
->  				    ddn->num_mask >> ddn->num_shift,
->  				    den, num);
-> -	return ccu_ddn_calc_rate(prate, *num, *den);
-> +	return ccu_ddn_calc_rate(prate, *num, *den, ddn->pre_div);
->  }
->  
->  static long ccu_ddn_round_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -58,7 +58,7 @@ static unsigned long ccu_ddn_recalc_rate(struct clk_hw *hw, unsigned long prate)
->  	num = (val & ddn->num_mask) >> ddn->num_shift;
->  	den = (val & ddn->den_mask) >> ddn->den_shift;
->  
-> -	return ccu_ddn_calc_rate(prate, num, den);
-> +	return ccu_ddn_calc_rate(prate, num, den, ddn->pre_div);
->  }
->  
->  static int ccu_ddn_set_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/spacemit/ccu_ddn.h b/drivers/clk/spacemit/ccu_ddn.h
-> index a52fabe77d62eba16426867a9c13481e72f025c0..4838414a8e8dc04af49d3b8d39280efedbd75616 100644
-> --- a/drivers/clk/spacemit/ccu_ddn.h
-> +++ b/drivers/clk/spacemit/ccu_ddn.h
-> @@ -18,13 +18,14 @@ struct ccu_ddn {
->  	unsigned int num_shift;
->  	unsigned int den_mask;
->  	unsigned int den_shift;
-> +	unsigned int pre_div;
+
+...
+
+> + * i2s_bclk is a non-linear discrete divider clock.
+> + * Using i2s_bclk_factor as its parent simplifies software handling
+> + * and avoids dealing with the non-linear division directly.
+> + */
+
+And thus this comment is wrong and misleading. Suggest something like,
+
+	Divider of i2s_bclk always implies a 1/2 factor, which is
+	described by i2s_bclk_factor.
+
+> +CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s_bclk_factor), MPMU_ISCCR, 27, 2, BIT(29), 0);
+
+>  static const struct clk_parent_data apb_parents[] = {
+>  	CCU_PARENT_HW(pll1_d96_25p6),
+> @@ -756,6 +777,10 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
+>  	[CLK_I2S_BCLK]		= &i2s_bclk.common.hw,
+>  	[CLK_APB]		= &apb_clk.common.hw,
+>  	[CLK_WDT_BUS]		= &wdt_bus_clk.common.hw,
+> +	[CLK_I2S_153P6]		= &i2s_153p6.common.hw,
+> +	[CLK_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
+> +	[CLK_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
+> +	[CLK_I2S_BCLK_FACTOR]	= &i2s_bclk_factor.common.hw,
 >  };
 >  
->  #define CCU_DDN_INIT(_name, _parent, _flags) \
->  	CLK_HW_INIT_HW(#_name, &_parent.common.hw, &spacemit_ccu_ddn_ops, _flags)
->  
->  #define CCU_DDN_DEFINE(_name, _parent, _reg_ctrl, _num_shift, _num_width,	\
-> -		       _den_shift, _den_width, _flags)				\
-> +		       _den_shift, _den_width, _pre_div, _flags)		\
->  static struct ccu_ddn _name = {							\
->  	.common = {								\
->  		.reg_ctrl	= _reg_ctrl,					\
-> @@ -33,7 +34,8 @@ static struct ccu_ddn _name = {							\
->  	.num_mask	= GENMASK(_num_shift + _num_width - 1, _num_shift),	\
->  	.num_shift	= _num_shift,						\
->  	.den_mask	= GENMASK(_den_shift + _den_width - 1, _den_shift),	\
-> -	.den_shift	= _den_shift,					\
-> +	.den_shift	= _den_shift,						\
-> +	.pre_div	= _pre_div,						\
->  }
->  
->  static inline struct ccu_ddn *hw_to_ccu_ddn(struct clk_hw *hw)
-> 
-> -- 
-> 2.50.1
-> 
+>  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
+
+Best regards,
+Haylen Chu
