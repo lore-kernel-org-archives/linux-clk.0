@@ -1,118 +1,101 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DC2255E53
-	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 15:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A37D258CE1
+	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 15:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755530541; cv=none; b=Dj1yRw8d6FW9YTKKqzsIawLV3ZeChdQiTa9FnGExBq5rUxqWn7PdvL1YOfFOomlhV5nJBiyCR/caeyB7k5/aAB4+V03N/6oe5RfC2P/QJx43Ff90flhNjt3ensQL1ABh729WH6zNpv8o8rw26boeVu+OxPKWDWLOKI/Ce9LSVGw=
+	t=1755532034; cv=none; b=is4pq6DQF84sz5ZEsEV9/ftdXyqkaYs4mX57ASunGIqrA35WTfs7lxh6GKuFH55TUJDc+CbsLkSN/cz+CNAwbIuSLDDSGdnEB20HVSmQ1zUNB/D8q1Zf8JCwU4665M3KkXoxu7n3pBrMgSPC9I+SX16pgJizFyvaVH2zd9r0o74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755530541; c=relaxed/simple;
-	bh=TZB6OzqRHkfT0at7DfysjFW1dYU/QwDxNcArpH9FPJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDKcb3B06CGqell5fXN9Ah3Lc3OQg35SgMiOZuXfd/kAjb7gVofiDYmcqHD5h+Dl63Fi2EmmQq0pfNd8RFLUChVUFpBgBjmHuDNczXPyelboCwxwXX7TK/vGquKfheXek2ok8KFk0bghICWFhPnl3S4bdPz+gkNQlSyzthZi4d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u06rAZbl; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755532034; c=relaxed/simple;
+	bh=WUakmhPTGh3JHJBduDtg9bHzUVeNreikaFApL4jcRsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6bbGRYx7gZAjkx5bHcNf4esImSSVsBhrS6jUvYOVDXD3HfkUQv0F+cYByMLvvZuwAK/EzfqtLMe0yxhekFVVj4z0lGkqEm79tZhJRSxhiIpZ1A1k2wsFtxwexI77pGvrOtOKDiCk0wX6P8GGE7nZL2BqbmksLMtT6cW/ZS/6RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=I8Bq11ah; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u06rAZbl"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-333f918d71eso30173181fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 08:22:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I8Bq11ah"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b109c482c8so75693691cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 08:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755530538; x=1756135338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yVZcBNGwpkq+v3DR0vvpafxBkSL/1KeRhlI8oyXPu5U=;
-        b=u06rAZbl2IKE5aHqI29nVAjfqYPmxsWvrYsyHBlAY+SwekxsfWfAGIC8oAlGGBhBOD
-         wugb5qxb3xnEuUyB8rXIbkTNNY8fdDdsbNTIc/Au5PBccylFzxKaJosRKuhoo0fJHZJG
-         NIlWCQ7Vtd4B2yhHdr2A7aOtM7LnoqyPru8SHYjAZVk3u/K2WTVWF8VUTAAeS3t1rto5
-         zyiy9gXs4sZ/3SLQ2tBq64TO64PUhPUC8CWNb1kHMFwD9sihRygUxt6BIyA3SaaULwfg
-         2RvGGxV6djsdbbsQBJg7tWrbdJYxzxk8lNdguUDp6rMxHPJtwI2sf18JqKPZYLGnlP7g
-         kuvA==
+        d=sifive.com; s=google; t=1755532031; x=1756136831; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5NZWNuw9uqGyH6UBABpbY9lwXWb90jB/i2Dis4FmyQU=;
+        b=I8Bq11ahQhqfEnYtsoH7G5MNTr0RniVsDDpcFBN6FbPC3qcn8JVyOaS2C80/YmoXJh
+         g1u7ie7+sP+0lS4MEzyJlP0oS/jhWoi4vLDhkDlpm3cbKKseDCEXtCQDKGRTQt7xWdvw
+         7X0t7HkzqpmmCSBgY3ln+Ga3V6AK2TGdZRDON8MLGffvM09MWJJXCNwjsx4KsWVwpiiZ
+         bfVTXIGI2zXtnmz+g9mcKnasm2r5EK5PIazfJV3WQ1+gD+5GVIjlq9MJYcGVnCXV/d4P
+         lMnYu4tcRpgBZVJN8xep2x6VD7Uzacse/hc+5FPjaAA7BCUOmJLerQ5Z4JCQiBkx6g1I
+         Ub+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755530538; x=1756135338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yVZcBNGwpkq+v3DR0vvpafxBkSL/1KeRhlI8oyXPu5U=;
-        b=kLCUUWOu8j5eAiT6dYuuVxdgxglgwAde3//9nDMUeV2bzm+jjSeDOkYQx04uHZtblo
-         6ErYtSgKNFhu8ExgVCfxk2UZ4/pBnNAhtPDdMO6yTYnTuH8URZn+4GP1niycun+I4fN2
-         1RZoJdznfxTHVj5R/paPzOaPmSx2nporn6Ltm21uwgEhe4Wf39rRE+tgbjTWR4iqzv1i
-         lKkMj/fkFR/tASS3Fr3q3a0PFn4+E6Z/7SdaEmc/dCuXsDJRja9NlZ07exm6nPUsxU4H
-         VNDvCjbzmQp/v2w4kJbircbm8uKmI0HhmN1KhUzdvflwkyxNDf0lgxTr+kZLDb3fgoWr
-         ZyKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQiyS5axrstwqeGQk9AMqEpgfatpKfC5zc71tMAgCoXtHYz7NTAM2MD5CSEnnB5bzC4Yk4BwIGbcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYmUzXhpixpxfiFoBmqwOfTwq3fvlLEU9fPf7EPW4IxjI9LnDl
-	qR1rQNW1j0ajnyrP5GD4BvBkzesg7UkBERn24VFmGTUsOl1c6SzN3MJfh5plFkl835nq7Eu02E3
-	x5j8N6UxS4Z0p20DH3FYQMkXnz5EVnE1VH66qlKeVIw==
-X-Gm-Gg: ASbGncs1FFjQ8Woq97UbeCG7dhHTvce8u/Aw1baPYL14yyIkWH17ivGrZX8nFZcGl6I
-	2DhvAHbO7qlmCYMTOU5OGIRdF4JMBylX/U+zZeRjIQiFdZQX5S+q61/jfOams3F/6oFlrbEC9ct
-	psNE+xT4Kd6hZC30zeHzLLLfMttjKOwlNg37VA4tdpc3xBXdZ2HHTjAh/IeCmguohGfC0yM8ype
-	aol0Nyo7V++
-X-Google-Smtp-Source: AGHT+IEuIn7Pd5TPUO8L66bFb+S5ecBGsVI6khVLYk/8B6wK0KvSrOChhN5fjVMUxuyUcCqgOaWvaaAbYkhBGXf3lsc=
-X-Received: by 2002:a2e:bc1b:0:b0:333:ad65:c4bd with SMTP id
- 38308e7fff4ca-3340990b5cbmr39999151fa.23.1755530537596; Mon, 18 Aug 2025
- 08:22:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755532031; x=1756136831;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NZWNuw9uqGyH6UBABpbY9lwXWb90jB/i2Dis4FmyQU=;
+        b=iW3Xc6c/nRw73bO/W51GuMhE+qZKYvpSLeU6L2azTvDeKKJwVDt5dY5czj18ANyH/z
+         863pnhVG8nmuJsJ8NTwjNeSk6WIxpnMQR2rneXJIohv0TiCBoodaFpSSH40dus9EflHz
+         7+HncwusHx2uU14656HoSvkyH3u1updlsMcO/PotKLmAUdFw+3vVEd7BAwaaBbtPRHK2
+         HM5dx8H/pUCOxsl+LwroSNsjVhPTFARG/Yu+XJhx5uu7UR9hKL33t7/o9SwF6Sa72fC7
+         a4JnUoteiyzniM3cu/Nf3KgOnPMhbkYeDVK8q+RYu+nLv1CMOK/lt1kwafB6U8pKXos9
+         j5IQ==
+X-Gm-Message-State: AOJu0YzJ5jhW6eIBiIZ9ZCU+6lw+tprZf4sUttWa2e++jd8CKexjxkJc
+	MLdqRQcTKyIkflH3KXTTQpe78/lVQc9v3LAzafOYp1jcRmxUK+8LqRoMgKD7rkg2pPuG/be4qEF
+	kJWJd
+X-Gm-Gg: ASbGncvAtZfgCOpXaXz98Meu21IoRDBiAxFHY26+Eys8DlxFmviGQTe+ZQYBXF6khO0
+	vAfv8UzumF2hLELmFk0+VLx51bpEifsFg6lLBYPgOdwVni6nWRV+SfRBY6KBpjIgmSOEJVD/S9H
+	qOqffEZ0sXcgrevzZ19QzxDQp2RWAYEjbLqDtHA/mi1gCfil1baBFhI0Dz+qBbH6OyTQFkQ+fQv
+	qmJp7cU1YHp+vuZZJS/4cFy4+X/oL573jRocSRQ7HlulpSb33LJaSV50l46qN6ZG1WSu+qI0hrB
+	e82T/8F8yTDlILrCtoVvrQLoLrqCriqyu4xyW9R29HTUxZ42Cl7AieVqZp6p+cbu1WIqyw4Q8N7
+	LWNcJzo8n4ArRJ4UNgrEQC5xi4PBMqLjZ07rN9HES
+X-Google-Smtp-Source: AGHT+IHtyZSzLjJeK5dygj5R68bwBBP999TKqLNyPthvXLv8L+n5/XjRwQcWRiuFAFjpEWW5iC0zvg==
+X-Received: by 2002:ac8:58c4:0:b0:4af:1837:778e with SMTP id d75a77b69052e-4b12a74e438mr104897681cf.31.1755532031187;
+        Mon, 18 Aug 2025 08:47:11 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.10.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e1e15besm610112485a.72.2025.08.18.08.47.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Aug 2025 08:47:10 -0700 (PDT)
+Message-ID: <7502cad3-ca4c-490e-9b11-50e3297b6e32@sifive.com>
+Date: Mon, 18 Aug 2025 10:47:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
- <20250801-mtk-dtb-warnings-v1-8-6ba4e432427b@collabora.com> <CAGXv+5EHk=f62+KiLo-aWMcd0-q+_59kno+uOW5rdYaq5q+5tQ@mail.gmail.com>
-In-Reply-To: <CAGXv+5EHk=f62+KiLo-aWMcd0-q+_59kno+uOW5rdYaq5q+5tQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Aug 2025 17:22:05 +0200
-X-Gm-Features: Ac12FXwpejZ0ETsmnb_X42vgeTPsfQZWI7EY17l_sz1-eYnLo5UFkub2X4VrxBw
-Message-ID: <CACRpkdbWctNH0XJfcHfVJM9Etp0WCXpdyhhyaQemH-Xc0LDr0A@mail.gmail.com>
-Subject: Re: [PATCH 8/9] arm64: dts: mediatek: mt8183-kukui: Fix
- pull-down/up-adv values
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>, 
-	Enric Balletbo i Serra <eballetbo@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
-	Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, 
-	Sean Wang <sean.wang@kernel.org>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 046/114] clk: sifive: sifive-prci: convert from
+ round_rate() to determine_rate()
+To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-46-b3bf97b038dc@redhat.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-46-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 6, 2025 at 8:38=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> wr=
-ote:
-> On Fri, Aug 1, 2025 at 7:18=E2=80=AFPM Julien Massot wrote
+On 2025-08-11 10:18 AM, Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
+> 
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Note that the changes to the three header files were done by hand.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/clk/sifive/fu540-prci.h  |  2 +-
+>  drivers/clk/sifive/fu740-prci.h  |  2 +-
+>  drivers/clk/sifive/sifive-prci.c | 11 ++++++-----
+>  drivers/clk/sifive/sifive-prci.h |  4 ++--
+>  4 files changed, 10 insertions(+), 9 deletions(-)
 
-> >                 pins-clk {
-> >                         pinmux =3D <PINMUX_GPIO124__FUNC_MSDC0_CLK>;
-> >                         drive-strength =3D <MTK_DRIVE_14mA>;
-> > -                       mediatek,pull-down-adv =3D <10>;
-> > +                       mediatek,pull-down-adv =3D <2>;
->
->         bias-pull-down =3D <MTK_PUPD_SET_R1R0_10>;
->
-> and so on.
->
-> ChenYu
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
-I agree with ChenYu, the more standardized properties are the better it is.
-
-All the custom properties makes sense for an engineer working with just
-that one SoC (like the SoC vendor...) but for field engineers who have
-to use different SoCs every day this is just a big mess for the mind.
-
-The standard properties are clear, concise and tell you exactly what
-they are about.
-
-The argument should be in Ohms though, according to the standard
-bindings, but maybe the value of MTK_PUPD_SET_R1R0_10 is
-something like that?
-
-Yours,
-Linus Walleij
