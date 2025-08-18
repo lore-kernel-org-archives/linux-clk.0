@@ -1,216 +1,116 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887AB326D79;
-	Mon, 18 Aug 2025 12:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD233218D7;
+	Mon, 18 Aug 2025 12:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755519263; cv=none; b=eKrD62oAj57FaNrUMEa3BSR40CreQhWzp8vs1wQgGBAEcYvC3bThmKq7mCQD5AmIlTbbRqy4rL6Sf6D2EN1bXL8gWgh7L3KwpcSScIJ/FT39XnbEMcjo/ws0R3sGEOaTjlz/Jt3l1vXciVH+dz8m3fZOQyYJ0lfOuaZkzvD9lY8=
+	t=1755521288; cv=none; b=gix3NoYo060eLL2WkoUn/AjXW6+wiO9Ohwef9TxKkNXLpyXBpanIfLIFI7mV9HumN6Orn4Qd7YLCzt4y2byAz5GXi3uU4oMJO+ygUTxUFbXigGwmwyI+2XgWc2W/sfCbaqeZrchgjqK7UPPEm9tWWmCJT0beKNROdntQGze1N4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755519263; c=relaxed/simple;
-	bh=mD40O8ELAQZNuLx/Q1w5PsWpc3asVslfYsz2e2ICqJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nCPQj+U30wLaD4VFkdlTd4ywAN+LzTPUnd2ZOTMEHOfvwbvoextdnP2oXYCpqjJudiR2YkODpMALuFVo//Q7/yiKfnRKOOye3jvqT0BGErAAGQNrXYy+rWikGupe/640Vtu6lYVTDhqBCi0Bgyzk9d8u8azkAmXcSGOTcpJGtmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1hz90Qtb; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1755521288; c=relaxed/simple;
+	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=YdV901cukZvcKgiv948icCFt2MnwQu3VZSJfRY3QaFH7mcsY4lX4+/mbbfgT3sRaqM8S7WsTN6Vm68itGPzWDeIjoujZPSNAdGP3LD8M+MDrRiErlYzo+8C8pX3VMX4U7sOs+1XyZhYx9gOaYRHBOxYi+3IBInqCqxoXtUF4xkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n18g+dpo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1hz90Qtb"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IBp5bh013848;
-	Mon, 18 Aug 2025 14:13:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Di2sJMGDTfc2gFtc34a6qY4519gtg5sAUPBz5vhubF0=; b=1hz90Qtb072d/lZA
-	y9NnyHsNccVQIbaFxcx7E7yMN9BVd6YWYCKylGEN0e+OTGXy865/O0Gbf3dEl9Z1
-	+pyjnZtqZmY2hzn9RxRMNrPWlLtWLnBzv9SpI7iBuZ/YBnTIyzd+BxQeYYhkAnBf
-	lX0UbccWrDFNhEjef3I/A05Gy8if96eAhsYMdQYBIYX+g0MMFq0OgbfziCesFdFl
-	nXQ1MgcAlJriBhvCSa3kyLIDJFZiBSDm3BbHyZUB9/jrK0ro6YbspzGy9IWCI7bL
-	FHgHd+KEt/UAXCrUnRbJH4HCqt+6p5voVSZk9OWqBUOTtwg3MAsd6wUIGVvnupeu
-	MGwV9Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48k4xmm2ax-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Aug 2025 14:13:38 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 53C774004D;
-	Mon, 18 Aug 2025 14:11:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5BF7971CEFF;
-	Mon, 18 Aug 2025 14:09:58 +0200 (CEST)
-Received: from [10.48.87.121] (10.48.87.121) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Aug
- 2025 14:09:53 +0200
-Message-ID: <836b8be6-ec6a-413d-8657-ee02025ebc24@foss.st.com>
-Date: Mon, 18 Aug 2025 14:09:52 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n18g+dpo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6107C113D0;
+	Mon, 18 Aug 2025 12:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755521288;
+	bh=RfJbadEG1WXqCbA+L6puR7/SdieeHuzNWBQVsVWP4Us=;
+	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
+	b=n18g+dpoNlQYiFSwWCCD/5j0vkRu2KWMp7n30uC9KZm2gl1yoABRwoZu4SWAo1Pnc
+	 lEOQfrO1cf1h8/JCrZDhODe5if+suJh1egobeJQOCo5F42HylkYGAElk0clbJoJSQt
+	 JQzWsQP6m54kk6GTaZU0YQW1NzQJacSGW+ZG4rKdlUttOixB335EGnZnyqP/JBsOyJ
+	 a4SFHZV2vJ8NbR4xJiHSMuYrOCOJ/FWa1EgUZmtjXGSuZPH5z4OaBL9a4Fs2QhpKTP
+	 Svn6rnvF+/gqVNVcWoE1i/n+G3w/B52a5MD20eEFlZ4pdZwbZBM/Ymz5f8VkHPvqKD
+	 sPi//gt4b4ftg==
+Content-Type: multipart/signed;
+ boundary=c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 18 Aug 2025 14:47:55 +0200
+Message-Id: <DC5KCSEUZQUJ.3KPENNUQBUFM8@kernel.org>
+To: "Stephan Gerhold" <stephan.gerhold@linaro.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Dmitry Baryshkov"
+ <lumag@kernel.org>
+Subject: Re: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay
+ applying clock defaults
+Cc: "Rob Clark" <robin.clark@oss.qualcomm.com>, "Abhinav Kumar"
+ <abhinav.kumar@linux.dev>, "Jessica Zhang"
+ <jessica.zhang@oss.qualcomm.com>, "Sean Paul" <sean@poorly.run>, "Marijn
+ Suijten" <marijn.suijten@somainline.org>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Abel Vesa"
+ <abel.vesa@linaro.org>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Nishanth Menon" <nm@ti.com>
+From: "Michael Walle" <mwalle@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
+In-Reply-To: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 059/114] clk: stm32: stm32mp1: convert from round_rate()
- to determine_rate()
-To: <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-        "Cristian Marussi" <cristian.marussi@arm.com>,
-        Chen Wang
-	<unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@gmail.com>,
-        Nicolas
- Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Keguang Zhang
-	<keguang.zhang@gmail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        "Takao Orito" <orito.takao@socionext.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Huang
-	<ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        "Vladimir
- Zapolskiy" <vz@mleia.com>,
-        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Samuel Holland
-	<samuel.holland@sifive.com>,
-        Yixun Lan <dlan@gentoo.org>,
-        Steen Hegelund
-	<Steen.Hegelund@microchip.com>,
-        Daniel Machon <daniel.machon@microchip.com>,
-        <UNGLinuxDriver@microchip.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Michal Simek <michal.simek@amd.com>,
-        "Maxime
- Ripard" <mripard@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>, Sven Peter
-	<sven@kernel.org>,
-        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig
-	<alyssa@rosenzweig.io>,
-        Neal Gompa <neal@gompa.dev>,
-        Eugeniy Paltsev
-	<Eugeniy.Paltsev@synopsys.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>,
-        Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner
-	<heiko@sntech.de>,
-        Andrea della Porta <andrea.porta@suse.com>,
-        "Krzysztof
- Kozlowski" <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <sophgo@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
-        <spacemit@lists.linux.dev>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <patches@opensource.cirrus.com>, <linux-actions@lists.infradead.org>,
-        <asahi@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <soc@lists.linux.dev>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-59-b3bf97b038dc@redhat.com>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-59-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-18_05,2025-08-14_01,2025-03-28_01
 
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On 8/11/25 17:18, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Hi,
 
-> ---
->   drivers/clk/stm32/clk-stm32mp1.c | 13 ++++++++-----
->   1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
-> index b8b45ed22f981df580506f3d4ca801ba11d2bab2..2d9ccd96ec98c05eb836d632bfd9903de60ba1bb 100644
-> --- a/drivers/clk/stm32/clk-stm32mp1.c
-> +++ b/drivers/clk/stm32/clk-stm32mp1.c
-> @@ -970,12 +970,15 @@ static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
->   	return mult;
->   }
->   
-> -static long timer_ker_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				 unsigned long *parent_rate)
-> +static int timer_ker_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
->   {
-> -	unsigned long factor = __bestmult(hw, rate, *parent_rate);
-> +	unsigned long factor = __bestmult(hw, req->rate,
-> +					  req->best_parent_rate);
->   
-> -	return *parent_rate * factor;
-> +	req->rate = req->best_parent_rate * factor;
-> +
-> +	return 0;
->   }
->   
->   static int timer_ker_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -1026,7 +1029,7 @@ static unsigned long timer_ker_recalc_rate(struct clk_hw *hw,
->   
->   static const struct clk_ops timer_ker_ops = {
->   	.recalc_rate	= timer_ker_recalc_rate,
-> -	.round_rate	= timer_ker_round_rate,
-> +	.determine_rate = timer_ker_determine_rate,
->   	.set_rate	= timer_ker_set_rate,
->   
->   };
->
+On Thu Aug 14, 2025 at 11:18 AM CEST, Stephan Gerhold wrote:
+> Michael had a somewhat related problem in the PVR driver recently [1],
+> where of_clk_set_defaults() needs to be called a second time from the PVR
+> driver (after the GPU has been powered on) to make the assigned-clock-rat=
+es
+> work correctly.
+
+I've come back to this and just noticed that the
+assigned-clock-rates do actually work. What doesn't work is the
+caching of the clock rate. That bug was then masked by calling
+of_clk_set_defaults() again in the driver.
+
+Here is what the driver is doing:
+ (1) driver gets handle to the clock with clk_get().
+ (2) driver enables clock with clk_enable()
+ (3) driver does a clk_get_rate() which returns 0, although there is
+     already a hardware default in my case. That got me curious
+     again..
+
+Now on the k3 platforms the clocking is handled by a firmware and it
+appears that the firmware is reporting a clock rate of 0 unless the
+clock is actually enabled. After the clock is enabled it will report
+the correct rate. (FWIW, I can modify the hardware/firmware default
+rate with the assigned-clock-rates DT property).
+
+I've hacked the clock driver to register all clocks with
+CLK_GET_RATE_NO_CACHE and then everything is working as expected.
+
+I'm no expert for the clocking framework, but it seems that
+clk_get() will ask the HW for the clk rate and caches it early on.
+
+-michael
+
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKMg/RIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/iUoAF+J3OaVC3IxUeIFloGDoJ8dv5T/iTrFSoA
++swW8sUuXrerXJYNsOz5CEpkMw5MWCHhAYD/qVKeufcrPpXb/T8mC9Q7mY7menjZ
+YTiG9V2kBLg2wK8UiF2WoE+54Vcry3zejqc=
+=y5fA
+-----END PGP SIGNATURE-----
+
+--c7999e395d5ad658028f60c4d5da8e05c74a2c659f013cb8ab28620f2f20--
