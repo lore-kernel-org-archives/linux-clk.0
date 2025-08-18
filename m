@@ -1,199 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B556311941;
-	Mon, 18 Aug 2025 18:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9306B3451DD
+	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 20:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755541484; cv=none; b=MPTpnmeiAX0V5XtcgFPJnirhaglO32Kk/7dnVZUBJqdtuNP6DndfONY8AD80H572nF0cUuVAlHpU1Rz2kdXFUwDOhmVGLB+3PITfgX+moNNAJssjfKcXLeLj41gzftZzZAMCXq08Gt7PJZO2ULb1R/lEow+my7WjofBfFin7Bo8=
+	t=1755547335; cv=none; b=Q/1Fp/VFte9ZfRVL5Khi1ofxPRwp+IAmuP1u6/PHLZ6I24oe7/nuZ59ceTFYGHxTMariz89UK6Esx590ocmA3/MGldt83DX41nXb4oelRiXAXQV2WDp/Wc+47mj62WOCMnF7eD5u/G+blBemi5gTLsw9ppY+0lbQr7mCMNyPGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755541484; c=relaxed/simple;
-	bh=EtzxoV3mnhEERBKMayyfjmOhWE0QWt9AxeuBtdSTkTU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=qi3O/SpduJgxSb614osLCicbZ7trTEjzGt5+0G7o+v+u/1JlHrYf72M3rDJy+rqYde18zuFUpCaW0WfxTLukAR6Ws6NAWncv/TRPHhJHN2znhkrF0aKKbw76cfneQyzYa2/U6ycPCvIG0JKuvdaRvEv1cE0ayJleHOF4exszBFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiSsISxC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755547335; c=relaxed/simple;
+	bh=qjmLUZjHQ5QD9oJntM9nVj7N7ya7TqMjrnF99c2YdS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1JWHjbRNvMJlYQASyzpEOpFJXTigsP3yFl4Cyxw3hcPMFlDA5g9Ta0xp9/vCm3waLYWch2ewtK73HSSMrNxdo8xe5Nt/qvlWrlr2r0aIJFjLxw+xJFWZIxRYgMnrGJp706IOtGMK8zBT0cboeR1V8A0wD9C7ghbqiH1sAvcD0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvVaJmpA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiSsISxC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E943C4CEEB;
-	Mon, 18 Aug 2025 18:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755541482;
-	bh=EtzxoV3mnhEERBKMayyfjmOhWE0QWt9AxeuBtdSTkTU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JiSsISxCoILf8P8IAu4QEDM5/orNPxkhDcIKyvwzOprKYDkmqysLOl7K4C8nyeHb1
-	 RF/MWQToWMreGNTumjzPAthTKMKdvP7v7J9iBb/Wh7tZk7atUDLXE0BhPOi6126AlY
-	 fqsZrzEtbDprU/xUsWhDQUdKzGpipIBzeTJzfvHeTmHddD9A/JIOEUmcmz7OFJtKXZ
-	 56Kw7YtqIQGmBTZdhO3H2KR/3Rc3Rq+XmHbe3YO/w3Ov+L2yBfVbCHXcU2z/oKgK3/
-	 x/HkEztPyRgma5dqHg47MD0Ul2BiLQjfZwbqObKTvowX500w8SSOaZGgob2/hJhhSJ
-	 nyCEzGZ0B50tQ==
-Date: Mon, 18 Aug 2025 13:24:41 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvVaJmpA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755547332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
+	b=dvVaJmpAuJfSkUAcngRfzMOLLgRjRGfSTRz60i11JxBKVngadB5sZg2b0MbZvsgIQGmmpc
+	GfoJFQ37Av6EibHcQ+7LLwn48uoV/diuEtXsGCZdvNJhT+q2TPtkimLWyNR2IgRcq+wRnt
+	uzhvv6RbADOmXeWCDDoKPtmo0cAYav4=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-epA0e0OePRyi9sjC-pDayA-1; Mon, 18 Aug 2025 16:02:11 -0400
+X-MC-Unique: epA0e0OePRyi9sjC-pDayA-1
+X-Mimecast-MFC-AGG-ID: epA0e0OePRyi9sjC-pDayA_1755547330
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-afcb7338319so332960166b.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 13:02:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755547330; x=1756152130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+fG5ZGl1C62cZQFaAJ90q87NcBu2h7Rp+foxmE8Ttek=;
+        b=sKh925BPE96IrrZF936jjcMK6BGZ8nuXJU/54iALTH/ZaCkiNe2tg9ARQ6XE5j9F5F
+         PtpFCn+1sgdChKFF9yGvGYLWbHeAuhEmyhQW5epnSLhJpl3SHmBE5bnQzHY6QWsA9/Vh
+         a2wLWfImx9lN6mNM4Mbya0bAkM29BeeWeHcMzccSjIw0gfXZ+X7acNMJ6Y9/RXC0Z/UD
+         gfMh+B6IfrHNjD9D/Vpp+3o85bOclI34BuUeU/ZiPuQOhmZaMUp/R33LgRnq92R/6gV/
+         JO1do7ezRrwVGORb1RAlRGf0yEHChBtjLznJLgZYGVkb9ORO/gFQFVM+Y/F5TEHTnflP
+         3OJQ==
+X-Gm-Message-State: AOJu0YxKysIdM5+VfanvirVRIxhpu5K02I77ua/r8sWVwraedxmsegiT
+	AYr6MLf86V3STRh0PeR5eMuDx0/JF3VH0ufaNa35u4s0pm5bDXJMjj5qZX0HROaWmJbrnLUuLqS
+	qo4Hc+31XFdE1GImCjylLUhp6gg088DrWb8Djszu3fFZEkNpz46jeWuKLY7xkh4fXHQzVBYqbSw
+	eaRmsPXSwq2Y3eHg55qxpUgxz/h6eLDHa1InlL
+X-Gm-Gg: ASbGnct75tmTYFH+3sc1+4S3mz2ZtkqlM6JKe3KL9Rk5G2qFpwcmc3b3Tv6iqhmgtEE
+	iGlSK0RyM6pf/rJhJqZNSutxtDo+mXry1mH8X1T5J2tVsFBYJzVe1/UfJL84DMw4s6LaQk/ABBL
+	FZozgOAv+uOTN4Vn7OEDxL/BT9Gq7D
+X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id a640c23a62f3a-afddcb815ffmr6650166b.24.1755547329847;
+        Mon, 18 Aug 2025 13:02:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/Z6YJYYcpHHX5vpa68pR+vUhD0YFs4ADGuF96s+2h4oESeiqbIO9Y8YyPLEqoOxV16y8wZ3QXEoGXDLW/TU4=
+X-Received: by 2002:a17:907:6e9e:b0:af9:566c:4cd1 with SMTP id
+ a640c23a62f3a-afddcb815ffmr6647666b.24.1755547329385; Mon, 18 Aug 2025
+ 13:02:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Samuel Holland <samuel@sholland.org>, 
- linux-arm-kernel@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
- linux-sunxi@lists.linux.dev, Andre Przywara <andre.przywara@arm.com>, 
- linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-To: iuncuim <iuncuim@gmail.com>
-In-Reply-To: <20250816084700.569524-1-iuncuim@gmail.com>
-References: <20250816084700.569524-1-iuncuim@gmail.com>
-Message-Id: <175554055617.1719671.12698982859500685788.robh@kernel.org>
-Subject: Re: [PATCH 0/7] arm64: allwinner: a523: add USB3.0 support
+References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com> <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
+In-Reply-To: <20250812-clk-tests-docs-v3-3-054aed58dcd3@redhat.com>
+From: Brian Masney <bmasney@redhat.com>
+Date: Mon, 18 Aug 2025 16:01:56 -0400
+X-Gm-Features: Ac12FXxrVE5SCQ9rFBJfDNiF5LVNb7p52sPwt4Nq3ZChgQz7oePbloiikJEf1XA
+Message-ID: <CABx5tq+yDZ2GL+ekvQAXHGXUbFF3KfwN5ts5020RpYFYZNcUzg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/9] clk: test: introduce clk_dummy_div for a mock divider
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 12, 2025 at 10:40=E2=80=AFAM Brian Masney <bmasney@redhat.com> =
+wrote:
+> +static long clk_dummy_div_round_rate(struct clk_hw *hw, unsigned long ra=
+te,
+> +                                    unsigned long *parent_rate)
+> +{
+> +       return divider_round_rate(hw, rate, parent_rate, NULL,
+> +                                 CLK_DUMMY_DIV_WIDTH, CLK_DUMMY_DIV_FLAG=
+S);
+> +}
 
-On Sat, 16 Aug 2025 16:46:53 +0800, iuncuim wrote:
-> From: Mikhail Kalashnikov <iuncuim@gmail.com>
-> 
-> This series is a draft and does not include patches for dt-bindings.
-> The first series is necessary for testing on other devices and
-> initiating discussion.
-> 
-> This series of patches adds USB 3.0 functionality for the
-> A523/A527/H728/T527 processor.Most of the code is derived from the BSP,
->  as the datasheet does not fully describe this feature.
-> 
-> I have verified functionality on two of my boards, walnutpi 2b (t527)
-> and x96qproplus (h728). When testing usb3.0 on x96qproplus, I get
-> reconnections of my nvme, it looks like the port does not provide enough
->  current to work. I have encountered similar complaints from users of the
->   device on Android. In the case of walnutpi, there is no such problem.
-> 
-> Based on 6.17-rc1
-> 
-> Mikhail Kalashnikov (7):
->   clk: sunxi-ng: a523: add missing usb related clocks
->   arm64: dts: allwinner: a523: add third usb2 phy
->   phy: sun4i-usb: a523: add support for the USB2 PHY
->   phy: allwinner: a523: add USB3/PCIe PHY driver
->   arm64: dts: allwinner: a523: add USB3.0 phy node
->   arm64: dts: allwinner: a523: add DWC3 USB3.0 node
->   arm64: dts: allwinner: a523: activate USB3 for all boards
-> 
->  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  52 +++-
->  .../dts/allwinner/sun55i-a527-cubie-a5e.dts   |   8 +
->  .../dts/allwinner/sun55i-h728-x96qpro+.dts    |   8 +
->  .../dts/allwinner/sun55i-t527-avaota-a1.dts   |   8 +
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  32 +++
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |   2 +-
->  drivers/phy/allwinner/Kconfig                 |   9 +
->  drivers/phy/allwinner/Makefile                |   1 +
->  drivers/phy/allwinner/phy-sun4i-usb.c         |  10 +
->  drivers/phy/allwinner/phy-sun55i-usb3-pcie.c  | 267 ++++++++++++++++++
->  include/dt-bindings/clock/sun55i-a523-ccu.h   |   4 +
->  11 files changed, 392 insertions(+), 9 deletions(-)
->  create mode 100644 drivers/phy/allwinner/phy-sun55i-usb3-pcie.c
-> 
-> --
-> 2.50.1
-> 
-> 
-> 
+I sent the wrong version of this patch with the round_rate instead of
+the determine_rate implementation. Kind of ironic given that I posted
+various series across the kernel to get rid of round_rate!
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: remotes/korg/master-95-g90d970cade8e (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/allwinner/' for 20250816084700.569524-1-iuncuim@gmail.com:
-
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clock-names: ['usb0_phy', 'usb1_phy', 'usb2_phy'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clocks: [[5], [5], [2, 179]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['allwinner,sun55i-a523-usb-phy'] is too short
-	'allwinner,sun55i-a523-usb-phy' is not one of ['allwinner,sun20i-d1-usb-phy', 'allwinner,sun50i-a64-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg: [[68158464, 256], [68163584, 256], [69208064, 256], [81788928, 256]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg-names: ['phy_ctrl', 'pmu0', 'pmu1', 'pmu2'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reset-names: ['usb0_reset', 'usb1_reset', 'usb2_reset'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clock-names: ['usb0_phy', 'usb1_phy', 'usb2_phy'] is too long
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): resets: [[2, 49], [2, 50], [2, 56]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clocks: [[5], [5], [2, 179]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['allwinner,sun55i-a523-usb-phy'] is too short
-	'allwinner,sun55i-a523-usb-phy' is not one of ['allwinner,sun20i-d1-usb-phy', 'allwinner,sun50i-a64-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg: [[68158464, 256], [68163584, 256], [69208064, 256], [81788928, 256]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg-names: ['phy_ctrl', 'pmu0', 'pmu1', 'pmu2'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reset-names: ['usb0_reset', 'usb1_reset', 'usb2_reset'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): resets: [[2, 49], [2, 50], [2, 56]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clock-names: ['usb0_phy', 'usb1_phy', 'usb2_phy'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clocks: [[5], [5], [2, 179]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['allwinner,sun55i-a523-usb-phy'] is too short
-	'allwinner,sun55i-a523-usb-phy' is not one of ['allwinner,sun20i-d1-usb-phy', 'allwinner,sun50i-a64-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg: [[68158464, 256], [68163584, 256], [69208064, 256], [81788928, 256]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg-names: ['phy_ctrl', 'pmu0', 'pmu1', 'pmu2'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reset-names: ['usb0_reset', 'usb1_reset', 'usb2_reset'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): resets: [[2, 49], [2, 50], [2, 56]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clock-names: ['usb0_phy', 'usb1_phy', 'usb2_phy'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): clocks: [[5], [5], [2, 179]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): compatible: 'oneOf' conditional failed, one must be fixed:
-	['allwinner,sun55i-a523-usb-phy'] is too short
-	'allwinner,sun55i-a523-usb-phy' is not one of ['allwinner,sun20i-d1-usb-phy', 'allwinner,sun50i-a64-usb-phy']
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg: [[68158464, 256], [68163584, 256], [69208064, 256], [81788928, 256]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reg-names: ['phy_ctrl', 'pmu0', 'pmu1', 'pmu2'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): reset-names: ['usb0_reset', 'usb1_reset', 'usb2_reset'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: phy@4100400 (allwinner,sun55i-a523-usb-phy): resets: [[2, 49], [2, 50], [2, 56]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/allwinner,sun50i-a64-usb-phy.yaml#
-arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb: /soc/phy@4f00000: failed to match any schema with compatible: ['allwinner,sun55i-a523-usb3-pcie-phy']
-arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb: /soc/phy@4f00000: failed to match any schema with compatible: ['allwinner,sun55i-a523-usb3-pcie-phy']
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb: /soc/phy@4f00000: failed to match any schema with compatible: ['allwinner,sun55i-a523-usb3-pcie-phy']
-arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb: /soc/phy@4f00000: failed to match any schema with compatible: ['allwinner,sun55i-a523-usb3-pcie-phy']
-
-
-
-
+Brian
 
