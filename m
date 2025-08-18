@@ -1,63 +1,63 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE99120485B
-	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 08:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07874304BD7
+	for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 08:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755506855; cv=none; b=qnLkPYex1t5iHRIwW8/0he3/m/zEfW70sffiC5eKhEYqWYazCSC8ze4B/dyfvgg3JL33YOniatjceA5tpolUIiHw8O6EehGKCFfiVea0k0CRzRHKgkgIKoBZUnqu9kY7BiqvHUK3fk8cJtxkBnd6qtgTlRk5MYZHmbSCdX0Cz7k=
+	t=1755506858; cv=none; b=UpfPGvENBS99Ch0x1kXVYNl0IfYHcOppA7fpxOVExdnhu3JeU5kywyV5q0bwu2MBxa9TYKw1J2GzMfEvu0XttIWbAXky0fkdUzwVrlk1YMwm1UoqLEqeq11oQEETabxHEg9TVRoYg24R6Llyh19tyn0cS8SgZ5XXPiqC9ouWhJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755506855; c=relaxed/simple;
-	bh=BFqb772XKvnkGz/X/GiHYC9tY0Kc1FlOx29S2g2BP6k=;
+	s=arc-20240116; t=1755506858; c=relaxed/simple;
+	bh=cfhhhzhQxZrXxPloRoYunXy+b+gOmZJrF1u84C5Mzbs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n1pBQBoYdQxKR+KN5vbLC0aJZlk8quOozeltTRv3ESaciSVxlc42sr8RnRbbmSs/+VufMugZWArZkQyvyTQP6CEd+NTgpZWnx1x5ACf4W1R9ZStbpQmOxqKrJbCjL6f3VIrSaJ26BK06I25ySLzbSc0iSluKBfBHLPIJ5rM53FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JwUdK/5n; arc=none smtp.client-ip=209.85.208.51
+	 MIME-Version:Content-Type; b=n4+HIcR3V58drKjD1Vp8ypTa1mDm8gh21AChAdgTTBeb7Th8/lsc9oRfqjkCRvMSZM4LP99TPKIAqvAUSOvRuIO0OJBESj1r7NMR6W9YC2MaQkYB4kO3DYq5vKu3NKPJpxOtceg174Z4vrVG4Nwq7KVez9g010Lgcr33E1xQDd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xGlCf3RQ; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JwUdK/5n"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6188b761d74so687837a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 01:47:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xGlCf3RQ"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso47294a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Aug 2025 01:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755506851; x=1756111651; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755506854; x=1756111654; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BeuayamteocopIdawkFz8GBgWsuO6jcTjJdO7tqQ9I0=;
-        b=JwUdK/5nUdkGf0zbwUKOLs+S0/DASbi0UqaDUkEU3nwHR+Ki8Z8Jfsv7aJy0kJ0ABx
-         5xaFtRBJpyIdqZthpPCUnb+I5wVK+kQR8UgrdDAt756aGl5ruv44ArgHOKGcjHyhZ74w
-         IvkSP2pKgTk3a2OofaEF3+HKt0zyjgCZSKW9FIpQTXEVFTZv3bPE2VerVme+5wX5hEJ8
-         3wjbr2HascFvi2Fau6qL+OZiOiSCRVegWe+cWc60BNs5CPSXA5vAwFDPYOyBiW2lRwHp
-         NHxR5cvdwiKAgfn8rZ4SZ7CfEy8DC4NKuYDDEWRi2Ke/742SVuw696yP0Fbw40/M8jFq
-         XH6g==
+        bh=p0L7vCqnemiga4MJSGEdKnywkyS4sL50zcZbVWgOu40=;
+        b=xGlCf3RQ4OmYcH5KpurF2OaO1+xexpMa7V1UcD1BKoR60Qyf5OdIGs5eLIfRfjd8sB
+         GwoJow6gXrqivJeYhMZ7n3IAPAwP1TrKollsllF/aqm5/S3fRQk8cklGJARp7VMDD7oV
+         G2JZvvk4hC6VpCYnYCufufk3nBMESnf600hcp/o8imuSeytayRJgvB8DbsBkZ+FYvvL+
+         S0+UzRXh4Sv4ztoWVxjTahRrVZIYAm03B9oWwVizrsxRxSfPvAOrqiT6E2BCMWFBeklJ
+         BVuQAmvTlUyhngkfX04Ksi/ZaJq5TW+lWXjWy8tmaziLZYTSm3tbNR8pDoYsmIQHdO/T
+         yDpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755506851; x=1756111651;
+        d=1e100.net; s=20230601; t=1755506854; x=1756111654;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BeuayamteocopIdawkFz8GBgWsuO6jcTjJdO7tqQ9I0=;
-        b=Zs/1Fkju5cqvh6Npcr6ol742HyOlf96rjJCoH9ZvxgzJhcsrlR9+mjCZYRLydZ2jui
-         3+L1j5SX4jx0GTnvgwbHodsntH7T2yVsqt9tS7d64LsUp3Y/GcijFbsvuzm9KFrR44th
-         /3uStyJjmNAt0V2mtRnvpAEzkYSj4cKYRzuB/GT2VJKHs4A84I+ABRuvmfgv2y5OG/Dd
-         0y4SvnfQMetk1eQViAeWs0AJ+eVKVyBFuDkRQHVWQpuQ7QoBeMW+fXiavDEqqIGVSTt2
-         epmO3P2ibraAl0tSL7GcQYnXcp05SPmc6AQY/3g1hX0z5f/dzfOxua/h1OxDiUoRHKn+
-         iISA==
-X-Gm-Message-State: AOJu0YxXv/NC0wpsEspLZF2iqL4glPcDXjs6L5Ra8glEQhW6YxQWFI47
-	5Uh83wgJeONJUZGwB6QIM+ZUVTP0DffUhxu35gKpMW5zO9ba0zc7djsctQjSGDcrdGM40c3EKmG
-	6hcT2
-X-Gm-Gg: ASbGnctvgwP24xOuzwkj4NJwGx8l01hd+nakp1ScH6YxNZJ1pl5qOm0c3ZAX7kQsBk4
-	33dSI1UKDAkloO+yF71h2Oif+8WXhup264VdtVfNsHKOIx3bISKdUEfHJ1Vw7wBQ5aGVWWJlOIj
-	8veZmiz2C/MNA4jGzslJSHTeKanUGekuzNUjR3P6YTleWjeKsIANNQA/rUJL1ZMdD1ShPAZAD2K
-	7q2VQ/dSlWpVwVLgIn7HK3DDIXvhqEXPLb1luJ5Ip7NCHrxbHI+8lHL6rYjMEZKc92Gxt+coW7F
-	9CW96q1X6MDisTuMuqXXHzQE58U4+uOLbzPEndh0/sBwKV6W96qcrUk+ZNzosotTgiUn6FV3mMR
-	CKycJGJBAas8/lFQTMI85qruw7jnPqo6pPcIzV0LU8jBN9KEmtg==
-X-Google-Smtp-Source: AGHT+IHnFT/QiiX+/jyxr6JrjJHBnX2ZgiTGkz6V56Qs5+zyrhsCVsoAqUSeVCMOf8wng75ASWqViQ==
-X-Received: by 2002:a05:6402:440a:b0:617:be23:1111 with SMTP id 4fb4d7f45d1cf-618b0865203mr4787283a12.7.1755506851453;
-        Mon, 18 Aug 2025 01:47:31 -0700 (PDT)
+        bh=p0L7vCqnemiga4MJSGEdKnywkyS4sL50zcZbVWgOu40=;
+        b=BfxtF5Nu0ymIXdoLWuF9tiEnFRvsihz6I5sOJffVY8h0Qz/Di5WLquNvfykjz/YWBK
+         /uYLqrYcHKWVMQ5hsEdf2wEcbQ1/5ziZU+L1IWBbcHDzdsk11ox2T1BBs04Wk8GzgHpp
+         fOco6DkCXM4fXWYXYi36gLyLJEfNBzt3LkAJc8B8AhiR7eWEdiQPv+hG7EJoyz+SZnrT
+         gXDcqKYzHQSbrr9fXgUaKuoTBcbGpPvC1eqS/Ovi7CgcqFsW05gANRh0CoCXMY7NcP0l
+         av+yodSHfWnoBAvVymfUFXMMEMLF9nsdMHb0WjkGnjj5SoKrV7Z3lt9S2ZqNo9w2SQ3d
+         utxw==
+X-Gm-Message-State: AOJu0Yy9vd4njbMQpiuQB+5sZUPOAmFOptrUp+6PTsk1F/XcbKAztMsf
+	YiGvuJ27Z5IRhG9jpT8pQPRHjAZWyN/btFR8M3ji2hdhnAO6SGNx2qovpwK8d4W4HCQO+cP79gG
+	wTCNR
+X-Gm-Gg: ASbGncuOk9PsA/ObjBrSckvPs7/6prCtVVogd9QaNxYkCsKYpEgUvrLN/9D92BvlWNn
+	xOgC7H9r0EYSMAZs6/VczeWc2wGFypKXsI5ON2hr8TuR0KgRCjl7pyEUmpQCsrF9DWspOx6FSOt
+	0I0HZ4H9a3HKk2PIdq4s/JPwtwvLljOBkZwq4b7jVdIF62OlI4O6B4b2CuvvbFkpyloaPIw1io9
+	7MpuLbhwOjAIpZ/IUw1uhVmhO//mW3PjKz8g2NV84u22ZLzB26OGXDN1rwsFih27PRX3DRcmBtj
+	30Txa7dXvkOGjXWdRT2rz+HudpvUMmGmbP6q3g/xoel/TENVuNIr2Di11a6Qo02qY4m76UL5hM3
+	yuXodWJO6JyOAyXS7Bsu0agQsT53XUrv3W0lFuuI=
+X-Google-Smtp-Source: AGHT+IHknpi+jVcAiHPe7qLq8tMu11yKP03M4lXkXrorN3kjMjAvXVfdd/sJwjbdKxYg4VZrpI7G9w==
+X-Received: by 2002:a05:6402:1d54:b0:615:5cc1:3446 with SMTP id 4fb4d7f45d1cf-618b0f1c504mr4641443a12.5.1755506853905;
+        Mon, 18 Aug 2025 01:47:33 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618af9da68fsm6627647a12.22.2025.08.18.01.47.28
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-618af9da68fsm6627647a12.22.2025.08.18.01.47.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 01:47:30 -0700 (PDT)
+        Mon, 18 Aug 2025 01:47:33 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
  krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
@@ -71,14 +71,14 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de, 
  festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20250814140943.22531-2-inbaraj.e@samsung.com>
+In-Reply-To: <20250814140943.22531-3-inbaraj.e@samsung.com>
 References: <20250814140943.22531-1-inbaraj.e@samsung.com>
- <CGME20250814141003epcas5p167e0a3d0ecc52fd8af17151cdddd031a@epcas5p1.samsung.com>
- <20250814140943.22531-2-inbaraj.e@samsung.com>
-Subject: Re: (subset) [PATCH v2 01/12] dt-bindings: clock: Add CAM_CSI
- clock macro for FSD
-Message-Id: <175550684881.11777.14718777449068060989.b4-ty@linaro.org>
-Date: Mon, 18 Aug 2025 10:47:28 +0200
+ <CGME20250814141009epcas5p153e4aacfc1ead3db8c9bb647c6e5c7c4@epcas5p1.samsung.com>
+ <20250814140943.22531-3-inbaraj.e@samsung.com>
+Subject: Re: (subset) [PATCH v2 02/12] clk: samsung: fsd: Add clk id for
+ PCLK and PLL in CAM_CSI block
+Message-Id: <175550685171.11777.14695565851704310683.b4-ty@linaro.org>
+Date: Mon, 18 Aug 2025 10:47:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -90,17 +90,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Thu, 14 Aug 2025 19:39:32 +0530, Inbaraj E wrote:
-> CAM_CSI block has ACLK, PCLK and PLL clocks. PCLK id is already
-> assigned. To use PCLK and PLL clock in driver add id macro for CAM_CSI_PLL
-> and CAM_CSI_PCLK.
+On Thu, 14 Aug 2025 19:39:33 +0530, Inbaraj E wrote:
+> Add clock id for PCLK and PLL. These clock id will be used for
+> operation of CSI driver. PCLK is AXI2APB clock used for register
+> access. PLL clock is main clock source for CAM_CSI block.
 > 
 > 
 
 Applied, thanks!
 
-[01/12] dt-bindings: clock: Add CAM_CSI clock macro for FSD
-        https://git.kernel.org/krzk/linux/c/5576d8098052952a6c95af86ad3dcb341554ac75
+[02/12] clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
+        https://git.kernel.org/krzk/linux/c/1a713bd3b0c60d826bdde633919bedc1fd38df4d
 
 Best regards,
 -- 
