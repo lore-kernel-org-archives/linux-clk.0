@@ -1,116 +1,97 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E027E074;
-	Tue, 19 Aug 2025 15:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C5226CE1A;
+	Tue, 19 Aug 2025 20:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755616260; cv=none; b=uxHqzqym3kbVkaJN6kKQ9I52+0kLqI+b5kpFRl3DMli/tpLam0ntbY0yjA4xAsLnwMg0yXpfypbgVwGkftH2pnXDLgV9gXuMIEc6U+wtVDrXyKj5DcoVFoOjze6i3uz+Q802UyLjTj201zDjICwwJvPw+bsT9uHpxNo4X0FWd3U=
+	t=1755635243; cv=none; b=XAXy5/KFU8KFOmiZryy8sqwdYLpWYFRO2RHatOAyJsOBIzE84mdP72d/Rn3lkJ5b9gPhK7M1QdY69ZCq+nd3mQG7LPvxVXZAdcpixoDaqBQ57qvd8mRsVuMWg5OyrCFCw/uo8/mcnt53YcgHa2Y6sf7aSVVpwelXQWERvCeX6xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755616260; c=relaxed/simple;
-	bh=OZMEdhP+NHwht6AbKMmHkMK0vMbV6WrxDlng36BQY7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmpDZ1oZWFBn9TBIMtY1GQsevF9mSAT5Y8dTNzwHbaIULfnkVN8OF6Vw2MxP96txjC7xbNHNJHLbVw05kgMiu9YZpKUnPMw6bKaPB4dzBwemc4fU7mieG/bpqlPdPp+sR6yU7IpAI7CDP2ch13sdZadbtzf8/VvjrRtG6fbRzK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-53b173aa4a9so3567944e0c.1;
-        Tue, 19 Aug 2025 08:10:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755616257; x=1756221057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w3NQNV5+BMzTrUVoePYKb9VKcFqO0DuhTEn/Kg6ptTk=;
-        b=ZdiJDAE7QTN7QgoOPD+LoZLchKKeCPwnqmyKMWkP7GmIYUh1mue5HddWVlUXCuIB8X
-         PTYyN4+3ratMKm7tgKEuGJSVpJKxnYutCDSINJnlhKkOsPx+rI9YssYotWr9jsGamUWV
-         kuN++yFzn4C+Y1tXNobwyvr980aAswv3v0GKD9g5sB31wOhNNfEg24Es5zX9bQ0uTjhw
-         UI3RTiU/5RrMDEW9TzufFPfSGpmoDCmJDs3Cdr7GpWe548ifvxbUK6IpWpwSmjZESLKC
-         6ox1Je79WLJRHH91IjDgDGVgaqhM+llQTox8RUNDtjF5QR02+N+jX7+vWH7WtAQLNNHY
-         WfmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4rUM2W7aNWK8Ys5tG8nl6KlLzfEvweAKlrzPJ1Nal/cwLl/xZmd0b6eh+a4H9CA5EEkx/IB+qEPFC@vger.kernel.org, AJvYcCUVHKj3aZcMPHjPjSbFtIfHb5GhAsn8eMHz+SjPugYm4oeb8uSquYrOvwvKiAIOMBUyu75p6KZiNSAgQI++xPrFxNg=@vger.kernel.org, AJvYcCXIGmJHrySdRLJv8cFKXKu4TQ00P3cWBy5j70/njmCUIeP2bv9lsIk+ZyV7v3iYcu4Hm/3MfS/go0Jq1iw6@vger.kernel.org, AJvYcCXK8z9Q1n8mUkYJ7kVWV072BuspKjTpJzylfqiMM5THnFcGy2uWdkzsrsCeitYiKW9ZenTpa+P3Zzlv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpftwN0PVuP+9Pdz/Q46PzEAbp5rmOH9dbm49iNV4/qVvC1BdQ
-	8a8K++WzTgJ5gM9DrBrXZGdwVb8k+gLSIW+GfrwsyHBAsIWajJtEhVnd21nMv4Qt
-X-Gm-Gg: ASbGnctrySPouzu1dzuyK54rkSbgIzRE9ACjxsPz6mIxSCO/vDk2bSd2u7g6T6qz6hD
-	WfRNnL/AkqETwpXQydjV1K+7/XWdSJol51rKqmiROoNzV3LBQmUfrNTrA2dkhI5RherRE/Pp1Bz
-	1aMUVQUZBid96JrwGv0LEOpx2Rg+RoF0II7R9TrUWR/UdYP2BAR5KaoHPG0S+Mp5ZayzsgEIBMz
-	MvjZhv+G7hYedaewCugatooZf76Lqs4XwfTA21LxxZCHNLtjg3reGPhcGK+tBoF/lbP7Hz4SUWk
-	B+tkfGWN1scIQRApa3dQjXwGDJF1GtCWo1wiur3PJgy2v1/Of2EjLTc+YuYfI48o3438GErxvCJ
-	TJWaCRW5fqAeWCd5NSvNrysOVrhpKawSYgYbHIRjGRKjFRIgR2csISOV7pAPQ
-X-Google-Smtp-Source: AGHT+IHUoo9cSISYwOuuyZmvYYMRuchWW3BeH+/e6cj4dWGomJWE3w/OzpMKdjaM5zaysBxqzCoNFA==
-X-Received: by 2002:a05:6122:7ca:b0:534:765a:8c3c with SMTP id 71dfb90a1353d-53b5d1acd20mr1265971e0c.5.1755616256687;
-        Tue, 19 Aug 2025 08:10:56 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2beff365sm2637617e0c.23.2025.08.19.08.10.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 08:10:56 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-50f8b14cdb8so4266483137.2;
-        Tue, 19 Aug 2025 08:10:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUc4O+wg1wJNcmlzoShdfNTXNPkgf/DPjtgyzXgTBsBxnm26QDiHI8lVD2CUkAMs6tXdVBjvTuvm7t7rM9UxY7or0k=@vger.kernel.org, AJvYcCVPORkK3ecW3gI4R8WdQQhQ1tzFJjluzooJ6kYGcmX0igUm+rCAOEkxvFna3aF2VGJAddlGUrs2fAN0@vger.kernel.org, AJvYcCWrXWWHIOHDZS4LZL016BdjB7GY4EirAOReQ3X4N6KhAQ4HH3xcCdr49Q2oELQgqvS/bt940/tkhlQu@vger.kernel.org, AJvYcCX+s0XQPehBnAXoW3+F1NbgeB8a2srzRZhhA2QeaW+E8HzkbxMwx9zxa42gnyvPtZehb7srt63Weyd1jdh4@vger.kernel.org
-X-Received: by 2002:a05:6102:5f04:b0:4fb:fc47:e8c2 with SMTP id
- ada2fe7eead31-519228111f3mr1000386137.9.1755616255726; Tue, 19 Aug 2025
- 08:10:55 -0700 (PDT)
+	s=arc-20240116; t=1755635243; c=relaxed/simple;
+	bh=oIDpHueO9zGTm/sfs/uw7A7+IqTRVGpRNQrkAMXBRsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AR2DTilx6iR8VPyXBeXnMdu6ETFPgV/AmBcsHwV7E1DgLaV/ozbMuk3yDigY6fXhlX6IPOny90ibNbDJqFZ3MyxY7bf2hIYHOK2oXCIe4CMVkxSHT4tG5xEIACxMBNKffa/X6foZd/mPOngYHcWPooyDvTQhQYYPbX1mXKMOREM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmCFTRj3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmCFTRj3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166F6C4CEF1;
+	Tue, 19 Aug 2025 20:27:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755635243;
+	bh=oIDpHueO9zGTm/sfs/uw7A7+IqTRVGpRNQrkAMXBRsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pmCFTRj3iZCCkzA57BGea3AnymZmNXaIgJtP0674gt4uZi6udBFgB8yVncHIR7+Ke
+	 pIgNDFO1IJi9rf3m2tnECTQ6YY2zQBPPLeKDGzBAnqTKtRxfCMB8cpEVItQLdjo8SH
+	 wHONffK+o4aqaRMEUXiGaFgeuLHVWfxOD2GoakCdmi06QMXdGE6K5KF6iIMz97nC1G
+	 jnBGlEfBr49Ae10eKlKgXjHv6E1xEcvq18BPlIpq7yfp5uM+HvUYy36KbwBP3kf7Mr
+	 DJMx/i+tW6w0FNinu33Pdly+YTqdhMtGe9/A11KzN2Kgv2lHIlAalqpLRg2ygW6JVZ
+	 6ApwOp+YhQLAA==
+Date: Tue, 19 Aug 2025 15:27:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v1 04/19] dt-bindings: display: tegra: document Tegra30
+ VIP
+Message-ID: <20250819202722.GA1264491-robh@kernel.org>
+References: <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-5-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814124832.76266-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250814124832.76266-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 17:10:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
-X-Gm-Features: Ac12FXztSIbRfGM6ft2_clmtiqn-w5zb7j5z52Ilgtf_wXQ8foyw6kTPUGThxEs
-Message-ID: <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Add RZ/G3E GPT clocks and resets
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819121631.84280-5-clamor95@gmail.com>
 
-Hi Biju,
+On Tue, Aug 19, 2025 at 03:16:16PM +0300, Svyatoslav Ryhel wrote:
+> Parallel VI interface found in Tegra30 is exactly the same as Tegra20 has.
 
-On Thu, 14 Aug 2025 at 14:48, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> The RZ/G3E GPT IP has multiple clocks and resets. It has bus and core
-> clocks. The bus clock is module clock and core clock is sourced from
-> the bus clock. So add support for module clock as parent reusing the
-> existing rzv2h_cpg_fixed_mod_status_clk_register().
+That's not what the compatible schema says. 'exactly the same' implies a 
+fallback to whatever it is exactly the same as.
 
-Thanks for your series!
-
-> Biju Das (4):
->   clk: renesas: rzv2h: Refactor
->     rzv2h_cpg_fixed_mod_status_clk_register()
->   clk: renesas: rzv2h: Add support for parent mod clocks
->   dt-bindings: clock: renesas,r9a09g047-cpg: Add GPT core clocks
->   clk: renesas: r9a09g047: Add GPT clocks and resets
-
-I think you are overcomplicating: according to the clock system diagram
-and clock list sheets, gpt_[01]_pclk_sfr and gpt_[01]_clks_gpt_sfr
-are really the same clocks (the same is true for rsci_[0-9]_pclk and
-rsci_[0-9]_pclk_sfr).
-So you can just describe gpt_[01]_pclk_sfr as normal module clocks,
-and use them for both the core and bus blocks in DT, e.g.
-
-    clocks = <&cpg CPG_MOD 0x31>, <&cpg CPG_MOD 0x31>;
-    clock-names = "core", "bus";
-
-Do you agree?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml    | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+> index 14294edb8d8c..39e9b3297dbd 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
+> @@ -13,6 +13,7 @@ properties:
+>    compatible:
+>      enum:
+>        - nvidia,tegra20-vip
+> +      - nvidia,tegra30-vip
+>  
+>    ports:
+>      $ref: /schemas/graph.yaml#/properties/ports
+> -- 
+> 2.48.1
+> 
