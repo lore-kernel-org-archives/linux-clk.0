@@ -1,175 +1,107 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E621305063
-	for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 12:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791B532BF46;
+	Tue, 19 Aug 2025 13:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755606467; cv=none; b=I6k0vmX3EU6zYmzj6th7mZ2q4ffYkyQIdTPHU97OOtCQuVN5PCXz39p93BVA/DpZFiDqYH28vwVPL7WbCFhRr2gJOxnEr/gS7ui5hFA3fcGFX1RceVnfoblBrNOdbHAE2MHAnkBL3VxM5s3znAK0uHgmZvU/OITlI+YlZItIVco=
+	t=1755608771; cv=none; b=GRoMfolABe0C352KykQcjLfRJiYJ6aiw9pWapn3ZHNBpcBAko+W3Ql7X703jT6ruSHEmO0JB+sdaFU+Ly98NPo6Y8tDGP8EukqbL/brFY/8ayQusLY+nlWLSfzU2h1yEaL68MT3pXyVrb7Exx8XORJ77sYWebNiTNkKKu+sus04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755606467; c=relaxed/simple;
-	bh=Nv1pjUoOXSZoynilhAmAiRkhImajQkD3cwyCqkQSFdg=;
+	s=arc-20240116; t=1755608771; c=relaxed/simple;
+	bh=cRFojcPNllV40ehqCehsEpGuU/MxDG/dFERecHjiEUw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzhQwiAHv4LDo39MT8DnxxCUpbaXBFZo5EcEKxqtCHq+TqHKUATjtM9XPymR2RbXjigX+QnynZhipH7H53msaXcbYEQUb6j2WNzubOZh1lUrGIdgamfKAw0VEDQBrxamAbhO0LFuAQAlBtVpoVjifM6XxTxXKhK5u9twdWriAdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLwnu4UB; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLwnu4UB"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e934bcb7623so1829214276.1
-        for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 05:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755606464; x=1756211264; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQJ9/fQYlFZB7BHFOxhE5rqON71LQpmFE+5hRcesI34=;
-        b=XLwnu4UB/tjlTYDfWQlmTs5F64e8gESNq+mtrDvQ+/6D3AoAunnxWkOh5tnSBkHbyH
-         +polz83DIAOnhlT8dduYky8acG83SSPNGzopy1SGBjqSzcPt9sDpYAHEjqsj1pXrFOC3
-         GT67M11579NCcx7q328g0NZNQNEAzVj27xYmOtSwfbVlU6CnbBHyebP0lgBLV27Civv7
-         Lkg5+dLhPP6s6k52KCZ6RbtozRp1BideOEClV158dVScJrR1ScFBfJJmcHFf/IpS3CYN
-         xkIhjc51yoAVfORcsAbblZQCX23om4f48f+Fpw6O7xVPdK6/aguRBIXoLTCt+PK9ZUdu
-         1IFg==
+	 To:Cc:Content-Type; b=TP8n45xi/PmadwEUQtszw14y4gP6wgeK4WNA40lDmFJXIIHUIq8+En4mMFT3G7wKikIA10+XqbeNi5zEZ3Hux1VJSdVo26ZlYu+t3BtXm4myyfC1ydHgJ/dLr724rUEmwGclroQzcYkG8YeUavhBF6bylAyLceNVGx1D7Vsz3fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-53b1740154dso3673537e0c.1;
+        Tue, 19 Aug 2025 06:06:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755606464; x=1756211264;
+        d=1e100.net; s=20230601; t=1755608768; x=1756213568;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TQJ9/fQYlFZB7BHFOxhE5rqON71LQpmFE+5hRcesI34=;
-        b=AnJ8HjmZjA9jrRnv8ebf8kYVor0st8HgbrHhIAAV3VM9UISx8JZ032/VDpapa/0HkF
-         sKyjhHNLXALT8F8CesX8nnNAL0MIo/7dA5vCEEUyYTWNljXkpTCu9OVoYchpOstltujh
-         fwVbdToB0hnYHA5wgkhqNJSdmrkGjOggED4fPVnyxEPhOAO6qmBv/K3qVfnO5+SbOzM0
-         xp60+gHFWj03lr2/TNAvlO8LKOYgGjlbwk6iW2sDYLNUZXzHm8enzX45xE8Tm2vMCEP5
-         GQWM/WlwEa4YtKLa4L7/HSQl9BGfo0wJSp5RJ2PV+soIHwtACzqiBB3qb3JNFp3Uc9Nv
-         IF8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlC8ltMlcKZDK+2GFwrf44OlicT9xwF2fsIWcM7kPaoDRig1k2q0sqv9OO2oQQViX2qmy/cG1QrcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf58G5TPYWkophy/b75Z4YfeAddpnh3Zh/bdR+uhke+TfqoNK/
-	j7CgzlVSvLsc790Ym2OMBE2cXTs9Gw8R3rgUI6ehtGH4c1X01pRjTnyKPF0QZOz2H3WZrz+SpNx
-	io/P9xOIieL5VJ7VmeZ4ydVuwRaNQbDPpfPMwAvihZg==
-X-Gm-Gg: ASbGncvom67wAMPaKHfL/VAUQlmVld5DypjTn0HcThpR+2JwNUk3Ey6FGXcfZ/iKkqi
-	xwvGV+u7swyd651td4pc+1ASJPshnsDfObRIb/smQkeoWRIjyzUy4kAhsRcgGbAoZSzoyNrp6mK
-	NVInvrl5YSGmgq4cvvsxIA447qsl6Y97wz2Ts9/C4vWrz1I3ZPuCmyGxllCTTtGsR7LKgahWJTS
-	//RF0bZpuVnWBIkLg==
-X-Google-Smtp-Source: AGHT+IFRBAMqbjVrBOTdcqCFqxd0nH4dT+3B6E2uJUNFB6x6KANXkZyugb9RUsQkwMq/iR7D246ApID8/zxfeOWdOJ0=
-X-Received: by 2002:a05:690c:688c:b0:71a:1234:3529 with SMTP id
- 00721157ae682-71f9d532028mr22641667b3.21.1755606463949; Tue, 19 Aug 2025
- 05:27:43 -0700 (PDT)
+        bh=8XOdfZsHoyTBBC5eTa1c4VcrP/Xh4XLwdxd8CP9jAi0=;
+        b=K3cB106PQu1tYqJET32dmDR1ed1dzh99fQ5yEjUDsx5Eoc1xdmuRYpI7FYyt99+pSS
+         rHU6cObniE7bqgugP7OHBu3cvSHcGYq8dBRD83IRF1jJWN1ivSd/WbeLAqIbnqFtySus
+         Q9FIJFxIHl+Z7MHVM3UpWXFoEe1eJ6BOVgoibQ8IXPEjoo4lXIDk1o6fsBCD/R/nNnq9
+         6KDKqLgqOcw+cZ5hpeA5WUIgCHkwLw8nhdNdS24WR8yOqPhBvDP4v7h8bjyyOwJ8VWCc
+         zyYWVuoG4DgFli9+SfKL2xfSmc2x4WLxv3PLgnFFyFiLUi0igkLQ/r2ySZXPoRyUKB7+
+         o2UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5uombveublmyXy1mucq7SouQsu9NB5GhT1gro+7TVd3nhwqie6E4BYl18L8Xl950u5F/Ig5kAJuU+@vger.kernel.org, AJvYcCVftBj0o4wGyLaHVZ/JDaDlkMKqLaYds9fxa0Ru5G1ta8mc8QyJ42QlYxsXkd7gCkDMRRyi2vghbn66l3qggaZYNu4=@vger.kernel.org, AJvYcCW40lRZ/jaSCMqYwC75Ce6T6GCc9r5V0vnpbmaq95ntrH8WJwQGboyeHcH1kPyAhrNukEpxVAExXWs3@vger.kernel.org, AJvYcCWnHWjKSka4rIfG8S2E9qi6FBWJs1M9qBHqKsSYypK23mgBKZ20Tggl1gjgu7PtvDapzWl2Qn6ZgSIPADRu@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlzHFWy2QxooLMyO1J14DfLjWSJkL4OC5/qHAozndKY+TaAQrm
+	N3w95RjKBhgQL9dA1okqCyfqrVHnOfgB4iLKQYVrAXNXcjOuUuTClRpIz4gHPmPH
+X-Gm-Gg: ASbGncuNNonHo1xlCnvBsskcqldZfipMtQSoLt1/7PBPBjjeXq0wK01UAE+lbg5b/kL
+	u6AriorjonvgQdBsYCXjbOE240Zqz3vM29uFUfQReQLudGFzfN93tnmk4WK6yBroVM9wVYGL5v/
+	4MJNhUd4lZP1k/dN0Bp067ZY02lcPfju7dOhzrRU55mQ7vbLxCdCS1blD4JESzi0FlLXcA8LueN
+	INfjO++pcwSjyq1KrVx1ARzIjzR2emMJBP7dUXWmATZ1NcCiJwNC3dz+U/FV2GYMrh/zovllZSB
+	DBo0X1g8zu91AYIDyC+cOdJfAXRC2Vm6H3InvLduUxZiMePibEoEGJzZcinvd4ryIY31M7i3u2z
+	KlilupF+RdGIbtrilNhI5n1M1Sqrdfs7vNnadqzZkYrQuOZ/Enq8sG2oUvlTNwOSpGi3Eacc=
+X-Google-Smtp-Source: AGHT+IH8JI5kcbwxb0nmuwhaK0Vfx4/7mxZOTMEcvqZanF3GYNy9KpIkQyd3iaYTg/8U3zjX8MbXdQ==
+X-Received: by 2002:a05:6122:921:b0:535:ed79:2aed with SMTP id 71dfb90a1353d-53b5e5955b7mr872314e0c.2.1755608767803;
+        Tue, 19 Aug 2025 06:06:07 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bed931esm2528042e0c.20.2025.08.19.06.06.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Aug 2025 06:06:07 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-50f7e78cc12so3672173137.0;
+        Tue, 19 Aug 2025 06:06:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPdJ4H7LjsfJNs3Xz+0911sApXx3mzWeu47ekRKs5SV/bLxCn+NXsDRPVnZJU02lE45cqH65Yp1ouo8emsQuI/Qk4=@vger.kernel.org, AJvYcCWvKegN/ef58vjWojEiVqjWSrh/M/5x7SRS9xuYuCtfuKJNrQRGYp0pmyAq5rMOfYfKnh1Gkz/wMFMq@vger.kernel.org, AJvYcCWxW+eACyb87ChQfU0J2GaabJ+DOAIaylvbNFzTGxbDC46awa0wsAkvL68Q3WrH873HvU5mUXFOiqzB8oCq@vger.kernel.org, AJvYcCXpWcbZ1Mm8RlRquAxL9DLPDJJiwighAF5DyjmIYkGjEGfjO85mLwbJ1nBus7kjHfHe5XuYBoO7xLnJ@vger.kernel.org
+X-Received: by 2002:a05:6102:4a97:b0:4e5:5c14:5937 with SMTP id
+ ada2fe7eead31-51929a19afbmr863928137.1.1755608766525; Tue, 19 Aug 2025
+ 06:06:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
-In-Reply-To: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 19 Aug 2025 14:27:08 +0200
-X-Gm-Features: Ac12FXwryiFxmL3QF8klQ7lK3nu4VpQFZS0iCSqAffd276Bc50rHoj93F3N9QSM
-Message-ID: <CAPDyKFqOBJxnNWWQvrFLy=w2FWb9bh0EvQ4_3d3zRBaDMWF03w@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/24] GPU_CC power requirements reality check
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250728201435.3505594-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250728201435.3505594-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Aug 2025 15:05:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXTfz5mBNLNTwGjzuuVV5L726a2x_penD85524X5GsXjA@mail.gmail.com>
+X-Gm-Features: Ac12FXzFxo0dVvYfSvWWErtn55ptRVL7u8GTkaX8Cq25P7cD0mfdKfGkkT3ZV4I
+Message-ID: <CAMuHMdXTfz5mBNLNTwGjzuuVV5L726a2x_penD85524X5GsXjA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/6] clk: renesas: rzv2h-cpg: Add instance field to
+ struct pll
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Douglas Anderson <dianders@chromium.org>, 
-	Vinod Koul <vkoul@kernel.org>, Richard Acayan <mailingradian@gmail.com>, 
-	Andy Gross <andy.gross@linaro.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Luca Weiss <luca.weiss@fairphone.com>, Jonathan Marek <jonathan@marek.ca>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 28 Jul 2025 at 18:16, Konrad Dybcio <konradybcio@kernel.org> wrote:
+On Mon, 28 Jul 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> In an effort parallel to [1], the GPU clock controller requires more
-> than 0/1 power domains to function properly.
-> Describe these dependencies to ensure the hardware can always power on
-> safely.
+> Add a two-bit "instance" member to struct pll and extend the PLL_PACK()
+> macro to accept an instance parameter.  Initialize all existing PLL
+> definitions with instance 0 to preserve legacy behavior. This change
+> enables support for SoCs with multiple PLL instances (for example,
+> RZ/G3E we have two PLL DSIs).
 >
-> Patches 1 & 2 are separate (but related) fixes,  which need to be
-> merged before the DT change for SC8280XP.
->
-> Posting as RFC since I only got to test it on SC8280XP(-crd).
->
-> [1] https://lore.kernel.org/all/20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com/
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This doesn't apply, as I have just queued up a series from Dmitry [1]
-that requires this to be re-based on top of my next branch. Please
-submit a new version.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Kind regards
-Uffe
+Gr{oetje,eeting}s,
 
-[1]
-https://lore.kernel.org/all/20250718-rework-rpmhpd-rpmpd-v1-0-eedca108e540@oss.qualcomm.com/
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> ---
-> Konrad Dybcio (24):
->       dt-bindings: power: qcom,rpmpd: Add SC8280XP_MXC_AO
->       pmdomain: qcom: rpmhpd: Add MXC to SC8280XP
->       dt-bindings: clock: qcom,gpucc: Merge in sm8450-gpucc.yaml
->       dt-bindings: clock: qcom,gpucc: Describe actual power domain plumbing
->       dt-bindings: clock: qcom,gpucc: Sort out SA8540P constraints
->       arm64: dts: qcom: qcs8300: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sa8540p: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sa8775p: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sar2130p: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sc7180: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sc7280: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sc8180x: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sc8280xp: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sdm670: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sdm845: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm4450: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm6350: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8150: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8250: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8350: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8450: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8550: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: sm8650: Describe GPU_CC power plumbing requirements
->       arm64: dts: qcom: x1e80100: Describe GPU_CC power plumbing requirements
->
->  .../devicetree/bindings/clock/qcom,gpucc.yaml      | 155 ++++++++++++++++++---
->  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  75 ----------
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi              |   6 +
->  arch/arm64/boot/dts/qcom/sa8155p.dtsi              |   6 +
->  arch/arm64/boot/dts/qcom/sa8540p.dtsi              |   6 +-
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   5 +
->  arch/arm64/boot/dts/qcom/sar2130p.dtsi             |   5 +
->  arch/arm64/boot/dts/qcom/sc7180.dtsi               |   5 +
->  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   5 +
->  arch/arm64/boot/dts/qcom/sc8180x.dtsi              |   5 +
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi             |   6 +-
->  arch/arm64/boot/dts/qcom/sdm670.dtsi               |   4 +
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               |   4 +
->  arch/arm64/boot/dts/qcom/sm4450.dtsi               |   4 +
->  arch/arm64/boot/dts/qcom/sm6350.dtsi               |   4 +
->  arch/arm64/boot/dts/qcom/sm8150.dtsi               |   4 +
->  arch/arm64/boot/dts/qcom/sm8250.dtsi               |   5 +
->  arch/arm64/boot/dts/qcom/sm8350.dtsi               |   6 +
->  arch/arm64/boot/dts/qcom/sm8450.dtsi               |   6 +
->  arch/arm64/boot/dts/qcom/sm8550.dtsi               |   6 +
->  arch/arm64/boot/dts/qcom/sm8650.dtsi               |   5 +
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi             |   6 +
->  drivers/pmdomain/qcom/rpmhpd.c                     |   4 +
->  include/dt-bindings/power/qcom-rpmpd.h             |   1 +
->  24 files changed, 240 insertions(+), 98 deletions(-)
-> ---
-> base-commit: 0b90c3b6d76ea512dc3dac8fb30215e175b0019a
-> change-id: 20250728-topic-gpucc_power_plumbing-646275aec2cb
->
-> Best regards,
-> --
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
