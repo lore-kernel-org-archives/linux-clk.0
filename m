@@ -1,168 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3231A06A;
-	Tue, 19 Aug 2025 09:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AFF31195F
+	for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 09:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755595669; cv=none; b=WQNI4PHZjZJyhW6Tf67OuPxAxnxWju4/WfsbmlC/D8qr/EwxJpxWsktZpMWnBHih3/jmIxrzBt03PvxoeXHIjZRiVPDna8bzHP390rn6nGZZeyNcdoIBdapru/LsP3F0rW3oi69xMoq79G0MQkBDK4z2kz5tYoUlhFaLj3mbctI=
+	t=1755596807; cv=none; b=Yl2W203o0+bwwKHSkhDUntH1zWRP1MXK+YrV1PXJGqiRCVsnZBu7Qr79NAbCeHv2FRxLbDu4ZOLpwf0F90iNK0SratEfBYRYx796JIyBEYC421+GvexDAeQLNlqIHu0kMpBLHTrwaU2HQqyn3DIB9922gXzxhiLIZ11CgvkLB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755595669; c=relaxed/simple;
-	bh=mlRwEb7SX4oAgBhpmfaZnnPryE/EzdfZteXaY9t1JnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBjQGkruQEtbeM3me7+L4maWsTZ9HflpHsd5Xul0hm8L4XcYgKdPnU+KqM1QwPhJgiHpVO8L6eWlvv3XfzncJq+m9gOzrOQYrtgyrdqyMFITr9L0tHM3HHroCRuD2X+bBe1cibRyoh7i/NjNXzgWMhfkR1Ii9nq/BOF2iaw7/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKzGln0n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755596807; c=relaxed/simple;
+	bh=CnJekPM0wQKG9e7pS0aBHZul0jrDqWHtRHfFM2JeVrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t51xBGCmVMT25SLgUptIpZ5ywaksR0640xlM35hAHQPHIPTqyKK30R2rREkgrdrN1Rpa0atjtcNsPXqBnXUtyR7NSnEK2uYwBK5Apopj6sEENiIz0l8PD+DDitm39w+6F10RgrQzdkwpABQPMKBQ2Irw+xuT6VNeVA1k7wo+xrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zmi1XXK4; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKzGln0n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D208BC4CEF1;
-	Tue, 19 Aug 2025 09:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755595669;
-	bh=mlRwEb7SX4oAgBhpmfaZnnPryE/EzdfZteXaY9t1JnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKzGln0nO4/46/KG061bA2HjsGcUHqr5QTHjf/nSkvPMELf7hAbBi+d1ZCpNUMZIp
-	 5itY7VQUqiDgwHY2UYjGShwo+kuq11WHmHWlO/qU5ZTnOLyf8BTzNbOGjmk1K8BBUY
-	 HQoTfLLQq9SdWP/GDtQ8hlH4Np3Qlb1dhbnA0EgC57bPjJTIVDLj7vbP29B5JxzFj1
-	 oBEoGPlX07WcXrYfk0/R0xAv8CWfy2OehL5KTN3Xh7n1goSgwZTBTKyZt532V+UlGV
-	 T70yIp9dUybrfu2d0oCMZaKKy6w0t+SP8qmfO2kObGGIykaB3RLWRcryQWS3FD2uvP
-	 tXWZvfb7muADg==
-Date: Tue, 19 Aug 2025 11:27:45 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/9] clk: add kernel docs for struct clk_core
-Message-ID: <b3kfxuvkz5elhkquj7iqajcoibozsysskwvbfw7rlhvo5sebhq@5uhoib7h5dtl>
-References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com>
- <20250812-clk-tests-docs-v3-1-054aed58dcd3@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zmi1XXK4"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55ce509127bso3967190e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 02:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755596803; x=1756201603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CnJekPM0wQKG9e7pS0aBHZul0jrDqWHtRHfFM2JeVrQ=;
+        b=Zmi1XXK4wKmRuynbrwT8fn72i6E5QZzEJ6LCdcveQ4hFn9whcKtHfr87ay8H4Y+9KV
+         lng10Yu1G/9gConL0pN/9mlwVgCgz//l3Px/GwqISBFVaAR93O6sOLumX9p01ykV25TX
+         NYzgrhIuOGKm1/dSx6jB33sij3qY19lEC4qaBVyBFx2H9c1CVtmU1IO3I+JGAQR/syBW
+         V4nHpsU1JTUQgDv9K65CovKkelbqDhfscqVbIucyf4TQVtHBUgNIefr4QDVOOlThsH4o
+         QD/zEu919Zitm4lEL3BSv7hjdX0YxJzt7L6f5y6HkhgmSxUNLcq51f8vAlc+yCO31urf
+         rPnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755596803; x=1756201603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CnJekPM0wQKG9e7pS0aBHZul0jrDqWHtRHfFM2JeVrQ=;
+        b=EFXGi/Potoo85DWhGKEAAT/sXDmPHehqaq7T05M4T/NXdYTGWCerL5ROBCByJQNM3O
+         uHM1gqHOJz3XIae9Ou44xF9ZKZdRICO691v8mGOkXCC+rLjCtWFKyeauoImb0u+k2+9G
+         N7IqeeKFapKeHuzTilZAmqyVnyOwEU9zXo+YC0Kxo+rYjo4C2sBL+oEyWEnRTtUwsBYI
+         qg6IZJ/x42wLiZspEVjOMu/IJdoZCQUDKXuEfShVXLRxHM4RHeyWGWP+Qchw6FbUs6t8
+         Yb0PG2AS86z45TMr+8Jsy71tLmg42+eB2faQ872m3EEGblTXxy4w41xGI2Npm5IyBmdu
+         6igQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSikZ1WhiRUTYWdDW79kh8p5n/5ZqTR36HrIMLolR1sCGHcruAw8/JFkd0Idxk+KC8QjkwYttQN1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRUtKx/e3o7jM5FoafMEOiVEwAwEahxDIxkzURzyeQqkGL29Tg
+	DDPwDkZFU0hl0WMake9ox28JYhsSqQjw+fVSII7ibBU4y72n65+55ANLuMogGiIi3cCmmeovtxa
+	fwrikTp3WcKB0W4VCO2YAvNmW75QJfZxtn6qeVF6Qig==
+X-Gm-Gg: ASbGnctxsNT4WXRcZHhwOez7m2+Omdw+CnNjt751QKVAE/RjBNwf6ihqtYC7IUCTZFu
+	vqar+XBGfjjBXjYwSK61jOcI46u/0OvVbhpEvhVzW/upLTrXX0XuQk9cusadzYGUBrw9kvHxaUu
+	/KVNSx5svi44PouWX4GqrbLRJQDrjwIGQh1xuBnfF9udi/8aNFDUJSd16kKQ2xADSpvFEe3pJbd
+	9uxwiE=
+X-Google-Smtp-Source: AGHT+IEnhi69VygT7g84GFEWBMGYd/u/z/IkVXlUwHEo4DfM7Y7k8WnKy5jP9SBDHCTX2vCUgNODYTsIltctm9ywUhA=
+X-Received: by 2002:a05:6512:61d4:20b0:55c:c9d5:d337 with SMTP id
+ 2adb3069b0e04-55e007aecbfmr398443e87.24.1755596802917; Tue, 19 Aug 2025
+ 02:46:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mjii5jltq4fisuad"
-Content-Disposition: inline
-In-Reply-To: <20250812-clk-tests-docs-v3-1-054aed58dcd3@redhat.com>
-
-
---mjii5jltq4fisuad
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-16-b3bf97b038dc@redhat.com>
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-16-b3bf97b038dc@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Aug 2025 11:46:31 +0200
+X-Gm-Features: Ac12FXzd6X-i_It645W5rQicFyi-TYZe6vnFChkDKrkqPz2wrPccuV5zYO_EO9M
+Message-ID: <CACRpkdaeF5VueC44jQZzdJjVJXj2F7cDsOzb6aa6bHLgQJXS7Q@mail.gmail.com>
+Subject: Re: [PATCH 016/114] clk: gemini: convert from round_rate() to determine_rate()
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
+	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
+	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
+	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/9] clk: add kernel docs for struct clk_core
-MIME-Version: 1.0
 
-Hi,
+On Mon, Aug 11, 2025 at 5:18=E2=80=AFPM Brian Masney via B4 Relay
+<devnull+bmasney.redhat.com@kernel.org> wrote:
 
-On Tue, Aug 12, 2025 at 10:40:31AM -0400, Brian Masney wrote:
-> Document all of the members of struct clk_core.
->=20
+> From: Brian Masney <bmasney@redhat.com>
+>
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/clk.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 55 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b821b2cdb155331c85fafbd2fac8ab3703a08e4d..41690448ce9ada8eaa3022195=
-0da4a3b1c4552d2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -57,6 +57,61 @@ struct clk_parent_map {
->  	int			index;
->  };
-> =20
-> +/**
-> + * struct clk_core - This structure represents the internal state of a c=
-lk
-> + * within the kernel's clock tree. Drivers do not interact with this str=
-ucture
-> + * directly. The clk_core is manipulated by the framework to manage clock
-> + * operations, parent/child relationships, rate, and other properties.
-> + *
-> + * @name:              Unique name of the clk for identification.
-> + * @ops:               Pointer to hardware-specific operations for this =
-clk.
-> + * @hw:                Pointer for traversing from a struct clk to its
-> + *                     corresponding hardware-specific structure.
-> + * @owner:             Kernel module owning this clk (for reference coun=
-ting).
-> + * @dev:               Device associated with this clk (optional)
-> + * @rpm_node:          Node for runtime power management list management.
-> + * @of_node:           Device tree node associated with this clk (if app=
-licable)
-> + * @parent:            Pointer to the current parent in the clock tree.
-> + * @parents:           Array of possible parents (for muxes/selectable p=
-arents).
-> + * @num_parents:       Number of possible parents
-> + * @new_parent_index:  Index of the new parent during parent change.
-> + * @rate:              Current clock rate (Hz). This is effectively a ca=
-ched
-> + *                     value of what the hardware has been programmed wi=
-th. It's
-> + *                     initialized by reading the value at boot time, an=
-d will
-> + *                     be updated every time an operation affects the ra=
-te.
-> + *                     Clocks with the CLK_GET_RATE_NOCACHE flag should =
-not use
-> + *                     this value, as its rate is expected to change beh=
-ind the
-> + *                     kernel's back (because the firmware might change =
-it, for
-> + *                     example). Also, if the clock is orphan, it's set =
-to 0
-> + *                     and updated when (and if) its parent is later loa=
-ded, so
-> + *                     its content is only ever valid if clk_core->orpha=
-n is
-> + *                     false.
-> + * @req_rate:          The last rate requested by a call to clk_set_rate=
-=2E It's
-> + *                     initialized to clk_core->rate. It's also updated =
-to
-> + *                     clk_core->rate every time the clock is reparented=
-, and
-> + *                     when we're doing the orphan -> !orphan transition.
-> + * @new_rate:          New rate to be set during a rate change operation.
-> + * @new_parent:        Pointer to new parent during parent change.
-> + * @new_child:         Pointer to new child during reparenting.
 
-I think both can also be used during a rate change that affects the
-parenting, right?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> + * @flags:             Clock property and capability flags.
-> + * @orphan:            True if this clk is currently orphaned.
-> + * @rpm_enabled:       True if runtime power management is enabled for t=
-his clk.
-> + * @enable_count:      Reference count of enables.
-> + * @prepare_count:     Reference count of prepares.
-> + * @protect_count:     Protection reference count against disable.
-> + * @min_rate:          Minimum supported clock rate (Hz).
-> + * @max_rate:          Maximum supported clock rate (Hz).
-> + * @accuracy:          Accuracy of the clock rate (parts per billion).
-> + * @phase:             Current phase (degrees).
-> + * @duty:              Current duty cycle configuration.
-
-We should probably mention the unit here too. I assume it's in percent?
-
-Looks good otherwise. Once fixed,
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---mjii5jltq4fisuad
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKRDkQAKCRAnX84Zoj2+
-dswRAX4wgR60klAwrWDL/lT/4T47QpCTjFlOgT/Pe9nulGeVn9SLRjrPrszRRlqW
-eaI0OJgBfipVIYXvl3dAgMv/ws1tqsQ9XKhWmdUeyFhLuza7e5hUzvo8skend1wB
-Y8kU01QYxg==
-=bhAh
------END PGP SIGNATURE-----
-
---mjii5jltq4fisuad--
+Yours,
+Linus Walleij
