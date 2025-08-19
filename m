@@ -1,168 +1,168 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FDA31A059;
-	Tue, 19 Aug 2025 09:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3231A06A;
+	Tue, 19 Aug 2025 09:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755594784; cv=none; b=Jl4Br/8roRolIV3TMcRPoazRDnqkvI+qV2SwpqtzP1mOyX2j4aYjfkqaHSM8Hk68xratRUi36euxL0QB3gAnjg0ilDdy3fAxh9qRnUbyHCccInpJxJ4yilHBdntN7NDpk7XPTdtxd0NVGEevcY3WOXTRWk0QbfZj6PHoh4Nlkqg=
+	t=1755595669; cv=none; b=WQNI4PHZjZJyhW6Tf67OuPxAxnxWju4/WfsbmlC/D8qr/EwxJpxWsktZpMWnBHih3/jmIxrzBt03PvxoeXHIjZRiVPDna8bzHP390rn6nGZZeyNcdoIBdapru/LsP3F0rW3oi69xMoq79G0MQkBDK4z2kz5tYoUlhFaLj3mbctI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755594784; c=relaxed/simple;
-	bh=nLwgX0rt2w+Inkkf34i/Uun1hxhNuo283Du7mGcFnw0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZSi0SXwrQia02d7my7896EmyweuT69QttDbDux3dDcihaubLf8oXTqNTiQlJG0ZMHs6sd1yHD5PDVDXlDEgXaEBl06kBkq7hH2XTxc+pIIhmcbeSJm93dOMStLk7dq0EYLGxLW4lGXgrRJ+0ALwy112O+jfLpbJl/9vp1jjwRm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dmyJzvwd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1755595669; c=relaxed/simple;
+	bh=mlRwEb7SX4oAgBhpmfaZnnPryE/EzdfZteXaY9t1JnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBjQGkruQEtbeM3me7+L4maWsTZ9HflpHsd5Xul0hm8L4XcYgKdPnU+KqM1QwPhJgiHpVO8L6eWlvv3XfzncJq+m9gOzrOQYrtgyrdqyMFITr9L0tHM3HHroCRuD2X+bBe1cibRyoh7i/NjNXzgWMhfkR1Ii9nq/BOF2iaw7/xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKzGln0n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dmyJzvwd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755594779;
-	bh=nLwgX0rt2w+Inkkf34i/Uun1hxhNuo283Du7mGcFnw0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=dmyJzvwdD2oD2FA+P7Jf0WYb7DiNDMsSsqqC+w3eByrplSvm5P6/JiN4Bnmc9RXZg
-	 ZBzFkqlUjidrS5O2k++VziehpoX4z+eoBg/tDFXcfbuaULb5mNpaCDbaHK4qc/OK6P
-	 KaKLwfcXifGQyx4e0J9Wnnoco2dFwUx4ZNr63+kEyHp2PFncQGwJNx885D7bLnYWUP
-	 wLNMiYKllEWYiYE0nZXQ4R+e2YdR0wmf8bR7VSNN8x7k68F3XpwLdN+VQje1uZISaE
-	 2OKFTumwkHm729xNyan5REMukD1yFfBl1w8P9ZmspuNCF/YKVRGPQCCt4RjVPY3HPY
-	 SVaDtz8wlAsxA==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2d600c8f85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DC5FA17E0154;
-	Tue, 19 Aug 2025 11:12:58 +0200 (CEST)
-Message-ID: <8be063910b553945da12263818bd05c4e90e27f6.camel@collabora.com>
-Subject: Re: [PATCH 8/9] arm64: dts: mediatek: mt8183-kukui: Fix
- pull-down/up-adv values
-From: Julien Massot <julien.massot@collabora.com>
-To: Chen-Yu Tsai <wenst@chromium.org>, Linus Walleij
- <linus.walleij@linaro.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>,
-  Enric Balletbo i Serra	 <eballetbo@kernel.org>, Weiyi Lu
- <weiyi.lu@mediatek.com>, Eugen Hristev	 <eugen.hristev@linaro.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>, Julien
- Massot <jmassot@collabora.com>, Sean Wang	 <sean.wang@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Tue, 19 Aug 2025 11:12:58 +0200
-In-Reply-To: <CAGXv+5FXZ_byK8Ftb9LjfQMkgtLd7mTmWgz_Nsvcv8=jy53T=g@mail.gmail.com>
-References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
-	 <20250801-mtk-dtb-warnings-v1-8-6ba4e432427b@collabora.com>
-	 <CAGXv+5EHk=f62+KiLo-aWMcd0-q+_59kno+uOW5rdYaq5q+5tQ@mail.gmail.com>
-	 <CACRpkdbWctNH0XJfcHfVJM9Etp0WCXpdyhhyaQemH-Xc0LDr0A@mail.gmail.com>
-	 <CAGXv+5ECsP7_wbdcaAkWuD=RyJiJpPe4r60bhD5U8xUvEBzmXw@mail.gmail.com>
-	 <CAGXv+5FXZ_byK8Ftb9LjfQMkgtLd7mTmWgz_Nsvcv8=jy53T=g@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKzGln0n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D208BC4CEF1;
+	Tue, 19 Aug 2025 09:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755595669;
+	bh=mlRwEb7SX4oAgBhpmfaZnnPryE/EzdfZteXaY9t1JnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKzGln0nO4/46/KG061bA2HjsGcUHqr5QTHjf/nSkvPMELf7hAbBi+d1ZCpNUMZIp
+	 5itY7VQUqiDgwHY2UYjGShwo+kuq11WHmHWlO/qU5ZTnOLyf8BTzNbOGjmk1K8BBUY
+	 HQoTfLLQq9SdWP/GDtQ8hlH4Np3Qlb1dhbnA0EgC57bPjJTIVDLj7vbP29B5JxzFj1
+	 oBEoGPlX07WcXrYfk0/R0xAv8CWfy2OehL5KTN3Xh7n1goSgwZTBTKyZt532V+UlGV
+	 T70yIp9dUybrfu2d0oCMZaKKy6w0t+SP8qmfO2kObGGIykaB3RLWRcryQWS3FD2uvP
+	 tXWZvfb7muADg==
+Date: Tue, 19 Aug 2025 11:27:45 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] clk: add kernel docs for struct clk_core
+Message-ID: <b3kfxuvkz5elhkquj7iqajcoibozsysskwvbfw7rlhvo5sebhq@5uhoib7h5dtl>
+References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com>
+ <20250812-clk-tests-docs-v3-1-054aed58dcd3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="mjii5jltq4fisuad"
+Content-Disposition: inline
+In-Reply-To: <20250812-clk-tests-docs-v3-1-054aed58dcd3@redhat.com>
+
+
+--mjii5jltq4fisuad
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/9] clk: add kernel docs for struct clk_core
+MIME-Version: 1.0
 
 Hi,
-On Tue, 2025-08-19 at 13:29 +0800, Chen-Yu Tsai wrote:
-> On Tue, Aug 19, 2025 at 1:27=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >=20
-> > On Mon, Aug 18, 2025 at 11:22=E2=80=AFPM Linus Walleij <linus.walleij@l=
-inaro.org> wrote:
-> > >=20
-> > > On Wed, Aug 6, 2025 at 8:38=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.o=
-rg> wrote:
-> > > > On Fri, Aug 1, 2025 at 7:18=E2=80=AFPM Julien Massot wrote
-> > >=20
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 pins-clk {
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- pinmux =3D <PINMUX_GPIO124__FUNC_MSDC0_CLK>;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- drive-strength =3D <MTK_DRIVE_14mA>;
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media=
-tek,pull-down-adv =3D <10>;
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media=
-tek,pull-down-adv =3D <2>;
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bias-pull-down =3D <MTK_=
-PUPD_SET_R1R0_10>;
-> > > >=20
-> > > > and so on.
-> > > >=20
-> > > > ChenYu
-> > >=20
-> > > I agree with ChenYu, the more standardized properties are the better =
-it is.
-> > >=20
-> > > All the custom properties makes sense for an engineer working with ju=
-st
-> > > that one SoC (like the SoC vendor...) but for field engineers who hav=
-e
-> > > to use different SoCs every day this is just a big mess for the mind.
-> > >=20
-> > > The standard properties are clear, concise and tell you exactly what
-> > > they are about.
-> > >=20
-> > > The argument should be in Ohms though, according to the standard
-> > > bindings, but maybe the value of MTK_PUPD_SET_R1R0_10 is
-> > > something like that?
-> >=20
-> > For reasons I can't recall clearly these are just placeholder values
-> > that the driver then maps to the R1 and R0 settings. But at least they
-> > use the standard properties.
-> >=20
-> > The reason was either one of the following or both:
-> >=20
-> > =C2=A0 a. not every group of pins had the same resistance values for R1=
- & R0
-> > =C2=A0 b. there are no known precise values; the values depend on the p=
-rocess
-> > =C2=A0=C2=A0=C2=A0=C2=A0 and batch
+
+On Tue, Aug 12, 2025 at 10:40:31AM -0400, Brian Masney wrote:
+> Document all of the members of struct clk_core.
 >=20
-> I don't know for (b), but no there is a lot of different values for R1 & =
-R0
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/clk/clk.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 55 insertions(+)
 >=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b821b2cdb155331c85fafbd2fac8ab3703a08e4d..41690448ce9ada8eaa3022195=
+0da4a3b1c4552d2 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -57,6 +57,61 @@ struct clk_parent_map {
+>  	int			index;
+>  };
+> =20
+> +/**
+> + * struct clk_core - This structure represents the internal state of a c=
+lk
+> + * within the kernel's clock tree. Drivers do not interact with this str=
+ucture
+> + * directly. The clk_core is manipulated by the framework to manage clock
+> + * operations, parent/child relationships, rate, and other properties.
+> + *
+> + * @name:              Unique name of the clk for identification.
+> + * @ops:               Pointer to hardware-specific operations for this =
+clk.
+> + * @hw:                Pointer for traversing from a struct clk to its
+> + *                     corresponding hardware-specific structure.
+> + * @owner:             Kernel module owning this clk (for reference coun=
+ting).
+> + * @dev:               Device associated with this clk (optional)
+> + * @rpm_node:          Node for runtime power management list management.
+> + * @of_node:           Device tree node associated with this clk (if app=
+licable)
+> + * @parent:            Pointer to the current parent in the clock tree.
+> + * @parents:           Array of possible parents (for muxes/selectable p=
+arents).
+> + * @num_parents:       Number of possible parents
+> + * @new_parent_index:  Index of the new parent during parent change.
+> + * @rate:              Current clock rate (Hz). This is effectively a ca=
+ched
+> + *                     value of what the hardware has been programmed wi=
+th. It's
+> + *                     initialized by reading the value at boot time, an=
+d will
+> + *                     be updated every time an operation affects the ra=
+te.
+> + *                     Clocks with the CLK_GET_RATE_NOCACHE flag should =
+not use
+> + *                     this value, as its rate is expected to change beh=
+ind the
+> + *                     kernel's back (because the firmware might change =
+it, for
+> + *                     example). Also, if the clock is orphan, it's set =
+to 0
+> + *                     and updated when (and if) its parent is later loa=
+ded, so
+> + *                     its content is only ever valid if clk_core->orpha=
+n is
+> + *                     false.
+> + * @req_rate:          The last rate requested by a call to clk_set_rate=
+=2E It's
+> + *                     initialized to clk_core->rate. It's also updated =
+to
+> + *                     clk_core->rate every time the clock is reparented=
+, and
+> + *                     when we're doing the orphan -> !orphan transition.
+> + * @new_rate:          New rate to be set during a rate change operation.
+> + * @new_parent:        Pointer to new parent during parent change.
+> + * @new_child:         Pointer to new child during reparenting.
 
-From what I saw in the register table
-We can have for the pull up resistors
-75K / 200K
-2K  / 75K
-5K  / 20K
-50k / 10K=20
+I think both can also be used during a rate change that affects the
+parenting, right?
 
-And for the pull down ones:
+> + * @flags:             Clock property and capability flags.
+> + * @orphan:            True if this clk is currently orphaned.
+> + * @rpm_enabled:       True if runtime power management is enabled for t=
+his clk.
+> + * @enable_count:      Reference count of enables.
+> + * @prepare_count:     Reference count of prepares.
+> + * @protect_count:     Protection reference count against disable.
+> + * @min_rate:          Minimum supported clock rate (Hz).
+> + * @max_rate:          Maximum supported clock rate (Hz).
+> + * @accuracy:          Accuracy of the clock rate (parts per billion).
+> + * @phase:             Current phase (degrees).
+> + * @duty:              Current duty cycle configuration.
 
-75k/2k
-75k/75k
-10k/50k
+We should probably mention the unit here too. I assume it's in percent?
 
-And we can have a combination of both resistors that will give odd values=
-=20
-(e.g 1948 Ohm for 2k/75K, 545454 Ohm for 75k/200k) to express in the device=
- tree=20
+Looks good otherwise. Once fixed,
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
+Maxime
 
->=20
-> Also, their customers seemed more accustomed to dealing with toggling
-> R1 & R0 vs setting some actual value. I presume that comes with the
-> uncertainty of the actual hardware value, and they just try which
-> combination works better.
->=20
-> ChenYu
+--mjii5jltq4fisuad
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Julien
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKRDkQAKCRAnX84Zoj2+
+dswRAX4wgR60klAwrWDL/lT/4T47QpCTjFlOgT/Pe9nulGeVn9SLRjrPrszRRlqW
+eaI0OJgBfipVIYXvl3dAgMv/ws1tqsQ9XKhWmdUeyFhLuza7e5hUzvo8skend1wB
+Y8kU01QYxg==
+=bhAh
+-----END PGP SIGNATURE-----
+
+--mjii5jltq4fisuad--
