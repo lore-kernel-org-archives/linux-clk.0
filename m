@@ -1,136 +1,172 @@
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EFA322DD9;
-	Tue, 19 Aug 2025 10:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8C51C84C0
+	for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 10:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755600413; cv=none; b=L3S79EUbE1dyP6hfOzw1tl0S3LJEmJ+dgzcKtkYxedf+AYrlANSsx8QkbJOuiKaPrOJ3JtQVfMdZQ7jPw4d0P6bWiTEeSu02ZBvqJ4lz06KUz93tvOZWdyj9oKonlbBPhZxMPm6roP9g8ZgzYGuGRbKz8GsaqGfok4tVHyd0LC8=
+	t=1755600439; cv=none; b=ib61XyXWgdDkNpr67qb3KL8faSHnOTyWFR3x9WK4epRBjdpczlDIivK9ldW0oxL4MOYSU4WNNPyQ2K31euOK+ye1GJR8BlYrvL7DG+RYNccPo1BBDpDAtgqWVmc6AMYTgaQcwaY83PtflAcGIrx+MK0pSv8Ss0DFsCvPdU29GLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755600413; c=relaxed/simple;
-	bh=uopoiV8HyAqxU9op6og8ChAkirSUUQctyoGCBvLV9t8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C7+MeaCSzvtyBOUtC65gPQDtLoB66ESllWp5BM2gO0QAnTk6QMkeuwSBnyxn/0OhTULUMhpqKUIsFAU8mnNkZfTekQO7rlxeaoR0Jl306MMmDXDD/M0fLKRmOEQM4HXJL+sQziWtDA+njNos6WovQEti/TaUn/MZKL95rkHFft4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381f3a3daso2397566a34.1;
-        Tue, 19 Aug 2025 03:46:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755600410; x=1756205210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=doFbpw5H93w6OCFZvWHsPgEA4fiQmo1QkgmSlnIHgck=;
-        b=mVLrRhMMsSW+PZy6qVLNMJe2Od4nqEbsD4YpMJBIkzbVga6n8nzFsxOeyBB57Mz10o
-         3uk7GUqeygKq0YZ8jlTPgZkewdxL8BNpS1OSNm+baU/wD7nrvMM8ezYqcDsnfx+A0E1S
-         +xBJUGdS4uTnqxv9FcaWyCkQAyWjNz+c6etwpcXWb8NlVl9V0vNdc2mJZbLkh3HznWDm
-         sCRH9u2J983ykGD+oyegtHt8rzf7Xx4V/VDRErLAgyGk+ZXIeZezjY2dRP5n6yShawaw
-         5Iqrt2MlWcZ6GUlh7N7WuFU5W1ZiDUVRVJYdHnFm5YMrnMz9w7cQBTRsUHdvRcvIM6u/
-         7njQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMGxfcDY5CNX9rQGtj71N58b7KAYWS5NwtgS0hykKj9WbiyHh4AzyUDARW18abtBNCuPGBrVPnieoz@vger.kernel.org, AJvYcCUWZW4GyhtoiPFnfK2guFiZ6QEC9OS4HXZN87LyIagFUrQdH8Xk7FYC2/QnDXOka/doISnDpsk5Gv8GPza9DhsJrjU=@vger.kernel.org, AJvYcCVf8747iLKSagUAKdAmIwR/WFcm8BPmReLxyB/hDCeu14on0KKA0Sm25EW4UuME+faw51EkTu+xlkX1@vger.kernel.org, AJvYcCWp6WvWaS343yYosG31pYyvt7+HU1Cx0hHjczPc79x4zq7mvViCCmA1Cx3Lj/E2JK2NFBLkAyT4B9oDUhUx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLLu0K5ancwucAd34yhzmlJmQIEFdkOBgdB5XTm/Ytc3Q9fleL
-	qXUT86chifOFOmbCbr00a0PmZqO8TY9tuDIcSHgE60JTGixk9CP/KCdpb89bW6Zp
-X-Gm-Gg: ASbGncuj7Nmp91giq929bO8sunnh4xyBNi2TXvXtnFFa6T4XYzbbBBmtHS1qH9L6FEz
-	SIY6HUQ/cTvolu83wH27vvikeZy0aNduVBy1gTTgN6gfd/PpI+UyNPQ/V8KOtLwv7/Nm/mnRW3u
-	ZhisnajlLuz9huvLsz8WoKC2vuGe4t6bK+wSQ+6q6ufybVT6ul5y/0JP1F+79uAOJHtNZsesrdo
-	1dAq5YaDBRrf+OhgogmUrEmheufA3mTcJfEdwrILirNYodhFXL1e0gBTbMzFSnYpZRh+DQHC7Xb
-	eWrfxWjB02Y7OdaIXCIgOxFvch2Kp4zbiC4BehQnhk7P5uLpoHjDYRgM58QqmQHu8KdTgcC+zaG
-	9M6w40K5S/lygf89LIXM+1Uoj7tDjxHbIeRprOG8Ea5noftSL6sRUnX5Uap+yxedfysbob7M=
-X-Google-Smtp-Source: AGHT+IEu5IukSeD8mPykXzn+hztoe/vfT0lWboNhEX/LD0NwIRwj6GFYm3rYRDtEkMj+OFi4432iwA==
-X-Received: by 2002:a05:6830:2b21:b0:742:f90c:ec75 with SMTP id 46e09a7af769-744e0afb22fmr1342088a34.25.1755600410421;
-        Tue, 19 Aug 2025 03:46:50 -0700 (PDT)
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com. [209.85.160.50])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-310abb343d4sm3355355fac.17.2025.08.19.03.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 03:46:50 -0700 (PDT)
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce8ec298so4336225fac.1;
-        Tue, 19 Aug 2025 03:46:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJnimBvoMtASqwSwBRm5OG04SEALKBOlecrUf/2fzu8EMK9w9//AfGAl19znHKhzdKe1RebxGn8HEy@vger.kernel.org, AJvYcCW+PS4F7MOYi8kNx7VdpbYwytUtfgdRtHEtOVhM2OeOTtEM0nWXTw+wl8M4VgqGxQ68VnH40o80/9I18dL5DpjPqaM=@vger.kernel.org, AJvYcCWoW0YJ1yR/hQJ3/kINDpLMJT3820vtdljB10bEtcc+VT4szscA8p5K3EJ8/988ejvWvYPZj9nH9HYM4dft@vger.kernel.org, AJvYcCXpX+WBXqyCqtA3qoN8Zk0cuLZZIAh+0v+lK1S3SH9LBym3rTCGeOIxPIpDpX6pvuY0Y9jnjX/XKbnu@vger.kernel.org
-X-Received: by 2002:a05:6102:548a:b0:4e6:f7e9:c4a5 with SMTP id
- ada2fe7eead31-51924b3b1c1mr573466137.22.1755600045268; Tue, 19 Aug 2025
- 03:40:45 -0700 (PDT)
+	s=arc-20240116; t=1755600439; c=relaxed/simple;
+	bh=h63OmaVsTOo+4EVN1eb+eB6UUR5CTBNejqqlb4cmN9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CujTTFI/FELqBpKenMVSn8MYJLaB8y4GOfV6qLlwqSGC8RslJ2MrO4wCK9FhS+QhQNFkbUddw5HYacxHav6en2xN1gxCbon4aWsa3up43qpVWXYSniC3VpRhW4VlJkKjrf2k2uXta2WiW0fQj4QcibNWVhdHo/bqs4FBR4scMxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=ZDU2UDfW; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="ZDU2UDfW"
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 29F071012BA8
+	for <linux-clk@vger.kernel.org>; Tue, 19 Aug 2025 16:17:03 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 29F071012BA8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1755600423; bh=h63OmaVsTOo+4EVN1eb+eB6UUR5CTBNejqqlb4cmN9g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZDU2UDfWLXoC8XSoYelVaDAdDaYS8eFJG+IWf9VbZEGZb5a2dQ6xqPhdzg+SZ0YmL
+	 8xDNTNEWL+btvqJ8JSjtE6DpN6GbwgHjWw8CyiuvMIkh3NmIfrPB8KDU18WJlhMakW
+	 +w/k3yreKP2NiGL3QVfZdHg7h+R8MhUi4QZjbGRA=
+Received: (qmail 11986 invoked by uid 510); 19 Aug 2025 16:17:03 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.552856 secs; 19 Aug 2025 16:17:03 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 19 Aug 2025 16:16:59 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 0ABED3414EC;
+	Tue, 19 Aug 2025 16:16:59 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 712051E81492;
+	Tue, 19 Aug 2025 16:16:58 +0530 (IST)
+Date: Tue, 19 Aug 2025 16:16:53 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: alexandre.belloni@bootlin.com, mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH 0/1] rtc: ds1307: add support for clock provider in ds1307
+Message-ID: <cover.1755599808.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
-In-Reply-To: <CA+V-a8ujMaFFOv8Jd-5=fKHUEfVji1Xt5y_h4uwtR96TBz4VNA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 12:40:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVFxaCrBu0fAJX3wmY9wdgHn1O8-cVOS6OKN6HGX9v55g@mail.gmail.com>
-X-Gm-Features: Ac12FXz7ywVTeSgdEqc13iyHS6v2zZGzk_1Dft3Db5rZ3MNDTn1vQslXfUK25bs
-Message-ID: <CAMuHMdVFxaCrBu0fAJX3wmY9wdgHn1O8-cVOS6OKN6HGX9v55g@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas,dsi:
- Document RZ/V2H(P) and RZ/V2N
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 28 Jul 2025 at 22:28, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Mon, Jul 28, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
-> > RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
-> > with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, t=
-he
-> > RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and require=
-s
-> > five clocks instead of six.
-> >
-> > To reflect these hardware differences, update the binding schema to
-> > support the reduced clock and reset requirements for RZ/V2H(P).
-> >
-> > Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
-> > RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
-> > reused for RZ/V2N.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v6->v7:
-> > - Renamed pllclk to pllrefclk
-> > - Preserved the reviewed by tag from Geert and Krzysztof
-> >
-> - Included support for RZ/V2N in the same patch
-> - Updated commit description.
->
-> I missed mentioning the above.
+Hi all, 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This work adds support for square-wave output from ds1307 rtc chip. 
+ds1307 rtc supports generating 4 rates of square wave output signal,
+1, 4096, 8192, 32768 Hz. This output can be controlled by device
+register - CONTROL_REGISTER at I2C address 0x7 as follows: 
+OUT [7] : control default state of SQW/OUT pin if clock output is disabled.
+SQWE [4] : Enable/Disable output clock
+RS [1:0] : Select the rate for output clock.
 
-Gr{oetje,eeting}s,
+Other devices can use this clock via DT and Common Clock Framework.
 
-                        Geert
+I have done testing and validation using CCF's debugfs interface.
+Below are the details of test/validation done for this patch.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+*** Test setup
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Hardware:
+* I am using Texas Instruments AM62x SK board (ARM64 based SoC)
+* ds1307 RTC hardware module.
+* I have connected ds1307 module at I2C0 bus of am62x available
+at 40pin user expansion connector headers.
+SDA --> pin 27
+SCL --> pin 28
+No pull up needed as board already have pull ups on I2C0 lines.
+* 24MHz logic analyzer to see the waveforms and validate frequency.
+
+Kernel:
+* v6.17-rc2
+* define CLOCK_ALLOW_WRITE_DEBUGFS manually in drivers/clk/clk.c
+so that we can use debugfs interface to test setting clock rates.
+Note: This config is intentionally kept manual in the kernel and 
+should be defined manually only.
+
+*** Validation steps: 
+
+Step 1: Probe the module
+$ modprobe rtc-ds1307
+
+Step 2: Mount debugfs
+$ mount -t debugfs none /sys/kernel/debug
+
+Step 3: Instantiate device
+$ echo "ds1307 0x68" > /sys/class/i2c-dev/i2c-0/device/new_device
+
+Step 4: read initial rate
+$ cat /sys/kernel/debug/clk/ds1307_clk_sqw/clk_rate
+1
+
+Step 5: Set rate to 8192 and enable square-wave output
+$ echo 8192 > /sys/kernel/debug/clk/ds1307_clk_sqw/clk_rate
+$ echo 1 > /sys/kernel/debug/clk/ds1307_clk_sqw/clk_prepare_enable
+
+Step 6: Verify rate
+$ cat /sys/kernel/debug/clk/ds1307_clk_sqw/clk_rate
+8192
+Validate output clock using logic analyzer.
+Probe at pin #7 (SQW/OUT) of ds1307 chip.
+
+Step 7: delete the device
+$ echo "0x68" > /sys/class/i2c-dev/i2c-0/device/delete_device
+
+Step 8: use i2ctools to direct read device register 0x7
+$ i2cget -y 0 0x68 0x7
+0x12
+0x12 shows that clock is enabled with frequency 8192Hz by our driver.
+
+step 9: Redo Step 3 through 8 for various supported rates
+I have put few important debug printk() on various callbacks
+to validate codepaths. Below is testing log for various random rates. 
+
+$ echo 81929999 > /sys/kernel/debug/clk/ds1307_clk
+[  913.107859] ds1307 determine rate callback rate:
+[  913.114978] DS1307 set rate callback
+[  913.119598] ds1307 recalc rate callback rate: 1
+
+$ echo 10 > /sys/kernel/debug/clk/ds1307_clk
+[  976.439016] ds1307 determine rate callback rate:
+[  976.446192] DS1307 set rate callback
+[  976.450849] ds1307 recalc rate callback rate: 4096
+
+$ echo 5000 > /sys/kernel/debug/clk/ds1307_clk
+[  991.732748] ds1307 determine rate callback rate:
+[  991.739954] DS1307 set rate callback
+[  991.744576] ds1307 recalc rate callback rate: 8192
+
+$ echo 9000 > /sys/kernel/debug/clk/ds1307_clk
+[ 1007.463786] ds1307 determine rate callback rate:
+[ 1007.471000] DS1307 set rate callback
+[ 1007.475636] ds1307 recalc rate callback rate: 32768
+
+$ echo 40000 > /sys/kernel/debug/clk/ds1307_clk
+[ 1020.292701] ds1307 determine rate callback rate:
+[ 1020.299934] DS1307 set rate callback
+[ 1020.304563] ds1307 recalc rate callback rate: 1
+
+Regards,
+Akhilesh
+
+Akhilesh Patil (1):
+  rtc: ds1307: add support for clock provider in ds1307
+
+ drivers/rtc/rtc-ds1307.c | 139 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 137 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
