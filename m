@@ -1,100 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C910154BE2;
-	Tue, 19 Aug 2025 14:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FB727D780;
+	Tue, 19 Aug 2025 14:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755612033; cv=none; b=u5M+aECL5b2VCCQsaFY9QSEgn0lFcM4vFinizk1HjH8KW3l4nNfksGiLsiBr84zMn7/86PQGBijWy+sTR1FW6nGBxfsiJnJA25xcrO/rOfpGH5MJnND4jjIKU1QvEQxEmSCxmH7uw7gOrGinL6K68i95+8DuXNhaG8mMfJNNuHs=
+	t=1755615268; cv=none; b=G0zFYn9m6GpLXu5uscaB+MfAXtCMXwJBaguqHhe47gIFu76MxF8n6elFgEIFE0E4V/Nc/NgrXsKWaZjZxh7yJC8kHLJut0XApYRs/Ax+JjcvuAFXel4c8ACINxFpEQvx3+vAb+5P6W6+prNT2YEKvGp4ugXIge1EZ0vmNp8Gnv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755612033; c=relaxed/simple;
-	bh=ZMTlEVIlOoJCADD4AmnS/MMMiFgjo+AQaxivAFX55Q8=;
+	s=arc-20240116; t=1755615268; c=relaxed/simple;
+	bh=bS73IBP0XgIpvrcjYBqF+tR9I5LvIwqpJWovbWz/tmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XK2cVroRLKJ1jJrUkim8rnSLLr3QmUrUv74Z2OXk6hFAgvYTBMyMeVMp+4FlMH9UoHHBxfN0mRDpJAD5wsuMv2+9ychY6yYdKyPU31dPVz2xs+prmIMZyHrrKFXaORkJ/D8I/zjdtQVtPgKZ4ByddQBokOwWAM9esB/Qi9Eb874=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NS8zusma; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bw+jNSwl0WDDEYoEYHQ1uAEytfeSmPoYH7dxftFkeieef+IZi1cL78b5odWgNIb0a7io/xvAOOX4fP+y5WP5IvbJEK9fJpVTKkXhsHV1Z6om7H3ztahbWa95Uj2hgrLL62RZxf6OkBu1UvG3I06YkC/FUhP2t3P4cCq2f383i9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IpOPUuCe; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS8zusma"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643FFC113CF;
-	Tue, 19 Aug 2025 14:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755612032;
-	bh=ZMTlEVIlOoJCADD4AmnS/MMMiFgjo+AQaxivAFX55Q8=;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IpOPUuCe"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EC5EC2391;
+	Tue, 19 Aug 2025 16:53:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755615206;
+	bh=bS73IBP0XgIpvrcjYBqF+tR9I5LvIwqpJWovbWz/tmA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NS8zusmak1/Elfy0IE5ys6wYeu46SjomHyanHJUmZUmWXqP6th9z9kMfK8D6mbxls
-	 /6lKvCItrTfrcZEUzogCH9vtfXlUDRVCpz4W86ComeP/taiOyyQzr/u1hDc+0yQwNm
-	 0WB2u0xnQARoFMP3L7veyPyYtu5eHrq1ryQZWQma20mhXYcZwNZAvn7n0mrmn1kbdF
-	 ug3octs89H+EJqdSll+XVZiQRa2bW9tMeCkiw1gGRKNYhy+AKHf4CYsIveru09j/2g
-	 POrB9u+WeHl/01D6aAg1eMYyXGYz7skXTB+fhfwaGCgAIFZxtl2a2IAq8PWPjTEEuj
-	 zLpEmwAHqzFiQ==
-Date: Tue, 19 Aug 2025 16:00:30 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] clk: test: introduce clk_dummy_rate_mhz()
-Message-ID: <f62aql76feibrznlau4xfppxci3atmxhfl5tyrattogt5ly23p@7f2gm6wykogx>
-References: <20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com>
- <20250812-clk-tests-docs-v3-2-054aed58dcd3@redhat.com>
+	b=IpOPUuCetwEVA81ICn/utvxBQhlUR2gVMI9g/f2wvAMD3w42pyVdWKFY6N8yNZyb0
+	 BJ4bXtW5O0j3L8KK41XKSllgBdJ1dvPohgGe6LHE/am2TNml44k1OfXlk6UXxmMl6Q
+	 GwYz6dqIKHnkU7duJfsMjH6a9vqfFUe3wQmhfTBU=
+Date: Tue, 19 Aug 2025 17:54:01 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v7 0/6] Add support for DU/DSI clocks and DSI driver
+ support for the Renesas RZ/V2H(P) SoC
+Message-ID: <20250819145401.GW5862@pendragon.ideasonboard.com>
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="2vs3of32h3mhs7ud"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250812-clk-tests-docs-v3-2-054aed58dcd3@redhat.com>
+In-Reply-To: <CAMuHMdXSJO1MOoNS5M2M1Zs=iWmiBbmc8Xc9tMDsXd_kM6bj=Q@mail.gmail.com>
 
+On Tue, Aug 19, 2025 at 03:48:08PM +0200, Geert Uytterhoeven wrote:
+> On Mon, 28 Jul 2025 at 22:14, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > This patch series adds DU/DSI clocks and provides support for the
+> > MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
+> > series [0], but has now been split into 6 patches due to dependencies
+> > on the clock driver, making it easier to review and merge.
+> 
+> Thanks for your series!
+> 
+> > Lad Prabhakar (6):
+> >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
+> >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
+> >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+> >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+> >     RZ/V2N
+> >   drm: renesas: rz-du: mipi_dsi: Add support for LPCLK clock handling
+> >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+> 
+> On the renesas-clk side, I am (almost) totally happy with this.
+> Any feedback from the renesas-drm side?
 
---2vs3of32h3mhs7ud
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/9] clk: test: introduce clk_dummy_rate_mhz()
-MIME-Version: 1.0
+Tomi told me he added the patches on this review list.
 
-On Tue, Aug 12, 2025 at 10:40:32AM -0400, Brian Masney wrote:
-> Some of the mock tests care about the relationship between two
-> different rates to ensure that functionality in the clk core is
-> exercised when the parent rate is negotiated by using specific
-> rates. Introduce clk_dummy_rate_mhz() to improve readability.
-> Change the DUMMY_CLOCK_* rate constants over to use this.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/clk_test.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index a268d7b5d4cb28ec1f029f828c31107f8e130556..fafa736ca32144a2feae75a8d=
-641abca3162d42d 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -21,9 +21,10 @@
-> =20
->  static const struct clk_ops empty_clk_ops =3D { };
-> =20
-> -#define DUMMY_CLOCK_INIT_RATE	(42 * 1000 * 1000)
-> -#define DUMMY_CLOCK_RATE_1	(142 * 1000 * 1000)
-> -#define DUMMY_CLOCK_RATE_2	(242 * 1000 * 1000)
-> +#define clk_dummy_rate_mhz(rate)	((rate) * 1000 * 1000)
+> The last patch depends on a header file introduced by the second patch,
+> so I will need to provide an immutable branch containing the first
+> two patches (probably/hopefully based on v8).
 
-Macros are typically defined with uppercase names. Also, you can use
-HZ_PER_MHZ.
+-- 
+Regards,
 
-Maxime
-
---2vs3of32h3mhs7ud
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaKSDfQAKCRAnX84Zoj2+
-djlpAYCgdJeLnsSwzLbso3TS1UjExhFm/KIE9c05ve/udc/krxfTNwp7pdrPzjGd
-Z8HiUDEBf0Sb+vitIOfaanrEtSrg/187G/XkYLfrVGpNW0s3/AKn9vvOXDc5Kg5y
-NLGF4YNrKQ==
-=rVQm
------END PGP SIGNATURE-----
-
---2vs3of32h3mhs7ud--
+Laurent Pinchart
