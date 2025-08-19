@@ -1,105 +1,222 @@
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D5C311C19;
-	Tue, 19 Aug 2025 13:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CFA2EB84F;
+	Tue, 19 Aug 2025 13:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755609284; cv=none; b=sAsNWPk+ZW9P/3kuNWlF8+x1z/e0ZY+BhxMErU1sGkfnXHqH0SFGq0wFdeAq6puUtKme5CQRjKsjaSRmZRsnJKrrFRw8ISkh36VDW0yMFHb2JGVbXV8ygyOjoQFnsf5ha8N/yGfrGC7jTCkGNaBhlxC5Rrf6R1o9NJpJe433gCs=
+	t=1755610122; cv=none; b=D6oer8GR/1PM+du4j8mmGk/XqqjOTdFRmppohK52wcOPmJXo+yWpG6HJt2/xLOyRpDb/VldVMfg47YntnGGakpOjsXRTi7galQmosaYoSlVVExEiiD2itAisq1vgFv9y0gYUOXKMiMC/tOzjxTBmMaEbVQKVHBdB8WFpcdtAbC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755609284; c=relaxed/simple;
-	bh=1gKMdAUE2OshcUGdUlR3ZrdbtgbJEwjx0CgIUxXGcLM=;
+	s=arc-20240116; t=1755610122; c=relaxed/simple;
+	bh=c/loB25XWaocBkQQsCvlN2LhJCnYYgir7o7QB1FBbuc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bqPKt7/dAi7APHHj4ESqXci4nwGgOnxXwpitFuzGU/1KuaLrL6NPR1T5rKqaX12ca9gBQGy7RzthaBIugtlmQyPNyCs5ZTlEvZb1nxiMx6cWn714NI7DcPRFDf8culhmf2egzX2Kyq/YuYmYyaiF/2Kq0GviZygbeuOsWcnbfeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=tRKCrB4+ZAQGm6jvKtNmcO9IRO/PJNxXKBIiRxiv78dxH5Hwj8GxtptJjTkLg9BzH6ujrTLycePE9wg65SigmsDZHeTrlI6xxboSCq47soY/dc9ztvCilVZs55deYr9ZLkAdIBWezfkLYnJgUd805DQm2GROdTVP624e/Ii3ds0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1c4WyuU; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-50f88cd5ac7so3847923137.1;
-        Tue, 19 Aug 2025 06:14:42 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1c4WyuU"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e411c820so2895372f8f.1;
+        Tue, 19 Aug 2025 06:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755610119; x=1756214919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fHRs8a8ToP76Xg753tKaZJsH4t0v+FJDBlgNuk4bxVw=;
+        b=g1c4WyuUBii4jIv5EMOSDj4lCRyZXnArguK8a4RmnMO1joOx/pmBcYwHygsfe7KHt5
+         D4HrPnoxOMbiBF5e1gNNZK/fLi0pVMbf8NMAcGpDPLoiLBu/I3g36s1i+LwmC0mRbAey
+         T1jtFPWoAJipUBmv4y1ET+6BH4hYpwOfEAXBfhIQ/6pFt4grBKFj40xPtm+4sIuDbF0a
+         IBBAlV7sYVoQ9qpsyGq8f/3FYDqUbqDXxHHzUqxgXgTH1M2wC/JxRgPJ6B89RQwdUeOj
+         0X3H9s1FRv1bffpB35qwPGIkVOfzkojr5Z527VLKRuZhehg2J9P/nQDz0K7dom1lK6oP
+         Ss+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755609282; x=1756214082;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w8Kx5cGiGpdinLDvM81MdLwujJYEv4s4yCGfX3+iapQ=;
-        b=pGWM6D7Gp/E7ip/cfTM9Erh+yiYdAYibAugw0/cPBZ+rR/kLLElUK440aUCqxwSsHR
-         BASKrnzibYKZaJHqMWPTYIkMqLBlN9PYPbJjBD4tAgFgbEmVBmm1rv6YOz7KinzCXJmd
-         olOZyfbiQULJKTcDGvBMNd3DNWal6HlxXFCoaqLgYp2Zee6dPfbNKw/fQGm6QiC1TS2F
-         G0q4f4fcGc3E/u4g0qRLbh1FEemwmJUJldgZPFAWzNiE6BeCSejb6HKD0ssgK4ekeIgD
-         IHml9qW43m9ZHfWKaNHNB41onzNmGMwcxJFfKKF0Kb9s9vut6w7ccRdOkjWY20GX1wnY
-         DMXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdfhW1b7Y3Ca5k14vc+EEO0NUBLWM2K12DPSv11RA0EwE/n9dRP2aHwcewRlufa+iLMybbNQqGsn/n@vger.kernel.org, AJvYcCUuv9I/RUliQFK6BxpADowC5mdxQj+p9yRchrxqVttjTmTUCEo7hT/q0F8ij5rJo2YbIX+bL5v515c18aUo@vger.kernel.org, AJvYcCVu/8bA5K/PueXClJfOZgTiPu9Xm7zifDkxU1Wf/bZwTyZAUAHTKwjgM56l4PFPYF7XIlu6T7Y16o5y@vger.kernel.org, AJvYcCWEbLPphPR8ifNTZzi59cuN2I2vcb6xGjlkL0pd8aKNH62MIY0lP4YS4uw2XJPHYs39Vc5I2jZ+rBVgymj+5ovsABE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxt72M0v9m5wl00Y/gk6bxUcuzYOBs8QPywOWjVS0x2RG3SElY
-	6RNgu7m8JcQgyp2IeivmZ55NI+kG0nOWKNBdntdLphTXoIFfP4ge5VX1IGkHAA13
-X-Gm-Gg: ASbGncs5ImtGrTditJ+mO83cpNcfy9xwS/hflbkiyXGHi5nQv2OfGK259eEuH9ywCUm
-	pIhZ4njItCeeRnP49UM1Wxd/C2Rzz1xQZiZVl60yE2AjV2XyCql+xspBcfyu+zBUSXKMVNmAL9e
-	RpYin8Hl7owKcJlPzl0BQq9O8rAABvujDToeoGRg4RgPvjhjMGb/OJIXTCAT9qrHF5Svn1UpagI
-	FJnQD0dM6/Um534UXFBmXzD2namngIr7aZ2nxHAJCEiCAYSGuTVdh4SvYkGwulQPmBx28SeOMgm
-	YtkANwnkqQi2guh4CLOaiTCJocKjUbFd5tTRIVNS1WXUgOX1bjmQqbwpRBhJaxc68KP86FlIop5
-	r+qIZht2lHWb8AsBF8bhCgTTo8DnwXnD+yNlptrbyAWQpitWU7WaCo2HTBgo8
-X-Google-Smtp-Source: AGHT+IE6IUPud65EnXlvUr2B9H12xe04ANAAYjMR68KPziB56fb8AAsrOw1lRMa2NFGCZlUkWXsT0g==
-X-Received: by 2002:a05:6102:3048:b0:4f7:c5ed:209c with SMTP id ada2fe7eead31-5192201cbb1mr768695137.7.1755609281923;
-        Tue, 19 Aug 2025 06:14:41 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127f80546fsm2903858137.14.2025.08.19.06.14.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Aug 2025 06:14:41 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-50f8ad2176eso3146611137.2;
-        Tue, 19 Aug 2025 06:14:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhC4ydS/klI+b0AXH+JyyGyYN+YNAiAKJOBPZ2KOCykd2TGNO5jMbwBalVZ3fpYbPvxp3vPFtm8hB5Al0B@vger.kernel.org, AJvYcCVqrSPuwJvwRV9iygKGMvMk0rOLutNZga/YXyZ81s2xIm9Ldau/ktcHcpqLR0+dPCmiOJA/abG6TOL1@vger.kernel.org, AJvYcCWBHUwvJCrrId2XiM9XRN9MlHUqCQx1FuiOHRolq+uWLSVrYo/b7ULgZuY3Z8xmf4In7eJryp0Heson3lz9loqRCpM=@vger.kernel.org, AJvYcCXiQiRM3ulC2Wv88qQb58ojH5ZQnuZI/pOLMz4OSwCyGuUDBkLuYzNbsXY7ILq3n4AGhwHTux5a8SIj@vger.kernel.org
-X-Received: by 2002:a05:6102:6cc:b0:4e4:5ed0:19b2 with SMTP id
- ada2fe7eead31-51922118868mr745706137.9.1755609280511; Tue, 19 Aug 2025
- 06:14:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755610119; x=1756214919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fHRs8a8ToP76Xg753tKaZJsH4t0v+FJDBlgNuk4bxVw=;
+        b=X35l3cXv065MW8xWqli3ZOdgR9dobzubR64C+j95IpDPkAK0QcF2/mAe/7ksKyqDED
+         dnjRmUJVxgcfd8iMBhcEpnsV5l3r5ZLQXJZSSPOk1HzRNCxhEWQCJYk2ZBsbb9Hu5r0d
+         j7Dj6SkJN8mSRvZEG8UsVjbc7HdMoLs2umJpWllqntCb0R6DgpsRNz+/O9GfCJrI74ZR
+         83//56scU21Dwsza0mOHP29AuKuLvlVSrHayqX0izYM+DZ8wRcnuLEdsnHNBKl+Jxrqu
+         JfK/ZPQ65rKg/+rvtmnclc0AdMm0Cwqryy5TcptMomh36PQPgXHcPwm1GGRSqwy3Atmd
+         veVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU45h0jxb3aQZ3J4Nr+kMDPFRyphYofIwc1ypxAz1bax43CnsSjIXqMOpBbp+cnkiEZXSIoBuNohikgt8tkJYnLPCw=@vger.kernel.org, AJvYcCUSpD5yWsdTsQ107/FE0kzmf0O5GRS54dej0G9GGbgNNWKT79jZ/0ZlMai21zBs1lb5Rfvhzb4fiRE=@vger.kernel.org, AJvYcCV6OH5hU7EAUxUpCwbrC8vx4LSPe+WYdA/ZXmO1CbyGg60CZKMaEB+fxQI7U70YJZ5bfCIbNMHYdgL7tZ45@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQfcNowQ4yUE36dgh3Xs7/LmyMWyqJ2rH1EP1+07TcoHsQM4U7
+	wvohlQn/d/S5G1WX65xTPq96JRCXWD4CwQXkIKYcA5t12U6wBNnzUITJNz1H0xPlHDOFC3aHm+o
+	fkt5hqsoPD0M7qQhb1a6lCQus48H+nBmPm40r2LM=
+X-Gm-Gg: ASbGncs+ZyeFUW/GeI90yrvjLrE2mkYjM1S1QzYe3yoP0DcL6IlYPBD0SVuwAnKy1G6
+	ltPsHM2Wmb/TNgBKl/FtlENn9OnM1yXnRZYZWzcf8crEzYj5qkgxbSRKfWYybQbr1UO+q+/DoUH
+	1FH7PYiGaoZtPniEeroUpJNwagQRZ+G2dfsgLn8t5OerNoYSb6FGBGZ91E17scYMPXTevDIYqEt
+	Wj1XTXWzUdSTuSWaL8=
+X-Google-Smtp-Source: AGHT+IEIAmAYoZb8NekNGfHJ5IrwcEh00Ksd18bPKf9ZuS+XbWiAqsXyLuCf+xEbSouTR3Egx2LqdyCwsdzkphKdOc4=
+X-Received: by 2002:a05:6000:1885:b0:3b5:def6:4f7 with SMTP id
+ ffacd0b85a97d-3c0ecc322b6mr1657921f8f.30.1755610118972; Tue, 19 Aug 2025
+ 06:28:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250728201435.3505594-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250728201435.3505594-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Aug 2025 15:14:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV5Rk2ppHwKZLgjektLCVShkoh=ESoSt9PY6jcp-uEukQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz6ckZqsKpNRXFU7y3mbLg1_W5_Ln9ZIyfl6OPClvcylW7dhk8Lvat-Pt0
-Message-ID: <CAMuHMdV5Rk2ppHwKZLgjektLCVShkoh=ESoSt9PY6jcp-uEukQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] clk: renesas: r9a09g057: Add clock and reset
- entries for DSI and LCDC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+References: <20250807164353.1543461-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVJT3+dnikgULm7FXFwussc-9o9h8eoDP-Np9Y6JZNHYg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVJT3+dnikgULm7FXFwussc-9o9h8eoDP-Np9Y6JZNHYg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 19 Aug 2025 14:28:13 +0100
+X-Gm-Features: Ac12FXxIhlYzT3fNzKJCwYyWPi4NXFdFFGhVK8pxU_0YqfAE19u_DimDYZljVyA
+Message-ID: <CA+V-a8sHSo1bVBPYyrUctgeAbOk9VsRdt80KLrfbZUg=juWQAg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Jul 2025 at 22:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Geert,
+
+Thank you for the review.
+
+On Fri, Aug 8, 2025 at 11:14=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Add clock and reset entries for the DSI and LCDC peripherals.
+> Hi Prabhakar,
 >
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On Thu, 7 Aug 2025 at 18:44, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+> > CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+> > Registers (MRCR) where both reset and deassert actions are done via
+> > read-modify-write (RMW) to the same register.
+> >
+> > Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assig=
+n
+> > it to both reset_regs and reset_clear_regs. For RZ/T2H, set
+> > rcdev.nr_resets based on the number of MRCR registers rather than the
+> > number of module clocks.
+> >
+> > Update the reset/assert/deassert/status operations to perform RMW when
+> > handling RZ/T2H-specific layout. This enables proper reset sequencing f=
+or
+> > modules on RZ/T2H without affecting the behavior of other supported SoC=
+s.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > @@ -137,6 +137,22 @@ static const u16 srcr_for_gen4[] =3D {
+> >         0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
+> >  };
+> >
+> > +static const u16 mrcr_for_rzt2h[] =3D {
+> > +       0x240,  /* MRCTLA */
+> > +       0x244,  /* Reserved */
+> > +       0x248,  /* Reserved */
+> > +       0x24C,  /* Reserved */
+> > +       0x250,  /* MRCTLE */
+> > +       0x254,  /* Reserved */
+> > +       0x258,  /* Reserved */
+> > +       0x25C,  /* Reserved */
+> > +       0x260,  /* MRCTLI */
+> > +       0x264,  /* Reserved */
+> > +       0x268,  /* Reserved */
+> > +       0x26C,  /* Reserved */
+> > +       0x270,  /* MRCTLM */
+> > +};
+> > +
+> >  /*
+> >   * Software Reset Clearing Register offsets
+> >   */
+> > @@ -686,12 +702,16 @@ static int cpg_mssr_reset(struct reset_controller=
+_dev *rcdev,
+> >
+> >         dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+> >
+> > +       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H)
+> > +               bitmask =3D readl(priv->pub.base0 + priv->reset_regs[re=
+g]) | bitmask;
+>
+> bitmask |=3D ...
+>
+> >         /* Reset module */
+> >         writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+>
+> However, you should hold the &priv->pub.rmw_lock spinlock everywhere
+> you do an RMW operation.
+>
+Ok.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >         /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz)=
+ */
+> >         udelay(35);
+>
+> Please read "6.5.1 Notes on Module Reset Control Register Operation"...
+>
+I had missed that...
 
-Gr{oetje,eeting}s,
+> > +       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H)
+> > +               bitmask =3D readl(priv->pub.base0 + priv->reset_clear_r=
+egs[reg]) & ~bitmask;
+> >         /* Release module from reset state */
+> >         writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+>
+> Hence I think it would be worthwhile to have your own struct
+> reset_control_ops mrcr_reset_ops with its own set of callbacks.
+>
+Ok, I will add a new mrcr_reset_ops for T2H which will adhere to
+"6.5.1 Notes on Module Reset Control Register Operation" restrictions
+with spinlock held.
 
-                        Geert
+> > @@ -764,7 +788,16 @@ static int cpg_mssr_reset_controller_register(stru=
+ct cpg_mssr_priv *priv)
+> >         priv->rcdev.of_node =3D priv->dev->of_node;
+> >         priv->rcdev.of_reset_n_cells =3D 1;
+> >         priv->rcdev.of_xlate =3D cpg_mssr_reset_xlate;
+> > -       priv->rcdev.nr_resets =3D priv->num_mod_clks;
+> > +
+> > +       /*
+> > +        * RZ/T2H (and family) has the Module Reset Control Registers
+> > +        * which allows control resets of certain modules.
+> > +        * The number of resets is not equal to the number of module cl=
+ocks.
+> > +        */
+> > +       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H)
+> > +               priv->rcdev.nr_resets =3D ARRAY_SIZE(mrcr_for_rzt2h) * =
+32;
+> > +       else
+> > +               priv->rcdev.nr_resets =3D priv->num_mod_clks;
+>
+> I guess this is fine for now, but probably we will have to introduce
+> a proper nr_resets field when the next RZ/T* SoC is introduced...
+>
+Thanks.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> >         return devm_reset_controller_register(priv->dev, &priv->rcdev);
+> >  }
+> >
+> > @@ -1166,6 +1199,8 @@ static int __init cpg_mssr_common_init(struct dev=
+ice *dev,
+> >                 priv->control_regs =3D stbcr;
+> >         } else if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H) {
+> >                 priv->control_regs =3D mstpcr_for_rzt2h;
+> > +               priv->reset_regs =3D mrcr_for_rzt2h;
+> > +               priv->reset_clear_regs =3D mrcr_for_rzt2h;
+>
+> With its own set of reset callbacks directly accessing mrcr_for_rzt2h,
+> this could be dropped.  However, if you want to keep on using
+> cpg_mssr_status(), you do have to keep the assignment to
+> priv->reset_regs.
+>
+To reuse cpg_mssr_status() I'll keep ` priv->reset_regs =3D
+mrcr_for_rzt2h;` for now and drop the later.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
