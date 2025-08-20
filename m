@@ -1,112 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E361E342C85;
-	Wed, 20 Aug 2025 17:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040051FE471;
+	Wed, 20 Aug 2025 17:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710368; cv=none; b=H1LvVraPqYu2nNpujmpuTdDHa4/nI7ETczM9zcu9/YJhTsq0wIMtsGFYSAyNpmAKk+wGI9yHJTWZPjJGEpOuVbU8Mzo8AhGiBdbeI2tWRU4X4otHNDAUzDAg2vVXmY93dd345QmF2d1vCH7A3h2mdsQStH+4o9N3hNMseW2cZXc=
+	t=1755711231; cv=none; b=AMtXrbAeea9zsXRgVVMD1QRSLApKDg/UoDY1H3vrcm80Dg7+qTsFEYmp/UCeG8/FiT+FGn+oKMYRHuFmW3KFJ92wdofzZq2Ha9nJt9ezbm4oxzN3oR0DvxCm70m1wXj57SdqdpKYDNdooTXMM0JT1sKNKeLwws1oqvU2tyoTXDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710368; c=relaxed/simple;
-	bh=ZqeFO6HvfjccxgbJRn37HsDogI883Z0ye1Ok5+j3EBg=;
+	s=arc-20240116; t=1755711231; c=relaxed/simple;
+	bh=IZLhfWlR8l29O/Rs+y/vbyQIxjgqFr1RK3zhxpfWq9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8qfKrbNAKc1TLWebdR/aAlg7v//NXqAEt2/A0pk2EXbSer5BJZwnFItC6WxwT0d2nRGjhOoK5dMyggdlZzKfVRGGwWNp3m+nLL8XDidu1mLf7NjSNjjZXS6z4NSYr82/8HWIXH+zdqeO3M7hU+V0Y8gbdv7fcancYI+IcREmpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnXxuBq9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qkxle7CKRHy6W6DYnL1wSJPPy9mWRyyzJNXWY1lq8XfX5pX1XtXo+7yiFu2gvDsKd4t3d9I3OQKY9fjttDni8JAAcfoGvSxT3CmVFXmLCnVzsA/FxOzvqjiCRobWm4P5iZVYLpequp9UyVthgDWf4NRijaP1JdW7qrRXtkCZ+tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qB3404rn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnXxuBq9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A08C113CF;
-	Wed, 20 Aug 2025 17:19:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qB3404rn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8DBC4CEE7;
+	Wed, 20 Aug 2025 17:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755710367;
-	bh=ZqeFO6HvfjccxgbJRn37HsDogI883Z0ye1Ok5+j3EBg=;
+	s=k20201202; t=1755711230;
+	bh=IZLhfWlR8l29O/Rs+y/vbyQIxjgqFr1RK3zhxpfWq9Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QnXxuBq9DaMzoURintPzzDLWm6OGJtRPK5y6jTbj4z7Fe4QFIOGeMAm6xTyXlFlwz
-	 I1zl0A27O5+l30TpOLpjgTLLT3IBhtn/oy3JXr6IOY17PGFSGAekC+hsYinNTrGBFk
-	 iyi5XmYQfJfrXsrIMIx9mSXEVhtw5EJDcwvNR9/iaD0lQqiT+VhTajCOQjYaWm06jB
-	 stPgfsAYA4tGBt+YkC71Gl8cggC5pcFKWJugxR6MwEfnWn+gBwjqX7RUh22ZwkEEu2
-	 EFSJB4JzO4GLVaUVXC0doDoVm3oCa3OAU1BRy4BTWD+deENzt+8LIf/iP/tmJ3OedF
-	 fG0lE3alkNn6Q==
-Date: Wed, 20 Aug 2025 18:19:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com, chunkuang.hu@kernel.org,
-	ck.hu@mediatek.com, conor+dt@kernel.org, davem@davemloft.net,
-	dmitry.torokhov@gmail.com, edumazet@google.com,
-	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
-	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
-	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
-	lgirdwood@gmail.com, linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
-	matthias.bgg@gmail.com, mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com, mripard@kernel.org,
-	p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
-	sean.wang@kernel.org, simona@ffwll.ch,
-	support.opensource@diasemi.com, tiffany.lin@mediatek.com,
-	tzimmermann@suse.de, yunfei.dong@mediatek.com,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v1 00/14] MediaTek dt-bindings sanitization (MT8173)
-Message-ID: <9401aab0-1168-4570-a0a1-1310f37142eb@sirena.org.uk>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+	b=qB3404rnN0wFbDUiVHboYVAJPfSJyh0mlizGnsPAKDEQrliwNVkpMrdOir+7wq9sM
+	 NQBZTujNSdd6t94u4k7Zi9u4/O8cMIN31yWoHhw1RcG4gTPiuotcSoPZjjQsU4Njvj
+	 IenBRIZFhOAYv71dBbWYGT059/71eYmLHhAKIlxnQK7D4EHvKH6tx1e+f7tJtixwS3
+	 xdmCZo9v+cDpbbWdVCij+PlYYxV7eI7YiHeSa0PRLpbxmGUHaAN6bETGM1vtVm9w2+
+	 UDPN7J3qFeEQkTAMyYerfRIp/Mu+qi2uye7orz+gRGa86cT0u7Z7nwcKr1v5GRpaHc
+	 moLSENnPxdyZw==
+Date: Wed, 20 Aug 2025 23:03:46 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of
+ SoCs
+Message-ID: <aKYG-ph43pjgiHF_@vaman>
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/IS/CsiIsaaXgGuH"
-Content-Disposition: inline
-In-Reply-To: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
-X-Cookie: Semper Fi, dude.
-
-
---/IS/CsiIsaaXgGuH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
 
-On Wed, Aug 20, 2025 at 02:12:48PM -0300, Ariel D'Alessandro wrote:
-> This patch series continues the effort to address Device Tree validation
-> warnings for MediaTek platforms, with a focus on MT8173. It follows the i=
-nitial
-> cleanup series by Angelo (https://www.spinics.net/lists/kernel/msg5780177=
-=2Ehtml)
->=20
-> Similarly to the ongoing MT8183 work done by Julien Massot, this patchset
-> eliminates several of the remaining warnings by improving or converting DT
-> bindings to YAML, adding missing properties, and updating device tree fil=
-es
-> accordingly.
+On 01-08-25, 10:48, Tommaso Merciai wrote:
+> The DMAC block on the RZ/G3E SoC is identical to the one found on the
+> RZ/V2H(P) SoC.
+> 
+> No driver changes are required, as `renesas,r9a09g057-dmac` will be used
+> as a fallback compatible string on the RZ/G3E SoC.
 
-Same question as for that series, what's the story with
-interdependencies between the patches?
+I seem to have only 2/3 w.o cover, nothing in pw too...?
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+> 
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> index 92b12762c472..f891cfcc48c7 100644
+> --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> @@ -21,6 +21,11 @@ properties:
+>                - renesas,r9a08g045-dmac # RZ/G3S
+>            - const: renesas,rz-dmac
+>  
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a09g047-dmac # RZ/G3E
+> +          - const: renesas,r9a09g057-dmac
+> +
+>        - const: renesas,r9a09g057-dmac # RZ/V2H(P)
+>  
+>    reg:
+> -- 
+> 2.43.0
 
---/IS/CsiIsaaXgGuH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmimA5MACgkQJNaLcl1U
-h9CEfgf+Pr+Af7Z3trY1Qt1ap+qEJ57HkG6lF3iW60MvmprIVByI7krLMLxXZ09K
-ggagUaBYGNe98N0oE1w0BjSlrjQxJkAkDTBS7pWP1kc001DinfldPd7bCVwY+3i/
-59SETB3Wqun/8fKWU717tHGGGXQ0ruQ7y7dJbZNRCNIo8od7RIBHM2ev88Q8q6H9
-wqdaDwKYMej3vW+Icx/xuH+VELI62AlrJ6W6XGDofU3hpvWHCvMN8GPcJnieHnZi
-2iOYaasf79REJsNyLC6UqGXE1LBDcN3GkZDxou/yZ2kzh5h7obsGMg11oQS3/iI6
-kvVcUoGo80bkRQrHEqntaPQqVwSecQ==
-=rN98
------END PGP SIGNATURE-----
-
---/IS/CsiIsaaXgGuH--
+-- 
+~Vinod
