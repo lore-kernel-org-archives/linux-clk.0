@@ -1,206 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4469A2629F;
-	Wed, 20 Aug 2025 17:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208672522A7;
+	Wed, 20 Aug 2025 18:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755712070; cv=none; b=aHK0lq5pZJL+Bz7Zh56fmwcM8POH90tQ8wzYbDRshsvHg+iz+CnxSqOQDfd4HbCG9lpimKEcWcLE1+OslOhB9O/4QxA5DM8mmWcC0KAQXryAtQUce7tyrm6J5B2NLwuP6hUsRzCv53VGckeFdkuqn9bT6WmBdO0+KyaG96DE8/s=
+	t=1755716110; cv=none; b=q+xHpZ4WM4cW8Y3L05qoSMsUF7sFfL4Fim7ZsHBtOk7yzzw8pzAB34zE+wcAdyvs2SW0VpARmLwHHRaBCU+goDMrPhYuB7e9/Fck471sS7gxY1Wlh7x7RidXsgsMCH32VZ6b1Pkk5TMJPUgXg4unUfAKxBVvzWsfSq8ML4auO78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755712070; c=relaxed/simple;
-	bh=+LT24B6nqcidaacLuQ1/YF/caYmrsYm6FwAYLXqEPO8=;
+	s=arc-20240116; t=1755716110; c=relaxed/simple;
+	bh=KrxBI4bw6u84H4zKkUEDYwKmV2iNFMyZmZhqsrfdtV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQnTyq1k9lx2WgEXWTOhEKrW+tvg0qVAGjwHFjStf+0KBbFmjtkTByCUa6CyJZDmMsfcLXYJtJhQtjI2JQ8u4zzVBzHKpeEUeBmjj2nJuLrdHa4ShamxfQV4O2w14Vzw2ReFfnKtkkslmOEXPjbPC+mbndn1SnP0fWb509+bHLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGfgqJgv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7IYANhACssORhLKzP6jQq3x17roE97+5pN+L699rcZMDrzXa7lxE43m16CTuT74DTPuPlTRn+DfDjTPiYsxsXSbESyPveoJmfv+lQh4rOslTHx6i834mGZUz96ua78O9d9U3nLbflzqKjgdJPXdx9RXXyHSlTdeyflKhypqmKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CozULjtI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGfgqJgv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B7EC4CEE7;
-	Wed, 20 Aug 2025 17:47:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CozULjtI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD47C4CEE7;
+	Wed, 20 Aug 2025 18:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755712069;
-	bh=+LT24B6nqcidaacLuQ1/YF/caYmrsYm6FwAYLXqEPO8=;
+	s=k20201202; t=1755716109;
+	bh=KrxBI4bw6u84H4zKkUEDYwKmV2iNFMyZmZhqsrfdtV8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cGfgqJgvrbi0zV1kwHYzxbXXJaIzYhoUFz2CSLBnMyRYL6ysG7dz8r+YTY4tp0/7e
-	 8hTD/KfoIYxXv8p+n5NzZZn/bVxt4wifzpDA2ERiFb40jnNfEArkddbUSn8XtrX86q
-	 N9c0FgJgxq/F8KL7SUSDJ1+xINq/wH2ixyUBhNszXwpvnlPZ/mRPFu5Uw0iWCa4Idt
-	 DFOLdGd8ER2vYoDgIFQow3Zzh+++QJa3RJKAzBmKW2iIrYV3sUngWGhs1lTt6oXsMb
-	 7ji8XG0nKmqqj2ehoFJg0BHUv8dfXOQe5Y6CTcllIHACTMMb7a4unufQfj9DVRkoPC
-	 MCj+DE8fbLJCQ==
-Date: Wed, 20 Aug 2025 23:17:30 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 3/9] PCI: of_property: Restore the arguments of the
- next level parent
-Message-ID: <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
+	b=CozULjtI87ezxw30qO0tiBXmd/B+a0DtFD8O0r1Ijt8QQQx8BThbtwW8QWNFZ8zwn
+	 GDhVSyvd/eTXNDvmuoKLP8gZbzIqwAavVeNAJTL9AD4T+oq9JD211sXJ3A9jIHdBe9
+	 oby2P2YVBQ3I8r9mQM/Lwt2RVdfRe2sGJcP/c1x3u1vg+xkh+l09/RNCiQufnL+vjh
+	 GyhWNZepnUHlVO7AOBcuUpAEM08nIs4SZGmNIG29XplZsZ5MYKbpImtIHpbPRBy/n6
+	 J3D2v1i3GLEYxCZCXE+oRmNdlWlQrHy63msQ03IsVrcWk7mI62sGbw7/ZkfMSJmtPd
+	 X3jYiXs/0WZXQ==
+Date: Wed, 20 Aug 2025 13:55:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+	andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
+	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
+	davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
+	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
+	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
+	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+	lgirdwood@gmail.com, linus.walleij@linaro.org,
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
+	matthias.bgg@gmail.com, mchehab@kernel.org,
+	minghsiu.tsai@mediatek.com, mripard@kernel.org,
+	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
+	simona@ffwll.ch, support.opensource@diasemi.com,
+	tiffany.lin@mediatek.com, tzimmermann@suse.de,
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1 14/14] dt-bindings: media: mediatek,jpeg: Fix jpeg
+ encoder/decoder ranges
+Message-ID: <20250820185508.GA273751-robh@kernel.org>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-15-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250820171302.324142-15-ariel.dalessandro@collabora.com>
 
-On Fri, Jul 04, 2025 at 07:14:03PM GMT, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> of_pci_make_dev_node() creates a device tree node for the PCIe bridge it
-> detects. The node name follows the format: pci_type@pci_slot,pci_func. If
-> such a node already exists in the current device tree, a new one is not
-> created.
-> 
-> When the node is created, its contents are populated with information from
-> the parent node. In the case of root complex nodes described in the device
-> tree, the created node duplicates the interrupt-map property. However, the
-> duplicated interrupt-map property does not correctly point to the next
-> interrupt controller.
-> 
-> For example, in the case of the Renesas RZ/G3S SoC, the resulting device
-> tree node is as follows (only relevant DT properties are shown):
-> 
-> pcie@11e40000 {
-> 
->     // ...
-> 
->     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->     interrupt-controller;
->     #interrupt-cells = <0x01>;
-> 
->     #address-cells = <0x03>;
->     #size-cells = <0x02>;
-> 
->     phandle = <0x1f>;
-> 
->     // ...
-> 
->     pci@0,0 {
->         reg = <0x00 0x00 0x00 0x00 0x00>;
->         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00
->                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x01
->                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x02
->                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x03>;
->         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->         #interrupt-cells = <0x01>;
-> 
->         #address-cells = <0x03>;
->         #size-cells = <0x02>;
-> 
->         // ...
->     };
-> };
-> 
-> With this pci@0,0 node, the interrupt-map parsing code behaves as follows:
-> 
-> When a PCIe endpoint is enumerated and it requests to map a legacy
-> interrupt, of_irq_parse_raw() is called requesting the interrupt from
-> pci@0,0. If INTA is requested, of_irq_parse_raw() first matches:
-> 
-> interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00>
-> 
-> from the pci@0,0 node. It then follows the phandle 0x1f to the interrupt
-> parent, looking for a mapping for interrupt ID 0x00
-> (0x00 0x11e40000 0x00 0x00). However, the root complex node does not
-> provide this mapping in its interrupt-map property, causing the interrupt
-> request to fail.
-> 
+On Wed, Aug 20, 2025 at 02:13:02PM -0300, Ariel D'Alessandro wrote:
+> Commit 14176e94bb35d ("arm64: dts: mediatek: mt8195: Fix ranges for jpeg
 
-Are you trying to say that the generated bridge node incorrectly uses Root
-Complex node as the interrupt parent?
+That commit is not in any upstream tree.
 
-I'm getting confused since your example above shows '0x1f' as the interrupt
-parent phandle for both Root Complex and bridge nodes. But I don't know to which
-node this phandle corresponds to.
-
-In any case, since this seems to be an independent fix, please send it
-separately.
-
-- Mani
-
-> To avoid this, in the interrupt-map property of the nodes generated by
-> of_pci_make_dev_node() map legacy interrupts to entries that are valid in
-> the next level interrupt controller in the interrupt mapping tree.
+> enc/decoder nodes") redefined jpeg encoder/decoder children node ranges.
+> Update the related device tree binding yaml definition to match
+> mediatek/mt8195.dtsi, as this is currently the only one using it.
 > 
-> With this, the generated pci@0,0 node and its parent look as follows:
-> 
-> pcie@11e40000 {
->     // ...
-> 
->     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
->                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
->                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
->                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
->     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
->     interrupt-controller;
->     #interrupt-cells = <0x01>;
-> 
->     #address-cells = <0x03>;
->     #size-cells = <0x02>;
-> 
->     phandle = <0x1f>;
-> 
->     // ...
-> 
->     pci@0,0 {
->         reg = <0x00 0x00 0x00 0x00 0x00>;
->         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x01
->                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x02
->                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x03
->                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x04>;
->         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
->         #interrupt-cells = <0x01>;
-> 
->         #address-cells = <0x03>;
->         #size-cells = <0x02>;
->     };
-> };
-> 
-> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 > ---
+>  .../media/mediatek,mt8195-jpegdec.yaml        | 31 ++++++++++---------
+>  .../media/mediatek,mt8195-jpegenc.yaml        | 15 ++++-----
+>  2 files changed, 24 insertions(+), 22 deletions(-)
 > 
-> Changes in v3:
-> - none; this patch is new
-> 
->  drivers/pci/of_property.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-> index 506fcd507113..8dfed096326f 100644
-> --- a/drivers/pci/of_property.c
-> +++ b/drivers/pci/of_property.c
-> @@ -243,6 +243,14 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
->  		}
->  		of_property_read_u32(out_irq[i].np, "#address-cells",
->  				     &addr_sz[i]);
-> +
-> +		/*
-> +		 * Restore the arguments of the next level parent if a map
-> +		 * was found.
-> +		 */
-> +		out_irq[i].np = pnode;
-> +		out_irq[i].args_count = 1;
-> +		out_irq[i].args[0] = pin;
->  	}
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
+> index e5448c60e3eb5..b1f3df258dc87 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
+> @@ -36,7 +36,7 @@ properties:
 >  
->  	list_for_each_entry(child, &pdev->subordinate->devices, bus_list) {
-> -- 
-> 2.43.0
-> 
+>  # Required child node:
+>  patternProperties:
+> -  "^jpgdec@[0-9a-f]+$":
+> +  "^jpgdec@[0-9],[0-9a-f]+$":
 
--- 
-மணிவண்ணன் சதாசிவம்
+This is wrong unless 0-9 is a separate, distinct address (like a chip 
+select #).
+
+Rob
+
