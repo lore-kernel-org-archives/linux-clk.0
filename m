@@ -1,150 +1,118 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018BF2E11B6
-	for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 12:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A8823741;
+	Wed, 20 Aug 2025 13:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755694126; cv=none; b=P1iZQp4CUY4zk564IYs1Vpw1GIBsJqjA5Lis9DicUdGO0Jfdpn+RyLYDbWneyih974t1y/E6AsLK8864qSI5zbnDADykYnJf9cyV3pdNAActUvFUWikbtJd/Z5XmXy06ZQwc7MlbB1t/yBsEo/VkiBfojmNxdbu9uD70PmM+VCk=
+	t=1755696447; cv=none; b=LEuEoyA/w/R84FwFCGzZmdigIPJcZnBaLWx04QSb91yuQn+hsAuVfAFmj4Mc1XYUsgIRwqNsxc+sy8PFyx4TUIDhZMaFBmMEhoztU0O1zhozAv2cAgaiOyWmZfDtX0ansNEg3eL0T7YY7bRH60dbNoiJMH91qvIrxPJDoYWnCMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755694126; c=relaxed/simple;
-	bh=v/R4TrCBrstwUYV7h3b2X+gvhFJUmV73UzhRK9sl0gY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RlctaV1469zruyUsrP/zrtVe3ej9cF9mn/aQZozvaTqRl4apLLbRspOKOI6L9CXnajIcM6tHZT8Z3VD8LzUWu0t+9PtPv0/qYnSkZU6eENcMTR+kaJfjE4Mzd6t+DSKmbvVfaF8DwY2VlBFEU8brdxZzuOGZvAX1xldB6YhdI3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FPzAp2rP; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755696447; c=relaxed/simple;
+	bh=Iroe3MCa2ZZaRY9jKe2399kPLRw8TL6vb7UDOEeV6xo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sJZGCF8Z+z48Yzd/Q0PxlAAd55/Cg8jiONMuvjMZQHzHExaiFbeemYux6EkqzoU9GKg4YA0vRrXC7acUjRGj8dgeX3OF4jVExiAI0D62IGkwT5HYXwmm6dgN9Th49nyjoJY/mofr0pG7Js1lthzh9j5eFslR6dGZMRBkKck/kUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BPhghfmM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FPzAp2rP"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a5cff3so117389466b.3
-        for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 05:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755694123; x=1756298923; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OkT6TK/LZrlOvYEv9bhxocEXHgpzfm9Pge1oG8/jr9g=;
-        b=FPzAp2rP3koPCABTyvD9DlIfQenZet9tNfNdFvliU9VOFlFZVgjaxSKfPaAdu7zi5a
-         To4v855FbPuCjsMH3Qx5FkQ2/95qNCGLWxtcZeeifC1v4uBgkmxnBDjEogXcI0nTs0w5
-         fx4lYv7hPQAHoBOMY/tf9DLRX1zqA8dvmKPmuCbhFDCVwxbynAw3rZmFzk4HaNSMkJnP
-         OPimA93Ev/6dbaukbhPy+fllcMu28iSOHfhT7kus2aH74VIBXkp2A0mlWSnNATC/NV1/
-         lwSFy/jTJnDfl4AfUrqWd9HKo+qOSGIAAXJ99bJKxL5anlGYjB0B3xXEidEXxNjiySNt
-         qAgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755694123; x=1756298923;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OkT6TK/LZrlOvYEv9bhxocEXHgpzfm9Pge1oG8/jr9g=;
-        b=AeG+xH65/J1JkxYmA4Vii990NmoXCqAj6D2hSrdSFuLFpXdQSPhPPRhv5b6xRhSpBH
-         eIxq5MGUzgqtLR2FnCdvfnK+rU82EzfFySJR87in0lGGIPxa9XMpwoeVaQBT2TNL+2Fh
-         YH/xjnSQ9Kx9rkLkG2DCY+tjTwwuvfB6YXyJ14kk/7wGJ/gAUcifpqChlj/wLSL0sx2d
-         JL2tI0YUkFFePjkQFzboEgXWUxRRPvgCO/5b1qmN35Lom/C3nn10hE8ymB7zn+RGQ/J5
-         YGWA8z0om8P+KRUeDaMY/xworU9zJjc2VJMGXfGf2OpfMNO6tbdPlgAZqbSuYZWC+XPl
-         HAVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoGIJ+8i/9QZ8gc5E7FAWpmFSJAfgXh+Xjz31PCxXoLfYBd5b8hQ2v3L3ibzBCk3EAj82D9BpTbdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqPeI/7PQif2cP4YujbVy2aV/00CpSbJqmPFNCrWkv++gFFX+L
-	oADxgNVGN//To4tuj5g/7uahJBe6xqCAdJmEWdt0FUquMQTfmb5lGhgaOLG5lniXxCY=
-X-Gm-Gg: ASbGncu0ci+aa+K4a8rlGpGlUSF/quIWVNwT0SMchPnF+Gr79pTgUMjxBslCIzud4l4
-	WXNRSl+KOjqBfRc5XWVA11HkdcIQWKJscj1HBX6J3ajlf66o3e3qONk/hurJyVzBj3wPsxByijG
-	uwrwjfm8/wyWsQ02qDdJKaTtgqjs/2s7L9L/J/YtcojV8wmKWESJxuY+c3PX46HlZZxVXmXb8Wt
-	q8PHLzHpr7kPVmrhb5NCf+G+TRFgw3WuG9pJAPGVNHggnG97jX3Rvv6j9OqspzFMYJRSvYPHDhq
-	mjJs7U/mkNumtYLWpSXq1zbWRVb65o2O+ICyhsOyZPQCGgnhnMx2zq620ilR7PeVzs6l9fgs8fN
-	GETK6fp99TxQubl0J2d1I2gm1yEQH7ycgJd3JXQpegJ1P
-X-Google-Smtp-Source: AGHT+IHKzzrGEdiFYsueiKwx9BaC4fDCRH+9fw+xj4goJdji8m0G9uuzPSNtNUweFSOs0P0skvdibQ==
-X-Received: by 2002:a17:907:7e8b:b0:af9:3397:ee9d with SMTP id a640c23a62f3a-afdf00a8954mr117729666b.3.1755694123212;
-        Wed, 20 Aug 2025 05:48:43 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afded3020cbsm176871966b.31.2025.08.20.05.48.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 05:48:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: qcom: milos: Constify 'struct qcom_cc_desc'
-Date: Wed, 20 Aug 2025 14:48:22 +0200
-Message-ID: <20250820124821.149141-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BPhghfmM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755696443;
+	bh=Iroe3MCa2ZZaRY9jKe2399kPLRw8TL6vb7UDOEeV6xo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BPhghfmM17dTR9tU6w/x7QCksTcLIMZmJe9nr6IPzIGw7KNbMFlwN7Vy7Ks4TWEdt
+	 +dIh+4Rx64/VObgOsVABZr2GyQDDUTspGLOi7NkBPilc3dQxEETLl89DMf+h2l6v5O
+	 iUpiW5Mm/T1gZtNkKllA9wBB+gAuH62JEyCpqmvebiHanOXdSoqw84/RxoPhMIg9nv
+	 uIiJhWmnNENJCXvDzCPPw+kJDZz7w3VJoo92oHfL4/AisZfUB6tzoouFMo9wK0m+FL
+	 OR6rdIAdm1MFOn6jbjmF/kE6YGuhwXO2+lDjzbqxer5YqNL9MhikIrkrnIH5PkJb0A
+	 xaCNRtP8+0pcw==
+Received: from localhost-live.home (2a01cb0892f2d600C8f85Cf092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0D12717E01F5;
+	Wed, 20 Aug 2025 15:27:22 +0200 (CEST)
+Message-ID: <124e3fbe79660eac9d529b127d888ce6942ba346.camel@collabora.com>
+Subject: Re: [PATCH 1/9] dt-bindings: clock: mediatek: Add power-domains
+ property
+From: Julien Massot <julien.massot@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger	 <matthias.bgg@gmail.com>, Ikjoon Jang
+ <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
+ Tsai <wenst@chromium.org>, Weiyi Lu	 <weiyi.lu@mediatek.com>, Eugen Hristev
+ <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>,  Sean Wang
+ <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Wed, 20 Aug 2025 15:27:21 +0200
+In-Reply-To: <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+	 <20250801-mtk-dtb-warnings-v1-1-6ba4e432427b@collabora.com>
+	 <ab97489a-9493-4005-9a1a-9f88ad970b05@collabora.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2261; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=v/R4TrCBrstwUYV7h3b2X+gvhFJUmV73UzhRK9sl0gY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBopcQV5wdJMvBk3Pq90PuYVZPxhRxJtpOTusSnG
- rvp0AkCBrGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKXEFQAKCRDBN2bmhouD
- 189LEACLV67Cz9njRk3BXJodF1sFdqMpzV3yMBrD5APiRGfDd5Iim+lO+9042OVAQEzX6gEpDto
- j+mySuZTaLYVtvsqREB8UacL+tlR1I0pOEreP9WhFqkGyv9f2UrjygNkboeobuFmLPHEzHCJbTk
- oP8Qj/M7RkjOJT8JCJtnQwqIlK83s4NzFfw1WyuEq5rpdq4bdZFBLQcFP0Qu1XOdLyLuZWjJlDS
- 1F1Ds8EtMxApSsK8Mkw7fK7gstDVoC05LBeeA/e6guY2vVr5Se9xXe5eWdChqiwM3BqRjTaGo0V
- y2QLt4Nw8ksmXb05LMIJRFUj0Vt2QmYPQ9bohGtEebTWWot8DeQKQpy4j6PDK1V5gYG8c29DlWE
- u73Wi8YaadpnzK9zTWm2LzIvihAQv1Mi0lodu1cXYv0TdYUKNdzf0Qfy4KQ0YCkw2XmuY9kdCpA
- UHXv/wcofTrqUBw/DowCwAnH31aG+v1NuQkHba8muy92gMfaS/CI0kk01E5p0Dr+33gxli3JGBT
- VcbCL8kHet4fOR7sNhJ4wMhuv7nSN4ippJiqyk041EZHUVismnlFYfk1s5hoBhhymmvOaaYM46F
- CECZzayLAaz701KBMnEq3FmHnTGvf8pISase5IOwtBjKD/bjMlyhhyr3Ws3qMKDlDSvTYpXYsQT q2isQaQm4Z/GKnA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
 
-'struct qcom_cc_desc' is passed to qcom_cc_map() and
-qcom_cc_really_probe() only as pointer to const, so make the memory
-const for safety.
+Hi Angelo,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, 2025-08-04 at 09:59 +0200, AngeloGioacchino Del Regno wrote:
+> Il 01/08/25 13:18, Julien Massot ha scritto:
+> > The mt8183-mfgcfg node uses a power domain in its device tree node.
+> > To prevent schema validation warnings, add the optional `power-domains`
+> > property to the binding schema for mediatek syscon clocks.
+> >=20
+> > Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains p=
+roperty to mfgcfg")
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+>=20
+> Is MT8183 the only one?
+>=20
+> if:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: mediatek,mt8183=
+-mfgcfg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^^^^^^^(if it's not just=
+ mt8183, this should be an enum)
+>=20
+> then:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 power-domains: true
+> else:
+> =C2=A0=C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 power-domains: false
+>=20
+> (check if the above is correct, don't blindly trust what I wrote! :P)
+>=20
+>=20
+Verified on my side 'mediatek,mt8183-mfgcfg' is the only one with a power-d=
+omain
+property.
+I will add the if/else and disable the power-domains property for other com=
+patible
+as suggested.
 
----
+>=20
+> after which:
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> (if it's not only mt8183, keep the R-b on this commit regardless)
+Thanks,
 
-My standard commit... I just keep repeating the same over and over
-again.
----
- drivers/clk/qcom/camcc-milos.c   | 2 +-
- drivers/clk/qcom/dispcc-milos.c  | 2 +-
- drivers/clk/qcom/videocc-milos.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/camcc-milos.c b/drivers/clk/qcom/camcc-milos.c
-index 75bd939f7dd1..0077c9c9249f 100644
---- a/drivers/clk/qcom/camcc-milos.c
-+++ b/drivers/clk/qcom/camcc-milos.c
-@@ -2124,7 +2124,7 @@ static struct qcom_cc_driver_data cam_cc_milos_driver_data = {
- 	.num_clk_cbcrs = ARRAY_SIZE(cam_cc_milos_critical_cbcrs),
- };
- 
--static struct qcom_cc_desc cam_cc_milos_desc = {
-+static const struct qcom_cc_desc cam_cc_milos_desc = {
- 	.config = &cam_cc_milos_regmap_config,
- 	.clks = cam_cc_milos_clocks,
- 	.num_clks = ARRAY_SIZE(cam_cc_milos_clocks),
-diff --git a/drivers/clk/qcom/dispcc-milos.c b/drivers/clk/qcom/dispcc-milos.c
-index 602d3a498d33..95b6dd89d9ae 100644
---- a/drivers/clk/qcom/dispcc-milos.c
-+++ b/drivers/clk/qcom/dispcc-milos.c
-@@ -937,7 +937,7 @@ static struct qcom_cc_driver_data disp_cc_milos_driver_data = {
- 	.clk_regs_configure = disp_cc_milos_clk_regs_configure,
- };
- 
--static struct qcom_cc_desc disp_cc_milos_desc = {
-+static const struct qcom_cc_desc disp_cc_milos_desc = {
- 	.config = &disp_cc_milos_regmap_config,
- 	.clks = disp_cc_milos_clocks,
- 	.num_clks = ARRAY_SIZE(disp_cc_milos_clocks),
-diff --git a/drivers/clk/qcom/videocc-milos.c b/drivers/clk/qcom/videocc-milos.c
-index 998301e0ba88..acc9df295d4f 100644
---- a/drivers/clk/qcom/videocc-milos.c
-+++ b/drivers/clk/qcom/videocc-milos.c
-@@ -366,7 +366,7 @@ static struct qcom_cc_driver_data video_cc_milos_driver_data = {
- 	.num_clk_cbcrs = ARRAY_SIZE(video_cc_milos_critical_cbcrs),
- };
- 
--static struct qcom_cc_desc video_cc_milos_desc = {
-+static const struct qcom_cc_desc video_cc_milos_desc = {
- 	.config = &video_cc_milos_regmap_config,
- 	.clks = video_cc_milos_clocks,
- 	.num_clks = ARRAY_SIZE(video_cc_milos_clocks),
--- 
-2.48.1
-
+Julien
