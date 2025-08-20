@@ -1,97 +1,86 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173F02DEA76;
-	Wed, 20 Aug 2025 17:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755710290; cv=pass; b=bBNLXvRJyZPti1iIuD/V38QyieZlGyFMTQV6xlX/FiITcg2RDSkky8mRnplPhG+0t3QvgCnt5pJZT04+7gW5s/i5sOpP4dcAVZBAvK8c9+ipmp/s3P058lT9dtjo665zt1F7f7rTJxVJQkdk0Y3bFUqvurGhukUpX4aAB5dQc1I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755710290; c=relaxed/simple;
-	bh=ge7L7YbYpkE5ifhhVnTn3LgR/LKaG6jh+sNYhfW8vMY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9974424A063;
+	Wed, 20 Aug 2025 17:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755710299; cv=none; b=oKF/i09M0mA+CcY/adglTGyASx0UIqR84W6ocL8sjuT6Tw6nw+4oiJQeB5hBf4hIhfFiIaWN3IWBTYmrycwg5VCihpBmgdGEbgJ4XVnBv7TK00za13ZjRc1DL4ChpZb6YgjABlaL7NwSWW6eTGQvbLajZGcLktGamEk4UzSBTkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755710299; c=relaxed/simple;
+	bh=CmNWtLZ2s9K53e1ONqlsg46UiADNACIlzrJX5ZDlR6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jYNN8EtRMDlicXwkpM8C0PAPYjuTdUSl2tPo+sUcTFAMVvl2KbuuBfcbOPR7dnSgw0NV4YlR4LG9dSJp2K34J6fdZR7RXhW5uD32hvZkfUlBVqymqcIePRo6oOJNW8Dv/eH34p/91i+kR70hfhWLWCV93R7SrDenPddRpX33xSw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=LCTflfgG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 MIME-Version; b=FvCq7wGjwGWwZ0aDIeWN8ZTL+YF2eIb0hZE+WoVfwkdqTA7GNfqyh8bu9WFSxNKtVo975gKN0cejTnjnfBQwkYKRYqzruP0PLhmGC6TgNDyOY1kVEelwbu2j/sA5TpcvSrr2IfySs47rug8hfJ5fciP3jZ2zmov0IvQZbA/aPs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+G6ID/H; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="LCTflfgG"
-ARC-Seal: i=1; a=rsa-sha256; t=1755710244; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Bv4o2GtIfeSCwpdAJVXW68k+i1poY2wqPj54uQzy+AHhghVwJlUMefTi/tuQeSpEq8KM8h1C3tVOI0c89HFuygo4/7XbZawEuwwwxpqs5FutFXCD1swTo8eQJQoHDj+QNjnFATRrnrqju0TgqVHDEpJ6dVzi+fTTL1/2WJJoKso=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1755710244; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Al91Oq6qR8Q/pF2nlUQ+kuTW9VseeKQhfyjI2Oag7gI=; 
-	b=Intb6FGDtZmL8hqJgDUh9DVsy9d98DUYl18Ioi/0ZEaDgb+UWiFYqGMy1OvZsMjhwN59HlTRbT1XPdXo7z679jAoyS3jMDb/Rmeftc12eBmAe0JKBhSnVukPl4w24AW/dLv1YOnLLXip6qs3L8hHr7HSD1j2IiGZLXiug8gNl7g=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755710244;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Al91Oq6qR8Q/pF2nlUQ+kuTW9VseeKQhfyjI2Oag7gI=;
-	b=LCTflfgG7eGVjTGguBB0daRZFJjRYDOP25NAel4BHQxfQt6HAjut98TSnt2MxnoF
-	RUD/kiA6FQjh8OTWF5Em6/OlJr5xuzRC5d/fBQkHSDOdzNg2qAxTA0YoD7EsvqFjTxr
-	g00N2SqiTUdEfGteL75CwjASfyqRoZV+hjbcPj2c=
-Received: by mx.zohomail.com with SMTPS id 1755710242902207.8401396356436;
-	Wed, 20 Aug 2025 10:17:22 -0700 (PDT)
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-To: airlied@gmail.com,
-	amergnat@baylibre.com,
-	andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	ariel.dalessandro@collabora.com,
-	broonie@kernel.org,
-	chunkuang.hu@kernel.org,
-	ck.hu@mediatek.com,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	dmitry.torokhov@gmail.com,
-	edumazet@google.com,
-	flora.fu@mediatek.com,
-	houlong.wei@mediatek.com,
-	jeesw@melfas.com,
-	jmassot@collabora.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	kyrie.wu@mediatek.corp-partner.google.com,
-	lgirdwood@gmail.com,
-	linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com,
-	maarten.lankhorst@linux.intel.com,
-	matthias.bgg@gmail.com,
-	mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com,
-	mripard@kernel.org,
-	p.zabel@pengutronix.de,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	sean.wang@kernel.org,
-	simona@ffwll.ch,
-	support.opensource@diasemi.com,
-	tiffany.lin@mediatek.com,
-	tzimmermann@suse.de,
-	yunfei.dong@mediatek.com
-Cc: devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+G6ID/H"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9e4193083so155304f8f.3;
+        Wed, 20 Aug 2025 10:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755710296; x=1756315096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ND+OuYZtU8cHDfP5d0xay3pHHejc7Ij+v8jKbCIAZE=;
+        b=g+G6ID/HnvcdtA/bGk7cgAGWu42Ps52jInVt0fQ7eK2R9xAEo3fQ1TR+xkCBu+tTwH
+         Vk+RQyjBFUw02I5Hg2JRswrs/l4loAyUYDkjqDD9miuUlp8p2VAFIDXzUX9Yr2nEjlxg
+         I8LaF/KoZUw4xZXZ2b42IBBTKlmOAnSFUMyg9H7LdBvdwGG7gsvqpt2zpW/pSKiQwo9D
+         QEQ4BQuIbagkQP5Ojyo0MVwAI/NVllD3XKCo0tb8znfPamGdh2RKZuFvN1WRkyYOlrww
+         i27bWwmXqjKACK2i1aJXdIyAyFX4EaPNuNvUqeuqOUsLLG9DPQVnwrKAYsFVr9xx37AS
+         Oe1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755710296; x=1756315096;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8ND+OuYZtU8cHDfP5d0xay3pHHejc7Ij+v8jKbCIAZE=;
+        b=Pzpr6un7WKF0v+d3SyRMWrEVT5iE/poAKY37/FVJLsyjpnBY0Vf5MNlUCL7HhRjP2w
+         nTbIYkb1xe5V4ho1waEdC9B8rv02pQ3n9Di015nk93ZfHXJU1hDI+av/V+nd64N4fWFh
+         yYV/Rpe2qGOLByOXHxHKbgcwtpYrYt/Ra095g9Dar5aZGEq/1Oy+4h7JkShPj5FQKqby
+         xl+mQFaMmuxVz7gC1bOcA4azlCeExH3nYPwtitg8dFLRIqYe1sR8zJ4JJF6Zg19Fwklt
+         aJtfYrkY8XEtO4zEDpX2gnUvr3zTnXtZarq/vXH6Kq6fKHElnDRYxTkB/DuJpI1gymKM
+         /uxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+okOjeln1C+Fwes3+8fdu+bk4JSCDRegGQX0Am19aKdVzkcInS7DIFOOgyZ4nm0ALgmhn1pwZx8mV@vger.kernel.org, AJvYcCUeEBXW2befGK8vMOFPLuW0CZV3VBUWLd7CmBO4VWxJQaUHw3wgy0VBQpIbiJK+fpkvtU6/cvrm6odM@vger.kernel.org, AJvYcCVDUWwsR0RLvdfO85JTJGzhWHIOS3EDOFvvvHFYYWk7pwAslu5L8/kV4mHJAaoOGL9d87bPFluUpecgpUuI@vger.kernel.org, AJvYcCWlHa2Rztyzioh4rXG1XnqqP4WzRxtUchJEUoibhJusFLtWROz+nZsUPQWf0fkD0oedvX6VimIukXTMst4VIEMJj80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVd3oWWXs2dCtL3qzQec6rHd+1WTDzVWkB3XXFr68aZWWR/KDO
+	in7FsmMPAwOhLw3OBcVEy0jDCzWH5Sn9Db5RoihSXUoubZ0yojRs6ptf
+X-Gm-Gg: ASbGncunu6HfETVZNENRGnvpZuGkt8p5QdfLtG0qx6NXVjw0iJapKwr5ZaqwdqsLsmn
+	ztPaTgApOlFAOiGdddsnXJG/mcNhm5c1yWIc+Lqx8A6oen6oUi2M0S/bbkgd4EyJpu1YLdcqPJC
+	l0O6YpZQv9XiVhSfGzUYOv4U6UmBbLL5AIWUE221voKj5tme5EozCdCTNQw8z1BbE2X2bm1QLoC
+	xUHNdGg+D4Gxw1qz3d7rIhF9dVghvqopNFyR3Q5l2s7dINDolnWZgm9oy2IdGTl3KrkT0FWzHGg
+	YaHDhaO8S8kFshSOLBktGF+xf17JmwxlSja7INn0thipmqAl3WlpyPrxNzCVoKI2HuCxwk1V3LG
+	3kpIGPUMAVGsmt5oemJczMYjtptGEZSimhXgFxxtt4lovttmSGCSsuQwiupWBFyJNakKxnockfg
+	==
+X-Google-Smtp-Source: AGHT+IH99TSCBjgQlZV2cxN4ruzMS93qT7bj6JHQ1jwesjD7kt87OQj3cO0bYtjR84SdN60QlkR0Yw==
+X-Received: by 2002:a05:6000:20c6:b0:3c4:655d:f31b with SMTP id ffacd0b85a97d-3c4655df82amr182161f8f.5.1755710295613;
+        Wed, 20 Aug 2025 10:18:15 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c2865dsm40319815e9.2.2025.08.20.10.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Aug 2025 10:18:15 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v1 14/14] dt-bindings: media: mediatek,jpeg: Fix jpeg encoder/decoder ranges
-Date: Wed, 20 Aug 2025 14:13:02 -0300
-Message-ID: <20250820171302.324142-15-ariel.dalessandro@collabora.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 01/11] dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
+Date: Wed, 20 Aug 2025 18:17:48 +0100
+Message-ID: <20250820171812.402519-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,140 +88,29 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Commit 14176e94bb35d ("arm64: dts: mediatek: mt8195: Fix ranges for jpeg
-enc/decoder nodes") redefined jpeg encoder/decoder children node ranges.
-Update the related device tree binding yaml definition to match
-mediatek/mt8195.dtsi, as this is currently the only one using it.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Add definitions for USB3.0 core clocks in the R9A09G047 CPG DT bindings
+header file.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../media/mediatek,mt8195-jpegdec.yaml        | 31 ++++++++++---------
- .../media/mediatek,mt8195-jpegenc.yaml        | 15 ++++-----
- 2 files changed, 24 insertions(+), 22 deletions(-)
+ include/dt-bindings/clock/renesas,r9a09g047-cpg.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
-index e5448c60e3eb5..b1f3df258dc87 100644
---- a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
-+++ b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
-@@ -36,7 +36,7 @@ properties:
+diff --git a/include/dt-bindings/clock/renesas,r9a09g047-cpg.h b/include/dt-bindings/clock/renesas,r9a09g047-cpg.h
+index a27132f9a6c8..f165df8a6f5a 100644
+--- a/include/dt-bindings/clock/renesas,r9a09g047-cpg.h
++++ b/include/dt-bindings/clock/renesas,r9a09g047-cpg.h
+@@ -20,5 +20,7 @@
+ #define R9A09G047_SPI_CLK_SPI			9
+ #define R9A09G047_GBETH_0_CLK_PTP_REF_I		10
+ #define R9A09G047_GBETH_1_CLK_PTP_REF_I		11
++#define R9A09G047_USB3_0_REF_ALT_CLK_P		12
++#define R9A09G047_USB3_0_CLKCORE		13
  
- # Required child node:
- patternProperties:
--  "^jpgdec@[0-9a-f]+$":
-+  "^jpgdec@[0-9],[0-9a-f]+$":
-     type: object
-     description:
-       The jpeg decoder hardware device node which should be added as subnodes to
-@@ -100,22 +100,23 @@ examples:
-         #address-cells = <2>;
-         #size-cells = <2>;
- 
--        jpgdec-master {
-+        jpeg-decoder@1a040000 {
-             compatible = "mediatek,mt8195-jpgdec";
-             power-domains = <&spm MT8195_POWER_DOMAIN_VDEC1>;
--            iommus = <&iommu_vpp M4U_PORT_L19_JPGDEC_WDMA0>,
--                     <&iommu_vpp M4U_PORT_L19_JPGDEC_BSDMA0>,
--                     <&iommu_vpp M4U_PORT_L19_JPGDEC_WDMA1>,
--                     <&iommu_vpp M4U_PORT_L19_JPGDEC_BSDMA1>,
--                     <&iommu_vpp M4U_PORT_L19_JPGDEC_BUFF_OFFSET1>,
--                     <&iommu_vpp M4U_PORT_L19_JPGDEC_BUFF_OFFSET0>;
-+            iommus = <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA0>,
-+                     <&iommu_vdo M4U_PORT_L19_JPGDEC_BSDMA0>,
-+                     <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA1>,
-+                     <&iommu_vdo M4U_PORT_L19_JPGDEC_BSDMA1>,
-+                     <&iommu_vdo M4U_PORT_L19_JPGDEC_BUFF_OFFSET1>,
-+                     <&iommu_vdo M4U_PORT_L19_JPGDEC_BUFF_OFFSET0>;
-             #address-cells = <2>;
-             #size-cells = <2>;
--            ranges;
-+            ranges = <0 0 0 0x1a040000 0 0x20000>,
-+                     <1 0 0 0x1b040000 0 0x10000>;
- 
--            jpgdec@1a040000 {
-+            jpgdec@0,0 {
-                 compatible = "mediatek,mt8195-jpgdec-hw";
--                reg = <0 0x1a040000 0 0x10000>;/* JPGDEC_C0 */
-+                reg = <0 0 0 0x10000>;/* JPGDEC_C0 */
-                 iommus = <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA0>,
-                          <&iommu_vdo M4U_PORT_L19_JPGDEC_BSDMA0>,
-                          <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA1>,
-@@ -128,9 +129,9 @@ examples:
-                 power-domains = <&spm MT8195_POWER_DOMAIN_VDEC0>;
-             };
- 
--            jpgdec@1a050000 {
-+            jpgdec@0,10000 {
-                 compatible = "mediatek,mt8195-jpgdec-hw";
--                reg = <0 0x1a050000 0 0x10000>;/* JPGDEC_C1 */
-+                reg = <0 0 0x10000 0x10000>;/* JPGDEC_C1 */
-                 iommus = <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA0>,
-                          <&iommu_vdo M4U_PORT_L19_JPGDEC_BSDMA0>,
-                          <&iommu_vdo M4U_PORT_L19_JPGDEC_WDMA1>,
-@@ -143,9 +144,9 @@ examples:
-                 power-domains = <&spm MT8195_POWER_DOMAIN_VDEC1>;
-             };
- 
--            jpgdec@1b040000 {
-+            jpgdec@1,0 {
-                 compatible = "mediatek,mt8195-jpgdec-hw";
--                reg = <0 0x1b040000 0 0x10000>;/* JPGDEC_C2 */
-+                reg = <1 0 0 0x10000>;/* JPGDEC_C2 */
-                 iommus = <&iommu_vpp M4U_PORT_L20_JPGDEC_WDMA0>,
-                          <&iommu_vpp M4U_PORT_L20_JPGDEC_BSDMA0>,
-                          <&iommu_vpp M4U_PORT_L20_JPGDEC_WDMA1>,
-diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegenc.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegenc.yaml
-index 596186497b684..190e4e7470195 100644
---- a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegenc.yaml
-+++ b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegenc.yaml
-@@ -36,7 +36,7 @@ properties:
- 
- # Required child node:
- patternProperties:
--  "^jpgenc@[0-9a-f]+$":
-+  "^jpgenc@[0-9],[0-9a-f]+$":
-     type: object
-     description:
-       The jpeg encoder hardware device node which should be added as subnodes to
-@@ -100,7 +100,7 @@ examples:
-         #address-cells = <2>;
-         #size-cells = <2>;
- 
--        jpgenc-master {
-+        jpeg-encoder@1a030000 {
-             compatible = "mediatek,mt8195-jpgenc";
-             power-domains = <&spm MT8195_POWER_DOMAIN_VENC_CORE1>;
-             iommus = <&iommu_vpp M4U_PORT_L20_JPGENC_Y_RDMA>,
-@@ -109,11 +109,12 @@ examples:
-                      <&iommu_vpp M4U_PORT_L20_JPGENC_BSDMA>;
-             #address-cells = <2>;
-             #size-cells = <2>;
--            ranges;
-+            ranges = <0 0 0 0x1a030000 0 0x10000>,
-+                     <1 0 0 0x1b030000 0 0x10000>;
- 
--            jpgenc@1a030000 {
-+            jpgenc@0,0 {
-                 compatible = "mediatek,mt8195-jpgenc-hw";
--                reg = <0 0x1a030000 0 0x10000>;
-+                reg = <0 0 0 0x10000>;
-                 iommus = <&iommu_vdo M4U_PORT_L19_JPGENC_Y_RDMA>,
-                          <&iommu_vdo M4U_PORT_L19_JPGENC_C_RDMA>,
-                          <&iommu_vdo M4U_PORT_L19_JPGENC_Q_TABLE>,
-@@ -124,9 +125,9 @@ examples:
-                 power-domains = <&spm MT8195_POWER_DOMAIN_VENC>;
-             };
- 
--            jpgenc@1b030000 {
-+            jpgenc@1,0 {
-                 compatible = "mediatek,mt8195-jpgenc-hw";
--                reg = <0 0x1b030000 0 0x10000>;
-+                reg = <1 0 0 0x10000>;
-                 iommus = <&iommu_vpp M4U_PORT_L20_JPGENC_Y_RDMA>,
-                          <&iommu_vpp M4U_PORT_L20_JPGENC_C_RDMA>,
-                          <&iommu_vpp M4U_PORT_L20_JPGENC_Q_TABLE>,
+ #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G047_CPG_H__ */
 -- 
-2.50.1
+2.43.0
 
