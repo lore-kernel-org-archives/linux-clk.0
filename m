@@ -1,98 +1,94 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC9D20C48A
-	for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 08:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D64B281369;
+	Wed, 20 Aug 2025 09:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755679190; cv=none; b=Tr4Ujsw5Wk+It8+aO0WtJ53v8b8In/Dcdzb5PWjhfQ/2UzHPfSbpyj8bLhPZyRSgU0J3LDwhjoFD3GOJKimM113iB/hqaNRlCtmIczxTiynzLBzlUOoMaED3Aw6TRC2RNsDYDI94JNAr0h3HcVpAH74uDhBTCvflxRXI0oibExw=
+	t=1755683204; cv=none; b=BvlY6tDmwOHdtXMTqXXJj6mAl+d5fmNvLyicUqoNH0Y6639XCGuaob3ye1/jLip/s8CpdBnKhea4xKEH6oZ3KU7d4kyozTTWCf1Hw8aTeIU/Z+mVxfAm5hTHwZ8sUvC5tKeiGpTak/QlutWawhT1zP05zNPLYlfr0i50sjGAl6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755679190; c=relaxed/simple;
-	bh=B5Odn0BpuqAx/zQPP5UfzrjrGTX8wxfSsyNahtVboZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmmv9CKCkWL5+r+6Td7c7GqeNgz/ICXGL9X68P1HucAugWZor3UFiMmt9iGry5ojlF/N77GOLAvpuugw++D/wyiigmzJcRRey4q6YeAxm2z+rg4P/CYceGAw7XoqEkkJZWjYZTtx9hlJqj4pzsTzzLdIDLZ6FgDVZNQA15yOxuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofYFmVYq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofYFmVYq"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so33513335e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 01:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755679187; x=1756283987; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IfdcMs0PNyVozDxCFB7NWyoBaP2B6WgwAVLq6ldhhGE=;
-        b=ofYFmVYqIz7TnLyqS3oui/I6FgAZ3uQL8D60Gd5HHy8UsCMuC6fgQZKfdFGQipUPDL
-         RJ/L3lTuYfFEJ3oNwyW4bDZvzuuB/CJ2DsXizq8qb+V/UdNbBKrMzGF2CkvCN3am2NlZ
-         riHGA+mO2rGW/ZXpZC3Yrt7SaPQAZo+EKu0n74OTJkcdxDHSpOM9p60b+9q6lQnbwm1M
-         7Aj2mlJt69N9sdDqQRkKRoUgpIRkTWkDX3iqoZ6N/luck3SbwQ+O6DeuB6ll5hdBYpi9
-         qNKNRkqDty5aQHU82EtlJcJN5w+0RsZKOdBID7Ha/b1dBzomum4e+Y9tmR8SHGlNkpV7
-         6TTQ==
+	s=arc-20240116; t=1755683204; c=relaxed/simple;
+	bh=Bogmh45luZk7f/wrceWZr0qQGxKbiHRk57vTOqKBceE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sI93spWaPri/pYZ10Jt4E9haPBsVTwum/yf3mtEDIGNSt5oKCXw9taxQh9stDyZRJMPG9xBanfx5+yPzTYpWKZi3RuJzCNuFsxbFBlPLXItceCqbfsjGxI+CjT94NPtj/qriBKi4/N59wTymz6pC76+OpBwiHLh1rF/JCuH37pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-50f861e18cbso2305833137.0;
+        Wed, 20 Aug 2025 02:46:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755679187; x=1756283987;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IfdcMs0PNyVozDxCFB7NWyoBaP2B6WgwAVLq6ldhhGE=;
-        b=b6IKKc+gcXZzrwvo7EJbY7GfnA5e8E5xX314B4R8HdmO58Q9xqYUobfF/IhQ4RW7n/
-         gXhWJRdzAPdGreMm2nSnIcudPpvbxVx0UVfAx0GO/Y4e6c6OTm5FaNkBVtRKpqzbGVZT
-         Xtc7rXzQDYtbuhYUgfKIVVgG2V1eHwGgDhRTwVSP39t7ajT41o5pavkC0389BEQFTcPb
-         baZp8w8zKejTJRwGUsWL5ullBHZsIAJvDMU7cjj923IondseDm1twP0bAauBctpvnrv1
-         EkzD21YIcvb1SLD+udcn+INJfRcDqyL/ltSpZyoahLqjWoZ6m/C+q0nbSJltgb0eRNHT
-         T14A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxGHgU8rqU0ThqU4B0GvArMxPg/tJ86FhjsdrH6rs5cXLqdJHnsOtfeJThLLi4UFOLXThIy90SFTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHvBhABhZ+JC9lawGC2t+a/x9zQ6AZv9ZutgsUFllWttykq0LK
-	DsFSxZE2mfoH0bwUBLATMpCRpEdysGI5Mwl0ysylwPe533GDkLF0+46x2oHZrAjkuIA=
-X-Gm-Gg: ASbGncvA/zA6cGO5WWYFOOwlbNkRJKD/TF/Uj3+NrNZ01jDdhqG7BFvpe3CbD97KHwm
-	1TwTzivMimfe6jvG7pacZ2U5WZt3+ZaL/LBMyLYH9eLmVOfR06405Cw1vbZ1Lqi4AL2JVP93ZJG
-	w9LE4627gFMfpMbw46JjgOEm7Yi8oHdtOxfPqZ5DhiwRX8EQ+68rePueNdCuLVvmJVSb3/1Ub94
-	XxoSnxM+AGIWwl9qVJQEpYBolG91TydM3dqlgag4RU3Wo6U8YuMm7O15J9FcJoV1end4DFtRwxr
-	b1a2lRLX65fQNYdMeeQsCRB1LlMdrQVt4PuSuf89zcu/i9j7n9RkWcjDC+K1XNGrb7rLHzS4NCU
-	z0nHQ8OEE1+RuDpsUnUo=
-X-Google-Smtp-Source: AGHT+IGJauwKyrl57epN9GYL9wKpPJYYPayxZn61Gui1IwqTxzG6ooIUmqPZFZG1hvz5cY1leyuB5g==
-X-Received: by 2002:a5d:5d0e:0:b0:3b9:1684:e07 with SMTP id ffacd0b85a97d-3c3303dbf5dmr1187908f8f.55.1755679187055;
-        Wed, 20 Aug 2025 01:39:47 -0700 (PDT)
-Received: from linaro.org ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c077789106sm6850315f8f.51.2025.08.20.01.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 01:39:46 -0700 (PDT)
-Date: Wed, 20 Aug 2025 11:39:44 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 3/7] clk: qcom: Add TCSR clock driver for Glymur SoC
-Message-ID: <aKWJ0AG4r6owg-O3@linaro.org>
-References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
- <20250813-glymur-clock-controller-v4-v4-3-a408b390b22c@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1755683201; x=1756288001;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcEaRArYv/BgkTzE+foRpuqvMlKly3EO/m8jwQreMS8=;
+        b=BMlrDqBP7gbw3v2Li3+1FSTTaD7dm2CLFIv5Sf+v3MPiVcBIAmg7mroks2CwhB3cx6
+         6bTN2uuPpoQsk0mE2SNuyQFZ/a7rxX+j9WLpeNc7nl6pB+JeIqsa6x7/SFK8+tVHVst6
+         C0PTrUlh+wC8Ub4YVvLl30rY7rRDmbho3nAXPR3abfujunHxINIP+2KBzPtfpuNrf96n
+         dvSgcVj/IMYvBhuI0KS1UIjTeByBn4Mj42G4Sj7WgK/c8+KFUVwkYmsxKWyBMv6sjgF3
+         FnKIDkdKPdXKgeRX0zdx8CoPER4M7tqWMGabJnCrt7FLLpVmGhZvhQ6gHzD+MUgUgetO
+         7NkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUstYFSFxxz5/NHK/mk9vGMACZ5yRPIrDSWLwmN18VGwrVn5u8qp93cjgXiGvkaigYwpRHQquXa0q9CBrW3@vger.kernel.org, AJvYcCVPVSRdqiGs9VbHkbsIZiKpxmDCu1VnltU/oQuORWpNwLxhL+NGEAwNpXGB0btvS0O8XpolJncsrCG6iwGH64ObYZo=@vger.kernel.org, AJvYcCVlIku3Y2Bzcez3cHrWELvz7JY0Kewi7R+rjypcq6vhFGT631C+z5aLolaw0JbJCU1n1ttYzdS1Zblh@vger.kernel.org, AJvYcCWmq46pIu0K6lkWG7gocdf/BIU2uo/248L7f8oke3HiwcuTVe5T+kVS4AsAAxmZYTGlqg7lV8YMvsLr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsmOhH+P/8PUjFeYZHb37TQUT2v7hFZ+cZeUow3zqU0MjMc+Mg
+	b//E3rQXU5G0EhmMwACDIwEkTC/amlxCOVMLu9NWdgqOLHASYrGKBkaB6UW/oZ+b
+X-Gm-Gg: ASbGncvukJsf+2s2WA5H4Kmce9lyOf+kLC8f0VhUD+IoJAZtfvUyNQoGCD0p4flFijo
+	qEWjX1Xjo4eEXWxStXJ/tdS3nniKVuHaEm2l3H591ZSdTx2VhsOinH2aDltshZdaBOjuk0I+0Q0
+	6wG/ar1+6PwI2eZCBCwnNP8iKlVGM5+dVQtWxJIAxztjCoLQL2KP0WQdjEqVi7ZJI3mVfzFIAl0
+	TyxlpIn/j+fYRkspOLt9I6rQsXIwjPk0xAomBif2ivp82mZ7OLuL/6Jz3b6SCYX18h5i86fdMJH
+	a/H1K46GOpYPUnG+t/IF04PouV5XeRiu/1EUC/8sxaRPQot+TL8YuOpzJt2YnubVxLLtpTcQwdu
+	YP2O2DQv/E6CjBGXxoNH2hx8wGvByZJ1SuKAisYhmxz91VWaw6CSfB39XU2aI
+X-Google-Smtp-Source: AGHT+IEUWdEl4cvCVZtLVNt3hgdnh1m2MwjQWB13nr0brxsvrNiApHpVMx5muIfOMfPIEyaXDT1sJQ==
+X-Received: by 2002:a05:6102:83da:10b0:4e9:c7c8:5e24 with SMTP id ada2fe7eead31-51a511a2c1emr436012137.25.1755683200740;
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5127d4dc422sm3182591137.6.2025.08.20.02.46.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018ec3597so3674682241.0;
+        Wed, 20 Aug 2025 02:46:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQIGV259oEWLf4P2luW+0c/93547M5EGR/bwnWDmpSIxZd7u1dc3OqUsFex97+S7F5ChVg3vN4+219JC8E@vger.kernel.org, AJvYcCUVB2P5J0BMP3BcaqTUF54J6gOgA3Xj4LlMZ58ovSGsAmZ5KsNJ8TlLkeVQK4y5bkOebcExL8gfq4kc@vger.kernel.org, AJvYcCUqLAtODGe+EKOJYal4R2WPkIrOlaSyGDtSHEwE/7OPTfEGSfHzn9bzRqi7Bwi5scYpgNTDSwAh9aJA6LMsIMbFsk0=@vger.kernel.org, AJvYcCXgLfihgIoGYC2Qd+GIw5O7PVW8PZRr6AXan6FDtzYldS9/gtjPbnQO0pmL5DQzRe4Y+LPsQdjrTf+i@vger.kernel.org
+X-Received: by 2002:a05:6102:b14:b0:4fd:30aa:e6cb with SMTP id
+ ada2fe7eead31-51a50c82849mr589032137.21.1755683200318; Wed, 20 Aug 2025
+ 02:46:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813-glymur-clock-controller-v4-v4-3-a408b390b22c@oss.qualcomm.com>
+References: <20250814124832.76266-1-biju.das.jz@bp.renesas.com> <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXJBL_uJ=2v0aKJaSf45070yP=Z_kPe-9uSyE1P0QeiJQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Aug 2025 11:46:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWipx5FRthdfveqw7i+33RXf5ATY=xJFZQNV7O7GzLVkg@mail.gmail.com>
+X-Gm-Features: Ac12FXzZK3tq6JNAyNlFgqE2SjUH5ykPbRt43RvSnkuEMQ4S62djLNI-OkYseQs
+Message-ID: <CAMuHMdWipx5FRthdfveqw7i+33RXf5ATY=xJFZQNV7O7GzLVkg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Add RZ/G3E GPT clocks and resets
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-08-13 13:25:19, Taniya Das wrote:
-> Add a clock driver for the TCSR clock controller found on Glymur SoC,
-> which provides refclks for PCIE, USB, and UFS subsystems.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+On Tue, 19 Aug 2025 at 17:10, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> I think you are overcomplicating: according to the clock system diagram
+> and clock list sheets, gpt_[01]_pclk_sfr and gpt_[01]_clks_gpt_sfr
 
-LGTM now.
+s/gpt_[01]_clks_gpt_sfr/gpt_[01]_clks_gpt/
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> are really the same clocks (the same is true for rsci_[0-9]_pclk and
+> rsci_[0-9]_pclk_sfr).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
