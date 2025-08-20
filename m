@@ -1,222 +1,128 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728E2482FF
-	for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60F1341ADD;
+	Wed, 20 Aug 2025 14:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755699862; cv=none; b=LLnBjTch7NoZmJCOorRANUcxB4RSc45LoE0alem5LyHP7xISEtpSWyFSCsg0u0wdegIJlJ4cMMeUx8XWetatexZW9/1X8W9SYR7ibzFt+8CqPDUYjeZfD34S1eewy0AfNHLureZn3ztfkV+OZsQGniMcLE9HBLegWjZwzt301pI=
+	t=1755701955; cv=none; b=nnq/9p45eZ1b6eo44ynczkGtEoWfkKFlI2MqCq+3icCbpcP8DagKUpZA/EKPnBOuw+DIIWJm6MshUFqdl0xVaZvunrDehy4SV+piy8q/MopjaNLtoll7pO7+2ZsmmvYoQlcVNEn7pIJ412r54FfCto/23PC5TyRgo1vGHYo+5vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755699862; c=relaxed/simple;
-	bh=sFi3nf9189XWLnFEh/REiiOkLpKIbqzYdFnw+OHRV5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmTql3R5qiYfEGnqrqx0hb2RudS52d0TpPOlYe2J00ldfHd/U9sxHqNYKlsC/QPeDIfLVPOMGGqyT8/YfI/dNDDB4LLtdevLSAHshVoLGIeIg3vkj0NlB8QSb22lmneAaRCGnHyVLJN+muIXIIOWfIeI35Yw3bg81kFXcFWr7ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xSAtgG48; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755701955; c=relaxed/simple;
+	bh=W68k0m74FKq6rT8PIZd3IxIAE0Dive0UITAv+zCe5+g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SQKzFzLmE7WRqqiuBBwyE4eG3FkApjCaG7dkWMyo8JJoeaZIsQKK8VF4JKLWsFbd+bwyLWbVUteVI9Jytn2JIP81wigFkIK9naDug+5ltmip/lO2UbI8+eXcZCRhebUFOgRcNV9P0CS4Y94xD1xJplGYCsByIIJlXM7s505fsNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQTWWkYO; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xSAtgG48"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9dc52c430so3361638f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 Aug 2025 07:24:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQTWWkYO"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2445827be70so72560205ad.3;
+        Wed, 20 Aug 2025 07:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755699859; x=1756304659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6J3bLH3lxnU1wq9lp33HkB5R033P8bBP3qGJYX3dOFU=;
-        b=xSAtgG48PKBy95ArEEWEcxVz4ZURUxS7CUoYlLh1gSHkslwCFuYyWTK+MW6WLGeO9I
-         YaCOjhORGwWWYqNK/PA9v24IVQr2T/vNaeRf66G3eiDZoGjNGzi6MxNeVHWKL78BAMjn
-         3fMbuqR302CJg4kVX5bX7LxQE9DYbbqTeJeLYnIMdoj8MT2T0/8672Y+jxL3JLHyS5ZW
-         G6MtBlqs2dR5yFyZemlH/MMopDXZWAylKgf9ukfIHoS1O9FJbv7WLV8ZiAYlii86qTIX
-         SKh9xuavjf12jmU3+XOgpQt0TIFu8JigmTS+B4JcwEqWntFpidDUrG70iOuvC2v0KZ3H
-         tP3g==
+        d=gmail.com; s=20230601; t=1755701953; x=1756306753; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gWtZEHKoGP7mw0rgmfais8XlelkoGry/mMQ7iZX7hc=;
+        b=WQTWWkYOVUnTee114zPtqVzhwVAD5H9HdPS9Ley5oNiTQkze0HjE/flNVBF8Gmx8yz
+         JX5s5JZS0xaBpFZDo2IvHJOy26pMMIxDvtNFH3QHpfuhvW83vo0opC8w7wk1s+dHgRKG
+         kX1tfB2W+u6trHaxxUx+qLis9IFaSyzaWTaMX+n4lxeTuM1mdk6nzb00vm6aGrT79rXc
+         EqxsERfiLwbqaLGuW1TYm8al/4vbI3jgTqTY6zjA3TCmdbyC0YmhpX/xbC/6dhJZKT5A
+         oHvf05+urdj5kzN6oJSpQZHchd2BhhbRcyAqc0FkaiS0WBDvrMMFJaCfZ21L7mHwmK2A
+         9TzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755699859; x=1756304659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6J3bLH3lxnU1wq9lp33HkB5R033P8bBP3qGJYX3dOFU=;
-        b=fwFfoI+YRVbzqTqh1LSU0yDuYgUE/gU6SgrtfvmwqLr4U+o1BR87nB5pBdEUJ0gKll
-         T/sDk/q7rUr28XkW3bBtffA00A9vq8JvK3+bkWN+YN0lm0VNWu5ZBwg2//r3D2vvuetT
-         UM5EGrhQdW6MHuIFNdlw44BOGYd4mUBWfI4GpWHAGkLqWxS9EKd9qarP3mlF6jFBrbMs
-         HlAqIlISZOB7BRfhf1Oba2yNsf3dVr5L79xeoFhpW0Z/aIQxif/qbpO2Iy0m/cia4Qns
-         GS6HvhWtpOtXbVUjdnU3vrhWeK6MxZpW0v4UpT1BbQgRv/NbJSQe2WSK21pHEpkxWDmW
-         9JOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNcfAZ8/k4xkD6RHBe7lQTE8sWF3ED2BJt2LjPlMECRUC+M2yjuLw85v4Rqsrc+gZ09Cu9yis0aPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS8NYU7Rju4mFqZ6QtjU0WYBdv8ocVPvkhC/C++pNFGc2PZiLv
-	Djx1Pl7LhkvFiP+QRPWmsffF/+iVYgUEIU8lU5w49CbbP8NsHVtD0T0Jd0q2d4M9eS4=
-X-Gm-Gg: ASbGncvIL0O0Fg1UD2Z6c328NZeYJQy1IuapCB0livOjDR3ueIF8tleCJEdgOK7wB5J
-	fzOnpLW5vy+U1LhxZiLVCArjgfDa35J5cgnKZgDOe/xkLILHp5CQnyBAdw0EnkR6Uq9YE9xVxbq
-	IZLig514yfy3Px1NZPHeyMYhBMJhoCg6rTp+DSPZ5+9CMMYdQOHD9w0B8xxrLhqQRz547dq/EBm
-	c+jtyCbG+i1kwaq8AW5VbJ473TiabfhJsBVEi2sZwiYts39K8vgy6qUSNnRxII6/JvHmV32Qv7P
-	QyP1YC4aqrG/X3QCyvxhG3K+AI026yGz2kCbW06b11l5bfUMEquz6USKTJ6tdvgMmDJkCT0WVtF
-	ParThTU74rArfiNf+77cT0blst30=
-X-Google-Smtp-Source: AGHT+IFnea2n21+kS1N+9kldwzmLDXovzHwkQ2dtRizVAVyYeiR3u+rellXeEys1h8pnuViATD2x5w==
-X-Received: by 2002:a05:6000:4007:b0:3b7:94c3:2786 with SMTP id ffacd0b85a97d-3c32e2294d9mr2203490f8f.34.1755699858694;
-        Wed, 20 Aug 2025 07:24:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c3a8980ed5sm2231742f8f.16.2025.08.20.07.24.17
+        d=1e100.net; s=20230601; t=1755701953; x=1756306753;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+gWtZEHKoGP7mw0rgmfais8XlelkoGry/mMQ7iZX7hc=;
+        b=AcEe63JTaahbO0zcxVtmCS8FZ1XSY9ryTgKJBASuW2hXUNk7ebXzVbhZOHOEH73O+i
+         BFtz1E3Caig2/9GqGaTh1VlihmvCBP2pR2xBZlSFDe8XeSUa3T57t5Sjc3K0ZLKna1yv
+         BcMyQdBipgoRV1AH9pS+pHx0tBCPwrRyUHKc6zBZUaa8Z68NMJtSBQTd4AYpg+j5/aVz
+         lMeZqnW50/9Xx1WCbKoXsJBqShzZXOyGmroPewMZt6jQlG/teltvtPYT4jcQ2YeVa4lS
+         BLGFfajQeXxQOpUw5sfsCHBtSvpobF0xWz6gsEnQJrTxnZFL3AhQn3BtL3oNHHENvGEP
+         eAQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp8Ue6XDxqgLtC+QBrNWAO7S4oLLTLsWC8m6cZQ2VRbWodhqA8xk4CHeeZsJ/ls8MsYTdgBjKuC5vP@vger.kernel.org, AJvYcCUsPw9rLGaY8lLDHMQ/8mpDa52aOWey3UhshmR+SHya01ziTbIq8fyHfw7N9e3RE71JM/Bevl4yT7mXToNA@vger.kernel.org, AJvYcCV/qGnTZZOuuiz4nDYmJ+3TbIb291Q9GHcVzLreWtxOjWgkhgGMis85BCJ80l1JNDckYaxuwWZZpEmT@vger.kernel.org
+X-Gm-Message-State: AOJu0YztJ5WrllGfT4ZOiP/rpIk3+9PUW+j8DwpmabhaKVY4weEK7kP3
+	CkDujzna4pT7As4U+u6/yZhmR/JuSQYvX2S9rVh9+BBnCB3A4kjtU6qF
+X-Gm-Gg: ASbGnctrpW2KLC0LGZx+B90rJTWjDAL/YlXm4+OEdPaQ62B/qf74z+7Yh6a6bb0/sMV
+	l7vjkiksWwkgQ/DShpv2kMKKwsAge8OndJ6OScJ17warNjC6qehS11H+BLY3+1qTXYxbqNnoDGT
+	LmwBySfrIo1+fgTdVZJLDBu23BiAnGBlJYmHMhooeQVEaTW1gyybd1RkQml09tS69apopkLesbk
+	TMJPtAnP6+3zdvqxz2vc14ld3V9tZdSuvJSbtAmL88Drl+NAQ54mONWBRpzlY154Z0NBrxemOLX
+	uwYSd+Mo9J5d/0+lMLfz9U0b01x9c8RxccsuAOSUVRUpIxfYAW33m8QOfOBZl5Wq0DtN34UI/pH
+	7aKRMSRwxIQ0xUkW34HwYXIkBQFWOiqBhh+vLKwSwFY7AXrQ=
+X-Google-Smtp-Source: AGHT+IFuZGLvyxMcilBbJyU+WX5ieFDHPZ5qcPgTlkAoOpIPQGjsZxxRLuTraJW+LFjnoMiyYGMkLw==
+X-Received: by 2002:a17:903:32c8:b0:234:d292:be95 with SMTP id d9443c01a7336-245ef237f3bmr39664895ad.42.1755701953108;
+        Wed, 20 Aug 2025 07:59:13 -0700 (PDT)
+Received: from [127.0.0.1] (aulavirtual.utp.edu.pe. [190.12.77.24])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324e257809esm2606455a91.24.2025.08.20.07.59.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 07:24:18 -0700 (PDT)
-Date: Wed, 20 Aug 2025 17:24:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: Juno-r2 WARNING kernel time clockevents.c cev_delta2ns
- clockevents_config.part
-Message-ID: <aKXajiHqhhkFeV4a@stanley.mountain>
-References: <CA+G9fYsYVuEpL5KnYdq4ciRmpnUMQqkNQHmy7y5XvUm48kjxyA@mail.gmail.com>
+        Wed, 20 Aug 2025 07:59:12 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v2 0/3] clk: samsung: exynos990: CMU_TOP fixes (mux regs,
+ widths, factors)
+Date: Wed, 20 Aug 2025 09:57:21 -0500
+Message-Id: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsYVuEpL5KnYdq4ciRmpnUMQqkNQHmy7y5XvUm48kjxyA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFLipWgC/02Myw6DIBBFf8XMujRAtGBX/Y/GBY9RJ6nSQEM0h
+ n8vddXlubnnHJAwEia4NwdEzJQorBXkpQE3m3VCRr4ySC47rkXPJDP25rT1I1deQf29I460nY3
+ nUHmm9AlxP5NZ/NZ/OwvGGerWtsrqrnf4mBZDr6sLCwyllC83XA3XkgAAAA==
+X-Change-ID: 20250819-2-ab6c8bdf07d7
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755701948; l=1078;
+ i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
+ bh=W68k0m74FKq6rT8PIZd3IxIAE0Dive0UITAv+zCe5+g=;
+ b=u9TvdLut9T/l2pJ/hsZbjYfVLj1dhqtUVvMITE8G9SK/eUYZGzp7h0OtJjP51LUJjTi8syUTb
+ /JlJJyTwBsfCogQd8FAkonDyS60JQ0a7+mCVss5qZP2pgSvtW4nVz5E
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
 
-Hi Sudeep,
+Hi,
 
-Could we revert commit 1fa3ed04ac55 ("arm64: dts: arm: Drop the
-clock-frequency property from timer nodes")?  We're still getting this
-warning on our Juno systems (with admittedly ancient firmware).
+Two small fixes for Exynos990 CMU_TOP:
 
-regards,
-dan carpenter
+Correct PLL mux register selection (use PLL_CON0), add DPU_BUS and
+CMUREF mux/div, and update clock IDs.
+Fix mux/div bit widths and replace a few bogus divs with fixed-factor
+clocks (HSI1/2 PCIe, USBDP debug); also fix OTP rate.
 
-On Tue, Jun 10, 2025 at 12:48:18PM +0530, Naresh Kamboju wrote:
-> Regression while booting Juno-r2 with the Linux next-20250606
-> the following kernel warnings found.
-> 
-> This boot warning was reproduced with juno-r2.dtb and juno-r2-scmi.dtb.
-> 
-> Regressions found on Juno-r2
-> - boot warning
-> 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
-> 
-> First seen on the next-20250606
-> Good: next-20250512
-> Bad:  next-20250606
-> 
-> The suspected patch that found between tags is,
-> 
-> # git show next-20250512..next-20250513 --
-> arch/arm64/boot/dts/arm/juno-base.dtsi
-> commit 1fa3ed04ac55134063e3cd465b41aeb26715e52a
-> Author: Sudeep Holla <sudeep.holla@arm.com>
-> Date:   Mon May 12 11:11:32 2025 +0100
-> 
->     arm64: dts: arm: Drop the clock-frequency property from timer nodes
-> 
->     Drop the clock-frequency property from the timer nodes, since it must be
->     configured by the boot/secure firmware.
-> 
->     Cc: Liviu Dudau <liviu.dudau@arm.com>
->     Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
->     Cc: Mark Rutland <mark.rutland@arm.com>
->     Message-Id: <20250512101132.1743920-1-sudeep.holla@arm.com>
->     Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi
-> b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> index 055764d0b9e5..9ccb80821bdb 100644
-> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
-> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
-> @@ -10,7 +10,6 @@ / {
->         memtimer: timer@2a810000 {
->                 compatible = "arm,armv7-timer-mem";
->                 reg = <0x0 0x2a810000 0x0 0x10000>;
-> -               clock-frequency = <50000000>;
->                 #address-cells = <1>;
->                 #size-cells = <1>;
->                 ranges = <0 0x0 0x2a820000 0x20000>;
-> 
-> 
-> Boot regression: Juno-r2 WARNING kernel time clockevents.c
-> cev_delta2ns clockevents_config.part
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Boot warning
-> [    0.000000] timer_sp804: timer clock not found: -517
-> [    0.000000] timer_sp804: arm,sp804 clock not found: -2
-> [    0.000000] Failed to initialize
-> '/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@110000':
-> -22
-> [    0.000000] timer_sp804: timer clock not found: -517
-> [    0.000000] timer_sp804: arm,sp804 clock not found: -2
-> [    0.000000] Failed to initialize
-> '/bus@8000000/motherboard-bus@8000000/iofpga-bus@300000000/timer@120000':
-> -22
-> [    0.000000] arch_timer: frequency not available
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/time/clockevents.c:38
-> cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1))
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
-> 6.15.0-next-20250605 #1 PREEMPT
-> [    0.000000] Hardware name: ARM Juno development board (r2) (DT)
-> [    0.000000] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.000000] pc : cev_delta2ns (kernel/time/clockevents.c:38
-> (discriminator 1))
-> [    0.000000] lr : clockevents_config.part.0 (kernel/time/clockevents.c:499)
-> [    0.000000] sp : ffff800082923cd0
-> [    0.000000] x29: ffff800082923cd0 x28: 0000000000000400 x27: ffff800081650000
-> [    0.000000] x26: ffff80008292fcc0 x25: ffff800082425888 x24: ffff8000829343c0
-> [    0.000000] x23: ffff800083210000 x22: 000000000000000b x21: ffff8000823cf178
-> [    0.000000] x20: ffff800082433880 x19: ffff00080021e240 x18: 0000000000000000
-> [    0.000000] x17: ffff00080021a400 x16: ffff00080021a200 x15: 0000000000000100
-> [    0.000000] x14: fffffdffe0008a00 x13: ffff800080000000 x12: 0000000000000000
-> [    0.000000] x11: 0000000000000068 x10: 0000000000000100 x9 : ffff8000801b50f8
-> [    0.000000] x8 : 000000001dcd6500 x7 : 000000003b9aca00 x6 : 0000000000000020
-> [    0.000000] x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000f00000000
-> [    0.000000] x2 : 0000000000000000 x1 : ffff00080021e240 x0 : 000000000000000f
-> [    0.000000] Call trace:
-> [    0.000000] cev_delta2ns (kernel/time/clockevents.c:38 (discriminator 1)) (P)
-> [    0.000000] clockevents_config_and_register (kernel/time/clockevents.c:519)
-> [    0.000000] arch_timer_mem_frame_register
-> (drivers/clocksource/arm_arch_timer.c:1319
-> drivers/clocksource/arm_arch_timer.c:1580)
-> [    0.000000] arch_timer_mem_of_init
-> (drivers/clocksource/arm_arch_timer.c:1653)
-> [    0.000000] timer_probe (drivers/clocksource/timer-probe.c:31)
-> [    0.000000] time_init (arch/arm64/kernel/time.c:62)
-> [    0.000000] start_kernel (init/main.c:1014)
-> [    0.000000] __primary_switched (arch/arm64/kernel/head.S:247)
-> [    0.000000] ---[ end trace 0000000000000000 ]---
-> [    0.000000] arch_timer: cp15 and mmio timer(s) running at 50.00MHz
-> (phys/phys).
-> 
-> ## Source
-> * Kernel version: 6.15.0-next-20250513 to 6.15.0-next-20250606
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git sha: 4f27f06ec12190c7c62c722e99ab6243dea81a94
-> * Toolchain: gcc-13
-> 
-> ## Boot details
-> * Boot lava log: https://lkft.validation.linaro.org/scheduler/job/8309469#L622
-> * Boot log: https://qa-reports.linaro.org/api/testruns/28679128/log_file/
-> * Boot warning:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20250605/log-parser-boot/exception-warning-cpu-pid-at-kerneltimeclockevents-cev_delta2ns/
-> * Build link:  https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2y4wgEvmeoVH3Vr528M4YN2OBXY/config
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+Changes in v2:
+
+- In the first commit the divratio of 
+  PLL_SHARED0_DIV3 should not be changed.
+
+Please review.
+
+Denzeel Oliva
+
+---
+Denzeel Oliva (3):
+      clk: samsung: exynos990: Fix CMU TOP mux/div widths and add fixed-factors
+      dt-bindings: clock: exynos990: Reorder IDs clocks and extend
+      clk: samsung: exynos990: Fix PLL mux regs, add DPU/CMUREF
+
+ drivers/clk/samsung/clk-exynos990.c           | 154 +++++++++++++++----------
+ include/dt-bindings/clock/samsung,exynos990.h | 402 ++++++++++++++++++++++++++++++++--------------------------------
+ 2 files changed, 297 insertions(+), 259 deletions(-)
+---
+base-commit: 886e5e7b0432360842303d587bb4a65d10741ae8
+change-id: 20250819-2-ab6c8bdf07d7
+
+Best regards,
+-- 
+Denzeel Oliva <wachiturroxd150@gmail.com>
+
