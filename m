@@ -1,109 +1,97 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE3A29A303;
-	Thu, 21 Aug 2025 08:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016FE2EA48F;
+	Thu, 21 Aug 2025 08:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765532; cv=none; b=hauTx7Ynb2j8amQwrx7gobxU/oxHKaHYodnV99VDxtI6midLiqzpivRQEIwoHf8S5wNiteWmY5E1INr7aBzsmtJ05XlJXRAnqZhAOAOS0EBP99h3iZkTcvxHXW4jMBbAOr49Eqoo7UYBtckHHalgz30mQ3PIFT4EqNo3tigkh6c=
+	t=1755765946; cv=none; b=lH8bcDk/W6o7iVRVflYUvFBN0ka0axaAyRs9K3I7+Ai+peVUl5sbou3p2oPSPXQhvBQ4vMuTvNgUHn06KE2TUnFNtP96/Nke34IrGGxCddanet7g73fjIdtXrBMkIUQqoaymuPjeorBis1gHEiGWdP2PSchaDyXyyCx3m07ym+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765532; c=relaxed/simple;
-	bh=OOWbc93NNAvuoFHJIERvL2ni0Hh4WX8rxmSVcRBWSh8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WPfzjX6wKkJrf0DLNirC7fmZyDwCZtZkeq7gc8Oz4JUvYz6o2fdUPr+4y5tgdxcfWMU/+7SKt7j1FHE9q7x0pwSAD1ou8E1uNEFTRVIWcoZApNISyn6uiY0EGAPIHUMAlkmdJrUShnyFhVSdB8bIXx/4r9QmiPn9YO6aUkINZAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UNNSDlpj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UNNSDlpj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1755765528;
-	bh=OOWbc93NNAvuoFHJIERvL2ni0Hh4WX8rxmSVcRBWSh8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UNNSDlpjULRYhhubgyBlL3uOvOZTQmSqPOv2MHax1e1KRJ+2nv98syzqmrv6NZaFI
-	 ew7WR8HtaioqREui4tfTOLNyfdHkExd7J2MWERwm9fix6D4Yb7wQXduX7SWIAqg8UY
-	 mwk3EISANgsXq/dfh6J76UGV1FiYryAIkNMh7w2kLN+gNNkxtHXy/Sh0AF6iaOhCgV
-	 OSffjmCunuEHnVAQmQ81fFFEqoDytDBrz9adhKQFrmh/uVp1TQAg0iQdQ6L93BSgRm
-	 EQ8c1LE2Eb1YwT+uTausgVfHy1MEVfLt20KvB28Zaw0blRjONprF1wgajZb26iDZxJ
-	 YLYdrr4VkAu5w==
-Received: from localhost-live.home (2a01cb0892f2D600c8F85CF092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0B55E17E0C8C;
-	Thu, 21 Aug 2025 10:38:46 +0200 (CEST)
-Message-ID: <6491baf3e08454f2ea042934f9f781cf21cbf4d7.camel@collabora.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: mediatek: Add power-domains
- property
-From: Julien Massot <julien.massot@collabora.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>,
-  Enric Balletbo i Serra	 <eballetbo@kernel.org>, Chen-Yu Tsai
- <wenst@chromium.org>, Weiyi Lu	 <weiyi.lu@mediatek.com>, Eugen Hristev
- <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>,  Sean Wang
- <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-clk@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, 	linux-sound@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Date: Thu, 21 Aug 2025 10:38:46 +0200
-In-Reply-To: <376a8f00-e803-4ab1-a54e-6535e41ebaee@kernel.org>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
-	 <20250820-mtk-dtb-warnings-v2-1-cf4721e58f4e@collabora.com>
-	 <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
-	 <376a8f00-e803-4ab1-a54e-6535e41ebaee@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755765946; c=relaxed/simple;
+	bh=1OZUlltJR5Uc++55sA1dzKlArKgrpruidlWcPYjFWIs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=fM9b0gYeQqCUZc5pZnvJFjYi7RhI3ln0Jg+bZFfABVQNJBGxbQ+qIn1krdYV5ayn6hbopiyw1F/LMRFQV6mexQHOnZNxBjV/EgQhJnMp8r57WurYTUuOxjVr29CRfdfc0YIcc1qT91s1JMUO9L7sqk7GSHxDo4JfSTcZIhhILDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Thu, 21 Aug 2025 16:45:26 +0800 (GMT+08:00)
+Date: Thu, 21 Aug 2025 16:45:26 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, linux-riscv@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <bfa23779-9861-4ae4-9ced-9f347394f033@kernel.org>
+References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
+ <20250815093754.1143-1-dongxuyang@eswincomputing.com>
+ <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
+ <3fa3950e.371.198c1770125.Coremail.dongxuyang@eswincomputing.com>
+ <bfa23779-9861-4ae4-9ced-9f347394f033@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <27984d9.51f.198cbcde8d7.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgAXt5Wm3KZodHPBAA--.23144W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEBAmil+M8hP
+	gACsn
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-Hi Krzysztof,=20
-
-Thanks for the review
-On Thu, 2025-08-21 at 09:30 +0200, Krzysztof Kozlowski wrote:
-> On 21/08/2025 09:16, Krzysztof Kozlowski wrote:
-> > On Wed, Aug 20, 2025 at 03:44:52PM +0200, Julien Massot wrote:
-> > > The mt8183-mfgcfg node uses a power domain in its device tree node.
-> > > To prevent schema validation warnings, add the optional `power-domain=
-s`
-> > > property to the binding schema for mediatek syscon clocks.
-> > >=20
-> > > Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains=
- property to mfgcfg")
-> >=20
-> > Checkpatch complains here, but more important - where is explanation of
-> > dropped tag?
-
-Right the proper tag is=20
-Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains prope=
-rity to mfgcfg")
-
-> >=20
-> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
-llabora.com>
-> >=20
-> > But this tag appeared? It wasn't even given!
-> >=20
-> > You remove public tags and add tags never given on the lists.
->=20
-> I found Angelo's tag, but still dropping other acks is not explained.
->=20
-Regarding the tags: in v2 the patch changed quite a lot after I applied
-Angelo's suggestion, so I decided to drop Rob=E2=80=99s Acked-by as it no l=
-onger
-applies to the new version. I should have explained this in the changelog.
-
-Regards,
-Julien
+SGkgS3J6eXN6dG9mLAoKVGhhbmtzIGZvciB5b3VyIGNvbnN0cnVjdGl2ZSBzdWdnZXN0aW9ucy4K
+IAo+ID4+Pgo+ID4+PiBBZGQgY2xvY2sgZGV2aWNlIHRyZWUgc3VwcG9ydCBmb3IgZWljNzcwMCBT
+b0MuCj4gPj4+Cj4gPj4+IFNpZ25lZC1vZmYtYnk6IFlpZmVuZyBIdWFuZyA8aHVhbmd5aWZlbmdA
+ZXN3aW5jb21wdXRpbmcuY29tPgo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBYdXlhbmcgRG9uZyA8ZG9u
+Z3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20+Cj4gPj4+IC0tLQo+ID4+PiAgYXJjaC9yaXNjdi9i
+b290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpIHwgMjI4MyArKysrKysrKysrKysrKysr
+Kwo+ID4+PiAgMSBmaWxlIGNoYW5nZWQsIDIyODMgaW5zZXJ0aW9ucygrKQo+ID4+PiAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGFyY2gvcmlzY3YvYm9vdC9kdHMvZXN3aW4vZWljNzcwMC1jbG9ja3MuZHRz
+aQo+ID4+Pgo+ID4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9ib290L2R0cy9lc3dpbi9laWM3
+NzAwLWNsb2Nrcy5kdHNpIGIvYXJjaC9yaXNjdi9ib290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nr
+cy5kdHNpCj4gPj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPj4+IGluZGV4IDAwMDAwMDAwMDAw
+MC4uNDA1ZDA2ZjkxOTBlCj4gPj4+IC0tLSAvZGV2L251bGwKPiA+Pj4gKysrIGIvYXJjaC9yaXNj
+di9ib290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpCj4gPj4+IEBAIC0wLDAgKzEsMjI4
+MyBAQAo+ID4+PiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIE1JVCkK
+PiA+Pj4gKy8qCj4gPj4+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMjUsIEJlaWppbmcgRVNXSU4gQ29t
+cHV0aW5nIFRlY2hub2xvZ3kgQ28uLCBMdGQuCj4gPj4+ICsgKi8KPiA+Pj4gKwo+ID4+PiArLyB7
+Cj4gPj4+ICsJY2xvY2stY29udHJvbGxlckA1MTgyODAwMCB7Cj4gPj4+ICsJCWNvbXBhdGlibGUg
+PSAiZXN3aW4sZWljNzcwMC1jbG9jayI7Cj4gPj4+ICsJCXJlZyA9IDwweDAwMDAwMCAweDUxODI4
+MDAwIDB4MDAwMDAwIDB4ODAwMDA+Owo+ID4+PiArCQkjY2xvY2stY2VsbHMgPSA8MD47Cj4gPj4+
+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ID4+PiArCQkjc2l6ZS1jZWxscyA9IDwwPjsKPiA+
+Pj4gKwo+ID4+PiArCQkvKiBmaXhlZCBjbG9jayAqLwo+ID4+PiArCQlmaXhlZF9yYXRlX2Nsa19h
+cGxsX2ZvdXQyOiBmaXhlZC1yYXRlLWFwbGwtZm91dDIgewo+ID4+Cj4gPj4gU3VjaCBwYXR0ZXJu
+IHdhcyB5ZWFycyBhZ28gTkFLZWQuCj4gPj4KPiA+PiBObywgZG9uJ3QgZXZlciBicmluZyBub2Rl
+cyBwZXIgY2xvY2suCj4gPj4KPiA+IFdlIGhhdmUgZGVmaW5lZCBhIGxhcmdlIG51bWJlciBvZiBj
+bG9jayBkZXZpY2VzLsKgCj4gPiBUaGUgY29tbWVudCBvZiB2MyBpcyAiRHJpdmVyIGlzIGFsc28g
+d2F5IHRvbyBiaWcgZm9yIHNpbXBsZSBjbG9jayBkcml2ZXIgYW5kIEnCoAo+ID4gYW0gc3VycHJp
+c2VkIHRvIHNlZSBzbyBtYW55IHJlZHVuZGFuY2llcy4iLiBUaGVyZWZvcmUsIHdlIG1vZGlmaWVk
+IHRoZSBjbG9ja8KgCj4gPiBkcml2ZXIgY29kZSBhbmQgbW92ZWQgdGhlIGRlc2NyaXB0aW9uIG9m
+IGNsb2NrIGRldmljZSBmcm9tIHRoZSBkcml2ZXIgdG8gdGhlIERUUy4KPiA+IAo+ID4gQnV0LCB0
+aGlzIGNvbW1lbnQgaXMgdGhhdCBkb24ndCBldmVyIGJyaW5nIG5vZGVzIHBlciBjbG9jay4gV2Xi
+gJl2ZSBydW4gaW50byBzb21lCj4gCj4gQW5kPyBXaGF0IGlzIHVuY2xlYXIgaW4gdGhhdCBjb21t
+ZW50Pwo+IAo+ID4gdHJvdWJsZSBhbmQgYXJlbuKAmXQgc3VyZSB3aGljaCBhcHByb2FjaCBhbGln
+bnMgYmV0dGVyIHdpdGggY29tbXVuaXR5IGd1aWRlbGluZXMuwqAKPiA+IENvdWxkIHlvdSBzaGFy
+ZSB5b3VyIGFkdmljZSBvciBzdWdnZXN0aW9ucyBvbiB0aGUgYmVzdCB3YXkgZm9yd2FyZD8KPiAK
+PiBMb29rIGF0IGFueSBvdGhlciByZWNlbnQgY2xvY2sgZHJpdmVycy4KCkkgZm91bmQgb3V0IHRo
+YXQgdGhlIHJlY2VudCBjbG9jayBkcml2ZXJzLCBzdWNoIGFzIHNvcGhnby9jbGstc2cyMDQ0LmPC
+oAphbmQgcm9ja2NoaXAvY2xrLXJrMzU2Mi5jLCB0aGUgY2xvY2sgdHJlZSBpbmZvcm1hdGlvbiBv
+ZiB0aGVtIHdhcyBwbGFjZWQKaW4gdGhlIEMgY29kZS7CoApTbywgZm9yIEVJQzc3MDAgU29DLCBz
+aG91bGQgdGhlIGNsb2NrIHRyZWUgaW5mb3JtYXRpb24gYmUgcGxhY2VkIGluCmNsay1laWM3NzAw
+LmMganVzdCBhcyBjbGstc2cyMDQ0LmM/IElzIHRoaXMgdW5kZXJzdGFuZGluZyBjb3JyZWN0PwoK
+SSB3b3VsZCBiZSBncmF0ZWZ1bCBmb3IgeW91ciByZXBseS4KClJlZ2FyZHMsClh1eWFuZyBEb25n
+Cg==
