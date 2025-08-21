@@ -1,82 +1,88 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99461DE89B
-	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 18:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2542EC55C
+	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 18:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755801168; cv=none; b=IU9AHgPv4zvd1yHO3HN19+Rp//MX4VepX/St1TeTyrxw5r70NZ+IA9WlDOzOLyM9VXT6ttptqzM3W81XH14KLVIFsaOwV65QQxDXZmofMwhsBmedvlGFDgXNCTy4kforNkWKirCDP49v64joX4076PWyeo0ObBCxN6PTIedPbEk=
+	t=1755801284; cv=none; b=ZzH1tX9H2LcWyrDlwrJ9Ovv3EoahuZJ9mgnHHkG1XwWa6oIGC3IDrxPx3rxb4AOK9toYSRMpA9uAthe6i3ypgvNjQUwAtDx/8cB6Mxr8AWZLh8+WWc6JKwlAHQPyOAiNGXm5EhYc/boWKLgmCwi4MP6USr9jZBq0vYDILu6AX3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755801168; c=relaxed/simple;
-	bh=xmFoegaHOnErQaDfGoJTZzEBXqlmEwNm+xf91HfBQDo=;
+	s=arc-20240116; t=1755801284; c=relaxed/simple;
+	bh=XcXSdUzKD1mwXL/9Can636iXduhuHzRkLnWqXVqBSRk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K80/EYEyxE0hMInBcBrMvy9elmI5IHb3lePsXAzZf0WMklpuPh159rZzOsfr1098fIzhE94AVAT4SE7FXS3FoZ5uD0GkDP0+GJPfMpmA6fojYgB+ZU2p6LBM8nyoYThVjjwFHH3NR3cDgK8UA3Nlo4oJ/AYQ6m3CWXQyagQE6r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KdTQnqvO; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTgsFaqoM1IfbtiL/43GtQF0aZCtdrg36RQlaYRgJZlJCSlwX8oZoayTvKAePmU0mqFJOJ4dF5szltNLchfwMkhqoOXy0SbPlqpEGO2KwMJPQ52Yct5bLtrH0mptop4+ewKqnlchqkJhHHIWrMiftTLIhs+4JzyAPYHgcL4afGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1SJh49E; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdTQnqvO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1SJh49E"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755801165;
+	s=mimecast20190719; t=1755801281;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KON+Q6whUKmJdJeXPPkBBlZNmW3IaSDriSZEFUK+R2Y=;
-	b=KdTQnqvO/YQ+ueqFA2tkcWwHwUNk5Xe/8/XwrzqKxIF5LVHMJ/yqS4yZiMQKuftIlFVl4K
-	OvDa0GXQSEtHW2toMcqhHnX4kNnI95gkY9SXQtUtnF9lkGBdjr/TJkZh7wrFONitIQgi1a
-	KNDbCXIGjZP+0kFJm3U9RIntmBIMQhI=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8IdtsQzzrEsnVQCR1m8AsOo08J6mLd4OylRDhAWo4nw=;
+	b=X1SJh49EieKn7wpGo9WV1tMSAiMrPmlo0W6Hg2unUFvBzKtUi3QUkjQ2sLgEyxaluxL6nN
+	EPnmsAokTcGdLr7BU37KPIDiXenF+lqvq34DcOq+W56YzZ4IgHScDbJGmsxxJGgxyOxHPV
+	HjH7iXBfmmYdUeafA5NIhqeBs/X31KE=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-120-7o40Mi1XPICFv7E4QlAoBQ-1; Thu, 21 Aug 2025 14:32:44 -0400
-X-MC-Unique: 7o40Mi1XPICFv7E4QlAoBQ-1
-X-Mimecast-MFC-AGG-ID: 7o40Mi1XPICFv7E4QlAoBQ_1755801164
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e864817cb8so645795385a.0
-        for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 11:32:44 -0700 (PDT)
+ us-mta-571-XibR_VaeOYuBWbn00h7qCA-1; Thu, 21 Aug 2025 14:34:38 -0400
+X-MC-Unique: XibR_VaeOYuBWbn00h7qCA-1
+X-Mimecast-MFC-AGG-ID: XibR_VaeOYuBWbn00h7qCA_1755801278
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70d7c7e972fso18490186d6.3
+        for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 11:34:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755801164; x=1756405964;
+        d=1e100.net; s=20230601; t=1755801278; x=1756406078;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KON+Q6whUKmJdJeXPPkBBlZNmW3IaSDriSZEFUK+R2Y=;
-        b=p70pqBAmFc8gYExlYC7wLEjrhF11GJWCleIRmDXhG+e4r4gGvHhqQsVK/ls0IH/7Q5
-         FEdiONbljRFAznUyaej+cqkwRxQxUmdZ1C++6hRkbeBSaccBmMxhm/u008/PLqFxacwy
-         HLT0K9W++Wg/++9DidDPAZcvuM+SOGLDqM9JTIBpghxHX4PUrfxjQJQQAXS1oCUktMCh
-         l5aKXED/1wJF+qASsBK5RGFbKHVwsrYJ9vThXQKStJIAmflGrhOqZwbHerphsJm3l7Nu
-         y8BuP88ubgsGdPaTSJ1m3/l1ez2mTHaw3tGthlCzK5hZhT2P1AyKUWXUcbIaDl2o9PiM
-         cxYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK/E6TQRw6DeoQ88jD5uK2npAV6LmRhizZf0pUbAD7+L/2hdkNgslGcykDeE7gafy70WAf4hrMnAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Wk3QoQRrieFltXWrDuM6VO0C4CZWMi12UGLf+eRG9PHHjRJm
-	FO4aHQvsrqwE3Rmek3OPXgY67UpUhHKTYAhYCQXTI4i/ySi4V4rG35147Sf6eLAW7rkzDW3rc1u
-	xmjHR0xwdH5N1J0FsAXTycSSmN76tY7EjX2Q0zh3FIdF6q+3rd+oLuh5F/1c/ug==
-X-Gm-Gg: ASbGncv0GK+Iofni54mJovP/noCLfCeC2XAasqp+zsHIopusYwyNLvX1TL4XVx3wKAn
-	n8tjLjbfUF6dtme/c1bdwTqj9TKdNamf/S6Kc4uifd2uiQ/DUm4eHzBocL5o7tt+2myHB17VYvO
-	Tj7/8NdTK3JYYVuBKwSFUw6AoyrwhITgZL/Hk/pNhph9Vo0ypp6jMUuh0XwtmVdla40LkjUVOMV
-	db4Nmv7fpzUtFpJQZD4MI70AyZWso3Rzm0i7YXhifpYVMbS6+sT76TUYNDeZ3CIHCWXbah/Mw2K
-	waMI9L144ik2CZ7Pt9SONFEC37GqYCbHGYcVNpRe9tbxtI4rYYXht5MWENkl1Sg=
-X-Received: by 2002:ac8:6f14:0:b0:4b1:1109:6090 with SMTP id d75a77b69052e-4b2aae2cc8bmr2120541cf.4.1755801163647;
-        Thu, 21 Aug 2025 11:32:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8u9mZep+thwTChGyaQOwVjhjsZ4znq9OEsEjARCqM1Fbessm7gFZ796HVd8qGyD2EqIFVpg==
-X-Received: by 2002:ac8:6f14:0:b0:4b1:1109:6090 with SMTP id d75a77b69052e-4b2aae2cc8bmr2120031cf.4.1755801163034;
-        Thu, 21 Aug 2025 11:32:43 -0700 (PDT)
+        bh=8IdtsQzzrEsnVQCR1m8AsOo08J6mLd4OylRDhAWo4nw=;
+        b=qQkIgzgxqz4k6ecIlZRfeszxgr+6Stc3WROyUW2lvmGseKKl0nnb7ljbvQ+FnuAYoe
+         7uH9q/htRoiUo8dJq8Jq2xS11t62bHNw+JNzB0EA/QHTdegE7hEsBLFvUwhi9k2vxMua
+         SZ4NoTSXhtQkCXrsrOzSxvABW5nATpT3s155cyWhyuQNFM06gQesStmEVfud6Xm2K9W4
+         kluA4i5+wX1D9TCMGrhg9l+ugnpwtyAonpFxbuWGXuWjs0xMmW9xwXAmoAEYJ5MnxHWb
+         fwmPdZdoRu0ziLngQR0Fem7gSIKM5EXlh6TYc5ed417NQWunnwEg6Gc0RVgbAsH1Xc+e
+         h/QA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBJBkuwOIIXYQuUPcQ1IabgoAS1Du0ED8Q9RnNyj5lYICLJXekMh7GW/KyIPlH08lnOTgvJyWuX0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy88hf5pilKH01/XM07X5MozFsyz/kDru/de0g7mG1DB5h7Yg0t
+	HbOe32Ex8T3+MokgN9rBw4Y9BKUFas5QKlLqICNcralZ+V6oCwm5LJhPwZ+TX1/waaSQE0SDPB5
+	OujN+ZvyW8KqXUZXTKD287mgUhW5i/SXQ3bavhJtKJRfaFjwL+IzaKWrgJyiAMA==
+X-Gm-Gg: ASbGncvzoov6qlfBdtCmii7CVMf2EXL9xCdJ0Hp4J9suouFW6bQ4UHm6Zl9FJ247eGC
+	yGtZclqH7wWVxUe3AKiI1EbUHgL1Wbuq5fP6WGSfCdRX9hsx/Uf1gAMxQsoryoshI+W/7ZP+JrF
+	cT7pa7hN95wMQs6mpZuVRoDXKpCQVC3cA7JGdyjsckvsIZwedW5dYO6I9XDDtQJrSZdfHBjUp4m
+	1ZnsqU5M8dRfptHa+Cz3kTknx1UUGrCBrPDUU7qHdqixkO88boI/r0uMgCc1fbu9qY0YkVjfE+V
+	8YWHYhsJBY47Fwk//dWt0piKJMDwbvQ+a4gAL/HDp8hO+7VlK+kSeGh4g8zR3zQ=
+X-Received: by 2002:a05:6214:627:b0:70d:86ab:6f95 with SMTP id 6a1803df08f44-70d9738f7f7mr6593516d6.36.1755801277414;
+        Thu, 21 Aug 2025 11:34:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGhBCfL4CK1vaEmXkCImS1C3Q00vXihd0Pi1g9BmtPkaC8+Yz1YnsuRpshrKZpYpvvdxsepA==
+X-Received: by 2002:a05:6214:627:b0:70d:86ab:6f95 with SMTP id 6a1803df08f44-70d9738f7f7mr6593076d6.36.1755801276990;
+        Thu, 21 Aug 2025 11:34:36 -0700 (PDT)
 Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11ddd693asm104533501cf.37.2025.08.21.11.32.41
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba937390dsm110337596d6.60.2025.08.21.11.34.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 11:32:42 -0700 (PDT)
-Date: Thu, 21 Aug 2025 14:32:40 -0400
+        Thu, 21 Aug 2025 11:34:36 -0700 (PDT)
+Date: Thu, 21 Aug 2025 14:34:34 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: dongxuyang@eswincomputing.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, linux-riscv@lists.infradead.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v4 2/3] clock: eswin: Add eic7700 clock driver
-Message-ID: <aKdmSJtTrs6n7ZXI@x1>
-References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
- <20250815093720.1088-1-dongxuyang@eswincomputing.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+Message-ID: <aKdmurrT1pFtLSI8@x1>
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,55 +91,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815093720.1088-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi,
+Hi Tudor,
 
-On Fri, Aug 15, 2025 at 05:37:20PM +0800, dongxuyang@eswincomputing.com wrote:
-> +static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *parent_rate)
+On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
+> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *parent_rate)
 > +{
-> +	struct eswin_clk_pll *clk = to_pll_clk(hw);
-> +	const char *clk_name = clk_hw_get_name(&clk->hw);
-> +
-> +	if (!clk_name)
-> +		return -ENOMEM;
-> +
-> +	int index;
-> +	u64 round_rate = 0;
-> +
-> +	/* Must be sorted in ascending order */
-> +	u64 apll_clk[] = { APLL_LOW_FREQ, APLL_HIGH_FREQ };
-> +	u64 cpu_pll_clk[] = { CLK_FREQ_100M,  CLK_FREQ_200M,  CLK_FREQ_400M,
-> +			      CLK_FREQ_500M,  CLK_FREQ_600M,  CLK_FREQ_700M,
-> +			      CLK_FREQ_800M,  CLK_FREQ_900M,  CLK_FREQ_1000M,
-> +			      CLK_FREQ_1200M, CLK_FREQ_1300M, CLK_FREQ_1400M,
-> +			      CLK_FREQ_1500M, CLK_FREQ_1600M, CLK_FREQ_1700M,
-> +			      CLK_FREQ_1800M };
-> +
-> +	switch (str_to_pll_clk(clk_name)) {
-> +	case CLK_APLL_FOUT1:
-> +		index = find_closest(rate, apll_clk, ARRAY_SIZE(apll_clk));
-> +		round_rate = apll_clk[index];
-> +		break;
-> +	case CLK_PLL_CPU:
-> +		index = find_closest(rate, cpu_pll_clk,
-> +				     ARRAY_SIZE(cpu_pll_clk));
-> +		round_rate = cpu_pll_clk[index];
-> +		break;
-> +	default:
-> +		pr_err("%s %d, unknown clk %s\n", __func__, __LINE__,
-> +		       clk_name);
-> +		break;
-> +	}
-> +	return round_rate;
+> +	/*
+> +	 * We can't figure out what rate it will be, so just return the
+> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
+> +	 * after the rate is set and we'll know what rate the clock is
+> +	 * running at then.
+> +	 */
+> +	return rate;
 > +}
+
+...
+
 > +
-> +static const struct clk_ops eswin_clk_pll_ops = {
-> +	.set_rate = clk_pll_set_rate,
-> +	.recalc_rate = clk_pll_recalc_rate,
-> +	.round_rate = clk_pll_round_rate,
+> +static const struct clk_ops acpm_clk_ops = {
+> +	.recalc_rate = acpm_clk_recalc_rate,
+> +	.round_rate = acpm_clk_round_rate,
+> +	.set_rate = acpm_clk_set_rate,
 > +};
 
 The round_rate clk op is deprecated. Please convert this over to use
