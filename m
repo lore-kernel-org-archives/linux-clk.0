@@ -1,128 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343A4A31;
-	Thu, 21 Aug 2025 07:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE482E92DA;
+	Thu, 21 Aug 2025 07:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755761417; cv=none; b=lUgJ2McTJ0gW9BcEH5/HRzyGbYma0Kgw8xfqmFbzqAA3ljUPtKT5mGDzFWj/JoRd19ophllCSJdl+rDgiy3HPj2Y2e6pIO75Si1SlAO/RitQWMY1tXXse1ZD8qfA6pn3jaiUtpvYoLHcu7Xge0F1vaV806cD9gJ2BNRNblGr+xM=
+	t=1755761576; cv=none; b=tAXWIIQ3EbI6awy64KFmJQDO4vSZLclBKFAyb+3BWONfDRlkQrGcgeYEVPWzo1aEZwdETJOAWtL1Gs82+JG6OxRBVEP+pJ0Ir8nrxFCBceX8tTqAo/+tgksMhE0WXdfdGu8h3U9RwdaDgFtGsJcmuDJZSpHV2gCucs0bs4csBxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755761417; c=relaxed/simple;
-	bh=vxlY/X8dtM1EGO1feIikldcljazKbwBz1ntaXK3cUpU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UmdpJ74uuWt/PwD71l1zQh+jlt4QkOwgfDTW/NVDI3+Wy3ttD2BbeQlPuSZowjacV8sOc3SacofqT8NyuuoC18mSmh0LxY62dT5J6huZdfZTuQz2M3DGEboZZ5jFajx1CRW98WEIzU3XRbQ3/5wI7jYJy1wsKwvfzTyN3VZFqOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q97ul9Oz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q97ul9Oz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D869C4CEED;
-	Thu, 21 Aug 2025 07:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755761417;
-	bh=vxlY/X8dtM1EGO1feIikldcljazKbwBz1ntaXK3cUpU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=q97ul9Ozfed6vNpxwGCGCpJMgRcuiAvswkhCRQbdWAFXt4dVe1ucLVPd4Mdmjv8Q6
-	 FV+Egb9unFMjK3NlU2eiA9LRsUonhKNDhF0iLQormve3cdIM0PXHTJP0DGpbfXu0H3
-	 aPpkqbqQglfni0SyYuPI9Ym4BhcSNPQFig+CrxXS51+LKYt+eQ4LAZZKIIlrf8/RaE
-	 k3xE7clHFNWfX4vFDpZm8nEnHS2yUmdyWUYc/nzrkpDmDUNIQC1RYp9igzIaLMD3/O
-	 j4M/OFbOp8t/YQYCpG7rqItsqn2++bZj2ulhgTnNJ8TldYriooq4B68EcbLulA16CK
-	 k0vj578P3qyyg==
-Message-ID: <376a8f00-e803-4ab1-a54e-6535e41ebaee@kernel.org>
-Date: Thu, 21 Aug 2025 09:30:09 +0200
+	s=arc-20240116; t=1755761576; c=relaxed/simple;
+	bh=iR7W9OBIg/YoAAEk8o+v4Qww1X9xHOdg9QT6r7jtb8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bH1aduXjMi6nSRI1OxQVVjZ/TPekA5SlFAZzcntvkpXN8tQJ75cvgvYIQiKCZmrRMfGig2yWiexmv9Oqj4r11jffHV9+0T5uKrGGGJkp+a3DMzkUJKx+zjShDuUeYZ53Kkgbujs8CTs5FCBnKeuslri88/T7Tw6GG9iMq1ebJbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-53b17534eeeso266060e0c.3;
+        Thu, 21 Aug 2025 00:32:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755761573; x=1756366373;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5G76ZiP1l04eRnUL+woGlRNtcvSbJmIHOuwOKU1fo5k=;
+        b=W2M+vthg7R5KQMSTVFl3oLmKAKn/fuKJHZpSD+ROejCkEop3pnePpyjzpwmEUtFxct
+         cqQMDZ8K2JwWiUn9mP0KOnjTATA85zfwaOb18eKJgnbRrTr4wjT0b6bA2YdDCkg7Ujgh
+         HaBk5iWQYV9D13BrWfnvWEOy3aeXoObda1eiX/WEAkgwoLKLs+DIDasTNsQM7GLEIQLi
+         Nuj5+JNn0fJRyeTd+CSaF+gSfmcgBEatnD6/OPc9ag2TyxSFSe2ZszftI6TDF5+H29DO
+         x38/Q6FRH3dqy6+AvMYQ/yNle5z/tC4o7g6W8Yzzp8iF6vxgwdNrxCWxGYy32So9cM3/
+         2TRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtYAdXFXggMDgt++Ut4uQYCZ+XTdbhPcMr224V0rM85pUZC/Y+LZwc06vrtkKl2MnKIe8BNUZL2Bhx@vger.kernel.org, AJvYcCVYlRKHqQns4m57nTccw4ckVTktO62QJCtubr9ZTswEgGkJURew1N0jNp03iLCAkQ7UJ4svDxcaoUoZwKRAv/QO+38=@vger.kernel.org, AJvYcCVa9NlV7hcK5FSPOyPc1Gcl9esc8Pprf/Oc0BTlbb2HLV+l57GPt7FsJqAArhmZvRQUz/j9Ar5/fg+I@vger.kernel.org, AJvYcCVh6oGiuTHxA6slMG02LlEinoo9EChj+U/EK4EJqFjGPjVYlG72VVXnruRb0IslXeI5g8HKEXPw+8o2@vger.kernel.org, AJvYcCWzwNOXuSbfKfkr388loriLI8C7E+uaLwtQ8J/Pg4nwiel7vKYew7aJoo3wHCYgXDdC5Ya1xJXP/SmbzgEi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM5830RzXEjFOHQC3p3IfoaE8qhTOR4UKh+O1O5+O4A/xzb+4N
+	rH7pvphK6G1CRKVQ7cktQ4pnS9Wnrb0jzW5Eatk6S2qcZNVD4Al8Ie3akORruhd3
+X-Gm-Gg: ASbGnctufC5J498dPThQf7O/U4vdoqyys/5p/eppwaY5a5BguaM1PVRqp0HMOJNvJrW
+	69IAMj6bXVDHLHAsurJxFc5B2h16eHYJe36Z2kiVdv91T0hfJ/yMuMmsWEZBm7uFKgwvm79AV/z
+	eJ4BOt4IRRLPp668R7iZAWRcxd3sAoOeAEu4eae0SzON0m583PbB5EEX0Q/9TpqR1OYvRJ6Dfn2
+	OY1eXKrAmWcwFvTsIQKVjeNCXxBWqq9fBF1YYGcvvCcAhFFU3eu4mYLJ+L4hw1nIvF+ZOOtxDrj
+	M6aGE9W8mR2DAUrg8D3y2iglNBYTGUWYetEZ/qjugHjLW2Oi3uDDwPmEwTxRYG2+iQiNwTRVvP6
+	umKegE6XULva8hiTaAZMY348Eab0pC1Rw+r3UTIbir6Pex5kQ0PwPw4idMf8V
+X-Google-Smtp-Source: AGHT+IEvPadvvCjlqTkLcsVvoOxXWxY6JCaIK9t63EjMOycQ80Ax647sJDgibdZedCRW1cb95Z9VSQ==
+X-Received: by 2002:a05:6122:3d0b:b0:531:188b:c19e with SMTP id 71dfb90a1353d-53c7d83aac7mr297981e0c.2.1755761572460;
+        Thu, 21 Aug 2025 00:32:52 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53b2bed8eb8sm3623728e0c.21.2025.08.21.00.32.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Aug 2025 00:32:52 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-8921eb4befaso44655241.2;
+        Thu, 21 Aug 2025 00:32:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbS0hbWotO+4kXM8mHWKp2BoXZTZzO1s9qWJJkW0rr81km4QIrkScBV5sI2zIlFehtoLYpHrFPbKA4@vger.kernel.org, AJvYcCVvkXtNfttsJdleJ+tLAjLj+UJLkpYIuu7DbNyo3+oMZXUDEoD8y/XsYRXCE7ZSn9vHw5cn8Xp8NvSZ8wE2@vger.kernel.org, AJvYcCX2Ttsyf/Vr8QtRU0SaFHBlxjLoIXJDk6jqVPKwvgD6nFZ3hq+qzOcPzVu6axqsbN4uzxMd74SZhBInVwmwrhE5ezk=@vger.kernel.org, AJvYcCX9NsqebSswSAJBIMIs/cNTcGKT1WVNX39y2xArnC9oEpNAc5gfl5NWoJmEWxlzwukZC0RoeejTyOyk@vger.kernel.org, AJvYcCXxfvUoXynw5afkjv5G22uyV+3tsCgFaeDQZ9IOQrGzBYyg5k1avP7kj7iGKZvpZUvAfem10/kfv6F2@vger.kernel.org
+X-Received: by 2002:a67:e7c5:0:b0:4e7:5f31:7443 with SMTP id
+ ada2fe7eead31-51bdf241ebemr427508137.9.1755761571596; Thu, 21 Aug 2025
+ 00:32:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: mediatek: Add power-domains
- property
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ikjoon Jang <ikjn@chromium.org>,
- Enric Balletbo i Serra <eballetbo@kernel.org>,
- Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
- Eugen Hristev <eugen.hristev@linaro.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
- <20250820-mtk-dtb-warnings-v2-1-cf4721e58f4e@collabora.com>
- <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250821-whimsical-mustang-of-champagne-ca7a7d@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com> <aKYG-ph43pjgiHF_@vaman>
+In-Reply-To: <aKYG-ph43pjgiHF_@vaman>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 Aug 2025 09:32:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUWEspGvAvrm1T_hSjHmEhqAO4+OPfRWRZP+PTP-EO=5Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzPw4V06_RhWFxxZjKCzjwq7JCDGr5NyUZSqRo7upsFc1Tlulg44uQr3Mg
+Message-ID: <CAMuHMdUWEspGvAvrm1T_hSjHmEhqAO4+OPfRWRZP+PTP-EO=5Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/08/2025 09:16, Krzysztof Kozlowski wrote:
-> On Wed, Aug 20, 2025 at 03:44:52PM +0200, Julien Massot wrote:
->> The mt8183-mfgcfg node uses a power domain in its device tree node.
->> To prevent schema validation warnings, add the optional `power-domains`
->> property to the binding schema for mediatek syscon clocks.
->>
->> Fixes: 1781f2c46180 ("arm64: dts: mediatek: mt8183: Add power-domains property to mfgcfg")
-> 
-> Checkpatch complains here, but more important - where is explanation of
-> dropped tag?
-> 
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> But this tag appeared? It wasn't even given!
-> 
-> You remove public tags and add tags never given on the lists.
+Hi Vinod,
 
-I found Angelo's tag, but still dropping other acks is not explained.
+On Wed, 20 Aug 2025 at 19:33, Vinod Koul <vkoul@kernel.org> wrote:
+> On 01-08-25, 10:48, Tommaso Merciai wrote:
+> > The DMAC block on the RZ/G3E SoC is identical to the one found on the
+> > RZ/V2H(P) SoC.
+> >
+> > No driver changes are required, as `renesas,r9a09g057-dmac` will be used
+> > as a fallback compatible string on the RZ/G3E SoC.
+>
+> I seem to have only 2/3 w.o cover, nothing in pw too...?
 
-Best regards,
-Krzysztof
+Lore has the full series:
+https://lore.kernel.org/all/20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com/
+
+Only patch 2/3 was meant for you.
+Patches 1/3 and 3/3 are clk and DTS patches, which I have already
+applied to my renesas-clk and renesas-devel trees, as the new DT
+binding is straightforward.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
