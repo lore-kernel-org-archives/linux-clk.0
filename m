@@ -1,107 +1,113 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11D1321F4F
-	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 12:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8777334378;
+	Thu, 21 Aug 2025 13:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780071; cv=none; b=izn8fUNSg/9qpVha/lAIJEsJm55hjMeqF3ktrJSg6E5wHSg95fYeni1SFCIRcJJpWdVy2IMJBnMNlnycxL/ldwJTznBDsIVqs09gRir0gltRWmWfiX/mA50hOCbu8GUTzlPTS2VFsLoGcARCQZRySuK1VHhN2QvScQK46cmehRc=
+	t=1755782694; cv=none; b=QcWGiPyoep64c5GzbAYJ7EDqwNZSqe22YndGKhiDFnrAMBXdKnWCUhm9YAhKLHN8MFLc2nEjdE6DT0yV+D2K5vMPUy9cuE3onDTLg6AkLpCtR/2bYjmDLhN38ecbpCdSE+5YGiId4uT7rLuYBEYdV3ZbhJVW0MWkMjxfutxjuQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780071; c=relaxed/simple;
-	bh=9jpgKSSMok4duRe0b+RWtWp7OmcmSdefUa27stJuCIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=lVPs79bIetO7LpLTmznGxdbtPQ/uvAoNKdSUs4uyrJAT+9YdCrpbhOI0/dSaPI8n8vE1vp7QUAhr1oF2aFXwsHcUS382erWBiL/dUceA1ouHomYl6UxxBAsgE3IdfOadgeMFgoOnxutUjJTkoFjBUf1w0lPDVnCnwmPPRJ33dCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QWXx8Tb2; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755782694; c=relaxed/simple;
+	bh=76ReIJtXJzBwzWrjJa65Ko+8l//Yi0hjkZIdqxBBBC4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RmhO+oB7Llr+QsStDx+ilgypEj+cP/uDdKKac/A3bHaqoBuW25k3HVUzDO3MKwZtIXxHoTbmXtiEN24ctUyJvTMRewg2x+zgcVw9LT8ldX2ozSwK5lGgSbyoMf3h6FUx0lRVOYtT94saNgenVQo179P4RGFGm2oUmLaz8AmEPE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnBgB5CT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QWXx8Tb2"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250821124108epoutp0131292323dc82fce72ab35f4d3fbb9ddf~dyKt0QMdG2189221892epoutp01B
-	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 12:41:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250821124108epoutp0131292323dc82fce72ab35f4d3fbb9ddf~dyKt0QMdG2189221892epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755780068;
-	bh=YSW64KWlEWguGEP5S6aHwmfVaZSZlb36SUEt3aN4gtI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QWXx8Tb211F14jUMSrcwT07DY7tg/o+idoGrQraXOqpAfx+TwGAeM9Y8kBjDv+4Ox
-	 4YDHdVWNmCKBzze9otwaUXMP8wH8BEAlYTNhm4ENoecs6qsA0141K6a97exhYIgwd+
-	 uZFv1gmF08usf6AqhXs0eeQlC3tr4Wt7o80yXL7M=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250821124107epcas5p3d0165e6d8c4fefbe9990d4ed54b437af~dyKtBAz0d1592915929epcas5p37;
-	Thu, 21 Aug 2025 12:41:07 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c72xG4gNtz3hhT3; Thu, 21 Aug
-	2025 12:41:06 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80~dyKrZpFEa1534115341epcas5p41;
-	Thu, 21 Aug 2025 12:41:05 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124100epsmtip24bf607fee6cda2466f7f16b0c3a40894~dyKmvfG7k2624826248epsmtip2b;
-	Thu, 21 Aug 2025 12:41:00 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
-	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
-	ravi.patel@samsung.com, inbaraj.e@samsung.com, swathi.ks@samsung.com,
-	hrishikesh.d@samsung.com, dj76.yang@samsung.com, hypmean.kim@samsung.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, soc@lists.linux.dev
-Subject: [PATCH v2 10/10] arm64: defconfig: Enable Axis ARTPEC SoC
-Date: Thu, 21 Aug 2025 18:02:54 +0530
-Message-ID: <20250821123310.94089-11-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250821123310.94089-1-ravi.patel@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnBgB5CT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFE2C4CEEB;
+	Thu, 21 Aug 2025 13:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755782693;
+	bh=76ReIJtXJzBwzWrjJa65Ko+8l//Yi0hjkZIdqxBBBC4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=RnBgB5CTZ17kmiwkBbDAExo7pQlNQ7peebeeq092niVb2vM+IwmJxsaCAvlOS3f1A
+	 1KXPgaHqN2qA+FxKYuTun7TaAYGIOyMoiJwznaRPhIPEf4jTowAINPvQa5U5Y/q2cm
+	 31QZA8P9XHmdskehrqJbo59m7Mlp3EwsKBWt55rxDk06koyNoMi+dS8TV3XLfBuySg
+	 BUN7JtkuVLrS9PAtC2+onlSRb59amhYyTZUBKjLNryTjslMPmnQOlFeQij1/xLGXTP
+	 g87wdPfMA2peIEu6ojeGdw+oPlXqMg0JJ2c5MCSOLr2n2eQ+fqaYHiBWU7p3uiloB5
+	 8ovoQJMVlfSvA==
+Date: Thu, 21 Aug 2025 08:24:52 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	<20250821123310.94089-1-ravi.patel@samsung.com>
-	<CGME20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80@epcas5p4.samsung.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: flora.fu@mediatek.com, chunkuang.hu@kernel.org, broonie@kernel.org, 
+ linux-gpio@vger.kernel.org, mripard@kernel.org, 
+ louisalexis.eyraud@collabora.com, mchehab@kernel.org, 
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com, 
+ linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, 
+ conor+dt@kernel.org, kernel@collabora.com, 
+ linux-arm-kernel@lists.infradead.org, amergnat@baylibre.com, 
+ netdev@vger.kernel.org, tiffany.lin@mediatek.com, 
+ linux-input@vger.kernel.org, airlied@gmail.com, linux-clk@vger.kernel.org, 
+ jeesw@melfas.com, yunfei.dong@mediatek.com, linus.walleij@linaro.org, 
+ sean.wang@kernel.org, linux-media@vger.kernel.org, 
+ linux-sound@vger.kernel.org, tzimmermann@suse.de, 
+ andrew-ct.chen@mediatek.com, minghsiu.tsai@mediatek.com, simona@ffwll.ch, 
+ kuba@kernel.org, jmassot@collabora.com, devicetree@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, houlong.wei@mediatek.com, 
+ angelogioacchino.delregno@collabora.com, andrew+netdev@lunn.ch, 
+ support.opensource@diasemi.com, maarten.lankhorst@linux.intel.com, 
+ ck.hu@mediatek.com, matthias.bgg@gmail.com, pabeni@redhat.com, 
+ p.zabel@pengutronix.de, edumazet@google.com, krzk+dt@kernel.org, 
+ davem@davemloft.net, dri-devel@lists.freedesktop.org
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250820171302.324142-5-ariel.dalessandro@collabora.com>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-5-ariel.dalessandro@collabora.com>
+Message-Id: <175578240744.3438740.13033328475024605529.robh@kernel.org>
+Subject: Re: [PATCH v1 04/14] net: dt-bindings: Convert Marvell 8897/8997
+ bindings to YAML
 
-From: SungMin Park <smn1196@coasia.com>
 
-Enable the Axis ARTPEC-8 SoC in arm64 defconfig.
+On Wed, 20 Aug 2025 14:12:52 -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for Marvell 8897/8997
+> (sd8897/sd8997) bluetooth devices controller to a YAML schema.
+> 
+> While here, bindings for "usb1286,204e" (USB interface) are dropped from
+> the YAML definition as these are currently documented in file:
+> 
+> - Documentation/devicetree/bindings/net/btusb.txt
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  .../bindings/net/marvell,sd8897-bt.yaml       | 91 +++++++++++++++++++
+>  .../bindings/net/marvell-bt-8xxx.txt          | 83 -----------------
+>  2 files changed, 91 insertions(+), 83 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+> 
 
-Signed-off-by: SungMin Park <smn1196@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5bb8f09422a2..f94c1357d6f5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
-+CONFIG_ARCH_ARTPEC=y
- CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM2835=y
- CONFIG_ARCH_BCM_IPROC=y
--- 
-2.49.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/marvell,sd8897-bt.yaml: marvell,wakeup-gap-ms: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/marvell,sd8897-bt.example.dtb: bluetooth@2 (marvell,sd8897-bt): marvell,wakeup-gap-ms: b'\x00d' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/net/btusb.txt references a file that doesn't exist: Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+Documentation/devicetree/bindings/net/btusb.txt: Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250820171302.324142-5-ariel.dalessandro@collabora.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
