@@ -1,125 +1,109 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2542EC55C
-	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 18:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5053128C4;
+	Thu, 21 Aug 2025 20:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755801284; cv=none; b=ZzH1tX9H2LcWyrDlwrJ9Ovv3EoahuZJ9mgnHHkG1XwWa6oIGC3IDrxPx3rxb4AOK9toYSRMpA9uAthe6i3ypgvNjQUwAtDx/8cB6Mxr8AWZLh8+WWc6JKwlAHQPyOAiNGXm5EhYc/boWKLgmCwi4MP6USr9jZBq0vYDILu6AX3Q=
+	t=1755808985; cv=none; b=V7eIMs8L+cs+yz8jmXWr13lRN1zHcCf9Rci7MRPeTB/QshjJyAGwFf7uP+qKiVuC0hCg0Yv1TaXTtmWs72rwruBU0amZj2r55SPxrjSOljYUrgKZ0zdH7gEJ7XCbpPUuukmZCsUqPJjZENgScOUvYf087cGUUOwXWgRGH9Nj63s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755801284; c=relaxed/simple;
-	bh=XcXSdUzKD1mwXL/9Can636iXduhuHzRkLnWqXVqBSRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTgsFaqoM1IfbtiL/43GtQF0aZCtdrg36RQlaYRgJZlJCSlwX8oZoayTvKAePmU0mqFJOJ4dF5szltNLchfwMkhqoOXy0SbPlqpEGO2KwMJPQ52Yct5bLtrH0mptop4+ewKqnlchqkJhHHIWrMiftTLIhs+4JzyAPYHgcL4afGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1SJh49E; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1755808985; c=relaxed/simple;
+	bh=Y1I8jahgciXUO2vX0njJM1NW5jilQkAEyjxTM0zI+ig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZaBnC4RD2i91Q9E5xY2X6VaTj7LfBAcSw9ZhAxLaA0+fTeCvg0GG2w9SuPBTC08qCRMfCNh85ZnXeZB6JzIsZa8whyTXOKgKkll2MhjyS7IqgfqUn9+NB+xkrcTYfqhb0R1gAmVnWapCuhNYtMlQjyO9zvgvE8KA77ESWh6GYF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=YEatoojs; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1SJh49E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755801281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8IdtsQzzrEsnVQCR1m8AsOo08J6mLd4OylRDhAWo4nw=;
-	b=X1SJh49EieKn7wpGo9WV1tMSAiMrPmlo0W6Hg2unUFvBzKtUi3QUkjQ2sLgEyxaluxL6nN
-	EPnmsAokTcGdLr7BU37KPIDiXenF+lqvq34DcOq+W56YzZ4IgHScDbJGmsxxJGgxyOxHPV
-	HjH7iXBfmmYdUeafA5NIhqeBs/X31KE=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-571-XibR_VaeOYuBWbn00h7qCA-1; Thu, 21 Aug 2025 14:34:38 -0400
-X-MC-Unique: XibR_VaeOYuBWbn00h7qCA-1
-X-Mimecast-MFC-AGG-ID: XibR_VaeOYuBWbn00h7qCA_1755801278
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70d7c7e972fso18490186d6.3
-        for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 11:34:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YEatoojs"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-245f3784edcso13858945ad.1;
+        Thu, 21 Aug 2025 13:43:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1755808983; x=1756413783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7HMnbUJjOig9s+/+Eizv6zpmYG/IGENV4CSNveOOfxM=;
+        b=YEatoojs2TGtlLmf8emm1chahTE9Vv7lpUIrw33HAV+mme8h+MN1uJJrh2UUFzKHGa
+         aLfV6NccaxynX4Pj6KJFLj/sNXtZfIkFNgjaA+koL5ZHisx/Dvh2SyYP6rcPWixibNbN
+         XKequdhg6xzy16MjmUuh2qzaaN8heR2RkQ0w/aSH0OJxXzm270Y9Nskjxq8ndFqZA1AZ
+         0AHmBw4eomOTlbJ5WZS2OgTJ/O/KrTqLwtXlTCSnR+gBBrg4L/bJcf2pPljg+Imvay6t
+         gsGHDFmG2ScEMcYXZ2wf3anHBwqqFjibCQToTvzOsWI8vT0Ydv4G0R3KDkySw8Hw7bTc
+         rlIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755801278; x=1756406078;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755808983; x=1756413783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8IdtsQzzrEsnVQCR1m8AsOo08J6mLd4OylRDhAWo4nw=;
-        b=qQkIgzgxqz4k6ecIlZRfeszxgr+6Stc3WROyUW2lvmGseKKl0nnb7ljbvQ+FnuAYoe
-         7uH9q/htRoiUo8dJq8Jq2xS11t62bHNw+JNzB0EA/QHTdegE7hEsBLFvUwhi9k2vxMua
-         SZ4NoTSXhtQkCXrsrOzSxvABW5nATpT3s155cyWhyuQNFM06gQesStmEVfud6Xm2K9W4
-         kluA4i5+wX1D9TCMGrhg9l+ugnpwtyAonpFxbuWGXuWjs0xMmW9xwXAmoAEYJ5MnxHWb
-         fwmPdZdoRu0ziLngQR0Fem7gSIKM5EXlh6TYc5ed417NQWunnwEg6Gc0RVgbAsH1Xc+e
-         h/QA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBJBkuwOIIXYQuUPcQ1IabgoAS1Du0ED8Q9RnNyj5lYICLJXekMh7GW/KyIPlH08lnOTgvJyWuX0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy88hf5pilKH01/XM07X5MozFsyz/kDru/de0g7mG1DB5h7Yg0t
-	HbOe32Ex8T3+MokgN9rBw4Y9BKUFas5QKlLqICNcralZ+V6oCwm5LJhPwZ+TX1/waaSQE0SDPB5
-	OujN+ZvyW8KqXUZXTKD287mgUhW5i/SXQ3bavhJtKJRfaFjwL+IzaKWrgJyiAMA==
-X-Gm-Gg: ASbGncvzoov6qlfBdtCmii7CVMf2EXL9xCdJ0Hp4J9suouFW6bQ4UHm6Zl9FJ247eGC
-	yGtZclqH7wWVxUe3AKiI1EbUHgL1Wbuq5fP6WGSfCdRX9hsx/Uf1gAMxQsoryoshI+W/7ZP+JrF
-	cT7pa7hN95wMQs6mpZuVRoDXKpCQVC3cA7JGdyjsckvsIZwedW5dYO6I9XDDtQJrSZdfHBjUp4m
-	1ZnsqU5M8dRfptHa+Cz3kTknx1UUGrCBrPDUU7qHdqixkO88boI/r0uMgCc1fbu9qY0YkVjfE+V
-	8YWHYhsJBY47Fwk//dWt0piKJMDwbvQ+a4gAL/HDp8hO+7VlK+kSeGh4g8zR3zQ=
-X-Received: by 2002:a05:6214:627:b0:70d:86ab:6f95 with SMTP id 6a1803df08f44-70d9738f7f7mr6593516d6.36.1755801277414;
-        Thu, 21 Aug 2025 11:34:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGhBCfL4CK1vaEmXkCImS1C3Q00vXihd0Pi1g9BmtPkaC8+Yz1YnsuRpshrKZpYpvvdxsepA==
-X-Received: by 2002:a05:6214:627:b0:70d:86ab:6f95 with SMTP id 6a1803df08f44-70d9738f7f7mr6593076d6.36.1755801276990;
-        Thu, 21 Aug 2025 11:34:36 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70ba937390dsm110337596d6.60.2025.08.21.11.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 11:34:36 -0700 (PDT)
-Date: Thu, 21 Aug 2025 14:34:34 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	willmcvicker@google.com, kernel-team@android.com
-Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
-Message-ID: <aKdmurrT1pFtLSI8@x1>
-References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
- <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
+        bh=7HMnbUJjOig9s+/+Eizv6zpmYG/IGENV4CSNveOOfxM=;
+        b=edfSQdKZEUZeR1s8BVM/VIwM5tUIgRcIQtNUse0qAmH6NsK101wTGjMCkDGjcCCC6S
+         yD9GYhxCjppmP4ruv1QRTOVE9pcXzuBGwoogM31cY/+UZu+ViWRpWdaJ78ljJwAgSjk+
+         Azt0m3286bj0LMI9Lt22FVJfnuZjYJGiqWzGT7dBIuxFqW0SAUY5R6C3yOoy28E+OCh3
+         fmsvau03s9Fwf+RG0YfvJ40HzYHxBdynPNQtg70OETGXCpmkdu9h7EqApqHIJ7+OtzeI
+         c9SAfffunX87ik1nfNdyEO9Q7g6+4mARLimwBc7H5hMJlXD03lXcerwr3aLw5TpxseI8
+         7aUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhrEsLKnM41aLCrYFqUZvyk1pGeVZmNSB/J75g/Q42aamgVB2PWcJgRoqH3JpPJoPSv7qIFPyyX9W62w0@vger.kernel.org, AJvYcCWTMXTg+Bgx9qXTJJG6lEYtR3xdf7Qea5fdOQy/PhsXSWj4o9+iGMOUMhEn0iYSDIHB1mciG+v+DG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrrE8s4QrKbLBE+YhehM8esojwCpzqw3Q7hV7KZjKM0za8Hzye
+	aign1nDQKKOb0PVE0pRne00m10mzcmKqZHl5QS+9ndePuu+XV6RS7LuHrfQ74d3HiVuiibzwwrv
+	qKTawaNVmYMg8XkKQckYgx88uFxRj2bg=
+X-Gm-Gg: ASbGncvXF2EKLhDW+ak0ZeXE0Qwi/hrbXw+stZ1UCIRtouXbpWBAj4PaTGBnhyUpHaE
+	MMxG5NMgn/OlW2KFh2JO2qZNhi/w6Yw7ANz5aKAvZdTqv6vUHKrYIirQUxOdwSP7YxESNnFaY1g
+	IexyXGCtZ44uLTbRJZ9ePsX1+xOJZElXY/tb4izxkkVw2f1Y4C0kVRKg9B573IyvfofF7XSaMri
+	N7wpK+I4q6OX8IzPe+hybO2wE9gV+qJzqD0Mh4K
+X-Google-Smtp-Source: AGHT+IGuprKMUQEODaMep9Ho8yPNqOKRMqZI02yinYtRQ7Fki1XZs3M4IXAeEY52gzg1zE/0hwBQh7l6+wPOYT0Ocrc=
+X-Received: by 2002:a17:902:e888:b0:246:570:2d99 with SMTP id
+ d9443c01a7336-2462efc9965mr8562475ad.58.1755808982872; Thu, 21 Aug 2025
+ 13:43:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20250814200953.1969944-1-da@libre.computer>
+In-Reply-To: <20250814200953.1969944-1-da@libre.computer>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 21 Aug 2025 22:42:51 +0200
+X-Gm-Features: Ac12FXweMQUvhGMxkUIwx9HmkMNbiRniVi18J_hwc2Z1Wue7xjXq3oeWyHupql0
+Message-ID: <CAFBinCA2XZfiY2ESDSp2WyM9r-XB_LSj9s91woU9iWoQKrp6QA@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson-g12a: fix bit range for fixed sys and hifi pll
+To: Da Xue <da@libre.computer>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tudor,
+On Thu, Aug 14, 2025 at 10:09=E2=80=AFPM Da Xue <da@libre.computer> wrote:
+>
+> The bit range 17:0 does not match the datasheet for A311D / S905D3.
+> Change the bit range to 19:0 for FIX and HIFI PLLs to match datasheet.
+I have:
+-  S905X3_Public_Datasheet_Hardkernel.pdf
+-  S922X_Datasheet_Wesion.pdf
+-  A311D_Datasheet_01_Wesion.pdf
+These state (for all three PLLs) that .frac is [18:0] (that's shift =3D
+0 and width =3D 19).
+I get where you're coming from with 19:0 - in the context of this
+patch this can be misleading as it would mean that the fractional
+divider is 20 bits wide.
 
-On Tue, Aug 19, 2025 at 11:45:38AM +0000, Tudor Ambarus wrote:
-> +static long acpm_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *parent_rate)
-> +{
-> +	/*
-> +	 * We can't figure out what rate it will be, so just return the
-> +	 * rate back to the caller. acpm_clk_recalc_rate() will be called
-> +	 * after the rate is set and we'll know what rate the clock is
-> +	 * running at then.
-> +	 */
-> +	return rate;
-> +}
+> There's no frac for sys pll so add that as well.
+I first read this as sys pll does not have a fractional divider.
+What do you think about: "The frac field for sys pll is missing so add
+that as well"
 
-...
+I guess at this point this should include:
+Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Signed-off-by: Da Xue <da@libre.computer>
 
-> +
-> +static const struct clk_ops acpm_clk_ops = {
-> +	.recalc_rate = acpm_clk_recalc_rate,
-> +	.round_rate = acpm_clk_round_rate,
-> +	.set_rate = acpm_clk_set_rate,
-> +};
+[...]
+Have you compared /sys/kernel/debug/meson-clk-msr/measure_summary and
+/sys/kernel/debug/clk/clk_summary before/after this patch?
+I'll test this during the weekend and then give my Tested/Reviewed by
 
-The round_rate clk op is deprecated. Please convert this over to use
-determine_rate.
 
-Brian
-
+Best regards,
+Martin
