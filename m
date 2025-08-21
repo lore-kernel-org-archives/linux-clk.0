@@ -1,97 +1,280 @@
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016FE2EA48F;
-	Thu, 21 Aug 2025 08:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A35242D76;
+	Thu, 21 Aug 2025 08:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755765946; cv=none; b=lH8bcDk/W6o7iVRVflYUvFBN0ka0axaAyRs9K3I7+Ai+peVUl5sbou3p2oPSPXQhvBQ4vMuTvNgUHn06KE2TUnFNtP96/Nke34IrGGxCddanet7g73fjIdtXrBMkIUQqoaymuPjeorBis1gHEiGWdP2PSchaDyXyyCx3m07ym+E=
+	t=1755766067; cv=none; b=k8nSf/ISIM/CvtXb74orPjwhCU9GwMKzh7Zs/Tng1Qd5WR3qsKfzAfT1JTbhC6pKQ7WzrcRTmBbjr9CGG622JPuiNVIAmaM9CYcd3dV0AOROk4F/bxwA4TF7IM/3mB2Gk/Um0FB5aZfVVEIUcwUCXkKkJ8EHdXWqvHaWXpKwH1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755765946; c=relaxed/simple;
-	bh=1OZUlltJR5Uc++55sA1dzKlArKgrpruidlWcPYjFWIs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=fM9b0gYeQqCUZc5pZnvJFjYi7RhI3ln0Jg+bZFfABVQNJBGxbQ+qIn1krdYV5ayn6hbopiyw1F/LMRFQV6mexQHOnZNxBjV/EgQhJnMp8r57WurYTUuOxjVr29CRfdfc0YIcc1qT91s1JMUO9L7sqk7GSHxDo4JfSTcZIhhILDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 21 Aug 2025 16:45:26 +0800 (GMT+08:00)
-Date: Thu, 21 Aug 2025 16:45:26 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6JGj57uq5rSL?= <dongxuyang@eswincomputing.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, linux-riscv@lists.infradead.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v4 3/3] riscv: dts: eswin: Add clock driver support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <bfa23779-9861-4ae4-9ced-9f347394f033@kernel.org>
-References: <20250815093539.975-1-dongxuyang@eswincomputing.com>
- <20250815093754.1143-1-dongxuyang@eswincomputing.com>
- <0ef61f03-0346-491d-ad2a-293e24cbc4a8@kernel.org>
- <3fa3950e.371.198c1770125.Coremail.dongxuyang@eswincomputing.com>
- <bfa23779-9861-4ae4-9ced-9f347394f033@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1755766067; c=relaxed/simple;
+	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tgz1IWmi0k26tFQqMvOIgWf9z8GOr5U8ZzxNeUuMAVDFogLK3sl8+IgNCpSWs515CMn/sJJrlcKwHoKVy6roUlMjvvxwn2f8pwbgPd0of+DzQzcxkf/bTOKkrE301t13MY6kVq0w5NU3LCdVeqHMB+MipOf4hDeO3efgN7CnvUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JR/XurJW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JR/XurJW"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1BDEFC78;
+	Thu, 21 Aug 2025 10:46:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755765995;
+	bh=YOJtioSHHd/SkiLRqPzjm4PRQjeoNg6aVatMs971PnA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JR/XurJW8sk9ngBFyhtN41bOYZKc3k6MO96wg5S1s/yToSxVonfxw9oBZCQeluZc4
+	 hC5yUxoMZeMOJDoy+oNNr2zhw/ZUz2MejPSMRyXxSdBRev9IAwx146iUVyEZncJuFf
+	 ukWll4p/fGM3RUiMJdlG0yqwWG8S0wD4TJl2KYj0=
+Message-ID: <913b5a87-19f1-44f5-8782-8711980644a1@ideasonboard.com>
+Date: Thu, 21 Aug 2025 11:47:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <27984d9.51f.198cbcde8d7.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAXt5Wm3KZodHPBAA--.23144W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEBAmil+M8hP
-	gACsn
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/6] dt-bindings: display: bridge: renesas, dsi:
+ Document RZ/V2H(P) and RZ/V2N
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Magnus Damm <magnus.damm@gmail.com>
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20250728201435.3505594-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGkgS3J6eXN6dG9mLAoKVGhhbmtzIGZvciB5b3VyIGNvbnN0cnVjdGl2ZSBzdWdnZXN0aW9ucy4K
-IAo+ID4+Pgo+ID4+PiBBZGQgY2xvY2sgZGV2aWNlIHRyZWUgc3VwcG9ydCBmb3IgZWljNzcwMCBT
-b0MuCj4gPj4+Cj4gPj4+IFNpZ25lZC1vZmYtYnk6IFlpZmVuZyBIdWFuZyA8aHVhbmd5aWZlbmdA
-ZXN3aW5jb21wdXRpbmcuY29tPgo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBYdXlhbmcgRG9uZyA8ZG9u
-Z3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20+Cj4gPj4+IC0tLQo+ID4+PiAgYXJjaC9yaXNjdi9i
-b290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpIHwgMjI4MyArKysrKysrKysrKysrKysr
-Kwo+ID4+PiAgMSBmaWxlIGNoYW5nZWQsIDIyODMgaW5zZXJ0aW9ucygrKQo+ID4+PiAgY3JlYXRl
-IG1vZGUgMTAwNjQ0IGFyY2gvcmlzY3YvYm9vdC9kdHMvZXN3aW4vZWljNzcwMC1jbG9ja3MuZHRz
-aQo+ID4+Pgo+ID4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9yaXNjdi9ib290L2R0cy9lc3dpbi9laWM3
-NzAwLWNsb2Nrcy5kdHNpIGIvYXJjaC9yaXNjdi9ib290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nr
-cy5kdHNpCj4gPj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPj4+IGluZGV4IDAwMDAwMDAwMDAw
-MC4uNDA1ZDA2ZjkxOTBlCj4gPj4+IC0tLSAvZGV2L251bGwKPiA+Pj4gKysrIGIvYXJjaC9yaXNj
-di9ib290L2R0cy9lc3dpbi9laWM3NzAwLWNsb2Nrcy5kdHNpCj4gPj4+IEBAIC0wLDAgKzEsMjI4
-MyBAQAo+ID4+PiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIE1JVCkK
-PiA+Pj4gKy8qCj4gPj4+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMjUsIEJlaWppbmcgRVNXSU4gQ29t
-cHV0aW5nIFRlY2hub2xvZ3kgQ28uLCBMdGQuCj4gPj4+ICsgKi8KPiA+Pj4gKwo+ID4+PiArLyB7
-Cj4gPj4+ICsJY2xvY2stY29udHJvbGxlckA1MTgyODAwMCB7Cj4gPj4+ICsJCWNvbXBhdGlibGUg
-PSAiZXN3aW4sZWljNzcwMC1jbG9jayI7Cj4gPj4+ICsJCXJlZyA9IDwweDAwMDAwMCAweDUxODI4
-MDAwIDB4MDAwMDAwIDB4ODAwMDA+Owo+ID4+PiArCQkjY2xvY2stY2VsbHMgPSA8MD47Cj4gPj4+
-ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ID4+PiArCQkjc2l6ZS1jZWxscyA9IDwwPjsKPiA+
-Pj4gKwo+ID4+PiArCQkvKiBmaXhlZCBjbG9jayAqLwo+ID4+PiArCQlmaXhlZF9yYXRlX2Nsa19h
-cGxsX2ZvdXQyOiBmaXhlZC1yYXRlLWFwbGwtZm91dDIgewo+ID4+Cj4gPj4gU3VjaCBwYXR0ZXJu
-IHdhcyB5ZWFycyBhZ28gTkFLZWQuCj4gPj4KPiA+PiBObywgZG9uJ3QgZXZlciBicmluZyBub2Rl
-cyBwZXIgY2xvY2suCj4gPj4KPiA+IFdlIGhhdmUgZGVmaW5lZCBhIGxhcmdlIG51bWJlciBvZiBj
-bG9jayBkZXZpY2VzLsKgCj4gPiBUaGUgY29tbWVudCBvZiB2MyBpcyAiRHJpdmVyIGlzIGFsc28g
-d2F5IHRvbyBiaWcgZm9yIHNpbXBsZSBjbG9jayBkcml2ZXIgYW5kIEnCoAo+ID4gYW0gc3VycHJp
-c2VkIHRvIHNlZSBzbyBtYW55IHJlZHVuZGFuY2llcy4iLiBUaGVyZWZvcmUsIHdlIG1vZGlmaWVk
-IHRoZSBjbG9ja8KgCj4gPiBkcml2ZXIgY29kZSBhbmQgbW92ZWQgdGhlIGRlc2NyaXB0aW9uIG9m
-IGNsb2NrIGRldmljZSBmcm9tIHRoZSBkcml2ZXIgdG8gdGhlIERUUy4KPiA+IAo+ID4gQnV0LCB0
-aGlzIGNvbW1lbnQgaXMgdGhhdCBkb24ndCBldmVyIGJyaW5nIG5vZGVzIHBlciBjbG9jay4gV2Xi
-gJl2ZSBydW4gaW50byBzb21lCj4gCj4gQW5kPyBXaGF0IGlzIHVuY2xlYXIgaW4gdGhhdCBjb21t
-ZW50Pwo+IAo+ID4gdHJvdWJsZSBhbmQgYXJlbuKAmXQgc3VyZSB3aGljaCBhcHByb2FjaCBhbGln
-bnMgYmV0dGVyIHdpdGggY29tbXVuaXR5IGd1aWRlbGluZXMuwqAKPiA+IENvdWxkIHlvdSBzaGFy
-ZSB5b3VyIGFkdmljZSBvciBzdWdnZXN0aW9ucyBvbiB0aGUgYmVzdCB3YXkgZm9yd2FyZD8KPiAK
-PiBMb29rIGF0IGFueSBvdGhlciByZWNlbnQgY2xvY2sgZHJpdmVycy4KCkkgZm91bmQgb3V0IHRo
-YXQgdGhlIHJlY2VudCBjbG9jayBkcml2ZXJzLCBzdWNoIGFzIHNvcGhnby9jbGstc2cyMDQ0LmPC
-oAphbmQgcm9ja2NoaXAvY2xrLXJrMzU2Mi5jLCB0aGUgY2xvY2sgdHJlZSBpbmZvcm1hdGlvbiBv
-ZiB0aGVtIHdhcyBwbGFjZWQKaW4gdGhlIEMgY29kZS7CoApTbywgZm9yIEVJQzc3MDAgU29DLCBz
-aG91bGQgdGhlIGNsb2NrIHRyZWUgaW5mb3JtYXRpb24gYmUgcGxhY2VkIGluCmNsay1laWM3NzAw
-LmMganVzdCBhcyBjbGstc2cyMDQ0LmM/IElzIHRoaXMgdW5kZXJzdGFuZGluZyBjb3JyZWN0PwoK
-SSB3b3VsZCBiZSBncmF0ZWZ1bCBmb3IgeW91ciByZXBseS4KClJlZ2FyZHMsClh1eWFuZyBEb25n
-Cg==
+Hi,
+
+On 28/07/2025 23:14, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add the compatible string "renesas,r9a09g057-mipi-dsi" for the Renesas
+> RZ/V2H(P) (R9A09G057) SoC. While the MIPI DSI LINK registers are shared
+> with the RZ/G2L SoC, the D-PHY register layout differs. Additionally, the
+> RZ/V2H(P) uses only two resets compared to three on RZ/G2L, and requires
+> five clocks instead of six.
+> 
+> To reflect these hardware differences, update the binding schema to
+> support the reduced clock and reset requirements for RZ/V2H(P).
+> 
+> Since the RZ/V2N (R9A09G056) SoC integrates an identical DSI IP to
+> RZ/V2H(P), the same "renesas,r9a09g057-mipi-dsi" compatible string is
+> reused for RZ/V2N.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v6->v7:
+> - Renamed pllclk to pllrefclk
+> - Preserved the reviewed by tag from Geert and Krzysztof
+> 
+> v5->v6:
+> - Preserved the sort order (by part number).
+> - Added reviewed tag from Geert.
+> 
+> v4->v5:
+> - No changes
+> 
+> v3->v4:
+> - No changes
+> 
+> v2->v3:
+> - Collected reviewed tag from Krzysztof
+> 
+> v1->v2:
+> - Kept the sort order for schema validation
+> - Added  `port@1: false` for RZ/V2H(P) SoC
+> ---
+>  .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++++++++++++-----
+>  1 file changed, 91 insertions(+), 29 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> index 5a99d9b9635e..c20625b8425e 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> @@ -14,16 +14,21 @@ description: |
+>    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
+>    up to four data lanes.
+>  
+> -allOf:
+> -  - $ref: /schemas/display/dsi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    items:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> +          - const: renesas,rzg2l-mipi-dsi
+> +
+> +      - items:
+> +          - const: renesas,r9a09g056-mipi-dsi # RZ/V2N
+> +          - const: renesas,r9a09g057-mipi-dsi
+> +
+>        - enum:
+> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> -      - const: renesas,rzg2l-mipi-dsi
+> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+>  
+>    reg:
+>      maxItems: 1
+> @@ -49,34 +54,56 @@ properties:
+>        - const: debug
+>  
+>    clocks:
+> -    items:
+> -      - description: DSI D-PHY PLL multiplied clock
+> -      - description: DSI D-PHY system clock
+> -      - description: DSI AXI bus clock
+> -      - description: DSI Register access clock
+> -      - description: DSI Video clock
+> -      - description: DSI D-PHY Escape mode transmit clock
+> +    oneOf:
+> +      - items:
+> +          - description: DSI D-PHY PLL multiplied clock
+> +          - description: DSI D-PHY system clock
+> +          - description: DSI AXI bus clock
+> +          - description: DSI Register access clock
+> +          - description: DSI Video clock
+> +          - description: DSI D-PHY Escape mode transmit clock
+> +      - items:
+> +          - description: DSI D-PHY PLL reference clock
+> +          - description: DSI AXI bus clock
+> +          - description: DSI Register access clock
+> +          - description: DSI Video clock
+> +          - description: DSI D-PHY Escape mode transmit clock
+
+Is this style ok in the bindings? I thought it's necessary to "if" these
+kind of blocks based on the compatible.
+
+>    clock-names:
+> -    items:
+> -      - const: pllclk
+> -      - const: sysclk
+> -      - const: aclk
+> -      - const: pclk
+> -      - const: vclk
+> -      - const: lpclk
+> +    oneOf:
+> +      - items:
+> +          - const: pllclk
+> +          - const: sysclk
+> +          - const: aclk
+> +          - const: pclk
+> +          - const: vclk
+> +          - const: lpclk
+> +      - items:
+> +          - const: pllrefclk
+> +          - const: aclk
+> +          - const: pclk
+> +          - const: vclk
+> +          - const: lpclk
+>  
+>    resets:
+> -    items:
+> -      - description: MIPI_DSI_CMN_RSTB
+> -      - description: MIPI_DSI_ARESET_N
+> -      - description: MIPI_DSI_PRESET_N
+> +    oneOf:
+> +      - items:
+> +          - description: MIPI_DSI_CMN_RSTB
+> +          - description: MIPI_DSI_ARESET_N
+> +          - description: MIPI_DSI_PRESET_N
+> +      - items:
+> +          - description: MIPI_DSI_ARESET_N
+> +          - description: MIPI_DSI_PRESET_N
+>  
+>    reset-names:
+> -    items:
+> -      - const: rst
+> -      - const: arst
+> -      - const: prst
+> +    oneOf:
+> +      - items:
+> +          - const: rst
+> +          - const: arst
+> +          - const: prst
+> +      - items:
+> +          - const: arst
+> +          - const: prst
+>  
+>    power-domains:
+>      maxItems: 1
+> @@ -130,6 +157,41 @@ required:
+>  
+>  unevaluatedProperties: false
+>  
+> +allOf:
+> +  - $ref: ../dsi-controller.yaml#
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g057-mipi-dsi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 5
+> +
+> +        clock-names:
+> +          maxItems: 5
+> +
+> +        resets:
+> +          maxItems: 2
+> +
+> +        reset-names:
+> +          maxItems: 2
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 6
+> +
+> +        clock-names:
+> +          minItems: 6
+> +
+> +        resets:
+> +          minItems: 3
+> +
+> +        reset-names:
+> +          minItems: 3
+> +
+
+Oh... So this one does the selection based on the compatible. And if we
+get a new SoC which doesn't fit into the above classification model,
+we'll have to restructure the binding (or add a new one)?
+
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+
+ Tomi
+
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/r9a07g044-cpg.h>
+
