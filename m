@@ -1,143 +1,105 @@
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7EA2DC334;
-	Thu, 21 Aug 2025 11:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702922E040A
+	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 11:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755775175; cv=none; b=rd6h6jWSUe29Cs1g9DfMvuCJFjpumw1Qflnz/D+SbPoef4iTdkC7MoJxfkS/lXQd4+RYagmLqC8vg4loCFOfQYgiU1I51xART+sfdoaqAKM3XC06+OYh67jRZP1S9aVIJRqHth74X+EKwCbHbKvQxHHqRVmxs8EqvbkMvrJ6YSM=
+	t=1755777240; cv=none; b=tK0F4OM85qVMJc/CPb+WLOhxB+rsLrLZ0j0tqwa4oFl2u3yeJ9dgILtSRWbeeAr1ZHb1xy8lg6BKh2jzdZxioDlqaIp/uCFYHP04bDDRpARhOh/1PaF3uNAsuvjXqOyRlGXUs/lGa/aq4DhxM6cherxZ5PFFV63VAZ2DHsqknb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755775175; c=relaxed/simple;
-	bh=qV8PLaqeW9hgJT+405ZgED/JzPTXaQoHO4G+xKSnioI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q7m8c9bVxnAMOkxdTH5qJfLoQxTSRyq8xHkYf7vFh7x2HNoedx9kOWi4EUEiI/3EVcMwzp3014V2zLMypOIc0aMarzKGNnOe9/Utn6fEpzpWOSoQkgWcEFlafJfUFU+VCUm7V1LZx/Lu2MXIBKkll4SYWvcEdIEl5kbcnPazX/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=saFAjhys; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+	s=arc-20240116; t=1755777240; c=relaxed/simple;
+	bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H4eredic0DU8+YkhSC7fGGjrTv75d8Qm3hElZjPqxbBnZxGKMJWJeCy07P1EWYKX3S8VMixNoCVkQlQQuuTEhZEs6EzZlJGQG5g5IbPGUsPJbeKaeLZlMlOyJa197yiu5PdaqxJl0eFWb+eUvwSZreMUZOAv0ONgY2KQ/nQMyaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EeTlcgdw; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="saFAjhys"
-DKIM-Signature: a=rsa-sha256; bh=84JybEFawvEnVDJfX1degPru+BtEANRZCQyoOyQXNDA=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1755775104; v=1; x=1756207104;
- b=saFAjhys+SAA5w1z6HmhRdMrqBXNWCYwA8VV09AXOYV/8+MSQT0YKeKKqx1Nf92fGzfkcVvA
- 71w51cxD3ZndMX34Wg71IUm5odEer/pSah2LLw4KGMsCkQd5otdbvgBnVdlJ22B4Goy18v4lKQ6
- WBrCMf8/xj6C/vDbSgHh55vaGo1pkWaad4lkYch8F8bGVGmtKVB84LqNiqnzcfnVUsLj/yBlUY4
- +IgCJG7NseBgTqByYsAxJgZebrXyR/Lq5wtksQQR+7XT2f5b9jp+Ub9XWqgh23vuRjrN+d0aTc6
- WcqMvZdkJvRuyvUPBnO3y2ZTeXpJAXFteMlUjCZOuFGfQ==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 4562db5e; Thu, 21 Aug 2025 13:18:24 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Thu, 21 Aug 2025 13:17:43 +0200
-Subject: [PATCH v2 1/4] dt-bindings: clock: marvell,pxa1908: Add syscon
- compatible to apmu
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeTlcgdw"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-335360f9b6aso16795381fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 04:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755777236; x=1756382036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+        b=EeTlcgdwYygVPvWzZ81l5IByZT3GZgdfLnceLEVRtnLKn5kjZAK18d9RTZKllNN3R9
+         UXNJuNZYhZL2/q7EIlmuqT/RNnXonu0xTXfM7Mu1hvzHJXxGStRwQ8wUjUvu1nmWe5kJ
+         bOvHqJiyfkTBFnPalQCG/zkNmCKpV4C//WOnsggDAKiSq2dxxWaUdzQDpOv4icRLO6jy
+         FLT1i4qApSx7t3oDdCbKZI6Uo/XCgFeugJGvh4s4McwDReUaIaDZCi4GNX1+YPb88r4q
+         FyMPyu6OD1xEbix9HWqrFIy2K24Qt+lvmhMkS4VLBb67YbyhwsoovUIdJ3elz5ONpvok
+         A3oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755777236; x=1756382036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7PbAw7tFxkqZThPb3yJ9U2UGY2pHnuSaci2IGV7yfc=;
+        b=mqjtKfdraPS303G6WNp1bvPabb4/580VEKxp+16vcn//tDqEIWhEwBQfhufdyB1TxU
+         eH09lcwDM7ME+tb07S6FcJCYqVWdBoXZVCbsaXMH1W82rRzu1p0Tc+DCzOYKH1bj4/9Z
+         WSDUfhDUS++OpAPoD0jpCc2xOnhkP+Be7hoEuybxsFCxDX32KDQruyjdHBGy2J59MhiS
+         0ynNvybutZ9NTO8AJfiy/rYuof/AS5hbzxRRt3bD0T37ZnWM1Pu8IDBOFWet3ZasPl1X
+         QWcRr4fqOt1Vsd7+cMJ65hQeIuNZVxMY41ixRDOJSVB5y0EGsTP4mL2yakt52j9GjmI8
+         CxtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ6ooMh8KLiLy0Pre/ovnn4GwGBxXEOHZB8vbBnRrWIGb6DJrshYc7U1Zu+YctvMkEpF5DCs8sTUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM1TroDaYtEXCwviu4IAc6lh6DzoAtS2r+vhkTMHKCKzfGNxaF
+	Myo5QbRKYiaKMSYMZtMQcR1f/V90Z96FvIu57oJR8jO3D7vZGcVE+btxbR3XDyr/ImBrekAXbkN
+	OWhR+DpjAL2tJToKl76iS9Za7lAae/MQt6SmwDlDKig==
+X-Gm-Gg: ASbGncuM7mMZnbDFZXSA0mxLoo3SgIKPg1ch7i5MzQte0MmXuf2yHgrTCy6qIO23vy9
+	jB+9gJvyO1teef4VL9VUT3bu36chqid8t66hPYiDydcmmx7yA/F+OjMzb7lsV8YD+JsAtndNFN8
+	IpZ7rC5nx+1DYHMIYTHJZz7IthNOYY4WEVBdynkfwLb8K0mpdwEChyeUZAC7zkn0ga88+mPsFh1
+	PC4vCo=
+X-Google-Smtp-Source: AGHT+IFoewdvNuLwpOMDi7tPmb9FEQKLI5JEdERuyolhueuXHZ2+5KnKdkT/j3cc2QMbmt8jG7ipw7ObSBOoHSZHVLc=
+X-Received: by 2002:a2e:a013:0:b0:332:2d5c:e171 with SMTP id
+ 38308e7fff4ca-3354a275fd8mr4061531fa.11.1755777236482; Thu, 21 Aug 2025
+ 04:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250821-pxa1908-genpd-v2-1-eba413edd526@dujemihanovic.xyz>
-References: <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
-In-Reply-To: <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2011;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=qV8PLaqeW9hgJT+405ZgED/JzPTXaQoHO4G+xKSnioI=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBnLGep6WF9r3Zs+31QsVqBe4MOVhtn5MZJxbudNHn9ac
- WrHK5a9HaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjAR0V5Ghk/nfsbwdLxoVX//
- Tj3vjdV/CY5XM/6Hb1VbNmWTW1fonVSG/zXZt4KVp+o9XusWpJ/JllDybr3ivdMeJ+NuCTnt151
- 7jhkA
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com> <20250820171302.324142-10-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250820171302.324142-10-ariel.dalessandro@collabora.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 21 Aug 2025 13:53:45 +0200
+X-Gm-Features: Ac12FXy1SuiUzS280qDRSJHcA_2jVr4y-FjGItB1ru8eWVK-JVnc9Ql5XGWxM9c
+Message-ID: <CACRpkdbVqNpz2HiAz+_vFUkDy1TE6ZDxp6X2g9rRWAt4s=jRgw@mail.gmail.com>
+Subject: Re: [PATCH v1 09/14] dt-bindings: pinctrl: mediatek,mt65xx-pinctrl:
+ Allow gpio-line-names
+To: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch, 
+	andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com, 
+	broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com, 
+	conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com, 
+	edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com, 
+	jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com, 
+	krzk+dt@kernel.org, kuba@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com, 
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com, 
+	matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com, 
+	mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add required syscon compatible to the APMU controller. This is required
-for the SoC's power domain controller as the registers are shared.
+On Wed, Aug 20, 2025 at 7:16=E2=80=AFPM Ariel D'Alessandro
+<ariel.dalessandro@collabora.com> wrote:
 
-Also add a #power-domain-cells property as the node will serve as the
-power domain phandle.
+> Current, the DT bindings for MediaTek's MT65xx Pin controller is missing
+> the gpio-line-names property, add it to the associated schema.
+>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
-v2:
-- Drop simple-mfd
-- Add #power-domain-cells
----
- .../devicetree/bindings/clock/marvell,pxa1908.yaml | 30 +++++++++++++++++-----
- 1 file changed, 24 insertions(+), 6 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-index 4e78933232b6b925811425f853bedf6e9f01a27d..6f3a8578fe2a6810911fec5879c07c9ddb34565a 100644
---- a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-+++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-@@ -19,11 +19,14 @@ description: |
- 
- properties:
-   compatible:
--    enum:
--      - marvell,pxa1908-apbc
--      - marvell,pxa1908-apbcp
--      - marvell,pxa1908-mpmu
--      - marvell,pxa1908-apmu
-+    oneOf:
-+      - enum:
-+          - marvell,pxa1908-apbc
-+          - marvell,pxa1908-apbcp
-+          - marvell,pxa1908-mpmu
-+      - items:
-+          - const: marvell,pxa1908-apmu
-+          - const: syscon
- 
-   reg:
-     maxItems: 1
-@@ -31,6 +34,9 @@ properties:
-   '#clock-cells':
-     const: 1
- 
-+  '#power-domain-cells':
-+    const: 1
-+
- required:
-   - compatible
-   - reg
-@@ -38,11 +44,23 @@ required:
- 
- additionalProperties: false
- 
-+if:
-+  not:
-+    properties:
-+      compatible:
-+        contains:
-+          const: marvell,pxa1908-apmu
-+
-+then:
-+  properties:
-+    '#power-domain-cells': false
-+
- examples:
-   # APMU block:
-   - |
-     clock-controller@d4282800 {
--      compatible = "marvell,pxa1908-apmu";
-+      compatible = "marvell,pxa1908-apmu", "syscon";
-       reg = <0xd4282800 0x400>;
-       #clock-cells = <1>;
-+      #power-domain-cells = <1>;
-     };
-
--- 
-2.50.1
-
+Yours,
+Linus Walleij
