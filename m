@@ -1,109 +1,130 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5053128C4;
-	Thu, 21 Aug 2025 20:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180122C0292
+	for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 21:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755808985; cv=none; b=V7eIMs8L+cs+yz8jmXWr13lRN1zHcCf9Rci7MRPeTB/QshjJyAGwFf7uP+qKiVuC0hCg0Yv1TaXTtmWs72rwruBU0amZj2r55SPxrjSOljYUrgKZ0zdH7gEJ7XCbpPUuukmZCsUqPJjZENgScOUvYf087cGUUOwXWgRGH9Nj63s=
+	t=1755812790; cv=none; b=Kj+UPym9jdtbwTjbHEtjR3C6sODxe/kOk3mFHLu9f3GB0e0T2TxVr8B2Wyl2x2tw4aP/dbe3uD3xrxuEAVzZADbAX5610c5WnBwR1vYgYmBSEEH8eovLnLAwjcyqcswHcVhv1RC2mM+5z0xxpqP4V8NTl0Dt/6SGO4LW9vTqhnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755808985; c=relaxed/simple;
-	bh=Y1I8jahgciXUO2vX0njJM1NW5jilQkAEyjxTM0zI+ig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZaBnC4RD2i91Q9E5xY2X6VaTj7LfBAcSw9ZhAxLaA0+fTeCvg0GG2w9SuPBTC08qCRMfCNh85ZnXeZB6JzIsZa8whyTXOKgKkll2MhjyS7IqgfqUn9+NB+xkrcTYfqhb0R1gAmVnWapCuhNYtMlQjyO9zvgvE8KA77ESWh6GYF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=YEatoojs; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	s=arc-20240116; t=1755812790; c=relaxed/simple;
+	bh=WjMsQZzuysaDV6R+P3ZzyoCh1QHeYreJxscNPZJrjvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=evfjIdGA4M1ohJ+43Wbdy1PxP2l67NeO9JV679WywMru64Qjz8NMuShQdMuijdLio6S1h7MChUZdlZbLgstj+jXqp8VjQw6eYF3YpICUrbljtrmAw/dZISPgVDb4MT0cuOAlD5Sb2NUAir8aOwW5SO8kr0URAeoiSb0t3tR8mvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8Ah7uDh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YEatoojs"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-245f3784edcso13858945ad.1;
-        Thu, 21 Aug 2025 13:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755808983; x=1756413783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7HMnbUJjOig9s+/+Eizv6zpmYG/IGENV4CSNveOOfxM=;
-        b=YEatoojs2TGtlLmf8emm1chahTE9Vv7lpUIrw33HAV+mme8h+MN1uJJrh2UUFzKHGa
-         aLfV6NccaxynX4Pj6KJFLj/sNXtZfIkFNgjaA+koL5ZHisx/Dvh2SyYP6rcPWixibNbN
-         XKequdhg6xzy16MjmUuh2qzaaN8heR2RkQ0w/aSH0OJxXzm270Y9Nskjxq8ndFqZA1AZ
-         0AHmBw4eomOTlbJ5WZS2OgTJ/O/KrTqLwtXlTCSnR+gBBrg4L/bJcf2pPljg+Imvay6t
-         gsGHDFmG2ScEMcYXZ2wf3anHBwqqFjibCQToTvzOsWI8vT0Ydv4G0R3KDkySw8Hw7bTc
-         rlIQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8Ah7uDh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755812788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UOEidWIYFOcPQc5k2cWSdnWss7AqeJmy+kRLikq18m4=;
+	b=K8Ah7uDhCPqerNmb4nVEJWvyZZyKKUflA1cziygM+Ve249/l3ZGLl0TvvteiC9CWnLSe/x
+	vE1yJrRTtG2RgqcEjgiY67nZ95glF0HthDVB77wIeXy0mDgUlFPkJQaIfIJmP/+YdAd/P5
+	9H53nhE9FSWOgdCF7WLqqo1+UpkJw/c=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-385-_YsZIefbMrOSeWz9z32EtA-1; Thu, 21 Aug 2025 17:46:27 -0400
+X-MC-Unique: _YsZIefbMrOSeWz9z32EtA-1
+X-Mimecast-MFC-AGG-ID: _YsZIefbMrOSeWz9z32EtA_1755812786
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109bccebaso44779861cf.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 Aug 2025 14:46:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755808983; x=1756413783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755812786; x=1756417586;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7HMnbUJjOig9s+/+Eizv6zpmYG/IGENV4CSNveOOfxM=;
-        b=edfSQdKZEUZeR1s8BVM/VIwM5tUIgRcIQtNUse0qAmH6NsK101wTGjMCkDGjcCCC6S
-         yD9GYhxCjppmP4ruv1QRTOVE9pcXzuBGwoogM31cY/+UZu+ViWRpWdaJ78ljJwAgSjk+
-         Azt0m3286bj0LMI9Lt22FVJfnuZjYJGiqWzGT7dBIuxFqW0SAUY5R6C3yOoy28E+OCh3
-         fmsvau03s9Fwf+RG0YfvJ40HzYHxBdynPNQtg70OETGXCpmkdu9h7EqApqHIJ7+OtzeI
-         c9SAfffunX87ik1nfNdyEO9Q7g6+4mARLimwBc7H5hMJlXD03lXcerwr3aLw5TpxseI8
-         7aUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOhrEsLKnM41aLCrYFqUZvyk1pGeVZmNSB/J75g/Q42aamgVB2PWcJgRoqH3JpPJoPSv7qIFPyyX9W62w0@vger.kernel.org, AJvYcCWTMXTg+Bgx9qXTJJG6lEYtR3xdf7Qea5fdOQy/PhsXSWj4o9+iGMOUMhEn0iYSDIHB1mciG+v+DG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrrE8s4QrKbLBE+YhehM8esojwCpzqw3Q7hV7KZjKM0za8Hzye
-	aign1nDQKKOb0PVE0pRne00m10mzcmKqZHl5QS+9ndePuu+XV6RS7LuHrfQ74d3HiVuiibzwwrv
-	qKTawaNVmYMg8XkKQckYgx88uFxRj2bg=
-X-Gm-Gg: ASbGncvXF2EKLhDW+ak0ZeXE0Qwi/hrbXw+stZ1UCIRtouXbpWBAj4PaTGBnhyUpHaE
-	MMxG5NMgn/OlW2KFh2JO2qZNhi/w6Yw7ANz5aKAvZdTqv6vUHKrYIirQUxOdwSP7YxESNnFaY1g
-	IexyXGCtZ44uLTbRJZ9ePsX1+xOJZElXY/tb4izxkkVw2f1Y4C0kVRKg9B573IyvfofF7XSaMri
-	N7wpK+I4q6OX8IzPe+hybO2wE9gV+qJzqD0Mh4K
-X-Google-Smtp-Source: AGHT+IGuprKMUQEODaMep9Ho8yPNqOKRMqZI02yinYtRQ7Fki1XZs3M4IXAeEY52gzg1zE/0hwBQh7l6+wPOYT0Ocrc=
-X-Received: by 2002:a17:902:e888:b0:246:570:2d99 with SMTP id
- d9443c01a7336-2462efc9965mr8562475ad.58.1755808982872; Thu, 21 Aug 2025
- 13:43:02 -0700 (PDT)
+        bh=UOEidWIYFOcPQc5k2cWSdnWss7AqeJmy+kRLikq18m4=;
+        b=ubPHzsxvCjXH3WCvYU6QJNC/+0eeMz7njq/Pvwwo/SCpWBU+BeWq4/h6bDXPuuR8rK
+         OnF+geTY1DISem963pmhopKsx1tMUSsIrhqtvZ5N9rBEVKpV215skPKeaKOrbs6I7Ovf
+         hxlhBXGMDyAAFHbXSm1zwP0bnGCIAeNOTGYWgnb4ZSe4C1vGwWkq1tdcXCZVcpzfwx8L
+         YAd0Fxo6SVRzsIOxV8YyE9deeXIc9TuQHwVJMvR5vuLpYBsSonhotj8txwm6RGCJpFU6
+         tqyjQIAwpIPpXdqGMaxWU7+SFB8AO58M1Au/+4Xj7cPblFafsfY9Ez6AA0/bciPOpYGM
+         B5Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQSq3HYVfzcNc2zGT01smTCZxYPNLnft5HO4YvUcoW3TkAP3fnv6IeMgzvBHNMrQO7AW0AWdVSaZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkAI3Jmdy4p2ot1Y3dGAN8zkxxrdoQpNnvAgJ7ZawZCVpRUbhp
+	/PrxhEqpOmwV0LDkMcNJSRti6ql1Lkcvd4RSqfAH5vdGcOzoKMIzFlGUdkmKP4vIyWYU61tfOuS
+	OVq+gSQol8ouyxnpSo0HQk1Tfwd9Qg5XqJOiSg9W2Sxx2aW4dVUFM/K7W2MWgiA==
+X-Gm-Gg: ASbGncs5+FMSw8YGi/DWFIieb3wgkACGsTfKlpE3Dk4Tp5aoAAUDDBvW3ebz3UpJEh0
+	AbVZBYiTOd+0agLkzN5COBVhGQCm68brq3Ijy4OhwhqzPhEvbJ2iicXZnjYHk3hxXy//rY9boUb
+	bn2VSXZu3QdOo14bQGk3+jOtJbr/Z6fCJEN6KndeRuYO70rB3t/LmQL+I4pDj4MXiwPQVurH8FZ
+	ob69yq0Nn5cCLPGwLyZWPUiLZzwPALTfLaGioOCdnOhW/u+xOXzDhUct9/nv7kHSokZ6uv0xL7G
+	FtiGv8iAvjmr/mjalnIT3ox1T9NjoKYvKJAVFzrirFNRnrmqYTPYo5DNUHgrZqrdDxXjoJ4u8la
+	JYuwLAsWtDKTnzppbcsc=
+X-Received: by 2002:ac8:5812:0:b0:4b0:73db:f81b with SMTP id d75a77b69052e-4b2aaa1a378mr10332661cf.10.1755812786460;
+        Thu, 21 Aug 2025 14:46:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM/f6AWKsD/uiuSUkJzb9jNkg9oqjjxZOXqxlVkr171nvQa2lEbcNla+IOhlEltLwBQr891g==
+X-Received: by 2002:ac8:5812:0:b0:4b0:73db:f81b with SMTP id d75a77b69052e-4b2aaa1a378mr10332491cf.10.1755812786097;
+        Thu, 21 Aug 2025 14:46:26 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e020514sm1201852885a.17.2025.08.21.14.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 14:46:25 -0700 (PDT)
+Date: Thu, 21 Aug 2025 17:46:19 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/21] clk: remove unneeded 'fast_io' parameter in
+ regmap_config
+Message-ID: <aKeTq1lJ549a2jnQ@x1>
+References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+ <20250813161517.4746-3-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814200953.1969944-1-da@libre.computer>
-In-Reply-To: <20250814200953.1969944-1-da@libre.computer>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Thu, 21 Aug 2025 22:42:51 +0200
-X-Gm-Features: Ac12FXweMQUvhGMxkUIwx9HmkMNbiRniVi18J_hwc2Z1Wue7xjXq3oeWyHupql0
-Message-ID: <CAFBinCA2XZfiY2ESDSp2WyM9r-XB_LSj9s91woU9iWoQKrp6QA@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson-g12a: fix bit range for fixed sys and hifi pll
-To: Da Xue <da@libre.computer>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813161517.4746-3-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Aug 14, 2025 at 10:09=E2=80=AFPM Da Xue <da@libre.computer> wrote:
->
-> The bit range 17:0 does not match the datasheet for A311D / S905D3.
-> Change the bit range to 19:0 for FIX and HIFI PLLs to match datasheet.
-I have:
--  S905X3_Public_Datasheet_Hardkernel.pdf
--  S922X_Datasheet_Wesion.pdf
--  A311D_Datasheet_01_Wesion.pdf
-These state (for all three PLLs) that .frac is [18:0] (that's shift =3D
-0 and width =3D 19).
-I get where you're coming from with 19:0 - in the context of this
-patch this can be misleading as it would mean that the fractional
-divider is 20 bits wide.
+Hi Wolfram,
 
-> There's no frac for sys pll so add that as well.
-I first read this as sys pll does not have a fractional divider.
-What do you think about: "The frac field for sys pll is missing so add
-that as well"
+On Wed, Aug 13, 2025 at 06:14:48PM +0200, Wolfram Sang wrote:
+> When using MMIO with regmap, fast_io is implied. No need to set it
+> again.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> No dependencies, can be applied directly to the subsystem tree. Buildbot is
+> happy, too.
+> 
+>  drivers/clk/actions/owl-common.c  | 1 -
+>  drivers/clk/clk-axm5516.c         | 1 -
+>  drivers/clk/nxp/clk-lpc32xx.c     | 1 -
+>  drivers/clk/qcom/a53-pll.c        | 1 -
+>  drivers/clk/qcom/a7-pll.c         | 1 -
+>  drivers/clk/qcom/apss-ipq-pll.c   | 1 -
+>  drivers/clk/qcom/clk-cbf-8996.c   | 1 -
+>  drivers/clk/qcom/clk-cpu-8996.c   | 1 -
+>  drivers/clk/qcom/hfpll.c          | 1 -
+>  drivers/clk/qcom/ipq-cmn-pll.c    | 1 -
+>  drivers/clk/thead/clk-th1520-ap.c | 1 -
+>  11 files changed, 11 deletions(-)
 
-I guess at this point this should include:
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Signed-off-by: Da Xue <da@libre.computer>
+These all look good to me.
 
-[...]
-Have you compared /sys/kernel/debug/meson-clk-msr/measure_summary and
-/sys/kernel/debug/clk/clk_summary before/after this patch?
-I'll test this during the weekend and then give my Tested/Reviewed by
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
+Should drivers/clk/sprd/common.c also be updated as well?
 
-Best regards,
-Martin
+Brian
+
