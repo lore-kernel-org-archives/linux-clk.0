@@ -1,98 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2199A4A1A;
-	Fri, 22 Aug 2025 19:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C50E15E90;
+	Fri, 22 Aug 2025 19:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755891386; cv=none; b=FTo5wdgeCOesqq7wjwGUTcV33npscbwybHcUaguAbDc/+p/ToAWNbIG8h4Gw0MQenC8+HEZyZXGvsiNQHJD49TiCiVXpIRNofRxS1FHFDhmUzZTSvJ4ulYFHQE0k0pANuK9cYav72UGUrWab/fI5tvzmvoNi8tEdkUJ3OpuhG/E=
+	t=1755891592; cv=none; b=SSd759AGR0M8rI7PI9FnkG9z2HZoe6PZnRj4VF6Zcg0KVDKUr66TzvhsPnsNTy05g7LXNQ3hfoTq3UfVgWwd4L+Wy6GA3aQ5mX+caK2X511HpVHE3FfYs6gUdJ+Zb8T5JG7PrJ43KXb+JDgnjiqR+3Wd/EusO9txhVIAZeuSJDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755891386; c=relaxed/simple;
-	bh=zUCHNRR29X2q9YcEgJs3tXfAiU46otyD1jNMg85M99Y=;
+	s=arc-20240116; t=1755891592; c=relaxed/simple;
+	bh=dg74KSkRhAtNHcxY1z8fkqMzfxeeOVWbECFvFRXHLSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tl3yw0SXSfxTv9yTnS21AB4cc+fDaAziu50FGZNzA7lksJ/FgFVuKjQtV55dmM2sAHgWYyvgLPbv8HhvSvR2wQGNNybfp0G0hNeOB9GNlZFyvKVfAaG4GkcjLsedUXr56gyYeBnRglND6zDanIZHpU6tOx2nYbSeFvoENGE1j8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCsrNgGl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJQVpmHC2W710oGsR7yVTFCp51NAk1pgw8SP876HBqye+maz6Hp/g/kOe6fM7D8m6Potc5y4DEong+oxYHWucVabd20LbVzxcxFlH6XfXivHaIjFmt7XqfMpQdLLNqNCP5szDG9YBdbY2SL94htjVTtgvgWXiKXlwah5iDiQO6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXpJdOxL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCsrNgGl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C97EC4CEED;
-	Fri, 22 Aug 2025 19:36:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXpJdOxL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5934C4CEED;
+	Fri, 22 Aug 2025 19:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755891385;
-	bh=zUCHNRR29X2q9YcEgJs3tXfAiU46otyD1jNMg85M99Y=;
+	s=k20201202; t=1755891592;
+	bh=dg74KSkRhAtNHcxY1z8fkqMzfxeeOVWbECFvFRXHLSM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QCsrNgGlw9/U8/bb96FmiCm0e7GCnSOxo2e73LWwl7l4/OVe3lBJSmgheBA3wLb4p
-	 ztRSODRu6eLqie2tbnSD/eKWGhnDOzOJkb7VrjYLSDJkZQGl+AZGOfsJYtmu7zKqq0
-	 25ykW8pS5oX4v1Lmh4YFYI4qONxivNNHghtLus1xvDWSJOY0AlylaAWJenmU8XDzbK
-	 /YLxDPEm05uZqeftxy14lqO6DZC0FglHvw9JCscmhCLlRKfESVh4Dbk40NfaYIrMPV
-	 JDzKMK3jbHP8NVAPQaSrpAkLf57lNF5AVfB2/gWXFJb0T1jTn+3GuM8k0H7J+WTJOu
-	 BdTgWPpypKi0Q==
-Date: Fri, 22 Aug 2025 14:36:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: power: Add Marvell PXA1908 domains
-Message-ID: <20250822193624.GA187008-robh@kernel.org>
-References: <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
- <20250821-pxa1908-genpd-v2-2-eba413edd526@dujemihanovic.xyz>
+	b=rXpJdOxLNycUvIsw2gMPg9zMyrLykVSU8bb4RU5BVW/xSq/Vls3DtK2GulvNfNh9p
+	 /rpm9efCsTWFz55az9lBRAVaMmZiGzjSsotLl8YIGj4dj0OL1EqiXNjVaBvR/chQHn
+	 FJwOBlmJrRSZv1V9sGHuFLwlhgpHSqv3rIKsjVAOvH/4dU0x0AWtCEAxY9LzMV8N8T
+	 lOEPz2/kOoJUySu0oi7CU5zLpNuTGEadrKYU279/tloaEh9YOUYVRhJmsPl6CKPWmx
+	 SC8vBb2xd29j9VoS+ye0Hqo7k0xubgxT4jOs15OBMDOUSw0agE3Ivnzt8NlGqhTNQu
+	 uk8aLClwGeRfg==
+Date: Fri, 22 Aug 2025 14:39:51 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: swathi.ks@samsung.com, linux-arm-kernel@axis.com, krzk@kernel.org,
+	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
+	hypmean.kim@samsung.com, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, hrishikesh.d@samsung.com, pjsin865@coasia.com,
+	pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org,
+	kenkim@coasia.com, linus.walleij@linaro.org, soc@lists.linux.dev,
+	dj76.yang@samsung.com, linux-arm-kernel@lists.infradead.org,
+	cw00.choi@samsung.com, smn1196@coasia.com, jesper.nilsson@axis.com,
+	shradha.t@samsung.com, catalin.marinas@arm.com, arnd@arndb.de,
+	mingyoungbo@coasia.com, gwk1013@coasia.com, tomasz.figa@gmail.com,
+	s.nawrocki@samsung.com, will@kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, hgkim05@coasia.com, ksk4725@coasia.com,
+	devicetree@vger.kernel.org, inbaraj.e@samsung.com, sboyd@kernel.org,
+	alim.akhtar@samsung.com
+Subject: Re: [PATCH v2 01/10] dt-bindings: clock: Add ARTPEC-8 clock
+ controller
+Message-ID: <175589159077.191700.15798343255656756009.robh@kernel.org>
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <20250821123310.94089-1-ravi.patel@samsung.com>
+ <CGME20250821124019epcas5p42ac6e6abe1d3c8c9d69331596e51ad48@epcas5p4.samsung.com>
+ <20250821123310.94089-2-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821-pxa1908-genpd-v2-2-eba413edd526@dujemihanovic.xyz>
+In-Reply-To: <20250821123310.94089-2-ravi.patel@samsung.com>
 
-On Thu, Aug 21, 2025 at 01:17:44PM +0200, Duje Mihanović wrote:
-> Add device tree bindings for Marvell PXA1908's power domains.
+
+On Thu, 21 Aug 2025 18:02:45 +0530, Ravi Patel wrote:
+> From: Hakyeong Kim <hgkim05@coasia.com>
 > 
-> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+> Add dt-schema for Axis ARTPEC-8 SoC clock controller.
+> 
+> The Clock Management Unit (CMU) has a top-level block CMU_CMU
+> which generates clocks for other blocks.
+> 
+> Add device-tree binding definitions for following CMU blocks:
+> - CMU_CMU
+> - CMU_BUS
+> - CMU_CORE
+> - CMU_CPUCL
+> - CMU_FSYS
+> - CMU_IMEM
+> - CMU_PERI
+> 
+> Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 > ---
-> v2:
-> - Drop schema
-> ---
->  include/dt-bindings/power/marvell,pxa1908-power.h | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>  .../bindings/clock/axis,artpec8-clock.yaml    | 213 ++++++++++++++++++
+>  include/dt-bindings/clock/axis,artpec8-clk.h  | 169 ++++++++++++++
+>  2 files changed, 382 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+> 
 
-This should be squashed into the previous patch. The Reviewed-by stands 
-with that.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> 
-> diff --git a/include/dt-bindings/power/marvell,pxa1908-power.h b/include/dt-bindings/power/marvell,pxa1908-power.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..19b088351af138823505a774ff27203429fe2d97
-> --- /dev/null
-> +++ b/include/dt-bindings/power/marvell,pxa1908-power.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * Marvell PXA1908 power domains
-> + *
-> + * Copyright 2025, Duje Mihanović <duje@dujemihanovic.xyz>
-> + */
-> +
-> +#ifndef __DTS_MARVELL_PXA1908_POWER_H
-> +#define __DTS_MARVELL_PXA1908_POWER_H
-> +
-> +#define PXA1908_POWER_DOMAIN_VPU	0
-> +#define PXA1908_POWER_DOMAIN_GPU	1
-> +#define PXA1908_POWER_DOMAIN_GPU2D	2
-> +#define PXA1908_POWER_DOMAIN_DSI	3
-> +#define PXA1908_POWER_DOMAIN_ISP	4
-> +
-> +#endif
-> 
-> -- 
-> 2.50.1
-> 
