@@ -1,245 +1,205 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A9B3F9D2;
-	Fri, 22 Aug 2025 15:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D7F20E023;
+	Fri, 22 Aug 2025 15:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755875104; cv=none; b=IOdKr+0KCxOUT1KQFuO6eGCY85C5wEJNUpMniOq2UPtq1p8ECYUjg4o8OUHfSR29VU8HKJY5Fnrw2dBUOQvkfhjZ64Nn/xG9yzNV7Ojxisfuda7SMaXfMjphGYCyMknH56XoD4BGieI9dcub3uHOuoe6aVvuYhHt6oGjG6UgodA=
+	t=1755875656; cv=none; b=axRJ3pS0V/XBLf9GpGC5iZSQFba9SLvzch1jqYIqUhTXOXpEGnbcRcLFVVtpSyShlqS1bkTotLql75PCV8S8RwcxPD3PCUaQp8lRXTksL7a+V7SugIV+MvLJ1AJDNP8TrcxrbI2NZdw//s3M9Cx7WqS0nFXdoplSxH4yZWsMndk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755875104; c=relaxed/simple;
-	bh=tGSSNSnFFWPZY21Ur0558xtTyXaUmF1cBPI/rRqOS3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PF143m5EmJofXLhqMaWHylstSjmP1wYJkSS6Bh3Qg5f0Bc7JkKlHbP4N1TmujGLxnWsf0/fwxnKh23pHXL+yTyn5Zk8YI8pM/M5vIPH34zVgsWS27pvVOBrlWP/QEMGQr+4+sl2egOTLTRdwEGlMBuKas9jT9QhBDj42gfatjfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SO/viMQV; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755875656; c=relaxed/simple;
+	bh=LonE3rEgRMxIVsYfDjiHDPQfYMJ4W3TyT5tCihgHym0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzp9wth/bJnR3S+qCsdGlz9n7zLHfQbmgJ4YrABAUo05s3QTAtrXtHITn9KF10zCmfwIphXAKxYaDzL2UWUxxf0pRbI4p2MrOlSRL68OGUXufQmzBkhZn3TVdJ7CqtYP/37kvgrVfhJrbnfvH9lTKr9XB9IxK6VkrQxwJu//N9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcdvgiT3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SO/viMQV"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c4368ab352so1075701f8f.1;
-        Fri, 22 Aug 2025 08:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755875101; x=1756479901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSy3uP111tmp0BYAk5JJsg/1JnSS0DO1D4O3BOeuxDQ=;
-        b=SO/viMQVv19xDwv0W+EqZLzF90zM52OAp2jz0NnZgK/4uGx+JoSxSRkeI2oYzpfGTa
-         FMpNtcY4XL22tMqpwLjyjuFaf/cgaXjvsO5nr2sDNrt8sFXeioccJy7GdRKwpDLqx1mv
-         ooJqhlTvHO2FS3Djbk6VAtxvwQV7S9iv3qHbhGqp+j78pnNI3xJEhjQmqu9fExDvbh7Z
-         KxPMjUiPprA5+kEjY3hav2l/yJyI6KDjJkKwqISpghiPoDQBdPLuWxrR1K4PLYjvvaZs
-         8Kq5O8VrujNUIeSsB3YDNjyzppNjX4WcNe/jLhQbzIHigQLv+cuc3+c3W2ZdTSZs4kM/
-         Pwcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755875101; x=1756479901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jSy3uP111tmp0BYAk5JJsg/1JnSS0DO1D4O3BOeuxDQ=;
-        b=QEz5yBWUHlHMg44WbjX/UQsIdvXq+78yl+DJNTf6GNE8UVE8UJ3bBLxUh0yzCU4kR9
-         T22nIJ0b1zALjPj1SUR+7gG+0YNn9Pkzu7UVwonxqJ+hRdoblW6xjusiTXrg50BYNz6w
-         GKO4zPAi3lrYGANKWRmZfj517RHkgLxnRUwIZmSMRAsukiDvhR71WZjx+wgJCnGJKvfD
-         es++rGkByYr3b64ayEXkxilYXOkhMEw/DDibtWQhzRSk18CGzYg5q3uk3ZKElkWNYuAv
-         mbDXg5qYEKjNovgBEHUuIpdbHFJCsHPbbEVqP8B9AxBhUlz4dJY44m95T4nbwkEF5ZKe
-         tYDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoGoZtwXOOqkmJ6E/D+2e1QiQhU702xZCredeqnGjy7DVUKagKlNwucrZu3vXNu5Ro4t8pkwb6iTnpVAw=@vger.kernel.org, AJvYcCVR0hnUM4DGAJzV+YcO/b1g3q+tsLhlfYeximFVUvyPnl58nzsz2frPpcWbIgBN+8Af838ty8RsFRAYWccy@vger.kernel.org, AJvYcCW6N2l4lwrTDmn7TP1D3eRMPj3iyiqWDEc97Izi4SENk4xsYosR3YcBX8F2YEOERtG50U7e3PykvkHl@vger.kernel.org, AJvYcCWP9g5y4CM4FQdwsOzlG0lZqfzkowypNojE8h5bWmuOj5coctdwYOaOb1uHdo/B3FKnT4pBRooebOKf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf/A/ib/ZBENpGI5kF9r/YPFNmJ7u7ZAEUCGwia1CIpLSHrPAp
-	8qE9hVL4wn+9SQa9dGwmBmp3glRdTLY4UqtjjfuplM4HwlrRPHtFUs3/A78Snukoss1QICQ4rDN
-	RkyXR1PbxWPX47G2DY3hwKSUM/mT+pRM=
-X-Gm-Gg: ASbGnctZ1yXh8Ok8GvLcLW1mUCB0K947/0wTUkERcdZijRxdfSVTvfBK3rOcfAfvlBx
-	nmSIu+dq4fVjf4oTEgIDeyiGgXGgEvXfgkxKXjM7yeMgwJNBBkyE8qa4xFKpZHM7Ro9u//deAJ4
-	CyacJlZsMZr0rSF+iUs5bjy/zIclxcV6KBvwfUiNIqzPZW6mxn9UOEiGSVifLgg23lPadKwUR9o
-	31lmkQV
-X-Google-Smtp-Source: AGHT+IHdbJCM1JrU9aZhUhCW3G/ZDFnrficgj+epThhDt8C/ZyJfJc4LFShS/wBERzgRCfTyJaZymDF2pTWqYPZCvmI=
-X-Received: by 2002:a05:6000:310d:b0:3c3:d82c:2295 with SMTP id
- ffacd0b85a97d-3c5dad0fdbamr2848028f8f.24.1755875101014; Fri, 22 Aug 2025
- 08:05:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcdvgiT3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28AE3C4CEED;
+	Fri, 22 Aug 2025 15:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755875656;
+	bh=LonE3rEgRMxIVsYfDjiHDPQfYMJ4W3TyT5tCihgHym0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lcdvgiT329HDpoh0VCPKjLOr0moxcH5cK28AAxLH4+gdXwe82hWMy5dQXf+hxi+SJ
+	 e5skJ6Ap3UNK0hxPe/1QnheFWVpdsPDuOEyu/CscLYWgU30HdVoKiMx0zfj5Wy/CwO
+	 cSBIRzhdLMkd6X6u2lLgcYTDtvl9pespreueOrlccrxtDtXBmjc4D3yOKhl7LjVwQ5
+	 WRahCkYy+4d50YdUNM+F8DB4LPVIQUwhjRHIh6Ac0h1fO7vCZVT1jWiRh9yW8JCFOw
+	 AZM9juQBSX/GvY2Z50e0J5uHQ1wlVf5cHwNZOkZXtCySwR9zTYxtOWABXBHT5B2nDf
+	 L8Yg2tntKVzEQ==
+Date: Fri, 22 Aug 2025 10:14:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+	andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
+	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
+	davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
+	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
+	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
+	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+	lgirdwood@gmail.com, linus.walleij@linaro.org,
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
+	matthias.bgg@gmail.com, mchehab@kernel.org,
+	minghsiu.tsai@mediatek.com, mripard@kernel.org,
+	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
+	simona@ffwll.ch, support.opensource@diasemi.com,
+	tiffany.lin@mediatek.com, tzimmermann@suse.de,
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1 05/14] sound: dt-bindings: Convert MediaTek RT5650
+ codecs bindings to YAML
+Message-ID: <20250822151415.GA3819434-robh@kernel.org>
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-6-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820151323.167772-1-clamor95@gmail.com> <20250820151323.167772-3-clamor95@gmail.com>
- <20250822145934.GA3791610-robh@kernel.org>
-In-Reply-To: <20250822145934.GA3791610-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 22 Aug 2025 18:04:49 +0300
-X-Gm-Features: Ac12FXypG4PfqbTzwK4muiuwuwQ2NYN0lKk_T4ivOXsgmwVEHmwuJibOvc-hr2M
-Message-ID: <CAPVz0n3ysZA2ku4PzcwVTyuii_ORe=3qkD1z+iYAmVYFhZuUCA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] dt-bindings: memory: Document Tegra114 Memory Controller
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820171302.324142-6-ariel.dalessandro@collabora.com>
 
-=D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 17:5=
-9 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Aug 20, 2025 at 06:13:16PM +0300, Svyatoslav Ryhel wrote:
-> > Add Tegra114 suffort into existing Tegra124 MC schema with the most not=
-able
-> > difference in the amount of EMEM timings.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../nvidia,tegra124-mc.yaml                   | 106 +++++++++++++-----
-> >  1 file changed, 80 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidi=
-a,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/n=
-vidia,tegra124-mc.yaml
-> > index 7b18b4d11e0a..e2568040213d 100644
-> > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > @@ -19,7 +19,9 @@ description: |
-> >
-> >  properties:
-> >    compatible:
-> > -    const: nvidia,tegra124-mc
-> > +    enum:
-> > +      - nvidia,tegra114-mc
-> > +      - nvidia,tegra124-mc
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -62,31 +64,7 @@ patternProperties:
-> >              minimum: 1000000
-> >              maximum: 1066000000
-> >
-> > -          nvidia,emem-configuration:
-> > -            $ref: /schemas/types.yaml#/definitions/uint32-array
->
-> The type should stay here. It is not conditional.
->
-> > -            description: |
-> > -              Values to be written to the EMEM register block. See sec=
-tion
-> > -              "15.6.1 MC Registers" in the TRM.
-> > -            items:
-> > -              - description: MC_EMEM_ARB_CFG
-> > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > -              - description: MC_EMEM_ARB_TIMING_RP
-> > -              - description: MC_EMEM_ARB_TIMING_RC
-> > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > -              - description: MC_EMEM_ARB_DA_TURNS
-> > -              - description: MC_EMEM_ARB_DA_COVERS
-> > -              - description: MC_EMEM_ARB_MISC0
-> > -              - description: MC_EMEM_ARB_MISC1
-> > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > +          nvidia,emem-configuration: true
-> >
-> >          required:
-> >            - clock-frequency
-> > @@ -109,6 +87,82 @@ required:
-> >    - "#iommu-cells"
-> >    - "#interconnect-cells"
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra114-mc
-> > +    then:
-> > +      patternProperties:
-> > +        "^emc-timings-[0-9]+$":
-> > +          patternProperties:
-> > +            "^timing-[0-9]+$":
-> > +              properties:
-> > +                nvidia,emem-configuration:
-> > +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +                  description: |
->
-> Drop '|'.
->
-> > +                    Values to be written to the EMEM register block. S=
-ee section
-> > +                    "20.11.1 MC Registers" in the TRM.
-> > +                  items:
-> > +                    - description: MC_EMEM_ARB_CFG
-> > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > +                    - description: MC_EMEM_ARB_MISC0
-> > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra124-mc
-> > +    then:
-> > +      patternProperties:
-> > +        "^emc-timings-[0-9]+$":
-> > +          patternProperties:
-> > +            "^timing-[0-9]+$":
-> > +              properties:
-> > +                nvidia,emem-configuration:
-> > +                  $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +                  description: |
-> > +                    Values to be written to the EMEM register block. S=
-ee section
-> > +                    "15.6.1 MC Registers" in the TRM.
-> > +                  items:
-> > +                    - description: MC_EMEM_ARB_CFG
-> > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > +                    - description: MC_EMEM_ARB_MISC0
-> > +                    - description: MC_EMEM_ARB_MISC1
-> > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
->
-> I imagine every SoC is going to be slightly different. I really don't
-> care to know what are all the magic registers in the list, so I would
-> just drop all this and just document the length. Just treat it as opaque
-> data like calibration data we have in other bindings.
->
+On Wed, Aug 20, 2025 at 02:12:53PM -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for Mediatek MT8173 RT5650
+> codecs to a YAML schema.
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  .../sound/mediatek,mt8173-rt5650.yaml         | 73 +++++++++++++++++++
+>  .../bindings/sound/mt8173-rt5650.txt          | 31 --------
+>  2 files changed, 73 insertions(+), 31 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
+> new file mode 100644
+> index 0000000000000..36e4f9c4c3d62
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8173-rt5650.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/mediatek,mt8173-rt5650.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek MT8173 with RT5650 codecs and HDMI via I2S
+> +
+> +maintainers:
+> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: "mediatek,mt8173-rt5650"
 
-I though about length but not only names, amount of registers,
-unfortunately, changes as well.
+Drop quotes.
 
-> Rob
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  mediatek,audio-codec:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      The phandles of rt5650 codecs and of the HDMI encoder node.
+> +    minItems: 2
+> +
+> +  mediatek,platform:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of MT8173 ASoC platform.
+> +
+> +  mediatek,mclk:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      The MCLK source.
+> +      0: external oscillator, MCLK = 12.288M
+> +      1: internal source from mt8173, MCLK = sampling rate * 256
+> +
+> +  codec-capture:
+> +    description: Subnode of rt5650 codec capture.
+> +    type: object
+> +
+> +    properties:
+> +      sound-dai:
+> +        maxItems: 1
+> +        description: phandle of the CPU DAI
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - mediatek,audio-codec
+> +  - mediatek,platform
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    sound: sound {
+
+Drop unused label.
+
+> +        compatible = "mediatek,mt8173-rt5650";
+> +        mediatek,audio-codec = <&rt5650 &hdmi0>;
+> +        mediatek,platform = <&afe>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&aud_i2s2>;
+> +
+> +        mediatek,mclk = <1>;
+> +        codec-capture {
+> +            sound-dai = <&rt5650 1>;
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt b/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
+> deleted file mode 100644
+> index 29dce2ac8773a..0000000000000
+> --- a/Documentation/devicetree/bindings/sound/mt8173-rt5650.txt
+> +++ /dev/null
+> @@ -1,31 +0,0 @@
+> -MT8173 with RT5650 CODECS and HDMI via I2S
+> -
+> -Required properties:
+> -- compatible : "mediatek,mt8173-rt5650"
+> -- mediatek,audio-codec: the phandles of rt5650 codecs
+> -                        and of the hdmi encoder node
+> -- mediatek,platform: the phandle of MT8173 ASoC platform
+> -
+> -Optional subnodes:
+> -- codec-capture : the subnode of rt5650 codec capture
+> -Required codec-capture subnode properties:
+> -- sound-dai: audio codec dai name on capture path
+> -  <&rt5650 0> : Default setting. Connect rt5650 I2S1 for capture. (dai_name = rt5645-aif1)
+> -  <&rt5650 1> : Connect rt5650 I2S2 for capture. (dai_name = rt5645-aif2)
+> -
+> -- mediatek,mclk: the MCLK source
+> -  0 : external oscillator, MCLK = 12.288M
+> -  1 : internal source from mt8173, MCLK = sampling rate*256
+> -
+> -Example:
+> -
+> -	sound {
+> -		compatible = "mediatek,mt8173-rt5650";
+> -		mediatek,audio-codec = <&rt5650 &hdmi0>;
+> -		mediatek,platform = <&afe>;
+> -		mediatek,mclk = <0>;
+> -		codec-capture {
+> -			sound-dai = <&rt5650 1>;
+> -		};
+> -	};
+> -
+> -- 
+> 2.50.1
+> 
