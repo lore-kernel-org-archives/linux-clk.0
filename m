@@ -1,119 +1,128 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C611B2FFDE6
-	for <linux-clk@vger.kernel.org>; Fri, 22 Aug 2025 13:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3472FAC1B
+	for <linux-clk@vger.kernel.org>; Fri, 22 Aug 2025 13:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755868586; cv=none; b=NvsqmFvztNgWx2Ojb55jX73JkQiCk7ErzZHJtldc8y6GOQkSw/0EIS0z7+jfvce2qiBuiUZQhPKxjWz52+8vqbF8glUNQgi0laWVdSFoxes8T5rq0DAEl+ubD0i6/0UoOGZwb9Oj9M4JvE7FYatF+vsdf24Y+SRKPo1QDAVIWt0=
+	t=1755868861; cv=none; b=C/MacaIjpAQEt5phOGwtIA3y7r0zmBQXrQdSnyLta9zfmxeAO8xY3qHp1zcw8VD7ZYX60052k3kgiqOOASQkB3XENjJF1jynUXfzGaRmt174KgUE5zqiD/H130q1ZQ/DMqQGIjK8vR7ZnqRpYwPQdygWVE/Uyix6x1A7yYSru/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755868586; c=relaxed/simple;
-	bh=CdrU7eCrr3LV3Lu1u46oRfF2i9xBpxz4MaRNU2opurg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PjjcADicA0ygOC6eRIKCq7WnWRDKY53zFIWrwjKksqkoNM8jNIbj9a3HeS8YTAQL3/p7xctCyovh3VT42pMSwVSws6nxSS5IiltMzTtKGr1XzRe2VXOHZC4toRw+gAdgIj7nGAr+0w1j0GmfVcLLD9hut2vVBdgyU3u+n5rkKj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PxGRN7kv; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755868861; c=relaxed/simple;
+	bh=RLk4D4vD/TDD8BadjDyMjnwONRBMR+yTQwbOQuHgP3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhhNrT3+13Kp3TMWAkWHgmbKZgdPnROP38qvaV9lO0c8JUy+fTDG6an2dtC2ARrel9dyJLbStZBefb0GwlgWKFxQPALXT55avoM3b4L4Wp/R/uwLhdfm+aBE4ql95BUsMdBTa/MVdoHKRI0N1MHr9grwmwv0LEDZ6aHm0ETPZ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bhsZ5zAm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PxGRN7kv"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250822131621epoutp02e7a78e7ffd7bdbc477e110f5743eeaa5~eGSwUhuFL3272732727epoutp02I
-	for <linux-clk@vger.kernel.org>; Fri, 22 Aug 2025 13:16:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250822131621epoutp02e7a78e7ffd7bdbc477e110f5743eeaa5~eGSwUhuFL3272732727epoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755868581;
-	bh=9ZJZJ33xPZN7YhRnDXzj6QYdPa3pESiJ7l6R5mbj/y8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=PxGRN7kvTKdGM7owi9m91ynX2Bv2hG7D+oiG/X22aQy1vO0iPIOLRXdWW4vVdD8K+
-	 Sp0y6q8xArHia/7z/DTgpyJpjO3MlWUhPoeXBhZBKzjGB0YYbQogAsX/FwKpKw8oqw
-	 UYPrFvT1zq4NpSpj2+YYC6b6Ukjc4lCjH4qetH9I=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250822131620epcas5p4fb8e2cb786224a21ccd3128b8c4bf219~eGSu_iGlk1406114061epcas5p4E;
-	Fri, 22 Aug 2025 13:16:20 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c7ggR2zLSz3hhT4; Fri, 22 Aug
-	2025 13:16:19 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250822131618epcas5p170f75240f21ff047898bbaab4188142b~eGStIRSuw0944809448epcas5p11;
-	Fri, 22 Aug 2025 13:16:18 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250822131614epsmtip1b5ad2e345c8486a50a1145d3feb073b6~eGSpYp5xV1475814758epsmtip1L;
-	Fri, 22 Aug 2025 13:16:14 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <05da83dd-2cd2-4f51-8169-e8cf0190d6c1@kernel.org>
-Subject: RE: [PATCH v2 00/12] Add FSD CSI support
-Date: Fri, 22 Aug 2025 18:46:12 +0530
-Message-ID: <00cf01dc1366$f210a000$d631e000$@samsung.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bhsZ5zAm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755868858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3leSXfueIJ7OjI6bMt9yYc6dreSLbCTLjK5B3khIUcw=;
+	b=bhsZ5zAmphH9jEZxu8LDouEg0FD4M8zdTt1JfhtbwuUES7adCAm/wwgq/vB96MMQkXqkdm
+	i9UVcq3ciUf5MhkhAVaW3IofTPlpsgEDc4SxQwSAoHzxVS/OWQC+sdzi5HIWsgmoV/uI2U
+	Dl2d+kj/YcJUX4CfTTc9cZ5VzUhv9yo=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-Nwp4PW4NM_OgX32eq-Yi_A-1; Fri, 22 Aug 2025 09:20:57 -0400
+X-MC-Unique: Nwp4PW4NM_OgX32eq-Yi_A-1
+X-Mimecast-MFC-AGG-ID: Nwp4PW4NM_OgX32eq-Yi_A_1755868857
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7eb98119838so11139285a.0
+        for <linux-clk@vger.kernel.org>; Fri, 22 Aug 2025 06:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755868857; x=1756473657;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3leSXfueIJ7OjI6bMt9yYc6dreSLbCTLjK5B3khIUcw=;
+        b=Xxf+HPG7EQh/4qGhytJynOlqJitDn6tpWd5YcnPzLe1WTZv8Qnfvt6fBZR3kF5E+Oy
+         pPIAzGJkANFQ1ExEbKcVJk1AA9lR9kPHZms1BKCipGwGNkzJz8nQfnjozV5Oo6xFtPi6
+         UC8QqCDM9OjG6qpl0K38QorgXws8tFjXuTyamDtNKsZb+Gaqqp6zli+C0bKvo2hxPObM
+         YdnVJE89+m0JFJq75Yaxrub54MDU15ySlnQuqPHqRqNMW+iTjUWt25lNjKZAPioQrH6e
+         jCEx2xWmvsgoaLn0z+BcX0yjPc3Gd3OaxeQKm9lsf87YmJy7QDNureijSXya6WCLYYih
+         olMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUDgXLx/ntVMmdhx16fTOq/WETe4xRAQXleU/e/heH1ec6wzjMpwbZhtdcFU+Vy9McWPsbNbNQ6EY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCc208o5Fn0FAgN97bQLd2XsT5aNpbqEN/h8a169D4W8GHKz73
+	TFXFZN4SYxd2hAFZ4s/9Zl22MtTu+FdVFJWqNp2djTJMq9LeGO4OTpUUZL65Nd/vmIPcG37+OU8
+	UixDleB56gaXTTxCjNDzoT2H85wKx1SzbsJs8c5CWAUEDUs2Lbaz0oL2/fjqNZA==
+X-Gm-Gg: ASbGncsL4+4nvTNf6fae4/nY6JJTXUvdAwSJ2d1joqNrVW20ez9KV0o/XxFcIzvVM1i
+	C1kTqfOfztWdM0HxBZ9x4+6m8GspJ5xa6Dg55hY790sXBs2TCHPTOI7a1la7hmHY4Mq9AILFub9
+	8vhENbfsQTAeCeKtgi3o5pzS3cyoIjVnkfdx8gAkOuTqGf4KDAqdzknVPw5WR14M69C0pskY9Ug
+	bMPM7HtOHVfUPN9e9PpZh/+hy9XvXPlnylKp2PVwyFR2TErRnCU5WBfFw75Fok5rJCrsNYQ59Pa
+	13lb/nk5Oi85VlGZciCgV02cDPHF7Qi4okOyxVck5KkFY8RRZ/qBNZL2ftKt5izjPJYjLh2AVE+
+	Db9szNUFxwAQw/L79Sqw=
+X-Received: by 2002:a05:620a:4723:b0:7d4:3bcc:85bf with SMTP id af79cd13be357-7ea10f96d7bmr350319985a.12.1755868856679;
+        Fri, 22 Aug 2025 06:20:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJT6pAPKYEy5K11CQ9yMu+8+XejnwBM/iicip7wZSgoCGQVpWGHpC8P6vRS4lRcd6AamSOvw==
+X-Received: by 2002:a05:620a:4723:b0:7d4:3bcc:85bf with SMTP id af79cd13be357-7ea10f96d7bmr350315285a.12.1755868856078;
+        Fri, 22 Aug 2025 06:20:56 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e87e19211asm1338828085a.51.2025.08.22.06.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 06:20:55 -0700 (PDT)
+Date: Fri, 22 Aug 2025 09:20:53 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: Use hashtable for global clk lookups
+Message-ID: <aKhutc0IVWun83qF@x1>
+References: <20250814035317.4112336-1-wenst@chromium.org>
+ <20250814035317.4112336-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHSAysb0EL7RTtQtCp/95MWB/0BNwK5oFMDAeOgCum0Xd0h0A==
-Content-Language: en-in
-X-CMS-MailID: 20250822131618epcas5p170f75240f21ff047898bbaab4188142b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814140956epcas5p480aa24441933523484da5c241a201d3c
-References: <CGME20250814140956epcas5p480aa24441933523484da5c241a201d3c@epcas5p4.samsung.com>
-	<20250814140943.22531-1-inbaraj.e@samsung.com>
-	<05da83dd-2cd2-4f51-8169-e8cf0190d6c1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814035317.4112336-2-wenst@chromium.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Krzysztof
-
-> >
-> > Changes since v1:
-> > 1. Addressed review comments from Laurent Pinchart to integrate the
-> > with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
-> >
-> > Here is the link to v1 patch for reference:
-> > https://patchwork.kernel.org/project/linux-media/patch/7e7832c16925386
-> > b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/
+On Thu, Aug 14, 2025 at 11:53:16AM +0800, Chen-Yu Tsai wrote:
+> A clk lookup using clk_core_lookup() is currently somewhat expensive
+> since it has to walk the whole clk tree to find a match. This is
+> extremely bad in the clk_core_init() function where it is used to look
+> for clk name conflicts, which is always the worst case of walking the
+> whole tree. Moreover, the number of clks checked increases as more
+> clks are registered, causing each subsequent clk registration becoming
+> slower.
 > 
-> Use lore links. b4 gives them for free..
-
-I'll use lore links from next patchset.
-
+> Add a hashtable for doing clk lookups to replace the tree walk method.
+> On arm64 this increases kernel memory usage by 4 KB for the hashtable,
+> and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
+> platform with around 800 clks, this reduces the time spent in
+> clk_core_lookup() significantly:
 > 
-> >
-> > Inbaraj E (12):
-> >   dt-bindings: clock: Add CAM_CSI clock macro for FSD
-> >   clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
-> >   dt-bindings: media: nxp: Add support for FSD SoC
-> >   arm64: dts: fsd: Add CSI nodes
+>           |      PID 0      |     kworker     |
+>           | before |  after | before |  after |
+>     -------------------------------------------
+>     avg   | 203 us | 2.7 us | 123 us | 1.5 us |
+>     -------------------------------------------
+>     min   | 4.7 us | 2.3 us | 102 us | 0.9 us |
+>     -------------------------------------------
+>     max   | 867 us | 4.8 us | 237 us | 3.5 us |
+>     -------------------------------------------
+>     culm  | 109 ms | 1.5 ms |  21 ms | 0.3 ms |
 > 
-> Please split patches targeting different subsystems, since they are
-> completely independent. There is little benefit in combining independent
-> work into one huge patchset.
+> This in turn reduces the time spent in clk_hw_register(), and
+> ultimately, boot time. On a different system with close to 700 clks,
+> This reduces boot time by around 110 ms. While this doesn't seem like
+> a lot, this helps in cases where minimizing boot time is important.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-I'll spilt into different patchset according to the subsystem
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Tested-by: Brian Masney <bmasney@redhat.com>
 
-> Best regards,
-> Krzysztof
+I tested this on my Thinkpad x13s laptop, and clk_core_lookup() is
+called 684 times on normal boot up of my system. Only 4 of those are
+duplicate lookups.
 
-Regards,
-Inbaraj E
+Brian
 
