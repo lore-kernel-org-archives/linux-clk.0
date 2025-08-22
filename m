@@ -1,104 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA322135B9;
-	Fri, 22 Aug 2025 15:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D5B4A1A;
+	Fri, 22 Aug 2025 19:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755877979; cv=none; b=umQCuzzWJUZ3SZJfFVgxGgiDvdhCE2GHpiIi11quPThnErCbuTnn13Oq77nXuFjHaHk3nPRTNptUF6mOZF8gdqvdLZh7EIeJVkLEF5kmILn3SVcNC+u6eq2Y5LyFL1lx4xVj5CBSPawQOxYJsXu22mlqRi2Zx/ypSCCAbuXrUZs=
+	t=1755891335; cv=none; b=MkL73cJggSkkuOi9LziHibW061CJ2yuwIqOFFiRbV9hisrVIZz4/GFX920ylsc775kepA9LoJeZwHzI4D+QoAKy98ftFldzxgQyzImlH+IiO4auCbpolj8aJkSWOfGiQlXnGTc59OMcJiOYxuqSDHjnMFFLj6ylCJ1EhroZ42K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755877979; c=relaxed/simple;
-	bh=GZcqAUhind1yPvp4zhhO0FBJJvpJTi5iPD/E6Y6N6GE=;
+	s=arc-20240116; t=1755891335; c=relaxed/simple;
+	bh=xgU7037EpdyDMRnXjTxTDjKwrS8kwbSM8eeBoserZHs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sQQ4/79tJQEVAT+ycz/GACP1Pki2ZebAruBw4fkZzrpcmWTAgDUkHU/Q4d/DP72JzVQ+dQmXNJrPG5lAE+hG9o9n5DkzXrSTU101gShN/i3XrZ+jly9UkS1Qd+c6f/QVMRFFTj5Pi15hHYpyg1bQpI93MHrIkZqNIRTM4+RwLJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBUykIQB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmNjieY/sHCqGtjxpktSBllD+LbS6VJJpVS8ntG4VUYcfhEe5HQpQm9BXNw3SH4gPPeq1Ucgm4BhN5AGEZRHek8nVgdV6dxeZCaYmMJoLcIYD4wJfesCe6pkq+Lg1iAmS3j7YG4K9XDOSJgPt08aPChaeyNcjZ8xYvxJHQRaZdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfLNl9Px; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBUykIQB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8FAC4CEED;
-	Fri, 22 Aug 2025 15:52:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfLNl9Px"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85280C4CEED;
+	Fri, 22 Aug 2025 19:35:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755877978;
-	bh=GZcqAUhind1yPvp4zhhO0FBJJvpJTi5iPD/E6Y6N6GE=;
+	s=k20201202; t=1755891335;
+	bh=xgU7037EpdyDMRnXjTxTDjKwrS8kwbSM8eeBoserZHs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tBUykIQBRStiihtAnJe0AVIVB3jiv164suytchNLOiHzXp4/+sT3VdYIWELtCxQ/S
-	 k+XB53PnA2SVEHhRTUS7U4pZc/6+NTJUkZY7CKASmPvQ9QpYCcufIcSzgpR7NWVkSi
-	 jp9XGx5f+pZpXKidRSPAs6K+jdBokudQq0L+JSHKIQsakl6rBCtx53/+fKmRYU7AE5
-	 FMyFc2btLCA2xVryygJW3jkoBWIeiRMncRcBrhZrVRERgO/U1xU0HV1QVl4Lxov6FV
-	 dzjxYmwhLLY/zdK180LgDdUc1uFpRhZ4yyM60sjdxOlRcDnYbBAtClKHQaXm10ebIj
-	 AcsRl3MiOJs+A==
-Date: Fri, 22 Aug 2025 10:52:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
-	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
-	davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
-	flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
-	jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
-	kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
-	lgirdwood@gmail.com, linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
-	matthias.bgg@gmail.com, mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com, mripard@kernel.org,
-	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
-	simona@ffwll.ch, support.opensource@diasemi.com,
-	tiffany.lin@mediatek.com, tzimmermann@suse.de,
-	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v1 13/14] dt-bindings: input/touchscreen: Convert MELFAS
- MIP4 Touchscreen to YAML
-Message-ID: <20250822155257.GA3865729-robh@kernel.org>
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-14-ariel.dalessandro@collabora.com>
+	b=QfLNl9PxlXpIZKzVjyxkyQ6HZXNSJGnrEG4zrh9mbX6tbS81oJOoGBdOh7CoHdJ8p
+	 HccHwUyCh8ud7F9XtoYmfIgtYPjx/1o2RFLWdJJDAQGZptq8FhRRtNiJtFtTBzvu9Q
+	 IX+0ldBlpbiCclPz1GyfphvtvEG7hv/PwVGQpES9UWE64L9l6A46Kzl5FTgSx8jz9b
+	 4wBBXI37n04qLS9ZUX+hUdUdOy7sB3rMJa2/V9UFkuc00a1BJ1OMVlwAGd9ZT4j38h
+	 /yjjVM3hoPALD1oFxzFoefkUBclP6G8sZMdO4g14uv6eTBLQykLTCiPXSbGrrTvrRP
+	 Sp+GWW9abJZWg==
+Date: Fri, 22 Aug 2025 14:35:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	Karel Balej <balejk@matfyz.cz>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: marvell,pxa1908: Add syscon
+ compatible to apmu
+Message-ID: <175589133410.186782.9795752378497482017.robh@kernel.org>
+References: <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
+ <20250821-pxa1908-genpd-v2-1-eba413edd526@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820171302.324142-14-ariel.dalessandro@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821-pxa1908-genpd-v2-1-eba413edd526@dujemihanovic.xyz>
 
-On Wed, Aug 20, 2025 at 02:13:01PM -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for MELFAS MIP4 Touchscreen
-> controller to a YAML schema.
+
+On Thu, 21 Aug 2025 13:17:43 +0200, Duje Mihanović wrote:
+> Add required syscon compatible to the APMU controller. This is required
+> for the SoC's power domain controller as the registers are shared.
 > 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> Also add a #power-domain-cells property as the node will serve as the
+> power domain phandle.
+> 
+> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 > ---
->  .../input/touchscreen/melfas,mip4_ts.yaml     | 55 +++++++++++++++++++
->  .../input/touchscreen/melfas_mip4.txt         | 20 -------
->  2 files changed, 55 insertions(+), 20 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
->  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+> v2:
+> - Drop simple-mfd
+> - Add #power-domain-cells
+> ---
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml | 30 +++++++++++++++++-----
+>  1 file changed, 24 insertions(+), 6 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
-> new file mode 100644
-> index 0000000000000..170fd4212467e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/melfas,mip4_ts.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MELFAS MIP4 Touchscreen
-> +
-> +maintainers:
-> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: "melfas,mip4_ts"
-
-Drop quotes. With that,
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
