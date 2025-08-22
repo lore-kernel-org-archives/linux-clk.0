@@ -1,164 +1,231 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53943054C5;
-	Fri, 22 Aug 2025 14:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B453054EB;
+	Fri, 22 Aug 2025 14:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755872035; cv=none; b=n3EktkpKienSgHcNhmvB0Vxt0YhFN/kySvArF4XvL+PHo9OVsLG7J4ffdqCuIIxgsTXL2gZ5X391sWxjCsDGnyJ/rSpSFeRl5NV/EXObGeeiM3FZ+oTMWkHlKV3QWe47zUa78YqUdcRMr6rEg4zGpl9GXyWNZg3bBqXg3/28uxk=
+	t=1755873587; cv=none; b=f9Kjrfv/ahtyRlCMyNWz6pP3yblk8Crx5nUhWRMEWGvrd+pztikewtwdAS3h/uuQM5WsP9rTQD2GW2yMFzd4olIGJo/U2P5n9K74pZLdqCeTzdp49hZZyVIHKluDAG1PrUj+lZnoXO9lHeYrPIGlvAimpPGUyrtZt6qnbS3lz0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755872035; c=relaxed/simple;
-	bh=p5a7degfIw0dQZsZxxsvkoQCwnY6OhJE2U6FzHq3N6A=;
+	s=arc-20240116; t=1755873587; c=relaxed/simple;
+	bh=MQpTXSG/z9wgXCqnHJLGZddIUiDznuwl5RLSvgOuvXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8daS5I66NBClpj/Mwfvx5MP9BjhjS4vmcCacZy6bII0cAn6SrSXg90cb19RA9zqU5KvTnzgLqYTItANzO4S4E/IWNAD790c1v3KzJWNzOB/5BiVTwHJI+6qkbJoNRM6iFzWM5pEZdacdiiW+SDO0vWgjELcOsgdZ5UE7EJAUJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfR5e113; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJOsT5Oj1nlzBG72lPZEag+o/RDM+BWK7IciYRXjNC1D8mN/AQJzBDWjOQFmW2+nmGV6NUCKIYHdoMsmzUaFy21YwjAKQElTl9Fog1dzkCppGejDORwy3iwCUowIIMb5bCxUMFdUz5fhJBSjp1YCFxkxrq2dd1yJ6OiEZKgNyd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQP9xZ/s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfR5e113"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AABEC113D0;
-	Fri, 22 Aug 2025 14:13:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQP9xZ/s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0FAC4CEED;
+	Fri, 22 Aug 2025 14:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755872034;
-	bh=p5a7degfIw0dQZsZxxsvkoQCwnY6OhJE2U6FzHq3N6A=;
+	s=k20201202; t=1755873586;
+	bh=MQpTXSG/z9wgXCqnHJLGZddIUiDznuwl5RLSvgOuvXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfR5e113OergLD1D6mQfNAi67vZvuSnQ2SCuHyjiBfXC4Lrx7FP2CnOTgpRx7lNav
-	 cBqjJp9tO+jX0LUirAxEFcM7+w7Gtk9RiOPLLiZOq3O+fPwboBVi4xXh9txiaA/OqU
-	 mrVPfTisuNk/O2rviGhWlCgB0IzXDAqPrg79wJp9ZLuvmA4r4RzhBUU+iZE4EQqh+r
-	 XcPR6MVD03qhX69VMv81Jnr8L1H+8u+lHO/4+/jG0Ob9uJOOP+xhfYC1nrNM5r9naJ
-	 Enou61vI55SjWtM4xkrSgINKJxJltBw0KltDtFfuXYbuB8A9lUemyj3ZA39oncjgXU
-	 xf1Pi9daOw9+A==
-Date: Fri, 22 Aug 2025 21:56:36 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: designware: Avoid taking clk_prepare mutex in
- PM callbacks
-Message-ID: <aKh3FMgMVP20DvN0@xhacker>
-References: <20250820153125.22002-1-jszhang@kernel.org>
- <20250820153125.22002-2-jszhang@kernel.org>
- <aKXyVvFOvpsaAEAB@smile.fi.intel.com>
- <aKX4xEYE29JC_g14@xhacker>
- <7198221a-1f12-49cf-9d35-7498ae7389cd@linux.intel.com>
- <aKcYw0Az1fYfNbBr@smile.fi.intel.com>
- <aKdKOa1jFXDHK8uI@xhacker>
- <aKg18p9Zf9hoZHPY@smile.fi.intel.com>
- <aKg5j7hkxI2q1x0s@smile.fi.intel.com>
+	b=VQP9xZ/s3HAazOp75U4TuPEapU2a39p4qFkiPYIQluE9pzYgrWJa51B3d7Os+uHLk
+	 07QHvilTh/0IAMVvP8UtJwPSIc0eJAf5rObM7N29vjvflf6VZGJn0JfN8HKFj7BsYm
+	 9sZgVOXvhX9hE/PeH+yQcevUbLRCskzs5ZFVxFbzilJROE5DFOdSSB/y7jUi5jCEY3
+	 pZa0NNYw/yYl6y4JmKEJG2R1ZlqIP8Nx9urx8QMT0C+9SQZ9XxvbDPU64Ct0zCldhS
+	 nvniOoHUDaRUvwH7j9veUxRB9j9fiSCDgnWPu02PsUE+WsrymcmcHcoABbS0buo7Gl
+	 4I4fTPlTHXjIg==
+Date: Fri, 22 Aug 2025 09:39:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ikjoon Jang <ikjn@chromium.org>,
+	Enric Balletbo i Serra <eballetbo@kernel.org>,
+	Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Julien Massot <jmassot@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] ASoC: dt-binding: Convert mt8183-afe-pcm binding
+ to YAML
+Message-ID: <20250822143945.GA3709669-robh@kernel.org>
+References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
+ <20250820-mtk-dtb-warnings-v2-2-cf4721e58f4e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKg5j7hkxI2q1x0s@smile.fi.intel.com>
+In-Reply-To: <20250820-mtk-dtb-warnings-v2-2-cf4721e58f4e@collabora.com>
 
-On Fri, Aug 22, 2025 at 12:34:07PM +0300, Andy Shevchenko wrote:
-> On Fri, Aug 22, 2025 at 12:18:43PM +0300, Andy Shevchenko wrote:
-> > On Fri, Aug 22, 2025 at 12:32:57AM +0800, Jisheng Zhang wrote:
-> > > On Thu, Aug 21, 2025 at 04:01:55PM +0300, Andy Shevchenko wrote:
-> > > > On Thu, Aug 21, 2025 at 03:45:43PM +0300, Jarkko Nikula wrote:
-> > > > > On 8/20/25 7:33 PM, Jisheng Zhang wrote:
-> > > > > > On Wed, Aug 20, 2025 at 07:05:42PM +0300, Andy Shevchenko wrote:
-> > > > > > > On Wed, Aug 20, 2025 at 11:31:24PM +0800, Jisheng Zhang wrote:
-> > > > > > > > This is unsafe, as the runtime PM callbacks are called from the PM
-> > > > > > > > workqueue, so this may deadlock when handling an i2c attached clock,
-> > > > > > > > which may already hold the clk_prepare mutex from another context.
-> > > > > > > 
-> > > > > > > Can you be more specific? What is the actual issue in practice?
-> > > > > > > Do you have traces and lockdep warnings?
-> > > > > > 
-> > > > > > Assume we use i2c designware to control any i2c based clks, e.g the
-> > > > > > clk-si5351.c driver. In its .clk_prepare, we'll get the prepare_lock
-> > > > > > mutex, then we call i2c adapter to operate the regs, to runtime resume
-> > > > > > the i2c adapter, we call clk_prepare_enable() which will try to get
-> > > > > > the prepare_lock mutex again.
-> > > > > > 
-> > > > > I'd also like to see the issue here. I'm blind to see what's the relation
-> > > > > between the clocks managed by the clk-si5351.c and clocks to the
-> > > > > i2c-designware IP.
-> > > 
-> > > The key here is: all clks in the system share the same prepare_lock
-> > > mutex, so the global prepare_lock mutex is locked by clk-si5351
-> > > .prepare(), then in this exact .prepare(), the i2c-designware's runtime
-> > > resume will try to lock the same prepare_lock again due to
-> > > clk_prepare_enable()
-> > > can you plz check clk_prepare_lock() in drivers/clk/clk.c?
-> > > 
-> > > And if we take a look at other i2c adapters' drivers, we'll see
-> > > some of them have ever met this issue and already fixed it, such
-> > > as 
-> > > 
-> > > i2c-exynos5, by commit 10ff4c5239a1 ("i2c: exynos5: Fix possible ABBA
-> > > deadlock by keeping I2C clock prepared")
-> > > 
-> > > i2c-imx, by commit d9a22d713acb ("i2c: imx: avoid taking clk_prepare
-> > > mutex in PM callbacks")
+On Wed, Aug 20, 2025 at 03:44:53PM +0200, Julien Massot wrote:
+> Convert the MediaTek MT8183 AFE PCM Device Tree binding from the old
+> .txt format to YAML schema format to improve validation.
 > 
-> > Why is this an I²C driver problem?
+> While converting, also document all clock inputs and memory-region
+> used by the AFE block.
 > 
-> I just read these two and one more referenced from one of the changes.
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> ---
+>  .../bindings/sound/mediatek,mt8183-audio.yaml      | 228 +++++++++++++++++++++
+>  .../devicetree/bindings/sound/mt8183-afe-pcm.txt   |  42 ----
+>  2 files changed, 228 insertions(+), 42 deletions(-)
 > 
-> I do not think this is a correct fix. Seems to me like papering over a special
-> (corner case). I would agree on this change if and only if the CLK maintainers
-> tell us that there is no other way.
-> 
-> My understanding is that the I²C clock and client's clocks (when it's a clock
-> provider) are independent. There should not be such a clash to begin with. The
-> clock framework should operate on a clock subtrees and not having yet another
-> Global Kernel Lock.
-> 
-> That said, I think this is a design issue in CLK framework, we should not go and
-> "fix" all the drivers. Today it's I²C, tomorrow SPI and I³C and so on...
-> This is not a scalable solution.
+> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8183-audio.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8183-audio.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..93517565f0f3a692c824be0897bc88dfd59bd723
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8183-audio.yaml
+> @@ -0,0 +1,228 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/mediatek,mt8183-audio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek AFE PCM controller for mt8183
+> +
+> +maintainers:
+> +  - Julien Massot <jmassot@collabora.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8183-audio
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: audiosys
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: AFE clock
+> +      - description: ADDA DAC clock
+> +      - description: ADDA DAC pre-distortion clock
+> +      - description: ADDA ADC clock
+> +      - description: ADDA6 ADC clock
+> +      - description: Audio low-jitter 22.5792m clock
+> +      - description: Audio low-jitter 24.576m clock
+> +      - description: Audio PLL1 tuner clock
+> +      - description: Audio PLL2 tuner clock
+> +      - description: I2S1 bit clock
+> +      - description: I2S2 bit clock
+> +      - description: I2S3 bit clock
+> +      - description: I2S4 bit clock
+> +      - description: Audio Time-Division Multiplexing interface clock
+> +      - description: Powerdown Audio test model clock
+> +      - description: Audio infra sys clock
+> +      - description: Audio infra 26M clock
+> +      - description: Mux for audio clock
+> +      - description: Mux for audio internal bus clock
+> +      - description: Mux main divider by 4
+> +      - description: Primary audio mux
+> +      - description: Primary audio PLL
+> +      - description: Secondary audio mux
+> +      - description: Secondary audio PLL
+> +      - description: Primary audio en-generator clock
+> +      - description: Primary PLL divider by 4 for IEC
+> +      - description: Secondary audio en-generator clock
+> +      - description: Secondary PLL divider by 8 for IEC
+> +      - description: Mux selector for I2S port 0
+> +      - description: Mux selector for I2S port 1
+> +      - description: Mux selector for I2S port 2
+> +      - description: Mux selector for I2S port 3
+> +      - description: Mux selector for I2S port 4
+> +      - description: Mux selector for I2S port 5
+> +      - description: APLL1 and APLL2 divider for I2S port 0
+> +      - description: APLL1 and APLL2 divider for I2S port 1
+> +      - description: APLL1 and APLL2 divider for I2S port 2
+> +      - description: APLL1 and APLL2 divider for I2S port 3
+> +      - description: APLL1 and APLL2 divider for I2S port 4
+> +      - description: APLL1 and APLL2 divider for IEC
+> +      - description: 26MHz clock for audio subsystem
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aud_afe_clk
+> +      - const: aud_dac_clk
+> +      - const: aud_dac_predis_clk
+> +      - const: aud_adc_clk
+> +      - const: aud_adc_adda6_clk
+> +      - const: aud_apll22m_clk
+> +      - const: aud_apll24m_clk
+> +      - const: aud_apll1_tuner_clk
+> +      - const: aud_apll2_tuner_clk
+> +      - const: aud_i2s1_bclk_sw
+> +      - const: aud_i2s2_bclk_sw
+> +      - const: aud_i2s3_bclk_sw
+> +      - const: aud_i2s4_bclk_sw
+> +      - const: aud_tdm_clk
+> +      - const: aud_tml_clk
+> +      - const: aud_infra_clk
+> +      - const: mtkaif_26m_clk
+> +      - const: top_mux_audio
+> +      - const: top_mux_aud_intbus
+> +      - const: top_syspll_d2_d4
+> +      - const: top_mux_aud_1
+> +      - const: top_apll1_ck
+> +      - const: top_mux_aud_2
+> +      - const: top_apll2_ck
+> +      - const: top_mux_aud_eng1
+> +      - const: top_apll1_d8
+> +      - const: top_mux_aud_eng2
+> +      - const: top_apll2_d8
+> +      - const: top_i2s0_m_sel
+> +      - const: top_i2s1_m_sel
+> +      - const: top_i2s2_m_sel
+> +      - const: top_i2s3_m_sel
+> +      - const: top_i2s4_m_sel
+> +      - const: top_i2s5_m_sel
+> +      - const: top_apll12_div0
+> +      - const: top_apll12_div1
+> +      - const: top_apll12_div2
+> +      - const: top_apll12_div3
+> +      - const: top_apll12_div4
+> +      - const: top_apll12_divb
+> +      - const: top_clk26m_clk
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt8183-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/power/mt8183-power.h>
+> +    #include <dt-bindings/reset/mt8183-resets.h>
+> +
+> +    afe: mt8183-afe-pcm {
 
-The fact is there's no SPI attached clks. Current all clks are either
-mmio based or i2c attached clks. And yep you're right, I3C has the same
-problem if we use i3c controller to operate those i2c attached clks.
+audio-controller {
 
-> 
-> Here is formal NAK until it will be worked with CLK maintainers to provide an
-> agreed roadmap for this(ese) issue(s).
+like you changed the .dts.
 
-+ clk maintainers
+With that,
 
-Hi Michael and Stephen,
-
-If we use i2c designware adapter to operate the i2c attached clks such
-as clk-si5351, then there's a deadlock issue -- This issue is well
-explained by commit d9a22d713acb ("i2c: imx: avoid taking clk_prepare
-mutex in PM callbacks")
-
-I propsed a similar fix for the i2c-designware adapter, but Andy
-disagree with this fix. Instead, he thinks the issue is from the clk
-framework. Could you please comment?
-
-Thanks
-
-> 
-> > > > I believe they try to make an example when clk-si5351 is the provider of
-> > > > the clock to I²C host controller (DesignWare).
-> > > 
-> > > Nope, the example case is using i2c host controller to operate the clk-si5351
-> > 
-> > Okay, so that chip is controlled over I²C, but how their clocks even related to
-> > the I²C host controller clock?! I am sorry, I am lost here.
-> > 
-> > > > But I'm still not sure about the issues here... Without (even simulated with
-> > > > specific delay injections) lockdep warnings it would be rather theoretical.
-> > > 
-> > > No, it happened in real world.
-> > 
-> > Can you provide the asked traces and lockdep warnigns and/or other stuff to see
-> > what's going on there?
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
