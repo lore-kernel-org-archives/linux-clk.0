@@ -1,119 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF32EB861;
-	Fri, 22 Aug 2025 20:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884AD2BCF46;
+	Fri, 22 Aug 2025 20:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755895774; cv=none; b=m9fFgFzZr7gqfnEA5Aq876vIb+vc+Y3vqleSoJ7VA/S8n5tIGPu5aT59sRi9tBmxWmfwAbvfbvk9tcbZET0bIbKp36KGePeqbHC5id2w5s7xiMunneH5x15JtYEJlvRB5v9k8wjyjRLQ1Es5lPwFiKRk1yNWSQaFSx9ct372Rjk=
+	t=1755896170; cv=none; b=CAOVvPzFwk/66bMWiGJbK412+uI9SLyGVDn4Erj7T3OYBKs07iHdxSASHd53kUCZKlNw9E5MDkhzelsV7XWIUI9bww5TLTlwrzsyJn4W2H/L/YmU8REWj5r8+JXM7Ng/C4a8NqKq5GcwTSX8Yg91wFlJ/iTwjdUefMm+RUuPao8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755895774; c=relaxed/simple;
-	bh=T6qRJEDHnq+mnjsWtsK8R7/Xtst4O7SL4dK318Mo5qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTfsrSIiccR8VMW5V8soTZrQ7jiuUdZkJZwF8RGWR/Xvv9walY/R6thVoI0rydJjgvmCNbjhAH/YOVcSj8PgaPm1Db4O6l1ka959VwaetDv7RwbH2jzPH0CwLgEoaeFvv3wqJWg+POWBr6emcvZwNiHEzZcoZU3FIK8uBwBiipY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D6ITf2XT; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1755896170; c=relaxed/simple;
+	bh=PHG0D5CzDDTIfrFFxjd2HcsgBLjTrNlrvcq+F1lz+2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AIaUPFYQwCcX9W0gKpk1T7J1DBeapwWghSE0tFa17ZKZHRAblHCG2WGJq+d+JiBLwasjh5AtvTefgX88wLuR2OixzRR2Uol29t89NdEjLfL5YbDVT2GDCIC/8D5P03Dyny1PhpZb3/4+yRGWkbUTGSCxoqa3rvpe3nYgffDvCTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=DJQSXnrc; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D6ITf2XT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755895771; x=1787431771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T6qRJEDHnq+mnjsWtsK8R7/Xtst4O7SL4dK318Mo5qM=;
-  b=D6ITf2XTVFDv10Y1q6lQvn4tTyTkKJ/WBOqlr6pk0275CJqb9ndGckli
-   QZqI3EfBU78w7Moh72ki7r8RslL1eDZY/Yv4hSE6Kmf4Pkgz2aAqgyAgN
-   EUrn4dtR7941AoJo54zpZECsKJdwUbUBUxl0ENUNox26lS5cQyw43xZQI
-   15I/HCAisuGNrgB0g7bHZbd7kWdyipig/m1BtjktcQyz3ybVpe7N3Z09O
-   wb2DrpCoYMYYNedj/ADf2fAMuWJ4ZBpmXTHxhUI8T4d16BsMM9SgQmT0g
-   Zc73xI+c33E2zKOh0TpCAKQ8C1np4YECZUk5HSa5gRnP7jDsqgD/OXNF/
-   A==;
-X-CSE-ConnectionGUID: Ip7h6ZrpQXyU/NvlvUc3Iw==
-X-CSE-MsgGUID: do0eAljOSKOHvlswFB33Bg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="58356631"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58356631"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2025 13:49:30 -0700
-X-CSE-ConnectionGUID: n/+zYlt0RPqPyOa2rQ36qA==
-X-CSE-MsgGUID: m+IUK9QUTnelV4MFBQJK3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168399112"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 22 Aug 2025 13:49:28 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1upYhR-000Lp5-2X;
-	Fri, 22 Aug 2025 20:49:25 +0000
-Date: Sat, 23 Aug 2025 04:48:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mediatek: clk-mux: Do not pass flags to
- clk_mux_determine_rate_flags()
-Message-ID: <202508230416.OIwROhOT-lkp@intel.com>
-References: <20250822062854.2633133-1-wenst@chromium.org>
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="DJQSXnrc"
+DKIM-Signature: a=rsa-sha256; bh=jfIU0fuoE9yXlwzwCsY58yVMK25YpgK8FBL6dKXlTGM=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1755896103; v=1; x=1756328103;
+ b=DJQSXnrcX1KtXFD8wN/IsWAeXiCKnnn69GH/KEJ8BExviuHhDhgNduzZ4liRcUICrKbL8W2N
+ pO8i7R+txU/wZSYMNRNtNWYFPdDbJ3Z1IIsaRL2ln0OdCUQglEMuQI2pA3Rm91tZPhTiW8OI/vi
+ BLgWP8MoT8TQCaiBDXJB2kdBLl28Yt2TL5osaCRM4ZYKKfPB3HarwCjt9pkDDw0L15SQZJZ0qPk
+ 098W7wjKzHXepBiTHHF3EpS9d9FU3erH5/TcFi58UNKCPONunJkaBtN7rgvvK/VdifKBsAkBghW
+ tdwOVaFmp/ScFDObBX+vJ5gMSk5hKIH9+r2X/V5UQGLsQ==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id b22c5fac; Fri, 22 Aug 2025 22:55:03 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: mmp: Add PXA1908 power domain driver
+Date: Fri, 22 Aug 2025 22:55:02 +0200
+Message-ID: <6193521.lOV4Wx5bFT@radijator>
+In-Reply-To:
+ <CAPDyKFoHWNuSmnN0e=QR73r0Ea-XJogbB8S3K+_=VRovzXL2Sw@mail.gmail.com>
+References:
+ <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
+ <20250821-pxa1908-genpd-v2-3-eba413edd526@dujemihanovic.xyz>
+ <CAPDyKFoHWNuSmnN0e=QR73r0Ea-XJogbB8S3K+_=VRovzXL2Sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822062854.2633133-1-wenst@chromium.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi Chen-Yu,
+On Friday, 22 August 2025 11:36:02 Central European Summer Time Ulf Hansson 
+wrote:
+> By looking at the implementation of the power-domain code below, it
+> seems to me that this code is better maintained within the pmdomain
+> subsystem (drivers/pmdomain/pxa perhaps). May I suggest that you move
+> it there.
+> 
+> I guess the easiest way to do this is to export the
+> pxa1908_pd_register() function - but you could explore using the
+> auxiliary bus too, to instantiate a power-domain driver as an
+> auxiliary driver.
 
-kernel test robot noticed the following build warnings:
+The auxiliary bus was exactly what I needed, thanks. As for the path, I think 
+drivers/pmdomain/marvell would be a better fit and I'll go with that if you 
+don't object.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.17-rc2 next-20250822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/clk-mediatek-clk-mux-Do-not-pass-flags-to-clk_mux_determine_rate_flags/20250822-143106
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250822062854.2633133-1-wenst%40chromium.org
-patch subject: [PATCH] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
-config: x86_64-buildonly-randconfig-004-20250823 (https://download.01.org/0day-ci/archive/20250823/202508230416.OIwROhOT-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250823/202508230416.OIwROhOT-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508230416.OIwROhOT-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/mediatek/clk-mux.c:149:22: warning: unused variable 'mux' [-Wunused-variable]
-     149 |         struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-         |                             ^~~
-   1 warning generated.
+Regards,
+--
+Duje
 
 
-vim +/mux +149 drivers/clk/mediatek/clk-mux.c
-
-a3ae549917f163 Owen Chen                  2019-03-05  145  
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  146  static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  147  				      struct clk_rate_request *req)
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  148  {
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11 @149  	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  150  
-6c66f834fd3bf9 Chen-Yu Tsai               2025-08-22  151  	return clk_mux_determine_rate_flags(hw, req, 0);
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  152  }
-b05ea3314390e9 AngeloGioacchino Del Regno 2022-10-11  153  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
