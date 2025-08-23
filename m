@@ -1,81 +1,191 @@
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FE928726F;
-	Fri, 22 Aug 2025 20:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55006A930
+	for <linux-clk@vger.kernel.org>; Sat, 23 Aug 2025 01:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755896372; cv=none; b=VTgEbaK5NH+mk/UgDu3XX/F9JUoVI4B8XnVJ2MY5QjTThbKO9wDXGuBosxehL9MlchhIRMFRIJwGIJDNT8TV6xAcBsBfNjZomeEEB7joQc7AyPJCgNzmjkHTvgkFJlEXK2RmUTgMOVozZ94N6qwHCU7ASIjYm8LB+Gc/xt9ER44=
+	t=1755914110; cv=none; b=pZiiv5YI7wcsYQ0mw1FfW7TLxxaHHQSrfj9zhytXs8M72qDuJno0abkfNDwo2rxWnPXRCvNZ3GW1VXU1EVXV4kyByb/tjPgvXznp+hNiEVrD9yW7CNm9RUZCNtncglzfg4fYNDc4UkfEJtp8oc3/sG5e1eoUkiBB+Z+qBOIa89k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755896372; c=relaxed/simple;
-	bh=ZO1xB19sLASKZGiZeAMZAeh5CkOBEqS1C10uFP87I88=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UFXSr9hYooZ9tN6aUunEldxPfpUiNwLAX2VdfX3NWwfwo6DrFTA/tPY4ac/aab6TXBYG682gM59tKMisMjasMUMYYQOT+pbHgERpae8SbZtgTxTs6BgYz8HiT+4FBltzhdLowoGrysapzuBlsR18dH+RWLcyn10bE5LRB1/k7sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=Fb/QHsdN; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+	s=arc-20240116; t=1755914110; c=relaxed/simple;
+	bh=Oilq80xlpQKrMrP3dOuNaR+z1TjFVmKmhc+hfCqlbXc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=RqlPqcDFHTZUxzXEaBBI9lYl5GGhxZcVgxmlhooVAJhwpzyeskv8vK+7SmzohIy2v6tlXkvrWhurCIxOPnBjEH4co9npMWM5VIVXEez2twXnWNbKTNCp+7tY9MGJi/7Spo9D9h+pOm5/QzO+ok+TuGcyyHnvRuz5bIdoN38Yq/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uc7Egc9k; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="Fb/QHsdN"
-DKIM-Signature: a=rsa-sha256; bh=VE6qGcpOBptbfyWtsDbPdbSi5iQYynI3yhAWfcylssU=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1755896360; v=1; x=1756328360;
- b=Fb/QHsdNqricuj3bK2V+FKhmpwu4jcDsV2yXmFGeltNEurS1jCPTBcPPwaC9TlikZNxye+NC
- 87pJCNNEelNcsu77cJXshgdZEtBN+t30qGUijM3vjo9jKpPbfiiFHvaGejuKRtP7plDXfs9MOsD
- jHZ0BgPLAqvuaqk+p8RgObq4yJHzPKuJ3pd3K6AUI2EWB6UR0x8oKKdJcbjPwzuIw/qOt+/DM7C
- lC/mpaQyujSqaaDKilZUdqEy+LTEjwjCGq4ZIVEWNMIHVUDBCsa9Sj7duz+lzJM3P7OroO/MU0w
- GsoQ/ECyheEOc8nosjC2Vxh7Y0BRYb09lsHUzjXUNWcoA==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 17a16cd0; Fri, 22 Aug 2025 22:59:20 +0200
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: power: Add Marvell PXA1908 domains
-Date: Fri, 22 Aug 2025 22:59:19 +0200
-Message-ID: <5013342.GXAFRqVoOG@radijator>
-In-Reply-To: <20250822193624.GA187008-robh@kernel.org>
-References:
- <20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz>
- <20250821-pxa1908-genpd-v2-2-eba413edd526@dujemihanovic.xyz>
- <20250822193624.GA187008-robh@kernel.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uc7Egc9k"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250823015505epoutp038b325c10c09e93beebea36ea90faca61~eQpNXRA1o1469414694epoutp03V
+	for <linux-clk@vger.kernel.org>; Sat, 23 Aug 2025 01:55:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250823015505epoutp038b325c10c09e93beebea36ea90faca61~eQpNXRA1o1469414694epoutp03V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755914105;
+	bh=asCGKjBvcLIXcXUvTDB/pRmft2VEgqJkRU+ozd+V3kw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=uc7Egc9knMcegX8j9Ul8mLWHa6t1jfGt6qQY2GMWWC/IRukYxrJk0iO9lvX26z0X7
+	 d2yWSk23ksCEUfCloabZ9I/u0ESTMG9ld+hUsO50JW2D5rV+7ceQy1InglVFew1i6L
+	 hTp3o5jIkBoIs2K8XljStzZIPU2NFdcHVoz9Sx0o=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250823015503epcas5p4f37cf633ec897cf5cab6117f191d17a5~eQpLZM0vF1982919829epcas5p4q;
+	Sat, 23 Aug 2025 01:55:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4c80Vt1xfPz6B9m6; Sat, 23 Aug
+	2025 01:55:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250823015501epcas5p2edc67128fded208772b700d6b811c948~eQpJfftO53272832728epcas5p2D;
+	Sat, 23 Aug 2025 01:55:01 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250823015457epsmtip1ec063c01134a62dda47169229eba2da7~eQpFx0Y6c0879208792epsmtip17;
+	Sat, 23 Aug 2025 01:54:57 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
+Subject: RE: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
+ controller
+Date: Sat, 23 Aug 2025 07:24:55 +0530
+Message-ID: <00d301dc13d0$efb4ef90$cf1eceb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQIMxZSZAiExi2YBbREwJ7KHhpcw
+Content-Language: en-in
+X-CMS-MailID: 20250823015501epcas5p2edc67128fded208772b700d6b811c948
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141051epcas5p14dccee388087372973988aeebcb872cf
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
+	<20250814140943.22531-11-inbaraj.e@samsung.com>
+	<67199625-13d2-4510-bbbd-3dd2f61c62fd@kernel.org>
 
-On Friday, 22 August 2025 21:36:24 Central European Summer Time Rob Herring=
- wrote:
-> On Thu, Aug 21, 2025 at 01:17:44PM +0200, Duje Mihanovi=C4=87 wrote:
-> > Add device tree bindings for Marvell PXA1908's power domains.
-> >=20
-> > Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
-> > ---
-> > v2:
-> > - Drop schema
-> > ---
-> >=20
-> >  include/dt-bindings/power/marvell,pxa1908-power.h | 17 +++++++++++++++=
-++
-> >  1 file changed, 17 insertions(+)
->=20
-> This should be squashed into the previous patch. The Reviewed-by stands
-> with that.
+Hi Krzysztof,
 
-Should the resulting patch have a 'dt-bindings: power:' title prefix?
+Thanks for the review.
+
+> 
+> On 14/08/2025 16:09, Inbaraj E wrote:
+> > Document bindings for the FSD CSIS DMA controller.
+> >
+> > Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> > ---
+> >  .../bindings/media/tesla,fsd-csis-media.yaml  | 74
+> > +++++++++++++++++++
+> 
+> Your patchset is organized in total mess. First clock, then media bindings,
+> then arm64,  then media drivers, then media bindings, then arm64... Please
+> organize it in standard way - about independent subsystems I mentioned, so
+> within media first bindings, then driver. Not intermixed.
+
+I'll update in next patchset.
+
+> 
+> 
+> 
+> >  1 file changed, 74 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> > b/Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+> > new file mode 100644
+> > index 000000000000..ce6c2e58ed4e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/tesla,fsd-csis-
+> media.yam
+> > +++ l
+> > @@ -0,0 +1,74 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +https://protect2.fireeye.com/v1/url?k=21cb70d9-4129ed84-21cafb96-
+> 000b
+> > +abd9f1ba-63c99c5193b8964e&q=1&e=f7087d49-8d33-4468-9323-
+> 67fa9fa72e40&
+> >
+> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fmedia%2Ftesla%2Cfsd-
+> csis-me
+> > +dia.yaml%23
+> > +$schema:
+> > +https://protect2.fireeye.com/v1/url?k=4db8909d-2d5a0dc0-4db91bd2-
+> 000b
+> > +abd9f1ba-be3588ecc45596c1&q=1&e=f7087d49-8d33-4468-9323-
+> 67fa9fa72e40&
+> > +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+> > +
+> > +title: Tesla FSD SoC MIPI CSI-2 DMA (Bridge device) receiver
+> > +
+> > +maintainers:
+> > +  - Inbaraj E <inbaraj.e@samsung.com>
+> > +
+> > +description: |-
+> 
+> Drop |-
+> 
+> > +  The FSD MIPI CSI-2 (Camera Serial Interface 2) have internal DMA
+> > + engine to  capture frames originating from the sensor.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: tesla,fsd-csis-media
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aclk
+> > +      - const: pclk
+> > +      - const: pll
+> > +
+> > +  iommus:
+> > +    maxItems: 1
+> > +
+> > +  port:
+> > +    $ref: /schemas/graph.yaml#/properties/port
+> 
+> Don't you need second port to CSIS block?
+
+No, one port is sufficient.
+This port represent CSIS DMA and connected to CSIS (imx-mipi-csis node)
+
+ I guess this one is input from the
+> sensor?
+
+No, it is input from CSIS(imx-mipi-csis).
 
 Regards,
-=2D-
-Duje
-
+Inbaraj E
 
