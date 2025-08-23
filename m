@@ -1,156 +1,106 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D8F2E8DE4
-	for <linux-clk@vger.kernel.org>; Sat, 23 Aug 2025 16:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1034820297E;
+	Sat, 23 Aug 2025 17:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755967854; cv=none; b=osfvZaYMOkSKg8KyuD3EQxLulr8WHDKVeRYxG6cvEhPkqlUAXELFF5ayVVtLDoJ3U2gCk9p5SzNHi3Hbk29Rp/yUUZ2lJEBbbM2sYiwMBLrkjx3dydudZ91uFeuYeoLauH7bpFQqWp3DHUa7JZLDj1/2R9gqMvhiGW5pwqlyRCI=
+	t=1755970054; cv=none; b=GyJx69zJcvg7Ry2o+qYgss0kTdG7E0VSzgXC1eTriYuRbzx3V3adD6vuZYBlCpSZgGZQlAaU9Z5cvfwrH+rIXj2LYppZcqZ+uNoTHQu65O9wY8qEECheQFJv1TcjJaYjFxS8C6SlvL10vvLnm2ioUZ9Ba7/3vbvLRNMx0uyxHxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755967854; c=relaxed/simple;
-	bh=ll4kgop1oU/2MiH1wKMG9HwPL4Ffv5IU0KbLcPeRX0w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nRwkWdJNc2s/x7PVNaYoZNtMM9oMRn1uIw2J2bfJTmF4eVkPow6piPXKlUBYtT+nelm17iqX08hoXUWTg/zX4oSL25JZg7X6KgnzDhNqRqDV90DtjWdO6gu9w/R8iaVV0TVTId/Ul6Xx4eN/Yl5pOKBaWKdpQhv5pmiZTFXFF1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oGDVYWhB; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755970054; c=relaxed/simple;
+	bh=XUSH9JvyIKyy+/sQF9Fg04XQIcS5328kuqvUN7VZnEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPPURCZs3Vj/Eivgm/4NLGEHuNjAnXE/hNNyIkrlg2NNigD92O79kEsI/l7FtpC17N031RPBv1NdNmlYoBWmbSnNDUW7QeJWcFeqXM8D0jJTQ6RB74pJhpnl9S4EuUNA0oBoVwC3owJMtOrDjhluH6BwQafc31AgGk9PPrGphho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6La9Yqb; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oGDVYWhB"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b72d690so413418a12.2
-        for <linux-clk@vger.kernel.org>; Sat, 23 Aug 2025 09:50:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6La9Yqb"
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e87067b15aso361729785a.3;
+        Sat, 23 Aug 2025 10:27:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755967850; x=1756572650; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rswAVyuJvRa6TX9BXHZuTzZwEBPSMziKik/9EoWIi4w=;
-        b=oGDVYWhBwVsCp4cNmgu01bBTD+4L+zo2PM5C9UJcBtUqELEXyXEuS4IZ4yS2WrT9Q+
-         pnHCkG1JbKGVD+OmLNPp9fybkFEm10iMo5fzLIpfs8hn9PIaVL7j/lBpGhDWtHT1gQKa
-         Uawi+jgN0QGXFI0WNcLsSwUbaqTupEnsDPme8UKLmt2bf4ljbxpeZxDCWq03at0lqWPl
-         qQaWzDwBqINxq/Fj8wRRkFHubQMJlch3Lhqg0Mazx6CN2GEEpz4vDXVckSQBmhkl1cL3
-         QYSo3z754V/9OldgP8FJKJjlMymNr1ncLCKDMO1LhAa+Ko3eWBW0N8BNHJak80TpIQz5
-         3ADg==
+        d=gmail.com; s=20230601; t=1755970052; x=1756574852; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XUSH9JvyIKyy+/sQF9Fg04XQIcS5328kuqvUN7VZnEs=;
+        b=l6La9Yqbn/3zg1t4P6uwZ/JPMvkRT0hBEd349+8zuqtqEPf5DbY1tkChJHrzL5n4fJ
+         wWri+9bzpVngL588kHuByXMt3SHin8ZF8eBlQ8E64n27zEDeROH19wb0+I03qYXqzjrX
+         kxtgki627QSihwg5Jq1hirAoZ2XcUCD0gfYX17z66auVYI7UkqcAcPkp19vGmcaPA+cm
+         EI3w67oS/3KsX/856Nx3bC1TKJyWFe+qUhzxZnaQckc4e7Xfw4YI2u9HK1+O1o+xUVpb
+         Zqho/YppE/z0aRUWifFuilnuova0lku8bzL3Yc+rep1f7D0tXzCnGAbbHjRNSKkRzajq
+         cSjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755967850; x=1756572650;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rswAVyuJvRa6TX9BXHZuTzZwEBPSMziKik/9EoWIi4w=;
-        b=ExYMMK7cQNU4sW96XV/BbkR5UaXB0Php1P2KpFoAWVk5jp7TnK/+YXtFugTtb18uSq
-         qoGYXyM5mZWGUzqnXqbA7Bro0EbiLmY3ymLuhWfTnoKCkVrtWly2pG0U/u+Hv0mwXKtv
-         LoqmeSPnbInlIgRs7JSd0oSwQU4zxiFMGmRkDQaxakQPnoFfBG/eMNWs3STLjGI4/HA0
-         A0u7MIrV+Wey09KwvaqRSXaZx1Nncc1c7QHyNWV7Akj8HvKiE+V2ogwI3ajjdBCSpa7B
-         LRsABLquLthZf74v7r14SlX0V0FH6l1TOmF3AwAzOI0e+Z8Hc578NURWTNoutKafN6SB
-         U2Yg==
-X-Gm-Message-State: AOJu0YzBbeXglIrGR6EXZewyiEUnlJS/7uwoRdf1BCnWKl77HlTDDAzw
-	IJzzS3599ZDPJx4K1FOB87Q39p+7ywrN1T1VRZXmCahVXZbdgqaJ+dqlWOz9eH5lDMI=
-X-Gm-Gg: ASbGncuHDWBbipja9BJ1ocCF6UJxtgHwwxrC5KLRbQDjsrPuCWTGvVzFOYNLhpT61+I
-	Sl0PTJlUBDm5JSDn4cLn1tTFQ3xeCyBKLHzJGlddTfLZzjUyBgOqlq8nm5IxDFoQ0zPQyXgJEWo
-	OR1SzqVNr6a71V7BKO3CrQcX8/cSvweNERO5NBkCxhJnnLTN0a7kJoOOVr5tk53ZJZcwkNOkcgy
-	QktS91JKtAfGOIiSzO6elA5Gila/S9mWweVYIqSh9IdyXbdaglXW8FFzbKepGy3sVdFzIhtnHbd
-	FEYXySgTjN268liZ/5sOC7yOz1t+SiFYV62YQGGQW5fAt5MEgFyKaT6n+q+fUezXpRRKeSRIdPB
-	xRVoJsTo8f8vL4cC513cGBEmxR+KsLDTSwMnavac=
-X-Google-Smtp-Source: AGHT+IHjBstjuzxQsJVLkeGYHgOE3wWdKaHmumAPQvcdN50PYZzwBsMeGzXzhJUjnQCkGBQZZA30xg==
-X-Received: by 2002:a05:6402:274e:b0:61a:927b:a79c with SMTP id 4fb4d7f45d1cf-61c1b703ddfmr2766014a12.8.1755967850448;
-        Sat, 23 Aug 2025 09:50:50 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c312c4cdesm1797880a12.23.2025.08.23.09.50.46
+        d=1e100.net; s=20230601; t=1755970052; x=1756574852;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUSH9JvyIKyy+/sQF9Fg04XQIcS5328kuqvUN7VZnEs=;
+        b=F76A8/YGwjcMs2TWM8usc1MvUjFBQ5j657SxBFIKY/a6uR9HG87SE56IBKO/h2d6Wm
+         s7PL0DcL9vUJtsWsNJaLuit9CJTtEe7EYqhagaZiAjDY1aofAEg76Nr7Ke6LJgfILAkf
+         v8t93VhD2gNumSmuWCu8YgZ8siXM3ZNpaIcuT4Dl23lM3gWpoNVRU4MnRoZWKidbhiMg
+         cixeMATJLEqbzSXGSZJDZFTG4yPoB+KhiyggjXuwq+HibDvFZT7EWHGh49Ng9h2YbWX4
+         8Lp69ReVatjBYZLqm5fC9vXCabCIuforaYWRVwuPFQZZ4hl/KV8PzBz0GPijBY7gpGtG
+         dVKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlJpjipvx0d809/G5llpTGZPV0YJ1fD0MKmi8F1231qTP4hKRWSV9WZcZCXTkCD0dBpdFpcrCEalBqUuZW@vger.kernel.org, AJvYcCVfz/ymMKrq+l852byTXRAOrmSkwE+YHJi43bDD6T5ibd6u8NPuZ6tWXBiIFFSubj20mC+fH69uO6tB@vger.kernel.org, AJvYcCWXNoRswR2lAoHiuZHGKqWN6ZtYaCh+CImgpudePzg5utPbSpofvvnkmqiTEPRs3UrUnSR8BfYzgWf7@vger.kernel.org, AJvYcCXmLe1nGtWg53LriOlsTBT4z/pZfYSdCAJPbVX1clBCdd5lRalYgcQn41DOusoXKroPhtdtfqcEn16hY4uQ84wwjtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2tiPmYzMg3O2jg2X/LLEYTtU2FkrhDz2dN5u9pVgvwFmleVVG
+	jyuDgGqdcRMhJvhGpDuSJMU8ZUxEjUCnVBUtH52q1nCCpIG+O/DAXA/jyzrKJvP1WUc=
+X-Gm-Gg: ASbGncuOl4pM/a9P4gsQXXaL+nbOS2/5sBNDKAVUtVcoUvZy3E1AJlgHhIHJjMBvyPs
+	n20xfPcdwME0rmFRDH3Dl5I1tBDRnDJjgomxUjLZ1UzX7Z61c0AKsgtApOx1sSia0MI+v55i/wZ
+	cgipzCeUM8i4HIwlvqFfeEBQdwzfJ4rfIQSz6hYKXetGsXqKKt3L1cKX6pigAvLBZeNjIuQLLAW
+	9aV4o8n+UhgLiK0Q9BCiZXg9Br4JmoGZe8LcvbMP5st1SS2MPeyMeLqW3HY6m3BEYdAeYjaltci
+	cEcHeMdR273J14XAWujsrXay8R7gQ/bFPV260NeglubHrzhlA6zeun/U0biNiPvtXkHFuSpMbYq
+	pUdLVyBcxGLFgb8+g/l0eY6nQCoCI2QUdQw==
+X-Google-Smtp-Source: AGHT+IHsakSgynYXDTEIxfql1qjzpysL0gClsR895vhO///5Zbblp31VQLCpZlK+UWogbB1c6SvypQ==
+X-Received: by 2002:a05:620a:3189:b0:7e9:f820:2b8f with SMTP id af79cd13be357-7ea110b94b7mr813978585a.80.1755970051597;
+        Sat, 23 Aug 2025 10:27:31 -0700 (PDT)
+Received: from codespaces-a28d22 ([20.42.11.29])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebede53d5esm176063185a.24.2025.08.23.10.27.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Aug 2025 09:50:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Keguang Zhang <keguang.zhang@gmail.com>, 
- Taichi Sugaya <sugaya.taichi@socionext.com>, 
- Takao Orito <orito.takao@socionext.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
- Steen Hegelund <Steen.Hegelund@microchip.com>, 
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Michal Simek <michal.simek@amd.com>, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, 
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Max Filippov <jcmvbkbc@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>, 
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Alex Helms <alexander.helms.jy@renesas.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
- linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-99-b3bf97b038dc@redhat.com>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-99-b3bf97b038dc@redhat.com>
-Subject: Re: (subset) [PATCH 099/114] clk: samsung: pll: convert from
- round_rate() to determine_rate()
-Message-Id: <175596784601.52468.3851559862193091574.b4-ty@linaro.org>
-Date: Sat, 23 Aug 2025 18:50:46 +0200
+        Sat, 23 Aug 2025 10:27:31 -0700 (PDT)
+Date: Sat, 23 Aug 2025 17:27:29 +0000
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: exynos990: Reorder IDs clocks
+ and extend
+Message-ID: <aKn6AYIAG9eUeSx2@codespaces-a28d22>
+References: <20250820-2-v2-0-bd45e196d4c4@gmail.com>
+ <20250820-2-v2-2-bd45e196d4c4@gmail.com>
+ <20250820-diffused-impaired-ba776d39692f@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820-diffused-impaired-ba776d39692f@spud>
 
+> This looks like a massive ABI break, where is the justification for
+> doing it?
+>
+> Cheers,
+> Conor.
 
-On Mon, 11 Aug 2025 11:19:31 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
-> 
-> 
+Hi Conor,
 
-Applied, thanks!
+I reordered because the current IDs don’t match CMU_TOP:
+the PLL mux select is in PLL_CON0, not CON3, which gave wrong/low rates.
+I also added DPU/CMUREF and a missing fixed-factor path to stop bad rates
+and clk_summary hangs on hardware.
+I’d rather fix the mapping now than keep a wrong layout.
 
-[099/114] clk: samsung: pll: convert from round_rate() to determine_rate()
-          https://git.kernel.org/krzk/linux/c/e278e39b014d789fb670695d422ff33c3ef56040
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Thanks,
+Denzeel
