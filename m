@@ -1,150 +1,107 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7C2FB97D;
-	Mon, 25 Aug 2025 15:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26F2F4A1B;
+	Mon, 25 Aug 2025 15:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756136492; cv=none; b=BuvzQNLcis1vvEnBxsp4O2W51rCWKZEMvucufsPlCZBCfj5aBndh3JoNVX0te54jY5J1qmZPioquVvtOQW+ZJSrf+1YyYle8OhlIy5WjzjVXs+1XR36e44N9hagqTgVhgUn4Hiq/xtlRlmw70UROqkrNx/GHQliMf3VVNw8Ney0=
+	t=1756137483; cv=none; b=tMgquhpxKQfkkzzuBiPvNlagTYmpauLpAoQNBD51WYnZkwAM3RXtvbg+x4n9FTlc1TvZl2zDIZjHxPsXJmOifMH250czbqgQGDhjhVGkqxm5ZFtg+EA4R8CIb/Nbd1BL+qTgrH9TZ+lW0qbgnhcguz2fERw5e1mMr8kp+DHrv6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756136492; c=relaxed/simple;
-	bh=iVJ9I3QV2otLbWWjQsCxDOsmCPvi3IMzSx/d+b1GE/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCT2epgcnHqoAOuoQfb6CmL/R5ufIJMffZts+1FmjECaqhrQPoePx2ljp5IsvDwy2hUkKUvC/UgYwkhv3yknvEuW7jOpAgaG75mTjng5yWmyK4BYusxoDM8NBWOjhqhRzZ6lFYZ+Jey7gF1j4gWsppGUjuQB0NvCIz28YmkHFZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3366ce6889bso9846101fa.0;
-        Mon, 25 Aug 2025 08:41:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756136487; x=1756741287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lf0SerB/BddtiPRZt6oTCzK0uyEGO4TRGC1HhfQpBU4=;
-        b=J6OCbyqh7fF2JzvRvhvn2cPiQhPKMrOimbHNjYueD5pV4FkzDtCiiPSD39FyWby+CD
-         ws69PHImF32jeNM3LvLnItFp4V34PcmJRAywt/lRqVlWzH/JX4sG3RpVtmv1wV4vS7bM
-         pmFVGCQFDTUAmAj7LDxfeYKMfXAXCgB283C3tKbFwllkWSWrc8PLNfgO6jfVCYFAp6Cq
-         jgEre1NLYReXDMJbLl2znSmR8ryRY97/IFqgt6L+pLkT8oVKnUatw/VLJFZ9UQZtRusz
-         Uto6amvX8/eeX+JZpoAN9v8hDl/MCWgiPJ6VjhqG+TmqSDlvKEy46fI8DqRkQ25jx+lG
-         e+2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUon5ljhbKz2I47bJz5yGdB6xJ8eSXcOHcZ+JbBkSDyuu3pczEKNr2+Z3AWnyV5Edb6io519+hgJ3xK4xsd@vger.kernel.org, AJvYcCUu6rL60FxCxnin5gIiElFkvs5wK3fahjaPpwZNvGdA2gekieaUQD9DtGn8/VWcsIbXHKlPoKjLXfLs@vger.kernel.org, AJvYcCXgJqV62iJsgI4Wcbx2Gy7hPFHXNXTK4NqFm8MuyKuEBdZrkzookbrqQwnp8iIqtztLH0JmDOOJq26O@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPLrGzkGfM8Bijzfm2BdhoMAGWhI2s7c9fpObYx+uUinYdhQnv
-	heXfSoZLwW7FK+NPyY9CfPdJueNCbwf4vyuyr0wpdtn7Xa0bgr4sSrx6kBsIDQhcSYo=
-X-Gm-Gg: ASbGncsQLtSsbLrGTcqiZ3KH6/2mLCWVeFAvcElyVJ+FfrjLjwWR/aT8y4gqlQ/HJYb
-	TTGWtzQKuC3fJvchhju1ExaD3nNVEs6ZTGHOUx3DF39qHXN3OO7KRnEPQZN7YD3QotTn0WvGA06
-	x3bUd62fCzgxsPXycYOvWK6veBRq7ecE4FlkZsaVqLxi4hRs8tL/RazDhTAatwnihxwoz0pEhI4
-	WQCT6FsoWlUCZItjGIxGwJevniatiwOExd2ZlacTJIOSyzIQGUNtIDx5kRgG10hhpqycBEHm8pd
-	PIc+d+9OCaulZkrJc9FfKKbAWIVXhpZ+P2fDPV16fgCliQkEQfY/eQ8FiC7QNEgi4eeJY8WdZUH
-	J2bEBWAmkplFxmL1d79o6LWMaJrmzCDE79uxogaqpZ/l1xI6/PCI8yCs=
-X-Google-Smtp-Source: AGHT+IHZUzj2Gt5/ShJSTqlvwH+lIydPXeS41PwFnfciEQ1JeKFJnnWiFAkn2qK1B+L4WgBVeoMulQ==
-X-Received: by 2002:a05:651c:20db:20b0:332:57b8:92eb with SMTP id 38308e7fff4ca-33650e732eemr19534371fa.10.1756136487167;
-        Mon, 25 Aug 2025 08:41:27 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5aa917sm16002931fa.41.2025.08.25.08.41.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 08:41:24 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3366f66a04cso10077291fa.1;
-        Mon, 25 Aug 2025 08:41:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8Igos1SJ9w2R8AsQCh7+Bc1ja3+8SgmVNiJGIBoWR/uGHCZ/R0DGbDRU0Ol9ktiN8+X/z8Qy8pKeu@vger.kernel.org, AJvYcCXE7Wb4pYImyAOkI0lEKWr1ESTC7VJwSG0GQWOJzK6DFBrAbIY5LKgPnLXDROsoawxXQpqmFwsBOzrmeISF@vger.kernel.org, AJvYcCXKhyLdV7DbitsTo4Bcyrj4WUKKSsfvpLp7pp8kdCE4i/Der59pAUjHvXURB3dcFSK0V+cZ8n3I0hoL@vger.kernel.org
-X-Received: by 2002:a05:651c:31c5:b0:333:b656:a685 with SMTP id
- 38308e7fff4ca-33650e3812dmr36899791fa.1.1756136484611; Mon, 25 Aug 2025
- 08:41:24 -0700 (PDT)
+	s=arc-20240116; t=1756137483; c=relaxed/simple;
+	bh=J5bupA+heQtL5Wcp4JAPKY1z0JPnUwdB+YBwuYoNau8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VnRzDFhDFVEkTnb92m6u2JICkc/6zkkCZKHlG7i503lh26WqMkrP9vm9AvX1N7aswl3DhUCHfUTUpppiSlI8WYm6McaCzeoWAgoN0i5U6nioSxI6PcC8YBG0Q56djfwdE49mdHtQhs2UpohIOZ+md5GQedMxdbEAWCQGoIYEVlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E3+JVySO; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E3+JVySO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756137479;
+	bh=J5bupA+heQtL5Wcp4JAPKY1z0JPnUwdB+YBwuYoNau8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=E3+JVySOtDo6B73FegZ6Or80M/ila2fRd1xu2TVpmdEKV9Sc/1jbhYN+Iic29PXGo
+	 ImJeCh0eMufQ8BWvZ/gXuqKyQQP79mjfpwEY1P8VUEMsz5UwauFcm7kPxheNobMKec
+	 NyHFDDwFCs1N3p1feTcjEZK+bSrPSbd5gsDYVqJG2Kd9B1o82RnzEAOkJu9j25SwMc
+	 Hiv0f6eatIri3ZDVVflvsaROY9xNzvxaDkvOG5o61OKcKhBPq59cJ2ITFzx8I9Ab66
+	 qWC0Yn5VFl4k+YA9E5p7XZO8m8uF4RD4Al07heeqORCxhtPYonbw2jvJBUAnV2L7aY
+	 ik/bz0vcVCXFQ==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2d600C8f85CF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22E0C17E07FB;
+	Mon, 25 Aug 2025 17:57:58 +0200 (CEST)
+Message-ID: <c3b6c0ff993b7ebc9fb8abd8104b537f0c7f5fb3.camel@collabora.com>
+Subject: Re: [PATCH v2 0/6] MediaTek devicetree/bindings warnings
+ sanitization second round
+From: Julien Massot <julien.massot@collabora.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>,
+  Enric Balletbo i Serra	 <eballetbo@kernel.org>, Chen-Yu Tsai
+ <wenst@chromium.org>, Weiyi Lu	 <weiyi.lu@mediatek.com>, Eugen Hristev
+ <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Julien
+ Massot <jmassot@collabora.com>, Sean Wang	 <sean.wang@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, 	linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org,
+ linux-sound@vger.kernel.org, 	linux-gpio@vger.kernel.org
+Date: Mon, 25 Aug 2025 17:57:57 +0200
+In-Reply-To: <d02d2a5f-b8d7-4fdb-b3c5-6e6d21127733@sirena.org.uk>
+References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
+	 <d02d2a5f-b8d7-4fdb-b3c5-6e6d21127733@sirena.org.uk>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816084700.569524-1-iuncuim@gmail.com> <20250816084700.569524-6-iuncuim@gmail.com>
- <20250816144936.3f2738cc@minigeek.lan>
-In-Reply-To: <20250816144936.3f2738cc@minigeek.lan>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 25 Aug 2025 17:41:12 +0200
-X-Gmail-Original-Message-ID: <CAGb2v64vMvs+UN4AJWZAGnU+ZQRBQBheqnRKzbMmd10UMdOxCw@mail.gmail.com>
-X-Gm-Features: Ac12FXyXTRSXu5z7cM1Z4ILcGzs0omRgBCqYp8gycWr1OzOdi7Cz8MsXeBWG_GU
-Message-ID: <CAGb2v64vMvs+UN4AJWZAGnU+ZQRBQBheqnRKzbMmd10UMdOxCw@mail.gmail.com>
-Subject: Re: [PATCH 5/7] arm64: dts: allwinner: a523: add USB3.0 phy node
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: iuncuim <iuncuim@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 16, 2025 at 3:52=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
->
-> On Sat, 16 Aug 2025 16:46:58 +0800
-> iuncuim <iuncuim@gmail.com> wrote:
->
-> Hi,
->
-> > From: Mikhail Kalashnikov <iuncuim@gmail.com>
-> >
-> > After adding the phy driver, we can also add phy node. In addition to t=
-he
-> > clk and reset lines, the power domain PD_PCIE is declared in this node
-> > according to the bsp dtb. So let's mention it.
-> > Currently, phy driver does not support role selection and only works in
-> > USB3.0 mode.
->
-> That's the current limitation of the proposed Linux driver, but should
-> not affect the binding or DT:
->
-> >
-> > Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm6=
-4/boot/dts/allwinner/sun55i-a523.dtsi
-> > index e4ed4fa82..233365496 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> > @@ -606,6 +606,16 @@ mdio0: mdio {
-> >                       };
-> >               };
-> >
-> > +             combophy: phy@4f00000 {
-> > +                     compatible =3D "allwinner,sun55i-a523-usb3-pcie-p=
-hy";
-> > +                     reg =3D <0x04f00000 0x100000>;
-> > +                     clocks =3D <&ccu CLK_USB3>;
->
-> Will we need more clocks (or resets) when supporting PCIe later? If
-> yes, we should add them already now, even if they are not used by the
-> current driver.
->
-> > +                     resets =3D <&ccu RST_BUS_PCIE_USB3>;
-> > +                     #phy-cells =3D <0>;
->
-> I think we should use one PHY cell here, to allow users to select the
-> PHY path they need. A USB3.0-only driver implementation could choose to
-> ignore it, or require the number to be 0 only, rejecting anything else.
-> But this way we keep compatibility with newer DTs.
+Hi Mark,
 
-Agreed. It seems this is the common case for combined PHYs. The last
-cell tells which type of PHY is to be used.
+On Wed, 2025-08-20 at 15:21 +0100, Mark Brown wrote:
+> On Wed, Aug 20, 2025 at 03:44:51PM +0200, Julien Massot wrote:
+> > This patch series continues the effort to address Device Tree
+> > validation warnings for MediaTek platforms, with a focus on MT8183. It
+> > follows the initial cleanup series by Angelo
+> > (https://www.spinics.net/lists/kernel/msg5780177.html)
+> >=20
+> > The patches in this set eliminate several of the remaining warnings by
+> > improving or converting DT bindings to YAML, adding missing
+> > properties, and updating device tree files accordingly.
+>=20
+> What's the story with interdepenencies between the patches in this
+> series?
+>=20
+> Please fix your mail client to word wrap within paragraphs at something
+> substantially less than 80 columns.=C2=A0 Doing this makes your messages =
+much
+> easier to read and reply to.
 
-ChenYu
+Thanks for the feedback, and apologies for the long lines =E2=80=94 I have =
+fixed
+my mail client for follow-ups.
 
-> Cheers,
-> Andre
->
-> > +                     power-domains =3D <&pck600 PD_PCIE>;
-> > +                     status =3D "disabled";
-> > +             };
-> > +
-> >               ppu: power-controller@7001400 {
-> >                       compatible =3D "allwinner,sun55i-a523-ppu";
-> >                       reg =3D <0x07001400 0x400>;
->
+Regarding interdependencies in the series:
+
+  * Patch 1/6 can be picked up independently.
+  * Patch 2/6 is standalone.
+  * Patch 3/6 depends on 2/6.
+  * Patch 4/6 fixes the DTS node name as expected by 3/6.
+  * Patches 5/6 and 6/6 are independent.
+
+So the only ordering requirement is that 2/6 should land before 3/6, with
+4/6 included as well to avoid introducing a temporary new DTB warning.
+All others can be applied in any order
+
+Regards,
+Julien
