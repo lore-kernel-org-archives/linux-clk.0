@@ -1,185 +1,184 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B0829DB86
-	for <linux-clk@vger.kernel.org>; Mon, 25 Aug 2025 08:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460C7242D96;
+	Mon, 25 Aug 2025 08:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756110991; cv=none; b=odeezx4tctR3AUIKn8+KsZ+an4IOCur4yZMH9CCyEvwqyc2UIuN8IF9QriqGHhRhCwNLPw8se0t/TeKd72BXy1QhR5KFUQgzZ/m2FCo1LA1Bpkuzy6ngk4VvUPv9bNKlN/Yr06echpYhXyV0MBlYGLCiBm+Hun5NqaYsz94aMbs=
+	t=1756111246; cv=none; b=XPwwMh2UtelS2wdDAQLkbplqkKzvIrU7MGKZc547SRvCR/f6bw48sB0WreSmoBfBFxUmhFhKH49BI4cqk5d0VqVaCdh3PvA6LOsGH6WgO74rWdjhDcthUsTcyMY0fuM1D6OOfX2AsUQePtQ06NDfETSwXChor0u1JqdRp6SWJrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756110991; c=relaxed/simple;
-	bh=yEIYjWl6ezBClWzYKCGr5752vL7ppckrbHSq1WORKUM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A+Z41E6NVzPI4Ff0aJS0FSziD/RgpEvg6V859Nud5094aLfycfaX3w/ckwXcwD+UICJsMVvNqOZpZh/DBx3WtPRmv3AbaEKscc7rmKqmuh5/oELR5g4n6akXcVKwYX8e15wlzTqMNS+YKtzmfd2C+H1+AwXUmr5fEwlmtMPCaWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FUpEX1aA; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1756111246; c=relaxed/simple;
+	bh=aL0MAVPP+baLaUpSwr0jfz0k4rjTubYNQV6vSJB6OP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QumvMAJyCeQvjT3ebz/RN5jOtAa3tW0NOm+MmPCbZS50TTSujzJ4hKx7dtb8jKs9ehrlr8BOGHYFAnkyyV1sCCFUixylZ2LHsDfRyPHHLFxMf50hkQzPhVwUIZ76/ShhwLxzpdFkwH4Z3N1UVmp3/VhvhAyS6peHGEVKanXFEzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhTSsXLt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FUpEX1aA"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so21812135e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Aug 2025 01:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756110986; x=1756715786; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XO1+IS9STBCj34Lw+wOXXrOpWS+ZkYDToI4PIiLJ9vs=;
-        b=FUpEX1aAKSNcHCXt3khGfAz+rLqvRSUZ6pui5i2UTtnM0sSyIeB9g5ydTRErxatRuU
-         IlZZjY6Pvapzv+crsCnvMAImPionUmBLjBN+EPIJOgEy++gnBk494T0y3q3vXde3/z6Y
-         sOPeiZKCT/1daRuUmBShyzXnbDByhvluc0Fl4DFORdUhOruGC/Ih2fOk/cO03sal78Ms
-         jEPDgpJGnZeKAxpxqQrGN6YDvOygDN5hCDoGVU+YhYhfhTJcXUNazH/09LAzxwpZlrV6
-         DzML3flc41ZNNHOFKTYpA5nUTnsYB1oIjN93zaXHL3KxNC7NWFFKahOczGj/Q+ICo7b4
-         zcHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756110986; x=1756715786;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XO1+IS9STBCj34Lw+wOXXrOpWS+ZkYDToI4PIiLJ9vs=;
-        b=Uujs+M98XGkVTYKrpNZMGXwdQxrDrp6HhoCTch28IJHLp3Zc7I4MlV06BW+0/+RPhO
-         znvHOc89keCs905QkLvNqaTpVpbMNsC5Ko6gpkvnmPow6kjku82AUNYbleNE3P11M2CQ
-         y5/HT9sEUCsA88Wzr3JaAAGDgTEU2sonetcYGV1vCrQ9MQdKfHfjAwxj3lznkJ9gx+Tb
-         1HV5YAepghRx9w9Wj2nsO0Wo3EdZrVXg4mJfPriBeWQuQnRWMObI979xKLb6vSBHtsnd
-         YYwh830u9zTEKFsjkJDSbvRPdxo7HgQt5uenBNCljKki1MGNg9WIxFB89mjnNRP9XqBR
-         RnqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAT99n1ucMLOBBORN64zDSApnaFEiuX1ERUvSaK41VY0OgT/kSFzl/5uDvTUedCXUFg8Zn0EHAyko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsvCUPpTa8EfPW39u5w1H9DIanTpVTzVp1uR6I1uMFA04md4kW
-	0gmF0jVdvDDk526C6XIUggefBOXO3Dkkf1rB9w6bF5a7aa6I4yyAfvpQpC+rOvNI4HE=
-X-Gm-Gg: ASbGncuVVp5Om2w9hLpOYnfABzX4aC7lfQqAGT0rUqrWtcNm66x+3O3h/PK5oecjPCf
-	GbNpvSaPkpCOIfc5ODAHg1MJuUR4jsks9k0hQ3Z8rn8KSUDr2tAk1bwQLCTd9xenUKDHCNfN2+5
-	kVLX7HXbjpqvK0uotRIlgSFMhkqIoMCJVrFo7UAVtatBae+3OWoVjbIgsATJFhtF3Tj8vrbTf3Y
-	XtR0cOdh62HLT3GJ/+6t/plYwhvdhtlQS/IqIRXHQk/ArFg9W6gxm/wrFkkAx9kWrovPh0WKlns
-	L5e1wMAtX288hdcqHTimMLVPjCWge+b8ApLSon3cYmRMuo5Y291pxYexvNOGzJSRjhZFutZsotB
-	8m9hOsTFj4CVu2nSo/jBXCg==
-X-Google-Smtp-Source: AGHT+IGiamtdsGY2kDX6w9f/mzPofYs3vSisqz5ZM4c90dOvsj+B0bgxdt8+7FzKKa6/ub2RebLE1A==
-X-Received: by 2002:a05:600c:b8d:b0:459:e35e:a90d with SMTP id 5b1f17b1804b1-45b517c2eebmr91517135e9.27.1756110986280;
-        Mon, 25 Aug 2025 01:36:26 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:af88:b6ba:23b9:97e3])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b5753adf7sm99733285e9.7.2025.08.25.01.36.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 01:36:25 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Da Xue <da@libre.computer>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Jian Hu <jian.hu@amlogic.com>,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: meson-g12a: fix bit range for fixed sys and
- hifi pll
-In-Reply-To: <20250822002203.1979235-1-da@libre.computer> (Da Xue's message of
-	"Thu, 21 Aug 2025 20:22:02 -0400")
-References: <20250822002203.1979235-1-da@libre.computer>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 25 Aug 2025 10:36:25 +0200
-Message-ID: <1jcy8j6bna.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhTSsXLt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A433C4CEED;
+	Mon, 25 Aug 2025 08:40:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756111245;
+	bh=aL0MAVPP+baLaUpSwr0jfz0k4rjTubYNQV6vSJB6OP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FhTSsXLtwO6EYA8rIZFKJgEf1O0j/6AFVpaIb7+0szOlxeqEkxITba+wS9KfZ+kjH
+	 dJ4D0usUwHPH2GWzU3dXYRelvBK6F/Z+h883XsJq3lJG4gwBDPoq7M/8L4HEjQ78Vz
+	 uw/bRo0VNtHxfdkgkl90Rnhxn0zOB4RalzhxYxbJGexY8w9QaG1wwgcVo4YigkvXdQ
+	 HQavQb3MOaV1ehg5AV6v7VNw85VJa0JTCzNxPuL1pTIJOwcfLGwF2EeUKXrxIt0vRt
+	 UCzCy8PTNnoYCOQUG/lUyh80qq0nQtE3jstm5jDssnnjYRZ8hsuFayTUr3+h+B+cyD
+	 ob0l8lzfNS6fA==
+Date: Mon, 25 Aug 2025 16:40:43 +0800
+From: Yixun Lan <dlan@kernel.org>
+To: bmasney@redhat.com
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Alex Helms <alexander.helms.jy@renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 049/114] clk: spacemit: ccu_ddn: convert from
+ round_rate() to determine_rate()
+Message-ID: <20250825084043-GYA1096417@kernel.org>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-49-b3bf97b038dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-49-b3bf97b038dc@redhat.com>
 
-On Thu 21 Aug 2025 at 20:22, Da Xue <da@libre.computer> wrote:
+Hi Brian,
 
-> The bit range 17:0 does not match the datasheet for A311D / S905D3.
-> Change the bit range to 18:0 for FIX and HIFI PLLs to match datasheet.
->
-> The frac field is missing for sys pll so add that as well.
->
-> Patched:
->
-> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
-> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
-> 996999
-> 500000
-> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
-> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->  hifi_pll                      0    +/-1562Hz
->  sys_pll_div16                 0    +/-1562Hz
->  sys_pll_cpub_div16            0    +/-1562Hz
-> + sudo cat /sys/kernel/debug/clk/clk_summary
-> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->     hifi_pll_dco                     0       0        0        0
->        hifi_pll                      0       0        0        0
->     sys_pll_dco                      1       1        0        3999999985
->        sys_pll                       0       0        0        499999999
->           sys_pll_div16_en           0       0        0        499999999
->              sys_pll_div16           0       0        0        31249999
->     fixed_pll_dco                    1       1        1        3987999985
->        fixed_pll                     3       3        1        1993999993
->
-> Unpatch:
->
-> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
-> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
-> 1000000
-> 500000
-> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
-> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->  hifi_pll                      0    +/-1562Hz
->  sys_pll_div16                 0    +/-1562Hz
->  sys_pll_cpub_div16            0    +/-1562Hz
-> + sudo cat /sys/kernel/debug/clk/clk_summary
-> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->     hifi_pll_dco                     0       0        0        0
->        hifi_pll                      0       0        0        0
->     sys_pll_dco                      1       1        0        4800000000
->        sys_pll                       0       0        0        1200000000
->           sys_pll_div16_en           0       0        0        1200000000
->              sys_pll_div16           0       0        0        75000000
->     fixed_pll_dco                    1       1        1        3999999939
->        fixed_pll                     3       3        1        1999999970
->
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Signed-off-by: Da Xue <da@libre.computer>
+  Thanks for doing this
+
+  I will give my rb to 49-51 for SpacemiT, and here we face same
+issue as Krzysztof did for samsung, to avoid potential conflicts
+we will route the clk patches through SpacemiT SoC tree..
+
+On 11:18 Mon 11 Aug     , Brian Masney via B4 Relay wrote:
+> From: Brian Masney <bmasney@redhat.com>
+> 
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+Reviewed-by: Yixun Lan <dlan@kernel.org>
+
 > ---
->  drivers/clk/meson/g12a.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 66f0e817e416..f78cca619ca5 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -157,7 +157,7 @@ static struct clk_regmap g12a_fixed_pll_dco = {
->  		.frac = {
->  			.reg_off = HHI_FIX_PLL_CNTL1,
->  			.shift   = 0,
-> -			.width   = 17,
-> +			.width   = 19,
->  		},
->  		.l = {
->  			.reg_off = HHI_FIX_PLL_CNTL0,
-> @@ -223,6 +223,11 @@ static struct clk_regmap g12a_sys_pll_dco = {
->  			.shift   = 10,
->  			.width   = 5,
->  		},
-> +		.frac = {
-> +			.reg_off = HHI_SYS_PLL_CNTL1,
-> +			.shift   = 0,
-> +			.width   = 19,
-> +		},
->  		.l = {
->  			.reg_off = HHI_SYS_PLL_CNTL0,
->  			.shift   = 31,
-> @@ -1901,7 +1906,7 @@ static struct clk_regmap g12a_hifi_pll_dco = {
->  		.frac = {
->  			.reg_off = HHI_HIFI_PLL_CNTL1,
->  			.shift   = 0,
-> -			.width   = 17,
-> +			.width   = 19,
->  		},
->  		.l = {
->  			.reg_off = HHI_HIFI_PLL_CNTL0,
-
-Thanks for this.
-
-While this is indeed the same topic, this is doing 2 things at once.
-Could you please split this, fixup in one change, adding the missing
-frac in another ?
-
-It is much easier to handle in case something needs to be reverted.
+>  drivers/clk/spacemit/ccu_ddn.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu_ddn.c b/drivers/clk/spacemit/ccu_ddn.c
+> index be311b045698e95a688a35858a8ac1bcfbffd2c7..02b68ea84db9bd3ecdde41f8013c48263edbd917 100644
+> --- a/drivers/clk/spacemit/ccu_ddn.c
+> +++ b/drivers/clk/spacemit/ccu_ddn.c
+> @@ -39,13 +39,16 @@ static unsigned long ccu_ddn_calc_best_rate(struct ccu_ddn *ddn,
+>  	return ccu_ddn_calc_rate(prate, *num, *den);
+>  }
+>  
+> -static long ccu_ddn_round_rate(struct clk_hw *hw, unsigned long rate,
+> -			       unsigned long *prate)
+> +static int ccu_ddn_determine_rate(struct clk_hw *hw,
+> +				  struct clk_rate_request *req)
+>  {
+>  	struct ccu_ddn *ddn = hw_to_ccu_ddn(hw);
+>  	unsigned long num, den;
+>  
+> -	return ccu_ddn_calc_best_rate(ddn, rate, *prate, &num, &den);
+> +	req->rate = ccu_ddn_calc_best_rate(ddn, req->rate,
+> +					   req->best_parent_rate, &num, &den);
+> +
+> +	return 0;
+>  }
+>  
+>  static unsigned long ccu_ddn_recalc_rate(struct clk_hw *hw, unsigned long prate)
+> @@ -78,6 +81,6 @@ static int ccu_ddn_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  const struct clk_ops spacemit_ccu_ddn_ops = {
+>  	.recalc_rate	= ccu_ddn_recalc_rate,
+> -	.round_rate	= ccu_ddn_round_rate,
+> +	.determine_rate = ccu_ddn_determine_rate,
+>  	.set_rate	= ccu_ddn_set_rate,
+>  };
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
 -- 
-Jerome
+Yixun Lan (dlan)
