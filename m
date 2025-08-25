@@ -1,227 +1,199 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010053.outbound.protection.outlook.com [52.101.229.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ED6241139;
-	Mon, 25 Aug 2025 04:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096021; cv=none; b=AGAQwwBEUWWkKnG9fXXQplkxxUP5qx/I37DGJued9X8EibFo6Q0UxgIG1aOgp1lbmVGZbLQyDV03jra+DmXHikrRrmO/5Mhqg0C+HfM+JDoMHjFu6f4A3377zv2gvVgZ+CXOaLvWsr7oPzzKSaJzbPEYtCHIcLffcqDDpv2JDBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096021; c=relaxed/simple;
-	bh=T2KNeitGqMrA4lQFUWPAPqsr3uw3BA9T+qVqNSGH6P4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=cMH38UQZPbB8ZMcxgHhzgL1nByXdwV9upDtAKSuaoP5B9Lr8qn0xpJnSq2EDSBL/kTPYvtIZm9uZt0hC03y8SXMsvAKksx/Y3a//C0tk+WQ57xMdh2CuCvs7UnkBkZ/Z3qR3iPx4Q8xvAyJHfH7QwXd7c9Cn7KFD305azPNa3JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaZPHHZh; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFA72101AE;
+	Mon, 25 Aug 2025 04:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756096396; cv=fail; b=tIcuXJtsJJNLCu4fe1RkhJAvhFHf4s726XvWbvjgAwb89jfbheOAykSsC0ESWjVC2woTstPBmkd00zxeO7537kQqHnC6GebacvbsSh1+MHJMv6QcDK/L1UAAIpLFTp7XqU3OnrYqq6B6r/UKVoh8En9VrhQyKG21+dcot3YR0Wc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756096396; c=relaxed/simple;
+	bh=l4Evo45bNm7vKq3yVekYDQp++EF6VkMbwD90gZJ0Tu4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sZ+6fbFAZu3TUEJ68Oy9Pq+bjU7avWxDLkqyEpSAEGJsThyNrwa2O/RCMlFlIu56pYrquxDBN4u2+fHxANFBagWG9M02lvD5iPylYYpk6bmn3ZQADmbVu7xPEmZhsn7mVzYVhvc0E9akzY2SWDwUZ4EARgsOfsGuLNXmerqQAqI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=b2Au0AW/; arc=fail smtp.client-ip=52.101.229.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaZPHHZh"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so8214183a12.3;
-        Sun, 24 Aug 2025 21:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756096018; x=1756700818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HehqKz7DcqQo+iRQ7tqcTNNvNXOyAsHSoNxFFxCivuM=;
-        b=AaZPHHZhPhnYs5XmomTxnZk+0IfeGSILIQLTz0rN36LJOW0bbCmc8IYo0ixfUfgFTY
-         SkBaqD7UFbKUeZSZF9fixvTSYvO8s5zNR15yZ63E4ZiNn5LbdqPaTPi6beFQk9uIMUYU
-         4TKlF6S5ykQCqkDyHIRFB9b6M6lxnCLWLb21pT3Jn/vZnA7IIr9qz2+FGLMpFYsDI41Z
-         4VXf21pLiayifV6XLwmogdYpzrcOdNGXoH/ZOsJFEAHhasTQY0d0sukvGzQw5b4W8u7D
-         eehc2eufaJOyWza728BP2GoOn5ec1keqfH7b3eEyL/bndzSzG4PtoyT+6BWGLtcdIrjE
-         xDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756096018; x=1756700818;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HehqKz7DcqQo+iRQ7tqcTNNvNXOyAsHSoNxFFxCivuM=;
-        b=Cp8iBNZAGoK3GmltNJDZtzdVPQxOp+1E4WTarMMsUVamGJ8LOQJtHG5atjESZLEMyd
-         aukftOci77YrHPAeFxoex7w1G2zOtWqek5jaVJTmDfc0MvKxeV6kXd8y3DCEtXSt2FAJ
-         wzL/dv+hA4u9xblb1WV+XeDUfNv2YrVQH+KVo8djg4EY+mnokYe5xAHzF1jDQ8HK9V7I
-         xSYsWQmm0ft85LGIZqqjjXUfbxFQ/Jo2OGfRWwrqFOvk5L2Lg3CKvy8g8x04RJSV7OWU
-         QCXFPFM3kkxNpDDSc26G1e7GaU/chvMTUmva/ZqzlnyEbIk+EJsNw34bpxzAE5l05yWd
-         3ofA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXKDP706xeJfYrlCCLzHsmji/T7ziwT5LzxLKwogcD9QeWYOmaO7DXhs6bTzDch90PfXyEVPnByOw=@vger.kernel.org, AJvYcCVpCiSkK063T6y4aL9TioCIPwpG75g7KdNGKNfMCa1iyo9vZGvhdFzk2/otOouPrLJAA1HCxJA2VZk=@vger.kernel.org, AJvYcCWprQwTpd/D+19LusQGTloYlBP1Dzk1VS+fkrQ2MTHRGk2A6OKLThum153N7TPGZ4EkTtJT/LkNZKCENAGr@vger.kernel.org, AJvYcCXam8ssfPRdf8eldcJFt3p5o+oREFVRw1NeF2VqEOOCBeCWAcQVj5nGVbg496C5RaXwsEMVgSvM6dnoBQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv72quzCmSPZbT7oFS4pLAocua/3TOJgUVX96O94J95p26wAe4
-	95KOdo7pJV5/VKevZxB5S5P+LBD/izEdnyBQCSZSuPDyuxYeT0dD4i3Z
-X-Gm-Gg: ASbGnctuxbA2elQ9EB83WY+mf3lYHHLUP6s2MHLxkhf+qwJePPrx39JnX96l5URFgwS
-	lNM27JSDTjbJCRyOsx8ViTuOCcMq0PIOl0cLfxO01bB5ai5AZnuS0YbN+0QFEkVeRvdxrpTY/SH
-	pTqD0sTtmNdL4F+qSAwPDtkiMLyp5EnHfn06e8icvmh3zsZrAbvCg4+UodThN0frpIt4bLgoQr9
-	Fs6P2vkKR0QxVXdseh/wg8vZclej3AUV86z6+qVQz6iaqffagwWEu2Tt2kFrhHHoHpFqiye5toM
-	1JAOA5Vymyf2POcYywEDApX7m1l9H6+LWsJsiV/Xu5RpGEmhiujO5BdomoXMFB6GW8yraGo86LX
-	/PzGsWs2nNawvgAI=
-X-Google-Smtp-Source: AGHT+IHovRBHbssX5qoAa1uGysmLNUE5XzYtwqBIUbX+G9XsiBZON5wkKM4gUG+rS19rAFFRvDd/uQ==
-X-Received: by 2002:a05:6402:a0cb:b0:61a:967f:55f9 with SMTP id 4fb4d7f45d1cf-61c1b492cb4mr9401400a12.10.1756096017568;
-        Sun, 24 Aug 2025 21:26:57 -0700 (PDT)
-Received: from [127.0.0.1] ([5.248.9.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c316f4f45sm4239498a12.36.2025.08.24.21.26.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 21:26:57 -0700 (PDT)
-Date: Mon, 25 Aug 2025 07:26:55 +0300
-From: Svyatoslav <clamor95@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-CC: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] ARM: tegra: Add DFLL clock support on Tegra 4
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2480891.iZASKD2KPV@senjougahara>
-References: <20250321095556.91425-1-clamor95@gmail.com> <117069551.nniJfEyVGO@senjougahara> <CAPVz0n24N1-iAoQFpzw7r7sz2E4Xhd8fB-gaoPesdc7XaR2HcQ@mail.gmail.com> <2480891.iZASKD2KPV@senjougahara>
-Message-ID: <9139A302-ADF6-4E2C-917E-0E0E1D6CBA0A@gmail.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="b2Au0AW/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SofYVdDL9jGIfbHT2VHCaduErnVlmEzOIFcQyWX9igi1aq2n6/IrVROBsWzXBxCES14uQ2sWk4xPkEZ3T0fpPhl8/Lo1DVEFQKcGNjNGqOkviCdYZwMwL5ngjmNHP2K1XTvy+wRi7O4ByRAk7NMQhOg3ot4oEHja4a9ItEU8c6mYEpEYetiLbFan7OA5ZNqdoN4yCXOh70TgW8Qwo+mQZaTv5anTMMRkXizsahev9pyXmwdlBANn/zApHOO6uVZTd8SdOlzyyR4yQlTaxc4ocPVqOmhU6OpOvzR4xk7IIASEsA4HX0ArqQbWQrmfIYxmRGFb86Wy9Jt9N4QvgKQw1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cljJ1IWU0gWRam4Yjyfja+Hjsc3suPZkW/9P9p/6A7Q=;
+ b=d/ddMLo+2Oxp9C5rWTX2sjanIsKtBKpyKE+qU0uj2ZBTXW7T+0gEJ2PnwGNB1CgG4SzEDcA8kXAM2OqGgsx6xlkQ8ohNkK1NtMkqbyzY5HFX3iDFYu+QDR9sNqA/gNlbszVSJoWqCkN3VxjK8fEvrj8jFqMkzCrRgnt6nUbwdGYiSyY16ji4aWOBT3s2zMEmBTnLtpZh+bqXPepASmx+ZaVhYitd7EpaxMIspthWxxUb+IvPRZNT6aYu+z/TvvH073ATQ7WTIvHpeloeXFOluyl3uNuJBtnmVQhTm1/Z7yZibnHUwV/9vm72JvF0J+zDhw3g/twpEeKxOX7q5mNjDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cljJ1IWU0gWRam4Yjyfja+Hjsc3suPZkW/9P9p/6A7Q=;
+ b=b2Au0AW/kMkVmPPM2+j6jEKzVmv9jcL+Hg+2EFMES/HC42/rRnPjLSyQ1Q3gQAT1l4GnlhnQkgWtgwY/I4Ns6+RByhyoZNRiUl8pAy19ZPRjLQotk86L7nxOdoAPjt02Gpd4Mu7/N8QOlBVS8Sk/PbhTTo8aeby3i2y6Zf/WtKM=
+Received: from OS7PR01MB13703.jpnprd01.prod.outlook.com (2603:1096:604:35c::7)
+ by TYWPR01MB9923.jpnprd01.prod.outlook.com (2603:1096:400:237::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 04:33:10 +0000
+Received: from OS7PR01MB13703.jpnprd01.prod.outlook.com
+ ([fe80::fde:76ef:aab6:f60a]) by OS7PR01MB13703.jpnprd01.prod.outlook.com
+ ([fe80::fde:76ef:aab6:f60a%4]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
+ 04:33:10 +0000
+From: Anh Nguyen <anh.nguyen.pv@renesas.com>
+To: "geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kuninori
+ Morimoto <kuninori.morimoto.gx@renesas.com>, Duy Dang
+	<duy.dang.yw@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>
+Subject: [PATCH v1] clk: renesas: r8a779g0: Add ZG clocks
+Thread-Topic: [PATCH v1] clk: renesas: r8a779g0: Add ZG clocks
+Thread-Index: AQHcFXlcffJdQ3ksF06N4ZMFEcGxfw==
+Date: Mon, 25 Aug 2025 04:33:10 +0000
+Message-ID:
+ <OS7PR01MB1370314F7F5D7548A573D8B25A73EA@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+References:
+ <OS7PR01MB137037775991BBBDB29E54105A77BA@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+	<87zfdw2wlt.wl-kuninori.morimoto.gx@renesas.com>
+	<OS7PR01MB13703B662D2AE6ECB77F59584A77BA@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+	<877c0z2vz3.wl-kuninori.morimoto.gx@renesas.com>
+	<OS7PR01MB13703654640293E4F1F95B694A730A@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+	<877byyzjcm.wl-kuninori.morimoto.gx@renesas.com>
+	<OS7PR01MB137031EFD84919AA36666E1FAA732A@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+	<87bjo971ns.wl-kuninori.morimoto.gx@renesas.com>
+	<OS7PR01MB13703647C4AABD03C6345F221A732A@OS7PR01MB13703.jpnprd01.prod.outlook.com>
+ <87cy8k2uf1.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87cy8k2uf1.wl-kuninori.morimoto.gx@renesas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS7PR01MB13703:EE_|TYWPR01MB9923:EE_
+x-ms-office365-filtering-correlation-id: 74ce3210-b949-4d77-8bfd-08dde3907ef3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?VgoR/OYoO09DmihHw+RDNMiflp6wR38nbyiukkaxmeLGaizupqTtP9Hpthum?=
+ =?us-ascii?Q?PfU4YDYLqDU3dRliEQE3T6JhwkYjup6oqCL9xRznZXA2ie9inMV+MT/T0txT?=
+ =?us-ascii?Q?XzJojZlWDDeUy1hRFKxkisJ9HmcR0erYXXAz8QciTnR8tWkRaE1DBE+LImoK?=
+ =?us-ascii?Q?Qmyw+zinV+bh02LYGWlanYpDMIA1e0eeutm0dfEJHAMlIy7rnB/7xc/LRC8e?=
+ =?us-ascii?Q?0VLV2Ac5EFYv1cuO9z0SED+GNRxuFPRtCSe5QvOYgvy988lJig6A6Y49UFyI?=
+ =?us-ascii?Q?aZ+6KH1VvwYTJD9vninWLdC8xeewdHOnL6mnHtWZFxHG73wUoMBMAmlDt/Ks?=
+ =?us-ascii?Q?t27IFexAX8w72MiXKP5w2PPTsAY/WMSLDVhxDxVPqVJg7Aprs2cvDCRdA8Wz?=
+ =?us-ascii?Q?KMJtWL2byfsFSpWpSgz4fJABHycylwPlhvQc7GPefYFTDHqcEYDYbziIjw1r?=
+ =?us-ascii?Q?ITxzyBSes02369q6fZvfp2A/dcKgNtCtzD34Nln+6so/m6YCgrbb+U3p3qfE?=
+ =?us-ascii?Q?ih5hlCPTaf1wdycXBkBdNlY5xlLLAh31qEDAlAWUeWs3RQeFhFR8m7sCoq9S?=
+ =?us-ascii?Q?z+My95zMQtt7fql4qebeqT8s05cji50Hy9o4c1ez5TCWyAd+iNsakESm+LEX?=
+ =?us-ascii?Q?VPfnAz2c64eGQuUzX0zKgyw+STDdx9CVMd8RWiTQTa0VUkQ4n4LWcYE0kKIc?=
+ =?us-ascii?Q?JdRQLXfaoYHbiJKYZPF2GOV36sSqggsHfS8R9kRdsKUGEDTqTaGeCP1z/nlC?=
+ =?us-ascii?Q?+z7roKtfxd4yEcJB+zLJQu8M4b2c0AyiytXtW59ziAjcv18nezcM2w+TYJ+4?=
+ =?us-ascii?Q?4omcei3S8Zkf0oQL5RfcVLDn3qV/cJeS+ANBf52t1MXgfDnju+Vpbo2kMkao?=
+ =?us-ascii?Q?dTGxT+ZtE3CRBTuuvq9f/Vi8cJh37tbh+LFYMkElbjYURJc5FJU/Hv3ScLZy?=
+ =?us-ascii?Q?BUAyfVpJ6URvsYWl0M3NqUpJgXZkFsNpPIPdjCJI76RX0gRMKxOJ98Pi8+ve?=
+ =?us-ascii?Q?iyXxQo5Ac0xD/Wz900dgTowuG4gH3kYcE+KdYknK40bkUw5kMeA6DDg2S4p3?=
+ =?us-ascii?Q?/C6FKPBE8a5XVLJjJ+V52rBe8Kkx6VC4ovIhCYn21ZwPdl6cr/JTCbQRVwbe?=
+ =?us-ascii?Q?1fMeM4+PwcOTV41OzgK16DEDkFH/7Qe2ev1W2sxbXmBaPQ5dO0Ge+qvdaD70?=
+ =?us-ascii?Q?T6OyHn3ZxAIPARxygh1E9lOV0wOG/+l/U06UjKv+ch9pqQWoDMKN/lGeHz/n?=
+ =?us-ascii?Q?CAHHc8o0MM1LQthc5ARAF+w0KPtNh4XCoA3df8PkFk9it09Ssc4TG3DzJw02?=
+ =?us-ascii?Q?J25n4SB+tec0ItUD9E/Y3c4Au8dPN6E+/o2mAjCAwPqLSguBQC8TDQ6qIjbu?=
+ =?us-ascii?Q?2Rh+/Hf4vQVqQV5Ozxc8q5igDChfMzukO6xFIJAJo1fYQlheoN31dTIvlKtw?=
+ =?us-ascii?Q?jIB6at9TsBe8rTvWQ9b5zZnyidW+wnVK5KzJHj0bLEdxZNhBfqbm2ygwIRtu?=
+ =?us-ascii?Q?jiIY5QVKPp/YaFs=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS7PR01MB13703.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?dPt5iK844k+mTtFm2ZfSQzkSkTx+E54BpDcTWXbWWhRlNKp7YAwcs00LRnt1?=
+ =?us-ascii?Q?5yhI3iic1VwCmYguVkjdjPClBCnTl+srLTUszJuMQBD7+bkQHJIyy8asDH4N?=
+ =?us-ascii?Q?RcU59qiRq4cRa+B+AYSA6W4Wa+9ujFrkyeYomk0z0ZsxQBdUGRB2MpXjqVFj?=
+ =?us-ascii?Q?720m9CBBviyOpbjeCsh0KWSpy1tbO1IHSfeBulA3b+hMjteYL+qugEuyXx6K?=
+ =?us-ascii?Q?ukCyOftMxgMlHc3l89B45aIawWMZfFItB1mLdJZ+w9zJyw9HnPJrdHmedpEf?=
+ =?us-ascii?Q?hyjCRFBvaIZdec6NE6C3yrNfKsBuwQ91YyzfDhx66RlWLwmeJwaWF+M9TGXt?=
+ =?us-ascii?Q?8JRtm0PekZkfG1RiH1caqHC6pUyk/sWOcuIdviLKabxfztPEXvZzKdaAQAWQ?=
+ =?us-ascii?Q?X3U96wfoA24GYrNmrAVnXpbeXjRFCeDq89Pc85nn4Fh6Ro4KASL3kf3L8ens?=
+ =?us-ascii?Q?hshs2rolml2LEUr9u0UzI8R+sUDn/SecNZsAsXI0z0AtM+d2DCnvGQPwt2FU?=
+ =?us-ascii?Q?1cYx9hbm22yP41hTTChQ0S+ILgb3OZFAKrMldTH1naELd+/8IhjqlfFk70TH?=
+ =?us-ascii?Q?0+h19ZTC4spE8tVzLrJy9Pe4wdKB5AoQBW/DVY4eXquDjfa8rHjVckpgTkhi?=
+ =?us-ascii?Q?Qm8hQ/ISyIk0P/Mhjw5HX64a7f4bB/PYrgMJy77K6tP+i5xUf8p9MLtiQEUG?=
+ =?us-ascii?Q?FKnJgMU/Sl7ZoflTDUvOHdQxUQ/9O/I5GkBAPzYVSUi7FtKNiM4ukjmhkx46?=
+ =?us-ascii?Q?6yfnBSnSr0NO6s7YGValgMAYmxL1RbLUvrG62Zoh+qCsXeTmTm62soZP87td?=
+ =?us-ascii?Q?BsYzLU6jngochJkMUWjpWxm//+gj1pURZ4Q7l2L4wv6xISGFeGPamcgAKgsf?=
+ =?us-ascii?Q?+V8mzuMGe89REKGqN88cV+hqXYJFrGd55j/iFXz7Rw4CC4+bZ+oILKOmArWQ?=
+ =?us-ascii?Q?6JnbQ2eUK3NfbGDkVhKXhZggAZ98EYJZBH9PAwGvUWzJBsPKY9lkzN+AoRbk?=
+ =?us-ascii?Q?KHhuyaNNID7LYALzW2ctZxyQpkja1bkDGqwcEBtvSMo8DnOWirafvPFaTbKD?=
+ =?us-ascii?Q?r7oLuUdd6I9GY6SDKiOv/k5Z1bBkxvjbgxRlnqjF9Svbp5cvzpB3uqiuOWgj?=
+ =?us-ascii?Q?lWkJyZST3j+QbButtl9y9CJ+cfEpPSbkOJbNew4gEwsIkngxHHM2kJF1vxSo?=
+ =?us-ascii?Q?WlsJoX64BYiyO93D4eNStHW8lZc2JKLyLRuZmSJImxC4ZxAJ1ac5+k+bO3Pn?=
+ =?us-ascii?Q?QWjv4NuAOe1mCaZ3yusJ8PBD7E08qtJl4C7KyJDmyD598WMgKmbNRTOVxcfg?=
+ =?us-ascii?Q?HYHmUPmrY15mOGCdirADALsrfpJBQ35CRh+QuX3A+xzDR+WCarPJTGXYPX65?=
+ =?us-ascii?Q?tiGiYLz9gKkiso42Y23qNQ8FqJFw7CBZmGlB2VSgMQHWVclZuHbuX19Z+c8t?=
+ =?us-ascii?Q?Y5uswuIEsjKRVEgLIsa//WUAUwz6yA0tMQKWRr1sg6ssTkH5tGFMgXoIGvoQ?=
+ =?us-ascii?Q?NLFPtVPs44/cU7Hopc3LwH8rBeo55eG0HFDUl0oe0taziCcnP0bXY+Zicosx?=
+ =?us-ascii?Q?sk2jgeaTPcd/8PuUe8MqDvyqGqO4Qjb2QzGwSJ6eLyWPUaAbdQtQ9Fs0q1N3?=
+ =?us-ascii?Q?9g=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS7PR01MB13703.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74ce3210-b949-4d77-8bfd-08dde3907ef3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2025 04:33:10.1005
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l/5g2OIYelsWKOmLqiNNg88AuUadn+eUux84ExeEwXiRN52nePEKSfcUq0qfGB6ITfwHu5v5m+izdqWiKFvajkMGWRG4RgFCl21PY3NKa8E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9923
 
+From decde7c45060327ecb24df8218cd58b9ffd3c45d Mon Sep 17 00:00:00 2001
+From: Anh Nguyen <anh.nguyen.pv@renesas.com>
+Date: Thu, 21 Aug 2025 09:54:00 +0700
+Subject: [PATCH 1/2] clk: renesas: r8a779g0: Add ZG clocks
 
+Add ZG related clocks for GSX
 
-25 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 07:20:10 GM=
-T+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=
-:
->On Friday, August 22, 2025 2:19=E2=80=AFPM Svyatoslav Ryhel wrote:
->> =D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF=2E 2025=E2=80=AF=D1=80=2E =D0=
-=BE 06:05 Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=
-=B5:
->> > On Friday, March 21, 2025 6:55=E2=80=AFPM Svyatoslav Ryhel wrote:
->> > > Add DFLL clock node to common Tegra114 device tree along with clock=
-s
->> > > property to cpu node=2E
->> > >=20
->> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> > > ---
->> > >=20
->> > >  arch/arm/boot/dts/nvidia/tegra114=2Edtsi | 34 ++++++++++++++++++++=
-++++++
->> > >  1 file changed, 34 insertions(+)
->> > >=20
->> > > diff --git a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > b/arch/arm/boot/dts/nvidia/tegra114=2Edtsi index
->> > > 341ec0962460=2E=2E25d063a47ca5
->> > > 100644
->> > > --- a/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > +++ b/arch/arm/boot/dts/nvidia/tegra114=2Edtsi
->> > > @@ -4,6 +4,7 @@
->> > >=20
->> > >  #include <dt-bindings/memory/tegra114-mc=2Eh>
->> > >  #include <dt-bindings/pinctrl/pinctrl-tegra=2Eh>
->> > >  #include <dt-bindings/interrupt-controller/arm-gic=2Eh>
->> > >=20
->> > > +#include <dt-bindings/reset/tegra114-car=2Eh>
->> > >=20
->> > >  #include <dt-bindings/soc/tegra-pmc=2Eh>
->> > > =20
->> > >  #include "tegra114-peripherals-opp=2Edtsi"
->> > >=20
->> > > @@ -710,6 +711,30 @@ mipi: mipi@700e3000 {
->> > >=20
->> > >               #nvidia,mipi-calibrate-cells =3D <1>;
->> > >      =20
->> > >       };
->> > >=20
->> > > +     dfll: clock@70110000 {
->> > > +             compatible =3D "nvidia,tegra114-dfll";
->> > > +             reg =3D <0x70110000 0x100>, /* DFLL control */
->> > > +                   <0x70110000 0x100>, /* I2C output control */
->> > > +                   <0x70110100 0x100>, /* Integrated I2C controlle=
-r */
->> > > +                   <0x70110200 0x100>; /* Look-up table RAM */
->> > > +             interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
->> > > +             clocks =3D <&tegra_car TEGRA114_CLK_DFLL_SOC>,
->> > > +                      <&tegra_car TEGRA114_CLK_DFLL_REF>,
->> > > +                      <&tegra_car TEGRA114_CLK_I2C5>;
->> > > +             clock-names =3D "soc", "ref", "i2c";
->> > > +             resets =3D <&tegra_car TEGRA114_RST_DFLL_DVCO>;
->> > > +             reset-names =3D "dvco";
->> > > +             #clock-cells =3D <0>;
->> > > +             clock-output-names =3D "dfllCPU_out";
->> > > +             nvidia,sample-rate =3D <11500>;
->> >=20
->> > Should this be 12500? That would match Tegra124 and a downstream kern=
-el
->> > for
->> > Tegra114 I have=2E
->>=20
->> I referred to tegratab and macallan boards in 3=2E4 kernel which give
->> 11500, maybe sample-rate was changed to 12500 later with tegra124
->> addition?
->
->That's interesting=2E I was looking at the public roth (Shield Portable) =
-kernel,=20
->which does not support Tegra124=2E I checked the L4T r17 release now, and=
- it=20
->seems it's a newer version, where the sample rate has been changed to 115=
-00 on=20
->some boards due to a voltage undershoot issue with vdd_cpu on macallan/
->tegratab [1]=2E
->
->So on macallan/tegratab, the vdd_cpu (smps123) ramp rate should be set to=
+Signed-off-by: Anh Nguyen <anh.nguyen.pv@renesas.com>
+Reviewed-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/=
+r8a779g0-cpg-mssr.c
+index dc376b683d22..afb86973e771 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -151,6 +151,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] _=
+_initconst =3D {
+ 	DEF_FIXED("dsiref",	R8A779G0_CLK_DSIREF,	CLK_PLL5_DIV4,	48, 1),
+ 	DEF_DIV6P1("dsiext",	R8A779G0_CLK_DSIEXT,	CLK_PLL5_DIV4,	CPG_DSIEXTCKCR),
 =20
->2=2E5mV/us and sample-rate to 11500, while on other boards it can be 5mV/=
-us with=20
->12500 for faster ramping=2E
->
->[1] https://nv-tegra=2Envidia=2Ecom/r/plugins/gitiles/linux-2=2E6/+/
->b92cab2d4cb6379aeded80adc4c5d0708c3f038e%5E%21/#F0
->
->Cheers,
->Mikko
->
++	DEF_FIXED("zg",		R8A779G0_CLK_ZG,	CLK_PLL4_DIV2,	2, 1),
+ 	DEF_GEN4_SDH("sd0h",	R8A779G0_CLK_SD0H,	CLK_SDSRC,	   CPG_SD0CKCR),
+ 	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	R8A779G0_CLK_SD0H, CPG_SD0CKCR),
+ 	DEF_DIV6P1("mso",	R8A779G0_CLK_MSO,	CLK_PLL5_DIV4,	CPG_MSOCKCR),
+@@ -163,6 +164,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] _=
+_initconst =3D {
+ };
+=20
+ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst =3D {
++	DEF_MOD("rgx",		  0,	R8A779G0_CLK_ZG),
+ 	DEF_MOD("isp0",		 16,	R8A779G0_CLK_S0D2_VIO),
+ 	DEF_MOD("isp1",		 17,	R8A779G0_CLK_S0D2_VIO),
+ 	DEF_MOD("avb0",		211,	R8A779G0_CLK_S0D4_HSC),
+--=20
+2.34.1
 
-So should I stick with 11500 as a safer, acceptable for every t114 option?
-
->>=20
->> > > +             nvidia,droop-ctrl =3D <0x00000f00>;
->> > > +             nvidia,force-mode =3D <1>;
->> > > +             nvidia,cf =3D <10>;
->> > > +             nvidia,ci =3D <0>;
->> > > +             nvidia,cg =3D <2>;
->> > > +             status =3D "disabled";
->> > > +     };
->> > > +
->> > >=20
->> > >       mmc@78000000 {
->> > >      =20
->> > >               compatible =3D "nvidia,tegra114-sdhci";
->> > >               reg =3D <0x78000000 0x200>;
->> > >=20
->> > > @@ -841,6 +866,15 @@ cpu@0 {
->> > >=20
->> > >                       device_type =3D "cpu";
->> > >                       compatible =3D "arm,cortex-a15";
->> > >                       reg =3D <0>;
->> > >=20
->> > > +
->> > > +                     clocks =3D <&tegra_car TEGRA114_CLK_CCLK_G>,
->> > > +                              <&tegra_car TEGRA114_CLK_CCLK_LP>,
->> > > +                              <&tegra_car TEGRA114_CLK_PLL_X>,
->> > > +                              <&tegra_car TEGRA114_CLK_PLL_P>,
->> > > +                              <&dfll>;
->> > > +                     clock-names =3D "cpu_g", "cpu_lp", "pll_x", "=
-pll_p",
->> >=20
->> > "dfll";
->> >=20
->> > > +                     /* FIXME: what's the actual transition time? =
-*/
->> > > +                     clock-latency =3D <300000>;
->> > >=20
->> > >               };
->> > >              =20
->> > >               cpu@1 {
->
->
->
->
