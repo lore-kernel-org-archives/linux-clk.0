@@ -1,141 +1,84 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A562FB994;
-	Mon, 25 Aug 2025 16:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1933019D9;
+	Mon, 25 Aug 2025 16:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137932; cv=none; b=DUmg0RGFkKAcJiehhpWE/fQ+6dm/rTBOq3yDRGwGgTIJTbfO0d3AjEB/QrQ+kouKvScs3/qIMK1ZuoXwS5lZLExQ2HNVEL68PkX9NrdaWt9IS1S2FMHR8Lo0uxgQhg42L1Ia39wUD+g8kpMXlAOZc1bqHMMreFet6XQ99iPQfgw=
+	t=1756138305; cv=none; b=nrEDRNN/SupWSrmlOD/eSP8DDeVp4Q1eK0r3oT+CdLzP5Jw00Yug9Cee7ddH4gaVqGDG3/z0FGevvYxeaElpv1MnZYFrRLzUfIL1iDoIVh0hfIXx/fYWMS4IxUpLs9V0kgT4RJBhQhGguzDLxQhvvX/tGuEMFDMIvIkbJdvSFm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137932; c=relaxed/simple;
-	bh=MXpFBvl/G9TdM58J/HqLeuWhK7n8weJPpEkm2tmgU/s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LUZnNZb0AbZ4nu8kDfzvbY4zIidzT4qLMC/ht7PVnVelrY7nfXRwcGUxzDEmAH4plB2o/6OR3GFnEc077q8xre26s0uTtwZ9PA6a2+TsNfQmETzlOOMbSxKyVdK9qQPtsGyPEK3gQkYnlCvzmFAJCE3aELmAzuyT++bzZB8uen8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O3oy07lg; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1756138305; c=relaxed/simple;
+	bh=aNQomJuptJF2BKrENvq9UPqvAr9yynnLcyovKghIDS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WXOCfdmLJz2w7j5UIV0mgL6YvIaNXSEH9wsJWQ4JuET7hwqW7cU6Nne8FhVjlQLid+cj/9P/aYr+W+2lDO/Gk0quDTht7xpS2DUDxk8da9GLWOYIxb3uzYMXaVCEgcDXxx/K/XlL1fmySBHT/apwf9MBp2okiHwgFqKtM7oXkZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbdBBock; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O3oy07lg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756137929;
-	bh=MXpFBvl/G9TdM58J/HqLeuWhK7n8weJPpEkm2tmgU/s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=O3oy07lgJtUmddl3ObqfK0Dw2tOSJrtb1veMxs9gJqc7bsM0XH/3uuLH7p8NbyS28
-	 sOYokpgZqXpq8Ef5TLcv2wU2fJbnufKcoc8VQaI+c4G2+Uijnvj5lRVtMQWMN86vTK
-	 Ce/WkSB2SpjBqC/OQ75c3Pr3Upefjp1H4g0g1C7ns6xLBQgm0bWyb2G5UrzoKjsaKs
-	 ds2/C1Z35njmOiwLvV+HV5LjtyKXoDVcw4RiZ3TJA1VsgCqmlgWZ/slNlZUEAoF/Q/
-	 2taqVa7VlaMgP+o9Z67fi+AfkWgZy8RbxmetnKPghMOkNBEckyliDL3Zsrgw3732N1
-	 YEJyLZFWPlWLg==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2D600C8f85cf092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 218B317E053B;
-	Mon, 25 Aug 2025 18:05:28 +0200 (CEST)
-Message-ID: <57d67b983f527e9a202422dcc329622cceac6b89.camel@collabora.com>
-Subject: Re: [PATCH v2 6/6] ASoC: dt-binding: Convert MediaTek mt8183-mt6358
- bindings to YAML
-From: Julien Massot <julien.massot@collabora.com>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
- <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
- Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
-	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
- Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Mon, 25 Aug 2025 18:05:27 +0200
-In-Reply-To: <20250822144652.GA3763665-robh@kernel.org>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
-	 <20250820-mtk-dtb-warnings-v2-6-cf4721e58f4e@collabora.com>
-	 <20250822144652.GA3763665-robh@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbdBBock"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7597DC4CEED;
+	Mon, 25 Aug 2025 16:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756138305;
+	bh=aNQomJuptJF2BKrENvq9UPqvAr9yynnLcyovKghIDS4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qbdBBockwrqRSRbw1MmR0KGBgFfM9D+8u941MSUikW6NAWC90PRGbB0i6q8xVc7EB
+	 ITtR7PKuJRYXp473MCFXNHbrMeu1xzcPS8rvekbCjxur0Cgas0asZxh/sg5bPCJ4Yt
+	 ohpHqVkmF+hyu51Nre17dv6f2mgh2HiI8NuD9Xb3cR84DWnrVzbPaGSQrRHxnl1U6y
+	 2IyWulIJ6dZe/CXBxBaGj/+CWPuG78wYZ8PvwEfbFooB8+zBx4OPjXJ2w0JgYdY3gf
+	 xrAbQ/hJOPOYzKDzm6FFiiBBES+bP9TnqmD5pPqEw1PnWcfr1jdJhfYICS0XGjSeg3
+	 AmjAHniT18djA==
+Date: Mon, 25 Aug 2025 09:11:42 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Shreeya
+ Patel <shreeya.patel@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>, Andy Yan
+ <andy.yan@rock-chips.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Nicolas Frattaroli
+ <frattaroli.nicolas@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Shawn Lin
+ <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>, Manivannan
+ Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham
+ <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Qin
+ Jian <qinjian@cqplus1.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3 01/20] bitmap: introduce hardware-specific bitfield
+ operations
+Message-ID: <20250825091142.3735f1fe@kernel.org>
+In-Reply-To: <20250825-byeword-update-v3-1-947b841cdb29@collabora.com>
+References: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+	<20250825-byeword-update-v3-1-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2025-08-22 at 09:46 -0500, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 03:44:57PM +0200, Julien Massot wrote:
-> > Convert the existing text-based DT binding for MT8183 sound cards
-> > using
-> > MT6358 and various other codecs to a YAML schema.
->=20
-> In the subject (on all the patches), avoid saying 'binding' twice and I=
-=20
-> prefer 'DT schema' over YAML. Lot's of things are YAML, but only one=20
-> thing is DT schema.
+On Mon, 25 Aug 2025 10:28:21 +0200 Nicolas Frattaroli wrote:
+> Hardware of various vendors, but very notably Rockchip, often uses
+> 32-bit registers where the upper 16-bit half of the register is a
+> write-enable mask for the lower half.
 
-Ok, I fixed all the commit messages and replaced 'YAML' by 'DT schema'.
-
->=20
-> >=20
-> > Reviewed-by: AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com>
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0.../sound/mediatek,mt8183_mt6358_ts3a227.yaml=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 59
-> > ++++++++++++++++++++++
-> > =C2=A0.../sound/mt8183-mt6358-ts3a227-max98357.txt=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 25 ---------
-> > =C2=A02 files changed, 59 insertions(+), 25 deletions(-)
-> >=20
-> > diff --git
-> > a/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a2
-> > 27.yaml
-> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a2
-> > 27.yaml
-> > new file mode 100644
-> > index
-> > 0000000000000000000000000000000000000000..048fe62715d67d44daa08e75a63c
-> > 782238815689
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a2
-> > 27.yaml
-> > @@ -0,0 +1,59 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id:
-> > http://devicetree.org/schemas/sound/mediatek,mt8183_mt6358_ts3a227.yaml=
-#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MediaTek MT8183 sound card with MT6358, TS3A227, and
-> > MAX98357/RT1015 codecs
-> > +
-> > +maintainers:
-> > +=C2=A0 - Julien Massot <julien.massot@collabora.com>
-> > +
-> > +description:
-> > +=C2=A0 Binding for MediaTek MT8183 SoC-based sound cards using the MT6=
-358
-> > codec,
->=20
-> Drop 'Binding for '.
->=20
-> Sure
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->=20
-> And thank you for jumping on all these Mediatek bindings.
->=20
-> Rob
-No problem, Thanks for your time.
-
-Regards,
-Julien
+Acked-by: Jakub Kicinski <kuba@kernel.org>
