@@ -1,137 +1,142 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742AF28000C
-	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 11:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE71341ABD;
+	Tue, 26 Aug 2025 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756209179; cv=none; b=WEZHHakFk8k4+F4Hvbr7Sgn1I8V/gDPXnlsm2S61+YjKzIQw4n+HCwBx1pdHDU2ADIrYXAhg4lv0VjLYXuTOfKXwWg8Q2FcwWuVCslVgzBKZOPEDnn/7VC/5XZe0R7i/QwnZ6ALflKH8mcptGywObrJKgMZf97vqyso8b8XBLCs=
+	t=1756216608; cv=none; b=j50clJ4Xax6nGSPgHu8GmbKZziPjoUufgSjaPOprxIeMtFK7/pQc8rPHtwwmwJ+TlnFPy/9iKKXiOxZ2ExaozOmgmVlIoXQ+tCydhHx9iwlRWsUkh+oDYcK5ojEjP1BBEHfQsmNMb5+6HpOOTsXqXcSxtxo0Z5RVptWG2qE+aMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756209179; c=relaxed/simple;
-	bh=GR8wOyKl4HbIY5koqYX6Qcxm/LL8C7IpL8DFj8Soc1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c31EpLTmo1fM2oovnUgjo2jH3VrBoGqUASVStceCdGa4bTYbQ8sCs82d0Fjrr4nMlVbZZ978XDe7xtTTKWqE6SXYKKTcHiqGD0KzX4dvPTE+jolzSoIrcrKOYenuRl0k7Y8eKGIKWD8S0t4VN66wW5qEl0zTFoR/yGpXZzCSO9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OGb3eJS5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756216608; c=relaxed/simple;
+	bh=GAK3iErIJh5FHvvRonZ/RMRYuNJxBuLG4M3JABISxbU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=S/axGT3jFdP4vG0H+oKbSNRNsMGGe8BRu6X5RaLNc+p8rOgB0QhDMI6DBoZX3n2f6z7A7JmRffMZAN040sf6XU4NlxT6yEHRhX+vfXpo/o8rNUBLyB0KfSKFIKh3IwDp98HkstAKrbkJvfCcpuXfxMv12DoLpF3iPLLFxDOBXS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J//Si2GW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OGb3eJS5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756209176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e53lcb42G3RVNhjNWPFwju1PJTH1cjj9lH1MqnWkPUw=;
-	b=OGb3eJS5HaMnsnwILZORtvCVe11rE6PZnS8H9bto0aciOkEcLf1CBZycrRC9k3d6DClH6P
-	EReDPPMTehSvJ8906fnKTmBswQALdSmVr9Mg7s2GgePM/KPR4jZ6eyg3HI6uzvm3FuSrnx
-	1kp2Ij7LNxjyrO+IxWMfXdwblBncZ6A=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-bJoPvQFoNo2PkQegnX7JEA-1; Tue, 26 Aug 2025 07:52:55 -0400
-X-MC-Unique: bJoPvQFoNo2PkQegnX7JEA-1
-X-Mimecast-MFC-AGG-ID: bJoPvQFoNo2PkQegnX7JEA_1756209175
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e870315c98so1962822685a.0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 04:52:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756209174; x=1756813974;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e53lcb42G3RVNhjNWPFwju1PJTH1cjj9lH1MqnWkPUw=;
-        b=inWKewqqna5FnDMGw+OEJNafy3NfESR2k5yFsVPLCD/b/BQ4o76u2M5w8+b1eCbBmN
-         IgAv/IVd0K4evwD4G0Cci/V0hPNwJQMp6um0tUqI9hHUvZRyAtUOojd4T8+2BXu0oDzG
-         p5y9Ft0xI1/rsffA9k0LnG84AbiAB6usZ91lKCLhC67J5q2VP/0KYBysNMNRelRuNVSS
-         WYLuu9g7/6OFV4fMpmwjkvLSakIdfvHPst8TywhKrmKZCm9lv6cMt8VMyHOdrqAjp6wP
-         NfFwXGv2hjviADpYoIO3tkv/pEJI/NpD2PdPraAdLMlRieCLE5YrFwFrdcMzaCCwQwsv
-         mJRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQcvllh/eLHTOb8kTW7kk4MRenfFj0/NLGOCbCp8MgUQrCwrTXopbhuGWQdz6jvuhap8UKu9crsP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynWAm68cNj/8UW0XXlahA83TiUOCf1PAiCyS+0VnabSvto/86l
-	DYZkYi4t41eduB/rNrZBd7wPVU+LlHu8xTt+8SJFe6BdDwqCg3qgaAuR4jo6JV+Dst3X4g4Gf/g
-	Etov1N/JxMqEoWYHONAHV/vkwjcyq8SZfRGfObhP3a7cIXgcbtDGSgGYI7y9aNw==
-X-Gm-Gg: ASbGncu+DNcctEyBljDj3JADqW2QPweB9fLjMLr3Pgn16DqJse0cmYq04jwSFEHK72W
-	hpgp3NPaoV7jDSjFwm93LqalAp1znznYKjtQ+QKmjbMnav1NC5hZC/KScxA5Lf2GYn3YUGqpS+D
-	etxDdo/IPmYBbDYE+P/PdHn7aQ3zc/2mD2RtRQTa0El86YedsrMWbnLbYWJ5m1yMW23s16CNTYK
-	3IXAByMSoDBbaqjErcQy4tIm4UdLVdkMO4j9KXMjjiUzy/hN7WlaTrJeKWh9M7I/q3PRQ2+Tf/T
-	sVtLAgek45x2v3MWvoDibINvsM/N47MfbRr9k6Wyy7V0xHbg4yQK/uLFRm4BcB7d4BL6OwEiHMR
-	cHemlqh9xCPeqYu7CcM8=
-X-Received: by 2002:a05:620a:a903:b0:7e9:f81f:ce91 with SMTP id af79cd13be357-7ea110a5fc6mr1545015285a.83.1756209174582;
-        Tue, 26 Aug 2025 04:52:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEES/HvFR76larcT3Nn6nir0QLpsUJq2+C9kWe3HGsFZh8ETnB9k+QXuGo4sEteZ1xDZAs8Sg==
-X-Received: by 2002:a05:620a:a903:b0:7e9:f81f:ce91 with SMTP id af79cd13be357-7ea110a5fc6mr1545012785a.83.1756209174056;
-        Tue, 26 Aug 2025 04:52:54 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebecb1825bsm661572385a.10.2025.08.26.04.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 04:52:53 -0700 (PDT)
-Date: Tue, 26 Aug 2025 07:52:51 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, geert+renesas@glider.be,
-	linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 0/2] clk: renesas: rzg2l: Disable unused clocks after
- resume
-Message-ID: <aK2gE0CysSWisFwB@x1>
-References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
- <aKyX4YJswZLuqA6Y@x1>
- <0d71269f-1c78-4732-8235-5640bf340d00@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J//Si2GW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412E6C116B1;
+	Tue, 26 Aug 2025 13:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756216605;
+	bh=GAK3iErIJh5FHvvRonZ/RMRYuNJxBuLG4M3JABISxbU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=J//Si2GWx4doiSIjC71SHMojeaD1+tCxptmSzaXZqxSx3rCUTtGQ+N7qSq0mOM8hl
+	 RdvRAjAI4KD/o56UqmJBJ7h9hifetskHNsgG6r/jlVtoaErGvd0QQjU3sQT1uE8Ete
+	 cDAayHCLQUSflFpyl1uH2n8CYd/EcdD+7f+YaTcNOlSE0LI5Ou+0HTthv4IVq/mTt+
+	 Wnsvyky7VR2spB54QCYWFuJ+p2kR6iUBfte8T6jcIFXZHO1ayCudO5gD+qSP1QC/sn
+	 wsg4DZjJg/QQMiAEqVVXFxc2LYHuYDNusrNbdM7mEorQgDXPfu9bP/MWHiTYqy11lV
+	 /WAgbi+dJWiXw==
+Date: Tue, 26 Aug 2025 08:56:44 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d71269f-1c78-4732-8235-5640bf340d00@tuxon.dev>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Thierry Reding <treding@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-pm@vger.kernel.org
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250826061117.63643-1-clamor95@gmail.com>
+References: <20250826061117.63643-1-clamor95@gmail.com>
+Message-Id: <175621649727.159471.17430997152265024171.robh@kernel.org>
+Subject: Re: [PATCH v3 0/4] clk: tegra: add DFLL support for Tegra114
 
-Hi Claudiu,
 
-On Tue, Aug 26, 2025 at 02:01:56PM +0300, claudiu beznea wrote:
-> On 8/25/25 20:05, Brian Masney wrote:
-> > On Thu, Aug 21, 2025 at 11:03:30AM +0300, Claudiu wrote:
-> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > This series disables clocks that remain unused after resume.
-> > > This is necessary when the resume process is done with the help of the
-> > > bootloader, as the bootloader enables various clocks when returning from
-> > > resume.
-> > > 
-> > > On the RZ/G3S SoC (where this series was tested), the bootloader enables
-> > > the SDHI clocks (for all SDHI modules, of which 2 are used by Linux and
-> > > 1 is unused) and the clocks for a serial IP (unused by Linux).
-> > > 
-> > > Testing was done on the RZ/G3S SMARC Carrier II board.
-> > 
-> > Do you think that other boards would also benefit from this change? If
-> > so, what do you think about putting the call to register_pm_notifier()
-> > inside an __init block in clk.c so that this same change doesn't have to
-> > be implemented across various clk drivers?
+On Tue, 26 Aug 2025 09:11:13 +0300, Svyatoslav Ryhel wrote:
+> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> a ring oscillator and translates voltage changes into frequency
+> compensation changes needed to prevent the CPU from failing and is
+> essential for correct CPU frequency scaling.
 > 
-> Yes, that was my other approach I was thinking about. I wanted to see how
-> other people consider this version.
+> ---
+> Changes in v2:
+> - dropped 'drivers:' from commit title
+> - aligned naming to Tegra114
 > 
-> > 
-> > Alternatively, if this is board specific, could this be fixed in the
-> > boot loader so that the clock that's not used by Linus is properly shut
-> > down on resume?
+> Changes in v3:
+> - add DFLL support for Tegra 114 was split into dt header addition,
+>   DFLL reset configuration and CVB tables implementation.
+> - added cleaner commit message to dt header commit
+> - added T210_ prefixes to Tegra210 CVB table macros
+> ---
 > 
-> As a result of your request I did some more investigations on my side, I can
-> say that, yes, in theory that could be also handled by bootloader.
+> Svyatoslav Ryhel (4):
+>   dt-bindings: reset: add Tegra114 car header
+>   clk: tegra: add DFLL DVCO reset control for Tegra114
+>   clk: tegra: dfll: add CVB tables for Tegra114
+>   ARM: tegra: Add DFLL clock support for Tegra114
 > 
-> I can drop this and try to do it in bootloader, if any. Please let me know
-> if you still consider this (or the variant that implements it in a generic
-> way) necessary.
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
+>  drivers/clk/tegra/Kconfig                  |   2 +-
+>  drivers/clk/tegra/clk-tegra114.c           |  30 +++-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
+>  drivers/clk/tegra/clk.h                    |   2 -
+>  include/dt-bindings/reset/tegra114-car.h   |  13 ++
+>  6 files changed, 204 insertions(+), 34 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/tegra114-car.h
+> 
+> --
+> 2.48.1
+> 
+> 
+> 
 
-Personally I would go the route of fixing this in the bootloader for
-this particular platform.
 
-If this issue affects other platforms, particularly across multiple
-SoC vendors, then I think it would be worthwhile to have a discussion
-about adding this functionality to the clk core.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Brian
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250825 (best guess, 3/5 blobs matched)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250826061117.63643-1-clamor95@gmail.com:
+
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+
+
+
+
 
