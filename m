@@ -1,121 +1,137 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C90312814
-	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 10:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFD515E5DC
+	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 11:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202918; cv=none; b=BdB3zvqwxUZYSro6XEe6GWg39kanbDAJzRZCEGMR7mPQeDUYtmoMZF2MmMdDNPpwduPHi/17vvBefXaqmdxwb1QaLW8D2g7NHnL9R1D6EIKodLIwOZXLmmzAK1jckNLcl/g8Lrx3mWw8iIjZYWkZaiGsFrO6MdbLE1WfmNcB6JM=
+	t=1756206125; cv=none; b=HJQxUDoKpHPgFFqWhIu3/eKcy6PkD4XEUgt5GKnxwSI46pOFnPg3kIyfIEMj1LhWiT8VfiknJ0+rfcS7oH6dhG3rBgpSVzpKQ2jwLWTL3SvmtoN/vDgeQjzCSKA++KeOjnpW+RYTplNQ2cdMJomc4dxJ/82GkTPHagb0/0VZ5NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202918; c=relaxed/simple;
-	bh=gygMN3gMSxZ6Evr4Nrnpma342Igh7n4myrgw/1fPWg4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=W9NpuSk6OBSt2WkHDztfIUWddqD9XlvWW0MzC4mlL1yjaQbGKVFgSV3iTWKQlX7QubC9BDHfpfW6lVk04gMuDr3BDhT6JQyax4VZEhIN3KcvQGH4H9VXxWDqEoEd+mDmlYOMtdyUp5OUOTC/EdNp1x9GLKThPjP2r7r0TGDbMJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r7NlZ/4t; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1756206125; c=relaxed/simple;
+	bh=LH4NaFwMH564ZNn49848uCu1K3fc78EyKP3IwLdanJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MB5R7CnD1ps159fBfvV9jovVdzsDECHucn8myoT5T4E7qBeSEO7ybdIK7QrFU+c0Z8WZ6ZIAi2CTseq3it1bxti/MAT0xlOuPnkoc9mjNw8rP7Kxjsvo5qyhglM0IhhNpwF55HNVYk3oFptVG38kmypcqbt3PdRd27ZwtdPspWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j9uWEU3v; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r7NlZ/4t"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250826100829epoutp03f579c3661098b6c1d51c6a4b98044a53~fST22mQsp2453424534epoutp03S
-	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 10:08:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250826100829epoutp03f579c3661098b6c1d51c6a4b98044a53~fST22mQsp2453424534epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756202909;
-	bh=gygMN3gMSxZ6Evr4Nrnpma342Igh7n4myrgw/1fPWg4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=r7NlZ/4tAu+9H/3P7ZWUKTeFXtGPrnNGXPVGjg+FnDizdhhY2CcucA6jZY56cem/W
-	 +67efryuTeLX78KEo8RXX7wyJn+cGCSiHzt5hSkaHeJF9GbnTAncXUgfih65s/Ru86
-	 AnYJnsVxc+pynbElLONt0wHfZZL3yl6125+xZmlE=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250826100827epcas5p1193525accefc68efcd36c224d01ca9fc~fST10omlf3119231192epcas5p1b;
-	Tue, 26 Aug 2025 10:08:27 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cB3Jq08MPz6B9mF; Tue, 26 Aug
-	2025 10:08:27 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250826100826epcas5p24abdd08b355b1a7c1064b086bb9c11ac~fST0MRrip0241602416epcas5p2f;
-	Tue, 26 Aug 2025 10:08:26 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250826100822epsmtip1d21b4e23ad85bcf46748f0d59cda39b5~fSTwTkU862841628416epsmtip1X;
-	Tue, 26 Aug 2025 10:08:21 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <1dfaedc8-88e6-4749-8726-e8f66878e57e@kernel.org>
-Subject: RE: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
-Date: Tue, 26 Aug 2025 15:38:19 +0530
-Message-ID: <019c01dc1671$5c8f6850$15ae38f0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j9uWEU3v"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb78f5df4so926047066b.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 04:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756206122; x=1756810922; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S9pMIy2ceXu0U+iaZPJ+CBfNzoY8Ci+2h3RmbLWXEeI=;
+        b=j9uWEU3vipQAR6vjvIopP4JMg7TsCX9RdJaVvfCZD9plbft3Tg26ajPPTGA7jsD9Fy
+         6f/QIv7ZrZw4I9JaolerLLb4/S3D5jHkAHoARoQbcv9JroOyrRB2pZDWIp+eY4C8ee2z
+         KoH/V7wsgt/8sNpB7zvP2rwx77Cqps8K4VHS8rpNhIYHzYiHohcsSBx9MOQ8/d2zx5z1
+         x5E2AnjNVbY6XVta949W/rZHPf+I35yIPvk49i5ipMSXew7TzPaH/X0JwkgT7xclQkfX
+         MB3CpjxZIhAZNJwet/fr6rImqgEbp8npL4TUDghDCv/z8BWrSSTRJroWX9/80dHUit3d
+         Z5Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756206122; x=1756810922;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S9pMIy2ceXu0U+iaZPJ+CBfNzoY8Ci+2h3RmbLWXEeI=;
+        b=NTJKIdBUrc4RbhiyZeQzlKHCgUMXk+JRfoGFbsvMeTRqEx/etwYXUH+z6MoiJYZXRM
+         00iV/DL+lMM8jZNqTKf7nF8US+BeTG/MKVvdbVXmL23eue+/7u7hk1c3ATM033YocGRI
+         2MSB6jmQZlhVJdZMP8kn+uCd1iTm5rom1oQpP+9ZMMEiZbhkO85hOdTd9D4lYnBKr19C
+         T2GVqo7iP+ttA1QsW97hcEpuxwnsxpv+7bdxoGl+xvUhT6AR1sZi9zGr/+PsErwKc3gH
+         Y8JxS1dqoXpFBv7NBzoycK8qQeW2QWFKVCMBRBSlfTS1q0dS6hxzMZLIyKmZqXi418O6
+         stTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNIu1GiUi+dWIaUS4alPe0xNkuF3UNTBRmtCBocdgS6+I6Cpf/YmzKOWcOhgwGGGo8OSMToRn704E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu51TL4AfMLY/u2zXgKMIxc5b+MogSUedseNIAV8YIyeOh9xJp
+	F5raETQb0OAhD9PPNxWWpsTAXegXzrpP+e+zfefBAfW5yzjglXzLWsfddVjDGD/GW/U=
+X-Gm-Gg: ASbGncslYKoapT+N7Zgf4maCDDsHbk5yrILJ2/p9zUOx4xhahtCzgu+KT+tQkDa0v7Z
+	RKhybiaCSzhFstsJQLcsujmkyEoFcWBliLHAl4KC2KF2pzWGMKe/om4FM7g8OuhWNqlSwFgSXZV
+	D7vEWbSLu9mledg9PL/LC3oXDm8e2EQ8X8qZ6fMqW4BZu/q6gNMwaGG1If6ueUGlUqcZS0jgrvI
+	0YNkbXsqz69DM8kihcjESdi7/zYSkuEeSTKEDpRWS9HR4sYSIMHDNRnCVc28BcO9ALRos/OmVWN
+	D3X+L/aIWwWrxQEvzF5agxSAOyIN50aURDf6ynNi6BIYIlUGBUM/YEQGRr6OTcK4fiHHKd4JD4U
+	37LN4Hq9x99IieZAm33Q12x/GGtnf7X8kcRqZbZvQMBqs/aJIoSLGDliFG5UrvHUp4Mf1+lacw7
+	usoiWRGzdCENNJ
+X-Google-Smtp-Source: AGHT+IFsEcWIMVxL9iC4gvBj9YbqBmSOY+YYxvhjHWiMWtUrH8NxDZ6rdnSthTAZuxEPdrp5IvpPaA==
+X-Received: by 2002:a17:907:7249:b0:ae3:7058:7b48 with SMTP id a640c23a62f3a-afe28fdfcb1mr1617412266b.25.1756206121373;
+        Tue, 26 Aug 2025 04:02:01 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6103:4200:f276:8e0c:6e17:2570? ([2a02:2f04:6103:4200:f276:8e0c:6e17:2570])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm447908866b.105.2025.08.26.04.01.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 04:02:00 -0700 (PDT)
+Message-ID: <0d71269f-1c78-4732-8235-5640bf340d00@tuxon.dev>
+Date: Tue, 26 Aug 2025 14:01:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQE9OnCOAxwEstACXXiXxwGMECOMAYbqfFkCHlK3ygEZONEMslGN25A=
-Content-Language: en-in
-X-CMS-MailID: 20250826100826epcas5p24abdd08b355b1a7c1064b086bb9c11ac
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
-	<20250814140943.22531-5-inbaraj.e@samsung.com>
-	<1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
-	<00d101dc136c$aa037020$fe0a5060$@samsung.com>
-	<41434afa-fecd-4507-bcca-735d358ac925@kernel.org>
-	<016401dc15c0$fc0dcfe0$f4296fa0$@samsung.com>
-	<1dfaedc8-88e6-4749-8726-e8f66878e57e@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] clk: renesas: rzg2l: Disable unused clocks after
+ resume
+To: Brian Masney <bmasney@redhat.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, geert+renesas@glider.be,
+ linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
+ <aKyX4YJswZLuqA6Y@x1>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <aKyX4YJswZLuqA6Y@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+Hi, Brian,
 
+On 8/25/25 20:05, Brian Masney wrote:
+> Hi Claudiu,
+> 
+> On Thu, Aug 21, 2025 at 11:03:30AM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Hi,
+>>
+>> This series disables clocks that remain unused after resume.
+>> This is necessary when the resume process is done with the help of the
+>> bootloader, as the bootloader enables various clocks when returning from
+>> resume.
+>>
+>> On the RZ/G3S SoC (where this series was tested), the bootloader enables
+>> the SDHI clocks (for all SDHI modules, of which 2 are used by Linux and
+>> 1 is unused) and the clocks for a serial IP (unused by Linux).
+>>
+>> Testing was done on the RZ/G3S SMARC Carrier II board.
+> 
+> Do you think that other boards would also benefit from this change? If
+> so, what do you think about putting the call to register_pm_notifier()
+> inside an __init block in clk.c so that this same change doesn't have to
+> be implemented across various clk drivers?
 
- >> Googling for =22MIPI CSIS=22 gives me 0 results, so I still claim this =
-is
-> >> not a generic name.
-> >
-> > I checked other vendors (e.g: freescale), and they are using mipi-csi.
-> > I'll adopt for the same.
-> >
-> >
->=20
-> Then it is just =22csi=22?=20
+Yes, that was my other approach I was thinking about. I wanted to see how other 
+people consider this version.
 
-For the CSIS MIPI CSI-2 Rx handled by imx-mipi-csis driver, I'll keep node =
-name as =22csi=22
+> 
+> Alternatively, if this is board specific, could this be fixed in the
+> boot loader so that the clock that's not used by Linus is properly shut
+> down on resume?
 
->Except that you have some other different nodes called
-> =22csi=22 as well, so two different devices are =22csi=22?
+As a result of your request I did some more investigations on my side, I can say 
+that, yes, in theory that could be also handled by bootloader.
 
-For CSIS video capture interface which is handled by fsd-csis driver I'll k=
-eep node
-name as =22csis=22.
- If =22csis =22 and =22csi=22 is kind of confusing in the same dt, then I'l=
-l keep
-as =22video=22.
+I can drop this and try to do it in bootloader, if any. Please let me know if 
+you still consider this (or the variant that implements it in a generic way) 
+necessary.
 
-is it fine?
+Thank you for your review,
+Claudiu
 
-Regards,
-Inbaraj E
+> 
+> I'm not the subsystem maintainer, so I'm not asking you to make any of
+> these changes.
+> 
+> Brian
+> 
 
