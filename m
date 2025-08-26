@@ -1,205 +1,137 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC002F60B4;
-	Tue, 26 Aug 2025 06:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756189524; cv=fail; b=RD3Cglc4wYI6175RWWSnehzapZcT86v61tejPcrVP2eGaHsHgmo+LdlUFbAKneF6ZbzPPgR0e6rlrN1N6pBUeRBI84Tpb4bIa7qA1tBIkzIWx15Oe3f1ng2ad6jleyCZI2XYlqWWAC00bpjVkSpj5usRGgAgMqgtUSdFNKX5UMc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756189524; c=relaxed/simple;
-	bh=fIVtEcZeYHn+qIJTySkLZtt1yeK0OwajRXzzQQe3/oI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=toAxBNGuqnaNxBfWktOcXc0lHHZ0UmqDQ8z1F41KH3wdbBwLlf7/h8v/tGJ32oijdQq+Xw/NjCLpXKFmHNcEfOdI/QERkZ7hdNxLBzWAEg0KiD+46WdeCdFbmIwvodIT+RAkkMGklT2hKVHtLo3D+webA+X1y0+Do8auPvMhiZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n9Qj/Ima; arc=fail smtp.client-ip=40.107.92.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFA938DD8;
+	Tue, 26 Aug 2025 07:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756193981; cv=none; b=Q8bVZ91RxvOW6jCCe2toFRoMZnrDJaJu0OT5K3evOviUnUXe2GXyjzw6XxI1QpaJyTaAwPIZVaa9kCzPoY7mZyzPcbTEFvkZsm676lWpEXg1bByyPCmEpXICdvrwLq/fIXLquG5Pf10soxNO8HkgxTGgrAWMUKxa6QDzB73620g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756193981; c=relaxed/simple;
+	bh=OXv6h16dfjmKpvPXbWekd18jZy8dArhzITkeeRAJORI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FhGtOG/y+0b91zZrXa+In6vUMj1S7j91E3+/NSGqwCYLaIGA7/xZ+xkmGZhVauBsKxmPoyW+KQEsoi9Py3dTW2jyUAurEgbLQkL5mb1HFj0PYHM94mg8uN1WnG2tSUPuMOhWDju/sBBe7QRQOTN53NsRpY7aOy4ZuKcyA/MYfig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Vz2RvEQd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n9Qj/Ima"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J4uzoMLFMnarzLgOfMjbumsvINzKhr0dy4vcKylSrqEnlBhlRZ3ReK1JsPxv56mNP8MnO5k6kMG6PSoTMw1r3yhWk+CKAE0ts3nIz/5toWJlgZ+BUtYg99Wz7SRpMpcdAC5bpZNuXmFRRZW0cEClqjT9f502XLvbDyQEuIaths0tq07oVspMiPKxDd3W4Q/PXo8d/FrYd1d4wmG5J0NADNe8+z/oQNfNQAcgYWYmWlGNVIiz46qQQq5Ir+xcJ1cJ8Dl1qHVzY6XBgOrVTFfVSTtgFBFxQQkA9JuBxti5XnBgnZ667BUxqdJP98CyJ5jegwkXDZX+mC6ao/OjUKkePw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wTSjsd1sYLu0C7rsihtOEYTNpCktsUK9tpPDNiW6jhw=;
- b=XvK53CLKm8noH5DjMiYErCsGLjVJHiR8CApGZfqFkHB6VTHr563fPT0gT3TSuTqfo2iMVndbunpgtqBJPC+l7iEuDdDdo1lUc2rTGFln/DjhVWIKwc+Zk6gvFFUTnLWZA0Uby6v7Twbbd43BaOCS9KWV14cvo+ze6iKp1L13XZ7TQGZEwQP3O/FETNrSf/UpwX/VXyDfCqaKFzdDkfK6b+a5Crob97q8/MUaRNRepUH/W/Y6e+OvGIIUQa8ga4LIvKJeP2gjQWlIQ0OtotEZ6gjopFZVBoTdbeDt7+M/6HqMBwRv8PUryNt2iVBzlf/7WN8L4wDaxMXYu96dv5LsUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wTSjsd1sYLu0C7rsihtOEYTNpCktsUK9tpPDNiW6jhw=;
- b=n9Qj/ImaESWo+auWpSGZi6Uj3MSJ0SGpda4lDh+FncDLVyTZ3T8JtnVrXzxy+YNSstdac59bzdJY46OA6N2VmAStCFRY0aqYMzBFbP6E4TQwS53JmaVzEDmw4E2cl5H4BY8xYN7NLXbtizWoEBfqX3XoQZbJ4Jg8k9EXVrcFBOGiokVEHXZoezk/XtCNVQGVddyB2kaUmcRaJMPgX5kKnoeMUnTjZhtxBS1sYUn9Jv7p3hL5qDxYTWdfhFwuEOA2BOrXo4oQeD1yBh5gfIZE/ZrgC35JA6As8Z/m7JjZtDOUuhkMJ15QG+DAb1wXcKu+ZkN9pitGoiGD31nyFijkVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- DM4PR12MB6493.namprd12.prod.outlook.com (2603:10b6:8:b6::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.21; Tue, 26 Aug 2025 06:25:18 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 06:25:18 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: tegra: add DFLL support for Tegra114
-Date: Tue, 26 Aug 2025 15:25:14 +0900
-Message-ID: <22816220.EfDdHjke4D@senjougahara>
-In-Reply-To: <20250826061117.63643-1-clamor95@gmail.com>
-References: <20250826061117.63643-1-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0234.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::6) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Vz2RvEQd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756193977;
+	bh=OXv6h16dfjmKpvPXbWekd18jZy8dArhzITkeeRAJORI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Vz2RvEQdkeXiWNn5E9pY+JTxBJN6tYnGg95IpWV4j0HsMPw6mF0YOYS9yOwm3ackm
+	 ieiSWSImeFuZ2A9xET7hXQVWco3je+9E5houg4d4tcW5AZL74CKtPAYCuw381zBLKZ
+	 uAm6Uppm8JkVY0pX/iDl3zYWNpaasr6MpkvkFHETliw3aciigP0b/LN5Udly1AowfO
+	 UxUA0cBwdxSAQpd0DiucRMPzVn+QEaCxyD9PJ/WwvRw8OcBeJJGz/c6dvp7dS8R0Ba
+	 sSywsbE5asDSHHIynRYB0HCedCONAGTQomIVBAsWqbzsBCDrOFet/Mgb8f/NNz111W
+	 nzMdfMt3zV+hw==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600C8F85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 89E9417E0985;
+	Tue, 26 Aug 2025 09:39:36 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH v3 0/6] MediaTek devicetree/bindings warnings sanitization
+ second round
+Date: Tue, 26 Aug 2025 09:39:33 +0200
+Message-Id: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|DM4PR12MB6493:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2803ce3-e2fc-4470-7341-08dde46953c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|10070799003|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?blhSd3dvbWdRNm56cGVQYW1EZVJGcEl0emluYVVrZXovc3dlZllvWk1BVjdK?=
- =?utf-8?B?UExRd0czeXMyaHlSeFhUV1IycDlNazVLRlRVK1ZyRjZubHI1RmVubEFJalZD?=
- =?utf-8?B?SGpsQnV0QTcrRE9UMERvZEc5RS9BWDBIU1hhRFNOVHJnN01WdW9qeVY2YmJh?=
- =?utf-8?B?azlQeGthK1hidW5Kc1lkUlJLcS9meU12cXRzTEhrV2NLNDhwckRiUWlhY2FS?=
- =?utf-8?B?NXJKM2hRb2NRdHRDNm9KMFE5eVhEa25tYWhHVEpOYVoycWJKQWFrN2FnMUhI?=
- =?utf-8?B?T0ROYUd5RnNib09aZ0VEcEhIa2gzTHNLY0pGM0lQVVBleGN0ODJIbm5CenM0?=
- =?utf-8?B?RHVabmJLb0RoNlh6cEFhRnB2ZlRpa3dFQTROcGw1UXdUQ01LMllybUMzelJT?=
- =?utf-8?B?WVU4Qk1LYjVmKzBkWjZxVWJxTE51M1YzMzhEYzNjNVJnMkhFcDBtYmNid05T?=
- =?utf-8?B?dGYvc0ljK2hWTDFsaUlnZW9ScVZkY1F4TXRYNVJiOHhtVm1mSk5IQkkxQ1VS?=
- =?utf-8?B?cENhbk9rUnowN1hHWFY3VjdHL3Z0Z2k1aCtoT2FyUXpBa3c2bWNYQmxCWG9i?=
- =?utf-8?B?c2FiMlE5YmRGWjZ5bGFSaGJxTlpXbDluZVk3WUN2YUY4U2xCb1JXbStNZTBp?=
- =?utf-8?B?RXJUaU9Vcjh1c1dlTHBZempSUitENkZuczEyRWtIM28zaUY0aVY1dHBJT2Ro?=
- =?utf-8?B?V3pXdEoxaGlZSTM2ekFRS2tnb0tnVnYvYmR1ZzdoVUFPcC9iM0NMZExWSGd6?=
- =?utf-8?B?OFRyMEZQZ21oWHp3eDF4U243TU9ERHI2cjAwZDgvTG16VlkzRklQVFpZak9W?=
- =?utf-8?B?OW5hOFBxSTZjRG4rRk9YTnhNb3JhZkFOZmpUMlREVVJoQjRRL2RLbEJOVS9r?=
- =?utf-8?B?RzFuczJaaVB2anNxc2ZkSTdYQVFtdGY1M1ZpeDE0dDhEbk5JZ25XbFRSNEJp?=
- =?utf-8?B?MWk4eEcvK1NJK3ppYkFHTGc4YjFBanlPVlVXOHBVMS9DZENucWlINUJJR1ZV?=
- =?utf-8?B?TXpmd1lNUmZ5UkFxcncyRDVsaDlsbHFBZDVzdlBkSEhLNXB6NGhYY0pJdUc0?=
- =?utf-8?B?MHltb2ErV2orNnhydmt3RnBncXNpdStwT3IyRlhwT09DaHdlSGJXZUZLTXFR?=
- =?utf-8?B?Ry92dDZZWXdGV3NWVlRmRG1tc1h1L3BuTFR4b0VwUVcxaWMzc3B3S0wzUlBn?=
- =?utf-8?B?MklCN0w5a0V4aXN4VFBDNklPZmpxQkttMjJEcis0dkdhMHBTYnZ3SjhqQ283?=
- =?utf-8?B?b0FENlNYaEVIMDFCWHdFNWpWTTRrcXNOV0Mwck1vNUR3R2ltaW12QjhHSzNh?=
- =?utf-8?B?MjdiaEZnTnJQZmFuVTJEejJ1QmxuVGNwVEN2R2hYNTVDUm1DdkVLZmVaN3NB?=
- =?utf-8?B?NU10RmlmRDhkV0NrUCtnSkFHanJCMXJCV0NzVnFaenkrMmt3U2VhMytjSUdZ?=
- =?utf-8?B?MUNUWkQvU0pDWHk1QmdzVHppQkVudVVvM2hwNWxUK3R4MkdXZzJIVDRBb2lx?=
- =?utf-8?B?UkhPNkdVVHVRR05DcGVMSW93dUgwaTc0MUxrc1didXNVNitXSkZKSGQxNm1S?=
- =?utf-8?B?eUVua1hQaEU2b0gzZ3FTQWcrOUtkMTZHbmZKaXAycGJtU29VTnN5U2l1bkph?=
- =?utf-8?B?d0tnaXpnWFFGbUp3NkZ0aFc5SmR3SnZvdEZ4aGxTOXFKUjZkQmQrWnExcjRh?=
- =?utf-8?B?SW5FRFl3S204NG1wNEtlZ3FTRTNhc3I3c1FQd0NqUVkrcDlCU1F2QXRzSkRO?=
- =?utf-8?B?LzJqU0ZJdVZNcHJ5Z3Y2cTlLQmZ1b3pDOTBPaEI5NHNlZmVvcE14S0xGeVdQ?=
- =?utf-8?B?UFBSOVFOQzJTTktGYnY2cXpNMjdKTVFnRnlONGtDbjdFZkpIU2puOEZjQ2hY?=
- =?utf-8?B?cTdETjlNc21MWnVIS0dxU3hiQkhBdlJTckgzVVVGRGZhNFExQVlnZGlhSlJx?=
- =?utf-8?B?OWdPWDdCZHZQNFVyaitVWDEvb2tvdnVKV3I0WUFEQksya2NFWXpyRWlRdXBI?=
- =?utf-8?B?VlA3Zk1pSDBBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(10070799003)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N3lJeStJYTVzd3lXSEpHSHRnSnpzbk1uNEk5VTZMTHhvcVBoNURmVCtDcWJD?=
- =?utf-8?B?NWZ0d3E2YlNJRE1CZVgvdW1oampWdXR3Y2VXMitobnVXcFQ5TTZWTysvNTZi?=
- =?utf-8?B?bEQrWEZ6Z1czak9TcXJ2NE0wL2MvTUpQYU1SM2JKNW5uU0p5QlpaNDR4TExZ?=
- =?utf-8?B?b09uclZEbkRDV2hZS251QXhxK1FwZ2lnRE44eXRqaGZOL2FpUkdJRmJrREM1?=
- =?utf-8?B?cVhLL0JYYnFYQksyMzBBVlp1NllBajNzaWJYMzR4M1BYWGh6NC9lTThjejdy?=
- =?utf-8?B?alAzN0haQ3pXNkhtZzJBR0pSZUNSZWtzVmkvbUZBUUtyazZtZ2ZjV0xhOXll?=
- =?utf-8?B?Ym5XSm0yVlcvY3o0eXZjVkEwK3NzcXJydklWRU05WXFESzlJMTNYNkdweVky?=
- =?utf-8?B?UWNsMVY2YVIyNEJTeEczUHo1UGg5cXRrNmFwek5WUWxFNkFUK21wQUt3OE1n?=
- =?utf-8?B?OEZQdEZmNlBKUXJqcHNpaWZRRE9YemF5MVlyZ1BmMmdHNDkwVTBjWUxJY0tV?=
- =?utf-8?B?ckxXc1dkVmRPbHYyL3lNY08vVFh6LzdOTU8rbU1XNU16MElwMXk5N25jL0Nr?=
- =?utf-8?B?K1pMZ3NCM1JldHNnc29sbnVISkRRbVFuSW9uWld2dEkwTTYycVJyYVFLS01X?=
- =?utf-8?B?YTFaaldhdWhqYitQc2g0dGFzUXVFWWNNTCtwTjd6VnJ2RC9QTitTZTVJb0lG?=
- =?utf-8?B?SFVna215bnNMdXc1Z2dFTXI5UFk0VEQvY1Bab0RIek9pNStDR3kvRDA2YWxL?=
- =?utf-8?B?NytiWHV5UmxWQ0xqR3czMmk4Uk9xOHlMMnZmTWNEZWVmOWpJV0EzWHpKSGdu?=
- =?utf-8?B?Q0pVemF1dFRGRmRHOERjbUF6VnBvOUxvc0U1M0dZSHFFajAzalVkVEdqZXhl?=
- =?utf-8?B?b0xIM01XWSt6ZWl0SitaVkJiTzh0OC9pdEhjeVREWXZ0bGUyeVY2THA0Skph?=
- =?utf-8?B?SDhjMnVTTEZ5UW1kL2RFUEFDWXRIcmorSm5yUUZlbXdlZVZNNE1MdnhSTmZa?=
- =?utf-8?B?RmREWjYzT2dyb0FzK2YzZ0Fla0d5cjEvTXRaOTIxWTVlcjZKakFmQWcxb25l?=
- =?utf-8?B?Rk51MGNYSGNQOTVQUjgzTVZ1SFhoYWd3d2JTUXlUTlJiRHl2VFpPSUo1dy9X?=
- =?utf-8?B?Ry9sWnc0QzE2cnY0aVV2Wm9Ldkx3TGc1d3c4YVMwdUhoU1VLQTZaUjgyUWRQ?=
- =?utf-8?B?c01McW9oM1NUS2RmV00vY3BrZnJXQjNBdkxINkVvdVluWVpJQTBqeGhLaDRm?=
- =?utf-8?B?VGFFWlp6ZjVhT2RjYXFiUE5uQWpXTENXdGVBNkJZWFdTQm8xMEJqTnRVTjBW?=
- =?utf-8?B?djNTaGVIbnlzLzZ3S0lRNUR6ZFVCNUM5UmNHZVNrNlpEdlJ3aUxvaUttbDNZ?=
- =?utf-8?B?WlFHUHJtRHBGL3BlZEpRWllDYzFRQ3NhRCtqMWx1KzNMNC8rNDQ2U3JqdUM3?=
- =?utf-8?B?Vk8xeGc5M3N4RlhlVEZrUVBoM1d1VS94UVJNM2Znam5NQUE0ZTJzWlpBczhR?=
- =?utf-8?B?QlNPWGFwYzJQSm9FbG9mL21tK2NwK2VLV3VLVkV4akpsT0dkWmc2b0E0TzJr?=
- =?utf-8?B?ZkZHcFE2WnRmeXRDNktJQXVPZS91MW56Zlp0WHRsYSs4M25lVFFDTlluVGJR?=
- =?utf-8?B?QnBOVjNTQS9FcVVZbDd4RHJpQTFLb0h4c3NLOW9ENmJ2S2xPYi9FMnd4MUNK?=
- =?utf-8?B?WENEMWVIQ2FKUThXOWZncndobDMwK09VYWR2OG03ZmpLNWxYKzVoUEgrR2Jk?=
- =?utf-8?B?MG9SZUw0L09kbGlFR3pJaUR4OEhSWnRTdmY2aXYzUEhuaEhvaEc1cnJhamwx?=
- =?utf-8?B?ZTUxVlFJa1p1RUVjdlpySHErd3VDL3BYd2NJdlZ3WnFnaGxva21qc1hNaS9Q?=
- =?utf-8?B?RjQ2eFFXL3h0b0NONXhZRm1xOUg0bmQvRFFwTmcvbm8xelVCVGtCS3locUJB?=
- =?utf-8?B?d1lRMW9URUZBNmRvazV1UXExNkFZbmZ3UzQ2ZElISnpMRjhsaXl6R1crM0VX?=
- =?utf-8?B?ZWZBdXU4Q3hydi9qNkJUTzlmY05FcVA2RDNzZml4NklscitKMDI5UXVSbFc4?=
- =?utf-8?B?OGxjZWVsLzY1Z3JvQ3JERkVva1JOeVI2Zm9VbnNjV2ZZRXdLb0oydFlVcElH?=
- =?utf-8?B?eHJ5SmxEVGhIVWJkMnh5dGNUZFBMcFV2Z0d3K1R6bGtOOU5yN0FtUGpmWFJw?=
- =?utf-8?B?dktwSUROK1piSlZDUmJQUi9kNlQrM1FZeTB6N1BJWVk0MGpPNFFJZmZBdHdG?=
- =?utf-8?B?YWFZQVhoUkZUOERKaXZNb2k2VXZRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2803ce3-e2fc-4470-7341-08dde46953c5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 06:25:18.6310
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: btkgMeE8ZBfLYWH92DnWDnS4UdzTHakgXDxV6pnOvI1SIfaLMwBBc6QsZ7BfD+CioeuU8Du8DxQlhmU/ppIaZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6493
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALVkrWgC/33NQQ7CIBCF4as0rMXAlErjynsYF0CHlljBQIOap
+ neXdmWMcfm/ZL6ZScLoMJFjNZOI2SUXfIl6VxEzKN8jdV1pAgwa1jJOb9OVdpOmDxW9832ivJG
+ dsIYzKyUpZ/eI1j038nwpPbg0hfjaPmS+rn+wzCmjB60EihoESH0yYRyVDlHtTbiRFczwgQD7g
+ UBBjBUSODatFfiNLMvyBvGL2zL5AAAA
+X-Change-ID: 20250801-mtk-dtb-warnings-157d4fc10f77
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tuesday, August 26, 2025 3:11=E2=80=AFPM Svyatoslav Ryhel wrote:
-> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
-> a ring oscillator and translates voltage changes into frequency
-> compensation changes needed to prevent the CPU from failing and is
-> essential for correct CPU frequency scaling.
->=20
-> ---
-> Changes in v2:
-> - dropped 'drivers:' from commit title
-> - aligned naming to Tegra114
->=20
-> Changes in v3:
-> - add DFLL support for Tegra 114 was split into dt header addition,
->   DFLL reset configuration and CVB tables implementation.
-> - added cleaner commit message to dt header commit
-> - added T210_ prefixes to Tegra210 CVB table macros
-> ---
->=20
-> Svyatoslav Ryhel (4):
->   dt-bindings: reset: add Tegra114 car header
->   clk: tegra: add DFLL DVCO reset control for Tegra114
->   clk: tegra: dfll: add CVB tables for Tegra114
->   ARM: tegra: Add DFLL clock support for Tegra114
->=20
->  arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
->  drivers/clk/tegra/Kconfig                  |   2 +-
->  drivers/clk/tegra/clk-tegra114.c           |  30 +++-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
->  drivers/clk/tegra/clk.h                    |   2 -
->  include/dt-bindings/reset/tegra114-car.h   |  13 ++
->  6 files changed, 204 insertions(+), 34 deletions(-)
->  create mode 100644 include/dt-bindings/reset/tegra114-car.h
+This patch series continues the effort to address Device Tree validation
+warnings for MediaTek platforms, with a focus on MT8183. It follows the
+initial cleanup series by Angelo
+(https://www.spinics.net/lists/kernel/msg5780177.html).
 
-Whole series,
+The patches in this set eliminate several of the remaining warnings by
+improving or converting DT bindings to DT schema, adding missing properties,
+and updating device tree files accordingly.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
+---
+Changes in v3:
+- Mostly cosmetic updates.
+- Patch 1/6: fixed the commit reference in the 'Fixes' tag.
+- Patch 1/6: not mentioned in v2, but this patch changed quite a lot
+  since v1 after applying Angelo's suggestions, so I dropped Rob's
+  'Acked-by' tag.
+- Renamed commits from "YAML" to "DT schema", and avoided repetition
+  of "bindings".
+- Patch 2/6: switched to the generic node name "audio-controller".
+- Link to v2:
+  https://lore.kernel.org/r/20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com
 
+Merge strategy:
+- Patch 1/6 can be picked up independently.
+- Patch 2/6 is standalone.
+- Patch 3/6 depends on 2/6.
+- Patch 4/6 fixes the DTS node name as expected by 3/6.
+- Patches 5/6 and 6/6 are independent.
 
+Changes in v2:
+
+- Restrict power-domain usage to mediatek,mt8183-mfgcfg only
+- Add the MT8183 AFE binding before audiosys (it is referenced in the example)
+  and include the memory-region property
+- Rename binding files to align with the compatible name
+- Drop former patch 7/9 (already applied via the pinctrl tree)
+- Drop patches 8/9 and 9/9 until we decide how to represent R0 and R1 values
+
+---
+Julien Massot (6):
+      dt-bindings: clock: mediatek: Add power-domains property
+      ASoC: dt-binding: Convert mt8183-afe-pcm to dt-schema
+      dt-bindings: arm: mediatek: Support mt8183-audiosys variant
+      arm64: dts: mt8183: Rename nodes to match audiosys DT schema
+      dt-bindings: sound: Convert MT8183 DA7219 sound card to DT schema
+      ASoC: dt-binding: Convert MediaTek mt8183-mt6358 to DT schema
+
+ .../bindings/arm/mediatek/mediatek,audsys.yaml     |  16 +-
+ .../devicetree/bindings/clock/mediatek,syscon.yaml |  15 ++
+ .../bindings/sound/mediatek,mt8183-audio.yaml      | 228 +++++++++++++++++++++
+ .../bindings/sound/mediatek,mt8183_da7219.yaml     |  49 +++++
+ .../sound/mediatek,mt8183_mt6358_ts3a227.yaml      |  59 ++++++
+ .../devicetree/bindings/sound/mt8183-afe-pcm.txt   |  42 ----
+ .../bindings/sound/mt8183-da7219-max98357.txt      |  21 --
+ .../sound/mt8183-mt6358-ts3a227-max98357.txt       |  25 ---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |   4 +-
+ 9 files changed, 368 insertions(+), 91 deletions(-)
+---
+base-commit: 9df95ca9b379cb29aa0f75c4ca86d7b2293d8bf9
+change-id: 20250801-mtk-dtb-warnings-157d4fc10f77
+
+Best regards,
+-- 
+Julien Massot <julien.massot@collabora.com>
 
