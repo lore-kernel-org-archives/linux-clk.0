@@ -1,242 +1,131 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1BB302CD1
-	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 09:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE3D3090CD;
+	Tue, 26 Aug 2025 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199500; cv=none; b=qbBA30xDiN/4PlOAEPIece6WnCh3y3bTl1xJ72vpBpxmuKhGU/vgivx98qoRp94xA/IJmw+q1zSt0DFYjYEVi2VwcWEZPi+SLc5iLMzRedWYjfSU/wJMpB4/Wm1hL61jPIfQDkzHqmfahmxiCPOrGewAcszis/wsMCxj+kl540s=
+	t=1756199770; cv=none; b=nAgvWeAI1x3hEb0vYTf8HLSdbdyqmFAVHI7LawgUqlJRaWa1WJTVtyNNu766xbRPbmIfbGY8DX2G43YycmoJAUKLkUV+m8h5sJ1XIkGe3MPgDvprt7ph9Aj7J82XF52aVqSuM08/bCacfQBzQzcKYld0juMxv7JSRrfw4FMfbSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199500; c=relaxed/simple;
-	bh=oUvDJknltmsHE5kgS2L1KW2dhWMzUcSQlAHCv0I9Kjc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GJ+1ckkzLNKL2XKafDvitrNu4I3Ezb+H02pAOYWF/jBtPd9tKLGpm2KnaeFtQYDnR9mpUnm3JlTStfayvoSJusahwgQmIRO8Rbvp1d6or1yfm7LWGBiu9kV1Gmudt5Nvp2WrlBOcKTKtAhltg2FMEtK8roai5O8BbE0pLUBGEwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F/KVRZrM; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1756199770; c=relaxed/simple;
+	bh=83wIkZOfIMgtYeUo8h7rEJt0HnMOiQqBGtwJQOkoA0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHHfACzrh2DwSiLEG15QTIpxr0cc7Xsgw+z6UWrLrjzu0f/U7J31NwpJ1RpZ0iAENLSItrKLe6uunhgO776Tz52FeJtEW4+BVawlFT8Mnjd0bEdkpRXwdTQ5AzCNJfyejzXVXv722LJ7zxJj4cEVJmUWnxEY5z9e/0PN+s1Dvls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdZk414z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F/KVRZrM"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso41944745e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 02:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756199494; x=1756804294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kSGgiA7okXMSZ3FGPGzhv/sQluxvM/Gr3n+FFVx6Zrk=;
-        b=F/KVRZrMHG3qI2k5+wSKxz5kmtxtIVRjTQlzLtokJLSKUVnXNhaFlhfUGf0T+w7EOs
-         Jx9BOS++tu7wXl+ca7ZPKFJ8iT11olkcNnJVmhfM01Go9Z3BIh3bawlMVT6ILq8QjnKk
-         NpT4figuvWk2/DUyuHkKkmqlQS+YCyA0qV4CYaCpVSTa2oUULlBhI2Jrr0T3HsdgmNU2
-         /ASVvC0RPGIuv7RoVN0XLXiiv7oLROTHSuS+xt2dkcie17El3wsuz/xejYq7p73cu58P
-         iiWH7v05l9doBgYlWOBBNeWtJRBoxONp3/3DOVx4FrjQxJPusSM91OcGCDjm3mMtMHjn
-         BBnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199494; x=1756804294;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kSGgiA7okXMSZ3FGPGzhv/sQluxvM/Gr3n+FFVx6Zrk=;
-        b=tjP1G4ll2mpMrjjAI3+snKrWoSbVD0f2M1nXkBcXKiAMgqK7FaWekDVJ3Q1ce+jXWI
-         tl61KghtsKUE6uZLKyWrCLjhBECgLlA4F+B83XkO3wTaCZ8m+LuQlt9M/XR7vEiTQzEf
-         +Bhwfw+M5iA6Tmyj4H7VuDegho8LDgfIB/8NLFtzSwhHlib+BBGnzCnMgv/Ovvvb2Ze6
-         YhXYcW+s4IE4se2tGccPOJX75FxgKpt2U+oRI/6MmGrcyWZSy7/GMoJS0q19GiSVL/Ar
-         7iyktnGzceolsV3OJomszW5/Vaw544gtdB0AUrN6B9WrEAZna8bimFW8rWP39CyjmiOZ
-         I5Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqt/I0c9lXfY36GR+/rQxvI5Id/GHBQcWcYnvTGUMA5bDF/LIpiR+VtKRWPzdFL3D50wllycl2URE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjOZjQjQTpU2/Z+7xAc4trDSKdN/5UhEBtOpBcEMCv8DRTdQsd
-	KbTJayfg3ga+VAhh5+CA8YMvw+CtvRQEv+PNUeroSDDXlY2eJ/5VS5rvtQjXjXg+t4U=
-X-Gm-Gg: ASbGncufTw7HE4bcNvk9b7lERSfRMp+PDt9DF/nUWnvbi0FfD8HFdBQxXVBY3lpiXxj
-	kya33bdj/ZCUrg8JoUz6iBwpumsFIUjPE73VlDX9UeebqXq9iSdaEqaaggmhko4bWRC+V+RJpe3
-	F4d6Cr0m/LfvEghCn4CnCCQriPPTbqecY9ILB6pezebr/0E1/dlq4Y0fZ6rVLQ31gyOOeVpOawc
-	cEtUdQMBpJgo4j3r844uQRfoXOJBvziHu5D4x7ZPcC5b2pW3konY62zYzhb/MWYN4Xx4MdELOsQ
-	QDg9Ht7HFCfFe/b2FzU2Rov691UEuHNl2ECknrC7Vnr8p/6TkUOSoyf7tVIJXnkdvJF3J6UOYbA
-	6ehLBvuGe7aQCoYl48k0/XCCEiyGSCOg=
-X-Google-Smtp-Source: AGHT+IFtBWXrOWyVTOM6kOSvzOnSizJ26W7d5kPzjQBIk8HokgLiwvROTQt35HufZ0kQxPuRV/tMwg==
-X-Received: by 2002:a05:6000:400f:b0:3c8:eead:3d2f with SMTP id ffacd0b85a97d-3c8eead4359mr5090468f8f.41.1756199493485;
-        Tue, 26 Aug 2025 02:11:33 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:46d7:73a6:7b7:2201])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cad431ea49sm4204236f8f.42.2025.08.26.02.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 02:11:32 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Da Xue <da@libre.computer>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Jian Hu
- <jian.hu@amlogic.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: meson-g12a: fix bit range for fixed sys and
- hifi pll
-In-Reply-To: <c0e8cf9a-b5c7-4369-8b6a-c4f80a6bc398@amlogic.com> (Chuan Liu's
-	message of "Tue, 26 Aug 2025 15:59:32 +0800")
-References: <20250822002203.1979235-1-da@libre.computer>
-	<c0e8cf9a-b5c7-4369-8b6a-c4f80a6bc398@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 26 Aug 2025 11:11:32 +0200
-Message-ID: <1jy0r64fcr.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdZk414z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2087CC4CEF4;
+	Tue, 26 Aug 2025 09:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756199770;
+	bh=83wIkZOfIMgtYeUo8h7rEJt0HnMOiQqBGtwJQOkoA0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rdZk414znMjHrZ9HLlCG8c6erTITP2REz5Ek+YQU/4TL1/ROrHA3FoXYuq4eoI4mU
+	 lTmZ3DQ8Y3Pa8UU/6caIr+E4AP8ejL5uSc4M0rjBDLB1PabaJ2jzdacLfK8oC2La4G
+	 A/D7syBorzfA/TbIyETMmrvCnEeTVaOjoDm+XscnTeXOOneo6Wh6GkdllQKE0WW/MK
+	 QQdbcVh6T3EEKO3UX+AJPybNARTBodY5gPsX28zjloTI/U84VMXwry6OTddTNWhMUO
+	 RPCOBxtjrqAD0DJrE4/4IOdnMzEpBIwXb9BYnvtLguKIysrwbabU7Kj+Uv/Q82gn2e
+	 W+7ytrK5Yu/Og==
+Message-ID: <443da26a-0b47-4e68-9fd0-9a155dcdc31a@kernel.org>
+Date: Tue, 26 Aug 2025 11:16:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: reset: add Tegra114 car header
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250826061117.63643-1-clamor95@gmail.com>
+ <20250826061117.63643-2-clamor95@gmail.com>
+ <2ef333b7-2c4c-4c06-b90f-5dfa8af41e36@kernel.org>
+ <3303492.5fSG56mABF@senjougahara>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3303492.5fSG56mABF@senjougahara>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue 26 Aug 2025 at 15:59, Chuan Liu <chuan.liu@amlogic.com> wrote:
-
-> Hi Da:
->
-> =C2=A0 =C2=A0=C2=A0Thanks for your feedback.=C2=A0but this patch is wrong.
->
->
-> On 8/22/2025 8:22 AM, Da Xue wrote:
->> [ EXTERNAL EMAIL ]
+On 26/08/2025 10:29, Mikko Perttunen wrote:
+> On Tuesday, August 26, 2025 5:21 PM Krzysztof Kozlowski wrote:
+>> On 26/08/2025 08:11, Svyatoslav Ryhel wrote:
+>>> Binding values for special resets that are placed starting from
+>>> software-defined index 160 in line with other chips.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>
+>>>  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
 >>
->> The bit range 17:0 does not match the datasheet for A311D / S905D3.
->> Change the bit range to 18:0 for FIX and HIFI PLLs to match datasheet.
->
->
-> The upper 2 bits (bit18, bit17) of the frac were deprecated long ago.
-
-deprecated ? that is really confusing
-
-That seems to imply that it does have an effect but you are choosing not
-to use it. Please clarify.
-
-> The actual effective bit field for frac is bit[16:0]. However, the
-> corresponding datasheet has not been updated. I will provide feedback
-> and update the datasheet accordingly.
->
-
-What about bit 17 and 18 then ? does it have any effect at all ?
-
->
+>> NAK
 >>
->> The frac field is missing for sys pll so add that as well.
->
->
-> PLLs with frac support are used in scenarios requiring a wide range
-> of output frequencies (e.g., audio/video applications).
->
-> Since sys_pll is dedicated to clocking the CPU and does not require
-> such frequency versatility, it does not support fractional frequency
-> multiplication.
+>> You got comments last time and you completely ignored them.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Thierry explained to you last time why this patch makes sense.
 
-You are mixing "HW support" and "usage choice" here.
+And each such discussion should be reflected in the commit msg. There is
+nothing like that here.
 
-What I read is :
-* Da says the SYS PLL does have HW support for the frac parameter
-* Amlogic does not see the point of using it since the CPU does not
-  require fine tuning of the rate.
+But I am not speaking about this and the values here. I am speaking
+about all other comments which were just ignored.
 
-Is that correct ? or is the HW just no present ?
 
->
->
->>
->> Patched:
->>
->> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
->> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
->> 996999
->> 500000
->> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
->> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>   hifi_pll                      0    +/-1562Hz
->>   sys_pll_div16                 0    +/-1562Hz
->>   sys_pll_cpub_div16            0    +/-1562Hz
->> + sudo cat /sys/kernel/debug/clk/clk_summary
->> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>      hifi_pll_dco                     0       0        0        0
->>         hifi_pll                      0       0        0        0
->>      sys_pll_dco                      1       1        0        39999999=
-85
->>         sys_pll                       0       0        0        499999999
->>            sys_pll_div16_en           0       0        0        499999999
->>               sys_pll_div16           0       0        0        31249999
->>      fixed_pll_dco                    1       1        1        39879999=
-85
->>         fixed_pll                     3       3        1        19939999=
-93
->>
->> Unpatch:
->>
->> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
->> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
->> 1000000
->> 500000
->> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
->> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>   hifi_pll                      0    +/-1562Hz
->>   sys_pll_div16                 0    +/-1562Hz
->>   sys_pll_cpub_div16            0    +/-1562Hz
->> + sudo cat /sys/kernel/debug/clk/clk_summary
->> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>      hifi_pll_dco                     0       0        0        0
->>         hifi_pll                      0       0        0        0
->>      sys_pll_dco                      1       1        0        48000000=
-00
->>         sys_pll                       0       0        0        12000000=
-00
->>            sys_pll_div16_en           0       0        0        12000000=
-00
->>               sys_pll_div16           0       0        0        75000000
->>      fixed_pll_dco                    1       1        1        39999999=
-39
->>         fixed_pll                     3       3        1        19999999=
-70
->>
->> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
->> Signed-off-by: Da Xue <da@libre.computer>
->> ---
->>   drivers/clk/meson/g12a.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index 66f0e817e416..f78cca619ca5 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -157,7 +157,7 @@ static struct clk_regmap g12a_fixed_pll_dco =3D {
->>                  .frac =3D {
->>                          .reg_off =3D HHI_FIX_PLL_CNTL1,
->>                          .shift   =3D 0,
->> -                       .width   =3D 17,
->> +                       .width   =3D 19,
->>                  },
->>                  .l =3D {
->>                          .reg_off =3D HHI_FIX_PLL_CNTL0,
->> @@ -223,6 +223,11 @@ static struct clk_regmap g12a_sys_pll_dco =3D {
->>                          .shift   =3D 10,
->>                          .width   =3D 5,
->>                  },
->> +               .frac =3D {
->> +                       .reg_off =3D HHI_SYS_PLL_CNTL1,
->> +                       .shift   =3D 0,
->> +                       .width   =3D 19,
->> +               },
->>                  .l =3D {
->>                          .reg_off =3D HHI_SYS_PLL_CNTL0,
->>                          .shift   =3D 31,
->> @@ -1901,7 +1906,7 @@ static struct clk_regmap g12a_hifi_pll_dco =3D {
->>                  .frac =3D {
->>                          .reg_off =3D HHI_HIFI_PLL_CNTL1,
->>                          .shift   =3D 0,
->> -                       .width   =3D 17,
->> +                       .width   =3D 19,
->>                  },
->>                  .l =3D {
->>                          .reg_off =3D HHI_HIFI_PLL_CNTL0,
->> --
->> 2.47.2
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
---=20
-Jerome
+Best regards,
+Krzysztof
