@@ -1,222 +1,242 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE412FD7AA;
-	Tue, 26 Aug 2025 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1BB302CD1
+	for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 09:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197443; cv=none; b=O3W14fNyvqf5VHzorj7TANPtPHs3cW4A/wuTVJQMpUIyFotZ9tZqJyoQLv48/Go3QpTCksnzPOLEFTfSzLV0yvAFlODrwfC3drrkUUKd0+Q0ldT2O0yn1wDP97f/gfkmgQwGdfQvul+1MZyUI5/BoD0S06TH3yXMMYbHVCVO+HE=
+	t=1756199500; cv=none; b=qbBA30xDiN/4PlOAEPIece6WnCh3y3bTl1xJ72vpBpxmuKhGU/vgivx98qoRp94xA/IJmw+q1zSt0DFYjYEVi2VwcWEZPi+SLc5iLMzRedWYjfSU/wJMpB4/Wm1hL61jPIfQDkzHqmfahmxiCPOrGewAcszis/wsMCxj+kl540s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197443; c=relaxed/simple;
-	bh=INN9sg5yobmoEiseoSRofMlthz3mHACZQ1QnQIT9W5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JA5SVpjkq9b7FXoq0i//adKgAQZlBPHAkwYeQ2a7NRg3q5ReVL7fdQpAL68a3xCFDBoAYI8NFWevSRL4AG7/Q7oxMV5Up97guTPnNA6FBV6i2PN7YwjUwA771N23ywumkleaTWOMgXh8NvsYT6DIKoQ5fAAyP9FGrXUws9ElSRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=msrcev8+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1756199500; c=relaxed/simple;
+	bh=oUvDJknltmsHE5kgS2L1KW2dhWMzUcSQlAHCv0I9Kjc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GJ+1ckkzLNKL2XKafDvitrNu4I3Ezb+H02pAOYWF/jBtPd9tKLGpm2KnaeFtQYDnR9mpUnm3JlTStfayvoSJusahwgQmIRO8Rbvp1d6or1yfm7LWGBiu9kV1Gmudt5Nvp2WrlBOcKTKtAhltg2FMEtK8roai5O8BbE0pLUBGEwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F/KVRZrM; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="msrcev8+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756197438;
-	bh=INN9sg5yobmoEiseoSRofMlthz3mHACZQ1QnQIT9W5w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=msrcev8+mnukKssQ+3BQww3TdIuCeVQoa5alyFH82bRxGTZSTjakU6KXioV6/PRKr
-	 CvOFQsGJs8c3TDHGR4TGvQ4ZzfaSJf0Z1of6XNutesPMhxc2Y8N/p3ApEkJVswX96D
-	 2EcOb+YNYGXAbdAIADlFBvcGPkwy0rJASIV0rMyMtDA3MuPT3P/ByiKl/knL3xx/vC
-	 trUoZwlX5W9vj+Yk57mRktiPFSOSJgGSKBY/4dhYtqNYSxgw51+Ylx8znGkrlgFNE5
-	 5JBzT5+u4+9WTeUhtuvGtQK9lqVQNRbQav/DU03wndPE5vvJM/VcppF6RUpAL73nMJ
-	 sG8VrDSkSwsEQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:3f5e:9a5c:2b70:3fc4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AC87517E0488;
-	Tue, 26 Aug 2025 10:37:17 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: wenst@chromium.org
-Cc: angelogioacchino.delregno@collabora.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	guangjie.song@mediatek.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	netdev@vger.kernel.org,
-	nfraprado@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com,
-	robh@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v4 07/27] clk: mediatek: clk-gate: Add ops for gates with HW voter
-Date: Tue, 26 Aug 2025 10:36:16 +0200
-Message-Id: <20250826083616.15558-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAGXv+5HQrMY+osCZKVOq28fQi-Be-eZ=_-=5HcrkacivHekOTQ@mail.gmail.com>
-References: <CAGXv+5HQrMY+osCZKVOq28fQi-Be-eZ=_-=5HcrkacivHekOTQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F/KVRZrM"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso41944745e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Aug 2025 02:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756199494; x=1756804294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kSGgiA7okXMSZ3FGPGzhv/sQluxvM/Gr3n+FFVx6Zrk=;
+        b=F/KVRZrMHG3qI2k5+wSKxz5kmtxtIVRjTQlzLtokJLSKUVnXNhaFlhfUGf0T+w7EOs
+         Jx9BOS++tu7wXl+ca7ZPKFJ8iT11olkcNnJVmhfM01Go9Z3BIh3bawlMVT6ILq8QjnKk
+         NpT4figuvWk2/DUyuHkKkmqlQS+YCyA0qV4CYaCpVSTa2oUULlBhI2Jrr0T3HsdgmNU2
+         /ASVvC0RPGIuv7RoVN0XLXiiv7oLROTHSuS+xt2dkcie17El3wsuz/xejYq7p73cu58P
+         iiWH7v05l9doBgYlWOBBNeWtJRBoxONp3/3DOVx4FrjQxJPusSM91OcGCDjm3mMtMHjn
+         BBnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756199494; x=1756804294;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kSGgiA7okXMSZ3FGPGzhv/sQluxvM/Gr3n+FFVx6Zrk=;
+        b=tjP1G4ll2mpMrjjAI3+snKrWoSbVD0f2M1nXkBcXKiAMgqK7FaWekDVJ3Q1ce+jXWI
+         tl61KghtsKUE6uZLKyWrCLjhBECgLlA4F+B83XkO3wTaCZ8m+LuQlt9M/XR7vEiTQzEf
+         +Bhwfw+M5iA6Tmyj4H7VuDegho8LDgfIB/8NLFtzSwhHlib+BBGnzCnMgv/Ovvvb2Ze6
+         YhXYcW+s4IE4se2tGccPOJX75FxgKpt2U+oRI/6MmGrcyWZSy7/GMoJS0q19GiSVL/Ar
+         7iyktnGzceolsV3OJomszW5/Vaw544gtdB0AUrN6B9WrEAZna8bimFW8rWP39CyjmiOZ
+         I5Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqt/I0c9lXfY36GR+/rQxvI5Id/GHBQcWcYnvTGUMA5bDF/LIpiR+VtKRWPzdFL3D50wllycl2URE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjOZjQjQTpU2/Z+7xAc4trDSKdN/5UhEBtOpBcEMCv8DRTdQsd
+	KbTJayfg3ga+VAhh5+CA8YMvw+CtvRQEv+PNUeroSDDXlY2eJ/5VS5rvtQjXjXg+t4U=
+X-Gm-Gg: ASbGncufTw7HE4bcNvk9b7lERSfRMp+PDt9DF/nUWnvbi0FfD8HFdBQxXVBY3lpiXxj
+	kya33bdj/ZCUrg8JoUz6iBwpumsFIUjPE73VlDX9UeebqXq9iSdaEqaaggmhko4bWRC+V+RJpe3
+	F4d6Cr0m/LfvEghCn4CnCCQriPPTbqecY9ILB6pezebr/0E1/dlq4Y0fZ6rVLQ31gyOOeVpOawc
+	cEtUdQMBpJgo4j3r844uQRfoXOJBvziHu5D4x7ZPcC5b2pW3konY62zYzhb/MWYN4Xx4MdELOsQ
+	QDg9Ht7HFCfFe/b2FzU2Rov691UEuHNl2ECknrC7Vnr8p/6TkUOSoyf7tVIJXnkdvJF3J6UOYbA
+	6ehLBvuGe7aQCoYl48k0/XCCEiyGSCOg=
+X-Google-Smtp-Source: AGHT+IFtBWXrOWyVTOM6kOSvzOnSizJ26W7d5kPzjQBIk8HokgLiwvROTQt35HufZ0kQxPuRV/tMwg==
+X-Received: by 2002:a05:6000:400f:b0:3c8:eead:3d2f with SMTP id ffacd0b85a97d-3c8eead4359mr5090468f8f.41.1756199493485;
+        Tue, 26 Aug 2025 02:11:33 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:46d7:73a6:7b7:2201])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cad431ea49sm4204236f8f.42.2025.08.26.02.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 02:11:32 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Da Xue <da@libre.computer>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Jian Hu
+ <jian.hu@amlogic.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: meson-g12a: fix bit range for fixed sys and
+ hifi pll
+In-Reply-To: <c0e8cf9a-b5c7-4369-8b6a-c4f80a6bc398@amlogic.com> (Chuan Liu's
+	message of "Tue, 26 Aug 2025 15:59:32 +0800")
+References: <20250822002203.1979235-1-da@libre.computer>
+	<c0e8cf9a-b5c7-4369-8b6a-c4f80a6bc398@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 26 Aug 2025 11:11:32 +0200
+Message-ID: <1jy0r64fcr.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/25/25 16:50, Chen-Yu Tsai wrote:
-> On Mon, Aug 25, 2025 at 2:52 PM Laura Nao <laura.nao@collabora.com> wrote:
->>
->> On 8/15/25 05:37, Chen-Yu Tsai wrote:
->>> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
->>>>
->>>> MT8196 use a HW voter for gate enable/disable control. Voting is
->>>> performed using set/clr regs, with a status bit used to verify the vote
->>>> state. Add new set of gate clock operations with support for voting via
->>>> set/clr regs.
->>>>
->>>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>>> ---
->>>>  drivers/clk/mediatek/clk-gate.c | 77 +++++++++++++++++++++++++++++++--
->>>>  drivers/clk/mediatek/clk-gate.h |  3 ++
->>>>  2 files changed, 77 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
->>>> index 0375ccad4be3..426f3a25763d 100644
->>>> --- a/drivers/clk/mediatek/clk-gate.c
->>>> +++ b/drivers/clk/mediatek/clk-gate.c
->>>> @@ -5,6 +5,7 @@
->>>>   */
->>>>
->>>>  #include <linux/clk-provider.h>
->>>> +#include <linux/dev_printk.h>
->>>>  #include <linux/mfd/syscon.h>
->>>>  #include <linux/module.h>
->>>>  #include <linux/printk.h>
->>>> @@ -12,14 +13,19 @@
->>>>  #include <linux/slab.h>
->>>>  #include <linux/types.h>
->>>>
->>>> +#include "clk-mtk.h"
->>>>  #include "clk-gate.h"
->>>>
->>>>  struct mtk_clk_gate {
->>>>         struct clk_hw   hw;
->>>>         struct regmap   *regmap;
->>>> +       struct regmap   *regmap_hwv;
->>>>         int             set_ofs;
->>>>         int             clr_ofs;
->>>>         int             sta_ofs;
->>>> +       unsigned int    hwv_set_ofs;
->>>> +       unsigned int    hwv_clr_ofs;
->>>> +       unsigned int    hwv_sta_ofs;
->>>>         u8              bit;
->>>>  };
->>>>
->>>> @@ -100,6 +106,28 @@ static void mtk_cg_disable_inv(struct clk_hw *hw)
->>>>         mtk_cg_clr_bit(hw);
->>>>  }
->>>>
->>>> +static int mtk_cg_hwv_set_en(struct clk_hw *hw, bool enable)
->>>> +{
->>>> +       struct mtk_clk_gate *cg = to_mtk_clk_gate(hw);
->>>> +       u32 val;
->>>> +
->>>> +       regmap_write(cg->regmap_hwv, enable ? cg->hwv_set_ofs : cg->hwv_clr_ofs, BIT(cg->bit));
->>>> +
->>>> +       return regmap_read_poll_timeout_atomic(cg->regmap_hwv, cg->hwv_sta_ofs, val,
->>>> +                                              val & BIT(cg->bit),
->>>> +                                              0, MTK_WAIT_HWV_DONE_US);
->>>> +}
->>>> +
->>>> +static int mtk_cg_hwv_enable(struct clk_hw *hw)
->>>> +{
->>>> +       return mtk_cg_hwv_set_en(hw, true);
->>>> +}
->>>> +
->>>> +static void mtk_cg_hwv_disable(struct clk_hw *hw)
->>>> +{
->>>> +       mtk_cg_hwv_set_en(hw, false);
->>>> +}
->>>> +
->>>>  static int mtk_cg_enable_no_setclr(struct clk_hw *hw)
->>>>  {
->>>>         mtk_cg_clr_bit_no_setclr(hw);
->>>> @@ -124,6 +152,15 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
->>>>         mtk_cg_clr_bit_no_setclr(hw);
->>>>  }
->>>>
->>>> +static bool mtk_cg_uses_hwv(const struct clk_ops *ops)
->>>> +{
->>>> +       if (ops == &mtk_clk_gate_hwv_ops_setclr ||
->>>> +           ops == &mtk_clk_gate_hwv_ops_setclr_inv)
->>>> +               return true;
->>>> +
->>>> +       return false;
->>>> +}
->>>> +
->>>>  const struct clk_ops mtk_clk_gate_ops_setclr = {
->>>>         .is_enabled     = mtk_cg_bit_is_cleared,
->>>>         .enable         = mtk_cg_enable,
->>>> @@ -138,6 +175,20 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
->>>>  };
->>>>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_inv);
->>>>
->>>> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr = {
->>>> +       .is_enabled     = mtk_cg_bit_is_cleared,
->>>> +       .enable         = mtk_cg_hwv_enable,
->>>> +       .disable        = mtk_cg_hwv_disable,
->>>> +};
->>>> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr);
->>>> +
->>>> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr_inv = {
->>>> +       .is_enabled     = mtk_cg_bit_is_set,
->>>> +       .enable         = mtk_cg_hwv_enable,
->>>> +       .disable        = mtk_cg_hwv_disable,
->>>> +};
->>>> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr_inv);
->>>> +
->>>>  const struct clk_ops mtk_clk_gate_ops_no_setclr = {
->>>>         .is_enabled     = mtk_cg_bit_is_cleared,
->>>>         .enable         = mtk_cg_enable_no_setclr,
->>>> @@ -153,8 +204,9 @@ const struct clk_ops mtk_clk_gate_ops_no_setclr_inv = {
->>>>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_no_setclr_inv);
->>>>
->>>>  static struct clk_hw *mtk_clk_register_gate(struct device *dev,
->>>> -                                               const struct mtk_gate *gate,
->>>> -                                               struct regmap *regmap)
->>>> +                                           const struct mtk_gate *gate,
->>>> +                                           struct regmap *regmap,
->>>> +                                           struct regmap *regmap_hwv)
->>>>  {
->>>>         struct mtk_clk_gate *cg;
->>>>         int ret;
->>>> @@ -169,11 +221,22 @@ static struct clk_hw *mtk_clk_register_gate(struct device *dev,
->>>>         init.parent_names = gate->parent_name ? &gate->parent_name : NULL;
->>>>         init.num_parents = gate->parent_name ? 1 : 0;
->>>>         init.ops = gate->ops;
->>>> +       if (mtk_cg_uses_hwv(init.ops) && !regmap_hwv) {
->>>> +               dev_err(dev, "regmap not found for hardware voter clocks\n");
->>>> +               return ERR_PTR(-ENXIO);
->>>
->>> return dev_err_probe()?
->>>
->>> I believe the same applies to the previous patch.
->>>
->>
->> mtk_clk_register_gate and mtk_clk_register_mux actually both return a
->> struct clk_hw *.
+On Tue 26 Aug 2025 at 15:59, Chuan Liu <chuan.liu@amlogic.com> wrote:
+
+> Hi Da:
 >
-> Oops, you're right. If that case I believe dev_err_ptr_probe() could be
-> used?
+> =C2=A0 =C2=A0=C2=A0Thanks for your feedback.=C2=A0but this patch is wrong.
+>
+>
+> On 8/22/2025 8:22 AM, Da Xue wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> The bit range 17:0 does not match the datasheet for A311D / S905D3.
+>> Change the bit range to 18:0 for FIX and HIFI PLLs to match datasheet.
+>
+>
+> The upper 2 bits (bit18, bit17) of the frac were deprecated long ago.
 
-Indeed, thanks for the pointer. I'll fix it in the next revision.
+deprecated ? that is really confusing
 
-Laura
+That seems to imply that it does have an effect but you are choosing not
+to use it. Please clarify.
+
+> The actual effective bit field for frac is bit[16:0]. However, the
+> corresponding datasheet has not been updated. I will provide feedback
+> and update the datasheet accordingly.
+>
+
+What about bit 17 and 18 then ? does it have any effect at all ?
+
+>
+>>
+>> The frac field is missing for sys pll so add that as well.
+>
+>
+> PLLs with frac support are used in scenarios requiring a wide range
+> of output frequencies (e.g., audio/video applications).
+>
+> Since sys_pll is dedicated to clocking the CPU and does not require
+> such frequency versatility, it does not support fractional frequency
+> multiplication.
+
+You are mixing "HW support" and "usage choice" here.
+
+What I read is :
+* Da says the SYS PLL does have HW support for the frac parameter
+* Amlogic does not see the point of using it since the CPU does not
+  require fine tuning of the rate.
+
+Is that correct ? or is the HW just no present ?
+
+>
+>
+>>
+>> Patched:
+>>
+>> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
+>> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
+>> 996999
+>> 500000
+>> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
+>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
+>>   hifi_pll                      0    +/-1562Hz
+>>   sys_pll_div16                 0    +/-1562Hz
+>>   sys_pll_cpub_div16            0    +/-1562Hz
+>> + sudo cat /sys/kernel/debug/clk/clk_summary
+>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
+>>      hifi_pll_dco                     0       0        0        0
+>>         hifi_pll                      0       0        0        0
+>>      sys_pll_dco                      1       1        0        39999999=
+85
+>>         sys_pll                       0       0        0        499999999
+>>            sys_pll_div16_en           0       0        0        499999999
+>>               sys_pll_div16           0       0        0        31249999
+>>      fixed_pll_dco                    1       1        1        39879999=
+85
+>>         fixed_pll                     3       3        1        19939999=
+93
+>>
+>> Unpatch:
+>>
+>> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
+>> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
+>> 1000000
+>> 500000
+>> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
+>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
+>>   hifi_pll                      0    +/-1562Hz
+>>   sys_pll_div16                 0    +/-1562Hz
+>>   sys_pll_cpub_div16            0    +/-1562Hz
+>> + sudo cat /sys/kernel/debug/clk/clk_summary
+>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
+>>      hifi_pll_dco                     0       0        0        0
+>>         hifi_pll                      0       0        0        0
+>>      sys_pll_dco                      1       1        0        48000000=
+00
+>>         sys_pll                       0       0        0        12000000=
+00
+>>            sys_pll_div16_en           0       0        0        12000000=
+00
+>>               sys_pll_div16           0       0        0        75000000
+>>      fixed_pll_dco                    1       1        1        39999999=
+39
+>>         fixed_pll                     3       3        1        19999999=
+70
+>>
+>> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+>> Signed-off-by: Da Xue <da@libre.computer>
+>> ---
+>>   drivers/clk/meson/g12a.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+>> index 66f0e817e416..f78cca619ca5 100644
+>> --- a/drivers/clk/meson/g12a.c
+>> +++ b/drivers/clk/meson/g12a.c
+>> @@ -157,7 +157,7 @@ static struct clk_regmap g12a_fixed_pll_dco =3D {
+>>                  .frac =3D {
+>>                          .reg_off =3D HHI_FIX_PLL_CNTL1,
+>>                          .shift   =3D 0,
+>> -                       .width   =3D 17,
+>> +                       .width   =3D 19,
+>>                  },
+>>                  .l =3D {
+>>                          .reg_off =3D HHI_FIX_PLL_CNTL0,
+>> @@ -223,6 +223,11 @@ static struct clk_regmap g12a_sys_pll_dco =3D {
+>>                          .shift   =3D 10,
+>>                          .width   =3D 5,
+>>                  },
+>> +               .frac =3D {
+>> +                       .reg_off =3D HHI_SYS_PLL_CNTL1,
+>> +                       .shift   =3D 0,
+>> +                       .width   =3D 19,
+>> +               },
+>>                  .l =3D {
+>>                          .reg_off =3D HHI_SYS_PLL_CNTL0,
+>>                          .shift   =3D 31,
+>> @@ -1901,7 +1906,7 @@ static struct clk_regmap g12a_hifi_pll_dco =3D {
+>>                  .frac =3D {
+>>                          .reg_off =3D HHI_HIFI_PLL_CNTL1,
+>>                          .shift   =3D 0,
+>> -                       .width   =3D 17,
+>> +                       .width   =3D 19,
+>>                  },
+>>                  .l =3D {
+>>                          .reg_off =3D HHI_HIFI_PLL_CNTL0,
+>> --
+>> 2.47.2
+>>
+>>
+>> _______________________________________________
+>> linux-amlogic mailing list
+>> linux-amlogic@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
+--=20
+Jerome
