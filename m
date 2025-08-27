@@ -1,203 +1,110 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47562EF673
-	for <linux-clk@vger.kernel.org>; Wed, 27 Aug 2025 17:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24C13E41A;
+	Wed, 27 Aug 2025 18:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756314752; cv=none; b=ohfWd+3dp9nUnwFfMwBCTL05+XiriC4zFtjI4fAKM4utID0nlTo7ze4yPYlcgHBfQtt0X9ckjvDSpC+MeEupYmW9xCIhZoSutli9QiQEcBLzf7I0zJyoaykxFaY9GOrEc7gPRFVtK7nhv/+1szj5+g3aOz87jrKSXujrg6SE2pU=
+	t=1756318792; cv=none; b=o6vpTyAbylgqNMCcQyW1tTvbdPAGcqSkTC3S0wyUm+C9dpyMtH4ZixFG1bkj7Lcbd0Ebw+kLUrS0oDq3FIPivKMNQRjDMzJ64JnynL4hmUWaUQB9PUszG7KuoU59gg7xzAGm+SW55xoy9uMUL7NtdAjtECTqGIgOL81d9AmpkA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756314752; c=relaxed/simple;
-	bh=ocvtdTl2hOZOQ/4oos7E0kZJWuxHuy23o8Wb53TCSIg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QEnrDwMn31X3x2KF9LnXaEBKhq6yRiY82TbR33u1hDFda6do09ncpJ7roD4HTYP0YtMC7uh+8kVeVfcjqi7RuL8xnDGKtXxY+JJji26WuVHYIZvIRsqLNuFRREyz0jZFa6ZlconCb73OzmDiAwSDzMKvFPmKgpE62vn+deOH2hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NEyrQZIl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756318792; c=relaxed/simple;
+	bh=AoB7RtMWPGPKI3YjzpnVxFzMLZRaV0tUnljLiktOVYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWRc5Jnhvncj3mBkW+LixCiQixr60SLf3+6uWBdKswklLqm+UT+BcoKA0LszrCwQSn5pUUx0OMyr616goSUz/HKBbX9B43OnjnQRcpCYoTixvuxCpk+gwrhOtrh9alyE6Otv+he7osC+66JwjKb42YcOJwHju7mgs3aGBX7zV8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Va5zAj1C; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NEyrQZIl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756314749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UBRt2ellMgrU2jWQCq6P6WpGbiIdthsHZnAXPTIGBXY=;
-	b=NEyrQZIlMLr22MD4RzxXFgLDnjocyh33cgmJCaM1diuOiojdbJCJYKCSqUs9B8hNxIhL9P
-	c16F0Or/9uKg+rq7Q2dS7HCdH0RsAQhfE+T2SOiN/2WjJTFzPrU991w7fi+xf8piedtrbP
-	rUT/e+tdcEopf3gVq/+AXse4cp5pHCI=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-418-0hmOsIAIMt2yJF6tZY3kXQ-1; Wed, 27 Aug 2025 13:12:28 -0400
-X-MC-Unique: 0hmOsIAIMt2yJF6tZY3kXQ-1
-X-Mimecast-MFC-AGG-ID: 0hmOsIAIMt2yJF6tZY3kXQ_1756314747
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7f7b2d52958so39693185a.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Aug 2025 10:12:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Va5zAj1C"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b629c8035so541305e9.3;
+        Wed, 27 Aug 2025 11:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756318789; x=1756923589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b1iWyT21+fm0/ET10Fcea2WHsXwAX4VwcEeu61gegUk=;
+        b=Va5zAj1C3NynF0u1QeaUE8pIUv2U+sKKe0GSzodU34r+FB9xfV6gbmbktNbk2ZZbGT
+         Zhhp8o50q8qUFrvMzV2BxGwioBZnarDS94AuateI9e2EKUEQUXou/kjGdLN+2+KldHpY
+         hCSIUIlFRX0vWzbZNuxGXsfV221qq5GnC7obHNoR0NdWbR3tejQDNMTaupfzaD4sH1Lw
+         wxrLJ+tc9/zAFsf7kAKi1qrn4pOeRH5mlrjKevK1XXpqoVKBpHgoFQCjWy+PJGVFHQTS
+         IQjqyDAQusDwmDpbp/W3lzwflteZYoVpgnK4i/3QyOdwSLc7Pq7D+2B/Rt4Hjn+L/DnD
+         +Jcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756314746; x=1756919546;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756318789; x=1756923589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UBRt2ellMgrU2jWQCq6P6WpGbiIdthsHZnAXPTIGBXY=;
-        b=eW5tuiWMpq6XfrBYlYwyLUuVMi5XsIRbAMkJAxy9GrhW+CKXQrs6/NzWAgkNFsaewJ
-         2Q8r7U3mgrFrIDbWikBGScYmjz+hK8QbAoAwQkY6Pf9p4eOn+zCWQKKAxb1Q+ESivzUQ
-         NfmjhDO9VKCXoSj0svb0inDY0s+mr4XlzioAnxokLmva8ZrnCnBL4e1X4zxZZneo7cEG
-         gDbDImwJenIp0aIxRrcT16glayzFbIWpsb2p5OLUmnRDq8NpzhXCLcim1Julk2Awvp75
-         dAQvG88JSMBIUj9VYjGQeGBWLEs/GqFmcf95EjHN5ARub1FCTBfjnLtkMFiDSX/r0T0I
-         I/cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjvVOsup0SnbBjLGVcB30n9Npgot9DbAIds8I7RDCc/sxfM6MWwYCDN4bQAyLLgbLaKH5runbHaqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWBFUtJZ24tB0Vz/9zm46DgX/YF2wScdWykux6hQirDxQshQeW
-	kYxKw1wyJNG53orBBobDx9rmkohxF34gz7Gy+yoH6H6VVys/G9S8/GHRPTU8G4hJvE3p2CBuctI
-	RO9vrAPcUgqwAE96Oiz/okjYjoYbmzz/1so/KmRbuP+/62w34FcZIC3z/zpx27g==
-X-Gm-Gg: ASbGnct40vQzcTjfl2mKyzj2vDIW+qtUrLKaCySf9YyXW6URdTT9XISXuLFeiaRSQAj
-	FCjP7xnkq9SY3pUj+18UICf7dndGEtLoQbmg0bmtZewR+/ofw4snJaeXi97lFiTBfEXKD1PzxG7
-	DWLtexetIBIxZYQRvpcQ+lswseftSb6U3hLN/679LtMInzA/gAw6dTOgtk8ZEx9RVwW4FIW6NuX
-	GLZc0sMJX+5f5toMUW8enHtHwZ/vUcNqcPeLWIG/pTGiMvDRVZ7TYT8fRjO+0hSs2E+hpgvumnt
-	cQCWFUVBHFZkcMN2pgt5zsK60tO3s9D5ri8o5FE/1aONMEtIQyZmj4Rsj+M7BlT1aObfdGUGjxi
-	dJLs7BeFZHBvZYJmJRL42DDVTt8CTXqkZ+g==
-X-Received: by 2002:a05:620a:1920:b0:7f1:8b22:35b1 with SMTP id af79cd13be357-7f18b2235ecmr1243375185a.83.1756314746338;
-        Wed, 27 Aug 2025 10:12:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDHgQzklZ25afIN2UyeYjisBxqH9PGDR2eAcGa4awGEaZEQH/Lm6l47YrGmmWNZAyud13+rQ==
-X-Received: by 2002:a05:620a:1920:b0:7f1:8b22:35b1 with SMTP id af79cd13be357-7f18b2235ecmr1243369985a.83.1756314745803;
-        Wed, 27 Aug 2025 10:12:25 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf4a1cfe3sm887374785a.75.2025.08.27.10.12.24
+        bh=b1iWyT21+fm0/ET10Fcea2WHsXwAX4VwcEeu61gegUk=;
+        b=P9dXlLvOkk8f6d3TTBe9OOXv6XA94ITz6Nkvb8XqBioUawlSO78dqyQWQQG3X67qYz
+         zMoNeH+I2rIHVR0XaXAA96ZwzXBaeNfB+ScpRHGXuZJzw/Pi2Y8dtnG+4Xntttr8kCQD
+         RCaMUvKJ9j/tpcKRdoxjGg/UCUaTh9pUOJDa6O0I0TqA57W9HQGEiWbJoJjrWc7gyHvd
+         C3KUQqBjn9/WHmh3bpM2BNhRtLjJAc9RE/sw0jGUlSjiTf5fyIOXFjwupXL/wa1a8wXf
+         Hwx/h7ANYnWZ1wG68lmy2kX/6iRXDl2r3cqbvMvGDjdIdYnZ4p3EipLz7Aig8rUnwcMw
+         nrqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpj4ArX5IqznSk7yK+ZI+AY7lWsQZXlz9Pj0dAm84oCEfTscZ7QNtYLy5Uzs+ZYuu2L2+4f31jzKKW@vger.kernel.org, AJvYcCVGbHHUzirDieI5FwNYtVpJpr52rHkeA9j3OVcSTiodwRz7eRoK1JKlCK6myZb6wrPZz/x6+IrmaFXZ@vger.kernel.org, AJvYcCWAg9EssWiYKYamnh5DQHL4Dhc+9P0cvg5HrgxdojxwOyrONTtQYfyy1w+/Ka4TzYx+k+SqG2+Ug76uoSdz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRGPEZUkR1fEJYU5FK13/gKxUoOjm1WVRaASr8jNCKfCEpynjc
+	VL83/7/GukiRttK8inwx42UzOwGDqYWMBzUtnFKhow9CqMEGcq8vzCXh
+X-Gm-Gg: ASbGncsWkR+gppoTo6yrD4xNUNQZEXswVJ6l+flk4ofCnSBc6Yyy2h80V+9c9wBV3dz
+	scMpR/rIku3Bjf3dzRaJgFTnS9/i8sN+H+t9kQ+PiShbbhum5IPswrYdwfxgx0eEOukfcZ/E3em
+	dnYJfqkTDULiA3Qry1Zj7JQOrs+2MHJBa6PIykbM2PeUIINgz/4LTmnATuB5yIvffSrIgN/ry/5
+	9ori9/kNYML9m5iYNPNVocYXH/Y7QcAT+XyaXwZhb3K+MrKJ7Q+NPXVCv2hCTwDp6TGVegmlU8L
+	QFToIK3xN7dNELRqEfgo773U5JsqJhuOvjSl95TH03Tx/5Dl1oBxnr9RbPIEGwbxO2kMQZGqaOf
+	oE9Zblc/pEjhGRSe1I0xEdfsOZWCrMq8Mp0louVN8ravciS7I2U97UI9ENsZDty4mY4E=
+X-Google-Smtp-Source: AGHT+IHkpSxz5/17ztNCvd3miIcH68VEO5SybiYJxvFm1dY68bpmmjhlH5jOXGIwv7gydEERMzMlGw==
+X-Received: by 2002:a05:600c:4f8b:b0:459:e398:ed80 with SMTP id 5b1f17b1804b1-45b517e9de7mr158244295e9.32.1756318789157;
+        Wed, 27 Aug 2025 11:19:49 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:c546:df97:4816:d7e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6b1cdf05sm24604485e9.1.2025.08.27.11.19.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 10:12:25 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 27 Aug 2025 13:12:07 -0400
-Subject: [PATCH v2] clk: scmi: migrate round_rate() to determine_rate()
+        Wed, 27 Aug 2025 11:19:48 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] Add Ethernet and GMAC clocks for Renesas RZ/{T2H, N2H} SoCs
+Date: Wed, 27 Aug 2025 19:19:42 +0100
+Message-ID: <20250827181944.2750142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
-X-B4-Tracking: v=1; b=H4sIAGY8r2gC/x3MTQ5AMBBA4avIrE1SRfxcRSyadjBByRSRiLtrL
- L/Few8EEqYAbfKA0MWBNx+h0wTsZPxIyC4atNKlqnWFdpkx2JVRttM7FHMQVpS7QjVNlhcGYrk
- LDXz/165/3w8ePB4OZQAAAA==
-X-Change-ID: 20250827-clk-scmi-round-rate-7e3d4099134a
-To: Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756314744; l=3344;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=ocvtdTl2hOZOQ/4oos7E0kZJWuxHuy23o8Wb53TCSIg=;
- b=EUWRUgkqHWynVd1A4xl577sXaTq1HwLS666cge+27XtKzJ1tgwSvxjvJBVFfBZCaPJJV+FVrZ
- 6+ZZlQE6K7YAopYkUFzodxnL2XGOChCHk9zD5shzQ0A1tzFxrW4Fqte
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Transfer-Encoding: 8bit
 
-This driver implements both the determine_rate() and round_rate() clk
-ops, and the round_rate() clk ops is deprecated. When both are defined,
-clk_core_determine_round_nolock() from the clk core will only use the
-determine_rate() clk ops.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The existing scmi_clk_determine_rate() is a noop implementation that
-lets the firmware round the rate as appropriate. Drop the existing
-determine_rate implementation and convert the existing round_rate()
-implementation over to determine_rate().
+Hi All,
 
-scmi_clk_determine_rate() was added recently when the clock parent
-support was added, so it's not expected that this change will regress
-anything.
+This patch series aims to add Ethernet and GMAC clocks for Renesas
+RZ/{T2H, N2H} SoCs. The first patch adds the core clock definitions
+and the second patch adds the entries to modules and core clocks.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Changes since v1:
-- Split out individual patch from larger v1 114 patch series
-- Drop noop determine_rate implementation; convert round_rate
----
- drivers/clk/clk-scmi.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+Cheers,
+Prabhakar
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index d2408403283fc72f0cf902e65f4c08bcbc7b4b0b..78dd2d9c7cabd18f2a05cffd0408cfefaf34fce0 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -54,8 +54,8 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
--static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long *parent_rate)
-+static int scmi_clk_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
- {
- 	u64 fmin, fmax, ftmp;
- 	struct scmi_clk *clk = to_scmi_clk(hw);
-@@ -67,20 +67,27 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	 * running at then.
- 	 */
- 	if (clk->info->rate_discrete)
--		return rate;
-+		return 0;
- 
- 	fmin = clk->info->range.min_rate;
- 	fmax = clk->info->range.max_rate;
--	if (rate <= fmin)
--		return fmin;
--	else if (rate >= fmax)
--		return fmax;
-+	if (req->rate <= fmin) {
-+		req->rate = fmin;
-+
-+		return 0;
-+	} else if (req->rate >= fmax) {
-+		req->rate = fmax;
- 
--	ftmp = rate - fmin;
-+		return 0;
-+	}
-+
-+	ftmp = req->rate - fmin;
- 	ftmp += clk->info->range.step_size - 1; /* to round up */
- 	do_div(ftmp, clk->info->range.step_size);
- 
--	return ftmp * clk->info->range.step_size + fmin;
-+	req->rate = ftmp * clk->info->range.step_size + fmin;
-+
-+	return 0;
- }
- 
- static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -119,15 +126,6 @@ static u8 scmi_clk_get_parent(struct clk_hw *hw)
- 	return p_idx;
- }
- 
--static int scmi_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
--{
--	/*
--	 * Suppose all the requested rates are supported, and let firmware
--	 * to handle the left work.
--	 */
--	return 0;
--}
--
- static int scmi_clk_enable(struct clk_hw *hw)
- {
- 	struct scmi_clk *clk = to_scmi_clk(hw);
-@@ -300,7 +298,6 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
- 
- 	/* Rate ops */
- 	ops->recalc_rate = scmi_clk_recalc_rate;
--	ops->round_rate = scmi_clk_round_rate;
- 	ops->determine_rate = scmi_clk_determine_rate;
- 	if (feats_key & BIT(SCMI_CLK_RATE_CTRL_SUPPORTED))
- 		ops->set_rate = scmi_clk_set_rate;
+Lad Prabhakar (2):
+  dt-bindings: clock: renesas,r9a09g077/87: Add Ethernet and GMAC clocks
+  clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clocks
 
----
-base-commit: 3c642997252eef4449cb6b6e02af3dc22515d817
-change-id: 20250827-clk-scmi-round-rate-7e3d4099134a
+ drivers/clk/renesas/r9a09g077-cpg.c            | 18 +++++++++++++++++-
+ .../clock/renesas,r9a09g077-cpg-mssr.h         |  9 +++++++++
+ .../clock/renesas,r9a09g087-cpg-mssr.h         |  9 +++++++++
+ 3 files changed, 35 insertions(+), 1 deletion(-)
 
-Best regards,
 -- 
-Brian Masney <bmasney@redhat.com>
+2.51.0
 
