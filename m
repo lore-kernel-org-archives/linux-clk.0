@@ -1,152 +1,174 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1242D979B;
-	Wed, 27 Aug 2025 18:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D2B3FC7;
+	Wed, 27 Aug 2025 20:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756318795; cv=none; b=pa/oivgU2TkBpfvPZy59rEGPTZeCpnIL4UARsZg8lsZNGK3Q6plRqO3al0IYzFwnXhRJ0P1KQK5wdkttNgHs90NAN3E7igaG+698ZT9XOMgp2f0xLVjFNPUvGXy871RIkzx5BAi6ZNNoLONzVCq+uj12Ha2XTyNFd0Gpzgihvi0=
+	t=1756326777; cv=none; b=UWOQ8gOiB/TCVoLZ16Ply43y/Zd/prbCIpTW9RxO9DW+SnoJH9SCcUcESCWqs+lVV+iQfph9l9G+tV+lUjjDQPh2KtcBT7hyBnT4SCefGpajDUz9lE2fFDLlHgJPXl14ax+wbRwfsjurN5tdyYYD7Uk5/KzxZ3z8fEQgL12pY18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756318795; c=relaxed/simple;
-	bh=r1PuEOOcDzXU/cK74wpmAf7V34Q8BgmSaKBfE3J8p7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I4+QL09wgUhFTYFB+3tateMXgUcmNwjDfwanMtl9cTFfuvkjHO+760d4TMBurWeFliJf6ztrB4mz31gBhmwC8Oxuwx1aj7BEr4+1JUwt/e5ENfiG2vmzAH+JfHLXrljEIKjj1E6ERh4cxxfS5W07ybCw3fcQjISPlZ2b/7q5F0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGlXOGyD; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756326777; c=relaxed/simple;
+	bh=y9997n1KrMbMeAMj+IWy2kERVmk6DJGRSqufvzXc1uY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ihHxnlfa+QfPBF3sp1+y7cUdjCQFqA4CpVpwDw4IJFvGF0JmTNoOe9e8enOrE0jlBaoy41lBloghJSPnY2EjEv/C8L5IEwoKio28LcImgy+WtgEIh3UHieETBEYFN+T0dwOpOe/OFOR9HTeqhfn065KZw5mNdMlEPc2M7nWQwe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=GgPhCbla; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGlXOGyD"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso743725e9.3;
-        Wed, 27 Aug 2025 11:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756318792; x=1756923592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/I8FQkQums77JVKAZN2X3wL6lH3NdThS9nrylqJ25Y=;
-        b=AGlXOGyD/sbOAL22i8zgyLw5cGAflxP0zFbGDmauoScVRBaqxsryQiNAgfkEJ7irmD
-         CNjv/VYYrbvnG4IwaqjYivx0I18pb3UH7uZcf4R98H5/44sAk/58a2yF9I421JC4kGaH
-         QRtZehPlDCcynBkJ2aTRS3gSIJuAoy001H5fTPWO794RmlQvLQqOiE6wJWPRJx20ys4s
-         vr7K0f/h2y0Y4nSeOk1SAl/0nxHigrWIDtFyWHDdYHAKWKAoe4DTpvGLbRHykqku1fwJ
-         iszv/0IWgYFvndPEvQEGc4zUSqZ1BKMd5UyXciA0OvdQ6ENeoZqlzXJ83JFKPTeFEopJ
-         2f7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756318792; x=1756923592;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/I8FQkQums77JVKAZN2X3wL6lH3NdThS9nrylqJ25Y=;
-        b=UOF/Eg0uGrfBeX/DhwjuhePuxYQChAq2Jn3+dlsp3ZhxvBh9sy1JcKreKoOM1qmixT
-         Jvj1HVJ6eDfeMvwcRqsH7CEFBh3Pe+VIpmSBv/XI/0vX7K4XvylnSCpoEgrXQAah5djM
-         GRBwCwLEt5p9p92q8S8w1j7B3E+o4eylG7Ay2zDPRxQwwg/hdvNw9AiV1kcxfe7Z99tx
-         rCkWBhI6qtNUCA3b+LeQgizU/yRPZpM6QV86xV8KaZqVxNh6RSrCVUmMLoCDyAhCmYsl
-         E5+eznRnVUdqr0HzzAL0JxCHHXtsbnoPcomneSXtxuHP8HDY816w3ffy+DuK9/UNdeDN
-         eKWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9oW9LYpZEtMBzKu/ocsVEquOnTj527QuPuAqGspSujdvdZVyXo1TGJCmzSHiPyA+8K4fPx0eCpn7l@vger.kernel.org, AJvYcCWlGtbbE/IygHZWDSOiY8RYEApWBebRlzVDxWVd07FzjmAYIIYePn3Qtqn/IYUxsogv45AUbWNAH45R@vger.kernel.org, AJvYcCWxjdP54A2fm+qOcfYOsFz3mamcTmRTwzDeDUHus/DWIJMEi9pl2itEZr9oUkjOJBYSSNHC7lz7dq5zesVX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlXtLdugZygq+fMwMzalU9EcfoXIqT7pG3LPDZ+06xlULVbkOo
-	XnNqee2PxF1+jWNNBSsT6bQJ3jRht/YPtvYdR08IMCbqWsYjGdYtlO7k
-X-Gm-Gg: ASbGncs4rWfU6X+n/3m10akozWptA8BMq3Y34eftwJxSh8A+Z0Uvitua6Zjbl1p9SDg
-	9w0yccWWwsZ2hxKvcNoJuTNSNig+7yQXCokFjHIsbr7MvyaZ90QANcW2MLAG1VfmbHqjNMQnxFO
-	ZDkDV+e9czcfv8DbjlBbE/vE37LZ4V48Fcin1KJvp73+g1+F8h1G0cm9md6PUtS0Gv0bd7492lv
-	2S3oILZshzp5UiTVKD/cTaqN/3Y2WXdhiWHhdDVr7ik7gQqeN6NuDTLkPOvn6odzTpiu9PZVr/9
-	C0Wt9axm3PtYdRXEYvx/ZJY9gUVtC8ssBFogMhCl2LwWyRmikZGQVV5fLRjGRr/XAcmFJpTTkK7
-	nfIala0FINMDaGHF9nvwGsf0J1Mj8ezp5Bz2e65OfXCWHdTKnNWuQh8ch
-X-Google-Smtp-Source: AGHT+IFplG3/84s2HCEr4pOH0LbvQjJRlR8yf1lK3XVZKVjglA41WVrIdwM3NdWT0B6DNPI0yKQJOQ==
-X-Received: by 2002:a05:600c:1e85:b0:458:bc2c:b2ed with SMTP id 5b1f17b1804b1-45b5179f402mr183554455e9.7.1756318791657;
-        Wed, 27 Aug 2025 11:19:51 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:c546:df97:4816:d7e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6b1cdf05sm24604485e9.1.2025.08.27.11.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 11:19:50 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clocks
-Date: Wed, 27 Aug 2025 19:19:44 +0100
-Message-ID: <20250827181944.2750142-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250827181944.2750142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250827181944.2750142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GgPhCbla"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756326775; x=1787862775;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y9997n1KrMbMeAMj+IWy2kERVmk6DJGRSqufvzXc1uY=;
+  b=GgPhCbla2GccWEXy7WUaPpRNB0i8jmMVZIbAWomf92a8xmjy7rJHkpCa
+   O3jLh4L9bwyzX4NOSlzylctQbpY8NOylJLUxmJV8vssqnO9+B5UwFZWkO
+   4CPtypYd/t0/uFXidtafs2lu2CnlGkAmNFc5FTq2uuqsoqYNm+RfVwXIE
+   Jy341Qpqd79ixzUTCyvekeyIcApWV3bug4NW/C/EYTyZt78d4VH99pMKk
+   y+GeuFsI2L7Z/bUigpl77yXHSXUv0AFXxRCb9aKwxRO0Z/9jYaApYTDby
+   UzPlrJZ3/qjd0tjeM51Q+V3hgAWw18GVSGVYLDkT2kfdy0RBs/B6LL2iu
+   Q==;
+X-CSE-ConnectionGUID: DtXPaCWgQLGobwENlPj6ng==
+X-CSE-MsgGUID: a2obzWYWSJm3Ob0XwFZKDQ==
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="51382651"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Aug 2025 13:32:54 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 27 Aug 2025 13:31:41 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 27 Aug 2025 13:31:41 -0700
+Message-ID: <af762c93-c9d0-485e-a0d1-7792e6e37c09@microchip.com>
+Date: Wed, 27 Aug 2025 13:31:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <varshini.rajendran@microchip.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<robh@kernel.org>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+From: Ryan Wanner <ryan.wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 7/10/25 13:06, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> This series adds support for parent data and parent _hw on the at91
+> clock drivers. This also updates all the SoC specific clock drivers to
+> use this format as well.
+> 
+> This is a continuation of the V1 of this series here [1].
+> 
+> This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
+> SoCs.
+> 
+> Changes v1 -> V2:
+> - Remove all the small sama7g54 SoC driver changes and put them in their
+>   own patch.
+> - Add the SAMA7D65 and the SAM9X75 to this update.
+> - Add a patch to move all common used macros into the pmc.h file.
+> - Update changes from v6.6 to v6.16.
+> - Remove patches that where style fixes and include those in the update.
+> 
+> Changes v2 -> v3:
+> - Adjust each patch so they are fully atomic.
+> - Add a patch to have the SAMA7D65 systemclocks use parent_data and
+>   parent_hw.
+> - Add a formatting cleanup patch for the SAM9X75.
+> - Adjust commit messages that no longer show invalid information.
+> 
+> 
+> 1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
+Hello,
 
-Add module and core clocks used by Ethernet Subsystem (Ethernet_SS),
-Ethernet MAC (GMAC), Ethernet Switch (ETHSW).
+Just Bumping this thread.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g077-cpg.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index 1fdd764f9b91..1d3717cc4533 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -72,7 +72,7 @@ enum rzt2h_clk_types {
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A09G077_USB_CLK,
-+	LAST_DT_CORE_CLK = R9A09G077_GMAC2_PCLKAH,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -166,11 +166,22 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 	DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
- 		dtable_1_2),
- 	DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
-+	DEF_FIXED("PCLKH", R9A09G077_CLK_PCLKH, CLK_SEL_CLK_PLL1, 4, 1),
- 	DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
- 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
-+	DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
- 	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
- 	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
- 	DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
-+	DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
-+	DEF_FIXED("ETCLKB", R9A09G077_ETCLKB, CLK_SEL_CLK_PLL1, 8, 1),
-+	DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
-+	DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
-+	DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
-+
-+	DEF_FIXED("GMAC0_PCLKH", R9A09G077_GMAC0_PCLKH, R9A09G077_CLK_PCLKH, 1, 1),
-+	DEF_FIXED("GMAC1_PCLKH", R9A09G077_GMAC1_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
-+	DEF_FIXED("GMAC2_PCLKH", R9A09G077_GMAC2_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
- };
- 
- static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-@@ -186,6 +197,11 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
- 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
- 	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
-+	DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
-+	DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
-+	DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
-+	DEF_MOD("gmac1", 416, R9A09G077_CLK_PCLKAM),
-+	DEF_MOD("gmac2", 417, R9A09G077_CLK_PCLKAM),
- };
- 
- static struct clk * __init
--- 
-2.51.0
+Ryan
+> 
+> 
+> Claudiu Beznea (28):
+>   clk: at91: pmc: add macros for clk_parent_data
+>   clk: at91: clk-sam9x60-pll: use clk_parent_data
+>   clk: at91: clk-peripheral: switch to clk_parent_data
+>   clk: at91: clk-main: switch to clk parent data
+>   clk: at91: clk-utmi: use clk_parent_data
+>   clk: at91: clk-master: use clk_parent_data
+>   clk: at91: clk-programmable: use clk_parent_data
+>   clk: at91: clk-generated: use clk_parent_data
+>   clk: at91: clk-usb: add support for clk_parent_data
+>   clk: at91: clk-system: use clk_parent_data
+>   clk: at91: clk-pll: add support for parent_hw
+>   clk: at91: clk-audio-pll: add support for parent_hw
+>   clk: at91: clk-plldiv: add support for parent_hw
+>   clk: at91: clk-h32mx: add support for parent_hw
+>   clk: at91: clk-i2s-mux: add support for parent_hw
+>   clk: at91: clk-smd: add support for clk_parent_data
+>   clk: at91: clk-slow: add support for parent_hw
+>   clk: at91: dt-compat: switch to parent_hw and parent_data
+>   clk: at91: sam9x60: switch to parent_hw and parent_data
+>   clk: at91: sama5d2: switch to parent_hw and parent_data
+>   clk: at91: sama5d3: switch to parent_hw and parent_data
+>   clk: at91: sama5d4: switch to parent_hw and parent_data
+>   clk: at91: at91sam9x5: switch to parent_hw and parent_data
+>   clk: at91: at91rm9200: switch to parent_hw and parent_data
+>   clk: at91: at91sam9260: switch to parent_hw and parent_data
+>   clk: at91: at91sam9g45: switch to parent_hw and parent_data
+>   clk: at91: at91sam9n12: switch to parent_hw and parent_data
+>   clk: at91: at91sam9rl: switch to clk_parent_data
+> 
+> Ryan Wanner (4):
+>   clk: at91: pmc: Move macro to header file
+>   clk: at91: sam9x75: switch to parent_hw and parent_data
+>   clk: at91: sama7d65: switch to parent_hw and parent_data
+>   clk: at91: sam9x7: Clean up formatting
+> 
+>  drivers/clk/at91/at91rm9200.c       |  95 ++++----
+>  drivers/clk/at91/at91sam9260.c      | 136 ++++++------
+>  drivers/clk/at91/at91sam9g45.c      |  89 ++++----
+>  drivers/clk/at91/at91sam9n12.c      | 106 ++++-----
+>  drivers/clk/at91/at91sam9rl.c       |  63 +++---
+>  drivers/clk/at91/at91sam9x5.c       | 125 ++++++-----
+>  drivers/clk/at91/clk-audio-pll.c    |  28 ++-
+>  drivers/clk/at91/clk-generated.c    |   8 +-
+>  drivers/clk/at91/clk-h32mx.c        |  11 +-
+>  drivers/clk/at91/clk-i2s-mux.c      |   6 +-
+>  drivers/clk/at91/clk-main.c         |  16 +-
+>  drivers/clk/at91/clk-master.c       |  24 +-
+>  drivers/clk/at91/clk-peripheral.c   |  16 +-
+>  drivers/clk/at91/clk-pll.c          |   9 +-
+>  drivers/clk/at91/clk-plldiv.c       |  11 +-
+>  drivers/clk/at91/clk-programmable.c |   8 +-
+>  drivers/clk/at91/clk-sam9x60-pll.c  |  14 +-
+>  drivers/clk/at91/clk-slow.c         |   8 +-
+>  drivers/clk/at91/clk-smd.c          |  10 +-
+>  drivers/clk/at91/clk-system.c       |   8 +-
+>  drivers/clk/at91/clk-usb.c          |  41 ++--
+>  drivers/clk/at91/clk-utmi.c         |  16 +-
+>  drivers/clk/at91/dt-compat.c        |  80 +++++--
+>  drivers/clk/at91/pmc.h              |  66 +++---
+>  drivers/clk/at91/sam9x60.c          | 117 +++++-----
+>  drivers/clk/at91/sam9x7.c           | 328 ++++++++++++++++------------
+>  drivers/clk/at91/sama5d2.c          | 168 +++++++-------
+>  drivers/clk/at91/sama5d3.c          | 122 ++++++-----
+>  drivers/clk/at91/sama5d4.c          | 129 +++++------
+>  drivers/clk/at91/sama7d65.c         | 156 ++++++-------
+>  drivers/clk/at91/sama7g5.c          | 111 +++++-----
+>  31 files changed, 1134 insertions(+), 991 deletions(-)
+> 
 
