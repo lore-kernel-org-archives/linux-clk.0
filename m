@@ -1,70 +1,82 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023085.outbound.protection.outlook.com [52.101.127.85])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032092AD04;
-	Wed, 27 Aug 2025 03:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB4A23FC49;
+	Wed, 27 Aug 2025 04:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756265444; cv=fail; b=C9rNjCA3dLPF1pNOcl9cI2TAhaalwJfhQmE3t2AF/rmDQc5ofoTdJjFeJu+Q+RZ1yy9hnbNJR3ygHqHv+SI/BX4jxvewG1dAqGQ2i2iz9xSxiwNsWLqFF5+PMyQzFRq/YIiN7W5bljyVO5XlcwTBTcKWCFFrdlvfPCyXRCd2WhE=
+	t=1756267796; cv=fail; b=YQyaoVVjW8P2cx6hMow0zjuKsUkzdO9J1CBx2cTVslS8/Sal1zFGBYVIBn6kzIKu1A29xlqNZRgH7W7RAnE+3iy8Xqr1R9ZjwbWFu74YNlPIDlfboasCsXD7Tg4MPdnC3hSujA9vHxDeFkBejpP7AqtJfLpPQDnQEvzRjfT+Xgc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756265444; c=relaxed/simple;
-	bh=60syY7I+QcT8mkztaJ0gy9ElINpm1EzK2CVbdv1i8eE=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aQt8Y6St8zr3ALDDuhl7MJ/6ROoxQxpcHrMo09zAZDvao5daUc+za3su9WWzbFTI52B66bK6s3qypDFX15TlKm7nqYAQWQrzSpMh0x6U/v4sKxkmEy+ohRzCov253CHzphYuogfoJ9J5v4MGud61zRgxmMj1vqRcqlOlSqI+JHs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=GB//F0Yo; arc=fail smtp.client-ip=52.101.127.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	s=arc-20240116; t=1756267796; c=relaxed/simple;
+	bh=gNW/JiDOx+us5p81YMpz4fPp0y7fbm4zbukwaV28EFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TJSU5uvJ5Ar/ysoTjjCHm92CCydimxwI62teB63zSMashXqmyL33DX/FP/VtQ+syuMP1uXd3VMbRZ26AFTciC1/KJXXNXSPWz7/C5DB2ZZO6tHyin8KD2CwnGm3Z8HuoXWVAHU+EEon1ijCO3Vjx8V3FtBtVAIbkdOwCD7eQ0+s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rkQsHFQh; arc=fail smtp.client-ip=40.107.92.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="GB//F0Yo"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rkQsHFQh"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=axIHXfVw33qyKjVS28iKUb7GbjxucwTDVHAd0nkWz7Ng71iAYyz/vkID4p1qrJRKCP4em4UrEueifv4t/cANNygxr+d/flRazC+ZOzmWDqnLF2XEkw01ycailYHBXOWMrIePmq1I6GU3ffSgYbYXL8iJx3npxYgG9w9JzJnVrOlQAHG3SXMk5LHOQGKi0dhcPY1nrDt5Sjmy6AeGH7ObwdSpQqakHcvOPuiAxa/6sW1dvcXvBm2hdwKAwZnG0Yn6wLGjg3fLd9pdbcEYBJKwRvaO0+ujLGyG4MB8X1OI39TBXDYr79GfcmWgq1/a10cZd+Jebz3PKBW/q1jj24g1Og==
+ b=omvyba/eJSpN6dWDRGQjuXVA9rHVOjk5akGiyG1k8QIgriUoLAZJ8sZ7aylk82/n8Bd/ehN01K+Ruhu37Q76fEGd2MZmwLTEM5Fkp2NXPodM4+GEngDHwpWbdbzsFYfpJ3BzBPLov+z4PCQqrtL+ewB4igLvPBjtYr7LCsOFqZkF/a7qAvlay2nj4tBc6aA8qE5y4PBjHBZ0edTXga6xvpqiTHP7x93KwClwhNCfLwrgBATyXWzFYARC17onfKWjExyJu+2UJHzGs96lo/9+sBSivr4nozmNOZtq1NM0XQrMPO2sExx/lEx9qZZfXR2ZXB+E7jpUvSgRVmAjsH++aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k+kmzeSfTmlnIJWXyJ9/yt9TqO2koIktUZEVzGDu4EE=;
- b=KahoGTdEKenaaEHNclkrRZsxxunSxHmN/459EzOCjbbT+QIPBovIlmvRVR9PSd+RG9MYmjExJRtIW1Hv6BIQ0NCn6rCqNgJDVnyrDXTwTzYAaJ/H78rPeQA16aopSCQ4JPECycFYX/p/T6lsnKQVHOdgAlG627r6xq+0Tf79lcqpl9CZGrnuZY7hdSnl5x8cdzWFlZOZhaMCkU/y8wpBn5riPgCuewnt/3stssTrJDUS0wI491CRWyUh46pJhIL0X0jP2qhr1UmgFusLsN/FePybbdktH5baKnWAOb/Dg4CmxjQ7HyHZLzBcc4I1ezHQsUVqD065TAB/9BFhk44yiQ==
+ bh=0Dr9z8wQRsdtQQ02Syv+PfvDegPH7WSwtF9XDzGDbvI=;
+ b=vwQ6b+MuMywtRbSOwLAkdKbQbLmhbtgCdZBYjg71u+nuoMMB06drULSpyVZkVdtjCa6R5NMZ0qFqJhTlvDvQgLsUMGQ+yqdCAwqw8SLMBrBXLrhbRRnoV4jj74RZpu7NSPY6E0argqZyGZemDPKWOiE+AxyBtlhwvVUYiSsiel8a+SHco0LO0XJwPpJJZL/kWb8ic6bhsNoIxah5HEhpTaZ7xizEKfDmqyoduaqoTisEkSxlMKa+FjQyzW9Yi1u+aHe3MtxOOf7FbcfyOc4ks8rymtsLitbDUD1waHFgv4naOFAz54C6BM96yuj34rqSAfRD6P1O2swiwA+n8fHF8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k+kmzeSfTmlnIJWXyJ9/yt9TqO2koIktUZEVzGDu4EE=;
- b=GB//F0YoubIo7C1fSUSJ7BMMsLCa54Aj1MMvwxFMyocpJofduElmKkBKV1gQHvuLy1OenRlU0mwKQbItMrr51CKkmgbJ2Fjsi47JiA7gvcHFVH3uypoU4OVK/6OVDVOt7dsMNJfVgkH3Hr8INoYwqBoxQCfh0FMsTl+e6h+k3+pTTbYOYL8AOjf8b34fRXVMmDaaaKT4+4affYonp1+U5LUqbFfi3onlaprw0UskouCkivMBXH8DJlEHDz5VrNyrnLZqkVlMG6qYisFz3J6P9g5EVNtioPhyAK6iz73OoQ8nPygL8EHAB3H/NBiVdNbx04lPiGmFQ+r4GfseUgOmPA==
+ bh=0Dr9z8wQRsdtQQ02Syv+PfvDegPH7WSwtF9XDzGDbvI=;
+ b=rkQsHFQhJSZ1PVyh70DWo9kML6rNDwjp2vxkSyNg61Mw9OoY5wigT/LSzvtEw35H9q4cAPJgCDtALNcjnog38cIHDwJbp1iyYoQev+IVtImCRJ586nTEbHdY0+J9P76GnF4L+qrJwgXCANJFEdvijIKrntU1XzEiZ185o8R3iCCI8+WkKxDg44TtntMJXMto/05LsggbkzJL/mpU8Olrn4jurorllTh4/hBQd6D7b0i+NGYe1bmDSyWHY9jdShVTUEKuitu4drD2FI44FLxDWMA+y2kHd38Bzf0QJ01+o+7FaVpJkVK9Eom0MOLLwKYH7/T7sys+45ziB/a4x07Kcg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEZPR03MB6960.apcprd03.prod.outlook.com (2603:1096:101:9d::12) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ PH7PR12MB6635.namprd12.prod.outlook.com (2603:10b6:510:210::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 27 Aug
- 2025 03:30:35 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%4]) with mapi id 15.20.9052.013; Wed, 27 Aug 2025
- 03:30:35 +0000
-Message-ID: <e9d65b1d-912d-442a-bac1-4284bef72083@amlogic.com>
-Date: Wed, 27 Aug 2025 11:29:52 +0800
-User-Agent: Mozilla Thunderbird
-From: Chuan Liu <chuan.liu@amlogic.com>
-Subject: Re: [PATCH v2] clk: meson-g12a: fix bit range for fixed sys and hifi
- pll
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Da Xue <da@libre.computer>, Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jian Hu <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250822002203.1979235-1-da@libre.computer>
- <c0e8cf9a-b5c7-4369-8b6a-c4f80a6bc398@amlogic.com>
- <1jy0r64fcr.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jy0r64fcr.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0135.apcprd02.prod.outlook.com
- (2603:1096:4:188::23) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 04:09:49 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 04:09:49 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v1 01/19] clk: tegra: init CSUS clock for Tegra20 and Tegra30
+Date: Wed, 27 Aug 2025 13:09:45 +0900
+Message-ID: <1909286.atdPhlSkOF@senjougahara>
+In-Reply-To: <20250819121631.84280-2-clamor95@gmail.com>
+References:
+ <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-2-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0234.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::6) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,267 +84,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB6960:EE_
-X-MS-Office365-Filtering-Correlation-Id: 423a4945-e554-4712-9e06-08dde51a156b
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH7PR12MB6635:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f49e49e-d85c-4a60-d624-08dde51f90a8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2VCL0RPc0E3MGNYOWhGQiszYlJQeDNNL3ZJTUI5Ri9kaDI3K3hjd0dOZFBY?=
- =?utf-8?B?RUNETzREeUtxbDJBQm5ZMzB6bFhXTjJHbXVIRTFWRVMyYWhEZEFuOHozVlVh?=
- =?utf-8?B?U3lxUnErQktTTW1IaFJJWUtQMGVUWkhWRU1rVlNneEk1QmJ2MmJrcnVJZUlU?=
- =?utf-8?B?VHUrcHExbTMzL3h1bWFVeW9ybjJLbXdDUFQ3STg0dlJaQUJUQkpObDJqMWlQ?=
- =?utf-8?B?eXFmdGRvVCtycTZ4WUNPVTBERHlaNWlMaEF1YXBURHhIRi9OYnNBcndFalFM?=
- =?utf-8?B?Q2RMR1IvWUY1dVZpWTBBTE1UNExObnBtKzZQVElVcHdBaFdITUFXY3ZhM1Ni?=
- =?utf-8?B?SmxSbHJqYXJwdi9mUk5mZnVoMU5iL3ZsZnpKZ2RUWDNDSDg4aEJTbncrOVE5?=
- =?utf-8?B?MVFMczJ0b2JDb1N0aXk5S2szYjdBdG5xSDNBRGkxaURzK1VqSnpTM1g4cnUx?=
- =?utf-8?B?bkVkbWNYbTRSeUt6dkxURGJmZ0N2TTJTMmxpVlcramdOZkEwdmlHbWlnNzNO?=
- =?utf-8?B?ZkNKRTlpYVZYNmFZU2x0NUhlYWRzQ0VJbnAzQlBQUnZUWVhPblFDb0xZd2w3?=
- =?utf-8?B?bWJoVTF5MDFIaHV6Q1p5bGU0djRGSjhUK3hIaVNwNGtvUThqM0REYjMzbEtQ?=
- =?utf-8?B?c1diaGtoM2NZZG40MVovQ0l2eTlkaGo4bkFvSDcyZWJ5RFRWdmVURXUvSENr?=
- =?utf-8?B?eTB2dmtHd0k2Z05vcTFQMDdRRkQ2OFl4MExrS0tTNHhNZWtJWEFSNEh3QkNi?=
- =?utf-8?B?dHRzS1FDT1NGVTE2aFdqYlN2M0M2alJ3b01USkhueTNtY2NITFdUSm90UndW?=
- =?utf-8?B?eCtURDliOGJCK1VIaW9WMVNQTC9rMG9udnJVMzBIem13VGxZQmtMOVBMdmlm?=
- =?utf-8?B?K2M0RXlEQ1ZhWThSK0E2OXdsdmtQbzVZalV2T01XOGtzSmxTcFNxVWl6eEdT?=
- =?utf-8?B?UXFoVDhrSGhkVklveko4SEZ2MUowRkxVM2hpTFFTM2p2ZEpBelBZellyRkgx?=
- =?utf-8?B?THo3bFZneS9OQzAyMWVOQ1BsQmx2MXRINktQWm1iQlBCeVg0SkFFZC9uYVBW?=
- =?utf-8?B?eVNuL0c0YXc2L0dkQ0tjSnBrS2toQkJkbm80cStkRHlIYUNTR1pSbmNwNk5n?=
- =?utf-8?B?UUw3OTlkNE44QXVHbGpnenZKTWhMYWxSUG5qazZNSHlXWDRtb1F3TTRJVHlR?=
- =?utf-8?B?TDhXcWZVSERYTGZSU3dDcUpJSU9RU01KQVFlSGtJWGNVT3kyNmkxYUlNcE01?=
- =?utf-8?B?alRlRFlBU2s2cVdqNHo2UHFsZDVoQlZKVmcyck1HT21RMXVtSjZmR0xFK1Ax?=
- =?utf-8?B?ODF3RjB2V3ZRNk9DQzlOclRLeGcxeXc0MFk5YWk3aUtocnB6RlEraGFqeTMw?=
- =?utf-8?B?TWRtZ3VpR3NRTEdXVE1SL3B0aW5OUDNuMGJFOVVtQ2RsS2c3UUdXRENlaFkr?=
- =?utf-8?B?S2ozM1RzY2NHZlZhd3NHY3VCdGNTRm1sa09GOHNtZDNYUk1CSzU2UnlPb2Vv?=
- =?utf-8?B?ZG9ua2RLM3ljSHVpMGVuVGhEclA2ejJtMnNsM3g3a25uYVlQOGNmTk90QWdT?=
- =?utf-8?B?MVZZVTZpRnJsZkMwa21GUUh4NlZMZnZPUTlmcUQ4NUQ3eWpQRWVyclZZdGJk?=
- =?utf-8?B?V0l4NExidVl1c0hIaEVhcmY3WGx0TVFralBjMWE3WitZZVEraDFmeEVEdVcz?=
- =?utf-8?B?NHRZN1NTQyt6K3JuSGtXM1NzckhqTVJmU3QwMmdsa1JHcDFDem9nSm5xMHYv?=
- =?utf-8?B?L1Y2Yy85cGRsVXkrSUhHZHkzTlJsbVR6YkI5cUtLdkNOUDQ0QkVLbTZOcG0w?=
- =?utf-8?B?UUxoOEJqc0RUOGtQVk9mU2pmb3VnSitURkhVcjZUeXFUeW9TNVkzVWVPcVhp?=
- =?utf-8?B?L3o4YzhpaHQyMWhGRGJKTCtNV0NIbkkvNzVxYU5QOFVqeUdFdWliRnVsTHBU?=
- =?utf-8?Q?W4UDl884vRM=3D?=
+	=?utf-8?B?ZXpFa1BVVkhRcGRCRTQ5amlaTlFORFRhM3MxNUp6SHRMYUxzdU5mYVkybS81?=
+ =?utf-8?B?NDJMdGZIUFkyNGR3KzdrR01iKzllTHdrR0NDQXp3dUxLS0RQNGt0a3k1R1du?=
+ =?utf-8?B?V0hueUMxVHh4bXdYa2dDSDRlWWVvQjJMM3JNc3hqY2QrSzVPTXFIeUg0cUsz?=
+ =?utf-8?B?bTAyUk05UTAwVWlFRFg3dGxKVC9yQXlXQTlQZDRyckI2L3I5cU54bHFGM3lV?=
+ =?utf-8?B?R0VPdkxVd0dSMlZtcmxkOThYdC81VTNPQWkwYlpDcXk3bHloQTlJMm9JVlhh?=
+ =?utf-8?B?T3RBY0pNSkNYbStrcnpqaUVMMXJKYU5Bc3BsMHNYU0xRSjkzSVJtam53T1M4?=
+ =?utf-8?B?VHByM2FJYVdKYUFBcG50dkN4K0I2YWRpYzBVUGlPQkU3ZWhIenNrS3Zpdlc5?=
+ =?utf-8?B?Rmw1SW91d29DUUo2dWlBc3p4T2xRN1A5cS8xWHczVmd5VHp1d1l3eENhOFRp?=
+ =?utf-8?B?dEphRmpFS2dMRTFnaVljSHdPd3lwY1puaXd5Mi81cmtXeUFDbDlKT1pVODls?=
+ =?utf-8?B?MXVSSzR1UlR4K00wYjFjYTlMaXRKVGRhQzY5YytsNDhSM21XYUFsTm1IMVZY?=
+ =?utf-8?B?SU14ZURLNGNsZ3NWTHV6RkljWCtPVkFFK0NHcVBBenU5Zlp4LytsQXU2TWtQ?=
+ =?utf-8?B?MnhsUjEveXBSaWs2aTgyRzB4V0RiQ0pNVEtZL1NDbmdZd0pJQ3ZMSERvajBD?=
+ =?utf-8?B?QTJMQk5EOWhzMFdYTnlPMVcwdW54MGJ2UWZ3OGJEUVRaRHJ5UFpYaUJGNlM3?=
+ =?utf-8?B?Szd2ZEdTUzdXaHZlN1cvbkJYS3JodnhSQnZyZ1BYT1NVUGlzT2lMQUJDK0xE?=
+ =?utf-8?B?UUp4M0dyU2pCREM3OGZNeVU1ajFGNXpWVEFRRFdjSlJwMHFkQlNMekhobXY4?=
+ =?utf-8?B?S0xmdXdZei9yTFJKSDdYN3g1VVlNa3JPdGNBeStPTFQ0Y0Z1T01CbGRNbGxx?=
+ =?utf-8?B?R3FTTkc1dnBUQTlvdHZnQkpUTjhXWUlYaDVWRHJ4OXh2bXNnU29KQkJoeUNW?=
+ =?utf-8?B?U25wUkdnd1h3K21OMGJ1WVFxRElZM0dudWtheGRMaUFWcTI3anpQR01URUU5?=
+ =?utf-8?B?TFg0Y08zelJodGhFSnh3SlZ2ZE4xdmZWWHhremx4Q0krZStva3hJQllGQURR?=
+ =?utf-8?B?S2N2N2lBOE9RdmQ4NUNwWlJKWHpKelpjcm9pOFhEYThZSXNZNGV1bCtpUk5v?=
+ =?utf-8?B?dDdMY2RnNnhLb3IwTkJCbkVxclluYTdQTzdQQytDM2VUVnJzSnkvNkZBczNC?=
+ =?utf-8?B?NG9vM1Zwcmg3Q1pTenpDc1UrTHNhZE5JUGIvWG00SG1YUUNWQTFCUTUwd2hz?=
+ =?utf-8?B?MklIN3ZsQ2d4U0pRa1M4UmM5NDkvMEpXWFlINmdRL3JGVVNRcFhHR1dsRXZx?=
+ =?utf-8?B?dmc0aVhsSFd1Q29md3JLN3VTbEh0OEhYZFEwcnpsNXRYMFY2NlQ3Q1ltQVh4?=
+ =?utf-8?B?Qk9aTzA3WWxocVJNRDYwMmpTTGlhckFmSDNiUThDa3pWblNEdkZlMDNBeFB5?=
+ =?utf-8?B?d0tEeWNvVXNCajU4aGtnVGZaczhab2ZzNlJUU01mVTlGcTBKc25MVlVpV0hs?=
+ =?utf-8?B?enpqYndvZHQ3bzdaM0lsd1RhUDIrMEpSWHFXMXUySG5paGszaEFrUEd3YXF2?=
+ =?utf-8?B?S3NKeG81SVlXbWgxMjFMZjVBa005dFo0d3R2MXBqQi9xTVVJYXZ0TTV3T1E2?=
+ =?utf-8?B?blBsWEYyMW9EWXBkN0RFb1czdjdhSW9UVS82Z2dQT1FRVXZ0S1lrclpSTVJD?=
+ =?utf-8?B?eFVjbkxPMHgyV3ptZC82ZkJwbHcyVGNYVlFTYmJYVmtVRERwMmczNEF3Wmph?=
+ =?utf-8?B?NEdtT0NJMUI0YUczTHJ6QmpTTlE4ekY5NExvaDJRZzRIS25oKzhlRS93anJN?=
+ =?utf-8?B?ZzRQL1puY1BVQm9GTUd0RFlFMzN6VzVPOFdzT0hlWE1nWlc5UGxhYTJWNXor?=
+ =?utf-8?B?cEEvM1kxOEpEcGgydzFmcmhxVjBxV3AvWnZnbWZsY01ER1N2aVdxcjg1dlQ3?=
+ =?utf-8?B?VzJGNnJRMmpRPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d1FwVzA1cUVibEF5NmlEZk1BK3IzcytMT3dlK045UzRUNDJicEhBY3BmR0lL?=
- =?utf-8?B?YTFJdkl2UXVWdjU4bE9MWGtDbXkzSlE4d2ZsczN5dGxoS1ptU1g0elYwVDFI?=
- =?utf-8?B?QzZMaU53MFZ1VCtoUHlnMnhQY2I5REFtcU5kcVpFTjlOUXlvOHIyWGwzazRI?=
- =?utf-8?B?UmV0cFRPbEd4dW5xcm42L3Q5MVNheUNZb0xlVnZkYVlmZEtzb25hL0FSblB6?=
- =?utf-8?B?ejRnL0crZ3luTWVMdEtuckJ2Qks5eTVTK2pwQzAyeXNFUklGODBPdTU5V2Zt?=
- =?utf-8?B?TlY1UzhhcVhmWHRZVFpwdkkxMzV4RFErdjlQZEdTMFFmSjRwQUwzTjJnMVdy?=
- =?utf-8?B?RnkxcXI5NmJyKzFIdlNHdzd3aUQ2Y1ptcmFOdFFkVVJVRlFFOXp2VVgwY3Rs?=
- =?utf-8?B?ZkpwdGpHSE1vU3FQb3dpbmhWVTEySTZRTzlQazFBNnZ0OGNCR2xkRGIxaTlq?=
- =?utf-8?B?N3F3cFVhTFE0UW5uUmxMOTN4VmRXbFFwZWEweitCZlpGT2YvY3NKckFMM2Rs?=
- =?utf-8?B?MDJpQ2txY3FPOWFYLzRXcncxZmozZkhCczhQY1lLOUtqNlBvdUdtdnhnTjhF?=
- =?utf-8?B?emJ0R040UlYxbkJIcGpVeUhYd3I4UnNoaUtuWW5XUzNMZmpuU1J1dWNkMThz?=
- =?utf-8?B?WEFUMUMyVVNhZmhreWVjWm5GczZCNmtsWUxtaDhCNnJQQ1dWdEdqcGJTMllv?=
- =?utf-8?B?aVNGb085Kyt1NmhRclYxa2xoYzNSUmJBejF5clFrejZhQUhRSzJ5OFZTZnhw?=
- =?utf-8?B?aUQ5V2JRNlRxTXY2NmdCMFo3T3ZlczVlSWpQY1dheHhoOVk1MWN0M3JHS0Rv?=
- =?utf-8?B?Sm9INmVGWTFTUVc5b2dFNUdTZGMvWjRFc1lldFZwWi9GUU9JWDkzOFd2RHFH?=
- =?utf-8?B?LzFzU1NoNG1MdkJDQzZMN3I3S2UzOEpjWVFCM0hyblhaSVdTamhUdUo0VlhO?=
- =?utf-8?B?SVBtZFlUaHZwU1pjeUk0b1F3bGNUczZFS2cvSUJoNWJlR0Fza1hNTEVmczVS?=
- =?utf-8?B?clpzWWxTUWNPZkt4UDBsK3FwOXFJYU1Gem9NajZpQ00rK3RZMTNsT0xYV0VM?=
- =?utf-8?B?MnY5cnEvRkF5NGdiRm1KOU5qL0lyRWw0aGRESDdDTmZodnFaRVhMR2prb0Rl?=
- =?utf-8?B?Y09rck4rRThxN1FIajNzbjVWN2FSRGlyT1g5Z3RLZHl5Z3F1TVdKVnVvYlc1?=
- =?utf-8?B?UEg5bERYRmJuQzJBbUxNYVlPeTF4SktOdG0yS0ZQSGU4SHhZSk9hSENOMjFK?=
- =?utf-8?B?bnkrSXErcnlWcWxQRXNCZEJPQ1FVY1FHVS9ENUt4bFgzQlpMRHVVMTdKRjl1?=
- =?utf-8?B?eW04K1crcGhvU2JKRGFIRHpiZkxlNFVFNEhYU1d3NVhsSjVvR3lhRTdLOTJ2?=
- =?utf-8?B?dklTMVZRYUFKYy80Q1o3MFZJbU1UUkNKbDNPZEVjZ2pGeTI0YkNFckpvV1Mv?=
- =?utf-8?B?ZUo2QjlTdlErclF4ZUpmalpTcnZobGltWVBlVC9UUWkxWFkzdG1vNUVaYTUw?=
- =?utf-8?B?cTBUWHBxckV3dHNqUUlXTWEyREdwY0dXcElLRWRDbUZ4YVI0OTdMOGRMODJz?=
- =?utf-8?B?VC9SMU5KMjkzazhheUJGY2x2djVabmRRZVQ5TUhma20yekkveUhaVjJ2dlY4?=
- =?utf-8?B?ZlBBdC91ZlY1cGhCTTRaU3BUbW9jbGUyOUF0Zy9BcmgxVnZ2WEVWYk4yQms0?=
- =?utf-8?B?Q2NkSUh1aUZwVGlubmd4Vnd1SjMzclV6OElwdUVHaHg1eUhzNlA2NlMvV0cz?=
- =?utf-8?B?dTdtSUhvNVVSdTRDcXcraWg4alZNa3c5YTQwY00rWnp5ckNrYjI5elZwRGN4?=
- =?utf-8?B?MHlJT0ZJRzhiK2NnTUd4dXR5aFBFTEV1MkRiSkRFVVk1MlNLWnluc1Z4M1BB?=
- =?utf-8?B?a05ycTJIWERCU1Y2elpsU1NIWTdTRXc0aVVKUzV0WEJLQXJSTm1hZmo0My9C?=
- =?utf-8?B?SDlpRXNPRk5rKzd0T05EYW5LNjk4cm15bFIreEU2WVh2WWtRdEZTT1JOVzlL?=
- =?utf-8?B?WnF5aXV3UmZBMmY2YnNMcEtLZ2ZJek1iNXMzL3ZsSmhVSXl2Y1NxaWZXK0l3?=
- =?utf-8?B?d29VQ2N6WlZxSzBSVG03S2doblpjSmpiamJFZHNKalBaa1VLUWZyRDF0eW5V?=
- =?utf-8?Q?19FmdiVuKttY/CmBurX86YLU/?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 423a4945-e554-4712-9e06-08dde51a156b
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+	=?utf-8?B?MTlKM2JaRkJsbnhmZVlSR2t0Nm8zMUNGc0p2NEVla1NwRnUwRjY1cW55Wm5F?=
+ =?utf-8?B?azFqZ3J5ZVo0cVYzYWh0bmhWVWoxeStZTXBuQ25DNXlNaXIvMGtFa2hRK2pq?=
+ =?utf-8?B?enN0K1V1WDhxZG9HWE4zYXZSbDV6RllLUDZaN1FqZi9QckdzaW54VHhsbWsr?=
+ =?utf-8?B?bnc1NytVcERsQXY1RDFOaFFHZDRkOEtWUTFsK2VvTEh1VHlKUlVTdE5IUWF3?=
+ =?utf-8?B?b0J5M205MTFtSitJNFZ5YlJIMFJ0V0ZrcUlpckYzYThnTWVVcTZXaXFjWGdE?=
+ =?utf-8?B?Z0huK1J6RmdHY1FHWWJURXh4NlZLb1VwTFVSdmc1MXVVSHdCRzd2TXNmZThY?=
+ =?utf-8?B?R2daWjVSV2RPc0k1REF1VDdLU1Mzc2grenZ3T2dkbUl3VFBNdSt3Q0RjQ2g0?=
+ =?utf-8?B?M2RZc1Zib0pTVTlJblYrZysrcU83ZUtZUEY5dnlPYis5S3FPSkQxZEJFSlNn?=
+ =?utf-8?B?WFBWdU5vbXZTQTBEc2ZRMElQTHJjMUJqSG1mSVZPTFdLZ3ZEQVpNOVJjSEJz?=
+ =?utf-8?B?VTR4eTNsMUttdXZCQVdMUWV6cHhjQjE4RU1lRC9EdHE0WFJ4QnQ2STRGTVhm?=
+ =?utf-8?B?cEZRWEdUWXVheW5OT2NzNjEvaHljZFRCVlY1ZGEwOWdFY2NTd1VGYnlENUth?=
+ =?utf-8?B?alNyczc3U3RHQ3Jyc25CNlAxN2xRa1lWaDMydlBZMEVDTzFCaElUdkVoRlF5?=
+ =?utf-8?B?cVplUmNHc2JzeVJtYjdscHFJR0pZK1pxN05JUGxDZm5xU043SGdYaEE5ek5P?=
+ =?utf-8?B?eS90STErWkJyM01uMFhvcjNqU3Rod2NPSHJ5dGhMbmlKNmZ2ZHduTEFiUUJO?=
+ =?utf-8?B?dVJXSlM2ci9UdTM4aktvbXdURnhKYlpOc2FEejNXMm9wOHhDVWd5b1g2Q2hz?=
+ =?utf-8?B?WXF1ZXUyeHNXRGhXRjZROXd0U2xPQTdLNWV4NVdtUnlBeHdaY01BTDhpemw2?=
+ =?utf-8?B?VHpjSytBeGc1SDBEQ2tqTmZ1RG5zc2VnSm4zUlNHZzlzNE9NZ3pZeEJnVGZv?=
+ =?utf-8?B?Z0lVeWdOeGFYclA2eXBkbnpDSTdoaTRsdjVwc0NaaXV6dzNLcVc0dzZ5SFh0?=
+ =?utf-8?B?TXMwZS93bEdpb1NFbzlTUmtoL2tnNkhKTDRtQ3I4c25ETU9mSTJGYXl3d3Y4?=
+ =?utf-8?B?VGNpNzRhcnRKODlOUVZ3c3Z5UHFvQjRYMmZxdUpRUENwUnNTZDZXRE54bVhP?=
+ =?utf-8?B?OXgvRFZVMXdRMUxqS3A0VVEvSWVBUXo1dlJzYXRJOFJGdSs2RHJrYURSN1dH?=
+ =?utf-8?B?SDl1NVhDMVVxU2xhbitIUTlNSTNOYkRFdkd6YUJ3TDZqY2NUcFRVNCtkZyt0?=
+ =?utf-8?B?ZHovU2E4TzJXUThCczA4RVcyMUtsd1dxeklENFpVNlBoME04Z0U4dVB1SUxH?=
+ =?utf-8?B?bTBYY1pLL0pwcnoxNXpFUDZTMGZ4RmZhUGNKODVTMU8xMnJhMklkNXF4RVpO?=
+ =?utf-8?B?WDBJaDU4WkZGQmxnNmM4RTV6c0hNb0kydWp4REg3QkJoUmMyaFV6U1ZIRS9h?=
+ =?utf-8?B?RHVvN01MSzQ1WWhud0haMFhhWWJjZGY1anpvOUpHVGs3bmkyVWdRL2J5amxz?=
+ =?utf-8?B?VGZkWFFoTjl6UWJlQmlLSFk5cldUQjRmelhrdVRZMnpPTjV1UnNiWDVDK0xS?=
+ =?utf-8?B?UVg3RUZSNTgxNWM0WDZ2ZUpGVVRsZ0lOTm5XUDlKamtRZVB3VGhUeGFYTEI3?=
+ =?utf-8?B?OG9LaG5FWVVvN21sRlFhMWxQOVZrZTZ6MWt4TGtZTUZCbzhxNmRiRGt2VE1M?=
+ =?utf-8?B?aENPUTFIVzVlVVlBWHJHb0ZtNFVhZU9mUWRJRTNWUXFteHhiOXVuMkxLOFpn?=
+ =?utf-8?B?aWlFa2J1ZHNmSHY5dWtJVDQ4Zi95MGovdGNjSXk3MEhsT1VHYmZtemg4ZHVh?=
+ =?utf-8?B?OVZvUFBBbDMrSU94MGpvT3F6SW9tVUIxT25XY2l1NjFob3Y1U0RmdkdqaW9Q?=
+ =?utf-8?B?OWNzb3J0cGFCRUtBL1lNWjAraGN2OXhVRnBtY3BVT2E0dHN6bXZQZ09NdUZM?=
+ =?utf-8?B?eGRwYWpuQ05wd0M0Mk5FQWorZjg2SnJQSWVPUDVyU3FsdEk5R0FQNnNKNTNx?=
+ =?utf-8?B?SUl5bVhnQnQ5ZDlFNCtaMWVCLy80c216d1RJekUzOW8xVzJVR3gxdW5VbHgv?=
+ =?utf-8?B?OUpJUGpBclY0TWloNUI1bGdqZ1h4aTltaVZNaW1HVjBGR0pSam03eXNqS09p?=
+ =?utf-8?B?aEdsTGdRWXltTTA2blZFUGczSzFOMWVnWnhhMlI5Sll1cFppeE5VSjlaTnpk?=
+ =?utf-8?B?cndIaFNwajJ0cEJ6d1hlNmxiYVhRPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f49e49e-d85c-4a60-d624-08dde51f90a8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 03:30:34.9632
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 04:09:49.3448
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IdgvB0qQqvyQ2zbpb5Lttl0GDhpUMoZ/UTzgJ6HMRosp7Z3YlhReSPZv8kJZh+h+tro+JROeABcB4TaeBzpSYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB6960
+X-MS-Exchange-CrossTenant-UserPrincipalName: eWzKrFtu/QMDg5KkijNWBIb1/yqden9T9jZpySBJrAK4BFgJikhw6YpRR0IKq1Q2BAucw3IG7Os+9eu5kNUpew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6635
 
-Hi Jerome:
+On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> CSUS clock is required to be enabled on camera device configuration or
+> else camera module refuses to initiate properly.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>  drivers/clk/tegra/clk-tegra30.c | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra20.c
+> b/drivers/clk/tegra/clk-tegra20.c index 551ef0cf0c9a..42f8150c6110 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table init_table[] =3D=
+ {
+>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>  	{ TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
+> +	{ TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
+>  	/* must be the last entry */
+>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>  };
+> diff --git a/drivers/clk/tegra/clk-tegra30.c
+> b/drivers/clk/tegra/clk-tegra30.c index 82a8cb9545eb..70e85e2949e0 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_table[] =3D=
+ {
+>  	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
+>  	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>  	{ TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
+> +	{ TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
+>  	/* must be the last entry */
+>  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+>  };
 
+I looked into what this clock does and it seems to be a gate for the CSUS p=
+in,=20
+which provides an output clock for camera sensors (VI MCLK). Default source=
+=20
+seems to be PLLC_OUT1. It would be good to note that on the commit message,=
+ as=20
+I can't find any documentation about the CSUS clock elsewhere.
 
-On 8/26/2025 5:11 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On Tue 26 Aug 2025 at 15:59, Chuan Liu<chuan.liu@amlogic.com> wrote:
->
->> Hi Da:
->>
->>      Thanks for your feedback. but this patch is wrong.
->>
->>
->> On 8/22/2025 8:22 AM, Da Xue wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> The bit range 17:0 does not match the datasheet for A311D / S905D3.
->>> Change the bit range to 18:0 for FIX and HIFI PLLs to match datasheet.
->> The upper 2 bits (bit18, bit17) of the frac were deprecated long ago.
-> deprecated ? that is really confusing
->
-> That seems to imply that it does have an effect but you are choosing not
-> to use it. Please clarify.
+What is the 6MHz rate based on?
 
+Since this seems to be a clock consumed by the sensor, it seems to me that=
+=20
+rather than making it always on, we could point to it in the sensor's devic=
+e=20
+tree entry.
 
-After investigating the historical context of this issue, the original
-design intent for frac[18:0] was as follows:
-
-Bit [18]: Configure the sign for fractional multiplication:
-0 → The fractional parameter configured in bits [17:0] is positive:
-     fout = 24M * (m + frac / frac_max) / n
-1 → The fractional parameter configured in bits [17:0] is negative:
-     fout = 24M * (m - frac / frac_max) / n
-
-Bits [17:0]: Fractional multiplier parameter, where:
-bit[17] - bit[0] = 1/2^0 + 1/2^1 + ... + 1/2^17
-
-However, the functionality of both bit [18] and bit [17] could be
-replaced by simply adjusting the integer ‘m’ value. Moreover, actual
-testing revealed that these bits did not perform as expected.
-Consequently, this feature was eventually deprecated.
-
-
->> The actual effective bit field for frac is bit[16:0]. However, the
->> corresponding datasheet has not been updated. I will provide feedback
->> and update the datasheet accordingly.
->>
-> What about bit 17 and 18 then ? does it have any effect at all ?
-
-
-The functionality of these two bits is deprecated, please ignore it.
-
-
->>> The frac field is missing for sys pll so add that as well.
->> PLLs with frac support are used in scenarios requiring a wide range
->> of output frequencies (e.g., audio/video applications).
->>
->> Since sys_pll is dedicated to clocking the CPU and does not require
->> such frequency versatility, it does not support fractional frequency
->> multiplication.
-> You are mixing "HW support" and "usage choice" here.
+Cheers,
+Mikko
 
 
-Alright, the previous explanation may have caused some misunderstanding.
-The actual intent was to explain why the SYS PLL does not support frac.
 
-
->
-> What I read is :
-> * Da says the SYS PLL does have HW support for the frac parameter
-> * Amlogic does not see the point of using it since the CPU does not
->    require fine tuning of the rate.
->
-> Is that correct ? or is the HW just no present ?
-
-
-The SYS PLL HW does not present frac functionality.
-
-
->>> Patched:
->>>
->>> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
->>> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
->>> 996999
->>> 500000
->>> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
->>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>>    hifi_pll                      0    +/-1562Hz
->>>    sys_pll_div16                 0    +/-1562Hz
->>>    sys_pll_cpub_div16            0    +/-1562Hz
->>> + sudo cat /sys/kernel/debug/clk/clk_summary
->>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>>       hifi_pll_dco                     0       0        0        0
->>>          hifi_pll                      0       0        0        0
->>>       sys_pll_dco                      1       1        0        3999999985
->>>          sys_pll                       0       0        0        499999999
->>>             sys_pll_div16_en           0       0        0        499999999
->>>                sys_pll_div16           0       0        0        31249999
->>>       fixed_pll_dco                    1       1        1        3987999985
->>>          fixed_pll                     3       3        1        1993999993
->>>
->>> Unpatch:
->>>
->>> + sudo cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq \
->>> /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
->>> 1000000
->>> 500000
->>> + sudo cat /sys/kernel/debug/meson-clk-msr/measure_summary
->>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>>    hifi_pll                      0    +/-1562Hz
->>>    sys_pll_div16                 0    +/-1562Hz
->>>    sys_pll_cpub_div16            0    +/-1562Hz
->>> + sudo cat /sys/kernel/debug/clk/clk_summary
->>> + grep -i '\(sys_\|hifi_\|fixed_\)pll'
->>>       hifi_pll_dco                     0       0        0        0
->>>          hifi_pll                      0       0        0        0
->>>       sys_pll_dco                      1       1        0        4800000000
->>>          sys_pll                       0       0        0        1200000000
->>>             sys_pll_div16_en           0       0        0        1200000000
->>>                sys_pll_div16           0       0        0        75000000
->>>       fixed_pll_dco                    1       1        1        3999999939
->>>          fixed_pll                     3       3        1        1999999970
->>>
->>> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
->>> Signed-off-by: Da Xue<da@libre.computer>
->>> ---
->>>    drivers/clk/meson/g12a.c | 9 +++++++--
->>>    1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->>> index 66f0e817e416..f78cca619ca5 100644
->>> --- a/drivers/clk/meson/g12a.c
->>> +++ b/drivers/clk/meson/g12a.c
->>> @@ -157,7 +157,7 @@ static struct clk_regmap g12a_fixed_pll_dco = {
->>>                   .frac = {
->>>                           .reg_off = HHI_FIX_PLL_CNTL1,
->>>                           .shift   = 0,
->>> -                       .width   = 17,
->>> +                       .width   = 19,
->>>                   },
->>>                   .l = {
->>>                           .reg_off = HHI_FIX_PLL_CNTL0,
->>> @@ -223,6 +223,11 @@ static struct clk_regmap g12a_sys_pll_dco = {
->>>                           .shift   = 10,
->>>                           .width   = 5,
->>>                   },
->>> +               .frac = {
->>> +                       .reg_off = HHI_SYS_PLL_CNTL1,
->>> +                       .shift   = 0,
->>> +                       .width   = 19,
->>> +               },
->>>                   .l = {
->>>                           .reg_off = HHI_SYS_PLL_CNTL0,
->>>                           .shift   = 31,
->>> @@ -1901,7 +1906,7 @@ static struct clk_regmap g12a_hifi_pll_dco = {
->>>                   .frac = {
->>>                           .reg_off = HHI_HIFI_PLL_CNTL1,
->>>                           .shift   = 0,
->>> -                       .width   = 17,
->>> +                       .width   = 19,
->>>                   },
->>>                   .l = {
->>>                           .reg_off = HHI_HIFI_PLL_CNTL0,
->>> --
->>> 2.47.2
->>>
->>>
->>> _______________________________________________
->>> linux-amlogic mailing list
->>> linux-amlogic@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-> --
-> Jerome
