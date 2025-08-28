@@ -1,65 +1,50 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFCD286D60;
-	Thu, 28 Aug 2025 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932DC212567;
+	Thu, 28 Aug 2025 16:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397518; cv=none; b=mwEIsvBByabDGVxmGIblkbmPzyXDNimHMfXYyFIBnuKL5v5D/YhAfGuQghklgb6AKJi9Im1QD84YOIadY8KO9t9t1tzPAR5thxmDJAEXzAG9WwjFt5fmLDVOIMNmEkiWSIccQmPNrDvN3eucdDP2tdrrEwXt8D9KrZTRCMkGFD8=
+	t=1756397802; cv=none; b=KOGpuciwBxC2F2u3hKXGEbowY+m0I/ou4v6kcRti6Aml+1yUk5x8G7xO1+bQ/eZE77apiaOEmHS9hs0E/CJM8q7cokbpgIhskZwnBE+Uv7WKBHpd5xUb4cBpnCL82do61lBdNGaZvaz0wcVyKPLXQDWfPzDHHjWpICwm8U1IQmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397518; c=relaxed/simple;
-	bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmtFtc1kTCtss3jaqxFIX7Imgm5J9FJgLBSNS7f6U3M2FIA4k9rnx+Qg2r1mZ4ADElIK5SSIyGNYBms9OSZ7K8tHTpPLRT1NTk4i3G6UVTk6AS3prNonWz6/XpAq3r3O9QqxLVY6QBpg9zDF+IS5p6VlHaeL5uds9FsD7ewtREI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpncEeF/; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756397802; c=relaxed/simple;
+	bh=dbxb4w4OJlV5sDEo57zFUE5nYfUGYzxZZDwgoF4J/Dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cPDD2aIfKlYl62VN+Tzt5vD/fymeE1jUN1oXWXgvxQvxIHoUS/HeFBe5ko3EMnPECHPkrCMJROBON596SuFI/e2JMRwczZTu8GE1Omdg5bT6JLhv5LRrhda0PQWKnYaRePU9QWh0FPUSTiSGF7Lf6t9konN+rkfZfvXdTqsGSx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=GpcF7xYc; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpncEeF/"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b47175d02dcso971172a12.3;
-        Thu, 28 Aug 2025 09:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756397516; x=1757002316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-        b=JpncEeF/iBww32epG/SJZsoKDJkTQmeSDtnB1nMwAxhRecyBMNR465HQXKKnIbbMA6
-         LRYEAwcJ2f76K7bG3K1qeJ50dNQcC1ugQ+iq5HFmVTWJIm8yOlTvfBrxiB04mCPPI3Lk
-         LAdYISZJI8XTm7Dexcovssm0j/WqHyYN8C0UX+BpW6cqSxX8VVV4iCFvpcN8D8xXuktc
-         n5UIo9vUL3Sv3PhIQhyzqSBvH6CnDmawIDCb2cYWFY74lkzqAe8DfNJ9BjHx4bTrNDRK
-         5T0yrwOSmrCYfyiaGpho51gXBlT5W+7IZgYBhM7oT1RWWrikQsp27AWVu599IZh1jZxb
-         TYew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756397516; x=1757002316;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-        b=WdaLDsvVheCAGGdPTtplIDQhr6FJfzZIsT1bkaLhXruNtOrbFdH38hCALAB/MSU+2y
-         4lI9UNjAnzVY1hfoAAjNiyHmBdNSPkDtqqOKypwhg2+3a6LmzDrWCptBahV0478KEclY
-         Yz2FFz1Yr1nPao7+CRcE4EXD/cL3O5Fl8JFIznxcYbBNnNlw+UtMACZF20/PyDA36P0/
-         JwSOYVG7GmUecTwab5AYG30UJIuLrNAQrA7HmrPVx2bpUcFFBzyAounwWpc+IhpFd/L3
-         ioGPmeUPQOLRpvZv56I097nJD2XPlytPMLUEfuS+M7FtRVzsU7s6znGQBftt3/5rsa+R
-         0iHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzG1aFV79RmgWKw+HEVngdYNtFDi8NGMN1oSg9gJdC/HULIMpNwXXz13tJOp82zmzAYSSz0GNZ12+@vger.kernel.org, AJvYcCUxz5rqptzuKmbhOYRzHPHKYjVd50XJUMpL8H9ewn3xOwQoyx4YQ223WWrRHLV8dgFKJ558P/ckKA0AY+Q=@vger.kernel.org, AJvYcCV7qMOCA+a9vtiieFbd25qA8Mq0QuicYy+5fkq1d/czS7pU8QPTFIf/q/dRRlp9wthIbCxEuferDFTmMOv4wxx9@vger.kernel.org, AJvYcCVG2eTElNfwN6eQ4Teq3bOdlIYSSxm5LmA5RToOFbymPIDWh7hO6x519ReWc8HcUi0oAdbOPfUjX/f3aZ/F9ZI=@vger.kernel.org, AJvYcCVUTpOPqYKamM0fXt6ZKEPLugy+q0DzwaSbZYlhiSGysWCwaPdclV0QCFVqDCQvTDCGfV47UbPq1fA2@vger.kernel.org, AJvYcCX+/s2sePoWMUtlXeybqw/INOdHV8M4gTcqoM0Cs+2YJDuSV32o4HrnRE/azyrSCsCvnDSsIKsibEjz@vger.kernel.org, AJvYcCXDMrkOUvX6axMMcuMSupcwOnnYR2qp6cAVChVaP04R6Fq7cYex5MSXBQCsum9hAb5gqBjhNlzd9As=@vger.kernel.org, AJvYcCXH22lIKaCe86U5NgeRoorBb4aEABl+eTLLtCFFeJYJxCjkHQVatvNvLxnyj9ARPy8fkOXxdjXHN12T@vger.kernel.org, AJvYcCXIfzmzhsg2ch/UVk7Lc0yez/iV3GWzfxPH9GTL/h8GIudq3LglRpTqz6e1vs/q/R3myoSCC4FCDHr5Rnx9@vger.kernel.org, AJvYcCXjuj6DlZnilC5tnoFteVS74h5dQBvCedYWSoNdmmmEmLDMjiantSTKMtyHs7Kb4U+YilO5Y/nygvmdgUzPfQI=@vger.kernel.org, AJvYcCXkKZqBh/XqPgYc6e1+jn0W1jtFftIqk3Skjb7dwMbNnPNXC7l8be9SQ6lrtLHRODr3wKLw9+Xx5AnG5w==@vger.kernel.org, AJvYcCXqOjhIx9oxvgsLpSHeOyu0sJb0f5sA59bq300R9/4kE4bcVjXRuP4DecFeazImEbFPzD03wLgRc0Be@vger.kernel.org, AJvYcCXuBxupmB/mzZQ2If2rWTX6qbRM2M6p8aZHLQN6B2A8iBbfG8SjpN107zXjgdgbsvdBaeZ9Hhhy8k9M@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2ooFcZMn5Qg/2WSwiFbOXpMEGYa6DB62Urc52Th9LDnKuJGHt
-	NLu81jkM90MAgD0qPvkGVOTWhsWPWnu4hhqcValiQw27SPyxmfdHXU+q
-X-Gm-Gg: ASbGncuhVr+9O7iPPiQqxUXuNPeevfWdsrFCOO+2n1iyQPF1ho3KXcVEV1lVhYPT9KP
-	AEVamihwDxHRtaSvj54/+Zvarcxwn6Sr7XAOQcS+Ebn2LemBo8TfW7MmpN7oYfX82714+r3U95h
-	ffJUZgxkbnf/7XR1+n1lAYPHG+7WgONSckPT+jaBfy9hVy912Vd9HpSMobqaYSPpXZ7D/hMSIRu
-	vLs7vcGUlwQ5ZXSBeUXTp6gyrKW84HrCCeFN4tQcbDwbjtAxli6J6k5IjEEu84Yp8zt2YmZbGEd
-	j7w4v9mgJt5IJV2hG765i3USeobsbwOWrcjHCk1gLtbXvIqQ5/ZkoHVm6wnhpWw9BebiIVYLXCH
-	ijjqJFU+4QYHY5fbioRgO+AYd6av3dckDnh1PUJ4V7BP4zIXiGPCW1b+a8hS4vt0M
-X-Google-Smtp-Source: AGHT+IEelSOuEo8Npbahj3GwLi0XEymTTpHMsSHpMsvQzhvD7rxDhVw5w3VB77ZuaLmwNpmmTqLyYw==
-X-Received: by 2002:a17:903:19ec:b0:248:9e56:e806 with SMTP id d9443c01a7336-2489e56ea30mr87843455ad.12.1756397515676;
-        Thu, 28 Aug 2025 09:11:55 -0700 (PDT)
-Received: from [192.168.1.111] ([59.188.211.98])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248a63b5916sm45971445ad.52.2025.08.28.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 09:11:55 -0700 (PDT)
-Message-ID: <932e0085-c901-40f8-b0d5-67f8f0b934e6@gmail.com>
-Date: Fri, 29 Aug 2025 00:11:40 +0800
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GpcF7xYc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756397800; x=1787933800;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dbxb4w4OJlV5sDEo57zFUE5nYfUGYzxZZDwgoF4J/Dw=;
+  b=GpcF7xYcgB23BK6bxJ80U1JNAOWvKZMDyA/mNMTamrON4h+JrNl+vY6e
+   cJgF87J+JPxoDW65T3Jsessbw0SXW7tfUdijirtuK4rcxO5Xqoma2aeRi
+   gavNAEKSmlfrAB9VypuRKrRZ6VaWYhEzfAVVzRmFCdQv2TM9KHde13pN5
+   aLOurrOIGPBPEF2SpZ973YB0dfpxr7BP2wXBv2PO09hovDqJIB0MXc6Il
+   M3jlPQo5sEwekyJh7Oxf+kL6QVgVdQ4xtXmJmD6gkL9nqc1/Eg2Tp4qG4
+   crnow5eU+GgLWs0GXe2AECJRmhO0a4sqtYd1RLwIXu+AnKsdoCczqbMOS
+   g==;
+X-CSE-ConnectionGUID: X9YiAgovSEikt4Ra+TjvOg==
+X-CSE-MsgGUID: 9dg/711GTSemJKiM6lKqeA==
+X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
+   d="scan'208";a="46343766"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Aug 2025 09:16:33 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 28 Aug 2025 09:16:18 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 28 Aug 2025 09:16:18 -0700
+Message-ID: <08dd4d82-8ac4-43a3-8d01-f293db6302e2@microchip.com>
+Date: Thu, 28 Aug 2025 09:16:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,76 +52,103 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-To: Janne Grunau <j@jannau.net>, Sven Peter <sven@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner
- <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sasha Finkelstein <fnkl.kernel@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Johannes Berg <johannes@sipsolutions.net>, van Spriel <arend@broadcom.com>,
- Lee Jones <lee@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
- Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
+To: Brian Masney <bmasney@redhat.com>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <robh@kernel.org>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <aLB7CJY9nMLoS1or@x1>
+From: Ryan Wanner <ryan.wanner@microchip.com>
 Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLB7CJY9nMLoS1or@x1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
+On 8/28/25 08:51, Brian Masney wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hi Ryan and Claudiu,
+> 
+> On Thu, Jul 10, 2025 at 01:06:53PM -0700, Ryan.Wanner@microchip.com wrote:
+>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>
+>> This series adds support for parent data and parent _hw on the at91
+>> clock drivers. This also updates all the SoC specific clock drivers to
+>> use this format as well.
+>>
+>> This is a continuation of the V1 of this series here [1].
+>>
+>> This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
+>> SoCs.
+>>
+>> Changes v1 -> V2:
+>> - Remove all the small sama7g54 SoC driver changes and put them in their
+>>   own patch.
+>> - Add the SAMA7D65 and the SAM9X75 to this update.
+>> - Add a patch to move all common used macros into the pmc.h file.
+>> - Update changes from v6.6 to v6.16.
+>> - Remove patches that where style fixes and include those in the update.
+>>
+>> Changes v2 -> v3:
+>> - Adjust each patch so they are fully atomic.
+>> - Add a patch to have the SAMA7D65 systemclocks use parent_data and
+>>   parent_hw.
+>> - Add a formatting cleanup patch for the SAM9X75.
+>> - Adjust commit messages that no longer show invalid information.
+>>
+>>
+>> 1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
+>>
+>>
+>> Claudiu Beznea (28):
+>>   clk: at91: pmc: add macros for clk_parent_data
+>>   clk: at91: clk-sam9x60-pll: use clk_parent_data
+>>   clk: at91: clk-peripheral: switch to clk_parent_data
+>>   clk: at91: clk-main: switch to clk parent data
+>>   clk: at91: clk-utmi: use clk_parent_data
+>>   clk: at91: clk-master: use clk_parent_data
+>>   clk: at91: clk-programmable: use clk_parent_data
+>>   clk: at91: clk-generated: use clk_parent_data
+>>   clk: at91: clk-usb: add support for clk_parent_data
+>>   clk: at91: clk-system: use clk_parent_data
+>>   clk: at91: clk-pll: add support for parent_hw
+>>   clk: at91: clk-audio-pll: add support for parent_hw
+>>   clk: at91: clk-plldiv: add support for parent_hw
+>>   clk: at91: clk-h32mx: add support for parent_hw
+>>   clk: at91: clk-i2s-mux: add support for parent_hw
+>>   clk: at91: clk-smd: add support for clk_parent_data
+>>   clk: at91: clk-slow: add support for parent_hw
+>>   clk: at91: dt-compat: switch to parent_hw and parent_data
+>>   clk: at91: sam9x60: switch to parent_hw and parent_data
+>>   clk: at91: sama5d2: switch to parent_hw and parent_data
+>>   clk: at91: sama5d3: switch to parent_hw and parent_data
+>>   clk: at91: sama5d4: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9x5: switch to parent_hw and parent_data
+>>   clk: at91: at91rm9200: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9260: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9g45: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9n12: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9rl: switch to clk_parent_data
+>>
+>> Ryan Wanner (4):
+>>   clk: at91: pmc: Move macro to header file
+>>   clk: at91: sam9x75: switch to parent_hw and parent_data
+>>   clk: at91: sama7d65: switch to parent_hw and parent_data
+>>   clk: at91: sam9x7: Clean up formatting
+> 
+> What tree did you develop this against? When I try to apply this series
+> to Linus's tree (6.17-rc3) and linux-next, only 12 of these patches
+> actually apply with 'git am'.
 
-Janne Grunau 於 2025/8/28 晚上10:01 寫道:
-> This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> follow design of the t600x family so copy the structure of SoC *.dtsi
-> files.
-[...]
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatibles anymore [1]. Instead either the first
-> compatible SoC or t8103 is used as fallback compatible supported by the
-> drivers. t8103 is used as default since most drivers and bindings were
-> initially written for M1 based devices.
->
-> The series adds those fallback compatibles to drivers where necessary,
-> annotates the SoC lists for generic compatibles as "do not extend" and
-> adds t6020 per-SoC compatibles.
+This was developed on 6.16 but when I bumped this thread I checked and
+they all apply cleanly on the v6.17-rc3 tag. I also just tested on
+next-20250828 tag and this set applies cleanly as well.
 
-The series is inconsistent about the use of generic fallback compatibles.
+Ryan
+> 
+> Brian
+> 
 
-"apple,aic2", "apple,s5l-fpwm", "apple,asc-mailbox-v4" is still used.
-
-
-[...]
-
-Best regards,
-Nick Chan
