@@ -1,254 +1,400 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDC11DF996;
-	Thu, 28 Aug 2025 09:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756372270; cv=none; b=RGe4BfEIALeiixPn1Tub2+naZ8uPMGDls3oBGby0/5atZlFudHImz6rw1Cg41tu9vCH/cQxL/FGg41pXwCriejCowWo7Iqcm2QiWgpZ9Gzyflkki4NVxvzXvTIZURkS0KIMFlI7kT20m8o4FRRlNBgxcStUZkWBsnBIsAnkTO/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756372270; c=relaxed/simple;
-	bh=dPrYDz7aaaDOtcDn6hEy0IZTYQxNLmnaAHVIwg68uwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qsQGyvOZ8I6oiNhxFvL/oQXJnBjWo+sMn2kXMNm6MqXGPLMud56356373gHH2DQPjRR7uPdjZL1Ca8jS07bIQRleQNGMTlafvrT8Gu+KD8hh+MBfVsNjdGmsr0x4QWfK+hGza/TtoeRBgnb7YPlwLfdBy45CNlW1G84NO/ZcBfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IQanoKyB; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EFF309DC1;
+	Thu, 28 Aug 2025 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756376151; cv=fail; b=lDSoX4g+o+Mfre4lw5Kj+p3pwauvEEh/29wy5OYtDcsaCi1/s36BXzFkYKaIblQ9XiBz2bUu22oWERQwARrY1VoGVvkwgjZwT3UC0ZnEsf4FDtqvSXgDgB6BxjiR1R69q8dFlinCBk8vYMYfZ7krxHPs3YMB/ijhG4ObEHms1bI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756376151; c=relaxed/simple;
+	bh=3dMGRBzLed/GqAI6h734dvWQm1P0Kago5a2PDQITyCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HoaULxbUmATTDyG2A7kbYWavZ6WR1Yav890zpmL1tUYKyg+lGoORwS6ZjUQjXa39cfnC6ooaXWENWRxq0Ywvj8T8qTtRoh3zRrjGbaIJsflpRyCCX6jqA6V38DKKWd/IJp9g/HhqmhKHKQt1rc9qjY58CNIfKew/hXXuDsK0hvs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D7PydIXi; arc=fail smtp.client-ip=40.107.94.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IQanoKyB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756372260;
-	bh=dPrYDz7aaaDOtcDn6hEy0IZTYQxNLmnaAHVIwg68uwE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IQanoKyBfluSNfPHhrJk4NcYs2n2pY0lMdsRz2vZFccbWWWbT0KcJ2X0ZPgl2rSVb
-	 pxrsVZYwaKQCZx1ff/sr26IFkyxLYYIZ04RK8G3ee/TDyzNf9EWVGbt5BrHcaKvZDC
-	 UmLr4eiyu2qf4tpNE2qW9pehksF9b1E6jJnBSB9rU52quiJ1eRDF9dSl0TRjCbigNV
-	 brGWl8inplnwXB3eXhJ+0w34IWwS9L+mZblulAN7R8RC2YVA1Q4HhfoaPA6v/PVSQ6
-	 MV0TkDsVTcfYjP/OheSWQGV2v2TSIO/KWi9FsZBtuwU3zs+WceVlZj3IDfJkSbT5ll
-	 CfZ4a+tEzOBFQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:55b9:ed88:bb41:e59d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8FA4317E0985;
-	Thu, 28 Aug 2025 11:10:59 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: laura.nao@collabora.com,
-	wenst@chromium.org
-Cc: angelogioacchino.delregno@collabora.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	guangjie.song@mediatek.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	netdev@vger.kernel.org,
-	nfraprado@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com,
-	robh@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v4 02/27] clk: mediatek: clk-pll: Add ops for PLLs using set/clr regs and FENC
-Date: Thu, 28 Aug 2025 11:09:58 +0200
-Message-Id: <20250828090958.29653-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250825123952.208448-1-laura.nao@collabora.com>
-References: <20250825123952.208448-1-laura.nao@collabora.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D7PydIXi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iZSFE0wy2L8c2Tw6EyioNqG45RsKkodMGlivku6nRYJufHEaH9rRJmR8CkCu6hkatwElPoJeo7KfNqcqOudOUiGqsbXeT0DgYCipkWj11s9MCPl8YiiQiiUejV1jQQqB6pNiLna/CfQSKaNYTBwajdS2VJGoD2UQFUes3hcQKuHgtZx3Kf0mgQlJ0PJZOS0VUOgHSctCLdB7DxSGc+dzTbcdtFiRmCxtoBhA6e+9NCgAsgIbLhN3osgYnqFrmsfF3I1NSnTMmtdYs9tn2QcRhRNFv653KfY/57Vkk5kfxQNw1dBTH1Zu4G5QINkLybz+aqT5f5tYYgiS0fCb40gzeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iiOuYtCW//x6U93G7j0jdDQRBSe4GhR5fIY6f8R23uI=;
+ b=QkQ3HsQYNobaIOs2bP8UklgszMH8gW4PS763va+s8urGvDbzhy//rQkRuxu5/4j3ZFQ9E/ZfX3b45mM9geOoaDq2rCd56HAO1eeCasXVXfrUK2ILaPK04Mum3amWKTJIQW71L+ZluJGCz+0mFXtBJDe3PGSeHN92GToJfh4goHfwZvdTtrI23yKBJxQZILzvUWh9hu79yaEhi3rUgMZ+f1WcTIAbpjbxHQ3w81KYidkq0t2waoELgFbeE7tty9jzxgYesYfWltpNie3jDH7SE2lr3tqjrOn7tJmiu/suwToXxjNBcjMsR/+falD1RRxqnUpoGM8bjwaM9rLgBZKEyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iiOuYtCW//x6U93G7j0jdDQRBSe4GhR5fIY6f8R23uI=;
+ b=D7PydIXimHcpFBIbwjIEQqUVLEAcs18pVel32vw/lCYNsf5hcvCe4cfloTNb3ghjqTqKq65NytliSHbtVVc8l5piPWbnb+3bcUOHtZul/XA9HpzzP6E2c/5ZRa3UUNIBGkHOmnq+zXClqxCZU6YmpyyKLK9f1PYojeIs3hsz+87Gc1ACF1kG+QvsH/qvBCMYhASjAyz4k4SLXoujWvWaLZOZNpDwgTc8MgiwGzd4c40Qw2lKkGNP8h+lCJf1ZgUWtTM8/letwiXZIA9c47TNrubtongyTG+2/qPXErO9bgCNIpKI/6ybuBR09djDLbGrVV/H07d4DyURedoLcuEm1g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ CY5PR12MB6597.namprd12.prod.outlook.com (2603:10b6:930:43::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.21; Thu, 28 Aug 2025 10:15:43 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 10:15:43 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>, linux-media@vger.kernel.org,
+ linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v1 01/19] clk: tegra: init CSUS clock for Tegra20 and Tegra30
+Date: Thu, 28 Aug 2025 19:15:38 +0900
+Message-ID: <2263218.C4sosBPzcN@senjougahara>
+In-Reply-To:
+ <CAPVz0n2JdRXQ7oUJqXkmGO+EPZTq3t6k8HY7pWHT3eAVXj9T3w@mail.gmail.com>
+References:
+ <20250819121631.84280-1-clamor95@gmail.com> <1797126.QkHrqEjB74@senjougahara>
+ <CAPVz0n2JdRXQ7oUJqXkmGO+EPZTq3t6k8HY7pWHT3eAVXj9T3w@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0241.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::6) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|CY5PR12MB6597:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1976fb2-f1ad-4f55-ce66-08dde61bd89f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NWF3R0FsRkxVOGE2LzNpcDFBaE1pYkhVSGhpOVNVMkVzcU5DWUlHc3pCUlFp?=
+ =?utf-8?B?SnJwcjUzQWQ1UEdnVXBTR1dPeXF5OTJBVGNuMHJjMXhUOTY0WHlUWUdsK3VL?=
+ =?utf-8?B?aWZWQUkyeFliOXo3L1lSVjhvd3JaWWRCUDQwakU5aUhjRExsMGxoMExpY1VY?=
+ =?utf-8?B?S3p0T2dtQ091NW1iSjViTjUydCtqaVNQNG9odXgxTWsrU1JMbUdmSEpPaGpl?=
+ =?utf-8?B?bm56REtuSkE5N2ZoSm9Od01vYkoxVE9FaUFicHpJM0JVK3o2YUNLVjErR3BV?=
+ =?utf-8?B?ZkxKbUtFb05lbi9FNCtBbjVqazNrV2xTNCtaaWl1REMxaGhxVzRnWE9PSWMw?=
+ =?utf-8?B?WWoyTE9mYkRyMWZBVG16cTZyQ0FRc1pQaHd5bEhwRkxCNVF6S3lVWXRlcVha?=
+ =?utf-8?B?SVU5Ny9CMjZJWVE4bjlMN0taTTJvRE5ONENkSG1BSmk1WFhSYVdJeVIrTEtL?=
+ =?utf-8?B?akpsMEo2V3ZDeW04QTF4QVZzQWE1aEwyNVNEbFRnRHc0aElqclBwT1Fkd2RU?=
+ =?utf-8?B?dDJ5N0pselE5UXNVVTlzNDZ4TVlrK3RtWUZwZ0h2OUwvWG5KaXFoSGZxS2gv?=
+ =?utf-8?B?b1pYUHFNc3hpeWw2Q3Q5K2FvTHIvL0o1a1Z6SURJaWtuUTlwYWRXTFZ5OWJX?=
+ =?utf-8?B?SjI4OUg4NTl1OGdtZi9uSlJPa3AyWUFqQk1VQzZaYXk4ci9NMUh1YnplaHZO?=
+ =?utf-8?B?eGFQVVFCYVgycFAzczI1WC81NGpPMGdFQ3pqRnVVSkxXVlhtMWdJYXpYSTlm?=
+ =?utf-8?B?eHRMWDlhL1lINzlzalFQcFErb0JPN0cxbWtqdjhiYlVRajhCWXZ0NUNqZk9n?=
+ =?utf-8?B?WXRHVkQ5UTB6Mlhld24vZVI3Ly9Jak52MmYvQlEvTmJ1K0J6MnBQa0hlL1VW?=
+ =?utf-8?B?ZzhpYnhBYm5yZFZDUFRwQStNcFpNQ0xRQmhvekJKWVhYWWJ4ZUJXZnVNeWV4?=
+ =?utf-8?B?VjRDQUFoYzlocXN1bW56VWxETCttK3hROE5YN3ByY3Vlb2FZNlBRVXJTYmZi?=
+ =?utf-8?B?YnZwYVNrUDRqSS9ldFladEZJdndmbVI0MTM4R2YzdStJa1lsei9kdWxLbGkw?=
+ =?utf-8?B?VFpKWVZmSStMOU85N2g2L1kxS240TGxTaTk5R1NmRHdmQVFXLzc1blRnUXNk?=
+ =?utf-8?B?ei95U1A5MXAzSE5zMXAwNzFwbG42NFkyWTljVmg3SEtJNXJ4TkdtajNYTEhJ?=
+ =?utf-8?B?QkkyZHJrYlAyWkI4eGpkaVpmSUNGSFhZYU50cWZuMmQ5Z3Y4NGp4UHhYdkpk?=
+ =?utf-8?B?T2lzUm1SdUlwMzVVMlQwR3cxRHo5aFJ3RXJ5UDdzd3h6Qzh1NWttTnVPZjdU?=
+ =?utf-8?B?RGJ2WC8xU1UxMmVuMlE1c3B1TnBva21nS1o0MzVtVk1BM2tXQkNvbG5rTC9U?=
+ =?utf-8?B?NzRoV3Bkdy9HaktTdTJQbVRQSisvZDAreVE2RnZhYnltTm5Wd0VncTZlWkE3?=
+ =?utf-8?B?bHNHcW9Fa3h0eGwrbDhMY2Jjdmt0M3RGMTRYbjhnc2xLTHJGS0hzZTc1SlE2?=
+ =?utf-8?B?cnJnQzU5QW8zbzYzTnJnTUFjQUdZYVpHUStId3Awc2RWWEkyWXJRLzIzR1VZ?=
+ =?utf-8?B?M0FPbFdrMVBrOXRGMXB5TXpDSWdaSkRVeXR4dXh4VXBwR25ERFo4aGQ1UTMx?=
+ =?utf-8?B?YlJqYnZod1M1TDBJRGVpaldJM2tUQ01kam52dmxuRGNxNkNGbkRRUURUMk9h?=
+ =?utf-8?B?M0RhcG9qODhsYkg0a0VFRXRXakVId2k0cWg2YkJnQjAyeFdWOEtJZHdKOXNM?=
+ =?utf-8?B?dVNsRjdTejlVdzZIUHNKbWx0QUlJcktrWG1GVXdEcE51bXhLU0JzR0VMZkF4?=
+ =?utf-8?B?NGVSLzRYY2pFZSttSnMzVU14NWhEQTRGQm5PSFg5aGEzdkVlZmZlOVlXMklm?=
+ =?utf-8?B?b1VyMVdoZVY1VFRKbnQrL0NnaFlWb0szeWt6K2NDbFExZ3JpM2o3QUgxYlJy?=
+ =?utf-8?Q?APTyJTZUNW8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YkUwRUhFRnBDQ3dOb245Z2k1R1BwUmFlN3VaTFRHYWRnVFErZEw4V3YvWmtY?=
+ =?utf-8?B?ZHVFMDlDeGRKcHNmM2hCWHYvbFA1U0lWamgxZllmREl2Q3N5cTdxT0tSbkpr?=
+ =?utf-8?B?bTBtWnU3NzBZYWlFMlI0RG9MenpISTlyOE1ibElaMC95OWlFVTJXaHpzOENk?=
+ =?utf-8?B?MCtDdC9qRHF6bmZ4K3ZkTktMc05waXBzbnJjT0Rxbm16S1hyNC9kcWl6UTYr?=
+ =?utf-8?B?VUl6YnFQNUVoenpMbHJuZVFRYStGc3BpZ0tqVVMydHg0czBTODlNTUp4dXBt?=
+ =?utf-8?B?RnlRUmFmRGdsc1Bod1VNSVlzRWNqeVVFVGpPWmtKTXdndENsd0k0a1pLQm5N?=
+ =?utf-8?B?cE1CNnNpZnpzeWpQbjZSVC9jYXhNVmZtenpIdE5KZ0dVcmc4c3VCY1NHa2dN?=
+ =?utf-8?B?ZGEyVGNhZ1N6SkU5UmgyZjR0bmdtekhJN0JEd0Eram5XYkR2eDNTQklKcG56?=
+ =?utf-8?B?NXZDRFZXRTJUSFVXQ0dkVGs3a2VLNlRGbU5jemhQR2dSSzFnTnhoeGwvN0hZ?=
+ =?utf-8?B?cUVxemRjcXRqRVpuOS9ONXcxR2tJRGx5U2kzVnNUSGpDYTNGUFc1QXpORlph?=
+ =?utf-8?B?ekI2Ry9rZ1RWbFFwS3dVUzRwZTNLck5KKzUxQ1ZFMHF3Qmp2RUNRVzFCZjlo?=
+ =?utf-8?B?WDg1dTk2Z1VKWEZBRHZGK0RWTGJXOFdEaStYYzIxTGk5My9iTG8vRVpNUjYr?=
+ =?utf-8?B?ZXZRNVNHd2xsT0ZDNzNqaVdrOGN0MGUvb3dzemRsZjZ0bW4yY3N4aUpiRGpZ?=
+ =?utf-8?B?TXIvQ1dLMkZYVXd5SWpnSzNUMGl2UGJzUDVyWDdyWlRyWGovazlWNjlndkQr?=
+ =?utf-8?B?VERNY2V2M1VqWEQxcFllRkI3Wi9HM2o3c25RZ1k3cGxtZjFRVnVPVnV4Ti90?=
+ =?utf-8?B?aDdlRmh1MXVOY2ZSTElqOHN3dVlTRzFmcnAwYTl3VkRSaC9WSzJiV1RWZzNv?=
+ =?utf-8?B?N3ZPK3NxNTZmeXQvSWZSNUQ5eFZEQ1Y5K2ErSEU1aDFFTVNKcnRRZStoKzgy?=
+ =?utf-8?B?YWJRT0ZyUGZ2L0hndk0xR25YNVFtbDFOc25GcXd6SXBSYmsweEovRWU1WEtz?=
+ =?utf-8?B?SVpZcTZxWnpPdFpMNURQMW5FQjVQeTQreEN6RGh1a2luVEk3ejRWWU5YMHhj?=
+ =?utf-8?B?RytibWVtR2NPaWZnaXZIMGN4NHRnak11SlBBdjArRmcvSXVUc3liMEQrZmtF?=
+ =?utf-8?B?dUlOL3R2Z3IvSFZZZUI5WEtHTkR0ZEdTRDNsa09iaVVFTkQrbzNhbzRiN2RD?=
+ =?utf-8?B?N2dNVFpFR21DTUhKS3c5YUprNnhWOTRrRFdsc3NNSmZlVVF2RzlHY1dNcUFI?=
+ =?utf-8?B?eVhBUEZCYS81L1M3aUVsZG1CaEhBWGtiMzNlK001dDh3dEdhdGRybmZadEU5?=
+ =?utf-8?B?aFNBMUZUR092UFBFaEpoeTk4VVlaY0hHVU5SZ3k4SDhtOHN6SFVRL0dvTVRu?=
+ =?utf-8?B?T3BzbTVXQW8wdUFtWVhUWXVqNGgvRWw0ZXpQUC9EdStuNGlCYjdMWTJXRjBI?=
+ =?utf-8?B?dlpwZGZWdUxTdTRDcnRxYTA2MTlhVzl2enI5V2ptZC81NjB0c2hrUHhTYXQ4?=
+ =?utf-8?B?R0dpL1Fka3hQeEpRLy9OaG9UNEFiSDBHb0lUSm9XV2Q5NTNFb3pmTUtiQVN2?=
+ =?utf-8?B?NkRxT1pkUXIramdJdll2MDkzTVNSWjY0RWxLZVFqdXNGbk5qVG1YNFQwUk9F?=
+ =?utf-8?B?YmV6ZFlKU1dicFVUYmtvRzFCKzFHVGI5Qmh1QTBuaFo4QS9CRytMVFd0eFZT?=
+ =?utf-8?B?ZzZBWHJIV1l6M2kzVzEwM0N0RmZqdjRyS1dRcy84YmRTeSsvbms5aW5CSzdv?=
+ =?utf-8?B?RThpaFg4RXYrSmFTdmFCTi9vZmp4bDIrNVBOaXVJREJTeGFtTmV3WVhOMEZ0?=
+ =?utf-8?B?Zm44MXZMWk13K1NrYnJ2WDgrUTFDZFVFVGNQalVqYkhaYmQ5VEI2MURISStk?=
+ =?utf-8?B?SGdzRnVDVWhRckdOQjRLT3N5TG5uVlBkY0paUzh2QndvajArYVdSYkNUbDlu?=
+ =?utf-8?B?aWp4aEFTaTdJZGxQRkRRdFhWUG1mZFNVbzNNNXd2eFRVeStLMHlpSjl3OVZj?=
+ =?utf-8?B?MS9oVVVZZnZpYlhISG5YNFVNbDNKNUZoVkYvNForMVFtVFRZQ0tVMi82a25V?=
+ =?utf-8?B?eUFQSlNOdmhGcFBYRDRFTGdFcnZvZWpPMVhTQXVockFrUEs1ZXdRa1ovSnp5?=
+ =?utf-8?B?TFB1dG03bzNuTVdrTlYzWFNpQU91WDVnTmt1dUNvUlNFNVhNbUhLSzd6RTJM?=
+ =?utf-8?B?cXNUTkFRVUVYd3lhVk5KRW5peTlnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1976fb2-f1ad-4f55-ce66-08dde61bd89f
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 10:15:43.0887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yRTtXsvc2qc+BfxY59Bl4XopwKzUD9aKbtvtNvJfSuuToZHuYQrfen4BdbJaieNDAJLj2xB2u2Vk9pANRRafgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6597
+
+On Thursday, August 28, 2025 5:28=E2=80=AFPM Svyatoslav Ryhel wrote:
+> =D1=87=D1=82, 28 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 11=
+:13 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > On Wednesday, August 27, 2025 7:45=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > =D1=81=D1=80, 27 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=
+=BE 13:36 Mikko Perttunen <mperttunen@nvidia.com>=20
+=D0=BF=D0=B8=D1=88=D0=B5:
+> > > > On Wednesday, August 27, 2025 1:32=E2=80=AFPM Svyatoslav wrote:
+> > > > > 27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80. 07:0=
+9:45 GMT+03:00, Mikko Perttunen
+> > > >=20
+> > > > <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > > >On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wro=
+te:
+> > > > > >> CSUS clock is required to be enabled on camera device
+> > > > > >> configuration
+> > > > > >> or
+> > > > > >> else camera module refuses to initiate properly.
+> > > > > >>=20
+> > > > > >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > >> ---
+> > > > > >>=20
+> > > > > >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+> > > > > >>  drivers/clk/tegra/clk-tegra30.c | 1 +
+> > > > > >>  2 files changed, 2 insertions(+)
+> > > > > >>=20
+> > > > > >> diff --git a/drivers/clk/tegra/clk-tegra20.c
+> > > > > >> b/drivers/clk/tegra/clk-tegra20.c index
+> > > > > >> 551ef0cf0c9a..42f8150c6110
+> > > > > >> 100644
+> > > > > >> --- a/drivers/clk/tegra/clk-tegra20.c
+> > > > > >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> > > > > >> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table
+> > > > > >> init_table[]
+> > > > > >> =3D {
+> > > > > >>=20
+> > > > > >>    { TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > > > > >>    { TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > > > > >>    { TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
+> > > > > >>=20
+> > > > > >> +  { TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
+> > > > > >>=20
+> > > > > >>    /* must be the last entry */
+> > > > > >>    { TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> > > > > >> =20
+> > > > > >>  };
+> > > > > >>=20
+> > > > > >> diff --git a/drivers/clk/tegra/clk-tegra30.c
+> > > > > >> b/drivers/clk/tegra/clk-tegra30.c index
+> > > > > >> 82a8cb9545eb..70e85e2949e0
+> > > > > >> 100644
+> > > > > >> --- a/drivers/clk/tegra/clk-tegra30.c
+> > > > > >> +++ b/drivers/clk/tegra/clk-tegra30.c
+> > > > > >> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table
+> > > > > >> init_table[]
+> > > > > >> =3D {
+> > > > > >>=20
+> > > > > >>    { TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
+> > > > > >>    { TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 =
+},
+> > > > > >>    { TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
+> > > > > >>=20
+> > > > > >> +  { TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
+> > > > > >>=20
+> > > > > >>    /* must be the last entry */
+> > > > > >>    { TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+> > > > > >> =20
+> > > > > >>  };
+> > > > > >
+> > > > > >I looked into what this clock does and it seems to be a gate for
+> > > > > >the
+> > > > > >CSUS
+> > > > > >pin, which provides an output clock for camera sensors (VI MCLK)=
+.
+> > > > > >Default
+> > > > > >source seems to be PLLC_OUT1. It would be good to note that on t=
+he
+> > > > > >commit
+> > > > > >message, as I can't find any documentation about the CSUS clock
+> > > > > >elsewhere.
+> > > > > >
+> > > > > >What is the 6MHz rate based on?
+> > > > >=20
+> > > > > 6mhz is the statistic value which I was not able to alter while
+> > > > > testing.
+> > > > > I
+> > > > > have tried 12mhz and 24mhz too but it remained 6mhz, so I left it
+> > > > > 6mhz.
+> > > > >=20
+> > > > > >Since this seems to be a clock consumed by the sensor, it seems =
+to
+> > > > > >me
+> > > > > >that
+> > > > > >rather than making it always on, we could point to it in the
+> > > > > >sensor's
+> > > > > >device tree entry.
+> > > > >=20
+> > > > > Sensor device tree uses vi_sensor as clocks source and sensor
+> > > > > drivers
+> > > > > don't
+> > > > > support multiple linked clocks.
+> > > >=20
+> > > > AIUI vi_sensor is an internal clock so the sensor cannot be receivi=
+ng
+> > > > it
+> > > > directly. Perhaps the sensor is actually connected to csus, and the
+> > > > reason
+> > > > we need to enable it is to allow the vi_sensor clock to pass throug=
+h
+> > > > the
+> > > > csus gate?
+> > > >=20
+> > > > That leaves the question of why the csus pad would be muxed to
+> > > > vi_sensor
+> > > > by
+> > > > default, but perhaps there's an explanation for that.
+> > >=20
+> > > From downstream T30 sources csus and vi_sensor are always called in
+> > > pair (6MHz csus and 24MHz for vi_sensor), naturally I assumed that
+> > > latter is used as camera reference clock since most sensors has
+> > > reference clock around 24 MHz
+> >=20
+> > It's possible that the csus pad is still outputting 24MHz. The pinmux
+> > options for the csus pad are various clocks, so it would seem logical
+> > that the clock source for the pad is one of those clocks. However, on t=
+he
+> > clock framework side, the csus clock is just a gate. What I'm confused
+> > about is that since on the clock framework side the parent of csus is
+> > currently set to clk_m, I don't know why setting the rate of csus would
+> > affect the output of the pad, given clk_m is not one of the options for
+> > the pinmux.
+> >=20
+> > It's be good to verify the register value for the csus pinmux to see wh=
+ere
+> > it thinks the clock is coming from, and then check how that matches wit=
+h
+> > what we are seeing.
+>=20
+> TRM does not provide such data, it has only register address with
+> layout for it as a plain pad control, that register has only DRVDN,
+> DRVUP, SLWR and SLWF and I don't see a way to decode clock value or
+> parent or anything similar. If you give me a method I will calculate
+> those values.
+
+I notice that on Tegra20, there is a mux pingroup called 'csus', which has =
+the=20
+mux options PLLC_OUT1, PLLP_OUT2, PLLP_OUT3, and VI_SENSOR_CLK (based on=20
+upstream pinctrl-tegra20.c). The TRM also says 'Enable clock to SUS pad.'=20
+about the CSUS (or SUS) clock.
+
+On Tegra30, however, which I guess you refer to, I guess mux pingroups are=
+=20
+gone and each pin has its own mux (again looking at upstream pinctrl-
+tegra30.c). vi_mclk_pt1 is now its own mux with the options VI, VI_ALT1,=20
+VI_ALT2, VI_ALT3. The drive group for this pin is still called csus, so by=
+=20
+that name it only has the drive settings as you mention.
+
+Are you testing on Tegra20, Tegra30, or both?
+
+I've looked at some Tegra30 schematics, and they show a signal called VI_MC=
+LK=20
+being routed to CSI cameras.
+
+>=20
+> Another theory is that maybe csus is used for VIP cameras only and
+> vi_sensor is used for CSI cameras, but they both have to be on in
+> order to work correctly. Csus was removed from Tegra114 along with
+> VIP, might not be a coincidence. Moreover, T124 uses vi_sensor as
+> camera mclk source.
+
+I see the CSUS clock still on Tegra124 based on the upstream kernel. There =
+is=20
+also a CAM_MCLK pin. It seems Tegra30 has both VI_MCLK and CAM_MCLK pins,=20
+which both can output the clock. After Tegra30 there is only CAM_MCLK.
+
+Looking at L4T r21, in tegra12_clocks.c, it defines the clocks mclk and mcl=
+k2.=20
+There is a comment on mclk saying:
+
+	               .clk_num =3D 92, /* csus */
+
+whereas mclk2 is vim2_clk. These clocks are indeed defined as gates, with=20
+vi_sensor / vi_sensor2 as parent, set_rate being passed onto the parent.
+
+All of that wasn't very coherently written, but to summarize my thoughts:
+
+On Tegra30, we have
+- Pins vi_mclk and cam_mclk. Both can only source from (vi_)mclk which also=
+=20
+goes by name csus. The mclk/csus clock is a clock gate with vi_sensor as=20
+parent.
+On Tegra114 and later,
+- Same situation, but vi_mclk is gone, so instead we have cam_mclk (possibl=
+y=20
+multiple with associated mclkN and vi_sensorN clocks)
+On Tegra20,
+- The vi_mclk pin has a variety of mux options, one of which is VI_SENSOR_C=
+LK.=20
+I expect this to correspond to the same behavior as later chips, i.e. sourc=
+es=20
+from the csus(/mclk) clock, which sources from vi_sensor.
+
+>=20
+> Here is a fragment of Tegra124 clock tree (dumped from Mi pad 1)
+>=20
+>          pll_p                                 on     13  x34      408000=
+000
+> vi_sensor2                       $ off    0   3.0      136000000 mclk2   =
+ =20
+>                    $ off    0            136000000 vi_sensor             =
+ =20
+>         $ off    0   3.0      136000000 mclk                          $ o=
+ff
+>    0            136000000
+> > > > > >Cheers,
+> > > > > >Mikko
 
 
-On 8/25/25 14:39, Laura Nao wrote:
-> Hi Chen-Yu,
->
-> On 8/15/25 05:18, Chen-Yu Tsai wrote:
->> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
->>>
->>> MT8196 uses a combination of set/clr registers to control the PLL
->>> enable state, along with a FENC bit to check the preparation status.
->>> Add new set of PLL clock operations with support for set/clr enable and
->>> FENC status logic.
->>>
->>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>> ---
->>>  drivers/clk/mediatek/clk-pll.c | 42 +++++++++++++++++++++++++++++++++-
->>>  drivers/clk/mediatek/clk-pll.h |  5 ++++
->>>  2 files changed, 46 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
->>> index 49ca25dd5418..8f46de77f42d 100644
->>> --- a/drivers/clk/mediatek/clk-pll.c
->>> +++ b/drivers/clk/mediatek/clk-pll.c
->>> @@ -37,6 +37,13 @@ int mtk_pll_is_prepared(struct clk_hw *hw)
->>>         return (readl(pll->en_addr) & BIT(pll->data->pll_en_bit)) != 0;
->>>  }
->>>
->>> +static int mtk_pll_fenc_is_prepared(struct clk_hw *hw)
->>> +{
->>> +       struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
->>> +
->>> +       return readl(pll->fenc_addr) & pll->fenc_mask;
->>
->> Nits:
->>
->> I'd do a double-negate (!!) just to indicate that we only care about
->> true or false.
->>
->> Also, why do we need to store fenc_mask instead of just shifting the bit
->> here? Same goes for the register address. |pll| has the base address.
->> Why do we need to pre-calculate it?
->>
->> The code is OK; it just seems a bit wasteful on memory.
->>
->
-> Thanks for the heads up - since these are only used here for now, I
-> agree they’re not really adding value. I’ll drop fenc_mask and fenc_addr
-> in the next revision.
->
 
-On second thought, since pll->base_addr is initialized as base +
-data->reg (i.e. at CON0 offset), and the FENC status register sits
-before that in the register map, it can’t be derived directly from
-pll->base_addr.
 
-So we need to keep fenc_addr, but I’ll drop fenc_mask and shift the bit
-inline instead.
-
-Laura
-
-> Best,
->
-> Laura
->
->> Either way, this is
->>
->> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->>
->>> +}
->>> +
->>>  static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
->>>                 u32 pcw, int postdiv)
->>>  {
->>> @@ -274,6 +281,25 @@ void mtk_pll_unprepare(struct clk_hw *hw)
->>>         writel(r, pll->pwr_addr);
->>>  }
->>>
->>> +static int mtk_pll_prepare_setclr(struct clk_hw *hw)
->>> +{
->>> +       struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
->>> +
->>> +       writel(BIT(pll->data->pll_en_bit), pll->en_set_addr);
->>> +
->>> +       /* Wait 20us after enable for the PLL to stabilize */
->>> +       udelay(20);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static void mtk_pll_unprepare_setclr(struct clk_hw *hw)
->>> +{
->>> +       struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
->>> +
->>> +       writel(BIT(pll->data->pll_en_bit), pll->en_clr_addr);
->>> +}
->>> +
->>>  const struct clk_ops mtk_pll_ops = {
->>>         .is_prepared    = mtk_pll_is_prepared,
->>>         .prepare        = mtk_pll_prepare,
->>> @@ -283,6 +309,16 @@ const struct clk_ops mtk_pll_ops = {
->>>         .set_rate       = mtk_pll_set_rate,
->>>  };
->>>
->>> +const struct clk_ops mtk_pll_fenc_clr_set_ops = {
->>> +       .is_prepared    = mtk_pll_fenc_is_prepared,
->>> +       .prepare        = mtk_pll_prepare_setclr,
->>> +       .unprepare      = mtk_pll_unprepare_setclr,
->>> +       .recalc_rate    = mtk_pll_recalc_rate,
->>> +       .round_rate     = mtk_pll_round_rate,
->>> +       .set_rate       = mtk_pll_set_rate,
->>> +};
->>> +EXPORT_SYMBOL_GPL(mtk_pll_fenc_clr_set_ops);
->>> +
->>>  struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
->>>                                         const struct mtk_pll_data *data,
->>>                                         void __iomem *base,
->>> @@ -315,6 +351,9 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
->>>         pll->hw.init = &init;
->>>         pll->data = data;
->>>
->>> +       pll->fenc_addr = base + data->fenc_sta_ofs;
->>> +       pll->fenc_mask = BIT(data->fenc_sta_bit);
->>> +
->>>         init.name = data->name;
->>>         init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
->>>         init.ops = pll_ops;
->>> @@ -337,12 +376,13 @@ struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
->>>  {
->>>         struct mtk_clk_pll *pll;
->>>         struct clk_hw *hw;
->>> +       const struct clk_ops *pll_ops = data->ops ? data->ops : &mtk_pll_ops;
->>>
->>>         pll = kzalloc(sizeof(*pll), GFP_KERNEL);
->>>         if (!pll)
->>>                 return ERR_PTR(-ENOMEM);
->>>
->>> -       hw = mtk_clk_register_pll_ops(pll, data, base, &mtk_pll_ops);
->>> +       hw = mtk_clk_register_pll_ops(pll, data, base, pll_ops);
->>>         if (IS_ERR(hw))
->>>                 kfree(pll);
->>>
->>> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
->>> index c4d06bb11516..7fdc5267a2b5 100644
->>> --- a/drivers/clk/mediatek/clk-pll.h
->>> +++ b/drivers/clk/mediatek/clk-pll.h
->>> @@ -29,6 +29,7 @@ struct mtk_pll_data {
->>>         u32 reg;
->>>         u32 pwr_reg;
->>>         u32 en_mask;
->>> +       u32 fenc_sta_ofs;
->>>         u32 pd_reg;
->>>         u32 tuner_reg;
->>>         u32 tuner_en_reg;
->>> @@ -51,6 +52,7 @@ struct mtk_pll_data {
->>>         u32 en_clr_reg;
->>>         u8 pll_en_bit; /* Assume 0, indicates BIT(0) by default */
->>>         u8 pcw_chg_bit;
->>> +       u8 fenc_sta_bit;
->>>  };
->>>
->>>  /*
->>> @@ -72,6 +74,8 @@ struct mtk_clk_pll {
->>>         void __iomem    *en_addr;
->>>         void __iomem    *en_set_addr;
->>>         void __iomem    *en_clr_addr;
->>> +       void __iomem    *fenc_addr;
->>> +       u32             fenc_mask;
->>>         const struct mtk_pll_data *data;
->>>  };
->>>
->>> @@ -82,6 +86,7 @@ void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
->>>                              struct clk_hw_onecell_data *clk_data);
->>>
->>>  extern const struct clk_ops mtk_pll_ops;
->>> +extern const struct clk_ops mtk_pll_fenc_clr_set_ops;
->>>
->>>  static inline struct mtk_clk_pll *to_mtk_clk_pll(struct clk_hw *hw)
->>>  {
->>> --
->>> 2.39.5
->>>
->
