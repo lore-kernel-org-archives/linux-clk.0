@@ -1,217 +1,163 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83F1624D5
-	for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 17:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E89322DB3;
+	Thu, 28 Aug 2025 17:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400695; cv=none; b=VvE0+BYu6eJDzgpPQoupH4YaToWH+CDuF5b9TQZEl2pv8iXJVT9DmEkqZflTczDI9bpXg7bEnVpw+VpbK4PsItsxTHJYpTl0GfLH4Fp/sPYXVfCju8hEphy+3gkuRITcs8n2LY9YdIC2W4RrFtBQj2IHtZSJkAR6RzdSqXW6p6U=
+	t=1756401546; cv=none; b=sMlOxL3BJQvzd6eqYIHLPRFjN7EZT5FPRH4c3aYB/f8qTB8H+ux+ttIV6xg988bI4xnlWtlfnXC0DG+wGye7ZZ31nWB3dKQmEGduAUYI/36n1TYG5KMMKLlvUMLF9NYbqvSGt0JuxVJtQkx1hAf5Ou+M2pc7/llYntJZH1VH9/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400695; c=relaxed/simple;
-	bh=KjdMnmax17wj/hHZCqG4IeQlHBv3R7AnyEbZo7q4ZxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAbDbL/MlmDJ+/EzeGC6dtPTv5wK7OIt4iRCmsyDOnTzUfqgsS1q1+LFsr2qXIzGhAYyHeZfK0+6++dKY9H5bekfkGJuGm/DGj/0HPzlFizCMzl0L0aUjm/M6ZeByGpa1BWVW/g6N+HYagQaWqGu+8VXKJXO+o1PR0MsPNyLbDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ASKZqSnf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756401546; c=relaxed/simple;
+	bh=SS4pv8uyaXLZEUMjbC2GJgsLUt5PP91S4SC3iNr8JIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iiddvf3EIHd5vF6ZfJeFTsCwNiDJOVgTZukqGoieHxzZR8QWk7KMf4WMw41M8f+4Tj03nRAyFhMZhYYrGNd+VmRiHmoUTUuZKYVeqzX865b7ZKoEcRdDmZRwzQ7ICka4bxi/mFkoX/QohAE7G6HtESs+dcXT+IO8IBZCxy7ZIKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5r9gwhU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ASKZqSnf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756400692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQWSx8bT6V+HM/W9ets+QXcD0v/UrJQL7ZZAexBVPTE=;
-	b=ASKZqSnfPkpYDBjnfdsx2n+9Oq7L7nHGGc6gDJwiB8aZaLCOPpmsHE9fC16WGikrKKjAob
-	Zg6bC5vGptomCzV6Pa2yCUJCxFsMiDgERT1Ayy5BbMDpPewvng/CcwY+nDn9fsQmKXpHpm
-	fYyKRcTq4RMh3av9A6fGXNkKM1dfwLU=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-380-BwiKttjEOKG2vXGY65A_mA-1; Thu, 28 Aug 2025 13:04:50 -0400
-X-MC-Unique: BwiKttjEOKG2vXGY65A_mA-1
-X-Mimecast-MFC-AGG-ID: BwiKttjEOKG2vXGY65A_mA_1756400690
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5228ed1eff1so172833137.3
-        for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 10:04:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5r9gwhU"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-244582738b5so10962595ad.3;
+        Thu, 28 Aug 2025 10:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756401544; x=1757006344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SS4pv8uyaXLZEUMjbC2GJgsLUt5PP91S4SC3iNr8JIE=;
+        b=a5r9gwhU3OZ7+sie3vFCnu5KUoHlLiq8Fda10SVQKy3KY5E0TfZT3HnHYacMzrAd9G
+         4oDSRC42Wp020yOLlxfrHgXRW8lABMsdsVfaL9PBrn045pSVevt6Ig5BnSXVkm+PxAcH
+         eXJD/mczQxUWiXWYNtcFszV/JVJ34kverJ4fwTGINbY354Jv6sLpy44bT/ZABHP3utFV
+         ZbfrCHPFGqhRrtzGvTS7rd2LPcnO7D1BinpEiSkpUSGxzuUgCspo94w2jRvkVl9+pQOe
+         eER9rvU++mTqwSMkUWBF5P5HhVHwjG37aNkK+uw9g0+uowJCMaErb30x7sQ4xl6Fjv4h
+         5lEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756400690; x=1757005490;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQWSx8bT6V+HM/W9ets+QXcD0v/UrJQL7ZZAexBVPTE=;
-        b=ojxfB2xV+JWuVD7PRKg1hgB2SyhSHqBE1/1q9N5NhxvOeXS3ufT+EKzOps2HTTBAPM
-         iegyjbPpxi2YO2NeES1BuXnu4TOmClwYQb/YU5BK+e5SyNVSB9W1yVy4OKtJ0rziXpCF
-         nHcd/HkLTi7NpcmBfi87vhcWl3LdXR55+pORFhi8hbKSCmBV7QS2oyYXoWN+Tzpv+syz
-         vNge86MOOvE42oaPvakDbA/RwvGyG9gq7HtQxy/Zd04jjrPyKpZHQWUZHE5RdAtLtOr3
-         a89TdwcEFDy4ql2jhH2TB+EoDvTEg//qxdXL9/km2CbIQ8VmUHOcJgvYWo/oA9oSYgHb
-         fHtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCHmKtoPjRmbg6acZNkpZbthqcuyyB+Depq1Dvy1llAJjqdCYrHBMRkfOniqrdGeDVey/YGocz89I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6bSTMzLmcD6nS+XFsy15Y884QsqiIWiaK0//qAUqTE4G0lzgb
-	+kcrdhEof5uzZvXzCIyVI5Kbkpwu3G92LNcL/dzVZjwZK3mtNaW7t2quD2Um69YAZJHpJqBVj05
-	5mvBd4CcA7SE2R5URMrGOlqnFqHn5txTiETP64tF5V/LP5Iy0PftXJKniaYRWkg==
-X-Gm-Gg: ASbGncvSl4Jrbq7vIO3pLegHtxFqrFaKXr3N5P3ChV9ey8AlowaLyU9/ITfP1E4i/SF
-	6J68pf2JUyn241wzz1KIBLIo4i/NRIWS7Cl+pc4Gu9W34sA7o6Q+8cMybhZsE7QeZBzYVCVw8oG
-	8mk9SLVMMlvHVqF0HIuOZ+vdiQON2HRdKxLez/XB34NXUjOEFzdb4IL4LuyRjZqkP5yPU9VBY9B
-	WqFd4g5rRAbf816R+3XSzEVkHiYN47BIwggtoDnK0edswtjro492JENOmPKggknIbJpTMalYpWw
-	+1QXojFC5JWbDv4mqej9yukYwpvJXXWjxeDSH3CHsF+tPWcWILcO1RtaIGVMp4xV4FH4n+aI0qT
-	a5Mdefp5zsrPAzKaAbak=
-X-Received: by 2002:a05:6102:945:b0:521:b9f2:a5ca with SMTP id ada2fe7eead31-521b9f2aa92mr5454482137.13.1756400689781;
-        Thu, 28 Aug 2025 10:04:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFK33mKzOVRkyg/syyoWlGXnfN23Xh+fbGd+pr1oPcAGqsYr4OfVhyh6dTOdU8MTFy+2f9q6Q==
-X-Received: by 2002:a05:6102:945:b0:521:b9f2:a5ca with SMTP id ada2fe7eead31-521b9f2aa92mr5454448137.13.1756400689195;
-        Thu, 28 Aug 2025 10:04:49 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc15c83bbasm12882885a.60.2025.08.28.10.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 10:04:48 -0700 (PDT)
-Date: Thu, 28 Aug 2025 13:04:46 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Ryan.Wanner@microchip.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
-	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v3 04/32] clk: at91: clk-sam9x60-pll: use clk_parent_data
-Message-ID: <aLCMLs6FLp5TZAA8@x1>
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
- <2e7902b73fa6bb5bc8698b3ca0fa7cef583b76f5.1752176711.git.Ryan.Wanner@microchip.com>
+        d=1e100.net; s=20230601; t=1756401544; x=1757006344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SS4pv8uyaXLZEUMjbC2GJgsLUt5PP91S4SC3iNr8JIE=;
+        b=n/JTgC4I3IW6814pe/YiTW/PnJ2bqEr/XY71snk70r8Rdt2OV6tpLLTlsVKx/UNnbR
+         Q/TXefjQt3KWGK0aOTzGCYF/ZgHYOTJZUjCp7h1I7cpMQq3mFi8xsLSlXPzpOz/IVcbc
+         QjDJUVS7fICjSv80S5151K1C0RETqyEHCvFx+rH9OaoVOD+Hkv42dd4h9wPC3yIeRh+E
+         w1Q2iHqAyuiQpfJGxX0XTCHw1KEC9ctQJhl4Q8m6Xt5jUlHp0icvfZ99Mz1kPrfzoLmX
+         T1SfX7uQrIgrg7xrXWs0oVYLIuThIS7EoFktx1QzcCsptU7SR+L4XtkZT/XFW3Cp5g8V
+         UpEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBa5k+mZQiDt0S0ZTIhWgv7noMtqIj+PFRcEjioo/MEbva+BvTyDRwxJvOYKL0n/YH14HSX+q7JszW@vger.kernel.org, AJvYcCUXZLgZNpZAjTMSealn1HQMnxDD8iFszliZWn0C4V2ilTveq+qvda7siVf/MwsSNH9qj6NxJWdlzB7P@vger.kernel.org, AJvYcCV9RAoS8gNgfyTjTNcn6R4rOUfsxIUbBHXigItqshuIYSeIScTop6b2KWJ6LYK6kKC6AzbMoWIuwkNqvw1u@vger.kernel.org, AJvYcCVSJdinKHvPCX1wpjlobmaRyzIcazfGoEqqPpik6yhcT7sOq5odu1Q7sLxDCuLwigXGtebViR9q9y95@vger.kernel.org, AJvYcCVp8ixI2tQY4z8ky1mYOoMNMEexHKYOk7OYirIKdHBSGMhCkeQQY1T1eJlkHP5JPg1MILXc0h100O4=@vger.kernel.org, AJvYcCVtXDMPfUlvbxNu3fP+pKjbBlNOZCKTPfyjqG0F8ItcqU+qWpY1n3pyRoSN7IDsUpiC0H/iPLTxbXmd@vger.kernel.org, AJvYcCW65DBx7BAMTLd85Ul5qOgMJG/luZ/5DVXEYs+YGhKPGldV2Oe10UDjoGI9Nb7iWQ2SL2ZAbHhKzat5bqO4Oa5k@vger.kernel.org, AJvYcCWd6W8zmw45ijKWJ5+PpuwW1Or22QLB3mDfVPvyFxpVCD6fiy+7gHkRrRdqDGEjc70WDXZeRTeswETo@vger.kernel.org, AJvYcCWnzpZufkX6uylH5sfx1xvj/DkL1cyMEi3bPh23EaTkSei0+3VE+12K5te/wzIEUN4c+QJGjPEv9AWUmg==@vger.kernel.org, AJvYcCWokkqmb28MSp6aPx3LMZCk34o5zu+5IsNCTRWYEw5lwPhbJ/f8+I9N4zSqvhQEQrDmTGCEV7pH3kH09jjJ3y8=@vger.kernel.org, AJvYcCWzIIxyZ+7WWV7IEXk0OUMjXUlS22fOYcnhAsj4P/cO9D4yP+Pw9TbVOtRjwpZMkaKNhjbBiWT7YbB1@vger.kernel.org, AJvYcCXEmmsOKb+AD5PcpVEIwafxQfvlI4JuJ7VCshwKcQOsN/WpPCDSsiEwnnHnP3FJfJ7+KEx36n6UN6RFLKY=@vger.kernel.org, AJvYcCXMwnfQ1IUK8MITtCnwYIvWs7nOy/ffePPv6VlK2RGB5IE3j1SLQjhlArHbdh16kos/8v+eEFhweOmEXndxKoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy6norp54vk4rnN353sWnVHYIze17dMDiKXCG0XErk3TH+pPBG
+	P/xHQyC96nQzazue4wHmmF6XTrbMRPSLYbASQngUxQMme3uPx+GhqIy5
+X-Gm-Gg: ASbGncvo+kSc+4xPfdAFl/qzPtj8VURi9+u5sHNq099Fwm8UmxDEjnBEzTozl1nqGXN
+	ws6rOqX0nM3YWqAes9vel31GRfwE/kWArV9jQzWuH1QWn5UdijT3ZtTh/oXWm82aDEIfk77k1Uw
+	75WRCKSNOC/kz6pNLaPRKPqiGxxqAE7J4Zr8SdsFpkYlHIn+4QftR/Bmw1m4dBBZT8c2fEV0nPX
+	x08UnlDOFACE4E/F3l9NpE6aZ8wdG8TP3gIRRx0g1C69KMDitetX32HALNqpyZPvd3Gg0d9iGdD
+	B4hgtHvvp2xmgqsx9EfjPEDAwoG55WZ6zG7o7YChrVLGHVCbdfU1CnmtiVB2gC4moo1V3i+1+hM
+	UKVp+dIjCmZAxW/sgDGXSmEGd2uJYHxBqRCbkhmGGYIEiPSVR8PORUQ==
+X-Google-Smtp-Source: AGHT+IFPj3GBG1tXe0w52JDhOrrrStWKIT6zs8hpAEsM8UEVZqo8QCtKE2lg8olsPKFlf0oBzRgObQ==
+X-Received: by 2002:a17:903:2391:b0:249:308:353 with SMTP id d9443c01a7336-2490308048fmr5489935ad.41.1756401543466;
+        Thu, 28 Aug 2025 10:19:03 -0700 (PDT)
+Received: from [192.168.1.111] ([59.188.211.98])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24905da2f20sm739185ad.82.2025.08.28.10.18.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 10:19:02 -0700 (PDT)
+Message-ID: <86ab9bd4-9a4f-4ae9-930f-5fb9ef69c963@gmail.com>
+Date: Fri, 29 Aug 2025 01:18:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e7902b73fa6bb5bc8698b3ca0fa7cef583b76f5.1752176711.git.Ryan.Wanner@microchip.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
+ Pro/Max/Ultra devices
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sasha Finkelstein <fnkl.kernel@gmail.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Johannes Berg <johannes@sipsolutions.net>, van Spriel <arend@broadcom.com>,
+ Lee Jones <lee@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>,
+ =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+ Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+ <932e0085-c901-40f8-b0d5-67f8f0b934e6@gmail.com>
+ <20250828165012.GC204299@robin.jannau.net>
+Content-Language: en-US
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20250828165012.GC204299@robin.jannau.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 01:06:57PM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Use struct clk_parent_data instead of struct parent_hw as this leads
-> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-> conversion of existing SoC specific clock drivers from parent_names to
-> modern clk_parent_data structures. As clk-sam9x60-pll need to know
-> parent's rate at initialization we pass it now from SoC specific drivers.
-> This will lead in the end at removing __clk_get_hw() in SoC specific
-> drivers (that will be solved by subsequent commits).
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Add SAMA7D65 and SAM9X75 SoCs to the change set.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->  drivers/clk/at91/clk-sam9x60-pll.c | 14 +++++---------
->  drivers/clk/at91/pmc.h             |  5 +++--
->  drivers/clk/at91/sam9x60.c         |  8 +++++---
->  drivers/clk/at91/sam9x7.c          | 17 ++++++++++++-----
->  drivers/clk/at91/sama7d65.c        | 16 +++++++++++-----
->  drivers/clk/at91/sama7g5.c         | 17 ++++++++++++-----
->  6 files changed, 48 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
-> index cefd9948e103..03a7d00dcc6d 100644
-> --- a/drivers/clk/at91/clk-sam9x60-pll.c
-> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
-> @@ -630,19 +630,19 @@ static const struct clk_ops sam9x60_fixed_div_pll_ops = {
->  
->  struct clk_hw * __init
->  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
-> -			      const char *name, const char *parent_name,
-> -			      struct clk_hw *parent_hw, u8 id,
-> +			      const char *name, const struct clk_parent_data *parent_data,
-> +			      unsigned long parent_rate, u8 id,
->  			      const struct clk_pll_characteristics *characteristics,
->  			      const struct clk_pll_layout *layout, u32 flags)
->  {
->  	struct sam9x60_frac *frac;
->  	struct clk_hw *hw;
->  	struct clk_init_data init = {};
-> -	unsigned long parent_rate, irqflags;
-> +	unsigned long irqflags;
->  	unsigned int val;
->  	int ret;
->  
-> -	if (id > PLL_MAX_ID || !lock || !parent_hw)
-> +	if (id > PLL_MAX_ID || !lock || !parent_data)
->  		return ERR_PTR(-EINVAL);
->  
->  	frac = kzalloc(sizeof(*frac), GFP_KERNEL);
-> @@ -650,10 +650,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->  		return ERR_PTR(-ENOMEM);
->  
->  	init.name = name;
-> -	if (parent_name)
-> -		init.parent_names = &parent_name;
-> -	else
-> -		init.parent_hws = (const struct clk_hw **)&parent_hw;
-> +	init.parent_data = (const struct clk_parent_data *)parent_data;
->  	init.num_parents = 1;
->  	if (flags & CLK_SET_RATE_GATE)
->  		init.ops = &sam9x60_frac_pll_ops;
-> @@ -684,7 +681,6 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->  		 * its rate leading to enabling this PLL with unsupported
->  		 * rate. This will lead to PLL not being locked at all.
->  		 */
-> -		parent_rate = clk_hw_get_rate(parent_hw);
->  		if (!parent_rate) {
->  			hw = ERR_PTR(-EINVAL);
->  			goto free;
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index 63d4c425bed5..b43f6652417f 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -255,8 +255,9 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
->  
->  struct clk_hw * __init
->  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
-> -			      const char *name, const char *parent_name,
-> -			      struct clk_hw *parent_hw, u8 id,
-> +			      const char *name,
-> +			      const struct clk_parent_data *parent_data,
-> +			      unsigned long parent_rate, u8 id,
->  			      const struct clk_pll_characteristics *characteristics,
->  			      const struct clk_pll_layout *layout, u32 flags);
->  
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index db6db9e2073e..fd53e54abf88 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -240,7 +240,8 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->  	sam9x60_pmc->chws[PMC_MAIN] = hw;
->  
->  	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "pllack_fracck",
-> -					   "mainck", sam9x60_pmc->chws[PMC_MAIN],
-> +					   &AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MAIN]),
-> +					   clk_hw_get_rate(sam9x60_pmc->chws[PMC_MAIN]),
->  					   0, &plla_characteristics,
->  					   &pll_frac_layout,
->  					   /*
-> @@ -266,8 +267,9 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->  	sam9x60_pmc->chws[PMC_PLLACK] = hw;
->  
->  	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "upllck_fracck",
-> -					   "main_osc", main_osc_hw, 1,
-> -					   &upll_characteristics,
-> +					   &AT91_CLK_PD_HW(main_osc_hw),
-> +					   clk_hw_get_rate(main_osc_hw),
-> +					   1, &upll_characteristics,
->  					   &pll_frac_layout, CLK_SET_RATE_GATE);
->  	if (IS_ERR(hw))
->  		goto err_free;
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index 31184e11165a..edd5fd3a1fa5 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -739,6 +739,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
->  {
->  	struct clk_range range = CLK_RANGE(0, 0);
->  	const char *main_xtal_name = "main_xtal";
-> +	u8 main_xtal_index = 2;
 
-Is there a #define somewhere that can be used instead of 2? Or a comment
-at least? This applies to the other file as well.
+Janne Grunau 於 2025/8/29 凌晨12:50 寫道:
+> On Fri, Aug 29, 2025 at 12:11:40AM +0800, Nick Chan wrote:
+>> Janne Grunau 於 2025/8/28 晚上10:01 寫道:
+>>> This series adds device trees for Apple's M2 Pro, Max and Ultra based
+>>> devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
+>>> follow design of the t600x family so copy the structure of SoC *.dtsi
+>>> files.
+>> [...]
+>>> After discussion with the devicetree maintainers we agreed to not extend
+>>> lists with the generic compatibles anymore [1]. Instead either the first
+>>> compatible SoC or t8103 is used as fallback compatible supported by the
+>>> drivers. t8103 is used as default since most drivers and bindings were
+>>> initially written for M1 based devices.
+>>>
+>>> The series adds those fallback compatibles to drivers where necessary,
+>>> annotates the SoC lists for generic compatibles as "do not extend" and
+>>> adds t6020 per-SoC compatibles.
+>> The series is inconsistent about the use of generic fallback compatibles.
+>>
+>> "apple,aic2", "apple,s5l-fpwm", "apple,asc-mailbox-v4" is still used.
+> Those are less generic than say "apple,spi". For "apple,aic2" especially
+> it's clear which SoCs use it and the set is closed (ignoring iphone SoCs
+> which very likely will never run linux). For the interrupt controller
+> the fallout of not using the "apple,aic2" is larger since even m1n1
+> expect that. irq driver is special in so far as it requires more than
+> adding a compatible.
+> I think "apple,s5l-fpwm" and "apple,asc-mailbox-v4" are specific enough
+> and describe simple hardware so the will not cause issues unlike the
+> complex firmware based "apple,nvme-ans2".
 
-Brian
+All of these compatibles has around the same specificity as "apple,nvme-ans2" which is
+a mistake of using A11's version (ans2) to describe the M1 nvme (ans3). Though I do agree
+"apple,asc-mailbox-v4", "apple,s5l-fpwm" and "apple,aic2" should be fine compatibility-wise.
 
+Although AIC2 compatible should be fine that may not hold for later versions since Linux's
+AIC driver is actually AIC + core complex FIQ stuff, so when you do add newer AICs it is
+probably better to use SoC-specific compatible there.
+
+>
+> Janne
+>
+Best regards,
+Nick Chan
