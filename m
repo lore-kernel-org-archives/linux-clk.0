@@ -1,102 +1,125 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6402B1A3172
-	for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 05:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C242737F3;
+	Thu, 28 Aug 2025 05:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756359357; cv=none; b=VMYoEAGadrSRS/axIpClxmiddRvNtdQC24TLV+GYgHtjhP4kaBJZLsxm6G0IHXKj22nIy/cPDfh/1VVTBBbdPau8+IzVL9ApQ8yXE2JSwnY58smd/Of8R4vBPalQYGyxkt+lZMMQlsDbhKh422Z0ybEtBy9oDmSBkyqN/Cudne4=
+	t=1756359866; cv=none; b=PFuMiqKXhGZkFKRJyGwV5+7YlfpnjF6pqJfCkrk/ed0RNcEIdJNCIfBHIq/qcjSqIHZeyH7gW6lbPH8WsesS1riGnidLrNYx8CRJnjMrxNkHp1n04sJwhexadnMOFKdZ/G1c/LxxU31CMZB5lZ+m2RW3eNR7VmNxkpMnlaB7DkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756359357; c=relaxed/simple;
-	bh=rcAWr9JSebwJfCokBDML03Zmc1hKN/PsbbEvit6r3QU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KtDX+Heg/KV85pbLsBwBoCirbDaI2Rszzv0ajG15llUGp4UrEb6JskeukCSV68tC74JcEJQ+PRQgcsiEsqsVwjIVrryU7nfqnoIXuTdOf3erDu3lzr4M1YNk0dV+wiApZVBPNjRuVeaDIAD5BkTcbYrUe1ukptVN4oVXq10c8To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MaUYOxv3; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756359866; c=relaxed/simple;
+	bh=SVm/66f36wSgvenSHIMpwxxA7rJfcYwK08iUz6qNS2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NgKLdwn/C0Fx7f6Sw+zzOjV7GRs8jmbiGyFXU25psuOStZ75pWQAYKS4kCjYWsbVLPVBMnF35ikAvAp7OdewPbX5jtJNWIEvtSI8rZXvNnqXHrM3iMAEDQOL9Fwt4PGX5touIX8TFLK2Unb1Fj2X30Wcsd6nWz7qftuYI9X/jl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqtTM4mE; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MaUYOxv3"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b49f7aaf5so2570805e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Aug 2025 22:35:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqtTM4mE"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so596411a12.0;
+        Wed, 27 Aug 2025 22:44:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756359354; x=1756964154; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GVN6vmL2mzYorsNRnKCEmc0gW60w1iaICM1/zHjRYZE=;
-        b=MaUYOxv3AXHaqpmdWy2tM0PWw8OFhZEKF+jEJbwScyJUD7C1Zr7f7tOywNzbXlZNae
-         BiIauB8V9o/NsEfcz7RDot3hTxtTBdVSQY9iSNdbWA7mNJbStfPolC21qzOJoZhq5CAW
-         KvpVpyCiy4B9h1uYnDOgbtyDTzvYVpdvzVaddzvK0HmDvTcYk+GRhZKDMJ8SdEuitENj
-         dE+7bR/uzRI1FmM7iue+0xixWa9corVyQaHRs3ke4s8JldQvBIljiZM9Kop0rtZ9+0Qp
-         awmeRRyVPeOU6vU5m6IVFa9IW7CgXi8XdR1WgFxINBbGxD+Fmmt5UUIQb/JmV/Oulh+6
-         GaXw==
+        d=gmail.com; s=20230601; t=1756359863; x=1756964663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
+        b=DqtTM4mEDO7gt7S3ueSWOOzeVNFIzQtoLBGPFkuMONJGT0fC/lnTF6G+aAbjXghh0/
+         WDkNpFDJzg2JwDfbTwPXq8/X9SbsfTADT83V6LvkiRgGqkq8dwE3ubMPPQ8IaEqUxgUH
+         00y72Hl0YL5imNPmD0NR16xH/LJwoTnduQllXTGfAYfLDz74OY/Xkci4QQpeC65Zwb3S
+         El3Ym43Z7Bi9mQrbQorOV9W6f1CIEmvnNqtYZkjzu0/7x/I3Vv/KmZ45SFASVclRECWG
+         vTTNC92+QJ+cpIs/MoWdGFITHOMoBVx/DYBvDMrNu3GDNAvR3SX2xNa41MBGdxT02cFR
+         DNWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756359354; x=1756964154;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GVN6vmL2mzYorsNRnKCEmc0gW60w1iaICM1/zHjRYZE=;
-        b=IMVeckzzD+oREqX5cAsBMgAqv2VgxaSz8QkjRILyuGnGU/Y0zzOkJooMR2EtKlO0N0
-         O6JhmspLuZKlkUYKvyyZRuh1GsjtMic7e/K2+MgnYGWRh0bq7jb81jrBPCmy+7pWqjoY
-         dMzr+YvudB8N/5hrIItIhpKPIaeU/UmnQ8E2IOO7Cchksog7gfLNaWvnBLDazVvLBt/O
-         H2IMtxdJeVJd1a3liUEoMFOjBE0GwRP7E4qAdZXC7YvlG1CDl/sTlvka8Y1eR/YEwDGM
-         jOVZY2LCvm0LVhsUBsOTtxzPqYDigYzLWZNYnysaaZBJeBH+fef5N0VJ4EhYHdUgNgV8
-         Hk6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6L7otu+mDmzu7mrZ4s0A/Bydd57zPbnJqW08LB7gRIfoS+DfGk0tPyiyyQk5Nw3rLHR+Iz10vC9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAuiwJDX9F8M7f54InTsMNQPDVN5GnPiBPm/c1N6gEm4JE+ERY
-	8ADuTBqgR1+URQob97YUoiApz0oV2G174tZqMB4h/al+QlapSO2eETQZ4qCGDHk001M=
-X-Gm-Gg: ASbGncuK9PUA5Kh0VsOYGkjFer9EBe6zhKIjFSHHs2a4kU1sJtqULraHiPR/R6MwDAW
-	bXGcY9TviUlPfNanEQvfFDMlFXSL61/5SOuy7d6bRG9iYUS3v7+gjAQezPrGui9hbVUrgrSK0T1
-	nPjwD207cVgOA2GD7wNsVis19L2Z59VUDfr2y7ep4Pp0cC1H495DITf3POwJFOSJzS+z0VYSjHv
-	fDsBG59EpcLu2qsXbdVQuPcZtXTIG10GxvBr086oqILGxdUJKl/Y+GTYTGDUeco9gkg67LDBfnp
-	PSKVY37qj5Cpk2a1dWHeRXfnuf+Fp9tYoNQJO9P3i2emJ7Si8WNhlj6lgaUo4aeP60iYBuEJSX4
-	NG/9RrLBBZaaokWp93rrX5sUgi8mqAUZZIOEJqTk=
-X-Google-Smtp-Source: AGHT+IHIR++z2ZTED5bprbyTQI3HdqS+SJGiXMbzBh/T/8B21WwlVZNnxeYMt/U1HQ0RYCeCpzMWIA==
-X-Received: by 2002:a05:600c:1c98:b0:459:ea5d:418b with SMTP id 5b1f17b1804b1-45b5179f3dcmr185227785e9.9.1756359353745;
-        Wed, 27 Aug 2025 22:35:53 -0700 (PDT)
-Received: from [192.168.0.251] ([5.12.38.90])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cd0acafd09sm4483005f8f.31.2025.08.27.22.35.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 22:35:53 -0700 (PDT)
-Message-ID: <407b0663-1f54-4cc4-8012-75d61e94e6d2@linaro.org>
-Date: Thu, 28 Aug 2025 06:35:51 +0100
+        d=1e100.net; s=20230601; t=1756359863; x=1756964663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
+        b=HZZKO0ICW6rF/E7gAGboUx1c3CHZ+0V/GS8e2ROPdFFP3X+LTpBoBXA1QzLjrTbt3y
+         BytBqU8H186ph+545CgnEGv+Yj+P78fphh0WSctE2hOWSR77XGrx+nuDyvnEkH5Fw+79
+         fEbryT0R6nq8TbWZs+nDhr8tVPHO75m5sZfVQAibjtKw2Ca2CxdBxkLRNRzoPAqoS75Q
+         19g+LA1XqlG+oDV8gM+K4M9IjB6R4VfoWcGBmN508ZqzEZKhH/wThi0Cw1u6qE+6pfSl
+         O/cYNvGoyXp5FsCBrqgLZXPGIpp/R2sh2YTHq3lwQQ847QCLWJ1bXpMxJEvHkG2oFgt5
+         mJ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Emp9c4Vv2vmgkDG+yPt0Gw8w+CSBWAmdPyDb5IhFqtcJZFCLRjvhR+9A5g7KGUE5PVsKt9vvJqnxWts=@vger.kernel.org, AJvYcCVDy2Fhs34LfbC9tay41S/LbWYkZguACpv85Taa5cWUEILxpoN+/iRV1I+gncB/sii16L1IkbXniLnbaMBu@vger.kernel.org, AJvYcCXt1ekCVppcO66RBc/18zUKS02QfVu0nxbd5NEm/LRFG8ibphiNyrXDz9VKmMp6BO6SCAVmD5LS/94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5U68RvDKIAzq6l98ZWUqP5DukknpB3TKCo1aIYHVsnCN+nhDD
+	SPrEyjMYfKbklXpFTsR0Msfe9PpyT9JoSm8gOvWSg7lJaq26Ma71XGyS
+X-Gm-Gg: ASbGncvGPPURLiudaF9AstRsJhHftnDOBAROakwlWkOLHYhuyNd4ovRgHH0v9B/Z12W
+	kavATmgSa1s8YW7/rNtcUMeJtcUozVCmXuoC6P2WsxsGoPBiYARvk4L/UYMu3shucnZWnwRXkG1
+	X40T5IgFUm2Dw6LlkfT3dhlRuPf4GUJFb+rfqvxTr9kEfeFgsZ66UWKubvD6kxjS0NqUr+CuEwW
+	i00w5wgE2sbwEJW7L7ZB1ApQXBtx37b2M62ynNcgHxPmuOPYsYXbIUFEOQq9oe8Fv9TGr2NmcA0
+	TModSfD+zuQ7I/qJMNV/KL0xzhQtn0VY4Fxuf+izLb1+n8GSWMPu7WWnvWU3nTLmsIss/dmxLre
+	lrbieq7ufj40OJg==
+X-Google-Smtp-Source: AGHT+IFtcxH3zxd8aYow9gXMQsfmYAfh4wBFQfjq4IBvLJ+tK7MVsPB6uKxjlRpyveKHwrvoaAe7+g==
+X-Received: by 2002:a05:6402:52ca:b0:618:afa:70f7 with SMTP id 4fb4d7f45d1cf-61c1b490275mr18123976a12.12.1756359863165;
+        Wed, 27 Aug 2025 22:44:23 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cbbdac051sm2102841a12.29.2025.08.27.22.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 22:44:22 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/4] clk: tegra: add DFLL support for Tegra114
+Date: Thu, 28 Aug 2025 08:43:59 +0300
+Message-ID: <20250828054403.7112-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] clk: samsung: add Exynos ACPM clock driver
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-3-de5c86b49b64@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250827-acpm-clk-v2-3-de5c86b49b64@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+a ring oscillator and translates voltage changes into frequency
+compensation changes needed to prevent the CPU from failing and is
+essential for correct CPU frequency scaling.
 
+---
+Changes in v2:
+- dropped 'drivers:' from commit title
+- aligned naming to Tegra114
 
-On 8/27/25 1:42 PM, Tudor Ambarus wrote:
-> +config EXYNOS_ACPM_CLK
-> +	tristate "Clock driver controlled via ACPM interface"
-> +	depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
+Changes in v3:
+- add DFLL support for Tegra 114 was split into dt header addition,
+  DFLL reset configuration and CVB tables implementation.
+- added cleaner commit message to dt header commit
+- added T210_ prefixes to Tegra210 CVB table macros
 
-I'll need to update the depends on line to:
-	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+Changes in v4:
+- expanded commit message of car header adding commit
+---
 
-otherwise on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
-ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+Svyatoslav Ryhel (4):
+  dt-bindings: reset: add Tegra114 car header
+  clk: tegra: add DFLL DVCO reset control for Tegra114
+  clk: tegra: dfll: add CVB tables for Tegra114
+  ARM: tegra: Add DFLL clock support for Tegra114
+
+ arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
+ drivers/clk/tegra/Kconfig                  |   2 +-
+ drivers/clk/tegra/clk-tegra114.c           |  30 +++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
+ drivers/clk/tegra/clk.h                    |   2 -
+ include/dt-bindings/reset/tegra114-car.h   |  13 ++
+ 6 files changed, 204 insertions(+), 34 deletions(-)
+ create mode 100644 include/dt-bindings/reset/tegra114-car.h
+
+-- 
+2.48.1
+
