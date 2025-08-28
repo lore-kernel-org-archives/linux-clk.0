@@ -1,163 +1,170 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493E723D2BF
-	for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 15:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB852E7F2F;
+	Thu, 28 Aug 2025 16:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756396306; cv=none; b=qSJUJbr+dDQ8Hk1hAalmZ2minFJlvdgy3zcpyZEtIWtE/wu4mPq3s+1n47zwGnXwKacxbVrPHq/FWR0Se6EfKXbtRZp4ZJIchqSgB6F9Gk4aOj1SXlzpBE2flNBpeYhMpct7sYLleE+X+yu1xyWkjE7My+p6nsgg202Qh95YT+g=
+	t=1756396865; cv=none; b=H6huqOoL13zmqgJ5FI9ZAlOYVJ3HVG0OFTdqgP2xz3ipRW/ZkmqF78U7PeQcCiC+MVWarEM/dJaiDvu8IJghaY4XtxUc/szJ8NWNCkSXD4Q4w7ofjK8r8lecTAtRSY0jweRAuBHjQRJtG5LU7PVixX5S56+Tp6nuSfxWyhN2ENk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756396306; c=relaxed/simple;
-	bh=nuOece6ghhXcpjXrD46Fa2xlg5rsU0Y3LSu39LXs6vU=;
+	s=arc-20240116; t=1756396865; c=relaxed/simple;
+	bh=IhCwyVSLQaDPC1ItyuW0KFgIev1MsX9imMYlVGODsGI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7XhwdWxRTdeifkRP/JhQmQ9UtaB8kHHu3oPFqvqeNfz1K/MAf6UFvd0ZLbrk3lvNd0I/81yvXstBvHmRffhcPCphCOOMoTA2eCwMFefbcmH/D6GLBxW38DemmQDcxF0GKnOTLF2AcBsI/vX1nD/D979Nrr2U6S4IfOxmDkSEOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PlWvbwSU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=FV8HP3CR03JoqlKw16ttJ/WOlpuziHLmi1hp90NPLasaFML0bIi/NQj98rvtvoCSPkSeU+FQK/v6le/T7Dy+JTzjfL+mpNmm8Uakw+IG5jnMl5jqlT7qsLbHJgWRfuPukSZOFd4XSm+PJ7sFQT9peegAuk+2zhhZvH8bLeTlU+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=I0vds5M2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UQwmO8gI; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PlWvbwSU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756396303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S+knyS2+c+jGuo6fC46mPYtwsTJxg5ztsNayK7xPVlA=;
-	b=PlWvbwSU6PU4JG8If3rRoqGtufY62zcHHcb1QA/Juv8GSJ0uyVNaY2Ni2oy+DIYwczs35f
-	fPwKQTZH7FzIS4+LQj3gZdqvjnpQrUgh+kMEkoBLRGt5e7DoT4zH+j1gaybkIP4B6wYWfk
-	BvLPRNN27Xg7Ok/tz8BIRsMDtTxaXeA=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-186--cS79Id6P5eKb-qH9l12nA-1; Thu, 28 Aug 2025 11:51:41 -0400
-X-MC-Unique: -cS79Id6P5eKb-qH9l12nA-1
-X-Mimecast-MFC-AGG-ID: -cS79Id6P5eKb-qH9l12nA_1756396301
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7eac60d6c18so191515185a.1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 08:51:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756396301; x=1757001101;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S+knyS2+c+jGuo6fC46mPYtwsTJxg5ztsNayK7xPVlA=;
-        b=K42EKShYJbsndcCL952HdnNYLGMs+oUzvWfaCcbQqF4/I1uRZ5g/iB8OZ1dlI2wHtA
-         O2DfCYFyABx2BDa+A1VEtEyVOOowcoe+8d57SJrvpoA7afH57V20soEWJyGwRomT4wnv
-         cxHNFhCj4AIAxRpJyiw0qcBENnBtomxCDlQ2pPX4/nrjSuLaaZ3+bLeB3Umf1vnOsqt6
-         SONnnDzF/Lnke3zoKWSukiG2Gs1vKaS4YFLh6DIfyTeBgFpem17ILFLEYLiFKVRlECai
-         LVbJ+wzaJLUEqbG5ZSFQ9ruZMScHSKWzGuJvMBWM2b3p5DwUKKMNkUB6kIPWTrOCgKaC
-         1nHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTWGSHSMnrFeO0t+Ti+NOpa5gvxzO1/rzvPjWC0i/A6Raziwg+IfM+3HO9ePK0bxIVszY+SDtnogo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwifcLUu43ZUcjzhWHj2UwERknJ4uPuWqCP6qv1zrc5K44Mg3io
-	+Zhn5lf65iawuh9v7seSF+7QvRGZlvBawsjLs0cRKF4P5TgAj8oKAg9xUW1bDMc53a4BwlBK8Q7
-	VgU0XeNXJn+Nd6sRXvaTRLU4Jcv7nEaaWW6iilaGlr88MeIM1QqZoQx6oD5kgbA==
-X-Gm-Gg: ASbGncs+T2axlTf3g+Fpc19ff51+ALkTBt8FXY2+glkJU0G8Kis/GhVAbcMST0Z0o6x
-	yguBwXXJDqR3mYJG9Ktk3++lDNG1kU4A0yRulqCym8sqyXYFSbYUadnfbOk4OWSQ75KiPQzze1H
-	iKGu6jDg0ubtPVlRgpKPbfgRQKWCIeo1bUiAlgI1gHxZyN3s+/46foVd0IbJJmudCJoXCyYKFAs
-	SwDmvhjM4V77+R/uEqpQBNjseLazWAhiW/wyCMxakzPXy7uWnouMPXYDpvNvlPRb5gk2TCrULgy
-	QekozazY54VfTDHixo6Wpa0H2hPoOl5ZpIh8xDcokbd6P4wjrxEoD2s6b6qjhgpC3iaGxJqIf4d
-	pbn1nPfFcdGzoFn3eEkw=
-X-Received: by 2002:a05:620a:372b:b0:7ee:84f4:8134 with SMTP id af79cd13be357-7ee84f49bfbmr2632531685a.73.1756396301010;
-        Thu, 28 Aug 2025 08:51:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJeyZ8hC7qSu0hkLbJpyPcPTqfRgt1CgSMTN9TL/BiqkQO+pTUormRnaRlWD6V++9KCREhlQ==
-X-Received: by 2002:a05:620a:372b:b0:7ee:84f4:8134 with SMTP id af79cd13be357-7ee84f49bfbmr2632527385a.73.1756396300477;
-        Thu, 28 Aug 2025 08:51:40 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc14478510sm2413085a.35.2025.08.28.08.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 08:51:39 -0700 (PDT)
-Date: Thu, 28 Aug 2025 11:51:36 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Ryan.Wanner@microchip.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
-	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
-Message-ID: <aLB7CJY9nMLoS1or@x1>
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="I0vds5M2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UQwmO8gI"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id CFDC31380BD6;
+	Thu, 28 Aug 2025 12:01:01 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 28 Aug 2025 12:01:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1756396861;
+	 x=1756404061; bh=X0y5RQTmfwxUObhRto5XKdRlcInx4/Tzp/ibu8iObz8=; b=
+	I0vds5M2ZwZ/2oQ5PNgXiYYN+e9KqQ+21lQKMj2rlUB7qGtjIwE2S1czCT6Kj3mO
+	B3rCT4TSXFmrs2KqxhrTjjzcNHj1PKES0qeM4gAIqognX5qNWUmCKwEySizle3oV
+	FgJPiOVf6COGjfksPddIITc3Qi40GWDNi5ySxPvgf4+rryLSti++rzyclUXCPExt
+	VmvDLkEzuRoUPIKITRnFr9T1C4s5yQx6WpmkX9ZaT6d0jXKS/3t6T6q0YOtf5HPo
+	5wSdBfPjOhtvp+2Lx8cCFC4itL5YsBqXSHvMJR/FJGGCCi34aO63jYfdIJqpRqhi
+	HtoEsRbYXoY5Dfxl4Uv6Bg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756396861; x=
+	1756404061; bh=X0y5RQTmfwxUObhRto5XKdRlcInx4/Tzp/ibu8iObz8=; b=U
+	QwmO8gISdU25Fs3HSYuPhjs9y7oII5xEQZmiGUN6AynJMwVcwv1yPJOzlr3OGowA
+	J3kw2w52WOa7u2NUKOxzlAjTtjdUEa+UjUu1AyeUiMeIXa7nyD0ZxJLsl471kUzN
+	z38wDdRjfnKe9fx8F7dnq0FaG8NMvEuvWT7Xxxcjt0dGSF7AQ2ZLHNLOwqQq+JKp
+	vtyv6t4WFCa5A18ZKdeQn2Ao2X5/tij28k21rRW7LYGsjO+SkUvRJaTcv+VcN2aa
+	u3Zf/oqcuHBmRF/LknGTuZWN6sIntoqw+fb+j1GMTj1Fal4hRXQnCNpMSK+KYWTe
+	gDBSKWi41Ng7rYALGBwBg==
+X-ME-Sender: <xms:On2waIxJlexuPzypFfc2uxTpdNwLE_OHXPTlfTfwFUFslgrePoufjg>
+    <xme:On2waDv810MwADrY_nRVH_KwjmB3F0NMW_ws2Wrj-VWfWFKq08Xz6Zbgvzk7-JulL
+    XJbkV8aOPj6CAlPclM>
+X-ME-Received: <xmr:On2waDRzvvGywk6DwPkLvk9uBcG00uECS6wd59vVf4ke3ZxWDi0fSZhxMPoY9B8Qh9uJIEolZzSsKsd-tT30ZdyMq_qYM5dJRrk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukedugeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeflrghnnhgv
+    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepve
+    efkeeuudettddvffevhfevvdekhffgveehfefhffehfeetgfetffeugfevfefhnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrg
+    hurdhnvghtpdhnsggprhgtphhtthhopeeigedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomhdprhgtphhtthhopehsvh
+    gvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiif
+    vghighdrihhopdhrtghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtoh
+    eprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprhgrfhgr
+    vghlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:On2waBdAe8K_bVqvNlQR0j5V1DKUm0Ra1Gjf1ktaipolDUs-krUtjQ>
+    <xmx:On2waJRmnZC6YgZWEQVw_LwCMcqtoCD8bnwuizrYGROWUpfHSKqzHQ>
+    <xmx:On2waJnA2UkyifRmB3uklG3XznqZxfoMS-lY1Z4ov7UTS6RuoDIXUg>
+    <xmx:On2waDHqNwU0uR-xpYaUzht54A7lAkmGOQO7gUi2D5fEP12ITgI9gw>
+    <xmx:PX2waMoTJjhez4WANByCdWAkFMP5JaWhXJAkwB8SD_dJwvTzPB-wYtf2>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Aug 2025 12:00:57 -0400 (EDT)
+Date: Thu, 28 Aug 2025 18:00:55 +0200
+From: Janne Grunau <j@jannau.net>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,	Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,	Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>,	Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,	asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,	linux-pm@vger.kernel.org,
+ iommu@lists.linux.dev,	linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org,	dri-devel@lists.freedesktop.org,
+ linux-bluetooth@vger.kernel.org,	linux-wireless@vger.kernel.org,
+ linux-pwm@vger.kernel.org,	linux-watchdog@vger.kernel.org,
+ linux-clk@vger.kernel.org,	dmaengine@vger.kernel.org,
+ linux-sound@vger.kernel.org,	linux-spi@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 34/37] arm64: dts: apple: Add initial t6020/t6021/t6022
+ DTs
+Message-ID: <20250828160055.GB204299@robin.jannau.net>
+References: <20250828-dt-apple-t6020-v1-0-bb8e1b87edef@jannau.net>
+ <20250828-dt-apple-t6020-v1-34-bb8e1b87edef@jannau.net>
+ <5e0e51db-17ae-483a-bb96-8ab88ad2fbad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1752176711.git.Ryan.Wanner@microchip.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5e0e51db-17ae-483a-bb96-8ab88ad2fbad@gmail.com>
 
-Hi Ryan and Claudiu,
+On Thu, Aug 28, 2025 at 11:37:08PM +0800, Nick Chan wrote:
+> 
+> Janne Grunau 於 2025/8/28 夜晚10:52 寫道:
+> > From: Hector Martin <marcan@marcan.st>
+> >
+> > These SoCs are found in Apple devices with M2 Pro (t6020), M2 Max
+> > (t6021) and M2 Ultra (t6022) and follow the pattern of their M1
+> > counterparts.
+> >
+> > t6020 is a cut-down version of t6021, so the former just includes the
+> > latter and disables the missing bits (This is currently just one PMGR
+> > node and all of its domains.
+> >
+> > t6022 is two connected t6021 dies. The implementation seems to use
+> > t6021 with blocks disabled (mostly on the second die). MMIO addresses on
+> > the second die have a constant offset. The interrupt controller is
+> > multi-die aware. This setup can be represented in the device tree with
+> > two top level "soc" nodes. The MMIO offset is applied via "ranges" and
+> > devices are included with preproceesor macros to make the node labels
+> > unique and to specify the die number for the interrupt definition.
+> >
+> > Device nodes are distributed over dtsi files based on whether they are
+> > present on both dies or just on the first die. The only exception is the
+> > NVMe controller which resides on the second die. Its nodes are in a
+> > separate file.
+> 
+> There are some outdated / copy pasted from M1-series parts.
 
-On Thu, Jul 10, 2025 at 01:06:53PM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> This series adds support for parent data and parent _hw on the at91
-> clock drivers. This also updates all the SoC specific clock drivers to
-> use this format as well.
-> 
-> This is a continuation of the V1 of this series here [1].
-> 
-> This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
-> SoCs.
-> 
-> Changes v1 -> V2:
-> - Remove all the small sama7g54 SoC driver changes and put them in their
->   own patch.
-> - Add the SAMA7D65 and the SAM9X75 to this update.
-> - Add a patch to move all common used macros into the pmc.h file.
-> - Update changes from v6.6 to v6.16.
-> - Remove patches that where style fixes and include those in the update.
-> 
-> Changes v2 -> v3:
-> - Adjust each patch so they are fully atomic.
-> - Add a patch to have the SAMA7D65 systemclocks use parent_data and
->   parent_hw.
-> - Add a formatting cleanup patch for the SAM9X75.
-> - Adjust commit messages that no longer show invalid information.
-> 
-> 
-> 1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
-> 
-> 
-> Claudiu Beznea (28):
->   clk: at91: pmc: add macros for clk_parent_data
->   clk: at91: clk-sam9x60-pll: use clk_parent_data
->   clk: at91: clk-peripheral: switch to clk_parent_data
->   clk: at91: clk-main: switch to clk parent data
->   clk: at91: clk-utmi: use clk_parent_data
->   clk: at91: clk-master: use clk_parent_data
->   clk: at91: clk-programmable: use clk_parent_data
->   clk: at91: clk-generated: use clk_parent_data
->   clk: at91: clk-usb: add support for clk_parent_data
->   clk: at91: clk-system: use clk_parent_data
->   clk: at91: clk-pll: add support for parent_hw
->   clk: at91: clk-audio-pll: add support for parent_hw
->   clk: at91: clk-plldiv: add support for parent_hw
->   clk: at91: clk-h32mx: add support for parent_hw
->   clk: at91: clk-i2s-mux: add support for parent_hw
->   clk: at91: clk-smd: add support for clk_parent_data
->   clk: at91: clk-slow: add support for parent_hw
->   clk: at91: dt-compat: switch to parent_hw and parent_data
->   clk: at91: sam9x60: switch to parent_hw and parent_data
->   clk: at91: sama5d2: switch to parent_hw and parent_data
->   clk: at91: sama5d3: switch to parent_hw and parent_data
->   clk: at91: sama5d4: switch to parent_hw and parent_data
->   clk: at91: at91sam9x5: switch to parent_hw and parent_data
->   clk: at91: at91rm9200: switch to parent_hw and parent_data
->   clk: at91: at91sam9260: switch to parent_hw and parent_data
->   clk: at91: at91sam9g45: switch to parent_hw and parent_data
->   clk: at91: at91sam9n12: switch to parent_hw and parent_data
->   clk: at91: at91sam9rl: switch to clk_parent_data
-> 
-> Ryan Wanner (4):
->   clk: at91: pmc: Move macro to header file
->   clk: at91: sam9x75: switch to parent_hw and parent_data
->   clk: at91: sama7d65: switch to parent_hw and parent_data
->   clk: at91: sam9x7: Clean up formatting
+All fixed locally. I also removed an outdated "hypothetical T6022 (M2
+Ultra)" from t602x-dieX.dtsi.
 
-What tree did you develop this against? When I try to apply this series
-to Linus's tree (6.17-rc3) and linux-next, only 12 of these patches
-actually apply with 'git am'.
+thanks for spotting these,
 
-Brian
-
+Janne
