@@ -1,168 +1,120 @@
-Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E382225FA05;
-	Thu, 28 Aug 2025 16:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D896E24C06A
+	for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 16:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399820; cv=none; b=Zj44UL4bekv1FqANXM3ItE0CnwJder+tjtj+rygrry+z6eWwx9eSjLRtCTHfducDuRnHg5osGhErL4w8IhG2ZI+Q0GYuJ3HRZhwLdBuMRUeENjejxYScTeMGuL8AcBZCpTcsS3ivTE7MlsdeMamyDC0BXRFJDRr9rIjbhc3yeRY=
+	t=1756399942; cv=none; b=PM0ZsllqhNtlhAn6MZZV9pOelQlRoTQ1IcAXzLdx0XSZWe4KhsRLipPaYjxMb3RfWQMpsl4W7mBUEFGNaZsdJ/KE5vnEZJpE3n0UmCuIeFbeqR2HV48NnO7Ik+o/geKX7QzQRHeq3bfuyEC6pOZwgK9PKY8gYLNmVQ+DEPxxkq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399820; c=relaxed/simple;
-	bh=WHSQv1KYA+XyxHFfAXjPG2gWg6DDUwApOFqEq9D3d1E=;
+	s=arc-20240116; t=1756399942; c=relaxed/simple;
+	bh=F6F1t90tDYHI9HHx/dUs3bHIlZY2N4fRir8Q3403KXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhCJogixiQSxto2VwqK7zi21sKchCu7KPfNadSloAimmIgEFi5+6clULAOUIscFtLj/alwEGmsliH0DI5IUEFp+kUFtMbYLR6O83qmnnv2eTrJf4T8WO7azHA3V/PtQVWZ/4m5YZ/3BLEmA1a0mUfPDd2Af4hHJWRVR1CvXiZ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=mv9+17Kg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IyWfsEtv; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqRy48Az3/NO+EnXkTNr3HZauA33gJachpHEQ2IN4vskfq1sIwloihQjqPwXSrnjNvvHafxlK7g0kSuoUZaPuUzBOXERz6AYhJLNXo/WCaKCNpZkoattLRzhvIxLDSvN85keoIH/QxX/BVz0wMXru+krJFn4+aC/fAYQbms1OU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Krc99uc1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="mv9+17Kg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IyWfsEtv"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.phl.internal (Postfix) with ESMTP id E3DD31380CD9;
-	Thu, 28 Aug 2025 12:50:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 28 Aug 2025 12:50:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1756399817;
-	 x=1756407017; bh=0NVIgLeywlcdQ7Q96WR+bM0acpRT6H98AkXzmXrivW0=; b=
-	mv9+17KgF+5GxOl9vLcdUtzFnoGfgshEXGSdE9REgEQZq3GUbd6cGMl+1XHjHaGn
-	gRn5J3tBrLwKGOLArwU+SwnGxXBrO+6XMrQMC9uhnBHq4N7p4rC7aYyfMR/x7+VH
-	Kr1yZrgBgm4iZmu8nkX4VwnTVuEvm67D/eKs/7ybS2UNFANfW290F7mPGfTI/Dm3
-	5H0qXfPBjnhZzDwVXAiYOykUCMM0Z//BS8hMucloljBJmasWT9rSaZedbFDVhESx
-	Os9ak1XmWvhp8pecHT+xvsYiP9YA86zvkqt0LcDKtGaAX/lpBJqSVaybMEnv7kJz
-	fbmEr3UZ1qv3GSlhUph4IQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756399817; x=
-	1756407017; bh=0NVIgLeywlcdQ7Q96WR+bM0acpRT6H98AkXzmXrivW0=; b=I
-	yWfsEtvH5pa0deFWH5y+3Wv8iC++fyUJzaKl0zTLlHTFsrFBKltzqsCKNE2bpW7H
-	WZEdNUyqlCWPJ1gDLWtRpoUDSa9fNg+b8PAqdSspStFRXQR0qIjJasbTc5VXnDJY
-	LV0vY26Or4luziTABSgI82H/8Ov1+fhNzsxpTCEmcopAYLQhNfqfTcox4lobPbO8
-	tI9jNPtHd+bBhTSMwAAVyVUmvBXJiIGDe0RdmYT94+GNLj6uC0NVka3y5otetQ7K
-	jjfzsE5+DRrT+7N9usH8oy60yQi0nSoP46sUUZ+s/W9b0RCt9d99oXcOTu7zze7y
-	WBgtUjFRANmVIPI+elMlg==
-X-ME-Sender: <xms:xoiwaIbwiPlONZyvvi3nrwonaYX0GPTt0j98poxImmWpqps68_1DbQ>
-    <xme:xoiwaK2wEmopWAvQU09c0ZiTiWKcZT5jfQSOlyZunfuU5U7zsvsT6xpQcPiFu5btz
-    VzOLCZ9pvfsENega0I>
-X-ME-Received: <xmr:xoiwaL6z8yuoEP9fblhgra2VNvMI-jh6RKnJtliUwx53eQO20tt6-2dicZxHzpQoO5lU9j9tP1u5Te1bCfbmfw321V6aP0TULq8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeduheefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeflrghnnhgv
-    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepve
-    efkeeuudettddvffevhfevvdekhffgveehfefhffehfeetgfetffeugfevfefhnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrg
-    hurdhnvghtpdhnsggprhgtphhtthhopeeigedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomhdprhgtphhtthhopehsvh
-    gvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiif
-    vghighdrihhopdhrtghpthhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtoh
-    eprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprhgrfhgr
-    vghlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xoiwaNm2W47ghLtWIAD_pLahxBhBVbtlB0HjuziPYBUZSeeRVEXQTA>
-    <xmx:xoiwaC5DusAdyl5Pk1di6jyPCo5sIoppiKD0TupQW-3eWXylCA373w>
-    <xmx:xoiwaCsKTp4DaYaYaIDjWLqlvlKWjo035Lklt_v6NWHAVsNG6jOhjg>
-    <xmx:xoiwaFtpbONR3sJOiA3GJesirPwRAbsZWp3JhVVJESjdloGO55-IPQ>
-    <xmx:yYiwaGZUykDrx6nBmdQEI6U-4WzN_i3nfk1N2dRMiDOlhpPNNeGnuj8c>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Aug 2025 12:50:13 -0400 (EDT)
-Date: Thu, 28 Aug 2025 18:50:12 +0200
-From: Janne Grunau <j@jannau.net>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,	Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,	Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,	Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,	asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,	linux-pm@vger.kernel.org,
- iommu@lists.linux.dev,	linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org,	dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org,	linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org,	linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org,	dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org,	linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250828165012.GC204299@robin.jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <932e0085-c901-40f8-b0d5-67f8f0b934e6@gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Krc99uc1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756399939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xee6NKuNIkTbreHLQ12czC3T2u1dvCFe2tAbj30qkQs=;
+	b=Krc99uc1cpk9irdvRn6n8Dp8vLR74rbQ7EKi7nhcrnA6Y95L8GIgwjOSsZH7/X8p0x9nMe
+	SYgRMd+YId3lZ37pjgzhAKEUPL51abY3rlwQqhsO9Nqy1y6gpH70RoK4kBqb/RWxblg0O+
+	qfHkJTmiG94wJpi96tqCrCbyZTISVsI=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-x04wXK0RPTq9iHrB0uI11w-1; Thu, 28 Aug 2025 12:52:18 -0400
+X-MC-Unique: x04wXK0RPTq9iHrB0uI11w-1
+X-Mimecast-MFC-AGG-ID: x04wXK0RPTq9iHrB0uI11w_1756399938
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70dd6d25992so26630896d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 09:52:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756399938; x=1757004738;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xee6NKuNIkTbreHLQ12czC3T2u1dvCFe2tAbj30qkQs=;
+        b=i9aPh9nE34FoNWnGa+46yyC0+e4PjWSMTSek6hUlY3LbLsvWHQSRgzuEt+3SIDOfOB
+         ZhCfrt+yRes5BwFi5ZL2zwOdqUjHVLEeCU6XBdUY1sJG11dmVoI07EEYIQwqn4X8BXv9
+         rhdynkAHWi5KPrlXtwWkBZhlW+QZY316ejBI4c9YlraShDmciqx3CfvyhCsNig7iIU5w
+         iVJtBbs3bNyCNIA37N3ATv1f53xM6LWwIGxs3i7YWqYkUGbopI7DIL9QCwt9Gc+R7Sr7
+         QEoFX3HucnyPQGGDJFvsDQNftdF2iw+CjLwWsqQ4OJFUMMdy6i6uR81IJRuG3M0qtZjv
+         PSrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmBHAEVW72wbx1Za6lRgU/IS6IBG0iBdQ/+QU7/z/J0NompodxC43fWxobAnbtn47S5aDFwC7KYT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH+fZZJad006WIWX8HTLz8hZ0Jw/YZNL/mwXvivJESCzJvpR/I
+	l2eIXUgAKE2BGeJEMmmORlJnjR6KX8ANd/572yYDkLE6xco9SdI5r/DKC+x6gaevnY+oB8Zby5o
+	1VAaxwxZSgsXHmsgRFPtmIN0obO64F9tPOnE9E7jshsaVhGLmqu2qVHM6wvL+lQ==
+X-Gm-Gg: ASbGncveV+AHplRmcAKK1A7FnfxoMX/eheMRjb2QUtjEwc4SWAJ5EhVmQ2TwrFO/XMk
+	cPGvob5GMVmAgKlJZHmMcGBIYh9BWsEaRzf4KNksv96TRuRzxmyNaLdZbdp87M6R8QJkZpyLMAQ
+	1cmMLMdnkL+5KuKGJD1vW9yx12RW6mnPzawXe3WbqVDhn70FOraY5oXdq+I2CniwrqMWHvyHAZb
+	ySfZUL+AIFXD6u+a0kel4YKgz/HiAk6drN96Eop4jg+RmHT9JAKqGKn++V7JK4DtePtunkvBiE9
+	VeU6RttBrrJ0SJFMQMe0XdfHEYCZdtRE6w60XexttaAYc5cO0v1UZuYtVrplo2C6USL7YvKlXhY
+	NlgmvHPZJPE8ttGXOD6M=
+X-Received: by 2002:a05:6214:4004:b0:70d:91e8:6cb7 with SMTP id 6a1803df08f44-70d9725f3e3mr251186766d6.66.1756399937792;
+        Thu, 28 Aug 2025 09:52:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpZ4ICMlbvyyFxhlVpeB0jL0VatrVSJLDHmA5nepySE1dAK1W4TzFTEvJOVDIu9B0SbTwIFw==
+X-Received: by 2002:a05:6214:4004:b0:70d:91e8:6cb7 with SMTP id 6a1803df08f44-70d9725f3e3mr251186526d6.66.1756399937368;
+        Thu, 28 Aug 2025 09:52:17 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70de7e0ae63sm30790536d6.52.2025.08.28.09.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 09:52:16 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:52:14 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Ryan.Wanner@microchip.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 01/32] clk: at91: pmc: add macros for clk_parent_data
+Message-ID: <aLCJPlWTHcaxUze0@x1>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <f3ef0275345578c504b41710c67bfe1238c44c21.1752176711.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <932e0085-c901-40f8-b0d5-67f8f0b934e6@gmail.com>
+In-Reply-To: <f3ef0275345578c504b41710c67bfe1238c44c21.1752176711.git.Ryan.Wanner@microchip.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Aug 29, 2025 at 12:11:40AM +0800, Nick Chan wrote:
+On Thu, Jul 10, 2025 at 01:06:54PM -0700, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> Janne Grunau 於 2025/8/28 晚上10:01 寫道:
-> > This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> > follow design of the t600x family so copy the structure of SoC *.dtsi
-> > files.
-> [...]
-> > After discussion with the devicetree maintainers we agreed to not extend
-> > lists with the generic compatibles anymore [1]. Instead either the first
-> > compatible SoC or t8103 is used as fallback compatible supported by the
-> > drivers. t8103 is used as default since most drivers and bindings were
-> > initially written for M1 based devices.
-> >
-> > The series adds those fallback compatibles to drivers where necessary,
-> > annotates the SoC lists for generic compatibles as "do not extend" and
-> > adds t6020 per-SoC compatibles.
+> Add helpers to set parent_data objects in platform specific drivers.
 > 
-> The series is inconsistent about the use of generic fallback compatibles.
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip.com: enclose complex macro with parentheses.]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  drivers/clk/at91/pmc.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> "apple,aic2", "apple,s5l-fpwm", "apple,asc-mailbox-v4" is still used.
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 4fb29ca111f7..0b721a65b77f 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -15,6 +15,12 @@
+>  
+>  #include <dt-bindings/clock/at91.h>
+>  
+> +#define AT91_CLK_PD_NAME(n, i) ((struct clk_parent_data){ \
+> +	.hw = NULL, .name = (n), .fw_name = (n), .index = (i), \
+> +})
+> +
+> +#define AT91_CLK_PD_HW(h) ((struct clk_parent_data){ .hw = (h) })
 
-Those are less generic than say "apple,spi". For "apple,aic2" especially
-it's clear which SoCs use it and the set is closed (ignoring iphone SoCs
-which very likely will never run linux). For the interrupt controller
-the fallout of not using the "apple,aic2" is larger since even m1n1
-expect that. irq driver is special in so far as it requires more than
-adding a compatible.
-I think "apple,s5l-fpwm" and "apple,asc-mailbox-v4" are specific enough
-and describe simple hardware so the will not cause issues unlike the
-complex firmware based "apple,nvme-ans2".
+If you have to spin a new series, then personally I would put a space
+before the {. I see both usages in drivers/clk/.
 
-Janne
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+
