@@ -1,47 +1,47 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF49347B4
-	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 13:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D34B31CA7C
+	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 13:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756475825; cv=none; b=gl79YCVt7baDP4yGC1KMjJRjGsACimReYbTtIQWsCvTtJz4gDJA77n1/EKuyOUhrSG8SdHiegslAI2IhKx2NBzNubmI/uLsWh2ZICRR+CFqTavPh11bYatqsh/UJKk1qw0GISNhpsNkLUOfHqY//x5R5y9IlS1doLXSJynGv3cQ=
+	t=1756475829; cv=none; b=iMHVJZWJyvcJfepb/H0+116s3d9u0egC5cMMN0cJxFg6tGi7dRAsGBNEdQqdrGlnA3MwJR9xFq6DBAeu63EsHPban/uBnz/SVj0H6I29G9hTOMkpHwjG1X21/yxxIZdloq0wQwGawFXSYRRTjH7wD1dKGl0wYTnrJG4yDcMA33U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756475825; c=relaxed/simple;
-	bh=Ef1NuRo2w2WdhPk8MN+4gOvRdA3R3v+pDc3iILF8sqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=Y8+wZobxPWuJ1uuOhRxWH7ipN8wDSK4JKXvjEhI2Y9PfsjSdPGpkXEz25vAGQb9YK1zRM9YN0Xc2nz0Er1dXQ7ZS+6DMgAtHyUcD28TokV7/mvnn0W0YkMP4v36jchaEGxTrdppz/rbB2gn2N99G2gvGd4TXV8ablln7FEO/mzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XhQnqRZ2; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1756475829; c=relaxed/simple;
+	bh=OhNPbnt1rf5s8smDv39eHuvIsyk/DaFHGGKYuhVdoxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=GYYfJVmahp7zD0An5Ch0jZ30/bY1aNFPEz74uwVWwU9/ROmzc1JpE1PtgmUb6BUPgXFjWvWcGR3xKGRefYJBgvtIvgdoaRH8uvP9J+5nnGQkag57yrTp1Y1bumB/reJ3W1DvSy6X1xTrw233an51ZneyK2KNwOd287Voycdy3f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X4LcKWs6; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XhQnqRZ2"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X4LcKWs6"
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250829135700epoutp02df09b89b15bf8024af6fcd4c82348eae~gQXPWUWvE2422224222epoutp02g
-	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 13:57:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250829135700epoutp02df09b89b15bf8024af6fcd4c82348eae~gQXPWUWvE2422224222epoutp02g
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250829135705epoutp03159ba5329bcde827648e24c3e275e109~gQXTxRekH2671826718epoutp03q
+	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 13:57:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250829135705epoutp03159ba5329bcde827648e24c3e275e109~gQXTxRekH2671826718epoutp03q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756475820;
-	bh=P/PSg7LV+0qqtsWnBqc+ufwU9SbD3VXOH9HxTbYXVdA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=XhQnqRZ20aj3IeB4CADNg0A9R9TWeCz4W+QlskSMqapwucLEj1+gQsR0VVBypvJHy
-	 Ckk9k27vHy/5OyQZx5dgMViAR0lhnZCW6DVIUQianAjNZdlMgwz/YRNTEH30X/NCpX
-	 FrYm5Tbm5vb20s8Xfis0S9A9Ifppae84x2nuKaoc=
+	s=mail20170921; t=1756475825;
+	bh=HpTKhZ7/rpVPsXoILVVhOB2b+exwcmHjfNj1mWTFV1Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=X4LcKWs6160yTCH+IYNGHzCISj8YZjCdYL3IlxX7tEQxAoAIrU8ox2c07l7MPHoaA
+	 p4viO16j1kadBl9BVXq5Dx8ReXckKzwa9lPTFJrxI4Kz58tPx1ixVRyZ5Mizxw/Yr4
+	 D/4cEztMCuJb1yBVdBTcGnwQjdh1Zi8T4OtNuxP0=
 Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250829135659epcas5p45f243a9e12d857393ecd714dc6c5d133~gQXOyXHGE1269312693epcas5p4C;
-	Fri, 29 Aug 2025 13:56:59 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cD0F66JMtz6B9m8; Fri, 29 Aug
-	2025 13:56:58 +0000 (GMT)
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250829135704epcas5p261ee4e9409c6b563e52c485a959b9a9e~gQXTXg0Uw1958719587epcas5p2W;
+	Fri, 29 Aug 2025 13:57:04 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cD0FC5dN2z6B9m5; Fri, 29 Aug
+	2025 13:57:03 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250829135658epcas5p24bb23c6fef2092aa7397faa10e0d9228~gQXNRLo_I3096430964epcas5p2d;
-	Fri, 29 Aug 2025 13:56:58 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd~gQXR4BPzZ1167611676epcas5p1z;
+	Fri, 29 Aug 2025 13:57:03 +0000 (GMT)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250829135656epsmtip2c943b2ae8c7c97158101f6967f651497~gQXLjQJAl0722807228epsmtip2Z;
-	Fri, 29 Aug 2025 13:56:56 +0000 (GMT)
+	20250829135701epsmtip2ba771a62bb7f0c34182fac990cda423d~gQXQRzt9-1416014160epsmtip22;
+	Fri, 29 Aug 2025 13:57:01 +0000 (GMT)
 From: Varada Pavani <v.pavani@samsung.com>
 To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
 	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -49,10 +49,11 @@ To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: aswani.reddy@samsung.com, gost.dev@samsung.com, Varada Pavani
 	<v.pavani@samsung.com>
-Subject: [PATCH 0/2] dt-bindings: watchdog: Add support for FSD SoC watchdog
-Date: Fri, 29 Aug 2025 19:26:41 +0530
-Message-ID: <20250829135643.105406-1-v.pavani@samsung.com>
+Subject: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
+Date: Fri, 29 Aug 2025 19:26:42 +0530
+Message-ID: <20250829135643.105406-2-v.pavani@samsung.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250829135643.105406-1-v.pavani@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,26 +61,67 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250829135658epcas5p24bb23c6fef2092aa7397faa10e0d9228
+X-CMS-MailID: 20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250829135658epcas5p24bb23c6fef2092aa7397faa10e0d9228
-References: <CGME20250829135658epcas5p24bb23c6fef2092aa7397faa10e0d9228@epcas5p2.samsung.com>
+X-CMS-RootMailID: 20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd
+References: <20250829135643.105406-1-v.pavani@samsung.com>
+	<CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
 
-The FSD SoC features 3 CPU clusters, each with its own Watchdog Timer (WDT) instance.
-The DT-binding and device data is updated to reflect the cluster index and clock configurations as per the HW user manual.
+FSD SoC WDT is using Samsung legacy WDT driver with
+"samsung,exynos7-wdt" compatibility. Now change the compatibility due to
+few driver changes (PMU bit changes for each WDT instance and Clocks)
+for WDT found in FSD SoC.
 
-Varada Pavani (2):
-  dt-bindings: watchdog: Modify tesla fsd bindings
-  arm64: dts: fsd: Fix Clock handle for WDT
+Signed-off-by: Varada Pavani <v.pavani@samsung.com>
+---
+ .../devicetree/bindings/watchdog/samsung-wdt.yaml        | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
- .../bindings/watchdog/samsung-wdt.yaml        |  9 ++++---
- arch/arm64/boot/dts/tesla/fsd.dtsi            | 24 ++++++++++++-------
- 2 files changed, 19 insertions(+), 14 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+index d175ae968336..db2009654fe4 100644
+--- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+@@ -27,10 +27,7 @@ properties:
+           - samsung,exynos850-wdt                 # for Exynos850
+           - samsung,exynosautov9-wdt              # for Exynosautov9
+           - samsung,exynosautov920-wdt            # for Exynosautov920
+-      - items:
+-          - enum:
+-              - tesla,fsd-wdt
+-          - const: samsung,exynos7-wdt
++          - tesla,fsd-wdt
+ 
+   reg:
+     maxItems: 1
+@@ -79,6 +76,7 @@ allOf:
+               - samsung,exynos850-wdt
+               - samsung,exynosautov9-wdt
+               - samsung,exynosautov920-wdt
++              - tesla,fsd-wdt
+     then:
+       required:
+         - samsung,syscon-phandle
+@@ -91,6 +89,7 @@ allOf:
+               - samsung,exynos850-wdt
+               - samsung,exynosautov9-wdt
+               - samsung,exynosautov920-wdt
++              - tesla,fsd-wdt
+     then:
+       properties:
+         clocks:
+@@ -102,7 +101,7 @@ allOf:
+             - const: watchdog
+             - const: watchdog_src
+         samsung,cluster-index:
+-          enum: [0, 1]
++          enum: [0, 1, 2]
+       required:
+         - samsung,cluster-index
+     else:
 -- 
 2.49.0
 
