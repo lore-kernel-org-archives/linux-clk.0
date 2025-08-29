@@ -1,184 +1,150 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B335CA52
-	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 05:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB4F25394A;
+	Fri, 29 Aug 2025 06:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756443813; cv=none; b=sn6SIbm2mgRpL93IFiGLmn97dAGf8vLIqvW97fb4fIGT7xBcIGOyLxOM0yPeJTXqvRW6wcjlZtWo+iefX5nJRIyQW6Hskz6x67lanGQtuvJ1l70NmPqZX9tbyLz5RipgFqYLqAEbfZhG+4Zl1gu/I9zq3lP/JV8IJ5G8VAPEPKE=
+	t=1756449765; cv=none; b=dVSEYuppMYh0nj7nP2/AxQkqVI2hWC9G7nMnr6poMS0zMccky3yLhmrDUrB93/hk/tJCmtY6TWYpTVRMCwUD7b4IKb8SGWmnIIXTtk2sT5w8/SFSNub0x2hLhdlDKvKYNifaTBJagsVVUT0kYUZWd3HstKcrKY79zrgRlhxGkgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756443813; c=relaxed/simple;
-	bh=HgGs1nmyr93hWqKJb/wArPT5hRVjZy9lGlIN/F+3xkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQKqY/0bKGSVz1j2VvsCiEk0/3WwI70UUs5cmqeMHFYs8LoQKp1fuWbaDszpS3YG6r3J3zl0XXdA2w8QUnM13R3c1gKLDjAftJxutu6mILY8KOcJ0r4/5LUPwT78EyaguQn4NW45B0fOkRGLJtJDeNFZdGnHZ/BWmTwTswRcaZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ydadmk1P; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1756449765; c=relaxed/simple;
+	bh=kVuD7W376c6FrZNyHaO5XNEGImOvvlZo36DWNaRRpy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EbmgXf/z41UNBUOp6L14IIS9SChQRWsxJVGlJMK4lFX9qQQK7y9PxI3mqQdFYCERIq49pklWnHhbr50JNySf9glzQKhR7Em21HqPNJQgMNaXav/P9nJcgVQfNlhvhSmRpCl/Cc9xQb1YzLZrKfGDSGHY3XOXveHh+nAk+MW45Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn09N6k9; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ydadmk1P"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b618b7d33so13812515e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 22:03:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn09N6k9"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c73d3ebff0so1313410f8f.1;
+        Thu, 28 Aug 2025 23:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756443810; x=1757048610; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bb9BFU+tpEf23jDV6mWRZSZIrfp5E5QZk6jdr2Nh69s=;
-        b=Ydadmk1PgLqjPNaXaBDo75Tg6EI9AJNfPsTJHzGlF+QbqEnFP/5kO/Mn397NNpHfZ8
-         m89EfTTV6xbNWWWoZA+2qNmoGrda2UAbsUekBtznzAxt23q/qNkx3JCiYpfCwZrWa51R
-         DHydSrB27xuSwjiY1ltCeWdX1n4GSPSO+/gVSiGrEPKfMkZBz61zeuVGo+xkS1z1tn2L
-         zakFQVK0a6AWYFk9QwYd5s0jZBAijdCLuVlVZLODgkH96tUBFt/mobjZfAS6uPNFwE0K
-         5GSd+UZYvjPnDCO7Lzf9MWBd3ijqeys2hHj39b7oIZ4rfu3oc0OCiXpW+H0zqdzLVUYy
-         epXg==
+        d=gmail.com; s=20230601; t=1756449762; x=1757054562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWSNy/JRqLkLoJxnOEcFDdNep+6HQzRpiS/0aFPTMrQ=;
+        b=nn09N6k9F65ztBjTgb/lbslL/gqROChSuBduyEO8+2QuOo2nCmo1/QWvZ10eqI2f3g
+         TGcr0lhl/shkmLgn0e/b7gTVFJDMHRTUSzDGGBoouMv0lLyCMVn885ZkBfD7PHVzL2An
+         PMytXSjkR6XPfN3jKa2lFYIbQOUmZUOeMZ6rHWGICS/nD98V8/Pe8P+0aTmPvT6bUP5h
+         mQGRyELKKQZPlNUhFsdBcM56bAnawdQdVKxfIf+okq7ETHd+nVRdWn+rEkuxqdEHomNo
+         XUEbTWs/cuxluCXhXIKUOJPi9yv0kow6p6XL20x5Ne8TGEDd9sRgnaYkCsNsxu4W4pgI
+         43bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756443810; x=1757048610;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bb9BFU+tpEf23jDV6mWRZSZIrfp5E5QZk6jdr2Nh69s=;
-        b=j7Ax5WRsaQV3fGyYv1W0GCIJPacz8gIAYr5OUmuV3fP0ng1v4l7402kI5x3jV5ucQV
-         kykILSHOvzrZVxf86dnWgp/3w0ioxSTJ0k/rK8qF8Nc9XqAQi0H+Sx8QLyzUaM/z+QqP
-         Uw1tFEMHf013NgiqgwNA8RTOa412fbB7wK4nvRZKIofqf+i6SijIV5/bmbMtALNRg1l0
-         KCuHn3trB0930iqhFWWkOSd9alt1gSXltjF68NuBH0cWiBRsPSOcmU6dAtJziBkvRjrd
-         RoET5nGPALB2GMp1mpBhQcbKiuHTKvXy9DKJeqKb/USvGRc2k/zSSLWJfUChQxwNF0XN
-         XluA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAoc1e0shnGcfhRu6YQWkaRK583GXw8RAgttZJVnGm98KymEpKuSPyCqBOJQo/3CeOx0UCFv2bk84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9BAepB90yZ51Lg+IYPnq9QssKX2SSud2qZ0xWEw8ruiLEAYgR
-	1rPc3vtBLhOlfE37Pu0b2wiONv5b5rJ5OohT6UR9WJJYrQaua6u7PDTwsvLMFJqibJU=
-X-Gm-Gg: ASbGncuBWDrY7aGzZeCMTaAgYWRaaENnP/7pmhbv7mz0cQyc3HSDigC4xHQQkdWRDsU
-	v6dU6fjpVW7GTwBlvxtEXf+7rzna9uPQ7rz3f8WCG4CocklFLosNB/68CkSjnXpD8SyZqtfjD7K
-	3RX/U0Vpch1ccJDCPwvDscXpTB0ja39iEhX+JHnXOGwoWIg3Sn9OVVXbEDluKBdEkJWffOra8c2
-	J4mgh2tOTVVARr9TQ+lZYXyEx8/mHXX5sHz0LwejEiE/uB9PQFziJz1YPZ1Fn3ZN3Bihc9cs+Nr
-	zgAKgoWVLD0Z+CLdvzIwxRRLB04ybLRQy6I60T2IiO6XVILnhvrpZW1WoWAm0LXKk6p606o1tEj
-	PnNY6hR0NWdvkI7Eb//dc4G+7D6F8KEMfd01xevbpKnmTPvN+DhBpmPLUXhJa5fq5Jn7xZGY6Qn
-	YAuKCzz9CR8vSi
-X-Google-Smtp-Source: AGHT+IFVd6qIssetNf0PlgYJI19qTYNEIHf0vWYP6G6M987Vw9zUraqTXmyhlT/MrqFSPHzJ1uz73g==
-X-Received: by 2002:a05:600c:3544:b0:45b:7c4c:cfbf with SMTP id 5b1f17b1804b1-45b7c4cd1e7mr35520595e9.23.1756443809583;
-        Thu, 28 Aug 2025 22:03:29 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd? ([2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66bbcf19sm66990015e9.4.2025.08.28.22.03.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 22:03:29 -0700 (PDT)
-Message-ID: <27d76eac-6141-45db-a347-edfc3bb593d4@tuxon.dev>
-Date: Fri, 29 Aug 2025 08:03:24 +0300
+        d=1e100.net; s=20230601; t=1756449762; x=1757054562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWSNy/JRqLkLoJxnOEcFDdNep+6HQzRpiS/0aFPTMrQ=;
+        b=q/5HB/8zFNZyan0nZVrrOqINm5ZxRLV3PPfm4JGIFmkJKKfER8J/jOpgwMtzOcnZnw
+         m6IrbG5no/FLCTZHBrCMYO1A9NxxpUWAZ0g1+BjTjrOo1ZHkq4kFAeuk8n3Y/Wc5PzAg
+         kpEcAH2iuoNhEfgRkDYpzdhyBe6B9ju7HDuMKccz2+yI/8dSz4ZJSdrdYqVZKm9qYwWU
+         yO4bmnjCAjamA34Apby3J1NlP4L7JJNWES4BRtoTHQ4OdsmOsCwdX5wqVQTfrXLP4PdM
+         nUKtsgAhzdwwz9vtUyj/zrWX5F6NEgO5SYqEVr3oC7hKH6sVKrLDjmpJscKDUq+cCnS3
+         gA2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVY3Re4VRlUdqzMEf+WVWiGtiDg1sbvEOvB9/Xk7iy7NpU4lXljHqDpDQtmYDSxV6v/4+jwAknrZD5gViw=@vger.kernel.org, AJvYcCWBcYxjAYth3k4XUcfmAxUpFs07oxkGrKAwDuETGdJ1jOP+JEh7AsC9o1UC/FE729sH11obiAMxOu5W@vger.kernel.org, AJvYcCWRhrR8fDTYq4jsA8hrhl5LaBt7qPwyBSVVzYHt/BpCW/4I0m/6b2SYAiwYDdCIvToe1pDOTsDe9gFpK4k=@vger.kernel.org, AJvYcCWYyRiS1JL410XTZR4o4caRv8yCynQuO2XaPuzRkz+F1NCQyEId1USrnamSFZaikZgbdBeedyEGyESG@vger.kernel.org, AJvYcCXJT1LVJ3BrKiqh9/H2YJspa74b97yt5aQi08i7pbRe3TO3WYOEdWu9x177iuHOUiMxTu4zOtmUAOjrfDb4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhGSASguC2Wr65cRGHpnXAgR12xoppRt1VLfp9bSRsSDY28Xc5
+	vteKpraYCw1z9HsGrSiEevOE82RNJXuWDXwtb3ZPn8cnfVek6zp3y2PdLTGyOJAzQzBfs5yBQ/L
+	VUm0KozQnUoXvcbmRdEl6E5c2BVb/mqs=
+X-Gm-Gg: ASbGnctyNqH95wps2pe36QSrlkdtHOXLgK/X89/6kWEHUPxFzngxNnc+DWZBmgz3U3V
+	sWWkdDV1QiZbQaAHfIunztuwUVEKL+FgbVANZ2ofbmA3FQHFbesWhw22O9gJGO96qNUiM7lofBH
+	THLiwVf9SZw+dPYh0BWWq41LaNhHUHEAwcZ4QE/hDzfFYZzOFTckSoiF/H0MgN7v+i21SFq90W4
+	tscYTm/
+X-Google-Smtp-Source: AGHT+IHjRL9sOfRC6KlJXM91TuBldUFCTWN+6IKyuNVfAGqivuS+QA4CO7lbMYhZ/89R1DWqkhTaNLnSJ6XXeiMAmew=
+X-Received: by 2002:a05:6000:40ca:b0:3d0:c6bf:60c6 with SMTP id
+ ffacd0b85a97d-3d0c6bf6478mr507752f8f.13.1756449761912; Thu, 28 Aug 2025
+ 23:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
- documentation for the PCIe IP on Renesas RZ/G3S
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250828193605.GA957994@bhelgaas>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20250828193605.GA957994@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-5-clamor95@gmail.com>
+ <20250819202722.GA1264491-robh@kernel.org>
+In-Reply-To: <20250819202722.GA1264491-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 29 Aug 2025 09:42:30 +0300
+X-Gm-Features: Ac12FXxicf5syu3ZrQDe1liim-jpvbuNbb6FjdElmnqfyMSBMVU7aVm-Nae8-uI
+Message-ID: <CAPVz0n1CN_rXu6EvgiMBeCvpOK6Ep96pax+naRha-=9THBifZQ@mail.gmail.com>
+Subject: Re: [PATCH v1 04/19] dt-bindings: display: tegra: document Tegra30 VIP
+To: Rob Herring <robh@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	Charan Pedumuru <charan.pedumuru@gmail.com>, linux-media@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Bjorn,
+=D0=B2=D1=82, 19 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 23:2=
+7 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Aug 19, 2025 at 03:16:16PM +0300, Svyatoslav Ryhel wrote:
+> > Parallel VI interface found in Tegra30 is exactly the same as Tegra20 h=
+as.
+>
+> That's not what the compatible schema says. 'exactly the same' implies a
+> fallback to whatever it is exactly the same as.
+>
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml    | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
+ra20-vip.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
+a20-vip.yaml
+> > index 14294edb8d8c..39e9b3297dbd 100644
+> > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
+p.yaml
+> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
+p.yaml
+> > @@ -13,6 +13,7 @@ properties:
+> >    compatible:
+> >      enum:
+> >        - nvidia,tegra20-vip
+> > +      - nvidia,tegra30-vip
+> >
 
-On 8/28/25 22:36, Bjorn Helgaas wrote:
-> On Thu, Aug 28, 2025 at 10:11:55PM +0300, claudiu beznea wrote:
->> On 8/8/25 14:25, Claudiu Beznea wrote:
->>> On 08.07.2025 19:34, Bjorn Helgaas wrote:
->>>> On Fri, Jul 04, 2025 at 07:14:04PM +0300, Claudiu wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
->>>>> Base Specification 4.0. It is designed for root complex applications and
->>>>> features a single-lane (x1) implementation. Add documentation for it.
->> ...
-> 
->> Renesas HW team replied to me that there are no clock, reset, or interrupt
->> signals dedicated specifically to the Root Port. All these signals are
->> shared across the PCIe system.
->>
->> Taking this and your suggestions into account, I have prepared the following
->> device tree:
->>
->> pcie: pcie@11e40000 {
->> 	compatible = "renesas,r9a08g045-pcie";
->> 	reg = <0 0x11e40000 0 0x10000>;
->> 	ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
->> 	/* Map all possible DRAM ranges (4 GB). */
->> 	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
->> 	bus-range = <0x0 0xff>;
->> 	interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
->> 		     <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
->> 	interrupt-names = "serr", "serr_cor", "serr_nonfatal",
->> 			  "serr_fatal", "axi_err", "inta",
->> 			  "intb", "intc", "intd", "msi",
->> 			  "link_bandwidth", "pm_pme", "dma",
->> 			  "pcie_evt", "msg", "all";
->> 	#interrupt-cells = <1>;
->> 	interrupt-controller;
->> 	interrupt-map-mask = <0 0 0 7>;
->> 	interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INTA */
->> 			<0 0 0 2 &pcie 0 0 0 1>, /* INTB */
->> 			<0 0 0 3 &pcie 0 0 0 2>, /* INTC */
->> 			<0 0 0 4 &pcie 0 0 0 3>; /* INTD */
->> 	clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
->> 		 <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
->> 	clock-names = "aclk", "pm";
->> 	resets = <&cpg R9A08G045_PCI_ARESETN>,
->> 		 <&cpg R9A08G045_PCI_RST_B>,
->> 		 <&cpg R9A08G045_PCI_RST_GP_B>,
->> 		 <&cpg R9A08G045_PCI_RST_PS_B>,
->> 		 <&cpg R9A08G045_PCI_RST_RSM_B>,
->> 		 <&cpg R9A08G045_PCI_RST_CFG_B>,
->> 		 <&cpg R9A08G045_PCI_RST_LOAD_B>;
->> 	reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
->> 		      "rst_rsm_b", "rst_cfg_b", "rst_load_b";
->> 	power-domains = <&cpg>;
->> 	device_type = "pci";
->> 	#address-cells = <3>;
->> 	#size-cells = <2>;
->> 	renesas,sysc = <&sysc>;
->> 	status = "disabled";
->>
->> 	pcie_port0: pcie@0,0 {
->> 		reg = <0x0 0x0 0x0 0x0 0x0>;
->> 		ranges;
->> 		clocks = <&versa3 5>;
->> 		clock-names = "ref";
->> 		device_type = "pci";
->> 		vendor-id = <0x1912>;
->> 		device-id = <0x0033>;
->> 		bus-range = <0x1 0xff>;
-> 
-> I don't think you need this bus-range.  The bus range for the
-> hierarchy below a Root Port is discoverable and configurable via
-> config space.
+Rob, may I use this:
 
-Thank you for the pointer. I'll update and send a new version.
+properties:
+  compatible:
+    one0f:
+      - const: nvidia,tegra20-vip
+      - items:
+          - const: nvidia,tegra30-vip
+          - const: nvidia,tegra20-vip
 
-Claudiu
+Among all Tegra SoC only 2 have VIP support Tegra20 and Tegra30.
+Tegra30 is backwards compatible with Tegra20 so we can use fallback.
+There should be no new generation added to this schema.
 
+OR should I use enum?
 
+properties:
+  compatible:
+      one0f:
+        - enum:
+          - nvidia,tegra20-vip
+
+        - items:
+          - const: nvidia,tegra30-vip
+          - const: nvidia,tegra20-vip
+
+> >    ports:
+> >      $ref: /schemas/graph.yaml#/properties/ports
+> > --
+> > 2.48.1
+> >
