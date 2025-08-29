@@ -1,256 +1,140 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B00279DD6;
-	Fri, 29 Aug 2025 10:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DA72BEFF6;
+	Fri, 29 Aug 2025 10:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462602; cv=none; b=tXNUBMF4mKtV3kUT+qicTUgx/dkENDhu84eGHRKgTE7I3GBCMwyciwfjQxSUoEHR4Q18kHC/EbLc9B1kMD36jOcnTLqkNqbUwM6gjxeQbvhcUpCxiSHd9woAX1qNZHPdSqJFYUguiyYq9g4br9j2e7kwzx7pr7V5Xqgv9CKSg9k=
+	t=1756463349; cv=none; b=WtlTeykeNQFNiw7slbfcRDecbOIk6HwirwRNNtSuq/fnwCwJOIXND4uAS4aCwa7FjdbeBS5BNiGWy7Sj6nwmF4hSFrcEWJFvG1GF5/bjqffTTnanmEPir2svNsSg5KnnT6Uoz7FFwjmCHDTrxdzvU0lCtFv2f8GbFVlljaLK+2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462602; c=relaxed/simple;
-	bh=Fo2BSo1uuGZPD8/kbpcTgSnb4bvZP0cwCSjGbYafPC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kIFRJraauo9Xs4DKmj5i2qabyiCgN4M9zEEH/mjxvcXmoCcVM1VErIeUB3lV+Z9oeoqTQ3UtSIc/Ig6sYgjRxhFxI+tuN3YT0EDyIxZlm7QgfJEcORhZwgEgckfy6tVgDJLJ3v1izIdEf3Tb+VvvxYMcheA/FPTwb1qZyXPHMk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKB5dFnz; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756463349; c=relaxed/simple;
+	bh=rK4qkpQLHD4YV+ZOv6+7UA3F3GsCJ78MecmyuokwNhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PATegCY43OUlNEY0hbHyc28z8kCUYN1bHafnmxWmeCgbpiqcrRIi3zcqmbMI5ZMyaj62P3UDdM3fiDYQSbos9BSq99KOa0s6D7KcxR4CZnNev4ZeHMDXvYM/Gzv5NMzlGOw+lC9Trk+F9RJbIX8NGmFVr/xUh3p6aNYaaWY0TLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXZriuDk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKB5dFnz"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3c7ba0f6983so1185495f8f.0;
-        Fri, 29 Aug 2025 03:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756462597; x=1757067397; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HNjJcb/AnhYp3bRUecCJOkXacIhhMtPAM2CmxFDzs84=;
-        b=aKB5dFnz3WYs1tX1SCUFaM1GcbW/Ka5DPhhrjMvK7QhhM2gnrw0ayWaCa08fLTSBcE
-         jS69j34QEKcwJuJr7zR4bsT7lQ8LDGqlBueHlhbnYGf+wsAK8m+tD5GdzX6oA3U9hCgx
-         kisWW/tMwQmwYpdBbn92gvzU8eqihtEQFk9GVTy1MbB1RAy3evNpIgh2zbA0Rt9ayYgl
-         bt6QKUR/qwU0D5312NYtDSDr8y5PwYK0ZoPUx+gi3UW9UWaiOR1MEMA1F9amtqYaqFaW
-         f3Ova7sjCaxoPI8xkVYVKxy3xyXs1uwcFVncsieMWPjSevLmjv1wxBbDnQzGsD0BldDC
-         LVaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756462597; x=1757067397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HNjJcb/AnhYp3bRUecCJOkXacIhhMtPAM2CmxFDzs84=;
-        b=w8FgnCOC0tNQSa7v0pR3KT+YQm9msAu8AcCzQRf4PuyncWyUyKU27N3D6lEi5tavdO
-         NTzlkEZyNjmxSv46CZZ9wXu80XmrBmHRSWLLCTYR/5Zu2eEIMS01hRFNvsZp7c5JXXLy
-         vZe4UUSTewROKHtuwFVwheWvt6+g4cJYezkIIyRQ1j60qTKxoEeF9EMARx8H6XZCJasF
-         N9aanqEftFWuIto/Tu8WzaERgsrhJqGgeX9EfZtfWPy3ZZB35eBVDSG7ZkTcmQEwDNcx
-         eJJQiGOM6AoRrPsSf/Wcu7KBI3vTEI84GLIITwyT2/1S44cbvJ3SAjKhtfKYa2Dc8k3q
-         okOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2eQg7p46uWSbkeKgyfkMMNT5SvG1JDVZqkaUl222Y6Rs7nXfIN4aUYE33qpgnO23YiCQ9xJ5h087RPyiN@vger.kernel.org, AJvYcCWTK8HlFVJM8+2Hvt30XbCHrsZG7+88XqEehg3J7xYcgboSPPga+NIFQytPhdDOef8fCOPn4nLvbX/ZKp14R9CobfE=@vger.kernel.org, AJvYcCXtPSbq2NIgfDDQVRRV+9FsTRWUUW7fswVNKYfWNGF9lZSU2IbMaUtQToW/8b+Yux3YXF6VfSOWHTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9IAC6lWxumJNX6OpTuUpjBJLpbDDitT113A/IMrJR6FgLMoXn
-	eg9XkBQDRkxzkQjHjW8KrFYupkIOgwBrU3xJqgFZEpskOqq/y6qNk6JpyEi3tB7HoNAtjj4HKMr
-	IFvf68EAOKoSCdTVKYqM8uXHHgt51kpg=
-X-Gm-Gg: ASbGncu3qyeHl/mf7aBeWallNYVO2FPn9wFLSFsu/8u3Ui3UTuIAbsGRXeR0CxhGIMj
-	ajirQnWxbNPhNpEmcApugml378f727SGX0f6hkn4w79xCxRtEOhfcAvMDjPTlthueuSr3D73C4p
-	smZx007fGj6C7hrJjOisi8D60MgrUIjO40VcBIfu71LU0qMq2FEIoPfFlt+eHZ1fs+koCYV7HYz
-	ZGTePJK
-X-Google-Smtp-Source: AGHT+IESXEGfmQuLFsgsjcdDhNuOM2wd/ylN9NiufcjNfGjJ1YHgIqENqbfoiK/ve4RGkN//ckte3YYhYKSCRByp8w4=
-X-Received: by 2002:a05:6000:40c8:b0:3ce:caa7:d7f1 with SMTP id
- ffacd0b85a97d-3cecaa7d9e6mr3049546f8f.27.1756462596628; Fri, 29 Aug 2025
- 03:16:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXZriuDk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE17C4CEF0;
+	Fri, 29 Aug 2025 10:28:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756463349;
+	bh=rK4qkpQLHD4YV+ZOv6+7UA3F3GsCJ78MecmyuokwNhA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oXZriuDkwQAQm9ce6gw+R5rqIDEB/OI+h2EsdRTbbciLZPFIKjLWfZfByzZNRVA0/
+	 4kwLvxPLFMjjcU7FhE23E4Nb788MSU9ScxDDFIqS1smxYrFHr4wvR75K9+EfvLht2v
+	 gAbbRULk70G1qnvHBT5yGLzNPic1WyvHUlehmuoL1pcVv3mfbOmpZ5gURvCtFC1bdX
+	 X6PkDrK7o2KywWgHhuJ1040CwOh+EOM2n02isZCWgSfyVnYcD+2j07j3km+PklsRab
+	 0qkA+5nZqsZREwAS9LYlPX2+0CiFCSATA9bC5niYDb7zTwA8+LOTQtrnrVtpcO6gmi
+	 ZHvq9jYIv/Qpg==
+Message-ID: <32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
+Date: Fri, 29 Aug 2025 12:28:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820204810.2328183-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <d0a4368ce2f4743457f98d8559aaeee097b78d3e.camel@pengutronix.de>
-In-Reply-To: <d0a4368ce2f4743457f98d8559aaeee097b78d3e.camel@pengutronix.de>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 29 Aug 2025 11:16:10 +0100
-X-Gm-Features: Ac12FXw6RPfl2JpQBCT71xLJj0ymVoY-LxhRk5xnoQ1_I5nqlBqI0b1GzPhqj9Q
-Message-ID: <CA+V-a8t0Q9+wUh0wOaz=2nd0=8p3XiVpxcejQiTgee1+LD282g@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific
+ configuration
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Ravi Patel <ravi.patel@samsung.com>
+Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
+ dj76.yang@samsung.com, hypmean.kim@samsung.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev,
+ Priyadarsini G <priya.ganesh@samsung.com>
+References: <CGME20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2@epcas5p4.samsung.com>
+ <20250825114436.46882-1-ravi.patel@samsung.com>
+ <20250825114436.46882-6-ravi.patel@samsung.com>
+ <CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Philipp,
+On 29/08/2025 12:11, Linus Walleij wrote:
+> Hi Ravi / SeonGu,
+> 
+> thanks for your patch!
+> 
+> On Mon, Aug 25, 2025 at 2:07 PM Ravi Patel <ravi.patel@samsung.com> wrote:
+> 
+>> From: SeonGu Kang <ksk4725@coasia.com>
+>>
+>> Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
+>>
+>> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+>> Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
+>> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> 
+> Please avoid CC to soc@kernel.org on these patches, they end up in the
+> patchwork for immediate merging for SoC:
+> https://patchwork.kernel.org/project/linux-soc/patch/20250825114436.46882-6-ravi.patel@samsung.com/
 
-Thank you for the review.
+Yeah, that's odd - most likely old CC-list. This could happen if using
+b4 but there is no b4 being used here, so why Cc-ing according to some
+old files?
 
-On Fri, Aug 29, 2025 at 10:46=E2=80=AFAM Philipp Zabel <p.zabel@pengutronix=
-.de> wrote:
->
-> On Mi, 2025-08-20 at 21:48 +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
-> > CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
-> > Registers (MRCR) where both reset and deassert actions are done via
-> > read-modify-write (RMW) to the same register.
-> >
-> > Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assig=
-n
-> > it to reset_regs. For this SoC, the number of resets is based on the
-> > number of MRCR registers rather than the number of module clocks. Also
-> > add cpg_mrcr_reset_ops to implement reset, assert, and deassert using R=
-MW
-> > while holding the spinlock. This follows the RZ/T2H requirements, where
-> > processing after releasing a module reset must be secured by performing
-> > seven dummy reads of the same register, and where a module that is rese=
-t
-> > and released again must ensure the target bit in the Module Reset Contr=
-ol
-> > Register is set to 1.
-> >
-> > Update the reset controller registration to select cpg_mrcr_reset_ops f=
-or
-> > RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2:
-> > - Added cpg_mrcr_reset_ops for RZ/T2H specific handling
-> > - Updated commit message
-> > ---
-> >  drivers/clk/renesas/renesas-cpg-mssr.c | 139 ++++++++++++++++++++++++-
-> >  1 file changed, 135 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renes=
-as/renesas-cpg-mssr.c
-> > index 5ff6ee1f7d4b..77a298b50c9c 100644
-> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> > @@ -137,6 +137,22 @@ static const u16 srcr_for_gen4[] =3D {
-> >       0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
-> >  };
-> >
-> > +static const u16 mrcr_for_rzt2h[] =3D {
-> > +     0x240,  /* MRCTLA */
-> > +     0x244,  /* Reserved */
-> > +     0x248,  /* Reserved */
-> > +     0x24C,  /* Reserved */
-> > +     0x250,  /* MRCTLE */
-> > +     0x254,  /* Reserved */
-> > +     0x258,  /* Reserved */
-> > +     0x25C,  /* Reserved */
-> > +     0x260,  /* MRCTLI */
-> > +     0x264,  /* Reserved */
-> > +     0x268,  /* Reserved */
-> > +     0x26C,  /* Reserved */
-> > +     0x270,  /* MRCTLM */
-> > +};
->
-> Does each of these registers contain 32 reset controls?
->
-On RZ/T2H SoC for registers MRCTLA-MRCTLM none of them have 32 rest
-controls in them; For the bits which does not have rest controls they
-are marked as reserved.
+> 
+> I think this is not you intention, the pinctrl portions will be merged by
+> Krzysztof who sends it to me once that part is finished reviewing.
+Version for review should not be merged via soc@, so that's wrong
+process in any case. But you are right that I will be taking everything,
+thus soc@ is not involved at all.
 
-> Why are reserved registers in this list? It looks like the driver
-> allows poking around in reserved registers.
->
-The HW manual currently lists registers MRCTLA/E/I/M, for the rest of
-the registers I have marked them as reserved to avoid breakage i.e. in
-future if MRCTLC register is exposed we won't have any breakage.
-
-MRCTLA   -  0
-MRCTLE   -  400
-MRCTLI    -  800
-MRCTLM  -  1200
-
-
-For example, MRCTLE[0] controls GMAC0 PCLKH reset; this is represented
-as 400 in DT.
-
-This driver uses `4` to get the offset from  mrcr_for_rzt2h array and
-`00` is the bit to be updated. So suppose in future if MRCTLD is
-exposed we just use that in DT.
-
-> > +
-> >  /*
-> >   * Software Reset Clearing Register offsets
-> >   */
-> > @@ -736,6 +752,102 @@ static int cpg_mssr_status(struct reset_controlle=
-r_dev *rcdev,
-> >       return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmas=
-k);
-> >  }
-> >
-> > +static int cpg_mrcr_reset(struct reset_controller_dev *rcdev,
-> > +                       unsigned long id)
-> > +{
-> > +     struct cpg_mssr_priv *priv =3D rcdev_to_priv(rcdev);
-> > +     unsigned int reg =3D id / 32;
-> > +     unsigned int bit =3D id % 32;
-> > +     u32 bitmask =3D BIT(bit);
-> > +     unsigned long flags;
-> > +     unsigned int i;
-> > +
-> > +     dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
-> > +
-> > +     spin_lock_irqsave(&priv->pub.rmw_lock, flags);
-> > +     /* Reset module */
-> > +     bitmask |=3D readl(priv->pub.base0 + priv->reset_regs[reg]);
-> > +     writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> > +
-> > +     /* Ensure module reset control register is set */
-> > +     if (!(bitmask & readl(priv->pub.base0 + priv->reset_regs[reg]))) =
-{
->
-> Can this actually happen on this hardware? Under which circumstances?
->
-This check is based on the HW manual,
-
-"When module is reset once and released again, make sure that the
-target bit of module reset control register is set to 1 by reading the
-register before releasing from a module reset. Then release from a
-module reset."
-
-> > +             dev_err(priv->dev, "Reset register %u%02u is not set\n",
-> > +                     readl(priv->pub.base0 + priv->reset_regs[reg]), b=
-it);
->
-> Why read the register again? Could it have changed in the meantime?
-> Maybe it would be better to store the value that was actually checked
-> and print the variable here.
->
-OK.
-
-> > +             spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> > +             return -EIO;
-> > +     }
-> > +
-> > +     /* Release module from reset state */
-> > +     bitmask =3D readl(priv->pub.base0 + priv->reset_regs[reg]) & ~bit=
-mask;
-> > +     writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> > +
-> > +     /*
-> > +      * To secure processing after release from a module reset, dummy =
-read
-> > +      * the same register at least seven times.
->
-> Why 7? Is this documented in a reference manual?
->
-This is again based on the HW manual,
-
-"To secure processing after release from a module reset, dummy read
-the same register at least seven times after writing to initiate
-release from the module reset, and only then proceed with the
-subsequent processing."
-
-> > +      */
-> > +     for (i =3D 0; i < 7; i++)
-> > +             readl(priv->pub.base0 + priv->reset_regs[reg]);
->
-> It would be better to define a macro and use it in both places instead
-> of the magic number.
->
-OK.
-
-Cheers,
-Prabhakar
+Best regards,
+Krzysztof
