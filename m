@@ -1,94 +1,123 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C6E288CA3
-	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 11:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBDD3128BA;
+	Fri, 29 Aug 2025 12:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756466708; cv=none; b=PhBigWPTla6+wzgpEmJOTnxn1A3bZdLR2sLIplvYvNcnnFlEt95dFMGbC+aj40ccQhw0aVcnOxiuy63SWzIDRCs3/AadDNfRysgwkADlFLUt1Uc6h1GRrIt+sKC3PeTWlyiI7SuE+Vghhve49gh4HO9icYnYgKyiAD4SEdoWkxQ=
+	t=1756469920; cv=none; b=PUxWMdl0vlWBVvo70iiKOL4swDwcBnM/Pc41ZmJ+loPVN4sEFsW348gC/qcd0atZZbeK6WhQcokTqOecqQrUY0u+VP+6NIdRQlS4Mi9DMHs5YvvyA9IMKimgXW/O9ofKk4ioonRVIj1emcje1bgTI9/GMLWTgrrYSFG8oGIrsH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756466708; c=relaxed/simple;
-	bh=6BFQxgM0oh5DVS5xIr9d7exSQK21yLoo9WBRstJGdHI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=q5z6P6WR/3Nmmgn14Kl7rxgQ6xLQVINERj9F6JaKlrdMZ2qnldA1nKRztK/GBGGNT16zdawtWOWqm+WfzuvMlZTsewSCI++U4+8X3L2Fsyui2FwZYoEnLi9ll6SmcfdPcHwqo26jr8uQSWOELCosB/sTyUjfdQC0LK/Xe9vQDnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FkNPPWmd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FkNPPWmd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756466706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=H5DSrH7S/YL0DhZrQaaJj+H/G5K8+6JE30rwyPkkkH8=;
-	b=FkNPPWmdZBAryhAHtAJGGETQ6DJiUG+mBKliriIvEvdgzQtOtYA+ghg1JiOS0bZNi2+9wO
-	p0H4XilmEwS+e87IWQrz2phJwHtHgk3DhtDNGKyp29+eKU6tlbKg2mntd4o5e/tj5BDw/M
-	sNBWREqB8guG9ujrzkCjGMwWzwVZj2I=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-WHbU2cmUMm6U0r3Sfz8k9w-1; Fri, 29 Aug 2025 07:25:04 -0400
-X-MC-Unique: WHbU2cmUMm6U0r3Sfz8k9w-1
-X-Mimecast-MFC-AGG-ID: WHbU2cmUMm6U0r3Sfz8k9w_1756466703
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-afcb7a3a160so182991966b.2
-        for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 04:25:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756466703; x=1757071503;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H5DSrH7S/YL0DhZrQaaJj+H/G5K8+6JE30rwyPkkkH8=;
-        b=TIMdJi1RwUyFW/EiZjF4+zTcju6XShzqdVYjzoyZ8dppILweO6WQuPVmGbGbBn4DuK
-         /VP56OJL6R/L6fJnedWO1Rvarbb/Nc+Vbr6ZfsADE/VwZ3rLvp/Q4nvdGFJCoPNXh4vw
-         /qkDP69wSukC0KeNwXdNQizxSkaCoZT8jdG0wEurHQBcXlKVbhyT3x2/rj5jz5rXg0M2
-         9pWB8HjZm2OIoUvvH7bYX+QH77z2DhNGJ3Dd3SoZ6xFphHd8eGUVGopKXlyGakiLylQ5
-         R1NxCq4xOvOadNgJIOtffdIyI9kH00uo+xyrbav4QEHbMh4gMHxXIz0V57XyVTxTEgBT
-         MnWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/zL9M8wRKvsrm0LkPsJxNAxJ09M3/LWL+vCl+RRcBbIIWSfGZ/RtYY36uuRRW6EuLYqaCka0IiIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaVtMEsO+IijYvWz0zmkXAWVqla35YQ+vP2Qnba2joZBSufZUs
-	vb8T5Rrcyov15C6U7B2IzWhXSKYfHu5oW71IGXKMNpTN1goWg3B/aAiblps8rX51kbpgKoQDAwg
-	tbc7TU/zyXFC4qpdqEsv18LmPjaJaJzgfgFNt5NvLIpu9VRauj23G+Q810pMmpkLR+xvX2Z9cbj
-	mjjV0VIl7IprApxJrWmgRTQet0Ln5nqtNsRqCE
-X-Gm-Gg: ASbGnctRaP00ZyrigKCROSXKUcVjiYCM2vIK5ADuKo5/1u2c+OKVylBsB8qdOEnKwvR
-	+KBzCXMrifeW47pWoFhc2z6KfaOrD2bxiH1Qaw2RLswPphVloOGyefNr2eeiF2Xb1rW2WwqCKTm
-	68rthimtDG6bbInhh8uRVWBI1QOAFPQb3WaRx0SlcIRpUINqAkzSjR
-X-Received: by 2002:a17:907:7248:b0:afe:839e:d10 with SMTP id a640c23a62f3a-afe839e3cecmr1780883266b.31.1756466703353;
-        Fri, 29 Aug 2025 04:25:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDUAydazSnnhFhQ2IS/7xxn5zNZxC7KkqkPr1qBMJMM9fvjQWnwmefjaIofovb26bMZHJC4dwIv5EeZ0pSjP0=
-X-Received: by 2002:a17:907:7248:b0:afe:839e:d10 with SMTP id
- a640c23a62f3a-afe839e3cecmr1780881266b.31.1756466702991; Fri, 29 Aug 2025
- 04:25:02 -0700 (PDT)
+	s=arc-20240116; t=1756469920; c=relaxed/simple;
+	bh=A2UcC2Spy8fXkJkpa5GTZfEnkeSzPGRwdV1fYBisDqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kmhNLKJ2lzG+MfhT8ME+KWDI8Cjj9hiYuo+r7109HajdX7mE0RhKgWJQ3u+z2qnvsr/VnHr8uBx7NJ5+84nIKtTj2xAPiUFqtK1aWSYqizlzCi/CLFo4EquHUpIv/1+fuXSf3SkAX86rCRqY07dEL6wEQ91sHGtbYk6y7ztWIXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA4FC4CEF1;
+	Fri, 29 Aug 2025 12:18:38 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.18
+Date: Fri, 29 Aug 2025 14:18:34 +0200
+Message-ID: <cover.1756469006.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 29 Aug 2025 07:24:51 -0400
-X-Gm-Features: Ac12FXyyk3VCSqAncN0P6PmazJ4uiOf2K-91_nf2hLatGLxa_FrGw2-c_4CbC0k
-Message-ID: <CABx5tqJ0+1bjoMM4qPS94coa0wyQaae1gJP14pUKk+xVgD5kaQ@mail.gmail.com>
-Subject: Bouncing email for Renesas Versaclock 7 Clock Driver maintainer
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+	Hi Mike, Stephen,
 
-The MAINTAINERS file has the following entry and Alex's email address bounces.
+The following changes since commit f63aaf6e71de897954fbde4e4a17a9dcdbe5e7e1:
 
-RENESAS VERSACLOCK 7 CLOCK DRIVER
-M:     Alex Helms <alexander.helms.jy@renesas.com>
-S:     Maintained
-F:     Documentation/devicetree/bindings/clock/renesas,versaclock7.yaml
-F:     drivers/clk/clk-versaclock7.c
+  clk: renesas: mstp: Add genpd OF provider at postcore_initcall() (2025-08-18 09:36:55 +0200)
 
-Should this driver, along with clk-versaclock3.c and clk-versaclock5.c
-be moved under the drivers/clk/renesas/ directory?
+are available in the Git repository at:
 
-If not, is there anyone else from Renesas that should be listed as a
-maintainer instead?
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.18-tag1
 
-Thanks,
-Brian
+for you to fetch changes up to 6bbf77bb22565332744c74e9806f8fb50402d73e:
 
+  clk: renesas: r9a09g047: Add GPT clocks and resets (2025-08-25 15:57:49 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.18
+
+  - Add USB and remaining serial (SCI) clocks and resets on RZ/T2H and
+    RZ/N2H,
+  - Add I3C and PCIe clocks and resets on RZ/G3S,
+  - Add DMAC and PWM (GPT) clocks and resets on RZ/G3E,
+  - Add Module Stop (MSTOP) support on RZ/G2L and RZ/G2UL,
+  - Convert from round_rate() to determine_rate(),
+  - Miscellaneous fixes and improvements.
+
+Note that:
+  1. This is based on renesas-clk-fixes-for-v6.17-tag1, which you
+     have not pulled yet,
+  2. This includes DT binding definition updates for the RZ/T2H and
+     RZ/N2H SoCs, which are shared by clock driver, pin control driver,
+     and DT source files.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: r9a09g047: Add GPT clocks and resets
+
+Brian Masney (2):
+      clk: renesas: rzg2l: convert from round_rate() to determine_rate()
+      clk: renesas: rzv2h: remove round_rate() in favor of determine_rate()
+
+Claudiu Beznea (5):
+      clk: renesas: r9a08g045: Add PCIe clocks and resets
+      clk: renesas: r9a08g045: Add MSTOP for GPIO
+      clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
+      clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
+      clk: renesas: r9a07g04[34]: Use tabs instead of spaces
+
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag3' into renesas-clk-for-v6.18
+
+Lad Prabhakar (4):
+      dt-bindings: clock: renesas,r9a09g077/87: Add USB_CLK clock ID
+      dt-bindings: pinctrl: renesas: Document RZ/T2H and RZ/N2H SoCs
+      clk: renesas: r9a09g077: Add USB core and module clocks
+      clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
+
+Tommaso Merciai (1):
+      clk: renesas: r9a09g047: Add DMAC clocks and resets
+
+Wolfram Sang (1):
+      clk: renesas: r9a08g045: Add I3C clocks and resets
+
+ .../pinctrl/renesas,r9a09g077-pinctrl.yaml         | 172 +++++++++++++++++++++
+ drivers/clk/renesas/r9a07g043-cpg.c                | 140 ++++++++---------
+ drivers/clk/renesas/r9a07g044-cpg.c                | 162 +++++++++----------
+ drivers/clk/renesas/r9a08g045-cpg.c                |  29 +++-
+ drivers/clk/renesas/r9a09g047-cpg.c                |  27 ++++
+ drivers/clk/renesas/r9a09g077-cpg.c                |  29 +++-
+ drivers/clk/renesas/rzg2l-cpg.c                    |   9 +-
+ drivers/clk/renesas/rzg2l-cpg.h                    |   1 +
+ drivers/clk/renesas/rzv2h-cpg.c                    |  10 --
+ .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |   1 +
+ .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |   1 +
+ .../pinctrl/renesas,r9a09g077-pinctrl.h            |  22 +++
+ 12 files changed, 435 insertions(+), 168 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
+ create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
