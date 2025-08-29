@@ -1,248 +1,184 @@
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010009.outbound.protection.outlook.com [52.103.67.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C1221FBA;
-	Fri, 29 Aug 2025 03:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756437108; cv=fail; b=LlgcfEFIJcj9ZGtbi2WJXkdyN9FXoC9LHm8A6VKD0Bom+7/++H1sZArmF2hfgKdhhRtWpQvmZsHWIw7tBk7jz+nvgT6ItclS3BORQGmrlmWrV3aNXunSJS4gQVJdRWYtkp0B/va12AKzgEsM2QC2ETlxvCi+YjTau5oKv+YXj7E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756437108; c=relaxed/simple;
-	bh=3Jy3a0PMHuF+mWtZWFfARk+lO7KH3HJxOMKtDrlh5L4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gGqegkJjKoyfLTHDTggLMsVsAaXqA9zhUaQJNjBImuPRhJXS0ygQxuUR/s/9HHzFThHPZtddvLHbiwg+ao8zwVRpwsN6Gxr3D0ZB4AlIGIoXFadVUSpTzXiGLNNWJ0EDOG93oQ/lmO7MiHFTtIiY9ewyfTI0HWxmnUx/faQQrZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=g/s4TvVp; arc=fail smtp.client-ip=52.103.67.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B335CA52
+	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 05:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756443813; cv=none; b=sn6SIbm2mgRpL93IFiGLmn97dAGf8vLIqvW97fb4fIGT7xBcIGOyLxOM0yPeJTXqvRW6wcjlZtWo+iefX5nJRIyQW6Hskz6x67lanGQtuvJ1l70NmPqZX9tbyLz5RipgFqYLqAEbfZhG+4Zl1gu/I9zq3lP/JV8IJ5G8VAPEPKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756443813; c=relaxed/simple;
+	bh=HgGs1nmyr93hWqKJb/wArPT5hRVjZy9lGlIN/F+3xkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQKqY/0bKGSVz1j2VvsCiEk0/3WwI70UUs5cmqeMHFYs8LoQKp1fuWbaDszpS3YG6r3J3zl0XXdA2w8QUnM13R3c1gKLDjAftJxutu6mILY8KOcJ0r4/5LUPwT78EyaguQn4NW45B0fOkRGLJtJDeNFZdGnHZ/BWmTwTswRcaZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ydadmk1P; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="g/s4TvVp"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FtdRz2sSa2Xos+3ECSWJYQUAy2j4mAOWT1xsKuPCHtKxAGrZu1iary9mjnX2FrJHA2tIWHkyaosr46/4QJt8gEaF4kaJYPe6HBVoweBeSO9XOKeDg1v89ns66p4RaESBM4cqtp03ogGluhA6sGsCvAci862sBedZOv6p9MSgwujfM0pWm/qmIpLCn2GX9TYUJHGR8ksYM5jczNiEcec/lpX39uVdPXxAWnG218jpeKNJCC9M5plpjK89jajJs9xVfqxezdQBpC5kXpUh1cP3wM4tZq00IRf7uAJgz+gcqZ3LiDj8HASDWd3nGN/WvtkMz0pHLEjrcybndNVma3BS/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5PifqUiL24JNFj+b/ZzKHBEp+KMJcG89xMWPBkx9A3I=;
- b=WUIb+c0llaDG8TgdGtYxl+gQXaODBnZ+dpiaDccvJXYAv6+pu9CSJZYSlMmaTK7vuwc6YGCMW0G2XPNjzUqsiNpGIq66jnycKgz+o8H9t8CWI4yBzk7NNh8khus59ZTLTrMOiVjBuu16t5K4XVqWJToI0FLZbdlKlx6PRy42DM0d1i1UOkQJ0ZcPO+NYojrPDGaCVpMEsw0FN6Ia3zGVrWUAXzvU+5daxc2b51g2j78drgZ6UexJFxUlGyjOICH0sBYdEa9N5hJYpuhmWhPNmJ/oK0+nv0lqepLEe2J9l9nwnGR0zsbtmHD7rbWtEmKy5qBl85fAqk/cknVDJ4aHcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5PifqUiL24JNFj+b/ZzKHBEp+KMJcG89xMWPBkx9A3I=;
- b=g/s4TvVpPp4/zkDRCnaPp3v6eB14YSY2TXQEfnDBIVAh6cDFpQPPlD6LhwEudAJBOig9RcG+Z54cqKb/okyVAc2pamRGxdBayDRaeYV9rFPqsXMh0uU9RBc9TG5sB0rmPXtMEMXkJLxG5Y9jPpoouGucC8aW8bFow3m6tUN8IjVUduDIu66QTkRrimXWT28y7oktpyENDXjx74aKGMg+p3a7L1S2Gl0H7WY9PR5sWFynEToxMPi68gOs6I4SDkiQAWfX/xNlEMq87OnKo70w3OvTvel0X6PCbvdK1wVqFvGq5g1RTRErAwGAXzPz3Yv6mJ5dLqrjItrrJOr28B/vTA==
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16) by MAYPR01MB10446.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:158::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.14; Fri, 29 Aug
- 2025 03:11:38 +0000
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b]) by MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b%4]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
- 03:11:38 +0000
-Message-ID:
- <MAUPR01MB11072A23DEEA6F37D43DF0AFDFE3AA@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
-Date: Fri, 29 Aug 2025 11:11:33 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] clk: sophgo: sg2042-pll: remove round_rate() in favor
- of determine_rate()
-To: Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Inochi Amaoto <inochiama@gmail.com>, Michal Simek <michal.simek@amd.com>,
- Bjorn Andersson <andersson@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, sophgo@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
- <20250828-clk-round-rate-v2-v1-6-b97ec8ba6cc4@redhat.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250828-clk-round-rate-v2-v1-6-b97ec8ba6cc4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP286CA0021.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::11) To MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16)
-X-Microsoft-Original-Message-ID:
- <d698f04a-d60b-42bb-9692-2d3088a6c77b@outlook.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ydadmk1P"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b618b7d33so13812515e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 28 Aug 2025 22:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756443810; x=1757048610; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bb9BFU+tpEf23jDV6mWRZSZIrfp5E5QZk6jdr2Nh69s=;
+        b=Ydadmk1PgLqjPNaXaBDo75Tg6EI9AJNfPsTJHzGlF+QbqEnFP/5kO/Mn397NNpHfZ8
+         m89EfTTV6xbNWWWoZA+2qNmoGrda2UAbsUekBtznzAxt23q/qNkx3JCiYpfCwZrWa51R
+         DHydSrB27xuSwjiY1ltCeWdX1n4GSPSO+/gVSiGrEPKfMkZBz61zeuVGo+xkS1z1tn2L
+         zakFQVK0a6AWYFk9QwYd5s0jZBAijdCLuVlVZLODgkH96tUBFt/mobjZfAS6uPNFwE0K
+         5GSd+UZYvjPnDCO7Lzf9MWBd3ijqeys2hHj39b7oIZ4rfu3oc0OCiXpW+H0zqdzLVUYy
+         epXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756443810; x=1757048610;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bb9BFU+tpEf23jDV6mWRZSZIrfp5E5QZk6jdr2Nh69s=;
+        b=j7Ax5WRsaQV3fGyYv1W0GCIJPacz8gIAYr5OUmuV3fP0ng1v4l7402kI5x3jV5ucQV
+         kykILSHOvzrZVxf86dnWgp/3w0ioxSTJ0k/rK8qF8Nc9XqAQi0H+Sx8QLyzUaM/z+QqP
+         Uw1tFEMHf013NgiqgwNA8RTOa412fbB7wK4nvRZKIofqf+i6SijIV5/bmbMtALNRg1l0
+         KCuHn3trB0930iqhFWWkOSd9alt1gSXltjF68NuBH0cWiBRsPSOcmU6dAtJziBkvRjrd
+         RoET5nGPALB2GMp1mpBhQcbKiuHTKvXy9DKJeqKb/USvGRc2k/zSSLWJfUChQxwNF0XN
+         XluA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAoc1e0shnGcfhRu6YQWkaRK583GXw8RAgttZJVnGm98KymEpKuSPyCqBOJQo/3CeOx0UCFv2bk84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9BAepB90yZ51Lg+IYPnq9QssKX2SSud2qZ0xWEw8ruiLEAYgR
+	1rPc3vtBLhOlfE37Pu0b2wiONv5b5rJ5OohT6UR9WJJYrQaua6u7PDTwsvLMFJqibJU=
+X-Gm-Gg: ASbGncuBWDrY7aGzZeCMTaAgYWRaaENnP/7pmhbv7mz0cQyc3HSDigC4xHQQkdWRDsU
+	v6dU6fjpVW7GTwBlvxtEXf+7rzna9uPQ7rz3f8WCG4CocklFLosNB/68CkSjnXpD8SyZqtfjD7K
+	3RX/U0Vpch1ccJDCPwvDscXpTB0ja39iEhX+JHnXOGwoWIg3Sn9OVVXbEDluKBdEkJWffOra8c2
+	J4mgh2tOTVVARr9TQ+lZYXyEx8/mHXX5sHz0LwejEiE/uB9PQFziJz1YPZ1Fn3ZN3Bihc9cs+Nr
+	zgAKgoWVLD0Z+CLdvzIwxRRLB04ybLRQy6I60T2IiO6XVILnhvrpZW1WoWAm0LXKk6p606o1tEj
+	PnNY6hR0NWdvkI7Eb//dc4G+7D6F8KEMfd01xevbpKnmTPvN+DhBpmPLUXhJa5fq5Jn7xZGY6Qn
+	YAuKCzz9CR8vSi
+X-Google-Smtp-Source: AGHT+IFVd6qIssetNf0PlgYJI19qTYNEIHf0vWYP6G6M987Vw9zUraqTXmyhlT/MrqFSPHzJ1uz73g==
+X-Received: by 2002:a05:600c:3544:b0:45b:7c4c:cfbf with SMTP id 5b1f17b1804b1-45b7c4cd1e7mr35520595e9.23.1756443809583;
+        Thu, 28 Aug 2025 22:03:29 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd? ([2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66bbcf19sm66990015e9.4.2025.08.28.22.03.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 22:03:29 -0700 (PDT)
+Message-ID: <27d76eac-6141-45db-a347-edfc3bb593d4@tuxon.dev>
+Date: Fri, 29 Aug 2025 08:03:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAUPR01MB11072:EE_|MAYPR01MB10446:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3f7eeb2-03d6-48e0-2797-08dde6a9c4cd
-X-MS-Exchange-SLBlob-MailProps:
-	dx7TrgQSB6fOgpu0AmRux6KMzGkolm4jvkjiR1GM6lqFmvShxAYPC6EwqCw9Qts0w+uWnx/uvGyHxmwP0P1erJpxafpfdVhfp8o9PoIjGBUM3oDKjuoxoYPNIH0i4SE2OI5VL2G/VZH0zwzcapUaVjnczE5oDVfsZ6C2Oyva42vnSzipslWa/+m8v3XCA6J8XKSV5JnMrpw6bV42CkqNzc9MGEeGRPc5lh95fcEwCWUyLclFGzR0OHVDg8C+7i10ZIVgyaZn75T/sYgF5Y5WiossrTBqEgxJIYxyZtDDOMunSmYQRoYR2cpN9y21x8JacKsJUDW44zwgqMiBFZjKmJIyNolXoXbOdm8+IuLeatCWBxTFL0xpXJivaHypKGFaKet/HAHkeP7P7RefDNAGA/LfNqIaIKeO2cYsA1kkk5YvbDwiHEwpCL0CtW5CRNy1DX1qkCRMbUDEdiByayKucA3nhM1YKquSJ+teN5WhtcC64WVlkR9ouK6QrlSrEHhwoKEl3zdMrc1jzw2lrNT1icEfW0bP0JHn5+E2LHje8TtrncmSqwfYYoQg2pygH/kvP0YgfX7qWVmhKD1e+NdKsbV1OKv2PWKwZW6Nq9cL6Co8bw2YTcPq7e2lCtqs90RtmoHW8J7VqSmmgPADktP+EIqcIU7FF5mI5crHbrXmqZjL0/6k66I1OO2SAjsEGbzceQT4iREat2FCCwkKLGfFK45tWCDNHBhwmhrBi/NLmNmZmNIdB60dKQnb2Mexhim1dYwGV8DWGAI=
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|23021999003|461199028|15080799012|5072599009|19110799012|8060799015|6090799003|41001999006|40105399003|440099028|51005399003|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0FVMG5EYmFoV1A0Qkw0TTNERzJNRkVZL2swQVdNZENKMEo1QzF0TFF3R1pK?=
- =?utf-8?B?ZnhrWVlHQkVCTVBDNkM3Y05qWEJLTk9aRWRvbmtYcXlPOU56bzNuVVozS2FB?=
- =?utf-8?B?NFpjQlM5MzMrL2hCbTYxQ3BrM21mb3ZpMWJjNXJHOHlBeDRGMDJ0eElCZmZN?=
- =?utf-8?B?UVVPTXhpNEh4UjcvMk5wTUdIOWVabG5JbWNYdklFSEpvN3k0MTVJQVYyeDM2?=
- =?utf-8?B?Y1JHZ2F0NTZ1anRTcEFBeUVFOFZxSVV2VjhIQXVWWUhXbmNzRFVyTEQrMHV4?=
- =?utf-8?B?SVR2dTAwd0xvdDNXYzRndHlSVm1scGd4dmRaamlSV0pEOUFOWHhFTmJ2cmJE?=
- =?utf-8?B?b0pQVEtoMXV2NUFBMVNHcnlpQm1WNFpFZGE2dVpKZXkrU1d6VFZ5TUJaMmti?=
- =?utf-8?B?UXVZbXlWQlFWUmpRVXZBMlRUOWdMSDZ1TDBOa2xLOUNmNlFUMlhkVU0vUmhl?=
- =?utf-8?B?dTl0NW9iK2ZPZzZpMzhTYTdZK2ZtMjFVWXM5NWNTbGY4NmFkNEN4YWc5ZFcy?=
- =?utf-8?B?TU5MRzRwMDFab1AyTW94MWIzMXAyeHlkT1dYUTJDek5JWUhqRlBxcmZ2V0Yr?=
- =?utf-8?B?OFZvU1Q3Y1RxOURDRVdjLzhJdVpRV1NnT0NOUXNuM3NPMVdsUnRWTnNUMXdO?=
- =?utf-8?B?NlE2eWFZMFJ5cm1nMWNBbDBoT1YyTWNMeWFZMHh5ZkJ1dWs5emd2ZElUT21x?=
- =?utf-8?B?NlNqaVhJdGI2ZDdMVXh4bkFxY05ISnhIMXVCUTlZbWxGRGJ3VFcxNkxaeWFl?=
- =?utf-8?B?SkpCb0FkdGlWc2ZoRFFhZlBvVHY3cjhQelE2MWFqeWd6MG40emo3VnNpOEU0?=
- =?utf-8?B?cndvZHZadDZ0RnNPNS9hL2s0a0UrQVRrbmdKMXZWQW44bTVsazh5MVhoT3pW?=
- =?utf-8?B?RVpLS1MzOG9aWld6ZGVKWEdUZHk1dVpxQ1NzSU8yanJ2SjdCanpXZVRTNXpw?=
- =?utf-8?B?dnVLc2Q4NzN2V1pSYU1JNWdNZCtGQ3B2VDRQQ1NSaEsra09WdDFFV0VaZ1JO?=
- =?utf-8?B?RVBrVlNmdUZweXFTbjk5VVQ0N3BReHVWTXZ1UXAxa0hZUmNMWitTVnV3TTJx?=
- =?utf-8?B?UVJ2NWhJLzVmWmpyODhPb05SU0VybXJQMXhwdll6NnluT2xoTjlwSzBzUXFi?=
- =?utf-8?B?c1RudStOSGlqL1JxNFZ3djREMmt0aGRxOXFGTjBIckFWTC9hdnhZRjdBNWdn?=
- =?utf-8?B?RkU5MldaU1gwODZjNy8wS3ZHckNJVXI4bURhTTJVeWhqdVRkOHpvbFNpbG0r?=
- =?utf-8?B?NmQzeC9iLzZmTkRZcXBTVE4wQk9UYlkyQU1iSjdxbVZFWmlzWXgyelordDI5?=
- =?utf-8?B?bUhFYm9NK0pxS3dKUCtIY1IvMG94Tk5nc0N3QXN3TlJNLzFzODlTL3JMSHUz?=
- =?utf-8?B?S1NaRGtpZEU5WWZmaTVid3lqK3hxKzRZWi9WM1Y4SzJyczdValVvMXg3NmJZ?=
- =?utf-8?B?OHgxQ2JkT1JOeWUrTCt4cnoyVklJWlRuRjM1K2gva2kvQVhBd3BuRVlmbzhT?=
- =?utf-8?B?QUZGMlpuT0hzSmc4Yy9OelBLa05CVnhSR0dzb1dIZkhPR2JnYS95RnBmUURp?=
- =?utf-8?B?cmV6NzJVZDc3V2loRkJpV2RMeUpKeVlaYkZHbWdUbFZoU2doQVVGZ3g2WXRq?=
- =?utf-8?Q?5XJ9l38TO17z0CxLlOksKxmmWajWv6x4jaKGYP8P89jA=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1BjamJZTDVoZzY0Y2E2RFlsbVBROWtVT1plR2RCUG1TUVViam8yWHJjVVRQ?=
- =?utf-8?B?SEVsM2s0QW9FTUVob1ZoSlRkcmhJOHpsaFFFekFFcVpLamlJdWJsVC9oVFRD?=
- =?utf-8?B?clRycjVXWHhCMy9VZ243RjZrcG9RY1Bwc09ZSlc1UWgxT3lzTlVpNVNpVFFx?=
- =?utf-8?B?ejEzTExQaTdPdUc1WW9iL3BROVhlYkVFK1pnUlMvNmtlSG1JS1U0Z2dmWFlp?=
- =?utf-8?B?S0hkRkQ0QmJPYzBtUXVSRlVVSE9rYWY5NWR4VldyWGRBeHloNFQzOXora0d4?=
- =?utf-8?B?QzNJSnhLcFQ0bFdOTWxPd3dZSVNuQ2swRjFjS0xrVWlJdEJTd2N3eXhYdmZK?=
- =?utf-8?B?alJJWkpjYWVCdFJ2NnpOUThJaDlGRWkxL2tnMHpIWldhRjN6MVlqSkxqRnZw?=
- =?utf-8?B?VG9QTyt3MHQzb0xtZGNjVC9nbHhvV3VOWU1haTRYK3h3VXVCNy80VFpaY3Vp?=
- =?utf-8?B?QytQZW90cVFKQkgvZDB5Y2lmK0NXYU1VOXhWWHNCWkppbWl0Mi9GcERtWlNn?=
- =?utf-8?B?dVRIMUVIOUh0bHVqOXpaeFk3KzIzclA5NkNVMU1tWnRsN29GTlptYnNZSzN3?=
- =?utf-8?B?Z3FXVG9TeG1CcjVKRXJVMWNCNmQrOGFlVEo2UGdyWnJReUJ5bHUzYkI3ZzRi?=
- =?utf-8?B?YWNxNWl6VmtrWm1JRDRwRUdPanloSWZhSTRuZHdpa0lidHVVTHNyclduNVYz?=
- =?utf-8?B?QUJIQXAzUFp1WkJMRWhJWW9POVBmRkxCVGdwb0lvS2Q5S2MzSmVXVHdmUGF1?=
- =?utf-8?B?bExzSFg0SkxkeHpMK0JaanllUzFmMi9tTWJseHo0aDRXU0ZKeU9FMGRsTlJL?=
- =?utf-8?B?c1c1Q3FWNHdQeHd5UXVyeEtUb1VuMWw3cXg5WE9Xb2hXZysxWFlmbmc0R2w1?=
- =?utf-8?B?bjF6Z0h5M2ZmMTBETTdTeCtIZFNTWXh4WVpETXNKUjR5TXhiYzljbUFCS1d1?=
- =?utf-8?B?bnR6VWc2ZEx6SFQvSjVxellOcm9JYlNNU09rOEZJYVd0V20yYWlPUzA5WCtp?=
- =?utf-8?B?bXJrNXc2Z0pyc2pVb2xheXErOEZ6eCtwaWtuREQ4WG5sc1c0WkhRMnhVRFln?=
- =?utf-8?B?dWxldk5mSUJiKzBseWc0WWdwM2c4bjNSbUtqR3R2UExrWVVSbTkxamtsVjRB?=
- =?utf-8?B?aWRYd2R6QkkwY3VqN0xxQXhsSkYvMGVva1BPYU80cUt6UkRTTHlTYkhkbnhl?=
- =?utf-8?B?M1dKQlRxVXRRWXUyYVplaDd4am1Ga2dGa0dMUkhabllEeERrTjZ4anpIUVRN?=
- =?utf-8?B?K2FkS0Rmb0dEVlh1Mkw4TGlpWkd1RGV0dzM1QjNQYjdIRzNlNWNUTThYNE9B?=
- =?utf-8?B?bTIxejJjV2VISWpwYUVKZTlUT0tEcm1HRlFpRnF0UXdyNmxrZjIrcDBnR0d5?=
- =?utf-8?B?NXpROEd4Qkc3M285cW5GZ0RWS01ZekxJekgxTlpSRlRYL0YrdlJOWGZ0bW5j?=
- =?utf-8?B?SzRFTUJycHFlZGlnNUVOSDkrT1NOQUpTMWlEUHQ4aXVoRkM1MmE5NjdOUlhx?=
- =?utf-8?B?N09nMlhlV2hCY2JleStKVEY5MjlBUHdSYTJOaEFpSTVCbUtic1BLOEFod1pj?=
- =?utf-8?B?ZElOWFNyYmlRQXZFVFgwWjAra0NlcWU0cEdUY1E1UDVzaDQzQjliOG1xMXJ0?=
- =?utf-8?B?SW11UHJySDFFc2RBNHR0azdqNXZJblkzTGdSWElPaFhQMmhPeVV5N05HNmJN?=
- =?utf-8?B?aGh3eUtRZWQrVnBtcXV4eStra1FUUksyV3NnRCtxdjBWckl2YVdYeVdqSEV6?=
- =?utf-8?Q?IFLWfIrsVUU5csfldM=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3f7eeb2-03d6-48e0-2797-08dde6a9c4cd
-X-MS-Exchange-CrossTenant-AuthSource: MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 03:11:38.5436
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYPR01MB10446
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
+ documentation for the PCIe IP on Renesas RZ/G3S
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250828193605.GA957994@bhelgaas>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20250828193605.GA957994@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi, Bjorn,
+
+On 8/28/25 22:36, Bjorn Helgaas wrote:
+> On Thu, Aug 28, 2025 at 10:11:55PM +0300, claudiu beznea wrote:
+>> On 8/8/25 14:25, Claudiu Beznea wrote:
+>>> On 08.07.2025 19:34, Bjorn Helgaas wrote:
+>>>> On Fri, Jul 04, 2025 at 07:14:04PM +0300, Claudiu wrote:
+>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>
+>>>>> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
+>>>>> Base Specification 4.0. It is designed for root complex applications and
+>>>>> features a single-lane (x1) implementation. Add documentation for it.
+>> ...
+> 
+>> Renesas HW team replied to me that there are no clock, reset, or interrupt
+>> signals dedicated specifically to the Root Port. All these signals are
+>> shared across the PCIe system.
+>>
+>> Taking this and your suggestions into account, I have prepared the following
+>> device tree:
+>>
+>> pcie: pcie@11e40000 {
+>> 	compatible = "renesas,r9a08g045-pcie";
+>> 	reg = <0 0x11e40000 0 0x10000>;
+>> 	ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
+>> 	/* Map all possible DRAM ranges (4 GB). */
+>> 	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
+>> 	bus-range = <0x0 0xff>;
+>> 	interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
+>> 		     <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
+>> 	interrupt-names = "serr", "serr_cor", "serr_nonfatal",
+>> 			  "serr_fatal", "axi_err", "inta",
+>> 			  "intb", "intc", "intd", "msi",
+>> 			  "link_bandwidth", "pm_pme", "dma",
+>> 			  "pcie_evt", "msg", "all";
+>> 	#interrupt-cells = <1>;
+>> 	interrupt-controller;
+>> 	interrupt-map-mask = <0 0 0 7>;
+>> 	interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INTA */
+>> 			<0 0 0 2 &pcie 0 0 0 1>, /* INTB */
+>> 			<0 0 0 3 &pcie 0 0 0 2>, /* INTC */
+>> 			<0 0 0 4 &pcie 0 0 0 3>; /* INTD */
+>> 	clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
+>> 		 <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
+>> 	clock-names = "aclk", "pm";
+>> 	resets = <&cpg R9A08G045_PCI_ARESETN>,
+>> 		 <&cpg R9A08G045_PCI_RST_B>,
+>> 		 <&cpg R9A08G045_PCI_RST_GP_B>,
+>> 		 <&cpg R9A08G045_PCI_RST_PS_B>,
+>> 		 <&cpg R9A08G045_PCI_RST_RSM_B>,
+>> 		 <&cpg R9A08G045_PCI_RST_CFG_B>,
+>> 		 <&cpg R9A08G045_PCI_RST_LOAD_B>;
+>> 	reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
+>> 		      "rst_rsm_b", "rst_cfg_b", "rst_load_b";
+>> 	power-domains = <&cpg>;
+>> 	device_type = "pci";
+>> 	#address-cells = <3>;
+>> 	#size-cells = <2>;
+>> 	renesas,sysc = <&sysc>;
+>> 	status = "disabled";
+>>
+>> 	pcie_port0: pcie@0,0 {
+>> 		reg = <0x0 0x0 0x0 0x0 0x0>;
+>> 		ranges;
+>> 		clocks = <&versa3 5>;
+>> 		clock-names = "ref";
+>> 		device_type = "pci";
+>> 		vendor-id = <0x1912>;
+>> 		device-id = <0x0033>;
+>> 		bus-range = <0x1 0xff>;
+> 
+> I don't think you need this bus-range.  The bus range for the
+> hierarchy below a Root Port is discoverable and configurable via
+> config space.
+
+Thank you for the pointer. I'll update and send a new version.
+
+Claudiu
 
 
-On 8/29/2025 8:38 AM, Brian Masney wrote:
-> This driver implements both the determine_rate() and round_rate() clk
-> ops, and the round_rate() clk ops is deprecated. When both are defined,
-> clk_core_determine_round_nolock() from the clk core will only use the
-> determine_rate() clk ops, so let's remove the round_rate() clk ops since
-> it's unused.
->
-> The implementation of sg2042_clk_pll_determine_rate() calls
-> sg2042_clk_pll_round_rate(), so this folds the two into a single
-> function.
->
-> Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-
-Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
-
-Thanks,
-
-Chen
-
-> ---
->   drivers/clk/sophgo/clk-sg2042-pll.c | 26 +++++++++-----------------
->   1 file changed, 9 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-> index e5fb0bb7ac4f97616f3b472fcab45e5729eb653e..110b6ee06fe4b61e89f3cbf2ce00eb03c078afb6 100644
-> --- a/drivers/clk/sophgo/clk-sg2042-pll.c
-> +++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-> @@ -346,37 +346,30 @@ static unsigned long sg2042_clk_pll_recalc_rate(struct clk_hw *hw,
->   	return rate;
->   }
->   
-> -static long sg2042_clk_pll_round_rate(struct clk_hw *hw,
-> -				      unsigned long req_rate,
-> -				      unsigned long *prate)
-> +static int sg2042_clk_pll_determine_rate(struct clk_hw *hw,
-> +					 struct clk_rate_request *req)
->   {
->   	struct sg2042_pll_ctrl pctrl_table;
->   	unsigned int value;
->   	long proper_rate;
->   	int ret;
->   
-> -	ret = sg2042_get_pll_ctl_setting(&pctrl_table, req_rate, *prate);
-> +	ret = sg2042_get_pll_ctl_setting(&pctrl_table,
-> +					 min(req->rate, req->max_rate),
-> +					 req->best_parent_rate);
->   	if (ret) {
->   		proper_rate = 0;
->   		goto out;
->   	}
->   
->   	value = sg2042_pll_ctrl_encode(&pctrl_table);
-> -	proper_rate = (long)sg2042_pll_recalc_rate(value, *prate);
-> +	proper_rate = (long)sg2042_pll_recalc_rate(value, req->best_parent_rate);
->   
->   out:
-> -	pr_debug("--> %s: pll_round_rate: val = %ld\n",
-> +	pr_debug("--> %s: pll_determine_rate: val = %ld\n",
->   		 clk_hw_get_name(hw), proper_rate);
-> -	return proper_rate;
-> -}
-> +	req->rate = proper_rate;
->   
-> -static int sg2042_clk_pll_determine_rate(struct clk_hw *hw,
-> -					 struct clk_rate_request *req)
-> -{
-> -	req->rate = sg2042_clk_pll_round_rate(hw, min(req->rate, req->max_rate),
-> -					      &req->best_parent_rate);
-> -	pr_debug("--> %s: pll_determine_rate: val = %ld\n",
-> -		 clk_hw_get_name(hw), req->rate);
->   	return 0;
->   }
->   
-> @@ -417,14 +410,13 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
->   
->   static const struct clk_ops sg2042_clk_pll_ops = {
->   	.recalc_rate = sg2042_clk_pll_recalc_rate,
-> -	.round_rate = sg2042_clk_pll_round_rate,
->   	.determine_rate = sg2042_clk_pll_determine_rate,
->   	.set_rate = sg2042_clk_pll_set_rate,
->   };
->   
->   static const struct clk_ops sg2042_clk_pll_ro_ops = {
->   	.recalc_rate = sg2042_clk_pll_recalc_rate,
-> -	.round_rate = sg2042_clk_pll_round_rate,
-> +	.determine_rate = sg2042_clk_pll_determine_rate,
->   };
->   
->   /*
->
