@@ -1,39 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8109422A4D5;
-	Fri, 29 Aug 2025 07:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35A12857CB;
+	Fri, 29 Aug 2025 07:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756453085; cv=none; b=hdfaBnPnFoVLIzB9kVHDNiHSUB0Lk6mehScMBTBejHwIGalPT+nkpziEnkf6IiTNUm/tGkv7KAcPUfYLYrMRgBc74+1QgoMihOO/DRADGktpmPV94xm2OPu2kZ2nN7o8k8RGvpgrBkwJm2ub5coXy2Ez3w/sfaK3e7nB2gnoYYk=
+	t=1756454170; cv=none; b=AYy9rFT6FwA+DSGDNpxzhtkTyexNz6Ye/MTuFXA7SZ9KRGuAS80Ob3AXCdJ0WDBRNMjGFkS+dh1lXtqbkNrFjfm+ZmyJnhu9rbbL6PR72bQ+GHuTCNXA91f37AiySPFTabbdqMwXXwmXM83L9acgc7KPJWl+I0az6XRmQxdQmAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756453085; c=relaxed/simple;
-	bh=Tl11kOoBn9+Z8c4phzkCXnlIR9PQSdgakpVZpWjZPB4=;
+	s=arc-20240116; t=1756454170; c=relaxed/simple;
+	bh=gEVY2TEOLXWuc/PylIHeYa0ayOzElTCYmrn2BP+q/ow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txRTni1onmod4xKWrNnOo2/cJvILLJt1E0pPLUpun37vtljwNwpQ+VMPX/Zpbb7BSO/4jNNKeM3oK5gr9ATJmHJLYwRc46+UTH5V3BLbkZP+JkuYwMaOgRX0w+6ithl7e0CVJ/ZqRHWGKrPM91kFeCjO3A8tFpp5RIvxvV6YPak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B299C4CEF0;
-	Fri, 29 Aug 2025 07:38:04 +0000 (UTC)
-Date: Fri, 29 Aug 2025 09:38:02 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Varadarajan Narayanan <quic_varada@quicinc.com>, Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Anusha Rao <quic_anusha@quicinc.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
-	Devi Priya <quic_devipriy@quicinc.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	quic_pavir@quicinc.com, quic_suruchia@quicinc.com
-Subject: Re: [PATCH v4 07/10] dt-bindings: clock: qcom: Add NSS clock
- controller for IPQ5424 SoC
-Message-ID: <20250829-quick-green-pigeon-a15507@kuoka>
-References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
- <20250828-qcom_ipq5424_nsscc-v4-7-cb913b205bcb@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPnnwgkBHgPfoaAf24C5C2OcBp8ylnMLSv6wANo0mBtUMCHMDITHUnZjlqZwiqA69yM+56U6439vLcyEDHkE5Z8rKLsGap08lCA4kt+ig23fqszudhD9flifUb5ySgV+SASPfJ7nuAeANGKLaxDfu4zChR8MIyuieD9m6G01ILE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThUpyuCE; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThUpyuCE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA52BC4CEF0;
+	Fri, 29 Aug 2025 07:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756454169;
+	bh=gEVY2TEOLXWuc/PylIHeYa0ayOzElTCYmrn2BP+q/ow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ThUpyuCEt+rHjGchX/jdas1nJIAeIqJ6AnMYOF9cySZOYAnrJZYC/QcNcxw2bHsMR
+	 f1bS5mUqF9syMOLObU9aoV97mJjLf4lbHaYNHo2UrzxWImgkd3rV7YWUeRrqiu5ujd
+	 zdBpWZrXThODYKC6Yay5tyTon+RB67NHLqQYKCalVyKw98bTZgRb927gWS14SJwVS+
+	 v+iAlJSdNA69eV935f/yCfNPpnUtlbxGk7DaTpnRylJJJwdhvVh3EJOOo2IRZXw7Va
+	 UCO8AhPWZTjqDZXc2LWD7ROB8k2Gtf9BrFLnJNtLT9l+JJEt8BTHB1UXGdssEAkXzj
+	 mRAxskbk1f3YA==
+Date: Fri, 29 Aug 2025 09:56:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com, 
+	cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org, 
+	tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, gwk1013@coasia.com, 
+	hgkim05@coasia.com, mingyoungbo@coasia.com, smn1196@coasia.com, 
+	pankaj.dubey@samsung.com, shradha.t@samsung.com, inbaraj.e@samsung.com, 
+	swathi.ks@samsung.com, hrishikesh.d@samsung.com, dj76.yang@samsung.com, 
+	hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	soc@lists.linux.dev
+Subject: Re: [PATCH v3 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
+ SoC support
+Message-ID: <20250829-attentive-watchful-guan-b79ccc@kuoka>
+References: <20250825114436.46882-1-ravi.patel@samsung.com>
+ <CGME20250825120735epcas5p3c86b9db5f17c0938f1d53ef6014ab342@epcas5p3.samsung.com>
+ <20250825114436.46882-9-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,33 +55,76 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-7-cb913b205bcb@quicinc.com>
+In-Reply-To: <20250825114436.46882-9-ravi.patel@samsung.com>
 
-On Thu, Aug 28, 2025 at 06:32:20PM +0800, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
-> devices.
-> 
-> Add support for the compatible string "qcom,ipq5424-nsscc" based on the
-> existing IPQ9574 NSS clock controller Device Tree binding. Additionally,
-> update the clock names for PPE and NSS for newer SoC additions like
-> IPQ5424 to use generic and reusable identifiers "nss" and "ppe" without
-> the clock rate suffix.
-> 
-> Also add master/slave ids for IPQ5424 networking interfaces, which is
-> used by nss-ipq5424 driver for providing interconnect services using
-> icc-clk framework.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 62 ++++++++++++++++++---
->  include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++++
->  include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 +++++
->  include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 +++++++++++++++
->  4 files changed, 178 insertions(+), 8 deletions(-)
+On Mon, Aug 25, 2025 at 05:14:34PM +0530, Ravi Patel wrote:
+>  config ARCH_AXIADO
+>  	bool "Axiado SoC Family"
+>  	select GPIOLIB
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index bdb9e9813e50..bcca63136557 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +subdir-y += axis
+>  subdir-y += google
+>  
+>  dtb-$(CONFIG_ARCH_EXYNOS) += \
+> diff --git a/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h b/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
+> new file mode 100644
+> index 000000000000..70bd1dcac85e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
+> @@ -0,0 +1,36 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
+Does not match rest of licenses.
 
-Are you going to change the binding in next version?
+> +/*
+> + * Axis ARTPEC-8 SoC device tree pinctrl constants
+> + *
+> + * Copyright (c) 2025 Samsung Electronics Co., Ltd.
+> + *             https://www.samsung.com
+> + * Copyright (c) 2025  Axis Communications AB.
+> + *             https://www.axis.com
+> + */
+> +
+> +#ifndef __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__
+> +#define __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__
+> +
+> +#define ARTPEC_PIN_PULL_NONE		0
+> +#define ARTPEC_PIN_PULL_DOWN		1
+> +#define ARTPEC_PIN_PULL_UP		3
+> +
+> +#define ARTPEC_PIN_FUNC_INPUT		0
+> +#define ARTPEC_PIN_FUNC_OUTPUT		1
+> +#define ARTPEC_PIN_FUNC_2		2
+> +#define ARTPEC_PIN_FUNC_3		3
+> +#define ARTPEC_PIN_FUNC_4		4
+> +#define ARTPEC_PIN_FUNC_5		5
+> +#define ARTPEC_PIN_FUNC_6		6
+> +#define ARTPEC_PIN_FUNC_EINT		0xf
+> +#define ARTPEC_PIN_FUNC_F		ARTPEC_PIN_FUNC_EINT
+> +
+> +/* Drive strength for ARTPEC */
+> +#define ARTPEC_PIN_DRV_SR1		0x8
+> +#define ARTPEC_PIN_DRV_SR2		0x9
+> +#define ARTPEC_PIN_DRV_SR3		0xa
+> +#define ARTPEC_PIN_DRV_SR4		0xb
+> +#define ARTPEC_PIN_DRV_SR5		0xc
+> +#define ARTPEC_PIN_DRV_SR6		0xd
+> +
+> +#endif /* __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__ */
+> diff --git a/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
+> new file mode 100644
+> index 000000000000..8d239a70f1b4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
+> @@ -0,0 +1,120 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+
+This is Dual license, so why pincltr header is not?
 
 Best regards,
 Krzysztof
