@@ -1,118 +1,147 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4242D9ECB;
-	Fri, 29 Aug 2025 14:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767393218A4;
+	Fri, 29 Aug 2025 14:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476880; cv=none; b=JZXsJ4M5Gw3mVmSJL2rdtwRVH1tHIxCc7kyYADkL0Rxx3xeYoy4y8hVOYdinZZjZBMOLYwzVKsXX1lkcGbQLC6i4KyjcQvQ7irepQSCyLzR+ImptkL0P6aoY6tyCZPSuGztJ9rErTByjflz0aPCkTbqmGCC6S3Mz/sXc1fTR+r0=
+	t=1756477656; cv=none; b=iwpybkDVYrfUiVVpe2TDP0Xl2yXUQQosE432LjrBfk6u81Lzj4wfrhdd2o3oDBOoutelMc1Dgl9MS/EQffBieGezhpcPcyWj6yY/w/xGocMm9O6ggRfZbgrikKGwSjKw3jxfdSdR1kbsU6Xy1pVKqOp2dKE58xTiGHxzijb3axY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476880; c=relaxed/simple;
-	bh=VMVb37L+6eOc0LNuwVScLaeYIjjIpE5bZA9fKqzTBGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j5rqZqzKi3CRmp9eY9be3SDLI7gezFbkNLG4VxaMofe7hvbWH6q4LOIt7LCsmKjJAeqaerOdRdxBPlplJJvxUigMDpiIsqnQx3tsKgVa/bXB3aSFy6W7vAr86+hJFPHrhG0abJNr8sWl/XMFmH5gaVY6e+vGqUVlxzHkm5t6XxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfGkQDKU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756477656; c=relaxed/simple;
+	bh=4tBUrRyd74FiupUVrJ5fFiV36preehjktcmpPlLe3nM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Q+2kC+uxNsudCsftCNs45ChKfsBV2DttzOXJZ+7H05wmElP3GJ84ZD8Ed0DN6YXWWG2uFj4/t9Ea3QIQ87XgBKlCDopPkd3bLOWZ2ZPFEltdqdKakAV1/SRRNzCHJGpu6CBfDr5WSUQa61wXo2IixeQfBGOpi6rbLDiL/vxFBSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=je5iMdwg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfGkQDKU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB09C4CEF0;
-	Fri, 29 Aug 2025 14:14:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="je5iMdwg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2381C4CEF7;
+	Fri, 29 Aug 2025 14:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756476880;
-	bh=VMVb37L+6eOc0LNuwVScLaeYIjjIpE5bZA9fKqzTBGo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LfGkQDKUOoTmhjCFBaANinZoo1Gvxbb40ViyMTqs1bOVP+1nI32MJjIDpPgcVuxVS
-	 NOuD0KoZH/7XYjATrGqbQgIVjH9yVp94fX4miCr/RRci5c7o7rRgvwW47Y5NoNX98T
-	 eoR+kykEfNGTQAsnj+dz4dGbydGXGviNWeZFeKAhWDBeqUTgw+Sc+EtH62BswjaRSX
-	 KcWGJW1osmXfUr2mtf062vkaTQ+RHQw0RqJnkA/Jxh/7KGBYNaSQHIsW1I7l/6WCzY
-	 0f6GLjAnrCA73lFKV5BA1BLTHiSqqmyuNO59iQReSDX8yvJBHSnjWjR3qA579fkwcJ
-	 MxNOtmb2thPew==
-Message-ID: <4770fec3-1b1c-4ade-aa3f-1ad097bbbb3f@kernel.org>
-Date: Fri, 29 Aug 2025 16:14:34 +0200
+	s=k20201202; t=1756477656;
+	bh=4tBUrRyd74FiupUVrJ5fFiV36preehjktcmpPlLe3nM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=je5iMdwgPCFuqQzrzqIOE8loBFILcb4OVyIXumvohf2TIzcw8NcSXFmaI6kOw0m7L
+	 xiXtqGxeAo1lWJaqJqoe+t4Md6L6lzKJ/eRsYHEDHt36sSdMIvgcWGZusdFdvbgQNm
+	 Bf/z7tGigVF0FOJuvmrmCZjG1K5eTy/1O1F3IL7KHtKZcSIv2q1QeJkxDbCye9UiZU
+	 1fCG16wt1Ro651Lchb7xZ05S9X2j1AMXoV3fxk4MS63/T/6ObAiZmRZTvrJsi7HMrX
+	 hQVPvvo23h73Yf9FmpJ5KzHoFirCu4qAJ/mtp9kxLw5Yal0zKWfBNN/0kgIV2jdh3j
+	 +nNOmbFJChPVw==
+Date: Fri, 29 Aug 2025 09:27:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: fsd: Fix Clock handle for WDT
-To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
-References: <20250829135643.105406-1-v.pavani@samsung.com>
- <CGME20250829135708epcas5p1b62d44f8a712b1c865fd82d26e89896f@epcas5p1.samsung.com>
- <20250829135643.105406-3-v.pavani@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250829135643.105406-3-v.pavani@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 29/08/2025 15:56, Varada Pavani wrote:
-> FSD SoC WDT has few changes when compared to exynos7 interms of Clocks,
-> PMU register bits for each cluster. So use "tesla,fsd-wdt"
-
-So what was added in 2022?
-
-> compatibility for using correct driver data.
-> FSD supports 2 Clocks for WDT (PCLK and CLK).
-> - use fin_pll source Clock for all timer related calculations.
-> - use bus Clock (IMEM_WDT0_IPCLKPORT_PCLK) to gate/ungate the register
-> interface. Update both as per WDT UM.
-
-No, you break all the users. Probably users don't care, but I do care
-because I use that arguments for reviewing other patches, so I apply a
-bit stricter rules for existing Samsung trees.
-
-Otherwise provide rationale about impact and what was happening in 2022
-with this code...
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, linux-tegra@vger.kernel.org, 
+ devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, linux-kernel@vger.kernel.org, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
+References: <20250829122235.119745-1-clamor95@gmail.com>
+Message-Id: <175647746523.734549.14987983644245053548.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
 
 
-Best regards,
-Krzysztof
+On Fri, 29 Aug 2025 15:22:30 +0300, Svyatoslav Ryhel wrote:
+> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> a ring oscillator and translates voltage changes into frequency
+> compensation changes needed to prevent the CPU from failing and is
+> essential for correct CPU frequency scaling.
+> 
+> ---
+> Changes in v2:
+> - dropped 'drivers:' from commit title
+> - aligned naming to Tegra114
+> 
+> Changes in v3:
+> - add DFLL support for Tegra 114 was split into dt header addition,
+>   DFLL reset configuration and CVB tables implementation.
+> - added cleaner commit message to dt header commit
+> - added T210_ prefixes to Tegra210 CVB table macros
+> 
+> Changes in v4:
+> - expanded commit message of car header adding commit
+> 
+> Changes in v5:
+> - renamed tegra114-car.h to nvidia,tegra114-car.h
+> ---
+> 
+> Svyatoslav Ryhel (4):
+>   dt-bindings: reset: add Tegra114 car header
+>   clk: tegra: add DFLL DVCO reset control for Tegra114
+>   clk: tegra: dfll: add CVB tables for Tegra114
+>   ARM: tegra: Add DFLL clock support for Tegra114
+> 
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        |  33 ++++
+>  drivers/clk/tegra/Kconfig                     |   2 +-
+>  drivers/clk/tegra/clk-tegra114.c              |  30 +++-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c    | 158 +++++++++++++++---
+>  drivers/clk/tegra/clk.h                       |   2 -
+>  .../dt-bindings/reset/nvidia,tegra114-car.h   |  13 ++
+>  6 files changed, 204 insertions(+), 34 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/nvidia,tegra114-car.h
+> 
+> --
+> 2.48.1
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250828 (best guess, 3/5 blobs matched)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250829122235.119745-1-clamor95@gmail.com:
+
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+
+
+
+
+
