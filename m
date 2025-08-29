@@ -1,181 +1,72 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E133985
-	for <linux-clk@vger.kernel.org>; Fri, 29 Aug 2025 09:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9221C5D72;
+	Fri, 29 Aug 2025 09:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460784; cv=none; b=TKzCaZMJTarIXgf7jdDQcLL1P0Ibrl+dOl0AvaP5n8/4yiE2dbpFhXoV/7U52IjNgk7PhzC18Bhg10bUlM/uaCILMOeplqIgJnL5S5nCyJXCXsj/a3WtZKhcc8Gi4OmhhVH2fobAhtSjGlCZaLPd9LC72qEAeC4Bm4k1mTVXUJU=
+	t=1756461566; cv=none; b=XWHJZeywBcQi4GC9+DLk3dnuqx3rp3T2KLElAtBXM25XOZt9RVVll+3YJNVyvHxstb97kHsJi0nSloy17wnxU0vzmEvtwbvT73todHYD6SOIpCXpH6c1BHbtpL79VlnH5dxSqRmpFQrSmQjkSwojP0bDuZQQoiJ2MdpOOc9tujI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460784; c=relaxed/simple;
-	bh=m2AA8AQ7ZC5QPFOd4+BL7ccckeu2croSpHaWgn2WXtE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WDqQzg+Hmwg1R4VDfsu2EERmXaHb52luL2XpTRIoMDDPG+QY7G+coJLv0JQm9AoSB3bUunTrk9spk/t0Nf48E67XSSsBEitd1IqMoAhCvHS9RcUKXgzx6gCVJ1H4zaeKbeprAo1ru4AN8udP+th6WNATv5eJCl4tFCjrxQbCSwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urvgU-0003pN-4g; Fri, 29 Aug 2025 11:46:14 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urvgT-002hrG-00;
-	Fri, 29 Aug 2025 11:46:13 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urvgS-000DDJ-2x;
-	Fri, 29 Aug 2025 11:46:12 +0200
-Message-ID: <d0a4368ce2f4743457f98d8559aaeee097b78d3e.camel@pengutronix.de>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add module reset support for
- RZ/T2H
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Geert Uytterhoeven
-	 <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date: Fri, 29 Aug 2025 11:46:12 +0200
-In-Reply-To: <20250820204810.2328183-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: 
-	<20250820204810.2328183-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1756461566; c=relaxed/simple;
+	bh=sbsTpvesguyPzn4lXJKCI8/Damqt6BObQ+yJQw0/JkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGiqC+6GTTKBHbLRHyMItx5W2iy7XlQAFHNT0NfOj0msKab74XYfh+03CT8sYfgj9Qkx5E4ijSFbRv1IHrliTkMAEJptIjeJqsiv2y+QFh9X20cZ25E58/ubH5dulRrKbZopFAIS6vcypPqF+5YK2a8JMIu0xZ8D3PpTpMe3R54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6509C15A1;
+	Fri, 29 Aug 2025 02:59:11 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D38FB3F694;
+	Fri, 29 Aug 2025 02:59:17 -0700 (PDT)
+Date: Fri, 29 Aug 2025 10:59:15 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, <arm-scmi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: scmi: migrate round_rate() to determine_rate()
+Message-ID: <20250829-fine-tacky-sturgeon-0ba3c4@sudeepholla>
+References: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
+ <20250829100903.GB16625@nxa18884-linux.ap.freescale.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829100903.GB16625@nxa18884-linux.ap.freescale.net>
 
-On Mi, 2025-08-20 at 21:48 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
-> CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
-> Registers (MRCR) where both reset and deassert actions are done via
-> read-modify-write (RMW) to the same register.
->=20
-> Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
-> it to reset_regs. For this SoC, the number of resets is based on the
-> number of MRCR registers rather than the number of module clocks. Also
-> add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
-> while holding the spinlock. This follows the RZ/T2H requirements, where
-> processing after releasing a module reset must be secured by performing
-> seven dummy reads of the same register, and where a module that is reset
-> and released again must ensure the target bit in the Module Reset Control
-> Register is set to 1.
->=20
-> Update the reset controller registration to select cpg_mrcr_reset_ops for
-> RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
-> - Added cpg_mrcr_reset_ops for RZ/T2H specific handling
-> - Updated commit message
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 139 ++++++++++++++++++++++++-
->  1 file changed, 135 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas=
-/renesas-cpg-mssr.c
-> index 5ff6ee1f7d4b..77a298b50c9c 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -137,6 +137,22 @@ static const u16 srcr_for_gen4[] =3D {
->  	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
->  };
-> =20
-> +static const u16 mrcr_for_rzt2h[] =3D {
-> +	0x240,	/* MRCTLA */
-> +	0x244,	/* Reserved */
-> +	0x248,	/* Reserved */
-> +	0x24C,	/* Reserved */
-> +	0x250,	/* MRCTLE */
-> +	0x254,	/* Reserved */
-> +	0x258,	/* Reserved */
-> +	0x25C,	/* Reserved */
-> +	0x260,	/* MRCTLI */
-> +	0x264,	/* Reserved */
-> +	0x268,	/* Reserved */
-> +	0x26C,	/* Reserved */
-> +	0x270,	/* MRCTLM */
-> +};
+On Fri, Aug 29, 2025 at 06:09:03PM +0800, Peng Fan wrote:
+> On Wed, Aug 27, 2025 at 01:12:07PM -0400, Brian Masney wrote:
+> >This driver implements both the determine_rate() and round_rate() clk
+> >ops, and the round_rate() clk ops is deprecated. When both are defined,
+> >clk_core_determine_round_nolock() from the clk core will only use the
+> >determine_rate() clk ops.
+> >
+> >The existing scmi_clk_determine_rate() is a noop implementation that
+> >lets the firmware round the rate as appropriate. Drop the existing
+> >determine_rate implementation and convert the existing round_rate()
+> >implementation over to determine_rate().
+> >
+> >scmi_clk_determine_rate() was added recently when the clock parent
+> >support was added, so it's not expected that this change will regress
+> >anything.
+> >
+> >Signed-off-by: Brian Masney <bmasney@redhat.com>
+> 
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-Does each of these registers contain 32 reset controls?
+Peng,
 
-Why are reserved registers in this list? It looks like the driver
-allows poking around in reserved registers.
+It would be great if you can test it with parent clock support on i.MX
+platforms just to be sure this doesn't regress anything.
 
-> +
->  /*
->   * Software Reset Clearing Register offsets
->   */
-> @@ -736,6 +752,102 @@ static int cpg_mssr_status(struct reset_controller_=
-dev *rcdev,
->  	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
->  }
-> =20
-> +static int cpg_mrcr_reset(struct reset_controller_dev *rcdev,
-> +			  unsigned long id)
-> +{
-> +	struct cpg_mssr_priv *priv =3D rcdev_to_priv(rcdev);
-> +	unsigned int reg =3D id / 32;
-> +	unsigned int bit =3D id % 32;
-> +	u32 bitmask =3D BIT(bit);
-> +	unsigned long flags;
-> +	unsigned int i;
-> +
-> +	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
-> +
-> +	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
-> +	/* Reset module */
-> +	bitmask |=3D readl(priv->pub.base0 + priv->reset_regs[reg]);
-> +	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> +
-> +	/* Ensure module reset control register is set */
-> +	if (!(bitmask & readl(priv->pub.base0 + priv->reset_regs[reg]))) {
-
-Can this actually happen on this hardware? Under which circumstances?
-
-> +		dev_err(priv->dev, "Reset register %u%02u is not set\n",
-> +			readl(priv->pub.base0 + priv->reset_regs[reg]), bit);
-
-Why read the register again? Could it have changed in the meantime?
-Maybe it would be better to store the value that was actually checked
-and print the variable here.
-
-> +		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> +		return -EIO;
-> +	}
-> +
-> +	/* Release module from reset state */
-> +	bitmask =3D readl(priv->pub.base0 + priv->reset_regs[reg]) & ~bitmask;
-> +	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> +
-> +	/*
-> +	 * To secure processing after release from a module reset, dummy read
-> +	 * the same register at least seven times.
-
-Why 7? Is this documented in a reference manual?
-
-> +	 */
-> +	for (i =3D 0; i < 7; i++)
-> +		readl(priv->pub.base0 + priv->reset_regs[reg]);
-
-It would be better to define a macro and use it in both places instead
-of the magic number.
-
-regards
-Philipp
+-- 
+Regards,
+Sudeep
