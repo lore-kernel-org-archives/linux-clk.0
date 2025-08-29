@@ -1,47 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F9426A1CC;
-	Fri, 29 Aug 2025 07:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7C26561E;
+	Fri, 29 Aug 2025 07:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756452565; cv=none; b=ghqSh20YPkYd0RLfGa6H3J4B8kbgxd3ZzvHVi8IdYitPeiiAhmN+AxqpfsnFZNsQKXfAEbjDQ+Zf2/EMDNlI47nVhcYKvP3EXRhkDhzNolw6k4eiHsgPkgnPW94eqMvZLU4TxAnOcHlKSlzYAr4vBMruOQKZGfpwaN2nLpjP1q4=
+	t=1756452902; cv=none; b=T56vNAUt1qaT+DEO9gf1H+PgFHC/znz11Vh/zDG9aFqA+OYu2MMhvVYp/HshqGOzpuFf8DZ0eBk13VNsHA6yNk4Uo0CHNB3I+zdkuQPflNhJIhpHL5JX3bhDgpsMZpjd/EJ0UQzTmyBRCMrTl5unRLFOOT2LQdS4MoxT0P49/2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756452565; c=relaxed/simple;
-	bh=LtKditM3783lUD+7tNNW2BewtV55GmdnezEjkTitfSU=;
+	s=arc-20240116; t=1756452902; c=relaxed/simple;
+	bh=+WVE46uuvxctaL0w0YnwCtu/IBm/gh4OIN3YtU/QZ8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4fYWC/I0EyAzrYigEV2bvgtOqpUNyUbDk7xJ6g7JokdVduIDOly6cHhHlZmQq9lV3DpV5Vn1oaOXWE3drCzPpx9MLtoTcgdA48+V9UA/sS7ZbLHUGgHQ1ZS/S4HlxDDPrjcuLXJ0O3eGByCqtJ6FR6ogLEkjX56dXvre6uR5JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wh30pSn5; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wh30pSn5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B62C4CEF0;
-	Fri, 29 Aug 2025 07:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756452564;
-	bh=LtKditM3783lUD+7tNNW2BewtV55GmdnezEjkTitfSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wh30pSn5K70IhV+mB/N1Tv62WkIIaKCQ86dgXkSAHitMHQypYgigdw7+CDg3/qEXd
-	 KiblDZJMNjR3g06oWaYdF+duEAaBXESRbnWb+vxFm2YUgqoefhMEblPIUKRUEtBDmW
-	 I33+bjcAydj2iuEdnatiS5+tJnMDRGxqaKaZpP/3OfszAb95rSZ/akQ9TUBoxnO1OM
-	 lbXAA9yjGz6SbJ40Q/b110XKKK9RML1kG7Fxrt6/1pa270JpZYYfb2rLV1eOzvc60I
-	 ac9/HV/c8ylqYo2VA/KdFythEqSZvYW/JwIUg5mVoMrJfp8XylEpZN6jNyibDXv2D4
-	 MsrJ0fOkjx0VA==
-Date: Fri, 29 Aug 2025 09:29:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=WzO3RbskaVOA+Vl6YNppVtO6V5y+gxe9SHmRP1Fs7YTeRKmDSGb7w6rsPc+T9UCZkhkdTMx85lLY/MxdZHyOyVb9q3W9orvqrAZbvOvjsZZqCHXaU8bzWy8RAZXNpcgham9vExE+mOMjOWTgqUQyQOWLDliHqpk2sM5k3m7jZB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29321C4CEF0;
+	Fri, 29 Aug 2025 07:35:00 +0000 (UTC)
+Date: Fri, 29 Aug 2025 09:34:58 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: reset: add Tegra114 car header
-Message-ID: <20250829-hot-spicy-puma-c9a9b3@kuoka>
-References: <20250828054403.7112-1-clamor95@gmail.com>
- <20250828054403.7112-2-clamor95@gmail.com>
- <53b596e5-42da-418c-addf-d53fd12c528c@kernel.org>
- <1865189.3VsfAaAtOV@senjougahara>
+	Varadarajan Narayanan <quic_varada@quicinc.com>, Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Anusha Rao <quic_anusha@quicinc.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
+	Devi Priya <quic_devipriy@quicinc.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	quic_pavir@quicinc.com, quic_suruchia@quicinc.com, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v4 00/10] Add Network Subsystem (NSS) clock controller
+ support for IPQ5424 SoC
+Message-ID: <20250829-versed-gazelle-of-tempest-edfbf1@kuoka>
+References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,39 +42,13 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1865189.3VsfAaAtOV@senjougahara>
+In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
 
-On Thu, Aug 28, 2025 at 04:50:03PM +0900, Mikko Perttunen wrote:
-> > > 
-> > >  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
-> > >  create mode 100644 include/dt-bindings/reset/tegra114-car.h
-> > > 
-> > > diff --git a/include/dt-bindings/reset/tegra114-car.h
-> > > b/include/dt-bindings/reset/tegra114-car.h new file mode 100644
-> > > index 000000000000..d7908d810ddf
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/reset/tegra114-car.h
-> > 
-> > Still incorrectly named. Use full compatible, just like the other file
-> > where we already switched to recommended format (see also writing bindings).
-> > 
-> > I asked for this at v1 and then reminded about unresolved comments at v3.
-> > 
-> 
-> Ah, I guess you mean using 'nvidia,tegra114-car.h'? At least I hadn't realized 
-> practice had changed to include the vendor prefix.
+On Thu, Aug 28, 2025 at 06:32:13PM +0800, Luo Jie wrote:
+> - Remove the Acked-by tag from the "Add Qualcomm IPQ5424 NSSNOC IDs" patch"
+>   as the new NOC IDs are added.
 
-That practice is VERY old. For example first patches from my subsystem
-are around 2015. It is true, though, that we ask for this since 3-4
-years. In the upstream Linux kernel 3-4 years is also very long time,
-though...
-
-> 
-> It can be said that 'tegra114-car.h' is also based on the compatible, so I 
-> hadn't quite understood the original comment.
-
-With that approach "tegra114.h" or "t.h" is also based on the compatible.
+So let's wait for v6 with acking :/
 
 Best regards,
 Krzysztof
