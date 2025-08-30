@@ -1,103 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7BF2D7813;
-	Sat, 30 Aug 2025 17:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEE11F91C8;
+	Sat, 30 Aug 2025 22:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756573763; cv=none; b=tyZux9xXh6dkF8379UQbaKiEl/JSxA27UzV2cbqsgpaDmCi6/Hdoq72ufAF7dP8mi4vbcxwuzM7cSogK+Q7pjoV0L6LCjEiptu4ujA5n04snBG5x4l9yml33d3U+zNUT8SZrX8+7MDf1HFrqXp4rzCfCJ0D+Y2CtN7rBdR4DFF0=
+	t=1756593624; cv=none; b=ezrUDXqgwg8U1BZp66MXEB5Vzez8XJ0JwFVGizTZjK8g9ZyzlfC8OovwvRbxow+BFf8bPDEVFlHHZnEIlIlpEsYG0YE+DeLJVYvW8b9KgK1YihRmSc99t6v5ruB+ByWoLbta8abcMGWlcxMvWoEpgvnShg8fvt/kPJQe+wRr+xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756573763; c=relaxed/simple;
-	bh=1ZGcBxhR574KIHzPTRucl3u543FWRbkCW4Ao9ObAk1g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l7buuW43kBVwpfo0oXBsoqfrigBOe/lAey7/yAWHZYlIa+/WrC6ur7/iIwkcjUo+pU0ri4Ry+2YjwuA8FHDHOVhd8TFdn3W19sOcxWRngalt0OtY56+njuERmH5P9IfypJu+x2dEn6ydUbGNGHqbpyOb+mCdhYytnn/BzyoS8RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vI83iiQZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756593624; c=relaxed/simple;
+	bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IijS5l/vzVq8uRpvFfx26Om9jX/od7S+6IdQhbccQdYFCHym7vCIxUDqhOaNTZXKJReBUs/PR37ExpbAqRH802oIqgtB4w9O4nOieNEYucR2g7dpNA5Jt6Li2800/GAGle12/mXJW4fb9RkI/E8z1hpIjwHXrQSTbmYmJEXvaBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=We2pdkut; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=vRSfIWUQ; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vI83iiQZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B991C4CEEB;
-	Sat, 30 Aug 2025 17:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756573762;
-	bh=1ZGcBxhR574KIHzPTRucl3u543FWRbkCW4Ao9ObAk1g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vI83iiQZBW4XV+q5tHTOwmQ1UKfYiLXsk0MMtdOuCQ9ZbneFFI3fw89x+rrjWm42X
-	 QxJVdB+b/kND+DX3O/zobvZZ6DgTCvc5nqw7dRXvYknALf8gHzwb8b0KDAM9oRbXp8
-	 DTM8frvOfBj+awY3OsDoQZjOJeQDbnTxXIpbco6C3SrQtYEcAsNXwzLiVIQHV6VcWl
-	 B3qDoc+ODPjbq/o6YT4lG+uj2LNChj9BCdBR5I8IZPHNT4BFZpC2vEUPdZyrHGX2/h
-	 vgJ23Gx71wOtQK5AphGRUjaFMkE9RjX0/eztrdX79rkAD9Y4RHtXX8nE6c8o4lHtvc
-	 rNCtz6f+mL0TQ==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 6AA495FDD4; Sun, 31 Aug 2025 01:09:17 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	linux-sunxi@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] clk: sunxi-ng: div: support power-of-two dividers
-Date: Sun, 31 Aug 2025 01:08:58 +0800
-Message-Id: <20250830170901.1996227-6-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250830170901.1996227-1-wens@kernel.org>
-References: <20250830170901.1996227-1-wens@kernel.org>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="We2pdkut";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="vRSfIWUQ"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
+	GuZQp+Mi+3zTPjxiaEug=; b=We2pdkutSDpgFO7ThJOWkr3Xh14gRYQXsBK0m1jvmWS9dwQ/1Q
+	5ZakAQoratAmfIYsjadVJ4RTLt9onK0FMmzWV2yVCAss9bYLseeEg1IvtBZVJJ4pjCDZnkwp7Ry
+	fz3oKuQSPtepCSY2UuEQ20Ib+Vox5gSnrFvRoUesfTMHWfcZqyLREjYttozsXknjTfwPRlNP9gw
+	R1R31qmsx74qmFXkR1/mkonqm1xRyaEA7Ly59HLAI3mSt+7SQlcC2HeYC8ODYNPprx6i2+agdFA
+	Dv/U2xoiChdoaxVqhq8wmunHVhg7VxnVI0qDJnEHlh1PeGRVCBduF8BMwANf4qcYWXg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
+	GuZQp+Mi+3zTPjxiaEug=; b=vRSfIWUQfdh4cTR5f/jxKink47sa7Uyi8W49AjGwzAoy8aqGO2
+	3INo66qUtCJKVjqCAPjYpQ+VqmxCg6ApFOCg==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Sun, 31 Aug 2025 00:38:13 +0200
+Subject: [PATCH v7 1/6] dt-bindings: clock: qcom: Add MSM8937 Global Clock
+ Controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250831-msm8937-v7-1-232a9fb19ab7@mainlining.org>
+References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+In-Reply-To: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756593498; l=3026;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
+ b=MtLbUHknAvcy+vFuA6otWwb8o7X459E/zexNKP9F1CpXCqjsXcP7H3YKb2xpJPPv6Aq+6rMFS
+ 9gWqqueSuejCiusUz0FBHkAivQa2txPUkZiP0DZG2aCHu9AoIopaU2s
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-From: Chen-Yu Tsai <wens@csie.org>
+Add device tree bindings for the global clock controller on Qualcomm
+MSM8937 platform.
 
-Some clocks (for timers) on the A523 are mux-divider-gate types
-with the divider being values of power-of-two.
-
-Add a macro for these types of clocks so that we can use the divider
-types instead of the M-P types without an M divider.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/clk/sunxi-ng/ccu_div.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
+ include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++++++++
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 90d49ee8e0cc..be00b3277e97 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -274,6 +274,24 @@ struct ccu_div {
- 	SUNXI_CCU_M_HWS_WITH_GATE(_struct, _name, _parent, _reg,	\
- 				  _mshift, _mwidth, 0, _flags)
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+index fe1f5f3ed992453a347062a556b1ddb2a011db6f..f2e37f439d28b3ec066f407927955b3b82b5c10a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+@@ -9,16 +9,21 @@ title: Qualcomm Global Clock & Reset Controller on MSM8953
+ maintainers:
+   - Adam Skladowski <a_skl39@protonmail.com>
+   - Sireesh Kodali <sireeshkodali@protonmail.com>
++  - Barnabas Czeman <barnabas.czeman@mainlining.org>
  
-+#define SUNXI_CCU_P_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+				       _mshift, _mwidth,		\
-+				       _muxshift, _muxwidth,		\
-+				       _gate, _flags)			\
-+	struct ccu_div _struct = {					\
-+		.enable	= _gate,					\
-+		.div	= _SUNXI_CCU_DIV_FLAGS(_mshift, _mwidth,	\
-+					       CLK_DIVIDER_POWER_OF_TWO), \
-+		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS_DATA(_name, \
-+								   _parents, \
-+								   &ccu_div_ops, \
-+								   _flags), \
-+		},							\
-+	}
-+
- static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
- {
- 	struct ccu_common *common = hw_to_ccu_common(hw);
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+-  domains on MSM8953.
++  domains on MSM8937 or MSM8953.
+ 
+-  See also: include/dt-bindings/clock/qcom,gcc-msm8953.h
++  See also::
++    include/dt-bindings/clock/qcom,gcc-msm8917.h
++    include/dt-bindings/clock/qcom,gcc-msm8953.h
+ 
+ properties:
+   compatible:
+-    const: qcom,gcc-msm8953
++    enum:
++      - qcom,gcc-msm8937
++      - qcom,gcc-msm8953
+ 
+   clocks:
+     items:
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+index 4b421e7414b50bef2e2400f868ae5b7212a427bb..4e3897b3669d9149b61a6feec31ca35e2058dcb9 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -170,6 +170,23 @@
+ #define VFE1_CLK_SRC				163
+ #define VSYNC_CLK_SRC				164
+ #define GPLL0_SLEEP_CLK_SRC			165
++/* Addtional MSM8937-specific clocks */
++#define MSM8937_BLSP1_QUP1_I2C_APPS_CLK_SRC		166
++#define MSM8937_BLSP1_QUP1_SPI_APPS_CLK_SRC		167
++#define MSM8937_BLSP2_QUP4_I2C_APPS_CLK_SRC		168
++#define MSM8937_BLSP2_QUP4_SPI_APPS_CLK_SRC		169
++#define MSM8937_BYTE1_CLK_SRC				170
++#define MSM8937_ESC1_CLK_SRC				171
++#define MSM8937_PCLK1_CLK_SRC				172
++#define MSM8937_GCC_BLSP1_QUP1_I2C_APPS_CLK		173
++#define MSM8937_GCC_BLSP1_QUP1_SPI_APPS_CLK		174
++#define MSM8937_GCC_BLSP2_QUP4_I2C_APPS_CLK		175
++#define MSM8937_GCC_BLSP2_QUP4_SPI_APPS_CLK		176
++#define MSM8937_GCC_MDSS_BYTE1_CLK			177
++#define MSM8937_GCC_MDSS_ESC1_CLK			178
++#define MSM8937_GCC_MDSS_PCLK1_CLK			179
++#define MSM8937_GCC_OXILI_AON_CLK			180
++#define MSM8937_GCC_OXILI_TIMER_CLK			181
+ 
+ /* GCC block resets */
+ #define GCC_CAMSS_MICRO_BCR			0
+@@ -187,5 +204,7 @@
+ #define VENUS_GDSC				5
+ #define VFE0_GDSC				6
+ #define VFE1_GDSC				7
++/* Additional MSM8937-specific GDSCs */
++#define MSM8937_OXILI_CX_GDSC				8
+ 
+ #endif
+
 -- 
-2.39.5
+2.51.0
 
