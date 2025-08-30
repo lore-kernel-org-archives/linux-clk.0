@@ -1,46 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA8E22ACFA;
-	Sat, 30 Aug 2025 07:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403365BAF0;
+	Sat, 30 Aug 2025 07:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756537209; cv=none; b=tvOUXR+hK32d5TrJEuY7Kbt7L6cAVATGa+qniGxxaZS4MqwZGIaZZ45ODnj9TufYtLWIrJRfiBFMtNsI+EtywUwakkoeqKgsBRhieM6AeMXFm6TNkMFMqKWzdzF3hKfSN7A8QxtS2fhEHFB9xAWrAdp3E1q5q8g5wXiy2kEWUpI=
+	t=1756538189; cv=none; b=BnZXf3FyY14Q14ztdY7cKgzPh+uUy8+6jbStQ6iIUOGo/WoJtjvw6qjODgYl2iy1kJQDqmoCSipMwQU4N4YqS6TW6X77mSC6dcBitk6khk6Ee0eU9UktyHv1v23z+M2ktP8MkkStNpxJrQRhRaSCVsdvacobpeWnRyWUdXev0Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756537209; c=relaxed/simple;
-	bh=SPgIy7oUucbrmZ+S1ARRKS/UEnUY/ohEYYI/F3/xYJs=;
+	s=arc-20240116; t=1756538189; c=relaxed/simple;
+	bh=Xgq//bPMcuLhTUcoKQVvIGaVUwN6Y8zHe3tfndbRoBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exZgx+vA4XJcXntQcdtvqj6cGHDfdkLoXks2LgJRDujL886kGRVhLl60b+oBFkJ8lspOBqExcq4i0RbGOo9Zl7ZvF+V9JKiQjtJZ8WyYxXdcxSBFkTots6/iA39PcwFfJ1KqPxbFHDUTJCm+lrQncpT60cvRVahf/41B9ky2bQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXe5Xq28; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=APLNP1pWpFXMSnM07ztj/na3FmyYYxNzNXea5BBUTac2XBmSxO7Vu/CDXiE4g9yjwqEMZCIcEEc/NmoDbdy3yWmTPnGr6ljnrTZlpve87ZHYFEYVvFd0NLDftigScHSQICZIujS5w2outiM1ZJezKY2WDJmMuTrn75UX5QF7OFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=bGPRiKj+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A28P82GL; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXe5Xq28"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D848C4CEEB;
-	Sat, 30 Aug 2025 07:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756537208;
-	bh=SPgIy7oUucbrmZ+S1ARRKS/UEnUY/ohEYYI/F3/xYJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OXe5Xq288p4UvOphSgKjt/UlKxTp2+trg1t4fVwX34H8F3oNR0gn52A0R/9t+DwG3
-	 FjvW9pDTp5LgOEzZj5TEui8U0W/sz+bNaRwNXH+HSlmlf9gbv04NeR0pavvH3vw9Zk
-	 44Ua9F0zsSjZ1jXZvBa4NDDOE/DjhYUZWe632xLEZrBukWBvZ93Vkht3SXhbC4xxBt
-	 A4VOf5yaSHEpcB+hkqTvhQRd+y6zpdpaODnQsjo0lT9OBlXByHPiuu+HDjs1PRUwC8
-	 nZtA7/8AWJOorNoo3Vifg/EuDRfUUtsnvVXZ/o4/ULtuBwpGExixkkz/8R59wR6xSw
-	 vTxPH9RWLFE1g==
-Date: Sat, 30 Aug 2025 12:29:57 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-Message-ID: <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="bGPRiKj+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A28P82GL"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id 50B9C13803E1;
+	Sat, 30 Aug 2025 03:16:26 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Sat, 30 Aug 2025 03:16:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1756538186; x=1756545386; bh=rH5wSPSqP8
+	tNxz48V8nyDtHP/PfH/+QarsY2hPsLNiY=; b=bGPRiKj+zJAsCUQyrJp0/StHT3
+	Z0CEFhLQjV5xm7Yvbyg5RazYCfPbyTHWSm2ZpCegTbXOy6qhuD/CjdcFxuViszyu
+	G3+fcGeOv7HdCyn7AzxAqSFmzLO2erX/Vdp5eEeZaLTZRFRspFMiQ+busfvUv9xK
+	P1Qxg+vqomILq0dDixCVgYHw5VQEBClB9I6+/uTShTR//VYQFOWuKhVaLsvC6l/b
+	E1N/tfeehqrMQEp4i3wWoOJxGypUi7brZoL9qGPmQKmmMa93tVd1AY5Gro+BAjS3
+	WpUTogmTRpIeiSKPcsYZ3mE0og2OG5NvvD5b/WVFxeoMPFsjnwskajCq3uyw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756538186; x=1756545386; bh=rH5wSPSqP8tNxz48V8nyDtHP/PfH/+QarsY
+	2hPsLNiY=; b=A28P82GLhQ+gU+qNvkSXEMIHHGhWHgGPB6W2BqfuM8nVdICuM2A
+	NcqEdXjnRC5GOtPhl8vytw2JOVW6a632Lth7tFVqpN0jcVrs5FIWi0nJ5dbfpPbz
+	93UWghe/7/x4NXeA4FN4wHq2l0R/6xrVdl4M6x+X4EqZcsuk7fUrrkX7z2aqNGXe
+	GRh9v13JNwBHa0GWMNd0IJAZ/VLuVZRHMzmIP6KgEOrMibcUtTOr/XOmSC3N9SR2
+	+4h7cZHX5hYQElJlZ9AcSZWpik6DY6Yif1Q+6msGHxqUXYJZ/hDnKBXbWh3Xvalq
+	Rf1Hz1zKH3Te14Zyu+F/tIsbTPiaescl/sQ==
+X-ME-Sender: <xms:R6WyaEoVPmMMjSTFVHUliXOdv-32qkUK5pBFUekwj0BEfXYXKXHMdg>
+    <xme:R6WyaOxfi2Sr_p908cLZZq0WtOWmPygKs_jKndyVj8rKDpXX8ikKi1OeywN_Gtza-
+    FiH-hDxXuUZTl36M64>
+X-ME-Received: <xmr:R6WyaEyfRmAxZWCNsVqvVaXCqEN1juICIShBdAflOgf0gNEE_E5nocVl8uCdcH2Ux_v_VJ8rmIGy5LrSoEu2QIiMu_-QOznOlpk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeehjeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcu
+    ifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvd
+    ffveelgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruh
+    drnhgvthdpnhgspghrtghpthhtohepieefpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdp
+    rhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehkrhiikhdoug
+    htsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoh
+    eprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhu
+    mhgrrheslhhinhgrrhhordhorhhg
+X-ME-Proxy: <xmx:R6WyaOKeRrX_rKVtlS-_HS0UcyN9w8mWfjCwNfiQ70_pAa29FRblZA>
+    <xmx:R6WyaBhJsS4AgbvUvcN_o6uHp3h_R8NH2iRFaJDZJdGCW4iQPaQfCw>
+    <xmx:R6WyaMkzXbMbopG8scAkzx_CFhYUQNKGJXW5k3t17XIk3bIEeUpTWQ>
+    <xmx:R6WyaOgrns0dbGzbmla7f4E8nyVhRwKAcFG-qkHg9ORUTbTcZhmzrg>
+    <xmx:SqWyaJIOEg53pkAeV7MbeJTeynbZUjxSAdTQb-JDXFYqQHxsi0m95a1W>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 30 Aug 2025 03:16:22 -0400 (EDT)
+Date: Sat, 30 Aug 2025 09:16:20 +0200
+From: Janne Grunau <j@jannau.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,	Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,	Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>,	Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,	asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,	linux-pm@vger.kernel.org,
+ iommu@lists.linux.dev,	linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org,	dri-devel@lists.freedesktop.org,
+ linux-bluetooth@vger.kernel.org,	linux-wireless@vger.kernel.org,
+ linux-pwm@vger.kernel.org,	linux-watchdog@vger.kernel.org,
+ linux-clk@vger.kernel.org,	dmaengine@vger.kernel.org,
+ linux-sound@vger.kernel.org,	linux-spi@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
+ Pro/Max/Ultra devices
+Message-ID: <20250830071620.GD204299@robin.jannau.net>
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+ <20250829195119.GA1206685-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,608 +127,88 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250829195119.GA1206685-robh@kernel.org>
 
-On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Aug 29, 2025 at 02:51:19PM -0500, Rob Herring wrote:
+> On Thu, Aug 28, 2025 at 04:01:19PM +0200, Janne Grunau wrote:
+> > This series adds device trees for Apple's M2 Pro, Max and Ultra based
+> > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
+> > follow design of the t600x family so copy the structure of SoC *.dtsi
+> > files.
+> > 
+> > t6020 is a cut-down version of t6021, so the former just includes the
+> > latter and disables the missing bits.
+> > 
+> > t6022 is two connected t6021 dies. The implementation seems to use
+> > t6021 and disables blocks based on whether it is useful to carry
+> > multiple instances. The disabled blocks are mostly on the second die.
+> > MMIO addresses on the second die have a constant offset. The interrupt
+> > controller is multi-die aware. This setup can be represented in the
+> > device tree with two top level "soc" nodes. The MMIO offset is applied
+> > via "ranges" and devices are included with preprocessor macros to make
+> > the node labels unique and to specify the die number for the interrupt
+> > definition.
+> > 
+> > The devices itself are very similar to their M1 Pro, M1 Max and M1 Ultra
+> > counterparts. The existing device templates are SoC agnostic so the new
+> > devices can reuse them and include their t602{0,1,2}.dtsi file. The
+> > minor differences in pinctrl and gpio numbers can be easily adjusted.
+> > 
+> > With the t602x SoC family Apple introduced two new devices:
+> > 
+> > The M2 Pro Mac mini is similar to the larger M1 and M2 Max Mac Studio. The
+> > missing SDHCI card reader and two front USB3.1 type-c ports and their
+> > internal USB hub can be easily deleted.
+> > 
+> > The M2 Ultra Mac Pro (tower and rack-mount cases) differs from all other
+> > devices but may share some bits with the M2 Ultra Mac Studio. The PCIe
+> > implementation on the M2 Ultra in the Mac Pro differs slightly. Apple
+> > calls the PCIe controller "apcie-ge" in their device tree. The
+> > implementation seems to be mostly compatible with the base t6020 PCIe
+> > controller. The main difference is that there is only a single port with
+> > with 8 or 16 PCIe Gen4 lanes. These ports connect to a Microchip
+> > Switchtec PCIe switch with 100 lanes to which all internal PCIe devices
+> > and PCIe slots connect too.
+> > 
+> > This series does not include PCIe support for the Mac Pro for two
+> > reasons:
+> > - the linux switchtec driver fails to probe and the downstream PCIe
+> >   connections come up as PCIe Gen1
+> > - some of the internal devices require PERST# and power control to come
+> >   up. Since the device are connected via the PCIe switch the PCIe
+> >   controller can not do this. The PCI slot pwrctrl can be utilized for
+> >   power control but misses integration with PERST# as proposed in [1].
+> > 
+> > This series depends on "[PATCH v2 0/5] Apple device tree sync from
+> > downstream kernel" [2] due to the reuse of the t600x device templates
+> > (patch dependencies and DT compilation) and 4 page table level support
+> > in apple-dart and io-pgtable-dart [3] since the dart instances report
+> > 42-bit IAS (IOMMU device attach fails without the series).
+> > 
+> > After discussion with the devicetree maintainers we agreed to not extend
+> > lists with the generic compatibles anymore [1]. Instead either the first
+> > compatible SoC or t8103 is used as fallback compatible supported by the
+> > drivers. t8103 is used as default since most drivers and bindings were
+> > initially written for M1 based devices.
 > 
-> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> only as a root complex, with a single-lane (x1) configuration. The
-> controller includes Type 1 configuration registers, as well as IP
-> specific registers (called AXI registers) required for various adjustments.
-> 
-> Hardware manual can be downloaded from the address in the "Link" section.
-> The following steps should be followed to access the manual:
-> 1/ Click the "User Manual" button
-> 2/ Click "Confirm"; this will start downloading an archive
-> 3/ Open the downloaded archive
-> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> 5/ Open the file r01uh1014ej*-rzg3s.pdf
-> 
-> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
+> An issue here is any OS without the compatibles added to the drivers 
+> won't work. Does that matter here? Soon as you need any new drivers or 
+> significant driver changes it won't. The compatible additions could be 
+> backported to stable. They aren't really any different than new PCI IDs 
+> which get backported.
 
-[...]
+I don't think backporting the driver compatible additions to stable
+linux is very useful. It is only relevant for t602x devices and the only
+way to interact with them is the serial console. The T602x PCIe support
+added in v6.16 requires dart changes (the posted 4th level io page table
+support) to be useful. After that PCIe ethernet works so there is a
+practical way to interact with t602x systems. So there are probably zero
+user of upstream linux on those devices 
+I'm more concerned about other projects already supporting t602x
+devices. At least u-boot and OpenBSD will be affected by this. As short
+term solution m1n1 will add the generic compatibles [1] temporarily.
+I think keeping this roughly for a year should allow to add the
+compatibles and wait for "fixed" releases of those projects.
+I'll send fixes for u-boot once the binding changes are reviewed.
 
-> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
-> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
-> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
-> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
-> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
-> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
-> +
-> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
-
-You don't need to do !!ret as the C11 standard guarantees that any scalar type
-stored as bool will have the value of 0 or 1.
-
-> +}
-> +
-
-[...]
-
-> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
-> +					     unsigned int devfn,
-> +					     int where)
-> +{
-> +	struct rzg3s_pcie_host *host = bus->sysdata;
-> +
-> +	if (devfn)
-> +		return NULL;
-
-Is it really possible to have devfn as non-zero for a root bus?
-
-> +
-> +	return host->pcie + where;
-> +}
-> +
-
-[...]
-
-> +static int rzg3s_pcie_msi_setup(struct rzg3s_pcie_host *host)
-> +{
-> +	size_t size = RZG3S_PCI_MSI_INT_NR * sizeof(u32);
-> +	struct rzg3s_pcie_msi *msi = &host->msi;
-> +	struct device *dev = host->dev;
-> +	int id, ret;
-> +
-> +	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
-> +	if (!msi->pages)
-> +		return -ENOMEM;
-> +
-> +	msi->dma_addr = dma_map_single(dev, (void *)msi->pages, size * 2,
-> +				       DMA_BIDIRECTIONAL);
-> +	if (dma_mapping_error(dev, msi->dma_addr)) {
-> +		ret = -ENOMEM;
-> +		goto free_pages;
-> +	}
-> +
-> +	/*
-> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.4.5.2 Setting
-> +	 * the MSI Window) the MSI window need to be within any AXI window. Find
-> +	 * an AXI window to setup the MSI window.
-
-Are you really finding the AXI window or just making sure that the MSI window
-falls into one of the AXI window?
-
-And I believe it is OK to have more than one MSI window within an AXI window.
-
-> +	 */
-> +	for (id = 0; id < RZG3S_MAX_WINDOWS; id++) {
-> +		u64 base, basel, baseu;
-> +		u64 mask, maskl, masku;
-> +
-> +		basel = readl(host->axi + RZG3S_PCI_AWBASEL(id));
-> +		/* Skip checking this AXI window if it's not enabled */
-> +		if (!(basel & RZG3S_PCI_AWBASEL_WIN_ENA))
-> +			continue;
-> +
-> +		baseu = readl(host->axi + RZG3S_PCI_AWBASEU(id));
-> +		base = baseu << 32 | basel;
-> +
-> +		maskl = readl(host->axi + RZG3S_PCI_AWMASKL(id));
-> +		masku = readl(host->axi + RZG3S_PCI_AWMASKU(id));
-> +		mask = masku << 32 | maskl;
-> +
-> +		if (msi->dma_addr < base || msi->dma_addr > base + mask)
-> +			continue;
-> +
-> +		break;
-> +	}
-> +
-> +	if (id == RZG3S_MAX_WINDOWS) {
-> +		ret = -EINVAL;
-> +		goto dma_unmap;
-> +	}
-> +
-> +	/* The MSI base address need to be aligned to the MSI size */
-> +	msi->window_base = ALIGN(msi->dma_addr, size);
-> +	if (msi->window_base < msi->dma_addr) {
-> +		ret = -EINVAL;
-> +		goto dma_unmap;
-> +	}
-> +
-> +	rzg3s_pcie_msi_hw_setup(host);
-> +
-> +	return 0;
-> +
-> +dma_unmap:
-> +	dma_unmap_single(dev, msi->dma_addr, size * 2, DMA_BIDIRECTIONAL);
-> +free_pages:
-> +	free_pages(msi->pages, 0);
-> +	return ret;
-> +}
-> +
-
-[...]
-
-> +static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
-> +{
-> +	u32 cs2, link_speed, remote_supported_link_speeds, tmp;
-> +	u32 pcie_cap = RZG3S_PCI_CFG_PCIEC;
-> +	u8 ltssm_state_l0 = 0xc;
-> +	u16 lcs;
-> +	int ret;
-> +
-> +	/*
-> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.3 Caution
-> +	 * when Changing the Speed Spontaneously) link speed change can be done
-> +	 * only when the link training and status state machine in the PCIe Core
-> +	 * Link is L0.
-
-"...only when the LTSSM is in L0."
-
-> +	 */
-> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, tmp,
-> +				 FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp) == ltssm_state_l0,
-> +				 PCIE_LINK_WAIT_SLEEP_MS,
-> +				 PCIE_LINK_WAIT_SLEEP_MS *
-> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
-> +	if (ret) {
-> +		dev_dbg(host->dev,
-> +			"Could not set max link speed! LTSSM not in L0, state=%lx\n",
-
-You should drop 'Could not set max link speed' since the caller is printing a
-similar error.
-
-> +			FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp));
-> +		return ret;
-> +	}
-> +
-> +	lcs = readw(host->pcie + pcie_cap + PCI_EXP_LNKSTA);
-> +	cs2 = readl(host->axi + RZG3S_PCI_PCSTAT2);
-> +
-> +	link_speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, lcs);
-> +	remote_supported_link_speeds = FIELD_GET(RZG3S_PCI_PCSTAT2_SDRIRE, cs2);
-> +
-> +	/*
-> +	 * Return if link is @ 5.0 GT/s or the connected device doesn't support
-> +	 * it.
-> +	 */
-> +	if (link_speed == PCI_EXP_LNKSTA_CLS_5_0GB ||
-> +	    !(remote_supported_link_speeds != GENMASK(PCI_EXP_LNKSTA_CLS_5_0GB - 1, 0)))
-> +		return 0;
-> +
-> +	/* Set target Link speed to 5.0 GT/s */
-
-Instead of setting the link speed to 5 GT/s always, you should honor the link
-speed set in DTS by making use of of_pci_get_max_link_speed() API.
-
-> +	rzg3s_pcie_update_bits(host->pcie, pcie_cap + PCI_EXP_LNKCTL2,
-> +			       PCI_EXP_LNKCTL2_TLS,
-> +			       FIELD_PREP(PCI_EXP_LNKCTL2_TLS,
-> +					  PCI_EXP_LNKCTL2_TLS_5_0GT));
-> +
-> +	/* Request link speed change */
-> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PCCTRL2,
-> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ |
-> +			       RZG3S_PCI_PCCTRL2_LS_CHG,
-> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ |
-> +			       FIELD_PREP(RZG3S_PCI_PCCTRL2_LS_CHG,
-> +					  PCI_EXP_LNKCTL2_TLS_5_0GT - 1));
-> +
-> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT2, cs2,
-> +				 (cs2 & RZG3S_PCI_PCSTAT2_LS_CHG_DONE),
-> +				 PCIE_LINK_WAIT_SLEEP_MS,
-> +				 PCIE_LINK_WAIT_SLEEP_MS *
-> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
-> +
-> +	/*
-> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.3 Caution
-> +	 * when Changing the Speed Spontaneously) the PCI_PCCTRL2_LS_CHG_REQ
-> +	 * should be de-asserted after checking for PCI_PCSTAT2_LS_CHG_DONE.
-> +	 */
-> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PCCTRL2,
-> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ, 0);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
-> +{
-> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
-> +	struct resource_entry *ft;
-> +	struct resource *bus;
-> +	u8 subordinate_bus;
-> +	u8 secondary_bus;
-> +	u8 primary_bus;
-> +
-> +	ft = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
-> +	if (!ft)
-> +		return -ENODEV;
-> +
-> +	bus = ft->res;
-> +	primary_bus = bus->start;
-> +	secondary_bus = bus->start + 1;
-> +	subordinate_bus = bus->end;
-> +
-> +	/* Enable access control to the CFGU */
-> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
-> +
-> +	/* Update vendor ID and device ID */
-
-Are you really updating it or setting it? If you are updating it, are the
-default IDs invalid?
-
-> +	writew(host->vendor_id, host->pcie + PCI_VENDOR_ID);
-> +	writew(host->device_id, host->pcie + PCI_DEVICE_ID);
-> +
-> +	/* HW manual recommends to write 0xffffffff on initialization */
-> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00L);
-> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00U);
-> +
-> +	/* Update bus info. */
-> +	writeb(primary_bus, host->pcie + PCI_PRIMARY_BUS);
-> +	writeb(secondary_bus, host->pcie + PCI_SECONDARY_BUS);
-> +	writeb(subordinate_bus, host->pcie + PCI_SUBORDINATE_BUS);
-> +
-> +	/* Disable access control to the CFGU */
-> +	writel(0, host->axi + RZG3S_PCI_PERM);
-> +
-> +	return 0;
-> +}
-> +
-
-[...]
-
-> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	/* Initialize the PCIe related registers */
-> +	ret = rzg3s_pcie_config_init(host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Initialize the interrupts */
-> +	rzg3s_pcie_irq_init(host);
-> +
-> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
-> +					  host->cfg_resets);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Wait for link up */
-> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
-> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS),
-> +				 PCIE_LINK_WAIT_SLEEP_MS,
-> +				 PCIE_LINK_WAIT_SLEEP_MS *
-> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
-> +	if (ret) {
-> +		reset_control_bulk_assert(host->data->num_cfg_resets,
-> +					  host->cfg_resets);
-> +		return ret;
-> +	}
-> +
-> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
-> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
-> +
-> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
-> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
-> +
-> +	if (probe) {
-> +		ret = devm_add_action_or_reset(host->dev,
-> +					       rzg3s_pcie_cfg_resets_action,
-> +					       host);
-
-Oh well, this gets ugly. Now the devm_add_action_or_reset() is sprinkled
-throughout the driver :/
-
-As I said earlier, there are concerns in unloading the driver if it implements
-an irqchip. So if you change the module_platform_driver() to
-builtin_platform_driver() for this driver, these devm_add_action_or_reset()
-calls become unused.
-
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void rzg3s_pcie_set_inbound_window(struct rzg3s_pcie_host *host,
-> +					  u64 cpu_addr, u64 pci_addr, u64 size,
-> +					  int id)
-> +{
-> +	/* Set CPU window base address */
-> +	writel(upper_32_bits(cpu_addr), host->axi + RZG3S_PCI_ADESTU(id));
-> +	writel(lower_32_bits(cpu_addr), host->axi + RZG3S_PCI_ADESTL(id));
-> +
-> +	/* Set window size */
-> +	writel(upper_32_bits(size), host->axi + RZG3S_PCI_AWMASKU(id));
-> +	writel(lower_32_bits(size), host->axi + RZG3S_PCI_AWMASKL(id));
-> +
-> +	/* Set PCIe window base address and enable the window */
-> +	writel(upper_32_bits(pci_addr), host->axi + RZG3S_PCI_AWBASEU(id));
-> +	writel(lower_32_bits(pci_addr) | RZG3S_PCI_AWBASEL_WIN_ENA,
-> +	       host->axi + RZG3S_PCI_AWBASEL(id));
-> +}
-> +
-> +static int rzg3s_pcie_set_inbound_windows(struct rzg3s_pcie_host *host,
-> +					  struct resource_entry *entry,
-> +					  int *index)
-> +{
-> +	u64 pci_addr = entry->res->start - entry->offset;
-> +	u64 cpu_addr = entry->res->start;
-> +	u64 cpu_end = entry->res->end;
-> +	u64 size_id = 0;
-> +	int id = *index;
-> +	u64 size;
-> +
-> +	while (cpu_addr < cpu_end) {
-> +		if (id >= RZG3S_MAX_WINDOWS)
-> +			return dev_err_probe(host->dev, -EINVAL,
-
--ENOSPC
-
-> +					     "Failed to set inbound windows!\n");
-
-"Failed to map inbound window for resource (%s), entry->res->name"
-
-> +
-> +		size = resource_size(entry->res) - size_id;
-> +
-> +		/*
-> +		 * According to the RZ/G3S HW manual (Rev.1.10,
-> +		 * section 34.3.1.71 AXI Window Mask (Lower) Registers) the min
-> +		 * size is 4K.
-> +		 */
-> +		size = max(size, SZ_4K);
-> +
-> +		/*
-> +		 * According the RZ/G3S HW manual (Rev.1.10, sections:
-> +		 * - 34.3.1.69 AXI Window Base (Lower) Registers
-> +		 * - 34.3.1.71 AXI Window Mask (Lower) Registers
-> +		 * - 34.3.1.73 AXI Destination (Lower) Registers)
-> +		 * the CPU addr, PCIe addr, size should be 4K aligned and be a
-> +		 * power of 2.
-> +		 */
-> +		size = ALIGN(size, SZ_4K);
-> +
-> +		/*
-> +		 * According to the RZ/G3S HW manual (Rev.1.10, section
-> +		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
-> +		 * 12 LSB bits to be 0xfff. Subtract 1 from size for this.
-> +		 */
-> +		size = roundup_pow_of_two(size) - 1;
-> +
-> +		cpu_addr = ALIGN(cpu_addr, SZ_4K);
-> +		pci_addr = ALIGN(pci_addr, SZ_4K);
-> +
-> +		rzg3s_pcie_set_inbound_window(host, cpu_addr, pci_addr, size,
-> +					      id);
-> +
-> +		pci_addr += size;
-> +		cpu_addr += size;
-> +		size_id = size;
-> +		id++;
-> +	}
-> +	*index = id;
-> +
-> +	return 0;
-> +}
-
-[...]
-
-> +static int rzg3s_pcie_parse_map_ranges(struct rzg3s_pcie_host *host)
-> +{
-> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
-> +	struct resource_entry *win;
-> +	int i = 0;
-> +
-> +	resource_list_for_each_entry(win, &bridge->windows) {
-> +		struct resource *res = win->res;
-> +
-> +		if (i >= RZG3S_MAX_WINDOWS)
-> +			return dev_err_probe(host->dev, -EINVAL,
-
--ENOSPC
-
-> +					     "Failed to set outbound windows!\n");
-
-"Failed to map outbound window for resource (%s), res->name"
-
-> +
-> +		if (!res->flags)
-> +			continue;
-> +
-> +		switch (resource_type(res)) {
-> +		case IORESOURCE_IO:
-> +		case IORESOURCE_MEM:
-> +			rzg3s_pcie_set_outbound_window(host, win, i);
-> +			i++;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-[...]
-
-> +static int rzg3s_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct pci_host_bridge *bridge;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct device_node *sysc_np __free(device_node) =
-> +		of_parse_phandle(np, "renesas,sysc", 0);
-> +	struct rzg3s_pcie_host *host;
-> +	int ret;
-> +
-> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
-> +	if (!bridge)
-> +		return -ENOMEM;
-> +
-> +	host = pci_host_bridge_priv(bridge);
-> +	host->dev = dev;
-> +	host->data = device_get_match_data(dev);
-> +	platform_set_drvdata(pdev, host);
-> +
-> +	host->axi = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(host->axi))
-> +		return PTR_ERR(host->axi);
-> +	host->pcie = host->axi + RZG3S_PCI_CFG_BASE;
-> +
-> +	ret = of_property_read_u32(np, "vendor-id", &host->vendor_id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32(np, "device-id", &host->device_id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	host->sysc = syscon_node_to_regmap(sysc_np);
-> +	if (IS_ERR(host->sysc))
-> +		return PTR_ERR(host->sysc);
-> +
-> +	ret = regmap_update_bits(host->sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_sysc_signal_action,
-> +				       host->sysc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rzg3s_pcie_resets_prepare(host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret)
-> +		return ret;
-> +
-
-Do you really need to do resume_and_get()? If not, you should do:
-
-	pm_runtime_set_active()
-	pm_runtime_no_callbacks()
-	devm_pm_runtime_enable()
-
-> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_pm_runtime_put, dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	raw_spin_lock_init(&host->hw_lock);
-> +
-> +	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_intx_setup,
-> +				    rzg3s_pcie_msi_enable, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(PCIE_RESET_CONFIG_WAIT_MS);
-> +
-> +	bridge->sysdata = host;
-> +	bridge->ops = &rzg3s_pcie_root_ops;
-> +	bridge->child_ops = &rzg3s_pcie_child_ops;
-> +	ret = pci_host_probe(bridge);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_add_action_or_reset(dev, rzg3s_pcie_host_remove_action,
-> +					host);
-> +}
-> +
-> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
-> +{
-> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
-> +	const struct rzg3s_pcie_soc_data *data = host->data;
-> +	struct regmap *sysc = host->sysc;
-> +	int ret;
-> +
-> +	ret = pm_runtime_put_sync(dev);
-> +	if (ret)
-> +		return ret;
-
-Since there are no runtime callbacks present, managing runtime PM in the driver
-makes no sense.
-
-> +
-> +	ret = reset_control_bulk_assert(data->num_power_resets,
-> +					host->power_resets);
-> +	if (ret)
-> +		goto rpm_restore;
-> +
-> +	ret = reset_control_bulk_assert(data->num_cfg_resets,
-> +					host->cfg_resets);
-> +	if (ret)
-> +		goto power_resets_restore;
-> +
-> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
-> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
-> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
-> +	if (ret)
-> +		goto cfg_resets_restore;
-> +
-> +	return 0;
-> +
-> +	/* Restore the previous state if any error happens */
-> +cfg_resets_restore:
-> +	reset_control_bulk_deassert(data->num_cfg_resets,
-> +				    host->cfg_resets);
-> +power_resets_restore:
-> +	reset_control_bulk_deassert(data->num_power_resets,
-> +				    host->power_resets);
-> +rpm_restore:
-> +	pm_runtime_resume_and_get(dev);
-> +	return ret;
-> +}
-> +
-
-[...]
-
-> +static struct platform_driver rzg3s_pcie_driver = {
-> +	.driver = {
-> +		.name = "rzg3s-pcie-host",
-> +		.of_match_table = rzg3s_pcie_of_match,
-> +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe = rzg3s_pcie_probe,
-> +};
-> +module_platform_driver(rzg3s_pcie_driver);
-
-Use builtin_platform_driver() as this driver is not supposed to be removed due
-to concersn with irqchip.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Janne
