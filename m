@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D12248F73;
-	Sat, 30 Aug 2025 08:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80320B7ED;
+	Sat, 30 Aug 2025 09:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756543563; cv=none; b=jNODXhBX2EkAZbODZ/ffQOoRMwrMax0eNKjVXgpGE61MuNqDacryXKDkdDakygk+6MDWbTark1FPbN+8lYvai52ZooGoZBIp6csS/We/gha2g8xQH4XuIDtM7qKvSyHg3eyFMnzfzY3Buw1lW2dkRkEuzJybfbUdYv5iFnoyLEA=
+	t=1756545403; cv=none; b=gLapjJeQEpjmArIWynzuZeCm2MtWagbePoFkg4+DXkor1Fp6X5qJhPLAKEhNAC4iBCRIWXX4g94Q05L0lI0avX66hwLlVQ8khoc6CXoPaTbltepBkcU2aacKorhNu5kIybazLFg81BZqCaj9p/N+fHE1H8qeB3kGi+/0WRMk71c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756543563; c=relaxed/simple;
-	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	s=arc-20240116; t=1756545403; c=relaxed/simple;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Grbg4inGqE+BzpSNQBnvPDj0yQxxbkCWkxlBRaD5nKdyNpBDZZ+LRH67vFL+YpKZnvqYmE7FHsfTAM/FmoqdTCIqYRC8w0eWL3rcb+uVRaRHi7hRmM+KvZuik7/eL88XD5BwDNayt0n12BaH66Q6xC3X5gnqXeS4gCWfJArVhhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VChSzhmv; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rExWhgfQkijVVyefShYGeBrGdr5gLL5rfJ5KzkdDILCQq1x2thgRm6mW0FOitJ3F9OKkq4gXjaumgOJXdUvVMY532MeR09tQZiOwC7mFRv/+G2ucwXWu3RrlKBTkhSbSUp8ttfYZvLFjst/QLEDYlhpidrUP7eTDWvbeXuF2zKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il1ejRMO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VChSzhmv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2DFC4CEEB;
-	Sat, 30 Aug 2025 08:45:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il1ejRMO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E1FC4CEEB;
+	Sat, 30 Aug 2025 09:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756543560;
-	bh=2bdvU0RJRJLGHzflhJpSDlCKftXyN1TaCSNn8HmET70=;
+	s=k20201202; t=1756545402;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VChSzhmvdwhjhYSeII5RUbIj6uU5nABAVHXKicw+PRbjuI8hL2IGyWHRAeCAUfuof
-	 E+aoFHwlwAF/Tepq0Y4PJCYnBLbau3TJMwff9TarIwhJMRDl7cpmK2kpiyICzzicRt
-	 EaeJmWRh2wgD4W2p4MuB6faqYLhHtjHtmPKAzgOAZ+pEGiwwP3GKhUh6naOp5A8pjQ
-	 Oaur/oEVWJPYFUDxlEtyMw6vpDCrO3/To43QklSszDLjyIrAjAH5MVREAaBcxmYWFm
-	 PnDXd/j1ovedS4zn34VdCBrwQSqTyGk957xp3xRMFLxZNUMsTnAO1MNH14ywvLMjYY
-	 y3ju75dYiJxrg==
-Message-ID: <7bb127ed-8c1c-4379-9cee-f1178eb3fbc7@kernel.org>
-Date: Sat, 30 Aug 2025 10:45:55 +0200
+	b=Il1ejRMOSMwAJPHZTR6+O7R66MmNB/OUP98v0puVCH7ezc5nmHP4Hkm+dhCfbruGG
+	 iY4Bvw0MniR+ogC3quGWR3PHp6bIwR4N/fPmI+mvSTmzvWg0LOnnx9y/66xWrvZ9L5
+	 OY/iTN4UZqIzrPJ8sjLJXn1bj08zUIJ/kqzBi1+dloZZiyyVzHToRx93UqNqUoJm33
+	 CzVFWev/mBxmkVleSrCBeg/RySzOMSyoFARHBnaxOrQM1pqMQAjQG7nVDh8l9+Sppk
+	 v4/BwCWRi13yJzSJcXIta8RfpYm0VwUhoOOlRDMWgsM5jDY4VOYM3oviekJzjdn297
+	 33KYFPJo9x+gA==
+Message-ID: <96bced8e-7e47-4db9-9674-be1f3138d608@kernel.org>
+Date: Sat, 30 Aug 2025 11:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
-To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
-References: <20250829135643.105406-1-v.pavani@samsung.com>
- <CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
- <20250829135643.105406-2-v.pavani@samsung.com>
+Subject: Re: [PATCH v4 4/4] clk: samsung: exynos990: Fix PLL mux regs, add
+ DPU/CMUREF
+To: Denzeel Oliva <wachiturroxd150@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250825-cmu-top-v4-0-71d783680529@gmail.com>
+ <20250825-cmu-top-v4-4-71d783680529@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,47 +93,217 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250829135643.105406-2-v.pavani@samsung.com>
+In-Reply-To: <20250825-cmu-top-v4-4-71d783680529@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2025 15:56, Varada Pavani wrote:
-> FSD SoC WDT is using Samsung legacy WDT driver with
-> "samsung,exynos7-wdt" compatibility. Now change the compatibility due to
-> few driver changes (PMU bit changes for each WDT instance and Clocks)
-> for WDT found in FSD SoC.
+On 25/08/2025 07:51, Denzeel Oliva wrote:
+> Switch PLL muxes to PLL_CON0 to correct parent selection and
+> clock rates. Add DPU_BUS and CMUREF mux/div and their register
+> hooks and parents.
 > 
-> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
-More comments:
-1. Subject: completely vague, everything is modify, every binding is
-"bindings". Write useful subjects.
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos990.c | 97 ++++++++++++++++++++++++-------------
+>  1 file changed, 63 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index 9fcdad7cc..d1135708c 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -45,6 +45,7 @@
+>  #define PLL_CON3_PLL_SHARED3				0x024c
+>  #define PLL_CON0_PLL_SHARED4				0x0280
+>  #define PLL_CON3_PLL_SHARED4				0x028c
+> +#define CLK_CON_MUX_CLKCMU_DPU_BUS			0x1000
+>  #define CLK_CON_MUX_MUX_CLKCMU_APM_BUS			0x1004
+>  #define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU			0x1008
+>  #define CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS			0x100c
+> @@ -103,6 +104,8 @@
+>  #define CLK_CON_MUX_MUX_CLKCMU_SSP_BUS			0x10e0
+>  #define CLK_CON_MUX_MUX_CLKCMU_TNR_BUS			0x10e4
+>  #define CLK_CON_MUX_MUX_CLKCMU_VRA_BUS			0x10e8
+> +#define CLK_CON_MUX_MUX_CLK_CMU_CMUREF			0x10f0
+> +#define CLK_CON_MUX_MUX_CMU_CMUREF			0x10f4
+>  #define CLK_CON_DIV_CLKCMU_APM_BUS			0x1800
+>  #define CLK_CON_DIV_CLKCMU_AUD_CPU			0x1804
+>  #define CLK_CON_DIV_CLKCMU_BUS0_BUS			0x1808
+> @@ -162,6 +165,7 @@
+>  #define CLK_CON_DIV_CLKCMU_VRA_BUS			0x18e0
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU			0x18e8
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU_ALT			0x18ec
+> +#define CLK_CON_DIV_DIV_CLK_CMU_CMUREF			0x18f0
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV2			0x18f4
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV3			0x18f8
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV4			0x18fc
+> @@ -239,13 +243,21 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	PLL_LOCKTIME_PLL_SHARED2,
+>  	PLL_LOCKTIME_PLL_SHARED3,
+>  	PLL_LOCKTIME_PLL_SHARED4,
+> +	PLL_CON0_PLL_G3D,
+>  	PLL_CON3_PLL_G3D,
+> +	PLL_CON0_PLL_MMC,
+>  	PLL_CON3_PLL_MMC,
+> +	PLL_CON0_PLL_SHARED0,
+>  	PLL_CON3_PLL_SHARED0,
+> +	PLL_CON0_PLL_SHARED1,
+>  	PLL_CON3_PLL_SHARED1,
+> +	PLL_CON0_PLL_SHARED2,
+>  	PLL_CON3_PLL_SHARED2,
+> +	PLL_CON0_PLL_SHARED3,
+>  	PLL_CON3_PLL_SHARED3,
+> +	PLL_CON0_PLL_SHARED4,
+>  	PLL_CON3_PLL_SHARED4,
+> +	CLK_CON_MUX_CLKCMU_DPU_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
+>  	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
+> @@ -304,6 +316,8 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_MUX_MUX_CLKCMU_SSP_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_TNR_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_VRA_BUS,
+> +	CLK_CON_MUX_MUX_CLK_CMU_CMUREF,
+> +	CLK_CON_MUX_MUX_CMU_CMUREF,
+>  	CLK_CON_DIV_CLKCMU_APM_BUS,
+>  	CLK_CON_DIV_CLKCMU_AUD_CPU,
+>  	CLK_CON_DIV_CLKCMU_BUS0_BUS,
+> @@ -363,6 +377,7 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_DIV_CLKCMU_VRA_BUS,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU_ALT,
+> +	CLK_CON_DIV_DIV_CLK_CMU_CMUREF,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV2,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV3,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV4,
+> @@ -458,6 +473,8 @@ PNAME(mout_pll_shared3_p)		= { "oscclk", "fout_shared3_pll" };
+>  PNAME(mout_pll_shared4_p)		= { "oscclk", "fout_shared4_pll" };
+>  PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
+>  PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
+> +PNAME(mout_cmu_dpu_bus_p)		= { "dout_cmu_dpu",
+> +					    "dout_cmu_dpu_alt" };
+>  PNAME(mout_cmu_apm_bus_p)		= { "dout_cmu_shared0_div2",
+>  					    "dout_cmu_shared2_div2" };
+>  PNAME(mout_cmu_aud_cpu_p)		= { "dout_cmu_shared0_div2",
+> @@ -507,7 +524,7 @@ PNAME(mout_cmu_cpucl0_switch_p)		= { "fout_shared4_pll",
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> -PNAME(mout_cmu_cpucl1_switch_p)	= { "fout_shared4_pll",
+> +PNAME(mout_cmu_cpucl1_switch_p)		= { "fout_shared4_pll",
 
-2. ... and never tested :/
-The amount of very poor contributions from Samsung recently skyrocketed.
-Like 66% of contributions were not passing basic guidelines, basic
-process, so should not have been sent.
 
+I don't understand this change.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> @@ -577,7 +594,7 @@ PNAME(mout_cmu_hsi1_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div3",
+>  					    "dout_cmu_shared2_div2",
+>  					    "fout_mmc_pll", "oscclk", "oscclk" };
+> -PNAME(mout_cmu_hsi1_mmc_card_p)	= { "oscclk", "fout_shared2_pll",
+> +PNAME(mout_cmu_hsi1_mmc_card_p)		= { "oscclk", "fout_shared2_pll",
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Neither this, looks like you changed nothing here.
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+>  					    "fout_mmc_pll",
+>  					    "dout_cmu_shared0_div4" };
+>  PNAME(mout_cmu_hsi1_pcie_p)		= { "oscclk", "fout_shared2_pll" };
+> @@ -672,6 +689,12 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div2",
+>  					    "dout_cmu_shared0_div4",
+>  					    "dout_cmu_shared4_div3" };
+> +PNAME(mout_cmu_cmuref_p)		= { "oscclk",
+> +					    "dout_cmu_clk_cmuref" };
+> +PNAME(mout_cmu_clk_cmuref_p)		= { "dout_cmu_shared0_div4",
+> +					    "dout_cmu_shared1_div4",
+> +					    "dout_cmu_shared2_div2",
+> +					    "oscclk" };
+>  
+>  /*
+>   * Register name to clock name mangling strategy used in this file
+> @@ -689,19 +712,21 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  
+>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	MUX(CLK_MOUT_PLL_SHARED0, "mout_pll_shared0", mout_pll_shared0_p,
+> -	    PLL_CON3_PLL_SHARED0, 4, 1),
+> +	    PLL_CON0_PLL_SHARED0, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED1, "mout_pll_shared1", mout_pll_shared1_p,
+> -	    PLL_CON3_PLL_SHARED1, 4, 1),
+> +	    PLL_CON0_PLL_SHARED1, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED2, "mout_pll_shared2", mout_pll_shared2_p,
+> -	    PLL_CON3_PLL_SHARED2, 4, 1),
+> +	    PLL_CON0_PLL_SHARED2, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED3, "mout_pll_shared3", mout_pll_shared3_p,
+> -	    PLL_CON3_PLL_SHARED3, 4, 1),
+> +	    PLL_CON0_PLL_SHARED3, 4, 1),
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+This looks like fix, so shuold be sent separately with Fixes tag.
 
+>  	MUX(CLK_MOUT_PLL_SHARED4, "mout_pll_shared4", mout_pll_shared4_p,
+>  	    PLL_CON0_PLL_SHARED4, 4, 1),
+>  	MUX(CLK_MOUT_PLL_MMC, "mout_pll_mmc", mout_pll_mmc_p,
+>  	    PLL_CON0_PLL_MMC, 4, 1),
+>  	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
+>  	    PLL_CON0_PLL_G3D, 4, 1),
+> +	MUX(CLK_MOUT_CMU_DPU_BUS, "mout_cmu_dpu_bus",
+> +	    mout_cmu_dpu_bus_p, CLK_CON_MUX_CLKCMU_DPU_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_APM_BUS, "mout_cmu_apm_bus",
+>  	    mout_cmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_AUD_CPU, "mout_cmu_aud_cpu",
+> @@ -830,37 +855,13 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	    mout_cmu_tnr_bus_p, CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 3),
+>  	MUX(CLK_MOUT_CMU_VRA_BUS, "mout_cmu_vra_bus",
+>  	    mout_cmu_vra_bus_p, CLK_CON_MUX_MUX_CLKCMU_VRA_BUS, 0, 2),
+> +	MUX(CLK_MOUT_CMU_CMUREF, "mout_cmu_cmuref",
+> +	    mout_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
+> +	MUX(CLK_MOUT_CMU_CLK_CMUREF, "mout_cmu_clk_cmuref",
+> +	    mout_cmu_clk_cmuref_p, CLK_CON_MUX_MUX_CLK_CMU_CMUREF, 0, 2),
+>  };
+>  
+>  static const struct samsung_div_clock top_div_clks[] __initconst = {
+> -	/* SHARED0 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+
+And this is not really explained in the commit msg.
+
+> -
+> -	/* SHARED1 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV2, "dout_cmu_shared1_div2", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV3, "dout_cmu_shared1_div3", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV4, "dout_cmu_shared1_div4", "dout_cmu_shared1_div2",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+> -
+> -	/* SHARED2 region */
+> -	DIV(CLK_DOUT_CMU_SHARED2_DIV2, "dout_cmu_shared2_div2", "mout_pll_shared2",
+> -	    CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
+> -
+> -	/* SHARED4 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV2, "dout_cmu_shared4_div2", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV3, "dout_cmu_shared4_div3", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV4, "dout_cmu_shared4_div4", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
+> -
+>  	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
+>  	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
+>  	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
+> @@ -974,6 +975,34 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+>  	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
+>  	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_dpu", "gout_cmu_dpu",
+>  	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
+> +	DIV(CLK_DOUT_CMU_DPU_ALT, "dout_cmu_dpu_alt", "gout_cmu_dpu_bus",
+> +	    CLK_CON_DIV_DIV_CLKCMU_DPU_ALT, 0, 4),
+> +	DIV(CLK_DOUT_CMU_CLK_CMUREF, "dout_cmu_clk_cmuref", "mout_cmu_clk_cmuref",
+> +	    CLK_CON_DIV_DIV_CLK_CMU_CMUREF, 0, 2),
 
 
 Best regards,
