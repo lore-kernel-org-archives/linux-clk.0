@@ -1,67 +1,36 @@
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC12594BE;
-	Sun, 31 Aug 2025 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530062629F;
+	Sun, 31 Aug 2025 12:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642400; cv=none; b=oX3tU7rr59dIaX5TYOabhY/kJuYsKYWNE0dPUdEinSegVQv5g/7N1sIrX3FOl7EMMUeg7d0RTvNiY9JKtzyPLzwnNoitkJ8TLc6h5XRC/PMpFTWWhN4haFy3gOSXoNNlGeRynFpSizVkWvVGpmdQ4JDYM4Oam8z9auwfGbywFn4=
+	t=1756643451; cv=none; b=ZhFOS2LedEAvlIxw4JxHjX30bkmCbH+NEMnlhVRzvTcNSc3cqUDh1eCLEkdDphmc24yJlIyYtCWro55GAwb9RAcjczGBev0mBbj64oalf3M36I4Xa9huQnoGrSDc+xA61L1iK0k9AiafDllFib6LNirVa9KaiKD1IkZT6P8ItDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642400; c=relaxed/simple;
-	bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Is9XZhI1gice9AV6Ju2LbYOz0PS1gqnOG/K9nr5ClxFJ8dazom+1566SeFkr9I65enDmw1rfpeCbkZGBu48v2sXa1iFyGEnHxDJ1KVWNpby91fIFnRr3cC13KmpqIh7WiwcjQnQ8XC16kfoUpWBrI9FyE4ky7qxdnG4qMa63gQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaQLfK8o; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756643451; c=relaxed/simple;
+	bh=4FfX1QEQR5BhgXz6cJLgVX8UFOXb13D1QrVd1i7A3Ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dgg81rzH0yrqRVoiuAPCXSy+Va+6KBjxznRNU2zxlp3FUKkpkryBmYCVZytL4wW2iW4M12azRdN0J9k3KY66oZlw29I41YnwXK1pUKPbjYSyC8vFGxEKTnaeg3l+QYHXayk0KVLW0eeS//C9XGXL5BCqGjVmsG0y783WGofTAYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Hd+qEDuh; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qM4n8yt2; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaQLfK8o"
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e87061a6d5so355763685a.2;
-        Sun, 31 Aug 2025 05:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756642398; x=1757247198; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
-        b=ZaQLfK8olCrrWhvh3mGHI9nR8/PxQEJVJctvs0LNWrQT/EvUoCgXHd0xMmwVFueNTv
-         sXD/tQe1MPqBZ966Ey8q/HlsmoLXzVsDXSQSebUo+AWRgq1fEdVHTm5gBRKuPbQI24oT
-         2QjCSBQs4HR9suHgE2TCIgiRXSzq8NOhc6amiQo5ePqMWE9J4crBPxfUXUQjq+rVgfJ5
-         nVPE6N8HQg7X9VPMvxaoOzLHebgCzEtPHXfwIlUdp+0nP4sqe4FBRHAgsfBmErDTuoBg
-         pDTlKz60QS8wSFYOZtMZ1JWJYiYPaUgZE/C9h1ejPl+0h/jtgLf6yll9UZs9s2W9pKIs
-         xdMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756642398; x=1757247198;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
-        b=plxM8yHt4LNyoPwUT0vbMj1YmH4t0A8mDw2dqkz/Vb5b3XYHoB1ahUEun9xudVaJgQ
-         4MR6ilWswDOMTICySwIHibKR8BrVbOKop7Z1iIIB3S+aoCXCQbY+WhcOE5lP+bBrx1jJ
-         hMrb2bhgFaM+JliAESvxv79R4xmyTj4Zqfa1HPCzqDmhg+GpHOTPoB+1Z6uMrHXq8Jj3
-         /wqpMZPDtf2hRTO0CKuQOrmAPY4F9rD1YPFIQzwuJrdzHrRUc2y8tDCtiXQ1D3O4/M9x
-         pvGDx3MzypaceFNpZSiElCRysbvTZkyvxrhC54TZJhXNRZuPQvnSr31rSasVWXcmXgBN
-         gkBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFqJdFsn64/Cd9kuP0aHWuiYblUge4oxDSAf2wXlwbHQxnqMZtQU7Ar9ijJg+MD8W4sE+JD1e0ig24@vger.kernel.org, AJvYcCV3SH8Di3Y2Xv9Zf6vV7KQ/aWRKMqOCUmB2cVLKk+9TC+ziVD42jc0gLfGaY2xbrbEPRCAP3MbQGTSv@vger.kernel.org, AJvYcCWf0jST3Gy/0vyXEedAcnGQQi/uWIvreeB7cfNp7ablRQcheVNFjjMC2Hd0ZVeZYAAgOBunHnNDV9BvRSB8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ6WfjtCTxPsiMSqFw4PKUiY3ay4Cz2me6WzyQUpWzQoPCbshJ
-	ioTH5xc6EAOfOsxyTh842zuHabxXl6gAKTvumD4RuTxo4ksq6WV3PV9t
-X-Gm-Gg: ASbGncsGsHxFfoYYsvBpiHjzDxNSOumGom0nOKB4j/ZdlnWD5G06HI40d4RjjSa96YE
-	a8Bwn+C76v4qc/iWXTHbr3fBXI9bt/mW4wngszSEr9OWgAgDcZrdfQ21jU0TjEB+WxWGp/TcfRo
-	By91Kv73af9FJBCID0JbIJTMDra91nx66nXpV/DjG5fKPFVZk8iwrJEPCliwms+WeQElDTLYtYG
-	YCpHgEgLtszhz9oqdNtsLMWMDckAETqxiDp9JlGOrI8VL2fDbGliObzhOioxWPokWPDCMZ5qa8+
-	qRndk84Nfq3NMSNWDQOxgYmYWQhUi/9qbITXT69szAT2cje9oLv5NCtykeYPjkfkoX5wWicke/f
-	LH8nPpRsfM3ytX+otkwbkaQew6FXixUQCScO3MCeitlqORVk1+YiN
-X-Google-Smtp-Source: AGHT+IGlRlomj28QsowpW+ggD3fSIRdZkTy4adIY1fcPCIHbaJRIzm6jBaXx0BhL2//vg7rIorOICA==
-X-Received: by 2002:a05:620a:29d0:b0:7f9:44b0:8072 with SMTP id af79cd13be357-7ff26eaae2amr464092785a.4.1756642397911;
-        Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
-Received: from [127.0.0.1] ([135.237.130.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb289f518sm21163776d6.56.2025.08.31.05.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sun, 31 Aug 2025 12:13:16 +0000
-Subject: [PATCH v2 3/3] clk: samsung: exynos990: Add missing USB clock
- registers to HSI0
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Hd+qEDuh";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qM4n8yt2"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1756643368; bh=i2nnWwgWrV153flpsGQ0nvH
+	siD/LEbmYW2t4Po0/UPg=; b=Hd+qEDuhnUJ6CJkydtVGUPpm6I/hJFBD1fzUILmg77uoA13Un3
+	ecx9pDeBOO1KUAzA1tmm2U/BqPROVexIv4/y6bQ48VnOKG1qyJZhj4R+ORl63sdXobWuwUwzIYL
+	hlbS9TwuvzspG6mTKajZT++M+sElsrrJ6Gkh8PZs6NDj4yEImEK+Y6/+d7kLnCdkykqOYI5K61Z
+	ShzR2JWUm5BfXPRZPxqY9mzaTyYHbiSL/ip+8/MdYd7mREEYhmOhuNJpF4RSwH4m3csSZKbtFec
+	BNKRYwiwFfi6qlo6x+SglXIJmipmN6coR/I5Hd5TiaUOt9/XeHkrTas085jKPE92pRw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1756643368; bh=i2nnWwgWrV153flpsGQ0nvH
+	siD/LEbmYW2t4Po0/UPg=; b=qM4n8yt2DHgkuEfcvH6rwSZ7vgDRNky28Ky+mQiCAVCcOYpVkx
+	woRsI6safiOoBsE1itwBpzlLku6VJfEZxLCw==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v8 0/7] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Sun, 31 Aug 2025 14:29:23 +0200
+Message-Id: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,50 +38,160 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250831-usb-v2-3-00b9c0559733@gmail.com>
-References: <20250831-usb-v2-0-00b9c0559733@gmail.com>
-In-Reply-To: <20250831-usb-v2-0-00b9c0559733@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACNAtGgC/23Q3WrEIBAF4FdZvG6KzpiM9qrvUXrhz5gVmmRJS
+ mhZ8u41C62B5vIMfkfHu1h4zryIl8tdzLzmJU9jCebpIsLVjT03OZYsQEIrQclmWAZjkRoAw0n
+ GgBysKKdvM6f89Wh6ey/5mpfPaf5+FK9qn/52qL+OVTWyoQjEsaNE0rwOLo8fecxj/zzNvdiLV
+ jhgwIqhYG8tlWGHHPEU4xHrirHg6CIFZSCE4E+xrhhVW7EuWCWFwIak0/YUtxVrOOzc7s9O1pD
+ lpHQ8x13FBuqnr92OpZUeXPAd8SmmA8bDzVQwIDibvLLO0z+8bdsPstv+YBECAAA=
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Daniil Titov <daniilt971@gmail.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756642395; l=1180;
- i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
- b=jhPFbn1//YcT1nfRuEz6+shNgqxHkLrk/WjGXAUF7BRl9XYF/0woSJ0zRfBoxqiOCuHFgPHT5
- lzyoXOz3+rJBxN/8EkFeSdhevcTySRhTi5kPETQZXXWA/eiNYG2SjdE
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756643366; l=4016;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=4FfX1QEQR5BhgXz6cJLgVX8UFOXb13D1QrVd1i7A3Ew=;
+ b=B5QHO+A+w0PBU7Z6D2cWI7h+7cQBlvX7Bd5nnGRwNyqCiCjUrY+3pX4v307VM+DEzp2DytdDC
+ nTE7aqNzjtpCgVuuqIQtNdC1+sRANww2PJ0Aj7lDfxOPWTGR1m+ywUX
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-These registers are required for proper USB operation and were omitted
-in the initial clock controller setup.
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
+
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/clk/samsung/clk-exynos990.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v8:
+- msm8937:
+  - Fix scm compatible.
+  - Fix position of sram@60000 node.
+- Document qcom,scm-msm8937 compatible
+- Link to v7: https://lore.kernel.org/r/20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org
 
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 7884354d612c54039289fa9b80ad08f34b9b7029..47a1e0850c3020ab66931ae0c5ac4920f41496d0 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -1224,6 +1224,8 @@ static const unsigned long hsi0_clk_regs[] __initconst = {
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSMMU_USB_IPCLKPORT_CLK_S2,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSREG_HSI0_IPCLKPORT_PCLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_ACLK_PHYCTRL,
-+	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USB31DRD_REF_CLK_40,
-+	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_REF_SOC_PLL,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_SCL_APB_PCLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBPCS_APB_CLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_BUS_CLK_EARLY,
+Changes in v7:
+- gpu.yaml: update adreno 505 pattern
+- Link to v6: https://lore.kernel.org/r/20250820-msm8937-v6-0-b090b2acb67e@mainlining.org
 
+Changes in v6:
+- msm8937:
+  - Fix nodes ordering.
+  - Format clocks, reg, dmas and -names properties.
+  - Add gpu_speedbin.
+- Describe A505 clocks.
+- Link to v5: https://lore.kernel.org/r/20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org
+
+Changes in v5:
+- msm8937:
+  - Remove wrongly defined idle-states.
+  - Fix thermal zones.
+  - Use the header with DSI phy clock IDs.
+  - Fix the nodes order.
+  - Fix the pinctrls style.
+  - Follow gcc header changes.
+- msm8937-xiaomi-land:
+  - Remove headphone switch and speaker amplifier bindings.
+  - Unify status property style.
+- gcc bindings:
+  - Expand MSM8953 gcc schema with MSM8937.
+  - Add MSM8937 prefix for MSM8937 specific clocks.
+- gcc:
+  - Follow the bindings changes.
+- Drop alwayson clock documentation it will be handled in another
+  patchset.
+- Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
+
+Changes in v4:
+- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
+- msm8937: add missing space after s9-p1@230
+- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
+- Remove applied patches
+- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
+
+Changes in v3:
+- Fix qcom,gcc-msm8937 dtbinding example 
+- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+
+Changes in v2:
+- drop applied patches
+- drop gcc schema commits infavor of a new schema for gcc-msm8937
+- document always on clock for adreno 505/506/510
+- msm8937:
+  - set cache size
+  - rename cpu labels
+  - fix style issues addressed by review
+- msm8937-xiaom-land:
+  - remove unused serial0 alias
+  - remove regulator-always-on from pm8937_l6
+  - add blue indicator led for aw2013
+- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+
+---
+Barnabás Czémán (5):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+      dt-bindings: firmware: qcom,scm: Add MSM8937
+      dt-bindings: display/msm/gpu: describe A505 clocks
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add initial support for MSM8937
+
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    6 +
+ .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
+ .../devicetree/bindings/display/msm/gpu.yaml       |    2 +-
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    3 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2134 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
+ 10 files changed, 3169 insertions(+), 11 deletions(-)
+---
+base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+change-id: 20250210-msm8937-228ef0dc3ec9
+
+Best regards,
 -- 
-2.50.1
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
