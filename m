@@ -1,61 +1,63 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E62A190685;
-	Sun, 31 Aug 2025 10:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F73D190685;
+	Sun, 31 Aug 2025 10:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756637785; cv=none; b=kBis3xfy4cR0VSYvfNP+3kK5+jniDUGs2/h/T2ny/OcJbqS22gYrZ3fI2+NhzzzyUwoStB8cte8TP9FeG4JScqJPgx65kLoOEc9XoBZ1aeA9SBdymbGh9SVFGLc5JGurBdq8F+fWJ4RPu7C5y5EwKixeKQ7ujH8GzrubmR8r+DA=
+	t=1756637792; cv=none; b=Y6+GhIy6lpU8AP1cHF+99669dG+fewMp4j4Oebtjz0LH5SPYYXi2cemI3pPoVUmAtxYdi574fXXJZidooWHqmXIW5TqhHb2I+buZBuUtcKm1yajo3J20PumPI90+MKj8cxj3Pm9oMFMEi5AXtKPcRo4ryLkiSUdQoFH3hUaLJNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756637785; c=relaxed/simple;
-	bh=pKMihHNeoIjexSn5j98+F6SYvhhQp72++66ZBaIXjoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fde81FRK9w8OLEvuVwaJ7DrJyw6YBshQ0CQVeaQVhzp6vRGhNZjQw/+vt2g4VqeIycibULy+i3t99/73/ZP5hM/1M/mhtgUS6AVZUCntXcEua39oJnEN8KneQK7HJT+XUnrBmhtzC7l1T1dPKiB47p8/Un+YRX5kA3R2P9KLITQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ez8eIlYR; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1756637792; c=relaxed/simple;
+	bh=IuXzZZ71LerZz18H3FXXnUMaMEPhllADXIEOlKv8fb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jrieWpGC3Qr3qDx8hm/p43BMeIvHI7YvRi5w19x1lKBtRSr3gUJGx+M7U2/Iwpp1D6ETSrn92JV5uEOSlbXacfnIPpoiZJDTJ7LLnEY9YocEF6/a5SGbIN/Y5zKXKe8k8PR7poHZZdmQSUGTCcGbzKgre99pzGReLNT4KWRTojA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLAIFqFq; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ez8eIlYR"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49cf21320aso3808590a12.1;
-        Sun, 31 Aug 2025 03:56:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLAIFqFq"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7722f2f2aa4so2360492b3a.1;
+        Sun, 31 Aug 2025 03:56:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756637783; x=1757242583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Apk6KML4dyqZBQ1Buqld5ww4xwE9iSu82US2UzeUrjc=;
-        b=Ez8eIlYRO8DAIJqwKqKjz1mP/wFmGYKxqPc6rrcfhBZ05scAhY8y8k0M57iIfRApmK
-         umd0byRuVYTlHKYhc1hDscAZK6+3O67HtBNpxErp6ow8A3VKWomtQfFDZB8X9nlcfUDA
-         GCCjokf8p6W1U/qkBYU32o7IYjITSqrQ3L/WzgPsXB75RWvc1oGB4jvXTHkZZ+4HZ+On
-         mwp3fzhdavjR6bhyvjtDxhR+Nd9KxSz/D4N8sRQ2vDoFYX0BCnZ8KVXk/KH8rfrPxabQ
-         F7EMXG+NaMlYdqDMNeXPNlQpMwd+3c0nnAiFf8uSTdoB2OLdqDb9SGzIjhTGP92kAqCr
-         4Vkw==
+        d=gmail.com; s=20230601; t=1756637791; x=1757242591; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MyCuQfx6deCrzI3S90GQXXhYycWHkOUav5G7qScYADI=;
+        b=kLAIFqFqFwY9ysypFEksatLe0fBAQLfJHXiKo7OEhaPbe/CfuU6dA41MMJXklJWLEA
+         9M/gQEg8BGGdLnw5UTtZaT4DU4Ygx6Qz/ql2mYgeVByICMpTexeOmIk5qBtkqV/tJC3a
+         mrULP/Nq3orjeyQE4gQ5jl7/6pw12RppEMSvJXO72O7Ii3c7eVphCpMTJj+Kplm+cT3/
+         iNprAteI9BfbjORt2QtX6CeVDbiWySlYxXE2NvhmGcrjNw5/rFH8Zh59Px1VEsjLZuE5
+         h0J6TGLs6uElhbzH5UV8YeFmiQrDhCo/yQ+GgqYZcCUE1ROZ7h5/qpOpyRiIV149J4vg
+         0luA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756637783; x=1757242583;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Apk6KML4dyqZBQ1Buqld5ww4xwE9iSu82US2UzeUrjc=;
-        b=CpY+6lVyoQwXziG3hKjtb/Mpd6vr+oivniPH29BjgxNby9jyY4UAb8CyDjYK70Plud
-         R/LC3IOrkD6jWXrCVQc0CCvk0TdolcZUcbIAb3Vz87SYFkHLwFHbGuNLOaDTmMbZa38j
-         Gj+Ysnym2c9uthtkgAN5qynKbbE2xlu80eOxncNnDZ//DNQGEzkT4QHeBjOxD1D1IjMN
-         c6x75ome1KQSNW+VodEGWc6c0kJKvPLVGlSHPEef8cLPyd+uBInINKlOor7CI4OiPltU
-         TpBDW8xnbMPsRYGVsjO84SjHXZTtTc0NH/qh+BZ79uOIRgd71m+j7piug28K5GI/RTkS
-         SfXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrVX6e/gU2bO8Ec28G3wx9S8qT2gfwoHyDlj9iwSAEx+20R6zJNRinnZH5I65Ptus8tVjP4w6DNehu@vger.kernel.org, AJvYcCW7Kp3lxvmVs8jhh80ISFjaQqRIVeu8FVn9pjzRxwyCdcii8UDsh1D0cIiopigLgpLAmvbHWnmLpLny@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVaz6LdQMiOMuLB1+HjbQGTl25/Zdy3cWWEyssw/q6pJaVKtK+
-	zwJ6T8uejFVBpDxJKN/RuvAq0752gLkWqMqqMSOYjUdOI6T+r5arIx6Q
-X-Gm-Gg: ASbGncv4ukYYmyfJO1p/YD99Iv5gHyJ+Oh+rmdC/OCgDulg2aXXypkLNd3LrCMj5QRF
-	MEM9mXyG20RNVOIL3MPL4AIVECefEBQ7vJ4jbmxkrjTiXw7Rwzg63vOEBKHg90PWmR0+6HQvlsy
-	Dw/q3hzJbUBRCT80sMb8gjsmWgTeRqYsT3SXpCIH+bvoKzwFWrTLTR9j5P9I1uvSR90J/Gscax2
-	rwAUPW0LHYzjR1dq8tGxAmc8VTlOo/zP0IEOHnU0fdStGGnYG8BGVHtiK8SzYAxq9z6K3nB8lf/
-	6PWcqshduO8zvuOU+9hi/Eu79V/9ksro2lcacIRyzB3xbx+eqtpTCwVDwAxteJqQfOvIUwo3asY
-	niBjUO8nZiAu0cB6quEppDWjBeMIh4Q27dR54Om41dGTPQxn5zg==
-X-Google-Smtp-Source: AGHT+IErGK7FJc+FCPGEwd2GnQFzRtcOpYSLZTpB8rjH79fTnlx1bOGmzhq6mdWM8W7i0rZcH9ZkcQ==
-X-Received: by 2002:a05:6a20:9191:b0:243:9824:26f0 with SMTP id adf61e73a8af0-243d6f3b97cmr7135848637.46.1756637783407;
-        Sun, 31 Aug 2025 03:56:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756637791; x=1757242591;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MyCuQfx6deCrzI3S90GQXXhYycWHkOUav5G7qScYADI=;
+        b=ojGrgKn3rdD7WsvEp74R08mU26aSc6GrxbhoRe9Ht6bgn23b6Sya5bwQ6bRvSyG5YQ
+         JsYUBhAs69WdNpOqH+GFKEVDZ7V1SsrJqoGnK6yIap7Vog8ArkVsp7bl4XxBiiMFvvpa
+         26p0y23KxcUJOX3jIXjAaXhsSQ2WPkHq1L4A12MRVjr0f6am7DeyCa5fYKynZ2zV+TUF
+         KENRA8Vx3Hc1e/CrOHN1QwN2bmgc8RY61/1uO9qZnD4RRSYaXdFlRqHAiUy5xT/F2atZ
+         Lkntl+drCqEWImZwYb71hOaQ9R/QZ1O4hNBmTXpakpvVMtQesKhRDR+f/vJRbuj+r+Kf
+         bnzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTBogjCnTdWMJWk36HWEcmevwX8fPwve3EYU3hEIW1J68O/fwYZ8IxkiCYfMaHss1rZAvcBOmVx6iy@vger.kernel.org, AJvYcCVit3DD5nhyCkw2To4vFGfl0JA2iZVnIMoRSFdhC6L6UsRASIGZPg/RtWhuw6o8hCFylpRHk/8Z3Osv@vger.kernel.org
+X-Gm-Message-State: AOJu0YweAE1i4twVEMZjagSlYYgnibd+tF4egOjbiz95IkE0pNujmgNN
+	rgUU5pqpesYaswJIeBmpp88fTN7tPprPzUGbXVbFnzi43oiL6nugGE20
+X-Gm-Gg: ASbGncumuR7rzfmTpFw22v0JScqkupQE2OxslY0tMYe8s6H2jVvIwS+vINJRln4NR8a
+	xRFo9lyELQG3jYc/lhsdpt1qaEFUstoOajTb1Pq18stIzpzi+M7Y61rcRRaZsxBiJ5vcG4rKpmh
+	kSQlrN/bW3GliMElUOmIXgqqCLrYTY713SXVwsDRkCq+fMy5lW4pNjT0iG+1wcgidP/SC7SyKXV
+	o/8b9dKl5Gb4Uxe6Iy3dpxG4CUTuX6JqUBsjg3KoSkRHdM5xdvr/vvNsobpRDXha/0C2vNQvpBD
+	Gf8uSKTpynIp+uTxtCgvP0dAn8/j6IwCmIKgKTx4EePun+t7Vp0vfkhvYgk7avn34pZa08U42+I
+	HN6E4Nhv+yxN+SuzL5O+sJ7LRllUYfhqARoG351u37xXQGX13KA==
+X-Google-Smtp-Source: AGHT+IE6r9QjMdEHo8v+4WkgO4Gaj1FQsN6g+kaTvt9XXtQpNPUIIt05Wv/m+Q/CEazER1X8WXX29A==
+X-Received: by 2002:a05:6a20:2446:b0:23d:d9dd:8e4f with SMTP id adf61e73a8af0-243d6f02e27mr5147570637.28.1756637790601;
+        Sun, 31 Aug 2025 03:56:30 -0700 (PDT)
 Received: from localhost.localdomain ([240e:478:1c78:352d:7cf7:15e8:f0c:9846])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd3669d76sm6638260a12.49.2025.08.31.03.56.16
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd3669d76sm6638260a12.49.2025.08.31.03.56.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 03:56:22 -0700 (PDT)
+        Sun, 31 Aug 2025 03:56:30 -0700 (PDT)
 From: WeiHao Li <cn.liweihao@gmail.com>
 To: heiko@sntech.de,
 	robh@kernel.org
@@ -66,10 +68,12 @@ Cc: hjc@rock-chips.com,
 	linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	WeiHao Li <cn.liweihao@gmail.com>
-Subject: [PATCH v1 0/7] drm/rockchip: Add MIPI DSI support for RK3368
-Date: Sun, 31 Aug 2025 18:48:48 +0800
-Message-ID: <20250831104855.45883-1-cn.liweihao@gmail.com>
+Subject: [PATCH v1 1/7] drm/rockchip: dsi: Add support for RK3368
+Date: Sun, 31 Aug 2025 18:48:49 +0800
+Message-ID: <20250831104855.45883-2-cn.liweihao@gmail.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250831104855.45883-1-cn.liweihao@gmail.com>
+References: <20250831104855.45883-1-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,44 +82,58 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds MIPI DSI support for the Rockchip RK3368 SoC, enabling
-native display connectivity through the MIPI DSI host controller and
-PHY. The changes span multiple subsystems, including clock control,
-DRM/VOP integration, DSI controller binding, and PHY driver updates.
+RK3368 has DesignWare MIPI DSI controller and an external inno D-PHY.
 
-Key changes:
-  - Update the Rockchip MIPI DSI PHY driver to preperly handle RK3368
-    phy initialization.
-  - Add missing lut_size of vop_data for RK3368.
-  - Add missing clock ID SCLK_MIPIDSI_24M to the RK3368 CRU driver,
-    which is required for enabling the 24MHz reference clock.
-  - Add MIPI DSI node to rk3368.dtsi with correct clocks, resets,
-    and register mappings.
-
-These changes were tested on a RK3368-based board with a MIPI DSI
-panel [1]. The display boots successfully with console output.
-
-[1] https://ieiao.github.io/wiki/embedded-dev/rockchip/rk3368
-
-Tested-by: WeiHao Li <cn.liweihao@gmail.com>
 Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+---
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-WeiHao Li (7):
-  drm/rockchip: dsi: Add support for RK3368
-  drm/rockchip: vop: add lut_size for RK3368 vop_data
-  dt-bindings: clock: rk3368: Add SCLK_MIPIDSI_24M
-  clk: rockchip: use clock ids for SCLK_MIPIDSI_24M on rk3368
-  ARM: dts: rockchip: Add display subsystem for RK3368
-  ARM: dts: rockchip: Add D-PHY for RK3368
-  ARM: dts: rockchip: Add DSI for RK3368
-
- arch/arm64/boot/dts/rockchip/rk3368.dtsi      | 79 +++++++++++++++++++
- drivers/clk/rockchip/clk-rk3368.c             |  2 +-
- .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 20 +++++
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c   |  1 +
- include/dt-bindings/clock/rk3368-cru.h        |  1 +
- 5 files changed, 102 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+index 3398160ad..5d76e3e04 100644
+--- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+@@ -162,6 +162,11 @@
+ #define RK3288_DSI0_LCDC_SEL		BIT(6)
+ #define RK3288_DSI1_LCDC_SEL		BIT(9)
+ 
++#define RK3368_GRF_SOC_CON7		0x41c
++#define RK3368_DSI_FORCETXSTOPMODE	(0xf << 7)
++#define RK3368_DSI_FORCERXMODE		BIT(6)
++#define RK3368_DSI_TURNDISABLE		BIT(5)
++
+ #define RK3399_GRF_SOC_CON20		0x6250
+ #define RK3399_DSI0_LCDC_SEL		BIT(0)
+ #define RK3399_DSI1_LCDC_SEL		BIT(4)
+@@ -1530,6 +1535,18 @@ static const struct rockchip_dw_dsi_chip_data rk3288_chip_data[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static const struct rockchip_dw_dsi_chip_data rk3368_chip_data[] = {
++	{
++		.reg = 0xff960000,
++		.lanecfg1_grf_reg = RK3368_GRF_SOC_CON7,
++		.lanecfg1 = HIWORD_UPDATE(0, RK3368_DSI_TURNDISABLE |
++						RK3368_DSI_FORCETXSTOPMODE |
++						RK3368_DSI_FORCERXMODE),
++		.max_data_lanes = 4,
++	},
++	{ /* sentinel */ }
++};
++
+ static int rk3399_dphy_tx1rx1_init(struct phy *phy)
+ {
+ 	struct dw_mipi_dsi_rockchip *dsi = phy_get_drvdata(phy);
+@@ -1693,6 +1710,9 @@ static const struct of_device_id dw_mipi_dsi_rockchip_dt_ids[] = {
+ 	}, {
+ 	 .compatible = "rockchip,rk3288-mipi-dsi",
+ 	 .data = &rk3288_chip_data,
++	}, {
++	 .compatible = "rockchip,rk3368-mipi-dsi",
++	 .data = &rk3368_chip_data,
+ 	}, {
+ 	 .compatible = "rockchip,rk3399-mipi-dsi",
+ 	 .data = &rk3399_chip_data,
 -- 
 2.47.2
 
