@@ -1,48 +1,47 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674EA21FF24;
-	Sun, 31 Aug 2025 15:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C09635;
+	Sun, 31 Aug 2025 15:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756652695; cv=none; b=FmhqApO8cruL7lvhWh4tMa4g9XzSRtDFGl2wxssJoZEnezXu9YnztAgEHtzgtkID63uI6XhOFqDME+YzSXNaRFM0yknbZ3LK/i1LcBACQGgXYHk+MTiBuc5iqeT/PkQX5vpblJJ+la2lK+PMgnHqxFptUVAG7RwvPcZIH853/Xk=
+	t=1756652792; cv=none; b=cgUVFAzgG8LKMosM636o3N3XeLQtYJ1oyPAwKQ8ijAh2DFkjfYoG9MlGo8Rb4oi1KXVPr80h7hcGyIkejQOuDOF3oYCw73E49hzEGqjrfHbVawFBuNEyct/V0fhyHad1nPOpeNCkRu+8EiMrWJwg2tY75M8Fj7EhB2wCI0lk2Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756652695; c=relaxed/simple;
-	bh=cnb9U8xfm+56fk+ZQhAzNFmK0EKzA2LS/LC+HJznkrs=;
+	s=arc-20240116; t=1756652792; c=relaxed/simple;
+	bh=6JgrtRTdOcirKARN+FD85gf2QoAmEtdpacJfKjiVeLM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZcdUCcE2fTVURSQu20WTH7XZ/sb2aB1EKUHcMKv1m+vg2q1sd8bPdRt+D3CjqmTatH19Ej9TV990R4/MWzRATgY4olOhFh27uwNQB5qPqz1k2Jx/UAy7YLxJRnBNdz2DzdNIQPTlKyRGuR9OUNvcfZ+h+HD1VZol6v3jeBx9KZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cPpv6qlP; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=P1UwxA98b46L4mNY/KTiCRM4ko/lwTBRp8rMItxJ5mG92pVK8NA1vmEg5YiqP7kuN+Hvf+0E63lLxmj7RsCuZbl1zGL1koXmgtarA3ao9kq8ThmY3X70R84gLHGdvgRF77UqAvU+cYJGTcIK8PuthfXiOf8tI5lwd03Th8zm+jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zr7VUttr; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cPpv6qlP"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zr7VUttr"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=FibP0s8DsDRdRncEUYqsAz/ECZHtws1JsEgePtJvE8Y=; b=cPpv6qlPTEnbNultnuF78/ObsZ
-	AIKnE4RuwUdabNTi4jRz45mFbmRfArz4IW6ike0/r3Xu/W9X/375j7UZmiBWXZJEHEamxRpNynWxL
-	Cu0TYqtV0mhrm9mlUo7vTTisqt1lSxfqkLnJTkQ4PnVlcAe8ypN9kPwjKkzlP7jsT0p1FVlu1Bqnd
-	hCK/lGaOHH4G2Nr8TPya/dsBLmavC9S5wIc6z2Gp3FbEGMSPgL84l+Xmp0xs8gKWU2aqb8vHsRvrZ
-	cs+bHCI/QbaLu0B5B0rzb76oUTyJ7+RfIOxSpDRWUq5RICFnN5wAbwQgffL/tvEZikO6JnGtfRstr
-	6IsWn1Qw==;
+	bh=NZfUhY1EZQv1OuZe5tH097MUEDvYB4HeowDcrbjOqWg=; b=zr7VUttrCYLdhVOAGJ/Lr9oKmN
+	G17tELZOSR5+6G4+83RfqgDQD/koYmtt9ulOu5Kclyt9jtnUg9Joo7kLYQ7y26JP3s70oJS1k8V1q
+	VBlejvPkHAhDchJt1rPJPxDpVCHRVAqd+6aLiQ91iKqw8BprlR4WkqqgkRLxnyDZCJd9MG+ioCEtF
+	D/R9aJP05KKdNhuapyq/iqDdbKSFoCxNqaLk7T0iI8tjtlohdhLRWMkHhsYgAKiR6wO0rWTMXEppn
+	8BzRFiAA0xvrcP6jVybEF+pSEvWrkFGNwF29EOGMMAbhnyCfKJ6zlA/KPxEuWm6pUldy8GrqB9luh
+	NU/pUbRg==;
 Received: from i53875b56.versanet.de ([83.135.91.86] helo=diego.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1usjbr-0006Xs-Pd; Sun, 31 Aug 2025 17:04:47 +0200
+	id 1usjdR-0001Dx-BJ; Sun, 31 Aug 2025 17:06:25 +0200
 From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 To: robh@kernel.org, WeiHao Li <cn.liweihao@gmail.com>
 Cc: hjc@rock-chips.com, andy.yan@rock-chips.com, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-clk@vger.kernel.org, WeiHao Li <cn.liweihao@gmail.com>
-Subject:
- Re: [PATCH v1 5/7] ARM: dts: rockchip: Add display subsystem for RK3368
-Date: Sun, 31 Aug 2025 17:04:47 +0200
-Message-ID: <3368190.aeNJFYEL58@diego>
-In-Reply-To: <20250831104855.45883-6-cn.liweihao@gmail.com>
+Subject: Re: [PATCH v1 6/7] ARM: dts: rockchip: Add D-PHY for RK3368
+Date: Sun, 31 Aug 2025 17:06:24 +0200
+Message-ID: <8571992.T7Z3S40VBb@diego>
+In-Reply-To: <20250831104855.45883-7-cn.liweihao@gmail.com>
 References:
  <20250831104855.45883-1-cn.liweihao@gmail.com>
- <20250831104855.45883-6-cn.liweihao@gmail.com>
+ <20250831104855.45883-7-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,64 +51,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Hi,
-
-Am Sonntag, 31. August 2025, 12:48:53 Mitteleurop=C3=A4ische Sommerzeit sch=
+Am Sonntag, 31. August 2025, 12:48:54 Mitteleurop=C3=A4ische Sommerzeit sch=
 rieb WeiHao Li:
-> Add vop and display-subsystem nodes to RK3368's device tree.
+> RK3368 has a InnoSilicon D-PHY which supports DSI/LVDS/TTL with maximum
+> trasnfer rate of 1 Gbps per lane.
 >=20
 > Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
-
-please use the appropriate patch prefix. For arm64 this should be
-arm64: dts: rockchip:
-
-The one you're using is from the arm32 side.
-
-Also please sort things appropriately both node-position and order of
-properties inside nodes, see
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/devicetree/bindings/dts-coding-style.rst
-
-
-Heiko
-
 > ---
->  arch/arm64/boot/dts/rockchip/rk3368.dtsi | 26 ++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>  arch/arm64/boot/dts/rockchip/rk3368.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 >=20
 > diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/d=
 ts/rockchip/rk3368.dtsi
-> index 73618df7a..0e47bf59a 100644
+> index 0e47bf59a..674a3676d 100644
 > --- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
 > +++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-> @@ -858,6 +858,32 @@ vop_mmu: iommu@ff930300 {
+> @@ -884,6 +884,20 @@ display_subsystem: display-subsystem {
 >  		status =3D "disabled";
 >  	};
 > =20
-> +	vop: vop@ff930000 {
-> +		compatible =3D "rockchip,rk3368-vop";
-> +		reg =3D <0x0 0xff930000 0x0 0x2fc>, <0x0 0xff931000 0x0 0x400>;
-> +		reg-names =3D "regs", "gamma_lut";
-> +		interrupts =3D <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks =3D <&cru ACLK_VOP>, <&cru DCLK_VOP>, <&cru HCLK_VOP>;
-> +		clock-names =3D "aclk_vop", "dclk_vop", "hclk_vop";
-> +		assigned-clocks =3D <&cru ACLK_VOP>, <&cru HCLK_VOP>;
-> +		assigned-clock-rates =3D <400000000>, <200000000>;
-> +		resets =3D <&cru SRST_LCDC0_AXI>, <&cru SRST_LCDC0_AHB>, <&cru SRST_LC=
-DC0_DCLK>;
-> +		reset-names =3D "axi", "ahb", "dclk";
-> +		iommus =3D <&vop_mmu>;
-> +		status =3D "disabled";
-> +
-> +		vop_out: port {
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +		};
-> +	};
-> +
-> +	display_subsystem: display-subsystem {
-> +		compatible =3D "rockchip,display-subsystem";
-> +		ports =3D <&vop_out>;
+> +	video_phy: video-phy@ff968000 {
+
+I think the node should be something like
+dsi_dphy: phy@ff968000
+
+
+> +		compatible =3D "rockchip,rk3368-dsi-dphy";
+> +		reg =3D <0x0 0xff968000 0x0 0x4000>,
+> +		      <0x0 0xff960000 0x0 0x4000>;
+> +		clocks =3D <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_DPHYTX0>,
+> +			 <&cru PCLK_MIPI_DSI0>;
+> +		clock-names =3D "ref", "pclk", "pclk_host";
+> +		#clock-cells =3D <0>;
+> +		resets =3D <&cru SRST_MIPIDPHYTX>;
+> +		reset-names =3D "apb";
+> +		#phy-cells =3D <0>;
 > +		status =3D "disabled";
 > +	};
 > +
