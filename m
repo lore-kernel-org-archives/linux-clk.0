@@ -1,65 +1,65 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC102367C1
-	for <linux-clk@vger.kernel.org>; Mon,  1 Sep 2025 06:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7552550A3
+	for <linux-clk@vger.kernel.org>; Mon,  1 Sep 2025 07:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756709816; cv=none; b=MBQ588iS7iUl+WhcDlbpIeBr245RcRJN8CilF6txSoYC7s7UtFMHQErDp/LWY9qV6B1LPrfijQ28oaxBDtpcoRMz6/WvxFWqk2Iw3JwbTP6E1qr8yDPHNrcfiT8crHcMIbtLYMbKkQ3emBNkVjvPpdLIBiIMar9djGCDKWiymXY=
+	t=1756710377; cv=none; b=XwTKlqsml1VG4W1azobtS/GLR6S+QUIYFQDRNPW7GBx5MMMne+Dy9jmjKz9D0JnbTtvKRk8UTjuDjZsKoog1lxgJSWmubTLk0GA8B3MTYKLRz3XU+1qSMUWvs4nnYKn9ECvvd+h2gxyhZPej5w1TKQuxHuc3k1nnSZOFtIHTVLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756709816; c=relaxed/simple;
-	bh=RQx8BbMxP6+7qLnaDn+zVCrc4iYJd8swpHvRNV/hEpg=;
+	s=arc-20240116; t=1756710377; c=relaxed/simple;
+	bh=ghUkVbbL6fSFFM+VnU2xLQumO120VvySAdwvS0T6ve0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VxlYQGzXpq+FPJaaDXpLiz4zHXsEkB5jPnGblVZijXJh+KOFniw6nv30dqh/CpqGTrNOhZDu/zEwyFyUgvw0HUETsWD4nck3INuaFUSuxx68cvek6/2tgLuBkOogbmEPB7DvOuW2ehhJbHZXgl+Y6mq1j8hru4NPHLjR3xfIirU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W95QRV/R; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=u5JVG2QuGO+z9n7wFFWPrAAnCCiMuCR5Wh9Mgw4CQKbootCZg6uA0YjyIC7e1swFC9Lq9DP9NIaHrqmR+6qLE37UuTIV5XaIbnLVZwTQchp7jZV6CYi2bQqQeEWnMmkvdRxI385CTZkRnX5nefPAPeKk7GxicZt7J0y+Qu4S8aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5V7s0Hc; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W95QRV/R"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b88bff3ebso5655765e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 31 Aug 2025 23:56:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5V7s0Hc"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b873a2092so12359145e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Sep 2025 00:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756709813; x=1757314613; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756710374; x=1757315174; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=n5gwX0oUoQ1OWBmNFYCauKpaErmMd3o/oWX1X0hG9WI=;
-        b=W95QRV/RbOBJfBGEQbjHkNnMekyMcTCQStmS1SVIu5PBhdpWIDlBizDpcpJUrbgFvH
-         auEQev19wXCW/6lgcMenHMXKzfYrrNcjHbvPfuLKJL2LHwm88QpnbbynZDx+3Wvpl3/6
-         8v8QhwriwITf4ah1jBd6WtyiHAuJlqxBX7yu7+oXyN0qW5EqJqIjarFGdTDP1ujTov5z
-         IOlZ/7Aw6rUBTk23e1UGxjLKTu6qyjedVQQROAj3dTQTajzumSdGbYTUfKFI7JOOqA7O
-         FJct651te5sv+6bza4lmiYmHXQMyE1Soa9bXA++JwSG045fHSHAtjWqaiUdzpxBYgslf
-         7cRA==
+        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
+        b=L5V7s0HcpxIN9ySwa+9k8bvQSXh6cl0hgNZll5XItb+IdlZ5Vu2bJDbABBorJxKxF0
+         UzscACIGYpDu4Np3yOwYzXlypBbXq7lXYdPo/SNf/vWBrRBfkNm3V5Ow3BgEI+qEntL1
+         Tr904zYYYwi/WIO7yQduQExd5GVJ1lhGjnyClNX4+cuYikU274e/6Ek4ZmQRjEZwTPlH
+         cajgmtQiOwddI1CWRuSaJzNIAwSKBK6Y/69Q4Zr06iuFf7idqzFEtsm/ap1F3jX0Dc8S
+         4gZMLk1w0TGZ0cxhmKra/aIVjvHz6HccPzM4IGvEJM9qVthIB7lOtmUpymMXydjEGtdG
+         VqeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756709813; x=1757314613;
+        d=1e100.net; s=20230601; t=1756710374; x=1757315174;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5gwX0oUoQ1OWBmNFYCauKpaErmMd3o/oWX1X0hG9WI=;
-        b=L7eoJ0BbUnuaKsX9ozUVd9Rn7iTOKrcje0WPTFrHzqZwDpBG1nP8oVF3swtAB+O4v4
-         /Lc3uopLGelqN2ar16PeazpObe568BUO0uhNR0gjYXbmFzW/kMBK5SbZ4Tux32RBXlb1
-         TKn7GhhY3g2fpJfwMh9qR3ZOSKF7xRAMsQQwv90NybLrdBK5bZQXQNMlWR/NDn6zvWB0
-         aco3CMHwiHTX8tqKC/2tOE77GQ7Nxk10rTApdVvnjgaUd6kXLTmKK263Uw/G5q2Y1IWS
-         xKrLdVzI4RI6SSEYdZaCJWRqhZBrTCS0Mx7qorMOmqhTwD7RcAApzsHtiQ0e/ZFmKmOl
-         JZ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWv+XtQ5M8jWXJxmBaPkptOUiYXJiF4JVN4m5eLWvil9DG5E8PO2pemret3AisCRY+Wd3gyHGXciE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZrCYgL6ZSVCVx4KUSqT2cibG3cScPD2Se8uHF6mEfECF3204k
-	cNBn3WKNwsVkXV2fcyxpa2YJyAIkYJmJOwMU756rGGT8OcwFP/Xp9OWnQ57mwFVnMyk=
-X-Gm-Gg: ASbGncteyoeVt2Cva2LQnIwMiwk/fmUUaYoW+hRYf5XDl1JFRQYQFwu5Y89STOkpoDa
-	9IPFog+fbU3vAVrCGV5sw4hzGy2l+LbOG1KcDLNWqNPGjQL1fIMfNfk4UiauWKTeIcquU0Yms3w
-	O8Hpbm7aXAdl9gtlF91dU5wgA6G2ap+wkyVleoh3IzxH182zwot09xC4NL7vbltZUAy64h+35gM
-	Agx3Sa8qij4fwd5WYCwEWap0o6cSU2RCUQA9PyXRVB02oMK5hm54Dd89Iw4Ld1CTWfex8gQw1bw
-	w/RN82TNMgmJNxcCpSDtAycCrfzpRDIpQHviNEbS9mzMOhTEcB0Fcm4RnYY51u+mFzKJrFKOSfR
-	jB+5AtFJ9tLy14UAQQmXTT1Krk2ff5y6fB+Vvxooc
-X-Google-Smtp-Source: AGHT+IFTyDtYclqmVOzGIS9ZJjlqs10NwWpon1hN8bxRSUY5lhRzsuWs0h2u4qUYWfT36TppjXjdDQ==
-X-Received: by 2002:a05:6000:40ce:b0:3d5:f5ef:3bb with SMTP id ffacd0b85a97d-3d5f5ef0766mr2382494f8f.11.1756709812699;
-        Sun, 31 Aug 2025 23:56:52 -0700 (PDT)
+        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
+        b=Moc4IOVYZnGsAfSKgK2ymhTasRQngAD2pdWAUtmf3cAqYvtM08AVd24wTE5IrJ7BrX
+         iyulNezZ1lomuL8k0RYCKgnbR+QFhPEyH8X3C9ST/CjM3yRezynWC/aFRNv71k1RzzT1
+         WIZuy1a1E1r0ZKWyFc3C0ZSsZ14vzUyvQtSICRHX+Q2arJNEp8PV1nEbwGwov5NgXwRH
+         fx3QOacC1/TpdSQwTAbNrroOKb93GQDjsN90kNBYV6+eWiApuKfgKLKK5J9yY+zsbYCY
+         1kA3vm1KdQd91W2ThjgZv4Vm6xpyTTz4zyJngTXkHG04BkvxD3LtFmyxdKf+WD0+XGMU
+         XFWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNNeq0IUQS0ahLua1rhSyBxf9uPgnFai/2pxi8FpGLPzawXX04COxm8n0bPn4XABThouPhE0UCaGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxvlX+HCZVbYQtrr7kMEjA4B0t+oq6Kj4U1fxWdOyoUWEN0EAk
+	ycTNPSrCuBYIYpN05gJmagtB7UsP3XgTDELhQWUKZr9nAjwPxZ5Ae+ugsb9GE8pkm9s=
+X-Gm-Gg: ASbGnctIjIiGJnSwZiZusa7VHzRyh35N63oQiX29oxnCgJFp9U1xzi3FmS+PlUNaELT
+	WKKQ3Ouql3qWz/H5Z884jASqDNv5hrRAjnkE6Ag0nQrIimsBWaSgftyg/R4Rh6TF4k++EcSen50
+	hzXico0sHppGyoVSrHtC6FkMkInqlNeFRfQaoPaJmyANApqNu+g6veQ2F9vpUEJwo0EIbBJ6aWS
+	PycIs7vk96J6N9qIrnxRFqJJhrqqHr+XArR0K7+F5mpTmt2YsgoUaY8uP2n14dsjXp/lBM3t9+t
+	4aSr1yE2kmdSnC2aFNP84JY+QNsZDQ+rb4jeIT9B7gfCQ9TgMlAUiMkRoaioa5jlv1QEJw5+7qD
+	W2AxtIi3OTk71hWZgv3U/Ii7VrInVmFu3uI54G3UR
+X-Google-Smtp-Source: AGHT+IFnBbOE5ba7PQ9iK6x0QBC9gheBMd69i0QeCPDpf2UAKrxEuZOeM6Cz6ka7pF/Dx8JiLhhRIQ==
+X-Received: by 2002:a05:600c:a44:b0:45b:7f72:340 with SMTP id 5b1f17b1804b1-45b8557c68cmr60349155e9.25.1756710374198;
+        Mon, 01 Sep 2025 00:06:14 -0700 (PDT)
 Received: from [192.168.0.251] ([79.115.63.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d12c90a01bsm11387089f8f.31.2025.08.31.23.56.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d85f80d8casm541692f8f.54.2025.09.01.00.06.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Aug 2025 23:56:52 -0700 (PDT)
-Message-ID: <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
-Date: Mon, 1 Sep 2025 07:56:50 +0100
+        Mon, 01 Sep 2025 00:06:13 -0700 (PDT)
+Message-ID: <73674a4e-2397-4470-8743-763e0fb7435d@linaro.org>
+Date: Mon, 1 Sep 2025 08:06:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
+Subject: Re: [PATCH v2 0/5] exynos-acpm: add DVFS protocol and clock driver
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
@@ -81,95 +81,40 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
 References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
- <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
+ <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
+In-Reply-To: <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
+On 8/31/25 11:42 AM, Krzysztof Kozlowski wrote:
 > On 27/08/2025 14:42, Tudor Ambarus wrote:
->> +
->> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
->> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
->> +};
+>> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+>> are variable and index based. These clocks don't provide an entire range
+>> of values between the limits but only discrete points within the range.
+>> The firmware also manages the voltage scaling appropriately with the
+>> clock scaling. Make the ACPM node a clock provider.
+>>
+>> Add support for the ACPM DVFS protocol. It translates clock frequency
+>> requests to messages that can be interpreted by the ACPM firmware.
+>> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
+>>
+>> All patches can go through the samsung tree.
 > 
-> I don't understand why clocks are defined in the firmware driver, not in
-> the clock driver.
+> You really should have explained the dependencies instead of me trying
+> to decipher how to handle this patch. It's really not trivial.
 
-I chose to define the clocks in the firmware driver and pass them as 
-platform data to the clock platform device for extensibility. In case
-other SoCs have different clock IDs, they'll be able to pass the
-clock data without needing to modify the clock driver. GS201 defines
-the same ACPM clocks as GS101, but I don't have access to other newer
-SoCs to tell if the ACPM clocks differ or not.
-
-The alternative is to define the clocks in the clock driver and
-use platform_device_register_simple() to register the clock platform
-device. The clock driver will be rigid in what clocks it supports.
-
-I'm fine either way for now. What do you prefer?
-
+My apologies, I forgot. If I tested individual patches, I would have
+remind about the dependency. Something to automate for the next time ...
 > 
-> This creates dependency of this patch on the clock patch, so basically
-> there is no way I will take it in one cycle.
-
-Would it work to have an immutable tag for the clock and samsung-soc
-subsytems to use?
-
-> 
->> +
->>  /**
->>   * acpm_get_saved_rx() - get the response if it was already saved.
->>   * @achan:	ACPM channel info.
->> @@ -606,6 +636,7 @@ static void acpm_setup_ops(struct acpm_info *acpm)
->>  
->>  static int acpm_probe(struct platform_device *pdev)
->>  {
->> +	const struct acpm_clk_platform_data *acpm_clk_pdata;
->>  	const struct acpm_match_data *match_data;
->>  	struct device *dev = &pdev->dev;
->>  	struct device_node *shmem;
->> @@ -647,7 +678,30 @@ static int acpm_probe(struct platform_device *pdev)
->>  
->>  	platform_set_drvdata(pdev, acpm);
->>  
->> -	return devm_of_platform_populate(dev);
->> +	acpm_clk_pdata = match_data->acpm_clk_pdata;
->> +	acpm->clk_pdev = platform_device_register_data(dev, "acpm-clocks",
->> +						       PLATFORM_DEVID_NONE,
->> +						       acpm_clk_pdata,
->> +						       sizeof(*acpm_clk_pdata));
->> +	if (IS_ERR(acpm->clk_pdev))
->> +		return dev_err_probe(dev, PTR_ERR(acpm->clk_pdev),
->> +				     "Failed to register ACPM clocks device.\n");
->> +
->> +	ret = devm_of_platform_populate(dev);
->> +	if (ret) {
->> +		platform_device_unregister(acpm->clk_pdev);
-> 
-> I think this should stick to devm-interfaces everywhere, not mix them,
-> to have exactly expected cleanup sequence. Now your remove() first
-> unregisters and then de-populates, which is different order than it was
-> done in probe(). Use devm-action handler for device unregistering.
+> You do understand that clock is completely different subsystem (Stephen
+> Boyd)?
 > 
 
-Right, I will take a look. Thanks!
+Yes, I do, sorry.
+
+Cheers,
 ta
