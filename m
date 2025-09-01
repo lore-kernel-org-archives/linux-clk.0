@@ -1,73 +1,73 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902F93AC1C;
-	Mon,  1 Sep 2025 00:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE58175A5;
+	Mon,  1 Sep 2025 00:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756686042; cv=none; b=ctJmG/yFJs507M4mV/64DyzAuKkF3LMFSLrVgucrMIEiIcqgYmS9x3EI2lK5bxMG4nQLoCdcAWUjgGfLdVZWNc0O4HgyxXqhfI1dZydQ+zasG+3heFIngO4BKTeJXDdUev9YzZZoH5OwdVx15aXioqNNwrimUMQO4myOduUi27E=
+	t=1756686838; cv=none; b=SD4kU/fSpoFfT5CrOKjSFmAoq/y4ub8YcegUjGwEexRrdkffwLHUDSrdLPnvD+rcFtiJeDzCt3HAiAwY0tQU6OtU9+qR87PyBdNmCqWBqiLWey2PFn8HKguckod6XLbwbtA+IA5sE0vZH1iaFBYESewlnFZTUNP9KR9XyF8bNH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756686042; c=relaxed/simple;
-	bh=dU6VSuqZNPYc1Kwd1vEczzF6SMJVLr744+sk2xhrRGg=;
+	s=arc-20240116; t=1756686838; c=relaxed/simple;
+	bh=TSWrSyoDzTL87mcL8MuZmOYXKTCJO+6HOjb3ku1UCWE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sk/4MBdiby1Xllqa5l1pVpUSXSJqenU4t6OIl+yzyX3efdINi4cbfgqDQLWKwysqesK6kYgHDPEorPdZ7bw280Gg01aIEtZy946CCe16e8qMCW1ePRAiqzwmZLJr0LEqRqRrRjTAaiNyLZ8z+XnHKgxvuemuZLwwYuOz/Nt3yaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6kZUNyD; arc=none smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=EqithVNFvvgYqElGmQGU96XB428N+48f+cGEj/xwGWiRoUGJopJL73t9FFYEjbJhjfJCNUcrE9z+35oL6SEUTTQ8G2hEA46sMtGDGQmABP9RwiKi4FT0VJekNmnG0qFOFer5z+/2BTJYzA4yfvgMQwdUROf2c8NhLjFSfFfk1FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EuvJZmIs; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6kZUNyD"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61cd3748c6dso7857820a12.3;
-        Sun, 31 Aug 2025 17:20:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EuvJZmIs"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61cd6089262so5681850a12.3;
+        Sun, 31 Aug 2025 17:33:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756686039; x=1757290839; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756686835; x=1757291635; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yGA1e9SWx5rX3wnMF8cYm7WiNRZD38DWQOe4gRTSbMk=;
-        b=R6kZUNyD+4seiYKihZyvQSEJft+hukJ1gXPeMHWjVkNU9QdPR5Nf7SHhXxDE0kwj6r
-         e+EjPFn5GxRComXUdmJmNv8fC/JrG4OKAMdnXwg0Mw6jHwWrjMdm6FmccZ4RbE/ZMUM9
-         mj6kJXkUrOunsknYYB8Rhnb/MWge7Th9ouiyjpUl2NwenSENmxyPqwe/5SpqN6Mc7pMe
-         o6db9hrhlDj3t/fRb1hyy+B9kfa7xj0w0k48nTbxkhD6GRkjQ+l+1TggnPPNfRgpQXqC
-         U5GaL1ae8HSk4JKLRNpOGGqu1p92ca5IG5VFxXMemBr4NKFhtWLav3yOdP2/96KhjU4q
-         //EQ==
+        bh=MvH3gCh3YcyePorgXaVz1lgEivaFSAAjIPEZY4vEWpE=;
+        b=EuvJZmIs0MrZA8eH9ZjaHIDJ58pPGiGFVWcjAPMs4h1DXENrS8Cqhl+us2PRuVcaa3
+         HBUR8ZASwEtl0gg9z9Vw4dh1aALtfsVc8WeAJjZYOesSSk3qbV3Hca1+cUSEVzenHce5
+         r3OvNj1zIRq88inOGaguX+9JxbDyxchVXXa1Oz147GTWeNdNaovMgrQbjwtbFsldUdOi
+         +egDDomcoi0Jv8YfXmug4Bm7BdS2Tfnw00dTZG++ZDym1lUZIDCFmn1DUSwdNtY2BHzu
+         ZZ4rrSTJ+27cGG4zQ8kHW5pOFQpJefAmO0KVq3lGLJH+wDjg+yGgNB3CQ+p/BILRkejj
+         WgXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756686039; x=1757290839;
+        d=1e100.net; s=20230601; t=1756686835; x=1757291635;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yGA1e9SWx5rX3wnMF8cYm7WiNRZD38DWQOe4gRTSbMk=;
-        b=T3JnF6IY+40e1C7M15jceXbZc4ffwyZpe97qkPKk9wgZlV3/Sw2IsKB9XUvrVsGnPa
-         25iHN41SxUang3STST6LOlOCKupd8hukHlBlV7ZHT99hoDLRjTONwvUrkSvVRqrCcSz9
-         r8W1xxQ+UltS2vLlDHDkLWtKCrg6+QK++e6B2nUIQq7to6hYAmH26xB6fHorY0XmzFVH
-         /kWFG3pwramoO8aeZ1Tdilgb44+5SeD9gsIDyQBP4+UEfvFH2Mx/PI0FnvVK9VaCfbtK
-         SMiftbuIiZBCdG/FQtFddj4J5qYkxHgXwH2pahr4sXY+UwRgZvad0Lpakm9eYqE7HpVy
-         ZQ6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Z2KPtn5yXIJMadCqTqkYESa5kujfyYs+iLFw70RoL0XwyoGRl09eAsZ7D9Jit3F3iM2tpV665zAo@vger.kernel.org, AJvYcCV50pTPHb8QoFVNsjRBf+D/Ac/U660eQ3yyR4AaM7EIktSUUPjzssAsCt4iZD2ni1fF/Qdr2CgjGkbi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBg3W53XCBa/1b1h8Xe0+sH+M4RHOYRHEhKqVf3aZ868AoiraI
-	Sp+XdZYcg3qSXOKHoZA75wOdAHqc7nd7LKPv4oSTj23IB6I90RCsnEO79ltyr8SQznw4hMT5A9S
-	IHKiUv8YApLV26VeBr0hgvvaLS7GXAzA=
-X-Gm-Gg: ASbGncvWVgGJxWer+ZOA8wGIR8BYqLx7kt+efC92vkowUfy5e+NtzQ4R2VZ+47SauPD
-	Z2ALTVmbp6J/ugckJbGrV2IHjG9aLniq0BjHvZGfcXgJSHycXFXNYtalCD6ky+r5rCYh23ieGk1
-	EfwLuQk9AT0fkj2y649gh0NdBdz8T3rWSv+boYNgwBwk2TXyzUeqnORdMCNs4c9N4hSw9/fDvVU
-	ZGTbse2EJo25g==
-X-Google-Smtp-Source: AGHT+IE2lhwT6Yzu3q9B3kLM5n807WkxfNRIG/AC95Pv7jUReWAmbkcsG8EsO/ckMMSuQjMFJIJQfLO5Xj7HXKZ2xPM=
-X-Received: by 2002:a05:6402:4303:b0:61c:deac:4693 with SMTP id
- 4fb4d7f45d1cf-61d269881e0mr5843191a12.12.1756686038562; Sun, 31 Aug 2025
- 17:20:38 -0700 (PDT)
+        bh=MvH3gCh3YcyePorgXaVz1lgEivaFSAAjIPEZY4vEWpE=;
+        b=d38I36TZJCMV8YOpb23ybB5OHZx14TVKiIeBKTLXOyk6Lc6MZDBuS77mzZ0iYoPsne
+         V61DZU+gXjxnYJwXtlDDLORIlxpefK8m9MrG7nlolETL8NJOHHo36fFUXmfpsI+Eof+G
+         8mq5ejLvvKj+Fbgf5OkwsQReREkhqYaz4mXtQDxbxL9rdck8hvO2Pct5oIsYV9EWpNBH
+         pLzbgnMaMEJcES74FCbrna1alnSnvp0d24rA7aQK8qTXRMJWpxEVwEGvT6ZK4wQMpEGH
+         Q4f5/6yZ6RqeW9bx8LdgYtUnEdD8KE54G8Q3c/uFsdrOR+GJ6zsrGR2LBb0kfmzo/8n3
+         fkHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU99VHsYiqz08C2Dkje8L4qjUtS1T8i8qLtHmpY2D9/zotHNY9IHjyTWXJ0+D5wnPtmv4sTtCtdKHqp@vger.kernel.org, AJvYcCV8lRkIezHtAtWluexmCz3hxp/99md4vvVECVCwkEsiD8i2gl+TuaF1Ql1luY0kqZ6MHNyMhw0QxGpV@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe3iCQjNkbBCpQL1R6vlVfLGyhpPPG6+HmkyfFcdA9+/h+1bGX
+	W1b7CqUVtYYA0oklNnWE10hVfdEYtiu6fZhEvzeGzCbFJfrU+XCGQdj9MWPLGQngj+AE1jwyMlU
+	UpYaIOTb8Ne+4nPqa7DJL46bDm1qMD733C5olBy3epJ2U
+X-Gm-Gg: ASbGnctoRw13hDACNSpmI89v36u3ZD49xCYWeUENYx1up1ysxMApmsMjtwJ9JQM1n2c
+	P8TY5u00ExfLYtAXGq7doRURT4r99Qas0x0Popkb6gPt1EQZfrP91V6AwglKxnbUqE431vUJS73
+	WmGawSN1+YKYhPXZ0O3m4qp7LSOgEuX81pGhuSEwakfYdM+ZMibDBiPq3e1GN0TwQCdD43iRB6a
+	7TGdiVRO+yJ/TIpOG9e9kZI
+X-Google-Smtp-Source: AGHT+IHsnDIYWknvZ46S599IimzZF74o7ha/d+7Cbv/hBrVMIpqV1LTK6TMA9HYQ0QgUHmynIKjrSHRY7rxC6a02QK0=
+X-Received: by 2002:a05:6402:27c9:b0:61c:bd9f:723e with SMTP id
+ 4fb4d7f45d1cf-61d26c3fabfmr4557103a12.22.1756686835238; Sun, 31 Aug 2025
+ 17:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831104855.45883-1-cn.liweihao@gmail.com> <20250831104855.45883-6-cn.liweihao@gmail.com>
- <3368190.aeNJFYEL58@diego>
-In-Reply-To: <3368190.aeNJFYEL58@diego>
+References: <20250831104855.45883-1-cn.liweihao@gmail.com> <20250831104855.45883-7-cn.liweihao@gmail.com>
+ <8571992.T7Z3S40VBb@diego>
+In-Reply-To: <8571992.T7Z3S40VBb@diego>
 From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Date: Mon, 1 Sep 2025 08:20:27 +0800
-X-Gm-Features: Ac12FXyWs5ayjwnKI44Mb7gtjPKcOLOC6rRUCDyygTcTJqSzEgRm03n4Up5wwFo
-Message-ID: <CAPEOAkRZbnVNCRHQnfJu610TK6gkJ0+YrpoL3-xsqTWm7NUsWQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/7] ARM: dts: rockchip: Add display subsystem for RK3368
+Date: Mon, 1 Sep 2025 08:33:44 +0800
+X-Gm-Features: Ac12FXwjlx-F7jqLTPXkOkYRV923MnWRyR-cXYRmkjdjk9ub15vW_5_Mbgck2YU
+Message-ID: <CAPEOAkRpuOOVXwDDha+990znhh0-PZwqa=F=mibGkJck5rgZ_w@mail.gmail.com>
+Subject: Re: [PATCH v1 6/7] ARM: dts: rockchip: Add D-PHY for RK3368
 To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 Cc: robh@kernel.org, hjc@rock-chips.com, andy.yan@rock-chips.com, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -75,78 +75,54 @@ Cc: robh@kernel.org, hjc@rock-chips.com, andy.yan@rock-chips.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi
+Hi,
 
-Sorry about that, I didn't notice this before, I will adjust it
-according to the documentation.
+This phy is a MIPI_DSI/LVDS/TTL combo phy.
+
+maybe it be better to use dphy: phy@ff968000?
 
 Best regards,
 WeiHao
 
 Heiko St=C3=BCbner <heiko@sntech.de> =E4=BA=8E2025=E5=B9=B48=E6=9C=8831=E6=
-=97=A5=E5=91=A8=E6=97=A5 23:04=E5=86=99=E9=81=93=EF=BC=9A
+=97=A5=E5=91=A8=E6=97=A5 23:06=E5=86=99=E9=81=93=EF=BC=9A
 
 >
-> Hi,
->
-> Am Sonntag, 31. August 2025, 12:48:53 Mitteleurop=C3=A4ische Sommerzeit s=
+> Am Sonntag, 31. August 2025, 12:48:54 Mitteleurop=C3=A4ische Sommerzeit s=
 chrieb WeiHao Li:
-> > Add vop and display-subsystem nodes to RK3368's device tree.
+> > RK3368 has a InnoSilicon D-PHY which supports DSI/LVDS/TTL with maximum
+> > trasnfer rate of 1 Gbps per lane.
 > >
 > > Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
->
-> please use the appropriate patch prefix. For arm64 this should be
-> arm64: dts: rockchip:
->
-> The one you're using is from the arm32 side.
->
-> Also please sort things appropriately both node-position and order of
-> properties inside nodes, see
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/devicetree/bindings/dts-coding-style.rst
->
->
-> Heiko
->
 > > ---
-> >  arch/arm64/boot/dts/rockchip/rk3368.dtsi | 26 ++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
+> >  arch/arm64/boot/dts/rockchip/rk3368.dtsi | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
 > >
 > > diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot=
 /dts/rockchip/rk3368.dtsi
-> > index 73618df7a..0e47bf59a 100644
+> > index 0e47bf59a..674a3676d 100644
 > > --- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
 > > +++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-> > @@ -858,6 +858,32 @@ vop_mmu: iommu@ff930300 {
+> > @@ -884,6 +884,20 @@ display_subsystem: display-subsystem {
 > >               status =3D "disabled";
 > >       };
 > >
-> > +     vop: vop@ff930000 {
-> > +             compatible =3D "rockchip,rk3368-vop";
-> > +             reg =3D <0x0 0xff930000 0x0 0x2fc>, <0x0 0xff931000 0x0 0=
-x400>;
-> > +             reg-names =3D "regs", "gamma_lut";
-> > +             interrupts =3D <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> > +             clocks =3D <&cru ACLK_VOP>, <&cru DCLK_VOP>, <&cru HCLK_V=
-OP>;
-> > +             clock-names =3D "aclk_vop", "dclk_vop", "hclk_vop";
-> > +             assigned-clocks =3D <&cru ACLK_VOP>, <&cru HCLK_VOP>;
-> > +             assigned-clock-rates =3D <400000000>, <200000000>;
-> > +             resets =3D <&cru SRST_LCDC0_AXI>, <&cru SRST_LCDC0_AHB>, =
-<&cru SRST_LCDC0_DCLK>;
-> > +             reset-names =3D "axi", "ahb", "dclk";
-> > +             iommus =3D <&vop_mmu>;
-> > +             status =3D "disabled";
-> > +
-> > +             vop_out: port {
-> > +                     #address-cells =3D <1>;
-> > +                     #size-cells =3D <0>;
-> > +             };
-> > +     };
-> > +
-> > +     display_subsystem: display-subsystem {
-> > +             compatible =3D "rockchip,display-subsystem";
-> > +             ports =3D <&vop_out>;
+> > +     video_phy: video-phy@ff968000 {
+>
+> I think the node should be something like
+> dsi_dphy: phy@ff968000
+>
+>
+> > +             compatible =3D "rockchip,rk3368-dsi-dphy";
+> > +             reg =3D <0x0 0xff968000 0x0 0x4000>,
+> > +                   <0x0 0xff960000 0x0 0x4000>;
+> > +             clocks =3D <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_DPHYTX0>,
+> > +                      <&cru PCLK_MIPI_DSI0>;
+> > +             clock-names =3D "ref", "pclk", "pclk_host";
+> > +             #clock-cells =3D <0>;
+> > +             resets =3D <&cru SRST_MIPIDPHYTX>;
+> > +             reset-names =3D "apb";
+> > +             #phy-cells =3D <0>;
 > > +             status =3D "disabled";
 > > +     };
 > > +
