@@ -1,94 +1,117 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8838317A2F0;
-	Mon,  1 Sep 2025 02:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BB210F2;
+	Mon,  1 Sep 2025 03:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756693422; cv=none; b=cTWMfUd6SQdApJ0V+TMXGyI+Le8nCrQqjKewFUKk4k7PzwcG2c5qzDV9eKRBCO0ySgEDd9/u3cPQSWZHDJrqqYSweNfnstl4I0CECiIOCYynYyh9YEOL2FZmTdj9sCMY61pGF9wJmcXkmJs1hrXU5/7vS+L+RiV4XkJ4qbDAjEs=
+	t=1756697583; cv=none; b=TZZmElhgXiBlUvWgDyp1rxIBWAO0eLYvdoLQ/jSf/2pNWNjVDV5xsEIQoKLhmbPXY7R9pq/wT5I3b/UCRD6gRIdrIynLm0KGQPcyAdtAfWTsiPJLhJ1dWbyOTJx5B+khQWw6mAFBjr+/F3Zc238zGavYLaw/AOTMM/wwvlJg9CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756693422; c=relaxed/simple;
-	bh=cTlm40qAW1ER//EYBPrjKsDBqFJg70C/SweWZMMApj0=;
+	s=arc-20240116; t=1756697583; c=relaxed/simple;
+	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMrNo+16ZI8QvdjCgaY8b9WQvQd+T0HWJ5O6yObomkbP11lDSv9I3hrt4kKtI0gAnMUjqMkfZ2wM9I4CQDK4lQ4178lGNRNpSY/2p5W6M6fGsOiw7TIxm9nwnZsJguv21QkehmjAdMQbjnzgAXzE1o0g1OM0Z+a1gqdVDrl9Ppc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=k4AXxQjd; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rTYHesc/; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	 In-Reply-To:Content-Type; b=twHqSy3C+Rp04f+L1StlZC5guaA2zX2oZifzaZdY/N9Ki8X1WtFt2u7o7HytdJG2gUJPtjKEDHmWl4Vbc9YGxyGgPvpN8htSxoi76Vuy3UDDXmn7qu6gHysT0MMQTUD7iJ3jhQr4VpXdw6sY7k+4XEPjmy6gmVeWKRa0S15S+kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r61O3p9i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="k4AXxQjd";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rTYHesc/"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cFXjc46qRz9txD;
-	Mon,  1 Sep 2025 04:23:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756693412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KcWCEGr6qgfUpHyZ2bb6dMdRWns/kJMvA5VGMIiIy+k=;
-	b=k4AXxQjd1HlPeiobIXEyCI/jPC7mEgm5egg8qPp/VjK6R86RjF6t8LNlyfh9ql1PpYLGtW
-	mEkBFKEBM2iVUPUMTi/RdeLkxKky2dGzaccFTRAp0YV9d96tDyleefubHqiKPQKezIg+Wg
-	yDiTo/hjW8RMC4wjqjLgCndkAl8nolvlLaDHatyjii6VN4HTaLbKs1ixShzJDI3Gwf1KKN
-	numz88zOiVLTBt7KifaXQBkNdq5VjrLk1CcwXrcSDjtsnr05s2LDIDCFsbhYSOP7bKNclB
-	EnzWVawgB99hDcjt5Zxsnyn9Ud+rrEAk177S+kaYXIH2mfjUORHeagQJdkm48w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="rTYHesc/";
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756693410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KcWCEGr6qgfUpHyZ2bb6dMdRWns/kJMvA5VGMIiIy+k=;
-	b=rTYHesc/kk5s8Qp5Pvw6sOAA8w/F4tmZAJR0CL+95Pek9MllTDu+g7oK1I4knmFJBA3wiZ
-	RiS9S8Y3iUjfPlbm7Rt8KpHRXEgX7zWTW01iae98tu+vYzRScscMKHShrW/H3kG1LtH9Y+
-	ZsRZIIZ2BQdqPWxOHYgHTr/iLvwxqrT/yZcLzz5pCfifQj9KoddK2wcz9OXVzWFGO7yNeu
-	2eg+NK/qB41UlrZuDIW5zW9IH1sNJdr857AE5YwM9n8rnoM+acR+Sm0E/7zL1nH6CS/4QZ
-	mCUoi3k11IUgHZLNCVMGmcv54KacCTXPVhLajiCOnbvnRZfajDuxrGDU0ZBZOw==
-Date: Mon, 1 Sep 2025 04:22:58 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r61O3p9i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E533AC4CEF0;
+	Mon,  1 Sep 2025 03:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756697582;
+	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r61O3p9ioLFTblgtvQj+JtahXqW2VoRyQceVr9j4LlT2on90SjuG3rhgtwWF4v3FI
+	 Qn5cSr8fJ8pjyW7RO8zr/dsS6ikNs+AP+C6VBfcTHLKl9q/me01secKQP1GtDLsXOf
+	 Km5+66AwT7UE/mW2x8L6X2L9IY6d1v74rOPmjv6SNsH0Ko8p8WD6AI7RzUZcM0vsWT
+	 4EtKp/vxi1HoAewgZW7F8uIOnNxPEZAubhZ7bLQGVqq2AK3TtX3NZ3J65Scf4gHcaC
+	 PbnDMy/cew0t6uc6L/AcZey05/K7J42ZbjfZsSgBjYxugB+NTk9wfksw0TGXoOW+WY
+	 rF6RJvVEKDJiQ==
+Message-ID: <d802bcea-d81f-49eb-96ce-5d89dddca7c3@kernel.org>
+Date: Mon, 1 Sep 2025 05:32:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
  imx9*-power.h into dt-bindings
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+To: E Shattow <e@freeshell.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
  Sascha Hauer <s.hauer@pengutronix.de>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
  Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- E Shattow <e@freeshell.de>
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
 References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250831200516.522179-1-e@freeshell.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 348a3e4ca199d13e5ef
-X-MBO-RS-META: drwo57x9gf3fnmbxbskh9qyqt8zpddsz
-X-Rspamd-Queue-Id: 4cFXjc46qRz9txD
 
-On 9/1/25 5:22 AM, Peng Fan wrote:
-> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->> Move imx9*-{clock,power}.h headers into
->> include/dt-bindings/{clock,power}/ and fix up the DTs
+On 31/08/2025 22:04, E Shattow wrote:
+> Move imx9*-{clock,power}.h headers into
+> include/dt-bindings/{clock,power}/ and fix up the DTs
+
+Huh? Why?
+
 > 
-> No. The files should be under arch/arm64/boot/dts/freescale/
-Why ? Linux already has include/dt-bindings/clock/ and 
-include/dt-bindings/power directories for exactly those headers , why 
-did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
+> Reported-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+
+What sort of bug are you fixing? Nothing in commit msg explains that at all.
+
+> Signed-off-by: E Shattow <e@freeshell.de>
+
+
+Best regards,
+Krzysztof
