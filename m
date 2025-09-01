@@ -1,73 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5CB261B64;
-	Mon,  1 Sep 2025 19:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55431277CB4;
+	Mon,  1 Sep 2025 21:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755986; cv=none; b=MMCl5hYrnyMDzhY9EYq4WifB0IjBya9DDvkuThCyMjC1Dl54KT/f9ejH6bKXRBISKg3L82Q3aFrGtRZGYa8oBLF9OVxHHmurO1+DWsNjR5R/QlPyM/QQNBU8EmLbqxYKs4Z9cX+JeOyvrqTxH1kfUHqFHd3A3T0GD07VcUAbzWw=
+	t=1756762176; cv=none; b=aTYA7CBgVY4kmDDfjbJBb+1TC9vTLHjBYxPc1uA02tJJVFK0ZCWOyZpXdha6CGYkvlsWGNvo5sygNwJHA19Zhlw+eoW3S3baieeEqkoMpiNxk9HQrZMJWT/N/ZAJnLn3MpZTkopgN7Os4jyor9aDF0/kHQDS6BtNXxH+I1V9MsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755986; c=relaxed/simple;
-	bh=Li59/wUW70jcWPW1p9qN4ZU56Bwt2w1u8OT0KmPmjdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WQgeAUTAFKxLPo+LuVHeQ3v6/KzJrVNKTNJ4W7XC7vEc0qDWgyr2UxgxrWD256utnSo9DbbVvQth+mRb6mKOGFnVdCckya8Uft6g+GABEyeSi22CgJuUQOHd8YLYDiZB6yrA6CkFMovEUXI+ftRrLgc0++8h9nN4fqIaxDcofc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgkZWN+S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756762176; c=relaxed/simple;
+	bh=ZGsW6Cp4Ck4odWBXZ5+9TBl7XqmtalvaRxUlMKXaYDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AfsJV4LKT1NbX5dFbsYPXYWawggN7M+iN69YmxD5kdzBlXFnz3fBPbiEfs2zGf08o2OQL/XQ1DVEAyh5pFcQPvGchkVKXck/MBJT6oU2ZRZoZITBeDFm3sW9cVehA0HyJChKMu4/Ouapfh0xsbmybxdNFXMuDhqxZKZUSLv/erQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnX6XK/k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgkZWN+S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191AAC4CEF1;
-	Mon,  1 Sep 2025 19:46:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnX6XK/k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 774FDC4CEF0;
+	Mon,  1 Sep 2025 21:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756755986;
-	bh=Li59/wUW70jcWPW1p9qN4ZU56Bwt2w1u8OT0KmPmjdo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hgkZWN+SXCIbwOOlU4gHGKGn87XJi8/bg0qligrtddOerEaR7Fi1sJtLh64Q5lhNv
-	 EzAq1Ajd7YIi9/UquzMX1s53sZPOBeocRu9KUzsTp0uRV7DIM9A4cXRRCk7QkRUoyF
-	 hGvJTixIGXPlbxqU1y1FRIVo8o2g8snneXElyqwoJFq9JJdmD98asA8T6BYH5eFgnN
-	 vcETS6eTlUGnFuRbjLCFMFSQEli6F3yk1lZXQ76ASKgQ7TnQj/0VnTcdayXCdDIhTP
-	 Yp0WhR+Q+bzZjzhxy9Kr7VXRQaDa5Vr4HI4pCo+fza8v3YRpvYqESwvbndH3S1p8D5
-	 BurPzuEvQOtXA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	s=k20201202; t=1756762175;
+	bh=ZGsW6Cp4Ck4odWBXZ5+9TBl7XqmtalvaRxUlMKXaYDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FnX6XK/kJwr4KXTTulE927esfbGKIfTFa9LMyQOAnCxQe4R3CLqISXTaig0QMwmNh
+	 OvnPUQUHKKNzkm3VHCsAlS4Q7Etp5UjxS3MKpqyif8YWPfWBfXeFoJylWxKCnC49uE
+	 nKm1qCf4FWpoDJkRSdIxB1zkWBlgQZA7tWjPUg+bW1+ecvwVfKZAYqMh/ltU1QeXzB
+	 FaqfaLtnMa/peObR9YdewZYGWengxAvZrAfB7WOTFUtivGSLikE5OHv4gEPDwsnoUB
+	 /aP2qYLucTSbEbhKomRcfmhYau/FN27iU39gRqiMXGkDa3r0FVdKAWsNWKoIpboTzY
+	 8xD7XBi1yP5Dw==
+Date: Mon, 1 Sep 2025 16:29:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	Jernej Skrabec <jernej@kernel.org>, devicetree@vger.kernel.org,
+	Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
 	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 0/2] Add video clock controller DT support for sc8180x
-Date: Mon,  1 Sep 2025 14:46:06 -0500
-Message-ID: <175675595933.1796591.14268648917937104042.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
-References: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
+	Andre Przywara <andre.przywara@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: sun55i-a523-ccu: Add missing NPU
+ module clock
+Message-ID: <175676217387.375469.10664750906350656739.robh@kernel.org>
+References: <20250830170901.1996227-1-wens@kernel.org>
+ <20250830170901.1996227-2-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830170901.1996227-2-wens@kernel.org>
 
 
-On Thu, 10 Jul 2025 18:30:38 +0530, Satya Priya Kakitapalli wrote:
+On Sun, 31 Aug 2025 01:08:54 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> The main clock controller on the A523/T527 has the NPU's module clock.
+> It was missing from the original submission, likely because that was
+> based on the A523 user manual; the A523 is marketed without the NPU.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  include/dt-bindings/clock/sun55i-a523-ccu.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Applied, thanks!
-
-[2/2] arm64: dts: qcom: sc8180x: Add video clock controller node
-      commit: 03253befa1d1f36b297889c7ce2805c9319814ff
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
