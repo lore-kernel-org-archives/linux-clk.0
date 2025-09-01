@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BB210F2;
-	Mon,  1 Sep 2025 03:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D691D86D6;
+	Mon,  1 Sep 2025 03:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697583; cv=none; b=TZZmElhgXiBlUvWgDyp1rxIBWAO0eLYvdoLQ/jSf/2pNWNjVDV5xsEIQoKLhmbPXY7R9pq/wT5I3b/UCRD6gRIdrIynLm0KGQPcyAdtAfWTsiPJLhJ1dWbyOTJx5B+khQWw6mAFBjr+/F3Zc238zGavYLaw/AOTMM/wwvlJg9CU=
+	t=1756697645; cv=none; b=KCb6RL+jQQL3+yIlbXmkesGg5b5OPHeyw/2s9rSgc0VJ5iPUjnf3nMtdJoS5zfIrKmWgT8pClFh3b/ep+PtONv3ksNUqrFvvS0Qt/KPtJfNywJU7KOSFbvbuqcugfxMfJSLgYp61conzYI8pPQOWTfejLgJ4uEOlspdiuUnhPoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697583; c=relaxed/simple;
-	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
+	s=arc-20240116; t=1756697645; c=relaxed/simple;
+	bh=3IMxmQrY05RHnLpjanoo61eVTxFix1to4caUCV0hfOY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twHqSy3C+Rp04f+L1StlZC5guaA2zX2oZifzaZdY/N9Ki8X1WtFt2u7o7HytdJG2gUJPtjKEDHmWl4Vbc9YGxyGgPvpN8htSxoi76Vuy3UDDXmn7qu6gHysT0MMQTUD7iJ3jhQr4VpXdw6sY7k+4XEPjmy6gmVeWKRa0S15S+kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r61O3p9i; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hv0XibRwtRVVkBylEDLM2hQ2A8HXswiykJGjzUx7GZHjDlWo45YkquVcALQrsU1umUKHJTVpxOYbgnt/66uJL4YS6MGrQQXmC8S26g65ZriCzBVWoSC0UmmW0pUPr/wq7pwZ4+w8bmB733zalbaqS+TRxdGJsSYqC/4yAxEhJSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlCPiZZP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r61O3p9i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E533AC4CEF0;
-	Mon,  1 Sep 2025 03:32:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlCPiZZP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9BEC4CEF0;
+	Mon,  1 Sep 2025 03:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756697582;
-	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
+	s=k20201202; t=1756697645;
+	bh=3IMxmQrY05RHnLpjanoo61eVTxFix1to4caUCV0hfOY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r61O3p9ioLFTblgtvQj+JtahXqW2VoRyQceVr9j4LlT2on90SjuG3rhgtwWF4v3FI
-	 Qn5cSr8fJ8pjyW7RO8zr/dsS6ikNs+AP+C6VBfcTHLKl9q/me01secKQP1GtDLsXOf
-	 Km5+66AwT7UE/mW2x8L6X2L9IY6d1v74rOPmjv6SNsH0Ko8p8WD6AI7RzUZcM0vsWT
-	 4EtKp/vxi1HoAewgZW7F8uIOnNxPEZAubhZ7bLQGVqq2AK3TtX3NZ3J65Scf4gHcaC
-	 PbnDMy/cew0t6uc6L/AcZey05/K7J42ZbjfZsSgBjYxugB+NTk9wfksw0TGXoOW+WY
-	 rF6RJvVEKDJiQ==
-Message-ID: <d802bcea-d81f-49eb-96ce-5d89dddca7c3@kernel.org>
-Date: Mon, 1 Sep 2025 05:32:55 +0200
+	b=GlCPiZZP7edJWIneHpeMhTT3Sd+vngEEMLNO8Py0P39Wn/HMRKt7AbbTDm8hmlEOT
+	 JttDPwtEQ1c+8nzra99vy/KFo0SgaMJnge0pshJcDmSRJZ7HDEnW100FH3ZQWj3Cg4
+	 FqSRGanicMqsty6hBFGlX6UN+AWuQuuPbH6EZUgiMb9/A9k7O3m7FVFncnJ5xwkyfL
+	 rDJ4U6sJjCmQeYyDuTuLGJD3m2CpWYg3ssVX761x0EeOucM0Z6pqYafrS4Rcp7LD2+
+	 IQj5iWzXDymbRzv6/Bct7t6sAotOZH/on2R63gYLradTs562AllsZ+AFqQH0n5nKK4
+	 mAeUpyAxTUJng==
+Message-ID: <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
+Date: Mon, 1 Sep 2025 05:33:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,19 +37,21 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
  imx9*-power.h into dt-bindings
-To: E Shattow <e@freeshell.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+To: Marek Vasut <marek.vasut@mailbox.org>, Peng Fan <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
  Sascha Hauer <s.hauer@pengutronix.de>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
  Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
+ Stephen Boyd <sboyd@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ E Shattow <e@freeshell.de>
 References: <20250831200516.522179-1-e@freeshell.de>
+ <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
+ <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,22 +97,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250831200516.522179-1-e@freeshell.de>
+In-Reply-To: <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/08/2025 22:04, E Shattow wrote:
-> Move imx9*-{clock,power}.h headers into
-> include/dt-bindings/{clock,power}/ and fix up the DTs
+On 01/09/2025 04:22, Marek Vasut wrote:
+> On 9/1/25 5:22 AM, Peng Fan wrote:
+>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
+>>> Move imx9*-{clock,power}.h headers into
+>>> include/dt-bindings/{clock,power}/ and fix up the DTs
+>>
+>> No. The files should be under arch/arm64/boot/dts/freescale/
+> Why ? Linux already has include/dt-bindings/clock/ and 
+> include/dt-bindings/power directories for exactly those headers , why 
+> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
 
-Huh? Why?
 
-> 
-> Reported-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-What sort of bug are you fixing? Nothing in commit msg explains that at all.
-
-> Signed-off-by: E Shattow <e@freeshell.de>
+Because maybe these are not bindings? Regardless whether you agree or
+not, the commit should clearly explain the reason behind.
 
 
 Best regards,
