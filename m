@@ -1,175 +1,182 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066372FB61B
-	for <linux-clk@vger.kernel.org>; Mon,  1 Sep 2025 08:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1370A30DD08;
+	Mon,  1 Sep 2025 09:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716222; cv=none; b=eHq83jaRSOmhw29QOiSEm5nDfjoL8PK3nD1JHvrzNQdR2SLifY6NS5SsKfKxYGvbfoXk4JSfi+saebBt1ARH1SyXFaysNY913eK+/5yiRZ7zbywKX6uqFOwSpA5V5/iCo2HL+Hq4Ir4uYgjPnBszZ8LAF2N3ESpSCvvBn53K2Bs=
+	t=1756718747; cv=none; b=RMZ20SvivNOTKLNOKJhuxQ4wzm/WC5hgtOrkf/OD7RrKUMYx2vJgs6G0/1Qy52So2AHjlJo1eiYZWL+U60+MD3mgAb6cZnje+ZpwK4XXHyTT2fM4pLpC0XAT5SbKsp83S8bvI85BCxCXq0yKONimrfxjW9tfv+CtS90Pj56jpQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716222; c=relaxed/simple;
-	bh=3H3Jx5oMcfa5QmF4ouRH6A2BD9ZreQQnHMh8vnL1tHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTuYQE4RduulO6xPs11ITFSVp1oDRIKyIPNlDbRHM5uuwRSND6ZTexVoy8mM75vUH6+IBBLADL6jCxqKIAV0ikcXIN56eGjkyYAs1owVQoLEHDdn+FV5eKil0FhG74r6ETKtYlDdbocGSP2+aWj4ztZxE8JiLFnbkHCD1cAlxxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nuBgR2oz; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nuBgR2oz"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b7c56a987so11005305e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 01 Sep 2025 01:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756716219; x=1757321019; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X1PqOUmZ0Ne7FPif1yb7D1u9567Eu8Y0LGe+cU3C1kk=;
-        b=nuBgR2oz76vd1dXQZF8qarc4nNfhFHMDri+H/iL47CV5GgBl0zLy0PD8XMP+Us8SFc
-         f5Y1yDAEoZzAhzlYP5LrZslerTzoZUWfnAeKho1tyDFUTh+MwJojJO4fGWj7sdpj88Q/
-         WhElkHRXwgEjCiJwo/FJ8T+Zb1lDttutP9hcVwBdVUG3Q/dQRU472P79IHOsUaYCRGQu
-         1WRJpbhpcd4mYiJzw3SlZ6aEA/NPGBmTtmj8EMjZcZXEmqEZeFTZdriVNc4n2XidTn8A
-         zdJnEPcptBIVQta8otexG3DDj+clNfMaY0rnGZ7djHBpKEZkBRNf6zvkQzuicqWXtg8H
-         taYA==
+	s=arc-20240116; t=1756718747; c=relaxed/simple;
+	bh=FtS6/YGhG772uhtJjhh1cI6qQRFds88d9VVWLUCe/LU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZTuCxbUbWgK5PWZ7/n1wlTrhhYPhcsWVYaHPeRRxe1wbgYzsR6+fBZbwbAVKtWhACk6wNqdPnaUbaeTWXD+rgJpMx4v+fNfCeiSlf4Lvc1ytbZCgCst3O2YB4/ng4zzH0KjstTnqr89E58dCj9McJbInUAUbK/ArR7bvzrkv3YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-890190c7912so792272241.2;
+        Mon, 01 Sep 2025 02:25:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756716219; x=1757321019;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1PqOUmZ0Ne7FPif1yb7D1u9567Eu8Y0LGe+cU3C1kk=;
-        b=tV0ei9o6vcAJo8wnWp0C0vTyzFAJFBGtESxdsmLJP6YNw66WnNAj9yFRhTvve2XNwg
-         XD0r7XaTRw5pwQx5aMEd+MlBDQfdJzOX0VEEPaYgn66VlFiP5H6O23F6k1aByQifZsHY
-         IYCB8HWCmV5EmKWHhDuf2yFGVYpBLeUMPmV59evEfTF2DfjZew1wTeETMgoAXdu37HRQ
-         W/vgquMElQN4leaRSWfnCV2EBHG6YyhyfmIylcLi9PIN27tlhvAZp9ElXyLZw7W5FEEN
-         /ajYrTQi5KORsq2X2XjV+VizVTICNLM9c+eAhdbvjSE+NiRdjXc8oziaf7P4+LT/4eTy
-         aJgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR5wdwy2bq+uwJgKoCpk0/i5G2LE//fa5oBvsKOPQ6wM8Vwj7Unz825KeMcJjRGSCQ/8wTEn0BqsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZRziLcnw17jRU1YfIdHnG7zELLmNyk/6wJzqdyVxVMYmsWGMx
-	VN3Taf1V8GVeEsmS70NnWBHsqzUWnilsY3FNQMOGbQq72TR0Y+ypEnZubzHwSkL2SF4=
-X-Gm-Gg: ASbGncvBPQENdLIdFL1g8V5Agg/JMJKu43vgJ5gbTljL4zM/uFVRumu6mGueHu2OKas
-	+vU0oN/jtm+jI+XiZhexNv20Xd08KgR5kz1rg/Plai/Ml2fSzGKQBrNjFE2xz88dM2OKxqZ982V
-	syzr9Ql8O6Acdrsn+zrYE+9NFPHerp00XBYUl7oMY6LYj5rP+KS626tzxDj5ZhEMel/8BVv9mvV
-	FOMTIb9gRCp7szbdubVjlN9uR3b/n84BVT7iHSnGu2hsvTzuRiY2KcQv0zPDqpsXCpaDMGJb5Iq
-	cpxQJYzj9aLRxMD8Y9A5YtihZ5kEKbsBBLS2lyAkClC1Hmd5vlmE0qc9ppfE3BQzL4RHP77XPmU
-	iMOLzB197LkgeZD2jiv0MyPTH0acKbg==
-X-Google-Smtp-Source: AGHT+IEOfIZTQy6jci7xeBxd5WsSj+WaclDlxn3VgJ9N1OGclS2wRjNkjBAzbocqqf4Z87S9TOQbdQ==
-X-Received: by 2002:a05:600c:a4b:b0:45b:6365:794e with SMTP id 5b1f17b1804b1-45b855711fdmr62236345e9.24.1756716219178;
-        Mon, 01 Sep 2025 01:43:39 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b69b7529asm139030665e9.0.2025.09.01.01.43.37
+        d=1e100.net; s=20230601; t=1756718743; x=1757323543;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=srcQe2QCCiAwB7DGCqKHSCUVph+K4Lh5idtVMweUwUM=;
+        b=TdokbKKrYamwXTcDb6r/+LvRc6XC7hbHenl5949FejxF7rBKD6ap4kE/V9x+ePe1Ao
+         LIW4oqOSjEexrFZc2fO10WIb5hdZu5Q7PUR4JrNQ/0jKnHhidGZhwQoPH+a2QA3kRaql
+         2AkBRnd/Mv/YWd9EbInOzwfUWnqZoqcuv7F2BlM9mTLwJCmKVJrCLM7YeOuTP+r4BenF
+         fc10hnC/WuzK59dw43/xgWVvP+86gBRyw+NleOeSt4cEDDFKXLvcXBA28NCBaTxTtamh
+         moKdJzyjf9Iyfzxn0tyjM+KQwh1gThIdQb5VNnyl+kMeXrMnzT973LkDqa86RMs0CnRZ
+         x0XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHcvlXyVqzcKsAAJvFfyWwnEdD/KTJg/M2HHiKRQz2dIh3jYv0rsbMNwNhY2EY7qS2n1nlreK9YZpLfH4w@vger.kernel.org, AJvYcCUTiq+vRCpods4J/0bB4jzeh5GjDdDSYq1PJnlKXKGWq1Bft1XYa3mQhpYwEnlJBvIIOosQy9fN080Q@vger.kernel.org, AJvYcCVs4Fcm/JpYN2JiLhVCBTNTjIXfzbQ6KhXbfyVvyPV+WEElnB7nwTBN/+MNFViugXENL9Wg1+IPJrIC@vger.kernel.org, AJvYcCWktEZ8KgkuBn9+X1sr/jAQMamxQ7VmCdCHkWLx3wFlmpHYTSDGkpMPzfVsWIe+nOpYqZ2k6tf3WG+y@vger.kernel.org, AJvYcCXNpyaFAfcfbTkSo6FBMtsQgx+DFsnvu9hTjAsQ1p54xfwqrQ5mdoH2tNT2EvanEl6xXGQEY+ayE0iGCbIhAscSzmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP2tDEMuhZzD/nIsRwtqSyyzJmTbnd4aJrWqaH8bHnNnWXIAvz
+	H3rduQ7JxKcVRcBubM2f1nnXXfmcvjYdP1EHCxJ0aQbhz5x7Ax8nZOZR+zL0cn4f
+X-Gm-Gg: ASbGncshGOnonQgJ2ChXoz0hlQ5hizS2zNPcF8M0YEXphWNKgF2kILH2faxQP/TVm91
+	uIStSqOIwnY23WwTWduCMLZgFAd/xxNRY33HRAJQPvPiUrlrbS+8cjQYDXpGPGdQQ0GBz6ISWcR
+	ZVLFnON1vhY4/ikS6G7fHu5eAx3mzgu3ZRAA/2hdyLBN1tXKm3rovj4IebZOvWRZphS+uLSK3Ze
+	O42NHEqgguoBJGmhN7HFGFHp6Q0/luIFZt1DqeaDMqflawbx1t6Mye0fopH5roLWPUNLqKTf1yy
+	AvV/2WXNnYedbv+blw254hTpijzMRg6CP2ADkuIMf+XyOGFH1rZg9TrZSAVSyGdG3Yohszri8IN
+	47bd2OqxXrF5BZGkgMQldG+uSmtOxhQV353/ZVKEfasl7fz0wPb0Qa54rUuR9Z9a94fpF3u4=
+X-Google-Smtp-Source: AGHT+IGqf6EtLyLcAcpjD1/RLp1f7DTHd9E5zyZ1/lm08oNAsUeVcprQH1/n7LqtiHVqxWRM4AC9Bg==
+X-Received: by 2002:a05:6102:5809:b0:527:8b63:78e1 with SMTP id ada2fe7eead31-52b19532b98mr1679443137.1.1756718743326;
+        Mon, 01 Sep 2025 02:25:43 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af1e3381asm2968389137.13.2025.09.01.02.25.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 01:43:38 -0700 (PDT)
-Message-ID: <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-Date: Mon, 1 Sep 2025 09:43:36 +0100
+        Mon, 01 Sep 2025 02:25:42 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-52a80b778e7so615912137.1;
+        Mon, 01 Sep 2025 02:25:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+8JqyQX8IeAkP4gQHH5ciJbdGbZoDvJDS6Rde5ma8x7wzvVunfFB20ksdRX5pMRd2BWLFCMfj9ZkCGOrA@vger.kernel.org, AJvYcCU+YVh72qa05ETnfQP7trxXfWAyuYx88GL0Xt3e5337gyi2EFbYSvOfk+/J/VcCFiMRERw7bkvV9x1C@vger.kernel.org, AJvYcCUom1rjLcSO0mqEX56L8FGyl4paoKG/TZp9wuPhgu3JHIiUjBIWWnrVa8URF33Ikfl7J4/OnTM/o54lcESyGwSURuA=@vger.kernel.org, AJvYcCVbcgZN0opcSdtQ07Xr2KFoZtYZwjdtiEylovrJfROpP8dg4mcGDBS1B1vdCBrWiYJf+wF0Cb6pT+Lt@vger.kernel.org, AJvYcCXrte3oOBN99iW1nxkj2pxHuBKOIIhgMMSOIxAV23Lh1UxTXztN/CbkYCDoyx1UUJ+JpDszGkY3Z/rK@vger.kernel.org
+X-Received: by 2002:a05:6102:c51:b0:527:4113:6ad6 with SMTP id
+ ada2fe7eead31-52b19a54877mr1662294137.9.1756718741912; Mon, 01 Sep 2025
+ 02:25:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
- <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
- <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
- <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev> <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+In-Reply-To: <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 11:25:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
+X-Gm-Features: Ac12FXz8RcNX144qqXwdTyVaOdBuKNMLkMT1y2uQFu-Wa0Ecb0dTxg5TkCmB8Xs
+Message-ID: <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, bhelgaas@google.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mani,
 
+On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+> > On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+> > > On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >>
+> > >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> > >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> > >> only as a root complex, with a single-lane (x1) configuration. The
+> > >> controller includes Type 1 configuration registers, as well as IP
+> > >> specific registers (called AXI registers) required for various adjustments.
+> > >>
+> > >> Hardware manual can be downloaded from the address in the "Link" section.
+> > >> The following steps should be followed to access the manual:
+> > >> 1/ Click the "User Manual" button
+> > >> 2/ Click "Confirm"; this will start downloading an archive
+> > >> 3/ Open the downloaded archive
+> > >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> > >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> > >>
+> > >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> > >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On 9/1/25 8:48 AM, Krzysztof Kozlowski wrote:
-> On 01/09/2025 08:56, Tudor Ambarus wrote:
->>
->>
->> On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
->>> On 27/08/2025 14:42, Tudor Ambarus wrote:
->>>> +
->>>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
->>>> +};
->>>
->>> I don't understand why clocks are defined in the firmware driver, not in
->>> the clock driver.
->>
->> I chose to define the clocks in the firmware driver and pass them as 
->> platform data to the clock platform device for extensibility. In case
->> other SoCs have different clock IDs, they'll be able to pass the
-> 
-> You will have to modify firmware driver, so still at least one driver
-> has to be changed. Having clocks defined in non-clock driver is really
-> unusual.
-> 
-> This solution here creates also dependency on clock bindings and makes
-> merging everything unnecessary difficult.
-> 
->> clock data without needing to modify the clock driver. GS201 defines
->> the same ACPM clocks as GS101, but I don't have access to other newer
->> SoCs to tell if the ACPM clocks differ or not.
->>
->> The alternative is to define the clocks in the clock driver and
->> use platform_device_register_simple() to register the clock platform
->> device. The clock driver will be rigid in what clocks it supports.
->>
->> I'm fine either way for now. What do you prefer?
-> 
-> Please move them to the driver.
+> > >> +  ret = pm_runtime_resume_and_get(dev);
+> > >> +  if (ret)
+> > >> +          return ret;
+> > >> +
+> > >
+> > > Do you really need to do resume_and_get()? If not, you should do:
+> >
+> > It it's needed to enable the clock PM domain the device is part of.
+> >
+>
+> I've replied below.
+>
+> > >
+> > >     pm_runtime_set_active()
+> > >     pm_runtime_no_callbacks()
+> > >     devm_pm_runtime_enable()
 
-Okay, will move the clock definitions to the clock driver.
+> > >> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> > >> +{
+> > >> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> > >> +  const struct rzg3s_pcie_soc_data *data = host->data;
+> > >> +  struct regmap *sysc = host->sysc;
+> > >> +  int ret;
+> > >> +
+> > >> +  ret = pm_runtime_put_sync(dev);
+> > >> +  if (ret)
+> > >> +          return ret;
+> > >
+> > > Since there are no runtime callbacks present, managing runtime PM in the driver
+> > > makes no sense.
+> >
+> > The PCIe device is part of a clock power domain. Dropping
+> > pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
+> > IP failing to work as its clocks will not be enabled/disabled. If you don't
+> > like the pm_runtime_* approach that could be replaced with:
+> >
+> > devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
+> > suspend/resume. W/o clocks the IP can't work.
+>
+> Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
+> if you have a power domain attached to the IP, which you also do as I see now.
+> So to conclude, you should enable/disable the clocks explicitly for managing
+> clocks and use runtime PM APIs for managing the power domain associated with
+> clock controller.
 
-> 
->>
->>>
->>> This creates dependency of this patch on the clock patch, so basically
->>> there is no way I will take it in one cycle.
->>
->> Would it work to have an immutable tag for the clock and samsung-soc
->> subsytems to use?
-> 
-> No, just try yourself. Patch #3 depends on patch #2, so that's the cross
-> tree merge. It's fine, but now patch #4 depends on patch #3, so you need
-> two merges.
-> 
-> Or how do you actually see it being merged with immutable tag? What goes
-> where?
-> 
+Why? For the past decade, we've been trying to get rid of explicit
+module clock handling for all devices that are always part of a
+clock domain.
 
-Unnecessary difficult indeed. Hypothetically, if we kept the current
-structure, we could have have a single tag on #4. Since the dependency was
-on a new clock driver, the clock subsystem could have lived without merging
-the tag, as the chances of conflicts with the clk core are small. But not
-ideal. Lesson learnt, always put yourself in the maintainer's shoes.
-Thanks for the patience!
+The Linux PM Domain abstraction is meant for both power and clock
+domains.  This is especially useful when a device is present on multiple
+SoCs, on some also part of a power domain,  and the number of module
+clocks that needs to be enabled for it to function is not the same on
+all SoCs.  In such cases, the PM Domain abstraction takes care of many
+of the integration-specific differences.
 
-Cheers,
-ta
+> But please add a comment above pm_runtime_resume_and_get() to make it clear as
+> most of the controller drivers are calling it for no reason.
 
+Note that any child device that uses Runtime PM depends on all
+its parents in the hierarchy to call pm_runtime_enable() and
+pm_runtime_resume_and_get().
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
