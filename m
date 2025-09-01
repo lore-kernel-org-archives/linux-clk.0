@@ -1,208 +1,175 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3FF21257F;
-	Mon,  1 Sep 2025 12:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3325F1B3930;
+	Mon,  1 Sep 2025 14:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728917; cv=none; b=U+JnMDJBz4icHcFzCYq/Psyr5klpGeM6ydFVYNdn5l33/9Q0fCN5jxMwnbj7Ivs8yFGY9635YuCWnAYAXNu5xCmy4unxV3NsN+E0nlRjSe8/fxZzETFEGSolBpjyl+48mNbNHA29P2jSMSROXj1VewhDSamc44aElLDZSv6ZDjE=
+	t=1756735444; cv=none; b=NmN60OYGhc7XqvqURoHxtT51Xdg/Lopw516xbx0LP64Ea2sJSRwUE/NT616EOQQdJC2HU4XxpkIAcWV9euHa86YGOOsMH1QJvaAndHBlZBPm50GyToL9X/IsnUFZVE9mOlGtUrqDU/Wc7La+OGCsReE9sdUki2XOuL3V2oSoN4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728917; c=relaxed/simple;
-	bh=skHDzNJEFTT/0Ypk/P72ToCddkHEoyFaGuJsmERB+qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hpHoVpBGjfLyoUnPaRXiCE2/nY0b0XaaphNpx7asBdn/J5+Ooj/zEBZqwF7LaY/GGVB9aFybKgloXTdMBvZlo0xjEFZr4YmTo78wcWLLcE2854wnFbc92Gqfyr9gdtnBmlCtzyuzIUKZVGFDO6at1KHjSv5W9XHwnwvat/XOPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT37ow95; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756735444; c=relaxed/simple;
+	bh=0I395bScAfXDaELxzjx7kkUg8Yab6NEvTHxGLJFKH38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TeL5zpWtB2tX/zToDFxRl8nRvvH0oJw7/yY/0pzGf7nGxOXN63qDtWrYykzwtDGb9tNoOuOZFLGoZj2lTb41S639V7uL4TRXNT29olBnWdiq9kn6psem8aKS66a/JtKmScnnHlsnAPcKc8YPkNpIbLgLawfDCThqirXTnrDQikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ON7rfcZr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT37ow95"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49BCAC4CEF0;
-	Mon,  1 Sep 2025 12:15:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ON7rfcZr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E63C4CEF0;
+	Mon,  1 Sep 2025 14:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756728916;
-	bh=skHDzNJEFTT/0Ypk/P72ToCddkHEoyFaGuJsmERB+qY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iT37ow95R4l8fVbcVebTqVRkO85m9r9Mk5KUDTVaZfcx+x21y80is6AMAtRBDulEF
-	 VPIpIShg19Fmk8Com7Dbi9JqLW8p8MOLe6SOqly4Fg8fU0S7x4V1wiofIVf6o7n4Bw
-	 LyH3HF9MrYi+JLTga2R64ibKkoZaRA05JWWWOatlfXPO3u/Kew7av8GhUEb9oVAPyZ
-	 Lt7V9niO611rp0DcyNySKhvuBZW6OGrROZUuYrRAMFVSzLMpyyK/QVN7kZ1JUZXUrf
-	 YZF8xCnfBdqpU4KBVRt3nDmIccqgmCcs+6A2X208pkqkVQL8zTKutBsVedGe8C1Z0j
-	 1HZWdY6tuw13A==
-Message-ID: <3fb8bf7d-a57a-47ac-b754-0e2bfe4a30d0@kernel.org>
-Date: Mon, 1 Sep 2025 14:15:10 +0200
+	s=k20201202; t=1756735443;
+	bh=0I395bScAfXDaELxzjx7kkUg8Yab6NEvTHxGLJFKH38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ON7rfcZrWkVmBjYtjlMhkKpQek1xpm3hU1TZGbJ6OOaING+Vrn9QuQ1ZfeI48TsG8
+	 BA3Z9dKoifyKhxyV2JV1zAIVeDE8xdfc/P6cEA/ZUVM4SHjFbbaRRwnpd4bLlInZET
+	 +SC9ca9otIPB3FTcRoLSoSQMimq8sw3dBcUXN/BKE6bJu4Z1brMcww598dC/ghhGPl
+	 9CnMioU4rvmGR8TbEc2JzA69sCv9U8D7ogozmHtweIaiqWtWbfH3/BIjRLdPf5QxXo
+	 tt3zFsHlWpUU/jpm4bGVq+8TjoE9xfHIx+6Uxr0xgk9Xvs3Vwd9n5loRXhVYywkWvk
+	 /mmn9n/bmgjDg==
+Date: Mon, 1 Sep 2025 19:33:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+ <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+ <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: E Shattow <e@freeshell.de>, Marek Vasut <marek.vasut@mailbox.org>,
- Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
- <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
- <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
- <ef9dab99-f14a-4b1e-883f-d2086435b8d5@freeshell.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ef9dab99-f14a-4b1e-883f-d2086435b8d5@freeshell.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
 
-On 01/09/2025 13:07, E Shattow wrote:
+On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
+> Hi Mani,
 > 
+> On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+> > > On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+> > > > On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> > > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > >>
+> > > >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> > > >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> > > >> only as a root complex, with a single-lane (x1) configuration. The
+> > > >> controller includes Type 1 configuration registers, as well as IP
+> > > >> specific registers (called AXI registers) required for various adjustments.
+> > > >>
+> > > >> Hardware manual can be downloaded from the address in the "Link" section.
+> > > >> The following steps should be followed to access the manual:
+> > > >> 1/ Click the "User Manual" button
+> > > >> 2/ Click "Confirm"; this will start downloading an archive
+> > > >> 3/ Open the downloaded archive
+> > > >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> > > >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> > > >>
+> > > >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> > > >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> On 9/1/25 03:54, Krzysztof Kozlowski wrote:
->> On 01/09/2025 12:30, Marek Vasut wrote:
->>> On 9/1/25 5:33 AM, Krzysztof Kozlowski wrote:
->>>> On 01/09/2025 04:22, Marek Vasut wrote:
->>>>> On 9/1/25 5:22 AM, Peng Fan wrote:
->>>>>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->>>>>>> Move imx9*-{clock,power}.h headers into
->>>>>>> include/dt-bindings/{clock,power}/ and fix up the DTs
->>>>>>
->>>>>> No. The files should be under arch/arm64/boot/dts/freescale/
->>>>> Why ? Linux already has include/dt-bindings/clock/ and
->>>>> include/dt-bindings/power directories for exactly those headers , why
->>>>> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
->>>>
->>>>
->>>> Because maybe these are not bindings?
->>>
->>> Please compare arch/arm64/boot/dts/freescale/imx95-clock.h and 
->>> include/dt-bindings/clock/imx8mp-clock.h and clarify to me, why the 
->>> imx95-clock.h is not bindings and the imx8mp-clock.h is bindings.
->>
->> That's uno reverse card. I do not have to prove why these are different.
->> You need to prove why imx95 are bindings.
->>
->>>
->>> Both files list clock IDs for the clock nodes, one clock one is SCMI 
->>> clock (iMX95), the other clock node is CCM clock (iMX8MP), and they are 
->>
->> Yeah, entirely different things. Like comparing apples and oranges.
->>
->>> both (SCMI and CCM) clock nodes in DT. Both header files may have to be 
->>> included in drivers, the iMX8MP headers already are, the iMX95 headers 
->>
->> No, the SCMI cannot be used in the drivers, because these are not
->> abstract IDs mapping between driver and DTS.
->>
->>> currently are included only in U-Boot drivers.
->>>
->>> I really don't see the difference here, sorry.
->>
->> You just pointed out difference - no usage in drivers, no ABI!
->>
->> Instead of playing this "I found this code somewhere, so I can do
->> whatever the same" answer the first implied question - why these are
->> bindings? Provide arguments what do they bind.
->>
->>>
->>>> Regardless whether you agree or
->>>> not, the commit should clearly explain the reason behind.
->>> Which commit ?
->>
->> This patch.
->>
->>
->> Best regards,
->> Krzysztof
+> > > >> +  ret = pm_runtime_resume_and_get(dev);
+> > > >> +  if (ret)
+> > > >> +          return ret;
+> > > >> +
+> > > >
+> > > > Do you really need to do resume_and_get()? If not, you should do:
+> > >
+> > > It it's needed to enable the clock PM domain the device is part of.
+> > >
+> >
+> > I've replied below.
+> >
+> > > >
+> > > >     pm_runtime_set_active()
+> > > >     pm_runtime_no_callbacks()
+> > > >     devm_pm_runtime_enable()
 > 
-> Providing some clarification, the user of this (in U-Boot) via
-> devicetree-rebasing leads to some path gymnastics:
+> > > >> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> > > >> +{
+> > > >> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> > > >> +  const struct rzg3s_pcie_soc_data *data = host->data;
+> > > >> +  struct regmap *sysc = host->sysc;
+> > > >> +  int ret;
+> > > >> +
+> > > >> +  ret = pm_runtime_put_sync(dev);
+> > > >> +  if (ret)
+> > > >> +          return ret;
+> > > >
+> > > > Since there are no runtime callbacks present, managing runtime PM in the driver
+> > > > makes no sense.
+> > >
+> > > The PCIe device is part of a clock power domain. Dropping
+> > > pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
+> > > IP failing to work as its clocks will not be enabled/disabled. If you don't
+> > > like the pm_runtime_* approach that could be replaced with:
+> > >
+> > > devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
+> > > suspend/resume. W/o clocks the IP can't work.
+> >
+> > Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
+> > if you have a power domain attached to the IP, which you also do as I see now.
+> > So to conclude, you should enable/disable the clocks explicitly for managing
+> > clocks and use runtime PM APIs for managing the power domain associated with
+> > clock controller.
 > 
-> (U-Boot code base) arch/arm/mach-imx/imx9/scmi/clock.c:9:#include
-> "../../../../../dts/upstream/src/arm64/freescale/imx95-clock.h"
+> Why? For the past decade, we've been trying to get rid of explicit
+> module clock handling for all devices that are always part of a
+> clock domain.
+> 
+> The Linux PM Domain abstraction is meant for both power and clock
+> domains.  This is especially useful when a device is present on multiple
+> SoCs, on some also part of a power domain,  and the number of module
+> clocks that needs to be enabled for it to function is not the same on
+> all SoCs.  In such cases, the PM Domain abstraction takes care of many
+> of the integration-specific differences.
+> 
 
-Why nothing like this was described in the commit msg? We really do not
-need lengthy discussions to discover the basic needs why patch is being
-sent.
+Hmm, my understanding was that we need to explicitly handle clocks from the
+consumer drivers. But that maybe because, the client drivers I've dealt with
+requires configuring the clocks (like setting the rate, re-parenting etc...) on
+their own. But if there is no such requirement, then I guess it is OK to rely on
+the PM core and clock controller drivers.
 
-Anyway, U-boot driver requesting clocks in C code not via DTS is the
-culprit here and not necessarily right approach.
+Thanks for clarifying.
 
+> > But please add a comment above pm_runtime_resume_and_get() to make it clear as
+> > most of the controller drivers are calling it for no reason.
 > 
-> Compared to the patterns of what else is going on I would guess this
-> should instead be:
+> Note that any child device that uses Runtime PM depends on all
+> its parents in the hierarchy to call pm_runtime_enable() and
+> pm_runtime_resume_and_get().
 > 
-> #include <dt-bindings/clock/imx95-clock.h>
-> 
-> which agrees with how it is done for all the other closely similar build
-> targets and is less fragile in that build context (although you may not
-> be interested in this since it's not Linux kernel code base). Ideally
-> I'm trying to make U-Boot flexible to build against different locations
-> of devicetree-rebasing or perhaps Linux kernel source tree. This is a
-> "one thing is not like the others" moment and it was suggested I send a
-> patch.
 
-Why instead not fixing U-boot and not taking these via DT property, like
-every other case? see include/clk.h for the API.
+Two things to note from your statement:
 
-> 
-> Whatever is best I'm open to improve the commit message, or take what
-> you think ought to be fixed in U-Boot there to improve.
+1. 'child device that uses runtime PM' - Not all child drivers are doing
+runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
+unless they depend on the parent for resource enablement as below.
 
-You should rather align with other U-boot maintainers and contributors
-how clock consumers should be written. Proposed patches depend on that
-outcome. If you just ask me, then I am telling you the same - requesting
-clocks by consumers should be via DT, not via C code. Someone just added
-ABI for driver consumers, not even providers...
+2. 'child devices depending on parents in the hierarchy' - Again, not all
+child drivers require their parent to enable the resources. In those cases, they
+can just call pm_runtime_set_active() and pm_runtime_enable() in their probe.
+There is absolutely no need to do pm_runtime_resume_and_get() AFAIK (correct me
+if I'm wrong).
 
-Best regards,
-Krzysztof
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
