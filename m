@@ -1,194 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC71248F66;
-	Mon,  1 Sep 2025 09:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DED25A2A4;
+	Mon,  1 Sep 2025 09:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756719247; cv=none; b=uLazeuC8Vp2boVvntf0WuLsp0Ka8SgYAtI7nLoRfXLqw0JW+meNrRxRgrntLiFVB4oUxkQsZgtgybJAQLYu2coe7G7yjh1x+QyeRTSZpAzmr5KBh2ExTTdbBCTb/bVlXOIYfxbN6NlzuEJ8B2v7Rc8hGD84Y1eHltG6+aLDONR0=
+	t=1756720009; cv=none; b=I27D9KUUgRCBB1q9t+109Cvvq6D4vWA22bmIhvqXkOaXvC6j5eG37Q2WkxeKuxzpc5/h1slmECuxUY8U50jiCq3TzqHReCnax3is4QGQ8HVOtDOWKmjDXEwL/JtUovhG2Gtgdmsh/NcBfj/KYLF2d3N9sCyg6AMAe4EYkClwOVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756719247; c=relaxed/simple;
-	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/A6m5gN/d17iWrueL+2Qz1GI8ye9l9ORJdj2K1au+SOSVJ7LP1Q6Q2pmBUWvuWs4hyNlike/iVRhOa3vDub4VYgnGMoOUWVm9yTMXZOpPK4FEeOLJlnl8Bx7JMslpqRgxnx2Wqp72N9Yqpnn76lrlMbN/ufGADj6EDNdkmtFcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=up5IY0Lz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="up5IY0Lz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF865C4CEF0;
-	Mon,  1 Sep 2025 09:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756719246;
-	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=up5IY0Lz+TWMrst6sxwJCXHZlvksy+Kyvgdb5EAAQyC+UHTG6/VphlFt01RyHvzdY
-	 SpU7YnF5+Jqv0wV6aIuRTNVyJMCpVHjQyME6P1+siibcpvKIrd1QOnpg8aTaePOXU/
-	 QvT67wDPOMoeNkN9KpE1mREID6KnHbBNmAqEobXL092QepnV9neHZRxgpw6FGBEUUh
-	 NPw6CEx8P9CGBIzoTcXJo+Y3n4/aN7N5E/YDXz95PBTWB2RVvsl7Mfp9smS62ZJXhp
-	 izWNuW6h6BRCHrXysOq6sHn5ZHhZngDG/WcJAe3ynXx+8m1AjDe6cCP1rhiJl+yTmO
-	 67GBt22Hy8KSw==
-Message-ID: <44d8a998-efe7-4c2f-8580-5248b1a98c44@kernel.org>
-Date: Mon, 1 Sep 2025 11:34:00 +0200
+	s=arc-20240116; t=1756720009; c=relaxed/simple;
+	bh=WhbgLgAfQTMGPDcA6stiNJasQDKU/EBukH2kJsAsKe8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LsPnIgFvdxeBQJEra00liAMbxFD8uyL+S1wd25pNXxVmSwsSI0io561nOtUEe+iCV2ZOWOgYGiKYk31nbJgDCJXJK359NzXgHzlYF9/38AbuXgm4N1Gwpq4RSHjCJWt0Ie4a+4RPtMlnjSaoZbN3AZvLpuqr9zeqKaLCZD2jQuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5449432a854so1269278e0c.3;
+        Mon, 01 Sep 2025 02:46:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756720006; x=1757324806;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bPKwAyL9UdPz2i3tqzNIzvOjss5rG+rqIGyHJh5GmGE=;
+        b=tLgI+xm8gv6S6sPQbtbAphG6FhE0M4NIYr+oEwofq1mgt/C4QFpdytBns6aA02iEf6
+         oL4E17emRS9FZohS3rEcK064XFLSXxkSk68FPPY070CrUCo83VNQPDmTULSe0u9lp+Hh
+         YTwf922qf+Ph/s+NHZjQIArC/deIijX/L9ky3IchKi54kf2w/GtJmjmmF3f6mnPxB2K9
+         cXCS/QqQsMxlC6yFPwG6rSQQl8mmNyYcoTAsLvdbMVN7cVVBebFP4Gc79D6nPAK5hURq
+         2iJKERmugaLrF8fvVsbo5CS1BvBxhd0p0bZ47ewdvNRu5hZ4rS9HpjQkQQXkIyFLv7v5
+         UnzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQducaANzHE2B6+iGFRjVLHikp6kZJU5PpWpTp9vfXFvFOLwKUU8hGr/AkE0JRHBKDrr/1A0TOwXk=@vger.kernel.org, AJvYcCVkK9zXSRYYA8pEfhMDK0ZCRZpGlIOXBjbGwUCBbqFmOb5HqtPOFCUujLNj2Mo9a7MMc6jFYZE9vhSg9jAlzRoEOrw=@vger.kernel.org, AJvYcCVx+dKtkNlw8886NZAJn0qkb4L35SAmv+XBeUZe9jfMGv/FCz+PLmv/j+KU/YtU4t/e8zPb3Bq1EvrJrUt9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr9Z2L9tNmag5Ug3MYlNwvJ0j00VJi392imZ8kMuwVDbiGueQI
+	7OMGlohko1e6QkfCxaPP0QWauuSiPGrJhPWtCsIF87AI4uh9ruVFk0vHUoDQXsiX
+X-Gm-Gg: ASbGnctxPPxrJiT5rmxkW9uEYWTeJIkTywcsmmNAqfWjUMwTKHs5X7UrIQVl/GchREs
+	B7raRClGq5WX6cwlEyBPKd+Dhq41LgfxZLeL6K4f77d1gDZC6HI2L/cWHC+g6X9s3GXr2IehCl4
+	ADM1cTjtw2Jk3xJi41nMfdqAeFYSghZp/Ni464Qg4utDZKva/D9I0qKFE3k4L76BvISnsjZpSVX
+	RruNwXItELC0Uazcksfe2gX/vr49mi/TulJ3tkoLuKcjOvazQwvxPiUoRiNLJ29u2jjyj56/ONZ
+	oImyZAIjb1F3u+oFqVyggxGfHVUEPRkieBrHW5C5BXUbpA0xQoNcsbScE3Rb8hvAeSoUofzddR9
+	xuZV/U2d2PxFPckeETIgKLIAW4CakAgFkF7V/swSWpMQHpTkEv18rLtGN4zYeHAN9
+X-Google-Smtp-Source: AGHT+IFnwm59SobkBkr62kCz4jSM/DyjEiIMexUaKM7PaozJx3i98J7pntaQGXNuXj75D98fgYiiIA==
+X-Received: by 2002:a05:6122:4687:b0:544:7d55:78d6 with SMTP id 71dfb90a1353d-544a017154cmr1745053e0c.2.1756720006269;
+        Mon, 01 Sep 2025 02:46:46 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544914c10c7sm4170074e0c.30.2025.09.01.02.46.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 02:46:46 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5432dfa5e8eso3148669e0c.0;
+        Mon, 01 Sep 2025 02:46:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVlf/RE8aRKlGYDl4lJOuddEBMSZuHSvo/GmBW9GIeHdWT+XpIyiLhfnNxPM0u7FvkRsdFMSXWwcZ4=@vger.kernel.org, AJvYcCWSOb7kuYNqjlQpsNd4zaxuZjFit0+3sfckuNUJxpZozl3/dzH4XLjO1lYJIUDjPwP9/6J6MJ5vh0sLkFqo@vger.kernel.org, AJvYcCX+Z8uo+umv7xTw1XYMp7y2/xQJe1tFQ+cIsJqVpc7gwPXIJaSSY6Zn2E/f5ozhZDNqY2xKMYsGitbU7ITvS/aqTDM=@vger.kernel.org
+X-Received: by 2002:a05:6122:2219:b0:531:2906:7525 with SMTP id
+ 71dfb90a1353d-544a01c856bmr1903553e0c.6.1756720005789; Mon, 01 Sep 2025
+ 02:46:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
- <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
- <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
- <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
- <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
+ <aKyX4YJswZLuqA6Y@x1> <0d71269f-1c78-4732-8235-5640bf340d00@tuxon.dev> <aK2gE0CysSWisFwB@x1>
+In-Reply-To: <aK2gE0CysSWisFwB@x1>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 11:46:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXNnGg0rEcM1hvvjBUJXFFAx4oiX=qVb3nKfmd4YBxhGw@mail.gmail.com>
+X-Gm-Features: Ac12FXySlzljzJBVQIh8T5D4LvHlbiTfXVHCTZ-xPjSYu4UAWotdvWAobnJMb5k
+Message-ID: <CAMuHMdXNnGg0rEcM1hvvjBUJXFFAx4oiX=qVb3nKfmd4YBxhGw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: renesas: rzg2l: Disable unused clocks after resume
+To: Brian Masney <bmasney@redhat.com>
+Cc: claudiu beznea <claudiu.beznea@tuxon.dev>, mturquette@baylibre.com, sboyd@kernel.org, 
+	geert+renesas@glider.be, linux@armlinux.org.uk, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/09/2025 10:43, Tudor Ambarus wrote:
-> 
-> 
-> On 9/1/25 8:48 AM, Krzysztof Kozlowski wrote:
->> On 01/09/2025 08:56, Tudor Ambarus wrote:
->>>
->>>
->>> On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
->>>> On 27/08/2025 14:42, Tudor Ambarus wrote:
->>>>> +
->>>>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
->>>>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
->>>>> +};
->>>>
->>>> I don't understand why clocks are defined in the firmware driver, not in
->>>> the clock driver.
->>>
->>> I chose to define the clocks in the firmware driver and pass them as 
->>> platform data to the clock platform device for extensibility. In case
->>> other SoCs have different clock IDs, they'll be able to pass the
->>
->> You will have to modify firmware driver, so still at least one driver
->> has to be changed. Having clocks defined in non-clock driver is really
->> unusual.
->>
->> This solution here creates also dependency on clock bindings and makes
->> merging everything unnecessary difficult.
->>
->>> clock data without needing to modify the clock driver. GS201 defines
->>> the same ACPM clocks as GS101, but I don't have access to other newer
->>> SoCs to tell if the ACPM clocks differ or not.
->>>
->>> The alternative is to define the clocks in the clock driver and
->>> use platform_device_register_simple() to register the clock platform
->>> device. The clock driver will be rigid in what clocks it supports.
->>>
->>> I'm fine either way for now. What do you prefer?
->>
->> Please move them to the driver.
-> 
-> Okay, will move the clock definitions to the clock driver.
-> 
->>
->>>
->>>>
->>>> This creates dependency of this patch on the clock patch, so basically
->>>> there is no way I will take it in one cycle.
->>>
->>> Would it work to have an immutable tag for the clock and samsung-soc
->>> subsytems to use?
->>
->> No, just try yourself. Patch #3 depends on patch #2, so that's the cross
->> tree merge. It's fine, but now patch #4 depends on patch #3, so you need
->> two merges.
->>
->> Or how do you actually see it being merged with immutable tag? What goes
->> where?
->>
-> 
-> Unnecessary difficult indeed. Hypothetically, if we kept the current
+Hi Brian,
 
-No, it is impossible.
+On Tue, 26 Aug 2025 at 13:52, Brian Masney <bmasney@redhat.com> wrote:
+> On Tue, Aug 26, 2025 at 02:01:56PM +0300, claudiu beznea wrote:
+> > On 8/25/25 20:05, Brian Masney wrote:
+> > > On Thu, Aug 21, 2025 at 11:03:30AM +0300, Claudiu wrote:
+> > > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > > This series disables clocks that remain unused after resume.
+> > > > This is necessary when the resume process is done with the help of the
+> > > > bootloader, as the bootloader enables various clocks when returning from
+> > > > resume.
+> > > >
+> > > > On the RZ/G3S SoC (where this series was tested), the bootloader enables
+> > > > the SDHI clocks (for all SDHI modules, of which 2 are used by Linux and
+> > > > 1 is unused) and the clocks for a serial IP (unused by Linux).
+> > > >
+> > > > Testing was done on the RZ/G3S SMARC Carrier II board.
+> > >
+> > > Do you think that other boards would also benefit from this change? If
+> > > so, what do you think about putting the call to register_pm_notifier()
+> > > inside an __init block in clk.c so that this same change doesn't have to
+> > > be implemented across various clk drivers?
+> >
+> > Yes, that was my other approach I was thinking about. I wanted to see how
+> > other people consider this version.
+> >
+> > > Alternatively, if this is board specific, could this be fixed in the
+> > > boot loader so that the clock that's not used by Linus is properly shut
+> > > down on resume?
+> >
+> > As a result of your request I did some more investigations on my side, I can
+> > say that, yes, in theory that could be also handled by bootloader.
+> >
+> > I can drop this and try to do it in bootloader, if any. Please let me know
+> > if you still consider this (or the variant that implements it in a generic
+> > way) necessary.
+>
+> Personally I would go the route of fixing this in the bootloader for
+> this particular platform.
+>
+> If this issue affects other platforms, particularly across multiple
+> SoC vendors, then I think it would be worthwhile to have a discussion
+> about adding this functionality to the clk core.
 
-> structure, we could have have a single tag on #4. Since the dependency was
+How would the bootloader know which clocks are not used by Linux?
+And why to offload this to the bootloader for resume, but not for boot?
 
-What does it mean tag on #4? There are no further users, so tagging this
-patch has zero effect.
+Gr{oetje,eeting}s,
 
-> on a new clock driver, the clock subsystem could have lived without merging
-> the tag, as the chances of conflicts with the clk core are small. But not
+                        Geert
 
-Quick look tells me nothing would compile. Really, try yourself. Neither
-patch #3 nor patch #4 builds!
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
