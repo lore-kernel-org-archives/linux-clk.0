@@ -1,80 +1,151 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A35EEAC7;
-	Mon,  1 Sep 2025 03:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBD928DC4;
+	Mon,  1 Sep 2025 05:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756699045; cv=none; b=FhRH7nb35WYk2GwelehyoJcmL+QGBXZ+LGAXGpujLu+5HYAWkCHzQr3xFtUnsO7g8GTL7Y7AYzXllZ633/82f+U/JfL3u7qUnsxFrUZpljnfjgVfHmYuxaaGyjlzQZtOrkYFc5LV1aLcv2R+xMJeb5Kdz5mK2M9LSfGKBgCGwCo=
+	t=1756703517; cv=none; b=DN0TKKXiiO/Lh4ILJTnWHKmAYtPuyyYpVi/PDHJaXr18gZ3cH6GrH8u+XLQeYwJLJr/DH2ZzQBUZ9d1V4u+CQn23i+RMFivwHolnuVBSwryNldvpO0DdvsoL8H8TCK3OxBPlV7jVWVDpZenkKN7e833nPYJBgJUbYP7pOPoV+yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756699045; c=relaxed/simple;
-	bh=3u1ZGDHFVAp81DLGLMD5zJXdw46pPftZHCXf2KWdjCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raf45rnB1LLk6iiVVPH+quctkF6CYSbgsUY141p1UT4uBH2karEMmSc2cTXe6fL7Vq0viIKoe3c6d5EHs77ZklJhRnYpzDXDZsQQtYFH5O1EcWqPuLi0Mt4BAgpw9HKKSkiJ5NoQ2PzQA7ynTM8SS2BlPg7AqHLiwmsYEZUD/j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYh8bAqh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756703517; c=relaxed/simple;
+	bh=0zcGP1JHy/F4YX2Ldd+o0wMIBnWn3+zAZi/ObO2lfWI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lxcr1Np2VWQqY91XAbsVVuILiKci5/sl777FnRUeWEcGt2uBj9tOFL9wI1sfOkEBhaQDY6L2NR7qm2v/O0nwB29bwZZasVdmm+aeUjZK/Bwm+YbPwZ8HdNf+7ZT3Q/B2I05WY+zvb98ww64mRQoZgKKc8kxZt/yIcspBNtatcRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXxFGAxC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYh8bAqh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37969C4CEF0;
-	Mon,  1 Sep 2025 03:57:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXxFGAxC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E36C4CEF0;
+	Mon,  1 Sep 2025 05:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756699044;
-	bh=3u1ZGDHFVAp81DLGLMD5zJXdw46pPftZHCXf2KWdjCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GYh8bAqhE98U6NWFv5j2OMIo4Ax6n5Mda5q/e1MmfRb479zy1yylPWPlSHvdVFcdT
-	 IzuQCL6O5XPXjotIsU6MDAIlwVPzejehfUmTQST+5kOC40kUrowxd30Lj5TQk9BrlK
-	 U0BtAbgaWEg4icjNB8pKDiBowLaPXt3akV2YzmXg4Ntt14YcP83rPmuv2+VIz21wtK
-	 BMOUTPghwfBVA/s6jron8Kblw1V3TEDKmMZGJEXD/IRFTJ3qJdFdalohbg6bHfKtBM
-	 PWNbWh9J36Kc4jl0nWid0LmBqWb1+g+gfSU2K0gkfAQ7rQCUuKo9/asmB7fKtizJaY
-	 KzPSTVCvVfAOA==
-Date: Mon, 1 Sep 2025 05:57:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	Thierry Reding <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: reset: add Tegra114 car header
-Message-ID: <20250901-juicy-straight-kestrel-a265dc@kuoka>
-References: <20250829122235.119745-1-clamor95@gmail.com>
- <20250829122235.119745-2-clamor95@gmail.com>
+	s=k20201202; t=1756703516;
+	bh=0zcGP1JHy/F4YX2Ldd+o0wMIBnWn3+zAZi/ObO2lfWI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iXxFGAxCyAX2Z/ywg/XTCdRGqX79L6oBBeyP61F+WMwJg6iYcL060e1uvnqvJrSVl
+	 eSWFl94eCQPDLdUPxOObV2KH038zR9dClh6XwqdfYpu5Kn6Jkl6fohDg9HlGov+n+M
+	 cX3/YBqSK4WlGVn8u9X/KHKukZAVwT3bndFB94AjkJtef3E6buyP805gRqd0WhaYDK
+	 CxyhnZ82kTr/EesV5DzOmo8iNApgiYBYgbg2VuTIQkovtYJfCpOllYBmYKEwSM/xca
+	 IPSSqumL1ENJEKQPZhvJE6soZ82L0zkISRnoKUleKab0h5OFcAHcInGZLYgbugOeDf
+	 55ua6+AvgjyKA==
+Message-ID: <e3f6d000-bbb7-45c2-93f2-69be9815ca99@kernel.org>
+Date: Mon, 1 Sep 2025 07:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829122235.119745-2-clamor95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: samsung: Add compatible
+ for ARTPEC-8 SoC
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
+ dj76.yang@samsung.com, hypmean.kim@samsung.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <20250825114436.46882-1-ravi.patel@samsung.com>
+ <CGME20250825120715epcas5p3a0c8b6eaff7bdd69cbed6ce463079c64@epcas5p3.samsung.com>
+ <20250825114436.46882-5-ravi.patel@samsung.com>
+ <b8085dd8-e1a0-48b1-a49f-f3edaa0381da@kernel.org>
+ <000201dc1af2$537b4e70$fa71eb50$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <000201dc1af2$537b4e70$fa71eb50$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 03:22:31PM +0300, Svyatoslav Ryhel wrote:
-> The way that resets are handled on these Tegra devices is that there is a
-> set of peripheral clocks & resets which are paired up. This is because they
-> are laid out in banks within the CAR (clock and reset) controller. In most
-> cases we're referring to those resets, so you'll often see a clock ID used
-> in conjection with the same reset ID for a given IP block.
+On 01/09/2025 05:41, Ravi Patel wrote:
 > 
-> In addition to those peripheral resets, there are a number of extra resets
-> that don't have a corresponding clock and which are exposed in registers
-> outside of the peripheral banks, but still part of the CAR. To support
-> those "special" registers, the TEGRA*_RESET() is used to denote resets
-> outside of the regular peripheral resets. Essentially it defines the offset
-> within the CAR at which special resets start. In the above case, Tegra114
-> has 5 banks with 32 peripheral resets each. The first special reset,
-> TEGRA114_RESET(0), therefore gets ID 5 * 32 + 0 = 160.
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  include/dt-bindings/reset/nvidia,tegra114-car.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->  create mode 100644 include/dt-bindings/reset/nvidia,tegra114-car.h
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 31 August 2025 18:55
+>> To: Ravi Patel <ravi.patel@samsung.com>; jesper.nilsson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+>> krzk+dt@kernel.org; conor+dt@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com; alim.akhtar@samsung.com;
+>> linus.walleij@linaro.org; tomasz.figa@gmail.com; catalin.marinas@arm.com; will@kernel.org; arnd@arndb.de
+>> Cc: ksk4725@coasia.com; kenkim@coasia.com; pjsin865@coasia.com; gwk1013@coasia.com; hgkim05@coasia.com;
+>> mingyoungbo@coasia.com; smn1196@coasia.com; pankaj.dubey@samsung.com; shradha.t@samsung.com; inbaraj.e@samsung.com;
+>> swathi.ks@samsung.com; hrishikesh.d@samsung.com; dj76.yang@samsung.com; hypmean.kim@samsung.com; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-arm-kernel@axis.com; linux-
+>> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-gpio@vger.kernel.org; soc@lists.linux.dev
+>> Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-8 SoC
+>>
+>> On 25/08/2025 13:44, Ravi Patel wrote:
+>>> From: SeonGu Kang <ksk4725@coasia.com>
+>>>
+>>> Document the compatible string for ARTPEC-8 SoC pinctrl block,
+>>> which is similar to other Samsung SoC pinctrl blocks.
+>>>
+>>> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+>>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+>>> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>
+>>
+>> No wakeup-eint interrupts here? samsung,pinctrl-wakeup-interrupt.yaml?
+> 
+> I don't see any use case for external wake-up interrupt here (as of now).
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It is more about hardware, not use case. Does this hardware has EINT
+wakeup pin banks?
+
+> So wakeup-eint entry is not present in dts and yaml both.
+
+
 
 Best regards,
 Krzysztof
-
