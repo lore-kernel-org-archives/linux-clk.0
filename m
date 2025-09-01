@@ -1,47 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D8927AC43;
-	Mon,  1 Sep 2025 21:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABD1221577;
+	Mon,  1 Sep 2025 21:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756762286; cv=none; b=G+w6BKUQsAzcOWWI5N/7CnN1FPo+Kp4QIJmnzLGQkFr4eRaajNosYitBNzYm380xjMk/9qLE8kvUf3AwnUaX2pqXjboe49amXlWGs2AHU6ZP3Dr3rYAQhjzuZnTVMmD7en7Bm4vm6Zx2u4W0j8zPE69KCI5Kxfs4JOQSQ2aNqjw=
+	t=1756762351; cv=none; b=XZGgzn/x//qzcxntPBOoJOa7OYQ+R8msv5L3RJppQ9wzPsVI8Bjbt3K6R0s/UW90wjfqG1d05FH1Td1hw1QQcaerUnhTD3qlGXzjBRytx0LR++SnRkOpHK91/V25WQ+Ijb0RJqwgvnrb5H6eAXzxzezYVq0ReuIZlsaKapDMlgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756762286; c=relaxed/simple;
-	bh=pYGx4Z5PyQy+FBk43EbI6DGF/1qa7cKPoVZH27D9KxQ=;
+	s=arc-20240116; t=1756762351; c=relaxed/simple;
+	bh=XJtUW54wFVnqUN/GjGXLK8CdHk3O9QHu7uFpdEFxdw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/Vqs85Mdl7lj5wjuyW5626lbT1Rb8ZxnvUJM4NEfgdnFEzVAO+e0L0ykwVlS5zIXPucSNSG+WT6x/SmXMmRd3IGZWda6J2X1KmbdO9KadHF0Ke0644Qn+LalkkNrgHv11kZ2TRPkKWa1IfOkFiKrNIYXy/G6UUdqxaTFh4QlN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7+IhNQk; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=sO7p2F7p7Q+GhLeWkVFax679Dq5xUm6NQhuK/tNjvEgelZ+DwxeAys+zN5LjXCcAYzgoa8jxYEi19blmvFLCuvntG4Ix80MPEaoOedeofzmxWrOQsDire0ORhQDvRbiYt73adyU+I2wOBtMPzSsJ0EwP9Gcgxw54BMoOAqxApWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODajV7ga; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7+IhNQk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB72C4CEF0;
-	Mon,  1 Sep 2025 21:31:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODajV7ga"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A74AC4CEF0;
+	Mon,  1 Sep 2025 21:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756762285;
-	bh=pYGx4Z5PyQy+FBk43EbI6DGF/1qa7cKPoVZH27D9KxQ=;
+	s=k20201202; t=1756762351;
+	bh=XJtUW54wFVnqUN/GjGXLK8CdHk3O9QHu7uFpdEFxdw4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o7+IhNQks9WAXZh5dRfApNnaOoV8N2Yw80HEtMQu/g4rLqCguPt8jS0WTUYBTj5/Y
-	 KDeyInm5+0uybxPJZd+FrYZJt70C3XHEPUJEVMkZfU4zbbuuKlpKZLizqloRa8HFen
-	 4BtqPhknnurexE1dUVYnsS6rlhXdEAghpZY/DaNbyFK6320VHLpK+fLzA3If/k3QRi
-	 M5i2b/ZcLyJ/8X955S1jvqfjiiRqpJ8Q19++YxlKcCrT14384N7lHMdp0JvmagHAPA
-	 UMvy8VF5Jz8uj7uwuBfBcHMtv+cE+/GRVIaTIFKzgr+m2TJSbUT6fzksm+3pGLfIuk
-	 XNCaMiH81IKnQ==
-Date: Mon, 1 Sep 2025 16:31:24 -0500
+	b=ODajV7gaIdI7Peny6U62Mdbzmn17K9c0n4WpKG92q5YyVAysBnZMEGw4Et5oG5ko1
+	 rL9IhH1ttdwkSZdj3hu7eMuqcD+1x3Mp+xA1M6SfkZgn0aP5qzETf8UyPlPKZouX+T
+	 nFY5rqZx1stDmtbCB/UWDJaeHMuoXq3P22KYL4bAIredkKjBmP9b7l/JJbJu13HESr
+	 BYSlVclAMrS54rDQM7Yu0zQtdMFUR/KtdHhyqZ+DgK4U6/p8SMJecIlbC/5sKl4H/9
+	 jAW7TlRg0vlEA8idVSL7tX4DdDEltK0kidhIG/jVqNtp/fi7bgmft1iIHwDwY9YYqu
+	 RifmqcGWDUVhQ==
+Date: Mon, 1 Sep 2025 16:32:30 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jernej Skrabec <jernej@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sunxi@lists.linux.dev,
+To: WeiHao Li <cn.liweihao@gmail.com>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 2/8] dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU
- CCU clock controller
-Message-ID: <175676228396.377947.13021468225327496814.robh@kernel.org>
-References: <20250830170901.1996227-1-wens@kernel.org>
- <20250830170901.1996227-3-wens@kernel.org>
+	linux-arm-kernel@lists.infradead.org, hjc@rock-chips.com,
+	andy.yan@rock-chips.com
+Subject: Re: [PATCH v1 3/7] dt-bindings: clock: rk3368: Add SCLK_MIPIDSI_24M
+Message-ID: <175676234944.379480.9026638393609375066.robh@kernel.org>
+References: <20250831104855.45883-1-cn.liweihao@gmail.com>
+ <20250831104855.45883-4-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,30 +45,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250830170901.1996227-3-wens@kernel.org>
+In-Reply-To: <20250831104855.45883-4-cn.liweihao@gmail.com>
 
 
-On Sun, 31 Aug 2025 01:08:55 +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+On Sun, 31 Aug 2025 18:48:51 +0800, WeiHao Li wrote:
+> Add a clock id for mipi dsi reference clock, mipi dsi node used it.
 > 
-> There are four clock controllers in the A523 SoC. The existing binding
-> already covers two of them that are critical for basic operation. The
-> remaining ones are the MCU clock controller and CPU PLL clock
-> controller.
-> 
-> Add a description for the MCU CCU. This unit controls and provides
-> clocks to the MCU (RISC-V) subsystem and peripherals meant to operate
-> under low power conditions.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
 > ---
->  .../clock/allwinner,sun55i-a523-ccu.yaml      | 35 +++++++++++-
->  .../dt-bindings/clock/sun55i-a523-mcu-ccu.h   | 54 +++++++++++++++++++
->  .../dt-bindings/reset/sun55i-a523-mcu-ccu.h   | 30 +++++++++++
->  3 files changed, 117 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-mcu-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun55i-a523-mcu-ccu.h
+>  include/dt-bindings/clock/rk3368-cru.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
