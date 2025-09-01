@@ -1,186 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32E2D5924;
-	Mon,  1 Sep 2025 15:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96D32F74A;
+	Mon,  1 Sep 2025 17:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742076; cv=none; b=lZ7n0dYDkf53JNbKCrHZKcTWBTt9pUenoeH8PyG7l9JuzZnl+vFA0eYutqPDinOjYuDvTvRGAsPlwGhYYRgM4K4zvJbABLYe5Sb9BH/7odoNUKlpb6Xm4D6GhnY0QateAOYgj1B49JdhmN+zmRAPPmADrAfoaKWNo/AlBp4jk+Y=
+	t=1756746465; cv=none; b=QOK9sYXYgwkM3lQRaMzaeQFLY7d5AFlOJZZRVrduJuVQv8Vi6zfmHq1+rSP1iA1mSLcgNvp4irxs33vkCZYP+eIQatDiCVRgnBH0gxUXBftDGa3PqdJFnAw3g2PP2MzCP5kLGrYpZ6VBNM9ULPRSV8tDD0+2keCQNHAEVTRmSKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742076; c=relaxed/simple;
-	bh=zbaUuwR137ygPnpQ0YzRAfrhZCcuUrJu1SPf+nLYCsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g07qFA6FIso2Agu+WDoo950XJeGX6GyxHzymnpd2A/+pAKgYFrg2qCMrxW5TMud+vn8AcYNMuf4eVb7fEFWe0FOFk6IOH3L5hJqEFqT/0XPFCdJaiBSTndu22scOR74Z9HYt9dfKH6H2+ZiTXVoJhuO9wV7R+UvcJTJTypSbo1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDsaAdUj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756746465; c=relaxed/simple;
+	bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V2NU+TCHg3boQmoZ/daFFZ1AZwXH/ldDycPYT6WlSFqyah0o9O7KQ+Oh1wYjE/17Zj4/Fjughu0ujWaLTvdjzTco3zWhy0FYpHRQpq7GWvJHOovzdBhwnRK37G8XlbkY5+W2DQe4JNZUXoj8kess2FigjOvGCBkF/XmOGdiGubg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DC+limGa; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDsaAdUj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B14BC4CEF0;
-	Mon,  1 Sep 2025 15:54:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756742076;
-	bh=zbaUuwR137ygPnpQ0YzRAfrhZCcuUrJu1SPf+nLYCsI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VDsaAdUjDt21AAz1YuepphxiXMwMEqxbceRWO1eDFCn3hMyTS0P1AIdUaMqjd9LaY
-	 w4UYGZg7mlCI1TfIxr73JZ4GUGJmOZAv8B0LamR11GLZSQZ99JmN3kwYnbn79q668f
-	 +xy2lfiIDihfknyZ0KSJCXvKeOoWoloviYzJkK3zlAg3++z2h4I4LDqCL113xr9ORu
-	 TrNNLs3a5QVAYlsSPLGOs/oLWL7G2++Qr6o0Zf+LSESwfXV92gYCO8t2zWyoVEy8sp
-	 Wt7ejild3mAw1jXg8Pa8V9BNc2/j0KJcP+ldmmtYXzIGj/EMgFnwE4RMTSwqRNxnoX
-	 5N7daNBwPszmw==
-Date: Mon, 1 Sep 2025 21:24:25 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, bhelgaas@google.com, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-Message-ID: <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
- <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
- <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
- <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
- <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
- <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
- <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC+limGa"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso1291753e87.1;
+        Mon, 01 Sep 2025 10:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756746462; x=1757351262; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=DC+limGagVIzn//NkTYABji4pGRRusPbtf3Yz3HRU4wGIAPMfLWwtnWrxLamzH8JcG
+         r+usFJAJxoh2BCjTuGtlIMVn0fvrf1KVhFm6h2+T7wKdFErUdXcaQRBaEOawSxSwnWIe
+         s4LQXl419bbUNPm0qDS86wScffl7rWTq4kLZ3xGc5VZBunpMuJ8NT0cS5IYYUxXZxtd2
+         kmOK4lwjyWtEj2MUxAgc4vZPku4il/o1Vjh76tig9jdqsDf6/nqH7CR9iAjSKIqrnugu
+         NCxJMKtDfPdScnAuI6iWbZZh3WTOGa4hIo8OSwG0RVIQUj3GWwkkD064XXXq1VJXej28
+         9Lyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756746462; x=1757351262;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=ZcmQT1MXwl84CAqTZ7/c1plIadkkhg0vl0V/Wv9DmKAi30agrQMQTqA3n85YB1s+Kj
+         wD9FD/9j0qrFbmMISr6QzT4zpM5M6XIKEyXXjrljsi1kbjTC3w9/R1x4P3VCN0AMZ4mQ
+         5a0npqLvD1kQHbcqSanga2WyAavItrrguta24Rhe8XBGjV90lg/1fFiQz3z8fbgpkIen
+         ML7GcTD12lxc6APWgi/P0eIeW5GIH2UkVTqfHHWnsnIPK7YC6Px8mA+mjSgAie6+IITB
+         dGHfCTz9fEzMfbPoiuIvHIWMBvfhfPzOlGX3K0F3iTMcnZtuF+F96WeEF75gW29tK6bu
+         PuEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+aA3mWKf4DekmXHB01tDo7NBjNxuXUE9JkmFBRNRmumwrWbYrrQ0mXA/rR+z6m6r15+EGoqQxjTTQ@vger.kernel.org, AJvYcCVMDr/05wUJsHABJ16eITL9nzmapGfJu1PXPnsqDTAKIGSwzu7ilFURzF+GlEOf9rqKi9mx3umqLbjW@vger.kernel.org, AJvYcCVf43a1yZqh2BQx3EJqpgIHyIU2nx1asN81/mNiHuoX49hvIXkLdeS41Ehnif1htGzz9IVfmIRiQWwU5x/Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzxbN9iG4BnRAvX/tzFzrkiVqv3mAemIyg8r56LnuKuNGGqRph
+	CAJAefGLUI4RTGvHQajhSASgh/EHb5Qm7Lz0RNQksW8LC+PWXmXUQwdo7UuySw==
+X-Gm-Gg: ASbGncv3ih8ZwxJuenbuTsrYEdzKG6gbuj7/TRfGWKz+6qziMQkMpUx060JhRAovpvj
+	DOfMOCTP+oQWhe8FK/GZd93q4niHITH9Qi5AaWRCdidQSU8T65YgxrKm5uetvYQQbyjwg0PgTP/
+	YXlXVLhG126ZJ2XMui5ceL8tA7JiCk3al3qUy3rLBJWuT139yfAGdzwktUzyfQaCHYZGhc+OrkL
+	QqSXtSLrbfvSqWrv5ddg6ysBY1hGhYBQsP3RKBj8dg3EjzGtWxW+o5PsHIbWBCMGyG4Kpe6x19M
+	iNh/od1CwjfNB5VrjhWwH+erWEOjPYBu5GhXtqJSpHrtrdIxBYqo6nI9KFWYV7NgkU9yzYOxpJt
+	qEkUQOBzk2zXHsPP90HPWOrU9TxmfPf8JnzOTp/6/wCOVIg==
+X-Google-Smtp-Source: AGHT+IHWg9rkJXFeOAyLPfI6Jq9upYbCl3QgUTbnRIZyklmbPgPwlM7YtvDYF70o6nvmJLdC8tIBxA==
+X-Received: by 2002:a05:6512:230b:b0:55f:5172:474f with SMTP id 2adb3069b0e04-55f708b50c1mr2491179e87.17.1756746461551;
+        Mon, 01 Sep 2025 10:07:41 -0700 (PDT)
+Received: from tablet.my.domain ([2a00:f44:892:8a37:6b0:21e7:549b:225b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f7abf7abesm1137666e87.55.2025.09.01.10.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 10:07:41 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH RESEND v6 0/9] clk: bcm: kona: Add bus clock support, bus
+ clocks for BCM21664/BCM281xx
+Date: Mon, 01 Sep 2025 19:07:06 +0200
+Message-Id: <20250901-kona-bus-clock-v6-0-c3ac8215bd4d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3153;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBotdLIi6PhSFeqmMBEQRv1HVm0Y6me6yRuQg9zb
+ h0pGkVQqemJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaLXSyAAKCRCzu/ihE6BR
+ aMimD/0cI/DWnNL3uvNnof3spp9UvWC6z4WyZGJpVBYGjAlnati6sOENPcj/H2kMAsGSktW2oka
+ D2mm5n0Vcfr1wfJv1l762pW9G4GHJQH2f7RG2Bs3L4tgOHhBhoC7uVgczKSNK46t2zWEGRd8UMb
+ ZwRHgpDoIdAaiq2EW2112cWmBeO/Zg0eJLpBlQ2AGruC087SH+ww2o7850ev2HcWG0Lxc1lweC9
+ eQ9/HjQ1gN3nJw85OJUVGLqaZLgcnAEwc5GzE2khBG1bUDGP69L9kFWOjrSfNpZlEgaviDNVCZ5
+ a6WzZSQjD+Zim+vmGhWkoofoIfLyZvYcl7SgW73kRzVEWnpamHJhp+UUL10er39DevgozHFga3Z
+ qpHaQXhEgn/LUYo9ca64MBT3XZqXFGJBO3UwalRzjFZpSSAa8j0jEymJmjOJw6TgxSrZwhsSDB8
+ 55fOA0pr+4Tsw+2zxq9MUqHe872NBfJa8Y6IHSjGXJisZmBRqwmdH6lYrg6h1rkRoo1PVCuALdr
+ gA4pj+VxDOYdGBHSGW1l8lYnlCpITCA755atn6ion3NyEc8xpiImvSfUoyEuRkS8n0J2iW8vGLx
+ xb6bZdLKNzNf7YAn1EBHjaQAS1AYllXZZuSDAv7qYARlTW7iXT9esNRbTFb4xnVrtya6U4daI7B
+ DgOG6vCyeG85p0g==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-On Mon, Sep 01, 2025 at 04:22:16PM GMT, Geert Uytterhoeven wrote:
-> Hi Mani,
-> 
-> On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
-> > > On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > > > On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
-> > > > > On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
-> > > > > > On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
-> > > > > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > > > >>
-> > > > > >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> > > > > >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> > > > > >> only as a root complex, with a single-lane (x1) configuration. The
-> > > > > >> controller includes Type 1 configuration registers, as well as IP
-> > > > > >> specific registers (called AXI registers) required for various adjustments.
-> > > > > >>
-> > > > > >> Hardware manual can be downloaded from the address in the "Link" section.
-> > > > > >> The following steps should be followed to access the manual:
-> > > > > >> 1/ Click the "User Manual" button
-> > > > > >> 2/ Click "Confirm"; this will start downloading an archive
-> > > > > >> 3/ Open the downloaded archive
-> > > > > >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> > > > > >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
-> > > > > >>
-> > > > > >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
-> > > > > >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >
-> > > > > >> +  ret = pm_runtime_resume_and_get(dev);
-> > > > > >> +  if (ret)
-> > > > > >> +          return ret;
-> > > > > >> +
-> > > > > >
-> > > > > > Do you really need to do resume_and_get()? If not, you should do:
-> > > > >
-> > > > > It it's needed to enable the clock PM domain the device is part of.
-> > > > >
-> > > >
-> > > > I've replied below.
-> > > >
-> > > > > >
-> > > > > >     pm_runtime_set_active()
-> > > > > >     pm_runtime_no_callbacks()
-> > > > > >     devm_pm_runtime_enable()
-> > >
-> > > > > >> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
-> > > > > >> +{
-> > > > > >> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
-> > > > > >> +  const struct rzg3s_pcie_soc_data *data = host->data;
-> > > > > >> +  struct regmap *sysc = host->sysc;
-> > > > > >> +  int ret;
-> > > > > >> +
-> > > > > >> +  ret = pm_runtime_put_sync(dev);
-> > > > > >> +  if (ret)
-> > > > > >> +          return ret;
-> > > > > >
-> > > > > > Since there are no runtime callbacks present, managing runtime PM in the driver
-> > > > > > makes no sense.
-> > > > >
-> > > > > The PCIe device is part of a clock power domain. Dropping
-> > > > > pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
-> > > > > IP failing to work as its clocks will not be enabled/disabled. If you don't
-> > > > > like the pm_runtime_* approach that could be replaced with:
-> > > > >
-> > > > > devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
-> > > > > suspend/resume. W/o clocks the IP can't work.
-> > > >
-> > > > Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
-> > > > if you have a power domain attached to the IP, which you also do as I see now.
-> > > > So to conclude, you should enable/disable the clocks explicitly for managing
-> > > > clocks and use runtime PM APIs for managing the power domain associated with
-> > > > clock controller.
-> > >
-> > > Why? For the past decade, we've been trying to get rid of explicit
-> > > module clock handling for all devices that are always part of a
-> > > clock domain.
-> > >
-> > > The Linux PM Domain abstraction is meant for both power and clock
-> > > domains.  This is especially useful when a device is present on multiple
-> > > SoCs, on some also part of a power domain,  and the number of module
-> > > clocks that needs to be enabled for it to function is not the same on
-> > > all SoCs.  In such cases, the PM Domain abstraction takes care of many
-> > > of the integration-specific differences.
-> >
-> > Hmm, my understanding was that we need to explicitly handle clocks from the
-> > consumer drivers. But that maybe because, the client drivers I've dealt with
-> > requires configuring the clocks (like setting the rate, re-parenting etc...) on
-> > their own. But if there is no such requirement, then I guess it is OK to rely on
-> > the PM core and clock controller drivers.
-> 
-> When you need to know the actual clock rate, or change it, you
-> indeed have to handle the clock explicitly.  But it still may be enabled
-> automatically through the clock domain.
-> 
+This patchset does the following:
 
-Yeah!
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-> > > > But please add a comment above pm_runtime_resume_and_get() to make it clear as
-> > > > most of the controller drivers are calling it for no reason.
-> > >
-> > > Note that any child device that uses Runtime PM depends on all
-> > > its parents in the hierarchy to call pm_runtime_enable() and
-> > > pm_runtime_resume_and_get().
-> >
-> > Two things to note from your statement:
-> >
-> > 1. 'child device that uses runtime PM' - Not all child drivers are doing
-> > runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
-> > unless they depend on the parent for resource enablement as below.
-> 
-> It indeed depends on the child device, and on the bus.  For e.g. an
-> Ethernet controller connected to a simple SoC expansion bus, the bus must
-> be powered and clock, which is what "simple-pm-bus" takes care of
-> ("simple-bus" does not).
-> 
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
 
-Right. But most of the PCI controller drivers call pm_runtime_resume_and_get()
-for no good reasons. They might have just copied the code from a driver that did
-it on purpose. So I tend to scrutinize these calls whenever they get added for a
-driver.
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v6:
+- Rebase on v6.16
+- Make kona_bus_clk_ops const, add a new commit to make kona_peri_clk_ops const as well
+- Link to v5: https://lore.kernel.org/r/20250430-kona-bus-clock-v5-0-46766b28b93a@gmail.com/
 
-- Mani
+Changes in v5:
+- Pick up Reviewed-by trailer from Krzysztof on patch 3
+- Rebase on v6.14
+- No code changes since v4
+- Link to v4: https://lore.kernel.org/r/20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com
 
+Changes in v4:
+- Rename moved CLOCK_COUNT defines to CLK_COUNT to avoid redefinition
+- Squash BCM21664/BCM281xx bus clock DT bindings commits together
+- Link to v3: https://lore.kernel.org/r/20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com
+
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
+
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (9):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 and BCM281xx bus clocks
+      clk: bcm: kona: Make kona_peri_clk_ops const
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add corresponding bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 +++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 ++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  99 ++++++++++++++-
+ drivers/clk/bcm/clk-bcm281xx.c                     | 141 ++++++++++++++++++++-
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  64 +++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  14 +-
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 540 insertions(+), 45 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Artur Weber <aweber.kernel@gmail.com>
+
