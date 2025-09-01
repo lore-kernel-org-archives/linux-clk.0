@@ -1,159 +1,189 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1871C549F;
-	Mon,  1 Sep 2025 10:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6D4217F55;
+	Mon,  1 Sep 2025 11:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724088; cv=none; b=JA/0ZbUix5JVwruiHm3wLkl2TYmDdc2yKoaWHBWf+tb0oRu8Gi9BGj6lV6Solf87Ev7umvpkLScyz/EYStzHqeH8SyRKkSWqqXyLUsA466XcPCTLc+vl3lXuk8g4/MQfp1VdffyiNWKf2X9gjFvVUDINnGRNMNwfiuRiVJiw9+0=
+	t=1756724696; cv=none; b=ujyp3W2cn7x7T4XQoyMcQwYlUWxr5fJ62CI7ja3PumRpNajW+CoZAxpIWwtnkGRfz1NeQVoTqohpRgc3CCM/EiQ18OFho01vYXvz+Ffc8rNzsQzZhcdibWb6tKkErAuqk89NbDRvu4MPrNul7qlHvRpvYcuNdRaQY5ASLnS4WDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724088; c=relaxed/simple;
-	bh=Uk7iN6sKk32/cDS26yYPoTUpYiWFWsU1qIbb3E/7pFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZ8Cp36TDF2SKkxgtvIgSia2WcT4UJS9qVOuDJDeEipBXXjGypvWXQUA93c2WuNAZAQ1uosVNdzT73aLG/2yAIjnGydeMNjYSBaJ+0H8nNq4j+7sEH4wyjZTyCefH/QuvUj2EhD7UGS7/eiFZOCvoiIjKj52M74JVswZxd3yMS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK4V5VqG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756724696; c=relaxed/simple;
+	bh=+8gXdf6AYvkuwsTQHIYRgcNXphR2xrs5FzoYe3zQNB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ubZsODzHSb9eHQPkW8gGSz+cRCVrQ+S394xfn3aFWA0J290rmmCQcHHW35Nj0frGg2oBwpyO3qfoIMOh5swMP5dK/06UTLmce4LBHJ9QVJPCxT8R57YKI5opjbfdHRfEDHLzhf5xAvrMnU83A1RotTNzZsIL6jfexX0ncTPY57k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Llous2c/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK4V5VqG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 483DBC4CEF0;
-	Mon,  1 Sep 2025 10:54:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Llous2c/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 091C0C4CEF0;
+	Mon,  1 Sep 2025 11:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756724087;
-	bh=Uk7iN6sKk32/cDS26yYPoTUpYiWFWsU1qIbb3E/7pFE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AK4V5VqGc3rFGw/d/GA/ysgfSH8uJGsT0eCgSW9v7LqOPOIqk0BxKMWmXHlQzDoaP
-	 mlV3CMhaR/dHgmab101hnzPwELOdzV+PabiLVn0vsKIYH5iCNmWgyJ6jJfaTTWvVRz
-	 FkJW8OwRf4jV5LiMbrT4iiWrh8YRt984vUuSfOT85p45rOPQwUAxeIoJQmkkZOoKN9
-	 udfeP0HKlSmrHI3nowOBL3RUXRSilHCo1jpIFkJqudlChAPbmGdhtrJWORzIBxcFx8
-	 q9O2AagdtxAV+DQgFAlTCz/nZuKvw1W5vZf/v5h1p1wv6taVuu7RFKx/YFSMwQe4ZZ
-	 pWUlIBm4oFzMA==
-Message-ID: <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
-Date: Mon, 1 Sep 2025 12:54:41 +0200
+	s=k20201202; t=1756724695;
+	bh=+8gXdf6AYvkuwsTQHIYRgcNXphR2xrs5FzoYe3zQNB4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Llous2c/uD3JzoaFblKUbeqxj95iyLg4Pe9RtHB5A9+wc/3CowARUEdiX6c+RlpK9
+	 K7Sy4J5gMkuKE9B+h2RAVfH8y3f+OmUpv7G+XWD9unINLmh9fdCvUQTdN03KpdAk35
+	 hzyZstEkeFziZZEPab9SAi/4ILOQ2aEQBVrmffbMWDbR7iUJEkiiemGmOhFuihHJdo
+	 XTcB+nweJmJViqA3Ez7ixT6JicWtLOn9VmyI/eYkqYRfpNS/fAoMext2Q1a+TNi8Gu
+	 bMx1Ukviqzys77lSHwd04idX5K3DMIdwrSOmbrK58/p+ngdfjEdBI8SZtH7OsjJNvw
+	 wKIgSjYlqUGSg==
+From: Conor Dooley <conor@kernel.org>
+To: sboyd@kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Subject: [PATCH v4 0/9] Redo PolarFire SoC's mailbox/clock devicetrees and related code
+Date: Mon,  1 Sep 2025 12:04:12 +0100
+Message-ID: <20250901-rigid-sacrifice-0039c6e6234e@spud>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Marek Vasut <marek.vasut@mailbox.org>, Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- E Shattow <e@freeshell.de>
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
- <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5793; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=PDC15xyhviRskACrubd0GzR2ve3J1jVrz01HMsd+U6M=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9co/dz9wvq1yRH9jknzywUeCpwU4FtwTT7vfN0in Rjnq78KO0pZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCR2fWMDBN3n5le9q+/cbuQ xTGuUF6R7Pbbs/pFhDW8P+6TTuZcXMbI0ChRrn/TqHtVfvGcb6Zqa68s1s/o3Z93/czNz4mSV+V mcgIA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On 01/09/2025 12:30, Marek Vasut wrote:
-> On 9/1/25 5:33 AM, Krzysztof Kozlowski wrote:
->> On 01/09/2025 04:22, Marek Vasut wrote:
->>> On 9/1/25 5:22 AM, Peng Fan wrote:
->>>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->>>>> Move imx9*-{clock,power}.h headers into
->>>>> include/dt-bindings/{clock,power}/ and fix up the DTs
->>>>
->>>> No. The files should be under arch/arm64/boot/dts/freescale/
->>> Why ? Linux already has include/dt-bindings/clock/ and
->>> include/dt-bindings/power directories for exactly those headers , why
->>> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
->>
->>
->> Because maybe these are not bindings?
-> 
-> Please compare arch/arm64/boot/dts/freescale/imx95-clock.h and 
-> include/dt-bindings/clock/imx8mp-clock.h and clarify to me, why the 
-> imx95-clock.h is not bindings and the imx8mp-clock.h is bindings.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-That's uno reverse card. I do not have to prove why these are different.
-You need to prove why imx95 are bindings.
+Yo,
 
-> 
-> Both files list clock IDs for the clock nodes, one clock one is SCMI 
-> clock (iMX95), the other clock node is CCM clock (iMX8MP), and they are 
+Stephen - I would really like to know if what I have done with the
+regmap clock is what you were asking for (a there's a link to that below
+to remind yourself). I've been trying to get you to look at this for a
+while, even just to affirm that I am on the right track!
 
-Yeah, entirely different things. Like comparing apples and oranges.
+Cheers,
+Conor.
 
-> both (SCMI and CCM) clock nodes in DT. Both header files may have to be 
-> included in drivers, the iMX8MP headers already are, the iMX95 headers 
+v4:
+- unify both regmap clk implementations under one option
+- change map_offset to a u32, after Gabriel pointed out that u8 was
+  too restrictive.
+- remove locking from regmap portion of reset driver, relying on
+  inherent regmap lock
 
-No, the SCMI cannot be used in the drivers, because these are not
-abstract IDs mapping between driver and DTS.
+v3 changes:
+- drop simple-mfd (for now) from syscon node
 
-> currently are included only in U-Boot drivers.
-> 
-> I really don't see the difference here, sorry.
+v2 cover letter:
 
-You just pointed out difference - no usage in drivers, no ABI!
+Here's something that I've been mulling over for a while, since I
+started to understand how devicetree stuff was "meant" to be done.
+There'd been little reason to actually press forward with it, because it
+is fairly disruptive. I've finally opted to do it, because a user has
+come along with a hwmon driver that needs to access the same register
+region as the mailbox and the author is not keen on using the aux bus,
+and because I do not want the new pic64gx SoC that's based on PolarFire
+SoC to use bindings etc that I know to be incorrect.
 
-Instead of playing this "I found this code somewhere, so I can do
-whatever the same" answer the first implied question - why these are
-bindings? Provide arguments what do they bind.
+Given backwards compatibility needs to be maintained, this patch series
+isn't the prettiest thing I have ever written. The reset driver needs to
+retain support for the auxiliary bus, which looks a bit mess, but not
+much can be done there. The mailbox and clock drivers both have to have
+an "old probe" function to handle the old layout. Thankfully in the
+clock driver, regmap support can be used to identically
+handle both old and new devicetree formats - but using a regmap in the
+mailbox driver was only really possible for the new format, so the code
+there is unfortunately a bit of an if/else mess that I'm both not proud
+of, nor really sure is worth "improving".
 
-> 
->> Regardless whether you agree or
->> not, the commit should clearly explain the reason behind.
-> Which commit ?
+The series should be pretty splitable per subsystem, only the dts change
+has some sort of dependency, but I'll not be applying that till
+everything else is in Linus' tree, so that's not a big deal.
 
-This patch.
+I don't really want this stuff in stable, hence a lack of cc: stable
+anywhere here, since what's currently in the tree works fine for the
+currently supported hardware.
 
+AFAIK, the only other project affected here is U-Boot, which I have
+already modified to support the new format.
 
-Best regards,
-Krzysztof
+I previously submitted this as an RFC, only to Lee and the dt list, in
+order to get some feedback on the syscon/mfd bindings:
+https://lore.kernel.org/all/20240815-shindig-bunny-fd42792d638a@spud/
+I'm not really going to bother with a proper changelog, since that was
+submitted with lots of WIP code to get answers to some questions. The
+main change was "removing" some of the child nodes of the syscons.
+
+And as a "real" series where discussion lead to me dropping use of the
+amlogic clk-regmap support:
+https://lore.kernel.org/linux-clk/20241002-private-unequal-33cfa6101338@spud/
+As a result of that, I've implemented what I think Stephen was asking
+for - but I'm not at all sure that it is..
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: pierre-henry.moussay@microchip.com
+CC: valentina.fernandezalanis@microchip.com
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Lee Jones <lee@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+
+Conor Dooley (9):
+  dt-bindings: mfd: syscon document the control-scb syscon on PolarFire
+    SoC
+  dt-bindings: soc: microchip: document the simple-mfd syscon on
+    PolarFire SoC
+  soc: microchip: add mfd drivers for two syscon regions on PolarFire
+    SoC
+  reset: mpfs: add non-auxiliary bus probing
+  dt-bindings: clk: microchip: mpfs: remove first reg region
+  riscv: dts: microchip: fix mailbox description
+  riscv: dts: microchip: convert clock and reset to use syscon
+  clk: divider, gate: create regmap-backed copies of gate and divider
+    clocks
+  clk: microchip: mpfs: use regmap clock types
+
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml |  36 ++-
+ .../devicetree/bindings/mfd/syscon.yaml       |   2 +
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  47 +++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 ++-
+ drivers/clk/Kconfig                           |   4 +
+ drivers/clk/Makefile                          |   2 +
+ drivers/clk/clk-divider-regmap.c              | 271 ++++++++++++++++++
+ drivers/clk/clk-gate-regmap.c                 | 254 ++++++++++++++++
+ drivers/clk/microchip/Kconfig                 |   3 +
+ drivers/clk/microchip/clk-mpfs.c              | 151 ++++++----
+ drivers/reset/reset-mpfs.c                    |  83 ++++--
+ drivers/soc/microchip/Kconfig                 |  13 +
+ drivers/soc/microchip/Makefile                |   1 +
+ drivers/soc/microchip/mpfs-control-scb.c      |  45 +++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c   |  48 ++++
+ include/linux/clk-provider.h                  | 119 ++++++++
+ 16 files changed, 1018 insertions(+), 95 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ create mode 100644 drivers/clk/clk-divider-regmap.c
+ create mode 100644 drivers/clk/clk-gate-regmap.c
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
+
+-- 
+2.47.2
+
