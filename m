@@ -1,213 +1,152 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D612FA0FF;
-	Mon,  1 Sep 2025 14:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AFB19D88F;
+	Mon,  1 Sep 2025 14:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736554; cv=none; b=fAwP5qVeNBq1Etk95jMGyfnJPxyywRYfi6vFdivyoOu3cEvKZiuDRaQcjyMidE28K7gXA31lxDiX4THr/1rkmEtsgsfs+dBYjmktiI5aD2sg+IPQObrRZEi0BBwxTGttupitHPR270hMFtUz8ih/jeP+CfiOJAfI9CM4nof5PBY=
+	t=1756738664; cv=none; b=kIo6i7MMORvnrupxiOYiX3XG+PdDi9jz1yvCg2NBJUQjJjFvI1SxMlzBjDHWz8SkevIduPYI7qQe4fK021LAcDWX8+UOSCY4ACMNqEecdi6duhqPgJv3SqpPGrDLR3bhz9kZYRCR0C1uDMYd44v8C3dbMfMs9xyTTPNBDVHFZi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736554; c=relaxed/simple;
-	bh=hhl4zlAske+6hd2beTuG0YEKdJgjf0YEOktmfvEYST0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O6vXhHjNzW26eX72gkV9uLZ7kOXwaKxDg6yQX+XVq7njxYq/pf8xTXiiqMrqFXPJ/2A304Deo+xSgKqKQRoQJ8+Y21g9phVmuBu5iCt9ztG9DToMyBXKnKw2lwC+DCqBVDASOnNelhAM9LQ8P5+zmomwy8nJvtoxogdDBM0sQFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1756738664; c=relaxed/simple;
+	bh=KhrAj3svwPmMiNuyFAaTwNKFm+CBl8pX8pjNBKRqhJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msKxTdcMwQehcUrUYGv1irq+x0PBniqoG5/8O+7ZHymw1rHHdC/luUnZiYAlfJfE7ibFNn/yTMBE+aEw418XCF5ZoXMJVQDxAtu2NA4QggAzq0CnUSEqmVhVmOvSsz9SJejtclbmG3JqNsuF5rWJg04h7ZN7zS9SJVeIMymbL+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRmTwtB2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-541f5f63bc9so3282298e0c.1;
-        Mon, 01 Sep 2025 07:22:32 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRmTwtB2"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b84367affso20631265e9.3;
+        Mon, 01 Sep 2025 07:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756738661; x=1757343461; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
+        b=RRmTwtB20vdGOCCkaO4hmnEL4ggDXjIjBPQ8TxfZb2mAqThEmYaEZ+9huOo2qOjg9i
+         UNJwjzEshj1gYPraSR9NDSc+qRZXbnPBKcHg+4n9kNateuspzRyIQ4pPmpJt4x818b4M
+         /yEHKLetYEuN7WV0s0Osct/lbGGx9aGTnke60uOtOthSoMMaWtNnbhPhTzsHDT3P96HR
+         Sd2NgUVti2CKCAKa11TBOrtMkGFtu4gTcJnPusU/xmjKCTScd3Mpfjx2WONvcIQ0F7/z
+         Cxg/U4/whYwSIRzzW1P+CsLCWqVaPJlwdx8xsSU8VAJpYOGEW1ob9li2R8AVjGXMs2uP
+         65EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756736551; x=1757341351;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZLSh+dplZEwqkEY2vG9Ve5oAn8yIPZsqSTneX9R1ncI=;
-        b=v0aoxuA2cQ2o89uBABmTmjTy9xALEnlLuMh0c7Y0aGvbyGTDnr2/d2m+3sZvdIeSr0
-         WBM0YyWsVfLSg7vcmagDqt3CVSJxUAARlomhLaALAAWcBWn1Y69+5Oiz0r9uM0sj4oMk
-         ocrohOEJNbzqmJGZzuvV83wHIjImd7HDSfTtwOANn4UXN9ynG0FZYzAbVkj96hYGVf/x
-         8nXH3vYUYNjrS8bT4sOnN1bvnZwjIDNYlWMEb0Fs9MpwL2ahD3xTMKxTsF2UHqv5TU/D
-         PZwJy+kDV7WqioQUg8k9S962H+gOdzS7Jaudff7iO7Fd6tYPxyz8f5KIKjV6IkdqjMnK
-         3kFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFPld4OzW5NQl7A+ZE+AnXpgqy+wC4X3gRFVInn5VK2wXInLur6bHzk6/O7oezsV/vU/izObMRfrrAAB8lSB3AA5A=@vger.kernel.org, AJvYcCUnTBzKQvPFycbiFmfjjq0GvzV9AGUJMZ9RrHFWDEtvcIYUF4Euu2coxcW3KVBUIbKxOC6TptZj97knZHIG@vger.kernel.org, AJvYcCVsSUu/kJJY/Ev0EyFq9tcpshUwtYYKhsShLASYpltF6WfpwVkjmmf3syVFoiJkyv5sMHfuw5D3XHs/@vger.kernel.org, AJvYcCWyRU6DtfqPLBJSuUG9MZZBrWAsy/hnIsnP1GoSGHjNjBVv+f/xz4TaqaYfQpcb1OUkxK3I2VIS3+8Y@vger.kernel.org, AJvYcCXHMSTR/eDhrl0ooXfHV6OmSjT9q/wtdVFmMWLNleTR644UIrX6kvd32vq93grDaGK2Gt1yemnJ4PNo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBDKj1Zp7kJnEfSgPbZD+zwx7tMaYNPkB52gBYzF5cqMOqMJ/P
-	BREmIoqN94yPfpw2g1S5PNv2LVKoKr5bGTg2yyxPCOKE0dsUf4/25gp1CTAnIMSJsY8=
-X-Gm-Gg: ASbGncsMwiEN6U0iCiD2CnBF/7bZ8fV/vZ/0+Sdc1D0otjo5P1Q+LxAS39yG2XDolYz
-	KQlwsijzTqh5Q1HeSQAW2YpzC/YXA6wAKtKEe6q+A4ENtS9vmWMt4le4cRyKeuIVOSclBlTJIHW
-	s0J2wlp9fnyozk1U8RF1htqeUngIqo01zAV6GBO2Gpd1l1MzjicGMHaannl1OOf4QAsHKsgU130
-	ENUy1VsKiBtK6ekuaZQRRNqjVRoSxx72WnRQtaBJpHgRebDBBcFrTb8pMf5+BATov96hnRKjclW
-	n6q6PQsu7Kw7h9bZqQlhF+5B80adV9wNzT7URka3t0O1wotyGc4ektQebg4hR7PjWnljWrrDvWS
-	LpfqjyobGsCt6N3WlDTZh4DAdmHpvy/lB9yR2u6YhCN9JPrZ/SgO/cvviO6KAfeta4FutzL0=
-X-Google-Smtp-Source: AGHT+IGC257Aw+fZqXY2/N7+wrXBPK23LMp16sDZmIRYFaUG/SgrNrcH3CfrUWyvy1KMBk7MjoDL3Q==
-X-Received: by 2002:a05:6122:2022:b0:544:8e42:aac with SMTP id 71dfb90a1353d-544a01c9c7fmr2966331e0c.4.1756736551196;
-        Mon, 01 Sep 2025 07:22:31 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491464a00sm4366781e0c.16.2025.09.01.07.22.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 07:22:30 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5299769c79cso2031008137.3;
-        Mon, 01 Sep 2025 07:22:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZzJg+nBj8o49Z8HxedbGnuD+K10k0K55/USha4BDDETfZpRKXMMWqjg8j/IIMDPOuvKjVVUGki2Kvn890ptFUGKs=@vger.kernel.org, AJvYcCVqNF2g1EtzcM0ATyVwR5NXwTRI1J8dDIlCPMFKaVKMYF0poEmlv6VyI0ZZJgyVvxAPxrjSKmxfA1VsX4Sx@vger.kernel.org, AJvYcCWSLzKsTIAK+eSTZ3uZYP/ETwzJdrQVTwxKj+E1vjusyUZdK7oHTbU3l8m5DA8jGKK+HSemMVdVUm6B@vger.kernel.org, AJvYcCWajs9Acl6kied5UiRurUEv7cCOgDSXN2Svcez7Kuyp3IU9AVowWTJxBcX8NmmSH9Y0DF0T+eNu4Q4e@vger.kernel.org, AJvYcCXgxgNTEbKiOvgRHaosvxpHlEw0qF+i/vTZykUQnsh/cMuP4f1yJI1DVRchH/ff/6ZioBmHb+4csrR8@vger.kernel.org
-X-Received: by 2002:a05:6102:6a8c:b0:519:f3b6:a1ae with SMTP id
- ada2fe7eead31-52b1bb104c4mr2181488137.22.1756736549969; Mon, 01 Sep 2025
- 07:22:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756738661; x=1757343461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
+        b=JegxAnuI47VuiZ8D3e/WgWLKuqUYooWJWlNxoGmxX5kR46Ah0nw7AlrXd0d79OtJV9
+         aumODBkH3jXt54s9P+eX01WmIgnIc6LNmlpag3u51faTWwlpvnOmLX4xVghJ0ajhRu2M
+         5WtEgf3ezuTQyVkkG483rVnCE3W3WWTJsh3P915xm5Ybkv99kLZT9ZsMNwPVbE5yrjjM
+         apXVvOfiWolMKs0CQkRF+0MJMlshF9nZaYpM0ORGly92PVftoXL8soXDX8II0xoy0FcI
+         yUr1SSd4b0wQI67C6yATSCCEQmOyo7/trbODn5k6fZFlXq+YvT2NJvqiCZA6sAxjD45R
+         dz8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/OHVLK3KVxuB+s5tHyUiOiDA9NBP0MLvvp8obkkKroDT06Rx0wdkF5+xbx2bCtSN2+9mrGF0NXHcMC7gO@vger.kernel.org, AJvYcCVw+3cy03ZwtyClR6nPKDD8jfvj0z3YFfPV7csYdjhnL3H1QaaWCOjjEecV893yqJnqg+zSj1CrgWFL@vger.kernel.org, AJvYcCWGi+YOQ/9XbMulFnSCsJ34Q1C6B0swQ7lxX3q7+RGApptrS9Jo9gbrzXk8sJz4XV3F7Ux4PWy3J7GS@vger.kernel.org, AJvYcCXY6ffARmyQt+9xYyB1sxgN3JLooj933MDBfpvspEUDkeYQy7AKA1Nkr+z0Xnmy7V6bJeMgmz+/mibK42Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3hQfbIDCuAM0A2ESt+fqAVR6s8D5mlHHqSYWuHbZjeXG7GMy0
+	ksq8gs0P6atcQv7xUJRupHm+pTtdpOwIMVeSBJWwomiyWQc4UGj2ARYC
+X-Gm-Gg: ASbGncu8/vqywxpERMIyXfunOUglQ1lF5z+j8+yHxqA2UOnD5hCtvizLlFxlQLKO3wF
+	4Yby6qgycdixFXPamzpOzD9OnkOGyDea1Nb0/O82s+q83kspMcLzR1KG94pQtE6xleHdlBCxyXn
+	MUJqm6F0yDst+dWj1dog3/LiVEHS9JdS7DZ9YjXmY4Q1mG6bTF0EyNDqLxR6P9zqGjUfeNjbiBU
+	WDsJvotrPy7CfTuP3ChxBQnbe1rI/iZAJXHVBxUXQH6Rv8epIMSjLF4eMmJqo+QxVn7V1rdXlZY
+	5NShOZ2fcBJgaWyYK3FwRsJK2+Btj3tvXEFKVEZL3a45WIs/tq6YfvuHGthks8bIceBJc5YVT4H
+	pRHN+9TFNQHecMiYFmMuo6ilm8+rZIAk6hi9reqOUrYKz4LZL2bgxxHp5yVsdfO45veGUNaubV5
+	lL21UvdGKIlrxGw3U+Lyk=
+X-Google-Smtp-Source: AGHT+IE8oJAQTsRIreD3B3G8iVhHG5yD2Ojfb6uoThjNjE6os7CLdXOhZ5jtB7Lc8aVcNrY1HYylhw==
+X-Received: by 2002:a05:6000:22c2:b0:3c9:b8b7:ea40 with SMTP id ffacd0b85a97d-3d1de5b08ccmr6018724f8f.38.1756738661236;
+        Mon, 01 Sep 2025 07:57:41 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d520eada16sm6918744f8f.41.2025.09.01.07.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 07:57:39 -0700 (PDT)
+Date: Mon, 1 Sep 2025 16:57:37 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+Message-ID: <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
+References: <20250829122235.119745-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
- <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
- <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev> <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
- <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com> <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
-In-Reply-To: <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 1 Sep 2025 16:22:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
-X-Gm-Features: Ac12FXyQcXb7KMSqJ3_EYSyMFOnb1q5L0gNjUWq7UpBRH6SSlGff4BAwA-gDtnc
-Message-ID: <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, bhelgaas@google.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, catalin.marinas@arm.com, 
-	will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tycn7npmaoa7dfae"
+Content-Disposition: inline
+In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
 
-Hi Mani,
 
-On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
-> > On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> > > On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
-> > > > On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
-> > > > > On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
-> > > > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > > >>
-> > > > >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> > > > >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> > > > >> only as a root complex, with a single-lane (x1) configuration. The
-> > > > >> controller includes Type 1 configuration registers, as well as IP
-> > > > >> specific registers (called AXI registers) required for various adjustments.
-> > > > >>
-> > > > >> Hardware manual can be downloaded from the address in the "Link" section.
-> > > > >> The following steps should be followed to access the manual:
-> > > > >> 1/ Click the "User Manual" button
-> > > > >> 2/ Click "Confirm"; this will start downloading an archive
-> > > > >> 3/ Open the downloaded archive
-> > > > >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> > > > >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
-> > > > >>
-> > > > >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
-> > > > >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > > > >> +  ret = pm_runtime_resume_and_get(dev);
-> > > > >> +  if (ret)
-> > > > >> +          return ret;
-> > > > >> +
-> > > > >
-> > > > > Do you really need to do resume_and_get()? If not, you should do:
-> > > >
-> > > > It it's needed to enable the clock PM domain the device is part of.
-> > > >
-> > >
-> > > I've replied below.
-> > >
-> > > > >
-> > > > >     pm_runtime_set_active()
-> > > > >     pm_runtime_no_callbacks()
-> > > > >     devm_pm_runtime_enable()
-> >
-> > > > >> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
-> > > > >> +{
-> > > > >> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
-> > > > >> +  const struct rzg3s_pcie_soc_data *data = host->data;
-> > > > >> +  struct regmap *sysc = host->sysc;
-> > > > >> +  int ret;
-> > > > >> +
-> > > > >> +  ret = pm_runtime_put_sync(dev);
-> > > > >> +  if (ret)
-> > > > >> +          return ret;
-> > > > >
-> > > > > Since there are no runtime callbacks present, managing runtime PM in the driver
-> > > > > makes no sense.
-> > > >
-> > > > The PCIe device is part of a clock power domain. Dropping
-> > > > pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
-> > > > IP failing to work as its clocks will not be enabled/disabled. If you don't
-> > > > like the pm_runtime_* approach that could be replaced with:
-> > > >
-> > > > devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
-> > > > suspend/resume. W/o clocks the IP can't work.
-> > >
-> > > Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
-> > > if you have a power domain attached to the IP, which you also do as I see now.
-> > > So to conclude, you should enable/disable the clocks explicitly for managing
-> > > clocks and use runtime PM APIs for managing the power domain associated with
-> > > clock controller.
-> >
-> > Why? For the past decade, we've been trying to get rid of explicit
-> > module clock handling for all devices that are always part of a
-> > clock domain.
-> >
-> > The Linux PM Domain abstraction is meant for both power and clock
-> > domains.  This is especially useful when a device is present on multiple
-> > SoCs, on some also part of a power domain,  and the number of module
-> > clocks that needs to be enabled for it to function is not the same on
-> > all SoCs.  In such cases, the PM Domain abstraction takes care of many
-> > of the integration-specific differences.
->
-> Hmm, my understanding was that we need to explicitly handle clocks from the
-> consumer drivers. But that maybe because, the client drivers I've dealt with
-> requires configuring the clocks (like setting the rate, re-parenting etc...) on
-> their own. But if there is no such requirement, then I guess it is OK to rely on
-> the PM core and clock controller drivers.
+--tycn7npmaoa7dfae
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+MIME-Version: 1.0
 
-When you need to know the actual clock rate, or change it, you
-indeed have to handle the clock explicitly.  But it still may be enabled
-automatically through the clock domain.
+On Fri, Aug 29, 2025 at 03:22:30PM +0300, Svyatoslav Ryhel wrote:
+> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> a ring oscillator and translates voltage changes into frequency
+> compensation changes needed to prevent the CPU from failing and is
+> essential for correct CPU frequency scaling.
+>=20
+> ---
+> Changes in v2:
+> - dropped 'drivers:' from commit title
+> - aligned naming to Tegra114
+>=20
+> Changes in v3:
+> - add DFLL support for Tegra 114 was split into dt header addition,
+>   DFLL reset configuration and CVB tables implementation.
+> - added cleaner commit message to dt header commit
+> - added T210_ prefixes to Tegra210 CVB table macros
+>=20
+> Changes in v4:
+> - expanded commit message of car header adding commit
+>=20
+> Changes in v5:
+> - renamed tegra114-car.h to nvidia,tegra114-car.h
+> ---
+>=20
+> Svyatoslav Ryhel (4):
+>   dt-bindings: reset: add Tegra114 car header
+>   clk: tegra: add DFLL DVCO reset control for Tegra114
+>   clk: tegra: dfll: add CVB tables for Tegra114
+>   ARM: tegra: Add DFLL clock support for Tegra114
 
-> > > But please add a comment above pm_runtime_resume_and_get() to make it clear as
-> > > most of the controller drivers are calling it for no reason.
-> >
-> > Note that any child device that uses Runtime PM depends on all
-> > its parents in the hierarchy to call pm_runtime_enable() and
-> > pm_runtime_resume_and_get().
->
-> Two things to note from your statement:
->
-> 1. 'child device that uses runtime PM' - Not all child drivers are doing
-> runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
-> unless they depend on the parent for resource enablement as below.
+Hi Michael, Stephen,
 
-It indeed depends on the child device, and on the bus.  For e.g. an
-Ethernet controller connected to a simple SoC expansion bus, the bus must
-be powered and clock, which is what "simple-pm-bus" takes care of
-("simple-bus" does not).
+Given the cross-dependency between the dt-bindings header, the driver
+and the DT, do you want me to pick this up into the Tegra tree and
+resolve the dependency there?
 
-> 2. 'child devices depending on parents in the hierarchy' - Again, not all
-> child drivers require their parent to enable the resources. In those cases, they
-> can just call pm_runtime_set_active() and pm_runtime_enable() in their probe.
-> There is absolutely no need to do pm_runtime_resume_and_get() AFAIK (correct me
-> if I'm wrong).
+Thanks,
+Thierry
 
-pm_runtime_set_active() may be sufficient, but I am not 100% sure.
+--tycn7npmaoa7dfae
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-                        Geert
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmi1tF4ACgkQ3SOs138+
+s6GCjw/9FaBlmOFR66ZgQ4g/k7rwkx5Hgs+m6KaCb08u3lPgkjX0F1Gs9nY3OykP
+jbZkiF/ySaikqLVlRx1tubkMqxUs95IvC7olR0RMdS6LnYhNfYTya9sLsMlRcVFI
+G3vBmESQmnjeNhsRTu09rVJKdm9e+Lf9U+g1OIkc0Am4seATEboMsjmlkAKD0ShG
+lNFBogwug4mR5inB3t0UGoi32e+jAzf1OaayhVCg4B+dQvsu3Z83ezjpGhbvOnwQ
+wZim9UI0P9V/LeaoUsc1zzGjzxhvxRQ2gd7UpcGZAC4jiIrOqm+Tk4KP9uAkPNEC
+Hzmekdf1DUVh90b33DftkXqEYnacfndauCTokb7tbV3pwsgcm+2rgFkxYpnet+pS
+11cmXg9P1Dk8HbzIkoEjv7jypbzVIlbAwWOfkmyoQH2kV0kM7Zr3THv/YdbkOiY9
+vzFfzkDIl73c0XgjEjWDnbpUdCzyMruJwxs+vq4MF4+HxaPWXMKBquScQT10M1S+
+ciVtQkVNEm2VI1KOQIpgqMmOuS41+rOVTzlYZMRYF9hKHJZTl5zm3RpnYcInIi0W
+z8sP+tC6+mgo3y4PDJ/NDdZh6ubHUn2iprz4U4mVJZcKwR1KA+Pm/FKeYEFUm89+
+kbom4wlZgRZA3yh547LyK1yDh5zi+3eg6lcQV3I6Ki1D07k95W0=
+=AP1F
+-----END PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--tycn7npmaoa7dfae--
