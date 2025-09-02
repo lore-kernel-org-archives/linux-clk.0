@@ -1,67 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA43D76;
-	Tue,  2 Sep 2025 08:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF2E2EDD75;
+	Tue,  2 Sep 2025 09:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801304; cv=none; b=sATF2Aocsa7Uk1CZ5DWgrK2fy+/rWN00+pA3pE6U1OfpXVzqA+mqSKVPOPViPz9peWyi+CcWGfRzf/4y8FtH75GsAyJKGNR3WuICpWQI+1wATSuuFOUmfaGU9kYzgbE41ctDGAcfNgt7CfS1YFXEEYZ57D99058tMIXwLBNn0zg=
+	t=1756806618; cv=none; b=sgD07QZkId2ZD674kP1lQnxVLsBJluDODNhRMpqgqOLCCqcpTXs9l6eq9NGhXWuhRR3wGtuAZws/mCzMck/MBrlFxZvFbDIDeTnXoXA//LOcJk9gT0DwXdInr7XBXTrdYYxTSR0a+lsMG9vhykfCZeDJZW7CLtVTHgpQIQvqatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801304; c=relaxed/simple;
-	bh=HTP71WhzGipeCSBajL8ANOHMk6CxNR64g0iCm2wt0kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DPBFEsHPYteEfEry8q6hdOptipFIOL+Y4+ESSvL17LX1TcI2d5rYDvb8Z2NKVqyNj8XIlfuWR2DLM4KP0my6KUzwpbmu1Ts8gU3rIEEHWQfMLR7d0daK/7e/tOBNTLLhKDZ0HU3EuNO39rhXHTk2eIZCyIyS2nLnMojnAg3SDmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9CIxXWk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756806618; c=relaxed/simple;
+	bh=ezKvsUrfP+7bg4ys751Ino9ZSoBxTPU7y+g2rK+k9u0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=X2qe/yKs4mnwt14WdPeVR5W90mNI4nB5dMjjHV+YGqBigNzDfpSaos07J2mmHg9kcquZsMzq1+84frhOZoec1xN/hn3RcuzdBpTUne8S2f4IxjdmNsvSNr+4h1+TeZviWjgw4t3tP9F+ngGc8/8FZThOltoOyJbZXQcsCtYG5Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNxoblO5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9CIxXWk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E31C4CEF7;
-	Tue,  2 Sep 2025 08:21:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNxoblO5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132EAC4CEF7;
+	Tue,  2 Sep 2025 09:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756801303;
-	bh=HTP71WhzGipeCSBajL8ANOHMk6CxNR64g0iCm2wt0kk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J9CIxXWkCuROnlh1iQx3SkkD051nxRcFCvy3ABzDYcrX5XJ3Q5xYOCu7zcxDYplD1
-	 TRrLbvXVKN2JO05Krc/nJ+o+6pBYkJO+r2CfpQLA8Q17L7F/YbvWZko1YzwQ2O2fAX
-	 2eA2KKS/xk3JmPaqY0GRjM8RQQl6WXtMr1s2gDxN/g2tn+5l/nlhGmrzEIhLYrUyyj
-	 JgNTrjC91rCsxIY4KbTeguaGw3NGt+GGDsqC4rMikKQHhW1hglPjD7J6KemtDEYsX3
-	 QGcJ7aEAqyGaqdk8evBorVaQhPT3wTSm74NnmsPJOhSVCDgBim6XXd0bAsnIVkSaGU
-	 UC3YOcz1/C7Cg==
-Date: Tue, 2 Sep 2025 10:21:40 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add DISPCC and reset controller
- for GLYMUR SoC
-Message-ID: <20250902-loutish-dangerous-trout-cf4e47@kuoka>
-References: <20250829-glymur-disp-clock-controllers-v1-0-0ce6fabd837c@oss.qualcomm.com>
- <20250829-glymur-disp-clock-controllers-v1-1-0ce6fabd837c@oss.qualcomm.com>
+	s=k20201202; t=1756806616;
+	bh=ezKvsUrfP+7bg4ys751Ino9ZSoBxTPU7y+g2rK+k9u0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KNxoblO5Sx/ehSK0U2W9GiqHuVOzhJSb7kD3vaI70GyGceuKbG+KvE6ruqCgFklMw
+	 8zZyf1nfyYFw5LmN56iceCDpfS8d4Y67IG4IbTucGwV8MARhd0o1XIbZItCjhuaHi2
+	 OlgirLVDV8xX5UODlNDbwRuzgw66YoN0Da056zvV8wH1kISVDt9jAlbwYxXc1AhClo
+	 lgGkAi/2+IUGfiHn/mgKtIy7YaXUYDuweeBbwkmUb2efseyOgL1OfdY0yxUE00OMiO
+	 9XfPoyCDzoZ+8Bt4PmZcZKz5IjQW2LxFc9RErKY07NhfJA9pUao0U1+fnVtii/uHn2
+	 CziRlVHmKITAA==
+From: Vinod Koul <vkoul@kernel.org>
+To: tomm.merciai@gmail.com, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+ prabhakar.mahadev-lad.rj@bp.renesas.com, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+Subject: Re: (subset) [PATCH 0/3] Add DMAC support to the RZ/G3E
+Message-Id: <175680661258.246694.16970472340052106378.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 15:20:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829-glymur-disp-clock-controllers-v1-1-0ce6fabd837c@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, Aug 29, 2025 at 01:28:03PM +0530, Taniya Das wrote:
-> Add the device tree bindings for the display clock controller which are
-> required on Qualcomm Glymur SoC.
+
+On Fri, 01 Aug 2025 10:48:20 +0200, Tommaso Merciai wrote:
+> This series adds DMAC support to the Renesas RZ/G3E SoC.
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,glymur-dispcc.yaml         |  99 ++++++++++++++++++
->  include/dt-bindings/clock/qcom,glymur-dispcc.h     | 114 +++++++++++++++++++++
->  2 files changed, 213 insertions(+)
+> Thanks & Regards,
+> Tommaso
+> 
+> Tommaso Merciai (3):
+>   clk: renesas: r9a09g047: Add entries for the DMACs
+>   dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+>   arm64: dts: renesas: r9a09g047: Add DMAC nodes
+> 
+> [...]
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied, thanks!
+
+[2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+      commit: cc0bacac6de7763a038550cf43cb94634d8be9cd
 
 Best regards,
-Krzysztof
+-- 
+~Vinod
+
 
