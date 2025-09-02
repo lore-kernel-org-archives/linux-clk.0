@@ -1,70 +1,70 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139DA1E51D
-	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 21:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E66E18991E
+	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 22:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849764; cv=none; b=IObOqxmm4X/CwiwymX3zYlgp6CO0o6bgM/GVMv3NEa+avXaGoiy+tA3xbfAXMQ58pnYkPSnn4bi/+F/6hxu0+RXVK2XfwJ4vBRExuFsTbqxTQr+vRTcNeZRO7aMQgzQzr/ksysWclm3f7wQ7OMpeK6w+aly6lfrIZm9y9o8C38Y=
+	t=1756850481; cv=none; b=HdcyW5RvLdsUOWnHRyi+cZgwvqPDiV5QkGHjOTlAhxIfTiJ441iuOE2Rb3OdQ0XjAMtFUI+/5uI52VQUjuT5+OA9BOu+8fwu8PXzpD5nyMFmIVGNkG2kd83VS8w6/fUroA8eN2AR8Fi7KoQGQsqezuivomjgIzp1xOC1l2P2Qxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849764; c=relaxed/simple;
-	bh=neN4/Xko4YcDJzuw40O/2fBeVJJQtw7JPWEFeXXUNzY=;
+	s=arc-20240116; t=1756850481; c=relaxed/simple;
+	bh=1N0OiT1hYOKXa5OlHLueqrsCjuk6IWGRfgcwjdOYwNU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEbME6x9HdlUbkWau8Q6RBw3hjR7nmAGlik/r51s+bGbr6Q1+99ScZQG1nFHqjFBFIODuTKVNqWM38HaY0/1jPqiLJwGtuepZNhvLuLP8zfj/V6zltqZ9YszwZeQ+M5qQyjhku6fm0kHs2IdToJLw2eTN3FBSbpf7SM5fNZGh9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5XzPNru; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=bswqXxIdzGID5GMn6pMWUF4G1+GQhFPf71+AldhaG+KFlM/YAeT9/gt5EkcFQuB9n+MQNS/9Zs+NPCq20vbzfuqu2Hh257I+N6fEn6AYhM30w2GW7L+QJkuksO/9eXk5J2V52As+wTB97jSRKruMALlnySXL9bIyKHdWAd8QtRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8ALRLwb; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5XzPNru"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8ALRLwb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756849761;
+	s=mimecast20190719; t=1756850478;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hsHmX5g0hW2RuOd+pFemlGczz+YYMgcCD+tzI6cEH+Y=;
-	b=e5XzPNruVwIa5n3YPpbPJSxwK0Sty0D02i/oMxKLLKsCxTGecGH63Bo8bwZqvsn9Oz9LPB
-	PdCAlbGH9E/W3xTRmhmPQS4uhJ3xXJIdbXlK6TV/H32OAQOPFn1SpAGHmDwicT4kvQYUXX
-	DL+G2oDMVsXAALzZgkduUvP6c6+TucM=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=SovXZeidkxb+f2nxu3IUvrmsRI1+mbgwRLBssLQhxNA=;
+	b=S8ALRLwbPrEbayi92AyR/gIYcU0iCbP43z5Yt+LFxAK4uTJZGyjhyDLh1QgEpAIghpZ8y7
+	+ICxLOTG2B2bI6FR9941VNVc2QcotH1NNzA1dtdFt+rRl/af7Tamnlqywhl1cYs+TFVzZR
+	cjvpU5zsBOyGfVRGgwZX/T7p9qaGbtY=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-P4SCoaVBPTK9sVjTEfCFQA-1; Tue, 02 Sep 2025 17:49:20 -0400
-X-MC-Unique: P4SCoaVBPTK9sVjTEfCFQA-1
-X-Mimecast-MFC-AGG-ID: P4SCoaVBPTK9sVjTEfCFQA_1756849760
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-72048b6e865so23911736d6.2
-        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 14:49:20 -0700 (PDT)
+ us-mta-594-K9db2q8iNemZPuive9Ro2Q-1; Tue, 02 Sep 2025 18:01:17 -0400
+X-MC-Unique: K9db2q8iNemZPuive9Ro2Q-1
+X-Mimecast-MFC-AGG-ID: K9db2q8iNemZPuive9Ro2Q_1756850477
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-807056330b6so152348785a.0
+        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 15:01:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756849760; x=1757454560;
+        d=1e100.net; s=20230601; t=1756850477; x=1757455277;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hsHmX5g0hW2RuOd+pFemlGczz+YYMgcCD+tzI6cEH+Y=;
-        b=pZ4ux332KL5XgwlGbqplTNyDNHhL7anbi2K9x3RUr4jYEfXAIitviV3WraCtxgbF2u
-         TBPwaHauRuBz6joEfdGyUiO1Zk95eigO+FtGIMs/ecPUn9XNAHGSO0QgzBm+Yx9O754S
-         PO3bSOotBaye4n4+vYaCwj8lDRis19M2ccJS1Nv0d1Wc2/lKIq+dY0ilt3pZk0ik77jz
-         lBg4ZY7iyHt6fVUAnVT/uo2y8+9XavB8Vpbj4PJv0PCTMUpvx+BxFKPhthJ7dmIYiMMF
-         MagTejxE7wtMjXO8BMZ4URcz16IvPcaAGYEIKmzN3N5mAHZPpQexeWdVe8YLPXFiNrG8
-         PObw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzUyIeQCgKRYVIFvHxmO+/AMcGAzzGwqri+85s/DqJfBtnVL5mZUlj8ok0NbwGPFp4zcLUcyKKsCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVesJcwfqO/21eGmpyTdA0vcQYD+Y3RD5mWtkw/g1DhOzxPlmI
-	hsofNe+oXQoxSKqfqf86farFZ3r4qb+bkZIX+ltzIBKlEERsDvnq8tMG+jM2nNsCBy/okwiKpRG
-	2lJLREWqQt0P8F/3aHrlHg8B0Yy/pTUaeWu/HCZW1cQqQUo8egr+60yMP6FDfAQ==
-X-Gm-Gg: ASbGncu1y+GvwRoZIsaNXza15n35zhonLZR9Ffz1Ks4NEXmxFk7MaCNQ8Ne/ji70Vvl
-	Kuw6VWXN5gIrT+OLc7sNuKN8LDRMeKkoAx/aNRmPWyHk48eQoyon32W2udS9Da+hEToYJrchKTm
-	nypp+VS+u4WVeRfl7UqZIuE+N0LvcMzppVW+LWsJ+AivKPiG+WS530eLOTcs5VvKI/wORM0Xda2
-	gZF26fa89krmInZhhz+JSuF8VpGjG/M3QrDD0myNmUeLFb9W2JYqku0kDmalRIuZL7W5mAzf5bw
-	2cyYmB18iQaYktN4QsgB4xFBzcOC5lPhrbxuwxFDVvoVQWhj2VKc8kbdChLpr2VliUO9nMnHpZk
-	Qdgjbd9zF1QmgF/HVSFs=
-X-Received: by 2002:a05:6214:c67:b0:71b:f511:7228 with SMTP id 6a1803df08f44-71bf52ff870mr81595626d6.51.1756849760167;
-        Tue, 02 Sep 2025 14:49:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwgG5MrCRiY+YEj7wHA6pGiT+So5GhjsjCrEdcrEastQ86ZBZAbzbVRYsDLAAf8z1862oXzQ==
-X-Received: by 2002:a05:6214:c67:b0:71b:f511:7228 with SMTP id 6a1803df08f44-71bf52ff870mr81595306d6.51.1756849759591;
-        Tue, 02 Sep 2025 14:49:19 -0700 (PDT)
+        bh=SovXZeidkxb+f2nxu3IUvrmsRI1+mbgwRLBssLQhxNA=;
+        b=nenNJz0yPWfheRahgW3Kr3wiRO8+ygf5ZTZv0csmAX19LY77GvNMiVTerQj4qIA+AA
+         vDACieZL9WYt6ApCBz3YtHVHo0Tdt+O1k3CqyoDNeMLDEHkTwQbIL7vB9IDlVQyx8dek
+         AMqobN+CE+kIGaiSUdQqWrJ4r1+MwSKATIVIbpNLg4qTWEDQr4jN3jHTEI0adOkK0+C0
+         c17bOi+ahjoMX0W90yank6puPNfacAwguf8UBOYoJH078sE7kkmuKCuVsMeQLR/kiQ66
+         yy0mTIi8J2hPdH/th1mb6pYVDVhasyDQbzgSp7z4fgVV7dmEiPpiFaRrq7sSkSjjlooi
+         NTJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVBwv4OvdJx5Y/952SnXNRRnOdn3Rw7o7NRmx6U1RQ064eM68LTD2euh/OoQwG6xr+xLxww+z/nRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvVdFa6IjL415wyn6EvRBwbXHJloA467vE4YxYqB1MuN9qa4FZ
+	+HJ3y7cVX27XqhBqXbqJFzai/E92nM6TNo8mm6anGnXuWrm20HBN2AdSddbqBJv27+/PBHsGSCE
+	renIXoK/s25vSg7d3Ekj7ag8QenQEITZkjVQ/8IfCpW9SawajQw7kjk8obzc9/w==
+X-Gm-Gg: ASbGncuntUah/6uqbXKUGL81XSksrhfK5oEWsMgkQM1mw7fRpnylkeHPjL6MjViBW1Q
+	HxYyGggayLD9AGv+nYb8QGFOhnhIVW6o3WGGXPCP5aWc27Hm2l8ABY/laMYmiiX+vd8F6CO2dfT
+	LnSTlBbI4389rZXTclwGyzpojSkKd4hoUiIEyaZwrE7NsST0K3JL6GnuHoaJuPodG1chkzMo+ir
+	dd4MAqaEfYiWGYgb6G7pIYsMQEckz6LVkdB5bPAAMRofpoCNPPs9QWdGarkSeLTZNv6p2WWFsGU
+	Y8kHUGJj5065XFSA59OXvSjM0BmcGBLRxyPTLk4Sob0qVRY7vngxS8bC5Y9AJrU+/eAYrNFexWx
+	l2mJe5SUoW2xUaOap/u0=
+X-Received: by 2002:a05:620a:3182:b0:7e8:6955:90fe with SMTP id af79cd13be357-7ff2aa225d7mr1459468085a.42.1756850477018;
+        Tue, 02 Sep 2025 15:01:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0PC62ojWiM/vLd9z8Xwp9bJyLjgplk2IMzQjw47Isk4CcYNDohrklNKP/ZniSDGJVijAGoA==
+X-Received: by 2002:a05:620a:3182:b0:7e8:6955:90fe with SMTP id af79cd13be357-7ff2aa225d7mr1459458685a.42.1756850476355;
+        Tue, 02 Sep 2025 15:01:16 -0700 (PDT)
 Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b475d63asm18667696d6.48.2025.09.02.14.49.18
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aaacfeb4bsm15561385a.41.2025.09.02.15.01.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 14:49:19 -0700 (PDT)
-Date: Tue, 2 Sep 2025 17:49:17 -0400
+        Tue, 02 Sep 2025 15:01:15 -0700 (PDT)
+Date: Tue, 2 Sep 2025 18:01:12 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Peng Fan <peng.fan@nxp.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -76,10 +76,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] clk: conf: Support assigned-clock-sscs
-Message-ID: <aLdmXcdJnoeXEJaQ@x1>
+Subject: Re: [PATCH v2 1/3] clk: Introduce clk_hw_set_spread_spectrum
+Message-ID: <aLdpKEwfqP448eMd@x1>
 References: <20250901-clk-ssc-version1-v2-0-1d0a486dffe6@nxp.com>
- <20250901-clk-ssc-version1-v2-2-1d0a486dffe6@nxp.com>
+ <20250901-clk-ssc-version1-v2-1-1d0a486dffe6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,84 +88,105 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901-clk-ssc-version1-v2-2-1d0a486dffe6@nxp.com>
+In-Reply-To: <20250901-clk-ssc-version1-v2-1-1d0a486dffe6@nxp.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Mon, Sep 01, 2025 at 11:51:46AM +0800, Peng Fan wrote:
-> Parse the Spread Spectrum Configuration(SSC) from device tree and configure
-> them before using the clock.
-> 
-> Each SSC is three u32 elements which means '<modfreq spreaddepth
-> modmethod>', so assigned-clock-sscs is an array of multiple three u32
-> elements.
+On Mon, Sep 01, 2025 at 11:51:45AM +0800, Peng Fan wrote:
+> Add clk_hw_set_spread_spectrum to configure a clock to enable spread
+> spectrum feature. set_spread_spectrum ops is added for clk drivers to
+> have their own hardware specific implementation.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/clk/clk-conf.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
+>  drivers/clk/clk.c            | 26 ++++++++++++++++++++++++++
+>  include/linux/clk-provider.h | 26 ++++++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
 > 
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 303a0bb26e54a95655ce094a35b989c97ebc6fd8..dd6083597db3f8f27d86abf5640dfc3fb39a9b88 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -155,6 +155,71 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
->  	return 0;
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b821b2cdb155331c85fafbd2fac8ab3703a08e4d..06db8918a1b35e3280e565272bc4603a88295a92 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2802,6 +2802,32 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
 >  }
+>  EXPORT_SYMBOL_GPL(clk_set_max_rate);
 >  
-> +static int __set_clk_spread_spectrum(struct device_node *node, bool clk_supplier)
+> +int clk_hw_set_spread_spectrum(struct clk_hw *hw, struct clk_spread_spectrum *conf)
 > +{
-> +	struct clk_spread_spectrum *sscs __free(kfree) = NULL;
-> +	u32 elem_size = sizeof(struct clk_spread_spectrum);
-> +	struct of_phandle_args clkspec;
-> +	int rc, count, index;
-> +	struct clk *clk;
+> +	struct clk_core *core;
+> +	int ret;
 > +
-> +	/* modfreq, spreadPercent, modmethod */
-> +	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
-> +	if (count <= 0)
+> +	if (!hw)
 > +		return 0;
 > +
-> +	sscs = kcalloc(count, elem_size, GFP_KERNEL);
-> +	if (!sscs)
-> +		return -ENOMEM;
+> +	core = hw->core;
 > +
-> +	rc = of_property_read_u32_array(node, "assigned-clock-sscs", (u32 *)sscs,
-> +					count * 3);
-> +	if (rc)
-> +		return rc;
+> +	clk_prepare_lock();
 > +
-> +	for (index = 0; index < count; index++) {
-> +		struct clk_spread_spectrum *conf = &sscs[index];
-> +		struct clk_hw *hw;
+> +	ret = clk_pm_runtime_get(core);
+> +	if (ret)
+> +		goto fail;
 > +
-> +		if (!conf->modfreq_hz && !conf->spread_bp && !conf->method)
-> +			continue;
+> +	if (core->ops->set_spread_spectrum)
+> +		ret = core->ops->set_spread_spectrum(hw, conf);
 > +
-> +		rc = of_parse_phandle_with_args(node, "assigned-clocks", "#clock-cells",
-> +						index, &clkspec);
-> +		if (rc < 0) {
-> +			/* skip empty (null) phandles */
-> +			if (rc == -ENOENT)
-> +				continue;
-> +			else
-> +				return rc;
-> +		}
+> +	clk_pm_runtime_put(core);
 > +
-> +		if (clkspec.np == node && !clk_supplier) {
-> +			of_node_put(clkspec.np);
-> +			return 0;
-> +		}
+> +fail:
+> +	clk_prepare_unlock();
+> +	return ret;
+> +}
 > +
-> +		clk = of_clk_get_from_provider(&clkspec);
-> +		of_node_put(clkspec.np);
-> +		if (IS_ERR(clk)) {
-> +			if (PTR_ERR(clk) != -EPROBE_DEFER)
-> +				pr_warn("clk: couldn't get clock %d for %pOF\n",
-> +					index, node);
-> +			return PTR_ERR(clk);
+>  /**
+>   * clk_get_parent - return the parent of a clk
+>   * @clk: the clk whose parent gets returned
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 630705a47129453c241f1b1755f2c2f2a7ed8f77..251035a96244c34ff2cbaaa349a08f4ea094e7fc 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -84,6 +84,24 @@ struct clk_duty {
+>  	unsigned int den;
+>  };
+>  
+> +#define	CLK_SSC_NO_SPREAD	0
+> +#define	CLK_SSC_CENTER_SPREAD	1
+> +#define	CLK_SSC_UP_SPREAD	2
+> +#define	CLK_SSC_DOWN_SPREAD	3
+> +
+> +/**
+> + * struct clk_spread_spectrum - Structure encoding spread spectrum of a clock
+> + *
+> + * @modfreq_hz:		Modulation frequency
+> + * @spread_bp:		Modulation percent in permyriad
+> + * @method:		Modulation method
+> + */
+> +struct clk_spread_spectrum {
+> +	u32 modfreq_hz;
+> +	u32 spread_bp;
+> +	u32 method;
+> +};
+> +
+>  /**
+>   * struct clk_ops -  Callback operations for hardware clocks; these are to
+>   * be provided by the clock implementation, and will be called by drivers
+> @@ -178,6 +196,11 @@ struct clk_duty {
+>   *		separately via calls to .set_parent and .set_rate.
+>   *		Returns 0 on success, -EERROR otherwise.
+>   *
+> + * @set_spread_spectrum: Configure the modulation frequency, modulation percentage
+> + *		and method. This callback is optional for clocks that does not
+> + *		support spread spectrum feature or no need to enable this feature.
+> + *		Returns 0 on success, -EERROR otherwise.
 
-This chunk can be replaced with dev_warn_probe(). Sorry I missed that in
-v1. Otherwise the rest looks good to me. With that fixed:
+I think it would be worthwhile to call out in the kdocs that this helps
+to reduce EMI. How does this sound?
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+@set_spread_spectrum: Optional callback used to configure the spread
+		spectrum modulation frequency, percentage, and method
+		to reduce EMI by spreading the clock frequency over a
+		wider range.
+		Returns 0 on success, -EERROR otherwise.
+
+Everything else looks good to me.
+
+Brian
 
