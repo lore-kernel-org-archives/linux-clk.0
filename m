@@ -1,122 +1,123 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C092FABE9
-	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 12:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA988285CA3;
+	Tue,  2 Sep 2025 12:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815494; cv=none; b=Q6E+zDDR3DcZFEeWT5UR0VUFfyPNQQoZmxOuMZvZMsMySfLCuOoN2UuIWDIv8Y36lOh1rzpBd/oWDVNokcu7bHnv2boUvpcmizpAiEuwXUhmi/xj85zyPzOUPuDW3FNfDE2E1KDXauQH8py3Neu3ua0kCh4J0FqFQuL5IydjNkw=
+	t=1756815512; cv=none; b=ITTDm3RNKVge99fYOAJqRkNshGDtTvV88gdSFhDoFe8YLIaxJeeVitFqsdpObkGDvkAALR5nCXPcywJmXaBwLVIkHR20h4eFuNooNnNCJ6bUuIXl+kk0DIF03CUc1fod2pJUnsKBBjkyLVul6IYCNJ2J5P5s08+rMQUyuZnBx08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815494; c=relaxed/simple;
-	bh=iV9OOBcP8NNsmpN1fZ74F397+PanErPMHV3l66Lj7mw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NnHtEMr8J6MJbuoA2aMyHzbfp+qniTfDJbo4ECOGFg0bziWqvdiVuVNwbi1xkE+VJuTp7LkLYx5EU1F5mqKAo0kEcsqPKIvBU7nbbJ1W7XvBi+Xg51O0XgJVetbGxoNGT3N014xvIVQafoi1Jha/ADr/k/Q1w3CNzxaKRnGWF5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7s22P4q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7s22P4q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756815491;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
-	b=h7s22P4q6Mqh5ELUOM0ZFIcvvMNpESHT8cAn+XNmYtuLV5ggXZ47ep83+dePzdw5X14vAt
-	NRgsJhn0OrENMczSX+jA3OdXrw9djy0W11KfunvvGhCbv+VRWGUT0j7DKmJPDKe2QmPTTp
-	F4VZ48qre8Rg3R7fkF0b78E9VF8PUig=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-358-QnqHyp6bOBSLg0fS_gBEEg-1; Tue, 02 Sep 2025 08:18:10 -0400
-X-MC-Unique: QnqHyp6bOBSLg0fS_gBEEg-1
-X-Mimecast-MFC-AGG-ID: QnqHyp6bOBSLg0fS_gBEEg_1756815489
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso3794865e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 05:18:09 -0700 (PDT)
+	s=arc-20240116; t=1756815512; c=relaxed/simple;
+	bh=8yb0QwvZWhrmWpeBUjsYnZS0PIV2RPL/27K3Kcf5Dnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pnQc6FWUOP4UolRKVdFkRlonOTU2FZHqglhRv6sd+fKv6gbNw9sXAUI0ORAaqrkPmlkjY7t+YyrpuK9kGLtEUbNmvRROZ0DFqpjyp+4rsQiN0iL8TDbhIOdXEf5IyYkIuWO2vi9w7xHmPUE8kX9kCjhDji0J9NvXDz0V2f3lORY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-544a1485979so956279e0c.3;
+        Tue, 02 Sep 2025 05:18:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756815489; x=1757420289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756815510; x=1757420310;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
-        b=FKKjhltNufz9GzFmwxmg7bPB1371WNQsOdi5UaiBWt01cxVw80HBQ0H1Dfe1ADP+AQ
-         RvZ89/r80jLTq+BsLzd2Q4Q1pHY3CXFmvufiNHb11Pgmezq7u/l9Hwp2dDlGU4mF3j6E
-         ouByg0grRRgh+/KNyMrnUpgsUtnz/V25E6HkZaWs5DwLMsEeWmJmU66SHjaBWs5kBW9Z
-         joDay9VkAAW7v1qreH5WeKHS/zzCEy/3b6dOOopJ/JPzQ5xyEav9JZf5EA/KxPPmHZ5v
-         Ij6Njni5Gkn1xg9VJExSenjLDPpEfJeG/chZzBLSjv/e+mbpjTsZiMSuM+FIs3ZPCo6N
-         k0Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/JEB10bDWm4kx624UEKHCwHXCDoBXvZMpwNba7wBvCb9Tg8vVP6VRkNnu8fmk8a6q4NCNYYshR7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIp6girulA+iVMgyxZstCd17h6RG80lfHpnNA+F1O/aRldE1la
-	BX5EHOdpA2apQ05u3AfPq8Apv/WoOPaq4dYX7btPKG2MDuV4W35moPgTnYJyLsLLTOvBZwsFgIO
-	NDe5UQeEMYzslUplCGFU1X1ATgcmO3tw4s3OMWMWyisEWsCDpOMS5SHocc7E5cQ==
-X-Gm-Gg: ASbGnctL/G7hescvaFqTn4EQDYxASw1+AQ1mI5NWJYSZB/NqVoz4PP5O3MvTGKRk5z0
-	YipWy9QYsdcRKs1eyMkTsGRGzXId3ATO/7WKtG/V/lCrvhXkH5p7W6qIc8LIAY8rbvObCpAW/BX
-	8QrOlxULpR7Y3mKQOzRiN3/ZKfxwsC4GSIDCDrDt98wqi5jT8XC99fBOqfs+mkAUYxBHCmsdI8p
-	3bUPPgXTvBd8y70QzNau3Ja+9kvxEvI8kYSdyhlpnfW8x3W94UhJ4lNUia5/Puu29KS08FkyIaG
-	PBdS020Zjukj/Vtkvs6tCFmDod6J4qjPNJdtug7SCNjW3wvB6QwqwPM6ZQwJVVBFgVNbEyCYakI
-	ZdISwkaROP3rS
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31212055e9.23.1756815488663;
-        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjWniM8t87MstmOKseixN3K4oxvQKmIMmSp/10Fw9hcxqnkqnioeD1dS7AiZVevFngzZ7ccg==
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31211795e9.23.1756815488249;
-        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm191441215e9.10.2025.09.02.05.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:18:07 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] clk: qcom: Select the intended config in QCS_DISPCC_615
-Date: Tue,  2 Sep 2025 14:17:54 +0200
-Message-ID: <20250902121754.277452-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+        bh=NzOWDwUf99hQ6uEzEY7PPEe93JThVL9qbHCe5bHjhTI=;
+        b=wtWDnLMNRKFF0eseXk0bC4RKY/ZJPSO9WZqUZ3s4Z6WuZ3uXTgkWhHFK89bhhNp9Tm
+         sgPdZsSJFlYcNzYdz9k4OJm2dloBgbc7SEwDtaBuf5/lv2Pv614v0eFZmXmXvYG/f2tE
+         TbLDl4EsDp2iRDFPaIyBvn/yAOl0eD7dvcYYBkoecvepXQGyuxvAo4hNurA/ffBfx/EF
+         ZskYBhkugdQ8sEoAntjyJse0y7ZbqD+jELLWMnLkyOl/d6kObTJsOJgkcdzfjUnfWv5h
+         ZwWpvxXxIe4nL119E8Sjd/bVHvY2D+qTLiiluzzYGvwj5YOzLMYTIHmShmBfGrlfoOd0
+         b4cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEVedqYmsN3H/TxbdFYsxYA8oDKdauPx31cckrSHaSDA+qxIHfidE/jdPGAr2R5F+7FapMARp++IQ=@vger.kernel.org, AJvYcCWmB8HK6JdoRsn3pZbgksdeHRtIQEZEyA+0Elhk5xAw+UzH3HR4u/lqEyoU+uD+ig9+xaBe6j1zrFZFUkIE@vger.kernel.org, AJvYcCXRFMfjUGQZr75JUJwtLvluApDqCUdXhzry108j92UI54LWF8TWRD00vSw8MXl3CV75L3KGkNnWcZL54s6lpFc50wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW5UDWvMkMxUBvG3ydl3kFiQ/tDuBR/M5lG5+bEo2BHg54KLYn
+	MkdtdP1uYXq1u1m8NT/UfrB6RAaG7UGvDFjfU++VJ5jKRXxquhFbA+JCUExbQWUu
+X-Gm-Gg: ASbGncti/6YIFDnTLa2ey58C3q+W/kDU6yVIbDmfmCA75PPkoLfwvI2AFAgjxoQVbQh
+	SP8elGwfLXPk6G6KHOMGAZeUnZIyiXNA8wYbIPmovilPytYpByAO6zPJ/tRhcwV0JdZ65Hjcv7F
+	TyO8mQ0sAlX8qr/GfhT7Hts5lXnb62Qn19yAiCgQ9q/Y23+lDH+eq05HwFXs4HVPCpPdVnZBOMi
+	tw9Rqh/UuVqxpCxZkDTTbrK/I4sy6/cK8VR/KY+I185iHbX6fNfbHhm9Md9hOQKtWwNXRaQWW67
+	CNiCKHUybmvZ8BKwVJKX6t07/OITRPMdl/paWrkA3JhIQjjJFSUHp7Fdjhdh04/QEEA1s6/Y915
+	9STMOGg2n6UOfniLuu23iyomY3KZD48lZpeLsIkIKBjYkmvBaIp4Gx6e/+V6oHUc92+Wbh54=
+X-Google-Smtp-Source: AGHT+IHD6Dh/+3CAJT4zemTBuZHBfepKZSeHfLyxRviokJTsyA+IDk8vUUXyU00V43za+RoGutoWoQ==
+X-Received: by 2002:a05:6122:4687:b0:542:1516:2701 with SMTP id 71dfb90a1353d-544a0206014mr2879599e0c.8.1756815509594;
+        Tue, 02 Sep 2025 05:18:29 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491467546sm5374832e0c.17.2025.09.02.05.18.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 05:18:29 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52992b299feso976909137.0;
+        Tue, 02 Sep 2025 05:18:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYwRws7uQbtKGFrBYAqwAI3IiD0CliceZ73nQQUpDrZTJA6DE7uNYjDaoSrABi2iiK1U+aZGmtQxw=@vger.kernel.org, AJvYcCWpGnYrmkrw56hOEksfjzO4uBBjiiU1uDGIQraMS9Zh0b0IjmwDwI43du9KdCYgNSB9NAVRuE8daRThQdPO/vFht2E=@vger.kernel.org, AJvYcCXkqUWznYke1/Sfx0RGzKzOLHvtQXn7Q8H4s1TB2jwRxgTaO3AVwHjf9EasRGI86bGItGRHN8qHOctxS8PL@vger.kernel.org
+X-Received: by 2002:a05:6102:4b84:b0:4fb:f6ea:cf88 with SMTP id
+ ada2fe7eead31-52b19c70a02mr3648232137.10.1756815508508; Tue, 02 Sep 2025
+ 05:18:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250820100428.233913-1-tommaso.merciai.xr@bp.renesas.com> <20250820100428.233913-3-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250820100428.233913-3-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Sep 2025 14:18:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU_grYXJF_L77-6np9iiVGvo52Z7TXN=ft97BuPX2BGxQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwYabVKof05tDQY5PMEkI_og52dzgDW0fzTzAtj0OMk-t41ALz7aSu9OD8
+Message-ID: <CAMuHMdU_grYXJF_L77-6np9iiVGvo52Z7TXN=ft97BuPX2BGxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: rzg2l: Re-assert reset on deassert timeout
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Hi Tommaso,
 
-Commit 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock
-controller driver") adds the config QCS_DISPCC_615, which selects the
-non-existing config QCM_GCC_615. Probably, this is just a three-letter
-abbreviation mix-up here, though. There is a config named QCS_GCC_615,
-and the related config QCS_CAMCC_615 selects that config.
+On Wed, 20 Aug 2025 at 12:05, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Prevent issues during reset deassertion by re-asserting the reset if a
+> timeout occurs when trying to deassert. This ensures the reset line is in a
+> known state and improves reliability for hardware that may not immediately
+> clear the reset monitor bit.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Fix the typo and use the intended config name in the select command.
+Thanks for your patch!
 
-Fixes: 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1667,9 +1667,16 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
+>                 return 0;
+>         }
+>
+> -       return readl_poll_timeout_atomic(priv->base + reg, value,
+> -                                        assert ? (value & mask) : !(value & mask),
+> -                                        10, 200);
+> +       ret = readl_poll_timeout_atomic(priv->base + reg, value,
+> +                                       assert ? (value & mask) : !(value & mask),
+> +                                       10, 200);
+> +       if (ret && !assert) {
+> +               dev_warn(rcdev->dev, "deassert timeout, re-asserting reset id %ld\n", id);
+> +               value = mask << 16;
+> +               writel(value, priv->base + CLK_RST_R(info->resets[id].off));
+> +       }
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index aeb6197d7c90..823125f48346 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -504,7 +504,7 @@ config QCM_DISPCC_2290
- 
- config QCS_DISPCC_615
- 	tristate "QCS615 Display Clock Controller"
--	select QCM_GCC_615
-+	select QCS_GCC_615
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  QCS615 devices.
+Is this an issue you've seen during actual use?
+Would it make sense to print warnings on assertion timeouts, too?
+
+> +
+> +       return ret;
+>  }
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
