@@ -1,66 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127D7261B9E;
-	Tue,  2 Sep 2025 08:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA43D76;
+	Tue,  2 Sep 2025 08:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800956; cv=none; b=DyXjs0YzZGHBr9mzPVWRC+Y1DiRH+ngaisVFtUuyfIG6qzovXa/O8ZlwxlMJ3e2n0YIwkAJo2iR0E5URXP/f+wgVX5hNWlZZFvAFpcAcUYr9gdr/Q7VWDYP1HdrvQAuU+J6YYDBAmuySkxhfW6uRGfjab4XLNhu/Np/N5z84ER0=
+	t=1756801304; cv=none; b=sATF2Aocsa7Uk1CZ5DWgrK2fy+/rWN00+pA3pE6U1OfpXVzqA+mqSKVPOPViPz9peWyi+CcWGfRzf/4y8FtH75GsAyJKGNR3WuICpWQI+1wATSuuFOUmfaGU9kYzgbE41ctDGAcfNgt7CfS1YFXEEYZ57D99058tMIXwLBNn0zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800956; c=relaxed/simple;
-	bh=MJXowf2wgR3zMSaL6vAUZvkiL3FLEXndHtAwni/LPaY=;
+	s=arc-20240116; t=1756801304; c=relaxed/simple;
+	bh=HTP71WhzGipeCSBajL8ANOHMk6CxNR64g0iCm2wt0kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGnnGqlW8A1WpJBVeOi+SVQ20jMlULH365sAc32zTicXrNhkP9tgb0ecqP8Brrb6SYRHICL2fgyc6fbwHMg774HRKXZDPJ01VwF36oE11W96cSPdIspOLv/Hee0MbCfVFafzz6XzV+l7q/+phmBjT3TwBlDD0TOOkbyWcEFsElo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GO+VfbRq; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPBFEsHPYteEfEry8q6hdOptipFIOL+Y4+ESSvL17LX1TcI2d5rYDvb8Z2NKVqyNj8XIlfuWR2DLM4KP0my6KUzwpbmu1Ts8gU3rIEEHWQfMLR7d0daK/7e/tOBNTLLhKDZ0HU3EuNO39rhXHTk2eIZCyIyS2nLnMojnAg3SDmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9CIxXWk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GO+VfbRq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6306C4CEF8;
-	Tue,  2 Sep 2025 08:15:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9CIxXWk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E31C4CEF7;
+	Tue,  2 Sep 2025 08:21:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756800955;
-	bh=MJXowf2wgR3zMSaL6vAUZvkiL3FLEXndHtAwni/LPaY=;
+	s=k20201202; t=1756801303;
+	bh=HTP71WhzGipeCSBajL8ANOHMk6CxNR64g0iCm2wt0kk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GO+VfbRqg9SyCpITfXxDVWS3AFB1Ybu4vslt2juwYAohgQOzzG8IaPTu8RmDqqZG/
-	 /FKExk28TQnHfpxBiGTDwXKUZ8zIiCqUZbc+s50zgq/EMkTikSHjWNfbNXBWaLur5i
-	 TeMui4hHvkRuq9eSR2x1Q0x9+zSIfSiZeyewZFLzi6Bho0kA9HM30lNg95iP8+Ekwz
-	 3atLbvNO+V4KWyks9qP1dbcaa05IGlXBz4c4E6a2Lq71ss1mgtFH0btcGtJ7UamhLZ
-	 lDyHvwgkZMhZG+S6m3cbBvo+dEZEi6KH3ucKLyBIRRaPri0A8NMBtYOKw74GER2oZy
-	 lwLEValqyxfIQ==
-Date: Tue, 2 Sep 2025 10:15:52 +0200
+	b=J9CIxXWkCuROnlh1iQx3SkkD051nxRcFCvy3ABzDYcrX5XJ3Q5xYOCu7zcxDYplD1
+	 TRrLbvXVKN2JO05Krc/nJ+o+6pBYkJO+r2CfpQLA8Q17L7F/YbvWZko1YzwQ2O2fAX
+	 2eA2KKS/xk3JmPaqY0GRjM8RQQl6WXtMr1s2gDxN/g2tn+5l/nlhGmrzEIhLYrUyyj
+	 JgNTrjC91rCsxIY4KbTeguaGw3NGt+GGDsqC4rMikKQHhW1hglPjD7J6KemtDEYsX3
+	 QGcJ7aEAqyGaqdk8evBorVaQhPT3wTSm74NnmsPJOhSVCDgBim6XXd0bAsnIVkSaGU
+	 UC3YOcz1/C7Cg==
+Date: Tue, 2 Sep 2025 10:21:40 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Michael Turquette <mturquette@baylibre.com>, Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>, 
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250902-robin-of-optimal-performance-eeb9c4@kuoka>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add DISPCC and reset controller
+ for GLYMUR SoC
+Message-ID: <20250902-loutish-dangerous-trout-cf4e47@kuoka>
+References: <20250829-glymur-disp-clock-controllers-v1-0-0ce6fabd837c@oss.qualcomm.com>
+ <20250829-glymur-disp-clock-controllers-v1-1-0ce6fabd837c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,19 +48,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250829-glymur-disp-clock-controllers-v1-1-0ce6fabd837c@oss.qualcomm.com>
 
-On Thu, Aug 28, 2025 at 04:01:19PM +0200, Janne Grunau wrote:
-> This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> follow design of the t600x family so copy the structure of SoC *.dtsi
-> files.
+On Fri, Aug 29, 2025 at 01:28:03PM +0530, Taniya Das wrote:
+> Add the device tree bindings for the display clock controller which are
+> required on Qualcomm Glymur SoC.
 > 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,glymur-dispcc.yaml         |  99 ++++++++++++++++++
+>  include/dt-bindings/clock/qcom,glymur-dispcc.h     | 114 +++++++++++++++++++++
+>  2 files changed, 213 insertions(+)
 
-37 patches, 9-15 separate subsystems. That's really not how you are
-suppose to upstream things. Please split this per subsystem. Few
-bindings without drivers could be together, though.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
