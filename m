@@ -1,114 +1,122 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284692882D6;
-	Tue,  2 Sep 2025 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C092FABE9
+	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 12:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815185; cv=none; b=maJNZ9sQrdY3DPLf02FxF8YP2Awq6G/exELwMYaKPSoj8/vILTA2Zgl76MuaiP1ccKnUEmDyd81mlRckBoTFFcMJxlvSnt4Y1XcsjuA9EVW4XGXXKs961GSQfdWLOHozU6YI+n4ZZmupKIME44LFnznDUNbHQmi4vttS0r3qfC0=
+	t=1756815494; cv=none; b=Q6E+zDDR3DcZFEeWT5UR0VUFfyPNQQoZmxOuMZvZMsMySfLCuOoN2UuIWDIv8Y36lOh1rzpBd/oWDVNokcu7bHnv2boUvpcmizpAiEuwXUhmi/xj85zyPzOUPuDW3FNfDE2E1KDXauQH8py3Neu3ua0kCh4J0FqFQuL5IydjNkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815185; c=relaxed/simple;
-	bh=TOhSKm/cs0IcjUSAOvCakjp4LAKiuqz0Bl8m/ahHY5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ypw0C9mh7m/145z8z75ankGHayzQFTdmMY+MsidE6x7WFSW/5nHAna4EdDOuM5pXKT9BOiJbh/xUUeM5sRIj9BnHbiSLf28cQvEHuwmxo18qOLIG7CW1rniM7SL8io6MVpYP73lFN6OoJOZx3R/sW1fsu/y7S1HD/ZSuxWAwAbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5449fc0a7f1so2437147e0c.0;
-        Tue, 02 Sep 2025 05:13:02 -0700 (PDT)
+	s=arc-20240116; t=1756815494; c=relaxed/simple;
+	bh=iV9OOBcP8NNsmpN1fZ74F397+PanErPMHV3l66Lj7mw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NnHtEMr8J6MJbuoA2aMyHzbfp+qniTfDJbo4ECOGFg0bziWqvdiVuVNwbi1xkE+VJuTp7LkLYx5EU1F5mqKAo0kEcsqPKIvBU7nbbJ1W7XvBi+Xg51O0XgJVetbGxoNGT3N014xvIVQafoi1Jha/ADr/k/Q1w3CNzxaKRnGWF5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7s22P4q; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7s22P4q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756815491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
+	b=h7s22P4q6Mqh5ELUOM0ZFIcvvMNpESHT8cAn+XNmYtuLV5ggXZ47ep83+dePzdw5X14vAt
+	NRgsJhn0OrENMczSX+jA3OdXrw9djy0W11KfunvvGhCbv+VRWGUT0j7DKmJPDKe2QmPTTp
+	F4VZ48qre8Rg3R7fkF0b78E9VF8PUig=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-358-QnqHyp6bOBSLg0fS_gBEEg-1; Tue, 02 Sep 2025 08:18:10 -0400
+X-MC-Unique: QnqHyp6bOBSLg0fS_gBEEg-1
+X-Mimecast-MFC-AGG-ID: QnqHyp6bOBSLg0fS_gBEEg_1756815489
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso3794865e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 05:18:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756815182; x=1757419982;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756815489; x=1757420289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/UimdT1ibBTesy/AP3pxhJqwDMsUxNlw8Zh+OBcciDk=;
-        b=gTZyQbA0Wm8s0WysviV9VnK7ydHUCenev1Q57pl2yu8kK/jrg1PTCMlZM3SB2FOqh8
-         2mzwxcKS53lJGktBtgGaPxaYfRTHBr1BNVbBIANUctouc5xEnxHnTwHkzj3xF2nmbJj7
-         M0KnJnpi25HztTq5Qvqd46ObbE7OMlNsKOkEvznetDfdA+T3UJQ8b8c/+9Phca3RNs3X
-         Ky5HqqLOUCrV9qVYGRdE6qckITqZuXNDcXMmHXPZqUfGe29Kf2Jqes64kqYo6mshMpBh
-         R1KkWEqgcatJifFAIYhcfPKY+DdEbbWXhY1DAI3RCC182Nw0fFoMujzUCGRtsfst/ICm
-         k/+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNCZ9TsIU6mpY7lefGUv2K14GOToawHObQPJUa6r8dLNwhP6jaL6a4mo5xahYh+b7nI658e7XtCvggd6l18d0ufIw=@vger.kernel.org, AJvYcCWs3LU6kwWfSFZJVyMNByvS3mUW4v7yDR3h8gkd0ZrDoDQ4guqXF3TIWZJKJWW20oZSAYWUq7HycLs=@vger.kernel.org, AJvYcCXVxXANdaUIkoy5GctyTnh0sbwd2OVXNozZ2xkmXjmMkZck+3lAW12A2rr6pWb8Eq5ayPX8bo/fip54q9YF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJF66eSruc/2WZvvcgikLBXMeDsjSR3WlkEsw9KiPjBl+YOCub
-	nZJZhmX0Sq6CQ8Paru7TprNMUwWmKGKWhXNRm6lPvzzo4JEQRga9tfXku1CvrO0x
-X-Gm-Gg: ASbGnctCkH3Zx8vhEZZkzourPOFanWJ/KscQSgE3oIwv365R1w3EhvV3bdlvn5JvW4j
-	hihZVCAx7y03GS9Xq8y3KoyMN8oAGcK2ghC7dOu/2yHvxJRsaSHlYBOoHNC3uyO47wgId8ln8ki
-	lWTxa06Ithfx3NgcrDzqR/IyEiAnyK+Q3a0a+G5eeqiTcgUKXLTJyX7NePGbGDBn8LEeOFZzx4D
-	pe9YQtoYU0JQja9tlTTnxkAINbSLwjshcV5jRK++a267woaCqIGzJN09ZFteygOw5sDfXjZcBcQ
-	U7Vo2v2BPx2GDdVzGpWp5ObOAgcHBGcjBu3vj5lBOsmJShpNLXV8ptprPvW5eElNSoJZzXrSXC8
-	9X3r+Z+urYLSVrPecrc340XeOdzo0+nq8rjdx3dA3GuQdx6B6HztOZpy7oXDK
-X-Google-Smtp-Source: AGHT+IH4PMXC7FIWpoDwykyTNStkR9UQRZ9/h1c+juN1zRpzkwKoZkyp6vFzTxbBG4jOyt78oCZNmA==
-X-Received: by 2002:a05:6122:3d06:b0:542:59a2:72fb with SMTP id 71dfb90a1353d-544a02b1510mr3472136e0c.9.1756815181696;
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912c6d3bsm5516535e0c.6.2025.09.02.05.13.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5299769c79cso2471265137.3;
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZLU8P3bqvTCfR6eN1yUQmyXbzzMu4H+SrjKcz/XnO6ehtN4+C6LZjO3SMyrT2Bf1a5ENiEcCyiU16kmZf9PyhruA=@vger.kernel.org, AJvYcCVdSWYlDfWLI8p6e/EzN1tQS4vaLGjjT5nANWLrd1sFcEUG9eEzIE1geIP7pgKys7hMCd5czRNNrf8rOoJS@vger.kernel.org, AJvYcCWMU0P8uZc0elQx7QLQuLZ9RA80WC/IO6f7znhpBpkLVHIW46RCJki4lGohyzzNVlVq1XMBJLtK2SY=@vger.kernel.org
-X-Received: by 2002:a05:6102:5f04:b0:520:3f1a:c533 with SMTP id
- ada2fe7eead31-52b1b91e423mr3012578137.21.1756815181104; Tue, 02 Sep 2025
- 05:13:01 -0700 (PDT)
+        bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
+        b=FKKjhltNufz9GzFmwxmg7bPB1371WNQsOdi5UaiBWt01cxVw80HBQ0H1Dfe1ADP+AQ
+         RvZ89/r80jLTq+BsLzd2Q4Q1pHY3CXFmvufiNHb11Pgmezq7u/l9Hwp2dDlGU4mF3j6E
+         ouByg0grRRgh+/KNyMrnUpgsUtnz/V25E6HkZaWs5DwLMsEeWmJmU66SHjaBWs5kBW9Z
+         joDay9VkAAW7v1qreH5WeKHS/zzCEy/3b6dOOopJ/JPzQ5xyEav9JZf5EA/KxPPmHZ5v
+         Ij6Njni5Gkn1xg9VJExSenjLDPpEfJeG/chZzBLSjv/e+mbpjTsZiMSuM+FIs3ZPCo6N
+         k0Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/JEB10bDWm4kx624UEKHCwHXCDoBXvZMpwNba7wBvCb9Tg8vVP6VRkNnu8fmk8a6q4NCNYYshR7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIp6girulA+iVMgyxZstCd17h6RG80lfHpnNA+F1O/aRldE1la
+	BX5EHOdpA2apQ05u3AfPq8Apv/WoOPaq4dYX7btPKG2MDuV4W35moPgTnYJyLsLLTOvBZwsFgIO
+	NDe5UQeEMYzslUplCGFU1X1ATgcmO3tw4s3OMWMWyisEWsCDpOMS5SHocc7E5cQ==
+X-Gm-Gg: ASbGnctL/G7hescvaFqTn4EQDYxASw1+AQ1mI5NWJYSZB/NqVoz4PP5O3MvTGKRk5z0
+	YipWy9QYsdcRKs1eyMkTsGRGzXId3ATO/7WKtG/V/lCrvhXkH5p7W6qIc8LIAY8rbvObCpAW/BX
+	8QrOlxULpR7Y3mKQOzRiN3/ZKfxwsC4GSIDCDrDt98wqi5jT8XC99fBOqfs+mkAUYxBHCmsdI8p
+	3bUPPgXTvBd8y70QzNau3Ja+9kvxEvI8kYSdyhlpnfW8x3W94UhJ4lNUia5/Puu29KS08FkyIaG
+	PBdS020Zjukj/Vtkvs6tCFmDod6J4qjPNJdtug7SCNjW3wvB6QwqwPM6ZQwJVVBFgVNbEyCYakI
+	ZdISwkaROP3rS
+X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31212055e9.23.1756815488663;
+        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjWniM8t87MstmOKseixN3K4oxvQKmIMmSp/10Fw9hcxqnkqnioeD1dS7AiZVevFngzZ7ccg==
+X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31211795e9.23.1756815488249;
+        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm191441215e9.10.2025.09.02.05.18.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 05:18:07 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] clk: qcom: Select the intended config in QCS_DISPCC_615
+Date: Tue,  2 Sep 2025 14:17:54 +0200
+Message-ID: <20250902121754.277452-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820100428.233913-1-tommaso.merciai.xr@bp.renesas.com> <20250820100428.233913-2-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250820100428.233913-2-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 14:12:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-X-Gm-Features: Ac12FXx7puQzjJrrLGE0Y4HY7C5fGC5GMSPwBCK32PiGQ-K3n4k4nXO_Grb_Z38
-Message-ID: <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: rzg2l: Simplify rzg2l_cpg_assert() and rzg2l_cpg_deassert()
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Tommaso,
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-On Wed, 20 Aug 2025 at 12:05, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Combine common code from rzg2l_cpg_assert() and rzg2l_cpg_deassert() into a
-> new __rzg2l_cpg_assert() helper to avoid code duplication. This reduces
-> maintenance effort and improves code clarity.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Commit 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock
+controller driver") adds the config QCS_DISPCC_615, which selects the
+non-existing config QCM_GCC_615. Probably, this is just a three-letter
+abbreviation mix-up here, though. There is a config named QCS_GCC_615,
+and the related config QCS_CAMCC_615 selects that config.
 
-Thanks for your patch!
+Fix the typo and use the intended config name in the select command.
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+Fixes: 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/clk/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> @@ -1664,37 +1668,20 @@ static int rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
->         }
->
->         return readl_poll_timeout_atomic(priv->base + reg, value,
-> -                                        value & mask, 10, 200);
-> +                                        assert ? (value & mask) : !(value & mask),
-
-This can be simplified to "assert == !!(value & mask)".
-Do you like that?
-
-> +                                        10, 200);
-> +}
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index aeb6197d7c90..823125f48346 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -504,7 +504,7 @@ config QCM_DISPCC_2290
+ 
+ config QCS_DISPCC_615
+ 	tristate "QCS615 Display Clock Controller"
+-	select QCM_GCC_615
++	select QCS_GCC_615
+ 	help
+ 	  Support for the display clock controller on Qualcomm Technologies, Inc
+ 	  QCS615 devices.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.51.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
