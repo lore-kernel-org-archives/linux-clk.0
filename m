@@ -1,140 +1,134 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B764D2AF1B;
-	Tue,  2 Sep 2025 06:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3C12E62A1
+	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 07:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795795; cv=none; b=F4W2qduvkPVvxwUuwtJQeo3pZCRITZUvwCpdvWPWcsarxF8As1wxaTA5buXpp+NkMaMr4NY1KnDakun6ZX6zGCa/VlLmzAKgn8H1sDVOKqfMnrYuL6SpfskPBf5up4I6E88Xrs+Sxtor0K2VEgl6KkSAkOwqQa4z2ZBY57mlNc0=
+	t=1756797126; cv=none; b=aMm4jmP10USUuzx9FD8MRpYPXINysVg/AbQoYzAJeq0WkZNyQg0bT0ei80ylLBRMUZLOA7lWxTiqJpvu3VWiZYvqSC4qpXDUJiFx8C3rSOt6vb5O7+Wp3pllKWNcWNQVzU4EjqPwmMs0LPzV4Eqfbi0oINxqqlBM/CuxtgpmFis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795795; c=relaxed/simple;
-	bh=CXjRLXB4rHcdrzMNHUS/e7hmZlrGT0FCxSbC/ubzzhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wmc7WzMwEROXZgxTrqgOwivP8gBrvJadsucYJnF4MhdkIyPhblZHDVi3fHTnLl1RugAQzYiEBd5YB1Uo4tnoVn0o+oC795g/uTTn5BZMMDW4rfZCdE2rIJnQO5TkYDwidusUpWEsAhaW4AEYXmo/H/2KI2A0jEnXkYo7f4DJKTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cjdiXPnW; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1756797126; c=relaxed/simple;
+	bh=4Dj8wHzcKZ+KE+l9JlZw2/wgZaNm5SI7Vg6vhkZUvrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzORWWlcaxnnNYDhMs2pCoruRF3SBlYfkF8cNjAiPmPyioNvX02qVBYgfos0ITLzZcND/udQeGGGuDqsIa+xm9MVQ6hsaqQNUBQqrDQLDqMmP/bWcPhmcOmz0Zsb+CKmJcUdXYJ5ObgidMLQIP3ppONEnAWXv2BUctufN8SLLBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NxPGfhMa; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cjdiXPnW"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=L3hysh1IuHC3Dp9XzTNJn7TLfYrR5FrB1YWba0t3M3k=; b=cjdiXPnWzvSvRuv8Q6fPuIwF/4
-	sHkk1gs59SSS6D16goSAnv08ppr71gIlpiKtrGwjWSvhv/ZyOouGVsLmf/Y429du9uAXmv4M0fI6m
-	3MGd0rZ+b1Ov/laSJ9w6G6KiRBdYw0EY9D+m8gLKaNAmsu7ZVCx4rTzWsZUT9tg5QP3vjCPShjeVM
-	yjDna1BAzyPmkD7XPvRdHZJbHHl/nR2PPOubn74Tcg9ShSIoAb5F4xv6GPHW+CcBaXkr++nwz/IyV
-	FYAFPYqj9qz8406lYoZvNonf6I4XZKG8SUeRI1mjUFsr+hYGhtOlCSJbmM0HHuS3kLH+pIXpjwEgE
-	r7DFLeNg==;
-Received: from [61.8.145.255] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1utKpf-0003Qz-Ke; Tue, 02 Sep 2025 08:49:31 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Cc: robh@kernel.org, hjc@rock-chips.com, andy.yan@rock-chips.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1 3/7] dt-bindings: clock: rk3368: Add SCLK_MIPIDSI_24M
-Date: Tue, 02 Sep 2025 08:49:29 +0200
-Message-ID: <5052759.PIDvDuAF1L@phil>
-In-Reply-To:
- <CAPEOAkQYA+XSx9QJSmNFLypH0ifE1jvui=MHiEHZ+5a3SR7=uA@mail.gmail.com>
-References:
- <20250831104855.45883-1-cn.liweihao@gmail.com> <2235041.irdbgypaU6@diego>
- <CAPEOAkQYA+XSx9QJSmNFLypH0ifE1jvui=MHiEHZ+5a3SR7=uA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxPGfhMa"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b7d485173so31215325e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 00:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756797122; x=1757401922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=leRMEPgF8RUEvULChzHRAQuhgrQpyQ/k4NKGFx3/OIQ=;
+        b=NxPGfhMalr0puieqZ0NjhnLO4k+g37416+742QxVCL39sCZ8MZ0jb++o2JkAxij8ZN
+         vJn/GLrFHv4il+X4O+S9k0gc1m3dqqP0sPeNNzTjEIkm47mcjrtddBFWbt0r9Dl7xhtM
+         n/Nt60RDPFxYA5LqefiznDa6Dwj1ALVZPuYSoeFC+Po/xGqv2pFlPxJBIAnAM1d4hNb6
+         qcND8K1zagmtFFVrGGOii5GgbfTLWGMbqXAYTr3inpqcsYAWui9z0GxlN1GOzu8SK9Hi
+         HqUdBxZrkWRxtoDJZRwKzQGI11wktL4skOeXqnTWj9NG88mpdOP4Xw2vAKnsK/vMicQ2
+         dE5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756797122; x=1757401922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=leRMEPgF8RUEvULChzHRAQuhgrQpyQ/k4NKGFx3/OIQ=;
+        b=UBf5UwhXRgCuAD+cvsldbGUBZfxEmKS7wfleYub2YFfpLFfTg1+2KVVJ0O6XORpYP5
+         I33mLd6u+FZjM5sy6msEi6M8ZOTOvBKjcbGx6ErkwccV1u8saa0mO+++NBF9vRa0J6U0
+         l6IHOMWUHZt4f+AzvTIytVMBVVwwQiHGkQNJy3F04UGCGs3jR+g4f7XFruTCtj1s+FZW
+         40sT6eqCC4K7cJ5T9i8dqXHqyKraSO9Vf9jyPv5QDZBHzKVFLvmjLbv/mJp4rCFAb3ut
+         khTOeTmBL3TGIY7y3gU4ZrWgpNDo4/X/i58oEHjQ7qmY5qm1jx3CMW4KM5RGgaJ9hxO5
+         V1sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnGBixfyibk0WHnK4yCNwivz2T0el0wGMa3rZUoTFp7/2cj1Jsj19vNsrPGvBPSqJ+2UwzXVsXWYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYK7/GBB5AT3TIeCaNwHeKlq5L5BMvtFlGww9ljnsh9YQd/xMN
+	g0mdjske5FUb+HlmsUCbJh7A84iLzVegefcOKhfhHtNuO29RZ+Mu7z3kwNmXNn1Bttc=
+X-Gm-Gg: ASbGnct6shbnlmh8Pw4HKROhi5EgVQj6uF8hNPbkEpu+yDaM4RsKYD9r3r6Vog2o7TL
+	NoCPLNKu2Q4Uu48Dn6O7pBvBu8ZjCUbH5sL8KaLStqeGH20f9IT8l2JxClGDSL7BSXRuslLs1qu
+	r+V6mtgkMJ2eDOP4zY+viWJQ9RgsBfPyO/FfaYnRYZjTdRGQxmqrwGOSxuFLsVlXyh6dYTW1tND
+	YnoOdYzhPe6s/Kl0xihcnof9p9KTCSmmAxRQ0I9lvbabPFGa5Mv0xW2pu8/L3tBGI8yc6/8DrQB
+	aHMdXo3z9Dc+U4KT4XocQ/sukKCD7Ycu9QsjjPXeNJgi17XIxBkJckrY0vwxuvVqu6ltuZWPMjL
+	qyCMSa4F0vhH174biHPhVdiUAkJci3WaviFfiMw==
+X-Google-Smtp-Source: AGHT+IFYuCWJOgHXp+J/kYURbVc6VnwzlfI13ByiraVfMdlwIoA3Pz1WV9KjlyYQt58VCk3unM9JLQ==
+X-Received: by 2002:a05:600c:4f8f:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-45b8558baefmr77527515e9.33.1756797122251;
+        Tue, 02 Sep 2025 00:12:02 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f0c6dc1sm267152735e9.1.2025.09.02.00.12.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 00:12:01 -0700 (PDT)
+Date: Tue, 2 Sep 2025 10:11:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v1 19/19] staging: media: tegra-video: add CSI support
+ for Tegra20 and Tegra30
+Message-ID: <aLaYvsh1sCF7uF6Z@stanley.mountain>
+References: <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-20-clamor95@gmail.com>
+ <3643424.irdbgypaU6@senjougahara>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3643424.irdbgypaU6@senjougahara>
 
-Hi,
+On Tue, Sep 02, 2025 at 11:38:18AM +0900, Mikko Perttunen wrote:
+> > @@ -282,20 +411,27 @@ static int tegra20_vi_enable(struct tegra_vi *vi, bool on)
+> >  static int tegra20_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
+> >  {
+> >  	struct tegra_vi *vi = chan->vi;
+> > -	struct host1x_syncpt *out_sp;
+> > +	struct host1x_syncpt *out_sp, *fs_sp;
+> >  
+> >  	out_sp = host1x_syncpt_request(&vi->client, HOST1X_SYNCPT_CLIENT_MANAGED);
+> >  	if (!out_sp)
+> > -		return dev_err_probe(vi->dev, -ENOMEM, "failed to request syncpoint\n");
+> > +		return dev_err_probe(vi->dev, -ENOMEM, "failed to request mw ack syncpoint\n");
+> 
+> Existing issue, but dev_err_probe doesn't print anything when the error is
+> -ENOMEM, since "there is already enough output". But that's not necessarily
+> the case with failing syncpoint allocation. Maybe we should be using a
+> different error code like EBUSY?
+> 
 
-Am Montag, 1. September 2025, 02:17:00 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb =E6=9D=8E=E7=BB=B4=E8=B1=AA:
-> I actually used script to get the maintainer list, but I was not sure
-> whether I should send-to or cc every maintainer, so I consulted the
-> AI, and the AI said to try not to do so because it might be considered
-> noise email, and only send it to the main maintainers.
+I'm not sure I love the rule that -ENOMEM doesn't print a message.
+Deleting error messages is fine because it makes the code simpler and
+saves a little memory.  But with dev_err_probe() the message is still
+there in the memory, we just don't print it.  Printing the error message
+doesn't hurt anything.
 
-please don't top-post :-)
-https://docs.kernel.org/process/submitting-patches.html#use-trimmed-interle=
-aved-replies-in-email-discussions
+But if we go down that road, we should make it make it a checkpatch
+warning to pass a hard coded -ENOMEM to dev_err_probe().
 
-
-> Should I cc all the devicetree maintainers with the next patches?
-
-Looks like we did get an Ack still with even only one maintainer listed,
-so don't need a resend ... but yeah, please include people listed as
-direct maintainers in the future.
-
-Workflows differ, so when submitting a patch you can't know if maintainers
-work from patchwork or directly from their inbox.
-
-So it's safer to include more people than not enough :-)
-
-Some trimming of the list can be done though, for example your drm patches
-would list the core drm maintainers who most likely do not really care
-about individual driver patches ;-) .
-
-get_maintainers.pl thankfully does list the role, so you can decide based
-on that.
-
-
-Heiko
-
-
-> Best regards,
-> WeiHao
->=20
-> Heiko St=C3=BCbner <heiko@sntech.de> =E4=BA=8E2025=E5=B9=B48=E6=9C=8831=
-=E6=97=A5=E5=91=A8=E6=97=A5 23:00=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Hi,
-> > Am Sonntag, 31. August 2025, 12:48:51 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb WeiHao Li:
-> > > Add a clock id for mipi dsi reference clock, mipi dsi node used it.
-> > >
-> > > Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
-> >
-> > you missed a number of devicetree maintainers, Rob thankfully does
-> > not need to do this on his own anymore.
-> >
-> > so please get the appropriate list of maintainers via scripts/get_maint=
-ainer.pl
-> >
-> > Change itself looks fine though.
-> >
-> > Heiko
-> >
-> > > ---
-> > >  include/dt-bindings/clock/rk3368-cru.h | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bind=
-ings/clock/rk3368-cru.h
-> > > index ebae3cbf8..b951e2906 100644
-> > > --- a/include/dt-bindings/clock/rk3368-cru.h
-> > > +++ b/include/dt-bindings/clock/rk3368-cru.h
-> > > @@ -72,6 +72,7 @@
-> > >  #define SCLK_SFC             126
-> > >  #define SCLK_MAC             127
-> > >  #define SCLK_MACREF_OUT              128
-> > > +#define SCLK_MIPIDSI_24M     129
-> > >  #define SCLK_TIMER10         133
-> > >  #define SCLK_TIMER11         134
-> > >  #define SCLK_TIMER12         135
-> > >
-> >
-> >
-> >
-> >
->=20
-
-
-
-
+regards,
+dan carpenter
