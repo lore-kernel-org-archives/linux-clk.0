@@ -1,84 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0E326C3A5;
-	Tue,  2 Sep 2025 19:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139DA1E51D
+	for <linux-clk@vger.kernel.org>; Tue,  2 Sep 2025 21:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756842876; cv=none; b=sxRAoAAyEtZFev17KptWrqIyb3VrWDDAQbtK8iU9j7bSroojv9MyRUn/3J5RbjZBCkIAYNBDmAE1yYKK5Sbl2dK54YM2FVurwbYDzVjF49M3FHYbzgHi52CaHQ9e5uqCfk5vhV6CKe8t931QZgpauCB97yTeCkSY8Myt3wCoO4Y=
+	t=1756849764; cv=none; b=IObOqxmm4X/CwiwymX3zYlgp6CO0o6bgM/GVMv3NEa+avXaGoiy+tA3xbfAXMQ58pnYkPSnn4bi/+F/6hxu0+RXVK2XfwJ4vBRExuFsTbqxTQr+vRTcNeZRO7aMQgzQzr/ksysWclm3f7wQ7OMpeK6w+aly6lfrIZm9y9o8C38Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756842876; c=relaxed/simple;
-	bh=oJOLNYG2Y3DXMCSgbwODVJA8SAuDYi5Dbvsh+hG6M4Q=;
+	s=arc-20240116; t=1756849764; c=relaxed/simple;
+	bh=neN4/Xko4YcDJzuw40O/2fBeVJJQtw7JPWEFeXXUNzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTeAwe3H0ZfTbDJRRZWdM2xfd7eeEpnNtL9F+QPxdolsSSKSGVg2KssdqxuJvRFGlI5KGDCu5vrRtsKYB7eKris3kTBG9bP51RP8Q3AaoEHEOpuKMIM8oWx/tcTVmXEbAotzkNR8T4NOFEuVAdNms1mXBJiFmjXY3v5zT96bZJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrJeisJC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEbME6x9HdlUbkWau8Q6RBw3hjR7nmAGlik/r51s+bGbr6Q1+99ScZQG1nFHqjFBFIODuTKVNqWM38HaY0/1jPqiLJwGtuepZNhvLuLP8zfj/V6zltqZ9YszwZeQ+M5qQyjhku6fm0kHs2IdToJLw2eTN3FBSbpf7SM5fNZGh9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5XzPNru; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrJeisJC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D07CC4CEED;
-	Tue,  2 Sep 2025 19:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756842875;
-	bh=oJOLNYG2Y3DXMCSgbwODVJA8SAuDYi5Dbvsh+hG6M4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZrJeisJCeZBLdRd9piYISWxH6ectOKfLkCBAI45oB9yskyvBJx+HrHbj0QupA23QY
-	 HMwYW+4SpxkS1Px4DFX1y0PnsLKuIvMupIqIiKRi5+/yisqqzHEEZpEI+OC+GPQMt+
-	 Ih9UPZZxLrikazCJPDm6WovmTyFRm0ulZKF/oPzplGj21mx5CKCfRPvb9oo4xKL1nz
-	 Qojwko0xFxCfGWgdvCBAYT8/hAuaZcNeMu33YO6xDjk/8M8E6xVx4H6De8eZjysot9
-	 apZ9PSugbHYcTWyIOnwbJIoCz8GthLjCfl1K6nrT8bke0E+1MO5eocgkH5TUTef2/d
-	 X7vBDpLUcS7MA==
-Date: Tue, 2 Sep 2025 14:54:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5XzPNru"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756849761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hsHmX5g0hW2RuOd+pFemlGczz+YYMgcCD+tzI6cEH+Y=;
+	b=e5XzPNruVwIa5n3YPpbPJSxwK0Sty0D02i/oMxKLLKsCxTGecGH63Bo8bwZqvsn9Oz9LPB
+	PdCAlbGH9E/W3xTRmhmPQS4uhJ3xXJIdbXlK6TV/H32OAQOPFn1SpAGHmDwicT4kvQYUXX
+	DL+G2oDMVsXAALzZgkduUvP6c6+TucM=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-P4SCoaVBPTK9sVjTEfCFQA-1; Tue, 02 Sep 2025 17:49:20 -0400
+X-MC-Unique: P4SCoaVBPTK9sVjTEfCFQA-1
+X-Mimecast-MFC-AGG-ID: P4SCoaVBPTK9sVjTEfCFQA_1756849760
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-72048b6e865so23911736d6.2
+        for <linux-clk@vger.kernel.org>; Tue, 02 Sep 2025 14:49:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756849760; x=1757454560;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hsHmX5g0hW2RuOd+pFemlGczz+YYMgcCD+tzI6cEH+Y=;
+        b=pZ4ux332KL5XgwlGbqplTNyDNHhL7anbi2K9x3RUr4jYEfXAIitviV3WraCtxgbF2u
+         TBPwaHauRuBz6joEfdGyUiO1Zk95eigO+FtGIMs/ecPUn9XNAHGSO0QgzBm+Yx9O754S
+         PO3bSOotBaye4n4+vYaCwj8lDRis19M2ccJS1Nv0d1Wc2/lKIq+dY0ilt3pZk0ik77jz
+         lBg4ZY7iyHt6fVUAnVT/uo2y8+9XavB8Vpbj4PJv0PCTMUpvx+BxFKPhthJ7dmIYiMMF
+         MagTejxE7wtMjXO8BMZ4URcz16IvPcaAGYEIKmzN3N5mAHZPpQexeWdVe8YLPXFiNrG8
+         PObw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzUyIeQCgKRYVIFvHxmO+/AMcGAzzGwqri+85s/DqJfBtnVL5mZUlj8ok0NbwGPFp4zcLUcyKKsCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVesJcwfqO/21eGmpyTdA0vcQYD+Y3RD5mWtkw/g1DhOzxPlmI
+	hsofNe+oXQoxSKqfqf86farFZ3r4qb+bkZIX+ltzIBKlEERsDvnq8tMG+jM2nNsCBy/okwiKpRG
+	2lJLREWqQt0P8F/3aHrlHg8B0Yy/pTUaeWu/HCZW1cQqQUo8egr+60yMP6FDfAQ==
+X-Gm-Gg: ASbGncu1y+GvwRoZIsaNXza15n35zhonLZR9Ffz1Ks4NEXmxFk7MaCNQ8Ne/ji70Vvl
+	Kuw6VWXN5gIrT+OLc7sNuKN8LDRMeKkoAx/aNRmPWyHk48eQoyon32W2udS9Da+hEToYJrchKTm
+	nypp+VS+u4WVeRfl7UqZIuE+N0LvcMzppVW+LWsJ+AivKPiG+WS530eLOTcs5VvKI/wORM0Xda2
+	gZF26fa89krmInZhhz+JSuF8VpGjG/M3QrDD0myNmUeLFb9W2JYqku0kDmalRIuZL7W5mAzf5bw
+	2cyYmB18iQaYktN4QsgB4xFBzcOC5lPhrbxuwxFDVvoVQWhj2VKc8kbdChLpr2VliUO9nMnHpZk
+	Qdgjbd9zF1QmgF/HVSFs=
+X-Received: by 2002:a05:6214:c67:b0:71b:f511:7228 with SMTP id 6a1803df08f44-71bf52ff870mr81595626d6.51.1756849760167;
+        Tue, 02 Sep 2025 14:49:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwgG5MrCRiY+YEj7wHA6pGiT+So5GhjsjCrEdcrEastQ86ZBZAbzbVRYsDLAAf8z1862oXzQ==
+X-Received: by 2002:a05:6214:c67:b0:71b:f511:7228 with SMTP id 6a1803df08f44-71bf52ff870mr81595306d6.51.1756849759591;
+        Tue, 02 Sep 2025 14:49:19 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b475d63asm18667696d6.48.2025.09.02.14.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 14:49:19 -0700 (PDT)
+Date: Tue, 2 Sep 2025 17:49:17 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org,
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250902194528.GA1014943-robh@kernel.org>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <20250829195119.GA1206685-robh@kernel.org>
- <20250830071620.GD204299@robin.jannau.net>
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] clk: conf: Support assigned-clock-sscs
+Message-ID: <aLdmXcdJnoeXEJaQ@x1>
+References: <20250901-clk-ssc-version1-v2-0-1d0a486dffe6@nxp.com>
+ <20250901-clk-ssc-version1-v2-2-1d0a486dffe6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,99 +88,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250830071620.GD204299@robin.jannau.net>
+In-Reply-To: <20250901-clk-ssc-version1-v2-2-1d0a486dffe6@nxp.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Sat, Aug 30, 2025 at 09:16:20AM +0200, Janne Grunau wrote:
-> On Fri, Aug 29, 2025 at 02:51:19PM -0500, Rob Herring wrote:
-> > On Thu, Aug 28, 2025 at 04:01:19PM +0200, Janne Grunau wrote:
-> > > This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> > > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> > > follow design of the t600x family so copy the structure of SoC *.dtsi
-> > > files.
-> > > 
-> > > t6020 is a cut-down version of t6021, so the former just includes the
-> > > latter and disables the missing bits.
-> > > 
-> > > t6022 is two connected t6021 dies. The implementation seems to use
-> > > t6021 and disables blocks based on whether it is useful to carry
-> > > multiple instances. The disabled blocks are mostly on the second die.
-> > > MMIO addresses on the second die have a constant offset. The interrupt
-> > > controller is multi-die aware. This setup can be represented in the
-> > > device tree with two top level "soc" nodes. The MMIO offset is applied
-> > > via "ranges" and devices are included with preprocessor macros to make
-> > > the node labels unique and to specify the die number for the interrupt
-> > > definition.
-> > > 
-> > > The devices itself are very similar to their M1 Pro, M1 Max and M1 Ultra
-> > > counterparts. The existing device templates are SoC agnostic so the new
-> > > devices can reuse them and include their t602{0,1,2}.dtsi file. The
-> > > minor differences in pinctrl and gpio numbers can be easily adjusted.
-> > > 
-> > > With the t602x SoC family Apple introduced two new devices:
-> > > 
-> > > The M2 Pro Mac mini is similar to the larger M1 and M2 Max Mac Studio. The
-> > > missing SDHCI card reader and two front USB3.1 type-c ports and their
-> > > internal USB hub can be easily deleted.
-> > > 
-> > > The M2 Ultra Mac Pro (tower and rack-mount cases) differs from all other
-> > > devices but may share some bits with the M2 Ultra Mac Studio. The PCIe
-> > > implementation on the M2 Ultra in the Mac Pro differs slightly. Apple
-> > > calls the PCIe controller "apcie-ge" in their device tree. The
-> > > implementation seems to be mostly compatible with the base t6020 PCIe
-> > > controller. The main difference is that there is only a single port with
-> > > with 8 or 16 PCIe Gen4 lanes. These ports connect to a Microchip
-> > > Switchtec PCIe switch with 100 lanes to which all internal PCIe devices
-> > > and PCIe slots connect too.
-> > > 
-> > > This series does not include PCIe support for the Mac Pro for two
-> > > reasons:
-> > > - the linux switchtec driver fails to probe and the downstream PCIe
-> > >   connections come up as PCIe Gen1
-> > > - some of the internal devices require PERST# and power control to come
-> > >   up. Since the device are connected via the PCIe switch the PCIe
-> > >   controller can not do this. The PCI slot pwrctrl can be utilized for
-> > >   power control but misses integration with PERST# as proposed in [1].
-> > > 
-> > > This series depends on "[PATCH v2 0/5] Apple device tree sync from
-> > > downstream kernel" [2] due to the reuse of the t600x device templates
-> > > (patch dependencies and DT compilation) and 4 page table level support
-> > > in apple-dart and io-pgtable-dart [3] since the dart instances report
-> > > 42-bit IAS (IOMMU device attach fails without the series).
-> > > 
-> > > After discussion with the devicetree maintainers we agreed to not extend
-> > > lists with the generic compatibles anymore [1]. Instead either the first
-> > > compatible SoC or t8103 is used as fallback compatible supported by the
-> > > drivers. t8103 is used as default since most drivers and bindings were
-> > > initially written for M1 based devices.
-> > 
-> > An issue here is any OS without the compatibles added to the drivers 
-> > won't work. Does that matter here? Soon as you need any new drivers or 
-> > significant driver changes it won't. The compatible additions could be 
-> > backported to stable. They aren't really any different than new PCI IDs 
-> > which get backported.
+On Mon, Sep 01, 2025 at 11:51:46AM +0800, Peng Fan wrote:
+> Parse the Spread Spectrum Configuration(SSC) from device tree and configure
+> them before using the clock.
 > 
-> I don't think backporting the driver compatible additions to stable
-> linux is very useful. It is only relevant for t602x devices and the only
-> way to interact with them is the serial console. The T602x PCIe support
-> added in v6.16 requires dart changes (the posted 4th level io page table
-> support) to be useful. After that PCIe ethernet works so there is a
-> practical way to interact with t602x systems. So there are probably zero
-> user of upstream linux on those devices 
-> I'm more concerned about other projects already supporting t602x
-> devices. At least u-boot and OpenBSD will be affected by this. As short
-> term solution m1n1 will add the generic compatibles [1] temporarily.
-> I think keeping this roughly for a year should allow to add the
-> compatibles and wait for "fixed" releases of those projects.
-> I'll send fixes for u-boot once the binding changes are reviewed.
+> Each SSC is three u32 elements which means '<modfreq spreaddepth
+> modmethod>', so assigned-clock-sscs is an array of multiple three u32
+> elements.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk-conf.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+> index 303a0bb26e54a95655ce094a35b989c97ebc6fd8..dd6083597db3f8f27d86abf5640dfc3fb39a9b88 100644
+> --- a/drivers/clk/clk-conf.c
+> +++ b/drivers/clk/clk-conf.c
+> @@ -155,6 +155,71 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+>  	return 0;
+>  }
+>  
+> +static int __set_clk_spread_spectrum(struct device_node *node, bool clk_supplier)
+> +{
+> +	struct clk_spread_spectrum *sscs __free(kfree) = NULL;
+> +	u32 elem_size = sizeof(struct clk_spread_spectrum);
+> +	struct of_phandle_args clkspec;
+> +	int rc, count, index;
+> +	struct clk *clk;
+> +
+> +	/* modfreq, spreadPercent, modmethod */
+> +	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
+> +	if (count <= 0)
+> +		return 0;
+> +
+> +	sscs = kcalloc(count, elem_size, GFP_KERNEL);
+> +	if (!sscs)
+> +		return -ENOMEM;
+> +
+> +	rc = of_property_read_u32_array(node, "assigned-clock-sscs", (u32 *)sscs,
+> +					count * 3);
+> +	if (rc)
+> +		return rc;
+> +
+> +	for (index = 0; index < count; index++) {
+> +		struct clk_spread_spectrum *conf = &sscs[index];
+> +		struct clk_hw *hw;
+> +
+> +		if (!conf->modfreq_hz && !conf->spread_bp && !conf->method)
+> +			continue;
+> +
+> +		rc = of_parse_phandle_with_args(node, "assigned-clocks", "#clock-cells",
+> +						index, &clkspec);
+> +		if (rc < 0) {
+> +			/* skip empty (null) phandles */
+> +			if (rc == -ENOENT)
+> +				continue;
+> +			else
+> +				return rc;
+> +		}
+> +
+> +		if (clkspec.np == node && !clk_supplier) {
+> +			of_node_put(clkspec.np);
+> +			return 0;
+> +		}
+> +
+> +		clk = of_clk_get_from_provider(&clkspec);
+> +		of_node_put(clkspec.np);
+> +		if (IS_ERR(clk)) {
+> +			if (PTR_ERR(clk) != -EPROBE_DEFER)
+> +				pr_warn("clk: couldn't get clock %d for %pOF\n",
+> +					index, node);
+> +			return PTR_ERR(clk);
 
-Honestly, at least in the cases where the generic compatible works for 
-every chip so far, I'd just stick with it. The issue with generic 
-compatibles is more that you don't really know if things are going to be 
-the same or not. And most of the time, the h/w ends up changing.
+This chunk can be replaced with dev_warn_probe(). Sorry I missed that in
+v1. Otherwise the rest looks good to me. With that fixed:
 
-If you want to keep it like this since you've already done it, then for 
-all the binding patches:
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
-Rob
