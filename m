@@ -1,162 +1,197 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F75D22B8C5
-	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 15:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE5E2C027F;
+	Wed,  3 Sep 2025 16:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912557; cv=none; b=MUl0t+3Hr1IQUr44nth4P8lqK6BdV0MZFbRaqSoIQBC9NkppRCrcJt8Kleb673tfmmV0SbwsmY28VsG+fuGOPAeAnRh/BMMYsAnYTG4Ra1j+9uyS7Ry0Xim6+WU/qup5OGr8Zsiy6FXd19HydJwT0B+y+QAUr1aMXIDuPielyOI=
+	t=1756916250; cv=none; b=Kj3aNFrAehllUcZ5hyy7c3Mnrc5jBUlhHpdVpKWPjpNqu2louBKkFgkt07M2/JRRiXVpyptYMICAv5UsXMfSF7IdN4rLXro5cRDhP2Kf+h00cYE9OHFTAICpX4ayWijrfRAgCm+pc2MfhNXO+xjBmw4yzODkepZVqvNgAJdnAf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912557; c=relaxed/simple;
-	bh=f7zeRbtjFE6oZbaxfqDkdxVp3qdgNoSMwDXWIe1dhQQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cZKNi9vP94c3lm1jvDAmbZO0vyVdNNKjOvABQgxKBuaqpfSVgf4RnucfF2EU+t832/9H30sUhXyBtxyjDwulJHEFq7vZnMcnc98SSpY9OMi6APL1hHY6OoPL7v3PxTMZS5wCEX9KWFEqBtu83zziz20BvdbmwaqgCbEAEYDupGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FrQBKEWp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756916250; c=relaxed/simple;
+	bh=CCln4rPb3P+0/6GwoT/lBnSgMtAhhtryaHSoqSLxhb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iD8AZTkWTjFShoQA+ttBG/U0SDhD172vgDRo03lKfUVae3jkLy7Khxwt6yPAUmuQrMffO2OBtUw9xElcnOhqVVKsQZbsolD3ulr2XoLLjcWQlvp7a3jSYtAd8wcugb8bq2tmbBfNvUaeqKKEaznNTQ89GZ2Tf54r1Rcg5p9/sZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i69K8/fH; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FrQBKEWp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756912555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4HCy2NL7Blg6ktZUTQG7x2ot9qLktGXqBXqd0E8mS4=;
-	b=FrQBKEWpl5L5kcJvCHoYY5tEmLOEQ4x7/6C4X115Ha0wmz5X9rScSQx/5GTaNyP3yTflWi
-	E+oatLGYvox4RBGikzzuwBDTsTXo1NDS08OPPBKjDadhLRaWft3Uk7W4jfs0DlqOnYIHlX
-	voLcgG8BWOHs4NRtY53jr4OfRppK/pM=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-13-XO7D98efOB2XZklYX954ag-1; Wed, 03 Sep 2025 11:15:54 -0400
-X-MC-Unique: XO7D98efOB2XZklYX954ag-1
-X-Mimecast-MFC-AGG-ID: XO7D98efOB2XZklYX954ag_1756912553
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70edbfb260fso87149706d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 Sep 2025 08:15:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i69K8/fH"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3dea538b826so74751f8f.2;
+        Wed, 03 Sep 2025 09:17:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756916247; x=1757521047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhI3DRe5+X+SOWNKbXoFOHpSP7IEamKPQO7YKwNjIhM=;
+        b=i69K8/fHUgbvRh7BwpHUYknmLVnuMpT3Qo+bFZyphm1gSN8zdDs/aUijOlpgM9t9+w
+         6H6cb4VlNzAo5ki1Qh2hogoFrKPKdJcgCVe80Bil7JCcWtYYeB7vhvoODyFLFTzVE+aN
+         oVnXBJAGNzJOY4pRfjouCswG6plv/rG8ZXgeMT6rgUk7eRPVts1XAJ3J+MrDDr7UD6R8
+         y5g6Re6rm32EDIrSFxCjmfCJRT01/zahUy0invWbTu4GmPK5s7asgexLc6nDHL/xaK0i
+         2h62SPZVPlDtz+2mTaLGl7YrDOW0wGghbhVDJIDM4J/P+lb2M45TfU90vop+jgM2xboO
+         ylVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912552; x=1757517352;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A4HCy2NL7Blg6ktZUTQG7x2ot9qLktGXqBXqd0E8mS4=;
-        b=ZumgR/LWOZR4uggb17nFe+gpherZGyNSsISfSYzRb/xoqF6BRQMr+23IdQ9SyGjO7+
-         tTCHel3VqdE3IIQeHh4Nhn5VHlGp5yuya/dryFTr+8IEKkk39/Hx2kM3Y47Opc2Xterl
-         x9OhJmum9CiIQHdojnuaunMcA897O+SkdxMNGN2RP4tAtW0cqTxni/JQRUHvjbZEf7au
-         Z3ryfW7UMLaHngtjmQZWd1yHo4FhKjG7+UlghuE/FSE4fuZHwBJt5NplSzbjbluVWsF4
-         wBc3uBlog6BOrkZNxLT5l8Qa6yYvhXZUJ32m4c5sUE2cBdBu6Tv64oNAa05dnbGD+h47
-         IuuQ==
-X-Gm-Message-State: AOJu0Yye6FJOQHaZaNcPeh5z0MOVPSejJaw2zkr3hxc6inabaUPCo4Rn
-	/RupA0CHzaWEXb1RWzSaIzHCs6qz9XPhUgp5SzXppbPP0Zgc/3N/alAnimMVsb3D+8poBjHi0MD
-	LlJqKQHvtwqKreuNcYcqkow71C/4V5SnrRptRqbV+rDxE36iX2d4mh/iJbBhdO2YFYWvsMA==
-X-Gm-Gg: ASbGnctsBP2imC/YHZBIGbYF1YqdX2HA3eHvOfF529CIGhDoHQRzfl5QGKf3BUnsQrJ
-	S35qIKCFuSggbDokYz//TxuxoW5V8KGpWnYwsYNdlesv8d//KxwpgBrLiAbswSORkQ3QsVBvyAK
-	t/FlKNijelAXadIqzb8SY7/8m3mTXqW/oVPXR9sGgPZR3LyLuFJ1MVN9Ykv59qP8+uludjyzC0f
-	LR1TGBhZuIT+VlJgYw4SGLrycdYVv7HSnQq2UJLp+j1+OK8SCKnBsDBSwxi7URTX1ZAnLP+pty8
-	nx9Md52X5bwiEF5CqsoJInFlpcNilWRTWDLr6b5gD1YkDbfbCmZRvvH7yb6EcWA/jFi3qgiZ10k
-	=
-X-Received: by 2002:a05:6214:2264:b0:716:17e0:244c with SMTP id 6a1803df08f44-71617e02b19mr128217636d6.33.1756912552283;
-        Wed, 03 Sep 2025 08:15:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlQ9BdrI0T15lHuajgK3Ofx/Mn+DHDA/1mjdjP2xlPN5vgFUBDe96IRrxXSlBhDZltKM9h5g==
-X-Received: by 2002:a0c:f118:0:b0:722:5704:daf6 with SMTP id 6a1803df08f44-7225704dbc7mr42110476d6.39.1756912541147;
-        Wed, 03 Sep 2025 08:15:41 -0700 (PDT)
-Received: from [10.12.114.224] ([2600:382:850c:786a:ff8e:13a:e47c:3472])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm30827706d6.3.2025.09.03.08.15.38
+        d=1e100.net; s=20230601; t=1756916247; x=1757521047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zhI3DRe5+X+SOWNKbXoFOHpSP7IEamKPQO7YKwNjIhM=;
+        b=d4KmlHR7MF9kmXuNqjP2/wZqdOLiXesOycSSRPm3tRuxyC9OgedegwUPP7IIzyr79I
+         ExCabcrlUXBRrQu3JdoGxGF3X3sQmQ6TanmyYh8bQ+R3jafwYJ3sLMuTtNcuSzkm4xGW
+         tNb56Dw7nIq2v45Wm8OnFuTyl7xabyJBcVq0/34HTAqmK9lgqJersGL/ybDdE1eoYu/j
+         2LiWs5gIhhXnztYvMoJmjE6SLGoWrq3JBDu5S6RPOi/SwBE1Vy+/s+7d6qjAeCoZVKUY
+         DngkWAMoC38YQ3DY427TJ09EHAx5A/btplewsbX+8dA2BwHnGYB+M7LYQTrCtQT0psks
+         Gmcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUc04AVYcrKd9HC7oMu47NHlDuO3tVkobT08vr5tWHlZW1iTr4u2MpG+KPgclGPJpSLbV5vpEr5mahMwIQ3@vger.kernel.org, AJvYcCVEptEmbX8daBH6tBOaWWJ+p41hdHChF44K4dIvevHMzlQR7eTCBVxa47r7ZyPmsGeCSxOcNl7SAVLP@vger.kernel.org, AJvYcCW2atzLL5o/n/j8rvdu5kYD1twy/bAvQuFdBjQtjfrAvSOce0DqQ9VrDMst0RwdMLkJSQTeZD1gDwg8@vger.kernel.org, AJvYcCWaN228wDiaY+So8Hir77PE4zAdPXUBpvE4HCU0X9Vls9jRdimcPRdYssgdkNvvMCm9FuXg2a5JIINlqmVG9S5hD4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8yQB1ZJ3mpGXvRIAYeHBszTv6iBbNC969Dq44Ja6y1UhDmorQ
+	H+ApGaCVqfj/CGG2ZGBs4dJtA4nrb3R71uLAdneU/jAqVoC4unH8Y9nU
+X-Gm-Gg: ASbGncsuzZW/ZLi2oxMI5Wy+ySV805aCe3/NMWoXOK4xK4Qr4/68xsvL8Fggf9dV7Az
+	SB65KPHZZVnVVAB8LhXOwi5Du2LaxItu74d5TTmoBvbWhQxiY4Hsj3+rtvJVFqM+cfeFG4M0og1
+	5n08n9Qv4Erl+QkphrUkf5SgbBRwEWJo9kApezDy797C9qIeVpuGIbcx6nL6dZFAi3Rp/sdCMta
+	GPSIWC4qSU+Y/7AMpgMQI2tD/uLXn+1bREBK8p1J5UPZw806yXnTi3wvFcJvGW2PsQwh91SvzoE
+	ZQZzz/uSJOuWNdOMPqnarAam5ymt6zxSwDfCdqAMlsEEc4gtvUV/PaVNKaPXUxVxc5OZ682hxzw
+	7bZpJ+uiYz4r5Iqp4MwaudVuCm1SGK+iiW/ud9FMqFQrpDnquiw06ojt+BeZ/2KmiWww=
+X-Google-Smtp-Source: AGHT+IGQvSyrqgXepsg7T3rt6MRb4D5lOt6u9g5K86HhZIiJtDR8DJpMha1fmoke+OZcXHmTNn9xUg==
+X-Received: by 2002:a05:6000:40d9:b0:3dc:1473:18bb with SMTP id ffacd0b85a97d-3dc14731910mr4074650f8f.39.1756916246607;
+        Wed, 03 Sep 2025 09:17:26 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:9019:aa0f:b6e4:7952])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3db72983560sm5645734f8f.1.2025.09.03.09.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 08:15:39 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 03 Sep 2025 11:15:07 -0400
-Subject: [PATCH v2 6/6] clk: tegra: tegra210-emc: convert from round_rate()
- to determine_rate()
+        Wed, 03 Sep 2025 09:17:26 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v8 0/6] Add support for DU/DSI clocks and DSI driver support for the Renesas RZ/V2H(P) SoC
+Date: Wed,  3 Sep 2025 17:17:12 +0100
+Message-ID: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-clk-tegra-round-rate-v2-v2-6-3126d321d4e4@redhat.com>
-References: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
-In-Reply-To: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756912523; l=2321;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=f7zeRbtjFE6oZbaxfqDkdxVp3qdgNoSMwDXWIe1dhQQ=;
- b=KqIQakTxpJPpr1rcYh3sziesySXJxjBrI6+0TTX75xgEW8kKgKvFNHcGYKnxBX9/2bRbUKoda
- ZEdPYfU2taXC6VUs1K4llMiSTTFXWFnjCoqsRS44x/u1CUt0bBPlqa0
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Transfer-Encoding: 8bit
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Link: https://lore.kernel.org/r/20250710-clk-tegra-round-rate-v1-6-e48ac3df4279@redhat.com
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+Hi All,
 
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 672ca8c184d2c6e9a7f26c07d036f3359af42bc4..fbf3c894eb56e3e702f0a1f67511463dc9d98643 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -86,22 +86,30 @@ static unsigned long tegra210_clk_emc_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP(parent_rate * 2, div);
- }
- 
--static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *prate)
-+static int tegra210_clk_emc_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
- {
- 	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
- 	struct tegra210_clk_emc_provider *provider = emc->provider;
- 	unsigned int i;
- 
--	if (!provider || !provider->configs || provider->num_configs == 0)
--		return clk_hw_get_rate(hw);
-+	if (!provider || !provider->configs || provider->num_configs == 0) {
-+		req->rate = clk_hw_get_rate(hw);
-+
-+		return 0;
-+	}
- 
- 	for (i = 0; i < provider->num_configs; i++) {
--		if (provider->configs[i].rate >= rate)
--			return provider->configs[i].rate;
-+		if (provider->configs[i].rate >= req->rate) {
-+			req->rate = provider->configs[i].rate;
-+
-+			return 0;
-+		}
- 	}
- 
--	return provider->configs[i - 1].rate;
-+	req->rate = provider->configs[i - 1].rate;
-+
-+	return 0;
- }
- 
- static struct clk *tegra210_clk_emc_find_parent(struct tegra210_clk_emc *emc,
-@@ -259,7 +267,7 @@ static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops tegra210_clk_emc_ops = {
- 	.get_parent = tegra210_clk_emc_get_parent,
- 	.recalc_rate = tegra210_clk_emc_recalc_rate,
--	.round_rate = tegra210_clk_emc_round_rate,
-+	.determine_rate = tegra210_clk_emc_determine_rate,
- 	.set_rate = tegra210_clk_emc_set_rate,
- };
- 
+This patch series adds DU/DSI clocks and provides support for the
+MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
+series [0], but has now been split into 6 patches due to dependencies
+on the clock driver, making it easier to review and merge.
+
+[0] https://lore.kernel.org/all/20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+v7->v8:
+- Added reviewed-by tags from Tomi, Geert and Biju
+- Dropped rzv2h_get_pll_dsi_info() helper and opencoded instead.
+- Dropped is_plldsi parameter from rzv2h_cpg_pll_clk_register()
+- Updated commit message for patch 5/6 and 6/6
+- Switched to use devm_clk_get() instead of devm_clk_get_optional()
+  as lpclk clock is available on all SoCs.
+- Simplified check in rzv2h_mipi_dsi_dphy_init() for PLL parameters
+- Renamed start_index member to base_value in struct rzv2h_mipi_dsi_timings
+- Added comments in the code for DSI arrays and their usage
+- Added comments in the code for sleeps
+- Rebased the changes on next-20250902
+
+v6->v7:
+- Renamed pllclk to pllrefclk in DT binding
+- Added a new patch to add instance field to struct pll
+- Renamed rzv2h_pll_div_limits to rzv2h_pll_limits
+- Included fout_min and fout_max in the rzv2h_pll_limits structure
+- Renamed rzv2h_plldsi_parameters to rzv2h_pll_div_pars and re-structured
+  for readability
+- Dropped rzv2h_dsi_get_pll_parameters_values() instead added modular apis
+  to calculate the PLL parameters ie rzv2h_get_pll_pars/rzv2h_get_pll_div_pars/
+  rzv2h_get_pll_dtable_pars
+- Dropped plldsi_limits from rzv2h_cpg_info structure
+- Updated the DSI driver to use the new PLL APIs
+- Included the LPCLK patch
+- Rebased the changes on next-20250728
+
+v5-> v6:
+- Renamed CPG_PLL_STBY_SSCGEN_WEN to CPG_PLL_STBY_SSC_EN_WEN
+- Updated CPG_PLL_CLK1_DIV_K, CPG_PLL_CLK1_DIV_M, and
+  CPG_PLL_CLK1_DIV_P macros to use GENMASK
+- Updated req->rate in rzv2h_cpg_plldsi_div_determine_rate()
+- Dropped the cast in rzv2h_cpg_plldsi_div_set_rate()
+- Dropped rzv2h_cpg_plldsi_round_rate() and implemented
+  rzv2h_cpg_plldsi_determine_rate() instead
+- Made use of FIELD_PREP()
+- Moved CPG_CSDIV1 macro in patch 2/4
+- Dropped two_pow_s in rzv2h_dsi_get_pll_parameters_values()
+- Used mul_u32_u32() while calculating output_m and output_k_range
+- Used div_s64() instead of div64_s64() while calculating
+  pll_k
+- Used mul_u32_u32() while calculating fvco and fvco checks
+- Rounded the final output using DIV_U64_ROUND_CLOSEST()
+- Renamed CLK_DIV_PLLETH_LPCLK to CLK_CDIV4_PLLETH_LPCLK
+- Renamed CLK_CSDIV_PLLETH_LPCLK to CLK_PLLETH_LPCLK_GEAR
+- Renamed CLK_PLLDSI_SDIV2 to CLK_PLLDSI_GEAR
+- Renamed plldsi_sdiv2 to plldsi_gear
+- Preserved the sort order (by part number).
+- Added reviewed tag from Geert.
+- Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
+  PHYTCLKSETR_* and PHYTHSSETR_* macros.
+- Replaced 10000000UL with 10 * MEGA
+- Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
+- Replaced `i -= 1;` with `i--;`
+- Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (6):
+  clk: renesas: rzv2h-cpg: Add instance field to struct pll
+  clk: renesas: rzv2h-cpg: Add support for DSI clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+  dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+    RZ/V2N
+  drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+  drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+
+ .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++--
+ drivers/clk/renesas/r9a09g057-cpg.c           |  62 +++
+ drivers/clk/renesas/rzv2h-cpg.c               | 298 +++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  29 +-
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 451 ++++++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+ include/linux/clk/renesas-rzv2h-cpg-pll.h     | 395 +++++++++++++++
+ 7 files changed, 1349 insertions(+), 40 deletions(-)
+ create mode 100644 include/linux/clk/renesas-rzv2h-cpg-pll.h
 
 -- 
-2.50.1
+2.51.0
 
