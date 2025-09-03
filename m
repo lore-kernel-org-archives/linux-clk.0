@@ -1,38 +1,66 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B585E30EF68
-	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 13:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E730DD06
+	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907784; cv=none; b=UJ7IbDlIzGgCcom4SvkCmBabDbHDBDT3dHMa1n6rPam6vFtbsC74x99FMmZPRSzwcm0iC24MrH/5FZ/tKAYJdaONjW6/gauXBYM4LpuadOrizQnpFf8r7ubeCpYvGhSUDLIY8iIzqWO3nk967nJIVN2JYJuRWQ2N7zyOpmsf8mw=
+	t=1756907807; cv=none; b=l5gkyAzRNOt/sFA4i+itOcfZ+Q7kGh9LpTQMlFXhX31tnETKAk0ynhp8lsS/DW5cT6tIr9SXwC9bgpL8ed4UpSuCDN2K8DDFwDpEeQQ0q9ZocHmGYUC3mkcqZc82tF3a7EF3g4TOgJmj8fQD5xBN8hwEI9LP2NTTmq3i7j6iT8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907784; c=relaxed/simple;
-	bh=OnQYOk+52qAYd0yryT9dBjrtNuF2ueF50xBunhTkKIU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rOefEvCqOUlrGrvqh6Ydmw5FF5TKqmO+odbIlICWLa6HlZF4IOema7q++CbM0wxN5yRWsCHdGBSkR7dN44lZL0FWcvD/9/KI/QJqaaWjXgOje70XjLSt/D42ei0oM5QWGCvs+i+dik6haH4+di2AKFZPVdBfbWgWTPN9sguwNJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1utnxx-0007v8-37; Wed, 03 Sep 2025 15:56:01 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1utnxw-003ZMO-1t;
-	Wed, 03 Sep 2025 15:56:00 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1utnxw-000000034Tm-26V1;
-	Wed, 03 Sep 2025 15:56:00 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 03 Sep 2025 15:55:45 +0200
-Subject: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
+	s=arc-20240116; t=1756907807; c=relaxed/simple;
+	bh=Mt2KpjzPULxrWRBMrQwI+fGFUPZG+amrTgGkb7YvIyw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BuVrz7G3lPPFB/F3i8MotZwmOdpfc9vz6Aj0ilQpC+2/kI3Pa5CYs6HJH6apun/lWUU5ir7bbEgSVbiioQxC3k450kqqz5iCjaYOscC8SLcGT9su50tkkrCt7xRySJ4lURs7y0xzWqIlnJSNOlR9FuUC+bzwb5JvuBvz3kedvKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wD7WCodY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wD7WCodY"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b7c56a987so23382545e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Sep 2025 06:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756907803; x=1757512603; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UyeZEfRakAOXRipKZZzHzlSyL5Gy818R1oSP4VasTw=;
+        b=wD7WCodYXch6E8TwZfWuqqT2nShA8slxn20kq88giwpLSyguhUKJDrSVNTyVPr0a79
+         0TLR2DTM8QHg5dhNwlePZqXPkEK8emtCSuoCF4RkMwdzvxYv9z6++xzDktx46NAbfr+P
+         Bxm5uVJ2RvUTMiSM2aFl0QVLZBD4ai+YK57YpBdwGg/izeMXOIn09Qqz/ObglZtQPZhe
+         N26QtkMpY2wz1vdRTDmJenM0DBapfHn50JKInogxysmzGmNHtlhKrQTgFTRV5Vwyeqi0
+         qq1samM7gj2lWFfWImuQZSwHfdZ2zF17ixkelp2xIS3yalq/7Bw3d+35GRECqMyM6SuQ
+         WFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756907803; x=1757512603;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7UyeZEfRakAOXRipKZZzHzlSyL5Gy818R1oSP4VasTw=;
+        b=hGUc6USSDzNAJTZ3xUOqBliGvSAEAQBxZfaPUtYGQTOFjlQ9nrAzEH/0ERuzQCNKCm
+         OgiQIMJx9uZ1K0av5Adh+kKbPqD3qOIpbUHWh9VKIy0w5PAiU7hIMwbTyVKl81NfNxZ5
+         tBo7GYJZaBjl0DTUxhUjzzNTFUyTiYsemGno8T1nqANuqAVyStuB3WcYwq4BhRre95S8
+         YYBx/PbWNEhTdu8GT0V5XbtX8r3h35CZa8X77tXRiGSOB6i3BNxjMzb3/5dy/1h6/jnR
+         RWNiefSkwMv4qLp00mkPNzTkInHmyKuEgcExV775OHJ+OEd8yVFS+Ysc2tc8d/KLfs9r
+         MvGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFTqTJRM39p8MsDaMGZewb0/qejafVOIMIR6uBcNdTFOKrqEJ/Jathd5ld125PME8cCB30oXTeTTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXH4qNRlPWpvGhERFzS9qPYBbkSAomHWeMzcAd9P0On9tSZ7MZ
+	uaN2OJBVLvQoaH5Gia8anauCKM1rbjP30mpKRcEiQleLkuNUGeqbhpI6bR8gCOgtejA=
+X-Gm-Gg: ASbGncv6w1i2INrN2Mfc7/KkxpcbVccCvtuQgnCclMdMXdrQ6Xmwwz7KMA6MVNS0Rzg
+	Q9zpApNNtqR1jeGCKsi+aknX/25fIxOhnBn7t1mNxTgMuOhYjJpCTOHYyxHBBj2Ju1ZJxJXIkY4
+	tlVmM0tdBOOVItEzMX8CxaCHfb4D1rqbw2IgHxMnTl0YHKimiXPX4408A90NxaxruVtPGeYv5E2
+	ZXrpEql+fAki7E0zOAyTNch9Gfp0ol2fZuJuciibpvAXbx1xxHJTDqoO39Od1splALPCy2GmpGW
+	LkNe0Uk0YOgMMmEP0HBWhsDQcDCFvjS3Qck13x0AdyzlN1EGyZWAH38B9xq9n/ZkjUsgR2ebU2E
+	OW+/9qUBilHlymemudLV9HdpbR7uF0p2L3/fHYPH1vOKw74hqKR5blxixLuCxICH6Vk+LijfZ50
+	clHebhYIvcIGAm
+X-Google-Smtp-Source: AGHT+IGAz13CW9qYdP4E1mRFLDKZhAD79+7ZMxCzGrpXuKeHY3BrVbbM+xV+kRrxmTmdkbjk2yyj+w==
+X-Received: by 2002:a05:600c:3ba8:b0:45b:6705:4fca with SMTP id 5b1f17b1804b1-45b8558b82amr147687525e9.31.1756907803419;
+        Wed, 03 Sep 2025 06:56:43 -0700 (PDT)
+Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87632365sm197257135e9.16.2025.09.03.06.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 06:56:42 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v3 0/5] exynos-acpm: add DVFS protocol and clock driver
+Date: Wed, 03 Sep 2025 13:56:37 +0000
+Message-Id: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,276 +69,117 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
-References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
-In-Reply-To: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIABVJuGgC/22MTQ6DIBgFr2JYlwY+EdBV79F0wV+V1IqBhrQx3
+ r3oyiZdzsubWVBy0buEumpB0WWffJgK1KcKmUFNvcPeFkZAoCGStliZ+YnN+MAgLSghHamJQOU
+ +R3f37z11vRUefHqF+NnLmW7rn0immGCutW0FE4wLehn9pGI4h9ijrZLhYII4mFBM6xojuWat5
+ uzHXNf1C3fN1dHbAAAA
+X-Change-ID: 20250819-acpm-clk-28d2a78e0307
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907760; l=7048;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=OnQYOk+52qAYd0yryT9dBjrtNuF2ueF50xBunhTkKIU=;
- b=0zOtCWsi2hMxiQjr/vKDx7zF2YpdyCN3Hb60h9eBueaCATqwlY2VWybDTF2uq21GZQ9gz6Aq2
- lNnuCKulLBxDdkeei8ZAeJbUn8q4RBQ870OpLESPXmK0go8cKgMiAaX
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907802; l=3867;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=Mt2KpjzPULxrWRBMrQwI+fGFUPZG+amrTgGkb7YvIyw=;
+ b=DakkBlIHpn7tVePCz5oJ4zp5oD53iKk03icPlLMbc4NT51IpDoL/zCPk2pTUJ/MwmoE6lU8Ae
+ 7iEo8dy1mf+A1vb7kEC2c50vYYSwnyl6A0XAf8u2C8lCIsizEpn2dc4
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
-Generator With One PLL, Four Differential Outputs, Two Inputs, and
-Internal EEPROM.
+Dependencies description:
+The acpm-clk driver (#3) depends on the bindings (#1) and on the
+ACPM DVFS ops (#2), thus I propose to have an immutable tag so that
+the clock subsystem to merge first 3 patches if it really needs the
+new clock driver. Patches #4 and #5 have no dependencies.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+are variable and index based. These clocks don't provide an entire range
+of values between the limits but only discrete points within the range.
+The firmware also manages the voltage scaling appropriately with the
+clock scaling. Make the ACPM node a clock provider.
+
+Add support for the ACPM DVFS protocol. It translates clock frequency
+requests to messages that can be interpreted by the ACPM firmware.
+Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
+
+Thanks,
+ta
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
- include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
- 2 files changed, 222 insertions(+)
+Changes in v3:
+- dt-bindings:
+  - move clock bindings to a new bindings header
+  - update commit's subject, s/add #clock-cells/add ACPM clocks.
+    It also suggests that the bindings are added.
+  - prepend "GS101_" on clocks binding name. The bindings name are the
+    same for GS201 and the acpm-clk driver will likely include both.
+  - collect Rob's R-b
+- clk-acpm:
+  - move clock definitions here instead of keeping them into the
+    ACPM protocol driver
+  - use platform_driver.id_table to differentiate device type
+  - fix Kconfig dependency, || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+  - update commit subject, s/dev/pdev
+- exynos-acpm:
+  - move clock definitions to clk-acpm
+  - use devm-action to unregister clk-acpm platform device
+- Link to v2: https://lore.kernel.org/r/20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..4d40b8101fd7e094bb1b79c071e1be2c1fefec23
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-@@ -0,0 +1,198 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI CDCE6214 programmable clock generator with PLL
-+
-+maintainers:
-+  - Sascha Hauer <s.hauer@pengutronix.de>
-+
-+description: >
-+  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-+  Two Inputs, and Internal EEPROM
-+
-+  - CDCE6214: https://www.ti.com/product/CDCE6214
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,cdce6214
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - enum: [ priref, secref ]
-+      - const: secref
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  '#clock-cells':
-+    const: 1
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      '^conf':
-+        type: object
-+        additionalProperties: false
-+        $ref: /schemas/pinctrl/pincfg-node.yaml#
-+
-+        properties:
-+          pins:
-+            items:
-+              enum: [priref, secref, out0, out1, out2, out3, out4 ]
-+          io-standard:
-+            description: |
-+              1: CMOS
-+              2: LVDS
-+              3: Low-Power HCSL
-+              4: XTAL mode
-+              5: differential
-+            enum: [1, 2, 3, 4, 5]
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+          xo-cload-femtofarad:
-+            description: >
-+              Load capacity for XO in Femtofarad
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+          xo-bias-microampere:
-+            description: |
-+              Bias current setting of the XO
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+          cmosp-mode:
-+            description: |
-+              Driving mode for CMOSN output:
-+              1: Low Polarity
-+              2: High Polrity
-+              3: Disable
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            maximum: 3
-+          cmosn-mode:
-+            description: |
-+              Driving mode for CMOSN output:
-+              1: Low Polarity
-+              2: High Polrity
-+              3: Disable
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            maximum: 3
-+
-+        allOf:
-+          - if:
-+              properties:
-+                pins:
-+                  contains:
-+                    const: priref
-+            then:
-+              properties:
-+                io-standard:
-+                  enum: [ 1, 5 ]
-+
-+          - if:
-+              properties:
-+                pins:
-+                  contains:
-+                    const: secref
-+            then:
-+              properties:
-+                io-standard:
-+                  enum: [ 1, 4, 5 ]
-+
-+          - if:
-+              properties:
-+                pins:
-+                  contains:
-+                    const: out0
-+            then:
-+              properties:
-+                io-standard:
-+                  enum: [ 1 ]
-+
-+          - if:
-+              properties:
-+                pins:
-+                  contains:
-+                    enum:
-+                      - out1
-+                      - out4
-+            then:
-+              properties:
-+                io-standard:
-+                  enum: [ 1, 2, 3 ]
-+
-+          - if:
-+              properties:
-+                pins:
-+                  contains:
-+                    enum:
-+                      - out2
-+                      - out3
-+            then:
-+              properties:
-+                io-standard:
-+                  enum: [ 2, 3 ]
-+
-+        required:
-+          - pins
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/ti,cdce6214.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        clock-generator@67 {
-+            compatible = "ti,cdce6214";
-+            reg = <0x67>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            #clock-cells = <1>;
-+            clocks = <&clock_ref25m>;
-+            clock-names = "priref";
-+
-+            cdce6214_pins: cdce6214-pins {
-+                conf1 {
-+                    pins = "secref";
-+                    io-standard = <CDCE6214_IOSTD_XTAL>;
-+                    xo-cload-femtofarad = <8100>;
-+                    xo-bias-microampere = <100>;
-+                };
-+
-+                conf2 {
-+                    pins = "out1";
-+                    io-standard = <CDCE6214_IOSTD_CMOS>;
-+                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
-+                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
-+                };
-+
-+                conf3 {
-+                    pins = "out4";
-+                    io-standard = <CDCE6214_IOSTD_CMOS>;
-+                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
-+                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
-+                };
-+            };
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..6d2cc5f01864e70a3fbccbfe20e67899e0d049e4
---- /dev/null
-+++ b/include/dt-bindings/clock/ti,cdce6214.h
-@@ -0,0 +1,24 @@
-+#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
-+#define _DT_BINDINGS_CLK_TI_CDCE6214_H
-+
-+/* Clock indices for the clocks provided by the CDCE6214 */
-+#define CDCE6214_CLK_OUT0	2
-+#define CDCE6214_CLK_OUT1	3
-+#define CDCE6214_CLK_OUT2	4
-+#define CDCE6214_CLK_OUT3	5
-+#define CDCE6214_CLK_OUT4	6
-+#define CDCE6214_CLK_PLL	7
-+#define CDCE6214_CLK_PSA	8
-+#define CDCE6214_CLK_PSB	9
-+
-+#define CDCE6214_IOSTD_CMOS	1
-+#define CDCE6214_IOSTD_LVDS	2
-+#define CDCE6214_IOSTD_LP_HCSL	3
-+#define CDCE6214_IOSTD_XTAL	4
-+#define CDCE6214_IOSTD_DIFF	5
-+
-+#define CDCE6214_CMOS_MODE_LOW		1
-+#define CDCE6214_CMOS_MODE_HIGH		2
-+#define CDCE6214_CMOS_MODE_DISABLED	3
-+
-+#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
+Changes in v2:
+- dt-bindings: clocks are not longer a child of ACPM protocol. Instead
+  make Alive Clock and Power Manager (ACPM) node a clock provider.
+  Update commit message.
+- firmware: exynos-acpm: register by hand the ACPM clocks dev (new
+  patch)
+- firmware: exynos-acpm: use defines intead of enum
+- acpm-clk:
+  - switch to determine_rate
+  - drop __init, __refdata, __initconst, this is a module, we need those
+    methods and data, after boot as well.
+  - fix the assumption that the clocks are defined by ID in ascending order.
+    There's still an assumption that the clk_id < nr_clks, but this is
+    now covered by a sanity check in the clock driver.
+- arm64: defconfig: enable Exynos ACPM clocks (add patch together with
+  this patch set) 
+- Link to v1: https://lore.kernel.org/r/20250819-acpm-clk-v1-0-6bbd97474671@linaro.org
 
+---
+Tudor Ambarus (5):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
+      firmware: exynos-acpm: add DVFS protocol
+      clk: samsung: add Exynos ACPM clock driver
+      firmware: exynos-acpm: register ACPM clocks pdev
+      arm64: defconfig: enable Exynos ACPM clocks
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/samsung/Kconfig                        |  10 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 203 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  83 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |  26 +++
+ include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  10 +
+ 11 files changed, 395 insertions(+), 1 deletion(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250819-acpm-clk-28d2a78e0307
+
+Best regards,
 -- 
-2.47.2
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
