@@ -1,113 +1,145 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CA2FF643;
-	Wed,  3 Sep 2025 11:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29042FDC43;
+	Wed,  3 Sep 2025 12:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900721; cv=none; b=hpitx7V9k62zxrLQjFBkYfiWmf9XwJseZNj6XFtR8NTu/vFiBhglf70swja7Tz27rLgMN3Vt+nmMv+A0drZ4MCpYPaHJBCjNj3isLnpfdwvefKsuqSf0uVeIUuU4WyFQTon9k3A7putuTsZ5uqmTcZpXP//c8r65YU5dy03onjo=
+	t=1756901280; cv=none; b=IFRStdd6wckW7IEODaQcBV3335BgHoEe41qKcjx3h8UbUDud06+uWYn9p+YtgjgN3dM43doCm4DxLMLpvGamdLArGF17X3eRgMNrXi9zT7EGRnW8o6kXb8Wa1ecxzJbX+19exXAghT+V/WSO+Dg7VRg/ooOkNFhvIoP2yT5YFkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900721; c=relaxed/simple;
-	bh=yaJqh2VDrWQ1DxACW5SPoSFNNNkLbBmtgSRyoK7CgtU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OFbvuhXPpusFNuwwrVR2pk414OTIx/gSSJbTJH3N/7JrW75X8McKl+zi9WAK4rfvQUTI6FF4zumJuVhOOb8P5nYXAgafVfoLnZ5EQti5gYKV0K5jUXFB566vTeWWjPr4ODFA+zI77/TfErRwFjQy01XcmzXhcmcKTLtX62d9KRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-52e231e3d48so1135334137.1;
-        Wed, 03 Sep 2025 04:58:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756900718; x=1757505518;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c6WuE2oNiBPwI08RjkW+PWfEBaP/Xa6V6hhs3bRi3RQ=;
-        b=LtYiDUHfSWIVj9o2nBy0nihTCQlU1l2xIOqyvmXAcyvhs268CsUpsiMk8Vsi3DvsvH
-         WX8a407ubVtQBdXKAsk/4EhCmVdrODYQ+cDA33RbLPm/8uHhbmrE0SLeXnHDHTlepPra
-         QwnV6rJNpOfqHgf7rfQZSOUVCvjC8xki0xGUth+evG2p1IEWHOWdlz6ur7hiYJe6bCaw
-         1k66+5JWTZeSr1Q4tMM+7BW05MHUDbX+vbnVt5wFYGVXzVYuMJw8j/WYlmFoF4qPL4NE
-         s+hpOgDehdYnehichwofJnm8b3fI2ODMrBhySjY0HSpZjcknFN7zvxwPm0qImLgVmwuu
-         hUhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/TOtlxoMf+SC68/0DTdZmLJKDuEPOClvxQPiO2Q0Ni0l/X4OXPGTWTYe7sT5PTjTibnzfLW2j8OcLEN9@vger.kernel.org, AJvYcCV2X9gZPK8xNFAYwztxllbS7l+CdODN/MtEG1AXypRBMoPD4mqBP9TSVhbyWmikuo32jWgsrtcXZVPweUoikwfTXtw=@vger.kernel.org, AJvYcCXQaa4PG364EKtSjdJenAkexjMTsue1wLaD3GRXB8WhN1mmBS273L472qMXrbDdzJYUsvDDdJMGh14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwulHsF/mZZjRk+ZQC3ELb/uH+B/bFrPtr9d43ztxZcJu+hWCBV
-	BYoHITSswMwbeosEC8RMhxi+QfqE3KO4kk4KmxaA4/s5pZAEP6opP9p4zfmTIAJ3
-X-Gm-Gg: ASbGnctScF06D4itjGTfjAiScdsges/pFYeS6+Y8HjrtvxnetpT6p0/uJouD/3hDfXA
-	TNma/cwGJReZGUWrBEWCPMkI8wJ6JQoZCG5XLvVN6ZNPYgruxxjvq45T3nkMBZGRjHwgxaBOQiA
-	lflCL08p2ta5rlH+NRdObZELNX2vZVb+2obvXWgQtMcCQIxEjwo4PQh6Y7yY/HltSsAJanpAny+
-	8x0ISwBD8DENiGjTzpUaY7TdanmQ75dsTVJcXVEU+Z7CLUoza+i+5KeYTYoxcFcwIn54YWQPXwg
-	wPSqWXWov2TjbOS675b1dpU4rClKmdqwWK5D5xk4bsPujUHj9dHohudHkWcgqzNtF9KCFH0UoL4
-	JV2ov1bTfsNQTYasMQVFpxX/i1NmBZ68bmofovorw9V2kDVGCJgh7jr+j+20V
-X-Google-Smtp-Source: AGHT+IHTl4Z+U0PfiyN7OkEeVFTA4s86J7o6OhMkJq37XtcmkSaz9nw5n8IJZNtgEMhjSeY/Q9b18g==
-X-Received: by 2002:a05:6102:2ac9:b0:529:4887:9f05 with SMTP id ada2fe7eead31-52b1be2a14cmr5041306137.27.1756900718607;
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943b7c369asm5615632241.2.2025.09.03.04.58.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-52eb6872bd2so1308018137.3;
-        Wed, 03 Sep 2025 04:58:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVVAjWVb3VSzrO/fT7nOB/+XYHINCWsMsbE/8q/TQe+mJDYJRElHPH26yjltJ+rvdD8AvnJDQkot2TDO9I1@vger.kernel.org, AJvYcCVdZkCj0mohW3hDfWTVtZF8GW9nfnhsuebMc4LVmji3FsmcM28025zPFOpFSzfYMzA/4oXuLSY//eI=@vger.kernel.org, AJvYcCWCdRc/5QJq4q05FBpxpaR4xa87uF/NRxku1BbrDDKsLie6PDAE7R/5M6zYNBq8fP6fezi7DmYXOimzRc9Tr/A/ddo=@vger.kernel.org
-X-Received: by 2002:a05:6102:6a8f:b0:52a:daa1:87e2 with SMTP id
- ada2fe7eead31-52b19b5df5amr5404870137.11.1756900718060; Wed, 03 Sep 2025
- 04:58:38 -0700 (PDT)
+	s=arc-20240116; t=1756901280; c=relaxed/simple;
+	bh=apP00f1prfgTq3AXtVyDGTaG/grN3r0DtJ9BwIO8mAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lELBMELhiKMRMKyUZcXpU4HORJxq4IscAdQgSmAWTYwWccV8Xxhk7/LadW4aC3lEDqB9nZUIuTTs3vOnA6cs9l2idY3BzDADjB6yV6LPSMSFAxzDqZnPs0rJp/vb8a5yitXhXQOpU07XiWyu2fShs3YzrTNJY7yM057OaH6QM/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iUJ9ElgQ; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iUJ9ElgQ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=ZOenNhon7WaisY3VTWVx6XvzUrCIft1GDsFy/zuDvrw=; b=iUJ9ElgQf60LxlCjHOOQ1c/Fd7
+	BYiUf3C0Qz/+VRgXBlKyU2e9nV844hAstYooKL2/Ld44LHRv7wUCqAbEFRxleYnsUwXWdpjZ0MoGe
+	55qrbCHIjwf7FI/WBm98PFYOW7NFhpbdHbZvQnMu/cxIbKUMDsPtmanc1GPLl3O8A9JU0gjrCtjSi
+	BM18wN5K4mjCJXjG/le0ylwp3EqWJiWTBcjIQw8/HReyuAyqlHPYUO3EnImQ1++WYpvJwlP0uo84y
+	RmBjcI6PoJHz4qwEVUMK3cgvGg3h6mc4L29EB6bi7uvoa5a2wqU6Wpqj7cduk/8xpdNoglutCCThY
+	6/M5rA8Q==;
+Received: from [213.70.40.217] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1utmHI-0001wC-4F; Wed, 03 Sep 2025 14:07:52 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org, WeiHao Li <cn.liweihao@gmail.com>
+Cc: hjc@rock-chips.com, andy.yan@rock-chips.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-clk@vger.kernel.org, WeiHao Li <cn.liweihao@gmail.com>
+Subject: Re: [PATCH v1 1/7] drm/rockchip: dsi: Add support for RK3368
+Date: Wed, 03 Sep 2025 14:07:50 +0200
+Message-ID: <42028191.XM6RcZxFsP@phil>
+In-Reply-To: <20250831104855.45883-2-cn.liweihao@gmail.com>
+References:
+ <20250831104855.45883-1-cn.liweihao@gmail.com>
+ <20250831104855.45883-2-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903082757.115778-1-tommaso.merciai.xr@bp.renesas.com> <20250903082757.115778-5-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250903082757.115778-5-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 13:58:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
-X-Gm-Features: Ac12FXzpl2KDgVFIaSoTGPqoQ-We8jzec3aA0Bomu7VEX-KNarpcbWQzd9HkGLY
-Message-ID: <CAMuHMdWc+gJo35btt3D7mibq+JCnZh4OagFPtSgUELjAG1J9UA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: renesas: rzv2h: Simplify polling condition in __rzv2h_cpg_assert()
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Tommaso,
+Hi,
 
-On Wed, 3 Sept 2025 at 10:28, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Replace the ternary operator with a direct boolean comparison to improve
-> code readability and maintainability. The logic remains unchanged.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Am Sonntag, 31. August 2025, 12:48:49 Mitteleurop=C3=A4ische Sommerzeit sch=
+rieb WeiHao Li:
+> RK3368 has DesignWare MIPI DSI controller and an external inno D-PHY.
+>=20
+> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
 
-Thanks for your patch!
+as a general remark, this patch will likely need to wait for 6.18-rc1,
+because a big update of the HIWORD_MASK macros was merged [0].
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -867,7 +867,7 @@ static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
->         mask = BIT(monbit);
->
->         ret = readl_poll_timeout_atomic(priv->base + reg, value,
-> -                                       assert ? (value & mask) : !(value & mask),
-> +                                       assert == !!(value & mask),
->                                         10, 200);
+So introducing a new user now would cause havok :-) .
 
-These two lines now fit on a single line.
+Also when sending a v2, please base it on top of that changeset, or
+just take linux-next [1] as a base.
 
->         if (ret && !assert) {
->                 value = mask << 16;
+Also in a separate patch, please add the needed rk3368 entry to the
+devicetree binding [2], this will pacify the bot that checked your
+devicetree changes :-) .
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18 with the above fixed.
-No need to resend.
+Please also make sure that relevant additions to the lists below
+are made (the binding contains specific settings for some controllers
+furter below) .
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Heiko
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[0] https://lore.kernel.org/linux-rockchip/20250825-byeword-update-v3-0-947=
+b841cdb29@collabora.com/
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.ya=
+ml
+
+> ---
+>  .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gp=
+u/drm/rockchip/dw-mipi-dsi-rockchip.c
+> index 3398160ad..5d76e3e04 100644
+> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> @@ -162,6 +162,11 @@
+>  #define RK3288_DSI0_LCDC_SEL		BIT(6)
+>  #define RK3288_DSI1_LCDC_SEL		BIT(9)
+> =20
+> +#define RK3368_GRF_SOC_CON7		0x41c
+> +#define RK3368_DSI_FORCETXSTOPMODE	(0xf << 7)
+> +#define RK3368_DSI_FORCERXMODE		BIT(6)
+> +#define RK3368_DSI_TURNDISABLE		BIT(5)
+> +
+>  #define RK3399_GRF_SOC_CON20		0x6250
+>  #define RK3399_DSI0_LCDC_SEL		BIT(0)
+>  #define RK3399_DSI1_LCDC_SEL		BIT(4)
+> @@ -1530,6 +1535,18 @@ static const struct rockchip_dw_dsi_chip_data rk32=
+88_chip_data[] =3D {
+>  	{ /* sentinel */ }
+>  };
+> =20
+> +static const struct rockchip_dw_dsi_chip_data rk3368_chip_data[] =3D {
+> +	{
+> +		.reg =3D 0xff960000,
+> +		.lanecfg1_grf_reg =3D RK3368_GRF_SOC_CON7,
+> +		.lanecfg1 =3D HIWORD_UPDATE(0, RK3368_DSI_TURNDISABLE |
+> +						RK3368_DSI_FORCETXSTOPMODE |
+> +						RK3368_DSI_FORCERXMODE),
+> +		.max_data_lanes =3D 4,
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +
+>  static int rk3399_dphy_tx1rx1_init(struct phy *phy)
+>  {
+>  	struct dw_mipi_dsi_rockchip *dsi =3D phy_get_drvdata(phy);
+> @@ -1693,6 +1710,9 @@ static const struct of_device_id dw_mipi_dsi_rockch=
+ip_dt_ids[] =3D {
+>  	}, {
+>  	 .compatible =3D "rockchip,rk3288-mipi-dsi",
+>  	 .data =3D &rk3288_chip_data,
+> +	}, {
+> +	 .compatible =3D "rockchip,rk3368-mipi-dsi",
+> +	 .data =3D &rk3368_chip_data,
+>  	}, {
+>  	 .compatible =3D "rockchip,rk3399-mipi-dsi",
+>  	 .data =3D &rk3399_chip_data,
+>=20
+
+
+
+
