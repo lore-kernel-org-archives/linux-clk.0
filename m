@@ -1,73 +1,73 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D4C22B8C5
-	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 15:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA7C239E7D
+	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 15:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912538; cv=none; b=gyzFip7YNisoPQQjkhg+TWU9zXClzlzgV9Jxnc1tr/o8PASPh1GWHQDQzMVHO24pAncAzLS15xXZ6ArkNBbAQsoAN5JFGHK+tVhSUeZwZQJlmUWQUjciNvLqdf/OotqfS1ZJmjcfLgqLIKy7eAPG9k1BXZUP1CJXslOgfF4Xyp0=
+	t=1756912545; cv=none; b=Ck7EsHADgOVur2EvxiUnBhuRJDKh+b37u7urYVx5HjisA21Qta2fEFMd/Qw+8LzhlHBH4/A0lalShLa41ywaYJGm0rHY4Meu5eZg8/oE1/ojanL/NTW1fr4W7oQgSU/PzqLbAyOhSSKzgoyJC9KGmRcTly/I7ah1ch0pV21xHss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912538; c=relaxed/simple;
-	bh=AjcEhiucMili9sf/wwjT6T4E9qy5apL2Ir5PIpobHoI=;
+	s=arc-20240116; t=1756912545; c=relaxed/simple;
+	bh=xHYSF20Z40O1IS/P13jD4/OabcPSIx9zs970N7AMeQ4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UvbfNsPCiXIUs0DSWeLhj7UY9+2rMn98JV8JBlTvI2I4dZkOIZuV2cr0wnHC/P4zO+6QkbSPzEFlYvp9iveB/I3oiRjNrDWGhw3dTuYQRKIezNiXPW6+AL94oEHglWmWt6CmxwWn3TDDBP/5F4PLA0xLWxB0XXxscw/cOC/ogM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJ/KxTBR; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=OVHDIGJ0/j9+kd6WvWAOd3Ug4/0ihE3z6f+t8lA7g3K9iobtZxt+/TkpBYKo4epBsVhD886iACjAjYW32gE1O0ImPHhxVheu2pg0RLjgp14aUzog8Yu12RP+oE52WM0ln6L6s7OUqzNSGzMUz8GaHw63YL9MsL9jg/R3h3qREQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LqiZFDMK; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJ/KxTBR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LqiZFDMK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756912535;
+	s=mimecast20190719; t=1756912543;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e+0vXFzhSxSwj3v2mrFQi86NSXUL4ZDppFXq+HtAwjk=;
-	b=DJ/KxTBRZzdXZhbnYxo3cKOTkGmn2J2UqGFw23PwT+7Vu1tQ9DQyu5fSKYGFXM8qkWbWDr
-	RoHLF95g1zdB5A3TcwLtYI4DJ1evNzdVdD/+xqMs5YppD5mh2XJtxB7l8YeMAaiO/YmI4A
-	lH3hNdtcLWk2E2CipRbkiq/dLsuOQ5s=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4DqnCcjwRpbK8o4p2iXe6lSoJojb6f7QiC9/BUgcCv0=;
+	b=LqiZFDMKbJT76BexlC321tSqNvydhJIC01RfBxQbOglVVataJ6JdNet6dHyRdf9wSCdPiX
+	5FkYfXqbBCa/XnCoaIzXiR09O9x5MPcDlLimEDiPhgHuJZch9zx58JrJIhI6EknBdbZSAd
+	Jh3Trbqh538JUNqaIBW9CqhW17JYH2M=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-MlwpztLdPHe1F5IMxx3DWQ-1; Wed, 03 Sep 2025 11:15:34 -0400
-X-MC-Unique: MlwpztLdPHe1F5IMxx3DWQ-1
-X-Mimecast-MFC-AGG-ID: MlwpztLdPHe1F5IMxx3DWQ_1756912534
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-72048b6e864so22664766d6.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Sep 2025 08:15:34 -0700 (PDT)
+ us-mta-645-Kg-R26NfPua0fcyDjCHc3Q-1; Wed, 03 Sep 2025 11:15:42 -0400
+X-MC-Unique: Kg-R26NfPua0fcyDjCHc3Q-1
+X-Mimecast-MFC-AGG-ID: Kg-R26NfPua0fcyDjCHc3Q_1756912542
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-725d32eaa99so15610086d6.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Sep 2025 08:15:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912534; x=1757517334;
+        d=1e100.net; s=20230601; t=1756912541; x=1757517341;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e+0vXFzhSxSwj3v2mrFQi86NSXUL4ZDppFXq+HtAwjk=;
-        b=FUWXI2XYQGGVg/edU8Ev6IE/96V8dMraEC4vuP4imrs8doZttfq3FNKYNsPSUL2fwf
-         oetu8UfLV0lonzIfnnRntp6GYfy7v79zU9scH4CF4z2elveBW5KyJYh3mKFb2yh/3wOB
-         f/xmrLEGvnOWdX91Ccd+jYl+e+BUZ4wojDdx1gAK9pJchl3WYaMabE+TMriFPwn73adv
-         EWqDGL+GYTw9/pNTL10NYZs7wA3PlX8sKe2hpgo8bF2VgW6swQ+QoluZT062sRfOklLq
-         LM7vDbHQJjlzg8XkWv4ljGtvMGCqjYozdpVxG/EUKcBRtEJhF3A7OiiGp4Ior7D5KNsl
-         uflQ==
-X-Gm-Message-State: AOJu0Yw0vgtnDIHdIc1HYJ6Mk6bnJHLpu55q3lYQQVq+78UZ+bvzRGyR
-	YQibkI8FE390HtU61J8OyYlBbyfjsfX+ZWmmUpJhyrYbDkULvoXAj1Dh4jdamPQtGN0daCso64Y
-	5Z5uHKNExcLM1sbxl66u61Feo6ydQDxCLTuQkdjrdSRYEAbA0dmrKv4EHUwsPeA==
-X-Gm-Gg: ASbGncu/sXLN+sajiqGSGNk6Nzg76PiyWyRSKBSxsGo2yQP7a925tCicw1/JKFRRtQD
-	jdmrvl5eedogNaadCMwAfqiLjvyZla7AF9PyulFgi5Td/rOmFqsMBkK1ysCHydDsih34hrwGi/J
-	ovat0KcQ7V1/tkmjLl/PNS0AsOEdlaOmEQChgL8koJj7ffJ97A/lImQ4Q/oLAv7l2/q9CgfVOvB
-	adQbCN81Qx6aubzsuFmLWffsoTtrs5rtvbHjrGg7Z10+z/zJXEe6yFJm1MsYu7K8/u3zrWXKz/m
-	ccdISee/0DG696vfq5ka0BC1kE1zmAAni5Q1hZciRFBzbtNJEi9f6TMVMyJtU2HHIWX/nrIygbA
+        bh=4DqnCcjwRpbK8o4p2iXe6lSoJojb6f7QiC9/BUgcCv0=;
+        b=pYsJ9N0AvkpfmJCDfaCjuIcN8gPerWH57hoqj+wpPKnQuzN5e7BwUU48RlWR5DjOfv
+         zxitRhpgd/29F6FEPGRyA9Pl5jSfoYbs0jEIX6wTzEBLXiUWk6sU7yt3IcEtmhGaz099
+         mTk3LOn6ylne6GHZPhUCwXVU7TkqEMpmDhUpFexzqEVBCGMzsyRdA7hPdrisaR41+IEq
+         fpCrmDF0Zb2ziosqQfyNoUm6zMF21E+BPflACSuTBLv6xYQ9k9hXSTqFULlIqQJjZQKN
+         DXweBquh4mlLrHBlhlF1wF5Imrr2hYha0mgmCnhiuQuqVyXo8pAnExEeK5ZoMpB5gNq9
+         VRIA==
+X-Gm-Message-State: AOJu0YwF4R0q2E4RsXoc+CdnDzWyiy2zdOielJBt8PF7k7yvVTBpN3FB
+	yp2LoUhsvmYYLdDtXO811fdDCIzhYA3+1qVDK1o0iXh/tBXoPB5X5JJ3EEpYyHonAWJWHtALBAJ
+	SSaZwT1sgyqwf7kCPmbbthEnFIt3HSfmraGVQfv3XWj4MJ8jpgI5nQTqzqdejdtvRyIS1fg==
+X-Gm-Gg: ASbGncsV6K1Uabe533mzhQnLvgNNUXuPwINjmZb8pm86TBTQOVqoZtOK+oHHSRKNqZL
+	V9dZK+asuW2VJXt9daumWDJSbbzAwmNRWBvg/96MvfVqYfdu/0uuR/N1j/nCwBKv9ELp66JMtWt
+	iOCb6b06loZXrsnj0iTW0HzoTicgDhX++d2BrRQK7zH90dQkoH4hRppKF6h6tK2/NNtIKy4fmz3
+	su5guglJADauZc+lLHXy1HIvAlV8TThzkufj1Rh4iYpif7T8gj4J2yOk7edGnvstrob5qkgVAhr
+	T7FWKy14eHx3LeC3DGm3xTftruBp7Ym96aY7gMxSxZ8eZQJLdnbnxFQuoKAfY6dTer8lr8NARq0
 	=
-X-Received: by 2002:a05:6214:e43:b0:726:c288:a666 with SMTP id 6a1803df08f44-726c288aa54mr17036456d6.59.1756912533691;
-        Wed, 03 Sep 2025 08:15:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3IlMKWWgNAO7Q6WOeecM/0SWSXq5cZbNHqhjh9Ns5zZcD414eMglOR+F+Y+S6eyNAlpLYGQ==
-X-Received: by 2002:a05:6214:e43:b0:726:c288:a666 with SMTP id 6a1803df08f44-726c288aa54mr17035696d6.59.1756912533116;
-        Wed, 03 Sep 2025 08:15:33 -0700 (PDT)
+X-Received: by 2002:a05:6214:501d:b0:712:e30b:ef1d with SMTP id 6a1803df08f44-712e30bf1f3mr165062006d6.63.1756912539784;
+        Wed, 03 Sep 2025 08:15:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5I10I0WKxYKgKAEy94Wym7iHHUY6i406j/dnJpfUUA78DHHNcSjK7v+PoMe2ZX5mXlpF6Hg==
+X-Received: by 2002:a05:6214:501d:b0:712:e30b:ef1d with SMTP id 6a1803df08f44-712e30bf1f3mr165060786d6.63.1756912538520;
+        Wed, 03 Sep 2025 08:15:38 -0700 (PDT)
 Received: from [10.12.114.224] ([2600:382:850c:786a:ff8e:13a:e47c:3472])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm30827706d6.3.2025.09.03.08.15.29
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm30827706d6.3.2025.09.03.08.15.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 08:15:30 -0700 (PDT)
+        Wed, 03 Sep 2025 08:15:38 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 03 Sep 2025 11:15:04 -0400
-Subject: [PATCH v2 3/6] clk: tegra: periph: divider: convert from
- round_rate() to determine_rate()
+Date: Wed, 03 Sep 2025 11:15:06 -0400
+Subject: [PATCH v2 5/6] clk: tegra: super: convert from round_rate() to
+ determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-clk-tegra-round-rate-v2-v2-3-3126d321d4e4@redhat.com>
+Message-Id: <20250903-clk-tegra-round-rate-v2-v2-5-3126d321d4e4@redhat.com>
 References: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
 In-Reply-To: <20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com>
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
@@ -87,11 +87,11 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>,
 Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756912523; l=1192;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756912523; l=1247;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=AjcEhiucMili9sf/wwjT6T4E9qy5apL2Ir5PIpobHoI=;
- b=70I3Mq4ZlKGkt6RonBDIV0MOdusccrx3oFKMRyi6Oj3qJe6anIuKkXklg2G3L0mxPS9RSXztK
- VIj/MFE74U1B/LMA9OcxnqvYJNn8ONfhSkWtW74K+w2SQ3VpCWSv8y0
+ bh=xHYSF20Z40O1IS/P13jD4/OabcPSIx9zs970N7AMeQ4=;
+ b=N3/ppBwKIalyXCuBEW2R9w9ULDE/nReiU7B/SInxIldEMfFQK4/50ssw1KjHFQxbm//MjBL0r
+ 6WVAAeReogDDWplhQIpZ9kTvZzJ/B0C4NUYb/zmnGIQq4g+kbCW93kh
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
@@ -101,33 +101,35 @@ round_rate() to determine_rate().
 Note that this change also requires the same migration to
 drivers/clk/tegra/clk-divider.c.
 
+Link: https://lore.kernel.org/r/20250710-clk-tegra-round-rate-v1-5-e48ac3df4279@redhat.com
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/tegra/clk-periph.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/clk/tegra/clk-super.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index fa0cd7bb8ee67801dde3c65eababe30c96a176ef..6ebeaa7cb65648e77f11f2c676aa3428bc490a73 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -51,16 +51,10 @@ static int clk_periph_determine_rate(struct clk_hw *hw,
- 	struct tegra_clk_periph *periph = to_clk_periph(hw);
- 	const struct clk_ops *div_ops = periph->div_ops;
- 	struct clk_hw *div_hw = &periph->divider.hw;
--	long rate;
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 7ec47942720c5aa43f35107369b42804f4847b97..51fb356e770eeaea9d26ef48f298dbc00e164732 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -147,17 +147,10 @@ static int clk_super_determine_rate(struct clk_hw *hw,
+ {
+ 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+ 	struct clk_hw *div_hw = &super->frac_div.hw;
+-	unsigned long rate;
  
  	__clk_hw_set_clk(div_hw, hw);
  
--	rate = div_ops->round_rate(div_hw, req->rate, &req->best_parent_rate);
+-	rate = super->div_ops->round_rate(div_hw, req->rate,
+-					  &req->best_parent_rate);
 -	if (rate < 0)
 -		return rate;
 -
--	req->rate = (unsigned long)rate;
+-	req->rate = rate;
 -	return 0;
-+	return div_ops->determine_rate(div_hw, req);
++	return super->div_ops->determine_rate(div_hw, req);
  }
  
- static int clk_periph_set_rate(struct clk_hw *hw, unsigned long rate,
+ static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
 
 -- 
 2.50.1
