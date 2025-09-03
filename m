@@ -1,161 +1,127 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5ED28373;
-	Wed,  3 Sep 2025 00:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A613217A2E6;
+	Wed,  3 Sep 2025 04:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756859435; cv=none; b=NAcSYDWYYrBHQ9xWhiDCdRGFv4PXJDPW1lH7ZuQmScEHUny92iEOz9BXlije2Ca31OdS4cxCxB2JMSvt5SWeAsnamhs0DDfRj9TldSxDvA+JRwElJ3OjY7u0GLe4nM1g3CEnDUNq5pHTXn7gH/Su+qIk3udA/C2YDj25Wr+NtZI=
+	t=1756873276; cv=none; b=sK16WnhOXonI7U79k35qd3s/lfMqECp62g1yDGUEuQuAk12cHXoZ+MDz2Hw9KwERW8hr2OVUFFFdFEHXFTFsc+zhp2ooItZ2mJcGui3xlanzY9qDFMP68XunvK+yZ1SADTvm2He8YhzDxeTs3s3YgXzQgxMbEofAS//i8UeBt0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756859435; c=relaxed/simple;
-	bh=kN1SVeqqtF7jjk4r9ClxSGmVc8Agt/K+EhDBYCzp8ao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPlk6NapYMJq3O7apg4stnRVrfr6KKp+uC+P1kRMPWGrcLtoM5uSUVQgvHfRlEs/zGZIDe00Crk7Vu3w+3HH84ALmuYp0iTD8RSaEIMoGLs79uaZHLbIUjLt6UZDzNUv7scdjdvgbZdqLxbQtYIq+zyEaBPb5ENbtJGtxL0/2Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huDgh31A; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1756873276; c=relaxed/simple;
+	bh=ZoXxCHWqaro5pXtAU4oVQfP5mp8AkjK8NRJcUqEzsiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kp0jUo1gVcYb69SnA36jj+gX8p26CdrK55kXAAeekmiGqyxm9VgG0PcDR4c0vWhlyEBgwnJXpJx5/c8x6eCFcimm6EUFeGHyEYsJJQBSQvHku9MgFz308LhALM4Wr4BIscYM6gB6FZTIR2VkXO+e1KLa7rP+y5gAqsKbsWqKgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huDgh31A"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso4666374a91.1;
-        Tue, 02 Sep 2025 17:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756859433; x=1757464233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CmMfbXYYghLau518ZkBS9EQ6iyJ6tyWuJVdbkNRuMJc=;
-        b=huDgh31ARc1zjpSuTcEszPnxeXc9AKySu7L3CPRypwhJEev3uHHu7Hb1AK6NHj8gfL
-         7mzaLEfytoYC2fIviYqLghGXeocHw76lP87de955rZtFfsxFQrR2flng/WQ1IHrliBgj
-         ewXRPZi6ykEsBMrWA70vVO9vKCrRbE6tB6Rfr0V/wcv9E9PcgVglp67Synb9oxXPfbUb
-         YPW+T/3vG5jkJZvGfAXCLQtBJJiixKdO3jAPPms7rgB/tuZc0mNXHnGaCzihwRPHalmR
-         Wkj5VKRSlynicZLkOB5qgc5aBxEH+YMiDCnKoMNg0dHHF+R7ucvrQfsGf6bBbrLN0XlC
-         6K8w==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f76277413so3633438e87.3;
+        Tue, 02 Sep 2025 21:21:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756859433; x=1757464233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CmMfbXYYghLau518ZkBS9EQ6iyJ6tyWuJVdbkNRuMJc=;
-        b=BU7t0LHClP/WsMAMB9pbhGACljp/YKSVOPScDpvcxt1L4Os36d/cfYg22CAomO619i
-         H+Do6t/Mm6Q48Nq2SbzbK+gdonLINpMst0gLtPQ1u5AUKtdjlA5Ojlo/0Hv1PR4NHhhx
-         KSM1krpwkpYIcxQ0KwREMiCrMwkWTut46aoi8hOxawbnVNhjjmdRQvD8U9WQm1Ux2x3y
-         SzOhwlAO/ttgkv/G+78XUHAiiicIOou3DNRmdxGbLh24j3w2C8I3hIPnmwIqwA17FH+0
-         VGZP+34PnjZe7bCIu6zfv38fAFHaL9GNl2Pw7RZwNIRej9FGDdGI/YWW/N5HeLI0DQP+
-         xqDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv6l1kqGPlksG2tkehWP9dkkFZUviZgV0BWcDcKtBcYmh7RsqoZaK3Erkw5VMIk8UbnP0mVKTdVcZ5bSk=@vger.kernel.org, AJvYcCVNG3V8J2CTN34aF2nev3ast5xDbiEAVXDK9zubOfbrvxFuqbT+5XxxsiUGnQTgUDzEqRtWwVi8oNQ=@vger.kernel.org, AJvYcCVTVtczB6Xs4h0EyMVSUvVAJiZtsVJu+IuOdf6Y2nlEIfl351vsbchC3RnFKETlSCa+SaOQfYIwvlbg@vger.kernel.org, AJvYcCVUP8Cic2Bre0RPMp81MW67LXllXAaTwSiLhtjfbFNgZvt8N0NEmxZ9OR3QQW94jXB9uxOs+mitkQtDB9Y=@vger.kernel.org, AJvYcCW9CK4COPo9DltvCTXW02qDbZBKefFcB38uV94m2dQXULlUJiGQI1OXTptFSKhxOy7hEztLg0f9PaM=@vger.kernel.org, AJvYcCWOHkB5zUiSYmeTuH3J/0Ak+FtoCMFIXjuIVMGDvLjGSZvMcZRpoWJHO1vWSue6Dgzcp0S7AAJEaaR+mtSq@vger.kernel.org, AJvYcCWpgbVe+irAdm42j6Vue9kSqSLFoPIweQWPJeKCvVZMPKd2/YDAe4Y6Wv/p3EHt5G1OaA4Ziw9WIfZQ@vger.kernel.org, AJvYcCWu4OOz4PW+97vu7iIOeLOu9QnF2HtscNKDB74BH2N3uc9J5ceN0Nbu8dp7fZNd9HS/q8vOunCN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJjkPY7a0sto9YTi7clsatyWPbcV7ZBt5PXQST/oOk2aVHjEp3
-	KnanfOuvnZSmQVvDmBV6Ac7ClwHAm7h7yM33hJj8e2yVTZlJPuR4SET6dO8brb/B
-X-Gm-Gg: ASbGncuIUWbxNzUeV/rfC1wnjCJOr+9kYblifRaJxY47rmIvHmPQ8yNb3Er/iGDxn/9
-	MNHSN8ErYvxDFJ4ux4R2MlDW1AO7mhg0LZSBQ03mpgpRQU7VQ4BHr5v+BBFpIqZS0QrXQikSpZ4
-	ik8C371hzuHyHe3ts9jhMn1jXdgHf90zJjKTQGiMVthWUgg/xXqFWDbwdsv7ItFFLjbQGqPUpH6
-	zOnH5Chi4kK8MJ+PdWEqRT61pVgj9Ur7KnhIoytGKWsW3Yh0m6+ugrCO17+k9mK+Wil02QM/n/M
-	7FH7MsL7GVweIOH1H0lPtDMRCcnSzjSRoIDUmj/Zl20I8srdVzRxtahdm2wPS19jK8L6bk1AhZD
-	o9H8VPBatWoyOpHkDqLsbkg==
-X-Google-Smtp-Source: AGHT+IHKuGow4ZFuttu6aoYR+s2VkdzBbs1o2jEf8YSpdi38rlMbKdEgFtFxfdUZ56XgWRNUklItiw==
-X-Received: by 2002:a17:90b:1b12:b0:323:7e80:8818 with SMTP id 98e67ed59e1d1-328156e5627mr18724374a91.37.1756859433210;
-        Tue, 02 Sep 2025 17:30:33 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e23858ecsm3480217a91.14.2025.09.02.17.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 17:30:32 -0700 (PDT)
-Date: Tue, 2 Sep 2025 20:30:30 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Shreeya Patel <shreeya.patel@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Qin Jian <qinjian@cqplus1.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-	linux-sound@vger.kernel.org, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v3 00/20] BYEWORD_UPDATE: unifying (most) HIWORD_UPDATE
- macros
-Message-ID: <aLeMJjfhisYSIEph@yury>
-References: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+        d=1e100.net; s=20230601; t=1756873270; x=1757478070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ADtwGUks5/GGWfb4oIFPF0C8f7SmDwE61v3oi+KH4+E=;
+        b=nfUlBMWefwchqSdkZ4+EqzudDE3SzXU0YEQlA7FdLKy9s9ntZdAA7VYIhaxJILmIeu
+         Y5a/ZFAgDtCbo+OTuNF98PPxalRnGyZ8vyRXkcnzbZipsxPbtQ8WmA2Od+xhgXtxsU1h
+         E6PERtY8oDCLpMZxeDuWXT0MeuKpPaagiqhMc8TbKJuoeOUTY0kLloMSzKmKKrUC8w1F
+         88aguQ/krpOD2c52ssh5UOHItptgULWi8Pr3ZMq06pa30UYy4hqex+ZRBPLr3YzxXIJq
+         llVyrn5EuPv/h4ptIiP+JmkQxxaKdKh/uL3EGg9O/iJzg22b9fETlOiii55vJq36n/vP
+         npJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJnG3PLsx2/WMDZqGDO/U912qGgrVAoijytP/I/FLjSpHqJ2iPTpVjvBVhjiKVfq4Z8k9pGNON+jV7@vger.kernel.org, AJvYcCXiwhCSN0u2xnGt1zUJcTIdr9d/GP/Q9OM1oZ6vUOr88SlqrmMxJ7+MoSSnH8j+si2U0dKtJz6wv45J@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFn3lCxfXLV659J6EE/3I+8yWXvQsfUTHwe7FFyyV/hq6Qlufo
+	c5JlKUjRrUZX34Vr2PNZzdnrroFU5TuJJNHdwGBDSMNf+K6aqvt8jYaXOLkW3bRM
+X-Gm-Gg: ASbGncsyegWq6rFYuv57DRs4D9Z7aA8k3bLo570meFFOECMGM9NJwfYxwKccwLtdKjl
+	g1VpCMP7Pl5b5rLmqHpHlZAYcS9ZmpchXhoOciINlyP5J3FqGhVCUvesqIwXE/SN4eHST+oQKKx
+	zpig7079Q/jTTC1AhXJGMQqKBiKKeBnYLjgAT2d1vv3t9RSnzWXCuq+Nap16TaXhxwFggFYfGxp
+	+DNR9J/q/InYZvsA/4mwU2v2dwUTGiHMdTpZC3zOd4qgFM4AItjeg4tVFI+Q+BXaWWeAlxi0LrN
+	Wsoi0ClIY+p7I/MYycJPBdtXJd5aOxCupF39gNPAgEEc8iHcZDmUhiRbMmYli7OvmnBy5gk+AKH
+	jY4vEiiBJT9LjJhE2YgLKIuPRTaIA2RccAeLrohc1konO5Vs/XzpWiu9dWBaejw==
+X-Google-Smtp-Source: AGHT+IGKpurOeaAlRPQn5kLQGQbzlNMRAHGJW2qM/CfCp67QxWWRMC3vy6peed0odjLeqRt7SNC3zg==
+X-Received: by 2002:a2e:be09:0:b0:338:7f3:a757 with SMTP id 38308e7fff4ca-3380802eda9mr1550911fa.10.1756873270201;
+        Tue, 02 Sep 2025 21:21:10 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c4ed3csm7714101fa.4.2025.09.02.21.21.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 21:21:08 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so5280207e87.0;
+        Tue, 02 Sep 2025 21:21:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6to7P1iTy4R+ERR/zfgya5/Fnw0Tr9Br9D8cG/TcbERncfeyS/fR3VjkmQQBUzZo3sERMROleYQii@vger.kernel.org, AJvYcCVKpfRxN8g2gTvNO3yieG7AX4tvLLV0E/H3F1gB5Dw+vIMa9Q7cGTsoKFArhKO1dsCljAYLViQJ+WT2@vger.kernel.org
+X-Received: by 2002:a05:651c:551:b0:336:e102:9611 with SMTP id
+ 38308e7fff4ca-336e1029af0mr33033101fa.36.1756873267878; Tue, 02 Sep 2025
+ 21:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+References: <20250903000910.4860-1-andre.przywara@arm.com> <20250903000910.4860-4-andre.przywara@arm.com>
+In-Reply-To: <20250903000910.4860-4-andre.przywara@arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 3 Sep 2025 12:20:55 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com>
+X-Gm-Features: Ac12FXwDJPiA6-F7YvlIel1VqSOtkOlXCU1uqZBll3biFaGOGyU1Aw_g7q5-Q7Y
+Message-ID: <CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] clk: sunxi-ng: mp: support clocks with just a shift register
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Mikhail Kalashnikov <iuncuim@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 10:28:20AM +0200, Nicolas Frattaroli wrote:
-> This series was spawned by [1], where I was asked to move every instance
-> of HIWORD_UPDATE et al that I could find to a common macro in the same
-> series that I am introducing said common macro.
-> 
-> The first patch of the series introduces a new header file,
-> hw_bitfield.h, which contains two new macros: FIELD_PREP_WM16 and
-> FIELD_PREP_WM16_CONST. The latter can be used in initializers.
-> 
-> I've cheekily added the hw_bitfield.h header to the BITMAP API section
-> of the MAINTAINERS file.
-> 
-> This macro definition checks that the mask fits, and that the value fits
-> in the mask. Like FIELD_PREP, it also shifts the value up to the mask,
-> so turning off a bit does not require using the mask as a value. Masks
-> are also required to be contiguous, like with FIELD_PREP.
-> 
-> For each definition of such a macro, the driver(s) that used it were
-> evaluated for three different treatments:
->  - full conversion to the new macro, for cases where replacing the
->    implementation of the old macro wouldn't have worked, or where the
->    conversion was trivial. These are the most complex patches in this
->    series, as they sometimes have to pull apart definitions of masks
->    and values due to the new semantics, which require a contiguous
->    mask and shift the value for us.
->  - replacing the implementation of the old macro with an instance of the
->    new macro, done where I felt it made the patch much easier to review
->    because I didn't want to drop a big diff on people.
->  - skipping conversion entirely, usually because the mask is
->    non-constant and it's not trivial to make it constant. Sometimes an
->    added complication is that said non-constant mask is either used in a
->    path where runtime overhead may not be desirable, or in an
->    initializer.
+On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@arm.c=
+om> wrote:
+>
+> The "mp" clock models a mod clock with divider and a shift field. At
+> least one clock in the Allwinner A523 features just a power-of-2 divider
+> field, so support an initialisation of the clock without providing an
+> actual divider field.
+>
+> Add a check whether the "width" field is 0, and skip the divider
+> handling in this case, as the GENMASK macro will not work with a zero
+> length.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
 
-Applied in bitmap-for-next for testing.
+In my series I have a patch that adds this to the divider clocks,
+thus adding a P-clock type to the M-clock bits.
 
-Thanks,
-Yury
+Maybe use that instead? I prefer we use actual matching types instead
+of disabling one part of a complex clock type.
+
+ChenYu
+
+>  drivers/clk/sunxi-ng/ccu_mp.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.=
+c
+> index 354c981943b6f..a03dac294d048 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> @@ -236,9 +236,11 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsign=
+ed long rate,
+>         spin_lock_irqsave(cmp->common.lock, flags);
+>
+>         reg =3D readl(cmp->common.base + cmp->common.reg);
+> -       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+> +       if (cmp->m.width)
+> +               reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m=
+.shift);
+>         reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+> -       reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+> +       if (cmp->m.width)
+> +               reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+>         if (shift)
+>                 reg |=3D ilog2(p) << cmp->p.shift;
+>         else
+> --
+> 2.46.3
+>
