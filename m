@@ -1,67 +1,67 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C9B30F527
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429530F7EB
 	for <linux-clk@vger.kernel.org>; Wed,  3 Sep 2025 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756907811; cv=none; b=CsFPPrUeVyJDCJKBp0KkyCZp4UOvdDjEjI2MY3CqoKQqEXS2H0xjOclq2/1duliKC8WXkMXcyK7Rb6rx0UQMhyahWXRq18JA+1DyNjZTJHICPe2tcHsMrPBSAoOM1mzJA+D7QAgbUfNg4rRtBWaIoJ4Z2wjbc2kiCJKo7DdL3Pk=
+	t=1756907812; cv=none; b=WPZFI8zcv44bshZnWr63D8qL7djOrBLoXv/7gyArYnHsIPBvuwTpIEFqC6GQjTxh2F8+YyNSSpmNbTeLjVihAoX2TUFO8ymFrMjefZY1OKRuDltaFU/iwuyL+apcx8lsWkfhuI1cni0PpMvddq9SQM1m5l96PWnvBtIbAn3kuFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756907811; c=relaxed/simple;
-	bh=dz7gQjCygFQTHCpzStxcsEQEHazG0z97bLLdbPJU1cI=;
+	s=arc-20240116; t=1756907812; c=relaxed/simple;
+	bh=jmSGd1LEiJi/OzRrbMT0IdOTY/EPAZZsAFW195MpqOM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ieI9Bbp6068w477uKZiEjfCFgmTpcycwV3htYIQMvXSX9YXvrsnXCsgTlrGq676QctNT1DWZrofZeY82GN4u9vNVTWlUpm0M5HZko1XuQdq1ZmCwCA57itxijhC0gNDxPZKAH2lDBhGZy6MDBxRxa04+E4Afj7sTjTCZ2BLDNbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GbCt9QwN; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=UK8gnpN+79qGmmYwgz2qMp4f+pxrD95DwagKV0Wn2yVjqZP7x9g8qTGASax+87Iwk+D18XA7R0Y6PJnEVGzpjeAk9d5e/acOiXIg1myD9n/5r3llaBK2pozCc/uIsdbRf+Mz3YNTpAsVnutoe9eT7oo9xefboQA4+Nqd/Rl771s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gu3DBpJq; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GbCt9QwN"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b883aa3c9so25295035e9.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gu3DBpJq"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45cb659e858so4549405e9.2
         for <linux-clk@vger.kernel.org>; Wed, 03 Sep 2025 06:56:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756907806; x=1757512606; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756907807; x=1757512607; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UYuv3IrS7IPuMyikGmW/lennhceiqK2zrsQcCIyLu+Y=;
-        b=GbCt9QwNqPh1zBRtVaheAtuNrRo8B1bIuw+9aZo28tskobvempbkFwJkVGCRPEyroz
-         +4d2YeOut4IztKqcjFgBovxJfTm8yzEUnS7F1peemX2iFNGEzCI7vbtjUcTJncZVeW5D
-         yKpKbcbDxf+3IYsrIxmwXM8Q2z3UxO3ycd2jSjVfHq/P0QaDTHIfkqycBxkFfv6ws1Be
-         XDrOr0LD0El8ja5BvNH3Q1Ld24WknaLtFVuxxO0uIlSL0QKevog97dBEQpkCwAuPO8i7
-         HXHvM1huNXkcSpDfwLfD/EgE0vA3xsplKDheXK74XR13PjFm9Tonv9TKKQgbaAxUsduF
-         Xazg==
+        bh=knWYmZlS1tcNLIvNHwra67g63fbf9sRjO2H/UvMZ5D0=;
+        b=Gu3DBpJqJIkDwXMJR+3BFOmT1ZwdlnBG+T5WxgqkanYALyWEifLQkMzZi6F92t4ZfN
+         ugfWuT0KOUvLTz1emDszCCsgZcBwobQ+9OIFBBNq0H5oNHN2s+Owhv0m48HDreG3EYUb
+         uxtoDd8djgQi6RZ3x0gCToLphTDMSwq6Hw0CxpuczLMmwpjqzJ8uO559eKufYAsSRLQK
+         3hows0RUQUf8chR33mbXPqyzDCkfvX6eLnMaj/oIWkFbhcoC5CxR0NUM66x85+EfRbbT
+         zE3J0TdW48iTGmCQ22lIshOkSqy6GOOfrdbmwoHsahoctH2Vl4wDHrSt8arJnVHeJSDR
+         HBbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756907806; x=1757512606;
+        d=1e100.net; s=20230601; t=1756907807; x=1757512607;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UYuv3IrS7IPuMyikGmW/lennhceiqK2zrsQcCIyLu+Y=;
-        b=DDrX02nHd1NTjD5HdplXsIdlxg5UOr6maw4O66TTH3CSlU0WSECnO3MDHcpL+vXxh0
-         ZeUGywOgLz0Ad1j0RPuKd3oXEUVJld45YEzq9baLObULq83yyUcT1IUAk5WpwXt4j9iK
-         JgXvydAgGFyP1zuVtf+BJXP3ACRdxfSe3voewoOKsjlbJ2+Rq4wReF9Q/D8col5ElpM4
-         F/Pm+DCcdxFlxoKwLhVgwa2U7kF1TvCfwmhszJullHTsCVnOuA6AY9y8vsS5iPnH9+bo
-         q0DXKcw00ySQ7/8gG/i9WwqGHSE5ps+g9MlCLwIwjI000172HtUy7vYTcl0+zNggqd3D
-         Gb2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSu/1ThwvHx3viRSu/wvlYCLPGOIiYJ7laAtb86WzLgIX3+pIoyABLPI+QcD3DoHZpiJeXArTKHXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR+u/yw3ZwjJ0cSQTDe5LaekQ0nGhLZLBhbVyXrsnf+h8xM9IA
-	wPJCtMy5NVGDaHA9eytsqg5Ikw4KAlZy3PLsh9D8KobItWiz5mp+JwlVzJS/ZdOsbFI=
-X-Gm-Gg: ASbGncubDOXeFqZSmq3jWJmDtDIw4NXZEjp97iJSVnrmhjRmyd/oA+nYTEF/mp20/dC
-	66hzdtLeeLobBGe7E2mufOH5Mwe7GaKuFEFyjgp8f4WcFQ4DLVTTy51GjIVNr4yzzoRyHOJ8C1C
-	ojKM9515GPeLfDg/TJ4YNjmy5TjGS7ETJcFKe7XW8PXz2cws+/sXRFDD7C8pYA4Ecd/Krmi0Uzl
-	4EuXHh5qUfs24Y5h/Q1TsjK33Oe647ZZKG38vyn+E0MyOKCVKGKSe/jXGQFs1ww1Qwr0s0pZ0KI
-	pW25t0SkXEp39CMgZp59+lvLlFjPkqTna88lHkZkokMDEL9xu9aGquUV/ryje3m1du8PrN+gbX3
-	Ta7HdYsKoReY0PH0oZo1NoZ7P+TeKCSPo0QMI7hn+VbuEXsqvN2bd+u/uw0ze5ADrF6K98iFLXy
-	D9yy4dEgShdcdNPAt2Nlfy/2k=
-X-Google-Smtp-Source: AGHT+IHYANMgRYGXdNHs2QyGL8QnX2/Tp8baR9s93U+KQIcT5D6VPk22Vpiz9HHftpfRlLtqh7LR+Q==
-X-Received: by 2002:a05:600c:358c:b0:45b:9a3b:34aa with SMTP id 5b1f17b1804b1-45b9a3b36d5mr60145985e9.16.1756907806344;
-        Wed, 03 Sep 2025 06:56:46 -0700 (PDT)
+        bh=knWYmZlS1tcNLIvNHwra67g63fbf9sRjO2H/UvMZ5D0=;
+        b=R9PCgXocBWKU0FPWOZn6Nb66UW4oRo62m2BO95l7FWWJa4cpgOHGSblyLnfgA1qPtA
+         +dm3nfg87+a4k/CFqQC9IDKhd7XqPgI79kBKG8YwJ8HoZDG5q+vJLhOOUZVHwWXZcXnm
+         bqwJW3mtkNamRUjjerJu+tDnxSbjyNPcPNJZ5BPxkRwfL8yeLycFLejdxwiafjJFad+K
+         uct/Kq/v0HjWjDGx5OdvV+MkF7DxJXYkxhJRCAw1gZ+nDgYxKO4kKfv54SwifqccVdmS
+         QfcHYVFXeAwYepq3YSo+2GZr/EhZ6gP3tuQd9xprkfYSmtosqniwkYLpfmAHW3PVp6Bu
+         rtbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXs6Ka877/sArUutcwaDHCo99HLOq51TjHtZbXVSL2CLy5/4heAxY68udr0FOzYqE1oC3CR7CWeRAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUEWkedq6ZhZGk9tNJnB206PElMXI3vqAiuGSteNSdeoNHH8/3
+	rnn2L3lzW+o7+crBsS/fyNlgt/uskmZrijqHOVIWVIjX7ECocLzrnqFM+Y/pydBdo/c=
+X-Gm-Gg: ASbGncu8sYT43ZzK0TJu4FP/Xx126sTQHayrcwOh+Wz0OlDQ2y6sSHeenqr/KJ/V4g1
+	7vEmj+9mEQS/x9sWFJ7GC1aWHKni74I5EQKQKzhAnPSyotKNoAMpO7rFNoE1B6JyFA0scFnvbM+
+	LfKY3XSLD4wheLO/ZOjNL/PkBUf5asfk9Qmm7wBlAfyq2c3Vl9jdLTv5v+8UDIPeaZ/RqIe82/O
+	47V3lvNKgu1NLpXA0q4Uh1wQn1aygfR6FxswErVUZTEdK/IKwkhd9YOw8Z8fCi7K8byTV78SnoU
+	rfiDkZwtnK6E9gDWZekaG6j7msIZ0GuOeoUb1ofSuw15HAKJB8nOI2AMx5N0vNsREkfNPgCTQRi
+	ft5dmoKg7lGPHgDlVtxtNlj5vJ1HOpLWeGfecGTfWlJYEZx1cqHfhIjxGF/W5If7EW7CFXl8VZq
+	k5uL3d4kGgPYP8
+X-Google-Smtp-Source: AGHT+IEEbe9zmys+SdHs+R+yvKPrY3H8cKyU1UJgBhivbEglt1LnfQ35e5S95bN5Q3yU4Jw1QrwtWA==
+X-Received: by 2002:a05:600c:5253:b0:45d:98be:ee91 with SMTP id 5b1f17b1804b1-45d98bef030mr1077085e9.9.1756907807066;
+        Wed, 03 Sep 2025 06:56:47 -0700 (PDT)
 Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87632365sm197257135e9.16.2025.09.03.06.56.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87632365sm197257135e9.16.2025.09.03.06.56.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 06:56:45 -0700 (PDT)
+        Wed, 03 Sep 2025 06:56:46 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 03 Sep 2025 13:56:41 +0000
-Subject: [PATCH v3 4/5] firmware: exynos-acpm: register ACPM clocks pdev
+Date: Wed, 03 Sep 2025 13:56:42 +0000
+Subject: [PATCH v3 5/5] arm64: defconfig: enable Exynos ACPM clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
+Message-Id: <20250903-acpm-clk-v3-5-65ecd42d88c7@linaro.org>
 References: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
 In-Reply-To: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -88,85 +88,35 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907802; l=2606;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756907802; l=820;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=dz7gQjCygFQTHCpzStxcsEQEHazG0z97bLLdbPJU1cI=;
- b=LnTHfH04YTaRtLtGrKsu0l2tPiCHi5kfhymeOk52FGnp5MzLrMabP6gJe0V4GjgInvVmxXtUf
- XE+PInRBnXoA2tDMR/QaB3Bf4NEDZH1HPg1Gifx67K5mHfQZQODjRKi
+ bh=jmSGd1LEiJi/OzRrbMT0IdOTY/EPAZZsAFW195MpqOM=;
+ b=uHbQ7xT3bV6lIp0HqgAN0MLCg6QtXHzra5fcYf5Lk5NwyHh5UfcdGdrFyQvIdgzD6dfszLV11
+ AJJjST6HJPrAxYtlucE/6MSFIODMgces/93QGOxMCFOl2jtohAP2doq
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Register by hand a platform device for the ACPM clocks.
-The ACPM clocks are not modeled as a DT child of ACPM because:
-1/ they don't have their own resources.
-2/ they are not a block that can be reused. The clock identifying
-   data is reduced (clock ID, clock name and mailbox channel ID)
-   and may differ from a SoC to another.
+Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
+implement ACPM to provide support for clock configuration, PMIC
+and temperature sensors.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/firmware/samsung/exynos-acpm.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 9fa0335ccf5db32892fdf09e8d4b0a885a8f8fb5..0cb269c7046015d4c5fe5731ba0d61d48dcaeee1 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -177,9 +177,11 @@ struct acpm_info {
- /**
-  * struct acpm_match_data - of_device_id data.
-  * @initdata_base:	offset in SRAM where the channels configuration resides.
-+ * @acpm_clk_dev_name:	base name for the ACPM clocks device that we're registering.
-  */
- struct acpm_match_data {
- 	loff_t initdata_base;
-+	const char *acpm_clk_dev_name;
- };
- 
- #define client_to_acpm_chan(c) container_of(c, struct acpm_chan, cl)
-@@ -604,9 +606,15 @@ static void acpm_setup_ops(struct acpm_info *acpm)
- 	pmic_ops->update_reg = acpm_pmic_update_reg;
- }
- 
-+static void acpm_clk_pdev_unregister(void *data)
-+{
-+	platform_device_unregister(data);
-+}
-+
- static int acpm_probe(struct platform_device *pdev)
- {
- 	const struct acpm_match_data *match_data;
-+	struct platform_device *acpm_clk_pdev;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *shmem;
- 	struct acpm_info *acpm;
-@@ -647,6 +655,18 @@ static int acpm_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, acpm);
- 
-+	acpm_clk_pdev = platform_device_register_data(dev,
-+						match_data->acpm_clk_dev_name,
-+						PLATFORM_DEVID_NONE, NULL, 0);
-+	if (IS_ERR(acpm_clk_pdev))
-+		return dev_err_probe(dev, PTR_ERR(acpm_clk_pdev),
-+				     "Failed to register ACPM clocks device.\n");
-+
-+	ret = devm_add_action_or_reset(dev, acpm_clk_pdev_unregister,
-+				       acpm_clk_pdev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add devm action.\n");
-+
- 	return devm_of_platform_populate(dev);
- }
- 
-@@ -746,6 +766,7 @@ EXPORT_SYMBOL_GPL(devm_acpm_get_by_node);
- 
- static const struct acpm_match_data acpm_gs101 = {
- 	.initdata_base = ACPM_GS101_INITDATA_BASE,
-+	.acpm_clk_dev_name = "gs101-acpm-clk",
- };
- 
- static const struct of_device_id acpm_match[] = {
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 58f87d09366cd12ae212a1d107660afe8be6c5ef..4255bc885545fb3bb7e9cf02760cac35bf2872fa 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1445,6 +1445,7 @@ CONFIG_CLK_GFM_LPASS_SM8250=m
+ CONFIG_SM_VIDEOCC_8450=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_CLK_RENESAS_VBATTB=m
++CONFIG_EXYNOS_ACPM_CLK=m
+ CONFIG_CLK_SOPHGO_CV1800=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_OMAP=m
 
 -- 
 2.51.0.338.gd7d06c2dae-goog
