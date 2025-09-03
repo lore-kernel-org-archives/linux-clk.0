@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE8275B18;
-	Wed,  3 Sep 2025 10:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B3B1DA60F;
+	Wed,  3 Sep 2025 10:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895116; cv=none; b=SY8stLSf3cFQQ66YI5R+aD6BvkGJvIHJfTbWDCu7TuTJuoPYVReu+9VE8ThaM1mEEGZmkjkdRm2xXwRtOFdiY/3MmhWlbsuGgNgQnbp2HIpIV3z1acwVcuewt2S08ML/tLnj2GYanNbt8EV/T3G2c00RWMeUdBhoiJ6gO7afqR4=
+	t=1756895215; cv=none; b=jrA7CSl7U5Yb3fqYGPO7J5uIQY9uT8NqpV5+8UvX1bhXxUz+YcBB6umxbRAvTpEOfX7K7A2ZM2B469OrIb7f9eQNWKHY5WdtiwkkMRKsdwNewDQ4oARSPjpkA6DSDVWYrtxlZnXy7OKMcAUL8LzcRkE884sQXzSuTRJfRUrud1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895116; c=relaxed/simple;
-	bh=TaFWHQjvVfXejaDsEJWPpAUgrBcapiu1AuP/gQXiR+U=;
+	s=arc-20240116; t=1756895215; c=relaxed/simple;
+	bh=j8WwRyidorWq6I/V1DikgrexlK9rJb32nczwqmy5r40=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFjZnaqL4Ceo4rpLwbfQTw28iah47C2WXQ942frqRyp/DXTaX4MPQjMaLOJ85QWuQ+BTKByiwMegEvQ3V8bZoslGlDt+vpeW6mQMu0O3nTD9v6WeB2uvzkwIF8I0LZkQxEHGqSQhNlR8kPQUJo9GmGpOZc8z+3QsP+GkVbvMf7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBWzAqCg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=WFCI8iekbAkQRY3j6fsd3HBWZOSK1wfic2X3xlCnKs+iLoBMtxnFxwlSq13TUQrkzpJt6wkvMCSHouM65BqG46XLNTuuKVIb0xG2+qGGjNsvmYJa5fokU7g8fGfWTIi8cb5aIdgZZMzaTqXn2k1dDKA6FH3pQW/i3f0421TqJWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vObmhpe0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBWzAqCg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4897BC4CEF0;
-	Wed,  3 Sep 2025 10:25:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vObmhpe0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BD8C4CEF0;
+	Wed,  3 Sep 2025 10:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756895115;
-	bh=TaFWHQjvVfXejaDsEJWPpAUgrBcapiu1AuP/gQXiR+U=;
+	s=k20201202; t=1756895214;
+	bh=j8WwRyidorWq6I/V1DikgrexlK9rJb32nczwqmy5r40=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EBWzAqCgxdZBq3OvTkX0ocQlR2ksWFCW23qk48jmCjpTKj1u7LTt5BNg2jisUKtYO
-	 Cq2G7lrQaCc3ZDM7VpDAum42Q8y0UDsPYYE7Qph9+QbWslQd5DZF/d0kYzmlFbX+R+
-	 ObleuNHa9roYs4nTOjDlw80MZ73g59tPaauhusUpAw+2jBHwBGwThvxUBqSrGweuo6
-	 /zxhHErvk34CX2Tjegmxn+TuKOQ15zTBgToBe9QDrB83Pj728bmHnqj/nQWLUKPYeQ
-	 rGPVncHJTU6KtpS8/iKPknyCQdShtL2YztwTD2HxmYj+haXW6VozRP6kwFBC74oqIT
-	 ucOic0QtJL8ug==
-Message-ID: <998b2faf-4093-487b-a9b0-a7cfe1d96c3f@kernel.org>
-Date: Wed, 3 Sep 2025 12:25:10 +0200
+	b=vObmhpe0Q8lYt1oStUpRbxEUo8Fw6bIAFPTh80RVydOl4Xsql3X8cns+Lcxn+nH8V
+	 O6VF6dAu4pn81O3GMb4yBI9oEkVWlWuZ27HQxwayjCHj1062gc/1myhEkzvIkaNILQ
+	 b3NVz/tI5iX0ey2dI96nc9kZafHX8ENeNjACYLRR1FTuBotUDSsIMBaUHOQUCvfWww
+	 v8pQtsLO2D3zcitfX/yGMafpwquqZJCbTRKO2GfPgtAjOFVpcYGDWC5Qu955s34knY
+	 FZkywIAK2UhfdH0QY9Z0ebI3RK4ztQIbn2oOEG0/ys8poXnUm+5n/SaDBmbfpebp8v
+	 TIZ4xIpxXsAtA==
+Message-ID: <701542d5-adfd-4e35-a173-94791c118db5@kernel.org>
+Date: Wed, 3 Sep 2025 12:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU CCU
- clock controller
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: add support for the A523/T527 CPU CCU
+To: Andre Przywara <andre.przywara@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
  Mikhail Kalashnikov <iuncuim@gmail.com>
 References: <20250903000910.4860-1-andre.przywara@arm.com>
- <20250903000910.4860-2-andre.przywara@arm.com>
- <20250903-meticulous-didactic-degu-621fe0@kuoka>
- <20250903104644.7359a86d@donnerap>
+ <20250903000910.4860-5-andre.przywara@arm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,36 +92,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250903104644.7359a86d@donnerap>
+In-Reply-To: <20250903000910.4860-5-andre.przywara@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/09/2025 11:46, Andre Przywara wrote:
->>
->>
->>> @@ -0,0 +1,13 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->>> +/*
->>> + * Copyright 2025 Arm Ltd.
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
->>> +#define _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
->>> +
->>> +#define CLK_CPU_L		7
->>> +#define CLK_CPU_DSU		8
->>> +#define CLK_CPU_B		9  
->>
->> I don't see the header being used by the driver and odd numbers (they
->> should start from 0 or 1) suggest these are not bindings.
-> 
-> This header is included by the private header (at the end of patch 4/5).
-> The private header is then included by the driver.
-
-Ah, I see now.
-
-> 
-
+On 03/09/2025 02:09, Andre Przywara wrote:
+> +#include "ccu_common.h"
+> +#include "ccu_reset.h"
+> +
+> +#include "ccu_div.h"
+> +#include "ccu_gate.h"
+> +#include "ccu_mp.h"
+> +#include "ccu_nm.h"
+> +#include "ccu_mult.h"
+> +
+> +#include "ccu-sun55i-a523-cpu.h"
+You should not rely on some other headers pulling other headers. You use
+here bindings, so you should include here bindings header as well.
 
 Best regards,
 Krzysztof
