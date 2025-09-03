@@ -1,125 +1,130 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EBE2E8B9C;
-	Wed,  3 Sep 2025 10:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE8275B18;
+	Wed,  3 Sep 2025 10:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894864; cv=none; b=U73KxYTuI0phoAaC/gZdCO5pVz/pOBRs1ELslgAmEhq1U9F2SQnSDf5nAvuYvUH6Ae/UakCJdzhP8FuAo0zLU96PAypFgx2uRyV5rS+ukpUEQOlYhsCfOTnRhJIWdKsP4l3rOAOX3EnMF8VGjFvigUELyiogxMxEt1afsbuiZO4=
+	t=1756895116; cv=none; b=SY8stLSf3cFQQ66YI5R+aD6BvkGJvIHJfTbWDCu7TuTJuoPYVReu+9VE8ThaM1mEEGZmkjkdRm2xXwRtOFdiY/3MmhWlbsuGgNgQnbp2HIpIV3z1acwVcuewt2S08ML/tLnj2GYanNbt8EV/T3G2c00RWMeUdBhoiJ6gO7afqR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894864; c=relaxed/simple;
-	bh=L3vddjUU1jpt8BxPZ+4MbL520RZhTPPHok7S2N8mXFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Og2eTdMmI/2p2nyz891KJxp1O/fEfNfAIVJAykOu8h+HEwnnpdu2hrLFGtdD3e4+Oc+KR3o015tMSiJ9GCB96si9R6hrnqCAtru7uEIUGRkjCm7vG2YvUuohDZkfoLZoO4JqP8ZBwZPbchPyAFNWrPpZyLhCDAxG0Er3UFG/an0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D0121688;
-	Wed,  3 Sep 2025 03:20:53 -0700 (PDT)
-Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 088923F6A8;
-	Wed,  3 Sep 2025 03:20:59 -0700 (PDT)
-Date: Wed, 3 Sep 2025 11:20:54 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
- Mikhail Kalashnikov <iuncuim@gmail.com>
-Subject: Re: [PATCH 3/5] clk: sunxi-ng: mp: support clocks with just a shift
- register
-Message-ID: <20250903112054.173fe7b8@donnerap>
-In-Reply-To: <CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com>
-References: <20250903000910.4860-1-andre.przywara@arm.com>
-	<20250903000910.4860-4-andre.przywara@arm.com>
-	<CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1756895116; c=relaxed/simple;
+	bh=TaFWHQjvVfXejaDsEJWPpAUgrBcapiu1AuP/gQXiR+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qFjZnaqL4Ceo4rpLwbfQTw28iah47C2WXQ942frqRyp/DXTaX4MPQjMaLOJ85QWuQ+BTKByiwMegEvQ3V8bZoslGlDt+vpeW6mQMu0O3nTD9v6WeB2uvzkwIF8I0LZkQxEHGqSQhNlR8kPQUJo9GmGpOZc8z+3QsP+GkVbvMf7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBWzAqCg; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBWzAqCg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4897BC4CEF0;
+	Wed,  3 Sep 2025 10:25:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756895115;
+	bh=TaFWHQjvVfXejaDsEJWPpAUgrBcapiu1AuP/gQXiR+U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EBWzAqCgxdZBq3OvTkX0ocQlR2ksWFCW23qk48jmCjpTKj1u7LTt5BNg2jisUKtYO
+	 Cq2G7lrQaCc3ZDM7VpDAum42Q8y0UDsPYYE7Qph9+QbWslQd5DZF/d0kYzmlFbX+R+
+	 ObleuNHa9roYs4nTOjDlw80MZ73g59tPaauhusUpAw+2jBHwBGwThvxUBqSrGweuo6
+	 /zxhHErvk34CX2Tjegmxn+TuKOQ15zTBgToBe9QDrB83Pj728bmHnqj/nQWLUKPYeQ
+	 rGPVncHJTU6KtpS8/iKPknyCQdShtL2YztwTD2HxmYj+haXW6VozRP6kwFBC74oqIT
+	 ucOic0QtJL8ug==
+Message-ID: <998b2faf-4093-487b-a9b0-a7cfe1d96c3f@kernel.org>
+Date: Wed, 3 Sep 2025 12:25:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: clock: sun55i-a523-ccu: Add A523 CPU CCU
+ clock controller
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ Mikhail Kalashnikov <iuncuim@gmail.com>
+References: <20250903000910.4860-1-andre.przywara@arm.com>
+ <20250903000910.4860-2-andre.przywara@arm.com>
+ <20250903-meticulous-didactic-degu-621fe0@kuoka>
+ <20250903104644.7359a86d@donnerap>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250903104644.7359a86d@donnerap>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Wed, 3 Sep 2025 12:20:55 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On 03/09/2025 11:46, Andre Przywara wrote:
+>>
+>>
+>>> @@ -0,0 +1,13 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>>> +/*
+>>> + * Copyright 2025 Arm Ltd.
+>>> + */
+>>> +
+>>> +#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
+>>> +#define _DT_BINDINGS_CLK_SUN55I_A523_CPU_CCU_H_
+>>> +
+>>> +#define CLK_CPU_L		7
+>>> +#define CLK_CPU_DSU		8
+>>> +#define CLK_CPU_B		9  
+>>
+>> I don't see the header being used by the driver and odd numbers (they
+>> should start from 0 or 1) suggest these are not bindings.
+> 
+> This header is included by the private header (at the end of patch 4/5).
+> The private header is then included by the driver.
 
-> On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@arm=
-.com> wrote:
-> >
-> > The "mp" clock models a mod clock with divider and a shift field. At
-> > least one clock in the Allwinner A523 features just a power-of-2 divider
-> > field, so support an initialisation of the clock without providing an
-> > actual divider field.
-> >
-> > Add a check whether the "width" field is 0, and skip the divider
-> > handling in this case, as the GENMASK macro will not work with a zero
-> > length.
-> >
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > --- =20
->=20
-> In my series I have a patch that adds this to the divider clocks,
-> thus adding a P-clock type to the M-clock bits.
+Ah, I see now.
 
-Yeah, I saw that, but wasn't convinced this would be better. Hence wanted
-to post my version as an alternative.
+> 
 
-> Maybe use that instead? I prefer we use actual matching types instead
-> of disabling one part of a complex clock type.
 
-Good that you bring up that topic: when looking for matching clocks I saw
-we have a lot of them, though often one is just a subset of some others,
-with some code duplication. And we use the pattern of "use type A, but
-without feature X" already, for instance for "NKMP without the K".
-
-So I was wondering if we should revisit this and clean this up. IIUC those
-clocks were all modelled after the H3 and earlier generation, and the
-clocks have changed since then. For instance I don't see PLLs with two
-multipliers (NK) after the A64 anymore.
-
-So what about we consolidate the various types into just a few distinct
-ones, like NKMP for all PLLs, for instance, and provides macros that
-disable fields as needed? This could ideally be done under the hood,
-leaving the per-SoC drivers mostly alone, hopefully.
-
-What do people think about that?
-
-Cheers,
-Andre
-
-> >  drivers/clk/sunxi-ng/ccu_mp.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_m=
-p.c
-> > index 354c981943b6f..a03dac294d048 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> > @@ -236,9 +236,11 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsi=
-gned long rate,
-> >         spin_lock_irqsave(cmp->common.lock, flags);
-> >
-> >         reg =3D readl(cmp->common.base + cmp->common.reg);
-> > -       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift=
-);
-> > +       if (cmp->m.width)
-> > +               reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp-=
->m.shift);
-> >         reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift=
-);
-> > -       reg |=3D (m - cmp->m.offset) << cmp->m.shift;
-> > +       if (cmp->m.width)
-> > +               reg |=3D (m - cmp->m.offset) << cmp->m.shift;
-> >         if (shift)
-> >                 reg |=3D ilog2(p) << cmp->p.shift;
-> >         else
-> > --
-> > 2.46.3
-> > =20
-
+Best regards,
+Krzysztof
