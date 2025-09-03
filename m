@@ -1,136 +1,101 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B252D8DB7;
-	Wed,  3 Sep 2025 19:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F24C2C18A;
+	Wed,  3 Sep 2025 19:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927239; cv=none; b=nnqO3evFtIt+5VADF09bwF1HgonZNMZillNczluLDofxUAWprcMKcB3MdaKNC+G0yELSvAYyYWM3/1r+mHdbbEoLXb7qMi7RBU8lxS3GpD98h1u6h1kE/4CciP8JiEDCIr/IjT1lvNreIGsnSmpOoLD4eRqew7GLb5kZRiy+w5k=
+	t=1756927823; cv=none; b=P3Xhpawf7G00K8cPqIweQEJ5UghK/zhPW9rs+zZnCn3anvjex0X1KfigsdnDRu3EeVt0J0Bs2uZq6oEo9LAq9cq8R1yPoVKp6etuQOIKfbwO5gEv40kdq3fpM2X2EwBBQmT/p5tQClZuf11VGJBnnZeLXgQq6YDVOV9tb3R9G84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927239; c=relaxed/simple;
-	bh=kRSOTd5XrHRhOT4S3xBCr2B49OtJoj5AOBsWHzaGwXc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SW+LUlAyNFUKkbFyzCxAYsYgo7L+nQuD32k9quKV7nNvIckun8/7uC9smO8/k11vLnjyJWuLQKX2aCUZb0RiJH/JcUVPfuX2TAQMP1cCZZc+D2cOXPLtqO/LitGtaZxxc/aCcHa4xkpwXJSHAhiPxOP7n8xuIdSf3MHE4y5H0Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=Z0xvlH/E; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1756927823; c=relaxed/simple;
+	bh=azJJidwQGmkU3EAnsYHzQNhECcLwkhnufXPLFd5EkoY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ick90VhaOMumoK1l5IUyqAmxtuoa2I7YKWjsArr2JEcZ45TQYAFMyx6io9tH8/NswMxOLA9QHpjYxwzq8Q+BADyFEbCjaSYkfmxaOCukWjl6Bku9ZnjWO3NsRM+fb2xp4crj89EG2pg2PE/Rr0X77ebx+MClQ67F20YxiaNUE6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6NoLQU2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Z0xvlH/E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1756927235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=c+ZgGU/Y7ymCGJS4a8iBSCEwRU68y0Cdd3gwtYGpdv4=;
-	b=Z0xvlH/ECfsC59swm4ATc7moQPplDnhXIzmBF4X35r6pJmnBDDeoU1Ie5Ab1yxhe+1ln8W
-	GcUQb2ZLGdW9NnPudS1kvJ3oXxwi39axE8bJQYRDLCQpq4QuYcwKIMP6MOFv74jzcnlQqN
-	tMc5uO4lOOAAr/7RBg88uyXzuq33+zQ=
-Message-ID: <f19aa842d210bf4cd3d7abf03ea7323f9e52df75.camel@crapouillou.net>
-Subject: Re: [PATCH 024/114] clk: ingenic: x1000-cgu: convert from
- round_rate() to determine_rate()
-From: Paul Cercueil <paul@crapouillou.net>
-To: bmasney@redhat.com, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Date: Wed, 03 Sep 2025 21:20:32 +0200
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-24-b3bf97b038dc@redhat.com>
-References: 
-	<20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
-	 <20250811-clk-for-stephen-round-rate-v1-24-b3bf97b038dc@redhat.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6NoLQU2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F3D6CC4CEF7;
+	Wed,  3 Sep 2025 19:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756927823;
+	bh=azJJidwQGmkU3EAnsYHzQNhECcLwkhnufXPLFd5EkoY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Y6NoLQU2vUF/wN07UHbDfQMC0h2gpNr+ap0txcRycyL4VYOi+P6N6BKQ9kUX+Yu/P
+	 99R4iD+oNRe5+EcYxJSc7OykW3H1dMV2sR8OFbTU2sM2r1P89Xd1KAqrQiP4HzSu7R
+	 ogxRPn5TzXKxjsUoM0+adFqjf4++mBa93avbjbneabjlIQ0jX91U6pFl9L+2Geuse5
+	 6gu9tZ+h0d7P33yQx9MZrCGHz8/AeOiTNLF4rNqn+S3xUyWleQvg40iMoTNolfTROn
+	 A2CATq0Y6O/faq7pWhMeHXPfXMocfLs4uhcRUK8mhIoJFjnW25d3p5boEESpnSz6fn
+	 D5/kJhsgZm71A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE948CA1009;
+	Wed,  3 Sep 2025 19:30:22 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Wed, 03 Sep 2025 14:30:16 -0500
+Subject: [PATCH v2 1/4] dt-bindings: clock: tegra124-dfll: Add property to
+ limit frequency
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250903-tegra210-speedo-v2-1-89e6f86b8942@gmail.com>
+References: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
+In-Reply-To: <20250903-tegra210-speedo-v2-0-89e6f86b8942@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, 
+ Peter De Schrijver <pdeschrijver@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thierry Reding <treding@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756927822; l=1194;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=axF8VoKW1z4zF0BEmMzp42sD9+64WYeJh7/vhD2MdRk=;
+ b=GFrHH9RpV8qd9w+3EfHF0coPiEC42v2Wpr+Ti33KTvOfyXPFojo6VwAuDz5QqhZ61O3hrwYom
+ eSIF1u9ke9TAUtRBS6TbBOmUErspN5p7rIUcnz3VDv7vTTIPoIwYyNc
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Le lundi 11 ao=C3=BBt 2025 =C3=A0 11:18 -0400, Brian Masney via B4 Relay a
-=C3=A9crit=C2=A0:
-> From: Brian Masney <bmasney@redhat.com>
->=20
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+The dfll driver generates opp tables based on internal CVB tables
+instead of using dt opp tables. Some devices such as the Jetson Nano
+require limiting the max frequency even further than the corresponding
+CVB table allows in order to maintain thermal limits.
 
-Cheers,
--Paul
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> ---
-> =C2=A0drivers/clk/ingenic/x1000-cgu.c | 19 ++++++++++---------
-> =C2=A01 file changed, 10 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/x1000-cgu.c
-> b/drivers/clk/ingenic/x1000-cgu.c
-> index
-> feb03eed4fe8c8f617ef98254a522d72d452ac17..d80886caf393309a0c908c06fb5
-> aa8b59aced127 100644
-> --- a/drivers/clk/ingenic/x1000-cgu.c
-> +++ b/drivers/clk/ingenic/x1000-cgu.c
-> @@ -84,16 +84,17 @@ static unsigned long
-> x1000_otg_phy_recalc_rate(struct clk_hw *hw,
-> =C2=A0	return parent_rate;
-> =C2=A0}
-> =C2=A0
-> -static long x1000_otg_phy_round_rate(struct clk_hw *hw, unsigned
-> long req_rate,
-> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *parent_rate)
-> +static int x1000_otg_phy_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request
-> *req)
-> =C2=A0{
-> -	if (req_rate < 18000000)
-> -		return 12000000;
-> -
-> -	if (req_rate < 36000000)
-> -		return 24000000;
-> +	if (req->rate < 18000000)
-> +		req->rate =3D 12000000;
-> +	else if (req->rate < 36000000)
-> +		req->rate =3D 24000000;
-> +	else
-> +		req->rate =3D 48000000;
-> =C2=A0
-> -	return 48000000;
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int x1000_otg_phy_set_rate(struct clk_hw *hw, unsigned long
-> req_rate,
-> @@ -161,7 +162,7 @@ static int x1000_usb_phy_is_enabled(struct clk_hw
-> *hw)
-> =C2=A0
-> =C2=A0static const struct clk_ops x1000_otg_phy_ops =3D {
-> =C2=A0	.recalc_rate =3D x1000_otg_phy_recalc_rate,
-> -	.round_rate =3D x1000_otg_phy_round_rate,
-> +	.determine_rate =3D x1000_otg_phy_determine_rate,
-> =C2=A0	.set_rate =3D x1000_otg_phy_set_rate,
-> =C2=A0
-> =C2=A0	.enable		=3D x1000_usb_phy_enable,
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+index f7d347385b5775ddd702ecbb9821acfc9d4b9ff2..8a049b684f962f2b06209a47866711b92c15c085 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+@@ -70,6 +70,9 @@ Required properties for PWM mode:
+   - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+   - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
+ 
++Optional properties for limiting frequency:
++- nvidia,dfll-max-freq: Maximum scaling frequency in hertz.
++
+ Example for I2C:
+ 
+ clock@70110000 {
+
+-- 
+2.50.1
+
+
