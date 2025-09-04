@@ -1,64 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13D02356C9;
-	Thu,  4 Sep 2025 13:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991587; cv=none; b=DIH14zQzC4UoPbjWBTQ2mW6avcrRBIvtnufMZFuTyFuUdcZOSCtvKx2UujIMXMPak0hr1I5PQ4SLonYtaEef5aQYrMSGsNf7NeFMeYaE/My4vrTrDnzFMIsifA1sxe0xzxCLj4y5uhAtZ6+Xu8vcJrSancGF2sPJsgIN7iBd0S4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991587; c=relaxed/simple;
-	bh=LtDWtmqJ+7LA5Gh7HYgsRMlM+zIYR1O1RoF4bWFUYgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGRtQdVhCuHmmiPveUbl91XWoUH0ueWZ4rOOh0aTshZLrMfAntC8y5PM7xe7h0VAEc2HC9AmK6e523x7Bmp4PjDzzMBDG6oG22BV35dou/zbKEvzd44kWtbAbbGymTEWJZ2WPhn63BXs2Lsq8ZLD2XRjzwQqWGj5dSnGUq6ZO5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WO98OgSS; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CACC306D36;
+	Thu,  4 Sep 2025 13:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756992198; cv=pass; b=dk2ZHgQ9Dg2js2Jkma60iE8uXTAQNO6+ek3MqcIGewXFPmzmnNPAIH/99HVMSlV/zOf5edVD/PEk41d14L11Jltu00Xb3+sQ8GOPHBR45EL2vAsNkpzUotcDHC/4Nkcefd0+4+49wJPLKZMlKnYlaqdWYZGGfEpe124pSMJw3gQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756992198; c=relaxed/simple;
+	bh=bhm73F+M8pEYKYlPp5PI3Hp1kRr4g7QcydbznI7A32U=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=JnbnvaB+x2TwuBkGmMR/T696sdAJORb5IQlYneNAjevz/HUYfi/Km/PR8QUYvx/iD6PwIkX44i6tIUOZYqVfPvHzXvqbFyaU+dT8EP3GSh/6p3vYRO1Z2s4B89Trr2haj6qwjkGTYDRUJkZ4Xq1hy0ucVLCAClAveem4uJOcQbY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=biGoIWD6; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WO98OgSS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A24C4CEF0;
-	Thu,  4 Sep 2025 13:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756991587;
-	bh=LtDWtmqJ+7LA5Gh7HYgsRMlM+zIYR1O1RoF4bWFUYgI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WO98OgSS8w5E7FedQegN/sAsy6HUSnkxuJHsaxeDcVwhU2i3F9Bas+CD9QL8vJPTo
-	 cT0DPLd6c+UDZHnLB6unultWBaNZcL/QqvYFLBd626tZ8mnevNqnC5kW2owhooSv+l
-	 l9bVKuzz5EbCuq1pB8ioXtxE0m06WnkmijCG1rmSt6yW/dzED9l5BZhHdDq3pzcY9U
-	 RGqTM9nrC/tNdhZR7elFDkzGew6/N4ad2xG/s58SzfsQAWRdH0uIJ0ulebdF4uZL+/
-	 RZ3B0l2i+0qh+iuFIqLKY/pvLE/E4HfMzCwXKr9OUs7qOamWNfzSlpyPSI5U7EK7yg
-	 jal/JEJuTFE/w==
-Message-ID: <19c28f99-b41c-428b-af04-a5914df6fec8@kernel.org>
-Date: Thu, 4 Sep 2025 15:13:02 +0200
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="biGoIWD6"
+ARC-Seal: i=1; a=rsa-sha256; t=1756992177; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cO56TXW5CTX2VSlBygMfNXZE5pVgeqmiBd8IPspLvAF0EqxwKr7unbvK+2e/JA8xmfO1OQFhDzk4yQbD/wG4wClnkXmAUV6XLGSnnBemd8aa7gs3+MvbxCUiKkaBwxPawiBzUWdIxxf3x9yXfmaaFZJUgxfnm2BpBA9U0fq7JQU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756992177; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bhm73F+M8pEYKYlPp5PI3Hp1kRr4g7QcydbznI7A32U=; 
+	b=iybKfrGxujqX52H67ZTvRW4oR7IXRXysPK4cB+mHu/+iwz88x7FrjbiyuB7irdEI3GLeeMDabprY0WEqtZlU6iZQOiuLV8aI3o0U/IBrWmSD5mtyVFyrgU7WxCUNeL8Qgil8TmlmrK9QhnTUSwWkh+L0m44yeE1MivU66wzSlr0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756992177;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=bhm73F+M8pEYKYlPp5PI3Hp1kRr4g7QcydbznI7A32U=;
+	b=biGoIWD6eb1ILuKY5I79GXsb+v6IQSAQ/bmJoqRc/21sMRG/KwTU5ZV22RqUtj7m
+	TCskeTjvo/e8Hg1oJtZCqz5/wC5wxaAaq80FKejTrGRwcELtkayLV05ASTSfy7wx6Kp
+	jnIxRr8IUY1aPkbdh+P5xcAdUkuTXvspWQ+6EbrQ=
+Received: by mx.zohomail.com with SMTPS id 1756992174964253.37598761629408;
+	Thu, 4 Sep 2025 06:22:54 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
 Subject: Re: [PATCH] rust: clk: implement Send and Sync
-To: Alice Ryhl <aliceryhl@google.com>
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgjRaFjiw84_uP4N2kTs_iuDCe1vcZ7gyF4XiwDkbEgiWQ@mail.gmail.com>
+Date: Thu, 4 Sep 2025 10:22:38 -0300
 Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Daniel Almeida <daniel.almeida@collabora.com>, linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+ Stephen Boyd <sboyd@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <06C4ED75-E370-4F19-B6BE-6D2455C94180@collabora.com>
 References: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <CB9F3786-48F0-46EE-BE61-8823E437C786@collabora.com>
+ <CAH5fLgjRaFjiw84_uP4N2kTs_iuDCe1vcZ7gyF4XiwDkbEgiWQ@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 9/4/25 11:03 AM, Alice Ryhl wrote:
-> These traits are required for drivers to embed the Clk type in their own
-> data structures because driver data structures are usually required to
-> be Send. See e.g. [1] for the kind of workaround that drivers currently
-> need due to lacking this annotation.
-> 
-> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+
+> On 4 Sep 2025, at 10:07, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> On Thu, Sep 4, 2025 at 2:31=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>> Can you base your change on top of [0]? Otherwise it will become =
+stale rather
+>> quickly, as this introduces new types, i.e.: Clk<Unprepared>, =
+Clk<Prepared>
+>> etc.
+>>=20
+>> I will push out a new version today.
+>>=20
+>> [0]: =
+https://lore.kernel.org/rust-for-linux/20250729-clk-type-state-v1-1-896b53=
+816f7b@collabora.com/
+>=20
+> I would suggest the reverse. If your series is based on top of mine,
+> then this patch can land today regardless of how long it takes to
+> finish the clk refactor.
+>=20
+> Alice
+>=20
+
+True,
+
+Ok then:
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
