@@ -1,157 +1,333 @@
-Received: from mail-pg1-f227.google.com (mail-pg1-f227.google.com [209.85.215.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665C343D76
-	for <linux-clk@vger.kernel.org>; Thu,  4 Sep 2025 18:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8C26B2A5;
+	Thu,  4 Sep 2025 19:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757010522; cv=none; b=pgEBtZJikwzPOroi2bPuD1IF72MwPqJE91MB+UiZvK1ydIFKO/rF1aoV29+oiKyzTqGSpGMdkgtv2A1ftB3DXeLDwze4EalXQUufaOSbg8G91xDm9ZhkXCPKB+erL/6G7nxS7wG2HSMj4YlUYmPd6f1gavzkiBEb37D8NuTCh38=
+	t=1757012406; cv=none; b=RjJuh0QweRPUOoWKYUKvCvKmZ4mtwIPcNnJF71+JHM/dkGsCUQCghDylagZ7ZHtFj3C4HIFbyWTbnBTSiCDpjBFDpB0bA0hmfS9BLMHC6qxdlu4BWgFU5KV5qTyHzjQ48mQXNxOECqzOXIwOkIxBsOhwEXP7UnRG1I2619bet0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757010522; c=relaxed/simple;
-	bh=q8yl9UAC+xlFQzwRViDxyj79HGQ8dK/5g+KGtqUhusA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DgryMJVrPQEBo37418E/KGcT1gSH/HHS6c9Ixr4WjShqOXmxfbR3d5N0nstErjaTtCBy39wTfg3qbSUgnsLtN13xu1LNnoMTe6OkDsmuHeh8bBs+kAL/72/MVUheUshc1Slo1dlz1GsGmBX23A4kD2HFkJLIV8I00GrazwH7Oyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DIORHLdp; arc=none smtp.client-ip=209.85.215.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1757012406; c=relaxed/simple;
+	bh=GGNzgggiwqfI3Drgy4V1N79jaY0m+XWuKRb9blp6bKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4MGt+qsM8Z0iM4kXHXL2XXi7KatORhZc/Cg5SwDRkG2LRSflobVPCrCvP+aQIfqi94rwtB1Hc5Z1OWC1OIFuXcFB9mZiHgookAe+F/PgcwtNjJezCqpJpvfGfWDCAT1E2rX3o3dStvNm8uvioyd52w/01j4OYFi42zTV0x5I+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUGg1ODx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DIORHLdp"
-Received: by mail-pg1-f227.google.com with SMTP id 41be03b00d2f7-b4c9a6d3fc7so753989a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 11:28:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757010520; x=1757615320;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cqK97eCKaUkliEvZf9Ytd8do9pTcU9xExLvP6WCAzkE=;
-        b=lCwbjCvrLlsE3aDHlqFygbB57zyZ21Cjp6wC6FXDhYb18lambmdwgSnGqcTqqNHnn7
-         xWvtd26KmQbuFrWI0B0F8d/LZIZY4zqJCXX09uu5TRK+BIxMMwyEd7M43WZs2byiQ3WW
-         lsAgI1xyYD9UtuwxJFLDSnutRFCUEBe7JiLLL10tZgYVhDgISbh6QMEGbIkpdjUA3VIy
-         QzD0euIhPPFJiTRmTGtxgnB4fMteDYpv8GOrRNF0nCw2ZYWFDnXGmpV9ijmIYQUIZN0Z
-         9az2Kv/j6jUOQBgw1YsxJKncyM7zhS3D7oA3imWSqSxBLBEzfFqo4BWFtkQuZmUNPlsp
-         LMeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZs3Nc60V6mRsl4eO9bx70FsCGrvZh2ujEfBCYSySPkP6nWV5bM0ZWuJ0gMwqpjwk/U7Cc+K3RtXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBrTODmsHYBZUipy2zxnG5cwe5jGZnU+UFlkg5dFQMevl6Bisf
-	DWbusFDC+iFLEUMPwj42JcDtHccuIEwZPXi9Ladk0Zl/moZ2T6xpizytZDkF7ZpGrR8RD0l2NZD
-	tOPUlKf2bN1SV190ocVdFMaFgm/8muE/BsWorJKDbQN80n/1+b57sGKo7R/zEfV7niSZWvVgAHP
-	JPMB/Qc9+00VfJQ8xgTJx4Ii51wm66LcXgBqPYfwEFvWlmShTWEoGbEMmNvyhtcsokwqsXuiZH1
-	aPgN2NYxuq1jZwTI5Mn
-X-Gm-Gg: ASbGncv5PC5sBWTtrVme/T/0aaOCeT5wyA0q4QaeXYf49kIOOtH6q/+ZX1EDsI3E25e
-	+mF7Bk8x6TbKJql53cdo8JhXlA5qghECatSAI41tWyWsSaa2/mRmeLbSIo7PWK6q1flx2kxztFA
-	gnc+sIVOcO1YYAmIYJB7bWM2D1HmTYSGk2ZSTzHfah2BCWpKfLkGdEjFuY21gc2pfiz4Ng3UcbS
-	URDWGNKpI7iT0twBVH4/0ptZ7YkcOpHx8LJtOudaKmp7+dykOfB/RhmzNM9t5gjbLBNgIja7u+C
-	atJOsziWuMlcvcqg/LKHtF7iSFtX9PT1Sy4Vs0mtki5nLz3omn9tU8pGwC56ZApw49ndNyvLCGv
-	zRowXfbXMPgHGhyddpb+84Lfh86TPrRZaXPUdpbYL1K20G2xorYpM41czaz5UsVdUNrLHr02uwf
-	3xmRvxQW0=
-X-Google-Smtp-Source: AGHT+IGhPD83Ngn+RzE0L6I1wroYeaTNu+oAJRXKhKnEtga3h0xWVcEJHZeztJZzkNC3fCA2QJWwg53rBc1J
-X-Received: by 2002:a17:90b:48c5:b0:32b:be68:bb35 with SMTP id 98e67ed59e1d1-32bbe68bce5mr415413a91.36.1757010520270;
-        Thu, 04 Sep 2025 11:28:40 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
-        by smtp-relay.gmail.com with ESMTPS id 41be03b00d2f7-b4cd22aa228sm1348675a12.12.2025.09.04.11.28.40
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Sep 2025 11:28:40 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8031e10621aso272131385a.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 11:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757010519; x=1757615319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqK97eCKaUkliEvZf9Ytd8do9pTcU9xExLvP6WCAzkE=;
-        b=DIORHLdp/EqOZ0P5Qkl/kXd90YWjjSXRaqwmRhJqAzj4YVI7EPh2UR/V19EA45JlBg
-         P6r76Ga4pcV6L8iw9YYDabV9PQ2rhtzmZcE1Heno+EJWNC5A37clW9A+qHF6teW3lBpv
-         7glolW5kWzqQpHMa+L3gSoqW/PEz3GI/wtEwA=
-X-Forwarded-Encrypted: i=1; AJvYcCXJ12G9Nak2M47ndV/Xnesa3ECz92FjQljKrRWmaBI95kW5Rh6C2ZSUJ6yToC3Q3Ly4DXypzuMJTew=@vger.kernel.org
-X-Received: by 2002:a05:620a:4145:b0:7fd:6709:f091 with SMTP id af79cd13be357-7ff27b20401mr2095666885a.20.1757010519041;
-        Thu, 04 Sep 2025 11:28:39 -0700 (PDT)
-X-Received: by 2002:a05:620a:4145:b0:7fd:6709:f091 with SMTP id af79cd13be357-7ff27b20401mr2095663485a.20.1757010518465;
-        Thu, 04 Sep 2025 11:28:38 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aa62c789esm322292485a.11.2025.09.04.11.28.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 11:28:37 -0700 (PDT)
-Message-ID: <d36c5597-e26e-4ddc-93b3-222d8b40dab7@broadcom.com>
-Date: Thu, 4 Sep 2025 11:28:34 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUGg1ODx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBBA8C4CEF0;
+	Thu,  4 Sep 2025 19:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757012406;
+	bh=GGNzgggiwqfI3Drgy4V1N79jaY0m+XWuKRb9blp6bKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WUGg1ODx0wmrOlaMSpYAGSjxmkV4hRMETLkDU1ck8RQRFxf1+zVXptsIYoL8cwYbT
+	 2ujiGiRWHCKCq2UdtUvsb7h2AwXXAThnfpLTFabx/M66svYHZh+REAMLddu2nZ9AG5
+	 3dUfFMbeaewDo4dMFlXKZ8zwXnUL2USbv3LCg/6mHK4XT2sESDdjd3vvnSb51ksZDm
+	 MabejUxX+1CSi0GUH7SiRc04m/iS/2vda+kZPirq2fcAh8mGCbnPqChDw/AZwXdD2e
+	 j4OmrZ65yAowpjdATltYeeGWI9To/gMk27uMkGullFXGM4Kc/PSjE92/rzi+Xv9M18
+	 yY8n6k3/+hYxw==
+Date: Thu, 4 Sep 2025 14:00:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <20250904190005.GA19595-robh@kernel.org>
+References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
+ <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH RESEND v6 0/9] clk: bcm: kona: Add bus clock support, bus
- clocks for BCM21664/BCM281xx
-To: Artur Weber <aweber.kernel@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, Stanislav Jakubek
- <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alex Elder <elder@riscstar.com>
-References: <20250901-kona-bus-clock-v6-0-c3ac8215bd4d@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250901-kona-bus-clock-v6-0-c3ac8215bd4d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
 
-On 9/1/25 10:07, Artur Weber wrote:
-> This patchset does the following:
+On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
+> Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+> Generator With One PLL, Four Differential Outputs, Two Inputs, and
+> Internal EEPROM.
 > 
-> - Introduce support for bus clocks. These are fairly similar to
->    peripheral clocks, but only implement policy, gate and hyst.
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
+>  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
+>  2 files changed, 222 insertions(+)
 > 
-> - Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
->    and update device tree bindings to match.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4d40b8101fd7e094bb1b79c071e1be2c1fefec23
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> @@ -0,0 +1,198 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI CDCE6214 programmable clock generator with PLL
+> +
+> +maintainers:
+> +  - Sascha Hauer <s.hauer@pengutronix.de>
+> +
+> +description: >
+> +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
+> +  Two Inputs, and Internal EEPROM
+> +
+> +  - CDCE6214: https://www.ti.com/product/CDCE6214
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,cdce6214
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    items:
+> +      - enum: [ priref, secref ]
+> +      - const: secref
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
 
-Stephen, are you OK with taking all of those patches through the clock 
-tree? Patches #8 and #9 have a dependency on patches #2 and #3.
+No child nodes with 'reg', so drop #address/size-cells.
 
-Thanks!
--- 
-Florian
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+
+blank line
+
+> +    patternProperties:
+> +      '^conf':
+> +        type: object
+> +        additionalProperties: false
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml#
+> +
+> +        properties:
+> +          pins:
+> +            items:
+> +              enum: [priref, secref, out0, out1, out2, out3, out4 ]
+> +          io-standard:
+
+Needs a vendor prefix.
+
+> +            description: |
+> +              1: CMOS
+> +              2: LVDS
+> +              3: Low-Power HCSL
+> +              4: XTAL mode
+> +              5: differential
+> +            enum: [1, 2, 3, 4, 5]
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+
+blank line between properties
+
+> +          xo-cload-femtofarad:
+
+Needs a vendor prefix
+
+Use standard unit suffixes. It's "-femtofarads".
+
+> +            description: >
+
+Don't need '>'.
+
+> +              Load capacity for XO in Femtofarad
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +          xo-bias-microampere:
+
+vendor prefix and unit suffix.
+
+> +            description: |
+
+Don't need '|'.
+
+> +              Bias current setting of the XO
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +          cmosp-mode:
+
+Vendor prefix
+
+And so on...
+
+> +            description: |
+> +              Driving mode for CMOSN output:
+> +              1: Low Polarity
+> +              2: High Polrity
+> +              3: Disable
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            maximum: 3
+> +          cmosn-mode:
+> +            description: |
+> +              Driving mode for CMOSN output:
+> +              1: Low Polarity
+> +              2: High Polrity
+> +              3: Disable
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            maximum: 3
+> +
+> +        allOf:
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    const: priref
+> +            then:
+> +              properties:
+> +                io-standard:
+> +                  enum: [ 1, 5 ]
+> +
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    const: secref
+> +            then:
+> +              properties:
+> +                io-standard:
+> +                  enum: [ 1, 4, 5 ]
+> +
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    const: out0
+> +            then:
+> +              properties:
+> +                io-standard:
+> +                  enum: [ 1 ]
+> +
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    enum:
+> +                      - out1
+> +                      - out4
+> +            then:
+> +              properties:
+> +                io-standard:
+> +                  enum: [ 1, 2, 3 ]
+> +
+> +          - if:
+> +              properties:
+> +                pins:
+> +                  contains:
+> +                    enum:
+> +                      - out2
+> +                      - out3
+> +            then:
+> +              properties:
+> +                io-standard:
+> +                  enum: [ 2, 3 ]
+> +
+> +        required:
+> +          - pins
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/ti,cdce6214.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        clock-generator@67 {
+> +            compatible = "ti,cdce6214";
+> +            reg = <0x67>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            #clock-cells = <1>;
+> +            clocks = <&clock_ref25m>;
+> +            clock-names = "priref";
+> +
+> +            cdce6214_pins: cdce6214-pins {
+> +                conf1 {
+> +                    pins = "secref";
+> +                    io-standard = <CDCE6214_IOSTD_XTAL>;
+> +                    xo-cload-femtofarad = <8100>;
+> +                    xo-bias-microampere = <100>;
+> +                };
+> +
+> +                conf2 {
+> +                    pins = "out1";
+> +                    io-standard = <CDCE6214_IOSTD_CMOS>;
+> +                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
+> +                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
+> +                };
+> +
+> +                conf3 {
+> +                    pins = "out4";
+> +                    io-standard = <CDCE6214_IOSTD_CMOS>;
+> +                    cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
+> +                    cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..6d2cc5f01864e70a3fbccbfe20e67899e0d049e4
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ti,cdce6214.h
+> @@ -0,0 +1,24 @@
+> +#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
+> +#define _DT_BINDINGS_CLK_TI_CDCE6214_H
+> +
+> +/* Clock indices for the clocks provided by the CDCE6214 */
+> +#define CDCE6214_CLK_OUT0	2
+> +#define CDCE6214_CLK_OUT1	3
+> +#define CDCE6214_CLK_OUT2	4
+> +#define CDCE6214_CLK_OUT3	5
+> +#define CDCE6214_CLK_OUT4	6
+> +#define CDCE6214_CLK_PLL	7
+> +#define CDCE6214_CLK_PSA	8
+> +#define CDCE6214_CLK_PSB	9
+> +
+> +#define CDCE6214_IOSTD_CMOS	1
+> +#define CDCE6214_IOSTD_LVDS	2
+> +#define CDCE6214_IOSTD_LP_HCSL	3
+> +#define CDCE6214_IOSTD_XTAL	4
+> +#define CDCE6214_IOSTD_DIFF	5
+> +
+> +#define CDCE6214_CMOS_MODE_LOW		1
+> +#define CDCE6214_CMOS_MODE_HIGH		2
+> +#define CDCE6214_CMOS_MODE_DISABLED	3
+> +
+> +#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
+> 
+> -- 
+> 2.47.2
+> 
