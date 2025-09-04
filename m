@@ -1,118 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118CA29ACC2;
-	Thu,  4 Sep 2025 07:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960E42BE651
+	for <linux-clk@vger.kernel.org>; Thu,  4 Sep 2025 07:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970854; cv=none; b=diEyN/+PA2AGSzH/Nn7lrdSFtelUbAvu+k9cBPfAjFJHSLd3jTp8MbpgTM/7KpNPA5q65WwVgluY5WV9f8+rq8WY+XY9gCrRXDrh/0dNrNfKaj+fs8T1n30owL/kZa4uq2sUfbkfPP5DqVJRfF1sinSuS1U8IEdIK99uCzT7p/Y=
+	t=1756971281; cv=none; b=AOLIGY7fLqri7kfIotfj3NAFuN16BRyGVQCe0WJcakkXiLspABufDvGe06vEjVfku4Q1wjkfogp74gDPp1t62gKb/N93aImXplFkRjW/00UZZ19KdYp7LKf3cD4zP5Yj9tzIp2WQ0p/NSlCcyAAgzA8oiiAOVLkQ8zJ3uk6GOGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970854; c=relaxed/simple;
-	bh=Z8XSQTvtPUkxAQ9BXix6/Yhokfu8nsR+89vawyheIsE=;
+	s=arc-20240116; t=1756971281; c=relaxed/simple;
+	bh=9Lfs7x06aYUGDh170BRagUu5k+P060o70Hk6IG+sLGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWqODVMN+4oR6uzSjlHqkeZPQc285k4KH+HULURJqneJz9/2RiRx58oj2HyEFoZcTjjHAn87d9j5jkNLR+E9tMHRhN7XeZSMZJWIRHiIbHRdwjQIN+tOApn0bYp2FYJzYd80KyY46QeIyopdnO0ILWRqYVVfK1QigEdJK3zMlIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRT50ZUh; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRT50ZUh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4589AC4CEF0;
-	Thu,  4 Sep 2025 07:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756970853;
-	bh=Z8XSQTvtPUkxAQ9BXix6/Yhokfu8nsR+89vawyheIsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GRT50ZUhGaiA9XuQgRPkzuI+B/6okbH+qUPwIurIe99vYFu8u3r7UVXtK1fXYfue3
-	 Tct/kxZsTf047c3Q4Xw5jRmOGoEwB2CQYuadcmL4NKKRsuhK0krkwqDd7CKrRZdZyA
-	 Jl7w7prXAnR/VYEi4qarJDsN5UgokGCtLY3SwZicKhnp/Bn/M3w26Yzkpo9zyP+xZc
-	 yY0p+KiSnrKQ/v0H+Hc6Z3+meX1Hy8obFSgfJWvt41GUkH5hbjr2aKJrQoWuRSIfeC
-	 VVn8p9MnyRgrJ6kd16q039oE8lvlHbuZYl1zouYM7MqI3j2qRdKokXcOILRYQGmxKp
-	 WhXOd9rsF1oXA==
-Date: Thu, 4 Sep 2025 09:27:31 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 6/9] dt-bindings: clock: nxp,imx95-blk-ctl: Add ldb
- child node
-Message-ID: <20250904-misty-mini-buzzard-af2aec@kuoka>
-References: <20250903123332.2569241-1-laurentiu.palcu@oss.nxp.com>
- <20250903123332.2569241-7-laurentiu.palcu@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=atiKBGywaj3BZchQKnD6Etw+zkCt0JR/MBafhAShpJPsGZTRTW7A22jk4p6jTp32cPiIZR4Bq92E/jEE//deBsctEVGSyJ47EQ8i89XDjH3UaNtmOzAeVKyBPTvtpY6ANRWPun1p41P/3LUY2TZeaTnjZd3Lm28czbhSA/L6fmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UF-0006Gq-DD; Thu, 04 Sep 2025 09:34:27 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UE-003gug-3D;
+	Thu, 04 Sep 2025 09:34:27 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uu4UE-0025QG-2n;
+	Thu, 04 Sep 2025 09:34:26 +0200
+Date: Thu, 4 Sep 2025 09:34:26 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <aLlBAuYoHIJZLfiE@pengutronix.de>
+References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
+ <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+ <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903123332.2569241-7-laurentiu.palcu@oss.nxp.com>
+In-Reply-To: <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, Sep 03, 2025 at 03:33:24PM +0300, Laurentiu Palcu wrote:
-> Since the BLK CTL registers, like the LVDS CSR, can be used to control the
-> LVDS Display Bridge controllers, add 'ldb' child node to handle
-> these use cases.
+On Thu, Sep 04, 2025 at 09:18:13AM +0200, Krzysztof Kozlowski wrote:
+> On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
+> > Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+> > Generator With One PLL, Four Differential Outputs, Two Inputs, and
+> > Internal EEPROM.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
+> >  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
+> >  2 files changed, 222 insertions(+)
+> > 
 > 
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
->  .../bindings/clock/nxp,imx95-blk-ctl.yaml     | 24 ++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-
-Nothing in the changelog explains this patch.
-
-What happened with entire previous review?
-
+> I don't understand what is happening here.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> index 27403b4c52d62..f83d96701bb04 100644
-> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> @@ -39,6 +39,28 @@ properties:
->        ID in its "clocks" phandle cell. See
->        include/dt-bindings/clock/nxp,imx95-clock.h
->  
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: nxp,imx94-lvds-csr
-> +then:
-> +  properties:
-> +    "#address-cells":
-> +      const: 1
-> +
-> +    "#size-cells":
-> +      const: 1
-> +
-> +  patternProperties:
-> +    "^ldb@[0-9a-f]+$":
+> Patch changed in weird and unexplained way - nothing in the changelog
+> explains dropping SPDX - and does not pass even checkpatch.
 
-No, don't define nodes in if:then:. Where did you get this syntax from?
+I removed the SPDX by accident, will add it back of course.
 
-> +      type: object
-> +      $ref: /schemas/display/bridge/fsl,ldb.yaml#
-> +
-> +  required:
-> +    - '#address-cells'
-> +    - '#size-cells'
-> +
->  required:
->    - compatible
->    - reg
-> @@ -46,7 +68,7 @@ required:
->    - power-domains
->    - clocks
->  
-> -additionalProperties: false
-> +unevaluatedProperties: false
+Other than that, what's weird? Changelog says I now use the pinctrl
+subsystem to configure pins. OK, that also changes the binding, I could
+have mentioned that explicitly, sorry for that.
 
-NAK, so schema warned you above syntax is wrong and you decided to
-silence the warning with this hack, right?
+Sascha
 
-Best regards,
-Krzysztof
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
