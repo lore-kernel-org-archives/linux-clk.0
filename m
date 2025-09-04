@@ -1,107 +1,77 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C3D2DC334
-	for <linux-clk@vger.kernel.org>; Thu,  4 Sep 2025 09:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C6428153C;
+	Thu,  4 Sep 2025 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976934; cv=none; b=MH1uvJIuzuPrrQB5HCSC3t2kCVcgZKpPS5sVxTAk2Je+dOkA2LjvB2UnOMqM92WcbILM6WlLRWsCBF3p42XWt+wci+xU+UrDd078lL87aHkGhzmHZ9etLFQ2drHRP4ug1AR6U+m/w0Had0i6uNWgXC+QabhhvRd2fsR+Afpep14=
+	t=1756977634; cv=none; b=ivPO0UC28j16XKKQXsmQRtPV3B/sFmvqJtvpYFhV/joGJ4teaAWZsKSv/JZq7eHjefO/aZNew7BE6TYkpNSweQ+lbjjncTj+todzKC3vY4/DisqNzsnmZ0dDNYcsD8TPvC8puHQRPYiY8bJvJG+mdgKpYiOb34sFvwJ4u4APF+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976934; c=relaxed/simple;
-	bh=9OuwB/mKcO6haey57JJkqXea6iJb0zgcty8aAKBWe5w=;
+	s=arc-20240116; t=1756977634; c=relaxed/simple;
+	bh=pIaTpK25gjhy0I3MoReopJjl9vx8OfRgqgs85pzEqf8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGrBvoJWKF8NHU052niFib/6tcClJ92F71+x7Gr7r7ehdq9putjg7AvphHdg2e5RyE/jmU6o9xROm/EnF+Z43LbGuGJukCH/p8ZI0uv5kuODxZLVGx+XQvziUb2N6kR1iZ848ws5oDFS9fRNHuEdqwx8vnpdUfbDk0xijfFjXOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ceca3pwi; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMSbfUd5oQ4nDaeIDdpVuK/skbqYHRyTX0zCeXJAv0fRKxCekZNPxPqMnKSLf8R/UCqowmcHLanctdhBmae/aR9m6UsdXngKuv4IHMshKATE/nhIAJsPD5ICRw35GjHKGHURU56FAp+8CLsLDqDZc//t+elNw95twmEMNInlCUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqN8whEd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ceca3pwi"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77250e45d36so736267b3a.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 02:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756976932; x=1757581732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
-        b=Ceca3pwiSSggVuowWec1JaLEyCaRIHEEeuEXh/Pg2vqE4eeee5PYsZ+7FpTWtLbdhj
-         b4fSSdlxnHgsOgH0tE4QoRCkkGqnV8SE5M0FsiiPVT59UJZ1++fNuZk20zJPCpBdGnsR
-         bpoIUhJsiAOj7N0+5yRiIsQOKPKmMd/wVrADJu5SOAWagOrdk6vbjacvbxuc3sXT4oVw
-         zFBGDbt0SKUAyXznewucg5kpr1wGY5ascZUvXoNkaSBuaeaPLSDfGckGKi+g9W59H+W2
-         Xcn+nidUd00WcL37TCqzcWFEEUFK96Pv2bIHPNTXA0qI0c0dkaHNtr8W9gP24zxFye5r
-         2veQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976932; x=1757581732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
-        b=SPpRcjDZW9TenDUqI2fyrVMF6z/y4qa3ErLKo6ZwDwas5r4R9C12+1IxxdFOt+NHJo
-         g7wSJ3mCtCVc45GO67nkqzb2XHtpFA5Kx7HdIryKP3Vspe7CD76lVGmNDR7nDfMFwtS4
-         aN0TOwuY07DCB06OOR125UwGOOGpJAja/4Xj1sIiDWmzLRJTB9J7eu3dGSe1zWEAoRTg
-         LUY1w+HJM0M/kd7qW9FCp4vTkleEIqLtuqbrH9GWjGzhcWW4HjotlO7Taoj5EtpNCVHb
-         jrKG/IsPNUcNeF99X0DXadWuNhDlMK2cVBM4sGMv/gCLj39WogOohSGYoamTGM7CBLvs
-         qpbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKuThHDmICMpZGil6IB1iF0RkQEwfsYfYDtEyhLDds8g2rG4xBjKtCrXU0mU8Jwy6bbfOSr3wHPuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBUCvZQ9rGkUWamYzU4r5tKL1QaYe2rZmom9cwL6pI15cwE5zJ
-	KxKIm34LesDbxzJ7zxpvJql4EhH3iwyMWTJj7+vuJc0lidDleLjRfYsy5LzemG3KT2M=
-X-Gm-Gg: ASbGncvEQ8HixBYYFWDp9un2EkGugfthkFs5beHXL2K+BcERFQxIVGs1h430JPxpAlU
-	h7xoztGbOEOouaPmBXlCA0U77jTzynAhS3w04+o3+a/Pp072DLNiJkwcXZKq9FbX0ifviBzGQlm
-	VC6pXrQ1Dc8iEVJW3TEw66S0NjEGr/xUnGJ79SvESxyBRPIY8TBn1V3wzK/fgocoKvPLn/rA4JH
-	vDLMg0Lja3K9w8zyWPEx4zSTSRv2zTBdXkVTBMaNGydk6oxfWKU1MdTA1jUU/oC9IiCXdXip58M
-	wSahwTpksKReejFMXiOvtZtxbfW6pmgHe/6lJBaxRRvuiBPhYJsF72er40jT7QHT5YN5ahomOju
-	9dZppqOxm7cyUNnUy0y8cK58FubzS8jyjw/Q=
-X-Google-Smtp-Source: AGHT+IHI7lc2wZNpnK6c7bml3S96KONYzvjvTqV1qrfL3bzvd/FiM6GZPsewH6KTBQYgX9g7o654HA==
-X-Received: by 2002:a05:6a20:3d86:b0:243:a189:f1f8 with SMTP id adf61e73a8af0-243d6ddb3bdmr27908154637.8.1756976931899;
-        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0736ba7sm16257509a12.12.2025.09.04.02.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
-Date: Thu, 4 Sep 2025 14:38:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: clk: implement Send and Sync
-Message-ID: <20250904090849.7uiroafxk5juml6b@vireshk-i7>
-References: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqN8whEd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1E4C4CEF1;
+	Thu,  4 Sep 2025 09:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756977634;
+	bh=pIaTpK25gjhy0I3MoReopJjl9vx8OfRgqgs85pzEqf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XqN8whEdCM58Vl2+xGqlQHW1Fx7byfe9PhOSrVQW4639OhPE2YdOW25P4eWoE7U4j
+	 sJgtwieKE8FH+L6wjE4zxr4zUjCemWzaG74vFtelwOJgmCFLcUmVGPCnJyE13fv76o
+	 dgcBp9+pyowRe/c4RdMRqWNMHlKvLANMB+GYyW5fph6BJPkFyl9+yOlhYlaql1VtZ5
+	 6QJAfuq+mhUd8lOe0FERlV2G6NzETJTa5/7QX+Lq/WIoJdyXdrinvComXegiUsKlHk
+	 +PU5D5SVloU6p7JMl13FDHIw4FL+3KQgWEiPObnDd3bXfNc6mbR1Bap8OEu4SsQq1f
+	 0J5eBeRm7yZDQ==
+Date: Thu, 4 Sep 2025 11:20:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+	Sari Khoury <sari.khoury@mobileye.com>
+Subject: Re: [PATCH 01/19] dt-bindings: soc: mobileye: rename to eyeq-olb.yaml
+Message-ID: <20250904-vivid-seal-from-nibiru-8c50b5@kuoka>
+References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
+ <20250903-clk-eyeq7-v1-1-3f5024b5d6e2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250903-clk-eyeq7-v1-1-3f5024b5d6e2@bootlin.com>
 
-On 04-09-25, 09:03, Alice Ryhl wrote:
-> These traits are required for drivers to embed the Clk type in their own
-> data structures because driver data structures are usually required to
-> be Send. See e.g. [1] for the kind of workaround that drivers currently
-> need due to lacking this annotation.
-> 
-> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Wed, Sep 03, 2025 at 02:47:08PM +0200, Beno=C3=AEt Monin wrote:
+> Drop the 5 from the binding name as the OLB described in it are found
+> in multiple Mobileye eyeQ SoCs.
+>=20
+> The binding already contains entries for eyeQ6L and eyeQ6H OLBs
+> alongside the one for the eyeQ5.
+>=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
 > ---
-> I'm not sure if there was already sent a patch for this. I recall
-> being told that one had been sent, but I could not find it. Maybe I
-> mixed it up with the regulator change, so now I'm sending a change for
-> clk.
-> ---
->  rust/kernel/clk.rs | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../soc/mobileye/{mobileye,eyeq5-olb.yaml =3D> mobileye,eyeq-olb.yaml}  =
+  | 2 +-
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+No, we don't do that. That's unneeded churn.
 
--- 
-viresh
+If you wanted to rename, you could try when adding new compatibles. And
+maybe you even tried and received comment for that.
+
+NAK
+
+Best regards,
+Krzysztof
+
