@@ -1,131 +1,107 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C412C0296
-	for <linux-clk@vger.kernel.org>; Thu,  4 Sep 2025 09:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C3D2DC334
+	for <linux-clk@vger.kernel.org>; Thu,  4 Sep 2025 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976610; cv=none; b=Tw3Ln6gA2jQjZyUGlPB8f1IcGmszGRxUuT/lcVxBr86hzMcERp61GWkJy21inqjkcBj30dsJBHfKmsdqzuu3LejQFjopC/Y7vlxIF8dmh7qqtMboN66ird7I3WzkQ7CcFA2VjDgbEC5sZuna83lr53Vj5On8GKhYwliJpVrqLF0=
+	t=1756976934; cv=none; b=MH1uvJIuzuPrrQB5HCSC3t2kCVcgZKpPS5sVxTAk2Je+dOkA2LjvB2UnOMqM92WcbILM6WlLRWsCBF3p42XWt+wci+xU+UrDd078lL87aHkGhzmHZ9etLFQ2drHRP4ug1AR6U+m/w0Had0i6uNWgXC+QabhhvRd2fsR+Afpep14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976610; c=relaxed/simple;
-	bh=vd6AugBRQQ7LSCss9P7jkclD2lwejCl9P5EdEOF1JQA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=H781HFFJz2HUNchRqcV4HCK4YylohcZz10sdT0iskrIEHv2NHspdwCW5HdqZWDwgSlC6gBpubVOR1GeyRkybtdrBsSA9/+MRTjh3BmvmiqJAIdPMxxNch/DmLZOQb13Bpn2UxfoBuhPhzANwKBJpddVfaOmdlWYl+CxMaVvS9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tekYqWB+; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1756976934; c=relaxed/simple;
+	bh=9OuwB/mKcO6haey57JJkqXea6iJb0zgcty8aAKBWe5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGrBvoJWKF8NHU052niFib/6tcClJ92F71+x7Gr7r7ehdq9putjg7AvphHdg2e5RyE/jmU6o9xROm/EnF+Z43LbGuGJukCH/p8ZI0uv5kuODxZLVGx+XQvziUb2N6kR1iZ848ws5oDFS9fRNHuEdqwx8vnpdUfbDk0xijfFjXOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ceca3pwi; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tekYqWB+"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45cb612d362so4289645e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 02:03:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ceca3pwi"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77250e45d36so736267b3a.0
+        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 02:08:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756976607; x=1757581407; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jJtnDDrtdvxSxz2byyhf6ovg3vXgEml10lpi8GliOwg=;
-        b=tekYqWB+kGgUXTKTfXzZb1/3XFaAyHW0G5mD/UyznnWDka6LP+pVidT9CMWn43F1Az
-         wtnd/gwvukSeiyVkykYgbSFu1EKLpxZp61Uss//gaNzI4mLhfju03ggEzzXbDZzbVE2k
-         FUmzfcyKVEepoX8S6KlckEW3XFomIXGwUUwucd7J/g0ld9Cn95YHHHWJBvEzt1Aan1LD
-         E9GX3cjBGTOfp6wnKCgAr3dTiXItuKLjlUMxZgdbgI0BsN055zMRIXmYo5UURC2fDUKb
-         41YuuyfZJ9E8eTkJBUkX5poyzSI8qgRLDDcvnzdKCgj7cKA6n6D6GpBxAcCutEB+JxF0
-         VA8A==
+        d=linaro.org; s=google; t=1756976932; x=1757581732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
+        b=Ceca3pwiSSggVuowWec1JaLEyCaRIHEEeuEXh/Pg2vqE4eeee5PYsZ+7FpTWtLbdhj
+         b4fSSdlxnHgsOgH0tE4QoRCkkGqnV8SE5M0FsiiPVT59UJZ1++fNuZk20zJPCpBdGnsR
+         bpoIUhJsiAOj7N0+5yRiIsQOKPKmMd/wVrADJu5SOAWagOrdk6vbjacvbxuc3sXT4oVw
+         zFBGDbt0SKUAyXznewucg5kpr1wGY5ascZUvXoNkaSBuaeaPLSDfGckGKi+g9W59H+W2
+         Xcn+nidUd00WcL37TCqzcWFEEUFK96Pv2bIHPNTXA0qI0c0dkaHNtr8W9gP24zxFye5r
+         2veQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756976607; x=1757581407;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jJtnDDrtdvxSxz2byyhf6ovg3vXgEml10lpi8GliOwg=;
-        b=kMdfC8mud7s0pYiDP2gYYj0jAdXT7O1kX8uNfQ+/Ame5jobSlF+hWLFScBOGIuVxAX
-         0OGabDaUz9oGfLX9G6c9Bmmd3gRs4Jmc2r8sfTn1HzOTs8a6K49kKo6bGCpmytAlanJd
-         L0EgXJaY3D/BD7xXKNqhC5lG8RpCUogfjJoPWXrdvUtFgVUGVIWh/x4XRGjrw5T4Cxwc
-         TmkDmhWRB6Mjg2ui0js9rRsY2qv+NHsN5wwcmbjm69lzQeqJX+rT1MPe8jNYjVNQbhEP
-         5kKdeHAc19DTkc3DudEcMIhYbfnfkW1Pvz7WdqA3f75aUgowpAVuC4fz/NWR9ePxaE9R
-         axKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdj5aS+Zr97S//QVPCctl/tyeAW4o2EJ/pwmEXesllgjpuAMvThRDuWKRqh8olCX4HJDbYhL5JiBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvtw+Im6HaFNnywgvYz0P2KbaQWQ31RqMW/35JYvjgUs1bwBd9
-	3I+jchnPkKRkc8QMOEZjoQSn85ddKOsJKyrM0Ptp8C69lGJfiVx+Gg39toJdMDNhlnkU6zx9UtH
-	km1u3M47/0v277JoLgA==
-X-Google-Smtp-Source: AGHT+IFON1WOJMPLi3KX20ldY+fg9A+absAs4vpg5c2bhfbXxem38DAApNJjd/cwu2TKdJ2KoCKCY+4GfZPUlUU=
-X-Received: from wmbep20.prod.google.com ([2002:a05:600c:8414:b0:45b:9cac:6fea])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:354f:b0:459:d6a6:77c with SMTP id 5b1f17b1804b1-45b855add8bmr140973945e9.33.1756976606738;
- Thu, 04 Sep 2025 02:03:26 -0700 (PDT)
-Date: Thu, 04 Sep 2025 09:03:19 +0000
+        d=1e100.net; s=20230601; t=1756976932; x=1757581732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmBbjONRTs6bzm6TRjxemHxdhBeOSzGNBuBX1gDxW0c=;
+        b=SPpRcjDZW9TenDUqI2fyrVMF6z/y4qa3ErLKo6ZwDwas5r4R9C12+1IxxdFOt+NHJo
+         g7wSJ3mCtCVc45GO67nkqzb2XHtpFA5Kx7HdIryKP3Vspe7CD76lVGmNDR7nDfMFwtS4
+         aN0TOwuY07DCB06OOR125UwGOOGpJAja/4Xj1sIiDWmzLRJTB9J7eu3dGSe1zWEAoRTg
+         LUY1w+HJM0M/kd7qW9FCp4vTkleEIqLtuqbrH9GWjGzhcWW4HjotlO7Taoj5EtpNCVHb
+         jrKG/IsPNUcNeF99X0DXadWuNhDlMK2cVBM4sGMv/gCLj39WogOohSGYoamTGM7CBLvs
+         qpbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKuThHDmICMpZGil6IB1iF0RkQEwfsYfYDtEyhLDds8g2rG4xBjKtCrXU0mU8Jwy6bbfOSr3wHPuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBUCvZQ9rGkUWamYzU4r5tKL1QaYe2rZmom9cwL6pI15cwE5zJ
+	KxKIm34LesDbxzJ7zxpvJql4EhH3iwyMWTJj7+vuJc0lidDleLjRfYsy5LzemG3KT2M=
+X-Gm-Gg: ASbGncvEQ8HixBYYFWDp9un2EkGugfthkFs5beHXL2K+BcERFQxIVGs1h430JPxpAlU
+	h7xoztGbOEOouaPmBXlCA0U77jTzynAhS3w04+o3+a/Pp072DLNiJkwcXZKq9FbX0ifviBzGQlm
+	VC6pXrQ1Dc8iEVJW3TEw66S0NjEGr/xUnGJ79SvESxyBRPIY8TBn1V3wzK/fgocoKvPLn/rA4JH
+	vDLMg0Lja3K9w8zyWPEx4zSTSRv2zTBdXkVTBMaNGydk6oxfWKU1MdTA1jUU/oC9IiCXdXip58M
+	wSahwTpksKReejFMXiOvtZtxbfW6pmgHe/6lJBaxRRvuiBPhYJsF72er40jT7QHT5YN5ahomOju
+	9dZppqOxm7cyUNnUy0y8cK58FubzS8jyjw/Q=
+X-Google-Smtp-Source: AGHT+IHI7lc2wZNpnK6c7bml3S96KONYzvjvTqV1qrfL3bzvd/FiM6GZPsewH6KTBQYgX9g7o654HA==
+X-Received: by 2002:a05:6a20:3d86:b0:243:a189:f1f8 with SMTP id adf61e73a8af0-243d6ddb3bdmr27908154637.8.1756976931899;
+        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0736ba7sm16257509a12.12.2025.09.04.02.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 02:08:51 -0700 (PDT)
+Date: Thu, 4 Sep 2025 14:38:49 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: clk: implement Send and Sync
+Message-ID: <20250904090849.7uiroafxk5juml6b@vireshk-i7>
+References: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIANZVuWgC/x3MMQqAMAxA0atIZgO1VkSvIg4lphqUKg2IIt7d4
- viG/x9QTsIKffFA4lNU9phRlQXQ4uPMKFM2WGMb0xmHtK2oHCfUOxLWFHwbHFfEFnJzJA5y/b9 hfN8PQpUfpV8AAAA=
-X-Change-Id: 20250904-clk-send-sync-3cfa7f4e1ce2
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1600; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=vd6AugBRQQ7LSCss9P7jkclD2lwejCl9P5EdEOF1JQA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBouVXZEgW4jnxvJ/iEOXp3OqgNSuN/YN/xWrsUl
- SHDqcVjfEWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaLlV2QAKCRAEWL7uWMY5
- RmRBD/9CYkpfGQt4q39WuBsUiTUblJypwp1kURHjawSb19cMOK6iRyNxPWJ5XFUnnmSrI20oTxq
- xb/XKSu1fg6DVdee5o2IfO4oYwZg88f4sFNwi1wZS8ghUcbgkGS37DcOexsFbojXb55i/rh5TyJ
- ZZByQj+JrSx9XTyh/weW/Y/2TTtYn+d3tbVHFV69heZUNYTFmi/z677wHaGH9kcja5p9+9rZ6XL
- vPTw7USab1mnLP6p09WCBPmx37b19BkbddxuFWsSq2p3ZHp657uUpgOTmiaQqz9srkJZhRMa2Wy
- N9h+v3YR5H3zD6xIc19nB+LuSseRU6lD05Q5vtgs3yEkS2e9NtHrj2O0JDrW4bQ9VzqdMvYLkz5
- 98Qvst/ohMU/YWeDQwa9psTIfGaL5mMFncAQajootFjynWZ2ed1Q6JOYDHRNm/7SNdCESVFFlMi
- GBAtvAkWzWU01Fa24TFche5ToEyzcWDjE+lSXax/5MUljrsLN6sQD2cA1hwXjlLFRwtkY4UH4Zn
- 78qRXHUn0uKPuSVJnjXBDYxj5uJWK0breTxPRQixK7IUhRWKa2K9PPcb58MgiXU0pETKAABBogp
- rJt3B79qzP9ZTvBP6P673FpDuH0bBV94XF2/OXenumEIsf2fEaOAK6DImEmg1cbNSpcuDoMo6FP 9bsx2qmPLaHdL2Q==
-X-Mailer: b4 0.14.2
-Message-ID: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
-Subject: [PATCH] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
 
-These traits are required for drivers to embed the Clk type in their own
-data structures because driver data structures are usually required to
-be Send. See e.g. [1] for the kind of workaround that drivers currently
-need due to lacking this annotation.
+On 04-09-25, 09:03, Alice Ryhl wrote:
+> These traits are required for drivers to embed the Clk type in their own
+> data structures because driver data structures are usually required to
+> be Send. See e.g. [1] for the kind of workaround that drivers currently
+> need due to lacking this annotation.
+> 
+> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> I'm not sure if there was already sent a patch for this. I recall
+> being told that one had been sent, but I could not find it. Maybe I
+> mixed it up with the regulator change, so now I'm sending a change for
+> clk.
+> ---
+>  rust/kernel/clk.rs | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@collabora.com/ [1]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-I'm not sure if there was already sent a patch for this. I recall
-being told that one had been sent, but I could not find it. Maybe I
-mixed it up with the regulator change, so now I'm sending a change for
-clk.
----
- rust/kernel/clk.rs | 7 +++++++
- 1 file changed, 7 insertions(+)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 1e6c8c42fb3a321951e275101848b35e1ae5c2a8..0a290202da69669d670ddad2b6762a1d5f1d912e 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -129,6 +129,13 @@ mod common_clk {
-     #[repr(transparent)]
-     pub struct Clk(*mut bindings::clk);
- 
-+    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
-+    unsafe impl Send for Clk {}
-+
-+    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
-+    // methods are synchronized internally.
-+    unsafe impl Sync for Clk {}
-+
-     impl Clk {
-         /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-         ///
-
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250904-clk-send-sync-3cfa7f4e1ce2
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
-
+viresh
