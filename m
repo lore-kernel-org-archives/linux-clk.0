@@ -1,187 +1,139 @@
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8A2E1C6F;
-	Thu,  4 Sep 2025 12:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988671; cv=none; b=nUnMh4qZMgUNwbAVKrgTIcN/7BkzL90zYllU0/0rmQD53enbX1tQuUm4B4SZqzegn2Z1kgyGrS7YraK+7OJwH4pVsbGYLSXPRlMQdteL9ePw5f4E69iaQ0thIDcD9uUDbD/xon7edfVSeMi7bA6YtoHiVTvXHB6PeQN4Lr3rWos=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988671; c=relaxed/simple;
-	bh=KTI+fAni0p2MENKwxEmxfldj86CWpRNVIqjj2os4Uhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swZ3D021e9GKvqpwcHdeFHpyRidBYOrSm+XnXxAbMvt7yxJ0cavyfgfzMMFQchani6r0z29WFfqqmV1hPKNwI3p07IYFleN6cAgiZ8bnnPZTIkavwKOtd1Bi9vGr68s+imvANCjcYG3ltDHFgopM0G8QRsNEReNKagBIwtgxBA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=hDNDwMru; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nwHa/7xp; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE67032F77B;
+	Thu,  4 Sep 2025 12:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756989128; cv=pass; b=bIDleio4crpjcePiC4YrrINtzb9mntOKMRSVdY4+Pm1deB8E1lh1dxOn2fm+EB9ddUna4lARwn7WHcenTwqdafVXHBu/WJPLhrAAxNxWw/o8PPAcfWaGA85m1eHTkcQYlqKC/3GZjV10ddGqtIZCTJ4Dnpt7Bc2ZkauryhTaE84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756989128; c=relaxed/simple;
+	bh=6FbDbPZobxC9svGYjuKWJ/ikHmQK3ctj8zeP21jLaCg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=NRUv6/WyVd35c0yU++PsC6Nw80xhIJZgXeOyHljckGPOQXClKBUPq3ivLCZSgbjRDV+RiyArd5D6Zo+RGCeCmEwsB55lp15nzQF95qLu+HvF4mZLPc1Ju8sUNxnSkatWXrc0ia+PsET2pILedOM//NnxbRWVHkYQ8IIzFHmu/WY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=DXSRcE13; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="hDNDwMru";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nwHa/7xp"
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 91B7A138030E;
-	Thu,  4 Sep 2025 08:24:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Thu, 04 Sep 2025 08:24:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1756988667; x=1756995867; bh=8U7GdOjxhs
-	TzAyM8D4u5BI8G2Xd1f8HkMUIoKDmyl7w=; b=hDNDwMrunWW+ZSBiQCae5O6HdM
-	rHIzrk1w93POFvUtWhk8/PTcjfDQw70b/bAYalCtI2CEx2Jf3r36xMTLqz9CDIHu
-	HZcPpZPQ+saIaP0ny4IDb8U+Rt3hJOO0nBCCwBQG1znzCFlMcLqF43sj3v5cxi5F
-	JrUfDaG0n1YTh8zUbpL1UxNYnnzVf7SsFPCIxwfijVgSkmuLxLS3N65UfaS6exGA
-	ADh5LalaVXZoXMFdoF1Z1f55no4+j5lcUJw0Jasq3jj0uF9M2iWqQlJ4iQPxmKgW
-	bJR0slNQsYWBDyjz0B2oPnJfmGr+7Cs2dBc6c3jMcMe8lqkFrYcT3BVZQUFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756988667; x=1756995867; bh=8U7GdOjxhsTzAyM8D4u5BI8G2Xd1f8HkMUI
-	oKDmyl7w=; b=nwHa/7xpjU32Z0Hf4NkHRGrhCI9S0+o+3GkFeLYaD4BO4ahSIiE
-	AzfgjNUTcHpC8m5rkhEaZpprVmEahYBL4a3IXs7TKP7uSms2vaqjFv/7OVT1+BrN
-	HiMWeD78WUeyUOqv6Ut+wjdDFtN7PwBIpxpp77y9j/hfwsM5M40bJShcazAq2Nfj
-	vU0k0733ZUqRn1WSn2lEKneSOFqnM5iYPhEZMUh5lh5NYIX7eFe8AmPGcP1UL9Oo
-	NpVS0IuWh+DjWJNqzDnp+c3xE7dELMyc/KjBBuMsB0ith0KURGCxVQ8t1hCBLsHq
-	Nw/5Zqgh0Zq1JjITNRJNb43qV+z/R/mJORA==
-X-ME-Sender: <xms:-YS5aPp7-Q-PJ75oKwTPe0FcPwMF6CU7PPlMZUYvafzhxITyOuiNQQ>
-    <xme:-YS5aNw42Jh_uRF-Vh88T3KVyMb5UDEtsSugx0zRywWFbbhkl6SwQIyf9iLELaMQ5
-    m338mmu0yL4v5o3LG8>
-X-ME-Received: <xmr:-YS5aHydJs3sY-GK3oCbvAHsOkngOP2IJEXL3-Xsm7VL-Gn688r9we0YV-V5onScvbN07mdHctJXOIr-NeHO4ekZlmvdoAv7z3Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeitdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgvdffve
-    elgedujeeffeehheekheelheefgfejffeftedugeethfeuudefheefteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnh
-    gvthdpnhgspghrtghpthhtohepieefpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhvvghnsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgt
-    phhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehkrhiikhdoughtse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprh
-    grfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgr
-    rheslhhinhgrrhhordhorhhg
-X-ME-Proxy: <xmx:-YS5aFL5RENaptCIz0BuOu7c20yv3c3vvpf0r7dw-JaCLTja_Bz-qQ>
-    <xmx:-YS5aMhqfqjJDjwhEwdZLnuYL-XJITqjWEtj1CN62kOs7Lr-e1ARig>
-    <xmx:-YS5aLmrOIowpLzSrzFmFlJi5IwpCHBFCji4UnFHC3LawjtEN9XozQ>
-    <xmx:-YS5aBjdESh3CesfnA5BUM2uF_YS4jSIK-ieYu5ywQQcEQrIsgMdmQ>
-    <xmx:-4S5aHzTvFrOsjIChzaXkMhnpIzOEDH0ImtlmNuExND3IUGhmeRiqy8O>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 4 Sep 2025 08:24:24 -0400 (EDT)
-Date: Thu, 4 Sep 2025 14:24:23 +0200
-From: Janne Grunau <j@jannau.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,	Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,	Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>,	Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,	asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,	linux-pm@vger.kernel.org,
- iommu@lists.linux.dev,	linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org,	dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org,	linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org,	linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org,	dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org,	linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250904122423.GB89417@robin.jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <20250829195119.GA1206685-robh@kernel.org>
- <20250830071620.GD204299@robin.jannau.net>
- <20250902194528.GA1014943-robh@kernel.org>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="DXSRcE13"
+ARC-Seal: i=1; a=rsa-sha256; t=1756989107; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HOWhScNr1wUvSa2o7O6Nrjk5oGJKC1MWxnfDk3MXMn7bSpJJpe4wHWrf+HFQsj76VqjQdHdtXw2IDZCB1cxHaFtSRPRWwDZITaPjfeUm5z68vf44I53UtjmaOV3LL/bjXV9upJ2EpnBEgynObqyHczbtYlf7pQofEFBlmXYKers=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756989107; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vOiTWYBCudswC5h85TFZHJnqluWo4OG28H4xN4hnraw=; 
+	b=ZfpnbYVVbnGBwkjajb3iF7SXSwtTMiGL5LYHVKbsUgHEkysmqcp0MhtOj2Y4QlVYdaZdpYtJ3g+1i6JcTw3q7PRc0gk+vLUVeOWekYkkjMDNNDbtolmR6g9eB1qdYRU4IGxjewrqzcSDF6y/kZirfSeYF0m270m/jMerFE+EA80=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756989107;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=vOiTWYBCudswC5h85TFZHJnqluWo4OG28H4xN4hnraw=;
+	b=DXSRcE133DVP4VHZCyFZ4QgZdH5ma3wFjoErAFCvUEPW0OgBk8GX4njBRNwH6hsE
+	/REA+Nq4CqwuBy7kxO9pVOkA7MbyHTzpUarkQ6JMQvNzpeBajQLLVrSONme2UkTXzdB
+	XxM/s7k66dHzVFhPtAJF4iHTrYFvoPegLdwSqEGM=
+Received: by mx.zohomail.com with SMTPS id 1756989104182732.7086986239485;
+	Thu, 4 Sep 2025 05:31:44 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902194528.GA1014943-robh@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] rust: clk: implement Send and Sync
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
+Date: Thu, 4 Sep 2025 09:31:28 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CB9F3786-48F0-46EE-BE61-8823E437C786@collabora.com>
+References: <20250904-clk-send-sync-v1-1-48d023320eb8@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Tue, Sep 02, 2025 at 02:54:34PM -0500, Rob Herring wrote:
-> On Sat, Aug 30, 2025 at 09:16:20AM +0200, Janne Grunau wrote:
-> > On Fri, Aug 29, 2025 at 02:51:19PM -0500, Rob Herring wrote:
-> > > On Thu, Aug 28, 2025 at 04:01:19PM +0200, Janne Grunau wrote:
-> > > > This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> > > > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> > > > follow design of the t600x family so copy the structure of SoC *.dtsi
-> > > > files.
+Hi Alice, good catch, this is indeed missing.
 
-...
+> On 4 Sep 2025, at 06:03, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> These traits are required for drivers to embed the Clk type in their =
+own
+> data structures because driver data structures are usually required to
+> be Send. See e.g. [1] for the kind of workaround that drivers =
+currently
+> need due to lacking this annotation.
+>=20
+> Link: =
+https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@coll=
+abora.com/ [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> I'm not sure if there was already sent a patch for this. I recall
+> being told that one had been sent, but I could not find it. Maybe I
+> mixed it up with the regulator change, so now I'm sending a change for
+> clk.
+> ---
+> rust/kernel/clk.rs | 7 +++++++
+> 1 file changed, 7 insertions(+)
+>=20
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> index =
+1e6c8c42fb3a321951e275101848b35e1ae5c2a8..0a290202da69669d670ddad2b6762a1d=
+5f1d912e 100644
+> --- a/rust/kernel/clk.rs
+> +++ b/rust/kernel/clk.rs
+> @@ -129,6 +129,13 @@ mod common_clk {
+>     #[repr(transparent)]
+>     pub struct Clk(*mut bindings::clk);
+>=20
+> +    // SAFETY: It is safe to call `clk_put` on another thread than =
+where `clk_get` was called.
+> +    unsafe impl Send for Clk {}
+> +
+> +    // SAFETY: It is safe to call any combination of the `&self` =
+methods in parallel, as the
+> +    // methods are synchronized internally.
+> +    unsafe impl Sync for Clk {}
+> +
+>     impl Clk {
+>         /// Gets [`Clk`] corresponding to a [`Device`] and a =
+connection id.
+>         ///
+>=20
+> ---
+> base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+> change-id: 20250904-clk-send-sync-3cfa7f4e1ce2
+>=20
+> Best regards,
+> --=20
+> Alice Ryhl <aliceryhl@google.com>
+>=20
 
-> > > > After discussion with the devicetree maintainers we agreed to not extend
-> > > > lists with the generic compatibles anymore [1]. Instead either the first
-> > > > compatible SoC or t8103 is used as fallback compatible supported by the
-> > > > drivers. t8103 is used as default since most drivers and bindings were
-> > > > initially written for M1 based devices.
-> > > 
-> > > An issue here is any OS without the compatibles added to the drivers 
-> > > won't work. Does that matter here? Soon as you need any new drivers or 
-> > > significant driver changes it won't. The compatible additions could be 
-> > > backported to stable. They aren't really any different than new PCI IDs 
-> > > which get backported.
-> > 
-> > I don't think backporting the driver compatible additions to stable
-> > linux is very useful. It is only relevant for t602x devices and the only
-> > way to interact with them is the serial console. The T602x PCIe support
-> > added in v6.16 requires dart changes (the posted 4th level io page table
-> > support) to be useful. After that PCIe ethernet works so there is a
-> > practical way to interact with t602x systems. So there are probably zero
-> > user of upstream linux on those devices 
-> > I'm more concerned about other projects already supporting t602x
-> > devices. At least u-boot and OpenBSD will be affected by this. As short
-> > term solution m1n1 will add the generic compatibles [1] temporarily.
-> > I think keeping this roughly for a year should allow to add the
-> > compatibles and wait for "fixed" releases of those projects.
-> > I'll send fixes for u-boot once the binding changes are reviewed.
-> 
-> Honestly, at least in the cases where the generic compatible works for 
-> every chip so far, I'd just stick with it. The issue with generic 
-> compatibles is more that you don't really know if things are going to be 
-> the same or not. And most of the time, the h/w ends up changing.
-> 
-> If you want to keep it like this since you've already done it, then for 
-> all the binding patches:
+Can you base your change on top of [0]? Otherwise it will become stale =
+rather
+quickly, as this introduces new types, i.e.: Clk<Unprepared>, =
+Clk<Prepared>
+etc.
 
-Let's keep with this series. I still have a branch with dt-binding
-changes using the generic compatibles but let's keep this approach to
-confusion and duplicate review work.
+I will push out a new version today.
 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
-Thanks
-
-Janne
+[0]: =
+https://lore.kernel.org/rust-for-linux/20250729-clk-type-state-v1-1-896b53=
+816f7b@collabora.com/=
