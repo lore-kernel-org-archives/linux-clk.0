@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B131B80B;
-	Fri,  5 Sep 2025 15:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DFE31B824;
+	Fri,  5 Sep 2025 15:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085163; cv=none; b=MGisWiVKOI03Wl841t/uRCT7Hyc03gKsGbGBhrKgKvnzYZ9TRc7AuI8CRxC08Aox6HN7ej9hD8v+pI+mLIr83YjwnX2Obja69kbNseiL9psvLKjJY3a5CuKnBAO//R0E7I+za+z1g7SPi+RpQ9eWcy2RWEs+7ZQaITpVaj61xrc=
+	t=1757085265; cv=none; b=FOlVFguixHDRm8JrSi5CtHHInyHaB5ia2aowmStKxeG1BQ5C+tzpOZ6xOiT0kIHect7VbrRZOKgy5naG8pt0LtNN4U/gNWJ8QZtnA9qi0D/JE81BOpcLcFokgDOoejsHFY3uSnox+gbh4g2PLK4XYM/XOixN+UfUk3TQNIrDstc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085163; c=relaxed/simple;
-	bh=/KX5luXYZW6HClpST7249EccgXx88bUyswNisMK+RJc=;
+	s=arc-20240116; t=1757085265; c=relaxed/simple;
+	bh=BG2k1oDsnnhcNwGuKMXzIg8UPUKmN0Mer2rlo4LnUV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aRyaI04ACeCUDe796StuHqcK+IS4LXSmYcjk1t6a14CKubjCfEQwsPZKc8SqILBGY/pnhU01d0HFae3q1X+BXgTFF3iSWAida4DKM79MS32xUH5jrJ82H3pnJSv4p3zrom8iWh/5uiz/W9OT1siYBsKf4ioUyuP00tMF4O8RJKg=
+	 MIME-Version:Content-Type; b=U0Kxd81IYbjUrvE3GavbW8tvrdjCS39GCoxz9rGwc56278fKofx8DLGbH71CdPvYH5qu7RBoJXISK34ix/yOMTlB684EBu+D70t91ss6folXGxkWbaM2DNa/z6mhTaeGaGBSpvMmbOBbNvZOn8g1S6F7HNJvB+cH9q/pK+FRfs4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F49C152B;
-	Fri,  5 Sep 2025 08:12:33 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E228F152B;
+	Fri,  5 Sep 2025 08:14:13 -0700 (PDT)
 Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B7F93F6A8;
-	Fri,  5 Sep 2025 08:12:39 -0700 (PDT)
-Date: Fri, 5 Sep 2025 16:12:36 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D9693F6A8;
+	Fri,  5 Sep 2025 08:14:20 -0700 (PDT)
+Date: Fri, 5 Sep 2025 16:14:18 +0100
 From: Andre Przywara <andre.przywara@arm.com>
 To: Chen-Yu Tsai <wens@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -27,12 +27,12 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] clk: sunxi-ng: mp: Fix dual-divider clock rate
- readback
-Message-ID: <20250905161236.51b6ecee@donnerap>
-In-Reply-To: <20250830170901.1996227-4-wens@kernel.org>
+Subject: Re: [PATCH 4/8] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU
+ module clock
+Message-ID: <20250905161418.30562637@donnerap>
+In-Reply-To: <20250830170901.1996227-5-wens@kernel.org>
 References: <20250830170901.1996227-1-wens@kernel.org>
-	<20250830170901.1996227-4-wens@kernel.org>
+	<20250830170901.1996227-5-wens@kernel.org>
 Organization: ARM
 X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
@@ -44,47 +44,135 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 31 Aug 2025 01:08:56 +0800
+On Sun, 31 Aug 2025 01:08:57 +0800
 Chen-Yu Tsai <wens@kernel.org> wrote:
+
+Hi,
 
 > From: Chen-Yu Tsai <wens@csie.org>
 > 
-> When dual-divider clock support was introduced, the P divider offset was
-> left out of the .recalc_rate readback function. This causes the clock
-> rate to become bogus or even zero (possibly due to the P divider being
-> 1, leading to a divide-by-zero).
+> The main clock controller on the A523/T527 has the NPU's module clock.
+> It was missing from the original submission, likely because that was
+> based on the A523 user manual; the A523 is marketed without the NPU.
 
-Ah, a nice catch, thanks for that! Just curious, how did you find this?
-The MMC clocks use the dual divider type as well, but I didn't observe
-them being wrong?
+Ah, sorry, I missed that one. I think I spotted writable bits in that
+register, but didn't find a clue what this clock was about. Anyway, checked
+the bits against the T527 manual, they match up.
 
-Regardless:
+> Also, merge the private header back into the driver code itself. The
+> header only contains a macro containing the total number of clocks.
+> This has to be updated every time a missing clock gets added. Having
+> it in a separate file doesn't help the process. Instead just drop the
+> macro, and thus the header no longer has any reason to exist.
 
-> Fix this by incorporating the P divider offset into the calculation.
-> 
-> Fixes: 45717804b75e ("clk: sunxi-ng: mp: introduce dual-divider clock")
+Interesting, looks nice, and solves Krzysztof's complaint the other
+day about the binding header inclusion missing from the driver as well.
+Just one thought:
+
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 21 ++++++++++++++++++---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.h | 14 --------------
+>  2 files changed, 18 insertions(+), 17 deletions(-)
+>  delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> index 1a9a1cb869e2..88405b624dc5 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -11,6 +11,9 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+> +#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> +#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> +
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Should we have the number #define here, at a more central location? Seems a
+bit buried down in there. And then use a plural name while at it:
 
-Thanks,
+#define NUM_CLOCKS	CLK_NPU + 1
+
+Alternatively, put .num behind .hws below, so that the last clock and the
+number definition are close together?
+
+Cheers,
 Andre
 
-> ---
->  drivers/clk/sunxi-ng/ccu_mp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-> index 354c981943b6..4221b1888b38 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> @@ -185,7 +185,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
->  	p &= (1 << cmp->p.width) - 1;
+>  #include "../clk.h"
 >  
->  	if (cmp->common.features & CCU_FEATURE_DUAL_DIV)
-> -		rate = (parent_rate / p) / m;
-> +		rate = (parent_rate / (p + cmp->p.offset)) / m;
->  	else
->  		rate = (parent_rate >> p) / m;
+>  #include "ccu_common.h"
+> @@ -25,8 +28,6 @@
+>  #include "ccu_nkmp.h"
+>  #include "ccu_nm.h"
 >  
+> -#include "ccu-sun55i-a523.h"
+> -
+>  /*
+>   * The 24 MHz oscillator, the root of most of the clock tree.
+>   * .fw_name is the string used in the DT "clock-names" property, used to
+> @@ -486,6 +487,18 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
+>  
+>  static SUNXI_CCU_GATE_HWS(bus_ve_clk, "bus-ve", ahb_hws, 0x69c, BIT(0), 0);
+>  
+> +static const struct clk_hw *npu_parents[] = {
+> +	&pll_periph0_480M_clk.common.hw,
+> +	&pll_periph0_600M_clk.hw,
+> +	&pll_periph0_800M_clk.common.hw,
+> +	&pll_npu_2x_clk.hw,
+> +};
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0x6e0,
+> +				    0, 5,	/* M */
+> +				    24, 3,	/* mux */
+> +				    BIT(31),	/* gate */
+> +				    CLK_SET_RATE_PARENT);
+> +
+>  static SUNXI_CCU_GATE_HWS(bus_dma_clk, "bus-dma", ahb_hws, 0x70c, BIT(0), 0);
+>  
+>  static SUNXI_CCU_GATE_HWS(bus_msgbox_clk, "bus-msgbox", ahb_hws, 0x71c,
+> @@ -1217,6 +1230,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
+>  	&bus_ce_sys_clk.common,
+>  	&ve_clk.common,
+>  	&bus_ve_clk.common,
+> +	&npu_clk.common,
+>  	&bus_dma_clk.common,
+>  	&bus_msgbox_clk.common,
+>  	&bus_spinlock_clk.common,
+> @@ -1343,7 +1357,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
+>  };
+>  
+>  static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+> -	.num	= CLK_NUMBER,
+> +	.num	= CLK_NPU + 1,
+>  	.hws	= {
+>  		[CLK_PLL_DDR0]		= &pll_ddr_clk.common.hw,
+>  		[CLK_PLL_PERIPH0_4X]	= &pll_periph0_4x_clk.common.hw,
+> @@ -1524,6 +1538,7 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+>  		[CLK_FANOUT0]		= &fanout0_clk.common.hw,
+>  		[CLK_FANOUT1]		= &fanout1_clk.common.hw,
+>  		[CLK_FANOUT2]		= &fanout2_clk.common.hw,
+> +		[CLK_NPU]		= &npu_clk.common.hw,
+>  	},
+>  };
+>  
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h b/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> deleted file mode 100644
+> index fc8dd42f1b47..000000000000
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -/*
+> - * Copyright 2024 Arm Ltd.
+> - */
+> -
+> -#ifndef _CCU_SUN55I_A523_H
+> -#define _CCU_SUN55I_A523_H
+> -
+> -#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> -#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> -
+> -#define CLK_NUMBER	(CLK_FANOUT2 + 1)
+> -
+> -#endif /* _CCU_SUN55I_A523_H */
 
