@@ -1,61 +1,62 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA328488F
-	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 21:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED3530748A
+	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 21:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757107425; cv=none; b=bxUOS5BzhjxLdIBh7s+ICgT5WuM3X7X8R+k+AIpJ6VO3eH4d5OGZTGk00389+YG6TBcLVDtP902rLChVwMzNmIzGoMzb6FGEFSqZ1b7HLDlc1X3wvIDYbUWs/7QS64mr7DQi823NIt1yATMshlKAl3OPiUw06yvwKtjlO8SDWtI=
+	t=1757108408; cv=none; b=aU6WwD2L7DvEHsECU4xPFE2duYJ4vcpfW2bNI7WFlTEGW29FcC9jecPldqisH9V042IqeelXm3dqlZozYxe/f8jsafM4y0lznzp9nmS4nz7Okcna9AXIZ9zd5IBAS5h+PoMfuPsI5+pQQQQvB7bdNyFQfBofYSHKv+U8KzyHYaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757107425; c=relaxed/simple;
-	bh=o/PqQhK0PKkxH5IBGjaZ5xFiBra8PzKV7+1t1tFVm/g=;
+	s=arc-20240116; t=1757108408; c=relaxed/simple;
+	bh=EuwPVtHyZtk0Y1lc41SsIpHNM6KNvdVwwJODJaVH/gM=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lnO5C6NZaKO5owBnBrkg9mOFZASYeRmoSPto4+FJpy/IIMPsPaHOSyK4q4xIO2uh9aV8kjzaQUhrQP8uJqfh0EEKjKEGfSV8wCwbpcnuadsfVKS7/pHvonK8npW4S0pSdAXKl41x3RZf91DLwIf5jXv5cFV5qHEfk1kZ6z2vJ4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version:Content-Type; b=pkzjmKiR9kgBsKbbrBRcMbj1xz0n3Xr+FZQYl0Wm3bSnzokEOBtlCPypBbDBzlUoGhsQ5mwhqt8Jn3UUWPTti5XJPSgj1L8WBTDcjXnbbNrNzrLPu39n40C871SHiLr1uzVPFwSxpW206PGafSC0U1p7uxEyg47kIma1Zq/zAiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7728815e639so1563057b3a.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 14:23:44 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24c8ef94e5dso22276295ad.1
+        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 14:40:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757107423; x=1757712223;
+        d=1e100.net; s=20230601; t=1757108406; x=1757713206;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W6wZ9HgdgMtQgRD7Hr86g025jE/p6E3Wse2CcjqMIiw=;
-        b=CdHCFHH26jWxKtmDVpcNPzoHN7u4Td/oCDSlsCVDJ2pODFPZyRI0uSPEB2BqxMj5k/
-         X6DhO+xeEay/9IzZTi5oZXD/bRL27hLqdyYTJ+h86LXtJ64dvRMwNnDsKrl4pzHgP/WI
-         5PoFktf3tCFqJ/il5VKft+XwBksTveY5PQipBkQJ8g7FIeosWugSsAOfFS0Abeg2W3lc
-         3l2qw7MSiU5hfYekK8dh9O0+T8uWKJAkxN8EHvtFqZqTX+HvSpgSfW6ggTcmc6VWqMRT
-         eZv80IggDI/n6pinu69ntBer2PrYgCpmLn/y/XdmjjYb0Etuc2b57kIKTige1O0bTPR+
-         lflw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMRSQ+9kIBa2/JVt/f8YonVjs5PLUq/guiKnPyVdzDspdCi0xiiAI2hvZOgvqw35sj5G8zCJwx3Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJWk0BoJ8qaZvFaqBwXqko0OFi2PAcRV8Vjc4DorimnTqxwlGX
-	l+I9FbtkJiXilLI3ei2Hxuwrt/uhOkc6rXJTEK//Mya29r8IhBfm0rhdpytTWw1wEj0=
-X-Gm-Gg: ASbGnctDTjX2oBihdn4qj05fIDOJV/4cahV8OzP4DW1SGRVB9JQBsowPKfbvRbPTBcq
-	jzSFxToErydZsAXcEsDoGN0xeWaPcqjpY+0/vRk0LvFyolx25Bs+k6Z2YCTmSMBnSESw2Z99Im3
-	CiHKGssw7fYux/GLm5EITFpYyYiQrdcRsmvbZ7J5TPLIBZ+JHQKaCLvd2JYFYlwoYXFabynm8gf
-	h1KMIY52d+J/7s8t3U1RfXPPaSPidOPg6mf5QlYQ7aB8BRAvLf0QvfjU0Ncs5O/S06ug/LAjlnN
-	h5ln2+gSDQ3jRXKDE+RPZFB+zRU+TKDaGQhf3H9mSOvL3RnpCxmS2ZpEbLVEP1lwgESF1VeBg5E
-	1zpNQwFlIRPEaFd1olPNF
-X-Google-Smtp-Source: AGHT+IECEsSQkwfBCZIu4aCVdg/6xbbfhAHy0KA5ITM5kpE6xl3JxGGtEoATFjZl9SBoRxWqA+Li6A==
-X-Received: by 2002:a05:6a20:3d89:b0:246:f1:bec3 with SMTP id adf61e73a8af0-25344415094mr362891637.42.1757107423576;
-        Fri, 05 Sep 2025 14:23:43 -0700 (PDT)
+        bh=xirptwLPscOOrD6MjERvQR7+JKo3MLBeTIYrgAFmkYE=;
+        b=wW77v3VEUV+btV0NFRxbTAqWyF9NBUd2t7gzGIQicdzzpywhrMEKr84/qKU40aPrMq
+         HQzu8MNNtlq0E8+/sa67DV5WsomQ4WF0nUTfBna56OFFoj6iqan0vV4VAPwJI/z5jB3F
+         PyNv9m6YJaF200FmbdfnzlElqPn0gVOv8hjLfpHxqNUb1LEioeUKo6UY8LT+sTTXf+Eb
+         YKIMIHpfkpC6tbFvHMorZLgCJNo6Y9F0Ua1sRWIW9vKUaYH1eqhq42Hq20nfE3QDOB1q
+         uAUFF25hzECOuqPucvUpPU5suHaaqTSLY8CqKwG9EH9JZXtu7wVAyTSsw1fs0pP6Yqej
+         /mFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE6Cj8oXQG0/Z8G6RPO6CkovApmlx9H+SchuSlSU8DuN7oEcl/JsKY+mVsx8kNYcxDlbkeScbfj58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMTwsniTwHQ/V2jLtlVNvxg+rcLzDW5pLSiGN2grjiunForlJh
+	793gn4yqlA5lb2C65JkhRSJkSMdLASaXEwaRARmmsPiWweXLBVoNhI+eMw/s1WLshvLRZoCyYRr
+	vXd+n
+X-Gm-Gg: ASbGnctK5JC5r309ytgsUigIzk44PtlWIa3fm2NNfxWwWE8st67VQPsyvQbwVJZT0GH
+	11TyqFjAW14seyZnYmAMOWwvxJWYmoyFZ++jRI+XfNBRc14tT33HA3f/MoGvtpLNpWsb0rwzc3f
+	QIxqFINggerKUYdsBnEXX/yjzBZP37yKoWYF3yBgFZyLbOff51LGTvcWlLf8te0CU7KEuKVUhPE
+	j799ZnFBVv52+MzTm4JjfYVOAg+CDxk/2w1H7Vy8FSsV+2IbjLRdbUCPVXUpj7YWuK2ziDam7q4
+	AIeBQXaTScyhoNs/6JRSUwB5g9SmTBIrS3IceHVcKue22s7IzIUr1LRwq0LKG5NWj1zegQTSerS
+	41Xn/XDn1COYGqB/vnlII
+X-Google-Smtp-Source: AGHT+IFw9MwANXAgB0eCLMrfpT9FSIah/S2jHqgdaTFzPWLL5Scc72YKTjtxBqxKZTvx50aR9gsoUA==
+X-Received: by 2002:a17:903:1c2:b0:24c:affd:6f00 with SMTP id d9443c01a7336-24cef52790fmr57400485ad.14.1757108405639;
+        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
 Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4bf561sm23001252b3a.59.2025.09.05.14.23.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9df827besm74488265ad.152.2025.09.05.14.40.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 14:23:43 -0700 (PDT)
+        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
 From: Kevin Hilman <khilman@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>, Brian Masney <bmasney@redhat.com>
-Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
- <mripard@kernel.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] clk: ti: convert from clk round_rate() to
- determine_rate()
-In-Reply-To: <20250814094527.29745592@akair>
-References: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
- <20250814094527.29745592@akair>
-Date: Fri, 05 Sep 2025 14:23:42 -0700
-Message-ID: <7hseh0a90h.fsf@baylibre.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Tero Kristo
+ <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>
+Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexander Stein
+ <alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH 1/1] clk: ti: am33xx: keep WKUP_DEBUGSS_CLKCTRL enabled
+In-Reply-To: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
+References: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
+Date: Fri, 05 Sep 2025 14:40:04 -0700
+Message-ID: <7hms78a897.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,31 +65,41 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Andreas Kemnade <andreas@kemnade.info> writes:
+Alexander Stein <alexander.stein@ew.tq-group.com> writes:
 
-> Am Mon, 11 Aug 2025 08:48:05 -0400
-> schrieb Brian Masney <bmasney@redhat.com>:
+> From: Matthias Schiffer <matthias.schiffer@tq-group.com>
 >
->> The round_rate() clk ops is deprecated in the clk framework in favor
->> of the determine_rate() clk ops. The first two patches in this series
->> drops the round_rate() function since a determine_rate() function is
->> already implemented. The remaining patches convert the drivers using
->> the Coccinelle semantic patch posted below. I did a few minor cosmetic
->> cleanups of the code in a few cases.
->> 
->> I want to call out the changes to the dpll driver since a fair number
->> of changes had to be done outside of Coccinelle. I unfortunately don't
->> have this particular hardware on hand, so I was not able to test it.
->> I broke the changes to this driver up into smaller chunks to make it
->> easier to review.
->> 
-> Tested-by: Anddreas Kemnade <andreas@kemnade.info> # OMAP3 GTA04, OMAP4 Panda
+> As described in AM335x Errata Advisory 1.0.42, WKUP_DEBUGSS_CLKCTRL
+> can't be disabled - the clock module will just be stuck in transitioning
+> state forever, resulting in the following warning message after the wait
+> loop times out:
 >
-> No new scary things seen on boot. Can someone check this on AM3, too?
+>     l3-aon-clkctrl:0000:0: failed to disable
+>
+> Just add the clock to enable_init_clks, so no attempt is made to disable
+> it.
+>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-I gave this a basic boot test on am335x-boneblack.  All is well.
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-Kevin
+> ---
+>  drivers/clk/ti/clk-33xx.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+> index 85c50ea39e6da..9269e6a0db6a4 100644
+> --- a/drivers/clk/ti/clk-33xx.c
+> +++ b/drivers/clk/ti/clk-33xx.c
+> @@ -258,6 +258,8 @@ static const char *enable_init_clks[] = {
+>  	"dpll_ddr_m2_ck",
+>  	"dpll_mpu_m2_ck",
+>  	"l3_gclk",
+> +	/* WKUP_DEBUGSS_CLKCTRL - disable fails, AM335x Errata Advisory 1.0.42 */
+> +	"l3-aon-clkctrl:0000:0",
+>  	/* AM3_L3_L3_MAIN_CLKCTRL, needed during suspend */
+>  	"l3-clkctrl:00bc:0",
+>  	"l4hs_gclk",
+> -- 
+> 2.43.0
