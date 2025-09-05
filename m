@@ -1,282 +1,324 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D0927FB27
-	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 08:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8B028A704;
+	Fri,  5 Sep 2025 09:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062424; cv=none; b=EVQsR2+lxYQnhLSOp3l1Nct7mGdDRzQmN+PFeMKMj0rV3mLjsZPpnuHaWWxccD2olDS4++MgIQkbW9fuLme7uFN/hjdxkTroDilmTKN/ikm9kD7U9wYrNWpdEA0d8lCkzl0B8PPSMSbKTjdzwkfoeLZcXJbeC2GpECrdiTUgk4k=
+	t=1757063206; cv=none; b=MACspXxJKhJYTtGhp0OG7adgLIZWgfYe6BHhs4nFskNscRe3q53CaoX/F54Jp5MuFU9OOcf6ucyEec9ExPEFkT5wcMkLPHbI/OueRd6QM0sv1oO/2p1IyhuTus8wOCc3s9BPNcW3CpaKrLmsV5kRM0OViID+tuMnVoxWbhj8IBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062424; c=relaxed/simple;
-	bh=s1H95DzZ47/Gv87gSW5XfSmmnQ9iM2HST1opScL1BwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pTzUvnmqKEwG+SjVlt9q9Ipjf1uhh1WgaB6XsQ1IFm8ZjUYfLA4RrVFppmj/jG//aVmzFWjfdV8sj6Ml2lOd2tsdwRIAUfSoXPIl0KSPZszUKDYFna6pxWdTZvGdOCFNNggvb9ke0CBoaHWGfg0lHCZRw9VNgmSeA87uXAQAxno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TSfiqTAv; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1757063206; c=relaxed/simple;
+	bh=Nf4BNlj92A6Gq2vl04S2lCAj8pMT1QldYLkShSHu178=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ofrnjJg9D/o3NwZOvGH5Aq725uyhXDrP+0v2xZdjeiEKB6Hauzhyu5d+P4VLxLP0JYH6WOlg3Csttmh11ayq/G6DhSD1g35Doibhg2SfjqLYhjaiMFVNNvuIV9pNOK6pwHUt97rXlazVbuooECcqq0bLTVk4OGVCbhz87Ucja0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZG5blmF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TSfiqTAv"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f78e3cdf9so2376504e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 01:53:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757062420; x=1757667220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3vZ3W53+NBzM1/YoocDMpt9TAql3h7i1DOTAYBcde+k=;
-        b=TSfiqTAvn3TzZa11wBRPVN3tVHumyx5moTKZz9AkTpVlPAqyzCsvOqzO2Sf60N8xcR
-         HUm7VT2iTTrWO4PiO2AQBSsC+KKfpxvMiII/Px1H7BXd7aqHSm4tD2aB2uvySZraWudI
-         fjLe26pHFQbvDiTtSBCkUXN396CvwYgEngg7Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757062420; x=1757667220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3vZ3W53+NBzM1/YoocDMpt9TAql3h7i1DOTAYBcde+k=;
-        b=UklMDjZq4X9XHIad8YnO1Y/Xe73pSLDQw633FIhbGJXrjnv/LTHCS1Iu7mEfINPqSP
-         IMwtZb8U/eSi0lbp1eq+0M+e4ml5HjPKT1FbrPJH4z3yEI050gL7bRSF91RCrX+DRGQr
-         Q/3sL6+HGuG2po2UlxeRK1YEPtddKbYqUPx5k5Mvjkj2kI9khIspLMSdFzcC8tOH7iRC
-         2kOwvIV2r5kR1ggqp7wipxX4Yu7fr2cQbWGOBIdkDoRRilHyB3+FOcuquDKSDzk4/+uY
-         EN9qJii+Xk+UCrlvkp3Z4TXxOkXG7ZXsmmTYSZw3KouEMEUpskbeGDEHL/7sOxxlzKzr
-         0hZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNije327HkxAB70La8g+S0ltTB7Ps6T8WdrLbu801ZLYV2RQKp67zxNmTX4hDNz/d5XfIwRf/MZ18=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx0R73YbRbU64SPsB6npJwnYCZz6xIzN+p5jGx+O5p/KvF0HQk
-	nfnh/dS1HZJsdqTwP1TkoWQKOb7oHoeWOka5yaK9xZDo3cd2PiWyqtW9PQoLR/2BmXoB6VFTsP7
-	mUT+mN5BoP53sRwtZBUZ9KbaLLPoLv9LAopoY/DGr
-X-Gm-Gg: ASbGnct6YQPZRWsh1RCc0rreE10+YNMZFeKpUV+FiACpAbquqD+3NLa/wXgT+GjAayc
-	XsuTornfmJg+ljHqts+kvBe9cHpGAr8+blcWekMwaSEeRx2aW3Pm/Zx+izhHP6eNYso2yitUNcU
-	AHSMHrHALTqPvhEvO3y9IFSifNuaKwE+aqvQg1N1wYQ5g+FFnh2LfxQEv2ZRu0VfXNO/h/PdSJj
-	QPpqxbHVaV3lmuyeBNB9H9/df45hVRz4sdTAw==
-X-Google-Smtp-Source: AGHT+IEjHV/T1RYYsuzHLdjnxHEKIYfNZ8/LU3RE2sLPGxb+l+/MTplgH0fgFpzDm7aF6IX2eRbQMv8bMFW6xshxSss=
-X-Received: by 2002:a05:6512:3b10:b0:561:70f1:e3ec with SMTP id
- 2adb3069b0e04-56170f1e54amr557993e87.30.1757062420258; Fri, 05 Sep 2025
- 01:53:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZG5blmF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 05E21C4CEFB;
+	Fri,  5 Sep 2025 09:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757063206;
+	bh=Nf4BNlj92A6Gq2vl04S2lCAj8pMT1QldYLkShSHu178=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=JZG5blmFIaQPAQuViZoIXaY17JqFnqoY8c2N+iP+QeRohxocLqKH87oqTW9nbwPmD
+	 KWUwdhbFbpB0jpyfHMKwnmCG0HaAG9j33NBFA1gIB4zEcYDxLeOc5u86px77UNhxbc
+	 o8onfsUJZHn3fctc5XqZ454u3DQQhIFG0g5dIn7oITXlPcgDRKtkwc/bRT2kiL0Jrl
+	 l9jsA8kPH8lUCPtt4jdpYPJx6QpqPjDDtlzlwO+JYGHTu3jyhv158qRiLytrvTPkqR
+	 JoOvle+gBwCMbeQqEPuQ0tzalH/wHj5VW97cW5YYqqzDn1t12pVMN23zmS0/mMSkeM
+	 ocgzayxkwtTZA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC38CA0FED;
+	Fri,  5 Sep 2025 09:06:45 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 05 Sep 2025 17:06:39 +0800
+Subject: [PATCH v3 2/2] clk: amlogic: add video-related clocks for S4 SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829091913.131528-1-laura.nao@collabora.com>
- <20250829091913.131528-20-laura.nao@collabora.com> <0e6592b7-6f6d-4291-992c-ff321c920381@collabora.com>
-In-Reply-To: <0e6592b7-6f6d-4291-992c-ff321c920381@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 16:53:29 +0800
-X-Gm-Features: Ac12FXznPHud9uxEoezJCyg2AXmAKQakPZkEkl_DvIt-_2nZkd2YLz6bIWoFjWA
-Message-ID: <CAGXv+5GFaudGqm4C9CY-_spiXcyWk7OvWHTdkehsyrV4sO1Ndw@mail.gmail.com>
-Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com, 
-	guangjie.song@mediatek.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	netdev@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250905-add_video_clk-v3-2-8304c91b8b94@amlogic.com>
+References: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
+In-Reply-To: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757063204; l=7141;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=kLmXzk491eV2x81ro4ZED7Iyt5KXxTTTzbVBOuqxLYA=;
+ b=QmC/l58/sloPfIy5YK9Z1FVq75GuUgALvxzAREqNgwP7JwIOzanXydlUyAE4u1or3EOQq5eVN
+ MpGpDf+BwBiD0KSvE5uuhqf0aHUOGVezhejOxbUq2YEBTrSd1PA2etz
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Fri, Sep 5, 2025 at 4:39=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 29/08/25 11:19, Laura Nao ha scritto:
-> > Add support for the MT8196 mdpsys clock controller, which provides cloc=
-k
-> > gate control for MDP.
-> >
-> > Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> > ---
-> >   drivers/clk/mediatek/Kconfig             |   7 +
-> >   drivers/clk/mediatek/Makefile            |   1 +
-> >   drivers/clk/mediatek/clk-mt8196-mdpsys.c | 186 ++++++++++++++++++++++=
+From: Chuan Liu <chuan.liu@amlogic.com>
+
+Add video encoder, demodulator and CVBS clocks.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/clk/meson/s4-peripherals.c | 203 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 203 insertions(+)
+
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index 6d69b132d1e1..c0f877ce0993 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -44,6 +44,7 @@
+ #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
+ #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
+ #define CLKCTRL_HDCP22_CTRL                        0x100
++#define CLKCTRL_CDAC_CLK_CTRL                      0x108
+ #define CLKCTRL_VDEC_CLK_CTRL                      0x140
+ #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
+ #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
+@@ -1126,6 +1127,22 @@ static struct clk_regmap s4_cts_encp_sel = {
+ 	},
+ };
+ 
++static struct clk_regmap s4_cts_encl_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = CLKCTRL_VIID_CLK_DIV,
++		.mask = 0xf,
++		.shift = 12,
++		.table = mux_table_cts_sel,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_encl_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_hws = s4_cts_parent_hws,
++		.num_parents = ARRAY_SIZE(s4_cts_parent_hws),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
 +
-> >   3 files changed, 194 insertions(+)
-> >   create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
-> >
-> > diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfi=
-g
-> > index 8e5cdae80748..68ac08cf8e82 100644
-> > --- a/drivers/clk/mediatek/Kconfig
-> > +++ b/drivers/clk/mediatek/Kconfig
-> > @@ -1024,6 +1024,13 @@ config COMMON_CLK_MT8196_MCUSYS
-> >       help
-> >         This driver supports MediaTek MT8196 mcusys clocks.
-> >
-> > +config COMMON_CLK_MT8196_MDPSYS
-> > +     tristate "Clock driver for MediaTek MT8196 mdpsys"
-> > +     depends on COMMON_CLK_MT8196
-> > +     default COMMON_CLK_MT8196
-> > +     help
-> > +       This driver supports MediaTek MT8196 mdpsys clocks.
-> > +
-> >   config COMMON_CLK_MT8196_PEXTPSYS
-> >       tristate "Clock driver for MediaTek MT8196 pextpsys"
-> >       depends on COMMON_CLK_MT8196
-> > diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makef=
-ile
-> > index 46358623c3e5..d2d8bc43e45b 100644
-> > --- a/drivers/clk/mediatek/Makefile
-> > +++ b/drivers/clk/mediatek/Makefile
-> > @@ -155,6 +155,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apm=
-ixedsys.o clk-mt8196-topckgen.o
-> >                                  clk-mt8196-peri_ao.o
-> >   obj-$(CONFIG_COMMON_CLK_MT8196_IMP_IIC_WRAP) +=3D clk-mt8196-imp_iic_=
-wrap.o
-> >   obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) +=3D clk-mt8196-mcu.o
-> > +obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) +=3D clk-mt8196-mdpsys.o
-> >   obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) +=3D clk-mt8196-pextp.o
-> >   obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) +=3D clk-mt8196-ufs_ao.o
-> >   obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt83=
-65.o
-> > diff --git a/drivers/clk/mediatek/clk-mt8196-mdpsys.c b/drivers/clk/med=
-iatek/clk-mt8196-mdpsys.c
-> > new file mode 100644
-> > index 000000000000..a46b1627f1f3
-> > --- /dev/null
-> > +++ b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
-> > @@ -0,0 +1,186 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2025 MediaTek Inc.
-> > + *                    Guangjie Song <guangjie.song@mediatek.com>
-> > + * Copyright (c) 2025 Collabora Ltd.
-> > + *                    Laura Nao <laura.nao@collabora.com>
-> > + */
-> > +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include "clk-gate.h"
-> > +#include "clk-mtk.h"
-> > +
-> > +static const struct mtk_gate_regs mdp0_cg_regs =3D {
-> > +     .set_ofs =3D 0x104,
-> > +     .clr_ofs =3D 0x108,
-> > +     .sta_ofs =3D 0x100,
-> > +};
-> > +
-> > +static const struct mtk_gate_regs mdp1_cg_regs =3D {
-> > +     .set_ofs =3D 0x114,
-> > +     .clr_ofs =3D 0x118,
-> > +     .sta_ofs =3D 0x110,
-> > +};
-> > +
-> > +static const struct mtk_gate_regs mdp2_cg_regs =3D {
-> > +     .set_ofs =3D 0x124,
-> > +     .clr_ofs =3D 0x128,
-> > +     .sta_ofs =3D 0x120,
-> > +};
-> > +
-> > +#define GATE_MDP0(_id, _name, _parent, _shift) {     \
-> > +             .id =3D _id,                              \
-> > +             .name =3D _name,                          \
-> > +             .parent_name =3D _parent,                 \
-> > +             .regs =3D &mdp0_cg_regs,                  \
-> > +             .shift =3D _shift,                        \
-> > +             .flags =3D CLK_OPS_PARENT_ENABLE,         \
->
-> Why would MDP0 and MDP2 be different, as in why would MDP1 be so special =
-to not
-> need CLK_OPS_PARENT_ENABLE while the others do?
->
-> Either they all do, or they all don't.
->
-> I guess they all don't, but I'm not sure how you tested that at all, sinc=
-e the
-> only way to test this is downstream (and upstream will very likely be dif=
-ferent
-> from that).
->
-> Even though I think they don't need that - please add back CLK_OPS_PARENT=
-_ENABLE
-> to GATE_MDP1 to be safe, as in (all) MediaTek SoCs the multimedia subsyst=
-em is
-> kinda separate from the rest.
+ static struct clk_regmap s4_cts_vdac_sel = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = CLKCTRL_VIID_CLK_DIV,
+@@ -1205,6 +1222,22 @@ static struct clk_regmap s4_cts_encp = {
+ 	},
+ };
+ 
++static struct clk_regmap s4_cts_encl = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = CLKCTRL_VID_CLK_CTRL2,
++		.bit_idx = 3,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "cts_encl",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cts_encl_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_regmap s4_cts_vdac = {
+ 	.data = &(struct clk_regmap_gate_data){
+ 		.offset = CLKCTRL_VID_CLK_CTRL2,
+@@ -2735,6 +2768,165 @@ static struct clk_regmap s4_gen_clk = {
+ 	},
+ };
+ 
++/* CVBS DAC */
++static struct clk_regmap s4_cdac_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.mask = 0x3,
++		.shift = 16,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal", },
++			{ .fw_name = "fclk_div5" },
++		},
++		.num_parents = 2,
++	},
++};
++
++static struct clk_regmap s4_cdac_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.shift = 0,
++		.width = 16,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cdac_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_cdac = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.bit_idx = 20,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cdac_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_demod_core_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.mask = 0x3,
++		.shift = 9,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal" },
++			{ .fw_name = "fclk_div7" },
++			{ .fw_name = "fclk_div4" }
++		},
++		.num_parents = 3,
++	},
++};
++
++static struct clk_regmap s4_demod_core_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_demod_core_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_demod_core = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.bit_idx = 8
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_demod_core_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* CVBS ADC */
++static struct clk_regmap s4_adc_extclk_in_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.mask = 0x7,
++		.shift = 25,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal" },
++			{ .fw_name = "fclk_div4" },
++			{ .fw_name = "fclk_div3" },
++			{ .fw_name = "fclk_div5" },
++			{ .fw_name = "fclk_div7" },
++			{ .fw_name = "mpll2" },
++			{ .fw_name = "gp0_pll" },
++			{ .fw_name = "hifi_pll" }
++		},
++		.num_parents = 8,
++	},
++};
++
++static struct clk_regmap s4_adc_extclk_in_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.shift = 16,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_adc_extclk_in_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_adc_extclk_in = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.bit_idx = 24
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_adc_extclk_in_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
+ 
+ #define S4_PCLK(_name, _reg, _bit, _flags) \
+@@ -3028,6 +3220,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
+ 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_sel.hw,
+ 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
+ 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk.hw,
++	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
++	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
++	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
++	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
++	[CLKID_CDAC]			= &s4_cdac.hw,
++	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
++	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
++	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
++	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
++	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
++	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
+ };
+ 
+ static const struct meson_clkc_data s4_peripherals_clkc_data = {
 
-That kind of doesn't fly since the parent of mdp_f26m is clk26m, not the
-mdp clock. So either this block doesn't need a clock for register access
-or this clock is going to be broken.
+-- 
+2.42.0
 
-This is why I raised the question about the validity of the flag in the
-first place.
 
-> +       GATE_MDP1(CLK_MDP_F26M, "mdp_f26m", "clk26m", 27),
-
-> Once MT8196 MDP support is upstreamed, we will be able to run a number of=
- tests
-> to evaluate whether this flag is really needed or not.
->
-> After all, if it turns out we can remove it, it's going to be a 3 lines p=
-atch,
-> not a big deal.
-
-That also works. Though IMO it makes the error harder to notice.
-
-ChenYu
-
-> > +             .ops =3D &mtk_clk_gate_ops_setclr,        \
-> > +     }
-> > +
-> > +#define GATE_MDP1(_id, _name, _parent, _shift) {     \
-> > +             .id =3D _id,                              \
-> > +             .name =3D _name,                          \
-> > +             .parent_name =3D _parent,                 \
-> > +             .regs =3D &mdp1_cg_regs,                  \
-> > +             .shift =3D _shift,                        \
-> > +             .ops =3D &mtk_clk_gate_ops_setclr,        \
-> > +     }
-> > +
-> > +#define GATE_MDP2(_id, _name, _parent, _shift) {     \
-> > +             .id =3D _id,                              \
-> > +             .name =3D _name,                          \
-> > +             .parent_name =3D _parent,                 \
-> > +             .regs =3D &mdp2_cg_regs,                  \
-> > +             .shift =3D _shift,                        \
-> > +             .flags =3D CLK_OPS_PARENT_ENABLE,         \
-> > +             .ops =3D &mtk_clk_gate_ops_setclr,        \
-> > +     }
-> > +
->
-> ..snip..
->
-> > +
-> > +static const struct mtk_clk_desc mdp_mcd =3D {
-> > +     .clks =3D mdp_clks,
-> > +     .num_clks =3D ARRAY_SIZE(mdp_clks),
-> > +     .need_runtime_pm =3D true,
-> > +};
-> > +
-> > +static const struct of_device_id of_match_clk_mt8196_mdpsys[] =3D {
-> > +     { .compatible =3D "mediatek,mt8196-mdpsys1", .data =3D &mdp1_mcd =
-},
-> > +     { .compatible =3D "mediatek,mt8196-mdpsys0", .data =3D &mdp_mcd }=
-,
->
-> 0 comes before 1, swap those entries please.
->
-> After applying the proposed fixes
->
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
->
-> > +     { /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mdpsys);
-> > +
-> > +static struct platform_driver clk_mt8196_mdpsys_drv =3D {
-> > +     .probe =3D mtk_clk_simple_probe,
-> > +     .remove =3D mtk_clk_simple_remove,
-> > +     .driver =3D {
-> > +             .name =3D "clk-mt8196-mdpsys",
-> > +             .of_match_table =3D of_match_clk_mt8196_mdpsys,
-> > +     },
-> > +};
-> > +module_platform_driver(clk_mt8196_mdpsys_drv);
-> > +
-> > +MODULE_DESCRIPTION("MediaTek MT8196 Multimedia Data Path clocks driver=
-");
-> > +MODULE_LICENSE("GPL");
->
