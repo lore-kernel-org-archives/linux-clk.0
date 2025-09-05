@@ -1,77 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7722F33E7;
-	Fri,  5 Sep 2025 18:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33332D7DE9;
+	Fri,  5 Sep 2025 20:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757096913; cv=none; b=loOjhEaWL8/Mi5UosQ95172NgLU2VYATyy4RKEXCUfs1OAiY4BMUpi+o7XXe0UrYeaQhqU8g8nJoqhrm63oSwtfNO0lMmySMNkYTTNQPLbh8mGSeuMmYcS/xGp9/9rFn7nLh1J+ILlIXueYQ1hlFGjKRmBIJV6rgOYkNMAQA+AI=
+	t=1757105105; cv=none; b=SPiV6/BQKw8DjmEgtcVfXHI6qIb6lxeJoXfiUXprIu6osTC6MuTjlErU1lS9FXN/FS2Xyh8jpYJDYGlQvfWVhcViGMBHHKOd2yU2oJl7fEW2OHSpRHNekEbB0P1iYlwh45GdwkvfTsw7jtNBy48DiMV6TbvSF6qmsB96NB7T4Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757096913; c=relaxed/simple;
-	bh=gvlpwRNtZnIGPhG7S6zJZs/7xh+8sbv8Bx4xDVNZaaQ=;
+	s=arc-20240116; t=1757105105; c=relaxed/simple;
+	bh=4ZLCyJt/jgAVLSyrVPrxlIa5FRBvIVjWg3S+LiVVSqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+j3s59hrzF8ZgO6FtiY1dHanP/FFYMW5fZrOORS1YNdv9QV/cOpodrV3DxTRLJxj4Py1x8NJF8NfHZ5GGWa97LL3VlzVOBMUKkbHdPMcf2vjp3SFTRqg/tQMsRhLHhwDFW/9may+XKnp4e93W5ZOaXo7f+LH9b6huCPlLNKr8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OotgecdI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+pBFDnCy4PgmcdMo4loPXZHVahLGOR5AZ0vi+hyGUwJFhJTwzfVnNmcUdyKfBWBfVeJGBRkMREFFgLy4iny0Q19MrDEk0YZseJFB0wCLD4eiPclgWnNR65FF5Hgu8O745IJXm08kT5Mh/olfKgdyNyyq2VdarpmJbC1WDYGjWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5kWqd+G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OotgecdI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26872C4CEF1;
-	Fri,  5 Sep 2025 18:28:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5kWqd+G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125DCC4CEF1;
+	Fri,  5 Sep 2025 20:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757096913;
-	bh=gvlpwRNtZnIGPhG7S6zJZs/7xh+8sbv8Bx4xDVNZaaQ=;
+	s=k20201202; t=1757105105;
+	bh=4ZLCyJt/jgAVLSyrVPrxlIa5FRBvIVjWg3S+LiVVSqU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OotgecdISxk6kWKWnSDQYxp7at6LsdwLy6Ko3CjW/0iR212vxzjkOjrEEZyx5g/A3
-	 pp1lH98V9O0sJqlQnNscYbjEapYQbJLDHUPM0b4xvsu8UfIGVIYFovlsxMIHVhNZTH
-	 Q0PrGULAXljxr4kpmHJxDQVBErqV85O+1e3NKySx8herH0soBWOuajBzIlqhuR5q1k
-	 xdLlf9eKVtjipig6m0+bO5U0MRLKCjkhU0bXQJ5nxkYsDDXoNvT/R4WoZPsS386HJ9
-	 sXj+GJFfADGJsqVi1U5pVj7P0bHtxDhtzylcZMYvbHIMCeyw55ua5FVaBmscNo1b3r
-	 M2Tnh/YR5/EEg==
-Date: Fri, 5 Sep 2025 19:28:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: chuan.liu@amlogic.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: add video clock indices for
- Amlogic S4 SoC
-Message-ID: <20250905-datebook-excuse-659da9b41d8b@spud>
-References: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
- <20250905-add_video_clk-v3-1-8304c91b8b94@amlogic.com>
+	b=K5kWqd+GaUtF8PvSlPDq6g7W/bImMKVo7Znc7Omtj6NReEt9sFqffksrb8/6ON8/A
+	 OohPm2WgU0IIIjVt3nKGRu5y8bZ5CzchNRmBvJRsyehZYVY2oGnOD0Flnsrp8gpeTk
+	 H8NohGs6+j4Sh7rxGV0/vLelcCR4+wCIpdi40R0hRtINYRYzLbfsPBlKADWwEGQCnM
+	 u9DI7uzOluK2UR6C7RQVadjopsK+N3XzzPeU0JCAf4Z1nmb01G8dbcbB/XM+ZkJNYq
+	 VNsrKlfn2CE0pRqA6vH75ghtEbeGH24rNVOlQCNXm21iEG30wexijhTfSFX5YU/syp
+	 8UQ2UueKpz1Tw==
+Date: Fri, 5 Sep 2025 15:45:04 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: WeiHao Li <cn.liweihao@gmail.com>
+Cc: andy.yan@rock-chips.com, conor+dt@kernel.org, heiko@sntech.de,
+	krzk+dt@kernel.org, hjc@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] dt-bindings: display: rockchip,dw-mipi-dsi:
+ Document RK3368 DSI
+Message-ID: <175710510342.1351910.7954617435326405550.robh@kernel.org>
+References: <20250905025632.222422-1-cn.liweihao@gmail.com>
+ <20250905025632.222422-9-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tp/2PmSvCUVt5yEJ"
-Content-Disposition: inline
-In-Reply-To: <20250905-add_video_clk-v3-1-8304c91b8b94@amlogic.com>
-
-
---tp/2PmSvCUVt5yEJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250905025632.222422-9-cn.liweihao@gmail.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---tp/2PmSvCUVt5yEJ
-Content-Type: application/pgp-signature; name="signature.asc"
+On Fri, 05 Sep 2025 10:56:32 +0800, WeiHao Li wrote:
+> Document the MIPI DSI controller for Rockchip RK3368.
+> 
+> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+> ---
+>  .../bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml         | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
------BEGIN PGP SIGNATURE-----
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsrywAKCRB4tDGHoIJi
-0hR+AQDCr0nevvM8U0I/9Maks/GUrWECQUm7mVu1J/fU9cV7awEAnWatZjLmHYF8
-WW1uD9ucXu1VnPgvK3uEC9EvFqfHLw8=
-=+jIT
------END PGP SIGNATURE-----
-
---tp/2PmSvCUVt5yEJ--
