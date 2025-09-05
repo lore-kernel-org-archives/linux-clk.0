@@ -1,61 +1,63 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6AB34F485;
-	Fri,  5 Sep 2025 13:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC8A353340;
+	Fri,  5 Sep 2025 13:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078699; cv=none; b=COCALY0b1RiCFJMTntwpz4pt0ytHFu1MzPyCcHvjlGDno52Y+Lx1qvTKR8hjc0mZBuX078Bx1L+mUf4mNfu4DiNB+ZV3q54yk2DOH9Yq25mywBHcLUivXsaMwRO3o9XE6GAxsrnja7pYkJT9sAW3PfZlZgq11/X9rqTALCbrwpA=
+	t=1757078704; cv=none; b=ih0kXkHzha9D9ILISDC39cuqu7AKufVF58NY4qEYPLR5QLZcWuPTvFbZ1tW6nZgtnFXJt5WdsZv37w9ZAmHKUvYYCZel+hNHbCOsAeRvEErcdx8yW94UmSzPHkchnuepUwAIa6A33kYr7sm+1oGACujcQdo8+J48897kaRPFLvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078699; c=relaxed/simple;
-	bh=BYXgjrfETWBC94bq+gRzSrmYuVcnmIm21cNjnYQZRbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DtllRYUpe+DNcECh9kzLnHFpsD6heTVIyCpVrNin9t5Wgzb89DaAfvatecZgUFXHRVBrknTGvILe4p+jHcRlHf9H+LMWDYDI9IPRxUWTtSyJgrUeX/wQy0AAD09vUZ/YDz+pV/cSQuaZb6Zxcq9uqvLaz9KXk56rvNqtZYK/+e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1a+VTHi; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1757078704; c=relaxed/simple;
+	bh=4g7sTXCYaWnKn/D8OunDYdgTGYj2L6yFb5LQp7jM4Bs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Zefp+dgOPmhCNIJaugGoT9bfGJNk4Xu5m9blHZpDV9kfsbROdNqF1uundFWoN3FtF1kcgdk5hgkFUee2IYKcTRH2B89EEJl8OxG2AZPjspJhbYktN5gSbSvwLurJ+WhFfQNQh4iM+JymkX9IgDqWDKsLf9AScybxwT3lEQyKSV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cVzdq6zR; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1a+VTHi"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cdbeca71eso10141705ad.2;
-        Fri, 05 Sep 2025 06:24:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVzdq6zR"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24b1622788dso15716145ad.2;
+        Fri, 05 Sep 2025 06:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757078697; x=1757683497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUZ+q+JJg13FrFHzy6ZfeYtYvRdE7r/MNLwJRgdnPng=;
-        b=b1a+VTHiSkxGKo5/34IAmv7spKyKDjNcHrKNbLwLTwL1U9JoFmZs0nQFLkOImqk5fc
-         pUM/FBWFR+OQ8PJS6KpUF2s6qGOZYQBxPF/fJXDd7Dm3dBmSw40ScgSy6ayyZCHoIGHh
-         51AALkWvq7A1zYWOOO4wBLqrra0RvzB4+8/8GZUy51gFFn+x5n10elbIFq0ZXrBU/zeo
-         tr8XRl7nCANY/4F/O+fXjxY2jzbFBYf7UVyWp19hDVN2NIonkcKa0Z0yDDrreQ+gD066
-         jJwYfkiKB3ianbWu1l08HmHDOdYDa1U7YA/AlIOjNgOXInTFqoVei1VIuGYnrczkGfU/
-         Ghtw==
+        d=gmail.com; s=20230601; t=1757078702; x=1757683502; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mzs0fcUa+DxpkLkc7ASzbeG0qA3dcJ9VCs0pVkhY65M=;
+        b=cVzdq6zRkTe2Y9nQeNmrsrbePw7/bfLh6rnoJ3Fw9iuK7Ewlgk9THquotATQNMsYX1
+         jpTuUNblJmnKq2WAR+FsedWabn/Z7Z1sksB+tuiHunLimJAWm6n21zDjFeVYB9nGllPG
+         5MXCVi99UNB55gF2oFJ287GX6zGF5t4cEltbeWJVWAxHHZOceIlBytjbcCe9xj9w+2eP
+         qOacY9J2I+eTQ38gfGrrBFOZWjOX85qTdVIcbUKc4mCsR29DbOIkhqyfoc6aO8fI2FMO
+         CEe2bvzVfACa8nuLGBnQmVCJWXQRo5OepW5YCmEYZrX2Jawhhgro/cCgR5O5ufGzFPy9
+         Ut4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078697; x=1757683497;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HUZ+q+JJg13FrFHzy6ZfeYtYvRdE7r/MNLwJRgdnPng=;
-        b=pBtS12WnKjCJEB608uYwIYquKOIut3qqBlbow4DhiSJfxUwZrkJWhxv+9LF1sfa3xV
-         fuj1yGtI2LyKXML6YyO5ohA4lqMVt+OYkYDtIP5vGT+v1Xe4n0xGlLquei9iG26UcCTK
-         29yvaWVhC7Q1YErAqZd5Bblil4ozUhzIvtOGvJAtqJwREETWn8mwRFpOLriWrpVALk5m
-         qZBpdu9HqyFwWgQRnUFhpsAqVb5oiURXOpXuYMoL0Y/Zt6kLZziC9Fh710MfTqFmclg9
-         wt+OSd6VltxVH+TD2ZSu9xlSuVwCzg/Xj0+h5yhp+EluDBv4Sk9tV4MbKS+NxqsnZD7Q
-         Ph3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUWTk6jqJ3ZCxxtYyD+4eatsrRfV61AIdNf3+8q0/iEp1C2s3x/x4ApJauIn5Aa/Fy/NlGZWjX8GtVNFUy/@vger.kernel.org, AJvYcCWAkm9gejUhR3YMNIuWtKEMt3PWWv218Xjcx4lx50TCK9x7ebr7QSZBymyHfP12D8hkzNdiJwhW9BAv@vger.kernel.org, AJvYcCWTsj2gQDEEWeqdoI/fQX28L7GoMhar1pdMoXZqBXAOClVGjdfYwbqxADq1eFN/7Qcf66Pl91qmI+VQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/LL3ZZ8Yk4iQUK6iXHxZFQ6HsRb550DIqc/on4PN3xz2IiTul
-	6sIEIIvBTEq9GWqrIxj4H3gdz+dyR1Q5d0PkU+1V/Q793frsJKhPNg50
-X-Gm-Gg: ASbGncunjrn3hyKf8q07ZUDKwKIXxnHHkg/DLaw09v0g0ZRer+4qa0I78nBpyqZymgt
-	Lr8PFPFbqUraeVdast5JDCo51Mu87/H+iklC6OULCByhEkoMGxKZ6dOmAOzwm7ai5nJa1ACoMbv
-	fa8r2+RSnFAayRYombiU/leV/IB2JcUhFNg7u0OSfv8TlKjrflOJySN7I9Qbq7be4kphXYmdKZi
-	bg4oBLDgMpUVwaCnVUWTT/swUA/wXhJVzdYZzVmls08MSeItaoRfkqHLAEao4JiJsKNrDqqkyqh
-	1rKaO5hagFYqLp1/oLvXCbgRRw90LvSeQTOzms2AT4ts90k0A78zYqwRSQYV3OlvDsK/oMkbWDH
-	b2IO61XwUq/J72NawVwkRa/aQviF/+9qQ
-X-Google-Smtp-Source: AGHT+IGUYvJbv28CQfw0PH02I1cEnjbK4o/GeReRVwIEuFF3MpQPaqUM8HGBojCALZS/4ClS+kWakA==
-X-Received: by 2002:a17:903:32c3:b0:24c:8af7:6b06 with SMTP id d9443c01a7336-24c8af77cb4mr147770415ad.21.1757078697048;
-        Fri, 05 Sep 2025 06:24:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757078702; x=1757683502;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mzs0fcUa+DxpkLkc7ASzbeG0qA3dcJ9VCs0pVkhY65M=;
+        b=taFPaTgLrXjuMVSuvgd+XcMTAPjMLqHHhj9mzXZRoa/o3P2W2TBzOL5YV/9l4PEqX3
+         nqPCobKpWvwULvQCwUTlrQRSioZjz5ZDjMT4JJoqVKS03K1To5UAt/t82C2NZSFTooYy
+         GXi1e0JFPL2Nyar/FzjmdWua9wfHBzTuWfj0vKnoez4Ahnik7n8dIAgcM7379sNHJw+w
+         ZMaDEinFt/yBJ4aQ8qwW5xAgwBchkAlP9RTu/as8ZCZRh89DSKdYbrl46LZRUcLH/mDi
+         gvv7RWlLudLYDl2T458qb6IgpI4nQSVKw4403BTCIyuybYWqP3pnoZIWzaXzvuMuiX27
+         Gb4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgChEzBagpmBqnGx41ebNEVE4AxkF9abE24efTqKyjo7CNBV8ZCjJqzqAOCU56Pc86bm93Fb9O/8j@vger.kernel.org, AJvYcCV5ZxZkfeudz+94vUCOBy7TuaVA5ucFxy1C1hDnonvkbtO5eR7HcVr2jHRryo8OVsP1zkFxRa8Ebx9Q@vger.kernel.org, AJvYcCVJiZM2GZEI3KNwyBf/1rlYJ3sNvqEmlORiRYA807a9s7TmSH8/r8YSYZ8pUcyxbH9BGWxCb+kb7BgZR9ps@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKYS2oeEbIepVzNrIKRtbzHVqnpoLsSm7NFJs8cyvBefjVL5nQ
+	ZJ97CV/SlOap5Hgp2TcgLy89spChuF304eyKCFpjg3Ljkb4Zf9sj+5n0
+X-Gm-Gg: ASbGnct3se02BqZpV2/B+U98Pd+QoXMvYUJjQbKx2X9M1z5AFgFJdoC650/qEfUGGY/
+	0WxRI7r8u41FmNqJPfj+ddRQwpsavPE+C6ChL/+AHH91e4TnkEDSLpkajZPvOGcx83AO38N1KdC
+	FfTgMOdr+sMAT6rpIJvHvkdUXAoGoVOcuzzpLictRhBtFRSGQ+nNr7tGXCzafBBD04LXN9ofY/R
+	/H10ivI3r53WrTk8nSLuWWRKaTOJdzDjfkCw6lpxgAvrYuG6yLDzGV95TzigWht568xxIxFZ/z9
+	Id2caVWKOEA9yCuArx44x6Z6l8ha5bxIep1D+S85C9hmB7PdRcEh11nGjXMAHRtBGVod4zI82o9
+	/zmvvXHLPmyJc+C0pLsKV7A==
+X-Google-Smtp-Source: AGHT+IH4zx4sI6FblJmB5He7a6nYAWLg6d3RbumYzZWccC7zXGmeUwtWGArXlU0WRJI06Z4GqaIqDQ==
+X-Received: by 2002:a17:902:c40c:b0:24c:b2a4:7089 with SMTP id d9443c01a7336-24cb2a4744fmr134900655ad.31.1757078702100;
+        Fri, 05 Sep 2025 06:25:02 -0700 (PDT)
 Received: from localhost.localdomain ([2401:ce20:10::d4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c8945d8d4sm76447955ad.127.2025.09.05.06.24.51
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c8945d8d4sm76447955ad.127.2025.09.05.06.24.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 06:24:56 -0700 (PDT)
+        Fri, 05 Sep 2025 06:25:01 -0700 (PDT)
 From: WeiHao Li <cn.liweihao@gmail.com>
 To: heiko@sntech.de,
 	robh@kernel.org
@@ -67,10 +69,12 @@ Cc: krzk+dt@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	WeiHao Li <cn.liweihao@gmail.com>
-Subject: [PATCH v1 0/4] clk/rockchip: Fix I2S 8CH mclk output for RK3368
-Date: Fri,  5 Sep 2025 21:23:24 +0800
-Message-ID: <20250905132328.9859-1-cn.liweihao@gmail.com>
+Subject: [PATCH v1 1/4] clk: rockchip: rk3368: fix SCLK_I2S_8CH_OUT flags
+Date: Fri,  5 Sep 2025 21:23:25 +0800
+Message-ID: <20250905132328.9859-2-cn.liweihao@gmail.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250905132328.9859-1-cn.liweihao@gmail.com>
+References: <20250905132328.9859-1-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,29 +83,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I2S 8CH needs assign correct clock to output frequency wanted, this
-serial fix it.
+Clock SCLK_I2S_8CH_OUT has no capability to adjust clock frequency by
+itself, add CLK_SET_RATE_PARENT flag to fix it.
 
-These changes were tested on a RK3368-based board with es8316 codec [1],
-playback function is good.
-
-[1] https://ieiao.github.io/wiki/embedded-dev/rockchip/rk3368
-
-Tested-by: WeiHao Li <cn.liweihao@gmail.com>
 Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-WeiHao Li (4):
-  clk: rockchip: rk3368: fix SCLK_I2S_8CH_OUT flags
-  dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE and CLK_I2S_8CH_FRAC
-  clk: rockchip: rk3368: use clock ids CLK_I2S_8CH_PRE and
-    CLK_I2S_8CH_FRAC
-  arm64: dts: rockchip: Assign I2S 8 channel clock for rk3368
-
- arch/arm64/boot/dts/rockchip/rk3368.dtsi | 2 ++
- drivers/clk/rockchip/clk-rk3368.c        | 6 +++---
- include/dt-bindings/clock/rk3368-cru.h   | 3 +++
- 3 files changed, 8 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 95e6996adb..8159f643dc 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -371,7 +371,7 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 			  RK3368_CLKSEL_CON(28), 0,
+ 			  RK3368_CLKGATE_CON(6), 2, GFLAGS,
+ 			  &rk3368_i2s_8ch_fracmux),
+-	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "i2s_8ch_clkout", mux_i2s_8ch_clkout_p, 0,
++	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "i2s_8ch_clkout", mux_i2s_8ch_clkout_p, CLK_SET_RATE_PARENT,
+ 			RK3368_CLKSEL_CON(27), 15, 1, MFLAGS,
+ 			RK3368_CLKGATE_CON(6), 0, GFLAGS),
+ 	GATE(SCLK_I2S_8CH, "sclk_i2s_8ch", "i2s_8ch_pre", CLK_SET_RATE_PARENT,
 -- 
 2.39.5
 
