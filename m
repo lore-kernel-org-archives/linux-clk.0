@@ -1,69 +1,69 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CD52FD7DE
-	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 08:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082DD2FDC3E
+	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 08:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059453; cv=none; b=eoeeXhI1iZE95p484IXMA2RUSBCfh3Y4dJqlajPHeUwer7QWdOxX4WElIcvQReITR8uj7/l8MgL1AwCiYDYNW+pH8t2/3xBpP0LS7ljaULtL37F9D9YFrcSzUw48OyBqg7TpkEMRKK3gUnCwkzXuRNll8G2RqRsoW76ANxWSpj0=
+	t=1757059486; cv=none; b=utmNOpFlOQkyIRzQ8I/1ptIH9zWDrwWApfpFxzLXnhofduLEoRcDE0FCy245c8KJbPUlMJMYhNwOkahcxGHSkfL6d3Gv2eQYF1QU9jQQMQvsorJYLczZtqSfiwpKpyRN9CLunow+MpJpxg1TR2sfH7xLuBfbFOMtiOFfuyouC8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059453; c=relaxed/simple;
-	bh=gPfnz/o3iNaHytOqe7truOjcGer8WrwACGpoW942gks=;
+	s=arc-20240116; t=1757059486; c=relaxed/simple;
+	bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=npTJng+uMB0TlBr69f2mR5NWWExlM9xuNOXGng86rFu/9LPNh3r7yj30tmfxtmL88ZD+juSv/GB4/EG/E8NhL/D074vUdtkIedujGvbwT0TfGHgrxppyPs3i0ZSOl8rZhn2084Sh3GtKejcpuNPvT+vZDrZzF2XQfBHX6pnORfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bGzL0syZ; arc=none smtp.client-ip=209.85.208.180
+	 To:Cc:Content-Type; b=j0uuVpJX/QhPrzcUTpE+Drp1yK58LQjV5rHERap6A1RhkptjjUacEjsM3KBsDp68qdf3mbQNJafZeUbUipXreanKh6lHHHjuLePKhT+6ftjV/owoKqAYfX9ktnzNU371oCg8LnspbPawndFD0AknDEbOeYAUhg2hFI/086uBwIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Btp6hzfz; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bGzL0syZ"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336bbcebca9so14384141fa.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 01:04:10 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Btp6hzfz"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-336c86796c0so15528051fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 01:04:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757059449; x=1757664249; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1757059483; x=1757664283; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gPfnz/o3iNaHytOqe7truOjcGer8WrwACGpoW942gks=;
-        b=bGzL0syZP9Tuw2/0AtF/bmdxZuSWwd+gXiqLXNd/9xOGMYNV9rMpUzhjtCVFNo2ZY3
-         l78vFVU1pG0AWRrg7iWPp+lGTzRO+dzfsweZ5ZBqPaCH8FYiXGO26yAh+lzo2QBqvwa0
-         ykCa59A+0TRJc6P+jYJO2uEWqA4ApH+alnp2U=
+        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
+        b=Btp6hzfz4fIMQsarTFsMnLAfWVos9BkEPbBYhpuEYLDx26tordIN89lnk28EowcLDu
+         Q0jXZGTXpVQtlsKCOFau9WlFu41K8TSr21Z6X2DbsH/kUm65eyg4FxoMMUt5ZSwZDWfn
+         wns9vAoveW4954lfmyROdyO4NHh+xajzi7N+o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757059449; x=1757664249;
+        d=1e100.net; s=20230601; t=1757059483; x=1757664283;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gPfnz/o3iNaHytOqe7truOjcGer8WrwACGpoW942gks=;
-        b=GlOTFqymeZRoDvdr9oRhNGR/SglTKgrGO310PZylPq1HbmKzCUP/woJmLQAMNqfKF+
-         4NRxb19GJRyGLZ0kRODGS+uDYhEhPB4vH3MN6sa+Ri6+ZzW6Ot3g6wO13nm6U0JTEqeG
-         cHJFCwxFCUSt/ebN4QrQpXBOQqToLkODwKf9KVFzAdO/OFcOJjT55qW7Do91HlswQHjB
-         +Hg1dTX1+IIGiolbx4+EdzLx/f9YXHidhc7DdsF+CWyyV/mG7MS/P+PudhTu8vz0iNYG
-         QGpOtjovhLELq/giJEuXq8qIP69E6Z34lqouAPG0ouqULmJB72p+YoodkPmSO9vm61hn
-         ZW6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUOZVjjI/O2qbC8kRBP4jBzqFZFVrIrKeChHYHRFmwjEWQUACBr8Lg0qZL9Z+7lQqRJiNMMo8cbInU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFd6B7NqUTZe5CeOGrZ+6XY8IKorBm2PW190KCahyUWRyljTvo
-	j8qekkEsdiKNW/PyAZZMV43clwp+O8EHk+bh1u8PJp8oHqjoGsAI5UcuBQtJm0NzZjpaGZ7X7hF
-	V7bLwHaILySU3ekDibxhaKxicfLquAkyeWhH8FKqo
-X-Gm-Gg: ASbGnctKbSUU0BdV9PpcLmoRjN16Yr5SnU6RRHmkr8i5tsdSgp7kwNXfeLu052jZ50j
-	kgvHpBuE6kW3GjrcmtzY6bNQXis64046ZzSjWyC+tb+dpibQaDq1rj96WDr8/08m2GQ5unpmV2k
-	B5FJmyn63u/fm67WYNFBliqPOOsixLUEsIGrQQ4oM9pbxJAN7TcH0YF8G8vfuZwnSQ7Z2c8Ntku
-	fVv68JrvVTMs56z0Rs8yZZQnV3VYrF3kYuUjg==
-X-Google-Smtp-Source: AGHT+IHT043Y/TruREpGKZ+/QRl4lPJ5bvgN3xV40J/rToLhwUaxJ8c7vgtH50x+X4YlPrhw0jN/shKQPrGCvcazPsI=
-X-Received: by 2002:a05:651c:1a0c:b0:339:1b58:b199 with SMTP id
- 38308e7fff4ca-3391b58bbc2mr3260661fa.36.1757059449029; Fri, 05 Sep 2025
- 01:04:09 -0700 (PDT)
+        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
+        b=RM6lTsMPnuAN2+nQJr4EZn4JJ0F6L32+H2NeBdarfeCDWJ1oy+J5o0+MUoMmDODjzb
+         OL5xY+jg/o7Rkx1YX3/jAoqkCUx/ptAcKQ5Rwc8u2DT4jkaEO9RwucJhFEpqBRxdz9aL
+         nkr+Jn6gsZV4pHzT1DFMgqzXQcD+VtFt12KjcLkcVF43DydWqUkPerQeQJQiPk7a03yv
+         /85YDpDOHu92r7KL4BaVUKzwKTKoGcRCfD/jIKWGU5znVgtw4gQZ1hVBzid7Jn616fu2
+         9/tPBgNvGID5v76GN/e1Mm4uckpHyy/1u31XP72MZbcm+3lFFGWNBeb0tv7zJIbjS2AP
+         yPMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUaIYKpOvDDio+DHKUDU+APjPnKiBR6wnkdFMVN/KU1lF26rPJSvaIk+D1AiAY69IWd/B3m9azyrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMVOiAdPVQoZq4j/88Yw2BTaIfWadsM9O8PlOUErtiATnz/4n2
+	9Q8ybDzr19LPDalZenMoSVgUdWDnKs0wfUoiPlYyXPwRgEJA+TblR4o/WteesseOaOG7I6Nuwx2
+	G+ob+h61PouqOypBclHfC2rGxDM0ehf9bHQXPyco0
+X-Gm-Gg: ASbGnctMxCO8gc85QtKEKiqHLQn7rcstrk0v0IffXjjviF/I/+S0axJgwQFo1/l9FQ/
+	pj2rW4cMHMFl8FLaEoT/9FmvobHoZIeWVGw+tgl2012K54DWsaNRtYVuprftUvquR35lc6zAaQH
+	ZvPgbqJxfFdtFHa0A9rUNYFnxSC0bUCaXycufndM1P39olE3W0oLD6b+afNg1ciEuesfEDZw9s3
+	tGxneWLL5uQsdlEjVyBl7LpAl6NAe9MAcjR5xGcS5h5DhjS
+X-Google-Smtp-Source: AGHT+IFYc+QgjrNQcnNX0OlLPGUtYQKqYiLrIJbM/loEuXaaE2NFn67DssV7d5/BEdo89ntnizvXLq3xRVbqrk9nj5U=
+X-Received: by 2002:a05:651c:2106:b0:336:e176:cd3c with SMTP id
+ 38308e7fff4ca-336e176d479mr52475301fa.38.1757059483084; Fri, 05 Sep 2025
+ 01:04:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-23-laura.nao@collabora.com>
-In-Reply-To: <20250829091913.131528-23-laura.nao@collabora.com>
+References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-20-laura.nao@collabora.com>
+In-Reply-To: <20250829091913.131528-20-laura.nao@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 16:03:58 +0800
-X-Gm-Features: Ac12FXzqjLPg1snoakkIHpjZL3gjVDvpLkfu1BDJJWXmMZBGn3rIna_U1tSPpG8
-Message-ID: <CAGXv+5GreKJSz76EiHYzX-ByfyxuYNYB6OyBJk9ZhsKCapPjRA@mail.gmail.com>
-Subject: Re: [PATCH v5 22/27] clk: mediatek: Add MT8196 disp1 clock support
+Date: Fri, 5 Sep 2025 16:04:32 +0800
+X-Gm-Features: Ac12FXyKW6bhjZsI-yGgtsh7BXxxyLqh5BQG4iFyVSU7pOJ_sKap2vxzQ5qbqlw
+Message-ID: <CAGXv+5F0pWn5+iE+3pgpZ+GMoXDV-eoEx4zKTfsmV5cpa-WC5Q@mail.gmail.com>
+Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
 To: Laura Nao <laura.nao@collabora.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
@@ -79,10 +79,8 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
  wrote:
 >
-> Add support for the MT8196 disp1 clock controller, which provides clock
-> gate control for the display system. It is integrated with the mtk-mmsys
-> driver, which registers the disp1 clock driver via
-> platform_device_register_data().
+> Add support for the MT8196 mdpsys clock controller, which provides clock
+> gate control for MDP.
 >
 > Signed-off-by: Laura Nao <laura.nao@collabora.com>
 
