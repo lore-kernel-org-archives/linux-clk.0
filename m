@@ -1,70 +1,69 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21456202960
-	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 04:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBD31C6FFA
+	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 05:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757046365; cv=none; b=c07tp4a9EaUJyjtTO7kGKJHAmip1SP9kwbdQ7N9uBJVJ66ChxyVDFKWhvkXIxND3JPTi3s92dzyyirqN8XdulHK13PCl3n1aYFWLvr5dppfFVIrMG4avBXxFlMfnMPbX+PYVGf7KOl3lujcsBLmTEXL9Wg7LXfzs7edvvVhnhus=
+	t=1757048493; cv=none; b=icXv/hWMDCghc/56JaVQmPGrpJfE5xbmOoOhx6JGbbaYqh/0W5QLrC+syiSi+aGNwiE7nwFVIxsV/dm1RnuKpXHpfpMIbOIJfZM+RWNvHQe/0xOVDVVMnYHxKsF+M1txcPMzpNP0JSAZ5kjAWxF8nkyz59Ij0r9DF8DXm7DiHJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757046365; c=relaxed/simple;
-	bh=IHmo68YQ7L/duddAgclVIEvUtWdksnELEMP5v/s9PNQ=;
+	s=arc-20240116; t=1757048493; c=relaxed/simple;
+	bh=njvK5FtQ51xwKW4s0pYsz4x7aMPMIyJMS4OWthiAzGw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1LVHk5Mhfo5xunWO9cgG/g8xBuSrYqshxj3RB5Oq5/KTaUUzDWOSp/p7YeWan+8rrbvPNKnqoa9uikk+769wXrIGG5jZo1YaW/s6qww4iNhqJsUqTAmbKrA5oFggIr7NZ+poYm+Jgp8CZ4g6EctVUoGA5VdJ/2wr0tt6I4mOfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=htMXJrRR; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=cmvG4R99G22Et3eF2NFHUl6D+7RObB+bJS6w40UxEcZZEVqA/eQr/H6jNTcEbbPgSjVucfrHgzsluAIRSfvi737XKImo//wkLVcXt1ZZIFWOQLdgSuyqWCaEM7IdGgmzJJ5htHXzicclYlj5YIo5lfdL4EmHVD+i8tJfNYscTOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EqE4M6jg; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="htMXJrRR"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f720ffe34so2246094e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 21:26:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EqE4M6jg"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55f6017004dso1879822e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 04 Sep 2025 22:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757046361; x=1757651161; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1757048488; x=1757653288; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IHmo68YQ7L/duddAgclVIEvUtWdksnELEMP5v/s9PNQ=;
-        b=htMXJrRRMGYyCmihQClevvmjDrLBJX7Z/3XgUtOCOU7dthuqse7P5iUGq8/t1mW3V8
-         fcpakuzx0HKkJ30QzYlnKffMhb+SdxpVUetVkESl6QcwonkAFCf2bUV1fGGzNQiN2Pve
-         2oEnzR5onaauL8sipAf9CWGwPWzL2IUhU1GmA=
+        bh=I3pbQnf8CUqRojAhpUlOIMWVPCuywXIR601pJXOx+Vk=;
+        b=EqE4M6jgR5rIe5A3xGBaoGQXZmnZP4E/gqVhNrv/kjCXnKsX9khbaYkyXBKGzPb+Bd
+         zrJcN5xf8rSCZemJI0eE0QKlXb5vXzm70IvIBc9x+vP0uP+mbJUF3L4g/vn4kZQaNLl7
+         S1hPR0QEyIcqbXYwqikiaRaU28v05PdWrCe6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757046361; x=1757651161;
+        d=1e100.net; s=20230601; t=1757048488; x=1757653288;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IHmo68YQ7L/duddAgclVIEvUtWdksnELEMP5v/s9PNQ=;
-        b=FKYi+jBh/rKz35Khlxt6QWhvTGwocbsg/KkJ5NWFz1jVkULZVht333MkdHZLnQisb6
-         RDWTNCNywQRK/vPNVHo0xjaJvIsQ0DWQT0iT8Ka3qHuv1fhKcwVJoDbKdI7r0LblrTZn
-         6+p7Z45HjwqvGnZg30rUlCfS/ErU9ZOjKp63vkq/ePgvK9C5eT6fnaRpoT6i7Cfos1wh
-         Sol4XzuOjxpfste8Wubypw8pX4tVsv6JGuZ5lA8rcxAf01W5+8j5K9d3MfMG8ngCqJvl
-         UPePOKKqNorn5HN5Y+IzqNS3lnq3j/UCCVbEt2DeXEolNKMFLTCrfJpmy8rwlDhuxvku
-         XYwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpdeDrimBle/ixL+cEZyqLHK4k2OIChFo1QfEK8d2wkmgTXSSAUkPxpB0tDsXXni38S5MDb2tZb1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ewDGs5JCLAf259k/XEMtByNZLxL5tyaMIDuIDrS407GUZJ4F
-	lmICO3NSiUncQ6t0xZBnR0pmHDm4OXySKe3u/lg0xU8mr7tv+b6iufC9l5shli3tNkJ+PAHulgz
-	aPJgVuAMA+0fTAkdhAmycZy1F0n/8lJHE9aQShq11
-X-Gm-Gg: ASbGncuGSvRpWlyCJZN8YBBEZJGUy59pfwtWG9zWTK5tLJZlqYPmE6OeZy5cd6neXiB
-	shg3afUv8ze5/0WdhJHSk8Fcbg+5Df1GCjZheSMlMEOxJRb85h31EmFq2WvGt5hmZ+7ynXCJowB
-	+a9kAn1opglIcbvk503hF8LVbV3knIIzmNdhXqdXScuFaHdFaJQGGUGBCal0Lizf5deMvls5QDX
-	aNtmbcccOtpgLVF+HXiy9lMGTkmZ81qOacFVA==
-X-Google-Smtp-Source: AGHT+IH5pWHA8nQf6AbDXyeEcMeTEINpq+oHNFsdmhAJKkVR1+KEZHE+PC3gHq59gfSmiiSALqCN4LCODqxkvK4xsXI=
-X-Received: by 2002:a05:6512:3c93:b0:55f:552c:f731 with SMTP id
- 2adb3069b0e04-56099453ef8mr666761e87.7.1757046361254; Thu, 04 Sep 2025
- 21:26:01 -0700 (PDT)
+        bh=I3pbQnf8CUqRojAhpUlOIMWVPCuywXIR601pJXOx+Vk=;
+        b=dYd9XhYk+dHY8qR+eDa87w/rrqQLcq5nC54zQ07pU9d5/dsnMzuXfyRswY4gp5kuHT
+         pK4T3Qv9Rh3gVxUcaMGiZHtlLMN4ajX/rnt0PooJBmKx2MBQ0Gu65Rq5bzq8npsvUvAt
+         DyxbxKTXf+/zWHBbfuh5/OPR2kpY6ifeiLgenrUJwM/mJbA7kraStaPKGuwf9/yWjKtg
+         BHA9xP698pzis10MzZTwfbkEPencLBWuwzySpqSWq4/jEXSYC7o9Vz6jyZrSzDGbLJ/0
+         a1pAUf2G0Y0wiraCWZvsKoFc114stR3UBgCM3PkgzuL3bU6zoo0W1ZR5gIm8K8g9d0oc
+         /BhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIotQhJzC5wXNG2KuIH/6sYZ9pGQWdXU9JOeanxThklNEoLiBTDlwn3uiF921BpOCWg6RqAf6UmGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRQlNmBDL14AEdGKTukQg+IP3g9bs0WWLXOdF5N5dShQEXm7H0
+	Y1PHE2y75Cam2Yxl6s4HXFNdOt0I2NayXm26V9nAc5Xk0dZy5BVByjlqYrBcTOjsTW8j67fwDOE
+	4prdkBZh0H7xTwcl2PpP8T1V5I7saG0CKui8dwh/n
+X-Gm-Gg: ASbGnct0XaWG1X8Ed5ne0sSZdkECRDthAFGAt78CEUC/v9EoWSbDYpsubJzxvk09gYM
+	aFs/XmBDEUvVOvmIvbvyKNgNbmVTr4YN5cih4/TCJ6c+g2IQT2gaq6RttPboo/IRgqSvdYWIYan
+	MOfBabou/yZxq7X2U94vQXyBxPmyt1FDAWh23PNWVFnic1Dzq99FMQtcP1Lz0Nic1x4kJfHuMOl
+	anUV7whnYN9F321GwRmxxyZKelPe1+9aK4goA==
+X-Google-Smtp-Source: AGHT+IG10f/KUXsl9teEaeQj7H79dcAZoPGx48y81i6F/mMxgob5Z7ShaCVyVzMRSRmKn/PqDEFL3jvm3MNUmJiY2p8=
+X-Received: by 2002:a2e:be1d:0:b0:336:dd88:6a02 with SMTP id
+ 38308e7fff4ca-336dd886e73mr50101251fa.43.1757048487955; Thu, 04 Sep 2025
+ 22:01:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-8-laura.nao@collabora.com>
-In-Reply-To: <20250829091913.131528-8-laura.nao@collabora.com>
+References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-14-laura.nao@collabora.com>
+In-Reply-To: <20250829091913.131528-14-laura.nao@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 12:25:50 +0800
-X-Gm-Features: Ac12FXzDHpGuz6HiaGhCY4WidH-LRTm2axo9L1u6x0u8-eqIT-uiyLk75FyGJCg
-Message-ID: <CAGXv+5FgKsg0sM6EXeTL=du2BY1xgH6jVmtQtb2M0kY3iix-tA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/27] clk: mediatek: clk-gate: Add ops for gates with
- HW voter
+Date: Fri, 5 Sep 2025 13:01:16 +0800
+X-Gm-Features: Ac12FXxt8YDULnOSESMbWAKIOZ29Yui3hZN9Zs_7tmp-v_md5T4Hs_0EWckqSKk
+Message-ID: <CAGXv+5E-EM6aMR3M=rk2HMT8qCn5J-zuqFtPJP0G1x7+Lj1gEg@mail.gmail.com>
+Subject: Re: [PATCH v5 13/27] clk: mediatek: Add MT8196 vlpckgen clock support
 To: Laura Nao <laura.nao@collabora.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
@@ -73,21 +72,96 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
+	kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
  wrote:
 >
-> MT8196 use a HW voter for gate enable/disable control. Voting is
-> performed using set/clr regs, with a status bit used to verify the vote
-> state. Add new set of gate clock operations with support for voting via
-> set/clr regs.
+> Add support for the MT8196 vlpckgen clock controller, which provides
+> muxes and dividers for clock selection in other IP blocks.
 >
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
 > Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>  drivers/clk/mediatek/Makefile              |   2 +-
+>  drivers/clk/mediatek/clk-mt8196-vlpckgen.c | 729 +++++++++++++++++++++
+>  2 files changed, 730 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefil=
+e
+> index c415453e02fd..031e7ac38804 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -151,7 +151,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) +=3D clk-mt81=
+95-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) +=3D clk-mt8195-vpp0.o clk-mt8195=
+-vpp1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) +=3D clk-mt8195-wpe.o
+>  obj-$(CONFIG_COMMON_CLK_MT8196) +=3D clk-mt8196-apmixedsys.o clk-mt8196-=
+topckgen.o \
+> -                                  clk-mt8196-topckgen2.o
+> +                                  clk-mt8196-topckgen2.o clk-mt8196-vlpc=
+kgen.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365) +=3D clk-mt8365-apmixedsys.o clk-mt8365.=
+o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) +=3D clk-mt8365-apu.o
+>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) +=3D clk-mt8365-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c b/drivers/clk/med=
+iatek/clk-mt8196-vlpckgen.c
+> new file mode 100644
+> index 000000000000..c38d1e80a5ba
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+
+[...]
+
+> +static const char * const vlp_audio_h_parents[] =3D {
+> +       "clk26m",
+> +       "vlp_clk26m",
+> +       "vlp_apll1",
+> +       "vlp_apll2"
+> +};
+> +
+> +static const char * const vlp_aud_engen1_parents[] =3D {
+> +       "clk26m",
+> +       "vlp_clk26m",
+> +       "apll1_d8",
+> +       "apll1_d4"
+> +};
+> +
+> +static const char * const vlp_aud_engen2_parents[] =3D {
+> +       "clk26m",
+> +       "vlp_clk26m",
+> +       "apll2_d8",
+> +       "apll2_d4"
+> +};
+> +
+> +static const char * const vlp_aud_intbus_parents[] =3D {
+> +       "clk26m",
+> +       "vlp_clk26m",
+> +       "mainpll_d7_d4",
+> +       "mainpll_d4_d4"
+> +};
+
+The above parents lists are incorrect. What we want is to exclude the
+"clk26m" parent and only have the latter three parents. That is why
+we have the parent index table below.
+
+So please remove "clk26m" from the lists that are used together with
+vlp_aud_parent_index.
+
+I apologize if my previous explanation wasn't clear. The index table
+is meant for "skipping" parent mux values when the values don't start
+from 0 and/or the values aren't contiguous. The number of values still
+has to match the number of parents given. The index list below is
+essentially saying that "parent 0" is actually at "mux value 1".
+
+> +static const u8 vlp_aud_parent_index[] =3D { 1, 2, 3 };
+
+After this is fixed,
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+[...]
