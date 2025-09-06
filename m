@@ -1,101 +1,137 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C893F9FB;
-	Sat,  6 Sep 2025 04:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4D1E1C36;
+	Sat,  6 Sep 2025 07:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757132175; cv=none; b=SC4nT8jXD82myG8gQHDPMIYdEoChoaZJH2CdAEu/90YPo3rnqesx1aT+Kc7VFDNlC1ZRbEQntkkOEo6U+bpKaBemVWtoP5lzycY3rWQBbCtlc++d+QUSFfc+C++laUGsOWv270ZJIjR9fBKTf0eZItqQkOCdOFdFM3+PkVta9S8=
+	t=1757143295; cv=none; b=J2Zq4ndjqLU5kG79DDXnLym5l5GcZtp75kuw8LKBJarHvmffveVCTZ6COU8NDpzIZ1SXpbvfUHnxZUHgEhSsdubYuAmedmG78fR+tjx2HZ3EhtNVra53q6KrU4w3Gp7Yhtsjj3Cu5mq5aFnbit/l5mgIUTJLh0WcFTGNjJwUCCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757132175; c=relaxed/simple;
-	bh=+AaGa4KY4O7VR1L+5lz7LhtoM1ACUjc5l1vLXnV94tY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L7ZOkvh2AWfAvzqJo0w51NTzsBmPbjAZfaYpCJRPFdcZTwMUcZStIZPmlJhBwVxbu8YvRxIXe+K7nVK/ENN7pAGLV3pg/zamdGVt1/TwTpPUVr2E/EAzrc4ih2J1GnuVWboOWoUdXs0lH3Szbljs6f6LexaXGwPeBusMt2yl4yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f76454f69so2638527e87.0;
-        Fri, 05 Sep 2025 21:16:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757132171; x=1757736971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+AaGa4KY4O7VR1L+5lz7LhtoM1ACUjc5l1vLXnV94tY=;
-        b=HKK1ZBnPsz+GQOJ7s5W5QOJ6V8/QBKWvS54Ir9j3HudeXN1otxoV/f9ded+x68eT44
-         wPVTJG4oNsj11GOoGjdcfd+gG5biP/rsQknUiW0MDgsLfifnZ4lChpTpDHZmhuheIsVy
-         1v4zsNgLBCm4ZY/T1rAEJPZTsj12spL7YjxaCNhHLjB35xyRjxZ7ed9rFakgEIvI4Q2z
-         CnFtyjAILOT2iEBQs67mVFlg5Pswfgxpd1UmbhcNHONA8MktyCpzzxzxJrnfiVo1TXXL
-         MSVGZqk8RwobfUSBi0pg5mEggg3MuJGgXilA7SCkaoXVT71s60Fw2mMUYftkYhJGlJ+q
-         nL3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUGyIhJ2hm9F6rJahfvekjn+/5iuBNcEtGZ99dd8lTBbGJY4jxoSIq5aHmBUwCZ2iNymhHo/l+i83a7@vger.kernel.org, AJvYcCUI3xhr+pO76G2UaUGZuAXtRyDMWy9pnk+DV5A5jmJDBJvNVTYvd3aA62WejAqFz2WWHq9SS/esTlQe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZxlNdLwkh0FQGMHeYtQMMDAPYkO7BW7ltHpp/8wiF79Pn4KsQ
-	29399RGZA9tukE3OVpHMn+bru8krj4yLqOBjuNXf7oy2GNrEMk4ayk3Ya9IupnSOniI=
-X-Gm-Gg: ASbGncvAh/ZJXomDNRZpJBIYi+26NjeQszqa+NgnwqYak7iPvSKhLz40NSSoNivsGQW
-	/ZCbiIcR3rI4a1UpT7mTtdeHSY/ApfBzmVgpTM8WehBLDQLeUj7aq5a420qNToBrnIFlDjMJ08J
-	SnYoHZhUFvXoaI3geBuHxi5EgJqZlx7ZNfA2MGr1fJG1jb+DN8aUQxM+ozVxh4WaW1Yl32I8rV7
-	fEhbjviUJhjxwPiqjRQzvr1cjj+/0OdeCv+6DTAHEqCPdbzgZ6HeSmEQIaxT4EUUeRV2ELB8Jwz
-	eqGdo0FfLzCf/kNrJdBXzoXuKevYgom9ELTzul7w0O8wnMLxW/kxGO4QZZndGmZ5RleVctHaYGn
-	b22gkKvVZrfGFmYREom6Ly/ARtpMpqN0sggFzHo9w191p0GGpL4y1TeI=
-X-Google-Smtp-Source: AGHT+IF3qwMn1nQcbUBPY8R4JeqWSjiErGgfTeBHoJ0E6TP6+8bpKtcu7s2KAiiMU/DhLfa/I5Wp/Q==
-X-Received: by 2002:a05:6512:3b1f:b0:55f:687f:d1a6 with SMTP id 2adb3069b0e04-5625eb95fe8mr375213e87.3.1757132170564;
-        Fri, 05 Sep 2025 21:16:10 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ab8e95bsm2109927e87.34.2025.09.05.21.16.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 21:16:10 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33ca74c62acso368791fa.1;
-        Fri, 05 Sep 2025 21:16:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW04D02gFK3wUj7JJwaYi9BKOf2Dk+26t6+ChXqV/CV+rtA0INNQUfyqnkLL/+wCagKjxu7G13mnAX8@vger.kernel.org, AJvYcCXlyWmfigyHOl7NGRe0iunAIwaaouFffRjxH9iGW2GrKYsH37Ve5sx94zHF4MPis/rLgoFwQbL5Za/1@vger.kernel.org
-X-Received: by 2002:a2e:a547:0:b0:337:f786:2f4a with SMTP id
- 38308e7fff4ca-33b4d8cb2bbmr3431571fa.18.1757132169950; Fri, 05 Sep 2025
- 21:16:09 -0700 (PDT)
+	s=arc-20240116; t=1757143295; c=relaxed/simple;
+	bh=1vf2uE44kUXhBmJjEDqAjCxyn0j1zb8VmMho+cmnE3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVoD3Ez4begVeZ/GBLg7SjrgyVvbHHGUt8/SqJMcqQD5ZbwDn0TeY+bugiZF2NTe5zVT5meMWLVD7kl7Gun64iNx1kKAs3glLS/6chodYCu0sJGg50/YJJOx+zu4qfmtZxiB0v/xPTSZ8NUfZA0BV8ERPwuv8uojW+xa4XjUm90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVwnbvQ0; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVwnbvQ0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEBCC4CEE7;
+	Sat,  6 Sep 2025 07:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757143295;
+	bh=1vf2uE44kUXhBmJjEDqAjCxyn0j1zb8VmMho+cmnE3Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hVwnbvQ0GyGsk9CV7Y/bDk88/07Z/1RInKhzz/lVezZPebsoSNm6PNjbskRTi2OC3
+	 MZ/tqBGzbWdQRATDynJweGlEm1U9SFFWSuLRLYqHP3MNh/bVQ7VUhts4ClE6UVmu0b
+	 ROKtXp8uXzl9BR5uCjV7UXut4nz+W6a8XyhCy1k1MYL9Ur+hq35CkapZ5uHaqhEJFM
+	 9pERv8RjCy8kNFl0i9jZNCb8GPgE1rWW6fDH4cKr2CJliRR16cboPbEONNlngPowBI
+	 Xt1SPjaIWcdpWd4TgwyA+BIWScba9iUqAUSAMDtYP85o2b7rkX0tAUiNTCMwGVwbAb
+	 EQ/GfDQvGH74w==
+Message-ID: <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+Date: Sat, 6 Sep 2025 09:21:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903000910.4860-1-andre.przywara@arm.com> <20250903000910.4860-3-andre.przywara@arm.com>
-In-Reply-To: <20250903000910.4860-3-andre.przywara@arm.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 6 Sep 2025 12:15:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65rRqTWvn2NR-OSeP-zVJzheJ=L0YeG5DOrCTPJ8Haiyg@mail.gmail.com>
-X-Gm-Features: Ac12FXxA73ZfGI4H5Rgtw7dq1dOBGNO-B8ktFeY3H3nm-PBpHd0UB2GulbKMsHM
-Message-ID: <CAGb2v65rRqTWvn2NR-OSeP-zVJzheJ=L0YeG5DOrCTPJ8Haiyg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: generalise update bit
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Mikhail Kalashnikov <iuncuim@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+To: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
+Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250905132328.9859-1-cn.liweihao@gmail.com>
+ <20250905132328.9859-3-cn.liweihao@gmail.com>
+ <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
+ <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@arm.c=
-om> wrote:
->
-> A few of the Allwinner A523 CCU clock registers introduced an "update" bi=
-t,
-> which must be set for changes to the other bits to take effect.
-> Of the three clocks where this was used, it was always bit 27, so we just
-> encoded this as a single bit feature flag.
->
-> Now the CPU PLL also features the update bit, but puts it at bit 26, so
-> this flag trick won't work anymore.
->
-> Add an "update_bit" field to the common sunxi clock struct, which takes a
-> bitmask, so we can encode any bit to use, even potentially multiple of
-> them. As uninitialised fields are set to 0, we can use this as a default
-> bitmask to set, so can OR this in unconditionally.
->
-> Change the existing update bit users to use this new encoding, and add
-> support for the ccu_nm clock on the way, since we will need it there
-> shortly.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On 06/09/2025 03:34, 李维豪 wrote:
+> Hi,
+> 
+> Krzysztof Kozlowski <krzk@kernel.org> 于2025年9月5日周五 22:13写道：
+>>
+>> On 05/09/2025 15:23, WeiHao Li wrote:
+>>> We need a clock id to assign clock parent when use i2s 8ch as audio
+>>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can get
+>>> frequency we want.
+>>>
+>>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+>>> ---
+>>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
+>>> index b951e29069..795e721957 100644
+>>> --- a/include/dt-bindings/clock/rk3368-cru.h
+>>> +++ b/include/dt-bindings/clock/rk3368-cru.h
+>>> @@ -183,6 +183,9 @@
+>>>  #define HCLK_BUS             477
+>>>  #define HCLK_PERI            478
+>>>
+>>> +#define CLK_I2S_8CH_PRE              500
+>>
+>> 479
+>>
+>>> +#define CLK_I2S_8CH_FRAC     501
+>>
+>> 480, no?
+>>
+> 
+> Neither of these clocks belong to the previous grouping in terms of
+> type, so I chose to start with a new integer id here.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+I don't know what is "previous grouping" here, but IDs are abstract and
+are incremented by 1.
+
+Best regards,
+Krzysztof
