@@ -1,145 +1,194 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD575225A29;
-	Sat,  6 Sep 2025 13:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4122EDD41;
+	Sat,  6 Sep 2025 13:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757165685; cv=none; b=ecIESbCSxDwWE9CrfJf3ZepnZgejsy3g3GT/FqiFm0kW2wfBLdu8uv7HrmqGy1allnev2Vxs2Gpxy4hGZv3GhsiYnnM8sS3dyug9QyeCge3nEzJsdvP49aCrIx29OUfji+reSXrzxC0WfSXVRuuG++vXIDC3WKE7afJGZR9zXIU=
+	t=1757166846; cv=none; b=Vxa5j4zgl8WZssqUhJe4aJTwyTPT8NtyhktEaMcNILcG+F4pqbv3aWN3kSucCkt6OiB6m9sWXV3Onk82LogP6VDbuZ6tWPQb38SPgK/PLFPDhxGJnmacKARvuRRk2XRmVkq7fHeOLlbWNrZUf5oFKAy/mCDXt2KO9h0oTrCQeSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757165685; c=relaxed/simple;
-	bh=A/O9bArQgchRCNE4YOOq/nXP7u364U1IIbj9QaZZDwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oPdIbrl0gMPtNRRAFXS7FVfpwGUzmwxwIM9wa0/3ex+CDUZfSlXCV4LOcEla+ZVCJPelHwTntu6EKccKVDXf8kdmcGuGxs6tcw4BI+ZSKQeP1F3jQJGAS/vLqM7s7h83uI5xRpX33k/joKkyViOZGpP+I543CKNxSFSvVCLaTJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=karuOkNi; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1757166846; c=relaxed/simple;
+	bh=xkEfL9tKyJ9u5IYJCzBGBFDRUqugpsZZtkBEdlAkPOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i32W1bRDQfqzMPQI7FHwBk8mZF6ifA0KY4ZHN9vbBBr9/btkN/W6xpdOgIt/RSe0h2l/0Fmf71/28Fpm50eEnZHjYENZYDWmleXfUBvPzakGhW6GmLS+f/G7IbHPBzkrXY636Cdf3L6bYzYHJtSFFqhYzCuhl2kxITt6er9AQHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjOCrwVL; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="karuOkNi"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso488882a12.3;
-        Sat, 06 Sep 2025 06:34:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjOCrwVL"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f6186cc17so2893286e87.2;
+        Sat, 06 Sep 2025 06:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757165682; x=1757770482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
-        b=karuOkNiwcNI8+X5MVYiz8+d5jix0m56PJDucveZsgZIERIg/Evh5lCis4thXgrHCd
-         Sjw1E2GQZ0xglXTntXPzKS8TXP/Qrk55WcvHAPAKRgjDPdxzINq2srn6vylzrAjyXBfy
-         RR7NSylPu2Agv18OU2LLETLSIZDjVZqYkuLl3tzPmy5mDDgG2APV7cP274a2h1zDPvss
-         4tznogsTuJo6NX0Yg2qbkr++spJzOTwY0fMavCnPyqDJU2HUhtbYWdGnhqF0ngP/4j0b
-         79AjveWxhRWNKLALF0J3Ib0q6i9zP+TD+TvFms39vvpo2fRz+cJeATKCbu5RMegmRC3P
-         KTfw==
+        d=gmail.com; s=20230601; t=1757166842; x=1757771642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UPNxUXPxSXFgZu+p4pJj6Pw9/UY7PSbv42TZPM74sbk=;
+        b=cjOCrwVLh52m0qRfZde/AInIk0yPgSS33m8FaYmN8Uhdo4pb3vo/qxZrIqHNl4Bn+b
+         HgjXyKd8C4KAlTXfPQ8xyxvpxdXIu5THwDZfGMqXwNcEsPL6QHdK0/TmsTGmmoIJfJ1v
+         2jl/n8XXulCteLiRQIp+b9vCEXObqxxgaYofiM54wzBLJJhxHsRfs43WOozi6nIOeGaN
+         E7YScw5BkTmjHUj/qe0DhqlyHBWCAMspHTwp7dhyiV9yijqp+BM8U4nAvtF2z2kdjLIp
+         lSfPg5V9w4Sc/jyG+1C7NOPwqtgCnm/B/33Oq/7RJSdxJ5vl9j8zhGlTAXWSRCpKHc6f
+         mawg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757165682; x=1757770482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
-        b=ZZmu6yzWX8rp0hivCdcavyvxN68GV/lo473+d0BcRSk4VyaxgGYVa0VTMf4i6AulhV
-         gTPthAr6LPKYHEaNzwA3jRUoWedQU72b0aQdzwsaCoH6XMXl7nC+AiSsD8FhOFeISIA/
-         AmfwV160dPtVKqMZ0au/LTD7ImVjI0gXCOD1KmbxKQrtw6oHHpzivrH5k/xRtwymv1t9
-         pGGMhS6IcPW6kEMR356cEA6CjT4VTTEifDc3tuYH9xnQ0qBq6IxSnFTqaCSUmwowMPXq
-         tzbBXaWnOesEiynh5QbJfbC4y6sh3DpbGwLtIOxz+14zKQEJ6qOMXlp3ZpuH2zUplmMT
-         c43Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvLZrda18nSPMDEkBa/JhnTUKtPMtZFE3OypDmgOKGLq/eGSAdniuzF+RX4KVwvqaISe1tS7SoBOyzwFQV@vger.kernel.org, AJvYcCXSYxzvizK7dDMzie0EHAAIN1lm7gh+leRiSE7yI3UZZWOLAJ7FtaCtyCOGLJqU/V4KgZCWpsLKa4Lm@vger.kernel.org, AJvYcCXnogxRojYsJ0rPUi8RMcYw0Aga8lKmjaltb/9Y2QaSzYYO/f+3QarCGrOKPqRyJCjXK4vs4szsyegm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmb4CcchjSos8sU/GeS0fU++iE58qFReXm+ap2wDmlAMye2C07
-	wfK+8TWxk2NbQpVMJ8LeM9yMtthYrGJUNfJpj9RJ1GM0nSvQQgnlSDP3QiuB+iQTAosUu10Ihaq
-	/iHQ2cdpAzeQmCfiwL4PBDPad44eHgFw=
-X-Gm-Gg: ASbGnctpTubDRA6u2w81gQ6btRPjs5LtnvfRobtx3r98WAv5BgSI1NRhmLki5Y8ykzA
-	iErZD1Q+8jdCfEvIgEdTwRYhnGSKDWseUr/SZqv8zEdMaOkrv6SOOh+G0WgW+jbyUBq1JZcBYUl
-	KW1PvNMrWS2q31laCfMF+3BMX/hjhKL0p0LWPsi3Dt/MUwmUAmOHQDVplvFcwSbnk2sc0mJzCdn
-	QktBAVKb7f0IJlGoA==
-X-Google-Smtp-Source: AGHT+IFG1phE+ZeZqgW1zMy+uFKSv2Qx1hsWmfAK05w/g8wdzyZKfVxtUYHEK5SPBjzsv/309PI16u5CYZdBDd/9NL0=
-X-Received: by 2002:a05:6402:909:b0:624:6ba9:52c0 with SMTP id
- 4fb4d7f45d1cf-6246ba9555fmr1617735a12.15.1757165681932; Sat, 06 Sep 2025
- 06:34:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757166842; x=1757771642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UPNxUXPxSXFgZu+p4pJj6Pw9/UY7PSbv42TZPM74sbk=;
+        b=uk+a0qBTNOZwEPitzpiN/SIBbFuZqA0+Hg7nsbPCuSbjfAxnOSJu8Tsm8MZNov89hq
+         2rTMgtsfRmhqDq8IRxbhQXQ0CtK2aH7Ra9AIVsMSWpN4thuNbEj3LetKhXagmYStZs87
+         R26w4ezAu+F9hwPB+aqo4NM1q0vUjp9nBI5gWBJt/Rpns5ZvTz7R5D/CiHg1S5A6b82r
+         1mH2u7SULmPu3qo3tO1ws+5RCNh3pCZBAlPK93GpNzb/xdhR+iARIKDusAT9p6y98+4n
+         TWyphZi+w4mJvXemdCclDOD7UxG1JPPiu88Gtz/0BAajyY/EC2Frdzss+ufQMiZ5xffh
+         0ROQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa/uJFRR1MA0+mMBlxwGfAVGhlVcDiS17zyE7vdzT6HnUMlwqZjWNbvgn2EtoOwg0qwBYJ1Kde4s3W@vger.kernel.org, AJvYcCUeASV2QOewOyoly7dhRJBscOaNmbVi0ce3edyZ6EHKr1U+r3Uz7ggg5G4OBmNbwIzRR/bxcx2uJcf/@vger.kernel.org, AJvYcCViW6fQ5iNAVrtKmBlWmnLN7XOT2xdvnCcWX+EBTqbw1vVPeiWupm6NNbDjWGZ9BgEgHOwMrrdV1t0TAjQ=@vger.kernel.org, AJvYcCW84PslNm0o0OD7nsGHp85xI7O7m5MEzBVo1fcLah5jXSQO388e210AdcWRid3Kv7GYV/Y9hjixQqVC4l7g@vger.kernel.org, AJvYcCWQBeFSZgvRdq6V/oQVfuOOEOlCaF9TY0JIX3+8kGEQcPmQy4fCIOCLZXRPxyoXCLTmQaqTPagsRdKxC7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+VqqsNDgV6F8ntemJsMnOrN1pwUxWg/dcvHbVfcZKkj61Oi7c
+	8/CoA+DtSXEQfDSd2QQZE58lNC9aINICQwOZUKHEcKZRgwB3/Kg4tPp4
+X-Gm-Gg: ASbGncv6+TZzbWQ6tgVIdy294fM42r7EjKwGNZTQ0Y5xYzflYvGuQoUi+Gwye4Ss+Kd
+	AiqRYIGyT4qKSg4by/VYn9QJUldRVdW16gDYjYA4i0267mbtLmF8hrcoDttaWRUGmNENB+7bw8+
+	tc9afBv4Tu1CbXyIeiCyjTYeGd0MszhZ6jx/gK61Ugejo8P09yTgRinGBTLoGnuDLnvILpOQK6u
+	gbHsoZ/F7l/hk8vHBEuED+GvnsCFXkeI75Sdx4wIq/68013a61tu3BLl6A1Mh5m1TSZ38MMpvDY
+	dhjjmpn4PpCxMSe9exptjkcboYjTztCY17dji+bnZPHZECNCsEzUDti4foGDz8hyfWrrNnNVFvN
+	wvoN6KRo65sj1W98exa8t0bcw
+X-Google-Smtp-Source: AGHT+IESUrWBV6x89XWvgKOIImpxLehwahZXu+FMNGClISAqT36rK28RionSJf7lu3R6CGsKWJwi9w==
+X-Received: by 2002:a05:6512:2212:b0:55f:3658:c3c3 with SMTP id 2adb3069b0e04-5626425c636mr724355e87.47.1757166842149;
+        Sat, 06 Sep 2025 06:54:02 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace9c65sm2357467e87.85.2025.09.06.06.54.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 06:54:01 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v2 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Sat,  6 Sep 2025 16:53:21 +0300
+Message-ID: <20250906135345.241229-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905132328.9859-1-cn.liweihao@gmail.com> <20250905132328.9859-3-cn.liweihao@gmail.com>
- <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org> <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
- <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
-In-Reply-To: <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
-From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Date: Sat, 6 Sep 2025 21:34:25 +0800
-X-Gm-Features: AS18NWBAYmmcyxx9GhaGWWnfw6zHk7za_4uCKBVeQx-mNiFJOJIfxAZlKy9QaMc
-Message-ID: <CAPEOAkSpEzVtUqyUJQbDmbmPOjORnAfuehhvo1qqZgAAeY=ZVA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
- and CLK_I2S_8CH_FRAC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+with a set of changes required for that.
 
-Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=886=E6=
-=97=A5=E5=91=A8=E5=85=AD 15:21=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 06/09/2025 03:34, =E6=9D=8E=E7=BB=B4=E8=B1=AA wrote:
-> > Hi,
-> >
-> > Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=885=
-=E6=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
-> >>
-> >> On 05/09/2025 15:23, WeiHao Li wrote:
-> >>> We need a clock id to assign clock parent when use i2s 8ch as audio
-> >>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can g=
-et
-> >>> frequency we want.
-> >>>
-> >>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
-> >>> ---
-> >>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bind=
-ings/clock/rk3368-cru.h
-> >>> index b951e29069..795e721957 100644
-> >>> --- a/include/dt-bindings/clock/rk3368-cru.h
-> >>> +++ b/include/dt-bindings/clock/rk3368-cru.h
-> >>> @@ -183,6 +183,9 @@
-> >>>  #define HCLK_BUS             477
-> >>>  #define HCLK_PERI            478
-> >>>
-> >>> +#define CLK_I2S_8CH_PRE              500
-> >>
-> >> 479
-> >>
-> >>> +#define CLK_I2S_8CH_FRAC     501
-> >>
-> >> 480, no?
-> >>
-> >
-> > Neither of these clocks belong to the previous grouping in terms of
-> > type, so I chose to start with a new integer id here.
->
-> I don't know what is "previous grouping" here, but IDs are abstract and
-> are incremented by 1.
+---
+Changes in v2:
+- vi_sensor gated through csus
+- TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+- adjusted commit titles and messages
+- clk_register_clkdev dropped from pad clock registration
+- removed tegra30-vi/vip and used tegra20 fallback
+- added separate csi schema for tegra20-csi and tegra30-csi
+- fixet number of VI channels
+- adjusted tegra_vi_out naming
+- fixed yuv_input_format to main_input_format
+- MIPI calibration refsctored for Tegra114+ and added support for
+  pre-Tegra114 to use CSI as a MIPI calibration device
+- switched ENOMEM to EBUSY
+- added check into tegra_channel_get_remote_csi_subdev
+- moved avdd-dsi-csi-supply into CSI
+- next_fs_sp_idx > next_fs_sp_value
+- removed host1x_syncpt_incr from framecounted syncpoint
+- csi subdev request moved before frame cycle
+---
 
-In the current kernel code, the RK3368 clock IDs are categorized by
-SCLK, ACLK, PCLK, and HCLK.
+Svyatoslav Ryhel (23):
+  clk: tegra: set CSUS as vi_sensors gate for Tegra20, Tegra30 and
+    Tegra114
+  dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+  clk: tegra30: add CSI pad clock gates
+  dt-bindings: display: tegra: document Tegra30 VI and VIP
+  staging: media: tegra-video: expand VI and VIP support to Tegra30
+  staging: media: tegra-video: vi: adjust get_selection op check
+  staging: media: tegra-video: vi: add flip controls only if no source
+    controls are provided
+  staging: media: tegra-video: csi: move CSI helpers to header
+  gpu: host1x: convert MIPI to use operations
+  staging: media: tegra-video: csi: add support for SoCs with integrated
+    MIPI calibration
+  staging: media: tegra-video: csi: add a check to
+    tegra_channel_get_remote_csi_subdev
+  dt-bindings: display: tegra: move avdd-dsi-csi-supply from VI to CSI
+  staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+    CSI
+  staging: media: tegra-video: tegra20: set correct maximum width and
+    height
+  staging: media: tegra-video: tegra20: add support for second output of
+    VI
+  staging: media: tegra-video: tegra20: simplify format align
+    calculations
+  staging: media: tegra-video: tegra20: set VI HW revision
+  staging: media: tegra-video: tegra20: increase maximum VI clock
+    frequency
+  staging: media: tegra-video: tegra20: expand format support with
+    RAW8/10 and YUV422 1X16
+  staging: media: tegra-video: tegra20: adjust luma buffer stride
+  dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+  ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+  staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
 
-However, for the I2S 8CH peripheral, the default MCLK output frequency
-depends on I2S_8CH_PRE, which has four possible clock sources:
-i2s_8ch_src, i2s_8ch_frac, ext_i2s, and xin12m.
+ .../display/tegra/nvidia,tegra20-csi.yaml     | 104 +++
+ .../display/tegra/nvidia,tegra20-vi.yaml      |  22 +-
+ .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+ .../display/tegra/nvidia,tegra210-csi.yaml    |   3 +
+ .../display/tegra/nvidia,tegra30-csi.yaml     | 115 +++
+ arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+ arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+ drivers/clk/tegra/clk-tegra114.c              |   7 +-
+ drivers/clk/tegra/clk-tegra20.c               |   7 +-
+ drivers/clk/tegra/clk-tegra30.c               |  21 +-
+ drivers/gpu/drm/tegra/dsi.c                   |   1 +
+ drivers/gpu/host1x/mipi.c                     |  58 +-
+ drivers/staging/media/tegra-video/Makefile    |   1 +
+ drivers/staging/media/tegra-video/csi.c       |  66 +-
+ drivers/staging/media/tegra-video/tegra20.c   | 793 +++++++++++++++---
+ drivers/staging/media/tegra-video/tegra210.c  |   2 +-
+ drivers/staging/media/tegra-video/vi.c        |  54 +-
+ drivers/staging/media/tegra-video/vi.h        |   9 +-
+ drivers/staging/media/tegra-video/video.c     |   8 +-
+ drivers/staging/media/tegra-video/vip.c       |   4 +-
+ include/dt-bindings/clock/tegra30-car.h       |   3 +-
+ include/linux/host1x.h                        |  10 -
+ .../csi.h => include/linux/tegra-csi.h        |  18 +
+ include/linux/tegra-mipi-cal.h                | 143 ++++
+ 24 files changed, 1269 insertions(+), 232 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml
+ rename drivers/staging/media/tegra-video/csi.h => include/linux/tegra-csi.h (88%)
+ create mode 100644 include/linux/tegra-mipi-cal.h
 
-The parent clock of i2s_8ch_frac is i2s_8ch_src, and the frequency of
-i2s_8ch_src comes from either the CPLL or GPLL.
+-- 
+2.48.1
 
-Due to the clock topology, CLK_I2S_8CH_PRE and CLK_I2S_8CH_FRAC cannot
-be simply categorized as SCLK, ACLK, PCLK, and HCLK mentioned above,
-so I choose to start counting from a new ID.
-
-If this way of assigning IDs is not appropriate, I can modify it to
-increment based on the previous one.
-
-Besh wishes,
-WeiHao
