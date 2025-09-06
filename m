@@ -1,115 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AED266EF1;
-	Sat,  6 Sep 2025 12:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9D2877EA;
+	Sat,  6 Sep 2025 13:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161256; cv=none; b=KjwL43pmw7NuRfAmrRxrqG6hKkz00Mx6mJUyzJn/nDtwr0+S6vsiYj+jhTIYcj8WWxQR/soOYekwNuF0nb4fetSmBSupX9QbmA8QKbR7LkcUSlh9+vghQc0RYP/pOnBwHdqBPQ1cbA4NbXwzj0x0luyqZH8olc2O6pk/UB3bbDg=
+	t=1757164638; cv=none; b=q6NuLzASw0FER+NjATGSw/Z3XxWUeMQFkBRAV9oHAuMc6ETi+KMU/+j0tF0Gx9zc9kNf2LWfcdZN56bS5XwxWO1cTly706BKUf7nWee6Bu3U/hIm0q1SFq1OLB76VhEDjOXPBz7H04sYictqWQ6mogE3oTpLPtaEYcwT2UgL0gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161256; c=relaxed/simple;
-	bh=tj2qaoX0X4TgcNXLGb5/BwqEER/Qx4Bs9TmgYBUu/vg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diFgTmVmwvi0ecQEvGb1G3/rXtAYbVx1OkrdSsQCfKWd6dNWnnyip66MoEo9RDRdmzWp7MvhV58PJz/fYyZfdL5IaZCy+bgq+Ac9ObbOUxa+hKHCWLCbVG7J2ztZp/wDtkjTXYueK7NPd3CBo4FkoMMvSHgPBlIekLIRRfl5JqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LneFQRDj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757164638; c=relaxed/simple;
+	bh=o9IcrFnimv7ibOLrNRYV7WuA4rm8uS1dfW5VR+qdcDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PMToz+lSdmZ3LBeAX6d3V2ee5zOxYPSdskzVRC7SzIhuwOO2l4RwWDigkvx4VUT+pkulac9FN10pGTiqIyiAg3bn5VgUVBx1aQEWcyGy0o/X9Ew/+0V+jnEtTxi+++5BXF/d70XfoAIywXndgj2RjAHcZ4tWXYG3mIfWVMGJxiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/kI9R8o; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LneFQRDj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411AFC4CEE7;
-	Sat,  6 Sep 2025 12:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757161255;
-	bh=tj2qaoX0X4TgcNXLGb5/BwqEER/Qx4Bs9TmgYBUu/vg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LneFQRDjv//hBKwYIOfuAeZS26z2XACGJrDB8xTO3LSKmRRDCRwty7TCQrM+KLapR
-	 3uAqg20tT3OZuJTH58jyZ++yEsSfmWWV5gDpnTVZw81ruvE4goyuInK39JsRy1M59C
-	 8c+Cozat0J/+ftjqfa8nPOul/F630EdfsfpfMo4zrGThqqeTlfoyT//SZILAmfrL9a
-	 RHQRaS/JXtdMWyCEZmG3VqRyaRXHHdaftQyVvbZ6mzCB/CdFFtchADTI97t90jjsCB
-	 75K10SXV1+56xC6X9YEb/VnC21CJoEsFY2bP2RH3fzjyAQWEDPfLBuxrLSzj7oX5Kb
-	 6odKzo4myA6/Q==
-Message-ID: <700967d0-ad8b-471b-b2cf-6544727db26d@kernel.org>
-Date: Sat, 6 Sep 2025 14:20:49 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/kI9R8o"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5608bfae95eso3355361e87.1;
+        Sat, 06 Sep 2025 06:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757164634; x=1757769434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=e/kI9R8oBRSh2GAcbDQBRtuqa1ofI89Lb14GlNrfgTEQ1tL5zBU/Ts+t03ohPzMPkj
+         6dScjHsUhAQ+BHLt1tKak1ccTkbqo+Wis3T3OfBidXkfVjwqXTs8kiH0YDGZtHOFsyo1
+         cIL9BFyZmLuoy4Li2jVn1dHlNfZNR3fvWWZLIQ1Fr4Jy8kd0WdnP+EQYwi3hUEOASUtS
+         6PzTqrSl86CikswjcvOwPn5xyj5H4jKYl9eq05Mm5UWUyQAqLchGlBJgFBmd4dAjoGGJ
+         DTGnhWFEoCKVFcqoEUBeW7guDICC10kZshSNrpC+xtTqkj89LXkcjReK0GhGBk5KSMUv
+         a1xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757164634; x=1757769434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=Jr+5tnfujSuIQJzSOyfJMo72Xx5dJ3LWZHEBPMHATj8smzxg6GWTGDIYhgA1xvlYYL
+         O34KFDB2oKDhtGZYxq5nK10csSZgtwGo8/U4IMCo8HcGoIqclb712QXjrLxkMlQg1TYp
+         MneH2VQBmPoqyyj/JHWGk5dZjSDjp06x1JeltQu8itmDN7rWjqP6x2m8Y4Rsh59XqIaE
+         jQIA+8EbmvlL95efNxjGMzpIOK5GZWZe28YszUCyuJulFgJCO1TSw+87IsilUMtf5+P3
+         06OWHQw3uffDFyQojWzTkfKp/tppVctCmPgICQ67xESA0symyYidFYJvf543mafPZPyo
+         5e/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbAGXUUD873yToQVa2V4ZQMBzzLZP4JKx5S/lgXlzmYsEiw6gQI1rz2C00mhZyh/bebIqgQP5+H4w=@vger.kernel.org, AJvYcCXrKORT5jFKyazkPfPusz/RR42+7UmzgJpllJuGF28ti7aux0UaUBxUJh2EunZ/CLaNv3oZncCIOIvHhR/Q@vger.kernel.org, AJvYcCXuax2z6Gu2khUH/pwglMj0KHD19Ys+f2LZH7cbO90BGpF/Pz+lJ/jclP2w+Vt2YeneokK9Qf9kPIx2mTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6W0OORc0lr/pWj0TXR7ZE++EhpQUsWLQ//DAqn7ZU+pHybB/k
+	CR2RpS58o/ie35OqX8gcic3e/zCM5GTAv4cN3yLpIlwQ0RHs04arAvpI
+X-Gm-Gg: ASbGncsmKS/5Oj9ZKYjXV1DQktYovV4XzU13AzMQWSmm3q6RmuIjprp7B/mXEK4Xm3R
+	XZJ6FLxadJlH0x1QQvyBEpCZVRrgCpPTtJLEOCQqSF07lBqY+Y1W+yAbKCjPFqFdR/IiTC8S53h
+	/XnE5T6dLZo0QVygBqv3T+JuwYhjDf+RRFOSdR658bnyB+hP20UED3YfRq7jDC7eT5N3ZtgVl1w
+	n0a2TH0ZsveT2b+uXLpvfk/rvz2/lkVYCxwLPZC+bosvGUwGYVMnHL/XNrIIaUQLC0TQr3jTOlY
+	iE5kZupVXv6OgBo9CdwM9EhXApHKRqoTnvemMc0rwAznQBy7D7iXYxO8IxcDwNgSbTrKZYUacFg
+	8iDPJiqgaJSn+5zh5FE1FP9NH
+X-Google-Smtp-Source: AGHT+IGemkowJ9DUUuzY2mYnlqSwBPTYFfnUHammCbEHEEG+j0HPGbQknwWy53AHiTbfVkzNhph45A==
+X-Received: by 2002:ac2:51ca:0:b0:560:8b86:75ba with SMTP id 2adb3069b0e04-56261db5e31mr599542e87.52.1757164634145;
+        Sat, 06 Sep 2025 06:17:14 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad44f8fsm2312647e87.137.2025.09.06.06.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 06:17:13 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/4] gpu/drm: tegra: add DSI support for Tegra20/Tegra30
+Date: Sat,  6 Sep 2025 16:16:51 +0300
+Message-ID: <20250906131655.239340-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] firmware: exynos-acpm: register ACPM clocks pdev
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250903-acpm-clk-v3-0-65ecd42d88c7@linaro.org>
- <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250903-acpm-clk-v3-4-65ecd42d88c7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 15:56, Tudor Ambarus wrote:
-> Register by hand a platform device for the ACPM clocks.
-> The ACPM clocks are not modeled as a DT child of ACPM because:
-> 1/ they don't have their own resources.
-> 2/ they are not a block that can be reused. The clock identifying
->    data is reduced (clock ID, clock name and mailbox channel ID)
->    and may differ from a SoC to another.
+Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+logic and clocks. With a few minor tweaks, existing tegra DSI driver
+should work on Tegra20/Tegra30 devices just fine. Tested on
+Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
 
-If I understand patchset correctly (and your cover letter supports
-that), this does not depend on patch #3, so please move it before that
-one, so both firmware patches are one after another.
+This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+MIPI calibration logic. Ideally these patches should be picked after
+CSI bringup but they will not break anything even if picked before
+CSI patches.
 
-Best regards,
-Krzysztof
+---
+Changes in v2:
+- removed all MIPI calibration, it is handled within CSI bringup
+- added per-soc structures into of_match
+- added fix for hang caused by register access with uninited hw
+---
+
+Svyatoslav Ryhel (4):
+  clk: tegra20: reparent dsi clock to pll_d_out0
+  gpu/drm: tegra: dsi: move prepare function at the top of encoder
+    enable
+  gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
+  ARM: tegra: adjust DSI nodes for Tegra20/Tegra30
+
+ arch/arm/boot/dts/nvidia/tegra20.dtsi |   4 ++
+ arch/arm/boot/dts/nvidia/tegra30.dtsi |   8 +++
+ drivers/clk/tegra/clk-tegra20.c       |   6 +-
+ drivers/gpu/drm/tegra/drm.c           |   2 +
+ drivers/gpu/drm/tegra/dsi.c           | 100 ++++++++++++++++----------
+ drivers/gpu/drm/tegra/dsi.h           |  15 ++++
+ 6 files changed, 95 insertions(+), 40 deletions(-)
+
+-- 
+2.48.1
+
