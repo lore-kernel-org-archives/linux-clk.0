@@ -1,171 +1,99 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B293227A462
-	for <linux-clk@vger.kernel.org>; Sat,  6 Sep 2025 18:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E2B1A0728;
+	Sat,  6 Sep 2025 19:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757184730; cv=none; b=pzgmd8cmJQKMqg5eLozBAxiw8dSG5WOvhT9fV1Lfhw0zd6AQ5fBwo9p0n6KJkZhJMa03YtPJjYqO5I+QLmCCWOP7fXLFUtJYlW9RWUmMOiwsd8DYg4STWA3MZGDhInWExKFq+CrZQCIVZnVf8Y72ebURQwowCf8IkYCrdojId/A=
+	t=1757185977; cv=none; b=YD7HwT8+qUb8mcHjIORD93hmfJ17dLWdOHx9Sf8bchCnDy0u1Ifl3ceCtij/mm1WSSnM4QammgtFQxiaMo1HwKrlbzrHKqV7eEbMNKTCyQpYnoKOKB8pMKiKoHd0ZNVF/irQZU+2NxZvR//EmJ/Rk7l9TXv4T/yu1YWlvRC6GU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757184730; c=relaxed/simple;
-	bh=AXwT0kHloCdjCQXQT0QNKgsw9c361exmwtf2WiUe9g0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LmIflyP73iyNPLvHiLNonezE4XCs0RiETAtgspQE3jndxKsrXpqvm3CMlvUwKA9y9zk+pq+x6Fg8b5Boo2twZ4M8+2rNDkMepuM57dWsr24xCe/HkuT2GfWOEZu1XS0uIfr9IArv6gvgkTl+sFQRIuMGOgRDDg/134pU+shxsZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=J2jc4APL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1757185977; c=relaxed/simple;
+	bh=QHY0+QhCJ0gde/ktx4tvJbgsXT6QCzobFLcyaTfoVhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=reY13wWCDMw9dg+2Rl8XQffwBstyEXM9f0dgxtqLlSHdvAljxw9PejaSR1HARX8oHglKJIyazgsQv+Lyoq89KVFUPxsU2lKhafbGaMj0oS1ao99sC3EllKbMsN/WFc2AmEmNZW89aX65TjjhklplvruHowPAtWgjRT8k6Rb/4wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ijb25Xr3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="J2jc4APL"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b7722ea37so16448665e9.1
-        for <linux-clk@vger.kernel.org>; Sat, 06 Sep 2025 11:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757184726; x=1757789526; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nYHy1RYaZz8qwqLoCLiBztSqW0ycyPrtnmbrVy9V3QA=;
-        b=J2jc4APLfQCD64LPpYHb6WczF4Fgr2TY99RQ3r19ljesYTCj4je7CqkL/Kodvq1Ta/
-         e4M0Y6bNmdhHhZ0/d5BhmVWmjDvpMJtH+HlErJ//Uj49H6fO7xogW4AB2ujDCn2otE3t
-         4Ali7b2iEl3WdDe7W4IlDWOgoZe5UQ3oQjWO0k1wKdnS7+KouDZFqaJlycIBeRVO+haf
-         WvRk7iDPIPKeT4ipuEuvGRNyyz085BeRrERidt3D6+TM0qV4W45aBKyT6h4e2vDpmy04
-         q/7IIwEKdbU5y9KISHtzalk6faUweEfXNQtpRjo/8ioL6VvRAiQWKzbFhLRQ13UDek4K
-         CDnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757184726; x=1757789526;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nYHy1RYaZz8qwqLoCLiBztSqW0ycyPrtnmbrVy9V3QA=;
-        b=W5crQ7fLZ4e25mPEzFmAbXtmiFoV30UdUAW4JiBEkvfFYZbbrriBgNj119Jk1/ktvA
-         iH6+dfK+zl1/paZ4Qntwd7QD7A2OqdE78R/ewjXGfncBq2i2edxXsktNURe803yIgE+I
-         sb5elNexN6AiDTjMWAU0hQ6ija96gjbzuJ09WgQOwhhM5OH+57jlkXsT3ZmWmvgW5Cl4
-         Ydvv58m2l93wiPI0a/oUIevD3zzDh9rX/3SpmpbmMo35tU05iWv+FIcVDr09IJCv+Pus
-         vbPhFbRcFHAPxNn22VfnEQrQas0O3bIUM0ViuxLLrRyE6LmxJvrjXkbiA0PwuPvWWnnB
-         g09w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0/F0sx1NzFdPEplw8qwWPxcfcaWyggs4M7rEP+HfFu9MwHgA6KjeUepBrIMpfH/T8xD+KgQmcKSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgWrFtpya0YrZ1kA9DN86L9mEa3CytIuVlfQWa9P6WscBUfTR+
-	yR3MIkD6PPme4R9p3S3uKX42agCJU9+mPt8Hv96Q90jFG03kuKMrZK4r/mcq82BZYjH/oRnjKyt
-	0k17c
-X-Gm-Gg: ASbGncu6HsvuUvYjVcpzzt9Olb58PgcJhKOSXV7wrNJ2f+CG4m/xwUDFCO6B3i8zaH4
-	zdwNmAkR78yaj5iuMaPvXc5SW6Up7meHhBBgdtUR36hOjHeejI0zo6/ol6dRn1xcJhjnQED1lR5
-	rzWlwA2N46Lu9zG7A0yZfBtvLjlm5fz1ZldYyVbEYU+zdP2pbvFiHyvr30cFlnft3AwVkge4KTu
-	h73ZR2zKZuD9hCaqQOsCco4CHaw8IpY1ahqVEv9CrHPmwrrSsHCxIYLfave3Gq0N/z0nZ7ImM6P
-	Dz6+IhDgPGI55m6sP/Aveo05key5QhquE9goMAlLh9MLZWVedjmgDDMnKW7+63ppUcmW6M3dPG+
-	W/1v3/OgzPWrcpuA36hrr52F5uWpJuZh6UjtQu/herA==
-X-Google-Smtp-Source: AGHT+IEpMP6ACL8oRBA8hTz9DJ0XgNVlGBZlDBNrI3mU0DI00pLaSesHNRCSOeWsnURabXbOB6R20Q==
-X-Received: by 2002:a05:600c:8b5c:b0:45b:9b9f:88cb with SMTP id 5b1f17b1804b1-45dd5b78584mr60223555e9.16.1757184725986;
-        Sat, 06 Sep 2025 11:52:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45cb687fe4esm150076175e9.23.2025.09.06.11.52.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 11:52:05 -0700 (PDT)
-Message-ID: <41cf6626-ce6f-408f-bcbd-299866d70fe0@tuxon.dev>
-Date: Sat, 6 Sep 2025 21:52:04 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ijb25Xr3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF72C4CEE7;
+	Sat,  6 Sep 2025 19:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757185976;
+	bh=QHY0+QhCJ0gde/ktx4tvJbgsXT6QCzobFLcyaTfoVhI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ijb25Xr3nxmCzkM9SHloRJmes2F0WpNk+nFMs4keCuthT9bvUq0ck8ODZMQMiB0Gp
+	 O2ZPVAccI4xifo71rjyV0SGo9y9UUOEV+Ev3EbxQo4+5+1mGLIpkfl3GBEGLRR/o4M
+	 +ga2xcx9X8Zoiiq9P1CqPQEuaKZ2rPppFCSDeU3Na7eWTmlw1dVxGjDSZ3ssfUDfbO
+	 iiGfCaPzZgRLdVHz2W5b4QZ1vl/F9R5Ke8vmdiQqbe3cxjBCVBM0bOgO54uPP2gz7Z
+	 dWoXEnd1JntsOhkU9wZQy1JO82CP9bsg7NDqaCyd7ZKxQNCCYbaq4D/rt2cdNzR//5
+	 CBWRnKYpzkPMg==
+Date: Sat, 6 Sep 2025 12:12:55 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>, Icenowy Zheng <uwu@icenowy.me>
+Subject: [GIT PULL] clk: thead: Updates for v6.18
+Message-ID: <aLyHtxrU4mGFfnFs@x1>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 26/32] clk: at91: at91sam9x5: switch to parent_hw and
- parent_data
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
-Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- robh@kernel.org
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
- <95cbe3653752bc3c0b6f068949706313e3778fe5.1752176711.git.Ryan.Wanner@microchip.com>
- <10f016fd-2ceb-40b0-a81d-9c5663f65191@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <10f016fd-2ceb-40b0-a81d-9c5663f65191@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-On 9/3/25 18:16, claudiu beznea wrote:
-> 
-> 
-> On 7/10/25 23:07, Ryan.Wanner@microchip.com wrote:
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>
->> Switch AT91SAM9X5 clocks to use parent_hw and parent_data. Having
->> parent_hw instead of parent names improves to clock registration
->> speed and re-parenting.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->> ---
->>   drivers/clk/at91/at91sam9x5.c | 125 ++++++++++++++++++----------------
->>   1 file changed, 65 insertions(+), 60 deletions(-)
->>
->> diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
->> index 13331e015dd7..f6138622ab50 100644
->> --- a/drivers/clk/at91/at91sam9x5.c
->> +++ b/drivers/clk/at91/at91sam9x5.c
->> @@ -38,9 +38,9 @@ static const struct clk_pll_characteristics
->> plla_characteristics = {
->>       .out = plla_out,
->>   };
->>   -static const struct {
->> +static struct {
->>       char *n;
->> -    char *p;
->> +    struct clk_hw *parent_hw;
->>       unsigned long flags;
->>       u8 id;
->>   } at91sam9x5_systemck[] = {
->> @@ -48,12 +48,12 @@ static const struct {
->>        * ddrck feeds DDR controller and is enabled by bootloader thus we
->> need
->>        * to keep it enabled in case there is no Linux consumer for it.
->>        */
->> -    { .n = "ddrck", .p = "masterck_div", .id = 2, .flags =
->> CLK_IS_CRITICAL },
->> -    { .n = "smdck", .p = "smdclk",   .id = 4 },
->> -    { .n = "uhpck", .p = "usbck",    .id = 6 },
->> -    { .n = "udpck", .p = "usbck",    .id = 7 },
->> -    { .n = "pck0",  .p = "prog0",    .id = 8 },
->> -    { .n = "pck1",  .p = "prog1",    .id = 9 },
->> +    { .n = "ddrck", .id = 2, .flags = CLK_IS_CRITICAL },
->> +    { .n = "smdck", .id = 4 },
->> +    { .n = "uhpck", .id = 6 },
->> +    { .n = "udpck", .id = 7 },
->> +    { .n = "pck0",  .id = 8 },
->> +    { .n = "pck1",  .id = 9 },
->>   };
->>     static const struct clk_pcr_layout at91sam9x5_pcr_layout = {
->> @@ -133,25 +133,16 @@ static void __init at91sam9x5_pmc_setup(struct
->> device_node *np,
->>                       const struct pck *extra_pcks,
->>                       bool has_lcdck)
->>   {
->> +    const char *slow_clk_name = "slowck", *main_xtal_name = "main_xtal";
->> +    struct clk_hw *main_rc_hw, *main_osc_hw, *hw;
->> +    u8 slow_clk_index = 0, main_xtal_index = 0;
->>       struct clk_range range = CLK_RANGE(0, 0);
->> -    const char *slck_name, *mainxtal_name;
->> +    struct clk_parent_data parent_data[6];
->> +    struct clk_hw *smdck_hw, *usbck_hw;
->>       struct pmc_data *at91sam9x5_pmc;
->> -    const char *parent_names[6];
->>       struct regmap *regmap;
->> -    struct clk_hw *hw;
->> -    int i;
->>       bool bypass;
->> -
->> -    i = of_property_match_string(np, "clock-names", "slow_clk");
->> -    if (i < 0)
->> -        return;
->> -
->> -    slck_name = of_clk_get_parent_name(np, i);
->> -
->> -    i = of_property_match_string(np, "clock-names", "main_xtal");
->> -    if (i < 0)
->> -        return;
->> -    mainxtal_name = of_clk_get_parent_name(np, i);
+are available in the Git repository at:
 
-Same here, and same for the rest of conversion patches.
+  git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/thead-clk-for-v6.18
+
+for you to fetch changes up to c567bc5fc68c4388c00e11fc65fd14fe86b52070:
+
+  clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL (2025-08-18 14:58:23 -0700)
+
+----------------------------------------------------------------
+T-HEAD clock changes for v6.18
+
+Updates for the T-HEAD TH1520 clock controller:
+
+ - Describe gate clocks with clk_gate so that clock gates can be clock
+   parents. This is similar to the mux clock refactor in 54edba916e29
+   ("clk: thead: th1520-ap: Describe mux clocks with clk_mux").
+
+ - Add support for enabling/disabling PLLs. Some PLLs are put into a
+   disabled state by the bootloader, and clock driver now has the
+   ability to enable them.
+
+ - Set all AXI clocks to CLK_IS_CRITICAL. The AXI crossbar of TH1520 has
+   no proper timeout handling, which means gating AXI clocks can easily
+   lead to bus timeout and hang the system. All these clock gates are
+   ungated by default on system reset.
+
+ - Convert all current CLK_IGNORE_UNUSED usage to CLK_IS_CRITICAL to
+   prevent unwanted clock gating.
+
+ - Fix parent of padctrl0 clock, fix parent of DPU pixel clocks and
+   support changing DPU pixel clock rate.
+
+All changes have been tested in linux-next.
+
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+
+----------------------------------------------------------------
+Icenowy Zheng (5):
+      clk: thead: th1520-ap: describe gate clocks with clk_gate
+      clk: thead: th1520-ap: fix parent of padctrl0 clock
+      clk: thead: add support for enabling/disabling PLLs
+      clk: thead: support changing DPU pixel clock rate
+      clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
+
+Michal Wilczynski (1):
+      clk: thead: Correct parent for DPU pixel clocks
+
+ drivers/clk/thead/clk-th1520-ap.c | 503 ++++++++++++++++++++++----------------
+ 1 file changed, 292 insertions(+), 211 deletions(-)
