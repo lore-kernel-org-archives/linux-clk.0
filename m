@@ -1,150 +1,145 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1A82F363D;
-	Sat,  6 Sep 2025 13:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD575225A29;
+	Sat,  6 Sep 2025 13:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757164643; cv=none; b=etAc7f0GFdbSELGhDAR5m2d63B8qIgQwKWh7nGaoV2TN41i6cOyiA8Atg7+98Zz68eWb+HBJ53E1YKWNRLiBKAf0yfMSJELZtv46BrjI/60IHQhtUIZnfRuylwDldkzJG77yrFKzKK291S1zX8RibVXHRmGteCnhzdTP7cvU/MA=
+	t=1757165685; cv=none; b=ecIESbCSxDwWE9CrfJf3ZepnZgejsy3g3GT/FqiFm0kW2wfBLdu8uv7HrmqGy1allnev2Vxs2Gpxy4hGZv3GhsiYnnM8sS3dyug9QyeCge3nEzJsdvP49aCrIx29OUfji+reSXrzxC0WfSXVRuuG++vXIDC3WKE7afJGZR9zXIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757164643; c=relaxed/simple;
-	bh=eWyb4phIDaB9Lh/G9uzUO+x1BpVASAfd4mHwSb0xves=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Roedt5LFYQk9O1+WrRelvXOsvf4mNlwNY0XtYyCvZ0vX8ObiZ/NnoPl3qz/BD6jTJm2Uuw2zo4gQnT31xsRQ+Z1wMawD0Jmmc1358edYPOMAGEqv78cQuYXtbk1VZPht4H54klVJGKMUx3OyAE7CSz5kpE2jmJWAN1N+1UrGAAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0qKjiOc; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1757165685; c=relaxed/simple;
+	bh=A/O9bArQgchRCNE4YOOq/nXP7u364U1IIbj9QaZZDwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPdIbrl0gMPtNRRAFXS7FVfpwGUzmwxwIM9wa0/3ex+CDUZfSlXCV4LOcEla+ZVCJPelHwTntu6EKccKVDXf8kdmcGuGxs6tcw4BI+ZSKQeP1F3jQJGAS/vLqM7s7h83uI5xRpX33k/joKkyViOZGpP+I543CKNxSFSvVCLaTJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=karuOkNi; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0qKjiOc"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so3234281e87.1;
-        Sat, 06 Sep 2025 06:17:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="karuOkNi"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso488882a12.3;
+        Sat, 06 Sep 2025 06:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757164639; x=1757769439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757165682; x=1757770482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xO0aKgv2KbReOFRNCLP5zz82s3c058MLvHztpGFjRTA=;
-        b=e0qKjiOcUhHGDs52URV7GKGO03FsyN04yYwkH7hV+mAuyuNYjk8A0GD1ete5a10JI8
-         PRyS4odwmsx5DVjkPwXqxh6/fCmFbW1HDIBvrRbhffUZq6l9Ma33O53++2HB36hXi6SD
-         GlX0H2sabkhypOEYq3y7anrtbH616nVU/xBSPffAwy350FGTeZoujye9VtFjF64Ey7kG
-         ng84f4AIISgZrZ3EQWp43VHSjiIz/Jq04Kn8dvopi72+JShOeAn5nTxEulYXgoG40b7O
-         BB6JIVFIkyMRGB2/RD3icyQboB//VpfbMGVRcqvpyUYkAi8w86IPU4Vi4xVGBxNfDgTG
-         kEHg==
+        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
+        b=karuOkNiwcNI8+X5MVYiz8+d5jix0m56PJDucveZsgZIERIg/Evh5lCis4thXgrHCd
+         Sjw1E2GQZ0xglXTntXPzKS8TXP/Qrk55WcvHAPAKRgjDPdxzINq2srn6vylzrAjyXBfy
+         RR7NSylPu2Agv18OU2LLETLSIZDjVZqYkuLl3tzPmy5mDDgG2APV7cP274a2h1zDPvss
+         4tznogsTuJo6NX0Yg2qbkr++spJzOTwY0fMavCnPyqDJU2HUhtbYWdGnhqF0ngP/4j0b
+         79AjveWxhRWNKLALF0J3Ib0q6i9zP+TD+TvFms39vvpo2fRz+cJeATKCbu5RMegmRC3P
+         KTfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757164639; x=1757769439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757165682; x=1757770482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xO0aKgv2KbReOFRNCLP5zz82s3c058MLvHztpGFjRTA=;
-        b=AxNe+KNhEKV/DCDicZBeWKlDgjma0VjTrQHv+BoqQTRB1642jkqH7EkPx9AFLXlyX7
-         mpWsEslVqrq5qDqDQ1ZPWz+rciUqSc5ZgxhwWz3dJp7BF2fhxm6LEvwzZ2SadTPN8qhu
-         Jx7M1VcylEzvNwGx7W1I9m7Sp61ITYig6c8pBKJvb/jr0mSnielOa9utqec8L0o1J2Lx
-         E05mBlEPYvpRlloEVSg5CxOwf+r9yR/EYwjjv2hCiTdoTju8cM8uVcsu/hcXMdYHuNyd
-         o7MBufmtmsuc3swjlAKU+YIha+uiyBpj0l4AooafBP1a9NlYpquuKQEu3nD9Lja7SRjY
-         E19g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGWq4VhURHJcLwNqTpbSVNf/JwVDoL02pf78itUcsUcSZDY9Q0pLYnrJU5TnBjgHvtvcXXImyAnlo=@vger.kernel.org, AJvYcCVKOjSNEFPgBSBROTOhxBB98qBLQ06FZO+a76GLuIc0HGkLibQLnxP8IELGMv8RV3/vwwBbesDiSdEBYUo=@vger.kernel.org, AJvYcCVR2F0F9XxQOdZR0704dV6wBfUfkOdFmBv7jy0gzxxPvCxCPbPKOBodgvZb7u7ZGTav+RxZUwkRN+sjX4Jo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQHA6xAn98iCOMUziK692opMCH5Y+WtzY6w2nqognMl5k3smqZ
-	y9F6WU7E202Noy7d0Z6xdLvBd/GloUAHuXLGem0Xarjfi2bXTQNo1nFU
-X-Gm-Gg: ASbGnctbjE4Yk/Fu/HaYKa+gWIDJTAESRPt+TDz/5Ppwc6wa1rqmZ3GhUBagPPNLI6A
-	gGm6eGj3N5E6rYqHUyV55YCVzJVfGkThbACHmqo5LekWVRZ3MihBs5V8i0it4xoky9nXkYpmqEI
-	gMHb0ccG0sVIADlZGpok7cmWI+21xm3GznH8nx4wfXkaS/+455AOerFEsViKQIS7gwesS3wC6ZP
-	DMDmZNZ4PKi9ocqRBQZDNEaNZv5QtcSgBWflsd/P+MArSLBfs6txVDb1AbG0K7M+q4XH/Rx6u8x
-	k8M4NGHTDY6ewYsNCPVvGAIH3yrPA2HWaPR+svgPNVy9cUtalyuIPO5//sZLG30AljjDXA5HiLa
-	rU24TfoO4pTozkg==
-X-Google-Smtp-Source: AGHT+IF0XtiV51Ye0m2nDgyWEyVZWdZXdOMIrgeIT7t+FXgoHro7abHxMEkhc0w1HnmHJgO6z0SnAQ==
-X-Received: by 2002:a05:6512:6d3:b0:560:8c58:6cd7 with SMTP id 2adb3069b0e04-5625f817e0emr722096e87.5.1757164639337;
-        Sat, 06 Sep 2025 06:17:19 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad44f8fsm2312647e87.137.2025.09.06.06.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 06:17:18 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 4/4] ARM: tegra: adjust DSI nodes for Tegra20/Tegra30
-Date: Sat,  6 Sep 2025 16:16:55 +0300
-Message-ID: <20250906131655.239340-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250906131655.239340-1-clamor95@gmail.com>
-References: <20250906131655.239340-1-clamor95@gmail.com>
+        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
+        b=ZZmu6yzWX8rp0hivCdcavyvxN68GV/lo473+d0BcRSk4VyaxgGYVa0VTMf4i6AulhV
+         gTPthAr6LPKYHEaNzwA3jRUoWedQU72b0aQdzwsaCoH6XMXl7nC+AiSsD8FhOFeISIA/
+         AmfwV160dPtVKqMZ0au/LTD7ImVjI0gXCOD1KmbxKQrtw6oHHpzivrH5k/xRtwymv1t9
+         pGGMhS6IcPW6kEMR356cEA6CjT4VTTEifDc3tuYH9xnQ0qBq6IxSnFTqaCSUmwowMPXq
+         tzbBXaWnOesEiynh5QbJfbC4y6sh3DpbGwLtIOxz+14zKQEJ6qOMXlp3ZpuH2zUplmMT
+         c43Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvLZrda18nSPMDEkBa/JhnTUKtPMtZFE3OypDmgOKGLq/eGSAdniuzF+RX4KVwvqaISe1tS7SoBOyzwFQV@vger.kernel.org, AJvYcCXSYxzvizK7dDMzie0EHAAIN1lm7gh+leRiSE7yI3UZZWOLAJ7FtaCtyCOGLJqU/V4KgZCWpsLKa4Lm@vger.kernel.org, AJvYcCXnogxRojYsJ0rPUi8RMcYw0Aga8lKmjaltb/9Y2QaSzYYO/f+3QarCGrOKPqRyJCjXK4vs4szsyegm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmb4CcchjSos8sU/GeS0fU++iE58qFReXm+ap2wDmlAMye2C07
+	wfK+8TWxk2NbQpVMJ8LeM9yMtthYrGJUNfJpj9RJ1GM0nSvQQgnlSDP3QiuB+iQTAosUu10Ihaq
+	/iHQ2cdpAzeQmCfiwL4PBDPad44eHgFw=
+X-Gm-Gg: ASbGnctpTubDRA6u2w81gQ6btRPjs5LtnvfRobtx3r98WAv5BgSI1NRhmLki5Y8ykzA
+	iErZD1Q+8jdCfEvIgEdTwRYhnGSKDWseUr/SZqv8zEdMaOkrv6SOOh+G0WgW+jbyUBq1JZcBYUl
+	KW1PvNMrWS2q31laCfMF+3BMX/hjhKL0p0LWPsi3Dt/MUwmUAmOHQDVplvFcwSbnk2sc0mJzCdn
+	QktBAVKb7f0IJlGoA==
+X-Google-Smtp-Source: AGHT+IFG1phE+ZeZqgW1zMy+uFKSv2Qx1hsWmfAK05w/g8wdzyZKfVxtUYHEK5SPBjzsv/309PI16u5CYZdBDd/9NL0=
+X-Received: by 2002:a05:6402:909:b0:624:6ba9:52c0 with SMTP id
+ 4fb4d7f45d1cf-6246ba9555fmr1617735a12.15.1757165681932; Sat, 06 Sep 2025
+ 06:34:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250905132328.9859-1-cn.liweihao@gmail.com> <20250905132328.9859-3-cn.liweihao@gmail.com>
+ <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org> <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+ <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+In-Reply-To: <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
+Date: Sat, 6 Sep 2025 21:34:25 +0800
+X-Gm-Features: AS18NWBAYmmcyxx9GhaGWWnfw6zHk7za_4uCKBVeQx-mNiFJOJIfxAZlKy9QaMc
+Message-ID: <CAPEOAkSpEzVtUqyUJQbDmbmPOjORnAfuehhvo1qqZgAAeY=ZVA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add missing nvidia,mipi-calibrate and cells properties to DSI nodes.
+Hi,
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra20.dtsi | 4 ++++
- arch/arm/boot/dts/nvidia/tegra30.dtsi | 8 ++++++++
- 2 files changed, 12 insertions(+)
+Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=886=E6=
+=97=A5=E5=91=A8=E5=85=AD 15:21=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 06/09/2025 03:34, =E6=9D=8E=E7=BB=B4=E8=B1=AA wrote:
+> > Hi,
+> >
+> > Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=885=
+=E6=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On 05/09/2025 15:23, WeiHao Li wrote:
+> >>> We need a clock id to assign clock parent when use i2s 8ch as audio
+> >>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can g=
+et
+> >>> frequency we want.
+> >>>
+> >>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+> >>> ---
+> >>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+> >>>  1 file changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bind=
+ings/clock/rk3368-cru.h
+> >>> index b951e29069..795e721957 100644
+> >>> --- a/include/dt-bindings/clock/rk3368-cru.h
+> >>> +++ b/include/dt-bindings/clock/rk3368-cru.h
+> >>> @@ -183,6 +183,9 @@
+> >>>  #define HCLK_BUS             477
+> >>>  #define HCLK_PERI            478
+> >>>
+> >>> +#define CLK_I2S_8CH_PRE              500
+> >>
+> >> 479
+> >>
+> >>> +#define CLK_I2S_8CH_FRAC     501
+> >>
+> >> 480, no?
+> >>
+> >
+> > Neither of these clocks belong to the previous grouping in terms of
+> > type, so I chose to start with a new integer id here.
+>
+> I don't know what is "previous grouping" here, but IDs are abstract and
+> are incremented by 1.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20.dtsi b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-index 5cdbf1246cf8..39c0f791c7ee 100644
---- a/arch/arm/boot/dts/nvidia/tegra20.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra20.dtsi
-@@ -238,7 +238,11 @@ dsi@54300000 {
- 			reset-names = "dsi";
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsi_dvfs_opp_table>;
-+			nvidia,mipi-calibrate = <&csi 3>; /* DSI pad */
- 			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30.dtsi b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-index be752a245a55..fecd4891e751 100644
---- a/arch/arm/boot/dts/nvidia/tegra30.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-@@ -343,7 +343,11 @@ dsi@54300000 {
- 			reset-names = "dsi";
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsia_dvfs_opp_table>;
-+			nvidia,mipi-calibrate = <&csi 3>; /* DSIA pad */
- 			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 
- 		dsi@54400000 {
-@@ -356,7 +360,11 @@ dsi@54400000 {
- 			reset-names = "dsi";
- 			power-domains = <&pd_core>;
- 			operating-points-v2 = <&dsib_dvfs_opp_table>;
-+			nvidia,mipi-calibrate = <&csi 4>; /* DSIB pad */
- 			status = "disabled";
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- 
--- 
-2.48.1
+In the current kernel code, the RK3368 clock IDs are categorized by
+SCLK, ACLK, PCLK, and HCLK.
 
+However, for the I2S 8CH peripheral, the default MCLK output frequency
+depends on I2S_8CH_PRE, which has four possible clock sources:
+i2s_8ch_src, i2s_8ch_frac, ext_i2s, and xin12m.
+
+The parent clock of i2s_8ch_frac is i2s_8ch_src, and the frequency of
+i2s_8ch_src comes from either the CPLL or GPLL.
+
+Due to the clock topology, CLK_I2S_8CH_PRE and CLK_I2S_8CH_FRAC cannot
+be simply categorized as SCLK, ACLK, PCLK, and HCLK mentioned above,
+so I choose to start counting from a new ID.
+
+If this way of assigning IDs is not appropriate, I can modify it to
+increment based on the previous one.
+
+Besh wishes,
+WeiHao
