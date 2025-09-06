@@ -1,105 +1,117 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED3530748A
-	for <linux-clk@vger.kernel.org>; Fri,  5 Sep 2025 21:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E70A55;
+	Sat,  6 Sep 2025 01:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108408; cv=none; b=aU6WwD2L7DvEHsECU4xPFE2duYJ4vcpfW2bNI7WFlTEGW29FcC9jecPldqisH9V042IqeelXm3dqlZozYxe/f8jsafM4y0lznzp9nmS4nz7Okcna9AXIZ9zd5IBAS5h+PoMfuPsI5+pQQQQvB7bdNyFQfBofYSHKv+U8KzyHYaM=
+	t=1757122510; cv=none; b=SvOQhs3T55XCjJRCcyRhBFWE/08Ym2IPS22KqRyWwcgUa+2Ca+F8GQuplpgJDO3ukiyhC7/rZ8B3Vm4OmJeyHtaIGbK4/r7DnYrMJ2hrfZOwXTdh7i3X69/g90P3w4xIHKnAPKK/fvT84l/y1ZA7C8Tlc/Ll7ui87G3I8xyOv9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108408; c=relaxed/simple;
-	bh=EuwPVtHyZtk0Y1lc41SsIpHNM6KNvdVwwJODJaVH/gM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pkzjmKiR9kgBsKbbrBRcMbj1xz0n3Xr+FZQYl0Wm3bSnzokEOBtlCPypBbDBzlUoGhsQ5mwhqt8Jn3UUWPTti5XJPSgj1L8WBTDcjXnbbNrNzrLPu39n40C871SHiLr1uzVPFwSxpW206PGafSC0U1p7uxEyg47kIma1Zq/zAiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24c8ef94e5dso22276295ad.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Sep 2025 14:40:06 -0700 (PDT)
+	s=arc-20240116; t=1757122510; c=relaxed/simple;
+	bh=yuxno6aCRHrUWvFqeYUtAlBYHeeI/Dg5Qu4SNRdlRG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=elRdrBCKQmlP0NvK2PgmrnEYta8qXJ1UGV6yfauX2qF5HAR0tdnHyxlIReICqou04j0ZvnmmGx9c5o0pQ1q8S9J3gQ7ZXMPy0YhrEMBjdH1hDPajgLpzsh+g+85wL00mKWR0TUsotZdscOaNi+KbNZwTkniZirffoFkRCcwOuZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeGEp8jM; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeGEp8jM"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cebce2f78so3295808a12.1;
+        Fri, 05 Sep 2025 18:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757122507; x=1757727307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CqNxXQ4nHpsF+qXR4Dx8odJeFWSsZU+70lFnX5QCDhY=;
+        b=jeGEp8jMxr/onFev5Fc6AmzIF/fLFNxmCkJgXbo5o4XdKkSZA5HMxTTLwYMAWuLvDH
+         PxqYd5VTSNAzwulzmLBkSFc2Q46JLg/+DPxh717qiBXLTrpMbX0mF3QlGXvbsOHg0o4/
+         7ZOO2zhOn42LYFCA+gxJw6+iKAguZmPsa/J9Fma4N2qo7TUUUfO5hTxTDSxt70oXl/CJ
+         m0ApOYioNVzsfBZADIL7fcPjJ8h8hQmJsIUnMeO4BLfkdsqjDHjjNH0PXeB8XwyP0piS
+         wrrBYzZaYqCDDZNHgxE5wD7mTbnhC7VQ3nNsFoBX+gp8F+yv1z9r+tsIq8B+O0ZT5RBh
+         gHAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757108406; x=1757713206;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xirptwLPscOOrD6MjERvQR7+JKo3MLBeTIYrgAFmkYE=;
-        b=wW77v3VEUV+btV0NFRxbTAqWyF9NBUd2t7gzGIQicdzzpywhrMEKr84/qKU40aPrMq
-         HQzu8MNNtlq0E8+/sa67DV5WsomQ4WF0nUTfBna56OFFoj6iqan0vV4VAPwJI/z5jB3F
-         PyNv9m6YJaF200FmbdfnzlElqPn0gVOv8hjLfpHxqNUb1LEioeUKo6UY8LT+sTTXf+Eb
-         YKIMIHpfkpC6tbFvHMorZLgCJNo6Y9F0Ua1sRWIW9vKUaYH1eqhq42Hq20nfE3QDOB1q
-         uAUFF25hzECOuqPucvUpPU5suHaaqTSLY8CqKwG9EH9JZXtu7wVAyTSsw1fs0pP6Yqej
-         /mFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE6Cj8oXQG0/Z8G6RPO6CkovApmlx9H+SchuSlSU8DuN7oEcl/JsKY+mVsx8kNYcxDlbkeScbfj58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMTwsniTwHQ/V2jLtlVNvxg+rcLzDW5pLSiGN2grjiunForlJh
-	793gn4yqlA5lb2C65JkhRSJkSMdLASaXEwaRARmmsPiWweXLBVoNhI+eMw/s1WLshvLRZoCyYRr
-	vXd+n
-X-Gm-Gg: ASbGnctK5JC5r309ytgsUigIzk44PtlWIa3fm2NNfxWwWE8st67VQPsyvQbwVJZT0GH
-	11TyqFjAW14seyZnYmAMOWwvxJWYmoyFZ++jRI+XfNBRc14tT33HA3f/MoGvtpLNpWsb0rwzc3f
-	QIxqFINggerKUYdsBnEXX/yjzBZP37yKoWYF3yBgFZyLbOff51LGTvcWlLf8te0CU7KEuKVUhPE
-	j799ZnFBVv52+MzTm4JjfYVOAg+CDxk/2w1H7Vy8FSsV+2IbjLRdbUCPVXUpj7YWuK2ziDam7q4
-	AIeBQXaTScyhoNs/6JRSUwB5g9SmTBIrS3IceHVcKue22s7IzIUr1LRwq0LKG5NWj1zegQTSerS
-	41Xn/XDn1COYGqB/vnlII
-X-Google-Smtp-Source: AGHT+IFw9MwANXAgB0eCLMrfpT9FSIah/S2jHqgdaTFzPWLL5Scc72YKTjtxBqxKZTvx50aR9gsoUA==
-X-Received: by 2002:a17:903:1c2:b0:24c:affd:6f00 with SMTP id d9443c01a7336-24cef52790fmr57400485ad.14.1757108405639;
-        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
-Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9df827besm74488265ad.152.2025.09.05.14.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>, Tero Kristo
- <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>
-Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Stein
- <alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH 1/1] clk: ti: am33xx: keep WKUP_DEBUGSS_CLKCTRL enabled
-In-Reply-To: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
-References: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
-Date: Fri, 05 Sep 2025 14:40:04 -0700
-Message-ID: <7hms78a897.fsf@baylibre.com>
+        d=1e100.net; s=20230601; t=1757122507; x=1757727307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CqNxXQ4nHpsF+qXR4Dx8odJeFWSsZU+70lFnX5QCDhY=;
+        b=O52ivj/4oZLbdVd6YIdyVJkVadzg77kfdrPi302wukxhz2nSCovJh/OjR2WB9y+RQx
+         UXehByEXmJeCUqETOJvLUVUvjsQqZzuwuYNRBD1XJz1F/7b5YOd0aIpK325MMZ17Zpaw
+         3etIksbhxpoyi8nkmMCPTNcc2NQhE0Hgnl73fKkupbhJjKfZ7zNJk+OyHtZW9lpnWlxz
+         aMuooSTDOVrA6ZzPVeLy9TYMkI1x2mT35diWbwqdqXkYj7MF1gJ7443HKx3ImDvP01Xf
+         D2XpF04SRIj8vOXSrwByEQ6Iv6ciK4tShYjJAjP8i0Vl3x302vqeyPOHASsM8a9gUyc/
+         2RrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmCkZn/VHbRAeWvNu+W+kAvTvYX6AfrvtRYHVVJF8U/dVFKGxpM+hrKxfr2iHWDpyiBvPfsTLWdoMlYhBJ@vger.kernel.org, AJvYcCWNZFAbh0dX+ndzghR7ycrT2hrI7bokU6mxbSahd1fXQH3hLE1B90kq1Ui2s0qFACDRSRelbzHtK3DA@vger.kernel.org, AJvYcCX9bqhHwH4asXug3vulYII1rn1+IauhfmxOV+9o4UOaQ4i2eGPuBEPNToY8byErOioojyCi89Z+FHr3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwXqQ2YYY21M6YU5pYNS8TT7RZuhVP7FnZj/yxw17WG0sPXTGd
+	SiIKt0NHtvskCyDZwEYNuGHeFOLNaNNf6tsfyU6FsiIoz02Fch5/kfXy0MPJ+E2/UNJgz8z/YQH
+	H9MR8YwHY8O7R+vxljsSW0Eg8lIINF998xYqaPX5xWUqw
+X-Gm-Gg: ASbGncsXi3R+CHUOkXIu3TeLQ8qlHL9xkoLskPeFTiJWvmGAhtwgRJI8Q16j4U86Jlt
+	veqqNaapvE1kPSsQ7KXtJjf81GNaAMD+76fMj9fQnpieIimc/ELFb+e/YAn7ksmzSqFZuEtQlcF
+	VFst1u45MalIQz02wAy1pDM+tQvWA/9A2zjyrOix3ZcawNwrP2T00S2Ok6xoaGn8B1RUoWorG2u
+	0fwS+RVDxN6w9vXIg==
+X-Google-Smtp-Source: AGHT+IHUk2XfEP3oZ1qlnnJyiPfNm42Q4P5RUupaRScX2mRrTgQl+/WpyWfrV8JDjZaSVCFI462i2vBCUsBzJ3JREIg=
+X-Received: by 2002:a05:6402:370d:b0:61c:5cac:2963 with SMTP id
+ 4fb4d7f45d1cf-6237f944ec1mr747810a12.29.1757122507114; Fri, 05 Sep 2025
+ 18:35:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250905132328.9859-1-cn.liweihao@gmail.com> <20250905132328.9859-3-cn.liweihao@gmail.com>
+ <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
+In-Reply-To: <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
+From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
+Date: Sat, 6 Sep 2025 09:34:51 +0800
+X-Gm-Features: Ac12FXz_ebvQ7hvtXykd69gMxtD2syeHiyJATPrpJ61FnCFXWiMfi64X3YV7b4Q
+Message-ID: <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alexander Stein <alexander.stein@ew.tq-group.com> writes:
+Hi,
 
-> From: Matthias Schiffer <matthias.schiffer@tq-group.com>
+Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=885=E6=
+=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
 >
-> As described in AM335x Errata Advisory 1.0.42, WKUP_DEBUGSS_CLKCTRL
-> can't be disabled - the clock module will just be stuck in transitioning
-> state forever, resulting in the following warning message after the wait
-> loop times out:
+> On 05/09/2025 15:23, WeiHao Li wrote:
+> > We need a clock id to assign clock parent when use i2s 8ch as audio
+> > device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can get
+> > frequency we want.
+> >
+> > Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+> > ---
+> >  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindin=
+gs/clock/rk3368-cru.h
+> > index b951e29069..795e721957 100644
+> > --- a/include/dt-bindings/clock/rk3368-cru.h
+> > +++ b/include/dt-bindings/clock/rk3368-cru.h
+> > @@ -183,6 +183,9 @@
+> >  #define HCLK_BUS             477
+> >  #define HCLK_PERI            478
+> >
+> > +#define CLK_I2S_8CH_PRE              500
 >
->     l3-aon-clkctrl:0000:0: failed to disable
+> 479
 >
-> Just add the clock to enable_init_clks, so no attempt is made to disable
-> it.
+> > +#define CLK_I2S_8CH_FRAC     501
 >
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> 480, no?
+>
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Neither of these clocks belong to the previous grouping in terms of
+type, so I chose to start with a new integer id here.
 
-> ---
->  drivers/clk/ti/clk-33xx.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-> index 85c50ea39e6da..9269e6a0db6a4 100644
-> --- a/drivers/clk/ti/clk-33xx.c
-> +++ b/drivers/clk/ti/clk-33xx.c
-> @@ -258,6 +258,8 @@ static const char *enable_init_clks[] = {
->  	"dpll_ddr_m2_ck",
->  	"dpll_mpu_m2_ck",
->  	"l3_gclk",
-> +	/* WKUP_DEBUGSS_CLKCTRL - disable fails, AM335x Errata Advisory 1.0.42 */
-> +	"l3-aon-clkctrl:0000:0",
->  	/* AM3_L3_L3_MAIN_CLKCTRL, needed during suspend */
->  	"l3-clkctrl:00bc:0",
->  	"l4hs_gclk",
-> -- 
-> 2.43.0
+Yours,
+WeiHao
