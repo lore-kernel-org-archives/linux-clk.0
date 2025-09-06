@@ -1,112 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EA825B1C5;
-	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DEF1F0E50;
+	Sat,  6 Sep 2025 20:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757186268; cv=none; b=QLAZwZzc8XTNWwtB00FZAIBlcFA6ZFLOL3WKCo/u1yQz5sZUZUUVBM2rfSxJhr+fu9P8be/BhAjJPxSdSakI6U1UalJfhVBzDZUfDTHEzjaqjnYrDskIFq2gdPvDHjdEbZjmvnGg526heDwY46peQbe996zB9rULxAQ6p58J+eM=
+	t=1757189834; cv=none; b=Q3rMIpCqNQAibjWa3J8wGh2nWeQSc5ior8Bq65lBKW05ecYjKjst/4LtIzzO0K5ZDzCCcDsrPbkPsvtBFK7gMO2cMIo70FB5ZivcPeM5Xzr/Cc6DObxp69wN0oWy4r9mBJe86RfrwMI+dSfnn8a/qU+GxXZMh9rgCX6WWzFx4Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757186268; c=relaxed/simple;
-	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=kFtM5W8XU4lMmyp4ADCVVaQya+ze6TJWx7I4iWKdBe3G25i8CaYbLbcrK9thdfq6+3JiyDK276yj//aDJW7ZD40fCC3MwRFQOo2uz3spdnQZ0khgSQtqmaGEpEJ+YgAabWuFibbtBLWKms2dHFazVUZb0SkVEDcWzUoMTYjrrtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRmMeziJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757189834; c=relaxed/simple;
+	bh=Hi8Uf97ociTZBCvVJuSSZJnZFchp84XKT4cetmjVOzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dIzH7G2wF5/WXCfsIOWCKhiU1z7UtQ5GzFoHM28Wv4pr6U5QbSdB/EBkrofpaYbNMrxecoOY1t4tHIxWgxH4Hve52i+ZW3M435ss1oaTjd35MaHPfOmHf5YX2W6uKrx02G53mSeqnoYYGmmD/kqyQC7LOW1sLpDveov7S3t2Jdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzqp8I9i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRmMeziJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C21C4CEE7;
-	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzqp8I9i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF05C4CEE7;
+	Sat,  6 Sep 2025 20:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757186268;
-	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PRmMeziJu1HlJ53s8cvAtqN3495uZxs/Jtw+3b/wl/tpByw8ltRq0GtkKT5oNdf+C
-	 TAPPZz4RcsGIf/NRUAbhLQ1RSKhHGo5C/s6RGcWQE/PKHndd2wjq1zei3fsjuYZt5+
-	 /FxHE04rv5z6gL73pOHTaHTdlXmCUpjihD9LfZFQMUecsAMq/3zSKISSdOJQxTCN3f
-	 4Gw5xhCv7blWlgh30jQ+SKks6wMMmRv7JcZkwuBNy6dCHZBlWltomYuPA1N4Xy687k
-	 lv4lhcd9mWTWgfRbJ0jk8MKkaJeRUwkodnUSY+8hO/LuGvKxnmLYLtAH8FJfzD1M7P
-	 mYZfDluqIseqQ==
-Date: Sat, 06 Sep 2025 14:17:47 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1757189833;
+	bh=Hi8Uf97ociTZBCvVJuSSZJnZFchp84XKT4cetmjVOzQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dzqp8I9in09rvsB5YUwEQh58RW2e6mGeuZ7JLBEMSkVkzg93ve9Mzf4D7yN7lJPuM
+	 TnspyBoziwr5Pxigmz5QPh4jE1eTYlsy+GNqbmk8nFB5No72fOzN+1QmLUTiTwOlEe
+	 s+dPaOV2o5yGg+0DLxN6LSYmw07sW0sI3ocmGmuU5d2OK+u3Gp4o/fam23trWONwrs
+	 77r8Hy8/Pcy3PNgKrNbBp97dDE7VRnpY+ow274vBUaw48RKzrFTrTPSpbU2n8Pn3Hq
+	 9T/GzHwapPomgIGnhWhG6nU0fWuHIf00AMpHZnqDIoFYk7DOw9JfN/ypzutSzjkWSI
+	 M5wtz/aJI9oSw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michal Simek <michal.simek@amd.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: silabs,si5341: Add missing properties
+Date: Sat,  6 Sep 2025 15:16:56 -0500
+Message-ID: <20250906201657.1734462-1-robh@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Charan Pedumuru <charan.pedumuru@gmail.com>, 
- =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
- Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, 
- Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Dmitry Osipenko <digetx@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250906135345.241229-5-clamor95@gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
- <20250906135345.241229-5-clamor95@gmail.com>
-Message-Id: <175718505408.1618397.11958757465445078243.robh@kernel.org>
-Subject: Re: [PATCH v2 04/23] dt-bindings: display: tegra: document Tegra30
- VI and VIP
+Content-Transfer-Encoding: 8bit
 
+Add "clock-output-names" which is a standard property for clock
+providers.
 
-On Sat, 06 Sep 2025 16:53:25 +0300, Svyatoslav Ryhel wrote:
-> Existing Parallel VI interface schema for Tegra20 is fully compatible with
-> Tegra30; hence, lets reuse it by setting fallback for Tegra30.
-> 
-> Adjust existing VI schema to reflect that Tegra20 VI is compatible with
-> Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
-> an enum instead of list of const.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
->  .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
->  2 files changed, 19 insertions(+), 9 deletions(-)
-> 
+Add the "always-on" boolean property which was undocumented, but
+already in use for some time. The flag prevents a clock output from
+being disabled.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/silabs,si5341.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
-	'one0f' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-	'type' was expected
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: Additional properties are not allowed ('one0f' was unexpected)
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250906135345.241229-5-clamor95@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.yaml b/Documentation/devicetree/bindings/clock/silabs,si5341.yaml
+index b4f7efdf0b7b..d6416bded3d5 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si5341.yaml
++++ b/Documentation/devicetree/bindings/clock/silabs,si5341.yaml
+@@ -73,6 +73,8 @@ properties:
+       - const: in1
+       - const: in2
+ 
++  clock-output-names: true
++
+   interrupts:
+     maxItems: 1
+     description: Interrupt for INTRb pin
+@@ -130,6 +132,10 @@ patternProperties:
+         description: Number of clock output
+         maximum: 9
+ 
++      always-on:
++        description: Set to keep the clock output always running
++        type: boolean
++
+       silabs,format:
+         description: Output format
+         $ref: /schemas/types.yaml#/definitions/uint32
+-- 
+2.50.1
 
