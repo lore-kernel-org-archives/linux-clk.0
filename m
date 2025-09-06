@@ -1,99 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E2B1A0728;
-	Sat,  6 Sep 2025 19:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EA825B1C5;
+	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757185977; cv=none; b=YD7HwT8+qUb8mcHjIORD93hmfJ17dLWdOHx9Sf8bchCnDy0u1Ifl3ceCtij/mm1WSSnM4QammgtFQxiaMo1HwKrlbzrHKqV7eEbMNKTCyQpYnoKOKB8pMKiKoHd0ZNVF/irQZU+2NxZvR//EmJ/Rk7l9TXv4T/yu1YWlvRC6GU0=
+	t=1757186268; cv=none; b=QLAZwZzc8XTNWwtB00FZAIBlcFA6ZFLOL3WKCo/u1yQz5sZUZUUVBM2rfSxJhr+fu9P8be/BhAjJPxSdSakI6U1UalJfhVBzDZUfDTHEzjaqjnYrDskIFq2gdPvDHjdEbZjmvnGg526heDwY46peQbe996zB9rULxAQ6p58J+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757185977; c=relaxed/simple;
-	bh=QHY0+QhCJ0gde/ktx4tvJbgsXT6QCzobFLcyaTfoVhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=reY13wWCDMw9dg+2Rl8XQffwBstyEXM9f0dgxtqLlSHdvAljxw9PejaSR1HARX8oHglKJIyazgsQv+Lyoq89KVFUPxsU2lKhafbGaMj0oS1ao99sC3EllKbMsN/WFc2AmEmNZW89aX65TjjhklplvruHowPAtWgjRT8k6Rb/4wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ijb25Xr3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757186268; c=relaxed/simple;
+	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=kFtM5W8XU4lMmyp4ADCVVaQya+ze6TJWx7I4iWKdBe3G25i8CaYbLbcrK9thdfq6+3JiyDK276yj//aDJW7ZD40fCC3MwRFQOo2uz3spdnQZ0khgSQtqmaGEpEJ+YgAabWuFibbtBLWKms2dHFazVUZb0SkVEDcWzUoMTYjrrtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRmMeziJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ijb25Xr3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF72C4CEE7;
-	Sat,  6 Sep 2025 19:12:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRmMeziJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C21C4CEE7;
+	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757185976;
-	bh=QHY0+QhCJ0gde/ktx4tvJbgsXT6QCzobFLcyaTfoVhI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ijb25Xr3nxmCzkM9SHloRJmes2F0WpNk+nFMs4keCuthT9bvUq0ck8ODZMQMiB0Gp
-	 O2ZPVAccI4xifo71rjyV0SGo9y9UUOEV+Ev3EbxQo4+5+1mGLIpkfl3GBEGLRR/o4M
-	 +ga2xcx9X8Zoiiq9P1CqPQEuaKZ2rPppFCSDeU3Na7eWTmlw1dVxGjDSZ3ssfUDfbO
-	 iiGfCaPzZgRLdVHz2W5b4QZ1vl/F9R5Ke8vmdiQqbe3cxjBCVBM0bOgO54uPP2gz7Z
-	 dWoXEnd1JntsOhkU9wZQy1JO82CP9bsg7NDqaCyd7ZKxQNCCYbaq4D/rt2cdNzR//5
-	 CBWRnKYpzkPMg==
-Date: Sat, 6 Sep 2025 12:12:55 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Yao Zi <ziyao@disroot.org>, Icenowy Zheng <uwu@icenowy.me>
-Subject: [GIT PULL] clk: thead: Updates for v6.18
-Message-ID: <aLyHtxrU4mGFfnFs@x1>
+	s=k20201202; t=1757186268;
+	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=PRmMeziJu1HlJ53s8cvAtqN3495uZxs/Jtw+3b/wl/tpByw8ltRq0GtkKT5oNdf+C
+	 TAPPZz4RcsGIf/NRUAbhLQ1RSKhHGo5C/s6RGcWQE/PKHndd2wjq1zei3fsjuYZt5+
+	 /FxHE04rv5z6gL73pOHTaHTdlXmCUpjihD9LfZFQMUecsAMq/3zSKISSdOJQxTCN3f
+	 4Gw5xhCv7blWlgh30jQ+SKks6wMMmRv7JcZkwuBNy6dCHZBlWltomYuPA1N4Xy687k
+	 lv4lhcd9mWTWgfRbJ0jk8MKkaJeRUwkodnUSY+8hO/LuGvKxnmLYLtAH8FJfzD1M7P
+	 mYZfDluqIseqQ==
+Date: Sat, 06 Sep 2025 14:17:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>, 
+ =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, 
+ Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Dmitry Osipenko <digetx@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250906135345.241229-5-clamor95@gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-5-clamor95@gmail.com>
+Message-Id: <175718505408.1618397.11958757465445078243.robh@kernel.org>
+Subject: Re: [PATCH v2 04/23] dt-bindings: display: tegra: document Tegra30
+ VI and VIP
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+On Sat, 06 Sep 2025 16:53:25 +0300, Svyatoslav Ryhel wrote:
+> Existing Parallel VI interface schema for Tegra20 is fully compatible with
+> Tegra30; hence, lets reuse it by setting fallback for Tegra30.
+> 
+> Adjust existing VI schema to reflect that Tegra20 VI is compatible with
+> Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
+> an enum instead of list of const.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
+>  .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
+>  2 files changed, 19 insertions(+), 9 deletions(-)
+> 
 
-are available in the Git repository at:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/thead-clk-for-v6.18
+yamllint warnings/errors:
 
-for you to fetch changes up to c567bc5fc68c4388c00e11fc65fd14fe86b52070:
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
+	'one0f' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
+	'type' was expected
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: Additional properties are not allowed ('one0f' was unexpected)
+	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
 
-  clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL (2025-08-18 14:58:23 -0700)
+doc reference errors (make refcheckdocs):
 
-----------------------------------------------------------------
-T-HEAD clock changes for v6.18
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250906135345.241229-5-clamor95@gmail.com
 
-Updates for the T-HEAD TH1520 clock controller:
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
- - Describe gate clocks with clk_gate so that clock gates can be clock
-   parents. This is similar to the mux clock refactor in 54edba916e29
-   ("clk: thead: th1520-ap: Describe mux clocks with clk_mux").
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
- - Add support for enabling/disabling PLLs. Some PLLs are put into a
-   disabled state by the bootloader, and clock driver now has the
-   ability to enable them.
+pip3 install dtschema --upgrade
 
- - Set all AXI clocks to CLK_IS_CRITICAL. The AXI crossbar of TH1520 has
-   no proper timeout handling, which means gating AXI clocks can easily
-   lead to bus timeout and hang the system. All these clock gates are
-   ungated by default on system reset.
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
- - Convert all current CLK_IGNORE_UNUSED usage to CLK_IS_CRITICAL to
-   prevent unwanted clock gating.
-
- - Fix parent of padctrl0 clock, fix parent of DPU pixel clocks and
-   support changing DPU pixel clock rate.
-
-All changes have been tested in linux-next.
-
-Signed-off-by: Drew Fustini <fustini@kernel.org>
-
-----------------------------------------------------------------
-Icenowy Zheng (5):
-      clk: thead: th1520-ap: describe gate clocks with clk_gate
-      clk: thead: th1520-ap: fix parent of padctrl0 clock
-      clk: thead: add support for enabling/disabling PLLs
-      clk: thead: support changing DPU pixel clock rate
-      clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL
-
-Michal Wilczynski (1):
-      clk: thead: Correct parent for DPU pixel clocks
-
- drivers/clk/thead/clk-th1520-ap.c | 503 ++++++++++++++++++++++----------------
- 1 file changed, 292 insertions(+), 211 deletions(-)
