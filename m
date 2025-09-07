@@ -1,81 +1,72 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E58F35950;
-	Sun,  7 Sep 2025 03:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822A1DF979;
+	Sun,  7 Sep 2025 09:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757215062; cv=none; b=NmrfWGf+Fa202kIjXeqbSMRv2mzbdc1XnyXDy3Sh5EPBHGqCVXGps4iaFfLFp52VrzXO0l98NSp71D01ecPZte5UkNYhe5M7bzos/dxPOC1ngjAahIL0WpNW92uBnJMGWOxJ5+JbRYh/GFbPSRPQF7IzcHZ2T19mySe/txWTdC8=
+	t=1757236351; cv=none; b=YJZgampXC/VQU2J1rTA7JKKqawH1LtokwhHyWGej2nmqD4pHBVDmsA24A7urJyXjRO4rJGz3Zq6udQ8K+wyioW8e6DmSRZ8vYKX94XaPSZ50BwNqd7cfyZprfxnMbR8kloj5sAx/CB45xBilf4/RB7X3L3W2osj3zKoZ2+aViD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757215062; c=relaxed/simple;
-	bh=LhDHTlcfR1jGlZto3p6JzzhQfbrunIuTuGNvuvqpJWo=;
+	s=arc-20240116; t=1757236351; c=relaxed/simple;
+	bh=mfGSVCyqkFfhc9bRNihF8aTujKJxsawJCfMEkmaqVJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTpFUji+qbHe+WxbTpreuHRFdmi0V6BeNVsGm+oNb8Thxtdw7NFCp2QPDk6yeom+OxpJzgGHfniGJvOwVekknmI+ge/8TgKiCjF1JJXKyKgWu8UIGD8gRFbILjwDyEZrfb6QCBLhIvmLjO5oigQx6DortiBH0r/dWlgz2bYEToI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=jrWfrwVv; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFFGKjXamnOHu8rs82qGFz9TcUkJdjNlGj9raplYor7syCl8nvRZBQuayQnujRKCWOrLRbMSYoVPHZqjSBYN9LL6rcAATdCe3LR1sh6O9XCtamsGkp3Edcnk94iJbn+iXNi3vjmbYqGYOTteRRs9pawN9nB2d0eadS5ghMrlFUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojIDPb2Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="jrWfrwVv"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 7772D20E83;
-	Sun,  7 Sep 2025 05:17:38 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 8t3ZYEGffzYV; Sun,  7 Sep 2025 05:17:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1757215057; bh=LhDHTlcfR1jGlZto3p6JzzhQfbrunIuTuGNvuvqpJWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jrWfrwVvsp5VR5ASaKQCO0jC+3CL6AoWx6zFsTPONS1ul+pILsdE6xQfe5oHrOgbg
-	 yNKw6gCy8+kBwGl9bVE+U6elHWFtNqJzjhtOrYeePFNhEK+oP2k8PgiY6ypUxAWnqL
-	 Eqbr7JmA89v3x1q0pS3inbCvfvHYKpA/jXN3nRRn7Ckmc9upfw+O5STwWo2sbLB1Ym
-	 FZ6IdAQZcCQHM/yYjLWtI12ugh2CJoLdVDsnHfXOhgVK+Vg5pVwdt9GYe3v/SiWyRw
-	 pZWZh2C+CuNlqz8Xbs4ZntgGi5S0EtHpuQsPrnrrIlA6flrLkblWWq+hfl3rlZxhT8
-	 WSKXzQqrsmMDQ==
-Date: Sun, 7 Sep 2025 03:17:26 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v8 2/3] clk: canaan: Add clock driver for Canaan K230
-Message-ID: <aLz5RsjBoi0KVGSJ@pie>
-References: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
- <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com>
- <aLz4Q7LZFEfQQGUj@pie>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojIDPb2Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A54C4CEF0;
+	Sun,  7 Sep 2025 09:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757236351;
+	bh=mfGSVCyqkFfhc9bRNihF8aTujKJxsawJCfMEkmaqVJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ojIDPb2ZIBmvtvGTbN/hags6A2eFZ9ypaCQhQMLtpHLmRaCAi3qwER218gM4IPmFp
+	 hLNGCO4Rm2RssSlPwjK1FhWljoCBDUOi90NAHaWi+0Dri7pC14nq8zrl4gIypuQXUM
+	 FPOZS4vWGNM3+7/lhrBneaiamVQgi45WVJB38N40S9Nsg6tHPkwWs94ICXxpLTpvpA
+	 lsKtiqJH7BKTjpnoiAXjABHMLiiGTWUgnk3iUPn5Ca3LBTYQ2meIzbrC5AeL8NCGfQ
+	 VF7Vgf69FbZd7pUXUgS2UhaOHMjcADb4A6/l4VisQoscCZxUb+l/7ZgtnVp6OEd4qJ
+	 koheN36AO2oAg==
+Date: Sun, 7 Sep 2025 11:12:28 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: samsung: exynos990: Add PERIC0 and PERIC1
+ clock support
+Message-ID: <20250907-provocative-roaring-butterfly-cfaccf@kuoka>
+References: <20250904-perics-usi-v3-0-3ea109705cb6@gmail.com>
+ <20250904-perics-usi-v3-3-3ea109705cb6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aLz4Q7LZFEfQQGUj@pie>
+In-Reply-To: <20250904-perics-usi-v3-3-3ea109705cb6@gmail.com>
 
-On Sun, Sep 07, 2025 at 03:13:07AM +0000, Yao Zi wrote:
-> > +struct k230_clk_rate_self {
-> > +	struct clk_hw	hw;
-> > +	void __iomem	*reg;
-> > +	bool		read_only;
+On Thu, Sep 04, 2025 at 02:07:13PM +0000, Denzeel Oliva wrote:
+> Add clock controller support for Peripheral Connectivity 0 and 1 blocks.
+> These provide clocks for USI, I2C and UART peripherals.
 > 
-> Isn't a read-only multiplier, divider or something capable of both a
-> simple fixed-factor hardware? If so please switch to the existing clock
-> hardware, instead of introducing a field in description of rate clocks.
+> Some clocks need to be marked as critical to prevent system hang when
+> disabled.
 > 
-> It's worth noting that you've already had at least one fixed-rate clock
-> (shrm_sram_div2).
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos990.c | 1152 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 1152 insertions(+)
+> 
 
-It should be "fixed-factor" clock instead of "fixed-rate" clock, sorry
-for the typo.
+CHECK: Alignment should match open parenthesis
 
-Regards,
-Yao Zi
+
+Best regards,
+Krzysztof
+
