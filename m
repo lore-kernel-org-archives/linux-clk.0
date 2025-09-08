@@ -1,92 +1,103 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41C219A86;
-	Mon,  8 Sep 2025 20:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E841B87E8;
+	Mon,  8 Sep 2025 23:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757362035; cv=none; b=vDwIGjP2c72aiZmJEAA7WLJLaYhbgPnVdM+NtXf60/r4N+wvsw4+OxLZzgba1jyudK5p5sv0f1/EluC04mLdF0wti5H3l7WRuvhtSxT0P8qorP2HeW6Emt+5zGVltT5jQUDft99TRfjlM/CoYhUzyu6crZTwp7QgOnWDiE0ga88=
+	t=1757374763; cv=none; b=QTkELTmBIlTxo0j36i95CdGoU0q6Y1iE4OBnYPO2saEM7GrAAGw+2Mjr4Aww7bsiaX+5X2DH3gMu0NlF7lU9+E/HUO/n7NU4HMlJI1nSqXFTHmd6cGc26Dg98kJc+QnhgnrchL2M8QKztFPaIxjCbmiyTkt3/2USFcHQsMU69Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757362035; c=relaxed/simple;
-	bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7i4nfVICqgUJIudW1zJtFqs5LiNdhimtshGgkNBs+IBu1OCNtVb4uUutReCZ8giBDMxZc2fTJ0xxPWDE+gh4aL3WqqSijvoWdjVSNH572C825nUmZEijzA6ALDR+afJN7m44Ubmw1CRSkO/UPRrb29JS6k0BJ+9+Fu/AOBfDuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kaxq5pcp; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1757374763; c=relaxed/simple;
+	bh=Q03Q1QdCh+FVjubFdk49psMRgmBtn6TP8GD5Q0vmpcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDTY5D3TUiU32EDGlECwK+O/pG/8BGEXmQLE8uYd8m/bYvC3eNaaufarxb804jA8UwbBAWxdscftQlNkfMhPQeSZQnQv/6XQFo+QkhzvuuVMb8mze+Pzd+ttq+9hGsMEPbgiEaJmyGjIyIHlH5Nr4W9AxPf1c2XhRqr0+Ez+eoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VXVBtK6m; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kaxq5pcp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757362035; x=1788898035;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BoqMfXbExT7t634yESc/SibX5EIdQetlbFOZlCukLw0=;
-  b=kaxq5pcpCug2K8NkfBFZe0rqgNJY8RQU2vXA29a172zw1nyv54tesbn7
-   LlCguINCf/b0F3B4S1ymznq2xDU3PMytvizKzsH1JPEOQqzDmYpGz5C1z
-   FiGlRkWHm07+zLOqZ8ZU3tP+juckoN3m5UgCVmU358ouCb31/PrxXPDjZ
-   mCSpysqnUBkLbJaJ8TH4skphrnH990yigMX8UkejcV/uhZlscpdfN66/V
-   mPwTM4mHXPGqeNS5TBGesmGWjAvLSR7KXHEUBaBr7UbSy22NlHm6UwI1a
-   azfAqiukbPcfhsEnmqDdC+LWGcOCxmcRR1ALqJacwVQKeKLdpjSDN8DxQ
-   Q==;
-X-CSE-ConnectionGUID: EMpCwBz3Ssqhzk3id+g8NQ==
-X-CSE-MsgGUID: Z2lHKD+gRSG+WU2V/cbPIA==
-X-IronPort-AV: E=Sophos;i="6.18,249,1751266800"; 
-   d="scan'208";a="277602015"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Sep 2025 13:07:08 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 8 Sep 2025 13:06:37 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 8 Sep 2025 13:06:37 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH] clk: at91: clk-master: Add check for divide by 3
-Date: Mon, 8 Sep 2025 13:07:17 -0700
-Message-ID: <20250908200725.75364-1-Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VXVBtK6m"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cLNhP5g1xz9stK;
+	Tue,  9 Sep 2025 01:39:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757374757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6loKHnERR6UQJlGUtEQ3+3fogYBwTr8txF5Ji+qXuY=;
+	b=VXVBtK6mXUfaVqVUbAwXZk4vf3gBlosdFyQkADIFM7YPJD0BuXmyZtLP/gWnX49fLxLWmS
+	TvYWCqgevy3ANpxrGU1FuxPOfB02fv2PcckuuSfUtHsLqy9xmmdMFbY2v1e2Y98GOYUcGk
+	FbBB/kiOVrj+Jre+jYhGFch8aPLgcRrNCtjGRIsS8zWOzLYfw+RXT/fR+Z2rPBB3LZgcCC
+	S5QjAAzduh1mysaLLq6zphP+oa8kVMEVSASePJ+YwGA6tHUG2Qso8V+KUEMHf4/fQ1VLE1
+	N6sG0fUjP+5898B4FVmylOx1Jm6DnKBsCiFnCRkwZyEz8ZUrVap7cZC/z8lbOA==
+Message-ID: <afe58aa6-0c3e-4508-8133-8e7621a0484a@mailbox.org>
+Date: Tue, 9 Sep 2025 01:39:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
+ imx9*-power.h into dt-bindings
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ E Shattow <e@freeshell.de>
+References: <20250831200516.522179-1-e@freeshell.de>
+ <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
+ <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
+ <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
+ <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
+ <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
+ <be2fc937-b7a6-49a7-b57d-6e3f16f4ccc3@mailbox.org>
+ <20250904093442.GA13411@nxa18884-linux.ap.freescale.net>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20250904093442.GA13411@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 6pky7gdj4zuqu4e5ou56mtyfkp7ssjjh
+X-MBO-RS-ID: fbc66ab64366b5ef5dd
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 9/4/25 11:34 AM, Peng Fan wrote:
 
-A potential divider for the master clock is div/3. The register
-configuration for div/3 is MASTER_PRES_MAX. The current bit shifting
-method does not work for this case. Checking for MASTER_PRES_MAX will
-ensure the correct decimal value is stored in the system.
+Hi,
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/clk-master.c | 3 +++
- 1 file changed, 3 insertions(+)
+sorry for my late reply.
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 7a544e429d34..d5ea2069ec83 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -580,6 +580,9 @@ clk_sama7g5_master_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_master *master = to_clk_master(hw);
- 
-+	if (master->div == MASTER_PRES_MAX)
-+		return DIV_ROUND_CLOSEST_ULL(parent_rate, 3);
-+
- 	return DIV_ROUND_CLOSEST_ULL(parent_rate, (1 << master->div));
- }
- 
--- 
-2.43.0
+>> Instead of playing this "I found this code somewhere, so I can do
+>>> whatever the same" answer the first implied question - why these are
+>>> bindings? Provide arguments what do they bind.
+>>
+>> I am not sure how to answer this, but what I can write is, that if I scramble
+>> these IDs in either the DT or the firmware (which provides the SCMI clock
+>> service), then the system cannot work. I am not sure if this is the answer
+>> you are looking for.
+> 
+> Marek,
+>    Some U-Boot code indeed directly use the IDs to configure the clock without
+>    relying on any drivers. Since the SCMI IDs could not be moved to dt-bindings,
 
+Why can they not be moved to DT bindings ?
+
+They are part of the ABI.
+
+This is the part I do not understand, the SCMI IDs are no different than 
+any other clock IDs used in DT, is that not so ?
+
+>    the possible method to do in U-Boot is to duplicate a copy of the file,
+
+No.
