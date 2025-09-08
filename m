@@ -1,373 +1,199 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF1A2FDC53;
-	Mon,  8 Sep 2025 14:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757340839; cv=pass; b=tQSRRIB2x5QbTGy/FfNr388eoxLsFMtcQkMdqcsJTMhGBtjn+f8lbq5c4iDLMnaS6KAgBfBKlI8DgXn3cKbRzi+n7qRkcbSGIji//53Do7+PbOHYAVlAQDLgm30/YjDMLp5vvwbhVImUBZmWiVoib7hnH6h1oX6ETydFEq+uRzY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757340839; c=relaxed/simple;
-	bh=1L4kJL3UJUTzEDDNFNP7ZgGEfdrGBGYl9Q/dHHEvhMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYMbS2Jwz3omWEmIW0MjgLi5C1FIOXm8+WSRXgIx2nde5osJBGRBTmZ357nfTVcEJBfRTy3LqN0RtVN++jJ9aNuHfMtIy9Ic8Ewaw2ClRXbTCTpV1sZlyalkNdX55UzOZP+RIzBEQ/Lqt69YUJQgvE/xui2PiaORGSTpknTkpak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=fAzFDKRW; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A8630C616;
+	Mon,  8 Sep 2025 15:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757345127; cv=none; b=SXmUjeTeZ2iwF4hocWtdHz9doP2HB/ap5hTMETPfgvUB9ZkjrdjBc1nEjg0JJFl9MxfXgiU//o/NqFrIygs/d51RTlhgkdYCYqw1MusykxU5suoSqyu/W3/l9hat+8DmqHfsSTIv1rgTogHrxCC36ZDatUFs9xjcbQnXXDRmTbo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757345127; c=relaxed/simple;
+	bh=xze1+fxvsPzdRtMPODz1XPQ0lxdL5slP1XUd9qQL0ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuDSZubRb2QsXPjnppXJOX5dcaGtQkZNQWQ0y0IqfRPuSCGNQVnwDlN83kED0FqkPAM2a+ToAyYsEuoK7WuEsIjP2g29JZ8QZpYICe0fedNrBe7u9RET34vURH3Co/DCnfUGRIb2MJWZpRYMQWVmEqvRngLCJzw+coCQNSTOMsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyTU68Y+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="fAzFDKRW"
-ARC-Seal: i=1; a=rsa-sha256; t=1757340821; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HY1W1rb3UWJjXA4GWgwrCg3WFkQYKp1HxUYChOQp3hLHVwQmGlreUJ7mJwoAZN9IWGGGMSS58l6BY4O88C8jkfzlujM0PWICCdBvDCM1UIKSB4FViavBd39KBrBvC+G6MdoKUdRCyyAziCEkOG0c4p8kmE15p8+mw3IOSckdVh8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757340821; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=D7dn87T1Q/YhXyIChz9la9EUN9N/WrqpB+mjFuCaq8M=; 
-	b=oCoF7sKbhb1bY8MBY26jtyvrM6IKx3Ifx1TrBY7xQuB2JAJ6TafPnxd+q/Vb1CCBq0PqC93uAVaVf8KseSDKeU1CZGnHf3sTQ6x8MGy87EqZTn8144CIREu2l3Ls+jWsN1o/ukf3QbJYLS5z6fB1+YCKIwzifeDT0GqEObu3w8U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757340821;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=D7dn87T1Q/YhXyIChz9la9EUN9N/WrqpB+mjFuCaq8M=;
-	b=fAzFDKRW67DZIKvriEmeGKwNktUD9kT8p1+18uMw43hFU0ZWUgF7va0Aom3vwjPl
-	xOqPlSXBITAEhLbBU4WtsKg+6bmDMldmi2bPZNOe3JSYE4n4GjXrEBM8p2ppjOiEcS1
-	PGR9TQ0WJBjxwZoXYMSBpU/FHgseaGM9t+eznWVo=
-Received: by mx.zohomail.com with SMTPS id 1757340814629883.3802401714803;
-	Mon, 8 Sep 2025 07:13:34 -0700 (PDT)
-Message-ID: <0947d9cc-86ba-46e0-92aa-04f4714e7a20@zohomail.com>
-Date: Mon, 8 Sep 2025 22:13:15 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyTU68Y+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99800C4CEF1;
+	Mon,  8 Sep 2025 15:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757345127;
+	bh=xze1+fxvsPzdRtMPODz1XPQ0lxdL5slP1XUd9qQL0ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KyTU68Y+L8AxoUgOYplOYbRD7vcfIix5f1zj7y9rUsF0mCwiuVtMC51iUrXdh6Kio
+	 ffjp/kvxXdzVnq604zNpCEIWfzK/19XZo2gHHJqakbo9/GZFOKfRnaCk/0XJbxGjpw
+	 sGUOEAJwxO7AZBvrlQ5cDq0PyUVsi7zrMsOQbIdUQ3HifsTm1wyu/I4GMJYK0KUveV
+	 DSM0lcKrm5mk3A1Htr7dSnyVsWdkNVGpQOsMyLXPZf9n7TTvqIGfYDzfn409+Di0My
+	 QFXFC70/OORIVYFcRwFvyrb+9ROBhPszeSJAUiw8XT2p8m8/pSd7dd0Vtc3yc3FMeF
+	 pH1XDfrsdC8MQ==
+Date: Mon, 8 Sep 2025 20:55:15 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <qghspbzkde5rftdtqmrqt4v5qkx4hakqwdklotlf6vaj55tpmb@aoixy7umnrqj>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+ <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+ <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
+ <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
+ <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
+ <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
+ <742cf1ae-1723-4cf5-8931-afd35699cc95@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/3] clk: canaan: Add clock driver for Canaan K230
-To: Yao Zi <ziyao@disroot.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
- <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com> <aLz4Q7LZFEfQQGUj@pie>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <aLz4Q7LZFEfQQGUj@pie>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227f7ec689b3a1cc24ae91973f30000be427d4c8078f809808da5614982b6ab992c7250b1278ceefc:zu08011227438f7af4f083e7026300f4d400000fbe94f06e0793af23973735d85f8d1e64b7706faea7ad9aad:rf0801122c56cc4189672bcef28f1e80d3000043dc8331194374bd3027e2bf5ba8e1559fece2c3849fc43722bf23cf923e:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <742cf1ae-1723-4cf5-8931-afd35699cc95@tuxon.dev>
 
+On Mon, Sep 08, 2025 at 04:06:50PM GMT, Claudiu Beznea wrote:
+> Hi, Manivannan,
+> 
+> On 9/1/25 18:54, Manivannan Sadhasivam wrote:
+> > On Mon, Sep 01, 2025 at 04:22:16PM GMT, Geert Uytterhoeven wrote:
+> >> Hi Mani,
+> >>
+> >> On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >>> On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
+> >>>> On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >>>>> On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+> >>>>>> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+> >>>>>>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> >>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>>>>>>
+> >>>>>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> >>>>>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> >>>>>>>> only as a root complex, with a single-lane (x1) configuration. The
+> >>>>>>>> controller includes Type 1 configuration registers, as well as IP
+> >>>>>>>> specific registers (called AXI registers) required for various adjustments.
+> >>>>>>>>
+> >>>>>>>> Hardware manual can be downloaded from the address in the "Link" section.
+> >>>>>>>> The following steps should be followed to access the manual:
+> >>>>>>>> 1/ Click the "User Manual" button
+> >>>>>>>> 2/ Click "Confirm"; this will start downloading an archive
+> >>>>>>>> 3/ Open the downloaded archive
+> >>>>>>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> >>>>>>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> >>>>>>>>
+> >>>>>>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> >>>>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>>
+> >>>>>>>> +  ret = pm_runtime_resume_and_get(dev);
+> >>>>>>>> +  if (ret)
+> >>>>>>>> +          return ret;
+> >>>>>>>> +
+> >>>>>>>
+> >>>>>>> Do you really need to do resume_and_get()? If not, you should do:
+> >>>>>>
+> >>>>>> It it's needed to enable the clock PM domain the device is part of.
+> >>>>>>
+> >>>>>
+> >>>>> I've replied below.
+> >>>>>
+> >>>>>>>
+> >>>>>>>     pm_runtime_set_active()
+> >>>>>>>     pm_runtime_no_callbacks()
+> >>>>>>>     devm_pm_runtime_enable()
+> >>>>
+> >>>>>>>> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> >>>>>>>> +{
+> >>>>>>>> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> >>>>>>>> +  const struct rzg3s_pcie_soc_data *data = host->data;
+> >>>>>>>> +  struct regmap *sysc = host->sysc;
+> >>>>>>>> +  int ret;
+> >>>>>>>> +
+> >>>>>>>> +  ret = pm_runtime_put_sync(dev);
+> >>>>>>>> +  if (ret)
+> >>>>>>>> +          return ret;
+> >>>>>>>
+> >>>>>>> Since there are no runtime callbacks present, managing runtime PM in the driver
+> >>>>>>> makes no sense.
+> >>>>>>
+> >>>>>> The PCIe device is part of a clock power domain. Dropping
+> >>>>>> pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
+> >>>>>> IP failing to work as its clocks will not be enabled/disabled. If you don't
+> >>>>>> like the pm_runtime_* approach that could be replaced with:
+> >>>>>>
+> >>>>>> devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
+> >>>>>> suspend/resume. W/o clocks the IP can't work.
+> >>>>>
+> >>>>> Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
+> >>>>> if you have a power domain attached to the IP, which you also do as I see now.
+> >>>>> So to conclude, you should enable/disable the clocks explicitly for managing
+> >>>>> clocks and use runtime PM APIs for managing the power domain associated with
+> >>>>> clock controller.
+> >>>>
+> >>>> Why? For the past decade, we've been trying to get rid of explicit
+> >>>> module clock handling for all devices that are always part of a
+> >>>> clock domain.
+> >>>>
+> >>>> The Linux PM Domain abstraction is meant for both power and clock
+> >>>> domains.  This is especially useful when a device is present on multiple
+> >>>> SoCs, on some also part of a power domain,  and the number of module
+> >>>> clocks that needs to be enabled for it to function is not the same on
+> >>>> all SoCs.  In such cases, the PM Domain abstraction takes care of many
+> >>>> of the integration-specific differences.
+> >>>
+> >>> Hmm, my understanding was that we need to explicitly handle clocks from the
+> >>> consumer drivers. But that maybe because, the client drivers I've dealt with
+> >>> requires configuring the clocks (like setting the rate, re-parenting etc...) on
+> >>> their own. But if there is no such requirement, then I guess it is OK to rely on
+> >>> the PM core and clock controller drivers.
+> >>
+> >> When you need to know the actual clock rate, or change it, you
+> >> indeed have to handle the clock explicitly.  But it still may be enabled
+> >> automatically through the clock domain.
+> >>
+> > 
+> > Yeah!
+> > 
+> >>>>> But please add a comment above pm_runtime_resume_and_get() to make it clear as
+> >>>>> most of the controller drivers are calling it for no reason.
+> >>>>
+> >>>> Note that any child device that uses Runtime PM depends on all
+> >>>> its parents in the hierarchy to call pm_runtime_enable() and
+> >>>> pm_runtime_resume_and_get().
+> >>>
+> >>> Two things to note from your statement:
+> >>>
+> >>> 1. 'child device that uses runtime PM' - Not all child drivers are doing
+> >>> runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
+> >>> unless they depend on the parent for resource enablement as below.
+> >>
+> >> It indeed depends on the child device, and on the bus.  For e.g. an
+> >> Ethernet controller connected to a simple SoC expansion bus, the bus must
+> >> be powered and clock, which is what "simple-pm-bus" takes care of
+> >> ("simple-bus" does not).
+> >>
+> > 
+> > Right. But most of the PCI controller drivers call pm_runtime_resume_and_get()
+> > for no good reasons. They might have just copied the code from a driver that did
+> > it on purpose. So I tend to scrutinize these calls whenever they get added for a
+> > driver.
+> 
+> To be sure I will prepare the next version with something that was
+> requested: are you OK with keeping pm_runtime_resume_and_get() and add a
+> comment for it?
+> 
 
-On 2025/9/7 11:13, Yao Zi wrote:
->> On Fri, Sep 05, 2025 at 11:10:23AM +0800, Xukai Wang wrote:
->> This patch provides basic support for the K230 clock, which covers
->> all clocks in K230 SoC.
->>
->> The clock tree of the K230 SoC consists of a 24MHZ external crystal
->> oscillator, PLLs and an external pulse input for timerX, and their
->> derived clocks.
->>
->> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>  drivers/clk/Kconfig    |    6 +
->>  drivers/clk/Makefile   |    1 +
->>  drivers/clk/clk-k230.c | 2456 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 2463 insertions(+)
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 299bc678ed1b9fcd9110bb8c5937a1bd1ea60e23..b597912607a6cc8eabff459a890a1e7353ef9c1d 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -464,6 +464,12 @@ config COMMON_CLK_K210
->>  	help
->>  	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
->>  
->> +config COMMON_CLK_K230
->> +	bool "Clock driver for the Canaan Kendryte K230 SoC"
->> +	depends on ARCH_CANAAN || COMPILE_TEST
->> +	help
->> +	  Support for the Canaan Kendryte K230 RISC-V SoC clocks.
->> +
->>  config COMMON_CLK_SP7021
->>  	tristate "Clock driver for Sunplus SP7021 SoC"
->>  	depends on SOC_SP7021 || COMPILE_TEST
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index fb8878a5d7d93da6bec487460cdf63f1f764a431..5df50b1e14c701ed38397bfb257db26e8dd278b8 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -51,6 +51,7 @@ obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
->>  obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
->>  obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
->>  obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
->> +obj-$(CONFIG_COMMON_CLK_K230)		+= clk-k230.o
->>  obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
->>  obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
->>  obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
->> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..2ba74c008b30ae3400acbd8c08550e8315dfe205
->> --- /dev/null
->> +++ b/drivers/clk/clk-k230.c
->> @@ -0,0 +1,2456 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Kendryte Canaan K230 Clock Drivers
->> + *
->> + * Author: Xukai Wang <kingxukai@zohomail.com>
->> + * Author: Troy Mitchell <troymitchell988@gmail.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/spinlock.h>
->> +
->> +#include <dt-bindings/clock/canaan,k230-clk.h>
->> +
->> +/* PLL control register bits. */
->> +#define K230_PLL_BYPASS_ENABLE			BIT(19)
->> +#define K230_PLL_GATE_ENABLE			BIT(2)
->> +#define K230_PLL_GATE_WRITE_ENABLE		BIT(18)
->> +#define K230_PLL_OD_SHIFT			24
->> +#define K230_PLL_OD_MASK			0xF
->> +#define K230_PLL_R_SHIFT			16
->> +#define K230_PLL_R_MASK				0x3F
->> +#define K230_PLL_F_SHIFT			0
->> +#define K230_PLL_F_MASK				0x1FFF
->> +#define K230_PLL_DIV_REG_OFFSET			0x00
->> +#define K230_PLL_BYPASS_REG_OFFSET		0x04
->> +#define K230_PLL_GATE_REG_OFFSET		0x08
->> +#define K230_PLL_LOCK_REG_OFFSET		0x0C
-> Maybe FIELD_PREP() and FIELD_GET() would help for the PLL-related
-> rountines, and you could get avoid of writing shifts and masks by hand.
-OK, I've already replaced the manual shifts and masks with GENMASK() and
-FIELD_GET().
->
-> ...
->
->> +struct k230_clk_rate_self {
->> +	struct clk_hw	hw;
->> +	void __iomem	*reg;
->> +	bool		read_only;
-> Isn't a read-only multiplier, divider or something capable of both a
-> simple fixed-factor hardware?
-You're right. None of the rate clocks are read-only, so this flag is
-unnecessary and should be removed.
-> If so please switch to the existing clock
-> hardware, instead of introducing a field in description of rate clocks.
->
-> It's worth noting that you've already had at least one fixed-ra te clock
-> (shrm_sram_div2).
+Yes!
 
->
->> +	u32		write_enable_bit;
->> +	u32		mul_min;
->> +	u32		mul_max;
->> +	u32		mul_shift;
->> +	u32		mul_mask;
->> +	u32		div_min;
->> +	u32		div_max;
->> +	u32		div_shift;
->> +	u32		div_mask;
->> +	/* ensures mutual exclusion for concurrent register access. */
->> +	spinlock_t	*lock;
->> +};
-> ...
->
->> +static int k230_clk_find_approximate_mul_div(u32 mul_min, u32 mul_max,
->> +					     u32 div_min, u32 div_max,
->> +					     unsigned long rate,
->> +					     unsigned long parent_rate,
->> +					     u32 *div, u32 *mul)
->> +{
->> +	long abs_min;
->> +	long abs_current;
->> +	long perfect_divide;
->> +
->> +	if (!rate || !parent_rate || !mul_min)
->> +		return -EINVAL;
->> +
->> +	perfect_divide = (long)((parent_rate * 1000) / rate);
->> +	abs_min = abs(perfect_divide -
->> +		     (long)(((long)div_max * 1000) / (long)mul_min));
->> +
->> +	*div = div_max;
->> +	*mul = mul_min;
->> +
->> +	for (u32 i = div_max - 1; i >= div_min; i--) {
->> +		for (u32 j = mul_min + 1; j <= mul_max; j++) {
->> +			abs_current = abs(perfect_divide -
->> +					 (long)(((long)i * 1000) / (long)j));
->> +
->> +			if (abs_min > abs_current) {
->> +				abs_min = abs_current;
->> +				*div = i;
->> +				*mul = j;
->> +			}
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
-> This looks like a poor version of rational_best_approximation(). Could
-> you please consider switching to it?
-OK, I've switched k230_clk_find_approximate_mul_div() to use
-rational_best_approximation().
+- Mani
 
-Additionally, since rational_best_approximation() only supports setting
-the maximum value for numerator and denominator, I added extra checks
-after the call to ensure that the resulting values are not lower than
-mul_min and div_min.
->
->> +static int k230_clk_set_rate_mul(struct clk_hw *hw, unsigned long rate,
->> +				 unsigned long parent_rate)
->> +{
->> +	struct k230_clk_rate *clk = hw_to_k230_clk_rate(hw);
->> +	struct k230_clk_rate_self *rate_self = &clk->clk;
->> +	u32 div, mul, mul_reg;
->> +
->> +	if (rate > parent_rate)
->> +		return -EINVAL;
->> +
->> +	if (rate_self->read_only)
->> +		return 0;
->> +
->> +	if (k230_clk_find_approximate_mul(rate_self->mul_min, rate_self->mul_max,
->> +					  rate_self->div_min, rate_self->div_max,
->> +					  rate, parent_rate, &div, &mul))
->> +		return -EINVAL;
->> +
->> +	guard(spinlock)(rate_self->lock);
->> +
->> +	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
->> +	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
->> +	mul_reg |= BIT(rate_self->write_enable_bit);
->> +	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
->> +
->> +	return 0;
->> +}
->> +
->> +static int k230_clk_set_rate_div(struct clk_hw *hw, unsigned long rate,
->> +				 unsigned long parent_rate)
->> +{
->> +	struct k230_clk_rate *clk = hw_to_k230_clk_rate(hw);
->> +	struct k230_clk_rate_self *rate_self = &clk->clk;
->> +	u32 div, mul, div_reg;
->> +
->> +	if (rate > parent_rate)
->> +		return -EINVAL;
->> +
->> +	if (rate_self->read_only)
->> +		return 0;
->> +
->> +	if (k230_clk_find_approximate_div(rate_self->mul_min, rate_self->mul_max,
->> +					  rate_self->div_min, rate_self->div_max,
->> +					  rate, parent_rate, &div, &mul))
->> +		return -EINVAL;
->> +
->> +	guard(spinlock)(rate_self->lock);
->> +
->> +	div_reg = readl(rate_self->reg + clk->div_reg_off);
->> +	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
->> +	div_reg |= BIT(rate_self->write_enable_bit);
->> +	writel(div_reg, rate_self->reg + clk->div_reg_off);
->> +
->> +	return 0;
->> +}
->> +
->> +static int k230_clk_set_rate_mul_div(struct clk_hw *hw, unsigned long rate,
->> +				     unsigned long parent_rate)
->> +{
->> +	struct k230_clk_rate *clk = hw_to_k230_clk_rate(hw);
->> +	struct k230_clk_rate_self *rate_self = &clk->clk;
->> +	u32 div, mul, div_reg, mul_reg;
->> +
->> +	if (rate > parent_rate)
->> +		return -EINVAL;
->> +
->> +	if (rate_self->read_only)
->> +		return 0;
->> +
->> +	if (k230_clk_find_approximate_mul_div(rate_self->mul_min, rate_self->mul_max,
->> +					      rate_self->div_min, rate_self->div_max,
->> +					      rate, parent_rate, &div, &mul))
->> +		return -EINVAL;
->> +
->> +	guard(spinlock)(rate_self->lock);
->> +
->> +	div_reg = readl(rate_self->reg + clk->div_reg_off);
->> +	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
->> +	div_reg |= BIT(rate_self->write_enable_bit);
->> +	writel(div_reg, rate_self->reg + clk->div_reg_off);
->> +
->> +	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
->> +	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
->> +	mul_reg |= BIT(rate_self->write_enable_bit);
->> +	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
->> +
->> +	return 0;
->> +}
-> There are three variants of rate clocks, mul-only, div-only and mul-div
-> ones, which are similar to clk-multiplier, clk-divider,
-> clk-fractional-divider.
->
-> The only difference is to setup new parameters for K230's rate clocks,
-> a register bit, described as k230_clk_rate_self.write_enable_bit, must
-> be set first.
-Actually, I think the differences are not limited to just the
-write_enable_bit. There are also distinct mul_min, mul_max, div_min, and
-div_max values, which are not typically just 1 and (1 << bit_width) as
-in standard clock divider or multiplier structures.
-
-For example, the div_min for hs_sd_card_src_rate is 2, not 1. This
-affects the calculation of the approximate divider, and cannot be fully
-represented if we only use the clk_divider structure.
-
-Another example is ls_codec_adc_rate, where mul_min is 0x10, mul_max is
-0x1B9, div_min is 0xC35, and div_max is 0x3D09. These specific ranges
-cannot be described using the normal clk_fractional_divider structure.
-
->
-> What do you think of introducing support for such "write enable bit" to
-> the generic implementation of multipler/divider/fractional? Then you
-> could reuse the generic implementation in K230's driver, avoiding code
-> duplication.
-Therefore, in addition to the requirement of setting the
-write_enable_bit, the customizable ranges for these parameters are also
-important differences that should be considered.
->
-> ...
->
->> +static const struct of_device_id k230_clk_ids[] = {
->> +	{ .compatible = "canaan,k230-clk" },
->> +	{ /* Sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, k230_clk_ids);
-> MODULE_DEVICE_TABLE is unnecessary if your driver couldn't be built as
-> a module.
-OK, thanks for point it out.
->
->> +static struct platform_driver k230_clk_driver = {
->> +	.driver = {
->> +		.name = "k230_clock_controller",
->> +		.of_match_table = k230_clk_ids,
->> +	},
->> +	.probe = k230_clk_probe,
->> +};
->> +builtin_platform_driver(k230_clk_driver);
-> Best regards,
-> Yao Zi
+-- 
+மணிவண்ணன் சதாசிவம்
