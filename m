@@ -1,77 +1,90 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7723570B8;
-	Tue,  9 Sep 2025 18:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D6931D37B;
+	Tue,  9 Sep 2025 18:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757441221; cv=none; b=Pkekunzu7idFAjlPuzM0diJq/6CPBm42mF24k2RQy6hzvU+htGAzQrHmvAH0Z+FBtoHLO24BQ7+Z2W4lTArKvOKiJKX4LjnImjP95TtU9BVdwltjs3xrM7f+LNlJsYmeqPqYnECHFvxBPPivjXWcK7Z9eqvJIbhDLUXr8n/594o=
+	t=1757441289; cv=none; b=OMs+Vneu4VKo12QS4V3HE6wOg1dUf2Lqw1G5dFqUwiup9NGakqDMlZK+f7DSBb4Rhsyb2f8tGKQ01RCEb0eaEG1vrkwOw1+B8djhU5kh0HHbYJkQIU0x1jBF8ykqQzqcwSnSovrwMRhT5FA5323DI5Z2jEmg5oa4Qvccb3PTCEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757441221; c=relaxed/simple;
-	bh=COUUp+dytOaa4h0pvUMtk0BvGhM37JjC6rq+LUDaqtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=enzhmKBC7rcCpokxz6uv7HGD1wsuWfjGe2osNe1vQE/Jw7OYo0TJY0EKcklT4rGdB+i5dluYFPBTKSQ6wyX4Di+1o7kzh0LVw/+pOqE3NPRGi4rhV9aQFzWzuz9OJYLCfyVfxswLj4/EIdoz4cJ4ztccd2i357ap/oa/EhWWqZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6tg5HaR; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1757441289; c=relaxed/simple;
+	bh=1E/FEfgXbxlTyDOQEnGwwHybKyqopOrH/LUQEsD4bdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=opzGf2J6X4GfYVAl7mWdZois3zBlP6+TFoo/embo70T3KYb8uOe/HSH/RvGlpx0JcyGoHUOBD9Eoj/K/HcQTjSD0X4CCEg3NI1841shxkv2IjsgP3drIee3EO2fCTDaryocIiq16/0yEEbzaObnWpSb0pDHIXmqqO+o9Cg2UGhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RdVOS2x1; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6tg5HaR"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32b6108f2d5so4295576a91.3;
-        Tue, 09 Sep 2025 11:06:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdVOS2x1"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so42735355e9.3;
+        Tue, 09 Sep 2025 11:08:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757441219; x=1758046019; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757441286; x=1758046086; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
-        b=g6tg5HaRn2pY6C4v6V0IH2GCiA8s3Y8lskDauOEpHv+HEA+3KlSWB1zcZWKQyQOF15
-         VajrP5nZ0LFmERX86zybdrBYoNJHcRG3atgJ3VcALZdYTzTpsRIEvhNxMgXMua4GG3yy
-         IYCEd49MYbzBFVmr65ifHhn1kyYCpEdo4B90PJ/p9tQ7GoW/2diJLiiSYWjzJdR29+GB
-         6j6sTjOtpCL6u54IXruFOKMQBk6fVcZIUfOGKJSet3SOBdP59EP0VaqoVasKLzNtkn2r
-         tjacWEiRSh4ySCddtVlGGw7QNXLs9IkMEmRqxp5XEFDqwgiylnaxTzEnG8KZdD8WhGsr
-         gyvA==
+        bh=pzISf5D7Sm/re0S/MlFezCf6LIeMNaY1mdeO+lXW9Lw=;
+        b=RdVOS2x13d05QH7s06mD6PVBar/crYdXNBnpvI2/2d9ZHpwqSd+JgIYTh0IBblF77I
+         JKORmagnx3Oznpwd5+RswAxDaBZXcSJy+AtZu4yWmUtPibCxSipd2JfuHsQSWUIb6D9z
+         lPcZG4l+srJpHMz2LU2M+r331hBVxJeK6iDi8vA8ZeFdJZtIg1KMP0lvOrTPBXayw77b
+         EJkScyLbxKJWltaBsrnqGdTyw1YDMJuxiZrqm+w8O7f0rJAc7o+oYSC8xm5uFR1wr9Dv
+         KkLVAMumqJ0pOltw03QpG7fhFWH8gR94o7hfKLCiFCCRpRoN190aB0hReKqXB7Or/26f
+         roHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757441219; x=1758046019;
+        d=1e100.net; s=20230601; t=1757441286; x=1758046086;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lC2S89uWVd4kKLJY+Z3L6fWfhN36m0m3rdw9eQ0mhyM=;
-        b=wIdMNYBb6g/sRDH58UU0+58u28c8jbcTjp29GIYKTeF1pGFX143nkr0k91PDIu8Gr4
-         WzXeDugPtfYu8Q62oWXL2Ely6lfUrQVwDw2mYf5xuPwBtD/ukhnNBScWJpJXNKYTnqQj
-         nflT28IDkB6EZaKYzB0SCad5N08DBB7CyAz7WAmEl9YycxmYUMrJ4a8LsAi+YFrNA3/b
-         bbL2LV5XJyLW1kROrzVkg0Z+KvmF1AJnAT0LlMtnIVCwsoQ7elqGL/qt2Bk+18KOb41+
-         NSUomY4/UtSTzOx8nLif5wx3vMUubu6roYK213KLvFiE8dgI7gN8edO+FzynNUWWZnma
-         garA==
-X-Forwarded-Encrypted: i=1; AJvYcCV46ybBpYz3WL1e+ZUzVFFpatn56V3cSVRr1ce/7IeZBfr/6fWO2JRkDwymMIC63VZULh8A8G6U+9QZqYjM@vger.kernel.org, AJvYcCVHKamF1TokTle2W8pjQYh66vLCJaAAjTIWn+SfSeyQ798340MBIJt0mTH2twpH6NaxpRTySDGY6Pp8X/lUkZeFOsE=@vger.kernel.org, AJvYcCWlxiSAMWwrdyrPWasuvwx6Ult0+1G27QTMvzKXwSqmRkxaXHsz8HvbMexBQXZaYCA5iwEeHPd7SqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEevcqO9OrUmTCmVVxSUmC4dwkHIt+UTcl4ZWZEmMSzLXUnk9J
-	KJBW113ogEEnKUz6BglXdBGT/+OI4EMWc5041XoHNYP05EDBSUJzNnO+
-X-Gm-Gg: ASbGncvWXgn35fFnX2yGXrBe12D7EtIv3bWapZhOy0n8Q6pCjUhkpVsaP31ADCjcAIO
-	7KiEi8GMldXelmhOorK9ScR5thbQkosuLG+KXhhwQA4KWoks1iGSyKFvaCHNhzMgfodEsfqwyyT
-	hjtbA5c7wOrkgsXP93+8XtCn7zheStXHg10he7hvLrIGbGRNWiy1KYXG2KMg3t6B4IfnfsZPkUZ
-	RkajUxDS6yedl9LYSXjeSfLVegIll2fZCrK2GeujJQ/dj1JXSe+0QLRR09eADC1shRCPK4dK/tt
-	M/SRmm2q/FnbHKHUKVxW0P5YhIk3bkrYV3Ql+1PZae79eyLAFWET8VdQ9ibMRvPfDd+okcL0BBo
-	B8ANf2bryia7MvljcVxBTmB75OraXwYg=
-X-Google-Smtp-Source: AGHT+IEQ8Fdk0HbZvmKlziMWHOi6q7YSOReqEYtXvWbMeLz8O2VLpBEy5+WUL5qEMmSebQfRgcmeeQ==
-X-Received: by 2002:a17:90b:3dcc:b0:329:e9da:35d0 with SMTP id 98e67ed59e1d1-32d43ef5112mr14793775a91.5.1757441218843;
-        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
-Received: from rockpi-5b ([45.112.0.216])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e7186sm35182693a91.16.2025.09.09.11.06.55
+        bh=pzISf5D7Sm/re0S/MlFezCf6LIeMNaY1mdeO+lXW9Lw=;
+        b=IjG2HW7sCOzddJZseD3vgMLvnzx6NUbLLZY+1+XqRu9aejOUFt7nj3XLCJaSvVbjFJ
+         DbUVbbZJ/B7wdKt2LNAU2muSn9sYCZyg8Knxt85G9aNjIUvs16KQqJ1FaRGN4Ox4868R
+         yi3g/6j1XjmCJmnURtmjSTOLlzyycCZE39XzNVORfBIo2uCzThvktgVj8UnQFVnWcb2j
+         Ure9HKd770PCNtf7gczYQgWMNUVCU1W6BkSZJN7yTYBsXjOLFL2CJu9ULsm18qhX0iuc
+         LwKTmVAVinss+0xlEeUyVaaiWJMqcSTX6DpvvFPLO/U3K5oDczcx3PMox+GZwSAF9oA2
+         GjGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwqLdVQlp6+3pYF1l6vKVsAXgx1XDSFtqZntohcN+LP92/vfpGtFJ6IA7xw74LfQ0vCadt8Z9teSojftuQbQAsgFA=@vger.kernel.org, AJvYcCVJMT+gNyIuM55cTaLMcGwcIT794eMe6NnwaoZ1/y15nFmU0a4SjvmmdtGDTeKPrztuTjolaeqFFA5N@vger.kernel.org, AJvYcCVocqrdigTCqtzqm11Lo/PjvYlwTnDQtQKEsYKJPFZgdQ1/4OQ3nCcJgc64XOUAQPpdCZZNedEWew9F2YIr@vger.kernel.org, AJvYcCWnxa2C8YhvVdXWH6BE1fMsHGiu8WDP1u/K5n+srDW/1+pf3w1CHzdhgaOUVWo+Ku9ypf6wc6W9+6gO@vger.kernel.org, AJvYcCXK5NVhaXEZmzPCYSesy71s43Ly+7RLrADMI1IcP3tDAoLCoRMrYP3s5JaviSlZR9iwjVNKzmJE5arv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzePGykLJ3CQDgomQNVHxkIoRtIBOhpOHJJYBgL9tjyq4vLE5d8
+	2hLQpJW7sOOEMBmAaN2Yoh1w118OO2EP195JF3AczZc070P3QBkKKw2q
+X-Gm-Gg: ASbGnctvLQzNWQ8PBjSfbzPCh7wVkLUKZwCpPljoUs3x0Fq94VgBA0B7DdyadGlhqVI
+	X611OZccrY47V3Ctqp59gcswe+JWCQZpU7Tyj6wF+Nuzn0PsyvSpomNxswXWQzQKZCQeU2mjLwV
+	DquzYZ8T5EH3Q7eBxLTKm0f1oOy7UeO1w+92WqK7fmwfgLfAwYH3ZtuTmw/L5JldAmRWjDiwYB0
+	qoBYe2Ulg6gV5tKNBbYUoPARKq7w80FOuiyV4PeL0K+lBfyhIyMcfov3LXThCY9CFwPPrkLq/x0
+	fKHNYjdVHuFHKcxAJxaGB+9Z/T0DvcVMHuI2ehRsBcf9FLjHQTY815admQQ6JiV8/qnPkXeyVHx
+	afe+pKTSK22ppsidMq5rGs9ErtQoanI+G+TJmMzg3l02rSRGtViOz4O6YVboORw8rvFYl2H0JcG
+	tIQb+GB1gRDyZn
+X-Google-Smtp-Source: AGHT+IHU8RVQLjbJmIfVzd4tfEr5Aww1xmlwzaYanHEmYj2UDm4y3gZ47LxspBoB5NASAirXTwqtAA==
+X-Received: by 2002:a05:600c:3596:b0:45d:d6fc:2509 with SMTP id 5b1f17b1804b1-45dddeb00bfmr133247045e9.6.1757441285524;
+        Tue, 09 Sep 2025 11:08:05 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df679a4c9sm4174015e9.3.2025.09.09.11.08.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:06:58 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+        Tue, 09 Sep 2025 11:08:05 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1] clk: samsung: exynos5420: Add support for power control registers
-Date: Tue,  9 Sep 2025 23:36:49 +0530
-Message-ID: <20250909180652.7130-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 00/11] Add RZ/G3E USB3.2 Gen1 Host Controller support
+Date: Tue,  9 Sep 2025 19:07:45 +0100
+Message-ID: <20250909180803.140939-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,180 +93,129 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As per the Exynos5422 user manual, settings for the PWR_CTRL, PWR_CTRL2,
-PWR_CTRL_KFC, and PWR_CNTL_KFC registers manage ARM clock down and up
-configurations for idle and standby states.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The Exynos5422's dynamic clock frequency down feature enables automatic
-clock down when all CPU cores are in Wait For Event (WFE) or
-Wait For Interrupt (WFI) states, utilizing this feature in standby
-configurations.
+Add RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The USB3HOST
+is compliant with the Universal Serial Bus 3.2 Specification Revision 1.0.
+ - Supports 1 downstream USB receptacles
+     - Number of SSP Gen2 or SS ports: 1
+     - Number of HS or FS or LS ports: 1
+ - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
+   High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
+ - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
+   these split-transactions.
+ - Supports Power Control and Over Current Detection.
 
-These modifications enhance the power management capabilities of the
-Exynos542x by providing finer control over the ARM clock behavior in
-various states.
+v1->v2:
+ * Collected tags.
+ * Replaced usb30->usb3_0 for clocks and resets.
+ * Replaced magic numbers with macros iphy driver.
+ * Added ref to usb-xhci.yaml in USB3 binding patch.
+ 
+ Logs:
+ root@smarc-rzg3e:/cip-test-scripts/py# cat /proc/interrupts | grep SLEEP
+133:          0          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:/cip-test-scripts/py# [  128.532806] PM: suspend entry (deep)
+[  128.536700] Filesystems sync: 0.000 seconds
+[  128.542466] Freezing user space processes
+[  128.548296] Freezing user space processes completed (elapsed 0.001 seconds)
+[  128.555283] OOM killer disabled.
+[  128.558531] Freezing remaining freezable tasks
+[  128.564240] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[  128.571649] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-169-g1410189b0
+NOTICE:  BL2: Built : 12:53:12, Jul 15 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+[  128.604363] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[  128.670116] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[  128.683550] Disabling non-boot CPUs ...
+[  128.688394] psci: CPU3 killed (polled 4 ms)
+[  128.695415] psci: CPU2 killed (polled 0 ms)
+[  128.702070] psci: CPU1 killed (polled 0 ms)
+[  128.704897] Enabling non-boot CPUs ...
+[  128.705107] Detected VIPT I-cache on CPU1
+[  128.705157] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+[  128.705195] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[  128.706006] CPU1 is up
+[  128.706106] Detected VIPT I-cache on CPU2
+[  128.706128] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+[  128.706149] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[  128.706732] CPU2 is up
+[  128.706831] Detected VIPT I-cache on CPU3
+[  128.706854] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+[  128.706876] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[  128.707557] CPU3 is up
+[  128.724000] dwmac4: Master AXI performs fixed burst length
+[  128.724900] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[  128.724920] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[  128.728436] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[  128.745766] dwmac4: Master AXI performs fixed burst length
+[  128.746653] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[  128.746668] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[  128.750222] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[  128.797030] usb usb1: root hub lost power or was reset
+[  128.797038] usb usb2: root hub lost power or was reset
+[  130.956146] usb 2-1: reset SuperSpeed Plus Gen 2x1 USB device number 2 using xhci-renesas-hcd
+[  131.143425] OOM killer enabled.
+[  131.146563] Restarting tasks: Starting
+[  131.151382] Restarting tasks: Done
+[  131.154877] random: crng reseeded on system resumption
+[  131.160209] PM: suspend exit
+[  131.494956] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 111 +++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+root@smarc-rzg3e:/cip-test-scripts/py# ./run_pytests.sh tests/test_xhci.py -k test_xhci_005
+==================================================================== test session starts ====================================================================
+INFO     root:spl2_test_helpers.py:2059 DD performance with bs=32M count=32 is
+Write= 383 MB/s
+Read= 555 MB/s
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index a9df4e6db82fa..ce4c554eb59f1 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <dt-bindings/clock/exynos5420.h>
-+#include <linux/bitfield.h>
- #include <linux/slab.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
-@@ -29,6 +30,8 @@
- #define CLKOUT_CMU_CPU		0xa00
- #define SRC_MASK_CPERI		0x4300
- #define GATE_IP_G2D		0x8800
-+#define PWR_CTRL		0x1020
-+#define PWR_CTRL2		0x1024
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
- #define EPLL_LOCK		0x10040
-@@ -139,10 +142,50 @@
- #define KPLL_CON0		0x28100
- #define SRC_KFC			0x28200
- #define DIV_KFC0		0x28500
-+#define PWR_CTRL_KFC		0x29020
-+#define PWR_CTRL2_KFC		0x29024
- 
- /* NOTE: Must be equal to the last clock ID increased by one */
- #define CLKS_NR			(CLK_DOUT_PCLK_DREX1 + 1)
- 
-+/* Below definitions are used for PWR_CTRL settings */
-+#define PWR_CTRL_ARM2_RATIO_MASK       GENMASK(30, 28)
-+#define PWR_CTRL_ARM_RATIO_MASK        GENMASK(18, 16)
-+#define PWR_CTRL_DIVARM2_DOWN_ENB      BIT(9)
-+#define PWR_CTRL_DIVARM_DOWN_ENB       BIT(8)
-+#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE3  BIT(7)
-+#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE2  BIT(6)
-+#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE1  BIT(5)
-+#define PWR_CTRL_USE_STANDBYWFE_ARM_CORE0  BIT(4)
-+#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE3  BIT(3)
-+#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE2  BIT(2)
-+#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE1  BIT(1)
-+#define PWR_CTRL_USE_STANDBYWFI_ARM_CORE0  BIT(0)
-+
-+#define PWR_CTRL2_DIVARM2_UP_ENB       BIT(25)
-+#define PWR_CTRL2_DIVARM_UP_ENB        BIT(24)
-+#define PWR_CTRL2_DUR_STANDBY2_MASK    GENMASK(23, 16)
-+#define PWR_CTRL2_DUR_STANDBY1_MASK    GENMASK(15, 8)
-+#define PWR_CTRL2_UP_ARM2_RATIO_MASK   GENMASK(6, 4)
-+#define PWR_CTRL2_UP_ARM_RATIO_MASK    GENMASK(2, 0)
-+
-+/* Below definitions are used for PWR_CTRL_KFC settings */
-+#define PWR_CTRL_KFC_RATIO_MASK       GENMASK(21, 16)
-+#define PWR_CTRL_KFC_DIVKFC_DOWN_ENB       BIT(8)
-+#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3  BIT(7)
-+#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2  BIT(6)
-+#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1  BIT(5)
-+#define PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0  BIT(4)
-+#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3  BIT(3)
-+#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2  BIT(2)
-+#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1  BIT(1)
-+#define PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0  BIT(0)
-+
-+#define PWR_CTRL2_KFC_DIVKFC_UP_ENB        BIT(24)
-+#define PWR_CTRL2_KFC_DUR_STANDBY2_MASK    GENMASK(23, 16)
-+#define PWR_CTRL2_KFC_DUR_STANDBY1_MASK    GENMASK(15, 8)
-+#define PWR_CTRL2_KFC_UP_ARM_RATIO_MASK    GENMASK(5, 0)
-+
- /* Exynos5x SoC type */
- enum exynos5x_soc {
- 	EXYNOS5420,
-@@ -1574,6 +1617,72 @@ static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ },
- };
- 
-+static void __init exynos5420_core_down_clock(void)
-+{
-+	unsigned int tmp;
-+
-+	/*
-+	 * Enable arm clock down (in idle) and set arm divider
-+	 * ratios in WFI/WFE state.
-+	 */
-+	tmp = (FIELD_PREP(PWR_CTRL_ARM2_RATIO_MASK, 7) |
-+		FIELD_PREP(PWR_CTRL_ARM_RATIO_MASK, 7) |
-+		PWR_CTRL_DIVARM_DOWN_ENB |
-+		PWR_CTRL_DIVARM2_DOWN_ENB |
-+		PWR_CTRL_USE_STANDBYWFE_ARM_CORE3 |
-+		PWR_CTRL_USE_STANDBYWFE_ARM_CORE2 |
-+		PWR_CTRL_USE_STANDBYWFE_ARM_CORE1 |
-+		PWR_CTRL_USE_STANDBYWFE_ARM_CORE0 |
-+		PWR_CTRL_USE_STANDBYWFI_ARM_CORE3 |
-+		PWR_CTRL_USE_STANDBYWFI_ARM_CORE2 |
-+		PWR_CTRL_USE_STANDBYWFI_ARM_CORE1 |
-+		PWR_CTRL_USE_STANDBYWFI_ARM_CORE0);
-+
-+	writel_relaxed(tmp, reg_base + PWR_CTRL);
-+
-+	/*
-+	 * Enable arm clock up (on exiting idle). Set arm divider
-+	 * ratios when not in idle along with the standby duration
-+	 * ratios.
-+	 */
-+	tmp = (PWR_CTRL2_DIVARM2_UP_ENB | PWR_CTRL2_DIVARM_UP_ENB |
-+		FIELD_PREP(PWR_CTRL2_DUR_STANDBY2_MASK, 3) |
-+		FIELD_PREP(PWR_CTRL2_DUR_STANDBY1_MASK, 3) |
-+		FIELD_PREP(PWR_CTRL2_UP_ARM2_RATIO_MASK, 3) |
-+		FIELD_PREP(PWR_CTRL2_UP_ARM_RATIO_MASK, 2));
-+
-+	writel_relaxed(tmp, reg_base + PWR_CTRL2);
-+
-+	/*
-+	 * Enable arm clock down (in idle) and set kfc divider
-+	 * ratios in WFI/WFE state.
-+	 */
-+	tmp = (FIELD_PREP(PWR_CTRL_KFC_RATIO_MASK, 7) |
-+		PWR_CTRL_KFC_DIVKFC_DOWN_ENB |
-+		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE3 |
-+		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE2 |
-+		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE1 |
-+		PWR_CTRL_KFC_USE_STANDBYWFE_ARM_CORE0 |
-+		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE3 |
-+		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE2 |
-+		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE1 |
-+		PWR_CTRL_KFC_USE_STANDBYWFI_ARM_CORE0);
-+
-+	writel_relaxed(tmp, reg_base + PWR_CTRL_KFC);
-+
-+	/*
-+	 * Enable arm clock up (on exiting idle). Set kfc divider
-+	 * ratios when not in idle along with the standby duration
-+	 * ratios.
-+	 */
-+	tmp = (PWR_CTRL2_KFC_DIVKFC_UP_ENB |
-+		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY2_MASK, 3) |
-+		FIELD_PREP(PWR_CTRL2_KFC_DUR_STANDBY1_MASK, 3) |
-+		FIELD_PREP(PWR_CTRL2_KFC_UP_ARM_RATIO_MASK, 2));
-+
-+	writel_relaxed(tmp, reg_base + PWR_CTRL2_KFC);
-+}
-+
- /* register exynos5420 clocks */
- static void __init exynos5x_clk_init(struct device_node *np,
- 		enum exynos5x_soc soc)
-@@ -1649,6 +1758,8 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 				ARRAY_SIZE(exynos5800_cpu_clks));
- 	}
- 
-+	exynos5420_core_down_clock();
-+
- 	samsung_clk_extended_sleep_init(reg_base,
- 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
- 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+INFO     root:spl2_test_helpers.py:2099 fio performance with bs=32m for Sequential and bs=4m for random access are
 
-base-commit: cf6fc5eefc5bbbbff92a085039ff74cdbd065c29
+INFO     root:spl2_test_helpers.py:2104 b'   READ: bw=562MiB/s (590MB/s), 562MiB/s-562MiB/s (590MB/s-590MB/s), io=5024MiB (5268MB), run=8936-8936msec'
+INFO     root:spl2_test_helpers.py:2104 b'  WRITE: bw=555MiB/s (582MB/s), 555MiB/s-555MiB/s (582MB/s-582MB/s), io=5024MiB (5268MB), run=9058-9058msec'
+INFO     root:spl2_test_helpers.py:2104 b'   READ: bw=373MiB/s (391MB/s), 373MiB/s-373MiB/s (391MB/s-391MB/s), io=5000MiB (5243MB), run=13394-13394msec'
+INFO     root:spl2_test_helpers.py:2104 b'  WRITE: bw=387MiB/s (406MB/s), 387MiB/s-387MiB/s (406MB/s-406MB/s), io=5000MiB (5243MB), run=12920-12920msec'
+
+Biju Das (11):
+  dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
+  clk: renesas: r9a09g047: Add USB3.0 clocks/resets
+  dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
+  phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
+  usb: host: xhci-rcar: Move R-Car reg definitions
+  dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+  usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
+  usb: host: xhci-rcar: Add Renesas RZ/G3E USB3 Host driver support
+  arm64: dts: renesas: r9a09g047: Add USB3 PHY/Host nodes
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable USB3HOST
+  arm64: defconfig: Enable RZ/G3E USB3 PHY driver
+
+ .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  |  63 ++++
+ .../bindings/usb/renesas,rzg3e-xhci.yaml      |  87 ++++++
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  30 ++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  10 +
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a09g047-cpg.c           |   9 +-
+ drivers/phy/renesas/Kconfig                   |   7 +
+ drivers/phy/renesas/Makefile                  |   1 +
+ drivers/phy/renesas/phy-rzg3e-usb3.c          | 271 ++++++++++++++++++
+ drivers/usb/host/Kconfig                      |   2 +-
+ drivers/usb/host/xhci-plat.c                  |  14 +
+ drivers/usb/host/xhci-plat.h                  |   1 +
+ drivers/usb/host/xhci-rcar-regs.h             |  49 ++++
+ drivers/usb/host/xhci-rcar.c                  | 100 ++++---
+ drivers/usb/host/xhci-rzg3e-regs.h            |  12 +
+ .../dt-bindings/clock/renesas,r9a09g047-cpg.h |   2 +
+ 17 files changed, 621 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+ create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
+ create mode 100644 drivers/usb/host/xhci-rcar-regs.h
+ create mode 100644 drivers/usb/host/xhci-rzg3e-regs.h
+
 -- 
-2.50.1
+2.43.0
 
