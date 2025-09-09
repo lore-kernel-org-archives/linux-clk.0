@@ -1,71 +1,66 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBBF2D1303
-	for <linux-clk@vger.kernel.org>; Tue,  9 Sep 2025 09:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963F92F3C30;
+	Tue,  9 Sep 2025 10:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411349; cv=none; b=BNFSyP99T8vXJZsJD2amzKZ+qKrFSvb4HwAjQ2jkEKH8C5YQtP/C77x3KBfPfeq3k7h0kezCurqg7NCc5JJuP8FIz/vM3a2xnUGTWcHKOpt08Dfv8OmORzCCN3ZNR6rP01oxXMOhjFdng8P6ZgKisDPPZA/Enycpx5x/J2HDqow=
+	t=1757412743; cv=none; b=lrSOu81pd1BJvWjrEP+hBE4rqfH2SnnjrY6rDNAs+Xu00pM16kyo+uSdY7186lmjnhoUXBZVyuQQmx6TkskxT/i7GscCpi3lM1iS96EWLKxoOvK9rFa45m21EqCNAHoKD4cBIfDDchJNnGf6rQDSLkfAN/uaVuE09QCZs9IVDoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411349; c=relaxed/simple;
-	bh=AjIJNpNuIYSwMPaWgpWk8j1HyqC7OeaYozK9weYOVqk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nbUQ/aArjfgFgXNqXd0+fTsHdF3lIOF0qXjKOlEiIPgUsFe3hpgGMrdFQ1UMONptarOeoN1r0WJnzpr5lgKWeEJcZmAo/vM4ofTa2+PuwqJ1DnyQK5nOfTrb+lnDLU03LKTN4Ef0KSAnpCSkT30MtaO+owFuN5n9mz9ijgG0NB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=in3hK42E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1757412743; c=relaxed/simple;
+	bh=f+p6Hi8Bq/0XParmq+GNXSTJ8BCIU7MW/q9t0C9h1mM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ggAeBmS9bumrouXr+QBBuPTc+9HQRTHKyQuF/HkvwCSM5LCic6WQhVlMafu0gmLg7v8qW04D8DezstiBqwuOZ2K7rgZALiiOwYazEWp8hKxkf+vYUwYBi9+s4B4FclgnZOGvUm0bPefwEyjtCGv+y+kU+EcgGr1CGWiNFr5UcZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asgwzWwn; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="in3hK42E"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899Lcn6029368
-	for <linux-clk@vger.kernel.org>; Tue, 9 Sep 2025 09:49:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=tk2wsNUfzGcgRNL4wnI8L9
-	jtFRsDbUn8qphZ3Qi+y18=; b=in3hK42EBbKItXY3B+7PDBML2gGT+4BH/6VNLI
-	etCnRrC2TUg9eKmmk/97TfS4/r9sbzIOszq7EExCpVbSYfmgnMIIuqxK8hmnX9xG
-	23cz9Z2cIzdhyhCyYxNO9oBu/zxsKEqZ7wGjCk7Sn0T637WqUq5w8Ixl0mcbmSAa
-	Dj/+pKCclRrBLM4rFugA8wrACEYJu7S8MTEVsKJDwLPJiQWOOljaf24i9WB2ZMqu
-	KqF4LEKB+ciG9Jq0DNbvdWVjhRMD3lOh9gJCrbIukvTKBzB72zu65YPO302Hg62S
-	JSAd9J7SlqZABaPjoctQJ3LAeL62DGmBDO3EVoK0VnO3Anvg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8fsr4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 09:49:06 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77422201fd8so3925085b3a.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 02:49:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asgwzWwn"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so1772492f8f.1;
+        Tue, 09 Sep 2025 03:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757412740; x=1758017540; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2DVZjA2xzBpsspRxmBhscCQ8qNTTD3WeHWSgLWWar2Y=;
+        b=asgwzWwnvSxIwEY7f7A7efk/p50ZzoJk8c+C6P8YSNZLqgoZUj3WDFCDFWYW8TwDYn
+         VSz7PqlKKkoha7Bu31m/7FH0Vg6ewF99L29+Driu4kqQ+zRKwD9y57XIEoydVZ4M8D68
+         JFQNQD3H/y1Xz4Z8fIwsRb/0G3V6OWnIN9+YZoGGQbZQPX9t83uw0C8fVCPl9ti3399H
+         TWmpYEuSm2dbOoAHkRF5As3Wf9dJedfmKKzw2uyb2WAxcU6+ckQ55jDSiFzeg8Gxe5r1
+         CcWb8tT+9epX2W3InbTyaByIb+6Zyjr+Sufblk80uQS90dLmhgsEK9oYVkJBQcAasSlI
+         5hBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757411345; x=1758016145;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757412740; x=1758017540;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tk2wsNUfzGcgRNL4wnI8L9jtFRsDbUn8qphZ3Qi+y18=;
-        b=OurrszyohI7KbUS6YBmdvX/H6co8AwuJcSXhLS/xNts9Q3ljJDg7cNOx0wtS5EHlpW
-         eYArBa83g/wEie27COxKH85ly5lJHz+x2uhZ17cfTaN07XH2EnvODvc7kbQx5l+VReUN
-         9xeyAj4J62AY/kNrSG2Kd7qmj1ko8eFLp3K5PncRrwabP8ifSqzRVMAQA0upuqqRjPvp
-         bfffTSvXF0Dr4lbFcjRSdqvCNKkTtW5RXvnkoqVlboi1+nAgO63XZWf9ISZCkSL/N0WZ
-         /5Y/KaIgSJBwYHKprX/6HzcNyOeYbcIhY/rBfyicpKdNSuyJAjV7o5mdBDl2h8jQzFuF
-         Ta0w==
-X-Forwarded-Encrypted: i=1; AJvYcCULQR2rzru2V2S0ix310iPBhSttNnfzSiqhdhNNR4lmtCybijKHZbs0juzVOS0PdYP47+F+2gK1A8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynXUGzSiBfWMntZme4Pe/ri5uUayMcW+GWSeDFrbzgExQnKCSy
-	4VKXdTEK+EIiREQ90Mj9D6Ai8yiWWblRy1VARIb/lDdJTY3FWaK/E83wRsR7063w0kFI5IuPBaw
-	GDcseFYThXB5YZbbo3+Smuv/fPTs3p9F3lyrmi2z+PVyAQQU+Cs9D5RUjDW6EPqk=
-X-Gm-Gg: ASbGncsye9fhb0sDuE5uvXZrLCNJT6qh9nb9RhQqZPJwepxpKfO3+nLDLIdRxThH2kq
-	YdquqcaUAzOFO4hnrH9OMyd4viJD9/UmEEA+nGEZGo/uPqkLRDpC1OUUUyZ7PNyoPgWLnJbcQ4d
-	EMXeoMWnKiYzIhTjeWe8ja1Z+/0k7wtJ7+jWaXPwJY/YM1E4YlandvSYHMRASZVWtUeCr3ExKSZ
-	2WkKdMdozbwQsdItp/mbZPkzuwBefgTddHK+p9CbfcqqeaSWtiCXDPUlfctXJjOwulUASBZcrhF
-	GVV4RTqRuffkO+RD0n9YDMzAC+AgMZIRljGr00ru2Et44sHvjev/ex2P8N3olUu56q2frmc=
-X-Received: by 2002:a05:6a00:2d23:b0:774:1fd4:1010 with SMTP id d2e1a72fcca58-7742dd50a40mr14032385b3a.9.1757411344757;
-        Tue, 09 Sep 2025 02:49:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHi5iBwBJA93nYQepdGPa6C3DS34cVTOIUFas1WAo4ztjqAQAV6qQOz5U2c1xk5tTzuHEPx9w==
-X-Received: by 2002:a05:6a00:2d23:b0:774:1fd4:1010 with SMTP id d2e1a72fcca58-7742dd50a40mr14032354b3a.9.1757411344304;
-        Tue, 09 Sep 2025 02:49:04 -0700 (PDT)
-Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f990esm1533558b3a.102.2025.09.09.02.49.01
+        bh=2DVZjA2xzBpsspRxmBhscCQ8qNTTD3WeHWSgLWWar2Y=;
+        b=Hel0c9NB7f3/NO70THebtEA6zGn6JClBKQJMU125nO4ck1g5Du/c5zgnNDZisUWjOy
+         /+ZbgoF5NvXXr1tFPkmh3I8lL1jk/oyQP59cau8MJCpwU/90XJvZsR4b9CAxkDm+cDBb
+         MGtYVdsvm+D6Xh6NQ1yVvhFyz+eIyJvb6IudmcOJESlb/qbYjuM64GmVovwa6lCSXneP
+         DXqkeXAo+5kP043OYxBGcj7Yxm+J2pvATf5agkgc+SW8rTTG5QOQk7EX2eWf9XW0lwXS
+         4oIFsuwZDL59/jucCzMRMI9y+g/cFOzLG4bJMBLQvnP6yQn5oKBbMZiolY/5dwojk5KE
+         VmoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpTFuLn9UeDtXvw6j12e1+An9FBIV4n7QMdoGw7H6HHstldDVS4ptCiTmyTHLM75kEEmTw0uhrOcEr@vger.kernel.org, AJvYcCVCT7VBD96/SpUZOqP0o4HGy0RAAGUguoFrCUJ98fOJCXGR99KGbaJ8CP3oi3XfFCnJuTOEofr7igClTrJ1@vger.kernel.org, AJvYcCW9Qwzrj5lLXKzd7tA0sE53SYYg4YRUi84zO1WppMGCLRkrYphkb4ytUBYR4Eieiuk/j9I3lZDPH482@vger.kernel.org, AJvYcCX16vhQdJoT65eIzX2TzjbCghsv0siAmdDO7CQPTsLosJJQTbeM55nwaNS/l/hCyb2szUnai1S6VGgH@vger.kernel.org, AJvYcCXlFemWpn855YLL5BZ6ul2pvcH8CCTor37elrqJEgEjCONgmxUIUoxkZ0nCeyx6KzDylnaTDmFm4VhzLZVHy+EkHw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMKZh1a7IrTxMD4dQ0YBYudPWwZ7QOxIqHaV9fHSgbDPyNiES+
+	Nzghr4z0qeC6yKLUrPAfITG76Xi1F6ht+JiBSslK5mCUO7neGFC3niJn
+X-Gm-Gg: ASbGncvPtcYVGPBu7QkYira6nv4b8ABcd0yFnimq1IbmIAJjUFhj6HBdtwfbc0XJyTX
+	OyoLGAVQ9g7DqXdGtM6fgIKlWn8xaiXjPxb7jfU1DtfLHJ1rhkO973Oh9v5Svr41it9vaSBsmdO
+	63ay1Q8mZEh+5nisVG4a50iYnsLEqsGSlYlRDzZKHvLA9RpW0fJyY+UzMjqZd8iSUAmLPhIzX0A
+	+Kzhq56Ew2h2jLi47Ctzj21ER+hTQ7+W1+qXdmy368om5YdEMBnCFd5yhkQu/bnS+valiglrFqK
+	BsxIbeF7b2Oa3NJfEhshQfzVki/wXvPn71RcEdxM0NgUfxuRvTXAzkcb9IMiOEhoUtEStTMCLry
+	d9GNSbju9eHtVaEn1rOJGNyk6zHb8C0xK2Dp0MYTlYECNdYROFEEtbt2RBim3QXD0JzSLlDF2M1
+	/BxNtuT5h6KsmbpV2lNV+GBLh1eg==
+X-Google-Smtp-Source: AGHT+IHWtrZ9/XJ8g8wPILz5HBJiKdiHip6k2Y7nAmAFrkuZKlueXTzkqAL0OsGQ2MntX2372cUV3g==
+X-Received: by 2002:a05:6000:1846:b0:3e7:441e:ca19 with SMTP id ffacd0b85a97d-3e7441ecdcemr7240561f8f.43.1757412739533;
+        Tue, 09 Sep 2025 03:12:19 -0700 (PDT)
+Received: from localhost (2a02-8440-7136-74e7-5ebf-4282-0e1a-b885.rev.sfr.net. [2a02:8440:7136:74e7:5ebf:4282:e1a:b885])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bf610sm2035518f8f.9.2025.09.09.03.12.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:49:03 -0700 (PDT)
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Date: Tue, 09 Sep 2025 15:17:59 +0530
-Subject: [PATCH] clk: qcom: dispcc-glymur: Constify 'struct qcom_cc_desc'
+        Tue, 09 Sep 2025 03:12:19 -0700 (PDT)
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+Subject: [PATCH v6 00/20] Introduce STM32 DDR PMU for STM32MP platforms
+Date: Tue, 09 Sep 2025 12:12:07 +0200
+Message-Id: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,78 +68,206 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-constify-dispcc-glymur-desc-fix-v1-1-6cb59730863f@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAM73v2gC/x2NQQ5EQBAAvyJ91skMS5aviAM9jU7WkGmEiL/vx
- LHqUHWDchBWqJMbAh+isvgINk2Aps6PjOIiQ2aywlSmQlq8bjJc6ERXIhx/17wHdKyEg5zY5X1
- pC/qy/ZQQK2vgqN9D0z7PH8aBzjZxAAAA
-X-Change-ID: 20250909-constify-dispcc-glymur-desc-fix-a3b615c8e146
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX6aKe03SFmvMU
- JVFjwXD/c6RFKqwtNGJr0fZy2xYuGGC+GMnGX5m3hlYUWNMQp4O8Uu5dJGhBEBjeg7lZWoHqb+r
- wvSo68wkgiKrzqGf9L68i5f6x4Yeds8nl7FlRUwIgps7yTdlDiS1g4Z9OHraLQQFu6Vd7GFri8C
- BhnAPPUIqLRTQwojBFcMdg8D6QSvs6+HKNAUZNw2G2wwGe8R3sUjcZIXpi1WsjdMDQnK47KmHFu
- h7Gww4+w6XaFLhg3wOx8WsTJeQE7GTA9L5m+DiN3wV1/SbGgFdzISPLQxNc9teUfdiE77HP2Vub
- AHKkWV/h1mnGHw9jOlzVtEJUp3xpilH/sTWiwVtL637SwPlRPwjFXbKJoAGmoZcFn9TLAX86ftg
- Clp/Hg03
-X-Proofpoint-ORIG-GUID: ht1yegBE_MrkER5KoOOwt_yhcg9zjeD-
-X-Proofpoint-GUID: ht1yegBE_MrkER5KoOOwt_yhcg9zjeD-
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68bff812 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=csJZpMO3bG6WjO6BR9QA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHj9v2gC/x3MQQ5AMBBA0avIrE1ClZSriEW1g1mgmSIScXeN5
+ Vv8/0AkYYrQZQ8IXRx53xKaPAO32G0mZJ8MqlB1YcoKR43eSyCZVjxDPITsimS0VqNzpmobSGk
+ Qmvj+t/3wvh94tKr2ZgAAAA==
+X-Change-ID: 20250813-b4-ddrperfm-upstream-e8442bcc8396
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Julius Werner <jwerner@chromium.org>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
+ =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+ =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+X-Mailer: b4 0.15-dev-dfb17
 
-'struct qcom_cc_desc' is passed to qcom_cc_map() and
-qcom_cc_really_probe() only as pointer to const, so make the memory
-const for safety.
+This patch series introduces the DDR Performance Monitor (DDRPERFM) support
+for STM32MP platforms.
 
-Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+The series improves the STM32MP25 RCC driver to make it usable
+as an access controller, needed for driver probe.
+
+The series introduces support of DDR channel through dt-binding and
+devicetree entries.
+
+It also includes the addition of DDRPERFM device tree bindings,
+the DDRPERFM driver, the documentation and updates to the device tree files
+for STM32MP13, STM32MP15, STM32MP25 SoCs and stm32mp257f-dk and
+stm32mp257f-ev1 boards.
+The series also updates the MAINTAINERS file to include myself as the
+maintainer for the STM32 DDR PMU driver.
+
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
 ---
-This commit is similar to [1].
+Changes in v6:
+Use personnal mail account
+dt_bindings:
+  - Improve sdram-props's compatible and revision ID description
+  - Fix DDR4 compatible regex pattern and remove a DDR3 string
+driver:
+  - Add io.h include for writel_relaxed and readl_relaxed symbols
+- Link to v5: https://lore.kernel.org/r/20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com
 
-[1] https://lore.kernel.org/r/20250820124821.149141-2-krzysztof.kozlowski@linaro.org
+Changes in v5:
+driver:
+  - Remove one more trailing comma
+  - Include right includes and not more than needed.
+  - Fix the counter deletion for loop exit condition
+  - Fix a dev_err_probe error log
+dt_bindings:
+  - rcc:
+    - Fix commit message:
+      's/access_controller_cell/#access_controller_cells/g'
+  - sdram props
+    - Few fixes properties description (compatible, io-width and
+      density):
+      - fix SPD bytes number for density
+      - add manufacturer part number in compatible for DDR SDRAM
+      - improve description sentences
+- Link to v4: https://lore.kernel.org/r/20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com
+
+Changes in v4:
+- Fix DDRPERFM dt-binding example with a DDR4 channel instead of DDR3
+- s/memory/sdram/ for factorising patches.
+- Improve properties description for the new SDRAM props binding by
+  adding information on compatible generation, revision-id, density and
+  io-width for DDR that comes with an SPD module.
+- Add a patch to standardise sdram channel node name.
+- Improve DDR4 compatible pattern.
+- Link to v3: https://lore.kernel.org/r/20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com
+
+Changes in v3:
+- dt-bindings:
+  - perf:
+    - fix compatible conditions and dtbs_check/dt_binding_check errors
+  - memory:
+    - Remove ddr-channel binding added in v2
+    - Generalise lpddr-props binding into memory-props binding
+    - Add ddr4 binding
+    - Generalise lpddr-channel binding into memory-channel-binding
+- devicetree:
+    - update stm32mp257f-ev1 board devicetree as per new ddr4-channel
+      binding
+- driver:
+    - Remove unneeded pmu and event pointer tests in
+      `stm32_ddr_pmu_get_counter()` as it would break before if they are
+      NULL
+    - Rename macro to be more driver specific
+    - Fix few trailing commas in array and enum last entries
+    - Stick to the use of `pmu->dev` in the probe instead of
+      `&pdev->dev`
+    - s/devm_clk_get_optional_prepared/devm_clk_get_optional_enabled/ to
+      fix unwinding issue and remove the `clk_enable()` of the probe.
+    - Move the `perf_pmu_register()` at the end of the probe
+    - Add lacking spaces in regspec structs
+    - Use DEFINE_SIMPLE_DEV_PM_OPS instead of SET_SYSTEM_SLEEP_PM_OPS
+- Link to v2: https://lore.kernel.org/r/20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com
+
+Changes in v2:
+- MAINTAINERS:
+    Due to reorganisation, my contract with ST ends at the end of this month
+    and I will no longer have access to this mailbox.
+    Therefore, I will be available for any mission related to embedded and
+    kernel linux.
+    Change email address in MAINTAINERS file for STM32 DDR PMU driver.
+- devicetrees:
+  -stm32mp257f-dk: add LPDDR4 channel
+  -stm32mp257f-ev1: add DDR4 channel
+- dt-bindings:
+  - perf:
+    - Change Maintainer email address
+    - Drop obvious descriptions (clocks and reset property)
+    - Drop redundant "bindings" in commit message
+    - Drop unneedded "stm32mp151-ddr-pmu" compatible
+    - s/st,dram-type/memory-channel/, memory-channel property is not in
+      dtschema library so it will produce an error in the v2.
+  - rcc:
+    - Add required "access-controller-cells" property in example
+  - ddr-channel:
+    - Add bindings as per jedec,lpddrX-channel bindings
+- driver:
+  - Substitute the parsing of the 'st,dram-type' vendor devicetree
+    property value with the parsing of the [lp]ddr channel compatible
+  - Remove unneeded "stm32mp151-ddr-pmu" compatible
+  - Use dev_err_probe when possible
+  - Assert and deassert reset line unconditionnaly
+  - Use `devm_reset_control_get_optional_exclusive` instead of
+    `of_property_present` then `devm_reset_control_get`
+  - Use `devm_clk_get_optional_prepared` instead of `of_property_present`
+    then `devm_clk_get_prepared`
+  - Disable and unprepare the clock at end of probe
+  - Add io.h include as per LKP test report
+  - Removed `of_match_ptr` reference in `platform_driver` struct
+  - Add `pm_sleep_ptr` macro for `platform_driver` struct's `pm` field
+  - Link to v1: https://lore.kernel.org/r/20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com
+
 ---
- drivers/clk/qcom/dispcc-glymur.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Clément Le Goffic (20):
+      bus: firewall: move stm32_firewall header file in include folder
+      dt-bindings: stm32: stm32mp25: add `#access-controller-cells` property
+      clk: stm32mp25: add firewall grant_access ops
+      arm64: dts: st: set rcc as an access-controller
+      dt-bindings: memory: factorise LPDDR props into SDRAM props
+      dt-bindings: memory: introduce DDR4
+      dt-bindings: memory: factorise LPDDR channel binding into SDRAM channel
+      dt-binding: memory: add DDR4 channel compatible
+      dt-bindings: memory: SDRAM channel: standardise node name
+      arm64: dts: st: add LPDDR channel to stm32mp257f-dk board
+      arm64: dts: st: add DDR channel to stm32mp257f-ev1 board
+      dt-bindings: perf: stm32: introduce DDRPERFM dt-bindings
+      perf: stm32: introduce DDRPERFM driver
+      Documentation: perf: stm32: add ddrperfm support
+      MAINTAINERS: add myself as STM32 DDR PMU maintainer
+      ARM: dts: stm32: add ddrperfm on stm32mp131
+      ARM: dts: stm32: add ddrperfm on stm32mp151
+      arm64: dts: st: add ddrperfm on stm32mp251
+      arm64: dts: st: support ddrperfm on stm32mp257f-dk
+      arm64: dts: st: support ddrperfm on stm32mp257f-ev1
 
-diff --git a/drivers/clk/qcom/dispcc-glymur.c b/drivers/clk/qcom/dispcc-glymur.c
-index d755b41cf458a7cb9c22f510a16a414562432dab..5203fa6383f6ac7fb49e888887ee9105101a9b56 100644
---- a/drivers/clk/qcom/dispcc-glymur.c
-+++ b/drivers/clk/qcom/dispcc-glymur.c
-@@ -1945,7 +1945,7 @@ static struct qcom_cc_driver_data disp_cc_glymur_driver_data = {
- 	.num_clk_cbcrs = ARRAY_SIZE(disp_cc_glymur_critical_cbcrs),
- };
- 
--static struct qcom_cc_desc disp_cc_glymur_desc = {
-+static const struct qcom_cc_desc disp_cc_glymur_desc = {
- 	.config = &disp_cc_glymur_regmap_config,
- 	.clks = disp_cc_glymur_clocks,
- 	.num_clks = ARRAY_SIZE(disp_cc_glymur_clocks),
-
+ Documentation/admin-guide/perf/index.rst           |   1 +
+ Documentation/admin-guide/perf/stm32-ddr-pmu.rst   |  86 ++
+ .../bindings/clock/st,stm32mp25-rcc.yaml           |   7 +
+ .../memory-controllers/ddr/jedec,ddr4.yaml         |  34 +
+ .../memory-controllers/ddr/jedec,lpddr-props.yaml  |  74 --
+ .../memory-controllers/ddr/jedec,lpddr2.yaml       |   2 +-
+ .../memory-controllers/ddr/jedec,lpddr3.yaml       |   2 +-
+ .../memory-controllers/ddr/jedec,lpddr4.yaml       |   2 +-
+ .../memory-controllers/ddr/jedec,lpddr5.yaml       |   2 +-
+ ...lpddr-channel.yaml => jedec,sdram-channel.yaml} |  40 +-
+ .../memory-controllers/ddr/jedec,sdram-props.yaml  |  94 +++
+ .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml |  94 +++
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/st/stm32mp131.dtsi               |   7 +
+ arch/arm/boot/dts/st/stm32mp151.dtsi               |   7 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |   8 +
+ arch/arm64/boot/dts/st/stm32mp257f-dk.dts          |  12 +
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  12 +
+ drivers/bus/stm32_etzpc.c                          |   3 +-
+ drivers/bus/stm32_firewall.c                       |   3 +-
+ drivers/bus/stm32_rifsc.c                          |   3 +-
+ drivers/clk/stm32/clk-stm32mp25.c                  |  40 +-
+ drivers/perf/Kconfig                               |  11 +
+ drivers/perf/Makefile                              |   1 +
+ drivers/perf/stm32_ddr_pmu.c                       | 897 +++++++++++++++++++++
+ {drivers => include/linux}/bus/stm32_firewall.h    |   0
+ 26 files changed, 1351 insertions(+), 98 deletions(-)
 ---
-base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
-change-id: 20250909-constify-dispcc-glymur-desc-fix-a3b615c8e146
+base-commit: f777d1112ee597d7f7dd3ca232220873a34ad0c8
+change-id: 20250813-b4-ddrperfm-upstream-e8442bcc8396
 
 Best regards,
--- 
-Imran Shaik <imran.shaik@oss.qualcomm.com>
+--  
+Clément Le Goffic <legoffic.clement@gmail.com>
 
