@@ -1,103 +1,84 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E841B87E8;
-	Mon,  8 Sep 2025 23:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF2317A5BE;
+	Tue,  9 Sep 2025 00:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757374763; cv=none; b=QTkELTmBIlTxo0j36i95CdGoU0q6Y1iE4OBnYPO2saEM7GrAAGw+2Mjr4Aww7bsiaX+5X2DH3gMu0NlF7lU9+E/HUO/n7NU4HMlJI1nSqXFTHmd6cGc26Dg98kJc+QnhgnrchL2M8QKztFPaIxjCbmiyTkt3/2USFcHQsMU69Yw=
+	t=1757378980; cv=none; b=Aicfk04SuAnK5/JT7D1SdB4xEw9eKGXmvctcJ5tNVcP68G/RXN2aGrf2Z4JUL4LvBQwUaqYMZXXpLhQuLwmgM5zSNrzt+Dwjyzs6hjarp1EZauJCeIffWd5vNekhUW+Ur4NP+R+7AZQ6whfUm/xYdt0muKh+qGpz9+xLFm9Uv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757374763; c=relaxed/simple;
-	bh=Q03Q1QdCh+FVjubFdk49psMRgmBtn6TP8GD5Q0vmpcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDTY5D3TUiU32EDGlECwK+O/pG/8BGEXmQLE8uYd8m/bYvC3eNaaufarxb804jA8UwbBAWxdscftQlNkfMhPQeSZQnQv/6XQFo+QkhzvuuVMb8mze+Pzd+ttq+9hGsMEPbgiEaJmyGjIyIHlH5Nr4W9AxPf1c2XhRqr0+Ez+eoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VXVBtK6m; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1757378980; c=relaxed/simple;
+	bh=LQdIjGA0RNJfpAshsgQiaTl641ej9IcHvJemsA2HaVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du1ByzObNKYgNJjUJsZB6HJCns1UL0waQWuNtw6ZXh56ayE3tJ7GdwWaAjEkjtQhHFx/S0q2ecvb5u/bvO0c37+SGzB5fEw7DK1erwWYTxgIjXsTVWAx+eAp5E9L5Z8V6f69YdwfGpepbJVrJICAD35lVxrP4+qvoSzxj6PoOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEjAnFvV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VXVBtK6m"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cLNhP5g1xz9stK;
-	Tue,  9 Sep 2025 01:39:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757374757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S6loKHnERR6UQJlGUtEQ3+3fogYBwTr8txF5Ji+qXuY=;
-	b=VXVBtK6mXUfaVqVUbAwXZk4vf3gBlosdFyQkADIFM7YPJD0BuXmyZtLP/gWnX49fLxLWmS
-	TvYWCqgevy3ANpxrGU1FuxPOfB02fv2PcckuuSfUtHsLqy9xmmdMFbY2v1e2Y98GOYUcGk
-	FbBB/kiOVrj+Jre+jYhGFch8aPLgcRrNCtjGRIsS8zWOzLYfw+RXT/fR+Z2rPBB3LZgcCC
-	S5QjAAzduh1mysaLLq6zphP+oa8kVMEVSASePJ+YwGA6tHUG2Qso8V+KUEMHf4/fQ1VLE1
-	N6sG0fUjP+5898B4FVmylOx1Jm6DnKBsCiFnCRkwZyEz8ZUrVap7cZC/z8lbOA==
-Message-ID: <afe58aa6-0c3e-4508-8133-8e7621a0484a@mailbox.org>
-Date: Tue, 9 Sep 2025 01:39:13 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEjAnFvV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BB6C4CEF1;
+	Tue,  9 Sep 2025 00:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757378980;
+	bh=LQdIjGA0RNJfpAshsgQiaTl641ej9IcHvJemsA2HaVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DEjAnFvVJV70t+cqG1zPZc4VDEw9jZdRlv2CZ/TQ7EMJDgLhMY9aOixn3O9fXn3pg
+	 rxycI98+T+nYtMg+ZZcx+/AystCGSWx24HU1WlQb1tgtlPEKHxiJTq97+cTueyysPI
+	 5I3TZeQ/YUoGGJP1cjGO9re3wn7pcxjoJijO/4W9AHJRT0IstYHGHVStUDW/F7L70Y
+	 43Htj9vxSPdhFgAvtbCuER+ORqS0ywMiOsa3qtsUeVpIUkf0FdGXvEmzSGJzCY7dro
+	 l7qzALqD3DkbHZFA9YC/b+vjGjpxZNOzYK9HOs7QRkFsqNV4e5bF9+o3MNWAmvHhaL
+	 J3UbkZ9LK/L5g==
+Date: Mon, 8 Sep 2025 19:49:39 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-staging@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Thierry Reding <treding@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>
+Subject: Re: [PATCH v2 12/23] dt-bindings: display: tegra: move
+ avdd-dsi-csi-supply from VI to CSI
+Message-ID: <175737897848.2324392.4970104076561451474.robh@kernel.org>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-13-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- E Shattow <e@freeshell.de>
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
- <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
- <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
- <be2fc937-b7a6-49a7-b57d-6e3f16f4ccc3@mailbox.org>
- <20250904093442.GA13411@nxa18884-linux.ap.freescale.net>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20250904093442.GA13411@nxa18884-linux.ap.freescale.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 6pky7gdj4zuqu4e5ou56mtyfkp7ssjjh
-X-MBO-RS-ID: fbc66ab64366b5ef5dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906135345.241229-13-clamor95@gmail.com>
 
-On 9/4/25 11:34 AM, Peng Fan wrote:
 
-Hi,
-
-sorry for my late reply.
-
->> Instead of playing this "I found this code somewhere, so I can do
->>> whatever the same" answer the first implied question - why these are
->>> bindings? Provide arguments what do they bind.
->>
->> I am not sure how to answer this, but what I can write is, that if I scramble
->> these IDs in either the DT or the firmware (which provides the SCMI clock
->> service), then the system cannot work. I am not sure if this is the answer
->> you are looking for.
+On Sat, 06 Sep 2025 16:53:33 +0300, Svyatoslav Ryhel wrote:
+> The avdd-dsi-csi-supply is CSI power supply, it has nothing to do with VI,
+> like same supply is used with DSI and has nothing to do with DC. Move it
+> to correct place.
 > 
-> Marek,
->    Some U-Boot code indeed directly use the IDs to configure the clock without
->    relying on any drivers. Since the SCMI IDs could not be moved to dt-bindings,
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml   | 3 ---
+>  .../devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml | 3 +++
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
 
-Why can they not be moved to DT bindings ?
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-They are part of the ABI.
-
-This is the part I do not understand, the SCMI IDs are no different than 
-any other clock IDs used in DT, is that not so ?
-
->    the possible method to do in U-Boot is to duplicate a copy of the file,
-
-No.
