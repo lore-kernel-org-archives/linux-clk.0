@@ -1,187 +1,170 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5933CEAD
-	for <linux-clk@vger.kernel.org>; Tue,  9 Sep 2025 12:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D73F340D84;
+	Tue,  9 Sep 2025 13:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757422096; cv=none; b=pvU2KTfzi/4W9ukfvnQwmA3+lyBbzuAqORpbGNVXiOXL1EwWdd0dB1aaFo+QBz8aZ5ndtRqQHFiJMHZ75fA0EaRxEgHt8l6YCUMxSHxKC8+wFTHp0RJt4A6sVdktSBUaI6KMWQ7Ep1oNHByE29eg1jC6SM4Gu+7WEsuxKAK8BME=
+	t=1757424797; cv=none; b=Ybl2itFwYlaPEFCP0RtgGNC7SiLsVpbahOXG5Tu8imqXx3eSvHO2Y0YUa5NM90svYpom2ObWY3jPD8lgI7pytn6cW7/CdsVNdJIB8ya2gVByunjQmuigmJ4+uEc8IR084COLoxbiq3GDH2eWLl1AVsz9C9bUa4yUO3zqrip3LZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757422096; c=relaxed/simple;
-	bh=VftbE1hsLmXFChLA3aJJHbvI9G8AlMyg5ojBtwjpRKo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mTxm3mU7EPCDjUzeT23PAjvL2FUsZ7DwxbR/N1rvhrq+0OjMbhkJGtK2rrki+lIQtpa5+h40Fhc6A6+kd3BMZMoiMvnFEKvtgBNC3yow/+AFRGNh/II9jFl4MUBgwHeO4sENILcnqt/iBulMUB5fAdQHY9w6zCz3l9C7Sxy0XrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NokdZ6BY; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NokdZ6BY"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso33302455e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 05:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757422093; x=1758026893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
-        b=NokdZ6BYazX/JhBEcEC2OTZ6eRkjs7y0uEp0LXUYy9BiyZSIZk7sPHMmq+JbNkzcoA
-         t3ztbk9gkrCMzrWLyzDIgYyjE4Q1NXlPvGum3GwfsZQkUZNO1fEnqUF5cJctheqUQL96
-         3l+LGCsbEMHvPg2j6Nqxms3PEgpv1CUUc1xqfEYA8hBeZOcVsMhoDaKEVDlz3+b46KTp
-         SVoPwYvczWzPsuhBRBdKzM5jctbjYhCFdQ0M+khI9b+JlU1oq/Ic/dtE/NeoQJVc/7tU
-         waIefJtJ3EQgRmKhMyHIn9gBpGYVqJNJ7v/heJnpaOyZvSGGJLX1CyimDGzaB2NxHncR
-         yRLw==
+	s=arc-20240116; t=1757424797; c=relaxed/simple;
+	bh=HvqrxfVpH7iJhCYu7YCrbtWJo9St/OC+LmsQzVrb2yI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q2N/NP2w2mL65d9cVsGznmrAVLlR281klvYqggzCHajm8HEK6zUaW4yPvEqcc2OJr7N7tYpbQpZYbgMl7xP859aA0n//4eIyxFm9AEtJr2d67DwJpqo7KYg4fZ2+6brSk1sPpd8YK7TqI1w2gCLGdS5W2aP3Ymt9pnECqlB+SZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f7c0fb972so6121511e87.3;
+        Tue, 09 Sep 2025 06:33:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757422093; x=1758026893;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
-        b=N9L7ta6IhPuGGD51XRUjVqHD3hLdAJDEng0nFVSxX57e0z1WXL1uuF287UP06PqXX6
-         l745zb6ErsLVqFb2Rz63MDj+k6k91WLk8EMg1otUg4LAyxCT8QWTldhPSWp8uUwx+S8Y
-         MCXO6H1sQju7bzDyjmp1HJl+Rv/V7vJaafFDk9CiLchgSoIkmLckvDlUo8p7Lq7rT4RV
-         U5S01YhG4r8VLuZQ9S4VYX8PyQTHd0ykaItkn09AGwNIrOhvkW2GpJjEFnPRNNy2vS0a
-         uBA85OIFhtRwfX2w42ekQUqTcXyVNDMNJAdkBh2t8vr4WSwY2nuuIIcUxxzCvwG0h0mi
-         /XKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmqsTNaQozYal0gw5a/3lH1wGTzKdfyNaR1Xj2DuQ+qeu6mSd4g9e2G8uy1U5hjnD8VBCClEqOtu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7/ubvHnGJHO6kdtA2qU9NF8IyfJu7SNc/TBSSEJdoYGApa/a
-	rTybix1EuqqdopUb4ABCZneAVOZpN2ccVgqPXdvD5rTQKtYJHe91Oa0IEPLYfCZxWjs=
-X-Gm-Gg: ASbGnctfDLqjkLUZcCyAHJP8Hq6NzF96oNCtuReXKfL12fDCS1am1zMJt4m0jj0bzMk
-	UMxQWbuuC4u0GzoJ43KnO5hAATRhwN1FJpmSBCU8LD3393L+CNbcMm6GuY5Hefy1/qrz0AK22SI
-	F3/JuwQyDqRRWI0odTpPNZfYB9wXg4GXEIwIK/0spalW+eUCxLx8Hfp9wKzLkKlzNR/uvjwSx3E
-	Gmwy5VZDKDAiRHwnwK8zAeqD22RuPpVOFsOpQVl6trg92RD8txzVKyp3r3h+ygFX9LKWD3abZsp
-	W/Y7V7Q/IghbDjLNLJbxfFIrgjXXOJmo+79ZJ+H3sgMLYhqRVeQhT+1r7t3SPB+01qvXxHlzpUe
-	r0L4PZ8q2HvJg8yXecqbCxWcOnD5QvumbGJi3YhGCmQ==
-X-Google-Smtp-Source: AGHT+IGNhrTxIPsosCdGJWZIZAbT0RGPUxRM8nlUnIFpaFAXk/yICLpZY71X3iYYFxkLTIc/wDUO1A==
-X-Received: by 2002:a05:600c:46d0:b0:45d:d96e:6176 with SMTP id 5b1f17b1804b1-45ddded62d8mr99306545e9.25.1757422092531;
-        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75224db20sm2503507f8f.60.2025.09.09.05.48.10
+        d=1e100.net; s=20230601; t=1757424792; x=1758029592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OiPDvR6ZseDfZONnWJWsyImGvwysMua8qOuAT6/itt0=;
+        b=lgW1xP7/qJO8Ae/ua3obAsNR6BXYFdiQd2uHT7wTyjYrWIa9WMPmpglWP38BmtwNg5
+         y2EKt+NyteRwhYLCl4WQ3Vcp8skWqQ5ls4KGv4tQ7T3U7FyRMWihPxGGEl3x6MDVvb7N
+         k4HhOKReHMPGIlTNGZlK9AXPKWn09BI3d141h9avvpNuTS1k/pAWFAbipnHbj3HT4Q5k
+         CHR8jkKT9yYcyGaW+ty26vMuhBLwrFoSTSouoy5KRG6TxYnNb5d9Tmm+EMAXdBsTvmHx
+         6Vpd/VEC3FV6DtHp7a6gG1gcOk0EA7VaA2OEBKaj5Ee+CHEsrnff96jZcN0uO5aIYSio
+         cgyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8w2rJmE6XxQG+W/5EvfkddRV9LLq+AnUaeCc2FLKUQhncblDZMwHwRcXx7HfPHoOd1TziXzpB7XcY@vger.kernel.org, AJvYcCX2o2aFjkJoQSPiXHo6skAFtoIGjD+lECiMbfJd6jQsFzk8BgY/LzSTCYD35kE+pbkQajVI3ax93NbG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoktbY0U7HDrP9I+C2faPxFO/G/m+YiYLUh5EFxKWsrP3f5b13
+	uFKd2jisuY0LXl5kGci+NeFJPf4eIwOj6oetQ/IvADcwDSckgfzLmyTVaLAs9WaL
+X-Gm-Gg: ASbGncsUmp7AZSNuTx9CzThLSaZwbCty7qY5ILkdkddZEz8eknSCcsKjG21KBQmtK0k
+	9GCuCs0p4BdrF/bhMhmk3xiE87nJ+y6qaDDQQvyqb+HNz40z15I1fJjMPaq6w4of48itQgFGNPP
+	Lybl8eLNsWY8iKMhU/058nQTb/puZokaihDAkXBvKq2rpLHlcKlZwuVTn3mCsGj/QQhfGTC2stI
+	O6myjReIlhotuJG87H9zScfRk7miH/KegCZrO0JkIq4G8nzHPvxwCPAAw91mEtGp0ttWxPK+S18
+	XFXSQTqDfbFKb1VQCp/pUzE4zzSxpZODLCQDQpli0xFn6xGVvk85nq+yRdrqAJW7Eq+/t6ypaUB
+	7f8vEX7HhT2FfBzePgYe9RnpQsZPi7PKmWnGvobaZIKs6RS7KedAMe1mf0nGzU5pj4Q==
+X-Google-Smtp-Source: AGHT+IGofTC5HeARuqmuZ4nFlnyJ/oOrYNFZNubfat4FWSuE8OQiiAorhnhjuHYlLfWmznsANDyTdg==
+X-Received: by 2002:a05:6512:124a:b0:55f:33d5:5bbd with SMTP id 2adb3069b0e04-56261314a11mr3544620e87.1.1757424792081;
+        Tue, 09 Sep 2025 06:33:12 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c424fa5sm534524e87.25.2025.09.09.06.33.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
-Message-ID: <ba50f82f-3344-42dd-b58d-0a1d7438e1ac@tuxon.dev>
-Date: Tue, 9 Sep 2025 15:48:10 +0300
+        Tue, 09 Sep 2025 06:33:10 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336d2b0ea8dso43580951fa.3;
+        Tue, 09 Sep 2025 06:33:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUf2fTQa+HIaGkqFRTa4DQlFafzcp8BHCclu7pm81l1QEsm53tRLqpyOm62wDCPjjKSo/CIyM+4dhIU@vger.kernel.org, AJvYcCUkFt8zIbOjSy7FqbcN5fu8Qm5NnN7qzcufgUfMuE59SzvogDuqJi6rq6Ig4ZGWYaRu/UQ3mTs9xWzb@vger.kernel.org
+X-Received: by 2002:a2e:a54a:0:b0:338:a33:96e0 with SMTP id
+ 38308e7fff4ca-33b52891786mr32184271fa.21.1757424790514; Tue, 09 Sep 2025
+ 06:33:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
- <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
- <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250903000910.4860-1-andre.przywara@arm.com> <20250903000910.4860-4-andre.przywara@arm.com>
+ <CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com> <20250903112054.173fe7b8@donnerap>
+In-Reply-To: <20250903112054.173fe7b8@donnerap>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 9 Sep 2025 21:32:57 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64Cv4BUiwq2kX4OSeRcMU=YC=-CxQTtnQG_-0=B=tsaYg@mail.gmail.com>
+X-Gm-Features: Ac12FXwVCVC7-rgwvVDgpfgKJIONLlDmlW4y0Cq7K_8SdacVRdO0XPJ7BtdhumE
+Message-ID: <CAGb2v64Cv4BUiwq2kX4OSeRcMU=YC=-CxQTtnQG_-0=B=tsaYg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] clk: sunxi-ng: mp: support clocks with just a shift register
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Mikhail Kalashnikov <iuncuim@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Manivannan,
+On Wed, Sep 3, 2025 at 6:21=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
+om> wrote:
+>
+> On Wed, 3 Sep 2025 12:20:55 +0800
+> Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> > On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@a=
+rm.com> wrote:
+> > >
+> > > The "mp" clock models a mod clock with divider and a shift field. At
+> > > least one clock in the Allwinner A523 features just a power-of-2 divi=
+der
+> > > field, so support an initialisation of the clock without providing an
+> > > actual divider field.
+> > >
+> > > Add a check whether the "width" field is 0, and skip the divider
+> > > handling in this case, as the GENMASK macro will not work with a zero
+> > > length.
+> > >
+> > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > > ---
+> >
+> > In my series I have a patch that adds this to the divider clocks,
+> > thus adding a P-clock type to the M-clock bits.
+>
+> Yeah, I saw that, but wasn't convinced this would be better. Hence wanted
+> to post my version as an alternative.
+>
+> > Maybe use that instead? I prefer we use actual matching types instead
+> > of disabling one part of a complex clock type.
+>
+> Good that you bring up that topic: when looking for matching clocks I saw
+> we have a lot of them, though often one is just a subset of some others,
+> with some code duplication. And we use the pattern of "use type A, but
+> without feature X" already, for instance for "NKMP without the K".
+>
+> So I was wondering if we should revisit this and clean this up. IIUC thos=
+e
+> clocks were all modelled after the H3 and earlier generation, and the
+> clocks have changed since then. For instance I don't see PLLs with two
+> multipliers (NK) after the A64 anymore.
+>
+> So what about we consolidate the various types into just a few distinct
+> ones, like NKMP for all PLLs, for instance, and provides macros that
+> disable fields as needed? This could ideally be done under the hood,
+> leaving the per-SoC drivers mostly alone, hopefully.
+>
+> What do people think about that?
 
-On 8/30/25 14:22, Claudiu Beznea wrote:
-> 
-> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
->> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->>> only as a root complex, with a single-lane (x1) configuration. The
->>> controller includes Type 1 configuration registers, as well as IP
->>> specific registers (called AXI registers) required for various adjustments.
->>>
->>> Hardware manual can be downloaded from the address in the "Link" section.
->>> The following steps should be followed to access the manual:
->>> 1/ Click the "User Manual" button
->>> 2/ Click "Confirm"; this will start downloading an archive
->>> 3/ Open the downloaded archive
->>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
->>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->>>
->>> Link: https://www.renesas.com/en/products/rz-g3s?
->>> queryID=695cc067c2d89e3f271d43656ede4d12
->>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>> ---
->>>
->> [...]
->>
->>> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
->>> +{
->>> +	u32 val;
->>> +	int ret;
->>> +
->>> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
->>> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
->>> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
->>> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
->>> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
->>> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
->>> +
->>> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
->> You don't need to do !!ret as the C11 standard guarantees that any scalar type
->> stored as bool will have the value of 0 or 1.
-> OK, will drop it anyway as suggested in another thread.
-> 
->>> +}
->>> +
->> [...]
->>
->>> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
->>> +					     unsigned int devfn,
->>> +					     int where)
->>> +{
->>> +	struct rzg3s_pcie_host *host = bus->sysdata;
->>> +
->>> +	if (devfn)
->>> +		return NULL;
->> Is it really possible to have devfn as non-zero for a root bus?
-> I will drop it.
+I guess we could combine the NK* types, since those are relatively few.
 
-Actually, when calling:
+I would like to keep the basic ones, those with just one multiplier or
+one divider, possibly combined with a mux and/or a gate, alone. These
+are based on core clk helpers. We only add features like fixed post
+dividers or update bit support on top of them.
 
-pci_host_probe() ->
-  pci_scan_root_bus_bridge() ->
-    pci_scan_child_bus() ->
-      pci_scan_child_bus_extend() ->
-        // ...
-        for (devnr = 0; devnr < PCI_MAX_NR_DEVS; devnr++)
-            pci_scan_slot(bus, PCI_DEVFN(devnr, 0));
 
-The pci_scan_slot() calls only_one_child() at the beginning but that don't
-return 1 on the root bus as it is called just after pci_host_probe() and
-the bus->self is not set (as of my investigation it is set later in
-pci_scan_child_bus_extend()) leading to rzg3s_pcie_root_map_bus() being
-called with devfn != 0.
+ChenYu
 
-Similar drivers having ops and child_ops assigned use the same approach.
-E.g. dw_pcie_own_conf_map_bus():
-
-void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int
-devfn, int where)
-{
-	struct dw_pcie_rp *pp = bus->sysdata;
-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-
-	if (PCI_SLOT(devfn) > 0)
-		return NULL;
-
-	return pci->dbi_base + where;
-}
-
-Thank you,
-Claudiu
+> Cheers,
+> Andre
+>
+> > >  drivers/clk/sunxi-ng/ccu_mp.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu=
+_mp.c
+> > > index 354c981943b6f..a03dac294d048 100644
+> > > --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> > > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> > > @@ -236,9 +236,11 @@ static int ccu_mp_set_rate(struct clk_hw *hw, un=
+signed long rate,
+> > >         spin_lock_irqsave(cmp->common.lock, flags);
+> > >
+> > >         reg =3D readl(cmp->common.base + cmp->common.reg);
+> > > -       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shi=
+ft);
+> > > +       if (cmp->m.width)
+> > > +               reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cm=
+p->m.shift);
+> > >         reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shi=
+ft);
+> > > -       reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+> > > +       if (cmp->m.width)
+> > > +               reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+> > >         if (shift)
+> > >                 reg |=3D ilog2(p) << cmp->p.shift;
+> > >         else
+> > > --
+> > > 2.46.3
+> > >
+>
