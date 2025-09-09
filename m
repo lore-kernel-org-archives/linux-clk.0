@@ -1,170 +1,162 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D73F340D84;
-	Tue,  9 Sep 2025 13:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB0B31CA52;
+	Tue,  9 Sep 2025 13:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424797; cv=none; b=Ybl2itFwYlaPEFCP0RtgGNC7SiLsVpbahOXG5Tu8imqXx3eSvHO2Y0YUa5NM90svYpom2ObWY3jPD8lgI7pytn6cW7/CdsVNdJIB8ya2gVByunjQmuigmJ4+uEc8IR084COLoxbiq3GDH2eWLl1AVsz9C9bUa4yUO3zqrip3LZM=
+	t=1757425223; cv=none; b=Me9gqcD8nV+v0H1DxKchaUhPl0TkVcr0F90A0UWhbN4FDkCZ5UTS7qRVfxYLcXwwFPg8iGu++Lyg8hPDplJr6UNGfRpmnHwBJlC1IDoZYNSkWWU8OIJy2SP2M+xbzxRvLAdY+8pQaGBR739hWBsHmoZPkM3kKgv8tCoo6Y1Mpmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424797; c=relaxed/simple;
-	bh=HvqrxfVpH7iJhCYu7YCrbtWJo9St/OC+LmsQzVrb2yI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q2N/NP2w2mL65d9cVsGznmrAVLlR281klvYqggzCHajm8HEK6zUaW4yPvEqcc2OJr7N7tYpbQpZYbgMl7xP859aA0n//4eIyxFm9AEtJr2d67DwJpqo7KYg4fZ2+6brSk1sPpd8YK7TqI1w2gCLGdS5W2aP3Ymt9pnECqlB+SZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f7c0fb972so6121511e87.3;
-        Tue, 09 Sep 2025 06:33:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424792; x=1758029592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OiPDvR6ZseDfZONnWJWsyImGvwysMua8qOuAT6/itt0=;
-        b=lgW1xP7/qJO8Ae/ua3obAsNR6BXYFdiQd2uHT7wTyjYrWIa9WMPmpglWP38BmtwNg5
-         y2EKt+NyteRwhYLCl4WQ3Vcp8skWqQ5ls4KGv4tQ7T3U7FyRMWihPxGGEl3x6MDVvb7N
-         k4HhOKReHMPGIlTNGZlK9AXPKWn09BI3d141h9avvpNuTS1k/pAWFAbipnHbj3HT4Q5k
-         CHR8jkKT9yYcyGaW+ty26vMuhBLwrFoSTSouoy5KRG6TxYnNb5d9Tmm+EMAXdBsTvmHx
-         6Vpd/VEC3FV6DtHp7a6gG1gcOk0EA7VaA2OEBKaj5Ee+CHEsrnff96jZcN0uO5aIYSio
-         cgyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8w2rJmE6XxQG+W/5EvfkddRV9LLq+AnUaeCc2FLKUQhncblDZMwHwRcXx7HfPHoOd1TziXzpB7XcY@vger.kernel.org, AJvYcCX2o2aFjkJoQSPiXHo6skAFtoIGjD+lECiMbfJd6jQsFzk8BgY/LzSTCYD35kE+pbkQajVI3ax93NbG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoktbY0U7HDrP9I+C2faPxFO/G/m+YiYLUh5EFxKWsrP3f5b13
-	uFKd2jisuY0LXl5kGci+NeFJPf4eIwOj6oetQ/IvADcwDSckgfzLmyTVaLAs9WaL
-X-Gm-Gg: ASbGncsUmp7AZSNuTx9CzThLSaZwbCty7qY5ILkdkddZEz8eknSCcsKjG21KBQmtK0k
-	9GCuCs0p4BdrF/bhMhmk3xiE87nJ+y6qaDDQQvyqb+HNz40z15I1fJjMPaq6w4of48itQgFGNPP
-	Lybl8eLNsWY8iKMhU/058nQTb/puZokaihDAkXBvKq2rpLHlcKlZwuVTn3mCsGj/QQhfGTC2stI
-	O6myjReIlhotuJG87H9zScfRk7miH/KegCZrO0JkIq4G8nzHPvxwCPAAw91mEtGp0ttWxPK+S18
-	XFXSQTqDfbFKb1VQCp/pUzE4zzSxpZODLCQDQpli0xFn6xGVvk85nq+yRdrqAJW7Eq+/t6ypaUB
-	7f8vEX7HhT2FfBzePgYe9RnpQsZPi7PKmWnGvobaZIKs6RS7KedAMe1mf0nGzU5pj4Q==
-X-Google-Smtp-Source: AGHT+IGofTC5HeARuqmuZ4nFlnyJ/oOrYNFZNubfat4FWSuE8OQiiAorhnhjuHYlLfWmznsANDyTdg==
-X-Received: by 2002:a05:6512:124a:b0:55f:33d5:5bbd with SMTP id 2adb3069b0e04-56261314a11mr3544620e87.1.1757424792081;
-        Tue, 09 Sep 2025 06:33:12 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c424fa5sm534524e87.25.2025.09.09.06.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 06:33:10 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336d2b0ea8dso43580951fa.3;
-        Tue, 09 Sep 2025 06:33:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUf2fTQa+HIaGkqFRTa4DQlFafzcp8BHCclu7pm81l1QEsm53tRLqpyOm62wDCPjjKSo/CIyM+4dhIU@vger.kernel.org, AJvYcCUkFt8zIbOjSy7FqbcN5fu8Qm5NnN7qzcufgUfMuE59SzvogDuqJi6rq6Ig4ZGWYaRu/UQ3mTs9xWzb@vger.kernel.org
-X-Received: by 2002:a2e:a54a:0:b0:338:a33:96e0 with SMTP id
- 38308e7fff4ca-33b52891786mr32184271fa.21.1757424790514; Tue, 09 Sep 2025
- 06:33:10 -0700 (PDT)
+	s=arc-20240116; t=1757425223; c=relaxed/simple;
+	bh=NlXEF3VmiXF2+P9u5NoblgQUs0TpNmThc3On54QrJMw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=MFf/ZYl7yFeSRe25KYBP3UP5Qbw7KmBKFW/b2rxVUiZmeC5kNp+xOaRb53s5zoz+PQTaQqigHV1d7ELh6T3RQ0NyRzo6vVaGtiF8GD8C4CuvC1z80qJt+Vhg90jwFDOmTb0XGVs1NqTRb/wTEc8gA1LydQG3syvYTlLX/vWhIhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bq/pHbki; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bq/pHbki"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LR49009159;
+	Tue, 9 Sep 2025 13:39:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yd/oPuUfVOJcMQA/lTcKzDkbSGoGxeZhh5S6dzLVh+I=; b=bq/pHbki52n+xlpE
+	YPJ324wYDd4eq6QDmKcf4GXVJiszfNFz3t/gg4FPsISNDVKTuO0+c1BQGNpUBZy0
+	pgJu6hOH10Vwq7EZNza4MUUU52clxkOJ1GbzesJg5r/hvLNw8xp155HrRbnnCVaM
+	2xz+Wf/D+3sN2sAiQs50kwuUHSfxqotOfXUXWI37JGmdLTcMtVxZwVXgdt7oLaIK
+	gzAm02A8i8YUhdQYXR8FI1YR85GHxTUlFED9MdUi13ECx2UWwjXFEdReJx1NjPGt
+	G9RkAZQhMxXZMLisVPK830mIWjU5gjRdGl8kPxHItvfMdEV4A+7aQkVlZ2oH06KJ
+	7iBATQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491qhdw5vf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 13:39:52 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 589DdqZL022907
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Sep 2025 13:39:52 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 9 Sep 2025 06:39:46 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Tue, 9 Sep 2025 21:39:13 +0800
+Subject: [PATCH v5 04/10] clk: qcom: gcc-ipq5424: Enable NSS NoC clocks to
+ use icc-clk
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903000910.4860-1-andre.przywara@arm.com> <20250903000910.4860-4-andre.przywara@arm.com>
- <CAGb2v66DHvE5gcWDvHwoiiCgNEnPiGjB6ash407PwJr8oMwyhw@mail.gmail.com> <20250903112054.173fe7b8@donnerap>
-In-Reply-To: <20250903112054.173fe7b8@donnerap>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 9 Sep 2025 21:32:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64Cv4BUiwq2kX4OSeRcMU=YC=-CxQTtnQG_-0=B=tsaYg@mail.gmail.com>
-X-Gm-Features: Ac12FXwVCVC7-rgwvVDgpfgKJIONLlDmlW4y0Cq7K_8SdacVRdO0XPJ7BtdhumE
-Message-ID: <CAGb2v64Cv4BUiwq2kX4OSeRcMU=YC=-CxQTtnQG_-0=B=tsaYg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] clk: sunxi-ng: mp: support clocks with just a shift register
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Mikhail Kalashnikov <iuncuim@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250909-qcom_ipq5424_nsscc-v5-4-332c49a8512b@quicinc.com>
+References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+In-Reply-To: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Richard
+ Cochran" <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_suruchia@quicinc.com>, Luo Jie
+	<quic_luoj@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757425161; l=1747;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=NlXEF3VmiXF2+P9u5NoblgQUs0TpNmThc3On54QrJMw=;
+ b=6rzlGrtf5VhelZUnQeSdhadmQ0GIDdRH7Skgdahrg9hSitkSO+i7pqegpxcL3hyrJnwKQ+IHu
+ pIyIV6y/E/zBH7izgJW0shEFonjzUJtrsD5W6qfWXotJ59+Zr3hegHl
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6n1DAXKtfqOxuJKqmubf_sc1-PbXpfnE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDAzNCBTYWx0ZWRfX80FPbKVtPCXK
+ cZwGom+2lhm5RF+56rWVvNKPdSyqsXhDpAD7TEdejeMGm5BKx5vxtVWfjF5++MPvMZPcE54tZkQ
+ YqmIcbHLgqUqbYRdG6nnwq94Sk1KetllO2qSGTXgOPE/HWtmDhv5OLQWwNLVRPJvxCaqyDgIM69
+ Q9bogFwA9vuDdlXamwm14X98XgAUCKLdCfaW/1NIWKKXjl8unqB+FyOmOhxEfb+sX59EiSsOPpv
+ k9gac+QzMkUVAcH2b0o4bkkPQzJJ7VLSKaNhO4ykOCYVoKL4PbRXQeWOnvLcOtsSGz4HpttXyfB
+ I2+5SHDfS/4JWLCtoFEhZadfWxX8KJQb4a/cPmrdppvq6vHnd0eZx+gIfM2HvemK3r2Hro71Phr
+ ymIikCZu
+X-Authority-Analysis: v=2.4 cv=YOCfyQGx c=1 sm=1 tr=0 ts=68c02e28 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=gl6uzLfi5yNa2Npxn2gA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 6n1DAXKtfqOxuJKqmubf_sc1-PbXpfnE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080034
 
-On Wed, Sep 3, 2025 at 6:21=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
-om> wrote:
->
-> On Wed, 3 Sep 2025 12:20:55 +0800
-> Chen-Yu Tsai <wens@csie.org> wrote:
->
-> > On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@a=
-rm.com> wrote:
-> > >
-> > > The "mp" clock models a mod clock with divider and a shift field. At
-> > > least one clock in the Allwinner A523 features just a power-of-2 divi=
-der
-> > > field, so support an initialisation of the clock without providing an
-> > > actual divider field.
-> > >
-> > > Add a check whether the "width" field is 0, and skip the divider
-> > > handling in this case, as the GENMASK macro will not work with a zero
-> > > length.
-> > >
-> > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > > ---
-> >
-> > In my series I have a patch that adds this to the divider clocks,
-> > thus adding a P-clock type to the M-clock bits.
->
-> Yeah, I saw that, but wasn't convinced this would be better. Hence wanted
-> to post my version as an alternative.
->
-> > Maybe use that instead? I prefer we use actual matching types instead
-> > of disabling one part of a complex clock type.
->
-> Good that you bring up that topic: when looking for matching clocks I saw
-> we have a lot of them, though often one is just a subset of some others,
-> with some code duplication. And we use the pattern of "use type A, but
-> without feature X" already, for instance for "NKMP without the K".
->
-> So I was wondering if we should revisit this and clean this up. IIUC thos=
-e
-> clocks were all modelled after the H3 and earlier generation, and the
-> clocks have changed since then. For instance I don't see PLLs with two
-> multipliers (NK) after the A64 anymore.
->
-> So what about we consolidate the various types into just a few distinct
-> ones, like NKMP for all PLLs, for instance, and provides macros that
-> disable fields as needed? This could ideally be done under the hood,
-> leaving the per-SoC drivers mostly alone, hopefully.
->
-> What do people think about that?
+Add NSS NoC clocks using the icc-clk framework to create interconnect
+paths. The network subsystem (NSS) can be connected to these NoCs.
 
-I guess we could combine the NK* types, since those are relatively few.
+Additionally, add the LPASS CNOC and SNOC nodes to establish the complete
+interconnect path.
 
-I would like to keep the basic ones, those with just one multiplier or
-one divider, possibly combined with a mux and/or a gate, alone. These
-are based on core clk helpers. We only add features like fixed post
-dividers or update bit support on top of them.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+ drivers/clk/qcom/gcc-ipq5424.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
+index 71afa1b86b72..6cfe4f2b2888 100644
+--- a/drivers/clk/qcom/gcc-ipq5424.c
++++ b/drivers/clk/qcom/gcc-ipq5424.c
+@@ -3250,6 +3250,16 @@ static const struct qcom_icc_hws_data icc_ipq5424_hws[] = {
+ 	{ MASTER_ANOC_PCIE3, SLAVE_ANOC_PCIE3, GCC_ANOC_PCIE3_2LANE_M_CLK },
+ 	{ MASTER_CNOC_PCIE3, SLAVE_CNOC_PCIE3, GCC_CNOC_PCIE3_2LANE_S_CLK },
+ 	{ MASTER_CNOC_USB, SLAVE_CNOC_USB, GCC_CNOC_USB_CLK },
++	{ MASTER_NSSNOC_NSSCC, SLAVE_NSSNOC_NSSCC, GCC_NSSNOC_NSSCC_CLK },
++	{ MASTER_NSSNOC_SNOC_0, SLAVE_NSSNOC_SNOC_0, GCC_NSSNOC_SNOC_CLK },
++	{ MASTER_NSSNOC_SNOC_1, SLAVE_NSSNOC_SNOC_1, GCC_NSSNOC_SNOC_1_CLK },
++	{ MASTER_NSSNOC_PCNOC_1, SLAVE_NSSNOC_PCNOC_1, GCC_NSSNOC_PCNOC_1_CLK },
++	{ MASTER_NSSNOC_QOSGEN_REF, SLAVE_NSSNOC_QOSGEN_REF, GCC_NSSNOC_QOSGEN_REF_CLK },
++	{ MASTER_NSSNOC_TIMEOUT_REF, SLAVE_NSSNOC_TIMEOUT_REF, GCC_NSSNOC_TIMEOUT_REF_CLK },
++	{ MASTER_NSSNOC_XO_DCD, SLAVE_NSSNOC_XO_DCD, GCC_NSSNOC_XO_DCD_CLK },
++	{ MASTER_NSSNOC_ATB, SLAVE_NSSNOC_ATB, GCC_NSSNOC_ATB_CLK },
++	{ MASTER_CNOC_LPASS_CFG, SLAVE_CNOC_LPASS_CFG, GCC_CNOC_LPASS_CFG_CLK },
++	{ MASTER_SNOC_LPASS, SLAVE_SNOC_LPASS, GCC_SNOC_LPASS_CLK },
+ };
+ 
+ static const struct of_device_id gcc_ipq5424_match_table[] = {
 
-ChenYu
+-- 
+2.34.1
 
-> Cheers,
-> Andre
->
-> > >  drivers/clk/sunxi-ng/ccu_mp.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu=
-_mp.c
-> > > index 354c981943b6f..a03dac294d048 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> > > @@ -236,9 +236,11 @@ static int ccu_mp_set_rate(struct clk_hw *hw, un=
-signed long rate,
-> > >         spin_lock_irqsave(cmp->common.lock, flags);
-> > >
-> > >         reg =3D readl(cmp->common.base + cmp->common.reg);
-> > > -       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shi=
-ft);
-> > > +       if (cmp->m.width)
-> > > +               reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cm=
-p->m.shift);
-> > >         reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shi=
-ft);
-> > > -       reg |=3D (m - cmp->m.offset) << cmp->m.shift;
-> > > +       if (cmp->m.width)
-> > > +               reg |=3D (m - cmp->m.offset) << cmp->m.shift;
-> > >         if (shift)
-> > >                 reg |=3D ilog2(p) << cmp->p.shift;
-> > >         else
-> > > --
-> > > 2.46.3
-> > >
->
