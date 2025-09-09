@@ -1,66 +1,65 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4391F3BAE
-	for <linux-clk@vger.kernel.org>; Tue,  9 Sep 2025 12:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5933CEAD
+	for <linux-clk@vger.kernel.org>; Tue,  9 Sep 2025 12:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757421274; cv=none; b=CG6z6weC8XPD0yrh1mRV30HsQrNgCAxDK0MFzD+oxsXAVHgNJcpbzy5KJiXZgZZbZHTTvkn9krfCfslf5QtPB7Yh4P7osss1mi0QY/rZkJTYmupa92QlfTNHNBdJO+fT3Qe7jZuBfVq+N71OZawC14VKLeLpkfOEbyLq68z8XfQ=
+	t=1757422096; cv=none; b=pvU2KTfzi/4W9ukfvnQwmA3+lyBbzuAqORpbGNVXiOXL1EwWdd0dB1aaFo+QBz8aZ5ndtRqQHFiJMHZ75fA0EaRxEgHt8l6YCUMxSHxKC8+wFTHp0RJt4A6sVdktSBUaI6KMWQ7Ep1oNHByE29eg1jC6SM4Gu+7WEsuxKAK8BME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757421274; c=relaxed/simple;
-	bh=7mjj7rz2/91ejYPmnOag2TLqmJpXVzRAQQZ9jyS/Yuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kuRln51dfrvbcyDC62pt0gfjxmDTYfHVNCcJYshl/d87kXlAGORxOCl4RWvUQHwPeDuXT6F8rxA8fCnnZf53ycuEpmN5m8cmSXd4kMDB+YgeMzdscgTJF+EiTvl7RtsiR2JjHS1b38Qmdx3mt9FPpoRJjYAXfp4Be1jIVduPqcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JEYDF1W0; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757422096; c=relaxed/simple;
+	bh=VftbE1hsLmXFChLA3aJJHbvI9G8AlMyg5ojBtwjpRKo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mTxm3mU7EPCDjUzeT23PAjvL2FUsZ7DwxbR/N1rvhrq+0OjMbhkJGtK2rrki+lIQtpa5+h40Fhc6A6+kd3BMZMoiMvnFEKvtgBNC3yow/+AFRGNh/II9jFl4MUBgwHeO4sENILcnqt/iBulMUB5fAdQHY9w6zCz3l9C7Sxy0XrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NokdZ6BY; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JEYDF1W0"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b04260d72bfso98688066b.3
-        for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 05:34:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NokdZ6BY"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso33302455e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 05:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757421271; x=1758026071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=A8FY6t1e4Uc9Ae59s5Q0dm07RQgXfKaJ6ZJfiPWFz8w=;
-        b=JEYDF1W0lPqbwNrqtb/LQmskl2uvQcTNfHwZvCq90rtVnZbqZvgbjvH4/rrbIOgTFF
-         uHkVBSRZAALE8k5+/PadOsiT6ZZ7imJvjirDGQa10zCKpMVNnZEu1V6x/2iZ3RpUKZGW
-         8IPUSYtD/l1UAPg04HadnhRl71ZxvESyf6sKPljuaTeif8gqYoXh99R92QFH//u/FNsU
-         6PbRdnxu7Pmfujx4hKo9HsH1MJPEBzHZrBoCZHH//nIgqBON0/I3lAgCA3DQzKIE3fCo
-         pLFIH6BlbkJ48iJyqgrBXtk2IYnkO5LTjr5PmRLziT+wPHHeJioadZ3NWSnuOdvcxO6r
-         ISwg==
+        d=tuxon.dev; s=google; t=1757422093; x=1758026893; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
+        b=NokdZ6BYazX/JhBEcEC2OTZ6eRkjs7y0uEp0LXUYy9BiyZSIZk7sPHMmq+JbNkzcoA
+         t3ztbk9gkrCMzrWLyzDIgYyjE4Q1NXlPvGum3GwfsZQkUZNO1fEnqUF5cJctheqUQL96
+         3l+LGCsbEMHvPg2j6Nqxms3PEgpv1CUUc1xqfEYA8hBeZOcVsMhoDaKEVDlz3+b46KTp
+         SVoPwYvczWzPsuhBRBdKzM5jctbjYhCFdQ0M+khI9b+JlU1oq/Ic/dtE/NeoQJVc/7tU
+         waIefJtJ3EQgRmKhMyHIn9gBpGYVqJNJ7v/heJnpaOyZvSGGJLX1CyimDGzaB2NxHncR
+         yRLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757421271; x=1758026071;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A8FY6t1e4Uc9Ae59s5Q0dm07RQgXfKaJ6ZJfiPWFz8w=;
-        b=DDBZlHCqEHqZnOAMqE0KJh1ScjWvbP7JySqLtBDcY2ukdRyD779DrHVNBUqOInhtGh
-         cxPd451LaeuyfSvRb2kTzUxq71ryMMZNMVCU3RvKng2AbKnZCKWOL/UI0JZ1t9DE9sjB
-         vmuVhO8Ve1aD087BW8wMAmObueiYko9nrTmp/S36+rQxf40EwyA/HV9tXQnVY+IDNF/S
-         Zlsrq1SuvhIG41fmKk2j3eCZNWuoULdfQ2ehU0tweXug+f8EhthgmOQMyR1QCCgzMLnh
-         AUBTjmAT0HBgbGM0riPr2i3dLKbWEt9skMC8dpuo1d8GdwIoe4pbeAIjqs8zaK4nOte+
-         hkVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH1rwa8e5NnjP72cgCrnCQijp0d6JqoA2OuaNmel8gquEjHm3ltNhaXbmFesMLCd2FVDowAwsRIQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGxXIRqV9z8kRTHAP4zIQBGYNoGi7FgPO3u7Tle5aB2/O1LLKG
-	mavpnvG385rZIplTrZZliVwjrk7uvF4wghaVnUTCjkGK+6nWGndxMEyEla10W56nsJo=
-X-Gm-Gg: ASbGncvw1slXt7M3mayglgkE9R42st6S0wJSO7qRfgsHaBJwfa3EUKdSwa0N+mLj3WN
-	iHe4b4xB9Su0lNv7Nd5z8+X8L0Z61mbKTDtFZsb4ByRFWegMwKHWYvgshXP/RPDrBb7FPNPqprA
-	xQkJsBy+r+q6KLH35lK94OmhpOBmt4pFbu73HN5ttBfim7y9SNzWmn7cHHBigOD76pHis6P/OKb
-	PcAV5UA3R+QraQHsRnCw3ynjX3xwqdWQJC5eSvYCm0WY7IYl0I0+dWFJc3At4iSoQ0nvU/+45gX
-	pGx9rf7Sr84dw1ppMYomOK5/d4sukgyRkB4uMZ9M08wdVRsL/0eoiXyN5COs/Af1p92D1kiEr51
-	3oKtfHXdGyRk7Hznvo5/mCruxzeEVm5Fqfofa7t6GUqE=
-X-Google-Smtp-Source: AGHT+IE8rEi135RP6VtGcWAWerUo0T15mMkFHkykkUAIx12TkWOyPRkfn7DvpKit5FzG6ZAN4/JF8g==
-X-Received: by 2002:a17:906:d54b:b0:b04:71b1:765d with SMTP id a640c23a62f3a-b04b13d6ad8mr574604266b.1.1757421271333;
-        Tue, 09 Sep 2025 05:34:31 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046d420e02sm1466778166b.39.2025.09.09.05.34.29
+        d=1e100.net; s=20230601; t=1757422093; x=1758026893;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9O8tHwn09nsjeClSuqgfyQVy6t2GJ6AHHgo9UAkBbk=;
+        b=N9L7ta6IhPuGGD51XRUjVqHD3hLdAJDEng0nFVSxX57e0z1WXL1uuF287UP06PqXX6
+         l745zb6ErsLVqFb2Rz63MDj+k6k91WLk8EMg1otUg4LAyxCT8QWTldhPSWp8uUwx+S8Y
+         MCXO6H1sQju7bzDyjmp1HJl+Rv/V7vJaafFDk9CiLchgSoIkmLckvDlUo8p7Lq7rT4RV
+         U5S01YhG4r8VLuZQ9S4VYX8PyQTHd0ykaItkn09AGwNIrOhvkW2GpJjEFnPRNNy2vS0a
+         uBA85OIFhtRwfX2w42ekQUqTcXyVNDMNJAdkBh2t8vr4WSwY2nuuIIcUxxzCvwG0h0mi
+         /XKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmqsTNaQozYal0gw5a/3lH1wGTzKdfyNaR1Xj2DuQ+qeu6mSd4g9e2G8uy1U5hjnD8VBCClEqOtu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP7/ubvHnGJHO6kdtA2qU9NF8IyfJu7SNc/TBSSEJdoYGApa/a
+	rTybix1EuqqdopUb4ABCZneAVOZpN2ccVgqPXdvD5rTQKtYJHe91Oa0IEPLYfCZxWjs=
+X-Gm-Gg: ASbGnctfDLqjkLUZcCyAHJP8Hq6NzF96oNCtuReXKfL12fDCS1am1zMJt4m0jj0bzMk
+	UMxQWbuuC4u0GzoJ43KnO5hAATRhwN1FJpmSBCU8LD3393L+CNbcMm6GuY5Hefy1/qrz0AK22SI
+	F3/JuwQyDqRRWI0odTpPNZfYB9wXg4GXEIwIK/0spalW+eUCxLx8Hfp9wKzLkKlzNR/uvjwSx3E
+	Gmwy5VZDKDAiRHwnwK8zAeqD22RuPpVOFsOpQVl6trg92RD8txzVKyp3r3h+ygFX9LKWD3abZsp
+	W/Y7V7Q/IghbDjLNLJbxfFIrgjXXOJmo+79ZJ+H3sgMLYhqRVeQhT+1r7t3SPB+01qvXxHlzpUe
+	r0L4PZ8q2HvJg8yXecqbCxWcOnD5QvumbGJi3YhGCmQ==
+X-Google-Smtp-Source: AGHT+IGNhrTxIPsosCdGJWZIZAbT0RGPUxRM8nlUnIFpaFAXk/yICLpZY71X3iYYFxkLTIc/wDUO1A==
+X-Received: by 2002:a05:600c:46d0:b0:45d:d96e:6176 with SMTP id 5b1f17b1804b1-45ddded62d8mr99306545e9.25.1757422092531;
+        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75224db20sm2503507f8f.60.2025.09.09.05.48.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 05:34:30 -0700 (PDT)
-Message-ID: <d7caec9b-3137-4e55-87e0-831732453b13@linaro.org>
-Date: Tue, 9 Sep 2025 14:34:29 +0200
+        Tue, 09 Sep 2025 05:48:12 -0700 (PDT)
+Message-ID: <ba50f82f-3344-42dd-b58d-0a1d7438e1ac@tuxon.dev>
+Date: Tue, 9 Sep 2025 15:48:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,83 +67,121 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: dispcc-glymur: Constify 'struct qcom_cc_desc'
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>
-References: <20250909-constify-dispcc-glymur-desc-fix-v1-1-6cb59730863f@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250909-constify-dispcc-glymur-desc-fix-v1-1-6cb59730863f@oss.qualcomm.com>
+In-Reply-To: <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/09/2025 11:47, Imran Shaik wrote:
-> 'struct qcom_cc_desc' is passed to qcom_cc_map() and
-> qcom_cc_really_probe() only as pointer to const, so make the memory
-> const for safety.
+Hi, Manivannan,
+
+On 8/30/25 14:22, Claudiu Beznea wrote:
 > 
-> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> ---
-> This commit is similar to [1].
+> On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+>> On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>> only as a root complex, with a single-lane (x1) configuration. The
+>>> controller includes Type 1 configuration registers, as well as IP
+>>> specific registers (called AXI registers) required for various adjustments.
+>>>
+>>> Hardware manual can be downloaded from the address in the "Link" section.
+>>> The following steps should be followed to access the manual:
+>>> 1/ Click the "User Manual" button
+>>> 2/ Click "Confirm"; this will start downloading an archive
+>>> 3/ Open the downloaded archive
+>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+>>>
+>>> Link: https://www.renesas.com/en/products/rz-g3s?
+>>> queryID=695cc067c2d89e3f271d43656ede4d12
+>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>> ---
+>>>
+>> [...]
+>>
+>>> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
+>>> +{
+>>> +	u32 val;
+>>> +	int ret;
+>>> +
+>>> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
+>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
+>>> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
+>>> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
+>>> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
+>>> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
+>>> +
+>>> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
+>> You don't need to do !!ret as the C11 standard guarantees that any scalar type
+>> stored as bool will have the value of 0 or 1.
+> OK, will drop it anyway as suggested in another thread.
 > 
-> [1] https://lore.kernel.org/r/20250820124821.149141-2-krzysztof.kozlowski@linaro.org
-> ---
->  drivers/clk/qcom/dispcc-glymur.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> +}
+>>> +
+>> [...]
+>>
+>>> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+>>> +					     unsigned int devfn,
+>>> +					     int where)
+>>> +{
+>>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>>> +
+>>> +	if (devfn)
+>>> +		return NULL;
+>> Is it really possible to have devfn as non-zero for a root bus?
+> I will drop it.
 
-Uh, people need to stop copying downstream drivers.
+Actually, when calling:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+pci_host_probe() ->
+  pci_scan_root_bus_bridge() ->
+    pci_scan_child_bus() ->
+      pci_scan_child_bus_extend() ->
+        // ...
+        for (devnr = 0; devnr < PCI_MAX_NR_DEVS; devnr++)
+            pci_scan_slot(bus, PCI_DEVFN(devnr, 0));
 
-Best regards,
-Krzysztof
+The pci_scan_slot() calls only_one_child() at the beginning but that don't
+return 1 on the root bus as it is called just after pci_host_probe() and
+the bus->self is not set (as of my investigation it is set later in
+pci_scan_child_bus_extend()) leading to rzg3s_pcie_root_map_bus() being
+called with devfn != 0.
+
+Similar drivers having ops and child_ops assigned use the same approach.
+E.g. dw_pcie_own_conf_map_bus():
+
+void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int
+devfn, int where)
+{
+	struct dw_pcie_rp *pp = bus->sysdata;
+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+
+	if (PCI_SLOT(devfn) > 0)
+		return NULL;
+
+	return pci->dbi_base + where;
+}
+
+Thank you,
+Claudiu
