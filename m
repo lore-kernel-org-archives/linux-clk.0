@@ -1,33 +1,24 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1309433AC;
-	Tue,  9 Sep 2025 06:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7E84502F;
+	Tue,  9 Sep 2025 07:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757401010; cv=none; b=OXF/lMcnynISePwOCGCHWnO1dFyGGiIHB4e5r/byfwslW1OHogF7dFqpb6kaX271dmx2ZsBfLjCTC8pw5h7+zsHie1TwYWbBRSxZOnPVs++ZxOpGhtJwmegoHcH44YyRaT/NgHkx+YgwcWSAt3nvxy7ZTD37ZzmabenlRs1FDRU=
+	t=1757401398; cv=none; b=TQJSa7tECNUsqP6pWNieNh+HHQmrjIIs9NGBcdDbPsna7XhDut3sR/i9ClWZd4fsUX0MPkO0ecP7NsAE98KEQHXd23Hv1YJD+pNiPHMqmdMQ1/WeYAUKbNvF+RUefZdzVdmW0W+9mndpO0KQzDTnB8c7RxNyFSEQ+4mRofzbgoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757401010; c=relaxed/simple;
-	bh=hnJH5C3OpaIIK3hyzpIrwMipqvYJj91l3eSueWTRe3s=;
+	s=arc-20240116; t=1757401398; c=relaxed/simple;
+	bh=G3l0j0yDGkwnJ5+na5g4DIY/7rGmXIaiDhhDbpx1czQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SCe5Q4JHInX9oOuRQhyBjS6isFbreNSAwUDG5dTgAnsf+nRIK93RyLHa2vJLMQNgWchT+UbkXbIHpAuFLxS/hQXSzVaEIx6uWx7MFd+aPqB/vqFSsaTkw8PbYv4Kc3ryO3V5b5ROnuTZ9BUUdgPSkPHooR/DNbnMOOKAwJxFA9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/sGI9JU; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/sGI9JU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98C9C4CEF4;
-	Tue,  9 Sep 2025 06:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757401009;
-	bh=hnJH5C3OpaIIK3hyzpIrwMipqvYJj91l3eSueWTRe3s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j/sGI9JUba8PwIvD4rCNzEu+QAKX8Iv4Xl4p68eunJTs6le9RRqKzV0NLQWEyb3JB
-	 6HS+b30VURdI5feCaMKv9FGS7Uxx7k+njIcFs3UzNzBEDBBK5ukn1DcMTGKkOUGSE0
-	 sPpsDQmpRYgm2XdtcxOdSbB3A4AJWKfGMEIUCV6sGdGp5ZUTiabe8XxZOvjbhqqIgh
-	 soz8b4qJiIfEMSyR0Jw00FF+k3rMdHHMiXB/gU72EqMEgRwD0GNXYfToeB6ztgPtiM
-	 QnwjTtlIFgVA2W9FjZ+VekMVaO9J2Dcd+9KSPcyzcuXL5SMkmvYvriTE0Pg0IDU2lB
-	 dCCZMu3Jq8pUw==
-Message-ID: <f199fc0b-20c0-4c22-b0ed-c508514b60c6@kernel.org>
-Date: Tue, 9 Sep 2025 08:56:36 +0200
+	 In-Reply-To:Content-Type; b=joGjZr9BL2zeNDHrejPHds+8ZZaqh4wg8nvp9rprNQ8CjBCygqf4IXKsSOoIwcQKzTcch+PdE3nadhRAhxFHehfqq970U2/B53PAkOl8mNV1snkbj068/1vtZ25/PvAqf/Jv/ekxfswHFUBPcFQGZsvoBIViK0bJYbbxmOgz3ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.102] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowABH6RIf0b9o6DPiAQ--.22178S2;
+	Tue, 09 Sep 2025 15:02:56 +0800 (CST)
+Message-ID: <8ca70773-42b0-4dcc-8b54-338594e9a8ea@iscas.ac.cn>
+Date: Tue, 9 Sep 2025 15:02:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,124 +26,108 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 13/14] dt-bindings: input/touchscreen: Convert MELFAS
- MIP4 Touchscreen to YAML
-To: Linus Walleij <linus.walleij@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Ariel D'Alessandro <ariel.dalessandro@collabora.com>, airlied@gmail.com,
- amergnat@baylibre.com, andrew+netdev@lunn.ch, andrew-ct.chen@mediatek.com,
- angelogioacchino.delregno@collabora.com, broonie@kernel.org,
- chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
- davem@davemloft.net, edumazet@google.com, flora.fu@mediatek.com,
- houlong.wei@mediatek.com, jeesw@melfas.com, jmassot@collabora.com,
- kernel@collabora.com, krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
- matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com,
- mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com,
- robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch,
- support.opensource@diasemi.com, tiffany.lin@mediatek.com,
- tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-14-ariel.dalessandro@collabora.com>
- <CACRpkdbpKqKyebADj0xPFq3g0biPh-vm4d6C3sd8r0URyfyYRg@mail.gmail.com>
- <caguo7ud4dapb4yupeq2x4ocwoh4dt5nedwjsyuqsaratugcgz@ozajhsqwfzq6>
- <CACRpkdZRHQ6vuchN8x8d0uPCVMPPHOdBVWiUhzFJNs2paHGbYw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v8 2/3] clk: canaan: Add clock driver for Canaan K230
+To: Xukai Wang <kingxukai@zohomail.com>, Yao Zi <ziyao@disroot.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
+ <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com> <aLz4Q7LZFEfQQGUj@pie>
+ <0947d9cc-86ba-46e0-92aa-04f4714e7a20@zohomail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CACRpkdZRHQ6vuchN8x8d0uPCVMPPHOdBVWiUhzFJNs2paHGbYw@mail.gmail.com>
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <0947d9cc-86ba-46e0-92aa-04f4714e7a20@zohomail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowABH6RIf0b9o6DPiAQ--.22178S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF1rWr4xAFW3Zr1fWr18Grg_yoW5GFWkpr
+	yIgFy8tF4DJF17Cw12va9rWr1Yyws0qa4SkrykGFyxJ3Z0k34IqF1Skrn5uayUArnrt3WS
+	v3y5try7CFZYyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxU3QzVUUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On 05/09/2025 13:33, Linus Walleij wrote:
-> On Fri, Sep 5, 2025 at 12:02 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->> On Thu, Aug 21, 2025 at 01:56:24PM +0200, Linus Walleij wrote:
->>> Hi Ariel,
+
+On 9/8/25 22:13, Xukai Wang wrote:
+>>> [...]
 >>>
->>> thanks for your patch!
->>>
->>> On Wed, Aug 20, 2025 at 7:17 PM Ariel D'Alessandro
->>> <ariel.dalessandro@collabora.com> wrote:
->>>
->>>> +  ce-gpios:
->>>> +    description: GPIO connected to the CE (chip enable) pin of the chip
->>>> +    maxItems: 1
->>>
->>> Mention that this should always have the flag GPIO_ACTIVE_HIGH
->>> as this is required by the hardware.
->>>
->>> Unfortunately we have no YAML syntax for enforcing flags :/
+>>> +
+>>> +static int k230_clk_set_rate_mul_div(struct clk_hw *hw, unsigned long rate,
+>>> +				     unsigned long parent_rate)
+>>> +{
+>>> +	struct k230_clk_rate *clk = hw_to_k230_clk_rate(hw);
+>>> +	struct k230_clk_rate_self *rate_self = &clk->clk;
+>>> +	u32 div, mul, div_reg, mul_reg;
+>>> +
+>>> +	if (rate > parent_rate)
+>>> +		return -EINVAL;
+>>> +
+>>> +	if (rate_self->read_only)
+>>> +		return 0;
+>>> +
+>>> +	if (k230_clk_find_approximate_mul_div(rate_self->mul_min, rate_self->mul_max,
+>>> +					      rate_self->div_min, rate_self->div_max,
+>>> +					      rate, parent_rate, &div, &mul))
+>>> +		return -EINVAL;
+>>> +
+>>> +	guard(spinlock)(rate_self->lock);
+>>> +
+>>> +	div_reg = readl(rate_self->reg + clk->div_reg_off);
+>>> +	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
+>>> +	div_reg |= BIT(rate_self->write_enable_bit);
+>>> +	writel(div_reg, rate_self->reg + clk->div_reg_off);
+>>> +
+>>> +	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
+>>> +	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
+>>> +	mul_reg |= BIT(rate_self->write_enable_bit);
+>>> +	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
+>>> +
+>>> +	return 0;
+>>> +}
+>> There are three variants of rate clocks, mul-only, div-only and mul-div
+>> ones, which are similar to clk-multiplier, clk-divider,
+>> clk-fractional-divider.
 >>
->> Theoretically there can be an inverter on the line, so from the AP point
->> of view the line is active low while from the peripheral POV the pin is
->> active high...
-> 
-> Yes, I think someone even proposed adding inverters to the
-> device tree and was nixed.
+>> The only difference is to setup new parameters for K230's rate clocks,
+>> a register bit, described as k230_clk_rate_self.write_enable_bit, must
+>> be set first.
+> Actually, I think the differences are not limited to just the
+> write_enable_bit. There are also distinct mul_min, mul_max, div_min, and
+> div_max values, which are not typically just 1 and (1 << bit_width) as
+> in standard clock divider or multiplier structures.
 
-It's not about DT, it's about board design - you can (almost?) always
-invert the logical signal, so this should match what hardware requires
-plus any inverter on the board.
+So the part I have been thinking about is, consider just checking the
+{mul,div}_{min,max} values to determine which kind it is? As is this is
+just redundant information, since you can infer whether there is a
+configurable multiplier by checking if mul_{min,max} are equal. Same for
+div_{min,max}.
 
+Vivian "dramforever" Wang
 
-> 
-> It's a matter of phrasing I would say:
-> 
-> "Mention that this should nominally have the flag GPIO_ACTIVE_HIGH
+> For example, the div_min for hs_sd_card_src_rate is 2, not 1. This
+> affects the calculation of the approximate divider, and cannot be fully
+> represented if we only use the clk_divider structure.
+>
+> Another example is ls_codec_adc_rate, where mul_min is 0x10, mul_max is
+> 0x1B9, div_min is 0xC35, and div_max is 0x3D09. These specific ranges
+> cannot be described using the normal clk_fractional_divider structure.
+>
 
-No, please do not, it is wrong. If hardware requires active high, then
-just say this is active high. But the actual GPIO flag depends on the
-board design if signal is inverted.
-
-
-Best regards,
-Krzysztof
