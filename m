@@ -1,116 +1,338 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF012322C66;
-	Tue,  9 Sep 2025 16:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41613223337;
+	Tue,  9 Sep 2025 16:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757433988; cv=none; b=KKF5fxhR00hbpbvsaHWLKMIBeY7lB9VxoK1CgK10qGiylu7E3ngz02I7gEfsVxryZU2AiFu1stKnUqCuwF75w4EHbeQWGVKaXLxbFqeR9r/eTuTpKYr6/Pu9UtXK1q7FnH9vpAfxn3/9jnQfV54dJeiRAePN6EuN6jZEsLl2iio=
+	t=1757435162; cv=none; b=D/aBkx+zoLI1Nx7D9oKNSxrDueuEu4AYB6QeE7qimYCDkufzFyI4yKYs6PHkmgvTw+/ER20MU9oaFqi291esV4NE6QPVhZsnL3GlvwHrzpeG9t3/fz7IMZ3hkYQDlttdPLpLnUTTyEm4WOXacPummaF0sXS2hagRNkA17I6ITww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757433988; c=relaxed/simple;
-	bh=mqM7enTl5JCEBh5L5tH8TyjNRitV3B594uobCX8eDCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bJ5Kyj37hJjwZfJj+e/UN7Xv7DNMzjh3NjK+zFieAKhGhtoKNjxP7ACHSpvWoxu/4YBoWgfwONJ+/XhVEaGoJIaLQeqvRdh0xCcMfY4/eLfiZBURDLfdaxRRCd8ruKMZ2JTR73IdxIHuHGEKlEiS5GsFZfRpPeyszmJ/HsjguQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5688ac2f39dso986840e87.3;
-        Tue, 09 Sep 2025 09:06:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757433983; x=1758038783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mqM7enTl5JCEBh5L5tH8TyjNRitV3B594uobCX8eDCc=;
-        b=tKdzS47bmvbIsYNUSr+fqYgytkxWsnk50V1aNonOvpyvUoor4grs6wWmGOnHB9m1Z4
-         xoWlFlpU3nC/rAddVdDij6ZmFpW4gC6h8+4+LBV1Bvi0stFyh5BCBLyvujSPP1gTE0DW
-         6kDj2vvuqOqqZH4ccy6jG+McBQ1YeHxi2UImRlchfwq2dyf006t27IF6WeRfUJDDrVHR
-         AhM7F5fJ3/Jvp0qwB7DbS5Md2g30m2OZyhdodvxExhOLXRg2fL0rREYkGbx7W1QnrcYF
-         lEgbPIs2LDhKRDQ4t9tveeVMwWcnTOcZlNxCsIgrMcRLYaaExInRi5fXkr7GW6zC8Oxl
-         9OJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLXvKe+bXDyOVrdzYPLHJyUC/iuNT52YHLX6+f98ne8TFaTQiLh7QcCfm+OP5Fqjgen/nyOS7pH/Ah@vger.kernel.org, AJvYcCXh/GhjCroRiF7hpv69B3xTXxcuSx7uL5q+Sj4jggbIId9Tw+NYlXYVUQsGPNP/BGvPGxY9PkkAKasw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy73qB6UGJhI6H28d8unrzf5S9q6UUu1P+PA1iFPUygOKhg1YUm
-	NBbGDDNF9PRFveX/a8bRPdW6CnP3+1FV/5aQQyKjsfklCIRUSMtf01Px4hpXiQxp
-X-Gm-Gg: ASbGnct0NsAKojv+ixt+gTDt/67ZgbhxmXqSmxXztKheL6vSYDzwjUAk8H+pHOeaCSH
-	+Q0pD7muM5ShJ0HyGLK5nQUzjPWhKyeTdJqxYs0jXgiPelxt/vf8dS5Z71KlcfG7FKO4qlPb+f+
-	gesNl1RyOBxZh3zsTFaZ0G+LFSmG2/0iMybgF3wxwVyS9MjfqYnSSH0l5kqXGSg7tEOQ1Fbmj2+
-	MYKF4lRgzJBh57Ko4lMnWJQV4pgsUHlbJA30OpT0Mf5xybLQqeRd8Uc05XWEkASDeEkkMvb5gbP
-	tQdSr+f+fwbG+0edOIQtFkfj0vPCJhbzhakyR3sP9iKUMQWxcCejiIqvQ4iptTGNkjHbBkqg2e2
-	zg4mpRFSuHpJlD2WN0+v8uDArPAT2f4FxV60vFj/MCg7Wfn1Y1Od04NlrTkOTvJhVMnR/cgW6l9
-	Nk
-X-Google-Smtp-Source: AGHT+IFvKPRugc3wb6yNdKOZU08GPmJzFfdq9AxadUXw2ixPAK257Dcjw7AmxlZHTYvIIzBPcKZnRg==
-X-Received: by 2002:a05:6512:1546:10b0:562:d04d:fa05 with SMTP id 2adb3069b0e04-562d04dfad0mr2788980e87.54.1757433982398;
-        Tue, 09 Sep 2025 09:06:22 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56817f57ca7sm606522e87.100.2025.09.09.09.06.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 09:06:21 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f901b2d2so59633611fa.2;
-        Tue, 09 Sep 2025 09:06:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUnI9KKhITCBsCgT+dIDiUsGmZe/Wl9FeuZgSD1cmx1JZrHwEbCo/RJspslFzztkni8HK+dzjWPjXuJ@vger.kernel.org, AJvYcCWpulw2elKwTrFCdVwwqSMEvDSxR/Vxn1wB8qCzw/x+9Jqx/zQ7SKUtl2dgsv8RCB7ajVs9L6SZcpPZ@vger.kernel.org
-X-Received: by 2002:a05:651c:1118:10b0:336:de52:5c33 with SMTP id
- 38308e7fff4ca-33b58cbe583mr29181991fa.16.1757433981198; Tue, 09 Sep 2025
- 09:06:21 -0700 (PDT)
+	s=arc-20240116; t=1757435162; c=relaxed/simple;
+	bh=vfzDmUMBXFEXny9F+Q1BKzqeDg/juItm7mo3ihXETqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=esYC6Yfu3RKT8qugdSj3lwdL65Qx3jOelZr7Cfv3jKUClFqPgwTcXS1IQbH0Ug33qUEdLeX5wNbUTYeXf9HEwX0zvynLftrs64Rjl1dQbP9todViFSJkI0xlQOlmMc4OAHY+7hT8/RDy7h8VwosjT8EdqIIeCV0fNalTJ3C6rfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj/NCaLx; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj/NCaLx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8ABC4CEF8;
+	Tue,  9 Sep 2025 16:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757435161;
+	bh=vfzDmUMBXFEXny9F+Q1BKzqeDg/juItm7mo3ihXETqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gj/NCaLx7Ci5Nrx3m8Qf0cGJZZp75UjNxcnZIoP8nSRYWwPJOvqRotzfOsP9OKj6f
+	 60pNDV648NMVSJ51qbitr7AfgNT022kvjT0C05+NAoI+JRDzpmL8Z/1H0xKMLPPaLr
+	 qBDyEA6I3r36yIAYFGs8e61NuttAp/FG+mxwEUwe1oqS5hH3KO6fHXBUUNYmvaeOcD
+	 lhDe9F7Flz6XNeMQUy/dHv8B+NZRH1X6dQycKZQZyjh7q3KJPrX8OBl7oEtQsNSOgE
+	 epjVKtUJy2LNDGUTbSzyJacqQqJhNSRM3CybLPgLExFHy4/BG56vhj2Dqbpzj4xLIs
+	 31Zg4kW986h4g==
+Date: Tue, 9 Sep 2025 11:26:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 21/23] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+Message-ID: <20250909162600.GA3311232-robh@kernel.org>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-22-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903000910.4860-1-andre.przywara@arm.com> <20250903000910.4860-3-andre.przywara@arm.com>
- <CAGb2v65rRqTWvn2NR-OSeP-zVJzheJ=L0YeG5DOrCTPJ8Haiyg@mail.gmail.com>
-In-Reply-To: <CAGb2v65rRqTWvn2NR-OSeP-zVJzheJ=L0YeG5DOrCTPJ8Haiyg@mail.gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 10 Sep 2025 00:06:07 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66DEh3ZGTsBkX6RELRs+0ZPbMq7bsNQhdUcpxHHMxDhhQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxEC7pM8O5XaLI0ogPtLktnWEqjnqEb6kXbRdWLZTDBJ17zyeRXdPd0u4w
-Message-ID: <CAGb2v66DEh3ZGTsBkX6RELRs+0ZPbMq7bsNQhdUcpxHHMxDhhQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: generalise update bit
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Mikhail Kalashnikov <iuncuim@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906135345.241229-22-clamor95@gmail.com>
 
-On Sat, Sep 6, 2025 at 12:15=E2=80=AFPM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Sep 3, 2025 at 8:09=E2=80=AFAM Andre Przywara <andre.przywara@arm=
-.com> wrote:
-> >
-> > A few of the Allwinner A523 CCU clock registers introduced an "update" =
-bit,
-> > which must be set for changes to the other bits to take effect.
-> > Of the three clocks where this was used, it was always bit 27, so we ju=
-st
-> > encoded this as a single bit feature flag.
-> >
-> > Now the CPU PLL also features the update bit, but puts it at bit 26, so
-> > this flag trick won't work anymore.
-> >
-> > Add an "update_bit" field to the common sunxi clock struct, which takes=
- a
-> > bitmask, so we can encode any bit to use, even potentially multiple of
-> > them. As uninitialised fields are set to 0, we can use this as a defaul=
-t
-> > bitmask to set, so can OR this in unconditionally.
-> >
-> > Change the existing update bit users to use this new encoding, and add
-> > support for the ccu_nm clock on the way, since we will need it there
-> > shortly.
-> >
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+On Sat, Sep 06, 2025 at 04:53:42PM +0300, Svyatoslav Ryhel wrote:
+> Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-csi.yaml     | 104 ++++++++++++++++
+>  .../display/tegra/nvidia,tegra30-csi.yaml     | 115 ++++++++++++++++++
+>  2 files changed, 219 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> new file mode 100644
+> index 000000000000..1a2858a5893c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> @@ -0,0 +1,104 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra20 CSI controller
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra20-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  avdd-dsi-csi-supply:
+> +    description: DSI/CSI power supply. Must supply 1.2 V.
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#nvidia,mipi-calibrate-cells":
+> +    description: The number of cells in a MIPI calibration specifier.
+> +      Should be 1. The single cell specifies an id of the pads that
+> +      need to be calibrated for a given device.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    const: 1
 
-Hmm, actually, we also have the "key field" feature. Maybe we should
-generalize that one and merge the two?
+This property goes in the provider. Is the parent node the provider? You 
+don't really need any of it if it's all one block.
 
-What do you think?
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-1]$":
+> +    type: object
+> +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+
+Instead:
+
+maximum: 1
 
 
-ChenYu
+> +
+> +      nvidia,mipi-calibrate:
+> +        description: Should contain a phandle and a specifier specifying
+> +          which pads are used by this DSI output and need to be
+> +          calibrated. 0 is for CSI-A, 1 is for CSI-B, 2 is for DSI.
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+
+Is DSI applicable here?
+
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: port receiving the video stream from the sensor
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: /schemas/media/video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes: true
+
+Drop. No need unless you have some constraints like number of lanes?
+
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +        required:
+> +          - endpoint
+
+Drop.
+
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: port sending the video stream to the VI
+> +
+> +    required:
+> +      - reg
+> +      - "#address-cells"
+> +      - "#size-cells"
+> +      - port@0
+> +      - port@1
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - power-domains
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +# see nvidia,tegra20-vi.yaml for an example
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml
+> new file mode 100644
+> index 000000000000..ea5ebd2f3c65
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra30-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra30 CSI controller
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra30-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: module clock
+> +      - description: PAD A clock
+> +      - description: PAD B clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: csi
+> +      - const: csia-pad
+> +      - const: csib-pad
+
+Looks like clocks are the only difference? I think these 2 schemas can 
+be merged.
+
+> +
+> +  avdd-dsi-csi-supply:
+> +    description: DSI/CSI power supply. Must supply 1.2 V.
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#nvidia,mipi-calibrate-cells":
+> +    description: The number of cells in a MIPI calibration specifier.
+> +      Should be 1. The single cell specifies an id of the pads that
+> +      need to be calibrated for a given device.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    const: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-1]$":
+> +    type: object
+> +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      nvidia,mipi-calibrate:
+> +        description: Should contain a phandle and a specifier specifying
+> +          which pads are used by this DSI output and need to be
+> +          calibrated. 0 is for CSI-A, 1 is for CSI-B, 2 is for DSI-A and
+> +          3 is for DSI-B
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: port receiving the video stream from the sensor
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: /schemas/media/video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes: true
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +        required:
+> +          - endpoint
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: port sending the video stream to the VI
+> +
+> +    required:
+> +      - reg
+> +      - "#address-cells"
+> +      - "#size-cells"
+> +      - port@0
+> +      - port@1
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +# see nvidia,tegra20-vi.yaml for an example
+> -- 
+> 2.48.1
+> 
