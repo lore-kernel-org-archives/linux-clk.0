@@ -1,303 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92B118A93F;
-	Tue,  9 Sep 2025 06:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76511DE8BF;
+	Tue,  9 Sep 2025 06:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757399551; cv=none; b=KEceyEFFXzBzuVvbjbnS7dRp6DwlwW15gknr+jb8AhZFDGr0KEiEr1yv+pmRz5Qgt5aQz64wUPGJU7N5feCHtx2JSLm1rBf+a7ueYUQCB+Cf+i971nuf+sbvd0Jjt4Z3iQI02rGUKfaDgYFIZxgntBjTTxasG3Um/Qbok+DPPJw=
+	t=1757400343; cv=none; b=g393ivAK25bDZOisfNt7IuS4wfrWHMbbYJc14KhajwzvCe5MoFuBG8fjub4GkoPm4C/TxjWloisO2C6k7q5hJOyRIfcp/PC5FXXDS3I3jX6FARDMubYuBrlfziBxWSa//T+rhi3LOkRIyzw3w4OObU0W12ECCr1xdIKom16Zmp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757399551; c=relaxed/simple;
-	bh=2G05gzx1PbaHyR1yYOE2y+mLcbStlpmfMPAJKrEzaC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQpcxBDGFDVYOzLAK+x8GbMPJABX+l0gMvQQQWYwGE5lJlCIjz4Qr1qWUOwWR/LME2ryNWI9NXibLe1T1GHz3zmigHr4cvKu+OoutV6x6C0IQXemU9kWVfCHWmkTc3ZWsrE6V1KPtHgt1RJCjXigIC8xhuoA0pWjNm2Zk6SKBhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp/hdWj6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757400343; c=relaxed/simple;
+	bh=c+1ehdd+8N66l95N/Q+fuTsgvbjN0WNAF1sdZEAjwYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZvhKx1s/hpF9iy84rtcor0jf9UuDCgzJfm9cA8g2hOSRP+uvCFcndgBtFaZwbP8EdeOXobXdXwaKUkoUPpOcEUUS4dqRyMwNdtsP4OR4Kr/PM2NUGVS8dz7UAQxxey1uIieTFdADJB9veaZlw3Ts2FuFPUagcgOn5dbbjdsLITk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M8+l34Mo; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp/hdWj6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634CDC4CEF5;
-	Tue,  9 Sep 2025 06:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757399549;
-	bh=2G05gzx1PbaHyR1yYOE2y+mLcbStlpmfMPAJKrEzaC8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pp/hdWj6LY6bGFjsgsADGJsGjUD6dcZ8sIz1E2W8Bp78HpLJf5tiqc6PaS2tctJdm
-	 vmRk4z5ffK38g1LunQBW0MQIF8wH/i8WasdyLDVZhqU5vYlbAWpRm+5WdrI4F4e1nx
-	 SZk6v7FD0wB9wfJnihoizbTt7Ts6XaoOFKQzUFaVUmnfIwh3Fb69isdIlQwB+DU/zV
-	 sUK7LXBTh4A/R913c5kWjfFNoDCsJAzLL/Fjd+T7S001RLhPcMZsFqlGTK+5PtZRI4
-	 Rh2iw78Rf2haihzrZVl0vVKInRdOFZSP9QhMrMB3DmwQLT65Da5TroKWm2ahjZzO7A
-	 YG0KA2UCAnqHw==
-Message-ID: <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
-Date: Tue, 9 Sep 2025 08:32:17 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M8+l34Mo"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 000194E408F2;
+	Tue,  9 Sep 2025 06:45:38 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BFE3C60630;
+	Tue,  9 Sep 2025 06:45:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7BCA0102F278B;
+	Tue,  9 Sep 2025 08:45:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757400337; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=c+1ehdd+8N66l95N/Q+fuTsgvbjN0WNAF1sdZEAjwYE=;
+	b=M8+l34MoEkgGknKQan9JbXuLxsAHbbfLMrX9lhOin7732JbDPvwFas8RcRnigWEcn2wuQw
+	VtKlcK8WjnbfNnhepYUSd2Cae0MTX94OUkkO4SrYMfn+W7yC2F/d3pAQBniLY5NqTVz1fB
+	6RrPUwnRaSP+HFQkoWMDCF17o7cf4yCmnS7nUOpTZJegrB2KnK1R7FwiF0MCjergD/HL8x
+	IczudxJeJ4Mhw8oTBJsn0oVyjBsSvX/dtHwbppYm/+09mDTv8Gk65wEtN9FGZFw1P7xAkK
+	RAlUjnfzpNbjqyLxLPi0pZEhR5Cjfc2ajOtiY62DIMsr+OhczBfp2mBOUsK3Nw==
+Date: Tue, 9 Sep 2025 08:45:21 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
+ <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
+ <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter De
+ Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
+ <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v1 13/19] staging: media: tegra-video: tegra20: set VI
+ HW revision
+Message-ID: <20250909084103.60de1cd6@booty>
+In-Reply-To: <CAPVz0n2m4U-7G14Jhnsm41qsj0FVo39bdJ=f8kAm=+uxZyM0xw@mail.gmail.com>
+References: <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-14-clamor95@gmail.com>
+ <20250905180837.35547304@booty>
+ <CAPVz0n2m4U-7G14Jhnsm41qsj0FVo39bdJ=f8kAm=+uxZyM0xw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
- bindings to YAML
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-2-ariel.dalessandro@collabora.com>
- <20250821-silky-slug-of-novelty-e4bb64@kuoka>
- <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 08/09/2025 19:52, Ariel D'Alessandro wrote:
-> Krzysztof,
-> 
-> On 8/21/25 3:46 AM, Krzysztof Kozlowski wrote:
->> On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
->>> Convert the existing text-based DT bindings for MediaTek MT8173 Media Data Path
->>> to a YAML schema.
->>
->> Please wrap commit message according to Linux coding style / submission
->> process (neither too early nor over the limit):
->> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> 
-> Thanks. Looks like my editor was misconfigured, sorry. Will fix in v2.
-> 
->>
->>>
->>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->>> ---
->>>   .../bindings/media/mediatek,mt8173-mdp.yaml   | 174 ++++++++++++++++++
->>>   .../bindings/media/mediatek-mdp.txt           |  95 ----------
->>>   2 files changed, 174 insertions(+), 95 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->>>   delete mode 100644 Documentation/devicetree/bindings/media/mediatek-mdp.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->>> new file mode 100644
->>> index 0000000000000..f3a08afc305b1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
->>> @@ -0,0 +1,174 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/media/mediatek,mt8173-mdp.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: MediaTek MT8173 Media Data Path
->>> +
->>> +maintainers:
->>> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->>> +
->>> +description:
->>> +  Media Data Path is used for scaling and color space conversion.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - items:
->>
->> Just enum, no items here
-> 
-> See below.
-> 
->>
->>
->>> +          - enum:
->>> +              - mediatek,mt8173-mdp-rdma
->>> +              - mediatek,mt8173-mdp-rsz
->>> +              - mediatek,mt8173-mdp-wdma
->>> +              - mediatek,mt8173-mdp-wrot
->>> +      - items:
->>> +          - enum:
->>> +              - mediatek,mt8173-mdp-rdma
->>> +              - mediatek,mt8173-mdp-rsz
->>> +              - mediatek,mt8173-mdp-wdma
->>> +              - mediatek,mt8173-mdp-wrot
->>> +          - const: mediatek,mt8173-mdp
->>
->> This makes no sense. How devices can be compatible and can not be
->> compatible.
-> 
-> According to the driver source code (and the previous txt mt8173-mdp 
-> bindings), there must be a "controller node" with compatible 
-> `mediatek,mt8173-mdp`. Then its sibling nodes (including itself) should 
+Hello Svyatoslav,
 
-But you did not define "mediatek,mt8173-mdp" here, so what are you
-talking about?
+On Fri, 5 Sep 2025 19:11:06 +0300
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-I talk here about "wrot" and others, I thought it is obvious from the
-mistake in the schema.
+> =D0=BF=D1=82, 5 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:08 Luc=
+a Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Tue, 19 Aug 2025 15:16:25 +0300
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > Tegra20, Tegra30 and Tegra114 have VI revision 1. =20
+> >
+> > Why? You should mention the reason in the commit message.
+> > =20
+>=20
+> Because TRM states that Tegra20, Tegra30 and Tegra114 have VI revision
+> 1, Tegra124 has VI revision 2 and Tegra210 has VI revision 3 (which is
+> set in tegra210.c btw).
+>=20
+> > But I don't see hw_revision used in the series, so unless I missed
+> > something you should drop this patch.
+
+My point was rather that the hw revision is not used in the series, not
+quite about the value itself. I was missing it is exposed by MC, so
+this is fine.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
-> be one of the component node ids, listed in `struct of_device_id 
-> mtk_mdp_comp_dt_ids[]`.
-> 
-> Is there a proper/different way to describe this compatible binding in 
-> the yaml? Or you're saying the driver doesn't make sense here?
-> 
-> [0] drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-> 
->>
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks: true
->>
->> No, there's no such syntax. Look at other bindings.
-> 
-> Ack.
-> 
->>
->>
->>> +
->>> +  power-domains:
->>> +    maxItems: 1
->>> +
->>> +  iommus:
->>> +    description: |
->>
->> Drop |
-> 
-> Ack.
-> 
->>
->>> +      This property should point to the respective IOMMU block with master port as argument,
->>> +      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
->>
->> Drop entire description, completely redundant. I don't know why my patch
->> fixing this was not applied, so you keep repeating same mistakes...
-> 
-> Ack.
-> 
->>
->>> +    maxItems: 1
->>> +
->>> +  mediatek,vpu:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description:
->>> +      Describes point to vpu.
->>
->> Useless description. We see that from the property name. Explain the
->> purpose in the hardware.
-> 
-> Ack.
-> 
->>
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - clocks
->>> +  - power-domains
->>> +
->>> +allOf:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: mediatek,mt8173-mdp-rdma
->>> +    then:
->>> +      properties:
->>> +        clocks:
->>> +          items:
->>> +            - description: Main clock
->>> +            - description: Mutex clock
->>> +    else:
->>> +      properties:
->>> +        clocks:
->>> +          items:
->>> +            - description: Main clock
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - mediatek,mt8173-mdp-rdma
->>> +              - mediatek,mt8173-mdp-wdma
->>> +              - mediatek,mt8173-mdp-wrot
->>> +    then:
->>> +      required:
->>> +        - iommus
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: mediatek,mt8173-mdp
->>
->> This makes no sense either.
-> 
-> Same question above about compatibles.
-
-How same question? Do you understand this code? It is nothing the same -
-you have here contains!
-
-
-Best regards,
-Krzysztof
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
