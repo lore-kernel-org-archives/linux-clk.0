@@ -1,139 +1,228 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793A322745;
-	Wed, 10 Sep 2025 14:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513162; cv=pass; b=RseXRxCzlO9OVseJj3DBWofR9XiOd8Kz8LHOE9hG8fYNOkhsJIdNQ9OBmF5CD3p0CKcw/1vEDHXc6+cGzD8zmTnFwHiRdFVA1/o9Wj0pRK5TQexojKzpedWuGLPbYfN9biQTM6CGGd2IlLzdETfmJAUrk+i1V/jhi6J7D0xJQ4g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513162; c=relaxed/simple;
-	bh=FONkIWI0n7lG/bUtRih9a715N9XA1/QgoWiRIL6pOMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Led4Xyg2zycabojrGQIylF/V68hg5lc9vHaERYY4+CSab6Q15AeOec+7KOqV7L3j4NQdn9tK3CdUyH9c9xtM1TDkJWnVaJUuN/L7A1iXV1bRtezbUDcH6ZrK21P/FFVY1KO2E/9ZDMvDsUw4nLWiiD1e1sTJqKcjsutw4Pj9Pe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=IHYKNoZY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19204322A26
+	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 14:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757513669; cv=none; b=QfQeEHpiCTQZXvKHxUuR7LfwGLlxk4lBYsMSkHegkMGAJXcafv28US4t+UMVV3otr0Tp3IW8UJuwxA9Fa/XrSlW3hito4AeLYgeKJIfhxdH3ZiD4bjip3r64tg1zEM8BFhuK9HMt6aUJd5x50rIJ/VCalg6Qqoi6rzpYQXEAj5g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757513669; c=relaxed/simple;
+	bh=r+AaCInzdkxBbx9W02sgOISt/s07Hcu0+abKHIJ1GWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFBUkSDizOqB4t1991tMxtyXHBw0VwpCHEgR4ipUg5AeC0Vj6+/iqloGY331P4eDiGYdxvHcW9Gzcc+XDNjzQQj7whEMXEYSX5BYGrN7qGnHGr+HRP06MSBLXMM8B6b9Li8fXqcBtZTWwmy6hP5ci8vATAgIAFUzmVnuJx425oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lz0fEuih; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="IHYKNoZY"
-ARC-Seal: i=1; a=rsa-sha256; t=1757513088; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VEkyJDxuAQfVsvKhIxBruPEvS+E+Faq6lkb8StCuTHDG4il/MJXRcIahNdDe1K9l5asGM6fNcHpp2dATLpTDdixJydv1Eav7Ciq7KRQ57d64AIcR9G9MzobjDNJWa735TFRzENggkAWdoogP0hXnRRQvmnhic10HgfMoJOI0qqw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757513088; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=; 
-	b=P9BxtulcIUGD/6FoPkulfuuR84JV4Ri/6txauWEhPar814ZnGKTiquSh/essihNHEQbflrG4B1II2xYvbvqlCLvtwTc27q7uJsa6RzH4frCk8k+iYr2hMphCwl+2BMJFaXmesNFLrkU20dt2cWy9mIGCBaIpcPsipJH3cRPNWPM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757513088;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=;
-	b=IHYKNoZY4zf4ISQCHWYEleElg0zyYX0fAY3flK0zslYU4qZregRMacfv+qxcfwpQ
-	1x+1iaYapTxzAjxF38sg0OhTVRo1GLDfKW55tsC3QwJKNIhZiomEvEjFNt5Ia3ldCpT
-	ecLwFY4c1qFjQXhURNFG3nBQQ/aFvg2+LOYp7AEA=
-Received: by mx.zohomail.com with SMTPS id 1757513084822538.2895524618148;
-	Wed, 10 Sep 2025 07:04:44 -0700 (PDT)
-Message-ID: <28049fe0-0ae7-4b40-9f95-1513e317547f@collabora.com>
-Date: Wed, 10 Sep 2025 11:04:29 -0300
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lz0fEuih"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757513666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4AKBrsHYyZy6NVWerxVC8iAlV9/6fvAVIrP6ESd120U=;
+	b=Lz0fEuihSDksJa8ORAcwsySuw97OHAJMZhjK+AW5cRNNpuwBeGDwncW4q+HaHN2tNRLku6
+	nNB5RAbWCL50VugxJlHww/KXNg8eXq/RzsvRPXgpte3Qj2rywAjtYZSTob4PCS9s4YbvnE
+	DIuf56ASPuej8uEUvSPAd1Jl46g/vq4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-56-P-_iwKDIMJiXePPv8uMyAQ-1; Wed, 10 Sep 2025 10:14:25 -0400
+X-MC-Unique: P-_iwKDIMJiXePPv8uMyAQ-1
+X-Mimecast-MFC-AGG-ID: P-_iwKDIMJiXePPv8uMyAQ_1757513665
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7ffb4a65951so2748155885a.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 07:14:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757513665; x=1758118465;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4AKBrsHYyZy6NVWerxVC8iAlV9/6fvAVIrP6ESd120U=;
+        b=MTHXPG60+t26OWahH6Hnjej+g4G02rh0JDNAyzOA6DN9ExsAuJJf9Wmlxyr3568hV+
+         N7oSfHzmN+c00gF3gmsGlKfzOqwebpZ7f+JbZcJsyPEuPK+Wd1fCIzrJsRrg+bboYwAA
+         iNArTxVYcvir6Ixtc2RbExEikfc/dMQlA1KZ5NjBM2jmQWMSTb2+Vsas2N4HNDN7Ce2q
+         nN5rubj+HBNGw40FvSjn0Xd1xmF2eRMTEH/aKSIAHIsNHjHRl87GJ7bTY3Tt6cZoVfTp
+         aq3e4K6Jz0G2T09V9UplCxMN9WUfA430w2BZcY0g9OyPzlIFgyHQLjBBl7p2S5EA6tUO
+         G/OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Nkb4hrTTeaNBgp85Omn1LNCR1M7z9LY25OV4bEDbBwT/NiotdX/em9TXGLhkJpvSYH6Nh+Gz0kQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyITekAwL/G7EyMWW7uLaX4I6eEUTh9O+KRRr1uzTmlUtkp9yY1
+	Z3Ts7G8tgZ47n062xYFeIfW8NJ+FvMF95qgk53M01ZITLuSQ/AMs7UqgjGOR4D/EfMENnun+7we
+	3t0Bx4/oiQLtsPAo7Bl2oMKNXNvnuoNDn/AHgL6SYlMnq0VW15Y/FreDzwyLRQQ==
+X-Gm-Gg: ASbGncuYWcY5YVJMzyNol4T8zFYnwluxFz1SSVafyrrdNpefstBz+m2tfzD6vwD10K0
+	lyBH5IuoH+7IEvRr9KyDTr9ezOnhQ1Z6J0x/F5YnKwPryAvOWZ3ZYccjpZuljTXglsOW96YV9mm
+	wW4P7x8xlw+Z8pSC1g/8e1DhHP7N6re7HiqJyXhoXBhU6+rePSNitRDKl5bsuyDHBaRM7+prQBi
+	1YvWxTe5mwpqLKu4C1OHWeGvf1LxoO2IhfwyE2CtOXWBJGRBAIKBOYf8WswQLpU0FR9AMv3czoQ
+	GaF4i0W22j670ATExaOOCsOWuzelqc2RJgrgrvU9GFdkUYghb8jo7arOYV8tFpVt2WZ5rZvp0Xg
+	ygNiQvHmsfVdrtGeeG+8=
+X-Received: by 2002:a05:620a:1997:b0:7e8:922:f02b with SMTP id af79cd13be357-813bed042c0mr1615332985a.25.1757513665028;
+        Wed, 10 Sep 2025 07:14:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkFeL3wPJOKIe3shUG9pzAQKQjdBD+pGyVy/83wrA05r4tPdXbaw2hUPMEXQ3KZIEvXGTTLQ==
+X-Received: by 2002:a05:620a:1997:b0:7e8:922:f02b with SMTP id af79cd13be357-813bed042c0mr1615324385a.25.1757513664239;
+        Wed, 10 Sep 2025 07:14:24 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b58b5d7fesm299937185a.8.2025.09.10.07.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 07:14:23 -0700 (PDT)
+Date: Wed, 10 Sep 2025 10:14:20 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mo Elbadry <elbadrym@google.com>,
+	Rom Lemarchand <romlem@google.com>,
+	William Kennington <wak@google.com>,
+	Yuxiao Zhang <yuxiaozhang@google.com>, wthai@nvidia.com,
+	leohu@nvidia.com, dkodihalli@nvidia.com, spuranik@nvidia.com
+Subject: Re: [PATCH v12 3/3] clk: aspeed: add AST2700 clock driver
+Message-ID: <aMGHvHf6BPrJD1pC@x1>
+References: <20250708052909.4145983-1-ryan_chen@aspeedtech.com>
+ <20250708052909.4145983-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/14] dt-bindings: display: mediatek,ufoe: Add
- mediatek,gce-client-reg property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-8-ariel.dalessandro@collabora.com>
- <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708052909.4145983-4-ryan_chen@aspeedtech.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Krzysztof,
+Hi Ryan,
 
-On 8/21/25 3:50 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 20, 2025 at 02:12:55PM -0300, Ariel D'Alessandro wrote:
->> Current, the DT bindings for Mediatek UFOe (Unified Frame Optimization
->> engine) is missing the mediatek,gce-client-reg property. Add it and
+On Tue, Jul 08, 2025 at 01:29:09PM +0800, Ryan Chen wrote:
+> Add AST2700 clock controller driver and also use axiliary
+> device framework register the reset controller driver.
+> Due to clock and reset using the same register region.
 > 
-> Why is it missing? If the binding is complete, it cannot be missing...
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 
-Due to the following error:
+I just have a few very minor style comments below. Otherwise the driver
+looks good to me.
 
-$ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
-   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-   DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
-[...]
-arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: ufoe@1401a000 
-(mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does not match 
-any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: 
-http://devicetree.org/schemas/display/mediatek/mediatek,ufoe.yaml#
+> +static struct clk_hw *ast2700_clk_hw_register_hpll(void __iomem *reg,
+> +						   const char *name, const char *parent_name,
+> +						   struct ast2700_clk_ctrl *clk_ctrl)
+> +{
+> +	unsigned int mult, div;
+> +	u32 val;
+> +
+> +	val = readl(clk_ctrl->base + SCU0_HWSTRAP1);
+> +	if ((readl(clk_ctrl->base) & REVISION_ID) && (val & BIT(3))) {
+> +		switch ((val & GENMASK(4, 2)) >> 2) {
+> +		case 2:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1800 * HZ_PER_MHZ);
+> +		case 3:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1700 * HZ_PER_MHZ);
+> +		case 6:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1200 * HZ_PER_MHZ);
+> +		case 7:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 800 * HZ_PER_MHZ);
+> +		default:
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +	} else if ((val & GENMASK(3, 2)) != 0) {
+> +		switch ((val & GENMASK(3, 2)) >> 2) {
+> +		case 1:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1900 * HZ_PER_MHZ);
+> +		case 2:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1800 * HZ_PER_MHZ);
+> +		case 3:
+> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
+> +							       0, 1700 * HZ_PER_MHZ);
+> +		default:
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +	} else {
+> +		val = readl(reg);
+> +
+> +		if (val & BIT(24)) {
+> +			/* Pass through mode */
+> +			mult = 1;
+> +			div = 1;
+> +		} else {
+> +			u32 m = val & 0x1fff;
+> +			u32 n = (val >> 13) & 0x3f;
+> +			u32 p = (val >> 19) & 0xf;
+> +
+> +			mult = (m + 1) / (2 * (n + 1));
+> +			div = (p + 1);
 
-> 
->> update the example as well.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../bindings/display/mediatek/mediatek,ufoe.yaml      | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
->> index 61a5e22effbf2..ecb4c0359fec3 100644
->> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
->> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
->> @@ -64,6 +64,14 @@ properties:
->>         - port@0
->>         - port@1
->>   
->> +  mediatek,gce-client-reg:
->> +    description: The register of client driver can be configured by gce with
->> +      4 arguments defined in this property, such as phandle of gce, subsys id,
->> +      register offset and size. Each GCE subsys id is mapping to a client
-> 
-> Don't explain what DT syntax is. We all know, so that's completely
-> redundant description. Explain the purpose. Explain Arguments with sechema - items.
+The ( ) is unnecessary here.
 
-Although I agree with your suggestions, this is exactly how the rest of 
-the Mediatek DT bindings describe this node. This patch is based on the 
-other +20 files, which describe the node in the same way.
+> +		}
+> +	}
+> +
+> +	return devm_clk_hw_register_fixed_factor(clk_ctrl->dev, name, parent_name, 0, mult, div);
+> +}
+> +
+> +static struct clk_hw *ast2700_clk_hw_register_pll(int clk_idx, void __iomem *reg,
+> +						  const char *name, const char *parent_name,
+> +						  struct ast2700_clk_ctrl *clk_ctrl)
+> +{
+> +	int scu = clk_ctrl->clk_data->scu;
+> +	unsigned int mult, div;
+> +	u32 val = readl(reg);
+> +
+> +	if (val & BIT(24)) {
+> +		/* Pass through mode */
+> +		mult = 1;
+> +		div = 1;
+> +	} else {
+> +		u32 m = val & 0x1fff;
+> +		u32 n = (val >> 13) & 0x3f;
+> +		u32 p = (val >> 19) & 0xf;
+> +
+> +		if (scu) {
+> +			mult = (m + 1) / (n + 1);
+> +			div = (p + 1);
+> +		} else {
+> +			if (clk_idx == SCU0_CLK_MPLL) {
+> +				mult = m / (n + 1);
+> +				div = (p + 1);
+> +			} else {
+> +				mult = (m + 1) / (2 * (n + 1));
+> +				div = (p + 1);
 
-Regards,
+The ( ) is unnecessary on div on the three places above.
 
--- 
-Ariel D'Alessandro
-Software Engineer
+> +static void ast2700_soc1_configure_i3c_clk(struct ast2700_clk_ctrl *clk_ctrl)
+> +{
+> +	if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID)
+> +		/* I3C 250MHz = HPLL/4 */
+> +		writel((readl(clk_ctrl->base + SCU1_CLK_SEL2) &
+> +			~SCU1_CLK_I3C_DIV_MASK) |
+> +			       FIELD_PREP(SCU1_CLK_I3C_DIV_MASK,
+> +					  SCU1_CLK_I3C_DIV(4)),
+> +		       clk_ctrl->base + SCU1_CLK_SEL2);
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+This block is hard to read. What do you think about this instead?
+
+        if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID) {
+        	u32 val;
+
+                /* I3C 250MHz = HPLL/4 */
+                val = readl(clk_ctrl->base + SCU1_CLK_SEL2) & ~SCU1_CLK_I3C_DIV_MASK;
+                val |= FIELD_PREP(SCU1_CLK_I3C_DIV_MASK, SCU1_CLK_I3C_DIV(4));
+                writel(val, clk_ctrl->base + SCU1_CLK_SEL2);
+        }
+
+With those addressed:
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
