@@ -1,172 +1,177 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F71827735
-	for <linux-clk@vger.kernel.org>; Tue,  9 Sep 2025 18:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57273235341;
+	Wed, 10 Sep 2025 02:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442913; cv=none; b=hPBqP+P9rHAhTrKIGMIGrs3oZtvm5GMM6w4DQhURn5uknHrHkXyC9j3ZLxFBpnOUSWBA2IY3UlxR5XGvIjUZRuNsO+23UTZtxAwPExBkKbsIyyu86rvgg7d5XzYFDdD0VvHhFpNPAsXmWGrBryAMydwACMPhCW8x9ByEKoz7QyM=
+	t=1757470414; cv=none; b=Yrg+KxFbbSUEEODQfC4crE9PxNo6WVuX2dYcKwUXK3scdwpK1GPoh2GkF7UYZ2d25UC0Sr4TLlRWDhblaNwIawP7u5s3qLE8rIL35OJXw4dqz6o86lVdUc4e6qCjw6CJgdQequeTYrC/uf7s41na8PRhmKGVxYIvoqPtvlRwmus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442913; c=relaxed/simple;
-	bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rv59e+BtBW83kDjDRtmwAzeG/iu7dN2hz1u82FkaSA+xrKLERnIlcOVL+TlCxTr3l4Rd/lTWDkMbCn2yY7p+NQkHnjLi+sJpS3oB9MKcsZzXKBZESYaGK6JRZOqTBfts8+9+oukl57vuyl3p398+MmLpmle/eitssMqyPm8fhvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fKR8dC1Z; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757470414; c=relaxed/simple;
+	bh=Q3rmZLXX3SIGu/Pup57T8RwwkJTVjjAk7jOAL3jEL20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDxyzy0DLROclgXlMsxHB82zslMibKDYiEGX7cJL2lejFSzGXS+6O+3IUl7L5g5h07fIw1HQrxoGVBoyXMX6HgMV05Nm9NeTm4KZFJnA69OUIHGKCTroIrtFvP75pJTB8Vt5dVMrQxH9aOQAhQWllD++xnPS3wVGgovstSVvxFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUtcd9a5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fKR8dC1Z"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-628f2102581so445761a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 09 Sep 2025 11:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757442910; x=1758047710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=fKR8dC1ZxKD5eQ7nCZs3VKAlInEJo8EKtOYvE3rDFMsIzkw0wjavw5+MX9zl0qT23H
-         m7/vdMni+VTvOnjDZJY/DHzbA7mbI9VLUryA8ogVsaeWbxsXKdQX7MPrVEBiZXK8+1I4
-         PnjvEmroIY5ULlBIvH9OyCDwDcHIlBigPivfFDoR7GXF50HCb3ZI+WRJozasyQD5NNXl
-         L+y2/kZUcNkOcjvIuWKqathysmv8ybpkak3eZtoZ5AFSHBGZa099BD66fDp0AW7pVjak
-         OxiHkussRUTU6cVXJ+R84bxjTxZbhY0zCor70/yWY0IZ8guEO43HHesICiYASt5+5jGS
-         yF3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757442910; x=1758047710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=tfDJ2CMSDGbNKdWdABwJvYQHAqMg9ElNAzKaWXJEV54k6C7+4r5PElCTtaccpE8oFd
-         1oaKaa5ku6qwTpp5grnHRztEPiTUGgxAmASjNRhtA5cGqlZp4hayER/mGU1RbN0SoOMr
-         9w8deyASIfy+MyA2+QiC6V8KlpBfh/9tjY178l/e1taghBnNP+Z2ATNq39wg/jCHOwBA
-         eAt3BhtwGurCwxzapcoAFUtA8zHo3+p09XAkkepX0YL/q7DA5QQB41m8zPRnt0UrW1Kj
-         M53BLOfe2yCBTA4E2VeHKun2O/VkgmDZ88qywEXVikIZ3ZOyC91N38Lqwnb+3Cr1xChg
-         vXmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKjTFh+sYWwa08R4PP3KqAkZz88t0PFC2FIPz+H36eFOqggz9M4uy2bPLSk34il1RxQPDIPo+ElFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIK4bbrxELQr6uimLug08Tea3X20IFEh3zBmuJD4ElmRZQa1y9
-	Tw42bT/2QBBgtySsc1z16VjfZKqojFvv886mi7SvPYkjtea1EAEyeO4e9ytIafcb+R4=
-X-Gm-Gg: ASbGncvffvgPIQSZ2oLCsw/fSWX2paVjqGRTFJ28bBBTA8Wt5bC1RvuJO9ZPevQTvD7
-	T9d6Hb6mu8A6bfc5ciajo72QDv74f5wtVR0agyVPJHd5adTg4Wo679my+vWxmAzqlXULcJPO+fp
-	DEVZR9Gd9qL6kGm8uag96tRHfa/inSPnHlu4LVdaA1/WZdqPhX2m0O5xqm+KvkipFC1G8eqJk4U
-	Kxf9CGTUIf0BvMi+u8caa9QBMhPNJsVqF4QNGd63vRc0z37bmt7Yw05sOHkxJaX36WcU8LmZgrR
-	JVhMHg41WCdK+Q0/YfwX7TPpx9CgbC3l26UnybVRf5usMA+vDXqNrCcjlPgoK/KJpV+8z4PZK8N
-	0/YA/DSvb6rMy8eTVdJEH4SlKYGNwV8YQdA==
-X-Google-Smtp-Source: AGHT+IEtJecmV/jjQmnrF4shDa6h9ku/souQrmOu0T5Vo6piPtCO7DvbXGp5/2Tji0sGHNxwh00KNw==
-X-Received: by 2002:a05:6402:1e92:b0:627:6281:e432 with SMTP id 4fb4d7f45d1cf-6276281e7c1mr4700848a12.6.1757442910428;
-        Tue, 09 Sep 2025 11:35:10 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f08esm1707282a12.33.2025.09.09.11.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:35:09 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.18
-Date: Tue,  9 Sep 2025 20:35:04 +0200
-Message-ID: <20250909183504.104261-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUtcd9a5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE929C4CEF4;
+	Wed, 10 Sep 2025 02:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757470413;
+	bh=Q3rmZLXX3SIGu/Pup57T8RwwkJTVjjAk7jOAL3jEL20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUtcd9a5ISSFiCbzvGVXizCsC7nCkVgqvXE7UB3SlXM2vp56AxVqHhPFQG9iZnNIx
+	 tGjUcRmJWcrfCetRGe+rjavrpvk1plVgOBwtiWHa3UddcwNaJyyGy13sNQa5XoDyvd
+	 4mEPsQaeftQBel2Fe6Q4zJWD6lrNL3KKBym1fNygnbj8mg5De+8Mmj/FfA0Q9+Fa6l
+	 5BjkDEVmKnZ67h1IX/6eBI86CGS270r6G5gjtqEHHVbNaN89KeuvdB5C/DvxKLUaRt
+	 qqs7ffj8qSVOklihhYyUrPPE3cTH4ZQ5P2W7Yyi8e6AvlIY1pjCzm/KYZNPL5igqMl
+	 bitRNKicLQhEQ==
+Date: Tue, 9 Sep 2025 21:13:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 21/23] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+Message-ID: <20250910021332.GA3634809-robh@kernel.org>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-22-clamor95@gmail.com>
+ <20250909162600.GA3311232-robh@kernel.org>
+ <CAPVz0n2Hafvnk4BBXfhWLWCfTg336DLOr=xN9vKBGc2xEWYrMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3592; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHNYyTMtXdgVINSVVMUfHhVmyZrZSKfFw9c6L
- Pz+Jl63/jeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBzWAAKCRDBN2bmhouD
- 18jGD/9/DW7x7Gnncm+III6OLPIJRggeJ3ahi+ZOIbPAcqzETQjteI+PC1+r+WVnJR4LgRTjnfy
- nh99rONItP2xQpqCUvO78IyTJlg55fci64+pL/81Zy0VuFeCNxKhzfudG3mVs8C3fmGO1v2V5SH
- mdpHObusWdByV49x327xv2Gdt/WR//yjaPLKQH4ALm/XaX8CqB7fEVqULhcBXoJw1gwffBkYPVE
- 2O2jXhQ6WnmvQb04PLoizDRtfAJ5FkemhjCuuvkDRxBlycZR5P+8dEH3v+R8CKUI6XcFV/KUW3M
- loomE0efVKlueZz/d+cG3v5aGtLfpCPnCTXjWbEW2ey8aqtJSZO27Jd34CkP4+Q6BnIUv4vqlGU
- NgJFFQc7IcgMicy2YaqUM1mAj5U99y13U+Ec7w52T9R4sts0SYZoQjuNd2/jCkIM/kLZLAs7PiN
- IbpQXdtUQe6OqfSS8ixhQ/UM3Gu6P1tmRukxzTt5+7thjhbYz5N5Yt67ixKFq+t+MpNhDMIRdQJ
- 68ZKfAxI7Pw1F0S2Vj/qj0oNKMO/qIhlaCjKseMfTmysXUjKYKsiZu2Xyd+WoMnAY5z0ziCEsVK
- KtI81ktQne6TXowGhZTHLfCmfvBIKdBxRcArVAz245DgcLmUnOBj9tJiX38qUjO2ib9M+UJQbgK ki7dl0vi6BLGViQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n2Hafvnk4BBXfhWLWCfTg336DLOr=xN9vKBGc2xEWYrMw@mail.gmail.com>
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+On Tue, Sep 09, 2025 at 07:39:02PM +0300, Svyatoslav Ryhel wrote:
+> вт, 9 вер. 2025 р. о 19:26 Rob Herring <robh@kernel.org> пише:
+> >
+> > On Sat, Sep 06, 2025 at 04:53:42PM +0300, Svyatoslav Ryhel wrote:
+> > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 104 ++++++++++++++++
+> > >  .../display/tegra/nvidia,tegra30-csi.yaml     | 115 ++++++++++++++++++
+> > >  2 files changed, 219 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra30-csi.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > > new file mode 100644
+> > > index 000000000000..1a2858a5893c
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> > > @@ -0,0 +1,104 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra20 CSI controller
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nvidia,tegra20-csi
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 1
+> > > +
+> > > +  avdd-dsi-csi-supply:
+> > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#nvidia,mipi-calibrate-cells":
+> > > +    description: The number of cells in a MIPI calibration specifier.
+> > > +      Should be 1. The single cell specifies an id of the pads that
+> > > +      need to be calibrated for a given device.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    const: 1
+> >
+> > This property goes in the provider. Is the parent node the provider? You
+> > don't really need any of it if it's all one block.
+> >
+> 
+> Yes parent node is provides and channel is one of receivers, other one
+> is DSI node.
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Please make that clear in the descriptions somewhere.
 
-are available in the Git repository at:
+> 
+> > > +
+> > > +  "#address-cells":
+> > > +    const: 1
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 0
+> > > +
+> > > +patternProperties:
+> > > +  "^channel@[0-1]$":
+> > > +    type: object
+> > > +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> > > +    additionalProperties: false
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        maxItems: 1
+> >
+> > Instead:
+> >
+> > maximum: 1
+> >
+> >
+> > > +
+> > > +      nvidia,mipi-calibrate:
+> > > +        description: Should contain a phandle and a specifier specifying
+> > > +          which pads are used by this DSI output and need to be
+> > > +          calibrated. 0 is for CSI-A, 1 is for CSI-B, 2 is for DSI.
+> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> >
+> > Is DSI applicable here?
+> >
+> 
+> It is because CSI is calibration provider. I can move it up into
+> #nvidia,mipi-calibrate-cells which may be more appropriate place.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.18
+Yes, as the provider defines the meaning of the cells (and they are 
+opaque to the consumer).
 
-for you to fetch changes up to b3b314ef13e46dce1cdd97a856bd0250dac8feb9:
-
-  clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support (2025-09-07 11:12:45 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.18
-
-1. Tesla FSD: Expose CSI clocks to consumers (DTS).
-
-2. Exynos990:
-   - Few fixes for fixed factor clocks, register widths and proper PLL
-     parents.
-   - Add four more clocks for the DPU and HSI0 clock for USB.
-   - Add PERIC0 and PERIC1 clock controllers (CMU), responsible for
-     providing clocks to serial engines.
-
-3. Add seven clock controllers for the new Axis ARTPEC-8 SoC.  The SoC
-   shares all main blocks, including the clock controllers, with Samsung
-   SoC, so same drivers and bindings are used.
-
-4. Cleanups: switch to determine_rate().
-
-----------------------------------------------------------------
-Brian Masney (2):
-      clk: samsung: cpu: convert from round_rate() to determine_rate()
-      clk: samsung: pll: convert from round_rate() to determine_rate()
-
-Denzeel Oliva (10):
-      clk: samsung: exynos990: Use PLL_CON0 for PLL parent muxes
-      clk: samsung: exynos990: Fix CMU_TOP mux/div bit widths
-      clk: samsung: exynos990: Replace bogus divs with fixed-factor clocks
-      dt-bindings: clock: exynos990: Extend clocks IDs
-      clk: samsung: exynos990: Add DPU_BUS and CMUREF mux/div and update CLKS_NR_TOP
-      dt-bindings: clock: exynos990: Add LHS_ACEL clock ID for HSI0 block
-      clk: samsung: exynos990: Add LHS_ACEL gate clock for HSI0 and update CLK_NR_TOP
-      clk: samsung: exynos990: Add missing USB clock registers to HSI0
-      dt-bindings: clock: exynos990: Add PERIC0 and PERIC1 clock units
-      clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support
-
-Hakyeong Kim (3):
-      dt-bindings: clock: Add ARTPEC-8 clock controller
-      clk: samsung: Add clock PLL support for ARTPEC-8 SoC
-      clk: samsung: artpec-8: Add initial clock support for ARTPEC-8 SoC
-
-Inbaraj E (2):
-      dt-bindings: clock: Add CAM_CSI clock macro for FSD
-      clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
-
-Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.18/dt-bindings-clk' into next/clk
-
- .../bindings/clock/axis,artpec8-clock.yaml         |  213 ++++
- .../bindings/clock/samsung,exynos990-clock.yaml    |   24 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-artpec8.c                  | 1044 ++++++++++++++++
- drivers/clk/samsung/clk-cpu.c                      |   12 +-
- drivers/clk/samsung/clk-exynos990.c                | 1240 +++++++++++++++++++-
- drivers/clk/samsung/clk-fsd.c                      |   28 +-
- drivers/clk/samsung/clk-pll.c                      |  161 ++-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- include/dt-bindings/clock/axis,artpec8-clk.h       |  169 +++
- include/dt-bindings/clock/fsd-clk.h                |   13 +
- include/dt-bindings/clock/samsung,exynos990.h      |  181 +++
- 12 files changed, 3032 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-artpec8.c
- create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+Rob
