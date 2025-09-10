@@ -1,96 +1,131 @@
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C983093C9;
-	Wed, 10 Sep 2025 10:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC380279DC2
+	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 12:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498994; cv=none; b=EioniPxye1st6r4zqzDB35TaiyXjzUgqbqjHUUgd2B2183TfqEm9AJXxu8uMmpTB43KH5xMQSG6Iv/2AFFsd3hXN2424wWMrhmSMXWMw1l5vpAZC1FcTtp/99xae42Q8gnzeJTOhK3QaKOKMMod1ESnaRbnrf870+ye/kEeOFZg=
+	t=1757505765; cv=none; b=W2/XjSYavCaIvujODKGJpRcAN+6HQhsqspBr3awTRGIXIxFJsL5grpC9dY3bAesXFXOYu+sXWIUIal6cAt7+PrHfj7caJWgFGcDi+IZTuu+cFUVG7hP1biCpsnfihhzf6N9uh3K3zhmsZOjK7vtp+XQ2OeDEBBkAzSZT7pXrwyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498994; c=relaxed/simple;
-	bh=41hj1LsqBEEnUu/oVfgAQEkzuLRxVVACzyHYDG+AJQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ec49JuGBHh8jc80Y5YVRrTTYd2LxtrA6rkV8P3U8pafmRRNXiGDJjyWRdOL1GEvRlHMyiTKfSnriOg/Q6KMZ+niClwNu5z26EiAHuVUPwnZT6HceC1g+NpPCU+VxwwJzjH/dzfmqg+T+zzSqRBBQFUkW7vPVKwmI6i9AFdi9+OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-890190d9f89so3419642241.2;
-        Wed, 10 Sep 2025 03:09:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757498991; x=1758103791;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oQbItlL6nJ3jExzsgpoE75BEbZRvOH9P0SgufEiofto=;
-        b=DP9IePtDxeCvkXlRcRMahRxsIaSEAO7ci1goVWIDc3cj+gewIXVRTdlLCfHj9AHa7W
-         yw5gnlNQlsyh1h+vXD6yHojB0nPn0xAh7TebVTBVi7qZl6iP/b6dn4G0YcfxeVTeK3F6
-         aDQ+DzEUExU5kKpQedWhqj6/4uxEt2R8yygnzvzZll9x8u033M4CvlRWwAdawWyZAlsz
-         Ezyfqo74EgHDzC18K6PpDrn9L/wdMkfDWorYsCIXQSbvzDsM24UUqJBBdTFO6z4f1PcY
-         Jc39w1tZ0TyhOpEGWJ3AYt+VvIEIHTG2GLfBhKIGQTIldsGcEe4cw8PHnLm4zk++A6ko
-         CdZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHfQ/F3AWE/sDS/nlWKWFPVg0Kth86W2v+Li0ddTstmHVf79+vfu98GuZh8z5jwQX/V9KooVqYqKFiqRCZ@vger.kernel.org, AJvYcCUbLR8fER0KQd5NQMI+JVwLV1AkfEnI0gMbH6YVyHKURwh4FusjalKwIwN05/RHBAGeuZvg9+18POk=@vger.kernel.org, AJvYcCXXSJuo5MvGGi/V71vl3LTAMJlB7tyJBqnMKTabRQqiXlv8StiVqdFfv6NXkMU9cuMyXbAG+hqB5bTerPQGsjFxl8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRPLEZM9Np5EVe4iq+3dBN0cJjZ+2o2pEFCHXzc10ybS9pCU2R
-	Mu/SCk2Y/fFLn3tITIJ1pqEl8INbCVZZr6x5yr52MZASHUd4ZUp0ZQDrKoZ8tEVs
-X-Gm-Gg: ASbGncvj/zGqvCNyL4ePcR8PmuZe8ghJbhWEx43HRQxQIYKCOujwxvI5L13e4/fmi4c
-	ZqGVwMXWgko3vymiqjygBbT/HR0a1MxebioMwUDf8wbGXKecv7wNTAZ8H0JxdKMtfhgjRxb9am6
-	2+jaxwFmrePS2PjY5Vec+hbpbyVTN4pOWj4JPpChenfh2Ui6YZxwWSlL5KbXcCgE/cGsTRlgOgv
-	QSATqtrA0gMObEJUGJ2QMTgU+vPtKoRtnasBPMttfNoNwrurmowZwxsqs/J+X9VxHiKZDnfDPIA
-	W1zTw0VPVZEEsyBGtdzlSRtJisWM+EKSquoUY52BZR27Djd/lnglRTh2CSVp5ewLrsNNgyiZjQx
-	xKTgHJH/50g7GQsMrdLE4ml1g+MwVZi2fRnFwU25LYcjWBBbrwV8L0o388AnrCc+N3FgXUt0=
-X-Google-Smtp-Source: AGHT+IHFa+FneQ2dAsvLh1J4CUylut4MM8CvnNR2Lf7ssTCFE1KHtNl7MBqZh0P6br1wvjXRFBn2xg==
-X-Received: by 2002:a05:6102:6447:b0:527:d1de:893b with SMTP id ada2fe7eead31-53d21db6e02mr4408863137.18.1757498991292;
-        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af191584fsm12507232137.11.2025.09.10.03.09.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-8c1e1b6ecd5so915219241.1;
-        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDhuJ7NlCBC6tspw2oT98FViBcfQO0+7bwDiLIUBxLg7DnDO9HGM++iFfLC8lO15ZL4IPC4AoGtm4=@vger.kernel.org, AJvYcCVzEbqiEiTG/E6WcnL5ftT9uQRJF+OcKJRge5nSxJygo4ENKszB9aX73hgJmWPV9oTL5FlI/mQ43Fc5H20u@vger.kernel.org, AJvYcCXiTkwTdqwwUVTXNEWgTponAjDypekqDZmGXH9TWOXm9C2QrdBUDyzoN5arb3It68pYxQt4TDitw5qs3b4WCnaj3hg=@vger.kernel.org
-X-Received: by 2002:a05:6102:290e:b0:530:f657:c25 with SMTP id
- ada2fe7eead31-53d1aeac1efmr4496496137.5.1757498990898; Wed, 10 Sep 2025
- 03:09:50 -0700 (PDT)
+	s=arc-20240116; t=1757505765; c=relaxed/simple;
+	bh=jxew0vf7RuEzFnDze3/ICM1/y+QsIW5w3xJ75Vrwjdo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=eQLrXk53GDL0qkTvETtq8PYB5PwkWBjBaqLUTtvsHoxhq9fVYj4ust/d8/6Fui4bGYsBDaFbTM5QdJgXrDO6eVfZ17Q1U1BP/9EOox3IWb3V/u4BSN8ayMRsUKRjfbaa1sGy6u/LF8/3YuFlOcdjwPeeLKYvPeoSsu/rmFHUZFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HznxM6Zq; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HznxM6Zq"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250910120241epoutp0271d5ea5b475be03ac7fd41e2eb3b75fc~j6i27Edqx0481504815epoutp02m
+	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 12:02:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250910120241epoutp0271d5ea5b475be03ac7fd41e2eb3b75fc~j6i27Edqx0481504815epoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757505761;
+	bh=zBxS2L/AuWYp7TGtZwdzdWsLouc3JAEYP1TBSrBikwY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=HznxM6ZqLvci8L6Fon5wk1dUzrTk9jICGqO3u4qDrQz0AocTt8sC1cKqenHC3p0lx
+	 4IgWFBYHA7nq+E6+YgMQcI1rIfAvQP27cSK++ClEkI7UDDqtQWzqH9pq16PqZwvWIY
+	 tigdfvkS/cRB3W0hCKgpJF+juD3t8PxrD2Gje0WE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250910120240epcas5p1248fc9324e5ae8caa7f23ce34d0842de~j6i2Oht0y2148721487epcas5p1h;
+	Wed, 10 Sep 2025 12:02:40 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cMK7h0VPcz2SSKY; Wed, 10 Sep
+	2025 12:02:40 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250910120239epcas5p108aec1b642bf599978295ab7fd7e8721~j6i03PBiy2614626146epcas5p1K;
+	Wed, 10 Sep 2025 12:02:39 +0000 (GMT)
+Received: from INBRO002198 (unknown [107.122.5.156]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250910120237epsmtip19c210334904b3e1396315bc66436d0a6~j6iyj4SMI2315323153epsmtip1j;
+	Wed, 10 Sep 2025 12:02:36 +0000 (GMT)
+From: "Raghav Sharma" <raghav.s@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
+	<cw00.choi@samsung.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<robh@kernel.org>, <conor+dt@kernel.org>, <sunyeal.hong@samsung.com>,
+	<shin.son@samsung.com>, <alim.akhtar@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <dev.tailor@samsung.com>,
+	<chandan.vn@samsung.com>, <karthik.sun@samsung.com>
+In-Reply-To: <f8ad7883-d879-47ce-aafc-7c5f741f3c18@kernel.org>
+Subject: RE: [PATCH v1 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
+ nodes
+Date: Wed, 10 Sep 2025 17:32:25 +0530
+Message-ID: <08fe01dc224a$cde7ff50$69b7fdf0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904155507.245744-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250904155507.245744-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250904155507.245744-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Sep 2025 12:09:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVrx3Nhf10CeJrDV8fWuNXLRjjecYGHJfELAuxN3mY5KA@mail.gmail.com>
-X-Gm-Features: AS18NWCMc88swLPhTeoQZ5Wh_5YjKE_T8q-ASGiuYTxiLp8_dhkCPysbVkNQThc
-Message-ID: <CAMuHMdVrx3Nhf10CeJrDV8fWuNXLRjjecYGHJfELAuxN3mY5KA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a09g056: Add clock and reset entries
- for I3C
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQL0VUKk+u5fQqVv+k+NmjKuZqPkUAF92JyxAaWVb6EA7wl7+7I7Vh2g
+Content-Language: en-us
+X-CMS-MailID: 20250910120239epcas5p108aec1b642bf599978295ab7fd7e8721
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250808141247epcas5p2c254f35146a6ea35b5c49c4316ba30a3
+References: <20250808142146.3181062-1-raghav.s@samsung.com>
+	<CGME20250808141247epcas5p2c254f35146a6ea35b5c49c4316ba30a3@epcas5p2.samsung.com>
+	<20250808142146.3181062-4-raghav.s@samsung.com>
+	<f8ad7883-d879-47ce-aafc-7c5f741f3c18@kernel.org>
 
-On Thu, 4 Sept 2025 at 17:55, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add module clock entries for the I3C controller on the RZ/V2N
-> (R9A09G056) SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Krzysztof
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Monday, August 11, 2025 12:19 PM
+> To: Raghav Sharma <raghav.s=40samsung.com>; s.nawrocki=40samsung.com;
+> cw00.choi=40samsung.com; mturquette=40baylibre.com; sboyd=40kernel.org;
+> robh=40kernel.org; conor+dt=40kernel.org; sunyeal.hong=40samsung.com;
+> shin.son=40samsung.com; alim.akhtar=40samsung.com
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org; dev.tailor=40samsung.com; chandan.vn=40samsung.=
+com;
+> karthik.sun=40samsung.com
+> Subject: Re: =5BPATCH v1 3/3=5D arm64: dts: exynosautov920: add CMU_M2M c=
+lock
+> DT nodes
+>=20
+> On 08/08/2025 16:21, Raghav Sharma wrote:
+> > Add required dt node for CMU_M2M block, which provides clocks for M2M
+> > IP
+> >
+> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/exynos/exynosautov920.dtsi =7C 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> > b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> > index 0fdf2062930a..086d6bbc18b8 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> > =40=40 -1454,6 +1454,19 =40=40 pinctrl_aud: pinctrl=401a460000 =7B
+> >  			reg =3D <0x1a460000 0x10000>;
+> >  		=7D;
+> >
+> > +		cmu_m2m: clock-controller=400x1a800000 =7B
+>=20
+>=20
+> Are you sure this satisfies tests required by Samsung SoC maintainer prof=
+ile?
+>=20
+Sorry for delay in reply, I was off for some time.=20
+I understood the requirement here and thanks for your guidance on the other=
+ thread.=20
+I shall post the new version post fixing the compilation warnings.
 
-Gr{oetje,eeting}s,
+> Best regards,
+> Krzysztof
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
