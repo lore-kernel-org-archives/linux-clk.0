@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1703F32C33A;
-	Wed, 10 Sep 2025 15:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34D924A06B;
+	Wed, 10 Sep 2025 15:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519197; cv=none; b=NbJ6JZNMT6hfH3NOTFj83h11lcnrj3G+V+qy5/z9PpZ3A6oKdze8dcdgA3uGF4nYDyi+flhB3cFOGKevLAWCs7O+ZLOpl2+6979uurGk29blogWDwOY30voktmXhSvnqPzejubWhAjvlCYrW/Cv5XpETNcO3r9kqQlEE62VTrIg=
+	t=1757519301; cv=none; b=bM0NGlXUWeJjWpRsZvVUWuq/3fJwbfIrNIy/ORoh7AIYrlRZ2nzOVaCeKjjW7rAqvJoTPJ2Mj5RDi/TfAONkvFcOG7FSvgOSN9+GvmOuFbAz0sfBwgve0HFHLUaUb4kfuIHYeWEiGrmGkhzA0uCwnB/TZSCLnBQS0c4SjcBm9WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519197; c=relaxed/simple;
-	bh=Mi4K0CZQ6jU43YkCgUBT1n3qh/s1QE9jw4W0g6FulO8=;
+	s=arc-20240116; t=1757519301; c=relaxed/simple;
+	bh=VyU3XDWJ7w7Pm5zDjpHjmO9CjS68YuYex9FSm0Za+mQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=D116wMd3XeasPdD0nRNNPF2aIrVvzzPGoTlE7Tm0yCV2BT2iJ+XUg09IEQqbFcZk03gnMCiib/nTEzDz13GMu2PVV/gbO/aZTcR1TsOBCHY99qGtGkeaNSjXgIdIQZx3uR/9o43o3wCFWBCl8NUdu1Xqr+e3Z8GxH5K8/j0dgr8=
+	 MIME-Version:Content-Type; b=exSVAe6Z/TRat51rxisS387VrhjO7iEXI0fUbWmQpUHWDLyHPomSPbFXXH9j1Row1JLfGiQzJP755ZV3kwbMHPu8tGGK5hHSiJ5t3n0UL0J3IJkW50lrK6HilEY+GwxaAdCOjP4rVZZAfceVPkcwrtoPr5oDcuevBy42uE7c8po=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53624C4CEF0;
-	Wed, 10 Sep 2025 15:46:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34208C4CEEB;
+	Wed, 10 Sep 2025 15:48:20 +0000 (UTC)
 Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id BCD525F752;
-	Wed, 10 Sep 2025 23:46:33 +0800 (CST)
+	by wens.tw (Postfix) with ESMTP id ED7645F752;
+	Wed, 10 Sep 2025 23:48:17 +0800 (CST)
 From: Chen-Yu Tsai <wens@csie.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
@@ -29,8 +29,8 @@ In-Reply-To: <20250830170901.1996227-1-wens@kernel.org>
 References: <20250830170901.1996227-1-wens@kernel.org>
 Subject: Re: (subset) [PATCH 0/8] arm64: allwinner: a523: Enable MCU PRCM
  and NPU
-Message-Id: <175751919374.2641871.13986088170214893044.b4-ty@csie.org>
-Date: Wed, 10 Sep 2025 23:46:33 +0800
+Message-Id: <175751929795.2643345.10671677254490584515.b4-ty@csie.org>
+Date: Wed, 10 Sep 2025 23:48:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,10 +54,10 @@ On Sun, 31 Aug 2025 01:08:53 +0800, Chen-Yu Tsai wrote:
 > 
 > [...]
 
-Applied to sunxi/clk-fixes-for-6.17 in local tree, thanks!
+Applied to sunxi/clk-for-6.18 in local tree, thanks!
 
-[3/8] clk: sunxi-ng: mp: Fix dual-divider clock rate readback
-      commit: 25fbbaf515acd13399589bd5ee6de5f35740cef2
+[4/8] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
+      commit: 1ec8e9ba1f663d6ca5e71ab9f5e919c338075ff0
 
 Best regards,
 -- 
