@@ -1,228 +1,175 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19204322A26
-	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 14:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23108238C0A;
+	Wed, 10 Sep 2025 14:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513669; cv=none; b=QfQeEHpiCTQZXvKHxUuR7LfwGLlxk4lBYsMSkHegkMGAJXcafv28US4t+UMVV3otr0Tp3IW8UJuwxA9Fa/XrSlW3hito4AeLYgeKJIfhxdH3ZiD4bjip3r64tg1zEM8BFhuK9HMt6aUJd5x50rIJ/VCalg6Qqoi6rzpYQXEAj5g=
+	t=1757514094; cv=none; b=da45aaiteergA9E8pb02RMBtj3c9tSzIWYlFL2022/y4689yLB5qzgMaKtxAPhR/jN1EjaujjEnv4qovoiTqwx2L0WkACcKzcvd+C+YZol3KYT8lWSUSkASefpPThvGLb3tPSfAvDahdEIL54oKWkzj47IlCYaIyIS+bVLRReb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513669; c=relaxed/simple;
-	bh=r+AaCInzdkxBbx9W02sgOISt/s07Hcu0+abKHIJ1GWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFBUkSDizOqB4t1991tMxtyXHBw0VwpCHEgR4ipUg5AeC0Vj6+/iqloGY331P4eDiGYdxvHcW9Gzcc+XDNjzQQj7whEMXEYSX5BYGrN7qGnHGr+HRP06MSBLXMM8B6b9Li8fXqcBtZTWwmy6hP5ci8vATAgIAFUzmVnuJx425oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lz0fEuih; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1757514094; c=relaxed/simple;
+	bh=wlwwpmCHOkMFq8CRg6C3epU/9mVJzj7n97KyC/xLjSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fBNTkdsM15x3SlgTSeRVNN+R1DqXymFGuNERuahDFwheBTqaSGF69naNdFVpjdIPgoJyXB3mY0BNrPdSWSaQSKqT+pgfJdfyqiZ1WjzzRPegUM3nFEX46rsHXcmBdxwH3XSP26FtmOBggd3snc2QSmuVPULu5OVDrm9yZpemYFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWjtR1fK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lz0fEuih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757513666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4AKBrsHYyZy6NVWerxVC8iAlV9/6fvAVIrP6ESd120U=;
-	b=Lz0fEuihSDksJa8ORAcwsySuw97OHAJMZhjK+AW5cRNNpuwBeGDwncW4q+HaHN2tNRLku6
-	nNB5RAbWCL50VugxJlHww/KXNg8eXq/RzsvRPXgpte3Qj2rywAjtYZSTob4PCS9s4YbvnE
-	DIuf56ASPuej8uEUvSPAd1Jl46g/vq4=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-56-P-_iwKDIMJiXePPv8uMyAQ-1; Wed, 10 Sep 2025 10:14:25 -0400
-X-MC-Unique: P-_iwKDIMJiXePPv8uMyAQ-1
-X-Mimecast-MFC-AGG-ID: P-_iwKDIMJiXePPv8uMyAQ_1757513665
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7ffb4a65951so2748155885a.0
-        for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 07:14:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757513665; x=1758118465;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4AKBrsHYyZy6NVWerxVC8iAlV9/6fvAVIrP6ESd120U=;
-        b=MTHXPG60+t26OWahH6Hnjej+g4G02rh0JDNAyzOA6DN9ExsAuJJf9Wmlxyr3568hV+
-         N7oSfHzmN+c00gF3gmsGlKfzOqwebpZ7f+JbZcJsyPEuPK+Wd1fCIzrJsRrg+bboYwAA
-         iNArTxVYcvir6Ixtc2RbExEikfc/dMQlA1KZ5NjBM2jmQWMSTb2+Vsas2N4HNDN7Ce2q
-         nN5rubj+HBNGw40FvSjn0Xd1xmF2eRMTEH/aKSIAHIsNHjHRl87GJ7bTY3Tt6cZoVfTp
-         aq3e4K6Jz0G2T09V9UplCxMN9WUfA430w2BZcY0g9OyPzlIFgyHQLjBBl7p2S5EA6tUO
-         G/OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Nkb4hrTTeaNBgp85Omn1LNCR1M7z9LY25OV4bEDbBwT/NiotdX/em9TXGLhkJpvSYH6Nh+Gz0kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyITekAwL/G7EyMWW7uLaX4I6eEUTh9O+KRRr1uzTmlUtkp9yY1
-	Z3Ts7G8tgZ47n062xYFeIfW8NJ+FvMF95qgk53M01ZITLuSQ/AMs7UqgjGOR4D/EfMENnun+7we
-	3t0Bx4/oiQLtsPAo7Bl2oMKNXNvnuoNDn/AHgL6SYlMnq0VW15Y/FreDzwyLRQQ==
-X-Gm-Gg: ASbGncuYWcY5YVJMzyNol4T8zFYnwluxFz1SSVafyrrdNpefstBz+m2tfzD6vwD10K0
-	lyBH5IuoH+7IEvRr9KyDTr9ezOnhQ1Z6J0x/F5YnKwPryAvOWZ3ZYccjpZuljTXglsOW96YV9mm
-	wW4P7x8xlw+Z8pSC1g/8e1DhHP7N6re7HiqJyXhoXBhU6+rePSNitRDKl5bsuyDHBaRM7+prQBi
-	1YvWxTe5mwpqLKu4C1OHWeGvf1LxoO2IhfwyE2CtOXWBJGRBAIKBOYf8WswQLpU0FR9AMv3czoQ
-	GaF4i0W22j670ATExaOOCsOWuzelqc2RJgrgrvU9GFdkUYghb8jo7arOYV8tFpVt2WZ5rZvp0Xg
-	ygNiQvHmsfVdrtGeeG+8=
-X-Received: by 2002:a05:620a:1997:b0:7e8:922:f02b with SMTP id af79cd13be357-813bed042c0mr1615332985a.25.1757513665028;
-        Wed, 10 Sep 2025 07:14:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkFeL3wPJOKIe3shUG9pzAQKQjdBD+pGyVy/83wrA05r4tPdXbaw2hUPMEXQ3KZIEvXGTTLQ==
-X-Received: by 2002:a05:620a:1997:b0:7e8:922:f02b with SMTP id af79cd13be357-813bed042c0mr1615324385a.25.1757513664239;
-        Wed, 10 Sep 2025 07:14:24 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b58b5d7fesm299937185a.8.2025.09.10.07.14.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 07:14:23 -0700 (PDT)
-Date: Wed, 10 Sep 2025 10:14:20 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mo Elbadry <elbadrym@google.com>,
-	Rom Lemarchand <romlem@google.com>,
-	William Kennington <wak@google.com>,
-	Yuxiao Zhang <yuxiaozhang@google.com>, wthai@nvidia.com,
-	leohu@nvidia.com, dkodihalli@nvidia.com, spuranik@nvidia.com
-Subject: Re: [PATCH v12 3/3] clk: aspeed: add AST2700 clock driver
-Message-ID: <aMGHvHf6BPrJD1pC@x1>
-References: <20250708052909.4145983-1-ryan_chen@aspeedtech.com>
- <20250708052909.4145983-4-ryan_chen@aspeedtech.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWjtR1fK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A610CC4CEEB;
+	Wed, 10 Sep 2025 14:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757514093;
+	bh=wlwwpmCHOkMFq8CRg6C3epU/9mVJzj7n97KyC/xLjSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KWjtR1fKTnq1Zpnr1v3nujpytOtS2zSXRxEATD6htva1LA/eBAryUmMSKs0M0xGaS
+	 VRg76BTlwurInrXhKzJqMVRn+fRPUVE9r6oC9E8BAz7VRDtaaDBOnze8vzD5rrCR1f
+	 usEq/Pvcyd8nshiN7dOTBrtY2+JKH9pIsVBgKMTutiV+TmJgUoRSMH8+HNFPNr+h5X
+	 MOQnwGMmyI37lEkjeishIGV6cZwp6wQvmTTD8g35ZcgsFnCeHTptjSGupSQstBY4Hv
+	 u6bzDbyDNNex0oc61S44MyxQIL7riVXR5FgMXSwS5gtqNELzbGf0Bf1GgkM5bfIMWA
+	 AF5+NNjzLBdWQ==
+Message-ID: <a37db87d-c3b1-4ce4-bec0-4f496dc209b5@kernel.org>
+Date: Wed, 10 Sep 2025 16:21:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708052909.4145983-4-ryan_chen@aspeedtech.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/14] dt-bindings: display: mediatek,ufoe: Add
+ mediatek,gce-client-reg property
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-8-ariel.dalessandro@collabora.com>
+ <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
+ <28049fe0-0ae7-4b40-9f95-1513e317547f@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <28049fe0-0ae7-4b40-9f95-1513e317547f@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ryan,
-
-On Tue, Jul 08, 2025 at 01:29:09PM +0800, Ryan Chen wrote:
-> Add AST2700 clock controller driver and also use axiliary
-> device framework register the reset controller driver.
-> Due to clock and reset using the same register region.
+On 10/09/2025 16:04, Ariel D'Alessandro wrote:
+> Krzysztof,
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> On 8/21/25 3:50 AM, Krzysztof Kozlowski wrote:
+>> On Wed, Aug 20, 2025 at 02:12:55PM -0300, Ariel D'Alessandro wrote:
+>>> Current, the DT bindings for Mediatek UFOe (Unified Frame Optimization
+>>> engine) is missing the mediatek,gce-client-reg property. Add it and
+>>
+>> Why is it missing? If the binding is complete, it cannot be missing...
+> 
+> Due to the following error:
+> 
+> $ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
+>    SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>    DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
+> [...]
+> arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: ufoe@1401a000 
+> (mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does not match 
+> any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: 
+> http://devicetree.org/schemas/display/mediatek/mediatek,ufoe.yaml#
 
-I just have a few very minor style comments below. Otherwise the driver
-looks good to me.
+So there are users of it? Then please explain that.
 
-> +static struct clk_hw *ast2700_clk_hw_register_hpll(void __iomem *reg,
-> +						   const char *name, const char *parent_name,
-> +						   struct ast2700_clk_ctrl *clk_ctrl)
-> +{
-> +	unsigned int mult, div;
-> +	u32 val;
-> +
-> +	val = readl(clk_ctrl->base + SCU0_HWSTRAP1);
-> +	if ((readl(clk_ctrl->base) & REVISION_ID) && (val & BIT(3))) {
-> +		switch ((val & GENMASK(4, 2)) >> 2) {
-> +		case 2:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1800 * HZ_PER_MHZ);
-> +		case 3:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1700 * HZ_PER_MHZ);
-> +		case 6:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1200 * HZ_PER_MHZ);
-> +		case 7:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 800 * HZ_PER_MHZ);
-> +		default:
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +	} else if ((val & GENMASK(3, 2)) != 0) {
-> +		switch ((val & GENMASK(3, 2)) >> 2) {
-> +		case 1:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1900 * HZ_PER_MHZ);
-> +		case 2:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1800 * HZ_PER_MHZ);
-> +		case 3:
-> +			return devm_clk_hw_register_fixed_rate(clk_ctrl->dev, name, NULL,
-> +							       0, 1700 * HZ_PER_MHZ);
-> +		default:
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +	} else {
-> +		val = readl(reg);
-> +
-> +		if (val & BIT(24)) {
-> +			/* Pass through mode */
-> +			mult = 1;
-> +			div = 1;
-> +		} else {
-> +			u32 m = val & 0x1fff;
-> +			u32 n = (val >> 13) & 0x3f;
-> +			u32 p = (val >> 19) & 0xf;
-> +
-> +			mult = (m + 1) / (2 * (n + 1));
-> +			div = (p + 1);
+> 
+>>
+>>> update the example as well.
+>>>
+>>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>>> ---
+>>>   .../bindings/display/mediatek/mediatek,ufoe.yaml      | 11 +++++++++++
+>>>   1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>>> index 61a5e22effbf2..ecb4c0359fec3 100644
+>>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>>> @@ -64,6 +64,14 @@ properties:
+>>>         - port@0
+>>>         - port@1
+>>>   
+>>> +  mediatek,gce-client-reg:
+>>> +    description: The register of client driver can be configured by gce with
+>>> +      4 arguments defined in this property, such as phandle of gce, subsys id,
+>>> +      register offset and size. Each GCE subsys id is mapping to a client
+>>
+>> Don't explain what DT syntax is. We all know, so that's completely
+>> redundant description. Explain the purpose. Explain Arguments with sechema - items.
+> 
+> Although I agree with your suggestions, this is exactly how the rest of 
+> the Mediatek DT bindings describe this node. This patch is based on the 
+> other +20 files, which describe the node in the same way.
 
-The ( ) is unnecessary here.
 
-> +		}
-> +	}
-> +
-> +	return devm_clk_hw_register_fixed_factor(clk_ctrl->dev, name, parent_name, 0, mult, div);
-> +}
-> +
-> +static struct clk_hw *ast2700_clk_hw_register_pll(int clk_idx, void __iomem *reg,
-> +						  const char *name, const char *parent_name,
-> +						  struct ast2700_clk_ctrl *clk_ctrl)
-> +{
-> +	int scu = clk_ctrl->clk_data->scu;
-> +	unsigned int mult, div;
-> +	u32 val = readl(reg);
-> +
-> +	if (val & BIT(24)) {
-> +		/* Pass through mode */
-> +		mult = 1;
-> +		div = 1;
-> +	} else {
-> +		u32 m = val & 0x1fff;
-> +		u32 n = (val >> 13) & 0x3f;
-> +		u32 p = (val >> 19) & 0xf;
-> +
-> +		if (scu) {
-> +			mult = (m + 1) / (n + 1);
-> +			div = (p + 1);
-> +		} else {
-> +			if (clk_idx == SCU0_CLK_MPLL) {
-> +				mult = m / (n + 1);
-> +				div = (p + 1);
-> +			} else {
-> +				mult = (m + 1) / (2 * (n + 1));
-> +				div = (p + 1);
+Last time I tried to fix something for Mediatek display I got
+condescending and useless review from Collabora, so I won't be bothering
+with fixing these bindings to make your job easier. I don't care, you
+can thank someone inside. Therefore other poor bindings are not a valid
+excuse for this patch not being correct.
 
-The ( ) is unnecessary on div on the three places above.
-
-> +static void ast2700_soc1_configure_i3c_clk(struct ast2700_clk_ctrl *clk_ctrl)
-> +{
-> +	if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID)
-> +		/* I3C 250MHz = HPLL/4 */
-> +		writel((readl(clk_ctrl->base + SCU1_CLK_SEL2) &
-> +			~SCU1_CLK_I3C_DIV_MASK) |
-> +			       FIELD_PREP(SCU1_CLK_I3C_DIV_MASK,
-> +					  SCU1_CLK_I3C_DIV(4)),
-> +		       clk_ctrl->base + SCU1_CLK_SEL2);
-
-This block is hard to read. What do you think about this instead?
-
-        if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID) {
-        	u32 val;
-
-                /* I3C 250MHz = HPLL/4 */
-                val = readl(clk_ctrl->base + SCU1_CLK_SEL2) & ~SCU1_CLK_I3C_DIV_MASK;
-                val |= FIELD_PREP(SCU1_CLK_I3C_DIV_MASK, SCU1_CLK_I3C_DIV(4));
-                writel(val, clk_ctrl->base + SCU1_CLK_SEL2);
-        }
-
-With those addressed:
-
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-
+Best regards,
+Krzysztof
