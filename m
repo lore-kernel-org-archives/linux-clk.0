@@ -1,73 +1,43 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C4D320A29
-	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 13:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757512640; cv=none; b=LD4d353HPRoiDHuNQMTIq6PZfzCqjje1f3SgjppkEPpsq5C6KrL1Zt8rCJGqnjjT5fLC8csi9vl6LqpVmninob88gx7w+HY76mdh7qXGAoriXs8YaTzf4ECvYnqHAB5R4a6xZv9pxZSfnJMb2d0/ZfAmUDuap4decG00Ab4CRQM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757512640; c=relaxed/simple;
-	bh=/wfQDim4ahb6Q6nDJIfOnfdyp76lezfBLoVX/eGVN/g=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793A322745;
+	Wed, 10 Sep 2025 14:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757513162; cv=pass; b=RseXRxCzlO9OVseJj3DBWofR9XiOd8Kz8LHOE9hG8fYNOkhsJIdNQ9OBmF5CD3p0CKcw/1vEDHXc6+cGzD8zmTnFwHiRdFVA1/o9Wj0pRK5TQexojKzpedWuGLPbYfN9biQTM6CGGd2IlLzdETfmJAUrk+i1V/jhi6J7D0xJQ4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757513162; c=relaxed/simple;
+	bh=FONkIWI0n7lG/bUtRih9a715N9XA1/QgoWiRIL6pOMc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSpwpk6uQ5C64j3ymffFdvpgzQpg/re/SKo93+UG2HGeCc6cymbFRvQcLcyV2+sdBVOUvI8rlW3LnjfLDBEJC5kKrMYKMvQtlRtO+1kjKxj4jgjAtbhiR1DeVtOPHiN/4tzTymGM8g8xT+cyOGxz3IIm//WrrolqebEs5t508So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a3WoAPP2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=Led4Xyg2zycabojrGQIylF/V68hg5lc9vHaERYY4+CSab6Q15AeOec+7KOqV7L3j4NQdn9tK3CdUyH9c9xtM1TDkJWnVaJUuN/L7A1iXV1bRtezbUDcH6ZrK21P/FFVY1KO2E/9ZDMvDsUw4nLWiiD1e1sTJqKcjsutw4Pj9Pe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=IHYKNoZY; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a3WoAPP2"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ACgIoB024566
-	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 13:57:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1fJ/7ym1FXsoeacKSkxLjPWBg3p9UzUEwVJxmblp4aA=; b=a3WoAPP2Zo4Nisbx
-	ovOxDjIrrUpORZ3g8bUG13XOPuAV2Cn8KtkDRg5PknxvPkgJ8aYOsAS8+41Riwkd
-	s1ogfvQgtzGaxpWo/0xMwGZq/cabDK+DOqzFCLqKAXxnMFfkzfRTcEORsr3Pmofw
-	6PteGyHzEHwhA465q/9yL7dP1+0o0h2HiSrCWnjsgjTftKC3ilEvB1VVdhG2FV7s
-	TrdT71vaiI4d15wSD63aCDhtTKWzKymQudYSmKHfB5TKrVlndQZ91+PHaLcUdHO+
-	fl6j0Ud6371/vLoisb+y7ZgCLvAHDEcHlAtTeaRbw1kKOjN9QF7PYIAYEIT5eaqA
-	5rUHdw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8m2b3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 13:57:18 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b601ceb41cso16627441cf.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 06:57:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757512637; x=1758117437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1fJ/7ym1FXsoeacKSkxLjPWBg3p9UzUEwVJxmblp4aA=;
-        b=fmRwenYmplyPy8XS7wEb+MH8qWxef9vl7fh8G00pZzyB2cEjHhW4r2NsICmXxIdqmS
-         Sw/28Q7Z6kMLgV5aRIt/4AkCCPIKZ9HUaX9RbnMoS0HWdMT3MKK6C5uA4EAQ+pNpSKWP
-         E9aUVtUVEMoea4QV+aWqUB6wTAsUBcxr4vv+V0jTCvyoUivpgbMLu5aGbZGRTKLOdKwf
-         KtBIwcD3NS1wXeDHDFfcdO8J2IkDdaC51V3gwxSmrBRnOPpkZI3ejAFODz5pNPLWizFq
-         fIIt3k7hUjNt5PFvPpKMJ47+Sum5cgiCfEGI/pxSbB4lXvC2mQxm3IL9qffaOB5RPbkQ
-         go6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVhDKqkgGwDFpsrcvhD5niZMHP/iuKSrrlmS664v5l8fJdoxYf1MdO3cSHI5YFxj/6YaNawq8sY7zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdZTGyLhsrMh0AgRiAdLof64Q42TcXs9B/CR0oq8lUl9aogNmV
-	lqFfE40sRg08ZbXoNJYx62bYozpxwhNvGiAh+SSBSR1NiJ7v4yNaZi4j018DJV1kwNqK3/ouymZ
-	+s74pYNEpjJxZQ8O2xFV5yvdl0x2kAzdYKGoQ/BDiogXkjTYfBqY/YMkj3Y3/csY=
-X-Gm-Gg: ASbGncuNQc7MsidkGWwowGGXws5mnqc1KBRnA5lFALRgXRj+/EBJXenl8o5B8eS+sGj
-	1KJUd9D3WwPTWO/8kMcr4CclWdGa5/FYvV5rG3ovElCa2Q0lfofdBn5gIvZMoY7xCamdCSst6Vf
-	wRz0cR4hRmLHIOZ42k8lEDy6DUavLwNVgI3HE1pV1dFQhWW4QWSJR+TFSjnjIyrkkVVethI1RK8
-	CrmbXdikAYrayh9/Fub91qYe+bPG6stT+buQeVuGv/2H8KllBr2IXwnQ/mC4iUO0ju25bmaTfMo
-	GQu/eyKStOamEjk1JVKCQgft6cNgNBXHhsE+Sm2O2RMaCKrgbdacIW05lS/MP8r/1TeFC9BB6TY
-	77W5boWTqJnj0JAq0KlrYwQ==
-X-Received: by 2002:ac8:5981:0:b0:4b3:4d20:2f9 with SMTP id d75a77b69052e-4b5f83a513fmr119935511cf.4.1757512637383;
-        Wed, 10 Sep 2025 06:57:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtPKK5PUQ+h2E5IfRB6yeYQejWcIdFPwadPZHwUcThe6XnDwjitcbDpSw8Cmgn/hL3Cw7upw==
-X-Received: by 2002:ac8:5981:0:b0:4b3:4d20:2f9 with SMTP id d75a77b69052e-4b5f83a513fmr119935291cf.4.1757512636836;
-        Wed, 10 Sep 2025 06:57:16 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01bdb952sm3333151a12.52.2025.09.10.06.57.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 06:57:16 -0700 (PDT)
-Message-ID: <10b8b0c3-5c1d-4631-9feb-c83d08d619a3@oss.qualcomm.com>
-Date: Wed, 10 Sep 2025 15:57:14 +0200
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="IHYKNoZY"
+ARC-Seal: i=1; a=rsa-sha256; t=1757513088; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VEkyJDxuAQfVsvKhIxBruPEvS+E+Faq6lkb8StCuTHDG4il/MJXRcIahNdDe1K9l5asGM6fNcHpp2dATLpTDdixJydv1Eav7Ciq7KRQ57d64AIcR9G9MzobjDNJWa735TFRzENggkAWdoogP0hXnRRQvmnhic10HgfMoJOI0qqw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757513088; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=; 
+	b=P9BxtulcIUGD/6FoPkulfuuR84JV4Ri/6txauWEhPar814ZnGKTiquSh/essihNHEQbflrG4B1II2xYvbvqlCLvtwTc27q7uJsa6RzH4frCk8k+iYr2hMphCwl+2BMJFaXmesNFLrkU20dt2cWy9mIGCBaIpcPsipJH3cRPNWPM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757513088;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=;
+	b=IHYKNoZY4zf4ISQCHWYEleElg0zyYX0fAY3flK0zslYU4qZregRMacfv+qxcfwpQ
+	1x+1iaYapTxzAjxF38sg0OhTVRo1GLDfKW55tsC3QwJKNIhZiomEvEjFNt5Ia3ldCpT
+	ecLwFY4c1qFjQXhURNFG3nBQQ/aFvg2+LOYp7AEA=
+Received: by mx.zohomail.com with SMTPS id 1757513084822538.2895524618148;
+	Wed, 10 Sep 2025 07:04:44 -0700 (PDT)
+Message-ID: <28049fe0-0ae7-4b40-9f95-1513e317547f@collabora.com>
+Date: Wed, 10 Sep 2025 11:04:29 -0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,51 +45,95 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment
-To: Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250910134737.19381-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH v1 07/14] dt-bindings: display: mediatek,ufoe: Add
+ mediatek,gce-client-reg property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-8-ariel.dalessandro@collabora.com>
+ <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250910134737.19381-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfXzdJhSJ86PwMh
- dDKcL1NQIKLWJeREi4fX/pljdYVpXmQbkVrJ3UKFe991EdXVrqzmYiDYuv6ZBTWzwjmvPe/r+Yi
- SBbGPO4ExShncvF6oU5NM7dYLT7TXtB54sXd7cTcuTOj4bJxgciiSUz2dJRE2kMK2GB9aT3LcXU
- 3up0uyUxHOBuoq5syeVixmM3/Z+Vj0646tZasP/h7X+O2pcen+nQuPKVtuyMJmcT2u2M9ShHnaD
- BZ7OP49GVIwaDH4oHvJjD+ddSVfpDXDfLAQvxv2So3+HAmMalkCAIus2u2r4JbspUXCyoMaJIYn
- YFqYmsZdb4QIjAynbfjbmRYc1473pgtwKg79W1h7w6qJQM2a9ilw0P4GNsCzLmB6M6IbZ/AmlWw
- 7R3DLpha
-X-Proofpoint-ORIG-GUID: LIu0ePGVRbYFuN2Y-luidKr9YmVjHVXB
-X-Proofpoint-GUID: LIu0ePGVRbYFuN2Y-luidKr9YmVjHVXB
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c183be cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=nxTl8UUStihZDgUTFOEA:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_02,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+X-ZohoMailClient: External
 
-On 9/10/25 3:47 PM, Johan Hovold wrote:
-> Drop an obsolete comment about keeping the PCIe GDSCs always-on,
-> something which is no longer the case since commit db382dd55bcb ("clk:
-> qcom: gcc-sc8280xp: Allow PCIe GDSCs to enter retention state").
+Krzysztof,
+
+On 8/21/25 3:50 AM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 20, 2025 at 02:12:55PM -0300, Ariel D'Alessandro wrote:
+>> Current, the DT bindings for Mediatek UFOe (Unified Frame Optimization
+>> engine) is missing the mediatek,gce-client-reg property. Add it and
 > 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+> Why is it missing? If the binding is complete, it cannot be missing...
 
-They're not quite off yet, but they're not perma-on either, so I
-suppose it makes sense:
+Due to the following error:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+$ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
+   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+   DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
+[...]
+arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: ufoe@1401a000 
+(mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does not match 
+any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: 
+http://devicetree.org/schemas/display/mediatek/mediatek,ufoe.yaml#
 
-Konrad
+> 
+>> update the example as well.
+>>
+>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>> ---
+>>   .../bindings/display/mediatek/mediatek,ufoe.yaml      | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> index 61a5e22effbf2..ecb4c0359fec3 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> @@ -64,6 +64,14 @@ properties:
+>>         - port@0
+>>         - port@1
+>>   
+>> +  mediatek,gce-client-reg:
+>> +    description: The register of client driver can be configured by gce with
+>> +      4 arguments defined in this property, such as phandle of gce, subsys id,
+>> +      register offset and size. Each GCE subsys id is mapping to a client
+> 
+> Don't explain what DT syntax is. We all know, so that's completely
+> redundant description. Explain the purpose. Explain Arguments with sechema - items.
+
+Although I agree with your suggestions, this is exactly how the rest of 
+the Mediatek DT bindings describe this node. This patch is based on the 
+other +20 files, which describe the node in the same way.
+
+Regards,
+
+-- 
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
