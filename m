@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69D63680B6;
-	Thu, 11 Sep 2025 17:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1108F36934F;
+	Thu, 11 Sep 2025 17:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757612835; cv=none; b=GmE4K3KYKEpsoRqRUvr8zG5PNalr9PZ+PlM/mcbk2orGRzRxpjr0LSzEYBx/bICQGGtqfQwk+thSYy6kSCbRLR29EkB/w+L63EOE2DKqpqHjjjjMlIXQZVzEEku5LXKPGXMN/kRxUKeR3Fn3NH1udRGhIuWtBCUQrycV1kYKPUY=
+	t=1757612836; cv=none; b=QvR2SLMCC4ggQr2mr3XIv4xlHJmjyzJCzulq6nUx+54N+gsTwpLIuxcHqifKC0YZb6HqwDZm6ZOLUUcKBV6CNKhw7vckNXd2mndr3U4xxymGFuzwDU1m7nS87W+MBcbqgdjckmnItqkJIIflvWgH04jk4k6HC1YdTlU5PP/sBG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757612835; c=relaxed/simple;
-	bh=1VGX+X5eVJrtg3lTD0x2fIATGMZKPMhLF6+i7bBsWgI=;
+	s=arc-20240116; t=1757612836; c=relaxed/simple;
+	bh=W8J/+Z9oRBNbp4TXxTxT486U9Z9A7OK+Xcu6z7nwH6U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C8wCj2pHeKO5MMRmBEUbpYsIHaxMRVs/M9lqEdRnw8LjFokRBJqR2pBRLSesu0hAJZisvcgPeKa4fB80jol/OP5zsUq/lfV5JEyEVYuQMbrQVBruEno1T5bc+JyvXHnGfK3EncWQmXYMdQWuzeYIzc4YI1CSVPNxBs62HzboVGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSk0avWo; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=jT6R2QxMU/bRjjfg1TkFZF0gnqaEextNoOMC+8/fpvrYKLZtHU5kufGTK7+plkjGhto9iNTNOH7x5bI7eKdjMx+pvvef9x3WzwYRHH0jZTCoaQfI2g4pQI9yLtM0V2R1WmDYKytrJHCS2DL6QYBAyfz8c4elsRsSRO+qCJTpw7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJd45Roz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSk0avWo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 386C1C4CEF8;
-	Thu, 11 Sep 2025 17:47:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJd45Roz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86C2C4CEFB;
+	Thu, 11 Sep 2025 17:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757612834;
-	bh=1VGX+X5eVJrtg3lTD0x2fIATGMZKPMhLF6+i7bBsWgI=;
+	s=k20201202; t=1757612835;
+	bh=W8J/+Z9oRBNbp4TXxTxT486U9Z9A7OK+Xcu6z7nwH6U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qSk0avWok6UUo8+7Qj1RGhmQs+DEqs0rzebZrjRrWeMTSgtz9uMp45NiFgOlwj9tm
-	 pcrp5RizhnRej7FQqGEHgngogSObR9g7j5Xdkg8gquBWKTk91RTJbOjcaHp9I1qPE7
-	 6NqA1Zz04o7Hmu7oD3xzv3otpuSJxOASYsNfvv32JTBusFItsmZls7cq/sstsVGwD1
-	 7MflRHWH8VU8k+5GYsMnyU0IdMsNMQD/4v1If/cLHTIFYsmpi1tX7SlvIqcb9WzVuh
-	 X1nbsgjR0khHgzc1x+p7ICXXIKb0d+H4jiikSdQHs8Mq1bgg77M8D7Pcj4q70FnfVz
-	 U7fXT+ONz1S/A==
+	b=JJd45RozqFkAXe9m5Hfhk0n4JHTQvVyC/c+SxDDlCKZ6RCZCiEjddSRtjO0TmsKvZ
+	 u172mTIPv0AfawQuFAXI77k94Eol/+WUutllAE5dcQZuddsPhizkBIynE/991UjTyt
+	 lQ/BOQOR0cxz8qOLvmZ19G6WWca1+Gfgb2xjRDMp44ZDT7ML4su25Jj3HPpnc/3u5b
+	 IdUQ4sS7Ywc591SNk+0Q9jjbghEXKsu5o1DxfowV3N6IsgmEIcDqGBS3LJpkeB45wp
+	 Aztno5dew+S53sRlGe9A8OLj8ZNC8j37jwySePMSv80khSINbvTy5G/qtXzEAl1NKP
+	 9yM+WdKM5vWIg==
 Received: by wens.tw (Postfix, from userid 1000)
-	id E25D75FE35; Fri, 12 Sep 2025 01:47:11 +0800 (CST)
+	id 09AEA5FF0D; Fri, 12 Sep 2025 01:47:12 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -39,9 +39,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
-Date: Fri, 12 Sep 2025 01:47:06 +0800
-Message-Id: <20250911174710.3149589-4-wens@kernel.org>
+Subject: [PATCH v2 6/7] arm64: dts: allwinner: a523: Add MCU PRCM CCU node
+Date: Fri, 12 Sep 2025 01:47:09 +0800
+Message-Id: <20250911174710.3149589-7-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250911174710.3149589-1-wens@kernel.org>
 References: <20250911174710.3149589-1-wens@kernel.org>
@@ -55,117 +55,68 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-The main clock controller on the A523/T527 has the NPU's module clock.
-It was missing from the original submission, likely because that was
-based on the A523 user manual; the A523 is marketed without the NPU.
+Add a device node for the third supported clock controller found in the
+A523 / T527 SoCs. This controller has clocks and resets for the RISC-V
+MCU, and others peripherals possibly meant to operate in low power mode
+driven by the MCU, such as audio interfaces, an audio DSP, and the NPU.
 
-Also, merge the private header back into the driver code itself. The
-header only contains a macro containing the total number of clocks.
-This has to be updated every time a missing clock gets added. Having
-it in a separate file doesn't help the process. Instead just drop the
-macro, and thus the header no longer has any reason to exist.
-
-Also move the .num value to after the list of clks to make it obvious
-that it should be updated when new clks are added.
-
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
 Changes since v1:
-- Move .num to after list of clks
+- Enlarged MCU PRCM register range to 0x200
+- Moved "r-ahb" clock to the end of the list and added "r-apb0" clock
 ---
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 21 ++++++++++++++++++---
- drivers/clk/sunxi-ng/ccu-sun55i-a523.h | 14 --------------
- 2 files changed, 18 insertions(+), 17 deletions(-)
- delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-index 1a9a1cb869e2..acb532f8361b 100644
---- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-@@ -11,6 +11,9 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/sun55i-a523-ccu.h>
-+#include <dt-bindings/reset/sun55i-a523-ccu.h>
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index 79bd9ce08c7c..f93376372aba 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -4,8 +4,10 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/sun6i-rtc.h>
+ #include <dt-bindings/clock/sun55i-a523-ccu.h>
++#include <dt-bindings/clock/sun55i-a523-mcu-ccu.h>
+ #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
+ #include <dt-bindings/reset/sun55i-a523-ccu.h>
++#include <dt-bindings/reset/sun55i-a523-mcu-ccu.h>
+ #include <dt-bindings/reset/sun55i-a523-r-ccu.h>
+ #include <dt-bindings/power/allwinner,sun55i-a523-ppu.h>
+ #include <dt-bindings/power/allwinner,sun55i-a523-pck-600.h>
+@@ -825,6 +827,31 @@ rtc: rtc@7090000 {
+ 			clock-names = "bus", "hosc", "ahb";
+ 			#clock-cells = <1>;
+ 		};
 +
- #include "../clk.h"
++		mcu_ccu: clock-controller@7102000 {
++			compatible = "allwinner,sun55i-a523-mcu-ccu";
++			reg = <0x7102000 0x200>;
++			clocks = <&osc24M>,
++				 <&rtc CLK_OSC32K>,
++				 <&rtc CLK_IOSC>,
++				 <&ccu CLK_PLL_AUDIO0_4X>,
++				 <&ccu CLK_PLL_PERIPH0_300M>,
++				 <&ccu CLK_DSP>,
++				 <&ccu CLK_MBUS>,
++				 <&r_ccu CLK_R_AHB>,
++				 <&r_ccu CLK_R_APB0>;
++			clock-names = "hosc",
++				      "losc",
++				      "iosc",
++				      "pll-audio0-4x",
++				      "pll-periph0-300m",
++				      "dsp",
++				      "mbus",
++				      "r-ahb",
++				      "r-apb0";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
  
- #include "ccu_common.h"
-@@ -25,8 +28,6 @@
- #include "ccu_nkmp.h"
- #include "ccu_nm.h"
- 
--#include "ccu-sun55i-a523.h"
--
- /*
-  * The 24 MHz oscillator, the root of most of the clock tree.
-  * .fw_name is the string used in the DT "clock-names" property, used to
-@@ -486,6 +487,18 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
- 
- static SUNXI_CCU_GATE_HWS(bus_ve_clk, "bus-ve", ahb_hws, 0x69c, BIT(0), 0);
- 
-+static const struct clk_hw *npu_parents[] = {
-+	&pll_periph0_480M_clk.common.hw,
-+	&pll_periph0_600M_clk.hw,
-+	&pll_periph0_800M_clk.common.hw,
-+	&pll_npu_2x_clk.hw,
-+};
-+static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0x6e0,
-+				    0, 5,	/* M */
-+				    24, 3,	/* mux */
-+				    BIT(31),	/* gate */
-+				    CLK_SET_RATE_PARENT);
-+
- static SUNXI_CCU_GATE_HWS(bus_dma_clk, "bus-dma", ahb_hws, 0x70c, BIT(0), 0);
- 
- static SUNXI_CCU_GATE_HWS(bus_msgbox_clk, "bus-msgbox", ahb_hws, 0x71c,
-@@ -1217,6 +1230,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
- 	&bus_ce_sys_clk.common,
- 	&ve_clk.common,
- 	&bus_ve_clk.common,
-+	&npu_clk.common,
- 	&bus_dma_clk.common,
- 	&bus_msgbox_clk.common,
- 	&bus_spinlock_clk.common,
-@@ -1343,7 +1357,6 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
- };
- 
- static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
--	.num	= CLK_NUMBER,
- 	.hws	= {
- 		[CLK_PLL_DDR0]		= &pll_ddr_clk.common.hw,
- 		[CLK_PLL_PERIPH0_4X]	= &pll_periph0_4x_clk.common.hw,
-@@ -1524,7 +1537,9 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
- 		[CLK_FANOUT0]		= &fanout0_clk.common.hw,
- 		[CLK_FANOUT1]		= &fanout1_clk.common.hw,
- 		[CLK_FANOUT2]		= &fanout2_clk.common.hw,
-+		[CLK_NPU]		= &npu_clk.common.hw,
- 	},
-+	.num	= CLK_NPU + 1,
- };
- 
- static struct ccu_reset_map sun55i_a523_ccu_resets[] = {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h b/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
-deleted file mode 100644
-index fc8dd42f1b47..000000000000
---- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
-+++ /dev/null
-@@ -1,14 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * Copyright 2024 Arm Ltd.
-- */
--
--#ifndef _CCU_SUN55I_A523_H
--#define _CCU_SUN55I_A523_H
--
--#include <dt-bindings/clock/sun55i-a523-ccu.h>
--#include <dt-bindings/reset/sun55i-a523-ccu.h>
--
--#define CLK_NUMBER	(CLK_FANOUT2 + 1)
--
--#endif /* _CCU_SUN55I_A523_H */
+ 	thermal-zones {
 -- 
 2.39.5
 
