@@ -1,65 +1,67 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4671B31AF0E
-	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 16:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF3735AAB9
+	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 16:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757608851; cv=none; b=jbhvrQ7xMRWDn3Rp/uzQEIg9F6dJSC/ckaL/aPgLUih+dRvX42Jwrtc8j3JhCgAx1nw+BaMBBezUWSMjwJt2bnNfX5BO6sXWHeQ1CjdGuFl74x1ED+p1Bb/VMx+pUr01uXbTG0iLMkqIuS57NB9BHFpIjtvCvw1fvmSZAdMtLHw=
+	t=1757608854; cv=none; b=E+Iay8frHSO2HKUOTangE3/ABoI3k8vHA+U03DOuNS1RRQOEifTTqpeqOkJhGwPv7kTlVggDoNF1Nqwf7MJ9N5hdu8HWimXNXXx6TVampdg0cp+RCk1x5JI30+SRjcadUf4VyIn+fWWwYxaGUzAanTUkQVC3b56zrZenvNppJrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757608851; c=relaxed/simple;
-	bh=PGUYgHqS7CEbT5QLDYSKpf+raKUBoMSG/SoVXw8S0ZU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JCQ3zR8Rg3ov2YH6LqvblGQnZOTeZr/EVYk4f+aKOxgbSn+1F1qqD2PdsAP0RMuHWBkRAJCUVmZhC0KIpGhje4rPSQoE3nR2QakVN2gpI6MwdWWZLw0DFzM8UMF4/TR5VHf0KLSa0x1z1pBnzsDiDO6oaAcl34A6Z5EFrY1aGNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHylLhz/; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1757608854; c=relaxed/simple;
+	bh=a4DgACCHBYE7klse7BZobqD/NjzeLWKDISI/21WHr8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=K3cFeXowuMnlhxaxEQNkULZY6THhbb8RhErv3IIl34OJ+s2KyO95oJYbjgO3J9ULZ+CTkoGSPYUomHJ2HbIVUIQiBb8Y0FOvNSIL2VYJFqkHUYliiWUrkBcjO+CaQva7AVOXJhA/FQRDwE0g0rhPrsrfuj/WFE99C1Rv1xJb1lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hK23W9QZ; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHylLhz/"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45de60d39b7so7418055e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 09:40:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK23W9QZ"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso9495785e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 09:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757608847; x=1758213647; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iUkbXECYsNALn3AVpSeO9cAaZnIpWugEqcmf3/zSHD8=;
-        b=AHylLhz/bswBbHNEEFgE4zATHDvY404L/0zDC+EnupsYaEprtkhCphMmRcqCRumgDQ
-         rM0xhDzqoWT7BimokK0vZMxPXh5Sez4XbUFYOc66aNZVX11sdpV1pOslprO+qE2zzo+p
-         dZSkEeKFaOoBWMOEMiIYJR5EPUUGPV6Zy0jFESgpFV9iNJfSdp1QLYNTvBRvHeOlPUVl
-         +06YZaxrRuatW1evM0OV5mtH6fz7WmtLS3ZtLzxZogH/nNgz/7+BaBCuuRlOC1OjXRir
-         BP68I4U4cgTAobECUVtK9/RoyUW2vRDSlWu08TujidOHw7rINhe+rK/3Zatctc6jwlXB
-         m+Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757608847; x=1758213647;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1757608850; x=1758213650; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iUkbXECYsNALn3AVpSeO9cAaZnIpWugEqcmf3/zSHD8=;
-        b=Bti9yApxfYeI+tFhz/F+SH3t7cBrhBLRBfnknfioqsZA5OK1jhiXHW9GiDwpH9W0Wy
-         7kzO6qpvh+AicHFduSgUiR5adyvS/g6aCReib2ATpY8LHAp9gMJcYQ+w9s0xWbqZhErt
-         7NcT8uQonqveDn9HklSHNCtKoPHbLCZyhIf9vyN3njhCt7ofD/cHD9Re1YSYdLXJaPHN
-         qfF3qNxT4uWNuJ5RiEr6YbdM19JeK+Z+34OKb77v1Eznl/DY7bemknHQivUVJqB1Z5mM
-         TzMYNBRY27BWf9mSkXAQ6EFAPHEbCvLuQJj3nNmZM5hgPZBD+TEUd+5h/LFobc0w43Oq
-         B8nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdsLyNcz3dGpdCdpT/SmsJwwkHiprwEsdyJWD+tXA4Lq+2x8luWqNl/S4ez94KxoMAHdEFVQtOTmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJFIzCli3DWccpD4ZMsjtN/9bXemsftb6z7lxm2DWcavOZaHvX
-	6TbTo4minJDgTGLILiybkLqkFAxWumRZc61ZWtjjzqwyeIqrUNupLvbr
-X-Gm-Gg: ASbGncsZhI219Uo3H5+H4PIJOSScUA4WkFGDTHGeJ7SmvnAMrmnP9yTNF+PGWLNtyn4
-	1z8ITkE0KX1nAgYUrwpLaVZe4EPrWQo2Kb77XK2qFg89ZkleGr5kWiipf/dqEbsutsHG0sRCdsi
-	ZgF3pUx1zpKykYfLejJ7fM50dlsyJ0Z3MjKtwvQST0CcQXcTbAY7ipf6+0zO+iem/53ybJcdJK8
-	Ja5hqcUOtoPyazU3W2ZaunVV599x7uKgBS00OQT+Oro36lUsxHD0nmaOqXCfF8iId1Ucfnp84el
-	OMlZNdAHT+kMQxAwk4DL85Vj9RB+jTYqQNRqpWzKtVNXznExquZqjlRNI86vWKTgi+bfOotcApg
-	EogyDbURWl8D4m4TTBvA5sqaFBZh3YHoCbQ==
-X-Google-Smtp-Source: AGHT+IH+e4l4aKUISAkDkWhELbFiMdLI/yWf42i3aNGaNUM7NHoqldoqBTm7FI7Nsal5lPBry54xSg==
-X-Received: by 2002:a05:600c:3b8d:b0:45d:dba1:b4d3 with SMTP id 5b1f17b1804b1-45f21185db1mr1793415e9.0.1757608846269;
-        Thu, 11 Sep 2025 09:40:46 -0700 (PDT)
+        bh=gO/UfK1aYEVqxe5Kt8p5mu5GTkTJwSNJjdbcvgmikd4=;
+        b=hK23W9QZWgWCCYIgUX0whAqsO3y99h+/cAajOwtLzT/DDAxD/mtK3Ux1IWV3SOdimO
+         iy3MO0xkLF7cZEDXI3qM255VlkI46quH0AFpu0YmY0Fp6jlfXvG9UtNMrNsYfoPYWw9b
+         ShJnhKwWdDeAw61cUhMpq5unjWAE3v2cfd9hL+wJKOx2q/BGw5kff3vSXyunQQ1kJkeW
+         2ubtsajLO2qxQhe0/SlxPuUIozLek9si1LN6NlGKetIlD/63WRdW3sdmmfo2ty42YRcn
+         r/6/EI1OxrEt9RqY8utOu3MqWgobhiiKaHKaRPZ1//20fB0dCSThFvR09km1nTAfAi+S
+         Jexg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757608850; x=1758213650;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gO/UfK1aYEVqxe5Kt8p5mu5GTkTJwSNJjdbcvgmikd4=;
+        b=jCHmJDJb7qLo6fz3Ja7w3OKAKum7jYWHKzEh765P8FLbrpPKUj8WTzgSvcXHIySh9J
+         jPvHoVNr2fJW+cGK/vwqhKrMteyiayGPptvGXWffyOWnA0g6uFAfyjT8pa9/B0lPOpd5
+         I5i3OkZwxlA3vmZ29QuNRt23SobDNPHebnEQ9HQD4JmXKJmnSaonHShcXe1ke61E8pC/
+         yzi8CwVzzE0DibPiFRqLMkGzJcmJrL/xXr7cp74xbh5WXesh4THOuOM+AYFneVk9c5bh
+         OLGlQniu7BX55tAYFpBe2NJEtXD91OjfYPBwy/j/Uv2r6wq3eZ5SSnclNme0XJC3DubA
+         ItZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWx17Q1layof+bNcjtpt3I+VjucrxWM735S9sCzSoiNZ1x+9bsrSJedJkVUhBaIv9GcXxvyqZkGDqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ZWsfPN34mkJSzCCnoL3oDxiTKfm1rI+xSQT3bY4lE1n2jh5E
+	VT1epyZTjM+XDpHa9BjGopfwdWXnHUmdbq/LpIs43Ads4pxeAdz8Lk9/fmThOQ==
+X-Gm-Gg: ASbGncv7SANqtHATSwV6HxKSZ0kcwln7eLKhBEuRH8xKf9iZukTJALOkYvKwJongZFu
+	Un65KEKK0+QhiFS0S+rg78K6xGXrq5FScJx246acd/7zJPgqIXCqhNfJ8JhMYB70ksyap5t5aTT
+	Pq3TmZzPJOBrdO+cOa5lCmSKWsqjxtrSiSDnZlLR39YI8eRfP9HiH2KiG7bZVLz735oZyRblYae
+	6C9ibCNPDWtfDJ5yehEuunBcYSuXphb6AB7JqRz6OJk4C19ZaQh86m6nzH07dAUC11BZ8pvBwat
+	RzZB/TpN4XvOcyp0xLeQGeixOEJgojjg+drwWT7eMCtxWrq4k1ZI9vuYkNW9hka0bk74qPNBh2J
+	IDBmKFthgUl5RYGmk+dkqmtc=
+X-Google-Smtp-Source: AGHT+IFNINYP07L5vnE6dG0TQi6RkPduUefTVgGS8sPFZixor0lyaNc1rPgv7TghYgLkzMGhKmEl2Q==
+X-Received: by 2002:a05:600c:6549:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-45f211efde9mr749025e9.26.1757608849705;
+        Thu, 11 Sep 2025 09:40:49 -0700 (PDT)
 Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037b9215sm29772365e9.12.2025.09.11.09.40.44
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037c9d91sm28641195e9.20.2025.09.11.09.40.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:40:45 -0700 (PDT)
+        Thu, 11 Sep 2025 09:40:49 -0700 (PDT)
 From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Subject: [PATCH 0/4] STi drivers cleanup
-Date: Thu, 11 Sep 2025 18:39:56 +0200
-Message-Id: <20250911-master-v1-0-5d5d5ea9af22@gmail.com>
+Date: Thu, 11 Sep 2025 18:39:58 +0200
+Subject: [PATCH 2/4] dt-bindings: media: remove support of
+ stih407-c8sectpfe
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,10 +70,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFz7wmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwML3dzE4pLUIl3TZNNkSwuD5LQkA2MloOKCotS0zAqwQdGxtbUAm0b
- bTVgAAAA=
-X-Change-ID: 20250908-master-5c5c980cfb03
+Message-Id: <20250911-master-v1-2-5d5d5ea9af22@gmail.com>
+References: <20250911-master-v1-0-5d5d5ea9af22@gmail.com>
+In-Reply-To: <20250911-master-v1-0-5d5d5ea9af22@gmail.com>
 To: Patrice Chotard <partice.chotard@foss.st.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -81,63 +82,125 @@ To: Patrice Chotard <partice.chotard@foss.st.com>,
 Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1840; i=rgallaispou@gmail.com;
- h=from:subject:message-id; bh=PGUYgHqS7CEbT5QLDYSKpf+raKUBoMSG/SoVXw8S0ZU=;
- b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBowvt4M6eCDUbwniAvFsl7B6c6vFEZGtq6YBW2O
- Qvzkm+meM2JAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaML7eAAKCRDnIYpo1BLC
- tVZAEACJnq8EfqnB4N/xnh4xaA6NCv1zk6Axys6t8WWk9pLoeMLamXr9+zsfJ8YLhn+sTHNNtuF
- vV4zgzpXaotV5kWh9URYwYedts569Z3slS5u4TS9p4UBeFnyQaUzJFouhtCipwApOL+ghTccmNl
- BqzTj0bVxgu1CK6l4HuK5l9ZlsyQulqDDHXAGQHsGkdOdjixtND3iUtORyCL5wkNWW1XaYtxPCo
- oKLie0xb044BtXbtiON85ojR0dg4XVLk+mbPwDBqODW/7HqUUQa2EjCpg16+elAA0WQYkDoh0zT
- IjIT9LtBPEP1tU/diotyKuiBfbVkgcLKSoyxViMPM83xd3sKpjsyHAVssWIEfPvvng+Sr8D1iKl
- mVWWTuJkSsY4zXqoTgzMwJxylBu0l5s+nVlhao1zocKmk/sY+ZLCIQIMjufXWUnDWaauEcW2Ymg
- SesDSlR4fHfrTWCRnD3sqKobAnR2Z8jTucUwtGEmppu0kpnbcaKrMoH68y8z0KQwUguF8Gt+EQ3
- SGCvmD7PC6Qdy5004D5nHQQh0MvEjCxHhzxe0C83qeZa1U92VQwevkPsK9qpvUsXWpdM1k++2QD
- wXD9mdOwb7iAVSQdjlD3/Lavsoi3Ha5bte93wUXWmXKALdfkPAkA1KcimgEq9pEytPQJRXZp+lP
- sy74W8wCLcmL41w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4064; i=rgallaispou@gmail.com;
+ h=from:subject:message-id; bh=a4DgACCHBYE7klse7BZobqD/NjzeLWKDISI/21WHr8g=;
+ b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBowvuL9Vjok3vHYY6V+qRwOsG+KAigufBL7elki
+ FcVB90OdG2JAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaML7iwAKCRDnIYpo1BLC
+ tVHyEACZI3TtS23Qapj61fuiC+QFCObIViOThyK/uTv+4H/VrfgAg/TDIAKlh3+qHMlPNGNjGud
+ RQU/CHEbQ4qYPAGovDR8oq4PonutJaj3NWPROGF5GZ3trRhuSftIDPOWMUpLnLiyBaa/cCkTXX0
+ v+os5L+PiMixN/YESNipdC5oU8M0NPOCyJvbXJed6tFoXeur52DmcYoz5dXrOpJpEdxgVtMGHHm
+ l+vOL+kiUnW7tCoZaWxrbXFdTD6DgWfRnMWw3fcGm1TKn7ai7FkvQ8fkfk8HE5+i7yd6vCwK7JY
+ yivdW/+iXh6/dc4VTfGV1EZQNIGBk0iAtLlakSCo4+yIvHmXJABCExLrlPujIB6gPHAmW2ZBbdd
+ JBh1gdr7teeV1YlmP5K12p2JRkYWF5knsAm7o7aHKl0OBrdXtM8p204unMblkdNmQCgL15pF4BD
+ E3kYgjQnruHtXRecG2lUKcOfTg/eF4JKBDOF+G3+Jk5DBmGZXH8wg/ntyOe//9UacE9D5fbJqdw
+ rNcqvaM/AqN9WLEpGCX8fM5ziBoXoTbSooJOoCl5SIUbanngNlScVP0V/1IOuO0ZFMR0/fBx0Gj
+ mZW6adXkB1SY2tVQD9WjYVHBMss5DSHojps+ZY9VWzE6QXr6KqF4foIRDuKB8U8xqdo0QNqa0dU
+ zO+hTPC2q6KTqzw==
 X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
  fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
 
-With B2120 board removal[1] several drivers are left unused.
-
-Remove the following compatibles:
-- st,flexgen-stih407-a0
-- st,flexgen-stih407-c0
-- st,flexgen-stih407-d0
-- st,stih407-c8sectpfe
-
-[1] commit dee546e1adef ("ARM: sti: drop B2120 board support")
+Remove file documentation from stih407-c8sectpfe driver.
 
 Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 ---
-Raphael Gallais-Pou (4):
-      media: c8sectpfe: remove support of STi c8sectpfe driver
-      dt-bindings: media: remove support of stih407-c8sectpfe
-      clk: st: flexgen: remove unused compatible
-      dt-bindings: clock: st: flexgen: remove deprecated compatibles
+ .../bindings/media/stih407-c8sectpfe.txt           | 88 ----------------------
+ 1 file changed, 88 deletions(-)
 
- .../devicetree/bindings/clock/st/st,flexgen.txt    |    3 -
- .../bindings/media/stih407-c8sectpfe.txt           |   88 --
- MAINTAINERS                                        |    1 -
- drivers/clk/st/clk-flexgen.c                       |   80 --
- drivers/media/platform/st/sti/Kconfig              |    1 -
- drivers/media/platform/st/sti/Makefile             |    1 -
- drivers/media/platform/st/sti/c8sectpfe/Kconfig    |   28 -
- drivers/media/platform/st/sti/c8sectpfe/Makefile   |   11 -
- .../platform/st/sti/c8sectpfe/c8sectpfe-common.c   |  262 -----
- .../platform/st/sti/c8sectpfe/c8sectpfe-common.h   |   60 -
- .../platform/st/sti/c8sectpfe/c8sectpfe-core.c     | 1158 --------------------
- .../platform/st/sti/c8sectpfe/c8sectpfe-core.h     |  287 -----
- .../platform/st/sti/c8sectpfe/c8sectpfe-debugfs.c  |  244 -----
- .../platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h  |   23 -
- .../platform/st/sti/c8sectpfe/c8sectpfe-dvb.c      |  235 ----
- .../platform/st/sti/c8sectpfe/c8sectpfe-dvb.h      |   17 -
- 16 files changed, 2499 deletions(-)
----
-base-commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
-change-id: 20250908-master-5c5c980cfb03
+diff --git a/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt b/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt
+deleted file mode 100644
+index 880d4d70c9fd741ac13101721ced18f04336c373..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt
++++ /dev/null
+@@ -1,88 +0,0 @@
+-STMicroelectronics STi c8sectpfe binding
+-============================================
+-
+-This document describes the c8sectpfe device bindings that is used to get transport
+-stream data into the SoC on the TS pins, and into DDR for further processing.
+-
+-It is typically used in conjunction with one or more demodulator and tuner devices
+-which converts from the RF to digital domain. Demodulators and tuners are usually
+-located on an external DVB frontend card connected to SoC TS input pins.
+-
+-Currently 7 TS input (tsin) channels are supported on the stih407 family SoC.
+-
+-Required properties (controller (parent) node):
+-- compatible	: Should be "stih407-c8sectpfe"
+-
+-- reg		: Address and length of register sets for each device in
+-		  "reg-names"
+-
+-- reg-names	: The names of the register addresses corresponding to the
+-		  registers filled in "reg":
+-			- c8sectpfe: c8sectpfe registers
+-			- c8sectpfe-ram: c8sectpfe internal sram
+-
+-- clocks	: phandle list of c8sectpfe clocks
+-- clock-names	: should be "c8sectpfe"
+-See: Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-- pinctrl-names	: a pinctrl state named tsin%d-serial or tsin%d-parallel (where %d is tsin-num)
+-		   must be defined for each tsin child node.
+-- pinctrl-0	: phandle referencing pin configuration for this tsin configuration
+-See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+-
+-
+-Required properties (tsin (child) node):
+-
+-- tsin-num	: tsin id of the InputBlock (must be between 0 to 6)
+-- i2c-bus	: phandle to the I2C bus DT node which the demodulators & tuners on this tsin channel are connected.
+-- reset-gpios	: reset gpio for this tsin channel.
+-
+-Optional properties (tsin (child) node):
+-
+-- invert-ts-clk		: Bool property to control sense of ts input clock (data stored on falling edge of clk).
+-- serial-not-parallel	: Bool property to configure input bus width (serial on ts_data<7>).
+-- async-not-sync	: Bool property to control if data is received in asynchronous mode
+-			   (all bits/bytes with ts_valid or ts_packet asserted are valid).
+-
+-- dvb-card		: Describes the NIM card connected to this tsin channel.
+-
+-Example:
+-
+-/* stih410 SoC b2120 + b2004a + stv0367-pll(NIMB) + stv0367-tda18212 (NIMA) DT example) */
+-
+-	c8sectpfe@8a20000 {
+-		compatible = "st,stih407-c8sectpfe";
+-		reg = <0x08a20000 0x10000>, <0x08a00000 0x4000>;
+-		reg-names = "stfe", "stfe-ram";
+-		interrupts = <GIC_SPI 34 IRQ_TYPE_NONE>, <GIC_SPI 35 IRQ_TYPE_NONE>;
+-		interrupt-names = "stfe-error-irq", "stfe-idle-irq";
+-		pinctrl-0	= <&pinctrl_tsin0_serial>;
+-		pinctrl-1	= <&pinctrl_tsin0_parallel>;
+-		pinctrl-2	= <&pinctrl_tsin3_serial>;
+-		pinctrl-3	= <&pinctrl_tsin4_serial_alt3>;
+-		pinctrl-4	= <&pinctrl_tsin5_serial_alt1>;
+-		pinctrl-names	= "tsin0-serial",
+-				  "tsin0-parallel",
+-				  "tsin3-serial",
+-				  "tsin4-serial",
+-				  "tsin5-serial";
+-		clocks = <&clk_s_c0_flexgen CLK_PROC_STFE>;
+-		clock-names = "c8sectpfe";
+-
+-		/* tsin0 is TSA on NIMA */
+-		tsin0: port@0 {
+-			tsin-num		= <0>;
+-			serial-not-parallel;
+-			i2c-bus			= <&ssc2>;
+-			reset-gpios		= <&pio15 4 GPIO_ACTIVE_HIGH>;
+-			dvb-card		= <STV0367_TDA18212_NIMA_1>;
+-		};
+-
+-		tsin3: port@3 {
+-			tsin-num		= <3>;
+-			serial-not-parallel;
+-			i2c-bus			= <&ssc3>;
+-			reset-gpios		= <&pio15 7 GPIO_ACTIVE_HIGH>;
+-			dvb-card		= <STV0367_TDA18212_NIMB_1>;
+-		};
+-	};
 
-Best regards,
 -- 
-Raphael Gallais-Pou <rgallaispou@gmail.com>
+2.51.0
 
