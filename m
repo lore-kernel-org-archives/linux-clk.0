@@ -1,64 +1,64 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F36154BE2
-	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 18:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875FA154BE2
+	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 18:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616368; cv=none; b=Tgn6G1HCCWIPdmGVQLepJaTKmCzPHFH5AFIM83imKnSjPRELU+yHgCX+kUZGI+WhpNtjzKOIHYlQUPLC3tJj+UM5OIOS1h3FL4/IhtzS8bbxQShv+7obbctxLvoltFB78vFd8d7wmKRZrAXn+S4hCBvKlcR7cEFnEZCS9N/d8mI=
+	t=1757616407; cv=none; b=kNRtpAWLURIVXOTfYgLyylvVI9QxAsZ/0E8762PlaKLCpVY73KeAcQHwpFkO/CeAN1MPYs5Ibuf1trvDDGb9p+00/wVIn+hXaLM5xmatqQXh8psdBSfwCfwkX6bRF7wuKbXIvmWU+MDssuDk0FESjt+HQkRGqbUEWa+yOzsTaBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616368; c=relaxed/simple;
-	bh=45rVoyKHZDL7i67H3mSqnI9i+I5wrDeHw68fg9kOaTI=;
+	s=arc-20240116; t=1757616407; c=relaxed/simple;
+	bh=vHuwkKXYwD/cpOelPHVBXDenAhVWLgTP21RN1N3bYw4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M2ELuMJm6gBLN59REjQRHlj2Xht8N3fnPtte9kGGxhJkFLE4rxjjcxXTEEoasVOl7A54TzM6NKZQSvVSMWnyS8JsMee/QJF6/ZJoteDMCGsAJY0O6z2xe+oXGXmMaE9J2Ut+pYZqgeU9xzOdfG95DHJ7/8q53lzYayLzJuZPUYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGMd3GXK; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version:Content-Type; b=CAV/BJAqpDeis7evi+icOOs+RWeAfDEWgCbg9KpkmIXB4WJYqYXyL+5c+1Qiy7c4ViWAflDDJorI9M/KfLONJ3Om7wXHxbRZt1q610lTk8PZR/P9hMyxc7Rdt0sVFi5W8oIZo32f/prkjOTzevP9wEWeoCqOyd3L4p8VwGc+diQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bruhMaGO; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGMd3GXK"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dda7d87faso7502475e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 11:46:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bruhMaGO"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45df09c7128so8615755e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 11:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757616365; x=1758221165; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757616404; x=1758221204; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iLnSFY5/QAndl78OHoWYd50tPooQqwlEKZC1g+O6M5s=;
-        b=JGMd3GXKUcaQ6LOa3KHHAqOg8lciXpbjzpUpZCLPlJJOll0VItWNItYIA8OYY8J6ZF
-         WOoXMhq5FIMC3Wa+ZSH1WeEfP1nBq9T49ts7RL630ydUBH/09xTi4K9/bisvdf7dRCNa
-         v92VxhcWwqvz5MSnDETnUe1O8HAyu0JVQhkPUhTS5EsIxM5TzsHoUDRmGAuOwqOKCRZC
-         YLMla4ggidFPxhEOtoVQzSCizQdkUFy3hdq1n0sV1SmwPr8gYTqDK4IRmsH3pmK1Bvr4
-         tRr/rNDk8S6UjFT81q45VGHFYjC/sUwH3O4+RVgishi4e5XULWdr9VqJLeFoPkuYc3OQ
-         dPyQ==
+        bh=j3Kk5PCcvdUwK+/fsu2vdafHJIiHRXspA2ECOuACp4w=;
+        b=bruhMaGOAuwDUwHqHp7Welvx0uj2y3fdN4/en2LO10bUW7eDYRJvnXxLYn5l6ZTRlR
+         jUHL8oA3iXikpoply/FJI8A3GPd8EKDOgotraiK1/UpVfniRJRH26O5mMKoaFn/RWi9n
+         7NBsmk/j2r9XHXqyIyA+LeZJFwiYTX9FhoWz2qtWR1185xpBHDUs+ks53+cJjEJaE8uk
+         JUT07taNRktzcPCf+U4+eERZPcbka7DjE0/CkvT71qP3WlvG7rNkD2Zfb2hB3DqKWQlo
+         fQyXqTkU+UnhZRM0UMrpwaDHstctf9mpIP5Yr4CGVjDy2bg2cgLVbu+TPGQPUslc3QxN
+         UlPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757616365; x=1758221165;
+        d=1e100.net; s=20230601; t=1757616404; x=1758221204;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iLnSFY5/QAndl78OHoWYd50tPooQqwlEKZC1g+O6M5s=;
-        b=Ni3HhLRgJGxxBR1hKOww5VwFD2vSVzcjpW/JoiFIjrGMdTPpomCyMNkpkmNyBxkRrX
-         hqeKDvowLa2zEYZV2oGJvFbho5u3kj7gxrKZ+Sy2rt6Qb5/iWcsnGsoK54DZtFB7LiwY
-         OWTTxcmNQ1S32PA3xKIo+su9KGkCAvXQ7rylKl/qxk1PmY2u5172QCaT5wMLZJK0z6nW
-         ioVAQatjf2mzolNqa9JuVDLFTsxWOWcFMbOHeKiFDsj2YavOnBm11waq9Oq9XoIwa+Y6
-         2zl0IusF+tsqLVX2M7wVc/radwFfCnJDLpvn6C2R/Kf2huBnFKqP1d5bPbjhp/ApdKGQ
-         1vTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSAlg5LVqOudMZo2OeRqRZzAR2EbsEoAphH/NPu+PP6aawwzsswx1bziAOBan5EKNFR0PHQbA/JiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjLeYrQ4TqdXRaMdhgVhNO5mx9jt0tLYQRr2tYEugAKP2/0AqU
-	vEGwn9U3e4qQP6Shc8TLWFNbb+6gaCkwp17Kk9TcIt+FREKXnCR6/txq
-X-Gm-Gg: ASbGncsn+729LjEcBf0hbfTZAcBZgZTidUfhurqpns1nq9OWmSzqEwT7o+3vEkRF24E
-	jsYymZhd0nvNnIOmlbAseWELHqgP1rRKcHSWZAVzRWnjmJqcQQPKJh9AlKmaCYN4BQxU/rd/Kz5
-	/i0RruDHG9BcEei2mmshr7tMAq4vXJVILM+ToaSI4GEl0UYko3r9euJa4aE9FHeBjJ63TZ4s506
-	iVQw7eFtDZCGvYh0w3bL6MS9q0Nxz6PldY8iKpckkmRBMTWnWUFgdL4OA23w7bJAoqx24U2qfLq
-	4aepgbVgvtvvFnLQDTpqbNzopIp3Wgae/70HCmb+G2jTEn5X3qrVTjCaaOdoKUpz0f67MdG3MBl
-	DtIuAr6UY7rGbUuTAFtX5ZnWiJa7knijwBHvVoABafngM1yjjMuNxVzVtmvKNF7Aoh9bn3Xqe+v
-	N/NpglSHLhgR5vtAz9bH5w6w44TgvBgA==
-X-Google-Smtp-Source: AGHT+IH1eoAESwH3mOqBEu1EDRUwtU9bT+NVdrf9ZOgZBSqxSfPicQG9iVoecXpREjH59drqKdf77A==
-X-Received: by 2002:a5d:5d89:0:b0:3df:c5e3:55f8 with SMTP id ffacd0b85a97d-3e765a12a7fmr375119f8f.54.1757616364866;
-        Thu, 11 Sep 2025 11:46:04 -0700 (PDT)
+        bh=j3Kk5PCcvdUwK+/fsu2vdafHJIiHRXspA2ECOuACp4w=;
+        b=hIiK1bKieJapsvlPICP80V9PJDYiE44NKfZBeoIeZunK82/HHWJQe0+YMgvTEyb6cb
+         ABN1dOIbgaAwYj7bd41jRzD4F8PuXhCOIk2B3zk7QvgzUXNykZz6Zw8FMmd2SmRq6/FE
+         K53M3u8JtUqJ1uT2d5JN7vL9qGqe4qQvTbBSEqJYUCUI8bfQxFbtAHriczGxgaUHLZp9
+         5IcY6tvKujL9+SAe3PMNhsueRhbsca1048Yk7qT/c8oNU1tRqOihXHn3//Buv7VujT+F
+         x5R5Ymjf7kBfXh7ly3Kv81LYOx86pK7CbBuo3WU8AYTJeQON+2rfQvANJgN7Irlc91mB
+         msIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUANB4LLl0A3OsEgQT5Nui/U0Poxv8PfP//bhRbR6kcKiC5zxetURlr/KyQWqqaB4LpH6nkC3Rlqr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaYgGyWuiHWPgu/bL2rFhupflLZZ1U4CROSP7Iu+Tv/5jIlMe4
+	iLfM3tGOBC9OCD76DM/KPlwhVZ+EnvAPAGqiGJ+b61dSuN2Cp84ttQMn691W/w==
+X-Gm-Gg: ASbGncsgTCgGCvzb7tc4lp+tE5FTauUsje3HYtC7+57+hNXy1UsNz1bOsiDQmgJxWPX
+	cz0TR71TolgViIUAjQD+inmB9pBafIgcP9fG/QUitilArxLoETSMPys4/c9arLW0Q+K6C6Z0Mjc
+	BjhZxZxEvXa8OMeD/ijDQX7t+nlTYNtptzzjFdB+06oKGT0d4k89lwRIQEuF6dAHePfeoKFi2/p
+	EUAqsKHqBMp0yccU3T2lVcScY7/c681GkxLFO43WUBEI7GR0XI9zr8yOcSnpzYn/UdGgdbkTFtf
+	UJ3UDoCCOcgqG8dbf0y3zzqigH2rHaJ48G+iCaVAIoP+5qmJYWS+/em7yu6zz92M4D8v9IlzhHQ
+	9pskF1sdcKQMOt/bcOrS/ScbRh5cm6PZADMkXzH4nvMrxsph/AIJAoRYBcp5JQmtoZeDWQeP+MX
+	mPIgd5XrIVStJMYzsIcSU=
+X-Google-Smtp-Source: AGHT+IGPPdj04vc6Z8WnuiT1sf/ZoXQr56xVPN5ocFP5ISIHChh24Q+/p9n0LHx8H0kAPJH/zR+ueg==
+X-Received: by 2002:a05:600c:1d03:b0:45b:86bb:af5f with SMTP id 5b1f17b1804b1-45dfd5b59c2mr43153985e9.6.1757616403529;
+        Thu, 11 Sep 2025 11:46:43 -0700 (PDT)
 Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e3a91504fsm20727255e9.13.2025.09.11.11.46.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157619fsm36045945e9.7.2025.09.11.11.46.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 11:46:04 -0700 (PDT)
+        Thu, 11 Sep 2025 11:46:43 -0700 (PDT)
 From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
  Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>,
@@ -66,13 +66,13 @@ To: Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 Cc: Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] arm64: dts: allwinner: a523: Add MCU PRCM CCU node
-Date: Thu, 11 Sep 2025 20:46:03 +0200
-Message-ID: <2380002.ElGaqSPkdT@jernej-laptop>
-In-Reply-To: <20250911174710.3149589-7-wens@kernel.org>
+Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a523: Add NPU device node
+Date: Thu, 11 Sep 2025 20:46:42 +0200
+Message-ID: <1930957.tdWV9SEqCh@jernej-laptop>
+In-Reply-To: <20250911174710.3149589-8-wens@kernel.org>
 References:
  <20250911174710.3149589-1-wens@kernel.org>
- <20250911174710.3149589-7-wens@kernel.org>
+ <20250911174710.3149589-8-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,17 +82,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Dne =C4=8Detrtek, 11. september 2025 ob 19:47:09 Srednjeevropski poletni =
+Dne =C4=8Detrtek, 11. september 2025 ob 19:47:10 Srednjeevropski poletni =
 =C4=8Das je Chen-Yu Tsai napisal(a):
 > From: Chen-Yu Tsai <wens@csie.org>
 >=20
-> Add a device node for the third supported clock controller found in the
-> A523 / T527 SoCs. This controller has clocks and resets for the RISC-V
-> MCU, and others peripherals possibly meant to operate in low power mode
-> driven by the MCU, such as audio interfaces, an audio DSP, and the NPU.
+> The Allwinner T527 SoC has an NPU built in. Based on identifiers found
+> in the BSP, it is a Vivante IP block. After enabling it, the etnaviv
+> driver reports it as a GC9000 revision 9003.
+>=20
+> The standard bindings are used as everything matches directly. There is
+> no option for DVFS at the moment. That might require some more work,
+> perhaps on the efuse side to map speed bins.
+>=20
+> It is unclear whether the NPU block is fused out at the hardware level
+> or the BSP limits use of the NPU through software, as the author only
+> has boards with the T527.
 >=20
 > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
 
 Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
@@ -100,57 +108,29 @@ Best regards,
 Jernej
 
 > ---
-> Changes since v1:
-> - Enlarged MCU PRCM register range to 0x200
-> - Moved "r-ahb" clock to the end of the list and added "r-apb0" clock
-> ---
->  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
+>  arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >=20
 > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/=
 boot/dts/allwinner/sun55i-a523.dtsi
-> index 79bd9ce08c7c..f93376372aba 100644
+> index f93376372aba..9676caf9bd4e 100644
 > --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
 > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> @@ -4,8 +4,10 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/sun6i-rtc.h>
->  #include <dt-bindings/clock/sun55i-a523-ccu.h>
-> +#include <dt-bindings/clock/sun55i-a523-mcu-ccu.h>
->  #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
->  #include <dt-bindings/reset/sun55i-a523-ccu.h>
-> +#include <dt-bindings/reset/sun55i-a523-mcu-ccu.h>
->  #include <dt-bindings/reset/sun55i-a523-r-ccu.h>
->  #include <dt-bindings/power/allwinner,sun55i-a523-ppu.h>
->  #include <dt-bindings/power/allwinner,sun55i-a523-pck-600.h>
-> @@ -825,6 +827,31 @@ rtc: rtc@7090000 {
->  			clock-names =3D "bus", "hosc", "ahb";
+> @@ -852,6 +852,18 @@ mcu_ccu: clock-controller@7102000 {
 >  			#clock-cells =3D <1>;
+>  			#reset-cells =3D <1>;
 >  		};
 > +
-> +		mcu_ccu: clock-controller@7102000 {
-> +			compatible =3D "allwinner,sun55i-a523-mcu-ccu";
-> +			reg =3D <0x7102000 0x200>;
-> +			clocks =3D <&osc24M>,
-> +				 <&rtc CLK_OSC32K>,
-> +				 <&rtc CLK_IOSC>,
-> +				 <&ccu CLK_PLL_AUDIO0_4X>,
-> +				 <&ccu CLK_PLL_PERIPH0_300M>,
-> +				 <&ccu CLK_DSP>,
-> +				 <&ccu CLK_MBUS>,
-> +				 <&r_ccu CLK_R_AHB>,
-> +				 <&r_ccu CLK_R_APB0>;
-> +			clock-names =3D "hosc",
-> +				      "losc",
-> +				      "iosc",
-> +				      "pll-audio0-4x",
-> +				      "pll-periph0-300m",
-> +				      "dsp",
-> +				      "mbus",
-> +				      "r-ahb",
-> +				      "r-apb0";
-> +			#clock-cells =3D <1>;
-> +			#reset-cells =3D <1>;
+> +		npu: npu@7122000 {
+> +			compatible =3D "vivante,gc";
+> +			reg =3D <0x07122000 0x1000>;
+> +			interrupts =3D <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&mcu_ccu CLK_BUS_MCU_NPU_ACLK>,
+> +				 <&ccu CLK_NPU>,
+> +				 <&mcu_ccu CLK_BUS_MCU_NPU_HCLK>;
+> +			clock-names =3D "bus", "core", "reg";
+> +			resets =3D <&mcu_ccu RST_BUS_MCU_NPU>;
+> +			power-domains =3D <&ppu PD_NPU>;
 > +		};
 >  	};
 > =20
