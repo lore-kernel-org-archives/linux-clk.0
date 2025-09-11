@@ -1,105 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA61C3568EE;
-	Thu, 11 Sep 2025 15:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFFB3570AA;
+	Thu, 11 Sep 2025 16:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606283; cv=none; b=MxpPvHeQ9nghL8BMXdaSCtSP5Dz3AUgCmG8kMLrLxGLUcH7EhOthsH9bCbn6ybxjQGBfuIypVksP1queSDR+Qrh2Vwu8CPnIMgtccLJ5aCdekB2MvS1ivvTNTi6yNITNXybaV3OPgYn45gm3ZE36zvjja7QBX7ZxW+MhTYD7z0A=
+	t=1757606622; cv=none; b=eukq72YuUDEXOYL+3wc5jH4V1ZAQ/i6QRp/5N/0863TZcafXzfAkMvrh3tETu2gkOoBOGgBcw+CH278dfkTUSNbUi/Q16LknYAPIanBSzgKHxnq6CZ/r1zxZHatRiTPZPmioDjkoGfVkwQCmevGkkyh03YtLTLljWPJx5sa7Jl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606283; c=relaxed/simple;
-	bh=evudM0Uyjx2S8LqxgXEnatYJA++HlRHsVUO1LLrdNnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZbvvddZTr60qvgcI787P0JajAgODN+9d6Ziw0ezKdj2gQFDZA0bSLRdr1Ns8mB49brS3T3WQrfEb//tYIpNLaE/DtY8fF+yVawSn1n/iQkrZB90mYuEFDLN6XYzOyYoVMm3p//VTbBHqk+/4Uyh8xQGlbIx/tnh9pi91zPLpS5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB423C4CEF0;
-	Thu, 11 Sep 2025 15:58:01 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	s=arc-20240116; t=1757606622; c=relaxed/simple;
+	bh=ad1+GlOebaA4Dc7BMXCco+gstM8+RUWWlpqN5ZlppNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YGQgIzuY7elsRQUI6ibptJ47BfarPkq020awTto3W9nBM87ejn5ScQR90Ii94f0t8TVwLMOWPmqFuKit0JDSMVi3SFxhD+eopzhAl3zSgVS0i2IMfYT77gbXNDILJU2fHkloWLYaM5wUn3rQvgaXa8Mt67soBogESFxP1HKmiWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlwUJn2t; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlwUJn2t"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so8037465e9.0;
+        Thu, 11 Sep 2025 09:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757606619; x=1758211419; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
+        b=PlwUJn2tWhi/A9iRsILp8PW67z6MYhhtFtJNKZssdAdcnZqzya9T+tnhrBN2dYaOqa
+         zSIuk5Pwbkt3WOcQH/St9i2GGIlgdBfkCtwB/6pyIRPr6U2Bh8HLnlEBhIAVfSwfRZOB
+         qSV1bHwms1p6ydvzVlZksaPdvdBFZCzgDGGRa9JlDoqDVOa08yX2kDRXo3hdSP2wdpy+
+         4DXBg98qji+BShDhFd4cq5G0++f61ovBNB03uFnd6k6Hmbcyr/Dxk7RkkFLYn+h9goFS
+         eOpVW29piHuClLsuinWEwPKdMIkUXHQ7A5nn6QVixBqh6Qki+XctnW8tCmpvFo2u1gwH
+         mm9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757606619; x=1758211419;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
+        b=qhwKPtxZrBu26lMrX/ot2L4mte4UkXApxn4Yx+0471S6i2B6hbGbohPNAypLN5pYj2
+         UDXlP17at9lkKVfIvjwuQWgAVJI3i8AGXrobdOpTVsjr3HtVRqOPVzNK7r6chbKhWXXX
+         Mi3+Qy5wtyeBAmI46e5+HB3NUfTjszztCx5ukc+rgyUBJub03DbVDeZN4tnMF/+WKJ7X
+         EMAjkCjuZm1JWLSaWWXVag5S7rfUJ+lsAerB2QyZB8d+jQAvNv2NTqkAkJMb1FuLnP5U
+         pE3/jcKmpBUpX/z9WKQ4fwnVjE//cYd5NLGngAbwschDfa5gfkMCe5Wv3g4pYhR/0P3I
+         mgVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5pBBm2jrcPreOu/urSNx/nAGxNKLGedpYH+m00N76uAEA2ORY8aAdvqJCL6hPsht6/ruSTbm6DyAq@vger.kernel.org, AJvYcCU7PxC/0jEdRZ4I+uKdAL1eVCUatrL99voaWOWNrRTgds1aXEEhhV5WkwSt3JcACRqd+Ya0C3fJrgQ+5Jg=@vger.kernel.org, AJvYcCUNgXFwBg5zPmLdkogE4H0qG89AMlvp2E3Qpqq3KyEjD48l0fydz2CN2/2dESdtxHVkyrj8d7tMvLKq3hUc@vger.kernel.org, AJvYcCUoy7mmWvwi1zr+r7vSHEKP7K3wjnZ9x6arfDNPMHvmjq8CVq+0bi3mKEOe7KJ2pRG+fzBSM/UU0yc3@vger.kernel.org, AJvYcCVubqL2pPpdOGdpbYhRJRGY7B0v/bUgGfqudznfjOJg7DObj7x80Nea/7+GyjRjew1MSzp5xSIjcQK/R/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbaYu8YOG/X0zRSsyQAgekXV+/dvQqCAKGA1oe6cHd/VFRADLY
+	pH6Kr5RmtlkvlDfJDRTgE0WE5/cp7gp9+557yvDikBExOlB/TZFUjYkM
+X-Gm-Gg: ASbGncvzxIJRemoOHpzwVoDZ+iCUo34rlUA4o5cysD3BGpJoXRuGelqlxbJ6svg+zOg
+	tvg9LcegXuDyUWZM/rRRLmjztR+nDwWlHydcru6bxpLJT77oIm6hwWoXKisl0Eikru40urAP5ly
+	AHL4T/mjkpahil6nNxcNs/0+J4XCOBqY1sXcNybZoazrAvpWK/ut0bIhOtIr2pRwVWx4hcFlUel
+	lyPhkSTRi2l/l465mv3toRushBK6QBUI5MfYzv5eXs4/pWXDfTuNNsx9fn1N2l+cV99fUGbbEy2
+	rvrJ5dnFiAPm2HxHSvlQdK6v+Z1YLAomz5e39FZcd+Lw+48BhUDJawhWkAriQGwSnWmqgLGdMWY
+	GA/oqzaxsYf0jHF0TwU712wEilhikX8QriRjspidEoJxkhdJD9zcl4SkkFw6rnpeQtrGMvwzkFw
+	9UfiCCd6exMhokdA==
+X-Google-Smtp-Source: AGHT+IFkmvpn+ZMkR/ME/h210TOWfj/zRgJxKTOHh3DWlG10Yj3oOfPv3c1/HhofEdM287nETYtnIw==
+X-Received: by 2002:a05:600c:5d1:b0:45d:d86b:b386 with SMTP id 5b1f17b1804b1-45dfd5eec3bmr25128185e9.14.1757606618353;
+        Thu, 11 Sep 2025 09:03:38 -0700 (PDT)
+Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e017c0643sm30454515e9.23.2025.09.11.09.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 09:03:37 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r9a09g05[67]: Reduce differences
-Date: Thu, 11 Sep 2025 17:57:58 +0200
-Message-ID: <2246d2263e8a24d1aaf653db2004cbf2263c9048.1757606097.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	linux-staging@lists.linux.dev
+Subject: Re: (subset) [PATCH v2 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Thu, 11 Sep 2025 18:03:30 +0200
+Message-ID: <175760648464.2794963.6510932759569440897.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250906135345.241229-1-clamor95@gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The clock drivers for RZ/V2H and RZ/V2N are very similar.
-Reduce the differences between them by:
-  - Moving and reformatting the PLLCM33_GEAR clock definitions,
-  - Replacing spaces by TABs.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be qeueued in renesas-clk-for-v6.18.
 
- drivers/clk/renesas/r9a09g056-cpg.c | 8 ++++----
- drivers/clk/renesas/r9a09g057-cpg.c | 3 +--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+On Sat, 06 Sep 2025 16:53:21 +0300, Svyatoslav Ryhel wrote:
+> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+> with a set of changes required for that.
+> 
 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-index f0a8c5073fa6a48f..55f056359dd77762 100644
---- a/drivers/clk/renesas/r9a09g056-cpg.c
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -36,10 +36,10 @@ enum clk_ids {
- 	CLK_PLLCM33_DIV4,
- 	CLK_PLLCM33_DIV5,
- 	CLK_PLLCM33_DIV16,
-+	CLK_PLLCM33_GEAR,
- 	CLK_SMUX2_XSPI_CLK0,
- 	CLK_SMUX2_XSPI_CLK1,
- 	CLK_PLLCM33_XSPI,
--	CLK_PLLCM33_GEAR,
- 	CLK_PLLCLN_DIV2,
- 	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
-@@ -120,11 +120,11 @@ static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
- 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
- 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
- 	DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
- 		  dtable_2_16),
--	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 
- 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
- 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
-@@ -325,8 +325,8 @@ static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
- 	DEF_RST(9, 14, 4, 15),		/* RIIC_6_MRST */
- 	DEF_RST(9, 15, 4, 16),		/* RIIC_7_MRST */
- 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
--	DEF_RST(10, 3, 4, 20),          /* SPI_HRESETN */
--	DEF_RST(10, 4, 4, 21),          /* SPI_ARESETN */
-+	DEF_RST(10, 3, 4, 20),		/* SPI_HRESETN */
-+	DEF_RST(10, 4, 4, 21),		/* SPI_ARESETN */
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index e84fcd5cf648c57a..b9f5356e3e3eaaf0 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -171,9 +171,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
- 	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
- 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
--	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR,
--		 CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
- 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
- 	DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+Applied, thanks!
+
+[12/23] dt-bindings: display: tegra: move avdd-dsi-csi-supply from VI to CSI
+        (no commit info)
+
+Best regards,
 -- 
-2.43.0
-
+Thierry Reding <treding@nvidia.com>
