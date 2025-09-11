@@ -1,373 +1,202 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ACF27F017
-	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 07:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13A72E2679;
+	Thu, 11 Sep 2025 08:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576595; cv=none; b=e4x6pK8Bw4DMTzaWNQ7BHpry1orDON9Hult3tLTqRvVcO9jfoljgqlRRFV/7VrRUxpbXcSx4HQlyN4HAYI+tgIiEJGni6hD4LgqaKQ9jqpc5beZy8kjesXbNVLC/8N6wJ5HB9vpQypKo+09PwY5ZIk7zOanpLS2j0yTuyBG/EV0=
+	t=1757578526; cv=none; b=oqVNgRPM/RBTZs4wOd+7sEZoewjsch7TywuT6Y7WqOaRvs2uZWERf1+iviiN8zL1PDe1n9MrW8E9232/FRoveQUkBLfL7mXQMPs2CfBpQnHwr9TEBtbf5XK22H9hHXGPb3BzWhTiEpnQRvZDxG+3aiv3BKIVBz5uboZ7JN8oQDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576595; c=relaxed/simple;
-	bh=A5WSBeY7ArHbEttNrSD9TcclLr6jrbhQ9nT8KwBqsfI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aSl9w9OcZk531oSDe5BAylrvZ9lgwG8qraYG7iTk5jhWlj/nleNYPyvur4hy55vABZlFfSSNy4Swl1CWBQR7AKysM41fCND3If75TzD1mujLSAqgKikL1WgZ6oVWlTXaILmrAx1GVmIFPdnePbTRFVHUrmMW3mUXoVxkL0kughg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ds0vUgSm; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1757578526; c=relaxed/simple;
+	bh=sWbPf7+kNfG1EA2QI6Aw6Y1H/91adzKDkDy0MSMAesY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UqHbeZwQafSROEKM4FgfRVX2YoobGfsziMZuqSbNR41nN8MHtPCDq8gsnju4n0z4dXKSnvZTXC+YOJCNMdNA9GQN3KDBsxElE3GciBiltJLibHMIaKs5xPcH5aBqbS3eoYrzkcIz+xKCzr3qT6od+kZ7ikwRW4lhK0GfXNcWvTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmlIBjGW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ds0vUgSm"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45cb659e858so2790815e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 00:43:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmlIBjGW"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso2309510a12.0;
+        Thu, 11 Sep 2025 01:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757576590; x=1758181390; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ocLM34GOeUaGdAHS29toK+EluWRUE1MXFa3Amqck7do=;
-        b=ds0vUgSmHs537ye7CwEqguVfQ6CpvkOsA58VpwfokPwncHf+bycYd8ZN/IGOoPRsx5
-         ityFONvprBv0+FxTP8JOVQNsiQ3z7Nd813Ui6IyYEbxOO5wze+Q+sHZ7B9V7fb47Uy5S
-         YAz70UGQY8DI29X7stG0u4IeWy+LZxXGtSpaVoFcVUnJyzQp1lkeT8A5ildhndX92MEO
-         JFLeehT5kENyjOY5vLqIVggFhLbImajNOjqYs2e8VSEjLdj+5xt46x5vX4Y/sKy6TWSf
-         87yJpaY0iFtGLzbGO4gObPGOLw+vfMjiCprriFB2iIU3byY9RDYIYFUXlcX5fnXjVPOg
-         2zag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757576590; x=1758181390;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757578523; x=1758183323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ocLM34GOeUaGdAHS29toK+EluWRUE1MXFa3Amqck7do=;
-        b=gW+y/ilAz0upP06qNhRHe7nQZCzgCrPRpuVrEgIIUD9sFfGZtSvQYAFLWQydSWcQVr
-         yi4ecPBXbzqtLV+AmMBjdwkJ+W2V05sKejZkJtMEo2WdMZpwut4Bl2APhEzULCrpNXz1
-         +HhdnTwEaH6zJZWDRHzSOnZugtW89H4TsdEsBeNav9ld5w3qB2oQU3lBi4Hi018qfQQ+
-         Z0lea2qL0JEZgmTKk60Pl+rq1jNLVI3unHlMX2Gz9D+wPxIavW1IGeaP9hJXk5cH3bFL
-         ft6aVT59eRYtpY4xDFj6FPjW+lyD9sxBadwro4E/6cXMp5JeVHmeJa99gLHLFwP1vdwd
-         xvPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqIonfap31AXjI3HGAZTAzvvThD8MhNUY6M3igcDg4Z8K/f9y5NlEPas3Hb33UTWlXpEq1A2SvOo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGgE/6GpwutkWcdII/cO5Z0Xzwgdj2A4GYq+GAzTLql9KFv2g3
-	A8dLhEw3se0Nh9Y/+q7gkl1RN3qiBoaYnL+/WLRwZLV1Mze3ZNtN5HGVmICmZoo9yz4=
-X-Gm-Gg: ASbGncsWPtQh+iOVrrIIyS5Z1F/7UmV1E87NAzsEx/h0E+PmwpeNSTrIPLGKIzUFhye
-	8shD82QBUxZsJkvofLqAzzXa3TQl/Tk8hHHjJKnNBrZLF71dW6Uf+D00Wi7XGUrJFZuCX70CmZj
-	pwnv1zNkvsaXfRE1yrf0ib8Ljki6GQnrYmD1GFHU42xMqJvc5c5UKJdwm4I3o5awdR/btkoPMKx
-	pH0meg8xpG0D9yc3xbS8nN2edKO1mArOa3IR08zZJOOQKBgYYGEmR61/I+/2ny+aYv92G0rGyw6
-	zjZGz7KPBBiFKKAEC7l02+Wlp+KuwIr8rHj0PyqfiBM5XA4bZjzj4opmbdnXFHQKxKNtTioDYm5
-	vcFavOihGXBAG5XDlP+Ikg7sZ74H97CSMZAD5YmNizpM=
-X-Google-Smtp-Source: AGHT+IFziZg7v6LlC8m6JnaXV3d4ooVHtsdQLQH89zmhgGaJ+ZtkJo/Vd2456C3nvJ69B6Gcl/m45w==
-X-Received: by 2002:a05:600c:1e21:b0:45c:a955:4578 with SMTP id 5b1f17b1804b1-45dde02878emr152916345e9.21.1757576589973;
-        Thu, 11 Sep 2025 00:43:09 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:205f:d6d3:fd4a:adb5])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e0156d206sm16554135e9.5.2025.09.11.00.43.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 00:43:09 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
-  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/2] clk: amlogic: add video-related clocks for S4 SoC
-In-Reply-To: <28399ab7-2560-482a-be7b-c83d631ac351@amlogic.com> (Chuan Liu's
-	message of "Thu, 11 Sep 2025 10:01:03 +0800")
-References: <20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com>
-	<20250909-add_video_clk-v4-2-5e0c01d47aa8@amlogic.com>
-	<1jv7lqiqzg.fsf@starbuckisacylon.baylibre.com>
-	<28399ab7-2560-482a-be7b-c83d631ac351@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 11 Sep 2025 09:43:08 +0200
-Message-ID: <1jplbxigdv.fsf@starbuckisacylon.baylibre.com>
+        bh=EtBJ7XRZRXHnb1oRAlJMLn1CzpEHjZeP/Tjuzyg5UAo=;
+        b=KmlIBjGWh2mgCPlrmpvNV1jH/oewn701CjzGV5lalo0Rj9+7UxeIF7O0Za2jNUFk0h
+         9ltRkEgVQiNuz/UMmw8Yfk00URUUp/DSKedgvXwpTfNOEyg1mTfPaY0uLo9aVZirmi3w
+         x8M/sWbhGOMJi2EhCtrmiH21ilDEXN/MArNxvr1ZJiuAGm7xQqUNG80Fa4npTFn6rQlv
+         1SXErzTV+22aYtmfdYs6IHxcXh1U2Wx+J9usRNZbE31CYj1k8cXMUvtxvK5kKfN0d0Qf
+         RRti4N2tWisDlS46Gia0KKz7SrUNgvqcdEMa1bOfWiAd7YR4UBfyXAC81QGo0Zppz1SX
+         2O0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757578523; x=1758183323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EtBJ7XRZRXHnb1oRAlJMLn1CzpEHjZeP/Tjuzyg5UAo=;
+        b=oJpmViQuRk1EN0wZo3j3VkR94WtcE4rUbIcTdOh0AzMWoW/yhj/wDCtWfHdW7HjMQZ
+         Wj7b452i6JBN/rA527BpwEqG2fPpbiRafQXUJ7v3gd2Vj01H7Ad4n5gxUqqXkAPtNcNW
+         QyotiPAKBCGH7kXp5T4x6WBHiVtqSF/FFqAqTz2pXqu0VqCXeaFETxKvvRZrHGTIvUo1
+         8blum22yZttoNOLm+Fw1nmPntAQ8DGpWFO92NfqzjZXNbLIzM/1erZtJgKaYoqfLlMIB
+         GE3MyFqP7v7ll6qNKNNQf9zaDVNC6Zls+XcAEe8Dgd+pd0RoNOKlL0ejdZWPgW4ztEyd
+         9atg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUnmPBcj6nQ+7G6xivxEXxYrwchHXS78ug4gJvZyDGq5fCJkKCGIQ7k/UY23lw1AKRpAi6LXYfXlo4TO42@vger.kernel.org, AJvYcCVUSImXpvCFbgfBmurP8e0cXFTVg9pc9j9w7mheYTP5OWkJ5B1GgA3dQjlBHTk4mfD1JN/PmTFupByL@vger.kernel.org, AJvYcCWF0lIxXwtiUOUO9fnJcdwFcpRi/13HVHj/WPferpx6o9sYsD+AHMua+bAKVC8TA8H2kYK38msLnN1Q@vger.kernel.org, AJvYcCWs7r7Pd/ycjtFgLV3OxghZiOhojc5gebPMlRDV8GAZGParh0kWn7ihknH7xF/Z1SCVJb7rg4JtQroIVwWu67lwDE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0+NbYCFtaQiCUIe6mftORHYgxXPr0Vi5vHSW75cRCazc8xbNu
+	j1tkogW8d1Aa6lWypJaUQ41UjcQPK81IGkveoV6/0Bm/6WQDFDptccWe/N0GR99EOLfOjRy+OJy
+	WQEYaW6+qXaAMrSSf4T2oY2qgNNe2Edc=
+X-Gm-Gg: ASbGnctL8awUbzu/Um7k0tI9xMb1Csv4E6dJsbwAA2/69e96vrWAdzjf36M6Z4lrLWT
+	5xlccSZwT55EnEMiauVhrFzei8KLWmPAbVy8C6k14SmPeG4gGkbSN5vxNdFDSNqZTldBLEK7OBt
+	V9nJJTyavqSo/h9iEfwIGY34OV2V1Vu3fKFswNEmQrKg+WqpH5J602yt2tmt3gLVlTzP5cHR3ev
+	mWlQZVIrPsdp3hx+syG5G2qDm9U96sM6E6mzb/EkWhnu7TNDgk=
+X-Google-Smtp-Source: AGHT+IEnp+5Pp/hKtvuNcvkPD7ilbt2E7mIP6OMzOLx6fAXAtKZDlirtxajpgqUgKHbow62KqE/NON7LEPov9/q3UY0=
+X-Received: by 2002:a17:907:2da5:b0:b04:4579:486e with SMTP id
+ a640c23a62f3a-b07a6403229mr286982766b.28.1757578522708; Thu, 11 Sep 2025
+ 01:15:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+In-Reply-To: <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 11 Sep 2025 09:14:56 +0100
+X-Gm-Features: Ac12FXwA2G13xPdRFdy3yeIIErYfrkajYLbpZADAiTZT6Kl8ibBEbrC_wV_N2u8
+Message-ID: <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 11 Sep 2025 at 10:01, Chuan Liu <chuan.liu@amlogic.com> wrote:
+Hi Tomi,
 
-> Hi Jerome:
+On Wed, Sep 10, 2025 at 1:30=E2=80=AFPM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
 >
+> Hi,
 >
-> On 9/10/2025 5:41 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On Tue 09 Sep 2025 at 15:29, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>
->>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>
->>> Add video encoder, demodulator and CVBS clocks.
->>>
->>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->>> ---
->>>   drivers/clk/meson/s4-peripherals.c | 203 +++++++++++++++++++++++++++++++++++++
->>>   1 file changed, 203 insertions(+)
->>>
->>> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
->>> index 6d69b132d1e1..b855e8f1fc04 100644
->>> --- a/drivers/clk/meson/s4-peripherals.c
->>> +++ b/drivers/clk/meson/s4-peripherals.c
->>> @@ -44,6 +44,7 @@
->>>   #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
->>>   #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
->>>   #define CLKCTRL_HDCP22_CTRL                        0x100
->>> +#define CLKCTRL_CDAC_CLK_CTRL                      0x108
->>>   #define CLKCTRL_VDEC_CLK_CTRL                      0x140
->>>   #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
->>>   #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
->>> @@ -1126,6 +1127,22 @@ static struct clk_regmap s4_cts_encp_sel = {
->>>        },
->>>   };
->>>
->>> +static struct clk_regmap s4_cts_encl_sel = {
->>> +     .data = &(struct clk_regmap_mux_data){
->>> +             .offset = CLKCTRL_VIID_CLK_DIV,
->>> +             .mask = 0xf,
->>> +             .shift = 12,
->>> +             .table = s4_cts_parents_val_table,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "cts_encl_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_hws = s4_cts_parents,
->>> +             .num_parents = ARRAY_SIZE(s4_cts_parents),
->>> +             .flags = CLK_SET_RATE_PARENT,
->> Do you really expect the rate of the parents to be adjusted when calling
->> set_rate() on this clock ?
->>
->> It all trickle down to vclks which are shared with enci encp and vdac
->> clocks, so maybe not such a good idea, don't you think ?
+> On 03/09/2025 19:17, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for PLLDSI and PLLDSI divider clocks.
+> >
+> > Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and share
+> > PLLDSI related data structures, limits, and algorithms between the
+> > RZ/V2H(P) CPG and DSI drivers.
+> >
+> > The DSI PLL is functionally similar to the CPG's PLLDSI, but has slight=
+ly
+> > different parameter limits and omits the programmable divider present i=
+n
+> > CPG. To ensure precise frequency calculations, especially for milliHz-l=
+evel
+> > accuracy needed by the DSI driver, the shared algorithm allows both dri=
+vers
+> > to compute PLL parameters consistently using the same logic and input
+> > clock.
 >
+> Can you elaborate a bit more why a new clock APIs are needed for the DSI
+> PLL? This is the first time I have heard a DSI TX (well, any IP) require
+> more precision than Hz. Is that really the case? Are there other reasons?
 >
-> Thanks for pointing this out. You're right, this flag doesn't belong
-> here.
+Im pasting the same reply from Fab
+(https://lore.kernel.org/all/TYCPR01MB12093A7D99392BC3D6B5E5864C2BC2@TYCPR0=
+1MB12093.jpnprd01.prod.outlook.com/#t)
+for the similar concern.
 
-Ok, let's be consistent then. Please add another change to drop the flag
-from the other video clocks, such as enci, encp, etc . Thx.
+The PLL found inside the DSI IP is very similar to the PLLDSI found in
+the CPG IP block, although the limits for some of the parameters are
+different. Also, the PLLDSI is followed by a programmable divider,
+whereas there is no such thing in the DSI PLL IP.
 
->
-> I'll drop it in the next revision. If there are no further objections
-> on other aspects, I'll prepare a v5 series that also includes Conor's
-> Acked-by that I missed...
->
->
->>> +     },
->>> +};
->>> +
->>>   static struct clk_regmap s4_cts_vdac_sel = {
->>>        .data = &(struct clk_regmap_mux_data){
->>>                .offset = CLKCTRL_VIID_CLK_DIV,
->>> @@ -1205,6 +1222,22 @@ static struct clk_regmap s4_cts_encp = {
->>>        },
->>>   };
->>>
->>> +static struct clk_regmap s4_cts_encl = {
->>> +     .data = &(struct clk_regmap_gate_data){
->>> +             .offset = CLKCTRL_VID_CLK_CTRL2,
->>> +             .bit_idx = 3,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "cts_encl",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_cts_encl_sel.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>>   static struct clk_regmap s4_cts_vdac = {
->>>        .data = &(struct clk_regmap_gate_data){
->>>                .offset = CLKCTRL_VID_CLK_CTRL2,
->>> @@ -2735,6 +2768,165 @@ static struct clk_regmap s4_gen_clk = {
->>>        },
->>>   };
->>>
->>> +/* CVBS DAC */
->>> +static struct clk_regmap s4_cdac_sel = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_CDAC_CLK_CTRL,
->>> +             .mask = 0x3,
->>> +             .shift = 16,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "cdac_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = (const struct clk_parent_data []) {
->>> +                     { .fw_name = "xtal", },
->>> +                     { .fw_name = "fclk_div5" },
->>> +             },
->>> +             .num_parents = 2,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_cdac_div = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = CLKCTRL_CDAC_CLK_CTRL,
->>> +             .shift = 0,
->>> +             .width = 16,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "cdac_div",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_cdac_sel.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_cdac = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_CDAC_CLK_CTRL,
->>> +             .bit_idx = 20,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "cdac",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_cdac_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_demod_core_sel = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .mask = 0x3,
->>> +             .shift = 9,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "demod_core_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = (const struct clk_parent_data []) {
->>> +                     { .fw_name = "xtal" },
->>> +                     { .fw_name = "fclk_div7" },
->>> +                     { .fw_name = "fclk_div4" }
->>> +             },
->>> +             .num_parents = 3,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_demod_core_div = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .shift = 0,
->>> +             .width = 7,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "demod_core_div",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_demod_core_sel.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_demod_core = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .bit_idx = 8
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "demod_core",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_demod_core_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +/* CVBS ADC */
->>> +static struct clk_regmap s4_adc_extclk_in_sel = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .mask = 0x7,
->>> +             .shift = 25,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "adc_extclk_in_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = (const struct clk_parent_data []) {
->>> +                     { .fw_name = "xtal" },
->>> +                     { .fw_name = "fclk_div4" },
->>> +                     { .fw_name = "fclk_div3" },
->>> +                     { .fw_name = "fclk_div5" },
->>> +                     { .fw_name = "fclk_div7" },
->>> +                     { .fw_name = "mpll2" },
->>> +                     { .fw_name = "gp0_pll" },
->>> +                     { .fw_name = "hifi_pll" }
->>> +             },
->>> +             .num_parents = 8,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_adc_extclk_in_div = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .shift = 16,
->>> +             .width = 7,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "adc_extclk_in_div",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_adc_extclk_in_sel.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_adc_extclk_in = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = CLKCTRL_DEMOD_CLK_CTRL,
->>> +             .bit_idx = 24
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "adc_extclk_in",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_adc_extclk_in_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>>   static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
->>>
->>>   #define S4_PCLK(_name, _reg, _bit, _flags) \
->>> @@ -3028,6 +3220,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
->>>        [CLKID_HDCP22_SKPCLK_SEL]       = &s4_hdcp22_skpclk_sel.hw,
->>>        [CLKID_HDCP22_SKPCLK_DIV]       = &s4_hdcp22_skpclk_div.hw,
->>>        [CLKID_HDCP22_SKPCLK]           = &s4_hdcp22_skpclk.hw,
->>> +     [CLKID_CTS_ENCL_SEL]            = &s4_cts_encl_sel.hw,
->>> +     [CLKID_CTS_ENCL]                = &s4_cts_encl.hw,
->>> +     [CLKID_CDAC_SEL]                = &s4_cdac_sel.hw,
->>> +     [CLKID_CDAC_DIV]                = &s4_cdac_div.hw,
->>> +     [CLKID_CDAC]                    = &s4_cdac.hw,
->>> +     [CLKID_DEMOD_CORE_SEL]          = &s4_demod_core_sel.hw,
->>> +     [CLKID_DEMOD_CORE_DIV]          = &s4_demod_core_div.hw,
->>> +     [CLKID_DEMOD_CORE]              = &s4_demod_core.hw,
->>> +     [CLKID_ADC_EXTCLK_IN_SEL]       = &s4_adc_extclk_in_sel.hw,
->>> +     [CLKID_ADC_EXTCLK_IN_DIV]       = &s4_adc_extclk_in_div.hw,
->>> +     [CLKID_ADC_EXTCLK_IN]           = &s4_adc_extclk_in.hw,
->>>   };
->>>
->>>   static const struct meson_clkc_data s4_peripherals_clkc_data = {
->> --
->> Jerome
+The limits for the PLL found within the DSI IP are:
+1 <=3D PLL_P <=3D 4
+64 <=3D PLL_M <=3D 1023
+0 <=3D PLL_S <=3D 5
+=E2=88=9232768 <=3D PLL_K <=3D 32767
 
--- 
-Jerome
+The limits for PLLDSI (found in CPG) are:
+1 <=3D PLL_P <=3D 4
+64 <=3D PLL_M <=3D 533
+0 <=3D PLL_S <=3D 6
+=E2=88=9232768 <=3D PLL_K <=3D 32767
+The limits for the PLLDSI related divider are:
+CSDIV =3D 1/(2 + 2 * n), with n=3D0,...,15
+
+Header file `renesas-rzv2h-cpg-pll.h` is added so that both the CPG
+and DSI drivers can reuse exactly the same data structures and
+algorithm, although they'll drive  rzv2h_get_pll*pars() with different
+limits.
+
+While the CPG driver only needs visibility of the limits for the
+PLLDSI, the DSI driver is going to need visibility of the limits for
+both PLLDSI and for the PLL inside the DSI IP.
+
+The DSI driver requires a resolution higher than Hz (which is what the
+clock subsystem currently does not support), namely: mHz. This is
+vital to allow the DSI driver to keep the error between the calculated
+value of HSFREQ and the generated value of HSFREQ below a certain
+threshold. The difficulty in achieving a small error is down to the
+accuracy of the VCLK representation.
+Since the clock subsystem only allows for Hz, a 1/2 Hz error on the
+representation of VCLK (down to the selection of frequencies that
+cannot be precisely achieved and related rounding errors) may lead to
+a very big error in the calculation of HSFREQ, which uses the below
+formula:
+HSFREQ =3D (VCLK * bpp) / num_lanes
+In the worst case scenario (1 lane and 24 bpp), a 1/2 Hz error on the
+representation of VCLK will lead to an error of 12Hz(!) on the
+calculation of HSFREQ, leading to a non working video output.
+
+By granting the DSI driver access to the PLL calculations and PLLDSI
+(CPG) limits, the DSI driver can work out the best solution for VCLK
+independently from the CPG driver, and it can set VCLK accordingly
+(knowing that the CPG driver will use exactly the same parameters
+determined by the DSI driver, as it will be using the same input
+frequency and the same algorithm for the calculations).
+
+For convenience, macro RZV2H_CPG_PLL_DSI_LIMITS() is added to avoid
+replicating the declaration of the PLLDSI limits and therefore it can
+be used in both the CPG driver and in the DSI driver.
+
+Make use of the data structures and algorithm defined in header file
+`renesas-rzv2h-cpg-pll.h` to add PLLDSI support, including its
+divider.
+
+Since we need to make sure that the DSI driver knows exactly which
+frequency the PLLDSI + divider combo is going to generate, the CPG
+driver is instructed to calculate the parameters for the PLLDSI +
+divider combo (by calling into rzv2h_get_pll_dtable_pars()) only from
+rzv2h_cpg_plldsi_div_determine_rate(). rzv2h_cpg_plldsi_div_set_rate()
+will simply reuse the pre-calculated parameter values."
+
+
+> If such precision is really needed, does it then indicate that it could
+> be needed on other IPs too? Thus, we need improvements to the common clk
+> API.
+>
+As of now, this requirement is specific to the DSI IP on the RZ/V2H(P)
+SoC. For other IPs we haven=E2=80=99t seen a need yet. Once similar cases
+arise in the future, we can certainly revisit the clock subsystem and
+look into extending the common clk API to support this more generally.
+
+Cheers,
+Prabhakar
