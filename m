@@ -1,43 +1,33 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD42C32CF87;
-	Thu, 11 Sep 2025 13:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598125; cv=pass; b=O7S7Ls6tDoSkl/0IzZOUjn5TDtk4mWkVnOx/Pxh/V8ieknVDFpEdoIqBKyimAhTheEJAbliKFRkR70kqvsh+gqVqz19/Cb/o3gasNqFFW35ZaLVjU+PT+ZxH9QFMh95eMkvCNrVWDBR7EMGrFny3yCImNCf/tz3XlQ3i3H5W+5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598125; c=relaxed/simple;
-	bh=+j7wH6J9TwHPLevUCUsfv49hVVIfmnnJ50vL4o03eGs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9DF338F27;
+	Thu, 11 Sep 2025 14:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757600797; cv=none; b=NzDnpQ7k/HPAxjUM3Yly8XAC3K50V3IzVpAUgxtZThZcGq0KlzLlds2sYyhyVAGLtT7x7epZN/yc7ZD5/53CLxqGNOiPFlQ6N2byOCx6XBAGB70PYwV91AtGN2dM4sADP7CXNbN38nmYmFapvs7fqJwpAdz/atfhXCs4UBAIlhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757600797; c=relaxed/simple;
+	bh=qReZW+H6OyZz2AFMbvTmZJxvwut6V42yTPOtJKgTkkU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g0NQbJJa1PT1tE3smNzd6Aj6LIXqEGnI6zLKCb3QguR6IkOinaKLdQsgYv4M3GNOfIvJGWzIDj5A+C5yzlaeNkM1VcGDZFyONDqSbkoG8MXGGvX9n6Lq1YCtEHVHggIV6TRMuBaXW21ckdvvDEqZn9gd+7QAoPKKC9ch+qO96RI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=NsRlRzli; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 In-Reply-To:Content-Type; b=dY9vp19RAsuIts1Bt0PQU8YSXJ1D6CcFbHi1OrqOsUDN9FJDEKUNWsxpIivnjWEFPVq1MZyC8kcfvbgODIIUaIEiNEyaVeQQgw/tcEtJ2C78rx/dPJSj6onJwH9+5vZOQ5DyWhQziiM/6O8+xUlU1pTk8svwCAl05bD9tZNav54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kpzjQl4g; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="NsRlRzli"
-ARC-Seal: i=1; a=rsa-sha256; t=1757598055; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Wd4WA6Er9cB9s6Hkt5aT6OBU5Qo5bfiy5l1P+Xa+5VFE3pcj0EYC1irYclVw44xfA/LGEE1P3H5NoyDRj8g5aYL5DO6LFfOSdTi8Xo68/Y7PYyTuxxfNdOv2I+XK48iy/vJy4GjAsgOcqTkVjb0ACFfdnqJgaw2FRauP6e/Vqb0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757598055; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=akxgWnU52qi2aW5V4nycRXC1MA1p0XXtUX8b0SkdlHI=; 
-	b=LfUX1aQVAVFdHj8+y0//AJhf1fsHBn+VlpRO4LG22OXZv6/dMLXEYKunDdZoe364LrK8PnREgYhBB/fWBvWDinro5SWb85l1HU8gYCD9V+RoB8cvwAKdJEOq+hDpLHGB00DB6JJkrLd/THhPkaxSJdT3eQR6r8MibvY/ip2bat8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757598055;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=akxgWnU52qi2aW5V4nycRXC1MA1p0XXtUX8b0SkdlHI=;
-	b=NsRlRzlifXvTvvkDhLOg2YrB9VbwSR8DvKqJVdp8u4HzCFR5KM3LbVsfzq9vFNLv
-	HWBTS+duRr9SPP50E7s5ev8uzaDXlk5sQhS7q0jMxjng1FJa7tsWMU7IDEw8Cg44Nka
-	20rr30YjpaoW+uxdoNzBf0ZcDiNq8aysDR0/skEo=
-Received: by mx.zohomail.com with SMTPS id 1757598052583569.5590919976829;
-	Thu, 11 Sep 2025 06:40:52 -0700 (PDT)
-Message-ID: <c473c6ff-856a-4950-9c75-7bace41886ca@collabora.com>
-Date: Thu, 11 Sep 2025 10:40:36 -0300
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kpzjQl4g"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA8114A4;
+	Thu, 11 Sep 2025 16:25:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757600718;
+	bh=qReZW+H6OyZz2AFMbvTmZJxvwut6V42yTPOtJKgTkkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kpzjQl4gHzaXfBaGIdp3zuciJs1QF8I/wYVcHwLnl59KOl7jEas+jL5LeJ96wC5Ub
+	 zGuq1AJN7MzcYbfZTRr8d+DxG8OQJKotvXXy/fday67G0eqfN0+IJ1Yxa4Hjt8sAVI
+	 qjKQNZLyubtI9u63SW/VYvSbd4XDTS7yEGqj8nBg=
+Message-ID: <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
+Date: Thu, 11 Sep 2025 17:26:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,78 +35,113 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/14] dt-bindings: arm: mediatek: mmsys: Add
- assigned-clocks/rates properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-4-ariel.dalessandro@collabora.com>
- <20250821-electric-kestrel-of-awe-cb89dc@kuoka>
- <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
- <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
+Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
+ clocks
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Magnus Damm <magnus.damm@gmail.com>
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+ <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
 Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Krzysztof,
+Hi,
 
-On 9/9/25 3:29 AM, Krzysztof Kozlowski wrote:
-> On 08/09/2025 21:19, Ariel D'Alessandro wrote:
->> Krzysztof,
->>
->> On 8/21/25 3:43 AM, Krzysztof Kozlowski wrote:
->>> On Wed, Aug 20, 2025 at 02:12:51PM -0300, Ariel D'Alessandro wrote:
->>>> Current, the DT bindings for MediaTek mmsys controller is missing the
->>>> assigned-clocks and assigned-clocks-rates properties. Add these and
->>>
->>> No, they do not miss them. I don't understand why you are adding these.
->>
->> The reason I added these is due to the following check error:
->>
->> $ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
->>     DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
->> [...]
->> arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: syscon@14000000
->> (mediatek,mt8173-mmsys): 'assigned-clock-rates', 'assigned-clocks' do
->> not match any of the regexes: '^pinctrl-[0-9]+$'
->> 	from schema $id:
->> http://devicetree.org/schemas/arm/mediatek/mediatek,mmsys.yaml#
+On 11/09/2025 11:14, Lad, Prabhakar wrote:
+> Hi Tomi,
 > 
-> This is looking like missing clocks or other unevaluated property by the
-> binding.
+> On Wed, Sep 10, 2025 at 1:30 PM Tomi Valkeinen
+> <tomi.valkeinen+renesas@ideasonboard.com> wrote:
+>>
+>> Hi,
+>>
+>> On 03/09/2025 19:17, Prabhakar wrote:
+>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>
+>>> Add support for PLLDSI and PLLDSI divider clocks.
+>>>
+>>> Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and share
+>>> PLLDSI related data structures, limits, and algorithms between the
+>>> RZ/V2H(P) CPG and DSI drivers.
+>>>
+>>> The DSI PLL is functionally similar to the CPG's PLLDSI, but has slightly
+>>> different parameter limits and omits the programmable divider present in
+>>> CPG. To ensure precise frequency calculations, especially for milliHz-level
+>>> accuracy needed by the DSI driver, the shared algorithm allows both drivers
+>>> to compute PLL parameters consistently using the same logic and input
+>>> clock.
+>>
+>> Can you elaborate a bit more why a new clock APIs are needed for the DSI
+>> PLL? This is the first time I have heard a DSI TX (well, any IP) require
+>> more precision than Hz. Is that really the case? Are there other reasons?
+>>
+> Im pasting the same reply from Fab
+> (https://lore.kernel.org/all/TYCPR01MB12093A7D99392BC3D6B5E5864C2BC2@TYCPR01MB12093.jpnprd01.prod.outlook.com/#t)
+> for the similar concern.
+> 
+> The PLL found inside the DSI IP is very similar to the PLLDSI found in
+> the CPG IP block, although the limits for some of the parameters are
 
-Agreed, the rate assignment has to be moved in other DT nodes, it's not 
-a binding issue.
+Thanks. As discussed on chat, this confused me: There's a PLLDSI on CPG,
+which doesn't provide a DSI clock, but a pixel clock. And then there's a
+PLL in the DSI D-PHY which provides the DSI clock.
 
-Thanks,
+A few comments overall some for this driver but also the dsi driver:
 
--- 
-Ariel D'Alessandro
-Software Engineer
+This hardcodes the refclk rate to 24 MHz with RZ_V2H_OSC_CLK_IN_MEGA in
+the header file. That doesn't feel right, shouldn't the refclk rate come
+from the clock framework with clk_get_rate()?
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+While not v2h related, I think it would be good to have a comment in the
+dsi driver about how the g2l hs clock rate is derived directly from the
+pixel clock.
+
+I still don't see why all the code here has to be in a header file.
+Usually headers contain only a few lines of inline code. Is there a
+reason why it's not in a .c file?
+
+And last, we discussed the milliHz a bit on chat, you said you'll come
+back to that. I don't think it's a blocker, but I'm very curious why
+exactly it is needed in the DSI. +/- 12 Hz with, say 3.6GHz clock does
+not sound very much to me, and there should be enough time every line
+during blanking period to empty any fifos and "catch up".
+
+In fact, if the DSI is so picky about the rate, I find the HW design
+odd: in g2l the pixel clock and the DSI clock come from a single source,
+which keeps them neatly in sync. If that is required, why change the
+design here so that the DSI PLL is independent of the pixel clock, yet
+still the DSI PLL must be programmed to be exactly matched to the pixel
+clock.
+
+The docs say v2h supports burst mode. Isn't the idea with DSI burst mode
+that you run the DSI much faster than the display controller (i.e. with
+much higher clock than HSFREQ = (VCLK * bpp) / num_lanes), so that the
+DSI can burst the data out from its fifos and then go to sleep? The
+separate PLL in v2h allows independent DSI clock config, allowing burst
+mode. If the HW can support that, then there shouldn't be a strict
+requirement for HSFREQ = (VCLK * bpp) / num_lanes, or hitting the
+pclk-hsfreq ratio exactly to milliHz precision.
+
+ Tomi
 
