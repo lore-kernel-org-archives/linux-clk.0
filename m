@@ -1,64 +1,63 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8251E9B22
-	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 01:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22241A8412
+	for <linux-clk@vger.kernel.org>; Thu, 11 Sep 2025 01:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757553147; cv=none; b=cfKAGqgAhqRZ7jhsmK/wBBkO6tynyxxOwYgXjoEmxuqC2Ru13iPxknGTNIeddHY3E6Pppi7uuKzxJEu3gx3MiCV3shPRqlhq/Dqp+mlGnZEPk4MQFv/+vflzOUINL2M8UmilzozQo1KeBUno6KjJmGlvHtlPOmeuI+PkUHbKJZU=
+	t=1757553147; cv=none; b=egzeqzJh7UuL3P3T/saGdWaO3hntx/u9JYVeY6jmsxTk6mFq4/8SbaZQjmnjjd1trtRDSThRTObZAYEG8HGRppg2+36LPT85Kr7bYXmtP10UFm+1VrPbyfAQXITrfshiLjQg7NIjLQlZYr4QmHVvD6xXfm2I++JIK2eP7yPPD2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757553147; c=relaxed/simple;
-	bh=lny+i6/yVgFizIpIJrlHz0PaIRuaWNazlMaLqYSMAMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G7oW+uY0t0GG9FgLiUuczhG73kW88shXyBLtT7qLa3JQgLn5WZYL1M5NipEsP5VgBCM4eByGscAnfGHA+DvvZReypzt1JimFJaDyuaQbsqFgwQ1YgcAn4XfWTbqZay7eu1aZ5vB04eB27FyDefPBqQiqz5J+Mt+5j/whcNQyht4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ndx/kEeU; arc=none smtp.client-ip=209.85.167.44
+	bh=jRIu0W1JuXkE/BIb2o38vY5micOCt0sjxd4/0huHplY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nkzvT0aNwhRUe+2sERj8UrWGaSvs5meNfbsbL/NQ/ooUpAZyhWkoEBKoky+Z+KhiG4aSLU18PYJop7F60cQdafrn8bphg/Lxd++qY+N3krCQfO/P/gHAjy7KErLM0lmf1v/rN/ofc4TnZtkHznJZIdunh2XIpQkGVo3wcz1MKqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEQFzSJE; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ndx/kEeU"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f7c8b38a0so20010e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 18:12:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEQFzSJE"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-337e43f9c20so380591fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Sep 2025 18:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757553144; x=1758157944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02MT83MiCKx+KYBmaRTv8ahirZdU8YNNjP3slDfY1Pk=;
-        b=ndx/kEeUWtlJ7VjVoyGJtaF23GG4pYs7CaBnmp0TkrmUi8ZwW+1Jp7hJqs54p+O9rV
-         oUl00G9Yxq8PQ0bzQqIU8wlQH2ksuzaoLUA8Bv189Syq21ez+THMrSrM0RUEyI3NeV2/
-         tD/aW8EF9QyMgiXeqt38ZP/CEkpr95DOWG5Q8/oNHQ+kAffwZM2pOxUx/pTBBwgC4ifG
-         FxGGE1efQSv+TEw0qm2yw9lnUEBHJCvMgm0VJQ4lv6zZwenaZBuGiIVeQtp6lrNG1n8R
-         0ekE7Q/PTrHbujvq7uuHKO3edUrNY7cdqRgYhNGzhJSk1AxyeVi3UMg3gUdTJg0hmdKS
-         D5Ww==
+        d=linaro.org; s=google; t=1757553143; x=1758157943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T+o6r5L1XUbiBxCB1fojD2F0CMjkyCBE1OL+/oMjXBI=;
+        b=iEQFzSJEKMepG3aAUbfnunbfMFi2C1grULp4zUadbSAtbRctsjKyPLcycwXlSU/j1v
+         PgPk1yuGDEzMNrli6Zr1AwzQvpWF6S+UUHdpaH+w4GRi1uQMcs0WMdE6V3rE2LIlOpWW
+         NVQB7IMRgtFd7yvHhdd7vUHkkizWDA20LIteUJ/Def6B90ktLlXYCteqdsUSq/Vuf4eo
+         y9Nmp327zX2XaXT9i2e/fvBh+OWN/DjkyOXDpNH4msuAZXvhR2IgCXgYjQ96uSV2Ry3j
+         bSKEVbxBG9+VimS9rzma0j+YrowpIssOwdpTuyOUq+F6iMiIdoR7mmLvvzfw/1N5KtqG
+         HSSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757553144; x=1758157944;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02MT83MiCKx+KYBmaRTv8ahirZdU8YNNjP3slDfY1Pk=;
-        b=Th5muZdF3a2wKR7Yf71zsTqLE/PU7bJkJPDtd2fGspy2ooGmnPerzM22T+n2ehdS99
-         kKru41y1ZUvZ56pFcr+5j9JyfssQUIYvmHiMhzUscEy86h6+aMbru4eGPHxEKRGSRK/t
-         OAIy2gcU+QQYZwlS2xDHmSWieOQsGDCpYU+VaI5ctEiGEbew7wQ5H/LYWWxt/yNzr08l
-         yut6vR7Ba83begWtDPZ5yiU9hovMZxIv+j6uvcq9MupjjfCFG1BQjR5WRgA/A/uDSC6w
-         Mnjuc9MYDsKhpqCSH9fPts1vUipAAB+YG0vc8aX5fJHjmsouW1e6ub3slUxtRATL0/pQ
-         +aUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgoF52N3wWZ48phlhZUUOXdPvQvO0D/HpXz5kAfclbJU7vP7GASdcMYIvfPS4bfghNrZy2+LRw5NM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/P+EF62Ts8MD3M5hp90UkHf1lnfjAb2oHe8SYqsVEKMTmWqI8
-	eCq+EXyUJpM78pcIz0dhJFGgmziLbtu5W9yowPaN7y/HJCDOwD3F86BB3GMCSaEslXc=
-X-Gm-Gg: ASbGncui6s1fcJIlq5i9In4AREFwGGv727hYrrvDyF9sOHzm0F5/CTnZ6iMDJHyZAPu
-	CSGnP+rMsMX1WmvpLyOYoH9b3fUpN2mXT/wzarY4HlYVnZKQODhryVhaoDnFKW9ss2099GfOoKS
-	WMkbYTBF5qwLaB0t9mPhnb0K2GksHjqszVq1UMvdCSajRMQ+ddDpLKy6YgZUK63s8FXTfDaVvW1
-	GYZrC+BkvUiNdLTvVj7iKKj4ubfQ8/YsKhwcg0eBwUqosJV/xsjHoeTt4WFkUmyXMjC1PPLd+PN
-	N2PqPrZ7LOvKZfVfueMbGbn5Id5FAOk/BVUmV4cLjT+kIVgJUwxqwThU9jZT5d9Z5rzd2TW6ufM
-	2GB/mRANop37Q5Ic+1kboR6nndsplQo+LGHs1aRFerkrxlMJZ52U9H3TTamxv9b21tYM9lVjKc8
-	xLX9ixww==
-X-Google-Smtp-Source: AGHT+IEdI44g1/3JRS/obgEgFRR8e6UwS94D2kroflQQNBo7gfc3dUszd3E81tYEoGgE5krDED79bw==
-X-Received: by 2002:a19:6417:0:b0:564:7824:7771 with SMTP id 2adb3069b0e04-56478247976mr1746672e87.11.1757553143851;
-        Wed, 10 Sep 2025 18:12:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757553143; x=1758157943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T+o6r5L1XUbiBxCB1fojD2F0CMjkyCBE1OL+/oMjXBI=;
+        b=GVw4hU4nUYdu/7Q2WVG7yVQIX4K5HDHR/mwxLs433nhLXEo9Ovd0EPaN6Sy1Tz27qo
+         sIHUpqbKwA/poKl3mR27Ft7ifADQOkFv/Id5coOLhpi3NBQbcqI/Xw6H9ln6F1IvHoZo
+         7nNfvVaf1o7uXf9+RKC2yyjmzJ8kFHU6zUFSA9hNUmZfOHdmA+ri0n5CjagAzZiHcEOi
+         nlEj44AznRU2HECTYyrmniJKi8+PXYKi2DcC99ggAdvhi1gxtd3CXgsFM66kPgUXht0v
+         UXPMQtDWHsSioC0QR+tNNH9M3SGdknZ06npMwW++XeOvNMBO3OKTeqr1q4ZyhbnQ60ms
+         ZrJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZywOlKEqweR/0q/Zh9PQRi0H1wpbrIdtvV3u5GerIODIh00PZnpQILtq6kwOP04gs1XNNS46sLjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsw7c9HrFfapdi2CYZ4KkH64FJglKquRnf0f8DgFfoLfg9gRXh
+	8qVioPO3nqHC24rO8y8ipYkiww3BBrRjQd6U2WmkS98eXCxX4ZlVidlIkKH4qSGJ33f8CbUspMK
+	9HuNt
+X-Gm-Gg: ASbGncv5dSINNZ5zIG83/duUnumzO+jA74ZO7ERGPRTmEKHgSyRbu+2BQTJRKHLDPUC
+	aq35r5WnH639cLa4PpwCvNDEZoddJZXbBG/4Hhq9BiH4SRCUdtu6vQ7+kIxJqW+xmAqHKudhKsr
+	C3WYzYZZGRuqklSlocTMD5eYBrBIvvswll4TnFpuQV41odfmuBDU5AK8TACRi+PgCpwYRWVydmL
+	PofNpHQtjpn/vY0cQR9+ZbhwB/k2uFp+j29QodOb0W6GeSaiQYnIiY6YXRo+T1AHWPwD/106Hjy
+	SeKvATN/xW6V2GC5v9NqYlH7SvzDlXFCvfO7TWFGFN6Mkpq9jeRFxZp+TAbfnGP2mJPZvPwh3P4
+	1LlUUPy8I//6xpCRM06SWba8d3xKV+hMmDqdpYnGgb+VmdbelYcyU5LTBR20GLizwefY6ufjJSd
+	F316ecbg==
+X-Google-Smtp-Source: AGHT+IFVdqTcDiCzur0w1bVAWzy/bLKra6iG62K6s8w3CEbwZmYv0G51c/W/3EcnWcWyujF0k+gzZg==
+X-Received: by 2002:a05:6512:3a96:b0:55f:7066:ce87 with SMTP id 2adb3069b0e04-5626058cd0dmr3089123e87.1.1757553142729;
+        Wed, 10 Sep 2025 18:12:22 -0700 (PDT)
 Received: from thyme.local (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63f3esm45786e87.67.2025.09.10.18.12.22
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63f3esm45786e87.67.2025.09.10.18.12.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 18:12:23 -0700 (PDT)
+        Wed, 10 Sep 2025 18:12:21 -0700 (PDT)
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -69,12 +68,10 @@ Cc: Taniya Das <quic_tdas@quicinc.com>,
 	Jagadeesh Kona <quic_jkona@quicinc.com>,
 	linux-clk@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org
-Subject: [PATCH 1/6] clk: qcom: camcc-sm8550: Specify Titan GDSC power domain as a parent to other
-Date: Thu, 11 Sep 2025 04:12:13 +0300
-Message-ID: <20250911011218.861322-2-vladimir.zapolskiy@linaro.org>
+Subject: [PATCH 0/6] Specify Titan GDSC power domain as a parent to other
+Date: Thu, 11 Sep 2025 04:12:12 +0300
+Message-ID: <20250911011218.861322-1-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250911011218.861322-1-vladimir.zapolskiy@linaro.org>
-References: <20250911011218.861322-1-vladimir.zapolskiy@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -84,92 +81,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Make Titan GDSC power domain as a parent of all other GDSC power domains
-provided by the SM8550 camera clock controller to enforce a correct
+provided by the Qualcomm camera clock controller to enforce a correct
 sequence of enabling and disabling power domains by the consumers.
 
-Fixes: ccc4e6a061a2 ("clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550")
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- drivers/clk/qcom/camcc-sm8550.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Only two Fixes tags are given, because so far there is no any consumers
+of IPEx, BPS or SBI GDSC power domains, however the changes of making
+an explicit PD hierarchy with Titan on the top will be helpful in future.
 
-diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
-index 63aed9e4c362..b8ece8a57a8a 100644
---- a/drivers/clk/qcom/camcc-sm8550.c
-+++ b/drivers/clk/qcom/camcc-sm8550.c
-@@ -3204,6 +3204,8 @@ static struct clk_branch cam_cc_sfe_1_fast_ahb_clk = {
- 	},
- };
- 
-+static struct gdsc cam_cc_titan_top_gdsc;
-+
- static struct gdsc cam_cc_bps_gdsc = {
- 	.gdscr = 0x10004,
- 	.en_rest_wait_val = 0x2,
-@@ -3213,6 +3215,7 @@ static struct gdsc cam_cc_bps_gdsc = {
- 		.name = "cam_cc_bps_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3225,6 +3228,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
- 		.name = "cam_cc_ife_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3237,6 +3241,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
- 		.name = "cam_cc_ife_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3249,6 +3254,7 @@ static struct gdsc cam_cc_ife_2_gdsc = {
- 		.name = "cam_cc_ife_2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3261,6 +3267,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
- 		.name = "cam_cc_ipe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3273,6 +3280,7 @@ static struct gdsc cam_cc_sbi_gdsc = {
- 		.name = "cam_cc_sbi_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3285,6 +3293,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
- 		.name = "cam_cc_sfe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -3297,6 +3306,7 @@ static struct gdsc cam_cc_sfe_1_gdsc = {
- 		.name = "cam_cc_sfe_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
+Vladimir Zapolskiy (6):
+  clk: qcom: camcc-sm8550: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sm6350: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sdm845: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sm7150: Specify Titan GDSC power domain as a parent to IPEx and BPS
+  clk: qcom: camcc-sm8250: Specify Titan GDSC power domain as a parent to IPE/BPS/SBI
+  clk: qcom: camcc-sm8450: Specify Titan GDSC power domain as a parent to IPE/BPS/SBI
+
+ drivers/clk/qcom/camcc-sdm845.c |  3 +++
+ drivers/clk/qcom/camcc-sm6350.c |  7 +++++++
+ drivers/clk/qcom/camcc-sm7150.c |  3 +++
+ drivers/clk/qcom/camcc-sm8250.c |  3 +++
+ drivers/clk/qcom/camcc-sm8450.c |  3 +++
+ drivers/clk/qcom/camcc-sm8550.c | 10 ++++++++++
+ 6 files changed, 29 insertions(+)
+
 -- 
 2.49.0
 
