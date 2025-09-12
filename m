@@ -1,98 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF83A2F6563;
-	Fri, 12 Sep 2025 10:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BA92EA737;
+	Fri, 12 Sep 2025 10:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672189; cv=none; b=ZLbPa8MKC9w2FwKz/UfrZIS1TFLIbtvr/VmJsnxPnL+Xm1c1p7df6xSdqopBmXqxLcKL+LiluSVnH36QDOH5LvwQ9aftAIMuym+kuvBvKwo/zTUxzfsvBx4BkMMEL8XLvIClOox7FRSirdBcO2+rOI/EkNFhOgPPoipN3B4jA84=
+	t=1757672386; cv=none; b=VlftYUSR4e4yVfetFiJatcagfvnHsER11tfWBAiqchW4fdU3xbUS7HIxMs6V/cuylrfhk9HxFju1D1w2kGzSEwmKvc4do4zKPSx1bhGRcJODikcn2lHIXoSrY/MGHCu7tzBgqqkFc1zolTIVGJjaIpLvZeclKiBM3jHX5yHzrLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672189; c=relaxed/simple;
-	bh=b5bk2lcG87ekd48OY9uydwAqCA6ChZfJcEAbOO9qhaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rHizsTaHjb5Mm4QsH1vcLddVGIh7Be5+fY/WCdgaVNx0X9IB+n4m8rw0XxK+Knuik4eBYBGzohcLzg+fxtjVOCsNid0uVMUhFIVc7MCkulFQnb4NSMarl5G+DTSnKNVPTPHycwxisA7roVuhy8JY1kkAkxzKb/5j/Wspz4gGVVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB1DC4CEF1;
-	Fri, 12 Sep 2025 10:16:26 +0000 (UTC)
-Message-ID: <cdd90f0d-81fc-47be-93f4-e6397ae46299@nxsw.ie>
-Date: Fri, 12 Sep 2025 11:16:24 +0100
+	s=arc-20240116; t=1757672386; c=relaxed/simple;
+	bh=80VD8j953rabZpdH+qBSUDke5/D1/YIn00wR201HN5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UgTOgAkI/D0HMCwphOKuNrpnzrQHJK/Y4jiQ6nauHOHbCyHa4bEMwCOKmLfqjyF6eRMVvf/BPUYEE9nCfu4zFoqHnSMg8sVjyB7gedSbnsdjC2RUKNdRNEyQwpTIzBc+AeEJHLj6OYNCejqPcSwjf6FBasUHWgTgb4gbARpcEFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E3F616A3;
+	Fri, 12 Sep 2025 03:19:36 -0700 (PDT)
+Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B5E53F66E;
+	Fri, 12 Sep 2025 03:19:42 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:19:40 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU
+ module clock
+Message-ID: <20250912111940.61f87a3e@donnerap>
+In-Reply-To: <20250911174710.3149589-4-wens@kernel.org>
+References: <20250911174710.3149589-1-wens@kernel.org>
+	<20250911174710.3149589-4-wens@kernel.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] clk: qcom: camcc-sm8450: Specify Titan GDSC power
- domain as a parent to IPE/BPS/SBI
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250911011218.861322-1-vladimir.zapolskiy@linaro.org>
- <kv2Hw3iDLRb2Jc-HWg7CO2YkpOrCHH9X6PduKiW9Nq5NafOS4QvXbquj8UEX8aqEXrpbFfR6y4-e4SbyWKo2UA==@protonmail.internalid>
- <20250911011218.861322-7-vladimir.zapolskiy@linaro.org>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Content-Language: en-US
-In-Reply-To: <20250911011218.861322-7-vladimir.zapolskiy@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 11/09/2025 02:12, Vladimir Zapolskiy wrote:
-> Make Titan GDSC power domain as a parent of all other GDSC power domains
-> provided by the SD8450 camera clock controller, and it should include
-> IPE, BPS and SBI ones, even if there are no users of them currently.
+On Fri, 12 Sep 2025 01:47:06 +0800
+Chen-Yu Tsai <wens@kernel.org> wrote:
+
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> The main clock controller on the A523/T527 has the NPU's module clock.
+> It was missing from the original submission, likely because that was
+> based on the A523 user manual; the A523 is marketed without the NPU.
+> 
+> Also, merge the private header back into the driver code itself. The
+> header only contains a macro containing the total number of clocks.
+> This has to be updated every time a missing clock gets added. Having
+> it in a separate file doesn't help the process. Instead just drop the
+> macro, and thus the header no longer has any reason to exist.
+> 
+> Also move the .num value to after the list of clks to make it obvious
+> that it should be updated when new clks are added.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Thanks for the change!
+
+Cheers,
+Andre
+
 > ---
->   drivers/clk/qcom/camcc-sm8450.c | 3 +++
->   1 file changed, 3 insertions(+)
+> Changes since v1:
+> - Move .num to after list of clks
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 21 ++++++++++++++++++---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.h | 14 --------------
+>  2 files changed, 18 insertions(+), 17 deletions(-)
+>  delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
 > 
-> diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
-> index 4dd8be8cc988..ef8cf54d0eed 100644
-> --- a/drivers/clk/qcom/camcc-sm8450.c
-> +++ b/drivers/clk/qcom/camcc-sm8450.c
-> @@ -2935,6 +2935,7 @@ static struct gdsc bps_gdsc = {
->   		.name = "bps_gdsc",
->   	},
->   	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.parent = &titan_top_gdsc.pd,
->   	.pwrsts = PWRSTS_OFF_ON,
->   };
-> 
-> @@ -2944,6 +2945,7 @@ static struct gdsc ipe_0_gdsc = {
->   		.name = "ipe_0_gdsc",
->   	},
->   	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> +	.parent = &titan_top_gdsc.pd,
->   	.pwrsts = PWRSTS_OFF_ON,
->   };
-> 
-> @@ -2953,6 +2955,7 @@ static struct gdsc sbi_gdsc = {
->   		.name = "sbi_gdsc",
->   	},
->   	.flags = POLL_CFG_GDSCR,
-> +	.parent = &titan_top_gdsc.pd,
->   	.pwrsts = PWRSTS_OFF_ON,
->   };
-> 
-> --
-> 2.49.0
-> 
-> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> index 1a9a1cb869e2..acb532f8361b 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -11,6 +11,9 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+> +#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> +#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> +
+>  #include "../clk.h"
+>  
+>  #include "ccu_common.h"
+> @@ -25,8 +28,6 @@
+>  #include "ccu_nkmp.h"
+>  #include "ccu_nm.h"
+>  
+> -#include "ccu-sun55i-a523.h"
+> -
+>  /*
+>   * The 24 MHz oscillator, the root of most of the clock tree.
+>   * .fw_name is the string used in the DT "clock-names" property, used to
+> @@ -486,6 +487,18 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
+>  
+>  static SUNXI_CCU_GATE_HWS(bus_ve_clk, "bus-ve", ahb_hws, 0x69c, BIT(0), 0);
+>  
+> +static const struct clk_hw *npu_parents[] = {
+> +	&pll_periph0_480M_clk.common.hw,
+> +	&pll_periph0_600M_clk.hw,
+> +	&pll_periph0_800M_clk.common.hw,
+> +	&pll_npu_2x_clk.hw,
+> +};
+> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0x6e0,
+> +				    0, 5,	/* M */
+> +				    24, 3,	/* mux */
+> +				    BIT(31),	/* gate */
+> +				    CLK_SET_RATE_PARENT);
+> +
+>  static SUNXI_CCU_GATE_HWS(bus_dma_clk, "bus-dma", ahb_hws, 0x70c, BIT(0), 0);
+>  
+>  static SUNXI_CCU_GATE_HWS(bus_msgbox_clk, "bus-msgbox", ahb_hws, 0x71c,
+> @@ -1217,6 +1230,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
+>  	&bus_ce_sys_clk.common,
+>  	&ve_clk.common,
+>  	&bus_ve_clk.common,
+> +	&npu_clk.common,
+>  	&bus_dma_clk.common,
+>  	&bus_msgbox_clk.common,
+>  	&bus_spinlock_clk.common,
+> @@ -1343,7 +1357,6 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
+>  };
+>  
+>  static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+> -	.num	= CLK_NUMBER,
+>  	.hws	= {
+>  		[CLK_PLL_DDR0]		= &pll_ddr_clk.common.hw,
+>  		[CLK_PLL_PERIPH0_4X]	= &pll_periph0_4x_clk.common.hw,
+> @@ -1524,7 +1537,9 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+>  		[CLK_FANOUT0]		= &fanout0_clk.common.hw,
+>  		[CLK_FANOUT1]		= &fanout1_clk.common.hw,
+>  		[CLK_FANOUT2]		= &fanout2_clk.common.hw,
+> +		[CLK_NPU]		= &npu_clk.common.hw,
+>  	},
+> +	.num	= CLK_NPU + 1,
+>  };
+>  
+>  static struct ccu_reset_map sun55i_a523_ccu_resets[] = {
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h b/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> deleted file mode 100644
+> index fc8dd42f1b47..000000000000
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -/*
+> - * Copyright 2024 Arm Ltd.
+> - */
+> -
+> -#ifndef _CCU_SUN55I_A523_H
+> -#define _CCU_SUN55I_A523_H
+> -
+> -#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> -#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> -
+> -#define CLK_NUMBER	(CLK_FANOUT2 + 1)
+> -
+> -#endif /* _CCU_SUN55I_A523_H */
 
-Please fix the commit log per Bjorn's feedback, I've given a commit log 
-you might want to use.
-
-Apply a Fixes: tag
-Cc: stable@vger.kernel.org
-
-Then you may add
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
----
-bod
