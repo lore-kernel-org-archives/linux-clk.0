@@ -1,178 +1,108 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161EE2FF167
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 11:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B752FF167;
+	Fri, 12 Sep 2025 11:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757675300; cv=none; b=nuMcADzZ4rScsonwe4LwRok9WKMGBCpM/Lu3XQNI8SLYsasevPGzhPN4Xnpfp3yYAlVvjhHZ6rZs678JfNQvkB2f3P+OeKqV1EE4GJAk2u7CIuEhg59j4e/S6J2xLL1EJXXap+EV/uEdf+eimudn+7sPNmcXrGmN6Y3KTsZIcks=
+	t=1757675660; cv=none; b=EV7pjBpMOTQTn4JwGgatnM7K4233QxO1BRUNlnQvnAopuoMygU6qpbkFdMbPsGuUUtqdAK/HT/4pTH0rx4GC+vSUoZU9w4xspXZraMrP0rgLUxLoRS61mcB77dITPTo7MNTRoP0Tqc/Ybu4RARl3EjeRg0spy912fCMT5U6qxHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757675300; c=relaxed/simple;
-	bh=SdMLcvVYFfT8vLpy1kmVurQSEeQL47wxS31jcgfF/pI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dQyA7a1I1A51S05X2eEQiaJdjG3JmJcPDNNjfc8Z9zSOj55gB94CsQuRHQP/m/1b2eeVQkRxgDiHrytyvyQ3yWb2ngRfNRfqw4Cu0fTfhB0qy9Bnx2uWzfTgAPk7CUP1YG4HkDRzHpdI3T6ICNDMqqPILDXjEYwbeTnOaYsXu3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZZ8d9YlT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZZ8d9YlT"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fJBQ009053
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 11:08:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Uokk/WWg6coArADdOgc7mvwj7p78n+lj8V4PK0/8Pc4=; b=ZZ8d9YlTOOStIca8
-	NM5xJlgS34cKzY8iFqmNHBzCpqgK3kO9FoIteJeIwXRKlUb4Y5eD/D3V5FIwMB+K
-	ymjRCNqfjf+KBe8ZydDlVbq1n0zPQo3vu1vPcCSo1HPbVE0tsqayPaIRA/HKAuIB
-	z4slbvYJsmQ2DNMsJ2rJlsvsaXfBy3eqfDAHliUuKa7uIM5ry/cx2ZyiOgYICA8P
-	30cFNOcdeEteEfG/eS25So3gEJyAw/bxBS1S9q9y3N/I105ntrZqVSG5iyL5wGf+
-	+Pf0hCYhzbTCZvDis7UYH8RH6dOFxLWPjpX0ZxnWmCa4muHG0/mAT1Hf4SxlW18c
-	5753Lw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj13cpn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 11:08:17 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-814e68d61afso54914785a.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 04:08:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757675297; x=1758280097;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uokk/WWg6coArADdOgc7mvwj7p78n+lj8V4PK0/8Pc4=;
-        b=vQ6DUW59cToAIJi+H5mbnC//kPi8uy01uszqbRcZNAQuOw9saLW67LU3R07sSgUFPp
-         wTrpyS8g1y8IKC7cjXtkUY93I8j71gip1e6wq1JSz4OQdYzWQIWipSB/meOM4m9Xtmn7
-         avdo9x21kpL5SIWW+RQV3nnAnHqxkv0I0jFRvldVdx/8p0Yj0peO7pq+WHaDVfQaTaAD
-         7s6N9DeXkvEhuvGKnDzTp63GJor88Y5RoKg+1W0bklJ8xoIypf45dXpiq4P8OQq0LwPa
-         NDPy21eqBYUpZukCb95we18g4A01N2/TGJrsqJosileG+IfROS56RxeV6XMuNrJI7wo0
-         3vow==
-X-Forwarded-Encrypted: i=1; AJvYcCVUnRdWboabRH+usqH+yHi+Aw/Xxs9fTJosWGuq2uMhhibrOYY9zxmUFrg0giWt/xG+M7njJ12nB10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuOS4kRGVY64nDYT7N3CPz/sB39oCzI7tkpgcBGoG/rpfvc39c
-	sGJwHiDIV/AcGD//ISmyDX4xXdiuygT4nlfJfhxJe0aI4wYB+uXMscBigvdbK0n/h9SRuDHMUUP
-	r+WhybBV/3jK2cDdipfJnGd10eVGjQieWTf2C6l3r27pNS5qtw9DFTCI0GJhiAXM=
-X-Gm-Gg: ASbGncv3zfwOjAjys/J0tJ03LiyDjrdRidKeJnXwyQwTfegyVAadvU9n5QrGAbtdV2M
-	6CzGNU6nHcY2t5N3fjCElGbFof90yHqV37F8Bz4KLGxkRRg0WuHIBMkRfzPB77gyW4QpaQzXzVk
-	U6PUaJRkTCsDBtkU7m9tpi7H1FDSw3iYl0VKz1Az5IBYE/WZaIu/tRyokkZOkUdfl/Piez3734t
-	Dmr0mPmWJJS4V8mUVhNB+cI3ll2beGJZPd0Xk9Oybw5Ib/Dn+MidZbuiv1l1BmdxCIlKC03z90c
-	JP2yR6YIKCid+TvhtwWbppN9SMufe0zdoj29N97pb5SFWaasO0zKMtN1UWD4QUatfjY2T8fbK02
-	7F7iV97n9JQLcnlq3YnBfBg==
-X-Received: by 2002:a05:622a:205:b0:4b5:eaee:1c04 with SMTP id d75a77b69052e-4b77ce87c27mr21934311cf.0.1757675296982;
-        Fri, 12 Sep 2025 04:08:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4jHhw/0hyABv8RVQp3e5MRh69QWXm/R7Xr8cosuIOallnrpV/vm6x9Sn/KbICuXgxrabMlA==
-X-Received: by 2002:a05:622a:205:b0:4b5:eaee:1c04 with SMTP id d75a77b69052e-4b77ce87c27mr21934001cf.0.1757675296567;
-        Fri, 12 Sep 2025 04:08:16 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62eead54362sm614906a12.36.2025.09.12.04.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 04:08:16 -0700 (PDT)
-Message-ID: <503e1fde-39ea-4107-947b-18b705f2bc51@oss.qualcomm.com>
-Date: Fri, 12 Sep 2025 13:08:13 +0200
+	s=arc-20240116; t=1757675660; c=relaxed/simple;
+	bh=ihpFWe4dq614jo000yLElq0uq/thAHaDLt+4e0JLcmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDZwwnzHcB+tSWU7YXB/JaUVmMJkukTko0TMqbw8lskPmurlZUUkqOt0/rfd7moa5TdhTbM1zEHkM8M0KVvbYG/5mAzl48mjW9VAI5yaAGrNBzbu2lJ6i2RyYUXiZQz5wXIgS+R0gk6YUynmSHjK7FQyv/0g2CaMgTebP9qHiig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE326C4CEF1;
+	Fri, 12 Sep 2025 11:14:18 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.18 (take two)
+Date: Fri, 12 Sep 2025 13:14:15 +0200
+Message-ID: <cover.1757670020.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] clk: qcom: videocc-sm8750: Add video clock
- controller driver for SM8750
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com>
- <20250829-sm8750-videocc-v2-v2-3-4517a5300e41@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250829-sm8750-videocc-v2-v2-3-4517a5300e41@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: -Ml0HTew2OA5su8kubCGdj5p1L9-jtPX
-X-Proofpoint-GUID: -Ml0HTew2OA5su8kubCGdj5p1L9-jtPX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX/hqHx7dBpZG1
- MVW5vU7GP/MXzFLgv2nASKXnRP6BHCs0S/JE8Kj8B2pkdDNzzTqvmas44daYaKRHm4sruNcbRuX
- 60yKz3kb+bSSl8dF2YN+52P9yL/uP7hVBJp1g2ct+srrBRZIeqSeS+IQs51SFWbpKuwm81JeYSo
- Rn660JNHqDCCvQL7ZM0/TMCECuUDnfhSiOkcY30MtVcJl6RQAn/14ka7c+/F1BglxTMUDP9p9I9
- INZDQjdBbpUyEkjdZhE6EQZkXNvVHLaMSvR2Cdwc/8RI5xwS3pQ62r4ht1wJaoXzIWlFfCwpAum
- gayzBvnizOmUZAhLp1AZfg5s3Uj1Vlep9JlhrzqgYciFr7EFO86QWh43MJKS8kc61f21QdjtZ6P
- VDB5gMm3
-X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c3ff21 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=MRVLr9g2OpiS_xmof_MA:9
- a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060024
+Content-Transfer-Encoding: 8bit
 
-On 8/29/25 12:15 PM, Taniya Das wrote:
-> Add support for the video clock controller for video clients to be able
-> to request for videocc clocks on SM8750 platform.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
+	Hi Mike, Stephen,
 
-[...]
+The following changes since commit 6bbf77bb22565332744c74e9806f8fb50402d73e:
 
-> +static int video_cc_sm8750_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	ret = devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	regmap = qcom_cc_map(pdev, &video_cc_sm8750_desc);
-> +	if (IS_ERR(regmap)) {
-> +		pm_runtime_put(&pdev->dev);
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	clk_taycan_elu_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-> +
-> +	/* Update DLY_ACCU_RED_SHIFTER_DONE to 0xF for mvs0, mvs0c */
-> +	regmap_update_bits(regmap, 0x8074, 0x1e00000, 0x1e00000);
+  clk: renesas: r9a09g047: Add GPT clocks and resets (2025-08-25 15:57:49 +0200)
 
-regmap_update_bits(..., GENMASK(x, y) /* full field width */, 0xf)
+are available in the Git repository at:
 
-would be easier for the next person to check against docs in case this
-needs to ever change or be validated
-> +	regmap_update_bits(regmap, 0x8040, 0x1e00000, 0x1e00000);
-> +
-> +	regmap_update_bits(regmap, 0x9f24, BIT(0), BIT(0));
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.18-tag2
 
-The register description mentions a ticket which I believe says this
-is not necessary in production hardware
+for you to fetch changes up to b5788b96cba97da01e1f0e1316133427c1102ff6:
 
-> +
-> +	/*
-> +	 * Keep clocks always enabled:
-> +	 *	video_cc_ahb_clk
-> +	 *	video_cc_sleep_clk
-> +	 *	video_cc_xo_clk
-> +	 */
-> +	regmap_update_bits(regmap, 0x80a4, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x80f8, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x80d4, BIT(0), BIT(0));
+  clk: renesas: r9a09g05[67]: Reduce differences (2025-09-12 09:53:37 +0200)
 
-Please use the new _desc infra
+----------------------------------------------------------------
+clk: renesas: Updates for v6.18 (take two)
 
-Konrad
+  - Add Ethernet clocks on RZ/T2H and RZ/N2H,
+  - Add USB3.0 clocks and resets on RZ/G3E,
+  - Add I3C clocks and resets on RZ/V2H and RZ/V2N,
+  - Miscellaneous fixes and improvements.
+
+Note that this includes DT binding definition updates for the RZ/T2H,
+RZ/N2H, and RZ/G3E SoCs, which are shared by clock driver and DT source
+files.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (2):
+      dt-bindings: clock: renesas,r9a09g047-cpg: Add USB3.0 core clocks
+      clk: renesas: r9a09g047: Add USB3.0 clocks/resets
+
+Geert Uytterhoeven (3):
+      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag4' into renesas-clk-for-v6.18
+      Merge tag 'renesas-r9a09g047-dt-binding-defs-tag4' into renesas-clk-for-v6.18
+      clk: renesas: r9a09g05[67]: Reduce differences
+
+Lad Prabhakar (4):
+      dt-bindings: clock: renesas,r9a09g077/87: Add Ethernet clock IDs
+      clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clocks
+      clk: renesas: r9a09g057: Add clock and reset entries for I3C
+      clk: renesas: r9a09g056: Add clock and reset entries for I3C
+
+Tommaso Merciai (4):
+      clk: renesas: rzg2l: Simplify rzg2l_cpg_assert() and rzg2l_cpg_deassert()
+      clk: renesas: rzg2l: Re-assert reset on deassert timeout
+      clk: renesas: rzv2h: Re-assert reset on deassert timeout
+      clk: renesas: rzv2h: Simplify polling condition in __rzv2h_cpg_assert()
+
+Yuan CHen (1):
+      clk: renesas: cpg-mssr: Fix memory leak in cpg_mssr_reserved_init()
+
+ drivers/clk/renesas/r9a09g047-cpg.c                |  9 +++-
+ drivers/clk/renesas/r9a09g056-cpg.c                | 16 +++++--
+ drivers/clk/renesas/r9a09g057-cpg.c                | 11 ++++-
+ drivers/clk/renesas/r9a09g077-cpg.c                | 14 +++++-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  7 ++-
+ drivers/clk/renesas/rzg2l-cpg.c                    | 52 +++++++++-------------
+ drivers/clk/renesas/rzv2h-cpg.c                    | 12 +++--
+ include/dt-bindings/clock/renesas,r9a09g047-cpg.h  |  2 +
+ .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |  5 +++
+ .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |  5 +++
+ 10 files changed, 90 insertions(+), 43 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
