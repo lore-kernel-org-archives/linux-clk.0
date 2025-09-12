@@ -1,106 +1,107 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326C1311C2D
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 14:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11BC311C19
+	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 14:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688678; cv=none; b=OIF4a3d4jMJvh3EeuV8N18KvRWDZ6H/nP5joMpjECTJpAhKW7hOk/bhPObawJKt+b5t7uKQrSNyNsQR+VjMKaBcdIe5QOsR8wMUhWIKLIrFIAtbvw+nmRUGyAcY4xmggzN9tahNSfusJYLtptpvWAAGgDzO6Up4TF2ULqozhRVM=
+	t=1757689126; cv=none; b=IqlqcreZ//6wA1BPKucKK0m7GTvEsjTiAZmyC/1izdIekhyKG0gsWvKPsSfhUfjnVPxSAkzYizk88faNlanmIdtgI/8jMlcN6C06glk0YzmER9yOLQuuO5Wj5CK4IXqu49AB8vQFvD65hvIqGJeRDZQH1KDD7TGA+FpaFCzFYww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688678; c=relaxed/simple;
-	bh=uk6E5Paty7fp1wof3TD0JBLDuNVPgNqH8AUiWEIMf+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiaiQHDUI0m+HhuGMozn1pimgNHS5EKH3IYp6uPy2e8Zz+aR4hb0zuBZznIPcyml3z2o3JpOaz4cgfi342ousxYMyOBJxqa6UZuN/b+d5GJ8jyraj2min0WFsBKQuZwl4X/fT6Ra3HcrhGW9ZK6C/Y+Ghs+A8Mbw1EB7tuQrYnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iKIr1OvP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1757689126; c=relaxed/simple;
+	bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GF7yLX/KX1U0h3txwTkmjps/HQ5w6jW6luvYuJNoBqH3aWUsb0usWkSHiQmEcyzUARzlFxTxLbLOv1MfmiLiRmgB9LNPhAj3MnI6Ccv0Dv5lfWo4/2NCA56hYCe315aNEpN3OjhC/vcaC7qSHNCcW6EcGiMubpNbepZrNlhozXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXURIzoL; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iKIr1OvP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757688676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NU+SVzKeTWD0+BhYK3td1Pqzo+tTZOjwzHuyU7qJoZg=;
-	b=iKIr1OvPFqOM54Bae9o3VBrP3eoAxITH+vi3c6A7mMF0kd9dGC5uDB2KWmFPn1TV0/H6N4
-	eroVOKHkrBPUGeluYpGWf1b0QgURUNHQcBxmCRuYMSbOjWhugnEwENwNrqZlnDGyj42Axd
-	htq6FZiKxI+wVbAEswQqXzAlc+MgbII=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-zsI02cQCMw6f8ZLoCFSbwg-1; Fri, 12 Sep 2025 10:51:14 -0400
-X-MC-Unique: zsI02cQCMw6f8ZLoCFSbwg-1
-X-Mimecast-MFC-AGG-ID: zsI02cQCMw6f8ZLoCFSbwg_1757688674
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b49666c8b8so42032811cf.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 07:51:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXURIzoL"
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30ccebab736so1625503fac.3
+        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 07:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757689124; x=1758293924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=vXURIzoL6WOeHy68epWap3ErmNrC29xtLmfmt/5OszeFvCcBTXd9+e7funIXOiH1WE
+         jQUlydwxAqRRUSzjNPsX5gHuXQRClfjIzGBhA1yVFh8Wx4E/I2eHgAZNB8gnsJJlJLrg
+         qpBiAAef9FKGxqxnPsIVZKvBhTOvvs8z3RgusIBTBMpSwtYTpf/8kKvzhTrifkGV7O4p
+         9AHcCNNXS6KaIAkWvORPqfSTlRn1bEMfa6TjjUBZgHMd6weNK2Z3E1BXVucskAbhRmzp
+         vShp0Ug9U0wvKqbVBEcUFK5PfpEtk3+tUyoDXK1MFVj+zJWQSu9R6TfhZ1BRbhdWdqog
+         wv5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757688674; x=1758293474;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NU+SVzKeTWD0+BhYK3td1Pqzo+tTZOjwzHuyU7qJoZg=;
-        b=gqzRfw3R3/WEqJcKt8JqVaxGiMQRh7L2tgEqDThfEV3kT/p2BUHW97GcKUHRaz9c38
-         Rg+1KkFHBjseSbnjbqXfiBtdGkkiB092XXd4UPxxo8TIOb2YrVuyg94a6gvy03Cbzlnw
-         xY3HyAbpxgN3hnr89VXfi42peBAXw0u7Yml3oGIZ2Did33TVDvxBsWonJNFdTHChgPAd
-         xwbzDXv3Ci7Ol9w0zHVb2MMvXF2wOCFvk38xEgUqXesefaeNtIn1YCbXkiDldHn73RWv
-         3g6CXQuiN1XyhoafT9di+au7nJ/TLPpaxhiK6TVmwzYA2fS7fPjNhOVZo8+D9gaPoeDC
-         5MeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqWQVd2lY0zJ8YbPFUn8glxt+RIhkvNoFz5LwyjOFUoWIJWu9n74XuQ9D4k2hPMGT6nmQmlC0UL1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBOsqmISFK+uw8Idk+k6+ZL2hQiF2uCaCWdEDAoNRIREE3wJXU
-	QQ19G2Yan5Kib4mCsuOkTK20X1JN5qI7LvA2wb9mklzKwL9Srr6ntyEEKLfDQww4j0KAuRdCHDK
-	b3xegNZVN36kjZ8FxxprqOrdWW7Dp6g/kvUXP8Ttry/M0Sz8u45eK/wsbyRd9hQ==
-X-Gm-Gg: ASbGncvMCI7jw5Zwu5lZFKizT1smhAakk2f1V+YY62DWBcGXPbmtgPVIXMSS6Rp9Ngz
-	ebdjH+2C1px0AqBt9//utRLa3HXiK1xXnlenWtdEgHd076Bl6TGx3rToFlm0V8FXmm1jGAEpHsm
-	M+NDe9D7rT9jYgDEW4S7AGffeSIvXjzxM9nzAJLbg/5UT/KindlyH45tU+gbzwP+TU5eBEhkzB1
-	9aie2Tuun7/Lhi5XhRCeKPZZes2DpG0xYPvl1V6RiTo8ZlU1o+T/EsRtPhyKssADVQXegWwh7Sc
-	DK0PmYFInrGziZtnV98bkycfHm98+NLDcO9hIDpS3h82W3rXSWCxVd4Har69b+rTU6jkiw4Tp88
-	+1YDGNEiELymVmbATeEF0WnlCN4CNOA==
-X-Received: by 2002:a05:622a:1803:b0:4b3:4b6d:ec52 with SMTP id d75a77b69052e-4b77d0cc905mr42168431cf.32.1757688674177;
-        Fri, 12 Sep 2025 07:51:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKHaF5tvFQHHNEZPu3AfsN41wRwe2BP++0UPlIuNaDPH6QWUiaDDqVyOq53mlk8SSAOAXHkw==
-X-Received: by 2002:a05:622a:1803:b0:4b3:4b6d:ec52 with SMTP id d75a77b69052e-4b77d0cc905mr42167931cf.32.1757688673567;
-        Fri, 12 Sep 2025 07:51:13 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639dcae6dsm25920811cf.39.2025.09.12.07.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:51:12 -0700 (PDT)
-Date: Fri, 12 Sep 2025 10:51:09 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] dt-bindings: clock: Add spread spectrum definition
-Message-ID: <aMQzXdVHOGoT9y4C@redhat.com>
-References: <20250912-clk-ssc-version1-v3-0-fd1e07476ba1@nxp.com>
- <20250912-clk-ssc-version1-v3-1-fd1e07476ba1@nxp.com>
+        d=1e100.net; s=20230601; t=1757689124; x=1758293924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=bnfBrFsv3PWKcBZF6NnJvLJO6rbwB0qFwG8aDE4/PbeU2d33Q6z+s1SIRq9rGkK7Ud
+         O8DhbNmJm5OQ1jaHL8otsBerYbKSBQmgqtVgolmir0S6/mYJYdKS/KidcQm/Pj7ODs1x
+         UpV9oTVxqoYMYGYHPFSSAQFQc3Qm7q3qkexzgeCz7NhlRcBxf52OXdNO6ARxpaX7eYTp
+         RHG3bR9uobAWc78hcRqXnagAiKtioCtVqPMHeJRu2mMHFnS1YxJeaYd/pppB9nMFU22c
+         MfbDR0BQSTS32XEXIIaSdAacXItSsiX60nj5JB+v/daFGpLBIaDVvvn79Cf9SnqZuDO3
+         0nSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvQqqz1FqwHirCB7Z2NXP9+W7RxW1asbDCQpKDJCYLDDHJR/BeOYoLnkKrODHSwWModsqmhDvyMyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmRC1HyIqLFQznYb7VEZJ6MliCAtQ22O9lmoS+0i3VNd9E+ESe
+	SfZbdP6V0b57pjdzxpO/9Ahn8zKV6h1uZgIaRa80jyDq4f41s/E+cCKiQDCbfc/yKcCICy+M3BK
+	3fMiOUG+GjSwnYWf7zX4cTHQA/ISpqAWAKAnX9ecxNA==
+X-Gm-Gg: ASbGnctChQbvxxuec9fdel0+Dkgq0NdeVoSe5A9WOg8UuwBJpUcqn+XoZeN5Gb1UjfR
+	hVqVifGq+0eaXUxl5URdR/bUhBgKjrdOtJ8P5Ulq+9sKdpdgs6Pm3t7QqZhfvtgxFQOMCAlgBye
+	oRh8H8uysdX74E/G1B3qpJZnz5ovMqIougkoWDm+wUOICoESjKVUGnij0p1znfBW6yJSOqzZxr/
+	WFRd+OLoU4ho2ABuQ==
+X-Google-Smtp-Source: AGHT+IHAJ42BGc4DV3+A7HRXSgNpI4Ckz1R2zEcxWqCWvdlWoM2kBfvVDgKpueHQzqgzBraygif8YB0P1rDNI9gE4qo=
+X-Received: by 2002:a05:6870:b907:b0:315:3ef4:eecd with SMTP id
+ 586e51a60fabf-32e553a280fmr1618278fac.17.1757689123738; Fri, 12 Sep 2025
+ 07:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-clk-ssc-version1-v3-1-fd1e07476ba1@nxp.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+In-Reply-To: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 12 Sep 2025 15:58:32 +0100
+X-Gm-Features: Ac12FXwxoqn3zsYfC0T8IDf20S9zDpzsxcpDfKlZfpZdk1czNZgS3-vJNTlzLBQ
+Message-ID: <CADrjBPo8L=P2bHKTFvYOj7i0u6pA7vs32d3y+4Ho+82Z1mRE_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] exynos-acpm: add DVFS protocol and clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	willmcvicker@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 12, 2025 at 11:35:50AM +0800, Peng Fan wrote:
-> Per dt-schema, the modulation methods are: down-spread(3), up-spread(2),
-> center-spread(1), no-spread(0). So define them in dt-bindings to avoid
-> write the magic number in device tree.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On Mon, 8 Sept 2025 at 14:13, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+> Dependencies description:
+> All patches should go through the Samsung SoC tree.
+> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+> If the clock subsystem needs to merge the new clock driver, it will
+> need an immutable tag with the 2 patches.
+> No dependecies for #1, #3, #5.
+>
+> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+> are variable and index based. These clocks don't provide an entire range
+> of values between the limits but only discrete points within the range.
+> The firmware also manages the voltage scaling appropriately with the
+> clock scaling. Make the ACPM node a clock provider.
+>
+> Add support for the ACPM DVFS protocol. It translates clock frequency
+> requests to messages that can be interpreted by the ACPM firmware.
+> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
+>
+> Thanks,
+> ta
+>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
