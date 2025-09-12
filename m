@@ -1,109 +1,143 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA8311959
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 14:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34EB3126C8
+	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 14:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687761; cv=none; b=COctmCulIx2+b660+Ji+EFiOxAVlzILEDgh8idkfqMWtZMX5yqHDmZy78Bqz5caO3iiS03A6Yq1k+4MM/6Em//FqENqQyInUwhjKviwpwg/I71pHCae3gvie5o76w0oFUl4hOdctVblcksF62JLShUM1yiQX3yx29rL6KYlmzC4=
+	t=1757688648; cv=none; b=nmKgBhraCgo9pp9gwZx8D/Qb6JCHAeW3TBt1AqiXzg8zJqNeQ4t8XISb6cM2eAk7HQQ9TB4HlO03bCxGZB7Rf7rW0wOmIj7RPZ2x0wSTQqim206fgG/bBkZYLNsJSzdwXanvz2HRP0+/OFLjPrFtMtPFYs/ixPI3lBosiqQilrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687761; c=relaxed/simple;
-	bh=w0HNyCJgCIKMXof21vkl4pN3VquJKbWAGsmHF0hWEh4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kPGyk7ZbBB6u7J5tublokHXkj+aTYvG1rdFuNI5dO+AvjyzAFV4lmzLUrE+iW7HTUdkD+Q3yWbvU8Oi9TaOgmMYKevVSOLsAdcnHrWJDV4vDKeweTKqKNMlH3T8F3Epn8iO6q3hVepy70yaMSTMsOQ7WuFpi/8SZJP3QAp2xAX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P4ohENhj; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757688648; c=relaxed/simple;
+	bh=nsgqBhuQMIRgj0Foq7lbTZgCUyn2NDAcRteObcMHZAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HSrMETi3FL26y0pARExs5ZHslRmbm4pkQ7PqGbnxHGprhS0pksfm5jDnWI3QWPpiCnifKa/Vj7oTuoioMMdwImiu1gt7z8y/jJuF3EVQns/F4Lkl/mQYy+YK5hH/GVvL/FtGqsja7pdGW7WwgMTXD34t5nGImjp5DaB/VBrQc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NVsLrQfF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4ohENhj"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e751508f21so1408002f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 07:35:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757687758; x=1758292558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rux3uIEwt0djKEKrlDMK9wf/Q+VyRMin5568hbjdQuQ=;
-        b=P4ohENhj3OBByqOOeEbxfgzwL3xwxDLKHz6Zdhpph2yJo1NZ+pXODd6pPD/pyHhUYY
-         JFqwan1TIT6J4jpigXj/Kq24/REFy0L+ndyPRJ4WckOH3t2WHHiunNBdD02gBySAtp4i
-         tap7eoewKLh91qorDe/SWh8D6CKWxhLNaJTiYrdVL6d9zm679o2puGUlgOnAOgGtsBat
-         +kGgRk7CEin6ZKhkho8Rl9PEmmmZizfVbprJ68pvfQGL0k+ZfcVTUBBy01svq5BIV/Ch
-         7I64G4DYVcs6RiM3QGOQPMqAXW45C0Vwu9PYzNrxr+jrWbBwyREfYHWjPHqmHuy+46K/
-         yMqg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NVsLrQfF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757688645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NWnv1uPYTna1ts6VTb5bmSJ4gFzt0Uz75RWyORHBYho=;
+	b=NVsLrQfFJ7gcWGfmrp65i56c+GovdvJArTUz3ysX887vX+Swj+RCOiHILo3ZAsDpyz8c4e
+	AhsHaqwkfI2whgS2tVdKPqWXDu31eEuFMkxRxoNwByeBADLi8guOJenj9FtF7i0Cj1bDi7
+	eS+n8aYMknGy8L5K+9C/HrpUMJp7ht4=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-AFt0eKw3OWq19s4FjSL8TQ-1; Fri, 12 Sep 2025 10:50:44 -0400
+X-MC-Unique: AFt0eKw3OWq19s4FjSL8TQ-1
+X-Mimecast-MFC-AGG-ID: AFt0eKw3OWq19s4FjSL8TQ_1757688643
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b548745115so51515351cf.0
+        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 07:50:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757687758; x=1758292558;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757688643; x=1758293443;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rux3uIEwt0djKEKrlDMK9wf/Q+VyRMin5568hbjdQuQ=;
-        b=W5m+KPXVQksPeDH87qZrHem3CvDo+/T5ZFeG1LLDtZhy9qtAmEeZRnAvGMS+Gg1JaJ
-         f3jKugtlf8dOrEr5bGQR8VUeotU+gfvFh97sRXRzuj94p3+GzBH+ifSMhkWP3Jd2g0em
-         WW11DHxxU2bLUj05bZGI88zJi3HtIvQD0XjqCFZudpr1A3OpzUwpKoN0hjkX/DU5rlg2
-         PjUL/vSr4AMuEhQiCJf8cupspEbSeDM+R8+HI6lcS56LQmusArCVnwlDHGZm/rCNEcqE
-         rQwjx/VGLhMYWCBxsH8AWwSn1p0Stn+aEDKetMPOfMn+2fqeySQnHcXs1bKdMxyCKZuQ
-         /+Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwo1sJkS7u4vRGECn+X0o3gymzh+zD/I9ItmjhFJbbz9UzKkuihdn5F+Us6a19fOsfNGMYSzga5SE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1I5LBKDT5ukVP0B0YraCjId4QFhtHlP3xt++s1eXJq3TXjNpO
-	npH2yFDKEELUZORhtfDQ7xjAXjS/PFSJ4gI0CmiV662GL6ZXybvuN6bOLiw2anpnn+u5hSUrgf/
-	8FnPr
-X-Gm-Gg: ASbGncvjRwD/+Q3kAYfvTE/WVswI6WnrQaF4ET2YL3loYKUGS0P2bBX3Kr+WDFuoKTa
-	LeDab6kPf1hhTDnHJ9u0zm3jg+p4cYtMcfi4F1Fu6z8aFPztJueaqaD2I+ZIXdba913a6mL/Qp4
-	IZHmm/PuWKtIBy7gOJdX2WbA/G3x2zioUyVjFTcvyQH/Y3Szejbh/bsz+E2u0v+zGnBKfPZvnjV
-	0odpdZ521xTX1RnU/+61qoVPZvx18S2W6QuUR59CMXWnByPW/rlL/ARkkWe4WTbhBOegzX9Z+oF
-	1TbzX4dV8KRZq1oTdrluosweAfqXZMDZUpjkS0n0xZDHeRWnr/mwYLYJAugsBZeK7sj0Lm3IpdU
-	LFko16Qd5x3YtcsMdfI6/6vZOtyMIE1pIZQ==
-X-Google-Smtp-Source: AGHT+IH67tRYiTRZR0HlitAXkPqySgTj0c7ALy1itAhNYgQLFYvaB09Ls5bZvLW8qeoaRRjgwtFi6g==
-X-Received: by 2002:a05:6000:2408:b0:3b8:d360:336f with SMTP id ffacd0b85a97d-3e7658c1c6emr3279136f8f.28.1757687757628;
-        Fri, 12 Sep 2025 07:35:57 -0700 (PDT)
-Received: from hackbox.lan ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607ccf9esm6659591f8f.40.2025.09.12.07.35.55
+        bh=NWnv1uPYTna1ts6VTb5bmSJ4gFzt0Uz75RWyORHBYho=;
+        b=YrJ0iE+yxXR30XquS9mIWOEIDDJJjGlc2tlZ4U+C5zOp4mCJ9NytLtEG42OYREgery
+         FR85rUgqM+Qq3hkDjM0DJrpaw8VR6vCNRg9aa5sQmIzRHCWca/OrFG4WsyQGF5iAbpA0
+         ZgVGH/uKQCUAc7gpTgl5Jhe0vZceQWJ6KT/VfKbfB6qdxan9x0ZlISXB0Mb1F8BbTE8B
+         aHlgpFY9nvnrjDNGLm+fHxH3avczV3tQrAN+eKylrE5Hu/gv2PHCUISHUXgbT2ngw4cA
+         VhAwr5ts2l6LdaKjdxxOg3ZtG7oZH7E8U7WIMQ1pwu7E7FMvYf885wx/kDlGoIehCL4y
+         yQtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGtB8C7jlDoSPbteahjBTU9LXLQ62lWD9rDJ0Zx0ShL7st72Xm96dWTm1bCObp5B4yk9oSATyZvUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmBgXOaKx631kQReLhQRM6xy+hM7dvZlVZiWyXOR+ZDiI7ixa1
+	PPFjkGe7GCFTdt5EHkhBYXQllgs/cTDaJXW3RmbNFLDwqWBB6TBMbHlbSHCNwUddlb6CcvUHvLK
+	u3flJWBaNf/kjNyBcnZrlv/UTrwkMw78Cm5CCzbwJV43pZXiIzyW+gCppk7bd9Q==
+X-Gm-Gg: ASbGncvPyIIaopWa6ThBmjjEOwjR7Wad1fQfZkrd6aIQRr6coo5HXY2ED5kG2X4jO5Q
+	as1ob3/kyLxDvhlbNfcOI6sEPbxbsNNRFyZmpFt6aIfQN7J17EcGsvOaRO4a4n0UAXekbzeO/3x
+	Q8u5h76jias2rGoF2ukjiwmVmuW9ezyRYlY7zt+i8/stLBEPSFK0N8hfaIv0oIzAoPDkxOA1hyQ
+	rPDp/kEdldyOQg/QpwRAS1/xj4sYo6J4zTjQE3bEap/NxoeEZbvkdRE5IYTQnIymWK0uWc/h7Ep
+	fTUcrhIYkcmewuRwQcXGIFjelRjRqhCvoTgQKMEFb1X9Y8Ot0fe4ZgecJPt78QXbxuWROnPmStl
+	Akg4htbqwrNVJq3HuJpyZMVas8svaDg==
+X-Received: by 2002:a05:622a:5c1a:b0:4a7:81f6:331e with SMTP id d75a77b69052e-4b77cb3caa7mr40317901cf.6.1757688642709;
+        Fri, 12 Sep 2025 07:50:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyVIdYLjBKhorz3T0zQ9Rxegov6rF9Te/Pu4Zg+RAzt3WZQiqnmCsJB1uwM7uqun0gGUSs7Q==
+X-Received: by 2002:a05:622a:5c1a:b0:4a7:81f6:331e with SMTP id d75a77b69052e-4b77cb3caa7mr40317551cf.6.1757688642278;
+        Fri, 12 Sep 2025 07:50:42 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639a61502sm26238491cf.0.2025.09.12.07.50.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:35:56 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: frank.li@nxp.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250804131450.3918846-1-laurentiu.palcu@oss.nxp.com>
-References: <20250804131450.3918846-1-laurentiu.palcu@oss.nxp.com>
-Subject: Re: [PATCH v2 0/2] clk: imx95-blk-ctl: Fix runtime PM issues
-Message-Id: <175768775587.453341.7630569911585966967.b4-ty@linaro.org>
-Date: Fri, 12 Sep 2025 17:35:55 +0300
+        Fri, 12 Sep 2025 07:50:41 -0700 (PDT)
+Date: Fri, 12 Sep 2025 10:50:39 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] clk: Add KUnit tests for assigned-clock-sscs
+Message-ID: <aMQzP7DamsQWl8_L@redhat.com>
+References: <20250912-clk-ssc-version1-v3-0-fd1e07476ba1@nxp.com>
+ <20250912-clk-ssc-version1-v3-4-fd1e07476ba1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-dedf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-clk-ssc-version1-v3-4-fd1e07476ba1@nxp.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-
-On Mon, 04 Aug 2025 16:14:48 +0300, Laurentiu Palcu wrote:
-> These 2 patches belonged to a larger patch-set I sent a couple of weeks
-> ago([1]) but I decided to break that set into smaller sets, where
-> possible, as they will be easier to respin, to address any issues, and
-> will probably be merged faster than the other one.
+On Fri, Sep 12, 2025 at 11:35:53AM +0800, Peng Fan wrote:
+> Spread spectrum configuration is part of clock frequency settings,
+> and its behavior can be validated similarly to assigned clock rates.
 > 
-> Also, I addressed all the reviewers' comments received previously for
-> these patches.
+> Extend the existing KUnit tests for assigned-clock-rates to cover
+> assigned-clock-sscs by reusing the test framework. Add new test
+> device trees:
+>   - kunit_clk_assigned_sscs_null.dtso
+>   - kunit_clk_assigned_sscs_null_consumer.dtso
+>   - kunit_clk_assigned_sscs_without.dtso
+>   - kunit_clk_assigned_sscs_without_consumer.dtso
+>   - kunit_clk_assigned_sscs_zero.dtso
+>   - kunit_clk_assigned_sscs_zero_consumer.dtso
 > 
-> [...]
+> These tests cover various invalid configurations of assigned-clock-sscs,
+> ensuring robustness and consistent error handling, similar to the coverage
+> provided for assigned-clock-rates.
+> 
+> Co-developed-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Applied, thanks!
+There's no need to add a Co-developed-by for me. I just gave you a very
+rough starting point.
 
-[1/2] clk: imx95-blk-ctl: Save platform data in imx95_blk_ctl structure
-      commit: aa1735d72bc085c4d107fb2017c597f83bb9490c
-[2/2] clk: imx95-blk-ctl: Save/restore registers when RPM routines are called
-      commit: 14be8b7b6cbc0a072c749e46e28d66e0ea6d0857
+> diff --git a/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
+> index 1d964672e8553a90263af400367a2d947f755015..d62c7522c92461245d45f8ac0ebd26fa2850be98 100644
+> --- a/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
+> +++ b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
+> @@ -12,5 +12,6 @@ kunit-clock-consumer {
+>  		compatible = "test,clk-consumer";
+>  		assigned-clocks = <&clk>;
+>  		assigned-clock-rates = <0>;
+> +		assigned-clock-sscs = <0 0 0>;
+>  	};
+>  };
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+kunit_clk_assigned_rates_zero_consumer.dtso is modified, however
+kunit_clk_assigned_rates_zero.dtso was not. The underlying test doesn't
+check for this, so you can drop the change to this dtso file.
+
+Everything else looks good to me.
+
+Brian
 
