@@ -1,66 +1,67 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70930147C
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 11:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41793019C1
+	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 11:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677030; cv=none; b=mSH9io0y/s+wddACYPluhN7AGhuvfJpxenKs0qW5pqFNoRzZargFP0plGOZACzxeePBlEDH+M9Ey0FmiaZY9yid/rZprMMmcndtI/qxddmHiapvfPuY4m9i17DkFshG0pjIrADTEgQiCbDlhuWmoCozNhg6kADewdc2Gl9JVo5I=
+	t=1757677031; cv=none; b=BgiYVpuLD+1Ixy0QbSwLjfOIChTuirpf4UOJxwtr6BFoiu8TpyqbXTlVj/9XBN5WQOhlPmemaU5omwNPhn0WmkNucgsZ6artzekOp8L/RVZnUEMYU8vsMkcgBNDH0m98nmayKN+KkrHx08yuHTHSLyE4fpLU/+eBWA4GrH1n6lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677030; c=relaxed/simple;
-	bh=hTnvvxl+lyL52rYp9D+lJFkBieFPMCtFihiRlKLamkE=;
+	s=arc-20240116; t=1757677031; c=relaxed/simple;
+	bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C00ZquHwXV2eE0IOEGm4mOD+DSCdwsH1O9cqlyHzOUaQNllBmz/AtvkatIJlowm4sU+uUT6Uayiv/9A79F54UjOZPOoaN9lphT3jI6q2PECnhfC5EfrXuFmb9M+w/yWnxYmHM26oiZYtg+xEnrMHge4T+rAFGlR7V81y2F7ixY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITgsLOYJ; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=t1YvxzxhLIWEiW0ghTX+wO7kdlysRZZyBsGUdtjbzGeEruVAwvmLSCfBob42c+N/mblWXv3R0JErjy0jvogAhi+dPSvi4OYW5zYTsfMLEdjA1AagOLR6iv4tXWb6W1Dkq6Sw0wU+gQbeaOjz06f2Dv904bGg1a5XW2Wf7icFfDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNZc0lIl; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITgsLOYJ"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45df09c7128so14652155e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 04:37:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNZc0lIl"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45cb5492350so13618695e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 04:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757677027; x=1758281827; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757677028; x=1758281828; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DJ9s0RW4TlNtw5bKE6LaaAXASB0Bfcws+yTXIrMiB70=;
-        b=ITgsLOYJ7YGQ4D3Swey0ePUC9b3IBdPUHds+gOioFSuXCWkjLzBNr/UBN0/kggVoUO
-         x6Sw6bvfJJIoB/wNTwztTfp6b4Ov2ViSJ/5B2kJtWON/M2J2xT4xZIoCBAgSs0m9iM9W
-         skqSFMhVX0wGTEzslrwLmXshgrZMy5FDGZqt+G87n4kHVlImARrUjDpXWD/3/es72VCe
-         sw+5b4iphTp0Uo6tNXicCz7HnWzMEy+pZiPq6k4smVz2zq5aenC0S9RG3qjW9LCi8RCM
-         v0OHr0khYj+WutwIOe7c1Qk3PJGfu0lV5/VIZZ5MaXOv7D4hS32O2VyWSZDnud/Thvs/
-         EeEg==
+        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
+        b=dNZc0lIllrgzrl/koJZ3gnUYm4WNFWsApiuxLYYfV2NDLCdbK4DsMepr8hGsiTwCBn
+         oAaGHw6qUg0gG/KI85tu9BoyAd/ZstP7uD8zmbhbRdDk3fVNoOxmFTy+CYWTglRPzJnp
+         YDLzGnUy11Om5BNMyhQEYshNfQRkvRvFlEexg7C+mUKFxtItgiZjNQKHLZMlMv6eLXup
+         wmbAlHrFIz02MmTzTnqDKVJkh8BleAuf8zc26NWGn7wPBRjfzySsY+AyJMVqciaKgjQ+
+         /amRt8ZupW8p5/W+zRmF8oBcLKRF1+MhBxUOHc37rnJ8esqERnhST70d8/6v8r+s+VYp
+         OcKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757677027; x=1758281827;
+        d=1e100.net; s=20230601; t=1757677028; x=1758281828;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DJ9s0RW4TlNtw5bKE6LaaAXASB0Bfcws+yTXIrMiB70=;
-        b=Zp/1+0s9SzQHe7QGUlQKfVMjrZnaQmYI0wHIZYrnHKC6TfDV3xkDx7COo86P31GlaZ
-         H4iEGbMJ/5QeUZJPcpcLM3vXGPclSI6aYFa/WvzAIFQlmohzeWNCt4MN8Sv7CCMl6v3i
-         C60Vx9n+Rvq5D2Hrz3cnid9covUO+tgCLIsLJWmt6cm+fzhmW2TRzJbpJvefB6SeECnn
-         K8hLynBDa+q8KZbEnznIatF0w/XeSYZGHJ0NlIOczc8in+wrZSc7Clc1v17jfeELVxrf
-         kBI30r2cjqBHAfDtb8dqrt3/+fG16qdAdIG2TX3r/o+1FfkPF6P6xu03EWZ0MhSc7huZ
-         kYYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWypgLawK7MZirWAAleGn7yNxiGdBBrAL8sftFy3GRdADLuzBAojVwiQxyOmGcTsvdYNWFAk9IQSQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze0M7Excp5ji7mNdU7kVrsqKcSPO1plij/4PWFzBOduzyCIDQT
-	82Lb8vmgOhyRxSSd3OACwz6hLQcI0DgYdMCo0on9jqZNEC/GYrSZ6GqY
-X-Gm-Gg: ASbGnctc2cIeKVndLowTiDsaLeIfPRsb1mTzbz9SfqEjeGDk8gyQ7qBCuxaAUoJjqjx
-	NLXuQLRPFomO0zW6Jt6eA+h3Gps0brGe+PoTi6WZJsf0iyP9qdl25G8saD3qdN6pvgn9kTpu0oz
-	qUiPoc6+/r4AgHG981HvN7iI5MOEQFtHAl90e0IUgKnLJXaOq8N3H84t3mUns6wPPV+azwdIkCf
-	fFpBm8cqr0BcoV/tclf7804R1i5mcpOvM0Gu3SuJjeEkJSjW3CLmPqFsoL5diJgOINCzhd8F76c
-	+lCFHjpBqAJc1bAHHwrBdvicYD/cUhAW2VPy/htIS7Puv/xSnKFJrph5e3QBT7pyNzQG8nq1uhc
-	V6Hn8DxJmGjepR5jnRKsKz5U=
-X-Google-Smtp-Source: AGHT+IGNhskNQ222hAmA35gssLgeVkjancFizkOKZkOB3I+j1naDg4fRXY348FJIKpgreqpT7a9XOw==
-X-Received: by 2002:a05:600c:4fc9:b0:456:942:b162 with SMTP id 5b1f17b1804b1-45f2128cdabmr31042715e9.11.1757677026334;
-        Fri, 12 Sep 2025 04:37:06 -0700 (PDT)
+        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
+        b=ZO2k7DkA+VvciiwXz8gimusarjeLzp9QUAeOyZT5YUwlSuSOm6dEP63AJZ4teM5O8Q
+         +seX4pdMHE1hueqBfN+JvvF8LwK69v9OyeCmy1nP9L2jZsSyAhiWqKJ+tQJfblG/MrGA
+         YCg+n5JdTQ+oSX8vATZLt5Peugm2QPjeJS/w2lFKm3WPo/bdYySzIV6E4T+Xm+xB4sjD
+         4nJcFAQRKcm/hTuLNu9DI+VgzfmLne6AhvdMx/J4Ffr9UGLJaml30Pwq931TaUrFGTOV
+         AUg+F/3uIZ/DXL/l3gMrUUMYAYuQnBraZJDyP+PUzjwNtEyD/wWCzRTRPFpH+TJqnLI8
+         nHjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2u3pDg0jZpC710DQKwxAplXjYs0imYcfOhfG6tF+YNGbGKBt6h4U3o9OD6qrumurHDjDyOGh05/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQOkhXroaMVE8gNADGgjBTHtA2Ov/K/v8uFRHmoCQ/uaHtSZKu
+	Y9vuoH5OWZzDs8paziCbfSBAHBXTkE1Hvg7jak9BBhlcPuNgfF/6ZIWC
+X-Gm-Gg: ASbGncuWWCOwQX0aVmS3++diq473y/M2wHK8GA/Kc/E5vLNjz75nfIKO7ssqEJnBmt/
+	FYHOt9K51JGu0K6c1U7SHluAJ3wsf6kAllkcx55kByQw2i2Er87YR+/oPVAguaEbUdf3PY+A4bD
+	UfgFEY8zKnpZRqoi4DkaXKQF1SbFQS8JOMY+aJtr4iqhPI/iu5RnaMvRiS/uT3d9jo1tHAKv3wT
+	FLvYh6QzjLS13FPoJ1oSEORnyBJ1GqdxgTZ2rSvUa0v3tm0oailVIyZAXyXs0gn7YeuVU/8pNNz
+	HGWAK8JC8ExYPykSKEld5tEn1IoahY4+hpik7HwfzsoIttrstdiRUgmGEVc7wBhiOInpGo+fEkq
+	0RnJIduHGrUsbaH/6tWTEASc=
+X-Google-Smtp-Source: AGHT+IGejfUQRDplMR239pOYC0dAntQXwDDPfhYxh2LOkKsXpFqY6rB9nrWYDd+W28ipozk9KPoPJw==
+X-Received: by 2002:a05:600c:4e4b:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45f211d5753mr25454785e9.13.1757677027899;
+        Fri, 12 Sep 2025 04:37:07 -0700 (PDT)
 Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e0372ae57sm58341885e9.8.2025.09.12.04.37.05
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037c3ce5sm59287545e9.16.2025.09.12.04.37.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 04:37:05 -0700 (PDT)
+        Fri, 12 Sep 2025 04:37:07 -0700 (PDT)
 From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Fri, 12 Sep 2025 13:36:11 +0200
-Subject: [PATCH v2 4/5] clk: st: flexgen: remove unused compatible
+Date: Fri, 12 Sep 2025 13:36:12 +0200
+Subject: [PATCH v2 5/5] dt-bindings: clock: st: flexgen: remove deprecated
+ compatibles
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-master-v2-4-2c0b1b891c20@gmail.com>
+Message-Id: <20250912-master-v2-5-2c0b1b891c20@gmail.com>
 References: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
 In-Reply-To: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
 To: Patrice Chotard <patrice.chotard@foss.st.com>, 
@@ -81,155 +82,49 @@ To: Patrice Chotard <patrice.chotard@foss.st.com>,
 Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4682; i=rgallaispou@gmail.com;
- h=from:subject:message-id; bh=hTnvvxl+lyL52rYp9D+lJFkBieFPMCtFihiRlKLamkE=;
- b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBoxAXb8Qr++0bpvmUZDjewhmn4xfqZPw+dw+VQL
- vIFLz99yM6JAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaMQF2wAKCRDnIYpo1BLC
- tTj8EACagCvpdyYmyWR46Tf5X9sd9Vpyz9s0HqkWr/OjKI7Qc3phPpfpNGkMkKK5EqsoAhZp22W
- L1VMhuFlgfOtEWby0yEft8R9/Hd6kREeMBw6e9rw0gx6/JG0yQVDnWB3P8eq2eOBnhPoyy3VWRY
- PS1t9JoZj2L6k/QNWzdw1IDQ/FVXs2JP7/9tCE2aHZ1Vf0kS3d8vt/IOpOi3gFATsFxDIkWpIrc
- 0Ht4G4JvRuC09zayud9PzXJdUWvnDCrBCJwIdthHn4mFvpluaNPLgO/XhNQv1WYFb6AlXmRGyGP
- bWi1tG83LNU0OirrG5p0zfWVIGHn+cevKmaFU8g/FmvuInEYPor6SMfiyRaPMpIrvh/rq7e1jFb
- 3hgyJ5Iuzu/xphK98McPopQ9NuAUe05UPbb834iWGVbaakSitaiY21KnYFNhbfgGthB2Vguz4II
- EpWn02pAbATtNd+h0h28NjEIi4nCI2ElsxUZJP695rHn7ffdy44TanwPL78J+upKpMtbuXVYZmc
- 55AE1x/TEFEO77/qluqbsUvkUdeIH+uQiye5Jb7ILezL7Av0NNVDXfnq56qhVGlfkfPKJ6iJDsM
- dNsjv1Ip/FNt1PiH6HFV6HHfcWgu3ZNu/IAfp6HbieFpqZRDQjfU+gBV6mmelgA1nmqQUiBYYW8
- pICRc5B3BFmGzDw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1176; i=rgallaispou@gmail.com;
+ h=from:subject:message-id; bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
+ b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBoxAXb6s+ndbTRQTQkT6UJVWKMYLPxxzYY/K27j
+ OhxLLATMzKJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaMQF2wAKCRDnIYpo1BLC
+ tTAbEACsW8Im2GJnyd/A9nW2OVWa8v21L3beKtkkrcLZsvVewjBorACl5+Q1BKgUbkdPtOmAZX0
+ +vaB0XO1cTHWSXY/qBF0B/Ld1sJhebFPhX5RweGvcmpuW/vStC9N/KRFejRzHwU10Cfaj7AXcrR
+ F2sdu1Lv1e3VC6Zxp1sct77rAsQQKhGJyUUn+n8D2auTQoy05RB2Kv8qC2FnsI98XzI9V7a8cgX
+ UfHpmJ4U0czwQnaASE86LGQKYYEb5Ue38wlq9gUXFwn24q6UbSfFUq7Xm3E/AUtMD4xHtkMcjt0
+ uJbMojvibnzFYpmAz7ZB25Giqkp06Js1WW9AP0RNEH1lKvNBrCUymMEihmPEKYOJGfIHc2KxCNN
+ 2rZ5bUcG80xGYLIUuWZUotY/ocEbPGjH/bDI1h73K1QF9JxnW5oDGCNo4NSuUdP4lgoTYpXjzLo
+ SpDh88lX76avVtTC4w9iMnlN+XcDWFqQGjYc+gh7HxkKTJAA+AkHtJd7wVKX42e5KeyUo0auQCt
+ VuxwNEdOyP7Ggui6l/QLl27SaiLEx/Qb+O10OAXfdEz7tQ3Tdx7fqL2umGBF6q315EnePvPfFw2
+ m7YD2UwpCbvcbtuLx4qA4nrCVTFqSJnVtYZ1tt8jRkICBgyusKv71wesSyVF+cfkxZOH3gTek5I
+ GvveP8+RJR+TfIg==
 X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
  fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
 
-Following B2120 boards removal in commit dee546e1adef ("ARM: sti: drop
-B2120 board support"), several compatibles are left unused.  Remove
-them.
+st/stih407-clock.dtsi file has been removed in commit 65322c1daf51
+("clk: st: flexgen: remove unused compatible").  This file has three
+compatibles which are now dangling.  Remove them from documentation.
 
 Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 ---
- drivers/clk/st/clk-flexgen.c | 80 --------------------------------------------
- 1 file changed, 80 deletions(-)
+ Documentation/devicetree/bindings/clock/st/st,flexgen.txt | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 5292208c4dd8b45edfe7c2722e934dd0299c6d34..e8e7626c76db06b2255908a6658bca1f42600c85 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -303,16 +303,6 @@ static const struct clkgen_data clkgen_video = {
- 	.mode = 1,
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_a0_clk_out[] = {
--	/* This clk needs to be on so that memory interface is accessible */
--	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
--};
--
--static const struct clkgen_data clkgen_stih407_a0 = {
--	.outputs = clkgen_stih407_a0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_a0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_a0_clk_out[] = {
- 	/* Those clks need to be on so that memory interface is accessible */
- 	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
-@@ -324,51 +314,6 @@ static const struct clkgen_data clkgen_stih410_a0 = {
- 	.outputs_nb = ARRAY_SIZE(clkgen_stih410_a0_clk_out),
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_c0_clk_out[] = {
--	{ .name = "clk-icn-gpu", },
--	{ .name = "clk-fdma", },
--	{ .name = "clk-nand", },
--	{ .name = "clk-hva", },
--	{ .name = "clk-proc-stfe", },
--	{ .name = "clk-proc-tp", },
--	{ .name = "clk-rx-icn-dmu", },
--	{ .name = "clk-rx-icn-hva", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-cpu", .flags = CLK_IS_CRITICAL },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-tx-icn-dmu", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-mmc-0", },
--	{ .name = "clk-mmc-1", },
--	{ .name = "clk-jpegdec", },
--	/* This clk needs to be on to keep A9 running */
--	{ .name = "clk-ext2fa9", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-ic-bdisp-0", },
--	{ .name = "clk-ic-bdisp-1", },
--	{ .name = "clk-pp-dmu", },
--	{ .name = "clk-vid-dmu", },
--	{ .name = "clk-dss-lpc", },
--	{ .name = "clk-st231-aud-0", },
--	{ .name = "clk-st231-gp-1", },
--	{ .name = "clk-st231-dmu", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-lmi", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-tx-icn-disp-1", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-sbc", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-stfe-frc2", },
--	{ .name = "clk-eth-phy", },
--	{ .name = "clk-eth-ref-phyclk", },
--	{ .name = "clk-flash-promip", },
--	{ .name = "clk-main-disp", },
--	{ .name = "clk-aux-disp", },
--	{ .name = "clk-compo-dvp", },
--};
--
--static const struct clkgen_data clkgen_stih407_c0 = {
--	.outputs = clkgen_stih407_c0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_c0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_c0_clk_out[] = {
- 	{ .name = "clk-icn-gpu", },
- 	{ .name = "clk-fdma", },
-@@ -482,19 +427,6 @@ static const struct clkgen_data clkgen_stih418_c0 = {
- 	.outputs_nb = ARRAY_SIZE(clkgen_stih418_c0_clk_out),
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_d0_clk_out[] = {
--	{ .name = "clk-pcm-0", },
--	{ .name = "clk-pcm-1", },
--	{ .name = "clk-pcm-2", },
--	{ .name = "clk-spdiff", },
--};
--
--static const struct clkgen_data clkgen_stih407_d0 = {
--	.flags = CLK_SET_RATE_PARENT,
--	.outputs = clkgen_stih407_d0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_d0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_d0_clk_out[] = {
- 	{ .name = "clk-pcm-0", },
- 	{ .name = "clk-pcm-1", },
-@@ -596,18 +528,10 @@ static const struct of_device_id flexgen_of_match[] = {
- 		.compatible = "st,flexgen-video",
- 		.data = &clkgen_video,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-a0",
--		.data = &clkgen_stih407_a0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-a0",
- 		.data = &clkgen_stih410_a0,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-c0",
--		.data = &clkgen_stih407_c0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-c0",
- 		.data = &clkgen_stih410_c0,
-@@ -616,10 +540,6 @@ static const struct of_device_id flexgen_of_match[] = {
- 		.compatible = "st,flexgen-stih418-c0",
- 		.data = &clkgen_stih418_c0,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-d0",
--		.data = &clkgen_stih407_d0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-d0",
- 		.data = &clkgen_stih410_d0,
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index c918075405babb99a8f930f4a4430f57269417af..a9d1c19f30a3366c2ec86b6fe84e412b4b41ea56 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -64,12 +64,9 @@ Required properties:
+   audio use case)
+   "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
+ 					and activate synchronous mode)
+-  "st,flexgen-stih407-a0"
+   "st,flexgen-stih410-a0"
+-  "st,flexgen-stih407-c0"
+   "st,flexgen-stih410-c0"
+   "st,flexgen-stih418-c0"
+-  "st,flexgen-stih407-d0"
+   "st,flexgen-stih410-d0"
+   "st,flexgen-stih407-d2"
+   "st,flexgen-stih418-d2"
 
 -- 
 2.51.0
