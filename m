@@ -1,70 +1,70 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97535212568
-	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 15:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FF4221267
+	for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 15:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689439; cv=none; b=OSb1XE8GF0pzAzkFH6pgVem2ZD2jN/mGpgnTRGsJohK2GN9sv9/yaLJJZ+rWLIkNT+0JC04EKKuR0YK+lPLiLeGcZUzToW/2bwXJ+/ZcxN/0wd9nLgJWA+Yic4bujlF5Ef9qEMBSYkUxERT4nOkI1moK8YCm89F4Ms6hWyATr8o=
+	t=1757689469; cv=none; b=AFXQN/PnUw2buwUY0kuC8fwSioKSdcFHbvck5PP+sHZV8gN9ngQLbKFqWFSLvgbEWjLVJLLmWyTHjd/lvaGipwsES04J11iaBIinqR9zOYG+x4evtVjLOU4ANoTC2P4FbN0kW8KN/mow+ORzM/iDYI3yRbpNtud1L6tC0G0m8nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689439; c=relaxed/simple;
-	bh=DS83X1AnvvzLm+bCai80VK+iKHbBFz40tJWSVtqRlZs=;
+	s=arc-20240116; t=1757689469; c=relaxed/simple;
+	bh=2U3DqoOB9c4gUI0P2Jy+1Db4qAN8DMTnVvxyqVJIm5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6UfSehgFq/Y4yGG4Cw7pFTarmJ9eDYZATPHbuDabgUK9pr/IqV9N+bqhOPBacUJQBaSKWqbUksPjOC2aCnHQrawhiBNA9CyhtM0BFCjkUTWi7u/TM5Krn9qQNglKLmaDhejHtBeyu9DRvIOP0apOzBWLHT0hWpJz5V9dZ+zg+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YDhVXGJR; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRrq3C28geJWQnPnNQRvkQBcxixsE4552fk93vlXqpDXZPJ2WZC5sND/4TOx8j1umHsePB46us0QLp7IY1z7GW1KDnmPIyGiMIsUzp7XBnwOAy6FmtLkz68/T7VleEOZt+JhXs/cYNomi7tvHXEX+95/V/Ii5ufMHE4vhBB2+2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrvLJUOC; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YDhVXGJR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrvLJUOC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757689436;
+	s=mimecast20190719; t=1757689466;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ql70NaELGKTagorgJIq5i9FlqS1h8VPOM70ZysXf1/A=;
-	b=YDhVXGJRhQnZwr9pyEWVgvwTAL6+ahv13P9ZBnXBnRZ8ro8UhT4OTlsmK0MfyK4F4xD4wk
-	NSa3aqksSZyySByDgDBpSptbVcddv1lmWn7cL78v/EgeF2gpHCC7pNDmoP19d8iaKkTfnf
-	cIL82V7Zyb2/85X8mXePrfdZMYcMr4s=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=w6+03+6KMi0xIZ+CNaQJK/sgah2Ln0Cdnhj4ONcK25Q=;
+	b=MrvLJUOCb1oYH1KrQvBWguPR6dddLTKpfP1OemrSUe/I/zy6+mM1FVrS+Uj6XqkNTael/E
+	8qNjdA+mj9GxlcroFqrF7eEar/mzNrPvdI1KuFk4s4rONaTD+xcRgyZ/v9VqQ22rN9z1cl
+	G/PsjwSXnRj+smJ58ios76N4Cbk3X0A=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-YPaybJLoPzeoWuEN4KLlQg-1; Fri, 12 Sep 2025 11:03:55 -0400
-X-MC-Unique: YPaybJLoPzeoWuEN4KLlQg-1
-X-Mimecast-MFC-AGG-ID: YPaybJLoPzeoWuEN4KLlQg_1757689435
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-73050748418so16871127b3.1
-        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 08:03:55 -0700 (PDT)
+ us-mta-26-pnc9l-HpMy6SCaxCiJPT2Q-1; Fri, 12 Sep 2025 11:04:25 -0400
+X-MC-Unique: pnc9l-HpMy6SCaxCiJPT2Q-1
+X-Mimecast-MFC-AGG-ID: pnc9l-HpMy6SCaxCiJPT2Q_1757689464
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-806f812a0aaso453996385a.3
+        for <linux-clk@vger.kernel.org>; Fri, 12 Sep 2025 08:04:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689435; x=1758294235;
+        d=1e100.net; s=20230601; t=1757689464; x=1758294264;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ql70NaELGKTagorgJIq5i9FlqS1h8VPOM70ZysXf1/A=;
-        b=pwt2vrOVt79U3YcYJo9IUjev/djWIF/3U59dnMWmSmkFYVmIWbzEUx9h6L3KIHbJ0+
-         BmEi8zLgpv9tfbLyvVD3LEv/dCPp9+jtZtJpv5benmI0K5nuS3/kyE3AOOKQyq91ZC0I
-         yLjxClfP3BJ08Lw2BhN6mzFnuFSvwWgixLepsV2YYssvTu1E3/E/R2gizAH2jg/OeE9J
-         MhOHwoegtMuQU7RUQEfFbSeaOJicc8ze8z+BSNiDE+Tg45lSRhNRlkh2BgrT5KfU8yV1
-         8QdcCiPOwIlQ0sHxO0j4eiEhpUQ04A13FBPU1JSrCssKap9JvFQpUecCX2PeH0bnNiLN
-         eAzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKmYxH/oBfmf1YGTEDhMdXsaFZBUVfNpLaalEI4P73ItNMf4mV8KzTT7XUv7tBqcv6sA97L409Auk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbmHVgLqzVsQrzXRYqyV/39LyFe7FfYDKAjnD09KZANQ4WAtLe
-	oXu7yBaMyQ6jlR6O986b7EU8YAB5UDb3wPyUsWVEFyAC62v7aXeLsBxvZo8OmcXlsxA3V1o1Uw9
-	CA0UZiJy1yFekL66i9iFePb+tPiEmjaoHsH+HB8L6q5IoXQ8SeJy8AemdoTTC7Q==
-X-Gm-Gg: ASbGncurqGZK2ROkSVspV0i/5S2ObEVvO+6PAjLzZ+vUjaxrYiw72uZbsRGS5ROkUv7
-	aL65vdz+sVUrPZ258iLYmaw8cM1Nak2PsURV0mi5BPENdZCDRsdS+HWrLOCeP2EPCTZ2OAc/vY4
-	HXgHigMAi1i3xZ/us4Wa5PDSnOT4M+VHRilnt68vIFvx08+MOSixebEUPworY+W5+VRKtRBoKpj
-	z4VklgZE80yNrlbLziY3TY3u8SO7DB+votxpmIv4JulDSzcd5b+Mm14LLxZUdoG4hyFmeIKWb0U
-	snDjiPfXKiy/ROzzy+223c+V6pSwV8VUYpIGn+uJrGtfHJhYPUYH9zD4/8UuwD/F9zW7Mw/EAVe
-	MP2bX/JcaVUaWzs1jkOn2sybJQQrxBQ==
-X-Received: by 2002:a53:d30b:0:b0:5f3:317e:409c with SMTP id 956f58d0204a3-6232f8cb7ebmr4945687d50.0.1757689434720;
-        Fri, 12 Sep 2025 08:03:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAX6xF2fAzdjMOvplSdvZGKXrlcHOORL6WIZPj+3wYjGbwX4wiucOJhgAsE3V0lTTyfzcHDw==
-X-Received: by 2002:a53:d30b:0:b0:5f3:317e:409c with SMTP id 956f58d0204a3-6232f8cb7ebmr4945647d50.0.1757689434009;
-        Fri, 12 Sep 2025 08:03:54 -0700 (PDT)
+        bh=w6+03+6KMi0xIZ+CNaQJK/sgah2Ln0Cdnhj4ONcK25Q=;
+        b=hOb0UWv1eDruTugtlsVt9tsrks3Po/s0G92moRlYAlVmgN97KrbGsY2tcPO8DDDEmY
+         MfM/7zebQAA75WyOcIsrwTwiFa0ON7SH1aRCCbNvCGlhW9s5xziu+a38PO3iThBXVZ8e
+         +xW3sAAQLNNGjkdY4tO4I2fugjejIqRpw38ZCdnQEWxSXOa7HGnXWjM0EW/NEAE+mzFo
+         CICYFqlmxJXiZmWwRCAXqXNFVi6OJSgPzOyQTH6CFoQjKAeU7B3JM2htOH0IA+SyukTh
+         6jVf4c+4/JtSmFp3Mb3AYHMt9NEH5ZasOYiXbMjyaqGp2brdIUsqp48nOmsu3OvlZTH6
+         S+Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMJG4VjkB5JK0YvxKN3ModjdDXHEjksC1Xx2ygnnrbbqJXd0Gan2AuXfQtLjcGQalHtTe/ELwEjCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1QVHctO0YCuZkediAokrPAc5234vmPisSLZcI/ach7FCJOzFL
+	jGrvdBaqH1XgOCbFpB5nKi/nBgcFLsRw/uSaJld/kr3OELtovnOWt+0QQ5r4D8nwTNBAMa2wKO8
+	18OcZpvqeNKc+T59lAMH5PmRG4KEsk3Ifpqt2ufs2n+Y89UXulU6WR5jwU8Rltg==
+X-Gm-Gg: ASbGncuxcatPm/kh/uXRi6ZNJ02APa7/wf3I/jIwdbss/5tyD0D4Lfntvl9lnFuIBzU
+	zV9NB5Nxmc1KzD35V0Z9Zm0QVgwBi2VlnBt/ldsuWTlxUk2A170m4pwSDA2NV+DlFo6Tj5L9IuL
+	CEOSc9dMRshUjs0Fx34h0L0DGF9JcziuRN0HYkyr8ZKCbwLCmMy1X6lFc+b8EHxoM81+LKf0XRH
+	0K0gQDLpdNbbYkmYFiTJoPcJOvMckHJiHSrBK+AHRar332SY6F2TeHi94zoBRR7iwbUIcWNTfE2
+	1g/kEJqLwad1WGF/l/klj2EAXF12MIJ0+XuEszplNDr1TEntWoey5VQrOxXDkUol/9aXiUNxwDq
+	HlBJaNVfIGauhnAinYJr83A6gwyeJ/A==
+X-Received: by 2002:a05:620a:28c4:b0:810:bba9:d089 with SMTP id af79cd13be357-823fc987678mr477701985a.32.1757689452954;
+        Fri, 12 Sep 2025 08:04:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEgtgh/Gg0WuKmmKqdI04apG8y63BvE/4WJYY0ss9G0WLraw6KPsoUpne6BKqb/M/2Jd8L2w==
+X-Received: by 2002:a05:620a:28c4:b0:810:bba9:d089 with SMTP id af79cd13be357-823fc987678mr477601585a.32.1757689446310;
+        Fri, 12 Sep 2025 08:04:06 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820c88db181sm287951485a.4.2025.09.12.08.03.52
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd704b90sm283525285a.43.2025.09.12.08.04.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:03:53 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:03:50 -0400
+        Fri, 12 Sep 2025 08:04:05 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:04:02 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Raphael Gallais-Pou <rgallaispou@gmail.com>
 Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
@@ -76,10 +76,11 @@ Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
 	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: st: flexgen: remove unused compatible
-Message-ID: <aMQ2VveE3hIgmOBI@redhat.com>
+Subject: Re: [PATCH v2 5/5] dt-bindings: clock: st: flexgen: remove
+ deprecated compatibles
+Message-ID: <aMQ2Ym1GL3ZbyAOI@redhat.com>
 References: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
- <20250912-master-v2-4-2c0b1b891c20@gmail.com>
+ <20250912-master-v2-5-2c0b1b891c20@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,13 +89,13 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912-master-v2-4-2c0b1b891c20@gmail.com>
+In-Reply-To: <20250912-master-v2-5-2c0b1b891c20@gmail.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Sep 12, 2025 at 01:36:11PM +0200, Raphael Gallais-Pou wrote:
-> Following B2120 boards removal in commit dee546e1adef ("ARM: sti: drop
-> B2120 board support"), several compatibles are left unused.  Remove
-> them.
+On Fri, Sep 12, 2025 at 01:36:12PM +0200, Raphael Gallais-Pou wrote:
+> st/stih407-clock.dtsi file has been removed in commit 65322c1daf51
+> ("clk: st: flexgen: remove unused compatible").  This file has three
+> compatibles which are now dangling.  Remove them from documentation.
 > 
 > Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 
