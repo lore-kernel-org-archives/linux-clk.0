@@ -1,43 +1,43 @@
-Received: from mail-24422.protonmail.ch (mail-24422.protonmail.ch [109.224.244.22])
+Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623B32E62C0
-	for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 21:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F62E7F15;
+	Sun, 14 Sep 2025 21:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757884842; cv=none; b=l8haadHOEa0o2wctOmC8/P2GA3X+JJdiDjc2jzg+YRfP1i5LhlRE0bSDYz7jN7CEw7WGhwLfJ42TgMOVLf284uQY/fnvHX1xdeY2OKUakaplvNmLtiziuxE4uNUn2a0a6uzLqFzpzGdzG8xrq0coXCxItE/VpLtgmODLndUg05c=
+	t=1757884853; cv=none; b=WQiKHR8+mnk6/FrQyWpNMmkaXEfByntiC6/IkruNmLH1vVwPdT1SIzFidV3kUAhw99kCBc/UL5AbxnRgOuiTgotKfGkUxwT/1bAFVAbrvN4GqHQ5N5LciAvqhtdZ68CicpKwQ0rnTa3YoJDT9NXuRjaQ3cjjN8wORxGI4gIZMWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757884842; c=relaxed/simple;
-	bh=n8ed6ZgNTYQSpv3lZaLRY2mtiSkCkEeoGCHf236I0Kg=;
+	s=arc-20240116; t=1757884853; c=relaxed/simple;
+	bh=mmgJCfUyGE59PSXhluohTFxk2CSFp51DzKWgMlshUko=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ktT73CzgIUVdLFGIxwOa3RBbtDokUpgeIwY0U1bfBuZ0D+FIu5k3RT5x15MtNXPRnf7ueffJEImBIc1BEM1giDA8VqvPA/fxEbE+Q8brCEAhSzQwVAq3nBN3yXmWYBejAWwPi92LQ2uVHY/wpPamlG7OsVFGOzGKFGfXoC7QBDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=OHpyasHg; arc=none smtp.client-ip=109.224.244.22
+	 MIME-Version:Content-Type; b=MYeR9MUC/SeF0LXGlw/eoKvwnSHxPUENL/G5Klixvt6hUAhqePcCbV4qvww1sSvvkcfHSwRdMFOsFN3rMUD8nMvBWvMVttOREOrEtkswSQQ5wNBJmJTHvsW1ZrU2uMLA+QooHYUkJwh4egHEyJ7lK6y92jvSBkcvT/eV2q3iq5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=EFjT+GYP; arc=none smtp.client-ip=79.135.106.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="OHpyasHg"
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="EFjT+GYP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
-	s=protonmail; t=1757884838; x=1758144038;
-	bh=MuYJPjqO369cLtT78pu4q0h8jWBIkb6EelOSKhjt1So=;
+	s=protonmail; t=1757884848; x=1758144048;
+	bh=mmgJCfUyGE59PSXhluohTFxk2CSFp51DzKWgMlshUko=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=OHpyasHghddSwMxti/2xQUmZSn7VMYXCUj52PeyQLUMrRnDjQYcWTuTCKXVe3q73c
-	 1IpUZX//AYFSlgXkzytlRMk1ku+JZDmx7NOTnEwlC72RNdGbSJ2O7n6CrRY/mNXJvJ
-	 nLNKJigFdwnzn6dtMzwyCgFkEGf/wdwjxBFDFRlz34uQndkozZz8NFJa96ZbpjXBn9
-	 cGUtrCGLokviFilbNkm4dHCrIFhZvgVY0rfSYUatgfbj4seZQbmySFqRtC6ztpnXX5
-	 hM1jgxs+U3gRzhHoTxDFx+M+SzjqNkMq7WqJ3DSFY3qL/QhuGQx6jx0HLtBYEsF37X
-	 ugl8FYyUgpXng==
-Date: Sun, 14 Sep 2025 21:20:30 +0000
+	b=EFjT+GYPLf7Fuy9LBws+HTJ22YxKwa15I1oUIQSH2bStoj0Prtx9I6TSv40dVAifj
+	 mCT2qcc0lZTDeypszc+eBlOmJGRAyeA9furSO7n5APntt741nVGFkLg6pnAW7OBSHH
+	 QsOj1R4pnxojfEo0QGrO1K5YxUrjqqyJ8tTXGNbsrUUaHxW1vHzjCjVy26Q0Y1TJHM
+	 +iYJ/+fLSnCBqhkHrxEXkN5KObtYJZOXXJX+sdwwVMASaNF9n8ygp3tsnVpkOWcJRL
+	 hQLm+sf/n7q62Z+7XDeT1LZMcjMbV0lkeL+bkVtAUUOfz5XW/y1l+GVYfOWHRLKSzE
+	 LBPWIiFJhcDfA==
+Date: Sun, 14 Sep 2025 21:20:42 +0000
 To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alexandru Chimac <alexchimac@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
 From: Alexandru Chimac <alex@chimac.ro>
 Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
-Subject: [PATCH 7/8] arm64: dts: exynos9610: Assign clocks to existing nodes
-Message-ID: <20250915-exynos9610-clocks-v1-7-3f615022b178@chimac.ro>
+Subject: [PATCH 8/8] arm64: dts: exynos9610-gta4xl: Assign clocks to existing nodes
+Message-ID: <20250915-exynos9610-clocks-v1-8-3f615022b178@chimac.ro>
 In-Reply-To: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
 References: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
 Feedback-ID: 139133584:user:proton
-X-Pm-Message-ID: 4ccc2d5e2d6824a04c8c279d5349b2744e279e32
+X-Pm-Message-ID: 817b1c8826d8fad866384fcd032225ea749d553a
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,64 +47,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Required in order to have these parts work while the
-clock driver is enabled (without clk_ignore_unused).
+Temporarily assign DISPAUD_DISP gate to simplefb node,
+until the Exynos DRM driver will support this SoC.
 
 Signed-off-by: Alexandru Chimac <alex@chimac.ro>
 ---
- arch/arm64/boot/dts/exynos/exynos9610.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/d=
-ts/exynos/exynos9610.dtsi
-index 8ac113ceddacc30b52fa35954c85e1b8c320057d..2dc7cdda83d9357cb2a44d58d66=
-6a75674c83ec4 100644
---- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
-@@ -319,6 +319,9 @@ pinctrl_alive: pinctrl@11850000 {
- =09=09=09compatible =3D "samsung,exynos9610-pinctrl";
- =09=09=09reg =3D <0x11850000 0x1000>;
-=20
-+=09=09=09clocks =3D <&cmu_apm CLK_GOUT_APM_APBIF_GPIO_ALIVE_PCLK>;
-+=09=09=09clock-names =3D "pclk";
-+
- =09=09=09wakeup-interrupt-controller {
- =09=09=09=09compatible =3D "samsung,exynos9610-wakeup-eint",
- =09=09=09=09=09     "samsung,exynos850-wakeup-eint",
-@@ -342,6 +345,9 @@ cmu_cmgp: clock-controller@11c00000 {
- =09=09pinctrl_cmgp: pinctrl@11c20000 {
- =09=09=09compatible =3D "samsung,exynos9610-pinctrl";
- =09=09=09reg =3D <0x11c20000 0x1000>;
-+
-+=09=09=09clocks =3D <&cmu_cmgp CLK_GOUT_CMGP_GPIO_PCLK>;
-+=09=09=09clock-names =3D "pclk";
- =09=09};
-=20
- =09=09sysreg_core: system-controller@12010000 {
-@@ -385,6 +391,8 @@ gic: interrupt-controller@12300000 {
- =09=09=09      <0x12306000 0x2000>;
- =09=09=09interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) |
- =09=09=09=09=09=09 IRQ_TYPE_LEVEL_HIGH)>;
-+=09=09=09clocks =3D <&cmu_core CLK_GOUT_CORE_GIC_CLK>;
-+=09=09=09clock-names =3D "clk";
- =09=09};
-=20
- =09=09cmu_g2d: clock-controller@12e00000 {
-@@ -434,6 +442,8 @@ pinctrl_fsys: pinctrl@13490000 {
- =09=09=09compatible =3D "samsung,exynos9610-pinctrl";
- =09=09=09reg =3D <0x13490000 0x1000>;
- =09=09=09interrupts =3D <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+=09=09=09clocks =3D <&cmu_fsys CLK_GOUT_FSYS_GPIO_PCLK>;
-+=09=09=09clock-names =3D "pclk";
- =09=09};
-=20
- =09=09pinctrl_top: pinctrl@139b0000 {
-@@ -489,6 +499,8 @@ cmu_dispaud: clock-controller@14980000 {
- =09=09pinctrl_dispaud: pinctrl@14a60000 {
- =09=09=09compatible =3D "samsung,exynos9610-pinctrl";
- =09=09=09reg =3D <0x14a60000 0x1000>;
-+=09=09=09clocks =3D <&cmu_dispaud CLK_GOUT_DISPAUD_GPIO_DISPAUD_PCLK>;
-+=09=09=09clock-names =3D "pclk";
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts b/arch/arm64/=
+boot/dts/exynos/exynos9610-gta4xl.dts
+index 1a09d5e8ebaa130e9cd0b7f3266ee2c9dac4cf9a..e08a3603c27396c96dc2e9d5186=
+be504ff7ce3aa 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
+@@ -29,6 +29,7 @@ framebuffer0: framebuffer@ca000000 {
+ =09=09=09height =3D <2000>;
+ =09=09=09stride =3D <(1200 * 4)>;
+ =09=09=09format =3D "a8r8g8b8";
++=09=09=09clocks =3D <&cmu_dispaud CLK_GOUT_DISPAUD_CLK_DISPAUD_DISP>;
  =09=09};
  =09};
 =20
