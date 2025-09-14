@@ -1,159 +1,188 @@
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A1C2857CD;
-	Sun, 14 Sep 2025 16:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD30A25E813;
+	Sun, 14 Sep 2025 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757866986; cv=none; b=oiuSXwLlq0vXPFiGgYKNlW5Nl+JDzRzH0qym6bzlkpBxxZse1o6japn6fgsSguKdnMY8fN4SDI9SUVRfDSs7iOEUoGxOXdL1u0K17khHi4hecHcGhjGUqmgr8qbkvwUOVV3Y+6GhA/qpJg3xERGaBOcikKsE6Kpk0iMcsuxIczw=
+	t=1757867722; cv=none; b=gUtLC7byH62M6F/5VMwCLO6ggqOyLSl+QCDWILecvtegSapyFLMCDBw+9cGOwcQlc6RebBwmR+dGSKTaha1JzNXslo242ycwXlHKJ9j4b+uXKftjM8vJyoLOlpw5FM9LYVqRaoz7y1IxRwOQ9GQP8CSdXFeCt6AVMs81uIK12+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757866986; c=relaxed/simple;
-	bh=dQxeITb5hY6qfYJHe0khMY48r+n3JwUcweNzQW8TgQM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=F+B1Nm33z32rc80mYZmIq8deKbJ5idn7fT40zqT4OZ2PN4TV4OPjyPdCzB6YTUBS7XDGsyIGPacCyJFgCi65Tfe+WpZ0khpq+ciuqHqZeOCSk45qF9TcvR1erHge06ErDT2kYfMPR9rpf3uTmQQjIXsMUqVPYj+IJDBJcGLHlwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=o6BzjhQT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e9vHFZqc; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+	s=arc-20240116; t=1757867722; c=relaxed/simple;
+	bh=d/DksVt1jOUUNg1guB1c26u/tAnFGmp64Nkbi1kNFUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkMlldDq971z8hhcBL7kESHwhZ5ypAL7x/oyrOEkaGZ61P29bq6zEsbrvm/zyyzf27i2lSpJOyOywjkvu6zsbyIIQbPVwz9oczFD6VbP0cM/3RbOKFGCtSRBgxE0pVLQ/BZtOqDjTKGNqhgxavfLZ3JlqNWBpttEpc2HW2doNcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn+TQJVM; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="o6BzjhQT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e9vHFZqc"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2AD5AEC0A77;
-	Sun, 14 Sep 2025 12:23:04 -0400 (EDT)
-Received: from phl-imap-09 ([10.202.2.99])
-  by phl-compute-01.internal (MEProxy); Sun, 14 Sep 2025 12:23:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757866984;
-	 x=1757953384; bh=GczAxd/yOSl3eyN3svqHIDHZRTOmApw3DytFsK5tSX8=; b=
-	o6BzjhQTP5L8iMh5iwoe0nwR2vEB6NL2HM1yh20N1T67qvJxkbtvyHVSHcfBozG5
-	xt/2Sb0flapuO8VrdLs0hzh9IUHcUAaIdWmptEaQjAyKBDiL4f1TwkJUE/QkmTPv
-	uEvaxkyBEwhsFb3zYNFQLfZzpjvJ2CzDI1qdWMlAa9XvtA/4wUo6xvd8ap+MIPbJ
-	zQttLtiY3z7wCHKR3j+XyhxvHQ2URGvdhNCMu9JBdh9zHmVFdZwOm7Eb65kOuOsv
-	42Ti13OeB1AZSydiu5rzfv3zAaDIsOo7Q9WzO0RyrEkNtg8RXftXWhwGVJzoejTi
-	zD/lZUHhekmAxVc00k0Vcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757866984; x=
-	1757953384; bh=GczAxd/yOSl3eyN3svqHIDHZRTOmApw3DytFsK5tSX8=; b=e
-	9vHFZqcSBnE7AlrCG++OwRj8Z/hghx12ugNsgf1QNu+TD7vYLFRX4qshSWfMCNgs
-	PRIbxCAmbZy14eBNjGHuh68RX3/3hUtWJZists/pjouPAibe9m368whsGYq8H0SP
-	CHq9PcFJsxX1EeJK/JvpwMdO05iNczBDkig5EgSKj+io5tgCS3wkaiDSkUnliM7q
-	pFKnibyhFCQkOnF2F9amLC0EtFXYC3I1vhJm7YH+AuC9zbZVfehJohp3wtVVQZOF
-	nf4bFSPrK3jJpEYpnRSSEUyIdpmgqhY5OriElkSqGnulubkeH/qfPtTn/2TkT6X8
-	g+uJloEzpl+PnlXX3VytA==
-X-ME-Sender: <xms:6OvGaFqpOjQHw1xk3ksYXbQCpUffVgQBGYEx1tnN57wACc3Q20EXng>
-    <xme:6OvGaHoTD2QANLuMeB62khLtZ0rwZKi1ayIJy-Zz9CClkesL9Hb-66tJl72q5rnjm
-    nGH2pDrl32oicMAW5U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefhedvkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdflrghnnhgv
-    ucfirhhunhgruhdfuceojhgrnhhnvgesjhgrnhhnrghurdhnvghtqeenucggtffrrghtth
-    gvrhhnpefhjeehgfelteeggfehveejffeiffetiefhfedvgedvhfeuhefhfeevvedujeej
-    ueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhgrnhhnvgesjhgrnhhnrghurdhnvghtpdhn
-    sggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthiiih
-    hmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopeguvghvihgtvghtrhgvvges
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegumhgrvghnghhinhgvsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqsghluhgvthhoohht
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhkse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:6OvGaLO6OGSABlTgyVpCBq4izaQXqPCLnwPq1zJn6Wb8CqmwFXIu9g>
-    <xmx:6OvGaHfsyb22a_XpgwB4rkFxKLcTn8av3ij_3k9M2ALzaMizaBQkvA>
-    <xmx:6OvGaH5xxovP0RM7_DjTNkipNuxf-ldkaY53k1ywEIWhwMbdjL9iMQ>
-    <xmx:6OvGaHI5Xb6MzhkDL3DMaJRpOPyCFgroir9wessjpzB6xBDGQzbhyw>
-    <xmx:6OvGaFA97CvX_IKWQ_UH_Jswf1GDUi8s5cO4sx4IrLCj-6mCdJcqRJ2w>
-Feedback-ID: i449149f6:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EAFF03020073; Sun, 14 Sep 2025 12:23:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn+TQJVM"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 7AE3F4E40BD1;
+	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 452446063F;
+	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2DC5102F29EC;
+	Sun, 14 Sep 2025 18:35:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757867707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vXWzLeRrS8rJvdtCJ4XG5FPGmNASV270FtQzQBagios=;
+	b=Hn+TQJVM/yb935GC19LuIgIYljMxAJmsmLz7UaedBGkBq/dhvPV2kQcBfy3bsc+VYXcPvq
+	4XUFb6o+qmnPzfVk378L06lKM+0Hwh+WAzIpJHjswaV58/hO9T1QUoRI0PMih9eIsarw1E
+	RWXDHDGZUvfBkPlD5M1A57aL01icQ+8Oi/dPRiq0n7sQvMJnCQi029NnobOzpevUcLjmIS
+	5bxND2CPJVCPzKcaZU/42UyHVvpvIGDjW85vIXyx9QxPCKQBdBBu50iWY8OOIh6k6oflLB
+	WT/l5aXKGv2IA0teOtyOhhBPaCsU/F2mgRhdhGXJrWwvcUFzxk9AWq+G8dMZXg==
+Date: Sun, 14 Sep 2025 18:35:00 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 6/7] rtc: s5m: add support for S2MPS16 RTC
+Message-ID: <2025091416350055a27358@mail.local>
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ATYmlVkkxBG-
-Date: Sun, 14 Sep 2025 18:22:36 +0200
-From: "Janne Grunau" <janne@jannau.net>
-To: "Sven Peter" <sven@kernel.org>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Neal Gompa" <neal@gompa.dev>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Hector Martin" <marcan@marcan.st>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Joerg Roedel" <joro@8bytes.org>,
- "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mark Kettenis" <kettenis@openbsd.org>,
- "Andi Shyti" <andi.shyti@kernel.org>,
- "Jassi Brar" <jassisinghbrar@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Sasha Finkelstein" <fnkl.kernel@gmail.com>,
- "Marcel Holtmann" <marcel@holtmann.org>,
- "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "van Spriel" <arend@broadcom.com>, "Lee Jones" <lee@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>,
- "Guenter Roeck" <linux@roeck-us.net>,
- "Michael Turquette" <mturquette@baylibre.com>,
- =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
- "Vinod Koul" <vkoul@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, "Marc Zyngier" <maz@kernel.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>,
- "Keith Busch" <kbusch@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Christoph Hellwig" <hch@lst.de>, "Sagi Grimberg" <sagi@grimberg.me>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Janne Grunau" <j@jannau.net>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-Message-Id: <175786548038.4027671.16854298573806924090.b4-ty@jananu.net>
-In-Reply-To: <20250828-dt-apple-t6020-v1-31-bb8e1b87edef@jannau.net>
-References: <20250828-dt-apple-t6020-v1-31-bb8e1b87edef@jannau.net>
-Subject: Re: (subset) [PATCH 31/37] spi: apple: Add "apple,t8103-spi" compatible
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-
-On Thu, 28 Aug 2025 16:52:09 +0200, Janne Grunau wrote:
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatible "apple,spi" anymore [1]. Use
-> "apple,t8103-spi" as base compatible as it is the SoC the driver and
-> bindings were written for.
+On 14/09/2025 15:42:26+0300, Ivaylo Ivanov wrote:
+> Add support for Samsung's S2MPS16 PMIC RTC, which has pretty much
+> identical functionality to the existing S2MPS15 support, with the
+> difference being the ST2 register.
 > 
-> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+> ---
+>  drivers/rtc/rtc-s5m.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> [...]
+> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> index a7220b4d0..910248731 100644
+> --- a/drivers/rtc/rtc-s5m.c
+> +++ b/drivers/rtc/rtc-s5m.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/mfd/samsung/irq.h>
+>  #include <linux/mfd/samsung/rtc.h>
+>  #include <linux/mfd/samsung/s2mps14.h>
+> +#include <linux/mfd/samsung/s2mps16.h>
+>  
+>  /*
+>   * Maximum number of retries for checking changes in UDR field
+> @@ -254,6 +255,11 @@ static int s5m_check_pending_alarm_interrupt(struct s5m_rtc_info *info,
+>  		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+>  		val &= S5M_ALARM0_STATUS;
+>  		break;
+> +	case S2MPS16X:
+> +		ret = regmap_read(info->s5m87xx->regmap_pmic, S2MPS16_REG_ST2,
+> +				  &val);
+> +		val &= S2MPS_ALARM0_STATUS;
+> +		break;
+>  	case S2MPG10:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -303,6 +309,7 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  		udr_mask |= S5M_RTC_TIME_EN_MASK;
+>  		break;
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -354,6 +361,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -378,6 +386,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -416,6 +425,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -455,6 +465,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -494,6 +505,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -532,6 +544,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -613,6 +626,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>  		break;
+>  
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -680,6 +694,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+>  		struct i2c_client *i2c;
+>  
+>  		switch (device_type) {
+> +		case S2MPS16X:
+>  		case S2MPS15X:
+>  			regmap_cfg = &s2mps14_rtc_regmap_config;
+>  			info->regs = &s2mps15_rtc_regs;
+> @@ -817,6 +832,7 @@ static const struct platform_device_id s5m_rtc_id[] = {
+>  	{ "s2mps13-rtc",	S2MPS13X },
+>  	{ "s2mps14-rtc",	S2MPS14X },
+>  	{ "s2mps15-rtc",	S2MPS15X },
+> +	{ "s2mps16-rtc",	S2MPS16X },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
+> -- 
+> 2.43.0
+> 
 
-Applied, thanks!
-
-[31/37] spi: apple: Add "apple,t8103-spi" compatible
-        commit: 3f2ed0057369d07c20c7ab48c1c46dc77eb436c2
-[32/37] spi: dt-bindings: apple,spi: Add t6020-spi compatible
-        commit: ffea30e9e6178eeb7d9c165b0b0b2d2e7c5f4fbf
-
-Best regards,
 -- 
-Janne Grunau <j@jananu.net>
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
