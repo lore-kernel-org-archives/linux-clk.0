@@ -1,31 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616F927F724;
-	Sat, 13 Sep 2025 22:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C93525A334
+	for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 06:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757801441; cv=none; b=idx0XzXA5c1uoUdZVj32eNOeD8/y5zX+CXd1+i8X8Fov/lRXbAUUxXpx+IZ4KV+GVJ1LsuIiXz6S1cOWHF58vE+fFsDwkHTVM5wpJg5xAl4o0r/ZneW+BZ3CtkKl6mmYBg4H1mmWDtBHhjoEHLmaNp81teqRJZEN8WqX5FDYNG8=
+	t=1757832013; cv=none; b=F5TiGnocbgk7RVButzr+d1FeWhNla+/kIJgi47PiQnnZss3IG3yNGMJtkmCOUrLGOXYUNn09pFUh6B+FGYuJE0O33IMD61vgx+4WCgRDwjDK1drOLnWrDQjLYH4upc6h9zr44pmVn9FDUBUBfzCVwG/m49CxvdvvqgCwet8qCeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757801441; c=relaxed/simple;
-	bh=i0bogOX/tsV96N7qxN1qW4aceR3AWq7X8gaP0+oii1w=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=KDhfazZGINMdAPlfa5AmuDFT8PcdWMz9YbqYPykSWaB9m23iKU+zCyVoIZONPlSeWXYX7acbzQT1GeCoxLJkWq0U6tC1kvL/ebrNu6+KH1vGug0qNl3DXi4p5Fxob0p+HS/LbvkqL61p205Li00mTiLuSIi0MyiAw14BjlLZXcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKeJR7NN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757832013; c=relaxed/simple;
+	bh=9OIG5orqFsNwab6LqC4uN8hef6QGTi9NSan+WeIbQu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XI1SQYQStu4eBaDV3WJ4xw9Mft+Mb5PLczpMgWuiKBfhLUtbudQzeOu45HPFUkJAtTllmcyDtF0OY0qRZ6OfHUbyvT3TDJoAZDp2PEbibDI0bV8se1LViowtqQ5lNohHjFWW4iy2ZzPA5XvQhG4plcEFpyP9rvS1xvnFBUhgfcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Og5oG9Yp; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKeJR7NN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EE1C4CEEB;
-	Sat, 13 Sep 2025 22:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757801441;
-	bh=i0bogOX/tsV96N7qxN1qW4aceR3AWq7X8gaP0+oii1w=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TKeJR7NN5+6GM7hgg+l7XOkW5kO9YlHTfypEzelJcP2u/m3HIy4n66/vDoUhL2rqa
-	 Lq3x1Q6bM2AaOMeLZwl8smilcoX/gMGV+8hBc/pw0hxwXAktv3EBJrs0pf6opfzGBl
-	 hDq7VB9fM2WLFtWdI/2h8jySg3JhfxyyoiWBzwPuBavyzQw/Se80sJNCQWOTi9dGoB
-	 qZctxBjOxjzJv2VHirrDqK1VLxxPfIUeOg3JwvWOA/1a/bEmpt9hEn8UUH03H+LNX1
-	 LNwtXjw5riMs4Tn4jNK7VJC/bNXYIiC5zsuXcxbVgEx89d0N7jpu8iEjJgWfTQf1kw
-	 eMS9bBmSwdzQQ==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og5oG9Yp"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e7428c4cbdso2128646f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 13 Sep 2025 23:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757832010; x=1758436810; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGq6925/jIdr2ZHYK/3/QTpUPif8QL9XSz6t8qLpUGs=;
+        b=Og5oG9YpbYzNpCuki7TA79vIrw7ug+aWCFkUlCPUUm7SEFocs+OkDnoRFr4ZU7ZpSI
+         WB5WEkmtWslv0mgt3TuuaAepagLClWUAj1KEsYSMeuLtQX/WIUpEvkSwOkJJ78c1+xFH
+         jipaeElv41VHggVe2WohmVTtF3uqa5aqSfLCadOmYd8/TJ6VbrtCGmPCyRC0azi1YQz7
+         bwmOEozkX00Etv1xNv2wncyky4PJcVzwDgc7VJSpEpS7ZUH0tQLqf5KnJ+NP8MFmYnif
+         npTxxp4Kus/oMfvDDB7j5s75eHB23jzlfIxOn7nxLiYWGuz8wR3EZX0f4LTTZoAIE6NX
+         q/5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757832010; x=1758436810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mGq6925/jIdr2ZHYK/3/QTpUPif8QL9XSz6t8qLpUGs=;
+        b=T2rOuwqXEJjzoUoP0KjQB9W4tSR4sTI1BIA/eRag7fUp6t2uZ+E0ALBekVlTFggahM
+         vS4pP1ugUBfSmLwxnLDrzi0eLPDEJ/49yTNLPVtqLGYYTAIZCJbKWsFhtfp2yMUfxjLc
+         MBmdAZEev+26rI1sajV+1t9JyZWk/3nqb7VA1GES7Areq7XXIHGabgjbQSJ4reOwuaod
+         2rWhC11JJbG3Nga224CO7hrvwboAnNod7hc3VZ442T2nx1CJBMf3ewYety0kd0DxI45M
+         YLi7OQygPoGGy+viCWRwd/GLj4FCdTQbe3rp1RpVOQGnsY/yrjsCwc+g1Pptg/S3m65r
+         yfuA==
+X-Gm-Message-State: AOJu0YzQMZ/byQn0BaUC3/EM5GOtyUCJC2EzDp0welu8GBDlN5KW7RTg
+	Gw7ueCWTeZhnFEoD8bMCJBiL403rv/kXS5qXDNz8dMrfNHHVTA+JKvQ0lGjUNg==
+X-Gm-Gg: ASbGncte1osnveegWDmjlef16MGL0q0bOSPWQevnosibIDHva6l2YTnAbFoNMszm1Eh
+	tvbDORNtv6CdlcIJu59LfmfWod6g00LeSply1GE3estzJrK7yJzc4capHdbTbLkrAo4zC4Vphp4
+	o3LaJLW8yu0mzExUwda13FVeFJmaRvaCuS80MveE7vRlJ2bXsL7ehf/5eeGMu7N7c5enrp26u73
+	sqJIo6Z1ADGv3JrDuHRmphM5ZUQ6386MDAXjEB4MLhkehitbnOARk/7Rr/SANeIyYLudsKzGLWe
+	pzayuLNcJ8Yu+dPYBRiT/tOC8EXfcCXhgWWQ49Q1p9HZdn0jwXWVxOeDjummZ6XQLbzctlTIeK9
+	uSjcXTPzC0Wq8tDAuLo4pS1guOO2KHTvS1oDPo6dngPqAQfmkTuhSTVY4jGVOS/Q35EfS0HtPEK
+	xp+ungmvCx9QHS2A==
+X-Google-Smtp-Source: AGHT+IEkwFzC+MAQUOBOjx0qfNXQf1qYrih4ukqOKlPrqTVHxFCuNkIgRI4Eu4SBNCQ28PSsd3XSvQ==
+X-Received: by 2002:a05:6000:2489:b0:3e0:34f4:31f9 with SMTP id ffacd0b85a97d-3e765792ff9mr6535584f8f.1.1757832009742;
+        Sat, 13 Sep 2025 23:40:09 -0700 (PDT)
+Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e7607cd43csm12396259f8f.29.2025.09.13.23.40.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 23:40:08 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v6.18-rc1
+Date: Sun, 14 Sep 2025 08:40:04 +0200
+Message-ID: <20250914064006.90225-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -33,80 +72,45 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aL8MXYrR5uoBa4cB@x1>
-References: <aL8MXYrR5uoBa4cB@x1>
-Subject: Re: [GIT PULL] clk: convert drivers from deprecated round_rate() to determine_rate() for v6.18
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Sat, 13 Sep 2025 15:10:40 -0700
-Message-ID: <175780144026.4354.7838864408360305570@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
 
-Quoting Brian Masney (2025-09-08 10:03:25)
-> Hi Stephen and Michael,
->=20
-> Given the large number of patches that I have posted for the
-> round_rate() to determine_rate() conversion, and to avoid spamming
-> large numbers of people's inboxes where a v2 was needed on only a few
-> patches in a series with 114 patches, I submitted a v2 for only the
-> patches that needed it. Additionally, some of the other patches in the
-> large series have already been picked up by some of the clk
-> submaintainers, so should be excluded as well. This makes it more
-> complicated to merge everything, so I collected the most recent
-> versions of the conversion work for drivers/clk using the following b4
-> commands:
->=20
->     MAILDIR=3D$(mktemp -d)
->     b4 am -o "${MAILDIR}" --cherry-pick 1-1,3-3,5-8 \
->             20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com
->     b4 am -o "${MAILDIR}" \
->             --cherry-pick 1-37,39-47,52-63,65-67,69-89,91-91,94-94,96-96,=
-100-111,114-114 \
->             20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.=
-com
->     b4 am -o "${MAILDIR}" \
->             20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com
->     b4 am -o "${MAILDIR}" \
->             20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com
->     b4 am -o "${MAILDIR}" \
->             20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com
->    =20
->     git am "${MAILDIR}"/20250828_bmasney_clk_convert_drivers_from_depreca=
-ted_round_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/20250811_bmasney_clk_convert_drivers_from_depreca=
-ted_round_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/v2_20250903_bmasney_clk_tegra_convert_from_clk_ro=
-und_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/20250811_bmasney_clk_ti_convert_from_clk_round_ra=
-te_to_determine_rate.mbx
->     git am "${MAILDIR}"/v2_20250827_bmasney_clk_scmi_migrate_round_rate_t=
-o_determine_rate.mbx
->=20
-> Additionally I included the patch series for drivers/clk/ti and
-> drivers/clk/tegra since this is all related work.
->=20
-> Note the v2 clk/tegra series that I posted mistakenly had extra Link
-> tags added when I posted them to the mailinglist. I dropped the Link
-> tag for these commits so that those tags don't appear in the git history
-> in Linus's tree.
->=20
->=20
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
->=20
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/masneyb/linux tags/clk-round-rate-6.18
->=20
-> for you to fetch changes up to 80cb2b6edd8368f7e1e8bf2f66aabf57aa7de4b7:
->=20
->   clk: scmi: migrate round_rate() to determine_rate() (2025-09-08 12:50:5=
-6 -0400)
->=20
-> ----------------------------------------------------------------
+Hi Mike, Stephen,
 
-Thanks. Pulled into clk-next
+The following changes since commit 04f27a0fda6b6be104531eeb95d07ef1b3a72af8:
+
+  dt-bindings: arm: tegra: Add ASUS TF101G and SL101 (2025-09-11 18:28:57 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-6.18-clk
+
+for you to fetch changes up to 5aba939e80f439c1a67adb6d9cae23cc72db7ef9:
+
+  clk: tegra: dfll: Add CVB tables for Tegra114 (2025-09-14 08:23:28 +0200)
+
+This depends on the dt-bindings branch because of the DT header file
+that the driver includes.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v6.18-rc1
+
+Add DFLL support on Tegra114. This is quite similar to the existing
+Tegra124 support and most of the code can be reused, except for the
+CVB frequency tables.
+
+----------------------------------------------------------------
+Svyatoslav Ryhel (2):
+      clk: tegra: Add DFLL DVCO reset control for Tegra114
+      clk: tegra: dfll: Add CVB tables for Tegra114
+
+Thierry Reding (1):
+      Merge branch 'for-6.18/dt-bindings' into for-6.18/clk
+
+ drivers/clk/tegra/Kconfig                  |   2 +-
+ drivers/clk/tegra/clk-tegra114.c           |  30 +++++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 ++++++++++++++++++++++++-----
+ drivers/clk/tegra/clk.h                    |   2 -
+ 4 files changed, 158 insertions(+), 34 deletions(-)
