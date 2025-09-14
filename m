@@ -1,138 +1,115 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8D1261B70
-	for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 12:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992831DFCB
+	for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 12:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757851722; cv=none; b=Gtmsg1uQASwRT1E7EoYXskOuyvBoaHg18TCRbBdMFHL7MvglmYNf31ovmsu9VYrPygLnG5p6ci1c2PbyceC71HpaVA0yZU+ClCDFQllmC5Pyhle7O05XPJiaVo54yR2QVD7JqX0yIj9b4bPfG61tmvI8tcui6W58Fpp81oIvqlk=
+	t=1757852482; cv=none; b=AH/+ahMRWjnjwsWtM1kfSimAgagqpLlMoN6i1fOAJyYFpTahS4gHz2/IvUFLGtvX/V/D9TudcQntL1LzsVpGIOglbAzwaQhMO+atv1rHrLkTbWdLa4ifKd8Z4Mfu8jM793+6Utb1o9k02RjddQgotIVOgPrBETMcdl0MRUWn+FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757851722; c=relaxed/simple;
-	bh=/vAVhu/ngR4yHd05XqGLRzyRf/JzOKMB5L/10fK0Kk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QivdxamIqZXfPEcZAl4DBoy4jbQ91Z/KQeVJ0unjgHe/h33bVOW49T86jPGrdF4CcnmK10koWhOkzcJUJyX3icrdhNcR5JyU9LoSJUd6qGE3eiQNZPXxJieO9P7doeAzFeVsOx7h171j4Ive1RWXYvJqo70jFTlVdRQEIN5SmmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUeAnkDJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1757852482; c=relaxed/simple;
+	bh=bDv9gzB2l+sWC8tMgu06CrB9Mc3zq0b/cIxffjhmvHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LTB2QsX8SSQGDAMyZg6cBPx9kJ02uPDlBSYxmQY5ndL4tcU+YFyOnSBNs6bhVHkhp8OahDRPH0gyfOve88swTBwxYmL+P1t3rtvZLDSXNDbZadfEro7sWB497gzqppbOquBQUbFlxk9B8nWI5ilLXO3UegcJ6uFffnzpBIHgc08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akXhhK9u; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUeAnkDJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757851720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TGC4WoAJlpX9tdCXckzAZr5W3saj1ZSsINit3PsYuzA=;
-	b=FUeAnkDJW2mk8y1fOisF489Z0IOpfqgbpu9XulN49RNI288zmCFbSBfrEfRjRpKAZ5tK44
-	7S/gQlysYWIHns+MG2wcxt9+q3ixxGadaflWsIYiKMs7qVeMvsM0b8LrcdYK46TWPA8Mgn
-	GU8DJINiIk3yZCr1VyN3F7dsLXU/Lvs=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-381-BkWmWpZlOKCzfQO2Xnqr_w-1; Sun, 14 Sep 2025 08:08:38 -0400
-X-MC-Unique: BkWmWpZlOKCzfQO2Xnqr_w-1
-X-Mimecast-MFC-AGG-ID: BkWmWpZlOKCzfQO2Xnqr_w_1757851718
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-828bd08624aso119249385a.1
-        for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 05:08:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akXhhK9u"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso27098735e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 05:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757852479; x=1758457279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9hU2kDwn8IFHpbOTDX+dG8pysyvJ8KjOOASnN49MHHM=;
+        b=akXhhK9uFBFghQrX/Jpwvf9a6/Zx4zFHCExG9TYCQ5dlGZEYbTsYjF5TxOV5iehvnq
+         T1ahkXm8POKKZZLvNR/myfUQN2Pjp5JqtydUJrPhUowdxLPA27RTCJoNgu/Q/R/wsfNM
+         ezMOpewOcDvj16mhFIJER4iBjcLDAnPGfxxPT9e7IUCon+SUbpX2y86MOYAtbcXrehj3
+         jXbVKzfoDHSf+3Nj+GUdCVcTl2OUfCkJyTOKL+sZ01KFMdW5bMPLZJYEiQxSseeUQIfk
+         BkOzsbCPOGlcUXJCJ4NX+ANMDcsF3BEY0TYKKhJI/d1KQy7Jh9a6V6vhs6XpYbm+SEWd
+         G8Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757851718; x=1758456518;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TGC4WoAJlpX9tdCXckzAZr5W3saj1ZSsINit3PsYuzA=;
-        b=VL8IY8FDFUXy6FQL1jiNrRTU/ZfJi1X6YAwagX1ZvmrPwTi3k47puc3XufaXqFha2n
-         jJbIc4+smvZjBFWKuZ+/aa+RZxSm4qfEhJCpUmUOcUjBPm6Wx8LOpOiIr8pEA9Q+ZnsC
-         Wy21WqLh8MjkIq6d5//CP/TewrFNSIrUfbtaopCoL+uwPGarbgXrflFSqAprbi+OYtAh
-         wiTt+gl326Cozjg8eUV5a9VC3w3MXaI7RDS9gskb+CPefzUdWHsUCvBUaxiiyG18W4d7
-         tARsW9hEsomajitFwIGmNT7Ss8r+gi6sxDEi5VWbMItjL9TSOFiuqJ/mIz7YfHcf+vLD
-         8Uew==
-X-Gm-Message-State: AOJu0YzeD9CHxRp4iBXGAgjcKlm1XD4+Az4Kw4zvzhPYWGLfwxF47k1J
-	QSRfxRSg8sjPJfrb4QwnhfpjX5SY5WolhBy22yUERvSCgVsEZy4ObmosUB889x/SvPX/7qIWEBi
-	ItGYSZQeiSOUtYwa91VEtwA5Kjijz9WOYM/L4jv2CYChXIPrmO/gpvmOmIhqYUA==
-X-Gm-Gg: ASbGncslJeSlEWz+8tHe5t9dzc9X8zLQiTxM3qkc1WDADLsIvsPj7fcAaqq0mAm8h+y
-	bm3RKGmbI6xOAgEgI4gEKVENRR/1jAvlZ+Q2OYcXGfVPlRmONQiTTGZAigIT3RIbxVDu05adN0J
-	YTeLXmslj88Az35cBlT88ZNdYVaI65oKi5zK20EddQMXPz8WKgp5YRLCqZPN2V8KgA0BPikl5vs
-	tmDeD4NYYkasDtHkzOYWU2t5FNxBDrdYqmFnhG/nTAzijYVwzhEKfQMokEZbeswzEmuBCeBMhMH
-	cWDsIWNFklYJwpDCMNEYQ3+CqD2KjaJX3zZA6SgRTIF3dX43LK6LI1ZZoo1VqPaxGRcfQKkbwMM
-	HuXFjXu432uI9oZpkzR/svTsISZOhITU=
-X-Received: by 2002:a05:620a:c4f:b0:815:9bd3:72a4 with SMTP id af79cd13be357-82401a95c9bmr1036168585a.69.1757851718237;
-        Sun, 14 Sep 2025 05:08:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRdCKGXPgtbhvJpUCdDwCaaC2B0DLna/CzbBAvfkLzYJU98qL9IvUSFcqawGBto49lPMPxgQ==
-X-Received: by 2002:a05:620a:c4f:b0:815:9bd3:72a4 with SMTP id af79cd13be357-82401a95c9bmr1036164085a.69.1757851717778;
-        Sun, 14 Sep 2025 05:08:37 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cfcaca15sm580413985a.71.2025.09.14.05.08.35
+        d=1e100.net; s=20230601; t=1757852479; x=1758457279;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9hU2kDwn8IFHpbOTDX+dG8pysyvJ8KjOOASnN49MHHM=;
+        b=sDAob4LPAp2kW7/G9ZbVFxu0Z0sED9uj6MWadGpJ3jwBD57fXOY1jHyB3lIoLQPrRl
+         X5zMhU6vCOIZoscrBvozukWx7OM6J+HYQMjYmZNJQTDxFSRY7cPsoFTEB0cSZIZmW9FC
+         VTqJdfbz1ABIImPEN4ixFH8W3cL5S0GQ6jcY8F84e5z/JSTGtOXSt8+VJUUIMQvoMCjg
+         llCZ0jv53Jvbb3BCXPkQEv/2I+fiXlVXXANgUwuOLa8s5JbkxI639s24t5XQCkrbVypp
+         opKCPDONsyajbwyi/DeeMrobcslo4V94UD6nTtrxcwAj6oVDtYlIHJMpGPUkU80/XNK2
+         whjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXpq1hetnR7F5RekZYiQLGdtZCsQhxH+8lw1xlbOmeh/oaMSR/gn5lmL5Xkm6ib0uNLgb0WhSVkhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybTcMBkgdHfprD8RYds26E48ofFcp2/e7Ru0tVV/9NSzdGz0kh
+	EK5WvVQh7YhWFxaKlkoDIX7eqB2lCjWIsVsH/4o+yGJ5tAjUDhbynKbx
+X-Gm-Gg: ASbGncufMVu4dR7y/n9ffecU3JMg/PNOTEhQSCEKZ4wCShWR1Av6yPUItpeUu21/YVa
+	tyDJnjgr3kIqmh6dEt+BAxoSSRZDExetzdKhijog0s/njzABeIwnyO5YehkQ6vYIf58zsInFFIp
+	WRsMyoD3Rk2I+q3usbQBiIMWmWdYkviGDa8gZPFR/6/K+v4GmjTDb11r2vuuMPxoHRGHOp/Y0/d
+	MEBkdI1HE8zTNoma3Yfehv0z9cZwx9L76MXwJpB1RxYX3J2jthaVIsncONlKamem2YA4qu5YMKE
+	4fDhe2vV/5M3z+RiXCNHosSle4sQyt0vsEqP2D+50IrXS8P1fbia1spb/GNhseO2bFpH2EHR6Xt
+	4MHEZHIlVlTerrd+oNaYF/vp/4tkRMNIeCOBEIyOCLKS5+Q0Lnwn/x3NSSyoKMDXZexi5gAOVFA
+	qkKIEH2yvOkXzS4FrEpkE=
+X-Google-Smtp-Source: AGHT+IHNLBsatSIb71J2GFQncSTA+a3kyt/UTKwYcV2O04qKu+uELYeEsk/eGdFPUJLCbm3RtTdvwQ==
+X-Received: by 2002:a05:600c:5742:b0:45b:8f11:8e00 with SMTP id 5b1f17b1804b1-45f2120592amr59760815e9.37.1757852478915;
+        Sun, 14 Sep 2025 05:21:18 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm136476615e9.20.2025.09.14.05.21.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 05:08:37 -0700 (PDT)
-Date: Sun, 14 Sep 2025 08:08:33 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/9] drm: convert from clk round_rate() to
- determine_rate()
-Message-ID: <aMawQYUIjPw9m4IO@redhat.com>
-References: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
+        Sun, 14 Sep 2025 05:21:18 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] clk: samsung: introduce exynos8890 clock driver
+Date: Sun, 14 Sep 2025 15:21:11 +0300
+Message-ID: <20250914122116.2616801-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-drm-clk-round-rate-v2-0-4a91ccf239cf@redhat.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+Hey folks,
 
-On Mon, Aug 11, 2025 at 06:56:04AM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the drm subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
-> 
-> Changes since v1:
-> - Drop space after the cast (Maxime)
-> - Added various Acked-by and Reviewed-by tags
+This patchset adds a pretty much full (except for ISP and camera blocks)
+cmu driver for exynos8890. It's configured to run with gates in manual
+mode, which is done differenetly from other exynos SoCs.
 
-Would it be possible to get this picked up for v6.18? I'd like to remove
-this API from drivers/clk in v6.19.
+Best regards,
+Ivaylo
 
-I'm not sure which tree(s) this should go through. All of the patches
-except patch 1 have at least one Acked-by or Reviewed-by.
+Ivaylo Ivanov (5):
+  dt-bindings: clock: add exynos8890 SoC
+  clk: samsung: clk-pll: Add support for pll_141xx
+  clk: samsung: clk-pll: Add support for pll_1419x
+  clk: samsung: clk-pll: Add support for pll_1431x
+  clk: samsung: introduce exynos8890 clock driver
 
-Thanks,
+ .../clock/samsung,exynos8890-cmu.yaml         |  477 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynos8890.c          | 8695 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   13 +-
+ drivers/clk/samsung/clk-pll.h                 |   12 +
+ .../clock/samsung,exynos8890-cmu.h            | 1279 +++
+ 6 files changed, 10475 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8890-cmu.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8890.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8890-cmu.h
 
-Brian
+-- 
+2.43.0
 
