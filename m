@@ -1,305 +1,128 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9738527467E
-	for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 12:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2D8287E;
+	Sun, 14 Sep 2025 14:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757853770; cv=none; b=OVWVE3wPGw0M6lCJcWpNstwhVTMMUCkFh9ujVJ7wYMpsfTALGu4++jU6V84rbKxCerSlQzltYoibMHJKi2pgkpgyZHZlY9V037MuGlYZdJ2ZVEchOzFnyp9ElpVwBHMptzDoE4+aRpF//S1TF5SP7Ms5WZ4xOe/E23j4hDekfaU=
+	t=1757859396; cv=none; b=QXGCGwIUmiA7rfFSlYxX3XmuRCAq42vPkS1koA/CgDP2WcU164+o/v0L23FlbfbQSk3n7zXl/1wBdrWTMm1bmun4cejlo044RwZtzpdDHkbOscCT51aC69CJnO037FYupqYEihILDYypcXojgpkZj+Kq/7dV/Ea0VkqhSe86kWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757853770; c=relaxed/simple;
-	bh=z9kDI07Wpmm78QQXXWrYdY4Mhw7hD9DVSF7dxe4fhs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bv1qQCVzJssphLKii1BbOhG3jBnEgX3FHrkwAtcWOCwD8yd3wZv3wBjnCQ7bLtc74reTJjnxkf8ZTTmwx4V3wT6xkYWCcPe1TV2bm+CmmeVgjYa/aVtw/FjLRdTS3Bf1B7KI9TBYhXwJm86QRcNCebneA3vvq3hUWYOipkUZktQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K9jvENiU; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757859396; c=relaxed/simple;
+	bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJVjXj5dAn/KElCMuCNeIRFS6iEW+A3EgtQx8iv1+JCVKhlG71Q8F+SAPrk4GTO9OAQ9/rCApRWxC6umKvvuB5wnwU0ElkLVPSyWdH5ziYQBMImzBh0ICoMsfMxGOBV47rtuhvGzDv1JTpgc945kDrU2YEnNxQriE0Xnuh7/Jrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JTYB9lZj; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K9jvENiU"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dde353b47so20152255e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 05:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757853767; x=1758458567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/NzjVjcE/iDN8N+s4aQ4GgYpTz60HWxWgUIghlOd1Cw=;
-        b=K9jvENiUZznEQQ2zl8z42koo8py8wVLvKCAqOahP6RtvIdy1MPjfpev66uG4dB4X6e
-         sXchn9ii1PmdLd9Br0asn3KPrqr4+Q8Iu5xXTJHWM3dhNRxaKxRwP8xlCgQTLBRHLB2p
-         2k5VsNc8DlHxIhlOsQfP7E0/a2zkGAFmvCvMKkigqH/j8hvuhQDeWAkhzRlAzTj1Lulw
-         AqWfISBVBoJlPXZHgVvqog+kYzCGfiq/7+rYTMxAR3UhOCYSobY0SCYvLJu8Vn21tTkF
-         8RIeL8mU0qBwPGUIbyGE9nD1UsXzDbqt2rMRD/cHC0R07UJmf9FUjgD2b75baDW0YD0T
-         meqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757853767; x=1758458567;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/NzjVjcE/iDN8N+s4aQ4GgYpTz60HWxWgUIghlOd1Cw=;
-        b=TDd/5nOH+xsRLMb7djSmxsZpn541TAb8lfGjzaB2ou44L8wmpHZ8yvE6iiKInfoUmY
-         2RgISHIMLTDAN28r1+AMK2XRLkv+W/FYi8Sk2tRdMnVkX7BbC5BQ+6YQwL0XMtDdiJFm
-         2LkSI6uV/3c00AoIEGSPD4DmWSw1g1tl+Iu74lT7Nop4uKxk14Af0R4HGhfp8XqVtVzr
-         aeV6cUPwqoBea0HSsH1MVroT8IkRPSNV62p+BEM5KzyDLmNXhI7dq9fSDMROL3xoknfm
-         bWCwXFDnnl27Qc+yNwNAHtka5ecS/evA2smPv2YpVIP27ITHU/AR5f3mHWCDWte4RgmP
-         IZjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+GyrZ1ORBjLEBQJ9WhmQLMoYZvrmcwmlHrWSLzRts/R2sgzkYfiCRjKcJQVB3Ss9FhwArOu+01M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi0nMmkNMcHfR64nwl5HVQzlY97EouwKnTNUwAnf9WIi7EkRGf
-	Sf2jStqPVR3oN3WGEK1XsVk/hif1P1zd0ywd5uBe4w9OHhpmVaUxoUnA
-X-Gm-Gg: ASbGncvWYmSYCBTnZGpV817gdu9BC1Ps5d3BENcuQGLjbiQdoHuzRb9d8NMm1gvA45f
-	PnVyza/BeertMO6g2ITLWoAPxy46ceQjn6jn45Njdxn2JvAiBgDChxUCSJzXNS/QU/aZ09fSRMF
-	ge+4mtzqB4mS2FDIJHPUtZ0bHaFfhROxHcobTqldLeh7qxyG/lK+J4DmmWJhNJLAa30d2qpGRYh
-	TnwnuMoF5vcr6W/ZTNhVdBXau2KxNn+ImX4OkbCkN2cMgGrAIO9AbEd+mgjXBxQhQJHvXL3tSu5
-	hK7lXHoimTerR4y5axJ5+sj7GKmhA1VqLqXr0vN+sdmIAB7sowuk7Sv1BaWABu2dA+CApB/UqUg
-	fx7gXORtYw0GlCg1ujfVOw1IwL9i8Fy+YmGEKsu3ktaDlumoTIqOnyrA1cMLS7lOXO/HlbijjGN
-	6uYr8n/fQ2oWkeHyMlCRY=
-X-Google-Smtp-Source: AGHT+IF52cVcLt/Of4hqhHb8/XivoKbvphnH9NSc4wXU+Eh0bTuKYlp5oRDfnSzGvHYzjro9HUgg/g==
-X-Received: by 2002:a5d:5d81:0:b0:3ea:3b7b:80a8 with SMTP id ffacd0b85a97d-3ea3b7b86e1mr1126408f8f.52.1757853766693;
-        Sun, 14 Sep 2025 05:42:46 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9511abbccsm3727773f8f.9.2025.09.14.05.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 05:42:46 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JTYB9lZj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757859394; x=1789395394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
+  b=JTYB9lZjPD+zk2eMHjOaN5wVD+7PC7Rnr4CifeHV8Blj4ixpOhz1fnzn
+   s5Og+SFO4aoFaWsXyU5XghEW17N1XPEotKSbpAiEzUE7eCtCP1DByVoXm
+   33QJr00lDj4DY2YKY/BtN76ugsx9ZG/L7O/Jh0hJAGIzTasQPNxqE8avM
+   N1scrIDBqSAeKJoo6V/pIjK+ENJ6VW38ZMyStcmzIkztWCcggRqb2b7l5
+   DmyEg7cTxibD+DnCNxBdVtiRjlQhE3Dy73druFUnmvTRQ7XhL8oVAqouL
+   pi9qGf/q0g4ncn1pA8fn+hp49vmL1t+66S7UEo9DaQUPfwhHkdXFEZQ6l
+   w==;
+X-CSE-ConnectionGUID: hKcCLeKvQ6+/p9MEzuBpRw==
+X-CSE-MsgGUID: XOlwq7e4TIukCBqyfFjvoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="71503324"
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="71503324"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 07:16:33 -0700
+X-CSE-ConnectionGUID: fKFq+2jnSAaSeZDt1z3VvQ==
+X-CSE-MsgGUID: Zi1Q9B4xRvyVk5+bxvVdOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="174224891"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 14 Sep 2025 07:16:30 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uxnWi-0002Sy-0K;
+	Sun, 14 Sep 2025 14:16:24 +0000
+Date: Sun, 14 Sep 2025 22:16:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 7/7] regulator: s2mps11: add support for S2MPS16 regulators
-Date: Sun, 14 Sep 2025 15:42:27 +0300
-Message-ID: <20250914124227.2619925-8-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+Message-ID: <202509142156.qb0htmwo-lkp@intel.com>
+References: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 
-S2MPS16 is a PMIC, manufactured by Samsung, particularly used in
-exynos8890 based devices, featuring 38 LDOs, of which 11 are used for
-CP, and 11 BUCKs, of which 1 is used for CP. Add driver support for
-controlling all BUCKs and LDOs, except the ones used for CP, as they are
-not documented enough and the vendor kernel doesn't handle them anyways.
+Hi Ivaylo,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- drivers/regulator/Kconfig   |   4 +-
- drivers/regulator/s2mps11.c | 147 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 149 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index eaa6df1c9..41b56b647 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1352,10 +1352,10 @@ config REGULATOR_S2MPA01
- 	 via I2C bus. S2MPA01 has 10 Bucks and 26 LDO outputs.
- 
- config REGULATOR_S2MPS11
--	tristate "Samsung S2MPS11/13/14/15/S2MPU02/05 voltage regulator"
-+	tristate "Samsung S2MPS11/13/14/15/16/S2MPU02/05 voltage regulator"
- 	depends on MFD_SEC_CORE || COMPILE_TEST
- 	help
--	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02/05 voltage
-+	 This driver supports a Samsung S2MPS11/13/14/15/16/S2MPU02/05 voltage
- 	 output regulator via I2C bus. The chip is comprised of high efficient
- 	 Buck converters including Dual-Phase Buck converter, Buck-Boost
- 	 converter, various LDOs.
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 04ae9c615..f736b6ee9 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -20,6 +20,7 @@
- #include <linux/mfd/samsung/s2mps13.h>
- #include <linux/mfd/samsung/s2mps14.h>
- #include <linux/mfd/samsung/s2mps15.h>
-+#include <linux/mfd/samsung/s2mps16.h>
- #include <linux/mfd/samsung/s2mpu02.h>
- #include <linux/mfd/samsung/s2mpu05.h>
- 
-@@ -828,6 +829,146 @@ static const struct regulator_desc s2mps15_regulators[] = {
- 	regulator_desc_s2mps15_buck(10, s2mps15_buck_voltage_ranges2),
- };
- 
-+static int s2mps16_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
-+{
-+	unsigned int ramp_val, ramp_shift, ramp_reg;
-+	int rdev_id = rdev_get_id(rdev);
-+
-+	switch (rdev_id) {
-+	case S2MPS16_BUCK2:
-+	case S2MPS16_BUCK4:
-+	case S2MPS16_BUCK5:
-+		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT1;
-+		break;
-+	case S2MPS16_BUCK1:
-+	case S2MPS16_BUCK3:
-+	case S2MPS16_BUCK6:
-+		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT2;
-+		break;
-+	case S2MPS16_BUCK7:
-+	case S2MPS16_BUCK11:
-+		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT3;
-+		break;
-+	case S2MPS16_BUCK8:
-+	case S2MPS16_BUCK9:
-+		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT4;
-+		break;
-+	default:
-+		return 0;
-+	}
-+	ramp_reg = S2MPS16_REG_BUCK_RAMP;
-+	ramp_val = get_ramp_delay(ramp_delay);
-+
-+	return regmap_update_bits(rdev->regmap, ramp_reg,
-+				  S2MPS16_BUCK_RAMP_MASK << ramp_shift,
-+				  ramp_val << ramp_shift);
-+}
-+
-+static const struct regulator_ops s2mps16_ldo_ops = {
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_ops s2mps16_buck_ops = {
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+	.set_ramp_delay		= s2mps16_set_ramp_delay,
-+};
-+
-+#define regulator_desc_s2mps16_ldo(num, min, step) {		\
-+	.name		= "ldo"#num,				\
-+	.id		= S2MPS16_LDO##num,			\
-+	.ops		= &s2mps16_ldo_ops,			\
-+	.type		= REGULATOR_VOLTAGE,			\
-+	.owner		= THIS_MODULE,				\
-+	.min_uV		= S2MPS16_LDO_##min,			\
-+	.uV_step	= S2MPS16_LDO_##step,			\
-+	.n_voltages	= S2MPS16_LDO_N_VOLTAGES,		\
-+	.vsel_reg	= S2MPS16_REG_L##num##CTRL,		\
-+	.vsel_mask	= S2MPS16_LDO_VSEL_MASK,		\
-+	.enable_reg	= S2MPS16_REG_L##num##CTRL,		\
-+	.enable_mask	= S2MPS16_ENABLE_MASK,			\
-+	.enable_time	= S2MPS16_ENABLE_TIME_LDO		\
-+}
-+
-+#define regulator_desc_s2mps16_buck(num, min, step, vsel, enable) {	\
-+	.name		= "buck"#num,					\
-+	.id		= S2MPS16_BUCK##num,				\
-+	.ops		= &s2mps16_buck_ops,				\
-+	.type		= REGULATOR_VOLTAGE,				\
-+	.owner		= THIS_MODULE,					\
-+	.min_uV		= S2MPS16_BUCK_##min,				\
-+	.uV_step	= S2MPS16_BUCK_##step,				\
-+	.n_voltages	= S2MPS16_BUCK_N_VOLTAGES,			\
-+	.vsel_reg	= S2MPS16_REG_B##num##vsel,			\
-+	.vsel_mask	= S2MPS16_BUCK_VSEL_MASK,			\
-+	.enable_reg	= S2MPS16_REG_B##num##enable,			\
-+	.enable_mask	= S2MPS16_ENABLE_MASK,				\
-+	.enable_time	= S2MPS16_ENABLE_TIME_BUCK##num			\
-+}
-+
-+#define regulator_desc_s2mps16_buck1(num) \
-+	regulator_desc_s2mps16_buck(num, MIN1, STEP1, CTRL2, CTRL1)
-+
-+#define regulator_desc_s2mps16_buck2(num) \
-+	regulator_desc_s2mps16_buck(num, MIN1, STEP1, CTRL3, CTRL1)
-+
-+#define regulator_desc_s2mps16_buck3(num) \
-+	regulator_desc_s2mps16_buck(num, MIN2, STEP2, CTRL2, CTRL1)
-+
-+static const struct regulator_desc s2mps16_regulators[] = {
-+	regulator_desc_s2mps16_ldo(1, MIN2, STEP1),
-+	regulator_desc_s2mps16_ldo(2, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(3, MIN3, STEP2),
-+	regulator_desc_s2mps16_ldo(4, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(5, MIN3, STEP2),
-+	regulator_desc_s2mps16_ldo(6, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(7, MIN1, STEP2),
-+	regulator_desc_s2mps16_ldo(8, MIN1, STEP2),
-+	regulator_desc_s2mps16_ldo(9, MIN1, STEP2),
-+	regulator_desc_s2mps16_ldo(10, MIN1, STEP2),
-+	regulator_desc_s2mps16_ldo(11, MIN1, STEP2),
-+	regulator_desc_s2mps16_ldo(12, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(13, MIN3, STEP1),
-+	/* LDOs 14-24 are used for CP. They aren't documented */
-+	regulator_desc_s2mps16_ldo(25, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(26, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(27, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(28, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(29, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(30, MIN3, STEP2),
-+	regulator_desc_s2mps16_ldo(31, MIN3, STEP1),
-+	regulator_desc_s2mps16_ldo(32, MIN3, STEP2),
-+	regulator_desc_s2mps16_ldo(33, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(34, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(35, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(36, MIN4, STEP2),
-+	regulator_desc_s2mps16_ldo(37, MIN3, STEP2),
-+	regulator_desc_s2mps16_ldo(38, MIN3, STEP1),
-+	regulator_desc_s2mps16_buck1(1),
-+	regulator_desc_s2mps16_buck1(2),
-+	regulator_desc_s2mps16_buck1(3),
-+	regulator_desc_s2mps16_buck1(4),
-+	regulator_desc_s2mps16_buck1(5),
-+	regulator_desc_s2mps16_buck2(6),
-+	regulator_desc_s2mps16_buck1(7),
-+	regulator_desc_s2mps16_buck3(8),
-+	regulator_desc_s2mps16_buck3(9),
-+	/* BUCK 10 is used for CP. It's not documented */
-+	regulator_desc_s2mps16_buck1(11),
-+};
-+
- static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- 		struct regulator_dev *rdev)
- {
-@@ -1238,6 +1379,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		regulators = s2mps15_regulators;
- 		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps15_regulators));
- 		break;
-+	case S2MPS16X:
-+		rdev_num = ARRAY_SIZE(s2mps16_regulators);
-+		regulators = s2mps16_regulators;
-+		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps16_regulators));
-+		break;
- 	case S2MPU02:
- 		rdev_num = ARRAY_SIZE(s2mpu02_regulators);
- 		regulators = s2mpu02_regulators;
-@@ -1316,6 +1462,7 @@ static const struct platform_device_id s2mps11_pmic_id[] = {
- 	{ "s2mps13-regulator", S2MPS13X},
- 	{ "s2mps14-regulator", S2MPS14X},
- 	{ "s2mps15-regulator", S2MPS15X},
-+	{ "s2mps16-regulator", S2MPS16X},
- 	{ "s2mpu02-regulator", S2MPU02},
- 	{ "s2mpu05-regulator", S2MPU05},
- 	{ },
+[auto build test ERROR on krzk-dt/for-next]
+[also build test ERROR on linus/master v6.17-rc5]
+[cannot apply to krzk/for-next clk/clk-next next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-clock-add-exynos8890-SoC/20250914-202302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git for-next
+patch link:    https://lore.kernel.org/r/20250914122116.2616801-6-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+config: csky-randconfig-001-20250914 (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509142156.qb0htmwo-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/samsung/clk-exynos8890.c: In function 'exynos8890_init_clocks':
+>> drivers/clk/samsung/clk-exynos8890.c:49:45: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      49 | #define QCH_DIS                 (QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+         |                                             ^~~~~~~~~~
+   drivers/clk/samsung/clk-exynos8890.c:88:31: note: in expansion of macro 'QCH_DIS'
+      88 |                         val = QCH_DIS;
+         |                               ^~~~~~~
+
+
+vim +/FIELD_PREP +49 drivers/clk/samsung/clk-exynos8890.c
+
+    39	
+    40	/*
+    41	 * As exynos8890 first introduced hwacg, cmu registers are mapped similarly
+    42	 * to exynos7, with the exception of the new q-state and q-ch registers that
+    43	 * can set the behavior of automatic gates.
+    44	 */
+    45	
+    46	/* decoded magic number from downstream */
+    47	#define QCH_EN_MASK		BIT(0)
+    48	#define QCH_MASK		(GENMASK(19, 16) | BIT(12))
+  > 49	#define QCH_DIS			(QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+    50	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
