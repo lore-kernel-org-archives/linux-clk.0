@@ -1,188 +1,91 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD30A25E813;
-	Sun, 14 Sep 2025 16:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E0B1D27B6;
+	Sun, 14 Sep 2025 21:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757867722; cv=none; b=gUtLC7byH62M6F/5VMwCLO6ggqOyLSl+QCDWILecvtegSapyFLMCDBw+9cGOwcQlc6RebBwmR+dGSKTaha1JzNXslo242ycwXlHKJ9j4b+uXKftjM8vJyoLOlpw5FM9LYVqRaoz7y1IxRwOQ9GQP8CSdXFeCt6AVMs81uIK12+A=
+	t=1757884759; cv=none; b=VH7RrD3n1Wq/qKVVyVEm5iNEdd2r/MgGDnzByQqoyeHxE5yrNaDF/GhN1QVn9DiXFHuphk+iFRjExfx7fEnWP6a72QePoVU3IihD9UGjbva2F0VM1ajoktnSNTRC/kT5Drn6Qqh+9K+OTVXEYSr8laf7zgKVhyOqXGJyY+9KdJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757867722; c=relaxed/simple;
-	bh=d/DksVt1jOUUNg1guB1c26u/tAnFGmp64Nkbi1kNFUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkMlldDq971z8hhcBL7kESHwhZ5ypAL7x/oyrOEkaGZ61P29bq6zEsbrvm/zyyzf27i2lSpJOyOywjkvu6zsbyIIQbPVwz9oczFD6VbP0cM/3RbOKFGCtSRBgxE0pVLQ/BZtOqDjTKGNqhgxavfLZ3JlqNWBpttEpc2HW2doNcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn+TQJVM; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1757884759; c=relaxed/simple;
+	bh=Mp3ThDTfoGcWOtSNWR2msXKzQUo3f7rECaxqSDi7tvo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ps4TTRNWe1hxonNmKqNaD4ouJ3Ox402NauSPTPZ1JYFH2WFxfHLj+/y36QB36bFGBk1hN6CGoEgbgqwW+JhpVx8yRXt1DeAAoduZZ2X7dbQeL53qz1zZl01Yan4sGoNUW+C+YmHUfQF6e2bCan88LmMjYpbXdkcLbtlJ8ePQtIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=pjRdCZxZ; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn+TQJVM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7AE3F4E40BD1;
-	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 452446063F;
-	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2DC5102F29EC;
-	Sun, 14 Sep 2025 18:35:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757867707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=vXWzLeRrS8rJvdtCJ4XG5FPGmNASV270FtQzQBagios=;
-	b=Hn+TQJVM/yb935GC19LuIgIYljMxAJmsmLz7UaedBGkBq/dhvPV2kQcBfy3bsc+VYXcPvq
-	4XUFb6o+qmnPzfVk378L06lKM+0Hwh+WAzIpJHjswaV58/hO9T1QUoRI0PMih9eIsarw1E
-	RWXDHDGZUvfBkPlD5M1A57aL01icQ+8Oi/dPRiq0n7sQvMJnCQi029NnobOzpevUcLjmIS
-	5bxND2CPJVCPzKcaZU/42UyHVvpvIGDjW85vIXyx9QxPCKQBdBBu50iWY8OOIh6k6oflLB
-	WT/l5aXKGv2IA0teOtyOhhBPaCsU/F2mgRhdhGXJrWwvcUFzxk9AWq+G8dMZXg==
-Date: Sun, 14 Sep 2025 18:35:00 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 6/7] rtc: s5m: add support for S2MPS16 RTC
-Message-ID: <2025091416350055a27358@mail.local>
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="pjRdCZxZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
+	s=protonmail; t=1757884755; x=1758143955;
+	bh=sJdatwuItQDKsBxIYrlY3ZlspqT7UZOXCVPAjQosROw=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=pjRdCZxZYjv593LAaJYmmeAdRJYgbg4+m8zmgYUrZnk1HfnCX+zVZy5r516/ukeR5
+	 HRyNQ1XTojQVzmtmxIbFZMEJz8hjyyPZ8SK/oy/caVDpGBqSliy0EBZWXTJb7WDdVc
+	 /X6uGiLa7wje4dhrAZviuEebtrh3msO7WlgQp5NGRwOABM25CMAF72dqzsCbA2+gaS
+	 bqZXHsKzBvJJIELK0BrD3O1bhVhcF4R/Dz5qgYZgSHuBGAQRxxjlo9mXEH/eu9NbtT
+	 FccXs+6ZT4t3gZtcrC8uiZahoL74B62FTNss2rbvzkB4WAIeAJ21QwPsvlejEH8NsF
+	 WMGN9I9MW5sKw==
+Date: Sun, 14 Sep 2025 21:19:10 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alexandru Chimac <alexchimac@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+From: Alexandru Chimac <alex@chimac.ro>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
+Subject: [PATCH 0/8] clk: samsung: Introduce support for Exynos9610 clocks.
+Message-ID: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
+Feedback-ID: 139133584:user:proton
+X-Pm-Message-ID: 7100008c38a354ce31d7f13b8a0b76ba06752ed9
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 14/09/2025 15:42:26+0300, Ivaylo Ivanov wrote:
-> Add support for Samsung's S2MPS16 PMIC RTC, which has pretty much
-> identical functionality to the existing S2MPS15 support, with the
-> difference being the ST2 register.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This patchset adds partial support for clocks (no SHUB, USB, MIF0/1, ISP,=
+=20
+VIPX1/2, MFC) on Exynos9610.
 
-> ---
->  drivers/rtc/rtc-s5m.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> index a7220b4d0..910248731 100644
-> --- a/drivers/rtc/rtc-s5m.c
-> +++ b/drivers/rtc/rtc-s5m.c
-> @@ -18,6 +18,7 @@
->  #include <linux/mfd/samsung/irq.h>
->  #include <linux/mfd/samsung/rtc.h>
->  #include <linux/mfd/samsung/s2mps14.h>
-> +#include <linux/mfd/samsung/s2mps16.h>
->  
->  /*
->   * Maximum number of retries for checking changes in UDR field
-> @@ -254,6 +255,11 @@ static int s5m_check_pending_alarm_interrupt(struct s5m_rtc_info *info,
->  		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
->  		val &= S5M_ALARM0_STATUS;
->  		break;
-> +	case S2MPS16X:
-> +		ret = regmap_read(info->s5m87xx->regmap_pmic, S2MPS16_REG_ST2,
-> +				  &val);
-> +		val &= S2MPS_ALARM0_STATUS;
-> +		break;
->  	case S2MPG10:
->  	case S2MPS15X:
->  	case S2MPS14X:
-> @@ -303,6 +309,7 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
->  		udr_mask |= S5M_RTC_TIME_EN_MASK;
->  		break;
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -354,6 +361,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -378,6 +386,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -416,6 +425,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -455,6 +465,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -494,6 +505,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -532,6 +544,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	switch (info->device_type) {
->  	case S5M8767X:
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -613,6 +626,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
->  		break;
->  
->  	case S2MPG10:
-> +	case S2MPS16X:
->  	case S2MPS15X:
->  	case S2MPS14X:
->  	case S2MPS13X:
-> @@ -680,6 +694,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
->  		struct i2c_client *i2c;
->  
->  		switch (device_type) {
-> +		case S2MPS16X:
->  		case S2MPS15X:
->  			regmap_cfg = &s2mps14_rtc_regmap_config;
->  			info->regs = &s2mps15_rtc_regs;
-> @@ -817,6 +832,7 @@ static const struct platform_device_id s5m_rtc_id[] = {
->  	{ "s2mps13-rtc",	S2MPS13X },
->  	{ "s2mps14-rtc",	S2MPS14X },
->  	{ "s2mps15-rtc",	S2MPS15X },
-> +	{ "s2mps16-rtc",	S2MPS16X },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
-> -- 
-> 2.43.0
-> 
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+---
+Alexandru Chimac (8):
+      dt-bindings: clock: samsung: Add Exynos9610 CMU bindings
+      clk: samsung: clk-pll: Add support for pll_1061x
+      clk: samsung: Introduce Exynos9610 clock controller driver
+      arm64: dts: exynos9610: Enable clock support
+      dt-bindings: soc: exynos-sysreg: Add Exynos9610 SYSREG bindings
+      arm64: dts: exynos9610: Add SYSREG nodes
+      arm64: dts: exynos9610: Assign clocks to existing nodes
+      arm64: dts: exynos9610-gta4xl: Assign clocks to existing nodes
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ .../bindings/clock/samsung,exynos9610-clock.yaml   |  344 ++
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |   20 +
+ arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts   |    2 +
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi         |  277 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos9610.c               | 3652 ++++++++++++++++=
+++++
+ drivers/clk/samsung/clk-pll.c                      |   29 +-
+ drivers/clk/samsung/clk-pll.h                      |    1 +
+ include/dt-bindings/clock/samsung,exynos9610.h     |  720 ++++
+ 9 files changed, 5039 insertions(+), 7 deletions(-)
+---
+base-commit: 48c4c0b684f394721b7db809e1cc282fccdb33da
+change-id: 20250914-exynos9610-clocks-2fba704e6030
+prerequisite-message-id: <20250914-exynos9610-devicetree-v1-0-2000fc3bbe0b@=
+chimac.ro>
+prerequisite-patch-id: fb1e2f83c03a3b3a330c72d5d9c9fd8cd95ef2ce
+prerequisite-patch-id: b42a7c0c72b1bfe33bb65fb911bf28e3e101fa55
+prerequisite-patch-id: 4c5c21cf62e50db603fe4e2df17ee664ff0b243e
+prerequisite-message-id: <20250914-exynos9610-pinctrl-v1-0-90eda0c8fa03@chi=
+mac.ro>
+prerequisite-patch-id: 27e949ada132a43ba3dbf880af3e6168ec94eaf9
+prerequisite-patch-id: f446d396d0258709db47aef69e68821eb72582dc
+prerequisite-patch-id: e3bf016be9509ee79beb3d51907ef6cd58fb98b1
+
+Best regards,
+--=20
+Alexandru Chimac <alex@chimac.ro>
+
+
