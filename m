@@ -1,50 +1,50 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E560632F76A;
-	Mon, 15 Sep 2025 14:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270411A295;
+	Mon, 15 Sep 2025 14:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948003; cv=none; b=JUIIyjVkXVbf2p6aiEuSCIJdWqfBQpgWwXfTJjMuCUq6ncHMmEEzsz4ssapNIdLQ+JLmjvgIEToDdTvVFxF/tlTWTaDDDADpF6L2XE4FE87xrCVZ9fJPKu0r+L3rYCIhqMO4JdY2Ei0gxJFifEoR4hbDlyXffNOwqxcxi7qH2N4=
+	t=1757948109; cv=none; b=SzASLxIV50c4YkqhfmGO+38qjzdPPte9XCPUeSuZSKOH9IrlCPDt/XSQz67AN0fLHwO8uEh0k2oshfs5QVG9UXF9W7IKg2sHOsTHIotkEuWcX04It7HcZM1tfMNbbfwBc+WYwHgu6SD9SFJwb1JbwldSZnDHGNpec1c7vcASRJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948003; c=relaxed/simple;
-	bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eDebAc9QJP9Enn2NTMEbVcNZ53TYJqmDB2ecAgwgt8H8OEWyDKxjzrLmESUVrNn+WTLcQowFg5rGdaZ/KrCjnpR2eo3DHZaX40mUMpnwfdfxhHBjOCn8Qs1I1ZllwhOQiYZI6NJpHBwm4/Em12GPrzf1T/Lot5/2X4PJCcv95wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XP/6ecZ9; arc=none smtp.client-ip=68.232.154.123
+	s=arc-20240116; t=1757948109; c=relaxed/simple;
+	bh=EwNwBb1ZMwIRBiUXSFpclOvP5L0lGkCC606UBB6bd7E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=JEmhyrD5nqXFyERheuBr9iXTJWt8DbV1JT+WacLg22m9kXA3OfO05vnYmYmCXEdBwbEwgIr9Netz6SENJXc6Ym0+sY3xiexDvEBuWkkMUOS7+RILMybS34Hv/MhXINc5vjwvVZRF1YyKofU8EUlZIhPPrnQBjefGXV4YhI5dMf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=n72ouBc2; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XP/6ecZ9"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="n72ouBc2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757948001; x=1789484001;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
-  b=XP/6ecZ96pstD0Ap76SIZxes0dpb2cpnBVvtOQe3m1jWCYexlJTmkQdv
-   axDB8U+wXoWERcKCWQ19IST17sMOxaFkRcUwc0YzZbf1U8JnYjAjvFQpJ
-   GJjf0u8xhrdAulxDNp7cboXZoZXFsOC4I+7Ts/U3RHA6NYDnQUsP3Z6mF
-   T9iuUSjXC1dPOI1Y32jaBa/YhG8qXpv8owl4tQe+PJgPkUDqdH7L4WJPb
-   5KCJoPXdtFfTsVV1kdNQzlo4CPl7qRjIdFFbDRxgEM9Lscl0Zpt9IVy69
-   tIPTl3l3/kWgqcUD/UmZhy0zsHRL4hiVomYsspo/E+XS6Zqs79bRP+i5A
+  t=1757948108; x=1789484108;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=EwNwBb1ZMwIRBiUXSFpclOvP5L0lGkCC606UBB6bd7E=;
+  b=n72ouBc2/HcJizy6WQP6lM0l/3HSH/w3SMaOPR5f7k7MG7xIuyPeUowb
+   wSoRF5M/XUDvP5iptJLRvPNEt9C/jrnUbXo9M0ZVJz/F/jtFv/sCMcb92
+   +U5csg76Z1Z7siNkq9sWwJt/gKlVAoN/pHhhIi+RT8znQ02zgInPU+Bor
+   IKM0Dl+uEnpazvZT6e9eSEzE3z73afBK6rdWiA0oO4lbU2ibx8ZknbodX
+   zL9a5BIjNAzamA0tVpOTD+Mhf468NVBL6sO+RrFctZUJxGT0OKrfWk8YT
+   kPBW57KBBEvyk0uri4GIbwFXy7r2J4nStQy7zIZ1N1SpAHZsm7SHoqKUB
    w==;
-X-CSE-ConnectionGUID: t4nJTFLUQceZvkt6u9W+ug==
-X-CSE-MsgGUID: OXxTyGUQRK+73AIK12XuEA==
+X-CSE-ConnectionGUID: V6We0pr5QIOXx8mFDIxkEw==
+X-CSE-MsgGUID: 2WzlJk5dRtitwyzzXmjgJg==
 X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="45941907"
+   d="scan'208";a="47066873"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:53:20 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:55:07 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 07:53:17 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 15 Sep 2025 07:53:15 -0700
-Message-ID: <826bb7ba-c4fb-4dd9-9332-88140d7a0eb1@microchip.com>
-Date: Mon, 15 Sep 2025 16:53:15 +0200
+ 15.1.2507.58; Mon, 15 Sep 2025 07:54:59 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 15 Sep 2025 07:54:57 -0700
+Message-ID: <272ffdb9-9d7f-4a48-9968-7de1d32d721e@microchip.com>
+Date: Mon, 15 Sep 2025 16:54:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,47 +52,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: at91: sam9x7: Add peripheral clock id for pmecc
-To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH] clk: at91: clk-master: Add check for divide by 3
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+To: <Ryan.Wanner@microchip.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
 CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-References: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <20250908200725.75364-1-Ryan.Wanner@microchip.com>
+ <1882cb12-cb65-423a-bacb-3965ba845ab3@microchip.com>
 Content-Language: en-US, fr
 Organization: microchip
-In-Reply-To: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
+In-Reply-To: <1882cb12-cb65-423a-bacb-3965ba845ab3@microchip.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 09/09/2025 at 12:38, Balamanikandan Gunasundar wrote:
-> Add pmecc instance id in peripheral clock description.
+On 09/09/2025 at 09:57, Nicolas Ferre wrote:
+> On 08/09/2025 at 22:07, Ryan.Wanner@microchip.com wrote:
+>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>
+>> A potential divider for the master clock is div/3. The register
+>> configuration for div/3 is MASTER_PRES_MAX. The current bit shifting
+>> method does not work for this case. Checking for MASTER_PRES_MAX will
+>> ensure the correct decimal value is stored in the system.
+>>
+>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Signed-off-by: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Added to clk-microchip with fix of tab vs. space (made by Claudiu).
-
+Added to clk-microchip, on its way upstream.
 Thanks, regards,
    Nicolas
 
-> ---
-> Changes in v2:
-> - Removed Acked-by tag that was added by mistake
+> Thanks Ryan, regards,
+>     Nicolas
 > 
->   drivers/clk/at91/sam9x7.c | 1 +
->   1 file changed, 1 insertion(+)
+>> ---
+>>    drivers/clk/at91/clk-master.c | 3 +++
+>>    1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+>> index 7a544e429d34..d5ea2069ec83 100644
+>> --- a/drivers/clk/at91/clk-master.c
+>> +++ b/drivers/clk/at91/clk-master.c
+>> @@ -580,6 +580,9 @@ clk_sama7g5_master_recalc_rate(struct clk_hw *hw,
+>>    {
+>>    	struct clk_master *master = to_clk_master(hw);
+>>    
+>> +	if (master->div == MASTER_PRES_MAX)
+>> +		return DIV_ROUND_CLOSEST_ULL(parent_rate, 3);
+>> +
+>>    	return DIV_ROUND_CLOSEST_ULL(parent_rate, (1 << master->div));
+>>    }
+>>    
 > 
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index ffab32b047a0..bce60f7393d5 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -403,6 +403,7 @@ static const struct {
->   	{ .n = "pioD_clk",	.id = 44, },
->   	{ .n = "tcb1_clk",	.id = 45, },
->   	{ .n = "dbgu_clk",	.id = 47, },
-> +	{ .n = "pmecc_clk",     .id = 48, },
->   	/*
->   	 * mpddr_clk feeds DDR controller and is enabled by bootloader thus we
->   	 * need to keep it enabled in case there is no Linux consumer for it.
 
