@@ -1,154 +1,112 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1492F39D7
-	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 09:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DCF2FA0DA
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 09:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928391; cv=none; b=PNpDzbjfLIS0WjjbvBkrZR5HXmF00SRn9cgjAgoSUi20diz9WTL92Z5FwHzNrDnoYAvYMYkDdCyz4dN8UREcQid/4axjNG1O6RbTKlLWh33W8NGnrhycDgJylPeJpAkxB5FbPLy2O7EAqjh8dQvZjUcLHHxIsA5Li7cYFz+DEkw=
+	t=1757929516; cv=none; b=cs87HTBVhoeQSSgCqXerph+fw6Dgsjvhlu0GaoRl/lgjCGEDMcsURhgxrgCHlDNn0RP0vWpil7G4ZZCH3pClQ6ntuh5OKvw/petcUSCGLpD8u0HUeCeQDDFt+XttYxCK9Tgpg+8JeqbsG3pcInQfzPBLDxd6emdT5c+Wbm2+snQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928391; c=relaxed/simple;
-	bh=NwUlZ+d9Soy2KsCDuSl1V0Mnvqrs+f+M97eGO21lPvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pV6wsW32kDjK6IQmkstwwUYZq/VyowHnthA0feDRzeCu+MNkG6t9yuLaunlfZAtoPmG0Ge0cRyi5VZoa1z2FTz2WqvQXb8wV/9niJyHExmQPHBDrOXhwAMJu37YAkChQBXhAT6Q7GkA5pmfIB9NllSad+k2tK4v5esgtKQxNjgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lKxshNvk; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1757929516; c=relaxed/simple;
+	bh=TrChAAWunZiE/sb8luU2pEwyYavetGbtrq/ex3LO5f0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=EP+18nCcCtDtJTUGPAK+56iqooxNeYh7+WgVE9Whn47Y9B9XklA43QFqFt4UpnZI/m7iv+ANBHvPTYxN4FTNN8icWfChIel7ifFclheyJQGR7csVcxzLs3+ZNOrfmJPwn1CwYqvG4JAWsRChi9F//T3ClGyXhqLMeHkky3fm3m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VQuL5rpj; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lKxshNvk"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso42002925e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 02:26:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757928387; x=1758533187; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hs6GWuV18CGeToReruv/f07z6TMgsUaRPyZmMmtsSrc=;
-        b=lKxshNvkbxPu1NFlNkMc6lMYHOxKWbCh9kcNbIQyiHSF7r1aTB58kLbOWj9dFAXBJz
-         DpUB5u0WgmXLN24UHAaVCx7hrZh8Muy/dFEygo8wnn+PGvBTCy5DlEYcJiYhYsvm/fqa
-         pxhv9+VYhQ42gcz/SyFflAuLd39NsYpIATYl2YypVFDIIy653EE3zT1EkRgQPRH15k4T
-         iBbfWsRB2HUTHDQ4sBlvju+YNFGLfhdr/W4HtNbs8J6dKWAC7r8KFx2Hz2HiGkaQmqoE
-         Ji0Bp1pBj6VXeWVXZF9o4/b5eGywGY5Oq6TjoQUixnieEO33/ryIWpfUhl6BojsMOLdL
-         1cjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757928387; x=1758533187;
-        h=mime-version:message-id:date:user-agent:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hs6GWuV18CGeToReruv/f07z6TMgsUaRPyZmMmtsSrc=;
-        b=X3LSmU7Js418CyqnLVss55pLBIaFSSu3o1N3WeLDyK5VnWdYPIlebvGEuPBUbOsp/F
-         VL+3X0UqDu4TpivZj0MG2Xs2eH6L/MsyZBCQ64w91JD+wH4zcRnsuiwhmFYT9PdCX+bE
-         xDTpZRQo5cCpotzMi7ca0+GAQltohYdVLkk1A6Wc0YXo3JTX4AzthXJL7BJ3lnY54AnX
-         DgkZicL3chJk+Ar6voxPvZshyLtH/OySUDskHg25MbSCuCpLeu4mx2Cb1fR8iP1da837
-         TsI+ftSgqGsvkO8ahYdDhms6+fRN2YlGUpLCFl5YWhrahvOrz5crNbnPQh18FUhvP1Ut
-         PsIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeeN0AMVNgrbiyfvTBoCsW3xRvhbAfFPhedBIUgW/1afSMKEJdLtN6SGiKVBQevZwUMAKcd7I2P0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxSTSJm+ouDzqYYjoZXOaiCYl98Cbc3Uc3PdNjP+/lUy2EUKKm
-	uBWAmrVDv2I12qT3JPmWH+5516D52edt8P4SMdfFoEMMde9f6JxYtrKqvrB5uSouvvk=
-X-Gm-Gg: ASbGncvOfFtI32jnsfTEEq1m62O28TNkxLlCUqQnAaPFh13jSa8BbgTJGIE8D9W5h77
-	0dW8t9kZyL6i0tAM1Im9nhwVqt5+GPI1cOD5FIehr0D5N9tqH8eDrl92CAy5jFJX8J9ahwk+qmh
-	eCKCzaTxzsGzGL/HQcgDv/lTs6/c7vrcTWwRSsYyyYrfWSCMm5/5k2ge05WHMoTYs009KHAFXZD
-	vXVspCSLPkmXNIFCAehvjRXPaiodqTkh9Q8DwU3qXl4UtCTFhrXhlCsh4t2a5dtlrRUQTwGhEGX
-	yNgtuUeD7UT0PdiA8aJJXXNU7UwLcPg4mgwOoI5cAQxFb1Pl/TyqVppPWgu4HfYCJHA4FDNOmfX
-	iwoG+3dEB3LPeMxSiD29Djg==
-X-Google-Smtp-Source: AGHT+IFgxxLS2pJg24kRWNPyu3hgcRcX74JPOpS67jGIEm8dm9wZLjy1miiz+i+z7lmiREfwu/WfaA==
-X-Received: by 2002:a05:6000:220f:b0:3cd:590c:61e0 with SMTP id ffacd0b85a97d-3e765a03542mr12295242f8f.54.1757928386771;
-        Mon, 15 Sep 2025 02:26:26 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:508e:f12d:6dca:3a75])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e94163c03dsm7324441f8f.63.2025.09.15.02.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 02:26:26 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
- <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
- linux-amlogic <linux-amlogic@lists.infradead.org>
-Subject: [GIT PULL] clk: meson: amlogic updates for v6.18
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 15 Sep 2025 11:26:25 +0200
-Message-ID: <1jecs8hxry.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VQuL5rpj"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250915094512epoutp01fe0b32158ffce1d06b8fe1b7064f0a74~la5Pa2_Am2301323013epoutp01j
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 09:45:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250915094512epoutp01fe0b32158ffce1d06b8fe1b7064f0a74~la5Pa2_Am2301323013epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757929512;
+	bh=QkNp9D58yMqtTX6qAnEQLm2JGIov8tcrreWJNSP4Fj8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=VQuL5rpjpyZIowM8MYwNifukSNfosTYhNSMeVD0np2LNEjCkOm6I7w2EtFp2XyY4q
+	 zbnc8tNks2fBQ9wlqvcq988+qLTQc9iYCD/vvQpSoRWfKdVg+fDbc2qYn/+86xE0yW
+	 KGIEa2UTXb+qZUvHnUHuN0Yn5zGspo9JLTINlCpo=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250915094511epcas5p1ae78bac20f275fe9253e89b3ff86c2c5~la5OwEWup0088700887epcas5p1v;
+	Mon, 15 Sep 2025 09:45:11 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cQKrk4pRZz6B9m5; Mon, 15 Sep
+	2025 09:45:10 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250915094509epcas5p355b63f77800068afa6b891068080cde7~la5MwJfOc0109001090epcas5p3f;
+	Mon, 15 Sep 2025 09:45:09 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250915094506epsmtip273b178251cb71880f5f6d2a6befb0743~la5KWSHiC0834508345epsmtip2O;
+	Mon, 15 Sep 2025 09:45:06 +0000 (GMT)
+From: Raghav Sharma <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
+	shin.son@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, chandan.vn@samsung.com,
+	dev.tailor@samsung.com, karthik.sun@samsung.com, Raghav Sharma
+	<raghav.s@samsung.com>
+Subject: [PATCH v2 0/3] Add clock support for CMU_M2M
+Date: Mon, 15 Sep 2025 15:23:58 +0530
+Message-Id: <20250915095401.3699849-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250915094509epcas5p355b63f77800068afa6b891068080cde7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250915094509epcas5p355b63f77800068afa6b891068080cde7
+References: <CGME20250915094509epcas5p355b63f77800068afa6b891068080cde7@epcas5p3.samsung.com>
+
+This series adds clock support for the CMU_M2M block.
+
+Patch[1/3]: dt-bindings: clock: exynosautov920: add m2m clock definitions
+        - Adds DT binding for CMU_M2M and clock definitions
+
+Patch[2/3]: clk: samsung: exynosautov920: add block m2m clock support
+        - Adds CMU_M2M clock driver support
+
+Patch[3/3]: arm64: dts: exynosautov920: add CMU_M2M clock DT nodes
+        - Adds dt node for CMU_M2M
+
+Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+---
+Changes in v2:
+-Fixed the dt binding checks warning
+
+Link to v1:
+https://lore.kernel.org/all/20250808142146.3181062-1-raghav.s@samsung.com/
+
+Got a comment from Krzysztof Kozlowski
+Link: https://lore.kernel.org/all/f8ad7883-d879-47ce-aafc-7c5f741f3c18@kernel.org/
+
+Raghav Sharma (3):
+  dt-bindings: clock: exynosautov920: add m2m clock definitions
+  clk: samsung: exynosautov920: add block m2m clock support
+  arm64: dts: exynosautov920: add cmu_m2m clock DT nodes
+
+ .../clock/samsung,exynosautov920-clock.yaml   | 21 +++++++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 13 ++++++
+ drivers/clk/samsung/clk-exynosautov920.c      | 45 +++++++++++++++++++
+ .../clock/samsung,exynosautov920.h            |  5 +++
+ 4 files changed, 84 insertions(+)
 
 
-Hi Stephen,
-
-Here are the Amlogic clock updates for v6.18.
-
-This is mostly a clean up of pointless differences between the
-controllers which have been accumulated over the years. Hopefully, this
-will help with the maintenance and simplify the review of the incoming
-new controllers.
-
-Overall, this is just simple stuff but since it touches every Amlogic
-controllers, the diff is fairly large.
-
-Please pull
-Cheers
-
-Jerome
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.18-1
-
-for you to fetch changes up to 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf:
-
-  clk: amlogic: c3-peripherals: use helper for basic composite clocks (2025-09-04 18:27:12 +0200)
-
-----------------------------------------------------------------
-Amlogic clock changes for v6.18
-
-* Factorize clock controller probe functions
-* Clean up peripheral clocks definitions
-* Clean redundant composite clock definitions
-
-----------------------------------------------------------------
-Jerome Brunet (13):
-      clk: amlogic: naming consistency alignment
-      clk: amlogic: drop meson-clkcee
-      clk: amlogic: add probe helper for mmio based controllers
-      clk: amlogic: use probe helper in mmio based controllers
-      clk: amlogic: aoclk: use clkc-utils syscon probe
-      clk: amlogic: move PCLK definition to clkc-utils
-      clk: amlogic: drop CLK_SET_RATE_PARENT from peripheral clocks
-      clk: amlogic: pclk explicitly use CLK_IGNORE_UNUSED
-      clk: amlogic: introduce a common pclk definition
-      clk: amlogic: use the common pclk definition
-      clk: amlogic: add composite clock helpers
-      clk: amlogic: align s4 and c3 pwm clock descriptions
-      clk: amlogic: c3-peripherals: use helper for basic composite clocks
-
- drivers/clk/meson/Kconfig            |   13 +-
- drivers/clk/meson/Makefile           |    1 -
- drivers/clk/meson/a1-peripherals.c   |  995 +++++-----
- drivers/clk/meson/a1-pll.c           |  124 +-
- drivers/clk/meson/axg-aoclk.c        |  153 +-
- drivers/clk/meson/axg.c              |  237 +--
- drivers/clk/meson/c3-peripherals.c   | 2055 ++++++---------------
- drivers/clk/meson/c3-pll.c           |  245 ++-
- drivers/clk/meson/clk-regmap.h       |   20 -
- drivers/clk/meson/g12a-aoclk.c       |  238 +--
- drivers/clk/meson/g12a.c             | 3316 +++++++++++++++++-----------------
- drivers/clk/meson/gxbb-aoclk.c       |  123 +-
- drivers/clk/meson/gxbb.c             |  611 ++++---
- drivers/clk/meson/meson-aoclk.c      |   32 +-
- drivers/clk/meson/meson-aoclk.h      |    2 +-
- drivers/clk/meson/meson-clkc-utils.c |   86 +-
- drivers/clk/meson/meson-clkc-utils.h |   89 +
- drivers/clk/meson/meson-eeclk.c      |   60 -
- drivers/clk/meson/meson-eeclk.h      |   24 -
- drivers/clk/meson/meson8-ddr.c       |   62 +-
- drivers/clk/meson/meson8b.c          |  746 ++++----
- drivers/clk/meson/s4-peripherals.c   | 1160 ++++--------
- drivers/clk/meson/s4-pll.c           |   82 +-
- 23 files changed, 4434 insertions(+), 6040 deletions(-)
- delete mode 100644 drivers/clk/meson/meson-eeclk.c
- delete mode 100644 drivers/clk/meson/meson-eeclk.h
+base-commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+-- 
+2.34.1
 
