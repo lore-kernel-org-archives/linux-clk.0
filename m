@@ -1,110 +1,107 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C75280312
-	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 23:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7AC2566
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 23:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757978479; cv=none; b=DcSgYNvUk/mXGKhGKsQR9cFYKyzhEloi6ywLy1p3wuZsXksOM/eHmbPacXbzM7trmq8VD8FwjVVGJy03uVASYfpP3tRKnBUImNiMfK0DD048838RzFf2ItIGmN+5lW8cb7AEPwGyOWYrX24cGtYdwNrZnOoojXTc3LzNMT19180=
+	t=1757978670; cv=none; b=qthbMmaTmhLa4hE+RadY2EZdyFWWcLmNoR7ztEJyLXql8JoGtH9KFrPoJqKDNXJJ24oLnsLSItEXPRn0eUy4U7tIKuKcnHwVrzUg7xJ0gvTNm/NtG5HHb9dmev/4/930Y3Leh3Ov1Jckvq2aoLJ5Y+GWp29Nw7ICa2mh7NbL8I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757978479; c=relaxed/simple;
-	bh=QjptKauox/zh/yVRJgItfD+1SMNcMuOHhIn0e1+Z9Mc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BLnx/JR7llDMDuOu7za+81ft7kFLvCBIVe04JnPBRZj2r4DntdcHYPrPIWgdIhqGTrSKSORmwgJvxxi8xuzsK2/D/LRsp1ysJ8H8K1Z/3KcmPULY2EZil+6TanIW8f2ADMvyr+PBeTHIQ4jSHiTy1bfeIIsS/5HSnrqZlhMWRCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=D7h5B75/; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1757978670; c=relaxed/simple;
+	bh=GKwwThVWN55ZdhLn8yiXh6K4JxO9Mo/TQgLMtJNViiY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QgF+Y4eyM6GfUtZkK6+II+KmBBdhS+evs++aHGEG8Jody+Si5qxsF3ca2QJlbm0YuWqs8S5lxkkKJi2C/DULTzlYnTCeW4UevZqA3CmgSw4Qcw+AAi5WyOlsQB1Vh+n3dnidEfe5e7PwkZFIW042+CkuPeeCMcl7h0jp4+jIz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AnNF5SZK; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D7h5B75/"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2639bffd354so14566015ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 16:21:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AnNF5SZK"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-329e1c8e079so4061692a91.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 16:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757978477; x=1758583277; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgsUeyln5jHJQtg6nGIuuJa3omU5ijeYPDC8tIR2gz0=;
-        b=D7h5B75/JCdJbzyIf9m3bofYjEMIvzT38rcyTG2tKOWMIB829e5ldJZMKo8cizLcul
-         okswZh/T+GMZ1IeMF0Gs+S2yQ6M/zMI5AXe5tlLAE6D+Jfm3Qz+mZkL7PwOvNUD0zbwg
-         1xKmiTdN4EZIY0cooT+st3eRNp568XFIVFtAjvWapjh1yGFlHSkEcJBm5jNPuD46DK7C
-         JaOm9QJH7vLQB1bsRFa8Lqx/ZV54LxTKERel0yTI+L2wHU+2+wk8U6b9ty+Sytx0lxZt
-         l2RPuOyPsn4EOQAZ0usjyGrmfOarWsLUX0KeSE8Rfx4XbRUx6umdgkT9k8RHnjX2z31Q
-         A9kw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757978668; x=1758583468; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7uiIeEfgdlPYTD6UL4WzVPf/Tll8ADDPeUkNnf2rCA=;
+        b=AnNF5SZKv5v17asZT7KXmEVrj+c+cAHFNsqbOyyCckZn84Ou+TpsIyq9M5CNxXk9tp
+         wozriOntYhSiUFCQX/n/vTLbuYa1UxAeDgBphC69+e90/WPfG5f9ttB/62oYoZQY8wIQ
+         dFXRBNh5B8KDoHLupM0qQAHa1+etF8bgl1mJ2keogyskBZ/n+5OwdiFMhbXGJw/5YVks
+         S9lZyMmR5QX176dS50qmD/ygPWC0tVguS33YcC4T1DUjl0lrLk5P8z/H96YhD6PAL8pn
+         4FtAA667OE03xWx25OtDuFMjryLGR1dw2RQW1ytemeZGHlyQkpfZWg093TQRbI0MBXIc
+         w20g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757978477; x=1758583277;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgsUeyln5jHJQtg6nGIuuJa3omU5ijeYPDC8tIR2gz0=;
-        b=Tf5pAxIQdrahfgjkfKdlBhCyd4ekHXHVenQoUZxGTlmzT3o34eRs4SQZWj/2gJ8ZaS
-         lrFasPdpfMcG3jrXb5PHIfemGDuiGLpJu3uagSjaFC3aggV/QPb9Efbm5SPipBdDIUqE
-         hXF3syIWjvd6XQ1KQuB7swgKT84QLtGaNKe+b4GCoBUgndiKf/fs9sjhBzLLnw0Bp0IN
-         ocx4ocybPXSww/yjeAS7oyqgYYTRhS2j/o7P3E/K1lOGMWsM4GtBQhwA9xxJGGvQjWN8
-         5TyWweeYEfhMI+qgNuIqwduBr+JGhnCiaekJaahyGGDfm29r1t1xXlzlbYm4dYVtmqDZ
-         6N5Q==
-X-Gm-Message-State: AOJu0YxQjseJRkyrcwqAET+lrJ9CDLlAQAMX9TbKvWOjWHTvT2qbhLic
-	Af8gdcKdo/P+74edcwxd5VYVhIjho2qDEHxBGZDrfQWWMa6mc40cpeffjW383p3rR7g=
-X-Gm-Gg: ASbGnctVQw66i0rjsl/2H2SSr4VBtgYBeFs9XHHOjxnrBeGUDqf9rj/V0uRoqXaiTYj
-	z+uY6x/TH2eZA2+IAIf7XrlUP8BZ6aGQJKUHC/J6MaEeoh/OUWsd/30SQJWiz7UT0vpoYFgg4YK
-	7bAlTzUgAaUwWGsza7stFImthN4X4hY3cCL54QY9/mgMhRUrMEh5gF6NFp2mEJ3HYgUm/kS+tth
-	IeiREUTIDcq8obSBb7HYvjc3HJs8kqHBz5SrlGOdcbWmM7+HuOzBnPI3utJ/YzMyQgAVzdfkeAl
-	4bjyz+EsbQeh7zz2FOOS0udI1mQKG26KYKgUac0s/H+UvDqojAqG1VJqhqHNDJnlxAJeOuqGHNK
-	eVC+kiVekcyLzGwu0lRQqTTHMNuEnraw=
-X-Google-Smtp-Source: AGHT+IEMv8jBnfBFpzOj2tDIE4OBC2iZqPmVd1ibS2mAaD25rPyFSdy7EKxeRUd8V1wYJ+kr0edLjQ==
-X-Received: by 2002:a17:903:3888:b0:24c:cc32:788b with SMTP id d9443c01a7336-25d243e7b4cmr166970205ad.3.1757978476693;
-        Mon, 15 Sep 2025 16:21:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757978668; x=1758583468;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7uiIeEfgdlPYTD6UL4WzVPf/Tll8ADDPeUkNnf2rCA=;
+        b=GGCAIeAKx2jlBClsAiXZn/X52MaYjyEI8/FUvH1aFazOv6G91YmucNrLDIS34JLmN5
+         29dIXqidWpi22vtSvUnE+D2ajroPz9rIPP+pbPH8pH6Dv/JLdM2mggC5sLzTpp82Jowk
+         LkTgZdqYORjDooNgbm+5XDdUKcmlMjrNDSwIPbvM1BZF1CC+hd69lcDlAM0vzqdCrrpV
+         IWPX7GWxqpcUQKTKbeSs+xXLB4Y07PUL23pYI3EmjB7pNHbJW5FqqY0dKFMtVB7Yj52k
+         njkipDZ1dDk7tOtNfx/WNp+W2hT5xi94knFOgznTEpvY6C+izJyAg3CAZw7rNKiEJy8Q
+         PA9A==
+X-Gm-Message-State: AOJu0Yxr/9q+fIb8wSaIvTtl3zajtQ6iMQptjRLyDqKOWi9NLbXZwtgf
+	0Ekl8OtBzTjiSAcRyYtJeOwjZtcZ6TuBTZZ6WR72+4qKyvuUq20XStNbVg9Fnaze5xw=
+X-Gm-Gg: ASbGncsMUybzZV54Z/570AWZ1csijlMkpRI2m3x3yLW9haiEOXUHwKVmCxb5ISkJvTD
+	D8RcE/Nu4ntNLkoq1G0K3GYd2JFJCiKOJ1Tv9eb8mSq3XyPog+zcqQ4ZK41HTJK+WklIT0CPPEB
+	H3GPsqBVGCypXc0JQzKf476JXU+JPTzISsbjEhaRsX2M0g36tc/d5JU7E/XBqV4OJcJLDJiz9ae
+	xgpGEbSU9ugEpPG/Aomho0La8RLVXHf/RliAc9TZRlwoJaGDZgti6mETqMVAmk6NRlY9keVIglO
+	uv7DCCF/UEGW0WhItNxsl1C7DCsjZ8/F8kZoI5LpAFIFwb6qoPMu+pn8+sY17v+d9Ov7RG5J4w+
+	Fk45cfdICu03z/a0lJtSFqz9nb7vIWfw=
+X-Google-Smtp-Source: AGHT+IHW+Ei25gxkyciUKrKbP1B/EsmDVjk/MF+hGzmjRjAtg2y1sc/2CYFiYtv3fYigvlxtLkhu6A==
+X-Received: by 2002:a17:90b:49:b0:32e:528c:60ee with SMTP id 98e67ed59e1d1-32e528c62abmr7999389a91.24.1757978668587;
+        Mon, 15 Sep 2025 16:24:28 -0700 (PDT)
 Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b17c78sm14543629b3a.50.2025.09.15.16.21.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32df315f9dfsm11154777a91.21.2025.09.15.16.24.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 16:21:16 -0700 (PDT)
+        Mon, 15 Sep 2025 16:24:28 -0700 (PDT)
 From: Kevin Hilman <khilman@baylibre.com>
-To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren
+ <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andreas Kemnade
+ <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
-References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
 Subject: Re: (subset) [PATCH 0/3] ARM: convert from clk round_rate() to
  determine_rate()
-Message-Id: <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
-Date: Mon, 15 Sep 2025 16:21:15 -0700
+In-Reply-To: <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
+References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
+ <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
+Date: Mon, 15 Sep 2025 16:24:27 -0700
+Message-ID: <7hfrcn8fkk.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
+Content-Type: text/plain
 
+Kevin Hilman <khilman@baylibre.com> writes:
 
-On Thu, 10 Jul 2025 19:42:15 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the arm32 subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
-> 
-> Coccinelle semantic patch:
-> 
-> [...]
+> On Thu, 10 Jul 2025 19:42:15 -0400, Brian Masney wrote:
+>> The round_rate() clk ops is deprecated in the clk framework in favor
+>> of the determine_rate() clk ops, so let's go ahead and convert the
+>> drivers in the arm32 subsystem using the Coccinelle semantic patch
+>> posted below. I did a few minor cosmetic cleanups of the code in a
+>> few cases.
+>> 
+>> Coccinelle semantic patch:
+>> 
+>> [...]
+>
+> Applied, thanks!
+>
+> [1/3] ARM: OMAP1: clock: convert from round_rate() to determine_rate()
+>       commit: e2c0510935c5485a2dacfd13af3958536b9d138b
+> [2/3] ARM: OMAP2+: clock: convert from round_rate() to determine_rate()
+>       commit: bb676996ed583464504123721195e98a708fbba9
 
-Applied, thanks!
+I only toook the OMAP patches, Linus W. should take the mach-versatile
+one as he's the maintainer for that platform.
 
-[1/3] ARM: OMAP1: clock: convert from round_rate() to determine_rate()
-      commit: e2c0510935c5485a2dacfd13af3958536b9d138b
-[2/3] ARM: OMAP2+: clock: convert from round_rate() to determine_rate()
-      commit: bb676996ed583464504123721195e98a708fbba9
-
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
-
+Kevin
