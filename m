@@ -1,343 +1,315 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011001.outbound.protection.outlook.com [52.101.65.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2A52F0C64;
-	Mon, 15 Sep 2025 08:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925039; cv=fail; b=XrO3pk3TRI4Kn7qzSB0up3rua2mn91vBVkj8E/qwGsfZqqoxFjnfsb1EDqEZBdTO4rFLjJEGbKiTBk+aBjpHHC3vXle99cJymdi/2uf7lHI5RKQYyZN6h+eB/TAmCAG8aoKSStILA+XXKYgNduzcI6i7AuZuD9WKRZ+LozR4uzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925039; c=relaxed/simple;
-	bh=/f/t/uvptCFsPsDbOruMFADsd8OrSPUdYLFUpJTxZ8M=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Cah6SKlnqGon3aB3LQUhNybRO1s30RLOQEQvucOxikvDZABrOP/cnxvf9U85z0T7v1IfT/j/pu7OSbxLewa1aEN8V6FA5BLBCSmm4d43XrVnfVSEbhhe5ZsPo8GDCneVlTREiY7R4v97CNeBiG2mUigH8p7fCVKJ00r6EyrYcD8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=E9y3LOBt; arc=fail smtp.client-ip=52.101.65.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218712D3ECC
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 08:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757926794; cv=none; b=cIPLDfbE6K++KyUh3idBM7DaGBhARJUsMMjb4toKzPylHqSQqFZgrDmdMyyG1ljKhOITwALFCVgZDax3yvcnkFTnZyK1DdGRityEEacbXBhC+8eDQmRtUG1Ab2p/quRWIkMHiz9DpT017BYBtEjfI2jEeSKWPGs+AvyO6qNdu7o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757926794; c=relaxed/simple;
+	bh=yVJ/zB7Za/xFJEFjpbiTAxy/vw2oveYhHxBNm1AwRBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LNqLF+/3ZXUysNuGL75d+lVuFrvE9E0JNfQ9zl2pC03BTn8+FtgRxRwaDjKNW47MTHHF2gX0ETZmT1T+ehSDo5lEKU1tp8B0tOKJengrkDSABHFi4yLgcGEbE5g47BU2fvWV8stiICaySUv8Osdt1TFmtYxYOJrEWZfSt1z27UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRoAESXq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="E9y3LOBt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WiogRlaRGPH9IPxUhNZS8QKeqXboA4nxBT0nhFXADhGnatt6LjywcmT/PAgQJDwVaRHqyjxIpL6JcIfaHX0Z0GWAafxIURSkYF+U04+WlLZkKLkxLShFSppdpch/b2CMolzDnoL464pab6ED47ASilGtts/RX1mifa1P/TxAutPEwAXN8x6nPoGwIq40002Z8nUX2i592gNnfdVJiRB+h1l6lsCalRGW+nKxsIsGZbOy97MoSaPR8+8xYbl2TaRthZhXOWzjNZlvMbh9ruTHIojmEjIDLWwev500JEh0oOz/PHDi2gn3YlEmQ3uOWCDDDxKnqqIhBwaqiW4PRnP5iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pIJfCg4N2oQGUDEPTId1k3KrZRqXxJU5TwK1ZfHn4bY=;
- b=zPze5HJHX7nLOqtjGr+kcXBskQcbPfP+oJDXZ+leMrYidsCbSl8uicfzVoa1SqSW4CxbY4K43TGkENffThiBRr74HfQ1aEnFqq5OAO6tcl4SxhoANQHDWvDGOAuqprST0kv+75PpWswNh3uWM+Vh+UsOvuVd/BQXeBBUdTHTimaCs7UAWybdfQKlSTWWEknNfDLDLkUmz9yjcq+A9ZHfwgPRXcZJfHEbbUoupg6RL5ATeDEPR0Nus7NWzf6sQ6XITZxm1d6NvKZQohrXE/quay8uFRw+6wlnp6TaQMvRbuttzn1QpMWRuQZTacX3wFy5lnRX5oU6WCf4NZLjbdEoZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pIJfCg4N2oQGUDEPTId1k3KrZRqXxJU5TwK1ZfHn4bY=;
- b=E9y3LOBtsok/TLpr9sFx84rCC7ut0InbNS7cF5a3eC+TwBavWeKlmAfVD2xTDHNG8O1aqSSM8pk51H+vsA4fPrkfo+27tpsCMqslVR4Kbn5pWlgApMe9eao2ikaKQCS9FkxbB+9Yjfs+v61hTmmTx+KVVqEZxajyR1j0JcoUEa5v9/+T3MQH/KLmu6hwM+n9sz9vkjdH3FZz8aTT4qmUVrlgwa+GH+DvCL+NtMW6eJ2/AEmXX7jg2KaMUPgdsYQ509GkenGrS+33taeVaE7FCI9wm5QMFmNE1XRmIl9gtiJvBSNXzSBACJ/DsGELV16/kiReVAT2NQVoO4FfbacdDQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI1PR04MB7181.eurprd04.prod.outlook.com (2603:10a6:800:12a::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Mon, 15 Sep
- 2025 08:30:35 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.010; Mon, 15 Sep 2025
- 08:30:35 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Mon, 15 Sep 2025 16:29:39 +0800
-Subject: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
-In-Reply-To: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Marco Felsch <m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757925004; l=6023;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=/f/t/uvptCFsPsDbOruMFADsd8OrSPUdYLFUpJTxZ8M=;
- b=gIXahYYYynJk3KpjZj+JqdZuxsiIzKms0S5QI7cjes9KG5LBE/CL+EAHbooqJDt95kTlwwPnA
- yQQ6Uvkxsb1Bak7ETAnE9cirD2Pd1BAZvEEkWLO/kRaOMxpyojxAkFl
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SG2PR01CA0115.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::19) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRoAESXq"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2a69d876so6811495e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 01:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757926789; x=1758531589; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6LuFJVSHeAQHDn0+XSdf5A7eQdiJjAJ7onpQpF2BurQ=;
+        b=DRoAESXqLoTt3GcqQY8DByh196cLEpm25YnHEOAaBWzrL0x5EXWekGVhOlEIf0XM5p
+         6JtgeSn8gQ10ENaZf4mdHne1JPceqEtspVZACHmlSCkHFlWjW868WVDhcXKQ3sv1FLRC
+         UQvJpOOblG301SvJXzUbDHO9R0T1D7atdJeESFPwp/LMB503gK7FwHBhbeObihQoZC8b
+         hz06Uu9FJ1XOyLk6vrHUMcFEDA4+CyapcrG0vnal4ejZSHo44ESwWUSzNKQs/KYg2Qf+
+         kg19wTByFfRFCXJWFuddFBbF/Ex2GNUsTXWrIReTsB3LBr4sxS9cOUZG3hcP6N3XeRRA
+         hqeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757926789; x=1758531589;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6LuFJVSHeAQHDn0+XSdf5A7eQdiJjAJ7onpQpF2BurQ=;
+        b=IJGOT2pgvGvMAmtjQqD9gm8V2MFFGP5WSNAea1QeQcxhoKMZswd56WD9h0GXd8hZje
+         wDl4b8ki+NomAdRXX81H6EJpRtkTzPzDIrPjK6yb8D8+uvWc6obc4fxo9L7ottRyI6Ak
+         kWC5AlK7V7yn5tbLjI4WWj4fqma6WBBq3uccsVa5i6tq8dQJl2xDx53HdFQVlg6acblQ
+         5cyNgqWeRnfT+eiVGYDT0xWeEs+MEp+XSf+OSyv+DQ/jZlpTxfLEWYKPNZn98LtjQZAJ
+         CYBW0y5Fa+NrcPL7qotjuDKUCVZm5SFmIjHy6AV6FYhid+Uj6EJEX8hQ6RFGDqlWgmRQ
+         /+pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzvha7MQ9RC8yoAhH8mHLkbI8EAl/HUkwS0iPichNF5U3dH+XRkv8QirBkhf+wmEb5mZkChZ6PtbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlSJDjvFuyNzHzedp2oVIRP+SBXp/xndqUoziOcEQmMH13dKfQ
+	/E5EK+gv9ukimDCBgMEqLLKFPSntTmevA0haVqB5uJf/yncxaI6NQ0Oj
+X-Gm-Gg: ASbGncuW4uQru9QVtz+UPLL9UOM0Pt2UriDwfVuNkaIUZd6qZE7MOWYidNMcMeeO8u9
+	4oyWfu3+6sY9FfrfWr2ZrXya0wanzx57HUfx5zDWN2X9LAFl+5FhLptk9Kq3kG8ZhOwjEmm1NZm
+	aAR9jMXDsmBMzPMR4GivVyYVOxKNuIzJ+32TniqUgOIurfzVwsl0I40ATBzLXmECYXNil/7Xpm6
+	WN2AaueKa/DVRqRYCqE7NhNKyCiXUCxUryrU6nF+9TtqNKhhCFxDIAfiHtpzxBfEELUJd4dRdFC
+	INTqL1H51isGIbKM+gVEIJGJK8Bp5aSTZkTT34q3aGAeyESe6pq1JyrGJYwUhPzBjlObx9GTP1U
+	2H0HzmwQbK5RczH3BkFO+gjZuQ3kpkBW9+GDOwHjsBP21h4MFmBfXUoLSrveHFzX8QNIsMzMfk9
+	DxLxJnGIf628I=
+X-Google-Smtp-Source: AGHT+IHPNlJyMCNv0p6hi8FUDXyC4LeGZ9hyO1d/g54G8GsV8O86kurfDHc3Bpeny255lVmyLx7p/w==
+X-Received: by 2002:a05:6000:4021:b0:3b9:148b:e78 with SMTP id ffacd0b85a97d-3e7659f46f8mr9388551f8f.53.1757926789143;
+        Mon, 15 Sep 2025 01:59:49 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e86602a7d5sm9370472f8f.62.2025.09.15.01.59.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 01:59:48 -0700 (PDT)
+Message-ID: <d23885a5-6d42-443a-bf19-eb6747e8ec47@gmail.com>
+Date: Mon, 15 Sep 2025 11:59:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI1PR04MB7181:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d15b8ee-bdcb-4026-98c3-08ddf43224a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|7416014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bTZZUWh0cGF2UUZTdTRGZVFVWHBYNGg4UWtFd05CbVRURDdSQ29abTFSWTFH?=
- =?utf-8?B?Zm54U2o0MlBjMnpYQ2FYNnhHd3FpUXlpOXNobG1pU0N2ckZsZENLQUNpK3Ro?=
- =?utf-8?B?Q1lCWHIwaXdoL25OZmJ6L2RobVVrMXQzYUUvK1YxeGpCcXRYckhwT0dkS0Vp?=
- =?utf-8?B?VGdvTDNoWStCLzVWQXdKL0RwdkhubWJXMzl6ZDdkczFaaGZOTGZuMjVLNk5w?=
- =?utf-8?B?QlRZdXBsaHg0YnkvNnh0eEQ1MFQzM3JqZlBYanNSVkMzbVFsbk5yMTVCa3hL?=
- =?utf-8?B?L1Y0a1BXS0szYlNVRForTHNJOTdTK2F3MEE2c1dldUpBampJZnF4K2RKQkRo?=
- =?utf-8?B?a1loTzlkams4RVRVbUF3bmNsV2dES3JpSDluT2Zqb3JYbmRkTkpoQ2hRcFRY?=
- =?utf-8?B?VjUzeUc5RVovZW9Xa1NXYWNsOXBtblV5ZGg3WElSUU5aWWR0MHVyekRmLzBr?=
- =?utf-8?B?QUxTYVBtOUppVGJlRFg2OTV5RFJ1ejUveUNBcXpVTmFiNWdOV2FGNW42UUll?=
- =?utf-8?B?RStjdlJyTXdySWY0UEFGMmtyb0dQVXExemVFZDhiUzAxSDRkTVpoYnRwdUJB?=
- =?utf-8?B?RkdNRG9pM3BkRmJyVUhab0grM3NyZnhvR05BRVNzMExBOUg0UTFtUktoTVVW?=
- =?utf-8?B?L1NSUGJ5QmJvb2k1eEFocjVFTUxnaXAvSGNrSjllRnQ0djgxMlNIWjZadnVq?=
- =?utf-8?B?R0Fha1Fpb2trVFhwd1ZOVlNxblhpRHFIY3dYZXByOVNVMjZEclVIR0M3Ni9w?=
- =?utf-8?B?TExEbDg2Z2Zoam12M3VSZTY0SUoweVJHVldvQzAra0FzNURMbllwc3dKVWF1?=
- =?utf-8?B?Yk15YWZySXNzKzVMVFUxSEJlSzcrT29mS0kvTFNEVkFiaHZSTEFXVHhlTjYy?=
- =?utf-8?B?T3pwMG9wcWVUZ05RQ1F4ODhzcWdVYW5kd3I5UjNoQzFiclk3bVVKVFpJVjE4?=
- =?utf-8?B?elJBWEYvMW5lQkJKTFd0cFYvSEhEUHdVVmdFcXNFZyt0WWNZTEE3ZC9qV1Bz?=
- =?utf-8?B?THRjSkw5K2R5ODAxVm1pNEFGS1ZJNzZBUHZ2SkpLdDhQNDJGWFg1dGZQSEww?=
- =?utf-8?B?MmUrYm93QVlDNzNxaklBNzNZZExKZjFJMStRTTFWQU1CL0dHL1lzUUNjUjF1?=
- =?utf-8?B?b0xjZ09vaGZ3WDh1Z0o5N1JwcTZiS3BlcDJIZWx2NWV1Si9wdTZZeXY5L211?=
- =?utf-8?B?WVQya3JHcXcwNjFWbVNDV0FHUWluNWRkTlo3MjV4TmtnYkd0WTh2dThxQ3V6?=
- =?utf-8?B?bUxjRTl6WXZPZmp4UlZlOE13dzlWb3JxWDVyTVlDY3VzMERkeSt1dWw2THZC?=
- =?utf-8?B?eVU3ZTN4NWhicENmbi9XOVpPZnVISkFGY0VVUlBTbkhWS1NySVlyOGk5akJV?=
- =?utf-8?B?S054U0FFdmJrNExvbFlSTkoyY3hKYkVPNXR0UEdRNXlKSXkyRTRvandGV05V?=
- =?utf-8?B?NUE1YWQ0QXdsclJQY0lYeEMzZ0JGOWk1RHIzV05DVVgyVlBLSWdUak1kVkp5?=
- =?utf-8?B?ck8vSXhNNlhBSitITkNlSkVwNDFQem9Qb0xveXVXaWNMT25hM1FTUFlUMzBz?=
- =?utf-8?B?NEhmTDkyYmVwOFE5VW90RElwK1M4WWxpRW1LOXU3Umx6WWM1NHZDZ3h5U1VN?=
- =?utf-8?B?M2V6SFhsMytpczJxU2FWd2llVVQ4cjJNWnI4NGpPMUY2ZVdNWXlLNzdqWjVj?=
- =?utf-8?B?ckh5czNXbGQ2ZEU3MWV3NG1FYlFZaWtkeWVKRE1HYXlWc2JMeEtWR2RNQ1RM?=
- =?utf-8?B?c2lTZ0gzN0JlVVZ4V05XZDdtYnFkemNQdGs3UE9KZGV5SDMxS2oyblhLeTJx?=
- =?utf-8?B?Q1NoQWRkSGxqWGhjQ2xsRko2Mk5ZSEpqOERPOVlkZXlXRW5pZzBNUG5ndnVH?=
- =?utf-8?B?R1EyWkRzSmZ1WU40R3VRWHZ0SkpPVjhWTURyOHRIVEQxbWEvclpwQ3IzYXRa?=
- =?utf-8?B?RVZlS0gyZEFoMlBheW5hbHZXRlljZlJLTExMaEs3TitEa3RIck9iWXpkZWFK?=
- =?utf-8?B?WUZvaUNqY053PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a1RrWkRMckcyNUQzaVh4Y0cwSnF2dmtWUU9nSkxNRjJVUDZxZ3doYkJKR0VC?=
- =?utf-8?B?akNPTnY2N1VIZWJ1aWVNLzNNcG5PVkRnWVExYlhwWXlRV2wzTTRIMmpEb1Vr?=
- =?utf-8?B?T1lFRUY1bG9vb0xMRkEyZVN3VHZyUXNESElOZFNiOXc3OUtWd2oyTUQ3VmlU?=
- =?utf-8?B?K0tHU1VtcmYrUGhpYWJpSjFHV1l6eENpdE90VDBNTy9aWHFHbW5IQ3R3UEFN?=
- =?utf-8?B?R3BzcFZHQmRpZVB4bXQ5VGVLVTZKaHhvTUFYU1ZkbWtvZ1B2N3R2SXBKb3ZB?=
- =?utf-8?B?VUxwZjZHSytLT3MxSmt3VkxRbGdPcTJjb0I5YUtjdUlTUnpaUkhzMlF2aStP?=
- =?utf-8?B?NnJHc1E2aitBUk5jTWdMcUdYNVYvZzdVOUQ3cDhWUVJxb0V6dEZTMjJMZ21C?=
- =?utf-8?B?VG92b3NmK1hNUUErRnU2em9YbFV4WHNyWFRSMzRXeVkvVVpLTVF6VUoyelFS?=
- =?utf-8?B?K0Q1bnFQQ0JzZThEeDJ5bllUeHZid2hhT205NUhaT1RNaVI3VjBuYllJSkVm?=
- =?utf-8?B?VGp4Q3crMkROR3Ird0gwYnRnazlKUDRZUW1iMm1nUWdOSzF1TWdpODJJME5O?=
- =?utf-8?B?N3JLcGltTm9qVDNSUXNqN0hoaGV1YjVYRWRYTHg2SkVBSzZZYjdIRGVudU9W?=
- =?utf-8?B?aGNrOXo0U1o2Q05jUzZmL0pQdTNkQm80Y2MreFczbkIvSWhSSHhpRkZmT0F5?=
- =?utf-8?B?U3B1VDFtQkYzcFFjR0hZY0FCcFYwOVExTUNiR1Rxa2pnYzFvWlpMZ3pXT1dJ?=
- =?utf-8?B?eG1kQktncG85RlVBbCtZTnBEUDhXS2hzR3pFY0JtYkJYdnNRbWxaZGZNa1ZW?=
- =?utf-8?B?Y21PM0N3TVZDWWJRWFdqcm1ERXd6Qi8wVGNCUUxPZCtRYUhYRnhaakdMcWpo?=
- =?utf-8?B?YnFiaHdzaHJFRUJGSmxjQnhsWnJ3aGtTS1ZOVE52YlhDY2FNSGNtWWNFdVYz?=
- =?utf-8?B?cE9IcSs1dDRtd0FwZncrZkZUNEcwbWJWZEFMWDJiRzdUaTNZRHFJOXllOGpn?=
- =?utf-8?B?a3N5UWhBMXpjT0o5QVpEakZoWGdzVDNrYlJyNHlPbm1UQWFYemlBZlFvaTln?=
- =?utf-8?B?QXptM21Xa3BjYm1TaTl3VVlsYTA4UmJFMFpWeXk2dTdnbnBsVGtHYlAyRitP?=
- =?utf-8?B?dmZvOXVPQ1ZhenZWVURjSkVTbWIyQUtrekVHN0cvYXh2NVFpVVV6WnZwTUN4?=
- =?utf-8?B?eDhYcTJUUTlJUHo4QmhWOEJFWVJMNmI5UDQ0Z25QYmVoWlZUTkxZQTBmSWNH?=
- =?utf-8?B?bnZxRisrdnhMcWJzRTdIWG9ZNmxTcy9rOGlyTzJPTjZYeXU0V2Mvd2RMc1JD?=
- =?utf-8?B?ZUdkUCs4U212MXNVa255WlhsMVUyUm9NUzNxOGllbnNNR2xkcHJVTkxHU3or?=
- =?utf-8?B?Vk03NEIzNzExeW5FWXQwRmlvVC9jRng4THk2bkROSDNNWUdncWlhVk1lUS9w?=
- =?utf-8?B?WGo4OGwxTGlFSUFQOVA1TXdkU2NvWDA5QUx0NjdjenV5S2thQ0VPdmJJNTlJ?=
- =?utf-8?B?RHU1djhFTGVjRE9jcGp0MmVHS2pXTE9BN1N5MXVLNGh2MmdVdkdpVmNSMWIw?=
- =?utf-8?B?bjlYcCtBQzh3R3drMVM0cllMZ2MxNUYxaFROZjQwWFJKdEZwZTFlYmgxK0hy?=
- =?utf-8?B?Qk9wNmh0RVpSUitOanRlVko3SkU4UFJndDc3NVJDU2VWQy9RWGRxSGlzY21q?=
- =?utf-8?B?dXFjQS9hblAyWUs5cmRJL0g4Y0Q3M1paeDVrVm1SWThsdXlPSFUxVnh4Z215?=
- =?utf-8?B?bHNQZjYzZ2UxWGxLUTlKTDRBT09oQzI0VFpNczJJNy9zY3dPOU1kQThJMlFx?=
- =?utf-8?B?RE9sRlE3VFp1cmJWcUZhT2hndDliZkxRM0VITHdhQWQ0Y2xrTmdqT1BLMldt?=
- =?utf-8?B?SVVjTHZkeWFxQzludENvYkZ4RzdiZnV2bVNqQWFoUkl5QkZaY011UlpiSnMx?=
- =?utf-8?B?ZE44eGhvaUZxS29rMzZXUStNZmcrTERXUXI3S1FiQ0RKSTk1NkNlUEQ4UWs4?=
- =?utf-8?B?aHJFT2JaWWpHRnIyT1Z4ZU1JazgrWGJKR2t0Wjk2NzJLZVBLNjAwR25FVU8v?=
- =?utf-8?B?dnNIWFZNNGs0bDRodGdZTTFsdThNWTQ4N1pLZkUwb3VMelRkeWZnbTI3VHFE?=
- =?utf-8?Q?H+wAu+M408yINbtgyooKt78rJ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d15b8ee-bdcb-4026-98c3-08ddf43224a5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 08:30:35.8333
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zclcZ5km4SW1ciS7j2a1Rxv4N5XK/jkSOC4qm+HXFHDD8onpBLX2hZYNvKPAte8swL/EEdsn/WkudUHz36Hemw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7181
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+Content-Language: en-US
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250914122116.2616801-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
+ <20250915074931.GD8224@nxa18884-linux.ap.freescale.net>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250915074931.GD8224@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The PLL clocks on NXP i.MX95 SoCs support Spread Spectrum (SS).
-This patch introduces scmi_clk_imx_set_spread_spectrum to pass SS
-configuration to the SCMI firmware, which handles the actual
-implementation.
+On 9/15/25 10:49, Peng Fan wrote:
+> On Sun, Sep 14, 2025 at 03:21:16PM +0300, Ivaylo Ivanov wrote:
+>> Introduce a clocks management driver for exynos8890, providing clocks
+>> for the peripherals of that SoC.
+>>
+>> As exynos8890 is the first SoC to have HWACG, it differs a bit from the
+> Hardware Auto Clock Gating(HWACG), if I understand correctly.
+>
+>> newer SoCs. Q-channel and Q-state bits are separate registers, unlike
+>> the CLK_CON_GAT_* ones that feature HWACG bits in the same register
+>> that controls manual gating. Hence, don't use the clk-exynos-arm64
+>> helper, but implement logic that enforces manual gating according to
+>> how HWACG is implemented here.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>> drivers/clk/samsung/Makefile         |    1 +
+>> drivers/clk/samsung/clk-exynos8890.c | 8695 ++++++++++++++++++++++++++
+>> 2 files changed, 8696 insertions(+)
+>> create mode 100644 drivers/clk/samsung/clk-exynos8890.c
+>>
+>> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+>> index b77fe288e..982dc7c64 100644
+>> --- a/drivers/clk/samsung/Makefile
+>> +++ b/drivers/clk/samsung/Makefile
+>> @@ -22,6 +22,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7870.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7885.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
+>> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos8890.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos8895.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos990.o
+>> obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov9.o
+>> diff --git a/drivers/clk/samsung/clk-exynos8890.c b/drivers/clk/samsung/clk-exynos8890.c
+>> new file mode 100644
+>> index 000000000..670587bae
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-exynos8890.c
+>> @@ -0,0 +1,8695 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2025 Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> + * Author: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> + *
+>> + * Common Clock Framework support for Exynos8890 SoC.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <dt-bindings/clock/samsung,exynos8890-cmu.h>
+>> +
+>> +#include "clk.h"
+>> +
+>> +/* NOTE: Must be equal to the last clock ID increased by one */
+>> +#define TOP_NR_CLK	(CLK_GOUT_TOP_SCLK_PROMISE_DISP + 1)
+>> +#define PERIS_NR_CLK	(CLK_GOUT_PERIS_SCLK_PROMISE_PERIS + 1)
+>> +#define APOLLO_NR_CLK	(CLK_GOUT_APOLLO_SCLK_PROMISE_APOLLO + 1)
+>> +#define AUD_NR_CLK	(CLK_GOUT_AUD_SCLK_I2S_BCLK + 1)
+>> +#define BUS0_NR_CLK	(CLK_GOUT_BUS0_ACLK_TREX_P_BUS0 + 1)
+>> +#define BUS1_NR_CLK	(CLK_GOUT_BUS1_ACLK_TREX_P_BUS1 + 1)
+>> +#define CCORE_NR_CLK	(CLK_GOUT_CCORE_SCLK_PROMISE + 1)
+>> +#define DISP0_NR_CLK	(CLK_GOUT_DISP0_OSCCLK_DP_I_CLK_24M + 1)
+>> +#define DISP1_NR_CLK	(CLK_GOUT_DISP1_SCLK_PROMISE_DISP1 + 1)
+>> +#define FSYS0_NR_CLK	(CLK_GOUT_FSYS0_SCLK_USBHOST20_REF_CLK + 1)
+>> +#define FSYS1_NR_CLK	(CLK_GOUT_FSYS1_SCLK_PROMISE_FSYS1 + 1)
+>> +#define G3D_NR_CLK	(CLK_GOUT_G3D_SCLK_ASYNCAXI_G3D + 1)
+>> +#define MIF0_NR_CLK	(CLK_GOUT_MIF0_RCLK_DREX + 1)
+>> +#define MIF1_NR_CLK	(CLK_GOUT_MIF1_RCLK_DREX + 1)
+>> +#define MIF2_NR_CLK	(CLK_GOUT_MIF2_RCLK_DREX + 1)
+>> +#define MIF3_NR_CLK	(CLK_GOUT_MIF3_RCLK_DREX + 1)
+>> +#define MNGS_NR_CLK	(CLK_GOUT_MNGS_SCLK_PROMISE0_MNGS + 1)
+>> +#define PERIC0_NR_CLK	(CLK_GOUT_PERIC0_SCLK_PWM + 1)
+>> +#define PERIC1_NR_CLK	(CLK_GOUT_PERIC1_SCLK_UART5 + 1)
+>> +
+>> +/*
+>> + * As exynos8890 first introduced hwacg, cmu registers are mapped similarly
+>> + * to exynos7, with the exception of the new q-state and q-ch registers that
+>> + * can set the behavior of automatic gates.
+>> + */
+>> +
+>> +/* decoded magic number from downstream */
+>> +#define QCH_EN_MASK		BIT(0)
+>> +#define QCH_MASK		(GENMASK(19, 16) | BIT(12))
+>> +#define QCH_DIS			(QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+> Nit: align code.
 
-To ensure this feature is only enabled on NXP platforms,
-scmi_clk_imx_extended_config_oem is added. Since SS is only applicable
-to PLL clocks, config_oem_get is used to verify SS support for a given
-clock.
+Aligned in my editor, patch files offset each line with a single symbol
+so formatting gets broken...
 
-i.MX95 SCMI firmware Spread Spectrum extConfigValue definition is as
-below, no modulation method because firmware forces to use down spread.
-	 extConfigValue[7:0]   - spread percentage (%)
-	 extConfigValue[23:8]  - Modulation Frequency (KHz)
-	 extConfigValue[24]    - Enable/Disable
-	 extConfigValue[31:25] - Reserved
+>
+>> +
+>> +/* q-channel registers offsets range */
+>> +#define QCH_OFF_START		0x2000
+>> +#define QCH_OFF_END		0x23ff
+>> +
+>> +/* q-state registers offsets range */
+>> +#define QSTATE_OFF_START	0x2400
+>> +#define QSTATE_OFF_END		0x2fff
+> Nit: Align.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/clk-scmi.c        | 64 ++++++++++++++++++++++++++++++++++++++++---
- include/linux/scmi_protocol.h |  5 ++++
- 2 files changed, 65 insertions(+), 4 deletions(-)
+What?
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index d2408403283fc72f0cf902e65f4c08bcbc7b4b0b..bb5e20dab18e92932ab4b99192b496e0c4d96417 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -12,6 +12,7 @@
- #include <linux/of.h>
- #include <linux/module.h>
- #include <linux/scmi_protocol.h>
-+#include <linux/scmi_imx_protocol.h>
- #include <asm/div64.h>
- 
- #define NOT_ATOMIC	false
-@@ -23,6 +24,7 @@ enum scmi_clk_feats {
- 	SCMI_CLK_RATE_CTRL_SUPPORTED,
- 	SCMI_CLK_PARENT_CTRL_SUPPORTED,
- 	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
-+	SCMI_CLK_IMX_SSC_SUPPORTED,
- 	SCMI_CLK_FEATS_COUNT
- };
- 
-@@ -98,6 +100,35 @@ static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
- 	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
- }
- 
-+static int scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
-+					    struct clk_spread_spectrum *clk_ss)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+	int ret;
-+	u32 val;
-+
-+	/*
-+	 * extConfigValue[7:0]   - spread percentage (%)
-+	 * extConfigValue[23:8]  - Modulation Frequency
-+	 * extConfigValue[24]    - Enable/Disable
-+	 * extConfigValue[31:25] - Reserved
-+	 */
-+	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, clk_ss->spread_bp / 10000);
-+	val |= FIELD_PREP(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK, clk_ss->modfreq_hz);
-+	if (clk_ss->method != CLK_SSC_NO_SPREAD)
-+		val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
-+	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
-+						 SCMI_CLOCK_CFG_IMX_SSC,
-+						 val, false);
-+	if (ret)
-+		dev_warn(clk->dev,
-+			 "Failed to set spread spectrum(%u,%u,%u) for clock ID %d\n",
-+			 clk_ss->modfreq_hz, clk_ss->spread_bp, clk_ss->method,
-+			 clk->id);
-+
-+	return ret;
-+}
-+
- static u8 scmi_clk_get_parent(struct clk_hw *hw)
- {
- 	struct scmi_clk *clk = to_scmi_clk(hw);
-@@ -316,11 +347,33 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
- 		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
- 	}
- 
-+	if (feats_key & BIT(SCMI_CLK_IMX_SSC_SUPPORTED))
-+		ops->set_spread_spectrum = scmi_clk_imx_set_spread_spectrum;
-+
- 	return ops;
- }
- 
-+static void scmi_clk_imx_extended_config_oem(const struct scmi_handle *handle,
-+					     struct scmi_clk *sclk,
-+					     unsigned int *feats_key)
-+{
-+	int ret;
-+	u32 val;
-+
-+	if (strcmp(handle->version->vendor_id, SCMI_IMX_VENDOR) ||
-+	    strcmp(handle->version->sub_vendor_id, SCMI_IMX_SUBVENDOR))
-+		return;
-+
-+	ret = scmi_proto_clk_ops->config_oem_get(sclk->ph, sclk->id,
-+						 SCMI_CLOCK_CFG_IMX_SSC,
-+						 &val, NULL, false);
-+	if (!ret)
-+		*feats_key |= BIT(SCMI_CLK_IMX_SSC_SUPPORTED);
-+}
-+
- /**
-  * scmi_clk_ops_select() - Select a proper set of clock operations
-+ * @handle: A reference to an SCMI entity
-  * @sclk: A reference to an SCMI clock descriptor
-  * @atomic_capable: A flag to indicate if atomic mode is supported by the
-  *		    transport
-@@ -345,8 +398,8 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
-  *	   NULL otherwise.
-  */
- static const struct clk_ops *
--scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
--		    unsigned int atomic_threshold_us,
-+scmi_clk_ops_select(const struct scmi_handle *handle, struct scmi_clk *sclk,
-+		    bool atomic_capable, unsigned int atomic_threshold_us,
- 		    const struct clk_ops **clk_ops_db, size_t db_size)
- {
- 	const struct scmi_clock_info *ci = sclk->info;
-@@ -370,9 +423,12 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
- 	if (!ci->parent_ctrl_forbidden)
- 		feats_key |= BIT(SCMI_CLK_PARENT_CTRL_SUPPORTED);
- 
--	if (ci->extended_config)
-+	if (ci->extended_config) {
- 		feats_key |= BIT(SCMI_CLK_DUTY_CYCLE_SUPPORTED);
- 
-+		scmi_clk_imx_extended_config_oem(handle, sclk, &feats_key);
-+	}
-+
- 	if (WARN_ON(feats_key >= db_size))
- 		return NULL;
- 
-@@ -459,7 +515,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 		 * to avoid sharing the devm_ allocated clk_ops between multiple
- 		 * SCMI clk driver instances.
- 		 */
--		scmi_ops = scmi_clk_ops_select(sclk, transport_is_atomic,
-+		scmi_ops = scmi_clk_ops_select(handle, sclk, transport_is_atomic,
- 					       atomic_threshold_us,
- 					       scmi_clk_ops_db,
- 					       ARRAY_SIZE(scmi_clk_ops_db));
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index aafaac1496b06a6e4f0ca32eee58a9edf7d4a70f..37f422b4b1ef2af2b4231a1677161aa24e07d0e2 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -80,9 +80,14 @@ enum scmi_clock_oem_config {
- 	SCMI_CLOCK_CFG_DUTY_CYCLE = 0x1,
- 	SCMI_CLOCK_CFG_PHASE,
- 	SCMI_CLOCK_CFG_OEM_START = 0x80,
-+	SCMI_CLOCK_CFG_IMX_SSC = 0x80,
- 	SCMI_CLOCK_CFG_OEM_END = 0xFF,
- };
- 
-+#define SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK	GENMASK(7, 0)
-+#define SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK		GENMASK(23, 8)
-+#define SCMI_CLOCK_IMX_SS_ENABLE_MASK		BIT(24)
-+
- /**
-  * struct scmi_clk_proto_ops - represents the various operations provided
-  *	by SCMI Clock Protocol
+>
+>> +
+>> +/* check if the register offset is a QCH register */
+>> +static bool is_qch_reg(unsigned long off)
+>> +{
+>> +	return off >= QCH_OFF_START && off <= QCH_OFF_END;
+>> +}
+>> +
+>> +/* check if the register offset is a QSTATE register */
+>> +static bool is_qstate_reg(unsigned long off)
+>> +{
+>> +	return off >= QSTATE_OFF_START && off <= QSTATE_OFF_END;
+>> +}
+>> +
+>> +static void __init exynos8890_init_clocks(struct device_node *np,
+>> +					  const struct samsung_cmu_info *cmu)
+>> +{
+>> +	const unsigned long *reg_offs = cmu->clk_regs;
+>> +	size_t reg_offs_len = cmu->nr_clk_regs;
+>> +	void __iomem *reg_base;
+>> +	size_t i;
+>> +
+>> +	reg_base = of_iomap(np, 0);
+>> +	if (!reg_base)
+>> +		panic("%s: failed to map registers\n", __func__);
+>> +
+>> +	for (i = 0; i < reg_offs_len; ++i) {
+>> +		void __iomem *reg = reg_base + reg_offs[i];
+>> +		u32 val;
+>> +
+>> +		if (is_qch_reg(reg_offs[i])) {
+>> +			val = QCH_DIS;
+>> +			writel(val, reg);
+>> +		} else if (is_qstate_reg(reg_offs[i])) {
+>> +			val = 0;
+>> +			writel(val, reg);
+>> +		}
+> This seems to disable qchannel and set qstate to 0 for disable HWACG.
+> If this is true, a comment is preferred.
 
--- 
-2.37.1
+I believe the "DIS" part is pretty self explanatory, no?
+
+>
+>> +	}
+>> +
+>> +	iounmap(reg_base);
+>> +}
+>> +
+>> +/* ---- CMU_TOP ------------------------------------------------------------- */
+>> +
+>> +#define MIF_CLK_CTRL1						0x1084
+>> +#define MIF_CLK_CTRL2						0x1088
+>> +#define MIF_CLK_CTRL3						0x108C
+>> +#define MIF_CLK_CTRL4						0x1090
+>> +#define ACD_PSCDC_CTRL_0					0x1094
+>> +#define ACD_PSCDC_CTRL_1					0x1098
+>> +#define ACD_PSCDC_STAT						0x109C
+>> +#define CMU_TOP_SPARE0						0x1100
+>> +#define CMU_TOP_SPARE1						0x1104
+>> +#define CMU_TOP_SPARE2						0x1108
+>> +#define CMU_TOP_SPARE3						0x110C
+> Some of the registers not aligned.
+
+How are they not, they're aligned both in editors and the patch. Please elaborate.
+
+>
+>> +
+> [...]
+>> +static void __init exynos8890_cmu_top_init(struct device_node *np)
+>> +{
+>> +	exynos8890_init_clocks(np, &top_cmu_info);
+>> +	samsung_cmu_register_one(np, &top_cmu_info);
+>> +}
+>> +
+>> +/* Register CMU_TOP early, as it's a dependency for other early domains */
+>> +CLK_OF_DECLARE(exynos8890_cmu_top, "samsung,exynos8890-cmu-top",
+>> +	       exynos8890_cmu_top_init);
+> Not sure you need to run Android GKI, without module built, this platform
+> will not able to support GKI.
+>
+> It would be better to update to use platform drivers.
+
+Same as what Krzysztof said, design choice accross all samsung clock drivers.
+
+>
+>> +
+>> +/* ---- CMU_PERIS ---------------------------------------------------------- */
+>> +
+>> +#define QSTATE_CTRL_TMU				0x2474
+>> +#define QSTATE_CTRL_CHIPID			0x2484
+>> +#define QSTATE_CTRL_PROMISE_PERIS		0x2488
+> Not aligned.
+>
+>> +
+>> +
+>> +/* Register CMU_PERIS early, as it's needed for MCT timer */
+>> +CLK_OF_DECLARE(exynos8890_cmu_peris, "samsung,exynos8890-cmu-peris",
+>> +	       exynos8890_cmu_peris_init);
+> Same as above.
+>
+>> +
+>> +/* ---- CMU_APOLLO --------------------------------------------------------- */
+>> +
+>> +/* Register Offset definitions for CMU_APOLLO (0x11900000) */
+>> +#define APOLLO_PLL_LOCK				0x0000
+>> +#define APOLLO_PLL_CON0				0x0100
+>> +#define APOLLO_PLL_CON1				0x0104
+>> +#define APOLLO_PLL_FREQ_DET			0x010C
+> Not align.
+
+Same as the other comments about alignment.
+
+Best regards,
+Ivaylo
+
+>
+> Regards
+> Peng
+>
 
