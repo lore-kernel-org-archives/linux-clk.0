@@ -1,109 +1,176 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270411A295;
-	Mon, 15 Sep 2025 14:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296A115D1;
+	Mon, 15 Sep 2025 15:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948109; cv=none; b=SzASLxIV50c4YkqhfmGO+38qjzdPPte9XCPUeSuZSKOH9IrlCPDt/XSQz67AN0fLHwO8uEh0k2oshfs5QVG9UXF9W7IKg2sHOsTHIotkEuWcX04It7HcZM1tfMNbbfwBc+WYwHgu6SD9SFJwb1JbwldSZnDHGNpec1c7vcASRJY=
+	t=1757949688; cv=none; b=aJMcsW1f9Kiip5ddc4IM4q0v2MgOpNnjtUmu7eQvYDzVA+UINWeHgydgozi32J/U/PQ7Ygh79JIB9uDHK9T22iCH7DCnxW2PhH0J/XfYDpMhcyWzwzE5kICLG1Z3LNvXZ20/CEswi9bq66ODa/y5/fmw4MK9fYyfgEaD5Wc43B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948109; c=relaxed/simple;
-	bh=EwNwBb1ZMwIRBiUXSFpclOvP5L0lGkCC606UBB6bd7E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=JEmhyrD5nqXFyERheuBr9iXTJWt8DbV1JT+WacLg22m9kXA3OfO05vnYmYmCXEdBwbEwgIr9Netz6SENJXc6Ym0+sY3xiexDvEBuWkkMUOS7+RILMybS34Hv/MhXINc5vjwvVZRF1YyKofU8EUlZIhPPrnQBjefGXV4YhI5dMf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=n72ouBc2; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1757949688; c=relaxed/simple;
+	bh=gtM2QscaPzR4xfedL0O2h+0MwhbJv7L7+rVQtjSfix4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qpZM2aoVMHP5VGcullnF8XkRxKarJhOXvayUTPr+qqPBArMB2+QYHr14a1RPvPYeaVROvbadDFCnXC45bSApe7VVNXN1qMHIOJtmzj8I83YlkWWVAYK8KMBeBO4NSoTBSJGx4H65JOhCOaiemrqYAm2OWaKNOWrkgxbYv34ThY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZnQtBxEc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="n72ouBc2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757948108; x=1789484108;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=EwNwBb1ZMwIRBiUXSFpclOvP5L0lGkCC606UBB6bd7E=;
-  b=n72ouBc2/HcJizy6WQP6lM0l/3HSH/w3SMaOPR5f7k7MG7xIuyPeUowb
-   wSoRF5M/XUDvP5iptJLRvPNEt9C/jrnUbXo9M0ZVJz/F/jtFv/sCMcb92
-   +U5csg76Z1Z7siNkq9sWwJt/gKlVAoN/pHhhIi+RT8znQ02zgInPU+Bor
-   IKM0Dl+uEnpazvZT6e9eSEzE3z73afBK6rdWiA0oO4lbU2ibx8ZknbodX
-   zL9a5BIjNAzamA0tVpOTD+Mhf468NVBL6sO+RrFctZUJxGT0OKrfWk8YT
-   kPBW57KBBEvyk0uri4GIbwFXy7r2J4nStQy7zIZ1N1SpAHZsm7SHoqKUB
-   w==;
-X-CSE-ConnectionGUID: V6We0pr5QIOXx8mFDIxkEw==
-X-CSE-MsgGUID: 2WzlJk5dRtitwyzzXmjgJg==
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="47066873"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:55:07 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 07:54:59 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 15 Sep 2025 07:54:57 -0700
-Message-ID: <272ffdb9-9d7f-4a48-9968-7de1d32d721e@microchip.com>
-Date: Mon, 15 Sep 2025 16:54:57 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZnQtBxEc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757949684;
+	bh=gtM2QscaPzR4xfedL0O2h+0MwhbJv7L7+rVQtjSfix4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZnQtBxEcdpoSZJludpjeppay19kRf+JxYUd/FXeWXaExetQRhHPXEq8GeTv+AKE6X
+	 Hec/m03fwJJ8Glz4rfz1D1Pq+oOvIUVk3mit6IVjW13UaXAzIJDH+oOwiPmjLv+PAf
+	 yZO8cJt+/mESmCPnINE4ij/5RA51wQSdYnGJetGyq5QguES+YEgE90tA9s36v0pQCt
+	 2pl0nSpYCEeLBmMNWCpL/LAcs/tNKZCbDVhyrPldmxk1G54Zx1DVtOf12qygQYPKeT
+	 WAa1whbf4UakRwCaxjdWKhEndFQTpAR/7/H+fj3YwyapYEs2ahy+dIGjqvTm1OFB9V
+	 Vs7cIJZ2UN+rQ==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:1c8d:f5ba:823d:730b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6C69517E046C;
+	Mon, 15 Sep 2025 17:21:22 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
+	kernel@collabora.com,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH v6 00/27] Add support for MT8196 clock controllers
+Date: Mon, 15 Sep 2025 17:19:20 +0200
+Message-Id: <20250915151947.277983-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: at91: clk-master: Add check for divide by 3
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-To: <Ryan.Wanner@microchip.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250908200725.75364-1-Ryan.Wanner@microchip.com>
- <1882cb12-cb65-423a-bacb-3965ba845ab3@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <1882cb12-cb65-423a-bacb-3965ba845ab3@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2025 at 09:57, Nicolas Ferre wrote:
-> On 08/09/2025 at 22:07, Ryan.Wanner@microchip.com wrote:
->> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->>
->> A potential divider for the master clock is div/3. The register
->> configuration for div/3 is MASTER_PRES_MAX. The current bit shifting
->> method does not work for this case. Checking for MASTER_PRES_MAX will
->> ensure the correct decimal value is stored in the system.
->>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+This patch series introduces support for the clock controllers on the
+MediaTek MT8196 platform, following up on an earlier submission[1].
 
-Added to clk-microchip, on its way upstream.
-Thanks, regards,
-   Nicolas
+MT8196 uses a hardware voting mechanism to control some of the clock muxes
+and gates, along with a fence register responsible for tracking PLL and mux
+gate readiness. The series introduces support for these voting and fence
+mechanisms, and includes drivers for all clock controllers on the platform.
 
-> Thanks Ryan, regards,
->     Nicolas
-> 
->> ---
->>    drivers/clk/at91/clk-master.c | 3 +++
->>    1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
->> index 7a544e429d34..d5ea2069ec83 100644
->> --- a/drivers/clk/at91/clk-master.c
->> +++ b/drivers/clk/at91/clk-master.c
->> @@ -580,6 +580,9 @@ clk_sama7g5_master_recalc_rate(struct clk_hw *hw,
->>    {
->>    	struct clk_master *master = to_clk_master(hw);
->>    
->> +	if (master->div == MASTER_PRES_MAX)
->> +		return DIV_ROUND_CLOSEST_ULL(parent_rate, 3);
->> +
->>    	return DIV_ROUND_CLOSEST_ULL(parent_rate, (1 << master->div));
->>    }
->>    
-> 
+[1] https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
+
+Changes in v6:
+- Removed unnecessary braces in clk-mux and clk-gate
+- Excluded clk26m from the parent lists of vlp_audio_h, vlp_aud_engen1,
+  vlp_aud_engen2, and vlp_aud_intbus
+- Reordered entries in of_match_clk_mt8196_mdpsys
+- Converted mfg_eb clock into a mux with a gate
+
+Link to v5: https://lore.kernel.org/all/20250829091913.131528-1-laura.nao@collabora.com/
+
+Laura Nao (27):
+  clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable control
+  clk: mediatek: clk-pll: Add ops for PLLs using set/clr regs and FENC
+  clk: mediatek: clk-mux: Add ops for mux gates with set/clr/upd and
+    FENC
+  clk: mediatek: clk-mtk: Introduce mtk_clk_get_hwv_regmap()
+  clk: mediatek: clk-mux: Add ops for mux gates with HW voter and FENC
+  clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use
+    mtk_gate struct
+  clk: mediatek: clk-gate: Add ops for gates with HW voter
+  clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
+  dt-bindings: clock: mediatek: Describe MT8196 clock controllers
+  clk: mediatek: Add MT8196 apmixedsys clock support
+  clk: mediatek: Add MT8196 topckgen clock support
+  clk: mediatek: Add MT8196 topckgen2 clock support
+  clk: mediatek: Add MT8196 vlpckgen clock support
+  clk: mediatek: Add MT8196 peripheral clock support
+  clk: mediatek: Add MT8196 ufssys clock support
+  clk: mediatek: Add MT8196 pextpsys clock support
+  clk: mediatek: Add MT8196 I2C clock support
+  clk: mediatek: Add MT8196 mcu clock support
+  clk: mediatek: Add MT8196 mdpsys clock support
+  clk: mediatek: Add MT8196 mfg clock support
+  clk: mediatek: Add MT8196 disp0 clock support
+  clk: mediatek: Add MT8196 disp1 clock support
+  clk: mediatek: Add MT8196 disp-ao clock support
+  clk: mediatek: Add MT8196 ovl0 clock support
+  clk: mediatek: Add MT8196 ovl1 clock support
+  clk: mediatek: Add MT8196 vdecsys clock support
+  clk: mediatek: Add MT8196 vencsys clock support
+
+ .../bindings/clock/mediatek,mt8196-clock.yaml | 112 ++
+ .../clock/mediatek,mt8196-sys-clock.yaml      | 107 ++
+ drivers/clk/mediatek/Kconfig                  |  71 ++
+ drivers/clk/mediatek/Makefile                 |  13 +
+ drivers/clk/mediatek/clk-gate.c               | 117 ++-
+ drivers/clk/mediatek/clk-gate.h               |   3 +
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c  | 204 ++++
+ drivers/clk/mediatek/clk-mt8196-disp0.c       | 170 +++
+ drivers/clk/mediatek/clk-mt8196-disp1.c       | 170 +++
+ .../clk/mediatek/clk-mt8196-imp_iic_wrap.c    | 118 +++
+ drivers/clk/mediatek/clk-mt8196-mcu.c         | 167 +++
+ drivers/clk/mediatek/clk-mt8196-mdpsys.c      | 186 ++++
+ drivers/clk/mediatek/clk-mt8196-mfg.c         | 150 +++
+ drivers/clk/mediatek/clk-mt8196-ovl0.c        | 154 +++
+ drivers/clk/mediatek/clk-mt8196-ovl1.c        | 154 +++
+ drivers/clk/mediatek/clk-mt8196-peri_ao.c     | 142 +++
+ drivers/clk/mediatek/clk-mt8196-pextp.c       | 131 +++
+ drivers/clk/mediatek/clk-mt8196-topckgen.c    | 985 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8196-topckgen2.c   | 568 ++++++++++
+ drivers/clk/mediatek/clk-mt8196-ufs_ao.c      | 108 ++
+ drivers/clk/mediatek/clk-mt8196-vdec.c        | 253 +++++
+ drivers/clk/mediatek/clk-mt8196-vdisp_ao.c    |  80 ++
+ drivers/clk/mediatek/clk-mt8196-venc.c        | 236 +++++
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c    | 725 +++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |  16 +
+ drivers/clk/mediatek/clk-mtk.h                |  22 +
+ drivers/clk/mediatek/clk-mux.c                | 120 ++-
+ drivers/clk/mediatek/clk-mux.h                |  87 ++
+ drivers/clk/mediatek/clk-pll.c                |  45 +-
+ drivers/clk/mediatek/clk-pll.h                |   8 +
+ .../dt-bindings/clock/mediatek,mt8196-clock.h | 803 ++++++++++++++
+ .../reset/mediatek,mt8196-resets.h            |  26 +
+ 32 files changed, 6216 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mcu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-peri_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-pextp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen2.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt8196-clock.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
+
+-- 
+2.39.5
 
