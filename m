@@ -1,197 +1,135 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1A32FC03B;
-	Mon, 15 Sep 2025 10:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96162E9EC8
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 10:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757932387; cv=none; b=bybrXpZJsGk3z3Q8PjM4Z6ymrG+hmPKzV9k14p2XMPkDhDh8oQjDADl9RgtmJZMBmNJxJAWaCBiya4k0Cwxcu2DgahKQe6pqmn9fvVsxMFzukaEGmGByMTssO2q5IkZXZO6aHu6Bzg6Jb5/nrvGabY4LxeVnO1W5buK4P+SXf+0=
+	t=1757933433; cv=none; b=aQu8yK7X2ASRaLSS2XExtJgNIGUliYD7XwqOF5G4vEjZnmEGNmLocqH06K8cmKHg0nx4buq6hKI5kzfe3wt7Zbw8GhnU8KT6XGexCtomuFz1rVQZnMl8Au6VAkw7V4DfN3Y1glPjrg/tO18C4R1pyKUsMq6jTtZD+xybY6eWQjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757932387; c=relaxed/simple;
-	bh=jBrXosrEm0ufxE9d6vgC0d6AOZqOTBjfpGs+BYCBuG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JubSvzZhp/em8Py3obeCEZ2uNm2X1JFSXMsk7L++j8lZ0ois5uZ5n0CzVkVMozX+VqjJ6VYMw2ppIkK8/EjgptkGQLfpz1aNkZcxoqmjSY+NyESvFA6GO3fauyFrOP+liDStI7MLrSe2y0VvNZRQZW9hDdP4xCTUf3GojY8rfOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OjMAQCK/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1757933433; c=relaxed/simple;
+	bh=kARumPxqfmMMWgp1NvnsY+8lw/OMkVWPKeLFtKSIlME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0q13WDumKG1roKczFbquXkznC2D8KLT19np9Cz/GWe7L8MpXB0USBBHH+hr5ovXJfZ3GBeInNyXAZXiAU2CQi5KByYZ8kZ0+3hxnKahOOtw568WOO6wKi2Lj9IqRA7MQLKJTEaaRqMIzoWJl1//Ycz1IAuS9li1w4dD4E4VLw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dsm1gepW; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OjMAQCK/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757932384;
-	bh=jBrXosrEm0ufxE9d6vgC0d6AOZqOTBjfpGs+BYCBuG4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OjMAQCK/+gG+8jCO5AoowfuI++dUaRvWFld0urxeYgovi0jkDMe5Hkvib9GMsAoKB
-	 so1ns4TynJKzquBxFeLk+lGtZ/wj5YqsJMDLQlzbAw4n8Ksu5tAEBmnwghPdTHZ2OP
-	 OFp8Kpmgf3UaRNETufLr6u9k91pQVvvCCxiju/lEFiSae9B1TKBQsBAsKTlKaviL65
-	 24Rtmz0d9GAcsrMZDj6sCieAaQnU8nBf670lpSR2bo4itx3HxxyXhhV6e0xwMgxILt
-	 0AeHNx8nfeBGj9hpaLXRdM+xVX8TT6Hm3bR990osPafCN/VHxc997xHTHb02oADDZV
-	 whNUksv/BgHgA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E3AD17E107A;
-	Mon, 15 Sep 2025 12:33:03 +0200 (CEST)
-Message-ID: <db803bd3-4e7d-4aa2-bdd1-6e0b14812c03@collabora.com>
-Date: Mon, 15 Sep 2025 12:33:02 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dsm1gepW"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d603cebd9so32308977b3.1
+        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 03:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757933430; x=1758538230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
+        b=dsm1gepW+64GUvS7kMWqaTSMnvOb4DE2XTTvWEeHN+RE/+11IMxt7/VT5nrAsrozPj
+         LjW2VVhrxJupJV9qXK3qo8acFznWW8EUfnwnoI4vzGcKbj1UMmf+bhA1qOvMvaSEpSri
+         JxWMtmdA/Sij1xAwa/AkWOoJWA5FL9LcqfNjqBUys25YDzn55KJIvJEGu+5RMQH+vPpr
+         P8UCDM4suEIwAfOvYk3SwbegH35M/X9YI1gUIk0XqsFMHy+ZES0t8yI4pLpuClLxwNQX
+         aI3en3/nuAnC9ZoXdtEoEmEg9DHc2ZK9SllMJGfkcANMbMEBs5t6ih8A2jNMaQ6iEEy7
+         zv+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757933430; x=1758538230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
+        b=DathtbP/EqVFOV4AXSMKAehhN7qZLvamL8bW2QHWXzJSfwa81voMWTMBG+0WPv3Hx2
+         HXIGuy0J98ucZK1JjPP1Y7vves2JnMAY/qP8gXwy3USaihKkSJrx3+L/K4Eip9a2El64
+         V3jpNg+orefHK8BTgbh7nOqp6hG10lTP/ylPkl5KNkbY5PUODQxpMZpRv6CixjQbaRCa
+         bjoFKuQWlERWrsk5Wu5o7TN/H7EOg7Rgvn6I7Qq0H//sLK0tsyZMpPf2fZhshEWsgiip
+         NrMvPZeppXPAZCYNHmCmhenRJcphPD11C+U7Y0cpmjNdPO1f3mfmom66bPrYO7Wp+sFI
+         2hXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV49Tubo3ZTJmFdmP3lTlKUXY/RH/M+A5HPCBO/e3MujhZ9IxEukyl7eEIkIDaVTTouPPiSZHCuAdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgTf9X5j8OeqbqNdY9a6dN4HgG8Rrokwe9GS0aRW2gvZaLZb9S
+	cCMgrZDiFUxeODgG/K3zDZkvatSNPfpAsNWkZgFhkfkPdmeeFgsOxxhlYiM0eBe+Y+4nTbN1D06
+	NbM/XMjeiQtc/xrjQUYouDjX6eGMFUfNyg0Qlz4I0FA==
+X-Gm-Gg: ASbGncuGJ5ZSb/0bMUas1wU+YK2Tsg3UDX8jP89SwXNqHpDQtDhNuN4DBdXYoM1tmsV
+	kN9Q3Tbrw5HnzchEgI0i1OWsKlPC+ZOc9UefuuBrPZUVyDn7d1RxrSTc1fdRRCPuijaKYxsK+zK
+	8dNVRQY5UiwD8Dxks1v23uoOj57T/kLvKaTwr5g8lzX+AbmpTvnFulPJ5vod6z2Ot0vCJ/2WJtd
+	4cfWzjkAjgo4q3iCXQ=
+X-Google-Smtp-Source: AGHT+IGDEYgOKM3gJ8Zzlityz/syLNE9FRvDAqAmupyu9aSeveyvR7FHQhtEilEP6qYlMPKL0ImuzwqqE0dGUhFDiNI=
+X-Received: by 2002:a05:690c:3706:b0:722:7d35:e0c2 with SMTP id
+ 00721157ae682-730626d2dd2mr106799857b3.2.1757933429679; Mon, 15 Sep 2025
+ 03:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- guangjie.song@mediatek.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org, kernel@collabora.com
-References: <20250829091913.131528-1-laura.nao@collabora.com>
- <20250829091913.131528-20-laura.nao@collabora.com>
- <0e6592b7-6f6d-4291-992c-ff321c920381@collabora.com>
- <CAGXv+5GFaudGqm4C9CY-_spiXcyWk7OvWHTdkehsyrV4sO1Ndw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5GFaudGqm4C9CY-_spiXcyWk7OvWHTdkehsyrV4sO1Ndw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 15 Sep 2025 12:49:53 +0200
+X-Gm-Features: Ac12FXxZCAZGblY8VwFHa1GJ1rGV08p3Fv5KI-OAzvQkX2G4ZDMKiAukPP3wanY
+Message-ID: <CAPDyKFr9dAvP7U3dZ_LFw8YxcvJ6n95OKKLYpntUarqdfUqjWQ@mail.gmail.com>
+Subject: Re: [PATCH 03/37] pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mark Kettenis <kettenis@openbsd.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 05/09/25 10:53, Chen-Yu Tsai ha scritto:
-> On Fri, Sep 5, 2025 at 4:39 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 29/08/25 11:19, Laura Nao ha scritto:
->>> Add support for the MT8196 mdpsys clock controller, which provides clock
->>> gate control for MDP.
->>>
->>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>> ---
->>>    drivers/clk/mediatek/Kconfig             |   7 +
->>>    drivers/clk/mediatek/Makefile            |   1 +
->>>    drivers/clk/mediatek/clk-mt8196-mdpsys.c | 186 +++++++++++++++++++++++
->>>    3 files changed, 194 insertions(+)
->>>    create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
->>>
->>> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->>> index 8e5cdae80748..68ac08cf8e82 100644
->>> --- a/drivers/clk/mediatek/Kconfig
->>> +++ b/drivers/clk/mediatek/Kconfig
->>> @@ -1024,6 +1024,13 @@ config COMMON_CLK_MT8196_MCUSYS
->>>        help
->>>          This driver supports MediaTek MT8196 mcusys clocks.
->>>
->>> +config COMMON_CLK_MT8196_MDPSYS
->>> +     tristate "Clock driver for MediaTek MT8196 mdpsys"
->>> +     depends on COMMON_CLK_MT8196
->>> +     default COMMON_CLK_MT8196
->>> +     help
->>> +       This driver supports MediaTek MT8196 mdpsys clocks.
->>> +
->>>    config COMMON_CLK_MT8196_PEXTPSYS
->>>        tristate "Clock driver for MediaTek MT8196 pextpsys"
->>>        depends on COMMON_CLK_MT8196
->>> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
->>> index 46358623c3e5..d2d8bc43e45b 100644
->>> --- a/drivers/clk/mediatek/Makefile
->>> +++ b/drivers/clk/mediatek/Makefile
->>> @@ -155,6 +155,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o
->>>                                   clk-mt8196-peri_ao.o
->>>    obj-$(CONFIG_COMMON_CLK_MT8196_IMP_IIC_WRAP) += clk-mt8196-imp_iic_wrap.o
->>>    obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) += clk-mt8196-mcu.o
->>> +obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) += clk-mt8196-mdpsys.o
->>>    obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
->>>    obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
->>>    obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
->>> diff --git a/drivers/clk/mediatek/clk-mt8196-mdpsys.c b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
->>> new file mode 100644
->>> index 000000000000..a46b1627f1f3
->>> --- /dev/null
->>> +++ b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
->>> @@ -0,0 +1,186 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2025 MediaTek Inc.
->>> + *                    Guangjie Song <guangjie.song@mediatek.com>
->>> + * Copyright (c) 2025 Collabora Ltd.
->>> + *                    Laura Nao <laura.nao@collabora.com>
->>> + */
->>> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
->>> +
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of_device.h>
->>> +#include <linux/platform_device.h>
->>> +
->>> +#include "clk-gate.h"
->>> +#include "clk-mtk.h"
->>> +
->>> +static const struct mtk_gate_regs mdp0_cg_regs = {
->>> +     .set_ofs = 0x104,
->>> +     .clr_ofs = 0x108,
->>> +     .sta_ofs = 0x100,
->>> +};
->>> +
->>> +static const struct mtk_gate_regs mdp1_cg_regs = {
->>> +     .set_ofs = 0x114,
->>> +     .clr_ofs = 0x118,
->>> +     .sta_ofs = 0x110,
->>> +};
->>> +
->>> +static const struct mtk_gate_regs mdp2_cg_regs = {
->>> +     .set_ofs = 0x124,
->>> +     .clr_ofs = 0x128,
->>> +     .sta_ofs = 0x120,
->>> +};
->>> +
->>> +#define GATE_MDP0(_id, _name, _parent, _shift) {     \
->>> +             .id = _id,                              \
->>> +             .name = _name,                          \
->>> +             .parent_name = _parent,                 \
->>> +             .regs = &mdp0_cg_regs,                  \
->>> +             .shift = _shift,                        \
->>> +             .flags = CLK_OPS_PARENT_ENABLE,         \
->>
->> Why would MDP0 and MDP2 be different, as in why would MDP1 be so special to not
->> need CLK_OPS_PARENT_ENABLE while the others do?
->>
->> Either they all do, or they all don't.
->>
->> I guess they all don't, but I'm not sure how you tested that at all, since the
->> only way to test this is downstream (and upstream will very likely be different
->> from that).
->>
->> Even though I think they don't need that - please add back CLK_OPS_PARENT_ENABLE
->> to GATE_MDP1 to be safe, as in (all) MediaTek SoCs the multimedia subsystem is
->> kinda separate from the rest.
-> 
-> That kind of doesn't fly since the parent of mdp_f26m is clk26m, not the
-> mdp clock. So either this block doesn't need a clock for register access
-> or this clock is going to be broken.
-> 
-> This is why I raised the question about the validity of the flag in the
-> first place.
-> 
->> +       GATE_MDP1(CLK_MDP_F26M, "mdp_f26m", "clk26m", 27),
-> 
->> Once MT8196 MDP support is upstreamed, we will be able to run a number of tests
->> to evaluate whether this flag is really needed or not.
->>
->> After all, if it turns out we can remove it, it's going to be a 3 lines patch,
->> not a big deal.
-> 
-> That also works. Though IMO it makes the error harder to notice.
-> 
+On Thu, 28 Aug 2025 at 16:01, Janne Grunau <j@jannau.net> wrote:
+>
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,pmgr-pwrstate" anymore [1]. Use
+> "apple,t8103-pmgr-pwrstate" as base compatible as it is the SoC the
+> driver and bindings were written for.
+>
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-Okay, I understand your point.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Let's keep CLK_OPS_PARENT_ENABLE out of MDP1.
+Kind regards
+Uffe
 
-Cheers,
-Angelo
-
-
+> ---
+>  drivers/pmdomain/apple/pmgr-pwrstate.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pmdomain/apple/pmgr-pwrstate.c b/drivers/pmdomain/apple/pmgr-pwrstate.c
+> index 9467235110f4654e00ab96c25e160e125ef0f3e5..82c33cf727a825d2536644d2fe09c0282acd1ef8 100644
+> --- a/drivers/pmdomain/apple/pmgr-pwrstate.c
+> +++ b/drivers/pmdomain/apple/pmgr-pwrstate.c
+> @@ -306,6 +306,7 @@ static int apple_pmgr_ps_probe(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id apple_pmgr_ps_of_match[] = {
+> +       { .compatible = "apple,t8103-pmgr-pwrstate" },
+>         { .compatible = "apple,pmgr-pwrstate" },
+>         {}
+>  };
+>
+> --
+> 2.51.0
+>
