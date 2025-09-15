@@ -1,63 +1,63 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B785A2EA14E
-	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 08:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF70B2EA725
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 08:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757923346; cv=none; b=hO8cOMC6Y+gCDTedWzo21roRZ7jwj14ZsQUXIdoLmLCf0L1xhpERCIZU+7v1RJocr8b0zFpA10jxfDUefLVpp9sE1iPSqxOLL/QJ0exXCel4mOFRGmxeJrGPbgyUxgHCjjLerdYGcWOoUwZyU+lq50oN9UyZ8Yui+rDet0vhwlk=
+	t=1757923348; cv=none; b=BC4ewIEz5ZOBCIfnvqixdcf4oWU5UHZ9IxsH7fXzqKp9NrQGo5nfz0BAtM6OT/nqLAyxKiL8k+ZaAYaD688Zzv9HpWpwQbhge9z5ZiwvMNvbq3NenrqwbVBAsf7xN8WXgpdfrtxp38Lqtoa9QhnXknud0pBLX7uQQvUzQQMwA2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757923346; c=relaxed/simple;
-	bh=zND4GhxFU/tz0sYLfWaRU8glzS+okJHK24B1i0p/cZY=;
+	s=arc-20240116; t=1757923348; c=relaxed/simple;
+	bh=y84VDV0rZer94jeWEUGutZ+DiGlWK+mnb2KewZUqkys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uD8/eLJBjAMv4u9X6izxj5tQGbLF6TUhwnPJVF1IUSH5jGS9yz6mz2EGsHpYT628PhOgx6pMJZcckz36/62rF0aduVZ6qbLX/i2bxe2iiFADHddpM+oIlLS/CLY3eGUTJx9QMLSBwbflnxF6IxmGHC0rSUZITYQ+sr0A/6AAl6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K9o3Awbg; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version; b=BtK2aegoQGU/vQFNTsyiWM7jKHIb6FD3GsiR+wgXLT9oBrI//gBTW8T6Gp3elOtsVr8dgz4WcqvIRTylhVbvpjjtC/6ZVbv0X5N+QtQh6MB87fEMjHaI5ySQOTwoCrNBG/5WE+HgMUSMB5jwtdpdIYnboQLnhjcnntnLoRxLpag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv/toyx9; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K9o3Awbg"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f6017004dso3929685e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 01:02:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv/toyx9"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f72452a8eso4512996e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 01:02:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757923343; x=1758528143; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757923344; x=1758528144; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I+y0n2iQaoQRxXuIEAJP6wVzz5TSA3TjXyGRiIjZrCw=;
-        b=K9o3AwbgmZiQ/wdnFKUyEc2dCx6D5gVDTz+yZRekRc8pJdKcSydcnbf7psHj1pdExI
-         ofMDtNmiLOP7w5RTwWU6LvrqtDlzIuee2jH7VEtVnx67GMh1gTQ5fZsfFHRNT5Oh/Kwu
-         HMgy7QX2Edbvgq29gf1Elrop4XC9Y6+yMjd6E/8MdqlSVXS5PLPUupDqE2t2/AJiy98Q
-         O3RP1xk3wP0CDTEdYpkcemPWEjF57hYoLVFH1TkJsFATOaTM/NSGHqiJmcUJrZK1fjaw
-         EPZkICu3B3UYEQ6zlwWHRnpNtxOSMQCkyvnFp42A/5FgaA83NVqRogyN//XnhvlMa0Ck
-         bupQ==
+        bh=VFtIJBuALfkec7VGR4PeH5fwH/AzmTzDZVD8lAug6hM=;
+        b=Wv/toyx9Ty3pulYm0UcY4Q/22F4JSMxYIgAJgtualy/TduDl02If2eBvuqedo1soNX
+         3r6JqdGUftebh7ifqZMCbnlclJ17cHGe8auMfd+SxsSUflkOzCUmO7WEyZdwfhJCY4V0
+         0BY3MSYlqtP31LbKNUrpvGQZPhoWm+zHkyF0apmA0n9QytU3xh5uDQLlzu4blI2muobw
+         YoCiSoIwFj/0kVVS/gij0aVwIJrz+rNg6TgME+6y8cbPzkv4JHpu6wnTE7Is2TdUYCSz
+         xE8lCCvcQLvzMyIFFAMWt+mfn6+12PQtZ+mVTvFbqJ8Uy9BBUv7/wbkEEk4dgb9B+ty9
+         awtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757923343; x=1758528143;
+        d=1e100.net; s=20230601; t=1757923344; x=1758528144;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I+y0n2iQaoQRxXuIEAJP6wVzz5TSA3TjXyGRiIjZrCw=;
-        b=O4KhzTkfRKs2Zaursb57F4tifswQIFqIDDzgx4z5RVYUlPjy0IpD0eUHKhz4Rn6kaZ
-         KwfAbTP+lvHIxLEflNksnb6hKN1k8arcrrv3CFxBUD3RUtyl+OHm/k0EfawGFMn9W1lw
-         XvmplN4SqYwnje5kZJnhT+bo3/h69YHpNjuTNCkcOQCfpCikMtiAgDLlKDJdGK5ON/e5
-         XPKHviaFBn9FLV/WQSKx4A3B0LAyjqlLIOwN/k1tM/dflytfR3gjt5uYk36b4EracPHV
-         i9fvOWbsIDrHxwvlyggFZCdRkabS3mzoQ9dqO5ptOMPgp7awEoo1/VTJDxFFCv2XwB14
-         IkOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSpqwVu9JTAveE85Eif2gzPdJ0ii9QCBWD+rRvokkfhAI10NeFKdmj14rZ8ktYZ1WpoAWuCRW/5aM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYyyCCfHje4D/3GtvlFJdlXBlNiHHzsSz2HSgw/BLpAvO8QGJG
-	XT1hPyF99OpEkAvw0kqW4SYkywky5tSqhqDcR2Uzq/SrrtmBAzIDVQOM
-X-Gm-Gg: ASbGncuV5EjvexUn2NM8lTd59iIYiSTzoY/bEGzwij0bvoypJtbwusU6WEOWHPGOoAO
-	uF2iOvDK4ujjA5M2KaB6nQsRpi5/GsSOOW9IrmENtH5pByOAj+ytI2zhaEDGma+r5hloVdid4d4
-	I6N3ANSIbqP/WKsWJJnB0gUlNrSwiBPoWumrxtQgn0YC4uXMZZHOXx7e3dkQ1AqmFI7G/4lOSGR
-	/SuI3P0fsK9sVV+e9S9OHjUAQFZG+HxgKpV7CVksrHtHc6cJEljL3UxtWvirifiMkRgwFWdJEO5
-	EiDEzsIMzSKvJIl5PABaBrG2P4B8ol9wdze60KMfYcJDnrrhbRg7UDiT/0y4WohKnQS4FB1/aY/
-	GvJF3sglkCgzMAtbCszCgzN2F
-X-Google-Smtp-Source: AGHT+IE6lsTSCi1HbUYjhR6DRaTx/WD5l7j/ig8VpXqBNn3d/LYOB9q6iXpX88ot17AUCeJYiqAUPw==
-X-Received: by 2002:a05:6512:79a:b0:55f:536f:e89b with SMTP id 2adb3069b0e04-5704fd772d9mr2486614e87.53.1757923342570;
-        Mon, 15 Sep 2025 01:02:22 -0700 (PDT)
+        bh=VFtIJBuALfkec7VGR4PeH5fwH/AzmTzDZVD8lAug6hM=;
+        b=tqN4zLkmfk1EjDtCl+Fu0FK1XYJiiC+B/4zmGdX0c1akp6EyZ7yYiVQPV2jEHNaP4N
+         F0hQ7DyjRsUAGET8mPC/lU1SjxEZgAVFHwxiWtIeKX2x0UEJaDUHyRIW1ca/VKHtcDFn
+         e01tnwc2JIp3fAsK6aQ+Iaa1IBc/NHP8JbGlIDru2GqxHAqqFmAL2hKJ3ieB7G+4uIW0
+         jATZx/6XS5fjqBiHWQI+1iIJSlzRfiWcGt/066Lk+DWuIAbwxLLT7+aPu4tgAZeaXwJU
+         jWA9+cM6EbV9Kz9V+P78xic0esM9bGp1aV62VqUo+9XPqRZqGX0JYro0VFGYxqz4iHAA
+         ZG2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVdNCqZuAWbJEFbOTWARluOTMHr2dwLHUBlBCbsxlRwYbAXzH2fpIFchWUJv9jkW9T4cMV3Iy/ZzI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySixmCex73UwtZUifuFwzVvKa3dHObmYI3jpw8R0lb1zY/Qo37
+	zcpIa3l10q15ARwrYiZwBuVno7yDLuoRiA0j9QPurg3/hE3T5t6BOw7p
+X-Gm-Gg: ASbGncvtieosHomzAdU1RPlaEJS8NonkNaZkWJchOfAKMUM0JD4tW2BiDOZjjEDZ2nQ
+	mJh9vbLY/tlRPEWmk2Mxj7LSS7z4TyjuhXk/Tc4gRqlo/6Tzl0zDb2lRppnYmwvk4X8lWreabj0
+	PZhtX9S0DKvNbf1aUH4CsbguyA2H6+NbUgm6RKxWkq7nroY73Xd7dx2EewYOVdCShrvRGnhQq0R
+	rFWZwviZodeylJrv0sBxbZ+4WBGXgpc1khN6W4BZrP6hPmPmjrm7fFrBu4PL6tgiDzeoDPX57PI
+	BiIEcyGKBziZ/UQBBGp6v68Fv0q0kNJPJTuWk5BU42i+Um8MdG1F3D4iSYvhPn3QCeinVvQoRGd
+	JiNr/x+xPhSoCSFG/lijsfL+U
+X-Google-Smtp-Source: AGHT+IFe/jx4tFil9RjxwhD7bREzvIlC8fQ/134z0bvttum74XEn5yTMqRq0eo1UbfObzzjuNO/n+Q==
+X-Received: by 2002:ac2:4f01:0:b0:56c:4159:4e39 with SMTP id 2adb3069b0e04-57049f1b51fmr3830912e87.16.1757923343830;
+        Mon, 15 Sep 2025 01:02:23 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e6460dec4sm3392381e87.103.2025.09.15.01.02.21
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e6460dec4sm3392381e87.103.2025.09.15.01.02.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 01:02:22 -0700 (PDT)
+        Mon, 15 Sep 2025 01:02:23 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -79,9 +79,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v3 01/11] devfreq: tegra30-devfreq: add support for Tegra114
-Date: Mon, 15 Sep 2025 11:01:47 +0300
-Message-ID: <20250915080157.28195-2-clamor95@gmail.com>
+Subject: [PATCH v3 02/11] ARM: tegra: Add ACTMON node to Tegra114 device tree
+Date: Mon, 15 Sep 2025 11:01:48 +0300
+Message-ID: <20250915080157.28195-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250915080157.28195-1-clamor95@gmail.com>
 References: <20250915080157.28195-1-clamor95@gmail.com>
@@ -93,26 +93,38 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Lets add Tegra114 support to activity monitor device as a preparation to
-upcoming EMC controller support.
+Add support for ACTMON on Tegra114. This is used to monitor activity from
+different components. Based on the collected statistics, the rate at which
+the external memory needs to be clocked can be derived.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/nvidia/tegra114.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 8ea5b482bfb3..d976077d4757 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -980,6 +980,7 @@ static const struct tegra_devfreq_soc_data tegra30_soc = {
+diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
+index 5e695431ad2e..08f81a3d11de 100644
+--- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
+@@ -248,6 +248,18 @@ ahb: ahb@6000c000 {
+ 		reg = <0x6000c000 0x150>;
+ 	};
  
- static const struct of_device_id tegra_devfreq_of_match[] = {
- 	{ .compatible = "nvidia,tegra30-actmon",  .data = &tegra30_soc, },
-+	{ .compatible = "nvidia,tegra114-actmon", .data = &tegra124_soc, },
- 	{ .compatible = "nvidia,tegra124-actmon", .data = &tegra124_soc, },
- 	{ },
- };
++	actmon: actmon@6000c800 {
++		compatible = "nvidia,tegra114-actmon";
++		reg = <0x6000c800 0x400>;
++		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA114_CLK_ACTMON>,
++			 <&tegra_car TEGRA114_CLK_EMC>;
++		clock-names = "actmon", "emc";
++		resets = <&tegra_car TEGRA114_CLK_ACTMON>;
++		reset-names = "actmon";
++		#cooling-cells = <2>;
++	};
++
+ 	gpio: gpio@6000d000 {
+ 		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
+ 		reg = <0x6000d000 0x1000>;
 -- 
 2.48.1
 
