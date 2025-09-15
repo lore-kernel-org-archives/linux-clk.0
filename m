@@ -1,135 +1,133 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96162E9EC8
-	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 10:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4387C1B4F09
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 10:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933433; cv=none; b=aQu8yK7X2ASRaLSS2XExtJgNIGUliYD7XwqOF5G4vEjZnmEGNmLocqH06K8cmKHg0nx4buq6hKI5kzfe3wt7Zbw8GhnU8KT6XGexCtomuFz1rVQZnMl8Au6VAkw7V4DfN3Y1glPjrg/tO18C4R1pyKUsMq6jTtZD+xybY6eWQjU=
+	t=1757933939; cv=none; b=hbWv9NojkATD4sAVt+0NbE9qn0HElmMv5Rgh4x+Nd2xVborm4i6xJXy6sf0us2d3F81BB4WKKdbQVzlQUFmT8Rxt7tBK7Iw7YTpXqHJ1LjwGXtkEGHlquYiw4PZeKvT/u3MkJLQyExnwzF2nNGnIY+2Mx26gk11CY6+dRO4Q1kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933433; c=relaxed/simple;
-	bh=kARumPxqfmMMWgp1NvnsY+8lw/OMkVWPKeLFtKSIlME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0q13WDumKG1roKczFbquXkznC2D8KLT19np9Cz/GWe7L8MpXB0USBBHH+hr5ovXJfZ3GBeInNyXAZXiAU2CQi5KByYZ8kZ0+3hxnKahOOtw568WOO6wKi2Lj9IqRA7MQLKJTEaaRqMIzoWJl1//Ycz1IAuS9li1w4dD4E4VLw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dsm1gepW; arc=none smtp.client-ip=209.85.128.179
+	s=arc-20240116; t=1757933939; c=relaxed/simple;
+	bh=tEh8ZoBXLUGU5jPXVKCduCcrrcA3PMn3JN5BnZgScxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQ0t6B7R/YFNHSHWFipJCbIkXyWVrqSJhMY+IE2jkvnzuetmkldQdwULXpEMdciRhdd1REX/nJDERK6/trRWz61J1yJREuD+X0XcyHt5eF8ALA1qKUeIR6Q9rS9tJ/k2OiKpOI5bvHA3IpJDTLN2/t0DqGCMyOEmu8gw4Wm9Ngs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nQn4rFQP; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dsm1gepW"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d603cebd9so32308977b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 03:50:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQn4rFQP"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ea115556b2so775657f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 03:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757933430; x=1758538230; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
-        b=dsm1gepW+64GUvS7kMWqaTSMnvOb4DE2XTTvWEeHN+RE/+11IMxt7/VT5nrAsrozPj
-         LjW2VVhrxJupJV9qXK3qo8acFznWW8EUfnwnoI4vzGcKbj1UMmf+bhA1qOvMvaSEpSri
-         JxWMtmdA/Sij1xAwa/AkWOoJWA5FL9LcqfNjqBUys25YDzn55KJIvJEGu+5RMQH+vPpr
-         P8UCDM4suEIwAfOvYk3SwbegH35M/X9YI1gUIk0XqsFMHy+ZES0t8yI4pLpuClLxwNQX
-         aI3en3/nuAnC9ZoXdtEoEmEg9DHc2ZK9SllMJGfkcANMbMEBs5t6ih8A2jNMaQ6iEEy7
-         zv+A==
+        d=linaro.org; s=google; t=1757933937; x=1758538737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XAynPQhGGigAoLGUsNG/nP7nnU/F6joYqW8ReXsj3TQ=;
+        b=nQn4rFQPF/cA/sB5OdFIegHt/pI/AP0qLmMhFzE6cR6xnx51Y/7rdtOIKXcDMqVfyo
+         CE0EYzSakJxW/LsbT7yABwHReSF69ooOb/oPuRUC3oyJHLRppo3Rqmv+o7cbrK5HY4PI
+         xH5SMqAsBmGqg+BwZdvt1LLjwwE+0s90uTg68wmJ//aQvrt/P8IS09JFZeDADnTUDm61
+         6qxRviUyNxzTc0AxjF1L/uZn6CVBYARQD1S4jOXeFuTk5LPQdfH2ZuaF4icWJiNwMCe/
+         HZP9TxKtkS5ar1kDQqFx5WK4+sd5OPUa9+OfGYCwmNP+23xouVYm2bjLX0IxtvS16oib
+         i9Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757933430; x=1758538230;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
-        b=DathtbP/EqVFOV4AXSMKAehhN7qZLvamL8bW2QHWXzJSfwa81voMWTMBG+0WPv3Hx2
-         HXIGuy0J98ucZK1JjPP1Y7vves2JnMAY/qP8gXwy3USaihKkSJrx3+L/K4Eip9a2El64
-         V3jpNg+orefHK8BTgbh7nOqp6hG10lTP/ylPkl5KNkbY5PUODQxpMZpRv6CixjQbaRCa
-         bjoFKuQWlERWrsk5Wu5o7TN/H7EOg7Rgvn6I7Qq0H//sLK0tsyZMpPf2fZhshEWsgiip
-         NrMvPZeppXPAZCYNHmCmhenRJcphPD11C+U7Y0cpmjNdPO1f3mfmom66bPrYO7Wp+sFI
-         2hXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV49Tubo3ZTJmFdmP3lTlKUXY/RH/M+A5HPCBO/e3MujhZ9IxEukyl7eEIkIDaVTTouPPiSZHCuAdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgTf9X5j8OeqbqNdY9a6dN4HgG8Rrokwe9GS0aRW2gvZaLZb9S
-	cCMgrZDiFUxeODgG/K3zDZkvatSNPfpAsNWkZgFhkfkPdmeeFgsOxxhlYiM0eBe+Y+4nTbN1D06
-	NbM/XMjeiQtc/xrjQUYouDjX6eGMFUfNyg0Qlz4I0FA==
-X-Gm-Gg: ASbGncuGJ5ZSb/0bMUas1wU+YK2Tsg3UDX8jP89SwXNqHpDQtDhNuN4DBdXYoM1tmsV
-	kN9Q3Tbrw5HnzchEgI0i1OWsKlPC+ZOc9UefuuBrPZUVyDn7d1RxrSTc1fdRRCPuijaKYxsK+zK
-	8dNVRQY5UiwD8Dxks1v23uoOj57T/kLvKaTwr5g8lzX+AbmpTvnFulPJ5vod6z2Ot0vCJ/2WJtd
-	4cfWzjkAjgo4q3iCXQ=
-X-Google-Smtp-Source: AGHT+IGDEYgOKM3gJ8Zzlityz/syLNE9FRvDAqAmupyu9aSeveyvR7FHQhtEilEP6qYlMPKL0ImuzwqqE0dGUhFDiNI=
-X-Received: by 2002:a05:690c:3706:b0:722:7d35:e0c2 with SMTP id
- 00721157ae682-730626d2dd2mr106799857b3.2.1757933429679; Mon, 15 Sep 2025
- 03:50:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757933937; x=1758538737;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAynPQhGGigAoLGUsNG/nP7nnU/F6joYqW8ReXsj3TQ=;
+        b=HU1DgyUwhwfdM13Drngg73TxXzYR5lZYu3qArw5BI5pMqGKdAWnIQAAt9vzB5onCA+
+         eR4EgANVwSQs4Rjuk9SxSdV1fUBoifDHPLtAXIDTMRiIoYdUQt4VUFHcGSUuufJcrpp2
+         mGrlJp83ds45AtaUbuojoKEs5h++w9BJaxGUJY0FFA6k7Rgig1lYOf1V8tGKE8w8FdeN
+         tEl/v1nIn2SZsQliz+dnm+QwWAvuX/pnRUzztemCXizAxhDENHNuOr+svGMtslV9tkLz
+         QQrb5Z1iqXRmIxIN6al506c78XIvjAZvCYwHsAlCPkEg8ZcpvUPGrLuVOZ2lSI7xGTlE
+         MlIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfvA+uGH9i/bWi8Vcw98Cs5FXxuwKEp/BXjiO5MXb4ReBwfd/73V+RyzPmwEc2AAdm75zED+r/Mqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzayBa/eeZFAazoBWifYSGffZJO53ZkVY5K9jUFpJVS/eOQIxAq
+	tqInNYxOPwjORPvGos9icrFmIn52O9zC4R1D8JU36ClXSfSH5G5QeXIPhNLJi7aYEs0=
+X-Gm-Gg: ASbGncuKeEgsCwOUlfxXvXyMY3AvVoNcvxgOAX1XzB84lBUunc+RDheOlUHoOLDa1m6
+	aiZS6xGMByng6CXpl4AucZfMUumAXSzQIxeSfzmkr/5dn5qO+l7Uz03Qdtsiz0pTXX0qFr+5Uwp
+	ylKB2L6ma53d224I138GXB2x2PPzyOpYKlx2/QGxeWTNOonoNNQ20DZmNC4/LbcUgNU8424fCro
+	gHTUESZqIVH/tAXImNZgDsHEIRd7Vsx2iaEQUFBb9GkW5Q7E5Wxmp+3JwL+CWtO9L9yFxKYl+dV
+	GyzHNA54hwTRG1KSNWMsxd3OaWTsGqc5X85PvtyQX0AM89Soh6rq1OM4uYCzG+r7y9FtWWdhGs3
+	leE49l5maG/kb/o2v+oBPnxJhYfzZoEU4btsWzpfUebqBfBHQrDEKRTNdxW6r4I7X8d47g7E5EQ
+	wlTsjEThXu9t5hUz5SFp5/18NE0w/HYQ==
+X-Google-Smtp-Source: AGHT+IFTNWcYzpONk7q5sHZJPcB+MjCfusTYtLZp44gnfW+zyeIpjyoAejs0bsdSiNwXO1ddWHKtJg==
+X-Received: by 2002:a05:6000:2b0f:b0:3e8:e7a6:e5bd with SMTP id ffacd0b85a97d-3e8e7a6ea8amr4633702f8f.36.1757933936590;
+        Mon, 15 Sep 2025 03:58:56 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01865ff7sm94729955e9.2.2025.09.15.03.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 03:58:55 -0700 (PDT)
+Message-ID: <d965949c-a7a0-43df-9bf1-c1232fc7e38e@linaro.org>
+Date: Mon, 15 Sep 2025 11:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
-In-Reply-To: <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 15 Sep 2025 12:49:53 +0200
-X-Gm-Features: Ac12FXxZCAZGblY8VwFHa1GJ1rGV08p3Fv5KI-OAzvQkX2G4ZDMKiAukPP3wanY
-Message-ID: <CAPDyKFr9dAvP7U3dZ_LFw8YxcvJ6n95OKKLYpntUarqdfUqjWQ@mail.gmail.com>
-Subject: Re: [PATCH 03/37] pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Mark Kettenis <kettenis@openbsd.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>, 
-	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Marc Zyngier <maz@kernel.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: qcom: Add SM8750 video clock
+ controller
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com>
+ <EAIobHjo8rM1e0LwqDqaUllC0qjV5ElMMhk6KgT1oNnFt_-k7ctM2_6kym9OjEtse5o4pOFM7yCkXgrSGRZhuw==@protonmail.internalid>
+ <20250829-sm8750-videocc-v2-v2-2-4517a5300e41@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250829-sm8750-videocc-v2-v2-2-4517a5300e41@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Aug 2025 at 16:01, Janne Grunau <j@jannau.net> wrote:
->
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatible "apple,pmgr-pwrstate" anymore [1]. Use
-> "apple,t8103-pmgr-pwrstate" as base compatible as it is the SoC the
-> driver and bindings were written for.
->
-> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
->
-> Signed-off-by: Janne Grunau <j@jannau.net>
-
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
-
+On 29/08/2025 11:15, Taniya Das wrote:
+> Add compatible string for SM8750 video clock controller and the bindings
+> for SM8750 Qualcomm SoC.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  drivers/pmdomain/apple/pmgr-pwrstate.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pmdomain/apple/pmgr-pwrstate.c b/drivers/pmdomain/apple/pmgr-pwrstate.c
-> index 9467235110f4654e00ab96c25e160e125ef0f3e5..82c33cf727a825d2536644d2fe09c0282acd1ef8 100644
-> --- a/drivers/pmdomain/apple/pmgr-pwrstate.c
-> +++ b/drivers/pmdomain/apple/pmgr-pwrstate.c
-> @@ -306,6 +306,7 @@ static int apple_pmgr_ps_probe(struct platform_device *pdev)
->  }
->
->  static const struct of_device_id apple_pmgr_ps_of_match[] = {
-> +       { .compatible = "apple,t8103-pmgr-pwrstate" },
->         { .compatible = "apple,pmgr-pwrstate" },
->         {}
->  };
->
-> --
-> 2.51.0
->
+>   .../bindings/clock/qcom,sm8450-videocc.yaml        |  5 ++-
+>   include/dt-bindings/clock/qcom,sm8750-videocc.h    | 40 ++++++++++++++++++++++
+>   2 files changed, 44 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index fcd2727dae46711650fc8fe71221a06630040026..b31bd833552937fa896f69966cfe5c79d9cfdd21 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>   title: Qualcomm Video Clock & Reset Controller on SM8450
+> 
+>   maintainers:
+> -  - Taniya Das <quic_tdas@quicinc.com>
+> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>     - Jagadeesh Kona <quic_jkona@quicinc.com>
+> 
+>   description: |
+> @@ -17,6 +17,7 @@ description: |
+>     See also:
+>       include/dt-bindings/clock/qcom,sm8450-videocc.h
+>       include/dt-bindings/clock/qcom,sm8650-videocc.h
+> +    include/dt-bindings/clock/qcom,sm8750-videocc.h
+> 
+>   properties:
+>     compatible:
+> @@ -25,6 +26,7 @@ properties:
+>         - qcom,sm8475-videocc
+>         - qcom,sm8550-videocc
+>         - qcom,sm8650-videocc
+> +      - qcom,sm8750-videocc
+
+Shouldn't this be qcom,pakala-videocc now ?
+
+---
+bod
