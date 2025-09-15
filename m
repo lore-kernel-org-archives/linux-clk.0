@@ -1,98 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6317F320A17;
-	Mon, 15 Sep 2025 14:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E560632F76A;
+	Mon, 15 Sep 2025 14:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947020; cv=none; b=BPAf1y73SjP4uecD8rUAsfaia2oeQ7okqG4htATU7fCBX9Saa7+uT4wKjwf6pSG1JXMbSPmqysm3ND5REQ9POqUuup3lIECWrt4IQjJu+EjVI/51zJWjPLtyBdm0VTbqdiERHTvUxUBGz9Nsl+AQABfBh81vgTMG/AxImgXIoIA=
+	t=1757948003; cv=none; b=JUIIyjVkXVbf2p6aiEuSCIJdWqfBQpgWwXfTJjMuCUq6ncHMmEEzsz4ssapNIdLQ+JLmjvgIEToDdTvVFxF/tlTWTaDDDADpF6L2XE4FE87xrCVZ9fJPKu0r+L3rYCIhqMO4JdY2Ei0gxJFifEoR4hbDlyXffNOwqxcxi7qH2N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947020; c=relaxed/simple;
-	bh=LaVVBqstrujneGbAzHLz7nrkIsdxKDKzrualI52ZIIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sXHhUwn/gwu6sYThoHezrBVwjXEvbXq8gn0zpekXzyE1cFIFK8lRe7lxpbWUuEIQVPPm/PyE/aB/kU1+/8iExT6EpxRDOfgblEBL++1bTgio8BadFNGOyma9fSWcqxXOoE79vqrMLUVcxvdPFcLg2UjlPd65f6/8goX4p/I/ucI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVs88B5y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757948003; c=relaxed/simple;
+	bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eDebAc9QJP9Enn2NTMEbVcNZ53TYJqmDB2ecAgwgt8H8OEWyDKxjzrLmESUVrNn+WTLcQowFg5rGdaZ/KrCjnpR2eo3DHZaX40mUMpnwfdfxhHBjOCn8Qs1I1ZllwhOQiYZI6NJpHBwm4/Em12GPrzf1T/Lot5/2X4PJCcv95wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XP/6ecZ9; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVs88B5y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 625ACC4CEF1;
-	Mon, 15 Sep 2025 14:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757947020;
-	bh=LaVVBqstrujneGbAzHLz7nrkIsdxKDKzrualI52ZIIs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WVs88B5yPRlclUwE4sdDfug96OsJwa/zEnVNdGpbhF5zYb68Ql2WhaTZABRcwSHKv
-	 Zk9BU8nb9qRPHabu3/j47DThmakS/S1dxGaGrU+z/vwUqtlC506/ScQu9O75IblX4Y
-	 7+QwCb3VH72OdO5JpBd2MiIcBLSTsYUVJRekL7Qd6HKC0I8nXzaV+To1d3giw6uJDt
-	 dwTyz8u2kCoCaTSd3wQW79C42tsz1//NRN0ldFgfHqYDDHbHZM4Oa4IsVcwaBYVSGB
-	 i0OSM9QX0sOFzq0Dlv8gaocWM8Sb7DYeMyINVOjTFakLd3sEEv/9LPSixot9k2QaMp
-	 RwvKVaVQ2Sffw==
-From: Michael Walle <mwalle@kernel.org>
-To: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andrew Davis <afd@ti.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH 3/3] arm64: dts: ti: add GPU node
-Date: Mon, 15 Sep 2025 16:34:40 +0200
-Message-Id: <20250915143440.2362812-4-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250915143440.2362812-1-mwalle@kernel.org>
-References: <20250915143440.2362812-1-mwalle@kernel.org>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XP/6ecZ9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757948001; x=1789484001;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
+  b=XP/6ecZ96pstD0Ap76SIZxes0dpb2cpnBVvtOQe3m1jWCYexlJTmkQdv
+   axDB8U+wXoWERcKCWQ19IST17sMOxaFkRcUwc0YzZbf1U8JnYjAjvFQpJ
+   GJjf0u8xhrdAulxDNp7cboXZoZXFsOC4I+7Ts/U3RHA6NYDnQUsP3Z6mF
+   T9iuUSjXC1dPOI1Y32jaBa/YhG8qXpv8owl4tQe+PJgPkUDqdH7L4WJPb
+   5KCJoPXdtFfTsVV1kdNQzlo4CPl7qRjIdFFbDRxgEM9Lscl0Zpt9IVy69
+   tIPTl3l3/kWgqcUD/UmZhy0zsHRL4hiVomYsspo/E+XS6Zqs79bRP+i5A
+   w==;
+X-CSE-ConnectionGUID: t4nJTFLUQceZvkt6u9W+ug==
+X-CSE-MsgGUID: OXxTyGUQRK+73AIK12XuEA==
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="45941907"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:53:20 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 15 Sep 2025 07:53:17 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 15 Sep 2025 07:53:15 -0700
+Message-ID: <826bb7ba-c4fb-4dd9-9332-88140d7a0eb1@microchip.com>
+Date: Mon, 15 Sep 2025 16:53:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: at91: sam9x7: Add peripheral clock id for pmecc
+To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The J722S features a BXS-4 GPU. Add the node for it.
+On 09/09/2025 at 12:38, Balamanikandan Gunasundar wrote:
+> Add pmecc instance id in peripheral clock description.
+> 
+> Signed-off-by: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- .../arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Added to clk-microchip with fix of tab vs. space (made by Claudiu).
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-index d0cfd6821b18..d02f7fba327b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-@@ -1232,6 +1232,17 @@ dsi0: dsi@30500000 {
- 		status = "disabled";
- 	};
- 
-+	gpu: gpu@fd80000 {
-+		compatible = "ti,am62p-gpu", "img,img-bxs-4-64", "img,img-rogue";
-+		reg = <0x00 0x0fd80000 0x00 0x80000>;
-+		clocks = <&k3_clks 237 3>;
-+		clock-names = "core";
-+		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 242 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+	};
-+
- 	vpu: video-codec@30210000 {
- 		compatible = "ti,j721s2-wave521c", "cnm,wave521c";
- 		reg = <0x00 0x30210000 0x00 0x10000>;
--- 
-2.39.5
+Thanks, regards,
+   Nicolas
+
+> ---
+> Changes in v2:
+> - Removed Acked-by tag that was added by mistake
+> 
+>   drivers/clk/at91/sam9x7.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index ffab32b047a0..bce60f7393d5 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -403,6 +403,7 @@ static const struct {
+>   	{ .n = "pioD_clk",	.id = 44, },
+>   	{ .n = "tcb1_clk",	.id = 45, },
+>   	{ .n = "dbgu_clk",	.id = 47, },
+> +	{ .n = "pmecc_clk",     .id = 48, },
+>   	/*
+>   	 * mpddr_clk feeds DDR controller and is enabled by bootloader thus we
+>   	 * need to keep it enabled in case there is no Linux consumer for it.
 
