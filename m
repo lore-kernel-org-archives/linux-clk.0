@@ -1,190 +1,174 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013006.outbound.protection.outlook.com [52.101.72.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9151ADC97;
-	Mon, 15 Sep 2025 02:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757903756; cv=fail; b=mOhg7fIe7fY5l3PnunM+f07zIFPkJC9NwG5uJ3LxOAJW2CKb11l3wNuNPx25xs5gtOsiXvgV0brmutTlFz45VkVKQkMw3b9hNsmVHXWnpMy+wh0ffuXW9rM1BLt3Xs6WHWuUE7qJt+Pk+qoyURPiAITswOF4fpXs0C1E4hFx4Zw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757903756; c=relaxed/simple;
-	bh=s4yPTjFFBKr4uS7Atz7GSDoB9XNmRbsMFX3HJDRNKSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y7MnBTA3Gh4Mst9Z/O9MX2zBtEmzndMU40kyqXlPCA1B3/neUr0Th2cb/w+sBnrVBG7KJRFtm3my4Dxk28CfMxGSu9hrnFcZsMY0+MhBaFO9fJUNKdZLtWDZfg9NgGWy91OFiq+8R4SS2SiAx6MdZewsQKp5B0N3AX7xma3ZmNg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=g4lJ7WgA; arc=fail smtp.client-ip=52.101.72.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE42D1DDA24
+	for <linux-clk@vger.kernel.org>; Mon, 15 Sep 2025 02:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757904714; cv=none; b=eTHOGbE0GQCUwqyuEbTk12sjgvYicPxwoJscL0ovX7vj3O9Ii6kAKPCKosbaW5n0hv2MsaiksGoKDljgdpj2m+S7uCihdnr1YXlwTZs+PnGLyuP8BrKP1Dk67PWNLuXHUvv9flYm3bqBsWEschcY2DCF4iatHJTeZsCp7wIN68U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757904714; c=relaxed/simple;
+	bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dankivrtt8crbfrVOrFmdW4yeneOk0bQOzkXHFIAin2qqxC/vTg+Q4+72xkx6rIUuq7i31+q+dXSuBbbIDI6hHWymNxubW982xISveD4aoY/P7UJBTQEabRlfsmb7diKDs1Le542pVQbSfuYHs/6uujVECx0Fvkpm80OWr0Cq/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHLoIWMf; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="g4lJ7WgA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fide9dfwgc2RoSd3qoEvNvQNX8zD8vS+gmtZS77OIRmBTkeeRisxcgCk2m1sDEJ7GhpUzZ2zhr/w+Ek4Yg3RLEDpPpggN0mW8RqYlBiDNSBblj5ZX3mmmkcrfFVlp5YlnuKb4SGYx17hdwPcSfpBmMJicUA30wVAQIz5E3OfExOO6rbEzpz81S5hOYhFaa19jEr05t5S23k/DKrAPoaBR6CKQp93fsVn31PlfIwQHm65VZmp3wnXd2rBX5dsMBFOBr9ea+dhfpqt1BrNcxLAljR3DeiA2WdHG1TQ3aevofkNhHjPTfwDPNakPV7COX6JwP9PxiWoDTL+JRbKnPRltA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LFq63UVda3Oi5agpUYyyJrXZ+Jx3YaxLkGj+9FM9ItU=;
- b=o0Kb73h+jHPkQfpMRSJvJeUFZBoqsaFI59npfuZi093GKpYQgVTuwECryapzo69sTPwKOtHpcNOUZei9zy1KEZOT8g+bgnfYc8WLmdF1apVAueYbLF8XLodG+/LCrQ5XdkOkFe2uZpmtI34q3HfHduvJ4zp9K1n06XoCrapue1lgPtNHm/TBpfpVY5tv/PmoroF+rMcpTGa296ppAOV1OsHjfoSZZfJQfu/HEOZ4BLoez24qw0QXrXmjz31ZY8ckr8PBgtjtuw8UrSouTDO8azSNAH+QI0sRKg8FZCVW6lwpGMIwqWXafZe7F537wYGFUJj8AxUoz8UMRPqvuprPcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LFq63UVda3Oi5agpUYyyJrXZ+Jx3YaxLkGj+9FM9ItU=;
- b=g4lJ7WgAES+wmzbEeGC+nDM3jsZ+5kpt7cM9QOZGJztVTPAVSjN+KCMF4Jo+a45KWKT1wobwTLSiB31YvdvafIjzkPSiGIL8OB/uHJv6lFXs+brBwmoexki7w4vrprWJRsxBVs5NjnfY2r5XubqotURW7PMgfo6QMhMITkMGTYjyTCurxjxhEb4qblb30qm1HGMfSwqwQjkHEDE+OpUg1MZg03RQfrh1UNGko57eKyjBvBySRuXRz2LjM1H+Utzs1UH+J22qLwR48O/UJpxgpgIHZ+bNcF/kgsGZh/xey4wiuRI1qe4EJItJ+Lw8Epl1FMjRtQR0ZVtDl9EE6L7DnA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DU2PR04MB9018.eurprd04.prod.outlook.com (2603:10a6:10:2d9::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Mon, 15 Sep
- 2025 02:35:50 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 02:35:50 +0000
-Date: Mon, 15 Sep 2025 11:47:13 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] clk: Add KUnit tests for assigned-clock-sscs
-Message-ID: <20250915034713.GA1331@nxa18884-linux.ap.freescale.net>
-References: <20250912-clk-ssc-version1-v3-0-fd1e07476ba1@nxp.com>
- <20250912-clk-ssc-version1-v3-4-fd1e07476ba1@nxp.com>
- <aMQzP7DamsQWl8_L@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMQzP7DamsQWl8_L@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR01CA0052.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::11) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHLoIWMf"
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-76ce24d1dcaso20142376d6.1
+        for <linux-clk@vger.kernel.org>; Sun, 14 Sep 2025 19:51:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757904712; x=1758509512; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
+        b=QHLoIWMfVplcun/lEerfYdg/bUv0X5hCUd/1WvfoqWyjD+DD7EByyKr9BIgS2w3tLu
+         cUa3eF/zO1fZQ45n4VsIojB9YAw0fnCzEtFaABgm1r5y2kDFy9VSe15779sgE3n4dj68
+         KxErNSoCdCdNt+2WRZOmVXAGuog9F2z44HJEoKq/qcN5+IzlaN7QU0aVjEmUZNsU8TL8
+         2F/P56uKAj/YcpNocJ8PYz2IjqVaNO5HXe5L1Mt9YB+GuBINAP6KV6UGpN1LhGG5QwkC
+         lWrTgXFGLwbq8JQmyl/t7sHPqGjk0JK84OJq3b8uzWzkcN/lhc8eNONutc3Sc3Rp1/rn
+         /HFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757904712; x=1758509512;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
+        b=F1A6kzMOla9SUVljp1UPoF97zV8x8HxcoWy8l89KESfShuvwbqtl7rzWj1ys+vqnJM
+         42dKdfL17YcLsf/d86tEy9SuLso3/eOOplQkV2Z+voiWdWxISjv9qu+ZC31yX4DKbCo4
+         1cUk445tGj/3QUbKIcbLzB+Ute9TpW3TSc7S+B5wOe1QyHY0D3mqd5k7fdHW2QXLMNAu
+         27Gmm+qGv7iDpVHLkE3UlDSPWY+L4DwyBdo3+sYns9dlht8kdP254wmz438uNJgPfEVB
+         uSF8zOUO2SVAVHKkGiVlNmcmOIZ65Qw4T4VCAHll0knq1/DVBy1NMRs6FgWBYRDQK/rL
+         6BOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkPGv8S3/CtmTsPCp80RN/T3l9eqaMH0SuwJomeH5zxTTZm3bHtogEKDBj90CWi/QfHTnFKICLy8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIEiDFSaEN0OE/KIDoXB6Hwys0QpBcAdzf1qq6xbglfNyQLb08
+	twceD8aGx6uLiAn/P/QXqIv/qTw6X7LoUsJOv1PWCYxZraHyeuwHvT66ap8qcQLtkUSsne5szJc
+	dVEQzPdLQuHyUoMWE9kn4bxkVgzKb9/g=
+X-Gm-Gg: ASbGncuC6w1/2LPw/nBJO5pwk4S72I3Aoe8z21kPSHGuFaXMjrOD98W2DIldAce21GO
+	v8RUd7DhC+dYmHFoLpotrLGx1NJ6p9k0FX7UzKprioTIStnouy74j7NbwQ/7ZfVgsUwUq42f98u
+	/mcrC/rfhgiPh749V4WP197N1u/owRRRmSycNU7H07+TQqkvST/aN+DqSqAWDt4AkWco3+ryBNX
+	cTvr+sSCXzYt5EcWM+1
+X-Google-Smtp-Source: AGHT+IFP8eaILsH9go5zyLSWkPywDlTf0zFbEuxeMo96jyMKBC6y8FwuOWf/q4q8WZnK3lNGYAepz88m6iC+xXZJxTk=
+X-Received: by 2002:a05:6214:5f81:b0:767:c73e:88d4 with SMTP id
+ 6a1803df08f44-767c73e8a77mr124152186d6.8.1757904711760; Sun, 14 Sep 2025
+ 19:51:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DU2PR04MB9018:EE_
-X-MS-Office365-Filtering-Correlation-Id: f607d54f-92cf-400e-24e0-08ddf4009551
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K3o/g+QMJlb3zPrzzkUZz2PDSKN2ryWmoDn3sJ6dNizGnYOAfqJMENEUeg/z?=
- =?us-ascii?Q?T9rjhGLhfQ2M40cP0rD8ioOCyM5K9GvGKT3ssxWCHW20INAdpHBVYCZOJ4+o?=
- =?us-ascii?Q?84fXnKDBOJvTcaAQ7tRlDV6T6t/xxAfX8tr+nIyDG6EwBae0U1LQypyIRnMx?=
- =?us-ascii?Q?4ltCeaFFkY+tUcYuBEcohDmaNHSfFlsbEfwRao0Qo6El2EgbPPXbJTvVR5e1?=
- =?us-ascii?Q?U3MLOmZMQjQB5VkcVosWxV5bByRBwMLfM7MlGg8pM6kbCv34sRF0KWMNGhSY?=
- =?us-ascii?Q?uxKofXhFn2Tj0Wf/ywCNMcIk6SZuHl/Kvf6JMqsaYCjoPsM1Qd1e4tVlyZZk?=
- =?us-ascii?Q?6mpCfKH+nBRmi5EIgoVmOI80yaSFDVCd+RGylIP9FFTqi4muaJw5sEAgnGqR?=
- =?us-ascii?Q?QZ8CkJMphXS00NMnVb9zHKBw3Z7Ax/ER/wFRvWaF7rUZxQOSfNREolksUQx+?=
- =?us-ascii?Q?VR7Os849A8GSrpHVu+ynTyoM4XVmsQug6Q/LitlHyUGc8r+0CBqFk8xxU52E?=
- =?us-ascii?Q?6BsMcMOYpqYLSCQo8BIJSUqInqWqUW1JQnoSeWB3X17junoC80sUMik/TbEh?=
- =?us-ascii?Q?Eyv323eGklyjZm1qMv2RmuYmP4YRUIpJdf+u3fphVU7L1l/oMzvyrhdjAUsa?=
- =?us-ascii?Q?nmHvAv4YEWBdjdS6Rpg+DJymXf9a1WE6R2LaCOQRdUH/hRDX8AqlAkXQbS+r?=
- =?us-ascii?Q?xTxFIKMPTIpuKX1aDrZU5/wFbiOvanRAJQy8ksRKRDTe2mz4qXUUlaBer5yx?=
- =?us-ascii?Q?rkYLTqhHa9sMY7LqcGtpaoO9932Sy5OO6/Hmsbc/jbBAxDhzsMM/Wvw6CH4Y?=
- =?us-ascii?Q?rm4xv7X/yvitSnLRcHHe7HkvztmGwD8hKYQ4TNvWM13NRa5DWy8ZAZBCTbvI?=
- =?us-ascii?Q?rVr9VioPlfem/f1j9+WPJIhMJqHu5UB2IwSWh+2+l1/0DQvpV/nyEY7zDFkG?=
- =?us-ascii?Q?+ilt02ksKEnJseEJpANru1KGN00InRegayRWSDkLDsv0TAuTdnjAC8RzWbfG?=
- =?us-ascii?Q?iwF1QKaz6EY6O5ge4z/eXA33OoDXWg+6oQopB7DgoAnVCzoOr7q0DuB69nAN?=
- =?us-ascii?Q?mdhbQivd+0RLFd2jsUyFjqDN5BPnMkS5Y53jSaEBI/yv8dPV3/6YHwk2+hmt?=
- =?us-ascii?Q?ApWhGqS2VYxMb05bkQK9h3YAMOg3oBgIzmufDEiI9r3Xz1mGt/O/7ut3SJ+6?=
- =?us-ascii?Q?y8WlhkYwZ1MYPqtt7sEA7c7VTsJxGuumTYWzaovqy6cR3P8/lFPaJl3ncUEl?=
- =?us-ascii?Q?bNNXH42hcIFpY+6+QeaMZvKqTlKBQVWWb2+Zo0XxaR6qlu61ddaeTNMSgFuF?=
- =?us-ascii?Q?qq2zzkEtluRlsSOqOjkfDv3wyVKXMDnc/nYR3kLqj6dVf+Y6a2/dQDUbqnkd?=
- =?us-ascii?Q?szK8RWdwGW0RP79gZ8aRrwU/a2pZHS9UVvbdN+B1fo2FAB3Jm3BKp4zKNu15?=
- =?us-ascii?Q?yc1vNL3pWW3ra+L5gRABI7YnSIVp02BUNhZ67oR+8yLaIn3t+GZy6w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pv8BbZwQvOv6XNlkbxMbNVw1mA1kOxW7URuaOZMUc2MkVWh6wkzkJsNlxhWn?=
- =?us-ascii?Q?tEzOR8dg2tr7kkW135E3IeNYIsf9JC3w/F44FiXnBwHsApGnn+G0jddtrhNN?=
- =?us-ascii?Q?Gi71gfHuLiZHKDmnNIR/N9pg2XyI1rP+Jrp7NI53rxGIS3wPsnqeacPakZgt?=
- =?us-ascii?Q?WhGKmzHYlEix/xqMQqm9RuBLVbEt0/SQ4fvAkWt9LRpjJAET8qHK/2YFtp40?=
- =?us-ascii?Q?JYZ/e5SqRz50A+mAEWXcwbX3jVvL+LERFCQ3+mctBBtHSHXNM8V9hWqQHjNU?=
- =?us-ascii?Q?bBBN8z2SlyGMS8wrKmRFq+OzrbUzq5wK3cnhAxbJvLBo8PFgC/pYOwDjhMV+?=
- =?us-ascii?Q?HGJ7XCHTJUBs79nKeSzeleAAdG9KzR7MR9cofXQ6qUtgDAEl6oUpQkUYxjgY?=
- =?us-ascii?Q?9r6qtaQmGdMIAmt/yZeLlP2whUvvnG6qsIYOLEYzP4DXEsmzEu62VQsjPDd8?=
- =?us-ascii?Q?CVr3khWHHb5TZtvXphMEQguN+Nx+q8ukRhi+6vwLYqOMBGP2IWBBu33MVv1t?=
- =?us-ascii?Q?wzkLXMWZK1/iLs3n1YlpGNGbgHbBe8FTxfnB8Jz8T59W2mnUidrEaWktpX8H?=
- =?us-ascii?Q?pPx6j1+SFhPEO9QPJQ6YH0jJUVyESQwTlZcusMi+gk4LfsWGznmT0J+QUmfr?=
- =?us-ascii?Q?CJlTlBTYN/ZUN3TCCEYHvksF6t6m0A+3cUQkAhkWzphWULo6/8/YCaStb6FZ?=
- =?us-ascii?Q?GI9okNVlRmdBiEZiR2HoohobdjCgJZTxIwr4XvRgzZsvmXHB2feoyjs2NvBD?=
- =?us-ascii?Q?SI6yTuf1RfWtREwkfHl2FyOgQia+S3wRmrVE9u2Pg+XILYg11SRyjSLAtoBn?=
- =?us-ascii?Q?QbTgoRTK7jRF2M1S5LEdaPcThIX/UaOSldt/d5em2GWej0xpT3dbj/7UNW9v?=
- =?us-ascii?Q?9iPfDSOZWZdQXkbgidlMs8TTD251qF1NkCgbEWu4ULgP0nyBxvY193tNtJVz?=
- =?us-ascii?Q?a0qbyr3/Lk3MpPnFgPUVXmR1ArQh4AgEaaO+ESDqeEbeGX2yDTmqjA28WEkM?=
- =?us-ascii?Q?zlMKqDybzlYIKacwaryDiRaw/arHDVwOGpXin3f2N5uY+oMVe+ba8xfOq9ZH?=
- =?us-ascii?Q?5oQ7BGCDjRipd8Fd2Dfuc39p78hsGYr7fz1y0ntSPSzq1KmZQiryFIEj8bS8?=
- =?us-ascii?Q?8DdzYsvko8NOpgs/LMvZC7DrJFOu2/jirH0E1B7GOkUeqAol5/LDKWF3CPh+?=
- =?us-ascii?Q?nGwcMXiuIT1vKATZX30LazQ4vt6gRI88jJ8jWIKxcPLduIMiXYr5wwL0UJBn?=
- =?us-ascii?Q?Fr3pznUFvBXqr6rNJvfQEr+3al/kMFjE5+drMv9E3yQZ6Xv2bz++m6lfapAo?=
- =?us-ascii?Q?34ojqjBWQXXgtl3q0fN62A6jSX5d4iv27aaTBxZ7QJvy8P6nekhPgK+FcCxs?=
- =?us-ascii?Q?ZMvFE6KkNc9YRv0u7RD0HHZA5/X7aLqtHbKvRWxF8V7S3ljMpEP5v8f8c4uc?=
- =?us-ascii?Q?3U8X6UBbdt/SwgCsFcADLQANUIewKb7NETeG+0wbtKgOFK1lRnSGhI0NfkMS?=
- =?us-ascii?Q?OSLdJfAaTEkZBcn2/ZuypCDSCPrt/c5IBEMPTnN3ZscEAUXLoIRlvCrx0wqj?=
- =?us-ascii?Q?N8wBiFzWJvzFANM2j+HYsDjfwiTzIW/t1adS4Ssq?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f607d54f-92cf-400e-24e0-08ddf4009551
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 02:35:50.0989
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yqTaeE2/Baqz2LSqBfW5LwCSeuJrvSKckhtpJhnIlT9mTRNaCXMjPtXx3+Dci2Bta+YE6Ayb0iK5VUCJPZc+dA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9018
+From: =?UTF-8?B?6ZmI5Y2O5pit?= <lyican53@gmail.com>
+Date: Mon, 15 Sep 2025 10:51:38 +0800
+X-Gm-Features: AS18NWCYV1ejkfb-hhHGxKG9Jq-ZiN_AIhYVPE02h-fdGA1vS5JP9-9rQn3NWAQ
+Message-ID: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
+Subject: [RFC] Fix potential undefined behavior in __builtin_clz usage with
+ GCC 11.1.0
+To: linux-kernel@vger.kernel.org
+Cc: idryomov@gmail.com, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
+	pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Brian,
+Hi all,
 
-On Fri, Sep 12, 2025 at 10:50:39AM -0400, Brian Masney wrote:
->On Fri, Sep 12, 2025 at 11:35:53AM +0800, Peng Fan wrote:
->> ---
->
->There's no need to add a Co-developed-by for me. I just gave you a very
->rough starting point.
+I've identified several instances in the Linux kernel where __builtin_clz()
+is used without proper zero-value checking, which may trigger undefined
+behavior when compiled with GCC 11.1.0 using -march=x86-64-v3 -O1 optimization.
 
-I honor your support, otherwise it would take me more time on write
-the kunit test.
+PROBLEM DESCRIPTION:
+===================
 
->
->> diff --git a/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
->> index 1d964672e8553a90263af400367a2d947f755015..d62c7522c92461245d45f8ac0ebd26fa2850be98 100644
->> --- a/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
->> +++ b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
->> @@ -12,5 +12,6 @@ kunit-clock-consumer {
->>  		compatible = "test,clk-consumer";
->>  		assigned-clocks = <&clk>;
->>  		assigned-clock-rates = <0>;
->> +		assigned-clock-sscs = <0 0 0>;
->>  	};
->>  };
->
->kunit_clk_assigned_rates_zero_consumer.dtso is modified, however
->kunit_clk_assigned_rates_zero.dtso was not. The underlying test doesn't
->check for this, so you can drop the change to this dtso file.
+GCC bug 101175 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101175) causes
+__builtin_clz() to generate BSR instructions without proper zero handling when
+compiled with specific optimization flags. The BSR instruction has undefined
+behavior when the source operand is zero, potentially causing incorrect results.
 
-Right. I will drop this change.
+The issue manifests when:
+- GCC version: 11.1.0 (potentially other versions)
+- Compilation flags: -march=x86-64-v3 -O1
+- Code pattern: __builtin_clz(value) where value might be 0
 
-Thanks,
-Peng
+AFFECTED LOCATIONS:
+==================
+
+1. HIGH RISK: net/ceph/crush/mapper.c:265
+Problem: __builtin_clz(x & 0x1FFFF) when (x & 0x1FFFF) could be 0
+Impact: CRUSH hash algorithm corruption in Ceph storage
+
+2. HIGH RISK: drivers/scsi/elx/libefc_sli/sli4.h:3796
+Problem: __builtin_clz(mask) in sli_convert_mask_to_count() with no zero check
+Impact: Incorrect count calculations in SCSI operations
+
+3. HIGH RISK: tools/testing/selftests/kvm/dirty_log_test.c:314
+Problem: Two __builtin_clz() calls without zero validation
+Impact: KVM selftest framework reliability
+
+4. MEDIUM RISK: drivers/clk/clk-versaclock7.c:322
+Problem: __builtin_clzll(den) but prior checks likely prevent den=0
+Impact: Clock driver calculations (lower risk due to existing checks)
+
+COMPARISON WITH SAFE PATTERNS:
+=============================
+
+The kernel already implements safe patterns in many places:
+
+// Safe pattern from include/asm-generic/bitops/builtin-fls.h
+return x ? sizeof(x) * 8 - __builtin_clz(x) : 0;
+
+// Safe pattern from arch/powerpc/lib/sstep.c
+op->val = (val ? __builtin_clz(val) : 32);
+
+PROPOSED FIXES:
+==============
+
+1. net/ceph/crush/mapper.c:
+- int bits = __builtin_clz(x & 0x1FFFF) - 16;
++ u32 masked = x & 0x1FFFF;
++ int bits = masked ? __builtin_clz(masked) - 16 : 16;
+
+2. drivers/scsi/elx/libefc_sli/sli4.h:
+if (method) {
+- count = 1 << (31 - __builtin_clz(mask));
++ count = mask ? 1 << (31 - __builtin_clz(mask)) : 0;
+count *= 16;
+
+3. tools/testing/selftests/kvm/dirty_log_test.c:
+- limit = 1 << (31 - __builtin_clz(pages));
+- test_dirty_ring_count = 1 << (31 - __builtin_clz(test_dirty_ring_count));
++ limit = pages ? 1 << (31 - __builtin_clz(pages)) : 1;
++ test_dirty_ring_count = test_dirty_ring_count ?
++ 1 << (31 - __builtin_clz(test_dirty_ring_count)) : 1;
+
+REPRODUCTION:
+============
+
+Based on the GCC bug report and analysis of the kernel code patterns, this
+issue can be reproduced by:
+
+1. Compiling affected code with: gcc -march=x86-64-v3 -O1
+2. Examining generated assembly for BSR instructions
+3. Triggering code paths where the __builtin_clz argument could be zero
+
+QUESTIONS:
+=========
+
+1. Should I prepare formal patches for each affected subsystem?
+2. Are there other instances I should investigate?
+3. Would adding a kernel-wide safe wrapper for __builtin_clz be appropriate?
+4. Would the maintainers like me to create a proof-of-concept test case?
+
+This analysis is based on static code review and comparison with the known
+GCC bug behavior. Further testing by the respective subsystem maintainers
+would be valuable to confirm the impact.
+
+Best regards,
+Huazhao Chen
+lyican53@gmail.com
+
+---
+
+This analysis affects multiple subsystems and should be addressed to ensure
+deterministic behavior across different GCC versions and optimization levels.
+I'm happy to assist with testing or patch development if the maintainers
+confirm this is indeed an issue worth addressing.
