@@ -1,95 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC872625;
-	Tue, 16 Sep 2025 12:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CB419CC0C;
+	Tue, 16 Sep 2025 12:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026756; cv=none; b=CuqObbTecWq/ddC/MGIcnhOHB65ac0L1dHosHlAC5VrQ1+0NQfMDwjOxGoUKkNKJxxjUb4Sz2764hNPtM3TZOyZF64pShC6p/AmH2vvWC8EutmxqDwEN3QAM08O78W+Aa19iQ9X9LpRj+J0XRBZH9pr8+jLC9u4NxotGp6EBGew=
+	t=1758027162; cv=none; b=p28a8lc51J7t83Ro4NfCGk5lUclC5HRfQ9e7xQ6JMUxhXNPKN7rXJ21YkViKU0rxrzwTIAiGh5U+9ZI6dk8HhxfMsgAA29PEGdz79dvCOLZFXPJmXzD43IDXPSKKi4JvKr35XCs+CP34/KWQ2Y9o9BMnXx2tGCAfciAvYwgfBTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026756; c=relaxed/simple;
-	bh=lHY9jqqaClmpApWz/enuCHVhXRLEnKRw/EDHayVYsSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sDW9DvF7aDOZNX2hrUibaningDQY6afeDW3uWBbSqj/KFZ5USO6l7IvmeP2p9ivVMTDkDLFyLo56V9QT3MHRtFIqBcdfL3QYiy5uTr34ROO18+9+OILgd7VU7l+Q+lJQIWEqyUBOlMR97+p8kR/lWdcUTnHk2KNGufDxuWQUhW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bCfO6Z5U; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1758027162; c=relaxed/simple;
+	bh=vqbcR4wQ63DtZzR+CDAvsZNxuJHNWzFyGJDUfom1VsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=phEOVWXx2vp1aJowaFJvd/IVBA+tTZDuAi98QCnA++oT8rBYAFfOmpu5IaxfMMByj1FoF3LUlf35336DdLEUWhK5uUD8l58DDG/7GvbK+YGQIAJxCJjYD/9Pyk4+cfTJzQPOnL1cMMknzQ1xsFDq7tv/3v7yJETgssMIM1NIU6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hyUYy6uI; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bCfO6Z5U"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hyUYy6uI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758026755; x=1789562755;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lHY9jqqaClmpApWz/enuCHVhXRLEnKRw/EDHayVYsSM=;
-  b=bCfO6Z5UAZ/buvbYmJPrf5l61olNss7NugzBl6EJkcYZrqZ9J7NreOgX
-   F91hYPJGgHK5FAkIOCsRBGfY4WMsjC7KDPJdBeh0iR6CHpM+S093Bxcb0
-   exAnOrAWvcZgxmUFn73w5S3VH2VF7EGnb8YQJxgRXWW5hohq6I8HAoloK
-   kn+83qKtffOx/rUvqCxtItcUq8WBiTpEh/HWrlTxE6/E4Y4R0/g9gES+g
-   GHotlCRrcSJImDByfewbiEMUXMfNtKG6UXitFKuCxxV2t3uYV2t9yE+qy
-   PmuwH+p9boaZiDoUaIb16Ko2bEwm4AT/06+D9gRwnrriXMrr/7VWHK38a
-   w==;
-X-CSE-ConnectionGUID: s/JbbcftQbq6Qy1X/g+xgw==
-X-CSE-MsgGUID: aS59DxxRS2uAncU8r4Z7tw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="77743983"
+  t=1758027161; x=1789563161;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vqbcR4wQ63DtZzR+CDAvsZNxuJHNWzFyGJDUfom1VsE=;
+  b=hyUYy6uIOLJ4qteFR8Tbiy4NFmy3h4qFqH9/+CZDra/T/N+B6RsoA4IR
+   cnYqmDCd/rZQbfXzIS9gGtbElPtek7zeCxyF2+Gq0KO4v9Ba8HFpNP1IE
+   sow+tpKia6kXXrocVCjX4WsDljZ0CtQSfwzR0/x6/lSn0twi8k0m5iEgg
+   luJfC0cqmFGKMwe1RFOmG4WtD2Cl4PIAcu0YCUEkst9yCbYDExqsaQfL/
+   0dZTdxqqd0QZ3wQgDuZhgT7C1omhUcPol0sRDSjyvn0tOGRhKbC7VkLZ6
+   6XaL0ADMigJH97HBbwVxAOswokO0gxxPaogpqbTTA1C0BVgZVNX5lTnnJ
+   g==;
+X-CSE-ConnectionGUID: h344aNrjR1upjpdhwm0NYg==
+X-CSE-MsgGUID: RajVFfxaQYqJfWF9RqFVjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="77912724"
 X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="77743983"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:45:55 -0700
-X-CSE-ConnectionGUID: qJ9xvSQCTxK/wn+l14St7Q==
-X-CSE-MsgGUID: UJiB/hK/T0qXoRQCcymPBQ==
+   d="scan'208";a="77912724"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:52:40 -0700
+X-CSE-ConnectionGUID: FlH42tolSDK7p+p7Nwy0DQ==
+X-CSE-MsgGUID: 2l2wNfolRPiO/m6G/AU6PA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="175356195"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by fmviesa009.fm.intel.com with ESMTP; 16 Sep 2025 05:45:51 -0700
-From: Raag Jadav <raag.jadav@intel.com>
-To: nm@ti.com,
-	kristo@kernel.org,
-	ssantosh@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
-Date: Tue, 16 Sep 2025 18:15:18 +0530
-Message-Id: <20250916124518.2857524-1-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
+   d="scan'208";a="174869473"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:52:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyVAh-00000003Wqz-2jtE;
+	Tue, 16 Sep 2025 15:52:35 +0300
+Date: Tue, 16 Sep 2025 15:52:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
+Message-ID: <aMldk7M05W77rRw_@smile.fi.intel.com>
+References: <20250916124518.2857524-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916124518.2857524-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Convert to use devm_kmemdup_array() which is more robust.
+On Tue, Sep 16, 2025 at 06:15:18PM +0530, Raag Jadav wrote:
+> Convert to use devm_kmemdup_array() which is more robust.
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/clk/keystone/sci-clk.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index c5894fc9395e..a4b42811de55 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -480,13 +480,10 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
- 		num_clks++;
- 	}
- 
--	provider->clocks = devm_kmalloc_array(dev, num_clks, sizeof(sci_clk),
--					      GFP_KERNEL);
-+	provider->clocks = devm_kmemdup_array(dev, clks, num_clks, sizeof(sci_clk), GFP_KERNEL);
- 	if (!provider->clocks)
- 		return -ENOMEM;
- 
--	memcpy(provider->clocks, clks, num_clks * sizeof(sci_clk));
--
- 	provider->num_clocks = num_clks;
- 
- 	devm_kfree(dev, clks);
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
