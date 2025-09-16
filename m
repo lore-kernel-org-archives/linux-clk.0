@@ -1,48 +1,66 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5062129E6E;
-	Tue, 16 Sep 2025 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F733164BC
+	for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 14:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031428; cv=none; b=JwUDG0TneVLuOt0Gx2+luPIhKJ2JI1gSwfPEnrezTp5ZPdTZO7f3YfD8vn0OebxRxcUHus/yqaBiGmgvGwPLN5pk87FCsigooIRRCiUsp8qRTQoduZ74XucOcHq2sx8CTasr5dXLa7KzE4kELD6GdooIO0QxOYgqnO9i0lNMvdw=
+	t=1758034518; cv=none; b=YGdRSnJTkYB9ewZNF3mL4MINGZHSvEI5RDUoEFwMJsiD3Og3dry27+CRrlXbn+U2pNpkU+sL+akscJmMypjxpAEcZoXJa/uuMBnYu8hvlj6mYbb3TbCSHJneRlHLJ6qMI1vvXqrD8BhQMYAN9SokiYGGsq/qB6amiKtvLY/fHuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031428; c=relaxed/simple;
-	bh=jDkzduPIFAj6tQpA9LK703PSOe4qFHKJ6yj+8XUz7U4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q8ZTogQhAU9wRDQai+xOH5Vvctj/L1NCsSlUy97Q81u79jJ5goKIOzL/THfaAw9L7nsMO0WRLTS4kKNVLnoS1JjMa8wrLY1OMHtGANO19ey5p+uP7n70A+dLfvJ9lapo7YZ/v048ijnbGitqQnKt2yntTDvKB4/o2Roknxu8oRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X03ZJERA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1758034518; c=relaxed/simple;
+	bh=tm0kA5/U/7lPdDiVcC4zEEqOIVnKxf9PeM+eT4gS4pA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tc08pHZpCg1rvd2S4XLk538yVXc2Ma1ExrSjD3aJ0Lu54il+afDYjY7pTFNwHxB7tUhT1NqcZrdVYdbezyS2WNSCrleYxM3XrlKggi34mcpT/8hXXx0Lr8L23f4U4tf1juFY3C3oPWmbZdKobDjQAPeApc29DPDMcwgV9PwlfPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=obZ4N0j+; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X03ZJERA"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAmwKL021429;
-	Tue, 16 Sep 2025 14:03:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6X4Oo9dw265PURxeYMUaHsX4sLsJPuBPvb+0hPhB0tw=; b=X03ZJERAb6N+nykO
-	fRhY76URm/EZRth1agRZGE+rmcUE0A8iieizzc7LMY61aORwVFv4jx5sPQiqn8PM
-	LB3F3scF2PRfbAxdef75VtJFXwB9TUByWNjGmUdT9HDx3J/PPMSZQa17gJNT7w9O
-	ztT31JoyjV/2tAQ24qj3EwzKu8cWXpenI/qJSGPtMfXnS2YZsMBw4Ztm1jsQ6Wdm
-	UEMAanrQ4ZjdrwPXf17KUbxwLXBo9BVremMaIRqhOYxpwMh4kt8llEVyGD6YEdDg
-	Fp6Ehbjyrk7JBL1YqIFhuINTmzto00p3+U05za7REZLW+kP//hoDurAu/3cgrJ8K
-	VKyS1g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494yma92qj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 14:03:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58GE3Ppj030456
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 14:03:25 GMT
-Received: from [10.253.73.4] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 16 Sep
- 2025 07:03:18 -0700
-Message-ID: <1e7d7066-fa0b-4ebc-8f66-e3208bb6f948@quicinc.com>
-Date: Tue, 16 Sep 2025 22:03:14 +0800
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="obZ4N0j+"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-328466c2aedso4857820fac.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 07:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758034515; x=1758639315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D5iIq7+KHCywK04RSDS9es8l3U4mIawqQHyrRZJkTg8=;
+        b=obZ4N0j+eWHDyjwoNB8DM51ouON16EJd6CsPNyA1WIjfhnr1hkFuHxYKr7caIYqFzc
+         w5MQvEudlutDfIHU0rk1jWT++LF7ynasoY4mJmEfy9k+zL0O2DkKCGgTHetyU92BzJK+
+         zAqcPMC8pP8PQhzpEWq7koMrjpECa+KRpDtPrGXhInFDdBgDR8jQ1VdNEADeroeMRXb1
+         0e2aL2sanjC4hHaTLGvXWUHJl8KHv77n30R9XXGVgNzGqciGBPPHpyfI0VZR0dhUu+aB
+         uN77UjvJPFd+ZTWNN9P1ue23IB7ldgGpdciSlR3H1Eu06fsc/Ep1wahJKTC75yrhfO9r
+         YdjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758034515; x=1758639315;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5iIq7+KHCywK04RSDS9es8l3U4mIawqQHyrRZJkTg8=;
+        b=nlM7tagAcGx+iJkvmo/aylkCzliJ5r6MaITpTYDIuyPi2Vw0Z9VX68dn6Vn/99PWwg
+         KT+5Qy8NPmtWt5i0NS2QGIj1h82VUezyZpYeeeCKcuZQhmcrumiOr3nNOy64TXSsrdRn
+         3eYYGBt7rKANIdJlyugYaDtXNryB5Vx/phQyFFq2pW5WDMQqdEcOU4hac/bTC9zeQm1U
+         XYUIRSPCOjxvCXTaGQb/VCGMWeCyhzI9yoiRCMhyWSV/DNXt2VqMahfLgO6UQZAVY/hx
+         oOEzD0dFXt8ppVjEg6hTmacLz5985aVRioIcv5qS2iSLx+ZnrzY48Qm8FlJIE7B1/5aw
+         WjpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBMnZ6/XFqL7SCPrpUhtMtyxhqPpDXics9uuooA2679sHpWFtvEpamF4RUPiElWv6cgIM/GGutuP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza5O7gZ9N92Zg3BwhQ+NLJysaxsLCnT9Z8Anh11KcRLC0IWq2q
+	vzTmyKkoIJmBrDhBwRhejxMFIWzdaD3ExN5JdrDPIxplru5Emor6+CzqxTa24vNSZYk=
+X-Gm-Gg: ASbGnctEnaOTz1DTAFbl5+bC9xlgV4zjk7tnKdtFrRxRBMJ3CeNd2kJUcRLc0/PCUUB
+	2pA2qmudaE+B9ntlI3Erd15Y3FtABvb9terPj73m5TnpMn2+tRUUQxhMspIqKhkGkeZDnP3/WTE
+	vq6B8g5lsbBQGJ2D0FzySt4/JvOCVMwc3UKJ8DerFxQ9aoKDvqwyMN/TC5+l+XVmcKgi6+b0K5l
+	+0kzhWVxpnyOQTctQxVwBdwstjMfpeXbtCQnEQBs58ZTp40oJxy3DkATkhB9gWpS8Z0G6RBCtnV
+	C/kImewAB5Bqaz3TPr0chwi9B9M2ZWtyUYnlOQwhXrfmq5B9KDEkCdW2ijZcALUjDkXf+nX5GR9
+	VXUx+egtVeya+CEPuMrfrafrmOKPx4m7HZ1yhGFGgiCtBPrj2KFBx2irEx7BGh7fRpOONgpRsk2
+	w=
+X-Google-Smtp-Source: AGHT+IG2j6o5ZiECUky0T/Yvf86ZO9qsIYrDXwjsYiIUbY9fkQXrpUngcoYlXLsDg0lSeAlhfx8Log==
+X-Received: by 2002:a05:6870:de12:b0:31d:6e43:8d3a with SMTP id 586e51a60fabf-32e54e80af9mr7157585fac.18.1758034515240;
+        Tue, 16 Sep 2025 07:55:15 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:70a1:e065:6248:ef8b? ([2600:8803:e7e4:1d00:70a1:e065:6248:ef8b])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-33204689b2fsm2368205fac.6.2025.09.16.07.55.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 07:55:14 -0700 (PDT)
+Message-ID: <711b5e34-3534-440c-8914-ddb41987ee8d@baylibre.com>
+Date: Tue, 16 Sep 2025 09:55:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,118 +68,69 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add required
- "interconnect-cells" property
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_suruchia@quicinc.com>
-References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
- <20250909-qcom_ipq5424_nsscc-v5-2-332c49a8512b@quicinc.com>
- <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
- <b7487ab1-1abd-40ca-8392-fdf63fddaafc@oss.qualcomm.com>
- <0aa8bf54-50e4-456d-9f07-a297a34b86c5@linaro.org>
+Subject: Re: [PATCH v6 3/7] include: linux: move adi-axi-common.h out of fpga
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1_via_B4_Relay?=
+ <devnull+nuno.sa.analog.com@kernel.org>, dmaengine@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, nuno.sa@analog.com,
+ Michael Turquette <mturquette@baylibre.com>, Moritz Fischer
+ <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
+ Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>,
+ Xu Yilun <yilun.xu@linux.intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250519-dev-axi-clkgen-limits-v6-0-bc4b3b61d1d4@analog.com>
+ <20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com>
+ <175133153648.4372.1727886846407026331@lazor>
+ <202509161304166bf210e2@mail.local>
 Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <0aa8bf54-50e4-456d-9f07-a297a34b86c5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxOSBTYWx0ZWRfX+9fniE3pPWHB
- OK1mPcvWK39tjQpXeg8MT+BqotrnwWTpPXA47FselkKhjNIKTmvcDr6saYw99d/BVXIJhsDfVHF
- etU73HHUoARWi+cuEUe8kEn/BU/2eceCg7Dbb0SjbIcoVuKZE1W1IK8KPMGTthcJmUCAYXaTF1g
- CmoetI2YNTVgs5IaaRvgpKChIoq4svHTMffGrXGdZIM0MujvmF6vY7J7V3QxNTTGFqDPzFmCGEI
- FHPXtmj2Ll8giOhyYfxfJVLYTozy2RMuteHsZySMVg/01HkUkCTYqjMQEWhrDxlCKGaIePm2pnm
- H8rVrDGCmQCoIF0paiVaQAAOxAw2TzK20GcvInI19G3+HEPn0mvLaecbopPySZGzt01qjn9umyu
- 9KiSVr3P
-X-Authority-Analysis: v=2.4 cv=cdTSrmDM c=1 sm=1 tr=0 ts=68c96e2e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=gKVqG3yGxRJGUVRL1-wA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: LvqLRf81n_ETBpixAjO1G1xzpO7c-pka
-X-Proofpoint-GUID: LvqLRf81n_ETBpixAjO1G1xzpO7c-pka
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130019
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <202509161304166bf210e2@mail.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 9/12/2025 5:16 PM, Krzysztof Kozlowski wrote:
-> On 12/09/2025 11:13, Konrad Dybcio wrote:
->> On 9/12/25 9:04 AM, Krzysztof Kozlowski wrote:
->>> On Tue, Sep 09, 2025 at 09:39:11PM +0800, Luo Jie wrote:
->>>> The Networking Subsystem (NSS) clock controller acts as both a clock
->>>> provider and an interconnect provider. The #interconnect-cells property
->>>> is mandatory in the Device Tree Source (DTS) to ensure that client
->>>> drivers, such as the PPE driver, can correctly acquire ICC clocks from
->>>> the NSS ICC provider.
->>>>
->>>> Although this property is already present in the NSS CC node of the DTS
->>>> for CMN PLL for IPQ9574 SoC which is currently supported, it was previously
->>>> omitted from the list of required properties in the bindings documentation.
->>>> Adding this as a required property is not expected to break the ABI for
->>>> currently supported SoC.
->>>>
->>>> Marking #interconnect-cells as required to comply with Device Tree (DT)
->>>> binding requirements for interconnect providers.
+On 9/16/25 8:04 AM, Alexandre Belloni wrote:
+> Hi Stephen,
+> 
+> On 30/06/2025 17:58:56-0700, Stephen Boyd wrote:
+>> Quoting Nuno Sá via B4 Relay (2025-05-19 08:41:08)
+>>> From: Nuno Sá <nuno.sa@analog.com>
 >>>
->>> DT bindings do not require interconnect-cells, so that's not a correct
->>> reason. Drop them from required properties.
+>>> The adi-axi-common.h header has some common defines used in various ADI
+>>> IPs. However they are not specific for any fpga manager so it's
+>>> questionable for the header to live under include/linux/fpga. Hence
+>>> let's just move one directory up and update all users.
+>>>
+>>> Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
+>>> Acked-by: Xu Yilun <yilun.xu@intel.com>
+>>> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for IIO
+>>> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+>>> ---
 >>
->> "Mark #interconnect-cells as required to allow consuming the provided
->> interconnect endpoints"?
+>> Applied to clk-next
 > 
+> Do you mind providing an immutable branch for this as my i3c tree is
+> introducing a new driver using this header and so it is going to depend
+> on your branch.
 > 
-> The point is they do not have to be required.
-
-The reason for adding this property as required is to enforce
-the DTS to define this important resource correctly. If this property
-is missed from the DTS, the client driver such as PPE driver will not
-be able to initialize correctly. This is necessary irrespective of
-whether these clocks are enabled by bootloader or not. The IPQ9574 SoC
-DTS defines this property even though the property was not marked as
-mandatory in the bindings, and hence the PPE driver is working.
-
-By now marking it as required, we can enforce that DTS files going
-forward for newer SoC (IPQ5424 and later) are properly defining this
-resource. This prevents any DTS misconfiguration and improves bindings
-validation as new SoCs are introduced.
-
+> Thanks!
 > 
-> Best regards,
-> Krzysztof
+
+This was merged into mainline in v6.17-rc1, so I don't think we should
+need an immutable branch at this point.
+
+If you are modifying the include/linux/adi-axi-common.h file in the I3C
+tree, FYI there are some changes in the SPI tree that just got applied [1].
+But if you just need the header in the new location, it should already
+be there since v6.17-rc1.
+
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?id=67a529b7d3c50a56c162476509361f4fe11350dd
 
