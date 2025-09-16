@@ -1,124 +1,187 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7342D73A6;
-	Tue, 16 Sep 2025 15:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F58293C44;
+	Tue, 16 Sep 2025 15:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035308; cv=none; b=pO/6uEQ50uzDJFvgyqClAN5jr4gaor/pNK4jwiCLpcJ/2VYjpyh0Y1sFdl4E2pzIXZF2Jjs7adP/bkMQ6L0FH7Tbk0T7U1hPLVm5er0Vk1omu3dacs0g/3rEa6cGPqEqHgO1G2uAO3axVGMBxIUvZwZXqYolOoiARfuDlNr61LA=
+	t=1758037129; cv=none; b=rkDQUnr4piyiV+93cGjPc8M3AOXEPU+WRfrU4HF4+DNiqsEGwh81XsIy9uBGipBtiDv6/OvPhI3xd/svMUrpkiIbkOvZFoflwFxqGX5VBf4ASsTmmVywsTU7BG9yPso/lP9mpNyGESNRCffinKdRE6W2hkQVXetjyGJsJknCXs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035308; c=relaxed/simple;
-	bh=eh6QVqz3lffVGTOiB5L34b3cIqw2nKOaD4q8ix1TkTM=;
+	s=arc-20240116; t=1758037129; c=relaxed/simple;
+	bh=P3wG5soFYqyWrmIaLuRgRoQgSQObMaGfwT0bw/aoPl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAcWQiNMV9G7nXbW7Tui19f8fpw3IkdOtsx2SQOGe+z5Ry1MEY5+o7e9f5dse64/aIxcXEWMSW/U8sOMLx4JaK0CNh5wkZHJA4yOneH7nAJ/aRwk+XFINJAK3NZEzUuU93TeDWWm6T/yhOj8U/1WTFRSa6I3lK0RhtFm+RBPR+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A5n3fHiM; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpcUQLvO6v7pd4rtX3Q4Mt7zJr3AAC2MAqVBcvbXKppezc2PMiEzwdwEVW/t38Bh4hWuGONz6F+VlEVpCdFsegyGYjMDom0IWpW403dN+WVVeyZkJm8nzqv1hls6/QSsw2HSRyMRWP/zSRWbehruZBfBH0tkVOmiRDPVsKdxM+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lP++sHly; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A5n3fHiM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A5A561A0D5A;
-	Tue, 16 Sep 2025 15:08:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7595F6061E;
-	Tue, 16 Sep 2025 15:08:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B71A9102F1788;
-	Tue, 16 Sep 2025 17:08:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758035303; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=UQOE3eUMvpfqrZERSP7sEINW/46CzMSN740+oyUBq0U=;
-	b=A5n3fHiMc942pBxiiBYLe3Ui+XTe2GdJGXpoLjonwep6Fm3HRDcBDJ2kfucMjiUtzqSqDu
-	Pyuq0wuB08xAtdbWdJItZ3DbMhPoES66m5eMbmI1oNPHQTo3J8VCwI781aAq1NgKydtDPW
-	qILfxtHsmsefAfhKMely3Z5OOSLIfXq3kaHKRUcQkiVw0/4kKeNlrAMcIhBR0YjGknvHU9
-	IsUDRMKQ+Fa5VGZdjDZXEt4Pkdl5jZy+W1rrS1e27cb5NEjdAXud/EVL9S23Uggm1hveZ0
-	raBWRhUnhJB2FHm9Qab44gXXyrsp/SY5sdEv4eB0XY9MYU6DoM00TASOMfVKwg==
-Date: Tue, 16 Sep 2025 17:08:07 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>,
-	dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-spi@vger.kernel.org, nuno.sa@analog.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v6 3/7] include: linux: move adi-axi-common.h out of fpga
-Message-ID: <20250916150807090a7e5f@mail.local>
-References: <20250519-dev-axi-clkgen-limits-v6-0-bc4b3b61d1d4@analog.com>
- <20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com>
- <175133153648.4372.1727886846407026331@lazor>
- <202509161304166bf210e2@mail.local>
- <711b5e34-3534-440c-8914-ddb41987ee8d@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lP++sHly"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8668DC4CEEB;
+	Tue, 16 Sep 2025 15:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758037129;
+	bh=P3wG5soFYqyWrmIaLuRgRoQgSQObMaGfwT0bw/aoPl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lP++sHlyj7k0eEAPOf/uITuuhvToi25EFQBWluFvV7SJpQKeEHmsvioVssY+/G0iI
+	 V5NtNobDYKbYhyI/nWtyCS2bHlV8+ah3+ApYUWNIR5ISUw8Fpj+Mp8JdRcWT30AUNr
+	 GKMWp/v5yWLfI04NGrVEXFRKIghcL95tO7Lhq5N1zZgKJ7RQd6xPDG40eexlcci7aK
+	 yUXONV5/nJLKfE9dnDvuVcGy4Ar2A5b/U/MXkrx9er5n2X/DQDyuHf12HrRp2isiQn
+	 7CJ3U60bctuWmjJNqjiFBzllsI5i7/YLU+u99IFK5DDq7l6BWfOWlDlIuD8r3ElNMG
+	 U5JhcG2VR4hXw==
+Date: Tue, 16 Sep 2025 10:38:46 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/6] clk: qcom: camcc-sm8550: Specify Titan GDSC power
+ domain as a parent to other
+Message-ID: <kisbrykgmv7kigae4fdqm7uwkodwhhlgysja4cfaegr3zvvwiw@m6jahyjpy46m>
+References: <20250911011218.861322-1-vladimir.zapolskiy@linaro.org>
+ <20250911011218.861322-2-vladimir.zapolskiy@linaro.org>
+ <bsjcwbwvvw4eov4aaf4xk2bes4p4wsxvb53rsxkwhgd7bk44ix@wnbvksy6m3li>
+ <e90501b8-6af1-4473-b4f5-2fe1f118a5b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <711b5e34-3534-440c-8914-ddb41987ee8d@baylibre.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <e90501b8-6af1-4473-b4f5-2fe1f118a5b4@linaro.org>
 
-On 16/09/2025 09:55:13-0500, David Lechner wrote:
-> On 9/16/25 8:04 AM, Alexandre Belloni wrote:
-> > Hi Stephen,
+On Fri, Sep 12, 2025 at 09:23:00AM +0300, Vladimir Zapolskiy wrote:
+> On 9/12/25 05:09, Bjorn Andersson wrote:
+> > On Thu, Sep 11, 2025 at 04:12:13AM +0300, Vladimir Zapolskiy wrote:
+> > > Make Titan GDSC power domain as a parent of all other GDSC power domains
+> > > provided by the SM8550 camera clock controller to enforce a correct
+> > > sequence of enabling and disabling power domains by the consumers.
+> > > 
 > > 
-> > On 30/06/2025 17:58:56-0700, Stephen Boyd wrote:
-> >> Quoting Nuno Sá via B4 Relay (2025-05-19 08:41:08)
-> >>> From: Nuno Sá <nuno.sa@analog.com>
-> >>>
-> >>> The adi-axi-common.h header has some common defines used in various ADI
-> >>> IPs. However they are not specific for any fpga manager so it's
-> >>> questionable for the header to live under include/linux/fpga. Hence
-> >>> let's just move one directory up and update all users.
-> >>>
-> >>> Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
-> >>> Acked-by: Xu Yilun <yilun.xu@intel.com>
-> >>> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for IIO
-> >>> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> >>> ---
-> >>
-> >> Applied to clk-next
+> > I don't understand which problem you're solving.
 > > 
-> > Do you mind providing an immutable branch for this as my i3c tree is
-> > introducing a new driver using this header and so it is going to depend
-> > on your branch.
+> > Are these GDSCs children of the titan_top and your patch is describing
+> > that so that when a client is enabling any one of them they will be
+> > enabled in order?
 > > 
-> > Thanks!
+> > Are you correcting the description of the hardware? Or is this a hack to
+> > trick the system into performing the operations in order?
 > > 
 > 
-> This was merged into mainline in v6.17-rc1, so I don't think we should
-> need an immutable branch at this point.
-> 
-> If you are modifying the include/linux/adi-axi-common.h file in the I3C
-> tree, FYI there are some changes in the SPI tree that just got applied [1].
-> But if you just need the header in the new location, it should already
-> be there since v6.17-rc1.
+> Consumers of power domains are unaware of power domain hierarhy, same
+> with clocks for instance.
 > 
 
-Hum, right, this makes me realize I din't rebase i3c/next on top of
-v6.17-rc1
+There are several valid cases where this might not be true.
 
-> 
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?id=67a529b7d3c50a56c162476509361f4fe11350dd
+> When a consumer turns on/off a power domain dependant on another one,
+> the parent power domain shall be turned on/off, and it shall be done
+> by the power domain provider (camcc in this case), if the power domain
+> hierarchy is set. The changes in the series establish the hierarchy,
+> otherwise the CAMSS driver as a CAMCC consumer is irrecoverably broken.
 > 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Excellent, here you're saying "X is parent of Y, this needs to be
+described in software". This is completely different from the original
+"let's just make X parent of Y".
+
+> > 
+> > Please start your commit message with a problem description, then a
+> > description of your solution.
+> > 
+> > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> > 
+> 
+> I've started from "describe your changes in imperative mood" section,
+
+The 7 paragraphs leading up to that are important as well ;)
+
+Looking forward to v2.
+
+Regards,
+Bjorn
+
+> I'll resend the changes with the reformulated commit messages, thank
+> you for review.
+> 
+> > > Fixes: ccc4e6a061a2 ("clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550")
+> > > Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> > > ---
+> > >   drivers/clk/qcom/camcc-sm8550.c | 10 ++++++++++
+> > >   1 file changed, 10 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+> > > index 63aed9e4c362..b8ece8a57a8a 100644
+> > > --- a/drivers/clk/qcom/camcc-sm8550.c
+> > > +++ b/drivers/clk/qcom/camcc-sm8550.c
+> > > @@ -3204,6 +3204,8 @@ static struct clk_branch cam_cc_sfe_1_fast_ahb_clk = {
+> > >   	},
+> > >   };
+> > > +static struct gdsc cam_cc_titan_top_gdsc;
+> > > +
+> > >   static struct gdsc cam_cc_bps_gdsc = {
+> > >   	.gdscr = 0x10004,
+> > >   	.en_rest_wait_val = 0x2,
+> > > @@ -3213,6 +3215,7 @@ static struct gdsc cam_cc_bps_gdsc = {
+> > >   		.name = "cam_cc_bps_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3225,6 +3228,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+> > >   		.name = "cam_cc_ife_0_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3237,6 +3241,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
+> > >   		.name = "cam_cc_ife_1_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3249,6 +3254,7 @@ static struct gdsc cam_cc_ife_2_gdsc = {
+> > >   		.name = "cam_cc_ife_2_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3261,6 +3267,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
+> > >   		.name = "cam_cc_ipe_0_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3273,6 +3280,7 @@ static struct gdsc cam_cc_sbi_gdsc = {
+> > >   		.name = "cam_cc_sbi_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3285,6 +3293,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
+> > >   		.name = "cam_cc_sfe_0_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > @@ -3297,6 +3306,7 @@ static struct gdsc cam_cc_sfe_1_gdsc = {
+> > >   		.name = "cam_cc_sfe_1_gdsc",
+> > >   	},
+> > >   	.pwrsts = PWRSTS_OFF_ON,
+> > > +	.parent = &cam_cc_titan_top_gdsc.pd,
+> > >   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > >   };
+> > > -- 
+> > > 2.49.0
+> > > 
+> 
+> -- 
+> Best wishes,
+> Vladimir
