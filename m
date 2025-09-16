@@ -1,85 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4EC1CAA7D;
-	Tue, 16 Sep 2025 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD9721FF36;
+	Tue, 16 Sep 2025 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027236; cv=none; b=hd6Wbcl4jxFY728ddAQK3EF8gG1pK3QL70gQT73bUwZ39ml388q0Ah6OTacPgC5JZDwU2vj0Hsr64cxTzWdPf+b2ABKVq3HuMGq+s6RgA3R+ecspK6WNqb6qswzWZDC06Lk1xfYHukx50OW61InBlASqfyJUUkZZ4Wj29imTQ54=
+	t=1758027876; cv=none; b=VbNq+ZbPQeGh9VWRwS4lv0tjdwL8+nUMHkTWfg+J9VNhaeQs26w3jnVyLLIPlZOoOqz9xgOJKwaDdr2UqxQx9Va8Ej2sscXD/KupVeugvzrc9Me9J4g3CM4acO/J2Z5zx6G0L3eiIMTlz8F4XLTksCmG7rZp8Cl/KgseBrl3k6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027236; c=relaxed/simple;
-	bh=1Zbi/53ecUSSnOmf2N5VxqtKhKjyIluT57/tiPpaTLA=;
+	s=arc-20240116; t=1758027876; c=relaxed/simple;
+	bh=tS20RBq/5YBvw3V2zFuP41Ek8dUvJbPHU1ztOuJGWuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdTB4YqTNTKsW1tglsiEF5Sy85H23XTUuhUeZ+/NlacD4oECgYJYbyNDocJdHnVUWWMVb1a8kP+bVQQnWlQX//zjl3ZiE7SZ9nad6I6nl3PjiC8pJCx36Ki4rJLcAXfkixC6dgS9on2gYtUpBVPqYknMXSc6ViLA8orSYo8Zpjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9lztbWV; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oePEPloFxn9i+Fbf1Yq0c8KrBmxLnE0cK6YkcWoMwY42AqkekURsoK15WWU59J/D2ojO6c1f2Qfr80WBh4rZzZs6Zd2KsmaunOAiwP6DDsMpVozLtFySNKi0gOS8rXUuAzng2DOIt/yB9ueKV/tQcIr1OGQADCdKvkuDGRkDR74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QAzPxopU; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9lztbWV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758027235; x=1789563235;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1Zbi/53ecUSSnOmf2N5VxqtKhKjyIluT57/tiPpaTLA=;
-  b=J9lztbWVWKjRhUIuuZ2lAs92Quxf/oIsOwm2FqfJ3mMsEL6+x3uoI/aG
-   pGRInpaTJ0+eypfI1V355T8ph3hopkUxlbDtn8zOMgQvOsVi6/FIoNvEu
-   iFFfauJwA1f87AUx93Hhv0TEQ1l5CDZikjjL5n+AQLVeCTz+YUkojX/Qm
-   /bjSVRILxZ5Ql4spF65KqnNT4ox5fcsPC/h66CojZDpirv6+S3WEgcdf7
-   Y9TUxQq9ugDb1jdIw4gNGkYLZX1l2dFP3CiRSkyV+JomlWRWBV2pWq5qo
-   to5uKNTxh4AQCexH/ea45giZfS6JRe3G9atvQFYtDR2VxWW9WoMiNglwY
-   w==;
-X-CSE-ConnectionGUID: Dsq29EpJQi+nTePjGT73ig==
-X-CSE-MsgGUID: EGMTbNNqRSmyWiO0zPvaQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="85742723"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="85742723"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:53:52 -0700
-X-CSE-ConnectionGUID: DSG+MD6ZQ7uCDmOxy/Z1qQ==
-X-CSE-MsgGUID: mF3y6s1ESxSOrKDg5nDjKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="174044835"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:53:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uyVBq-00000003Wrk-30IW;
-	Tue, 16 Sep 2025 15:53:46 +0300
-Date: Tue, 16 Sep 2025 15:53:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
-Message-ID: <aMld2nQFIIt1aZwa@smile.fi.intel.com>
-References: <20250916124518.2857524-1-raag.jadav@intel.com>
- <aMldk7M05W77rRw_@smile.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QAzPxopU"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B43871A0D4B;
+	Tue, 16 Sep 2025 13:04:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 855076061E;
+	Tue, 16 Sep 2025 13:04:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BBCB1102F16EB;
+	Tue, 16 Sep 2025 15:04:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758027871; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lk9reX28fgXmqtrcSWnzyrJf4leAzS0Oqmq3V9099O8=;
+	b=QAzPxopUaCqGJfJxbvhel1zBoDYowwag6/mUM+1aIgzoLiR2dD/svnDN8V/tJxDBonWSDW
+	QCvUO5ImJ9Z+S7AWCHY0ECqZqAj7HUC8XGKjykpvLxHrJ6Xpt7OuijdkgSHLwUGSi1+qd8
+	mBYkD7AThix0Ag3viWcjUWhjJPBTEdeHR75DpTjc1Eh8olLFdfslUt47c3CC6G6cPu+un4
+	AC8idDTmmIAu+u47/HdsIzKF613zh7EC/iRM3V8pSfZ12QVa41ZSgLr8QElp0UgZ1g8Vr4
+	yfQRr82Tv6e4o8zqc2Jm8roR+ZOytf9wQUlRJYsmncSCnbirB9CIEFOce5JpGg==
+Date: Tue, 16 Sep 2025 15:04:16 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>,
+	dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-spi@vger.kernel.org, nuno.sa@analog.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Mark Brown <broonie@kernel.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v6 3/7] include: linux: move adi-axi-common.h out of fpga
+Message-ID: <202509161304166bf210e2@mail.local>
+References: <20250519-dev-axi-clkgen-limits-v6-0-bc4b3b61d1d4@analog.com>
+ <20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com>
+ <175133153648.4372.1727886846407026331@lazor>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <aMldk7M05W77rRw_@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175133153648.4372.1727886846407026331@lazor>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Sep 16, 2025 at 03:52:35PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 16, 2025 at 06:15:18PM +0530, Raag Jadav wrote:
-> > Convert to use devm_kmemdup_array() which is more robust.
+Hi Stephen,
+
+On 30/06/2025 17:58:56-0700, Stephen Boyd wrote:
+> Quoting Nuno Sá via B4 Relay (2025-05-19 08:41:08)
+> > From: Nuno Sá <nuno.sa@analog.com>
+> > 
+> > The adi-axi-common.h header has some common defines used in various ADI
+> > IPs. However they are not specific for any fpga manager so it's
+> > questionable for the header to live under include/linux/fpga. Hence
+> > let's just move one directory up and update all users.
+> > 
+> > Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
+> > Acked-by: Xu Yilun <yilun.xu@intel.com>
+> > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for IIO
+> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> > ---
 > 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Applied to clk-next
 
-However, you might also want to use sizeof(*clks) IIUC.
+Do you mind providing an immutable branch for this as my i3c tree is
+introducing a new driver using this header and so it is going to depend
+on your branch.
+
+Thanks!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
