@@ -1,134 +1,104 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0527F275B09
-	for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 07:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966FE2641FB
+	for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 07:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758008884; cv=none; b=dut28S6YM0KH9mscfW07SK+HVAp1NZ5l4mjbuV0Jb6lnmhpJwHUS4UugkJ/Ej9m+SzSRdYpUCD3ITOfT4p8ho7W7j5B9bq4tZLypf0BrCbNrT6oPgLVL5NlNxzaOnbUHQoQXGghnNCecd+bgWN6ZT2H5kYshOn5fpOHd0ufSsKE=
+	t=1758008932; cv=none; b=txYohVbXcUcVSHyLRzVHJqZ3zyMPfkzq0D09TwHBdi48/eOHzUpy0aZs2FPYhbuqYr1HbkZ8bmPOFt+kTYBdP4Bw59/eloGdjee9YZajoMLfTStWTdIdW/wh1Inj4Zp3poJjc2IKds7VjMSSq3rZwKFwvk4pAaDUYhSjEOX9pBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758008884; c=relaxed/simple;
-	bh=0WWtF8D7n7z6bitDlyHOYgL2Gbux8mCWx2KqJJwHlIw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m+izIIzouxGGWlCJY6UMxxY6ZS9nBsz8dmNkFfE5yRSHMyzguhN04ncsmr4qHuxuOXVUlclvszacdfgVC/h/9VPTGM1DKo8574fpiGEcUnMeoSKtuJ5wIXynxDG3NyEW4QLehg1gQyaD7rw8r4jls+6r59qHb3ZC8LKWK0v2Dxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0Rp2O3n0; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1758008932; c=relaxed/simple;
+	bh=EbxSoUUHARJ/26oz5qvy0rct4HOaMS6x3qf3UE5sAGU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FNRH31nBN5o+mWWQqJ3ynHxCFV3A4MczNTCZmwkB0cPUdSK7tfDHQ7qQiYsRgDMFk1OoEudHz/W0y/gPtl2lcxY9HWB2BY377enNsZhKTyxu79ci+QTycn6+ohtqrlhI6b3XhXQp1pP0G6TfB8o6RnOaXIyBGPO82ZpkPQrpkTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TDDBN0Ou; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0Rp2O3n0"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45f2c5ef00fso18478795e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 00:48:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TDDBN0Ou"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso55631535e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 00:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758008880; x=1758613680; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRMshHgr9BfhwP+oJxFotu57YS2EOBaQb6QEmA5pVV4=;
-        b=0Rp2O3n0dkInsoVww3kH4/Gb8djFbkwsRucoiJWGTEv+GcBvMHc1dVwpC7bEx+tQxb
-         lglfW3/4CJbf+E7Gpd6iKdIgNdDpik8NkRzYkYLQynBj3DgBkJWrsMqife1ueQ4sKpuR
-         uB6Z407ckDd2Ukuqo/lIfLHPhbS1qEW2zh2lBHhYAfgrTNn8Y4XZOCgqDY5bK5rCos5s
-         rrNmlWTXmGVSg86Pd6eEItxfyNP+8Xp8uPF39l8v9mLM9MfdeH1bIy4SuKmCjR+famGa
-         YUUk0RKq8/Tl6pPgnVkX16vjH4iPV/jZScUAycd6gYzUN7SktKZJGIKSzjyf1Q3AXirY
-         AwOw==
+        d=linaro.org; s=google; t=1758008929; x=1758613729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=72mKaLpH8ZVeWabfEKgenc3kq6CKIlNYl8ZR1LugQjA=;
+        b=TDDBN0OuzGB1/kuMKKjBN9M5+8Sykz6sDxOeayftXKGcWFXMl/jqls5Dx5BAB/C1rI
+         WnS1HaqwYlP1x9SH0aR7BBkEerDo8mEhjOnKH506r2eeo/gtH0D9iphJCq+NX2aLs7VB
+         MZv1fwf8brtx6eCQfOTd9WJ6Ms2b+bPm26oFKFcgEs3xjqwUM6hprX2sWWwYPkmPt6Bn
+         XhUR4NGidwNyd0DmKEAnemMo5aCulwk6joE9J+i1yp6y+CeLlKG0XNVk5eX+auuqSFBm
+         2ic/lr8/nZ0CcVs/+CZhNOK/qaP26BQ7iwJmVvo5jsfOc6sEgw0MWNXQxoM2eN+qVTOG
+         w1Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758008880; x=1758613680;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dRMshHgr9BfhwP+oJxFotu57YS2EOBaQb6QEmA5pVV4=;
-        b=Swca+NIih6WSR0RMHJf8I/yc9Y2EWWdDv8r0hZPhvHRQPC3UnkH9n3BciNdk0hPOAf
-         holFTZKOd9g3rv8WBnI/w1jT3TCmQdPJJISj2FYBvpfQP0uxgyoWXRsqjkJscB3NBLk2
-         dcMpFaVsN3K5c8usSs454/KCf8Bbs1eGXKuhUTZupyYnYiMWnYgCKV28A5v0rRFWkQXI
-         U1Rb9jxUzE+451gAg8Owa8Hj0uYn9g9xz2RbnArXn8bUyFOYEVY/7vKC1DwH+18SKD2k
-         UFfy7GhhFEcGDkoB9E6rmPLBUZaFqkoIEw+sspW+o0j9th4OZB8FCNGq5xBvi9K0pOzs
-         2vtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXio6xYyHg5uh3wZNojyONzvZp7dfSiDNIDADK+RuyN4xEli0P3Dcgm9j5gvArBz1cxFfVnzy8DwDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG7sVrhDbV38XTHRAMfjYvX8DEehye1AWls8DOh7hITrWCC8Dk
-	/euIXABrqo8u/eTSJvEwcCxbg7Ng8h2IUFHJOuMJA1OrjNBKmFZUFYGLGUJNCu6OVZM=
-X-Gm-Gg: ASbGncvs7dEfN6tVC9EzIeD+jA0oFUtpQ3/NA1Owp48KgiNxUSsGsEmhlVDLBAgS47V
-	xis+kaAfetObqDAN1mS5hWflgItAbKcmabYAGh93Tm38ELA5nMHcnk0eAnTeO/YLtXTOBXzcNAZ
-	65DK7PABbbn8kp5LpyaY5uPFX08HkrhdksPXMEFhxVf+E5JVGh3G6K+xAwgNyXSh/yb4J7SLdvM
-	ySc1vKqCDP8QYNzD3MH1Arf9nyIQZapkh0N5TMG6ZP849MAybIc+KGBRaTKjsVwKCKKEBIeMMJn
-	ljhZ3fy209U/VwZ92AHo68iwb8PQQchD2BDGlf0l12QBr/rLTAPKGcpvtfI+1RkEg2FJst/gnoU
-	ClYH8yNi582b5KHLRR20Q
-X-Google-Smtp-Source: AGHT+IHLQv5am8Q5PjXuyp6eiNrR5bsV8vHLUkJ1Q6ondFRjcGxSGd7COuqKP3wd8LC/p4RSW+zhnA==
-X-Received: by 2002:a05:600c:3b87:b0:45f:2d2a:e323 with SMTP id 5b1f17b1804b1-45f2d2ae5d7mr57197665e9.0.1758008880401;
-        Tue, 16 Sep 2025 00:48:00 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:a6cd:21af:56e0:521])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037d741asm207326335e9.23.2025.09.16.00.47.59
+        d=1e100.net; s=20230601; t=1758008929; x=1758613729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=72mKaLpH8ZVeWabfEKgenc3kq6CKIlNYl8ZR1LugQjA=;
+        b=imhCQuvP9V+1Wp4xn5XGjur2HLW1qgS8tH0gYkGbX3KKV8BFcZvJkNfvL0HHTgVUrn
+         Mg2Fejua9twRBkFOYG5I41TaN8zKBbSxq0COHxre7NpgedhRmo1lZxfWB3taHOF0MuD3
+         yTw6kbyULmL463OExOub/TQvKZ1xWMAT8kLj3yzj0NUbKKN82SVKd+xG74M3zg6luhfH
+         b+n4TY//ZY5YCGdzoGQvTw6kP1KC9qWrseX8q9nEPFYMlZw7b57dYjgt+7sr6L5i+09J
+         y5+CJEdRzNxhP2bSr2BdV2ySXMr67ZPF4T5foWOJ8q7WNGx4KkEFIirJtXWdzlkgImdF
+         e09w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoQrppA2ducZYKrAVpFAWKNIeemTpd577Jn6CmVvdTR2aB+86g9fHGTQkQElKPakXeemUlFFJg09I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR8k3FQmt9bGpy557zUxv/WL5TtcgKQaRKac4zQfYc23dNSoX0
+	0rJgj3P8OFwuACaf2ZjTzAYKwZ3jhixnpt24yjXTPrz87xgXUgaFpV48cFRJNBW8wJk=
+X-Gm-Gg: ASbGncvZ12zWGEDBg9kRW9CGMYuyQE7N8yOcxrmUcDdRSRvrrKOh9Fcr/i1p4jnsjQv
+	IvKFBbKKKvYsQxVcZmNDTpvBWfciDLpXiYABeRPJXchxH/Bjuz3aJ60T76B/yDV6FkaeNJtEnlz
+	HzV+MQFROS4vwzWG8RLx9/bKwwHL8n7mhsRUOt58tNL+naJGG6kffu6InYfqLzHlEnrPJ7xy2LO
+	2+pExL4LdhP436GYvyLuHzLW+jE0OLqvocw8WDV++CcwDUmHyT1f2nUjt5rvBVqlxLfmJzEpUKF
+	/ltveXvbk8V524VOh5mjUBhwp4b4pjKPlU7Y2Plp/f01bZshwEFWPohLXsO5mDEtrmlTZ+l/1jX
+	U97qauJ72YEWiD0XJHFx/rms=
+X-Google-Smtp-Source: AGHT+IEL8i5Yw2VUOhkEwwUUdverukoVgo0AoLaHUFR9LPgOcR+nlygVIx1c77T1ysbBtnjWFKJgpw==
+X-Received: by 2002:a05:600c:604b:b0:45b:73be:c707 with SMTP id 5b1f17b1804b1-45f211fad57mr85880805e9.22.1758008928887;
+        Tue, 16 Sep 2025 00:48:48 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f2acbeee0sm103220935e9.0.2025.09.16.00.48.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 00:47:59 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org,  Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>,  Conor Dooley
- <conor.dooley@microchip.com>
-Subject: Re: [PATCH v5 0/2] clk: amlogic: add video-related clocks for S4 SoC
-In-Reply-To: <20250916-add_video_clk-v5-0-e25293589601@amlogic.com> (Chuan Liu
-	via's message of "Tue, 16 Sep 2025 10:06:05 +0800")
-References: <20250916-add_video_clk-v5-0-e25293589601@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 16 Sep 2025 09:47:59 +0200
-Message-ID: <1j348mj0sw.fsf@starbuckisacylon.baylibre.com>
+        Tue, 16 Sep 2025 00:48:48 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.18
+Date: Tue, 16 Sep 2025 10:48:28 +0300
+Message-ID: <20250916074828.9677-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue 16 Sep 2025 at 10:06, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-> This patch introduces new clock support for video processing components
-> including the encoder, demodulator and CVBS interface modules.
->
-> The related clocks have passed clk-measure verification.
->
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
-> Changes in v5:
-> - Add Acked-by tags from Conor.
-> - Remove unnecessary flags as suggested by Jerome.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-The request was "in an another change" ? Why was this ignored ?
+are available in the Git repository at:
 
-> - Link to v4: https://lore.kernel.org/r/20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com
->
-> Changes in v4:
-> - Add Acked-by tags from Rob and Krzysztof.
-> - Fix compilation errors.
-> - Link to v3: https://lore.kernel.org/r/20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com
->
-> Changes in v3:
-> - Rebase with Jerome's latest code base.
-> - Link to v2: https://lore.kernel.org/r/20250814-add_video_clk-v2-0-bb2b5a5f2904@amlogic.com
->
-> Changes in v2:
-> - Removed lcd_an clock tree (previously used in meson series but obsolete in
-> newer chips).
-> - Removed Rob's 'Acked-by' tag due to dt-binding changes (Is it necessary?).
-> - Link to v1: https://lore.kernel.org/r/20250715-add_video_clk-v1-0-40e7f633f361@amlogic.com
->
-> ---
-> Chuan Liu (2):
->       dt-bindings: clock: add video clock indices for Amlogic S4 SoC
->       clk: amlogic: add video-related clocks for S4 SoC
->
->  drivers/clk/meson/s4-peripherals.c                 | 206 ++++++++++++++++++++-
->  .../clock/amlogic,s4-peripherals-clkc.h            |  11 ++
->  2 files changed, 213 insertions(+), 4 deletions(-)
-> ---
-> base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
-> change-id: 20250715-add_video_clk-dc38b5459018
->
-> Best regards,
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.18
 
--- 
-Jerome
+for you to fetch changes up to 14be8b7b6cbc0a072c749e46e28d66e0ea6d0857:
+
+  clk: imx95-blk-ctl: Save/restore registers when RPM routines are called (2025-09-12 17:28:29 +0300)
+
+----------------------------------------------------------------
+i.MX clock changes for 6.18
+
+- Rework the i.MX95 BLK CTL driver to add the platform data to the
+  state container.
+- Retain the state of the i.MS95 BLK CTL registers through both
+runtime and system suspend.
+
+----------------------------------------------------------------
+Laurentiu Palcu (2):
+      clk: imx95-blk-ctl: Save platform data in imx95_blk_ctl structure
+      clk: imx95-blk-ctl: Save/restore registers when RPM routines are called
+
+ drivers/clk/imx/clk-imx95-blk-ctl.c | 57 ++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 29 deletions(-)
