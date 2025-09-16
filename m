@@ -1,145 +1,90 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791C2D12ED;
-	Tue, 16 Sep 2025 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547932D4807;
+	Tue, 16 Sep 2025 13:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028777; cv=none; b=eHrdaZsdy001Lipn1jQhuJlJPGHhn6ml7BgihCcqUo9yVHgsLvqcPpXTqMmGNIjMA7gt0NO6hfS6vk0J7lsvpiBzo9vTLU7bAQp3olyo7EvXg+yYCUEbYWpvJLch9jkUgsfpHqohzXvUoGjvg0xblQE5I60ZforQkKKKR5rit0g=
+	t=1758028877; cv=none; b=SBgqJ5A4LY1mo0SVOb3/LP780vqD+vOoBOugMnwDXWq1ZkDqRat0zWaBlUtbVi8uKEzPeGNHJYskPGxctmmqwZF5hqRryGv5STigGPL4RfcipgMP/gs0PwFaz276Ier4HCRhcEARAR42PTHxY1TtsFfOdkx4UGrKjZKDJ7Zv7X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028777; c=relaxed/simple;
-	bh=GCqjILCeKyNT+/Gxo+qzeEjfs57+lZtCCEoAb15K/7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ih8SviGKnZCRWCOR2YaqzDisYM+69+rriYbwF5MiUwQX7vzOYqT8/XHe4vMlGzaHrWIFbnPfWgP3dRw+vqzncy8PtrX5Kc2v3tbDjU2kvI2PV8b+ErqJ80fKGc/CY9Y3BLVQX1xZAOnHDvg9/MXPX4T/pBnc5m3vSqREiHm/AN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ybxI+xpW; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1758028877; c=relaxed/simple;
+	bh=Ex94Vqd+zOnaciGr4nhID0352++fktvmJgYz265pFGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQVzHw0R9utIlBnKffHa6OZibFTRNJukyJWj6G1+sAykCRX28Pcu2bsMNDZC/vWa6OIknMGJ+Rf7ycRuMsieerPjxvAVH7rsCM+8QLAXCohbdqz47q4YqN+KvTnVa/zNLoPwnibyNyIsaVJoM6ZnrbQwc/XUsdzzpIF6o2VX/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCIOYIyd; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ybxI+xpW"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCIOYIyd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758028775; x=1789564775;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GCqjILCeKyNT+/Gxo+qzeEjfs57+lZtCCEoAb15K/7Q=;
-  b=ybxI+xpW9lD5nmPqkFk52cvYGt5usqRZOJrZwrv8tudvOV/RpVyFlPpH
-   TrNhJGwshIgZqF/v8OzVfk3LxkGEXABXnWQ2cqajjorJ5YM37EtURTBxW
-   bZiJOBx4X2SFb/R49uCmKezytPV78dM5+EqK/KHQXB/chUzwrJ3ESQsTT
-   cFJReoIxA4H8RbMA73+70HWJge14ZXtA9VtdApJc+lVqXT+mFj/kxWemF
-   D482oxle5hU0lfhmuzR77mMFFP/11do/ZVLxtn9EjXSDvet2WuXeTtBJy
-   r0kB85ONcq1CJQlxcxWYbDP4J31uxd8pHNa3G0kdAysn7kCxc+WI+kS8g
-   w==;
-X-CSE-ConnectionGUID: V/byoQjpSTeHg7RE9/pKtQ==
-X-CSE-MsgGUID: IY9Gcb90RGOMWsNzTufLXQ==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758028876; x=1789564876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ex94Vqd+zOnaciGr4nhID0352++fktvmJgYz265pFGY=;
+  b=jCIOYIyd/U3sEWHQ3Ti2I9Aj3M+p0i7tMqT9T0jyZEVnXtqHj1jb3JxG
+   xMN86NsxbKfoG19Vj15tQiYYuvqBxuTahjaRXCPlu/nmP54uvFGmA5RbI
+   rDOQNjH4EAvegscWPS2OPTiFuoJf+TJEW+7fEihHcT/xPINMsounmCp/4
+   6HVJ6Ll4ijVpdRQEFnXqSfs5Fgb4HVBq1Fa7ZkVjOq6F3NWRjs4tXc5O8
+   sIr8UmNATDVWzYZ71FzPiHGuXCvBw/f4dZ7tRCLDt+UWhRItYf+uM6sHq
+   7FufYVO2sVZOA/8Xu/Ja0IzHrzMi20ItGRsoXGCEeoyqtdQtp1e7xl3bt
+   g==;
+X-CSE-ConnectionGUID: 4X5GIHCfSWy55OTXxeYQQQ==
+X-CSE-MsgGUID: 7v3lE5ZTSiaTcoPG6QTtQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="77915599"
 X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="52399102"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 06:19:28 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 06:19:15 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 16 Sep 2025 06:19:12 -0700
-Message-ID: <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
-Date: Tue, 16 Sep 2025 15:19:11 +0200
+   d="scan'208";a="77915599"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:21:14 -0700
+X-CSE-ConnectionGUID: uXjdHH/gR4G26j4TjZhWrA==
+X-CSE-MsgGUID: 02MW8/5mQC2Fx2ADDkBNEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="175357160"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:21:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyVcM-00000003XEz-0eM6;
+	Tue, 16 Sep 2025 16:21:10 +0300
+Date: Tue, 16 Sep 2025 16:21:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
+Message-ID: <aMlkRSzrzUzKHMNa@smile.fi.intel.com>
+References: <20250916124518.2857524-1-raag.jadav@intel.com>
+ <aMldk7M05W77rRw_@smile.fi.intel.com>
+ <aMld2nQFIIt1aZwa@smile.fi.intel.com>
+ <aMljmOCTOLdgBWfh@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, SoC Team
-	<soc@kernel.org>
-CC: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu
- Beznea <claudiu.beznea@tuxon.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<llvm@lists.linux.dev>, kbuild test robot <lkp@intel.com>
-References: <20250916080545.9310-1-nicolas.ferre@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250916080545.9310-1-nicolas.ferre@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMljmOCTOLdgBWfh@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
-> 
-> Dear clock maintainers,
-> 
-> Here are the first clk changes for 6.18.
-> I don't think they have conflict with changes for the deprecated round_rate()
-> to determine_rate() topic.
-> They are in linux-next for a couple of days.
+On Tue, Sep 16, 2025 at 03:18:16PM +0200, Raag Jadav wrote:
+> On Tue, Sep 16, 2025 at 03:53:46PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 16, 2025 at 03:52:35PM +0300, Andy Shevchenko wrote:
 
-But... this series depends on this patch:
-https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.com
+...
 
-Which will be part of a pull-request to-be-sent soon to arm-soc (which 
-is part of linux-next, so the build error doesn't appear there).
+> > However, you might also want to use sizeof(*clks) IIUC.
+> 
+> It's a double pointer and could lead to misinterpretation.
 
-Once the pull-request is done, do you prefer that I do an immutable 
-branch between CLK and ARM, that I queue this at91 PM patch into the clk 
-pull-request or that everything goes through arm-soc?
+Fair enough!
 
-Thanks to the kbuild test bot.
-Regards,
-   Nicolas
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> Please pull. Thanks, best regards,
->    Nicolas
-> 
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-> 
->    Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-> 
-> are available in the Git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.18
-> 
-> for you to fetch changes up to e3130c2a9a0c8e549e044e659be6f762a1b1f725:
-> 
->    ARM: at91: remove default values for PMC_PLL_ACR (2025-09-15 16:24:25 +0200)
-> 
-> ----------------------------------------------------------------
-> Microchip clock updates for v6.18
-> 
-> This update includes:
-> - add one clock for sam9x75
-> - new meaning for MCR register field in clk-master
-> - use force-write to PLL update register to ensure
->    reliable programming sequence
-> - update Analog Control Register (ACR) management to accommodate
->    differences across SoCs
-> 
-> ----------------------------------------------------------------
-> Balamanikandan Gunasundar (1):
->        clk: at91: sam9x7: Add peripheral clock id for pmecc
-> 
-> Cristian Birsan (2):
->        clk: at91: add ACR in all PLL settings
->        ARM: at91: remove default values for PMC_PLL_ACR
-> 
-> Nicolas Ferre (1):
->        clk: at91: clk-sam9x60-pll: force write to PLL_UPDT register
-> 
-> Ryan Wanner (1):
->        clk: at91: clk-master: Add check for divide by 3
-> 
->   drivers/clk/at91/clk-master.c      |  3 ++
->   drivers/clk/at91/clk-sam9x60-pll.c | 82 +++++++++++++++++------------------
->   drivers/clk/at91/pmc.h             |  1 +
->   drivers/clk/at91/sam9x60.c         |  2 +
->   drivers/clk/at91/sam9x7.c          |  6 +++
->   drivers/clk/at91/sama7d65.c        |  4 ++
->   drivers/clk/at91/sama7g5.c         |  2 +
->   include/linux/clk/at91_pmc.h       |  2 -
->   8 files changed, 59 insertions(+), 43 deletions(-)
-> 
+
