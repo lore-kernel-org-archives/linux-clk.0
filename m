@@ -1,136 +1,234 @@
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F733164BC
-	for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 14:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C00305E02
+	for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 15:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034518; cv=none; b=YGdRSnJTkYB9ewZNF3mL4MINGZHSvEI5RDUoEFwMJsiD3Og3dry27+CRrlXbn+U2pNpkU+sL+akscJmMypjxpAEcZoXJa/uuMBnYu8hvlj6mYbb3TbCSHJneRlHLJ6qMI1vvXqrD8BhQMYAN9SokiYGGsq/qB6amiKtvLY/fHuI=
+	t=1758034984; cv=none; b=Lr6YiKjgtvJ6WA+lDlPtKnLfabY8MIh0+btqsroOLYRUnfNoJvNWOoEKaYJG15ZMnm1REdmoVKTgFHiccvY8wu3lR1HeUwnnTkmIa06m1Cdb0VNRYJur5alF1+/GTZxICRF5vkWBGlH1S6sn6VPlWSB/o5/RN1D3WSaBgN321Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034518; c=relaxed/simple;
-	bh=tm0kA5/U/7lPdDiVcC4zEEqOIVnKxf9PeM+eT4gS4pA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tc08pHZpCg1rvd2S4XLk538yVXc2Ma1ExrSjD3aJ0Lu54il+afDYjY7pTFNwHxB7tUhT1NqcZrdVYdbezyS2WNSCrleYxM3XrlKggi34mcpT/8hXXx0Lr8L23f4U4tf1juFY3C3oPWmbZdKobDjQAPeApc29DPDMcwgV9PwlfPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=obZ4N0j+; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1758034984; c=relaxed/simple;
+	bh=q+Pk+Q6rv6DpDXCQuOBOKOpK1ZLg4Cz5C74JWjudbjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMonPrkbhXWU5Ds690nrDBugcBAIleQtd4xhsyXptho2kXBCCRa13tZuQJDbKcE2e9ADlI1aSR/3EGc7C7DT0OIVYiMK3UGPZIbmMzyC8k135DAn5GYW4949mf6LjxVnEfi78CDmOaK5s04rM6yEa+0efTM1G9QnmXsvffGDfiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxIhjYTM; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="obZ4N0j+"
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-328466c2aedso4857820fac.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 07:55:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxIhjYTM"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e9a9298764so2090771f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 08:03:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758034515; x=1758639315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D5iIq7+KHCywK04RSDS9es8l3U4mIawqQHyrRZJkTg8=;
-        b=obZ4N0j+eWHDyjwoNB8DM51ouON16EJd6CsPNyA1WIjfhnr1hkFuHxYKr7caIYqFzc
-         w5MQvEudlutDfIHU0rk1jWT++LF7ynasoY4mJmEfy9k+zL0O2DkKCGgTHetyU92BzJK+
-         zAqcPMC8pP8PQhzpEWq7koMrjpECa+KRpDtPrGXhInFDdBgDR8jQ1VdNEADeroeMRXb1
-         0e2aL2sanjC4hHaTLGvXWUHJl8KHv77n30R9XXGVgNzGqciGBPPHpyfI0VZR0dhUu+aB
-         uN77UjvJPFd+ZTWNN9P1ue23IB7ldgGpdciSlR3H1Eu06fsc/Ep1wahJKTC75yrhfO9r
-         YdjA==
+        d=gmail.com; s=20230601; t=1758034979; x=1758639779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PHTUiWhUtK8pTHI8ct46YFhk9JnDX+h/5/AhlzM+H8E=;
+        b=fxIhjYTMnEzi3zaqOj/t2TkrWOqdTnlbhAgO70U4xqIr5V19KAFbpGH93BWicGuk18
+         E00pEaf3QzHjvKsH7cjOYC3ZUMH2tWqBlijxrieAGeA50zHjfQS4jD9ZPouiblloGjja
+         DzKrdOYzNzU+i1c5vvrQpJJrfG/ZyJLWvzTuKnG22EUKsbgqFapO9AWxbEFoG7C5WDRe
+         Pd4JCZZ9qYhLW6UjU39wdhTlia1m7FHqwhWfDxFDoFKWLnzYR/rBoG+5TvgFcrKtTkLD
+         ToeTJr4T8KBwbXxDgIZ4VCn5vWcHKfhPdGfZWlkfAnyc7WsEjL7F1EImnAPen/RZUIBT
+         0sYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758034515; x=1758639315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D5iIq7+KHCywK04RSDS9es8l3U4mIawqQHyrRZJkTg8=;
-        b=nlM7tagAcGx+iJkvmo/aylkCzliJ5r6MaITpTYDIuyPi2Vw0Z9VX68dn6Vn/99PWwg
-         KT+5Qy8NPmtWt5i0NS2QGIj1h82VUezyZpYeeeCKcuZQhmcrumiOr3nNOy64TXSsrdRn
-         3eYYGBt7rKANIdJlyugYaDtXNryB5Vx/phQyFFq2pW5WDMQqdEcOU4hac/bTC9zeQm1U
-         XYUIRSPCOjxvCXTaGQb/VCGMWeCyhzI9yoiRCMhyWSV/DNXt2VqMahfLgO6UQZAVY/hx
-         oOEzD0dFXt8ppVjEg6hTmacLz5985aVRioIcv5qS2iSLx+ZnrzY48Qm8FlJIE7B1/5aw
-         WjpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMnZ6/XFqL7SCPrpUhtMtyxhqPpDXics9uuooA2679sHpWFtvEpamF4RUPiElWv6cgIM/GGutuP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza5O7gZ9N92Zg3BwhQ+NLJysaxsLCnT9Z8Anh11KcRLC0IWq2q
-	vzTmyKkoIJmBrDhBwRhejxMFIWzdaD3ExN5JdrDPIxplru5Emor6+CzqxTa24vNSZYk=
-X-Gm-Gg: ASbGnctEnaOTz1DTAFbl5+bC9xlgV4zjk7tnKdtFrRxRBMJ3CeNd2kJUcRLc0/PCUUB
-	2pA2qmudaE+B9ntlI3Erd15Y3FtABvb9terPj73m5TnpMn2+tRUUQxhMspIqKhkGkeZDnP3/WTE
-	vq6B8g5lsbBQGJ2D0FzySt4/JvOCVMwc3UKJ8DerFxQ9aoKDvqwyMN/TC5+l+XVmcKgi6+b0K5l
-	+0kzhWVxpnyOQTctQxVwBdwstjMfpeXbtCQnEQBs58ZTp40oJxy3DkATkhB9gWpS8Z0G6RBCtnV
-	C/kImewAB5Bqaz3TPr0chwi9B9M2ZWtyUYnlOQwhXrfmq5B9KDEkCdW2ijZcALUjDkXf+nX5GR9
-	VXUx+egtVeya+CEPuMrfrafrmOKPx4m7HZ1yhGFGgiCtBPrj2KFBx2irEx7BGh7fRpOONgpRsk2
-	w=
-X-Google-Smtp-Source: AGHT+IG2j6o5ZiECUky0T/Yvf86ZO9qsIYrDXwjsYiIUbY9fkQXrpUngcoYlXLsDg0lSeAlhfx8Log==
-X-Received: by 2002:a05:6870:de12:b0:31d:6e43:8d3a with SMTP id 586e51a60fabf-32e54e80af9mr7157585fac.18.1758034515240;
-        Tue, 16 Sep 2025 07:55:15 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:70a1:e065:6248:ef8b? ([2600:8803:e7e4:1d00:70a1:e065:6248:ef8b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-33204689b2fsm2368205fac.6.2025.09.16.07.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 07:55:14 -0700 (PDT)
-Message-ID: <711b5e34-3534-440c-8914-ddb41987ee8d@baylibre.com>
-Date: Tue, 16 Sep 2025 09:55:13 -0500
+        d=1e100.net; s=20230601; t=1758034979; x=1758639779;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PHTUiWhUtK8pTHI8ct46YFhk9JnDX+h/5/AhlzM+H8E=;
+        b=dN/l/9SIX2YCRVo7Au70s44fGzv+yqLcXPWeEBRbXqwb9Mwseu65Rs4W4pjIgeowmF
+         Gj274eb7Pp7NhOpxs5Tn2qRyK6elZ+6u0JTFxyv2tyRy61/rLQjena78DohkTJEu6AVl
+         d3aDvOY8MG/C+cFu+DFA1CocSogdRsLdDTF9yNNJZIENwoLFfH+Uabv9lLktzAkQTQu6
+         LBIv05kVIQYty2bqk2rBdSI3nGb9QoDmNt+FXH1BCX5x8PmH+zSazussbWrKr8ez55eo
+         MtJJPXUq0JlxmzGkjtgj3T6eKnfaVwTR6QY5RCGMU7dBt5FGFQR93D77Xro+sj2+WupJ
+         DBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHAq3Ut46rdYYzzfJNbS36ERdY52mSAjzsVm0/afrfbRal2xNj+YsrHkOMswQmr8crRzV19VltMB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaHxSNmVPuhoA/QPpknYsTmugzSDIJl3p7uB5xC6SleM5G7jyS
+	ZRsiPRt9juADOBoRNHBF1xwQOInqKKwE4WPp4P5UZWQpExXxRtveOqAqYnxTe7/TG8k=
+X-Gm-Gg: ASbGncuKHDgJ9dlSCDhF+hmzmtzddfBL0ZBH7nHpaZnaLZoe3kr7F713KGLeCnDahrZ
+	uXaBhe0j8llRj1Nz9VeFPTpDjnvO+y1w8x6MA0LF8VyTYsAmE4FoT9PLCD2Lb4AbrmMsAg/GaKN
+	QxN/20NHEf3kuKz2zuJGu792kAhWV6mEoeu5EH/uH7jcq3jE+lfoUoiW0Fys1n2A55TXbBr33nd
+	pfEwgZEMdL1v1oy903MSL9q0BxBk03lDer45hJ3MVSAyNRCCy6QJls1+GnhqoFOheKy2CWY9RJL
+	cKpOG0husCcFV1iOU2fPEPgYrysyyuWOd7epaf/qBasNoKQ5wz3hqbR7DmvVY4a4hQxtU+dqdPD
+	vWDme/apUh9MIqduD+4qjzu3WmPoJil+rDt1pM8EBsfV5fk/b+W+hie5vAS5ChWmZJXY4FJpNu7
+	+1eA==
+X-Google-Smtp-Source: AGHT+IHLQiq6Ya6CNscfFEjZEvD6KmKZnLRsoKqMm1MOtE4+rnBEKT0hP0h7Er+bVJT9S1ifCBeLwA==
+X-Received: by 2002:a05:6000:430e:b0:3e9:86f1:52f3 with SMTP id ffacd0b85a97d-3e986f1667dmr8919793f8f.35.1758034978493;
+        Tue, 16 Sep 2025 08:02:58 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdc2deb20sm932154f8f.47.2025.09.16.08.02.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 08:02:58 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3 0/9] Add RZ/G3E USB3.2 Gen1 Host Controller support
+Date: Tue, 16 Sep 2025 16:02:36 +0100
+Message-ID: <20250916150255.4231-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] include: linux: move adi-axi-common.h out of fpga
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1_via_B4_Relay?=
- <devnull+nuno.sa.analog.com@kernel.org>, dmaengine@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, nuno.sa@analog.com,
- Michael Turquette <mturquette@baylibre.com>, Moritz Fischer
- <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
- Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>,
- Xu Yilun <yilun.xu@linux.intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250519-dev-axi-clkgen-limits-v6-0-bc4b3b61d1d4@analog.com>
- <20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com>
- <175133153648.4372.1727886846407026331@lazor>
- <202509161304166bf210e2@mail.local>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <202509161304166bf210e2@mail.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 9/16/25 8:04 AM, Alexandre Belloni wrote:
-> Hi Stephen,
-> 
-> On 30/06/2025 17:58:56-0700, Stephen Boyd wrote:
->> Quoting Nuno Sá via B4 Relay (2025-05-19 08:41:08)
->>> From: Nuno Sá <nuno.sa@analog.com>
->>>
->>> The adi-axi-common.h header has some common defines used in various ADI
->>> IPs. However they are not specific for any fpga manager so it's
->>> questionable for the header to live under include/linux/fpga. Hence
->>> let's just move one directory up and update all users.
->>>
->>> Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
->>> Acked-by: Xu Yilun <yilun.xu@intel.com>
->>> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for IIO
->>> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
->>> ---
->>
->> Applied to clk-next
-> 
-> Do you mind providing an immutable branch for this as my i3c tree is
-> introducing a new driver using this header and so it is going to depend
-> on your branch.
-> 
-> Thanks!
-> 
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This was merged into mainline in v6.17-rc1, so I don't think we should
-need an immutable branch at this point.
+Add RZ/G3E USB3.2 Gen1 Host Controller and PHY support. The USB3HOST
+is compliant with the Universal Serial Bus 3.2 Specification Revision 1.0.
+ - Supports 1 downstream USB receptacles
+     - Number of SSP Gen2 or SS ports: 1
+     - Number of HS or FS or LS ports: 1
+ - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
+   High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
+ - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
+   these split-transactions.
+ - Supports Power Control and Over Current Detection.
 
-If you are modifying the include/linux/adi-axi-common.h file in the I3C
-tree, FYI there are some changes in the SPI tree that just got applied [1].
-But if you just need the header in the new location, it should already
-be there since v6.17-rc1.
+Merge strategy:
+ Patch #1-#2: PHY subsystem
+ Patch #3-#6: USB subsystem
+ Patch #7-#9: SoC/DT subsystem
+
+v2->v3:
+ * Dropped clock patches #1 and #2 from this series as it is accepted.
+ * Replaced devm_reset_control_get_{shared}->{shared_deasserted} in phy
+   driver
+ * Dropped remove() callback from phy driver
+ * Added Rb tag from Rob for USB3 host binding patch
+
+v1->v2:
+ * Collected tags.
+ * Replaced usb30->usb3_0 for clocks and resets.
+ * Replaced magic numbers with macros iphy driver.
+ * Added ref to usb-xhci.yaml in USB3 binding patch.
+
+ Logs:
+root@smarc-rzg3e:~# cat /proc/interrupts | grep SLEEP
+131:          0          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:~# [   29.148305] PM: suspend entry (deep)
+[   29.152121] Filesystems sync: 0.000 seconds
+[   29.157698] Freezing user space processes
+[   29.163594] Freezing user space processes completed (elapsed 0.001 seconds)
+[   29.170591] OOM killer disabled.
+[   29.173827] Freezing remaining freezable tasks
+[   29.179559] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[   29.186946] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-169-g1410189b0
+NOTICE:  BL2: Built : 12:53:12, Jul 15 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+[   29.219734] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[   29.286013] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[   29.299538] Disabling non-boot CPUs ...
+[   29.303577] psci: CPU3 killed (polled 4 ms)
+[   29.311334] psci: CPU2 killed (polled 0 ms)
+[   29.318406] psci: CPU1 killed (polled 0 ms)
+[   29.323605] Enabling non-boot CPUs ...
+[   29.323818] Detected VIPT I-cache on CPU1
+[   29.323865] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+[   29.323903] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[   29.324761] CPU1 is up
+[   29.324861] Detected VIPT I-cache on CPU2
+[   29.324883] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+[   29.324904] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[   29.325495] CPU2 is up
+[   29.325597] Detected VIPT I-cache on CPU3
+[   29.325620] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+[   29.325641] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[   29.326324] CPU3 is up
+[   29.351355] dwmac4: Master AXI performs any burst length
+[   29.352252] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[   29.354015] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[   29.355802] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[   29.373186] dwmac4: Master AXI performs any burst length
+[   29.374076] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[   29.375796] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[   29.377581] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[   29.424034] usb usb1: root hub lost power or was reset
+[   29.424043] usb usb2: root hub lost power or was reset
+[   31.583523] usb 2-1: reset SuperSpeed Plus Gen 2x1 USB device number 2 using xhci-renesas-hcd
+[   31.770398] OOM killer enabled.
+[   31.773535] Restarting tasks: Starting
+
+[   31.778136] Restarting tasks: Done
+[   31.781617] random: crng reseeded on system resumption
+[   31.786887] PM: suspend exit
+root@smarc-rzg3e:~# [   32.135468] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+
+root@smarc-rzg3e:~# cat /proc/interrupts | grep SLEEP
+131:          1          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:~# 
+root@smarc-rzg3e:~# cd /cip-test-scripts/py/
+root@smarc-rzg3e:/cip-test-scripts/py# ./run_pytests.sh tests/test_xhci.py -k test_xhci_005
+INFO     root:spl2_test_helpers.py:2261 DD performance with bs=32M count=32 is
+Write= 401 MB/s
+Read= 605 MB/s
+
+INFO     root:spl2_test_helpers.py:2301 fio performance with bs=32m for Sequential and bs=4m for random access are
+
+INFO     root:spl2_test_helpers.py:2306 b'   READ: bw=617MiB/s (647MB/s), 617MiB/s-617MiB/s (647MB/s-647MB/s), io=5024MiB (5268MB), run=8146-8146msec'
+INFO     root:spl2_test_helpers.py:2306 b'  WRITE: bw=575MiB/s (603MB/s), 575MiB/s-575MiB/s (603MB/s-603MB/s), io=5024MiB (5268MB), run=8743-8743msec'
+INFO     root:spl2_test_helpers.py:2306 b'   READ: bw=583MiB/s (612MB/s), 583MiB/s-583MiB/s (612MB/s-612MB/s), io=5000MiB (5243MB), run=8572-8572msec'
+INFO     root:spl2_test_helpers.py:2306 b'  WRITE: bw=525MiB/s (550MB/s), 525MiB/s-525MiB/s (550MB/s-550MB/s), io=5000MiB (5243MB), run=9528-9528msec'
 
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?id=67a529b7d3c50a56c162476509361f4fe11350dd
+Biju Das (9):
+  dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
+  phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
+  dt-bindings: usb: Document Renesas RZ/G3E USB3HOST
+  usb: host: xhci-rcar: Move R-Car reg definitions
+  usb: host: xhci-plat: Add .post_resume_quirk for struct xhci_plat_priv
+  usb: host: xhci-rcar: Add Renesas RZ/G3E USB3 Host driver support
+  arm64: dts: renesas: r9a09g047: Add USB3 PHY/Host nodes
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable USB3HOST
+  arm64: defconfig: Enable RZ/G3E USB3 PHY driver
+
+ .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  |  63 +++++
+ .../bindings/usb/renesas,rzg3e-xhci.yaml      |  87 ++++++
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  30 ++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  10 +
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/phy/renesas/Kconfig                   |   7 +
+ drivers/phy/renesas/Makefile                  |   1 +
+ drivers/phy/renesas/phy-rzg3e-usb3.c          | 259 ++++++++++++++++++
+ drivers/usb/host/Kconfig                      |   2 +-
+ drivers/usb/host/xhci-plat.c                  |  14 +
+ drivers/usb/host/xhci-plat.h                  |   1 +
+ drivers/usb/host/xhci-rcar-regs.h             |  49 ++++
+ drivers/usb/host/xhci-rcar.c                  | 100 ++++---
+ drivers/usb/host/xhci-rzg3e-regs.h            |  12 +
+ 15 files changed, 599 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+ create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
+ create mode 100644 drivers/usb/host/xhci-rcar-regs.h
+ create mode 100644 drivers/usb/host/xhci-rzg3e-regs.h
+
+-- 
+2.43.0
 
