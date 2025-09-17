@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CAE223DE8;
-	Wed, 17 Sep 2025 04:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4F1F4C90;
+	Wed, 17 Sep 2025 04:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758084115; cv=none; b=peclWSqJINElvHeFnePXDVgcN7f6Y7JXgOjlPLlUo9v2cQynszshXWqggDFD31ilkj/rTQRuHg7jol/3WM2TWidBVdAJX4wKYlHQVZsBXzltNIU417jIgTKXbHtY59mxpYu1Hvf4NdhBoBXwyTGAGAhKgeLOmAMCAfHZM5xnHTs=
+	t=1758084578; cv=none; b=efMhu+dYxBc/w390jb+ESMA5NPnS721riQzt419Sr32sMpsZVY4J7EQizokuZD3ekNby/C2Us9CM4TTEkICXxBkh9x/LPu745JUPLjse3I08sH2063+0kFj4In1SMwrF14Qm1aP0XSC/htuG9svUHcfN/IQNnG1TJu6xuDq/zlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758084115; c=relaxed/simple;
-	bh=bvYJdBIebWbbLky595Ju+Qy57cTKh3vRPO/Is9p/+As=;
+	s=arc-20240116; t=1758084578; c=relaxed/simple;
+	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=dNfH+kbwrx+3z3qlsrWuIhHF5ybKtE0y7bfQTwcY6Uljq5dcGKZVTJE2OFgC8ttsY/ME2pBeCEUtVhSZ50gz7pNi8C4ZBUYZc/RSsohaqQHyKbjX9O89nCQrAvY+Lp7MuLyypbT8lRHUHEUI4siCSresRamVt5G7D0n33BJrO+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcFafbbC; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=qRyHxN5NVcHoaFLjzP9M5GTFWxbnHgIcsDXmLNP5/nEODYQN7VGeE4TXpFhFRDCQyBH4YzVpJle46VPJ7Vi0Xu6YDG0VnloG5adQuqQ+yNMlnMKAK1TFOW9atoibXwo4DFzBSY2lMTcOf60oNsRuf0c/ywXmbkL6+dbOXsx5/tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgixDBAV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcFafbbC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A74C4CEF5;
-	Wed, 17 Sep 2025 04:41:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgixDBAV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00976C4CEF0;
+	Wed, 17 Sep 2025 04:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758084115;
-	bh=bvYJdBIebWbbLky595Ju+Qy57cTKh3vRPO/Is9p/+As=;
+	s=k20201202; t=1758084578;
+	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=mcFafbbCaOwnq+FJ9nFCRZMI2CHdK6+1eVod2bk7RumbesBssXUt4WhxML8AfDckq
-	 PXa5J/KG+mDC06mzNHF5xYnmWsTAnv53g8LFg49kU5QFrZ7xKTb9FVABfvmGGcCOzb
-	 wgvTJf4yb7kKa+3hgH+paPCrxl6g2sPsvXAUqx3t/2ENk1CVRkgh7O6EXbX5Na60u/
-	 gKRKs2t/XBgIeak1pZ2ZoBh2pGuyK8nqopKSO4WZmLPbBLt7KHO4GFR7jwIPhiPGJq
-	 qJF3FSSD7jhreQQwp/8jLjDC598gSVLtUsq6h776OilHhMD8GSlHvLMyp3KO1V7a/J
-	 OIj0MCoT1FwYQ==
+	b=kgixDBAV4DcV+vsxuyDQuN9mAKXk+Fwp1Rj7x5YjbvblULsWAjF/aqf4SdHA+PpDb
+	 xk6vGGX2Pdx3p0E6YVCaxuf9Npu0VVrTCj+g6jBSg4IS/a+GDGRM0aEzmu6edX0sb+
+	 TT0qZcVpdp0GVLpmFTHtS2mZjfEa8B03vsV1Kh5dlnL8V6JkVuZxgJJstbKNy4AUDl
+	 PJP3twPd6gCUe25poKni14DRAuiG/qn+PKKys2pNGF20j8V0BePISlvbx/+kDqj6GY
+	 NTzE0nbNhO6j5bAs55i9Ua3Eo4y5mz5bdi9u0ho52p1NplYz4sR4/DrcwyfKSj2soL
+	 eEeRl/PG2KFpQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,32 +34,42 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250916074828.9677-1-abel.vesa@linaro.org>
-References: <20250916074828.9677-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.18
+In-Reply-To: <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
+References: <20250916080545.9310-1-nicolas.ferre@microchip.com> <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
+Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Tue, 16 Sep 2025 21:41:54 -0700
-Message-ID: <175808411442.4354.16459182435931479904@lazor>
+Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev, kbuild test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, SoC Team <soc@kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Date: Tue, 16 Sep 2025 21:49:37 -0700
+Message-ID: <175808457715.4354.11044142356915096975@lazor>
 User-Agent: alot/0.11
 
-Quoting Abel Vesa (2025-09-16 00:48:28)
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
+Quoting Nicolas Ferre (2025-09-16 06:19:11)
+> On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
+> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >=20
+> > Dear clock maintainers,
+> >=20
+> > Here are the first clk changes for 6.18.
+> > I don't think they have conflict with changes for the deprecated round_=
+rate()
+> > to determine_rate() topic.
+> > They are in linux-next for a couple of days.
 >=20
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> But... this series depends on this patch:
+> https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.=
+com
 >=20
-> are available in the Git repository at:
+> Which will be part of a pull-request to-be-sent soon to arm-soc (which=20
+> is part of linux-next, so the build error doesn't appear there).
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.18
->=20
-> for you to fetch changes up to 14be8b7b6cbc0a072c749e46e28d66e0ea6d0857:
->=20
->   clk: imx95-blk-ctl: Save/restore registers when RPM routines are called=
- (2025-09-12 17:28:29 +0300)
->=20
-> ----------------------------------------------------------------
+> Once the pull-request is done, do you prefer that I do an immutable=20
+> branch between CLK and ARM, that I queue this at91 PM patch into the clk =
 
-Thanks. Pulled into clk-next
+> pull-request or that everything goes through arm-soc?
+
+Whatever is required to build the code should be included in the PR. If
+the same commit goes into arm-soc tree that's OK, just make sure the
+branches aren't broken if you checkout a commit anywhere along the
+branch that is sent to clk or arm-soc trees. Broken includes
+functionally broken.
