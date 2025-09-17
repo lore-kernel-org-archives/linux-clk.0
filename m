@@ -1,75 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4F1F4C90;
-	Wed, 17 Sep 2025 04:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E6C25EFBE
+	for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 06:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758084578; cv=none; b=efMhu+dYxBc/w390jb+ESMA5NPnS721riQzt419Sr32sMpsZVY4J7EQizokuZD3ekNby/C2Us9CM4TTEkICXxBkh9x/LPu745JUPLjse3I08sH2063+0kFj4In1SMwrF14Qm1aP0XSC/htuG9svUHcfN/IQNnG1TJu6xuDq/zlc=
+	t=1758091801; cv=none; b=XoAaxiQW0bwPANu0y3XMojIVSo6vHntgqihpcQhELz/X8xWeq7BIwOBaS3k0VuuwGQ7e7YKOxblXhLZPvJGOpAWsWQawJiN7+t8FK6Z1jGJRlzXverDpbuOPclJrd7dpWP3BgksjlpzOj6glzoSS56IICrLp24v5Vj6UXVyGTew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758084578; c=relaxed/simple;
-	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qRyHxN5NVcHoaFLjzP9M5GTFWxbnHgIcsDXmLNP5/nEODYQN7VGeE4TXpFhFRDCQyBH4YzVpJle46VPJ7Vi0Xu6YDG0VnloG5adQuqQ+yNMlnMKAK1TFOW9atoibXwo4DFzBSY2lMTcOf60oNsRuf0c/ywXmbkL6+dbOXsx5/tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgixDBAV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758091801; c=relaxed/simple;
+	bh=i8tNuAeCQ29SwLEzEbOdCknl5LH6FMHRPqBRsuyT904=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etwFXm1e8U26Vmh8fkoVKGUkbdi8izp7rNoR5Se5AWHYRu3D66fVx1mOgqIW5MleEnX6r5GLuLDTUHQoLXBRGoiLLbX0iC28/rvGX5atoTtlsT7znGoBY3r35798RG2C9fZ8kW2nhK0NbN/v9z5fiZ83b0DBKwtIzpSMYHLqJ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=BSImQFk3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgixDBAV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00976C4CEF0;
-	Wed, 17 Sep 2025 04:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758084578;
-	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kgixDBAV4DcV+vsxuyDQuN9mAKXk+Fwp1Rj7x5YjbvblULsWAjF/aqf4SdHA+PpDb
-	 xk6vGGX2Pdx3p0E6YVCaxuf9Npu0VVrTCj+g6jBSg4IS/a+GDGRM0aEzmu6edX0sb+
-	 TT0qZcVpdp0GVLpmFTHtS2mZjfEa8B03vsV1Kh5dlnL8V6JkVuZxgJJstbKNy4AUDl
-	 PJP3twPd6gCUe25poKni14DRAuiG/qn+PKKys2pNGF20j8V0BePISlvbx/+kDqj6GY
-	 NTzE0nbNhO6j5bAs55i9Ua3Eo4y5mz5bdi9u0ho52p1NplYz4sR4/DrcwyfKSj2soL
-	 eEeRl/PG2KFpQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="BSImQFk3"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b9814efbcso3518725e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 16 Sep 2025 23:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1758091797; x=1758696597; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IVMvvCgA6ljcoCpqlgL1xSnREs4/fST5OPFbRQTwtdA=;
+        b=BSImQFk3kWE04UJ4wNGxhZgIgqBFu8H7evpNITOiR+XEr52bK5A3XTajF0BKcnE0/a
+         vrnlDgnmTBtG067MZ5524Is6T+wqQA1+F7WbSboe+v6lXEb4fdrMcITV98ED0bTbL8gj
+         ibqAXPWjuL/OMe6r7miOwjsmzLOYITjbfBVhljtQCUDx6FhcCFB7KF++1+7bA99NkBLC
+         HqwHYLmiSQpKC23w0WfzZtRHaUtq2VSjmtFKLxbH9c3vRv5mKOikfycELPCxOY2x9wBW
+         NBozMBU0//nbx8k69bHcnv6YfKMe5rRRajxdj09408x8Xthzyy2YVWQYVQs157zBsNUb
+         e/BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758091797; x=1758696597;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IVMvvCgA6ljcoCpqlgL1xSnREs4/fST5OPFbRQTwtdA=;
+        b=M49sOxV47AZdO1pqKHhsrcdvJnHAeSO3huNW0jdLflgyT632Mkl9kJ5O2F5gBlhhAv
+         tjEVJm4na4u9IF9MVc7AP7VJeRAt/XXuQPjjkrrNGtPLx27KHQD8YVvBrJSb0KHoyeaU
+         UkF9Je3IDj+1tq5xL/p+ec+G5ErCuyR2UNGPsOYqv+TZVXabL5onvDroyoYcN/KZfc9u
+         k9p5/rr53H09TfyDjnAtqXcXazjbQ9mzxHpy+pw6nlsvnBTuywKEF5jFBhT4GLabJ80X
+         C4exf7kWsolYbgmSUqw/BXfrMnZbo7ZCtE+BCN6qDqpHCuQ61P8dphTehIMkgzwLBTUP
+         a19w==
+X-Forwarded-Encrypted: i=1; AJvYcCUwzmu2Fyvqf97VxvDznV2t2JfYUa4xZOD2LS5/E/V8KuP+0NRiefymoueh2lzYnTi3YcXxGCJ8wy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGignp1+09t6NzQc1I5GEKUg37ggQ98DcsI0uwYqFadtAnGUZT
+	N/e4X/8pZ/9nKw66X0qbgAwJlJuOGwOqRP1W4FVX2ynmaeETMnlNSXr30E+eY3EKI8Y=
+X-Gm-Gg: ASbGnct44MaPfRpowTNWMe8DMbusZrHDDRB8c1KIvWOVcWXaTFsPGZzVrXvYt+xu9BC
+	IBFxeByPOndTqLcwWQYggFiRXATgvh45LkypMLwnjfGFJDsMFhjFTNPd3zXIRlfzTgyK0zaWNgD
+	IsowkixQkKYt3B6JdD+LkCPBCF60kG5FT2lZVcoS0MvqzfhLuJCSMsLdpSryi3GslzeZQZOU6u8
+	z7nzkJgME3sMX8tBJ9R0v/L2j/h42SbBYSz4oQ1lGKDBgA558GslXNshViQchcoFX9500FhP/6A
+	GJ5WLRYI3UJlF/TmDxLHVjxTLiQMZhMh+wto4uJ2q5COrtlfYhF2aPN+Q+DSzEfN/ldxd3LF0c4
+	xPJnJgbb5/CDkWqcwx3OD3mLsBXvvkvc=
+X-Google-Smtp-Source: AGHT+IEVFBb8u1kVGqedyodsw2F2aUQecKI0dQqbLqdRcPRySNRrawE71TWdhxxTWe9V1uTknu0h/Q==
+X-Received: by 2002:a05:600c:1d25:b0:45d:dc6c:9e30 with SMTP id 5b1f17b1804b1-461f94ae963mr9866535e9.14.1758091797412;
+        Tue, 16 Sep 2025 23:49:57 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-462d525fdb2sm983345e9.13.2025.09.16.23.49.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 23:49:56 -0700 (PDT)
+Message-ID: <d2c1d736-689b-452d-8031-2cf76288dca1@tuxon.dev>
+Date: Wed, 17 Sep 2025 09:49:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
-References: <20250916080545.9310-1-nicolas.ferre@microchip.com> <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
-Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev, kbuild test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, SoC Team <soc@kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Date: Tue, 16 Sep 2025 21:49:37 -0700
-Message-ID: <175808457715.4354.11044142356915096975@lazor>
-User-Agent: alot/0.11
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/32] clk: at91: clk-master: use clk_parent_data
+To: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <4b404eaaab4062464a4142e95aaa76d5cba866f0.1752176711.git.Ryan.Wanner@microchip.com>
+ <95e19f49-d0df-4d3f-bd7d-8b58b60f1f7a@tuxon.dev>
+ <61cfc570-6632-4e14-9e2b-2bd5d2ce1690@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <61cfc570-6632-4e14-9e2b-2bd5d2ce1690@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Nicolas Ferre (2025-09-16 06:19:11)
-> On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
-> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
-> >=20
-> > Dear clock maintainers,
-> >=20
-> > Here are the first clk changes for 6.18.
-> > I don't think they have conflict with changes for the deprecated round_=
-rate()
-> > to determine_rate() topic.
-> > They are in linux-next for a couple of days.
->=20
-> But... this series depends on this patch:
-> https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.=
-com
->=20
-> Which will be part of a pull-request to-be-sent soon to arm-soc (which=20
-> is part of linux-next, so the build error doesn't appear there).
->=20
-> Once the pull-request is done, do you prefer that I do an immutable=20
-> branch between CLK and ARM, that I queue this at91 PM patch into the clk =
 
-> pull-request or that everything goes through arm-soc?
 
-Whatever is required to build the code should be included in the PR. If
-the same commit goes into arm-soc tree that's OK, just make sure the
-branches aren't broken if you checkout a commit anywhere along the
-branch that is sent to clk or arm-soc trees. Broken includes
-functionally broken.
+On 9/16/25 20:35, Ryan Wanner wrote:
+>>>       td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
+>>> -     md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
+>>> +     md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, md_slck_name));
+>> Please use:
+>>
+>> i = of_property_match_string(np, "clock-names", "md_slck");
+>> if (i < 0)
+>>     return;
+>>
+>> md_slck_name = of_clk_get_parent_name(np, i);
+>>
+>> Same sama7d65, sama7g5.
+> For these SoCs the clk_hw struct is still needed since it is used later
+> in the driver and not changed until a subsquent patch later in this
+> series. Would it be better to hold this change untill then?
+
+OK for me!
+
+Thank you,
+Claudiu
