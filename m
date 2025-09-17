@@ -1,152 +1,218 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6314215F4A
-	for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912842F28EE
+	for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 14:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119590; cv=none; b=TNtCsoxzfGlnWALtRD+sHAf1yYkxGSnvXL+yuzPw6OCrhfIVV66Lbz9uZ087s5iDz5EY3jhzOcxTTl1jd/9jje4i3QR5Pk/D87QDTGWf+b34YSIXdBRqHUY9222ljsePUnmBfVInI3dW/yFa5F3c4b3IPFtAX6+wGISz5GGPaqA=
+	t=1758119983; cv=none; b=gyG/a7s1IHZEes8CfJ3puhvdAKCjfmUNNYsQo9bCbzPI1ulNGv3e0sM7i8Hh2QKpyVaWymPuAugkKvoarKc6v/Vk1ZmF4Y8FVmfahlAcsPTpDk2xsGh5vLFhPgIY/e5gFJq81Cmb1HGJQgwKr/aYmXpYWwHORusVQhblTSQ40VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119590; c=relaxed/simple;
-	bh=RKaFL/f/x+BpU4Xk7oekVWLIrBOIODf0tIBd2+YRAto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0+3LthRa4nlJquBGNsa7IdHteLYpBE4P46zdoiGG+koNvDEoooGMGtPyrtzYpHjbo8fea/jxitGQ1/xd2Y8sm+wLlbvgRORVlSUg715urMVuLS+csIkkqnlBRCek+TcihQj0A5cPMxU7fL1w39qXSD2zv6YMyh/Iz78mmfUKjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C3UUbFRm; arc=none smtp.client-ip=209.85.219.174
+	s=arc-20240116; t=1758119983; c=relaxed/simple;
+	bh=JQvshfvimgHfM0RiZnHUyLwR4iIsBOC1lbymHIY70KQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C7r0jH6gwBgo9VoQHGE4J78Z+0H+WHAbRTssN3rw07YxIzRAQDNg+AGSXhrd9tq5oZfpZRib/eBnRaaIDc/DJ1EQoea2hWe4u3dVOJpJCVkx27sWkW1qAwECjtFfPRBBXRW8ShrF+fIeRB0QyswYiqORCjMwgvcPb4YLUnzvOak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dn3TC6ER; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C3UUbFRm"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-ea411f21bfdso2555923276.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 07:33:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dn3TC6ER"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f277546abso8427177a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 07:39:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758119588; x=1758724388; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cjiYB/uowYFXiRivyJJw9KQxslDZjaml/1h2OkBzYY8=;
-        b=C3UUbFRm3acP+0gd7vxBXz6Z3ef402pRo2XadWFzpB/mpXuKLW7vRWbB4zfivlFst8
-         GoFZp1CMYZq2QABwCDUoiOSiBoZr10VhVEneXxJPE6qF7z8tJSamZikSv2lyZRwq34i8
-         WnSbeTp9SjJ+zGRONoG3aiK0lATCddxAxq6ypvl9zWUwTUCTxj+IoJDZwAex5ACmyGdB
-         l4aEfSz0+2npRMBWyEz7AHjfwhcvD/ioeyfpfBktFQE+sDh6dM/iNu3MIoCCXpmWOp5u
-         BxOWT6HUdbUBzBO7QgWUWG6Pr3QtzNoSjAfRk+X7xQiUEo5bNCB3O9uYHiLHsg+AcmUJ
-         FJwA==
+        d=linaro.org; s=google; t=1758119980; x=1758724780; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ign5Rvn1nrFDYbDVfbmxV7M+H+jM3AW8cIlkron9MVw=;
+        b=Dn3TC6ERkVkuH0TCOdsDTLxTsCKp6ENyTln2iSx5Y/5INH004leh+wKLiSC9YCw5xD
+         KrSlNNRxXfVKz5oU3rFo1yjXLbGikamf4KmwKLx7dw+K25hUen3xMMB12BedqNyGx65d
+         bnjjDNoEHRGm0gvmFDmaD/TwxyZatq8G/MHLM6BZiCJOODhnRgOnrHE1h2p0kWaw2PFt
+         f/A2B/Ym8mGTHAYIO93J4/bLeQjR7Z6QNXdwmCO4tFurRhBUgSNz661cNqrVVZTOq4Qe
+         AzHFX29WCHTxjgA7nc3S9nBJK7mxE8++gfVAQRTA8ojQSxDHhA99+2+swzYi56WWNBDk
+         /Dsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758119588; x=1758724388;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cjiYB/uowYFXiRivyJJw9KQxslDZjaml/1h2OkBzYY8=;
-        b=SINc+AkCvgW5JNmkyt6izfrlaXkNXpI//t2cxV3AInIbIAobEHhWSKNyOBsLAgwpp1
-         cgCLisBOZVFNx/5jtUn+oYe1u6qB699nd95R/Lb25mlBlNl2qQhQlqwmody4mxp2yIl6
-         7L+7hFEM7Wq6GH65F9qtBAu43zLsTX5G/l3QNfSQ2WcA6Tc4s8fBs7z79h5/Dl7Nbmcz
-         5OAlO6UsbzZB+2K/SApvu1fvG/gBkf6Ln6ssB9XynMvUbGTT8NctdOL8PCc+u0H9O6xA
-         kTQk3mnr9OfCNmalqawp3kC9bmBk/41ju3wMKgYqOq4f/B436AgTa/d8EnS2s94czX/7
-         GkAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9tcw5l5newwS1jVEAh+PUj9WPAbiGh+o6ncAbAwYf49i7urg5OGF6JJTmS9wWJcI3C5H2XlYSo5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+wqrtMNeTJFlvw7yQMlDT1R/K4+P1uBMJPE4RcLRvVLQ/mPf9
-	L4nUbmx2AfRGIuyWKT5IN9rr+lvZegmb3t/JAGWz4E33kNT81S0KTaxUWHQVlEmdB1OWOyQ+KMi
-	ZY2Cdho3p9PlM/0YoSuOV2tvoYyI4Yi8/i3gDZAlJCWqal8Fp4Aa3
-X-Gm-Gg: ASbGncsUnXKk8fP5UMwMhSOwg24Fx3p2ngEbopuIvfwiTFD/ZB4G1UOVsu2LCI51eI4
-	3u9uZPgB7REmoaQSGpyfqni0Ky1X1AS1t6YIBDBYKb5YEFKRI7wOedKeZe0kCZPSXQ4PjlHuwE1
-	bO2LZ4nAUJ6ETwQljkidRsaMAmM3FeoTI5WlzpErIwUGDT95KwqwFi2FfX0qANnLMLXg1JnBvB6
-	p0oEyPq
-X-Google-Smtp-Source: AGHT+IFQl4sxW4LUcoi3bIXsptHrliwBwP5f8RO+yo+IAgyckDyrm2VPVmx1uys1O5NAXNsLjZqsLa4xcMjhuXJl5zs=
-X-Received: by 2002:a05:6902:3101:b0:ea4:6:9024 with SMTP id
- 3f1490d57ef6-ea5c03aecffmr2119553276.8.1758119587602; Wed, 17 Sep 2025
- 07:33:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758119980; x=1758724780;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ign5Rvn1nrFDYbDVfbmxV7M+H+jM3AW8cIlkron9MVw=;
+        b=hMBXXSfkyxs9Hra6jSWO4vi6XbEsDrSr5hIUnsLM1+LX3E0qgNtVXfkr5vsUlnK2OF
+         fwORVqg5FyM30evnJM8+ndTGMS5Ge1iR7IKYN7AE4z8kQeDWTQM01f62XxZcz/8VPhe+
+         U2YnclSeHtFLDX9m/HgwPVDSZFA9pbBNedRPglT3EZn8OFqc//IYbzV7FQ0uXP1qqkEq
+         bOEzhTR2JVE/PyJPzwPLgXYd0h8zFmLOJ/CmbiXDQuDdmv2RJ5cRTEoy4KemdkRxHogD
+         9fcoDhb45mj2cFeIiANh5DA0p+gd4GOyiJB4i6Rlui0pUA7sfkCjM0xsx5vXTOrXbtGB
+         DFSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+a0eb4QjO3J//k1D/msaryzJn+ihH0OlzMpMzNM8SpCQVKT1Dzprhp+HyVcq6bybolQTZM6E5U9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbaP3ThNWeU5qnZiDYwzx/v7yvDwlld9Xi8U4dXYGUIfEiNixE
+	thQYF/X6q/OCsckbtLF9+/9L7c6th0fjDBneBT9NKWzZrlUbITHNh5wcAjJ5RPOqEj8=
+X-Gm-Gg: ASbGncsj4wLndod0JYNgQNAwOcuqm5lUwtUC90AccxgZemcoKr3MXmb44wV6hiaYnCE
+	gIcBVO6KDog3iViEopM2rd0RnpXWif2B/sr8uY7RvH7h/jEgudT/mR3sCBdNfnWaMKwSf9Ai8r6
+	DoHZGF3tluCm75Sg7HqQJm9Yr8EaKL/IMUXpoSj8H2Ym2eIHe9OGyz//bPw1WwMGWi3AroB5MCf
+	mFUzCpQKVLyUGLCJlUFSk9f99LbHJMn5/K3YrPXYdNhgfxDU37wrw0Cs7BuU/m4l9T6KTUB5HOV
+	AvFuJ7UFro3t7vNz1F697zxh3dW4f5CUXl+aDadDD1qpxb5MHrfgy8uwkl//YPqu+7KB59G+VDD
+	VV+MTsS4IwDgHS1S5ZaikGMlHBebGuf3mXgXqzsRLoKevNhgDYpjjgcezDe6xJlW9evszjmIhCA
+	voxOiluUyg7NcQ
+X-Google-Smtp-Source: AGHT+IFF8kxUes3UFZ/iPcURSxsxpGZGbUCV4rgSf6BC8Nw9XulL9xf8WQpD9qjmrn6KbrUO3AOgrw==
+X-Received: by 2002:a05:6402:23c2:b0:62a:91d5:8844 with SMTP id 4fb4d7f45d1cf-62f84231fcamr2655601a12.21.1758119979856;
+        Wed, 17 Sep 2025 07:39:39 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f317bf9f0sm7112464a12.49.2025.09.17.07.39.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 07:39:39 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH RESEND v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
+Date: Wed, 17 Sep 2025 15:39:31 +0100
+Message-Id: <20250917-s2mpg10-v5-0-9f9c9c4a44d9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
-In-Reply-To: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 17 Sep 2025 16:32:30 +0200
-X-Gm-Features: AS18NWB4VWSVduLAS3dHprEYP38MnWvLvmP0MGgnFO0V0b-XHaevM6W4A6ssrDo
-Message-ID: <CAPDyKFri+vsC9U7hhPukgWR2sRec5M0i8XtmyA7dVgJ-8Ewe_A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Marvell PXA1908 power domains
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Sat, 13 Sept 2025 at 23:16, Duje Mihanovi=C4=87 <dujemihanovic32@gmail.c=
-om> wrote:
->
-> Hello,
->
-> This series implements support for the power domains found in Marvell's
-> PXA1908 SoC. The domains control power for the graphics, video and image
-> processors along with the DSI PHY.
->
-> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
-> ---
-> Changes in v4:
-> - Address maintainer comments
-> - Rebase on v6.17-rc5
-> - Link to v3: https://lore.kernel.org/r/20250829-pxa1908-genpd-v3-0-2aaca=
-aaca271@dujemihanovic.xyz
->
-> Changes in v3:
-> - Move driver back to pmdomain subsystem
-> - Instantiate using auxiliary bus
-> - Small fixes and refactors
-> - Rebase on v6.17-rc3
-> - Link to v2: https://lore.kernel.org/r/20250821-pxa1908-genpd-v2-0-eba41=
-3edd526@dujemihanovic.xyz
->
-> Changes in v2:
-> - Move driver to clk subsystem (domains are instantiated by clock
->   driver)
-> - Drop power controller schema
-> - Drop RFC prefix
-> - Rebase on v6.17-rc2
-> - Link to v1: https://lore.kernel.org/r/20250806-pxa1908-genpd-v1-0-16409=
-309fc72@dujemihanovic.xyz
->
-> ---
-> Duje Mihanovi=C4=87 (4):
->       dt-bindings: clock: marvell,pxa1908: Add syscon compatible to apmu
->       pmdomain: marvell: Add PXA1908 power domains
->       clk: mmp: pxa1908: Instantiate power driver through auxiliary bus
->       arm64: dts: marvell: pxa1908: Add power domains
->
->  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  30 ++-
->  MAINTAINERS                                        |   4 +
->  .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |   1 +
->  arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |   5 +-
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/mmp/Kconfig                            |  10 +
->  drivers/clk/mmp/Makefile                           |   5 +-
->  drivers/clk/mmp/clk-pxa1908-apmu.c                 |   7 +
->  drivers/pmdomain/Kconfig                           |   1 +
->  drivers/pmdomain/Makefile                          |   1 +
->  drivers/pmdomain/marvell/Kconfig                   |  18 ++
->  drivers/pmdomain/marvell/Makefile                  |   3 +
->  .../pmdomain/marvell/pxa1908-power-controller.c    | 274 +++++++++++++++=
-++++++
->  include/dt-bindings/power/marvell,pxa1908-power.h  |  17 ++
->  14 files changed, 369 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-> change-id: 20250803-pxa1908-genpd-15918db5260c
->
-> Best regards,
-> --
-> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+Original cover letter further down.
 
-Patch 1 -> 2 applied for next, thanks!
+This is a resend of two patches from the original series that haven't
+been merged yet. That series was merged except for the attached two
+patches here. Other than rebasing against next-20250729 there are no
+changes to them.
 
-Note, the DT patch (patch 1) is available on the immutable dt branch
-too for clock/soc maintainers to pull, if needed.
+Lee, I think Stephen's intention was to get these two merged via the
+MFD tree please.
 
-Kind regards
-Uffe
+Original cover letter:
+----------------------
+
+This series adds initial support for the Samsung S2MPG10 PMIC using the
+MFD framework. This is a PMIC for mobile applications and is used on
+the Google Pixel 6 and 6 Pro (oriole / raven).
+
+*** dependency note ***
+
+To compile, this depends on the Samsung ACPM driver in Linux next with
+the following additional patches:
+https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+
+*** dependency note end ***
+
++++ Kconfig update +++
+
+There is a Kconfig symbol update in this series, because the existing
+Samsung S2M driver has been split into core and transport (I2C & ACPM)
+parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+
+This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+talk via I2C, but via the Samsung ACPM firmware.
+
++++ Kconfig update end +++
+
+This series must be applied in-order, due to interdependencies of some
+of the patches. There are also various cleanup patches to the S2M
+drivers. I've kept them ordered as:
+  * DT bindings (patches 1 ... 3)
+  * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
+  * split S2M mfd driver into s2m-core and s2m-i2c, including the
+    kconfig symbol update (patch 8)
+  * S2MPG10 core driver (patch 9)
+  * s2m mfd driver cleanup patches (patches 10 ... 23)
+  * S2MPG10 clock driver (patch 24)
+  * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
+  * S2MPG10 RTC driver (patch 27)
+  * s2m RTC cleanup patches (patches 28 ... 31)
+
+I realise these are many, but since some prep-work was required to be
+able to add S2MPG anyway, I wanted to get the cleanup patches in as
+well :-) Let me know if I should postpone them to a later date instead.
+
+The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
+clock outputs, and additional GPIOs interfaces.
+
+This series adds support in the top-level device driver, and for the
+RTC and clock. Importantly, having the RTC driver allows to do a proper
+reset of the system. Drivers or driver updates for the other components
+will be added in future patches.
+
+This will need a DT update for Oriole / Raven to enable this device. I
+will send that out separately.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v5:
+- just a rebase & resend of the last two remaining patches
+- no other changes
+- Link to v4: https://lore.kernel.org/r/20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org
+
+Changes in v4:
+- various updates to sec-acpm (patch 9, Lee)
+- cache enum type in patch 25 (Krzysztof)
+- collect tags
+- Link to v3: https://lore.kernel.org/r/20250403-s2mpg10-v3-0-b542b3505e68@linaro.org
+
+Changes in v3:
+- Krzysztof:
+  - keep 'regulators' subnode required even for s2mpg10
+  - drop '$ref' and 'unevaluatedProperties' from pmic subnode, use
+    'additionalProperties' instead
+  - add some regulators to examples since s2mpg10 requires them as of
+    v3
+- sec-acpm:
+  - use an enum for struct sec_acpm_bus_context::type
+  - consistent name space for all functions sec_pmic_acpm_... to be
+    similar to i2c and consistent in this file
+- Link to v2: https://lore.kernel.org/r/20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org
+
+Changes in v2:
+- Rob:
+  - make PMIC node a child of ACPM, and all related changes (binding,
+    driver)
+- Krzysztof:
+  - merge defconfig updates into patch changing the symbols (patch 8)
+  - split MODULE_AUTHOR update into a separate patch
+  - better alignment fix (patch 11)
+  - merge two s2dos05/s2mpu05 related patches into one (patch 14)
+- myself:
+  - keep PMIC DT parsing in core, not in transport driver
+  - several updates in sec-acpm.c, see separate entries in patch 9
+  - fix typo in patch 17
+  - collect tags
+- Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
+
+---
+André Draszik (2):
+      dt-bindings: clock: samsung,s2mps11: add s2mpg10
+      clk: s2mps11: add support for S2MPG10 PMIC clock
+
+ Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml | 1 +
+ drivers/clk/clk-s2mps11.c                                    | 8 ++++++++
+ 2 files changed, 9 insertions(+)
+---
+base-commit: 54efec8782214652b331c50646013f8526570e8d
+change-id: 20250321-s2mpg10-ef5d1ebd3043
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
