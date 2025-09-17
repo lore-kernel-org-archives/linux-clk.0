@@ -1,103 +1,98 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610602ED141;
-	Wed, 17 Sep 2025 14:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2635E1CDFD5
+	for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 14:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119433; cv=none; b=o2paIf/4MmN5laWdtfBuZMeSWHc9M7ezvAjAV2/3/7lxjic8FGzaBl1Qj6cAZ3y7Lz6VxF+1xksjamvzrM4X4xIBVd09HDs3IgdZ5vUkx4IXCMGrcTg/cndikNaa/kzVQBh7c34Zgy6aq9M61aiWT4hGG8nfemd0iSYSC88JL+E=
+	t=1758119570; cv=none; b=azfIC1lkKJ0lfgAq9v6BsAbqRywcqMMx956SSnI/jFFYUfha1K15doegRPZ6YZWQbqSleg1ZcnXGu4q/t4PhhODi6PL5S/eqvr9SZR9EgZ0rsu/HB/zuPEm2vQyoclXYWjYdXGzZMF2xlBqmHf+gN7euNibKfXSWbDq7QrSl09I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119433; c=relaxed/simple;
-	bh=cj6+/2eXBy09YqfNtn5AMsUZ2NewJPSo4MWBRtD/yXU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQRe0JvwRWPgCY/2OG8q0VQs6F1fLRkNGyaCWSWkO79XlFHeD/uWgvN8rQLJ4l0YuX0oAN1oYnBZFilbzZxB6ZMink7DAtBjxRkribsZ/h7hJ1BmhNtSe9lUex/DZN/Yx4Imwo5pGrlz5S0EbTNf2uLyrY/sZLQHnX8Z3m8+t2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BWfsuI5b; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1758119570; c=relaxed/simple;
+	bh=EPP9Vl6NqhaMU3EPY2zVx+QbBHXXovM2n/lYKSxXZDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gyqnLqlDwzkbdggfIXS9Ioyg/FBG0LWKnqo9Ivbv/XKutkwGWa44J79aPC7TdxBlv7YuXMf65p9pVSX5qrnzd0WoowyFKId7U6BTJRjqzeA/+s+7F4Vw9TkthoMb5Ggh0uj2T1R8Qj2zmgbrWBJw+UBkKsbiOmyLvf82jnLZr6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OUYV48in; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BWfsuI5b"
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58HEUNOn271708;
-	Wed, 17 Sep 2025 09:30:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758119423;
-	bh=U9zDJhovKbcpmhyz3gEhzY99qKe9+nLbwMu+0klK/DU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=BWfsuI5bflyRxT+M7Vp+9nWqxUh09W2j/nE749ZUoc4yL2AHHm6AQACBdlB0hf0Pz
-	 I9lLFo109Ks+vYgX4qy8zWeO894+F4ncVu4vP93S7PKieT/xfMjxDjpFSPIYs9shkJ
-	 mfdQXfu8DyOsLAGtcNNZaR61sKesnyEFFSErIPxQ=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58HEUMLF1607512
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 17 Sep 2025 09:30:23 -0500
-Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 17
- Sep 2025 09:30:22 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
- (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 17 Sep 2025 09:30:22 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58HEUMAe3192299;
-	Wed, 17 Sep 2025 09:30:22 -0500
-Date: Wed, 17 Sep 2025 09:30:22 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Raag Jadav <raag.jadav@intel.com>
-CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
-Message-ID: <20250917143022.vqp77wmu47yumwh2@revenge>
-References: <20250916124518.2857524-1-raag.jadav@intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUYV48in"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-ea5cbca279aso301140276.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Sep 2025 07:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758119567; x=1758724367; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPP9Vl6NqhaMU3EPY2zVx+QbBHXXovM2n/lYKSxXZDQ=;
+        b=OUYV48inhaKrKUvjYB7tdrAfAuewYRj+RLVJWMrAY7IAFAzABVufqZV5YelVdS4xr0
+         9Yhewg5BsXreT2vaPw31Pq5/GGt54tgd/QBGH+3es0fxAjhfutft7w4IIYAb74YR8Bkh
+         5NWViOjWBYqSXx5mn50IfB2dQSFXU+/pfVNKQSDDBNcuv7gzCRXBVE4yd5c9HbC7P5as
+         f1q5JC7+3/w9VGQo4FhAAICJrjVc02MmdBgY3GPXYN96Z+EP6I5bfpC+KXnNRLnMlTj0
+         2GdAyayUYLqVV48RKZ2YtaKu5uM2+w6ap2WxzEpFdKlsAeb8fXmd4yjkaRoYMrFFWPym
+         eAlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758119567; x=1758724367;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EPP9Vl6NqhaMU3EPY2zVx+QbBHXXovM2n/lYKSxXZDQ=;
+        b=fIzkAZPCpbVdw4R50sjgN0eEuITS9nt9cfoD9C9qLzAU22aIOSgKuSKuuCUQQ74R8f
+         J8CXyz1cleCmoF+eMROWORfW1J3GDQjYbQNpFqvLfoHr5QmM5Z+YAgBn5P1066KvWC8t
+         NEIqk/nQV//5Zfd3jUwvayG+LcMD0c/FqE8JvvVw16cbAJWTXHGP/RDWolDfQ3aS2d8G
+         /6+2RhiaEPyVvp7400fDt58nzE2+l6cdbtmdpIYIwWSMY7da4f5OKDf8QEwZ1fvTrJVr
+         YZIsdIKFYLFWD/wGX22GbDjsa8fwT28p9eZirGQdl9vIx7d0JWIc+RqutVc135rNIGMd
+         EQTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSWE+yD8IpHcGZYfDL/eOs3MKupfrWCnVOBM1YFpckihG7EnSRYQf22apH727XyevvjJlXutKFTW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYBdmSSrqG7T6OYqzSATxlTz8A/Hpc+95M5BXkAdEA65StCBzC
+	ixem6rWL2FfBYrp+2EYvZ5pNK7tafl3fnuC9sGt4zHp0asEAQSsIayykBBr2VuK7Irc3bqF8v8k
+	iNe/LiaP5KwBA/cK8CS/PkJFRcBAp8A8xMBVK11jahg==
+X-Gm-Gg: ASbGncuLH8lOp5DFeZWhEWug1GgdSOIhQ1SpktZHT8IJ0kGGn5GXQ1CeOJlHJzC6wIU
+	C8yxx/+RFfffVo3CRoufBAFuSV9I+okDX0XAZhGpZrfVDhykmTUQ/Jg7LKNcUKoO14FKcX6Vvrg
+	1KIn6+OKrgeMuusPXEDjvoDK1zfQWcvHcC0jfLfLSe0WsqtNZbf5mjO2pfbGmtSp0x9ndE2D8NO
+	35uiZdM
+X-Google-Smtp-Source: AGHT+IF8958qtxMgepRmmh01erhzEe2CCKMaB8p0aTdmbEk0KITYYPXFKjQVfYFyDlneSgtW8sFxeX7TRTnXN5JBV/c=
+X-Received: by 2002:a05:6902:6c1b:b0:ea3:d667:affd with SMTP id
+ 3f1490d57ef6-ea5c06c1586mr1899822276.53.1758119566841; Wed, 17 Sep 2025
+ 07:32:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250916124518.2857524-1-raag.jadav@intel.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250810-pmdomain-round-rate-v1-1-1a90dbacdeb6@redhat.com> <aMasUV14w0Dc1ki0@redhat.com>
+In-Reply-To: <aMasUV14w0Dc1ki0@redhat.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 17 Sep 2025 16:32:11 +0200
+X-Gm-Features: AS18NWC-l2ZajfsWo9MjcYD2GJjmouYf3pDYfF1nnijLrVzTzi40JFoPMgBPLz8
+Message-ID: <CAPDyKFosHY_aVP3EdzXJj4=DvZCPfC5c80oSwTEeyyV-7MRQJA@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: mediatek: airoha: convert from round_rate() to determine_rate()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 18:15-20250916, Raag Jadav wrote:
-> Convert to use devm_kmemdup_array() which is more robust.
-> 
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> ---
->  drivers/clk/keystone/sci-clk.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> index c5894fc9395e..a4b42811de55 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -480,13 +480,10 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
->  		num_clks++;
->  	}
->  
-> -	provider->clocks = devm_kmalloc_array(dev, num_clks, sizeof(sci_clk),
-> -					      GFP_KERNEL);
-> +	provider->clocks = devm_kmemdup_array(dev, clks, num_clks, sizeof(sci_clk), GFP_KERNEL);
->  	if (!provider->clocks)
->  		return -ENOMEM;
->  
-> -	memcpy(provider->clocks, clks, num_clks * sizeof(sci_clk));
-> -
->  	provider->num_clocks = num_clks;
->  
->  	devm_kfree(dev, clks);
-> -- 
-> 2.34.1
-> 
+On Sun, 14 Sept 2025 at 13:51, Brian Masney <bmasney@redhat.com> wrote:
+>
+> Hi Ulf,
+>
+> On Sun, Aug 10, 2025 at 06:16:19PM -0400, Brian Masney wrote:
+> > The round_rate() clk ops is deprecated, so migrate this driver from
+> > round_rate() to determine_rate() using the Coccinelle semantic patch
+> > appended to the "under-the-cut" portion of the patch.
+> >
+> > Note that prior to running the Coccinelle,
+> > airoha_cpu_pmdomain_clk_round() was renamed to
+> > airoha_cpu_pmdomain_clk_round_rate().
+> >
+> > Signed-off-by: Brian Masney <bmasney@redhat.com>
+>
+> Would it be possible to get this picked up for v6.18? I'd like to remove
+> this API from drivers/clk in v6.19.
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+Sorry for the delay, applied for next, thanks!
 
-Also ran a basic boot tests on K3 devices i have access to.. so all
-good.
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+Kind regards
+Uffe
