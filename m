@@ -1,108 +1,78 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1FD34BA4C;
-	Wed, 17 Sep 2025 18:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22F75661;
+	Wed, 17 Sep 2025 19:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758133445; cv=none; b=t6mZ194CHvUTnrTx9nfjEbMneFL/OL93WK73wEFdSnHFDRFqyGg2Kq3s4EeDcy38lVDg/66nZQeImSAGGh5nAWHKG/f+JaCTjFYILTIW30aM5FPXgwiBgYsCJaaaDpupNuhGbevnr+6wORos+EwrXQAqTFQ0LUZWDjdl/MaaZJE=
+	t=1758136863; cv=none; b=V0A2/IqYruu01+6qVFFSq80eJW18DYXQXZUMpbBFhckYtTotMnj0rmBIGBFxx7cwmmYszLWKiU9539mhGmkqqz1TU0u1KSt2BrLwQHaS7nMl3aAchvH0vcrS+rUIxVIXxXMpF+2QFHB6zKFYUX8AjjPV2KOekG2ErTNLIw1lzwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758133445; c=relaxed/simple;
-	bh=KQBYLBTGVcI6B/UU8+PuP9ANhqubXd++Fn247awfx+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eC0r4D/TU7j7qTyzx7MMiVDHBqA4LEbTWw6WzWZ3jrnqWWkPBZs6SFS3vVGcw6wpLtJTYpvKcN6QvmwGBXrvTKbc/IAC11NN9Vw5tc61dfR84jzvuyf0bbCxcPKu5fXo9sKXOSUOUgRhaJTTrGCCd8eW99nd7WkvpPHoTzb1CHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tZiROv/G; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1758136863; c=relaxed/simple;
+	bh=y+1oflaYqWx1oZke1AYLzfl4If0XApi/pCR6vFyP6Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=htMlF1iiPC1tto4zZ/LC8SWFJSEhyqXgUkN8wPSc0101LYmtXWHzsP3XUkdXauF9z/ryP/up/RXd/0IYvPnXMvgAmmXEtDhzWWxyxbL2ETi51CZGMpeKGg4vQA0daP8NosoBu617zwOIHSe/bJyzn4nQfDHVrpUk/YWki0yuDbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elVhVFs1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tZiROv/G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758133443; x=1789669443;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KQBYLBTGVcI6B/UU8+PuP9ANhqubXd++Fn247awfx+M=;
-  b=tZiROv/G5T5hSfAw8BT0EFgHSYRbJPD4f4En11zg/onExBVnL39fzSoR
-   c497FEYwN9E92pYEsdylqC/3GbX6tbWqrEYft3J3pJGrI1dpT1Cpp43nc
-   utUeFIEEANASZxghCsQDwIeREmWntR5IrZUx1VxlRp8UM9UiLhh2QDHQm
-   pyrCb8GZofVh2Md7KYx3q0n5r8x/tzp/nGISWudoWWIC2ShJJBTSbxCio
-   giVszUy8w8/dh5rYQIdsXJ704eRVFb4PcHhGK+rqLXdesPoobDfxDoh5y
-   +OwJshwWu2xMjlVY7GlC8nL6ExS80jk7SKgAnx0NeSDDbBT0bu4AcSWnf
-   Q==;
-X-CSE-ConnectionGUID: 5jJN7IFvSvKlx8qiM0vY4w==
-X-CSE-MsgGUID: RvhQqBJPShSHvESk7QwlQw==
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="214017525"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 11:24:02 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 17 Sep 2025 11:23:40 -0700
-Received: from [10.12.48.170] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 17 Sep 2025 11:23:36 -0700
-Message-ID: <1a740af5-78c9-421f-a58a-fd4a2066493a@microchip.com>
-Date: Wed, 17 Sep 2025 20:23:35 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elVhVFs1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299D8C4CEE7;
+	Wed, 17 Sep 2025 19:20:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758136862;
+	bh=y+1oflaYqWx1oZke1AYLzfl4If0XApi/pCR6vFyP6Jg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elVhVFs1jX2+3kDoleBQyuWVNoG1a8y2VSothBaxVMJS9D5ibYWTKz4q+tXzYInKC
+	 55z/W1t2Jb1zMwarTWYuGhb5qhN4bQPIP2fPQWNaIv6QZjSXWiKYwYhHo1COtzPgzk
+	 CytdkEvA9UTB0LAMsCyFd2kM9DILrBXh7+oxZVYYdXMjnPjxulqV9bAIjA5PdtsJRF
+	 bkkJjCor00KOuLH8e2/uPQZpY0GxpDnRPYJl1nal3oObv+zdx67FFeP1WpBM3PT/wP
+	 UpkpViIoAvdnhOttHIVvP95NQIWAPk6RdUpHbgraHqkuhSU8sPL+5XIGdSB0VnhKjh
+	 vFyfXteQdJhgA==
+Date: Wed, 17 Sep 2025 20:20:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com,
+	mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, ksk4725@coasia.com,
+	smn1196@coasia.com, linux-arm-kernel@axis.com, krzk@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com, kenkim@coasia.com
+Subject: Re: [PATCH 5/7] dt-bindings: arm: axis: Add ARTPEC-9 alfred board
+Message-ID: <20250917-underrate-blurb-cd6a9aee014d@spud>
+References: <20250917085005.89819-1-ravi.patel@samsung.com>
+ <CGME20250917085045epcas5p2905ed7f307ca892997e14c33ad68f9fa@epcas5p2.samsung.com>
+ <20250917085005.89819-6-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
-To: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, SoC Team
-	<soc@kernel.org>, <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>
-CC: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu
- Beznea <claudiu.beznea@tuxon.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<llvm@lists.linux.dev>, kbuild test robot <lkp@intel.com>
-References: <20250916080545.9310-1-nicolas.ferre@microchip.com>
- <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
- <175808457715.4354.11044142356915096975@lazor>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <175808457715.4354.11044142356915096975@lazor>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+jcr3yw54Dfe8FJr"
+Content-Disposition: inline
+In-Reply-To: <20250917085005.89819-6-ravi.patel@samsung.com>
 
-Stephen,
 
-On 17/09/2025 at 06:49, Stephen Boyd wrote:
-> Quoting Nicolas Ferre (2025-09-16 06:19:11)
->> On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
->>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>
->>> Dear clock maintainers,
->>>
->>> Here are the first clk changes for 6.18.
->>> I don't think they have conflict with changes for the deprecated round_rate()
->>> to determine_rate() topic.
->>> They are in linux-next for a couple of days.
->>
->> But... this series depends on this patch:
->> https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.com
->>
->> Which will be part of a pull-request to-be-sent soon to arm-soc (which
->> is part of linux-next, so the build error doesn't appear there).
->>
->> Once the pull-request is done, do you prefer that I do an immutable
->> branch between CLK and ARM, that I queue this at91 PM patch into the clk
->> pull-request or that everything goes through arm-soc?
-> 
-> Whatever is required to build the code should be included in the PR. If
-> the same commit goes into arm-soc tree that's OK, just make sure the
-> branches aren't broken if you checkout a commit anywhere along the
-> branch that is sent to clk or arm-soc trees. Broken includes
-> functionally broken.
+--+jcr3yw54Dfe8FJr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your quick response Stephen. v2 of the pull-request has just 
-been sent.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Best regards,
-   Nicolas
+--+jcr3yw54Dfe8FJr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsKFgAKCRB4tDGHoIJi
+0hWoAQCXo+6cPmdH6YWPs9PyzigkwJ60BhAPlINjCbIJTksefwD/VzsJGao/I5xz
+PPOC4KGvroyyyWVXBtRiAJbuIIL+nwA=
+=76fH
+-----END PGP SIGNATURE-----
+
+--+jcr3yw54Dfe8FJr--
