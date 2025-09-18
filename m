@@ -1,139 +1,167 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABC3283FD7;
-	Thu, 18 Sep 2025 09:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64262E0406
+	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 11:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188924; cv=none; b=j/7WLtLvkoVA9HcMcE9Ipct2QJHawmzbTDGb9BbgLU5BDGAlxXpCAaPnoMrljwdIkNUKJsqTuhazkbrYq069n8aIZeVyn+Y1yJeAuCWR12B1f8FkJYu6Y39nZ/msaRjQi6xk/l/61vzx0tzpidBKrnS1NRwAuh355cQWpjY0+vg=
+	t=1758193921; cv=none; b=KWX0IY2+FXguU7Qx6kUGMkbfOD4gUQQETsTyNp3l8xN9oZ+M8UKt9w9PH7xvM9a6llV9E3U03oYNVem1AZTvlLnIPd5HuFTOFFyGplviYzk4ky4KCrWhQP8EA+xrb0tnnSxL6RvixBpQzM3ZpfKlDbjGd4/sCz3QQi/edAywTwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188924; c=relaxed/simple;
-	bh=G6UtyHUyxSaifPv2pVQU3+E+zPh48AFOKmgPtR63JuY=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=bI5k0+nnbBO6w20PgqMa/a0xwLrVDEeSwfrQ/J/NJ46p3fisLqsjYPQB8W+AIqUrQkVUjzuAYIACVNe3pdj8wGeDG+FoFmSXa3a51EvRXZVtwE7HcZXHTJCdET9RhKe9TbyHlNJMwwuJkmLFyzvChg+UfRQHTb0324Tzz5Zk+Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2b4bvny; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758193921; c=relaxed/simple;
+	bh=hh9aJMUS07iQ+JFOom0lu0TZ4+z/q5RWhduVOfEcJqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8IDB5Yy6Erqg3AoTmOIJsmfiwL2xcG1jkgP5VVjgeayK4DXnjG49pBtFyR/qB6B8aCPGBjMb5IeE3CpU1myGbOHunXoq/CYs389UNZIvXDQN0A06M2r0sED6URZxywIe/xMa3LZHyf1fMhEtSqfSmv/BGaWtTk+5FWVK/Qehqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpCECnOC; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2b4bvny"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7188FC4CEF1;
-	Thu, 18 Sep 2025 09:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758188923;
-	bh=G6UtyHUyxSaifPv2pVQU3+E+zPh48AFOKmgPtR63JuY=;
-	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
-	b=J2b4bvnyCB1hOIq0nXuoaz4YXQ76vylR0qq8+ZZntww0EUcIRhx687K2XAdbMdTgr
-	 QeQtnxymNSkiun/Q3spIYBSNKEEmPm3qEy7jDuPQl7TjlGRtYqhK1X1Pvh7XjEe4pk
-	 E4xuBBs1RM/nBv1+c/vATpxZLzI55HDRO0oU0Z614tpBnWE3UDD1y1tx6GbbZmPqU6
-	 rmS00uFVndoqfgzG/GQZp1FNaaQjWCLdEaZpHhJoXmisC3ZerfslRUCjbJ4IVzB9Bc
-	 1jDxXIMKO40472hwo+RlGhlcqMY4LdO1830bAhfKVSGmCc4CfTIO7KVOfWeS0/JrJc
-	 KXWyjQ7VvXVGg==
-Content-Type: multipart/signed;
- boundary=1fecadb09047536cf39b2c2fe88ea2cebdc9c9ca55c9ebcbd19b674ed89b;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 18 Sep 2025 11:48:34 +0200
-Message-Id: <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Kevin Hilman" <khilman@kernel.org>, "Frank Binns"
- <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Nishanth Menon" <nm@ti.com>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>,
- "Santosh Shilimkar" <ssantosh@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>
-Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
-Cc: "Andrew Davis" <afd@ti.com>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250915143440.2362812-1-mwalle@kernel.org>
- <20250915143440.2362812-3-mwalle@kernel.org> <7hv7lhp0e8.fsf@baylibre.com>
-In-Reply-To: <7hv7lhp0e8.fsf@baylibre.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpCECnOC"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3eb0a50a60aso528644f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 04:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758193918; x=1758798718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgH82lUCOsP+VrtHsBb90fe5+wv2J6tQFhMpK3dJL7w=;
+        b=dpCECnOCrgA1mxzqPTKyDIj1swhbBlQ5b5LTRj+j2xRdvTIQEMKrI1ymAz8wTP7Xv8
+         h4+nvc2STIYQTUrdpAjc/II2zK0HfztmmR4Uwc+sXL6+HQTz8tJ85x1kWLJirour5Hjo
+         c7Qet4m2UyRhkDa6U2RxZR02qr6L22osn+bngCXsZWwoologyiWnqXzjneUld5RvY9np
+         uYbqU8yKTEtDs/CtOWWCBQCGArPTJNu3DP/QWW/C2Nw7hkUaEGVZSWNUBpYmmF2H2Ycf
+         oVw8e9UY4QwddTvVLx+WdZMoKqAaIHsUOHwQwnBq17yCRfUwu5mFzftWApdoPIfy3wtv
+         a+qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758193918; x=1758798718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qgH82lUCOsP+VrtHsBb90fe5+wv2J6tQFhMpK3dJL7w=;
+        b=FCFIGvzIWG9BgQPVIJwEEShdtMl675MzJTeoWx7CZoTX7oRcOUV/6EVuP29Mt6/37M
+         Y4R7D5uU1ij19LXrUi+pudUkUtIO56tQrrdEXZLbBEhW5BbtWPmpIKpWycSLNZhe7Mwq
+         qgw6Xp15rR23hFbHTU8CM37W4o+A/LX3gcgufWOW9a5KU/3Bd14YGPe7J2EDMV4dmzkp
+         MWYeGimTE2vVfz5ygQRKTKgE9bFYcZPMW2zwVe/l3kOso6xOmegx9BOPv7MW3Tyk9Zkc
+         Onk/SToocD4YwTxCTbfsamAWYYscZUza2cm7FYh01qrCQps2WSdcaihEgKHxTH9GhXtV
+         QmJA==
+X-Gm-Message-State: AOJu0YxLdqMHs0H/tBgT0QBlmSxsHpTsXYi+8w3Ab0jcZRnFC7y0mgvG
+	AQiU42Uvs+rvzmp2hC4z8yAlkxHqVllnrtZ9oi/b/1rkVScGISK0qFX8f9DJtiYejYCtLpYCfl+
+	QwVfWuT72VQt+cmMlLm7hXXNRPBxb5o+Xod0HjkI=
+X-Gm-Gg: ASbGncsWFpw6SGhsXVXBG1lj6+ZjRouFD4zTASBwClF5wkt3dFSGWuR3Gx4UoBhAxR5
+	i0dlbuQlecKmL80Jf+EjpVOlYTSU3ebnKi3bkSxV0rhtuHOeBK1CNiG6fVG1nOxEax6d9Brj8z+
+	XY1NweCC30KA7VQnh1oasyltS5r0c8k4v8cQS/eE8YCvfu2Fs/S0+SUr4z1Totz1xnTdzxus3iH
+	vl2Jg4q/gi9g9XzdzfDRgdh2sk=
+X-Google-Smtp-Source: AGHT+IG0GMui68drR1bqxkF8T9cRxS3juUoMGcMHWjH/OXmaJxEWr9FQxLagF0QgDoGdQk4pJSLUDY67LP3Vklsr4dA=
+X-Received: by 2002:a5d:5d10:0:b0:3dd:981d:43a5 with SMTP id
+ ffacd0b85a97d-3ecdfa4e575mr3860337f8f.47.1758193917668; Thu, 18 Sep 2025
+ 04:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-
---1fecadb09047536cf39b2c2fe88ea2cebdc9c9ca55c9ebcbd19b674ed89b
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 18 Sep 2025 12:11:30 +0100
+X-Gm-Features: AS18NWD77y8PPkGANcR7F8lkci9tGtrtCWwH2x7D42Lju8LFSoC6mJti4exnjPU
+Message-ID: <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
+ assure values latched
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Wed Sep 17, 2025 at 5:24 PM CEST, Kevin Hilman wrote:
-> Michael Walle <mwalle@kernel.org> writes:
+Hi Marek,
+
+On Thu, Sep 18, 2025 at 4:07=E2=80=AFAM Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
 >
-> > The TISCI firmware will return 0 if the clock or consumer is not
-> > enabled although there is a stored value in the firmware. IOW a call to
-> > set rate will work but at get rate will always return 0 if the clock is
-> > disabled.
-> > The clk framework will try to cache the clock rate when it's requested
-> > by a consumer. If the clock or consumer is not enabled at that point,
-> > the cached value is 0, which is wrong.
+> On R-Car V4H, the PCIEC controller DBI read would generate an SError
+> in case the controller reset is released by writing SRSTCLR register
+> first, and immediately afterward reading some PCIEC controller DBI
+> register. The issue triggers in rcar_gen4_pcie_additional_common_init()
+> on dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW), which on V4H is the first
+> read after reset_control_deassert(dw->core_rsts[DW_PCIE_PWR_RST].rstc).
 >
-> Hmm, it also seems wrong to me that the clock framework would cache a
-> clock rate when it's disabled.  On platforms with clocks that may have
-> shared management (eg. TISCI or other platforms using SCMI) it's
-> entirely possible that when Linux has disabled a clock, some other
-> entity may have changed it.
+> The reset controller which contains the SRSTCLR register and the PCIEC
+> controller which contains the DBI register share the same root access
+> bus, but the bus then splits into separate segments before reaching
+> each IP. Even if the SRSTCLR write access was posted on the bus before
+> the DBI read access, it seems the DBI read access may reach the PCIEC
+> controller before the SRSTCLR write completed, and trigger the SError.
 >
-> Could another solution here be to have the clk framework only cache when
-> clocks are enabled?
-
-It's not just the clock which has to be enabled, but also it's
-consumer. I.e. for this case, the GPU has to be enabled, until that
-is the case the get_rate always returns 0. The clk framework already
-has support for the runtime power management of the clock itself,
-see for example clk_recalc().
-
-> > Thus, disable the cache altogether.
-> >
-> > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > ---
-> > I guess to make it work correctly with the caching of the linux
-> > subsystem a new flag to query the real clock rate is needed. That
-> > way, one could also query the default value without having to turn
-> > the clock and consumer on first. That can be retrofitted later and
-> > the driver could query the firmware capabilities.
-> >
-> > Regarding a Fixes: tag. I didn't include one because it might have a
-> > slight performance impact because the firmware has to be queried
-> > every time now and it doesn't have been a problem for now. OTOH I've
-> > enabled tracing during boot and there were just a handful
-> > clock_{get/set}_rate() calls.
+> Mitigate the issue by adding a dummy SRSTCLR read, which assures the
+> SRSTCLR write completes fully and is latched into the reset controller,
+> before the PCIEC DBI read access can occur.
 >
-> The performance hit is not just about boot time, it's for *every*
-> [get|set]_rate call.  Since TISCI is relatively slow (involves RPC,
-> mailbox, etc. to remote core), this may have a performance impact
-> elsewhere too.
-
-Yes of course. I have just looked what happened during boot and
-(short) after the boot. I haven't had any real application running,
-though, so that's not representative.
-
-> That being said, I'm hoping it's unlikely that
-> [get|set]_rate calls are in the fast path.
+> Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> All of that being said, I think the impacts of this patch are pretty
-> minimal, so I don't have any real objections.
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas=
+/renesas-cpg-mssr.c
+> index 65dfaceea71f..7b52e8235984 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev=
+ *rcdev,
 >
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+>         /* Reset module */
+>         writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
+Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
+to read the reset register `7` times and confirm [0] (as mentioned in
+the HW manual). So after reading do we want to confirm the bit is
+set/clear?
 
-Thanks!
+[0] https://lore.kernel.org/all/20250905114558.1602756-1-prabhakar.mahadev-=
+lad.rj@bp.renesas.com/
 
--michael
+Cheers,
+Prabhakar
 
---1fecadb09047536cf39b2c2fe88ea2cebdc9c9ca55c9ebcbd19b674ed89b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMvVcxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/ieAwF+NhC0QChHEdPzBo2eq6c4gPSFFsfbpOZw
-yyhFNhdMeM/qzGsGyod+WUxyFBlyK3JRAYDoKCAopPEvlQH6lpl7sfIGHzNEl+Ii
-sNWwWzCJKZdbLMn4731FC8c/X9xYrCfTL8U=
-=CEaS
------END PGP SIGNATURE-----
-
---1fecadb09047536cf39b2c2fe88ea2cebdc9c9ca55c9ebcbd19b674ed89b--
+>
+>         /*
+>          * On R-Car Gen4, delay after SRCR has been written is 1ms.
+> @@ -701,6 +702,7 @@ static int cpg_mssr_reset(struct reset_controller_dev=
+ *rcdev,
+>
+>         /* Release module from reset state */
+>         writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+> +       readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
+>
+>         return 0;
+>  }
+> @@ -715,6 +717,7 @@ static int cpg_mssr_assert(struct reset_controller_de=
+v *rcdev, unsigned long id)
+>         dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+>
+>         writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
+>         return 0;
+>  }
+>
+> @@ -729,6 +732,7 @@ static int cpg_mssr_deassert(struct reset_controller_=
+dev *rcdev,
+>         dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+>
+>         writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+> +       readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
+>         return 0;
+>  }
+>
+> --
+> 2.51.0
+>
+>
