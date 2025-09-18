@@ -1,47 +1,47 @@
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A72C2FF173
-	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 08:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBDA2DF714
+	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 09:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185703; cv=none; b=gCaMOr1V5hbArDgDnBlboL/ao8PqwI6N/ZiUCij9rvk968wotghcYhPORRL0cW/Ic1jKVavf9ERjxmJl1sPAKQlnOZqvTfA6lyRBnzu6p0a17AUXks9C9a/6hxTdCN7in1QhKUYtpb5mg8ynJ47PrhXcfogyZUQ58BcGh7FaRos=
+	t=1758186139; cv=none; b=nsDq3924GKY31NF2Q6h/GbnfKOX7pdgrWIpkesb5Uqt+lFOYDkM4vmhauAf8/UcU9OieB/E35qlBptafrKUL9uACdxrC8fNL5hy6qIhc/VDgCljm1xLN/3hCJCC6hqmS3viDVzCaNbAAgtzQDr1UYuuPIRh1ixT9IfYrce1YI8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185703; c=relaxed/simple;
-	bh=r8+mQ+RdYsv3rDfv2JvyVzGHe2KwLSTcDnHh5EcD3E0=;
+	s=arc-20240116; t=1758186139; c=relaxed/simple;
+	bh=yUo0gwp5DmrYyI9pysjTCC8QKBXzpTTeyo4OlcnCFGg=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=B5D49SC+mg/eZ4gnr+AsiYzY7ZYX7BuTX9JikDXPABkKKnfwyyzlWxFoSB78yRtZcMN+mJDLVc7K7E35RpH2jrVCmkZ3iVL+HGbj8+CiGRHi3yVK2rcFf/6PIiZ/LBfvRdaJIc9x2+wgkD4pMLL5wz58wf5OL7jxLkGeuMYScQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IEi1i8gM; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=p/Awa/jzsKEoTOFMrBA9p3ZithZmJALE6FnchvY8FZpYFau9ShAmR2vEdckUKvIe/bHjS1lA2YifCmaEJNg12LFjpeYO8nOaQCC3awgz6GNgqNkm+hSD8ZGu0QqsZm77rIcWNCeeZBOlXsr3sgtW0lc+MBPcEewIz90eOgy2FDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tke3dUod; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IEi1i8gM"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918085459epoutp0220553b64ed505d83b5241c5ce664ae5d~mVJQcg7Us2081420814epoutp02g
-	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 08:54:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918085459epoutp0220553b64ed505d83b5241c5ce664ae5d~mVJQcg7Us2081420814epoutp02g
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tke3dUod"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918090214epoutp0270e92bd52b810f3026c51ffbbb5ef5d6~mVPlgmzfg2793027930epoutp02e
+	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 09:02:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918090214epoutp0270e92bd52b810f3026c51ffbbb5ef5d6~mVPlgmzfg2793027930epoutp02e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758185699;
-	bh=rmBBeWQLJLdBvcEKIt5FmNx+Tdlhgo71aY0OO5PcSIg=;
+	s=mail20170921; t=1758186134;
+	bh=xohElGlOL2qwuc7CaXtsWhYSzs957c36W9/xGMuImuk=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=IEi1i8gMN7XRpwrq1jlvNqDl3GdgvjdbqBCDWaWiEL4idn4Fyci88/rfn1jIYqlw0
-	 y3wKRHjBGrcIklb/MTquI1Yt16WxUz2ekSmFHGRnVaGwBoe4bxYWMN4g/OrJP7lprP
-	 9+a4Pg79J97saIxiHYSb2o4AtEOUn05wiyctgJUA=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	b=Tke3dUodbTkau937Ut/TVOrn/aNDPd2vymNswh+GMDtCRYjpedMriimw/19fSwSYl
+	 wwNtG0nmJ2Kh1n213M6brzVDxjNZnNIktmmkeTmyaZ8mEEWlwDUiMD3RV8qkNvaovC
+	 mYTstNC50VWVjjKuDglzFK/mupZRxUzrefG0A4Hs=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
 	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250918085459epcas5p453b23f97b8a18ada0f3347f30227a5e8~mVJP3CffL3128931289epcas5p41;
-	Thu, 18 Sep 2025 08:54:59 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cS8bQ0SqQz6B9mH; Thu, 18 Sep
-	2025 08:54:58 +0000 (GMT)
+	20250918090214epcas5p4d1ca88ffc44bb86f416cc7356a33e7ec~mVPlAaEad0371503715epcas5p4Z;
+	Thu, 18 Sep 2025 09:02:14 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cS8ln0298z3hhTD; Thu, 18 Sep
+	2025 09:02:13 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
 	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250918085457epcas5p183de37a5d137c6649aa29c66a510a9d4~mVJOQJrju3029730297epcas5p16;
-	Thu, 18 Sep 2025 08:54:57 +0000 (GMT)
+	20250918090212epcas5p1fae66bbfa75ebed68841f83a10714c54~mVPjcjgHK3151831518epcas5p1m;
+	Thu, 18 Sep 2025 09:02:12 +0000 (GMT)
 Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20250918085454epsmtip22719dfea50c923eee5bf322bf1dd9c07~mVJL1aAhm2272122721epsmtip2U;
-	Thu, 18 Sep 2025 08:54:54 +0000 (GMT)
+	20250918090209epsmtip29e21b8aa35276b5789667d683987389a~mVPg-y8no2788427884epsmtip2w;
+	Thu, 18 Sep 2025 09:02:09 +0000 (GMT)
 From: "Alim Akhtar" <alim.akhtar@samsung.com>
 To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
 	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
@@ -51,10 +51,11 @@ Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
 	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
-In-Reply-To: <20250915095401.3699849-3-raghav.s@samsung.com>
-Subject: RE: [PATCH v2 2/3] clk: samsung: exynosautov920: add clock support
-Date: Thu, 18 Sep 2025 14:24:53 +0530
-Message-ID: <087b01dc2879$e8822770$b9867650$@samsung.com>
+In-Reply-To: <20250915095401.3699849-4-raghav.s@samsung.com>
+Subject: RE: [PATCH v2 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
+ nodes
+Date: Thu, 18 Sep 2025 14:32:08 +0530
+Message-ID: <087c01dc287a$ebd50680$c37f1380$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,18 +64,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIDMWX7dzjI2+lsAsCe3lTeFtXiqgH5gg35ANbkz8C0NAzFkA==
+Thread-Index: AQIDMWX7dzjI2+lsAsCe3lTeFtXiqgFAK0RPAkIX1i20Ln7xwA==
 Content-Language: en-us
-X-CMS-MailID: 20250918085457epcas5p183de37a5d137c6649aa29c66a510a9d4
+X-CMS-MailID: 20250918090212epcas5p1fae66bbfa75ebed68841f83a10714c54
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250915094515epcas5p3210f5c66a24a7a7f23a04075e7636a89
+X-CMS-RootMailID: 20250915094517epcas5p2186fc92cca758b6fe610c0ec91ee51bc
 References: <20250915095401.3699849-1-raghav.s@samsung.com>
-	<CGME20250915094515epcas5p3210f5c66a24a7a7f23a04075e7636a89@epcas5p3.samsung.com>
-	<20250915095401.3699849-3-raghav.s@samsung.com>
+	<CGME20250915094517epcas5p2186fc92cca758b6fe610c0ec91ee51bc@epcas5p2.samsung.com>
+	<20250915095401.3699849-4-raghav.s@samsung.com>
 
 Hi Raghav
 
@@ -89,10 +90,10 @@ Hi Raghav
 > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
 > kernel@vger.kernel.org; chandan.vn@samsung.com; dev.tailor@samsung.com;
 > karthik.sun@samsung.com; Raghav Sharma <raghav.s@samsung.com>
-> Subject: [PATCH v2 2/3] clk: samsung: exynosautov920: add clock support
+> Subject: [PATCH v2 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
+> nodes
 > 
-> Add support for CMU_M2M which provides clocks to M2M block, and register
-> the required compatible and cmu_info for the same.
+> Add required dt node for CMU_M2M block, which provides clocks for M2M IP
 > 
 > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 > ---
