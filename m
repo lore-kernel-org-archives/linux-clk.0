@@ -1,174 +1,103 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5274334BA25;
-	Thu, 18 Sep 2025 18:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F0B27B357;
+	Thu, 18 Sep 2025 18:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758218633; cv=none; b=OxyHciEyma2nK5KVNpNCKi7KH3iRM4oxmSJsyUuhYaSANGywQKy2ZRktSKELCPxckMhgZOtTxZnWz32XWcL1kblvqfqx5EQHxwG38g8bJ/wxpzsbd1h22leAe2OtMMVDsE+EWofEwDLkEWzNejGxKlxvPSUFFGuecU01VrkLyik=
+	t=1758221398; cv=none; b=cby+UyM7UD/DSiFWSdtmE4La0P3Ce91BVjguGqERc5Sx9tWVNi6cMkl4a1cWP0sLI1n9/TlrA+n5o75+x9f8123+gDpYTmMsEJzbn1+M2HGK0QKG4WGCnasLAKe28X172tflnnDvKE2M1eaH4f1hB+YyWVRVmCrj3tTQTiXWHfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758218633; c=relaxed/simple;
-	bh=oFc0UUvaTrN00fQCCZR47mEWEgZ0kFqcrNmJXWNIqv0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acs6t7hPDAOz8j7Pm57Zf1GRxmEe1H+7cKPY7RuB5MuRSMg/fVuh0Cd3e09It4xxLRGhIsOCxjYRENq3JGtvXXQLF3slYtT2+NpXVZvD0hETFAmdhW71wpi13Le/y/lEqJWAhhqqZhxb3BVlRqurBXsqWUhuYySFYvRfKulRzcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r6kG6ZGg; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1758221398; c=relaxed/simple;
+	bh=YFvqcq/2EL5NjJ0I4Ow1yGNyZwdpiGWa5I9vDyoHhPM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aScE32gssX0u0rksk2iitkiYOahiNgsuCOcUYadc8PCkopzjpbE5Gcop7cjjSqD8ltEFces60SOj8xD4gqdLAE+H37L5u9lbZ4fd4yG8MCX+U9g4aKbhw0jr/tI2jem5DLAWBE3WCor5GJvqeD2I9gjh/CCd0Phmwbj2t2S2qwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Og/baEEG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r6kG6ZGg"
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58II3JWD065125;
-	Thu, 18 Sep 2025 13:03:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758218599;
-	bh=t4/cCa5+Es3PK/YLYFtiDyhJrzARI0WStMwJlXvT8cw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=r6kG6ZGg/ftlCggJnQ2jFUaA93cbiozpp4y5+kEMJ4pzrj78W3ZiPUtuS+pD61doL
-	 0gGfb8CNDDqIxpCpmvTZBobGnNwrl4zExEOebcL5sAhzVcp6VvfAIwMo7anYcYDA4a
-	 f9RzW5MQ/5+obpjSjsJ2R3n5YP0A2z85goCW0ww4=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58II3Ilj1732106
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 18 Sep 2025 13:03:18 -0500
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 18
- Sep 2025 13:03:18 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 18 Sep 2025 13:03:18 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58II3HEI1277187;
-	Thu, 18 Sep 2025 13:03:17 -0500
-Date: Thu, 18 Sep 2025 23:33:16 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Michael Walle <mwalle@kernel.org>
-CC: Kevin Hilman <khilman@kernel.org>, Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster <matt.coster@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth
- Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Andrew
- Davis <afd@ti.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
-Message-ID: <20250918180316.nze5ak3m5pde44uz@lcpd911>
-References: <20250915143440.2362812-1-mwalle@kernel.org>
- <20250915143440.2362812-3-mwalle@kernel.org>
- <7hv7lhp0e8.fsf@baylibre.com>
- <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Og/baEEG"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E1079C4CEE7;
+	Thu, 18 Sep 2025 18:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758221398;
+	bh=YFvqcq/2EL5NjJ0I4Ow1yGNyZwdpiGWa5I9vDyoHhPM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Og/baEEG7RJIWsGueDpHJH38aV26kd+cei0lHMvj4xuiNJJ/EUHRWhGkpf+wsXzZY
+	 6AVErdVzIuyyvjB6h9w6JkeJqoOuFONih7ykIxjunInVSd6KjpKNvnhOY8fAH7xpCF
+	 l4odM4vXM772c6cdpNLBGXG6RP8cYUP0wOJ4Xd1rzcR8Rc/D4LFpal/Mwq5AUjLDrj
+	 bm1IsbXoHx6i/Dfb3immgF2oCpJdfILx423U6yEwxsatvq2ECS2kWqbGnKRo/KaQef
+	 x/zEdMl5HWXXB1ww6kxMqVTKHF9k3G0iIRjZHghjWJfLaJRSiGn0GjspvwpgxDOtVO
+	 kzvp0gRnXvapQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D029FCAC59A;
+	Thu, 18 Sep 2025 18:49:57 +0000 (UTC)
+From: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>
+Date: Fri, 19 Sep 2025 01:48:41 +0700
+Subject: [PATCH 01/10] dt-bindings: gpio: rda: Make interrupts optional
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250919-rda8810pl-mmc-v1-1-d4f08a05ba4d@mainlining.org>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+In-Reply-To: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+To: Manivannan Sadhasivam <mani@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Dang Huynh <dang.huynh@mainlining.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758221395; l=820;
+ i=dang.huynh@mainlining.org; s=20250917; h=from:subject:message-id;
+ bh=2bdyJSmNfA84cD9RwcJK/nl1FiNGvBo/u1np6F84KKc=;
+ b=DyZRaXM1kMO4Bvn2OOUEuGjeJosLpZO+vdO4EV+4Kzk2toTVfVMNwOFax9Lh/KERoSAaQrAAn
+ gTzEsgHiZT0Cc3CM6CRQ0mx/+FPllcXT0qx3PI+xw69zxFy6ReLEoiV
+X-Developer-Key: i=dang.huynh@mainlining.org; a=ed25519;
+ pk=RyzH4CL4YU/ItXYUurA51EVBidfx4lIy8/E4EKRJCUk=
+X-Endpoint-Received: by B4 Relay for dang.huynh@mainlining.org/20250917
+ with auth_id=526
+X-Original-From: Dang Huynh <dang.huynh@mainlining.org>
+Reply-To: dang.huynh@mainlining.org
 
-Hi Michael,
+From: Dang Huynh <dang.huynh@mainlining.org>
 
-On Sep 18, 2025 at 11:48:34 +0200, Michael Walle wrote:
-> On Wed Sep 17, 2025 at 5:24 PM CEST, Kevin Hilman wrote:
-> > Michael Walle <mwalle@kernel.org> writes:
-> >
-> > > The TISCI firmware will return 0 if the clock or consumer is not
-> > > enabled although there is a stored value in the firmware. IOW a call to
-> > > set rate will work but at get rate will always return 0 if the clock is
-> > > disabled.
-> > > The clk framework will try to cache the clock rate when it's requested
-> > > by a consumer. If the clock or consumer is not enabled at that point,
-> > > the cached value is 0, which is wrong.
-> >
-> > Hmm, it also seems wrong to me that the clock framework would cache a
-> > clock rate when it's disabled.  On platforms with clocks that may have
-> > shared management (eg. TISCI or other platforms using SCMI) it's
-> > entirely possible that when Linux has disabled a clock, some other
-> > entity may have changed it.
-> >
-> > Could another solution here be to have the clk framework only cache when
-> > clocks are enabled?
-> 
-> It's not just the clock which has to be enabled, but also it's
-> consumer. I.e. for this case, the GPU has to be enabled, until that
-> is the case the get_rate always returns 0. The clk framework already
-> has support for the runtime power management of the clock itself,
-> see for example clk_recalc().
+The GPIO controller from the modem does not have an interrupt.
 
-Why did we move away from the earlier approach [1] again?
-[1] https://lore.kernel.org/all/20250716134717.4085567-3-mwalle@kernel.org/
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio-rda.yaml | 3 ---
+ 1 file changed, 3 deletions(-)
 
-
-> 
-> > > Thus, disable the cache altogether.
-> > >
-> > > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > > ---
-> > > I guess to make it work correctly with the caching of the linux
-> > > subsystem a new flag to query the real clock rate is needed. That
-> > > way, one could also query the default value without having to turn
-> > > the clock and consumer on first. That can be retrofitted later and
-> > > the driver could query the firmware capabilities.
-> > >
-> > > Regarding a Fixes: tag. I didn't include one because it might have a
-> > > slight performance impact because the firmware has to be queried
-> > > every time now and it doesn't have been a problem for now. OTOH I've
-> > > enabled tracing during boot and there were just a handful
-> > > clock_{get/set}_rate() calls.
-> >
-> > The performance hit is not just about boot time, it's for *every*
-> > [get|set]_rate call.  Since TISCI is relatively slow (involves RPC,
-> > mailbox, etc. to remote core), this may have a performance impact
-> > elsewhere too.
-> 
-> Yes of course. I have just looked what happened during boot and
-> (short) after the boot. I haven't had any real application running,
-> though, so that's not representative.
-
-I am not sure what cpufreq governor you had running, but depending on the governor,
-filesystem, etc. cpufreq can end up potentially doing a lot more of
-the clk_get|set_rates which could have some series performance degradation
-is what I'm worried about. Earlier maybe the clk_get_rate part was
-returning the cached CPU freqs, but now it will each time go query the
-firmware for it (unnecessarily)
-
-I currently don't have any solid data to say how much of an impact
-for sure but I can run some tests locally and find out...
-
-> 
-> > That being said, I'm hoping it's unlikely that
-> > [get|set]_rate calls are in the fast path.
-> >
-> > All of that being said, I think the impacts of this patch are pretty
-> > minimal, so I don't have any real objections.
-> >
-> > Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> 
-> Thanks!
-> 
-> -michael
-
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-rda.yaml b/Documentation/devicetree/bindings/gpio/gpio-rda.yaml
+index 6ece555f074f84b396537917d7149d4061724dcc..dbb73b4d33ed39aa65024376b1af0c4e2fb896db 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-rda.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-rda.yaml
+@@ -41,9 +41,6 @@ required:
+   - gpio-controller
+   - "#gpio-cells"
+   - ngpios
+-  - interrupt-controller
+-  - "#interrupt-cells"
+-  - interrupts
+ 
+ additionalProperties: false
+ 
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+2.51.0
+
+
