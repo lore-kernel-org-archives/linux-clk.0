@@ -1,152 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC2922425E;
-	Thu, 18 Sep 2025 15:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0B8312830;
+	Thu, 18 Sep 2025 15:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208713; cv=none; b=pqezMrWMYN1QBq5RoPsCoOMXE2RJTuduOM+vmclmFdHW8SUe224ap6Ht1vYXcGoefISHJtT3TMWoxzNfQEGQvFYYKJLUtwHhPsaX0LLELaFMakhkfuxsjN6P32uHjv73VYji5G8YLR2wOeQbPGSQ1DOZoXZ2GHxq7Y6ptEy9IAo=
+	t=1758209709; cv=none; b=H+rg3bNuWAX1MFTwL0kFyYb7s+65knS5kHj2RyoWuHYKLCswXspfbwlNU4gaVlzXbGXrjcYjmKvKL9atXX3stvqvNJzxPMUggFyr28nbYlkiKSeouvh4LsrRcbIgLH+gxPqpb8E+DC9QGbmowxQw9ho+5S4KZFyw0JJzNkfNMU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208713; c=relaxed/simple;
-	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBjcA+hLzwamDR8Qxz+zW+D3gPYuOxjy8ibUzhcRM6kwKBd4UesaVHrTwhZpN/EquqkCqdrUTi4AjHD8GI/Pgq2yVpLR0FqUCKj00QAF4iUIaWipgYBjbtudckA3B5+HcoTXf1SfTN2YTGYjVy1sB266xn0B6jxwR3/0BLgcS50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLi4AGnf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758209709; c=relaxed/simple;
+	bh=NztaOUsSCnDXOzioZ98y9HEmzoTvXBnvEUxhKkPC9RI=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=kyH6LBSiDRTJcWS5msXVe9ztC/tMnmCa0wcZs7x2gVlsLmUyw5mqfKU8T0xUT8FwzKlEmcl+vmyYfcEvR58Revh95m10bpg1srN+1lYEvCAVjxIygQm5VPpByhMJyH7tF+0/I4kp6Q0Gt3Z4LNoEcpJamvLdDT2ne8DggBCtmsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=vOB2VMKe; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLi4AGnf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAE5C4CEE7;
-	Thu, 18 Sep 2025 15:18:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758208712;
-	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uLi4AGnfRF6V6De0JAQgyez9xlUDmOFx461zVUm3XCG3sP4T0+DSxdMQyyFkuOUhV
-	 +Vh0+IHpwVsE1AZMdCz4UjHMuDlwhMrk39tlWhDcGgoEsf0H6LULv5ssc1b5PCpbhd
-	 JdIa4NK88xzdm/0CBrNg88tIE/Fx13gh/UUhVDeR2zvkFOqfwIosu0udNELsXGdBkl
-	 Js0qFWwQZgoA63M3jyhl2eCC8j64ckbBPtWR2RrV6aeDGgTIOkwrsNNEzkg2vc6zCf
-	 TfonVsjS25GolhGQGXBUZ0rgcw0cK/3wgOdylL6W6s1718xsH2XOddKjhMSuq6sr/2
-	 Gdq9xsJAzr/NA==
-Date: Thu, 18 Sep 2025 16:18:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
-Message-ID: <20250918-unharmed-bloating-8b573513fce6@spud>
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
- <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
- <20250917-contort-sassy-df07fd7515a0@spud>
- <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="vOB2VMKe"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=ktV39ZW891V7Z77BCOOj+b74VuWUKu/l31kKWMEBxlg=; b=vOB2VMKees5K/QqAbrhyk+sYbE
+	UMAhvmeFX7FnsTo2TrjTUStadkx9yxEVBhirMGT6AmNFS5cnHYNF5rp20RxqykorQpk0PJPY2l1Fi
+	SBBLMrF72znIqFijKvC5fUPRhnhr+4mXaNEFbsIEbhDQFEwK218NqtuMCqHchuWdWy/c=;
+Received: from [184.161.19.61] (port=56528 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1uzGej-0002kk-CN; Thu, 18 Sep 2025 11:34:46 -0400
+Date: Thu, 18 Sep 2025 11:34:44 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+ Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>
+Message-Id: <20250918113444.65155654f1e16416a492273f@hugovil.com>
+In-Reply-To: <OS3PR01MB831915ED0F0E2452BEBC37098A17A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+References: <20250912142056.2123725-1-chris.brandt@renesas.com>
+	<20250912142056.2123725-3-chris.brandt@renesas.com>
+	<20250917162832.02100f4bbe896c878eccca8e@hugovil.com>
+	<OS3PR01MB831915ED0F0E2452BEBC37098A17A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qnPPSzmWE/KqIUbp"
-Content-Disposition: inline
-In-Reply-To: <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -2.8 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v2 2/2] drm: renesas: rz-du: Set DSI divider based on
+ target MIPI device
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+
+On Wed, 17 Sep 2025 21:45:55 +0000
+Chris Brandt <Chris.Brandt@renesas.com> wrote:
+
+> Hi Hugo,
+> 
+> Thank you for your review.
+> 
+> > > +rzg2l_cpg_dsi_div_set_divider(mipi_dsi_pixel_format_to_bpp(dsi->forma
+> > > +t) / dsi->lanes, 1);
+> >
+> > What is this "1" value meaning? This is hard to decipher.
+> 
+> That is true (unless you know to look in the other file)
+> 
+> > If it is related to PLL5_TARGET_DSI, then these PLL5_TARGET_* macros should be added to the renesas.h header file and used here.
+> 
+> I was not clear how much I should be adding to that renesas.h file. But like you said, it would make the code
+> easier to read.
+> 
+> I was also waiting to hear what Geert thought about adding a new API to the clock driver.
+
+Hi Chris,
+no problem.
+
+Just to let you know, I tested your 2 patches on our custom board
+and the panel is still working well.
+
+Hugo.
 
 
---qnPPSzmWE/KqIUbp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Hugo Villeneuve <hugo@hugovil.com> 
+> Sent: Wednesday, September 17, 2025 4:29 PM
+> To: Chris Brandt <Chris.Brandt@renesas.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>; Michael Turquette <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Biju Das <biju.das.jz@bp.renesas.com>; Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Hien Huynh <hien.huynh.px@renesas.com>; Nghia Vo <nghia.vo.zn@renesas.com>; linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; dri-devel@lists.freedesktop.org
+> Subject: Re: [PATCH v2 2/2] drm: renesas: rz-du: Set DSI divider based on target MIPI device
+> 
+> On Fri, 12 Sep 2025 10:20:56 -0400
+> Chris Brandt <chris.brandt@renesas.com> wrote:
+> 
+> > Before the MIPI DSI clock source can be configured, the target divide 
+> > ratio needs to be known.
+> > 
+> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> > 
+> > ---
+> > v1->v2:
+> > - Add spaces around '/' in comments
+> > - Add target argument in new API
+> > ---
+> >  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 18 
+> > ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c 
+> > b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > index f87337c3cbb5..ca0de93d5a1a 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -7,6 +7,7 @@
+> >  
+> >  #include <linux/bitfield.h>
+> >  #include <linux/clk.h>
+> > +#include <linux/clk/renesas.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/io.h>
+> > @@ -732,6 +733,23 @@ static int rzg2l_mipi_dsi_host_attach(struct 
+> > mipi_dsi_host *host,
+> >  
+> >  	drm_bridge_add(&dsi->bridge);
+> >  
+> > +	/*
+> > +	 * Report required division ratio setting for the MIPI clock 
+> > +dividers
+> 
+> Add missing dot at end of sentence.
+> 
+> > +	 * Assume the default clock source is FOUTPOSTDIV (PLL/2) being fed to the DSI-PHY, but also
+> > +	 * the DSI-PHY must be 16x the MIPI-DSI HS clock.
+> > +	 *
+> > +	 * pllclk / 2 = vclk * DSI divider
+> > +	 * pllclk = vclk * DSI divider * 2
+> > +	 *
+> > +	 * hsclk = (vclk * DSI divider * 2) / 16
+> > +	 *
+> > +	 * vclk * bpp = hsclk * 8 * num_lanes
+> > +	 * vclk * bpp = ((vclk * DSI divider * 2) / 16) * 8 * num_lanes
+> > +	 *   which simplifies to...
+> > +	 * DSI divider = bpp / num_lanes
+> > +	 */
+> > +	
+> > +rzg2l_cpg_dsi_div_set_divider(mipi_dsi_pixel_format_to_bpp(dsi->forma
+> > +t) / dsi->lanes, 1);
+> 
+> What is this "1" value meaning? This is hard to decipher.
+> 
+> If it is related to PLL5_TARGET_DSI, then these PLL5_TARGET_* macros should be added to the renesas.h header file and used here.
+> 
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > --
+> > 2.50.1
+> > 
+> > 
+> 
+> 
+> --
+> Hugo Villeneuve
+> 
 
-On Thu, Sep 18, 2025 at 11:11:10AM +0700, Dang Huynh wrote:
-> On 2025-09-18 03:46, Conor Dooley wrote:
-> > On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
-> > > Add documentation describing the RTC found in RDA8810PL SoC.
-> > >=20
-> > > Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
-> > > ---
-> > >  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30
-> > > ++++++++++++++++++++++
-> > >  1 file changed, 30 insertions(+)
-> > >=20
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..3ceae294921cc3211cd77=
-5d9b3890393196faf82
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > @@ -0,0 +1,30 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: RDA Micro RDA8810PL Real Time Clock
-> > > +
-> > > +maintainers:
-> > > +  - Dang Huynh <dang.huynh@mainlining.org>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: rda,8810pl-rtc
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> >=20
-> > Your driver implements functions that turn on an alarm irq, but there is
-> > none mentioned here. What's going on there?
-> The RTC doesn't seem to have an AP IRQ associated. I can't find any
-> reference to it on downstream kernel and the docs.
->=20
-> >=20
-> > Additionally, there's no clocks property? For an onboard RTC I'd have
-> > expected there to be a clock sourced outside of the block.
 
-What about the clock?
-
-> >=20
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    rtc@1a06000 {
-> > > +      compatible =3D "rda,8810pl-rtc";
-> > > +      reg =3D <0x1a06000 0x1000>;
-> > > +    };
-> > >=20
-> > > --
-> > > 2.51.0
-
---qnPPSzmWE/KqIUbp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwiwQAKCRB4tDGHoIJi
-0mfkAP9yS2bi4VD6hutTCOIeT3qJB84qFVZONJYP1wnhQwLGeAD8CFxZvCN6Jv4e
-UC/tOu6vHervFswpc7sqlf9k4hh+qQs=
-=wDJV
------END PGP SIGNATURE-----
-
---qnPPSzmWE/KqIUbp--
+-- 
+Hugo Villeneuve
