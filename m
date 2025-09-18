@@ -1,47 +1,48 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB55817BB21;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E982820DB;
 	Thu, 18 Sep 2025 21:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758230189; cv=none; b=ajqKRhMHLbEV5WIz/AGN9ynJbI41NvbBP3ULnDMAtTMvVpOifSGBiOlGuvLfCeTSbfGRDz9P1FPrg9jpsJ1Qboh0Ure2PfaOdflxmAgqfR8tN4PFxX5yxbtJl4ngbV35+eoKimRA6a+lP4QZbNp5xh4MGb60+BRFylh/vG+fT7g=
+	t=1758230189; cv=none; b=RgkOFrQvzU+1LNclUcCokZVihut07Xaji/nLiy7K2rHvJxHTk9izR+8AMPK6BDXDnISKK51wAVJiGeVoyljhhgWowr/nKZrVm08vOxKOzZYZcOiR1sRK3AL7E7e8L9hTrelhBEan/K0z4YaCRlqWQ4WyvkpEJ30V+D48hZqMnLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758230189; c=relaxed/simple;
-	bh=bAu3PgIQmosp5/ybiTOCAKIVX/WWS61AIso35P5GwqQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mwNWSg/xVNW1P0lg/T6bYz7n1c9GmQ7V1wXFHup17MKuTlaFwMoEWlW0+Tewv1iaMSZxmWXNFm0e4buf5cjhGZkmdVuVdJ7+Art2D0rKu2pU1o7yrrM8htM+JH34XLOpdHGS8iXYKhBPd3EULBr/UXg8gf4DzLx2MK9zNFPY4ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nagapyF0; arc=none smtp.client-ip=68.232.153.233
+	bh=1hwWQkXg0mws8PjElqjxpMsAUmyOGjqz1fTxScdIq6I=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s3YMgf9Kdd5qYw3KqO1KMxE/Yy3Y0rq3WDWZp57Z0jdfH0GgWG7q2Uj4dDIVmsgoughtm5i1JkCily2De135bDZ5pTzBgyDwjc6L4/96bWmYTST/UKPiz8IdhxlG12S9fYYUqnzeTgF1XONDKFwF/V0gFzprAcNcNTVf2x3wWp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qI4EYjYq; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nagapyF0"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qI4EYjYq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758230188; x=1789766188;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bAu3PgIQmosp5/ybiTOCAKIVX/WWS61AIso35P5GwqQ=;
-  b=nagapyF0Kd4yq/nQzPxJD6GTmbAHKcplBuAWE4yBn7D8kcVfeczj+sTW
-   3p2UcMnDtNUbUYXoE+xadxIgAxDzrx1zpK0pIE0UISwVQFddL7Kf8j0o5
-   WaPZYBbzFTCzUvD+gLnCy8bALAVuqFwol3H1hvXwSgjmOPU6XFPv82Y5L
-   9gv4uzolPih7zafdg2+alEAQgw02igq+J2ra5taQgDfkDWgEv4KCXfNXo
-   Yl59j/7+1nqOvbdw/tKCvv5ibPLHpT5uBLL/ns9e0ojtDLLR6tW873lVr
-   1Axi6LVDQWowJGj5b+5H7H0xijHFODg/dbmHykNvmfPF0S6rTJ2GC85Gc
-   A==;
+  t=1758230189; x=1789766189;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1hwWQkXg0mws8PjElqjxpMsAUmyOGjqz1fTxScdIq6I=;
+  b=qI4EYjYqCghpQsrQ4O5QgDZjKGUVC/+OIjaf4FPa01PFc3vQ6cVg6K2v
+   /YBBaBdQVwfQuvVRFz152aAWwuL3H2wTVkX91wt9bEVNwO6EJU7jMJ4oy
+   VcEiwYmhiqxWHCW0x4Ic1HRkNHtqCu/BSkhF4BIr1Hw5gJizjjf4XJxXH
+   QHaamKb1rKBRggGrmitcv1rtFHUBVSoPhrZNRD14M5bYiIsBgaCCnwmnJ
+   5Y0pRQ/BYMBMkraA00cXwCYobc8CY468V4JH42ncRFKHZTPyW0YT+ThYq
+   oJcr/0gf1G3R2O12/+03jjvTES73UB56y79WbzL1Xm9zqNPvTZsNF9gBR
+   g==;
 X-CSE-ConnectionGUID: 31sRM3ybQuOqhqj3gb2ViA==
-X-CSE-MsgGUID: cMqbRIUSRbavarYgWwmabw==
+X-CSE-MsgGUID: WUC3l1bMTKia6RDJacDqUw==
 X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="278071374"
+   d="scan'208";a="278071376"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2025 14:16:22 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
  chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 18 Sep 2025 14:15:50 -0700
+ 15.1.2507.58; Thu, 18 Sep 2025 14:15:51 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 18 Sep 2025 14:15:50 -0700
+ 15.1.2507.58 via Frontend Transport; Thu, 18 Sep 2025 14:15:51 -0700
 From: <Ryan.Wanner@microchip.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
@@ -49,10 +50,12 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <varshini.rajendran@microchip.com>, "Ryan
  Wanner" <Ryan.Wanner@microchip.com>
-Subject: [PATCH v4 00/31] clk: at91: add support for parent_data and
-Date: Thu, 18 Sep 2025 14:15:42 -0700
-Message-ID: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v4 02/31] clk: at91: pmc: Move macro to header file
+Date: Thu, 18 Sep 2025 14:15:44 -0700
+Message-ID: <0e9bd3a3aaf4c3168a78f95625eb0e1beb07d35d.1758226719.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,108 +67,58 @@ Content-Type: text/plain
 
 From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-This series adds support for parent data and parent _hw on the at91
-clock drivers. This also updates all the SoC specific clock drivers to
-use this format as well.
+Move this macro to the header file as it is used by more than one driver
+file.
 
-This is a continuation of the V1 of this series here [1].
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/pmc.h      | 3 +++
+ drivers/clk/at91/sama7d65.c | 3 ---
+ drivers/clk/at91/sama7g5.c  | 3 ---
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
-SoCs.
-
-Changes v1 -> V2:
-- Remove all the small sama7g54 SoC driver changes and put them in their
-  own patch.
-- Add the SAMA7D65 and the SAM9X75 to this update.
-- Add a patch to move all common used macros into the pmc.h file.
-- Update changes from v6.6 to v6.16.
-- Remove patches that where style fixes and include those in the update.
-
-Changes v2 -> v3:
-- Adjust each patch so they are fully atomic.
-- Add a patch to have the SAMA7D65 systemclocks use parent_data and
-  parent_hw.
-- Add a formatting cleanup patch for the SAM9X75.
-- Adjust commit messages that no longer show invalid information.
-
-Changes v3 -> v4:
-- Adjusted the AT91_CLK_PD macros to not use the index and use the name
-  and HW.
-- Adjust the commit message for the sam9x7 to descibe the changes
-  better.
-- Remove the usage of clock indexes and use of_clk_get_parent_name().
-- Adjust commit messages to better describe the changes.
-
-1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
-
-Claudiu Beznea (28):
-  clk: at91: pmc: add macros for clk_parent_data
-  clk: at91: clk-sam9x60-pll: use clk_parent_data
-  clk: at91: clk-peripheral: switch to clk_parent_data
-  clk: at91: clk-main: switch to clk parent data
-  clk: at91: clk-utmi: use clk_parent_data
-  clk: at91: clk-master: use clk_parent_data
-  clk: at91: clk-programmable: use clk_parent_data
-  clk: at91: clk-generated: use clk_parent_data
-  clk: at91: clk-usb: add support for clk_parent_data
-  clk: at91: clk-system: use clk_parent_data
-  clk: at91: clk-pll: add support for parent_hw
-  clk: at91: clk-audio-pll: add support for parent_hw
-  clk: at91: clk-plldiv: add support for parent_hw
-  clk: at91: clk-h32mx: add support for parent_hw
-  clk: at91: clk-i2s-mux: add support for parent_hw
-  clk: at91: clk-smd: add support for clk_parent_data
-  clk: at91: clk-slow: add support for parent_hw
-  clk: at91: dt-compat: switch to parent_hw and parent_data
-  clk: at91: sam9x60: switch to parent_hw and parent_data
-  clk: at91: sama5d2: switch to parent_hw and parent_data
-  clk: at91: sama5d3: switch to parent_hw and parent_data
-  clk: at91: sama5d4: switch to parent_hw and parent_data
-  clk: at91: at91sam9x5: switch to parent_hw and parent_data
-  clk: at91: at91rm9200: switch to parent_hw and parent_data
-  clk: at91: at91sam9260: switch to parent_hw and parent_data
-  clk: at91: at91sam9g45: switch to parent_hw and parent_data
-  clk: at91: at91sam9n12: switch to parent_hw and parent_data
-  clk: at91: at91sam9rl: switch to clk_parent_data
-
-Ryan Wanner (3):
-  clk: at91: pmc: Move macro to header file
-  clk: at91: sam9x75: switch to parent_hw and parent_data
-  clk: at91: sama7d65: switch to parent_hw and parent_data
-
- drivers/clk/at91/at91rm9200.c       |  79 ++++---
- drivers/clk/at91/at91sam9260.c      | 120 ++++++-----
- drivers/clk/at91/at91sam9g45.c      |  73 ++++---
- drivers/clk/at91/at91sam9n12.c      |  90 ++++----
- drivers/clk/at91/at91sam9rl.c       |  49 +++--
- drivers/clk/at91/at91sam9x5.c       | 108 +++++-----
- drivers/clk/at91/clk-audio-pll.c    |  28 ++-
- drivers/clk/at91/clk-generated.c    |   8 +-
- drivers/clk/at91/clk-h32mx.c        |  11 +-
- drivers/clk/at91/clk-i2s-mux.c      |   6 +-
- drivers/clk/at91/clk-main.c         |  16 +-
- drivers/clk/at91/clk-master.c       |  24 +--
- drivers/clk/at91/clk-peripheral.c   |  16 +-
- drivers/clk/at91/clk-pll.c          |   9 +-
- drivers/clk/at91/clk-plldiv.c       |  11 +-
- drivers/clk/at91/clk-programmable.c |   8 +-
- drivers/clk/at91/clk-sam9x60-pll.c  |  14 +-
- drivers/clk/at91/clk-slow.c         |   8 +-
- drivers/clk/at91/clk-smd.c          |  10 +-
- drivers/clk/at91/clk-system.c       |   8 +-
- drivers/clk/at91/clk-usb.c          |  41 ++--
- drivers/clk/at91/clk-utmi.c         |  16 +-
- drivers/clk/at91/dt-compat.c        |  80 ++++---
- drivers/clk/at91/pmc.h              |  68 +++---
- drivers/clk/at91/sam9x60.c          | 101 +++++----
- drivers/clk/at91/sam9x7.c           | 315 ++++++++++++++++------------
- drivers/clk/at91/sama5d2.c          | 157 +++++++-------
- drivers/clk/at91/sama5d3.c          | 112 +++++-----
- drivers/clk/at91/sama5d4.c          | 118 ++++++-----
- drivers/clk/at91/sama7d65.c         | 156 +++++++-------
- drivers/clk/at91/sama7g5.c          | 112 +++++-----
- 31 files changed, 1124 insertions(+), 848 deletions(-)
-
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 4a416d227c50..16c2559889aa 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -23,6 +23,9 @@
+ 	.hw = (h), .name = NULL, .fw_name = NULL, .index = -1, \
+ })
+ 
++/* Used to create an array entry identifying a PLL by its components. */
++#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
++
+ extern spinlock_t pmc_pcr_lock;
+ 
+ struct pmc_data {
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index 7dee2b160ffb..ec2ef1a0249a 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -432,9 +432,6 @@ static struct sama7d65_pll {
+ 	},
+ };
+ 
+-/* Used to create an array entry identifying a PLL by its components. */
+-#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
+-
+ /*
+  * Master clock (MCK[0..9]) description
+  * @n:			clock name
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 1340c2b00619..713f5dfe7be2 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -343,9 +343,6 @@ static struct sama7g5_pll {
+ 	},
+ };
+ 
+-/* Used to create an array entry identifying a PLL by its components. */
+-#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
+-
+ /*
+  * Master clock (MCK[1..4]) description
+  * @n:			clock name
 -- 
 2.43.0
 
