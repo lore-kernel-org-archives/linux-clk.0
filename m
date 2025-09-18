@@ -1,129 +1,152 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7971C862F
-	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 15:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC2922425E;
+	Thu, 18 Sep 2025 15:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207956; cv=none; b=aSEHa+LU3ONY1acBGBANBBLE+1af+UoZGBz4PspEQ2t8SExrkq0cjLAqqM8n0FrmM+OsPARG329VGuKltVQMEtYuYdaPsu5QfFuYBtTqhQWASAGbYOHebNzrdIZB0ZkyZHW53u4QpOzI7W7+0dGSVWbDC9NFM4QnHmWn3Mg9y4k=
+	t=1758208713; cv=none; b=pqezMrWMYN1QBq5RoPsCoOMXE2RJTuduOM+vmclmFdHW8SUe224ap6Ht1vYXcGoefISHJtT3TMWoxzNfQEGQvFYYKJLUtwHhPsaX0LLELaFMakhkfuxsjN6P32uHjv73VYji5G8YLR2wOeQbPGSQ1DOZoXZ2GHxq7Y6ptEy9IAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207956; c=relaxed/simple;
-	bh=tn9oW2weBTiuh+fe4Hz258WQPC+0fvyj5weHPIU7zcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFrphvybLvh/OsX+E8NwZLLu2ex2jo9nzw86/Q66kNOi67VL4rINUYoScVNO20WiJbX6JYyIDsPE4eTpHLBZT/rbXoXWr9FxwnPGKzWn3OyEY5ZeJz0S5GiiCpQBNTgUDHzix70ExCLbAZw3qNE528XNY8Gl5b5xum3XdvyLC9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ornbj1t4; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758208713; c=relaxed/simple;
+	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBjcA+hLzwamDR8Qxz+zW+D3gPYuOxjy8ibUzhcRM6kwKBd4UesaVHrTwhZpN/EquqkCqdrUTi4AjHD8GI/Pgq2yVpLR0FqUCKj00QAF4iUIaWipgYBjbtudckA3B5+HcoTXf1SfTN2YTGYjVy1sB266xn0B6jxwR3/0BLgcS50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLi4AGnf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ornbj1t4"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso818084f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 08:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758207953; x=1758812753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ewj8l+hIr3uNhs1w28ZaX8/owmCfl59xjD467sLeY0Q=;
-        b=Ornbj1t452Rs3QROXq+pFG0qgUDwd/okxtJdOE5t9ECTgac9Dr3Q2ajU93R13k0iL2
-         FznCm0Q0NtftDXyZrYkHA2bMQl28UvZDZPStr6HwTHZY/ppzAfvWa1nMhqSr/6V2r/2X
-         7wXqvcyBplCPiz6mC/0UO1DTBHtjPV8H27UIalC0hyFlP2LAxavyEg+jxW62dVL/FEhk
-         e0bENPhcTPj6iP6JxGmAl1NoYbXGiJMrDHzRc3osAVuMcxR38CBDW0j+596o46+zrur7
-         t8UdzyBstIjZLWWEnxvgtzGBPAgccJ/MGjXQPUhpN+sk6IOga7Mvq1s0hVgEHAIlTkWs
-         P0yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758207953; x=1758812753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ewj8l+hIr3uNhs1w28ZaX8/owmCfl59xjD467sLeY0Q=;
-        b=g4F5ZbwLYFRxuXgp9o11swEiMrEYi12uxoPtrazAuYkncSVhpqBMXz0LIHAFkXK/ij
-         6wTYVKOMagJW9P3gJ6Ost0TnsvRAiDehjhgZ15xAtdxmuPzmRjGzZ9zmXiZlTL3DnTi5
-         Us/JqT7YpyvfTwT59TurqC8z/ZpUi8qMVM/Bg3kjGdao0uAIfHBZTJY1EFZ+/Bsyxo+b
-         69wD5YslDHbWoKkiFw6WWmLrO82ucOyjhFS3T45JHPXD+LlHynZJ9FdXt3DKKiBCSOQG
-         QvaRhMehBmgg0rSarapuMqDm1sQEmzhHysufou54xjS33eGez5T4Coo0scuZ/+4qSYUT
-         OLgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJRgS4TIcjmyMblKRmdeckm/TvvwXYEzrfa5LgVbyi1WhAX9v+lR8uGeBSElXZBRyVqwE8XpzKDFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1373DsiDue5zT/9yuhLfGFI+WcqizTHVD36guFtCHJI+RZtyO
-	DFFHMY/EiXkyvUUWaRy7E7+cLnvR0CIA0ITF70IT/V1Z3+Smqctee6Pc4JP8rq4WzQbs/gTml5d
-	8T2/tp4w40zlqE5Y6tnv03V01qSmUNOI=
-X-Gm-Gg: ASbGnctF/lLZyPrcDv/F2iwPhIZY2wIbM5oLxnoNa5qNbamRhv5e9gRZDs7BjqOkG2b
-	Fw37jDI9SyzwCcHgAc5q77muwsCx45KBKvSWamnfNcOZTlrkD6YqPRZQo8ZlDGtAJID8Sw01f7Y
-	t11I72lAQfu+aYL95Yu+nNiYjwpODBjLK2bXkenRsvCi+R+Dd4id+lhm+11U34ZVJKbxMjQTb+P
-	0H+8DTHY08jSDD/pLXcs11RZ4c=
-X-Google-Smtp-Source: AGHT+IFIpnAfWYBWC8/4He5hc0khqVIj9hQPJlI0L/TtRX7Oz0fi+5FvZGrToUW2nAYqq8wXZUyNg0HA+lD87ghtD6U=
-X-Received: by 2002:a5d:5f42:0:b0:3ec:4fe:860 with SMTP id ffacd0b85a97d-3ecdfa2b563mr6291885f8f.46.1758207952491;
- Thu, 18 Sep 2025 08:05:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLi4AGnf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAE5C4CEE7;
+	Thu, 18 Sep 2025 15:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758208712;
+	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uLi4AGnfRF6V6De0JAQgyez9xlUDmOFx461zVUm3XCG3sP4T0+DSxdMQyyFkuOUhV
+	 +Vh0+IHpwVsE1AZMdCz4UjHMuDlwhMrk39tlWhDcGgoEsf0H6LULv5ssc1b5PCpbhd
+	 JdIa4NK88xzdm/0CBrNg88tIE/Fx13gh/UUhVDeR2zvkFOqfwIosu0udNELsXGdBkl
+	 Js0qFWwQZgoA63M3jyhl2eCC8j64ckbBPtWR2RrV6aeDGgTIOkwrsNNEzkg2vc6zCf
+	 TfonVsjS25GolhGQGXBUZ0rgcw0cK/3wgOdylL6W6s1718xsH2XOddKjhMSuq6sr/2
+	 Gdq9xsJAzr/NA==
+Date: Thu, 18 Sep 2025 16:18:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dang Huynh <dang.huynh@mainlining.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
+Message-ID: <20250918-unharmed-bloating-8b573513fce6@spud>
+References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
+ <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
+ <20250917-contort-sassy-df07fd7515a0@spud>
+ <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
- <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com> <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
-In-Reply-To: <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 18 Sep 2025 16:05:25 +0100
-X-Gm-Features: AS18NWCC5xVX8IjDI7XHBdGHA0Pjuo6KvfUX2GcAPVjF4qUsRR9KD7_P8G6nqx8
-Message-ID: <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-clk@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qnPPSzmWE/KqIUbp"
+Content-Disposition: inline
+In-Reply-To: <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+
+
+--qnPPSzmWE/KqIUbp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marek,
+On Thu, Sep 18, 2025 at 11:11:10AM +0700, Dang Huynh wrote:
+> On 2025-09-18 03:46, Conor Dooley wrote:
+> > On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
+> > > Add documentation describing the RTC found in RDA8810PL SoC.
+> > >=20
+> > > Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> > > ---
+> > >  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30
+> > > ++++++++++++++++++++++
+> > >  1 file changed, 30 insertions(+)
+> > >=20
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..3ceae294921cc3211cd77=
+5d9b3890393196faf82
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > @@ -0,0 +1,30 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: RDA Micro RDA8810PL Real Time Clock
+> > > +
+> > > +maintainers:
+> > > +  - Dang Huynh <dang.huynh@mainlining.org>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: rda,8810pl-rtc
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> >=20
+> > Your driver implements functions that turn on an alarm irq, but there is
+> > none mentioned here. What's going on there?
+> The RTC doesn't seem to have an AP IRQ associated. I can't find any
+> reference to it on downstream kernel and the docs.
+>=20
+> >=20
+> > Additionally, there's no clocks property? For an onboard RTC I'd have
+> > expected there to be a clock sourced outside of the block.
 
-On Thu, Sep 18, 2025 at 2:42=E2=80=AFPM Marek Vasut <marek.vasut@mailbox.or=
-g> wrote:
->
-> On 9/18/25 1:11 PM, Lad, Prabhakar wrote:
->
-> Hello Prabhakar,
->
-> >> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/rene=
-sas/renesas-cpg-mssr.c
-> >> index 65dfaceea71f..7b52e8235984 100644
-> >> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> >> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> >> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_=
-dev *rcdev,
-> >>
-> >>          /* Reset module */
-> >>          writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> >> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
-> > Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
-> > to read the reset register `7` times and confirm [0] (as mentioned in
-> > the HW manual). So after reading do we want to confirm the bit is
-> > set/clear?
-> This is interesting, I wonder if the readback is something more common
-> to this reset controller.
->
-> Why 7 times ? Is this documented in one of the HW manuals ? Are those
-> public and can you share a link to them , with the specific chapter or
-> page I should read about this 7 times read requirement ?
->
-Yes this is documented in the HW manual [0] section 6.5.1 Notes on
-Module Reset Control Register Operation:
+What about the clock?
 
-1. To secure processing after release from a module reset, dummy read
-the same register at least seven times except RTC
-and LCDC after writing to initiate release from the module reset, and
-only then proceed with the subsequent processing.
-For RTC, dummy read the same register at least 300 times and for LCDC,
-at least 100 times.
+> >=20
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    rtc@1a06000 {
+> > > +      compatible =3D "rda,8810pl-rtc";
+> > > +      reg =3D <0x1a06000 0x1000>;
+> > > +    };
+> > >=20
+> > > --
+> > > 2.51.0
 
-2. When module is reset once and released again, make sure that the
-target bit of module reset control register is set to 1 by
-reading the register before releasing from a module reset. Then
-release from a module reset
+--qnPPSzmWE/KqIUbp
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-[0] https://www.renesas.com/en/document/mah/rzt2h-and-rzn2h-groups-users-ma=
-nual-hardware?r=3D25567515
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwiwQAKCRB4tDGHoIJi
+0mfkAP9yS2bi4VD6hutTCOIeT3qJB84qFVZONJYP1wnhQwLGeAD8CFxZvCN6Jv4e
+UC/tOu6vHervFswpc7sqlf9k4hh+qQs=
+=wDJV
+-----END PGP SIGNATURE-----
 
-Cheers,
-Prabhakar
+--qnPPSzmWE/KqIUbp--
