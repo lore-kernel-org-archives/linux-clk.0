@@ -1,211 +1,107 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5615132252F;
-	Thu, 18 Sep 2025 21:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE04A2D;
+	Thu, 18 Sep 2025 23:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758230208; cv=none; b=U/uFmYpssSaIyH2KDeEJOTAv5w4KlYwBUXEpM9A5cclnDcxhbaUqLpiG+T8sXDStaXsgRAsCmqGCTCJcSYpwjarcp7QJIUJAk2bTTBVM8VkwhEXq+jVWJKH0FHj9f1ACwUJviSnMhyyBo82FW0P4o+Bi9c/2Culs6u7tsv5q5qI=
+	t=1758237410; cv=none; b=ngj1sPbzUfVgxoy+mu5pqQHsvktVzpU0baWMcW1yUp5ZYya0vtsYaHeL8q7Nqn6v66RtkpF3FpCaXADej0jgPgmVwybcq0iOpNBLmgHmixzHQZIOpOD4CiO1fHDBshTmzOValBRLtCJHArObTHR+NqBp75hUJVUcKMTR2vgBP6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758230208; c=relaxed/simple;
-	bh=xqoF1rlYiCbyUzgobq3CKtOYoiAr0pjHL3GMBCRIJXM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hl0lT+FlQc6aK3H3Jif2Ee3FKUiRLl/65B50K9xznd8uAFw8Vkd5v3nXwOEZmPNOzOsejHdm0/mTptJtu+tIiDpYkclhcnO54o7qVBMebJfiIBLY390pxRqJSBhG0JGhuggFe69pEYbjKC/zyiejPiD5ChYrLbQAxqdW+xZ5kko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=U0zeq66l; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1758237410; c=relaxed/simple;
+	bh=uLe3Rs76NuC3iXyCx+i0ugiqXnSkTMOx8ZjqX3d1DYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZdjWUVawcCHjVmCerq8niayigNDaGL9LoQSvGnpf7t9wdi/FOF3NXDOp7sAroRF9rCblafrQWSrI14WkW4oAcTPO4qyWt13fioBE7jxrT7N0i/ssi+SrppnLKI+NaHBvghWEg+p2RNmS93S4tYXa7eupVEFT6yKDBvkryMmY5AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=iFz3ieaZ; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="U0zeq66l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758230207; x=1789766207;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xqoF1rlYiCbyUzgobq3CKtOYoiAr0pjHL3GMBCRIJXM=;
-  b=U0zeq66lOh7/60iCTqJBKnHYpnHkCmIE85O0AxhbT54278xsMbQLEvHB
-   Uiy84aV5WPR0ZjX88T9qqyvfy7y/L7bxAKISc/pEZ02faFy8eAATEZh43
-   fDEJFh9VLtQcMGYx/eMOMWEtMnp528MI3ZI3SlCY6+kptSGjDwsTg+0P5
-   b7CVnpBBVrbXf/BG2LYQl73c9NpxzPVGukc6afl/iHyIRdH2CiGQ9KQrK
-   QEBu/oS7YqweD9c55xiHh0kT4q2x3Q8YkF9DShTLsW63KQ6iGwGeKDwnf
-   hgH3JDEBakBu8KPw4/qLWUZRMYVN2fBVSds6dA0dZjvPc29ByJUu4/E1C
-   g==;
-X-CSE-ConnectionGUID: 31sRM3ybQuOqhqj3gb2ViA==
-X-CSE-MsgGUID: Q3ofXCo9Qz24xVkPcr8Hpw==
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="278071407"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2025 14:16:29 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 18 Sep 2025 14:15:55 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 18 Sep 2025 14:15:55 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<nicolas.ferre@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <varshini.rajendran@microchip.com>
-Subject: [PATCH v4 31/31] clk: at91: at91sam9rl: switch to clk_parent_data
-Date: Thu, 18 Sep 2025 14:16:13 -0700
-Message-ID: <d244c34b4b074e7babfc72c20e3fc4e87ceba64d.1758226719.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758226719.git.Ryan.Wanner@microchip.com>
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="iFz3ieaZ"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cSWjf6qD8z9sss;
+	Fri, 19 Sep 2025 01:16:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758237399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AWpAqgCZ+Kq1EB4cSge6b9M96CwK6u9PPFoE3ETCiRI=;
+	b=iFz3ieaZ6lgdPd4WmncLZbbrMxReE9O39AOS9Y81ZD2w4AQE0ecl24zru2u4eTCB1SiDHi
+	OrBtr6sY8oqL1qJ5Dz8iF7UDbKr0ySC4Mgb+M8uUc2Lb6kLPYLZrxm/1jVZE17+Gjs2tau
+	f+/j7VTG8+v0huPg/oQybpmss64z9KJgs+fh+i38y8WOizOJ5/4Rk7BpZvepwmRRNLUwAE
+	B47c6xpaYBQ4iEpAc3F734DW+5Y0EMDwkexq3o/x2SL84+4F1/EX7mzScWDcwgy3CTWBQB
+	al4xx+8pfzrfh7TRtwktCjrlT2z75aXSJI8vQaG+XDaFsziFY9wp0tJXrnU5kw==
+Message-ID: <9dbc6022-eb97-49af-bda7-1a7a8069609a@mailbox.org>
+Date: Fri, 19 Sep 2025 01:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
+ assure values latched
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+ <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
+ <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
+ <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 5ubejjp1t796cok6d6cj5kb96qbkbycs
+X-MBO-RS-ID: 4cd4385661fd9ec09cf
 
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+On 9/18/25 5:05 PM, Lad, Prabhakar wrote:
 
-Switch AT91SAM9RL clocks to use parent_hw and parent_data. Having
-parent_hw instead of parent names improves to clock registration
-speed and re-parenting.
+Hello Prabhakar,
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/at91sam9rl.c | 49 +++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 23 deletions(-)
+>>>> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>> index 65dfaceea71f..7b52e8235984 100644
+>>>> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+>>>>
+>>>>           /* Reset module */
+>>>>           writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+>>>> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
+>>> Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
+>>> to read the reset register `7` times and confirm [0] (as mentioned in
+>>> the HW manual). So after reading do we want to confirm the bit is
+>>> set/clear?
+>> This is interesting, I wonder if the readback is something more common
+>> to this reset controller.
+>>
+>> Why 7 times ? Is this documented in one of the HW manuals ? Are those
+>> public and can you share a link to them , with the specific chapter or
+>> page I should read about this 7 times read requirement ?
+>>
+> Yes this is documented in the HW manual [0] section 6.5.1 Notes on
+> Module Reset Control Register Operation:
+> 
+> 1. To secure processing after release from a module reset, dummy read
+> the same register at least seven times except RTC
+> and LCDC after writing to initiate release from the module reset, and
+> only then proceed with the subsequent processing.
+> For RTC, dummy read the same register at least 300 times and for LCDC,
+> at least 100 times.
+> 
+> 2. When module is reset once and released again, make sure that the
+> target bit of module reset control register is set to 1 by
+> reading the register before releasing from a module reset. Then
+> release from a module reset
 
-diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-index 0e8657aac491..a5cc0c1ed194 100644
---- a/drivers/clk/at91/at91sam9rl.c
-+++ b/drivers/clk/at91/at91sam9rl.c
-@@ -28,13 +28,12 @@ static const struct clk_pll_characteristics sam9rl_plla_characteristics = {
- 	.out = sam9rl_plla_out,
- };
- 
--static const struct {
-+static struct {
- 	char *n;
--	char *p;
- 	u8 id;
- } at91sam9rl_systemck[] = {
--	{ .n = "pck0",  .p = "prog0",    .id = 8 },
--	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-+	{ .n = "pck0",  .id = 8 },
-+	{ .n = "pck1",  .id = 9 },
- };
- 
- static const struct {
-@@ -68,8 +67,8 @@ static const struct {
- static void __init at91sam9rl_pmc_setup(struct device_node *np)
- {
- 	const char *slck_name, *mainxtal_name;
-+	struct clk_parent_data parent_data[6];
- 	struct pmc_data *at91sam9rl_pmc;
--	const char *parent_names[6];
- 	struct regmap *regmap;
- 	struct clk_hw *hw;
- 	int i;
-@@ -95,13 +94,15 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 	if (!at91sam9rl_pmc)
- 		return;
- 
--	hw = at91_clk_register_rm9200_main(regmap, "mainck", mainxtal_name, NULL);
-+	hw = at91_clk_register_rm9200_main(regmap, "mainck", NULL,
-+					   &AT91_CLK_PD_NAME(mainxtal_name));
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
- 	at91sam9rl_pmc->chws[PMC_MAIN] = hw;
- 
--	hw = at91_clk_register_pll(regmap, "pllack", "mainck", NULL, 0,
-+	hw = at91_clk_register_pll(regmap, "pllack", NULL,
-+				   &AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MAIN]), 0,
- 				   &at91rm9200_pll_layout,
- 				   &sam9rl_plla_characteristics);
- 	if (IS_ERR(hw))
-@@ -109,18 +110,19 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 
- 	at91sam9rl_pmc->chws[PMC_PLLACK] = hw;
- 
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", NULL,
-+				    &AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MAIN]));
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
- 	at91sam9rl_pmc->chws[PMC_UTMI] = hw;
- 
--	parent_names[0] = slck_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "pllack";
--	parent_names[3] = "utmick";
-+	parent_data[0] = AT91_CLK_PD_NAME(slck_name);
-+	parent_data[1] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MAIN]);
-+	parent_data[2] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_PLLACK]);
-+	parent_data[3] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_UTMI]);
- 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
--					   parent_names, NULL,
-+					   NULL, parent_data,
- 					   &at91rm9200_master_layout,
- 					   &sam9rl_mck_characteristics,
- 					   &sam9rl_mck_lock);
-@@ -128,7 +130,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 		goto err_free;
- 
- 	hw = at91_clk_register_master_div(regmap, "masterck_div",
--					  "masterck_pres", NULL,
-+					  NULL, &AT91_CLK_PD_HW(hw),
- 					  &at91rm9200_master_layout,
- 					  &sam9rl_mck_characteristics,
- 					  &sam9rl_mck_lock, CLK_SET_RATE_GATE, 0);
-@@ -137,18 +139,18 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 
- 	at91sam9rl_pmc->chws[PMC_MCK] = hw;
- 
--	parent_names[0] = slck_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "pllack";
--	parent_names[3] = "utmick";
--	parent_names[4] = "masterck_div";
-+	parent_data[0] = AT91_CLK_PD_NAME(slck_name);
-+	parent_data[1] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MAIN]);
-+	parent_data[2] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_PLLACK]);
-+	parent_data[3] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_UTMI]);
-+	parent_data[4] = AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MCK]);
- 	for (i = 0; i < 2; i++) {
- 		char name[6];
- 
- 		snprintf(name, sizeof(name), "prog%d", i);
- 
- 		hw = at91_clk_register_programmable(regmap, name,
--						    parent_names, NULL, 5, i,
-+						    NULL, parent_data, 5, i,
- 						    &at91rm9200_programmable_layout,
- 						    NULL);
- 		if (IS_ERR(hw))
-@@ -158,8 +160,8 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(at91sam9rl_systemck); i++) {
--		hw = at91_clk_register_system(regmap, at91sam9rl_systemck[i].n,
--					      at91sam9rl_systemck[i].p, NULL,
-+		hw = at91_clk_register_system(regmap, at91sam9rl_systemck[i].n, NULL,
-+					      &AT91_CLK_PD_HW(at91sam9rl_pmc->pchws[0]),
- 					      at91sam9rl_systemck[i].id, 0);
- 		if (IS_ERR(hw))
- 			goto err_free;
-@@ -170,7 +172,8 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 	for (i = 0; i < ARRAY_SIZE(at91sam9rl_periphck); i++) {
- 		hw = at91_clk_register_peripheral(regmap,
- 						  at91sam9rl_periphck[i].n,
--						  "masterck_div", NULL,
-+						  NULL,
-+						  &AT91_CLK_PD_HW(at91sam9rl_pmc->chws[PMC_MCK]),
- 						  at91sam9rl_periphck[i].id);
- 		if (IS_ERR(hw))
- 			goto err_free;
--- 
-2.43.0
-
+Thank you for sharing this, but it seems this is not the case for R-Car 
+Gen4. I found out that V4H and V4M has additional "synchronized" and 
+"asynchronized" reset types according to SRCRn_FSRCHRKRAn attachment to 
+the V4H RM. The PCIe resets are "asynchronized". This extra readl() 
+added in this patch is turning all the resets into "synchronized" and 
+therefore makes them behave as expected.
