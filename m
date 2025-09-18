@@ -1,101 +1,164 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB4526AE4
-	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 06:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E971336B;
+	Thu, 18 Sep 2025 08:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758175743; cv=none; b=pOYTHG80azi3xww95zfyhuevZ8Nra3pdzdt7sVmpHRqqvYCa+29JOIaj9x9oJ+LKxJDvzIhqGrcdilImOeplR/idsoYB4zETuv1Q3K8WmC3IbodBDnwKxDGEYTYkQX2Vezk7NSRWEtEhku707Zn7BCpZ4y3GjUJhwDt8nEgyXKk=
+	t=1758183534; cv=none; b=kK0awDY5q50ZOgrxv7SUkbD/GYWLiHI5qIpEV6jrSE9AcsZZnA0k5pQ2sJFKk4uZca37ioMCfZxtYXkP7MPsvVniQ9CnNP5pXq1dskxPhfpaTGvUw8Mog0nnnUSnvXUtbCX1wmtiIaN6H7EPNf+RzlTcxOIalspYnJ0uaUXmt3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758175743; c=relaxed/simple;
-	bh=1LRQ2H9cPe13w9gRpA2l1hedQ4SS7q8o5VCF39iJYvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OW1d4Joe1x/hrZDNfNLi2zk1k5xVfpfQ/TiGCEIhtPMENoCxPSmMqBU9biTz1Ipi3WgRv30Xjn+2q2BvWNFEz+4BCXdVeGlmQig7/kGr4UigLu6hG6tIyLIWnq19AfCoFYZ++MmxaHv7YHNis2MaLJncEvcO6EnEbOQ7gKGxhoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WLE+fPns; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1758183534; c=relaxed/simple;
+	bh=4/T8IJ3R5U+TdrJnbKh29YlwkhUFe974lRou1fa2E7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2zTnoAG8do0Mn3J8sUBZ0ST9NkmmZidkjkY0ij30Xl/0Wfl2AaGTH+RocGyQRVzQG8DI89ll2ywjwUrCK/9FBwDbNvH+tGLbia9kTrayIieD/M7zKIzztqc2sHTqSN81S6CxaxIutCwyO/ynu2PJOeFsF3hnwD0rzHP0W1orD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcNfN5Ds; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WLE+fPns"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VlC5
-	2CkaNI45z+NSovczaAyaQDzPjc6pSEUeingwJsY=; b=WLE+fPnsk4k57lEm+HQT
-	a9HRWN10IQ0cYCyc7Opel2PznirlK9WTKAquAiYD1dvIjJIJ/OSawppuSbIeGGj1
-	C+eUpzbpu8iYLv4aRcd5Uu3QY87d2SrXkmoLKn65CvF6le2jG8MQr3lptJWdFAHH
-	L+pX8nPtzc6UsRJYAJ/qgajly6TmES2tRjYLeBSKKm+b5ev7dDmQQ+OjFcqiD/md
-	0uqghVvpZnN7QdMQm9yixvF3Sb2MFnR3bjN7vkHlJLMXNKAi/eqjVsMHR2JYO55X
-	NU1lS+G6ULWsvabgtVZvrGuV2jsP2zSL2Z2BCQeq0E1Ju3uUWkjc9Z8tOCm6NtJW
-	7g==
-Received: (qmail 3395440 invoked from network); 18 Sep 2025 08:08:57 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Sep 2025 08:08:57 +0200
-X-UD-Smtp-Session: l3s3148p1@tLY8MA0/CNYgAQnoAFD3ADc1R8rbk3v2
-Date: Thu, 18 Sep 2025 08:08:56 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-Message-ID: <aMuh-K8d_d2GETga@shikoro>
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcNfN5Ds"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E82FC4CEE7;
+	Thu, 18 Sep 2025 08:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758183533;
+	bh=4/T8IJ3R5U+TdrJnbKh29YlwkhUFe974lRou1fa2E7c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FcNfN5Dsp2/+2pRUGmkXJcq9DGpjivbfcunS78JexfYqyGSwpm8ukyzqUK+y3T0qG
+	 0ju5aQVHi+CDWv44RzSf/vhCc4QoxmiLxD83O2spr3KiqAvYXltMaTuGTLqijZIfaJ
+	 iuy9zUkYcOaajp4cd0SVgQJTl+5F/JMPUhu9VdyGbJ/qKqkDNRv5UwJr9RnCbOyL71
+	 dzHGfYPhgHyxat3evqwN5IRRt4GLW+e1BV+M2PPjQAPQTdTtSQVyS8XBhRr7OAgD3F
+	 H+hgD4L2p/XUyA9kas0nZ8+tpGrXqVN/4qKKZlbj1852EjEvDCI22oh02I1vFLH/XX
+	 F6AmSmmpK0acw==
+Message-ID: <f0330c18-11fb-473b-8ed8-891dad16ca78@kernel.org>
+Date: Thu, 18 Sep 2025 17:18:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6aeSJXpp8NdYuP5F"
-Content-Disposition: inline
-In-Reply-To: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
+To: Ravi Patel <ravi.patel@samsung.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jesper.nilsson@axis.com, lars.persson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com
+Cc: ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, pjsin865@coasia.com, gwk1013@coasia.com,
+ bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
+ lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
+References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
+ <20250917085005.89819-1-ravi.patel@samsung.com>
+ <59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
+ <020801dc284d$6f555b50$4e0011f0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <020801dc284d$6f555b50$4e0011f0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 18/09/2025 12:36, Ravi Patel wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 18 September 2025 06:35
+>> To: Ravi Patel <ravi.patel@samsung.com>; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; jesper.nilsson@axis.com;
+>> lars.persson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; alim.akhtar@samsung.com; s.nawrocki@samsung.com;
+>> cw00.choi@samsung.com
+>> Cc: ksk4725@coasia.com; smn1196@coasia.com; linux-arm-kernel@axis.com; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; pjsin865@coasia.com;
+>> gwk1013@coasia.com; bread@coasia.com; jspark@coasia.com; limjh0823@coasia.com; lightwise@coasia.com; hgkim05@coasia.com;
+>> mingyoungbo@coasia.com; shradha.t@samsung.com; swathi.ks@samsung.com; kenkim@coasia.com
+>> Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
+>>
+>> On 17/09/2025 17:49, Ravi Patel wrote:
+>>> Add basic support for the Axis ARTPEC-9 SoC which contains
+>>> 6-core Cortex-A55 CPU and other several IPs. This SoC is an
+>>> Axis-designed chipset used in surveillance camera products.
+>>>
+>>> This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
+>>> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+>>>
+>>> This patch series includes below changes:
+>>> - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
+>>> - PMU bindings (patch #4)
+>>> - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
+>>>
+>>> The patch series has been tested on the ARTPEC-9 EVB with
+>>> Linux Samsung SoC tree (for-next branch) and intended
+>>> to be merged via the `arm-soc` tree.
+>>>
+>>> NOTE: This patch series is dependent on following floating patches:
+>>> 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
+>>
+>> NAK, sorry, DTS cannot depend on the drivers. Please decouple the
+>> dependencies.
+> 
+> Ok, so you want patch #1 - #5 in separate series and #6 - #7 (DTS patches) in another series.
 
---6aeSJXpp8NdYuP5F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No, I meant above dependencies. You said that these patchset, including
+DTS, depends on above. Above are drivers and that's a no go. I said it
+multiple times already in various occasions.
 
-Hi Marek,
+Patchset should be organized per maintainers subsystem, but that's
+different question.
 
-thanks for your hard work on the PCIe issue.
+> Can you please review the patches, I will address review comments in v2 (if any) itself.
 
->  	/* Reset module */
->  	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> +	readl(priv->pub.base0 + priv->reset_regs[reg]);
+As mentioned in other threads, I closed my tree a week ago (if you are
+surprised, notice kernel cycles and development process), so review will
+happen a bit later.
 
-Maybe it makes sense to introduce a light helper function
-'writel_with_latch' or something?
+> 
+>>
+>> Maybe you wanted to point me where the bindings are, but then say so.
+> 
+> Yes, these dependencies are for bindings related.
+So not really a dependency so again: just provide links to the bindings.
 
-a) we can have a central documentation point to describe why this is
-needed and for which registers
-
-b) this makes it hopefully more likely that future additions will use
-the helper right away and not forget to latch their access
-
-Opinions?
-
-Happy hacking,
-
-   Wolfram
-
---6aeSJXpp8NdYuP5F
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjLofgACgkQFA3kzBSg
-Kbavig//a3u4yzneHGJ5Xmq76EuVxVv4WcSAqS3TZpYwWOZgKQVdYmDWV6P3QdDK
-jp6+X+pT/5p1DEN9hktN/CbIW+YdAzLRJCL18hY5lnH5Vju5EbWwe1PaXTGZ4U6P
-7bEuH8c9OU4YFaJQx4C8k2uYSwdw6V4WwABE4LKlPQbhMrWFaRQtZe7ljn1j6YWA
-/Eo9hos0dYR2GMMCj3MUaFHoVRrbFAsNvmL94TDS1itJHKSFOHo6sRaJl0Snfa6M
-CWw2pfw/Zj8B7vQgJDneuxthYNxa+umMhWKdCYu+acCegZhaMnOGn4YT5ena+jXN
-CWrh33fXlx0uOFqFAGYCHYdPdjm3XOoNHkjeXJ6RyRDWevqhSd1QUFfR64sYUybD
-Zhm//t73dfToMCZQfYMjumzsIF/yMTUtipbTijw9O4bGj70OPJNSZI3lcyBjkV+u
-oNR3iJPtzivawMINm58GGDsv/NBFThP+ojxsgbgtPd2O+rEBtlNcetpsGPNHd9jl
-M6knz/U4Ttm52tTKIFx7vH42AUe2k15ppYQHDuGMtefWERsup8IX6ddWdrhrBFkt
-GkBhWaExOmi8cAuaegHVwqo8XJYEnFyNcFVBT1ZdsQP+fQEH2oSMGBxFBzPvx08j
-/98E+JlPGNpK48jg+JW/Np1h9DXQSIgVRJxhYHy+2B/G8r44DxA=
-=f2FI
------END PGP SIGNATURE-----
-
---6aeSJXpp8NdYuP5F--
+Best regards,
+Krzysztof
