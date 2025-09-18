@@ -1,272 +1,170 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011068.outbound.protection.outlook.com [52.101.125.68])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDBB34BA30;
-	Wed, 17 Sep 2025 21:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758145560; cv=fail; b=qEgtoGhUGUmUVjv9TDmxWm3d9h2L8uFhGKFIxRvLjpkgT7i5muacKx2WybAGZ4FetUq/Kp5JMP0k5s0zNFzZl75+QzHZm3OCFBrwD+Z2TItDirtA0TETSbYRiKCPzOlJSPLU5lk793dWoralRoZw+snmurWcVRtoV+wyL6ZP6y8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758145560; c=relaxed/simple;
-	bh=F4q53hIBWnm07+4P154W6oA7jJj94qb84J2EhCooZWc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CoP9wedQQBESSNnmn9liXzB0SzrKEJ0n5Xy+RyfYu4m9RlnkJlwcV8CX2gtOGKDPRYuWCBCuPKUQWuAfGC2RzqEnjjnvNG2OAM6NMKfk1zIDYEfGD/BMZ0pBg9eTjSw0MyoWqtJEXvHrKYDC9rVHGaEM/21xO2cYb4pBjbm7qmo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=HQyz0yLN; arc=fail smtp.client-ip=52.101.125.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A321E1DF2;
+	Thu, 18 Sep 2025 00:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758155971; cv=none; b=gpr6HIFWJYcRJNoXTDwDkCvjaBx652ACSw2IhkLl8rmjfjbGhkbq5c9Ou15IYkGejX0yLOxafFgb/YkV4XIS2T4E+RGmfXm4x3Cd//J8Z0asOzNILAWii6i9D3X2RO9ciNk2Uv8Ezyrmj5csRW5Y9xolqQOaezsH/rFNFhoTYqg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758155971; c=relaxed/simple;
+	bh=wCEJTBS5uIVfDBDzT/2Z5MMI5evfx/hh621pvrQxQLE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=PMiSN7PrbmmiwkRo/pdMtVEFV4o7J7xotsxcs961Vaf/T9dAdwXxTp2ilx3tQeA5+g7cqK1BZJiDyeACIzX9eTviJNnOU81w8zAq9qPXIGrDgzl0TrTmeJHCX+7UbzSnd4cXsDIMF484JGZ88RPnQYcBqfA+ZJv37vq2afZnuEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqxK6uqJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="HQyz0yLN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FAZYV3cGKSVB2jl1hsLOtnPzTA8xY/lLKK+csjNnJYMnU9c+gwjyS3e4gh5ye+nx8YZqtQT/bLWIoXGnP5fYtwwVkMAJWzH7u/Yk+Cal00/Ycm/BVLTJSQEgDSS6Y/Ak1OYt4+y1KzXXGtnJNd/GAlxcgYB0s9qcCNFG6zGqLO2D8qChS+tpIKc/tGjtRR9enNEO3RZGw3v8O84wW3K1HyMwXcJ+x2PR+wUVAh0GF6HrYrpkS0pgfG/yd3fvf4CkyzBqLQLR8IG9kmZrlOZZlcz6ol7u+QX/g0EhzcHqPM7WCsyVHfqgPuYx5UOqAntVM8nWQ50R2QTiBQ4q6HuNjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VKQruO0NYCDl0YDcke6fdzMKEEqrYpXysXekNNG0Jyk=;
- b=Az+no+yhHB7z72aL1HK/eM5hf3LbguZjVOl3jnxF1bfI4LZeiLCMfquEXCL76S+Cgn+YiBErolwD7LtQ7T1IyJXm2U8StFHB8I7lyaUcZcm/jzXlwSYWVAP8FPNJS+Gd9D5iiG4SCJqd8QzaEd+4hIsOUNwmML8JUEvxLYfYsH1ORPtpBXYiRzG9SOTgKM69ZkmQ5HEgd8zc6lhwidHAEcbmtL/GOiEa9Rrlop8OEqQlGX40tXkSwu3XYCFVBJjlNoLI3B9iVoqVwCISEJb2lhW1V09u0cpkh2sA3a2Loz8jsU3tnft1QWoWsh1/qzS3nO4GoCKG15HZYsvUGC4PWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VKQruO0NYCDl0YDcke6fdzMKEEqrYpXysXekNNG0Jyk=;
- b=HQyz0yLNMBjDsN7TyTjrUnTfdmwqMMOdL9uLWELZmhsdvU7VR0NjfJNsFtluky9/1Q9ppx+Tvn8Phrynn4jem5iNBYGGeKgac6UVMFgXCTp4QFd61JKz3Oz2BfsbuL2dsum+F1P9rnF/UIQwzZbsx3OHuaDM0E+8PrszEKQbWDo=
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com (2603:1096:604:1a2::11)
- by TY4PR01MB13839.jpnprd01.prod.outlook.com (2603:1096:405:1fc::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 21:45:55 +0000
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::3bc8:765f:f19e:16d5]) by OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::3bc8:765f:f19e:16d5%3]) with mapi id 15.20.9115.020; Wed, 17 Sep 2025
- 21:45:55 +0000
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Hugo Villeneuve <hugo@hugovil.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
-	Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: RE: [PATCH v2 2/2] drm: renesas: rz-du: Set DSI divider based on
- target MIPI device
-Thread-Topic: [PATCH v2 2/2] drm: renesas: rz-du: Set DSI divider based on
- target MIPI device
-Thread-Index: AQHcI/ChlVR/Fbx/a0e8x1EYnqi/TbSX22MAgAAPyWA=
-Date: Wed, 17 Sep 2025 21:45:55 +0000
-Message-ID:
- <OS3PR01MB831915ED0F0E2452BEBC37098A17A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-References: <20250912142056.2123725-1-chris.brandt@renesas.com>
-	<20250912142056.2123725-3-chris.brandt@renesas.com>
- <20250917162832.02100f4bbe896c878eccca8e@hugovil.com>
-In-Reply-To: <20250917162832.02100f4bbe896c878eccca8e@hugovil.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB8319:EE_|TY4PR01MB13839:EE_
-x-ms-office365-filtering-correlation-id: 174518f8-e25b-40d0-b998-08ddf63394d8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?N90AE+k2T3KzebOHvZ+wGbz7suUbNfR2O7PQUV/Rn5+XyZMt/d+CAI5Fb9TW?=
- =?us-ascii?Q?Dy3n3e+FKpvKzSO6548TTnsoVSw/83lkIxbcnST5qI/RoS5RI2i2jniM5PMx?=
- =?us-ascii?Q?iv+vjqazZWXVR3zvzSwKKb1Maw7rYNpWPoseJsJ2Q6paS9x3wKJVqEw9IWpH?=
- =?us-ascii?Q?VckyAycI1EgyZTwDmzPyRPGH5WH2+YZM74E3vQbIdCJd7xvZMFH5xmZxrlne?=
- =?us-ascii?Q?Z2Z0WUvwPthE9K5hoPwN6yGpeK+liLzP0Lypwv4ahy5hYQbHHeW4CCkeEhOy?=
- =?us-ascii?Q?8l32cCX5lJIxLMzHjDdHsPTumLiuOudwDiGRu8t5CBywZ8VMZctAGEwEc2oZ?=
- =?us-ascii?Q?zsFugmU2yH9ky4rNjt5gn0xer+NsUj1mT6obuIC5ovMs2IQ0FMR22zylH5OV?=
- =?us-ascii?Q?XEsvICNWUbCdeWaRqnIEdb8RtdMPRiG0nvKjsDR5hUDhqS3NbezKOZLtsCqX?=
- =?us-ascii?Q?2ZoadlUUe18jqDI+21yeYGyYR58b1VQ1eDCIMS29PJ546XmMIjgUYmF7L6it?=
- =?us-ascii?Q?++Op2XwSt/02gexo/v5pGeJXfttKcx2Eqkm4AlycL+TjSsXzkA8kdZdFk3OM?=
- =?us-ascii?Q?HvZ+/OJZH8AWqg4XTnI9VZlIbVQJRBadVQ5AK9fxT0RlJoO49Ei/SdvKI3PA?=
- =?us-ascii?Q?N469ecH4WisFO3U07EjHbT6/jzUqCX4w8GJR7MhiP1V5R98VNtkoufIddvQ8?=
- =?us-ascii?Q?bBK8EU8sP/1+g/3J3DzJ1M7GtUaRJHZbUsDxT6+K/u1E+D1L/3rs/P4XVlbn?=
- =?us-ascii?Q?57WJWmyoZTjdSRJhwr6FEoKBfpfdtTEbaMpNmNktSlPFd5/vK3qflWk7AC56?=
- =?us-ascii?Q?bm0AOs5ZfWgZSdXDM8LesqTYGZUv/eDzPyRWzYBCbjk+wfp9vfQwz4XuherH?=
- =?us-ascii?Q?M48phczQ4D4f2VDKmO71uABztAoWODWT+4j9Akzl9N0898xVbyeLn4GHteky?=
- =?us-ascii?Q?W8p1x608XXnMRVErQ1RU89m4W4s6TzLX1rGlRmXovoLyfI6XW4SD8aUiQqsD?=
- =?us-ascii?Q?90JiJAYJ5XkLWloHWYalnb/n+FhF2TieS3rVzNYpuBhaSjYVztkSL8Oc1lix?=
- =?us-ascii?Q?jtYRUGarnDyUB8xzG/lCUywm8oFjAtGno1W/gZ1yw+lwVfeHtVoyUQ2bjE3d?=
- =?us-ascii?Q?s34+riQq/Ardhb1Tf2AduGO1Jeu+dbVRbvuJfVrZw0fpuMCEdp7HthRJ8UQt?=
- =?us-ascii?Q?4OZjiVth+f/dpslqoyf3VBvAxdWsRtY3lajrW/tTkWF4gBuDXCGJUZ62TUR3?=
- =?us-ascii?Q?kcC9v4caVZwZSP7LqCa+mah4g+A99vIuBWLa/bQ4z6Pjv73UrwS/F2prhnfP?=
- =?us-ascii?Q?kfQTAfW9XebGgO4lXeAv7zsC9cAM4E/Hs5uXNp9/SQQBhbttUolhGHME7ED6?=
- =?us-ascii?Q?eghHT7aCZZfAH2LAbAzVyoawG+IE9yAbhE6R8lgoa1gJKpuLQwtNTvpRDyHJ?=
- =?us-ascii?Q?mS+YADHF5JOn2OFvWLSZqCOvykAElrIlF8L7dYHi2FlnHpst6rWfHQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Ei/0tKmQutNCc934YMP+4/PhSmVmSEtXknS/B3NCoN2eHcyCMHPmgRXtzSjp?=
- =?us-ascii?Q?UvBlr0Bm67PL2lubj0HyLER8vo8IEhqlMHXAIIbwZZmRy3Dc2yL/QGUJfxSb?=
- =?us-ascii?Q?bwlzhaGkS0L2FX55WpG5Dcub0XgkxIm6gVP9BobJpqDsnJVse42yjvGZQD3u?=
- =?us-ascii?Q?JXrWXx/zP5sose5PereVpk80TrNCYyNt4BrtF03Y7W19vRDyMsviHguihwcW?=
- =?us-ascii?Q?2tFEW73VB8THKh6t39yaXh7kVjYcSmjm9MkSNY5c0mzQoB9XJlT6a45fgLRs?=
- =?us-ascii?Q?XStIW1QFf9MKGCT58Wz8CZrKScolTjzoEM3xkp23H7KuEPdJfP71wb2ndXqD?=
- =?us-ascii?Q?w1E86IaZkeCUK0weetw7Fim/JgvJoOyEPqw9XY1/Oor4coyM6pL2UwPJ5t2/?=
- =?us-ascii?Q?RPFFMsES+MwJmPi0yaQxWrJIjRQvl6PhrMfENjurPfbBSMHHpwXst0SMTCZF?=
- =?us-ascii?Q?XQ0mkVzH0xkK7tm/5Dvo17vmAU7+3p//k3gMcjaISd81BEcLj2oyspKrjhIJ?=
- =?us-ascii?Q?cj3r5oXr8+zgFWazw5UQSrZ/OiB5zWslvfIzwJ3Fkymw1GNdQkRxVSV7suoh?=
- =?us-ascii?Q?uUB44zEeX4DxWYRQT5xs0Ir5MfoDP4/NiT8WIwPDjyxdhNSHGQtXmL+zwGOR?=
- =?us-ascii?Q?yhz59E7zf7R330YyrkSZW/BTGnvQbHKqgVusOnqfAeKAMIMRRnmgvz8Gahh8?=
- =?us-ascii?Q?7B0NReJLV9rIg2e5Jp95KCUmZ01Yy01oHJgBWR7lSK9/zf/EgwqqkTpZggsB?=
- =?us-ascii?Q?rIbXd/rTu8K9VekvuOEhYruXS1hCL1CNT0krWuQRmmeXf4pHWZZyRxkL2sRs?=
- =?us-ascii?Q?cb42ZfR1xWLSds0k794pv1EN1LKv1/sU81Xcb/gLewWBQ49aGzfZAc9zHFB7?=
- =?us-ascii?Q?xPkhZ2q1SpACz4VHSl5REwORs9M+Mc1OExlY6gOuV7d5h5vRyrGbHh7U5JOW?=
- =?us-ascii?Q?ecI/6Hm7jcdMkv/9+AmtfdmzACW2b/m9mTrICFcAqQ1pvcy9FdeVcdg7O5g3?=
- =?us-ascii?Q?qL3CTXP4vTLvWrMaHcqqUijY/hJivP46mO/3SarlV4b5K4su6zWrptwVv21N?=
- =?us-ascii?Q?REbiIPzAhCozkh/WI388zmqgM/EPaOS46rhWOXRIuGmNouviLfujn7l5MdFf?=
- =?us-ascii?Q?HFxeDrqz3XXpTJaZpr5Rc13x0roFPKM+i6uoiKlZKTY1b3gRcX+7LvG1vnqh?=
- =?us-ascii?Q?auvYdArKpzfSHixKIZrbCUoVcx0ELzbayfsAUNs/SQJ7HQ8x9cTJsEesfxre?=
- =?us-ascii?Q?XTYCmdtLUz+T70QILRsBLscqWgniQx5ujQEoeZD601DCjGpn+Pf753gr02gB?=
- =?us-ascii?Q?mZpTscbtswShMf7BLmBHCadrWRPBAnR5r1vHr56KFHREvQypZus7qP5d4xMf?=
- =?us-ascii?Q?u1q/p55AI3s22W1LWnD4hzJ31JQpc28j9tIgfHU9YvHDm6FosM7t7UOavD87?=
- =?us-ascii?Q?AThvc8+vnAo74gai9CfXKvyWd0RGPXiOssKe3463bPLGAB1sMUsaRNTj5gzC?=
- =?us-ascii?Q?04QPzXZLPn33mzocTQucdoXFil4x7x+HGGdaj2UFMIOf6oh/3PAjySP2ZUvu?=
- =?us-ascii?Q?LxlZDLxosisYKSYS87NSSjQzuAoeWOM+ISki85RM?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqxK6uqJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F89DC4CEFB;
+	Thu, 18 Sep 2025 00:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758155971;
+	bh=wCEJTBS5uIVfDBDzT/2Z5MMI5evfx/hh621pvrQxQLE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=FqxK6uqJmMN9Zg7D3ZQgs2RhF5MMCneizh7omKZrTu+TEjdVCS+LMexuWv9EWxJR4
+	 xONha/Kvj3IB56BjvKOKSNdgBzM/fgovjQmPSfGV9hBtWNH/ObnoAhSoiXz6k9Mlgf
+	 lIQo9zhf7CrsAnIY78jt8jtgJjsOYCBMEYdbtV9b0+86InRC902wYLMo+Nl9m/kWIr
+	 TsGEVMNkdbFFtW/XJqhNKg1P5S1HSfW+MT0elZmUjy7DPbmGqNZv3hvROz7V2wv3ie
+	 MYo0lkRJDLljjMFAI5a5MkwFBs5Z1PXG04Sg5QMGjKoM/39YmNQXdDq/FfDpYdU9bA
+	 0nj8eHYVfSI3w==
+Date: Wed, 17 Sep 2025 19:39:30 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8319.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 174518f8-e25b-40d0-b998-08ddf63394d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2025 21:45:55.7124
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SLNNoRq2CPEFuMqixLFbhwL0QjUOwDQmlrW3Z9HNy1ZFAavDPt7zIu9fKCjGLJzSIFXTuInz+1fwvce28QS48/RzJ6hs4Saa8cxSSY9EM38=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13839
-
-Hi Hugo,
-
-Thank you for your review.
-
-> > +rzg2l_cpg_dsi_div_set_divider(mipi_dsi_pixel_format_to_bpp(dsi->forma
-> > +t) / dsi->lanes, 1);
->
-> What is this "1" value meaning? This is hard to decipher.
-
-That is true (unless you know to look in the other file)
-
-> If it is related to PLL5_TARGET_DSI, then these PLL5_TARGET_* macros shou=
-ld be added to the renesas.h header file and used here.
-
-I was not clear how much I should be adding to that renesas.h file. But lik=
-e you said, it would make the code
-easier to read.
-
-I was also waiting to hear what Geert thought about adding a new API to the=
- clock driver.
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: gwk1013@coasia.com, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, sboyd@kernel.org, 
+ krzk+dt@kernel.org, s.nawrocki@samsung.com, shradha.t@samsung.com, 
+ swathi.ks@samsung.com, kenkim@coasia.com, linux-kernel@vger.kernel.org, 
+ lars.persson@axis.com, devicetree@vger.kernel.org, jspark@coasia.com, 
+ cw00.choi@samsung.com, bread@coasia.com, ksk4725@coasia.com, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com, 
+ krzk@kernel.org, mingyoungbo@coasia.com, limjh0823@coasia.com, 
+ pjsin865@coasia.com, smn1196@coasia.com, lightwise@coasia.com, 
+ alim.akhtar@samsung.com, hgkim05@coasia.com, mturquette@baylibre.com, 
+ jesper.nilsson@axis.com
+To: Ravi Patel <ravi.patel@samsung.com>
+In-Reply-To: <20250917085005.89819-1-ravi.patel@samsung.com>
+References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
+ <20250917085005.89819-1-ravi.patel@samsung.com>
+Message-Id: <175815587241.3804330.15494043939076166560.robh@kernel.org>
+Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
 
 
-Chris
-
-
------Original Message-----
-From: Hugo Villeneuve <hugo@hugovil.com>=20
-Sent: Wednesday, September 17, 2025 4:29 PM
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>; Michael Turquette <mturqu=
-ette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Biju Das <biju.das.jz@=
-bp.renesas.com>; Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Max=
-ime Ripard <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; D=
-avid Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Hien Huyn=
-h <hien.huynh.px@renesas.com>; Nghia Vo <nghia.vo.zn@renesas.com>; linux-re=
-nesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; dri-devel@lists.freed=
-esktop.org
-Subject: Re: [PATCH v2 2/2] drm: renesas: rz-du: Set DSI divider based on t=
-arget MIPI device
-
-On Fri, 12 Sep 2025 10:20:56 -0400
-Chris Brandt <chris.brandt@renesas.com> wrote:
-
-> Before the MIPI DSI clock source can be configured, the target divide=20
-> ratio needs to be known.
->=20
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->=20
-> ---
-> v1->v2:
-> - Add spaces around '/' in comments
-> - Add target argument in new API
-> ---
->  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 18=20
-> ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c=20
-> b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index f87337c3cbb5..ca0de93d5a1a 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -7,6 +7,7 @@
-> =20
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
-> +#include <linux/clk/renesas.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/io.h>
-> @@ -732,6 +733,23 @@ static int rzg2l_mipi_dsi_host_attach(struct=20
-> mipi_dsi_host *host,
-> =20
->  	drm_bridge_add(&dsi->bridge);
-> =20
-> +	/*
-> +	 * Report required division ratio setting for the MIPI clock=20
-> +dividers
-
-Add missing dot at end of sentence.
-
-> +	 * Assume the default clock source is FOUTPOSTDIV (PLL/2) being fed to =
-the DSI-PHY, but also
-> +	 * the DSI-PHY must be 16x the MIPI-DSI HS clock.
-> +	 *
-> +	 * pllclk / 2 =3D vclk * DSI divider
-> +	 * pllclk =3D vclk * DSI divider * 2
-> +	 *
-> +	 * hsclk =3D (vclk * DSI divider * 2) / 16
-> +	 *
-> +	 * vclk * bpp =3D hsclk * 8 * num_lanes
-> +	 * vclk * bpp =3D ((vclk * DSI divider * 2) / 16) * 8 * num_lanes
-> +	 *   which simplifies to...
-> +	 * DSI divider =3D bpp / num_lanes
-> +	 */
-> +=09
-> +rzg2l_cpg_dsi_div_set_divider(mipi_dsi_pixel_format_to_bpp(dsi->forma
-> +t) / dsi->lanes, 1);
-
-What is this "1" value meaning? This is hard to decipher.
-
-If it is related to PLL5_TARGET_DSI, then these PLL5_TARGET_* macros should=
- be added to the renesas.h header file and used here.
-
-> +
->  	return 0;
->  }
-> =20
+On Wed, 17 Sep 2025 14:19:57 +0530, Ravi Patel wrote:
+> Add basic support for the Axis ARTPEC-9 SoC which contains
+> 6-core Cortex-A55 CPU and other several IPs. This SoC is an
+> Axis-designed chipset used in surveillance camera products.
+> 
+> This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
+> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+> 
+> This patch series includes below changes:
+> - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
+> - PMU bindings (patch #4)
+> - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
+> 
+> The patch series has been tested on the ARTPEC-9 EVB with
+> Linux Samsung SoC tree (for-next branch) and intended
+> to be merged via the `arm-soc` tree.
+> 
+> NOTE: This patch series is dependent on following floating patches:
+> 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
+> 2. https://lore.kernel.org/all/20250917071342.5637-1-ravi.patel@samsung.com/T/#u
+> 3. https://lore.kernel.org/all/20250917071311.1404-1-ravi.patel@samsung.com/T/#u
+> 
+> GyoungBo Min (3):
+>   dt-bindings: clock: Add ARTPEC-9 clock controller
+>   clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+>   clk: samsung: artpec-9: Add initial clock support for ARTPEC-9 SoC
+> 
+> Ravi Patel (2):
+>   dt-bindings: arm: axis: Add ARTPEC-9 alfred board
+>   arm64: dts: axis: Add ARTPEC-9 Alfred board support
+> 
+> SungMin Park (2):
+>   dt-bindings: samsung: exynos-pmu: Add compatible for ARTPEC-9 SoC
+>   arm64: dts: exynos: axis: Add initial ARTPEC-9 SoC support
+> 
+>  .../devicetree/bindings/arm/axis.yaml         |    6 +
+>  .../bindings/clock/axis,artpec9-clock.yaml    |  232 ++++
+>  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
+>  arch/arm64/boot/dts/exynos/axis/Makefile      |    3 +-
+>  .../boot/dts/exynos/axis/artpec9-alfred.dts   |   36 +
+>  .../boot/dts/exynos/axis/artpec9-pinctrl.dtsi |  115 ++
+>  arch/arm64/boot/dts/exynos/axis/artpec9.dtsi  |  277 ++++
+>  drivers/clk/samsung/Makefile                  |    1 +
+>  drivers/clk/samsung/clk-artpec9.c             | 1224 +++++++++++++++++
+>  drivers/clk/samsung/clk-pll.c                 |  184 ++-
+>  drivers/clk/samsung/clk-pll.h                 |   17 +
+>  include/dt-bindings/clock/axis,artpec9-clk.h  |  195 +++
+>  12 files changed, 2282 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9.dtsi
+>  create mode 100644 drivers/clk/samsung/clk-artpec9.c
+>  create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+> 
 > --
-> 2.50.1
->=20
->=20
+> 2.17.1
+> 
+> 
+> 
 
 
---
-Hugo Villeneuve
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250917 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250917085005.89819-1-ravi.patel@samsung.com:
+
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: timer@10040000 (axis,artpec9-mct): compatible: 'oneOf' conditional failed, one must be fixed:
+	['axis,artpec9-mct', 'samsung,exynos4210-mct'] is too long
+	'axis,artpec9-mct' is not one of ['samsung,exynos4210-mct', 'samsung,exynos4412-mct']
+	'axis,artpec9-mct' is not one of ['axis,artpec8-mct', 'google,gs101-mct', 'samsung,exynos2200-mct-peris', 'samsung,exynos3250-mct', 'samsung,exynos5250-mct', 'samsung,exynos5260-mct', 'samsung,exynos5420-mct', 'samsung,exynos5433-mct', 'samsung,exynos850-mct', 'samsung,exynos8895-mct', 'samsung,exynos990-mct', 'tesla,fsd-mct']
+	from schema $id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/timer@10040000: failed to match any schema with compatible: ['axis,artpec9-mct', 'samsung,exynos4210-mct']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@141f0000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@14430000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@14c30000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: serial@14c70000 (axis,artpec9-uart): compatible: 'oneOf' conditional failed, one must be fixed:
+	['axis,artpec9-uart', 'samsung,exynos8895-uart'] is too long
+	'axis,artpec9-uart' is not one of ['apple,s5l-uart', 'axis,artpec8-uart', 'google,gs101-uart', 'samsung,s3c6400-uart', 'samsung,s5pv210-uart', 'samsung,exynos4210-uart', 'samsung,exynos5433-uart', 'samsung,exynos850-uart', 'samsung,exynos8895-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos2200-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7-uart', 'tesla,fsd-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7885-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynosautov9-uart', 'samsung,exynosautov920-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7870-uart']
+	'google,gs101-uart' was expected
+	'samsung,exynos4210-uart' was expected
+	'samsung,exynos5433-uart' was expected
+	'samsung,exynos850-uart' was expected
+	from schema $id: http://devicetree.org/schemas/serial/samsung_uart.yaml#
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/serial@14c70000: failed to match any schema with compatible: ['axis,artpec9-uart', 'samsung,exynos8895-uart']
+
+
+
+
+
