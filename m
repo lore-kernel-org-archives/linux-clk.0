@@ -1,128 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE8621B9E7;
-	Thu, 18 Sep 2025 19:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB55817BB21;
+	Thu, 18 Sep 2025 21:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758223993; cv=none; b=qOD9q2ldcS0dBKvCKfAbGyrgHq9BMJQ9+SjwM05+f8DhrQCXEmCbNjIYaJP0xtUjwaD7fiSPnfYdUVZBpvrDh+UGTh4Qkc3PxBg97D7rNzcGJekrLf9a16bq4H2ix47vlhk/dvcSWhWwCCYPENCGXSJwZ7jjYwtN7XvLtZm5wWk=
+	t=1758230189; cv=none; b=ajqKRhMHLbEV5WIz/AGN9ynJbI41NvbBP3ULnDMAtTMvVpOifSGBiOlGuvLfCeTSbfGRDz9P1FPrg9jpsJ1Qboh0Ure2PfaOdflxmAgqfR8tN4PFxX5yxbtJl4ngbV35+eoKimRA6a+lP4QZbNp5xh4MGb60+BRFylh/vG+fT7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758223993; c=relaxed/simple;
-	bh=SiTsMJ0sXAvpCnRX8FDPv8MfV2YWSlcEA47DenlZULY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fGhViwm+q2NMeUEu8m7/lJLhrFTxPZKdVYccF8r4IdjBUh+DTeKFxa3tWjq6INQZSV1rJfpZkEYVG4TzvWXZWDR15GevwTUDVspB0r5gGWlUkSQ+nHJyykfswEBmUjQQkR6dm8lNsTQhH8VIV9x4HeCuGHXuh4QDdDLDKi+FwSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlGWVZsw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758230189; c=relaxed/simple;
+	bh=bAu3PgIQmosp5/ybiTOCAKIVX/WWS61AIso35P5GwqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mwNWSg/xVNW1P0lg/T6bYz7n1c9GmQ7V1wXFHup17MKuTlaFwMoEWlW0+Tewv1iaMSZxmWXNFm0e4buf5cjhGZkmdVuVdJ7+Art2D0rKu2pU1o7yrrM8htM+JH34XLOpdHGS8iXYKhBPd3EULBr/UXg8gf4DzLx2MK9zNFPY4ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nagapyF0; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlGWVZsw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6849EC4CEE7;
-	Thu, 18 Sep 2025 19:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758223993;
-	bh=SiTsMJ0sXAvpCnRX8FDPv8MfV2YWSlcEA47DenlZULY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YlGWVZsw4RvC4JibN0EA6ibUfzsD04RlN5WeB4D1zYQJ9gFHptEmnMVPmNBfSr3bB
-	 HH0XQZaLMzje1GGD7MwYt/JCmyf05k0dQ6elVo0kMqFC6RFQERQ2PASS0IlJFTGjkC
-	 TM63BT3RirjMC9mwtoe83aVhq5IgPpoiCWPo3XrZAvth7Ae6b/S0KHw5UclcLM357T
-	 vBP+w/K7TuYScKef3bSEN7M147yQI0P5i48fs3CaLS+hEszfe9jT4ZharfxIxLD6Rf
-	 OBJrM7gKQOK0jhPAl/N8uNKTH4OqrvrxhtqD04A7yLGkDGjRLWIlXn6DNb0lwSs5lw
-	 A4+l3vl0alafw==
-From: Sven Peter <sven@kernel.org>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>,
-	Lee Jones <lee@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	=?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: (subset) [PATCH 00/37] arm64: Add initial device trees for Apple M2 Pro/Max/Ultra devices
-Date: Thu, 18 Sep 2025 21:32:52 +0200
-Message-Id: <175822390213.30186.12188566922096991002.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nagapyF0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758230188; x=1789766188;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bAu3PgIQmosp5/ybiTOCAKIVX/WWS61AIso35P5GwqQ=;
+  b=nagapyF0Kd4yq/nQzPxJD6GTmbAHKcplBuAWE4yBn7D8kcVfeczj+sTW
+   3p2UcMnDtNUbUYXoE+xadxIgAxDzrx1zpK0pIE0UISwVQFddL7Kf8j0o5
+   WaPZYBbzFTCzUvD+gLnCy8bALAVuqFwol3H1hvXwSgjmOPU6XFPv82Y5L
+   9gv4uzolPih7zafdg2+alEAQgw02igq+J2ra5taQgDfkDWgEv4KCXfNXo
+   Yl59j/7+1nqOvbdw/tKCvv5ibPLHpT5uBLL/ns9e0ojtDLLR6tW873lVr
+   1Axi6LVDQWowJGj5b+5H7H0xijHFODg/dbmHykNvmfPF0S6rTJ2GC85Gc
+   A==;
+X-CSE-ConnectionGUID: 31sRM3ybQuOqhqj3gb2ViA==
+X-CSE-MsgGUID: cMqbRIUSRbavarYgWwmabw==
+X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
+   d="scan'208";a="278071374"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2025 14:16:22 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 18 Sep 2025 14:15:50 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 18 Sep 2025 14:15:50 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<nicolas.ferre@microchip.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <varshini.rajendran@microchip.com>, "Ryan
+ Wanner" <Ryan.Wanner@microchip.com>
+Subject: [PATCH v4 00/31] clk: at91: add support for parent_data and
+Date: Thu, 18 Sep 2025 14:15:42 -0700
+Message-ID: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, 28 Aug 2025 16:01:19 +0200, Janne Grunau wrote:
-> This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> follow design of the t600x family so copy the structure of SoC *.dtsi
-> files.
-> 
-> t6020 is a cut-down version of t6021, so the former just includes the
-> latter and disables the missing bits.
-> 
-> [...]
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Applied to git@github.com:AsahiLinux/linux.git (apple-soc/drivers-6.18), thanks!
+This series adds support for parent data and parent _hw on the at91
+clock drivers. This also updates all the SoC specific clock drivers to
+use this format as well.
 
-[03/37] pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
-        https://github.com/AsahiLinux/linux/commit/442816f97a4f
+This is a continuation of the V1 of this series here [1].
 
-Best regards,
+This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
+SoCs.
+
+Changes v1 -> V2:
+- Remove all the small sama7g54 SoC driver changes and put them in their
+  own patch.
+- Add the SAMA7D65 and the SAM9X75 to this update.
+- Add a patch to move all common used macros into the pmc.h file.
+- Update changes from v6.6 to v6.16.
+- Remove patches that where style fixes and include those in the update.
+
+Changes v2 -> v3:
+- Adjust each patch so they are fully atomic.
+- Add a patch to have the SAMA7D65 systemclocks use parent_data and
+  parent_hw.
+- Add a formatting cleanup patch for the SAM9X75.
+- Adjust commit messages that no longer show invalid information.
+
+Changes v3 -> v4:
+- Adjusted the AT91_CLK_PD macros to not use the index and use the name
+  and HW.
+- Adjust the commit message for the sam9x7 to descibe the changes
+  better.
+- Remove the usage of clock indexes and use of_clk_get_parent_name().
+- Adjust commit messages to better describe the changes.
+
+1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
+
+Claudiu Beznea (28):
+  clk: at91: pmc: add macros for clk_parent_data
+  clk: at91: clk-sam9x60-pll: use clk_parent_data
+  clk: at91: clk-peripheral: switch to clk_parent_data
+  clk: at91: clk-main: switch to clk parent data
+  clk: at91: clk-utmi: use clk_parent_data
+  clk: at91: clk-master: use clk_parent_data
+  clk: at91: clk-programmable: use clk_parent_data
+  clk: at91: clk-generated: use clk_parent_data
+  clk: at91: clk-usb: add support for clk_parent_data
+  clk: at91: clk-system: use clk_parent_data
+  clk: at91: clk-pll: add support for parent_hw
+  clk: at91: clk-audio-pll: add support for parent_hw
+  clk: at91: clk-plldiv: add support for parent_hw
+  clk: at91: clk-h32mx: add support for parent_hw
+  clk: at91: clk-i2s-mux: add support for parent_hw
+  clk: at91: clk-smd: add support for clk_parent_data
+  clk: at91: clk-slow: add support for parent_hw
+  clk: at91: dt-compat: switch to parent_hw and parent_data
+  clk: at91: sam9x60: switch to parent_hw and parent_data
+  clk: at91: sama5d2: switch to parent_hw and parent_data
+  clk: at91: sama5d3: switch to parent_hw and parent_data
+  clk: at91: sama5d4: switch to parent_hw and parent_data
+  clk: at91: at91sam9x5: switch to parent_hw and parent_data
+  clk: at91: at91rm9200: switch to parent_hw and parent_data
+  clk: at91: at91sam9260: switch to parent_hw and parent_data
+  clk: at91: at91sam9g45: switch to parent_hw and parent_data
+  clk: at91: at91sam9n12: switch to parent_hw and parent_data
+  clk: at91: at91sam9rl: switch to clk_parent_data
+
+Ryan Wanner (3):
+  clk: at91: pmc: Move macro to header file
+  clk: at91: sam9x75: switch to parent_hw and parent_data
+  clk: at91: sama7d65: switch to parent_hw and parent_data
+
+ drivers/clk/at91/at91rm9200.c       |  79 ++++---
+ drivers/clk/at91/at91sam9260.c      | 120 ++++++-----
+ drivers/clk/at91/at91sam9g45.c      |  73 ++++---
+ drivers/clk/at91/at91sam9n12.c      |  90 ++++----
+ drivers/clk/at91/at91sam9rl.c       |  49 +++--
+ drivers/clk/at91/at91sam9x5.c       | 108 +++++-----
+ drivers/clk/at91/clk-audio-pll.c    |  28 ++-
+ drivers/clk/at91/clk-generated.c    |   8 +-
+ drivers/clk/at91/clk-h32mx.c        |  11 +-
+ drivers/clk/at91/clk-i2s-mux.c      |   6 +-
+ drivers/clk/at91/clk-main.c         |  16 +-
+ drivers/clk/at91/clk-master.c       |  24 +--
+ drivers/clk/at91/clk-peripheral.c   |  16 +-
+ drivers/clk/at91/clk-pll.c          |   9 +-
+ drivers/clk/at91/clk-plldiv.c       |  11 +-
+ drivers/clk/at91/clk-programmable.c |   8 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  |  14 +-
+ drivers/clk/at91/clk-slow.c         |   8 +-
+ drivers/clk/at91/clk-smd.c          |  10 +-
+ drivers/clk/at91/clk-system.c       |   8 +-
+ drivers/clk/at91/clk-usb.c          |  41 ++--
+ drivers/clk/at91/clk-utmi.c         |  16 +-
+ drivers/clk/at91/dt-compat.c        |  80 ++++---
+ drivers/clk/at91/pmc.h              |  68 +++---
+ drivers/clk/at91/sam9x60.c          | 101 +++++----
+ drivers/clk/at91/sam9x7.c           | 315 ++++++++++++++++------------
+ drivers/clk/at91/sama5d2.c          | 157 +++++++-------
+ drivers/clk/at91/sama5d3.c          | 112 +++++-----
+ drivers/clk/at91/sama5d4.c          | 118 ++++++-----
+ drivers/clk/at91/sama7d65.c         | 156 +++++++-------
+ drivers/clk/at91/sama7g5.c          | 112 +++++-----
+ 31 files changed, 1124 insertions(+), 848 deletions(-)
+
 -- 
-Sven Peter <sven@kernel.org>
+2.43.0
 
