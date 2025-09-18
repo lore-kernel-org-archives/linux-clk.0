@@ -1,99 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC0030BBB2;
-	Thu, 18 Sep 2025 16:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5274334BA25;
+	Thu, 18 Sep 2025 18:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758212111; cv=none; b=e4l/l2c0nOf/U7V1KCB+xcJmSLnaOK4KrYBKCppab/1nu0/9xRC68hblDDQPRLn9t4BBmBXBjTbunFGfw4XT7ZGd+Srcc0sf+rB0J+Sjj4qhO/DHxU7KjWSpmRLJpqPGTjaaU2va2GL4/zHYs19NX6V0GiYjHrwaFTGBsAVfrcI=
+	t=1758218633; cv=none; b=OxyHciEyma2nK5KVNpNCKi7KH3iRM4oxmSJsyUuhYaSANGywQKy2ZRktSKELCPxckMhgZOtTxZnWz32XWcL1kblvqfqx5EQHxwG38g8bJ/wxpzsbd1h22leAe2OtMMVDsE+EWofEwDLkEWzNejGxKlxvPSUFFGuecU01VrkLyik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758212111; c=relaxed/simple;
-	bh=NUmiPw09iI+MO0x6EdrHq4XKUr4BBz9df2qFPG/8Quc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aWwd8QF11sRpp8038sd90v5kia+9IWxOcTuUwHWBErwcMkoMlmFk2k2Pa7yl5RaeDkSgTiOS0TgYn19dcrYWk/lVWjvjcMnOFa6H6zDm+mjcaX0UnVl+qMbJrI4nx3jYMkEss4r17f47xA7AOXw9qu0uMbhY2LkvZjYz3Z5yyXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tW4woGZb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758218633; c=relaxed/simple;
+	bh=oFc0UUvaTrN00fQCCZR47mEWEgZ0kFqcrNmJXWNIqv0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acs6t7hPDAOz8j7Pm57Zf1GRxmEe1H+7cKPY7RuB5MuRSMg/fVuh0Cd3e09It4xxLRGhIsOCxjYRENq3JGtvXXQLF3slYtT2+NpXVZvD0hETFAmdhW71wpi13Le/y/lEqJWAhhqqZhxb3BVlRqurBXsqWUhuYySFYvRfKulRzcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r6kG6ZGg; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tW4woGZb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FBFC4CEE7;
-	Thu, 18 Sep 2025 16:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758212110;
-	bh=NUmiPw09iI+MO0x6EdrHq4XKUr4BBz9df2qFPG/8Quc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tW4woGZb23aELC+Scntq/1zwGWdLICpBTyNbSycVDjmQ/sdiklfvhLVGGRLjLhqBa
-	 Q0RBbq1Da5GRL3de5de5xQN1o/KgFQCVl0M9w8NeenWqHbBZrYgOdhh8YEu+KoVL1d
-	 X+fXup15BMXPSmlciFl4aKB/9nlF6zOVhowIn9EmyZkYY5Oippe/FiysslAaFY9KIi
-	 jku44GXwtQWS7Vr6w18gBvTCNqGw7Hro5fQw2SvH3Y2h0RikV3pCI38Ivs9xarQed5
-	 dkEM3QwFnCLQbbdQ4DkxqWD7dOxirMwTk9QAUDq1lgYVaOZL58KTII3xRsrhUAnAS2
-	 Ay9sQdZCyW0SA==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 7525960427; Fri, 19 Sep 2025 00:15:08 +0800 (CST)
-Date: Fri, 19 Sep 2025 00:15:08 +0800
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
-	linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock changes for 6.18
-Message-ID: <aMwwDAnj4QshEHdI@wens.tw>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r6kG6ZGg"
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58II3JWD065125;
+	Thu, 18 Sep 2025 13:03:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758218599;
+	bh=t4/cCa5+Es3PK/YLYFtiDyhJrzARI0WStMwJlXvT8cw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=r6kG6ZGg/ftlCggJnQ2jFUaA93cbiozpp4y5+kEMJ4pzrj78W3ZiPUtuS+pD61doL
+	 0gGfb8CNDDqIxpCpmvTZBobGnNwrl4zExEOebcL5sAhzVcp6VvfAIwMo7anYcYDA4a
+	 f9RzW5MQ/5+obpjSjsJ2R3n5YP0A2z85goCW0ww4=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58II3Ilj1732106
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 18 Sep 2025 13:03:18 -0500
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 18
+ Sep 2025 13:03:18 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 18 Sep 2025 13:03:18 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58II3HEI1277187;
+	Thu, 18 Sep 2025 13:03:17 -0500
+Date: Thu, 18 Sep 2025 23:33:16 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Michael Walle <mwalle@kernel.org>
+CC: Kevin Hilman <khilman@kernel.org>, Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster <matt.coster@imgtec.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth
+ Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Andrew
+ Davis <afd@ti.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
+Message-ID: <20250918180316.nze5ak3m5pde44uz@lcpd911>
+References: <20250915143440.2362812-1-mwalle@kernel.org>
+ <20250915143440.2362812-3-mwalle@kernel.org>
+ <7hv7lhp0e8.fsf@baylibre.com>
+ <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Hi Michael,
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+On Sep 18, 2025 at 11:48:34 +0200, Michael Walle wrote:
+> On Wed Sep 17, 2025 at 5:24 PM CEST, Kevin Hilman wrote:
+> > Michael Walle <mwalle@kernel.org> writes:
+> >
+> > > The TISCI firmware will return 0 if the clock or consumer is not
+> > > enabled although there is a stored value in the firmware. IOW a call to
+> > > set rate will work but at get rate will always return 0 if the clock is
+> > > disabled.
+> > > The clk framework will try to cache the clock rate when it's requested
+> > > by a consumer. If the clock or consumer is not enabled at that point,
+> > > the cached value is 0, which is wrong.
+> >
+> > Hmm, it also seems wrong to me that the clock framework would cache a
+> > clock rate when it's disabled.  On platforms with clocks that may have
+> > shared management (eg. TISCI or other platforms using SCMI) it's
+> > entirely possible that when Linux has disabled a clock, some other
+> > entity may have changed it.
+> >
+> > Could another solution here be to have the clk framework only cache when
+> > clocks are enabled?
+> 
+> It's not just the clock which has to be enabled, but also it's
+> consumer. I.e. for this case, the GPU has to be enabled, until that
+> is the case the get_rate always returns 0. The clk framework already
+> has support for the runtime power management of the clock itself,
+> see for example clk_recalc().
 
-are available in the Git repository at:
+Why did we move away from the earlier approach [1] again?
+[1] https://lore.kernel.org/all/20250716134717.4085567-3-mwalle@kernel.org/
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-6.18
 
-for you to fetch changes up to 598e4b6713b54267acc257b3c66a269079ee4d8f:
+> 
+> > > Thus, disable the cache altogether.
+> > >
+> > > Signed-off-by: Michael Walle <mwalle@kernel.org>
+> > > ---
+> > > I guess to make it work correctly with the caching of the linux
+> > > subsystem a new flag to query the real clock rate is needed. That
+> > > way, one could also query the default value without having to turn
+> > > the clock and consumer on first. That can be retrofitted later and
+> > > the driver could query the firmware capabilities.
+> > >
+> > > Regarding a Fixes: tag. I didn't include one because it might have a
+> > > slight performance impact because the firmware has to be queried
+> > > every time now and it doesn't have been a problem for now. OTOH I've
+> > > enabled tracing during boot and there were just a handful
+> > > clock_{get/set}_rate() calls.
+> >
+> > The performance hit is not just about boot time, it's for *every*
+> > [get|set]_rate call.  Since TISCI is relatively slow (involves RPC,
+> > mailbox, etc. to remote core), this may have a performance impact
+> > elsewhere too.
+> 
+> Yes of course. I have just looked what happened during boot and
+> (short) after the boot. I haven't had any real application running,
+> though, so that's not representative.
 
-  clk: sunxi-ng: add support for the A523/T527 MCU CCU (2025-09-13 13:50:52 +0800)
+I am not sure what cpufreq governor you had running, but depending on the governor,
+filesystem, etc. cpufreq can end up potentially doing a lot more of
+the clk_get|set_rates which could have some series performance degradation
+is what I'm worried about. Earlier maybe the clk_get_rate part was
+returning the cached CPU freqs, but now it will each time go query the
+firmware for it (unnecessarily)
 
-----------------------------------------------------------------
-Allwinner Clock changes for 6.18
+I currently don't have any solid data to say how much of an impact
+for sure but I can run some tests locally and find out...
 
-This tag contains two commits that are shared with the soc tree.
+> 
+> > That being said, I'm hoping it's unlikely that
+> > [get|set]_rate calls are in the fast path.
+> >
+> > All of that being said, I think the impacts of this patch are pretty
+> > minimal, so I don't have any real objections.
+> >
+> > Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> 
+> Thanks!
+> 
+> -michael
 
-In this cycle support for power-of-two single divider clocks was added.
-This covers some of the clocks found in the A523 MCU PRCM clock and
-reset controller, for which support was added as well.
 
-Besides the new controller, a missing clock was added for the A523's
-main clock controller. The RTC clock driver gained specifics for the
-A523's RTC block for tweaking the clock rate of the internal oscillator
-to get it closer to what the RTC needs.
 
-----------------------------------------------------------------
-Chen-Yu Tsai (7):
-      clk: sunxi-ng: sun6i-rtc: Add A523 specifics
-      dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
-      dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU CCU clock controller
-      Merge branch 'sunxi/shared-dt-headers-for-6.18' into sunxi/clk-for-6.18
-      clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
-      clk: sunxi-ng: div: support power-of-two dividers
-      clk: sunxi-ng: add support for the A523/T527 MCU CCU
-
- .../bindings/clock/allwinner,sun55i-a523-ccu.yaml  |  37 +-
- drivers/clk/sunxi-ng/Kconfig                       |   5 +
- drivers/clk/sunxi-ng/Makefile                      |   2 +
- drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c         | 469 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c             |  21 +-
- drivers/clk/sunxi-ng/ccu-sun55i-a523.h             |  14 -
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c               |  11 +
- drivers/clk/sunxi-ng/ccu_div.h                     |  18 +
- include/dt-bindings/clock/sun55i-a523-ccu.h        |   1 +
- include/dt-bindings/clock/sun55i-a523-mcu-ccu.h    |  54 +++
- include/dt-bindings/reset/sun55i-a523-mcu-ccu.h    |  30 ++
- 11 files changed, 643 insertions(+), 19 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c
- delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
- create mode 100644 include/dt-bindings/clock/sun55i-a523-mcu-ccu.h
- create mode 100644 include/dt-bindings/reset/sun55i-a523-mcu-ccu.h
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
