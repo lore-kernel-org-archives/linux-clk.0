@@ -1,135 +1,140 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C37E3D984;
-	Thu, 18 Sep 2025 03:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FEB221265
+	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 03:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758164861; cv=none; b=SkQYkGZ408oXffc+6KCwbaLLbSHxow6FoKJLzHfJXwefNG4YDMvJkdOzSjdJVkIiXq831LCjkfnp/pXWa6pS4tW78FRsAxc/FnlZfCVZ5lWvqNnwwHzIm16E6V7TaHlJxnBn/MK6PurYDZVkvNx3tTdYVKFaPTVCy10ehPO4QXQ=
+	t=1758166602; cv=none; b=iEfO60anRlAAl36yQF9eZ6MFupl4hvmilAIbGoFAEOxWfJU3FtbckCcM3a0QxTiiyek6on1upZYjjyh2VjjGRW7WwKVe8p3ctImewPJVKyoljk6ZahASAZK+eb9PvCjHXoNSi7OguzLmCs/NlHF91Rx4ZF54RbianMvw9ENKR/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758164861; c=relaxed/simple;
-	bh=r5J6Xh4YUa0MvD2MPxnB0v4QJmTN4BqYy1SGpfAPauA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P48PxLTmuG6bpWSoWv25USKEJ5jzj/hEwapx6UBLiO7R4DyQrBzRXWy9tWAnrUBDPO9/hNzk3gaKa0ABGp1GE8/2feDrM9sbpLd84blUQACKa4oP33GkcDNqb+wf7URLMcyX/VSRfr59N3ih8Rt9EoLXppvpXhqMSk1jYHROZKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WGwgXXXq; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nMR+SFBi; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1758166602; c=relaxed/simple;
+	bh=VKsWONJewYmDSeMo2MQznlDLi0vX8m8gSnerFHs1r+0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=SWs+cNsvBhR2ZH+j2DvQ0lmN2Cf4DrjA0Y6L4xKfrq2zQd9m2/1K6GUTjAg0Ez23oL441MMZMdYw56WP2xk05loAbFQ2/zQQOlOzamfPPEvArbKymEylJqMRuzl+3GoBvBjVON9JKPCePj/VCOMETpga6GggtNj/QMYk1zNYf54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kadCp3fm; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WGwgXXXq";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nMR+SFBi"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cS0td4ChSz9sdM;
-	Thu, 18 Sep 2025 05:07:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758164857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OyYwV9bOm1SqIxxcvCeAbUqevMM0QbYFC2WSPc2lN1o=;
-	b=WGwgXXXqYQYJPz52QRRmwI5of+NmwQ1tXWG78asBNl02xZAt8F5mB9LgaiTqZsb4hmi3w/
-	Jb+4hv1zpBdK6s4+yWe/10GHixtrF4t7FaLZYam37w+wVpd+8kRn5jGiLMMXia0lXMumfj
-	sECfQcl+rFYUMleAwIo/UFt+1RB3NMhg5NEGPibW2XDhTY5CAuTBSBqh/7asjD63tOuzub
-	F09A506IMet8AUJqkk6Qy5hrV0GYSAnEn62YgDXAiRU35jmzUleEKlA36cu3zjJJWYKwZh
-	pxn02goLJb188opcCNriGszvuJaNprAP1al53d+Az6y7cV+cikU1NacneIPF2w==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758164855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OyYwV9bOm1SqIxxcvCeAbUqevMM0QbYFC2WSPc2lN1o=;
-	b=nMR+SFBi8VTOD2BmdZXmI5MioHfqeeJkSOn9P8kKkCuYGu6lTMHT01UnM+bOwGB3Wqw07q
-	AY2nqjyEygxcZeFN+vAiF7cBoyH4b/XowU2U8DKWzKr6jh9726su4EfZjBVaR6ZwGa4+RC
-	Jd3q/9NC8wbFavNg66gS73d5S0JrsayD+i7L3t+RgcauXkKb9hliooHzGYT+4u5xNzJO2A
-	XpS0kehDP8OqcO/K8ilmOq42e28LoNJb53RIS+2AOFUsTllgJlAEWXPRGFhLTXjlSRzNws
-	jPOZTx4fIoHYL7qUhMNe1Is+LhAgbB+GhX6Rt4wwsRWTlYdzQmezwM/n9uq18g==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to assure values latched
-Date: Thu, 18 Sep 2025 05:06:51 +0200
-Message-ID: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kadCp3fm"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918033638epoutp0261166cb21a4ed934172c0026c8a2da66~mQzTKtqkM2116121161epoutp02F
+	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 03:36:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918033638epoutp0261166cb21a4ed934172c0026c8a2da66~mQzTKtqkM2116121161epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758166598;
+	bh=s3/5HzkQn/CeI2bopoX86uqRyljXPEsSE4o7WFp9P3M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=kadCp3fmysdFYd9IBQjFuD+vHlcKWirFTHefZhaBLZaTEtAmyCTOr2xzsc01TQwlm
+	 w0KBoHWSA9RuMEBcwjYnplWsQEWiQKEfWXkwWUp73Y+GIPeTi8QOg90AFYzushZTVd
+	 vmv60O0Ioal09e5lo/pnzDzIKPMBaM6C6aJ1+kAw=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250918033637epcas5p1d9d51cc4ecd81b27034d872b75b01417~mQzSacz5M1915119151epcas5p1L;
+	Thu, 18 Sep 2025 03:36:37 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cS1X45D7rz6B9m7; Thu, 18 Sep
+	2025 03:36:36 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250918033636epcas5p4b3debeea3bf32662128d305b2883376f~mQzQ83BaZ2797427974epcas5p4Z;
+	Thu, 18 Sep 2025 03:36:36 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250918033632epsmtip28a31cc2e7c1a72b6d54f7708eb49c7e1~mQzNNeDoo2096320963epsmtip2s;
+	Thu, 18 Sep 2025 03:36:32 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jesper.nilsson@axis.com>,
+	<lars.persson@axis.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<alim.akhtar@samsung.com>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>
+Cc: <ksk4725@coasia.com>, <smn1196@coasia.com>, <linux-arm-kernel@axis.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <pjsin865@coasia.com>, <gwk1013@coasia.com>,
+	<bread@coasia.com>, <jspark@coasia.com>, <limjh0823@coasia.com>,
+	<lightwise@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
+	<shradha.t@samsung.com>, <swathi.ks@samsung.com>, <kenkim@coasia.com>
+In-Reply-To: <59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
+Subject: RE: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
+Date: Thu, 18 Sep 2025 09:06:30 +0530
+Message-ID: <020801dc284d$6f555b50$4e0011f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 1uk6oimsckbeo4zeydeu1hhyiijcxup4
-X-MBO-RS-ID: 6cd8798236063df7e62
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLTcCpqrQuryqKp/HAeD2/j2cyERgGw+1i9ApJXu36yh53O0A==
+Content-Language: en-in
+X-CMS-MailID: 20250918033636epcas5p4b3debeea3bf32662128d305b2883376f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250917085019epcas5p273ef86028a90e78ada55cde48a28a949
+References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
+	<20250917085005.89819-1-ravi.patel@samsung.com>
+	<59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
 
-On R-Car V4H, the PCIEC controller DBI read would generate an SError
-in case the controller reset is released by writing SRSTCLR register
-first, and immediately afterward reading some PCIEC controller DBI
-register. The issue triggers in rcar_gen4_pcie_additional_common_init()
-on dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW), which on V4H is the first
-read after reset_control_deassert(dw->core_rsts[DW_PCIE_PWR_RST].rstc).
 
-The reset controller which contains the SRSTCLR register and the PCIEC
-controller which contains the DBI register share the same root access
-bus, but the bus then splits into separate segments before reaching
-each IP. Even if the SRSTCLR write access was posted on the bus before
-the DBI read access, it seems the DBI read access may reach the PCIEC
-controller before the SRSTCLR write completed, and trigger the SError.
 
-Mitigate the issue by adding a dummy SRSTCLR read, which assures the
-SRSTCLR write completes fully and is latched into the reset controller,
-before the PCIEC DBI read access can occur.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 18 September 2025 06:35
+> To: Ravi Patel <ravi.patel@samsung.com>; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; jesper.nilsson@axis.com;
+> lars.persson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; alim.akhtar@samsung.com; s.nawrocki@samsung.com;
+> cw00.choi@samsung.com
+> Cc: ksk4725@coasia.com; smn1196@coasia.com; linux-arm-kernel@axis.com; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; pjsin865@coasia.com;
+> gwk1013@coasia.com; bread@coasia.com; jspark@coasia.com; limjh0823@coasia.com; lightwise@coasia.com; hgkim05@coasia.com;
+> mingyoungbo@coasia.com; shradha.t@samsung.com; swathi.ks@samsung.com; kenkim@coasia.com
+> Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
+> 
+> On 17/09/2025 17:49, Ravi Patel wrote:
+> > Add basic support for the Axis ARTPEC-9 SoC which contains
+> > 6-core Cortex-A55 CPU and other several IPs. This SoC is an
+> > Axis-designed chipset used in surveillance camera products.
+> >
+> > This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
+> > Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+> >
+> > This patch series includes below changes:
+> > - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
+> > - PMU bindings (patch #4)
+> > - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
+> >
+> > The patch series has been tested on the ARTPEC-9 EVB with
+> > Linux Samsung SoC tree (for-next branch) and intended
+> > to be merged via the `arm-soc` tree.
+> >
+> > NOTE: This patch series is dependent on following floating patches:
+> > 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
+> 
+> NAK, sorry, DTS cannot depend on the drivers. Please decouple the
+> dependencies.
 
-Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Ok, so you want patch #1 - #5 in separate series and #6 - #7 (DTS patches) in another series.
+Can you please review the patches, I will address review comments in v2 (if any) itself.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 65dfaceea71f..7b52e8235984 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
- 
- 	/* Reset module */
- 	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-+	readl(priv->pub.base0 + priv->reset_regs[reg]);
- 
- 	/*
- 	 * On R-Car Gen4, delay after SRCR has been written is 1ms.
-@@ -701,6 +702,7 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
- 
- 	/* Release module from reset state */
- 	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-+	readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
- 
- 	return 0;
- }
-@@ -715,6 +717,7 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
- 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
- 
- 	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-+	readl(priv->pub.base0 + priv->reset_regs[reg]);
- 	return 0;
- }
- 
-@@ -729,6 +732,7 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
- 	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
- 
- 	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-+	readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
- 	return 0;
- }
- 
--- 
-2.51.0
+> 
+> Maybe you wanted to point me where the bindings are, but then say so.
+
+Yes, these dependencies are for bindings related.
+
+Thanks,
+Ravi
+
+> 
+> 
+> > 2. https://lore.kernel.org/all/20250917071342.5637-1-ravi.patel@samsung.com/T/#u
+> > 3. https://lore.kernel.org/all/20250917071311.1404-1-ravi.patel@samsung.com/T/#u
+> 
+> I am dropping the patchset from my queue.
+> 
+> 
+> Best regards,
+> Krzysztof
 
