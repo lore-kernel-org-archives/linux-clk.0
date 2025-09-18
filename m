@@ -1,167 +1,137 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64262E0406
-	for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 11:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A5D302CD7;
+	Thu, 18 Sep 2025 11:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758193921; cv=none; b=KWX0IY2+FXguU7Qx6kUGMkbfOD4gUQQETsTyNp3l8xN9oZ+M8UKt9w9PH7xvM9a6llV9E3U03oYNVem1AZTvlLnIPd5HuFTOFFyGplviYzk4ky4KCrWhQP8EA+xrb0tnnSxL6RvixBpQzM3ZpfKlDbjGd4/sCz3QQi/edAywTwE=
+	t=1758196325; cv=none; b=IM/N2sv7zXA6GSLNxj10dR0ct7+NZLUyrZl1bme/jwWIGApCq2Acz/AT08/mf/yPXJlEzLWb52TPLU+tfaKzDoA5oB48PR8GsB7QAQw0YoWieUqKTQGSbZJezx477UFDxcaSrlYV6NkWVK59Lol3DU+jENm7FOVnkPdUhnIePOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758193921; c=relaxed/simple;
-	bh=hh9aJMUS07iQ+JFOom0lu0TZ4+z/q5RWhduVOfEcJqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S8IDB5Yy6Erqg3AoTmOIJsmfiwL2xcG1jkgP5VVjgeayK4DXnjG49pBtFyR/qB6B8aCPGBjMb5IeE3CpU1myGbOHunXoq/CYs389UNZIvXDQN0A06M2r0sED6URZxywIe/xMa3LZHyf1fMhEtSqfSmv/BGaWtTk+5FWVK/Qehqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpCECnOC; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758196325; c=relaxed/simple;
+	bh=gRM5ebAAEf4TRIWQFHbcl8pLy8N7ldQhFRmgB1sHmKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1rgGiTtdNgHOw9LZJZtF7eRllRNz4OPLxF6kA4RXsTs55hWk4+J3NkPievehrll0RxkjDjf1+bkOByBdk1xEs/VNB1mwXc7SeRJ1CvjQxM4MafuLBC6RuZ2ICtThzVM7Xgyro9nzCE+2b/PEi49bptWjClUXtKsIcO264SLx34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lMjQgkSb; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpCECnOC"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3eb0a50a60aso528644f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 18 Sep 2025 04:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758193918; x=1758798718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qgH82lUCOsP+VrtHsBb90fe5+wv2J6tQFhMpK3dJL7w=;
-        b=dpCECnOCrgA1mxzqPTKyDIj1swhbBlQ5b5LTRj+j2xRdvTIQEMKrI1ymAz8wTP7Xv8
-         h4+nvc2STIYQTUrdpAjc/II2zK0HfztmmR4Uwc+sXL6+HQTz8tJ85x1kWLJirour5Hjo
-         c7Qet4m2UyRhkDa6U2RxZR02qr6L22osn+bngCXsZWwoologyiWnqXzjneUld5RvY9np
-         uYbqU8yKTEtDs/CtOWWCBQCGArPTJNu3DP/QWW/C2Nw7hkUaEGVZSWNUBpYmmF2H2Ycf
-         oVw8e9UY4QwddTvVLx+WdZMoKqAaIHsUOHwQwnBq17yCRfUwu5mFzftWApdoPIfy3wtv
-         a+qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758193918; x=1758798718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qgH82lUCOsP+VrtHsBb90fe5+wv2J6tQFhMpK3dJL7w=;
-        b=FCFIGvzIWG9BgQPVIJwEEShdtMl675MzJTeoWx7CZoTX7oRcOUV/6EVuP29Mt6/37M
-         Y4R7D5uU1ij19LXrUi+pudUkUtIO56tQrrdEXZLbBEhW5BbtWPmpIKpWycSLNZhe7Mwq
-         qgw6Xp15rR23hFbHTU8CM37W4o+A/LX3gcgufWOW9a5KU/3Bd14YGPe7J2EDMV4dmzkp
-         MWYeGimTE2vVfz5ygQRKTKgE9bFYcZPMW2zwVe/l3kOso6xOmegx9BOPv7MW3Tyk9Zkc
-         Onk/SToocD4YwTxCTbfsamAWYYscZUza2cm7FYh01qrCQps2WSdcaihEgKHxTH9GhXtV
-         QmJA==
-X-Gm-Message-State: AOJu0YxLdqMHs0H/tBgT0QBlmSxsHpTsXYi+8w3Ab0jcZRnFC7y0mgvG
-	AQiU42Uvs+rvzmp2hC4z8yAlkxHqVllnrtZ9oi/b/1rkVScGISK0qFX8f9DJtiYejYCtLpYCfl+
-	QwVfWuT72VQt+cmMlLm7hXXNRPBxb5o+Xod0HjkI=
-X-Gm-Gg: ASbGncsWFpw6SGhsXVXBG1lj6+ZjRouFD4zTASBwClF5wkt3dFSGWuR3Gx4UoBhAxR5
-	i0dlbuQlecKmL80Jf+EjpVOlYTSU3ebnKi3bkSxV0rhtuHOeBK1CNiG6fVG1nOxEax6d9Brj8z+
-	XY1NweCC30KA7VQnh1oasyltS5r0c8k4v8cQS/eE8YCvfu2Fs/S0+SUr4z1Totz1xnTdzxus3iH
-	vl2Jg4q/gi9g9XzdzfDRgdh2sk=
-X-Google-Smtp-Source: AGHT+IG0GMui68drR1bqxkF8T9cRxS3juUoMGcMHWjH/OXmaJxEWr9FQxLagF0QgDoGdQk4pJSLUDY67LP3Vklsr4dA=
-X-Received: by 2002:a5d:5d10:0:b0:3dd:981d:43a5 with SMTP id
- ffacd0b85a97d-3ecdfa4e575mr3860337f8f.47.1758193917668; Thu, 18 Sep 2025
- 04:11:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lMjQgkSb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758196323; x=1789732323;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gRM5ebAAEf4TRIWQFHbcl8pLy8N7ldQhFRmgB1sHmKg=;
+  b=lMjQgkSb1i9TJMwdwcBEkuoREb13VReBGNKC2Nbx6AIQmX+RhFhMvwwq
+   YoimvS5PWBAQsKGF3lTuE1CxpYqqT7R0zpt8tjR2j7zCLqrlPyOO7gAWy
+   FMRx7gRLmA3TGglDg5CYwtN/xjpoglb13K1kovCnCSNb9ytyVOcy0/0Wf
+   cT+N1sqfmmsjEZNp9P6jZacfr5u/0OfL7+7t/XMfYHQaRCRS/Vs+Rb9JL
+   RIFHx3FO2QEzJrh5Bk9EhNapWZmYITCgBv9Lp4PUiX+ZfOPHaYvGQ2gfK
+   sTj2E+PtZ3qJKaoUT4FRnBHsC7y17cTzik1Hf5uZ3c2UCFg/xnGAq16oP
+   w==;
+X-CSE-ConnectionGUID: B8ZVAdgnST60rHEwTjRNvg==
+X-CSE-MsgGUID: hM5iuPmZQJOUOhrOa5DqvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60454918"
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="60454918"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 04:52:03 -0700
+X-CSE-ConnectionGUID: xpACrP6fTbC4WJ9LOd4WfQ==
+X-CSE-MsgGUID: RkJTVKFVTm6UUBTnBekyMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="206471603"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Sep 2025 04:51:56 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzDB4-0003D5-14;
+	Thu, 18 Sep 2025 11:51:54 +0000
+Date: Thu, 18 Sep 2025 19:51:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ravi Patel <ravi.patel@samsung.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
+	lars.persson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	cw00.choi@samsung.com
+Cc: oe-kbuild-all@lists.linux.dev, ravi.patel@samsung.com,
+	ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com,
+	krzk@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com
+Subject: Re: [PATCH 2/7] clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+Message-ID: <202509181955.NgLJ2aBv-lkp@intel.com>
+References: <20250917085005.89819-3-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 18 Sep 2025 12:11:30 +0100
-X-Gm-Features: AS18NWD77y8PPkGANcR7F8lkci9tGtrtCWwH2x7D42Lju8LFSoC6mJti4exnjPU
-Message-ID: <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917085005.89819-3-ravi.patel@samsung.com>
 
-Hi Marek,
+Hi Ravi,
 
-On Thu, Sep 18, 2025 at 4:07=E2=80=AFAM Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
->
-> On R-Car V4H, the PCIEC controller DBI read would generate an SError
-> in case the controller reset is released by writing SRSTCLR register
-> first, and immediately afterward reading some PCIEC controller DBI
-> register. The issue triggers in rcar_gen4_pcie_additional_common_init()
-> on dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW), which on V4H is the first
-> read after reset_control_deassert(dw->core_rsts[DW_PCIE_PWR_RST].rstc).
->
-> The reset controller which contains the SRSTCLR register and the PCIEC
-> controller which contains the DBI register share the same root access
-> bus, but the bus then splits into separate segments before reaching
-> each IP. Even if the SRSTCLR write access was posted on the bus before
-> the DBI read access, it seems the DBI read access may reach the PCIEC
-> controller before the SRSTCLR write completed, and trigger the SError.
->
-> Mitigate the issue by adding a dummy SRSTCLR read, which assures the
-> SRSTCLR write completes fully and is latched into the reset controller,
-> before the PCIEC DBI read access can occur.
->
-> Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas=
-/renesas-cpg-mssr.c
-> index 65dfaceea71f..7b52e8235984 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev=
- *rcdev,
->
->         /* Reset module */
->         writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
-Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
-to read the reset register `7` times and confirm [0] (as mentioned in
-the HW manual). So after reading do we want to confirm the bit is
-set/clear?
+kernel test robot noticed the following build errors:
 
-[0] https://lore.kernel.org/all/20250905114558.1602756-1-prabhakar.mahadev-=
-lad.rj@bp.renesas.com/
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on clk/clk-next next-20250917]
+[cannot apply to robh/for-next linus/master v6.17-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Cheers,
-Prabhakar
+url:    https://github.com/intel-lab-lkp/linux/commits/Ravi-Patel/dt-bindings-clock-Add-ARTPEC-9-clock-controller/20250917-165346
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250917085005.89819-3-ravi.patel%40samsung.com
+patch subject: [PATCH 2/7] clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+config: arm-s5pv210_defconfig (https://download.01.org/0day-ci/archive/20250918/202509181955.NgLJ2aBv-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509181955.NgLJ2aBv-lkp@intel.com/reproduce)
 
->
->         /*
->          * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> @@ -701,6 +702,7 @@ static int cpg_mssr_reset(struct reset_controller_dev=
- *rcdev,
->
->         /* Release module from reset state */
->         writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-> +       readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
->
->         return 0;
->  }
-> @@ -715,6 +717,7 @@ static int cpg_mssr_assert(struct reset_controller_de=
-v *rcdev, unsigned long id)
->         dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
->
->         writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
->         return 0;
->  }
->
-> @@ -729,6 +732,7 @@ static int cpg_mssr_deassert(struct reset_controller_=
-dev *rcdev,
->         dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
->
->         writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-> +       readl(priv->pub.base0 + priv->reset_clear_regs[reg]);
->         return 0;
->  }
->
-> --
-> 2.51.0
->
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509181955.NgLJ2aBv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arm-linux-gnueabi-ld: drivers/clk/samsung/clk-pll.o: in function `samsung_a9fraco_recalc_rate':
+>> drivers/clk/samsung/clk-pll.c:1508:(.text+0xcc): undefined reference to `__aeabi_uldivmod'
+
+
+vim +1508 drivers/clk/samsung/clk-pll.c
+
+  1490	
+  1491	static unsigned long samsung_a9fraco_recalc_rate(struct clk_hw *hw,
+  1492							 unsigned long parent_rate)
+  1493	{
+  1494		struct samsung_clk_pll *pll = to_clk_pll(hw);
+  1495		u32 pll_con0, pll_con5;
+  1496		u64 mdiv, pdiv, sdiv, kdiv;
+  1497		u64 fvco = parent_rate;
+  1498	
+  1499		pll_con0 = readl_relaxed(pll->con_reg);
+  1500		pll_con5 = readl_relaxed(pll->con_reg + PLLA9FRACO_PLL_CON5_DIV_FRAC);
+  1501		mdiv = (pll_con0 >> PLLA9FRACO_MDIV_SHIFT) & PLLA9FRACO_MDIV_MASK;
+  1502		pdiv = (pll_con0 >> PLLA9FRACO_PDIV_SHIFT) & PLLA9FRACO_PDIV_MASK;
+  1503		sdiv = (pll_con0 >> PLLA9FRACO_SDIV_SHIFT) & PLLA9FRACO_SDIV_MASK;
+  1504		kdiv = (pll_con5 & PLLA9FRACO_KDIV_MASK);
+  1505	
+  1506		/* fvco = fref * (M + K/2^24) / p * (S+1) */
+  1507		fvco *= mdiv;
+> 1508		fvco = ((fvco << 24) + kdiv) / ((pdiv * (sdiv + 1)) << 24);
+  1509	
+  1510		return (unsigned long)fvco;
+  1511	}
+  1512	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
