@@ -1,129 +1,128 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ADE2F60AC
-	for <linux-clk@vger.kernel.org>; Fri, 19 Sep 2025 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D8B30EF97;
+	Fri, 19 Sep 2025 12:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758275965; cv=none; b=cVbVlPG+nTQIW3Cpqjj40BBaU4zh0+pUHISab6T+s9vxH0Oq1S2l83lEoD30e3o6PHex2u/Fj8QXuxf8Q/u9cnqEWl1/zr97RijdH2V0GKjux0S3TdCCgFPJTHANOU9M37fhxlQzl6KyOlU+CFPMr6DY4PSQoylk8CTCQNHqDyY=
+	t=1758284380; cv=none; b=fVclTzzBVjwdAEWlsh+s/K9nvlUtU+fDFhfSAuGR/W76tZnX60Akh5DkPaYb8S26wFSr6iytmhuiY1myBwTp2tWcli6XGsGAKIhyR4tNAUTLFcCU6IWAkfXn+GlkxKX3QS25zpVIehOqBxtt0zS0+uLkw0nvm3fPHtQREYKeWug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758275965; c=relaxed/simple;
-	bh=vbP03XlE1h7xnXHsE6YxSmU4t7foc5GMAXHOnth1Kak=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=onIZaMjFUaMZJ/QVSEbh8rD5aVlww0XDRegzklBjwR/tZdpAx6s/9+g3vvIqYuHdJo6uVTbSYwxj+naC0PIygQ1UR5TDx7rXPnOjs4QhFsEYo4Chso28Czla5bKwR9CFuQ8/scjev3osNJPDgD1h+R4vzHDUW0+YJMlT7vN3ICc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ljLPR3hH; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1758284380; c=relaxed/simple;
+	bh=s61a/yp1wfMmIUuIrqwP0YUZ7l3wMSZcSYjOwEKNHUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxBRnt+S2RAt+jPPdeX9azen0V9vL+6P1tamaj1qc+AoVD1ocP2NSdN6HpG8g4v0jU7yoim2w5nyAsJgf9nO/eLMTN50rplFTzE7Efxd5YLV1t9rS5TZGBeVcXzeA/NaM52uQ9he+gTAp5xTET5LQ3HGjKmgx+hyt+whluPapdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aTLVuzXq; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xcU5dyp9; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ljLPR3hH"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso603096a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 19 Sep 2025 02:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1758275960; x=1758880760; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HRCjBM+UZmtDkzaHBLv8yNwvYcdqAmpzBt7Gyq2DkH8=;
-        b=ljLPR3hHzSJXcJkUGL+iM62KIUPeW37CxYkOshGTYxeCiUOHiN9PY2r0PrSwCj1cUh
-         BAphtPA3BKJcN6atFC39OCHXAjVU29ubGTvrG87/BziM4hAMHrlCqcjInisWvVR2XwL5
-         yqHi0sEgurQ89N8rRfSrF9T2VEYRNiKIWw0seIcrQbMl5zg2/BhOyFlpNbzPKl9kDTzv
-         6R60C2qXmWR5QJsOsuWeJ+m5Iw6koacaRCu31tM4HDPCZM+hGze3B2ABpoXIFfpf0OGT
-         l22Kyrh1XkJP4oY9XUbVC/gX+m0dYMwqOvj7e5Mtns9wpwHwyg/Mf0KmMlUcANqq2apD
-         I/mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758275960; x=1758880760;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HRCjBM+UZmtDkzaHBLv8yNwvYcdqAmpzBt7Gyq2DkH8=;
-        b=Hqy9LhKQh1sqAVu3iEixVV4Or4tvkH4NdeiIdgIFtQFh25Xc9zhE/itqSOQF0/xUOy
-         EUpvdCd3JfVRgW1plBAR0kQn0WUFySkihWVNALmQ/yAhCFWBlH6hPt5gdA/vxUH8MEhG
-         sdArqsNl0qEtPZBeXumeuZ+WPtQIu4HpkjLZpUhwqjtmnffGpcM1Ew3EQUtcOw8yT05c
-         UpEvmjnhReAj7DYm8R9Kv1Yx7bq6906J/4LLuyLFAR669jncD48C9fFwQ8gNB7ZfXdq9
-         lJParUAGmbakyN7f2B/BFhzCvTAKiEWWfNPAVORTMFRtY/lW2qbi0ldqaTzsTI6bJ4aD
-         l5Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhBGheJ5uTB1X41Bu8rUFZsUmNzVEgOT7EDtxdIxkE5ojiSvoiVmzGQksbk6AzlT+HLTU7gSxnMhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6aTRX67V37oy4v6kLNfvhqwbpwDJfV4uV6wywjtVJE0E8VeNN
-	TMEK8hdrqOb3D8EjtHY/JQjulMpmzmWwle+cL+DiV59dwS4Pfld5iY3BqK6EY4AY90I=
-X-Gm-Gg: ASbGncvrCkAAFAch20l2tl/akj7brXAFE2TU2JYmkKzkR0PY03iqy356HAs+NGkJEeH
-	IOIywV2dEloBOmopZpf9P5hSmeKiFrADJDBF7a4Rg2uwmVhcQvokDpYrdPZihXLjytRf5WDJvQ4
-	sUFthNZCpAoUXKTbtlUYWdiDKJbOIy0Gm9yGJ2hw6cylco2NE1Lq58x99CcbuPvx/7Gy6Dl2POS
-	wuEH38d0x66qBXb/oqmTBTv/F1GDYBTMcr//UWKIQvoa+Lsqm/rqzUIabclKEgYE0Ap8XQ9ZRuk
-	Idg6QN30A6ri4t/779YQpmfHndgmNZw7kL8wWzlf25+Dc00KVgOPWLE3kXMeYdg3WqHRDvtEKFV
-	4sj3QQyCQ3t0bouyp379ffdqfIioy+6YdP6d41wq7zrX5TqgsxUlYzKke2Vb4DZkB7eiueQ==
-X-Google-Smtp-Source: AGHT+IFgmVd41y35n12dNNDHlT8B0lvOLEpxp28IQxQRb5l7rrryU13J2m4N5veYjKoNAlTvU8u3FA==
-X-Received: by 2002:a05:6402:20cd:b0:62f:a06a:5359 with SMTP id 4fb4d7f45d1cf-62fbe458ab3mr2516436a12.11.1758275959599;
-        Fri, 19 Sep 2025 02:59:19 -0700 (PDT)
-Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa6f03008sm2972107a12.7.2025.09.19.02.59.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 02:59:19 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 19 Sep 2025 11:57:24 +0200
-Subject: [PATCH 2/3] clk: qcom: dispcc-sm6350: Add MDSS_CORE & MDSS_RSCC
- resets
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aTLVuzXq";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xcU5dyp9"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cSs4z2Bcqz9sdH;
+	Fri, 19 Sep 2025 14:19:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758284371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7OrMoU3Lsx8RxrhmwIrFS2FblgYqLM3hYfHo+fqPTY=;
+	b=aTLVuzXq3ROwHxW2eNcQacyCs+kz/fDnTENfKXEWfr0gxGWDiJvsnW4qMJWHt+21PmcduT
+	zek9vtlBxsjTSuUq+XTBZvsKozF2EEsDS6GSHO5gq0z3Ut8+5ykC9XUl1ICwDFPQFSxk5i
+	ynfbR1M0f4ikztt1joLqMXk4mHdZ5U44yS9OirvisFGqkuMRHI9MaK+6N9WSH1WjZD3jnt
+	kyNun+FOffU0J0b6JN8cuF36SBmuBIkknjfzPwwr13AdW6rMCQWq9KyJuscvWAc/oec9fB
+	Rt8v3d0TEr1KjyOnTcbOXB5wysgzw4On8DUvEzc14ZsJsjj7OC9n7A0j6W/rGA==
+Message-ID: <066d5882-89d4-4d10-a054-4d0fdec88cd7@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758284369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7OrMoU3Lsx8RxrhmwIrFS2FblgYqLM3hYfHo+fqPTY=;
+	b=xcU5dyp9uWVB/WfyYLifydQLi/tumthbNNJdKmXXQ1sH6XSRIOV5j5jjnSClX+vnD6mFyL
+	tZa78pqfJ9AUv6pEEAjlRjNXjSGiAT9vbRcDwrH+oH+ZswcEYYTT8TJkSiZcZi8DTTNLIF
+	ZgU4l02hnToKJjDHBiWT5m1AwNvQqJqrrwIEdmYOW4BTqkZyfuCrI5Juu8VFkQpLV2/9lv
+	1+CP/zGTm5BlW2y+6AaWSttL2+Sn2AUJcGwtBtxY+3EVNoKJ2vdO/5vGZ7+x/v/iClTCSj
+	KEVzQf7ueSHcn9xnjcbDMvmf04yfFZ0qc4pAbRYAKvlTLRh8dMrINqvm6v3vUw==
+Date: Fri, 19 Sep 2025 14:19:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-sm6350-mdss-reset-v1-2-48dcac917c73@fairphone.com>
-References: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
-In-Reply-To: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758275958; l=1177;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=vbP03XlE1h7xnXHsE6YxSmU4t7foc5GMAXHOnth1Kak=;
- b=oKNSfmdNf301nQfc/PDdXbR7+ZlQdp0XSLyKqYLiOBuBW9hrNj940/clNKq7jd1x61ljxPbO4
- 4Zuv5gmqejyAEbeikZjWbZe8LVq/5JdMsfAnMcmLjFGp5mtmJrE06iX
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
+ assure values latched
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
+ <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
+ <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
+ <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
+ <CAMuHMdXN2=0KRhBy-pW_ah7mL6iU+8O9pGD20dhSxk4-5R5ckg@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdXN2=0KRhBy-pW_ah7mL6iU+8O9pGD20dhSxk4-5R5ckg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: dajori9jqiuixj5uegaj8bufk5wprot8
+X-MBO-RS-ID: fd5d281c595cb7b9d5a
 
-Add the offsets for two resets inside the dispcc on SM6350 SoC.
+On 9/19/25 9:21 AM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/dispcc-sm6350.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hello Geert,
 
-diff --git a/drivers/clk/qcom/dispcc-sm6350.c b/drivers/clk/qcom/dispcc-sm6350.c
-index b0bd163a449ccd2b27751e32eb17a982facf07d8..5b1d8f86515f251d90e01a4f3cb3b5582b5db683 100644
---- a/drivers/clk/qcom/dispcc-sm6350.c
-+++ b/drivers/clk/qcom/dispcc-sm6350.c
-@@ -679,6 +679,11 @@ static struct clk_branch disp_cc_xo_clk = {
- 	},
- };
- 
-+static const struct qcom_reset_map disp_cc_sm6350_resets[] = {
-+	[DISP_CC_MDSS_CORE_BCR] = { 0x1000 },
-+	[DISP_CC_MDSS_RSCC_BCR] = { 0x2000 },
-+};
-+
- static struct gdsc mdss_gdsc = {
- 	.gdscr = 0x1004,
- 	.en_rest_wait_val = 0x2,
-@@ -746,6 +751,8 @@ static const struct qcom_cc_desc disp_cc_sm6350_desc = {
- 	.num_clks = ARRAY_SIZE(disp_cc_sm6350_clocks),
- 	.gdscs = disp_cc_sm6350_gdscs,
- 	.num_gdscs = ARRAY_SIZE(disp_cc_sm6350_gdscs),
-+	.resets = disp_cc_sm6350_resets,
-+	.num_resets = ARRAY_SIZE(disp_cc_sm6350_resets),
- };
- 
- static const struct of_device_id disp_cc_sm6350_match_table[] = {
+> On Thu, 18 Sept 2025 at 17:05, Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+>> On Thu, Sep 18, 2025 at 2:42 PM Marek Vasut <marek.vasut@mailbox.org> wrote:
+>>> On 9/18/25 1:11 PM, Lad, Prabhakar wrote:
+>>>>> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>>> index 65dfaceea71f..7b52e8235984 100644
+>>>>> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>>> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>>> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+>>>>>
+>>>>>           /* Reset module */
+>>>>>           writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+>>>>> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
+>>>> Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
+>>>> to read the reset register `7` times and confirm [0] (as mentioned in
+>>>> the HW manual). So after reading do we want to confirm the bit is
+>>>> set/clear?
+>>> This is interesting, I wonder if the readback is something more common
+>>> to this reset controller.
+>>>
+>>> Why 7 times ? Is this documented in one of the HW manuals ? Are those
+>>> public and can you share a link to them , with the specific chapter or
+>>> page I should read about this 7 times read requirement ?
+>>>
+>> Yes this is documented in the HW manual [0] section 6.5.1 Notes on
+>> Module Reset Control Register Operation:
+>>
+>> 1. To secure processing after release from a module reset, dummy read
+>> the same register at least seven times except RTC
+>> and LCDC after writing to initiate release from the module reset, and
+>> only then proceed with the subsequent processing.
+>> For RTC, dummy read the same register at least 300 times and for LCDC,
+>> at least 100 times.
+> 
+> Ugh, the number of times depends on the module to reset :-(
+> Do we need #reset-cells = <2> to encode the number?
+
+This does seem like an reference manual issue and will be updated.
+
+However, it also seems if this encoding of per-reset properties is 
+necessary in the future, it would be better to have reset property 
+tables (similar to clock property tables) in the kernel instead of 
+encoding the per-reset properties in DT?
 
 -- 
-2.51.0
-
+Best regards,
+Marek Vasut
