@@ -1,231 +1,177 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012033.outbound.protection.outlook.com [52.101.66.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF92D0C64;
-	Fri, 19 Sep 2025 07:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758265412; cv=fail; b=FxBEpMcyJS7TgvCaBGm710ijD4eM3em53UvHPnKWpoggZi7hN+mCd9DBHQNZJzuR38HJixf8Izk51QOotszyYhFA12hV1Q/gHuJKNjLr61ByA/6jQUozGORMC9uStCg5HdC6ym0hiYa3CBRjqhtV+8S6iyS8Hqi6286OQlfTQSE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758265412; c=relaxed/simple;
-	bh=StPeBLLE96wSL3HV1iZbGDa+Xnv48zge1buSViV5PoA=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=ROfU+5ECCipI6uxj7CinXtugOZ/oDgI5zyssWzmgBrpj6knxJi8W90aL8oYnMgn9ytObxSliA37N/yLpybS2XouVhRLlXPzRQ3uhxXRqewZCRwg0svbOFGaxrCE09b6R4rAnh5xyBBiCM/gUeFuf+xESJnG8wUfE3lmTVRcThzc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PM8HruNR; arc=fail smtp.client-ip=52.101.66.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC0D28725E;
+	Fri, 19 Sep 2025 07:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758265825; cv=none; b=ksarqCpHQLkqw2N2NDNF9YhBRSTXrYeXK1cJkclo5+M2ghDJrlB8PF1Djf21+MELoEsjWoDzhpEhlILpCQZSrzKA9w1C9tVvQYaQRllewMTPhpVghHX6OXZb4KC6wEVd2ZOW8WOSXFGIV5WDOQ4BZRcKgDhfZhQR7WdvFh3M32A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758265825; c=relaxed/simple;
+	bh=yJrpUhZpWQ7g+nM8ZFphh1JYEVOuL4XzO9hsna4Hz0Q=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=VA+VFwA8NMYwEzF40ppPuEb5rgPnz+bOIw+NsIIJ3Fm2X3AM4hX8FpSpZEp2Y6Nz2v58/8xWoK7NpEcjnTsk4UIVy42dawfDuxdQK9GlEO4rIouC9F1s/ibPzDiuXvrEj+XOpFxEr2EEVXO4Frn8VA5iXLF8FMCOUMJbbGYAuyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7xHBPQe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PM8HruNR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M8ZJfIqDxzls9jkfdV6+UKKXtEEpWJNtXFKdHxH/o/NxvwctU6PieKNdEfsoWZKoFqLFCLum0azG6L212SA6sDgrESEWgAue8meWk1S266uUnbf0zC/+W+lqEWxbAj3CDWmhEHjIGO1/5QEp1JvXHQMWdYz9Rs67CHaX1x7k2yUr2GcqzYRaSzZvrgKsM085RP9MKFdA/o46WEgQQNEvotUV/IDYSFS17rDkPEZnAaCD3kdHihxKX6UfZnRe754CnXDm7tqFJl/rNF/KP3LSxc1QtTHi22lQrEBlwEiNmHwlmypaOV7zo45FmZ1ztQ5pka1EYEnhZoU/sNDDbu9oug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aE40jSXNBdvvzWaUH64Bho2Nvp8oyD3bY1xs/cz4ehs=;
- b=cmfkgz1zCACBixf1tP4zINopjsPaoliIi7qyZS2KX5p+OnqUtCqME4LV1Tvnrz367L0gMT97Z+sgAgPveGcBv/CWmAMutVSx7YAT5buD9xOavu5JBGvjNFf6SnYmABIx/YCYg1Au2dEbkIP70VN4/39AHINQ8U4vWhc+w26x61c5WsUuNIhOVtbIn0n3Wq5os8cWgBNUVQ6Utl6delB1k3bEzrQ0YyUqMjvMoZoqUdUctzw5Qp7fZLX/z5HseGQjlpb7PjxcUTu/1cpZzdY/Tdu80memAR/VbuLrRRd08FkZl1o5Mp0azozNJ/LRn0Yve/mHdZ4LtfuAwfIvZ2o+cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aE40jSXNBdvvzWaUH64Bho2Nvp8oyD3bY1xs/cz4ehs=;
- b=PM8HruNR1IGUenxtOZgExW+qJUT1fhARnt0PjKQIOGPz5FeBUFTQj1JodyfTSHQEo+NPQMOe9+L/a08rLIlgfcCgm7Z0QlTEiiQ3BIiqSokwx6N3t5iV8mrG5qis62VvT36kIh1lNm53YblGuBt7TX2Fsa/SOOae8WU/OFvvWJDeMhDtgElPxtEKFr4Sum+ddk5QB1xcUYk/ALe+kP66h4QQzHKVV09VtJXPMf0qCpmQKLxBwlJWssMtaflwHu+vMni1MvX5i1VlW34tpcfLYhANBAQJL3z6UiE31yIKgR8UJFeyeIASvpaRygPFLLfyoumPMfjGKrRQADDm5Msagg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by GV4PR04MB11452.eurprd04.prod.outlook.com (2603:10a6:150:298::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
- 2025 07:03:27 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::c67b:71cd:6338:9dce]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::c67b:71cd:6338:9dce%4]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
- 07:03:27 +0000
-From: Xu Yang <xu.yang_2@nxp.com>
-Date: Fri, 19 Sep 2025 15:03:00 +0800
-Subject: [PATCH 4/4] clk: imx95-blk-ctl: Add one clock mux for HSIO block
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-usb-phy-alt-clk-support-v1-4-57c2a13eea1c@nxp.com>
-References: <20250919-usb-phy-alt-clk-support-v1-0-57c2a13eea1c@nxp.com>
-In-Reply-To: <20250919-usb-phy-alt-clk-support-v1-0-57c2a13eea1c@nxp.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>, 
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Xu Yang <xu.yang_2@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758265397; l=2065;
- i=xu.yang_2@nxp.com; s=20250815; h=from:subject:message-id;
- bh=StPeBLLE96wSL3HV1iZbGDa+Xnv48zge1buSViV5PoA=;
- b=Ar9AWJfTzTdKgEhCelzpLr8ypuPEGoq5jNVw1L3Ok9a3SU3UKnObhA0fXvdQxQ3i2ARFdtxjN
- OdBi7V8RnNlChVRZ8USf2/iIC4+icalm+L0a87UhcXyZWGr3pHp2HM2
-X-Developer-Key: i=xu.yang_2@nxp.com; a=ed25519;
- pk=5c2HwftfKxFlMJboUe40+xawMtfnp5F8iEiv5CiKS+4=
-X-ClientProxiedBy: SG2PR01CA0146.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::26) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7xHBPQe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD25EC4CEF1;
+	Fri, 19 Sep 2025 07:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758265825;
+	bh=yJrpUhZpWQ7g+nM8ZFphh1JYEVOuL4XzO9hsna4Hz0Q=;
+	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
+	b=i7xHBPQeG+hyxv0j0jBVbNuijmA9WfKr0KnAARmLIxAGA5oIIW5Sd7ja7pvzWPDra
+	 9131IG724uQemk5ivVACHIfqTVuRoz4HIWF0+SaSSVhNOVryDIXP8wqH+UsqFUYVc9
+	 Qm9/d8I1x4cuQCvJGK0t25MWsad3if4iZaplaaZvPKu51fvg8CNqBh4/itp5WdOmVs
+	 smAcb34D5CoMe9c0paHVIplku9NxfUAEQ/Az0TfdBFKitFX2lLawggJ/BCoPJvcoaE
+	 M8T+IgPYCuaRNdgyVnwFxLPNl2AfKPMVBN4b46FnrN4z0E9KObxEcKNkag9o9GAPic
+	 lfm6tM6Hjv5/Q==
+Content-Type: multipart/signed;
+ boundary=cb912817ced60c190c00a4a2f04d7c3350a22b93ccded44d7d2e6bb80338;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 19 Sep 2025 09:10:21 +0200
+Message-Id: <DCWL7R9MZLH1.2FR5WWQEKB638@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Dhruva Gole" <d-gole@ti.com>
+Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
+Cc: "Kevin Hilman" <khilman@kernel.org>, "Frank Binns"
+ <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nishanth Menon" <nm@ti.com>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>,
+ "Santosh Shilimkar" <ssantosh@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Andrew
+ Davis" <afd@ti.com>, <dri-devel@lists.freedesktop.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20250915143440.2362812-1-mwalle@kernel.org>
+ <20250915143440.2362812-3-mwalle@kernel.org> <7hv7lhp0e8.fsf@baylibre.com>
+ <DCVTYCVUCXWH.LAMARC8K4UNU@kernel.org>
+ <20250918180316.nze5ak3m5pde44uz@lcpd911>
+In-Reply-To: <20250918180316.nze5ak3m5pde44uz@lcpd911>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|GV4PR04MB11452:EE_
-X-MS-Office365-Filtering-Correlation-Id: aba32e1b-a588-4438-a36f-08ddf74aa1fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|19092799006|1800799024|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UXZ4YmRiVVhJOU9FbHQ1b1R6MjdwVEpaMG5rYWtJVWtEV29oQTEvYmJ4N0Zv?=
- =?utf-8?B?Yi9hdnF5NDNDM20xcHBKamptb3BsT2lreWdRc1N3OGFNQ3J2K2svejJPd2Vv?=
- =?utf-8?B?dVJsWERYMVdEY25MTHB5TDZ2WENta096WWcvWGp3elhFYTJVNHV4YVJrVTR5?=
- =?utf-8?B?cGpnUXcyZnVUV0lBeWxoNWJTU0M1WGhhNTJlL2ExMDIweHlQaTZ3UEZVeTl4?=
- =?utf-8?B?R29EZzcvWDdJZ2dkeDRRNkhoaVVwSGNFUHdWaHhZTFNScEJ4OHRlNVVub2lM?=
- =?utf-8?B?NXA0Z2lEeU5RQlJ2MEVHeWlTZHVZVXU5NUlOSXZXcFhJaGNFQlRva2RySlJP?=
- =?utf-8?B?eG5wL1B5enhCWHNCRDg2SnlTN2I5aU13QldwK1BtQmRBcCtucGoyWURMU2Vl?=
- =?utf-8?B?Nk01NzVZL1dXaXBuOHpaNTRTUUx5ekMrcno1cHByQkY4Ty9TWXpaUHp5K1R0?=
- =?utf-8?B?djBvUENiN0V1SSsvV1BkVStQL0tmRGdrUUpBbGs2ZnMxS3NHK3ZDQmh6QlRX?=
- =?utf-8?B?Zm1oNFRTQkhzVmRBUzRaUzZZT282aC9BdG1CWDlNOVZRc2RuOEc0MFFTL0tX?=
- =?utf-8?B?bWlzTWMwZ05aWTBnZ2RYY3RoVG12ZS9lREVuZWU5WmM4UUx1ajRTcDFLdkNw?=
- =?utf-8?B?c0wrZTlnbUl0MjFWUHZWd29lYytCM1pJSjFseEJDOVBQd2J1K2szOGFuWXZQ?=
- =?utf-8?B?RzNIcGYxbE40ekF2a05TbmtJMmVuUDRwcnIyU2grRXV0SUN5eTJSZXFLUHZN?=
- =?utf-8?B?dlI2Q2d1Sld5c3dmNGtCcHdRTHJicFBPNDFoNkhSZXZVSnlocy9hY1M5dWJK?=
- =?utf-8?B?SUVCSjJFRDRnclJ2T1VRSERza1dpWk1lMkp4R3BiVWdvdyszNjhuaGMvNVJm?=
- =?utf-8?B?Wk9yNXVOeGpQc3U5VnJsanJRU3RuUHIzWnVscEw3eTFkazhsellDS1hUbTJr?=
- =?utf-8?B?VGFGSVYwOWhOZE5UYnhRaktuVFlSbjZ6emdyazhGRGdTMHpiU0x6Ri81KzVm?=
- =?utf-8?B?NFovMVQzajZiblNkYWI0bGpreDhLNm9vcWdXTlZJemVsamloaUk5cUxScUd5?=
- =?utf-8?B?a3FHTHFkdjBndHFhZ0RhQWwwUVNLRlN0QXdQYlVLODB0TEgrWmhPYStrQk9J?=
- =?utf-8?B?RXdIMWhwSkdnOFE1ODZnTkJ3cFpuSFl4R0pRUjhaYS95cEFDb3ZrVGRNcmN5?=
- =?utf-8?B?aW52QnlRR3lwMGhiNmJ3NWJhYTQ5YkZlWEFpbUJyU3Z1bERuK0ZjcjVVRTc5?=
- =?utf-8?B?VnZKQnF5YWM1NW14WTgyb3g4dmZwMFdWR3JrR3NpTXphc3padE9FdzBDa0ln?=
- =?utf-8?B?M0lwbTkyQWxELzNNdi9Rdkl6MG5SZ1hmcVhLcXBMbWR3a3B2ZEttVVppSEU4?=
- =?utf-8?B?TkxjZHFXb1d1a292YTk0RlRNT0xmRkxxYWMvSldkeVZ2bUhwbS96MVNwdmRD?=
- =?utf-8?B?SXdtTnJDSkl5UjU0Q3MrZUovTlpkS1lxMFBsWlpyZUJzN3FabDRaY3pONmZH?=
- =?utf-8?B?YU9IRHU5eDVXL2VmZ2hUMEYydnlocTZzc2U4N2Z4UHEwTGpPVWtMeGlCZVVF?=
- =?utf-8?B?QjRoQ0VHVWc3c256ejQvekY3RWt4TzliQWxCK3BjNFNuQmRxVjVlNUdXNEtQ?=
- =?utf-8?B?c01xd29EVml5OHFTN0JvN2pTYmY5OW5kcmhSTUJIOGlpb1VkaU9JVzFKaDU4?=
- =?utf-8?B?QSsxc2YxV2NLMytjNDQ1L1pMaUJxcGJNNzA4MGs1dGFJejNhNm1RWnlsakh2?=
- =?utf-8?B?blJJREwwTml2YnZsWTk1ZTN4TGd5QVU5NVBwcUhNdWdHQnVqRXFvT0NSTERt?=
- =?utf-8?B?aEx5dGRvVXFCVlVtTUhFVTREd2RCN2xLTkVYb0JQamhwdllZZFRjR3lHSW9n?=
- =?utf-8?B?aHY2eS9aNXovNFB2TTJoWnhITVZTYzREMy9mYm5YeFBySWJYdjdvU1kvbHVx?=
- =?utf-8?B?Y282dU85TFdKZWNZMEdrZTlFZ2Rjc0V1R2tkTjQxYUtwdHFLdlFCeEkwMFpo?=
- =?utf-8?Q?CrZpnUs30BTsaXzANI8Cbid32Llg6c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(19092799006)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MmdFczlGRjlYeE1PckJJMGlRcmVubnlzNGRpQUhrSUxnVk5nNVd5M09mb0Fw?=
- =?utf-8?B?NEhPeWhqU2UxVHBuejVZL3pMdzQvZzAwVEZOeVdUclN6VDVOVVpyMzA1UzhL?=
- =?utf-8?B?NFFnblFRV2VuZVRHcGJ5QzYzL1VRTlZPdmZZQVBJZTJLUHYzMTN3QmQyTmt2?=
- =?utf-8?B?TWZEeUZZdU5rWHhqWUxvZExjdkp2MlR0TmsvTitRNk9YRDFWMytSREdXeXV0?=
- =?utf-8?B?NEZXandWa2dHREN1UDBHUG1YZHBXZVhrdytJSXN3TG9DYjZucHdrbUExNWg4?=
- =?utf-8?B?UVB4bzUwWFcxb25LSitPNkpidHJWaVhDZjM3bWdUc1pSNjBvR0VObzBndHh6?=
- =?utf-8?B?bUgwWUpnUWJ6REF4bXY4V2NFZzVZODlqOVpNK3paYnFwWDExMEdTMmU0SURS?=
- =?utf-8?B?UGZLVDJXU2s5clUvNVlZYUUvZjlZTGdnSFV2NUZkWk5EUytUdnpUQjJVZ09S?=
- =?utf-8?B?dC93cHp0d3cveUZpN3lud0dDYkZtbVdLM2Q1cE5Ib1N4Mi95dGVRRDljbFh4?=
- =?utf-8?B?T2NvWTVRWWEyYm1GOFNOSHpRejFlTUQ2ZTZRdVpxb2RBaFlsRnRCZkFLbExB?=
- =?utf-8?B?VDFjMVZuMHVQeEdReU9tbXV1b3dLS3NsRFhFdER1OCtWNFdESXRLMEI4by8r?=
- =?utf-8?B?Q3NTQ3pESUVSYlJCYytRTHUzZk5Jck1JQXBJaDhQYk9FaXpDbEl3aGRKcmla?=
- =?utf-8?B?V1U2VkR1OTA5dWpjYnZRQm95UHVrVmh4akZtYkVVYzNBUnJDZklJSjJ6SG5L?=
- =?utf-8?B?Ylh4UElSV1Y1U1p3cWJPM1RPK3JBcWdUZ01FNXppMGJweEpydTBFQndzNjg4?=
- =?utf-8?B?MDJxZUd4YmZtSis0UmN5dUw2bDd5aWFxMnBOaXFIeDBqOXdqZWVXNjI3YWJI?=
- =?utf-8?B?SktCQ3FETnB4Yi9RNW1rQ1AwVzR4eUs0dVdEc0FhMFdsOGJYMHhReUIrSHM0?=
- =?utf-8?B?aE5uZ0lrZ25jVXVoTW9hdERWbUV3bnpSYnJweDhTMFJzTWcvMWQrLy9JUXJp?=
- =?utf-8?B?RjdoSER1ZjdKSGg4ZTJIQVhtUU1wdnBhYUh2aGcyRHFUTy8wL2tNblVlamhp?=
- =?utf-8?B?THJBdXl3Mzh5OE1Lbmo5eEtLWU5qb0I3TUNxWmNQbWQyTk55VE5DRGRyK2lH?=
- =?utf-8?B?eFg3RWs0aTBpejF1cVVQUWtnN3dwQ3VXMzFvNGc4Q1JZeUtadXZKOTRKQTRt?=
- =?utf-8?B?QTZHUVVQUVAzZWJSVUtwZzQycVdsM1BhMXZVTC84VUkrZmZmSDRxOTBtd1dO?=
- =?utf-8?B?ZEpvQlNsQm1lamJKUnN2ajdoNmRVZklXYTVhbEFqaFlLMGlKOGZFWWtJZWI1?=
- =?utf-8?B?Z056M1hWeGtFbUlLSXZyZDBjVEZpQjNxWVFvWEFwWS9TK0NYbFI3VkdyYUxh?=
- =?utf-8?B?RHFuSGJjMW9QbnFtQUN4NG9YVkh6NjY3UURUZGxJTUlNMitUUGNzWjAyQ1dr?=
- =?utf-8?B?aTdqMVFvMFFYa3FNZDU1QnI1ZFpJbFluSkg2OFlabFo2NzE4NXU1ZzBUYnZt?=
- =?utf-8?B?cmhROHRsRjJ5bDhPWXNiNE15N2dDOU51bXkyM3lKS254UFBXVUkxWHVDK2hD?=
- =?utf-8?B?VUhUYjRqc2d5WkNnSCtHbkQ3WHczVWUvL2RpUDUyTkxUeVdwYzBwZWNRZDYw?=
- =?utf-8?B?UTRwRVV6dlYrdmhxb3h0TW5QMUxYWDVoaWVkMHNvT3RabEJuMXJLMytDSFcx?=
- =?utf-8?B?dmdHN29ackR0azRtNW0xdlNTVDhUS1dZUk1sc1RJZ2lSbm5ScjNYUFNMQTkv?=
- =?utf-8?B?VWx5T0F3d1hUdkxkRHJGejFsejFUYVRLa1p6aHJQejREQWhseVEzTC81VFNo?=
- =?utf-8?B?Qm1vSFpBRnkrd0ZIWWVkeG1JeTB4d3A5RzlIYWYyUThIS2RkYnlrWHdTeUY3?=
- =?utf-8?B?d1VYcWIxVDZGaUwyUzVZcE1tNzJtWnJ0WVMvcURoZ3NPWEFlL2lFME5BNGpa?=
- =?utf-8?B?aWhaWE5tU0xZQktIdHJIeWRrZlhyQmxYUEhPZVJDbG1GR0hsdTZieTN3cVZv?=
- =?utf-8?B?ckw5VG0yU3NmZys3NHNWUWVCR0ozeWg2TFYraWkrNUx5dDh1c2tSYjRDWFpO?=
- =?utf-8?B?dlpCdDYvZnl1SloxVEszd05aZDlpYWdoSkxGWXJOSEhtUVVEamI5N3A1NXow?=
- =?utf-8?Q?awyKIj65CecEoCMPbnF0r7cED?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba32e1b-a588-4438-a36f-08ddf74aa1fb
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 07:03:27.5296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AjazLJDB/e/h8SczSu1+B6/YyzsH+3sznKYT5XO0H4TPYs9G278nj98WuD5+seCEYlT/tboo+PEl4KmpQx1Zow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11452
 
-The GPR_REG0 register has an USB_PHY_REF_CLK_SEL (bit 6) to select USB 3.0
-PHY reference clock.
+--cb912817ced60c190c00a4a2f04d7c3350a22b93ccded44d7d2e6bb80338
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-USB_PHY_REF_CLK_SEL:
-bit[6]   - 0b 24 MHz external oscillator
-         - 1b 100 MHz high performance PLL
+Hi,
 
-Add a clock multiplexer to support USB3.0 PHY clock selection.
+> > > > The TISCI firmware will return 0 if the clock or consumer is not
+> > > > enabled although there is a stored value in the firmware. IOW a cal=
+l to
+> > > > set rate will work but at get rate will always return 0 if the cloc=
+k is
+> > > > disabled.
+> > > > The clk framework will try to cache the clock rate when it's reques=
+ted
+> > > > by a consumer. If the clock or consumer is not enabled at that poin=
+t,
+> > > > the cached value is 0, which is wrong.
+> > >
+> > > Hmm, it also seems wrong to me that the clock framework would cache a
+> > > clock rate when it's disabled.  On platforms with clocks that may hav=
+e
+> > > shared management (eg. TISCI or other platforms using SCMI) it's
+> > > entirely possible that when Linux has disabled a clock, some other
+> > > entity may have changed it.
+> > >
+> > > Could another solution here be to have the clk framework only cache w=
+hen
+> > > clocks are enabled?
+> >=20
+> > It's not just the clock which has to be enabled, but also it's
+> > consumer. I.e. for this case, the GPU has to be enabled, until that
+> > is the case the get_rate always returns 0. The clk framework already
+> > has support for the runtime power management of the clock itself,
+> > see for example clk_recalc().
+>
+> Why did we move away from the earlier approach [1] again?
+> [1] https://lore.kernel.org/all/20250716134717.4085567-3-mwalle@kernel.or=
+g/
 
-Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
----
- drivers/clk/imx/clk-imx95-blk-ctl.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Because that not fixing the root case. Also it probably doesn't work
+if there is no assigned-clocks property. Nishanth asked for the
+latter and the soc dtsi should rely on the hardware default.
 
-diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-index 7e88877a624518cc679cfb3bf673418207a1bc74..a87af0dff46fe6583f59d8584e1208c1d8f24417 100644
---- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-+++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-@@ -301,6 +301,24 @@ static const struct imx95_blk_ctl_dev_data hsio_blk_ctl_dev_data = {
- 	.clk_reg_offset = 0,
- };
- 
-+static const struct imx95_blk_ctl_clk_dev_data hsio_usb_blk_ctl_clk_dev_data[] = {
-+	[0] = {
-+		.name = "usb_phy_ref_clk_sel",
-+		.parent_names = (const char *[]){"osc24m", "hsiopll"},
-+		.num_parents = 2,
-+		.reg = 0,
-+		.bit_idx = 6,
-+		.bit_width = 1,
-+		.type = CLK_MUX,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
-+	}
-+};
-+
-+static const struct imx95_blk_ctl_dev_data hsio_usb_blk_ctl_dev_data = {
-+	.num_clks = 1,
-+	.clk_dev_data = hsio_usb_blk_ctl_clk_dev_data,
-+};
-+
- static const struct imx95_blk_ctl_clk_dev_data imx94_lvds_clk_dev_data[] = {
- 	[IMX94_CLK_DISPMIX_LVDS_CLK_GATE] = {
- 		.name = "lvds_clk_gate",
-@@ -520,6 +538,7 @@ static const struct of_device_id imx95_bc_of_match[] = {
- 	{ .compatible = "nxp,imx95-display-csr", .data = &imx95_dispmix_csr_dev_data },
- 	{ .compatible = "nxp,imx95-lvds-csr", .data = &imx95_lvds_csr_dev_data },
- 	{ .compatible = "nxp,imx95-hsio-blk-ctl", .data = &hsio_blk_ctl_dev_data },
-+	{ .compatible = "nxp,imx95-hsio-usb-blk-ctl", .data = &hsio_usb_blk_ctl_dev_data },
- 	{ .compatible = "nxp,imx95-vpu-csr", .data = &vpublk_dev_data },
- 	{ .compatible = "nxp,imx95-netcmix-blk-ctrl", .data = &netcmix_dev_data},
- 	{ /* Sentinel */ },
+> > > > Thus, disable the cache altogether.
+> > > >
+> > > > Signed-off-by: Michael Walle <mwalle@kernel.org>
+> > > > ---
+> > > > I guess to make it work correctly with the caching of the linux
+> > > > subsystem a new flag to query the real clock rate is needed. That
+> > > > way, one could also query the default value without having to turn
+> > > > the clock and consumer on first. That can be retrofitted later and
+> > > > the driver could query the firmware capabilities.
+> > > >
+> > > > Regarding a Fixes: tag. I didn't include one because it might have =
+a
+> > > > slight performance impact because the firmware has to be queried
+> > > > every time now and it doesn't have been a problem for now. OTOH I'v=
+e
+> > > > enabled tracing during boot and there were just a handful
+> > > > clock_{get/set}_rate() calls.
+> > >
+> > > The performance hit is not just about boot time, it's for *every*
+> > > [get|set]_rate call.  Since TISCI is relatively slow (involves RPC,
+> > > mailbox, etc. to remote core), this may have a performance impact
+> > > elsewhere too.
+> >=20
+> > Yes of course. I have just looked what happened during boot and
+> > (short) after the boot. I haven't had any real application running,
+> > though, so that's not representative.
+>
+> I am not sure what cpufreq governor you had running, but depending on the=
+ governor,
+> filesystem, etc. cpufreq can end up potentially doing a lot more of
+> the clk_get|set_rates which could have some series performance degradatio=
+n
+> is what I'm worried about. Earlier maybe the clk_get_rate part was
+> returning the cached CPU freqs, but now it will each time go query the
+> firmware for it (unnecessarily)
 
--- 
-2.34.1
+There doesn't seem to be a cpufreq compatible for the am67a (which
+might make sense to add though). But I'm wondering how much energy
+that will save because the SoC can't do voltage scaling.
 
+-michael
+
+> I currently don't have any solid data to say how much of an impact
+> for sure but I can run some tests locally and find out...
+>
+> >=20
+> > > That being said, I'm hoping it's unlikely that
+> > > [get|set]_rate calls are in the fast path.
+> > >
+> > > All of that being said, I think the impacts of this patch are pretty
+> > > minimal, so I don't have any real objections.
+> > >
+> > > Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> >=20
+> > Thanks!
+> >=20
+> > -michael
+
+
+--cb912817ced60c190c00a4a2f04d7c3350a22b93ccded44d7d2e6bb80338
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaM0B3RIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/j93QGAmv8mlcnn/U296qSb5qVlNNhouKQqHfAp
+S37O0b5o/H2D++FFDN7P0+8oG6Z/DZslAXsH8+7nsfujBqs7SZbKUgOD8h4X/pHy
+iiuG302gZzP0JcSbusNqdTyWSSI3jX/RN88=
+=e1rG
+-----END PGP SIGNATURE-----
+
+--cb912817ced60c190c00a4a2f04d7c3350a22b93ccded44d7d2e6bb80338--
