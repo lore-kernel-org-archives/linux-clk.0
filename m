@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF716283FFA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768328466C;
 	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758261551; cv=none; b=YgqeGEJFIJD+4aDayt0FnfZQG+o/5cTT321ibfHmHDRG7X+l65Yu7HZaNPWE3d7G+Mt/44VvLKqqI6wBRr9peoF6kRa2OSl2eSDInYArLTwnXGUlzDnaNHlm8qRlwBlZOrsy6vKCypq9n3j51anbt1Zu3Iy/je3eCDXqMmhFre8=
+	t=1758261551; cv=none; b=hjTfHEpB9GpkwMYpFDmTaoWs5cUWALgUnJU48J26uNurTKWyIhbI1+u0lskgzTeyScIEiEk9Qp/rj13VheF2Jj9rqviduvSWJ3F5PFrTYT1FC43KTKRKv/efzbYWTRACBxpahwBFyiF8b7EbOqfr0aN/4JmdEGfvKUOQnGkq5xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758261551; c=relaxed/simple;
-	bh=ARN6P9/X424zlXLiKTbeILtanwkQtWd4O4u45ktBDnM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Nl0I/Qsip1YSxHfTGacB3YW8KRJ/km8zoQUtGMPxmegEqroEHjCT1QGIpxjuzsKi29zvHOg/OLXnzWhLKlwsaO2ZmlEG2xCdbzPV7/fEumkTMqKeGeN8dFzZEJhrKoX6SJDdqn2WV9UGEaBbKmlrgvCrjsjULAkHPHXvvjulYFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/qUzZBH; arc=none smtp.client-ip=10.30.226.201
+	bh=VPHrTQDDEYO21a94I8JiwUQGWbVLi46Ixi6m9z/mf5I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZE5KjdhEFWrzrBOEYj3z/ryQs3tsfshYYsyT82fSmJPDT3gS7t7EFszt8DZkURIOnnfFuvZLiZ1mAGtIT7qcTMJnlK8r+oIz5+q1IHTPFH22C7pC0khkpU9ZVsRfw7TM5UVSWmT/KBSSvoyDC3Ph/Bc0cNv7oLWNeZs65a48p1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJOkbXP2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/qUzZBH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 80730C4CEF0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJOkbXP2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A5C31C4AF0B;
 	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758261550;
-	bh=ARN6P9/X424zlXLiKTbeILtanwkQtWd4O4u45ktBDnM=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=R/qUzZBHIsxOOMKjnRckwsYr37MOnatD+425r/3bMIPTdPagxJds5RmoXdQ1t7PSw
-	 VKC4ys+4Uc9nL8IE8GblocuztHLnidGyWn+8wb1a19Hlb+dz6TDoeQyv2we8B05JEU
-	 u1BFt8RduSHsac4/Qy8o8L0oHtV5TsnoV4ydfE4FxogDz0D3c2M4V7sflb0sX/Gk30
-	 fgIFe2FaZzjgQP5En/DtRwdZjk6xGCa9JI4dq8+nh6fTSBS/zxAxvOeQlVtUu3RwOD
-	 0w8Q1STDbdNCMp/PAJSrRasbDvrE4wPofWtXcP+AFKlIJGDYIYMy5rDycGS1U5k3Xd
-	 jaP8moY3eVaxw==
+	bh=VPHrTQDDEYO21a94I8JiwUQGWbVLi46Ixi6m9z/mf5I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=QJOkbXP29P7Lk6a3p/1oTDd6ha3eRZF6Mt5yUSLV/xE4PYLWrH7tZSgsnoI3uSU1O
+	 aDOrg8l4HWh80L3yBw6dgYyi0CVdh78TL1nqbq32ol/A0TDuH4nOjWF7qrb2n+YuKH
+	 LxmaPB0ND7Fq6BgCqZDxnafdHIsAWSIazarWuAFww20yGeTcz3u9EimHrmxTDKMQ3s
+	 VArAMbehHvGc8ETGBZ1oXIEapdyCWKVzZ4+GOT9VuetcWp1voQCZan9ofHjmECXd7Z
+	 6j5qUiV9T4J4oD/5zGswSRKNlzbBIMzlv5cMyGzoYxz0/fNIv2s0Kj2rfRYrPo35x9
+	 Zju1lolxygUxQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC39CAC592;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DE5CAC5A5;
 	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH v6 0/3] clk: amlogic: add video-related clocks for S4 SoC
-Date: Fri, 19 Sep 2025 13:58:58 +0800
-Message-Id: <20250919-add_video_clk-v6-0-fe223161fb3f@amlogic.com>
+Date: Fri, 19 Sep 2025 13:59:00 +0800
+Subject: [PATCH v6 2/3] clk: amlogic: add video-related clocks for S4 SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,11 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACPxzGgC/3XPzWoCMRSG4VuRrBs5+TmZpKveRxHJzxkNVVNmJ
- LTI3LvRjTKjyy/wvIdc2EhDppF9ri5soJrHXE5tmI8Vi3t/2hHPqW0mQSJ0ArlPaVtzorKNhx+
- eorIBNToQljXzO1Cf/+69703b+zyey/B/z1dxe31XqoID10Bdb5TqlRFf/ngouxzXsRzZrVXlw
- 1uh5142H4IM6LGXDvTSq4d3sLivmrcKdHQi2OBeeP3s3dzr5pEggki6894uPT55YeYemyeJ0im
- 0zsDs/9M0XQHF8HpArAEAAA==
+Message-Id: <20250919-add_video_clk-v6-2-fe223161fb3f@amlogic.com>
+References: <20250919-add_video_clk-v6-0-fe223161fb3f@amlogic.com>
+In-Reply-To: <20250919-add_video_clk-v6-0-fe223161fb3f@amlogic.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -54,15 +52,13 @@ To: Michael Turquette <mturquette@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor.dooley@microchip.com>
+ linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758261548; l=1984;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758261548; l=7108;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=ARN6P9/X424zlXLiKTbeILtanwkQtWd4O4u45ktBDnM=;
- b=XXP6mQSo6VYw2td4KrrELnplOge6oWnhKcSZSb+u2Xr4OOmy2ahWYAZ3efQOYgziW+ySI+p7C
- kh9uYnVngwBDttGGcI1ZdGpcOzEN8UVV20TQpALs/I9Lf+4KyV+HqZ7
+ bh=Q4yUJrrH7nm8dR16U53oyYIkqzh2f0kcV3s4j1jZIus=;
+ b=oob6e/DY3vATqWvRmwF3Rcn9uIPkMSOFx209c8+xqPfO8cN7TrIf261YquhKnhpwT1liqT4aq
+ vXmPZE9hdHABRvkFs900ymrXnLEEfsJezkAwUGk5XygDsVlKIcSFXAw
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -70,55 +66,258 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-This patch introduces new clock support for video processing components
-including the encoder, demodulator and CVBS interface modules.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-The related clocks have passed clk-measure verification.
-
-Some potentially unsafe flag configurations were identified in other
-video clocks, and they are cleaned up as part of this patch series.
+Add video encoder, demodulator and CVBS clocks.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Changes in v6:
-- Split the flag removal changes for video clocks into a separate patch.
-- Link to v5: https://lore.kernel.org/r/20250916-add_video_clk-v5-0-e25293589601@amlogic.com
+ drivers/clk/meson/s4-peripherals.c | 202 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
 
-Changes in v5:
-- Add Acked-by tags from Conor.
-- Remove unnecessary flags as suggested by Jerome.
-- Link to v4: https://lore.kernel.org/r/20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index 6d69b132d1e1..aa500ea8ef9c 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -44,6 +44,7 @@
+ #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
+ #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
+ #define CLKCTRL_HDCP22_CTRL                        0x100
++#define CLKCTRL_CDAC_CLK_CTRL                      0x108
+ #define CLKCTRL_VDEC_CLK_CTRL                      0x140
+ #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
+ #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
+@@ -1126,6 +1127,21 @@ static struct clk_regmap s4_cts_encp_sel = {
+ 	},
+ };
+ 
++static struct clk_regmap s4_cts_encl_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = CLKCTRL_VIID_CLK_DIV,
++		.mask = 0xf,
++		.shift = 12,
++		.table = s4_cts_parents_val_table,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_encl_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_hws = s4_cts_parents,
++		.num_parents = ARRAY_SIZE(s4_cts_parents),
++	},
++};
++
+ static struct clk_regmap s4_cts_vdac_sel = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = CLKCTRL_VIID_CLK_DIV,
+@@ -1205,6 +1221,22 @@ static struct clk_regmap s4_cts_encp = {
+ 	},
+ };
+ 
++static struct clk_regmap s4_cts_encl = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = CLKCTRL_VID_CLK_CTRL2,
++		.bit_idx = 3,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "cts_encl",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cts_encl_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_regmap s4_cts_vdac = {
+ 	.data = &(struct clk_regmap_gate_data){
+ 		.offset = CLKCTRL_VID_CLK_CTRL2,
+@@ -2735,6 +2767,165 @@ static struct clk_regmap s4_gen_clk = {
+ 	},
+ };
+ 
++/* CVBS DAC */
++static struct clk_regmap s4_cdac_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.mask = 0x3,
++		.shift = 16,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal", },
++			{ .fw_name = "fclk_div5" },
++		},
++		.num_parents = 2,
++	},
++};
++
++static struct clk_regmap s4_cdac_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.shift = 0,
++		.width = 16,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cdac_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_cdac = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_CDAC_CLK_CTRL,
++		.bit_idx = 20,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cdac",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_cdac_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_demod_core_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.mask = 0x3,
++		.shift = 9,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal" },
++			{ .fw_name = "fclk_div7" },
++			{ .fw_name = "fclk_div4" }
++		},
++		.num_parents = 3,
++	},
++};
++
++static struct clk_regmap s4_demod_core_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_demod_core_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_demod_core = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.bit_idx = 8
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "demod_core",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_demod_core_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* CVBS ADC */
++static struct clk_regmap s4_adc_extclk_in_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.mask = 0x7,
++		.shift = 25,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "xtal" },
++			{ .fw_name = "fclk_div4" },
++			{ .fw_name = "fclk_div3" },
++			{ .fw_name = "fclk_div5" },
++			{ .fw_name = "fclk_div7" },
++			{ .fw_name = "mpll2" },
++			{ .fw_name = "gp0_pll" },
++			{ .fw_name = "hifi_pll" }
++		},
++		.num_parents = 8,
++	},
++};
++
++static struct clk_regmap s4_adc_extclk_in_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.shift = 16,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_adc_extclk_in_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap s4_adc_extclk_in = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLKCTRL_DEMOD_CLK_CTRL,
++		.bit_idx = 24
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "adc_extclk_in",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&s4_adc_extclk_in_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
+ 
+ #define S4_PCLK(_name, _reg, _bit, _flags) \
+@@ -3028,6 +3219,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
+ 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_sel.hw,
+ 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
+ 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk.hw,
++	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
++	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
++	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
++	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
++	[CLKID_CDAC]			= &s4_cdac.hw,
++	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
++	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
++	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
++	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
++	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
++	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
+ };
+ 
+ static const struct meson_clkc_data s4_peripherals_clkc_data = {
 
-Changes in v4:
-- Add Acked-by tags from Rob and Krzysztof.
-- Fix compilation errors.
-- Link to v3: https://lore.kernel.org/r/20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com
-
-Changes in v3:
-- Rebase with Jerome's latest code base.
-- Link to v2: https://lore.kernel.org/r/20250814-add_video_clk-v2-0-bb2b5a5f2904@amlogic.com
-
-Changes in v2:
-- Removed lcd_an clock tree (previously used in meson series but obsolete in
-newer chips).
-- Removed Rob's 'Acked-by' tag due to dt-binding changes (Is it necessary?).
-- Link to v1: https://lore.kernel.org/r/20250715-add_video_clk-v1-0-40e7f633f361@amlogic.com
-
----
-Chuan Liu (3):
-      dt-bindings: clock: add video clock indices for Amlogic S4 SoC
-      clk: amlogic: add video-related clocks for S4 SoC
-      clk: amlogic: remove potentially unsafe flags from S4 video clocks
-
- drivers/clk/meson/s4-peripherals.c                 | 206 ++++++++++++++++++++-
- .../clock/amlogic,s4-peripherals-clkc.h            |  11 ++
- 2 files changed, 213 insertions(+), 4 deletions(-)
----
-base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
-change-id: 20250715-add_video_clk-dc38b5459018
-
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
