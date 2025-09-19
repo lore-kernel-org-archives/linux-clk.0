@@ -1,107 +1,109 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE04A2D;
-	Thu, 18 Sep 2025 23:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B42153D2;
+	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758237410; cv=none; b=ngj1sPbzUfVgxoy+mu5pqQHsvktVzpU0baWMcW1yUp5ZYya0vtsYaHeL8q7Nqn6v66RtkpF3FpCaXADej0jgPgmVwybcq0iOpNBLmgHmixzHQZIOpOD4CiO1fHDBshTmzOValBRLtCJHArObTHR+NqBp75hUJVUcKMTR2vgBP6Y=
+	t=1758261551; cv=none; b=eKwKRqdy17qQZxzZzXUET6CUqcgAR/7GQgLn56uL6Kv9OamlIsUSsP1mtlML+VQ19xZk5fXTFmoOL+vDWBYIrs0d6ej2h4QxTDwILo3B9NSlJBZDxd/phcLAWDcdGMsZ0OgMpFpKHRQCC1v5vJv5n6A1R2yMzyiLAYFrhdcwZqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758237410; c=relaxed/simple;
-	bh=uLe3Rs76NuC3iXyCx+i0ugiqXnSkTMOx8ZjqX3d1DYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZdjWUVawcCHjVmCerq8niayigNDaGL9LoQSvGnpf7t9wdi/FOF3NXDOp7sAroRF9rCblafrQWSrI14WkW4oAcTPO4qyWt13fioBE7jxrT7N0i/ssi+SrppnLKI+NaHBvghWEg+p2RNmS93S4tYXa7eupVEFT6yKDBvkryMmY5AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=iFz3ieaZ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1758261551; c=relaxed/simple;
+	bh=QLoUf6MbemExweEkSHZ6Cs4Fo/cev8YIR8uKZymd67k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lL9FzGcwfK64PEmt4VCiHpZkSiTS9fe4xxYBwsfaDegtPrdfknRBhFLqrEHlcyU97KebpKvfuD9xfG3CoUiV3hvjWPd4oxL1LmC+h3rZQ3fcFrjwl3ST9WS3ctgwFfIzsHvlbO74HyudzQQ2SK2nI1MqTwFbj2645DG9e0X1nFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdmmGPmg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="iFz3ieaZ"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cSWjf6qD8z9sss;
-	Fri, 19 Sep 2025 01:16:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758237399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AWpAqgCZ+Kq1EB4cSge6b9M96CwK6u9PPFoE3ETCiRI=;
-	b=iFz3ieaZ6lgdPd4WmncLZbbrMxReE9O39AOS9Y81ZD2w4AQE0ecl24zru2u4eTCB1SiDHi
-	OrBtr6sY8oqL1qJ5Dz8iF7UDbKr0ySC4Mgb+M8uUc2Lb6kLPYLZrxm/1jVZE17+Gjs2tau
-	f+/j7VTG8+v0huPg/oQybpmss64z9KJgs+fh+i38y8WOizOJ5/4Rk7BpZvepwmRRNLUwAE
-	B47c6xpaYBQ4iEpAc3F734DW+5Y0EMDwkexq3o/x2SL84+4F1/EX7mzScWDcwgy3CTWBQB
-	al4xx+8pfzrfh7TRtwktCjrlT2z75aXSJI8vQaG+XDaFsziFY9wp0tJXrnU5kw==
-Message-ID: <9dbc6022-eb97-49af-bda7-1a7a8069609a@mailbox.org>
-Date: Fri, 19 Sep 2025 01:16:37 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdmmGPmg"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 91F59C4CEF7;
+	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758261550;
+	bh=QLoUf6MbemExweEkSHZ6Cs4Fo/cev8YIR8uKZymd67k=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=DdmmGPmg3TR3TMfxLtnLjyVcgG9cVOkyMT+JFYcLGXFUlyF1fl4JODVB8CF+VTHXK
+	 F9ExPLXTcQNzAbSun1YmtzOxc+VouR635zPDG0pVePHDRIHDOvzi9ZZZVYL5fu4RLC
+	 iBJgGBFBI6AbE13rqU7/kCXUFZ7z3V7dxU4Ljkv0OQ2KMBZUkLglxrWAxTBeSestrI
+	 hUefAAbJsKFsxUQ/jHTSvFFyQc2pV9XDWvHooqRrVDsW8m3jqWR2lF2rLMuUJMPpeD
+	 fLLjwS2Hb7+yXhhd3QQ0vXwBX4bLW/2ob86U+aXmdZsCkm7PtyeLRqY60sL8/9d8eb
+	 0NJyA/08sSyiw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81091CAC5A8;
+	Fri, 19 Sep 2025 05:59:10 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 19 Sep 2025 13:58:59 +0800
+Subject: [PATCH v6 1/3] dt-bindings: clock: add video clock indices for
+ Amlogic S4 SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
- <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
- <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
- <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 5ubejjp1t796cok6d6cj5kb96qbkbycs
-X-MBO-RS-ID: 4cd4385661fd9ec09cf
+Message-Id: <20250919-add_video_clk-v6-1-fe223161fb3f@amlogic.com>
+References: <20250919-add_video_clk-v6-0-fe223161fb3f@amlogic.com>
+In-Reply-To: <20250919-add_video_clk-v6-0-fe223161fb3f@amlogic.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758261548; l=1277;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=oFTBK7GmWCd1bTbEyxd9lw2QoXtneH1SDFph2xdcxG4=;
+ b=qgOii3kCYety9Xap68/0E6rPikg6BVV+MXY2JSJ82KyPp0Vw9nm3HCAFXsY+3VabzegaeHx4p
+ P0bxD3847auCuNMQOyYEvyTNeronrG/nAohEiE3pqXV7p+ioBRh4M0x
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On 9/18/25 5:05 PM, Lad, Prabhakar wrote:
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Hello Prabhakar,
+Add indices for video encoder, demodulator and CVBS clocks.
 
->>>> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
->>>> index 65dfaceea71f..7b52e8235984 100644
->>>> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
->>>> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
->>>> @@ -688,6 +688,7 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->>>>
->>>>           /* Reset module */
->>>>           writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
->>>> +       readl(priv->pub.base0 + priv->reset_regs[reg]);
->>> Fyi on the RZ/T2H and RZ/N2H SoCs which uses the same driver we need
->>> to read the reset register `7` times and confirm [0] (as mentioned in
->>> the HW manual). So after reading do we want to confirm the bit is
->>> set/clear?
->> This is interesting, I wonder if the readback is something more common
->> to this reset controller.
->>
->> Why 7 times ? Is this documented in one of the HW manuals ? Are those
->> public and can you share a link to them , with the specific chapter or
->> page I should read about this 7 times read requirement ?
->>
-> Yes this is documented in the HW manual [0] section 6.5.1 Notes on
-> Module Reset Control Register Operation:
-> 
-> 1. To secure processing after release from a module reset, dummy read
-> the same register at least seven times except RTC
-> and LCDC after writing to initiate release from the module reset, and
-> only then proceed with the subsequent processing.
-> For RTC, dummy read the same register at least 300 times and for LCDC,
-> at least 100 times.
-> 
-> 2. When module is reset once and released again, make sure that the
-> target bit of module reset control register is set to 1 by
-> reading the register before releasing from a module reset. Then
-> release from a module reset
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Thank you for sharing this, but it seems this is not the case for R-Car 
-Gen4. I found out that V4H and V4M has additional "synchronized" and 
-"asynchronized" reset types according to SRCRn_FSRCHRKRAn attachment to 
-the V4H RM. The PCIe resets are "asynchronized". This extra readl() 
-added in this patch is turning all the resets into "synchronized" and 
-therefore makes them behave as expected.
+diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+index 861a331963ac..b0fc549f53e3 100644
+--- a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
++++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+@@ -232,5 +232,16 @@
+ #define CLKID_HDCP22_SKPCLK_SEL		222
+ #define CLKID_HDCP22_SKPCLK_DIV		223
+ #define CLKID_HDCP22_SKPCLK		224
++#define CLKID_CTS_ENCL_SEL		225
++#define CLKID_CTS_ENCL			226
++#define CLKID_CDAC_SEL			227
++#define CLKID_CDAC_DIV			228
++#define CLKID_CDAC			229
++#define CLKID_DEMOD_CORE_SEL		230
++#define CLKID_DEMOD_CORE_DIV		231
++#define CLKID_DEMOD_CORE		232
++#define CLKID_ADC_EXTCLK_IN_SEL		233
++#define CLKID_ADC_EXTCLK_IN_DIV		234
++#define CLKID_ADC_EXTCLK_IN		235
+ 
+ #endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H */
+
+-- 
+2.42.0
+
+
