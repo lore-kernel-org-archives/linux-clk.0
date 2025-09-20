@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD664A21;
-	Sat, 20 Sep 2025 05:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FD013AD1C;
+	Sat, 20 Sep 2025 05:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758344806; cv=none; b=CzJ5O4rvz23a2RT+g4eK4jEOj3wUr/WR03LskyR78mQgFoSa0rySfPqVza9vRiCdplSD2k6t8RMtBqVcAPocUcYGCB9oLOMxC4gc69ZBZUVGgXtvgP3KIohrsoCGVH4SRcwu0p0/WVLPmdoyDRJsTEhMfll7s0rFTkDRewbV6tY=
+	t=1758345300; cv=none; b=mLr39aKDS6osWA8kP+Qg2r6kGqtqsrxAIlQ5sx0BqVHixU9IDAsO/syIahwGoNGLBAU86e3lj0mYnZ4Zltd57dn4pXLaDmNalr5IyKDChKRc+WsY/O9SgggaZo6Fm3cLbPVS3+g0GUf6OR+RDc7l2KAbx+huUIqQ8fO/ZEmhlrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758344806; c=relaxed/simple;
-	bh=0UDfmZ7DaFZLTqzi59DgWOG0qhddX+UAkuVNJQTlmKQ=;
+	s=arc-20240116; t=1758345300; c=relaxed/simple;
+	bh=EBTsphOtW3UKK7rvQLr2Pnn8/K5m8GSOqjnbjpzjHec=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=WrMpLawEVfa11E40d3danWwU7+BQ/yrqdnOpnCrq9kS7FNAa59vW3KKxiVoP4U0jmkJRYFw+oDto+S/YF16ExcHSNzyJWz2DH/Y2BS9Ilz34zq1X1MZ70OTpfLLkSRKbrK6ph+DUzC/w8GVJWQbwhvOQb8m6Q2maUmVc6G+T2qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8csHsX3; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=I/ClagX4RLnnGQ77TtDPIIQ31uQN2IwKoQP+HyVhIzTmsS0jT1NLst4QlDJo8MOV+Bp9G1ku6ZESCA193DiXCsaZ4MRb1ZWPiBuGExSzAQMLnUNvuCDxoMHX2jljErKa8k0/YBt1rrFGP1n7czs9XaYPi2ooOnlnjReInVs9QEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNMeoQTQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8csHsX3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D92C4CEEB;
-	Sat, 20 Sep 2025 05:06:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNMeoQTQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92693C4CEEB;
+	Sat, 20 Sep 2025 05:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758344805;
-	bh=0UDfmZ7DaFZLTqzi59DgWOG0qhddX+UAkuVNJQTlmKQ=;
+	s=k20201202; t=1758345299;
+	bh=EBTsphOtW3UKK7rvQLr2Pnn8/K5m8GSOqjnbjpzjHec=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=r8csHsX35fQg5mQ46THNN6En77PyJ8zJJ+Evlg4sO9JjPNoGFZGFxhnil5hO7rjiP
-	 jXDcBh4nQaWIvR2PInQuH6NpNK+rDtnhSXpsVFi2TUAe3AVkB/VTzk6Kq7gV1T41a4
-	 YLBJEsw7zEzJuimXE/j6gfHtU8amKJB97pHHvOi3Owl1naqchh/VIcT5rnkGSIKxhi
-	 fEZyY6YV7FCW0wgZV2mAJ61ygSE0xjDIflPdwKzxcs3XWmDugYd9y7GgpGO206i4TY
-	 nzR7LtRzvACwJPmy8/KS4nfboL0bUunZYiLJts9WEPvdKPmL8iDoOE39bgIJ5+UP6k
-	 fb3/Be+H5wTHg==
+	b=mNMeoQTQOAdcXQ9oGqsMZIsx5+0Ddmmwsn1x4SmVo8bU6SlT8u1Myt0hWBPWYJZtO
+	 jplSWtQK3zwqYpGCn+hdtpRTcV+57DAtZbbpRQCCkIfNSYHEwg/HTU7nj5qCMwf8SU
+	 UuqarsDVoLmBNa7QRdw3Qt1/sk3TRnb6XAQ/wGgBFblWl/f69F3/IfJrKtuJov4ahM
+	 jPxQQdVchz3eYRKaQzOyaQacLmyWcY0rG68ib3Y7bCHFOIRMhqCAUxT5OL9hMk3jJl
+	 m+8DhBxM244rBG/BrJVSHy9fS2qym6VmXYUkYNU9EGESD/sYBJvzAnft7UTH2mOU7L
+	 NzNFIgPmmnb0g==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,64 +34,57 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com> <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com> <aMG6JVMcMxVuX7De@tardis-2.local> <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
+In-Reply-To: <20250903-clk-eyeq7-v1-7-3f5024b5d6e2@bootlin.com>
+References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com> <20250903-clk-eyeq7-v1-7-3f5024b5d6e2@bootlin.com>
+Subject: Re: [PATCH 07/19] clk: fixed-factor: add clk_hw_register_fixed_factor_with_accuracy
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Rafael J. Wysocki <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-To: Boqun Feng <boqun.feng@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>
-Date: Fri, 19 Sep 2025 22:06:44 -0700
-Message-ID: <175834480479.4354.6269916774389395049@lazor>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Sari Khoury <sari.khoury@mobileye.com>, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+To: =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Date: Fri, 19 Sep 2025 22:14:58 -0700
+Message-ID: <175834529869.4354.196538790945051595@lazor>
 User-Agent: alot/0.11
 
-Quoting Daniel Almeida (2025-09-10 11:47:30)
-> Hi Boqun,
->=20
-> > On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
-> >=20
-> > On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
-> >> From: Alice Ryhl <aliceryhl@google.com>
-> >>=20
-> >> These traits are required for drivers to embed the Clk type in their o=
-wn
-> >> data structures because driver data structures are usually required to
-> >> be Send. See e.g. [1] for the kind of workaround that drivers currently
-> >> need due to lacking this annotation.
-> >>=20
-> >> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc=
-9da95@collabora.com/ [1]
-> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> >> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> >> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> >> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> >=20
-> > This tag list looks a bit weird to me. Why is there a SoB from you
-> > before Alice's SoB? At least for the usage I'm familiar with, outside
-> > the case of Co-developed-bys, multiple SoBs is used for recording how
-> > the patches are routed. For example, if I have a patch that has my SoB
-> > and I send it to you, you queue in your tree and then send out to other
-> > maintainers for merging, in general you would put your SoB after mine in
-> > that case. But I don't think that's case here? Alice's patch has only
-> > her SoB:
-> >=20
-> > https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48d0=
-23320eb8@google.com/
-> >=20
-> > What's the intention of the SoB tag here?
-> >=20
-> > Otherwise the patch looks good to me. If we get the tag list resolved,
-> > feel free to add:
-> >=20
-> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> >=20
-> > Regards,
-> > Boqun
-> >=20
->=20
-> You have to include your SOB when submitting patches from others.
->=20
-> This is something I tend to forget often, so I made sure it was there. The
-> order may be indeed off though.
+Quoting Beno=C3=AEt Monin (2025-09-03 05:47:14)
+> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
+r.c
+> index e62ae8794d445f685156276d5135448f340fca3f..7c76658a725f9b268da248576=
+9979e5ba213d25b 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -217,6 +217,18 @@ struct clk_hw *clk_hw_register_fixed_factor(struct d=
+evice *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+> =20
+> +struct clk_hw *clk_hw_register_fixed_factor_with_accuracy(struct device =
+*dev,
+> +               const char *name, const char *parent_name, unsigned long =
+flags,
+> +               unsigned int mult, unsigned int div, unsigned long acc)
+> +{
+> +       const struct clk_parent_data pdata =3D { .index =3D -1 };
 
-Yes the order is wrong. The first SoB should be the commit author.
+This is wrong. We're passing parent data and also setting the parent
+name with a string the original way. Do you have a parent?
+
+> +
+> +       return __clk_hw_register_fixed_factor(dev, NULL, name, parent_nam=
+e, NULL,
+> +                                             &pdata, flags, mult, div, a=
+cc,
+> +                                             CLK_FIXED_FACTOR_FIXED_ACCU=
+RACY, false);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_with_accuracy);
+
+There are a handful of these wrappers now. Can we have one function that
+takes all possibilities and then static inline functions that call one
+exported function?  We can pass some structs to that function to keep
+the argument count "low", so those structs live on the stack for a short
+time.
+
+> +
+>  struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
+>                 struct device_node *np, const char *name, const char *fw_=
+name,
+>                 unsigned long flags, unsigned int mult, unsigned int div)
