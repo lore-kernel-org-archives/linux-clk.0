@@ -1,68 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD8B239E65;
-	Sat, 20 Sep 2025 05:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBE03D6F;
+	Sat, 20 Sep 2025 06:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758347730; cv=none; b=nW5xuzNq/FWP7IFkjzlCfPJkyh9VJQDOajNMyl8Dk1HkG00SD7HDtCXRiPKyxuAE/q4WJ0ZmasjoVHKqlYzPHFQIhb/Vtbavk3IUQMhw0/IG8osENRoSv25vTDJ4M+yS/ks+Rp/ZJWluJ/qf6IYSM46k3zQcDaKL7YAanmnQmVs=
+	t=1758351034; cv=none; b=etyPG6bG7utYNA6Gp/GMq49/ExhFATKLIx3agLJSh+fc9Wb14YMejPd0ybbZz+m0cn+pdG5qJTSk4y7U3zQikqCxxsnEr603c1Myz2Qw9yX6TnjnFy5mnoIUwycoGVp9llesglZ3UesgKdqIFI2NMbsu9fdd+v3Ufxyh2BQjklo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758347730; c=relaxed/simple;
-	bh=0fZkG319TCKEqELzv7fC5eTm3rE9Hyx3FHG91aaL7DM=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=XeQUR3jU80ncHan3SjOyVI2MOQRuLbY5qSsN5VkFm7CuExTq7euIs8e0fxn0lBpoMmsEeBt4sWyusmCeBNuL9mAIbEAyxIXwbP/8/c+6pV5gkzEy7kmPmufDFp/oVJan6QUNN2x/oPRlGyrTSu/rN88KHOh5d6IHuxsmy25WaLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAD+kF/v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758351034; c=relaxed/simple;
+	bh=MjWkIR76I1fTlnqtv2BmHI0tJUeHTaAgBYhO8/TTe4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BR2yb3zRAs8aMWgaedoVL5pIWVZFMpbJcRWo7Xu3+uPaYQnQPoNrczp32qT6avArTLgOnfHJ/aYLwztZYkO94AuZcrKHLk95WbvAT3zygOPPzf8gVMLYhN+SzdF2SKyE0VRU/g0QcbFsnJoDjlPqa68GoPxOWWrEhamq0uvKYSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Mu0WT1kU; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=sb2pc5UT; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAD+kF/v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3127C4CEFC;
-	Sat, 20 Sep 2025 05:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758347729;
-	bh=0fZkG319TCKEqELzv7fC5eTm3rE9Hyx3FHG91aaL7DM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jAD+kF/v3QIXS9CCkBOC5gafGCuNukWhRtLxZJ0jI1+eSIfMYxMFIU+FwNsOOsSI5
-	 JofldBL9F6BwuFcd8NY/18FURr0J1YFAzcRMQAmoc71mUi8DEr4QriKWw4sNZmoCVo
-	 473WIt7Pf9aUeSXIZ9xcCLrnOk7Is0DP1S1LiSoQdMtdKRlVx/HhHn7Ay1EO7wlsbk
-	 u1JWX4AKOsHxmoY8IEjlF1tbQxYqiDTdktgI1yuqzkBTw6WBzBqnSH+/DcHaI7cqh8
-	 V5wv1NnQ7m/Y03/gtEmCue8TV7MGCpEpGmpeNNQxs35ZhH2cvFFiOf67NkHwHVgLdw
-	 n5HLhvXFM/JvQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Mu0WT1kU";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="sb2pc5UT"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758350983; bh=AW17lv89eSJE61jE0VgMo7I
+	K1f6MgMq0qzbJdrYGhAU=; b=Mu0WT1kUgl5cQlQ5PX2jRN2PMPq/dDr7fRG/j6P0q/F6ULS3KE
+	xoivzs0uuNLw4YbnCqJ/RpZ/PfDofasRt6XK59LmkyQwhHfrYQs5bo3vCn4BfUfSMZCWKBpoxJV
+	vMP/Z2Sr8hc2GauwgD00WGBgzerVfzWAzFlX2DTdBLXVaGuNIxQ6AhMRvo9an2gF8HJZ+IlipSj
+	ZFbt0CEcr+vfPWQLXzlDP1a7ZwX8LCwXd9Zavc+fRk0VUvcp2Vr1vhIGSK2ElWRDGPsIfvXrcrb
+	5MpdxFv/SmLCVSnaS9Ly+kcSIAagZt63ASSYPlG0/PYmKuYDp+HZCucRJi734fkCYdQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758350983; bh=AW17lv89eSJE61jE0VgMo7I
+	K1f6MgMq0qzbJdrYGhAU=; b=sb2pc5UTtihwQjvou4NnnaSmANU2soJblZAj9CMKygiR43FHTi
+	g56bTIeDIQPJ5/5lGPQJtPn7nlgAN0FmJpBw==;
+Date: Sat, 20 Sep 2025 13:49:34 +0700
+From: Dang Huynh <dang.huynh@mainlining.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
+Message-ID: <cr5gkkckxan2b2x23knfwb35a4ulngsp6gguqhcku3z6ghzkcn@cq4krj5qxy3r>
+References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
+ <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
+ <20250917-contort-sassy-df07fd7515a0@spud>
+ <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+ <20250918-unharmed-bloating-8b573513fce6@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250911-k1-clk-i2s-generation-v4-3-cba204a50d48@linux.spacemit.com>
-References: <20250911-k1-clk-i2s-generation-v4-0-cba204a50d48@linux.spacemit.com> <20250911-k1-clk-i2s-generation-v4-3-cba204a50d48@linux.spacemit.com>
-Subject: Re: [PATCH RESEND v4 3/3] clk: spacemit: fix i2s clock
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>, Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@outlook.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, Yixun Lan <dlan@gentoo.org>
-Date: Fri, 19 Sep 2025 22:55:28 -0700
-Message-ID: <175834772899.4354.17970704155310133154@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918-unharmed-bloating-8b573513fce6@spud>
 
-Quoting Troy Mitchell (2025-09-10 20:34:05)
-> Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-> for real I2S use cases.
->=20
-> Moreover, the current I2S clock configuration does not work as expected
-> due to missing parent clocks.
->=20
-> This patch adds the missing parent clocks, defines i2s_sysclk as
-> a DDN clock, and i2s_bclk as a DIV clock.
->=20
-> A special note for i2s_bclk:
->=20
-> From the register definition, the i2s_bclk divider always implies
-> an additional 1/2 factor.
->=20
-> The following table shows the correspondence between index
-> and frequency division coefficients:
->=20
-> | index |  div  |
-> |-------|-------|
+On Thu, Sep 18, 2025 at 04:18:25PM +0100, Conor Dooley wrote:
+> On Thu, Sep 18, 2025 at 11:11:10AM +0700, Dang Huynh wrote:
+> > On 2025-09-18 03:46, Conor Dooley wrote:
+> > > On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
+> > > > Add documentation describing the RTC found in RDA8810PL SoC.
+> > > > 
+> > > > Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> > > > ---
+> > > >  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30
+> > > > ++++++++++++++++++++++
+> > > >  1 file changed, 30 insertions(+)
+> > > > 
+> > > > diff --git
+> > > > a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > > b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > > new file mode 100644
+> > > > index 0000000000000000000000000000000000000000..3ceae294921cc3211cd775d9b3890393196faf82
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+> > > > @@ -0,0 +1,30 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: RDA Micro RDA8810PL Real Time Clock
+> > > > +
+> > > > +maintainers:
+> > > > +  - Dang Huynh <dang.huynh@mainlining.org>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: rda,8810pl-rtc
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > 
+> > > Your driver implements functions that turn on an alarm irq, but there is
+> > > none mentioned here. What's going on there?
+> > The RTC doesn't seem to have an AP IRQ associated. I can't find any
+> > reference to it on downstream kernel and the docs.
+> > 
+> > > 
+> > > Additionally, there's no clocks property? For an onboard RTC I'd have
+> > > expected there to be a clock sourced outside of the block.
+> 
+> What about the clock?
+I'll fix this in v2.
 
-Applied to clk-next
+> 
+> > > 
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    rtc@1a06000 {
+> > > > +      compatible = "rda,8810pl-rtc";
+> > > > +      reg = <0x1a06000 0x1000>;
+> > > > +    };
+> > > > 
+> > > > --
+> > > > 2.51.0
+
+
