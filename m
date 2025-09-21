@@ -1,94 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E3135965;
-	Sun, 21 Sep 2025 20:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E6A2206A7;
+	Sun, 21 Sep 2025 20:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758486099; cv=none; b=GKDXCaECrEMq3XlAhIO02x9rjhT0KA0zE8QjrHcF9taQ5fZBZo28yaE2wSRSESWPZPdyBfMxH8bB3bwSxR7sxF2G5rEEHAk2OKTMQzySXgY5Wg1naJ3BcREKD4mHR0miYrwj7rhSqhm55isdSlHe3+Xw78rqHChQBCRFVK13Udc=
+	t=1758486257; cv=none; b=pZHO+LIhF4vgxn1WcarUZlVujMdelaQGSl63eDS4lQEcJpl1f4jQ+S7hXv9M/3/nB7PK7ayjLeFQcDFoSzLC5wo/pllbYwfkUwOqYVn42mgiGT+olPqMFusscUMsH0B/FmrV6BLcHAKi5LKhcxLt6jmQCMKz9/wcsoOmA397IQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758486099; c=relaxed/simple;
-	bh=bstEZ3MlozQwIr0qi9vp4rP/dEmgLKuVJDPIe2c54w8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXdHInyQP97zwRKev452Eh8ieHqt6XQzK1Wb2Gq9MpU7ZC9L7bcJZ0QX03mdAlX4kAmfRFVYGZIo/wBkkhIp0OCBcjvSfWz5MMwTTCPwDIfP4yDPqaTJuyZVI9KBmBs7TZDZRGtTVpmUs87VaNiA7xp/DjO3Xm6GNmAd4KuyOSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fm+7yGVK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758486257; c=relaxed/simple;
+	bh=n42wuk3fRc2TVRisCoqEGhMVO97pJsliEokdZLTtgUI=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Ga8dT1m/ha08I+UDrSKac6Q+pWgV4aKCwwuTbvjffYgxJuXu/PuyCNSUZYSejJPaTEvdabWkRoGtX6NvEJVML4572MzStRJ9ZM3WX45YZO1NwzOCUf3cZ+l4UDyiejfSwsUDEMPra/omr+RJ49wEPTYdwym9pt5DMv5ROgErahQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SB96mFzF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fm+7yGVK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2ABDC4CEE7;
-	Sun, 21 Sep 2025 20:21:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SB96mFzF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C15AC4CEE7;
+	Sun, 21 Sep 2025 20:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758486098;
-	bh=bstEZ3MlozQwIr0qi9vp4rP/dEmgLKuVJDPIe2c54w8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fm+7yGVKVTF+lnHcl8xWL7Mxp5PWJgukZe4RAMz5nMDHick/Vwp/j+4eduQXSaPBI
-	 5hw+6RvKFMyJGQTyP1MNeC4AMKdI+ynm2UhGToJn+3YJf8OTJLjlgmDm3tWS9RqlBK
-	 l6mv/CoXHrTePmcZ8xC8E+5Pf0QQftA7zPtOFS51QDC7h6KtC5Oi0f5J1fjQdg3kT0
-	 d8jlvGF4B5er8Rh+QAPgK3glnvMPHwKHOCcAHytbLuTzL9zav+2sfnoRgVmfzS2Yr8
-	 O3OXZek7SR5Gtc4QeLlq3qMsjGR+utv3/D14FPlNOIcWYLv+Zy53cvZnU/7YxeONDd
-	 oHb3Gnnl4gWJw==
-Date: Sun, 21 Sep 2025 22:21:35 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: nuno.sa@analog.com
-Cc: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Trevor Gamblin <tgamblin@baylibre.com>, David Lechner <dlechner@baylibre.com>, 
-	Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, 
-	Xu Yilun <yilun.xu@linux.intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH RESEND v7 3/7] include: linux: move adi-axi-common.h out
- of fpga
-Message-ID: <vxbmatzbecktgppfexpdam4plwvynu4mzimtqbrzikeaxwjdfs@pyk3j4mmgjls>
-References: <20250627-dev-axi-clkgen-limits-v7-0-e4f3b1f76189@analog.com>
- <20250627-dev-axi-clkgen-limits-v7-3-e4f3b1f76189@analog.com>
+	s=k20201202; t=1758486255;
+	bh=n42wuk3fRc2TVRisCoqEGhMVO97pJsliEokdZLTtgUI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SB96mFzFx1fA+tB5zsjOGmulcvPZ3f7kLIWRwJnPolR+dmBSkVTB37P4bwjml4/nd
+	 GpGxSGxIrQoc0zJspuRDGi1+nOkBCXBJ9OG2Wj5SEEH96IrVwfBLeK0s1JDsFStHZr
+	 t29ixiUlz/bp0kXVHRFalJVH1bVUSadLBjGCZ2BiWgz/PKsO4MWzevGATRrkUTyWip
+	 UFMtEDdNvF8H1BbBNuJfBQPV4AH+eO1JvSWsZRxkpqK6ePAp+H+L9fNCp/mVsQAMYO
+	 vmR008DqDTaAZ9wEqa2dOCESo8minO4EvGE7wMKHbjdROq/7AcSXCCWOr6t8mC6m3K
+	 Gcp+MH9nKtdpw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qyi5knjwltel7rd5"
-Content-Disposition: inline
-In-Reply-To: <20250627-dev-axi-clkgen-limits-v7-3-e4f3b1f76189@analog.com>
-
-
---qyi5knjwltel7rd5
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND v7 3/7] include: linux: move adi-axi-common.h out
- of fpga
-MIME-Version: 1.0
+In-Reply-To: <20250917020539.3690324-2-ryan_chen@aspeedtech.com>
+References: <20250917020539.3690324-1-ryan_chen@aspeedtech.com> <20250917020539.3690324-2-ryan_chen@aspeedtech.com>
+Subject: Re: [PATCH v14 1/3] dt-bindings: clock: ast2700: modify soc0/1 clock define
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Mo Elbadry <elbadrym@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>, devicetree@vger.kernel.org, dkodihalli@nvidia.com, leohu@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, ryan_chen <ryan_chen@aspeedtech.com>, spuranik@nvidia.com, wthai@nvidia.com
+Date: Sun, 21 Sep 2025 13:24:13 -0700
+Message-ID: <175848625348.4354.12803484068611642489@lazor>
+User-Agent: alot/0.11
 
-Hello,
+Quoting Ryan Chen (2025-09-16 19:05:37)
+> -add SOC0_CLK_AHBMUX:
+> add SOC0_CLK_AHBMUX for ahb clock source divide.
+> mpll->
+>       ahb_mux -> div_table -> clk_ahb
+> hpll->
+>=20
+> -new add clock:
+>  SOC0_CLK_MPHYSRC: UFS MPHY clock source.
+>  SOC0_CLK_U2PHY_REFCLKSRC: USB2.0 phy clock reference source.
+>  SOC1_CLK_I3C: I3C clock source.
+>=20
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-On Fri, Jun 27, 2025 at 03:59:12PM +0100, Nuno S=E1 via B4 Relay wrote:
->  drivers/pwm/pwm-axi-pwmgen.c              | 2 +-
-
-Assuming this will go through some other tree than PWM:
-
-Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
-
-Best regards
-Uwe
-
---qyi5knjwltel7rd5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjQXksACgkQj4D7WH0S
-/k5ueQgAgYcvo6IUp2+PMkmWCwM2DQDxPkieRxywvN1Ze7NM6pC3wo9sU19sxYTU
-UL8SLVlOE1CZQ5Z04cwp7upDXKH5sagjnZSH/w0eovHyEethV2lZUoyvQdaHudl/
-+s18xlBrfiGjT1ZMvbpy8IIJUoTXI0Aznrs6M71a8nhFfFRxr6JtC/yOoohUp30L
-7m3YaJvBmCaGeCVfS3PLlPxEl9oTng9PYu0X3Bx83c6iIaB75u7XuFSAKucadlT2
-sY3mQ+WmgAWjMXkkY9mPgKgdjxJohDbxzz5JpB71VYppT6v8Usg7P9Dnh8TGt+bY
-KtbslkMXXVK70XJjmhSXnpeBn7gsTg==
-=YEhB
------END PGP SIGNATURE-----
-
---qyi5knjwltel7rd5--
+Applied to clk-next
