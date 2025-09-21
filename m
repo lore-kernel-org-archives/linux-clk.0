@@ -1,210 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF61B672;
-	Sun, 21 Sep 2025 02:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF9825C6FF;
+	Sun, 21 Sep 2025 04:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758421769; cv=none; b=MrFAANWalsX9KWauRZ4D+qgdUMfqXTgaxSuAAzK58Y9seu62Yze0x2UeHgJuD7tx6BdEmMkpzcaipAkmMwPxGd95OaqebvnYaavBYMaDCtU2vXSNJyucJKSs/Au/eNLvPCG9afcW3Q/45thLO/Ki/Be0rxO3yxodiZ4zYocQjfo=
+	t=1758429815; cv=none; b=gGAZW0zCu23GSfvWmszWIxi09NjFAVLwTMYaYTPqwNdgybfrQ6/gR3Wrzyzathcf4bZESCbFF073IDIhxkjxSipqTsjPFG0JkNuMMrtsywmiIvxEKQhkveFG7PePMyFsGbcycWDIwRdS064bHgiOlB1Xuya7P3sR9Rtll2TVbUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758421769; c=relaxed/simple;
-	bh=fFeKcvyf90lsSwgt3Wk9GULW2dVKlap3cFERVca4D1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VPfblngLRPD06TRWu5+G73qePXQPoxFKdh62xtQN7Nut16x2P3EcS81SqW7/70N9sUNKCRARQkKRcOHg9PNz/7B+IX9V1/RkFn49brkoN0FyEJ5lGlIGa1nGmEYQ0KTO7vI9IfvXJdKR+i78kKzmc4MU46X/rGJTvQDA24yHals=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FryCWU6W; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758429815; c=relaxed/simple;
+	bh=U/6aYvciv7wPkVNop93gO0dgz3bi/mpTw4Fjq0YUBCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rwgeg1AAkDi2cRgdsKzF82/X4zDFnEzpelbnSiOavgJLvud2aIE/zReIHLRg7Py2MnqXlFvKYXza++pB3+cw7tI5pome9HZYSe+IOF9so3MMtmlOcV+jv1DoLVaFB/VROwYc11kmtuy7O5HTxESYfcA09jo8XSowLbzcft1lxTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8W+f2Q9; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FryCWU6W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5703AC4CEEB;
-	Sun, 21 Sep 2025 02:29:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758421768;
-	bh=fFeKcvyf90lsSwgt3Wk9GULW2dVKlap3cFERVca4D1s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FryCWU6WZOUstYzyGiXr+Ppjaky/EojKKwIjg6SZ+MTmNc4jpnDuL0eGcnHpElDp/
-	 HRS0qTE3p7a862o+A5/FSHo6AnZZbcEEifrcquDab+OzEUtS9CZ6pshwkM9U4HZYfq
-	 SN92zowcldjVW6xDERYv3R0PO+dSs1W2x+U4DejyuTU6BxrfrGknhd4S7wJuTf5RLn
-	 TelxEB+16P7p8fq9q4SYWxRlbe/tZJldnqEOxf34vhfXXhAZt4dWCeJoGiziqU3OIZ
-	 LBC4nE6rmafvvn4vMoXc3Cx7aabPFu0Kqbz9H5aa6TLhShWNq0nNlz6j5vVMyCp+0P
-	 Ioz7HCC2p4fCQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Nickolay Goppen <setotau@yandex.ru>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Daniil Titov <daniilt971@gmail.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	=?UTF-8?q?Marko=20M=C3=A4kel=C3=A4?= <marko.makela@iki.fi>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Subject: [GIT PULL] Qualcomm clock updates for v6.18
-Date: Sat, 20 Sep 2025 21:29:23 -0500
-Message-ID: <20250921022925.599022-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8W+f2Q9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758429814; x=1789965814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U/6aYvciv7wPkVNop93gO0dgz3bi/mpTw4Fjq0YUBCo=;
+  b=n8W+f2Q9NiZuZjpuVA4oHtsNgWUKeCJBz/Q4+pWZJ0cAQqcRtwNlxcXo
+   oorbujiXFWQds/W4ZPkKY2cw1+Ndw9R63OcY4trKUljGPHXwa+epjUJG8
+   ImnatBQLPQYygpA8XKllf+EKriFcQbf7UvD0qFd5kuXOt+e3AsBec+Eki
+   V79eLngannmoSxXxxEIClJxDO1Q8P5JTj1dprfMf+9b+9FAU3kz9VDdtH
+   Xet2bWcNqmnI3B5NzKv5ijXac2XXt6c96dZnchjns3pXhoBH27iPcnKuu
+   vcnG49VrPjq5JI5L8kwptl/gOfE92n18T0ngdsobMemC8k1JPxQ2W1UqG
+   w==;
+X-CSE-ConnectionGUID: 66but7PYTjyNHrtqpG+MPg==
+X-CSE-MsgGUID: 9+YSVYXbS0e0vrVkEmy9Hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="59945722"
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="59945722"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 21:43:33 -0700
+X-CSE-ConnectionGUID: 9N0FngPCSY64MExk2m5y7A==
+X-CSE-MsgGUID: eHAV4rnKRfq7zVz5rQm3vQ==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 20 Sep 2025 21:43:28 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0Bv3-0000RB-1l;
+	Sun, 21 Sep 2025 04:43:25 +0000
+Date: Sun, 21 Sep 2025 12:42:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Dang Huynh <dang.huynh@mainlining.org>
+Subject: Re: [PATCH 08/10] dmaengine: Add RDA IFC driver
+Message-ID: <202509211252.z0s0XcXk-lkp@intel.com>
+References: <20250919-rda8810pl-mmc-v1-8-d4f08a05ba4d@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919-rda8810pl-mmc-v1-8-d4f08a05ba4d@mainlining.org>
+
+Hi Dang,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on ae2d20002576d2893ecaff25db3d7ef9190ac0b6]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dang-Huynh-via-B4-Relay/dt-bindings-gpio-rda-Make-interrupts-optional/20250919-025331
+base:   ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+patch link:    https://lore.kernel.org/r/20250919-rda8810pl-mmc-v1-8-d4f08a05ba4d%40mainlining.org
+patch subject: [PATCH 08/10] dmaengine: Add RDA IFC driver
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250921/202509211252.z0s0XcXk-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211252.z0s0XcXk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509211252.z0s0XcXk-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/dma/rda-ifc.c: In function 'rda_ifc_prep_slave_sg':
+>> drivers/dma/rda-ifc.c:180:28: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     180 |                 control |= FIELD_PREP(IFC_CTL_SIZE, 0);
+         |                            ^~~~~~~~~~
 
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+vim +/FIELD_PREP +180 drivers/dma/rda-ifc.c
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+   145	
+   146	static struct dma_async_tx_descriptor *rda_ifc_prep_slave_sg(struct dma_chan *chan,
+   147			struct scatterlist *sgl, unsigned int sg_len,
+   148			enum dma_transfer_direction direction, unsigned long dma_flags,
+   149			void *context)
+   150	{
+   151		struct rda_ifc_chan *ifc_chan = to_ifc_chan(chan);
+   152		struct rda_ifc *ifc = ifc_chan->rda_ifc;
+   153		struct device *dev = dmaengine_get_dma_device(chan);
+   154		struct scatterlist *sg;
+   155		unsigned long flags;
+   156		u32 control = 0;
+   157		int width;
+   158		int i;
+   159	
+   160		if (sg_len > ifc->sg_max) {
+   161			dev_err(dev, "sg_len %d overflowed (max sg %d)\n",
+   162					sg_len, ifc->sg_max);
+   163			return NULL;
+   164		}
+   165	
+   166		if (direction != ifc_chan->direction) {
+   167			dev_err(dev, "Inconsistent transfer direction\n");
+   168			return NULL;
+   169		}
+   170	
+   171		spin_lock_irqsave(&ifc_chan->lock, flags);
+   172	
+   173		if (ifc_chan->direction == DMA_DEV_TO_MEM)
+   174			width = ifc_chan->sconfig.src_addr_width;
+   175		else
+   176			width = ifc_chan->sconfig.dst_addr_width;
+   177	
+   178		switch (width) {
+   179		case DMA_SLAVE_BUSWIDTH_1_BYTE:
+ > 180			control |= FIELD_PREP(IFC_CTL_SIZE, 0);
+   181			break;
+   182		case DMA_SLAVE_BUSWIDTH_2_BYTES:
+   183			control |= FIELD_PREP(IFC_CTL_SIZE, 1);
+   184			break;
+   185		case DMA_SLAVE_BUSWIDTH_4_BYTES:
+   186			control |= FIELD_PREP(IFC_CTL_SIZE, 2);
+   187			break;
+   188		default:
+   189			return NULL;
+   190		}
+   191	
+   192		for_each_sg(sgl, sg, sg_len, i) {
+   193			if (!IS_ALIGNED(sg_dma_address(sg), width)) {
+   194				dev_err(dev, "Unaligned DMA address\n");
+   195				spin_unlock_irqrestore(&ifc_chan->lock, flags);
+   196				return NULL;
+   197			}
+   198	
+   199			writel(sg_dma_address(sg), ifc_chan->chan_base + IFC_REG_SG_START_ADDR + (8 * i));
+   200			writel(sg_dma_len(sg), ifc_chan->chan_base + IFC_REG_SG_TC + (8 * i));
+   201		}
+   202	
+   203		control |= FIELD_PREP(IFC_CTL_REQ_SRC, ifc_chan->request_id) |
+   204			IFC_CTL_CH_RD_HW_EXCH |
+   205			FIELD_PREP(IFC_CTL_SG_NUM, sg_len-1);
+   206		writel(control, ifc_chan->chan_base);
+   207	
+   208		spin_unlock_irqrestore(&ifc_chan->lock, flags);
+   209	
+   210		dma_async_tx_descriptor_init(&ifc_chan->tx, chan);
+   211		ifc_chan->tx.tx_submit = rda_ifc_tx_submit;
+   212	
+   213		return &ifc_chan->tx;
+   214	}
+   215	
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.18
-
-for you to fetch changes up to 4ca6a89f38718d6cd84304e6a26e7ddc90e03356:
-
-  clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment (2025-09-11 21:09:29 -0500)
-
-----------------------------------------------------------------
-Qualcomm clock updates for v6.18
-
-Introduce Glymur global, display, rpmh, and tcsr clock controllers.
-Introduce the IPQ5424 APSS clock controller. Extend the MSM8916 global
-clock controller, to add support for MSM8937.
-
-Convert alpha PLL to determine_rate().
-
-Add missing resets in SC7280 display clock controller.
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to eDP refclk
-
-Barnabás Czémán (1):
-      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
-
-Bjorn Andersson (6):
-      Merge branch '20250811090954.2854440-2-quic_varada@quicinc.com' into clk-for-6.18
-      dt-bindings: clock: dispcc-sc7280: Add display resets
-      Merge branch '20250811-sc7280-mdss-reset-v1-1-83ceff1d48de@oss.qualcomm.com' into clk-for-6.18
-      clk: qcom: dispcc-sc7280: Add dispcc resets
-      Merge branch '20250815-gcc-sdm660-vote-clocks-and-gdscs-v1-1-c5a8af040093@yandex.ru' into clk-for-6.18
-      Merge branch '20250903-msm8937-v9-1-a097c91c5801@mainlining.org' into clk-for-6.18
-
-Brian Masney (1):
-      clk: qcom: alpha-pll: convert from round_rate() to determine_rate()
-
-Dan Carpenter (1):
-      clk: qcom: common: Fix NULL vs IS_ERR() check in qcom_cc_icc_register()
-
-Daniil Titov (1):
-      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
-
-Imran Shaik (1):
-      clk: qcom: dispcc-glymur: Constify 'struct qcom_cc_desc'
-
-Johan Hovold (1):
-      clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment
-
-Konrad Dybcio (1):
-      clk: qcom: Remove double-space after assignment operator
-
-Krzysztof Kozlowski (1):
-      clk: qcom: milos: Constify 'struct qcom_cc_desc'
-
-Lukas Bulwahn (1):
-      clk: qcom: Select the intended config in QCS_DISPCC_615
-
-Marko Mäkelä (1):
-      clk: qcom: gcc-ipq6018: rework nss_port5 clock to multiple conf
-
-Nickolay Goppen (2):
-      dt-bindings: clock: gcc-sdm660: Add LPASS/CDSP vote clocks/GDSCs
-      clk: qcom: gcc-sdm660: Add missing LPASS/CDSP vote clocks
-
-Satya Priya Kakitapalli (1):
-      dt-bindings: clock: qcom,videocc: Add sc8180x compatible
-
-Sricharan Ramabadhran (2):
-      dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock controller
-      clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
-
-Taniya Das (9):
-      dt-bindings: clock: Add DISPCC and reset controller for GLYMUR SoC
-      clk: qcom: dispcc-glymur: Add support for Display Clock Controller
-      dt-bindings: clock: qcom-rpmhcc: Add support for Glymur SoCs
-      dt-bindings: clock: qcom: Document the Glymur SoC TCSR Clock Controller
-      clk: qcom: Add TCSR clock driver for Glymur SoC
-      clk: qcom: rpmh: Add support for Glymur rpmh clocks
-      clk: qcom: clk-alpha-pll: Add support for Taycan EKO_T PLL
-      dt-bindings: clock: qcom: document the Glymur Global Clock Controller
-      clk: qcom: gcc: Add support for Global Clock Controller
-
- .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
- .../bindings/clock/qcom,glymur-dispcc.yaml         |   98 +
- .../devicetree/bindings/clock/qcom,glymur-gcc.yaml |  121 +
- .../bindings/clock/qcom,ipq5424-apss-clk.yaml      |   55 +
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |    3 +
- .../devicetree/bindings/clock/qcom,videocc.yaml    |   23 +-
- drivers/clk/qcom/Kconfig                           |   44 +-
- drivers/clk/qcom/Makefile                          |    4 +
- drivers/clk/qcom/a7-pll.c                          |    2 +-
- drivers/clk/qcom/apss-ipq5424.c                    |  265 +
- drivers/clk/qcom/camcc-milos.c                     |    2 +-
- drivers/clk/qcom/clk-alpha-pll.c                   |  162 +-
- drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
- drivers/clk/qcom/clk-rcg.c                         |    2 +-
- drivers/clk/qcom/clk-rcg2.c                        |    8 +-
- drivers/clk/qcom/clk-rpmh.c                        |   28 +-
- drivers/clk/qcom/clk-smd-rpm.c                     |    8 +-
- drivers/clk/qcom/common.c                          |    4 +-
- drivers/clk/qcom/dispcc-glymur.c                   | 1982 +++++
- drivers/clk/qcom/dispcc-milos.c                    |    2 +-
- drivers/clk/qcom/dispcc-sc7280.c                   |    8 +
- drivers/clk/qcom/gcc-glymur.c                      | 8616 ++++++++++++++++++++
- drivers/clk/qcom/gcc-ipq6018.c                     |   60 +-
- drivers/clk/qcom/gcc-msm8917.c                     |  617 +-
- drivers/clk/qcom/gcc-qcs404.c                      |    2 +-
- drivers/clk/qcom/gcc-sc8280xp.c                    |    4 -
- drivers/clk/qcom/gcc-sdm660.c                      |   72 +
- drivers/clk/qcom/gpucc-sa8775p.c                   |    6 +-
- drivers/clk/qcom/gpucc-sc7180.c                    |    2 +-
- drivers/clk/qcom/gpucc-sm6350.c                    |    4 +-
- drivers/clk/qcom/gpucc-sm8150.c                    |    2 +-
- drivers/clk/qcom/gpucc-sm8250.c                    |    2 +-
- drivers/clk/qcom/lpassaudiocc-sc7280.c             |    4 +-
- drivers/clk/qcom/lpasscc-sc8280xp.c                |    4 +-
- drivers/clk/qcom/lpasscc-sm6115.c                  |    2 +-
- drivers/clk/qcom/lpasscorecc-sc7180.c              |    2 +-
- drivers/clk/qcom/mmcc-sdm660.c                     |    2 +-
- drivers/clk/qcom/nsscc-ipq9574.c                   |    2 +-
- drivers/clk/qcom/tcsrcc-glymur.c                   |  313 +
- drivers/clk/qcom/tcsrcc-x1e80100.c                 |    4 +
- drivers/clk/qcom/videocc-milos.c                   |    2 +-
- include/dt-bindings/clock/qcom,apss-ipq.h          |    6 +
- include/dt-bindings/clock/qcom,dispcc-sc7280.h     |    4 +
- include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
- include/dt-bindings/clock/qcom,gcc-sdm660.h        |    6 +
- include/dt-bindings/clock/qcom,glymur-dispcc.h     |  114 +
- include/dt-bindings/clock/qcom,glymur-gcc.h        |  578 ++
- include/dt-bindings/clock/qcom,glymur-tcsr.h       |   24 +
- include/dt-bindings/interconnect/qcom,ipq5424.h    |    3 +
- 50 files changed, 13162 insertions(+), 153 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
- create mode 100644 drivers/clk/qcom/apss-ipq5424.c
- create mode 100644 drivers/clk/qcom/dispcc-glymur.c
- create mode 100644 drivers/clk/qcom/gcc-glymur.c
- create mode 100644 drivers/clk/qcom/tcsrcc-glymur.c
- create mode 100644 include/dt-bindings/clock/qcom,glymur-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,glymur-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsr.h
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
