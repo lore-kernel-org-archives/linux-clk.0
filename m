@@ -1,164 +1,210 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1C923AB9C;
-	Sat, 20 Sep 2025 18:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758393822; cv=pass; b=oXi3TDThrjO03ORoP1ePn/ICm7nUlySEXi6wI0WLbDCHv3CmDd1+55od62V3Bnjd5EcIxflr3QnWgQH88aADP/20dqMj9TYOTN+LBf/E2oBoMAWvQSfrs7Fw/ycpWoE5UCVAxHSjqAJiSNhk5fLs55h827cyPYT6987k0zrA2lM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758393822; c=relaxed/simple;
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=L1A+YFg2WqDNEwXRONETQI9Si59ec9OWe2btxMQ9Z8iz1EWDxJ5g7uLx/tj7bOOya6un3K+cu3ZZGGZOuypG0kscPvrrgTfcTG9hn7/MYkrA/+lTn6OPbGUkGgUlQtn+/JoeDol0NuUgn8I//FsozGEuehDDKlDRbZ2AR/Ys6L8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=iC6oMZYR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF61B672;
+	Sun, 21 Sep 2025 02:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758421769; cv=none; b=MrFAANWalsX9KWauRZ4D+qgdUMfqXTgaxSuAAzK58Y9seu62Yze0x2UeHgJuD7tx6BdEmMkpzcaipAkmMwPxGd95OaqebvnYaavBYMaDCtU2vXSNJyucJKSs/Au/eNLvPCG9afcW3Q/45thLO/Ki/Be0rxO3yxodiZ4zYocQjfo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758421769; c=relaxed/simple;
+	bh=fFeKcvyf90lsSwgt3Wk9GULW2dVKlap3cFERVca4D1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VPfblngLRPD06TRWu5+G73qePXQPoxFKdh62xtQN7Nut16x2P3EcS81SqW7/70N9sUNKCRARQkKRcOHg9PNz/7B+IX9V1/RkFn49brkoN0FyEJ5lGlIGa1nGmEYQ0KTO7vI9IfvXJdKR+i78kKzmc4MU46X/rGJTvQDA24yHals=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FryCWU6W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="iC6oMZYR"
-ARC-Seal: i=1; a=rsa-sha256; t=1758393802; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cEgYZDLzfRP3m0D9gSl5NMlItx9GewrgEUTZAiHK3nGSyIXs4DaNdHMHzfnKYiIACio1d4WeTBfmRlAWFVRdcfpggn2YdGsPmz1NJY9Vw0PQFLfGOw5lQ3b+8OhhzOtMu5tMEgfrYAlC33/OyhuUlYY6DN4FhcDLXQxEgY5hKlU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758393802; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=; 
-	b=DqxVBuq2QpZPyjeW57aAHrzuN/LZRdAqTtRxX2/7pWM9Jt872YpvI4tdTyUKnVMpmZOQcq8mM7oROAo/QcwJro9USQgCZH/3+ISIsouhddS8kGOTlnXkDxBtBZxoCuszdUsNqQlNR6aQ5DbWbF8FZEwThWEFNdCa6hR8Kxou4xs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758393802;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=;
-	b=iC6oMZYRwJzyxocUOTGpkz0W+HXvdWA/p+MCy8s4jLrgF/+jujT7eZb5sndiChgw
-	xzLdjOImTgm74cJIoy6Mip+/rXXKSL1nSEi+dWRHMfO+Ub3UwpbxXxtuMT4omCRgK3R
-	VdatzvX+GUurkMZ4u6vXlFq6VXMKjGTBv+beyh9U=
-Received: by mx.zohomail.com with SMTPS id 1758393800802877.2320752719693;
-	Sat, 20 Sep 2025 11:43:20 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FryCWU6W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5703AC4CEEB;
+	Sun, 21 Sep 2025 02:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758421768;
+	bh=fFeKcvyf90lsSwgt3Wk9GULW2dVKlap3cFERVca4D1s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FryCWU6WZOUstYzyGiXr+Ppjaky/EojKKwIjg6SZ+MTmNc4jpnDuL0eGcnHpElDp/
+	 HRS0qTE3p7a862o+A5/FSHo6AnZZbcEEifrcquDab+OzEUtS9CZ6pshwkM9U4HZYfq
+	 SN92zowcldjVW6xDERYv3R0PO+dSs1W2x+U4DejyuTU6BxrfrGknhd4S7wJuTf5RLn
+	 TelxEB+16P7p8fq9q4SYWxRlbe/tZJldnqEOxf34vhfXXhAZt4dWCeJoGiziqU3OIZ
+	 LBC4nE6rmafvvn4vMoXc3Cx7aabPFu0Kqbz9H5aa6TLhShWNq0nNlz6j5vVMyCp+0P
+	 Ioz7HCC2p4fCQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Nickolay Goppen <setotau@yandex.ru>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Daniil Titov <daniilt971@gmail.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	=?UTF-8?q?Marko=20M=C3=A4kel=C3=A4?= <marko.makela@iki.fi>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [GIT PULL] Qualcomm clock updates for v6.18
+Date: Sat, 20 Sep 2025 21:29:23 -0500
+Message-ID: <20250921022925.599022-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLgib2a7UK0cYqy1cM6h_OZDMWf+JX+KpXXCJNTZchyfP5A@mail.gmail.com>
-Date: Sat, 20 Sep 2025 20:43:05 +0200
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0EAFA337-2E62-489E-9C22-61A6E1813C8A@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
- <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com>
- <aMG6JVMcMxVuX7De@tardis-2.local>
- <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
- <175834480479.4354.6269916774389395049@lazor>
- <CAH5fLgib2a7UK0cYqy1cM6h_OZDMWf+JX+KpXXCJNTZchyfP5A@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-> On 20 Sep 2025, at 19:12, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> On Sat, Sep 20, 2025 at 7:06=E2=80=AFAM Stephen Boyd =
-<sboyd@kernel.org> wrote:
->>=20
->> Quoting Daniel Almeida (2025-09-10 11:47:30)
->>> Hi Boqun,
->>>=20
->>>> On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
->>>>=20
->>>> On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
->>>>> From: Alice Ryhl <aliceryhl@google.com>
->>>>>=20
->>>>> These traits are required for drivers to embed the Clk type in =
-their own
->>>>> data structures because driver data structures are usually =
-required to
->>>>> be Send. See e.g. [1] for the kind of workaround that drivers =
-currently
->>>>> need due to lacking this annotation.
->>>>>=20
->>>>> Link: =
-https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@coll=
-abora.com/ [1]
->>>>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>>>> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
->>>>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->>>>=20
->>>> This tag list looks a bit weird to me. Why is there a SoB from you
->>>> before Alice's SoB? At least for the usage I'm familiar with, =
-outside
->>>> the case of Co-developed-bys, multiple SoBs is used for recording =
-how
->>>> the patches are routed. For example, if I have a patch that has my =
-SoB
->>>> and I send it to you, you queue in your tree and then send out to =
-other
->>>> maintainers for merging, in general you would put your SoB after =
-mine in
->>>> that case. But I don't think that's case here? Alice's patch has =
-only
->>>> her SoB:
->>>>=20
->>>> =
-https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48d0233=
-20eb8@google.com/
->>>>=20
->>>> What's the intention of the SoB tag here?
->>>>=20
->>>> Otherwise the patch looks good to me. If we get the tag list =
-resolved,
->>>> feel free to add:
->>>>=20
->>>> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->>>>=20
->>>> Regards,
->>>> Boqun
->>>>=20
->>>=20
->>> You have to include your SOB when submitting patches from others.
->>>=20
->>> This is something I tend to forget often, so I made sure it was =
-there. The
->>> order may be indeed off though.
->>=20
->> Yes the order is wrong. The first SoB should be the commit author.
->=20
-> One optoin is to just land the original patch:
-> =
-https://lore.kernel.org/all/20250904-clk-send-sync-v1-1-48d023320eb8@googl=
-e.com/
->=20
-> Alice
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-I guess this makes even more sense. I was hoping to land these two =
-together,
-but clearly this will not be possible for the time being as the second =
-patch
-has no r-b tags.
+are available in the Git repository at:
 
-=E2=80=94 Daniel=
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.18
+
+for you to fetch changes up to 4ca6a89f38718d6cd84304e6a26e7ddc90e03356:
+
+  clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment (2025-09-11 21:09:29 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock updates for v6.18
+
+Introduce Glymur global, display, rpmh, and tcsr clock controllers.
+Introduce the IPQ5424 APSS clock controller. Extend the MSM8916 global
+clock controller, to add support for MSM8937.
+
+Convert alpha PLL to determine_rate().
+
+Add missing resets in SC7280 display clock controller.
+
+----------------------------------------------------------------
+Abel Vesa (1):
+      clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to eDP refclk
+
+Barnabás Czémán (1):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+
+Bjorn Andersson (6):
+      Merge branch '20250811090954.2854440-2-quic_varada@quicinc.com' into clk-for-6.18
+      dt-bindings: clock: dispcc-sc7280: Add display resets
+      Merge branch '20250811-sc7280-mdss-reset-v1-1-83ceff1d48de@oss.qualcomm.com' into clk-for-6.18
+      clk: qcom: dispcc-sc7280: Add dispcc resets
+      Merge branch '20250815-gcc-sdm660-vote-clocks-and-gdscs-v1-1-c5a8af040093@yandex.ru' into clk-for-6.18
+      Merge branch '20250903-msm8937-v9-1-a097c91c5801@mainlining.org' into clk-for-6.18
+
+Brian Masney (1):
+      clk: qcom: alpha-pll: convert from round_rate() to determine_rate()
+
+Dan Carpenter (1):
+      clk: qcom: common: Fix NULL vs IS_ERR() check in qcom_cc_icc_register()
+
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+
+Imran Shaik (1):
+      clk: qcom: dispcc-glymur: Constify 'struct qcom_cc_desc'
+
+Johan Hovold (1):
+      clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment
+
+Konrad Dybcio (1):
+      clk: qcom: Remove double-space after assignment operator
+
+Krzysztof Kozlowski (1):
+      clk: qcom: milos: Constify 'struct qcom_cc_desc'
+
+Lukas Bulwahn (1):
+      clk: qcom: Select the intended config in QCS_DISPCC_615
+
+Marko Mäkelä (1):
+      clk: qcom: gcc-ipq6018: rework nss_port5 clock to multiple conf
+
+Nickolay Goppen (2):
+      dt-bindings: clock: gcc-sdm660: Add LPASS/CDSP vote clocks/GDSCs
+      clk: qcom: gcc-sdm660: Add missing LPASS/CDSP vote clocks
+
+Satya Priya Kakitapalli (1):
+      dt-bindings: clock: qcom,videocc: Add sc8180x compatible
+
+Sricharan Ramabadhran (2):
+      dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock controller
+      clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
+
+Taniya Das (9):
+      dt-bindings: clock: Add DISPCC and reset controller for GLYMUR SoC
+      clk: qcom: dispcc-glymur: Add support for Display Clock Controller
+      dt-bindings: clock: qcom-rpmhcc: Add support for Glymur SoCs
+      dt-bindings: clock: qcom: Document the Glymur SoC TCSR Clock Controller
+      clk: qcom: Add TCSR clock driver for Glymur SoC
+      clk: qcom: rpmh: Add support for Glymur rpmh clocks
+      clk: qcom: clk-alpha-pll: Add support for Taycan EKO_T PLL
+      dt-bindings: clock: qcom: document the Glymur Global Clock Controller
+      clk: qcom: gcc: Add support for Global Clock Controller
+
+ .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
+ .../bindings/clock/qcom,glymur-dispcc.yaml         |   98 +
+ .../devicetree/bindings/clock/qcom,glymur-gcc.yaml |  121 +
+ .../bindings/clock/qcom,ipq5424-apss-clk.yaml      |   55 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    3 +
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |   23 +-
+ drivers/clk/qcom/Kconfig                           |   44 +-
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/a7-pll.c                          |    2 +-
+ drivers/clk/qcom/apss-ipq5424.c                    |  265 +
+ drivers/clk/qcom/camcc-milos.c                     |    2 +-
+ drivers/clk/qcom/clk-alpha-pll.c                   |  162 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
+ drivers/clk/qcom/clk-rcg.c                         |    2 +-
+ drivers/clk/qcom/clk-rcg2.c                        |    8 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   28 +-
+ drivers/clk/qcom/clk-smd-rpm.c                     |    8 +-
+ drivers/clk/qcom/common.c                          |    4 +-
+ drivers/clk/qcom/dispcc-glymur.c                   | 1982 +++++
+ drivers/clk/qcom/dispcc-milos.c                    |    2 +-
+ drivers/clk/qcom/dispcc-sc7280.c                   |    8 +
+ drivers/clk/qcom/gcc-glymur.c                      | 8616 ++++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq6018.c                     |   60 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +-
+ drivers/clk/qcom/gcc-qcs404.c                      |    2 +-
+ drivers/clk/qcom/gcc-sc8280xp.c                    |    4 -
+ drivers/clk/qcom/gcc-sdm660.c                      |   72 +
+ drivers/clk/qcom/gpucc-sa8775p.c                   |    6 +-
+ drivers/clk/qcom/gpucc-sc7180.c                    |    2 +-
+ drivers/clk/qcom/gpucc-sm6350.c                    |    4 +-
+ drivers/clk/qcom/gpucc-sm8150.c                    |    2 +-
+ drivers/clk/qcom/gpucc-sm8250.c                    |    2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c             |    4 +-
+ drivers/clk/qcom/lpasscc-sc8280xp.c                |    4 +-
+ drivers/clk/qcom/lpasscc-sm6115.c                  |    2 +-
+ drivers/clk/qcom/lpasscorecc-sc7180.c              |    2 +-
+ drivers/clk/qcom/mmcc-sdm660.c                     |    2 +-
+ drivers/clk/qcom/nsscc-ipq9574.c                   |    2 +-
+ drivers/clk/qcom/tcsrcc-glymur.c                   |  313 +
+ drivers/clk/qcom/tcsrcc-x1e80100.c                 |    4 +
+ drivers/clk/qcom/videocc-milos.c                   |    2 +-
+ include/dt-bindings/clock/qcom,apss-ipq.h          |    6 +
+ include/dt-bindings/clock/qcom,dispcc-sc7280.h     |    4 +
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
+ include/dt-bindings/clock/qcom,gcc-sdm660.h        |    6 +
+ include/dt-bindings/clock/qcom,glymur-dispcc.h     |  114 +
+ include/dt-bindings/clock/qcom,glymur-gcc.h        |  578 ++
+ include/dt-bindings/clock/qcom,glymur-tcsr.h       |   24 +
+ include/dt-bindings/interconnect/qcom,ipq5424.h    |    3 +
+ 50 files changed, 13162 insertions(+), 153 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+ create mode 100644 drivers/clk/qcom/apss-ipq5424.c
+ create mode 100644 drivers/clk/qcom/dispcc-glymur.c
+ create mode 100644 drivers/clk/qcom/gcc-glymur.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-glymur.c
+ create mode 100644 include/dt-bindings/clock/qcom,glymur-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,glymur-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsr.h
