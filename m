@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5834E18EB0;
-	Sun, 21 Sep 2025 17:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4D235947;
+	Sun, 21 Sep 2025 17:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758475705; cv=none; b=soiyGGZIUrhEfJC16kLHapW3e5N62fiUiReq5oG13YRh6afjMWikWGxGYfUVDpiLp0oXtzz58M9xoy5LhcuT60ThCOU+Z7X77rRBWw+wg+9rdkmFQodHlK8/nOu6E1cr/Nq5deqjNvmRg/4u6lO2RVS0nGWcVIdeN9ZumiqGcUk=
+	t=1758475936; cv=none; b=M15IaG+xKyoLwJ93UFfDrdilyukvx7WdmjUlnmz1Tc05CWQoVXTba7wn3zb0bNQtg+cqf8cEFZVmSc1Hy5v/XzxWE+BsyDTqWWidCVe7fjJcuoAATJ7t4PD8CoKfuMDZq/LZ45FfVHJqOkYhcrl6TNZgUTpEuo7zbzXs7/tJtNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758475705; c=relaxed/simple;
-	bh=Y6OyRC8OGepucwPmVPz8/FQHQQPr31PG9hXtFpeOmaw=;
+	s=arc-20240116; t=1758475936; c=relaxed/simple;
+	bh=qepFOU8T20KaFaLq8hgY/wsf4nLF6or1PKzI4CKHSjo=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Tpix3gWOJBbv8GLdwYcngHoYQ1hkG9p2BoyxrFeWEAzec3BoGTaPruOhnMNQs+psrdWRGuTqi23hEKQBIvwf//zLdZZGgoob70hvjy+SnKXzOP3bKSj6/n+1D8J3NIPfI1C5dQ0N0jOSMWaLNA/dmydy5tOSE6TJr2iFfRK6FZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOYQNGMq; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=usjPx4X9WmwTLP5+sUE3zTMr1UIAneDsiFTiO1+F774aq3xzpc9vJKswmgrdAV64uw0DpgsLkrpKqZ7MHSppfTGrtyQLHlHTg080HTfcOMZDWftHPSndn5+FZvHPnVCfgte6Q/pvaeYScQK/6dPosYibx9QAoF91JOk66COmv6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koEmKzV1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOYQNGMq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4779C4CEE7;
-	Sun, 21 Sep 2025 17:28:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koEmKzV1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EA0C4CEE7;
+	Sun, 21 Sep 2025 17:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758475704;
-	bh=Y6OyRC8OGepucwPmVPz8/FQHQQPr31PG9hXtFpeOmaw=;
+	s=k20201202; t=1758475935;
+	bh=qepFOU8T20KaFaLq8hgY/wsf4nLF6or1PKzI4CKHSjo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=rOYQNGMquh9OWSN3UTmPtZ+0v9OeRM33ySEUj3+3H51CcaaVxyhzTUntAK1g4gGQH
-	 ZS7hCzCrCoQY0pC9TxVc5cFNWASi7ZByo+3UATC6fUebH635fNI13yjaed4MhY3Ogb
-	 Xi7O4rvMLZbzBLaYss6nQ0CL4aGg8soSI7499vnSGby+INaT4k1mZZapzy1jPlmaeg
-	 LkRTab9X3Eb1AsRD3HKd6iLIYktg1uv+qzFpmLRt+c3eXBboKiFc6pWcRP4siw425T
-	 HuWTRBzU8ddPAgukP6FH1qiRXNZGK5BShMFBbSeI5kmXCE22BYPcpfrjL3pAFavfPz
-	 2NB0GEV8pJOFw==
+	b=koEmKzV1JfTshEqlFj/6c7QvIt4O4+AHiKmF7yCgAUnIyKNJIxq9QY9yReUExzRoo
+	 RSvhAKRzWIrcDfEalNx1esu/opu2awkjrnj422ZaEVyM8UAiBR5Y1tlzXYyPQu1471
+	 aLqmqmtZYDSsdLGvO1EOWFqtUD6CP+miBuTkvXhV0V8CZbZP9TFSkXVFAkPmy49Jhr
+	 Svj0EkBVcIOOcxkobOQjkJGeKUgLFJprmv4hWdfvhZ8fsavVZ/kIrGFHsuzv8lHStU
+	 h5wLbIr3AQrfTmrDxio/6aC84uqYlgnMEjSPV+BsvAsow1UtRBq124elLPoaPI8WGQ
+	 mamP7+Lpb83rQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,62 +34,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250627-dev-axi-clkgen-limits-v7-0-e4f3b1f76189@analog.com>
-References: <20250627-dev-axi-clkgen-limits-v7-0-e4f3b1f76189@analog.com>
-Subject: Re: [PATCH RESEND v7 0/7] clk: clk-axi-clkgen: improvements and some fixes
+In-Reply-To: <20250625-upstream_rcc_mp21-v4-1-9368a86c8515@foss.st.com>
+References: <20250625-upstream_rcc_mp21-v4-0-9368a86c8515@foss.st.com> <20250625-upstream_rcc_mp21-v4-1-9368a86c8515@foss.st.com>
+Subject: Re: [PATCH RESEND v4 1/3] dt-bindings: stm32: add STM32MP21 clocks and reset bindings
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Xu Yilun <yilun.xu@linux.intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Nuno =?utf-8?q?S=C3=A1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, nuno.sa@analog.com
-Date: Sun, 21 Sep 2025 10:28:23 -0700
-Message-ID: <175847570323.4354.7019519707280531872@lazor>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>, Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
+Date: Sun, 21 Sep 2025 10:32:14 -0700
+Message-ID: <175847593403.4354.864826415550352713@lazor>
 User-Agent: alot/0.11
 
-Quoting Nuno S=C3=A1 via B4 Relay (2025-06-27 07:59:09)
-> This series starts with a small fix and then a bunch of small
-> improvements. The main change though is to allow detecting of
-> struct axi_clkgen_limits during probe().
-> ---
-> Changes in v7:
->  - Just include new tags.
+Quoting Gabriel Fernandez (2025-06-25 02:07:24)
+> Adds clock and reset binding entries for STM32MP21 SoC family.
 >=20
-> - Link to v6: https://lore.kernel.org/r/20250519-dev-axi-clkgen-limits-v6=
--0-bc4b3b61d1d4@analog.com
-> - Link to v5: https://lore.kernel.org/r/20250512-dev-axi-clkgen-limits-v5=
--0-a86b9a368e05@analog.com
-> - Link to v4: https://lore.kernel.org/r/20250505-dev-axi-clkgen-limits-v4=
--0-3ad5124e19e1@analog.com
-> - Link to v3: https://lore.kernel.org/r/20250421-dev-axi-clkgen-limits-v3=
--0-4203b4fed2c9@analog.com
-> - Link to v2: https://lore.kernel.org/r/20250313-dev-axi-clkgen-limits-v2=
--0-173ae2ad6311@analog.com
-> - Link to v1: https://lore.kernel.org/r/20250219-dev-axi-clkgen-limits-v1=
--0-26f7ef14cd9c@analog.com
->=20
+> Signed-off-by: Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > ---
-> Nuno S=C3=A1 (7):
->       clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
->       clk: clk-axi-clkgen: make sure to include mod_devicetable.h
->       include: linux: move adi-axi-common.h out of fpga
->       include: adi-axi-common: add new helper macros
->       clk: clk-axi-clkgen: detect axi_clkgen_limits at runtime
->       clk: clk-axi-clkgen move to min/max()
->       clk: clk-axi-clkgen: fix coding style issues
 
-What is the merge strategy for this series?
-
->=20
->=20
->  drivers/clk/clk-axi-clkgen.c        | 159 +++++++++++++++++++++++++-----=
-------
->  drivers/dma/dma-axi-dmac.c          |   2 +-
->  drivers/hwmon/axi-fan-control.c     |   2 +-
->  drivers/iio/adc/adi-axi-adc.c       |   3 +-
->  drivers/iio/dac/adi-axi-dac.c       |   2 +-
->  drivers/pwm/pwm-axi-pwmgen.c        |   2 +-
->  drivers/spi/spi-axi-spi-engine.c    |   2 +-
->  include/linux/adi-axi-common.h      |  56 +++++++++++++
->  include/linux/fpga/adi-axi-common.h |  23 ------
->  9 files changed, 174 insertions(+), 77 deletions(-)
-> ---
-> base-commit: 82f69876ef45ad66c0b114b786c7c6ac0f6a4580
-> change-id: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+Applied to clk-next
