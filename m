@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CF5B652;
-	Sun, 21 Sep 2025 15:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594B71F37DA;
+	Sun, 21 Sep 2025 16:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758469685; cv=none; b=emLwlyhDoD8rq3ReUHT+mUmmpmEeoQJ2JtoY/OKK6owoo/eok8sL8g1p0hKU4ChNw9nxICzeoQxdBxRLdzsiB21kTFNXHTj3fWGrt/MDdVoFp/pTiZsDwRdwgIH8KtS5J298T6KD5DAzmwUKWadNQV8uozze3xjioPR3WH19n54=
+	t=1758470405; cv=none; b=A111TEIYH2zxBml2L86zwW2UE3hBByzDBJ/QNjnhpGAd8BEEsjG0Y6UWXa3/poz853o1aLqfJqCvZchIIj8S64fFffg23LDKem+Gz/paKoiQ7FMLF5u+nZ/y6/6Uy5NdN7sms49aIoGdunniHf20yz3tUW01tlfYX7YAyZdx9lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758469685; c=relaxed/simple;
-	bh=lB8jKzCoilWGhPypSz0chPua50YkWHfd1+UXohEc1Jk=;
+	s=arc-20240116; t=1758470405; c=relaxed/simple;
+	bh=cm6J+UUm0Yhk5gWtzjh9epyLXB2qW6PN/nEAcS+Q3eo=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=stSLAVCJ2y6J8kjQdQa3U+H7xZ10zfgtNS2Mh9QUHBqLyUZ/M3sw3AcN9MbcRwQcKHUVxCYlIQyx71kT4sM4yj0lTrZH/8bW+PbaZAK+YNJKWlLMl+GY/x0ZvjaWRy34pu0jyRr71m5HBTTbHC3eH+tJ4iHCFgiTZk+ikero4eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kl7tP4qK; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=LbxNljaZz44WFxQhiUi3S/t4rSKgckyOT235qTheJkfU3WLdwmgu/oLbGx9djr5IbcpxRN0nkjd0rTRQ8OSeufB7CMmd9+aiYjnG/H6lpjNBUujh6FQgaaYbW7d0DGJ8Po3aVYdutTxM+8Iz0QkQ/MGbxl/DEyDKzGIb+d+3Gws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3pK0p0q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kl7tP4qK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E9E4C4CEE7;
-	Sun, 21 Sep 2025 15:48:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3pK0p0q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85221C4CEE7;
+	Sun, 21 Sep 2025 16:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758469684;
-	bh=lB8jKzCoilWGhPypSz0chPua50YkWHfd1+UXohEc1Jk=;
+	s=k20201202; t=1758470403;
+	bh=cm6J+UUm0Yhk5gWtzjh9epyLXB2qW6PN/nEAcS+Q3eo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kl7tP4qK79Aohs/Pt+Nq71nF+CkGK9E1dSdHd6aSIL8G03sn6w2jyE0bRbn3xbDI6
-	 JEmExm6wIV4Emx9pNvsyaWHtaGxZceCa+lMCzanp4GIPSdnD/QYHSq092HqgKMTaNE
-	 u7c4w+ks8EE8bQCpzXc5yn6DViYB2erVbWZzbOUjAY5cpo1NTxCJE8GMKxFJ2tz7ye
-	 QPygwhgSMCI//SZ75SQYlZ/UdBaheqDxFwfqpCECHdPxPVKF03BYF/ttDaGG8UXf77
-	 ZHJXYxvAvLtOR12vwX1fqDIBoQvO2uCkJJLeW3gUSzewPBi8+IeChJ151AL5sBIRuT
-	 gd8UOLvt8YLyw==
+	b=K3pK0p0qVU3h0AxJ4/wvHpEO+P/uqi3mIvu1GLcvOj88VReiPu3Z58Vbto8aNql4c
+	 Zy9xggoNLA/bi2x0KftoQxI4pI6wtnScf3db7c6OTXEZBQjjeXWvS+cw/tb2aHzQJa
+	 YcZMFDYeFDsGCIf3q5wgQMXndu2xDkA6I0EJ/8BHIJ0vioLYjX/M9f69zO305AAxyl
+	 i+Caud7at4YXkNwO2CEtZFzb7pBo2EOz5D+2wZCwnFRK46uuK+7l/kL3PYOeTlYO0x
+	 RiUHgaxr67xkqxf+0FMpBpYI1vzqpz5LkzCXcmW01aL24/6P6eDTR0mxPSy4qlgOI6
+	 B2v6u6lRknFBg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,36 +34,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <11324A9C-F7CC-47C7-B225-59A96C333A82@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com> <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com> <aMG6JVMcMxVuX7De@tardis-2.local> <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com> <175834480479.4354.6269916774389395049@lazor> <11324A9C-F7CC-47C7-B225-59A96C333A82@collabora.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
+In-Reply-To: <20250921022925.599022-1-andersson@kernel.org>
+References: <20250921022925.599022-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.18
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Rafael J. Wysocki <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Sun, 21 Sep 2025 08:48:03 -0700
-Message-ID: <175846968308.4354.2923659909996682902@lazor>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Taniya Das <taniya.das@oss.qualcomm.com>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Nickolay Goppen <setotau@yandex.ru>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, =?utf-8?b?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Brian Masney <bmasney@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>, Daniil Titov <daniilt971@gmail.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, Johan Hovold <johan+linaro@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, Marko =?utf-8?q?M=C3=A4kel=C3=A4?= <marko.makela@iki.fi>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Sun, 21 Sep 2025 09:00:01 -0700
+Message-ID: <175847040126.4354.10132480274472842830@lazor>
 User-Agent: alot/0.11
 
-Quoting Daniel Almeida (2025-09-20 03:33:07)
-> Hi Stephen,
+Quoting Bjorn Andersson (2025-09-20 19:29:23)
 >=20
-> [=E2=80=A6]
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
+85:
 >=20
-> >>=20
-> >> You have to include your SOB when submitting patches from others.
-> >>=20
-> >> This is something I tend to forget often, so I made sure it was there.=
- The
-> >> order may be indeed off though.
-> >=20
-> > Yes the order is wrong. The first SoB should be the commit author.
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 >=20
-> Do you want me to send a new version, or do you prefer fixing this before=
- applying?
+> are available in the Git repository at:
 >=20
-> For trivial changes some maintainers prefer the latter to reduce the amou=
-nt of noise.
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.18
 >=20
+> for you to fetch changes up to 4ca6a89f38718d6cd84304e6a26e7ddc90e03356:
+>=20
+>   clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment (2025-09-11 21=
+:09:29 -0500)
+>=20
+> ----------------------------------------------------------------
 
-You can send another round. I'm waiting to see if anyone will review the
-second patch. Maybe sending another round will prompt a review.
+Thanks. Pulled into clk-next
