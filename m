@@ -1,62 +1,62 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB06274B5A
-	for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 17:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5392737F4
+	for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 17:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758477549; cv=none; b=YsRNZjy+Fs4euhtf5LttdPTLXo+LQdzqcQ1pmq8nTz5ds9lMy/hOUlvieHCJXWGPAZc5uraim8dcuhsq4X/DaJ+hXRFaO3JbSU/AOlhb7Pi702vjFWV02NctQPyK4m3RW9Tm5+4MlpHSeoYglZoPNxVe+YU0jouw8nKE1N2kFuE=
+	t=1758477550; cv=none; b=YlNmwYsCzrjiYd7qcM+2R2ix90cn700io/ncpeb04oET0KElwGblnx8fiZz21cmetc0B0mg75OwJL1LZ5hGnILUTbCQj7xJ9ICzqzgACsCzA1Ie3nv1ohWqkdQz3/jvDOCNBlWe+vK5iN8GXz5iF6cXSoaSXQKWBXSgCYJ2sbwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758477549; c=relaxed/simple;
+	s=arc-20240116; t=1758477550; c=relaxed/simple;
 	bh=csrhZLgRqk0LyBv6H0m3QtRbPDuuNLS5kbPoTGl6p+k=;
-	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=G6cOVFg11n+DTdwmw9s3YCWr1Wo/kdCTRRN/LBKIl3Wwi+cyUkWcEpGAoBEz559/jKcWLKP1M6Az6p133qtvj81zSlApfb6dolXiSBNzWPB6JwnDXfNcRdSijxtAOWOse1F6D3zJhyN7iY0dltDWAnVNKC+97ChXvwcLn9Ja0lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=qMHAlNbb; arc=none smtp.client-ip=209.85.216.42
+	h=Content-Type:MIME-Version:Subject:From:To:Cc:Date:Message-ID; b=Or5qaL12HwTwjqiDFFL+WXAXoQWpxc6ZBrUegNRfdT0skALLGVdBPClgFsnYwDI6FrZ7R5WAb4A80hEqJ8y0YMqkEt6+YQFsLvSpgWIr26WVe1+zJIv8FWUlmE7cdgW0dKv2ezA1/LSIo1WaeNkflxK9OswyHD+2IDJliRjFBkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org; spf=none smtp.mailfrom=kernelci.org; dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b=bZRQKCDm; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kernelci.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="qMHAlNbb"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3306eb96da1so2295558a91.1
-        for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 10:59:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernelci-org.20230601.gappssmtp.com header.i=@kernelci-org.20230601.gappssmtp.com header.b="bZRQKCDm"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77f0efd84abso1305366b3a.3
+        for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 10:59:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1758477547; x=1759082347; darn=vger.kernel.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1758477548; x=1759082348; darn=vger.kernel.org;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
         bh=6XizHke7K2MtvztyRNpSVD9+knHSzRe7eGtjqBPmYl0=;
-        b=qMHAlNbbTz5LYvaSrJSJExTmwrQY3bEzXY+LoLrIFoMkVKOW0U4zVUk+ZF7VULxSNc
-         7Ym2BzsF1qfy4X06HS9LCSKWavBeo708QcOBo1hJbsXLDUFHWFiWllL36E1BH5ZHBsrU
-         xmV/AN1J0RDs9lkaNIIIFfHGqUZ1646GB2pAOwT4VVmxZ2AX8lk5VunE0fW9vvWMMbJS
-         ZDUXxLftb9mpRY5aRz8rju2tiKmlPOEX3msELLuu4fIE0r5x1TCXu26/BNzgEjyjxWGU
-         qY6OTsTCr2mJuxKMzkechDF98yXmtqB8iQzpoD7ncKhTSkfHVDg9/AQmiAOIlwN3DUUs
-         j9MQ==
+        b=bZRQKCDmQIOkB/ae58ikKbU39vNfcfkpwUlj1DBo4C4+RnS8onpdxGUCVbyQhEmeVE
+         ziIhh+kuTSDvGP1BQ/UFsZlXGwkuzpI41qZT11dEaEX9AuPds1pXfrBk0KJUDLW0z6sd
+         5mEHnJ4BYIigJJXinO1/evVORcyuS1YGjOTA8xGpCKlfdIpNBn2OytfwofRNnCH47KKj
+         xJpAz6GElU8dWkhLeTVeLKH8kA/XPcfPKAMSl+cPHf66MxUu2zhoBC0qqzj5Y5QLd10w
+         zV+xSGV8+9K3afZ87+Nir7M56OQmcPs/z3gVlvdE31MSCFMoYUjGQrO61u9oO8rXX8ly
+         Ohgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758477547; x=1759082347;
+        d=1e100.net; s=20230601; t=1758477548; x=1759082348;
         h=message-id:date:reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
         bh=6XizHke7K2MtvztyRNpSVD9+knHSzRe7eGtjqBPmYl0=;
-        b=S/LdEqYA5WBMdpg6esUc64xsIHTnAI7ZgCEgFU4XssBsVcyOqSilnpZ7KBK66NbtjE
-         4BKKiLSRXLyr1xil+Ng37zeFXP2px8aFzCoRKGrmb7wTsfTJgnCXFdJcmME3lVdCjhsf
-         Lv5QmiymI2CEnJsP2i5+D0S/7262SwSgTtgxYEZEeo0br40s1O8ke1B92C8sZTZKEyLm
-         /kVVAqwWOPNbpp3k37776dShoUB/4QtVCzqElsolqfAvUCVjrb/m9vDu9Sec7/WVjg84
-         zFeaAKSc/ZF1Erfdr/XT6fGxNND3m4byrqwHtCboQPjZ0ApFt6ITgwGU2852SUive4Ng
-         PIPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF0gi3Cz+wzmUkXTbPFXTPv4zKLN6H+4SNEA81Ua2eB0v8ME5gLFsAqwlP1TRWNqfwViZU+QyVgnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAV3ofa7ILygIZfTmIt/qUMQMFP33ua/fCDKNWQ9xa4j3wfgPy
-	1ddkzFB9N9tm6l/uMVXg+SxdDDWFXxrQqngpDKG2r2B7XFkm0AVAg9K/A7dBEFkWtYk=
-X-Gm-Gg: ASbGnctfWIRoXfw/r00KVVI2MviAOmj5ORKNk6NkfBCtm+hlSEgbJtzwoAQ9H17LR1r
-	4ZMXY6qCg2tk7giAQoZdaI1HpV7+UVigBftFDndvVcSqIByXyBgiVxsda1B/q4ehPp9GITmgYJ6
-	D+QPBIS8BHR0zYO6p633B5RFSesa2rAlLblGm5oxOnF7wAbfEjWE15DvL/LnRYZvzW8pDvJeP0p
-	ETdQphs6RQ1wflDYL1oIuwXfHfkLe9muELY11qbZdltyfvujzSmiSZHXrBWCXIFIMYYLGB8ptk4
-	Jm4dFmuQTMLiKR5edoJBcc9dlJJaVbcoNoWmeSojYOVhTXhYnRYNaI2aIVs1xTlX2ZU9nRsKHx5
-	BodmXqQEzoQ0Qzy/g
-X-Google-Smtp-Source: AGHT+IEaIUcg68S0KE2ZLQOfbyGk3xRoXSADGWAEtaR03YX8wvWYwsR4Kl5t59SaVu0aArL9bQkx3g==
-X-Received: by 2002:a17:90b:2b4e:b0:32e:8931:b59c with SMTP id 98e67ed59e1d1-3309836e539mr12344266a91.27.1758477547370;
-        Sun, 21 Sep 2025 10:59:07 -0700 (PDT)
-Received: from 1dfac204f25d ([20.38.40.137])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26857a0sm13963828a91.2.2025.09.21.10.59.05
+        b=a0ChEfFJEKu6FKk0+nRMrTerZzicLboVwhXBT6hONn856vEnqhVRF0pR1kFclEh0y8
+         sMydHTi8/66uUwCQR5fRtpCyuRaIN7c6UuA8+p2w/Ii0bTJSteIWkf37nz24aplU5v/K
+         9nsXRjjA++p0Nb0+znbl0+zODPxCkJn/PiSX91Ixsy1kKXl5r7nUtDNLToNvcy+aZuwp
+         BA/JCcqadj3u8bzsY7M0CBtj6NkGGcvxVmJ5/LMKu85rJWWMOva5FlJTdedAvyAsuhoZ
+         4IID5E9kbZ9zTPH4C4MWdZwF/t+pXlLGUtm2Odz/VaX8sDUWHwVrqW1dOCfD2uBn9F1Y
+         YxLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjk0s5ldgm4GXsoYwN6ezpQ8m4TJGUC94SFQgpPds7L3Zlt+6rwttdY/AxLYYp9OzgCYSG/h23ACQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWAJLqX8w7/rx26jn87ldBWSVbToxdmbcZb5owVNU9tcUT7WeR
+	MKeru0iTZAnFoJVo5pL9f7fFFHcYw+9G1TTsIgv1IGebdMWEhgcivBLwfwBug0TYJ24=
+X-Gm-Gg: ASbGncsPz//hPTLIokdM5AL8xXCpDIDUVk5e8790i0WWmhhOE5TMEvRPnUmhvQaqmFO
+	idDucv8795uKa9GjqhuTxzvjnLkqYJp6E6tcGK0Z8lBShUiwEECtdYEck+LNrwkHCWgvIhg/UkJ
+	131f4D2EFp6mtldBoes6hKWzXmMJ/1cQ0luXYwF90NKZgERYW7ESNtFLIPusLRrTSclnvhHztSx
+	yc4/i3JNoAOORlD4Xdv7vmxHp40FZ7HnTPrzX/P61itf1E4c/Ifceee+gX9NckRCYTUErxgI2ot
+	mTZOF45Nq3wgrrFW+hcg7WHbI8tuu8ciJ+4HD8zGFqMPtxBDnotUJvYqglp3YLonEoDVKiTTHUW
+	vUk5xBuRfAG69xklR
+X-Google-Smtp-Source: AGHT+IF8BZfuMlR0I4UhcY+twi707ASM1jIu26Ox3FiBZVWC+9NELO/GMcq+/aY7ed5K6qwH9wmwZA==
+X-Received: by 2002:a05:6a20:a127:b0:262:d265:a3c with SMTP id adf61e73a8af0-29270bb8175mr14565470637.32.1758477548013;
+        Sun, 21 Sep 2025 10:59:08 -0700 (PDT)
+Received: from 166871acc15a ([20.38.40.137])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0d3aad09sm6391241b3a.17.2025.09.21.10.59.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 10:59:06 -0700 (PDT)
+        Sun, 21 Sep 2025 10:59:07 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -73,8 +73,8 @@ From: KernelCI bot <bot@kernelci.org>
 To: kernelci-results@groups.io
 Cc: gus@collabora.com, linux-clk@vger.kernel.org, sboyd@kernel.org
 Reply-To: kernelci@lists.linux.dev
-Date: Sun, 21 Sep 2025 17:59:05 -0000
-Message-ID: <175847754545.744.17255394538264123187@1dfac204f25d>
+Date: Sun, 21 Sep 2025 17:59:06 -0000
+Message-ID: <175847754602.596.4377149237007455593@166871acc15a>
 
 
 
