@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA7C45948;
-	Sun, 21 Sep 2025 17:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2552E2BB1D;
+	Sun, 21 Sep 2025 17:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758475207; cv=none; b=HFsJYoE+iyld6DRi79lp5PVCtDH2N1oqItOwauqY51T08xQUxEbXWLDUetnESyX4kJki9ACgsHJgnRmpbiIaWgMxHb2rzqm6SA473sfsf20VxOP+4KSEeud4v3UX/i3nGbpy8tKqOlOpbqmiJsfwgwGr6J9DnQ+lHBlYa5pAx4M=
+	t=1758475508; cv=none; b=XhpxB5cV/UgNF4N94RAF+RA6/M/iC345MQ6W66ytLYQYi3FZ0dvG49dQ6MEscbCRppAaV6b1EvBdgbSfv4Dc2CUiXBIM/JVwNKrSgtc0Y82zXePZgaPModDcYoXbIn0WoAjFiTekhAy/0kzXfKRuHOb5gQTkpCN7NGutUwm8yfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758475207; c=relaxed/simple;
-	bh=nZFmlP/P0juGPtOeZk5oTehlfMx9ii7tpf1fA/FVz1s=;
+	s=arc-20240116; t=1758475508; c=relaxed/simple;
+	bh=WKwhxvq7jY3OZNVkywwrxdkcffohNo1hcW1y9XvV6Vs=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=j1woMN1gmyItlQzlMvsLvlCF2FTzV+JxkMNROVTQDpO19g7YckgM0+EsR7f75IKb0idxZJqg4w6r28Kqx7qarXsF64woHPuu3cierN/LFntA2VVES5ZMMb8D5kCZ0PMGrx3eTdyEC7fbKw6fZcu/F6XSV3+RBtEdg+YnuEp7d+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lyjmj1GL; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=eQerUoVMSDu8jMOEFJsHFKziabQu20XVat5PdxI79MiloYTcLMOgw+1ZEfQpROonubUFoEErzZbppVuSbSDlSLboJ+2n8NP8C/U1SkzO8OalzYbZszU1byrHVWpuwnaUKH6mTFJwZ2Lo0N90Nnzuv1by0I/1AtSe9muDIN8BZxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0OaBZS9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lyjmj1GL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DFAC4CEE7;
-	Sun, 21 Sep 2025 17:20:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0OaBZS9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849EBC4CEE7;
+	Sun, 21 Sep 2025 17:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758475206;
-	bh=nZFmlP/P0juGPtOeZk5oTehlfMx9ii7tpf1fA/FVz1s=;
+	s=k20201202; t=1758475507;
+	bh=WKwhxvq7jY3OZNVkywwrxdkcffohNo1hcW1y9XvV6Vs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Lyjmj1GLsZgcmTM/xErQpkAWiJsfqG74gTDr58NQ3iRoeTaRrrJm3x1fqe5xyzp4s
-	 7uCBE1j4SHEYaWLo2nnhMFvuDKfEFWr/vGAL/wOeFA63LqBy6rO/HDNc0Y8vrTXuK9
-	 eGcHTReOSVkA0DqwkFeEm8am/HXXAyY6OvdBcV/7xSPBeAux9q2fN/EndSWhICrp5N
-	 Oa8xXMiWFxYE0tXINsU8Fsi4brW/QEcc/fA33rkfD9D9PIe1GW3yyjQsh0epUySM5x
-	 yhPWSL8OwAUEgVHdK+q59NgKowEoFIyWNwYo6M0Mr36LdUD74DAgvQVpf/oFdSqPBg
-	 Cva0Y3s7JvAlg==
+	b=c0OaBZS9yKp9WHcw4ElnO4EXvPtp2u/u8xRmD4tCK1EW5wMuUNxGbK4cSa2LlgBEG
+	 ulSLvr8OIZI0BQaKmRvo3SLXtI4meKy6aa4StSY9FJYT1BbOqdcYXPA/dJftS/qOCj
+	 YIQ0SiL0lSPD5S6zBIQ/iIk0Rk1wOMdoVPYeu2qzAFOi56IPQ0j7OEDFJCx7W0lncv
+	 MwiUF3qwWJ3doA81mqzIm3TgEZsIygvvCyC10ZvycRDExQ2MxrFqZagdGhL0Nxw+ei
+	 2KCN4bZ/kyUj3CPCABT06BJEFmyul7Pm8EyGOGnQuEGEkLssa7dEQNJS1JW2oRNEzP
+	 dw8mapgNhUOMA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,40 +34,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250814035317.4112336-2-wenst@chromium.org>
-References: <20250814035317.4112336-1-wenst@chromium.org> <20250814035317.4112336-2-wenst@chromium.org>
-Subject: Re: [PATCH v2 2/2] clk: Use hashtable for global clk lookups
+In-Reply-To: <20250818040920.272664-9-apatel@ventanamicro.com>
+References: <20250818040920.272664-1-apatel@ventanamicro.com> <20250818040920.272664-9-apatel@ventanamicro.com>
+Subject: Re: [PATCH v10 08/24] dt-bindings: clock: Add RPMI clock service message proxy bindings
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Chen-Yu Tsai <wenst@chromium.org>
-Date: Sun, 21 Sep 2025 10:20:04 -0700
-Message-ID: <175847520494.4354.5422042536281886650@lazor>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor.dooley@microchip.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Date: Sun, 21 Sep 2025 10:25:06 -0700
+Message-ID: <175847550625.4354.7736204929282849019@lazor>
 User-Agent: alot/0.11
 
-Quoting Chen-Yu Tsai (2025-08-13 20:53:16)
-> A clk lookup using clk_core_lookup() is currently somewhat expensive
-> since it has to walk the whole clk tree to find a match. This is
-> extremely bad in the clk_core_init() function where it is used to look
-> for clk name conflicts, which is always the worst case of walking the
-> whole tree. Moreover, the number of clks checked increases as more
-> clks are registered, causing each subsequent clk registration becoming
-> slower.
+Quoting Anup Patel (2025-08-17 21:09:04)
+> Add device tree bindings for the RPMI clock service group based
+> message proxy implemented by the SBI implementation (machine mode
+> firmware or hypervisor).
 >=20
-> Add a hashtable for doing clk lookups to replace the tree walk method.
-> On arm64 this increases kernel memory usage by 4 KB for the hashtable,
-> and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
-> platform with around 800 clks, this reduces the time spent in
-> clk_core_lookup() significantly:
+> The RPMI clock service group is defined by the RISC-V platform
+> management interface (RPMI) specification.
 >=20
->           |      PID 0      |     kworker     |
->           | before |  after | before |  after |
->     -------------------------------------------
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
 
-Applied to clk-next
-
-Can you send a followup that adds a unit test for clk_core_lookup()? We
-don't want __clk_lookup() to continue being used, so maybe we can add a
-test only exported function like clk_hw_lookup() that uses
-clk_core_lookup() underneath while grabbing the prepare lock. It can
-make sure a registered clk_hw is found and a non-registered name isn't
-found and assert that the not yet registered name isn't found.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
