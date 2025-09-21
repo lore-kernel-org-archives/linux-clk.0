@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4485271443;
-	Sun, 21 Sep 2025 17:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE302940D;
+	Sun, 21 Sep 2025 18:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758477592; cv=none; b=SFai9mVQXMhjtiQQXCoWp9n6Z5eKc/UuUefxLLLaMvv/06M3lvaVh3cHeUngM2ELIQDy2A2rylBkTAi+yaeW4ot3tTtjZHoiIHKnSmPqMvN4F4wUHZo7E54rMJZVlh0FYSvrNjX16Q6t5surkVG8SPX3z1FKduQqIKJV+JICIo0=
+	t=1758478034; cv=none; b=kpg/Mjzo0ZEHldcM/R+uY9gp21ayQi6EEJ15kwRson8ykKHPQsS4JaJd8W7Hm8i5QsuJ34kRp5P3lMW8Z0CB3oea9ZMaxkReeMRGjYEQSMFaP0TJdFOl77YCO+z9nLyINmdxUzBGaS4QZXg1T9sCSkwImEkogWTrzNTF2u0D8GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758477592; c=relaxed/simple;
-	bh=ukRxplsQpCB+Qv3RlPxu32B9rZQpb3Mn+2vSepY0/b8=;
+	s=arc-20240116; t=1758478034; c=relaxed/simple;
+	bh=pa2WC7yfAfVWbt4k6CeSwbBCdF7ZFQ7FE81XX8Dk+dM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=iF34khWkQ1w8mmsX432LD2+XKE/bse+ONDuDH81LApHkDLpThXWL5638ePuuqbIMc/VrRoSS2qxQCXhFbo4jj0hcSrGRVsA0k1s2+E6eX8c0lxcAOEfaOmoG6KnlsxXmEFdyXplPsGHApyIu7lhJeXJHps61AP7iuLwizcGFfQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+KTHxHf; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=gHeAGb9AKq90Bb8wN6c5SkxIvKlwFNvq4cHEq3xRnZsytEOX7P/uv5WTBB6O+fU307Kg1KcHnjwN305fWW1V0/J835QRVWaCctMBqi4OG3O73NFNLp0k8BVsZwpPQqIVwQ03/3NCYTliwShR+C29SDOQ7OlkOKMtysC9yRTSGq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+urJkm+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+KTHxHf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5BEC4CEE7;
-	Sun, 21 Sep 2025 17:59:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+urJkm+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7225C4CEE7;
+	Sun, 21 Sep 2025 18:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758477592;
-	bh=ukRxplsQpCB+Qv3RlPxu32B9rZQpb3Mn+2vSepY0/b8=;
+	s=k20201202; t=1758478033;
+	bh=pa2WC7yfAfVWbt4k6CeSwbBCdF7ZFQ7FE81XX8Dk+dM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k+KTHxHfPfr8EXksvM/wLT81aulWBskeXWMKERc4UGZvOZzJRmDZbZDpJzK9qQ2C1
-	 5llmaz99fVHZMizwf15WID2RvnVRxkImeLU4yrxUhTumAflYH1JU2YCD02XtReCeDG
-	 9vLKEhdwtv2n/rWrxWUJGCutDDwVp1ZP5A3w3gVKYfq7GQjaQ20IHC10idUJSUKMPl
-	 7UGl88n0QkkrLtrQaD2Xc11kaCeij88Nn0yymv1Lw5xCYXymeLW0twgej9+rc6mwOP
-	 uzb2z1y1OE+pJ/pfKDA65ZCXteQLXiCSvgd9hMzTVMtyQvsRwq37hYy3H15GP1H+Bq
-	 fmVDLX8XSxdjA==
+	b=f+urJkm+WQud0i0WqDcilhtMS9pfJ63ZGprvZbvGxHPn7WAi1DO81Mwt61Ip0bZJO
+	 3Jle5HhrtCoqdeL5pYQ2EyGiKUIOZoWM4xRNpstuh3zgyo6xHMI0XvGHxEijZEaLEJ
+	 wC6Vimin1D4byn1AjCYXI8/QXMGmsT5svIELYHSsgM5Ij9eU0dkDLFnXchgi4q2NFA
+	 Z1W93IungxB2z1c280zupjdwW9h0c/h1agKQZeIjna7fYPxIMiEpbmOGwMjs9OQshb
+	 lF4wZW8iXXoWIk2oQd0H7D3umaR72J4CPo4tU2833pF4z4ElmDVS7Bgzyheg2DxU/z
+	 rKOFeIETT1siw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,36 +34,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7dd9bca2-6c09-4067-b3f8-9bdc10dea39f@altera.com>
-References: <20250513234837.2859-1-matthew.gerlach@altera.com> <175133195554.4372.1414444579635929023@lazor> <7dd9bca2-6c09-4067-b3f8-9bdc10dea39f@altera.com>
-Subject: Re: [PATCH v5] clk: socfpga: agilex: add support for the Intel Agilex5
+In-Reply-To: <175847754602.596.4377149237007455593@166871acc15a>
+References: <175847754602.596.4377149237007455593@166871acc15a>
+Subject: Re: [REGRESSION] clk/clk-next: (build) =?utf-8?b?4oCYbXRrX3BsbF9yb3VuZF9yYXRl4oCZ?= undeclared here (not in a function); did you ...
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>, Teh Wen Ping <wen.ping.teh@intel.com>
-To: Matthew Gerlach <matthew.gerlach@altera.com>, dinguyen@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, netdev@vger.kernel.org, richardcochran@gmail.com
-Date: Sun, 21 Sep 2025 10:59:51 -0700
-Message-ID: <175847759120.4354.5284082297601743277@lazor>
+Cc: gus@collabora.com, linux-clk@vger.kernel.org
+To: KernelCI bot <bot@kernelci.org>, kernelci-results@groups.io, kernelci@lists.linux.dev
+Date: Sun, 21 Sep 2025 11:07:12 -0700
+Message-ID: <175847803221.4354.483699676036796745@lazor>
 User-Agent: alot/0.11
 
-Quoting Matthew Gerlach (2025-07-02 09:04:17)
-> On 6/30/25 6:05 PM, Stephen Boyd wrote:
-> > Quoting Matthew Gerlach (2025-05-13 16:48:37)
-> > > @@ -334,6 +336,375 @@ static const struct stratix10_gate_clock agilex=
-_gate_clks[] =3D {
-> > >           10, 0, 0, 0, 0, 0, 4},
-> > >  };
-> > > =20
-> > > +static const struct clk_parent_data agilex5_pll_mux[] =3D {
-> > > +       { .name =3D "osc1", },
-> > > +       { .name =3D "cb-intosc-hs-div2-clk", },
-> > > +       { .name =3D "f2s-free-clk", },
-> >
-> > Please don't use clk_parent_data with only .name set with dot
-> > initializers. This is actually { .index =3D 0, .name =3D "..." } which =
-means
-> > the core is looking at the DT node for the first index of the 'clocks'
-> If the core should be looking for the first index of the 'clocks'=20
-> property, is it better to explicitly to state ".index =3D 0" or just have=
-=20
-> the name?
+Quoting KernelCI bot (2025-09-21 10:59:06)
+>=20
+>=20
+>=20
+>=20
+> Hello,
+>=20
+> New build issue found on clk/clk-next:
+>=20
+> ---
+>  =E2=80=98mtk_pll_round_rate=E2=80=99 undeclared here (not in a function)=
+; did you mean =E2=80=98mtk_pll_set_rate=E2=80=99? in drivers/clk/mediatek/=
+clk-pll.o (drivers/clk/mediatek/clk-pll.c) [logspec:kbuild,kbuild.compiler.=
+error]
+> ---
 
-Be explicit with '.index =3D 0' and don't have a '.name' member.
+Thanks. I'll fix it in the merge.
