@@ -1,85 +1,77 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A66619F464
-	for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 21:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65152F37
+	for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 22:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758490360; cv=none; b=BU0t0aMzirm9OApSYbES1L8lb+64GcDxx9fDpCwybv3gZ7Q03shEUVQ8ZUDBOyP1o2smYYG0kd2SCSdUxqz9TSvERyY/zazYYTCXbxvJ8arMgM9PJt1VFXE6tVEPqO/yfhztccFCEMNa81r/BSmZTrLT/plgVkrpUuXTLjadr78=
+	t=1758493791; cv=none; b=JWx0VEnz0ObHg9pI32h/odDu1rnRfYFmEXBhdKTvs3bUIQkflscaaPXJGvJJcnZQZRGVZbdsjRGrAeF8gHzi13UGpbtt67QRcIN82u7mWiLpZUjSTDvn6KwWW+8KpPauayZyywOp8lpTzog4YrI69dbf0bNmpEXynMYNf9Qj5jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758490360; c=relaxed/simple;
-	bh=O++oY2BSNOj5hNiizZ0zusXuzx8WauST8XSCRb5f4C8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ASWjaCNubAnz2P/0Ryhm1nCRHt8FQxOACr/+nI4ldhXn9w0pYbcpS0OogcfAiX/sSFURSbLP+B7SYRXBFCfrPJ0NVUk3kOkCkW34t2vgJJSzKdElZ7xA12H1x1OW9i8kEqXO/DOevV6h2w1XifQZPhnGqRN0/78KWF74XlAzNQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=frSDbpY4; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1758493791; c=relaxed/simple;
+	bh=t3M/HHaQ1LdJyfOFRrtusW7jDfV1vsfN6PQ9v2tBdIQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=VRXcUI0NSp7IpoOSRoa2HBZgKUY9YdrAbjY+AuZ/PCq2bLHkkgtG5sNIPwyg1H7ogF1fJjPxkKoYzlLJ7+enXSbFAYpjtPRJqj96RCp4vki23yapD1YINp3Sm9pywWPdSgVikM1BIL4XE6hSd1bSrFneE3JgZTcF2PQzKBGUuzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/HiWiQg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="frSDbpY4"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:References;
-	bh=huK5CpmxMXb5T6on4tR9EKj5JuGqYpWil2JrKF2Fx2A=; b=frSDbpY4vrmuUjIGC2pDcq0oTK
-	5+lohheHj+xjTrPzZG3C8hXHMhouRCyqWG+xW/MVZF87K1daPf56OAZIiKcWVed7klzV15RVyM4ck
-	dRk5zZxsMQnRflP9zLtU4FYRLdAsiG4sBEFGZtLib1PfILfWTsEnVpFJCIUuqJIjbHtVSVdVh6k/4
-	IYJYbj7xbYTjpRgZZrZBGEQQ5YYOVk/8zKINzdy384zAEEkbzStPQyUs8GJFg+MiamxOwl6PiRtm2
-	XBVaj6QI7jvKAgBpSQU04DmqdwRCuhoxoohr135l4/fndu394SsRq/K1R+vf8SlXW7G9LoCbGIqld
-	EcEvJ6QQ==;
-Received: from i53875add.versanet.de ([83.135.90.221] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1v0R9o-0007cj-Vy; Sun, 21 Sep 2025 22:59:41 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 6.18 #1
-Date: Sun, 21 Sep 2025 22:59:39 +0200
-Message-ID: <1897877.QZUTf85G27@diego>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/HiWiQg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D43C4CEE7;
+	Sun, 21 Sep 2025 22:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758493791;
+	bh=t3M/HHaQ1LdJyfOFRrtusW7jDfV1vsfN6PQ9v2tBdIQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=S/HiWiQgimVDNPWriwiE+Zajl8ymdN7j0xlpWfoFbGJhRnNGCFtCPSeBRuwxEfx4z
+	 Tx8PL3HBxzuSYwYSZ6E3B83LGdthHWG2XY+UxbDuzp7dVpU0InQb4qz3R9v8qrsk7j
+	 wlJRqNZu3I2vHbtPqjq/3JpkPlImj1kd21e+436+IUSSq1Q2smiesVsEO8VmB1gjuL
+	 VUGHqXwQX2oJZPIHoOiX5nIQxQ8BW4l7kDznDzn49vCGlO0z1Lp1R4d0reFUnAArN3
+	 b6rkKvIcvwgBpZ74ERimnEPdV1USlHKy+rkZuj7nWLgrwewln2drMMoh16uLjlQhbf
+	 3xL1u+VcO3BXw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1897877.QZUTf85G27@diego>
+References: <1897877.QZUTf85G27@diego>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.18 #1
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Sun, 21 Sep 2025 15:29:49 -0700
+Message-ID: <175849378973.4354.1911356302020699433@lazor>
+User-Agent: alot/0.11
 
-Hi Mike, Stephen,
+Quoting Heiko Stuebner (2025-09-21 13:59:39)
+> Hi Mike, Stephen,
+>=20
+> please find below a pull-request with Rockchip clock change for 6.18
+> Just a single newly exported clock for an older SoC.
+>=20
+>=20
+> Please pull.
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
+85:
+>=20
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.18-rockchip-clk1
+>=20
+> for you to fetch changes up to 77111b2c22ef5b368da5c833175b6f7806b39ccb:
+>=20
+>   clk: rockchip: rk3368: use clock ids for SCLK_MIPIDSI_24M (2025-09-03 1=
+4:17:54 +0200)
+>=20
+> ----------------------------------------------------------------
 
-please find below a pull-request with Rockchip clock change for 6.18
-Just a single newly exported clock for an older SoC.
-
-
-Please pull.
-
-Thanks
-Heiko
-
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.18-rockchip-clk1
-
-for you to fetch changes up to 77111b2c22ef5b368da5c833175b6f7806b39ccb:
-
-  clk: rockchip: rk3368: use clock ids for SCLK_MIPIDSI_24M (2025-09-03 14:17:54 +0200)
-
-----------------------------------------------------------------
-Export the dsi-24MHz clock on the RK3368, which seems to get some
-attention to enable DSI support there.
-
-----------------------------------------------------------------
-WeiHao Li (2):
-      dt-bindings: clock: rk3368: Add SCLK_MIPIDSI_24M
-      clk: rockchip: rk3368: use clock ids for SCLK_MIPIDSI_24M
-
- drivers/clk/rockchip/clk-rk3368.c      | 2 +-
- include/dt-bindings/clock/rk3368-cru.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-
-
+Thanks. Pulled into clk-next
