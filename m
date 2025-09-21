@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5818CEEDE;
-	Sun, 21 Sep 2025 16:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327FF34BA47;
+	Sun, 21 Sep 2025 16:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758472389; cv=none; b=IcLmTzIc0wLAOAt4XuOU1TCv4WANwJkVyarMFLrWzJMAn0PiCrlpEGoeS9f7b2uR5kXFYi7GIK3d0BkuZxsZ9WuGvFzn22jULGmclFez92Ib/CrwWVA9aseU/fO3hDYU/AyhAwF2WJiRsyJRspDk98YQ4mjjo1oI2/f2V7X7zDM=
+	t=1758473586; cv=none; b=XAZU1Awuw2QlBZ1yraD8ia/nkvwG3JvbP/clf+shr0Asg+Cce0BFPAkkgJ4ZTThNW9xDW2A8ty6u8r6OZefWGENrVF+4tdlRC3Ryz46Oz031DRgqtHmv7zIOmsJDCSmE9X+3JDcUvbpX/dVL28kkYA1Rf6LH8lFZ5xpzRU4JXho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758472389; c=relaxed/simple;
-	bh=5Cg2M5mdBA51WLv72+0nMAPShXd7ntb3KGFkfyKWP7w=;
+	s=arc-20240116; t=1758473586; c=relaxed/simple;
+	bh=pOC1FJ1dZ8Ed5BFxEGVeWgL22mKSWnuTkoOTFE8Asdk=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ViwXAseZHnTuBR6H5jiTl18QyMTvmNqafD0bbL2/UcVVXyEfLUDEm2CPe4tsZMv6t49NCdcL53u2pSRyylssyOW/NNs4IQPI0bOj4CAjcTVqntn6QRtulEttCjuxP/ZmKQCjzswhvy5MZnk27g47tKeoYKawquth4/XB/g0fvEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0qPF/YA; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=YIfdl4KIXQAJcRuCztlSULDhHBw2XPWW3pHyfpIcscNip09DjUSpkT7JonxoTfvMTOUQ2tVTE7DDwSqbpOEaQI48qe5I6rL00AlKdRGtB9DHtSwvrprPURDR2WB3+3o5AcAXhwzVvvYCJjoIjPbnCUtaP3Svh7VoEhQh5tFrd0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnvdXyr2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0qPF/YA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17712C4CEE7;
-	Sun, 21 Sep 2025 16:33:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnvdXyr2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF85C4CEE7;
+	Sun, 21 Sep 2025 16:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758472389;
-	bh=5Cg2M5mdBA51WLv72+0nMAPShXd7ntb3KGFkfyKWP7w=;
+	s=k20201202; t=1758473585;
+	bh=pOC1FJ1dZ8Ed5BFxEGVeWgL22mKSWnuTkoOTFE8Asdk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=q0qPF/YA7f02hqqMlRsC4NpyGBZzmjmEmqfaHItxf4QLx09JqCYD+7TKx6jcgislr
-	 raDDQZhdtYgHEuADuCpqPPryWiIvZ3Sad++9rp+vh4sVarfAHVKkpC+9Keb+C4OSxn
-	 xfJhnAyBEezvkXjc4+xvPbNKK5cnoOL45sob+91JWJf8m8moLlxvuzlEm3hmT1urxE
-	 QwcTqyYj4SKww53v2oclEq7HA6bpk+Lde1PMW5Y51NoZjG4jXHZR41jZEcKPWKpQ/J
-	 ucOBJVC0tQUHs+PTWTiUx+fXWXYYA9BmPhy/AO+AbVYZF8fpzfkM7W9Ue8wPRoj/7w
-	 zDp8lm76RCTsA==
+	b=hnvdXyr27NfEjzQxiAYLEySASSRxwYe37YWbHTqXGkPN78k7AO8RST6bORNKi2nt/
+	 AIuCCOTCDXQx69JULbDh4v/wIRNFElzKjmxuPx2Qk92hx4wapgdKzzkGSfVHfiZTZ+
+	 8CRFb+Ojo4mSorbJmEjof4hBptpZ0rH70t7pIlmFWNi08cpmZqpl1l0+mJ/M4tITUO
+	 QM5XKF10LHf9BrWaW50hM+A4FMWJLWCF23pgBkMaRs1rCr2HNj384F4nb8AyAWCwY+
+	 Dyr2Bvgek+nVmxOdyXo3DDH/sf1+jRIXaAZQc9lYjuMPd1ZSowMB7dnjvtFNXPKvPR
+	 04giQeGuNtR7g==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,26 +34,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250825150932.3695931-1-wenst@chromium.org>
-References: <20250825150932.3695931-1-wenst@chromium.org>
-Subject: Re: [PATCH v2] clk: mediatek: clk-mux: Do not pass flags to clk_mux_determine_rate_flags()
+In-Reply-To: <20250915151947.277983-2-laura.nao@collabora.com>
+References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-2-laura.nao@collabora.com>
+Subject: Re: [PATCH v6 01/27] clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable control
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Date: Sun, 21 Sep 2025 09:33:07 -0700
-Message-ID: <175847238786.4354.6043816943509142899@lazor>
+Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F . R . A . Prado <nfraprado@collabora.com>
+To: Laura Nao <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
+Date: Sun, 21 Sep 2025 09:53:04 -0700
+Message-ID: <175847358414.4354.6792968051513586535@lazor>
 User-Agent: alot/0.11
 
-Quoting Chen-Yu Tsai (2025-08-25 08:09:31)
-> The `flags` in |struct mtk_mux| are core clk flags, not mux clk flags.
-> Passing one to the other is wrong.
+Quoting Laura Nao (2025-09-15 08:19:21)
+> On MT8196, there are set/clr registers to control a shared PLL enable
+> register. These are intended to prevent different masters from
+> manipulating the PLLs independently. Add the corresponding en_set_reg
+> and en_clr_reg fields to the mtk_pll_data structure.
 >=20
-> Since there aren't any actual users adding CLK_MUX_* flags, just drop it
-> for now.
->=20
-> Fixes: b05ea3314390 ("clk: mediatek: clk-mux: Add .determine_rate() callb=
-ack")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 > ---
 
 Applied to clk-next
