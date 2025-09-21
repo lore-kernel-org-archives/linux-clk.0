@@ -1,77 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65152F37
-	for <linux-clk@vger.kernel.org>; Sun, 21 Sep 2025 22:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C8329A1;
+	Sun, 21 Sep 2025 23:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758493791; cv=none; b=JWx0VEnz0ObHg9pI32h/odDu1rnRfYFmEXBhdKTvs3bUIQkflscaaPXJGvJJcnZQZRGVZbdsjRGrAeF8gHzi13UGpbtt67QRcIN82u7mWiLpZUjSTDvn6KwWW+8KpPauayZyywOp8lpTzog4YrI69dbf0bNmpEXynMYNf9Qj5jA=
+	t=1758498956; cv=none; b=Hqid5EOWrIp2SGRdY594YOyA31jKrGp2Vpl6Dn0oBseVFtfcd+j7AGYMB3QkkkjCzHg++0JeWaUOEzTupkTWEF7tdEz9awLEywWNTXTTKk7Wgbeh2e+sdCAFfeMizdmJpUJWVNbO7uICPsnHaJqETnv7iOAOt4ZGRu3s78UeLDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758493791; c=relaxed/simple;
-	bh=t3M/HHaQ1LdJyfOFRrtusW7jDfV1vsfN6PQ9v2tBdIQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=VRXcUI0NSp7IpoOSRoa2HBZgKUY9YdrAbjY+AuZ/PCq2bLHkkgtG5sNIPwyg1H7ogF1fJjPxkKoYzlLJ7+enXSbFAYpjtPRJqj96RCp4vki23yapD1YINp3Sm9pywWPdSgVikM1BIL4XE6hSd1bSrFneE3JgZTcF2PQzKBGUuzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/HiWiQg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758498956; c=relaxed/simple;
+	bh=G5zDmYfHlGUKAXlip7xI/PIKkRJuPWRKz/ZJBtpZ3GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mh/E4y5NTlhUjPcWnKnMucgsho3gVJpfbMp6U6FBbtQ+Kt5VBaoknN0jmwdV2u89kSWYNsI79VhyeVhbbOfSdCdgoHcAVsob7teItRbMB4m8vLRqpJj8jmO7UBp/VVE+L9v0qTkbe+oOoXbnNN/wqoPb+/OFlpba4f4awUzQQXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=dUv2jddi; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/HiWiQg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D43C4CEE7;
-	Sun, 21 Sep 2025 22:29:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758493791;
-	bh=t3M/HHaQ1LdJyfOFRrtusW7jDfV1vsfN6PQ9v2tBdIQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=S/HiWiQgimVDNPWriwiE+Zajl8ymdN7j0xlpWfoFbGJhRnNGCFtCPSeBRuwxEfx4z
-	 Tx8PL3HBxzuSYwYSZ6E3B83LGdthHWG2XY+UxbDuzp7dVpU0InQb4qz3R9v8qrsk7j
-	 wlJRqNZu3I2vHbtPqjq/3JpkPlImj1kd21e+436+IUSSq1Q2smiesVsEO8VmB1gjuL
-	 VUGHqXwQX2oJZPIHoOiX5nIQxQ8BW4l7kDznDzn49vCGlO0z1Lp1R4d0reFUnAArN3
-	 b6rkKvIcvwgBpZ74ERimnEPdV1USlHKy+rkZuj7nWLgrwewln2drMMoh16uLjlQhbf
-	 3xL1u+VcO3BXw==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="dUv2jddi"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 017C625770;
+	Mon, 22 Sep 2025 01:55:45 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id PseRyeRPgRIP; Mon, 22 Sep 2025 01:55:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1758498945; bh=G5zDmYfHlGUKAXlip7xI/PIKkRJuPWRKz/ZJBtpZ3GU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dUv2jddiWZTUN8kyIaW++P6X4MuyrQGyTjCC2Btb8KZAUCbxfnZfiLKzD28I8RPg0
+	 ftP7uBkBg1pP0bz2tNe/wMMjRyPURfoRz04Eh7AXeEP6Q/DVPVlKa7w4TXz7jgXnTG
+	 w63KOdI5Py7di1axh3wUtHDFJis8u7XBwBmoNyadYVogJtvyvj2sgO8p8XgXIw2yIo
+	 1dRayEZ4t8oPJPEwRnOYSwpLGh4w8vAcYDpKFC0pwHmoKFjsYr+nkY4Y8hYgMRLnuk
+	 rwOdSPbw525Cupa/ezj2yrZPfliBd6sjEilzj2FAlM56SNXTo5OqVw5n7N9Ys5blj0
+	 HXBMHp1wYRlJQ==
+Date: Sun, 21 Sep 2025 23:55:31 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Avoid DT fetch in possible_parent_show if clk_hw is
+ provided
+Message-ID: <aNCQc4_TuJ4CJg_n@pie>
+References: <20250705095816.29480-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1897877.QZUTf85G27@diego>
-References: <1897877.QZUTf85G27@diego>
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.18 #1
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Sun, 21 Sep 2025 15:29:49 -0700
-Message-ID: <175849378973.4354.1911356302020699433@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250705095816.29480-2-ziyao@disroot.org>
 
-Quoting Heiko Stuebner (2025-09-21 13:59:39)
-> Hi Mike, Stephen,
->=20
-> please find below a pull-request with Rockchip clock change for 6.18
-> Just a single newly exported clock for an older SoC.
->=20
->=20
-> Please pull.
->=20
-> Thanks
-> Heiko
->=20
->=20
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
->=20
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v6.18-rockchip-clk1
->=20
-> for you to fetch changes up to 77111b2c22ef5b368da5c833175b6f7806b39ccb:
->=20
->   clk: rockchip: rk3368: use clock ids for SCLK_MIPIDSI_24M (2025-09-03 1=
-4:17:54 +0200)
->=20
-> ----------------------------------------------------------------
+On Sat, Jul 05, 2025 at 09:58:17AM +0000, Yao Zi wrote:
+> When showing a parent for which clk_core_get_parent_by_index fails, we
+> may try using the parent's global name or the local name. If this fails
+> either, the parent clock's clock-output-names is fetched through
+> DT-index.
+> 
+> struct clk_hw pointer takes precedence with DT-index when registering
+> clocks, thus most drivers only zero the index member of struct
+> clk_parent_data when providing the parent through struct clk_hw pointer.
+> If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
+> will fail as well, in which case possible_parent_show will fetch the
+> parent's clock-output-names property, treat the unintended, zeroed index
+> as valid, and yield a misleading name if the clock controller does come
+> with a clocks property.
+> 
+> Let's add an extra check against the struct clk_hw pointer, and only
+> perform the DT-index-based fetch if it isn't provided.
+> 
+> Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks without parent string names")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> 
+> This was found when fixing the wrong parent description of
+> clk-th1520-ap.c[1]. Without the patch,
+> 
+> 	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+> 	osc_24m cpu-pll1
+> 
+> The first parent should be c910-i0, provided by an unresolvable struct
+> clk_hw pointer. osc_24m is the first (and only) parent specified in
+> devicetree for the clock controller. With the patch,
+> 
+> 	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+> 	(missing) cpu-pll1
+> 
+> [1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@disroot.org/
 
-Thanks. Pulled into clk-next
+Hi Stephen and Michael,
+
+Is this patch applicable for CCF? Thanks for your time and review.
+
+Best regards,
+Yao Zi
