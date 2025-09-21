@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970834BA2E;
-	Sun, 21 Sep 2025 19:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203F21A9FBA;
+	Sun, 21 Sep 2025 20:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758484698; cv=none; b=GVSpVT+dKfgBk+Yb8HXdzrlF00YXo0p4l+m98SFzrahTS78tP4NId7KLDtYxDyMeAGluEOZrZ3TlbLz+db9wLpxvydFiDW3tIdzBfVYlN6wkuIMfEE2C/F4j+2zUnQIZDokSMPYpVOV12384p6at00dOZf4BJV1uf1PbsNYg3xs=
+	t=1758484965; cv=none; b=nqBdvzrk90IkBpjik5KF4dYMzlKn+mmXRFIReyjiixGCNB6zTdgx1DU8rEi5g/0aDcBN1JaoBN4/+tqHVcGx5XnbqUzJ7FkMoKsy9g5Mfju9xb0U1wnx0fEXkrrfWObAdogNHwmoI47YGEugsDwG6UAVAIZsUhbu05ex1XMhRZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758484698; c=relaxed/simple;
-	bh=zltGFf/iswHLioFD+7yrHPrDgYZxBlcwDu6SYUJNQg4=;
+	s=arc-20240116; t=1758484965; c=relaxed/simple;
+	bh=9/23kr7l9Mie4jX+p6zICO/yiliJHrV8QtJrD2UJNCY=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=HK737z07tFbjsrI+DGWdVPpMPZflYEwxXdYF1KIKno6HzreUFsTA82egxh2qzVg1UTtJTC9LVM7HZVMwvzISWSnssE15dI0UJ+NYeWExAajTDANt0Fr6rPgp4hkbXX/cD/8vuQFFMaTwhLpvqKq9nN8PNdybO979CIv+WC1P88A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USeqBhhl; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=B39B9IbWDrpNbeNYxD1V+XnStAcfTMUlXJutgrKaFyXN6C2nHNgZ1KEyiKZSFHFvDAtS5saoTBzl9i4f7K2giVfaLHAD+0bdyo7QOdCBzUSu1c1C6TPXHiCD6bYYdGEQz5mSAc49aa3fpa3AcyfAqk9jz/kkR7TsyodSaNOU4IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egamWNpt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USeqBhhl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED896C4CEE7;
-	Sun, 21 Sep 2025 19:58:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egamWNpt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E98C4CEE7;
+	Sun, 21 Sep 2025 20:02:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758484698;
-	bh=zltGFf/iswHLioFD+7yrHPrDgYZxBlcwDu6SYUJNQg4=;
+	s=k20201202; t=1758484964;
+	bh=9/23kr7l9Mie4jX+p6zICO/yiliJHrV8QtJrD2UJNCY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=USeqBhhlqudd2ayH26X/wWpf9M65wlqMolkJtsZiT8n/tGFNAmdpDa9E5vfdHq8nq
-	 sWmham3lJfgTG5+vY5dchand2nK+CyAKd1YfvZbePRSANlbxK/Q8hdNR8OX42HaH+K
-	 eu1rwPZ6hu9JWvdiC4JH5ZXFVRiKAJO0sb7h4at02SHGjChF1VlWHrHF+7UlyHrTJu
-	 REifoKLTyt/Ap9IMk0Oo4lvv70PCMIlTTUdC7vE5oDbbADqsZ9NeFUeYsOU2GMcf+j
-	 bYlOGE0DrSB/g77uJ9k+q4RUqWqRsY/DCLTJ1UOVGhR4rmF+/GK02ebwNkH2O6oYDQ
-	 YIFFMuZuvyXmA==
+	b=egamWNptFAMJt01ufNWDz5LneHoAej88B8H2o0FBQkYMK+U/oa1StMAOJfqJ/yYwL
+	 YNsEghEGelGUeRuoLc9dE6MPE9cdHMDGczpaCBlqyvuWQtM1UdbM4b7Qer2bdW4Yqa
+	 FjrtUyKcGK6g/VUFkWQyWWXWykaKPe+aON3EDnETtJ3Mde0mvVqnYDXfw5uPo6whQf
+	 z76cUS0XYpAjKNuyA/DCw2akGecMZr4Hm4+KO0c9vwseiFh+a4SYStOV/k5hRTpW5D
+	 /QmouchIzu4u9s37XCHbXMAOAJeVFsLZdUzzHrOk0mTgbNlS+SwoigzucyOIELapVL
+	 GaLsHp2COXbQQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,26 +34,29 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250706201158.1371209-1-alok.a.tiwari@oracle.com>
-References: <20250706201158.1371209-1-alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH] clk: nxp: Fix pll0 rate check condition in LPC18xx CGU driver
+In-Reply-To: <20250830122752.57670-1-rongqianfeng@vivo.com>
+References: <20250830122752.57670-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH] clk: ep93xx: Use int type to store negative error codes
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: alok.a.tiwari@oracle.com, darren.kenny@oracle.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, linux-clk@vger.kernel.org, vz@mleia.com
-Date: Sun, 21 Sep 2025 12:58:16 -0700
-Message-ID: <175848469633.4354.18141546693422292683@lazor>
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Michael Turquette <mturquette@baylibre.com>, Qianfeng Rong <rongqianfeng@vivo.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 21 Sep 2025 13:02:42 -0700
+Message-ID: <175848496291.4354.10936954302224095614@lazor>
 User-Agent: alot/0.11
 
-Quoting Alok Tiwari (2025-07-06 13:11:55)
-> The conditional check for the PLL0 multiplier 'm' used a logical AND
-> instead of OR, making the range check ineffective. This patch replaces
-> && with || to correctly reject invalid values of 'm' that are either
-> less than or equal to 0 or greater than LPC18XX_PLL0_MSEL_MAX.
+Quoting Qianfeng Rong (2025-08-30 05:27:52)
+> Change the 'ret' variable in ep93xx_uart_clock_init() from unsigned int to
+> int, as it needs to store either negative error codes or zero.
 >=20
-> This ensures proper bounds checking during clk rate setting and rounding.
+> Storing the negative error codes in unsigned type, doesn't cause an issue
+> at runtime but can be confusing. Additionally, assigning negative error
+> codes to unsigned type may trigger a GCC warning when the -Wsign-conversi=
+on
+> flag is enabled.
 >=20
-> Fixes: b04e0b8fd544 ("clk: add lpc18xx cgu clk driver")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> No effect on runtime.
+>=20
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 > ---
 
 Applied to clk-next
