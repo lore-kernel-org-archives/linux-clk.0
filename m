@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0276469D;
-	Sun, 21 Sep 2025 20:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7979285C9C;
+	Sun, 21 Sep 2025 20:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758486657; cv=none; b=BJP5nZo/DuugCmPOMqmfgil2HhCFI1ae/s/H8qswILbglci2vRSDqslLBatHXF1UiNEiwhKyv8Z738dFSayJgjBrGSJ7pCNacznoZRCbnCxGemxMxt1f9oIpDYcb1vRv5anfciJ67Bf5uRZ1G4f2J1KvEXp2yIpgm/Ogz0DXdhw=
+	t=1758487039; cv=none; b=p5AAZN5+Y7Xibo5iI+8X2yyEn5l/ON0KY5fPoOOtCohEl54kg0fsqml+gt4xnparmnO25mYNTksLaPsP9vE6zvAiLeSijICTUOJOp9eeUcVEe43fZ1xC7WOaiTWa24JjfJV3PlEdQiwfgRWTY9ENLtl1HhBxqUJ3nzOqmyEUkcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758486657; c=relaxed/simple;
-	bh=tUS6aLo3JFjUSfeZ3yczY2XUmq5jWkWh48tqLXUN0Co=;
+	s=arc-20240116; t=1758487039; c=relaxed/simple;
+	bh=h0CCspWX7v+icobunOo57R3hj+9ITuMxqueMpV/4iUQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=s4M+eEPoASIaBJG+G39uAJOnyzYZTbV3edjFuQS1m2c21egdMpRYdDKhpMpg2g6Ep34Gfr9KkN7qkiE7x/oLXsogURlj+QEQqLzjpIaVudHkdibv9466STT5Exau8jHErbNI+mLkY3XB7nAr9YPds2ev3q6NvMKY+x/8w5ohTGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kszijCFj; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=DCKtgny3D8bNPLCVCnPmCuvEwy45bDga3zKQpy0w1Bru3WLUezUFqnyGTUn3Ah2EWXYIP5zHFWcz4rUbRuuqcT+4/EzMRzThHQu4lmRCfhf0rQhEzZpj0CVZ0Omx84cxSovVG4p4p4f6e0T9K1wIet912K94El0BRCuXwC/Mv68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWHIjc15; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kszijCFj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355EBC4CEE7;
-	Sun, 21 Sep 2025 20:30:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWHIjc15"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E3DC4CEE7;
+	Sun, 21 Sep 2025 20:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758486657;
-	bh=tUS6aLo3JFjUSfeZ3yczY2XUmq5jWkWh48tqLXUN0Co=;
+	s=k20201202; t=1758487038;
+	bh=h0CCspWX7v+icobunOo57R3hj+9ITuMxqueMpV/4iUQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kszijCFj2nT8L+yY1Al/CKfdBLdyDsARLfAhHi+A0xL+QYkknKDHpY0Dv2+Nhk6b9
-	 RDrPhZ1WE54ygk4tm8SPkJr0gno2Sg1JQOEf31P26ksowu+NCeZFfR71b3eepty2Ub
-	 2oihm3GQOeg0N4jkjyLiw7mFIbU1bCLAl/KPa9fI38KRZ68ySpFHEl4Kc5WJHm6A4k
-	 L11q4N3LB2XjZR4mGZfUDYC63bWPTw+44PDLyxhKYLggDsDwjrb4vJ6Wm619DRfHwa
-	 MVtlEBmdio5G2eSxYINAOSq7lJoG81GtmqTBLeJ3p8orB11uh34hCEL8+xGNmJ9vW5
-	 3rZDchW5YDGTg==
+	b=GWHIjc15bLcK1IEAAs678u/24MLpykiuY2V/iTmlkGbs3wEHR2tZitc6wEcMIkfLI
+	 51UsHvUvkJp2CPh0KlTXvSiHF/ZqNH2RX6oj2lYNdVvRkF3r2HmVC0aPfjWDimdXgJ
+	 +quJ1/onweU9oJOaZvHBKGzu+cf5RqwGaiIoY+i8eQ6LFg6brwVlYAiLIA9Si865D3
+	 PABsMpTvS8OipSHL4RSB8aXq6tG3Rk/YykDXpW1M3aScraCwhtUdUPHP9mRROtLNu4
+	 EmCtAi1xnwcbKH8TsGGdet253smkYN2VweDHaic18bI8ym0zkGYjYMVQjJNKOCo8aJ
+	 HfKQurTsLbmXg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,414 +34,236 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250917020539.3690324-4-ryan_chen@aspeedtech.com>
-References: <20250917020539.3690324-1-ryan_chen@aspeedtech.com> <20250917020539.3690324-4-ryan_chen@aspeedtech.com>
-Subject: Re: [PATCH v14 3/3] clk: aspeed: add AST2700 clock driver
+In-Reply-To: <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org> <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
+Subject: Re: [PATCH v4 4/5] clk: samsung: add Exynos ACPM clock driver
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Mo Elbadry <elbadrym@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>, devicetree@vger.kernel.org, dkodihalli@nvidia.com, leohu@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, ryan_chen <ryan_chen@aspeedtech.com>, spuranik@nvidia.com, wthai@nvidia.com
-Date: Sun, 21 Sep 2025 13:30:55 -0700
-Message-ID: <175848665572.4354.4488545150485789314@lazor>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will Deacon <will@kernel.org>
+Date: Sun, 21 Sep 2025 13:37:16 -0700
+Message-ID: <175848703636.4354.2936744718103927060@lazor>
 User-Agent: alot/0.11
 
-Quoting Ryan Chen (2025-09-16 19:05:39)
-> diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c
+Quoting Tudor Ambarus (2025-09-08 06:12:45)
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95=
+e029c52436e5c7f 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>           status of the certains clocks from SoC, but it could also be ti=
+ed to
+>           other devices as an input clock.
+> =20
+> +config EXYNOS_ACPM_CLK
+> +       tristate "Clock driver controlled via ACPM interface"
+> +       depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_=
+PROTOCOL)
+
+Why is COMPILE_TEST limited to !EXYNOS_ACPM_PROTOCOL?
+
+> +       help
+> +         This driver provides support for clocks that are controlled by
+> +         firmware that implements the ACPM interface.
+> +
+> +         This driver uses the ACPM interface to interact with the firmwa=
+re
+> +         providing all the clock controlls.
+> +
+>  config TESLA_FSD_COMMON_CLK
+>         bool "Tesla FSD clock controller support" if COMPILE_TEST
+>         depends on COMMON_CLK_SAMSUNG
+> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acp=
+m.c
 > new file mode 100644
-> index 000000000000..7766bc17876f
+> index 0000000000000000000000000000000000000000..8566495265ee3e06dbf370f9e=
+424d5540f5c7457
 > --- /dev/null
-> +++ b/drivers/clk/clk-ast2700.c
-> @@ -0,0 +1,1139 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/clk/samsung/clk-acpm.c
+> @@ -0,0 +1,184 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Copyright (c) 2024 ASPEED Technology Inc.
-> + * Author: Ryan Chen <ryan_chen@aspeedtech.com>
+> + * Samsung Exynos ACPM protocol based clock driver.
+> + *
+> + * Copyright 2025 Linaro Ltd.
 > + */
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitfield.h>
+> +
+> +#include <linux/array_size.h>
 > +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/of_platform.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 
 Is this include used?
 
 > +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/units.h>
-> +
-> +#include <dt-bindings/clock/aspeed,ast2700-scu.h>
-> +
-> +#define SCU_CLK_12MHZ  (12 * HZ_PER_MHZ)
-> +#define SCU_CLK_24MHZ  (24 * HZ_PER_MHZ)
-> +#define SCU_CLK_25MHZ  (25 * HZ_PER_MHZ)
-> +#define SCU_CLK_192MHZ (192 * HZ_PER_MHZ)
+> +#include <linux/types.h>
 
-Please inline these where they're used to make it more readable and
-shorter. We don't have to look at the definition of 192MHZ to know that
-it is 192 MHz
+Are you avoiding kernel.h? If so, please include container_of.h and
+device/devres.h to avoid implicit includes.
 
 > +
-> +static const struct clk_div_table ast2700_clk_uart_div_table[] =3D {
-> +       { 0x0, 1 },
-> +       { 0x1, 13 },
-> +       { 0 }
+> +struct acpm_clk {
+> +       u32 id;
+> +       struct clk_hw hw;
+> +       unsigned int mbox_chan_id;
+> +       const struct acpm_handle *handle;
 > +};
 > +
-> +static const struct clk_parent_data soc0_clkin[] =3D {
-> +       { .fw_name =3D "soc0-clkin", .name =3D "soc0-clkin" },
-
-This is wrong. Please use clk_hw pointers, or the .index member of
-'struct clk_parent_data' instead of having both the .fw_name and .name
-members set in the parent data. The .fw_name should match some string in
-the DT binding for this device. The .name shouldn't be used unless we're
-migrating existing code from string based parent descriptions to clk_hw
-or clk_parent_data structures.
-
-> +
-> +static const struct clk_parent_data uart13clk[] =3D {
-
-This isn't used.
-
-> +       { .fw_name =3D "uart13clk", .name =3D "uart13clk" },
+> +struct acpm_clk_variant {
+> +       const char *name;
 > +};
 > +
-> +static const struct clk_parent_data uart14clk[] =3D {
-
-This isn't used.
-
-> +       { .fw_name =3D "uart14clk", .name =3D "uart14clk" },
+> +struct acpm_clk_driver_data {
+> +       const struct acpm_clk_variant *clks;
+> +       unsigned int nr_clks;
+> +       unsigned int mbox_chan_id;
 > +};
 > +
-> +static const struct clk_parent_data soc1_i3c[] =3D {
-> +       { .fw_name =3D "soc1-i3c", .name =3D "soc1-i3c" },
+> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
+> +
+> +#define ACPM_CLK(cname)                                        \
+> +       {                                               \
+> +               .name           =3D cname,                \
+> +       }
+> +
+> +static const struct acpm_clk_variant gs101_acpm_clks[] =3D {
+> +       ACPM_CLK("mif"),
+> +       ACPM_CLK("int"),
+> +       ACPM_CLK("cpucl0"),
+> +       ACPM_CLK("cpucl1"),
+> +       ACPM_CLK("cpucl2"),
+> +       ACPM_CLK("g3d"),
+> +       ACPM_CLK("g3dl2"),
+> +       ACPM_CLK("tpu"),
+> +       ACPM_CLK("intcam"),
+> +       ACPM_CLK("tnr"),
+> +       ACPM_CLK("cam"),
+> +       ACPM_CLK("mfc"),
+> +       ACPM_CLK("disp"),
+> +       ACPM_CLK("b0"),
 > +};
 > +
+> +static const struct acpm_clk_driver_data acpm_clk_gs101 =3D {
+> +       .clks =3D gs101_acpm_clks,
+> +       .nr_clks =3D ARRAY_SIZE(gs101_acpm_clks),
+> +       .mbox_chan_id =3D 0,
+> +};
 > +
-> +static struct clk_hw *ast2700_clk_hw_register_hpll(void __iomem *reg,
-> +                                                  const char *name, cons=
-t char *parent_name,
-> +                                                  struct ast2700_clk_ctr=
-l *clk_ctrl)
+> +static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
+> +                                         unsigned long parent_rate)
 > +{
-> +       unsigned int mult, div;
-> +       u32 val;
+> +       struct acpm_clk *clk =3D to_acpm_clk(hw);
 > +
-> +       val =3D readl(clk_ctrl->base + SCU0_HWSTRAP1);
-> +       if ((readl(clk_ctrl->base) & REVISION_ID) && (val & BIT(3))) {
-
-This can be read once during probe and then passed as an argument?
-
-> +               switch ((val & GENMASK(4, 2)) >> 2) {
-> +               case 2:
-> +                       return devm_clk_hw_register_fixed_rate(clk_ctrl->=
-dev, name, NULL,
-> +                                                              0, 1800 * =
-HZ_PER_MHZ);
-> +               case 3:
-> +                       return devm_clk_hw_register_fixed_rate(clk_ctrl->=
-dev, name, NULL,
-> +                                                              0, 1700 * =
-HZ_PER_MHZ);
-> +               case 6:
-> +                       return devm_clk_hw_register_fixed_rate(clk_ctrl->=
-dev, name, NULL,
-> +                                                              0, 1200 * =
-HZ_PER_MHZ);
-> +               case 7:
-> +                       return devm_clk_hw_register_fixed_rate(clk_ctrl->=
-dev, name, NULL,
-> +                                                              0, 800 * H=
-Z_PER_MHZ);
-> +               default:
-> +                       return ERR_PTR(-EINVAL);
-> +               }
-> +       } else if ((val & GENMASK(3, 2)) !=3D 0) {
-> +               switch ((val & GENMASK(3, 2)) >> 2) {
-> +               case 1:
-> +                       return devm_clk_hw_register_fixed_rate(clk_ctrl->=
-dev, name, NULL,
-> +                                                              0, 1900 * =
-HZ_PER_MHZ);
-> +               case 2:
-[...]
-> +static int ast2700_clk_enable(struct clk_hw *hw)
+> +       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
+> +                                       clk->mbox_chan_id, clk->id, 0);
+> +}
+> +
+> +static int acpm_clk_determine_rate(struct clk_hw *hw,
+> +                                  struct clk_rate_request *req)
 > +{
-> +       struct clk_gate *gate =3D to_clk_gate(hw);
-> +       u32 clk =3D BIT(gate->bit_idx);
-> +
-> +       if (readl(gate->reg) & clk)
-> +               writel(clk, gate->reg + 0x04);
-> +
+> +       /*
+> +        * We can't figure out what rate it will be, so just return the
+> +        * rate back to the caller. acpm_clk_recalc_rate() will be called
+> +        * after the rate is set and we'll know what rate the clock is
+> +        * running at then.
+> +        */
 > +       return 0;
 > +}
 > +
-> +static void ast2700_clk_disable(struct clk_hw *hw)
+> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                            unsigned long parent_rate)
 > +{
-> +       struct clk_gate *gate =3D to_clk_gate(hw);
-> +       u32 clk =3D BIT(gate->bit_idx);
+> +       struct acpm_clk *clk =3D to_acpm_clk(hw);
 > +
-> +       /* Clock is set to enable, so use write to set register */
-> +       writel(clk, gate->reg);
+> +       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
+> +                                       clk->mbox_chan_id, clk->id, rate);
 > +}
 > +
-> +static const struct clk_ops ast2700_clk_gate_ops =3D {
-> +       .enable =3D ast2700_clk_enable,
-> +       .disable =3D ast2700_clk_disable,
-> +       .is_enabled =3D ast2700_clk_is_enabled,
+> +static const struct clk_ops acpm_clk_ops =3D {
+> +       .recalc_rate =3D acpm_clk_recalc_rate,
+> +       .determine_rate =3D acpm_clk_determine_rate,
+> +       .set_rate =3D acpm_clk_set_rate,
 > +};
 > +
-> +static struct clk_hw *ast2700_clk_hw_register_gate(struct device *dev, c=
-onst char *name,
-> +                                                  const struct clk_paren=
-t_data *parent,
-> +                                                  void __iomem *reg, u8 =
-clock_idx,
-> +                                                  unsigned long clk_gate=
-_flags, spinlock_t *lock)
+> +static int acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
+
+Maybe acpm_clk_register() is a more appropriate name.
+
+> +                            const char *name)
 > +{
-> +       struct clk_gate *gate;
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init;
-> +       int ret =3D -EINVAL;
-> +
-> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
-> +       if (!gate)
-> +               return ERR_PTR(-ENOMEM);
+> +       struct clk_init_data init =3D {};
 > +
 > +       init.name =3D name;
-> +       init.ops =3D &ast2700_clk_gate_ops;
-> +       init.flags =3D clk_gate_flags;
-> +       init.parent_names =3D parent ? &parent->name : NULL;
-
-Don't use string names to describe parent child relationships.
-
-> +       init.num_parents =3D parent ? 1 : 0;
+> +       init.ops =3D &acpm_clk_ops;
+> +       aclk->hw.init =3D &init;
 > +
-> +       gate->reg =3D reg;
-> +       gate->bit_idx =3D clock_idx;
-> +       gate->flags =3D 0;
-> +       gate->lock =3D lock;
-> +       gate->hw.init =3D &init;
-> +
-> +       hw =3D &gate->hw;
-> +       ret =3D clk_hw_register(dev, hw);
-> +       if (ret) {
-> +               kfree(gate);
-> +               hw =3D ERR_PTR(ret);
-> +       }
-> +
-> +       return hw;
+> +       return devm_clk_hw_register(dev, &aclk->hw);
 > +}
 > +
-> +static void ast2700_soc1_configure_i3c_clk(struct ast2700_clk_ctrl *clk_=
-ctrl)
+> +static int acpm_clk_probe(struct platform_device *pdev)
 > +{
-> +       if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID) {
-> +               u32 val;
-> +
-> +               /* I3C 250MHz =3D HPLL/4 */
-> +               val =3D readl(clk_ctrl->base + SCU1_CLK_SEL2) & ~SCU1_CLK=
-_I3C_DIV_MASK;
-> +               val |=3D FIELD_PREP(SCU1_CLK_I3C_DIV_MASK, SCU1_CLK_I3C_D=
-IV(4));
-> +               writel(val, clk_ctrl->base + SCU1_CLK_SEL2);
-> +       }
-> +}
-> +
-> +static int ast2700_soc_clk_probe(struct platform_device *pdev)
-> +{
-> +       const struct ast2700_clk_data *clk_data;
-> +       struct clk_hw_onecell_data *clk_hw_data;
-> +       struct ast2700_clk_ctrl *clk_ctrl;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct auxiliary_device *adev;
-> +       void __iomem *clk_base;
+> +       const struct acpm_handle *acpm_handle;
+> +       struct clk_hw_onecell_data *clk_data;
 > +       struct clk_hw **hws;
-> +       char *reset_name;
-> +       int ret;
-> +       int i;
+> +       struct device *dev =3D &pdev->dev;
+> +       struct acpm_clk *aclks;
+> +       unsigned int mbox_chan_id;
+> +       int i, err, count;
 > +
-> +       clk_ctrl =3D devm_kzalloc(dev, sizeof(*clk_ctrl), GFP_KERNEL);
-> +       if (!clk_ctrl)
-> +               return -ENOMEM;
-> +       clk_ctrl->dev =3D dev;
-> +       dev_set_drvdata(&pdev->dev, clk_ctrl);
+> +       acpm_handle =3D devm_acpm_get_by_node(dev, dev->parent->of_node);
+> +       if (IS_ERR(acpm_handle))
+> +               return dev_err_probe(dev, PTR_ERR(acpm_handle),
+> +                                    "Failed to get acpm handle.\n");
+
+Remove the period please. Most error messages don't have proper
+punctuation.
+
 > +
-> +       spin_lock_init(&clk_ctrl->lock);
+> +       count =3D acpm_clk_gs101.nr_clks;
+> +       mbox_chan_id =3D acpm_clk_gs101.mbox_chan_id;
 > +
-> +       clk_base =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(clk_base))
-> +               return PTR_ERR(clk_base);
-> +
-> +       clk_ctrl->base =3D clk_base;
-> +
-> +       clk_data =3D device_get_match_data(dev);
+> +       clk_data =3D devm_kzalloc(dev, struct_size(clk_data, hws, count),
+> +                               GFP_KERNEL);
 > +       if (!clk_data)
-> +               return -ENODEV;
-> +
-> +       clk_ctrl->clk_data =3D clk_data;
-> +       reset_name =3D devm_kasprintf(dev, GFP_KERNEL, "reset%d", clk_dat=
-a->scu);
-> +
-> +       clk_hw_data =3D devm_kzalloc(dev, struct_size(clk_hw_data, hws, c=
-lk_data->nr_clks),
-> +                                  GFP_KERNEL);
-> +       if (!clk_hw_data)
 > +               return -ENOMEM;
 > +
-> +       clk_hw_data->num =3D clk_data->nr_clks;
-> +       hws =3D clk_hw_data->hws;
+> +       clk_data->num =3D count;
+> +       hws =3D clk_data->hws;
 > +
-> +       if (clk_data->scu)
-> +               ast2700_soc1_configure_i3c_clk(clk_ctrl);
+> +       aclks =3D devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
+> +       if (!aclks)
+> +               return -ENOMEM;
 > +
-> +       for (i =3D 0; i < clk_data->nr_clks; i++) {
-> +               const struct ast2700_clk_info *clk =3D &clk_data->clk_inf=
-o[i];
-> +               void __iomem *reg;
+> +       for (i =3D 0; i < count; i++) {
+> +               struct acpm_clk *aclk =3D &aclks[i];
 > +
-> +               if (clk->type =3D=3D CLK_FIXED) {
-> +                       const struct ast2700_clk_fixed_rate_data *fixed_r=
-ate =3D &clk->data.rate;
+> +               /*
+> +                * The code assumes the clock IDs start from zero,
+> +                * are sequential and do not have gaps.
+> +                */
+> +               aclk->id =3D i;
+> +               aclk->handle =3D acpm_handle;
+> +               aclk->mbox_chan_id =3D mbox_chan_id;
 > +
-> +                       hws[i] =3D devm_clk_hw_register_fixed_rate(dev, c=
-lk->name, NULL, 0,
-> +                                                                fixed_ra=
-te->fixed_rate);
-> +               } else if (clk->type =3D=3D CLK_FIXED_FACTOR) {
-> +                       const struct ast2700_clk_fixed_factor_data *facto=
-r =3D &clk->data.factor;
+> +               hws[i] =3D &aclk->hw;
 > +
-> +                       hws[i] =3D devm_clk_hw_register_fixed_factor(dev,=
- clk->name,
-> +                                                                  factor=
-->parent->name,
-> +                                                                  0, fac=
-tor->mult, factor->div);
-> +               } else if (clk->type =3D=3D DCLK_FIXED) {
-> +                       const struct ast2700_clk_pll_data *pll =3D &clk->=
-data.pll;
-> +
-> +                       reg =3D clk_ctrl->base + pll->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_dclk(reg, clk-=
->name, clk_ctrl);
-> +               } else if (clk->type =3D=3D CLK_HPLL) {
-> +                       const struct ast2700_clk_pll_data *pll =3D &clk->=
-data.pll;
-> +
-> +                       reg =3D clk_ctrl->base + pll->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_hpll(reg, clk-=
->name,
-> +                                                             pll->parent=
-->name, clk_ctrl);
-> +               } else if (clk->type =3D=3D CLK_PLL) {
-> +                       const struct ast2700_clk_pll_data *pll =3D &clk->=
-data.pll;
-> +
-> +                       reg =3D clk_ctrl->base + pll->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_pll(i, reg, cl=
-k->name,
-> +                                                            pll->parent-=
->name, clk_ctrl);
-> +               } else if (clk->type =3D=3D CLK_UART_PLL) {
-> +                       const struct ast2700_clk_pll_data *pll =3D &clk->=
-data.pll;
-> +
-> +                       reg =3D clk_ctrl->base + pll->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_uartpll(reg, c=
-lk->name,
-> +                                                                pll->par=
-ent->name, clk_ctrl);
-> +               } else if (clk->type =3D=3D CLK_MUX) {
-> +                       const struct ast2700_clk_mux_data *mux =3D &clk->=
-data.mux;
-> +
-> +                       reg =3D clk_ctrl->base + mux->reg;
-> +                       hws[i] =3D devm_clk_hw_register_mux_parent_data_t=
-able(dev, clk->name,
-> +                                                                        =
-   mux->parents,
-> +                                                                        =
-   mux->num_parents, 0,
-> +                                                                        =
-   reg, mux->bit_shift,
-> +                                                                        =
-   mux->bit_width, 0,
-> +                                                                        =
-   NULL, &clk_ctrl->lock);
-> +               } else if (clk->type =3D=3D CLK_MISC) {
-> +                       const struct ast2700_clk_pll_data *misc =3D &clk-=
->data.pll;
-> +
-> +                       reg =3D clk_ctrl->base + misc->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_misc(i, reg, c=
-lk->name,
-> +                                                             misc->paren=
-t->name, clk_ctrl);
-> +               } else if (clk->type =3D=3D CLK_DIVIDER) {
-> +                       const struct ast2700_clk_div_data *div =3D &clk->=
-data.div;
-> +
-> +                       reg =3D clk_ctrl->base + div->reg;
-> +                       hws[i] =3D devm_clk_hw_register_divider_table(dev=
-, clk->name,
-> +                                                                   div->=
-parent->name, 0,
-> +                                                                   reg, =
-div->bit_shift,
-> +                                                                   div->=
-bit_width, 0,
-> +                                                                   div->=
-div_table,
-> +                                                                   &clk_=
-ctrl->lock);
-> +               } else if (clk->type =3D=3D CLK_GATE_ASPEED) {
-> +                       const struct ast2700_clk_gate_data *gate =3D &clk=
-->data.gate;
-> +
-> +                       reg =3D clk_ctrl->base + gate->reg;
-> +                       hws[i] =3D ast2700_clk_hw_register_gate(dev, clk-=
->name, gate->parent,
-> +                                                             reg, gate->=
-bit, gate->flags,
-> +                                                             &clk_ctrl->=
-lock);
-> +
-> +               } else {
-> +                       const struct ast2700_clk_gate_data *gate =3D &clk=
-->data.gate;
-> +
-> +                       reg =3D clk_ctrl->base + gate->reg;
-> +                       hws[i] =3D devm_clk_hw_register_gate_parent_data(=
-dev, clk->name, gate->parent,
-> +                                                                      0,=
- reg, clk->clk_idx, 0,
-> +                                                                      &c=
-lk_ctrl->lock);
-> +               }
-> +
-> +               if (IS_ERR(hws[i]))
-> +                       return PTR_ERR(hws[i]);
+> +               err =3D acpm_clk_ops_init(dev, aclk,
+> +                                       acpm_clk_gs101.clks[i].name);
+> +               if (err)
+> +                       return dev_err_probe(dev, err,
+> +                                            "Failed to register clock.\n=
+");
 > +       }
 > +
-> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, c=
-lk_hw_data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       adev =3D devm_auxiliary_device_create(dev, reset_name, (__force v=
-oid *)clk_base);
-> +       if (!adev)
-> +               return -ENODEV;
-> +
-> +       return 0;
+> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +                                          clk_data);
 > +}
 > +
-[...]
-> +static int __init clk_ast2700_init(void)
-> +{
-> +       return platform_driver_register(&ast2700_scu_driver);
-> +}
-> +arch_initcall(clk_ast2700_init);
+> +static const struct platform_device_id acpm_clk_id[] =3D {
+> +       { "gs101-acpm-clk" },
+> +       {},
 
-Just use module_platform_driver()?
+Please drop comma here so that nothing can come after.
