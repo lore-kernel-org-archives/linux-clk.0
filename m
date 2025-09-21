@@ -1,56 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D342144C7;
-	Sun, 21 Sep 2025 20:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E3135965;
+	Sun, 21 Sep 2025 20:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758485679; cv=none; b=O7l+euGaLTOBJlZNOxYs2c276ypdBZJhik+XlwbbMorxioP27z+1wP+EjA8pySs5Mil8z/OCrdg9EPXgUfTjtR6HmQXYCkx10blgznEIKbbsxhQ1qkv9tqDeFZT3SRVPsNlAyqHXkk7br9Atz5mfwKqiwl5Vs7WizZXhstvzP/U=
+	t=1758486099; cv=none; b=GKDXCaECrEMq3XlAhIO02x9rjhT0KA0zE8QjrHcF9taQ5fZBZo28yaE2wSRSESWPZPdyBfMxH8bB3bwSxR7sxF2G5rEEHAk2OKTMQzySXgY5Wg1naJ3BcREKD4mHR0miYrwj7rhSqhm55isdSlHe3+Xw78rqHChQBCRFVK13Udc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758485679; c=relaxed/simple;
-	bh=sxNUxatlX2j8pSiDe8L67uJzf4cC07GJgtefdwBeAOc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=p5RKVRUE8WreRVHBNpF3P5hfF/gq2y0nET2Vvfa02los8WqSlNuOLOk563mU+WhNT/R9SKvnbp73zQWnmjlSCOqejrFglLCrgR5itxrr6OT7JjwoDrLWERjBKhxe8Yw323kWHeEld/HE1YFUJmFAmx+GNnm1uCVXe40TMchMPsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+FCO1T8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758486099; c=relaxed/simple;
+	bh=bstEZ3MlozQwIr0qi9vp4rP/dEmgLKuVJDPIe2c54w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXdHInyQP97zwRKev452Eh8ieHqt6XQzK1Wb2Gq9MpU7ZC9L7bcJZ0QX03mdAlX4kAmfRFVYGZIo/wBkkhIp0OCBcjvSfWz5MMwTTCPwDIfP4yDPqaTJuyZVI9KBmBs7TZDZRGtTVpmUs87VaNiA7xp/DjO3Xm6GNmAd4KuyOSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fm+7yGVK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+FCO1T8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E845C4CEE7;
-	Sun, 21 Sep 2025 20:14:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fm+7yGVK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2ABDC4CEE7;
+	Sun, 21 Sep 2025 20:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758485678;
-	bh=sxNUxatlX2j8pSiDe8L67uJzf4cC07GJgtefdwBeAOc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=l+FCO1T8tvENOND7RAa71AtzmmxkWP0XSoMcte7v/zC16QH0QouPQbhef+DT+YfSa
-	 K25SW5z7RnbyTDpqldoshrGCtlTmD0w2nl5PsoheUsr40aPn0Qy5seXFb34w7FdsPJ
-	 Hvq0HbGQzLh8kY//BA/+P/Q75Qh3/utaO+HhgSnjhlqJsbPNLxhemWqdSK8mr7ENz0
-	 DD02q+ocPjpivFx1nI4PfFCmf6Q7nbRuKLa2rgk8AttUQCs0mooX0eQrNMmxzehQt/
-	 vihxFlBUWkMxzWtaea8Nca3O9vX/GXg+RpDQ8fB3+BasCLoYwQyohIO3QT1bxaiHuv
-	 mABM/E7M+CwLA==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1758486098;
+	bh=bstEZ3MlozQwIr0qi9vp4rP/dEmgLKuVJDPIe2c54w8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fm+7yGVKVTF+lnHcl8xWL7Mxp5PWJgukZe4RAMz5nMDHick/Vwp/j+4eduQXSaPBI
+	 5hw+6RvKFMyJGQTyP1MNeC4AMKdI+ynm2UhGToJn+3YJf8OTJLjlgmDm3tWS9RqlBK
+	 l6mv/CoXHrTePmcZ8xC8E+5Pf0QQftA7zPtOFS51QDC7h6KtC5Oi0f5J1fjQdg3kT0
+	 d8jlvGF4B5er8Rh+QAPgK3glnvMPHwKHOCcAHytbLuTzL9zav+2sfnoRgVmfzS2Yr8
+	 O3OXZek7SR5Gtc4QeLlq3qMsjGR+utv3/D14FPlNOIcWYLv+Zy53cvZnU/7YxeONDd
+	 oHb3Gnnl4gWJw==
+Date: Sun, 21 Sep 2025 22:21:35 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: nuno.sa@analog.com
+Cc: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, David Lechner <dlechner@baylibre.com>, 
+	Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, 
+	Xu Yilun <yilun.xu@linux.intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH RESEND v7 3/7] include: linux: move adi-axi-common.h out
+ of fpga
+Message-ID: <vxbmatzbecktgppfexpdam4plwvynu4mzimtqbrzikeaxwjdfs@pyk3j4mmgjls>
+References: <20250627-dev-axi-clkgen-limits-v7-0-e4f3b1f76189@analog.com>
+ <20250627-dev-axi-clkgen-limits-v7-3-e4f3b1f76189@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qyi5knjwltel7rd5"
+Content-Disposition: inline
+In-Reply-To: <20250627-dev-axi-clkgen-limits-v7-3-e4f3b1f76189@analog.com>
+
+
+--qyi5knjwltel7rd5
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250917020539.3690324-4-ryan_chen@aspeedtech.com>
-References: <20250917020539.3690324-1-ryan_chen@aspeedtech.com> <20250917020539.3690324-4-ryan_chen@aspeedtech.com>
-Subject: Re: [PATCH v14 3/3] clk: aspeed: add AST2700 clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Mo Elbadry <elbadrym@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Rom Lemarchand <romlem@google.com>, William Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>, devicetree@vger.kernel.org, dkodihalli@nvidia.com, leohu@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, ryan_chen <ryan_chen@aspeedtech.com>, spuranik@nvidia.com, wthai@nvidia.com
-Date: Sun, 21 Sep 2025 13:14:37 -0700
-Message-ID: <175848567705.4354.18321442549280624891@lazor>
-User-Agent: alot/0.11
+Subject: Re: [PATCH RESEND v7 3/7] include: linux: move adi-axi-common.h out
+ of fpga
+MIME-Version: 1.0
 
-Quoting Ryan Chen (2025-09-16 19:05:39)
-> Add AST2700 clock controller driver and also use axiliary
-> device framework register the reset controller driver.
-> Due to clock and reset using the same register region.
->=20
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> ---
+Hello,
 
-Applied to clk-next
+On Fri, Jun 27, 2025 at 03:59:12PM +0100, Nuno S=E1 via B4 Relay wrote:
+>  drivers/pwm/pwm-axi-pwmgen.c              | 2 +-
+
+Assuming this will go through some other tree than PWM:
+
+Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
+
+Best regards
+Uwe
+
+--qyi5knjwltel7rd5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjQXksACgkQj4D7WH0S
+/k5ueQgAgYcvo6IUp2+PMkmWCwM2DQDxPkieRxywvN1Ze7NM6pC3wo9sU19sxYTU
+UL8SLVlOE1CZQ5Z04cwp7upDXKH5sagjnZSH/w0eovHyEethV2lZUoyvQdaHudl/
++s18xlBrfiGjT1ZMvbpy8IIJUoTXI0Aznrs6M71a8nhFfFRxr6JtC/yOoohUp30L
+7m3YaJvBmCaGeCVfS3PLlPxEl9oTng9PYu0X3Bx83c6iIaB75u7XuFSAKucadlT2
+sY3mQ+WmgAWjMXkkY9mPgKgdjxJohDbxzz5JpB71VYppT6v8Usg7P9Dnh8TGt+bY
+KtbslkMXXVK70XJjmhSXnpeBn7gsTg==
+=YEhB
+-----END PGP SIGNATURE-----
+
+--qyi5knjwltel7rd5--
