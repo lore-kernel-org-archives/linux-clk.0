@@ -1,137 +1,99 @@
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6951991CA;
-	Mon, 22 Sep 2025 17:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23704289824;
+	Mon, 22 Sep 2025 18:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758563727; cv=none; b=GC0WpkP+O/oMt2h5I1FLCDFpaxutkp6NPs6RcQgx1c09VAEVcrpuhovWthD4xGC9JSfkJAZG14oND1PCB3fb57HX9VexaJctDjAcxHzvX9xs1nVn5l4EKLhp9yiWPf4HJAZom/OgSuMSB6Kp1qmLpD4dDTTiql5+1UId4C1udSE=
+	t=1758564246; cv=none; b=XGDR8iw5xKAPzUO46BFQd1MqvdI3WZycfrK1P7+ryFyqjUtO6vp5AYqnF/WZB3Lahsg19R1TI2t5MyGWS9mMfmdMTu5KHaD5XtpvCH3IeW1KVoMSeFnK9FQXFN4Z2KfbfkGAVC0C/+J54LAoPs7hPHICWf9inMagDHasLIjUQZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758563727; c=relaxed/simple;
-	bh=K5cl92pvkgD/y2fnBzaamznki/4BJREvN2kPtKGbm54=;
+	s=arc-20240116; t=1758564246; c=relaxed/simple;
+	bh=L9lfSFfAFkIwqNZiT8BuwyifCSThhLnjRTrvPs+IIdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TonPcRpCdUmaTbLy7E3xa3HiYyJ+5uYHjUoP7zCFaJZdwCLMQH+IuG4nZEPV8fdN47GEDOXDcrXMU6YDI4ZbFyTOa9bz5UUydVYprQPSV9c0Tf0zjPmkrV4p4ID7c7QAlHnOtfCsrRAUrsFhb77bosMWVdlX+A9RVk9BiOnoH0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=dEiyeVuT; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTEuA4F709qlNMJAdYAhd2B5tyCZ24M6JfkrjlBRw3M3EAiIrdPyQWbjlrRj1DkVondXffRRvSHJ2mRy4FXcV8I+x5AfZbchW84VX79IhlOMFbLaIIuXOrPMI5vyPNGDkK1dB5AJjs9Y+5skNgV7NMIu9nH2Pqw+Y1KENZrjRto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuO7sf29; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="dEiyeVuT"
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 3A41E1C008F; Mon, 22 Sep 2025 19:45:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1758563134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LoNSD1MjksE+Q5STpZ9iMFA6rZNp5scT6RfGqsxh58=;
-	b=dEiyeVuTfcFh0yqrUAInmXJZKRuF3SIxESWQ07Xil4xdIB7tWc75EPVDpyt7i6rcSY+lj1
-	l6Ke6nSPHI4lpnpqhaKN4dkgF4srfd4485SecXZMyl80G1WsF/zRPNqg/vXjsDQF/cE2ms
-	eszlkEZ5YvkuB/teWa0j2ISyQ5Jl+XU=
-Date: Mon, 22 Sep 2025 19:45:33 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuO7sf29"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C4EC4CEF0;
+	Mon, 22 Sep 2025 18:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758564246;
+	bh=L9lfSFfAFkIwqNZiT8BuwyifCSThhLnjRTrvPs+IIdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XuO7sf29Gl3ExIVcVZoCotjBNm3sk5GSvahi/cVy0jCmUwsRze6ueZWDob1ye9ecZ
+	 Z7y677vHWKpuPqKxHPdGwXBaUnxQtk7nfu+bDD2FMWkSCnDcKXFQTQ6RmMa1GpHtL7
+	 hCDqiwntDiMzz9O+fS0+0F03rrkVX1aVsXXM4zSg82k4YFHElOioIXXCAw004tNAj7
+	 rCMzM9rPjOIB/rOxuQTiY/IiqnngQk4/GqL+9pBiMnzdxqMvQDmabA55m92HTnOGFO
+	 RqBCizGK5IfTUIeDyIguy9vptrroQP7zKvtqUwIC0Mdp11YU+0AKY8f2aFdY/ktorj
+	 kGBrcyWquc0YQ==
+Date: Mon, 22 Sep 2025 13:04:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dang Huynh <dang.huynh@mainlining.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Adam Skladowski <a_skl39@protonmail.com>,
-	Sireesh Kodali <sireeshkodali@protonmail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	linux@mainlining.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
-Message-ID: <aNGLPdmOyh/pfroq@duo.ucw.cz>
-References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
- <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 02/10] dt-bindings: clock: Add RDA Micro RDA8810PL
+ clock/reset controller
+Message-ID: <20250922180404.GA542994-robh@kernel.org>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+ <20250919-rda8810pl-mmc-v1-2-d4f08a05ba4d@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8MXtIuaouyubyuXB"
-Content-Disposition: inline
-In-Reply-To: <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
-
-
---8MXtIuaouyubyuXB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250919-rda8810pl-mmc-v1-2-d4f08a05ba4d@mainlining.org>
 
-Hi!
-
-> +	led-controller@45 {
-> +		compatible =3D "awinic,aw2013";
-> +		reg =3D <0x45>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
+On Fri, Sep 19, 2025 at 01:48:42AM +0700, Dang Huynh wrote:
+> Add documentation describing the RDA8810PL Clock and Reset
+> controller.
+> 
+> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> ---
+>  .../bindings/clock/rda,8810pl-apsyscon.yaml        | 43 +++++++++++++
+>  include/dt-bindings/clock/rda,8810pl-apclk.h       | 70 ++++++++++++++++++++++
+>  2 files changed, 113 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d90dae8ebaa270aa822e4855d2a4a892168c5eea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rda,8810pl-apsyscon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +		vcc-supply =3D <&pm8937_l10>;
-> +		vio-supply =3D <&pm8937_l5>;
+> +title: RDA Micro RDA8810PL AP Clock Controller
 > +
-> +		led@0 {
-> +			reg =3D <0>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_RED>;
-> +		};
+> +maintainers:
+> +  - Dang Huynh <dang.huynh@mainlining.org>
 > +
-> +		led@1 {
-> +			reg =3D <1>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_GREEN>;
-> +		};
-> +
-> +		led@2 {
-> +			reg =3D <2>;
-> +			function =3D LED_FUNCTION_STATUS;
-> +			led-max-microamp =3D <5000>;
-> +			color =3D <LED_COLOR_ID_BLUE>;
-> +		};
-> +	};
-> +};
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: rda,8810pl-apsyscon
+> +      - const: syscon
 
-That's single, 3-color LED, right? Please see LED multicolor support.
+What makes this a syscon? (Answer in the commit msg). If your only use 
+is so the regmap is automagically created for you, don't. Create a 
+regmap yourself in your driver.
 
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
-
---8MXtIuaouyubyuXB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaNGLPQAKCRAw5/Bqldv6
-8irtAJwI2afEzeUg31W2fmTx+qETFXOowQCdFOieFEzz1la9CKecVgIxILFSLCI=
-=EBxA
------END PGP SIGNATURE-----
-
---8MXtIuaouyubyuXB--
+Rob
