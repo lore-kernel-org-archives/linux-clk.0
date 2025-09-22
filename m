@@ -1,96 +1,106 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800D61DD0C7
-	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 14:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8922D24BA;
+	Mon, 22 Sep 2025 14:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758551022; cv=none; b=gqTJnFlG6RujxQnO/Vb3Q+aDoGzVGLZTf5QZLD5Q2McS69W/xoajBh0v1+NWenoX2Z1ryuHu8zihhUMUHoVXQlhzH8wc/pFrodhu3qqVrUlnwhbJxyI3HrD+WHz9rDNpPkgGTswEDjQgJRSjCJyszM4KCSSZMGrUMuOe3+4W8QA=
+	t=1758552788; cv=none; b=q2K6PlRlN99jkQCR4XnKiEh+lu1bQOpy+F4nK+Dp7gu/CI1kGyFE9YNsGA7r5TdSG92TmPSnB1MnOeDHUk7EkCxdLagtFGttbkMAzI9a8WFMCirOpubtwUgTC8YgQEY2Q9A6e2V45wPzdY18yq56PhZQO8oEVLnhUfbbmeF0c5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758551022; c=relaxed/simple;
-	bh=YJhroftolpyyHXdNnrVgkuQJol/kFCNmyqTziB6Ormo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+HNVqbR6NEM3GQLrIka3G5+b1jXFSbz6LnqI/vS23fRbeOHczCqlLfXDLPxoDXtjxmufxPH+JFR7mDaHikLuWHDNq117o0DHz/C3Lifiyf/f6IZrW8uAkbcTrRQcQLifQoWoF2Es5F1VGMJj2vSaIL+7bS5HW3yi91Wa8n7i+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=I2G3SdfR; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1758552788; c=relaxed/simple;
+	bh=GMCPkEYEEsTJqfE/6r6Ghq6SNiQAO0BjDhL0faMM54Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JP+l9y1oQ6Hy+SkRZSVvF6GkIhchvN3tL42RgxiSrODWWqnUx4UycnL5L/mxDol3tYZduMMFhw6n95R3QmIk6ElmrAugGFxA2ti8qjUkGYROfT7CAQL5rLGhDmVuYna9jCW/r8F5+vYJgUebNkGOvJi9FnF6aFqpxPMslm4rRVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=USSraptt; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=oxMbV+e3; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="I2G3SdfR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=YJhr
-	oftolpyyHXdNnrVgkuQJol/kFCNmyqTziB6Ormo=; b=I2G3SdfRIBHHOYxI1+A0
-	LGrtADt4g3CoEQhGuNTKTVO21NxC3a/7gdhYWlG0LsoXBNk4pxS0VvsjOzSjiJiJ
-	eCmJrTCT9VP7j77H32vN7xKadn7qvntmoPv+fZUUTpqc2kYe5WGdVo5vJYBel0Bm
-	OocDDU+N3q1knmhQ8e7MS7+1AcWGFnIscaGDs5hJipF3UNTFQr2WZtSwJAnpqPGT
-	f0heakLKfU2fm00WLwlgiuaiaAMSUu+AIMVJCo5tyS0+Xxz/dPx7AazJOEbt0MML
-	2fKYlbMLEn7pLyGorTSnvUT+Lc+3z6dkiOWCBgyTpaZnFbe+w+r7k8NZjVkbMWbK
-	Pw==
-Received: (qmail 760478 invoked from network); 22 Sep 2025 16:23:38 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2025 16:23:38 +0200
-X-UD-Smtp-Session: l3s3148p1@xSi/kGQ/CKkgAwDPXwQHAL/S9V79e5yL
-Date: Mon, 22 Sep 2025 16:23:37 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut@mailbox.org>,
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-Message-ID: <aNFb6S1WApJl-k45@shikoro>
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
- <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
- <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org>
- <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
- <9dbc6022-eb97-49af-bda7-1a7a8069609a@mailbox.org>
- <CAMuHMdWuCyq+jXSasGdrMOSBP-XmDG-wHsBaXUMTGA3mtq_C5Q@mail.gmail.com>
- <aNFVv_n7y-ZmblX-@shikoro>
- <CAMuHMdV7QvQFs_wXYy5B8fyO_TT2-ksHtfRKQXrhe3ouQpJALg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="USSraptt";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="oxMbV+e3"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cVmLm2gGzz9sxm;
+	Mon, 22 Sep 2025 16:53:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758552784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ia3X6LOqGAChyLZnv60EY8Niqy3mRn+utTuNAth8QQo=;
+	b=USSraptt5e3eqBAphtPEd4M/7yEVRQtJaikPRDFvyR084GcW63O9xJzdM903Rm/oDcQT24
+	/KpJ/kuJw3weKyoiXPHqnwJLkhvIEdu16U/E3T1MaSgOZ2rFrAdZtIW1b7BPE4DiG4aKP3
+	lcMBqgPVbqkOUujlLhuwY5e8VMY3aPU7KMrVaddouA0bAeuSHhnYaCA4NHBqdgboubQ/Th
+	FGIKEKHfoFD+fAvAAAV/7av0dMz6ZkO5b9zKnwt54gL/37g1s56bZyghgqxv4FwcTkPyDP
+	655nt34aNkOzuTxxsXhNzLMVg9hduaif7SbZhOv0TiEk3tD70eQQNP4uofvh2w==
+Message-ID: <a7bc3998-72d8-4d13-b0c1-05c5c44795b4@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758552782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ia3X6LOqGAChyLZnv60EY8Niqy3mRn+utTuNAth8QQo=;
+	b=oxMbV+e3sDebK83lCT2bvdqP0N1KrLcaIq6WTcZJtiGTyHnuNQlTHXZKz4xGlMM7GbVRoV
+	NDwbqPzR4Yj3tMWyIbLBFnar8PohdAdpJV+AC9f0Dy0A9qEivgXirgQjXOXSkl+PwFxX+s
+	csZw91CSOrBsMjeeVB6bp4lrDL7S16vfVFRqq7u4u9xZtgSl0Gr6G8jUjM/9tgM0FbhIZG
+	LdTET0ZjwzI1D6swb5vP7V4ENKzGBnLoH0upy0MCzfPAOAxgYjQz+JUKywxsheVkpe0tlQ
+	AdwzZR0hpUm8sHtNpFqTQLTCdNPEPqf1yLEWorFiDP/tGlXnfwXnUP0/1Bb76Q==
+Date: Mon, 22 Sep 2025 16:53:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eAoN4ABADDPrhkGz"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV7QvQFs_wXYy5B8fyO_TT2-ksHtfRKQXrhe3ouQpJALg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add missing 1ms delay into reset
+ toggle callback
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+References: <20250918030552.331389-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdWgaU9MvR+Aa4VGHJz+U_ksyP2w6+TmuEYPrGFEOtNg5g@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdWgaU9MvR+Aa4VGHJz+U_ksyP2w6+TmuEYPrGFEOtNg5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 1mdhnc95ckfgh3har8i1mwtnt3m7if7d
+X-MBO-RS-ID: 0de83875d2785eba642
 
+On 9/22/25 1:37 PM, Geert Uytterhoeven wrote:
 
---eAoN4ABADDPrhkGz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello Geert,
 
+>> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+>> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+>> @@ -689,8 +689,15 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+>>          /* Reset module */
+>>          writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+>>
+>> -       /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+>> -       udelay(35);
+>> +       /*
+>> +        * On R-Car Gen4, delay after SRCR has been written is 1ms.
+>> +        * On older SoCs, delay after SRCR has been written is 35us
+>> +        * (one cycle of the RCLK clock @ cca. 32 kHz).
+> 
+> s/cca/ca/ (I can fix that myself).
 
-> Can you trigger an issue by removing the polling, and does Marek's
-> patch fix it?
+cca - circa , it seems all of c., ca., ca, cca are valid.
 
-IIRC not with I2C, but SHDI needs this as well and there it surely
-happened during development a few years ago. I need to work on SDHI soon
-anyhow, I will see if I can reproduce it.
-
-
---eAoN4ABADDPrhkGz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjRW+kACgkQFA3kzBSg
-KbZrKg//euqoUL2fhKnfmNEvryG9/r8fVj9/TiS0wP69RLDYKXGWprKukKA6slVD
-wPzmHQDqa84URy3nCoYCxiPwvMXae7ly/zvJ8XCfx77XEEmQXg24fg2IJtpClyIg
-szX45QxkPm6k8WvvGkc8mQC7pOM+KAA8z6RrcXtl/SQGfyBhkAvDNUe2SyBoNpDX
-z7Hes1wYdeTQeDQJJKZIUZhjQId2eQ8Zrr9Q+34JWLYsDSQcCIHlEHAUP2VJsoPW
-FpNXzWZxSFVUDnzVJQ55Q8/wmRcs/qp8vKBnVNEdamd/7fxDyksAfTSaHC/xzj0E
-c3D1INAFXYH896XwPzrRYQE7MuLel6dEP4w8huG/n1ja6wQPAFp5RcnclsF+mFze
-WOtco05/hbXZoz5BjFvOv2zpSi3YXZbrRAJ1+YNt5oxSiAB7afSI0431iN6komq7
-805gNfjvbfkEq0YSMDXiyyjq6+1gQPdZCthxxoRTy7OLtQx6KL52AbXxPDRkJN6r
-0B/Vu9vyXePphxw9Dq/aCfbl24MV/sNL9LFWNlZE+CGIX0pB9piZjF/zoyjBDyPO
-06BttsKdwl1F2NX/I06ZNCLHop9KCd7F6qRgjJeCN8WZIjr5tYqqxD3YUOLzh+2W
-hCtMRJliVJFjDTI7jB41auWvciL1PLJ4WBeQD1d4IlYfrWYXIPs=
-=CZXv
------END PGP SIGNATURE-----
-
---eAoN4ABADDPrhkGz--
+>> +        */
+>> +       if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
+>> +               usleep_range(1000, 2000);
+>> +       else
+>> +               usleep_range(35, 1000);
+>>
+>>          /* Release module from reset state */
+>>          writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+> 
+> LGTM, but wait for more feedback?
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you. I wait.
