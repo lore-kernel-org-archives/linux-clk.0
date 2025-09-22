@@ -1,196 +1,186 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2826E3115B5
-	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 16:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3D5215198;
+	Mon, 22 Sep 2025 16:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557896; cv=none; b=BDnx8HkAWMfoEbOZcwp/BOycyqTqGMomMAXPTXnmlwZSO7IwhJy4Im5Hx1qoSRheGJjTQX3DJhz9u9ghAaOR8w+/emX+I67tfEkV7PbdNXi/c/FimaQL/ErIgOTAdri5kdaSTEySera87YOs7ZgdpbCObyKMfrocKvu+3NOF2dg=
+	t=1758558098; cv=none; b=i87+o6yJcPWbKXL4ZR0rImbeQP07v33vEH0XhGrfpUxAbZkkFA564TpvNeUtVOjLL27uTE6jtnKKkA6Vb4DZgXYOiKqxPuxroI/FJWE1Igok6p0e3tkZhHn+VbZ+WFuI8tZ2v2p1cQlNGlLua/RmxtvyZUAaeze6FeObX/9Y1Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557896; c=relaxed/simple;
-	bh=YDDPtDS5PpaBUTtBuBODfZ787hS7fpBN2ZOWG34B3t4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSgpeYIGhzs6pMmCpkg6kQMNLf1b0V3lLtJo3V7X6UWZi7DBa4wLAuVOfwOmnQjYk8QmS6fiDJAQPMPNXZaA5Bu+1UG6/7v88jvPptXYKtizhxl0S+EpNdiMUzrtni857Q/aP3HXaBUkwlL4VY7X/Cp3q+s3jCaR3lbLF1dWB8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqfXrAFB; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758558098; c=relaxed/simple;
+	bh=tE2zAptSNq/J+Q+6Iqinursh6sIsMnJY11rAjVQrQzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3MPTNEFptf4SQUw0crPBPdRJwOttK9NNus1QDTdfpYmI6Ybdkqutus+xUIuNU0zDFpEP6EWt2dLVl0ekjXbfcySthxRY2AUvMLWaBRlQQmjmHnD+QOQ7jVsdaZTyEktpLCc54vsC7X/Zp1kIHVQT/BdHSvvOSUZ/Z1sfujll68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Fp3h06l5; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=K67lEHCi; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqfXrAFB"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ece1102998so2870307f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 09:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758557892; x=1759162692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YRWvsgj06ryKBVe+hXMBpBLtxOsCv8UUnSD06Qt2wRU=;
-        b=CqfXrAFB3hpXtjltSFqS7U6yh8OPdIcytYtO+2v4cHcW69eTMI5BnhQmrBf+1IIw4Q
-         IID1bSZoGHnL4v588s3YGOuAGbVzGOw0o7pgrPDi63hmSveYEkihfxdDTgW+n270NlN2
-         LJbMA/mKTtKOssOevs7q6B6tIhp0YnNjYLN24g9v+egwin1Y6IlnOAK6i9JZljyVAH1y
-         ZINb/LS8wei0A7ua7viogfFRLNy0Usco69ELWIbWmqaUPHRBhC6MuJ5KOLac/ZXhQFtE
-         Rv+QaGbBWhK2acjR+b8/5tX+EE8jWNP9Yfpl0N8oBfAx0Z0O7LtWmBvy/osCcJp/GW1Y
-         Ca+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758557892; x=1759162692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YRWvsgj06ryKBVe+hXMBpBLtxOsCv8UUnSD06Qt2wRU=;
-        b=ht77Qat0808acws5Uj+GTeakHrL3qz7CsCsnc96KBjxLbeEkXIzUl4w6FhHsgHocTZ
-         tm8Cd7znxhmsRJPiP4geo6+2B7HFsxYgrfrtU/tFA4heeltvVA5dYTLMTnQE2cbfTx1J
-         Syh05bGaDKjXoot13pFwXmveQFytDteXDJw9c3ObD8bHuwCgpHLf1TWfXN8fWTqYSr+Q
-         TJZp/0YqqM4q+wQ8SIqX1WTwzrqJmUZngA2yy131Y/4PFjaVyOLTuUCbYgEU1HOpU/bc
-         zYCt3JnUiIg3Ro3K0PjgXqBowLdxbrBFI4YeUEXdPYZ4hx+7dCgC1pw6fWkFYJJpNH8b
-         iG7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULkLHu00FSSx8XjIw6uferfLRSyt/yn0ca2CxjRKepOIhX3GcG7vQKy/Kh3w29tThvQ4p2K0Me9HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1to6NsmMDRW7xFFyMbPq//pfeoFc+pn0V+vFnObb4nyz3GmqR
-	58yOaXB3GkoEJDnC9oHH9RS2GI1ncv2Cn/CDOVrZ14cSl0xbJFbNkOh4KhcKGBnM6tiIOiRI3Zb
-	qB6nz5sSut2TrYTLVzGW0cfRBjvxH3HA=
-X-Gm-Gg: ASbGnctx0VafDWKWstbbRr5rePYiQYabru5GX+zFnmRGhPrrlledUwsmsaimU0HbEoT
-	3c9G4eEDXKH9w/y+FRzy4oHnSUcqfpS65UGhciFAKbs4octdOE5U6By/YS/2XQQYFtBGZbhaoN8
-	C3wknyx9+VG3WOCekMCGXMGX1IU6/MCvu6qIBNx69M/aLh1P5cyy53ntzwFS4X01n+WCTnBzVQj
-	LdJIRpw
-X-Google-Smtp-Source: AGHT+IF1OW4Uuo/M1UxtfnKg6qFJMuGj8u/gBh+HyDuVE8SlDhk6/kPaC4q40fTL9VF7L9Z5AE3joelyQN0VbpKBDt0=
-X-Received: by 2002:a05:6000:610:b0:3e7:471c:1de3 with SMTP id
- ffacd0b85a97d-3ee7db4c459mr10915387f8f.14.1758557892173; Mon, 22 Sep 2025
- 09:18:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Fp3h06l5";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="K67lEHCi"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cVpJt2HRqz9v9D;
+	Mon, 22 Sep 2025 18:21:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758558094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Wg8AF9dz48wLNsQi3U7S4Uq6PfCqKgRn4n2UpopgsW8=;
+	b=Fp3h06l5m7lTFRJp8JMHWBlBAy5wNH33oc7tftmXCc+9dbNa3Dp/rvMWoUabknNh62X0hy
+	2Jko0CIdd2OPCsFRuZJsy7gAxGnVnK4fUlgDXC+7kDvSMfdmVwZNfj85iQAzNxgEVnVLhN
+	gZB/hZFM7bTVd/iWTg+JZpFSwOmQKJJAlyc7pSK5ragIkNA31oCZLrEfum7FCL+TbX1//J
+	WM9wOnXO/6OLx0JS3JC2T95pJKEOmEAkTGIJWZY7OaUCU+q0kl9x5eh0n0+LcaKr2WZnCv
+	R8/5MgvNg/VMFrVnQVBXrio+aSpKkiQ/VVMAmXZBAmiBlImi/y+r3b8BLmmkJA==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758558092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Wg8AF9dz48wLNsQi3U7S4Uq6PfCqKgRn4n2UpopgsW8=;
+	b=K67lEHCinHPGd4ma6jjY++WBmQ8nbEV97S/csrT8IM/UvRWvQGaqPWRWE4r7kSEo3w2fh8
+	WQpHMMAl0Zvht01x++siGYNVxJeq5uKPEp73weaoMg/1grvfYngzryco9saoz1Gl+eCG9N
+	gRLny0CZTsMcfWmu+hItu9/uyFZvSRvlYanRYXjZN+aKcR8L92qsF1cNUNZqeZixVSfgLI
+	Ivtz9lSp+v586slMbK11m6xfePAs/AVXKK0z9qkxEgT57WAZUxb8WDTy0tl+J8IC6HOTaX
+	PiI2Cnu5hre1nYc2iz9QE1zT0/ltbh3K0XRHL6lZgkmc0XJVZUiDUJE+b7KitA==
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4] clk: renesas: cpg-mssr: Read back reset registers to assure values latched
+Date: Mon, 22 Sep 2025 18:20:38 +0200
+Message-ID: <20250922162113.113223-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-4-clamor95@gmail.com>
- <20250922160040.GA92842-robh@kernel.org>
-In-Reply-To: <20250922160040.GA92842-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 22 Sep 2025 19:18:00 +0300
-X-Gm-Features: AS18NWDpKyD99LSDk4cdtlBB0rRoc7O4fFn4mETqSbvXEWtojMeCyyIIccv8Y9w
-Message-ID: <CAPVz0n3cmFC1PdFnLJ0Vf60i3c6pDO9Lvi8dmAHzBgwgsrPXnA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory Controller
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: gk65d9biq6dji8d8n7ocptjtjgm14gxh
+X-MBO-RS-ID: eca6f977796ca2cd658
 
-=D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:00 Rob =
-Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
-> > Add Tegra114 support into existing Tegra124 MC schema with the most
-> > notable difference in the amount of EMEM timings.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-----
-> >  1 file changed, 74 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidi=
-a,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/n=
-vidia,tegra124-mc.yaml
-> > index 7b18b4d11e0a..9cc9360d3bd0 100644
-> > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
-124-mc.yaml
-> > @@ -19,7 +19,9 @@ description: |
-> >
-> >  properties:
-> >    compatible:
-> > -    const: nvidia,tegra124-mc
-> > +    enum:
-> > +      - nvidia,tegra114-mc
-> > +      - nvidia,tegra124-mc
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -64,29 +66,10 @@ patternProperties:
-> >
-> >            nvidia,emem-configuration:
-> >              $ref: /schemas/types.yaml#/definitions/uint32-array
-> > -            description: |
-> > +            description:
-> >                Values to be written to the EMEM register block. See sec=
-tion
-> > -              "15.6.1 MC Registers" in the TRM.
-> > -            items:
-> > -              - description: MC_EMEM_ARB_CFG
-> > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > -              - description: MC_EMEM_ARB_TIMING_RP
-> > -              - description: MC_EMEM_ARB_TIMING_RC
-> > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > -              - description: MC_EMEM_ARB_DA_TURNS
-> > -              - description: MC_EMEM_ARB_DA_COVERS
-> > -              - description: MC_EMEM_ARB_MISC0
-> > -              - description: MC_EMEM_ARB_MISC1
-> > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > +              "20.11.1 MC Registers" in the Tegea114 TRM or
-> > +              "15.6.1 MC Registers" in the Tegra124 TRM.
-> >
-> >          required:
-> >            - clock-frequency
-> > @@ -109,6 +92,74 @@ required:
-> >    - "#iommu-cells"
-> >    - "#interconnect-cells"
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra114-mc
-> > +    then:
-> > +      patternProperties:
-> > +        "^emc-timings-[0-9]+$":
-> > +          patternProperties:
-> > +            "^timing-[0-9]+$":
-> > +              properties:
-> > +                nvidia,emem-configuration:
-> > +                  items:
-> > +                    - description: MC_EMEM_ARB_CFG
-> > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > +                    - description: MC_EMEM_ARB_MISC0
-> > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
->
-> Like I said before, I don't think it is worth enumerating the list of
-> registers for every variant. If you want to define the length
-> (minItems/maxItems), then that is fine.
->
+On R-Car V4H, the PCIEC controller DBI read would generate an SError
+in case the controller reset is released by writing SRSTCLR register
+first, and immediately afterward reading some PCIEC controller DBI
+register. The issue triggers in rcar_gen4_pcie_additional_common_init()
+on dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW), which on V4H is the first
+read after reset_control_deassert(dw->core_rsts[DW_PCIE_PWR_RST].rstc).
 
-It worth because position of value matters when reading and list above
-provides a reference to the order in which register values should be
-grouped.
+The reset controller which contains the SRSTCLR register and the PCIEC
+controller which contains the DBI register share the same root access
+bus, but the bus then splits into separate segments before reaching
+each IP. Even if the SRSTCLR write access was posted on the bus before
+the DBI read access, it seems the DBI read access may reach the PCIEC
+controller before the SRSTCLR write completed, and trigger the SError.
 
-> Rob
+Mitigate the issue by adding a dummy SRSTCLR read, which assures the
+SRSTCLR write completes fully and is latched into the reset controller,
+before the PCIEC DBI read access can occur.
+
+Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Factor out the writel-then-readl code into cpg_mssr_writel_with_latch()
+    and clean the code up a bit
+V3: Add RB from Wolfram
+V4: - Rename cpg_mssr_writel_with_latch() to cpg_mssr_reset_operate()
+    - Drop priv varible from cpg_mssr_reset()
+    - Add TB from Geert
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 44 +++++++++++---------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index be9f59e6975d7..6a33e8a3d6ddf 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -676,53 +676,47 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 
+ #define rcdev_to_priv(x)	container_of(x, struct cpg_mssr_priv, rcdev)
+ 
+-static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+-			  unsigned long id)
++static int cpg_mssr_reset_operate(struct reset_controller_dev *rcdev,
++				  char *func, bool set, unsigned long id)
+ {
+ 	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+ 	unsigned int reg = id / 32;
+ 	unsigned int bit = id % 32;
++	const u16 reset_reg = set ? priv->reset_regs[reg] : priv->reset_clear_regs[reg];
+ 	u32 bitmask = BIT(bit);
+ 
+-	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
++	if (func)
++		dev_dbg(priv->dev, "%s %u%02u\n", func, reg, bit);
+ 
++	writel(bitmask, priv->pub.base0 + reset_reg);
++	readl(priv->pub.base0 + reset_reg);
++	barrier_data(priv->pub.base0 + reset_reg);
++
++	return 0;
++}
++
++static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
++			  unsigned long id)
++{
+ 	/* Reset module */
+-	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
++	cpg_mssr_reset_operate(rcdev, "reset", true, id);
+ 
+ 	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+ 	udelay(35);
+ 
+ 	/* Release module from reset state */
+-	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+-
+-	return 0;
++	return cpg_mssr_reset_operate(rcdev, NULL, false, id);
+ }
+ 
+ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ {
+-	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+-	unsigned int reg = id / 32;
+-	unsigned int bit = id % 32;
+-	u32 bitmask = BIT(bit);
+-
+-	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+-
+-	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+-	return 0;
++	return cpg_mssr_reset_operate(rcdev, "assert", true, id);
+ }
+ 
+ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
+ 			     unsigned long id)
+ {
+-	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+-	unsigned int reg = id / 32;
+-	unsigned int bit = id % 32;
+-	u32 bitmask = BIT(bit);
+-
+-	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+-
+-	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+-	return 0;
++	return cpg_mssr_reset_operate(rcdev, "deassert", false, id);
+ }
+ 
+ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+-- 
+2.51.0
+
