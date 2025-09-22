@@ -1,105 +1,156 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7D719E7E2
-	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 14:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9811C8626
+	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 14:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550154; cv=none; b=b+7eJjUVvzDdK2NHNR92NeKAnc3EjaSKDKFFkXLe1YIO8/8+PaHHV6bTnhLvV8BHnDRTuuC4I+G/woAP1Jwzg25JSavtndN5LAc10cnROXq4m2trEGbFv9hVMDukH4P/rLs7YW5C2vKWe4gC9kOrMXOFrQl9Ah367Vc3zzM1ubk=
+	t=1758550643; cv=none; b=q8mafIMgt/Gld8PX11mnuNXhZer9ttVXer2PGHn1j+9rCFpzt3Ciw4r9ivi7oge0oPMDHHzyLdUx8oO2/wbx97EvX5cjTairaKg31rst3h7pa6KVEJkN6/juQAPRX5g1HIjpP4jyjksugbr1LALXnr+SMDp/L2pCKZBqGY8gohs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758550154; c=relaxed/simple;
-	bh=c5oVqsPoTa3VSn3rF+3vlXIawS3iS9jeZUv5xAHbhIM=;
+	s=arc-20240116; t=1758550643; c=relaxed/simple;
+	bh=fWzzdjlL6Qeihn+o/itxjEqN74qvQQO38r2QqurBj94=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OZuCuK5t036PbowUysZuAYwYcSbyt3f5AGKNXZDvEEVIQJzYoL32hwUlif4dO600OFOsMDV9HIiiO87gCf5qR7N4+K4RZxPDetsvBAfDPGGXiNeDKzBce+euBhwqtsybHS2zyR70hA9EF/VtFvQawyhJ+Yf/uS+ebHYrGH4BFmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8e30a19da78so2617340241.2
-        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 07:09:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=QSiadhx5UzgW413bh99l61BnhtA1lgaiN/hdxMRiCsCA4lXJeY7j3LpW/Prwq44nFnyt0YVWdUkfu8oHQFqlQE6b4Qi2PBuZ5YQGgRqKfDeCwhL1IsIbZBwZxmm0oCcRgy6wcxYbWRIEnToPIyQXTGt8ChR+wUbt2OcQdWGudRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FJtRL/ii; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FJtRL/ii"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-367874aeeacso16306661fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 07:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758550638; x=1759155438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
+        b=FJtRL/iilefnLtGJ8RHt8JgsdkR9Bwv5jp5h9u6hOudyZ6LPBr9JRFkLYvaXS5n/Pj
+         3eN6Slc2BXlzCDaaPKfYUf5kPD8EA8rodgkufNy8SWMmZi14ttFzIAHz7CnvDpQbeG9P
+         CltohY2KfFtz68kLonVt6XNO6gjd8lrIw9B9vlGk4wwxZvnWInWWjtBaC40wPJK9CDOh
+         QnNLP1EwDbHlXAfEEI8M6895VghrF9762JOwmVEvQqjx+nH9TOnut8S28f/AwfvZjytS
+         2Wn1dHe5v0Lq10jRdpBiKL4t3iN1tecmmm8LUqjTucWDL/g9rbqyOm3rXyuCvHdO41fa
+         xh2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758550151; x=1759154951;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9myguoJ7hjvRqUVutV6ImQsg8/m76or1A6XOg+N5HvU=;
-        b=rHxM4uGfLn+HW7wkGrKp+wu6+5Cq5CRerAFmagkfl2eZD3RV/op9dXffCvpDXxNbQj
-         kxBGhalh3bcrRCC+f31aVbFnXtDzkl/2I21dYSC5MaidkvOKLgu/htsNANr0xTUDZ3dZ
-         hVqgfruU2hR8MjEfWsSdVT3OEMHcZGXzQHy2UipwuZq3ztsGxQi49BKnNF1moZlaI7y5
-         EwsiPBsee2JFxEVDAfOgRc4S7ElxRIOuKTkVgcrEq7AVarDd8gpduZ0OGQ2ylkbWYoSa
-         /as9/H8b9q0iJzeN8cwG6RnarOcZjmG6feZtERBvsCsG/shmN8s9YdUzSYFtvVZxAjjh
-         v9Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdF0wb5BAAlY7o5r26ED5dVmge56e1bHhvg3KnlWR96aGFbQtPm5nIJysn3f4rYySlClTcyLDunJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsZUI9yjitL3VdXRO1V9FGJlYEEigtIEX/KmyWQROwRuLZeaEp
-	qDTS7PO6CT2ifo/+q9FMvQhMQSIIUb3Ut24xI2qbQaLpggnUWdjqkSBz08qzVP8V
-X-Gm-Gg: ASbGnctOlQmYzQKJMgpsRKfOmQz91T2JrtS60LyjANlYtbl+k6Ro3q/eO02CyIziJ5s
-	BHtN2/JuI7tpG26SEvtrIUulKFJCvAfWrzl9rVXtP6sudHO5Y8LAeWLZfzMcX54IjOg0HdT2BUg
-	YqV84MJxIYfu7Smt54caozLNzXnEa64RL1cTywWsLN01IAlYy2h0U0ooSL9JtTiPABlvbEvcVl+
-	P+FNlZ4XVXO6f2TpxeeS6QcQ0n3o5NqwUau7sRbcgb4VJgtGdzA3e7Y7WywnyHOxkJNdvQlZeUR
-	EiMBXBu+lRijo6u+r5t48C1crGU9VDqg8rLoZ9QWulrIjmwaRtb4uPSDT8UXOFq6QKkEhNGDg4y
-	KZO2LEFpWt9uXDmP/Kx4+dQ1ZrAIiXNrl37ODwTK82SYwgPH4SggPEKfsrZwDMNBsFbkeybw=
-X-Google-Smtp-Source: AGHT+IGO6R+VUqDdnAdfYnUm30ulHkK+gbiDBmSTuTGeP4OYEXmO4vhNDq2R3HnDKX4kiQ2QD1LrkQ==
-X-Received: by 2002:a05:6122:1d12:b0:544:7d55:78d6 with SMTP id 71dfb90a1353d-54a8371787cmr4239500e0c.2.1758550150684;
-        Mon, 22 Sep 2025 07:09:10 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a729e9ac6sm2675556e0c.29.2025.09.22.07.09.10
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 07:09:10 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-58de3ab1831so1726052137.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 07:09:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2iUQ+ruvM4IiAPDKyfSGhz8kY6ZXkHxS97MsCVq26/exWtPYUPkyKE1xLoeR6h9RNvS6BkMc3vxM=@vger.kernel.org
-X-Received: by 2002:a05:6102:c0f:b0:57d:9305:63de with SMTP id
- ada2fe7eead31-588e0e89e45mr4003349137.10.1758550149618; Mon, 22 Sep 2025
- 07:09:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758550638; x=1759155438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D42mDx7XES4dJT5DCpqob2SIIqhWq10lpNC2IIru3f8=;
+        b=C3wmiDLd7LTzPCJdu5xdXrEMbCh9xN/WZKbpTZiSUJ95HnzD9OhTu/leaf6JEIq2dh
+         7YCj3+vDptAINwkujX9COGjpZVuzIH+IUnJGf3ds4N5VZUrxyQhXXzB1VSJVEU2ruYag
+         Fi2KIT069rRN2W+EFdH67wmotrWnEhbexDZDYhsO0KQPYkq22XcZJeZdS1wDtGRUjE/d
+         v84xbkDSq5p6W1MPeKqpY/F1mN00rBLDaqc+yMyyw8O53xbNaNE436Z13k2qV3t+dXdf
+         ASyoqP+hxQ97reaviIQ4yqFQHRD5aWPtNTUvUTo2mearZWs2mo15vSvxaptZIYnVq+H/
+         Clbg==
+X-Forwarded-Encrypted: i=1; AJvYcCURolH/ggn4knYdPDjJIDWniIig8XZ+3Ao0xAogvE37WL8Hifg2sEh/TSXTU5+VLBxOeKtc2CrHVeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy3RjVnpQvnv2kJ7dz0xTIJz74L5/f9S6+I0A50LmtWmO5y7pb
+	Uf36YgHgP0OcirLZeyC/1GWG+uea8X3PvsTCS7wtRffo61gFSujgwWLCONTJBWGGS8qw71mM54W
+	jA6clqm1dAtdcn+KA7wpEQ4RO4XkniulzSzvvxRtB1g==
+X-Gm-Gg: ASbGncsnExNH2uLx3V2znDMPH4JUst+Ilo55K+/kZA6gG/ULjVDudJqPLMvL+d9bBDc
+	kCUjWkUDDq4syzkB0zWzzJfFyxf5hofLkhOEGyCDwCayz6gCDV1+ZJBthftNHv/CZoTx15gJ1AX
+	kzVOwbuai6EmnFuCrj0jQduCNAJGRpHIKCY1UFD+2MAEuQ0S36xqMd1KmyKJkDrFCk260j353HZ
+	MoN9Ng/KnGoqgAz7ISHPVgDTn6NG/sfnuFgVg==
+X-Google-Smtp-Source: AGHT+IGS2AjVg06y9Gl4ZoVygRe0txj+WZLEO+s0iRtEWqABbE+tNtV+p0mvb++GTiupjPDEskTHy6Yf/wVmcolsOo4=
+X-Received: by 2002:a2e:be07:0:b0:36a:97e5:c4a5 with SMTP id
+ 38308e7fff4ca-36a97e5c8d3mr17177811fa.39.1758550638057; Mon, 22 Sep 2025
+ 07:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918030723.331634-1-marek.vasut+renesas@mailbox.org>
- <CA+V-a8sjPx8U+MB3v-SxErRPqbz4irAgZhCvd5CHY=6uO_VoyQ@mail.gmail.com>
- <353db156-e518-49c8-96ac-bd138ee64a01@mailbox.org> <CA+V-a8sLxBq8vSuq2HxcchpLqyQxqTRtkWjUKsRN9tBqGhU7mw@mail.gmail.com>
- <9dbc6022-eb97-49af-bda7-1a7a8069609a@mailbox.org> <CAMuHMdWuCyq+jXSasGdrMOSBP-XmDG-wHsBaXUMTGA3mtq_C5Q@mail.gmail.com>
- <aNFVv_n7y-ZmblX-@shikoro>
-In-Reply-To: <aNFVv_n7y-ZmblX-@shikoro>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Sep 2025 16:08:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV7QvQFs_wXYy5B8fyO_TT2-ksHtfRKQXrhe3ouQpJALg@mail.gmail.com>
-X-Gm-Features: AS18NWCrW3QxDjpWptl-dOn2GBYoJBw9An_ElV0y7JonoSEdT_C1EiUOZKFlSZM
-Message-ID: <CAMuHMdV7QvQFs_wXYy5B8fyO_TT2-ksHtfRKQXrhe3ouQpJALg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+In-Reply-To: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 22 Sep 2025 16:17:05 +0200
+X-Gm-Features: AS18NWBBtPPpfa65LcAbGVqvkVRIVUyroOGhaWLkgkmXpHaSdWCO_RUkKb2djeo
+Message-ID: <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
+To: dang.huynh@mainlining.org
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
-
-On Mon, 22 Sept 2025 at 15:57, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > So e.g. MSIOF has synchronized resets, while I2C has not, although
-> > both are connected to the peripheral AXI bus...
+On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Dang Huynh via B4 Relay
+<devnull+dang.huynh.mainlining.org@kernel.org> wrote:
 >
-> Is this why we need 'read_poll_timeout_atomic' in 'rcar_i2c_do_reset()'
-> then? I have never received a reason besides "HW engineers said so".
-> This is pre-Gen4, though.
+> This patch series aims to add SDMMC driver and various drivers required
+> for SDMMC controller to function.
+>
+> This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
+> after the GPIO driver probed or by reading the GPIO debugfs.
+>
+> This patch series is a split from [1] to ease the maintainers.
+>
 
-Perhaps... IIRC there never was any mention of "(a)synchronized resets"
-before.
+This is still targeting at least 4 subsystems and isn't making the
+merging any easier. Are there any build-time dependencies here? If
+not, then split it further into small chunks targeting individual
+subsystems and the relevant ARM SoC tree.
 
-Can you trigger an issue by removing the polling, and does Marek's
-patch fix it?
+Bartosz
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Tested on Orange Pi 2G-IOT using a Buildroot environment.
+>
+> [1]: https://lore.kernel.org/all/20250917-rda8810pl-drivers-v1-0-9ca9184c=
+a977@mainlining.org/
+>
+> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> ---
+> Dang Huynh (10):
+>       dt-bindings: gpio: rda: Make interrupts optional
+>       dt-bindings: clock: Add RDA Micro RDA8810PL clock/reset controller
+>       dt-bindings: dma: Add RDA IFC DMA
+>       dt-bindings: mmc: Add RDA SDMMC controller
+>       gpio: rda: Make IRQ optional
+>       gpio: rda: Make direction register unreadable
+>       clk: Add Clock and Reset Driver for RDA Micro RDA8810PL SoC
+>       dmaengine: Add RDA IFC driver
+>       mmc: host: Add RDA Micro SD/MMC driver
+>       ARM: dts: unisoc: rda8810pl: Add SDMMC controllers
+>
+>  .../bindings/clock/rda,8810pl-apsyscon.yaml        |  43 ++
+>  Documentation/devicetree/bindings/dma/rda,ifc.yaml |  45 ++
+>  .../devicetree/bindings/gpio/gpio-rda.yaml         |   3 -
+>  Documentation/devicetree/bindings/mmc/rda,mmc.yaml |  92 +++
+>  MAINTAINERS                                        |  18 +
+>  .../boot/dts/unisoc/rda8810pl-orangepi-2g-iot.dts  |  20 +
+>  .../arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts |  20 +
+>  arch/arm/boot/dts/unisoc/rda8810pl.dtsi            |  47 +-
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/rda/Kconfig                            |  14 +
+>  drivers/clk/rda/Makefile                           |   2 +
+>  drivers/clk/rda/clk-rda8810.c                      | 769 +++++++++++++++=
+++++
+>  drivers/dma/Kconfig                                |  10 +
+>  drivers/dma/Makefile                               |   1 +
+>  drivers/dma/rda-ifc.c                              | 450 +++++++++++
+>  drivers/gpio/gpio-rda.c                            |   4 +-
+>  drivers/mmc/host/Kconfig                           |  12 +
+>  drivers/mmc/host/Makefile                          |   1 +
+>  drivers/mmc/host/rda-mmc.c                         | 853 +++++++++++++++=
+++++++
+>  include/dt-bindings/clock/rda,8810pl-apclk.h       |  70 ++
+>  include/dt-bindings/dma/rda-ifc.h                  |  28 +
+>  22 files changed, 2495 insertions(+), 9 deletions(-)
+> ---
+> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> change-id: 20250918-rda8810pl-mmc-3f33b83c313d
+>
+> Best regards,
+> --
+> Dang Huynh <dang.huynh@mainlining.org>
+>
+>
