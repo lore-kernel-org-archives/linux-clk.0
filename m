@@ -1,50 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BB3215198;
-	Mon, 22 Sep 2025 16:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B6E48CFC;
+	Mon, 22 Sep 2025 16:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556939; cv=none; b=JjYvftIcjqpgQeoWXZxMl1F1AdOU+48UHZjEU3G2tIczT54KFTQmnGIj9pP9bNkoIqmxg/33pn4NK/he7pvADE8+1kc5IF6+O/RRU/KM451fmSjC2imWBupBhm1NlAZFCB7sX5458PC8KDbKv6zU2ZH3dwUWKP6VcR4HECvIM9s=
+	t=1758557165; cv=none; b=fy9b1HdN1ni4iGsvpM9h2Vkwwh+aTXiPccOshWY65HUbdu8VKmb61O8kGI/fQolszyb0mEVz9pUrXXPmfvhIJQ9Zo5URD1zvAeiwZGzdwxtsE3TaAV4CK8xbssbx7KDEM2v8XZbmz40+ZIgZZZc/LUGoRc8F/GojujN0mpb8R44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556939; c=relaxed/simple;
-	bh=2/LizJClL1wBMVE5bMlfqc3v7W3h2uppscfEVfjjaKw=;
+	s=arc-20240116; t=1758557165; c=relaxed/simple;
+	bh=xd23r+XPRKUhoqOC2QyRgh7gsLc1kz5qKFbjLd0vuXA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8I4uy0sHNBia3fiFZTIJyKWwHIZh5WMFoSvYQRFKr3W1+kuaGuDNt0IL7yyvoYGSHlXu412F4VHxmywIiEVkMO6GMl+arKgwRmaW+VgqLwBwFZXz1Uga6zGFa5szDfNIjSvNLsZXBYqLysCP1zR7KGaTYQPU8zf9r3jrQsOZbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLzft7lF; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaVNSHIGJ7kKCegZYT+N4oHZ+tL6/qKjF09+woVpFUH9i+V6kKgxUQMhMH64T88SsgRpyJcRd0yHlwNkhpEdKGwFfUXgR0M829yNJ8uvWHE9De16OP/5yURiFxcu52idnOEfsrnrtq1QkjBGamCCHUZEPGuwCCxpl/BI6EcPrcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Klnq5wyT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLzft7lF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B668FC4CEF0;
-	Mon, 22 Sep 2025 16:02:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Klnq5wyT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFB6C4CEF0;
+	Mon, 22 Sep 2025 16:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758556937;
-	bh=2/LizJClL1wBMVE5bMlfqc3v7W3h2uppscfEVfjjaKw=;
+	s=k20201202; t=1758557164;
+	bh=xd23r+XPRKUhoqOC2QyRgh7gsLc1kz5qKFbjLd0vuXA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bLzft7lF6rvhOI4icdGvNJkM9UQviI0U8bEF7gne7g+Bvp3NY6JOzPpfSVrFmKB/g
-	 aM7FWa1VE9oXcgJv2H1NrN5XhgfoyEEVGf0fiqK6szQf93VDiWO261HpnUjCquQ3oT
-	 SieqwDC7RuoMOWm0AjYdLujrUr9yqdymL4/pccPNctf0vo7kbEp4Mj3RPfd2P8ZcEt
-	 b9/3e3+TsWX9sv4lQFjLOlgYTkoMjeDW/KgAsQkt8Ix2DFCEbnUXLfpQhljn5KO2i0
-	 sccL/cofSQX4GfDfvz5eYWVuWgp8xHAQ36dkxtE6nUDgGXJyI8QIQRbRPSs0mnCwUW
-	 Bl1uSZjfoX/vA==
-Date: Mon, 22 Sep 2025 11:02:15 -0500
+	b=Klnq5wyTEEwwZuDvCzAf9eNVUqEgkN0oiCi0L6KCrjyu+eagc7jGEjFHxQUOKoqbR
+	 yVPgBcFpkiyG2hg4q5n6fAqHI5gz03I6zn8VXN37x+T5NNBSe8avgp9/RpxhedGeDn
+	 PJCcTO3VrkttXJgjT6jAkD5tsEIfK+B/H6kvXvfadHrPL4ym9g+pFxyrBf4BO9NLzF
+	 fzAW4zBx5WGS1Zci0v7TiIyn9XPULs5haMR46zC2eZB7qgcXsjt9BVhEKItViEDYfS
+	 e9kq06WtiPOLxpRY/+wmQy+STTI1dYYtnKyvFU+xRI93Diulvs3HH153OLhpkfEukV
+	 2STz2eKHnod9A==
+Date: Mon, 22 Sep 2025 11:06:03 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, arm-scmi@vger.kernel.org,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/5] dt-bindings: clock: Add spread spectrum definition
-Message-ID: <175855693542.119673.169928379758722249.robh@kernel.org>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <20250915-clk-ssc-version1-v4-1-5a2cee2f0351@nxp.com>
+To: Raghav Sharma <raghav.s@samsung.com>
+Cc: conor+dt@kernel.org, karthik.sun@samsung.com, cw00.choi@samsung.com,
+	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	shin.son@samsung.com, linux-arm-kernel@lists.infradead.org,
+	chandan.vn@samsung.com, dev.tailor@samsung.com,
+	sunyeal.hong@samsung.com, linux-kernel@vger.kernel.org,
+	s.nawrocki@samsung.com, devicetree@vger.kernel.org,
+	alim.akhtar@samsung.com, sboyd@kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: exynosautov920: add m2m clock
+ definitions
+Message-ID: <175855716306.141333.16307821570342985917.robh@kernel.org>
+References: <20250915095401.3699849-1-raghav.s@samsung.com>
+ <CGME20250915094512epcas5p223e2eb264967508527f478eb2200be83@epcas5p2.samsung.com>
+ <20250915095401.3699849-2-raghav.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,19 +51,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915-clk-ssc-version1-v4-1-5a2cee2f0351@nxp.com>
+In-Reply-To: <20250915095401.3699849-2-raghav.s@samsung.com>
 
 
-On Mon, 15 Sep 2025 16:29:35 +0800, Peng Fan wrote:
-> Per dt-schema, the modulation methods are: down-spread(3), up-spread(2),
-> center-spread(1), no-spread(0). So define them in dt-bindings to avoid
-> write the magic number in device tree.
+On Mon, 15 Sep 2025 15:23:59 +0530, Raghav Sharma wrote:
+> Add device tree clock binding definitions for CMU_M2M
 > 
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 > ---
->  include/dt-bindings/clock/clock.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../clock/samsung,exynosautov920-clock.yaml   | 21 +++++++++++++++++++
+>  .../clock/samsung,exynosautov920.h            |  5 +++++
+>  2 files changed, 26 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
