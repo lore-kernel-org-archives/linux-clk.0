@@ -1,312 +1,334 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CB7243374
-	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 07:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15EB2F7469
+	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 07:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758526619; cv=none; b=t+3hw/nnKhmUu41QyspLiAst6a0MeU0kHxB9iUwbza5AMGZ39jM97LLfOEIedjoOFiviYPdIi0r7qEYSsqxl3a7gqVJSuHfR7wvsR9X6ux3v4gtAWnd80e1YOoqAY8D6wYZ990XgY1lSJJn8dsmeJeTn9ZClEcnK7BxtKkvk6mw=
+	t=1758527939; cv=none; b=Gd0auSc8cVfqK2BGw97v2RTVVsMLdfMVLPDKE8YCpQ8EC6pa0LkaO746qvBqGvIn+ASzamKAuQvU8BbQUHeb6xlJlKLl1UwO6nu5odwQd0UapFtafyobp6whKcP+XDiIektKLVI9eKgt0ZtOl7RMYPbFFpANgZnQcRGklXT4eqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758526619; c=relaxed/simple;
-	bh=aOyTQYZuDWlPt0S+jrgAOD98xMe9oFqP1/5VVHR8G98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSmT1+UI9JW6UCtxYbYtn6YLt0jy938PLsgiDQYtZDtGUg/7OkeVhU/Us0Z3fbu8Gk7BMWA/nFIj9T5kZRigbT2DoZsNX5m9GxTPF3dZV6avqH7mKcWK6qhS/WHFvGlm5pVO4QLhX88m5wX4cmUL/xUIvuB/AHsb29kZ+D7KT3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQGIOCZi; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758527939; c=relaxed/simple;
+	bh=VxFoXFJfLJu72VUQI8PkapTjFSVP1bwVeJjNyFvSU6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSRdAfDJIWMyCUNRZyGy+7g8Mmxjbo7Bl9DSDAknEsp1g8jl5oIZ7eKp/l0/rrcFmd7uf00YiXiFTvlLm0zU6wSvb6m95TVlFBlpYR5fiPrxUvmx3GVenZ/PcATX98hI0znyDi+Pf12wiFfS1QQN2c2OQqEMW5LQAaLUqi6DGUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A0LtMm4K; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQGIOCZi"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3fa528f127fso556604f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 00:36:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A0LtMm4K"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso35764275e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 00:58:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758526614; x=1759131414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SQTiutALUjkpQjQ6uKKs077crH4fXFWsk2vBwe4NujY=;
-        b=QQGIOCZiN0ERDkQxqpQ+JB6btRHGCJB0bePmB/2LiLTMWFhwix5GolXG/M68dG++Bj
-         hzOiq6Ybo5j4+kPmGFYGYggXdsoqtPplAl6S2Fg6sDl0oGkJwUtHhltUEMYyJQPlyIVH
-         g5MGahbLvo9wnmmj7jwGvk5+PEFceoii1ii3sSHlkYDTZwVGucJhIHX2gjDYfRnZAlN0
-         0/miRPBQt62QTTg+Fu5i2/DEzZTPZ9xmCNiCcLA0wwIeNHsm9ubRhkJNg2qplNCoEd7g
-         NNTrrSKhMm4R1TTvwZM+1yeJzU0NjyuVPJ9p7c8xsPf06IN0JMUgcn6loqNlBzKtga3q
-         iqdw==
+        d=linaro.org; s=google; t=1758527935; x=1759132735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
+        b=A0LtMm4KGe7kf1WDxajMfqTBr3JGx9o8EdpYa+ejdHZrKrlF6Mi4lLBtiyGDrxRmaG
+         hTTlfQsAZWd+dKrcx0eV5ANPokbJp2z8/lq/GTgXh/ygBrbSTjU2XEMnT6W9jFpeXTXT
+         yKXwNIbflatbA9lo1tNpsxitqPh39dzWVlUKG5dBCJr/geLe10jlMqU8sYM09YoqKzKN
+         ZZG+JYhbAiz8TX8+H13XhDtvGvmhd7XafBB2ZfRPhcqoGkdIVB9iaNgHoCKXbMcZ/Fe9
+         aKYVfhl2fze0MOruqfugaS3D7ZEnSmRadwuoW8NQ5OM5sIY7r2hTUklIHgJImfr2hXV/
+         KDZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758526614; x=1759131414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SQTiutALUjkpQjQ6uKKs077crH4fXFWsk2vBwe4NujY=;
-        b=EHA5R2Le44RUQiDpSGQmbKAhp2qBckLDT2xo8duFgyV1gyfWJqqa2ANEEt7/CguxvB
-         /saFjCKa3bFkwbco7j+RfmIGatMlieikcnlsYvaffLGBBsM3rcd7ssISYD8EOqw+MlBl
-         bMCikRnLNcPya2Zowf23VHK0V3gzQOoNNZrDqkst2IzcKfsymd+W976RBLYJON0JIJIO
-         XCjGbV8otIT/krnXu94w1yz47qQIRpyymT699lx6I5UZpul9nNSq38Z3IJvc92LwdEG3
-         C1lBXfX35Fg/5GBAMNYDJtXQYS9cKy2SEnUX2gW71Jhs8TtFncezXxtNKrp0upXqhAhh
-         jaeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUc4FYQP4MiOiQKZ64htv0Ryo1htKUMEmL/NxOL6mMd55VcsyPt90e3R/KIoM+k6OzxNRJHcyUgNpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqqiqJpffg8JwyD3w6fI0A1fL/cV20ru55yHhBjkFZHHGC8QLK
-	l/sPeqyttIkTB5NWTTmSz+Z4A5R7tlPQj6GarqIA2aHu3yw9RtlQLmhlOEnoDhb01p/1tIY6U/B
-	OY1VIjHXMOgn1i00wacDKrJxIjV/d31A=
-X-Gm-Gg: ASbGnctJtNC9ZAkONyKncjcPDJMD6KwGLQ4ZqEaiRETXpzmVToVVeYH0Johp/PwTHG6
-	aF/OBogD707unt7/V+gvYinhTJNJle1+XJUNiU3k+lOJPagA1MbMPy0yAmKy5wu04fBLuRthZXR
-	gMOxzcwMKVvBdP6wQwhBuRkPJ+10o4Qr3KmqvWIX/k0rxulFjRdf0czQAaX8Mkw/m3FouVX7bA5
-	N+Zs187
-X-Google-Smtp-Source: AGHT+IG2SLbXARRu0t168HLsZz/v53XcB1wJ8Ft52VtbeB5V4oYB8nfGA5hMzmF2UiZq9koPPs+A0RRL4rJK+tjvmts=
-X-Received: by 2002:a5d:5f87:0:b0:3ec:42f9:953e with SMTP id
- ffacd0b85a97d-3edd43b5c0dmr15773738f8f.7.1758526613972; Mon, 22 Sep 2025
- 00:36:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758527935; x=1759132735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
+        b=M+8lWILmLz/zYnuCc2/kmXSY427Eoig8bzJoWVbaT7TQ0DJrovrDzY+rAiVsOw5KRp
+         4v9G5xxt8ls7Rw4dN6Sbq+XIDi8HjY7Ux8CFwVhkRNfOhDkxhWgXS4UEtQoI/GK5lZgb
+         GR+PHIEthK9mfDFk1+0I+EpBR9zUQXCa9aU6RWY+/NbmVYgZRxLcvJcbKVbqkW2OA11/
+         ssGYbzlbjhyrUpz831+/g/ADaYVTtkmNtU8R9d+uP4i+mhl0FoGD/+uTafz8r8Re2XCA
+         AlozN6VZAZyGMTF3Gp6wrzO/haeEziip7bXuNeLfF4y3j0TNiga9oJOSyVL+YHBfgbY+
+         C8bA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRz8fO0bGwGtPixe9GtBD+Nv5NsjMeeqA/brevglIVHuIAQMPTUMQpRH0H4sjxqcPngo811jmogNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvKbaubP/T3gGtcsnRHwYEbju7091nk8d44UmhsNvqpJWkBCX3
+	KfN2boDEat4B2X3abZs4CSzd58lPW3SGofC80iM+ThcDTkY8mbZ9r7AMyjS+yTFywHI=
+X-Gm-Gg: ASbGnctAErYYyMrJ+g7K1ySd9Y1n5jdlKuLJb+kuEr3/l1yd7j+o+JgWGv0s5WNGTh6
+	QvhxbQQWWPgaLbFxfo8jRLnR6XCl755oD4I22IhjAh54gXzYaRL8kuSOHAZm3nTm3T7MZLqgc9h
+	ozUKVGiS0e4DrBKYQb1+EJUTKRSiDP7Q8XmyRxubT76pm2IqOJZxbYMBMUt91UweH7trxnx/aUN
+	xWoNFWaQ1Gqn8F5Dcd7SOQ3XWm5nJSWvdoHdnVGOqMpcIAsGEHRBivSwdhCRKFfhsxrlqkOJcQE
+	eF50cQqMlQpXtIabhbX3lHABXJJFbjRzTtclzbF/XaRv0kSoNe3XCFq3l4B8tAmC8q3D9gAQgbu
+	4M+bqg00E195SEI4sWR0NxPaGv76SMMw6
+X-Google-Smtp-Source: AGHT+IGv/gvgtd+VyFOGRY+JKmS6raLqaaGrk4Saz9mqQNEkVwU+lxnyBc+9ONztYTEGxxuU7e9nsg==
+X-Received: by 2002:a05:600c:3555:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-467eb048bafmr104267165e9.26.1758527934709;
+        Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
+Received: from [10.11.12.107] ([79.118.185.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm186423945e9.1.2025.09.22.00.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
+Message-ID: <905d8c89-56d3-40c9-928f-d6418a0f9193@linaro.org>
+Date: Mon, 22 Sep 2025 08:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <4198615.hdfAi7Kttb@senjougahara>
- <CAPVz0n0TPKa2cVXZdUEAWWHquGeqzj=p-9cXx79jc6RwXLkkGg@mail.gmail.com> <3074302.Sgy9Pd6rRy@senjougahara>
-In-Reply-To: <3074302.Sgy9Pd6rRy@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 22 Sep 2025 10:36:42 +0300
-X-Gm-Features: AS18NWCN3qDh6Art7Go1S1L6w234Yc5WBRcSNsroEE7Na7Xcr_-CeAzzooRElaI
-Message-ID: <CAPVz0n1ozJ13MB4eFMAJzESe8iQ7SKjMApZCLFAZ_eubCFs0tg@mail.gmail.com>
-Subject: Re: [PATCH v2 16/23] staging: media: tegra-video: tegra20: simplify
- format align calculations
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] clk: samsung: add Exynos ACPM clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+ <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
+ <175848703636.4354.2936744718103927060@lazor>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <175848703636.4354.2936744718103927060@lazor>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:27 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Monday, September 22, 2025 3:30=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:23 =
-Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Monday, September 22, 2025 2:13=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 07=
-:44 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >
-> > > > > On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel =
-wrote:
-> > > > > > Simplify format align calculations by slightly modifying suppor=
-ted formats
-> > > > > > structure.
-> > > > > >
-> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/staging/media/tegra-video/tegra20.c | 41 ++++++++-----=
---------
-> > > > > >  1 file changed, 16 insertions(+), 25 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/driv=
-ers/staging/media/tegra-video/tegra20.c
-> > > > > > index 6e0b3b728623..781c4e8ec856 100644
-> > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
-> > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l2_=
-pix_format *pix, unsigned int bpp)
-> > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  TE=
-GRA20_MAX_WIDTH);
-> > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, TE=
-GRA20_MAX_HEIGHT);
-> > > > > >
-> > > > > > -     switch (pix->pixelformat) {
-> > > > > > -     case V4L2_PIX_FMT_UYVY:
-> > > > > > -     case V4L2_PIX_FMT_VYUY:
-> > > > > > -     case V4L2_PIX_FMT_YUYV:
-> > > > > > -     case V4L2_PIX_FMT_YVYU:
-> > > > > > -             pix->bytesperline =3D roundup(pix->width, 2) * 2;
-> > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 * p=
-ix->height;
-> > > > > > -             break;
-> > > > > > -     case V4L2_PIX_FMT_YUV420:
-> > > > > > -     case V4L2_PIX_FMT_YVU420:
-> > > > > > -             pix->bytesperline =3D roundup(pix->width, 8);
-> > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix->=
-height * 3 / 2;
-> > > > > > -             break;
-> > > > > > -     }
-> > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8);
-> > > > >
-> > > > > Assuming the bpp is coming from the format table below, this chan=
-ges the value of bytesperline for planar formats. With this it'll be (width=
- * 12) / 8 i.e. width * 3/2, which doesn't sound right.
-> > > > >
-> > > >
-> > > > Downstream uses soc_mbus_bytes_per_line for this calculation which =
-was
-> > > > deprecated some time ago, here is a fragment
-> > > >
-> > > > s32 soc_mbus_bytes_per_line(u32 width, const struct soc_mbus_pixelf=
-mt *mf)
-> > > > {
-> > > >  if (mf->fourcc =3D=3D V4L2_PIX_FMT_JPEG)
-> > > >  return 0;
-> > > >
-> > > >  if (mf->layout !=3D SOC_MBUS_LAYOUT_PACKED)
-> > > >  return width * mf->bits_per_sample / 8;
-> > > >
-> > > >  switch (mf->packing) {
-> > > >  case SOC_MBUS_PACKING_NONE:
-> > > >   return width * mf->bits_per_sample / 8;
-> > > >  case SOC_MBUS_PACKING_2X8_PADHI:
-> > > >  case SOC_MBUS_PACKING_2X8_PADLO:
-> > > >  case SOC_MBUS_PACKING_EXTEND16:
-> > > >   return width * 2;
-> > > >  case SOC_MBUS_PACKING_1_5X8:
-> > > >   return width * 3 / 2;
-> > > >  case SOC_MBUS_PACKING_VARIABLE:
-> > > >   return 0;
-> > > >  }
-> > > >    return -EINVAL;
-> > > > }
-> > > >
-> > > > V4L2_PIX_FMT_YUV420 and V4L2_PIX_FMT_YVU420 are classified as
-> > > > SOC_MBUS_PACKING_1_5X8 hence we get width * 3/2
-> > >
-> > > Googling this brings up the entry
-> > >
-> > > {
-> > >         .code =3D V4L2_MBUS_FMT_YUYV8_1_5X8,
-> > >         .fmt =3D {
-> > >                 .fourcc                 =3D V4L2_PIX_FMT_YUV420,
-> > >                 .name                   =3D "YUYV 4:2:0",
-> > >                 .bits_per_sample                =3D 8,
-> > >                 .packing                        =3D SOC_MBUS_PACKING_=
-1_5X8,
-> > >                 .order                  =3D SOC_MBUS_ORDER_LE,
-> > >                 .layout                 =3D SOC_MBUS_LAYOUT_PACKED,
-> > >         },
-> > > }
-> > >
-> > > which matches that you're describing. It doesn't make sense to me, si=
-nce it at the same time specifies PIX_FMT_YUV420 (which is planar with 3 pl=
-anes, as documented by include/uapi/linux/videodev2.h), and LAYOUT_PACKED
-> > >
-> > > /**
-> > >  * enum soc_mbus_layout - planes layout in memory
-> > >  * @SOC_MBUS_LAYOUT_PACKED:             color components packed
-> > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_U_V:      YUV components stored in 3 pl=
-anes (4:2:2)
-> > >  * @SOC_MBUS_LAYOUT_PLANAR_2Y_C:        YUV components stored in a lu=
-ma and a
-> > >  *                                      chroma plane (C plane is half=
- the size
-> > >  *                                      of Y plane)
-> > >  * @SOC_MBUS_LAYOUT_PLANAR_Y_C:         YUV components stored in a lu=
-ma and a
-> > >  *                                      chroma plane (C plane is the =
-same size
-> > >  *                                      as Y plane)
-> > >  */
-> > > enum soc_mbus_layout {
-> > >         SOC_MBUS_LAYOUT_PACKED =3D 0,
-> > >         SOC_MBUS_LAYOUT_PLANAR_2Y_U_V,
-> > >         SOC_MBUS_LAYOUT_PLANAR_2Y_C,
-> > >         SOC_MBUS_LAYOUT_PLANAR_Y_C,
-> > > };
-> > >
-> > > i.e. non-planar. The code in the driver is handling it as three plane=
-s as well, with addresses VB0_BASE_ADDRESS/VB0_BASE_ADDRESS_U/VB0_BASE_ADDR=
-ESS_V. Since the planes are separate, there should be no need to have more =
-than 'width' samples per line.
-> > >
-> >
-> > I did not invent this, I have just simplified this calculation from
-> > downstream, output values remain same. I have no cameras which can
-> > output V4L2_PIX_FMT_YUV420 or V4L2_PIX_FMT_YVU420 so I cannot test if
-> > this works either. Other YUV and RAW formats were tested on real HW
-> > and work perfectly fine.
->
-> My understanding from the code was, that the MEDIA_BUS_FMT_ formats liste=
-d in the video format table refer to the input formats from the camera, and=
- the V4L2_PIX_FMT_ formats to output formats from VI. Hence VI could input =
-UYVY8_2X8 and write to memory in YUV420. The code dealing with V4L2_PIX_FMT=
-_ values seems to be related to the output to memory. Is it possible to tes=
-t this (your camera -> VI converts to YUV420) or am I mistaken?
->
+Hi, Stephen,
 
-Camera I am testing with has no YUV420 options available and from what
-I can tell there is no way to force VI to output in YUV420 unless
-camera supports it. Any format manipulations should requite hooking up
-ISP, or am I missing smth?
+On 9/21/25 9:37 PM, Stephen Boyd wrote:
+> Quoting Tudor Ambarus (2025-09-08 06:12:45)
+>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>> --- a/drivers/clk/samsung/Kconfig
+>> +++ b/drivers/clk/samsung/Kconfig
+>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>           status of the certains clocks from SoC, but it could also be tied to
+>>           other devices as an input clock.
+>>  
+>> +config EXYNOS_ACPM_CLK
+>> +       tristate "Clock driver controlled via ACPM interface"
+>> +       depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+> 
+> Why is COMPILE_TEST limited to !EXYNOS_ACPM_PROTOCOL?
 
-> It's certainly possible that the current code is functional -- if bytespe=
-rline is set to a too large value and that information flows to userspace, =
-it could still read the buffer. It would just waste memory.
->
-> >
-> > > >
-> > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
-> > > > > >  }
-> > > > > >
-> > > > > >  /*
-> > > > > > @@ -576,20 +564,23 @@ static const struct tegra_vi_ops tegra20_=
-vi_ops =3D {
-> > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
-> > > > > >  };
-> > > > > >
-> > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
-> > > > > > -{                                                    \
-> > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
-> > > > > > -     .bpp     =3D BPP,                                 \
-> > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
-> > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP=
-, FOURCC)      \
-> > > > > > +{                                                             =
-       \
-> > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,          =
-         \
-> > > > > > +     .bit_width      =3D BIT_WIDTH,                           =
-         \
-> > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,           =
-         \
-> > > > > > +     .bpp            =3D BPP,                                 =
-         \
-> > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,               =
-         \
-> > > > > >  }
-> > > > > >
-> > > > > >  static const struct tegra_video_format tegra20_video_formats[]=
- =3D {
-> > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
-> > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
-> > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
-> > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
-> > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
-> > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
-> > > > > > +     /* YUV422 */
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
-> > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
-> > > > > >  };
-> > > > > >
-> > > > > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
-> > > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > >
-> > >
-> > >
-> > >
->
->
->
->
+
+otherwise on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+
+> 
+>> +       help
+>> +         This driver provides support for clocks that are controlled by
+>> +         firmware that implements the ACPM interface.
+>> +
+>> +         This driver uses the ACPM interface to interact with the firmware
+>> +         providing all the clock controlls.
+>> +
+>>  config TESLA_FSD_COMMON_CLK
+>>         bool "Tesla FSD clock controller support" if COMPILE_TEST
+>>         depends on COMMON_CLK_SAMSUNG
+>> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..8566495265ee3e06dbf370f9e424d5540f5c7457
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-acpm.c
+>> @@ -0,0 +1,184 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Samsung Exynos ACPM protocol based clock driver.
+>> + *
+>> + * Copyright 2025 Linaro Ltd.
+>> + */
+>> +
+>> +#include <linux/array_size.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/device.h>
+>> +#include <linux/err.h>
+>> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+> 
+> Is this include used?
+
+ah, it's no longer used, I'll drop it, thanks!
+> 
+>> +#include <linux/platform_device.h>
+>> +#include <linux/types.h>
+> 
+> Are you avoiding kernel.h? If so, please include container_of.h and
+
+I tend to include just what's needed, yes. kernel.h has some things that
+are not yet needed in this driver.
+
+> device/devres.h to avoid implicit includes.
+
+Will add the two and recheck whether I rely on implicit includes somewhere else.
+
+>> +
+>> +struct acpm_clk {
+>> +       u32 id;
+>> +       struct clk_hw hw;
+>> +       unsigned int mbox_chan_id;
+>> +       const struct acpm_handle *handle;
+>> +};
+>> +
+>> +struct acpm_clk_variant {
+>> +       const char *name;
+>> +};
+>> +
+>> +struct acpm_clk_driver_data {
+>> +       const struct acpm_clk_variant *clks;
+>> +       unsigned int nr_clks;
+>> +       unsigned int mbox_chan_id;
+>> +};
+>> +
+>> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
+>> +
+>> +#define ACPM_CLK(cname)                                        \
+>> +       {                                               \
+>> +               .name           = cname,                \
+>> +       }
+>> +
+>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
+>> +       ACPM_CLK("mif"),
+>> +       ACPM_CLK("int"),
+>> +       ACPM_CLK("cpucl0"),
+>> +       ACPM_CLK("cpucl1"),
+>> +       ACPM_CLK("cpucl2"),
+>> +       ACPM_CLK("g3d"),
+>> +       ACPM_CLK("g3dl2"),
+>> +       ACPM_CLK("tpu"),
+>> +       ACPM_CLK("intcam"),
+>> +       ACPM_CLK("tnr"),
+>> +       ACPM_CLK("cam"),
+>> +       ACPM_CLK("mfc"),
+>> +       ACPM_CLK("disp"),
+>> +       ACPM_CLK("b0"),
+>> +};
+>> +
+>> +static const struct acpm_clk_driver_data acpm_clk_gs101 = {
+>> +       .clks = gs101_acpm_clks,
+>> +       .nr_clks = ARRAY_SIZE(gs101_acpm_clks),
+>> +       .mbox_chan_id = 0,
+>> +};
+>> +
+>> +static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
+>> +                                         unsigned long parent_rate)
+>> +{
+>> +       struct acpm_clk *clk = to_acpm_clk(hw);
+>> +
+>> +       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
+>> +                                       clk->mbox_chan_id, clk->id, 0);
+>> +}
+>> +
+>> +static int acpm_clk_determine_rate(struct clk_hw *hw,
+>> +                                  struct clk_rate_request *req)
+>> +{
+>> +       /*
+>> +        * We can't figure out what rate it will be, so just return the
+>> +        * rate back to the caller. acpm_clk_recalc_rate() will be called
+>> +        * after the rate is set and we'll know what rate the clock is
+>> +        * running at then.
+>> +        */
+>> +       return 0;
+>> +}
+>> +
+>> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                            unsigned long parent_rate)
+>> +{
+>> +       struct acpm_clk *clk = to_acpm_clk(hw);
+>> +
+>> +       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
+>> +                                       clk->mbox_chan_id, clk->id, rate);
+>> +}
+>> +
+>> +static const struct clk_ops acpm_clk_ops = {
+>> +       .recalc_rate = acpm_clk_recalc_rate,
+>> +       .determine_rate = acpm_clk_determine_rate,
+>> +       .set_rate = acpm_clk_set_rate,
+>> +};
+>> +
+>> +static int acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
+> 
+> Maybe acpm_clk_register() is a more appropriate name.
+
+okay, will update.
+
+> 
+>> +                            const char *name)
+>> +{
+>> +       struct clk_init_data init = {};
+>> +
+>> +       init.name = name;
+>> +       init.ops = &acpm_clk_ops;
+>> +       aclk->hw.init = &init;
+>> +
+>> +       return devm_clk_hw_register(dev, &aclk->hw);
+>> +}
+>> +
+>> +static int acpm_clk_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct acpm_handle *acpm_handle;
+>> +       struct clk_hw_onecell_data *clk_data;
+>> +       struct clk_hw **hws;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct acpm_clk *aclks;
+>> +       unsigned int mbox_chan_id;
+>> +       int i, err, count;
+>> +
+>> +       acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
+>> +       if (IS_ERR(acpm_handle))
+>> +               return dev_err_probe(dev, PTR_ERR(acpm_handle),
+>> +                                    "Failed to get acpm handle.\n");
+> 
+> Remove the period please. Most error messages don't have proper
+> punctuation.
+
+okay, will update.
+
+> 
+>> +
+>> +       count = acpm_clk_gs101.nr_clks;
+>> +       mbox_chan_id = acpm_clk_gs101.mbox_chan_id;
+>> +
+>> +       clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
+>> +                               GFP_KERNEL);
+>> +       if (!clk_data)
+>> +               return -ENOMEM;
+>> +
+>> +       clk_data->num = count;
+>> +       hws = clk_data->hws;
+>> +
+>> +       aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
+>> +       if (!aclks)
+>> +               return -ENOMEM;
+>> +
+>> +       for (i = 0; i < count; i++) {
+>> +               struct acpm_clk *aclk = &aclks[i];
+>> +
+>> +               /*
+>> +                * The code assumes the clock IDs start from zero,
+>> +                * are sequential and do not have gaps.
+>> +                */
+>> +               aclk->id = i;
+>> +               aclk->handle = acpm_handle;
+>> +               aclk->mbox_chan_id = mbox_chan_id;
+>> +
+>> +               hws[i] = &aclk->hw;
+>> +
+>> +               err = acpm_clk_ops_init(dev, aclk,
+>> +                                       acpm_clk_gs101.clks[i].name);
+>> +               if (err)
+>> +                       return dev_err_probe(dev, err,
+>> +                                            "Failed to register clock.\n");
+>> +       }
+>> +
+>> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>> +                                          clk_data);
+>> +}
+>> +
+>> +static const struct platform_device_id acpm_clk_id[] = {
+>> +       { "gs101-acpm-clk" },
+>> +       {},
+> 
+> Please drop comma here so that nothing can come after.
+
+okay. Thanks for the review!
+Cheers,
+ta
+
