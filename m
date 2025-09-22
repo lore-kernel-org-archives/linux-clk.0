@@ -1,111 +1,102 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2742F5326;
-	Mon, 22 Sep 2025 09:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425CB224D6
+	for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 11:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535108; cv=none; b=lamOqRJkglgZU39b+avkq+HhtnfaE3oFNoEFV0ZH6judvLKzft7/SDhvu7+yn3HfZp2pFlJmtXxC0/sGRYExBSGfCZl85bsbCncT8vMWJYug0nQ2E4ghr0OJStYK0W6MOu7lkEruAf+gxXCSrmo7Wm5hSFtvI7eKWrVfPlQHqCs=
+	t=1758538952; cv=none; b=MEea77WWe2182/mhY3lA753VhtpEZY210thN8xIYuegj5+VOlUxgkpliotS8yWqSw9T+S/TQe19p883xHFtqeWg8bzXPee2nnhNTCntfdvFoClRwM+Pek5Abtwze7cpBNWkl34u+IqWjxvd9i+v0FWCX1q71xrpWOMj45+z8Xxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535108; c=relaxed/simple;
-	bh=ZCHyRLM+j9OlCRrd3bKmx78gsMrZ5IafU4Re3JgUqMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NnzfNW3XFjJT6F3OT+y65G135IeK3CUHSF2F7oVnxpIwsZeX1uEwWqI0zOjj0qhbpWkA1NwuYNl3ovYTEqyEyuFf3dVKGDPHaPwpIKFYOHMZhOPuqhUU3bgFLhxhMimJb+f4OvA2DfZhxkyOIBPqqTY6SAQ+i782W951KeSM6qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lTQLW89V; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1758538952; c=relaxed/simple;
+	bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c26A+/3zrqdeTmI88TxRBn4Su3LJs6qKSdcB59fgRyLChpnkJ0K4iBRnzro/WoePhcbY4iCmk0AXSairlkNVzXcmE62EJWevnKc17ekv7Gk+Hyxp2sZDOdrZlG2gvMw+WyQrBEARz+OoNJXpO1Hhniuz3PQ3L2lQ5e8/2lj7K+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JIxMuHoM; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lTQLW89V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758535104;
-	bh=ZCHyRLM+j9OlCRrd3bKmx78gsMrZ5IafU4Re3JgUqMI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=lTQLW89VcBrKHcN6nJF22Ssn434CXDHE5MA2w9+4kD7D2zedW/k4uAS1VNO+MeL0B
-	 cl5AAz9agLrZ4jcXIFcXVWCT5Ii13IHsQ1/g7xM4gjtcLGNT+pc/00FBBj7HbvhYIA
-	 tP/mR3Ui6dO49jUwu31gir9RhCQJmYNOKGI33Srb1b+cPrJkLR26YiYLruQI9rhZLx
-	 7t1f2O5Pfv5kf5+k9LUYDw7ejcDhn4rlYE35mbn79sCFjvQeywOZ4Hqm/ts+a6adOV
-	 X6GW2NUyZtsenotXH8dQbF5NiaaYCAOWm9e2cvCliO0Y3pQdpybwv0OvmJ4V/OnT1j
-	 XCs6iZcs7jEPQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1DFB217E0237;
-	Mon, 22 Sep 2025 11:58:24 +0200 (CEST)
-Message-ID: <371a8b2a-1e89-4735-b8cd-5c00643e9ab6@collabora.com>
-Date: Mon, 22 Sep 2025 11:58:23 +0200
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JIxMuHoM"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-279e2554b6fso4499915ad.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 Sep 2025 04:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1758538950; x=1759143750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
+        b=JIxMuHoMddsnkA1HGxLhdLba+mklvPNgYLRC+BBFSA8TyBjRpqQ0WONpGo6lwPVDWW
+         hrwz/ALcbiuObkFbu65rtkB1ivDfSRA7TOvBdhaVHnPHQt4AMqus0ihUGncP7epLjnYl
+         4PVvvgSfRFYcpiF8ApwmcTLPiLHcOeYFlObL97B9zn5xYUagOgBPuONQSgn3NrGO8a0m
+         wDZACKNByxr7g61kT2ILtcFKBrH/mqO5qCAKEZXaDfCH2RQX1mO60GuQItahtyr8U8wy
+         OMbrltcLjguCUXX1kOfamT4wA0neEr66R6PqYE5+e0ZpnrcdAe+uXS7fMZPHHGzwMjrP
+         0TYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758538950; x=1759143750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+li5jZLjno+mrEq1vnQPMSZK9xNs3cFzE65Gz2fSCdQ=;
+        b=i0+FwUmNdr/V89Xu9j7imODEn16PYjFjJ/VlHS4obzuItNoPTkdV8PoN97K1Nb9ViS
+         PaO539Lz7fa9BWByPkDO2qFZGmGZUyj5DUSL5Ias/wY6667UrVOR7sZGVMScdPRZ82za
+         nkTinVpo0AItYjPOUEab5acWstyQk1jgJlV36y4dGdbcwOwcEnvypdAw2InNknIFNJnD
+         y61ZDXQX+ifR22DtCLzMZHkCPVHFeaXFoeMSJ6wIS4fos6VvxkPjq4q3GCEBvf250Bes
+         lfuRhLahyGF7ex9KYOwLn/wqb4Gok1YTrfv2+Hnl1i93yJmdjKwPUt/o32ufHm/dd45K
+         vcnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUBnnuvTqwSc4ArdvQePK+2hOt2AU2pilr2/IHcGkw0l5C3U9uvUldUG9PhpfYMbSbP3nqOVNFT6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeNK3wZlhZTV6od7WUr6m22TPst6OuaBR7V3xI1eEhXByJBgnF
+	pwnTe98U/lHVeWMTb0uho4bJA9B4wegq4kpGAt/qY4ayJa6kaqSsxC/uWoktKbRxTHD9KGE3VJP
+	g1TgR5znHCEXG96WU9gqgDanTS9/KflE=
+X-Gm-Gg: ASbGncvokftNO09Pq66eBgHg7vORvpQ2IIEFyyZDb4ViRGVZZ8Pg2gy5QnhS8991fNB
+	8JKXaVtc/WLvbsb+yOYwCXod6XBdQOd0dU5htpKqawPEPFAPA6LoZEWLQaynzRzvKlSk92yCFiG
+	Hjw6tEZuWzLtQG3pJHDg1PNt8ZPgjq6DntYajOS3ruFgIbA+fV5gqf1MV1YSt9hMTnQDaLfIZyP
+	CrDfRt4hryNyHYLE71O1yNqVuydkTuL0WrFvCbB
+X-Google-Smtp-Source: AGHT+IGmUtMYlpRUtriAGyHEqqhD7tsNW/oErA13JErbQr7Uwk/4xc/l1EjiIRO/SRnBAHwmetXhu5CvO/UV+bZ8Paw=
+X-Received: by 2002:a17:903:1c3:b0:275:c2f:1b41 with SMTP id
+ d9443c01a7336-2750c3e5feamr49668395ad.53.1758538950329; Mon, 22 Sep 2025
+ 04:02:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] clk: mediatek: mt7988-infracfg: SPI0 clocks are
- not critical
-To: Daniel Golle <daniel@makrotopia.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Sam Shih <sam.shih@mediatek.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <49fb368b4da6f5ed11812dceb45f174ceca8f10a.1758477397.git.daniel@makrotopia.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <49fb368b4da6f5ed11812dceb45f174ceca8f10a.1758477397.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
+ <b88a947c-7074-4fed-8283-c278b573a7ca@sirena.org.uk> <CAFBinCBe3LhN+3beovFVuWPpe3pDF5P1wSt7nPjm=ykRAx4zzQ@mail.gmail.com>
+ <1jldm855cd.fsf@starbuckisacylon.baylibre.com> <aNEZcNbSfJlkP7Ra@finisterre.sirena.org.uk>
+In-Reply-To: <aNEZcNbSfJlkP7Ra@finisterre.sirena.org.uk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 22 Sep 2025 13:02:18 +0200
+X-Gm-Features: AS18NWBF_8d672goWt-c8mlWPO6qTZjdU-iJtORQkODp_RuBXGukLUDReQvFfGA
+Message-ID: <CAFBinCCn-rBNoCiTkgn9__NyujAbPOeEdhLskbWwg_onRh=44w@mail.gmail.com>
+Subject: Re: [PATCH 00/26] clk: amlogic: clock controllers clean-up and factorisation
+To: Mark Brown <broonie@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 21/09/25 19:58, Daniel Golle ha scritto:
-> SPI0 clocks have wrongly been marked as critical while, probably due
-> to the SPI driver not requesting them. This can (and should) be addressed
-> in device tree instead.
-> Remove CLK_IS_CRITICAL flag from clocks related to SPI0.
-> 
-
-Eh, technically you're right about the Fixes tag - but if there is a problem in the
-devicetree and this patch gets backported to older releases, the device gets broken
-in all old kernels.
-
-So - I agree with this change and besides, the SPI clocks are correctly declared in
-at least mt7988a.dtsi so I don't see this breaking any device in the current kernel
-but please, at this point, drop the Fixes tag so that we avoid backports.
-
-Once the tag is removed, you can add my
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Cheers,
-Angelo
-
-> Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> Patch originally sent 2024-10-31 but never received any feedback.
-> 
->   drivers/clk/mediatek/clk-mt7988-infracfg.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> index ef8267319d91..c40e18c27f12 100644
-> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> @@ -196,12 +196,10 @@ static const struct mtk_gate infra_clks[] = {
->   	GATE_INFRA2(CLK_INFRA_SPINFI, "infra_f_fspinfi", "spinfi_sel", 10),
->   	GATE_INFRA2_FLAGS(CLK_INFRA_66M_NFI_HCK, "infra_hf_66m_nfi_hck", "sysaxi_sel", 11,
->   			  CLK_IS_CRITICAL),
-> -	GATE_INFRA2_FLAGS(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12,
-> -			  CLK_IS_CRITICAL),
-> +	GATE_INFRA2(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12),
->   	GATE_INFRA2(CLK_INFRA_104M_SPI1, "infra_hf_104m_spi1", "infra_mux_spi1_sel", 13),
->   	GATE_INFRA2(CLK_INFRA_104M_SPI2_BCK, "infra_hf_104m_spi2_bck", "infra_mux_spi2_sel", 14),
-> -	GATE_INFRA2_FLAGS(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15,
-> -			  CLK_IS_CRITICAL),
-> +	GATE_INFRA2(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15),
->   	GATE_INFRA2(CLK_INFRA_66M_SPI1_HCK, "infra_hf_66m_spi1_hck", "sysaxi_sel", 16),
->   	GATE_INFRA2(CLK_INFRA_66M_SPI2_HCK, "infra_hf_66m_spi2_hck", "sysaxi_sel", 17),
->   	GATE_INFRA2(CLK_INFRA_66M_FLASHIF_AXI, "infra_hf_66m_flashif_axi", "sysaxi_sel", 18),
-
+On Mon, Sep 22, 2025 at 11:40=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
+ote:
+>
+> On Sun, Sep 21, 2025 at 02:59:30PM +0200, Jerome Brunet wrote:
+> > On Sun 21 Sep 2025 at 14:21, Martin Blumenstingl <martin.blumenstingl@g=
+ooglemail.com> wrote:
+>
+> > > A few days ago Marek reported problems on an Odroid-N2 and provided a=
+ fix: [0]
+> > > It's not queued up for -next yet.
+> > >
+> > > Please give Marek's patch a try
+>
+> > Being on the A311D as well, it is likely to be the same issue.
+> > I suspect you would not see the crash it without earlycon indeed.
+>
+> > The fix is in clk-next already so linux-next should get it soon.
+> > Sorry for the inconvenience and thanks for the report.
+>
+> If it's supposed to turn up in -next it's probably easier for me to pick
+> it up from there given the firmware issues with the board, though there
+> may not be one until Thursday.
+The mentioned patch just landed in linux-next
