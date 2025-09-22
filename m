@@ -1,168 +1,160 @@
-Received: from sender4-op-o16.zoho.com (sender4-op-o16.zoho.com [136.143.188.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D312D77EF;
-	Mon, 22 Sep 2025 14:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552946; cv=pass; b=MOHvIdFxHIbF1d/5PnA/IKQ0wBW5VX1zi8aR3KwPjUV1xXXIGMcxpNI4uunBpLtA2dtnnXX4c4yYUQZMEPAn3e2ssGu5NNkOyHCydQic0BG2OZ4jM1j4D7ZLVB6nRCIQ8uYht6cwoCXXMn+9qdlXnFX4kmLgNJRfTOoz0wDFJ1g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552946; c=relaxed/simple;
-	bh=cb7wy+ZwN39ONi58h69i1DPSVfww4xXrfbM+TXkw/WI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gzfLU6hNjnTBzjyIUG9E6ITfz+BLdzvyopsjLJCi6e86ggj1MU/plXZEjijfNhdIKD3tRHUrEHHUrD+ne5/DRaiJ7h6wqKeTYyJSqMKSBL0cqX9E1pgjX/jsWgFntJuapWEfn9cclSxL1vIgqsURKrrqIVuusA7LkSvmKSoiLsw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=MkzjBf4f; arc=pass smtp.client-ip=136.143.188.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BBEEEC0;
+	Mon, 22 Sep 2025 16:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758556842; cv=none; b=AIZ2Twy7mX9OonUwN+0jFUW1thnaZD1nPNEp3UWCfonmIKl0B1OtGkJlM6neEzHeSyF76GuzsUKUEAMTx9jbcprE6YIvvwy+hNB2NmQIbTal4u9sNVEgCj1kB3AxvnUnFjqoaiV3KhhWnaaofJBfut36hb+Pkj2Hymsb9AN/+t4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758556842; c=relaxed/simple;
+	bh=gurdba/DTsv3U8QqRqFzecsKxs5zCX7qM3Ox+fJp8HQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9O8i0M1XgZQJ3dHgAVlIeBe+ihdoVNDWiNdnnDKgewTJQJXbNsQ+iKwoB9SV9qgNa3AREVUEnWt7/KNwDLOOvK0gdGUlcafjMafpd/Zitm9PI+c2G/vG4+77ecgt7Pkb31mQmNHhB40tSLS4mbvWarauct1hZgK9QM8AaxbELk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W59gmQgd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="MkzjBf4f"
-ARC-Seal: i=1; a=rsa-sha256; t=1758552923; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C55XzlbDLCmFbDiqjupdn3RbRvL/2iczTfU27UwBI4plR6YtkuDjy/pabhffB6p8nXzsPaNB4wlXlvfTY3j74iiwho6OqUvX//euxnMw1kEia6d860xS+CheNziVk7cbaXlqm85TQdoBhr085pEXZ4f7EtI25kun7g5sAANIUO0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758552923; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PLzv6fg3fqqkM8iKZ+L1jhNCwLYKzVSOP0OdN57SCX8=; 
-	b=RJeWA3DqZvG8gjVnDJJ290dMwFXazbC23ufhwfITvd6mlu4ppzwoZmIzFbV6quvzIxylKPtv73bEFAgoo2LTntxzQd2vguSKnRoqjCUeqNswjG6QvA3f4xaxZA1gwKEBwUVRiRT4dcx1GHDgX1S3VxZMapoUF9Dni6xBTIqCxbU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758552923;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=PLzv6fg3fqqkM8iKZ+L1jhNCwLYKzVSOP0OdN57SCX8=;
-	b=MkzjBf4fxvx6JK7eEAmxLrzmYFsyDwsopO+l8NiJwOrpaQYQkr8P0K8Wl6cylHAD
-	p06iSvqcL0U0Mm/6G3xVU/f6ezlT7B3A5z1C7dcbVYOT5sgB1Wh6v0AquwAlXUrzSJy
-	J/+8woSfozohZgZSFj93cspma7J6hH/mkftdPxhs=
-Received: by mx.zohomail.com with SMTPS id 1758552920497610.5552985610591;
-	Mon, 22 Sep 2025 07:55:20 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Mon, 22 Sep 2025 22:51:51 +0800
-Subject: [PATCH 5/5] riscv: dts: anlogic: add clocks and CRU for DR1V90
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W59gmQgd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9312AC4CEF0;
+	Mon, 22 Sep 2025 16:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758556841;
+	bh=gurdba/DTsv3U8QqRqFzecsKxs5zCX7qM3Ox+fJp8HQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W59gmQgdPctUTyG45puWTxq4a/dcWAgxGUxdASo4fqk9kIAuo1Rt7L2MuotxNYoXc
+	 d2mdX20+NU+uYrvBRpOP35HueZEPXa7tm1Nh9WfiRXsINRqceeJtjKa0unyUJxZeal
+	 8AH3YVieOZfp9JNU/+2eoIghAA+oVyl9J6DwjrWAO+fiBAlfrReDQFyj9BxJwWfHzH
+	 gQiHTxe7IW8YqgfHN/OKpw4Cy8Cgyi+3TO8Im/87UNo1FTzHY3ZTs86UA914UbJu89
+	 8brQy3zw1JZG/eoAXFcyfTDGpQMvPswjmFwBazEjpPUfF6Zcoo2qk4Vn6Xbi4r/H0u
+	 P/912Bgy/W3Nw==
+Date: Mon, 22 Sep 2025 11:00:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
+ Controller
+Message-ID: <20250922160040.GA92842-robh@kernel.org>
+References: <20250915080157.28195-1-clamor95@gmail.com>
+ <20250915080157.28195-4-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-dr1v90-cru-v1-5-e393d758de4e@pigmoral.tech>
-References: <20250922-dr1v90-cru-v1-0-e393d758de4e@pigmoral.tech>
-In-Reply-To: <20250922-dr1v90-cru-v1-0-e393d758de4e@pigmoral.tech>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Junhui Liu <junhui.liu@pigmoral.tech>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- "fushan.zeng" <fushan.zeng@anlogic.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758552834; l=2783;
- i=junhui.liu@pigmoral.tech; s=20250910; h=from:subject:message-id;
- bh=cb7wy+ZwN39ONi58h69i1DPSVfww4xXrfbM+TXkw/WI=;
- b=buSBznMbOgHdkJQ7FZtYm3RCpZxmyXDsUY+oZXW+9KxaSJHF+RaKU0KAdU860IixMtuCCq3mH
- GvDkjS5Jr3VDxCDn3E9hmEHCWpG5kWwp9vZ8l7PKnL7HY3761+D2PZB
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=cgATWSU1KfGWmdwNmkPyHGnWgofhqqhE8Vts58wyxe4=
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915080157.28195-4-clamor95@gmail.com>
 
-Add clocks and introduce the CRU (Clock and Reset) unit node
-for Anlogic DR1V90 SoC, providing both clock and reset support.
+On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
+> Add Tegra114 support into existing Tegra124 MC schema with the most
+> notable difference in the amount of EMEM timings.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-----
+>  1 file changed, 74 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> index 7b18b4d11e0a..9cc9360d3bd0 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+> @@ -19,7 +19,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: nvidia,tegra124-mc
+> +    enum:
+> +      - nvidia,tegra114-mc
+> +      - nvidia,tegra124-mc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -64,29 +66,10 @@ patternProperties:
+>  
+>            nvidia,emem-configuration:
+>              $ref: /schemas/types.yaml#/definitions/uint32-array
+> -            description: |
+> +            description:
+>                Values to be written to the EMEM register block. See section
+> -              "15.6.1 MC Registers" in the TRM.
+> -            items:
+> -              - description: MC_EMEM_ARB_CFG
+> -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> -              - description: MC_EMEM_ARB_TIMING_RCD
+> -              - description: MC_EMEM_ARB_TIMING_RP
+> -              - description: MC_EMEM_ARB_TIMING_RC
+> -              - description: MC_EMEM_ARB_TIMING_RAS
+> -              - description: MC_EMEM_ARB_TIMING_FAW
+> -              - description: MC_EMEM_ARB_TIMING_RRD
+> -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> -              - description: MC_EMEM_ARB_TIMING_R2R
+> -              - description: MC_EMEM_ARB_TIMING_W2W
+> -              - description: MC_EMEM_ARB_TIMING_R2W
+> -              - description: MC_EMEM_ARB_TIMING_W2R
+> -              - description: MC_EMEM_ARB_DA_TURNS
+> -              - description: MC_EMEM_ARB_DA_COVERS
+> -              - description: MC_EMEM_ARB_MISC0
+> -              - description: MC_EMEM_ARB_MISC1
+> -              - description: MC_EMEM_ARB_RING1_THROTTLE
+> +              "20.11.1 MC Registers" in the Tegea114 TRM or
+> +              "15.6.1 MC Registers" in the Tegra124 TRM.
+>  
+>          required:
+>            - clock-frequency
+> @@ -109,6 +92,74 @@ required:
+>    - "#iommu-cells"
+>    - "#interconnect-cells"
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra114-mc
+> +    then:
+> +      patternProperties:
+> +        "^emc-timings-[0-9]+$":
+> +          patternProperties:
+> +            "^timing-[0-9]+$":
+> +              properties:
+> +                nvidia,emem-configuration:
+> +                  items:
+> +                    - description: MC_EMEM_ARB_CFG
+> +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
+> +                    - description: MC_EMEM_ARB_TIMING_RCD
+> +                    - description: MC_EMEM_ARB_TIMING_RP
+> +                    - description: MC_EMEM_ARB_TIMING_RC
+> +                    - description: MC_EMEM_ARB_TIMING_RAS
+> +                    - description: MC_EMEM_ARB_TIMING_FAW
+> +                    - description: MC_EMEM_ARB_TIMING_RRD
+> +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
+> +                    - description: MC_EMEM_ARB_TIMING_R2R
+> +                    - description: MC_EMEM_ARB_TIMING_W2W
+> +                    - description: MC_EMEM_ARB_TIMING_R2W
+> +                    - description: MC_EMEM_ARB_TIMING_W2R
+> +                    - description: MC_EMEM_ARB_DA_TURNS
+> +                    - description: MC_EMEM_ARB_DA_COVERS
+> +                    - description: MC_EMEM_ARB_MISC0
+> +                    - description: MC_EMEM_ARB_RING1_THROTTLE
 
-The DR1V90 SoC uses three external clocks:
-- A 33 MHz crystal oscillator as the main system clock.
-- Two optional external clocks (via IO) for the CAN and WDT modules.
+Like I said before, I don't think it is worth enumerating the list of 
+registers for every variant. If you want to define the length 
+(minItems/maxItems), then that is fine.
 
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
----
- arch/riscv/boot/dts/anlogic/dr1v90.dtsi | 41 +++++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/boot/dts/anlogic/dr1v90.dtsi b/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
-index f9f8754ceb5247d3ca25e6a65b3f915916ba6173..6458093dcf27afd640265aa07be9b93d6cb72f8a 100644
---- a/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
-+++ b/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
-@@ -3,6 +3,9 @@
-  * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
-  */
- 
-+#include <dt-bindings/clock/anlogic,dr1v90-cru.h>
-+#include <dt-bindings/reset/anlogic,dr1v90-cru.h>
-+
- /dts-v1/;
- / {
- 	#address-cells = <2>;
-@@ -39,6 +42,27 @@ cpu0_intc: interrupt-controller {
- 		};
- 	};
- 
-+	clocks {
-+		can_ext: clock-ext-can {
-+			compatible = "fixed-clock";
-+			clock-output-names = "can_ext";
-+			#clock-cells = <0>;
-+		};
-+
-+		osc_33m: clock-33m {
-+			compatible = "fixed-clock";
-+			clock-frequency = <33333333>;
-+			clock-output-names = "osc_33m";
-+			#clock-cells = <0>;
-+		};
-+
-+		wdt_ext: clock-ext-wdt {
-+			compatible = "fixed-clock";
-+			clock-output-names = "wdt_ext";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&plic>;
-@@ -65,21 +89,34 @@ plic: interrupt-controller@6c000000 {
- 		uart0: serial@f8400000 {
- 			compatible = "anlogic,dr1v90-uart", "snps,dw-apb-uart";
- 			reg = <0x0 0xf8400000 0x0 0x1000>;
--			clock-frequency = <50000000>;
-+			clocks = <&cru CLK_IO_400M_DIV8>, <&cru CLK_CPU_1X>;
-+			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <71>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-+			resets = <&cru RESET_UART0>;
- 			status = "disabled";
- 		};
- 
- 		uart1: serial@f8401000 {
- 			compatible = "anlogic,dr1v90-uart", "snps,dw-apb-uart";
- 			reg = <0x0 0xf8401000 0x0 0x1000>;
--			clock-frequency = <50000000>;
-+			clocks = <&cru CLK_IO_400M_DIV8>, <&cru CLK_CPU_1X>;
-+			clock-names = "baudclk", "apb_pclk";
- 			interrupts = <72>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-+			resets = <&cru RESET_UART1>;
- 			status = "disabled";
- 		};
-+
-+		cru: clock-controller@f8801000 {
-+			compatible = "anlogic,dr1v90-cru";
-+			reg = <0x0 0xf8801000 0 0x400>;
-+			clocks = <&osc_33m>, <&can_ext>, <&wdt_ext>;
-+			clock-names = "osc_33m", "can_ext", "wdt_ext";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
- 	};
- };
-
--- 
-2.51.0
-
+Rob
