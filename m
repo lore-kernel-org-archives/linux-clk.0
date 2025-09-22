@@ -1,173 +1,90 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746733112B6;
-	Mon, 22 Sep 2025 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E03E1624E9;
+	Mon, 22 Sep 2025 16:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558255; cv=none; b=kue2ip6J02+GbV6FRA56y0q00cjuAI2kZQ2UOztbxcC+CM765mAKyl7QfIPX8ZDv2VBAwPczaYWtC2cFGJsn5TDhqXfQ7cisqaUkCLcdSI2krJ8Wq0VNDOmpticP+jjDpWiglJZRM1eESvMgM+Duyi5gItvOAw+S2y2v2ghJJf0=
+	t=1758560024; cv=none; b=G6zeMN8g+YItUK0K7usQKyXE9NOYaiPARDEG7MhGj3ZVNknqVfGSm+P5IhJoRC4U/SWbexFqwKJuj4nXXzVeRWSt9mPaPVRBZwaq0kEsvSvvZzV6CQaxdYF2t/pjPqvEgXmJDU4x/jm0xQOgVAMiorJLWc5wbKaORyVuOyswHi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558255; c=relaxed/simple;
-	bh=W67bb5xeAKFD4WCeyNYvkxIaDMl2y52xZkQejnTNGDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfKKKKkMT9Q7hXCiERCIE1GnuZ99Koq5rZ/4ucByOF0Ka66U8UTOV5VXo2t6wV6E+U+zq7Ql2qnHf4vQ7Lz5oZs2yd6uKf7G7P2QYJ/vpBSbKMAvMkOtV70pGM8jz7nteyK4LqYYRIJHIIAHdil3lJ30a/SBfDxSMFl4Q5rN2AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=X5tILOzJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YyK1ST7o; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1758560024; c=relaxed/simple;
+	bh=66YVdEIz0WO5xOUAZXPuRtDVfvF4ZqtngHDQvIbb4OU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDMr2xiA+G2M7/Gqf9WzuaRS21f7fNJsHSppcjLbQRJvtA0X8ZYUpmnd/cvTaaobxRLeRHuxKgOJKHASmrnuOuehJQ2A5H2bSLNoey51sJzQt8xPqh39rJWV07qvE7v9Ak5X+U27pFJvL8Nhj4F9X1uza9aScy75jWIH7sanCC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haa/u39e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="X5tILOzJ";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YyK1ST7o"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cVpMv4Kh5z9ssn;
-	Mon, 22 Sep 2025 18:24:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758558251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BmryXecZqKgG8YIjdIfh3974+nF+dOHXJtr8s2DrvYA=;
-	b=X5tILOzJ10dSZRDPuissL2Md6+nNcfNNrYKVXciXm0s7OT1bRcsgQahXeeafexCNP0Xcj7
-	LB5BPTJ2NTci7VTtDONg2D5QNSoN0uAFoHtaMDSCDmvP0wfqSeXwL8U+Xcc9f/R+NGTb27
-	TzHlhgQxtcULy+x/pnmCkX2B33JFwFRgUFfk+f+v2+DAbwMsrwQkTvoBTwgwC2ahkKK+93
-	7GyOFvtGSRAyrd2zUzHp/4OYyGMIUCcsho4h71QsxyBb333IleCtRoZ2whMwWFD7+LNpCX
-	aAL6uXf0jOzxlcwe4AZOADMKxPQr7HQPqu2YtTLCYjUkNg93Se6gzIYCYZwWhg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=YyK1ST7o;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <196d5c6d-0bd6-4dd5-b3ea-c8166b2bd830@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758558249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BmryXecZqKgG8YIjdIfh3974+nF+dOHXJtr8s2DrvYA=;
-	b=YyK1ST7otpjwIFGeNTOCqfE4981N9nYdM5iTdK1M7W7RV7WimQTZra9E7KNvR5Nq2GsOu3
-	Yr9jPALMG5sEZcKS3iQbw9DAiz5M79qkIhMvlP1aGyqXNOLUudOaSNUReAltKHKwCLAG6M
-	LaPV5gqrt4D6VQD7A21DGl86nJc/CdzSR5qM9CPb2HDA/3nrd0Cq49qbfnAq7zcZGBZ7xV
-	fP2VM8Q1X6xz0I8f8uRyxMh+IdbWlY9Tv+FUMrV2lZNHqCPzeI0OxXeiYjQGY4i6gnN3ya
-	xyi8o7yJaYMvyRmQky/fMFLpFqqhvvUZXd+bUVpSTxWQgl4xR3Soy7IKzET9yg==
-Date: Mon, 22 Sep 2025 18:24:08 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haa/u39e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB29C4CEF0;
+	Mon, 22 Sep 2025 16:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758560023;
+	bh=66YVdEIz0WO5xOUAZXPuRtDVfvF4ZqtngHDQvIbb4OU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=haa/u39eq5BLyx3UoZBQ1gg9wuP69x6DUj/rxEJE/qhGf9Fd0u5Te+KW89NvfVKBm
+	 7xfdjvF2tQCp+A3hO+2oeuDpGnIsney4VEfDVvrSa2vy31p4IX9TzZnbXuTV1LMwU8
+	 BeB7Eui+Noq6w7m/Qe1QZ1So3r3Tq+uGNJeMxhonPX7gduqIJRicoArwpC5BMarFk8
+	 20D+1Xfc30GxQ62VETnvK4LqIUJHYja/WxJ6u7Px4dEEmrEjM+PAN9ghH0UrzdMFYs
+	 YBUWsacp8SM86DyL5V89hpaoBGl8k9lmxjpu7vY3nWcJD2CwporgGCX+IRe0PkPxf4
+	 k5WmcfOv5NrnQ==
+Date: Mon, 22 Sep 2025 11:53:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: ksk4725@coasia.com, kenkim@coasia.com, jesper.nilsson@axis.com,
+	s.nawrocki@samsung.com, hgkim05@coasia.com, krzk+dt@kernel.org,
+	bread@coasia.com, shradha.t@samsung.com, mingyoungbo@coasia.com,
+	cw00.choi@samsung.com, krzk@kernel.org,
+	linux-kernel@vger.kernel.org, jspark@coasia.com,
+	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
+	limjh0823@coasia.com, smn1196@coasia.com, lightwise@coasia.com,
+	devicetree@vger.kernel.org, gwk1013@coasia.com, pjsin865@coasia.com,
+	lars.persson@axis.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, swathi.ks@samsung.com,
+	conor+dt@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 1/7] dt-bindings: clock: Add ARTPEC-9 clock controller
+Message-ID: <175856002216.463169.9530978340977850859.robh@kernel.org>
+References: <20250917085005.89819-1-ravi.patel@samsung.com>
+ <CGME20250917085025epcas5p229b9eba48bd93a1f059b3cc4656145bc@epcas5p2.samsung.com>
+ <20250917085005.89819-2-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Read back reset registers to
- assure values latched
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-References: <20250918134526.18929-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdWncCJQ_5uiATC+JhGr8K2ewO72L0DTWXtcx-OF-P=zVQ@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdWncCJQ_5uiATC+JhGr8K2ewO72L0DTWXtcx-OF-P=zVQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: jnc1m8ydpxy71fpzg6ij6fuwoh7wr1aa
-X-MBO-RS-ID: d2deca2706d36c40ebe
-X-Rspamd-Queue-Id: 4cVpMv4Kh5z9ssn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917085005.89819-2-ravi.patel@samsung.com>
 
-On 9/22/25 1:35 PM, Geert Uytterhoeven wrote:
 
-Hello Geert,
+On Wed, 17 Sep 2025 14:19:58 +0530, Ravi Patel wrote:
+> From: GyoungBo Min <mingyoungbo@coasia.com>
+> 
+> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
+> 
+> The Clock Management Unit (CMU) has a top-level block CMU_CMU
+> which generates clocks for other blocks.
+> 
+> Add device-tree binding definitions for following CMU blocks:
+> - CMU_CMU
+> - CMU_BUS
+> - CMU_CORE
+> - CMU_CPUCL
+> - CMU_FSYS0
+> - CMU_FSYS1
+> - CMU_IMEM
+> - CMU_PERI
+> 
+> Signed-off-by: GyoungBo Min <mingyoungbo@coasia.com>
+> Reviewed-by: Kyunghwan Kim <kenkim@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> ---
+>  .../bindings/clock/axis,artpec9-clock.yaml    | 232 ++++++++++++++++++
+>  include/dt-bindings/clock/axis,artpec9-clk.h  | 195 +++++++++++++++
+>  2 files changed, 427 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+> 
 
->> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
->> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
->> @@ -676,18 +676,31 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
->>
->>   #define rcdev_to_priv(x)       container_of(x, struct cpg_mssr_priv, rcdev)
->>
->> -static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->> -                         unsigned long id)
->> +static int cpg_mssr_writel_with_latch(struct reset_controller_dev *rcdev,
->> +                                     char *func, bool set, unsigned long id)
-> 
-> This function does a bit more than writel()-with-latch, so please find
-> a more suitable name. Or... continue reading.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I did so in V4.
-
->>   {
->>          struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
->>          unsigned int reg = id / 32;
->>          unsigned int bit = id % 32;
->> +       const u16 reset_reg = set ? priv->reset_regs[reg] : priv->reset_clear_regs[reg];
->>          u32 bitmask = BIT(bit);
->>
->> -       dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
->> +       if (func)
->> +               dev_dbg(priv->dev, "%s %u%02u\n", func, reg, bit);
->> +
->> +       writel(bitmask, priv->pub.base0 + reset_reg);
->> +       readl(priv->pub.base0 + reset_reg);
->> +
->> +       return 0;
->> +}
-> 
-> Now, do we want a special de(reset)-with-latch() function (which does
-> reduce code duplication), or would a simpler variant be more useful?
-> After this, we have three different "dummy read" mechanisms in this
-> driver:
-> 
->    1. Clock enable/disable and resume on RZ/A:
-> 
->           writeb(value, priv->pub.base0 + priv->control_regs[reg]);
-> 
->           /* dummy read to ensure write has completed */
->           readb(priv->pub.base0 + priv->control_regs[reg]);
->           barrier_data(priv->pub.base0 + priv->control_regs[reg]);
-> 
->    2. Reset handling on R-Car:
-> 
->           writel(bitmask, priv->pub.base0 + reset_reg);
->           readl(priv->pub.base0 + reset_reg);
-> 
->    3. Reset release on RZ/T2H and RZ/N2H:
-
-Maybe T2H support is not yet upstream , even in next ?
-
-In any case, 2 and 3 could be merged into single write-and-latch function.
-
->           writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> 
->           /*
->            * To secure processing after release from a module reset, dummy read
->            * the same register at least seven times.
->            */
->           for (i = 0; i < 7; i++)
->                   readl(priv->pub.base0 + priv->reset_regs[reg]);
-> 
-> So perhaps a simple helper like
-> 
->      void writel_with_latch(u32 val, volatile void __iomem *addr, unsigned int n)
->      {
->              writel(val, addr);
->              while (n-- > 0)
->                      readl(addr);
->      }
-> 
-> ? Do we need barrier_data(), like on RZ/A?
-
-I think so.
-
-> Unfortunately RZ/A uses byte-wide registers, so that one needs another
-> copy.
-> 
->> +
->> +static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->> +                         unsigned long id)
->> +{
->> +       struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> 
-> "priv" is unused (no compiler warning on your side?)
-I also have [PATCH] clk: renesas: cpg-mssr: Add missing 1ms delay into 
-reset toggle callback applied in tree, rebase was not accurate, dropped 
-in V4.
