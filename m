@@ -1,115 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EDB320A1D;
-	Tue, 23 Sep 2025 09:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7334E3203B2;
+	Tue, 23 Sep 2025 09:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758618461; cv=none; b=XZo90WrFWXoE7LIIqXm8sXcaJCY5u6FGWIhmDxO6jrakA0Md0P7EjR0npGx/IvzubojBzYYNeMDyKP+Ik9aY1gStStPGZVR+zrerjdoMsPbd4xV0nzND2Il2GXUpHCrkBQh/QOQcqXROHMA0Sly3TRkRcpMMFgYkRcBAk17OkWU=
+	t=1758618508; cv=none; b=sqYEI7RXqP8eEnTvJuu4hd4isWW+pV7Ecyx8dkJp9p3bAGa2hQm/b1ME2sCgZssI+EcuF2Gm5wZtS//aHFCpfXJs/mUyFjWs8h0B50ZvK6nSXP5OJFUddtBSHDQWlvOqzcUDrjuf3nvp+stDaKKJxByBeLJqz2XNi961epdXg+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758618461; c=relaxed/simple;
-	bh=kkCA8SAuPlhfPf3erMCajqMN5ix6aRl7bFBdFcZEqRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pl/dGBI37Kz5uVBBGdFu1XXsCfxhbeO1t4P0sIecvSuJCeSRDe3fjXmfEO+r89WEInruYDUpj+exM6Z4AVRHgx2oqhp+IbMz4n3g7DrVG2bpRgb2SxKO3d5Me9ilwhkmZiIukofAfq2tdElCRlGlr/qFMgNfD93Okq6wEwoFnOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3m+U6KH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758618508; c=relaxed/simple;
+	bh=dV6dkxSIgJIVDBjcMAUBchw7pIS41GHMU9a/Vh8z1nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCm4OcfM6S6zvdDM4vOUtrAPscBMEzm7CSn5DCFoX3PJw8vvCyXcReqcnzvjYXETdX55NlnPkCBCqIP2VFI7lu+aR3nFQtlrnvRPV2UIQ7DntbyAE2xd+QtcyJmTFlckW1Omw8PqfkOyk3Mcyh6a3arN5mq4ArHBpN3uAzJJrwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HMAF5w9u; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PK37n+hp; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3m+U6KH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF76C116B1;
-	Tue, 23 Sep 2025 09:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758618461;
-	bh=kkCA8SAuPlhfPf3erMCajqMN5ix6aRl7bFBdFcZEqRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q3m+U6KH9WiE7acahlltWpsy+84oMewDE/TQ5owV4ijWPp5icWn03RwVcgUjBc5gS
-	 zXTUDNGiHIbCrbV9C/iYOeNGz+M5m+BGWUKgHcgqvv+2CaTkbDZWIDq0WK2sLlOxCE
-	 04yk/Pq7o+L4cbjk8HtcVEYXpt+N5+caHnL1x8r5637Ith7QRC0JdwIcHlYLwobVwe
-	 IYN9qboRdoRAb5DO5lcPXnQF1CHt0GCSThptzuNU91oOFv6Q+R543hdrSjlgilb6kk
-	 Rw9QTdfe0ovaIqYnaLZWrp8YFhj3KlVeQtqH/vCyGPkiJ4b/auE+cDvm3tcNEhMsfJ
-	 muJVgYi9XANYQ==
-Date: Tue, 23 Sep 2025 11:07:38 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Michael Walle <mwalle@kernel.org>, 
-	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andrew Davis <afd@ti.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
-Message-ID: <20250923-brave-zebu-of-growth-a6426b@penduick>
-References: <20250915143440.2362812-1-mwalle@kernel.org>
- <20250915143440.2362812-3-mwalle@kernel.org>
- <7hv7lhp0e8.fsf@baylibre.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HMAF5w9u";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PK37n+hp"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cWDfb4QCBz9t7F;
+	Tue, 23 Sep 2025 11:08:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758618504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hfy179XI2ihTEF6wPEVdpaFbJQwQS69tfZ2sAasK7dQ=;
+	b=HMAF5w9ugE0r+cJtzysgZeSoW5sv81kFQZ29dYV7mEy60hQZIvoMBOMw/oiyrF+cckf552
+	h1OEULrbSnWUs7HaaYhfDCj1bTX0jEzod985rvnCLeNrMCalAQ6ao3CcVdQnJEeLY6QTd0
+	KbEWtivO/WrHy3L734LaSB7biymMGIJm0+vPq3aKf71Xqx/Wnuvldc2W/IKgTqAdSHyE1f
+	Z4Oz176PfoNull2wv1uWUQFNylWhJ5aMABG3vafPorsCQwzqi1fw1Q4Gk5P+SHjvttkmnC
+	dvKvB4IcxAq/HsGCtyisYp6nkN+G479rojZC8WGmWuChJyN7QjFIsaNNwJVkYw==
+Message-ID: <c6afd0b8-6613-45d1-936d-2d0265437316@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758618501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hfy179XI2ihTEF6wPEVdpaFbJQwQS69tfZ2sAasK7dQ=;
+	b=PK37n+hpOEkt/gZsa2hL79YQW4xdz6dFj5GrA1uIapv4yNqUIfuuqIA89EpWJ/VMUGzAfH
+	8ZgaCc3R7S1IXg4WAW432wVFgT+CRiBqLgaCk4NfUmBbncyua49dU+22ajDSmEzPKBouXs
+	PMWaoIV6ezsDTiet21k1VHPKUVFdBR1HEB7QWpo9SE+/dHXar7h9CDDVPPa7MIKsZJBzxm
+	hnOocMxfQxpZxso3I+YgQ2g7FGp8Bseg77NkZbN/X58alfrEQ4Ht/DFnugk5aDC9mw9Obv
+	ES4gsH5u2mUPEg64498/1JUQu9ZQsS5ELUFEUsksjZFIu0JFfAUK5Y0CDxc6Tw==
+Date: Tue, 23 Sep 2025 11:08:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="3iw34lfkiliihfo7"
-Content-Disposition: inline
-In-Reply-To: <7hv7lhp0e8.fsf@baylibre.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Read back reset registers to
+ assure values latched
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+References: <20250918134526.18929-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdWncCJQ_5uiATC+JhGr8K2ewO72L0DTWXtcx-OF-P=zVQ@mail.gmail.com>
+ <196d5c6d-0bd6-4dd5-b3ea-c8166b2bd830@mailbox.org>
+ <CAMuHMdW=WTTvhfe_qRBsp+T2cEC21Y62_O_Zhj_eUApqNdoX6Q@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdW=WTTvhfe_qRBsp+T2cEC21Y62_O_Zhj_eUApqNdoX6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: f60f5ccde293632b0b5
+X-MBO-RS-META: kau4yw1cz3xjmiodarfodk83kh9zpe4k
 
+On 9/23/25 9:11 AM, Geert Uytterhoeven wrote:
 
---3iw34lfkiliihfo7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
-MIME-Version: 1.0
+Hello Geert,
 
-On Wed, Sep 17, 2025 at 08:24:47AM -0700, Kevin Hilman wrote:
-> Michael Walle <mwalle@kernel.org> writes:
->=20
-> > The TISCI firmware will return 0 if the clock or consumer is not
-> > enabled although there is a stored value in the firmware. IOW a call to
-> > set rate will work but at get rate will always return 0 if the clock is
-> > disabled.
-> > The clk framework will try to cache the clock rate when it's requested
-> > by a consumer. If the clock or consumer is not enabled at that point,
-> > the cached value is 0, which is wrong.
->=20
-> Hmm, it also seems wrong to me that the clock framework would cache a
-> clock rate when it's disabled.  On platforms with clocks that may have
-> shared management (eg. TISCI or other platforms using SCMI) it's
-> entirely possible that when Linux has disabled a clock, some other
-> entity may have changed it.
-
-It doesn't really help that the CCF doesn't seem to agree on if it
-should do that in the first place :)
-
-In the original clk API definition, you're not supposed to call
-clk_get_rate() when the clock is disabled.
-
-https://elixir.bootlin.com/linux/v6.16.8/source/include/linux/clk.h#L746
-
-However, it's been allowed by the CCF since forever:
-
-https://elixir.bootlin.com/linux/v6.16.8/source/drivers/clk/clk.c#L1986
-
-But then, some drivers will return 0 as a valid value, and not an error
-code (whatever 0Hz for a clock means).
-
-It's kind of a mess, and very regression prone, so I don't really expect
-it to change anytime soon.
-
-Maxime
-
---3iw34lfkiliihfo7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNJjVAAKCRAnX84Zoj2+
-ds0nAX9cnO1qMu1gRrt93wqZ3E7heejWdZkXiLTOlsXu2u9hW0VAjJeUYt9/k6vh
-40iU+joBf0oNZk2TNHK5NY8d4PR+uru6sGDJqMFK0BBGGGWdlzNH5mgiIfgwVMdV
-1rDRIy6m2g==
-=8+3Q
------END PGP SIGNATURE-----
-
---3iw34lfkiliihfo7--
+>>>     3. Reset release on RZ/T2H and RZ/N2H:
+>>
+>> Maybe T2H support is not yet upstream , even in next ?
+> 
+> My bad, that is still under review (and I didn't even have the latest
+> version in my local tree). Latest version is
+> "[PATCH v3] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H"
+> https://lore.kernel.org/all/20250905114558.1602756-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Let's see how the T2H/N2H reset fares and which patch lands first, then 
+we can unify the accessors one way or the other ?
