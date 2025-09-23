@@ -1,148 +1,115 @@
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4C631158A;
-	Tue, 23 Sep 2025 07:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859F2316191
+	for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 07:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758612133; cv=none; b=IUWaBoK94Ccq0EW1te+N+1ny6S+wJ6664fa+MrZoab0ljtRxQx4tWohCaYZwOAeJs+UL5tRa7EZ9D1K8K2qu9inYN7t+i8z4Yo9ZvgWjrthWCdwBUYQBENbqqE3aVyf8bxyzG5vsPketDQWmVb18wUJoLvve1Z/1BxRWFThnM+Q=
+	t=1758613736; cv=none; b=Ls2TyBCQKtymJD/8PsVV5jwxPPdJ/04j5HM1KbO5pXYZcexmUnkOmF9na3dqA288u7kQ+6yX/JjMNxeOZwIaZU3cT1K/RcKkp2n/a7V7u6jeyPVF9++SCIc8/gMeuvQUCaCf+Bczsow39thMCnFM8c/9BOAO8WJo6/jlLf2JDf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758612133; c=relaxed/simple;
-	bh=UXWIhJQT0UWxMfY/+J9fpbJB9h4hs4LLSoJ3ohNFBv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smcRhb2ZtNw0nYSwmiN8CWyg2+6olJtj2jOFEaPQd49rMSfP7utWJO+Z/AD0sZVj+N21Idylc+9xH4YxDjcdTJH295CosSjiZxYq6XfES6FmQKNHZzuoyS7lgIsnRtW5mirur3QNZKBNI4gdD3QJ9EDvv7xHEOfRILcT3yKridw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=sTTBQf/a; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+	s=arc-20240116; t=1758613736; c=relaxed/simple;
+	bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QeXuYnk2aS4idxrlBYLHLyCOAWY/JPNaC/omlKeMl4Ok/sgPeQZOakTzbMz79r2JY8Fy/a3B2Uads98LFv4Wv47s9NQUOWx/Gtp3gIRiQ6np8pD3b26WpOLZncphbrzRiznd2+SuurbrpbQMBEEDkabyyJ5I9Bz5ApR2xZtqLM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Eznf5cwO; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="sTTBQf/a"
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0CBDD1C01D7; Tue, 23 Sep 2025 09:22:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1758612127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hwzWkQrBN4TucShSte7+gBBGke3z5o+Bkhkg05nMEo4=;
-	b=sTTBQf/a2nzDFGyFnuAvY+ZoWD8Hosb9TzAxDaZiDAvOEHBXFt2Ry+MnJvCHTHajjKDe30
-	+6esiaJNy6v6yDUz49gjYVaUeMw3Eoiy4/0gLL1s/YKgW31/ZpI0TrH8W7O7EFLug/Kc3m
-	TK/E85C8luh+gvffde677ZQ3AhTp++0=
-Date: Tue, 23 Sep 2025 09:22:06 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: barnabas.czeman@mainlining.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Adam Skladowski <a_skl39@protonmail.com>,
-	Sireesh Kodali <sireeshkodali@protonmail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	linux@mainlining.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
-Message-ID: <aNJKniJ46YuUsbQ+@duo.ucw.cz>
-References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
- <20250831-msm8937-v7-6-232a9fb19ab7@mainlining.org>
- <aNGLPdmOyh/pfroq@duo.ucw.cz>
- <97ee369f6ffbe42c72c57ebd72887b23@mainlining.org>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Eznf5cwO"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so3056419e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 00:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758613733; x=1759218533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
+        b=Eznf5cwOZ88V2MaKv6rCtt4MAxUW5dduUvOhPTHPEjhrlHMPdtFYL4g4qYiFPuFWR6
+         yRDDhVGIZ6DAt/SLexaLsJ/KzyndNLZjcqXhu4E2VfIOM+HoLI+eheKVIE1NGXowZAk1
+         yA14gM8ifFev7H/ctGl7NvU+O35jBj0uPidDyla1urUOMuP1VUnC4mYP/kDzVshUgnVy
+         5HpRSv7cAmu0dNByp8t0STC4EtGaMvBVJ3rzsrwYRC7PgGZmil1bFZeL5Mq8k6NBoj3S
+         5/T71ntfl4kZ5JIOnCaaRgMy4+X+mUCOuT9otCord4WGZj3z/5owucBaHuWvnfO7zr90
+         r5Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758613733; x=1759218533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AJaxzkgGMS2WBlrlop8PHPlSP36j70ySVSvjHs1aEs4=;
+        b=YN0kOlmFESwa0FD+rbbMoNfkzA3NhCLvd5jBIrHdv/rZkdPWfwcLJI+4hqyrcylINm
+         Kx7f/twZTD7l/sC8Pyblq8ejxwOCho7F+j29TgmiKNhZEjTD0jAzEdfbgPhYTGVzN60Z
+         azR2A/C0NeY1O/wQtJk3+yyOl8xkU92UupnHlKNuHdwntIsfzAwT2Kk67mvrWzGU0WqA
+         wSyNwfE4SHPjQCAimxqIW+iDW4EJ65B4X0oBIk4fnuQXKfvl+VqaSpXRhi6oIazHv21G
+         adtJbznH4CAh7mdZq1mb50TS3a6gXghI/cDvQr63C8D45bsL/f3iJjBFEz4R89AkaK8l
+         Te8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUI6D6isHAMnFu8tkzB39+/C8YFz9bwOB4cYOE4UVEdeSM57qi6nXuE1MJ5zi8BQaFs6JUeA12B6ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9L77HWnrQrta+frscUd6i3TadhJRCx6oWumBdxwcO1dKhGvRX
+	73Wk955b7gJXRHa0LcqZh1QL+sE9AO07+RdgvfsDU6Dw/0R9YLJYiwqEiGqXgyPXL9EMl4aA6ka
+	jeKpQdX+Z8798Anv8qyuFO7+d3Q31DP4M3qcgzlX8UQ==
+X-Gm-Gg: ASbGncuUyrMyVWMFJz09Ew2CPBkwjPkkTQpu+UgYzBcfDhFHCwOtcvlxKqZE3tqdWXR
+	BRQqcZfFyZ8wsalu/KDwCWIbewpE4cIf30DFKYgMR8xjkXDGNXIcPGpj/ObfacnhG4AzN6XOvAF
+	05J+0Q/gQKXq1bpmCaC60xDbGG99D35jKdZpRanRcIKq/3KMhiSAkxNWEoS3MXMXSDLRo/qwT19
+	0h7sFgZwgdEbtaFzGPWKcf9yZn5GLLUiLONUatb0z1xNEK/
+X-Google-Smtp-Source: AGHT+IFXCbUC7OKlJXhiIcyp3/0pEbhIPcVmkwcaoRpLoXztj3Zx0ZDwfLpI5huj43NEMpkp0HP1DS+xrpQFvaRxUT4=
+X-Received: by 2002:a05:6512:b19:b0:578:cee7:7aa9 with SMTP id
+ 2adb3069b0e04-580734f07d9mr498868e87.48.1758613732567; Tue, 23 Sep 2025
+ 00:48:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iO6C/R28FEPs1Luw"
-Content-Disposition: inline
-In-Reply-To: <97ee369f6ffbe42c72c57ebd72887b23@mainlining.org>
-
-
---iO6C/R28FEPs1Luw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+ <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com> <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
+In-Reply-To: <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 23 Sep 2025 09:48:41 +0200
+X-Gm-Features: AS18NWDP_wgtg5ZAo1aJS0Vwp6mqsgj6RBa2BQg1A6VrGdFXcg4GLeRrQ88qOWM
+Message-ID: <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
+Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
+To: Dang Huynh <dang.huynh@mainlining.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-> > Hi!
-> >=20
-> > > +	led-controller@45 {
-> > > +		compatible =3D "awinic,aw2013";
-> > > +		reg =3D <0x45>;
-> > > +		#address-cells =3D <1>;
-> > > +		#size-cells =3D <0>;
-> > > +
-> > > +		vcc-supply =3D <&pm8937_l10>;
-> > > +		vio-supply =3D <&pm8937_l5>;
-> > > +
-> > > +		led@0 {
-> > > +			reg =3D <0>;
-> > > +			function =3D LED_FUNCTION_STATUS;
-> > > +			led-max-microamp =3D <5000>;
-> > > +			color =3D <LED_COLOR_ID_RED>;
-> > > +		};
-> > > +
-> > > +		led@1 {
-> > > +			reg =3D <1>;
-> > > +			function =3D LED_FUNCTION_STATUS;
-> > > +			led-max-microamp =3D <5000>;
-> > > +			color =3D <LED_COLOR_ID_GREEN>;
-> > > +		};
-> > > +
-> > > +		led@2 {
-> > > +			reg =3D <2>;
-> > > +			function =3D LED_FUNCTION_STATUS;
-> > > +			led-max-microamp =3D <5000>;
-> > > +			color =3D <LED_COLOR_ID_BLUE>;
-> > > +		};
-> > > +	};
-> > > +};
-> >=20
-> > That's single, 3-color LED, right? Please see LED multicolor support.
-> As far as i know aw2013 driver does not have multicolor support.
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+On Tue, Sep 23, 2025 at 5:45=E2=80=AFAM Dang Huynh <dang.huynh@mainlining.o=
+rg> wrote:
+>
+> On Mon, Sep 22, 2025 at 04:17:05PM +0200, Bartosz Golaszewski wrote:
+> > On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Dang Huynh via B4 Relay
+> > <devnull+dang.huynh.mainlining.org@kernel.org> wrote:
+> > >
+> > > This patch series aims to add SDMMC driver and various drivers requir=
+ed
+> > > for SDMMC controller to function.
+> > >
+> > > This also fixed a bug where all the GPIO switched from INPUT to OUTPU=
+T
+> > > after the GPIO driver probed or by reading the GPIO debugfs.
+> > >
+> > > This patch series is a split from [1] to ease the maintainers.
+> > >
+> >
+> > This is still targeting at least 4 subsystems and isn't making the
+> > merging any easier. Are there any build-time dependencies here? If
+> > not, then split it further into small chunks targeting individual
+> > subsystems and the relevant ARM SoC tree.
+> The MMC driver depends on both the clock and the DMA driver.
+>
 
-I believe that needs to be fixed before more bugs are added on top to
-work around that problem...
+But is the dependency a build-time one or does the MMC DT node
+reference clocks and the DMA engine by phandle? I assume it's the
+latter in which case it's fine for them to go into next separately.
 
-=2E..and before that bug is cemented in the ABI.
-
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
-
---iO6C/R28FEPs1Luw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaNJKngAKCRAw5/Bqldv6
-8rwwAKCAEqvmxyif1M2EfR+OkPL1Yc+kKACfXIQxtdTTJxoVlwLVcRR2GW3coKg=
-=tPlv
------END PGP SIGNATURE-----
-
---iO6C/R28FEPs1Luw--
+Bart
