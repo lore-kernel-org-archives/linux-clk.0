@@ -1,72 +1,73 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2143725A322
-	for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 14:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2951A9F90
+	for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 14:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758638431; cv=none; b=n+UPnC1Qhin2k/OhVg4AY2CtrzcTFVu3fFCVyvNp7J3NVzHDsQnQx80lpTRh74LP0d6Y8GexdV9bI6pGzi7o4eSIWgIJFafgYfSsnH0y2E5iL+Lf3Qnbf17bUxHFuCGtVGLXPCjxc7+KVEYqJFOsAjC3BrBTgBoYQ5150QQK/ew=
+	t=1758638446; cv=none; b=FFOL5kcrMuhiCk+4q8m3qnBB+GZ3hUF8XJJpPLASz4xz8oiVCRpkPdG8V7ZYIqv/Zi8v/sEK5yNq2rRwIYKBXBaAxcta0H0TFkooHnaUVjy5UlgKsNmAoScqBaT+V6N02QOL66nWke+g0IBGC5OQ7IE1jgHmqDfS+QH3QcaYNAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758638431; c=relaxed/simple;
-	bh=H1GPptBRUoh2w27cPKC4anGOn4jSZDc2JlW+WJNT3Wg=;
+	s=arc-20240116; t=1758638446; c=relaxed/simple;
+	bh=D3UgrSosq/MOSn8K9Aaz+rOUHHRaOZ0z2hzHPegpLO8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZN4iBjNwNn1MKbXZTc7i5VskQqzR8czmsWCktTINV0TYg2d47CFEN+55ix+4Tl4khEGwW0kvDeuGsX63jF2pPF64vwNkCh3a71boKvvwyqDFGrZLRtoLSXRbUN/hwQ1yDfUXAuh7GJ2rptFEKeG3uyez4pdJOqHxmnlwOfC41kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYGKThG+; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=gRXKkZdUH8YoUcYI0rJbfzi0a407jIVn1PPrvriPxHV/4U6kkTu2l6QesPbZtWHAJrhDcETsn7R2qAwDS+R/9rmt71rYZB1/BuS8EPVIk5fOaCiU5jDf7ABk5/Ug3g5PPYhDvyACZnxq4HTxQf2w0c2YSrdAM5eP0u7he7+ZfYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VGZTPf1K; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYGKThG+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VGZTPf1K"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758638428;
+	s=mimecast20190719; t=1758638443;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0PYeewd8MlKC92Ky0ymLghLD05PEieLt3ORobkOYxO0=;
-	b=BYGKThG+bfaXRQq6TeP1XbkffNVAGAb3IPDkl821GUF70+c5XVS2uSHlK/PbWnHtBvXyy8
-	8PUY8ueIfmmxuSNeDqotXPWdM1+13/D9bn9LPETZ8SQU8fysNs/CmTd3UUNtAoJAPZrn1w
-	09v3dtuQI+zDglvO9WosT38fXZgot/I=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=D+erhI99JOuUzOc3CsexcHwDM2IOmUBQdfJnBT87dGw=;
+	b=VGZTPf1Kvdxh/hYZS72u2eKrZmNrx2wpOmFi+3u/l+TVpDfZd3xe8jR/Meu65iJZ6F8W39
+	tlHlbg6XgjzJZ6AEGq7JzVQAZpMrvFLXiPh1ARpCD+eCVGLr8sm9tuCFZO4y6ZMiXZBKOE
+	l+VWpR3h4Nrkdg2oBwZensH0YU/6XRg=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-468-qf7ZCCxpOBykexCNaSug_w-1; Tue, 23 Sep 2025 10:40:22 -0400
-X-MC-Unique: qf7ZCCxpOBykexCNaSug_w-1
-X-Mimecast-MFC-AGG-ID: qf7ZCCxpOBykexCNaSug_w_1758638419
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-84f13fb5b5eso303077785a.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 07:40:19 -0700 (PDT)
+ us-mta-127-Gya9C4b1OW2G9lLothCiEQ-1; Tue, 23 Sep 2025 10:40:25 -0400
+X-MC-Unique: Gya9C4b1OW2G9lLothCiEQ-1
+X-Mimecast-MFC-AGG-ID: Gya9C4b1OW2G9lLothCiEQ_1758638425
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-827061b4ca9so1036827085a.3
+        for <linux-clk@vger.kernel.org>; Tue, 23 Sep 2025 07:40:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758638419; x=1759243219;
+        d=1e100.net; s=20230601; t=1758638425; x=1759243225;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0PYeewd8MlKC92Ky0ymLghLD05PEieLt3ORobkOYxO0=;
-        b=UfNSIpZu7w6blKo4de5+V4Ix2+XQ1iffTIHN7H9690yBpJ6M4SpQVn3fqZ7P9RszEW
-         ZecTO33Z8Hx5DGYLgRI3wddtkaU0c/NCqqpIp9sNolEV4JjwugIRjvFuasZ4+lO8v6RX
-         jCGQPcF/o55DPcpsmEAk6QzJhCn+ZNoxwpq6SYXU5bzLP/3mUcHlt9RclPFGwUMwZ3m9
-         hIngt5+xCoWekAX0oP6co23E7NtDraTQ6NDaNBIjrVadwHGk/v9IelFDKqerWOF+4MbL
-         6R1zQjCSWVJwkAW0KXg76mCnf3qpxbXs4T9LWN+JP/w7iESNQfXMlgo6Sooby8EypkWN
-         R/Rg==
-X-Gm-Message-State: AOJu0Yw+AeQMI3N5qK/PYQEtVTzXmtBK7END2UpsH8SN36QIeJ8iAiWK
-	c7lkRXPoR+V9kOeQxCAwfvAk/pKgWq3rpObhw9onDsbL8yXp2o8yy9wqiwIGu7EgeUbl+V9Rq0e
-	9Sm/iDXGmw2qD1+7vukwhU+3oEchuNdRUVCEWDvOEhM31+p+5iN+pUdY6v+pE5Q==
-X-Gm-Gg: ASbGnctYJIhUS+5TGsiMRDM21SWQHGWanxtT/WJy5qfPOPzmDCxPu0tWsMOQ1/0hdw4
-	uwy5rBUNGWDMlJUxJNxk0N9GiQT/9qk/95KRJlNtg2vfn8it/x3bq6H3prQEruMAHqmG58bCKIi
-	B9FqvpqQP9rHo04bt1XXN+UUO6F6Pc0twvA5FRXvatWM7vhNKMPUd9IbjHyUb+axXR+0LSeXinh
-	xPzT1EcXSlSAc26YGZOnWLdiJc4Z9EMIv+iqHTNfPQ293gEJylt8B+9yxdGVsELgm8qYNMZpCEf
-	8vfhOsyu4Cd2OpHtpVgquQCDik2T0IT4mwm5D7VW3iliQLnzoYlYV5xOgZtIV8cD0ek4KGev4RI
-	v7FASB6jOU8x85aqJlILiB6vifpIQ4JJwKMkRg3A=
-X-Received: by 2002:a05:620a:198d:b0:850:77f0:3f47 with SMTP id af79cd13be357-85169115b30mr347183485a.6.1758638418773;
-        Tue, 23 Sep 2025 07:40:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbgVS6UuxqwfuMj3mpvBhdDbNqqkvaMjz/xybyYpq+FR7zcqyCung0SHqwOTKpF22MmT0GVA==
-X-Received: by 2002:a05:620a:198d:b0:850:77f0:3f47 with SMTP id af79cd13be357-85169115b30mr347179385a.6.1758638418218;
-        Tue, 23 Sep 2025 07:40:18 -0700 (PDT)
+        bh=D+erhI99JOuUzOc3CsexcHwDM2IOmUBQdfJnBT87dGw=;
+        b=lHX6LVLPx+//9utXzQNsiKaWkT3xqFrLaRNl2aAOANu1zihL2YuhaWoH26CVZ2BkQX
+         bq2dXZPSAuzayNcsrpI+Zn+NeQDnhmLUP4bILFo/z36WuwqLfBK48BjZWaXxO8JHdqhk
+         MUXHSWtakEylLR3wDhXH7sAtYyhpsLS1A+XBdmgin6ot6JmiBeOL4OJfHfIqwJQqRTLO
+         wCD6uKOE8HK0cpd4cGgG0kgokQwkWhqiALLky14eSlSomPp1B7McAF8Wqflw9gHwEK2e
+         rUhdoaIH81Omt/o4siq80jiKSfSkhQK+xn+CXo1a9RjjgjpgRiXGIfV6WXqeWopb+yQ1
+         utYw==
+X-Gm-Message-State: AOJu0YyKQPzKCifCTJtjxNNy79IieC+z8tH6AeDiKnuVQ2LOFZkowB8P
+	eZ4S6t9dnj/rs7DYo6SkKl9Uyynop5FmKrP2BMBn2SibpZVg4XX1cIDPUfz+ynwAdsQfxlmastL
+	0B7mI1J9UVs87yq/1nw2SRjR9Tjkc3+AbSVG+yiECluTHAy6NnGy6DUivtj/kSw==
+X-Gm-Gg: ASbGncsXtMdTIz0dR2ck1DZazZZtBzDZAD0NJIbnxYWJVwtjBz/e/MimVAbUmixEosv
+	m1rtDa5SRQ3zXNaAt4pZKd4D/LbhRRvNt7e1nZbPdWMj2tqh7pvsFqBeCIT68osf3hdqUVcUxn9
+	PLayUpLfyV89yrRWV9/46Fte+UX8DWyaBvsxk03hdOwk3RHeLcpFdl32WMZiQcaRG1UuvEGaAb1
+	XoD2mbTHwILg6E/NXuFdPkhk0piCrtmSeQjQmNzbcYuwk2+G1CJUgMt3zLXxw+jNhF6EY2bfrQi
+	gxsx8u1IkyTytFAdLxlq7glQaEtKqZPfGZQ+rGMoEpO04kE8tXS69hrOHLzNsDcLfj4ojFXbpz6
+	OLmuNeLHboALW80AEg452lYeOKpqYHzNsvdwJh7w=
+X-Received: by 2002:a05:620a:d8a:b0:812:c6e3:6663 with SMTP id af79cd13be357-8516ba5c35emr303165585a.34.1758638424930;
+        Tue, 23 Sep 2025 07:40:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7D73wHsfmP93/Sd0Q4FqlIqORkx+fAcKsqHGCJ9Fpb8lMOLSJtCsdrIjyP8S4cVr0zCMXug==
+X-Received: by 2002:a05:620a:d8a:b0:812:c6e3:6663 with SMTP id af79cd13be357-8516ba5c35emr303161285a.34.1758638424314;
+        Tue, 23 Sep 2025 07:40:24 -0700 (PDT)
 Received: from [10.175.117.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-84f2f6f3c25sm230272985a.49.2025.09.23.07.40.15
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-84f2f6f3c25sm230272985a.49.2025.09.23.07.40.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 07:40:17 -0700 (PDT)
+        Tue, 23 Sep 2025 07:40:23 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 23 Sep 2025 10:39:29 -0400
-Subject: [PATCH RFC v4 10/12] clk: add support for v2 rate negotiation
+Date: Tue, 23 Sep 2025 10:39:31 -0400
+Subject: [PATCH RFC v4 12/12] clk: test: update divider kunit tests for v1
+ and v2 rate negotiation
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,8 +75,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250923-clk-tests-docs-v4-10-9205cb3d3cba@redhat.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250923-clk-tests-docs-v4-12-9205cb3d3cba@redhat.com>
 References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
 In-Reply-To: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -84,409 +85,165 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14850; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6302; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=H1GPptBRUoh2w27cPKC4anGOn4jSZDc2JlW+WJNT3Wg=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIubTToeDv57+Q7fYVR3TerGdTWiBtJBcxc7dSVmDkn8
- kTxsfvPOkpZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZiIGycjw6dHpxp+nrBY8eF0
- iqFroEZCj5TmPQsWH70lRbM4M/4Wr2X4p11ssX6pwtaG/72/ehZHv+O2+VkxS9Xk7wfBQ0HrEmz
- PcAMA
+ bh=D3UgrSosq/MOSn8K9Aaz+rOUHHRaOZ0z2hzHPegpLO8=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIubTRcsnyrxlvJRTGXHzxVa+Dbvcaj9kidJs+JwOKF6
+ 1/P33TxXkcpC4MYF4OsmCLLklyjgojUVbb37miywMxhZQIZwsDFKQATSTZm+O8bY5OYtenwxQfR
+ EVErn77OOchw21lN/b5hqIljzKEw7hiGvzLlRe1WapwMGucS/LR6hc7F9K5R9e+csvHi7b7F4Te
+ NWAE=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-The Common Clock Framework is expected to keep a clock’s rate stable
-after setting a new rate with:
+Update the divider kunit tests to verify that the v1 and v2 rate
+negotiation logic is working as expected.
 
-    clk_set_rate(clk, NEW_RATE);
-
-Clock consumers do not know about the clock hierarchy, sibling clocks,
-or the type of clocks involved. However, several longstanding issues
-affect how rate changes propagate through the clock tree when
-CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
-
-- A clock in some cases can unknowingly change a sibling clock's rate.
-  More details about this particular case are documented at the Link
-  tag below.
-
-- No negotiation is done with the sibling clocks, so an inappropriate
-  or less than ideal parent rate can be selected.
-
-An unknown subset of existing boards are unknowingly dependent on the
-existing behavior, so it's risky to change the way the rate negotiation
-logic is done in the clk core.
-
-Add support for v1 and v2 rate negotiation logic to the clk core. When
-a child determines that a parent rate change needs to occur when the
-v2 logic is used, the parent negotiates with all nodes in that part of
-the clk subtree and picks the first rate that's acceptable to all nodes.
-
-The v2 logic is used when the negotiate_rates clk op is defined
-on the parent, or current clk code. Otherwise, the existing v1 logic
-will be used. Additionally, the clk_v2_rate_negotiation kernel parameter
-is introduced to help with debugging when you suspect your board is
-unknowingly dependent the legacy behavior.
-
-Link: https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f220442@redhat.com/
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  15 +++
- Documentation/driver-api/clk.rst                |   3 +
- drivers/clk/clk.c                               | 143 +++++++++++++++++++++---
- include/linux/clk-provider.h                    |   7 ++
- include/linux/clk.h                             |  20 ++++
- 5 files changed, 174 insertions(+), 14 deletions(-)
+ drivers/clk/clk_test.c | 77 ++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 59 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 747a55abf4946bb9efe320f0f62fdcd1560b0a71..3b8534811792165d0468616c8cbb3b78f3591472 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -695,6 +695,21 @@
- 			platform with proper driver support.  For more
- 			information, see Documentation/driver-api/clk.rst.
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 7c4d1a50a7dd0bfb66e021ba314a9a9709813d97..87af60d0782274c9faacf7729ed95bf04dfd4860 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -763,6 +763,7 @@ static int clk_rate_change_sibling_div_div_test_init(struct kunit *test)
+ 	test->priv = ctx;
  
-+	clk_v2_rate_negotiation
-+			[CLK]
-+			Use the v2 common clk rate negotiation logic. In some
-+			cases when a child needs to change the rate of it's
-+			parent clk, the rate of a sibling clk can be
-+			unexpectedly changed with the v1 rate negotiation logic,
-+			and some platforms are unknowingly dependent on this
-+			behavior.
-+
-+			This defaults to 1 where the v2 interface is used when
-+			supported by the clk providers. If it is 0, then the v1
-+			interface will be used. This is useful for debugging when
-+			you suspect your board is unknowingly dependent the
-+			legacy behavior.
-+
- 	clock=		[BUGS=X86-32, HW] gettimeofday clocksource override.
- 			[Deprecated]
- 			Forces specified clocksource (if available) to be used
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 93bab5336dfda06069eea700d2830089bf3bce03..c46ee62ba5bd1bf0c66ca282c582963b9ea55580 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -75,6 +75,9 @@ the operations defined in clk-provider.h::
- 		void		(*disable)(struct clk_hw *hw);
- 		int		(*is_enabled)(struct clk_hw *hw);
- 		void		(*disable_unused)(struct clk_hw *hw);
-+		bool            (*negotiate_rates)(struct clk_hw *hw,
-+					           struct clk_rate_request *req,
-+					           bool (*check_rate)(struct clk_core *, unsigned long));
- 		unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 						unsigned long parent_rate);
- 		long		(*round_rate)(struct clk_hw *hw,
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 018dd5a32ecbf166718da3eda851f51fdfdd2088..0cab15f0d7c3d45ff38c1d9971f29d95ac402d41 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -6,6 +6,7 @@
-  * Standard functionality for the common clock API.  See Documentation/driver-api/clk.rst
-  */
- 
-+#include <kunit/visibility.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/clk-conf.h>
-@@ -92,6 +93,8 @@ struct clk_parent_map {
-  *                     clk_core->rate every time the clock is reparented, and
-  *                     when we're doing the orphan -> !orphan transition.
-  * @new_rate:          New rate to be set during a rate change operation.
-+ * @validate_rate:     Temporary rate that's used when various clk nodes are
-+ *                     negotiating a rate with the v2 rate negotiation logic.
-  * @new_parent:        Pointer to new parent during parent change. This is also
-  *                     used when a clk's rate is changed.
-  * @new_child:         Pointer to new child during reparenting. This is also
-@@ -130,6 +133,7 @@ struct clk_core {
- 	unsigned long		rate;
- 	unsigned long		req_rate;
- 	unsigned long		new_rate;
-+	unsigned long		validate_rate;
- 	struct clk_core		*new_parent;
- 	struct clk_core		*new_child;
- 	unsigned long		flags;
-@@ -411,6 +415,44 @@ static bool clk_core_is_enabled(struct clk_core *core)
- 
- /***    helper functions   ***/
- 
-+static bool clk_v2_rate_negotiation = 1;
-+static int __init clk_v2_rate_negotiation_setup(char *str)
-+{
-+	unsigned long enabled;
-+
-+	if (!kstrtoul(str, 0, &enabled))
-+		clk_v2_rate_negotiation = enabled ? 1 : 0;
-+
-+	return 1;
-+}
-+__setup("clk_v2_rate_negotiation", clk_v2_rate_negotiation_setup);
-+
-+static int clk_core_use_v2_rate_negotiation(struct clk_core *core)
-+{
-+	bool has_v2_ops = core->ops->negotiate_rates ||
-+		(core->parent && core->parent->ops->negotiate_rates);
-+
-+	return has_v2_ops && clk_v2_rate_negotiation;
-+}
-+
-+void clk_enable_v1_rate_negotiation(void)
-+{
-+	clk_v2_rate_negotiation = false;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(clk_enable_v1_rate_negotiation);
-+
-+void clk_enable_v2_rate_negotiation(void)
-+{
-+	clk_v2_rate_negotiation = true;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(clk_enable_v2_rate_negotiation);
-+
-+int clk_use_v2_rate_negotiation(struct clk *clk)
-+{
-+	return clk_core_use_v2_rate_negotiation(clk->core);
-+}
-+EXPORT_SYMBOL_IF_KUNIT(clk_use_v2_rate_negotiation);
-+
- const char *__clk_get_name(const struct clk *clk)
- {
- 	return !clk ? NULL : clk->core->name;
-@@ -2321,7 +2363,8 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 	ctx->parent.hw.init = CLK_HW_INIT_NO_PARENT("parent", &clk_dummy_rate_ops, 0);
++	ctx->parent.negotiate_step_size = 1 * HZ_PER_MHZ;
+ 	ctx->parent.rate = 24 * HZ_PER_MHZ;
+ 	ret = clk_hw_register_kunit(test, NULL, &ctx->parent.hw);
+ 	if (ret)
+@@ -793,6 +794,20 @@ static int clk_rate_change_sibling_div_div_test_init(struct kunit *test)
+ 	return 0;
  }
  
- static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
--			     struct clk_core *new_parent, u8 p_index)
-+			     struct clk_core *new_parent, u8 p_index,
-+			     struct clk_core *initiating_clk)
- {
- 	struct clk_core *child;
- 
-@@ -2334,8 +2377,66 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
- 		new_parent->new_child = core;
- 
- 	hlist_for_each_entry(child, &core->children, child_node) {
--		child->new_rate = clk_recalc(child, new_rate);
--		clk_calc_subtree(child, child->new_rate, NULL, 0);
-+		if (child == initiating_clk || !clk_core_use_v2_rate_negotiation(child))
-+			child->new_rate = clk_recalc(child, new_rate);
-+		else
-+			child->new_rate = child->rate;
++static int clk_rate_change_sibling_div_div_v1_test_init(struct kunit *test)
++{
++	clk_enable_v1_rate_negotiation();
 +
-+		clk_calc_subtree(child, child->new_rate, NULL, 0, initiating_clk);
-+	}
++	return clk_rate_change_sibling_div_div_test_init(test);
 +}
 +
-+static bool clk_check_rate(struct clk_core *core, unsigned long validate_rate)
++static int clk_rate_change_sibling_div_div_v2_test_init(struct kunit *test)
 +{
-+	struct clk_rate_request req;
-+	struct clk_hw *orig_parent;
-+	struct clk_core *child;
-+	int ret, old_flags;
++	clk_enable_v2_rate_negotiation();
 +
-+	hlist_for_each_entry(child, &core->children, child_node) {
-+		clk_core_init_rate_req(child, &req, child->new_rate);
-+		req.best_parent_rate = validate_rate;
-+		orig_parent = req.best_parent_hw;
-+
-+		/*
-+		 * Round the existing child rate based on the new proposed
-+		 * parent rate. Don't allow the parent rate to be changed.
-+		 */
-+		old_flags = child->flags;
-+		child->flags &= ~CLK_SET_RATE_PARENT;
-+		ret = clk_core_determine_round_nolock(child, &req);
-+		child->flags = old_flags;
-+
-+		if (ret < 0)
-+			return false;
-+
-+		if (WARN_ON_ONCE(req.best_parent_rate != validate_rate))
-+			return false;
-+
-+		// FIXME - muxes not supported at the moment
-+		if (req.best_parent_hw != orig_parent)
-+			return false;
-+
-+		if (req.rate < child->new_rate || req.rate > child->new_rate)
-+			return false;
-+
-+		// Check the child's children (if present)
-+		if (!clk_check_rate(child, req.rate))
-+			return false;
-+	}
-+
-+	core->validate_rate = validate_rate;
-+
-+	return true;
++	return clk_rate_change_sibling_div_div_test_init(test);
 +}
 +
-+static void clk_accept_rate_negotiations(struct clk_core *core)
-+{
-+	struct clk_core *child;
-+
-+	core->new_rate = core->validate_rate;
-+	hlist_for_each_entry(child, &core->children, child_node) {
-+		clk_accept_rate_negotiations(child);
- 	}
- }
- 
-@@ -2344,11 +2445,13 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
-  * changed.
-  */
- static struct clk_core *clk_calc_new_rates(struct clk_core *core,
--					   unsigned long rate)
-+					   unsigned long rate,
-+					   struct clk_core *initiating_clk)
+ static void clk_rate_change_sibling_div_div_test_exit(struct kunit *test)
  {
- 	struct clk_core *top = core;
- 	struct clk_core *old_parent, *parent;
- 	unsigned long best_parent_rate = 0;
-+	bool fine_tune_rates = false;
- 	unsigned long new_rate;
- 	unsigned long min_rate;
- 	unsigned long max_rate;
-@@ -2392,7 +2495,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 		return NULL;
- 	} else {
- 		/* pass-through clock with adjustable parent */
--		top = clk_calc_new_rates(parent, rate);
-+		top = clk_calc_new_rates(parent, rate, initiating_clk);
- 		new_rate = parent->new_rate;
- 		goto out;
- 	}
-@@ -2416,11 +2519,23 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	}
+ 	struct clk_rate_change_sibling_div_div_context *ctx = test->priv;
+@@ -833,16 +848,21 @@ static void clk_test_rate_change_sibling_div_div_2(struct kunit *test)
+ 	struct clk_rate_change_sibling_div_div_context *ctx = test->priv;
+ 	int ret;
  
- 	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
--	    best_parent_rate != parent->rate)
--		top = clk_calc_new_rates(parent, best_parent_rate);
-+	    best_parent_rate != parent->rate) {
-+		top = clk_calc_new_rates(parent, best_parent_rate, initiating_clk);
-+		fine_tune_rates = true;
+-	kunit_skip(test, "This needs to be fixed in the core.");
+-
+ 	ret = clk_set_rate(ctx->child1_clk, 48 * HZ_PER_MHZ);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 48 * HZ_PER_MHZ);
+ 	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 48 * HZ_PER_MHZ);
+ 	KUNIT_EXPECT_EQ(test, ctx->child1.div, 1);
+-	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 24 * HZ_PER_MHZ);
+-	KUNIT_EXPECT_EQ(test, ctx->child2.div, 2);
++
++	if (clk_use_v2_rate_negotiation(ctx->child1_clk)) {
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 24 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child2.div, 2);
++	} else {
++		// Legacy behavior in v1 logic where sibling clks are expectedly changed.
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 48 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child2.div, 1);
 +	}
+ }
  
- out:
--	clk_calc_subtree(core, new_rate, parent, p_index);
-+	clk_calc_subtree(core, new_rate, parent, p_index, initiating_clk);
-+
-+	if (fine_tune_rates && clk_core_use_v2_rate_negotiation(top)) {
-+		struct clk_rate_request req;
-+
-+		clk_core_init_rate_req(top, &req, top->new_rate);
-+		if (!top->ops->negotiate_rates(top->hw, &req, clk_check_rate))
-+			return NULL;
-+
-+		clk_accept_rate_negotiations(top);
+ /*
+@@ -856,19 +876,26 @@ static void clk_test_rate_change_sibling_div_div_3(struct kunit *test)
+ 	struct clk_rate_change_sibling_div_div_context *ctx = test->priv;
+ 	int ret;
+ 
+-	kunit_skip(test, "This needs to be fixed in the core.");
+-
+ 	ret = clk_set_rate(ctx->child1_clk, 32 * HZ_PER_MHZ);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	ret = clk_set_rate(ctx->child2_clk, 48 * HZ_PER_MHZ);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+-	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 96 * HZ_PER_MHZ);
+-	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 32 * HZ_PER_MHZ);
+-	KUNIT_EXPECT_EQ(test, ctx->child1.div, 3);
+-	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 48 * HZ_PER_MHZ);
+-	KUNIT_EXPECT_EQ(test, ctx->child2.div, 2);
++	if (clk_use_v2_rate_negotiation(ctx->child1_clk)) {
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 96 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 32 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child1.div, 3);
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 48 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child2.div, 2);
++	} else {
++		// Legacy behavior in v1 logic where sibling clks are expectedly changed.
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 48 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 48 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child1.div, 1);
++		KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 48 * HZ_PER_MHZ);
++		KUNIT_EXPECT_EQ(test, ctx->child2.div, 1);
 +	}
- 
- 	return top;
  }
-@@ -2468,7 +2583,7 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
-  * walk down a subtree and set the new rates notifying the rate
-  * change on the way
-  */
--static void clk_change_rate(struct clk_core *core)
-+static void clk_change_rate(struct clk_core *core, struct clk_core *initiating_clk)
- {
- 	struct clk_core *child;
- 	struct hlist_node *tmp;
-@@ -2537,7 +2652,7 @@ static void clk_change_rate(struct clk_core *core)
- 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
  
- 	if (core->flags & CLK_RECALC_NEW_RATES)
--		(void)clk_calc_new_rates(core, core->new_rate);
-+		(void)clk_calc_new_rates(core, core->new_rate, initiating_clk);
+ static struct kunit_case clk_rate_change_sibling_div_div_cases[] = {
+@@ -879,13 +906,25 @@ static struct kunit_case clk_rate_change_sibling_div_div_cases[] = {
+ };
  
- 	/*
- 	 * Use safe iteration, as change_rate can actually swap parents
-@@ -2547,12 +2662,12 @@ static void clk_change_rate(struct clk_core *core)
- 		/* Skip children who will be reparented to another clock */
- 		if (child->new_parent && child->new_parent != core)
- 			continue;
--		clk_change_rate(child);
-+		clk_change_rate(child, initiating_clk);
- 	}
- 
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
--		clk_change_rate(core->new_child);
-+		clk_change_rate(core->new_child, initiating_clk);
- 
- 	clk_pm_runtime_put(core);
- }
-@@ -2608,7 +2723,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return -EBUSY;
- 
- 	/* calculate new rates and get the topmost changed clock */
--	top = clk_calc_new_rates(core, req_rate);
-+	top = clk_calc_new_rates(core, req_rate, core);
- 	if (!top)
- 		return -EINVAL;
- 
-@@ -2627,7 +2742,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	}
- 
- 	/* change the rates */
--	clk_change_rate(top);
-+	clk_change_rate(top, core);
- 
- 	core->req_rate = req_rate;
- err:
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129453c241f1b1755f2c2f2a7ed8f77..9041b17ba99ef16a01e9f4d749e2e4b601a94b93 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -129,6 +129,10 @@ struct clk_duty {
-  * @restore_context: Restore the context of the clock after a restoration
-  *		of power.
-  *
-+ * @negotiate_rates: When a child clk requests a new rate that requires a rate
-+ *		change from the parent, this negotiates a new parent rate that's
-+ *		acceptable to all of the children.
-+ *
-  * @recalc_rate: Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-  *		ensure that the prepare_mutex is held across this call. If the
-@@ -242,6 +246,9 @@ struct clk_ops {
- 	void		(*disable_unused)(struct clk_hw *hw);
- 	int		(*save_context)(struct clk_hw *hw);
- 	void		(*restore_context)(struct clk_hw *hw);
-+	bool		(*negotiate_rates)(struct clk_hw *hw,
-+					   struct clk_rate_request *req,
-+					   bool (*check_rate)(struct clk_core *, unsigned long));
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
- 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index b607482ca77e987b9344c38f25ebb5c8d35c1d39..e58f6c91aceaa329b4af90d3924ee63d47ecd68c 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -91,6 +91,26 @@ struct clk_bulk_data {
- 
- #ifdef CONFIG_COMMON_CLK
- 
-+void clk_enable_v1_rate_negotiation(void);
-+
-+void clk_enable_v2_rate_negotiation(void);
-+
-+/**
-+ * clk_use_v2_rate_negotiation - Use the v2 common clk rate negotiation logic.
-+ * In some cases when a child needs to change the rate of it's parent clk, the
-+ * rate of a sibling clk can be unexpectedly changed by the v1 negotiation
-+ * logic. Some platforms are unknowingly dependent on this behavior.
-+ *
-+ * This function is only exported for the kunit tests, and this is not to be
-+ * used outside of the clk core.
-+ *
-+ * @clk: clock to check
-+ *
-+ * Returns 1 if the v2 negotiation logic is used, or 0 if the v1 negotiation
-+ * logic is used.
+ /*
+- * Test suite that creates a parent with two divider-only children, and
+- * ensures that changing the rate of one child does not affect the rate
+- * of the other child.
++ * Test suite with v1 rate negotiation logic that creates a parent with two
++ * divider-only children, and ensures that changing the rate of one child
++ * does not affect the rate of the other child.
 + */
-+int clk_use_v2_rate_negotiation(struct clk *clk);
++static struct kunit_suite clk_rate_change_sibling_div_div_v1_test_suite = {
++	.name = "clk-rate-change-sibling-div-div-v1",
++	.init = clk_rate_change_sibling_div_div_v1_test_init,
++	.exit = clk_rate_change_sibling_div_div_test_exit,
++	.test_cases = clk_rate_change_sibling_div_div_cases,
++};
 +
- /**
-  * clk_notifier_register - register a clock rate-change notifier callback
-  * @clk: clock whose rate we are interested in
++/*
++ * Test suite with v2 rate negotiation logic that creates a parent with two
++ * divider-only children, and ensures that changing the rate of one child
++ * does not affect the rate of the other child.
+  */
+-static struct kunit_suite clk_rate_change_sibling_div_div_test_suite = {
+-	.name = "clk-rate-change-sibling-div-div",
+-	.init = clk_rate_change_sibling_div_div_test_init,
++static struct kunit_suite clk_rate_change_sibling_div_div_v2_test_suite = {
++	.name = "clk-rate-change-sibling-div-div-v2",
++	.init = clk_rate_change_sibling_div_div_v2_test_init,
+ 	.exit = clk_rate_change_sibling_div_div_test_exit,
+ 	.test_cases = clk_rate_change_sibling_div_div_cases,
+ };
+@@ -4017,7 +4056,8 @@ kunit_test_suites(
+ 	&clk_leaf_mux_set_rate_parent_test_suite,
+ 	&clk_test_suite,
+ 	&clk_multiple_parents_mux_test_suite,
+-	&clk_rate_change_sibling_div_div_test_suite,
++	&clk_rate_change_sibling_div_div_v1_test_suite,
++	&clk_rate_change_sibling_div_div_v2_test_suite,
+ 	&clk_rate_change_sibling_test_suite,
+ 	&clk_mux_no_reparent_test_suite,
+ 	&clk_mux_notifier_test_suite,
+@@ -4033,4 +4073,5 @@ kunit_test_suites(
+ 	&clk_uncached_test_suite,
+ );
+ MODULE_DESCRIPTION("Kunit tests for clk framework");
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+ MODULE_LICENSE("GPL v2");
 
 -- 
 2.51.0
