@@ -1,126 +1,131 @@
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA59622D4DD;
-	Tue, 23 Sep 2025 03:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7247CAD24;
+	Tue, 23 Sep 2025 03:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758596833; cv=none; b=nobvlaegbdlZtNMttuOf449tl+y1/GLog2kySm4n2JAZH0vjmCZWCIBisZfG+q6JgQWVAOn3rTLcWban9slKL0Yft+gjSQ0mga1EIdB1ooTmz+06v1Gtq3MRsl6HQU8eAXqRr5kniL2uF7NybbdxUFPf30ZeJAA4bT+/Sujeb74=
+	t=1758599150; cv=none; b=DiEgG/QxptoUILQf7LdeYU4iZJH6uREsVjMvxN1URBPav7igCAEyXisRxl/oClv9gxawt+oAgVEj+MYxsaU/b5Q0Bd5+mOB7Pjo5WeAutKA5lVPqqRH2c9DX+7JyqFjg6Fw0zLrhHCPVS6qS84OMQNefcdd708VyPA4xdYglqwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758596833; c=relaxed/simple;
-	bh=DWtj2aMHR3CGw+799Fzy9/MPClMHk39Me/Dt8ZvK9Cw=;
+	s=arc-20240116; t=1758599150; c=relaxed/simple;
+	bh=4CMWPtu95SpMo8DXVgcYovl8qzxoxMuizAwDQxBKMCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXE0g0QtdMHdW3lOYO6UkW/0Y636I0Uf8oU/Ik63Jbq9AfnnRXfhrTXg2rYekrbTHBV2PPhp6PSccEPD9vL2eXIupl0vRaD8jPhKfLLPD6bCEF76NTxqW0Fd0NTIfVH8Q0YUGP7ycU1rzJ/i5S4ihtNsPxH5uLLKeH/aFpc6oKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=oGLhGyoo; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYboDyGOGn7NU8j1A0pDBNpWwcUMVhnXcdti9wOuB/p+TsfaL3zcWskxpaoLyIdzGCYe7uGdWWP4SmEnqMYIIFRVOD34dd2DePi+91QSBbQKE+Fto+eOUPZAhdlU7o9HGDCgGJSTJgDKgb/BbKgIMYANhyXC4czmsXhSN01c7to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=sRjl/jZp; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=9iEveaNr; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="oGLhGyoo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758596796;
-	bh=4NPMmXQNPhh43Vfgs8uvOVv9B0WUHZ6XpV40eYHU7hc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=oGLhGyook+I4kpE21Ln4MDRvgPfFtQZHAimn8DGUBS2EFpqNgDv5V1xZizhHqL69W
-	 8Mb9L8i79QD0vV29be5R1gg4Tun1az3/5Zw+ncYm70PqNGac/PRrQyNB0mPu4s5XpB
-	 Q+xWBb31+ps8yG3bD4PgiKvvJHCKpTpTu+mB4LQQ=
-X-QQ-mid: zesmtpsz9t1758596790t586b0683
-X-QQ-Originating-IP: qX9i0wUg26C8yleLcKZzLZ0/pKDmgU7emqW0M+Rvx98=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 23 Sep 2025 11:06:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14575087354260022270
-EX-QQ-RecipientCnt: 17
-Date: Tue, 23 Sep 2025 11:06:28 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	"fushan.zeng" <fushan.zeng@anlogic.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 1/5] clk: correct clk_div_mask() return value for width
- == 32
-Message-ID: <261F7D53235844E5+aNIOtLYG1NcypGqr@LT-Guozexi>
-References: <20250922-dr1v90-cru-v1-0-e393d758de4e@pigmoral.tech>
- <20250922-dr1v90-cru-v1-1-e393d758de4e@pigmoral.tech>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="sRjl/jZp";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="9iEveaNr"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758598846; bh=RBI2aJbB7n590+KcwgaegrR
+	fg5lM30jDW0OwGnQmBL8=; b=sRjl/jZpgu8H2CCD/bvJRFr84ayFxOWFDfefDY/9M3pPOybi5w
+	lN8kDaTaV+lvXaJWoXtRLjvYQ72ke1vagpeRzkLmj9xzTdjaUUtLIcp6kNbjDTXNuUvfRjvQBGt
+	Woc9cSOZGQZHgEaNee3rLueQ/MPOLBaxqT6muqnh0yj3vVswnT4V4BGRyE4Ws2+y357MwxLDDXc
+	5zFTwjV430W2yYKhlLvSxm38QBj54ZvsJjZT1yH1zbZBRM+RcSMjtjl+He7bYMNL0vx57AC8lhu
+	0O7vO1yhF2z5AGLZyIb+D6gLV+qf+KpGapgbQ6XnOJl9oKC0A7w8P/AWbWb8IuVnPSw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758598846; bh=RBI2aJbB7n590+KcwgaegrR
+	fg5lM30jDW0OwGnQmBL8=; b=9iEveaNrpfx+7EskGD80aKFQggG9+eDi7M/DmfHYjY9si7U0fL
+	1IgSpCtPfNEbyOVBCakFKmaRd5+VgsDV4/Ag==;
+Date: Tue, 23 Sep 2025 10:40:37 +0700
+From: Dang Huynh <dang.huynh@mainlining.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
+Message-ID: <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+ <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250922-dr1v90-cru-v1-1-e393d758de4e@pigmoral.tech>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: No4GWyI4cWt6ew9iQmHdxH84kSJ8w+Ri5rgBTNHqPFQEu5t8t4nJLsIr
-	KErIC45YyfWV9Uz1FbBnJ+yfKtG2fnRSgsrOcp5sL4TJIvxvefvOXExlkC7QWMsm9juAtLQ
-	0VGj0Mmtq8Oqn+T0UTWvqjTxC9h078hlpT0NyHcICNWBm1V+s2GkKOfVm4BlqijmRkdLGmd
-	E0zEKjyflUuZtZ3XEk48FBlb/qSphUdOcpXOOU53BplWEeeiaQ6ZYuszykVWgmbIce6bohH
-	/bBsTAfcdsUoyE8Ek9OoacACdmhreWqaHQfSmBw/B2iuwItGxSa3xVMXMUfjFld72y23ZfG
-	D3nro/iaJTsqs2oPI1yKCqUiHSNo78oEIJ+E9x/GZQroIaxIJhUkc5C9OPbMY4OZ6cZqJgB
-	yIbNL81+vz24ifjmVSdbnEiEMy9arY7hlgThRyWM6xXen05i7jTWfW+Us5BIuoEpLm89z+h
-	vpm6la5tDUqS9RMgc6AYb8YG+5DEUYSuPH27a9jzaGs5MOP2ligdSu55vBdsU3hnAPnJR5s
-	XWEy9QZOn+C/+OBukx81nmMFR49MErLrCvmyjPGUi6+oKQJ2gIThiCi0RU4wYkQiRlZUsXj
-	RCtFJ5iWg+ly5pvNyb/AiZ4afrLP5TVmudv/DAET4AQiZs99B8+GgOsHX+Uffc8fE3g5MmE
-	kOnzP0stux+jWPa9RW1SMRMASxOB4RUwqu8EBlsPAWkpkap5H49q0s4aAmfcffbB9JlWKw5
-	zq83NEToEOuqvq0Zji1TjN+JqGLyWHw1gL4sgvuI7ZK1opqv7KgF2Rv8CE79J0lO73H0/NV
-	UpXwnvXxorzcW+tZfHzki+lFTDd8oLrv2BpAsQZUk8Yj144ZBTyuKVB1/krlI2pFrbwPDqj
-	++pQtdQfiCanKBiRhQes3xLhDd3hibBpClQ/5mKSMJwxlVUhI0LveFvtmAsahCjYK3N+smb
-	WcIW40bTHXkOSVCUi9AW94YqGyG9itgajLcC6t67jl2fniDCdEdXYpgr9kDrK+dlZS7ER7N
-	uCu4zMqA0jqe+366nxiCr5FlEdQWIyV+sc9i/wXNN0+KV5oPB9rhytLDM3lUNgiG3dtD+tb
-	78RqBnH8CQP5YMCaO6RahU=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
 
-On Mon, Sep 22, 2025 at 10:51:47PM +0800, Junhui Liu wrote:
-> The macro clk_div_mask() currently wraps to zero when width is 32 due to
-> 1 << 32 being undefined behavior. This leads to incorrect mask generation
-> and prevents correct retrieval of register field values for 32-bit-wide
-> dividers.
+On Mon, Sep 22, 2025 at 04:17:05PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Sep 18, 2025 at 8:49 PM Dang Huynh via B4 Relay
+> <devnull+dang.huynh.mainlining.org@kernel.org> wrote:
+> >
+> > This patch series aims to add SDMMC driver and various drivers required
+> > for SDMMC controller to function.
+> >
+> > This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
+> > after the GPIO driver probed or by reading the GPIO debugfs.
+> >
+> > This patch series is a split from [1] to ease the maintainers.
+> >
 > 
-> Although it is unlikely to exhaust all U32_MAX div, some clock IPs may rely
-> on a 32-bit val entry in their div_table to match a div, so providing a
-> full 32-bit mask is necessary.
+> This is still targeting at least 4 subsystems and isn't making the
+> merging any easier. Are there any build-time dependencies here? If
+> not, then split it further into small chunks targeting individual
+> subsystems and the relevant ARM SoC tree.
+The MMC driver depends on both the clock and the DMA driver.
+
 > 
-> Fix this by casting 1 to long, ensuring proper behavior for valid widths up
-> to 32.
+> Bartosz
 > 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->  include/linux/clk-provider.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 630705a47129453c241f1b1755f2c2f2a7ed8f77..a651ccaf1b44ff905c2bd4b9a7043f9e2169d27f 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -720,7 +720,7 @@ struct clk_divider {
->  	spinlock_t	*lock;
->  };
->  
-> -#define clk_div_mask(width)	((1 << (width)) - 1)
-> +#define clk_div_mask(width)	((1L << (width)) - 1)
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->  #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
->  
->  #define CLK_DIVIDER_ONE_BASED		BIT(0)
-> 
-> -- 
-> 2.51.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > Tested on Orange Pi 2G-IOT using a Buildroot environment.
+> >
+> > [1]: https://lore.kernel.org/all/20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org/
+> >
+> > Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> > ---
+> > Dang Huynh (10):
+> >       dt-bindings: gpio: rda: Make interrupts optional
+> >       dt-bindings: clock: Add RDA Micro RDA8810PL clock/reset controller
+> >       dt-bindings: dma: Add RDA IFC DMA
+> >       dt-bindings: mmc: Add RDA SDMMC controller
+> >       gpio: rda: Make IRQ optional
+> >       gpio: rda: Make direction register unreadable
+> >       clk: Add Clock and Reset Driver for RDA Micro RDA8810PL SoC
+> >       dmaengine: Add RDA IFC driver
+> >       mmc: host: Add RDA Micro SD/MMC driver
+> >       ARM: dts: unisoc: rda8810pl: Add SDMMC controllers
+> >
+> >  .../bindings/clock/rda,8810pl-apsyscon.yaml        |  43 ++
+> >  Documentation/devicetree/bindings/dma/rda,ifc.yaml |  45 ++
+> >  .../devicetree/bindings/gpio/gpio-rda.yaml         |   3 -
+> >  Documentation/devicetree/bindings/mmc/rda,mmc.yaml |  92 +++
+> >  MAINTAINERS                                        |  18 +
+> >  .../boot/dts/unisoc/rda8810pl-orangepi-2g-iot.dts  |  20 +
+> >  .../arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts |  20 +
+> >  arch/arm/boot/dts/unisoc/rda8810pl.dtsi            |  47 +-
+> >  drivers/clk/Kconfig                                |   1 +
+> >  drivers/clk/Makefile                               |   1 +
+> >  drivers/clk/rda/Kconfig                            |  14 +
+> >  drivers/clk/rda/Makefile                           |   2 +
+> >  drivers/clk/rda/clk-rda8810.c                      | 769 +++++++++++++++++++
+> >  drivers/dma/Kconfig                                |  10 +
+> >  drivers/dma/Makefile                               |   1 +
+> >  drivers/dma/rda-ifc.c                              | 450 +++++++++++
+> >  drivers/gpio/gpio-rda.c                            |   4 +-
+> >  drivers/mmc/host/Kconfig                           |  12 +
+> >  drivers/mmc/host/Makefile                          |   1 +
+> >  drivers/mmc/host/rda-mmc.c                         | 853 +++++++++++++++++++++
+> >  include/dt-bindings/clock/rda,8810pl-apclk.h       |  70 ++
+> >  include/dt-bindings/dma/rda-ifc.h                  |  28 +
+> >  22 files changed, 2495 insertions(+), 9 deletions(-)
+> > ---
+> > base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+> > change-id: 20250918-rda8810pl-mmc-3f33b83c313d
+> >
+> > Best regards,
+> > --
+> > Dang Huynh <dang.huynh@mainlining.org>
+> >
+> >
+
